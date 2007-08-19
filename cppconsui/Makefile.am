@@ -16,7 +16,7 @@ libcppconsui_la_SOURCES =\
 	Window.cpp \
 	Window.h \
 	WindowManager.cpp \
-	WindowManger.h \
+	WindowManager.h \
 	Border.cpp \
 	Border.h \
 	LineStyle.cpp \

@@ -40,7 +40,7 @@ cppconsui/Widget.h
 cppconsui/Window.cpp
 cppconsui/Window.h
 cppconsui/WindowManager.cpp
-cppconsui/WindowManger.h
+cppconsui/WindowManager.h
 cppconsui/Border.cpp
 cppconsui/Border.h
 cppconsui/LineStyle.cpp
