@@ -1,0 +1,28 @@
+TODO:
+- purple_pounces_load
+- purple_debug_set_enabled
+- better error catching in main
+- reference counters for singletons, only delete when noone else
+  references this class
+- grep for todo's and fix them
+- add const in a lot of places
+- put everything (in cppconsui) in a CppConsUI namespace ?
+- purple_pounces_load
+- purple_debug_set_enabled
+- purple_conversations_set_ui_ops which was in null_ui_init
+  where should it go? probably in the Centerim object
+- better error catching in main
+- put something in: README AUTHORS ChangeLog NEWS
+- make sure default constructors are not callable for all
+  classes where this applies
+- Add an init function to cppconsui which calls
+  bindtextdomain (PACKAGE, LOCALEDIR); (as explained by
+  <http://www.gnu.org/software/gettext/manual/gettext.html#Libraries>
+  also make the translations proper)
+- see what more files can be removed from git
+ 
+Less important todo's which sometimes are just ideas:
+- Add option to save/display buddy icon
+- Order switch statements, put most used cases on top
+- Replace `if (!window) return;'-like constructs with
+  g_return_if_fail/succes ??
