@@ -20,6 +20,7 @@ TODO:
   <http://www.gnu.org/software/gettext/manual/gettext.html#Libraries>
   also make the translations proper)
 - see what more files can be removed from git
+- see wether we can lose gettext.h from src/
  
 Less important todo's which sometimes are just ideas:
 - Add option to save/display buddy icon

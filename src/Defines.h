@@ -21,17 +21,7 @@
 #ifndef __DEFINES_H__
 #define __DEFINES_H__
 
-#ifdef ENABLE_NLS
-
-#include <locale.h>
-#include <libintl.h>
 #define _(s) gettext(s)
-
-#else 
-
-#define _(s) (s)
-
-#endif
 
 //TODO: configurable path using ./configure
 #define CIM_CONFIG_PATH		".centerim"

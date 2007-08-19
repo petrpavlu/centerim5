@@ -1,4 +1,5 @@
 bin_PROGRAMS = centerim
+DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\"
 
 # When you add files here, also add them in po/POTFILES.in
 centerim_SOURCES = \
@@ -38,5 +39,5 @@ centerim_LDADD =\
 	$(GLIBMM_LIBS) \
 	$(GLIB_LIBS) \
 	$(CURSES_LIBS) \
-	$(INTL_LIBS) \
+	$(LIBINTL) \
 	$(top_builddir)/cppconsui/libcppconsui.la

@@ -61,6 +61,7 @@ centerim_OBJECTS = $(am_centerim_OBJECTS)
 am__DEPENDENCIES_1 =
 centerim_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) \
 	$(top_builddir)/cppconsui/libcppconsui.la
 DEFAULT_INCLUDES = -I. -I$(top_builddir)@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
@@ -107,7 +108,7 @@ CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
-DEFS = @DEFS@
+DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\"
 DEPDIR = @DEPDIR@
 ECHO = @ECHO@
 ECHO_C = @ECHO_C@
@@ -257,7 +258,7 @@ centerim_LDADD = \
 	$(GLIBMM_LIBS) \
 	$(GLIB_LIBS) \
 	$(CURSES_LIBS) \
-	$(INTL_LIBS) \
+	$(LIBINTL) \
 	$(top_builddir)/cppconsui/libcppconsui.la
 
 all: all-am

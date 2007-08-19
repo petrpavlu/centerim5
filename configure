@@ -19310,6 +19310,8 @@ LIBTOOL='$(SHELL) $(top_builddir)/libtool'
 
 
 
+# Hurray for <http://www-src.lip6.fr/homepages/Alexandre.Duret-Lutz/autotools.html>
+
   { echo "$as_me:$LINENO: checking whether NLS is requested" >&5
 echo $ECHO_N "checking whether NLS is requested... $ECHO_C" >&6; }
     # Check whether --enable-nls was given.
