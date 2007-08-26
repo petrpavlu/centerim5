@@ -27,7 +27,7 @@
 class InputProcessor
 {
 	public:
-		InputProcessor(InputProcessor *processchild);
+		InputProcessor();
 		~InputProcessor();
 
 		/* Notes on how input is processed
@@ -53,6 +53,8 @@ class InputProcessor
 
 	protected:
 		virtual int ProcessInputText(const char *input, const int bytes);
+
+		void SetInputChild(InputProcessor *inputchild);
 
 	private:
 		/* Notes on how key combinations are stored and searched
@@ -85,7 +87,7 @@ class InputProcessor
 		KeyCombos::iterator BinSearchLast(const char *key);
 
 		KeyCombos combos;
-		InputProcessor *processchild;
+		InputProcessor *inputchild;
 };
 
 #endif /* __INPUTPROCESSOR_H__ */

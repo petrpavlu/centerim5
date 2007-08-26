@@ -109,13 +109,10 @@ void Widget::Redraw(void)
 
 void Widget::GiveFocus(void)
 {
+	if (canfocus) focus = true;
 }
 
 void Widget::TakeFocus(void)
 {
-}
-
-int Widget::ProcessInput(const char *input, int bytes)
-{
-	return 0;
+	focus = false;
 }

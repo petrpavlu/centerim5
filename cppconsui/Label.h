@@ -34,12 +34,15 @@ class Label
 
 		virtual void Draw(void);
 
+		void SetText(const Glib::ustring str);
+		Glib::ustring GetText(void);
+
 	protected:
-		Glib::ustring text;
 
 	private:
 		Label();
 
+		Glib::ustring text;
 };
 
 #endif /* __LABEL_H__ */

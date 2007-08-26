@@ -22,13 +22,15 @@
 
 #include "Scrollable.h"
 #include "LineStyle.h"
+#include "Keys.h"
 
 TreeView::TreeView(WINDOW *parentarea, int x, int y, int w, int h, LineStyle *linestyle)
 : Scrollable(parentarea, x, y, w, h, w, h)
 , linestyle(linestyle)
 , itemswidth(0)
 , itemsheight(0)
-, focuschild(NULL)
+, focusnode(NULL)
+, focuscycle(true)
 {
 	canfocus = true;
 
@@ -112,18 +114,136 @@ int TreeView::DrawNode(TreeNode *node, int top)
 	return height;
 }
 
+int TreeView::ProcessInputText(const char *input, const int bytes)
+{
+	//TODO this can all go somehere else
+	if (input[0] == 'n') {
+		FocusNext();
+		return 1;
+	}
+	if (input[0] == 'p') {
+		FocusPrevious();
+		return 1;
+	}
+}
+
 void TreeView::GiveFocus(void)
 {
 	focus = true;
-	if (focuschild)
-		focuschild->GiveFocus();
+	if (focusnode)
+		focusnode->widget->GiveFocus();
 }
 
 void TreeView::TakeFocus(void)
 {
 	focus = false;
-	if (focuschild)
-		focuschild->TakeFocus();
+	if (focusnode)
+		focusnode->widget->TakeFocus();
+}
+
+void TreeView::FocusNext(void)
+{
+	TreeNodes::iterator i;
+	TreeNode *node, *newfocus = NULL, *parent, *child;
+
+	if (!focusnode) return; /* no nodes have been added yet */
+	//if (root->children.size() == 1) /* only one noe can have focus (and has it) */
+	//why does that segfault?
+
+	node = focusnode;
+
+	if (node->open && node->children.size()) {
+		newfocus = node->children.front();
+	} else {
+		parent = FindParent(node->id);
+
+		for (i = parent->children.begin(); i != parent->children.end(); ) {
+			child = *i;
+			if (child == node) {
+				i++;
+				if (i == parent->children.end()) {
+					if (parent == root) {
+						if (focuscycle) {
+							newfocus = *(parent->children.begin());
+							break;
+						} else {
+							return;
+						}
+					}
+
+					node = parent;
+					parent = FindParent(parent->id);
+					i = parent->children.begin();
+					continue;
+				} else {
+					newfocus = *i;
+					break;
+				}
+			}
+			i++;
+		}
+	}
+
+	if (newfocus) {
+		focusnode->widget->TakeFocus();
+		focusnode = newfocus;
+		focusnode->widget->GiveFocus();
+		SetInputChild(focusnode->widget);
+		signal_redraw();
+	}
+}
+
+void TreeView::FocusPrevious(void)
+{
+//TODO fix this, doesn't work quite well
+	TreeNodes::iterator i;
+	TreeNode *node, *newfocus = NULL, *parent, *child;
+
+	if (!focusnode) return; /* no nodes have been added yet */
+	//if (root->children.size() == 1) /* only one noe can have focus (and has it) */
+	//why does that segfault?
+
+	node = focusnode;
+
+	if (node->open && node->children.size()) {
+		newfocus = node->children.front();
+	} else {
+		parent = FindParent(node->id);
+
+		for (i = parent->children.begin(); i != parent->children.end(); ) {
+			child = *i;
+			if (child == node) {
+				if (i == parent->children.begin()) {
+					if (parent == root) {
+						if (focuscycle) {
+							newfocus = parent->children.back();
+							break;
+						} else {
+							return;
+						}
+					}
+
+					node = parent;
+					parent = FindParent(parent->id);
+					i = parent->children.begin();
+					continue;
+				} else {
+					i--;
+					newfocus = *i;
+					break;
+				}
+			}
+			i++;
+		}
+	}
+
+	if (newfocus) {
+		focusnode->widget->TakeFocus();
+		focusnode = newfocus;
+		focusnode->widget->GiveFocus();
+		SetInputChild(focusnode->widget);
+		signal_redraw();
+	}
 }
 
 int TreeView::AddNode(int parentid, Widget *widget, void *data)
@@ -141,8 +261,10 @@ int TreeView::AddNode(int parentid, Widget *widget, void *data)
 	node->collapsable = true;
 	node->open = true;
 
-	if (!focuschild)
-		focuschild = widget;
+	if (!focusnode) {
+		focusnode = node;
+		SetInputChild(focusnode->widget);
+	}
 
 	parent = FindNode(parentid);
 	if (parent == NULL)
@@ -153,6 +275,8 @@ int TreeView::AddNode(int parentid, Widget *widget, void *data)
 
 	//TODO we want the widgets resize events
 	//so we can adjust the scroll area
+	node->sig_redraw = widget->signal_redraw.connect(sigc::mem_fun(this, &TreeView::OnChildRedraw));
+	
 	
 	itemswidth += widget->Width();
 	itemsheight += widget->Height();
@@ -192,8 +316,10 @@ void TreeView::DeleteNode(int nodeid, bool keepsubnodes)
 	if (!node)
 		return;
 
-	if (focuschild == node->widget)
-		focuschild = NULL;
+	if (focusnode == node) {
+		focusnode = NULL;
+		SetInputChild(NULL);
+	}
 
 	parent = FindParent(nodeid);
 	if (!parent)
@@ -219,6 +345,9 @@ void TreeView::DeleteNode(int nodeid, bool keepsubnodes)
 			break;
 		}
 	}
+
+	//TODO disconnect signals
+	node->sig_redraw.disconnect();
 
 	/* Delete the node objects */
 	DeleteNode(node);
@@ -369,4 +498,9 @@ int TreeView::GenerateId(void)
 
 	i++;
 	return i;
+}
+
+void TreeView::OnChildRedraw(void)
+{
+	signal_redraw();
 }

@@ -22,6 +22,7 @@
 #define __WINDOWMANAGER_H__
 
 #include "Window.h"
+#include "InputProcessor.h"
 
 #if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
 #include <ncurses.h>
@@ -34,6 +35,7 @@
 #include <vector>
 
 class WindowManager
+: public InputProcessor
 {
 	public:
 		~WindowManager(void);
@@ -46,8 +48,6 @@ class WindowManager
 
 		void Draw(void);
 		PANEL *GetPanel(Window &win);
-
-		int ProcessInput(const char *input, int bytes);
 
 	protected:
 		typedef std::pair<Window*, sigc::connection> WindowPair;
@@ -68,7 +68,6 @@ class WindowManager
 		WindowManager(void);
 
 		static WindowManager *instance;
-
 
 };
 

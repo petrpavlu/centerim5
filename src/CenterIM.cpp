@@ -307,6 +307,8 @@ void CenterIM::tmp_purple_print_(PurpleDebugLevel level, const char *category, c
 /* Xerox (finch saves us a little of work here) */
 void CenterIM::io_init(void)
 {
+	SetInputChild(windowmanager);
+
 	curs_set(0);
 	nonl();
 //        g_io_channel_set_encoding(channel, NULL, NULL); //TODO how to convert input to UTF-8 automatically? perhaps in io_input
@@ -350,8 +352,9 @@ gboolean CenterIM::io_input_error(GIOChannel *source, GIOCondition cond)
 
 gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 {
+	static std::string input;
 	char buf[INPUT_BUF_SIZE];
-	int rd = read(STDIN_FILENO, buf, INPUT_BUF_SIZE-1);
+	int rd = read(STDIN_FILENO, buf, INPUT_BUF_SIZE-1), eaten;
 
 	//TODO convert to UTF-8 here?
 
@@ -362,64 +365,36 @@ gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 	if (rd < 0) {
 		//TODO what to do on error?
 	} else if (rd == 0) {
-		//TODO this should not happen
+		//TODO this should not happen, should it?
+	} else if (rd == INPUT_BUF_SIZE-1) {
+		//TODO log an error about exausted read buffer
+		//if this ever happens, it would be best to
+		//implement a dynamically sized buffer
 	}
 
-	buf[rd] = '\0'; //TODO remove
-	log->Write(PURPLE_DEBUG_MISC, "input: %s (%02x %02x %02x)", buf, buf[0], buf[1], buf[2]); //TODO remove
 
-	ProcessInput(buf, rd);
+	{
+	gchar *ss;
+	buf[rd] = '\0'; //TODO remove
+	gunichar uc = g_utf8_get_char(buf);
+	log->Write(PURPLE_DEBUG_MISC, "input: %s (%02x %02x %02x) %d %d %d", buf, buf[0], buf[1], buf[2],
+		rd, g_utf8_validate(buf, rd, NULL), uc); //TODO remove
+	}
+
+	input.append(buf, rd);
+
+	while (input.size()) {
+		eaten = ProcessInput(input.c_str(), input.size());
+		if (eaten < 0) {
+			return TRUE;
+		} else if (eaten == 0) {
+			//TODO find out if there is a more intelligent way
+			//to discard input. eg: key_left is 6 bytes, so
+			//remove 6 bytes (*must* be *fast*)
+			eaten = 1;
+		}
+		input.erase(0, eaten);
+	}
 
 	return TRUE;
-}
-
-void CenterIM::ProcessInput(char *input, int bytes)
-{
-	int eaten;
-
-	//while (bytes > 0) {
-		/* Process overriding key-combo's */
-		/*
-		eaten = ProcessOverrides();
-		keys += eaten;
-		bytes -= eaten;
-		if (bytes < 1) break;
-		*/
-		switch (input[0]) {
-		case 'q':
-			//TODO remove this case when keybindings are done
-			g_main_loop_quit(gmainloop);
-			//keys++; bytes--;
-			break;//continue;
-		case 0x0c: // ^L, form feed, redraw
-			windowmanager->Draw();
-			input++;
-			bytes--;
-			break;//continue;
-		}
-
-		/* Process keys */
-		eaten = windowmanager->ProcessInput(input, bytes);
-		/*keys += eaten;
-		bytes -= eaten;
-		if (bytes < 1) break;*/
-
-		/* Process all key-combo's */
-		/*
-		eaten = ProcessOverrides();
-		keys += eaten;
-		bytes -= eaten;
-		if (bytes < 1) break;
-
-		eaten = ProcessKeyCombos();
-		keys += eaten;
-		bytes -= eaten;
-		
-		if (bytes < 1) break;
-		*/
-	//}
-
-	if (bytes < 0)
-		; //TODO throw exception about more processed input
-		// than there was input available
 }

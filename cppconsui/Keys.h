@@ -55,7 +55,7 @@
 #define CUI_KEY_HOME   SAFE(key_home)
 #define CUI_KEY_END    SAFE(key_end)
 
-#define CUI_KEY_ENTER  carriage_return
+#define CUI_KEY_ENTER	carriage_return
 
 #define CUI_KEY_BACKSPACE SAFE(key_backspace)
 #define CUI_KEY_DEL    SAFE(key_dc)

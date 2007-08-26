@@ -101,14 +101,6 @@ void Container::TakeFocus(void)
 		focuschild->TakeFocus();
 }
 
-int Container::ProcessInput(const char *input, int bytes)
-{
-	
-
-	if (!focuschild)
-		return 0;
-}
-
 void Container::AddWidget(Widget *widget)
 {
 	Child child;
@@ -119,8 +111,10 @@ void Container::AddWidget(Widget *widget)
 	child.first = widget;
 	children.push_back(child);
 
-	if (!focuschild)
+	if (!focuschild) {
 		focuschild = widget;
+		SetInputChild(widget);
+	}
 }
 
 void Container::RemoveWidget(Widget *widget)
@@ -142,8 +136,10 @@ void Container::RemoveWidget(Widget *widget)
 	child->second.disconnect();
 	children.erase(i);
 
-	if (focuschild == widget)
+	if (focuschild == widget) {
 		focuschild = NULL;
+		SetInputChild(NULL);
+	}
 }
 
 void Container::OnChildRedraw(void)

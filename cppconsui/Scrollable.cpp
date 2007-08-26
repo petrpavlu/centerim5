@@ -51,6 +51,8 @@ Scrollable::~Scrollable()
 
 void Scrollable::Draw(void)
 {
+	if (!scrollarea || ! area) return;
+
 	copywin(scrollarea, area, ypos, xpos, 0, 0, h-1, w-1, 0);
 	Widget::Draw();
 }

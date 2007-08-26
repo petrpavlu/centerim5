@@ -38,5 +38,25 @@ Label::~Label()
 
 void Label::Draw(void)
 {
-	mvwaddstr(area, 0, 0, text.c_str());
+	//TODO unicode drawing
+	//TODO focus stuff is for testing *only*
+	if (focus) {
+		mvwaddstr(area, 0, 0, "*");
+		mvwaddstr(area, 0, 1, text.c_str());
+	} else
+		mvwaddstr(area, 0, 0, text.c_str());
+}
+
+void Label::SetText(const Glib::ustring str)
+{
+	if (text == str) return;
+
+	text = str;
+	wclear(area);
+	signal_redraw();
+}
+
+Glib::ustring Label::GetText(void)
+{
+	return text;
 }

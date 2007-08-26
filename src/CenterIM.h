@@ -30,18 +30,18 @@
 #include "Conf.h"
 
 #include <cppconsui/WindowManager.h>
+#include <cppconsui/InputProcessor.h>
 
 #include <glib.h>
 #include <vector>
 
 class CenterIM
+: public InputProcessor
 {
 	public:
 		static CenterIM* Instance(void);
 		static void Delete(void);
 		void Run(void);
-
-		void ProcessInput(char *input, int bytes);
 
 		/* for purple_core_set_ui_ops() */
 		//static void ui_prefs_init_(void) { CenterIM::Instance()->ui_prefs_init(); }

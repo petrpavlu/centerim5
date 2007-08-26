@@ -17,8 +17,8 @@
 
 #include "InputProcessor.h"
 
-InputProcessor::InputProcessor(InputProcessor *processchild)
-: processchild(processchild)
+InputProcessor::InputProcessor()
+: inputchild(NULL)
 {
 }
 
@@ -35,8 +35,8 @@ int InputProcessor::ProcessInput(const char *input, const int bytes)
 	if (i) return i;
 	
 	/* Hand of input to a child */
-	if (processchild)
-		i = processchild->ProcessInput(input, bytes);
+	if (inputchild)
+		i = inputchild->ProcessInput(input, bytes);
 	if (i) return i;
 
 	/* Process other key combinations */
@@ -50,6 +50,11 @@ int InputProcessor::ProcessInput(const char *input, const int bytes)
 int InputProcessor::ProcessInputText(const char *input, const int bytes)
 {
 	return 0;
+}
+
+void InputProcessor::SetInputChild(InputProcessor *inputchild_)
+{
+	inputchild = inputchild_;
 }
 
 int InputProcessor::Process(InputProcessor::ComboType type, const char *input, const int bytes)
@@ -103,7 +108,8 @@ InputProcessor::KeyCombos::iterator InputProcessor::BinSearchFirst(const char *k
 {
 	int m, n, h;
 
-	m, n = -1, combos.size();
+	m = -1;
+	n = combos.size();
 
 	while (m+1 < n) {
 		h = (m+n) / 2;
@@ -121,7 +127,8 @@ InputProcessor::KeyCombos::iterator InputProcessor::BinSearchLast(const char *ke
 {
 	int m, n, h;
 
-	m, n = -1, combos.size();
+	m = -1;
+	n = combos.size();
 
 	while (m+1 < n) {
 		h = (m+n) / 2;
