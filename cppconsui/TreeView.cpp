@@ -33,8 +33,10 @@ TreeView::TreeView(WINDOW *parentarea, int x, int y, int w, int h, LineStyle *li
 , focusnode(NULL)
 , focuscycle(true)
 {
-	AddCombo(key_up, sigc::mem_fun(this, &TreeView::FocusPrevious));
-	AddCombo(key_down, sigc::mem_fun(this, &TreeView::FocusNext));
+	AddCombo(key_up, sigc::mem_fun(this, &TreeView::ActionFocusPrevious));
+	AddCombo(key_down, sigc::mem_fun(this, &TreeView::ActionFocusNext));
+	AddCombo("-", sigc::mem_fun(this, &TreeView::ActionCollapse));
+	AddCombo("+", sigc::mem_fun(this, &TreeView::ActionExpand));
 
 	canfocus = true;
 
@@ -61,6 +63,7 @@ TreeView::~TreeView()
 
 void TreeView::Draw(void)
 {
+	werase(scrollarea);
 	DrawNode(root, 0);
 	Scrollable::Draw();
 }
@@ -96,7 +99,7 @@ int TreeView::DrawNode(TreeNode *node, int top)
 
 			mvwadd_wch(scrollarea, top+height,  depthoffset + 2, linestyle->H());
 			
-			if (child->collapsable) {
+			if (child->collapsable && child->children.size()) {
 				mvwaddch(scrollarea, top+height, depthoffset + 3, '[');
 				mvwaddch(scrollarea, top+height, depthoffset + 4, child->open ? '-' : '+');
 				mvwaddch(scrollarea, top+height, depthoffset + 5, ']');
@@ -186,8 +189,7 @@ void TreeView::FocusNext(void)
 
 void TreeView::FocusPrevious(void)
 {
-//TODO fix this, doesn't work quite well
-	TreeNodes::iterator i;
+	TreeNodes::reverse_iterator i;
 	TreeNode *node, *newfocus = NULL, *parent, *child;
 
 	if (!focusnode) return; /* no nodes have been added yet */
@@ -196,36 +198,34 @@ void TreeView::FocusPrevious(void)
 
 	node = focusnode;
 
-	if (node->open && node->children.size()) {
-		newfocus = node->children.front();
-	} else {
-		parent = FindParent(node->id);
+	parent = FindParent(node->id);
 
-		for (i = parent->children.begin(); i != parent->children.end(); ) {
-			child = *i;
-			if (child == node) {
-				if (i == parent->children.begin()) {
-					if (parent == root) {
-						if (focuscycle) {
-							newfocus = parent->children.back();
-							break;
-						} else {
-							return;
-						}
-					}
-
-					node = parent;
-					parent = FindParent(parent->id);
-					i = parent->children.begin();
-					continue;
-				} else {
-					i--;
-					newfocus = *i;
-					break;
-				}
-			}
+	for (i = parent->children.rbegin(); i != parent->children.rend(); ) {
+		child = *i;
+		if (child == node) {
 			i++;
+			if (i == parent->children.rend()) {
+				if (parent == root) {
+					if (focuscycle) {
+						newfocus = *(parent->children.rbegin());
+						break;
+					} else {
+						return;
+					}
+				}
+
+				newfocus = parent;
+				break;
+			} else {
+				newfocus = *i;
+
+				while (newfocus->open && newfocus->children.size())
+					newfocus = newfocus->children.back();
+
+				break;
+			}
 		}
+		i++;
 	}
 
 	if (newfocus) {
@@ -234,6 +234,36 @@ void TreeView::FocusPrevious(void)
 		focusnode->widget->GiveFocus();
 		SetInputChild(focusnode->widget);
 		signal_redraw();
+	}
+}
+
+void TreeView::ActionFocusNext(void)
+{
+	FocusNext();
+}
+
+void TreeView::ActionFocusPrevious(void)
+{
+	FocusPrevious();
+}
+
+void TreeView::ActionCollapse(void)
+{
+	if (!focusnode) return;
+
+	if (focusnode->open && focusnode->collapsable) {
+		focusnode->open = false;
+		Redraw();
+	}
+}
+
+void TreeView::ActionExpand(void)
+{
+	if (!focusnode) return;
+
+	if (!focusnode->open && focusnode->collapsable) {
+		focusnode->open = true;
+		Redraw();
 	}
 }
 

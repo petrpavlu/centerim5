@@ -48,8 +48,15 @@ class TreeView
 
 		virtual void GiveFocus(void);
 		virtual void TakeFocus(void);
+
 		void FocusNext(void);
 		void FocusPrevious(void);
+
+		/* Actions for keybindings */
+		void ActionFocusNext(void);
+		void ActionFocusPrevious(void);
+		void ActionCollapse(void);
+		void ActionExpand(void);
 
 		int AddNode(int parentid, Widget *widget, void *data);
 		void DeleteNode(int nodeid, bool keepsubnodes);
