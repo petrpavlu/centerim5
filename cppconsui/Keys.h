@@ -31,91 +31,96 @@
 #include <glibmm/ustring.h>
 #include <map>
 
-/* thank you gntkeys.h :)
- * a lot of the stuff below has been copied
- * with minor changes
- */
-#define SAFE(x)   ((x) ? (x) : "")
-
-#define CUI_KEY_POPUP   SAFE(key_f16)   /* Apparently */
-
-/* Arrow keys */
-#define CUI_KEY_LEFT   SAFE(key_left)
-#define CUI_KEY_RIGHT  SAFE(key_right)
-#define CUI_KEY_UP     SAFE(key_up)
-#define CUI_KEY_DOWN   SAFE(key_down)
-
-#define CUI_KEY_CTRL_UP     SAFE(gnt_key_cup)
-#define CUI_KEY_CTRL_DOWN   SAFE(gnt_key_cdown)
-#define CUI_KEY_CTRL_RIGHT  SAFE(gnt_key_cright)
-#define CUI_KEY_CTRL_LEFT   SAFE(gnt_key_cleft)
-
-#define CUI_KEY_PGUP   SAFE(key_ppage)
-#define CUI_KEY_PGDOWN SAFE(key_npage)
-#define CUI_KEY_HOME   SAFE(key_home)
-#define CUI_KEY_END    SAFE(key_end)
-
-#define CUI_KEY_ENTER	carriage_return
-
-#define CUI_KEY_BACKSPACE SAFE(key_backspace)
-#define CUI_KEY_DEL    SAFE(key_dc)
-#define CUI_KEY_INS    SAFE(key_ic)
-
-#define CUI_KEY_CTRL_A     "\001"
-#define CUI_KEY_CTRL_B     "\002"
-#define CUI_KEY_CTRL_C     "\003" /* why doesn't libgnt have this one? */
-#define CUI_KEY_CTRL_D     "\004"
-#define CUI_KEY_CTRL_E     "\005"
-#define CUI_KEY_CTRL_F     "\006"
-#define CUI_KEY_CTRL_G     "\007"
-#define CUI_KEY_CTRL_H     "\010"
-#define CUI_KEY_CTRL_I     "\011"
-#define CUI_KEY_CTRL_J     "\012"
-#define CUI_KEY_CTRL_K     "\013"
-#define CUI_KEY_CTRL_L     "\014"
-#define CUI_KEY_CTRL_M     "\012"
-#define CUI_KEY_CTRL_N     "\016"
-#define CUI_KEY_CTRL_O     "\017"
-#define CUI_KEY_CTRL_P     "\020"
-#define CUI_KEY_CTRL_R     "\022"
-#define CUI_KEY_CTRL_T     "\024"
-#define CUI_KEY_CTRL_U     "\025"
-#define CUI_KEY_CTRL_V     "\026"
-#define CUI_KEY_CTRL_W     "\027"
-#define CUI_KEY_CTRL_X     "\030"
-#define CUI_KEY_CTRL_Y     "\031"
-
-#define CUI_KEY_F1         SAFE(key_f1)
-#define CUI_KEY_F2         SAFE(key_f2)
-#define CUI_KEY_F3         SAFE(key_f3)
-#define CUI_KEY_F4         SAFE(key_f4)
-#define CUI_KEY_F5         SAFE(key_f5)
-#define CUI_KEY_F6         SAFE(key_f6)
-#define CUI_KEY_F7         SAFE(key_f7)
-#define CUI_KEY_F8         SAFE(key_f8)
-#define CUI_KEY_F9         SAFE(key_f9)
-#define CUI_KEY_F10        SAFE(key_f10)
-#define CUI_KEY_F11        SAFE(key_f11)
-#define CUI_KEY_F12        SAFE(key_f12)
-
 class Keys
 {
 	public:
-                ~Keys(void);
-
-                static Keys* Instance(void);
-                void Delete(void);
+		static Keys* Instance(void);
+		void Delete(void);
 
 		static int Compare(const char *keys1, const char *keys2);
 		const Glib::ustring Name(const char *key);
 		void Refine(char *str, int bytes);
 
+		/* thank you gntkeys.h :)
+		 * a lot of the stuff below has been copied
+		 * with a lot of changes (yay)
+		 */
+		#define SAFE(x) ((x) ? (x) : "")
+
+		//TODO find names for these const key definitions which
+		//dont clash with the ncurses names
+		const char* Key_popup(void) { return SAFE(key_f16); }
+		const char* Key_tab(void) { return "\t"; }
+
+		/* arrow Keys */
+		const char* Key_left(void) { return SAFE(key_left); }
+		const char* Key_right(void) { return SAFE(key_right); }
+		const char* Key_up(void) { return SAFE(key_up); }
+		const char* Key_down(void) { return SAFE(key_down); }
+
+		const char* Key_ctrl_up(void) { return SAFE(key_ctl_up); }
+		const char* Key_ctrl_down(void) { return SAFE(key_ctl_down); }
+		const char* Key_ctrl_right(void) { return SAFE(key_ctl_right); }
+		const char* Key_ctrl_left(void) { return SAFE(key_ctl_left); }
+
+		const char* Key_pgup(void) { return SAFE(key_ppage); }
+		const char* Key_pgdown(void) { return SAFE(key_npage); }
+		const char* Key_home(void) { return SAFE(key_home); }
+		const char* Key_end(void) { return SAFE(key_end); }
+
+		const char* Key_enter(void) { return carriage_return; }
+
+		const char* Key_backspace(void) { return SAFE(key_backspace); }
+		const char* Key_del(void) { return SAFE(key_dc); }
+		const char* Key_ins(void) { return SAFE(key_ic); }
+
+		const char* Key_ctrl_a(void) { return "\001"; }
+		const char* Key_ctrl_b(void) { return "\002"; }
+		const char* Key_ctrl_c(void) { return "\003"; }
+		const char* Key_ctrl_d(void) { return "\004"; }
+		const char* Key_ctrl_e(void) { return "\005"; }
+		const char* Key_ctrl_f(void) { return "\006"; }
+		const char* Key_ctrl_g(void) { return "\007"; }
+		const char* Key_ctrl_h(void) { return "\010"; }
+		const char* Key_ctrl_i(void) { return "\011"; }
+		const char* Key_ctrl_j(void) { return "\012"; }
+		const char* Key_ctrl_k(void) { return "\013"; }
+		const char* Key_ctrl_l(void) { return "\014"; }
+		const char* Key_ctrl_m(void) { return "\012"; }
+		const char* Key_ctrl_n(void) { return "\016"; }
+		const char* Key_ctrl_o(void) { return "\017"; }
+		const char* Key_ctrl_p(void) { return "\020"; }
+		const char* Key_ctrl_q(void) { return "\021"; }
+		const char* Key_ctrl_r(void) { return "\022"; }
+		const char* Key_ctrl_s(void) { return "\023"; }
+		const char* Key_ctrl_t(void) { return "\024"; }
+		const char* Key_ctrl_u(void) { return "\025"; }
+		const char* Key_ctrl_v(void) { return "\026"; }
+		const char* Key_ctrl_w(void) { return "\027"; }
+		const char* Key_ctrl_x(void) { return "\030"; }
+		const char* Key_ctrl_y(void) { return "\031"; }
+		const char* Key_ctrl_z(void) { return "\032"; }
+
+		const char* Key_f1(void) { return SAFE(key_f1); }
+		const char* Key_f2(void) { return SAFE(key_f2); }
+		const char* Key_f3(void) { return SAFE(key_f3); }
+		const char* Key_f4(void) { return SAFE(key_f4); }
+		const char* Key_f5(void) { return SAFE(key_f5); }
+		const char* Key_f6(void) { return SAFE(key_f6); }
+		const char* Key_f7(void) { return SAFE(key_f7); }
+		const char* Key_f8(void) { return SAFE(key_f8); }
+		const char* Key_f9(void) { return SAFE(key_f9); }
+		const char* Key_f10(void) { return SAFE(key_f10); }
+		const char* Key_f11(void) { return SAFE(key_f11); }
+		const char* Key_f12(void) { return SAFE(key_f12); }
+
 	protected:
 
 	private:
 		Keys(void);
+		~Keys(void);
 
-                static Keys *instance;
+		static Keys *instance;
 
 		/* copied from gntkeys.h */
 		/**

@@ -312,6 +312,7 @@ void CenterIM::io_init(void)
 	SetInputChild(windowmanager);
 
 	curs_set(0);
+	keypad(stdscr, 1); /* without this, some keys are not translated correctly */
 	nonl();
 //        g_io_channel_set_encoding(channel, NULL, NULL); //TODO how to convert input to UTF-8 automatically? perhaps in io_input
 //        g_io_channel_set_buffered(channel, FALSE); //TODO not needed?
@@ -376,16 +377,16 @@ gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 
 	/* Fix the input string.
 	 * Some keys generate bytestrings which are different
-	 * from the strings in termcap
+	 * from the strings  terminfo/ncurses expects
 	 * */
-	keys->Refine(buf, rd);
+	//keys->Refine(buf, rd);
 
 	{
 	gchar *ss;
 	buf[rd] = '\0'; //TODO remove
 	gunichar uc = g_utf8_get_char(buf);
 	log->Write(PURPLE_DEBUG_MISC, "input: %s (%02x %02x %02x) %d %d %d %s", buf, buf[0], buf[1], buf[2],
-		rd, g_utf8_validate(buf, rd, NULL), uc, key_up); //TODO remove
+		rd, g_utf8_validate(buf, rd, NULL), uc, key_left); //TODO remove
 	}
 
 	input.append(buf, rd);

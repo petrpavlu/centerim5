@@ -33,8 +33,8 @@ TreeView::TreeView(WINDOW *parentarea, int x, int y, int w, int h, LineStyle *li
 , focusnode(NULL)
 , focuscycle(true)
 {
-	AddCombo(key_up, sigc::mem_fun(this, &TreeView::ActionFocusPrevious));
-	AddCombo(key_down, sigc::mem_fun(this, &TreeView::ActionFocusNext));
+	AddCombo(Keys::Instance()->Key_up(), sigc::mem_fun(this, &TreeView::ActionFocusPrevious));
+	AddCombo(Keys::Instance()->Key_down(), sigc::mem_fun(this, &TreeView::ActionFocusNext));
 	AddCombo("-", sigc::mem_fun(this, &TreeView::ActionCollapse));
 	AddCombo("+", sigc::mem_fun(this, &TreeView::ActionExpand));
 
