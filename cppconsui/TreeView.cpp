@@ -19,6 +19,7 @@
  * */
 
 #include "TreeView.h"
+#include "Keys.h"
 
 #include "Scrollable.h"
 #include "LineStyle.h"
@@ -32,6 +33,9 @@ TreeView::TreeView(WINDOW *parentarea, int x, int y, int w, int h, LineStyle *li
 , focusnode(NULL)
 , focuscycle(true)
 {
+	AddCombo(key_up, sigc::mem_fun(this, &TreeView::FocusPrevious));
+	AddCombo(key_down, sigc::mem_fun(this, &TreeView::FocusNext));
+
 	canfocus = true;
 
 	if (!linestyle)
@@ -112,19 +116,6 @@ int TreeView::DrawNode(TreeNode *node, int top)
 		}
 	}
 	return height;
-}
-
-int TreeView::ProcessInputText(const char *input, const int bytes)
-{
-	//TODO this can all go somehere else
-	if (input[0] == 'n') {
-		FocusNext();
-		return 1;
-	}
-	if (input[0] == 'p') {
-		FocusPrevious();
-		return 1;
-	}
 }
 
 void TreeView::GiveFocus(void)

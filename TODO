@@ -1,4 +1,12 @@
 TODO:
+- currently singletons use the Gamma singleton pattern
+  change this to the Meyers singelton pattern, which
+  has the automatic destruction advantage.
+  Actually i like some discussion on this.
+  The meyers variant has the disadvantage of not being
+  able to control when the singleton is destroyed. It will
+  exist until the app exits.
+  (so lets leave things like they are for now)
 - purple_pounces_load
 - purple_debug_set_enabled
 - better error catching in main
@@ -21,6 +29,9 @@ TODO:
   also make the translations proper)
 - see what more files can be removed from git
 - see wether we can lose gettext.h from src/
+- add function descriptions in the header files
+  you pick a format (Doxygen? you choose!)
+- make sure the copy constructor of singletons is private
  
 Less important todo's which sometimes are just ideas:
 - Add option to save/display buddy icon

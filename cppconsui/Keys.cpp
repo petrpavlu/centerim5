@@ -41,7 +41,6 @@ Keys::Keys(void)
 
 	const char *controls[] = {"", "c-", "ctrl-", "ctr-", "ctl-", NULL};
 	const char *alts[] = {"", "alt-", "a-", "m-", "meta-", NULL};
-	const char *term;
 	int c, a, ch;
 	char key[32];
 
@@ -49,18 +48,20 @@ Keys::Keys(void)
 	if (!term)
 		term = "";  /* Just in case */
 
-	if (strcmp(term, "xterm") == 0 || strcmp(term, "rxvt") == 0) {
-		key_ctl_up = "\033" "[1;5A";
-		key_ctl_down = "\033" "[1;5B";
-		key_ctl_right = "\033" "[1;5C";
-		key_ctl_left = "\033" "[1;5D";
-	} else if (strcmp(term, "screen") == 0 || strcmp(term, "rxvt-unicode") == 0) {
+	/* The default values here are based on xterm/rxvt */
+	key_ctl_up = "\033" "[1;5A";
+	key_ctl_down = "\033" "[1;5B";
+	key_ctl_right = "\033" "[1;5C";
+	key_ctl_left = "\033" "[1;5D";
+
+	if (strncmp(term, "screen", strlen("screen")) == 0 || strcmp(term, "rxvt-unicode") == 0) {
+		/* The check for screen includes other screen variants (eg: screen-bce)*/
 		key_ctl_up = "\033" "Oa";
 		key_ctl_down = "\033" "Ob";
 		key_ctl_right = "\033" "Oc";
 		key_ctl_left = "\033" "Od";
 	}
-	//TODO add more terms, and most importantly: defaults!
+	//TODO add more terms
 	//(tip use `cat|xxd' to see hex values of the keys)
 	//TODO where are the alt keys? add those too
 
@@ -93,7 +94,7 @@ Keys::Keys(void)
 	INSERT_KEY("f12", CUI_KEY_F12);
 
 	/* Lower-case alphabets */
-	for (c = 0; controls[c]; c++) {
+	for (a = 0, c = 0; controls[c]; c++, a = 0) {
 		if (c) {
 			INSERT_COMBO("up", key_ctl_up);
 			INSERT_COMBO("down", key_ctl_down);
@@ -159,4 +160,30 @@ const Glib::ustring Keys::Name(const char *key)
 		return i->second;
 	else
 		return key;
+}
+
+void Keys::Refine(char *str, int bytes)
+{
+	int i = 0;
+
+	while (i < bytes) {
+		if (str[i] == 27 && str[i+1] == '[' && str[i+2] >= 'A' && str[i+2] <= 'D') {
+			/* Apparently this is necessary for urxvt and screen and xterm */
+			if (strncmp(term, "screen", strlen("screen")) == 0
+					|| strcmp(term, "rxvt-unicode") == 0
+					|| strcmp(term, "xterm") == 0) {
+				str[i+1] = 'O';
+			}
+
+			i += 3;
+		} else if ((unsigned char)str[0] == 195) {
+			if (str[i+2] == 0 && strcmp(term, "xterm") == 0) {
+				str[i] = 27;
+				str[i+1] -= 64; /* Say wha? */
+
+				i += 3;
+			}
+		}
+		i++;
+	}
 }

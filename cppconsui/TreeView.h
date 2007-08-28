@@ -98,8 +98,6 @@ class TreeView
 		int AddNode(TreeNode *parent, TreeNode *node);
 		int DrawNode(TreeNode *node, int top);
 
-		virtual int ProcessInputText(const char *input, const int bytes);
-
 		TreeNode *root, *focusnode;
 
 		LineStyle *linestyle;

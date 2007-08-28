@@ -56,6 +56,10 @@ class InputProcessor
 
 		void SetInputChild(InputProcessor *inputchild);
 
+		void AddCombo(const char *key, sigc::slot<void> action, bool override = false);
+		void RebindCombo(const char *oldkey, const char *newkey);
+		void ClearCombos(void);
+
 	private:
 		/* Notes on how key combinations are stored and searched
 		 *
@@ -75,7 +79,7 @@ class InputProcessor
 		enum ComboType {Normal, Override, Both};
 		typedef struct KeyCombo {
 			std::string key;
-			sigc::signal<void> *sig;
+			sigc::slot<void> action;
 			ComboType type;
 		};
 		typedef std::vector<KeyCombo> KeyCombos;

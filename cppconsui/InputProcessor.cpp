@@ -57,6 +57,55 @@ void InputProcessor::SetInputChild(InputProcessor *inputchild_)
 	inputchild = inputchild_;
 }
 
+void InputProcessor::AddCombo(const char *key, sigc::slot<void> action, bool override)
+{
+	KeyCombos::iterator i, begin, end;
+	KeyCombo combo;
+
+	combo.key = key;
+	combo.action = action;
+	combo.type = override ? Override : Normal;
+	
+	begin = BinSearchFirst(key);
+	end = BinSearchLast(key);
+
+	for (i = begin; i != end; i++) {
+		if (Match((*i).key, key, combo.key.size())) {
+			//TODO log the fact that a previous combo
+			//shadows this rule (but add anyway!)
+			//there was a reason for this, but i can't 
+			//remember
+			break;
+		}
+	}
+
+	combos.insert(end, combo);
+}
+
+void InputProcessor::RebindCombo(const char *oldkey, const char *newkey)
+{
+	KeyCombos::iterator i, begin, end;
+	KeyCombo combo;
+
+	begin = BinSearchFirst(oldkey);
+	end = BinSearchLast(oldkey);
+
+	for (i = begin; i != end; i++) {
+		combo = *i;
+		if (combo.key == oldkey) {
+			combo.key = newkey;
+			return;
+		}
+	}
+
+	//TODO emit a warning about trying to rebind a non-existing keycombo
+}
+
+void InputProcessor::ClearCombos(void)
+{
+	combos.clear();
+}
+
 int InputProcessor::Process(InputProcessor::ComboType type, const char *input, const int bytes)
 {
 	KeyCombos::iterator i, begin, end;
@@ -75,7 +124,7 @@ int InputProcessor::Process(InputProcessor::ComboType type, const char *input, c
 				return m;
 			} else if (m > 0) {
 				/* found a match */
-				combo.sig->emit();
+				combo.action();
 				return m;
 			} else {
 				/* do nothing */

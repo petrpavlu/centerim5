@@ -30,6 +30,7 @@
 #include "Conf.h"
 
 #include <cppconsui/WindowManager.h>
+#include <cppconsui/Keys.h>
 #include <cppconsui/InputProcessor.h>
 
 #include <glib.h>
@@ -99,6 +100,7 @@ class CenterIM
 		Transfers *transfers;
 		Log *log;
 		Conf *conf;
+		Keys *keys;
 
 		GMainLoop *gmainloop;
 

@@ -208,15 +208,15 @@ void CenterIM::ui_uninit(void)
 	delete connections; connections = NULL;
 
 	windowmanager->Remove(buddylist);
-	buddylist->Delete(); buddylist = NULL;
+	if (buddylist) buddylist->Delete(); buddylist = NULL;
 
 //	windowmanager->Remove(conversations);
-	conversations->Delete(); conversations = NULL;
+	if (conversations) conversations->Delete(); conversations = NULL;
 
 //	windowmanager->Remove(transfers);
 	delete transfers; transfers = NULL;
 
-	conf->Delete(); conf = NULL;
+	if (conf) conf->Delete(); conf = NULL;
 }
 
 guint CenterIM::timeout_add(guint interval, GSourceFunc function, gpointer data)
@@ -307,6 +307,8 @@ void CenterIM::tmp_purple_print_(PurpleDebugLevel level, const char *category, c
 /* Xerox (finch saves us a little of work here) */
 void CenterIM::io_init(void)
 {
+	keys = Keys::Instance();
+
 	SetInputChild(windowmanager);
 
 	curs_set(0);
@@ -335,6 +337,7 @@ void CenterIM::io_uninit(void)
 	channel_id = 0;
 	g_io_channel_unref(channel);
 	channel = NULL;
+	if (keys) keys->Delete(); keys = NULL;
 }
 
 gboolean CenterIM::io_input_error(GIOChannel *source, GIOCondition cond)
@@ -355,7 +358,6 @@ gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 	static std::string input;
 	char buf[INPUT_BUF_SIZE];
 	int rd = read(STDIN_FILENO, buf, INPUT_BUF_SIZE-1), eaten;
-
 	//TODO convert to UTF-8 here?
 
 	/* Below this line we assume all input has been converted
@@ -372,13 +374,18 @@ gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 		//implement a dynamically sized buffer
 	}
 
+	/* Fix the input string.
+	 * Some keys generate bytestrings which are different
+	 * from the strings in termcap
+	 * */
+	keys->Refine(buf, rd);
 
 	{
 	gchar *ss;
 	buf[rd] = '\0'; //TODO remove
 	gunichar uc = g_utf8_get_char(buf);
-	log->Write(PURPLE_DEBUG_MISC, "input: %s (%02x %02x %02x) %d %d %d", buf, buf[0], buf[1], buf[2],
-		rd, g_utf8_validate(buf, rd, NULL), uc); //TODO remove
+	log->Write(PURPLE_DEBUG_MISC, "input: %s (%02x %02x %02x) %d %d %d %s", buf, buf[0], buf[1], buf[2],
+		rd, g_utf8_validate(buf, rd, NULL), uc, key_up); //TODO remove
 	}
 
 	input.append(buf, rd);

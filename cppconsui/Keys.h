@@ -108,6 +108,7 @@ class Keys
 
 		static int Compare(const char *keys1, const char *keys2);
 		const Glib::ustring Name(const char *key);
+		void Refine(char *str, int bytes);
 
 	protected:
 
@@ -130,6 +131,8 @@ class Keys
 		char *key_ctl_right;
 
 		std::map<Glib::ustring, Glib::ustring> specials;
+
+		const char *term;
 };
 
 #endif /* __KEYS_H__ */
