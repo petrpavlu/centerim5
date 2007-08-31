@@ -4,9 +4,6 @@ lib_LTLIBRARIES = libcppconsui.la
 libcppconsui_la_SOURCES =\
 	Container.cpp \
 	Container.h \
-	Makefile \
-	Makefile.am \
-	Makefile.in \
 	TextBrowser.cpp \
 	TextBrowser.h \
 	TextWindow.cpp \
@@ -34,5 +31,5 @@ libcppconsui_la_SOURCES =\
 	CppConsUI.cpp \
 	CppConsUI.h
 
-libcppconsui_la_CPPFLAGS = $(GLIBMM_CFLAGS)
-libcppconsui_la_LIBADD = $(GLIBMM_LIBS)
+libcppconsui_la_CPPFLAGS = $(GLIBMM_CFLAGS) $(NCURSESW_CFLAGS)
+libcppconsui_la_LIBADD = $(GLIBMM_LIBS) $(NCURSESW_LIBS)

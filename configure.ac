@@ -25,16 +25,6 @@ AM_GNU_GETTEXT_VERSION([0.16.1])
 # Checks for libraries. #
 #########################
 
-# glib
-PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.0.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
-        AC_MSG_RESULT(no)
-	AC_MSG_ERROR([
-
-You must have the GLib 2.0 development headers installed to build.
-])])
-AC_SUBST(GLIB_CFLAGS)
-AC_SUBST(GLIB_LIBS)
-
 # libpurple
 PKG_CHECK_MODULES(PURPLE, [purple >= 0.21], , [
         AC_MSG_RESULT(no)
@@ -44,6 +34,16 @@ You must have the libpurple development headers installed to build.
 ])])
 AC_SUBST(PURPLE_CFLAGS)
 AC_SUBST(PURPLE_LIBS)
+
+# We use glibmm so no need to check all these libraries
+# PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.0.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
+#         AC_MSG_RESULT(no)
+# 	AC_MSG_ERROR([
+#
+# You must have the GLib 2.0 development headers installed to build.
+# ])])
+# AC_SUBST(GLIB_CFLAGS)
+# AC_SUBST(GLIB_LIBS)
 
 # glibmm
 PKG_CHECK_MODULES(GLIBMM, [glibmm-2.4 >= 2.12.8], , [
@@ -55,16 +55,18 @@ You must have the glibmm-2.4 development headers installed to build.
 AC_SUBST(GLIBMM_CFLAGS)
 AC_SUBST(GLIBMM_LIBS)
 
-# curses
-AC_CHECK_CURSES
-AC_CHECK_CURSES
-if test "$has_curses" = false ; then
-        AC_ERROR(You must have the curses development headers installed to build.)
-fi
-#TODO remove this dirty hack!
-CURSES_LIBS="-lpanel -lcursesw"
-AC_SUBST(CURSES_LIBS)
-AC_SUBST(CURSES_INCLUDEDIR)
+# TODO -- verify which should be the latest ncurses library supported and check it too
+AC_PATH_LIB_LIBCONFIG
+AC_PATH_LIB(ncursesw, , ncurses.h, ncursesw5-config, , , [
+    AC_MSG_RESULT(no)
+    AC_ERROR(You must have the ncursesw library and developement headers installed to build.)
+    ])
+
+# we need -lpanel along with ncursesw (maybe need to check it too  ? )
+NCURSESW_LIBS="$NCURSESW_LIBS -lpanel"
+
+AC_SUBST(NCURSESW_LIBS)
+AC_SUBST(NCURSESW_CFLAGS)
 
 ############################
 # Checks for header files. #

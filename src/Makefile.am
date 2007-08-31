@@ -31,13 +31,11 @@ centerim_SOURCES = \
 centerim_CPPFLAGS =\
 	$(PURPLE_CFLAGS) \
 	$(GLIBMM_CFLAGS) \
-	$(GLIB_CFLAGS) \
-	$(CURSES_INCLUDEDIR)
+	$(NCURSESW_CFLAGS) \
+	-I$(top_srcdir)
 
 centerim_LDADD =\
 	$(PURPLE_LIBS) \
 	$(GLIBMM_LIBS) \
-	$(GLIB_LIBS) \
-	$(CURSES_LIBS) \
 	$(LIBINTL) \
 	$(top_builddir)/cppconsui/libcppconsui.la
