@@ -49,6 +49,15 @@ class TreeView
 		virtual void GiveFocus(void);
 		virtual void TakeFocus(void);
 
+		void FocusNext(void);
+		void FocusPrevious(void);
+
+		/* Actions for keybindings */
+		void ActionFocusNext(void);
+		void ActionFocusPrevious(void);
+		void ActionCollapse(void);
+		void ActionExpand(void);
+
 		int AddNode(int parentid, Widget *widget, void *data);
 		void DeleteNode(int nodeid, bool keepsubnodes);
 
@@ -82,28 +91,31 @@ class TreeView
 			/* if the subgroup is being displaed */
 			bool open;
 			/* signals for users to connect to */
-			//TODO add signals
+			//TODO add more signals we need, see cpp file
+			sigc::connection sig_redraw;
 		};
 
 		TreeNode* FindNode(int nodeid);
 		TreeNode* FindNode(TreeNode *parent, int nodeid);
 		TreeNode* FindParent(int childid);
 		TreeNode* FindParent(TreeNode *node, int childid);
+
 		void DeleteNode(TreeNode *node);
 		int GenerateId(void);
 		int AddNode(TreeNode *parent, TreeNode *node);
 		int DrawNode(TreeNode *node, int top);
 
-		TreeNode *root;
+		TreeNode *root, *focusnode;
 
 		LineStyle *linestyle;
 		int itemswidth, itemsheight;
 
-		Widget *focuschild;
+		bool focuscycle;
 
 	private:
 		TreeView();
 		
+		void OnChildRedraw(void);
 };
 
 #endif /* __TREEVIEW_H__ */

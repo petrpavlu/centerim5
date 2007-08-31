@@ -22,6 +22,7 @@
 #define __WIDGET_H__
 
 #include "CppConsUI.h"
+#include "InputProcessor.h"
 
 #include <curses.h>
 
@@ -30,6 +31,7 @@
 
 class Widget
 : public sigc::trackable
+, public InputProcessor
 {
 	public:
 		Widget(WINDOW* parentarea, int x, int y, int w, int h);
@@ -64,8 +66,6 @@ class Widget
 		int Top() { return y; }
 		int Width() { return w; }
 		int Height() { return h; }
-
-		virtual int ProcessInput(const char *input, int bytes);
 
 		sigc::signal<void, Point&, Point&> signal_move;
 		sigc::signal<void, Rect&, Rect&> signal_resize;

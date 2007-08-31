@@ -28,6 +28,7 @@ BuddyListNode::BuddyListNode(PurpleBlistNode *node)
 , id(-1)
 {
 	log = Log::Instance();
+	canfocus = true;
 }
 
 BuddyListNode::~BuddyListNode()
@@ -56,6 +57,20 @@ void BuddyListNode::Draw(void)
 	//TODO these nodes will use colors in the future
 	//the colours should be added here
 	Label::Draw();
+}
+
+void BuddyListNode::GiveFocus(void)
+{
+	focus = true;
+	Update();
+	Draw();
+}
+
+void BuddyListNode::TakeFocus(void)
+{
+	focus = false;
+	Update();
+	Draw();
 }
 
 BuddyListNode* BuddyListNode::GetParent(void)
@@ -92,8 +107,13 @@ void BuddyListBuddy::Draw(void)
 
 void BuddyListBuddy::Update(void)
 {
+	//TODO this doesn't seem optimal
+	//add a Width function to Label class and
+	//clean this file up
+	Glib::ustring text;
 	text = purple_buddy_get_alias(buddy);
 	Resize(NULL, width(text), 1);
+	SetText(text);
 }
 
 BuddyListChat::BuddyListChat(PurpleBlistNode *node)
@@ -111,8 +131,10 @@ void BuddyListChat::Draw(void)
 
 void BuddyListChat::Update(void)
 {
+	Glib::ustring text;
 	text = purple_chat_get_name(chat);
 	Resize(NULL, width(text), 1);
+	SetText(text);
 }
 
 BuddyListContact::BuddyListContact(PurpleBlistNode *node)
@@ -131,6 +153,7 @@ void BuddyListContact::Draw(void)
 void BuddyListContact::Update(void)
 {
 	PurpleBlistNode *bnode;
+	Glib::ustring text;
 
 	if (contact->alias) {
 		text = contact->alias;
@@ -147,7 +170,9 @@ void BuddyListContact::Update(void)
 			text = purple_buddy_get_alias((PurpleBuddy*)bnode);
 		}
 	}
+
 	Resize(NULL, width(text), 1);
+	SetText(text);
 }
 
 BuddyListGroup::BuddyListGroup(PurpleBlistNode *node)
@@ -165,6 +190,8 @@ void BuddyListGroup::Draw(void)
 
 void BuddyListGroup::Update(void)
 {
+	Glib::ustring text;
 	text = purple_group_get_name(group);
 	Resize(NULL, width(text), 1);
+	SetText(text);
 }

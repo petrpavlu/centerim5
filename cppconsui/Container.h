@@ -40,8 +40,6 @@ class Container
 		virtual void GiveFocus(void);
 		virtual void TakeFocus(void);
 
-		virtual int ProcessInput(const char *input, int bytes);
-
 	protected:
 		void AddWidget(Widget *widget);
 		void RemoveWidget(Widget *widget);

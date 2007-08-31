@@ -51,6 +51,8 @@ Scrollable::~Scrollable()
 
 void Scrollable::Draw(void)
 {
+	if (!scrollarea || ! area) return;
+
 	copywin(scrollarea, area, ypos, xpos, 0, 0, h-1, w-1, 0);
 	Widget::Draw();
 }
@@ -59,7 +61,8 @@ void Scrollable::Scroll(const char *key)
 {
 	int deltay = 0, deltax = 0;
 
-	if (Keys::Compare(CUI_KEY_UP, key)) deltay = -1;
+/* TODO do this with key combos
+	if (Keys::Compare(Key_up, key)) deltay = -1;
 	else if (Keys::Compare(CUI_KEY_DOWN, key)) deltay = 1;
 	else if (Keys::Compare(CUI_KEY_LEFT, key)) deltax = -1;
 	else if (Keys::Compare(CUI_KEY_RIGHT, key)) deltax = 1;
@@ -74,7 +77,7 @@ void Scrollable::Scroll(const char *key)
 	if (ypos + deltay > scrollh - h) ypos = scrollh - h;
 	if (xpos + deltax < 0) xpos = 0;
 	if (ypos + deltay < 0) ypos = 0;
-
+*/
 	Redraw();
 }
 

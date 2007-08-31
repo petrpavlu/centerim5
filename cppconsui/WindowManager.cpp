@@ -106,6 +106,7 @@ void WindowManager::FocusPanel(void)
 		if (focuswindow) {
 			focuswindow->TakeFocus();
 			focuswindow = NULL;
+			SetInputChild(NULL);
 		}
 		return;
 	}
@@ -119,6 +120,7 @@ void WindowManager::FocusPanel(void)
 			focuswindow->TakeFocus();
 		focuswindow = win;
 		focuswindow->GiveFocus();
+		SetInputChild(win);
 	}
 }
 
@@ -180,31 +182,10 @@ void WindowManager::Draw(void)
 	doupdate();
 }
 
-int WindowManager::ProcessInput(const char *input, int bytes)
-{
-	int eaten = 0;
-
-	if (bytes < 1) return 0;
-
-	while (eaten < bytes) {
-	switch (input[0]) {
-	case 0x0c: // ^L, form feed, redraw
-		Redraw();
-	}
-
-	//TODO global input handling first
-	//TODO give input to modal window first
-	eaten += focuswindow->ProcessInput(input+eaten, bytes-eaten);
-	//TODO fallback input handling
-	//eaten += process(input+eaten, bytes-eaten;
-	
-	}
-	return eaten;
-}
-
 void WindowManager::Redraw(void)
 {
 	//TODO disconnect redraw events from actual drawing to reduce the number of
-	//draws. Glib::signal_timeout can be used for this.
+	//draws. This means: multiple redraw = one actual draw.
+	//Glib::signal_timeout can be used for this.
 	Draw();
 }

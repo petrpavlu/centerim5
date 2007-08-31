@@ -25,16 +25,6 @@ AM_GNU_GETTEXT_VERSION([0.16.1])
 # Checks for libraries. #
 #########################
 
-# # glib  -- WE USE glibmm so no need to check all these libraries
-# PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.0.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
-#         AC_MSG_RESULT(no)
-# 	AC_MSG_ERROR([
-
-# You must have the GLib 2.0 development headers installed to build.
-# ])])
-# AC_SUBST(GLIB_CFLAGS)
-# AC_SUBST(GLIB_LIBS)
-
 # libpurple
 PKG_CHECK_MODULES(PURPLE, [purple >= 0.21], , [
         AC_MSG_RESULT(no)
@@ -44,6 +34,16 @@ You must have the libpurple development headers installed to build.
 ])])
 AC_SUBST(PURPLE_CFLAGS)
 AC_SUBST(PURPLE_LIBS)
+
+# We use glibmm so no need to check all these libraries
+# PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.0.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
+#         AC_MSG_RESULT(no)
+# 	AC_MSG_ERROR([
+#
+# You must have the GLib 2.0 development headers installed to build.
+# ])])
+# AC_SUBST(GLIB_CFLAGS)
+# AC_SUBST(GLIB_LIBS)
 
 # glibmm
 PKG_CHECK_MODULES(GLIBMM, [glibmm-2.4 >= 2.12.8], , [

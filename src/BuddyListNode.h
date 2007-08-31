@@ -38,7 +38,11 @@ class BuddyListNode
 		static BuddyListNode* CreateNode(PurpleBlistNode *node);
 
 		virtual void Draw(void);
+
 		virtual void Update(void) =0;
+
+		virtual void GiveFocus(void);
+		virtual void TakeFocus(void);
 
 		BuddyListNode* GetParent(void);
 
