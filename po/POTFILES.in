@@ -28,9 +28,6 @@ src/Log.h
 # CppConsUI source files
 cppconsui/Container.cpp
 cppconsui/Container.h
-cppconsui/Makefile
-cppconsui/Makefile.am
-cppconsui/Makefile.in
 cppconsui/TextBrowser.cpp
 cppconsui/TextBrowser.h
 cppconsui/TextWindow.cpp
