@@ -18,6 +18,9 @@
  *
  * */
 
+/// @file CppConsUI.h
+/// @todo CppConsUI namespace
+
 #ifndef __CPPCONSUI_H__
 #define __CPPCONSUI_H__
 
@@ -32,15 +35,13 @@
 #include <curses.h>
 #endif
 
-//TODO CppConsUI namespace
-
 int RealScreenWidth(void);
 int RealScreenHeight(void);
 
 Glib::ustring::size_type width(const Glib::ustring &string);
 Glib::ustring::size_type width(const char *start, const char *end);
 
-//TODO perhaps move to its own files?
+/// @todo perhaps move to its own files?
 
 class Point
 {

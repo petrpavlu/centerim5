@@ -34,7 +34,7 @@
 // are not visible
 //
 // item widgets are resized to fit the width (make configurable?)
-// when deleting give a choise to keep subnodes (remember to decrease their depth)
+// when deleting give a choice to keep subnodes (remember to decrease their depth)
 //
 // widgets can occupy multiple lines
 class TreeView
