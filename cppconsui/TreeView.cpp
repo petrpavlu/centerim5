@@ -25,9 +25,9 @@
 #include "LineStyle.h"
 #include "Keys.h"
 
-TreeView::TreeView(WINDOW *parentarea, int x, int y, int w, int h, LineStyle *linestyle)
+TreeView::TreeView(WINDOW *parentarea, int x, int y, int w, int h, LineStyle *linestyle_)
 : Scrollable(parentarea, x, y, w, h, w, h)
-, linestyle(linestyle)
+, linestyle(linestyle_)
 , itemswidth(0)
 , itemsheight(0)
 , focusnode(NULL)
@@ -41,7 +41,7 @@ TreeView::TreeView(WINDOW *parentarea, int x, int y, int w, int h, LineStyle *li
 	canfocus = true;
 
 	if (!linestyle)
-		linestyle == LineStyle::LineStyleDefault();
+		linestyle = LineStyle::LineStyleDefault();
 
 	root = new TreeNode;
 	root->widget = NULL;
