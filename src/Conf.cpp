@@ -159,7 +159,7 @@ void Conf::SetDimensions(const char *window, const Rect &rect)
 
 int Conf::GetLogMaxLines()
 {
-	gchar *pref = g_strconcat(CONF_PREFIX, "log/LogMaxLines");
+	gchar *pref = g_strconcat(CONF_PREFIX, "log/LogMaxLines", NULL);
 
 	int i = GetInt(pref, CONF_LOG_MAX_LINES_DEFAULT);
 	if (i < CONF_LOG_MAX_LINES_MIN || i > CONF_LOG_MAX_LINES_MAX) {
