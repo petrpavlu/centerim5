@@ -20,9 +20,24 @@
 
 #include "Conversation.h"
 
+#include <cppconsui/TextBrowser.h>
+
 Conversation::Conversation(PurpleConversation *conv)
-: conv(conv)
+: Window(0, 0, 80, 24, NULL)
+, conv(conv)
 {
+	log = Log::Instance();
+	conf = Conf::Instance();
+
+	SetBorder(new Border());
+	MoveResize(conf->GetChatDimensions());
+
+        browser = new TextBrowser(area, 1, 0, w-2, h);
+	AddWidget(browser);
+
+	SetPartitioning(conf->GetChatPartitioning());
+
+	focuschild = browser;
 }
 
 Conversation::~Conversation()
@@ -32,8 +47,24 @@ Conversation::~Conversation()
 void Conversation::Receive(const char *name, const char *alias, const char *message,
 	PurpleMessageFlags flags, time_t mtime)
 {
+	Glib::ustring text = message;
 	//TODO iconv, write to a window
-	printf("message from %s (%s) :\n%s\n", name, alias, message);
+	//printf("message from %s (%s) :\n%s\n", name, alias, message);
+	browser->AddLine(text);
 }
 
+void Conversation::SetPartitioning(unsigned int percentage)
+{
+	int browserheight, inputheight;
 
+	browserheight = (h * percentage) / 100;
+	if (browserheight < 1) browserheight = 1;
+
+	inputheight = h - browserheight - 1;
+	if (inputheight < 1) {
+		inputheight = 1;
+		browserheight = h - inputheight - 1;
+	}
+
+	browser->Resize(area, w-2, browserheight);
+}

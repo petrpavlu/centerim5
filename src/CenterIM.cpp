@@ -76,6 +76,11 @@ void CenterIM::Run(void)
 	g_main_loop_run(gmainloop);
 }
 
+void CenterIM::Quit(void)
+{
+	g_main_loop_quit(gmainloop);
+}
+
 //TODO: move next two static structs inside the CenterIM object
 static PurpleCoreUiOps centerim_core_ui_ops =
 {
@@ -309,11 +314,16 @@ void CenterIM::io_init(void)
 {
 	keys = Keys::Instance();
 
+	/* Key combinations */
+	AddCombo(Keys::Instance()->Key_ctrl_q(), sigc::mem_fun(this, &CenterIM::Quit));
+
 	SetInputChild(windowmanager);
 
 	curs_set(0);
 	keypad(stdscr, 1); /* without this, some keys are not translated correctly */
 	nonl();
+	cbreak();
+	raw();
 //        g_io_channel_set_encoding(channel, NULL, NULL); //TODO how to convert input to UTF-8 automatically? perhaps in io_input
 //        g_io_channel_set_buffered(channel, FALSE); //TODO not needed?
 //        g_io_channel_set_flags(channel, G_IO_FLAG_NONBLOCK, NULL ); //TODO not needed?

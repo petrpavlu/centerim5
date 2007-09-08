@@ -43,6 +43,7 @@ class CenterIM
 		static CenterIM* Instance(void);
 		static void Delete(void);
 		void Run(void);
+		void Quit(void);
 
 		/* for purple_core_set_ui_ops() */
 		//static void ui_prefs_init_(void) { CenterIM::Instance()->ui_prefs_init(); }

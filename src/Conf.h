@@ -49,13 +49,15 @@ class Conf
 
 		/* Configuration base get/set methods */
 		int GetInt(const char *pref, const int defaultvalue);
+		int GetInt(const char *pref, const int defaultvalue, const int min, const int max);
 		void SetInt(const char *pref, const int value);
 
 		Rect GetDimensions(const char *window, const int defx, const int defy, const int defwidth, const int defheight);
 		void SetDimensions(const char *window, const Rect &rect);
 		void SetDimensions(const char *window, const int x, const int y, const int width, const int height);
 
-		int GetLogMaxLines(void);
+		unsigned int GetLogMaxLines(void);
+		unsigned int GetChatPartitioning(void);
 
 		Rect GetLogDimensions(void);
 		Rect GetBuddyListDimensions(void);

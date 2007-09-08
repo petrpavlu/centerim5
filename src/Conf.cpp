@@ -27,6 +27,9 @@
 #include <libpurple/pounce.h>
 
 //TODO sensible values
+#define CONF_PERCENTAGE_MIN		0
+#define CONF_PERCENTAGE_MAX		100
+
 #define CONF_LOG_MAX_LINES_MIN		10
 #define CONF_LOG_MAX_LINES_MAX		100000
 #define CONF_LOG_MAX_LINES_DEFAULT	1000
@@ -45,6 +48,7 @@
 #define CONF_CHAT_DIMENSIONS_Y		00
 #define CONF_CHAT_DIMENSIONS_WIDTH	100
 #define CONF_CHAT_DIMENSIONS_HEIGHT	40
+#define CONF_CHAT_PARTITIONING_DEFAULT	80 /* 20% for the input window */
 
 Conf* Conf::instance = NULL;
 
@@ -82,6 +86,25 @@ int Conf::GetInt(const char *pref, const int defaultvalue)
 
 	if (purple_prefs_exists(pref)) {
 		i = purple_prefs_get_int(pref);
+	} else {
+		purple_prefs_set_int(pref, defaultvalue);
+		i = defaultvalue;
+		Save();
+	}
+
+	return i;
+}
+
+int Conf::GetInt(const char *pref, const int defaultvalue, const int min, const int max)
+{
+	int i;
+
+	if (purple_prefs_exists(pref)) {
+		i = purple_prefs_get_int(pref);
+		if (i < min || i > max) {
+			SetInt(pref, defaultvalue);
+			i = defaultvalue;
+		}
 	} else {
 		purple_prefs_set_int(pref, defaultvalue);
 		i = defaultvalue;
@@ -157,15 +180,24 @@ void Conf::SetDimensions(const char *window, const Rect &rect)
 	SetDimensions(window, rect.x, rect.y, rect.width, rect.height);
 }
 
-int Conf::GetLogMaxLines()
+unsigned int Conf::GetLogMaxLines()
 {
 	gchar *pref = g_strconcat(CONF_PREFIX, "log/LogMaxLines", NULL);
 
-	int i = GetInt(pref, CONF_LOG_MAX_LINES_DEFAULT);
-	if (i < CONF_LOG_MAX_LINES_MIN || i > CONF_LOG_MAX_LINES_MAX) {
-		SetInt(pref, CONF_LOG_MAX_LINES_DEFAULT);
-		i = CONF_LOG_MAX_LINES_DEFAULT;
-	}
+	int i = GetInt(pref, CONF_LOG_MAX_LINES_DEFAULT,
+			CONF_LOG_MAX_LINES_MIN, CONF_LOG_MAX_LINES_MAX);
+
+	g_free(pref);
+
+	return i;
+}
+
+unsigned int Conf::GetChatPartitioning(void)
+{
+	gchar *pref = g_strconcat(CONF_PREFIX, "chat/partitioning", NULL);
+
+	int i = GetInt(pref, CONF_CHAT_PARTITIONING_DEFAULT,
+			CONF_PERCENTAGE_MIN, CONF_PERCENTAGE_MAX);
 
 	g_free(pref);
 

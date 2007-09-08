@@ -20,6 +20,7 @@
 
 #include "WindowManager.h"
 #include "Window.h"
+#include "Keys.h"
 
 #if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
 #include <ncurses.h>
@@ -46,6 +47,8 @@ WindowManager::WindowManager(void)
 
 	if (!defaultwindow)
 		;//TODO throw an exception that we cant init curses
+
+	AddCombo(Keys::Instance()->Key_form_feed() /* ^L */, sigc::mem_fun(this, &WindowManager::Redraw));
 }
 
 WindowManager::~WindowManager(void)

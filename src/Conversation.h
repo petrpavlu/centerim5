@@ -21,9 +21,16 @@
 #ifndef __CONVERSATION_H__
 #define __CONVERSATION_H__
 
+#include "Log.h"
+#include "Conf.h"
+
+#include <cppconsui/Window.h>
+#include <cppconsui/TextBrowser.h>
+
 #include <libpurple/conversation.h>
 
 class Conversation
+: public Window
 {
 	public:
 		Conversation(PurpleConversation *conv);
@@ -32,9 +39,14 @@ class Conversation
 			PurpleMessageFlags flags, time_t mtime);
 
 	protected:
+		void SetPartitioning(unsigned int percentage);
 
 	private:
 		Conversation();
+
+		Log *log;
+		Conf *conf;
+		TextBrowser *browser;
 
 		PurpleConversation *conv;
 };

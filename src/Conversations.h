@@ -23,6 +23,8 @@
 
 #include <libpurple/conversation.h>
 
+#include <cppconsui/WindowManager.h>
+
 class Conversations
 {
 	public:
@@ -31,8 +33,13 @@ class Conversations
 
 		static void write_conv(PurpleConversation *conv, const char *name,
 			const char *alias, const char *message, PurpleMessageFlags flags, time_t mtime);
-		static void create_conversation(PurpleConversation *conv);
-		static void destroy_conversation(PurpleConversation *conv);
+		static void create_conversation_(PurpleConversation *conv)
+			{ Conversations::Instance()->create_conversation(conv); }
+		static void destroy_conversation_(PurpleConversation *conv)
+			{ Conversations::Instance()->destroy_conversation(conv); }
+
+		void create_conversation(PurpleConversation *conv);
+		void destroy_conversation(PurpleConversation *conv);
 
 	protected:
 
@@ -40,6 +47,7 @@ class Conversations
 		Conversations();
 		~Conversations();
 
+		WindowManager *windowmanager;
 		static Conversations *instance;
 };
 

@@ -48,6 +48,8 @@ void Conversations::create_conversation(PurpleConversation *conv)
 	}
 
 	conv->ui_data = new Conversation(conv);
+
+	windowmanager->Add((Window*)conv->ui_data);
 }
 
 void Conversations::destroy_conversation(PurpleConversation *conv)
@@ -59,6 +61,7 @@ void Conversations::destroy_conversation(PurpleConversation *conv)
 		return;
 	}
 
+	windowmanager->Remove((Window*)conv->ui_data);
 	delete conversation;
 	conv->ui_data = NULL;
 }
@@ -75,8 +78,8 @@ void Conversations::write_conv(PurpleConversation *conv, const char *name,
 //TODO move this struct inside the conversations object
 static PurpleConversationUiOps centerim_conv_uiops =
 {
-        Conversations::create_conversation,
-        Conversations::destroy_conversation,
+        Conversations::create_conversation_,
+        Conversations::destroy_conversation_,
         NULL,
         NULL,
         Conversations::write_conv,
@@ -96,6 +99,8 @@ Conversations::Conversations()
 {
 	/* setup the callbacks for conversations */
 	purple_conversations_set_ui_ops(&centerim_conv_uiops);
+
+	windowmanager = WindowManager::Instance();
 }
 
 Conversations::~Conversations()
