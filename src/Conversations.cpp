@@ -39,7 +39,9 @@ void Conversations::Delete(void)
 
 void Conversations::create_conversation(PurpleConversation *conv)
 {
-	//TODO add the new object to a hashtable of some sort?
+	PurpleConversationType type;
+
+	//TODO add the new object to a hashtable of some sort so we can iterate?
 	Conversation *conversation = (Conversation*)conv->ui_data;
 	if (conversation != NULL) {
 		 //TODO should be debug()
@@ -47,7 +49,15 @@ void Conversations::create_conversation(PurpleConversation *conv)
 		return;
 	}
 
-	conv->ui_data = new Conversation(conv);
+	type = purple_conversation_get_type(conv);
+	if (type == PURPLE_CONV_TYPE_CHAT) {
+		new ConversationChat(purple_conversation_get_chat_data(conv));
+	} else if (type == PURPLE_CONV_TYPE_IM) {
+		new ConversationIm(purple_conversation_get_im_data(conv));
+	} else {
+		log->Write(PURPLE_DEBUG_ERROR, "unhandled conversation type: %i", type);
+		return;
+	}
 
 	windowmanager->Add((Window*)conv->ui_data);
 }
@@ -97,6 +107,9 @@ static PurpleConversationUiOps centerim_conv_uiops =
 
 Conversations::Conversations()
 {
+	log = Log::Instance();
+	conf = Conf::Instance();
+
 	/* setup the callbacks for conversations */
 	purple_conversations_set_ui_ops(&centerim_conv_uiops);
 

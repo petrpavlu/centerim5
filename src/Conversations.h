@@ -21,6 +21,9 @@
 #ifndef __CONVERSATIONS_H__
 #define __CONVERSATIONS_H__
 
+#include "Log.h"
+#include "Conf.h"
+
 #include <libpurple/conversation.h>
 
 #include <cppconsui/WindowManager.h>
@@ -46,6 +49,9 @@ class Conversations
 	private:
 		Conversations();
 		~Conversations();
+
+		Log *log;
+		Conf *conf;
 
 		WindowManager *windowmanager;
 		static Conversations *instance;

@@ -26,6 +26,7 @@
 
 #include <cppconsui/Window.h>
 #include <cppconsui/TextBrowser.h>
+#include <cppconsui/LineStyle.h>
 
 #include <libpurple/conversation.h>
 
@@ -38,17 +39,55 @@ class Conversation
 		void Receive(const char *name, const char *alias, const char *message,
 			PurpleMessageFlags flags, time_t mtime);
 
+		virtual void Draw(void);
+
 	protected:
 		void SetPartitioning(unsigned int percentage);
+		void LoadHistory(void);
 
-	private:
-		Conversation();
+		PurpleConversationType type;
 
 		Log *log;
 		Conf *conf;
 		TextBrowser *browser;
-
+		
+		int browserheight;
 		PurpleConversation *conv;
+		LineStyle *linestyle;
+
+	private:
+		Conversation();
 };
+
+class ConversationChat
+: public Conversation
+{
+	public:
+		ConversationChat(PurpleConvChat *chat);
+		~ConversationChat();
+
+	protected:
+
+	private:
+		ConversationChat();
+
+		PurpleConvChat *chat;
+};
+
+class ConversationIm
+: public Conversation
+{
+	public:
+		ConversationIm(PurpleConvIm *im);
+		~ConversationIm();
+
+	protected:
+
+	private:
+		ConversationIm();
+
+		PurpleConvIm *im;
+};
+
 
 #endif /* __CONVERSATION_H__ */

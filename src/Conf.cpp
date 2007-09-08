@@ -50,6 +50,9 @@
 #define CONF_CHAT_DIMENSIONS_HEIGHT	40
 #define CONF_CHAT_PARTITIONING_DEFAULT	80 /* 20% for the input window */
 
+#define CONF_LOG_IMS_DEFAULT		true
+#define CONF_LOG_CHATS_DEFAULT		true
+
 Conf* Conf::instance = NULL;
 
 Conf* Conf::Instance(void)
@@ -117,6 +120,27 @@ int Conf::GetInt(const char *pref, const int defaultvalue, const int min, const 
 void Conf::SetInt(const char *pref, const int value)
 {
 	purple_prefs_set_int(pref, value);
+	Save();
+}
+
+bool Conf::GetBool(const char *pref, const bool defaultvalue)
+{
+	bool b;
+
+	if (purple_prefs_exists(pref)) {
+		b = purple_prefs_get_bool(pref);
+	} else {
+		purple_prefs_set_bool(pref, defaultvalue);
+		b = defaultvalue;
+		Save();
+	}
+
+	return b;
+}
+
+void Conf::SetBool(const char *pref, const bool value)
+{
+	purple_prefs_set_bool(pref, value);
 	Save();
 }
 
@@ -202,6 +226,28 @@ unsigned int Conf::GetChatPartitioning(void)
 	g_free(pref);
 
 	return i;
+}
+
+bool Conf::GetLogIms(void)
+{
+	gchar *pref = g_strconcat(CONF_PREFIX, "logging/log_ims", NULL);
+
+	bool b = GetBool(pref, CONF_LOG_IMS_DEFAULT);
+
+	g_free(pref);
+
+	return b;
+}
+
+bool Conf::GetLogChats(void)
+{
+	gchar *pref = g_strconcat(CONF_PREFIX, "logging/log_chats", NULL);
+
+	bool b = GetBool(pref, CONF_LOG_IMS_DEFAULT);
+
+	g_free(pref);
+
+	return b;
 }
 
 Conf::Conf()

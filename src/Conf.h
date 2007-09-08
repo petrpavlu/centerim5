@@ -51,6 +51,8 @@ class Conf
 		int GetInt(const char *pref, const int defaultvalue);
 		int GetInt(const char *pref, const int defaultvalue, const int min, const int max);
 		void SetInt(const char *pref, const int value);
+		bool GetBool(const char *pref, const bool defaultvalue);
+		void SetBool(const char *pref, const bool value);
 
 		Rect GetDimensions(const char *window, const int defx, const int defy, const int defwidth, const int defheight);
 		void SetDimensions(const char *window, const Rect &rect);
@@ -62,6 +64,9 @@ class Conf
 		Rect GetLogDimensions(void);
 		Rect GetBuddyListDimensions(void);
 		Rect GetChatDimensions(void);
+
+		bool GetLogIms(void);
+		bool GetLogChats(void);
 
 	protected:
 
