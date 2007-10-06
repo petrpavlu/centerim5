@@ -18,6 +18,7 @@
  *
  * */
 
+#include "Curses.h"
 #include "TextBrowser.h"
 
 #include "Widget.h"
@@ -120,9 +121,9 @@ void TextBrowser::Draw(void)
 		//TODO prepare string for on-screen printing, or should Glib::ustring do this automatically?
 		//probably not, as Glib::ustring doesn't know the output width
 		//also should trim / wrap the string to fit the width of the widget
-		mvwaddstr(area, i-pos, 0, line.c_str());
+		mvwaddstr(area->w, i-pos, 0, line.c_str());
 		/* clear until the end of the line */
-		wclrtoeol(area);
+		wclrtoeol(area->w);
 	}
 
 	Widget::Draw();

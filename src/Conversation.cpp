@@ -20,6 +20,9 @@
 
 /* LoadHistory taken almost verbatim from pidgin/plugins/history.c */
 
+//TODO remove this include
+#include <cppconsui/Curses.h>
+
 #include "Conversation.h"
 
 #include <cppconsui/TextBrowser.h>
@@ -40,7 +43,7 @@ Conversation::Conversation(PurpleConversation *conv)
 	linestyle = LineStyle::LineStyleDefault();
 	MoveResize(conf->GetChatDimensions());
 
-	browser = new TextBrowser(area, 1, 0, w-2, h);
+	browser = new TextBrowser(area->w, 1, 0, w-2, h);
 	AddWidget(browser);
 
 	SetPartitioning(conf->GetChatPartitioning());
@@ -55,11 +58,11 @@ Conversation::Conversation(PurpleConversation *conv)
 
 void Conversation::Draw(void)
 {
-	mvwadd_wch(area, browserheight, 0, linestyle->HBegin());
+	mvwadd_wch(area->w, browserheight, 0, linestyle->HBegin());
 	for (int i = 1; i+1 < w; i++) {
-		mvwadd_wch(area, browserheight, i, linestyle->H());
+		mvwadd_wch(area->w, browserheight, i, linestyle->H());
 	}
-	mvwadd_wch(area, browserheight, w-1, linestyle->HEnd());
+	mvwadd_wch(area->w, browserheight, w-1, linestyle->HEnd());
 
 	Window::Draw();
 }
@@ -91,7 +94,7 @@ void Conversation::SetPartitioning(unsigned int percentage)
 		browserheight = h - inputheight - 1;
 	}
 
-	browser->Resize(area, w-2, browserheight);
+	browser->Resize(area->w, w-2, browserheight);
 }
 
 void Conversation::LoadHistory(void)

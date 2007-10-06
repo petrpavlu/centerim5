@@ -18,15 +18,8 @@
  *
  * */
 
+#include "Curses.h"
 #include "Scrollable.h"
-
-#include "Keys.h"
-
-#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
-#include <ncurses.h>
-#else
-#include <curses.h>
-#endif
 
 #include <panel.h>
 
@@ -51,9 +44,9 @@ Scrollable::~Scrollable()
 
 void Scrollable::Draw(void)
 {
-	if (!scrollarea || ! area) return;
+	if (!scrollarea || ! area->w) return;
 
-	copywin(scrollarea, area, ypos, xpos, 0, 0, h-1, w-1, 0);
+	copywin(scrollarea, area->w, ypos, xpos, 0, 0, h-1, w-1, 0);
 	Widget::Draw();
 }
 

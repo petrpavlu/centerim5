@@ -18,6 +18,7 @@
  *
  * */
 
+#include <Curses.h>
 #include <Container.h>
 
 /* NOTES:
@@ -56,7 +57,7 @@ void Container::Move(WINDOW* parentarea, int newx, int newy)
 	Widget::Move(parentarea, newx, newy);
 
 	for (i = children.begin(); i != children.end(); i++)
-		((*i).first)->UpdateArea(area);
+		((*i).first)->UpdateArea(area->w);
 }
 
 void Container::Resize(WINDOW* parentarea, int neww, int newh)
@@ -66,7 +67,7 @@ void Container::Resize(WINDOW* parentarea, int neww, int newh)
 	Widget::Resize(parentarea, neww, newh);
 
 	for (i = children.begin(); i != children.end(); i++)
-		((*i).first)->UpdateArea(area);
+		((*i).first)->UpdateArea(area->w);
 }
 
 void Container::MoveResize(WINDOW* parentarea, int newx, int newy, int neww, int newh)
@@ -76,7 +77,7 @@ void Container::MoveResize(WINDOW* parentarea, int newx, int newy, int neww, int
 	Widget::MoveResize(parentarea, newx, newy, neww, newh);
 
 	for (i = children.begin(); i != children.end(); i++)
-		((*i).first)->UpdateArea(area);
+		((*i).first)->UpdateArea(area->w);
 }
 
 void Container::Draw(void)

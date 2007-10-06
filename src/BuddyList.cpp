@@ -31,6 +31,10 @@
 #include "Log.h"
 #include "Conf.h"
 
+//TODO remove this include. non-cppconsui classes may not touch area member
+#include <cppconsui/Curses.h>
+
+
 #include <cppconsui/Window.h>
 #include <cppconsui/TreeView.h>
 //TODO remove when signals are used
@@ -110,7 +114,7 @@ BuddyList::BuddyList()
 	Glib::signal_timeout().connect(sigc::mem_fun(this, &BuddyList::Load), 0);
 
 	//TODO get linestyle from conf
-	treeview = new TreeView(area, 0, 0, w, h, LineStyle::LineStyleDefault());
+	treeview = new TreeView(area->w, 0, 0, w, h, LineStyle::LineStyleDefault());
 	AddWidget(treeview);
 }
 

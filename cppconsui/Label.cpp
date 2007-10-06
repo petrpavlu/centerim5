@@ -18,13 +18,8 @@
  *
  * */
 
+#include "Curses.h"
 #include "Label.h"
-
-#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
-#include <ncurses.h>
-#else
-#include <curses.h>
-#endif
 
 Label::Label(WINDOW* parentarea, int x, int y, int w, int h, Glib::ustring text)
 : Widget(parentarea, x, y, w, h)
@@ -41,10 +36,10 @@ void Label::Draw(void)
 	//TODO unicode drawing
 	//TODO focus stuff is for testing *only*
 	if (focus) {
-		mvwaddstr(area, 0, 0, "*");
-		mvwaddstr(area, 0, 1, text.c_str());
+		mvwaddstr(area->w, 0, 0, "*");
+		mvwaddstr(area->w, 0, 1, text.c_str());
 	} else
-		mvwaddstr(area, 0, 0, text.c_str());
+		mvwaddstr(area->w, 0, 0, text.c_str());
 }
 
 void Label::SetText(const Glib::ustring str)
@@ -52,7 +47,7 @@ void Label::SetText(const Glib::ustring str)
 	if (text == str) return;
 
 	text = str;
-	wclear(area);
+	wclear(area->w);
 	signal_redraw();
 }
 

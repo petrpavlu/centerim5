@@ -18,21 +18,22 @@
  *
  * */
 
+#include "Curses.h"
 #include "Widget.h"
 
 #include <string>
 
 Widget::Widget(WINDOW* parentarea, int x, int y, int w, int h)
-: area(NULL)
-, x(x)
+: x(x)
 , y(y)
 , w(w)
 , h(h)
 , focus(false)
 , canfocus(false)
 {
-	area = subpad(parentarea, h, w, y, x);
-	if (area == NULL && parentarea != NULL)
+	area = new curses_imp_t(NULL);
+	area->w = subpad(parentarea, h, w, y, x);
+	if (area->w == NULL && parentarea != NULL)
 		;//TODO throw an exception
 		//no, this is not really an error is it?
 		//eg, when adding a widget to a treeview we dont
@@ -41,7 +42,7 @@ Widget::Widget(WINDOW* parentarea, int x, int y, int w, int h)
 
 Widget::~Widget()
 {
-	delwin(area);
+	delwin(area->w);
 }
 
 void Widget::Move(WINDOW* parentarea, int newx, int newy)
@@ -85,12 +86,12 @@ void Widget::MoveResize(WINDOW *parentarea, int newx, int newy, int neww, int ne
 
 void Widget::UpdateArea(WINDOW *parentarea)
 {
-	if (area)
-		delwin(area);
+	if (area->w)
+		delwin(area->w);
 
-	area = subpad(parentarea, h, w, y, x);
+	area->w = subpad(parentarea, h, w, y, x);
 
-	if (area == NULL)
+	if (area->w == NULL)
 		;//TODO throw an exception
 		//actually, dont!
 		//after a container resize, all widgets are updatearea()'d

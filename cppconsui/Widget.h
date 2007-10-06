@@ -24,10 +24,10 @@
 #include "CppConsUI.h"
 #include "InputProcessor.h"
 
-#include <curses.h>
-
 #include <sigc++/sigc++.h>
 #include <sigc++/signal.h>
+
+struct curses_imp_t;
 
 class Widget
 : public sigc::trackable
@@ -37,10 +37,10 @@ class Widget
 		Widget(WINDOW* parentarea, int x, int y, int w, int h);
 		~Widget();
 
-		virtual void Move(WINDOW *parentarea, int newx, int newy);
-		virtual void Resize(WINDOW *parentarea, int neww, int newh);
-		virtual void MoveResize(WINDOW *parentarea, int newx, int newy, int neww, int newh);
-		void UpdateArea(WINDOW *parentarea);
+		virtual void Move(WINDOW* parentarea, int newx, int newy);
+		virtual void Resize(WINDOW* parentarea, int neww, int newh);
+		virtual void MoveResize(WINDOW* parentarea, int newx, int newy, int neww, int newh);
+		void UpdateArea(WINDOW* parentarea);
 
 		/* The difference between the Draw() and Redraw() functions should be
 		 * clarified.
@@ -73,7 +73,9 @@ class Widget
 
 	protected:
 		int x, y, w, h; // screen area relative to parent area
-		WINDOW *area;
+
+		curses_imp_t* area;
+
 		bool focus, canfocus;
 
 	private:
