@@ -31,7 +31,7 @@
 #include <panel.h>
 
 Window::Window(int x, int y, int w, int h, Border *border)
-: Container(NULL, 0, 0, 0, 0)
+: Container(NULL, 1, 1, w-2, h-2)
 , window(NULL)
 , realwindow(NULL)
 , panel(NULL)
@@ -53,7 +53,8 @@ Window::Window(int x, int y, int w, int h, Border *border)
 
 	if (border) {
 		border->Resize(win_w, win_h);
-		Container::MoveResize(window, 1, 1, win_w-2, win_h-2);
+		/* this is the default, and thus done during class initialisation
+		Container::MoveResize(window, 1, 1, win_w-2, win_h-2); */
 	} else {
 		Container::MoveResize(window, 0, 0, win_w, win_h);
 	}
