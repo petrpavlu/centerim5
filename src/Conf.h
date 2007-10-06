@@ -67,6 +67,7 @@ class Conf
 
 		bool GetLogIms(void);
 		bool GetLogChats(void);
+		bool GetLogSystem(void);
 
 	protected:
 
