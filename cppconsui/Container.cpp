@@ -102,12 +102,23 @@ void Container::TakeFocus(void)
 		focuschild->TakeFocus();
 }
 
+void Container::SetFocusChild(Widget* widget)
+{
+	focuschild = widget;
+}
+
+Widget* Container::GetFocusChild(void)
+{
+	return focuschild;
+}
+
 void Container::AddWidget(Widget *widget)
 {
 	Child child;
 
 	g_return_if_fail(widget != NULL);
 
+	widget->UpdateArea(area->w);
 	child.second = widget->signal_redraw.connect(sigc::mem_fun(this, &Container::OnChildRedraw));
 	child.first = widget;
 	children.push_back(child);

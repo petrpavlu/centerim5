@@ -40,10 +40,13 @@ class Container
 		virtual void GiveFocus(void);
 		virtual void TakeFocus(void);
 
-	protected:
+		void SetFocusChild(Widget* widget);
+		Widget* GetFocusChild(void);
+
 		void AddWidget(Widget *widget);
 		void RemoveWidget(Widget *widget);
 
+	protected:
 		Widget *focuschild;
 
 	private:
