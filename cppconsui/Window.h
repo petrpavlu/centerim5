@@ -21,6 +21,7 @@
 #ifndef __WINDOW_H__
 #define __WINDOW_H__
 
+#include "Widget.h"
 #include "Container.h"
 #include "Border.h"
 #include "CppConsUI.h"
@@ -37,7 +38,7 @@
 #include <panel.h>
 
 class Window
-: public Container
+: public Widget
 {
 	public:
 		Window(int x, int y, int w, int h, Border *border);
@@ -69,6 +70,12 @@ class Window
 		virtual void Show();
 		virtual void Hide();
 
+		void SetFocusChild(Widget* widget);
+		Widget* GetFocusChild(void);
+
+		void AddWidget(Widget *widget);
+		void RemoveWidget(Widget *widget);
+
 	protected:
 		/* the window on-screen dimensions */
 		int win_x, win_y, win_w, win_h;
@@ -79,8 +86,11 @@ class Window
 		WINDOW *window, *realwindow;
 		PANEL *panel;
 		Border *border; 
+		Container *children;
 
 	private:
+		sigc::connection children_signal_redraw;
+
 		Window();
 
 		void MakeRealWindow(void);

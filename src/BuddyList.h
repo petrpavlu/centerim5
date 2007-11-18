@@ -39,6 +39,8 @@ class BuddyList
 		static BuddyList* Instance(void);
 		static void Delete(void);
 
+		void Resize(int neww, int newh);
+
 		static void new_list_(PurpleBuddyList *list)
 			{ BuddyList::Instance()->new_list(list); }
 		static void new_node_(PurpleBlistNode *node) 

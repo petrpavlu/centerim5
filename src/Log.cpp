@@ -86,6 +86,8 @@ Log::Log(void)
 
 	/* Set the purple debug callbacks */
 	purple_debug_set_ui_ops(&centerim_debug_ui_ops);
+
+	Redraw();
 }
 
 Log::~Log(void)
