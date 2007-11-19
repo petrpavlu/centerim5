@@ -70,8 +70,8 @@ class Window
 		/* dimensions to use when copying from pad to window */
 		int copy_x, copy_y, copy_w, copy_h;
 
-		/* the pad and the `real' window for this window */
-		WINDOW *window, *realwindow;
+		/* the `real' window for this window */
+		WINDOW *realwindow;
 		PANEL *panel;
 		Border *border; 
 

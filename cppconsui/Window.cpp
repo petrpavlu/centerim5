@@ -33,7 +33,6 @@
 
 Window::Window(int x, int y, int w, int h, Border *border)
 : Container(*this, 1, 1, w-2, h-2)
-, window(NULL)
 , realwindow(NULL)
 , panel(NULL)
 , win_x(x)
@@ -46,11 +45,8 @@ Window::Window(int x, int y, int w, int h, Border *border)
 	if (win_w < 1) win_w = 1;
 	if (win_h < 1) win_h = 1;
 
-	window = newpad(win_h, win_w);
+	UpdateArea();
 	MakeRealWindow();
-
-	if (window == NULL)
-		;//TODO throw an exception
 
 	if (border) {
 		border->Resize(win_w, win_h);
@@ -62,8 +58,6 @@ Window::Window(int x, int y, int w, int h, Border *border)
 
 Window::~Window()
 {
-	delwin(window);
-
 	if (panel) {
 		hide_panel(panel);
 		del_panel(panel);
@@ -93,20 +87,14 @@ void Window::Resize(int neww, int newh)
 	if (neww == win_w && newh == win_h)
 		return;
 
-	if (window)
-		delwin(window);
-
 	win_w = neww;
 	win_h = newh;
 
 	if (win_w < 1) win_w = 1;
 	if (win_h < 1) win_h = 1;
 
-	window = newpad(win_h, win_w);
+	UpdateArea();
 	MakeRealWindow();
-
-	if (!window)
-		;//TODO throw an exception
 
 	if (border) {
 		border->Resize(win_w, win_h);
@@ -135,8 +123,7 @@ void Window::UpdateArea()
 	if (area->w)
 		delwin(area->w);
 
-	//TODO this should be the window pad, try if it works withouth the extra indirection
-	area->w = subpad(window, h, w, y, x);
+	area->w = newpad(win_h, win_w);
 
 	if (area->w == NULL)
 		;//TODO throw an exception
@@ -221,14 +208,14 @@ void Window::Draw(void)
 		return;
 
 	if (border)
-		border->Draw(window); //TODO draw the border
+		border->Draw(area->w); //TODO draw the border
 	
 	Container::Draw();
 
 	/* copy the virtual window to a window, then display it
 	 * on screen.
 	 * */
-	copywin(window, realwindow, copy_y, copy_x, 0, 0, copy_h, copy_w, 0);
+	copywin(area->w, realwindow, copy_y, copy_x, 0, 0, copy_h, copy_w, 0);
 }
 
 void Window::Show()
