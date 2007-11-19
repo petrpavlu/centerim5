@@ -25,8 +25,8 @@
 #include "LineStyle.h"
 #include "Keys.h"
 
-TreeView::TreeView(WINDOW *parentarea, int x, int y, int w, int h, LineStyle *linestyle_)
-: Scrollable(parentarea, x, y, w, h, w, h)
+TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linestyle_)
+: Scrollable(parent, x, y, w, h, w, h)
 , linestyle(linestyle_)
 , itemswidth(0)
 , itemsheight(0)
@@ -78,7 +78,7 @@ int TreeView::DrawNode(TreeNode *node, int top)
 
 	/* draw this node first */
 	if (node->widget) {
-		node->widget->Move(scrollarea, depthoffset + 3, top);
+		node->widget->Move(x + depthoffset + 3, y + top);
 		node->widget->Draw();
 		height += node->widget->Height();
 	}

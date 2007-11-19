@@ -54,6 +54,7 @@ class Window
 		virtual void MoveResize(const Rect &rect)
 			{ MoveResize(rect.x, rect.y, rect.width, rect.height); }
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
+		void UpdateArea();
 		virtual void SetBorder(Border *border);
 		virtual Border* GetBorder(void);
 

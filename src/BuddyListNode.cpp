@@ -22,8 +22,8 @@
 
 #include <libpurple/blist.h>
 
-BuddyListNode::BuddyListNode(PurpleBlistNode *node)
-: Label(NULL, 0, 0, 64, 1, "")
+BuddyListNode::BuddyListNode(Widget& parent, PurpleBlistNode *node)
+: Label(parent, 0, 0, 64, 1, "")
 , node(node)
 , id(-1)
 {
@@ -35,18 +35,18 @@ BuddyListNode::~BuddyListNode()
 {
 }
 
-BuddyListNode* BuddyListNode::CreateNode(PurpleBlistNode *node)
+BuddyListNode* BuddyListNode::CreateNode(Widget& parent, PurpleBlistNode *node)
 {
 	BuddyListNode *bnode;
 
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
-		bnode = new BuddyListBuddy(node);
+		bnode = new BuddyListBuddy(parent, node);
 	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
-		bnode = new BuddyListChat(node);
+		bnode = new BuddyListChat(parent, node);
 	} else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-		bnode = new BuddyListContact(node);
+		bnode = new BuddyListContact(parent, node);
 	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
-		bnode = new BuddyListGroup(node);
+		bnode = new BuddyListGroup(parent, node);
 	}
 
 	return bnode;
@@ -92,8 +92,8 @@ BuddyListNode* BuddyListNode::GetParent(void)
 	return (BuddyListNode*)parent->ui_data;
 }
 
-BuddyListBuddy::BuddyListBuddy(PurpleBlistNode *node)
-: BuddyListNode(node)
+BuddyListBuddy::BuddyListBuddy(Widget& parent, PurpleBlistNode *node)
+: BuddyListNode(parent, node)
 {
 	buddy = (PurpleBuddy*)node;
 	node->ui_data = this;
@@ -112,12 +112,12 @@ void BuddyListBuddy::Update(void)
 	//clean this file up
 	Glib::ustring text;
 	text = purple_buddy_get_alias(buddy);
-	Resize(NULL, width(text), 1);
+	Resize(width(text), 1);
 	SetText(text);
 }
 
-BuddyListChat::BuddyListChat(PurpleBlistNode *node)
-: BuddyListNode(node)
+BuddyListChat::BuddyListChat(Widget& parent, PurpleBlistNode *node)
+: BuddyListNode(parent, node)
 {
 	chat = (PurpleChat*)node;
 	node->ui_data = this;
@@ -133,12 +133,12 @@ void BuddyListChat::Update(void)
 {
 	Glib::ustring text;
 	text = purple_chat_get_name(chat);
-	Resize(NULL, width(text), 1);
+	Resize(width(text), 1);
 	SetText(text);
 }
 
-BuddyListContact::BuddyListContact(PurpleBlistNode *node)
-: BuddyListNode(node)
+BuddyListContact::BuddyListContact(Widget& parent, PurpleBlistNode *node)
+: BuddyListNode(parent, node)
 {
 	contact = (PurpleContact*)node;
 	node->ui_data = this;
@@ -171,12 +171,12 @@ void BuddyListContact::Update(void)
 		}
 	}
 
-	Resize(NULL, width(text), 1);
+	Resize(width(text), 1);
 	SetText(text);
 }
 
-BuddyListGroup::BuddyListGroup(PurpleBlistNode *node)
-: BuddyListNode(node)
+BuddyListGroup::BuddyListGroup(Widget& parent, PurpleBlistNode *node)
+: BuddyListNode(parent, node)
 {
 	group = (PurpleGroup*)node;
 	node->ui_data = this;
@@ -192,6 +192,6 @@ void BuddyListGroup::Update(void)
 {
 	Glib::ustring text;
 	text = purple_group_get_name(group);
-	Resize(NULL, width(text), 1);
+	Resize(width(text), 1);
 	SetText(text);
 }

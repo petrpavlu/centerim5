@@ -23,8 +23,8 @@
 
 #include <panel.h>
 
-Scrollable::Scrollable(WINDOW* parentarea, int x, int y, int w, int h, int scrollw, int scrollh)
-: Widget(parentarea, x, y, w, h)
+Scrollable::Scrollable(Widget& parent, int x, int y, int w, int h, int scrollw, int scrollh)
+: Widget(parent, x, y, w, h)
 , scrollw(scrollw)
 , scrollh(scrollh)
 , scrollarea(NULL)
@@ -46,7 +46,7 @@ void Scrollable::Draw(void)
 {
 	if (!scrollarea || ! area->w) return;
 
-	copywin(scrollarea, area->w, ypos, xpos, 0, 0, h-1, w-1, 0);
+	//copywin(scrollarea, area->w, ypos, xpos, 0, 0, h-1, w-1, 0);
 	Widget::Draw();
 }
 

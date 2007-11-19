@@ -23,8 +23,9 @@
 
 #include <string>
 
-Widget::Widget(WINDOW* parentarea, int x, int y, int w, int h)
-: x(x)
+Widget::Widget(Widget& parent, int x, int y, int w, int h)
+: parent(&parent)
+, x(x)
 , y(y)
 , w(w)
 , h(h)
@@ -32,12 +33,7 @@ Widget::Widget(WINDOW* parentarea, int x, int y, int w, int h)
 , canfocus(false)
 {
 	area = new curses_imp_t(NULL);
-	area->w = subpad(parentarea, h, w, y, x);
-	if (area->w == NULL && parentarea != NULL)
-		;//TODO throw an exception
-		//no, this is not really an error is it?
-		//eg, when adding a widget to a treeview we dont
-		//have an area until the widget has been adeed
+	UpdateArea();
 }
 
 Widget::~Widget()
@@ -45,31 +41,31 @@ Widget::~Widget()
 	delwin(area->w);
 }
 
-void Widget::Move(WINDOW* parentarea, int newx, int newy)
+void Widget::Move(int newx, int newy)
 {
 	Point oldpos(x,y), newpos(newx, newy);
 
 	x = newx;
 	y = newy;
 
-	UpdateArea(parentarea);
+	UpdateArea();
 
 	signal_move(oldpos, newpos);
 }
 
-void Widget::Resize(WINDOW *parentarea, int neww, int newh)
+void Widget::Resize(int neww, int newh)
 {
 	Rect oldsize(x, y, w, h), newsize(x, y, neww, newh);
 
 	w = neww;
 	h = newh;
 
-	UpdateArea(parentarea);
+	UpdateArea();
 
 	signal_resize(oldsize, newsize);
 }
 
-void Widget::MoveResize(WINDOW *parentarea, int newx, int newy, int neww, int newh)
+void Widget::MoveResize(int newx, int newy, int neww, int newh)
 {
 	Rect oldsize(x, y, w, h), newsize(newx, newy, neww, newh);
 
@@ -78,18 +74,18 @@ void Widget::MoveResize(WINDOW *parentarea, int newx, int newy, int neww, int ne
 	w = neww;
 	h = newh;
 
-	UpdateArea(parentarea);
+	UpdateArea();
 
 	signal_move(oldsize, newsize);
 	signal_resize(oldsize, newsize);
 }
 
-void Widget::UpdateArea(WINDOW *parentarea)
+void Widget::UpdateArea()
 {
 	if (area->w)
 		delwin(area->w);
 
-	area->w = subpad(parentarea, h, w, y, x);
+	area->w = subpad(parent->area->w, h, w, y, x);
 
 	if (area->w == NULL)
 		;//TODO throw an exception

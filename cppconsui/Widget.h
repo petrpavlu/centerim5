@@ -34,13 +34,13 @@ class Widget
 , public InputProcessor
 {
 	public:
-		Widget(WINDOW* parentarea, int x, int y, int w, int h);
+		Widget(Widget& parent, int x, int y, int w, int h);
 		~Widget();
 
-		virtual void Move(WINDOW* parentarea, int newx, int newy);
-		virtual void Resize(WINDOW* parentarea, int neww, int newh);
-		virtual void MoveResize(WINDOW* parentarea, int newx, int newy, int neww, int newh);
-		void UpdateArea(WINDOW* parentarea);
+		virtual void Move(int newx, int newy);
+		virtual void Resize(int neww, int newh);
+		virtual void MoveResize(int newx, int newy, int neww, int newh);
+		virtual void UpdateArea();
 
 		/* The difference between the Draw() and Redraw() functions should be
 		 * clarified.
@@ -77,6 +77,8 @@ class Widget
 		curses_imp_t* area;
 
 		bool focus, canfocus;
+
+		Widget *parent;
 
 	private:
 		Widget();

@@ -43,7 +43,7 @@ Conversation::Conversation(PurpleConversation *conv)
 	linestyle = LineStyle::LineStyleDefault();
 	MoveResize(conf->GetChatDimensions());
 
-	browser = new TextBrowser(area->w, 1, 0, w-2, h);
+	browser = new TextBrowser(*this, 2, 1, w-4, h-2);
 	AddWidget(browser);
 
 	SetPartitioning(conf->GetChatPartitioning());
@@ -94,7 +94,7 @@ void Conversation::SetPartitioning(unsigned int percentage)
 		browserheight = h - inputheight - 1;
 	}
 
-	browser->Resize(area->w, w-2, browserheight);
+	browser->Resize(w-4, browserheight-2);
 }
 
 void Conversation::LoadHistory(void)

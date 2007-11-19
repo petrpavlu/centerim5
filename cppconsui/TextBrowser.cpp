@@ -25,15 +25,15 @@
 
 #include <vector>
 
-TextBrowser::TextBrowser(WINDOW* parentarea, int x, int y, int w, int h)
-: Widget(parentarea, x, y, w, h)
+TextBrowser::TextBrowser(Widget& parent, int x, int y, int w, int h)
+: Widget(parent, x, y, w, h)
 , pos(0)
 , follow(true)
 {
 }
 
-TextBrowser::TextBrowser(WINDOW* parentarea, int x, int y, int w, int h, std::vector<Glib::ustring> &lines)
-: Widget(parentarea, x, y, w, h)
+TextBrowser::TextBrowser(Widget& parent, int x, int y, int w, int h, std::vector<Glib::ustring> &lines)
+: Widget(parent, x, y, w, h)
 {
 	AddLines(lines);
 }

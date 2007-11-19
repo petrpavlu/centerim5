@@ -21,8 +21,8 @@
 #include "Curses.h"
 #include "Label.h"
 
-Label::Label(WINDOW* parentarea, int x, int y, int w, int h, Glib::ustring text)
-: Widget(parentarea, x, y, w, h)
+Label::Label(Widget& parent, int x, int y, int w, int h, Glib::ustring text)
+: Widget(parent, x, y, w, h)
 , text(text)
 {
 }

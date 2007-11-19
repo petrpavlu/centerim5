@@ -41,7 +41,7 @@ class TreeView
 : public Scrollable
 {
 	public:
-		TreeView(WINDOW *parentarea, int x, int y, int w, int h, LineStyle *linestyle);
+		TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linestyle);
 		~TreeView();
 
 		virtual void Draw(void);

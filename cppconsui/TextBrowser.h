@@ -30,8 +30,8 @@ class TextBrowser
 : public Widget
 {
 	public:
-		TextBrowser(WINDOW* parentarea, int x, int y, int w, int h);
-		TextBrowser(WINDOW* parentarea, int x, int y, int w, int h, std::vector<Glib::ustring> &lines);
+		TextBrowser(Widget& parent, int x, int y, int w, int h);
+		TextBrowser(Widget& parent, int x, int y, int w, int h, std::vector<Glib::ustring> &lines);
 		~TextBrowser();
 
 		void SetLines(std::vector<Glib::ustring> &lines);

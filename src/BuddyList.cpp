@@ -114,7 +114,7 @@ BuddyList::BuddyList()
 	Glib::signal_timeout().connect(sigc::mem_fun(this, &BuddyList::Load), 0);
 
 	//TODO get linestyle from conf
-	treeview = new TreeView(area->w, 0, 0, w, h, LineStyle::LineStyleDefault());
+	treeview = new TreeView(*this, 1, 1, w-2, h-2, LineStyle::LineStyleDefault());
 	AddWidget(treeview);
 }
 
@@ -183,7 +183,7 @@ void BuddyList::new_node(PurpleBlistNode *node)
 	BuddyListNode *bnode;
 
 	if (!node->ui_data) {
-		node->ui_data = bnode = BuddyListNode::CreateNode(node);
+		node->ui_data = bnode = BuddyListNode::CreateNode(*this, node);
 		AddNode((BuddyListNode*)node->ui_data);
 
 		Redraw();

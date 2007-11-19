@@ -22,6 +22,7 @@
 
 #include "Container.h"
 
+#include "Curses.h"
 #if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
 #include <ncurses.h>
 #else
@@ -31,7 +32,7 @@
 #include <panel.h>
 
 Window::Window(int x, int y, int w, int h, Border *border)
-: Container(NULL, 1, 1, w-2, h-2)
+: Container(*this, 1, 1, w-2, h-2)
 , window(NULL)
 , realwindow(NULL)
 , panel(NULL)
@@ -53,11 +54,8 @@ Window::Window(int x, int y, int w, int h, Border *border)
 
 	if (border) {
 		border->Resize(win_w, win_h);
-		/* this is the default, and thus done during class initialisation
-		Container::MoveResize(window, 1, 1, win_w-2, win_h-2); */
-	} else {
-		Container::MoveResize(window, 0, 0, win_w, win_h);
 	}
+	Container::MoveResize(0, 0, win_w, win_h);
 
 	Redraw();
 }
@@ -112,10 +110,9 @@ void Window::Resize(int neww, int newh)
 
 	if (border) {
 		border->Resize(win_w, win_h);
-		Container::Resize(window, win_w-2, win_h-2);
-	} else {
-		Container::Resize(window, win_w, win_h);
 	}
+
+	Container::Resize(win_w, win_h);
 
 	Redraw();
 }
@@ -133,17 +130,29 @@ void Window::MoveResize(int newx, int newy, int neww, int newh)
 	Resize(neww, newh);
 }
 
+void Window::UpdateArea()
+{
+	if (area->w)
+		delwin(area->w);
+
+	//TODO this should be the window pad, try if it works withouth the extra indirection
+	area->w = subpad(window, h, w, y, x);
+
+	if (area->w == NULL)
+		;//TODO throw an exception
+		//actually, dont!
+		//after a container resize, all widgets are updatearea()'d
+		//which will probably result (unless resizing to bigger) in
+		//area == null because no pad can be made
+}
+
 void Window::SetBorder(Border *border)
 {
 	this->border = border;
 	
 	if (border) {
 		border->Resize(win_w, win_h);
-		Container::MoveResize(window, 1, 1, win_w-2, win_h-2);
-	} else {
-		Container::MoveResize(window, 0, 0, win_w, win_h);
 	}
-
 }
 
 Border* Window::GetBorder(void)

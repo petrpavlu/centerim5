@@ -32,10 +32,10 @@ class BuddyListNode
 : public Label
 {
 	public:
-		BuddyListNode(PurpleBlistNode *node);
+		BuddyListNode(Widget& parent, PurpleBlistNode *node);
 		~BuddyListNode();
 
-		static BuddyListNode* CreateNode(PurpleBlistNode *node);
+		static BuddyListNode* CreateNode(Widget& parent, PurpleBlistNode *node);
 
 		virtual void Draw(void);
 
@@ -61,7 +61,7 @@ class BuddyListBuddy
 : public BuddyListNode
 {
 	public:
-		BuddyListBuddy(PurpleBlistNode *node);
+		BuddyListBuddy(Widget& parent, PurpleBlistNode *node);
 
 		virtual void Draw(void);
 		virtual void Update(void);
@@ -76,7 +76,7 @@ class BuddyListChat
 : public BuddyListNode
 {
 	public:
-		BuddyListChat(PurpleBlistNode *node);
+		BuddyListChat(Widget& parent, PurpleBlistNode *node);
 
 		virtual void Draw(void);
 		virtual void Update(void);
@@ -91,7 +91,7 @@ class BuddyListContact
 : public BuddyListNode
 {
 	public:
-		BuddyListContact(PurpleBlistNode *node);
+		BuddyListContact(Widget& parent, PurpleBlistNode *node);
 
 		virtual void Draw(void);
 		virtual void Update(void);
@@ -106,7 +106,7 @@ class BuddyListGroup
 : public BuddyListNode
 {
 	public:
-		BuddyListGroup(PurpleBlistNode *node);
+		BuddyListGroup(Widget& parent, PurpleBlistNode *node);
 
 		virtual void Draw(void);
 		virtual void Update(void);

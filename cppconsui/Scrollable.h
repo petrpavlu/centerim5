@@ -27,7 +27,7 @@ class Scrollable
 : public Widget
 {
 	public:
-		Scrollable(WINDOW* parentarea, int x, int y, int w, int h, int scrollw, int scrollh);
+		Scrollable(Widget& parent, int x, int y, int w, int h, int scrollw, int scrollh);
 		~Scrollable();
 
 		virtual void Draw(void);
