@@ -29,6 +29,7 @@ TextWindow::TextWindow(int x, int y, int w, int h, Border *border)
 : Window(x, y, w, h, border)
 {
 	browser = new TextBrowser(area->w, 1, 0, w-2, h);
+	focuschild = browser;
 	AddWidget(browser);
 }
 
@@ -84,7 +85,5 @@ void TextWindow::Resize(int neww, int newh)
 	 * what we want. in most cases you would need to recalculate
 	 * widget sizes based on window and/or container size.
 	 * */
-	//TODO this should use children->area->w, which is protected
-	browser->MoveResize(area->w, 2, 1, w-4, h-2);
-	Redraw();
+	browser->Resize(area->w, w-2, h);
 }

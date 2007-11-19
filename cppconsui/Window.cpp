@@ -18,10 +18,9 @@
  *
  * */
 
-#include "Curses.h"
 #include "Window.h"
 
-#include "Widget.h"
+#include "Container.h"
 
 #if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
 #include <ncurses.h>
@@ -32,7 +31,7 @@
 #include <panel.h>
 
 Window::Window(int x, int y, int w, int h, Border *border)
-: Widget(NULL, 0, 0, 0, 0)
+: Container(NULL, 1, 1, w-2, h-2)
 , window(NULL)
 , realwindow(NULL)
 , panel(NULL)
@@ -42,7 +41,7 @@ Window::Window(int x, int y, int w, int h, Border *border)
 , win_h(h)
 , border(border)
 {
-	//TODO just call moveresize?
+	//TODO just call moveresize
 	if (win_w < 1) win_w = 1;
 	if (win_h < 1) win_h = 1;
 
@@ -52,20 +51,15 @@ Window::Window(int x, int y, int w, int h, Border *border)
 	if (window == NULL)
 		;//TODO throw an exception
 
-	UpdateArea(window);
-
 	if (border) {
 		border->Resize(win_w, win_h);
-		/* this is the default, and thus done during class initialisation */
-		children = new Container(area->w, 1, 1, win_w-2, win_h-2);
+		/* this is the default, and thus done during class initialisation
+		Container::MoveResize(window, 1, 1, win_w-2, win_h-2); */
 	} else {
-		children = new Container(area->w, 0, 0, win_w, win_h);
+		Container::MoveResize(window, 0, 0, win_w, win_h);
 	}
 
-	SetInputChild(children);
-
-	children_signal_redraw = children->signal_redraw.connect(sigc::mem_fun(this, &Window::Redraw));
-	children->Redraw();
+	Redraw();
 }
 
 Window::~Window()
@@ -77,10 +71,6 @@ Window::~Window()
 		del_panel(panel);
 		delwin(realwindow);
 	}
-
-	SetInputChild(NULL);
-	children_signal_redraw.disconnect();
-	delete children;
 }
 
 void Window::Move(int newx, int newy)
@@ -108,8 +98,8 @@ void Window::Resize(int neww, int newh)
 	if (window)
 		delwin(window);
 
-	w = win_w = neww;
-	h = win_h = newh;
+	win_w = neww;
+	win_h = newh;
 
 	if (win_w < 1) win_w = 1;
 	if (win_h < 1) win_h = 1;
@@ -120,16 +110,14 @@ void Window::Resize(int neww, int newh)
 	if (!window)
 		;//TODO throw an exception
 
-	UpdateArea(window);
-
 	if (border) {
 		border->Resize(win_w, win_h);
-		children->MoveResize(area->w, 1, 1, win_w-2, win_h-2);
+		Container::Resize(window, win_w-2, win_h-2);
 	} else {
-		children->MoveResize(area->w, 0, 0, win_w, win_h);
+		Container::Resize(window, win_w, win_h);
 	}
 
-	children->Redraw();
+	Redraw();
 }
 
 void Window::MoveResize(int newx, int newy, int neww, int newh)
@@ -141,8 +129,8 @@ void Window::MoveResize(int newx, int newy, int neww, int newh)
 	//i dont think that is what we want
 	//update: the WindowManager should only do screen updates
 	//in its spare time. see the todo in WindowManager::Redraw()
-	Resize(neww, newh);
 	Move(newx, newy);
+	Resize(neww, newh);
 }
 
 void Window::SetBorder(Border *border)
@@ -151,14 +139,11 @@ void Window::SetBorder(Border *border)
 	
 	if (border) {
 		border->Resize(win_w, win_h);
-		//Container::MoveResize(window, 1, 1, win_w-2, win_h-2);
-		children->MoveResize(area->w, 1, 1, win_w-2, win_h-2);
+		Container::MoveResize(window, 1, 1, win_w-2, win_h-2);
 	} else {
-		//Container::MoveResize(window, 0, 0, win_w, win_h);
-		children->MoveResize(area->w, 0, 0, win_w, win_h);
+		Container::MoveResize(window, 0, 0, win_w, win_h);
 	}
 
-	children->Redraw();
 }
 
 Border* Window::GetBorder(void)
@@ -191,9 +176,6 @@ void Window::MakeRealWindow(void)
 	win = newwin(bottom - top, right - left, top, left);
 
 	if (!win) {
-		/* we can't make a real window
-		 * so the window is probably offscreen 
-		 * */
 		if (panel) {
 			del_panel(panel);
 			panel = NULL;
@@ -201,6 +183,9 @@ void Window::MakeRealWindow(void)
 		delwin(realwindow);
 		realwindow = NULL;
 
+		/* we can't make a real window
+		 * so the window is probably offscreen 
+		 * */
 		return;
 	} else {
 
@@ -227,10 +212,9 @@ void Window::Draw(void)
 		return;
 
 	if (border)
-		border->Draw(window); //TODO border should be a widget
+		border->Draw(window); //TODO draw the border
 	
-	//Container::Draw();
-	children->Draw();
+	Container::Draw();
 
 	/* copy the virtual window to a window, then display it
 	 * on screen.
@@ -248,24 +232,4 @@ void Window::Hide()
 {
 	//TODO emit signal to hide panel
 	//(while keeping stacking order)
-}
-
-void Window::SetFocusChild(Widget* widget)
-{
-	children->SetFocusChild(widget);
-}
-
-Widget* Window::GetFocusChild(void)
-{
-	return children->GetFocusChild();
-}
-
-void Window::AddWidget(Widget *widget)
-{
-	children->AddWidget(widget);
-}
-
-void Window::RemoveWidget(Widget *widget)
-{
-	children->RemoveWidget(widget);
 }

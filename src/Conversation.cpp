@@ -53,7 +53,7 @@ Conversation::Conversation(PurpleConversation *conv)
 		LoadHistory();
 	}
 
-	SetFocusChild(browser);
+	focuschild = browser;
 }
 
 void Conversation::Draw(void)

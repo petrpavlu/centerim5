@@ -154,7 +154,6 @@ void Container::RemoveWidget(Widget *widget)
 	}
 }
 
-//TODO this function is only here for easy debugging, we can connect directly to Redraw()
 void Container::OnChildRedraw(void)
 {
 	signal_redraw();

@@ -92,10 +92,6 @@ static PurpleBlistUiOps centerim_blist_uiops =
 
 BuddyList::BuddyList()
 : Window(0, 0, 80, 24, NULL)
-, buddylist(NULL)
-, log(NULL)
-, conf(NULL)
-, treeview(NULL)
 {
 	log = Log::Instance();
 	conf = Conf::Instance();
@@ -118,10 +114,8 @@ BuddyList::BuddyList()
 	Glib::signal_timeout().connect(sigc::mem_fun(this, &BuddyList::Load), 0);
 
 	//TODO get linestyle from conf
-	treeview = new TreeView(area->w, 1, 1, w-2, h-2, LineStyle::LineStyleDefault());
+	treeview = new TreeView(area->w, 0, 0, w, h, LineStyle::LineStyleDefault());
 	AddWidget(treeview);
-	//TODO this is not needed if updatearea looks at the parent
-	treeview->UpdateArea(area->w);
 }
 
 bool BuddyList::Load(void)
@@ -141,25 +135,6 @@ BuddyList::~BuddyList()
 	purple_blist_schedule_save(); //TODO: will this go wrong?! (probably)
 
 	delete GetBorder(); //TODO what if NULL?
-}
-
-void BuddyList::Resize(int neww, int newh)
-{
-	/* Let parent's Resize() renew data structures (including
-	 * the area's of child widgets which will thus be done
-	 * twice)
-	 * */
-	Window::Resize(neww, newh);
-
-	/* resize all our widgets, in this case its only one widget
-	 * here, w and h are the size of the container, which is 
-	 * what we want. in most cases you would need to recalculate
-	 * widget sizes based on window and/or container size.
-	 * */
-	//TODO this should use children->area->w, which is protected
-	if (treeview)
-		treeview->MoveResize(area->w, 1, 1, w-2, h-2);
-	Redraw();
 }
 
 void BuddyList::AddNode(BuddyListNode *node)
