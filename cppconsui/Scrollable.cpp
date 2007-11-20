@@ -31,8 +31,9 @@ Scrollable::Scrollable(Widget& parent, int x, int y, int w, int h, int scrollw, 
 {
 	//TODO scrollarea must be at least as largse as
 	//widget size?? no
-	scrollarea = newpad(scrollh, scrollw);
-	if (scrollarea == NULL)
+	area->w = newpad(scrollh, scrollw);
+	UpdateArea();
+	if (area->w == NULL)
 		;//TODO throw an exception?
 }
 
@@ -42,11 +43,29 @@ Scrollable::~Scrollable()
 		delwin(scrollarea);
 }
 
+void Scrollable::UpdateArea()
+{
+	curses_imp_t a(NULL);
+
+	if (scrollarea)
+		delwin(scrollarea);
+
+	parent->GetSubPad(a, x, y, w, h);
+	scrollarea = a.w;
+
+	if (scrollarea == NULL)
+		;//TODO throw an exception
+		//actually, dont!
+		//after a container resize, all widgets are updatearea()'d
+		//which will probably result (unless resizing to bigger) in
+		//area == null because no pad can be made
+}
+
 void Scrollable::Draw(void)
 {
 	if (!scrollarea || ! area->w) return;
 
-	//copywin(scrollarea, area->w, ypos, xpos, 0, 0, h-1, w-1, 0);
+	copywin(area->w, scrollarea, ypos, xpos, 0, 0, h-1, w-1, 0);
 	Widget::Draw();
 }
 
@@ -81,14 +100,14 @@ void Scrollable::ResizeScroll(int neww, int newh)
 	if (neww == scrollw && newh == scrollh)
 		return;
 
-	if (scrollarea)
-		delwin(scrollarea);
+	if (area->w)
+		delwin(area->w);
 
-	scrollarea = newpad(scrollh, scrollw);
-	if (scrollarea == NULL)
+	area->w = newpad(scrollh, scrollw);
+	if (area->w == NULL)
 		;//TODO throw an exception?
 
-	//TODO not overflow safe (probably not a problem)
+	//TODO not overflow safe (probably not a problem. but fix anyway)
 	if (xpos + deltax > scrollw - w) xpos = scrollw - w;
 	if (ypos + deltay > scrollh - h) ypos = scrollh - h;
 	if (xpos + deltax < 0) xpos = 0;

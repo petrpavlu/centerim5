@@ -67,6 +67,8 @@ class Widget
 		int Width() { return w; }
 		int Height() { return h; }
 
+		void GetSubPad(curses_imp_t& a, int x, int y, int w, int h);
+
 		sigc::signal<void, Point&, Point&> signal_move;
 		sigc::signal<void, Rect&, Rect&> signal_resize;
 		sigc::signal<void> signal_redraw;

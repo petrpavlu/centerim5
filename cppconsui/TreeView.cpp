@@ -21,6 +21,8 @@
 #include "TreeView.h"
 #include "Keys.h"
 
+#include "Curses.h"
+
 #include "Scrollable.h"
 #include "LineStyle.h"
 #include "Keys.h"
@@ -63,7 +65,7 @@ TreeView::~TreeView()
 
 void TreeView::Draw(void)
 {
-	werase(scrollarea);
+	werase(area->w);
 	DrawNode(root, 0);
 	Scrollable::Draw();
 }
@@ -78,35 +80,35 @@ int TreeView::DrawNode(TreeNode *node, int top)
 
 	/* draw this node first */
 	if (node->widget) {
-		node->widget->Move(x + depthoffset + 3, y + top);
+		node->widget->Move(depthoffset + 3, top);
 		node->widget->Draw();
 		height += node->widget->Height();
 	}
 
 	if (node->open) {
 		if (node->children.size()) {
-			for (j = top+1; j < top+height ; j++)
-				mvwadd_wch(scrollarea, j, depthoffset + 1, linestyle->V());
+			for (j = top+1; j < top+height; j++)
+				mvwadd_wch(area->w, j, depthoffset + 1, linestyle->V());
 		}
 
 		for (i = node->children.begin(); i != node->children.end(); i++) {
 			child = *i;
 
 			if (child != node->children.back())
-				mvwadd_wch(scrollarea, top+height,  depthoffset + 1, linestyle->VRight());
+				mvwadd_wch(area->w, top+height,  depthoffset + 1, linestyle->VRight());
 			else
-				mvwadd_wch(scrollarea, top+height,  depthoffset + 1, linestyle->CornerBL());
+				mvwadd_wch(area->w, top+height,  depthoffset + 1, linestyle->CornerBL());
 
-			mvwadd_wch(scrollarea, top+height,  depthoffset + 2, linestyle->H());
+			mvwadd_wch(area->w, top+height,  depthoffset + 2, linestyle->H());
 			
 			if (child->collapsable && child->children.size()) {
-				mvwaddch(scrollarea, top+height, depthoffset + 3, '[');
-				mvwaddch(scrollarea, top+height, depthoffset + 4, child->open ? '-' : '+');
-				mvwaddch(scrollarea, top+height, depthoffset + 5, ']');
+				mvwaddch(area->w, top+height, depthoffset + 3, '[');
+				mvwaddch(area->w, top+height, depthoffset + 4, child->open ? '-' : '+');
+				mvwaddch(area->w, top+height, depthoffset + 5, ']');
 			} else {
-				mvwadd_wch(scrollarea, top+height, depthoffset + 3, linestyle->H());
-				mvwadd_wch(scrollarea, top+height, depthoffset + 4, linestyle->H());
-				mvwadd_wch(scrollarea, top+height, depthoffset + 5, linestyle->HEnd());
+				mvwadd_wch(area->w, top+height, depthoffset + 3, linestyle->H());
+				mvwadd_wch(area->w, top+height, depthoffset + 4, linestyle->H());
+				mvwadd_wch(area->w, top+height, depthoffset + 5, linestyle->HEnd());
 			}
 
 			oldh = height;
@@ -114,7 +116,7 @@ int TreeView::DrawNode(TreeNode *node, int top)
 
 			if (child != node->children.back()) {
 				for (j = top+oldh+1; j < top+height ; j++)
-					mvwadd_wch(scrollarea, j, depthoffset + 1, linestyle->V());
+					mvwadd_wch(area->w, j, depthoffset + 1, linestyle->V());
 			}
 		}
 	}

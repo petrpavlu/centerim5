@@ -183,7 +183,7 @@ void BuddyList::new_node(PurpleBlistNode *node)
 	BuddyListNode *bnode;
 
 	if (!node->ui_data) {
-		node->ui_data = bnode = BuddyListNode::CreateNode(*this, node);
+		node->ui_data = bnode = BuddyListNode::CreateNode(*treeview, node);
 		AddNode((BuddyListNode*)node->ui_data);
 
 		Redraw();

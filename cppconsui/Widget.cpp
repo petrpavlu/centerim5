@@ -113,3 +113,8 @@ void Widget::TakeFocus(void)
 {
 	focus = false;
 }
+
+void Widget::GetSubPad(curses_imp_t& a, int x, int y, int w, int h)
+{
+	a.w = subpad(area->w, h, w, y, x);
+}
