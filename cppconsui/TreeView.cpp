@@ -259,6 +259,16 @@ void TreeView::ActionCollapse(void)
 	}
 }
 
+void TreeView::ActionToggleCollapsed(void)
+{
+	if (!focusnode) return;
+
+	if (focusnode->collapsable) {
+		focusnode->open = !focusnode->open;
+		Redraw();
+	}
+}
+
 void TreeView::ActionExpand(void)
 {
 	if (!focusnode) return;
@@ -374,6 +384,11 @@ void TreeView::DeleteNode(int nodeid, bool keepsubnodes)
 
 	/* Delete the node objects */
 	DeleteNode(node);
+}
+
+int TreeView::GetSelected(void)
+{
+	return focusnode->id;
 }
 
 int TreeView::GetDepth(int nodeid)

@@ -76,6 +76,7 @@ void WindowManager::Add(Window *window)
 	}
 
 	FocusPanel();
+	Redraw();
 }
 
 void WindowManager::Remove(Window *window)
@@ -180,6 +181,7 @@ void WindowManager::Draw(void)
 
 	for (i = windows.begin(); i != windows.end(); i++)
 		(*i).first->Draw();
+
 
 	update_panels();
 	doupdate();
