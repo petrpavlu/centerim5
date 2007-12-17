@@ -23,16 +23,24 @@
 
 #include "Log.h"
 #include "Conf.h"
+#include "Conversation.h"
 
 #include <libpurple/conversation.h>
 
 #include <cppconsui/WindowManager.h>
+
+#include <vector>
+
+class Conversation;
 
 class Conversations
 {
 	public:
 		static Conversations* Instance(void);
 		static void Delete(void);
+
+		Conversation* Find(PurpleBuddy* buddy);
+		Conversation* Find(PurpleChat* chat);
 
 		static void write_conv(PurpleConversation *conv, const char *name,
 			const char *alias, const char *message, PurpleMessageFlags flags, time_t mtime);
@@ -42,6 +50,7 @@ class Conversations
 			{ Conversations::Instance()->destroy_conversation(conv); }
 
 		void create_conversation(PurpleConversation *conv);
+		void create_conversation(PurpleBlistNode *node);
 		void destroy_conversation(PurpleConversation *conv);
 
 	protected:
@@ -52,6 +61,8 @@ class Conversations
 
 		Log *log;
 		Conf *conf;
+
+		std::vector<Conversation*> conversations;
 
 		WindowManager *windowmanager;
 		static Conversations *instance;

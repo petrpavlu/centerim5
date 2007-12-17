@@ -35,6 +35,7 @@
 #include <cppconsui/Curses.h>
 
 
+#include <cppconsui/Keys.h>
 #include <cppconsui/Window.h>
 #include <cppconsui/TreeView.h>
 //TODO remove when signals are used

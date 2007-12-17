@@ -23,9 +23,11 @@
 
 #include "Log.h"
 #include "Conf.h"
+#include "Conversations.h"
 
 #include <cppconsui/Window.h>
 #include <cppconsui/TextBrowser.h>
+#include <cppconsui/TextInput.h>
 #include <cppconsui/LineStyle.h>
 
 #include <libpurple/conversation.h>
@@ -33,9 +35,12 @@
 class Conversation
 : public Window
 {
+	friend class Conversations;
+
 	public:
 		Conversation(PurpleConversation *conv);
 		~Conversation();
+
 		void Receive(const char *name, const char *alias, const char *message,
 			PurpleMessageFlags flags, time_t mtime);
 
@@ -43,13 +48,14 @@ class Conversation
 
 	protected:
 		void SetPartitioning(unsigned int percentage);
-		void LoadHistory(void);
+		virtual void LoadHistory(void);
 
 		PurpleConversationType type;
 
 		Log *log;
 		Conf *conf;
 		TextBrowser *browser;
+		TextInput *input;
 		
 		int browserheight;
 		PurpleConversation *conv;
@@ -57,36 +63,48 @@ class Conversation
 
 	private:
 		Conversation();
+
+		void ConstructCommon(void);
 };
 
 class ConversationChat
 : public Conversation
 {
+	friend class Conversations;
+
 	public:
-		ConversationChat(PurpleConvChat *chat);
+		ConversationChat(PurpleConvChat *convchat);
+		ConversationChat(PurpleChat *chat);
 		~ConversationChat();
 
 	protected:
+		void LoadHistory(void);
 
 	private:
 		ConversationChat();
 
-		PurpleConvChat *chat;
+		PurpleConvChat* convchat;
+		PurpleChat* chat;
 };
 
 class ConversationIm
 : public Conversation
 {
+	friend class Conversations;
+
 	public:
-		ConversationIm(PurpleConvIm *im);
+		ConversationIm(PurpleConvIm *convim);
+		ConversationIm(PurpleBuddy *buddy);
 		~ConversationIm();
 
 	protected:
+		void LoadHistory(void);
 
 	private:
 		ConversationIm();
 
-		PurpleConvIm *im;
+		PurpleConvIm* convim;
+		PurpleBuddy* buddy;
 };
 
 

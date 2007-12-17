@@ -19,23 +19,29 @@
  * */
 
 #include "BuddyListNode.h"
+#include "Conversations.h"
+
+#include <cppconsui/Keys.h>
 
 #include <libpurple/blist.h>
 
-BuddyListNode::BuddyListNode(Widget& parent, PurpleBlistNode *node)
+BuddyListNode::BuddyListNode(TreeView& parent, PurpleBlistNode *node)
 : Label(parent, 0, 0, 64, 1, "")
 , node(node)
+, treeview(&parent)
 , id(-1)
 {
 	log = Log::Instance();
 	canfocus = true;
+
+	AddCombo(Keys::Instance()->Key_enter(), sigc::mem_fun(this, &BuddyListNode::ActionActivate));
 }
 
 BuddyListNode::~BuddyListNode()
 {
 }
 
-BuddyListNode* BuddyListNode::CreateNode(Widget& parent, PurpleBlistNode *node)
+BuddyListNode* BuddyListNode::CreateNode(TreeView& parent, PurpleBlistNode *node)
 {
 	BuddyListNode *bnode;
 
@@ -47,7 +53,7 @@ BuddyListNode* BuddyListNode::CreateNode(Widget& parent, PurpleBlistNode *node)
 		bnode = new BuddyListContact(parent, node);
 	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		bnode = new BuddyListGroup(parent, node);
-	}
+	} //TODO log some error if no match here
 
 	return bnode;
 }
@@ -92,7 +98,7 @@ BuddyListNode* BuddyListNode::GetParent(void)
 	return (BuddyListNode*)parent->ui_data;
 }
 
-BuddyListBuddy::BuddyListBuddy(Widget& parent, PurpleBlistNode *node)
+BuddyListBuddy::BuddyListBuddy(TreeView& parent, PurpleBlistNode *node)
 : BuddyListNode(parent, node)
 {
 	buddy = (PurpleBuddy*)node;
@@ -116,7 +122,16 @@ void BuddyListBuddy::Update(void)
 	SetText(text);
 }
 
-BuddyListChat::BuddyListChat(Widget& parent, PurpleBlistNode *node)
+void BuddyListBuddy::ActionActivate(void)
+{
+	PurpleConversation* conv;
+
+	log->Write(PURPLE_DEBUG_MISC, "Buddy activated!");
+
+	Conversations::Instance()->create_conversation(node);
+}
+
+BuddyListChat::BuddyListChat(TreeView& parent, PurpleBlistNode *node)
 : BuddyListNode(parent, node)
 {
 	chat = (PurpleChat*)node;
@@ -137,7 +152,14 @@ void BuddyListChat::Update(void)
 	SetText(text);
 }
 
-BuddyListContact::BuddyListContact(Widget& parent, PurpleBlistNode *node)
+void BuddyListChat::ActionActivate(void)
+{
+	log->Write(PURPLE_DEBUG_MISC, "Chat activated!");
+
+	Conversations::Instance()->create_conversation(node);
+}
+
+BuddyListContact::BuddyListContact(TreeView& parent, PurpleBlistNode *node)
 : BuddyListNode(parent, node)
 {
 	contact = (PurpleContact*)node;
@@ -175,7 +197,12 @@ void BuddyListContact::Update(void)
 	SetText(text);
 }
 
-BuddyListGroup::BuddyListGroup(Widget& parent, PurpleBlistNode *node)
+void BuddyListContact::ActionActivate(void)
+{
+	log->Write(PURPLE_DEBUG_MISC, "Contact activated!");
+}
+
+BuddyListGroup::BuddyListGroup(TreeView& parent, PurpleBlistNode *node)
 : BuddyListNode(parent, node)
 {
 	group = (PurpleGroup*)node;
@@ -194,4 +221,10 @@ void BuddyListGroup::Update(void)
 	text = purple_group_get_name(group);
 	Resize(width(text), 1);
 	SetText(text);
+}
+
+void BuddyListGroup::ActionActivate(void)
+{
+	log->Write(PURPLE_DEBUG_MISC, "Group activated!");
+	treeview->ActionToggleCollapsed();
 }

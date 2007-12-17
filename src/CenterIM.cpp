@@ -315,7 +315,7 @@ void CenterIM::io_init(void)
 	keys = Keys::Instance();
 
 	/* Key combinations */
-	AddCombo(Keys::Instance()->Key_ctrl_q(), sigc::mem_fun(this, &CenterIM::Quit));
+	AddCombo(Keys::Instance()->Key_ctrl_q(), sigc::mem_fun(this, &CenterIM::Quit), true);
 
 	SetInputChild(windowmanager);
 
@@ -395,7 +395,7 @@ gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 	gchar *ss;
 	buf[rd] = '\0'; //TODO remove
 	gunichar uc = g_utf8_get_char(buf);
-	log->Write(PURPLE_DEBUG_MISC, "input: %s (%02x %02x %02x) %d %d %d %s", buf, buf[0], buf[1], buf[2],
+	log->Write(PURPLE_DEBUG_MISC, "input: %s (%02x %02x %02x) %d utf8? %d uc: %d %s", buf, buf[0], buf[1], buf[2],
 		rd, g_utf8_validate(buf, rd, NULL), uc, key_left); //TODO remove
 	}
 

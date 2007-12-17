@@ -21,6 +21,8 @@
 #include "Conversations.h"
 #include "Conversation.h"
 
+#include <vector>
+
 Conversations* Conversations::instance = NULL;
 
 Conversations* Conversations::Instance(void)
@@ -29,6 +31,43 @@ Conversations* Conversations::Instance(void)
 	return instance;
 }
 
+Conversation* Conversations::Find(PurpleBuddy* buddy)
+{
+	std::vector<Conversation*>::iterator i;
+	Conversation* conv;
+	ConversationIm* im;
+	ConversationChat* chat;
+
+	for (i = conversations.begin(); i != conversations.end(); i++) {
+		conv = (Conversation*)(*i);
+		if ((im = dynamic_cast<ConversationIm*>(conv)) && im->buddy == buddy) {
+			return conv;
+		} else if ((chat = dynamic_cast<ConversationChat*>(conv))) {
+			/* we are not looking for a chat */;
+		} //TODO throw exception or log error
+	}
+
+	return NULL;
+}
+
+Conversation* Conversations::Find(PurpleChat* chat)
+{
+	std::vector<Conversation*>::iterator i;
+	Conversation* conv;
+	ConversationIm* im;
+	ConversationChat* convchat;
+
+	for (i = conversations.begin(); i != conversations.end(); i++) {
+		conv = (Conversation*)(*i);
+		if ((convchat = dynamic_cast<ConversationChat*>(conv)) && convchat->chat == chat) {
+			return conv;
+		} else if ((im = dynamic_cast<ConversationIm*>(conv))) {
+			/* we are not looking for a chat */;
+		} //TODO throw exception or log error
+	}
+
+	return NULL;
+}
 void Conversations::Delete(void)
 {
 	if (instance) {
@@ -39,27 +78,60 @@ void Conversations::Delete(void)
 
 void Conversations::create_conversation(PurpleConversation *conv)
 {
+	g_assert(conv != NULL);
+
 	PurpleConversationType type;
 
-	//TODO add the new object to a hashtable of some sort so we can iterate?
 	Conversation *conversation = (Conversation*)conv->ui_data;
 	if (conversation != NULL) {
 		 //TODO should be debug()
-		fprintf(stderr, "create_conversation(): already have an object\n");
+		fprintf(stderr, "create_conversation(conversation): already have an object\n");
 		return;
 	}
 
 	type = purple_conversation_get_type(conv);
 	if (type == PURPLE_CONV_TYPE_CHAT) {
-		new ConversationChat(purple_conversation_get_chat_data(conv));
+		conversation = new ConversationChat(purple_conversation_get_chat_data(conv));
 	} else if (type == PURPLE_CONV_TYPE_IM) {
-		new ConversationIm(purple_conversation_get_im_data(conv));
+		conversation = new ConversationIm(purple_conversation_get_im_data(conv));
 	} else {
-		log->Write(PURPLE_DEBUG_ERROR, "unhandled conversation type: %i", type);
+		log->Write(PURPLE_DEBUG_ERROR, "unhandled conversation type: %i\n", type);
 		return;
 	}
 
-	windowmanager->Add((Window*)conv->ui_data);
+	conversations.push_back(conversation);
+
+	windowmanager->Add(conversation);
+}
+
+void Conversations::create_conversation(PurpleBlistNode *node)
+{
+	Conversation *conversation;
+
+	g_assert(node != NULL);
+
+	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+		conversation = Find((PurpleBuddy*)node);
+	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
+		conversation = Find((PurpleChat*)node);
+	} //TODO log some error if no match here
+	
+	if (conversation != NULL) {
+		 //TODO should be debug()
+		log->Write(PURPLE_DEBUG_MISC, "create_conversation(buddy): already have an object\n");
+		return;
+	}
+
+	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+		conversation = new ConversationIm((PurpleBuddy*)node);
+	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
+		conversation = new ConversationChat((PurpleChat*)node);
+	}
+		log->Write(PURPLE_DEBUG_MISC, "conversation: %p\n", conversation);
+
+	conversations.push_back(conversation);
+
+	windowmanager->Add(conversation);
 }
 
 void Conversations::destroy_conversation(PurpleConversation *conv)
@@ -80,7 +152,7 @@ void Conversations::write_conv(PurpleConversation *conv, const char *name,
 	const char *alias, const char *message, PurpleMessageFlags flags, time_t mtime)
 {
 	Conversation *conversation = (Conversation*)conv->ui_data;
-	g_return_if_fail(conversation != NULL);
+	g_return_if_fail(conversation != NULL);//TODO create new conversation here or throw exception?
 
 	conversation->Receive(name, alias, message, flags, mtime);
 }

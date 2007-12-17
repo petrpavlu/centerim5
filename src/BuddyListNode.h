@@ -25,6 +25,7 @@
 #include "Conf.h"
 
 #include <cppconsui/Label.h>
+#include <cppconsui/TreeView.h>
 
 #include <libpurple/blist.h>
 
@@ -32,10 +33,10 @@ class BuddyListNode
 : public Label
 {
 	public:
-		BuddyListNode(Widget& parent, PurpleBlistNode *node);
+		BuddyListNode(TreeView& parent, PurpleBlistNode *node);
 		~BuddyListNode();
 
-		static BuddyListNode* CreateNode(Widget& parent, PurpleBlistNode *node);
+		static BuddyListNode* CreateNode(TreeView& parent, PurpleBlistNode *node);
 
 		virtual void Draw(void);
 
@@ -44,12 +45,17 @@ class BuddyListNode
 		virtual void GiveFocus(void);
 		virtual void TakeFocus(void);
 
+		/* Actions for keybindings */
+		virtual void ActionActivate(void) =0;
+
 		BuddyListNode* GetParent(void);
 
 		int id;
 
 	protected:
 		PurpleBlistNode *node;
+
+		TreeView *treeview;
 
 		Log *log;
 		Conf *conf;
@@ -61,10 +67,12 @@ class BuddyListBuddy
 : public BuddyListNode
 {
 	public:
-		BuddyListBuddy(Widget& parent, PurpleBlistNode *node);
+		BuddyListBuddy(TreeView& parent, PurpleBlistNode *node);
 
 		virtual void Draw(void);
 		virtual void Update(void);
+
+		virtual void ActionActivate(void);
 
 	protected:
 		PurpleBuddy *buddy;
@@ -76,10 +84,12 @@ class BuddyListChat
 : public BuddyListNode
 {
 	public:
-		BuddyListChat(Widget& parent, PurpleBlistNode *node);
+		BuddyListChat(TreeView& parent, PurpleBlistNode *node);
 
 		virtual void Draw(void);
 		virtual void Update(void);
+
+		virtual void ActionActivate(void);
 
 	protected:
 		PurpleChat *chat;
@@ -91,10 +101,12 @@ class BuddyListContact
 : public BuddyListNode
 {
 	public:
-		BuddyListContact(Widget& parent, PurpleBlistNode *node);
+		BuddyListContact(TreeView& parent, PurpleBlistNode *node);
 
 		virtual void Draw(void);
 		virtual void Update(void);
+
+		virtual void ActionActivate(void);
 
 	protected:
 		PurpleContact *contact;
@@ -106,10 +118,12 @@ class BuddyListGroup
 : public BuddyListNode
 {
 	public:
-		BuddyListGroup(Widget& parent, PurpleBlistNode *node);
+		BuddyListGroup(TreeView& parent, PurpleBlistNode *node);
 
 		virtual void Draw(void);
 		virtual void Update(void);
+
+		virtual void ActionActivate(void);
 
 	protected:
 		PurpleGroup *group;
