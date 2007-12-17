@@ -30,30 +30,50 @@ class InputProcessor
 		InputProcessor();
 		~InputProcessor();
 
-		/* Notes on how input is processed
+		/* Notes on how input is processed:
 		 *
-		 * Input is processed by first checking for overriding
+		 * There are 4 steps when processing input:
+		 *  1: overriding key combos
+		 *  2: input child processing
+		 *  3: other key combos
+		 *  4: raw input processing
+		 *
+		 * Overriding key combos:
+		 * **********************
+		 * Input is processed by checking for overriding
 		 * key combinations. If a match is found, the signal for
-		 * that combo is executed, and the function returns 
-		 * the number of bytes of that combo.
+		 * that combo is sent, and the function returns 
+		 * the number of bytes used by that combo.
 		 *
-		 * If no match is found the ProcessInput function of
-		 * a child, if not NULL is called. If this returns a
-		 * non-zero value the functions returns that value.
+		 * Input child processing:
+		 * ***********************
+		 * I an input child is assigned, processing is done
+		 * recursively by this child object. If this returns a
+		 * non-zero value indicating that more bytes are needed
+		 * or bytes were used the functions returns that value.
 		 *
-		 * If no input was eaten by the child, or no child was
-		 * selected normal key combinations are checked.
-		 * If a match is found, the signal for that combo is
-		 * executed, and the function returns the number of
-		 * bytes of that combo.
+		 * Other key combos:
+		 * *****************
+		 * Input is processed by checking for normal
+		 * key combinations. If a match is found, the signal for
+		 * that combo is sent, and the function returns 
+		 * the number of bytes used by that combo.
 		 *
-		 * TODO update and make accurate this description
+		 * Raw input processing:
+		 * *********************
+		 * Non key combo raw input processing by objects. Used
+		 * for e.g. input widgets.
+		 *
+		 * TODO update and make accurate this description:
+		 * return values could be negative! Explain why/when
 		 * */
 		int ProcessInput(const char *input, const int bytes);
 
 	protected:
 		virtual int ProcessInputText(const char *input, const int bytes);
 
+		/* Set the child object which must process input before this object
+		 * */
 		void SetInputChild(InputProcessor *inputchild);
 
 		void AddCombo(const char *key, sigc::slot<void> action, bool override = false);
@@ -63,7 +83,7 @@ class InputProcessor
 	private:
 		/* Notes on how key combinations are stored and searched
 		 *
-		 * Key combinations are stored in a vector (array) stabally
+		 * Key combinations are stored in a vector (array) stably
 		 * sorted on the first byte of the key value only.
 		 *
 		 * This allows for fast searching using binary search. Inserts

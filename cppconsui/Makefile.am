@@ -7,6 +7,8 @@ libcppconsui_la_SOURCES =\
 	Container.h \
 	TextBrowser.cpp \
 	TextBrowser.h \
+	TextInput.cpp \
+	TextInput.h \
 	TextWindow.cpp \
 	TextWindow.h \
 	Widget.cpp \

@@ -54,6 +54,7 @@ void TextBrowser::SetLines(std::vector<Glib::ustring> &lines_)
 	Redraw();
 }
 
+//TODO remove code duplication for redraw on follow
 void TextBrowser::AddLines(std::vector<Glib::ustring> &lines)
 {
 	std::vector<Glib::ustring>::iterator i;
@@ -69,7 +70,7 @@ void TextBrowser::AddLines(std::vector<Glib::ustring> &lines)
 	}
 }
 
-void TextBrowser::AddLine(Glib::ustring &line)
+void TextBrowser::AddLine(Glib::ustring line)
 {
 	lines.push_back(line);
 
@@ -79,6 +80,22 @@ void TextBrowser::AddLine(Glib::ustring &line)
 	} else if (lines.size() <= h) {
 		Redraw();
 	}
+}
+
+void TextBrowser::AddBytes(const char *s, int bytes)
+{
+	Glib::ustring *line = NULL;
+
+	if (!lines.size()) {
+		AddLine("");
+		if (follow)
+			pos = (h > lines.size()) ? 0 : lines.size()-h;
+	}
+	line = &lines.back();
+
+	line->append(s, bytes);
+
+	Redraw();
 }
 
 void TextBrowser::Clear(void)
