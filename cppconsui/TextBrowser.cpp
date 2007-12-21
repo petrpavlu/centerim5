@@ -101,6 +101,7 @@ void TextBrowser::AddBytes(const char *s, int bytes)
 void TextBrowser::Clear(void)
 {
 	lines.clear();
+	werase(area->w);
 
 	Redraw();
 }
@@ -126,6 +127,24 @@ void TextBrowser::RemoveBack(void)
 		pos--;
 		Redraw();
 	}
+}
+
+//TODO can the return value be a reference?
+Glib::ustring TextBrowser::AsString(Glib::ustring seperator)
+{
+	Glib::ustring str;
+
+	std::vector<Glib::ustring>::iterator i;
+
+	i = lines.begin();
+	str.append(*i);
+	i++;
+	for (; i != lines.end(); i++) {
+		str.append(seperator);
+		str.append(*i);
+	}
+
+	return str;
 }
 
 void TextBrowser::Draw(void)

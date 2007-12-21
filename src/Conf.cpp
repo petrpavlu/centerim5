@@ -80,7 +80,7 @@ void Conf::Save(void)
 	/* Save the list of loaded plugins */
         purple_plugins_save_loaded(CONF_PLUGIN_SAVE_PREF);
 
-	/* Preferences are save automatically by libpurple, so no
+	/* Preferences are saved automatically by libpurple, so no
 	 * call to a `purple_prefs_save' */
 }
 

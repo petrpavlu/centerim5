@@ -84,8 +84,8 @@ void Conversations::create_conversation(PurpleConversation *conv)
 
 	Conversation *conversation = (Conversation*)conv->ui_data;
 	if (conversation != NULL) {
-		 //TODO should be debug()
-		fprintf(stderr, "create_conversation(conversation): already have an object\n");
+		 //TODO should be debug() / debug level message, not an error
+		log->Write(PURPLE_DEBUG_ERROR, "create_conversation(conversation): already have an object\n");
 		return;
 	}
 
@@ -153,6 +153,8 @@ void Conversations::write_conv(PurpleConversation *conv, const char *name,
 {
 	Conversation *conversation = (Conversation*)conv->ui_data;
 	g_return_if_fail(conversation != NULL);//TODO create new conversation here or throw exception?
+						// we should have created a conversation before, so this might not even happen
+						// so add some error logging here if it does
 
 	conversation->Receive(name, alias, message, flags, mtime);
 }

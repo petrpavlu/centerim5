@@ -47,6 +47,8 @@ class TextBrowser
 		void RemoveFront(void);
 		void RemoveBack(void);
 
+		Glib::ustring AsString(Glib::ustring seperator = "\n");
+
 		virtual void Draw(void);
 
 	protected:

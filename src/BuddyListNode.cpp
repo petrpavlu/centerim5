@@ -124,8 +124,6 @@ void BuddyListBuddy::Update(void)
 
 void BuddyListBuddy::ActionActivate(void)
 {
-	PurpleConversation* conv;
-
 	log->Write(PURPLE_DEBUG_MISC, "Buddy activated!");
 
 	Conversations::Instance()->create_conversation(node);

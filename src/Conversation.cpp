@@ -27,6 +27,7 @@
 
 #include <cppconsui/TextBrowser.h>
 #include <cppconsui/LineStyle.h>
+#include <cppconsui/Keys.h>
 
 Conversation::Conversation(PurpleConversation *conv)
 : Window(0, 0, 80, 24, NULL)
@@ -50,10 +51,13 @@ Conversation::Conversation(PurpleConversation *conv)
 	AddWidget(browser);
 	AddWidget(input);
 	SetInputChild(input);
+
+	AddCombo(Keys::Instance()->Key_ctrl_x(), sigc::mem_fun(this, &Conversation::Send),true);
 }
 
 void Conversation::Draw(void)
 {
+	//TODO draw the seperator line using a line widget
 	mvwadd_wch(area->w, browserheight, 0, linestyle->HBegin());
 	for (int i = 1; i+1 < w; i++) {
 		mvwadd_wch(area->w, browserheight, i, linestyle->H());
@@ -77,6 +81,16 @@ void Conversation::Receive(const char *name, const char *alias, const char *mess
 	browser->AddLine(text);
 }
 
+//TODO if this remains empty, make it a pure virtual function
+void Conversation::Send(void)
+{
+}
+
+//TODO if this remains empty, make it a pure virtual function
+void Conversation::CreatePurpleConv(void)
+{
+}
+
 void Conversation::SetPartitioning(unsigned int percentage)
 {
 	int inputheight;
@@ -96,6 +110,7 @@ void Conversation::SetPartitioning(unsigned int percentage)
 	input->MoveResize(1, browserheight+1, w-4, inputheight);
 }
 
+//TODO if this remains empty, make it a pure virtual function
 void Conversation::LoadHistory(void)
 {
 }
@@ -116,11 +131,20 @@ ConversationChat::ConversationChat(PurpleChat* chat)
 , convchat(NULL)
 , chat(chat)
 {
+	CreatePurpleConv();
 	LoadHistory();
 }
 
 ConversationChat::~ConversationChat()
 {
+}
+
+void ConversationChat::CreatePurpleConv(void)
+{
+	//TODO adapt from conversationim::createpurpleconv
+	//if (!convchat) {
+	//	convchat = purple_conversation_new(PURPLE_CONV_TYPE_CHAT, purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
+	//}
 }
 
 void ConversationChat::LoadHistory(void)
@@ -176,11 +200,35 @@ ConversationIm::ConversationIm(PurpleBuddy* buddy)
 , convim(NULL)
 , buddy(buddy)
 {
+	CreatePurpleConv();
 	LoadHistory();
 }
 
 ConversationIm::~ConversationIm()
 {
+}
+
+void ConversationIm::Send(void)
+{
+	if (!convim)
+		CreatePurpleConv();
+
+	purple_conv_im_send(convim, input->AsString("<br>").c_str());
+
+	input->Clear();
+}
+
+void ConversationIm::CreatePurpleConv(void)
+{
+	if (!convim) {
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
+		convim = PURPLE_CONV_IM(conv);
+	}
+
+
+	if (!convim) //TODO only log an error if account is connected
+		log->Write(PURPLE_DEBUG_ERROR, "unable to open conversation with ");
+		//TODO add some info based on buddy
 }
 
 void ConversationIm::LoadHistory(void)

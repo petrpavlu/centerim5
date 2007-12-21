@@ -43,10 +43,13 @@ class Conversation
 
 		void Receive(const char *name, const char *alias, const char *message,
 			PurpleMessageFlags flags, time_t mtime);
+		virtual void Send(void);
 
 		virtual void Draw(void);
 
 	protected:
+		virtual void CreatePurpleConv(void);
+
 		void SetPartitioning(unsigned int percentage);
 		virtual void LoadHistory(void);
 
@@ -77,7 +80,11 @@ class ConversationChat
 		ConversationChat(PurpleChat *chat);
 		~ConversationChat();
 
+		//void Send(void);
+
 	protected:
+		void CreatePurpleConv(void);
+
 		void LoadHistory(void);
 
 	private:
@@ -97,7 +104,11 @@ class ConversationIm
 		ConversationIm(PurpleBuddy *buddy);
 		~ConversationIm();
 
+		void Send(void);
+
 	protected:
+		void CreatePurpleConv(void);
+
 		void LoadHistory(void);
 
 	private:
