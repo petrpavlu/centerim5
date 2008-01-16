@@ -220,12 +220,14 @@ void Window::Draw(void)
 
 void Window::Show()
 {
+	top_panel(panel);
 	//TODO emit signal to show panel
 	//(while keeping stacking order)
 }
 
 void Window::Hide()
 {
+	hide_panel(panel);
 	//TODO emit signal to hide panel
 	//(while keeping stacking order)
 }

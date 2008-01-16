@@ -91,13 +91,12 @@ void WindowManager::Remove(Window *window)
 	if (i != windows.end()) {
 		win = *i;
 
-		if (window == focuswindow)
-			FocusPanel();
-
 		win.second.disconnect();
-
 		windows.erase(i);
 	}
+
+	FocusPanel();
+	Redraw();
 }
 
 void WindowManager::FocusPanel(void)
@@ -124,7 +123,7 @@ void WindowManager::FocusPanel(void)
 			focuswindow->TakeFocus();
 		focuswindow = win;
 		focuswindow->GiveFocus();
-		SetInputChild(win);
+		SetInputChild(focuswindow);
 	}
 }
 

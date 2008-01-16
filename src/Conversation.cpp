@@ -29,16 +29,14 @@
 #include <cppconsui/LineStyle.h>
 #include <cppconsui/Keys.h>
 
-Conversation::Conversation(PurpleConversation *conv)
+Conversation::Conversation(PurpleBlistNode* node)
 : Window(0, 0, 80, 24, NULL)
-, conv(conv)
+, conv(NULL)
+, node(node)
 {
-	if (conv)
-		conv->ui_data = this;
-
 	log = Log::Instance();
 	conf = Conf::Instance();
-	type = purple_conversation_get_type(conv);
+	type = purple_blist_node_get_type(node);
 
 	SetBorder(new Border());
 	linestyle = LineStyle::LineStyleDefault();
@@ -53,6 +51,7 @@ Conversation::Conversation(PurpleConversation *conv)
 	SetInputChild(input);
 
 	AddCombo(Keys::Instance()->Key_ctrl_x(), sigc::mem_fun(this, &Conversation::Send),true);
+	AddCombo(Keys::Instance()->Key_ctrl_w(), sigc::mem_fun(this, &Conversation::Close),true);
 }
 
 void Conversation::Draw(void)
@@ -72,9 +71,27 @@ Conversation::~Conversation()
 	delete linestyle;
 }
 
+void Conversation::SetConversation(PurpleConversation* conv_)
+{
+	g_assert(conv == NULL);
+	conv = conv_;
+}
+
+void Conversation::UnsetConversation(PurpleConversation* conv_)
+{
+	conv = NULL;
+}
+
 void Conversation::Receive(const char *name, const char *alias, const char *message,
 	PurpleMessageFlags flags, time_t mtime)
 {
+	/* we should actually parse the html in the message to text attributes
+	 * but i've not decided how to implement it.
+	 **/
+	char *html = purple_strdup_withhtml(message);
+	message = purple_markup_strip_html(html);
+	g_free(html);
+
 	Glib::ustring text = message;
 	//TODO iconv, write to a window
 	//printf("message from %s (%s) :\n%s\n", name, alias, message);
@@ -84,6 +101,11 @@ void Conversation::Receive(const char *name, const char *alias, const char *mess
 //TODO if this remains empty, make it a pure virtual function
 void Conversation::Send(void)
 {
+}
+
+void Conversation::Close(void)
+{
+	Conversations::Instance()->Close(this);
 }
 
 //TODO if this remains empty, make it a pure virtual function
@@ -115,28 +137,30 @@ void Conversation::LoadHistory(void)
 {
 }
 
-ConversationChat::ConversationChat(PurpleConvChat* convchat)
-: Conversation(convchat->conv)
-, convchat(convchat)
-{
-	g_assert(conv != NULL);
-
-	chat = purple_blist_find_chat(conv->account, conv->name);
-
-	LoadHistory();
-}
-
 ConversationChat::ConversationChat(PurpleChat* chat)
-: Conversation(NULL)
+: Conversation(&chat->node)
 , convchat(NULL)
 , chat(chat)
 {
-	CreatePurpleConv();
+	g_assert(chat != NULL);
+	//CreatePurpleConv();
 	LoadHistory();
 }
 
 ConversationChat::~ConversationChat()
 {
+}
+
+void ConversationChat::SetConversation(PurpleConversation* conv)
+{
+	Conversation::SetConversation(conv);
+	convchat = PURPLE_CONV_CHAT(conv);
+}
+
+void ConversationChat::UnsetConversation(PurpleConversation* conv)
+{
+	convchat = NULL;
+	Conversation::UnsetConversation(conv);
 }
 
 void ConversationChat::CreatePurpleConv(void)
@@ -184,23 +208,14 @@ void ConversationChat::LoadHistory(void)
 	g_list_foreach(logs, (GFunc)purple_log_free, NULL);
 	g_list_free(logs);
 }
-ConversationIm::ConversationIm(PurpleConvIm* convim)
-: Conversation(convim->conv)
-, convim(convim)
-{
-	g_assert(conv != NULL);
-
-	buddy = purple_find_buddy(conv->account, conv->name);
-
-	LoadHistory();
-}
 
 ConversationIm::ConversationIm(PurpleBuddy* buddy)
-: Conversation(NULL)
+: Conversation(&buddy->node)
 , convim(NULL)
 , buddy(buddy)
 {
-	CreatePurpleConv();
+	g_assert(buddy != NULL);
+	//CreatePurpleConv();
 	LoadHistory();
 }
 
@@ -208,12 +223,24 @@ ConversationIm::~ConversationIm()
 {
 }
 
+void ConversationIm::SetConversation(PurpleConversation* conv)
+{
+	Conversation::SetConversation(conv);
+	convim = PURPLE_CONV_IM(conv);
+}
+
+void ConversationIm::UnsetConversation(PurpleConversation* conv)
+{
+	convim = NULL;
+	Conversation::UnsetConversation(conv);
+}
+
 void ConversationIm::Send(void)
 {
 	if (!convim)
 		CreatePurpleConv();
 
-	purple_conv_im_send(convim, input->AsString("<br>").c_str());
+	purple_conv_im_send(convim, input->AsString("<br/>").c_str());
 
 	input->Clear();
 }
@@ -227,7 +254,7 @@ void ConversationIm::CreatePurpleConv(void)
 
 
 	if (!convim) //TODO only log an error if account is connected
-		log->Write(PURPLE_DEBUG_ERROR, "unable to open conversation with ");
+		log->Write(PURPLE_DEBUG_ERROR, "unable to open conversation with `%s'", buddy->name);
 		//TODO add some info based on buddy
 }
 

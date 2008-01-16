@@ -31,6 +31,7 @@
 #include <cppconsui/LineStyle.h>
 
 #include <libpurple/conversation.h>
+#include <libpurple/blist.h>
 
 class Conversation
 : public Window
@@ -38,12 +39,16 @@ class Conversation
 	friend class Conversations;
 
 	public:
-		Conversation(PurpleConversation *conv);
+		Conversation(PurpleBlistNode* node);
 		~Conversation();
+
+		virtual void SetConversation(PurpleConversation* conv);
+		virtual void UnsetConversation(PurpleConversation* conv);
 
 		void Receive(const char *name, const char *alias, const char *message,
 			PurpleMessageFlags flags, time_t mtime);
 		virtual void Send(void);
+		virtual void Close(void);
 
 		virtual void Draw(void);
 
@@ -53,7 +58,8 @@ class Conversation
 		void SetPartitioning(unsigned int percentage);
 		virtual void LoadHistory(void);
 
-		PurpleConversationType type;
+		PurpleBlistNodeType type;
+		PurpleBlistNode* node;
 
 		Log *log;
 		Conf *conf;
@@ -76,9 +82,11 @@ class ConversationChat
 	friend class Conversations;
 
 	public:
-		ConversationChat(PurpleConvChat *convchat);
 		ConversationChat(PurpleChat *chat);
 		~ConversationChat();
+
+		virtual void SetConversation(PurpleConversation* conv);
+		virtual void UnsetConversation(PurpleConversation* conv);
 
 		//void Send(void);
 
@@ -100,9 +108,11 @@ class ConversationIm
 	friend class Conversations;
 
 	public:
-		ConversationIm(PurpleConvIm *convim);
 		ConversationIm(PurpleBuddy *buddy);
 		~ConversationIm();
+
+		virtual void SetConversation(PurpleConversation* conv);
+		virtual void UnsetConversation(PurpleConversation* conv);
 
 		void Send(void);
 

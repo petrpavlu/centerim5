@@ -203,7 +203,7 @@ void BuddyList::update_node(PurpleBuddyList *list, PurpleBlistNode *node)
 {
 	/* finch does this */
 	g_return_if_fail(node != NULL);
-	
+
 	if (!node->ui_data) {
 		//TODO remove when this never happens :) (yeah, try to catch that one! :)
 		log->Write(PURPLE_DEBUG_MISC, "BuddyList::update called before BuddyList::new_node\n");
@@ -227,7 +227,7 @@ void BuddyList::update_node(PurpleBuddyList *list, PurpleBlistNode *node)
 
 void BuddyList::remove_node(PurpleBuddyList *list, PurpleBlistNode *node)
 {
-	BuddyListNode *bnode;
+	BuddyListNode* bnode;
 
 	if (!node->ui_data) return; /* nothing to remove */
 
