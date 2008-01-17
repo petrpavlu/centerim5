@@ -30,6 +30,7 @@
 
 Accounts::Accounts()
 {
+	log = Log::Instance();
 	accounts_handle = purple_accounts_get_handle();
 
 	/* connect signal handlers */
@@ -58,7 +59,6 @@ void Accounts::signed_on_(PurpleConnection *gc, gpointer p)
 
 void Accounts::signed_on(PurpleConnection *gc)
 {
-	//TODO use loggin class thingy
 	PurpleAccount *account = purple_connection_get_account(gc);
-	fprintf(stderr, "+ Account connected: %s %s\n", account->username, account->protocol_id);
+	log->Write(PURPLE_DEBUG_INFO, "+ Account connected: %s %s\n", account->username, account->protocol_id);
 }

@@ -29,21 +29,24 @@ class Container
 : public Widget
 {
 	public:
-		Container(WINDOW* parentarea, int x, int y, int w, int h);
+		Container(Widget& parent, int x, int y, int w, int h);
 		~Container();
 
-		virtual void Move(WINDOW *parentarea, int newx, int newy);
-		virtual void Resize(WINDOW *parentarea, int neww, int newh);
-		virtual void MoveResize(WINDOW *parentarea, int newx, int newy, int neww, int newh);
+		virtual void Move(int newx, int newy);
+		virtual void Resize(int neww, int newh);
+		virtual void MoveResize(int newx, int newy, int neww, int newh);
 		virtual void Draw(void);
 
 		virtual void GiveFocus(void);
 		virtual void TakeFocus(void);
 
-	protected:
+		void SetFocusChild(Widget* widget);
+		Widget* GetFocusChild(void);
+
 		void AddWidget(Widget *widget);
 		void RemoveWidget(Widget *widget);
 
+	protected:
 		Widget *focuschild;
 
 	private:

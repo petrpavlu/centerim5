@@ -76,6 +76,11 @@ void CenterIM::Run(void)
 	g_main_loop_run(gmainloop);
 }
 
+void CenterIM::Quit(void)
+{
+	g_main_loop_quit(gmainloop);
+}
+
 //TODO: move next two static structs inside the CenterIM object
 static PurpleCoreUiOps centerim_core_ui_ops =
 {
@@ -309,11 +314,16 @@ void CenterIM::io_init(void)
 {
 	keys = Keys::Instance();
 
+	/* Key combinations */
+	AddCombo(Keys::Instance()->Key_ctrl_q(), sigc::mem_fun(this, &CenterIM::Quit), true);
+
 	SetInputChild(windowmanager);
 
 	curs_set(0);
 	keypad(stdscr, 1); /* without this, some keys are not translated correctly */
 	nonl();
+	cbreak();
+	raw();
 //        g_io_channel_set_encoding(channel, NULL, NULL); //TODO how to convert input to UTF-8 automatically? perhaps in io_input
 //        g_io_channel_set_buffered(channel, FALSE); //TODO not needed?
 //        g_io_channel_set_flags(channel, G_IO_FLAG_NONBLOCK, NULL ); //TODO not needed?
@@ -385,7 +395,7 @@ gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 	gchar *ss;
 	buf[rd] = '\0'; //TODO remove
 	gunichar uc = g_utf8_get_char(buf);
-	log->Write(PURPLE_DEBUG_MISC, "input: %s (%02x %02x %02x) %d %d %d %s", buf, buf[0], buf[1], buf[2],
+	log->Write(PURPLE_DEBUG_MISC, "input: %s (%02x %02x %02x) %d utf8? %d uc: %d %s", buf, buf[0], buf[1], buf[2],
 		rd, g_utf8_validate(buf, rd, NULL), uc, key_left); //TODO remove
 	}
 

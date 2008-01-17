@@ -18,21 +18,22 @@
  *
  * */
 
+#include "Curses.h"
 #include "TextBrowser.h"
 
 #include "Widget.h"
 
 #include <vector>
 
-TextBrowser::TextBrowser(WINDOW* parentarea, int x, int y, int w, int h)
-: Widget(parentarea, x, y, w, h)
+TextBrowser::TextBrowser(Widget& parent, int x, int y, int w, int h)
+: Widget(parent, x, y, w, h)
 , pos(0)
 , follow(true)
 {
 }
 
-TextBrowser::TextBrowser(WINDOW* parentarea, int x, int y, int w, int h, std::vector<Glib::ustring> &lines)
-: Widget(parentarea, x, y, w, h)
+TextBrowser::TextBrowser(Widget& parent, int x, int y, int w, int h, std::vector<Glib::ustring> &lines)
+: Widget(parent, x, y, w, h)
 {
 	AddLines(lines);
 }
@@ -53,6 +54,7 @@ void TextBrowser::SetLines(std::vector<Glib::ustring> &lines_)
 	Redraw();
 }
 
+//TODO remove code duplication for redraw on follow
 void TextBrowser::AddLines(std::vector<Glib::ustring> &lines)
 {
 	std::vector<Glib::ustring>::iterator i;
@@ -68,7 +70,7 @@ void TextBrowser::AddLines(std::vector<Glib::ustring> &lines)
 	}
 }
 
-void TextBrowser::AddLine(Glib::ustring &line)
+void TextBrowser::AddLine(Glib::ustring line)
 {
 	lines.push_back(line);
 
@@ -80,9 +82,26 @@ void TextBrowser::AddLine(Glib::ustring &line)
 	}
 }
 
+void TextBrowser::AddBytes(const char *s, int bytes)
+{
+	Glib::ustring *line = NULL;
+
+	if (!lines.size()) {
+		AddLine("");
+		if (follow)
+			pos = (h > lines.size()) ? 0 : lines.size()-h;
+	}
+	line = &lines.back();
+
+	line->append(s, bytes);
+
+	Redraw();
+}
+
 void TextBrowser::Clear(void)
 {
 	lines.clear();
+	werase(area->w);
 
 	Redraw();
 }
@@ -110,6 +129,24 @@ void TextBrowser::RemoveBack(void)
 	}
 }
 
+//TODO can the return value be a reference?
+Glib::ustring TextBrowser::AsString(Glib::ustring seperator)
+{
+	Glib::ustring str;
+
+	std::vector<Glib::ustring>::iterator i;
+
+	i = lines.begin();
+	str.append(*i);
+	i++;
+	for (; i != lines.end(); i++) {
+		str.append(seperator);
+		str.append(*i);
+	}
+
+	return str;
+}
+
 void TextBrowser::Draw(void)
 {
 	int i, j; // i for current lines, j for the number of wrapped lines
@@ -120,9 +157,9 @@ void TextBrowser::Draw(void)
 		//TODO prepare string for on-screen printing, or should Glib::ustring do this automatically?
 		//probably not, as Glib::ustring doesn't know the output width
 		//also should trim / wrap the string to fit the width of the widget
-		mvwaddstr(area, i-pos, 0, line.c_str());
+		mvwaddstr(area->w, i-pos, 0, line.c_str());
 		/* clear until the end of the line */
-		wclrtoeol(area);
+		wclrtoeol(area->w);
 	}
 
 	Widget::Draw();

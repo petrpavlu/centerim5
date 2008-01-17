@@ -29,7 +29,7 @@ class Label
 : public Widget
 {
 	public:
-		Label(WINDOW* parentarea, int x, int y, int w, int h, Glib::ustring text);
+		Label(Widget& parent, int x, int y, int w, int h, Glib::ustring text);
 		~Label();
 
 		virtual void Draw(void);

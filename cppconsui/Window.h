@@ -43,17 +43,12 @@ class Window
 		Window(int x, int y, int w, int h, Border *border);
 		~Window();
 
-		virtual void Move(WINDOW* parentarea, int newx, int newy)
-			{ Move(newx, newy); }
 		virtual void Move(int newx, int newy);
-		virtual void Resize(WINDOW* window, int neww, int newh)
-			{ Resize(neww, newh); }
 		virtual void Resize(int neww, int newh);
-		virtual void MoveResize(WINDOW *parentarea, int newx, int newy, int neww, int newh)
-			{ MoveResize(newx, newy, neww, newh); }
 		virtual void MoveResize(const Rect &rect)
 			{ MoveResize(rect.x, rect.y, rect.width, rect.height); }
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
+		void UpdateArea();
 		virtual void SetBorder(Border *border);
 		virtual Border* GetBorder(void);
 
@@ -75,8 +70,8 @@ class Window
 		/* dimensions to use when copying from pad to window */
 		int copy_x, copy_y, copy_w, copy_h;
 
-		/* the pad and the `real' window for this window */
-		WINDOW *window, *realwindow;
+		/* the `real' window for this window */
+		WINDOW *realwindow;
 		PANEL *panel;
 		Border *border; 
 

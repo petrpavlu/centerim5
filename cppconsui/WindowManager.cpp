@@ -20,6 +20,7 @@
 
 #include "WindowManager.h"
 #include "Window.h"
+#include "Keys.h"
 
 #if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
 #include <ncurses.h>
@@ -46,6 +47,8 @@ WindowManager::WindowManager(void)
 
 	if (!defaultwindow)
 		;//TODO throw an exception that we cant init curses
+
+	AddCombo(Keys::Instance()->Key_ctrl_l() /* ^L */, sigc::mem_fun(this, &WindowManager::Draw), true);
 }
 
 WindowManager::~WindowManager(void)
@@ -73,6 +76,7 @@ void WindowManager::Add(Window *window)
 	}
 
 	FocusPanel();
+	Redraw();
 }
 
 void WindowManager::Remove(Window *window)
@@ -87,13 +91,12 @@ void WindowManager::Remove(Window *window)
 	if (i != windows.end()) {
 		win = *i;
 
-		if (window == focuswindow)
-			FocusPanel();
-
 		win.second.disconnect();
-
 		windows.erase(i);
 	}
+
+	FocusPanel();
+	Redraw();
 }
 
 void WindowManager::FocusPanel(void)
@@ -120,7 +123,7 @@ void WindowManager::FocusPanel(void)
 			focuswindow->TakeFocus();
 		focuswindow = win;
 		focuswindow->GiveFocus();
-		SetInputChild(win);
+		SetInputChild(focuswindow);
 	}
 }
 
@@ -177,6 +180,7 @@ void WindowManager::Draw(void)
 
 	for (i = windows.begin(); i != windows.end(); i++)
 		(*i).first->Draw();
+
 
 	update_panels();
 	doupdate();

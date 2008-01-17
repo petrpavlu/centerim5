@@ -21,6 +21,8 @@
 #ifndef __ACCOUNTS_H__
 #define __ACCOUNTS_H__
 
+#include "Log.h"
+
 #include <libpurple/connection.h>
 
 class Accounts
@@ -35,6 +37,8 @@ class Accounts
 		/* callbacks */
 		static void signed_on_(PurpleConnection *gc, gpointer p);
 		void signed_on(PurpleConnection *gc);
+
+		Log *log;
 
 		void *accounts_handle;
 };

@@ -2,10 +2,13 @@ lib_LTLIBRARIES = libcppconsui.la
 
 # When you add files here, also add them in po/POTFILES.in
 libcppconsui_la_SOURCES =\
+	Curses.h \
 	Container.cpp \
 	Container.h \
 	TextBrowser.cpp \
 	TextBrowser.h \
+	TextInput.cpp \
+	TextInput.h \
 	TextWindow.cpp \
 	TextWindow.h \
 	Widget.cpp \

@@ -18,40 +18,30 @@
  *
  * */
 
-#include "Curses.h"
-#include "Label.h"
+#ifndef __TEXT_INPUT_H__
+#define __TEXT_INPUT_H__
 
-Label::Label(Widget& parent, int x, int y, int w, int h, Glib::ustring text)
-: Widget(parent, x, y, w, h)
-, text(text)
+#include "TextBrowser.h"
+
+#include <glibmm/ustring.h>
+#include <vector>
+
+class TextInput
+: public TextBrowser
 {
-}
+	public:
+		TextInput(Widget& parent, int x, int y, int w, int h);
+		TextInput(Widget& parent, int x, int y, int w, int h, std::vector<Glib::ustring> &lines);
+		~TextInput();
 
-Label::~Label()
-{
-}
+		virtual void Draw(void);
 
-void Label::Draw(void)
-{
-	//TODO unicode drawing
-	//TODO focus stuff is for testing *only*
-	if (focus) {
-		mvwaddstr(area->w, 0, 0, "*");
-		mvwaddstr(area->w, 0, 1, text.c_str());
-	} else
-		mvwaddstr(area->w, 0, 0, text.c_str());
-}
+		virtual int ProcessInputText(const char *input, const int bytes);
 
-void Label::SetText(const Glib::ustring str)
-{
-	if (text == str) return;
+	protected:
 
-	text = str;
-	wclear(area->w);
-	signal_redraw();
-}
+	private:
+		TextInput();
+};
 
-Glib::ustring Label::GetText(void)
-{
-	return text;
-}
+#endif /* __TEXT_INPUT_H__ */

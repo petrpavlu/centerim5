@@ -26,22 +26,28 @@
 #include <glibmm/ustring.h>
 #include <vector>
 
+//TODO add get/set for follow (and pos?)
 class TextBrowser
 : public Widget
 {
 	public:
-		TextBrowser(WINDOW* parentarea, int x, int y, int w, int h);
-		TextBrowser(WINDOW* parentarea, int x, int y, int w, int h, std::vector<Glib::ustring> &lines);
+		TextBrowser(Widget& parent, int x, int y, int w, int h);
+		TextBrowser(Widget& parent, int x, int y, int w, int h, std::vector<Glib::ustring> &lines);
 		~TextBrowser();
 
+		//TODO remove hackish interface and add nice functions
 		void SetLines(std::vector<Glib::ustring> &lines);
 		void AddLines(std::vector<Glib::ustring> &lines);
-		void AddLine(Glib::ustring &line);
+		//TODO add some nice functions for adding lines like for the log window
+		void AddLine(Glib::ustring line);
+		void AddBytes(const char *s, int bytes);
 		void Clear(void);
 		int Size(void);
 
 		void RemoveFront(void);
 		void RemoveBack(void);
+
+		Glib::ustring AsString(Glib::ustring seperator = "\n");
 
 		virtual void Draw(void);
 

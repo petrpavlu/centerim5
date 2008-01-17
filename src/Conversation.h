@@ -21,22 +21,112 @@
 #ifndef __CONVERSATION_H__
 #define __CONVERSATION_H__
 
+#include "Log.h"
+#include "Conf.h"
+#include "Conversations.h"
+
+#include <cppconsui/Window.h>
+#include <cppconsui/TextBrowser.h>
+#include <cppconsui/TextInput.h>
+#include <cppconsui/LineStyle.h>
+
 #include <libpurple/conversation.h>
+#include <libpurple/blist.h>
 
 class Conversation
+: public Window
 {
+	friend class Conversations;
+
 	public:
-		Conversation(PurpleConversation *conv);
+		Conversation(PurpleBlistNode* node);
 		~Conversation();
+
+		virtual void SetConversation(PurpleConversation* conv);
+		virtual void UnsetConversation(PurpleConversation* conv);
+
 		void Receive(const char *name, const char *alias, const char *message,
 			PurpleMessageFlags flags, time_t mtime);
+		virtual void Send(void);
+		virtual void Close(void);
+
+		virtual void Draw(void);
 
 	protected:
+		virtual void CreatePurpleConv(void);
+
+		void SetPartitioning(unsigned int percentage);
+		virtual void LoadHistory(void);
+
+		PurpleBlistNodeType type;
+		PurpleBlistNode* node;
+
+		Log *log;
+		Conf *conf;
+		TextBrowser *browser;
+		TextInput *input;
+		
+		int browserheight;
+		PurpleConversation *conv;
+		LineStyle *linestyle;
 
 	private:
 		Conversation();
 
-		PurpleConversation *conv;
+		void ConstructCommon(void);
 };
+
+class ConversationChat
+: public Conversation
+{
+	friend class Conversations;
+
+	public:
+		ConversationChat(PurpleChat *chat);
+		~ConversationChat();
+
+		virtual void SetConversation(PurpleConversation* conv);
+		virtual void UnsetConversation(PurpleConversation* conv);
+
+		//void Send(void);
+
+	protected:
+		void CreatePurpleConv(void);
+
+		void LoadHistory(void);
+
+	private:
+		ConversationChat();
+
+		PurpleConvChat* convchat;
+		PurpleChat* chat;
+};
+
+class ConversationIm
+: public Conversation
+{
+	friend class Conversations;
+
+	public:
+		ConversationIm(PurpleBuddy *buddy);
+		~ConversationIm();
+
+		virtual void SetConversation(PurpleConversation* conv);
+		virtual void UnsetConversation(PurpleConversation* conv);
+
+		void Send(void);
+
+	protected:
+		void CreatePurpleConv(void);
+
+		void LoadHistory(void);
+
+	private:
+		ConversationIm();
+
+		PurpleConvIm* convim;
+		PurpleBuddy* buddy;
+};
+
 
 #endif /* __CONVERSATION_H__ */

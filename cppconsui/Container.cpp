@@ -18,6 +18,7 @@
  *
  * */
 
+#include <Curses.h>
 #include <Container.h>
 
 /* NOTES:
@@ -30,8 +31,8 @@
 //this also means making the children vector
 //private (protected?>
 
-Container::Container(WINDOW* parentarea, int x, int y, int w, int h)
-: Widget(parentarea, x, y, w, h)
+Container::Container(Widget& parent, int x, int y, int w, int h)
+: Widget(parent, x, y, w, h)
 , focuschild(NULL)
 {
 	canfocus = true;
@@ -49,34 +50,34 @@ Container::~Container()
 	}
 }
 
-void Container::Move(WINDOW* parentarea, int newx, int newy)
+void Container::Move(int newx, int newy)
 {
 	Children::iterator i;
 
-	Widget::Move(parentarea, newx, newy);
+	Widget::Move(newx, newy);
 
 	for (i = children.begin(); i != children.end(); i++)
-		((*i).first)->UpdateArea(area);
+		((*i).first)->UpdateArea();
 }
 
-void Container::Resize(WINDOW* parentarea, int neww, int newh)
+void Container::Resize(int neww, int newh)
 {
 	Children::iterator i;
 
-	Widget::Resize(parentarea, neww, newh);
+	Widget::Resize(neww, newh);
 
 	for (i = children.begin(); i != children.end(); i++)
-		((*i).first)->UpdateArea(area);
+		((*i).first)->UpdateArea();
 }
 
-void Container::MoveResize(WINDOW* parentarea, int newx, int newy, int neww, int newh)
+void Container::MoveResize(int newx, int newy, int neww, int newh)
 {
 	Children::iterator i;
 
-	Widget::MoveResize(parentarea, newx, newy, neww, newh);
+	Widget::MoveResize(newx, newy, neww, newh);
 
 	for (i = children.begin(); i != children.end(); i++)
-		((*i).first)->UpdateArea(area);
+		((*i).first)->UpdateArea();
 }
 
 void Container::Draw(void)
@@ -101,12 +102,23 @@ void Container::TakeFocus(void)
 		focuschild->TakeFocus();
 }
 
+void Container::SetFocusChild(Widget* widget)
+{
+	focuschild = widget;
+}
+
+Widget* Container::GetFocusChild(void)
+{
+	return focuschild;
+}
+
 void Container::AddWidget(Widget *widget)
 {
 	Child child;
 
 	g_return_if_fail(widget != NULL);
 
+	widget->UpdateArea();
 	child.second = widget->signal_redraw.connect(sigc::mem_fun(this, &Container::OnChildRedraw));
 	child.first = widget;
 	children.push_back(child);

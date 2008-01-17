@@ -32,6 +32,8 @@ TODO:
 - add function descriptions in the header files
   you pick a format (Doxygen? you choose!)
 - make sure the copy constructor of singletons is private
+- make sure Curses.h is not distributed with cppconsui (can be
+  done in cppconsui/Makefile.am!)
  
 Less important todo's which sometimes are just ideas:
 - Add option to save/display buddy icon

@@ -46,7 +46,7 @@ AC_SUBST(PURPLE_LIBS)
 # AC_SUBST(GLIB_LIBS)
 
 # glibmm
-PKG_CHECK_MODULES(GLIBMM, [glibmm-2.4 >= 2.12.8], , [
+PKG_CHECK_MODULES(GLIBMM, [glibmm-2.4 >= 2.12.0], , [
         AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
 

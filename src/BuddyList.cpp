@@ -31,6 +31,11 @@
 #include "Log.h"
 #include "Conf.h"
 
+//TODO remove this include. non-cppconsui classes may not touch area member
+#include <cppconsui/Curses.h>
+
+
+#include <cppconsui/Keys.h>
 #include <cppconsui/Window.h>
 #include <cppconsui/TreeView.h>
 //TODO remove when signals are used
@@ -110,7 +115,7 @@ BuddyList::BuddyList()
 	Glib::signal_timeout().connect(sigc::mem_fun(this, &BuddyList::Load), 0);
 
 	//TODO get linestyle from conf
-	treeview = new TreeView(area, 0, 0, w, h, LineStyle::LineStyleDefault());
+	treeview = new TreeView(*this, 1, 1, w-2, h-2, LineStyle::LineStyleDefault());
 	AddWidget(treeview);
 }
 
@@ -179,7 +184,7 @@ void BuddyList::new_node(PurpleBlistNode *node)
 	BuddyListNode *bnode;
 
 	if (!node->ui_data) {
-		node->ui_data = bnode = BuddyListNode::CreateNode(node);
+		node->ui_data = bnode = BuddyListNode::CreateNode(*treeview, node);
 		AddNode((BuddyListNode*)node->ui_data);
 
 		Redraw();
@@ -198,7 +203,7 @@ void BuddyList::update_node(PurpleBuddyList *list, PurpleBlistNode *node)
 {
 	/* finch does this */
 	g_return_if_fail(node != NULL);
-	
+
 	if (!node->ui_data) {
 		//TODO remove when this never happens :) (yeah, try to catch that one! :)
 		log->Write(PURPLE_DEBUG_MISC, "BuddyList::update called before BuddyList::new_node\n");
@@ -222,7 +227,7 @@ void BuddyList::update_node(PurpleBuddyList *list, PurpleBlistNode *node)
 
 void BuddyList::remove_node(PurpleBuddyList *list, PurpleBlistNode *node)
 {
-	BuddyListNode *bnode;
+	BuddyListNode* bnode;
 
 	if (!node->ui_data) return; /* nothing to remove */
 

@@ -22,6 +22,7 @@
 
 #include "Container.h"
 
+#include "Curses.h"
 #if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
 #include <ncurses.h>
 #else
@@ -31,8 +32,7 @@
 #include <panel.h>
 
 Window::Window(int x, int y, int w, int h, Border *border)
-: Container(NULL, 0, 0, 0, 0)
-, window(NULL)
+: Container(*this, 1, 1, w-2, h-2)
 , realwindow(NULL)
 , panel(NULL)
 , win_x(x)
@@ -45,26 +45,19 @@ Window::Window(int x, int y, int w, int h, Border *border)
 	if (win_w < 1) win_w = 1;
 	if (win_h < 1) win_h = 1;
 
-	window = newpad(win_h, win_w);
+	UpdateArea();
 	MakeRealWindow();
-
-	if (window == NULL)
-		;//TODO throw an exception
 
 	if (border) {
 		border->Resize(win_w, win_h);
-		Container::MoveResize(window, 1, 1, win_w-2, win_h-2);
-	} else {
-		Container::MoveResize(window, 0, 0, win_w, win_h);
 	}
+	Container::MoveResize(0, 0, win_w, win_h);
 
 	Redraw();
 }
 
 Window::~Window()
 {
-	delwin(window);
-
 	if (panel) {
 		hide_panel(panel);
 		del_panel(panel);
@@ -94,27 +87,20 @@ void Window::Resize(int neww, int newh)
 	if (neww == win_w && newh == win_h)
 		return;
 
-	if (window)
-		delwin(window);
-
 	win_w = neww;
 	win_h = newh;
 
 	if (win_w < 1) win_w = 1;
 	if (win_h < 1) win_h = 1;
 
-	window = newpad(win_h, win_w);
+	UpdateArea();
 	MakeRealWindow();
-
-	if (!window)
-		;//TODO throw an exception
 
 	if (border) {
 		border->Resize(win_w, win_h);
-		Container::Resize(window, win_w-2, win_h-2);
-	} else {
-		Container::Resize(window, win_w, win_h);
 	}
+
+	Container::Resize(win_w, win_h);
 
 	Redraw();
 }
@@ -132,17 +118,28 @@ void Window::MoveResize(int newx, int newy, int neww, int newh)
 	Resize(neww, newh);
 }
 
+void Window::UpdateArea()
+{
+	if (area->w)
+		delwin(area->w);
+
+	area->w = newpad(win_h, win_w);
+
+	if (area->w == NULL)
+		;//TODO throw an exception
+		//actually, dont!
+		//after a container resize, all widgets are updatearea()'d
+		//which will probably result (unless resizing to bigger) in
+		//area == null because no pad can be made
+}
+
 void Window::SetBorder(Border *border)
 {
 	this->border = border;
 	
 	if (border) {
 		border->Resize(win_w, win_h);
-		Container::MoveResize(window, 1, 1, win_w-2, win_h-2);
-	} else {
-		Container::MoveResize(window, 0, 0, win_w, win_h);
 	}
-
 }
 
 Border* Window::GetBorder(void)
@@ -211,24 +208,26 @@ void Window::Draw(void)
 		return;
 
 	if (border)
-		border->Draw(window); //TODO draw the border
+		border->Draw(area->w); //TODO draw the border
 	
 	Container::Draw();
 
 	/* copy the virtual window to a window, then display it
 	 * on screen.
 	 * */
-	copywin(window, realwindow, copy_y, copy_x, 0, 0, copy_h, copy_w, 0);
+	copywin(area->w, realwindow, copy_y, copy_x, 0, 0, copy_h, copy_w, 0);
 }
 
 void Window::Show()
 {
+	top_panel(panel);
 	//TODO emit signal to show panel
 	//(while keeping stacking order)
 }
 
 void Window::Hide()
 {
+	hide_panel(panel);
 	//TODO emit signal to hide panel
 	//(while keeping stacking order)
 }

@@ -41,7 +41,7 @@ class TreeView
 : public Scrollable
 {
 	public:
-		TreeView(WINDOW *parentarea, int x, int y, int w, int h, LineStyle *linestyle);
+		TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linestyle);
 		~TreeView();
 
 		virtual void Draw(void);
@@ -56,11 +56,15 @@ class TreeView
 		void ActionFocusNext(void);
 		void ActionFocusPrevious(void);
 		void ActionCollapse(void);
+		void ActionToggleCollapsed(void);
 		void ActionExpand(void);
+		void ActionToggleExpanded(void)
+			{ ActionToggleCollapsed(); }
 
 		int AddNode(int parentid, Widget *widget, void *data);
 		void DeleteNode(int nodeid, bool keepsubnodes);
 
+		int GetSelected(void);
 		int GetDepth(int nodeid);
 		void* SetData(int nodeid, void *newdata);
 		void* GetData(int nodeid);

@@ -27,8 +27,10 @@ class Scrollable
 : public Widget
 {
 	public:
-		Scrollable(WINDOW* parentarea, int x, int y, int w, int h, int scrollw, int scrollh);
+		Scrollable(Widget& parent, int x, int y, int w, int h, int scrollw, int scrollh);
 		~Scrollable();
+
+		void UpdateArea();
 
 		virtual void Draw(void);
 
@@ -38,12 +40,13 @@ class Scrollable
 		void Scroll(const char *key);
 		void ResizeScroll(int neww, int newh);
 
-		WINDOW* scrollarea;
 		int scrollw, scrollh;
 		int xpos, ypos;
 
 	private:
 		Scrollable();
+
+		WINDOW* scrollarea;
 };
 
 #endif /* __SCROLLABLE_H__ */
