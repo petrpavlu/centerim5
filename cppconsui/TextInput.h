@@ -32,7 +32,7 @@ class TextInput
 	public:
 		TextInput(Widget& parent, int x, int y, int w, int h);
 		TextInput(Widget& parent, int x, int y, int w, int h, std::vector<Glib::ustring> &lines);
-		~TextInput();
+		virtual ~TextInput();
 
 		virtual void Draw(void);
 

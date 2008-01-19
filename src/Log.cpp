@@ -123,7 +123,7 @@ void Log::Write(PurpleDebugLevel level, const std::string text)
 		level = PURPLE_DEBUG_ALL;
 	} else {
 		//TODO get from config
-		PurpleDebugLevel conflevel = PURPLE_DEBUG_ALL;
+		conflevel = PURPLE_DEBUG_ALL;
 	}
 	//TODO if not enabled only show PURPLE_DEBUG_INFO level messages
 	//perhaps also give user more control on what to show
@@ -189,7 +189,9 @@ void Log::glib_log_handler(const gchar *domain, GLogLevelFlags flags,
         else
         {
 		Write(PURPLE_DEBUG_MISC, "centerim/log: Unknown glib logging level in %d\n", flags);
-                /* This will never happen. Actually should not, because some day, it will happen :) */
+                /* This will never happen. Actually should not, because some day, it will happen :)
+		 * So lets initialize lever, so that we don't have uninitialized values :) */
+		level = PURPLE_DEBUG_ALL;
         }
 
         if (msg != NULL)

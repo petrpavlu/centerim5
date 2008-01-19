@@ -31,8 +31,8 @@
 
 Conversation::Conversation(PurpleBlistNode* node)
 : Window(0, 0, 80, 24, NULL)
-, conv(NULL)
 , node(node)
+, conv(NULL)
 {
 	log = Log::Instance();
 	conf = Conf::Instance();

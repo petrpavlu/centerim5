@@ -27,12 +27,18 @@
 #include "LineStyle.h"
 #include "Keys.h"
 
+/* Put this macro around variable that will be used in the future,
+ * remove macro when variables are used.
+ * This macro is to get rid of compiler warnings
+ */
+#define VARIABLE_NOT_USED(x) x=x;
+
 TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linestyle_)
 : Scrollable(parent, x, y, w, h, w, h)
+, focusnode(NULL)
 , linestyle(linestyle_)
 , itemswidth(0)
 , itemsheight(0)
-, focusnode(NULL)
 , focuscycle(true)
 {
 	AddCombo(Keys::Instance()->Key_up(), sigc::mem_fun(this, &TreeView::ActionFocusPrevious));
@@ -281,10 +287,13 @@ void TreeView::ActionExpand(void)
 
 int TreeView::AddNode(int parentid, Widget *widget, void *data)
 {
-	int newwidth, newheight;
-	TreeNode *parent, *child, *node;
+	int newwidth = 0, newheight = 0;
+	TreeNode *parent, *child = NULL, *node;
 
 	//TODO check input and throw some errors (or return -1?)
+
+	//TODO remove this variable?
+	VARIABLE_NOT_USED(child)
 
 	/* construct a new node */
 	node = new TreeNode;
@@ -342,7 +351,10 @@ void TreeView::DeleteNode(int nodeid, bool keepsubnodes)
 {
 	TreeNodes::iterator i;
 	TreeNode *node, *child, *parent;
-	int depth;
+	int depth = 0;
+
+	// TODO remove this variable?
+	VARIABLE_NOT_USED(depth)
 
 	node = FindNode(nodeid);
 

@@ -35,7 +35,7 @@ class Widget
 {
 	public:
 		Widget(Widget& parent, int x, int y, int w, int h);
-		~Widget();
+		virtual ~Widget();
 
 		virtual void Move(int newx, int newy);
 		virtual void Resize(int neww, int newh);

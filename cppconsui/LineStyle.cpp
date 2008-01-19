@@ -22,6 +22,12 @@
 
 #include <stdlib.h>
 
+/* Put this macro around variable that will be used in the future,
+ * remove macro when variables are used.
+ * This macro is to get rid of compiler warnings
+ */
+#define VARIABLE_NOT_USED(x) x=x;
+
 /* the following are UTF-8 encoded multibyte characters */
 
 /* the *utf8 structures describe line drawing elements.
@@ -61,6 +67,7 @@ static LineElements lineelementsheavy = {
 
 LineStyle::LineStyle()
 {
+        VARIABLE_NOT_USED(lineelementsasciirounded)
 #define MAKELINEELEMENT(elem,fallback) elem = MakeLineElement(lineelementsascii.elem, fallback);
 	MAKELINEELEMENT(h, "-");
 	MAKELINEELEMENT(h_begin, "-");

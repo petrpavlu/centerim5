@@ -31,7 +31,7 @@ class TextWindow
 {
 	public:
 		TextWindow(int x, int y, int w, int h, Border *border);
-		~TextWindow();
+		virtual ~TextWindow();
 
 		void SetLines(std::vector<Glib::ustring> &lines);
 		void AddLines(std::vector<Glib::ustring> &lines);

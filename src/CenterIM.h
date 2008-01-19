@@ -51,9 +51,9 @@ class CenterIM
 		//static void ui_init_(void) { CenterIM::Instance()->ui_init(); }
 		static void ui_uninit_(void) { CenterIM::Instance()->ui_uninit(); }
 		static gboolean io_input_error_(GIOChannel *source, GIOCondition cond, gpointer data)
-			{ ((CenterIM*)data)->io_input_error(source, cond); }
+			{ return ((CenterIM*)data)->io_input_error(source, cond); }
 		static gboolean io_input_(GIOChannel *source, GIOCondition cond, gpointer data)
-			{ ((CenterIM*)data)->io_input(source, cond); }
+			{ return ((CenterIM*)data)->io_input(source, cond); }
 
 		void ui_prefs_init(void);
 		void debug_ui_init(void);

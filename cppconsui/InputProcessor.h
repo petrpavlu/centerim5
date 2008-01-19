@@ -28,7 +28,7 @@ class InputProcessor
 {
 	public:
 		InputProcessor();
-		~InputProcessor();
+		virtual ~InputProcessor();
 
 		/* Notes on how input is processed:
 		 *

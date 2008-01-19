@@ -144,7 +144,7 @@ int InputProcessor::Match(const std::string skey, const char *input, const int b
 	if (bytes < n) n = bytes;
 
 	if (strncmp(key, input, n) == 0) {
-		if (bytes < skey.size())
+ 	        if (bytes < (int)skey.size())
 			return bytes - skey.size(); /* need more input to determine a match */
 		else
 			return n; /* complete match found */

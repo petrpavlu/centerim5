@@ -71,9 +71,10 @@ void Scrollable::Draw(void)
 
 void Scrollable::Scroll(const char *key)
 {
+/* TODO do this with key combos
 	int deltay = 0, deltax = 0;
 
-/* TODO do this with key combos
+
 	if (Keys::Compare(Key_up, key)) deltay = -1;
 	else if (Keys::Compare(CUI_KEY_DOWN, key)) deltay = 1;
 	else if (Keys::Compare(CUI_KEY_LEFT, key)) deltax = -1;
@@ -95,7 +96,8 @@ void Scrollable::Scroll(const char *key)
 
 void Scrollable::ResizeScroll(int neww, int newh)
 {
-	int deltax, deltay;
+	int deltax = 0, deltay = 0;
+	//TODO: deltax and deltay aren't used in this function
 
 	if (neww == scrollw && newh == scrollh)
 		return;
