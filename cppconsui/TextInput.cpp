@@ -50,7 +50,7 @@ int TextInput::ProcessInputText(const char *input, const int bytes)
 	//TODO strchr depends on terminating zero, which we cannot expect
 	//(for now its hacked in in centerim.cpp)
 	start = input;
-	while (nl = strchr(input, '\n')) {
+	while (( nl = strchr(input, '\n') )) {
 		AddBytes(start, nl - start);
 		start = nl + 1;
 		AddLine("");

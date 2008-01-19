@@ -123,7 +123,7 @@ void Log::Write(PurpleDebugLevel level, const std::string text)
 		level = PURPLE_DEBUG_ALL;
 	} else {
 		//TODO get from config
-		PurpleDebugLevel conflevel = PURPLE_DEBUG_ALL;
+		conflevel = PURPLE_DEBUG_ALL;
 	}
 	//TODO if not enabled only show PURPLE_DEBUG_INFO level messages
 	//perhaps also give user more control on what to show

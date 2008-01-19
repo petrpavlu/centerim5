@@ -197,7 +197,7 @@ void Conversations::create_conversation_im(PurpleConversation *conv)
 
 void Conversations::create_conversation_chat(PurpleConversation *conv)
 {
-	PurpleChat *chat;
+	PurpleChat *chat = NULL;
 	Conversation* conversation;
 
 	//TODO chats not really implemented

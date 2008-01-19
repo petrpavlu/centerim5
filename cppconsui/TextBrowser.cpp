@@ -47,7 +47,7 @@ void TextBrowser::SetLines(std::vector<Glib::ustring> &lines_)
 	lines.assign(lines_.begin(), lines_.end());
 
 	if (follow)
-		pos = (h > lines.size()) ? 0 : lines.size()-h;
+		pos = (h > (int)lines.size()) ? 0 : (int)lines.size()-h;
 	else
 		pos = 0;
 
@@ -63,9 +63,9 @@ void TextBrowser::AddLines(std::vector<Glib::ustring> &lines)
 		lines.push_back(*i);
 
 	if (follow) {
-		pos = (h > lines.size()) ? 0 : lines.size()-h;
+                pos = (h > (int)lines.size()) ? 0 : (int)lines.size()-h;
 		Redraw();
-	} else if (lines.size() <= h) {
+	} else if ((int)lines.size() <= h) {
 		Redraw();
 	}
 }
@@ -75,9 +75,9 @@ void TextBrowser::AddLine(Glib::ustring line)
 	lines.push_back(line);
 
 	if (follow) {
-		pos = (h > lines.size()) ? 0 : lines.size()-h;
+	        pos = (h > (int)lines.size()) ? 0 : (int)lines.size()-h;
 		Redraw();
-	} else if (lines.size() <= h) {
+	} else if ((int)lines.size() <= h) {
 		Redraw();
 	}
 }
@@ -89,7 +89,7 @@ void TextBrowser::AddBytes(const char *s, int bytes)
 	if (!lines.size()) {
 		AddLine("");
 		if (follow)
-			pos = (h > lines.size()) ? 0 : lines.size()-h;
+			pos = (h > (int)lines.size()) ? 0 : (int)lines.size()-h;
 	}
 	line = &lines.back();
 
@@ -108,7 +108,7 @@ void TextBrowser::Clear(void)
 
 int TextBrowser::Size(void)
 {
-	return lines.size();
+	return (int)lines.size();
 }
 
 void TextBrowser::RemoveFront(void)
@@ -152,7 +152,7 @@ void TextBrowser::Draw(void)
 	int i, j; // i for current lines, j for the number of wrapped lines
 	Glib::ustring line;
 
-	for (i = pos, j = 0; (i+j-pos < h) && (i < lines.size()); i++) {
+	for (i = pos, j = 0; (i+j-pos < h) && (i < (int)lines.size()); i++) {
 		line = lines.at(i);
 		//TODO prepare string for on-screen printing, or should Glib::ustring do this automatically?
 		//probably not, as Glib::ustring doesn't know the output width

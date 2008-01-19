@@ -392,7 +392,6 @@ gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 	//keys->Refine(buf, rd);
 
 	{
-	gchar *ss;
 	buf[rd] = '\0'; //TODO remove
 	gunichar uc = g_utf8_get_char(buf);
 	log->Write(PURPLE_DEBUG_MISC, "input: %s (%02x %02x %02x) %d utf8? %d uc: %d %s", buf, buf[0], buf[1], buf[2],
