@@ -41,7 +41,7 @@ class Window
 {
 	public:
 		Window(int x, int y, int w, int h, Border *border);
-		~Window();
+		virtual ~Window();
 
 		virtual void Move(int newx, int newy);
 		virtual void Resize(int neww, int newh);

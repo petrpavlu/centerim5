@@ -42,7 +42,7 @@ class TreeView
 {
 	public:
 		TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linestyle);
-		~TreeView();
+		virtual ~TreeView();
 
 		virtual void Draw(void);
 

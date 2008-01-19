@@ -30,7 +30,7 @@ class Container
 {
 	public:
 		Container(Widget& parent, int x, int y, int w, int h);
-		~Container();
+		virtual ~Container();
 
 		virtual void Move(int newx, int newy);
 		virtual void Resize(int neww, int newh);

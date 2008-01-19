@@ -95,7 +95,8 @@ void Scrollable::Scroll(const char *key)
 
 void Scrollable::ResizeScroll(int neww, int newh)
 {
-	int deltax, deltay;
+	int deltax = 0, deltay = 0;
+	//TODO: deltax and deltay aren't used in this function
 
 	if (neww == scrollw && newh == scrollh)
 		return;

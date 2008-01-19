@@ -33,12 +33,12 @@
 
 Window::Window(int x, int y, int w, int h, Border *border)
 : Container(*this, 1, 1, w-2, h-2)
-, realwindow(NULL)
-, panel(NULL)
 , win_x(x)
 , win_y(y)
 , win_w(w)
 , win_h(h)
+, realwindow(NULL)
+, panel(NULL)
 , border(border)
 {
 	//TODO just call moveresize

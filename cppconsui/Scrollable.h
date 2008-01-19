@@ -28,7 +28,7 @@ class Scrollable
 {
 	public:
 		Scrollable(Widget& parent, int x, int y, int w, int h, int scrollw, int scrollh);
-		~Scrollable();
+		virtual ~Scrollable();
 
 		void UpdateArea();
 

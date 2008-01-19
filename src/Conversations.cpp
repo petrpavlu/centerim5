@@ -108,7 +108,7 @@ void Conversations::AddConversation(Conversation *conv)
 	Conversation* conversation;
 
 	for (i = conversations.begin(); i != conversations.end(); i++) {
-		conv = (Conversation*)(*i);
+		conversation = (Conversation*)(*i);
 		if (conversation == conv) {
 			log->Write(PURPLE_DEBUG_ERROR, "connot add a conversation to the stack twice\n");
 			return;

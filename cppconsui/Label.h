@@ -30,7 +30,7 @@ class Label
 {
 	public:
 		Label(Widget& parent, int x, int y, int w, int h, Glib::ustring text);
-		~Label();
+		virtual ~Label();
 
 		virtual void Draw(void);
 

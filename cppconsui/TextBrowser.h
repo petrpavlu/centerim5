@@ -33,7 +33,7 @@ class TextBrowser
 	public:
 		TextBrowser(Widget& parent, int x, int y, int w, int h);
 		TextBrowser(Widget& parent, int x, int y, int w, int h, std::vector<Glib::ustring> &lines);
-		~TextBrowser();
+		virtual ~TextBrowser();
 
 		//TODO remove hackish interface and add nice functions
 		void SetLines(std::vector<Glib::ustring> &lines);

@@ -29,10 +29,10 @@
 
 TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linestyle_)
 : Scrollable(parent, x, y, w, h, w, h)
+, focusnode(NULL)
 , linestyle(linestyle_)
 , itemswidth(0)
 , itemsheight(0)
-, focusnode(NULL)
 , focuscycle(true)
 {
 	AddCombo(Keys::Instance()->Key_up(), sigc::mem_fun(this, &TreeView::ActionFocusPrevious));
@@ -281,7 +281,7 @@ void TreeView::ActionExpand(void)
 
 int TreeView::AddNode(int parentid, Widget *widget, void *data)
 {
-	int newwidth, newheight;
+	int newwidth = 0, newheight = 0;
 	TreeNode *parent, *child, *node;
 
 	//TODO check input and throw some errors (or return -1?)

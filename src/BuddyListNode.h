@@ -34,7 +34,7 @@ class BuddyListNode
 {
 	public:
 		BuddyListNode(TreeView& parent, PurpleBlistNode *node);
-		~BuddyListNode();
+		virtual ~BuddyListNode();
 
 		static BuddyListNode* CreateNode(TreeView& parent, PurpleBlistNode *node);
 

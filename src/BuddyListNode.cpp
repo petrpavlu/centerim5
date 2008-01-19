@@ -27,9 +27,9 @@
 
 BuddyListNode::BuddyListNode(TreeView& parent, PurpleBlistNode *node)
 : Label(parent, 0, 0, 64, 1, "")
+, id(-1)
 , node(node)
 , treeview(&parent)
-, id(-1)
 {
 	log = Log::Instance();
 	canfocus = true;
@@ -43,7 +43,7 @@ BuddyListNode::~BuddyListNode()
 
 BuddyListNode* BuddyListNode::CreateNode(TreeView& parent, PurpleBlistNode *node)
 {
-	BuddyListNode *bnode;
+	BuddyListNode *bnode = NULL;
 
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		bnode = new BuddyListBuddy(parent, node);

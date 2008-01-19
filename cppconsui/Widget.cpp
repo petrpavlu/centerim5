@@ -24,13 +24,13 @@
 #include <string>
 
 Widget::Widget(Widget& parent, int x, int y, int w, int h)
-: parent(&parent)
-, x(x)
+: x(x)
 , y(y)
 , w(w)
 , h(h)
 , focus(false)
 , canfocus(false)
+, parent(&parent)
 {
 	area = new curses_imp_t(NULL);
 	UpdateArea();
