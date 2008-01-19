@@ -283,8 +283,8 @@ void Conversations::destroy_conversation(PurpleConversation *conv)
 	if ((conversation = Find(conv)) != NULL) {
 		conversation->UnsetConversation(NULL);
 	} else {
-		 //TODO should be debug()
-		fprintf(stderr, "ERROR: conversation withouth a window is being destroyed\n");
+		 //TODO should be debug() add some stuff to easily identify the conversation
+		log->Write(PURPLE_DEBUG_ERROR, "ERROR: conversation without a window is being destroyed: %p, %s\n", conv, conv->name);
 	}
 }
 
