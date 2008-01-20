@@ -72,7 +72,7 @@ void WindowManager::Add(Window *window)
 	if (!HasWindow(window)) {
 		info.window = window;
 		info.redraw = window->signal_redraw.connect(sigc::mem_fun(this, &WindowManager::Redraw));
-		windows_normal.insert(windows_normal.begin(), info);
+		windows.insert(windows.begin(), info);
 	}
 
 	FocusPanel();
@@ -88,13 +88,13 @@ void WindowManager::Remove(Window *window)
 
 	i = FindWindow(window);
 
-	if (i == windows_normal.end())
+	if (i == windows.end())
 		return; //TODO some debug here. cannot remove non-managed window
 
 	info = *i;
 
 	info.redraw.disconnect();
-	windows_normal.erase(i);
+	windows.erase(i);
 
 	FocusPanel();
 	Redraw();
@@ -118,12 +118,8 @@ void WindowManager::FocusPanel(void)
 	}
 
 	/* Check if there are any windows left */
-	if (windows_top.size()) {
-		win = windows_top.front().window;
-	} else if (windows_normal.size()) {
-		win = windows_normal.front().window;
-	} else if (windows_bottom.size()) {
-		win = windows_bottom.front().window;
+	if (windows.size()) {
+		win = windows.front().window;
 	} else {
 		win = NULL;
 	}
@@ -139,8 +135,8 @@ WindowManager::Windows::iterator WindowManager::FindWindow(Window *window)
 {
 	Windows::iterator i;
 
-	if (windows_normal.size()) {
-		for (i = windows_normal.begin(); i != windows_normal.end(); i++)
+	if (windows.size()) {
+		for (i = windows.begin(); i != windows.end(); i++)
 			if ((*i).window == window) break;
 	}
 
@@ -151,8 +147,8 @@ bool WindowManager::HasWindow(Window *window)
 {
 	Windows::iterator i;
 
-	if (windows_normal.size()) {
-		for (i = windows_normal.begin(); i != windows_normal.end(); i++)
+	if (windows.size()) {
+		for (i = windows.begin(); i != windows.end(); i++)
 			if ((*i).window == window) return true;
 	}
 
@@ -163,24 +159,14 @@ void WindowManager::Draw(void)
 {
 	Windows::iterator i;
 
-	for (i = windows_top.begin(); i != windows_top.end(); i++) {
+	for (i = windows.begin(); i != windows.end(); i++) {
 		(*i).window->Draw();
+		/* this updates the virtual ncurses screen */
 		wnoutrefresh((*i).window->GetWindow());
 	}
 
-	for (i = windows_normal.begin(); i != windows_normal.end(); i++) {
-		(*i).window->Draw();
-		wnoutrefresh((*i).window->GetWindow());
-	}
-
-	for (i = windows_bottom.begin(); i != windows_bottom.end(); i++) {
-		(*i).window->Draw();
-		wnoutrefresh((*i).window->GetWindow());
-	}
-
-	//update_panels();
+	/* this copies to virtual ncurses screen to the physical screen */
 	doupdate();
-	//refresh();
 }
 
 void WindowManager::Redraw(void)

@@ -42,9 +42,6 @@ class WindowManager
 		void Delete(void);
 
 		void Add(Window *window);
-		void AddOnTop(Window *window);
-		void AddOnBottom(Window *window);
-
 		void Remove(Window *window);
 
 		void Draw(void);
@@ -63,7 +60,7 @@ class WindowManager
 		Windows::iterator FindWindow(Window *window);
 		bool HasWindow(Window *window);
 
-		Windows windows_top, windows_normal, windows_bottom;
+		Windows windows;
 		WINDOW *defaultwindow;
 
 	private:
