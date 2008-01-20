@@ -1,4 +1,5 @@
 TODO:
+- see if `derwin' and similar can be used for scrollables.
 - currently singletons use the Gamma singleton pattern
   change this to the Meyers singelton pattern, which
   has the automatic destruction advantage.

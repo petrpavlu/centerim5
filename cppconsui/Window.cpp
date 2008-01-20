@@ -38,7 +38,6 @@ Window::Window(int x, int y, int w, int h, Border *border)
 , win_w(w)
 , win_h(h)
 , realwindow(NULL)
-, panel(NULL)
 , border(border)
 {
 	//TODO just call moveresize
@@ -58,11 +57,7 @@ Window::Window(int x, int y, int w, int h, Border *border)
 
 Window::~Window()
 {
-	if (panel) {
-		hide_panel(panel);
-		del_panel(panel);
-		delwin(realwindow);
-	}
+	delwin(realwindow);
 }
 
 void Window::Move(int newx, int newy)
@@ -166,40 +161,13 @@ void Window::MakeRealWindow(void)
 	copy_w = right - left - 1;
 	copy_h = bottom - top - 1;
 
-	/* this could fails if the window falls outside the visible
+	/* this could fail if the window falls outside the visible
 	 * area
 	 * */
 	win = newwin(bottom - top, right - left, top, left);
 
-	if (!win) {
-		if (panel) {
-			del_panel(panel);
-			panel = NULL;
-		}
-		delwin(realwindow);
-		realwindow = NULL;
-
-		/* we can't make a real window
-		 * so the window is probably offscreen 
-		 * */
-		return;
-	} else {
-
-		if (panel) {
-			replace_panel(panel, win);
-			delwin(realwindow);
-			realwindow = win;
-		} else {
-			delwin(realwindow);
-			realwindow = win;
-			panel = new_panel(realwindow);
-			set_panel_userptr(panel, this);
-			show_panel(panel);
-		}
-	}
-
-	if (!panel)
-		;//TODO throw an exception
+	delwin(realwindow);
+	realwindow = win;
 }
 
 void Window::Draw(void)
@@ -220,14 +188,12 @@ void Window::Draw(void)
 
 void Window::Show()
 {
-	top_panel(panel);
 	//TODO emit signal to show panel
 	//(while keeping stacking order)
 }
 
 void Window::Hide()
 {
-	hide_panel(panel);
 	//TODO emit signal to hide panel
 	//(while keeping stacking order)
 }

@@ -59,7 +59,9 @@ class Window
 		virtual int Width() { return win_w; }
 		virtual int Height() { return win_h; }
 
-		PANEL *GetPanel(void) { return panel; };
+		//TODO this is not real nice. find a better way to let the windowmanager 
+		//get this info.
+		WINDOW* GetWindow(void) { return realwindow; };
 
 		virtual void Show();
 		virtual void Hide();
@@ -72,7 +74,6 @@ class Window
 
 		/* the `real' window for this window */
 		WINDOW *realwindow;
-		PANEL *panel;
 		Border *border; 
 
 	private:

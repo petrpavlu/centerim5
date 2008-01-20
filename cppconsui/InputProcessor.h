@@ -75,6 +75,7 @@ class InputProcessor
 		/* Set the child object which must process input before this object
 		 * */
 		void SetInputChild(InputProcessor *inputchild);
+		InputProcessor* GetInputChild(void) { return inputchild; }
 
 		void AddCombo(const char *key, sigc::slot<void> action, bool override = false);
 		void RebindCombo(const char *oldkey, const char *newkey);

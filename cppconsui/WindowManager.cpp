@@ -41,7 +41,7 @@ WindowManager* WindowManager::Instance(void)
 }
 
 WindowManager::WindowManager(void)
-: focuswindow(NULL)
+: defaultwindow(NULL)
 {
 	defaultwindow = initscr();
 
@@ -67,12 +67,12 @@ void WindowManager::Delete(void)
 
 void WindowManager::Add(Window *window)
 {
-	WindowPair win;
+	WindowInfo info;
 
 	if (!HasWindow(window)) {
-		win.first = window;
-		win.second = window->signal_redraw.connect(sigc::mem_fun(this, &WindowManager::Redraw));
-		windows.insert(windows.begin(), win);
+		info.window = window;
+		info.redraw = window->signal_redraw.connect(sigc::mem_fun(this, &WindowManager::Redraw));
+		windows_normal.insert(windows_normal.begin(), info);
 	}
 
 	FocusPanel();
@@ -81,19 +81,20 @@ void WindowManager::Add(Window *window)
 
 void WindowManager::Remove(Window *window)
 {
-	WindowPair win;
+	WindowInfo info;
 	Windows::iterator i;
 
 	if (!window) return;
 
 	i = FindWindow(window);
 
-	if (i != windows.end()) {
-		win = *i;
+	if (i == windows_normal.end())
+		return; //TODO some debug here. cannot remove non-managed window
 
-		win.second.disconnect();
-		windows.erase(i);
-	}
+	info = *i;
+
+	info.redraw.disconnect();
+	windows_normal.erase(i);
 
 	FocusPanel();
 	Redraw();
@@ -101,62 +102,46 @@ void WindowManager::Remove(Window *window)
 
 void WindowManager::FocusPanel(void)
 {
-	PANEL *pan;
-	Window *win;
+	Window *win, *focus = NULL;
+	InputProcessor *inputchild;
 
-	pan = panel_below(NULL);
-	if (!pan) {
-		if (focuswindow) {
-			focuswindow->TakeFocus();
-			focuswindow = NULL;
-			SetInputChild(NULL);
-		}
-		return;
+	inputchild = GetInputChild();
+
+	if ((focus = dynamic_cast<Window*>(inputchild)) == NULL) {
+		; //TODO error about invalid input child
 	}
 
-	win = (Window*)panel_userptr(pan);
-	if (!win)
-		; //TODO throw exception about foreign panel
-
-	if (focuswindow != win) {
-		if (focuswindow)
-			focuswindow->TakeFocus();
-		focuswindow = win;
-		focuswindow->GiveFocus();
-		SetInputChild(focuswindow);
+	/* Take the focus from the old window with the focus */
+	if (focus) {
+		focus->TakeFocus();
+		SetInputChild(NULL);
 	}
-}
 
-//TODO i doubt this function will ever be used
-void WindowManager::Swap(Window* fst, Window* snd)
-{
-	Windows::iterator ifst, isnd;
-	Window *wb;
-	sigc::connection cb;
+	/* Check if there are any windows left */
+	if (windows_top.size()) {
+		win = windows_top.front().window;
+	} else if (windows_normal.size()) {
+		win = windows_normal.front().window;
+	} else if (windows_bottom.size()) {
+		win = windows_bottom.front().window;
+	} else {
+		win = NULL;
+	}
 
-	if (fst == snd) return;
-
-	ifst = FindWindow(fst);
-	isnd = FindWindow(snd);
-
-	if (ifst == windows.end() || isnd == windows.end())
-		return;
-	
-	wb = (*ifst).first;
-	cb = (*ifst).second;
-	(*ifst).first = (*isnd).first;
-	(*ifst).second = (*isnd).second;
-	(*isnd).first = wb;
-	(*isnd).second = cb;
+	/* Give the focus to the top window if there is one */
+	if (win) {
+		SetInputChild(win);
+		win->GiveFocus();
+	}
 }
 
 WindowManager::Windows::iterator WindowManager::FindWindow(Window *window)
 {
 	Windows::iterator i;
 
-	if (windows.size()) {
-		for (i = windows.begin(); i != windows.end(); i++)
-			if ((*i).first == window) break;
+	if (windows_normal.size()) {
+		for (i = windows_normal.begin(); i != windows_normal.end(); i++)
+			if ((*i).window == window) break;
 	}
 
 	return i;
@@ -166,9 +151,9 @@ bool WindowManager::HasWindow(Window *window)
 {
 	Windows::iterator i;
 
-	if (windows.size()) {
-		for (i = windows.begin(); i != windows.end(); i++)
-			if ((*i).first == window) return true;
+	if (windows_normal.size()) {
+		for (i = windows_normal.begin(); i != windows_normal.end(); i++)
+			if ((*i).window == window) return true;
 	}
 
 	return false;
@@ -178,12 +163,24 @@ void WindowManager::Draw(void)
 {
 	Windows::iterator i;
 
-	for (i = windows.begin(); i != windows.end(); i++)
-		(*i).first->Draw();
+	for (i = windows_top.begin(); i != windows_top.end(); i++) {
+		(*i).window->Draw();
+		wnoutrefresh((*i).window->GetWindow());
+	}
 
+	for (i = windows_normal.begin(); i != windows_normal.end(); i++) {
+		(*i).window->Draw();
+		wnoutrefresh((*i).window->GetWindow());
+	}
 
-	update_panels();
+	for (i = windows_bottom.begin(); i != windows_bottom.end(); i++) {
+		(*i).window->Draw();
+		wnoutrefresh((*i).window->GetWindow());
+	}
+
+	//update_panels();
 	doupdate();
+	//refresh();
 }
 
 void WindowManager::Redraw(void)

@@ -30,8 +30,6 @@
 #include <curses.h>
 #endif
 
-#include <panel.h>
-
 #include <vector>
 
 class WindowManager
@@ -44,14 +42,19 @@ class WindowManager
 		void Delete(void);
 
 		void Add(Window *window);
+		void AddOnTop(Window *window);
+		void AddOnBottom(Window *window);
+
 		void Remove(Window *window);
 
 		void Draw(void);
-		PANEL *GetPanel(Window &win);
 
 	protected:
-		typedef std::pair<Window*, sigc::connection> WindowPair;
-		typedef std::vector<WindowPair> Windows;
+		typedef struct {
+			Window* window;
+			sigc::connection redraw;
+		} WindowInfo;
+		typedef std::vector<WindowInfo> Windows;
 
 		void Redraw(void);
 
@@ -60,8 +63,7 @@ class WindowManager
 		Windows::iterator FindWindow(Window *window);
 		bool HasWindow(Window *window);
 
-		Windows windows;
-		Window *focuswindow;
+		Windows windows_top, windows_normal, windows_bottom;
 		WINDOW *defaultwindow;
 
 	private:
