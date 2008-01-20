@@ -29,8 +29,6 @@
 #include <curses.h>
 #endif
 
-#include <panel.h>
-
 Window::Window(int x, int y, int w, int h, Border *border)
 : Container(*this, 1, 1, w-2, h-2)
 , win_x(x)
@@ -188,12 +186,12 @@ void Window::Draw(void)
 
 void Window::Show()
 {
-	//TODO emit signal to show panel
+	//TODO emit signal to show window
 	//(while keeping stacking order)
 }
 
 void Window::Hide()
 {
-	//TODO emit signal to hide panel
+	//TODO emit signal to hide window
 	//(while keeping stacking order)
 }

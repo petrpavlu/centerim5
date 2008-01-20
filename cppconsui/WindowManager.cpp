@@ -28,8 +28,6 @@
 #include <curses.h>
 #endif
 
-#include <panel.h>
-
 #include <glib.h>
 
 WindowManager* WindowManager::instance = NULL;

@@ -21,8 +21,6 @@
 #include "Curses.h"
 #include "Scrollable.h"
 
-#include <panel.h>
-
 Scrollable::Scrollable(Widget& parent, int x, int y, int w, int h, int scrollw, int scrollh)
 : Widget(parent, x, y, w, h)
 , scrollw(scrollw)

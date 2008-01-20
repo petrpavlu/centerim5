@@ -34,8 +34,6 @@
 /* ncurses has border as a macro thats not nice */
 #undef border
 
-#include <panel.h>
-
 class Window
 : public Container
 {
