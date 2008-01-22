@@ -67,7 +67,25 @@ void Scrollable::Draw(void)
 	Widget::Draw();
 }
 
-void Scrollable::Scroll(const char *key)
+void Scrollable::AdjustScroll( const int newx, const int newy)
+{
+	if (newx < 0 || newy < 0 || newx > scrollw || newy > scrollh)
+		return;
+
+	if (newx > xpos + w - 1) {
+		xpos = newx - w + 1;
+	} else if (newx < xpos) {
+		xpos = newx;
+	}
+
+	if (newy > ypos + h - 1) {
+		ypos = newy - h + 1;
+	} else if (newy < ypos) {
+		ypos = newy;
+	}
+}
+
+void Scrollable::Scroll(const int deltax, const int deltay)
 {
 /* TODO do this with key combos
 	int deltay = 0, deltax = 0;
@@ -82,13 +100,14 @@ void Scrollable::Scroll(const char *key)
 	else if (Keys::Compare(CUI_KEY_HOME, key)) deltay = -scrollh;
 	else if (Keys::Compare(CUI_KEY_END, key)) deltay = scrollh;
 	//TODO more scroll posibilities?
+	*/
 	
-	//TODO not overflow safe (probably not a problem)
+	//TODO not overflow safe
 	if (xpos + deltax > scrollw - w) xpos = scrollw - w;
 	if (ypos + deltay > scrollh - h) ypos = scrollh - h;
 	if (xpos + deltax < 0) xpos = 0;
 	if (ypos + deltay < 0) ypos = 0;
-*/
+
 	Redraw();
 }
 
@@ -99,6 +118,9 @@ void Scrollable::ResizeScroll(int neww, int newh)
 
 	if (neww == scrollw && newh == scrollh)
 		return;
+
+	scrollw = neww;
+	scrollh = newh;
 
 	if (area->w)
 		delwin(area->w);

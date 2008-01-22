@@ -64,11 +64,15 @@ class Widget
 
 		int Left() { return x; }
 		int Top() { return y; }
+		int X() { return x; }
+		int Y() { return y; }
 		int Width() { return w; }
 		int Height() { return h; }
 
 		void GetSubPad(curses_imp_t& a, int x, int y, int w, int h);
 
+		//TODO encapsulate with a function, make sure derived classed call Move()/Resize()/Redraw() to emit signal
+		//also check if this is possible at all
 		sigc::signal<void, Point&, Point&> signal_move;
 		sigc::signal<void, Rect&, Rect&> signal_resize;
 		sigc::signal<void> signal_redraw;

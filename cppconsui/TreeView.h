@@ -88,6 +88,8 @@ class TreeView
 			void *data;
 			/* used for drawing *only* */ //TODO is this true?
 			int depth;
+			/* stores the total height of all child widgets together */
+			int height;
 			/* if a subgroup can be collapsed by the *user* or not. defines
 			 * if it is possible to *change*. (if open can close or if
 			 * closed can open) */

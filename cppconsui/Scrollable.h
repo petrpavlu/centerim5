@@ -36,8 +36,11 @@ class Scrollable
 
 		int ScrollWidth(void) { return scrollw; }
 		int ScrollHeight(void) { return scrollh; }
+
+		void AdjustScroll(const int newx, const int newy);
+
 	protected:
-		void Scroll(const char *key);
+		void Scroll(const int deltax, const int deltay);
 		void ResizeScroll(int neww, int newh);
 
 		int scrollw, scrollh;

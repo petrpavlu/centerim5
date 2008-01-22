@@ -54,10 +54,14 @@ TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linest
 	root = new TreeNode;
 	root->widget = NULL;
 	root->depth = -1;
+	root->height = 0;
 	root->children.clear();
 	root->id = 0;
 	root->collapsable = false;
 	root->open = true;
+
+	ResizeScroll(w, 200);
+	AdjustScroll(0, 0);
 }
 
 TreeView::~TreeView()
@@ -132,8 +136,10 @@ int TreeView::DrawNode(TreeNode *node, int top)
 void TreeView::GiveFocus(void)
 {
 	focus = true;
-	if (focusnode)
+	if (focusnode) {
 		focusnode->widget->GiveFocus();
+		focusnode->widget->Redraw();
+	}
 }
 
 void TreeView::TakeFocus(void)
@@ -191,7 +197,8 @@ void TreeView::FocusNext(void)
 		focusnode = newfocus;
 		focusnode->widget->GiveFocus();
 		SetInputChild(focusnode->widget);
-		signal_redraw();
+		AdjustScroll(focusnode->widget->Left(), focusnode->widget->Top());
+		Redraw();
 	}
 }
 
@@ -216,6 +223,8 @@ void TreeView::FocusPrevious(void)
 				if (parent == root) {
 					if (focuscycle) {
 						newfocus = *(parent->children.rbegin());
+						while (newfocus->open && newfocus->children.size())
+							newfocus = newfocus->children.back();
 						break;
 					} else {
 						return;
@@ -241,7 +250,8 @@ void TreeView::FocusPrevious(void)
 		focusnode = newfocus;
 		focusnode->widget->GiveFocus();
 		SetInputChild(focusnode->widget);
-		signal_redraw();
+		AdjustScroll(focusnode->widget->Left(), focusnode->widget->Top());
+		Redraw();
 	}
 }
 
@@ -299,6 +309,7 @@ int TreeView::AddNode(int parentid, Widget *widget, void *data)
 	node = new TreeNode;
 	node->id = GenerateId();
 	node->widget = widget;
+	node->height = 0;
 	node->data = data;
 	node->collapsable = true;
 	node->open = true;
@@ -314,6 +325,7 @@ int TreeView::AddNode(int parentid, Widget *widget, void *data)
 
 	node->depth = parent->depth + 1;
 	parent->children.push_back(node);
+	parent->height += node->widget->Height();
 
 	//TODO we want the widgets resize events
 	//so we can adjust the scroll area
@@ -332,7 +344,7 @@ int TreeView::AddNode(int parentid, Widget *widget, void *data)
 	if (scrollh < itemsheight)
 		newheight = itemsheight * 2;
 
-	ResizeScroll(newwidth, newheight);
+	//ResizeScroll(newwidth, newheight);
 
 	return node->id;
 }
@@ -343,6 +355,7 @@ int TreeView::AddNode(TreeNode *parent, TreeNode *node)
 		return -1;
 	
 	parent->children.push_back(node);
+	parent->height += node->widget->Height();
 
 	return node->id;
 }
@@ -378,6 +391,7 @@ void TreeView::DeleteNode(int nodeid, bool keepsubnodes)
 			AddNode(parent, child);
 
 			node->children.erase(i);
+			node->height -= child->widget->Height();
 			i = node->children.begin();
 		}
 	}
@@ -387,6 +401,7 @@ void TreeView::DeleteNode(int nodeid, bool keepsubnodes)
 		child = *i;
 		if (child == node) {
 			parent->children.erase(i);
+			parent->height -= child->widget->Height();
 			break;
 		}
 	}
@@ -471,6 +486,7 @@ void TreeView::SetParent(int nodeid, int parentid) //TODO changes depth, parenti
 		child = *i;
 		if (child == node) {
 			curparent->children.erase(i);
+			curparent->height -= child->widget->Height();
 			break;
 		}
 	}
@@ -478,6 +494,7 @@ void TreeView::SetParent(int nodeid, int parentid) //TODO changes depth, parenti
 	/* Add the node to its current parent */
 	node->depth = newparent->depth + 1;
 	newparent->children.push_back(node);
+	newparent->height += node->widget->Height();
 
 }
 
@@ -552,5 +569,5 @@ int TreeView::GenerateId(void)
 
 void TreeView::OnChildRedraw(void)
 {
-	signal_redraw();
+	Redraw();
 }
