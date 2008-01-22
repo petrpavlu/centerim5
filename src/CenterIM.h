@@ -83,6 +83,8 @@ class CenterIM
 
 		static void purple_glib_io_destroy(gpointer data);
 
+		static char const * const version;
+
 	protected:
 
 	private:
