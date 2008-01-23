@@ -23,7 +23,7 @@
 
 #include "Curses.h"
 
-#include "Scrollable.h"
+#include "ScrollPane.h"
 #include "LineStyle.h"
 #include "Keys.h"
 
@@ -34,7 +34,7 @@
 #define VARIABLE_NOT_USED(x) x=x;
 
 TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linestyle_)
-: Scrollable(parent, x, y, w, h, w, h)
+: ScrollPane(parent, x, y, w, h, w, h)
 , focusnode(NULL)
 , linestyle(linestyle_)
 , itemswidth(0)
@@ -60,7 +60,7 @@ TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linest
 	root->collapsable = false;
 	root->open = true;
 
-	ResizeScroll(w, 200);
+	SetScrollSize(w, 200);
 	AdjustScroll(0, 0);
 }
 
@@ -77,7 +77,7 @@ void TreeView::Draw(void)
 {
 	werase(area->w);
 	DrawNode(root, 0);
-	Scrollable::Draw();
+	ScrollPane::Draw();
 }
 
 int TreeView::DrawNode(TreeNode *node, int top)

@@ -19,9 +19,9 @@
  * */
 
 #include "Curses.h"
-#include "Scrollable.h"
+#include "ScrollPane.h"
 
-Scrollable::Scrollable(Widget& parent, int x, int y, int w, int h, int scrollw, int scrollh)
+ScrollPane::ScrollPane(Widget& parent, int x, int y, int w, int h, int scrollw, int scrollh)
 : Widget(parent, x, y, w, h)
 , scrollw(scrollw)
 , scrollh(scrollh)
@@ -35,13 +35,13 @@ Scrollable::Scrollable(Widget& parent, int x, int y, int w, int h, int scrollw, 
 		;//TODO throw an exception?
 }
 
-Scrollable::~Scrollable()
+ScrollPane::~ScrollPane()
 {
 	if (scrollarea)
 		delwin(scrollarea);
 }
 
-void Scrollable::UpdateArea()
+void ScrollPane::UpdateArea()
 {
 	curses_imp_t a(NULL);
 
@@ -59,7 +59,7 @@ void Scrollable::UpdateArea()
 		//area == null because no pad can be made
 }
 
-void Scrollable::Draw(void)
+void ScrollPane::Draw(void)
 {
 	if (!scrollarea || ! area->w) return;
 
@@ -67,7 +67,7 @@ void Scrollable::Draw(void)
 	Widget::Draw();
 }
 
-void Scrollable::AdjustScroll( const int newx, const int newy)
+void ScrollPane::AdjustScroll( const int newx, const int newy)
 {
 	if (newx < 0 || newy < 0 || newx > scrollw || newy > scrollh)
 		return;
@@ -85,9 +85,9 @@ void Scrollable::AdjustScroll( const int newx, const int newy)
 	}
 }
 
-void Scrollable::Scroll(const int deltax, const int deltay)
+/*void ScrollPane::Scroll(const int deltax, const int deltay)
 {
-/* TODO do this with key combos
+ TODO do this with key combos
 	int deltay = 0, deltax = 0;
 
 
@@ -100,7 +100,6 @@ void Scrollable::Scroll(const int deltax, const int deltay)
 	else if (Keys::Compare(CUI_KEY_HOME, key)) deltay = -scrollh;
 	else if (Keys::Compare(CUI_KEY_END, key)) deltay = scrollh;
 	//TODO more scroll posibilities?
-	*/
 	
 	//TODO not overflow safe
 	if (xpos + deltax > scrollw - w) xpos = scrollw - w;
@@ -109,18 +108,17 @@ void Scrollable::Scroll(const int deltax, const int deltay)
 	if (ypos + deltay < 0) ypos = 0;
 
 	Redraw();
-}
+}*/
 
-void Scrollable::ResizeScroll(int neww, int newh)
+void ScrollPane::SetScrollSize(const int width, const int height)
 {
-	int deltax = 0, deltay = 0;
 	//TODO: deltax and deltay aren't used in this function
 
-	if (neww == scrollw && newh == scrollh)
+	if (width == scrollw && height == scrollh)
 		return;
 
-	scrollw = neww;
-	scrollh = newh;
+	scrollw = width;
+	scrollh = height;
 
 	if (area->w)
 		delwin(area->w);
@@ -130,8 +128,8 @@ void Scrollable::ResizeScroll(int neww, int newh)
 		;//TODO throw an exception?
 
 	//TODO not overflow safe (probably not a problem. but fix anyway)
-	if (xpos + deltax > scrollw - w) xpos = scrollw - w;
-	if (ypos + deltay > scrollh - h) ypos = scrollh - h;
-	if (xpos + deltax < 0) xpos = 0;
-	if (ypos + deltay < 0) ypos = 0;
+	if (xpos > scrollw - w) xpos = scrollw - w;
+	if (ypos > scrollh - h) ypos = scrollh - h;
+	if (xpos < 0) xpos = 0;
+	if (ypos < 0) ypos = 0;
 }

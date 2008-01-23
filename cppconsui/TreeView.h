@@ -21,7 +21,7 @@
 #ifndef __TREEVIEW_H__
 #define __TREEVIEW_H__
 
-#include "Scrollable.h"
+#include "ScrollPane.h"
 #include "LineStyle.h"
 
 #include <vector>
@@ -38,7 +38,7 @@
 //
 // widgets can occupy multiple lines
 class TreeView
-: public Scrollable
+: public ScrollPane
 {
 	public:
 		TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linestyle);

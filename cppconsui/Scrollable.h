@@ -21,35 +21,35 @@
 #ifndef __SCROLLABLE_H__
 #define __SCROLLABLE_H__
 
-#include "Widget.h"
-
 class Scrollable
-: public Widget
 {
 	public:
-		Scrollable(Widget& parent, int x, int y, int w, int h, int scrollw, int scrollh);
-		virtual ~Scrollable();
+		virtual ~Scrollable() { ; }
+		/* Get the size of the scrollable area */
+		virtual Rect GetScrollSize(void) = 0;
 
-		void UpdateArea();
+		/* Set the size of the scrollable area*/
+		virtual void SetScrollSize(const int width, const int height) = 0;
 
-		virtual void Draw(void);
+		/* Adjust the visible area to include the given coordinates */
+		virtual void AdjustScroll(const int x, const int y) = 0;
+		/* Adjust the visible area to include the given rectangle, and
+		 * to include _at_least_ (Rect.x, Rect.y). 
+		 * This is useful when e.g. text appears right-to-left. We want
+		 * to see the text, but at least the start of it, which is
+		 * at the right.
+		 *
+		 * In that case Rect.w and Rect.h will be negative.
+		 * */
+		virtual void AdjustScroll(const Rect) = 0;
 
-		int ScrollWidth(void) { return scrollw; }
-		int ScrollHeight(void) { return scrollh; }
-
-		void AdjustScroll(const int newx, const int newy);
+		/* Get the visible scroll area coordinates */
+		virtual Rect GetScrollPosition(void) = 0;
 
 	protected:
-		void Scroll(const int deltax, const int deltay);
-		void ResizeScroll(int neww, int newh);
-
-		int scrollw, scrollh;
-		int xpos, ypos;
 
 	private:
-		Scrollable();
 
-		WINDOW* scrollarea;
 };
 
 #endif /* __SCROLLABLE_H__ */

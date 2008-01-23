@@ -42,7 +42,8 @@ cppconsui/Border.cpp
 cppconsui/Border.h
 cppconsui/LineStyle.cpp
 cppconsui/LineStyle.h
-cppconsui/Scrollable.cpp
+cppconsui/ScrollPane.cpp
+cppconsui/ScrollPane.h
 cppconsui/Scrollable.h
 cppconsui/Keys.cpp
 cppconsui/Keys.h
