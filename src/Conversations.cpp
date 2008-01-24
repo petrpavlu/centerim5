@@ -98,7 +98,7 @@ void Conversations::Close(Conversation* conversation)
 
 	conversation->Hide();
 	RemoveConversation(conversation);
-	windowmanager->Remove((Window*)conversation);
+	windowmanager->Remove(conversation);
 	delete conversation;
 }
 

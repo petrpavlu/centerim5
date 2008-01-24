@@ -94,6 +94,9 @@ void WindowManager::Remove(Window *window)
 	info.redraw.disconnect();
 	windows.erase(i);
 
+	werase(info.window->GetWindow());
+	wnoutrefresh(info.window->GetWindow());
+
 	FocusPanel();
 	Redraw();
 }
