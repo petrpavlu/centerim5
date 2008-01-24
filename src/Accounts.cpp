@@ -25,6 +25,8 @@
 
 #include "Accounts.h"
 
+#include "Log.h"
+
 #include <libpurple/account.h>
 #include <libpurple/savedstatuses.h>
 
@@ -60,5 +62,5 @@ void Accounts::signed_on_(PurpleConnection *gc, gpointer p)
 void Accounts::signed_on(PurpleConnection *gc)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	log->Write(PURPLE_DEBUG_INFO, "+ Account connected: %s %s\n", account->username, account->protocol_id);
+	log->Write(Log::Type_cim, Log::Level_info, "+ Account connected: %s %s\n", account->username, account->protocol_id);
 }

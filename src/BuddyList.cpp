@@ -170,12 +170,12 @@ void BuddyList::new_list(PurpleBuddyList *list)
 	if (buddylist != list) {
 		//TODO if this happens, then the first todo in Load should
 		//be checked again.
-		log->Write(PURPLE_DEBUG_ERROR, "Different Buddylist detected!\n");
+		log->Write(Log::Level_error, "Different Buddylist detected!\n");
 	}
 	if (buddylist->ui_data != this)
 	{
 		//TODO actually, this amounts to the same as the error above this one :).
-		log->Write(PURPLE_DEBUG_ERROR, "New Buddylist detected, but we only support one buddylist.\n");
+		log->Write(Log::Level_error, "New Buddylist detected, but we only support one buddylist.\n");
 	}
 }
 
@@ -206,7 +206,7 @@ void BuddyList::update_node(PurpleBuddyList *list, PurpleBlistNode *node)
 
 	if (!node->ui_data) {
 		//TODO remove when this never happens :) (yeah, try to catch that one! :)
-		log->Write(PURPLE_DEBUG_MISC, "BuddyList::update called before BuddyList::new_node\n");
+		log->Write(Log::Level_error, "BuddyList::update called before BuddyList::new_node\n");
 		new_node(node);
 	}
 

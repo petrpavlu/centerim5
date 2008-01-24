@@ -84,14 +84,15 @@ void Conf::Save(void)
 	 * call to a `purple_prefs_save' */
 }
 
-int Conf::GetInt(const char *pref, const int defaultvalue)
+int Conf::GetInt(const gchar *pref, const int defaultvalue)
 {
 	int i;
 
 	if (purple_prefs_exists(pref)) {
 		i = purple_prefs_get_int(pref);
 	} else {
-		purple_prefs_set_int(pref, defaultvalue);
+		AddPath(pref);
+		purple_prefs_add_int(pref, defaultvalue);
 		i = defaultvalue;
 		Save();
 	}
@@ -99,7 +100,7 @@ int Conf::GetInt(const char *pref, const int defaultvalue)
 	return i;
 }
 
-int Conf::GetInt(const char *pref, const int defaultvalue, const int min, const int max)
+int Conf::GetInt(const gchar *pref, const int defaultvalue, const int min, const int max)
 {
 	int i;
 
@@ -110,7 +111,8 @@ int Conf::GetInt(const char *pref, const int defaultvalue, const int min, const 
 			i = defaultvalue;
 		}
 	} else {
-		purple_prefs_set_int(pref, defaultvalue);
+		AddPath(pref);
+		purple_prefs_add_int(pref, defaultvalue);
 		i = defaultvalue;
 		Save();
 	}
@@ -118,20 +120,21 @@ int Conf::GetInt(const char *pref, const int defaultvalue, const int min, const 
 	return i;
 }
 
-void Conf::SetInt(const char *pref, const int value)
+void Conf::SetInt(const gchar *pref, const int value)
 {
 	purple_prefs_set_int(pref, value);
 	Save();
 }
 
-bool Conf::GetBool(const char *pref, const bool defaultvalue)
+bool Conf::GetBool(const gchar *pref, const bool defaultvalue)
 {
 	bool b;
 
 	if (purple_prefs_exists(pref)) {
 		b = purple_prefs_get_bool(pref);
 	} else {
-		purple_prefs_set_bool(pref, defaultvalue);
+		AddPath(pref);
+		purple_prefs_add_bool(pref, defaultvalue);
 		b = defaultvalue;
 		Save();
 	}
@@ -139,9 +142,31 @@ bool Conf::GetBool(const char *pref, const bool defaultvalue)
 	return b;
 }
 
-void Conf::SetBool(const char *pref, const bool value)
+void Conf::SetBool(const gchar *pref, const bool value)
 {
 	purple_prefs_set_bool(pref, value);
+	Save();
+}
+
+const gchar* Conf::GetString(const gchar *pref, const gchar *defaultvalue)
+{
+	const gchar* s;
+
+	if (purple_prefs_exists(pref)) {
+		s = purple_prefs_get_string(pref);
+	} else {
+		AddPath(pref);
+		purple_prefs_add_string(pref, defaultvalue);
+		s = defaultvalue;
+		Save();
+	}
+
+	return s;
+}
+
+void Conf::SetString(const gchar *pref, const gchar *value)
+{
+	purple_prefs_set_string(pref, value);
 	Save();
 }
 
@@ -166,7 +191,7 @@ Rect Conf::GetChatDimensions(void)
 		CONF_CHAT_DIMENSIONS_WIDTH, CONF_CHAT_DIMENSIONS_HEIGHT);
 }
 
-Rect Conf::GetDimensions(const char *window, const int defx, const int defy, const int defw, const int defh)
+Rect Conf::GetDimensions(const gchar *window, const int defx, const int defy, const int defw, const int defh)
 {
 	gchar *prefx = g_strconcat(CONF_PREFIX, window, "dimensions/x", NULL);
 	gchar *prefy = g_strconcat(CONF_PREFIX, window, "dimensions/y", NULL);
@@ -184,7 +209,7 @@ Rect Conf::GetDimensions(const char *window, const int defx, const int defy, con
 	return (Rect(x, y, w, h));
 }
 
-void Conf::SetDimensions(const char *window, const int x, const int y, const int width, const int height)
+void Conf::SetDimensions(const gchar *window, const int x, const int y, const int width, const int height)
 {
 	gchar *prefx = g_strconcat(CONF_PREFIX, window, "dimensions/x", NULL);
 	gchar *prefy = g_strconcat(CONF_PREFIX, window, "dimensions/y", NULL);
@@ -200,9 +225,68 @@ void Conf::SetDimensions(const char *window, const int x, const int y, const int
 	g_free(prefh);
 }
 
-void Conf::SetDimensions(const char *window, const Rect &rect)
+void Conf::SetDimensions(const gchar *window, const Rect &rect)
 {
 	SetDimensions(window, rect.x, rect.y, rect.width, rect.height);
+}
+
+bool Conf::GetDebugEnabled(void)
+{
+	gchar *pref = g_strconcat(CONF_PREFIX, "log/debug", NULL);
+	bool b;
+
+	b = GetBool(pref, false);
+
+	g_free(pref);
+
+	return b;
+}
+
+Log::Level Conf::GetLogLevel(const gchar *type)
+{
+	gchar *pref = g_strconcat(CONF_PREFIX, "log/log_level_", type, NULL);
+	const gchar *slevel;
+	Log::Level level = Log::Level_debug;
+	
+	if (!g_ascii_strncasecmp(type, "cim", 3))
+		slevel = GetString(pref, "info");
+	else
+		slevel = GetString(pref, "none");
+
+	if (!g_ascii_strncasecmp(slevel,"none", 4)) level = Log::Level_none;
+	else if (!g_ascii_strncasecmp(slevel, "info", 4)) level = Log::Level_info;
+	else if (!g_ascii_strncasecmp(slevel, "warning", 7)) level = Log::Level_warning;
+	else if (!g_ascii_strncasecmp(slevel, "critical", 8)) level = Log::Level_critical;
+	else if (!g_ascii_strncasecmp(slevel, "error", 5)) level = Log::Level_error;
+	else if (!g_ascii_strncasecmp(slevel, "debug", 5)) level = Log::Level_debug;
+	else {
+		if (!g_ascii_strncasecmp(type, "cim", 3))
+			SetLogLevel(type, Log::Level_info);
+		else
+			SetLogLevel(type, Log::Level_none);
+	}
+	g_free(pref);
+
+	return level;
+}
+
+void Conf::SetLogLevel(const gchar *type, const Log::Level level)
+{
+	gchar *pref = g_strconcat(CONF_PREFIX, "log/log_level_", type, NULL);
+	gchar *slevel;
+
+	if (level == Log::Level_none) slevel = "none";
+	else if (level == Log::Level_info) slevel = "info";
+	else if (level == Log::Level_warning) slevel = "warning";
+	else if (level == Log::Level_critical) slevel = "critical";
+	else if (level == Log::Level_error) slevel = "error";
+	else if (level == Log::Level_debug) slevel = "debug";
+	else {
+		//TODO error!
+	}
+	//TODO finish
+
+	g_free(pref);
 }
 
 unsigned int Conf::GetLogMaxLines()
@@ -242,6 +326,17 @@ bool Conf::GetLogChats(void)
 bool Conf::GetLogSystem(void)
 {
 	return GetBool("/purple/logging/log_system", CONF_LOG_SYSTEM_DEFAULT);
+}
+
+void Conf::AddPath(const std::string &s)
+{
+	std::string::size_type i = 1;
+	std::string ss;
+
+	while ((i = s.find_first_of('/', i+1)) && i != std::string::npos) {
+		ss = s.substr(0, i);
+		purple_prefs_add_none(ss.c_str());
+	}
 }
 
 Conf::Conf()

@@ -21,25 +21,38 @@
 #ifndef __LOG_H__
 #define __LOG_H__
 
-#include "Conf.h"
 
 #include <cppconsui/TextWindow.h>
 #include <libpurple/debug.h>
 #include <string>
 #include <vector>
 
+class Conf;
 
 class Log
 : public TextWindow
 {
 	public:
+		enum Type {Type_cim, Type_glib, Type_purple};
+		enum Level {Level_none,
+			Level_info,
+			Level_fatal,
+			Level_error,
+			Level_critical,
+			Level_warning,
+			Level_debug }; //TODO check order with purpledebuglevel and glib log flags
+
                 static Log* Instance(void);
                 static void Delete(void);
 
 		//TODO WriteFatal, WriteMisc etc
-		void WriteInfo(const std::string text);
-		void Write(PurpleDebugLevel level, const std::string text);
-		void Write(PurpleDebugLevel level, const char *fmt, ...);
+		void WriteInfo(const std::string text)
+			{ Write(Log::Type_cim, Log::Level_info, text); }
+
+		void Write(Log::Type type, Log::Level level, const std::string text);
+		void Write(Log::Level level, const std::string text)
+			{ Write(Log::Type_cim, level, text);}
+		void Write(Log::Type type, Log::Level level, const char *fmt, ...);
 		void WriteToFile(const std::string test);
 
 		/* to catch libpurple's debug messages */

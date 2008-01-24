@@ -21,7 +21,11 @@
 #ifndef __CONF_H__
 #define __CONF_H__
 
+#include "Log.h"
+
 #include <cppconsui/CppConsUI.h>
+
+#include <string>
 
 //TODO: configurable path using ./configure
 #define CIM_CONFIG_PATH		".centerim"
@@ -38,6 +42,8 @@
 #define CONF_DEFAULT_LOG_WINDOW_HEIGHT	6
 #define CONF_DEFAULT_LOG_WINDOW_WIDTH	80
 
+class Log;
+
 class Conf
 {
 	public:
@@ -48,15 +54,32 @@ class Conf
 		void Save(void);
 
 		/* Configuration base get/set methods */
-		int GetInt(const char *pref, const int defaultvalue);
-		int GetInt(const char *pref, const int defaultvalue, const int min, const int max);
-		void SetInt(const char *pref, const int value);
-		bool GetBool(const char *pref, const bool defaultvalue);
-		void SetBool(const char *pref, const bool value);
+		int GetInt(const gchar *pref, const int defaultvalue);
+		int GetInt(const gchar *pref, const int defaultvalue, const int min, const int max);
+		void SetInt(const gchar *pref, const int value);
+		bool GetBool(const gchar *pref, const bool defaultvalue);
+		void SetBool(const gchar *pref, const bool value);
+		const gchar* GetString(const gchar *pref, const gchar *defaultvalue);
+		void SetString(const gchar *pref, const gchar *value);
 
-		Rect GetDimensions(const char *window, const int defx, const int defy, const int defwidth, const int defheight);
-		void SetDimensions(const char *window, const Rect &rect);
-		void SetDimensions(const char *window, const int x, const int y, const int width, const int height);
+		Rect GetDimensions(const gchar *window, const int defx, const int defy, const int defwidth, const int defheight);
+		void SetDimensions(const gchar *window, const Rect &rect);
+		void SetDimensions(const gchar *window, const int x, const int y, const int width, const int height);
+
+		/* for debugging and logging */
+		bool GetDebugEnabled(void);
+		Log::Level GetLogLevelGlib(void)
+			{ return GetLogLevel("glib"); }
+		Log::Level GetLogLevelPurple(void)
+			{ return GetLogLevel("purple"); }
+		Log::Level GetLogLevelCIM(void)
+			{ return GetLogLevel("cim"); }
+		void SetLogLevelGlib(Log::Level level)
+			{ SetLogLevel("glib", level); }
+		void SetLogLevelPurple(Log::Level level)
+			{ SetLogLevel("purple", level); }
+		void SetLogLevelCIM(Log::Level level)
+			{ SetLogLevel("cim", level); }
 
 		unsigned int GetLogMaxLines(void);
 		unsigned int GetChatPartitioning(void);
@@ -72,10 +95,15 @@ class Conf
 	protected:
 
 	private:
+		static Conf* instance;
+
 		Conf();
 		~Conf();
 
-		static Conf* instance;
+		void AddPath(const std::string &s);
+
+		Log::Level GetLogLevel(const gchar *type);
+		void SetLogLevel(const gchar *type, Log::Level level);
 };
 
 #endif /* __CONF_H__ */

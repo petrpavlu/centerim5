@@ -392,9 +392,9 @@ gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 	//keys->Refine(buf, rd);
 
 	{
-	buf[rd] = '\0'; //TODO remove
+	buf[rd] = '\0'; //TODO remove all this debug stuff
 	gunichar uc = g_utf8_get_char(buf);
-	log->Write(PURPLE_DEBUG_MISC, "input: %s (%02x %02x %02x) %d utf8? %d uc: %d %s", buf, buf[0], buf[1], buf[2],
+	log->Write(Log::Type_cim, Log::Level_debug, "input: %s (%02x %02x %02x) %d utf8? %d uc: %d %s", buf, buf[0], buf[1], buf[2],
 		rd, g_utf8_validate(buf, rd, NULL), uc, key_left); //TODO remove
 	}
 

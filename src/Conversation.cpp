@@ -254,7 +254,7 @@ void ConversationIm::CreatePurpleConv(void)
 
 
 	if (!convim) //TODO only log an error if account is connected
-		log->Write(PURPLE_DEBUG_ERROR, "unable to open conversation with `%s'", buddy->name);
+		log->Write(Log::Type_cim, Log::Level_error, "unable to open conversation with `%s'", buddy->name);
 		//TODO add some info based on buddy
 }
 

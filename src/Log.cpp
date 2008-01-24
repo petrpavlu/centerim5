@@ -93,12 +93,7 @@ Log::~Log(void)
 	delete GetBorder(); //TODO what if NULL?
 }
 
-void Log::WriteInfo(const std::string text)
-{
-	Write(PURPLE_DEBUG_INFO, text);	
-}
-
-void Log::Write(PurpleDebugLevel level, const char *fmt, ...)
+void Log::Write(Log::Type type, Log::Level level, const char *fmt, ...)
 {
 	va_list args;
 	char buf[1024]; //TODO lets hope this is enough!
@@ -107,52 +102,63 @@ void Log::Write(PurpleDebugLevel level, const char *fmt, ...)
 	vsprintf(buf, fmt, args);
 	va_end(args);
 
-	Write(level, std::string(buf));
+	Write(type, level, std::string(buf));
 }
 
-void Log::Write(PurpleDebugLevel level, const std::string text)
+void Log::Write(Log::Type type, Log::Level level, const std::string text)
 {
-	//TODO get from config
-	bool debug = true;
-	//TODO get from config
-	PurpleDebugLevel conflevel = PURPLE_DEBUG_ALL;
+	std::string s;
 
-	//TODO if debugging is enabled, write to file and
-	//show all debug messages in window
-	if (debug) {
-		level = PURPLE_DEBUG_ALL;
-	} else {
-		//TODO get from config
-		conflevel = PURPLE_DEBUG_ALL;
+	if ( (type == Log::Type_glib && conf->GetLogLevelGlib() < level)
+		|| (type == Log::Type_purple && conf->GetLogLevelPurple() < level)
+		|| (type == Log::Type_cim && conf->GetLogLevelCIM() < level)) {
+		return; /* we dont want to see this log message */
 	}
-	//TODO if not enabled only show PURPLE_DEBUG_INFO level messages
-	//perhaps also give user more control on what to show
-	if (level != PURPLE_DEBUG_ALL
-		&& level != PURPLE_DEBUG_MISC
-		&& level != PURPLE_DEBUG_FATAL 
-		&& level > conflevel)
-		return;
 
-	if (debug)
-		WriteToFile(text);
+	//TODO prepend message type if appropriate
 
+	WriteToFile(text);
 	AddLine(text);
 }
 
 void Log::WriteToFile(const std::string test)
 {
+	if (conf->GetDebugEnabled()) {
 	//TODO if debugging is enabled, write to file
 	//TODO try to use the log.h api of libpurple
+	}
 }
 
-void Log::purple_print(PurpleDebugLevel level, const char *category, const char *arg_s)
+void Log::purple_print(PurpleDebugLevel purplelevel, const char *category, const char *arg_s)
 {
+	Log::Level level;
+
+	if (purplelevel == PURPLE_DEBUG_MISC)
+		level = Log::Level_debug;
+	else if (purplelevel == PURPLE_DEBUG_INFO)
+		level = Log::Level_info;
+	else if (purplelevel == PURPLE_DEBUG_WARNING)
+		level = Log::Level_warning;
+	else if (purplelevel == PURPLE_DEBUG_ERROR)
+		level = Log::Level_error;
+	else if (purplelevel == PURPLE_DEBUG_FATAL)
+		level = Log::Level_fatal;
+	else if (purplelevel == PURPLE_DEBUG_ALL)
+		level = Log::Level_info; //TODO this might not be appropriate
+	else 
+	{
+		Write(Log::Type_cim, Log::Level_warning, "centerim/log: Unknown libpurple logging level: %d\n", purplelevel);
+                /* This will never happen. Actually should not, because some day, it will happen :)
+		 * So lets initialize level, so that we don't have uninitialized values :) */
+                level = Log::Level_debug;
+        }
+
 	std::string text;
 	text.append("libpurple/");
 	text.append(category);
 	text.append(": ");
 	text.append(arg_s);
-	Write(level, text);
+	Write(Log::Type_purple, level, text);
 }
 
 gboolean Log::isenabled(PurpleDebugLevel level, const char *category)
@@ -170,28 +176,28 @@ gboolean Log::isenabled(PurpleDebugLevel level, const char *category)
 void Log::glib_log_handler(const gchar *domain, GLogLevelFlags flags,
 	const gchar *msg, gpointer user_data)
 {
-        PurpleDebugLevel level;
+        Log::Level level;
         char *new_msg = NULL;
         char *new_domain = NULL;
 
         if ((flags & G_LOG_LEVEL_ERROR) == G_LOG_LEVEL_ERROR)
-                level = PURPLE_DEBUG_ERROR;
+                level = Log::Level_error;
         else if ((flags & G_LOG_LEVEL_CRITICAL) == G_LOG_LEVEL_CRITICAL)
-                level = PURPLE_DEBUG_FATAL;
+                level = Log::Level_critical;
         else if ((flags & G_LOG_LEVEL_WARNING) == G_LOG_LEVEL_WARNING)
-                level = PURPLE_DEBUG_WARNING;
+                level = Log::Level_warning;
         else if ((flags & G_LOG_LEVEL_MESSAGE) == G_LOG_LEVEL_MESSAGE)
-                level = PURPLE_DEBUG_INFO;
+                level = Log::Level_info;
         else if ((flags & G_LOG_LEVEL_INFO) == G_LOG_LEVEL_INFO)
-                level = PURPLE_DEBUG_INFO;
+                level = Log::Level_info;
         else if ((flags & G_LOG_LEVEL_DEBUG) == G_LOG_LEVEL_DEBUG)
-                level = PURPLE_DEBUG_MISC;
+                level = Log::Level_debug;
         else
         {
-		Write(PURPLE_DEBUG_MISC, "centerim/log: Unknown glib logging level in %d\n", flags);
+		Write(Log::Type_cim, Log::Level_warning, "centerim/log: Unknown glib logging level in %d\n", flags);
                 /* This will never happen. Actually should not, because some day, it will happen :)
-		 * So lets initialize lever, so that we don't have uninitialized values :) */
-		level = PURPLE_DEBUG_ALL;
+		 * So lets initialize level, so that we don't have uninitialized values :) */
+                level = Log::Level_debug;
         }
 
         if (msg != NULL)
@@ -202,7 +208,7 @@ void Log::glib_log_handler(const gchar *domain, GLogLevelFlags flags,
 
         if (new_msg != NULL)
         {
-		Write(level, "glib/%s: %s", (new_domain != NULL ? new_domain : "g_log"), new_msg);
+		Write(Log::Type_glib, level, "glib/%s: %s", (new_domain != NULL ? new_domain : "g_log"), new_msg);
                 g_free(new_msg);
         }
 
@@ -215,7 +221,7 @@ void Log::glib_print(const char *msg)
 	text.append("glib/misc: ");
 	text.append(msg);
 	//TODO other level more approriate?
-	Write(PURPLE_DEBUG_MISC, text);
+	Write(Log::Type_glib, Log::Level_debug, text);
 }
 
 void Log::glib_printerr(const char *msg)
@@ -224,5 +230,5 @@ void Log::glib_printerr(const char *msg)
 	text.append("glib/miscerr: ");
 	text.append(msg);
 	//TODO other level more approriate?
-	Write(PURPLE_DEBUG_MISC, text);
+	Write(Log::Type_glib, Log::Level_debug, text);
 }
