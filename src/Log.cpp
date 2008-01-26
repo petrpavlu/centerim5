@@ -153,6 +153,11 @@ void Log::purple_print(PurpleDebugLevel purplelevel, const char *category, const
                 level = Log::Level_debug;
         }
 
+	if (!category) {
+		category = "misc";
+		Write(Log::Type_cim, Log::Level_warning, "centerim/log: purple_print() paramenter category was not defined\n");
+	}
+
 	std::string text;
 	text.append("libpurple/");
 	text.append(category);
