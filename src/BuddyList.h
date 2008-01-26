@@ -65,7 +65,6 @@ class BuddyList
 	protected:
 
 	private:
-
 		BuddyList();
 		~BuddyList();
 

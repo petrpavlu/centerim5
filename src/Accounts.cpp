@@ -30,6 +30,35 @@
 #include <libpurple/account.h>
 #include <libpurple/savedstatuses.h>
 
+Accounts* Accounts::instance = NULL;
+
+Accounts* Accounts::Instance(void)
+{
+	if (!instance) instance = new Accounts();
+	return instance;
+}
+
+void Accounts::Delete(void)
+{
+	if (instance) {
+		delete instance;
+		instance = NULL;
+	}
+}
+
+static PurpleAccountUiOps centerim_accounts_ui_ops =
+{
+	NULL, //TODO BuddyList::notify_added_,
+	NULL, //Accounts::status_changed_,
+	NULL, //BuddyList::request_add_,
+	NULL, //BuddyList::request_authorize_,
+	NULL, //BuddyList::close_account_request_,
+	NULL, /* reserverd */
+	NULL,
+	NULL,
+	NULL
+};
+
 Accounts::Accounts()
 {
 	log = Log::Instance();
@@ -38,6 +67,9 @@ Accounts::Accounts()
 	/* connect signal handlers */
 	purple_signal_connect(purple_connections_get_handle(), "signed-on", this,
 		PURPLE_CALLBACK(signed_on_), this);
+
+	/* setup the callbacks for the buddylist */
+	purple_accounts_set_ui_ops(&centerim_accounts_ui_ops);
 
 	/* if the statuses are not known, set them all
 	 * to the default */

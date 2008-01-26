@@ -190,15 +190,14 @@ void CenterIM::debug_ui_init(void)
 void CenterIM::ui_init(void)
 {
 	//TODO when these objecs are windows, add them to the windowmanager
+	accounts = Accounts::Instance();
 //	windowmanager->Add(accounts = new Accounts());
 //	windowmanager->Add(connections = new Connections());
 	windowmanager->Add(buddylist = BuddyList::Instance());
 //	windowmanager->Add(conversations = Conversations::Instance());
 //	windowmanager->Add(transfers = new Transfers());
 
-	accounts = new Accounts();
 	connections = new Connections();
-//	buddylist = new BuddyList();
 	conversations = Conversations::Instance();
 	transfers = new Transfers();
 }
@@ -207,13 +206,13 @@ void CenterIM::ui_uninit(void)
 {
 	//TODO when these objecs are windows, remove them from the windowmanager
 //	windowmanager->Remove(accounts);
-	delete accounts; accounts = NULL;
+	if (accounts) { accounts->Delete(); accounts = NULL; }
 
 //	windowmanager->Remove(connections);
 	delete connections; connections = NULL;
 
 	windowmanager->Remove(buddylist);
-	if (buddylist) buddylist->Delete(); buddylist = NULL;
+	if (buddylist) { buddylist->Delete(); buddylist = NULL; }
 
 //	windowmanager->Remove(conversations);
 	if (conversations) conversations->Delete(); conversations = NULL;

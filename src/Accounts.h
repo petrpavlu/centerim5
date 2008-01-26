@@ -28,12 +28,17 @@
 class Accounts
 {
 	public:
-		Accounts();
-		~Accounts();
+		static Accounts* Instance(void);
+		static void Delete(void);
 
 	protected:
 
 	private:
+		Accounts();
+		~Accounts();
+
+		static Accounts* instance;
+
 		/* callbacks */
 		static void signed_on_(PurpleConnection *gc, gpointer p);
 		void signed_on(PurpleConnection *gc);

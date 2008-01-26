@@ -73,7 +73,7 @@ void BuddyList::Delete(void)
 }
 
 //TODO move this struct inside the buddylist object
-static PurpleBlistUiOps centerim_blist_uiops =
+static PurpleBlistUiOps centerim_blist_ui_ops =
 {
 	BuddyList::new_list_,
 	BuddyList::new_node_,
@@ -110,7 +110,7 @@ BuddyList::BuddyList()
 	purple_set_blist(buddylist);
 
 	/* setup the callbacks for the buddylist */
-	purple_blist_set_ui_ops(&centerim_blist_uiops);
+	purple_blist_set_ui_ops(&centerim_blist_ui_ops);
 
 	Glib::signal_timeout().connect(sigc::mem_fun(this, &BuddyList::Load), 0);
 
