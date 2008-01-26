@@ -1,4 +1,7 @@
 TODO:
+- using panel.h might not be a bad idea after all.
+  what is needed is simple enough to implement with
+  panels.
 - For the TreeView, reimplement the tree structure with
   a standard implementation. Implementation needs parent
   pointers to speed things up, better tree-traversal
