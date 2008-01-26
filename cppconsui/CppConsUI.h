@@ -28,6 +28,18 @@
 #include <wchar.h>
 #include <glib.h>
 
+#ifdef ENABLE_NLS
+
+#include <libintl.h>
+#define _(s)	gettext(s)
+
+#else
+
+#define _(s)	(s)
+
+#endif
+
+
 #if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
 //#define _XOPEN_SOURCE_EXTENDED
 #include <ncurses.h>

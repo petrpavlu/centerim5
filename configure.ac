@@ -85,6 +85,7 @@ AC_C_CONST
 # Create output files. #
 ########################
 AC_CONFIG_FILES([Makefile po/Makefile.in
+		 intl/Makefile
 		 cppconsui/Makefile
 		 src/Makefile])
 AC_OUTPUT

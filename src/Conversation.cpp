@@ -34,6 +34,7 @@ Conversation::Conversation(PurpleBlistNode* node)
 , node(node)
 , conv(NULL)
 {
+	const gchar *context = "conversation";
 	log = Log::Instance();
 	conf = Conf::Instance();
 	type = purple_blist_node_get_type(node);
@@ -50,8 +51,14 @@ Conversation::Conversation(PurpleBlistNode* node)
 	AddWidget(input);
 	SetInputChild(input);
 
-	AddCombo(Keys::Instance()->Key_ctrl_x(), sigc::mem_fun(this, &Conversation::Send),true);
-	AddCombo(Keys::Instance()->Key_ctrl_w(), sigc::mem_fun(this, &Conversation::Close),true);
+	DeclareBindable(context, "send",  sigc::mem_fun(this, &Conversation::Send),
+		_("Send the message."), InputProcessor::Bindable_Override);
+	DeclareBindable(context, "close",  sigc::mem_fun(this, &Conversation::Close),
+		_("Close the conversation window."), InputProcessor::Bindable_Override);
+
+	//TODO get real binding from config
+	BindAction(context, "send", Keys::Instance()->Key_ctrl_x(), false);
+	BindAction(context, "close", Keys::Instance()->Key_ctrl_w(), false);
 }
 
 void Conversation::Draw(void)

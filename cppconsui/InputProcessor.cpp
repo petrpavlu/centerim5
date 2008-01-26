@@ -17,6 +17,30 @@
 
 #include "InputProcessor.h"
 
+//TODO this *must* leak memory somewhere :)
+class InputProcessor::Bindable
+: public InputProcessor::KeyCombo
+{
+	public:
+		Bindable(const gchar *context,
+			const gchar *action,
+			const gchar *description,
+			const gchar *keycombo,
+			sigc::slot<void> function,
+			InputProcessor::BindableType type
+		)
+		: KeyCombo(context, action, description, keycombo)
+		, function(function)
+		, type(type)
+		{ ; }
+
+		Bindable() { ; }
+
+		sigc::slot<void> function;
+		InputProcessor::BindableType type;
+
+};
+
 InputProcessor::InputProcessor()
 : inputchild(NULL)
 {
@@ -31,7 +55,7 @@ int InputProcessor::ProcessInput(const char *input, const int bytes)
 	int i;
 
 	/* Process overriding key combinations first */
-	i = Process(Override, input, bytes);
+	i = Process(Bindable_Override, input, bytes);
 	if (i) return i;
 	
 	/* Hand of input to a child */
@@ -40,7 +64,7 @@ int InputProcessor::ProcessInput(const char *input, const int bytes)
 	if (i) return i;
 
 	/* Process other key combinations */
-	i = Process(Normal, input, bytes);
+	i = Process(Bindable_Normal, input, bytes);
 	if (i) return i;
 
 	/* Do non-combo input processing */
@@ -57,74 +81,27 @@ void InputProcessor::SetInputChild(InputProcessor *inputchild_)
 	inputchild = inputchild_;
 }
 
-void InputProcessor::AddCombo(const char *key, sigc::slot<void> action, bool override)
+int InputProcessor::Process(InputProcessor::BindableType type, const char *input, const int bytes)
 {
-	KeyCombos::iterator i, begin, end;
-	KeyCombo combo;
+	g_assert(input != NULL);
 
-	combo.key = key;
-	combo.action = action;
-	combo.type = override ? Override : Normal;
-	
-	begin = BinSearchFirst(key);
-	end = BinSearchLast(key);
-
-	for (i = begin; i != end; i++) {
-		if (Match((*i).key, key, combo.key.size())) {
-			//TODO log the fact that a previous combo
-			//shadows this rule (but add anyway!)
-			//there was a reason for this, but i can't 
-			//remember
-			break;
-		}
-	}
-
-	combos.insert(end, combo);
-}
-
-void InputProcessor::RebindCombo(const char *oldkey, const char *newkey)
-{
-	KeyCombos::iterator i, begin, end;
-	KeyCombo combo;
-
-	begin = BinSearchFirst(oldkey);
-	end = BinSearchLast(oldkey);
-
-	for (i = begin; i != end; i++) {
-		combo = *i;
-		if (combo.key == oldkey) {
-			combo.key = newkey;
-			return;
-		}
-	}
-
-	//TODO emit a warning about trying to rebind a non-existing keycombo
-}
-
-void InputProcessor::ClearCombos(void)
-{
-	combos.clear();
-}
-
-int InputProcessor::Process(InputProcessor::ComboType type, const char *input, const int bytes)
-{
-	KeyCombos::iterator i, begin, end;
-	KeyCombo combo;
+	Bindables::iterator begin, end, i;
+	Bindable bindable;
 	int m;
 
-	begin = BinSearchFirst(input);
-	end = BinSearchLast(input);
+	begin = keybindings.lower_bound(input[0]);
+	end = keybindings.upper_bound(input[0]);
 
 	for (i = begin; i != end; i++) {
-		combo = *i;
-		if (combo.type == type || type == Both) {
-			m = Match(combo.key, input, bytes);
+		bindable = (*i).second;
+		if (bindable.type == type || type == Bindable_Override) {
+			m = Match(bindable.keycombo, input, bytes);
 			if (m < 0) {
 				/* could match, but need btes more input to be sure */
 				return m;
 			} else if (m > 0) {
-				/* found a match */
-				combo.action();
+				/* found a match, execute the action */
+				bindable.function();
 				return m;
 			} else {
 				/* do nothing */
@@ -135,58 +112,75 @@ int InputProcessor::Process(InputProcessor::ComboType type, const char *input, c
 	return 0;
 }
 
-int InputProcessor::Match(const std::string skey, const char *input, const int bytes)
+int InputProcessor::Match(const std::string &skeycombo, const char *input, const int bytes)
 {
-	const char *key = skey.c_str();
+	const char *keycombo = skeycombo.c_str();
 	int n;
 	
-	n = skey.size();
+	n = skeycombo.size();
 	if (bytes < n) n = bytes;
 
-	if (strncmp(key, input, n) == 0) {
- 	        if (bytes < (int)skey.size())
-			return bytes - skey.size(); /* need more input to determine a match */
+	if (strncmp(keycombo, input, n) == 0) {
+ 	        if (bytes < (int)skeycombo.size())
+			/* need more input to determine a match */
+			return bytes - skeycombo.size();
 		else
-			return n; /* complete match found */
+			/* complete match found */
+			return n;
 	} else {
 		return 0;
 	}
 }
 
-InputProcessor::KeyCombos::iterator InputProcessor::BinSearchFirst(const char *key)
+void InputProcessor::DeclareBindable(const gchar *context, const gchar *action,
+	sigc::slot<void> function, const gchar *description, BindableType type)
 {
-	int m, n, h;
+	if (HaveBindable(context, action))
+		return; //TODO maybe some error here
 
-	m = -1;
-	n = combos.size();
-
-	while (m+1 < n) {
-		h = (m+n) / 2;
-
-		if (combos[h].key[0] >= key[0])
-			n = h;
-		else
-			m = h;
-	}
-
-	return combos.begin() + n;
+	keybindings.insert(std::pair<char, Bindable>('\0', Bindable(context, action, description, '\0', function, type)));
 }
 
-InputProcessor::KeyCombos::iterator InputProcessor::BinSearchLast(const char *key)
+bool InputProcessor::BindAction(const gchar *context, const gchar *action, const char *keycombo, bool override)
 {
-	int m, n, h;
+	Bindables::iterator i;
+	Bindable bindable;
 
-	m = -1;
-	n = combos.size();
+	g_return_val_if_fail((keycombo != NULL) && strncmp("\0", keycombo, strlen(keycombo)), false);
 
-	while (m+1 < n) {
-		h = (m+n) / 2;
+	for (i = keybindings.begin(); i != keybindings.end(); i++) {
+		bindable = (*i).second;
 
-		if (combos[h].key[0] > key[0])
-			n = h;
-		else
-			m = h;
+		if (strncmp(bindable.context, context, strlen(bindable.context)) == 0 &&
+			strncmp(bindable.action, action, strlen(bindable.action)) == 0) {
+
+			if (bindable.keycombo == NULL || override) {
+				bindable.keycombo = g_strdup(keycombo);
+				keybindings.erase(i);
+				keybindings.insert(std::pair<char, Bindable>(keycombo[0], bindable));
+				return true;
+			} else 
+				return false;
+		}
 	}
 
-	return combos.begin() + n;
+	return false;
+}
+
+bool InputProcessor::HaveBindable(const gchar *context, const gchar *action)
+{
+	Bindables::iterator i;
+	Bindable bindable;
+
+	for (i = keybindings.begin(); i != keybindings.end(); i++) {
+		bindable = (*i).second;
+
+		if (strncmp(bindable.context, context, strlen(bindable.context)) == 0 &&
+			strncmp(bindable.action, action, strlen(bindable.action)) == 0) {
+
+			return true;
+		}
+	}
+
+	return false;
 }

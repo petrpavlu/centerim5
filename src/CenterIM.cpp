@@ -312,10 +312,15 @@ void CenterIM::tmp_purple_print_(PurpleDebugLevel level, const char *category, c
 /* Xerox (finch saves us a little of work here) */
 void CenterIM::io_init(void)
 {
+	const gchar *context = "centerim";
 	keys = Keys::Instance();
 
 	/* Key combinations */
-	AddCombo(Keys::Instance()->Key_ctrl_q(), sigc::mem_fun(this, &CenterIM::Quit), true);
+	DeclareBindable(context, "quit", sigc::mem_fun(this, &CenterIM::Quit),
+		_("Quit CenterIM."), InputProcessor::Bindable_Normal);
+
+	//TODO get real binding from config
+	BindAction(context, "quit", Keys::Instance()->Key_ctrl_q(), true);
 
 	SetInputChild(windowmanager);
 

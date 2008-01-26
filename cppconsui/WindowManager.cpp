@@ -41,12 +41,17 @@ WindowManager* WindowManager::Instance(void)
 WindowManager::WindowManager(void)
 : defaultwindow(NULL)
 {
+	const gchar *context = "windowmanager";
 	defaultwindow = initscr();
 
 	if (!defaultwindow)
 		;//TODO throw an exception that we cant init curses
 
-	AddCombo(Keys::Instance()->Key_ctrl_l() /* ^L */, sigc::mem_fun(this, &WindowManager::Draw), true);
+	DeclareBindable(context, "redraw-screen", sigc::mem_fun(this, &WindowManager::Draw),
+		_("Redraw the complete screen immediately"), InputProcessor::Bindable_Override);
+
+	//TODO get real binding from config
+	BindAction(context, "redraw-screen", Keys::Instance()->Key_ctrl_l(), false);
 }
 
 WindowManager::~WindowManager(void)

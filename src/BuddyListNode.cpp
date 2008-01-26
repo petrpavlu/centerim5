@@ -31,10 +31,15 @@ BuddyListNode::BuddyListNode(TreeView& parent, PurpleBlistNode *node)
 , node(node)
 , treeview(&parent)
 {
+	const gchar *context = "buddylist-node";
 	log = Log::Instance();
 	canfocus = true;
 
-	AddCombo(Keys::Instance()->Key_enter(), sigc::mem_fun(this, &BuddyListNode::ActionActivate));
+	DeclareBindable(context, "activate", sigc::mem_fun(this, &BuddyListNode::ActionActivate),
+		_("Perform the main action for the selected type of buddy."), InputProcessor::Bindable_Normal);
+
+	//TODO get real binding from config
+	BindAction(context, "activate", Keys::Instance()->Key_enter(), false);
 }
 
 BuddyListNode::~BuddyListNode()

@@ -29,7 +29,7 @@ TextWindow::TextWindow(int x, int y, int w, int h, Border *border)
 : Window(x, y, w, h, border)
 {
 	browser = new TextBrowser(*this, 2, 1, w-4, h-2);
-	focuschild = browser;
+	SetFocusChild(browser);
 	AddWidget(browser);
 }
 

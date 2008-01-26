@@ -21,12 +21,38 @@
 #include <sigc++/sigc++.h>
 #include <sigc++/signal.h>
 
+#include <glib.h>
+
 #include <vector>
+#include <map>
 #include <string>
 
 class InputProcessor
 {
 	public:
+		enum BindableType {Bindable_Normal, Bindable_Override};
+
+		class KeyCombo {
+			public:
+				KeyCombo(const gchar *context,
+					const gchar *action,
+					const gchar *description,
+					const gchar *keycombo
+				)
+				: context(context)
+				, action(action)
+				, description(description)
+				, keycombo(keycombo)
+				{ ; }
+
+				KeyCombo() { ; }
+
+				const gchar *context;
+				const gchar *action;
+				const gchar *description;
+				const gchar *keycombo;
+		};
+
 		InputProcessor();
 		virtual ~InputProcessor();
 
@@ -70,6 +96,23 @@ class InputProcessor
 		int ProcessInput(const char *input, const int bytes);
 
 	protected:
+		/* Notes on how key combinations are stored and searched
+		 *
+		 * Key combinations are stored in a multimap 
+		 * indexed on the first byte of the key value only, this
+		 * allows for partial matching.
+		 *
+		 * When adding a new combination to the map, care must be
+		 * taken to look for `shadowing'. This occurs when when to
+		 * key combinations have the same prefix. In this case the
+		 * first definition is used. The user should be notified of
+		 * an error in the configuration. TODO implement this
+		 * */
+
+		class Bindable;
+		typedef std::vector<KeyCombo> KeyCombos;
+		typedef std::multimap<char, Bindable> Bindables;
+
 		virtual int ProcessInputText(const char *input, const int bytes);
 
 		/* Set the child object which must process input before this object
@@ -77,41 +120,23 @@ class InputProcessor
 		void SetInputChild(InputProcessor *inputchild);
 		InputProcessor* GetInputChild(void) { return inputchild; }
 
-		void AddCombo(const char *key, sigc::slot<void> action, bool override = false);
-		void RebindCombo(const char *oldkey, const char *newkey);
-		void ClearCombos(void);
+		/* Bind a keycombo to an action */
+		bool BindAction(const gchar *context, const gchar *action, const char *keycombo, bool override);
+		bool RebindAction(const gchar *context, const gchar *action, const char *keycombo)
+			{ return BindAction(context, action, keycombo, true); }
 
+		void DeclareBindable(const gchar *context, const gchar *action,
+			sigc::slot<void> function, const gchar *description, BindableType type);
 	private:
-		/* Notes on how key combinations are stored and searched
-		 *
-		 * Key combinations are stored in a vector (array) stably
-		 * sorted on the first byte of the key value only.
-		 *
-		 * This allows for fast searching using binary search. Inserts
-		 * are slower, but since key combinations are manipulated
-		 * very irregular this is not a problem.
-		 *
-		 * When adding a new combination to the vector, care must be
-		 * taken to look for `shadowing'. This occurs when when to
-		 * key combinations have the same prefix. In this case the
-		 * first definition is used. The user should be notified of
-		 * an error in the configuration.
-		 * */
-		enum ComboType {Normal, Override, Both};
-		typedef struct KeyCombo {
-			std::string key;
-			sigc::slot<void> action;
-			ComboType type;
-		};
-		typedef std::vector<KeyCombo> KeyCombos;
+		int Process(BindableType type, const char *input, const int bytes);
+		int Match(const std::string &skey, const char *input, const int bytes);
+		bool HaveBindable(const gchar *context, const gchar *action);
 
-		int Process(ComboType type, const char *input, const int bytes);
-		int Match(const std::string skey, const char *input, const int bytes);
+		//TODO: Bindables GetBindables(void); maybe public
 
-		KeyCombos::iterator BinSearchFirst(const char *key);
-		KeyCombos::iterator BinSearchLast(const char *key);
+		Bindables keybindings;
 
-		KeyCombos combos;
+		/* The child which will get to process the input */
 		InputProcessor *inputchild;
 };
 

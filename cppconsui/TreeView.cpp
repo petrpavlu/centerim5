@@ -41,10 +41,21 @@ TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linest
 , itemsheight(0)
 , focuscycle(true)
 {
-	AddCombo(Keys::Instance()->Key_up(), sigc::mem_fun(this, &TreeView::ActionFocusPrevious));
-	AddCombo(Keys::Instance()->Key_down(), sigc::mem_fun(this, &TreeView::ActionFocusNext));
-	AddCombo("-", sigc::mem_fun(this, &TreeView::ActionCollapse));
-	AddCombo("+", sigc::mem_fun(this, &TreeView::ActionExpand));
+	const gchar *context = "treeview";
+	DeclareBindable(context, "previous", sigc::mem_fun(this, &TreeView::ActionFocusPrevious),
+		_("Focusses the previous item in the list"), InputProcessor::Bindable_Normal);
+	DeclareBindable(context, "next", sigc::mem_fun(this, &TreeView::ActionFocusNext),
+		_("Focusses the next item in the list"), InputProcessor::Bindable_Normal);
+	DeclareBindable(context, "collapse", sigc::mem_fun(this, &TreeView::ActionCollapse),
+		_("Collapse the selected subtree"), InputProcessor::Bindable_Normal);
+	DeclareBindable(context, "expand", sigc::mem_fun(this, &TreeView::ActionExpand),
+		_("Expand the selected subtree"), InputProcessor::Bindable_Normal);
+
+	//TODO get real binding from config
+	BindAction(context, "previous", Keys::Instance()->Key_up(), false);
+	BindAction(context, "next", Keys::Instance()->Key_down(), false);
+	BindAction(context, "collapse", "-", false);
+	BindAction(context, "expand", "+", false);
 
 	canfocus = true;
 

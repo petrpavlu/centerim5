@@ -20,7 +20,6 @@
 
 #include <config.h>
 #include <locale.h>
-#include "gettext.h"
 
 #include "CenterMain.h"
 
