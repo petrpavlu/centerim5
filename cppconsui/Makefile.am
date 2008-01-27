@@ -5,6 +5,12 @@ libcppconsui_la_SOURCES =\
 	Curses.h \
 	Container.cpp \
 	Container.h \
+	AbstractListBox.cpp \
+	AbstractListBox.h \
+	ListBox.cpp \
+	ListBox.h \
+	HorizontalListBox.cpp \
+	HorizontalListBox.h \
 	TextBrowser.cpp \
 	TextBrowser.h \
 	TextInput.cpp \

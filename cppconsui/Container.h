@@ -47,12 +47,17 @@ class Container
 		void RemoveWidget(Widget *widget);
 
 	protected:
-		Widget *focuschild;
-
-	private:
 		typedef std::pair<Widget*, sigc::connection> Child;
 		typedef std::vector<Child> Children;
 
+		Widget *focuschild;
+
+		Children::iterator ChildrenBegin(void)
+			{ return children.begin(); }
+		Children::iterator ChildrenEnd(void)
+			{ return children.end(); }
+
+	private:
 		Container();
 		Container(const Container&);
 

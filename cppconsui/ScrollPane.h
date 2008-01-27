@@ -21,12 +21,12 @@
 #ifndef __SCROLLPANE_H__
 #define __SCROLLPANE_H__
 
-#include "Widget.h"
+#include "Container.h"
 #include "Scrollable.h"
 
 class ScrollPane
 : public Scrollable
-, public Widget
+, public Container
 {
 	public:
 		ScrollPane(Widget& parent, int x, int y, int w, int h, int scrollw, int scrollh);
@@ -45,6 +45,10 @@ class ScrollPane
 
 		/* Set the size of the scrollable area*/
 		void SetScrollSize(const int width, const int height);
+		void SetScrollWidth(const int width)
+			{ SetScrollSize(width, scrollh); }
+		void SetScrollHeight(const int height)
+			{ SetScrollSize(scrollw, height); }
 
 		/* Adjust the visible area to include the given coordinates/rectangle */
 		void AdjustScroll(const int newx, const int newy);

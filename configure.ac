@@ -81,6 +81,17 @@ AC_C_CONST
 # Checks for library functions. #
 #################################
 
+###########
+# Options #
+###########
+
+AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug],
+        [compile with debugging support])], , enable_debug=no)
+
+if test "x$enable_debug" = "xyes" ; then
+        AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
+fi
+
 ########################
 # Create output files. #
 ########################

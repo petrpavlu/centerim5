@@ -119,6 +119,8 @@ void Container::AddWidget(Widget *widget)
 	g_return_if_fail(widget != NULL);
 
 	widget->UpdateArea();
+	//TODO also other widget signals. maybe a descendant class would like
+	//to do somethings. Eg a ListBox wants to undo move events.
 	child.second = widget->signal_redraw.connect(sigc::mem_fun(this, &Container::OnChildRedraw));
 	child.first = widget;
 	children.push_back(child);

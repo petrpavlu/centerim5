@@ -1,4 +1,6 @@
 TODO:
+- All classes should have a copy constructor and an
+  operator=().
 - using panel.h might not be a bad idea after all.
   what is needed is simple enough to implement with
   panels.
@@ -44,6 +46,9 @@ TODO:
   done in cppconsui/Makefile.am!)
  
 Less important todo's which sometimes are just ideas:
+- Re-implement container to user red-black trees. Could be useful
+  if we want to maintain some extra variables like maxheight over
+  a collection of widgets.
 - Add option to save/display buddy icon
 - Order switch statements, put most used cases on top
 - Replace `if (!window) return;'-like constructs with

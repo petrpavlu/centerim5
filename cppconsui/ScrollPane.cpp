@@ -22,7 +22,7 @@
 #include "ScrollPane.h"
 
 ScrollPane::ScrollPane(Widget& parent, int x, int y, int w, int h, int scrollw, int scrollh)
-: Widget(parent, x, y, w, h)
+: Container(parent, x, y, w, h)
 , scrollw(scrollw)
 , scrollh(scrollh)
 , scrollarea(NULL)
