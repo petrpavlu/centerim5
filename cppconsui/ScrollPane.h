@@ -64,6 +64,9 @@ class ScrollPane
 
 	private:
 		ScrollPane();
+		ScrollPane(const ScrollPane&);
+
+		ScrollPane& operator=(const ScrollPane&);
 
 		WINDOW* scrollarea;
 };

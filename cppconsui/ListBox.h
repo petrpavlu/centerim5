@@ -36,12 +36,12 @@ class ListBox
 	protected:
 
 	private:
-		bool movingwidget;
-
 		ListBox();
 		ListBox(const ListBox&);
 
 		ListBox& operator=(const ListBox&);
+
+		bool movingwidget;
 };
 
 #endif /* __LISTBOX_H__ */

@@ -40,7 +40,7 @@ class AbstractListBox
 		int maxheight, maxwidth;
 
 	private:
-		AbstractListBox();
+		AbstractListBox(void);
 		AbstractListBox(const AbstractListBox&);
 
 		AbstractListBox& operator=(const AbstractListBox&);

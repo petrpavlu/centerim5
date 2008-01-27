@@ -29,12 +29,12 @@ class Container
 : public Widget
 {
 	public:
-		Container(Widget& parent, int x, int y, int w, int h);
+		Container(Widget& parent, const int x, const int y, const int w, const int h);
 		virtual ~Container();
 
-		virtual void Move(int newx, int newy);
-		virtual void Resize(int neww, int newh);
-		virtual void MoveResize(int newx, int newy, int neww, int newh);
+		virtual void Move(const int newx, const int newy);
+		virtual void Resize(const int neww, const int newh);
+		virtual void MoveResize(const int newx, const int newy, const int neww, const int newh);
 		virtual void Draw(void);
 
 		virtual void GiveFocus(void);
@@ -58,8 +58,10 @@ class Container
 			{ return children.end(); }
 
 	private:
-		Container();
+		Container(void);
 		Container(const Container&);
+
+		Container& operator=(const Container&);
 
 		void OnChildRedraw(void);
 		

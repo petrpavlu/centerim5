@@ -24,6 +24,7 @@
 class Scrollable
 {
 	public:
+		Scrollable() { ; }
 		virtual ~Scrollable() { ; }
 		/* Get the size of the scrollable area */
 		virtual Rect GetScrollSize(void) = 0;
@@ -49,7 +50,9 @@ class Scrollable
 	protected:
 
 	private:
+		Scrollable(const Scrollable&);
 
+		Scrollable& operator=(const Scrollable&);
 };
 
 #endif /* __SCROLLABLE_H__ */

@@ -65,6 +65,9 @@ class WindowManager
 
 	private:
 		WindowManager(void);
+		WindowManager(const WindowManager&);
+
+		WindowManager& operator=(const WindowManager&);
 
 		static WindowManager *instance;
 

@@ -42,6 +42,9 @@ class TextInput
 
 	private:
 		TextInput();
+		TextInput(const TextInput&);
+
+		TextInput& operator=(const TextInput&);
 };
 
 #endif /* __TEXT_INPUT_H__ */

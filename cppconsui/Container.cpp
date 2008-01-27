@@ -31,7 +31,7 @@
 //this also means making the children vector
 //private (protected?>
 
-Container::Container(Widget& parent, int x, int y, int w, int h)
+Container::Container(Widget& parent, const int x, const int y, const int w, const int h)
 : Widget(parent, x, y, w, h)
 , focuschild(NULL)
 {
@@ -50,7 +50,7 @@ Container::~Container()
 	}
 }
 
-void Container::Move(int newx, int newy)
+void Container::Move(const int newx, const int newy)
 {
 	Children::iterator i;
 
@@ -60,7 +60,7 @@ void Container::Move(int newx, int newy)
 		((*i).first)->UpdateArea();
 }
 
-void Container::Resize(int neww, int newh)
+void Container::Resize(const int neww, const int newh)
 {
 	Children::iterator i;
 
@@ -70,7 +70,7 @@ void Container::Resize(int neww, int newh)
 		((*i).first)->UpdateArea();
 }
 
-void Container::MoveResize(int newx, int newy, int neww, int newh)
+void Container::MoveResize(const int newx, const int newy, const int neww, const int newh)
 {
 	Children::iterator i;
 

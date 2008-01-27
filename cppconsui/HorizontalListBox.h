@@ -38,7 +38,7 @@ class HorizontalListBox
 	private:
 		bool movingwidget;
 
-		HorizontalListBox();
+		HorizontalListBox(void);
 		HorizontalListBox(const HorizontalListBox&);
 
 		HorizontalListBox& operator=(const HorizontalListBox&);

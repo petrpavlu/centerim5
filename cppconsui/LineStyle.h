@@ -40,7 +40,7 @@ typedef struct LineElements {
 class LineStyle
 {
 	public:
-		LineStyle();
+		LineStyle(void);
 		LineStyle(const LineStyle *linestyle);
 		LineStyle(const LineElements *elements);
 		~LineStyle();
@@ -87,6 +87,10 @@ class LineStyle
 		cchar_t *corner_br;	// Bottom-right corner
 
 	private:
+		LineStyle(const LineStyle&);
+
+		LineStyle& operator=(LineStyle&);
+
 		cchar_t* MakeLineElement(const gchar *utf8, const gchar *fallback);
 };
 

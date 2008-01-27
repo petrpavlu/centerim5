@@ -35,7 +35,7 @@ class Border
 : public LineStyle
 {
 	public:
-		Border();
+		Border(void);
 		Border(LineStyle *linestyle, int width, int height);
 
 		void Resize(int newwidth, int newhheight);
@@ -45,6 +45,7 @@ class Border
 		int width, height;
 
 	private:
+		Border& operator=(const Border&);
 };
 
 #endif /* __BORDER_H__ */

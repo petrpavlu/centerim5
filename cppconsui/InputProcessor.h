@@ -53,7 +53,7 @@ class InputProcessor
 				const gchar *keycombo;
 		};
 
-		InputProcessor();
+		InputProcessor(void);
 		virtual ~InputProcessor();
 
 		/* Notes on how input is processed:
@@ -128,6 +128,8 @@ class InputProcessor
 		void DeclareBindable(const gchar *context, const gchar *action,
 			sigc::slot<void> function, const gchar *description, BindableType type);
 	private:
+		InputProcessor& operator=(const InputProcessor&);
+
 		int Process(BindableType type, const char *input, const int bytes);
 		int Match(const std::string &skey, const char *input, const int bytes);
 		bool HaveBindable(const gchar *context, const gchar *action);

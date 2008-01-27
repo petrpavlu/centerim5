@@ -75,7 +75,10 @@ class Window
 		Border *border; 
 
 	private:
-		Window();
+		Window(void);
+		Window(const Window&);
+
+		Window& operator=(const Window&);
 
 		void MakeRealWindow(void);
 };

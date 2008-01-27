@@ -120,6 +120,9 @@ class TreeView
 
 	private:
 		TreeView();
+		TreeView(const TreeView&);
+
+		TreeView& operator=(const TreeView&);
 		
 		void OnChildRedraw(void);
 };

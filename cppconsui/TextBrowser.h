@@ -58,6 +58,9 @@ class TextBrowser
 
 	private:
 		TextBrowser();
+		TextBrowser(const TextBrowser&);
+
+		TextBrowser& operator=(const TextBrowser&);
 };
 
 #endif /* __TEXT_BROWSER_H__ */

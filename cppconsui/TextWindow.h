@@ -48,6 +48,10 @@ class TextWindow
 		TextBrowser *browser;
 
 	private:
+		TextWindow();
+		TextWindow(const TextWindow&);
+
+		TextWindow& operator=(const TextWindow&);
 };
 
 #endif /* __TEXTWINDOW_H__ */

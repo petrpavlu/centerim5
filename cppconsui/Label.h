@@ -40,7 +40,10 @@ class Label
 	protected:
 
 	private:
-		Label();
+		Label(void);
+		Label(const Label&);
+
+		Label& operator=(const Label&);
 
 		Glib::ustring text;
 };

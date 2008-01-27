@@ -34,12 +34,12 @@ class Widget
 , public InputProcessor
 {
 	public:
-		Widget(Widget& parent, int x, int y, int w, int h);
+		Widget(Widget& parent, const int x, const int y, const int w, const int h);
 		virtual ~Widget();
 
-		virtual void Move(int newx, int newy);
-		virtual void Resize(int neww, int newh);
-		virtual void MoveResize(int newx, int newy, int neww, int newh);
+		virtual void Move(const int newx, const int newy);
+		virtual void Resize(const int neww, const int newh);
+		virtual void MoveResize(const int newx, const int newy, const int neww, const int newh);
 		virtual void UpdateArea();
 
 		/* The difference between the Draw() and Redraw() functions should be
@@ -69,7 +69,7 @@ class Widget
 		int Width() { return w; }
 		int Height() { return h; }
 
-		void GetSubPad(curses_imp_t& a, int x, int y, int w, int h);
+		void GetSubPad(curses_imp_t& a, const int x, const int y, const int w, const int h);
 
 		//TODO encapsulate with a function, make sure derived classed call Move()/Resize()/Redraw() to emit signal
 		//also check if this is possible at all
@@ -89,6 +89,8 @@ class Widget
 	private:
 		Widget();
 		Widget(const Widget &);
+
+		Widget& operator=(const Widget&);
 };
 
 #endif /* __WIDGET_H__ */

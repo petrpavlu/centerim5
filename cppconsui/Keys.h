@@ -122,6 +122,8 @@ class Keys
 
 		static Keys *instance;
 
+		Keys& operator=(const Keys&);
+
 		/* copied from gntkeys.h */
 		/**
 		 * terminfo/termcap doesn't provide all the information that I want to use, eg.
