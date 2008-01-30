@@ -18,30 +18,34 @@
  *
  * */
 
-#ifndef __LISTBOX_H__
-#define __LISTBOX_H__
+#ifndef __MENUWINDOW_H__
+#define __MENUWINDOW_H__
 
-#include "AbstractListBox.h"
+#include "MenuWindow.h"
+#include "Window.h"
+#include "Panel.h"
+#include "ListBox.h"
 
-class ListBox
-: public AbstractListBox
+#include <glibmm/ustring.h>
+
+class MenuWindow
+: public Window
 {
 	public:
-		ListBox(Widget& parent, int x, int y, int w, int h);
-		virtual ~ListBox();
+		MenuWindow(int x, int y, int w, int h, Border *border);
+		virtual ~MenuWindow();
 
-		virtual void AddWidget(Widget *widget);
-		virtual void RemoveWidget(Widget *widget);
+		virtual void Resize(int neww, int newh);
 
 	protected:
+		Panel *panel;
+		ListBox *listbox;
 
 	private:
-		ListBox();
-		ListBox(const ListBox&);
+		MenuWindow();
+		MenuWindow(const MenuWindow&);
 
-		ListBox& operator=(const ListBox&);
-
-		bool movingwidget;
+		MenuWindow& operator=(const MenuWindow&);
 };
 
-#endif /* __LISTBOX_H__ */
+#endif /* __MENUWINDOW_H__ */
