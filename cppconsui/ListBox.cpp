@@ -27,7 +27,6 @@ ListBox::ListBox(Widget& parent, int x, int y, int w, int h)
 : AbstractListBox(parent, x, y, w, h)
 , movingwidget(false)
 {
-
 }
 
 ListBox::~ListBox()

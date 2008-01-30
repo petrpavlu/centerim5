@@ -35,7 +35,13 @@ Container::Container(Widget& parent, const int x, const int y, const int w, cons
 : Widget(parent, x, y, w, h)
 , focuschild(NULL)
 {
+	const gchar *context = "container";
 	canfocus = true;
+
+	DeclareBindable(context, "focus-previous", sigc::mem_fun(this, &Container::FocusCyclePrevious),
+		_("Focusses the previous widget"), InputProcessor::Bindable_Normal);
+	DeclareBindable(context, "focus-next", sigc::mem_fun(this, &Container::FocusCycleNext),
+		_("Focusses the next widget"), InputProcessor::Bindable_Normal);
 }
 
 Container::~Container()
@@ -104,7 +110,14 @@ void Container::TakeFocus(void)
 
 void Container::SetFocusChild(Widget* widget)
 {
+	g_return_if_fail(focuschild != widget);
+
+	if (focuschild)
+		focuschild->TakeFocus();
+
 	focuschild = widget;
+	widget->GiveFocus();
+	SetInputChild(widget);
 }
 
 Widget* Container::GetFocusChild(void)
@@ -146,14 +159,60 @@ void Container::RemoveWidget(Widget *widget)
 
 	if (!child) return; //TODO a warning also?
 
-	child->first->TakeFocus();
+	FocusCycleNext();
+
 	child->second.disconnect();
 	children.erase(i);
+}
 
-	if (focuschild == widget) {
-		focuschild = NULL;
-		SetInputChild(NULL);
+void Container::FocusCyclePrevious(void)
+{
+	Children::reverse_iterator i;
+	Child *child = NULL;
+
+	g_return_if_fail(children.size() > 1);
+
+	//TODO take CanFocus() into account
+	for (i = children.rbegin(); i != children.rend(); i++) {
+		child = &(*i);
+		if (child->first == focuschild) {
+			i++;
+			break;
+		}
 	}
+
+	if (i == children.rend())
+		i = children.rbegin();
+
+	focuschild->TakeFocus();
+	focuschild = (*i).first;
+	focuschild->GiveFocus();
+	SetInputChild(focuschild);
+}
+
+void Container::FocusCycleNext(void)
+{
+	Children::iterator i;
+	Child *child = NULL;
+
+	g_return_if_fail(children.size() > 1);
+
+	//TODO take CanFocus() into account
+	for (i = children.begin(); i != children.end(); i++) {
+		child = &(*i);
+		if (child->first == focuschild) {
+			i++;
+			break;
+		}
+	}
+
+	if (i == children.end())
+		i = children.begin();
+
+	focuschild->TakeFocus();
+	focuschild = (*i).first;
+	focuschild->GiveFocus();
+	SetInputChild(focuschild);
 }
 
 void Container::OnChildRedraw(void)

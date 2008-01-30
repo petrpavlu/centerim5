@@ -28,11 +28,6 @@ AbstractListBox::AbstractListBox(Widget& parent, int x, int y, int w, int h)
 , maxheight(0)
 , maxwidth(0)
 {
-	const gchar *context = "listbox";
-	DeclareBindable(context, "focus-previous", sigc::mem_fun(this, &AbstractListBox::ActionFocusPrevious),
-		_("Focusses the previous item in the list"), InputProcessor::Bindable_Normal);
-	DeclareBindable(context, "focus-next", sigc::mem_fun(this, &AbstractListBox::ActionFocusNext),
-		_("Focusses the next item in the list"), InputProcessor::Bindable_Normal);
 }
 
 AbstractListBox::~AbstractListBox()

@@ -27,6 +27,8 @@ libcppconsui_la_SOURCES =\
 	Border.h \
 	LineStyle.cpp \
 	LineStyle.h \
+	Panel.cpp \
+	Panel.h \
 	ScrollPane.cpp \
 	ScrollPane.h \
 	Scrollable.h \

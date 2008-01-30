@@ -18,29 +18,46 @@
  *
  * */
 
-#ifndef __ABSTRACTLISTBOX_H__
-#define __ABSTRACTLISTBOX_H__
+#ifndef __PANEL_H__
+#define __PANEL_H__
 
-#include "ScrollPane.h"
+#include "Panel.h"
+#include "LineStyle.h"
+#include "Label.h"
+#include "Widget.h"
 
-class AbstractListBox
-: public ScrollPane
+#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
+//#define _XOPEN_SOURCE_EXTENDED
+#include <ncurses.h>
+#else
+#include <curses.h>
+#endif
+
+//TODO borders with colors are nice
+class Panel
+: public Widget
+, public LineStyle
 {
 	public:
-		AbstractListBox(Widget& parent, int x, int y, int w, int h);
-		virtual ~AbstractListBox();
+		Panel(Widget& parent, const int x, const int y, const int w, const int h);
+		Panel(Widget& parent, LineStyle *linestyle, const int x, const int y, const int w, const int h);
 
-		virtual void AddWidget(Widget *widget);
-		virtual void RemoveWidget(Widget *widget);
+		virtual ~Panel();
+
+		virtual void Draw(void);
+
+		void SetText(const Glib::ustring str);
+		Glib::ustring GetText(void);
 
 	protected:
-		int maxheight, maxwidth;
 
 	private:
-		AbstractListBox(void);
-		AbstractListBox(const AbstractListBox&);
+		Panel(void);
+		Panel(const Panel&);
 
-		AbstractListBox& operator=(const AbstractListBox&);
+		Panel& operator=(const Panel&);
+
+		Label *label;
 };
 
-#endif /* __ABSTRACTLISTBOX_H__ */
+#endif /* __PANEL_H__ */

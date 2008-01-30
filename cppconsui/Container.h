@@ -46,6 +46,9 @@ class Container
 		void AddWidget(Widget *widget);
 		void RemoveWidget(Widget *widget);
 
+		virtual void FocusCyclePrevious(void);
+		virtual void FocusCycleNext(void);
+
 	protected:
 		typedef std::pair<Widget*, sigc::connection> Child;
 		typedef std::vector<Child> Children;
