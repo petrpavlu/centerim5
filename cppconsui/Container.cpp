@@ -51,6 +51,7 @@ Container::~Container()
 
 	while((i = children.begin()) != children.end()) {
 		widget = (*i).first;
+		//TODO should we do this???? (line below)
 		delete widget;
 		children.erase(i);
 	}

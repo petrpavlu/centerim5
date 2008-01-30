@@ -27,6 +27,7 @@
 
 #include <cppconsui/Window.h>
 #include <cppconsui/TreeView.h>
+#include <cppconsui/Panel.h>
 
 #include <cppconsui/Label.h>
 
@@ -83,6 +84,7 @@ class BuddyList
 		Conf *conf;
 
 		TreeView *treeview;
+		Panel *border;
 };
 
 #endif /* __BUDDYLIST_H__ */

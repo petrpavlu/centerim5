@@ -45,6 +45,10 @@ Border::Border(LineStyle *linestyle, int width, int height)
 {
 }
 
+Border::~Border()
+{
+}
+
 void Border::Resize(int newwidth, int newheight)
 {
 	width = newwidth;

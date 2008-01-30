@@ -97,7 +97,6 @@ BuddyList::BuddyList()
 	log = Log::Instance();
 	conf = Conf::Instance();
 
-	SetBorder(new Border());
 	MoveResize(conf->GetBuddyListDimensions());
 
 	//TODO check if this has been moved to purple_blist_init
@@ -115,8 +114,11 @@ BuddyList::BuddyList()
 	Glib::signal_timeout().connect(sigc::mem_fun(this, &BuddyList::Load), 0);
 
 	//TODO get linestyle from conf
+	border = new Panel(*this,  LineStyle::LineStyleDefault(), 0, 0, w, h);
 	treeview = new TreeView(*this, 1, 1, w-2, h-2, LineStyle::LineStyleDefault());
+	AddWidget(border);
 	AddWidget(treeview);
+	SetInputChild(treeview);
 }
 
 bool BuddyList::Load(void)
@@ -135,7 +137,8 @@ BuddyList::~BuddyList()
 	 */
 	purple_blist_schedule_save(); //TODO: will this go wrong?! (probably)
 
-	delete GetBorder(); //TODO what if NULL?
+	//delete treeview;
+	//delete border;
 }
 
 void BuddyList::AddNode(BuddyListNode *node)

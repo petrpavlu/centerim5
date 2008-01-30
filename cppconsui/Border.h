@@ -38,6 +38,8 @@ class Border
 		Border(void);
 		Border(LineStyle *linestyle, int width, int height);
 
+		virtual ~Border();
+
 		void Resize(int newwidth, int newhheight);
 		void Draw(WINDOW *window);
 
