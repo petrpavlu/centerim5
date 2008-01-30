@@ -103,6 +103,9 @@ CenterIM::CenterIM()
 : channel(NULL)
 , channel_id(0)
 {
+	/* Declaring bindables must be done in CenterIM::io_init()
+	 * */
+
 	char *path;
 	/* set the configuration file location */
 	path = g_build_filename(purple_home_dir(), CIM_CONFIG_PATH, NULL);
@@ -396,10 +399,10 @@ gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 	//keys->Refine(buf, rd);
 
 	{
-	buf[rd] = '\0'; //TODO remove all this debug stuff
-	gunichar uc = g_utf8_get_char(buf);
-	log->Write(Log::Type_cim, Log::Level_debug, "input: %s (%02x %02x %02x) %d utf8? %d uc: %d %s", buf, buf[0], buf[1], buf[2],
-		rd, g_utf8_validate(buf, rd, NULL), uc, key_left); //TODO remove
+	//buf[rd] = '\0'; //TODO remove all this debug stuff
+	//gunichar uc = g_utf8_get_char(buf);
+	//log->Write(Log::Type_cim, Log::Level_debug, "input: %s (%02x %02x %02x) %d utf8? %d uc: %d %s", buf, buf[0], buf[1], buf[2],
+	//	rd, g_utf8_validate(buf, rd, NULL), uc, key_left); //TODO remove
 	}
 
 	input.append(buf, rd);
