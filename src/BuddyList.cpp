@@ -137,8 +137,10 @@ BuddyList::~BuddyList()
 	 */
 	purple_blist_schedule_save(); //TODO: will this go wrong?! (probably)
 
-	//delete treeview;
-	//delete border;
+	/* The container class takes care of deleting widgets
+	delete treeview;
+	delete border;
+	*/
 }
 
 void BuddyList::AddNode(BuddyListNode *node)
