@@ -71,6 +71,7 @@ Keys::Keys(void)
 	INSERT_KEY("pagedown", Key_pgdown());
 	INSERT_KEY("insert", Key_ins());
 	INSERT_KEY("delete", Key_del());
+	INSERT_KEY("esc", Key_esc());
 
 	INSERT_KEY("left", Key_left());
 	INSERT_KEY("right", Key_right());

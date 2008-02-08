@@ -72,6 +72,7 @@ class Keys
 		const char* Key_backspace(void) { return SAFE(key_backspace); }
 		const char* Key_del(void) { return SAFE(key_dc); }
 		const char* Key_ins(void) { return SAFE(key_ic); }
+		const char* Key_esc(void) { return "\033"; }
 		const char* Key_form_feed(void) { return SAFE(form_feed); }
 
 		const char* Key_ctrl_a(void) { return "\001"; }
