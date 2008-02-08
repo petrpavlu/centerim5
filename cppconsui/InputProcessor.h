@@ -90,8 +90,14 @@ class InputProcessor
 		 * Non key combo raw input processing by objects. Used
 		 * for e.g. input widgets.
 		 *
-		 * TODO update and make accurate this description:
-		 * return values could be negative! Explain why/when
+		 * Notes:
+		 * ******
+		 * When checking for matches and no match is found but
+		 * a partial match was found, the number of bytes
+		 * needed to be able to make a full match is returned.
+		 * In this case the return value is amount of bytes,
+		 * subtracted from 0.
+		 *
 		 * */
 		int ProcessInput(const char *input, const int bytes);
 
@@ -127,6 +133,9 @@ class InputProcessor
 
 		void DeclareBindable(const gchar *context, const gchar *action,
 			sigc::slot<void> function, const gchar *description, BindableType type);
+
+		void ClearBindables(void);
+
 	private:
 		InputProcessor& operator=(const InputProcessor&);
 

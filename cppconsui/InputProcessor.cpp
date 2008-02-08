@@ -87,7 +87,7 @@ int InputProcessor::Process(InputProcessor::BindableType type, const char *input
 
 	Bindables::iterator begin, end, i;
 	Bindable bindable;
-	int m;
+	int m, minm = 0;
 
 	begin = keybindings.lower_bound(input[0]);
 	end = keybindings.upper_bound(input[0]);
@@ -98,7 +98,7 @@ int InputProcessor::Process(InputProcessor::BindableType type, const char *input
 			m = Match(bindable.keycombo, input, bytes);
 			if (m < 0) {
 				/* could match, but need btes more input to be sure */
-				return m;
+				if (m > minm) minm = m;
 			} else if (m > 0) {
 				/* found a match, execute the action */
 				bindable.function();
@@ -139,6 +139,11 @@ void InputProcessor::DeclareBindable(const gchar *context, const gchar *action,
 		return; //TODO maybe some error here
 
 	keybindings.insert(std::pair<char, Bindable>('\0', Bindable(context, action, description, '\0', function, type)));
+}
+
+void InputProcessor::ClearBindables(void)
+{
+	keybindings.clear();
 }
 
 bool InputProcessor::BindAction(const gchar *context, const gchar *action, const char *keycombo, bool override)
