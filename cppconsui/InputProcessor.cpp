@@ -52,23 +52,30 @@ InputProcessor::~InputProcessor()
 
 int InputProcessor::ProcessInput(const char *input, const int bytes)
 {
-	int i;
+	int i, needed = 0;
 
 	/* Process overriding key combinations first */
 	i = Process(Bindable_Override, input, bytes);
-	if (i) return i;
+	if (i > 0) return i;
+	if (i < 0) needed = i;
 	
 	/* Hand of input to a child */
 	if (inputchild)
 		i = inputchild->ProcessInput(input, bytes);
-	if (i) return i;
+	if (i > 0) return i;
+	if (i < 0) needed = i;
 
 	/* Process other key combinations */
 	i = Process(Bindable_Normal, input, bytes);
-	if (i) return i;
+	if (i > 0) return i;
+	if (i < 0) needed = i;
 
 	/* Do non-combo input processing */
-	return ProcessInputText(input, bytes);
+	i = ProcessInputText(input, bytes);
+	if (i > 0) return i;
+	if (i < 0) needed = i;
+
+	return needed;
 }
 
 int InputProcessor::ProcessInputText(const char *input, const int bytes)
