@@ -32,13 +32,23 @@ class MenuWindow
 : public Window
 {
 	public:
-		MenuWindow(int x, int y, int w, int h, Border *border);
+		MenuWindow(int x, int y, int w, int h, LineStyle *linestyle);
 		virtual ~MenuWindow();
 
 		virtual void Resize(int neww, int newh);
 
+		void AddItem(const char *text, sigc::slot<void> callback)
+			{ listbox->AddItem(text, callback); }
+		void AddSeperator()
+			{ listbox->AddSeperator(); }
+
+		void AddWidget(Widget *widget)
+			{ listbox->AddWidget(widget); }
+		void RemoveWidget(Widget *widget)
+			{ listbox->RemoveWidget(widget); }
+
 	protected:
-		Panel *panel;
+		Panel *border;
 		ListBox *listbox;
 
 	private:

@@ -29,6 +29,7 @@
 #endif
 
 #include <glib.h>
+#include <glibmm/main.h>
 
 WindowManager* WindowManager::instance = NULL;
 
@@ -40,6 +41,7 @@ WindowManager* WindowManager::Instance(void)
 
 WindowManager::WindowManager(void)
 : defaultwindow(NULL)
+, redrawpending(false)
 {
 	const gchar *context = "windowmanager";
 	defaultwindow = initscr();
@@ -47,7 +49,7 @@ WindowManager::WindowManager(void)
 	if (!defaultwindow)
 		;//TODO throw an exception that we cant init curses
 
-	DeclareBindable(context, "redraw-screen", sigc::mem_fun(this, &WindowManager::Draw),
+	DeclareBindable(context, "redraw-screen", sigc::mem_fun(this, &WindowManager::Redraw),
 		_("Redraw the complete screen immediately"), InputProcessor::Bindable_Override);
 
 	//TODO get real binding from config
@@ -66,6 +68,23 @@ void WindowManager::Delete(void)
 		delete instance;
 		instance = NULL;
 	}
+}
+
+void WindowManager::CloseWindow(Window *window)
+{
+	if (HasWindow(window)) {
+		Glib::signal_timeout().connect(sigc::bind(sigc::mem_fun(this, &WindowManager::CloseWindowCallback), window), 0);
+	}
+}
+
+bool WindowManager::CloseWindowCallback(Window *window)
+{
+	window->Hide();
+	Remove(window);
+	delete window;
+	Redraw();
+
+	return false;
 }
 
 void WindowManager::Add(Window *window)
@@ -161,24 +180,30 @@ bool WindowManager::HasWindow(Window *window)
 	return false;
 }
 
-void WindowManager::Draw(void)
+bool WindowManager::Draw(void)
 {
 	Windows::iterator i;
 
-	for (i = windows.begin(); i != windows.end(); i++) {
-		(*i).window->Draw();
-		/* this updates the virtual ncurses screen */
-		wnoutrefresh((*i).window->GetWindow());
+	if (redrawpending) {
+		for (i = windows.begin(); i != windows.end(); i++) {
+			(*i).window->Draw();
+			/* this updates the virtual ncurses screen */
+			wnoutrefresh((*i).window->GetWindow());
+		}
+
+		/* this copies to virtual ncurses screen to the physical screen */
+		doupdate();
+
+		redrawpending = false;
 	}
 
-	/* this copies to virtual ncurses screen to the physical screen */
-	doupdate();
+	return false;
 }
 
 void WindowManager::Redraw(void)
 {
-	//TODO disconnect redraw events from actual drawing to reduce the number of
-	//draws. This means: multiple redraw = one actual draw.
-	//Glib::signal_timeout can be used for this.
-	Draw();
+	if (!redrawpending) {
+		redrawpending = true;
+		Glib::signal_timeout().connect(sigc::mem_fun(this, &WindowManager::Draw), 0);
+	}
 }

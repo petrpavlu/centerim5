@@ -18,36 +18,25 @@
  *
  * */
 
-#ifndef __LABEL_H__
-#define __LABEL_H__
+#ifndef __ACOUNTSTATUSMENU_H__
+#define __ACOUNTSTATUSMENU_H__
 
-#include "Widget.h"
+#include <cppconsui/MenuWindow.h>
 
-#include <glibmm/ustring.h>
-
-class Label
-: public Widget
+class AccountStatusMenu
+: public MenuWindow
 {
 	public:
-		Label(Widget& parent, int x, int y, int w, int h, Glib::ustring &text);
-		Label(Widget& parent, int x, int y, int w, int h, const char *text);
-		Label(Widget& parent, int x, int y, const char *text);
-		virtual ~Label();
-
-		virtual void Draw(void);
-
-		void SetText(const Glib::ustring str);
-		Glib::ustring GetText(void);
+		AccountStatusMenu(int x, int y, int w, int h, LineStyle *linestyle);
+		virtual ~AccountStatusMenu();
 
 	protected:
 
 	private:
-		Label(void);
-		Label(const Label&);
+		AccountStatusMenu();
+		AccountStatusMenu(const AccountStatusMenu&);
 
-		Label& operator=(const Label&);
-
-		Glib::ustring text;
+		AccountStatusMenu& operator=(const AccountStatusMenu&);
 };
 
-#endif /* __LABEL_H__ */
+#endif /* __ACOUNTSTATUSMENU_H__ */

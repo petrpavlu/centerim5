@@ -5,6 +5,10 @@ DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\"
 centerim_SOURCES = \
 	Accounts.cpp \
 	Accounts.h \
+	GeneralMenu.cpp \
+	GeneralMenu.h \
+	AccountStatusMenu.cpp \
+	AccountStatusMenu.h \
 	BuddyList.cpp \
 	BuddyList.h \
 	BuddyListNode.cpp \

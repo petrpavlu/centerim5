@@ -25,6 +25,8 @@ ScrollPane::ScrollPane(Widget& parent, int x, int y, int w, int h, int scrollw, 
 : Container(parent, x, y, w, h)
 , scrollw(scrollw)
 , scrollh(scrollh)
+, xpos(0)
+, ypos(0)
 , scrollarea(NULL)
 {
 	//TODO scrollarea must be at least as largse as
@@ -61,9 +63,21 @@ void ScrollPane::UpdateArea()
 
 void ScrollPane::Draw(void)
 {
+	int copyw, copyh;
+
 	if (!scrollarea || ! area->w) return;
 
-	copywin(area->w, scrollarea, ypos, xpos, 0, 0, h-1, w-1, 0);
+	Container::Draw();
+
+	/* if the defined scrollable area is smaller than the 
+	 * widget, make sure the copy works.
+	 * */
+	copyw = (w > scrollw) ? scrollw-1 : w-1;
+	copyh = (h > scrollh) ? scrollh-1 : h-1;
+
+	if(copywin(area->w, scrollarea, ypos, xpos, 0, 0, copyh, copyw, 0) == ERR)
+		g_assert(false); //TODO this is a big error
+
 	Widget::Draw();
 }
 
@@ -126,6 +140,8 @@ void ScrollPane::SetScrollSize(const int width, const int height)
 	area->w = newpad(scrollh, scrollw);
 	if (area->w == NULL)
 		;//TODO throw an exception?
+
+	UpdateAreas();
 
 	//TODO not overflow safe (probably not a problem. but fix anyway)
 	if (xpos > scrollw - w) xpos = scrollw - w;

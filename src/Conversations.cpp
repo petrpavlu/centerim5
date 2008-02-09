@@ -96,10 +96,7 @@ void Conversations::Close(Conversation* conversation)
 	if (conversation->conv)
 		purple_conversation_destroy(conversation->conv);
 
-	conversation->Hide();
 	RemoveConversation(conversation);
-	windowmanager->Remove(conversation);
-	delete conversation;
 }
 
 void Conversations::AddConversation(Conversation *conv)

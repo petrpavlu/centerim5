@@ -60,7 +60,8 @@ class Widget
 
 		virtual void GiveFocus(void);
 		virtual void TakeFocus(void);
-		bool CanFocus(void) { return canfocus; }
+		bool GetCanFocus(void) { return canfocus; }
+		void SetCanFocus(bool canfocus) { this->canfocus = canfocus; }
 
 		int Left() { return x; }
 		int Top() { return y; }

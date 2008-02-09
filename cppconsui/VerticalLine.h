@@ -18,36 +18,41 @@
  *
  * */
 
-#ifndef __LABEL_H__
-#define __LABEL_H__
+#ifndef __VERTICALLINE_H__
+#define __VERTICALLINE_H__
 
+#include "VerticalLine.h"
+#include "LineStyle.h"
+#include "Label.h"
 #include "Widget.h"
 
-#include <glibmm/ustring.h>
+#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
+//#define _XOPEN_SOURCE_EXTENDED
+#include <ncurses.h>
+#else
+#include <curses.h>
+#endif
 
-class Label
+//TODO borders with colors are nice
+class VerticalLine
 : public Widget
+, public LineStyle
 {
 	public:
-		Label(Widget& parent, int x, int y, int w, int h, Glib::ustring &text);
-		Label(Widget& parent, int x, int y, int w, int h, const char *text);
-		Label(Widget& parent, int x, int y, const char *text);
-		virtual ~Label();
+		VerticalLine(Widget& parent, const int x, const int y, const int w);
+		VerticalLine(Widget& parent, LineStyle *linestyle, const int x, const int y, const int w);
+
+		virtual ~VerticalLine();
 
 		virtual void Draw(void);
-
-		void SetText(const Glib::ustring str);
-		Glib::ustring GetText(void);
 
 	protected:
 
 	private:
-		Label(void);
-		Label(const Label&);
+		VerticalLine(void);
+		VerticalLine(const VerticalLine&);
 
-		Label& operator=(const Label&);
-
-		Glib::ustring text;
+		VerticalLine& operator=(const VerticalLine&);
 };
 
-#endif /* __LABEL_H__ */
+#endif /* __VERTICALLINE_H__ */

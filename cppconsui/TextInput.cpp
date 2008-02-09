@@ -47,8 +47,12 @@ int TextInput::ProcessInputText(const char *input, const int bytes)
 {
 	const char *nl, *start;
 
+	//TODO this is a hack!
+	if (input[0] == '\033')
+		return 0;
+
 	//TODO strchr depends on terminating zero, which we cannot expect
-	//(for now its hacked in in centerim.cpp)
+	//(for now its hacked in in centerim.cpp) use g_strstr_len
 	start = input;
 	while (( nl = strchr(input, '\n') )) {
 		AddBytes(start, nl - start);

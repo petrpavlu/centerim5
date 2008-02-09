@@ -30,8 +30,11 @@ class AbstractListBox
 		AbstractListBox(Widget& parent, int x, int y, int w, int h);
 		virtual ~AbstractListBox();
 
+		virtual void AddItem(const char *text, sigc::slot<void> function);
+		virtual void AddSeperator() =0;
+
 		virtual void AddWidget(Widget *widget);
-		virtual void RemoveWidget(Widget *widget);
+		virtual void RemoveWidget(Widget *widget); //TODO might not be needed?
 
 	protected:
 		int maxheight, maxwidth;

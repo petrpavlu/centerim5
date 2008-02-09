@@ -20,19 +20,37 @@
 
 #include "Curses.h"
 #include "TextBrowser.h"
+#include "Keys.h"
 
 #include "MenuWindow.h"
 
 #include <glibmm/ustring.h>
 
-MenuWindow::MenuWindow(int x, int y, int w, int h, Border *border)
-: Window(x, y, w, h, border)
+MenuWindow::MenuWindow(int x, int y, int w, int h, LineStyle *linestyle)
+: Window(x, y, w, h, NULL)
 {
-	panel = new Panel(*this, 1, 1, w, h);
-	listbox = new ListBox(*this, 3, 1, w-6, h-2);
+	const gchar *context = "menuwindow";
+
+	border = new Panel(*this,  linestyle, 0, 0, w, h);
+	listbox = new ListBox(*this, 1, 1, w-2, h-2);
 	SetFocusChild(listbox);
-	AddWidget(panel);
-	AddWidget(listbox);
+	Window::AddWidget(border);
+	Window::AddWidget(listbox);
+	SetInputChild(listbox);
+
+	ClearBindables();
+
+	DeclareBindable(context, "focus-previous", sigc::mem_fun(listbox, &Container::FocusCyclePrevious),
+		_("Focusses the previous menu item"), InputProcessor::Bindable_Normal);
+	DeclareBindable(context, "focus-next", sigc::mem_fun(listbox, &Container::FocusCycleNext),
+		_("Focusses the next menu item"), InputProcessor::Bindable_Normal);
+	DeclareBindable(context, "close-window", sigc::mem_fun(this, &Window::Close),
+		_("Close the window"), InputProcessor::Bindable_Normal);
+
+	//TODO get real binding from config
+	BindAction(context, "focus-previous", Keys::Instance()->Key_up(), false);
+	BindAction(context, "focus-next", Keys::Instance()->Key_down(), false);
+	BindAction(context, "close-window", Keys::Instance()->Key_esc(), false);
 }
 
 MenuWindow::~MenuWindow()
@@ -52,6 +70,6 @@ void MenuWindow::Resize(int neww, int newh)
 	 * what we want. in most cases you would need to recalculate
 	 * widget sizes based on window and/or container size.
 	 * */
-	panel->Resize(w, h);
-	listbox->Resize(w-6, h-2);
+	border->Resize(w, h);
+	listbox->Resize(w-2, h-2);
 }

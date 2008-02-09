@@ -19,6 +19,7 @@
  * */
 
 #include "HorizontalListBox.h"
+#include "VerticalLine.h"
 #include "Keys.h"
 
 #include "ScrollPane.h"
@@ -27,11 +28,19 @@ HorizontalListBox::HorizontalListBox(Widget& parent, int x, int y, int w, int h)
 : AbstractListBox(parent, x, y, w, h)
 , movingwidget(false)
 {
-
+	SetScrollSize(0, h);
 }
 
 HorizontalListBox::~HorizontalListBox()
 {
+}
+
+void HorizontalListBox::AddSeperator()
+{
+	VerticalLine *line;
+
+	line = new VerticalLine(*this, 0, 0, 1);
+	AddWidget(line);
 }
 
 void HorizontalListBox::AddWidget(Widget *widget)
@@ -42,8 +51,8 @@ void HorizontalListBox::AddWidget(Widget *widget)
 	
 	movingwidget = true;
 	widget->Move(x, 0);
-	movingwidget = true;
-	SetScrollHeight(y + widget->Height());
+	movingwidget = false;
+	SetScrollHeight(x + widget->Width());
 	AbstractListBox::AddWidget(widget);
 }
 
@@ -51,16 +60,18 @@ void HorizontalListBox::RemoveWidget(Widget *widget)
 {
 	Children::iterator i;
 	Widget *w = NULL;
-	int x = 0;
+	int x;
 
 	g_return_if_fail(widget != NULL);
 
 	AbstractListBox::RemoveWidget(widget);
 
+	x = 0;
 	for (i = ChildrenBegin(); i != ChildrenEnd(); i++) {
 		w = (*i).first;
 		widget->Move(x, 0);
+		x += widget->Width();
 	}
 
-	SetScrollWidth(x + widget->Width());
+	SetScrollWidth(x);
 }

@@ -19,12 +19,14 @@
  * */
 
 #include "AbstractListBox.h"
+#include "HorizontalLine.h"
+#include "Label.h"
 #include "Keys.h"
 
 #include "ScrollPane.h"
 
 AbstractListBox::AbstractListBox(Widget& parent, int x, int y, int w, int h)
-: ScrollPane(parent, x, y, w, h, w, h)
+: ScrollPane(parent, x, y, w, h, 0, 0)
 , maxheight(0)
 , maxwidth(0)
 {
@@ -34,15 +36,24 @@ AbstractListBox::~AbstractListBox()
 {
 }
 
+void AbstractListBox::AddItem(const char *text, sigc::slot<void> function)
+{
+	Label *label;
+
+	label = new Label(*this, 0, 0, text);
+	label->SetCanFocus(true);
+	AddWidget(label);
+}
+
 void AbstractListBox::AddWidget(Widget *widget)
 {
 	if (widget->Height() > maxheight)
 		maxheight = widget->Height();
 	
-	if (widget->Height() > maxwidth)
-		maxwidth = widget->Height();
+	if (widget->Width() > maxwidth)
+		maxwidth = widget->Width();
 
-	Container::AddWidget(widget);
+	ScrollPane::AddWidget(widget);
 }
 
 void AbstractListBox::RemoveWidget(Widget *widget)

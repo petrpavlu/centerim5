@@ -41,6 +41,7 @@ class Window
 		Window(int x, int y, int w, int h, Border *border);
 		virtual ~Window();
 
+		virtual void Close(void);
 		virtual void Move(int newx, int newy);
 		virtual void Resize(int neww, int newh);
 		virtual void MoveResize(const Rect &rect)

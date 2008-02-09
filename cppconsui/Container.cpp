@@ -57,34 +57,30 @@ Container::~Container()
 	}
 }
 
-void Container::Move(const int newx, const int newy)
+void Container::UpdateAreas(void)
 {
 	Children::iterator i;
 
-	Widget::Move(newx, newy);
-
 	for (i = children.begin(); i != children.end(); i++)
 		((*i).first)->UpdateArea();
+}
+
+void Container::Move(const int newx, const int newy)
+{
+	Widget::Move(newx, newy);
+	UpdateAreas();
 }
 
 void Container::Resize(const int neww, const int newh)
 {
-	Children::iterator i;
-
 	Widget::Resize(neww, newh);
-
-	for (i = children.begin(); i != children.end(); i++)
-		((*i).first)->UpdateArea();
+	UpdateAreas();
 }
 
 void Container::MoveResize(const int newx, const int newy, const int neww, const int newh)
 {
-	Children::iterator i;
-
 	Widget::MoveResize(newx, newy, neww, newh);
-
-	for (i = children.begin(); i != children.end(); i++)
-		((*i).first)->UpdateArea();
+	UpdateAreas();
 }
 
 void Container::Draw(void)
@@ -189,6 +185,7 @@ void Container::FocusCyclePrevious(void)
 	focuschild = (*i).first;
 	focuschild->GiveFocus();
 	SetInputChild(focuschild);
+	Redraw();
 }
 
 void Container::FocusCycleNext(void)
@@ -214,6 +211,7 @@ void Container::FocusCycleNext(void)
 	focuschild = (*i).first;
 	focuschild->GiveFocus();
 	SetInputChild(focuschild);
+	Redraw();
 }
 
 void Container::OnChildRedraw(void)

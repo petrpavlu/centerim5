@@ -29,6 +29,7 @@
 #define INPUT_BUF_SIZE			64	//TODO is this reasonable? (pasting needs a somewhat larger buffer to be efficient)
 
 #include "CenterIM.h"
+#include "AccountStatusMenu.h"
 
 #include <cppconsui/WindowManager.h>
 
@@ -203,6 +204,8 @@ void CenterIM::ui_init(void)
 	connections = new Connections();
 	conversations = Conversations::Instance();
 	transfers = new Transfers();
+
+	windowmanager->Add(new AccountStatusMenu(40,0, 40, 20, LineStyle::LineStyleDefault()));
 }
 
 void CenterIM::ui_uninit(void)
@@ -319,7 +322,7 @@ void CenterIM::io_init(void)
 
 	/* Key combinations */
 	DeclareBindable(context, "quit", sigc::mem_fun(this, &CenterIM::Quit),
-		_("Quit CenterIM."), InputProcessor::Bindable_Normal);
+		_("Quit CenterIM."), InputProcessor::Bindable_Override);
 
 	//TODO get real binding from config
 	BindAction(context, "quit", Keys::Instance()->Key_ctrl_q(), true);

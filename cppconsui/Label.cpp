@@ -21,10 +21,25 @@
 #include "Curses.h"
 #include "Label.h"
 
-Label::Label(Widget& parent, int x, int y, int w, int h, Glib::ustring text)
+Label::Label(Widget& parent, int x, int y, int w, int h, Glib::ustring &text)
 : Widget(parent, x, y, w, h)
 , text(text)
 {
+}
+
+Label::Label(Widget& parent, int x, int y, int w, int h, const char *text)
+: Widget(parent, x, y, w, h)
+, text(text)
+{
+}
+
+Label::Label(Widget& parent, int x, int y, const char *text)
+: Widget(parent, x, y, 0, 0)
+, text(text)
+{
+	//TODO size() gives character count (taking into account wide chars
+	//but not the number of cells a character takes.
+	Resize(this->text.size(), 1);
 }
 
 Label::~Label()
@@ -40,6 +55,8 @@ void Label::Draw(void)
 		mvwaddstr(area->w, 0, 1, text.c_str());
 	} else
 		mvwaddstr(area->w, 0, 0, text.c_str());
+
+	Widget::Draw();
 }
 
 void Label::SetText(const Glib::ustring str)

@@ -18,36 +18,39 @@
  *
  * */
 
-#ifndef __LABEL_H__
-#define __LABEL_H__
-
+#include "Curses.h"
+#include "VerticalLine.h"
+#include "LineStyle.h"
 #include "Widget.h"
 
-#include <glibmm/ustring.h>
-
-class Label
-: public Widget
+VerticalLine::VerticalLine(Widget& parent, const int x, const int y, const int w)
+: Widget(parent, x, y, w, 1)
+, LineStyle(LineStyleDefault())
 {
-	public:
-		Label(Widget& parent, int x, int y, int w, int h, Glib::ustring &text);
-		Label(Widget& parent, int x, int y, int w, int h, const char *text);
-		Label(Widget& parent, int x, int y, const char *text);
-		virtual ~Label();
+}
 
-		virtual void Draw(void);
+VerticalLine::VerticalLine(Widget& parent, LineStyle *linestyle, const int x, const int y, const int w)
+: Widget(parent, x, y, w, 1)
+, LineStyle(linestyle)
+{
+}
 
-		void SetText(const Glib::ustring str);
-		Glib::ustring GetText(void);
+VerticalLine::~VerticalLine()
+{
+}
 
-	protected:
+void VerticalLine::Draw()
+{
+	if (!area->w || Height() == 0)
+		return; //TODO and throw an exception/log a warning?
 
-	private:
-		Label(void);
-		Label(const Label&);
-
-		Label& operator=(const Label&);
-
-		Glib::ustring text;
-};
-
-#endif /* __LABEL_H__ */
+	if (Height() <= 1) {
+		mvwadd_wch(area->w, 0, 0, V());
+	} else {
+		mvwadd_wch(area->w, 0, 0, VBegin());
+		for (int i = 1; i < Height()-1; i++) {
+			mvwadd_wch(area->w, 0, i, V());
+		}
+		mvwadd_wch(area->w, 0, Width()-1, VEnd());
+	}
+}

@@ -53,12 +53,9 @@ Conversation::Conversation(PurpleBlistNode* node)
 
 	DeclareBindable(context, "send",  sigc::mem_fun(this, &Conversation::Send),
 		_("Send the message."), InputProcessor::Bindable_Override);
-	DeclareBindable(context, "close",  sigc::mem_fun(this, &Conversation::Close),
-		_("Close the conversation window."), InputProcessor::Bindable_Override);
 
 	//TODO get real binding from config
 	BindAction(context, "send", Keys::Instance()->Key_ctrl_x(), false);
-	BindAction(context, "close", Keys::Instance()->Key_ctrl_w(), false);
 }
 
 void Conversation::Draw(void)
@@ -112,7 +109,10 @@ void Conversation::Send(void)
 
 void Conversation::Close(void)
 {
+	/* close the open conversation, if any */
 	Conversations::Instance()->Close(this);
+	/* close the conversation window */
+	Window::Close();
 }
 
 //TODO if this remains empty, make it a pure virtual function

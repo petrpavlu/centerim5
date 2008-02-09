@@ -27,6 +27,10 @@ libcppconsui_la_SOURCES =\
 	Border.h \
 	LineStyle.cpp \
 	LineStyle.h \
+	HorizontalLine.cpp \
+	HorizontalLine. h \
+	VerticalLine.cpp \
+	VerticalLine.h \
 	Panel.cpp \
 	Panel.h \
 	MenuWindow.cpp \

@@ -41,10 +41,12 @@ class WindowManager
 		static WindowManager* Instance(void);
 		void Delete(void);
 
+		void CloseWindow(Window *window);
+
 		void Add(Window *window);
 		void Remove(Window *window);
 
-		void Draw(void);
+		bool Draw(void);
 
 	protected:
 		typedef struct {
@@ -69,8 +71,11 @@ class WindowManager
 
 		WindowManager& operator=(const WindowManager&);
 
-		static WindowManager *instance;
+		bool CloseWindowCallback(Window *window);
 
+		static WindowManager *instance;
+	
+		bool redrawpending;
 };
 
 #endif /* __WINDOWMANAGER_H__ */

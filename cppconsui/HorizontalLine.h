@@ -18,36 +18,41 @@
  *
  * */
 
-#ifndef __LABEL_H__
-#define __LABEL_H__
+#ifndef __HORIZONTALLINE_H__
+#define __HORIZONTALLINE_H__
 
+#include "HorizontalLine.h"
+#include "LineStyle.h"
+#include "Label.h"
 #include "Widget.h"
 
-#include <glibmm/ustring.h>
+#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
+//#define _XOPEN_SOURCE_EXTENDED
+#include <ncurses.h>
+#else
+#include <curses.h>
+#endif
 
-class Label
+//TODO borders with colors are nice
+class HorizontalLine
 : public Widget
+, public LineStyle
 {
 	public:
-		Label(Widget& parent, int x, int y, int w, int h, Glib::ustring &text);
-		Label(Widget& parent, int x, int y, int w, int h, const char *text);
-		Label(Widget& parent, int x, int y, const char *text);
-		virtual ~Label();
+		HorizontalLine(Widget& parent, const int x, const int y, const int w);
+		HorizontalLine(Widget& parent, LineStyle *linestyle, const int x, const int y, const int w);
+
+		virtual ~HorizontalLine();
 
 		virtual void Draw(void);
-
-		void SetText(const Glib::ustring str);
-		Glib::ustring GetText(void);
 
 	protected:
 
 	private:
-		Label(void);
-		Label(const Label&);
+		HorizontalLine(void);
+		HorizontalLine(const HorizontalLine&);
 
-		Label& operator=(const Label&);
-
-		Glib::ustring text;
+		HorizontalLine& operator=(const HorizontalLine&);
 };
 
-#endif /* __LABEL_H__ */
+#endif /* __HORIZONTALLINE_H__ */

@@ -20,6 +20,8 @@
 
 #include "Window.h"
 
+#include "WindowManager.h"
+#include "Keys.h"
 #include "Container.h"
 
 #include "Curses.h"
@@ -38,6 +40,8 @@ Window::Window(int x, int y, int w, int h, Border *border)
 , realwindow(NULL)
 , border(border)
 {
+	const gchar *context = "window";
+
 	//TODO just call moveresize
 	if (win_w < 1) win_w = 1;
 	if (win_h < 1) win_h = 1;
@@ -50,12 +54,22 @@ Window::Window(int x, int y, int w, int h, Border *border)
 	}
 	Container::MoveResize(0, 0, win_w, win_h);
 
+	DeclareBindable(context, "close-window", sigc::mem_fun(this, &Window::Close),
+		_("Close the menu"), InputProcessor::Bindable_Normal);
+
+	BindAction(context, "close-window", Keys::Instance()->Key_esc(), false);
+
 	Redraw();
 }
 
 Window::~Window()
 {
 	delwin(realwindow);
+}
+
+void Window::Close(void)
+{
+	WindowManager::Instance()->CloseWindow(this);
 }
 
 void Window::Move(int newx, int newy)

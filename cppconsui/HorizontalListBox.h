@@ -30,6 +30,8 @@ class HorizontalListBox
 		HorizontalListBox(Widget& parent, int x, int y, int w, int h);
 		virtual ~HorizontalListBox();
 
+		void AddSeperator();
+
 		virtual void AddWidget(Widget *widget) = 0;
 		virtual void RemoveWidget(Widget *widget) = 0;
 
