@@ -86,47 +86,51 @@ int InputProcessor::Process(InputProcessor::BindableType type, const char *input
 	g_assert(input != NULL);
 
 	Bindables::iterator begin, end, i;
-	Bindable bindable;
-	int m, minm = 0;
+	Bindable bindable, largest;
+	sigc::slot<void> function;
+	int m, max = 0;
 
 	begin = keybindings.lower_bound(input[0]);
 	end = keybindings.upper_bound(input[0]);
 
 	for (i = begin; i != end; i++) {
 		bindable = (*i).second;
-		if (bindable.type == type || type == Bindable_Override) {
+		if (bindable.type == type || type == Bindable_Normal) {
 			m = Match(bindable.keycombo, input, bytes);
 			if (m < 0) {
 				/* could match, but need btes more input to be sure */
-				if (m > minm) minm = m;
-			} else if (m > 0) {
-				/* found a match, execute the action */
-				bindable.function();
-				return m;
+				if (m > max || max == 0) max = m;
+			} else if (m > 0 && m > max) {
+				/* found a larger match, remember the action */
+				max = m;
+				function = bindable.function;
 			} else {
 				/* do nothing */
 			}
 		}
 	}
 
-	return 0;
+	if (max > 0)
+		function();
+
+	return max;
 }
 
 int InputProcessor::Match(const std::string &skeycombo, const char *input, const int bytes)
 {
 	const char *keycombo = skeycombo.c_str();
-	int n;
 	
-	n = skeycombo.size();
-	if (bytes < n) n = bytes;
+	if (bytes > skeycombo.size()) 
+		/* more input than this keycombo */
+		return 0;
 
-	if (strncmp(keycombo, input, n) == 0) {
+	if (strncmp(keycombo, input, bytes) == 0) {
  	        if (bytes < (int)skeycombo.size())
 			/* need more input to determine a match */
 			return bytes - skeycombo.size();
 		else
 			/* complete match found */
-			return n;
+			return bytes;
 	} else {
 		return 0;
 	}

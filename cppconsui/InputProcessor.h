@@ -94,9 +94,14 @@ class InputProcessor
 		 * ******
 		 * When checking for matches and no match is found but
 		 * a partial match was found, the number of bytes
-		 * needed to be able to make a full match is returned.
-		 * In this case the return value is amount of bytes,
-		 * subtracted from 0.
+		 * needed to be able to make a full match is returned
+		 * if the number of input bytes was less than the number
+		 * of bytes in the combo. In this case the return value
+		 * is amount of bytes subtracted from 0.
+		 *
+		 * If more input bytes were given than a certain combo,
+		 * even if the combo is a prefix of the input, it will
+		 * not count as a match.
 		 *
 		 * */
 		int ProcessInput(const char *input, const int bytes);
