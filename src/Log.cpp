@@ -93,6 +93,10 @@ Log::~Log(void)
 	delete GetBorder(); //TODO what if NULL?
 }
 
+void Log::Close(void)
+{
+}
+
 void Log::Write(Log::Type type, Log::Level level, const char *fmt, ...)
 {
 	va_list args;

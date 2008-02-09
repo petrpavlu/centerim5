@@ -45,6 +45,8 @@ class Log
                 static Log* Instance(void);
                 static void Delete(void);
 
+		void Close(void);
+
 		//TODO WriteFatal, WriteMisc etc
 		void WriteInfo(const std::string text)
 			{ Write(Log::Type_cim, Log::Level_info, text); }

@@ -143,6 +143,10 @@ BuddyList::~BuddyList()
 	*/
 }
 
+void BuddyList::Close(void)
+{
+}
+
 void BuddyList::AddNode(BuddyListNode *node)
 {
 	BuddyListNode *parent = node->GetParent();
