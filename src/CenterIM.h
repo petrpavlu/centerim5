@@ -81,6 +81,9 @@ class CenterIM
 		static gboolean tmp_isenabled_(PurpleDebugLevel level, const char *category)
 			{ return true; }
 
+		void OpenAccountStatusMenu(void);
+		void OpenGeneralMenu(void);
+
 		static void purple_glib_io_destroy(gpointer data);
 
 		static char const * const version;

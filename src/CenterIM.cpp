@@ -30,6 +30,7 @@
 
 #include "CenterIM.h"
 #include "AccountStatusMenu.h"
+#include "GeneralMenu.h"
 
 #include <cppconsui/WindowManager.h>
 
@@ -204,8 +205,6 @@ void CenterIM::ui_init(void)
 	connections = new Connections();
 	conversations = Conversations::Instance();
 	transfers = new Transfers();
-
-	windowmanager->Add(new AccountStatusMenu(40,0, 40, 20, LineStyle::LineStyleDefault()));
 }
 
 void CenterIM::ui_uninit(void)
@@ -323,9 +322,15 @@ void CenterIM::io_init(void)
 	/* Key combinations */
 	DeclareBindable(context, "quit", sigc::mem_fun(this, &CenterIM::Quit),
 		_("Quit CenterIM."), InputProcessor::Bindable_Override);
+	DeclareBindable(context, "accountstatusmenu", sigc::mem_fun(this, &CenterIM::OpenAccountStatusMenu),
+		_("Open the account status menu."), InputProcessor::Bindable_Override);
+	DeclareBindable(context, "generalmenu", sigc::mem_fun(this, &CenterIM::OpenGeneralMenu),
+		_("Open the general menu."), InputProcessor::Bindable_Override);
 
 	//TODO get real binding from config
 	BindAction(context, "quit", Keys::Instance()->Key_ctrl_q(), true);
+	BindAction(context, "accountstatusmenu", Keys::Instance()->Key_f3(), true);
+	BindAction(context, "generalmenu", Keys::Instance()->Key_f4(), true);
 
 	SetInputChild(windowmanager);
 
@@ -425,3 +430,16 @@ gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 
 	return TRUE;
 }
+
+void CenterIM::OpenAccountStatusMenu(void)
+{
+	//TODO get coords from config
+	windowmanager->Add(new AccountStatusMenu(40,0, 40, 20, LineStyle::LineStyleDefault()));
+}
+
+void CenterIM::OpenGeneralMenu(void)
+{
+	//TODO get coords from config
+	windowmanager->Add(new GeneralMenu(40,0, 40, 20, LineStyle::LineStyleDefault()));
+}
+
