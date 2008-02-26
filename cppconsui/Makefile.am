@@ -44,6 +44,8 @@ libcppconsui_la_SOURCES =\
 	TreeView.h \
 	Label.cpp \
 	Label.h \
+	Button.cpp \
+	Button.h \
 	InputProcessor.cpp \
 	InputProcessor.h \
 	CppConsUI.cpp \

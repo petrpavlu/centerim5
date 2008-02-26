@@ -20,7 +20,7 @@
 
 #include "AbstractListBox.h"
 #include "HorizontalLine.h"
-#include "Label.h"
+#include "Button.h"
 #include "Keys.h"
 
 #include "ScrollPane.h"
@@ -38,9 +38,9 @@ AbstractListBox::~AbstractListBox()
 
 void AbstractListBox::AddItem(const char *text, sigc::slot<void> function)
 {
-	Label *label;
+	Button *label;
 
-	label = new Label(*this, 0, 0, text);
+	label = new Button(*this, 0, 0, text, function);
 	label->SetCanFocus(true);
 	AddWidget(label);
 }
