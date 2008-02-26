@@ -32,8 +32,8 @@ class HorizontalListBox
 
 		void AddSeperator();
 
-		virtual void AddWidget(Widget *widget) = 0;
-		virtual void RemoveWidget(Widget *widget) = 0;
+		virtual void AddWidget(Widget *widget);
+		virtual void RemoveWidget(Widget *widget);
 
 	protected:
 

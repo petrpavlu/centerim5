@@ -55,5 +55,5 @@ void GeneralMenu::OpenAccountsWindow(void)
 {
 	//TODO adding to the windowmanager should be done by the windows themselves?
 	WindowManager *wm = WindowManager::Instance();
-	wm->Add(AccountsWindow::Instance());
+	wm->Add(new AccountsWindow());
 }

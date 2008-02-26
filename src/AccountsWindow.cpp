@@ -21,26 +21,6 @@
 #include "AccountsWindow.h"
 
 #include <cppconsui/Keys.h>
-#include <cppconsui/Window.h>
-#include <cppconsui/TreeView.h>
-
-#include <cppconsui/Label.h>
-
-AccountsWindow* AccountsWindow::instance = NULL;
-
-AccountsWindow* AccountsWindow::Instance(void)
-{
-	if (!instance) instance = new AccountsWindow();
-	return instance;
-}
-
-void AccountsWindow::Delete(void)
-{
-	if (instance) {
-		delete instance;
-		instance = NULL;
-	}
-}
 
 AccountsWindow::AccountsWindow()
 : Window(0, 0, 80, 24, NULL)
@@ -52,12 +32,42 @@ AccountsWindow::AccountsWindow()
 
 	//TODO get linestyle from conf
 	border = new Panel(*this,  LineStyle::LineStyleDefault(), 0, 0, w, h);
-	treeview = new TreeView(*this, 1, 1, w-2, h-2, LineStyle::LineStyleDefault());
+	accounts = new ListBox(*this, 1, 1, w-2, h-4);
+	menu = new HorizontalListBox(*this, 1, h-2, w-2, 1);
+	line = new HorizontalLine(*this, 1, h-3, w-2);
+
+	menu->AddItem(_("Add"), sigc::mem_fun(this, &AccountsWindow::Add));
+	menu->AddSeperator();
+	menu->AddItem(_("Edit"), sigc::mem_fun(this, &AccountsWindow::Edit));
+	menu->AddSeperator();
+	menu->AddItem(_("Delete"), sigc::mem_fun(this, &AccountsWindow::Delete));
+	menu->AddSeperator();
+
 	AddWidget(border);
-	AddWidget(treeview);
-	SetInputChild(treeview);
+	AddWidget(accounts);
+	AddWidget(menu);
+	AddWidget(line);
+	SetInputChild(accounts);
+
+	Populate();
 }
 
 AccountsWindow::~AccountsWindow()
+{
+}
+
+void AccountsWindow::Populate(void)
+{
+}
+
+void AccountsWindow::Add(void)
+{
+}
+
+void AccountsWindow::Edit(void)
+{
+}
+
+void AccountsWindow::Delete(void)
 {
 }

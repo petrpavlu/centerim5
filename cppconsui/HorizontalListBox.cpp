@@ -39,8 +39,10 @@ void HorizontalListBox::AddSeperator()
 {
 	VerticalLine *line;
 
-	line = new VerticalLine(*this, 0, 0, 1);
-	AddWidget(line);
+	//TODO this can be done better i think
+	//line = new VerticalLine(*this, 0, 0, 1);
+	//AddWidget(line);
+	AddWidget(new Label(*this, 0, 0, " | "));
 }
 
 void HorizontalListBox::AddWidget(Widget *widget)
@@ -52,7 +54,7 @@ void HorizontalListBox::AddWidget(Widget *widget)
 	movingwidget = true;
 	widget->Move(x, 0);
 	movingwidget = false;
-	SetScrollHeight(x + widget->Width());
+	SetScrollWidth(x + widget->Width());
 	AbstractListBox::AddWidget(widget);
 }
 

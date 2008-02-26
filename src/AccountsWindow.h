@@ -25,32 +25,34 @@
 #include "Conf.h"
 
 #include <cppconsui/Window.h>
-#include <cppconsui/TreeView.h>
+#include <cppconsui/ListBox.h>
+#include <cppconsui/HorizontalListBox.h>
 #include <cppconsui/Panel.h>
-
-#include <cppconsui/Label.h>
-
-#include <libpurple/blist.h>
+#include <cppconsui/HorizontalLine.h>
 
 class AccountsWindow
 : public Window
 {
 	public:
-		static AccountsWindow* Instance(void);
-		static void Delete(void);
+		AccountsWindow();
 
 	protected:
 
 	private:
-		AccountsWindow();
 		~AccountsWindow();
 
-		static AccountsWindow* instance;
+		void Populate(void);
+
+		void Add(void);
+		void Edit(void);
+		void Delete(void);
 
 		Log *log;
 		Conf *conf;
 
-		TreeView *treeview;
+		ListBox *accounts;
+		HorizontalListBox *menu;
+		HorizontalLine *line;
 		Panel *border;
 };
 
