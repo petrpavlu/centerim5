@@ -7,6 +7,8 @@ centerim_SOURCES = \
 	Accounts.h \
 	GeneralMenu.cpp \
 	GeneralMenu.h \
+	AccountsWindow.cpp \
+	AccountsWindow.h \
 	AccountStatusMenu.cpp \
 	AccountStatusMenu.h \
 	BuddyList.cpp \

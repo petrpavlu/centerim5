@@ -87,6 +87,7 @@ class Conf
 		Rect GetLogDimensions(void);
 		Rect GetBuddyListDimensions(void);
 		Rect GetChatDimensions(void);
+		Rect GetAccountsWindowDimensions(void);
 
 		bool GetLogIms(void);
 		bool GetLogChats(void);
