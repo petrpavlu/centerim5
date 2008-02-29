@@ -20,6 +20,7 @@
 
 #include <Curses.h>
 #include <Container.h>
+#include <Keys.h>
 
 /* NOTES:
  * Widgets added to a container will be deleted by the
@@ -42,19 +43,14 @@ Container::Container(Widget& parent, const int x, const int y, const int w, cons
 		_("Focusses the previous widget"), InputProcessor::Bindable_Normal);
 	DeclareBindable(context, "focus-next", sigc::mem_fun(this, &Container::FocusCycleNext),
 		_("Focusses the next widget"), InputProcessor::Bindable_Normal);
+
+	BindAction(context, "focus-previous", Keys::Instance()->Key_shift_tab(), false);
+	BindAction(context, "focus-next", Keys::Instance()->Key_tab(), false);
 }
 
 Container::~Container()
 {
-	Children::iterator i;
-	Widget *widget;
-
-	while((i = children.begin()) != children.end()) {
-		widget = (*i).first;
-		//TODO should we do this???? (line below)
-		delete widget;
-		children.erase(i);
-	}
+	Clear();
 }
 
 void Container::UpdateAreas(void)
@@ -218,3 +214,18 @@ void Container::OnChildRedraw(void)
 {
 	signal_redraw();
 }
+
+void Container::Clear(void)
+{
+	Children::iterator i;
+	Widget *widget;
+
+	while((i = children.begin()) != children.end()) {
+		widget = (*i).first;
+		//TODO should we do this???? (line below)
+		delete widget;
+		children.erase(i);
+	}
+}
+
+
