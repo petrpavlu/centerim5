@@ -73,3 +73,8 @@ void AbstractListBox::RemoveWidget(Widget *widget)
 		if (w->Height() > maxwidth) maxwidth = w->Height();
 	}
 }
+
+void AbstractListBox::Clear(void)
+{
+	maxheight = maxwidth = 0;
+}

@@ -36,6 +36,8 @@ class AbstractListBox
 		virtual void AddWidget(Widget *widget);
 		virtual void RemoveWidget(Widget *widget); //TODO might not be needed?
 
+		virtual void Clear(void);
+
 	protected:
 		int maxheight, maxwidth;
 
