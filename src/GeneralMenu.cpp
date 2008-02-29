@@ -19,12 +19,9 @@
  * */
 
 #include "GeneralMenu.h"
-#include "AccountsWindow.h"
+#include "AccountWindow.h"
 
 #include <cppconsui/WindowManager.h>
-#include <cppconsui/Label.h>
-#include <cppconsui/HorizontalLine.h>
-#include <cppconsui/LineStyle.h>
 
 GeneralMenu::GeneralMenu(int x, int y, int w, int h, LineStyle *linestyle)
 : MenuWindow(x, y, w, h, linestyle)
@@ -55,5 +52,6 @@ void GeneralMenu::OpenAccountsWindow(void)
 {
 	//TODO adding to the windowmanager should be done by the windows themselves?
 	WindowManager *wm = WindowManager::Instance();
-	wm->Add(new AccountsWindow());
+	wm->Add(new AccountWindow());
+	Close();
 }
