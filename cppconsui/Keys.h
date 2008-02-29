@@ -102,6 +102,8 @@ class Keys
 		const char* Key_ctrl_y(void) { return "\031"; }
 		const char* Key_ctrl_z(void) { return "\032"; }
 
+		const char* Key_shift_tab(void) { return "\033\133\132"; }
+
 		const char* Key_f1(void) { return SAFE(key_f1); }
 		const char* Key_f2(void) { return SAFE(key_f2); }
 		const char* Key_f3(void) { return SAFE(key_f3); }
@@ -142,5 +144,10 @@ class Keys
 
 		const char *term;
 };
+
+/* Bad term.h! */
+#undef buttons
+#undef columns
+#undef newline
 
 #endif /* __KEYS_H__ */
