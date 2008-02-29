@@ -196,7 +196,7 @@ Rect Conf::GetChatDimensions(void)
 		CONF_CHAT_DIMENSIONS_WIDTH, CONF_CHAT_DIMENSIONS_HEIGHT);
 }
 
-Rect Conf::GetAccountsWindowDimensions(void)
+Rect Conf::GetAccountWindowDimensions(void)
 {
 	return GetDimensions("accounts/",
 		CONF_ACCOUNTS_DIMENSIONS_X, CONF_ACCOUNTS_DIMENSIONS_Y,

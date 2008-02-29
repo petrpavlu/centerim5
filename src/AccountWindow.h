@@ -25,32 +25,35 @@
 #include "Conf.h"
 
 #include <cppconsui/Window.h>
-#include <cppconsui/ListBox.h>
+#include <cppconsui/TreeView.h>
 #include <cppconsui/HorizontalListBox.h>
-#include <cppconsui/Panel.h>
 #include <cppconsui/HorizontalLine.h>
+#include <cppconsui/Panel.h>
 
-class AccountsWindow
+class AccountWindow
 : public Window
 {
 	public:
-		AccountsWindow();
+		AccountWindow();
 
 	protected:
 
 	private:
-		~AccountsWindow();
+		~AccountWindow();
 
 		void Populate(void);
 
 		void Add(void);
-		void Edit(void);
+		void Change(void);
 		void Delete(void);
+
+		void FocusCyclePrevious(void);
+		void FocusCycleNext(void);
 
 		Log *log;
 		Conf *conf;
 
-		ListBox *accounts;
+		TreeView *accounts;
 		HorizontalListBox *menu;
 		HorizontalLine *line;
 		Panel *border;
