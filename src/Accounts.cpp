@@ -94,5 +94,5 @@ void Accounts::signed_on_(PurpleConnection *gc, gpointer p)
 void Accounts::signed_on(PurpleConnection *gc)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	log->Write(Log::Type_cim, Log::Level_info, "+ Account connected: %s %s\n", account->username, account->protocol_id);
+	log->Write(Log::Type_cim, Log::Level_info, _("+ [%s] Logged in: %s\n"), account->protocol_id, account->username);
 }
