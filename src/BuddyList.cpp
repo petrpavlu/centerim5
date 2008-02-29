@@ -38,9 +38,6 @@
 #include <cppconsui/Keys.h>
 #include <cppconsui/Window.h>
 #include <cppconsui/TreeView.h>
-//TODO remove when signals are used
-#include <cppconsui/WindowManager.h>
-
 #include <cppconsui/Label.h>
 
 //TODO remove stuff we dont need here
@@ -114,7 +111,7 @@ BuddyList::BuddyList()
 	Glib::signal_timeout().connect(sigc::mem_fun(this, &BuddyList::Load), 0);
 
 	//TODO get linestyle from conf
-	border = new Panel(*this,  LineStyle::LineStyleDefault(), 0, 0, w, h);
+	border = new Panel(*this, 0, 0, w, h, LineStyle::LineStyleDefault());
 	treeview = new TreeView(*this, 1, 1, w-2, h-2, LineStyle::LineStyleDefault());
 	AddWidget(border);
 	AddWidget(treeview);
@@ -151,8 +148,6 @@ void BuddyList::AddNode(BuddyListNode *node)
 {
 	BuddyListNode *parent = node->GetParent();
 	node->id = treeview->AddNode(parent ? parent->id : -1, node, NULL);
-
-	Redraw();
 }
 
 void BuddyList::UpdateNode(BuddyListNode *node)
@@ -163,15 +158,12 @@ void BuddyList::UpdateNode(BuddyListNode *node)
 		treeview->SetParent(node->id, parent->id);
 
 	node->Update();
-
-	Redraw();
 }
 
 void BuddyList::RemoveNode(BuddyListNode *node)
 {
 	//TODO check for subnodes (if this is a group for instance)
 	treeview->DeleteNode(node->id, false);
-	Redraw();
 }
 
 void BuddyList::new_list(PurpleBuddyList *list)
@@ -195,8 +187,6 @@ void BuddyList::new_node(PurpleBlistNode *node)
 	if (!node->ui_data) {
 		node->ui_data = bnode = BuddyListNode::CreateNode(*treeview, node);
 		AddNode((BuddyListNode*)node->ui_data);
-
-		Redraw();
 
 		if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 			/* The core seems to expect the UI to add the buddies.
@@ -230,8 +220,6 @@ void BuddyList::update_node(PurpleBuddyList *list, PurpleBlistNode *node)
 		//TODO is it possible for a nodes parent not to be a contact?
 		//if so, then this call could use some checks
 	}
-
-	Redraw();
 }
 
 void BuddyList::remove_node(PurpleBuddyList *list, PurpleBlistNode *node)
