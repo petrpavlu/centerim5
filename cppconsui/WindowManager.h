@@ -57,7 +57,7 @@ class WindowManager
 
 		void Redraw(void);
 
-		void FocusPanel(void);
+		void FocusWindow(void);
 		void Swap(Window* fst, Window* snd);
 		Windows::iterator FindWindow(Window *window);
 		bool HasWindow(Window *window);

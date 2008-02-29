@@ -1,4 +1,5 @@
 TODO:
+- Horizontal ListBox: add option to make every item the same width
 - All classes should have a copy constructor and an
   operator=().
 - using panel.h might not be a bad idea after all.

@@ -97,7 +97,7 @@ void WindowManager::Add(Window *window)
 		windows.insert(windows.begin(), info);
 	}
 
-	FocusPanel();
+	FocusWindow();
 	Redraw();
 }
 
@@ -121,11 +121,11 @@ void WindowManager::Remove(Window *window)
 	werase(info.window->GetWindow());
 	wnoutrefresh(info.window->GetWindow());
 
-	FocusPanel();
-	Redraw();
+	FocusWindow();
+	Draw();
 }
 
-void WindowManager::FocusPanel(void)
+void WindowManager::FocusWindow(void)
 {
 	Window *win, *focus = NULL;
 	InputProcessor *inputchild;
@@ -182,13 +182,17 @@ bool WindowManager::HasWindow(Window *window)
 
 bool WindowManager::Draw(void)
 {
-	Windows::iterator i;
+	Windows::reverse_iterator i;
+	WINDOW *window;
 
 	if (redrawpending) {
-		for (i = windows.begin(); i != windows.end(); i++) {
+
+		for (i = windows.rbegin(); i != windows.rend(); i++) {
 			(*i).window->Draw();
 			/* this updates the virtual ncurses screen */
-			wnoutrefresh((*i).window->GetWindow());
+			window = (*i).window->GetWindow();
+			touchwin(window);
+			wnoutrefresh(window);
 		}
 
 		/* this copies to virtual ncurses screen to the physical screen */
