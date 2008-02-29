@@ -35,6 +35,7 @@
 Container::Container(Widget& parent, const int x, const int y, const int w, const int h)
 : Widget(parent, x, y, w, h)
 , focuschild(NULL)
+, focus_cycle(false)
 {
 	const gchar *context = "container";
 	canfocus = true;
@@ -174,8 +175,14 @@ void Container::FocusCyclePrevious(void)
 		}
 	}
 
-	if (i == children.rend())
-		i = children.rbegin();
+	if (i == children.rend()) {
+		if (focus_cycle)
+			i = children.rbegin();
+		else
+			//TODO tell parent (signal) to move the focus to the next widget.
+			//this means the container will lose focus.
+			return;
+	}
 
 	focuschild->TakeFocus();
 	focuschild = (*i).first;
@@ -200,8 +207,13 @@ void Container::FocusCycleNext(void)
 		}
 	}
 
-	if (i == children.end())
-		i = children.begin();
+	if (i == children.end()) {
+		if (focus_cycle)
+			i = children.begin();
+		else
+			//TODO same as for focuscycleprevious
+			return;
+	}
 
 	focuschild->TakeFocus();
 	focuschild = (*i).first;

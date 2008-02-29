@@ -56,12 +56,17 @@ class Container
 		typedef std::pair<Widget*, sigc::connection> Child;
 		typedef std::vector<Child> Children;
 
-		Widget *focuschild;
+		void SetFocusCycle(bool cycle) { focus_cycle = cycle; }
+		bool GetFocusCycle(void) { return focus_cycle; }
 
 		Children::iterator ChildrenBegin(void)
 			{ return children.begin(); }
 		Children::iterator ChildrenEnd(void)
 			{ return children.end(); }
+
+		Widget *focuschild;
+
+		bool focus_cycle;
 
 	private:
 		Container(void);
