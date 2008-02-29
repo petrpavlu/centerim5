@@ -27,16 +27,33 @@ Label::Label(Widget& parent, int x, int y, int w, int h, Glib::ustring &text)
 {
 }
 
-Label::Label(Widget& parent, int x, int y, int w, int h, const char *text)
+Label::Label(Widget& parent, int x, int y, int w, int h, const char *fmt, ...)
 : Widget(parent, x, y, w, h)
-, text(text)
+, text("")
 {
+        va_list args;
+        char buf[1024]; //TODO lets hope this is enough!
+
+        va_start(args, fmt);
+        vsnprintf(buf, 1023, fmt, args);
+        va_end(args);
+	buf[1023] = '\0';
+	text = buf;
 }
 
-Label::Label(Widget& parent, int x, int y, const char *text)
+Label::Label(Widget& parent, int x, int y, const char *fmt, ...)
 : Widget(parent, x, y, 0, 0)
-, text(text)
+, text("")
 {
+        va_list args;
+        char buf[1024]; //TODO lets hope this is enough!
+
+        va_start(args, fmt);
+        vsnprintf(buf, 1023, fmt, args);
+        va_end(args);
+	buf[1023] = '\0';
+	text = buf;
+
 	//TODO size() gives character count (taking into account wide chars
 	//but not the number of cells a character takes.
 	Resize(this->text.size(), 1);

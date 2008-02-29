@@ -30,8 +30,8 @@ class Label
 {
 	public:
 		Label(Widget& parent, int x, int y, int w, int h, Glib::ustring &text);
-		Label(Widget& parent, int x, int y, int w, int h, const char *text);
-		Label(Widget& parent, int x, int y, const char *text);
+		Label(Widget& parent, int x, int y, int w, int h, const char *fmt, ...);
+		Label(Widget& parent, int x, int y, const char *fmt, ...);
 		virtual ~Label();
 
 		virtual void Draw(void);
