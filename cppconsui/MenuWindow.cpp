@@ -31,7 +31,7 @@ MenuWindow::MenuWindow(int x, int y, int w, int h, LineStyle *linestyle)
 {
 	const gchar *context = "menuwindow";
 
-	border = new Panel(*this,  linestyle, 0, 0, w, h);
+	border = new Panel(*this, 0, 0, w, h, linestyle);
 	listbox = new ListBox(*this, 1, 1, w-2, h-2);
 	SetFocusChild(listbox);
 	Window::AddWidget(border);

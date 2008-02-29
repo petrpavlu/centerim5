@@ -31,7 +31,7 @@ Panel::Panel(Widget& parent, const int x, const int y, const int w, const int h)
 	label = new Label(*this, 2, 0, w-4, 1, "");
 }
 
-Panel::Panel(Widget& parent, LineStyle *linestyle, const int x, const int y, const int w, const int h)
+Panel::Panel(Widget& parent, const int x, const int y, const int w, const int h, LineStyle *linestyle)
 : Widget(parent, x, y, w, h)
 , LineStyle(linestyle)
 , label(NULL)

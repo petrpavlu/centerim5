@@ -39,7 +39,7 @@ TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linest
 , linestyle(linestyle_)
 , itemswidth(0)
 , itemsheight(0)
-, focuscycle(true)
+, focus_cycle(false)
 {
 	const gchar *context = "treeview";
 	DeclareBindable(context, "focus-previous", sigc::mem_fun(this, &TreeView::ActionFocusPrevious),
@@ -182,7 +182,7 @@ void TreeView::FocusNext(void)
 				i++;
 				if (i == parent->children.end()) {
 					if (parent == root) {
-						if (focuscycle) {
+						if (focus_cycle) {
 							newfocus = *(parent->children.begin());
 							break;
 						} else {
@@ -232,7 +232,7 @@ void TreeView::FocusPrevious(void)
 			i++;
 			if (i == parent->children.rend()) {
 				if (parent == root) {
-					if (focuscycle) {
+					if (focus_cycle) {
 						newfocus = *(parent->children.rbegin());
 						while (newfocus->open && newfocus->children.size())
 							newfocus = newfocus->children.back();

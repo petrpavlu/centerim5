@@ -111,12 +111,15 @@ class TreeView
 		int AddNode(TreeNode *parent, TreeNode *node);
 		int DrawNode(TreeNode *node, int top);
 
+		void SetFocusCycle(bool cycle) { focus_cycle = cycle; }
+		bool GetFocusCycle(void) { return focus_cycle; }
+
 		TreeNode *root, *focusnode;
 
 		LineStyle *linestyle;
 		int itemswidth, itemsheight;
 
-		bool focuscycle;
+		bool focus_cycle;
 
 	private:
 		TreeView();
