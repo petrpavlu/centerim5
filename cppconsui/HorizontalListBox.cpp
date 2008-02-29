@@ -39,10 +39,8 @@ void HorizontalListBox::AddSeperator()
 {
 	VerticalLine *line;
 
-	//TODO this can be done better i think
-	//line = new VerticalLine(*this, 0, 0, 1);
-	//AddWidget(line);
-	AddWidget(new Label(*this, 0, 0, " | "));
+	line = new VerticalLine(*this, 0, 0, 1);
+	AddWidget(line);
 }
 
 void HorizontalListBox::AddWidget(Widget *widget)
