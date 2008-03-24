@@ -123,7 +123,7 @@ int InputProcessor::Process(InputProcessor::BindableType type, const char *input
 	return max;
 }
 
-int InputProcessor::Match(const std::string &skeycombo, const char *input, const int bytes)
+int InputProcessor::Match(const std::string &skeycombo, const char *input, const size_t bytes)
 {
 	const char *keycombo = skeycombo.c_str();
 	
@@ -132,7 +132,7 @@ int InputProcessor::Match(const std::string &skeycombo, const char *input, const
 		return 0;
 
 	if (strncmp(keycombo, input, bytes) == 0) {
- 	        if (bytes < (int)skeycombo.size())
+ 	        if (bytes < skeycombo.size())
 			/* need more input to determine a match */
 			return bytes - skeycombo.size();
 		else

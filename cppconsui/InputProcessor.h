@@ -145,7 +145,7 @@ class InputProcessor
 		InputProcessor& operator=(const InputProcessor&);
 
 		int Process(BindableType type, const char *input, const int bytes);
-		int Match(const std::string &skey, const char *input, const int bytes);
+		int Match(const std::string &skey, const char *input, const size_t bytes);
 		bool HaveBindable(const gchar *context, const gchar *action);
 
 		//TODO: Bindables GetBindables(void); maybe public
