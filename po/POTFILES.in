@@ -3,6 +3,8 @@
 # CenterIM source files
 src/Accounts.cpp
 src/Accounts.h
+src/AccountWindow.cpp
+src/AccountWindow.h
 src/BuddyList.cpp
 src/BuddyList.h
 src/BuddyListNode.cpp

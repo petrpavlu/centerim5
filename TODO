@@ -5,10 +5,6 @@ TODO:
 - using panel.h might not be a bad idea after all.
   what is needed is simple enough to implement with
   panels.
-- For the TreeView, reimplement the tree structure with
-  a standard implementation. Implementation needs parent
-  pointers to speed things up, better tree-traversal
-  functions.
 - see if `derwin' and similar can be used for scrollables.
 - currently singletons use the Gamma singleton pattern
   change this to the Meyers singelton pattern, which

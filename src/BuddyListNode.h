@@ -50,7 +50,7 @@ class BuddyListNode
 
 		BuddyListNode* GetParent(void);
 
-		int id;
+		TreeView::NodeReference ref;
 
 	protected:
 		PurpleBlistNode *node;

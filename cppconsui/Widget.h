@@ -82,9 +82,11 @@ class Widget
 	protected:
 		int x, y, w, h; // screen area relative to parent area
 
+		bool focus, canfocus;
+
 		curses_imp_t* area;
 
-		bool focus, canfocus;
+		//bool focus, canfocus;
 
 		Widget *parent;
 

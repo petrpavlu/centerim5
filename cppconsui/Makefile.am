@@ -42,6 +42,7 @@ libcppconsui_la_SOURCES =\
 	Keys.h \
 	TreeView.cpp \
 	TreeView.h \
+	tree.hh \
 	Label.cpp \
 	Label.h \
 	Button.cpp \

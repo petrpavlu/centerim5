@@ -46,83 +46,87 @@ TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linest
 		_("Focusses the previous item in the list"), InputProcessor::Bindable_Normal);
 	DeclareBindable(context, "focus-next", sigc::mem_fun(this, &TreeView::ActionFocusNext),
 		_("Focusses the next item in the list"), InputProcessor::Bindable_Normal);
-	DeclareBindable(context, "node-collapse", sigc::mem_fun(this, &TreeView::ActionCollapse),
+	DeclareBindable(context, "fold-subtree", sigc::mem_fun(this, &TreeView::ActionCollapse),
 		_("Collapse the selected subtree"), InputProcessor::Bindable_Normal);
-	DeclareBindable(context, "node-expand", sigc::mem_fun(this, &TreeView::ActionExpand),
+	DeclareBindable(context, "unfold-subtree", sigc::mem_fun(this, &TreeView::ActionExpand),
 		_("Expand the selected subtree"), InputProcessor::Bindable_Normal);
 
 	//TODO get real binding from config
 	BindAction(context, "focus-previous", Keys::Instance()->Key_up(), false);
 	BindAction(context, "focus-next", Keys::Instance()->Key_down(), false);
-	BindAction(context, "node-collapse", "-", false);
-	BindAction(context, "nodeexpand", "+", false);
+	BindAction(context, "fold-subtree", "-", false);
+	BindAction(context, "unfold-subtree", "+", false);
 
 	canfocus = true;
 
 	if (!linestyle)
 		linestyle = LineStyle::LineStyleDefault();
 
-	root = new TreeNode;
-	root->widget = NULL;
-	root->depth = -1;
-	root->height = 0;
-	root->children.clear();
-	root->id = 0;
-	root->collapsable = false;
-	root->open = true;
+	/* initialise the tree */
+	TreeNode root;
+	root.widget = NULL;
+	root.widgetheight = 0;
+	root.collapsable = false;
+	root.open = true;
+	thetree.set_head(root);
+	focusnode = thetree.begin();
 
+	//TODO remove the next line
+	//we should change the scroll size to the maximum possible
+	//(height of completely unfolded tree) when nodes are added/removed
+	//for this we need to maintain the widgetheight value correctly
 	SetScrollSize(w, 200);
+
 	AdjustScroll(0, 0);
 }
 
 TreeView::~TreeView()
 {
-	TreeNodes::iterator i;
-
+	DeleteNode(thetree.begin(), false);
 	delete linestyle;
-
-	DeleteNode(root);
 }
 
 void TreeView::Draw(void)
 {
 	werase(area->w);
-	DrawNode(root, 0);
+	DrawNode(thetree.begin(), 0);
 	ScrollPane::Draw();
 }
 
-int TreeView::DrawNode(TreeNode *node, int top)
+int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 {
 	int height = 0, j = top, oldh, depthoffset;
-	TreeNodes::iterator i;
-	TreeNode *child;
+	TheTree::sibling_iterator i;
+	TreeNode *child, *parent;
 
-	depthoffset = (node->depth+1) * 3;
+	depthoffset = thetree.depth(node) * 3;
 
-	/* draw this node first */
-	if (node->widget) {
-		node->widget->Move(depthoffset + 3, top);
-		node->widget->Draw();
-		height += node->widget->Height();
+	parent = &(*node);
+
+	/* draw the parent node first */
+	if (parent->widget) {
+		parent->widget->Move(depthoffset + 3, top);
+		parent->widget->Draw();
+		height += parent->widget->Height();
 	}
 
-	if (node->open) {
-		if (node->children.size()) {
+	if (parent->open) {
+		if (thetree.number_of_children(node) > 0) {
 			for (j = top+1; j < top+height; j++)
 				mvwadd_wch(area->w, j, depthoffset + 1, linestyle->V());
 		}
 
-		for (i = node->children.begin(); i != node->children.end(); i++) {
-			child = *i;
+		for (i = node.begin(); i != node.end(); i++) {
+			child = &(*i);
 
-			if (child != node->children.back())
+			if (i != node.back())
 				mvwadd_wch(area->w, top+height,  depthoffset + 1, linestyle->VRight());
 			else
 				mvwadd_wch(area->w, top+height,  depthoffset + 1, linestyle->CornerBL());
 
 			mvwadd_wch(area->w, top+height,  depthoffset + 2, linestyle->H());
 			
-			if (child->collapsable && child->children.size()) {
+			if (child->collapsable && thetree.number_of_children(i) > 0) {
 				mvwaddch(area->w, top+height, depthoffset + 3, '[');
 				mvwaddch(area->w, top+height, depthoffset + 4, child->open ? '-' : '+');
 				mvwaddch(area->w, top+height, depthoffset + 5, ']');
@@ -133,9 +137,9 @@ int TreeView::DrawNode(TreeNode *node, int top)
 			}
 
 			oldh = height;
-			height += DrawNode(child, top+height);
+			height += DrawNode(i, top+height);
 
-			if (child != node->children.back()) {
+			if (i != node.back()) {
 				for (j = top+oldh+1; j < top+height ; j++)
 					mvwadd_wch(area->w, j, depthoffset + 1, linestyle->V());
 			}
@@ -147,123 +151,100 @@ int TreeView::DrawNode(TreeNode *node, int top)
 void TreeView::GiveFocus(void)
 {
 	focus = true;
-	if (focusnode) {
-		focusnode->widget->GiveFocus();
-		focusnode->widget->Redraw();
-	}
+	(*focusnode).widget->GiveFocus();
+	(*focusnode).widget->Redraw();
 }
 
 void TreeView::TakeFocus(void)
 {
 	focus = false;
-	if (focusnode)
-		focusnode->widget->TakeFocus();
+	(*focusnode).widget->TakeFocus();
 }
 
 void TreeView::FocusNext(void)
 {
-	TreeNodes::iterator i;
-	TreeNode *node, *newfocus = NULL, *parent, *child;
+	TheTree::pre_order_iterator oldfocus;
 
-	if (!focusnode) return; /* no nodes have been added yet */
-	//if (root->children.size() == 1) /* only one noe can have focus (and has it) */
-	//why does that segfault?
+	oldfocus = focusnode;
 
-	node = focusnode;
+	if (focusnode != thetree.back()) {
+		if (!(*focusnode).open)
+			focusnode.skip_children();
 
-	if (node->open && node->children.size()) {
-		newfocus = node->children.front();
-	} else {
-		parent = FindParent(node->id);
+		focusnode++;
 
-		for (i = parent->children.begin(); i != parent->children.end(); ) {
-			child = *i;
-			if (child == node) {
-				i++;
-				if (i == parent->children.end()) {
-					if (parent == root) {
-						if (focus_cycle) {
-							newfocus = *(parent->children.begin());
-							break;
-						} else {
-							return;
-						}
-					}
-
-					node = parent;
-					parent = FindParent(parent->id);
-					i = parent->children.begin();
-					continue;
-				} else {
-					newfocus = *i;
-					break;
-				}
+		if (focusnode == thetree.end()) {
+			if (focus_cycle) {
+				focusnode = thetree.begin();
+			} else {
+				focusnode = oldfocus;
+				return;
 			}
-			i++;
+		}
+	} else {
+		if (focus_cycle) {
+			focusnode = thetree.begin();
+		} else {
+			return;
 		}
 	}
 
-	if (newfocus) {
-		focusnode->widget->TakeFocus();
-		focusnode = newfocus;
-		focusnode->widget->GiveFocus();
-		SetInputChild(focusnode->widget);
-		AdjustScroll(focusnode->widget->Left(), focusnode->widget->Top());
-		Redraw();
+	if ((*focusnode).widget == NULL)
+		focusnode++;
+
+	if ((*oldfocus).widget != NULL) {
+		(*oldfocus).widget->TakeFocus();
 	}
+	(*focusnode).widget->GiveFocus();
+	SetInputChild((*focusnode).widget);
+	AdjustScroll((*focusnode).widget->Left(), (*focusnode).widget->Top());
+	Redraw();
 }
 
 void TreeView::FocusPrevious(void)
 {
-	TreeNodes::reverse_iterator i;
-	TreeNode *node, *newfocus = NULL, *parent, *child;
+	TheTree::pre_order_iterator oldfocus;
+	TheTree::sibling_iterator previous;
 
-	if (!focusnode) return; /* no nodes have been added yet */
-	//if (root->children.size() == 1) /* only one noe can have focus (and has it) */
-	//why does that segfault?
+	oldfocus = focusnode;
 
-	node = focusnode;
+	if (focusnode != Root().begin()) {
+		if (focusnode == thetree.begin(thetree.parent(focusnode))) {
+			/* if the node is a first child move the focus to the parent*/
+			focusnode--;
+		} else {
+			/* if the node is not a first child it has a previous sibling
+			 * in this case we need to move to the last open node in
+			 * the previous sibling.
+			 * */
+			previous = focusnode;
+			previous--;
 
-	parent = FindParent(node->id);
-
-	for (i = parent->children.rbegin(); i != parent->children.rend(); ) {
-		child = *i;
-		if (child == node) {
-			i++;
-			if (i == parent->children.rend()) {
-				if (parent == root) {
-					if (focus_cycle) {
-						newfocus = *(parent->children.rbegin());
-						while (newfocus->open && newfocus->children.size())
-							newfocus = newfocus->children.back();
-						break;
-					} else {
-						return;
-					}
-				}
-
-				newfocus = parent;
-				break;
-			} else {
-				newfocus = *i;
-
-				while (newfocus->open && newfocus->children.size())
-					newfocus = newfocus->children.back();
-
-				break;
+			while ((*previous).open && thetree.number_of_children(previous) > 0) {
+				previous = previous.back();
 			}
+
+			focusnode = previous;
 		}
-		i++;
+	} else {
+		if (focus_cycle) {
+			focusnode = thetree.back();
+		} else {
+			return;
+		}
 	}
 
-	if (newfocus) {
-		focusnode->widget->TakeFocus();
-		focusnode = newfocus;
-		focusnode->widget->GiveFocus();
-		SetInputChild(focusnode->widget);
-		AdjustScroll(focusnode->widget->Left(), focusnode->widget->Top());
-		Redraw();
+	if ((*focusnode).widget == NULL)
+		focusnode--;
+
+	if ((*oldfocus).widget != NULL) {
+		(*oldfocus).widget->TakeFocus();
 	}
+	(*focusnode).widget->GiveFocus();
+	SetInputChild((*focusnode).widget);
+	AdjustScroll((*focusnode).widget->Left(), (*focusnode).widget->Top());
+	Redraw();
+
 }
 
 void TreeView::ActionFocusNext(void)
@@ -278,70 +259,54 @@ void TreeView::ActionFocusPrevious(void)
 
 void TreeView::ActionCollapse(void)
 {
-	if (!focusnode) return;
-
-	if (focusnode->open && focusnode->collapsable) {
-		focusnode->open = false;
+	if ((*focusnode).open && (*focusnode).collapsable) {
+		(*focusnode).open = false;
 		Redraw();
 	}
 }
 
 void TreeView::ActionToggleCollapsed(void)
 {
-	if (!focusnode) return;
-
-	if (focusnode->collapsable) {
-		focusnode->open = !focusnode->open;
+	if ((*focusnode).collapsable) {
+		(*focusnode).open = !(*focusnode).open;
 		Redraw();
 	}
 }
 
 void TreeView::ActionExpand(void)
 {
-	if (!focusnode) return;
-
-	if (!focusnode->open && focusnode->collapsable) {
-		focusnode->open = true;
+	if (!(*focusnode).open && (*focusnode).collapsable) {
+		(*focusnode).open = true;
 		Redraw();
 	}
 }
 
-int TreeView::AddNode(int parentid, Widget *widget, void *data)
+const TreeView::NodeReference TreeView::AddNode(const NodeReference &parent, Widget *widget, void *data)
 {
 	int newwidth = 0, newheight = 0;
-	TreeNode *parent, *child = NULL, *node;
+	TheTree::pre_order_iterator iter;
 
 	//TODO check input and throw some errors (or return -1?)
+	g_assert(widget != NULL);
 
-	//TODO remove this variable?
-	VARIABLE_NOT_USED(child)
+	/* construct the new node */
+	TreeNode node;
+	node.widget = widget;
+	node.widgetheight = 0;
+	node.data = data;
+	node.collapsable = true;
+	node.open = true;
 
-	/* construct a new node */
-	node = new TreeNode;
-	node->id = GenerateId();
-	node->widget = widget;
-	node->height = 0;
-	node->data = data;
-	node->collapsable = true;
-	node->open = true;
+	iter = thetree.append_child(parent, node);
+	(*parent).widgetheight += node.widget->Height();
 
-	if (!focusnode) {
-		focusnode = node;
-		SetInputChild(focusnode->widget);
+	if ((*focusnode).widget == NULL) {
+		focusnode = iter;
+		widget->GiveFocus();
 	}
 
-	parent = FindNode(parentid);
-	if (parent == NULL)
-		parent = root;
-
-	node->depth = parent->depth + 1;
-	parent->children.push_back(node);
-	parent->height += node->widget->Height();
-
-	//TODO we want the widgets resize events
-	//so we can adjust the scroll area
-	node->sig_redraw = widget->signal_redraw.connect(sigc::mem_fun(this, &TreeView::OnChildRedraw));
-	
+	node.sig_redraw = widget->signal_redraw.connect(sigc::mem_fun(this, &TreeView::OnChildRedraw));
+	node.sig_resize = widget->signal_resize.connect(sigc::mem_fun(this, &TreeView::OnChildResize));
 	
 	itemswidth += widget->Width();
 	itemsheight += widget->Height();
@@ -357,228 +322,82 @@ int TreeView::AddNode(int parentid, Widget *widget, void *data)
 
 	//ResizeScroll(newwidth, newheight);
 
-	return node->id;
+	return iter;
 }
 
-int TreeView::AddNode(TreeNode *parent, TreeNode *node)
+const TreeView::NodeReference TreeView::AddNode(const NodeReference &parent, TreeNode &node)
 {
-	if (!parent)
-		return -1;
-	
-	parent->children.push_back(node);
-	parent->height += node->widget->Height();
+	TheTree::pre_order_iterator iter;
 
-	return node->id;
+	iter = thetree.append_child(parent, node);
+	(*parent).widgetheight += node.widget->Height();
+
+	return iter;
 }
 
-void TreeView::DeleteNode(int nodeid, bool keepsubnodes)
+void TreeView::DeleteNode(const NodeReference &node, bool keepchildren)
 {
-	TreeNodes::iterator i;
-	TreeNode *node, *child, *parent;
-	int depth = 0;
-
-	// TODO remove this variable?
-	VARIABLE_NOT_USED(depth)
-
-	node = FindNode(nodeid);
-
-	if (!node)
-		return;
+	TheTree::sibling_iterator iter;
 
 	if (focusnode == node) {
-		focusnode = NULL;
-		SetInputChild(NULL);
+		/* by folding this node and then moving focus forward 
+		 * we are sure that no child node of the node to be
+		 * removed will get the focus.
+		 * */
+		(*focusnode).open = false;
+		FocusNext();
 	}
 
-	parent = FindParent(nodeid);
-	if (!parent)
-		parent = root;
+	/* If we want to keep child nodes we should flatten the tree */
+	if (keepchildren)
+		thetree.flatten(node);
 
-	/* Move subnodes to the parent */
-	if (keepsubnodes) {
-		i = node->children.begin();
-		while (i != node->children.end()) {
-			child = *i;
-			AddNode(parent, child);
-
-			node->children.erase(i);
-			node->height -= child->widget->Height();
-			i = node->children.begin();
-		}
-	}
-
-	/* Remove the node to be deleted from its parent */
-	for (i = parent->children.begin(); i != parent->children.end(); i++) {
-		child = *i;
-		if (child == node) {
-			parent->children.erase(i);
-			parent->height -= child->widget->Height();
-			break;
-		}
-	}
-
-	//TODO disconnect signals
-	node->sig_redraw.disconnect();
-
-	/* Delete the node objects */
-	DeleteNode(node);
+	//TODO does this disconnect the signals properly? i think so.
+	thetree.erase(node);
 }
 
-int TreeView::GetSelected(void)
+const TreeView::NodeReference& TreeView::GetSelected(void)
 {
-	return focusnode->id;
+	return focusnode;
 }
 
-int TreeView::GetDepth(int nodeid)
+int TreeView::GetDepth(const NodeReference &node)
 {
-	TreeNode *node = FindNode(nodeid);
-
-	if (node)
-		return node->depth;
-
-	return -1;
+	return thetree.depth(node);
 }
 
-void* TreeView::SetData(int nodeid, void *newdata)
+void* TreeView::SetData(const NodeReference &node, void *newdata)
 {
 	void *olddata = NULL;
-	TreeNode *node = FindNode(nodeid);
 
-	if (node) {
-		olddata = node->data;
-		node->data = newdata;
-	}
+	olddata = (*node).data;
+	(*node).data = newdata;
 
 	return olddata;
 }
 
-void* TreeView::GetData(int nodeid)
+void* TreeView::GetData(const NodeReference &node)
 {
-	TreeNode *node = FindNode(nodeid);
-
-	if (node)
-		return node->data;
-	
-	return NULL;
+	return (*node).data;
 }
 
-Widget* TreeView::GetWidget(int nodeid)
+Widget* TreeView::GetWidget(const NodeReference &node)
 {
-	TreeNode *node = FindNode(nodeid);
-
-	if (node)
-		return node->widget;
-	
-	return NULL;
+	return (*node).widget;
 }
 
-void TreeView::SetParent(int nodeid, Widget *widget, void *data) //TODO changes depth, parentid must be exactle before nodeid
+void TreeView::SetParent(NodeReference node, NodeReference newparent)
 {
-}
-
-void TreeView::SetParent(int nodeid, int parentid) //TODO changes depth, parentid must be exactle before nodeid
-{
-	TreeNodes::iterator i;
-	TreeNode *node, *curparent, *newparent, *child;
-
-	node = FindNode(nodeid);
-	if (!node) return;
-
-	newparent = FindNode(parentid);
-	if (!newparent) return;
-
-	curparent = FindParent(nodeid);
-
-	if (newparent->id == curparent->id)
-		return;
-
-	/* Remove the node from its current parent */
-	for (i = curparent->children.begin(); i != curparent->children.end(); i++) {
-		child = *i;
-		if (child == node) {
-			curparent->children.erase(i);
-			curparent->height -= child->widget->Height();
-			break;
-		}
-	}
-
-	/* Add the node to its current parent */
-	node->depth = newparent->depth + 1;
-	newparent->children.push_back(node);
-	newparent->height += node->widget->Height();
-
-}
-
-TreeView::TreeNode* TreeView::FindNode(int nodeid)
-{
-	return FindNode(root, nodeid);
-}
-
-TreeView::TreeNode* TreeView::FindNode(TreeNode *parent, int nodeid)
-{
-	TreeNodes::iterator i;
-	TreeNode *child = NULL;
-
-	if (nodeid < 0)
-		return NULL;
-
-	if (parent->id == nodeid)
-		return parent;
-
-	for (i = parent->children.begin(); i != parent->children.end(); i++) {
-		if ((child = FindNode(*i, nodeid)) != NULL)
-			break;
-	}
-
-	return child;
-}
-
-TreeView::TreeNode* TreeView::FindParent(int childid)
-{
-	return FindParent(root, childid);
-}
-
-TreeView::TreeNode* TreeView::FindParent(TreeNode *node, int childid)
-{
-	TreeNodes::iterator i;
-	TreeNode *child = NULL, *parent;
-
-	if (childid == -1)
-		return NULL;
-
-	for (i = node->children.begin(); i != node->children.end(); i++) {
-		child = *i;
-		if (child->id == childid) {
-			return node;
-		} else {
-			parent = FindParent(child, childid);
-			if (parent)
-				return parent;
-		}
-	}
-
-	return NULL;
-}
-
-void TreeView::DeleteNode(TreeNode *node)
-{
-	TreeNodes::iterator i;
-
-	for (i = node->children.begin(); i != node->children.end(); i++)
-		DeleteNode(*i);
-
-	delete node;
-}
-
-int TreeView::GenerateId(void)
-{
-	static int i = 0;
-
-	i++;
-	return i;
+	thetree.move_ontop(thetree.append_child(newparent), node);
 }
 
 void TreeView::OnChildRedraw(void)
 {
+	Redraw();
+}
+
+void TreeView::OnChildResize(Rect &oldsize, Rect &newsize)
+{
+	//TODO redraw only on height change
 	Redraw();
 }

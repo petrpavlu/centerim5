@@ -23,10 +23,9 @@
 
 #include "ScrollPane.h"
 #include "LineStyle.h"
+#include "tree.hh"
 
 #include <vector>
-
-//TODO subclass of a srollable ???
 
 //NOTES
 //
@@ -41,6 +40,33 @@ class TreeView
 : public ScrollPane
 {
 	public:
+		typedef struct TreeNode {
+			/* if a subtree can be collapsed by the *user* or not. defines
+			 * if it is possible to *change*. (if open can fold or if
+			 * closed can unfold)
+			 * */
+			bool collapsable;
+			/* if the subtree is unfolded */
+			bool open;
+
+			/* the total height of all child widgets together */
+			int widgetheight;
+			
+			/* widget to show. Not const because width is changed to
+			 * fit. E.g. labels can show `...' when the text
+			 * does not fit in the given space.
+			 * */
+			Widget *widget;
+			/* user supplied data */
+			void *data;
+
+			/* signal connection to the widget */
+			sigc::connection sig_redraw;
+			sigc::connection sig_resize;
+		};
+		typedef tree<TreeNode> TheTree;
+		typedef TheTree::pre_order_iterator NodeReference;
+
 		TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linestyle);
 		virtual ~TreeView();
 
@@ -61,60 +87,30 @@ class TreeView
 		void ActionToggleExpanded(void)
 			{ ActionToggleCollapsed(); }
 
-		int AddNode(int parentid, Widget *widget, void *data);
-		void DeleteNode(int nodeid, bool keepsubnodes);
+		const NodeReference Root(void)
+			{ return thetree.begin(); }
 
-		int GetSelected(void);
-		int GetDepth(int nodeid);
-		void* SetData(int nodeid, void *newdata);
-		void* GetData(int nodeid);
-		Widget* GetWidget(int nodeid);
-		void SetParent(int nodeid, Widget *widget, void *data);
-		void SetParent(int nodeid, int parentid); //TODO changes depth, parentid must be exactle before nodeid
+		const NodeReference AddNode(const NodeReference &parent, Widget *widget, void *data);
+		void DeleteNode(const NodeReference &node, bool keepchildren);
+
+		const TreeView::NodeReference& GetSelected(void);
+		int GetDepth(const NodeReference &node);
+		void* SetData(const NodeReference &node, void *newdata);
+		void* GetData(const NodeReference &node);
+		Widget* GetWidget(const NodeReference &node);
+		void SetParent(NodeReference node, NodeReference newparent);
+
 
 	protected:
-		typedef struct TreeNode;
-		typedef std::vector<TreeNode*> TreeNodes;
-		typedef struct TreeNode {
-			/* unique identifier */
-			int id;
-			/* widget to show. not const because width is changed to
-			 * fit. eg labels can show `...' when the text
-			 * does not fit in the given space
-			 * */
-			Widget *widget;
-			/* user supplied data*/
-			TreeNodes children;
-			void *data;
-			/* used for drawing *only* */ //TODO is this true?
-			int depth;
-			/* stores the total height of all child widgets together */
-			int height;
-			/* if a subgroup can be collapsed by the *user* or not. defines
-			 * if it is possible to *change*. (if open can close or if
-			 * closed can open) */
-			bool collapsable;
-			/* if the subgroup is being displaed */
-			bool open;
-			/* signals for users to connect to */
-			//TODO add more signals we need, see cpp file
-			sigc::connection sig_redraw;
-		};
-
-		TreeNode* FindNode(int nodeid);
-		TreeNode* FindNode(TreeNode *parent, int nodeid);
-		TreeNode* FindParent(int childid);
-		TreeNode* FindParent(TreeNode *node, int childid);
-
-		void DeleteNode(TreeNode *node);
-		int GenerateId(void);
-		int AddNode(TreeNode *parent, TreeNode *node);
-		int DrawNode(TreeNode *node, int top);
+		void DeleteNode(const NodeReference &node);
+		const NodeReference AddNode(const NodeReference &parent, TreeNode &node);
+		int DrawNode(TheTree::sibling_iterator node, int top);
 
 		void SetFocusCycle(bool cycle) { focus_cycle = cycle; }
 		bool GetFocusCycle(void) { return focus_cycle; }
 
-		TreeNode *root, *focusnode;
+		TheTree thetree;
+		NodeReference focusnode;
 
 		LineStyle *linestyle;
 		int itemswidth, itemsheight;
@@ -128,6 +124,7 @@ class TreeView
 		TreeView& operator=(const TreeView&);
 		
 		void OnChildRedraw(void);
+		void OnChildResize(Rect &oldsize, Rect &newsize);
 };
 
 #endif /* __TREEVIEW_H__ */

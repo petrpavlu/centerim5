@@ -27,7 +27,7 @@
 
 BuddyListNode::BuddyListNode(TreeView& parent, PurpleBlistNode *node)
 : Label(parent, 0, 0, 64, 1, "")
-, id(-1)
+, ref(parent.Root())
 , node(node)
 , treeview(&parent)
 {

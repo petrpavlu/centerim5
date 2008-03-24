@@ -53,17 +53,19 @@ AccountWindow::AccountWindow()
 
 	Populate();
 
-	SetInputChild(menu);
+	SetInputChild(accounts);
 
 	canfocus = true;
 
-	DeclareBindable(context, "focus-previous-button", sigc::mem_fun(this, &AccountWindow::FocusCyclePrevious),
-		_("Focusses the previous button"), InputProcessor::Bindable_Override);
-	DeclareBindable(context, "focus-next-button", sigc::mem_fun(this, &AccountWindow::FocusCycleNext),
-		_("Focusses the next button"), InputProcessor::Bindable_Override);
+	//DeclareBindable(context, "focus-previous-button", sigc::mem_fun(this, &AccountWindow::FocusCyclePrevious),
+	//	_("Focusses the previous button"), InputProcessor::Bindable_Override);
+	//DeclareBindable(context, "focus-next-button", sigc::mem_fun(this, &AccountWindow::FocusCycleNext),
+	//	_("Focusses the next button"), InputProcessor::Bindable_Override);
 
-	BindAction(context, "focus-previous-button", Keys::Instance()->Key_left(), false);
-	BindAction(context, "focus-next-button", Keys::Instance()->Key_right(), false);
+	//BindAction(context, "focus-previous-button", "a", false);
+	//BindAction(context, "focus-next-button", "s", false);
+	//BindAction(context, "focus-previous-button", Keys::Instance()->Key_left(), false);
+	//BindAction(context, "focus-next-button", Keys::Instance()->Key_right(), false);
 
 }
 
@@ -103,18 +105,57 @@ void AccountWindow::FocusCycleNext(void)
 
 void AccountWindow::Populate(void)
 {
-	GList *iter, *pref;
+	GList *iter, *jter, *pref;
 	PurplePluginProtocolInfo *prplinfo;
 	PurpleAccount *account;
-	int parent;
+	TreeView::NodeReference parent;
+	char *username, *s;
+	const char *value;
 
 	for (iter = purple_accounts_get_all(); iter; iter = iter->next) {
 		account = (PurpleAccount*)iter->data;
 		prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(account)));
 
-		parent = accounts->AddNode(-1, new Label(*accounts, 0, 0, "[%s] %s", 
+		parent = accounts->AddNode(accounts->Root(), new Label(*accounts, 0, 0, " [%s] %s", 
 			purple_account_get_protocol_name(account),
 			purple_account_get_username(account)), account);
+
+		/* We need to process the user name in a special way */
+		username = g_strdup(purple_account_get_username(account));
+
+		for (jter = g_list_last(prplinfo->user_splits); jter; jter = jter->prev) {
+			PurpleAccountUserSplit *split = (PurpleAccountUserSplit*)jter->data;
+
+			if(purple_account_user_split_get_reverse(split))
+                                s = strrchr(username, purple_account_user_split_get_separator(split));
+                        else
+                                s = strchr(username, purple_account_user_split_get_separator(split));
+
+                        if (s != NULL)
+                        {
+                                *s = '\0';
+                                s++;
+                                value = s;
+                        } else {
+				value = NULL;
+			}
+
+			if (value == NULL)
+				value = purple_account_user_split_get_default_value(split);
+
+			accounts->AddNode(parent, new Label(*accounts, 0, 0, " %s: %s",
+				purple_account_user_split_get_text(split),
+				value), NULL);
+
+		}
+
+		//TODO add this widget as the first widget in this subtree. Treeview needs to support this.
+		accounts->AddNode(parent, new Label(*accounts, 0, 0, "%s: %s", _("Screen name"), username), NULL);
+
+		g_free(username);
+
+		accounts->AddNode(parent, new Label(*accounts, 0, 0, "%s: %s", _("Password"),purple_account_get_password(account)), NULL);
+		accounts->AddNode(parent, new Label(*accounts, 0, 0, "%s: %s", _("Alias"), purple_account_get_alias(account)), NULL);
 
 		for (pref = prplinfo->protocol_options; pref; pref = pref->next) {
 			PurpleAccountOption *option = (PurpleAccountOption*)pref->data;

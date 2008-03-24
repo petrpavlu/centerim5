@@ -147,7 +147,7 @@ void BuddyList::Close(void)
 void BuddyList::AddNode(BuddyListNode *node)
 {
 	BuddyListNode *parent = node->GetParent();
-	node->id = treeview->AddNode(parent ? parent->id : -1, node, NULL);
+	node->ref = treeview->AddNode(parent ? parent->ref : treeview->Root(), node, NULL);
 }
 
 void BuddyList::UpdateNode(BuddyListNode *node)
@@ -155,7 +155,7 @@ void BuddyList::UpdateNode(BuddyListNode *node)
 	BuddyListNode *parent = node->GetParent();
 	/* The parent could have changed, so re-parent the node */
 	if (parent)
-		treeview->SetParent(node->id, parent->id);
+		treeview->SetParent(node->ref, parent->ref);
 
 	node->Update();
 }
@@ -163,7 +163,7 @@ void BuddyList::UpdateNode(BuddyListNode *node)
 void BuddyList::RemoveNode(BuddyListNode *node)
 {
 	//TODO check for subnodes (if this is a group for instance)
-	treeview->DeleteNode(node->id, false);
+	treeview->DeleteNode(node->ref, false);
 }
 
 void BuddyList::new_list(PurpleBuddyList *list)
