@@ -7,7 +7,7 @@
 #include <curses.h>
 #endif
 
-typedef struct curses_imp_t {
+struct curses_imp_t {
 	WINDOW* w;
 	curses_imp_t(WINDOW *w): w(w) {}
 };

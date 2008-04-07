@@ -17,6 +17,8 @@
 
 #include "InputProcessor.h"
 
+#include <cstring>
+
 //TODO this *must* leak memory somewhere :)
 class InputProcessor::Bindable
 : public InputProcessor::KeyCombo

@@ -20,6 +20,10 @@
 
 #include "Keys.h"
 
+#include <stdlib.h>
+
+#include <cstring>
+
 Keys* Keys::instance = NULL;
 
 Keys* Keys::Instance(void)

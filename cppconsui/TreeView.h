@@ -40,7 +40,7 @@ class TreeView
 : public ScrollPane
 {
 	public:
-		typedef struct TreeNode {
+		struct TreeNode {
 			/* if a subtree can be collapsed by the *user* or not. defines
 			 * if it is possible to *change*. (if open can fold or if
 			 * closed can unfold)

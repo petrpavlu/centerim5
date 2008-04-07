@@ -22,6 +22,7 @@
 
 #include <glibmm/ustring.h>
 #include <wchar.h>
+#include <cstring>
 
 #if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
 #include <ncurses.h>
