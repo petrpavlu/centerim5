@@ -29,7 +29,7 @@
 AccountWindow::AccountWindow()
 : Window(0, 0, 80, 24, NULL)
 {
-	const gchar *context = "accountwindow";
+	//const gchar *context = "accountwindow";
 	log = Log::Instance();
 	conf = Conf::Instance();
 

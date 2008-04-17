@@ -388,7 +388,8 @@ Widget* TreeView::GetWidget(const NodeReference &node)
 
 void TreeView::SetParent(NodeReference node, NodeReference newparent)
 {
-	thetree.move_ontop(thetree.append_child(newparent), node);
+	if (thetree.parent(node) != newparent)
+		thetree.move_ontop(thetree.append_child(newparent), node);
 }
 
 void TreeView::OnChildRedraw(void)

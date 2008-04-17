@@ -65,9 +65,15 @@ BuddyListNode* BuddyListNode::CreateNode(TreeView& parent, PurpleBlistNode *node
 
 void BuddyListNode::Draw(void)
 {
+	if (focus)
+		colorscheme->On(area, ColorScheme::Focus);
+
 	//TODO these nodes will use colors in the future
 	//the colours should be added here
 	Label::Draw();
+
+	if (focus)
+		colorscheme->On(area, ColorScheme::Focus);
 }
 
 void BuddyListNode::GiveFocus(void)
