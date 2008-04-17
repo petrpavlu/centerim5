@@ -22,25 +22,32 @@
 #include "Button.h"
 #include "Keys.h"
 
-Button::Button(Widget& parent, int x, int y, int w, int h, Glib::ustring &text, sigc::slot<void> function)
+Button::Button(Widget& parent, int x, int y, int w, int h, Glib::ustring &text, sigc::slot<void> callback)
 : Label(parent, x, y, w, h, text)
-, function(function)
+, callback(callback)
 {
 	canfocus = true;
 	AddBindables();
 }
 
-Button::Button(Widget& parent, int x, int y, int w, int h, const char *text, sigc::slot<void> function)
+Button::Button(Widget& parent, int x, int y, int w, int h, const char *text, sigc::slot<void> callback)
 : Label(parent, x, y, w, h, text)
-, function(function)
+, callback(callback)
 {
 	canfocus = true;
 	AddBindables();
 }
 
-Button::Button(Widget& parent, int x, int y, const char *text, sigc::slot<void> function)
+Button::Button(Widget& parent, int x, int y, const char *text, sigc::slot<void> callback)
 : Label(parent, x, y, text)
-, function(function)
+, callback(callback)
+{
+	canfocus = true;
+	AddBindables();
+}
+
+Button::Button(Widget& parent, int x, int y, const char *text)
+: Label(parent, x, y, text)
 {
 	canfocus = true;
 	AddBindables();
@@ -61,15 +68,24 @@ void Button::Draw(void)
 		colorscheme->Off(area, ColorScheme::Focus);
 }
 
+void Button::SetFunction(sigc::slot<void> callback)
+{
+	this->callback = callback;
+}
 
 void Button::AddBindables(void)
 {
 	const gchar *context = "button";
 
 	//DeclareBindable(context, "push", sigc::mem_fun(this, &Window::Close),
-	DeclareBindable(context, "push", function,
+	DeclareBindable(context, "push", sigc::mem_fun(this, &Button::OnActivate),
 		_("Push the button"), InputProcessor::Bindable_Normal);
 
 	//TODO get real binding from config
 	BindAction(context, "push", Keys::Instance()->Key_enter(), false);
+}
+
+void Button::OnActivate(void)
+{
+	callback();
 }

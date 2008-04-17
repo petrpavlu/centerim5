@@ -29,12 +29,15 @@ class Button
 : public Label
 {
 	public:
-		Button(Widget& parent, int x, int y, int w, int h, Glib::ustring &text, sigc::slot<void> function);
-		Button(Widget& parent, int x, int y, int w, int h, const char *text, sigc::slot<void> function);
-		Button(Widget& parent, int x, int y, const char *text, sigc::slot<void> function);
+		Button(Widget& parent, int x, int y, int w, int h, Glib::ustring &text, sigc::slot<void> callback);
+		Button(Widget& parent, int x, int y, int w, int h, const char *text, sigc::slot<void> callback);
+		Button(Widget& parent, int x, int y, const char *text, sigc::slot<void> callback);
+		Button(Widget& parent, int x, int y, const char *text);
 		virtual ~Button();
 
 		virtual void Draw(void);
+
+		void SetFunction(sigc::slot<void> callback);
 
 	protected:
 
@@ -45,8 +48,9 @@ class Button
 		Button& operator=(const Button&);
 
 		void AddBindables(void);
+		void OnActivate(void);
 
-		sigc::slot<void> function;
+		sigc::slot<void> callback;
 };
 
 #endif /* __BUTTON_H__ */

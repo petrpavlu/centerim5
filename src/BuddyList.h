@@ -29,8 +29,6 @@
 #include <cppconsui/TreeView.h>
 #include <cppconsui/Panel.h>
 
-#include <cppconsui/Label.h>
-
 #include <libpurple/blist.h>
 
 class BuddyList

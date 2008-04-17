@@ -24,21 +24,21 @@
 #include "Log.h"
 #include "Conf.h"
 
-#include <cppconsui/Label.h>
+#include <cppconsui/Button.h>
 #include <cppconsui/TreeView.h>
 
 #include <libpurple/blist.h>
 
 class BuddyListNode
-: public Label
+: public Button
 {
 	public:
 		BuddyListNode(TreeView& parent, PurpleBlistNode *node);
 		virtual ~BuddyListNode();
 
-		static BuddyListNode* CreateNode(TreeView& parent, PurpleBlistNode *node);
-
 		virtual void Draw(void);
+
+		static BuddyListNode* CreateNode(TreeView& parent, PurpleBlistNode *node);
 
 		virtual void Update(void) =0;
 

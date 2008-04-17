@@ -38,7 +38,6 @@
 #include <cppconsui/Keys.h>
 #include <cppconsui/Window.h>
 #include <cppconsui/TreeView.h>
-#include <cppconsui/Label.h>
 
 //TODO remove stuff we dont need here
 #include <libpurple/blist.h>

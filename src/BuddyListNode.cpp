@@ -26,24 +26,24 @@
 #include <libpurple/blist.h>
 
 BuddyListNode::BuddyListNode(TreeView& parent, PurpleBlistNode *node)
-: Label(parent, 0, 0, 64, 1, "")
+: Button(parent, 0, 0, "")
 , ref(parent.Root())
 , node(node)
 , treeview(&parent)
 {
-	const gchar *context = "buddylist-node";
 	log = Log::Instance();
 	canfocus = true;
 
-	DeclareBindable(context, "activate", sigc::mem_fun(this, &BuddyListNode::ActionActivate),
-		_("Perform the main action for the selected type of buddy."), InputProcessor::Bindable_Normal);
-
-	//TODO get real binding from config
-	BindAction(context, "activate", Keys::Instance()->Key_enter(), false);
+	SetFunction(sigc::mem_fun(this, &BuddyListNode::ActionActivate));
 }
 
 BuddyListNode::~BuddyListNode()
 {
+}
+
+void BuddyListNode::Draw(void)
+{
+	Button::Draw();
 }
 
 BuddyListNode* BuddyListNode::CreateNode(TreeView& parent, PurpleBlistNode *node)
@@ -61,19 +61,6 @@ BuddyListNode* BuddyListNode::CreateNode(TreeView& parent, PurpleBlistNode *node
 	} //TODO log some error if no match here
 
 	return bnode;
-}
-
-void BuddyListNode::Draw(void)
-{
-	if (focus)
-		colorscheme->On(area, ColorScheme::Focus);
-
-	//TODO these nodes will use colors in the future
-	//the colours should be added here
-	Label::Draw();
-
-	if (focus)
-		colorscheme->On(area, ColorScheme::Focus);
 }
 
 void BuddyListNode::GiveFocus(void)
@@ -126,7 +113,7 @@ void BuddyListBuddy::Update(void)
 {
 	//TODO this doesn't seem optimal
 	//add a Width function to Label class and
-	//clean this file up
+	//clean this file up?
 	Glib::ustring text;
 	text = purple_buddy_get_alias(buddy);
 	Resize(width(text), 1);
