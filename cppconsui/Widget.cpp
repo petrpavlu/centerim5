@@ -31,9 +31,11 @@ Widget::Widget(Widget& parent, int x, int y, int w, int h)
 , focus(false)
 , canfocus(false)
 , parent(&parent)
+, colorscheme(NULL)
 {
 	area = new curses_imp_t(NULL);
 	UpdateArea();
+	colorscheme = ColorScheme::ColorSchemeNormal();
 }
 
 Widget::~Widget()

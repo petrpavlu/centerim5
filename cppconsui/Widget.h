@@ -23,6 +23,7 @@
 
 #include "CppConsUI.h"
 #include "InputProcessor.h"
+#include "ColorScheme.h"
 
 #include <sigc++/sigc++.h>
 #include <sigc++/signal.h>
@@ -73,6 +74,8 @@ class Widget
 
 		void GetSubPad(curses_imp_t& a, const int x, const int y, const int w, const int h);
 
+
+
 		//TODO encapsulate with a function, make sure derived classed call Move()/Resize()/Redraw() to emit signal
 		//also check if this is possible at all
 		sigc::signal<void, Point&, Point&> signal_move;
@@ -86,9 +89,9 @@ class Widget
 
 		curses_imp_t* area;
 
-		//bool focus, canfocus;
-
 		Widget *parent;
+
+		ColorScheme *colorscheme;
 
 	private:
 		Widget();

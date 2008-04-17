@@ -34,6 +34,8 @@ class Button
 		Button(Widget& parent, int x, int y, const char *text, sigc::slot<void> function);
 		virtual ~Button();
 
+		virtual void Draw(void);
+
 	protected:
 
 	private:

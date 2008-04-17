@@ -138,8 +138,10 @@ Keys::Keys(void)
 
 Keys::~Keys(void)
 {
+	/* this is done by the window manager
 	if (endwin() == ERR)
 		;//TODO throw an exeption
+	*/
 }
 
 void Keys::Delete(void)

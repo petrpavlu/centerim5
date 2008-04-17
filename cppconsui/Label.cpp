@@ -66,12 +66,7 @@ Label::~Label()
 void Label::Draw(void)
 {
 	//TODO unicode drawing
-	//TODO focus stuff is for testing *only*
-	if (focus) {
-		mvwaddstr(area->w, 0, 0, "*");
-		mvwaddstr(area->w, 0, 1, text.c_str());
-	} else
-		mvwaddstr(area->w, 0, 0, text.c_str());
+	mvwaddstr(area->w, 0, 0, text.c_str());
 
 	Widget::Draw();
 }

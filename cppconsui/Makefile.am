@@ -4,6 +4,8 @@ lib_LTLIBRARIES = libcppconsui.la
 libcppconsui_la_SOURCES =\
 	Curses.h \
 	Container.cpp \
+	ColorScheme.h \
+	ColorScheme.cpp \
 	Container.h \
 	AbstractListBox.cpp \
 	AbstractListBox.h \

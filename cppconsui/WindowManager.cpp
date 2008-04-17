@@ -45,6 +45,7 @@ WindowManager::WindowManager(void)
 {
 	const gchar *context = "windowmanager";
 	defaultwindow = initscr();
+	start_color(); //TODO do something with the return value.
 
 	if (!defaultwindow)
 		;//TODO throw an exception that we cant init curses

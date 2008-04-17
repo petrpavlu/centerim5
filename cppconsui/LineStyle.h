@@ -30,11 +30,11 @@
 
 #include <glib.h>
 
-typedef struct LineElements {
+struct LineElements {
 	gchar *h, *h_begin, *h_end, *h_up, *h_down;
 	gchar *v, *v_begin, *v_end, *v_left, *v_right;
 	gchar *cross, *corner_tl, *corner_tr, *corner_bl, *corner_br;
-} LineElements;
+};
 
 //TODO add line drawing functions
 class LineStyle

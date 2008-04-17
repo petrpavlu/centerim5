@@ -38,11 +38,10 @@ AbstractListBox::~AbstractListBox()
 
 void AbstractListBox::AddItem(const char *text, sigc::slot<void> function)
 {
-	Button *label;
+	Button *button;
 
-	label = new Button(*this, 0, 0, text, function);
-	label->SetCanFocus(true);
-	AddWidget(label);
+	button = new Button(*this, 0, 0, text, function);
+	AddWidget(button);
 }
 
 void AbstractListBox::AddWidget(Widget *widget)

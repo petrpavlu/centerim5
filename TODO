@@ -1,4 +1,6 @@
 TODO:
+- modify diagram for colorscheme
+- what is this `#define _XOPEN_SOURCE_EXTENDED' good for?
 - Horizontal ListBox: add option to make every item the same width
 - All classes should have a copy constructor and an
   operator=().

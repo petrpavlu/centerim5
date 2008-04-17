@@ -26,6 +26,7 @@ Button::Button(Widget& parent, int x, int y, int w, int h, Glib::ustring &text, 
 : Label(parent, x, y, w, h, text)
 , function(function)
 {
+	canfocus = true;
 	AddBindables();
 }
 
@@ -33,6 +34,7 @@ Button::Button(Widget& parent, int x, int y, int w, int h, const char *text, sig
 : Label(parent, x, y, w, h, text)
 , function(function)
 {
+	canfocus = true;
 	AddBindables();
 }
 
@@ -40,12 +42,25 @@ Button::Button(Widget& parent, int x, int y, const char *text, sigc::slot<void> 
 : Label(parent, x, y, text)
 , function(function)
 {
+	canfocus = true;
 	AddBindables();
 }
 
 Button::~Button()
 {
 }
+
+void Button::Draw(void)
+{
+	if (focus)
+		colorscheme->On(area, ColorScheme::Focus);
+
+	Label::Draw();
+
+	if (focus)
+		colorscheme->Off(area, ColorScheme::Focus);
+}
+
 
 void Button::AddBindables(void)
 {
