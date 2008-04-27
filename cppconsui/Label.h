@@ -29,17 +29,22 @@ class Label
 : public Widget
 {
 	public:
-		Label(Widget& parent, int x, int y, int w, int h, Glib::ustring &text);
-		Label(Widget& parent, int x, int y, int w, int h, const char *fmt, ...);
+		Label(Widget& parent, int x, int y, int w, int h, const gchar *fmt, ...);
 		Label(Widget& parent, int x, int y, const char *fmt, ...);
 		virtual ~Label();
 
 		virtual void Draw(void);
 
-		void SetText(const Glib::ustring str);
+		void SetText(const gchar *str);
 		Glib::ustring GetText(void);
 
 	protected:
+		gchar *text; 
+		guint16 text_length;  /* length in use, in chars */
+		guint16 text_max_length;
+
+		guint16 text_size;    /* allocated size, in bytes */
+		guint16 n_bytes;      /* length in use, in bytes */
 
 	private:
 		Label(void);
@@ -47,7 +52,6 @@ class Label
 
 		Label& operator=(const Label&);
 
-		Glib::ustring text;
 };
 
 #endif /* __LABEL_H__ */

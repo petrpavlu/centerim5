@@ -65,7 +65,7 @@ void Panel::Draw()
 	mvwadd_wch(area->w, Height()-1, Width()-1, CornerBR());
 }
 
-void Panel::SetText(const Glib::ustring str)
+void Panel::SetText(const gchar *str)
 {
 	label->SetText(str);
 }

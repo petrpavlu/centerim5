@@ -21,6 +21,7 @@
 #include "AccountWindow.h"
 
 #include <cppconsui/Label.h>
+#include <cppconsui/TextEntry.h>
 #include <cppconsui/Keys.h>
 
 #include <libpurple/account.h>
@@ -143,7 +144,7 @@ void AccountWindow::Populate(void)
 			if (value == NULL)
 				value = purple_account_user_split_get_default_value(split);
 
-			accounts->AddNode(parent, new Label(*accounts, 0, 0, " %s: %s",
+			accounts->AddNode(parent, new TextEntry(*accounts, 0, 0, " %s: %s",
 				purple_account_user_split_get_text(split),
 				value), NULL);
 

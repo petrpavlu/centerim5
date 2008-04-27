@@ -114,7 +114,7 @@ void BuddyListBuddy::Update(void)
 	//TODO this doesn't seem optimal
 	//add a Width function to Label class and
 	//clean this file up?
-	Glib::ustring text;
+	const gchar *text;
 	text = purple_buddy_get_alias(buddy);
 	Resize(width(text), 1);
 	SetText(text);
@@ -142,7 +142,7 @@ void BuddyListChat::Draw(void)
 
 void BuddyListChat::Update(void)
 {
-	Glib::ustring text;
+	const gchar *text;
 	text = purple_chat_get_name(chat);
 	Resize(width(text), 1);
 	SetText(text);
@@ -171,7 +171,7 @@ void BuddyListContact::Draw(void)
 void BuddyListContact::Update(void)
 {
 	PurpleBlistNode *bnode;
-	Glib::ustring text;
+	const gchar *text;
 
 	if (contact->alias) {
 		text = contact->alias;
@@ -183,7 +183,7 @@ void BuddyListContact::Update(void)
 
 		if (!bnode) {
 			//TODO error message or is this too common?
-			text = "New Contact";
+			text = _("New Contact");
 		} else {
 			text = purple_buddy_get_alias((PurpleBuddy*)bnode);
 		}
@@ -213,7 +213,7 @@ void BuddyListGroup::Draw(void)
 
 void BuddyListGroup::Update(void)
 {
-	Glib::ustring text;
+	const gchar *text;
 	text = purple_group_get_name(group);
 	Resize(width(text), 1);
 	SetText(text);

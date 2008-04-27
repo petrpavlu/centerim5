@@ -19,6 +19,8 @@ libcppconsui_la_SOURCES =\
 	TextInput.h \
 	TextWindow.cpp \
 	TextWindow.h \
+	TextEntry.cpp \
+	TextEntry.h \
 	Widget.cpp \
 	Widget.h \
 	Window.cpp \

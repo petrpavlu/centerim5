@@ -45,6 +45,8 @@ class ColorScheme
 		void On(const curses_imp_t* area, const ColorType type);
 		void Off(const curses_imp_t* area, const ColorType type);
 
+		void SetColor(const curses_imp_t* area, const int x, const int y, const int n, const ColorType type);
+
 		void SetColorType(ColorType type, int scheme);
 		void GetColorType(ColorType type);
 

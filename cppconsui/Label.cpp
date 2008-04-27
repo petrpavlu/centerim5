@@ -21,61 +21,62 @@
 #include "Curses.h"
 #include "Label.h"
 
-Label::Label(Widget& parent, int x, int y, int w, int h, Glib::ustring &text)
-: Widget(parent, x, y, w, h)
-, text(text)
-{
-}
+#include <glib.h>
+#include <glib/gprintf.h>
 
 Label::Label(Widget& parent, int x, int y, int w, int h, const char *fmt, ...)
 : Widget(parent, x, y, w, h)
 , text("")
+, n_bytes(0)
 {
         va_list args;
-        char buf[1024]; //TODO lets hope this is enough!
 
         va_start(args, fmt);
-        vsnprintf(buf, 1023, fmt, args);
+	text_size = g_vasprintf(&text, fmt, args);
         va_end(args);
-	buf[1023] = '\0';
-	text = buf;
+
+	text_length = g_utf8_strlen(text, text_size);
 }
 
 Label::Label(Widget& parent, int x, int y, const char *fmt, ...)
 : Widget(parent, x, y, 0, 0)
 , text("")
+, n_bytes(0)
 {
         va_list args;
-        char buf[1024]; //TODO lets hope this is enough!
 
         va_start(args, fmt);
-        vsnprintf(buf, 1023, fmt, args);
+	text_size = g_vasprintf(&text, fmt, args);
         va_end(args);
-	buf[1023] = '\0';
-	text = buf;
 
-	//TODO size() gives character count (taking into account wide chars
-	//but not the number of cells a character takes.
-	Resize(this->text.size(), 1);
+	text_length = g_utf8_strlen(text, text_size);
+
+	Resize(width(text), 1);
 }
 
 Label::~Label()
 {
+	if (text)
+		g_free(text);
 }
 
 void Label::Draw(void)
 {
 	//TODO unicode drawing
-	mvwaddstr(area->w, 0, 0, text.c_str());
+	mvwaddstr(area->w, 0, 0, text);
 
 	Widget::Draw();
 }
 
-void Label::SetText(const Glib::ustring str)
+void Label::SetText(const gchar *str)
 {
-	if (text == str) return;
+	if (text)
+		g_free(text);
 
-	text = str;
+	text = g_strdup(str);
+	text_size = strlen(str);
+	text_length = g_utf8_strlen(text, text_size);
+
 	wclear(area->w);
 	signal_redraw();
 }

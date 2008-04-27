@@ -22,15 +22,7 @@
 #include "Button.h"
 #include "Keys.h"
 
-Button::Button(Widget& parent, int x, int y, int w, int h, Glib::ustring &text, sigc::slot<void> callback)
-: Label(parent, x, y, w, h, text)
-, callback(callback)
-{
-	canfocus = true;
-	AddBindables();
-}
-
-Button::Button(Widget& parent, int x, int y, int w, int h, const char *text, sigc::slot<void> callback)
+Button::Button(Widget& parent, int x, int y, int w, int h, const gchar *text, sigc::slot<void> callback)
 : Label(parent, x, y, w, h, text)
 , callback(callback)
 {

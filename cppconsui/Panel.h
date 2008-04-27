@@ -46,7 +46,7 @@ class Panel
 
 		virtual void Draw(void);
 
-		void SetText(const Glib::ustring str);
+		void SetText(const gchar *str);
 		Glib::ustring GetText(void);
 
 	protected:

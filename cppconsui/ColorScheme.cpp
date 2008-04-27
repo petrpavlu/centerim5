@@ -20,6 +20,13 @@
 
 #include "ColorScheme.h"
 
+#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
+#include <ncurses.h>
+#else
+#include <curses.h>
+#endif
+
+
 ColorScheme::ColorScheme()
 {
 	for (int i = 0; i <= Disabled; i++) {
@@ -55,4 +62,9 @@ void ColorScheme::On(const curses_imp_t* area, const ColorType type)
 void ColorScheme::Off(const curses_imp_t* area, const ColorType type)
 {
 	wattroff(area->w, schemes[type]);
+}
+
+void ColorScheme::SetColor(const curses_imp_t* area, const int x, const int y, const int n, const ColorType type)
+{
+	mvwchgat(area->w, y, x, n, schemes[type], 0, NULL);
 }

@@ -31,6 +31,8 @@
 #include <glibmm/ustring.h>
 #include <map>
 
+#define KEYS Keys::Instance()
+
 class Keys
 {
 	public:
