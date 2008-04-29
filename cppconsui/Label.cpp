@@ -27,7 +27,6 @@
 Label::Label(Widget& parent, int x, int y, int w, int h, const char *fmt, ...)
 : Widget(parent, x, y, w, h)
 , text("")
-, n_bytes(0)
 {
         va_list args;
 
@@ -35,13 +34,13 @@ Label::Label(Widget& parent, int x, int y, int w, int h, const char *fmt, ...)
 	text_size = g_vasprintf(&text, fmt, args);
         va_end(args);
 
+	n_bytes = text_size;
 	text_length = g_utf8_strlen(text, text_size);
 }
 
 Label::Label(Widget& parent, int x, int y, const char *fmt, ...)
 : Widget(parent, x, y, 0, 0)
 , text("")
-, n_bytes(0)
 {
         va_list args;
 
@@ -49,6 +48,7 @@ Label::Label(Widget& parent, int x, int y, const char *fmt, ...)
 	text_size = g_vasprintf(&text, fmt, args);
         va_end(args);
 
+	n_bytes = text_size;
 	text_length = g_utf8_strlen(text, text_size);
 
 	Resize(width(text), 1);

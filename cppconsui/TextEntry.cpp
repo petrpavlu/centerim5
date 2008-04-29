@@ -47,7 +47,9 @@ TextEntry::TextEntry(Widget& parent, int x, int y, int w, int h, const gchar *fm
 	text_size = g_vasprintf(&text, fmt, args);
         va_end(args);
 
+	n_bytes = text_size;
 	text_length = g_utf8_strlen(text, text_size);
+	set_position(text_size);
 
 	canfocus = true;
 	DeclareBindables();
@@ -68,7 +70,9 @@ TextEntry::TextEntry(Widget& parent, int x, int y, const gchar *fmt, ...)
 	text_size = g_vasprintf(&text, fmt, args);
         va_end(args);
 
+	n_bytes = text_size;
 	text_length = g_utf8_strlen(text, text_size);
+	set_position(text_size);
 
 	Resize(width(text), 1);
 
@@ -83,16 +87,31 @@ TextEntry::~TextEntry()
 
 void TextEntry::Draw(void)
 {
-	//TODO draw cursor
-
 	Label::Draw();
-	colorscheme->SetColor(area, 0, current_pos, 1, ColorScheme::Focus);
+
+	//TODO we can do better than this
+	if (focus) {
+		gchar *ptr = g_utf8_offset_to_pointer(text, current_pos);
+		int i = width(text, ptr);
+		colorscheme->SetColor(area, i, 0, 1, ColorScheme::Focus);
+	}
 }
 
 int TextEntry::ProcessInputText(const char *input, const int bytes)
 {
-	insert_text(input, bytes, &current_pos);
+	gint pos = current_pos;
+
+	//TODO filter out invalid chars
+
+	if (editable) {
+		insert_text(input, bytes, &pos);
+		set_position(pos);
+	} else {
+	}
+
 	Redraw();
+
+	return bytes;
 }
 
 void TextEntry::backspace(void)
@@ -439,7 +458,7 @@ void TextEntry::recompute (void)
  */     
 void TextEntry::set_positions (gint current_pos, gint selection_bound)
 {
-  gboolean changed = FALSE;
+  bool changed = false;
       
   //g_object_freeze_notify (G_OBJECT (this));
   
@@ -447,7 +466,7 @@ void TextEntry::set_positions (gint current_pos, gint selection_bound)
       this->current_pos != current_pos)
     {
       this->current_pos = current_pos;
-      changed = TRUE;           
+      changed = true;           
 
       //TODO would we like a cursor changed signal?
       //g_object_notify (G_OBJECT (this), "cursor-position");
@@ -457,7 +476,7 @@ void TextEntry::set_positions (gint current_pos, gint selection_bound)
       this->selection_bound != selection_bound)
     {
       this->selection_bound = selection_bound;
-      changed = TRUE;                         
+      changed = true;                         
       
       //TODO would we like a selection changed signal?
       //g_object_notify (G_OBJECT (this), "selection-bound"); 
@@ -640,6 +659,18 @@ gint TextEntry::move_logically (gint start, gint count)
         }
 
       g_free (log_attrs); */
+	gchar *ptr_pos = g_utf8_offset_to_pointer(text, new_pos);
+
+	while (count > 0 && new_pos < text_length
+			&& (ptr_pos = g_utf8_find_next_char(text+n_bytes, ptr_pos))) {
+		new_pos++;
+		count--;
+	}
+	while (count < 0 && new_pos > 0
+			&& (ptr_pos = g_utf8_find_prev_char(text, ptr_pos))) {
+		new_pos--;
+		count++;
+	}
     }
 
   return new_pos;
