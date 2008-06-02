@@ -33,8 +33,9 @@
 #include <cppconsui/Keys.h>
 #include <cppconsui/InputProcessor.h>
 
-#include <glib.h>
+#include <glibmm/main.h>
 #include <vector>
+
 
 class CenterIM
 : public InputProcessor
@@ -108,7 +109,7 @@ class CenterIM
 		Conf *conf;
 		Keys *keys;
 
-		GMainLoop *gmainloop;
+    Glib::RefPtr<Glib::MainLoop> gmainloop;
 
 		//TODO: nice names
 		typedef struct logbuf_item {
