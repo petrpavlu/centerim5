@@ -285,7 +285,7 @@ Log::Level Conf::GetLogLevel(const gchar *type)
 void Conf::SetLogLevel(const gchar *type, const Log::Level level)
 {
 	gchar *pref = g_strconcat(CONF_PREFIX, "log/log_level_", type, NULL);
-	gchar *slevel;
+	const gchar *slevel;
 
 	if (level == Log::Level_none) slevel = "none";
 	else if (level == Log::Level_info) slevel = "info";
