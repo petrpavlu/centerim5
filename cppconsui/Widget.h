@@ -72,9 +72,10 @@ class Widget
 		int Width() { return w; }
 		int Height() { return h; }
 
+		int GetAbsoluteX();
+		int GetAbsoluteY();
+
 		void GetSubPad(curses_imp_t& a, const int x, const int y, const int w, const int h);
-
-
 
 		//TODO encapsulate with a function, make sure derived classed call Move()/Resize()/Redraw() to emit signal
 		//also check if this is possible at all
