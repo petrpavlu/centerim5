@@ -82,6 +82,8 @@ void Window::Move(int newx, int newy)
 
 	MakeRealWindow();
 
+	Container::Move(newx, newy);
+
 	Redraw();
 }
 
