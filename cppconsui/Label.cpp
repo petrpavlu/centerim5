@@ -21,6 +21,8 @@
 #include "Curses.h"
 #include "Label.h"
 
+#include <cstring>
+
 #include <glib.h>
 #include <glib/gprintf.h>
 
