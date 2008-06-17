@@ -26,7 +26,8 @@
 
 Label::Label(Widget& parent, int x, int y, int w, int h, const char *fmt, ...)
 : Widget(parent, x, y, w, h)
-, text("")
+, text(NULL)
+, text_max_length(MAX_SIZE)
 {
         va_list args;
 
@@ -36,11 +37,13 @@ Label::Label(Widget& parent, int x, int y, int w, int h, const char *fmt, ...)
 
 	n_bytes = text_size;
 	text_length = g_utf8_strlen(text, text_size);
+	//TODO  text may be no longer than text_max_length
 }
 
 Label::Label(Widget& parent, int x, int y, const char *fmt, ...)
 : Widget(parent, x, y, 0, 0)
-, text("")
+, text(NULL)
+, text_max_length(MAX_SIZE)
 {
         va_list args;
 
@@ -50,6 +53,7 @@ Label::Label(Widget& parent, int x, int y, const char *fmt, ...)
 
 	n_bytes = text_size;
 	text_length = g_utf8_strlen(text, text_size);
+	//TODO  text may be no longer than text_max_length
 
 	Resize(width(text), 1);
 }
@@ -70,6 +74,7 @@ void Label::Draw(void)
 
 void Label::SetText(const gchar *str)
 {
+	//TODO may be no longer than text_max_length
 	if (text)
 		g_free(text);
 

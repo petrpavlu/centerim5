@@ -27,12 +27,6 @@
 
 #include <string.h>
 
-/* Initial size of buffer, in bytes */
-#define MIN_SIZE 16
-
-/* Maximum size of text buffer, in bytes */
-#define MAX_SIZE G_MAXUSHORT
-
 TextEntry::TextEntry(Widget& parent, int x, int y, int w, int h, const gchar *fmt, ...)
 : Label(parent, x, y, w, h, "")
 , current_pos(0)
@@ -90,6 +84,7 @@ void TextEntry::Draw(void)
 	Label::Draw();
 
 	//TODO we can do better than this
+	//TODO cursor blinking
 	if (focus) {
 		gchar *ptr = g_utf8_offset_to_pointer(text, current_pos);
 		int i = width(text, ptr);
@@ -179,7 +174,7 @@ void TextEntry::backspace(void)
       //g_free (log_attrs);
     }
 
-  //TODO cursor blinking
+  /* cursor blinking is a character attribute */
   //gtk_entry_pend_cursor_blink (this);
 }
 
@@ -206,8 +201,7 @@ void TextEntry::move_cursor (CursorMovement step, gint count, gboolean extend_se
               new_pos = current_x < bound_x ? this->current_pos : this->selection_bound;
             else
               new_pos = current_x > bound_x ? this->current_pos : this->selection_bound;
-
-            break;*/
+            break; */
           }
         case MOVE_LOGICAL_POSITIONS:
         case MOVE_WORDS:
@@ -237,8 +231,10 @@ void TextEntry::move_cursor (CursorMovement step, gint count, gboolean extend_se
           new_pos = move_logically (new_pos, count);
           break;
         case MOVE_VISUAL_POSITIONS:
-          //TODO find out what this function does and port it
+          //TODO this moves according to ltr or rtl or mixed text. should we support this
+	  //or wait for a gtktextbuffer port?
           //new_pos = move_visually (new_pos, count);
+          new_pos = move_logically (new_pos, count);
           break;
         case MOVE_WORDS:
           while (count > 0)
@@ -270,7 +266,7 @@ void TextEntry::move_cursor (CursorMovement step, gint count, gboolean extend_se
   else
     set_position (new_pos);
 
-  //TODO implement cursor blinking
+  /* blinking is a character attribute */
   //gtk_entry_pend_cursor_blink (entry);
 }
 
@@ -286,6 +282,7 @@ void TextEntry::insert_text (const gchar *new_text, gint new_text_length, gint *
   if (text_max_length > 0 && n_chars + text_length > text_max_length)
     {
       //TODO: flash/blink display, or just beep? (a la screen)
+      beep();
       //gdk_display_beep (gtk_widget_get_display (GTK_WIDGET (this)));
       n_chars = text_max_length - text_length;
       new_text_length = g_utf8_offset_to_pointer (new_text, n_chars) - new_text;
@@ -599,27 +596,21 @@ void TextEntry::delete_from_cursor (DeleteType type, gint count)
 
 void TextEntry::delete_whitespace (void)
 {
-  /*TODO implement this
-  PangoLayout *layout = gtk_entry_ensure_layout (entry, FALSE);
-  PangoLogAttr *log_attrs;
+  /*TODO this is untested */
   gint n_attrs;
-  gint start, end;
+  gchar *start, *end;
 
-  pango_layout_get_log_attrs (layout, &log_attrs, &n_attrs);
+  start = end = g_utf8_offset_to_pointer(text, this->current_pos); 
 
-  start = end = entry->current_pos; 
+  while (start > 0 && g_unichar_isspace(g_utf8_get_char(start)))
+    start = g_utf8_find_prev_char(text, start);
 
-  while (start > 0 && log_attrs[start-1].is_white)
-    start--;
-
-  while (end < n_attrs && log_attrs[end].is_white)
-    end++;
-
-  g_free (log_attrs);
+  while (end < text+n_bytes && g_unichar_isspace(g_utf8_get_char(end)))
+    end = g_utf8_find_next_char(end, text+n_bytes);
 
   if (start != end)
-    gtk_editable_delete_text (GTK_EDITABLE (entry), start, end);
-  */
+    delete_text (g_utf8_pointer_to_offset(text, start), 
+                 g_utf8_pointer_to_offset(text, end));
 }
 
 gint TextEntry::move_logically (gint start, gint count)
@@ -675,9 +666,10 @@ gint TextEntry::move_logically (gint start, gint count)
 
   return new_pos;
 }
+
 gint TextEntry::move_visually (gint start, gint count)
 {
-  /*TODO find out what this does and port it
+  /*TODO should cim5 support ltr and rtl and mixed text?
   gint index;
   PangoLayout *layout = gtk_entry_ensure_layout (entry, FALSE);
   const gchar *text;

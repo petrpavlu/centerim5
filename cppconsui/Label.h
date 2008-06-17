@@ -25,6 +25,12 @@
 
 #include <glibmm/ustring.h>
 
+/* Initial size of buffer, in bytes */
+#define MIN_SIZE 16
+
+/* Maximum size of text buffer, in bytes */
+#define MAX_SIZE G_MAXUSHORT
+
 class Label
 : public Widget
 {
