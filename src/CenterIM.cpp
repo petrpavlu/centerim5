@@ -103,8 +103,8 @@ static PurpleEventLoopUiOps centerim_glib_eventloops =
 
 CenterIM::CenterIM()
 : channel(NULL)
-, channel_id(0)
 , locale(NULL)
+, channel_id(0)
 , charset(NULL)
 {
 	/* Declaring bindables must be done in CenterIM::io_init()
