@@ -181,13 +181,6 @@ bool WindowManager::HasWindow(Window *window)
 	return false;
 }
 
-void WindowManager::SetCursor(int y, int x, bool draw)
-{
-	cursor_y = y;
-	cursor_x = x;
-	cursor_draw = draw;
-}
-
 bool WindowManager::Draw(void)
 {
 	Windows::reverse_iterator i;
@@ -205,14 +198,6 @@ bool WindowManager::Draw(void)
 
 		/* this copies to virtual ncurses screen to the physical screen */
 		doupdate();
-
-		if (cursor_draw)
-		{
-			curs_set(1);
-			move(cursor_y, cursor_x);
-			refresh();
-		} else
-			curs_set(0);
 
 		redrawpending = false;
 	}

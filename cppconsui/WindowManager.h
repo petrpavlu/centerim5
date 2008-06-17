@@ -48,8 +48,6 @@ class WindowManager
 
 		bool Draw(void);
 
-    void SetCursor(int y, int x, bool draw);
-
 	protected:
 		typedef struct {
 			Window* window;
@@ -58,10 +56,6 @@ class WindowManager
 		typedef std::vector<WindowInfo> Windows;
 
 		void Redraw(void);
-
-    int cursor_y;
-    int cursor_x;
-    bool cursor_draw;
 
 		void FocusWindow(void);
 		void Swap(Window* fst, Window* snd);

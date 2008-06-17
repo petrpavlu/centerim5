@@ -19,7 +19,6 @@
  * */
 
 #include "TextInput.h"
-#include "WindowManager.h"
 
 #include <string.h>
 
@@ -39,11 +38,9 @@ TextInput::~TextInput()
 
 void TextInput::Draw(void)
 {
-	TextBrowser::Draw();
+	//TODO draw cursor
 
-	int y = GetAbsoluteY() + getcury(area->w);
-	int x = GetAbsoluteX() + getcurx(area->w);
-	WindowManager::Instance()->SetCursor(y, x, true);
+	TextBrowser::Draw();
 }
 
 int TextInput::ProcessInputText(const char *input, const int bytes)

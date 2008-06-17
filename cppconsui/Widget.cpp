@@ -120,19 +120,3 @@ void Widget::GetSubPad(curses_imp_t& a, const int x, const int y, const int w, c
 {
 	a.w = subpad(area->w, h, w, y, x);
 }
-
-int Widget::GetAbsoluteX()
-{
-  if (parent && parent != this)
-    return parent->GetAbsoluteX() + Left();
-  else
-    return Left();
-}
-
-int Widget::GetAbsoluteY()
-{
-  if (parent && parent != this)
-    return parent->GetAbsoluteY() + Top();
-  else
-    return Top();
-}
