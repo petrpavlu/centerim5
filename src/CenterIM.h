@@ -40,10 +40,15 @@ class CenterIM
 : public InputProcessor
 {
 	public:
-		static CenterIM* Instance(void);
+		static CenterIM* Instance();
 		static void Delete(void);
 		void Run(void);
 		void Quit(void);
+
+		void SetLocale(const char *locale)
+			{ this->locale = locale; }
+		const char *GetLocale(void)
+			{ return locale; }
 
 		/* for purple_core_set_ui_ops() */
 		//static void ui_prefs_init_(void) { CenterIM::Instance()->ui_prefs_init(); }
@@ -95,6 +100,9 @@ class CenterIM
 		~CenterIM();
 
 		static CenterIM* instance;
+
+		const char *locale;
+		const char *charset;
 
 		GIOChannel *channel;
 		guint channel_id;

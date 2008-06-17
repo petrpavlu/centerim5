@@ -59,7 +59,7 @@ static PurpleDebugUiOps logbuf_debug_ui_ops =
 CenterIM* CenterIM::instance = NULL;
 std::vector<CenterIM::logbuf_item>* CenterIM::logbuf = NULL;
 
-CenterIM* CenterIM::Instance(void)
+CenterIM* CenterIM::Instance()
 {
 	if (!instance) instance = new CenterIM();
 	return instance;
@@ -104,9 +104,14 @@ static PurpleEventLoopUiOps centerim_glib_eventloops =
 CenterIM::CenterIM()
 : channel(NULL)
 , channel_id(0)
+, locale(NULL)
+, charset(NULL)
 {
 	/* Declaring bindables must be done in CenterIM::io_init()
 	 * */
+
+	/* store the currently used character set*/
+	g_get_charset(&charset);
 
 	char *path;
 	/* set the configuration file location */
@@ -339,9 +344,10 @@ void CenterIM::io_init(void)
 	nonl();
 	cbreak();
 	raw();
-//        g_io_channel_set_encoding(channel, NULL, NULL); //TODO how to convert input to UTF-8 automatically? perhaps in io_input
-//        g_io_channel_set_buffered(channel, FALSE); //TODO not needed?
+        g_io_channel_set_encoding(channel, locale, NULL); //TODO how to convert input to UTF-8 automatically? perhaps in io_input
+        g_io_channel_set_buffered(channel, FALSE); //TODO not needed?
 //        g_io_channel_set_flags(channel, G_IO_FLAG_NONBLOCK, NULL ); //TODO not needed?
+//g_printerr("encoding = %s\n", g_io_channel_get_encoding(channel));        
 
 	channel = g_io_channel_unix_new(STDIN_FILENO);
 	g_io_channel_set_close_on_unref(channel, TRUE);
@@ -354,6 +360,7 @@ void CenterIM::io_init(void)
 
 	g_io_channel_unref(channel);
 
+	//doing this here breaks things
 	//g_printerr("gntmain: setting up IO\n"); //TODO is this an error??
 }
 
@@ -407,10 +414,10 @@ gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 	//keys->Refine(buf, rd);
 
 	{
-	//buf[rd] = '\0'; //TODO remove all this debug stuff
-	//gunichar uc = g_utf8_get_char(buf);
-	//log->Write(Log::Type_cim, Log::Level_debug, "input: %s (%02x %02x %02x) %d utf8? %d uc: %d %s", buf, buf[0], buf[1], buf[2],
-	//	rd, g_utf8_validate(buf, rd, NULL), uc, key_left); //TODO remove
+	buf[rd] = '\0'; //TODO remove all this debug stuff
+	gunichar uc = g_utf8_get_char(buf);
+	log->Write(Log::Type_cim, Log::Level_debug, "input: %s (%02x %02x %02x) %d utf8? %d uc: %d %s", buf, buf[0], buf[1], buf[2],
+		rd, g_utf8_validate(buf, rd, NULL), uc, key_left); //TODO remove
 	}
 
 	input.append(buf, rd);

@@ -29,9 +29,10 @@
 int main (int argc, char **argv)
 {
 	CenterIM* cim;
+	const char *locale = NULL;
 
 #ifdef ENABLE_NLS
-        setlocale(LC_ALL, "");
+	locale = setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 #endif
@@ -49,7 +50,7 @@ int main (int argc, char **argv)
 		return i;
 	}
 
-
+	cim->SetLocale(locale);
 	cim->Run();
 
 	CenterIM::Delete();
