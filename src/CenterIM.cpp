@@ -41,7 +41,7 @@
 #include <libpurple/pounce.h>
 #include <libpurple/debug.h>
 #include <libpurple/savedstatuses.h>
-#include <glib.h>
+#include <glibmm/main.h>
 
 #include <libintl.h>
 
@@ -75,12 +75,12 @@ void CenterIM::Delete(void)
 
 void CenterIM::Run(void)
 {
-	g_main_loop_run(gmainloop);
+  gmainloop->run();
 }
 
 void CenterIM::Quit(void)
 {
-	g_main_loop_quit(gmainloop);
+  gmainloop->quit();
 }
 
 //TODO: move next two static structs inside the CenterIM object
@@ -159,8 +159,7 @@ CenterIM::CenterIM()
 	io_init();
 
 	/* create a new loop */
-	//TODO perhaps replace by Glib::Main ?? (does that even exist?)
-	gmainloop = g_main_loop_new(NULL, FALSE);
+	gmainloop = Glib::MainLoop::create();
 }
 
 CenterIM::~CenterIM()

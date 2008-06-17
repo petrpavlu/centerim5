@@ -24,6 +24,8 @@
 #include <cppconsui/TextEntry.h>
 #include <cppconsui/Keys.h>
 
+#include <cstring>
+
 #include <libpurple/account.h>
 #include <libpurple/accountopt.h>
 

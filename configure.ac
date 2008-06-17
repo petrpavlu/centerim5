@@ -19,7 +19,7 @@ AC_PROG_LIBTOOL
 
 # Hurray for <http://www-src.lip6.fr/homepages/Alexandre.Duret-Lutz/autotools.html>
 AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.16.1])
+AM_GNU_GETTEXT_VERSION([0.17])
 
 #########################
 # Checks for libraries. #
@@ -124,7 +124,6 @@ fi
 # Create output files. #
 ########################
 AC_CONFIG_FILES([Makefile po/Makefile.in
-		 intl/Makefile
 		 cppconsui/Makefile
 		 src/Makefile])
 AC_OUTPUT
