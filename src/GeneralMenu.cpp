@@ -21,11 +21,15 @@
 #include "GeneralMenu.h"
 #include "AccountWindow.h"
 
+//TODO remove testing of dialogs
+#include <cppconsui/InputDialog.h>
+
 #include <cppconsui/WindowManager.h>
 
 GeneralMenu::GeneralMenu(int x, int y, int w, int h, LineStyle *linestyle)
 : MenuWindow(x, y, w, h, linestyle)
 {
+	AddItem(_("Testing"), sigc::mem_fun(this, &GeneralMenu::OpenTestWindow));
 	AddItem(_("Change status"), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	AddItem(_("Go to contact..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	AddItem(_("Accounts..."), sigc::mem_fun(this, &GeneralMenu::OpenAccountsWindow));
@@ -46,6 +50,13 @@ GeneralMenu::GeneralMenu(int x, int y, int w, int h, LineStyle *linestyle)
 
 GeneralMenu::~GeneralMenu()
 {
+}
+
+void GeneralMenu::OpenTestWindow(void)
+{
+	WindowManager *wm = WindowManager::Instance();
+	wm->Add(new InputDialog("Try typing something!", "Type in the area."));
+	Close();
 }
 
 void GeneralMenu::OpenAccountsWindow(void)

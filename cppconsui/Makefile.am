@@ -51,6 +51,12 @@ libcppconsui_la_SOURCES =\
 	Label.h \
 	Button.cpp \
 	Button.h \
+	Dialog.cpp \
+	Dialog.h \
+	MessageDialog.cpp \
+	MessageDialog.h \
+	InputDialog.cpp \
+	InputDialog.h \
 	InputProcessor.cpp \
 	InputProcessor.h \
 	CppConsUI.cpp \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2008 by Mark Pustjens <pustjens@dds.nl>
  *
  * This file is part of CenterIM.
  *
@@ -18,29 +18,35 @@
  *
  * */
 
-#ifndef __GENERALMENU_H__
-#define __GENERALMENU_H__
+#ifndef __INPUTDIALOG_H__
+#define __INPUTDIALOG_H__
 
-#include <cppconsui/MenuWindow.h>
+#include "Dialog.h"
 
-class GeneralMenu
-: public MenuWindow
+#include "HorizontalListBox.h"
+#include "HorizontalLine.h"
+#include "Label.h"
+#include "TextEntry.h"
+
+class InputDialog
+: public Dialog
 {
 	public:
-		GeneralMenu(int x, int y, int w, int h, LineStyle *linestyle);
-		virtual ~GeneralMenu();
+		InputDialog(const gchar* text, const gchar* defaultvalue);
+		virtual ~InputDialog();
 
-		void Dummy(void) { ; } //TODO remove
+		virtual void Resize(int neww, int newh);
+
 	protected:
+		Label *label;
+		TextEntry *entry;
+		HorizontalLine *seperator;
 
 	private:
-		GeneralMenu();
-		GeneralMenu(const GeneralMenu&);
+		InputDialog();
+		InputDialog(const InputDialog&);
 
-		GeneralMenu& operator=(const GeneralMenu&);
-
-		void OpenAccountsWindow(void);
-		void OpenTestWindow(void);
+		InputDialog& operator=(const InputDialog&);
 };
 
-#endif /* __GENERALMENU_H__ */
+#endif /* __INPUTDIALOG_H__ */

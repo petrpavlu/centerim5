@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2008 by Mark Pustjens <pustjens@dds.nl>
  *
  * This file is part of CenterIM.
  *
@@ -18,29 +18,38 @@
  *
  * */
 
-#ifndef __GENERALMENU_H__
-#define __GENERALMENU_H__
+#ifndef __DIALOG_H__
+#define __DIALOG_H__
 
-#include <cppconsui/MenuWindow.h>
+#include "TextEntry.h"
+#include "Window.h"
 
-class GeneralMenu
-: public MenuWindow
+#include "HorizontalListBox.h"
+#include "HorizontalLine.h"
+
+class Dialog
+: public Window
 {
 	public:
-		GeneralMenu(int x, int y, int w, int h, LineStyle *linestyle);
-		virtual ~GeneralMenu();
+		Dialog(int x, int y, int w, int h, Border *border);
+		Dialog();
+		virtual ~Dialog();
 
-		void Dummy(void) { ; } //TODO remove
+		virtual void Resize(int neww, int newh);
+
+		void AddButton(const gchar *label, sigc::slot<void> function);
+
 	protected:
+		HorizontalListBox *buttons;
+		HorizontalLine *seperator;
 
 	private:
-		GeneralMenu();
-		GeneralMenu(const GeneralMenu&);
+		Dialog(const Dialog&);
 
-		GeneralMenu& operator=(const GeneralMenu&);
+		Dialog& operator=(const Dialog&);
 
-		void OpenAccountsWindow(void);
-		void OpenTestWindow(void);
+		//TODO better name?
+		void AddWidgets(void);
 };
 
-#endif /* __GENERALMENU_H__ */
+#endif /* __DIALOG_H__ */
