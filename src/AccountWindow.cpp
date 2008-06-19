@@ -20,8 +20,7 @@
 
 #include "AccountWindow.h"
 
-#include <cppconsui/Label.h>
-#include <cppconsui/TextEntry.h>
+#include <cppconsui/Button.h>
 #include <cppconsui/Keys.h>
 
 #include <cstring>
@@ -114,14 +113,16 @@ void AccountWindow::Populate(void)
 	TreeView::NodeReference parent;
 	char *username, *s;
 	const char *value;
+	char *label;
 
 	for (iter = purple_accounts_get_all(); iter; iter = iter->next) {
 		account = (PurpleAccount*)iter->data;
 		prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(account)));
 
-		parent = accounts->AddNode(accounts->Root(), new Label(*accounts, 0, 0, " [%s] %s", 
+		label = g_strdup_printf(" [%s] %s",
 			purple_account_get_protocol_name(account),
-			purple_account_get_username(account)), account);
+			purple_account_get_username(account));
+		parent = accounts->AddNode(accounts->Root(), new Button(*accounts, 0, 0, label), account);
 
 		/* We need to process the user name in a special way */
 		username = g_strdup(purple_account_get_username(account));
@@ -133,6 +134,7 @@ void AccountWindow::Populate(void)
                                 s = strrchr(username, purple_account_user_split_get_separator(split));
                         else
                                 s = strchr(username, purple_account_user_split_get_separator(split));
+			log->Write(Log::Level_debug, s);
 
                         if (s != NULL)
                         {
@@ -146,42 +148,53 @@ void AccountWindow::Populate(void)
 			if (value == NULL)
 				value = purple_account_user_split_get_default_value(split);
 
-			accounts->AddNode(parent, new TextEntry(*accounts, 0, 0, " %s: %s",
-				purple_account_user_split_get_text(split),
-				value), NULL);
+			label = g_strdup_printf("%s: %s", purple_account_user_split_get_text(split), value);
+			accounts->AddNode(parent, new Button(*accounts, 0, 0, label), NULL);
+			g_free(label);
 
 		}
 
 		//TODO add this widget as the first widget in this subtree. Treeview needs to support this.
-		accounts->AddNode(parent, new Label(*accounts, 0, 0, "%s: %s", _("Screen name"), username), NULL);
-
+		label = g_strdup_printf("%s: %s", _("Screen name"), username);
+		accounts->AddNode(parent, new Button(*accounts, 0, 0, label), NULL);
+		g_free(label);
 		g_free(username);
 
-		accounts->AddNode(parent, new Label(*accounts, 0, 0, "%s: %s", _("Password"),purple_account_get_password(account)), NULL);
-		accounts->AddNode(parent, new Label(*accounts, 0, 0, "%s: %s", _("Alias"), purple_account_get_alias(account)), NULL);
+		label = g_strdup_printf("%s: %s", _("Password"),purple_account_get_password(account));
+		accounts->AddNode(parent, new Button(*accounts, 0, 0, label), NULL);
+		g_free(label);
+
+		label = g_strdup_printf("%s: %s", _("Alias"), purple_account_get_alias(account));
+		accounts->AddNode(parent, new Button(*accounts, 0, 0, label), NULL);
+		g_free(label);
 
 		for (pref = prplinfo->protocol_options; pref; pref = pref->next) {
 			PurpleAccountOption *option = (PurpleAccountOption*)pref->data;
 			PurplePrefType type = purple_account_option_get_type(option);
 			const char *setting = purple_account_option_get_setting(option);
 
-			const char *value;
-			int ivalue;
+			char *value;
 			gboolean bvalue;
 
 			switch (type) {
 			case PURPLE_PREF_STRING:
-				value = purple_account_get_string(account, setting, NULL);
-				accounts->AddNode(parent, new Label(*accounts, 0, 0, "%s: %s", setting, value), NULL);
+				value = g_strdup_printf("%s: %s", setting,
+						purple_account_get_string(account, setting, NULL));
+				accounts->AddNode(parent, new Button(*accounts, 0, 0, value), NULL);
+				g_free(value);
 				break;
 			case PURPLE_PREF_INT:
-				ivalue = purple_account_get_int(account, setting, 0);
-				accounts->AddNode(parent, new Label(*accounts, 0, 0, "%s: %d", setting, ivalue), NULL);
+				value = g_strdup_printf("%s: %d", setting,
+						purple_account_get_int(account, setting, 0));
+				accounts->AddNode(parent, new Button(*accounts, 0, 0, value), NULL);
+				g_free(value);
 				break;
 			case PURPLE_PREF_BOOLEAN:
 				bvalue = purple_account_get_bool(account, setting, false);
-				value = bvalue ? _("yes") : _("no");
-				accounts->AddNode(parent, new Label(*accounts, 0, 0, "%s: %s", setting, value), NULL);
+				value = g_strdup_printf("%s: %s", setting,
+					bvalue ? _("yes") : _("no"));
+				accounts->AddNode(parent, new Button(*accounts, 0, 0, value), NULL);
+				g_free(value);
 				break;
 			case PURPLE_PREF_STRING_LIST:
 				//TODO implement, but for now, an error!
