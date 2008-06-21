@@ -73,7 +73,9 @@ class Window
 
 		/* the `real' window for this window */
 		WINDOW *realwindow;
-		Border *border; 
+		Border *border;
+
+		FocusChain focus_chain;
 
 	private:
 		Window(void);

@@ -32,7 +32,7 @@ BuddyListNode::BuddyListNode(TreeView& parent, PurpleBlistNode *node)
 , treeview(&parent)
 {
 	log = Log::Instance();
-	canfocus = true;
+	can_focus = true;
 
 	SetFunction(sigc::mem_fun(this, &BuddyListNode::ActionActivate));
 }
@@ -65,14 +65,14 @@ BuddyListNode* BuddyListNode::CreateNode(TreeView& parent, PurpleBlistNode *node
 
 void BuddyListNode::GiveFocus(void)
 {
-	focus = true;
+	has_focus = true;
 	Update();
 	Draw();
 }
 
 void BuddyListNode::TakeFocus(void)
 {
-	focus = false;
+	has_focus = false;
 	Update();
 	Draw();
 }

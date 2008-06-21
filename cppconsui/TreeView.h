@@ -72,9 +72,6 @@ class TreeView
 
 		virtual void Draw(void);
 
-		virtual void GiveFocus(void);
-		virtual void TakeFocus(void);
-
 		void FocusNext(void);
 		void FocusPrevious(void);
 
@@ -100,6 +97,7 @@ class TreeView
 		Widget* GetWidget(const NodeReference &node);
 		void SetParent(NodeReference node, NodeReference newparent);
 
+		virtual void GetFocusChain(FocusChain& focus_chain, FocusChain::iterator parent);
 
 	protected:
 		void DeleteNode(const NodeReference &node);

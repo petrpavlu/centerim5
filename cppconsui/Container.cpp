@@ -34,11 +34,10 @@
 
 Container::Container(Widget& parent, const int x, const int y, const int w, const int h)
 : Widget(parent, x, y, w, h)
-, focuschild(NULL)
 , focus_cycle(false)
 {
 	const gchar *context = "container";
-	canfocus = true;
+	can_focus = true;
 
 	DeclareBindable(context, "focus-previous", sigc::mem_fun(this, &Container::FocusCyclePrevious),
 		_("Focusses the previous widget"), InputProcessor::Bindable_Normal);
@@ -88,37 +87,6 @@ void Container::Draw(void)
 		((*i).first)->Draw();
 }
 
-void Container::GiveFocus(void)
-{
-	focus = true;
-	if (focuschild)
-		focuschild->GiveFocus();
-}
-
-void Container::TakeFocus(void)
-{
-	focus = false;
-	if (focuschild)
-		focuschild->TakeFocus();
-}
-
-void Container::SetFocusChild(Widget* widget)
-{
-	g_return_if_fail(focuschild != widget);
-
-	if (focuschild)
-		focuschild->TakeFocus();
-
-	focuschild = widget;
-	widget->GiveFocus();
-	SetInputChild(widget);
-}
-
-Widget* Container::GetFocusChild(void)
-{
-	return focuschild;
-}
-
 void Container::AddWidget(Widget *widget)
 {
 	Child child;
@@ -132,8 +100,8 @@ void Container::AddWidget(Widget *widget)
 	child.first = widget;
 	children.push_back(child);
 
-	if (!focuschild) {
-		focuschild = widget;
+	if (!focus_child) {
+		focus_child = widget;
 		SetInputChild(widget);
 	}
 }
@@ -169,7 +137,7 @@ void Container::FocusCyclePrevious(void)
 	//TODO take CanFocus() into account
 	for (i = children.rbegin(); i != children.rend(); i++) {
 		child = &(*i);
-		if (child->first == focuschild) {
+		if (child->first == focus_child) {
 			i++;
 			break;
 		}
@@ -184,10 +152,8 @@ void Container::FocusCyclePrevious(void)
 			return;
 	}
 
-	focuschild->TakeFocus();
-	focuschild = (*i).first;
-	focuschild->GiveFocus();
-	SetInputChild(focuschild);
+	if ((*i).first->GrabFocus())
+		SetInputChild(focus_child);
 	Redraw();
 }
 
@@ -201,7 +167,7 @@ void Container::FocusCycleNext(void)
 	//TODO take CanFocus() into account
 	for (i = children.begin(); i != children.end(); i++) {
 		child = &(*i);
-		if (child->first == focuschild) {
+		if (child->first == focus_child) {
 			i++;
 			break;
 		}
@@ -215,10 +181,8 @@ void Container::FocusCycleNext(void)
 			return;
 	}
 
-	focuschild->TakeFocus();
-	focuschild = (*i).first;
-	focuschild->GiveFocus();
-	SetInputChild(focuschild);
+	if ((*i).first->GrabFocus())
+		SetInputChild(focus_child);
 	Redraw();
 }
 
@@ -240,4 +204,43 @@ void Container::Clear(void)
 	}
 }
 
+void Container::GetFocusChain(FocusChain& focus_chain, FocusChain::iterator parent)
+{
+	Children::iterator i;
+	Widget *widget;
+	Container *container;
+	FocusChain::pre_order_iterator iter;
 
+	for (i = children.begin(); i != children.end(); i++) {
+		widget = (*i).first;
+
+		//TODO implement widget visibility.
+		//if (!widget->Visible())
+		//	/* invisible widgets dont need focus */
+		//	continue;
+
+		//TODO dont filter out widgets in this function (or overriding
+		//functions in other classes. filter out somewhere else.
+		if (!widget->CanFocus())
+			/* widgets that dont want focus wont get it */
+			continue;
+
+		iter = focus_chain.append_child(parent, widget);
+
+		if ((container = dynamic_cast<Container*>(widget))) {
+			/* the widget is a container so add its widgets
+			 * as well
+			 * */
+			container->GetFocusChain(focus_chain, iter);
+		}
+	}
+}
+
+void Container::MoveFocus(FocusDirection direction)
+{
+	FocusChain focus_chain;
+
+	GetFocusChain(focus_chain, focus_chain.begin());
+
+	
+}

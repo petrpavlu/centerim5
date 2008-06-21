@@ -26,7 +26,7 @@ Button::Button(Widget& parent, int x, int y, int w, int h, const gchar *text, si
 : Label(parent, x, y, w, h, text)
 , callback(callback)
 {
-	canfocus = true;
+	can_focus = true;
 	AddBindables();
 }
 
@@ -34,14 +34,14 @@ Button::Button(Widget& parent, int x, int y, const char *text, sigc::slot<void> 
 : Label(parent, x, y, text)
 , callback(callback)
 {
-	canfocus = true;
+	can_focus = true;
 	AddBindables();
 }
 
 Button::Button(Widget& parent, int x, int y, const char *text)
 : Label(parent, x, y, text)
 {
-	canfocus = true;
+	can_focus = true;
 	AddBindables();
 }
 
@@ -51,13 +51,16 @@ Button::~Button()
 
 void Button::Draw(void)
 {
-	if (focus)
+	if (has_focus)
 		colorscheme->On(area, ColorScheme::Focus);
 
 	Label::Draw();
 
-	if (focus)
+	if (has_focus)
 		colorscheme->Off(area, ColorScheme::Focus);
+
+	//TODO try setcolor, its shorter
+	//colorscheme->SetColor(area, 0, 0, w, ColorScheme::Focus);
 }
 
 void Button::SetFunction(sigc::slot<void> callback)

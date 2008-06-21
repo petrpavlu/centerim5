@@ -24,11 +24,22 @@
 #include <vector>
 
 #include "Widget.h"
+#include "tree.hh"
 
 class Container
 : public Widget
 {
 	public:
+		typedef tree<Widget*> FocusChain;
+		typedef enum {
+			Forward,
+			Backward,
+			Up,
+			Down,
+			Left,
+			Right
+		} FocusDirection;
+
 		Container(Widget& parent, const int x, const int y, const int w, const int h);
 		virtual ~Container();
 
@@ -38,12 +49,6 @@ class Container
 		virtual void MoveResize(const int newx, const int newy, const int neww, const int newh);
 		virtual void Draw(void);
 
-		virtual void GiveFocus(void);
-		virtual void TakeFocus(void);
-
-		void SetFocusChild(Widget* widget);
-		Widget* GetFocusChild(void);
-
 		void AddWidget(Widget *widget);
 		void RemoveWidget(Widget *widget);
 
@@ -52,9 +57,14 @@ class Container
 
 		virtual void Clear(void);
 
+		virtual void GetFocusChain(FocusChain& focus_chain, FocusChain::iterator parent);
+		virtual void MoveFocus(FocusDirection direction);
+
 	protected:
 		typedef std::pair<Widget*, sigc::connection> Child;
 		typedef std::vector<Child> Children;
+
+		bool focus_cycle;
 
 		void SetFocusCycle(bool cycle) { focus_cycle = cycle; }
 		bool GetFocusCycle(void) { return focus_cycle; }
@@ -63,10 +73,6 @@ class Container
 			{ return children.begin(); }
 		Children::iterator ChildrenEnd(void)
 			{ return children.end(); }
-
-		Widget *focuschild;
-
-		bool focus_cycle;
 
 	private:
 		Container(void);

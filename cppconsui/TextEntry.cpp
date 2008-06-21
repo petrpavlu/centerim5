@@ -45,7 +45,7 @@ TextEntry::TextEntry(Widget& parent, int x, int y, int w, int h, const gchar *fm
 	text_length = g_utf8_strlen(text, text_size);
 	set_position(text_size);
 
-	canfocus = true;
+	can_focus = true;
 	DeclareBindables();
 	BindActions();
 }
@@ -70,7 +70,7 @@ TextEntry::TextEntry(Widget& parent, int x, int y, const gchar *fmt, ...)
 
 	Resize(width(text), 1);
 
-	canfocus = true;
+	can_focus = true;
 	DeclareBindables();
 	BindActions();
 }
@@ -85,7 +85,7 @@ void TextEntry::Draw(void)
 
 	//TODO we can do better than this
 	//TODO cursor blinking
-	if (focus) {
+	if (has_focus) {
 		gchar *ptr = g_utf8_offset_to_pointer(text, current_pos);
 		int i = width(text, ptr);
 		colorscheme->SetColor(area, i, 0, 1, ColorScheme::Focus);
@@ -597,7 +597,7 @@ void TextEntry::delete_from_cursor (DeleteType type, gint count)
 void TextEntry::delete_whitespace (void)
 {
   /*TODO this is untested */
-  gint n_attrs;
+  //gint n_attrs;
   gchar *start, *end;
 
   start = end = g_utf8_offset_to_pointer(text, this->current_pos); 

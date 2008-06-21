@@ -57,7 +57,7 @@ TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linest
 	BindAction(context, "fold-subtree", "-", false);
 	BindAction(context, "unfold-subtree", "+", false);
 
-	canfocus = true;
+	can_focus = true;
 
 	if (!linestyle)
 		linestyle = LineStyle::LineStyleDefault();
@@ -148,6 +148,7 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 	return height;
 }
 
+/*TODO remove/port
 void TreeView::GiveFocus(void)
 {
 	focus = true;
@@ -160,9 +161,11 @@ void TreeView::TakeFocus(void)
 	focus = false;
 	(*focusnode).widget->TakeFocus();
 }
+*/
 
 void TreeView::FocusNext(void)
 {
+	/*
 	TheTree::pre_order_iterator oldfocus;
 
 	oldfocus = focusnode;
@@ -199,10 +202,12 @@ void TreeView::FocusNext(void)
 	SetInputChild((*focusnode).widget);
 	AdjustScroll((*focusnode).widget->Left(), (*focusnode).widget->Top());
 	Redraw();
+	*/
 }
 
 void TreeView::FocusPrevious(void)
 {
+	/*
 	TheTree::pre_order_iterator oldfocus;
 	TheTree::sibling_iterator previous;
 
@@ -210,13 +215,13 @@ void TreeView::FocusPrevious(void)
 
 	if (focusnode != Root().begin()) {
 		if (focusnode == thetree.begin(thetree.parent(focusnode))) {
-			/* if the node is a first child move the focus to the parent*/
+			* if the node is a first child move the focus to the parent*
 			focusnode--;
 		} else {
-			/* if the node is not a first child it has a previous sibling
+			* if the node is not a first child it has a previous sibling
 			 * in this case we need to move to the last open node in
 			 * the previous sibling.
-			 * */
+			 * *
 			previous = focusnode;
 			previous--;
 
@@ -244,6 +249,7 @@ void TreeView::FocusPrevious(void)
 	SetInputChild((*focusnode).widget);
 	AdjustScroll((*focusnode).widget->Left(), (*focusnode).widget->Top());
 	Redraw();
+	*/
 
 }
 
@@ -302,7 +308,7 @@ const TreeView::NodeReference TreeView::AddNode(const NodeReference &parent, Wid
 
 	if ((*focusnode).widget == NULL) {
 		focusnode = iter;
-		widget->GiveFocus();
+		widget->GrabFocus();
 	}
 
 	node.sig_redraw = widget->signal_redraw.connect(sigc::mem_fun(this, &TreeView::OnChildRedraw));
@@ -401,4 +407,35 @@ void TreeView::OnChildResize(Rect &oldsize, Rect &newsize)
 {
 	//TODO redraw only on height change
 	Redraw();
+}
+
+void TreeView::GetFocusChain(FocusChain& focus_chain, FocusChain::iterator parent)
+{
+	Widget *widget;
+	Container *container;
+	FocusChain::pre_order_iterator iter;
+	TheTree::pre_order_iterator i;
+
+	/* The preorder iterator starts with the root so we must skip it. */
+	for (i = ++thetree.begin(); i != thetree.end(); i++) {
+		widget = (*i).widget;
+
+		//TODO implement widget visibility.
+		//if (!widget->Visible())
+		//	/* invisible widgets dont need focus */
+		//	continue;
+
+		if (!widget->CanFocus())
+			/* widgets that dont want focus wont get it */
+			continue;
+
+		iter = focus_chain.append_child(parent, widget);
+
+		if ((container = dynamic_cast<Container*>(widget))) {
+			/* the widget is a container so add its widgets
+			 * as well
+			 * */
+			container->GetFocusChain(focus_chain, iter);
+		}
+	}
 }

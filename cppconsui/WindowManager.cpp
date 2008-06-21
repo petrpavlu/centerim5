@@ -139,7 +139,7 @@ void WindowManager::FocusWindow(void)
 
 	/* Take the focus from the old window with the focus */
 	if (focus) {
-		focus->TakeFocus();
+		focus->StealFocus();
 		SetInputChild(NULL);
 	}
 
@@ -153,7 +153,7 @@ void WindowManager::FocusWindow(void)
 	/* Give the focus to the top window if there is one */
 	if (win) {
 		SetInputChild(win);
-		win->GiveFocus();
+		win->RestoreFocus();
 	}
 }
 

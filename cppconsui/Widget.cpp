@@ -28,8 +28,9 @@ Widget::Widget(Widget& parent, int x, int y, int w, int h)
 , y(y)
 , w(w)
 , h(h)
-, focus(false)
-, canfocus(false)
+, can_focus(false)
+, has_focus(false)
+, focus_child(NULL)
 , parent(&parent)
 , colorscheme(NULL)
 {
@@ -106,14 +107,80 @@ void Widget::Redraw(void)
 	signal_redraw();
 }
 
-void Widget::GiveFocus(void)
+bool Widget::SetFocusChild(Widget* child)
 {
-	if (canfocus) focus = true;
+	g_assert(child != NULL);
+
+	if (focus_child == child)
+		/* The focus child is already correct. */
+		return true;
+
+	if (focus_child != NULL) {
+		/* The currently focussed widget is in a different branch
+		 * of the widget tree, so unfocus that widget first.
+		 * */
+		if (!focus_child->StealFocus())
+			return false;
+	}
+
+	if (parent == this) {
+		/* Current widget is a window. */
+		//TODO window should try to become topmost.
+		focus_child = child;
+		return true;
+	}
+
+	if (parent->SetFocusChild(this)) {
+		/* Only if we can grab the focus all the way up the widget
+		 * tree do we set the focus child.
+		 * */
+		focus_child = child;
+		return true;
+	}
+
+	return false;
 }
 
-void Widget::TakeFocus(void)
+bool Widget::StealFocus(void)
 {
-	focus = false;
+	/* If has_focus is true, then this is the widget with focus. */
+	if (has_focus) {
+		has_focus = false;
+		return true;
+	}
+
+	/* First propagate focus stealing to the widget with focus.
+	 * If theft is successful, then unset focus_child. */
+	if (focus_child && focus_child->StealFocus()) {
+		focus_child = NULL;
+		return true;
+	}
+
+	return false;
+}
+
+void Widget::RestoreFocus(void)
+{
+	if (focus_child == NULL) {
+		if (can_focus) {
+			has_focus = true;
+			Redraw();
+		}
+	} else {
+		focus_child->RestoreFocus();
+	}
+}
+
+bool Widget::GrabFocus(void)
+{
+	if (can_focus && parent != NULL && parent->SetFocusChild(this)) {
+		//TODO only set if window has focus.
+		has_focus = true;
+		Redraw();
+		return true;
+	}
+
+	return false;
 }
 
 void Widget::GetSubPad(curses_imp_t& a, const int x, const int y, const int w, const int h)

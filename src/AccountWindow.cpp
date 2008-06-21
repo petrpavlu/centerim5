@@ -57,7 +57,7 @@ AccountWindow::AccountWindow()
 
 	SetInputChild(accounts);
 
-	canfocus = true;
+	can_focus = true;
 
 	//DeclareBindable(context, "focus-previous-button", sigc::mem_fun(this, &AccountWindow::FocusCyclePrevious),
 	//	_("Focusses the previous button"), InputProcessor::Bindable_Override);
@@ -89,7 +89,7 @@ void AccountWindow::Delete(void)
 
 void AccountWindow::FocusCyclePrevious(void)
 {
-	if (accounts->HasFocus()) {
+	if (focus_child == accounts) {
 		Window::FocusCyclePrevious();
 	} else {
 		menu->FocusCyclePrevious();
@@ -98,7 +98,7 @@ void AccountWindow::FocusCyclePrevious(void)
 
 void AccountWindow::FocusCycleNext(void)
 {
-	if (accounts->HasFocus()) {
+	if (focus_child == accounts) {
 		Window::FocusCycleNext();
 	} else {
 		menu->FocusCyclePrevious();

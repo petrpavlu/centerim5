@@ -59,11 +59,13 @@ class Widget
 		virtual void Draw(void);
 		void Redraw(void);
 
-		virtual void GiveFocus(void);
-		virtual void TakeFocus(void);
-		bool HasFocus(void) { return focus; }
-		bool GetCanFocus(void) { return canfocus; }
-		void SetCanFocus(bool canfocus) { this->canfocus = canfocus; }
+		bool SetFocusChild(Widget* child);
+		bool StealFocus(void);
+		void RestoreFocus(void);
+		virtual bool GrabFocus(void);
+
+		bool CanFocus(void) { return can_focus; }
+		void SetCanFocus(bool val) { can_focus = val; }
 
 		int Left() { return x; }
 		int Top() { return y; }
@@ -85,7 +87,9 @@ class Widget
 	protected:
 		int x, y, w, h; // screen area relative to parent area
 
-		bool focus, canfocus;
+		bool can_focus;
+		bool has_focus;
+		Widget *focus_child;
 
 		curses_imp_t* area;
 
