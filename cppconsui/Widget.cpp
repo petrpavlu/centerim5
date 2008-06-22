@@ -53,7 +53,7 @@ void Widget::Move(int newx, int newy)
 
 	UpdateArea();
 
-	signal_move(oldpos, newpos);
+	signal_move(this, oldpos, newpos);
 }
 
 void Widget::Resize(int neww, int newh)
@@ -65,7 +65,7 @@ void Widget::Resize(int neww, int newh)
 
 	UpdateArea();
 
-	signal_resize(oldsize, newsize);
+	signal_resize(this, oldsize, newsize);
 }
 
 void Widget::MoveResize(int newx, int newy, int neww, int newh)
@@ -79,8 +79,8 @@ void Widget::MoveResize(int newx, int newy, int neww, int newh)
 
 	UpdateArea();
 
-	signal_move(oldsize, newsize);
-	signal_resize(oldsize, newsize);
+	signal_move(this, oldsize, newsize);
+	signal_resize(this, oldsize, newsize);
 }
 
 void Widget::UpdateArea()
@@ -104,7 +104,7 @@ void Widget::Draw(void)
 
 void Widget::Redraw(void)
 {
-	signal_redraw();
+	signal_redraw(this);
 }
 
 bool Widget::SetFocusChild(Widget* child)
@@ -146,12 +146,19 @@ bool Widget::StealFocus(void)
 	/* If has_focus is true, then this is the widget with focus. */
 	if (has_focus) {
 		has_focus = false;
+		signal_focus(this, false);
+		return true;
+	}
+
+	if (!focus_child) {
+		/* Apparently there is no widget with focus because
+		 * the chain ends here. */
 		return true;
 	}
 
 	/* First propagate focus stealing to the widget with focus.
 	 * If theft is successful, then unset focus_child. */
-	if (focus_child && focus_child->StealFocus()) {
+	if (focus_child->StealFocus()) {
 		focus_child = NULL;
 		return true;
 	}
@@ -159,6 +166,7 @@ bool Widget::StealFocus(void)
 	return false;
 }
 
+//TODO move to window and use getfocuswidget??
 void Widget::RestoreFocus(void)
 {
 	if (focus_child == NULL) {
@@ -171,11 +179,26 @@ void Widget::RestoreFocus(void)
 	}
 }
 
+Widget* Widget::GetFocusWidget(void)
+{
+	if (focus_child == NULL) {
+		if (can_focus) {
+			return this;
+		} else {
+			return NULL;
+		}
+	} else {
+		return focus_child->GetFocusWidget();
+	}
+
+}
+
 bool Widget::GrabFocus(void)
 {
 	if (can_focus && parent != NULL && parent->SetFocusChild(this)) {
 		//TODO only set if window has focus.
 		has_focus = true;
+		signal_focus(this, true);
 		Redraw();
 		return true;
 	}

@@ -35,29 +35,26 @@
 
 TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linestyle_)
 : ScrollPane(parent, x, y, w, h, w, h)
-, focusnode(NULL)
 , linestyle(linestyle_)
 , itemswidth(0)
 , itemsheight(0)
 , focus_cycle(false)
 {
 	const gchar *context = "treeview";
-	DeclareBindable(context, "focus-previous", sigc::mem_fun(this, &TreeView::ActionFocusPrevious),
-		_("Focusses the previous item in the list"), InputProcessor::Bindable_Normal);
-	DeclareBindable(context, "focus-next", sigc::mem_fun(this, &TreeView::ActionFocusNext),
-		_("Focusses the next item in the list"), InputProcessor::Bindable_Normal);
+	//DeclareBindable(context, "focus-previous", sigc::mem_fun(this, &TreeView::ActionFocusPrevious),
+	//	_("Focusses the previous item in the list"), InputProcessor::Bindable_Normal);
+	//DeclareBindable(context, "focus-next", sigc::mem_fun(this, &TreeView::ActionFocusNext),
+	//	_("Focusses the next item in the list"), InputProcessor::Bindable_Normal);
 	DeclareBindable(context, "fold-subtree", sigc::mem_fun(this, &TreeView::ActionCollapse),
 		_("Collapse the selected subtree"), InputProcessor::Bindable_Normal);
 	DeclareBindable(context, "unfold-subtree", sigc::mem_fun(this, &TreeView::ActionExpand),
 		_("Expand the selected subtree"), InputProcessor::Bindable_Normal);
 
 	//TODO get real binding from config
-	BindAction(context, "focus-previous", Keys::Instance()->Key_up(), false);
-	BindAction(context, "focus-next", Keys::Instance()->Key_down(), false);
+	//BindAction(context, "focus-previous", Keys::Instance()->Key_up(), false);
+	//BindAction(context, "focus-next", Keys::Instance()->Key_down(), false);
 	BindAction(context, "fold-subtree", "-", false);
 	BindAction(context, "unfold-subtree", "+", false);
-
-	can_focus = true;
 
 	if (!linestyle)
 		linestyle = LineStyle::LineStyleDefault();
@@ -313,6 +310,7 @@ const TreeView::NodeReference TreeView::AddNode(const NodeReference &parent, Wid
 
 	node.sig_redraw = widget->signal_redraw.connect(sigc::mem_fun(this, &TreeView::OnChildRedraw));
 	node.sig_resize = widget->signal_resize.connect(sigc::mem_fun(this, &TreeView::OnChildResize));
+	node.sig_focus = widget->signal_focus.connect(sigc::mem_fun(this, &TreeView::OnChildFocus));
 	
 	itemswidth += widget->Width();
 	itemsheight += widget->Height();
@@ -398,15 +396,22 @@ void TreeView::SetParent(NodeReference node, NodeReference newparent)
 		thetree.move_ontop(thetree.append_child(newparent), node);
 }
 
-void TreeView::OnChildRedraw(void)
+void TreeView::OnChildRedraw(Widget *widget)
 {
 	Redraw();
 }
 
-void TreeView::OnChildResize(Rect &oldsize, Rect &newsize)
+void TreeView::OnChildResize(Widget *widget, Rect &oldsize, Rect &newsize)
 {
 	//TODO redraw only on height change
 	Redraw();
+}
+
+void TreeView::OnChildFocus(Widget* widget, bool focus)
+{
+	/* Only adjust scroll position if the widget got focus. */
+	if (focus)
+		AdjustScroll(widget->Left(), widget->Top());
 }
 
 void TreeView::GetFocusChain(FocusChain& focus_chain, FocusChain::iterator parent)

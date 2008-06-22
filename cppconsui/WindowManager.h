@@ -56,6 +56,7 @@ class WindowManager
 		typedef std::vector<WindowInfo> Windows;
 
 		void Redraw(void);
+		void WindowRedraw(Widget* widget);
 
 		void FocusWindow(void);
 		void Swap(Window* fst, Window* snd);

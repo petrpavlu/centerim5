@@ -18,6 +18,8 @@
  *
  * */
 
+#include <algorithm>
+
 #include <Curses.h>
 #include <Container.h>
 #include <Keys.h>
@@ -37,11 +39,12 @@ Container::Container(Widget& parent, const int x, const int y, const int w, cons
 , focus_cycle(false)
 {
 	const gchar *context = "container";
-	can_focus = true;
 
-	DeclareBindable(context, "focus-previous", sigc::mem_fun(this, &Container::FocusCyclePrevious),
+	DeclareBindable(context, "focus-previous",
+		sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusPrevious),
 		_("Focusses the previous widget"), InputProcessor::Bindable_Normal);
-	DeclareBindable(context, "focus-next", sigc::mem_fun(this, &Container::FocusCycleNext),
+	DeclareBindable(context, "focus-next",
+		sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusNext),
 		_("Focusses the next widget"), InputProcessor::Bindable_Normal);
 
 	BindAction(context, "focus-previous", Keys::Instance()->Key_shift_tab(), false);
@@ -186,9 +189,9 @@ void Container::FocusCycleNext(void)
 	Redraw();
 }
 
-void Container::OnChildRedraw(void)
+void Container::OnChildRedraw(Widget* widget)
 {
-	signal_redraw();
+	signal_redraw(this);
 }
 
 void Container::Clear(void)
@@ -239,8 +242,86 @@ void Container::GetFocusChain(FocusChain& focus_chain, FocusChain::iterator pare
 void Container::MoveFocus(FocusDirection direction)
 {
 	FocusChain focus_chain;
+	FocusChain search_chain;
+	FocusChain::pre_order_iterator iter;
+	FocusChain::pre_order_iterator focus_root = focus_chain.begin();
+	//bool (*cmp)(Widget*, Widget*) = NULL;
+	Widget *focus_widget;
 
 	GetFocusChain(focus_chain, focus_chain.begin());
 
-	
+	/*TODO implement focus chain sorting functions
+	switch (direction) {
+		* Order by the focus_order property of the widget. *
+		case FocusNext:
+		case FocusPrevious:
+			cmp = Container::FocusChainSortFocusOrder;
+			break;
+		case FocusDown:
+		case FocusUp:
+			cmp = Container::FocusChainSortVertical;
+			break;
+		case FocusRight:
+		case FocusLeft:
+			cmp = Container::FocusChainSortHorizontal;
+			break;
+		default:
+			cmp = Container::FocusChainSortFocusOrder;
+			break;
+	}
+
+	focus_chain.sort(focus_chain.begin(), focus_chain.end(), cmp);
+	*/
+
+	focus_widget = GetFocusWidget();
+	if (!focus_widget) {
+		/* there is no node assigned to receive so give focus to
+		 * the first widget in the list (if there is a widget
+		 * which accepts focus).
+		 * */
+		if (focus_chain.number_of_children(focus_chain.begin())) {
+			iter = focus_chain.begin().begin();
+			(*iter)->GrabFocus();
+			return;
+		} else {
+			/* No children. */
+		}
+	}
+
+	search_chain.set_head(focus_widget);
+	iter = std::search(focus_root.begin(), focus_root.end(),
+		search_chain.begin(), search_chain.end());
+
+	if (iter == focus_chain.end()) {
+		/* We have a focussed widget but we couldn't find it. */
+		return;
+	}
+
+	/* This find the correct widget to focus */
+	switch (direction) {
+		case FocusPrevious:
+		case FocusUp:
+		case FocusLeft:
+			if (iter == focus_root.begin()) {
+				iter = focus_root.back();
+			} else {
+				iter--;
+			}
+			break;
+		case FocusNext:
+		case FocusDown:
+		case FocusRight:
+		default:
+			if (iter == focus_root.back()) {
+				iter = (focus_root.begin());
+			} else {
+				iter++;
+			}
+			break;
+	}
+
+	/* Make sure the widget is valid and the let it grab focus. */
+	if ((*iter) != NULL) {
+		(*iter)->GrabFocus();
+	}
 }

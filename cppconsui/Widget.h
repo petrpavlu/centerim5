@@ -62,15 +62,16 @@ class Widget
 		bool SetFocusChild(Widget* child);
 		bool StealFocus(void);
 		void RestoreFocus(void);
+		Widget* GetFocusWidget(void);
 		virtual bool GrabFocus(void);
 
 		bool CanFocus(void) { return can_focus; }
 		void SetCanFocus(bool val) { can_focus = val; }
 
-		int Left() { return x; }
-		int Top() { return y; }
-		int X() { return x; }
-		int Y() { return y; }
+		int Left() const { return x; }
+		int Top() const { return y; }
+		int X() const { return x; }
+		int Y() const { return y; }
 		int Width() { return w; }
 		int Height() { return h; }
 
@@ -80,9 +81,10 @@ class Widget
 
 		//TODO encapsulate with a function, make sure derived classed call Move()/Resize()/Redraw() to emit signal
 		//also check if this is possible at all
-		sigc::signal<void, Point&, Point&> signal_move;
-		sigc::signal<void, Rect&, Rect&> signal_resize;
-		sigc::signal<void> signal_redraw;
+		sigc::signal<void, Widget*, Point&, Point&> signal_move;
+		sigc::signal<void, Widget*, Rect&, Rect&> signal_resize;
+		sigc::signal<void, Widget*> signal_redraw;
+		sigc::signal<void, Widget*, bool> signal_focus;
 
 	protected:
 		int x, y, w, h; // screen area relative to parent area

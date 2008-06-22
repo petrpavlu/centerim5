@@ -94,7 +94,7 @@ void WindowManager::Add(Window *window)
 
 	if (!HasWindow(window)) {
 		info.window = window;
-		info.redraw = window->signal_redraw.connect(sigc::mem_fun(this, &WindowManager::Redraw));
+		info.redraw = window->signal_redraw.connect(sigc::mem_fun(this, &WindowManager::WindowRedraw));
 		windows.insert(windows.begin(), info);
 	}
 
@@ -211,4 +211,9 @@ void WindowManager::Redraw(void)
 		redrawpending = true;
 		Glib::signal_timeout().connect(sigc::mem_fun(this, &WindowManager::Draw), 0);
 	}
+}
+
+void WindowManager::WindowRedraw(Widget *widget)
+{
+	Redraw();
 }

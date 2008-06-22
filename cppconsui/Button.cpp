@@ -22,6 +22,9 @@
 #include "Button.h"
 #include "Keys.h"
 
+//TODO add spaces around the label st there is always some room between the label and the left/right
+//side of the button.
+
 Button::Button(Widget& parent, int x, int y, int w, int h, const gchar *text, sigc::slot<void> callback)
 : Label(parent, x, y, w, h, text)
 , callback(callback)

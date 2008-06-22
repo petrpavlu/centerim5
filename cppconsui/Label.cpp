@@ -85,7 +85,7 @@ void Label::SetText(const gchar *str)
 	text_length = g_utf8_strlen(text, text_size);
 
 	wclear(area->w);
-	signal_redraw();
+	signal_redraw(this);
 }
 
 Glib::ustring Label::GetText(void)

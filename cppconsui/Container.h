@@ -32,12 +32,12 @@ class Container
 	public:
 		typedef tree<Widget*> FocusChain;
 		typedef enum {
-			Forward,
-			Backward,
-			Up,
-			Down,
-			Left,
-			Right
+			FocusNext,
+			FocusPrevious,
+			FocusDown,
+			FocusUp,
+			FocusRight,
+			FocusLeft
 		} FocusDirection;
 
 		Container(Widget& parent, const int x, const int y, const int w, const int h);
@@ -80,7 +80,7 @@ class Container
 
 		Container& operator=(const Container&);
 
-		void OnChildRedraw(void);
+		void OnChildRedraw(Widget* widget);
 		
 		Children children;
 };

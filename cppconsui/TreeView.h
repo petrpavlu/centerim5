@@ -63,6 +63,7 @@ class TreeView
 			/* signal connection to the widget */
 			sigc::connection sig_redraw;
 			sigc::connection sig_resize;
+			sigc::connection sig_focus;
 		};
 		typedef tree<TreeNode> TheTree;
 		typedef TheTree::pre_order_iterator NodeReference;
@@ -121,8 +122,9 @@ class TreeView
 
 		TreeView& operator=(const TreeView&);
 		
-		void OnChildRedraw(void);
-		void OnChildResize(Rect &oldsize, Rect &newsize);
+		void OnChildRedraw(Widget *widget);
+		void OnChildResize(Widget *widget, Rect &oldsize, Rect &newsize);
+		void OnChildFocus(Widget* widget, bool focus);
 };
 
 #endif /* __TREEVIEW_H__ */
