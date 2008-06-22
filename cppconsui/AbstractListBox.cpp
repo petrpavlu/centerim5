@@ -49,7 +49,6 @@ AbstractListBox::AbstractListBox(Widget& parent, int x, int y, int w, int h)
 	BindAction(context, "focus-right", Keys::Instance()->Key_right(), false);
 	BindAction(context, "focus-up", Keys::Instance()->Key_up(), false);
 	BindAction(context, "focus-down", Keys::Instance()->Key_down(), false);
-
 }
 
 AbstractListBox::~AbstractListBox()

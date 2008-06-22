@@ -41,18 +41,20 @@ TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linest
 , focus_cycle(false)
 {
 	const gchar *context = "treeview";
-	//DeclareBindable(context, "focus-previous", sigc::mem_fun(this, &TreeView::ActionFocusPrevious),
-	//	_("Focusses the previous item in the list"), InputProcessor::Bindable_Normal);
-	//DeclareBindable(context, "focus-next", sigc::mem_fun(this, &TreeView::ActionFocusNext),
-	//	_("Focusses the next item in the list"), InputProcessor::Bindable_Normal);
+	DeclareBindable(context, "focus-up",
+		sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusUp),
+		_("Focus the next widget above."), InputProcessor::Bindable_Normal);
+	DeclareBindable(context, "focus-down",
+		sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusDown),
+		_("Focus the next widget below."), InputProcessor::Bindable_Normal);
 	DeclareBindable(context, "fold-subtree", sigc::mem_fun(this, &TreeView::ActionCollapse),
 		_("Collapse the selected subtree"), InputProcessor::Bindable_Normal);
 	DeclareBindable(context, "unfold-subtree", sigc::mem_fun(this, &TreeView::ActionExpand),
 		_("Expand the selected subtree"), InputProcessor::Bindable_Normal);
 
 	//TODO get real binding from config
-	//BindAction(context, "focus-previous", Keys::Instance()->Key_up(), false);
-	//BindAction(context, "focus-next", Keys::Instance()->Key_down(), false);
+	BindAction(context, "focus-up", Keys::Instance()->Key_up(), false);
+	BindAction(context, "focus-down", Keys::Instance()->Key_down(), false);
 	BindAction(context, "fold-subtree", "-", false);
 	BindAction(context, "unfold-subtree", "+", false);
 
