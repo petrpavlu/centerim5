@@ -87,6 +87,7 @@ void AccountWindow::Delete(void)
 {
 }
 
+/* do this with movefocus
 void AccountWindow::FocusCyclePrevious(void)
 {
 	if (focus_child == accounts) {
@@ -104,6 +105,7 @@ void AccountWindow::FocusCycleNext(void)
 		menu->FocusCyclePrevious();
 	}
 }
+*/
 
 void AccountWindow::Populate(void)
 {

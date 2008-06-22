@@ -124,69 +124,10 @@ void Container::RemoveWidget(Widget *widget)
 
 	if (!child) return; //TODO a warning also?
 
-	FocusCycleNext();
+	MoveFocus(FocusNext);
 
 	child->second.disconnect();
 	children.erase(i);
-}
-
-void Container::FocusCyclePrevious(void)
-{
-	Children::reverse_iterator i;
-	Child *child = NULL;
-
-	g_return_if_fail(children.size() > 1);
-
-	//TODO take CanFocus() into account
-	for (i = children.rbegin(); i != children.rend(); i++) {
-		child = &(*i);
-		if (child->first == focus_child) {
-			i++;
-			break;
-		}
-	}
-
-	if (i == children.rend()) {
-		if (focus_cycle)
-			i = children.rbegin();
-		else
-			//TODO tell parent (signal) to move the focus to the next widget.
-			//this means the container will lose focus.
-			return;
-	}
-
-	if ((*i).first->GrabFocus())
-		SetInputChild(focus_child);
-	Redraw();
-}
-
-void Container::FocusCycleNext(void)
-{
-	Children::iterator i;
-	Child *child = NULL;
-
-	g_return_if_fail(children.size() > 1);
-
-	//TODO take CanFocus() into account
-	for (i = children.begin(); i != children.end(); i++) {
-		child = &(*i);
-		if (child->first == focus_child) {
-			i++;
-			break;
-		}
-	}
-
-	if (i == children.end()) {
-		if (focus_cycle)
-			i = children.begin();
-		else
-			//TODO same as for focuscycleprevious
-			return;
-	}
-
-	if ((*i).first->GrabFocus())
-		SetInputChild(focus_child);
-	Redraw();
 }
 
 void Container::OnChildRedraw(Widget* widget)

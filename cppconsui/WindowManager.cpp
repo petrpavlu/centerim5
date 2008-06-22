@@ -130,6 +130,7 @@ void WindowManager::FocusWindow(void)
 {
 	Window *win, *focus = NULL;
 	InputProcessor *inputchild;
+	Widget *widget = NULL;
 
 	inputchild = GetInputChild();
 
@@ -139,7 +140,9 @@ void WindowManager::FocusWindow(void)
 
 	/* Take the focus from the old window with the focus */
 	if (focus) {
-		focus->StealFocus();
+		widget = focus->GetFocusWidget();
+		if (widget)
+			widget->UngrabFocus();
 		SetInputChild(NULL);
 	}
 

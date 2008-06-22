@@ -415,8 +415,8 @@ gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 	{
 	buf[rd] = '\0'; //TODO remove all this debug stuff
 	gunichar uc = g_utf8_get_char(buf);
-	log->Write(Log::Type_cim, Log::Level_debug, "input: %s (%02x %02x %02x) %d utf8? %d uc: %d %s", buf, buf[0], buf[1], buf[2],
-		rd, g_utf8_validate(buf, rd, NULL), uc, key_left); //TODO remove
+	log->Write(Log::Type_cim, Log::Level_debug, "input: %s (%02x %02x %02x) %d utf8? %d uc: %d %s (%02x %02x %02x)", buf, buf[0], buf[1], buf[2],
+		rd, g_utf8_validate(buf, rd, NULL), uc, key_up, key_up[0], key_up[1], key_up[2]); //TODO remove
 	}
 
 	input.append(buf, rd);

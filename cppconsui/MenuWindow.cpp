@@ -38,18 +38,18 @@ MenuWindow::MenuWindow(int x, int y, int w, int h, LineStyle *linestyle)
 	Window::AddWidget(listbox);
 	SetInputChild(listbox);
 
-	ClearBindables();
+	//ClearBindables();
 
-	DeclareBindable(context, "focus-previous", sigc::mem_fun(listbox, &Container::FocusCyclePrevious),
-		_("Focusses the previous menu item"), InputProcessor::Bindable_Normal);
-	DeclareBindable(context, "focus-next", sigc::mem_fun(listbox, &Container::FocusCycleNext),
-		_("Focusses the next menu item"), InputProcessor::Bindable_Normal);
+	//DeclareBindable(context, "focus-previous", sigc::mem_fun(listbox, &Container::FocusCyclePrevious),
+	//	_("Focusses the previous menu item"), InputProcessor::Bindable_Normal);
+	//DeclareBindable(context, "focus-next", sigc::mem_fun(listbox, &Container::FocusCycleNext),
+	//	_("Focusses the next menu item"), InputProcessor::Bindable_Normal);
 	DeclareBindable(context, "close-window", sigc::mem_fun(this, &Window::Close),
 		_("Close the window"), InputProcessor::Bindable_Normal);
 
 	//TODO get real binding from config
-	BindAction(context, "focus-previous", Keys::Instance()->Key_up(), false);
-	BindAction(context, "focus-next", Keys::Instance()->Key_down(), false);
+	//BindAction(context, "focus-previous", Keys::Instance()->Key_up(), false);
+	//BindAction(context, "focus-next", Keys::Instance()->Key_down(), false);
 	BindAction(context, "close-window", Keys::Instance()->Key_esc(), false);
 }
 

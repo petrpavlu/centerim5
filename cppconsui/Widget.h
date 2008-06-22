@@ -64,6 +64,7 @@ class Widget
 		void RestoreFocus(void);
 		Widget* GetFocusWidget(void);
 		virtual bool GrabFocus(void);
+		void UngrabFocus(void);
 
 		bool CanFocus(void) { return can_focus; }
 		void SetCanFocus(bool val) { can_focus = val; }

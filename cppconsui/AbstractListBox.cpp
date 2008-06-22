@@ -30,6 +30,26 @@ AbstractListBox::AbstractListBox(Widget& parent, int x, int y, int w, int h)
 , maxheight(0)
 , maxwidth(0)
 {
+	const gchar *context = "abstractlistbox";
+
+	DeclareBindable(context, "focus-left",
+		sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusLeft),
+		_("Focus the next widget to the left."), InputProcessor::Bindable_Normal);
+	DeclareBindable(context, "focus-right",
+		sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusRight),
+		_("Focus the next widget to the right."), InputProcessor::Bindable_Normal);
+	DeclareBindable(context, "focus-up",
+		sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusUp),
+		_("Focus the next widget above."), InputProcessor::Bindable_Normal);
+	DeclareBindable(context, "focus-down",
+		sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusDown),
+		_("Focus the next widget below."), InputProcessor::Bindable_Normal);
+
+	BindAction(context, "focus-left", Keys::Instance()->Key_left(), false);
+	BindAction(context, "focus-right", Keys::Instance()->Key_right(), false);
+	BindAction(context, "focus-up", Keys::Instance()->Key_up(), false);
+	BindAction(context, "focus-down", Keys::Instance()->Key_down(), false);
+
 }
 
 AbstractListBox::~AbstractListBox()

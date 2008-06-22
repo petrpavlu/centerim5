@@ -47,9 +47,6 @@ class AccountWindow
 		void Change(void);
 		void Delete(void);
 
-		void FocusCyclePrevious(void);
-		void FocusCycleNext(void);
-
 		Log *log;
 		Conf *conf;
 

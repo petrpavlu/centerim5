@@ -206,6 +206,11 @@ bool Widget::GrabFocus(void)
 	return false;
 }
 
+void Widget::UngrabFocus(void)
+{
+	has_focus = false;
+}
+
 void Widget::GetSubPad(curses_imp_t& a, const int x, const int y, const int w, const int h)
 {
 	a.w = subpad(area->w, h, w, y, x);

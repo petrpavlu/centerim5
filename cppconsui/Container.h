@@ -52,9 +52,6 @@ class Container
 		void AddWidget(Widget *widget);
 		void RemoveWidget(Widget *widget);
 
-		virtual void FocusCyclePrevious(void);
-		virtual void FocusCycleNext(void);
-
 		virtual void Clear(void);
 
 		virtual void GetFocusChain(FocusChain& focus_chain, FocusChain::iterator parent);

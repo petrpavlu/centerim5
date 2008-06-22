@@ -30,6 +30,8 @@ InputDialog::InputDialog(const gchar* text, const gchar* defaultvalue)
 , entry(NULL)
 , seperator(NULL)
 {
+	//TODO add a way such that each dialog uses the same strings
+	//for default buttons
 	AddButton(_("Ok"), sigc::mem_fun(this, &Window::Close));
 
 	label = new Label(*this, 1, 1, text);
