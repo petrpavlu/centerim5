@@ -214,6 +214,15 @@ void Widget::UngrabFocus(void)
 	has_focus = false;
 }
 
+void Widget::MoveFocus(FocusDirection direction)
+{
+	/* Make sure we always start at the root
+	 * of the widget tree. */
+	if (parent) {
+		parent->MoveFocus(direction);
+	}
+}
+
 void Widget::GetSubPad(curses_imp_t& a, const int x, const int y, const int w, const int h)
 {
 	a.w = subpad(area->w, h, w, y, x);

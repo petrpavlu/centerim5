@@ -36,7 +36,7 @@
 
 Container::Container(Widget& parent, const int x, const int y, const int w, const int h)
 : Widget(parent, x, y, w, h)
-, focus_cycle_scope(FocusCycleNone)
+, focus_cycle_scope(FocusCycleGlobal)
 {
 	const gchar *context = "container";
 

@@ -32,14 +32,6 @@ class Container
 	public:
 		typedef tree<Widget*> FocusChain;
 		typedef enum {
-			FocusNext,
-			FocusPrevious,
-			FocusDown,
-			FocusUp,
-			FocusRight,
-			FocusLeft
-		} FocusDirection;
-		typedef enum {
 			FocusCycleNone,
 			FocusCycleLocal,
 			FocusCycleGlobal

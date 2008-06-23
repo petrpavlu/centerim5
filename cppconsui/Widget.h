@@ -35,6 +35,15 @@ class Widget
 , public InputProcessor
 {
 	public:
+		typedef enum {
+			FocusNext,
+			FocusPrevious,
+			FocusDown,
+			FocusUp,
+			FocusRight,
+			FocusLeft
+		} FocusDirection;
+
 		Widget(Widget& parent, const int x, const int y, const int w, const int h);
 		virtual ~Widget();
 
@@ -65,6 +74,7 @@ class Widget
 		Widget* GetFocusWidget(void);
 		virtual bool GrabFocus(void);
 		void UngrabFocus(void);
+		virtual void MoveFocus(FocusDirection direction);
 
 		bool CanFocus(void) const { return can_focus; }
 		void CanFocus(bool val) { can_focus = val; }
