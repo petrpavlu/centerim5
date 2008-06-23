@@ -61,7 +61,7 @@ void Container::UpdateAreas(void)
 	Children::iterator i;
 
 	for (i = children.begin(); i != children.end(); i++)
-		((*i).first)->UpdateArea();
+		((*i).widget)->UpdateArea();
 }
 
 void Container::Move(const int newx, const int newy)
@@ -87,7 +87,7 @@ void Container::Draw(void)
 	Children::iterator i;
 
 	for (i = children.begin(); i != children.end(); i++)
-		((*i).first)->Draw();
+		((*i).widget)->Draw();
 }
 
 void Container::AddWidget(Widget *widget)
@@ -99,8 +99,8 @@ void Container::AddWidget(Widget *widget)
 	widget->UpdateArea();
 	//TODO also other widget signals. maybe a descendant class would like
 	//to do somethings. Eg a ListBox wants to undo move events.
-	child.second = widget->signal_redraw.connect(sigc::mem_fun(this, &Container::OnChildRedraw));
-	child.first = widget;
+	child.sig_redraw = widget->signal_redraw.connect(sigc::mem_fun(this, &Container::OnChildRedraw));
+	child.widget = widget;
 	children.push_back(child);
 
 	if (!focus_child) {
@@ -117,7 +117,7 @@ void Container::RemoveWidget(Widget *widget)
 
 	for (i = children.begin(); i != children.end(); i++) {
 		child = &(*i);
-		if (child->first == widget)
+		if (child->widget == widget)
 			break;
 	}
 
@@ -125,7 +125,7 @@ void Container::RemoveWidget(Widget *widget)
 
 	MoveFocus(FocusNext);
 
-	child->second.disconnect();
+	child->sig_redraw.disconnect();
 	children.erase(i);
 }
 
@@ -140,7 +140,7 @@ void Container::Clear(void)
 	Widget *widget;
 
 	while((i = children.begin()) != children.end()) {
-		widget = (*i).first;
+		widget = (*i).widget;
 		//TODO should we do this???? (line below)
 		delete widget;
 		children.erase(i);
@@ -155,7 +155,7 @@ void Container::GetFocusChain(FocusChain& focus_chain, FocusChain::iterator pare
 	FocusChain::pre_order_iterator iter;
 
 	for (i = children.begin(); i != children.end(); i++) {
-		widget = (*i).first;
+		widget = (*i).widget;
 		container = dynamic_cast<Container*>(widget);
 
 		//TODO implement widget visibility.
@@ -279,5 +279,14 @@ void Container::MoveFocus(FocusDirection direction)
 	/* Make sure the widget is valid and the let it grab focus. */
 	if ((*iter) != NULL) {
 		(*iter)->GrabFocus();
+	}
+}
+
+void Container::SetActive(const unsigned int i)
+{
+	Children::iterator j;
+
+	if (i < children.size()) {
+		children[i].widget->GrabFocus();
 	}
 }

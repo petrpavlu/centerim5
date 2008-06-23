@@ -57,8 +57,17 @@ class Container
 		virtual void GetFocusChain(FocusChain& focus_chain, FocusChain::iterator parent);
 		virtual void MoveFocus(FocusDirection direction);
 
+		void SetActive(const unsigned int i);
+
 	protected:
-		typedef std::pair<Widget*, sigc::connection> Child;
+		typedef struct {
+			Widget *widget;
+
+			/* signal connection to the widget */
+			sigc::connection sig_redraw;
+			//sigc::connection sig_resize;
+			//sigc::connection sig_focus;
+		} Child;
 		typedef std::vector<Child> Children;
 
 		bool focus_cycle;
