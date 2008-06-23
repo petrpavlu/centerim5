@@ -73,12 +73,13 @@ class TreeView
 
 		virtual void Draw(void);
 
+		virtual bool SetFocusChild(Widget* child);
+		virtual bool StealFocus(void);
+
 		/* Actions for keybindings */
 		void ActionCollapse(void);
 		void ActionToggleCollapsed(void);
 		void ActionExpand(void);
-		void ActionToggleExpanded(void)
-			{ ActionToggleCollapsed(); }
 
 		const NodeReference Root(void)
 			{ return thetree.begin(); }
@@ -104,7 +105,7 @@ class TreeView
 		bool GetFocusCycle(void) { return focus_cycle; }
 
 		TheTree thetree;
-		NodeReference focusnode;
+		NodeReference focus_node;
 
 		LineStyle *linestyle;
 		int itemswidth, itemsheight;

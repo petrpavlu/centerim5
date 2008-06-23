@@ -68,7 +68,7 @@ TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linest
 	root.collapsable = false;
 	root.open = true;
 	thetree.set_head(root);
-	focusnode = thetree.begin();
+	focus_node = thetree.begin();
 
 	//TODO remove the next line
 	//we should change the scroll size to the maximum possible
@@ -147,26 +147,57 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 	return height;
 }
 
+bool TreeView::SetFocusChild(Widget* child)
+{
+	TheTree::pre_order_iterator i;
+
+	g_assert(child != NULL);
+
+	if (ScrollPane::SetFocusChild(child)) {
+		//TODO do we want to use widget.data for this? or is
+		//this better?
+		for (i = thetree.begin(); i != thetree.end(); i++) {
+			if ((*i).widget == child) {
+				focus_node = i;
+				break;
+			}
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+bool TreeView::StealFocus(void)
+{
+	if (ScrollPane::StealFocus()) {
+		focus_node = thetree.begin();
+		return true;
+	}
+
+	return false;
+}
 void TreeView::ActionCollapse(void)
 {
-	if ((*focusnode).open && (*focusnode).collapsable) {
-		(*focusnode).open = false;
+	if (focus_node->open && focus_node->collapsable) {
+		focus_node->open = false;
 		Redraw();
 	}
 }
 
 void TreeView::ActionToggleCollapsed(void)
 {
-	if ((*focusnode).collapsable) {
-		(*focusnode).open = !(*focusnode).open;
+	if ((*focus_node).collapsable) {
+		(*focus_node).open = !(*focus_node).open;
 		Redraw();
 	}
 }
 
 void TreeView::ActionExpand(void)
 {
-	if (!(*focusnode).open && (*focusnode).collapsable) {
-		(*focusnode).open = true;
+	if (!(*focus_node).open && (*focus_node).collapsable) {
+		(*focus_node).open = true;
 		Redraw();
 	}
 }
@@ -190,8 +221,8 @@ const TreeView::NodeReference TreeView::AddNode(const NodeReference &parent, Wid
 	iter = thetree.append_child(parent, node);
 	(*parent).widgetheight += node.widget->Height();
 
-	if ((*focusnode).widget == NULL) {
-		focusnode = iter;
+	if ((*focus_node).widget == NULL) {
+		focus_node = iter;
 		widget->GrabFocus();
 	}
 
@@ -230,12 +261,12 @@ void TreeView::DeleteNode(const NodeReference &node, bool keepchildren)
 {
 	TheTree::sibling_iterator iter;
 
-	if (focusnode == node) {
+	if (focus_node == node) {
 		/* by folding this node and then moving focus forward 
 		 * we are sure that no child node of the node to be
 		 * removed will get the focus.
 		 * */
-		(*focusnode).open = false;
+		(*focus_node).open = false;
 		MoveFocus(Container::FocusNext);
 	}
 
@@ -249,7 +280,7 @@ void TreeView::DeleteNode(const NodeReference &node, bool keepchildren)
 
 const TreeView::NodeReference& TreeView::GetSelected(void)
 {
-	return focusnode;
+	return focus_node;
 }
 
 int TreeView::GetDepth(const NodeReference &node)
@@ -307,25 +338,30 @@ void TreeView::GetFocusChain(FocusChain& focus_chain, FocusChain::iterator paren
 	Container *container;
 	FocusChain::pre_order_iterator iter;
 	TheTree::pre_order_iterator i;
+	TreeNode *node;
 
 	/* The preorder iterator starts with the root so we must skip it. */
 	for (i = ++thetree.begin(); i != thetree.end(); i++) {
-		widget = (*i).widget;
+		node = &(*i); 
+		widget = node->widget;
+		container = dynamic_cast<Container*>(widget);
 
 		//TODO implement widget visibility.
-		//if (!widget->Visible())
-		//	/* invisible widgets dont need focus */
-		//	continue;
+		//TODO dont filter out widgets in this function (or overriding
+		//functions in other classes. filter out somewhere else.
+		//eg when sorting before use.
+		if (widget->CanFocus() /*&& widget->Visible() */) {
+			iter = focus_chain.append_child(parent, widget);
+		} else if (container != NULL) {
+			iter = focus_chain.append_child(parent, NULL);
+		}
 
-		if (!widget->CanFocus())
-			/* widgets that dont want focus wont get it */
-			continue;
+		if (!node->open)
+			i.skip_children();
 
-		iter = focus_chain.append_child(parent, widget);
-
-		if ((container = dynamic_cast<Container*>(widget))) {
+		if (container) {
 			/* the widget is a container so add its widgets
-			 * as well
+			 * as well.
 			 * */
 			container->GetFocusChain(focus_chain, iter);
 		}

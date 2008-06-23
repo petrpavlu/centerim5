@@ -156,23 +156,21 @@ void Container::GetFocusChain(FocusChain& focus_chain, FocusChain::iterator pare
 
 	for (i = children.begin(); i != children.end(); i++) {
 		widget = (*i).first;
+		container = dynamic_cast<Container*>(widget);
 
 		//TODO implement widget visibility.
-		//if (!widget->Visible())
-		//	/* invisible widgets dont need focus */
-		//	continue;
-
 		//TODO dont filter out widgets in this function (or overriding
 		//functions in other classes. filter out somewhere else.
-		if (!widget->CanFocus())
-			/* widgets that dont want focus wont get it */
-			continue;
+		//eg when sorting before use.
+		if (widget->CanFocus() /*&& widget->Visible() */) {
+			iter = focus_chain.append_child(parent, widget);
+		} else if (container != NULL) {
+			iter = focus_chain.append_child(parent, NULL);
+		}
 
-		iter = focus_chain.append_child(parent, widget);
-
-		if ((container = dynamic_cast<Container*>(widget))) {
+		if (container) {
 			/* the widget is a container so add its widgets
-			 * as well
+			 * as well.
 			 * */
 			container->GetFocusChain(focus_chain, iter);
 		}
@@ -181,12 +179,28 @@ void Container::GetFocusChain(FocusChain& focus_chain, FocusChain::iterator pare
 
 void Container::MoveFocus(FocusDirection direction)
 {
+	/* Make sure we always start at the root
+	 * of the widget tree. */
+	if (parent != this) {
+		Container *container;
+
+		if ((container = dynamic_cast<Container*>(parent))) {
+			container->MoveFocus(direction);
+			return;
+		} else {
+			//TODO warning about custom container class??
+			//what to do now? perhaps move this function
+			//to the widget class?
+		}
+	}
+
 	FocusChain focus_chain;
-	FocusChain search_chain;
 	FocusChain::pre_order_iterator iter;
 	FocusChain::pre_order_iterator focus_root = focus_chain.begin();
 	//bool (*cmp)(Widget*, Widget*) = NULL;
 	Widget *focus_widget;
+
+	focus_chain.set_head(NULL);
 
 	GetFocusChain(focus_chain, focus_chain.begin());
 
@@ -228,9 +242,7 @@ void Container::MoveFocus(FocusDirection direction)
 		}
 	}
 
-	search_chain.set_head(focus_widget);
-	iter = std::search(focus_root.begin(), focus_root.end(),
-		search_chain.begin(), search_chain.end());
+	iter = std::find(focus_chain.begin(), focus_chain.end(), focus_widget);
 
 	if (iter == focus_chain.end()) {
 		/* We have a focussed widget but we couldn't find it. */
@@ -242,21 +254,25 @@ void Container::MoveFocus(FocusDirection direction)
 		case FocusPrevious:
 		case FocusUp:
 		case FocusLeft:
-			if (iter == focus_root.begin()) {
-				iter = focus_root.back();
-			} else {
-				iter--;
-			}
+			do {
+				if (iter == focus_chain.begin()) {
+					iter = focus_chain.back();
+				} else {
+					iter--;
+				}
+			} while ((*iter) == NULL);
 			break;
 		case FocusNext:
 		case FocusDown:
 		case FocusRight:
 		default:
-			if (iter == focus_root.back()) {
-				iter = (focus_root.begin());
-			} else {
-				iter++;
-			}
+			do {
+				if (iter == focus_chain.back()) {
+					iter = focus_chain.begin();
+				} else {
+					iter++;
+				}
+			} while ((*iter) == NULL);
 			break;
 	}
 

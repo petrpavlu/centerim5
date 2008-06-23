@@ -59,8 +59,8 @@ class Widget
 		virtual void Draw(void);
 		void Redraw(void);
 
-		bool SetFocusChild(Widget* child);
-		bool StealFocus(void);
+		virtual bool SetFocusChild(Widget* child);
+		virtual bool StealFocus(void);
 		void RestoreFocus(void);
 		Widget* GetFocusWidget(void);
 		virtual bool GrabFocus(void);
