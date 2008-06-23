@@ -40,6 +40,9 @@ class Button
 		//TODO rename to setcallback?
 		void SetFunction(sigc::slot<void> callback);
 
+		//TODO keep signal or the callback?
+		sigc::signal<void, Button*> signal_activate;
+
 	protected:
 
 	private:
