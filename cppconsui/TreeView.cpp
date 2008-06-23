@@ -41,20 +41,12 @@ TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linest
 , focus_cycle(false)
 {
 	const gchar *context = "treeview";
-	DeclareBindable(context, "focus-up",
-		sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusUp),
-		_("Focus the next widget above."), InputProcessor::Bindable_Normal);
-	DeclareBindable(context, "focus-down",
-		sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusDown),
-		_("Focus the next widget below."), InputProcessor::Bindable_Normal);
 	DeclareBindable(context, "fold-subtree", sigc::mem_fun(this, &TreeView::ActionCollapse),
 		_("Collapse the selected subtree"), InputProcessor::Bindable_Normal);
 	DeclareBindable(context, "unfold-subtree", sigc::mem_fun(this, &TreeView::ActionExpand),
 		_("Expand the selected subtree"), InputProcessor::Bindable_Normal);
 
 	//TODO get real binding from config
-	BindAction(context, "focus-up", Keys::Instance()->Key_up(), false);
-	BindAction(context, "focus-down", Keys::Instance()->Key_down(), false);
 	BindAction(context, "fold-subtree", "-", false);
 	BindAction(context, "unfold-subtree", "+", false);
 
@@ -366,4 +358,28 @@ void TreeView::GetFocusChain(FocusChain& focus_chain, FocusChain::iterator paren
 			container->GetFocusChain(focus_chain, iter);
 		}
 	}
+}
+void TreeView::SetActive(int i)
+{
+	TheTree::pre_order_iterator j;
+
+	if (i < thetree.size()) {
+		for (j = thetree.begin(); i > 0 &&j != thetree.end(); j++, i--);
+		if (j != thetree.end() && (*j).widget)
+			(*j).widget->GrabFocus();
+	}
+}
+
+int TreeView::GetActive(void)
+{
+	TheTree::pre_order_iterator j;
+	int i;
+
+	for (j = thetree.begin(), i = 0; j != thetree.end(); j++, i++) {
+		if ((*j).widget  && (*j).widget->HasFocus()) {
+			return i;
+		}
+	}
+
+	return 0;
 }

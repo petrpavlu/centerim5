@@ -57,7 +57,11 @@ class Container
 		virtual void GetFocusChain(FocusChain& focus_chain, FocusChain::iterator parent);
 		virtual void MoveFocus(FocusDirection direction);
 
-		void SetActive(const unsigned int i);
+		virtual void SetActive(int i);
+		virtual int GetActive(void); //TODO better name?
+
+		void FocusCycle(bool cycle) { focus_cycle = cycle; }
+		bool FocusCycle(void) const { return focus_cycle; }
 
 	protected:
 		typedef struct {
@@ -71,9 +75,6 @@ class Container
 		typedef std::vector<Child> Children;
 
 		bool focus_cycle;
-
-		void SetFocusCycle(bool cycle) { focus_cycle = cycle; }
-		bool GetFocusCycle(void) { return focus_cycle; }
 
 		Children::iterator ChildrenBegin(void)
 			{ return children.begin(); }

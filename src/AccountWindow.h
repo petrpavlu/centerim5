@@ -47,6 +47,10 @@ class AccountWindow
 		void Change(void);
 		void Delete(void);
 
+		//void FocusCycleLeftRight(Container::FocusDirection direction);
+		//void FocusCycleUpDown(Container::FocusDirection direction);
+		void MoveFocus(FocusDirection direction);
+
 		Log *log;
 		Conf *conf;
 
@@ -54,6 +58,9 @@ class AccountWindow
 		HorizontalListBox *menu;
 		HorizontalLine *line;
 		Panel *border;
+
+		unsigned int menu_index;
+		unsigned int accounts_index;
 };
 
 #endif /* __ACCOUNTSWINDOW_H__ */

@@ -35,11 +35,11 @@ AccountStatusMenu::AccountStatusMenu(int x, int y, int w, int h, LineStyle *line
 	gchar *text;
 
 	label = new Label(*listbox, 0, 0, _(" All protocols"));
-	label->SetCanFocus(true);
+	label->CanFocus(true);
 	AddWidget(label);
 
 	label = new Label(*listbox, 0, 0, _(" Already logged in only"));
-	label->SetCanFocus(true);
+	label->CanFocus(true);
 	AddWidget(label);
 
 	line = new HorizontalLine(*listbox, 0, 0, listbox->Width());
@@ -54,7 +54,7 @@ AccountStatusMenu::AccountStatusMenu(int x, int y, int w, int h, LineStyle *line
 			purple_account_get_username(account));
 
 		label = new Label(*listbox, 0, 0, text);
-		label->SetCanFocus(true);
+		label->CanFocus(true);
 
 		g_free(text);
 

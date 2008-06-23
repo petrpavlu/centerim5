@@ -66,8 +66,10 @@ class Widget
 		virtual bool GrabFocus(void);
 		void UngrabFocus(void);
 
-		bool CanFocus(void) { return can_focus; }
-		void SetCanFocus(bool val) { can_focus = val; }
+		bool CanFocus(void) const { return can_focus; }
+		void CanFocus(bool val) { can_focus = val; }
+		bool HasFocus(void) const { return has_focus; }
+		Widget* Parent(void) const { return parent; }
 
 		int Left() const { return x; }
 		int Top() const { return y; }
@@ -77,8 +79,6 @@ class Widget
 		int Height() { return h; }
 
 		void GetSubPad(curses_imp_t& a, const int x, const int y, const int w, const int h);
-
-
 
 		//TODO encapsulate with a function, make sure derived classed call Move()/Resize()/Redraw() to emit signal
 		//also check if this is possible at all

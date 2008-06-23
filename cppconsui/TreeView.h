@@ -96,13 +96,16 @@ class TreeView
 
 		virtual void GetFocusChain(FocusChain& focus_chain, FocusChain::iterator parent);
 
+		void SetFocusCycle(bool cycle) { focus_cycle = cycle; }
+		bool GetFocusCycle(void) { return focus_cycle; }
+
+		void SetActive(int i);
+		int GetActive(void); //TODO better name?
+
 	protected:
 		void DeleteNode(const NodeReference &node);
 		const NodeReference AddNode(const NodeReference &parent, TreeNode &node);
 		int DrawNode(TheTree::sibling_iterator node, int top);
-
-		void SetFocusCycle(bool cycle) { focus_cycle = cycle; }
-		bool GetFocusCycle(void) { return focus_cycle; }
 
 		TheTree thetree;
 		NodeReference focus_node;

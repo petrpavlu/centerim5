@@ -30,6 +30,8 @@
 
 AccountWindow::AccountWindow()
 : Window(0, 0, 80, 24, NULL)
+, menu_index(3)
+, accounts_index(1)
 {
 	//const gchar *context = "accountwindow";
 	log = Log::Instance();
@@ -44,6 +46,10 @@ AccountWindow::AccountWindow()
 	accounts = new TreeView(*this, 1, 1, w-2, h-4, LineStyle::LineStyleDefault());
 	menu = new HorizontalListBox(*this, 1, h-2, w-2, 1);
 	line = new HorizontalLine(*this, 1, h-3, w-2);
+
+	accounts->FocusCycle(false);
+	menu->FocusCycle(false);
+
 	menu->AddItem(_("Add"), sigc::mem_fun(this, &AccountWindow::Add));
 	menu->AddItem(_("Delete"), sigc::mem_fun(this, &AccountWindow::Delete));
 	menu->AddItem(_("Change"), sigc::mem_fun(this, &AccountWindow::Change));
@@ -56,19 +62,6 @@ AccountWindow::AccountWindow()
 	Populate();
 
 	SetInputChild(accounts);
-
-	can_focus = true;
-
-	//DeclareBindable(context, "focus-previous-button", sigc::mem_fun(this, &AccountWindow::FocusCyclePrevious),
-	//	_("Focusses the previous button"), InputProcessor::Bindable_Override);
-	//DeclareBindable(context, "focus-next-button", sigc::mem_fun(this, &AccountWindow::FocusCycleNext),
-	//	_("Focusses the next button"), InputProcessor::Bindable_Override);
-
-	//BindAction(context, "focus-previous-button", "a", false);
-	//BindAction(context, "focus-next-button", "s", false);
-	//BindAction(context, "focus-previous-button", Keys::Instance()->Key_left(), false);
-	//BindAction(context, "focus-next-button", Keys::Instance()->Key_right(), false);
-
 }
 
 AccountWindow::~AccountWindow()
@@ -87,25 +80,34 @@ void AccountWindow::Delete(void)
 {
 }
 
-/* do this with movefocus
-void AccountWindow::FocusCyclePrevious(void)
+void AccountWindow::MoveFocus(FocusDirection direction)
 {
-	if (focus_child == accounts) {
-		Window::FocusCyclePrevious();
-	} else {
-		menu->FocusCyclePrevious();
-	}
-}
+	switch (direction) {
+		case FocusLeft:
+		case FocusRight:
+			if (focus_child != menu) {
+				accounts_index = accounts->GetActive();
+				menu->SetActive(menu_index);
+			}
 
-void AccountWindow::FocusCycleNext(void)
-{
-	if (focus_child == accounts) {
-		Window::FocusCycleNext();
-	} else {
-		menu->FocusCyclePrevious();
+			Window::MoveFocus(direction);
+
+			break;
+		case FocusUp:
+		case FocusDown:
+			if (focus_child != accounts) {
+				menu_index = menu->GetActive();
+				accounts->SetActive(accounts_index);
+			}
+
+			Window::MoveFocus(direction);
+
+			break;
+		default:
+			Window::MoveFocus(direction);
+			break;
 	}
 }
-*/
 
 void AccountWindow::Populate(void)
 {

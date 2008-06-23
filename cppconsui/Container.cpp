@@ -46,9 +46,25 @@ Container::Container(Widget& parent, const int x, const int y, const int w, cons
 	DeclareBindable(context, "focus-next",
 		sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusNext),
 		_("Focusses the next widget"), InputProcessor::Bindable_Normal);
+	DeclareBindable(context, "focus-left",
+		sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusLeft),
+		_("Focus the next widget to the left."), InputProcessor::Bindable_Normal);
+	DeclareBindable(context, "focus-right",
+		sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusRight),
+		_("Focus the next widget to the right."), InputProcessor::Bindable_Normal);
+	DeclareBindable(context, "focus-up",
+		sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusUp),
+		_("Focus the next widget above."), InputProcessor::Bindable_Normal);
+	DeclareBindable(context, "focus-down",
+		sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusDown),
+		_("Focus the next widget below."), InputProcessor::Bindable_Normal);
 
 	BindAction(context, "focus-previous", Keys::Instance()->Key_shift_tab(), false);
 	BindAction(context, "focus-next", Keys::Instance()->Key_tab(), false);
+	BindAction(context, "focus-left", Keys::Instance()->Key_left(), false);
+	BindAction(context, "focus-right", Keys::Instance()->Key_right(), false);
+	BindAction(context, "focus-up", Keys::Instance()->Key_up(), false);
+	BindAction(context, "focus-down", Keys::Instance()->Key_down(), false);
 }
 
 Container::~Container()
@@ -199,6 +215,7 @@ void Container::MoveFocus(FocusDirection direction)
 	FocusChain::pre_order_iterator focus_root = focus_chain.begin();
 	//bool (*cmp)(Widget*, Widget*) = NULL;
 	Widget *focus_widget;
+	const Container *container;
 
 	focus_chain.set_head(NULL);
 
@@ -249,7 +266,33 @@ void Container::MoveFocus(FocusDirection direction)
 		return;
 	}
 
-	/* This find the correct widget to focus */
+	/* If focus cycling is disabled and the widget with focus is
+	 * a last/first child, then stop here */
+	container = dynamic_cast<Container*>(focus_widget->Parent());
+	if (container && !(container->FocusCycle())) {
+		FocusChain::sibling_iterator parent, child;
+
+		child = iter;
+		parent = focus_chain.parent(child);
+
+		switch (direction) {
+			case FocusPrevious:
+			case FocusUp:
+			case FocusLeft:
+				if (child == parent.begin())
+					return;
+				break;
+			case FocusNext:
+			case FocusDown:
+			case FocusRight:
+			default:
+				if (child == parent.back())
+					return;
+				break;
+		}
+	}
+
+	/* Find the correct widget to focus. */
 	switch (direction) {
 		case FocusPrevious:
 		case FocusUp:
@@ -282,11 +325,24 @@ void Container::MoveFocus(FocusDirection direction)
 	}
 }
 
-void Container::SetActive(const unsigned int i)
+void Container::SetActive(int i)
 {
 	Children::iterator j;
 
-	if (i < children.size()) {
+	if (i < (int)children.size()) {
 		children[i].widget->GrabFocus();
 	}
+}
+
+int Container::GetActive(void)
+{
+	Children::iterator j;
+
+	for (unsigned int i = 0; i < children.size(); i++) {
+		if (children[i].widget->HasFocus()) {
+			return i;
+		}
+	}
+
+	return 0;
 }
