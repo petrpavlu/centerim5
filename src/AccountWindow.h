@@ -29,6 +29,10 @@
 #include <cppconsui/HorizontalListBox.h>
 #include <cppconsui/HorizontalLine.h>
 #include <cppconsui/Panel.h>
+#include <cppconsui/Button.h>
+
+#include <libpurple/account.h>
+#include <libpurple/accountopt.h>
 
 class AccountWindow
 : public Window
@@ -39,6 +43,33 @@ class AccountWindow
 	protected:
 
 	private:
+		class AccountOptionBool
+		: public Button
+		{
+			public:
+				AccountOptionBool(Widget& parent, int x, int y,
+					PurpleAccount *account, PurpleAccountOption *option);
+				~AccountOptionBool();
+
+			protected:
+
+			private:
+				AccountOptionBool(void);
+				AccountOptionBool(const AccountOptionBool&);
+
+				AccountOptionBool& operator=(const AccountOptionBool&);
+
+				void UpdateText(void);
+				void OnActivate(void);
+
+				PurpleAccount *account;
+				PurpleAccountOption *option;
+
+				const char *setting;
+				const char *text;
+				gboolean value;
+		};
+
 		~AccountWindow();
 
 		void Populate(void);

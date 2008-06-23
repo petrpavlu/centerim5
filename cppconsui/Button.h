@@ -37,6 +37,7 @@ class Button
 
 		virtual void Draw(void);
 
+		//TODO rename to setcallback?
 		void SetFunction(sigc::slot<void> callback);
 
 	protected:

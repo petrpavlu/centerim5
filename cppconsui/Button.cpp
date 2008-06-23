@@ -76,11 +76,11 @@ void Button::AddBindables(void)
 	const gchar *context = "button";
 
 	//DeclareBindable(context, "push", sigc::mem_fun(this, &Window::Close),
-	DeclareBindable(context, "push", sigc::mem_fun(this, &Button::OnActivate),
-		_("Push the button"), InputProcessor::Bindable_Normal);
+	DeclareBindable(context, "activate", sigc::mem_fun(this, &Button::OnActivate),
+		_("Activate the button"), InputProcessor::Bindable_Normal);
 
 	//TODO get real binding from config
-	BindAction(context, "push", Keys::Instance()->Key_enter(), false);
+	BindAction(context, "activate", Keys::Instance()->Key_enter(), false);
 }
 
 void Button::OnActivate(void)

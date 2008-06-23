@@ -179,7 +179,6 @@ void AccountWindow::Populate(void)
 			const char *text = purple_account_option_get_text(option);
 
 			char *value;
-			gboolean bvalue;
 
 			switch (type) {
 			case PURPLE_PREF_STRING:
@@ -195,13 +194,9 @@ void AccountWindow::Populate(void)
 				g_free(value);
 				break;
 			case PURPLE_PREF_BOOLEAN:
-				bvalue = purple_account_get_bool(account, setting, false);
-				value = g_strdup_printf("%s: %s", text,
-					bvalue ? _("yes") : _("no"));
 				accounts->AddNode(parent,
-					new Button(*accounts, 0, 0, value),
+					new AccountOptionBool(*accounts, 0, 0, account, option),
 					NULL);
-				g_free(value);
 				break;
 			case PURPLE_PREF_STRING_LIST:
 				//TODO implement, but for now, an error!
@@ -212,4 +207,44 @@ void AccountWindow::Populate(void)
 			}
 		}
 	}
+}
+
+AccountWindow::AccountOptionBool::AccountOptionBool(Widget& parent, int x, int y,
+	PurpleAccount *account, PurpleAccountOption *option)
+: Button(parent, x, y, "")
+, account(account)
+, option(option)
+{
+	g_assert(account != NULL && option != NULL);
+
+	setting = purple_account_option_get_setting(option);
+	text = purple_account_option_get_text(option);
+
+	UpdateText();
+	SetFunction(sigc::mem_fun(this, 
+		&AccountWindow::AccountOptionBool::OnActivate));
+}
+
+AccountWindow::AccountOptionBool::~AccountOptionBool()
+{
+
+}
+
+void AccountWindow::AccountOptionBool::UpdateText(void)
+{
+	gchar *str;
+	
+	value = purple_account_get_bool(account, setting, 
+			purple_account_option_get_default_bool(option));
+
+	//TODO create some DEFAULT_TEXT_YES etc, also for use in dialogs
+	str = g_strdup_printf("%s: %s", text, value ? _("yes") : _("no"));
+	SetText(str);
+	g_free(str);
+}
+
+void AccountWindow::AccountOptionBool::OnActivate(void)
+{
+	purple_account_set_bool(account, setting, !value);
+	UpdateText();
 }
