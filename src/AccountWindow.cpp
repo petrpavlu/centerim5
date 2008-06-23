@@ -174,28 +174,31 @@ void AccountWindow::Populate(void)
 			PurpleAccountOption *option = (PurpleAccountOption*)pref->data;
 			PurplePrefType type = purple_account_option_get_type(option);
 			const char *setting = purple_account_option_get_setting(option);
+			const char *text = purple_account_option_get_text(option);
 
 			char *value;
 			gboolean bvalue;
 
 			switch (type) {
 			case PURPLE_PREF_STRING:
-				value = g_strdup_printf("%s: %s", setting,
+				value = g_strdup_printf("%s: %s", text,
 						purple_account_get_string(account, setting, NULL));
 				accounts->AddNode(parent, new Button(*accounts, 0, 0, value), NULL);
 				g_free(value);
 				break;
 			case PURPLE_PREF_INT:
-				value = g_strdup_printf("%s: %d", setting,
+				value = g_strdup_printf("%s: %d", text,
 						purple_account_get_int(account, setting, 0));
 				accounts->AddNode(parent, new Button(*accounts, 0, 0, value), NULL);
 				g_free(value);
 				break;
 			case PURPLE_PREF_BOOLEAN:
 				bvalue = purple_account_get_bool(account, setting, false);
-				value = g_strdup_printf("%s: %s", setting,
+				value = g_strdup_printf("%s: %s", text,
 					bvalue ? _("yes") : _("no"));
-				accounts->AddNode(parent, new Button(*accounts, 0, 0, value), NULL);
+				accounts->AddNode(parent,
+					new Button(*accounts, 0, 0, value),
+					NULL);
 				g_free(value);
 				break;
 			case PURPLE_PREF_STRING_LIST:
