@@ -853,52 +853,52 @@ void TextEntry::DeclareBindables(void)
 	/* cursor movement */
 	DeclareBindable(context, "cursor-right",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_VISUAL_POSITIONS, 1, false),
-		_("Move the cursor to the right"), InputProcessor::Bindable_Override);
+		_("Move the cursor to the right."), InputProcessor::Bindable_Override);
 
 	DeclareBindable(context, "cursor-left",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_VISUAL_POSITIONS, -1, false),
-		_("Move the cursor to the left"), InputProcessor::Bindable_Override);
+		_("Move the cursor to the left."), InputProcessor::Bindable_Override);
 
 	DeclareBindable(context, "cursor-right-word",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_WORDS, 1, false),
-		_("Move the cursor to the right by one word"), InputProcessor::Bindable_Override);
+		_("Move the cursor to the right by one word."), InputProcessor::Bindable_Override);
 
 	DeclareBindable(context, "cursor-left-word",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_WORDS, -1, false),
-		_("Move the cursor to the left by one word"), InputProcessor::Bindable_Override);
+		_("Move the cursor to the left by one word."), InputProcessor::Bindable_Override);
 
 	DeclareBindable(context, "cursor-end-line",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_DISPLAY_LINE_ENDS, 1, false),
-		_("Move the cursor to the end of the line"), InputProcessor::Bindable_Override);
+		_("Move the cursor to the end of the line."), InputProcessor::Bindable_Override);
 
 	DeclareBindable(context, "cursor-begin-line",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_DISPLAY_LINE_ENDS, -1, false),
-		_("Move the cursor to the beginning of the line"), InputProcessor::Bindable_Override);
+		_("Move the cursor to the beginning of the line."), InputProcessor::Bindable_Override);
 
 	DeclareBindable(context, "cursor-end",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_BUFFER_ENDS, 1, false),
-		_("Move the cursor to the end of the text"), InputProcessor::Bindable_Override);
+		_("Move the cursor to the end of the text."), InputProcessor::Bindable_Override);
 
 	DeclareBindable(context, "cursor-begin",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_BUFFER_ENDS, -1, false),
-		_("Move the cursor to the beginning of the text"), InputProcessor::Bindable_Override);
+		_("Move the cursor to the beginning of the text."), InputProcessor::Bindable_Override);
 
 	/* selection extension variants */
 	DeclareBindable(context, "selection-right",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_VISUAL_POSITIONS, 1, true),
-		_("Extend the selection to the right"), InputProcessor::Bindable_Override);
+		_("Extend the selection to the right."), InputProcessor::Bindable_Override);
 
 	DeclareBindable(context, "selection-left",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_VISUAL_POSITIONS, -1, true),
-		_("Extend the selection to the left"), InputProcessor::Bindable_Override);
+		_("Extend the selection to the left."), InputProcessor::Bindable_Override);
 
 	DeclareBindable(context, "selection-right-word",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_WORDS, 1, true),
-		_("Extend the selection to the right by one word"), InputProcessor::Bindable_Override);
+		_("Extend the selection to the right by one word."), InputProcessor::Bindable_Override);
 
 	DeclareBindable(context, "selection-left-word",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_WORDS, -1, true),
-		_("Extend the selection to the left by one word"), InputProcessor::Bindable_Override);
+		_("Extend the selection to the left by one word."), InputProcessor::Bindable_Override);
 
 	DeclareBindable(context, "selection-end-line",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_DISPLAY_LINE_ENDS, 1, true),
@@ -906,47 +906,51 @@ void TextEntry::DeclareBindables(void)
 
 	DeclareBindable(context, "selection-begin-line",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_DISPLAY_LINE_ENDS, -1, true),
-		_("Extend the selection to the beginning of the line"), InputProcessor::Bindable_Override);
+		_("Extend the selection to the beginning of the line."), InputProcessor::Bindable_Override);
 
 	DeclareBindable(context, "selection-end",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_BUFFER_ENDS, 1, true),
-		_("Extend the selection to the end of the text"), InputProcessor::Bindable_Override);
+		_("Extend the selection to the end of the text."), InputProcessor::Bindable_Override);
 
 	DeclareBindable(context, "selection-begin",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_BUFFER_ENDS, -1, true),
-		_("Extend the selection to the beginning of the text"), InputProcessor::Bindable_Override);
+		_("Extend the selection to the beginning of the text."), InputProcessor::Bindable_Override);
 
 	/* select all */
 	DeclareBindable(context, "select-all",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionSelectAll), true),
-		_("Select all text"), InputProcessor::Bindable_Override);
+		_("Select all text."), InputProcessor::Bindable_Override);
 
 	/* unselect all */
 	DeclareBindable(context, "unselect-all",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionSelectAll), false),
-		_("Select all text"), InputProcessor::Bindable_Override);
+		_("Unselect all text."), InputProcessor::Bindable_Override);
 
 	/* deleting text */
 	DeclareBindable(context, "delete-char",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete), DELETE_CHARS, 1),
-		_("Delete character under cursor"), InputProcessor::Bindable_Override);
+		_("Delete character under cursor."), InputProcessor::Bindable_Override);
 
 	DeclareBindable(context, "backspace",
 		sigc::mem_fun(this, &TextEntry::ActionBackspace),
-		_("Delete character before cursor"), InputProcessor::Bindable_Override);
+		_("Delete character before cursor."), InputProcessor::Bindable_Override);
 
 	DeclareBindable(context, "delete-word-end",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete), DELETE_WORD_ENDS, 1),
-		_("Delete text until the end of the word at the cursor"), InputProcessor::Bindable_Override);
+		_("Delete text until the end of the word at the cursor."), InputProcessor::Bindable_Override);
 
 	DeclareBindable(context, "delete-word-begin",
 		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete), DELETE_WORD_ENDS, -1),
-		_("Delete text until the beginning of the word at the cursor"), InputProcessor::Bindable_Override);
+		_("Delete text until the beginning of the word at the cursor."), InputProcessor::Bindable_Override);
 
 	/* overwrite */
 	DeclareBindable(context, "toggle-overwrite",
 		sigc::mem_fun(this, &TextEntry::ActionToggleOverwrite),
-		_("Enable/Disable overwrite mode"), InputProcessor::Bindable_Override);
+		_("Enable/Disable overwrite mode."), InputProcessor::Bindable_Override);
+
+	/* non text editing bindables */
+	DeclareBindable(context, "activate", sigc::mem_fun(this, &TextEntry::OnActivate),
+		_("Accept input and move focus."), InputProcessor::Bindable_Override);
 }
 
 void TextEntry::BindActions(void)
@@ -976,4 +980,13 @@ void TextEntry::BindActions(void)
 	/*BindAction(context, "delete-word-end", KEYS->Key_(), false);
 	BindAction(context, "delete-word-begin", KEYS->Key_(), false);
 	BindAction(context, "toggle-overwrite", KEYS->Key_ins(), false);*/
+
+	BindAction(context, "activate", Keys::Instance()->Key_enter(), false);
+}
+
+void TextEntry::OnActivate(void)
+{
+	if (parent) {
+		parent->MoveFocus(FocusNext);
+	}
 }

@@ -108,6 +108,8 @@ class TextEntry
 
 		void DeclareBindables(void);
 		void BindActions(void);
+
+		void OnActivate(void);
 };
 
 #endif /* __TEXT_ENTRY_H__ */
