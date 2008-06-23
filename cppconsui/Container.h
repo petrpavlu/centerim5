@@ -39,6 +39,11 @@ class Container
 			FocusRight,
 			FocusLeft
 		} FocusDirection;
+		typedef enum {
+			FocusCycleNone,
+			FocusCycleLocal,
+			FocusCycleGlobal
+		} FocusCycleScope;
 
 		Container(Widget& parent, const int x, const int y, const int w, const int h);
 		virtual ~Container();
@@ -60,8 +65,8 @@ class Container
 		virtual void SetActive(int i);
 		virtual int GetActive(void); //TODO better name?
 
-		void FocusCycle(bool cycle) { focus_cycle = cycle; }
-		bool FocusCycle(void) const { return focus_cycle; }
+		void FocusCycle(FocusCycleScope scope) { focus_cycle_scope = scope; }
+		FocusCycleScope FocusCycle(void) const { return focus_cycle_scope; }
 
 	protected:
 		typedef struct {
@@ -74,7 +79,7 @@ class Container
 		} Child;
 		typedef std::vector<Child> Children;
 
-		bool focus_cycle;
+		FocusCycleScope focus_cycle_scope;
 
 		Children::iterator ChildrenBegin(void)
 			{ return children.begin(); }

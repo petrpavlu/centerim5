@@ -36,7 +36,7 @@
 
 Container::Container(Widget& parent, const int x, const int y, const int w, const int h)
 : Widget(parent, x, y, w, h)
-, focus_cycle(false)
+, focus_cycle_scope(FocusCycleNone)
 {
 	const gchar *context = "container";
 
@@ -266,62 +266,109 @@ void Container::MoveFocus(FocusDirection direction)
 		return;
 	}
 
-	/* If focus cycling is disabled and the widget with focus is
-	 * a last/first child, then stop here */
 	container = dynamic_cast<Container*>(focus_widget->Parent());
-	if (container && !(container->FocusCycle())) {
-		FocusChain::sibling_iterator parent, child;
 
-		child = iter;
-		parent = focus_chain.parent(child);
-
-		switch (direction) {
-			case FocusPrevious:
-			case FocusUp:
-			case FocusLeft:
-				if (child == parent.begin())
-					return;
-				break;
-			case FocusNext:
-			case FocusDown:
-			case FocusRight:
-			default:
-				if (child == parent.back())
-					return;
-				break;
-		}
-	}
+	FocusChain::iterator cycle_root, cycle_back, cycle_begin, cycle_iter;
 
 	/* Find the correct widget to focus. */
 	switch (direction) {
 		case FocusPrevious:
 		case FocusUp:
 		case FocusLeft:
-			do {
-				if (iter == focus_chain.begin()) {
-					iter = focus_chain.back();
-				} else {
-					iter--;
+			/* Setup variables for handling different scopes of
+			 * focus cycling.
+			 * */
+			cycle_begin = focus_chain.begin();
+			cycle_back = focus_chain.back();
+			cycle_iter = iter;
+
+			if (container) {
+				FocusChain::sibling_iterator parent_iter, child_iter;
+				child_iter = iter; /* Convert pre_order_iterator to sibling_iterator */
+				parent_iter = focus_chain.parent(child_iter);
+
+				switch (container->FocusCycle()) {
+					case FocusCycleLocal:
+						/* Local focus cycling is allowed (cycling
+						 * within focused widgets parent container).
+						 * */
+						cycle_begin = parent_iter.begin();
+						cycle_back = parent_iter.back();
+						cycle_iter = child_iter;
+
+						break;
+					case FocusCycleNone:
+						/* If no focus cycling is allowed, stop if the widget
+						 * with focus is a first/last child.
+						 * */
+						if (child_iter == parent_iter.begin())
+							return;
+
+						/* If not a first/last child, then handle as
+						 * the default case.
+						 * */
+					default:
+						/* Global focus cycling is allowed (cycling
+						 * amongst all widgets in a window).
+						 * */
+						break;
 				}
-			} while ((*iter) == NULL);
+			}
+
+			/* Finally, find the next widget which will get focus. */
+			do {
+				if (cycle_iter == cycle_begin) {
+					cycle_iter = cycle_back;
+				} else {
+					cycle_iter--;
+				}
+			} while ((*cycle_iter) == NULL);
+
 			break;
 		case FocusNext:
 		case FocusDown:
 		case FocusRight:
 		default:
-			do {
-				if (iter == focus_chain.back()) {
-					iter = focus_chain.begin();
-				} else {
-					iter++;
+			cycle_begin = focus_chain.begin();
+			cycle_back = focus_chain.back();
+			cycle_iter = iter;
+
+			if (container) {
+				FocusChain::sibling_iterator parent_iter, child_iter;
+				child_iter = iter;
+				parent_iter = focus_chain.parent(child_iter);
+
+				switch (container->FocusCycle()) {
+					case FocusCycleLocal:
+						cycle_begin = parent_iter.begin();
+						cycle_back = parent_iter.back();
+						cycle_iter = child_iter;
+
+						break;
+					case FocusCycleNone:
+						if (child_iter == parent_iter.back())
+							return;
+
+					default:
+						break;
 				}
-			} while ((*iter) == NULL);
+			}
+
+			/* Finally, find the next widget which will get focus. */
+			do {
+				if (cycle_iter == cycle_back) {
+					cycle_iter = cycle_begin;
+				} else {
+					cycle_iter++;
+				}
+			} while ((*cycle_iter) == NULL);
+
 			break;
 	}
 
 	/* Make sure the widget is valid and the let it grab focus. */
-	if ((*iter) != NULL) {
-		(*iter)->GrabFocus();
+	if ((*cycle_iter) != NULL) {
+		(*cycle_iter)->GrabFocus();
 	}
 }
 

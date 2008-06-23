@@ -47,8 +47,8 @@ AccountWindow::AccountWindow()
 	menu = new HorizontalListBox(*this, 1, h-2, w-2, 1);
 	line = new HorizontalLine(*this, 1, h-3, w-2);
 
-	accounts->FocusCycle(false);
-	menu->FocusCycle(false);
+	accounts->FocusCycle(Container::FocusCycleLocal);
+	menu->FocusCycle(Container::FocusCycleLocal);
 
 	menu->AddItem(_("Add"), sigc::mem_fun(this, &AccountWindow::Add));
 	menu->AddItem(_("Delete"), sigc::mem_fun(this, &AccountWindow::Delete));
