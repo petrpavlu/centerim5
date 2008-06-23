@@ -147,121 +147,6 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 	return height;
 }
 
-/*TODO remove/port
-void TreeView::GiveFocus(void)
-{
-	focus = true;
-	(*focusnode).widget->GiveFocus();
-	(*focusnode).widget->Redraw();
-}
-
-void TreeView::TakeFocus(void)
-{
-	focus = false;
-	(*focusnode).widget->TakeFocus();
-}
-*/
-
-void TreeView::FocusNext(void)
-{
-	/*
-	TheTree::pre_order_iterator oldfocus;
-
-	oldfocus = focusnode;
-
-	if (focusnode != thetree.back()) {
-		if (!(*focusnode).open)
-			focusnode.skip_children();
-
-		focusnode++;
-
-		if (focusnode == thetree.end()) {
-			if (focus_cycle) {
-				focusnode = thetree.begin();
-			} else {
-				focusnode = oldfocus;
-				return;
-			}
-		}
-	} else {
-		if (focus_cycle) {
-			focusnode = thetree.begin();
-		} else {
-			return;
-		}
-	}
-
-	if ((*focusnode).widget == NULL)
-		focusnode++;
-
-	if ((*oldfocus).widget != NULL) {
-		(*oldfocus).widget->TakeFocus();
-	}
-	(*focusnode).widget->GiveFocus();
-	SetInputChild((*focusnode).widget);
-	AdjustScroll((*focusnode).widget->Left(), (*focusnode).widget->Top());
-	Redraw();
-	*/
-}
-
-void TreeView::FocusPrevious(void)
-{
-	/*
-	TheTree::pre_order_iterator oldfocus;
-	TheTree::sibling_iterator previous;
-
-	oldfocus = focusnode;
-
-	if (focusnode != Root().begin()) {
-		if (focusnode == thetree.begin(thetree.parent(focusnode))) {
-			* if the node is a first child move the focus to the parent*
-			focusnode--;
-		} else {
-			* if the node is not a first child it has a previous sibling
-			 * in this case we need to move to the last open node in
-			 * the previous sibling.
-			 * *
-			previous = focusnode;
-			previous--;
-
-			while ((*previous).open && thetree.number_of_children(previous) > 0) {
-				previous = previous.back();
-			}
-
-			focusnode = previous;
-		}
-	} else {
-		if (focus_cycle) {
-			focusnode = thetree.back();
-		} else {
-			return;
-		}
-	}
-
-	if ((*focusnode).widget == NULL)
-		focusnode--;
-
-	if ((*oldfocus).widget != NULL) {
-		(*oldfocus).widget->TakeFocus();
-	}
-	(*focusnode).widget->GiveFocus();
-	SetInputChild((*focusnode).widget);
-	AdjustScroll((*focusnode).widget->Left(), (*focusnode).widget->Top());
-	Redraw();
-	*/
-
-}
-
-void TreeView::ActionFocusNext(void)
-{
-	FocusNext();
-}
-
-void TreeView::ActionFocusPrevious(void)
-{
-	FocusPrevious();
-}
-
 void TreeView::ActionCollapse(void)
 {
 	if ((*focusnode).open && (*focusnode).collapsable) {
@@ -351,7 +236,7 @@ void TreeView::DeleteNode(const NodeReference &node, bool keepchildren)
 		 * removed will get the focus.
 		 * */
 		(*focusnode).open = false;
-		FocusNext();
+		MoveFocus(Container::FocusNext);
 	}
 
 	/* If we want to keep child nodes we should flatten the tree */

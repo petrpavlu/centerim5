@@ -73,12 +73,7 @@ class TreeView
 
 		virtual void Draw(void);
 
-		void FocusNext(void);
-		void FocusPrevious(void);
-
 		/* Actions for keybindings */
-		void ActionFocusNext(void);
-		void ActionFocusPrevious(void);
 		void ActionCollapse(void);
 		void ActionToggleCollapsed(void);
 		void ActionExpand(void);
