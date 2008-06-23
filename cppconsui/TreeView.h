@@ -40,7 +40,7 @@ class TreeView
 : public ScrollPane
 {
 	public:
-		struct TreeNode {
+		typedef struct {
 			/* if a subtree can be collapsed by the *user* or not. defines
 			 * if it is possible to *change*. (if open can fold or if
 			 * closed can unfold)
@@ -64,7 +64,7 @@ class TreeView
 			sigc::connection sig_redraw;
 			sigc::connection sig_resize;
 			sigc::connection sig_focus;
-		};
+		} TreeNode;
 		typedef tree<TreeNode> TheTree;
 		typedef TheTree::pre_order_iterator NodeReference;
 
