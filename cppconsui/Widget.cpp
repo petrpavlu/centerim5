@@ -127,6 +127,7 @@ bool Widget::SetFocusChild(Widget* child)
 		/* Current widget is a window. */
 		//TODO window should try to become topmost.
 		focus_child = child;
+		SetInputChild(child);
 		return true;
 	}
 
@@ -135,6 +136,7 @@ bool Widget::SetFocusChild(Widget* child)
 		 * tree do we set the focus child.
 		 * */
 		focus_child = child;
+		SetInputChild(child);
 		return true;
 	}
 
@@ -160,6 +162,7 @@ bool Widget::StealFocus(void)
 	 * If theft is successful, then unset focus_child. */
 	if (focus_child->StealFocus()) {
 		focus_child = NULL;
+		SetInputChild(NULL);
 		return true;
 	}
 

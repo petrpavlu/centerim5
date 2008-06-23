@@ -104,8 +104,7 @@ void Container::AddWidget(Widget *widget)
 	children.push_back(child);
 
 	if (!focus_child) {
-		focus_child = widget;
-		SetInputChild(widget);
+		widget->GrabFocus();;
 	}
 }
 

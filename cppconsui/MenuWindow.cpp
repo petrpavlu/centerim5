@@ -36,7 +36,6 @@ MenuWindow::MenuWindow(int x, int y, int w, int h, LineStyle *linestyle)
 	SetFocusChild(listbox);
 	Window::AddWidget(border);
 	Window::AddWidget(listbox);
-	SetInputChild(listbox);
 
 	//ClearBindables();
 

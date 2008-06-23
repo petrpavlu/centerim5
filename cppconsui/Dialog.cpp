@@ -52,8 +52,6 @@ void Dialog::AddWidgets(void)
 	AddWidget(buttons);
 	AddWidget(seperator);
 	AddWidget(new Panel(*this, 0, 0, w, h, LineStyle::LineStyleDefault()));
-
-	SetInputChild(buttons);
 }
 
 void Dialog::Resize(int neww, int newh)

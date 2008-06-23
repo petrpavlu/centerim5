@@ -41,7 +41,6 @@ InputDialog::InputDialog(const gchar* text, const gchar* defaultvalue)
 	AddWidget(seperator);
 	AddWidget(entry);
 
-	SetInputChild(entry);
 	entry->GrabFocus();
 }
 
