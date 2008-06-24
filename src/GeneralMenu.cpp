@@ -55,7 +55,9 @@ GeneralMenu::~GeneralMenu()
 void GeneralMenu::OpenTestWindow(void)
 {
 	WindowManager *wm = WindowManager::Instance();
-	wm->Add(new InputDialog("Try typing something!", "Type in the area."));
+	InputDialog *dialog = new InputDialog("Try typing something!", "Type in the area.");
+	dialog->Flags(TextEntry::FlagNumeric);
+	wm->Add(dialog);
 	Close();
 }
 

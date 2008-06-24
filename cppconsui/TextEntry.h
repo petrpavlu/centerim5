@@ -30,6 +30,14 @@ class TextEntry
 : public Label
 {
 	public:
+		typedef enum {
+			FlagAlphabetic = 1<<0,
+			FlagNumeric = 1<<1,
+			FlagNoSpace = 1<<2,
+			FlagNoPunctuation = 1<<3,
+			FlagHidden = 1<<4
+		} Flag;
+
 		TextEntry(Widget& parent, int x, int y, int w, int h, const gchar *fmt, ...);
 		TextEntry(Widget& parent, int x, int y, const gchar *fmt, ...);
 
@@ -38,6 +46,12 @@ class TextEntry
 		virtual void Draw(void);
 
 		virtual int ProcessInputText(const char *input, const int bytes);
+
+		int Flags(void) { return flags; }
+		void Flags(int flags);
+
+		bool Obscured(void) { return obscured; }
+		void Obscured(bool obscure);
 
 		sigc::signal<void> signal_text_changed;
 
@@ -87,6 +101,9 @@ class TextEntry
 
 		bool editable;
 		bool overwrite_mode;
+		bool obscured;
+
+		int flags; /* Bitmask indicating which input we accept. */
 	private:
 		TextEntry();
 		TextEntry(const TextEntry&);

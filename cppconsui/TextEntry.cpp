@@ -28,10 +28,12 @@
 #include <string.h>
 
 TextEntry::TextEntry(Widget& parent, int x, int y, int w, int h, const gchar *fmt, ...)
-: Label(parent, x, y, w, h, "")
+: Label(parent, x, y, w, h, NULL)
 , current_pos(0)
 , selection_bound(0)
 , editable(true)
+, obscured(false)
+, flags(0)
 {
         va_list args;
 
@@ -51,10 +53,12 @@ TextEntry::TextEntry(Widget& parent, int x, int y, int w, int h, const gchar *fm
 }
 
 TextEntry::TextEntry(Widget& parent, int x, int y, const gchar *fmt, ...)
-: Label(parent, x, y, "")
+: Label(parent, x, y, NULL)
 , current_pos(0)
 , selection_bound(0)
 , editable(true)
+, obscured(false)
+, flags(0)
 {
         va_list args;
 
@@ -95,18 +99,83 @@ void TextEntry::Draw(void)
 int TextEntry::ProcessInputText(const char *input, const int bytes)
 {
 	gint pos = current_pos;
+	gunichar c;
+	char *new_input;
+	int new_bytes;
+	
+	/* We don't insert control characters in the text, we just skip
+	 * the input in this case. Note that this does not handle
+	 * control characters occurring anywhere else than in the first
+	 * byte. This means that pasting text with embedded control
+	 * characters will not work. */
+	//TODO also skip function keys
+	c = g_utf8_get_char_validated(input, bytes);
+	if (g_unichar_iscntrl(c))
+		return 0;
 
 	//TODO filter out invalid chars
+	
+	/* Filter out unwanted input */
+	//TODO move to seperate function?
+	if (flags) {
+		new_input = g_new0(char, bytes);
+		char *next;
+		const char *str = input;
+		const char *end = str + bytes;
+		new_bytes = 0;
 
+		for (str = input; str < end; str = next) {
+			c = g_utf8_get_char_validated(str, end-str);
+			next = g_utf8_next_char(str);
+
+			if (!(flags & FlagAlphabetic) && g_unichar_isalpha(c)) {
+				/* We dont want this character in the string, so skip it. */
+			} else if (!(flags & FlagNumeric) && g_unichar_isdigit(c)) {
+				/* Don't want it. */
+			} else if (!(flags & FlagNoSpace) && g_unichar_isspace(c)) {
+				/* Don't want it. */
+			} else if (!(flags & FlagNoPunctuation) && g_unichar_ispunct(c)) {
+				/* Don't want it. */
+			} else {
+				/* We want this character, so copy it to the new input string */
+
+				/* Copy the single character. */
+				g_utf8_strncpy(new_input+new_bytes, str, 1);
+				/* Increase the number of bytes in the input*/
+				new_bytes += next-str;
+			}
+		}   
+	} else {
+		new_input = g_strndup(input, bytes);
+		new_bytes = bytes;
+	}
+		
 	if (editable) {
-		insert_text(input, bytes, &pos);
+		insert_text(new_input, new_bytes, &pos);
 		set_position(pos);
 	} else {
 	}
 
 	Redraw();
 
+	/* Don't forget to free the new input string. */
+	g_free(new_input);
+
 	return bytes;
+}
+
+void TextEntry::Flags(int _flags)
+{
+	flags = _flags;
+	//TODO validate text using new flags?
+}
+
+void TextEntry::Obscured(bool obscure)
+{
+	//TODO how to actually obscure the text if we use label::draw?
+	//copy label::draw implementation here?
+	obscured = obscure;
+	Redraw();
 }
 
 void TextEntry::backspace(void)
