@@ -42,7 +42,7 @@ class Label
 		virtual void Draw(void);
 
 		void SetText(const gchar *str);
-		Glib::ustring GetText(void);
+		const gchar* GetText(void);
 
 	protected:
 		gchar *text; 

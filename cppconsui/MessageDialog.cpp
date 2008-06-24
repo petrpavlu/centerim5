@@ -27,7 +27,7 @@
 MessageDialog::MessageDialog(const gchar* text)
 : Dialog()
 {
-	AddButton(_("Ok"), sigc::mem_fun(this, &Window::Close));
+	AddButton(_("Ok"), Dialog::ResponseOK);
 
 	label = new Label(*this, 1, 1, text);
 	AddWidget(label);

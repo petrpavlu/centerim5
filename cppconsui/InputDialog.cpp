@@ -32,7 +32,7 @@ InputDialog::InputDialog(const gchar* text, const gchar* defaultvalue)
 {
 	//TODO add a way such that each dialog uses the same strings
 	//for default buttons
-	AddButton(_("Ok"), sigc::mem_fun(this, &Window::Close));
+	AddButton(_("Ok"), InputDialog::ResponseOK);
 
 	label = new Label(*this, 1, 1, text);
 	seperator = new HorizontalLine(*this, 1, 2, w-2);
@@ -62,4 +62,9 @@ void InputDialog::Resize(int neww, int newh)
 	 * widget sizes based on window and/or container size.
 	 * */
 	//browser->Resize(w-4, h-2);
+}
+
+const char* InputDialog::GetText(void)
+{
+	return entry->GetText();
 }

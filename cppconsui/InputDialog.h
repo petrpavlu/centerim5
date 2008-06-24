@@ -37,6 +37,8 @@ class InputDialog
 
 		virtual void Resize(int neww, int newh);
 
+		const char* GetText(void);
+
 	protected:
 		Label *label;
 		TextEntry *entry;

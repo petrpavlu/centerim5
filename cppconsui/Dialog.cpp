@@ -68,7 +68,18 @@ void Dialog::Resize(int neww, int newh)
 	//browser->Resize(w-4, h-2);
 }
 
-void Dialog::AddButton(const gchar *text, sigc::slot<void> function)
+void Dialog::AddButton(const gchar *text, Dialog::ResponseType response)
 {
-	buttons->AddItem(text, function);
+	buttons->AddItem(text, sigc::bind(sigc::mem_fun(this, &Dialog::Response), response));
+}
+
+void Dialog::Close(void)
+{
+	Response(ResponseCancel);
+}
+
+void Dialog::Response(Dialog::ResponseType response)
+{
+	signal_response(response);
+	Window::Close();
 }

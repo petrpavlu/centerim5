@@ -88,7 +88,7 @@ void Label::SetText(const gchar *str)
 	signal_redraw(this);
 }
 
-Glib::ustring Label::GetText(void)
+const gchar* Label::GetText(void)
 {
 	return text;
 }

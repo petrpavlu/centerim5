@@ -30,6 +30,7 @@
 #include <cppconsui/HorizontalLine.h>
 #include <cppconsui/Panel.h>
 #include <cppconsui/Button.h>
+#include <cppconsui/InputDialog.h>
 
 #include <libpurple/account.h>
 #include <libpurple/accountopt.h>
@@ -43,8 +44,33 @@ class AccountWindow
 	protected:
 
 	private:
-		class AccountOptionBool
+		class AccountOption
 		: public Button
+		{
+			public:
+				AccountOption(Widget& parent, int x, int y,
+					PurpleAccount *account, PurpleAccountOption *option);
+				~AccountOption();
+
+			protected:
+				PurpleAccount *account;
+				PurpleAccountOption *option;
+
+				const char *setting;
+				const char *text;
+
+			private:
+				AccountOption(void);
+				AccountOption(const AccountOption&);
+
+				AccountOption& operator=(const AccountOption&);
+
+				virtual void UpdateText(void) = 0;
+				virtual void OnActivate(void) = 0;
+		};
+
+		class AccountOptionBool
+		: public AccountOption
 		{
 			public:
 				AccountOptionBool(Widget& parent, int x, int y,
@@ -59,15 +85,37 @@ class AccountWindow
 
 				AccountOptionBool& operator=(const AccountOptionBool&);
 
+				virtual void UpdateText(void);
+				virtual void OnActivate(void);
+
+				gboolean value;
+		};
+
+		class AccountOptionString
+		: public AccountOption
+		{
+			public:
+				AccountOptionString(Widget& parent, int x, int y,
+					PurpleAccount *account, PurpleAccountOption *option);
+				~AccountOptionString();
+
+			protected:
+
+			private:
+				AccountOptionString(void);
+				AccountOptionString(const AccountOptionString&);
+
+				AccountOptionString& operator=(const AccountOptionString&);
+
 				void UpdateText(void);
 				void OnActivate(void);
 
-				PurpleAccount *account;
-				PurpleAccountOption *option;
+				void ResponseHandler(Dialog::ResponseType response);
 
-				const char *setting;
-				const char *text;
-				gboolean value;
+				const char *value;
+				InputDialog *dialog;
+
+				sigc::connection sig_response;
 		};
 
 		~AccountWindow();

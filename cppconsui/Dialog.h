@@ -31,13 +31,27 @@ class Dialog
 : public Window
 {
 	public:
+		typedef enum {
+			ResponseOK,
+			ResponseCancel, /* Cancel button or close dialog. */
+			ResponseYes,
+			ResponseNo
+		} ResponseType;
+
 		Dialog(int x, int y, int w, int h, Border *border);
 		Dialog();
 		virtual ~Dialog();
 
+		void Close(void);
+
 		virtual void Resize(int neww, int newh);
 
-		void AddButton(const gchar *label, sigc::slot<void> function);
+		void AddButton(const gchar *label, ResponseType response);
+
+		void Response(ResponseType response);
+
+		/* Signal emitted when the user closes the dialog indicating. */
+		sigc::signal<void, ResponseType> signal_response;
 
 	protected:
 		HorizontalListBox *buttons;

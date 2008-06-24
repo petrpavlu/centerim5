@@ -22,6 +22,7 @@
 
 #include <cppconsui/Button.h>
 #include <cppconsui/Keys.h>
+#include <cppconsui/WindowManager.h>
 
 #include <cstring>
 
@@ -182,10 +183,9 @@ void AccountWindow::Populate(void)
 
 			switch (type) {
 			case PURPLE_PREF_STRING:
-				value = g_strdup_printf("%s: %s", text,
-						purple_account_get_string(account, setting, NULL));
-				accounts->AddNode(parent, new Button(*accounts, 0, 0, value), NULL);
-				g_free(value);
+				accounts->AddNode(parent,
+					new AccountOptionString(*accounts, 0, 0, account, option),
+					NULL);
 				break;
 			case PURPLE_PREF_INT:
 				value = g_strdup_printf("%s: %d", text,
@@ -209,7 +209,7 @@ void AccountWindow::Populate(void)
 	}
 }
 
-AccountWindow::AccountOptionBool::AccountOptionBool(Widget& parent, int x, int y,
+AccountWindow::AccountOption::AccountOption(Widget& parent, int x, int y,
 	PurpleAccount *account, PurpleAccountOption *option)
 : Button(parent, x, y, "")
 , account(account)
@@ -220,14 +220,23 @@ AccountWindow::AccountOptionBool::AccountOptionBool(Widget& parent, int x, int y
 	setting = purple_account_option_get_setting(option);
 	text = purple_account_option_get_text(option);
 
-	UpdateText();
 	SetFunction(sigc::mem_fun(this, 
-		&AccountWindow::AccountOptionBool::OnActivate));
+		&AccountWindow::AccountOption::OnActivate));
+}
+
+AccountWindow::AccountOption::~AccountOption()
+{
+}
+
+AccountWindow::AccountOptionBool::AccountOptionBool(Widget& parent, int x, int y,
+	PurpleAccount *account, PurpleAccountOption *option)
+: AccountWindow::AccountOption::AccountOption(parent, x, y, account, option)
+{
+	UpdateText();
 }
 
 AccountWindow::AccountOptionBool::~AccountOptionBool()
 {
-
 }
 
 void AccountWindow::AccountOptionBool::UpdateText(void)
@@ -243,8 +252,60 @@ void AccountWindow::AccountOptionBool::UpdateText(void)
 	g_free(str);
 }
 
+
 void AccountWindow::AccountOptionBool::OnActivate(void)
 {
 	purple_account_set_bool(account, setting, !value);
 	UpdateText();
+}
+
+AccountWindow::AccountOptionString::AccountOptionString(Widget& parent, int x, int y,
+	PurpleAccount *account, PurpleAccountOption *option)
+: AccountWindow::AccountOption::AccountOption(parent, x, y, account, option)
+, dialog(NULL)
+{
+	UpdateText();
+}
+
+AccountWindow::AccountOptionString::~AccountOptionString()
+{
+}
+
+void AccountWindow::AccountOptionString::UpdateText(void)
+{
+	gchar *str;
+	
+	value = purple_account_get_string(account, setting, 
+			purple_account_option_get_default_string(option));
+
+	str = g_strdup_printf("%s: %s", text, value);
+	SetText(str);
+	g_free(str);
+}
+
+void AccountWindow::AccountOptionString::OnActivate(void)
+{
+	WindowManager *wm = WindowManager::Instance();
+	dialog = new InputDialog(text, value);
+	sig_response = dialog->signal_response.connect(
+		sigc::mem_fun(this, &AccountWindow::AccountOptionString::ResponseHandler));
+	//TODO add something to dialog class to show it. this removes the need
+	//for including windowmanager.h, and is easier to use.
+	wm->Add(dialog);
+}
+
+void AccountWindow::AccountOptionString::ResponseHandler(Dialog::ResponseType response)
+{
+	switch (response) {
+		case Dialog::ResponseOK:
+			if (!dialog)
+				/*TODO something is very wrong here */;
+
+			purple_account_set_string(account, setting, dialog->GetText());
+			UpdateText();
+
+			break;
+		default:
+			break;
+	}
 }
