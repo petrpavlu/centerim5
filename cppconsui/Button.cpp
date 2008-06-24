@@ -85,6 +85,6 @@ void Button::AddBindables(void)
 
 void Button::OnActivate(void)
 {
-	signal_activate();
+	signal_activate(this);
 	callback();
 }
