@@ -39,7 +39,7 @@ Label::Label(Widget& parent, int x, int y, int w, int h, const char *fmt, ...)
 
 	n_bytes = text_size;
 	text_length = g_utf8_strlen(text, text_size);
-	//TODO  text may be no longer than text_max_length
+	//TODO text may be no longer than text_max_length
 }
 
 Label::Label(Widget& parent, int x, int y, const char *fmt, ...)
@@ -69,7 +69,9 @@ Label::~Label()
 void Label::Draw(void)
 {
 	//TODO unicode drawing
+	//or draw with current locale?
 	mvwaddstr(area->w, 0, 0, text);
+	wclrtoeol(area->w);
 
 	Widget::Draw();
 }
