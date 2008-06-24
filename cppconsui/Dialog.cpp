@@ -24,8 +24,6 @@
 
 #include "Panel.h"
 
-#include <glibmm/ustring.h>
-
 Dialog::Dialog(int x, int y, int w, int h, Border *border)
 : Window(x, y, w, h, border)
 {
