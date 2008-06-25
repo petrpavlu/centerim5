@@ -112,7 +112,34 @@ class AccountWindow
 
 				void ResponseHandler(Dialog::ResponseType response);
 
-				const char *value;
+				const gchar *value;
+				InputDialog *dialog;
+
+				sigc::connection sig_response;
+		};
+
+		class AccountOptionInt
+		: public AccountOption
+		{
+			public:
+				AccountOptionInt(Widget& parent, int x, int y,
+					PurpleAccount *account, PurpleAccountOption *option);
+				~AccountOptionInt();
+
+			protected:
+
+			private:
+				AccountOptionInt(void);
+				AccountOptionInt(const AccountOptionInt&);
+
+				AccountOptionInt& operator=(const AccountOptionInt&);
+
+				void UpdateText(void);
+				void OnActivate(void);
+
+				void ResponseHandler(Dialog::ResponseType response);
+
+				gchar *value;
 				InputDialog *dialog;
 
 				sigc::connection sig_response;
