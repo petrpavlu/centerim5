@@ -44,12 +44,16 @@ class AccountWindow
 	protected:
 
 	private:
+		class AccountOptionSplit;
+		typedef std::list<AccountOptionSplit*> SplitWidgets;
+		typedef std::map<PurpleAccount*, SplitWidgets> SplitAccounts;
+
 		class AccountOption
 		: public Button
 		{
 			public:
-				AccountOption(Widget& parent, int x, int y,
-					PurpleAccount *account, PurpleAccountOption *option);
+				AccountOption(Widget& parent, PurpleAccount *account,
+					PurpleAccountOption *option);
 				~AccountOption();
 
 			protected:
@@ -73,8 +77,8 @@ class AccountWindow
 		: public AccountOption
 		{
 			public:
-				AccountOptionBool(Widget& parent, int x, int y,
-					PurpleAccount *account, PurpleAccountOption *option);
+				AccountOptionBool(Widget& parent, PurpleAccount *account,
+					PurpleAccountOption *option);
 				~AccountOptionBool();
 
 			protected:
@@ -95,8 +99,8 @@ class AccountWindow
 		: public AccountOption
 		{
 			public:
-				AccountOptionString(Widget& parent, int x, int y,
-					PurpleAccount *account, PurpleAccountOption *option);
+				AccountOptionString(Widget& parent, PurpleAccount *account,
+					PurpleAccountOption *option);
 				~AccountOptionString();
 
 			protected:
@@ -122,8 +126,8 @@ class AccountWindow
 		: public AccountOption
 		{
 			public:
-				AccountOptionInt(Widget& parent, int x, int y,
-					PurpleAccount *account, PurpleAccountOption *option);
+				AccountOptionInt(Widget& parent, PurpleAccount *account,
+					PurpleAccountOption *option);
 				~AccountOptionInt();
 
 			protected:
@@ -145,6 +149,42 @@ class AccountWindow
 				sigc::connection sig_response;
 		};
 
+		class AccountOptionSplit
+		: public Button
+		{
+			public:
+				AccountOptionSplit(Widget& parent, PurpleAccount *account,
+					PurpleAccountUserSplit *split, SplitAccounts *split_accounts);
+				~AccountOptionSplit();
+
+				void SetValue(const gchar *value);
+				const gchar* GetValue(void) { return value; }
+				void UpdateText(void);
+
+			protected:
+				PurpleAccount *account;
+				PurpleAccountUserSplit *split;
+
+				const char *text;
+				const gchar *value;
+				InputDialog *dialog;
+
+			private:
+				AccountOptionSplit(void);
+				AccountOptionSplit(const AccountOptionSplit&);
+
+				AccountOptionSplit& operator=(const AccountOptionSplit&);
+
+				void OnActivate(void);
+				void UpdateSplits(void);
+
+				void ResponseHandler(Dialog::ResponseType response);
+
+				sigc::connection sig_response;
+
+				SplitAccounts *split_accounts;
+		};
+
 		~AccountWindow();
 
 		void Populate(void);
@@ -164,6 +204,8 @@ class AccountWindow
 		HorizontalListBox *menu;
 		HorizontalLine *line;
 		Panel *border;
+
+		SplitAccounts split_accounts;
 
 		unsigned int menu_index;
 		unsigned int accounts_index;

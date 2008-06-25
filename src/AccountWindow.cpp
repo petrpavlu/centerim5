@@ -120,6 +120,8 @@ void AccountWindow::Populate(void)
 	char *username, *s;
 	const char *value;
 	char *label;
+	SplitWidgets split_widgets;
+	AccountOptionSplit *widget_split;
 
 	for (iter = purple_accounts_get_all(); iter; iter = iter->next) {
 		account = (PurpleAccount*)iter->data;
@@ -130,8 +132,11 @@ void AccountWindow::Populate(void)
 			purple_account_get_username(account));
 		parent = accounts->AddNode(accounts->Root(), new Button(*accounts, 0, 0, label), account);
 
-		/* We need to process the user name in a special way */
+		/* The username must be treated in a special way because it can contain
+		 * multiple values. (eg user@server:port/resource) */
 		username = g_strdup(purple_account_get_username(account));
+		
+		split_widgets.clear();
 
 		for (jter = g_list_last(prplinfo->user_splits); jter; jter = jter->prev) {
 			PurpleAccountUserSplit *split = (PurpleAccountUserSplit*)jter->data;
@@ -140,7 +145,6 @@ void AccountWindow::Populate(void)
                                 s = strrchr(username, purple_account_user_split_get_separator(split));
                         else
                                 s = strchr(username, purple_account_user_split_get_separator(split));
-			log->Write(Log::Level_debug, s);
 
                         if (s != NULL)
                         {
@@ -148,23 +152,29 @@ void AccountWindow::Populate(void)
                                 s++;
                                 value = s;
                         } else {
-				value = NULL;
+				value = purple_account_user_split_get_default_value(split);
 			}
 
-			if (value == NULL)
-				value = purple_account_user_split_get_default_value(split);
+			/* Create widget for the username split and remember */
+			widget_split = new AccountOptionSplit(*accounts, account, split, &split_accounts);
+			widget_split->SetValue(value);
+			widget_split->UpdateText();
+			split_widgets.push_front(widget_split);
 
-			label = g_strdup_printf("%s: %s", purple_account_user_split_get_text(split), value);
-			accounts->AddNode(parent, new Button(*accounts, 0, 0, label), NULL);
-			g_free(label);
-
+			accounts->AddNode(parent, widget_split, NULL);
 		}
 
+
 		//TODO add this widget as the first widget in this subtree. Treeview needs to support this.
-		label = g_strdup_printf("%s: %s", _("Screen name"), username);
-		accounts->AddNode(parent, new Button(*accounts, 0, 0, label), NULL);
-		g_free(label);
+		widget_split = new AccountOptionSplit(*accounts, account, NULL, &split_accounts);
+		widget_split->SetValue(username);
+		widget_split->UpdateText();
+		split_widgets.push_front(widget_split);
+
+		accounts->AddNode(parent, widget_split, NULL);
+
 		g_free(username);
+		split_accounts[account] = split_widgets;
 
 		label = g_strdup_printf("%s: %s", _("Password"),purple_account_get_password(account));
 		accounts->AddNode(parent, new Button(*accounts, 0, 0, label), NULL);
@@ -181,17 +191,17 @@ void AccountWindow::Populate(void)
 			switch (type) {
 			case PURPLE_PREF_STRING:
 				accounts->AddNode(parent,
-					new AccountOptionString(*accounts, 0, 0, account, option),
+					new AccountOptionString(*accounts, account, option),
 					NULL);
 				break;
 			case PURPLE_PREF_INT:
 				accounts->AddNode(parent,
-					new AccountOptionInt(*accounts, 0, 0, account, option),
+					new AccountOptionInt(*accounts, account, option),
 					NULL);
 				break;
 			case PURPLE_PREF_BOOLEAN:
 				accounts->AddNode(parent,
-					new AccountOptionBool(*accounts, 0, 0, account, option),
+					new AccountOptionBool(*accounts, account, option),
 					NULL);
 				break;
 			case PURPLE_PREF_STRING_LIST:
@@ -205,7 +215,7 @@ void AccountWindow::Populate(void)
 	}
 }
 
-AccountWindow::AccountOption::AccountOption(Widget& parent, int x, int y,
+AccountWindow::AccountOption::AccountOption(Widget& parent,
 	PurpleAccount *account, PurpleAccountOption *option)
 : Button(parent, x, y, "")
 , account(account)
@@ -224,9 +234,9 @@ AccountWindow::AccountOption::~AccountOption()
 {
 }
 
-AccountWindow::AccountOptionBool::AccountOptionBool(Widget& parent, int x, int y,
+AccountWindow::AccountOptionBool::AccountOptionBool(Widget& parent,
 	PurpleAccount *account, PurpleAccountOption *option)
-: AccountWindow::AccountOption::AccountOption(parent, x, y, account, option)
+: AccountWindow::AccountOption::AccountOption(parent, account, option)
 {
 	UpdateText();
 }
@@ -255,9 +265,9 @@ void AccountWindow::AccountOptionBool::OnActivate(void)
 	UpdateText();
 }
 
-AccountWindow::AccountOptionString::AccountOptionString(Widget& parent, int x, int y,
+AccountWindow::AccountOptionString::AccountOptionString(Widget& parent,
 	PurpleAccount *account, PurpleAccountOption *option)
-: AccountWindow::AccountOption::AccountOption(parent, x, y, account, option)
+: AccountWindow::AccountOption::AccountOption(parent, account, option)
 , value(NULL)
 , dialog(NULL)
 {
@@ -274,6 +284,8 @@ void AccountWindow::AccountOptionString::UpdateText(void)
 	
 	value = purple_account_get_string(account, setting, 
 			purple_account_option_get_default_string(option));
+	if (value == NULL)
+		value = "";
 
 	str = g_strdup_printf("%s: %s", text, value);
 	SetText(str);
@@ -307,9 +319,9 @@ void AccountWindow::AccountOptionString::ResponseHandler(Dialog::ResponseType re
 	}
 }
 
-AccountWindow::AccountOptionInt::AccountOptionInt(Widget& parent, int x, int y,
+AccountWindow::AccountOptionInt::AccountOptionInt(Widget& parent,
 	PurpleAccount *account, PurpleAccountOption *option)
-: AccountWindow::AccountOption::AccountOption(parent, x, y, account, option)
+: AccountWindow::AccountOption::AccountOption(parent, account, option)
 , value(NULL)
 , dialog(NULL)
 {
@@ -372,3 +384,116 @@ void AccountWindow::AccountOptionInt::ResponseHandler(Dialog::ResponseType respo
 			break;
 	}
 }
+
+AccountWindow::AccountOptionSplit::AccountOptionSplit(Widget& parent,
+	PurpleAccount *account, PurpleAccountUserSplit *split,
+	SplitAccounts *split_accounts)
+: Button(parent, 0, 0, "")
+, account(account)
+, split(split)
+, split_accounts(split_accounts)
+{
+	g_assert(account != NULL);
+
+	if (split) {
+		text = purple_account_user_split_get_text(split);
+	} else {
+		text = _("Username");
+	}
+	value = "";
+
+	SetFunction(sigc::mem_fun(this, 
+		&AccountWindow::AccountOptionSplit::OnActivate));
+
+	UpdateText();
+}
+
+AccountWindow::AccountOptionSplit::~AccountOptionSplit()
+{
+	//if (value)
+	//	g_free(value);
+}
+
+void AccountWindow::AccountOptionSplit::UpdateText(void)
+{
+	gchar *str;
+	
+	if (value == NULL)
+		value =	g_strdup(purple_account_user_split_get_text(split));
+	if (value == NULL)
+		value = g_strdup("");
+
+	str = g_strdup_printf("%s: %s", text, value);
+	SetText(str);
+	g_free(str);
+}
+
+void AccountWindow::AccountOptionSplit::UpdateSplits(void)
+{
+	AccountWindow::SplitWidgets::iterator split_widget;
+	PurpleAccountUserSplit *split;
+	AccountWindow::AccountOptionSplit *widget;
+	PurplePluginProtocolInfo *prplinfo;
+	SplitWidgets *split_widgets;
+	GList *iter;
+	const gchar *value;
+
+	split_widgets = &((*split_accounts)[account]);
+	split_widget = split_widgets->begin();
+	widget = *split_widget;
+	value = widget->GetValue();
+	split_widget++;
+
+	GString *username = g_string_new(value);
+	prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(account)));
+
+	for (iter = prplinfo->user_splits;
+			iter && split_widget != split_widgets->end();
+			iter = iter->next, split_widget++)
+	{
+		split = (PurpleAccountUserSplit*)iter->data;
+		widget = *split_widget;
+
+		value = widget->GetValue();
+		if (value == NULL || *value == '\0')
+			value = purple_account_user_split_get_default_value(split);
+		g_string_append_printf(username, "%c%s",
+				purple_account_user_split_get_separator(split),
+				value);
+	}
+
+	purple_account_set_username(account, username->str);
+}
+
+void AccountWindow::AccountOptionSplit::SetValue(const gchar *value)
+{
+	this->value = g_strdup(value);
+	UpdateText();
+}
+
+void AccountWindow::AccountOptionSplit::OnActivate(void)
+{
+	WindowManager *wm = WindowManager::Instance();
+	dialog = new InputDialog(text, value);
+	sig_response = dialog->signal_response.connect(
+		sigc::mem_fun(this, &AccountWindow::AccountOptionSplit::ResponseHandler));
+	//TODO add something to dialog class to show it. this removes the need
+	//for including windowmanager.h, and is easier to use.
+	wm->Add(dialog);
+}
+
+void AccountWindow::AccountOptionSplit::ResponseHandler(Dialog::ResponseType response)
+{
+	switch (response) {
+		case Dialog::ResponseOK:
+			if (!dialog)
+				/*TODO something is very wrong here */;
+
+			SetValue(dialog->GetText());
+			UpdateSplits();
+			break;
+		default:
+			break;
+	}
+}
+
