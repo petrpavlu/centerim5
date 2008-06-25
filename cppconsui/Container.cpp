@@ -185,10 +185,17 @@ void Container::GetFocusChain(FocusChain& focus_chain, FocusChain::iterator pare
 		}
 
 		if (container) {
-			/* the widget is a container so add its widgets
+			/* The widget is a container so add its widgets
 			 * as well.
 			 * */
 			container->GetFocusChain(focus_chain, iter);
+
+			/* If this is not a focusable widget and it has no focuasable
+			 * children, remove it from the chain. */
+			//TODO remove when widgets are filtered out elsewhere
+			if ((*iter) == NULL && !focus_chain.number_of_children(iter)) {
+				focus_chain.erase(iter);
+			}
 		}
 	}
 }
@@ -246,17 +253,20 @@ void Container::MoveFocus(FocusDirection direction)
 
 	focus_widget = GetFocusWidget();
 	if (!focus_widget) {
-		/* there is no node assigned to receive so give focus to
-		 * the first widget in the list (if there is a widget
+		/* there is no node assigned to receive focus so give focus
+		 * to the first widget in the list (if there is a widget
 		 * which accepts focus).
 		 * */
 		if (focus_chain.number_of_children(focus_chain.begin())) {
 			iter = focus_chain.begin().begin();
 			(*iter)->GrabFocus();
-			return;
 		} else {
-			/* No children. */
+			/* No children, so there is nothing to receive
+			 * focus.
+			 * */
 		}
+
+		return;
 	}
 
 	iter = std::find(focus_chain.begin(), focus_chain.end(), focus_widget);
