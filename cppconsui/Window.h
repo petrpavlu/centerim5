@@ -65,6 +65,10 @@ class Window
 		virtual void Show();
 		virtual void Hide();
 
+		sigc::signal<void, Window*> signal_close;
+		//sigc::signal<void, Window*> signal_show;
+		//sigc::signal<void, Window*> signal_hide;
+
 	protected:
 		/* the window on-screen dimensions */
 		int win_x, win_y, win_w, win_h;

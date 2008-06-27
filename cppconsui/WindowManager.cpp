@@ -74,7 +74,8 @@ void WindowManager::Delete(void)
 void WindowManager::CloseWindow(Window *window)
 {
 	if (HasWindow(window)) {
-		Glib::signal_timeout().connect(sigc::bind(sigc::mem_fun(this, &WindowManager::CloseWindowCallback), window), 0);
+		Glib::signal_timeout().connect(
+				sigc::bind(sigc::mem_fun(this, &WindowManager::CloseWindowCallback), window), 0);
 	}
 }
 

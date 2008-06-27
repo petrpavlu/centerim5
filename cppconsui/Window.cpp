@@ -69,6 +69,7 @@ Window::~Window()
 
 void Window::Close(void)
 {
+	signal_close(this);
 	WindowManager::Instance()->CloseWindow(this);
 }
 
