@@ -21,9 +21,11 @@
 #include "GeneralMenu.h"
 #include "AccountWindow.h"
 
-//TODO remove testing of dialogs
-#include <cppconsui/InputDialog.h>
+//TODO remove testing stuff
+#include <cppconsui/MessageDialog.h>
+#include <cppconsui/ComboBox.h>
 
+//TODO remove when show() of window/dialog is implemented
 #include <cppconsui/WindowManager.h>
 
 GeneralMenu::GeneralMenu(int x, int y, int w, int h, LineStyle *linestyle)
@@ -46,6 +48,15 @@ GeneralMenu::GeneralMenu(int x, int y, int w, int h, LineStyle *linestyle)
 	AddItem(_("Show offline users"), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	AddItem(_("Organize contact groups"), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	AddItem(_("Mass group move..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
+
+	//TODO remove testing stuff
+	ComboBox *combobox = new ComboBox(*(this->GetListBox()), 0, 0, w-2, 1, "Combo Test!");
+	std::vector<const gchar*> options;
+        options.push_back("onne");
+	options.push_back("twoo");
+        options.push_back("theree");
+	combobox->Options(options);
+	AddWidget(combobox);
 }
 
 GeneralMenu::~GeneralMenu()
@@ -55,8 +66,7 @@ GeneralMenu::~GeneralMenu()
 void GeneralMenu::OpenTestWindow(void)
 {
 	WindowManager *wm = WindowManager::Instance();
-	InputDialog *dialog = new InputDialog("Try typing something!", "Type in the area.");
-	dialog->Flags(TextEntry::FlagNumeric);
+	MessageDialog *dialog = new MessageDialog("Message.");
 	wm->Add(dialog);
 	Close();
 }

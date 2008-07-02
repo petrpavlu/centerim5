@@ -54,6 +54,12 @@ class ComboBox
 
 		ComboBox& operator=(const ComboBox&);
 
+		void DeclareBindables(void);
+		void BindActions(void);
+
+		void OnActivate(void)
+			{ OnDropDown(); }
+
 		sigc::connection sig_dropdown_close;
 };
 

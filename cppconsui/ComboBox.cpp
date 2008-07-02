@@ -23,6 +23,9 @@
 #include "Keys.h"
 #include "Button.h"
 
+//TODO remove when show() of window/dialog is implemented
+#include "WindowManager.h"
+
 #include <glib.h>
 #include <glib/gprintf.h>
 
@@ -31,11 +34,15 @@
 ComboBox::ComboBox(Widget& parent, int x, int y, int w, int h, const gchar *text)
 : TextEntry(parent, x, y, w, h, text)
 {
+	DeclareBindables();
+	BindActions();
 }
 
 ComboBox::ComboBox(Widget& parent, int x, int y, const gchar *text)
 : TextEntry(parent, x, y, text)
 {
+	DeclareBindables();
+	BindActions();
 }
 
 ComboBox::~ComboBox()
@@ -49,25 +56,27 @@ void ComboBox::OnDropDown(void)
 	if (dropdown)
 		/*TODO this shoudn't happen*/;
 
-	dropdown = new MenuWindow(x, y, w, options.size(), LineStyle::LineStyleDefault());
+	dropdown = new MenuWindow(x, y, w, options.size()+2, LineStyle::LineStyleDefault());
 	sig_dropdown_close = dropdown->signal_close.connect(sigc::mem_fun(this, &ComboBox::DropDownClose));
 
 	for (i = options.begin(); i != options.end(); i++) {
-		dropdown->AddWidget(new Button(*dropdown, 0, 0, *i, 
-				sigc::bind(sigc::mem_fun(this, &ComboBox::DropDownOk), *i)));
+		dropdown->AddItem(*i, sigc::bind(sigc::mem_fun(this, &ComboBox::DropDownOk), *i));
 	}
 
-	dropdown->Show();
+	//TODO implement show method of dialogs/windows
+	//dropdown->Show();
+	WindowManager *wm = WindowManager::Instance();
+	wm->Add(dropdown);
 }
 
 void ComboBox::DropDownOk(const gchar *selection)
 {
 	SetText(selection);
+	dropdown->Close();
 }
 
 void ComboBox::DropDownClose(Window *window)
 {
-	dropdown->Close();
 	dropdown = NULL;
 }
 
@@ -76,4 +85,18 @@ void ComboBox::Options(std::vector<const gchar*> _options)
 
 	options.clear();
 	options = _options;
+}
+void ComboBox::DeclareBindables(void)
+{
+	const gchar *context = "combobox";
+
+	DeclareBindable(context, "dropdown", sigc::mem_fun(this, &ComboBox::OnDropDown),
+		_("Show the dropdown menu."), InputProcessor::Bindable_Override);
+}
+
+void ComboBox::BindActions(void)
+{
+	const gchar *context = "combobox";
+
+	BindAction(context, "dropdown", Keys::Instance()->Key_enter(), false);
 }
