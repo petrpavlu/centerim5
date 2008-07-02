@@ -57,7 +57,11 @@ Label::Label(Widget& parent, int x, int y, const char *fmt, ...)
 	text_length = g_utf8_strlen(text, text_size);
 	//TODO  text may be no longer than text_max_length
 
-	Resize(width(text), 1);
+	if (text) {
+		Resize(width(text), 1);
+	} else {
+		Resize(1, 1);
+	}
 }
 
 Label::~Label()
