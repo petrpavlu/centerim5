@@ -126,7 +126,7 @@ class TextEntry
 		void DeclareBindables(void);
 		void BindActions(void);
 
-		void OnActivate(void);
+		virtual void OnActivate(void);
 };
 
 #endif /* __TEXT_ENTRY_H__ */
