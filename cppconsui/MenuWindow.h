@@ -47,6 +47,9 @@ class MenuWindow
 		void RemoveWidget(Widget *widget)
 			{ listbox->RemoveWidget(widget); }
 
+		ListBox* GetListBox(void)
+			{ return listbox; }
+
 	protected:
 		Panel *border;
 		ListBox *listbox;
