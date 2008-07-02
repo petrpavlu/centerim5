@@ -79,7 +79,7 @@ class Widget
 		bool CanFocus(void) const { return can_focus; }
 		void CanFocus(bool val) { can_focus = val; }
 		bool HasFocus(void) const { return has_focus; }
-		Widget* Parent(void) const { return parent; }
+		const Widget* Parent(void) const { return parent; }
 
 		int Left() const { return x; }
 		int Top() const { return y; }

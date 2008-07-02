@@ -276,7 +276,7 @@ void Container::MoveFocus(FocusDirection direction)
 		return;
 	}
 
-	container = dynamic_cast<Container*>(focus_widget->Parent());
+	container = dynamic_cast<const Container*>(focus_widget->Parent());
 
 	FocusChain::iterator cycle_root, cycle_back, cycle_begin, cycle_iter;
 
