@@ -10,7 +10,7 @@
  *
  * CenterIM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  Softwareee the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,22 +31,36 @@ class ComboBox
 : public TextEntry
 {
 	public:
+		typedef struct {
+			const gchar *text;
+			const void *data;
+		} ComboBoxEntry;
+		typedef std::vector<ComboBoxEntry> ComboBoxEntries;
+
 		ComboBox(Widget& parent, int x, int y, int w, int h, const gchar *text);
 		ComboBox(Widget& parent, int x, int y, const gchar *text);
 
 		virtual ~ComboBox();
 
-		void Options(std::vector<const gchar*> options);
-		std::vector<const gchar*> Options(void) { return options; }
+		void Options(const ComboBoxEntries options);
+		ComboBoxEntries Options(void) { return options; }
+		void AddOption(const gchar *text, const void *data);
+
+		ComboBoxEntry GetSelected(void) { return selected_entry; }
+		void SetSelected(void *data);
+
+		sigc::signal<void, const ComboBox*,
+			ComboBoxEntry, ComboBoxEntry> signal_selection_changed;
 
 	protected:
 		MenuWindow *dropdown;
 
 		void OnDropDown(void);
-		void DropDownOk(const gchar *selection);
+		void DropDownOk(const ComboBox *combo_box, ComboBoxEntry new_entry);
 		void DropDownClose(Window *window);
 
-		std::vector<const gchar*> options;
+		ComboBoxEntry selected_entry;
+		ComboBoxEntries options;
 
 	private:
 		ComboBox();

@@ -51,16 +51,17 @@ ComboBox::~ComboBox()
 
 void ComboBox::OnDropDown(void)
 {
-	std::vector<const gchar*>::iterator i;
+	ComboBoxEntries::iterator i;
 
 	if (dropdown)
 		/*TODO this shoudn't happen*/;
 
-	dropdown = new MenuWindow(x, y, w, options.size()+2, LineStyle::LineStyleDefault());
+	//TODO position correctly according to absolute coords.
+	dropdown = new MenuWindow(0, 0, w, options.size()+2, LineStyle::LineStyleDefault());
 	sig_dropdown_close = dropdown->signal_close.connect(sigc::mem_fun(this, &ComboBox::DropDownClose));
 
 	for (i = options.begin(); i != options.end(); i++) {
-		dropdown->AddItem(*i, sigc::bind(sigc::mem_fun(this, &ComboBox::DropDownOk), *i));
+		dropdown->AddItem((*i).text, sigc::bind(sigc::mem_fun(this, &ComboBox::DropDownOk), this, *i));
 	}
 
 	//TODO implement show method of dialogs/windows
@@ -69,9 +70,16 @@ void ComboBox::OnDropDown(void)
 	wm->Add(dropdown);
 }
 
-void ComboBox::DropDownOk(const gchar *selection)
+void ComboBox::DropDownOk(const ComboBox *combo_box, ComboBoxEntry new_entry)
 {
-	SetText(selection);
+	SetText(new_entry.text);
+	ComboBoxEntry old_entry;
+
+	old_entry = selected_entry;
+	selected_entry = new_entry;
+
+	signal_selection_changed(this, old_entry, new_entry);
+
 	dropdown->Close();
 }
 
@@ -80,12 +88,27 @@ void ComboBox::DropDownClose(Window *window)
 	dropdown = NULL;
 }
 
-void ComboBox::Options(std::vector<const gchar*> _options)
+void ComboBox::Options(const ComboBoxEntries options)
 {
-
-	options.clear();
-	options = _options;
+	this->options = options;
 }
+
+void ComboBox::AddOption(const gchar *text, const void *data)
+{
+	ComboBoxEntry entry;
+
+	entry.text = text;
+	entry.data = data;
+
+	options.push_back(entry);
+}
+
+void ComboBox::SetSelected(void *data)
+{
+	ComboBoxEntries::iterator i;
+	//TODO
+}
+
 void ComboBox::DeclareBindables(void)
 {
 	const gchar *context = "combobox";

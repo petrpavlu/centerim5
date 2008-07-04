@@ -52,10 +52,9 @@ GeneralMenu::GeneralMenu(int x, int y, int w, int h, LineStyle *linestyle)
 	//TODO remove testing stuff
 	ComboBox *combobox = new ComboBox(*(this->GetListBox()), 0, 0, w-2, 1, "Combo Test!");
 	std::vector<const gchar*> options;
-        options.push_back("onne");
-	options.push_back("twoo");
-        options.push_back("theree");
-	combobox->Options(options);
+        combobox->AddOption("onne", NULL);
+        combobox->AddOption("twoo", NULL);
+        combobox->AddOption("theree", NULL);
 	AddWidget(combobox);
 }
 
