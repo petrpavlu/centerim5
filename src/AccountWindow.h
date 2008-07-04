@@ -46,7 +46,15 @@ class AccountWindow
 	private:
 		class AccountOptionSplit;
 		typedef std::list<AccountOptionSplit*> SplitWidgets;
-		typedef std::map<PurpleAccount*, SplitWidgets> SplitAccounts;
+		typedef std::vector<Widget*> Widgets;
+
+		typedef struct {
+			TreeView::NodeReference parent_reference;
+			Widget *parent;
+			Widgets widgets;
+			SplitWidgets split_widgets;
+		} AccountEntry;
+		typedef std::map<PurpleAccount*, AccountEntry> AccountEntries;
 
 		class AccountOption
 		: public Button
@@ -154,7 +162,7 @@ class AccountWindow
 		{
 			public:
 				AccountOptionSplit(Widget& parent, PurpleAccount *account,
-					PurpleAccountUserSplit *split, SplitAccounts *split_accounts);
+					PurpleAccountUserSplit *split, AccountEntry *account_entry);
 				~AccountOptionSplit();
 
 				void SetValue(const gchar *value);
@@ -182,7 +190,7 @@ class AccountWindow
 
 				sigc::connection sig_response;
 
-				SplitAccounts *split_accounts;
+				AccountEntry *account_entry;
 		};
 
 		~AccountWindow();
@@ -205,7 +213,7 @@ class AccountWindow
 		HorizontalLine *line;
 		Panel *border;
 
-		SplitAccounts split_accounts;
+		AccountEntries account_entries;
 
 		unsigned int menu_index;
 		unsigned int accounts_index;

@@ -120,12 +120,24 @@ void AccountWindow::Populate(void)
 	char *username, *s;
 	const char *value;
 	char *label;
-	SplitWidgets split_widgets;
+	AccountEntry *account_entry;
 	AccountOptionSplit *widget_split;
 
 	for (iter = purple_accounts_get_all(); iter; iter = iter->next) {
 		account = (PurpleAccount*)iter->data;
 		prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(account)));
+
+		if (account_entries.find(account) == account_entries.end()) {
+			/* No entry for this account, so add one. */
+			AccountEntry entry;
+			entry.parent = NULL;
+			account_entries[account] = entry;
+		} else {
+			/* The account exists, so clear all data. */
+			//TODO: ClearAccount(account);
+		}
+
+		account_entry = &(account_entries[account]);
 
 		label = g_strdup_printf(" [%s] %s",
 			purple_account_get_protocol_name(account),
@@ -136,8 +148,6 @@ void AccountWindow::Populate(void)
 		 * multiple values. (eg user@server:port/resource) */
 		username = g_strdup(purple_account_get_username(account));
 		
-		split_widgets.clear();
-
 		for (jter = g_list_last(prplinfo->user_splits); jter; jter = jter->prev) {
 			PurpleAccountUserSplit *split = (PurpleAccountUserSplit*)jter->data;
 
@@ -156,25 +166,22 @@ void AccountWindow::Populate(void)
 			}
 
 			/* Create widget for the username split and remember */
-			widget_split = new AccountOptionSplit(*accounts, account, split, &split_accounts);
+			widget_split = new AccountOptionSplit(*accounts, account, split, account_entry);
 			widget_split->SetValue(value);
 			widget_split->UpdateText();
-			split_widgets.push_front(widget_split);
+			account_entry->split_widgets.push_front(widget_split);
 
 			accounts->AddNode(parent, widget_split, NULL);
 		}
 
 
 		//TODO add this widget as the first widget in this subtree. Treeview needs to support this.
-		widget_split = new AccountOptionSplit(*accounts, account, NULL, &split_accounts);
+		widget_split = new AccountOptionSplit(*accounts, account, NULL, account_entry);
 		widget_split->SetValue(username);
 		widget_split->UpdateText();
-		split_widgets.push_front(widget_split);
-
+		account_entry->split_widgets.push_front(widget_split);
 		accounts->AddNode(parent, widget_split, NULL);
-
 		g_free(username);
-		split_accounts[account] = split_widgets;
 
 		label = g_strdup_printf("%s: %s", _("Password"),purple_account_get_password(account));
 		accounts->AddNode(parent, new Button(*accounts, 0, 0, label), NULL);
@@ -387,11 +394,11 @@ void AccountWindow::AccountOptionInt::ResponseHandler(Dialog::ResponseType respo
 
 AccountWindow::AccountOptionSplit::AccountOptionSplit(Widget& parent,
 	PurpleAccount *account, PurpleAccountUserSplit *split,
-	SplitAccounts *split_accounts)
+	AccountEntry *account_entry)
 : Button(parent, 0, 0, "")
 , account(account)
 , split(split)
-, split_accounts(split_accounts)
+, account_entry(account_entry)
 {
 	g_assert(account != NULL);
 
@@ -438,7 +445,7 @@ void AccountWindow::AccountOptionSplit::UpdateSplits(void)
 	GList *iter;
 	const gchar *value;
 
-	split_widgets = &((*split_accounts)[account]);
+	split_widgets = &(account_entry->split_widgets);
 	split_widget = split_widgets->begin();
 	widget = *split_widget;
 	value = widget->GetValue();
