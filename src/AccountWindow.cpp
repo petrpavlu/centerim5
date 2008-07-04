@@ -122,6 +122,7 @@ void AccountWindow::Populate(void)
 	char *label;
 	AccountEntry *account_entry;
 	AccountOptionSplit *widget_split;
+	Widget *widget;
 
 	for (iter = purple_accounts_get_all(); iter; iter = iter->next) {
 		account = (PurpleAccount*)iter->data;
@@ -142,7 +143,15 @@ void AccountWindow::Populate(void)
 		label = g_strdup_printf(" [%s] %s",
 			purple_account_get_protocol_name(account),
 			purple_account_get_username(account));
-		parent = accounts->AddNode(accounts->Root(), new Button(*accounts, 0, 0, label), account);
+		widget = new Button(*accounts, 0, 0, label);
+		parent = accounts->AddNode(accounts->Root(), widget, account);
+		account_entry->parent = widget;
+		account_entry->parent_reference = parent;
+
+		/* Protocols combobox */
+		widget = new AccountOptionProtocol(*accounts, account);
+		accounts->AddNode(parent, widget, account);
+		account_entry->widgets.push_back(widget);
 
 		/* The username must be treated in a special way because it can contain
 		 * multiple values. (eg user@server:port/resource) */
@@ -170,6 +179,7 @@ void AccountWindow::Populate(void)
 			widget_split->SetValue(value);
 			widget_split->UpdateText();
 			account_entry->split_widgets.push_front(widget_split);
+			account_entry->widgets.push_back(widget_split);
 
 			accounts->AddNode(parent, widget_split, NULL);
 		}
@@ -180,15 +190,20 @@ void AccountWindow::Populate(void)
 		widget_split->SetValue(username);
 		widget_split->UpdateText();
 		account_entry->split_widgets.push_front(widget_split);
+		account_entry->widgets.push_back(widget_split);
 		accounts->AddNode(parent, widget_split, NULL);
 		g_free(username);
 
 		label = g_strdup_printf("%s: %s", _("Password"),purple_account_get_password(account));
-		accounts->AddNode(parent, new Button(*accounts, 0, 0, label), NULL);
+		widget = new Button(*accounts, 0, 0, label);
+		accounts->AddNode(parent, widget, NULL);
+		account_entry->widgets.push_back(widget);
 		g_free(label);
 
 		label = g_strdup_printf("%s: %s", _("Alias"), purple_account_get_alias(account));
-		accounts->AddNode(parent, new Button(*accounts, 0, 0, label), NULL);
+		widget = new Button(*accounts, 0, 0, label);
+		accounts->AddNode(parent, widget, NULL);
+		account_entry->widgets.push_back(widget);
 		g_free(label);
 
 		for (pref = prplinfo->protocol_options; pref; pref = pref->next) {
@@ -197,19 +212,19 @@ void AccountWindow::Populate(void)
 
 			switch (type) {
 			case PURPLE_PREF_STRING:
-				accounts->AddNode(parent,
-					new AccountOptionString(*accounts, account, option),
-					NULL);
+				widget = new AccountOptionString(*accounts, account, option);
+				accounts->AddNode(parent, widget, NULL);
+				account_entry->widgets.push_back(widget);
 				break;
 			case PURPLE_PREF_INT:
-				accounts->AddNode(parent,
-					new AccountOptionInt(*accounts, account, option),
-					NULL);
+				widget = new AccountOptionInt(*accounts, account, option);
+				accounts->AddNode(parent, widget, NULL);
+				account_entry->widgets.push_back(widget);
 				break;
 			case PURPLE_PREF_BOOLEAN:
-				accounts->AddNode(parent,
-					new AccountOptionBool(*accounts, account, option),
-					NULL);
+				widget = new AccountOptionBool(*accounts, account, option);
+				accounts->AddNode(parent, widget, NULL);
+				account_entry->widgets.push_back(widget);
 				break;
 			case PURPLE_PREF_STRING_LIST:
 				//TODO implement, but for now, an error!
@@ -504,3 +519,30 @@ void AccountWindow::AccountOptionSplit::ResponseHandler(Dialog::ResponseType res
 	}
 }
 
+AccountWindow::AccountOptionProtocol::AccountOptionProtocol(Widget& parent,
+        PurpleAccount *account)
+: ComboBox(parent, 0, 0, 15, 1, "") 
+, account(account)
+{
+        g_assert(account != NULL);
+
+        gchar *label;
+        GList *i; 
+        PurplePlugin *plugin;
+
+        plugin = purple_plugins_find_with_id(purple_account_get_protocol_id(account));
+
+        for (i = purple_plugins_get_protocols(); i; i = i->next){
+                AddOption(((PurplePlugin*)i->data)->info->name, i->data);
+        }   
+
+        label = g_strdup_printf("Protocol: %s", plugin->info->name);
+        SetText(label);
+        g_free(label);
+}
+
+AccountWindow::AccountOptionProtocol::~AccountOptionProtocol()
+{
+        //if (value)
+        //      g_free(value);
+}

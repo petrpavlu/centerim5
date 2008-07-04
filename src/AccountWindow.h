@@ -30,6 +30,7 @@
 #include <cppconsui/HorizontalLine.h>
 #include <cppconsui/Panel.h>
 #include <cppconsui/Button.h>
+#include <cppconsui/ComboBox.h>
 #include <cppconsui/InputDialog.h>
 
 #include <libpurple/account.h>
@@ -192,6 +193,29 @@ class AccountWindow
 
 				AccountEntry *account_entry;
 		};
+
+                class AccountOptionProtocol
+                : public ComboBox
+                {
+                        public:
+                                AccountOptionProtocol(Widget& parent, PurpleAccount *account);
+                                ~AccountOptionProtocol();
+
+
+                        protected:
+                                PurpleAccount *account;
+                                PurpleAccountUserSplit *split;
+
+                                const char *text;
+                                const gchar *value;
+                                InputDialog *dialog;
+
+                        private:
+                                AccountOptionProtocol(void);
+                                AccountOptionProtocol(const AccountOptionProtocol&);
+
+                                AccountOptionProtocol& operator=(const AccountOptionProtocol&);
+                };
 
 		~AccountWindow();
 
