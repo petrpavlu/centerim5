@@ -73,6 +73,7 @@ TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linest
 
 TreeView::~TreeView()
 {
+	//TODO deletenode does not free the memory, do this
 	DeleteNode(thetree.begin(), false);
 	delete linestyle;
 }
@@ -268,6 +269,12 @@ void TreeView::DeleteNode(const NodeReference &node, bool keepchildren)
 
 	//TODO does this disconnect the signals properly? i think so.
 	thetree.erase(node);
+}
+
+void TreeView::DeleteChildren(const NodeReference &node)
+{
+	//TODO does this disconnect the signals properly? i think so.
+	thetree.erase_children(node);
 }
 
 const TreeView::NodeReference& TreeView::GetSelected(void)

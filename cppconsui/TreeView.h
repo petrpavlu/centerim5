@@ -86,6 +86,7 @@ class TreeView
 
 		const NodeReference AddNode(const NodeReference &parent, Widget *widget, void *data);
 		void DeleteNode(const NodeReference &node, bool keepchildren);
+		void DeleteChildren(const NodeReference &node);
 
 		const TreeView::NodeReference& GetSelected(void);
 		int GetDepth(const NodeReference &node);
