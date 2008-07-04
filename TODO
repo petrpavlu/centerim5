@@ -1,4 +1,7 @@
 TODO:
+- Should containers take ownership of widgets and free() them
+  when done with them? currently this is done in (some) destructors
+  but it is not assumed in remove widget functions.
 - modify diagram for colorscheme
 - what is this `#define _XOPEN_SOURCE_EXTENDED' good for?
 - Horizontal ListBox: add option to make every item the same width
