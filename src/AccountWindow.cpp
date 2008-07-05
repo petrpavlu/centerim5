@@ -245,17 +245,20 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 	accounts->AddNode(account_entry->parent_reference, widget_split, NULL);
 	g_free(username);
 
-	label = g_strdup_printf("%s: %s", _("Password"),purple_account_get_password(account));
-	widget = new Button(*accounts, 0, 0, label);
+	/* Password */
+	widget = new AccountOptionString(*accounts, account, true, false);
 	accounts->AddNode(account_entry->parent_reference, widget, NULL);
 	account_entry->widgets.push_back(widget);
-	g_free(label);
 
-	label = g_strdup_printf("%s: %s", _("Alias"), purple_account_get_alias(account));
-	widget = new Button(*accounts, 0, 0, label);
+	/* Remember Password */
+	widget = new AccountOptionBool(*accounts, account, true);
 	accounts->AddNode(account_entry->parent_reference, widget, NULL);
 	account_entry->widgets.push_back(widget);
-	g_free(label);
+
+	/* Alias */
+	widget = new AccountOptionString(*accounts, account, false, true);
+	accounts->AddNode(account_entry->parent_reference, widget, NULL);
+	account_entry->widgets.push_back(widget);
 
 	for (pref = prplinfo->protocol_options; pref; pref = pref->next) {
 		PurpleAccountOption *option = (PurpleAccountOption*)pref->data;
@@ -293,10 +296,14 @@ AccountWindow::AccountOption::AccountOption(Widget& parent,
 , account(account)
 , option(option)
 {
-	g_assert(account != NULL && option != NULL);
+	g_assert(account != NULL);
 
-	setting = purple_account_option_get_setting(option);
-	text = purple_account_option_get_text(option);
+	if (option) {
+		setting = purple_account_option_get_setting(option);
+		text = purple_account_option_get_text(option);
+	} else {
+		setting = NULL;
+	}
 
 	SetFunction(sigc::mem_fun(this, 
 		&AccountWindow::AccountOption::OnActivate));
@@ -309,7 +316,21 @@ AccountWindow::AccountOption::~AccountOption()
 AccountWindow::AccountOptionBool::AccountOptionBool(Widget& parent,
 	PurpleAccount *account, PurpleAccountOption *option)
 : AccountWindow::AccountOption::AccountOption(parent, account, option)
+, remember_password(false)
 {
+	UpdateText();
+}
+
+AccountWindow::AccountOptionBool::AccountOptionBool(Widget& parent,
+	PurpleAccount *account, bool remember_password)
+: AccountWindow::AccountOption::AccountOption(parent, account, option)
+, remember_password(false)
+{
+	if (remember_password) {
+		this->remember_password = remember_password;
+		text = _("Remember password");
+	}
+
 	UpdateText();
 }
 
@@ -321,8 +342,12 @@ void AccountWindow::AccountOptionBool::UpdateText(void)
 {
 	gchar *str;
 	
-	value = purple_account_get_bool(account, setting, 
-			purple_account_option_get_default_bool(option));
+	if (remember_password) {
+		value = purple_account_get_remember_password(account);
+	} else {
+		value = purple_account_get_bool(account, setting, 
+				purple_account_option_get_default_bool(option));
+	}
 
 	//TODO create some DEFAULT_TEXT_YES etc, also for use in dialogs
 	str = g_strdup_printf("%s: %s", text, value ? _("yes") : _("no"));
@@ -333,7 +358,11 @@ void AccountWindow::AccountOptionBool::UpdateText(void)
 
 void AccountWindow::AccountOptionBool::OnActivate(void)
 {
-	purple_account_set_bool(account, setting, !value);
+	if (remember_password) {
+		purple_account_set_remember_password(account, !value);
+	} else {
+		purple_account_set_bool(account, setting, !value);
+	}
 	UpdateText();
 }
 
@@ -342,7 +371,28 @@ AccountWindow::AccountOptionString::AccountOptionString(Widget& parent,
 : AccountWindow::AccountOption::AccountOption(parent, account, option)
 , value(NULL)
 , dialog(NULL)
+, password(false)
+, alias(false)
 {
+	UpdateText();
+}
+
+AccountWindow::AccountOptionString::AccountOptionString(Widget& parent,
+	PurpleAccount *account, bool password, bool alias)
+: AccountWindow::AccountOption::AccountOption(parent, account, NULL)
+, value(NULL)
+, dialog(NULL)
+, password(false)
+, alias(false)
+{
+	if (password) {
+		this->password = true;
+		text = _("Password");
+	} else if (alias) {
+		this->alias = true;
+		text = _("Alias");
+	}
+
 	UpdateText();
 }
 
@@ -354,8 +404,15 @@ void AccountWindow::AccountOptionString::UpdateText(void)
 {
 	gchar *str;
 	
-	value = purple_account_get_string(account, setting, 
-			purple_account_option_get_default_string(option));
+	if (password) {
+		value = purple_account_get_password(account);
+	} else if (alias) {
+		value = purple_account_get_alias(account);
+	} else {
+		value = purple_account_get_string(account, setting, 
+				purple_account_option_get_default_string(option));
+	}
+
 	if (value == NULL)
 		value = "";
 
@@ -382,7 +439,14 @@ void AccountWindow::AccountOptionString::ResponseHandler(Dialog::ResponseType re
 			if (!dialog)
 				/*TODO something is very wrong here */;
 
-			purple_account_set_string(account, setting, dialog->GetText());
+			if (password) {
+				purple_account_set_password(account, dialog->GetText());
+			} else if (alias) {
+				purple_account_set_alias(account, dialog->GetText());
+			} else {
+				purple_account_set_string(account, setting, dialog->GetText());
+			}
+
 			UpdateText();
 
 			break;

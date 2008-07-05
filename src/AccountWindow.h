@@ -88,6 +88,8 @@ class AccountWindow
 			public:
 				AccountOptionBool(Widget& parent, PurpleAccount *account,
 					PurpleAccountOption *option);
+				AccountOptionBool(Widget& parent,
+					PurpleAccount *account, bool remember_password);
 				~AccountOptionBool();
 
 			protected:
@@ -102,6 +104,8 @@ class AccountWindow
 				virtual void OnActivate(void);
 
 				gboolean value;
+
+				bool remember_password;
 		};
 
 		class AccountOptionString
@@ -110,6 +114,8 @@ class AccountWindow
 			public:
 				AccountOptionString(Widget& parent, PurpleAccount *account,
 					PurpleAccountOption *option);
+				AccountOptionString(Widget& parent,
+					PurpleAccount *account, bool password, bool alias);
 				~AccountOptionString();
 
 			protected:
@@ -127,6 +133,8 @@ class AccountWindow
 
 				const gchar *value;
 				InputDialog *dialog;
+
+				bool password, alias;
 
 				sigc::connection sig_response;
 		};
