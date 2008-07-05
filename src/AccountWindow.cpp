@@ -22,6 +22,7 @@
 
 #include <cppconsui/Button.h>
 #include <cppconsui/Keys.h>
+#include <cppconsui/MessageDialog.h>
 #include <cppconsui/WindowManager.h>
 
 #include <libpurple/account.h>
@@ -35,7 +36,7 @@
 
 AccountWindow::AccountWindow()
 : Window(0, 0, 80, 24, NULL)
-, menu_index(3)
+, menu_index(1)
 , accounts_index(1)
 {
 	//const gchar *context = "accountwindow";
@@ -56,8 +57,6 @@ AccountWindow::AccountWindow()
 	menu->FocusCycle(Container::FocusCycleLocal);
 
 	menu->AddItem(_("Add"), sigc::mem_fun(this, &AccountWindow::Add));
-	menu->AddItem(_("Delete"), sigc::mem_fun(this, &AccountWindow::Delete));
-	menu->AddItem(_("Change"), sigc::mem_fun(this, &AccountWindow::Change));
 	menu->AddItem(_("Done"), sigc::mem_fun(this, &AccountWindow::Close));
 
 	AddWidget(accounts);
@@ -75,14 +74,42 @@ AccountWindow::~AccountWindow()
 
 void AccountWindow::Add(void)
 {
+	GList *i;
+	PurpleAccount *account;
+
+        i = purple_plugins_get_protocols();
+	account = purple_account_new(_("Username"),
+			purple_plugin_get_id((PurplePlugin*)i->data));
+	purple_accounts_add(account);
+
+	PopulateAccount(account);
 }
 
-void AccountWindow::Change(void)
+void AccountWindow::DropAccount(PurpleAccount *account)
 {
+	WindowManager *wm = WindowManager::Instance();
+	MessageDialog *dialog = new MessageDialog(_("Are you sure you want to delete this account?"));
+	dialog->signal_response.connect(
+		sigc::bind(sigc::mem_fun(this, &AccountWindow::DropAccountResponseHandler), account));
+	//TODO add something to dialog class to show it. this removes the need
+	//for including windowmanager.h, and is easier to use.
+	wm->Add(dialog);
 }
 
-void AccountWindow::Delete(void)
+void AccountWindow::DropAccountResponseHandler(Dialog::ResponseType response, PurpleAccount *account)
 {
+	switch (response) {
+		case Dialog::ResponseOK:
+			purple_accounts_remove(account);
+			Glib::signal_timeout().connect(
+					sigc::bind(sigc::mem_fun(this,
+					&AccountWindow::ClearAccount), 
+					account, true), 0);
+			break;
+		default:
+			break;
+	}
+
 }
 
 void AccountWindow::MoveFocus(FocusDirection direction)
@@ -121,14 +148,15 @@ void AccountWindow::Clear(void)
 
         for (i = purple_accounts_get_all(); i; i = i->next) {
                 account = (PurpleAccount*)i->data;
-                ClearAccount(account);
+                ClearAccount(account, true);
         }
 }
 
-void AccountWindow::ClearAccount(PurpleAccount *account)
+bool AccountWindow::ClearAccount(PurpleAccount *account, bool full)
 {
         AccountEntry* account_entry = &(account_entries[account]);
         std::vector<Widget*>::iterator i;
+	std::list<AccountOptionSplit*>::iterator j;
 
 	/* Move focus */
 	account_entry->parent->GrabFocus();
@@ -136,13 +164,21 @@ void AccountWindow::ClearAccount(PurpleAccount *account)
         /* First remove the nodes from the tree, then
          * free() all the widgets. */
         accounts->DeleteChildren(account_entry->parent_reference, false);
+	if (full)
+		accounts->DeleteNode(account_entry->parent_reference, false);
 
         for (i = account_entry->widgets.begin(); i != account_entry->widgets.end(); i++) {
                 delete *i;
         }
+	if (full)
+		delete account_entry->parent;
 
         account_entry->widgets.clear();
         account_entry->split_widgets.clear();
+	if (full)
+		account_entries.erase(account);
+
+	return false;
 }
 
 void AccountWindow::Populate(void)
@@ -177,7 +213,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		account_entries[account] = entry;
 	} else {
 		/* The account exists, so clear all data. */
-		ClearAccount(account);
+		ClearAccount(account, false);
 	}
 
 	account_entry = &(account_entries[account]);
@@ -187,8 +223,10 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		TreeView::NodeReference parent_reference;
 
 		//TODO proper autosizing for labels
-       		button = new Button(*accounts, 0, 0, 30, 1, label);
+       		button = new Button(*accounts, 0, 0, 30, 1, NULL, 
+				sigc::mem_fun(accounts, &TreeView::ActionToggleCollapsed));
 		parent_reference = accounts->AddNode(accounts->Root(), button, account);
+		accounts->Collapse(parent_reference);
 		account_entry->parent = button;
 		account_entry->parent_reference = parent_reference;
 	}
@@ -288,6 +326,12 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 			break;
 		}
 	}
+
+	/* Drop account */
+	widget = new Button(*accounts, 0, 0, _("Drop account"),
+			sigc::bind(sigc::mem_fun(this, &AccountWindow::DropAccount), account));
+	accounts->AddNode(account_entry->parent_reference, widget, NULL);
+	account_entry->widgets.push_back(widget);
 }
 
 AccountWindow::AccountOption::AccountOption(Widget& parent,

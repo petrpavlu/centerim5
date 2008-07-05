@@ -233,14 +233,14 @@ class AccountWindow
 		~AccountWindow();
 
 		void Clear(void);
-		void ClearAccount(PurpleAccount *account);
+		bool ClearAccount(PurpleAccount *account, bool full);
 
 		void Populate(void);
 		void PopulateAccount(PurpleAccount *account);
 
 		void Add(void);
-		void Change(void);
-		void Delete(void);
+		void DropAccount(PurpleAccount *account);
+		void DropAccountResponseHandler(Dialog::ResponseType response, PurpleAccount *account);
 
 		//void FocusCycleLeftRight(Container::FocusDirection direction);
 		//void FocusCycleUpDown(Container::FocusDirection direction);
