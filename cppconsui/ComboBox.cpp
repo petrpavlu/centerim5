@@ -33,14 +33,22 @@
 
 ComboBox::ComboBox(Widget& parent, int x, int y, int w, int h, const gchar *text)
 : TextEntry(parent, x, y, w, h, text)
+, dropdown(NULL)
 {
+	selected_entry.text = NULL;
+	selected_entry.data = NULL;
+
 	DeclareBindables();
 	BindActions();
 }
 
 ComboBox::ComboBox(Widget& parent, int x, int y, const gchar *text)
 : TextEntry(parent, x, y, text)
+, dropdown(NULL)
 {
+	selected_entry.text = NULL;
+	selected_entry.data = NULL;
+
 	DeclareBindables();
 	BindActions();
 }
@@ -78,7 +86,8 @@ void ComboBox::DropDownOk(const ComboBox *combo_box, ComboBoxEntry new_entry)
 	old_entry = selected_entry;
 	selected_entry = new_entry;
 
-	signal_selection_changed(this, old_entry, new_entry);
+	if (old_entry.data != new_entry.data)
+		signal_selection_changed(this, old_entry, new_entry);
 
 	dropdown->Close();
 }

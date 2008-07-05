@@ -50,7 +50,7 @@ class ComboBox
 		void SetSelected(void *data);
 
 		sigc::signal<void, const ComboBox*,
-			ComboBoxEntry, ComboBoxEntry> signal_selection_changed;
+			const ComboBoxEntry, const ComboBoxEntry> signal_selection_changed;
 
 	protected:
 		MenuWindow *dropdown;
