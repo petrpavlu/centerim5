@@ -252,8 +252,6 @@ const TreeView::NodeReference TreeView::AddNode(const NodeReference &parent, Tre
 
 void TreeView::DeleteNode(const NodeReference &node, bool keepchildren)
 {
-	TheTree::sibling_iterator iter;
-
 	if (focus_node == node) {
 		/* by folding this node and then moving focus forward 
 		 * we are sure that no child node of the node to be
@@ -271,10 +269,14 @@ void TreeView::DeleteNode(const NodeReference &node, bool keepchildren)
 	thetree.erase(node);
 }
 
-void TreeView::DeleteChildren(const NodeReference &node)
+void TreeView::DeleteChildren(const NodeReference &node, bool keepchildren)
 {
+	TheTree::sibling_iterator i;
 	//TODO does this disconnect the signals properly? i think so.
-	thetree.erase_children(node);
+	
+	for (i = thetree.begin(node); i != thetree.end(node); i++) {
+		DeleteNode(i, keepchildren);
+	}
 }
 
 const TreeView::NodeReference& TreeView::GetSelected(void)
