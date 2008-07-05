@@ -50,8 +50,8 @@ class AccountWindow
 		typedef std::vector<Widget*> Widgets;
 
 		typedef struct {
+			Button *parent;
 			TreeView::NodeReference parent_reference;
-			Widget *parent;
 			Widgets widgets;
 			SplitWidgets split_widgets;
 		} AccountEntry;
@@ -198,11 +198,12 @@ class AccountWindow
                 : public ComboBox
                 {
                         public:
-                                AccountOptionProtocol(Widget& parent, PurpleAccount *account);
+                                AccountOptionProtocol(Widget& parent, PurpleAccount *account,
+						AccountWindow *account_window);
                                 ~AccountOptionProtocol();
 
-
                         protected:
+				AccountWindow *account_window;
                                 PurpleAccount *account;
                                 PurpleAccountUserSplit *split;
 
@@ -215,11 +216,19 @@ class AccountWindow
                                 AccountOptionProtocol(const AccountOptionProtocol&);
 
                                 AccountOptionProtocol& operator=(const AccountOptionProtocol&);
+
+				void OnProtocolChanged(const ComboBox *combobox, const ComboBox::ComboBoxEntry old_entry,
+						ComboBox::ComboBoxEntry const new_entry);
+				bool OnProtocolChangedCallback(const ComboBox::ComboBoxEntry entry);
                 };
 
 		~AccountWindow();
 
+		void Clear(void);
+		void ClearAccount(PurpleAccount *account);
+
 		void Populate(void);
+		void PopulateAccount(PurpleAccount *account);
 
 		void Add(void);
 		void Change(void);

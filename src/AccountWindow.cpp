@@ -30,6 +30,9 @@
 #include <cstring>
 #include <errno.h>
 
+#include <glib.h>
+#include <glibmm/main.h>
+
 AccountWindow::AccountWindow()
 : Window(0, 0, 80, 24, NULL)
 , menu_index(3)
@@ -111,128 +114,175 @@ void AccountWindow::MoveFocus(FocusDirection direction)
 	}
 }
 
+void AccountWindow::Clear(void)
+{
+        GList *i;
+        PurpleAccount *account;
+
+        for (i = purple_accounts_get_all(); i; i = i->next) {
+                account = (PurpleAccount*)i->data;
+                ClearAccount(account);
+        }
+}
+
+void AccountWindow::ClearAccount(PurpleAccount *account)
+{
+        AccountEntry* account_entry = &(account_entries[account]);
+        std::vector<Widget*>::iterator i;
+
+	/* Move focus */
+	account_entry->parent->GrabFocus();
+
+        /* First remove the nodes from the tree, then
+         * free() all the widgets. */
+        accounts->DeleteChildren(account_entry->parent_reference, false);
+
+        for (i = account_entry->widgets.begin(); i != account_entry->widgets.end(); i++) {
+                delete *i;
+        }
+
+        account_entry->widgets.clear();
+        account_entry->split_widgets.clear();
+}
+
 void AccountWindow::Populate(void)
 {
-	GList *iter, *jter, *pref;
+        GList *i;
+        PurpleAccount *account;
+
+        for (i = purple_accounts_get_all(); i; i = i->next) {
+                account = (PurpleAccount*)i->data;
+                PopulateAccount(account);
+        }
+}
+
+void AccountWindow::PopulateAccount(PurpleAccount *account)
+{
+	GList *iter, *pref;
 	PurplePluginProtocolInfo *prplinfo;
-	PurpleAccount *account;
-	TreeView::NodeReference parent;
 	char *username, *s;
 	const char *value;
 	char *label;
 	AccountEntry *account_entry;
 	AccountOptionSplit *widget_split;
 	Widget *widget;
+	ComboBox *combobox;
 
-	for (iter = purple_accounts_get_all(); iter; iter = iter->next) {
-		account = (PurpleAccount*)iter->data;
-		prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(account)));
+	prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(account)));
 
-		if (account_entries.find(account) == account_entries.end()) {
-			/* No entry for this account, so add one. */
-			AccountEntry entry;
-			entry.parent = NULL;
-			account_entries[account] = entry;
+	if (account_entries.find(account) == account_entries.end()) {
+		/* No entry for this account, so add one. */
+		AccountEntry entry;
+		entry.parent = NULL;
+		account_entries[account] = entry;
+	} else {
+		/* The account exists, so clear all data. */
+		ClearAccount(account);
+	}
+
+	account_entry = &(account_entries[account]);
+
+	if (!account_entry->parent) {
+		Button *button;
+		TreeView::NodeReference parent_reference;
+
+		//TODO proper autosizing for labels
+       		button = new Button(*accounts, 0, 0, 30, 1, label);
+		parent_reference = accounts->AddNode(accounts->Root(), button, account);
+		account_entry->parent = button;
+		account_entry->parent_reference = parent_reference;
+	}
+
+	label = g_strdup_printf(" [%s] %s",
+		purple_account_get_protocol_name(account),
+		purple_account_get_username(account));
+	account_entry->parent->SetText(label);
+	g_free(label);
+
+	/* Protocols combobox */
+	combobox = new AccountOptionProtocol(*accounts, account, this);
+	accounts->AddNode(account_entry->parent_reference, combobox, account);
+	account_entry->widgets.push_back(combobox);
+
+	/* The username must be treated in a special way because it can contain
+	 * multiple values. (eg user@server:port/resource) */
+	username = g_strdup(purple_account_get_username(account));
+	
+	for (iter = g_list_last(prplinfo->user_splits); iter; iter = iter->prev) {
+		PurpleAccountUserSplit *split = (PurpleAccountUserSplit*)iter->data;
+
+		if(purple_account_user_split_get_reverse(split))
+			s = strrchr(username, purple_account_user_split_get_separator(split));
+		else
+			s = strchr(username, purple_account_user_split_get_separator(split));
+
+		if (s != NULL)
+		{
+			*s = '\0';
+			s++;
+			value = s;
 		} else {
-			/* The account exists, so clear all data. */
-			//TODO: ClearAccount(account);
+			value = purple_account_user_split_get_default_value(split);
 		}
 
-		account_entry = &(account_entries[account]);
-
-		label = g_strdup_printf(" [%s] %s",
-			purple_account_get_protocol_name(account),
-			purple_account_get_username(account));
-		widget = new Button(*accounts, 0, 0, label);
-		parent = accounts->AddNode(accounts->Root(), widget, account);
-		account_entry->parent = widget;
-		account_entry->parent_reference = parent;
-
-		/* Protocols combobox */
-		widget = new AccountOptionProtocol(*accounts, account);
-		accounts->AddNode(parent, widget, account);
-		account_entry->widgets.push_back(widget);
-
-		/* The username must be treated in a special way because it can contain
-		 * multiple values. (eg user@server:port/resource) */
-		username = g_strdup(purple_account_get_username(account));
-		
-		for (jter = g_list_last(prplinfo->user_splits); jter; jter = jter->prev) {
-			PurpleAccountUserSplit *split = (PurpleAccountUserSplit*)jter->data;
-
-			if(purple_account_user_split_get_reverse(split))
-                                s = strrchr(username, purple_account_user_split_get_separator(split));
-                        else
-                                s = strchr(username, purple_account_user_split_get_separator(split));
-
-                        if (s != NULL)
-                        {
-                                *s = '\0';
-                                s++;
-                                value = s;
-                        } else {
-				value = purple_account_user_split_get_default_value(split);
-			}
-
-			/* Create widget for the username split and remember */
-			widget_split = new AccountOptionSplit(*accounts, account, split, account_entry);
-			widget_split->SetValue(value);
-			widget_split->UpdateText();
-			account_entry->split_widgets.push_front(widget_split);
-			account_entry->widgets.push_back(widget_split);
-
-			accounts->AddNode(parent, widget_split, NULL);
-		}
-
-
-		//TODO add this widget as the first widget in this subtree. Treeview needs to support this.
-		widget_split = new AccountOptionSplit(*accounts, account, NULL, account_entry);
-		widget_split->SetValue(username);
+		/* Create widget for the username split and remember */
+		widget_split = new AccountOptionSplit(*accounts, account, split, account_entry);
+		widget_split->SetValue(value);
 		widget_split->UpdateText();
 		account_entry->split_widgets.push_front(widget_split);
 		account_entry->widgets.push_back(widget_split);
-		accounts->AddNode(parent, widget_split, NULL);
-		g_free(username);
 
-		label = g_strdup_printf("%s: %s", _("Password"),purple_account_get_password(account));
-		widget = new Button(*accounts, 0, 0, label);
-		accounts->AddNode(parent, widget, NULL);
-		account_entry->widgets.push_back(widget);
-		g_free(label);
+		accounts->AddNode(account_entry->parent_reference, widget_split, NULL);
+	}
 
-		label = g_strdup_printf("%s: %s", _("Alias"), purple_account_get_alias(account));
-		widget = new Button(*accounts, 0, 0, label);
-		accounts->AddNode(parent, widget, NULL);
-		account_entry->widgets.push_back(widget);
-		g_free(label);
 
-		for (pref = prplinfo->protocol_options; pref; pref = pref->next) {
-			PurpleAccountOption *option = (PurpleAccountOption*)pref->data;
-			PurplePrefType type = purple_account_option_get_type(option);
+	//TODO add this widget as the first widget in this subtree. Treeview needs to support this.
+	widget_split = new AccountOptionSplit(*accounts, account, NULL, account_entry);
+	widget_split->SetValue(username);
+	widget_split->UpdateText();
+	account_entry->split_widgets.push_front(widget_split);
+	account_entry->widgets.push_back(widget_split);
+	accounts->AddNode(account_entry->parent_reference, widget_split, NULL);
+	g_free(username);
 
-			switch (type) {
-			case PURPLE_PREF_STRING:
-				widget = new AccountOptionString(*accounts, account, option);
-				accounts->AddNode(parent, widget, NULL);
-				account_entry->widgets.push_back(widget);
-				break;
-			case PURPLE_PREF_INT:
-				widget = new AccountOptionInt(*accounts, account, option);
-				accounts->AddNode(parent, widget, NULL);
-				account_entry->widgets.push_back(widget);
-				break;
-			case PURPLE_PREF_BOOLEAN:
-				widget = new AccountOptionBool(*accounts, account, option);
-				accounts->AddNode(parent, widget, NULL);
-				account_entry->widgets.push_back(widget);
-				break;
-			case PURPLE_PREF_STRING_LIST:
-				//TODO implement, but for now, an error!
-				break;
-			default:
-				//TODO error!
-				break;
-			}
+	label = g_strdup_printf("%s: %s", _("Password"),purple_account_get_password(account));
+	widget = new Button(*accounts, 0, 0, label);
+	accounts->AddNode(account_entry->parent_reference, widget, NULL);
+	account_entry->widgets.push_back(widget);
+	g_free(label);
+
+	label = g_strdup_printf("%s: %s", _("Alias"), purple_account_get_alias(account));
+	widget = new Button(*accounts, 0, 0, label);
+	accounts->AddNode(account_entry->parent_reference, widget, NULL);
+	account_entry->widgets.push_back(widget);
+	g_free(label);
+
+	for (pref = prplinfo->protocol_options; pref; pref = pref->next) {
+		PurpleAccountOption *option = (PurpleAccountOption*)pref->data;
+		PurplePrefType type = purple_account_option_get_type(option);
+
+		switch (type) {
+		case PURPLE_PREF_STRING:
+			widget = new AccountOptionString(*accounts, account, option);
+			accounts->AddNode(account_entry->parent_reference, widget, NULL);
+			account_entry->widgets.push_back(widget);
+			break;
+		case PURPLE_PREF_INT:
+			widget = new AccountOptionInt(*accounts, account, option);
+			accounts->AddNode(account_entry->parent_reference, widget, NULL);
+			account_entry->widgets.push_back(widget);
+			break;
+		case PURPLE_PREF_BOOLEAN:
+			widget = new AccountOptionBool(*accounts, account, option);
+			accounts->AddNode(account_entry->parent_reference, widget, NULL);
+			account_entry->widgets.push_back(widget);
+			break;
+		case PURPLE_PREF_STRING_LIST:
+			//TODO implement, but for now, an error!
+			break;
+		default:
+			//TODO error!
+			break;
 		}
 	}
 }
@@ -520,8 +570,9 @@ void AccountWindow::AccountOptionSplit::ResponseHandler(Dialog::ResponseType res
 }
 
 AccountWindow::AccountOptionProtocol::AccountOptionProtocol(Widget& parent,
-        PurpleAccount *account)
+        PurpleAccount *account, AccountWindow *account_window)
 : ComboBox(parent, 0, 0, 15, 1, "") 
+, account_window(account_window)
 , account(account)
 {
         g_assert(account != NULL);
@@ -539,10 +590,29 @@ AccountWindow::AccountOptionProtocol::AccountOptionProtocol(Widget& parent,
         label = g_strdup_printf("Protocol: %s", plugin->info->name);
         SetText(label);
         g_free(label);
+
+	signal_selection_changed.connect(
+			sigc::mem_fun(this, &AccountWindow::AccountOptionProtocol::OnProtocolChanged));
 }
 
 AccountWindow::AccountOptionProtocol::~AccountOptionProtocol()
 {
         //if (value)
         //      g_free(value);
+}
+
+void AccountWindow::AccountOptionProtocol::OnProtocolChanged(const ComboBox *combobox,
+		ComboBox::ComboBoxEntry const old_entry, ComboBox::ComboBoxEntry const new_entry)
+{
+	Glib::signal_timeout().connect(
+			sigc::bind(sigc::mem_fun(this,
+			&AccountWindow::AccountOptionProtocol::OnProtocolChangedCallback), 
+			new_entry), 0);
+}
+
+bool AccountWindow::AccountOptionProtocol::OnProtocolChangedCallback(const ComboBox::ComboBoxEntry entry)
+{
+	purple_account_set_protocol_id(account, purple_plugin_get_id((const PurplePlugin*)entry.data));
+	account_window->PopulateAccount(account);
+	return false;
 }
