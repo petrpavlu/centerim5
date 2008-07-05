@@ -31,6 +31,7 @@ class Button
 	public:
 		Button(Widget& parent, int x, int y, int w, int h, Glib::ustring &text, sigc::slot<void> callback);
 		Button(Widget& parent, int x, int y, int w, int h, const char *text, sigc::slot<void> callback);
+		Button(Widget& parent, int x, int y, int w, int h, const char *text);
 		Button(Widget& parent, int x, int y, const char *text, sigc::slot<void> callback);
 		Button(Widget& parent, int x, int y, const char *text);
 		virtual ~Button();

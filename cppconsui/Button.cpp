@@ -33,6 +33,13 @@ Button::Button(Widget& parent, int x, int y, int w, int h, const gchar *text, si
 	AddBindables();
 }
 
+Button::Button(Widget& parent, int x, int y, int w, int h, const gchar *text)
+: Label(parent, x, y, w, h, text)
+{
+	can_focus = true;
+	AddBindables();
+}
+
 Button::Button(Widget& parent, int x, int y, const char *text, sigc::slot<void> callback)
 : Label(parent, x, y, text)
 , callback(callback)
