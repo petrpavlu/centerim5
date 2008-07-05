@@ -31,6 +31,8 @@
 /* Maximum size of text buffer, in bytes */
 #define MAX_SIZE G_MAXUSHORT
 
+//TODO proper autosizing
+
 class Label
 : public Widget
 {
