@@ -34,7 +34,7 @@ libcppconsui_la_SOURCES =\
 	LineStyle.cpp \
 	LineStyle.h \
 	HorizontalLine.cpp \
-	HorizontalLine. h \
+	HorizontalLine.h \
 	VerticalLine.cpp \
 	VerticalLine.h \
 	Panel.cpp \

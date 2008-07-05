@@ -33,8 +33,7 @@ centerim_SOURCES = \
 	Log.cpp \
 	Log.h \
 	git-version.cpp \
-	git-version.h.in \
-	gettext.h
+	git-version.h.in
 
 centerim_CPPFLAGS =\
 	$(PURPLE_CFLAGS) \

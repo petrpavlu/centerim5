@@ -15,6 +15,7 @@ Press F4 for a menu. In this menu there is an option "Accounts", this
 can be used to add, edit and delete accounts. There is also an
 option to test the combobox widget. The rest of the options are not
 implemented yet.
+Backspace for some reason does not work, use ^H.
 
 Pressing escape once will close almost any window. Use tab, shift-tab or
 the arrow keys to move focus from widget to widget. Moving focus between
