@@ -41,6 +41,10 @@ TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linest
 , focus_cycle(false)
 {
 	const gchar *context = "treeview";
+
+	//TODO figure out how to make static_cast work
+	//DeclareBindable(context, "fold-subtree", sigc::mem_fun(this, static_cast<void (*)(void)>(&TreeView::Collapse)),
+	//	_("Collapse the selected subtree"), InputProcessor::Bindable_Normal);
 	DeclareBindable(context, "fold-subtree", sigc::mem_fun(this, &TreeView::ActionCollapse),
 		_("Collapse the selected subtree"), InputProcessor::Bindable_Normal);
 	DeclareBindable(context, "unfold-subtree", sigc::mem_fun(this, &TreeView::ActionExpand),
@@ -171,28 +175,44 @@ bool TreeView::StealFocus(void)
 
 	return false;
 }
-void TreeView::ActionCollapse(void)
+
+void TreeView::Collapse(const NodeReference node)
 {
-	if (focus_node->open && focus_node->collapsable) {
-		focus_node->open = false;
+	if (node->open && node->collapsable) {
+		node->open = false;
 		Redraw();
 	}
 }
 
-void TreeView::ActionToggleCollapsed(void)
+void TreeView::Expand(const NodeReference node)
 {
-	if ((*focus_node).collapsable) {
-		(*focus_node).open = !(*focus_node).open;
+	if (!(*node).open && (*node).collapsable) {
+		(*node).open = true;
 		Redraw();
 	}
+}
+
+void TreeView::ToggleCollapsed(const NodeReference node)
+{
+	if ((*node).collapsable) {
+		(*node).open = !(*node).open;
+		Redraw();
+	}
+}
+
+void TreeView::ActionCollapse(void)
+{
+	Collapse(focus_node);
 }
 
 void TreeView::ActionExpand(void)
 {
-	if (!(*focus_node).open && (*focus_node).collapsable) {
-		(*focus_node).open = true;
-		Redraw();
-	}
+	Expand(focus_node);
+}
+
+void TreeView::ActionToggleCollapsed(void)
+{
+	ToggleCollapsed(focus_node);
 }
 
 const TreeView::NodeReference TreeView::AddNode(const NodeReference &parent, Widget *widget, void *data)

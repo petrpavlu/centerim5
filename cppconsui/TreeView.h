@@ -77,9 +77,12 @@ class TreeView
 		virtual bool StealFocus(void);
 
 		/* Actions for keybindings */
+		void Collapse(const NodeReference node);
 		void ActionCollapse(void);
-		void ActionToggleCollapsed(void);
+		void Expand(const NodeReference node);
 		void ActionExpand(void);
+		void ToggleCollapsed(const NodeReference node);
+		void ActionToggleCollapsed(void);
 
 		const NodeReference Root(void)
 			{ return thetree.begin(); }
@@ -122,6 +125,7 @@ class TreeView
 
 		TreeView& operator=(const TreeView&);
 		
+		/* Handlers of signals */
 		void OnChildRedraw(Widget *widget);
 		void OnChildResize(Widget *widget, Rect &oldsize, Rect &newsize);
 		void OnChildFocus(Widget* widget, bool focus);
