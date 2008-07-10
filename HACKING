@@ -4,7 +4,8 @@ How to get this version to work after compiling?
 
 Make sure you run in a terminal of at least 139 by 56 cells. No
 automatic resizing is implemented yet and this just happens
-to be the size of my terminal window i develop in.
+to be the size of my terminal window i develop in. Also make
+sure you run in an utf-8 locale.
 
 If you dont like this the open ~/.centerim/prefs.xml and look
 for `dimensions'. Here you can change the position and
