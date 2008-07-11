@@ -65,7 +65,7 @@ AccountWindow::AccountWindow()
 
 	Populate();
 
-	SetInputChild(accounts);
+	menu->GrabFocus();
 }
 
 AccountWindow::~AccountWindow()
