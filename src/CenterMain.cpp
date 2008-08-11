@@ -18,7 +18,7 @@
  *
  * */
 
-#include <config.h>
+#include <gettext.h>
 #include <locale.h>
 
 #include "CenterMain.h"
