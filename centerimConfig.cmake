@@ -9,7 +9,6 @@ set( CENTERIM_PO_DIR ${CMAKE_CURRENT_SOURCE_DIR}/po )
 
 set( GIT_VERSION 5-devel ) # If built from a git repo, set this with describe 
 
-set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true )
 set( GetText_REQUIRED true )
 
 set(CMAKE_BUILD_TYPE RELEASE)
