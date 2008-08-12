@@ -9,7 +9,7 @@ set( CENTERIM_PO_DIR ${CMAKE_CURRENT_SOURCE_DIR}/po )
 
 set( GIT_VERSION 5-devel ) # If built from a git repo, set this with describe 
 
-set( GetText_REQUIRED true )
+#set( GetText_REQUIRED true )
 
 set(CMAKE_BUILD_TYPE RELEASE)
 
@@ -45,7 +45,7 @@ a_find_library( LIB_NCURSES ncursesw )
 # }}}
 
 # {{{ Find for packages
-find_package( Gettext REQUIRED )
+#find_package( Gettext REQUIRED )
 # }}}
 
 # {{{ Find for headers
@@ -59,7 +59,7 @@ if( NOT GETTEXT_INCLUDE_DIR )
 endif()
 # }}}
 
-GETTEXT_CREATE_TRANSLATIONS( ${CENTERIM_PO_DIR}/POTFILES.in en_EN )
+#GETTEXT_CREATE_TRANSLATIONS( ${CENTERIM_PO_DIR}/POTFILES.in en_EN )
 
 # {{{ Check for required modules to build centerim
 pkg_check_modules( CENTERIM_REQUIRED REQUIRED
