@@ -1,17 +1,15 @@
-include(FindPkgConfig)
-include(CheckIncludeFiles)
-
 # {{{ Variable configuration
 set(CENTERIM_PROJECT_NAME centerim)
 set(CENTERIM_CPPCONSUI_PROJECT_NAME cppconsui)
 set(CENTERIM_SRCS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(CENTERIM_CPPCONSUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cppconsui)
 set(CENTERIM_PO_DIR ${CMAKE_CURRENT_SOURCE_DIR}/po)
-set(CENTERIM_CONFIG_FILENAME config.h)
 
 set(GIT_VERSION 5-devel) # If built from a git repo, set this with describe 
 
 set(CMAKE_BUILD_TYPE RELEASE)
+
+include(FindPkgConfig)
 
 # {{{ Find external utilities
 macro(a_find_program var prg req)
@@ -38,35 +36,56 @@ macro(a_find_library variable library)
 endmacro()
 # }}}
 
-# {{{ Check if header found
-macro(a_check_header header)
-    if(NOT ${header})
-        message( FATAL_ERROR ${header} " header not found.")
-    endif()
-endmacro()    
-# }}}
-
 # {{{ Find for executables
 a_find_program(GIT_EXECUTABLE git FALSE)
 # }}}
 
-# {{{ Find for libraries
-a_find_library(LIB_NCURSES ncursesw)
+# {{{ Find curses/ncurses(w) libraries
+find_library(NCURSESW_LIB NAMES ncursesw)
+find_library(CURSESW_LIB NAMES cursesw)
+find_library(NCURSES_LIB NAMES ncurses)
+find_library(CURSES_LIB NAMES curses)
 # }}}
 
-# {{{ Checking for system headers
-set(CMAKE_REQUIRED_INCLUDES /usr/share/gettext)
-
-CHECK_INCLUDE_FILES(curses.h RENAMED_NCURSES)
-CHECK_INCLUDE_FILES(ncurses.h USE_NCURSES)
-CHECK_INCLUDE_FILES(gettext.h GETTEXT_H)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${CENTERIM_CONFIG_FILENAME}.in 
-    ${CMAKE_CURRENT_BINARY_DIR}/${CENTERIM_CONFIG_FILENAME})
+# {{{ Find curses/ncurses(w) header path
+find_path(NCURSESW_H NAMES ncursesw.h)
+find_path(CURSESW_H NAMES cursesw.h)
+find_path(NCURSES_H NAMES ncurses.h)
+find_path(CURSES_H NAMES curses.h)
 # }}}
 
-# {{{ Check found headers
-a_check_header(RENAMED_NCURSES OR USE_NCURSES)
-a_check_header(GETTEXT_H)
+# {{{ Find the good curses/ncurses(w) lib/header match
+if(NCURSESW_LIB AND NCURSESW_H)
+    set(CURSES_LINK_LIB ${NCURSESW_LIB})
+    set(CURSES_INCLUDE_DIR ${NCURSESW_H})
+    add_definitions(-DUSE_NCURSES)
+elseif(NCURSESW_LIB AND NCURSES_H)
+    set(CURSES_LINK_LIB ${NCURSESW_LIB})
+    set(CURSES_INCLUDE_DIR ${NCURSES_H})
+    add_definitions(-DUSE_NCURSES)
+elseif(CURSESW_LIB AND CURSESW_H)
+    set(CURSES_LINK_LIB ${CURSESW_LIB})
+    set(CURSES_INCLUDE_DIR ${CURSESW_H})
+elseif(CURSESW_LIB AND CURSES_H) #Can this case happen?
+    set(CURSES_LINK_LIB ${CURSESW_LIB})
+    set(CURSES_INCLUDE_DIR ${CURSES_H})
+elseif(NCURSES_LIB AND NCURSES_H)
+    set(CURSES_LINK_LIB ${NCURSES_LIB})
+    set(CURSES_INCLUDE_DIR ${NCURSES_H})
+    add_definitions(-DUSE_NCURSES)
+elseif(CURSES_LIB AND CURSES_H)
+    set(CURSES_LINK_LIB ${CURSES_LIB})
+    set(CURSES_INCLUDE_DIR ${CURSES_H})
+else()
+    message(FATAL_ERROR "curses/ncurses(w) not found.")
+endif()
+# }}}
+
+# {{{ Find gettext header path
+find_path(GETTEXT_INCLUDE_DIR
+    NAMES gettext.h
+    PATHS /usr/share
+          /usr/share/gettext)
 # }}}
 
 # {{{ Check for required modules to build centerim
@@ -97,7 +116,8 @@ set(CENTERIM_INCLUDE_DIR ${CENTERIM_REQUIRED_INCLUDE_DIRS}
     ${GETTEXT_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR} 
     ${CMAKE_CURRENT_BINARY_DIR}
-    ${CMAKE_REQUIRED_INCLUDES})
+    ${CURSES_INCLUDE_DIR}
+    ${GETTEXT_INCLUDE_DIR})
 
 include_directories(${CENTERIM_INCLUDE_DIR})
 

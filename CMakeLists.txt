@@ -74,8 +74,8 @@ add_executable( ${CENTERIM_PROJECT_NAME} ${CENTERIM_SRCS} )
 add_dependencies( ${CENTERIM_PROJECT_NAME} ${CENTERIM_CPPCONSUI_PROJECT_NAME} )
 
 # Link centerim with the required modules
-target_link_libraries( ${CENTERIM_PROJECT_NAME} ${CENTERIM_REQUIRED_LIBRARIES} 
+target_link_libraries( ${CENTERIM_PROJECT_NAME} 
+    ${CENTERIM_REQUIRED_LIBRARIES} 
     ${CENTERIM_CPPCONSUI_PROJECT_NAME}
-    ${LIB_NCURSES}
-    )
+    ${CURSES_LINK_LIB})
 

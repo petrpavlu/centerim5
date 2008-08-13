@@ -1,2 +1,0 @@
-#cmakedefine USE_NCURSES 1 
-#cmakedefine RENAMED_NCURSES 1
