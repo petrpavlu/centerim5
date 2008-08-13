@@ -40,7 +40,6 @@ TAGS
 /config/depcomp
 /config.cache
 /config.h
-/config.h.in
 /config/install-sh
 /config.log
 /config/ltmain.sh

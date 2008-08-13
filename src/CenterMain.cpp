@@ -21,6 +21,8 @@
 #include <gettext.h>
 #include <locale.h>
 
+#include "config.h"
+
 #include "CenterMain.h"
 
 #include "CenterIM.h"
