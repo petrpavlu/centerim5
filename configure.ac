@@ -26,12 +26,45 @@ AM_GNU_GETTEXT_VERSION([0.16.1])
 #########################
 
 # libpurple
-PKG_CHECK_MODULES(PURPLE, [purple >= 0.21], , [
-        AC_MSG_RESULT(no)
-	AC_MSG_ERROR([
+#PKG_CHECK_MODULES(PURPLE, [purple >= 0.21], , [
+#        AC_MSG_RESULT(no)
+#	AC_MSG_ERROR([
+#
+#You must have the libpurple development headers installed to build.
+#])])
 
-You must have the libpurple development headers installed to build.
-])])
+AC_ARG_WITH(libpurple,
+	AC_HELP_STRING([--with-libpurple=DIR],[look for the purple library in DIR]),
+	[with_libpurple=$withval],[with_libpurple="no"])
+
+if test "x$with_libpurple" != "xno" ; then
+
+        AC_MSG_CHECKING(for libpurple)
+        if test -z "$with_libpurple" -o "x$with_libpurple" = "xyes"; then
+                for ac_dir in $with_libpurple /usr/local /usr; do
+                        if test -f "$ac_dir/include/libpurple/account.h"; then
+                                with_libpurple=$ac_dir
+                                break;
+                        fi
+                done
+        fi
+
+        if test -n "$with_libpurple" -a "x$with_libpurple" != "xno"; then
+                AC_MSG_RESULT([found in $with_libpurple])
+                PURPLE_CFLAGS="-I${with_libpurple}include"
+		PURPLE_LIBS="-L${with_libpurple}lib -lpurple"
+		PURPLE_DATADIR="${with_libpurple}share"
+		PURPLE_LIBDIR="${with_libpurple}lib"
+		ac_configure_args="$ac_configure_args  --with-libpurple=$with_libpurple"
+        else
+		AC_MSG_RESULT(no)
+		echo No libpurple found in $with_libpurple, /usr/local or /usr;
+        fi
+
+else
+	AM_PATH_PURPLE([2.4.0])
+fi
+
 AC_SUBST(PURPLE_CFLAGS)
 AC_SUBST(PURPLE_LIBS)
 
