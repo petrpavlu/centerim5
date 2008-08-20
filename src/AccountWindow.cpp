@@ -85,6 +85,7 @@ void AccountWindow::Add(void)
 	PopulateAccount(account);
 }
 
+//TODO move to Accounts class
 void AccountWindow::DropAccount(PurpleAccount *account)
 {
 	WindowManager *wm = WindowManager::Instance();
@@ -96,6 +97,7 @@ void AccountWindow::DropAccount(PurpleAccount *account)
 	wm->Add(dialog);
 }
 
+//TODO move to Accounts.cpp
 void AccountWindow::DropAccountResponseHandler(Dialog::ResponseType response, PurpleAccount *account)
 {
 	switch (response) {
@@ -109,7 +111,6 @@ void AccountWindow::DropAccountResponseHandler(Dialog::ResponseType response, Pu
 		default:
 			break;
 	}
-
 }
 
 void AccountWindow::MoveFocus(FocusDirection direction)
@@ -204,6 +205,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 	Widget *widget;
 	ComboBox *combobox;
 
+	//TODO segfaults if no prpl's loaded
 	prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(account)));
 
 	if (account_entries.find(account) == account_entries.end()) {

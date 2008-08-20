@@ -46,10 +46,11 @@ void Accounts::Delete(void)
 	}
 }
 
+//TODO move inside accounts class and make callbacks private
 static PurpleAccountUiOps centerim_accounts_ui_ops =
 {
 	NULL, //TODO BuddyList::notify_added_,
-	NULL, //Accounts::status_changed_,
+	Accounts::status_changed_,
 	NULL, //BuddyList::request_add_,
 	NULL, //BuddyList::request_authorize_,
 	NULL, //BuddyList::close_account_request_,
@@ -71,6 +72,15 @@ Accounts::Accounts()
 	/* setup the callbacks for the buddylist */
 	purple_accounts_set_ui_ops(&centerim_accounts_ui_ops);
 
+	/*TODO always set all accounts enabled
+	GList *i;
+	PurpleAccount *account;
+
+	for (i = purple_accounts_get_all(); i; i = i->next) {
+		account = (PurpleAccount*)i->data;
+		PopulateAccount(account);
+	}*/
+
 	/* if the statuses are not known, set them all
 	 * to the default */
 	if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
@@ -91,8 +101,33 @@ void Accounts::signed_on_(PurpleConnection *gc, gpointer p)
 	accounts->signed_on(gc);
 }
 
+void Accounts::status_changed_(PurpleAccount *account, PurpleStatus *status)
+{
+	Accounts::Instance()->status_changed(account, status);
+}
+
 void Accounts::signed_on(PurpleConnection *gc)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	log->Write(Log::Type_cim, Log::Level_info, _("+ [%s] Logged in: %s\n"), account->protocol_id, account->username);
+	log->Write(Log::Type_cim,
+		Log::Level_info,
+		_("+ [%s] Logged in: %s\n"),
+		account->protocol_id,
+		account->username);
+}
+
+void Accounts::status_changed(PurpleAccount *account, PurpleStatus *status)
+{
+	log->Write(Log::Type_cim,
+		Log::Level_info,
+		_("+ [%s] Status changed to: %s\n"),
+		account->protocol_id,
+		purple_status_get_name(status));
+}
+
+void Accounts::SetStatus(PurpleAccount *account, PurpleStatusType *status_type, bool active)
+{
+	purple_account_set_status(account,
+			purple_status_type_get_id(status_type),
+			active, NULL);
 }

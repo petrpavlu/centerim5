@@ -24,6 +24,7 @@
 #include "Log.h"
 
 #include <libpurple/connection.h>
+#include <libpurple/savedstatuses.h>
 
 class Accounts
 {
@@ -31,6 +32,10 @@ class Accounts
 		static Accounts* Instance(void);
 		static void Delete(void);
 
+		void SetStatus(PurpleAccount *account, PurpleStatusType *status_type, bool active);
+
+		static void status_changed_(PurpleAccount *account, PurpleStatus *status);
+		void status_changed(PurpleAccount *account, PurpleStatus *status);
 	protected:
 
 	private:
@@ -42,6 +47,7 @@ class Accounts
 		/* callbacks */
 		static void signed_on_(PurpleConnection *gc, gpointer p);
 		void signed_on(PurpleConnection *gc);
+
 
 		Log *log;
 
