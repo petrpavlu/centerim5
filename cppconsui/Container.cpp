@@ -33,6 +33,7 @@
 //connect to signals
 //this also means making the children vector
 //private (protected?>
+//TODO dont accept focus when we have no focusable widgets
 
 Container::Container(Widget& parent, const int x, const int y, const int w, const int h)
 : Widget(parent, x, y, w, h)
