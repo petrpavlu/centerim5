@@ -64,5 +64,5 @@ libcppconsui_la_SOURCES =\
 	CppConsUI.cpp \
 	CppConsUI.h
 
-libcppconsui_la_CPPFLAGS = $(GLIBMM_CFLAGS) $(NCURSESW_CFLAGS)
-libcppconsui_la_LIBADD = $(GLIBMM_LIBS) $(NCURSESW_LIBS)
+libcppconsui_la_CPPFLAGS = $(GLIBMM_CFLAGS) $(CURSES_INCLUDEDIR)
+libcppconsui_la_LIBADD = $(GLIBMM_LIBS) $(CURSES_LIBS)

@@ -96,10 +96,21 @@ AC_PATH_LIB(ncursesw, , ncurses.h, ncursesw5-config, , , [
     ])
 
 # we need -lpanel along with ncursesw (maybe need to check it too  ? )
-NCURSESW_LIBS="$NCURSESW_LIBS -lpanel"
+#NCURSESW_LIBS="$NCURSESW_LIBS -lpanel"
 
-AC_SUBST(NCURSESW_LIBS)
-AC_SUBST(NCURSESW_CFLAGS)
+#AC_SUBST(NCURSESW_LIBS)
+#AC_SUBST(NCURSESW_CFLAGS)
+
+CURSES_LIBS=$NCURSESW_LIBS
+CURSES_LIBDIR=$NCURSESW_CFLAGS
+has_curses=true
+AC_DEFINE(HAS_CURSES, 1, [Do we have curses?])
+
+AC_SUBST(CURSES_LIBS)
+AC_SUBST(CURSES_LIBDIR)
+
+#AC_CHECK_CURSES
+AM_CONDITIONAL(HAS_CURSES, test "$has_curses" = true)
 
 ############################
 # Checks for header files. #
