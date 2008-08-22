@@ -78,7 +78,7 @@ Accounts::Accounts()
 
 	for (i = purple_accounts_get_all(); i; i = i->next) {
 		account = (PurpleAccount*)i->data;
-		PopulateAccount(account);
+		purple_account_set_enabled(account, "centerim" , true);
 	}*/
 
 	/* if the statuses are not known, set them all
