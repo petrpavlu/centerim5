@@ -39,6 +39,7 @@ BuddyListNode::BuddyListNode(TreeView& parent, PurpleBlistNode *node)
 
 BuddyListNode::~BuddyListNode()
 {
+	node->ui_data = NULL;
 }
 
 void BuddyListNode::Draw(void)
