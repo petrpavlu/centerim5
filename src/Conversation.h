@@ -29,6 +29,7 @@
 #include <cppconsui/TextBrowser.h>
 #include <cppconsui/TextInput.h>
 #include <cppconsui/LineStyle.h>
+#include <cppconsui/HorizontalLine.h>
 
 #include <libpurple/conversation.h>
 #include <libpurple/blist.h>
@@ -50,8 +51,6 @@ class Conversation
 		virtual void Send(void);
 		virtual void Close(void);
 
-		virtual void Draw(void);
-
 	protected:
 		virtual void CreatePurpleConv(void);
 
@@ -65,6 +64,7 @@ class Conversation
 		Conf *conf;
 		TextBrowser *browser;
 		TextInput *input;
+		HorizontalLine *line;
 		
 		int browserheight;
 		PurpleConversation *conv;

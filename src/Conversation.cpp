@@ -25,6 +25,7 @@
 
 #include "Conversation.h"
 
+#include <cppconsui/HorizontalLine.h>
 #include <cppconsui/TextBrowser.h>
 #include <cppconsui/LineStyle.h>
 #include <cppconsui/Keys.h>
@@ -45,10 +46,12 @@ Conversation::Conversation(PurpleBlistNode* node)
 
 	browser = new TextBrowser(*this, 2, 1, w-4, h-2);
 	input = new TextInput(*this, 2, 1, w-4, h-2);
+	line = new HorizontalLine(*this, linestyle, 1, browserheight, w-2);
 	SetPartitioning(conf->GetChatPartitioning());
 
 	AddWidget(browser);
 	AddWidget(input);
+	AddWidget(line);
 	SetInputChild(input);
 
 	DeclareBindable(context, "send",  sigc::mem_fun(this, &Conversation::Send),
@@ -56,18 +59,6 @@ Conversation::Conversation(PurpleBlistNode* node)
 
 	//TODO get real binding from config
 	BindAction(context, "send", Keys::Instance()->Key_ctrl_x(), false);
-}
-
-void Conversation::Draw(void)
-{
-	//TODO draw the seperator line using a line widget
-	mvwadd_wch(area->w, browserheight, 0, linestyle->HBegin());
-	for (int i = 1; i+1 < w; i++) {
-		mvwadd_wch(area->w, browserheight, i, linestyle->H());
-	}
-	mvwadd_wch(area->w, browserheight, w-1, linestyle->HEnd());
-
-	Window::Draw();
 }
 
 Conversation::~Conversation()
@@ -137,6 +128,7 @@ void Conversation::SetPartitioning(unsigned int percentage)
 
 	browser->Resize(w-4, browserheight-2);
 	input->MoveResize(1, browserheight+1, w-4, inputheight);
+	line->Move(1, browserheight);
 }
 
 //TODO if this remains empty, make it a pure virtual function
