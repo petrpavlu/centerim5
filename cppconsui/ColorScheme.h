@@ -51,7 +51,7 @@ class ColorScheme
 		void GetColorType(ColorType type);
 
 	protected:
-		int schemes[Disabled];
+		int schemes[Disabled+1];
 
 	private:
 		ColorScheme(const ColorScheme&);
