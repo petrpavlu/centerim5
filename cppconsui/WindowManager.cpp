@@ -42,6 +42,7 @@ WindowManager* WindowManager::Instance(void)
 WindowManager::WindowManager(void)
 : defaultwindow(NULL)
 , redrawpending(false)
+, resizepending(false)
 {
 	const gchar *context = "windowmanager";
 	defaultwindow = initscr();
@@ -96,6 +97,7 @@ void WindowManager::Add(Window *window)
 	if (!HasWindow(window)) {
 		info.window = window;
 		info.redraw = window->signal_redraw.connect(sigc::mem_fun(this, &WindowManager::WindowRedraw));
+		info.resize = this->signal_resize.connect(sigc::mem_fun(window, &Window::ScreenResized));
 		windows.insert(windows.begin(), info);
 	}
 
@@ -118,6 +120,7 @@ void WindowManager::Remove(Window *window)
 	info = *i;
 
 	info.redraw.disconnect();
+	info.resize.disconnect();
 	windows.erase(i);
 
 	werase(info.window->GetWindow());
@@ -220,4 +223,27 @@ void WindowManager::Redraw(void)
 void WindowManager::WindowRedraw(Widget *widget)
 {
 	Redraw();
+}
+
+bool WindowManager::Resize(void)
+{
+	if (resizepending) {
+		// save new screen size
+		screenW = RealScreenWidth();
+		screenH = RealScreenHeight();
+
+		signal_resize();
+
+		resizepending = false;
+	}
+
+	return false;
+}
+
+void WindowManager::ScreenResized(void)
+{
+	if (!resizepending) {
+		resizepending = true;
+		Glib::signal_timeout().connect(sigc::mem_fun(this, &WindowManager::Resize), 0);
+	}
 }

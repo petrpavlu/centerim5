@@ -48,10 +48,14 @@ class WindowManager
 
 		bool Draw(void);
 
+		void ScreenResized(void);
+		bool Resize(void);
+
 	protected:
 		typedef struct {
 			Window* window;
 			sigc::connection redraw;
+			sigc::connection resize;
 		} WindowInfo;
 		typedef std::vector<WindowInfo> Windows;
 
@@ -65,6 +69,8 @@ class WindowManager
 
 		Windows windows;
 		WINDOW *defaultwindow;
+		sigc::signal<void> signal_resize;
+		int screenW, screenH;
 
 	private:
 		WindowManager(void);
@@ -77,6 +83,7 @@ class WindowManager
 		static WindowManager *instance;
 	
 		bool redrawpending;
+		bool resizepending;
 };
 
 #endif /* __WINDOWMANAGER_H__ */

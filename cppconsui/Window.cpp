@@ -210,3 +210,8 @@ void Window::Hide()
 	//TODO emit signal to hide window
 	//(while keeping stacking order)
 }
+
+void Window::ScreenResized()
+{
+	// TODO: handle resize/reposition of child widgets/windows
+}

@@ -65,6 +65,8 @@ class Window
 		virtual void Show();
 		virtual void Hide();
 
+		virtual void ScreenResized();
+		
 		sigc::signal<void, Window*> signal_close;
 		//sigc::signal<void, Window*> signal_show;
 		//sigc::signal<void, Window*> signal_hide;

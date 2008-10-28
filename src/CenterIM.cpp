@@ -42,8 +42,10 @@
 #include <libpurple/debug.h>
 #include <libpurple/savedstatuses.h>
 #include <glibmm/main.h>
+#include <signal.h>
 
 #include <libintl.h>
+
 
 //TODO move inside CenterIM object
 static PurpleDebugUiOps logbuf_debug_ui_ops =
@@ -58,6 +60,13 @@ static PurpleDebugUiOps logbuf_debug_ui_ops =
 
 CenterIM* CenterIM::instance = NULL;
 std::vector<CenterIM::logbuf_item>* CenterIM::logbuf = NULL;
+
+void signal_handler(int signum)
+{
+	if (signum == SIGWINCH)
+		CenterIM::Instance()->ScreenResized();
+}
+
 
 CenterIM* CenterIM::Instance()
 {
@@ -75,12 +84,20 @@ void CenterIM::Delete(void)
 
 void CenterIM::Run(void)
 {
+  register_resize_handler();
   gmainloop->run();
 }
 
 void CenterIM::Quit(void)
 {
+  unregister_resize_handler();
   gmainloop->quit();
+}
+
+void CenterIM::ScreenResized(void)
+{
+	log->Write(Log::Type_cim, Log::Level_debug, "CenterIM::ScreenResized()");
+	windowmanager->ScreenResized();
 }
 
 //TODO: move next two static structs inside the CenterIM object
@@ -169,6 +186,16 @@ CenterIM::~CenterIM()
 	purple_core_quit();
 	log->Delete();
 	windowmanager->Delete();
+}
+
+void CenterIM::register_resize_handler(void)
+{
+	signal(SIGWINCH, &signal_handler);
+}
+
+void CenterIM::unregister_resize_handler(void)
+{
+	signal(SIGWINCH, SIG_DFL);
 }
 
 void CenterIM::ui_prefs_init(void)

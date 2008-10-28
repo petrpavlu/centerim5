@@ -45,6 +45,7 @@ class CenterIM
 		static void Delete(void);
 		void Run(void);
 		void Quit(void);
+		void ScreenResized(void);
 
 		void SetLocale(const char *locale)
 			{ this->locale = locale; }
@@ -99,6 +100,9 @@ class CenterIM
 	private:
 		CenterIM();
 		~CenterIM();
+
+		void register_resize_handler(void);
+		void unregister_resize_handler(void);
 
 		static CenterIM* instance;
 
