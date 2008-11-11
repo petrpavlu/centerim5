@@ -46,8 +46,8 @@ Window::Window(int x, int y, int w, int h, Border *border)
 	if (win_w < 1) win_w = 1;
 	if (win_h < 1) win_h = 1;
 
-	UpdateArea();
 	MakeRealWindow();
+	UpdateArea();
 
 	if (border) {
 		border->Resize(win_w, win_h);
@@ -101,8 +101,8 @@ void Window::Resize(int neww, int newh)
 	if (win_w < 1) win_w = 1;
 	if (win_h < 1) win_h = 1;
 
-	UpdateArea();
 	MakeRealWindow();
+	UpdateArea();
 
 	if (border) {
 		border->Resize(win_w, win_h);
