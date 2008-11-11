@@ -31,6 +31,8 @@
 #include "Log.h"
 #include "Conf.h"
 
+#include "CIMWindowManager.h"
+
 //TODO remove this include. non-cppconsui classes may not touch area member
 #include <cppconsui/Curses.h>
 
@@ -93,8 +95,6 @@ BuddyList::BuddyList()
 	log = Log::Instance();
 	conf = Conf::Instance();
 
-	MoveResize(conf->GetBuddyListDimensions());
-
 	//TODO check if this has been moved to purple_blist_init
 	//renove these lines if it was
 	//as this will probably move to purple_init, the buddylist 
@@ -115,6 +115,8 @@ BuddyList::BuddyList()
 	AddWidget(border);
 	AddWidget(treeview);
 	SetInputChild(treeview);
+
+	MoveResize(conf->GetBuddyListDimensions());
 }
 
 bool BuddyList::Load(void)
@@ -234,4 +236,26 @@ void BuddyList::remove_node(PurpleBuddyList *list, PurpleBlistNode *node)
 
 void BuddyList::destroy_list(PurpleBuddyList *list)
 {
+}
+
+void BuddyList::Resize(int neww, int newh)
+{
+	/* Let parent's Resize() renew data structures (including
+	 * the area's of child widgets which will thus be done
+	 * twice)
+	 * */
+	Window::Resize(neww, newh);
+
+	/* resize all our widgets, in this case its only one widget
+	 * here, w and h are the size of the container, which is 
+	 * what we want. in most cases you would need to recalculate
+	 * widget sizes based on window and/or container size.
+	 * */
+	border->Resize(neww, newh);
+	treeview->Resize(neww-2, newh-2);
+}
+
+void BuddyList::ScreenResized()
+{
+	MoveResize((CIMWindowManager::Instance())->ScreenAreaSize(CIMWindowManager::BuddyList));
 }

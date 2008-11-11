@@ -29,13 +29,13 @@
 #include "Log.h"
 #include "Conf.h"
 
-#include <cppconsui/WindowManager.h>
+#include "CIMWindowManager.h"
+
 #include <cppconsui/Keys.h>
 #include <cppconsui/InputProcessor.h>
 
 #include <glibmm/main.h>
 #include <vector>
-
 
 class CenterIM
 : public InputProcessor
@@ -111,7 +111,7 @@ class CenterIM
 
 		GIOChannel *channel;
 		guint channel_id;
-		WindowManager *windowmanager;
+		CIMWindowManager *windowmanager;
 		Accounts *accounts;
 		Connections *connections;
 		BuddyList *buddylist;

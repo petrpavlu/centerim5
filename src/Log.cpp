@@ -22,6 +22,8 @@
 
 #include "Conf.h"
 
+#include "CIMWindowManager.h"
+
 #include <cppconsui/CppConsUI.h>
 #include <cppconsui/TextWindow.h>
 #include <cppconsui/WindowManager.h>
@@ -103,7 +105,7 @@ void Log::Write(Log::Type type, Log::Level level, const char *fmt, ...)
 	char buf[1024]; //TODO lets hope this is enough!
 
 	va_start(args, fmt);
-	vsprintf(buf, fmt, args);
+	vsnprintf(buf, 1023, fmt, args);
 	va_end(args);
 
 	Write(type, level, std::string(buf));
@@ -240,4 +242,9 @@ void Log::glib_printerr(const char *msg)
 	text.append(msg);
 	//TODO other level more approriate?
 	Write(Log::Type_glib, Log::Level_debug, text);
+}
+
+void Log::ScreenResized()
+{
+	MoveResize((CIMWindowManager::Instance())->ScreenAreaSize(CIMWindowManager::Log));
 }

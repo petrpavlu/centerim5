@@ -39,6 +39,8 @@ class BuddyList
 		static void Delete(void);
 
 		void Close(void);
+		virtual void Resize(int neww, int newh);
+
 
 		static void new_list_(PurpleBuddyList *list)
 			{ BuddyList::Instance()->new_list(list); }
@@ -62,6 +64,8 @@ class BuddyList
 		void update_node(PurpleBuddyList *list, PurpleBlistNode *node);
 		void remove_node(PurpleBuddyList *list, PurpleBlistNode *node);
 		void destroy_list(PurpleBuddyList *list);
+		
+		virtual void ScreenResized();
 	
 	protected:
 

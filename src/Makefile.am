@@ -19,6 +19,8 @@ centerim_SOURCES = \
 	CenterIM.h \
 	CenterMain.cpp \
 	CenterMain.h \
+	CIMWindowManager.cpp \
+	CIMWindowManager.h \
 	Conf.cpp \
 	Conf.h \
 	Connections.cpp \

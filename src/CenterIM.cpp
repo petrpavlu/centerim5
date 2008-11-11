@@ -32,7 +32,7 @@
 #include "AccountStatusMenu.h"
 #include "GeneralMenu.h"
 
-#include <cppconsui/WindowManager.h>
+#include "CIMWindowManager.h"
 
 #include <libpurple/prefs.h>
 #include <libpurple/core.h>
@@ -45,7 +45,7 @@
 #include <signal.h>
 
 #include <libintl.h>
-
+#include <sys/ioctl.h>
 
 //TODO move inside CenterIM object
 static PurpleDebugUiOps logbuf_debug_ui_ops =
@@ -61,10 +61,21 @@ static PurpleDebugUiOps logbuf_debug_ui_ops =
 CenterIM* CenterIM::instance = NULL;
 std::vector<CenterIM::logbuf_item>* CenterIM::logbuf = NULL;
 
+typedef void (*signal_t)(int);
+signal_t old_handler = NULL;
+
 void signal_handler(int signum)
 {
+	struct winsize size;
+
 	if (signum == SIGWINCH)
-		CenterIM::Instance()->ScreenResized();
+	{
+		if(ioctl(fileno(stdout), TIOCGWINSZ, &size) == 0) {
+			resizeterm(size.ws_row, size.ws_col);
+			wrefresh(curscr);
+			CenterIM::Instance()->ScreenResized();
+		}
+	}
 }
 
 
@@ -169,7 +180,7 @@ CenterIM::CenterIM()
 	 * a CenterIM object for them we have to call them
 	 * manually after the core has been initialized
 	 * */
-	windowmanager = WindowManager::Instance();
+	windowmanager = CIMWindowManager::Instance();
 	ui_prefs_init();
 	debug_ui_init();
 	ui_init();
@@ -190,12 +201,13 @@ CenterIM::~CenterIM()
 
 void CenterIM::register_resize_handler(void)
 {
-	signal(SIGWINCH, &signal_handler);
+	old_handler = signal(SIGWINCH, &signal_handler);
 }
 
 void CenterIM::unregister_resize_handler(void)
 {
-	signal(SIGWINCH, SIG_DFL);
+	signal(SIGWINCH, old_handler);
+	old_handler = SIG_DFL;
 }
 
 void CenterIM::ui_prefs_init(void)
@@ -442,6 +454,7 @@ gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 	{
 	buf[rd] = '\0'; //TODO remove all this debug stuff
 	gunichar uc = g_utf8_get_char(buf);
+	if (rd>2)
 	log->Write(Log::Type_cim, Log::Level_debug, "input: %s (%02x %02x %02x) %d utf8? %d uc: %d %s (%02x %02x %02x)", buf, buf[0], buf[1], buf[2],
 		rd, g_utf8_validate(buf, rd, NULL), uc, key_up, key_up[0], key_up[1], key_up[2]); //TODO remove
 	}

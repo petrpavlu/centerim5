@@ -76,6 +76,8 @@ class Log
 		void glib_print(const char *msg);
 		void glib_printerr(const char *msg);
 
+		virtual void ScreenResized();
+
 	protected:
 
 	private:

@@ -72,18 +72,18 @@ class WindowManager
 		sigc::signal<void> signal_resize;
 		int screenW, screenH;
 
-	private:
+		bool redrawpending;
+		bool resizepending;
+
 		WindowManager(void);
 		WindowManager(const WindowManager&);
 
 		WindowManager& operator=(const WindowManager&);
 
+	private:
 		bool CloseWindowCallback(Window *window);
 
 		static WindowManager *instance;
-	
-		bool redrawpending;
-		bool resizepending;
 };
 
 #endif /* __WINDOWMANAGER_H__ */
