@@ -248,6 +248,7 @@ void CenterIM::ui_init(void)
 	connections = new Connections();
 	conversations = Conversations::Instance();
 	transfers = new Transfers();
+	ScreenResized();
 }
 
 void CenterIM::ui_uninit(void)

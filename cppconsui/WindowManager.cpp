@@ -45,7 +45,7 @@ WindowManager::WindowManager(void)
 , resizepending(false)
 {
 	const gchar *context = "windowmanager";
-	use_env(0);
+
 	defaultwindow = initscr();
 	start_color(); //TODO do something with the return value.
 
