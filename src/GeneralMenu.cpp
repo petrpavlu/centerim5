@@ -20,6 +20,7 @@
 
 #include "GeneralMenu.h"
 #include "AccountWindow.h"
+#include "CIMWindowManager.h"
 
 //TODO remove testing stuff
 #include <cppconsui/MessageDialog.h>
@@ -76,4 +77,10 @@ void GeneralMenu::OpenAccountsWindow(void)
 	WindowManager *wm = WindowManager::Instance();
 	wm->Add(new AccountWindow());
 	Close();
+}
+
+void GeneralMenu::ScreenResized()
+{
+	Rect chat = (CIMWindowManager::Instance())->ScreenAreaSize(CIMWindowManager::Chat);
+	Move(chat.x, chat.y);
 }

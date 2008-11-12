@@ -31,6 +31,8 @@ class GeneralMenu
 		virtual ~GeneralMenu();
 
 		void Dummy(void) { ; } //TODO remove
+
+		virtual void ScreenResized();
 	protected:
 
 	private:

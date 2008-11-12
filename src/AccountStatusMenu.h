@@ -38,6 +38,8 @@ class AccountStatusMenu
 		virtual ~AccountStatusMenu();
 
 		void Dummy(void) { ; } //TODO remove
+
+		virtual void ScreenResized();
 	protected:
 
 	private:

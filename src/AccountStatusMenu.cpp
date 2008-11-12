@@ -19,6 +19,7 @@
  * */
 
 #include "AccountStatusMenu.h"
+#include "CIMWindowManager.h"
 
 #include <cppconsui/Label.h>
 #include <cppconsui/HorizontalLine.h>
@@ -184,3 +185,9 @@ void AccountStatusMenu::StatusPopup::SetStatusPrimitive(PurpleAccount *account, 
 	accounts->SetStatus(account, primitive);
 	Close();
 }*/
+
+void AccountStatusMenu::ScreenResized()
+{
+	Rect chat = (CIMWindowManager::Instance())->ScreenAreaSize(CIMWindowManager::Chat);
+	Move(chat.x, chat.y);
+}

@@ -43,7 +43,7 @@ class WindowManager
 
 		void CloseWindow(Window *window);
 
-		void Add(Window *window);
+		virtual void Add(Window *window);
 		void Remove(Window *window);
 
 		bool Draw(void);

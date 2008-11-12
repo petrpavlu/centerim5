@@ -237,6 +237,7 @@ void CenterIM::debug_ui_init(void)
 
 void CenterIM::ui_init(void)
 {
+	ScreenResized();
 	//TODO when these objecs are windows, add them to the windowmanager
 	accounts = Accounts::Instance();
 //	windowmanager->Add(accounts = new Accounts());
@@ -248,7 +249,6 @@ void CenterIM::ui_init(void)
 	connections = new Connections();
 	conversations = Conversations::Instance();
 	transfers = new Transfers();
-	ScreenResized();
 }
 
 void CenterIM::ui_uninit(void)
