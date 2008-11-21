@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 # script shamelessly taken from openbox
 
 sh() {

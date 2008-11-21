@@ -62,7 +62,28 @@ libcppconsui_la_SOURCES =\
 	InputProcessor.cpp \
 	InputProcessor.h \
 	CppConsUI.cpp \
-	CppConsUI.h
+	CppConsUI.h \
+	TextBTree.cpp \
+	TextBTree.h \
+	TextBuffer.cpp \
+	TextBuffer.h \
+	TextChild.cpp \
+	TextChild.h \
+	TextIter.cpp \
+	TextIter.h \
+	TextLayout.cpp \
+	TextLayout.h \
+	TextMark.cpp \
+	TextMark.h \
+	TextSegment.cpp \
+	TextSegment.h \
+	TextTag.cpp \
+	TextTag.h \
+	TextTagTable.cpp \
+	TextTagTable.h \
+	TextTypes.cpp \
+	TextTypes.h
+
 
 libcppconsui_la_CPPFLAGS = $(GLIBMM_CFLAGS) $(CURSES_INCLUDEDIR)
 libcppconsui_la_LIBADD = $(GLIBMM_LIBS) $(CURSES_LIBS)
