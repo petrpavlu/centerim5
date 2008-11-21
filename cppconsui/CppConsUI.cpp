@@ -50,6 +50,8 @@ Glib::ustring::size_type width(const Glib::ustring &string)
 	return width(string.data(), string.data()+string.bytes());
 }
 
+const gchar text_unknown_char_utf8[] = { '\xEF', '\xBF', '\xBC', '\0' };
+
 //NOTE copied from libgnt/gntutils.c
 //TODO should g_unichar_iszerowidth be used?
 //TODO write a wrapper string class
