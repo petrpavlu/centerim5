@@ -52,9 +52,25 @@ void CIMWindowManager::calculate_sizes(void)
 	areaSizes[BuddyList] = size;
 	
 	size = Conf::Instance()->GetLogDimensions();
-	size.x = areaSizes[BuddyList].x+1;
+	size.x = areaSizes[BuddyList].width;
 	size.width = screenW - size.x;
 	size.height = (int)(size.height * (screenH/(double)originalH));
 	size.y = screenH - size.height;
 	areaSizes[Log] = size;
+
+	areaSizes[Chat].x = areaSizes[BuddyList].width;
+	areaSizes[Chat].y = 0;
+	areaSizes[Chat].width = screenW - areaSizes[Chat].x;
+	areaSizes[Chat].height = screenH - areaSizes[Log].width;
+
+	areaSizes[Screen].x = 0;
+	areaSizes[Screen].y = 0;
+	areaSizes[Screen].width = screenW;
+	areaSizes[Screen].height = screenH;
+}
+
+void CIMWindowManager::Add(Window *window)
+{
+	WindowManager::Add(window);
+	window->ScreenResized();
 }

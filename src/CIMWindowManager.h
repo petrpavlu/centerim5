@@ -13,8 +13,9 @@ class CIMWindowManager
 		
 		Rect ScreenAreaSize(ScreenArea area);  // return size of selected area
 		static CIMWindowManager* Instance(void);
-		bool Resize(void);
+		virtual bool Resize(void);
 		void ScreenResized(void);
+		virtual void Add(Window *window);
 		
 	protected:
 		void calculate_sizes(void); // calculates area sizes
