@@ -46,6 +46,9 @@ Window::Window(int x, int y, int w, int h, Border *border)
 	if (win_w < 1) win_w = 1;
 	if (win_h < 1) win_h = 1;
 
+	//TODO allow focus going to windows by default or not?
+	can_focus = true;
+
 	MakeRealWindow();
 	UpdateArea();
 
