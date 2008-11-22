@@ -137,10 +137,10 @@ class Keys
 		 */
 		//TODO make sure the above is accurate, if there
 		//is a better way, use that
-		char *key_ctl_up;
-		char *key_ctl_down;
-		char *key_ctl_left;
-		char *key_ctl_right;
+		const char *key_ctl_up;
+		const char *key_ctl_down;
+		const char *key_ctl_left;
+		const char *key_ctl_right;
 
 		std::map<Glib::ustring, Glib::ustring> specials;
 
