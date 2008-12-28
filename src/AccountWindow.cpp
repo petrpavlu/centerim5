@@ -369,7 +369,7 @@ AccountWindow::AccountOptionBool::AccountOptionBool(Widget& parent,
 
 AccountWindow::AccountOptionBool::AccountOptionBool(Widget& parent,
 	PurpleAccount *account, bool remember_password)
-: AccountWindow::AccountOption::AccountOption(parent, account, option)
+: AccountWindow::AccountOption::AccountOption(parent, account, NULL)
 , remember_password(false)
 {
 	if (remember_password) {
