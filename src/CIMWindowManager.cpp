@@ -71,7 +71,7 @@ void CIMWindowManager::calculate_sizes(void)
 	areaSizes[Chat].x = areaSizes[BuddyList].width;
 	areaSizes[Chat].y = 0;
 	areaSizes[Chat].width = screenW - areaSizes[Chat].x;
-	areaSizes[Chat].height = screenH - areaSizes[Log].width;
+	areaSizes[Chat].height = screenH - areaSizes[Log].height;
 
 	areaSizes[Screen].x = 0;
 	areaSizes[Screen].y = 0;

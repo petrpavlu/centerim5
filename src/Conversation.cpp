@@ -24,6 +24,7 @@
 #include <cppconsui/Curses.h>
 
 #include "Conversation.h"
+#include "CIMWindowManager.h"
 
 #include <cppconsui/HorizontalLine.h>
 #include <cppconsui/TextBrowser.h>
@@ -42,12 +43,11 @@ Conversation::Conversation(PurpleBlistNode* node)
 
 	SetBorder(new Border());
 	linestyle = LineStyle::LineStyleDefault();
-	MoveResize(conf->GetChatDimensions());
 
 	browser = new TextBrowser(*this, 2, 1, w-4, h-2);
+	
 	input = new TextInput(*this, 2, 1, w-4, h-2);
 	line = new HorizontalLine(*this, linestyle, 1, browserheight, w-2);
-	SetPartitioning(conf->GetChatPartitioning());
 
 	AddWidget(browser);
 	AddWidget(input);
@@ -59,6 +59,10 @@ Conversation::Conversation(PurpleBlistNode* node)
 
 	//TODO get real binding from config
 	BindAction(context, "send", Keys::Instance()->Key_ctrl_x(), false);
+
+	SetPartitioning(conf->GetChatPartitioning());
+	
+	MoveResize(conf->GetChatDimensions());
 }
 
 Conversation::~Conversation()
@@ -104,6 +108,21 @@ void Conversation::Close(void)
 	Conversations::Instance()->Close(this);
 	/* close the conversation window */
 	Window::Close();
+}
+
+void Conversation::Resize(int neww, int newh)
+{
+	Window::Resize(neww, newh);
+
+	SetPartitioning(conf->GetChatPartitioning());
+	browser->MoveResize(2, 1, w-4, browserheight);
+	input->MoveResize(2, browserheight+1, w-4, h-2-browserheight);
+	line->MoveResize(1, browserheight, w-2, 1);
+}
+
+void Conversation::ScreenResized()
+{
+	MoveResize((CIMWindowManager::Instance())->ScreenAreaSize(CIMWindowManager::Chat));
 }
 
 //TODO if this remains empty, make it a pure virtual function
