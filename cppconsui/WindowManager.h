@@ -80,10 +80,10 @@ class WindowManager
 
 		WindowManager& operator=(const WindowManager&);
 
+		static WindowManager *instance;
+
 	private:
 		bool CloseWindowCallback(Window *window);
-
-		static WindowManager *instance;
 };
 
 #endif /* __WINDOWMANAGER_H__ */

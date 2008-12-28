@@ -5,12 +5,22 @@
 #include <glibmm/main.h>
 
 
-CIMWindowManager* CIMWindowManager::instance = NULL;
+CIMWindowManager* CIMWindowManager::cimInstance = NULL;
 
 CIMWindowManager* CIMWindowManager::Instance(void)
 {
-	if (!instance) instance = new CIMWindowManager();
-	return instance;
+	if (!cimInstance)
+	{
+		cimInstance = new CIMWindowManager();
+		// TODO: import existing windows, solve contructor/destructor curses problems
+		if (instance)
+		{
+			fprintf(stderr, "WM instance already exists!\n");
+			delete instance;
+		}
+		instance = cimInstance;
+	}
+	return cimInstance;
 }
 
 
