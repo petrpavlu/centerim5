@@ -115,9 +115,6 @@ void Conversation::Resize(int neww, int newh)
 	Window::Resize(neww, newh);
 
 	SetPartitioning(conf->GetChatPartitioning());
-	browser->MoveResize(2, 1, w-4, browserheight);
-	input->MoveResize(2, browserheight+1, w-4, h-2-browserheight);
-	line->MoveResize(1, browserheight, w-2, 1);
 }
 
 void Conversation::ScreenResized()
@@ -147,7 +144,7 @@ void Conversation::SetPartitioning(unsigned int percentage)
 
 	browser->Resize(w-4, browserheight-2);
 	input->MoveResize(1, browserheight+1, w-4, inputheight);
-	line->Move(1, browserheight);
+	line->MoveResize(1, browserheight, w-2, 1);
 }
 
 //TODO if this remains empty, make it a pure virtual function

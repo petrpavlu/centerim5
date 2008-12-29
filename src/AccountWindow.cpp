@@ -251,12 +251,16 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 
 	account_entry = &(account_entries[account]);
 
+	label = g_strdup_printf(" [%s] %s",
+							  purple_account_get_protocol_name(account),
+							  purple_account_get_username(account));
+	
 	if (!account_entry->parent) {
 		Button *button;
 		TreeView::NodeReference parent_reference;
 
 		//TODO proper autosizing for labels
-       		button = new Button(*accounts, 0, 0, 30, 1, NULL, 
+       		button = new Button(*accounts, 0, 0, width(label), 1, NULL,
 				sigc::mem_fun(accounts, &TreeView::ActionToggleCollapsed));
 		parent_reference = accounts->AddNode(accounts->Root(), button, account);
 		accounts->Collapse(parent_reference);
@@ -264,9 +268,6 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		account_entry->parent_reference = parent_reference;
 	}
 
-	label = g_strdup_printf(" [%s] %s",
-		purple_account_get_protocol_name(account),
-		purple_account_get_username(account));
 	account_entry->parent->SetText(label);
 	g_free(label);
 
