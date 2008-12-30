@@ -37,15 +37,15 @@ GeneralMenu::GeneralMenu(int x, int y, int w, int h, LineStyle *linestyle)
 	AddItem(_("Go to contact..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	AddItem(_("Accounts..."), sigc::mem_fun(this, &GeneralMenu::OpenAccountsWindow));
 	AddItem(_("CenterIM config options..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AddSeperator();
+	AddSeparator();
 	AddItem(_("Find/add users"), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	AddItem(_("Join channel/conference"), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	AddItem(_("Link an RSS feed"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AddSeperator();
+	AddSeparator();
 	AddItem(_("View/edit ignore list"), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	AddItem(_("View/edit invisible list"), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	AddItem(_("View/edit visible list"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AddSeperator();
+	AddSeparator();
 	AddItem(_("Show offline users"), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	AddItem(_("Organize contact groups"), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	AddItem(_("Mass group move..."), sigc::mem_fun(this, &GeneralMenu::Dummy));

@@ -30,7 +30,7 @@ class ListBox
 		ListBox(Widget& parent, int x, int y, int w, int h);
 		virtual ~ListBox();
 
-		void AddSeperator();
+		void AddSeparator();
 
 		virtual void AddWidget(Widget *widget);
 		virtual void RemoveWidget(Widget *widget);

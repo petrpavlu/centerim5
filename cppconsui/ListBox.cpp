@@ -35,7 +35,7 @@ ListBox::~ListBox()
 {
 }
 
-void ListBox::AddSeperator()
+void ListBox::AddSeparator()
 {
 	HorizontalLine *line;
 
