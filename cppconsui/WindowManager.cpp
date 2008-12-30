@@ -195,7 +195,9 @@ bool WindowManager::Draw(void)
 	WINDOW *window;
 
 	if (redrawpending) {
-
+		clear();
+		wnoutrefresh(stdscr);
+		
 		for (i = windows.rbegin(); i != windows.rend(); i++) {
 			(*i).window->Draw();
 			/* this updates the virtual ncurses screen */

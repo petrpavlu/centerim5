@@ -49,7 +49,7 @@ class WindowManager
 		bool Draw(void);
 
 		void ScreenResized(void);
-		bool Resize(void);
+		virtual bool Resize(void);
 
 	protected:
 		typedef struct {

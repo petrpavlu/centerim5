@@ -35,6 +35,8 @@ bool CIMWindowManager::Resize(void)
 		signal_resize();
 
 		resizepending = false;
+
+		Redraw();
 	}
 
 	return false;
