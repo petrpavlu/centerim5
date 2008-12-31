@@ -128,7 +128,7 @@ class InputProcessor
 
 		/* Set the child object which must process input before this object
 		 * */
-		void SetInputChild(InputProcessor *inputchild);
+		void SetInputChild(InputProcessor *child);
 		InputProcessor* GetInputChild(void) { return inputchild; }
 
 		/* Bind a keycombo to an action */

@@ -85,9 +85,9 @@ int InputProcessor::ProcessInputText(const char *input, const int bytes)
 	return 0;
 }
 
-void InputProcessor::SetInputChild(InputProcessor *inputchild_)
+void InputProcessor::SetInputChild(InputProcessor *child)
 {
-	inputchild = inputchild_;
+	inputchild = child;
 }
 
 int InputProcessor::Process(InputProcessor::BindableType type, const char *input, const int bytes)
