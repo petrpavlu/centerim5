@@ -124,6 +124,9 @@ void WindowManager::Remove(Window *window)
 	info.resize.disconnect();
 	windows.erase(i);
 
+	if (window == GetInputChild())
+		SetInputChild(NULL);
+
 	werase(info.window->GetWindow());
 	wnoutrefresh(info.window->GetWindow());
 
