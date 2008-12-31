@@ -278,7 +278,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		Label *label;
 
 		/* we cannot change the settings of an unknown account */
-		label = new Label(*accounts, 0, 0, _("This account was configured, but the protocol plugin was not loaded"));
+		label = new Label(*accounts, 0, 0, _("Invalid account or protocol plugin not loaded"));
 		accounts->AddNode(account_entry->parent_reference, label, account);
 		account_entry->widgets.push_back(label);
 
