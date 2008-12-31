@@ -38,7 +38,7 @@
 
 AccountWindow::AccountWindow()
 : Window(0, 0, 80, 24, NULL)
-, menu_index(1)
+, menu_index(2)
 , accounts_index(1)
 {
 	//const gchar *context = "accountwindow";
@@ -57,6 +57,7 @@ AccountWindow::AccountWindow()
 	menu->FocusCycle(Container::FocusCycleLocal);
 
 	menu->AddItem(_("Add"), sigc::mem_fun(this, &AccountWindow::Add));
+	menu->AddSeparator();
 	menu->AddItem(_("Done"), sigc::mem_fun(this, &AccountWindow::Close));
 
 	AddWidget(accounts);
