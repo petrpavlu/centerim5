@@ -25,11 +25,13 @@
 TextInput::TextInput(Widget& parent, int x, int y, int w, int h)
 : TextBrowser(parent, x, y, w, h)
 {
+	can_focus = true;
 }
 
 TextInput::TextInput(Widget& parent, int x, int y, int w, int h, std::vector<Glib::ustring> &lines)
 : TextBrowser(parent, x, y, w, h, lines)
 {
+	can_focus = true;
 }
 
 TextInput::~TextInput()
