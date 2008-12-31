@@ -5,12 +5,22 @@
 #include <glibmm/main.h>
 
 
-CIMWindowManager* CIMWindowManager::instance = NULL;
+CIMWindowManager* CIMWindowManager::cimInstance = NULL;
 
 CIMWindowManager* CIMWindowManager::Instance(void)
 {
-	if (!instance) instance = new CIMWindowManager();
-	return instance;
+	if (!cimInstance)
+	{
+		cimInstance = new CIMWindowManager();
+		// TODO: import existing windows, solve contructor/destructor curses problems
+		if (instance)
+		{
+			fprintf(stderr, "WM instance already exists!\n");
+			delete instance;
+		}
+		instance = cimInstance;
+	}
+	return cimInstance;
 }
 
 
@@ -25,6 +35,8 @@ bool CIMWindowManager::Resize(void)
 		signal_resize();
 
 		resizepending = false;
+
+		Redraw();
 	}
 
 	return false;
@@ -61,7 +73,7 @@ void CIMWindowManager::calculate_sizes(void)
 	areaSizes[Chat].x = areaSizes[BuddyList].width;
 	areaSizes[Chat].y = 0;
 	areaSizes[Chat].width = screenW - areaSizes[Chat].x;
-	areaSizes[Chat].height = screenH - areaSizes[Log].width;
+	areaSizes[Chat].height = screenH - areaSizes[Log].height;
 
 	areaSizes[Screen].x = 0;
 	areaSizes[Screen].y = 0;

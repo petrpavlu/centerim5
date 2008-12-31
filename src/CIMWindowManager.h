@@ -22,7 +22,7 @@ class CIMWindowManager
 		Rect areaSizes[Screen+1];
 		
 	private:
-		static CIMWindowManager *instance;
+		static CIMWindowManager *cimInstance;
 		static const int originalW = 139;
 		static const int originalH = 56;
 };

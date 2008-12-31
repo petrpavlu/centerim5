@@ -59,7 +59,7 @@ class BuddyList
 		static void request_add_group(void)
 			{ /*TODO hand of to Request object*/ ; }
 
-		 void new_list(PurpleBuddyList *list);
+		void new_list(PurpleBuddyList *list);
 		void new_node(PurpleBlistNode *node);
 		void update_node(PurpleBuddyList *list, PurpleBlistNode *node);
 		void remove_node(PurpleBuddyList *list, PurpleBlistNode *node);

@@ -39,7 +39,7 @@ AccountStatusMenu::AccountStatusMenu(int x, int y, int w, int h, LineStyle *line
 
 	AddItem(_("All protocols"), sigc::mem_fun(this, &AccountStatusMenu::Dummy));
 	AddItem(_("Already logged in only"), sigc::mem_fun(this, &AccountStatusMenu::Dummy));
-	AddSeperator();
+	AddSeparator();
 
 	for (iter = purple_accounts_get_all(); iter; iter = iter->next) {
 
@@ -106,7 +106,7 @@ AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h, LineStyl
 	if (!has_independents)
 		return;
 
-	AddSeperator();
+	AddSeparator();
 
 	for (iter = purple_account_get_status_types(account); iter; iter = iter->next) {
 		status_type = (PurpleStatusType*)iter->data;

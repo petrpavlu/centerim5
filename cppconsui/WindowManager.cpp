@@ -50,7 +50,7 @@ WindowManager::WindowManager(void)
 	start_color(); //TODO do something with the return value.
 
 	if (!defaultwindow)
-		;//TODO throw an exception that we cant init curses
+		;//TODO throw an exception that we can't init curses
 
 	DeclareBindable(context, "redraw-screen", sigc::mem_fun(this, &WindowManager::Redraw),
 		_("Redraw the complete screen immediately"), InputProcessor::Bindable_Override);
@@ -195,7 +195,9 @@ bool WindowManager::Draw(void)
 	WINDOW *window;
 
 	if (redrawpending) {
-
+		clear();
+		wnoutrefresh(stdscr);
+		
 		for (i = windows.rbegin(); i != windows.rend(); i++) {
 			(*i).window->Draw();
 			/* this updates the virtual ncurses screen */

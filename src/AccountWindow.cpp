@@ -25,6 +25,8 @@
 #include <cppconsui/MessageDialog.h>
 #include <cppconsui/WindowManager.h>
 
+#include "CIMWindowManager.h"
+
 #include <libpurple/account.h>
 #include <libpurple/accountopt.h>
 
@@ -42,8 +44,6 @@ AccountWindow::AccountWindow()
 	//const gchar *context = "accountwindow";
 	log = Log::Instance();
 	conf = Conf::Instance();
-
-	MoveResize(conf->GetAccountWindowDimensions());
 
 	//TODO get linestyle from conf
 	border = new Panel(*this, 0, 0, w, h, LineStyle::LineStyleDefault());
@@ -63,9 +63,40 @@ AccountWindow::AccountWindow()
 	AddWidget(menu);
 	AddWidget(line);
 
+	MoveResize(conf->GetAccountWindowDimensions());
+	
 	Populate();
 
 	menu->GrabFocus();
+}
+
+void AccountWindow::Resize(int neww, int newh)
+{
+	Window::Resize(neww, newh);
+
+	border->Resize(w, h);
+	accounts->Resize(w-2, h-4);
+	menu->MoveResize(1, h-2, w-2, 1);
+	line->MoveResize(1, h-3, w-2, 1);
+}
+
+void AccountWindow::ScreenResized()
+{
+	Rect screen = (CIMWindowManager::Instance())->ScreenAreaSize(CIMWindowManager::Screen);
+	Rect confSize = conf->GetAccountWindowDimensions();
+
+	// Check against screen size
+	if (screen.Width() < (confSize.Width()+4))
+		confSize.width = screen.Width()-4;
+
+	if (screen.Height() < (confSize.Height()+4))
+		confSize.height = screen.Height()-4;
+
+	// Center on screen
+	confSize.x = (screen.Width() - confSize.Width()) / 2;
+	confSize.y = (screen.Height() - confSize.Height()) / 2;
+	
+	MoveResize(confSize);
 }
 
 AccountWindow::~AccountWindow()
@@ -220,12 +251,16 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 
 	account_entry = &(account_entries[account]);
 
+	label = g_strdup_printf(" [%s] %s",
+							  purple_account_get_protocol_name(account),
+							  purple_account_get_username(account));
+	
 	if (!account_entry->parent) {
 		Button *button;
 		TreeView::NodeReference parent_reference;
 
 		//TODO proper autosizing for labels
-       		button = new Button(*accounts, 0, 0, 30, 1, NULL, 
+       		button = new Button(*accounts, 0, 0, width(label), 1, NULL,
 				sigc::mem_fun(accounts, &TreeView::ActionToggleCollapsed));
 		parent_reference = accounts->AddNode(accounts->Root(), button, account);
 		accounts->Collapse(parent_reference);
@@ -233,9 +268,6 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		account_entry->parent_reference = parent_reference;
 	}
 
-	label = g_strdup_printf(" [%s] %s",
-		purple_account_get_protocol_name(account),
-		purple_account_get_username(account));
 	account_entry->parent->SetText(label);
 	g_free(label);
 
@@ -369,7 +401,7 @@ AccountWindow::AccountOptionBool::AccountOptionBool(Widget& parent,
 
 AccountWindow::AccountOptionBool::AccountOptionBool(Widget& parent,
 	PurpleAccount *account, bool remember_password)
-: AccountWindow::AccountOption::AccountOption(parent, account, option)
+: AccountWindow::AccountOption::AccountOption(parent, account, NULL)
 , remember_password(false)
 {
 	if (remember_password) {

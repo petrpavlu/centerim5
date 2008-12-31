@@ -39,8 +39,8 @@ class MenuWindow
 
 		void AddItem(const char *text, sigc::slot<void> callback)
 			{ listbox->AddItem(text, callback); }
-		void AddSeperator()
-			{ listbox->AddSeperator(); }
+		void AddSeparator()
+			{ listbox->AddSeparator(); }
 
 		void AddWidget(Widget *widget)
 			{ listbox->AddWidget(widget); }

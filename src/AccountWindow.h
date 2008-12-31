@@ -42,6 +42,9 @@ class AccountWindow
 	public:
 		AccountWindow();
 
+		virtual void Resize(int neww, int newh);
+		virtual void ScreenResized();
+
 	protected:
 
 	private:

@@ -51,6 +51,9 @@ class Conversation
 		virtual void Send(void);
 		virtual void Close(void);
 
+		virtual void Resize(int neww, int newh);
+		virtual void ScreenResized();
+
 	protected:
 		virtual void CreatePurpleConv(void);
 
