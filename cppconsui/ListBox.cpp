@@ -69,8 +69,8 @@ void ListBox::RemoveWidget(Widget *widget)
 	y = 0;
 	for (i = ChildrenBegin(); i != ChildrenEnd(); i++) {
 		w = (*i).widget;
-		widget->Move(0, y);
-		y += widget->Height();
+		w->Move(0, y);
+		y += w->Height();
 	}
 
 	SetScrollHeight(y);
