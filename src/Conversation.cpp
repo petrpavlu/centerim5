@@ -52,7 +52,9 @@ Conversation::Conversation(PurpleBlistNode* node)
 	AddWidget(browser);
 	AddWidget(input);
 	AddWidget(line);
+
 	SetInputChild(input);
+	input->GrabFocus();
 
 	DeclareBindable(context, "send",  sigc::mem_fun(this, &Conversation::Send),
 		_("Send the message."), InputProcessor::Bindable_Override);
