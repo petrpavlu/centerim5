@@ -59,17 +59,10 @@
 //#include <gtk/gtkenums.h>
 
 #include "TextTagTable.h"
+#include "CppConsUI.h"
 
 #include <glib.h>
 
-/* Text wrap */
-typedef enum
-{
-  WRAP_NONE,
-  WRAP_CHAR,
-  WRAP_WORD,
-  WRAP_WORD_CHAR
-} WrapMode;
 
 /* Not needed, retained for compatibility -Yosh */
 //#include <gtk/gtkobject.h>
@@ -288,6 +281,7 @@ class TextAppearance
 
 class TextAttributes
 {
+	//TODO copy constructor etc
 	public:
 		TextAttributes(void);
 		TextAttributes(Colormap *cmap);
