@@ -89,6 +89,8 @@ class TextBuffer
 		} TextBufferTargetInfo;
 
 		TextBuffer(void);
+		/* table is NULL to create a new one */
+		TextBuffer(TextTagTable *table);
 
 /* Delete whole buffer, then insert */
 void set_text (const gchar *text, gint len);
@@ -399,8 +401,6 @@ void notify_will_remove_tag ( TextTag    *tag);
 
 
 
-/* table is NULL to create a new one */
-		TextBuffer(TextTagTable *table);
 		~TextBuffer(void);
 
 		gint get_line_count (void);
