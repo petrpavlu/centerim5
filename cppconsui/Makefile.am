@@ -23,6 +23,8 @@ libcppconsui_la_SOURCES =\
 	TextWindow.h \
 	TextEntry.cpp \
 	TextEntry.h \
+	TextView.cpp \
+	TextView.h \
 	Widget.cpp \
 	Widget.h \
 	Window.cpp \
