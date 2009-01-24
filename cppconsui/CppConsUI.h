@@ -53,6 +53,57 @@ int RealScreenHeight(void);
 Glib::ustring::size_type width(const Glib::ustring &string);
 Glib::ustring::size_type width(const char *start, const char *end);
 
+//TODO move into editable abstract class?
+enum CursorMovement {
+	MOVE_LOGICAL_POSITIONS,
+	MOVE_VISUAL_POSITIONS,
+	MOVE_WORDS,
+	MOVE_DISPLAY_LINES,
+	MOVE_DISPLAY_LINE_ENDS,
+	MOVE_PARAGRAPHS,
+	MOVE_PARAGRAPH_ENDS,
+	MOVE_PAGES,
+	MOVE_BUFFER_ENDS,
+	MOVE_HORIZONTAL_PAGES
+};
+enum DeleteType {
+	DELETE_CHARS,
+	DELETE_WORDS,
+	DELETE_WORD_ENDS,
+	DELETE_DISPLAY_LINE_ENDS,
+	DELETE_PARAGRAPH_ENDS,
+	DELETE_DISPLAY_LINES,
+	DELETE_PARAGRAPHS,
+	DELETE_WHITESPACE
+};
+
+enum WrapMode {
+  WRAP_NONE,
+  WRAP_CHAR,
+  WRAP_WORD,
+  WRAP_WORD_CHAR
+};
+
+enum DirectionType {
+  DIR_TAB_FORWARD,
+  DIR_TAB_BACKWARD,
+  DIR_UP,
+  DIR_DOWN,
+  DIR_LEFT,
+  DIR_RIGHT,
+  DIR_NONE
+};
+
+typedef enum {
+  SCROLL_STEPS,
+  SCROLL_PAGES,
+  SCROLL_ENDS,
+  SCROLL_HORIZONTAL_STEPS,
+  SCROLL_HORIZONTAL_PAGES,
+  SCROLL_HORIZONTAL_ENDS
+} ScrollStep;
+
+
 /// @todo perhaps move to its own files?
 
 class Point
