@@ -859,7 +859,7 @@ gint TextEntry::move_forward_word (gint start, gboolean allow_whitespace)
 gint TextEntry::move_backward_word (gint start, gboolean allow_whitespace)
 {
   gint new_pos = start;
-  /*TODO port this function
+  /*TODO port this function also in textview
 
   * Prevent any leak of information *
   if (!entry->visible)
@@ -1037,6 +1037,7 @@ void TextEntry::BindActions(void)
 {
 	const gchar *context = "textentry";
 
+	//TODO implement more of these
 	BindAction(context, "cursor-right", KEYS->Key_right(), false);
 	BindAction(context, "cursor-left", KEYS->Key_left(), false);
 	BindAction(context, "cursor-right-word", KEYS->Key_ctrl_right(), false);
@@ -1064,6 +1065,7 @@ void TextEntry::BindActions(void)
 	BindAction(context, "activate", Keys::Instance()->Key_enter(), false);
 }
 
+//TODO custom handlers?
 void TextEntry::OnActivate(void)
 {
 	if (parent) {

@@ -67,29 +67,6 @@ class TextEntry
 		sigc::signal<void> signal_text_changed;
 
 	protected:
-		enum CursorMovement {
-			MOVE_LOGICAL_POSITIONS,
-			MOVE_VISUAL_POSITIONS,
-			MOVE_WORDS,
-			MOVE_DISPLAY_LINES,
-			MOVE_DISPLAY_LINE_ENDS,
-			MOVE_PARAGRAPHS,
-			MOVE_PARAGRAPH_ENDS,
-			MOVE_PAGES,
-			MOVE_BUFFER_ENDS,
-			MOVE_HORIZONTAL_PAGES
-		};
-		enum DeleteType {
-			DELETE_CHARS,
-			DELETE_WORDS,
-			DELETE_WORD_ENDS,
-			DELETE_DISPLAY_LINE_ENDS,
-			DELETE_PARAGRAPH_ENDS,
-			DELETE_DISPLAY_LINES,
-			DELETE_PARAGRAPHS,
-			DELETE_WHITESPACE
-		};
-
 		void backspace(void);
 
 		void insert_text (const gchar *new_text, gint new_text_length, gint *position);
