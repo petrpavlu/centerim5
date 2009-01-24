@@ -77,6 +77,7 @@ class Keys
 		const char* Key_esc(void) { return "\033"; }
 		const char* Key_form_feed(void) { return SAFE(form_feed); }
 
+		//TODO create function Key(ctrl, shift, alt, [A-z0-9]) to do this stuff.
 		const char* Key_ctrl_a(void) { return "\001"; }
 		const char* Key_ctrl_b(void) { return "\002"; }
 		const char* Key_ctrl_c(void) { return "\003"; }
@@ -151,5 +152,6 @@ class Keys
 #undef buttons
 #undef columns
 #undef newline
+#undef cursor_visible
 
 #endif /* __KEYS_H__ */
