@@ -2738,8 +2738,7 @@ TextLayout::get_line_yrange ( TextIter *iter,
   line = iter->get_text_line ();
 
   if (y)
-    *y = buffer->get_btree()->find_line_top (
-                                       line, this);
+    *y = buffer->get_btree()->find_line_top ( line, this);
   if (height)
     {
       TextLineData *line_data = line->get_data (this);

@@ -190,6 +190,9 @@ class TextLayout
 
 		  TextBuffer *buffer;
 
+		void               set_buffer            ( TextBuffer     *buffer);
+		TextBuffer     *get_buffer            (void);
+
 		void invalidate        ( const TextIter *start, const TextIter *end);
 		void invalidate_cursors( const TextIter *start, const TextIter *end);
 
@@ -217,6 +220,90 @@ class TextLayout
 							TextLine     *line,
 							TextLineData *line_data); /* may be NULL */
 
+void get_iter_at_pixel (
+                                        TextIter       *iter,
+                                        gint               x,
+                                        gint               y);
+
+void get_iter_at_position (
+					   TextIter       *iter,
+					   gint              *trailing,
+					   gint               x,
+					   gint               y);
+
+	void get_iter_location ( TextIter *iter, Rect      *rect);
+
+void     get_line_yrange      (
+                                               TextIter *iter,
+                                               gint              *y,
+                                               gint              *height);
+void     get_line_xrange     (
+                                               TextIter *iter,
+                                               gint              *x,
+                                               gint              *width);
+
+	void get_line_at_y     (
+                                        TextIter       *target_iter,
+                                        gint               y,
+                                        gint              *line_top);
+
+bool is_valid        (void);
+void validate_yrange (
+                                          TextIter   *anchor_line,
+                                          gint           y0_,
+                                          gint           y1_);
+
+/* Getting the size or the lines potentially results in a call to
+ * recompute, which is pretty massively expensive. Thus it should
+ * basically only be done in an idle handler.
+ *
+ * Long-term, we would really like to be able to do these without
+ * a full recompute so they may get cheaper over time.
+ */
+void    get_size  (
+                                   gint           *width,
+                                   gint           *height);
+GSList* get_lines (
+                                   /* [top_y, bottom_y) */
+                                   gint            top_y,
+                                   gint            bottom_y,
+                                   gint           *first_line_y);
+
+void set_screen_width       ( gint               width);
+
+void               default_style_changed (void);
+//TODO move to private
+  /* Default style used if no tags override it */
+
+  TextAttributes *default_style;
+
+void     validate        ( gint           max_pixels);
+  //
+bool clamp_iter_to_vrange (
+                                               TextIter       *iter,
+                                               gint               top,
+                                               gint               bottom);
+void		   set_overwrite_mode	 ( bool           overwrite);
+void     set_cursor_visible ( bool           cursor_visible);
+
+
+bool move_iter_to_previous_line ( TextIter   *iter);
+bool move_iter_to_next_line     ( TextIter   *iter);
+void     move_iter_to_x             ( TextIter   *iter, gint           x);
+bool move_iter_visually         ( TextIter   *iter, gint           count);
+
+bool iter_starts_line           ( TextIter   *iter);
+
+void     get_iter_at_line (
+			     TextIter    *iter,
+			     TextLine    *line,
+			     gint            byte_offset);
+
+	bool move_iter_to_line_end ( TextIter   *iter, gint           direction);
+void               set_default_style     ( TextAttributes *values);
+
+	void get_cursor_locations ( TextIter    *iter, Rect   *strong_pos, Rect   *weak_pos);;
+
 	protected:
 	private:
   /* width of the display area on-screen,
@@ -235,8 +322,6 @@ class TextLayout
   /* gint left_edge; */
   /* gint top_edge; */
 
-  /* Default style used if no tags override it */
-  TextAttributes *default_style;
 
   /* Pango contexts used for creating layouts */
   //PangoContext *ltr_context;
@@ -327,48 +412,20 @@ class TextLayout
 
 //GType         gtk_text_layout_get_type    (void) G_GNUC_CONST;
 
-TextLayout*     gtk_text_layout_new                   (void);
-void               set_buffer            ( TextBuffer     *buffer);
-TextBuffer     *get_buffer            (void);
-void               set_default_style     (
-							  TextAttributes *values);
 /*void               gtk_text_layout_set_contexts          (TextLayout     *layout,
 							  PangoContext      *ltr_context,
 							  PangoContext      *rtl_context);*/
 void               set_cursor_direction  (
                                                           TextDirection   direction);
-void		   set_overwrite_mode	 (
-							  bool           overwrite);
 void               set_keyboard_direction (
 							   TextDirection keyboard_dir);
-void               default_style_changed (void);
 
-void set_screen_width       (
-                                             gint               width);
 /*void gtk_text_layout_set_preedit_string     (TextLayout     *layout,
  					     const gchar       *preedit_string,
  					     PangoAttrList     *preedit_attrs,
  					     gint               cursor_pos);*/
 
-void     set_cursor_visible (
-                                             bool           cursor_visible);
 bool get_cursor_visible (void);
-
-/* Getting the size or the lines potentially results in a call to
- * recompute, which is pretty massively expensive. Thus it should
- * basically only be done in an idle handler.
- *
- * Long-term, we would really like to be able to do these without
- * a full recompute so they may get cheaper over time.
- */
-void    get_size  (
-                                   gint           *width,
-                                   gint           *height);
-GSList* get_lines (
-                                   /* [top_y, bottom_y) */
-                                   gint            top_y,
-                                   gint            bottom_y,
-                                   gint           *first_line_y);
 
 void wrap_loop_start (void);
 void wrap_loop_end   (void);
@@ -379,70 +436,20 @@ TextLineDisplay* get_line_display  (
 void                free_line_display (
                                                        TextLineDisplay *display);
 
-void get_line_at_y     (
-                                        TextIter       *target_iter,
-                                        gint               y,
-                                        gint              *line_top);
-void get_iter_at_pixel (
-                                        TextIter       *iter,
-                                        gint               x,
-                                        gint               y);
-void get_iter_at_position (
-					   TextIter       *iter,
-					   gint              *trailing,
-					   gint               x,
-					   gint               y);
-
-bool is_valid        (void);
-void validate_yrange (
-                                          TextIter   *anchor_line,
-                                          gint           y0_,
-                                          gint           y1_);
-void     validate        ( gint           max_pixels);
 
 /*void     gtk_text_layout_get_iter_location    (TextLayout     *layout,
                                                const TextIter *iter,
                                                Rect      *rect);*/
-void     get_line_yrange      (
-                                               TextIter *iter,
-                                               gint              *y,
-                                               gint              *height);
-void     get_line_xrange     (
-                                               TextIter *iter,
-                                               gint              *x,
-                                               gint              *width);
 /*void     gtk_text_layout_get_cursor_locations (TextLayout     *layout,
                                                TextIter       *iter,
                                                Rect      *strong_pos,
                                                Rect      *weak_pos);*/
 /*bool _gtk_text_layout_get_block_cursor    (TextLayout     *layout,
 					       Rect      *pos);*/
-bool clamp_iter_to_vrange (
-                                               TextIter       *iter,
-                                               gint               top,
-                                               gint               bottom);
 
 bool iter_to_line_end      (
                                                      TextIter   *iter,
                                                      gint           direction);
-bool move_iter_to_previous_line (
-                                                     TextIter   *iter);
-bool move_iter_to_next_line     (
-                                                     TextIter   *iter);
-void     move_iter_to_x             (
-                                                     TextIter   *iter,
-                                                     gint           x);
-bool move_iter_visually         (
-                                                     TextIter   *iter,
-                                                     gint           count);
-
-bool iter_starts_line           ( TextIter   *iter);
-
-void     get_iter_at_line           (
-                                                     TextIter    *iter,
-                                                     TextLine    *line,
-                                                     gint            byte_offset);
-
 /* Don't use these. Use gtk_text_view_add_child_at_anchor().
  * These functions are defined in gtktextchild.c, but here
  * since they are semi-public and require TextLayout to
@@ -563,10 +570,6 @@ void update_text_display_cursors (
                TextLine  **line,
                gint          *line_top);
 
-	void get_cursor_locations (
-                                      TextIter    *iter,
-                                      Rect   *strong_pos,
-                                      Rect   *weak_pos);
 
 	bool get_block_cursor ( Rect  *pos);
 
@@ -575,11 +578,9 @@ void update_text_display_cursors (
 		    TextLineSegment *seg,
 		    gint                start);
 
-	void get_iter_location ( TextIter *iter, Rect      *rect);
 	void find_display_line_below ( TextIter   *iter, gint           y);
 	void find_display_line_above ( TextIter   *iter, gint           y);
 
-	bool move_iter_to_line_end ( TextIter   *iter, gint           direction);
 };
 
 
