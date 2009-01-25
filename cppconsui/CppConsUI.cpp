@@ -50,6 +50,89 @@ Glib::ustring::size_type width(const Glib::ustring &string)
 	return width(string.data(), string.data()+string.bytes());
 }
 
+/* NOTE: copied from pango/break.c, which has GNU GPL 2 or later
+ * thank you pango team
+ */
+void find_paragraph_boundary (const gchar *text,
+			       gint         length,
+			       gint        *paragraph_delimiter_index,
+			       gint        *next_paragraph_start)
+{
+  const gchar *p = text;
+  const gchar *end;
+  const gchar *start = NULL;
+  const gchar *delimiter = NULL;
+
+  /* Only one character has type G_UNICODE_PARAGRAPH_SEPARATOR in
+   * Unicode 5.0; update the following code if that changes.
+   */
+
+  /* prev_sep is the first byte of the previous separator.  Since
+   * the valid separators are \r, \n, and PARAGRAPH_SEPARATOR, the
+   * first byte is enough to identify it.
+   */
+  gchar prev_sep;
+
+
+  if (length < 0)
+    length = strlen (text);
+
+  end = text + length;
+
+  if (paragraph_delimiter_index)
+    *paragraph_delimiter_index = length;
+
+  if (next_paragraph_start)
+    *next_paragraph_start = length;
+
+  if (length == 0)
+    return;
+
+  prev_sep = 0;
+
+
+  while (p != end)
+    {
+      if (prev_sep == '\n' ||
+	  prev_sep == PARAGRAPH_SEPARATOR_STRING[0])
+	{
+	  g_assert (delimiter);
+	  start = p;
+	  break;
+	}
+      else if (prev_sep == '\r')
+	{
+	  /* don't break between \r and \n */
+	  if (*p != '\n')
+	    {
+	      g_assert (delimiter);
+	      start = p;
+	      break;
+	    }
+	}
+
+      if (*p == '\n' ||
+	   *p == '\r' ||
+	   !strncmp(p, PARAGRAPH_SEPARATOR_STRING,
+		    strlen(PARAGRAPH_SEPARATOR_STRING)))
+	{
+	  if (delimiter == NULL)
+	    delimiter = p;
+	  prev_sep = *p;
+	}
+      else
+	prev_sep = 0;
+
+      p = g_utf8_next_char (p);
+    }
+
+  if (delimiter && paragraph_delimiter_index)
+    *paragraph_delimiter_index = delimiter - text;
+
+  if (start && next_paragraph_start)
+    *next_paragraph_start = start - text;
+}
+
 const gchar text_unknown_char_utf8[] = { '\xEF', '\xBF', '\xBC', '\0' };
 
 //NOTE copied from libgnt/gntutils.c

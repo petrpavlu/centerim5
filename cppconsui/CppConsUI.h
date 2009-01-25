@@ -47,11 +47,19 @@
 #include <curses.h>
 #endif
 
+//from pango/break.c
+#define PARAGRAPH_SEPARATOR 0x2029
+#define PARAGRAPH_SEPARATOR_STRING "\xE2\x80\xA9"
+
 int RealScreenWidth(void);
 int RealScreenHeight(void);
 
 Glib::ustring::size_type width(const Glib::ustring &string);
 Glib::ustring::size_type width(const char *start, const char *end);
+void find_paragraph_boundary (const gchar *text,
+			       gint         length,
+			       gint        *paragraph_delimiter_index,
+			       gint        *next_paragraph_start);
 
 //TODO move into editable abstract class?
 enum CursorMovement {
