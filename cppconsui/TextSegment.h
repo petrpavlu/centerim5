@@ -144,7 +144,6 @@ class TextLineSegment
 		TextLineSegment(const gchar *text1, guint len1, guint chars1,
 					const gchar *text2, guint len2, guint chars2);
 		TextLineSegment(TextTagInfo *info, bool on);
-		TextLineSegment(TextMark *mark_obj);
 
 		static TextLineSegment* split_segment(TextIter *iter);
 
@@ -229,29 +228,25 @@ TextLineSegment *_gtk_toggle_segment_new                (TextTagInfo *info,
 
 //TODO rename to textlinesegmentmark, or also add a leftmark
 //when renaming: leftgravity is no longer needed, as it is always true
-class TextLineSegmentRightMark
+class TextLineSegmentLeftMark
 : public TextLineSegment
 { 
 	public:
-		TextLineSegmentRightMark(const gchar *text, guint len);
-		TextLineSegmentRightMark(const gchar *text1, guint len1, guint chars1,
-					const gchar *text2, guint len2, guint chars2);
-		TextLineSegmentRightMark(TextTagInfo *info, bool on);
-		TextLineSegmentRightMark (TextMark *mark_obj);
+		TextLineSegmentLeftMark (TextMark *mark_obj);
 
 		static TextLineSegment* split(const TextIter *iter);
 
 		//TextLineSegment* split (gint index);
-		bool deleteFunc (TextLineSegmentRightMark *segPtr, TextLine *line, bool tree_gone);
-		TextLineSegment* cleanupFunc (TextLineSegmentRightMark *segPtr, TextLine *line);
+		bool deleteFunc (TextLineSegmentLeftMark *segPtr, TextLine *line, bool tree_gone);
+		TextLineSegment* cleanupFunc (TextLineSegmentLeftMark *segPtr, TextLine *line);
 		//void lineChangeFunc (TextLine *line);
 		void checkFunc (TextLine *line);
 
 	protected:
 
 	private:
-  		TextLineSegmentRightMark();
-		TextLineSegmentRightMark(const TextLineSegment&);
+  		TextLineSegmentLeftMark();
+		TextLineSegmentLeftMark(const TextLineSegment&);
 
 		TextLineSegment& operator=(const TextLineSegment&);
 
@@ -266,7 +261,6 @@ class TextLineSegmentChar
 		TextLineSegmentChar(const gchar *text1, guint len1, guint chars1,
 					const gchar *text2, guint len2, guint chars2);
 		TextLineSegmentChar(TextTagInfo *info, bool on);
-		TextLineSegmentChar (TextMark *mark_obj);
 
 		static TextLineSegment* split(const TextIter *iter);
 
@@ -294,7 +288,6 @@ class TextLineSegmentToggle
 		TextLineSegmentToggle(const gchar *text1, guint len1, guint chars1,
 					const gchar *text2, guint len2, guint chars2);
 		TextLineSegmentToggle(TextTagInfo *info, bool on);
-		TextLineSegmentToggle (TextMark *mark_obj);
 
 		static TextLineSegment* split(const TextIter *iter);
 

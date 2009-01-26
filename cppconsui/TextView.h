@@ -109,14 +109,62 @@ class TextView
 	public:
 		TextView(Widget& parent, int x, int y, int w, int h, TextBuffer *buffer);
 		TextView(Widget& parent, int x, int y, int w, int h);
+		~TextView(void);
 
+		void select_all(bool select);
+
+  void  set_scroll_adjustments   (TextView    *text_view,
+                                     Adjustment  *hadjustment,
+                                     Adjustment  *vadjustment);
+
+  //void (* populate_popup)           (
+  //                                   GtkMenu        *menu);
+
+  /* These are all RUN_ACTION signals for keybindings */
+
+  /* move insertion point */
+  void move_cursor (
+                        CursorMovement step,
+                        gint            count,
+                        bool        extend_selection);
+
+  /* FIXME should be deprecated in favor of adding GTK_MOVEMENT_HORIZONTAL_PAGES
+   * or something in GTK 2.2, was put in to avoid adding enum values during
+   * the freeze.
+   */
+  void  page_horizontally (
+                              gint         count,
+                              bool     extend_selection);
+
+  /* move the "anchor" (what Emacs calls the mark) to the cursor position */
+  void  set_anchor  (void);
+
+  /* Edits */
+  void insert_at_cursor      ( const gchar *str);
+  void delete_from_cursor    (
+                                  DeleteType type,
+                                  gint          count);
+  void backspace             (void);
+
+  /* cut copy paste */
+  /*
+  void (* cut_clipboard)   (TextView *text_view);
+  void (* copy_clipboard)  (TextView *text_view);
+  void (* paste_clipboard) (TextView *text_view);
+  */
+  /* overwrite */
+  void toggle_overwrite (void);
+
+//TODO make private
+void           get_visible_rect      ( Rect  *visible_rect);
+void get_cursor_location    ( Rect      *pos);
 	protected:
 
 	private:
 		void init(void);
 
 		void ActionMoveCursor(CursorMovement step, int count, bool extend_selection);
-		void ActionSelectAll(bool select_all);
+		void ActionSelectAll(bool select);
 		void ActionDelete(DeleteType type, gint count);
 		void ActionBackspace(void);
 		void ActionToggleOverwrite(void);
@@ -151,7 +199,7 @@ class TextView
   bool cursor_visible ;//: 1;
 
   /* if we have reset the IM since the last character entered */  
-  bool need_im_reset ;//: 1;
+  //bool need_im_reset ;//: 1;
 
   bool accepts_tab ;//: 1;
 
@@ -195,8 +243,8 @@ class TextView
   TextMark *first_para_mark; /* Mark at the beginning of the first onscreen paragraph */
   gint first_para_pixels;       /* Offset of top of screen in the first onscreen paragraph */
 
-  TextMark *dnd_mark;
-  guint blink_timeout;
+  //TextMark *dnd_mark;
+  //guint blink_timeout;
 
   guint first_validate_idle;        /* Idle to revalidate onscreen portion, runs before resize */
   guint incremental_validate_idle;  /* Idle to revalidate offscreen portions, runs after redraw */
@@ -215,49 +263,6 @@ class TextView
 
   //ContainerClass parent_class;
 
-  void  set_scroll_adjustments   (TextView    *text_view,
-                                     Adjustment  *hadjustment,
-                                     Adjustment  *vadjustment);
-
-  //void (* populate_popup)           (
-  //                                   GtkMenu        *menu);
-
-  /* These are all RUN_ACTION signals for keybindings */
-
-  /* move insertion point */
-  void move_cursor (
-                        CursorMovement step,
-                        gint            count,
-                        bool        extend_selection);
-
-  /* FIXME should be deprecated in favor of adding GTK_MOVEMENT_HORIZONTAL_PAGES
-   * or something in GTK 2.2, was put in to avoid adding enum values during
-   * the freeze.
-   */
-  void  page_horizontally (
-                              gint         count,
-                              bool     extend_selection);
-
-  /* move the "anchor" (what Emacs calls the mark) to the cursor position */
-  void  set_anchor  (void);
-
-  /* Edits */
-  void insert_at_cursor      (
-                                  const gchar *str);
-  void delete_from_cursor    (
-                                  DeleteType type,
-                                  gint          count);
-  void backspace             (void);
-
-  /* cut copy paste */
-  /*
-  void (* cut_clipboard)   (TextView *text_view);
-  void (* copy_clipboard)  (TextView *text_view);
-  void (* paste_clipboard) (TextView *text_view);
-  */
-  /* overwrite */
-  void toggle_overwrite (void);
-
   /* as of GTK+ 2.12 the "move-focus" signal has been moved to GtkWidget,
    * so this is merley a virtual function now. Overriding it in subclasses
    * continues to work though.
@@ -275,8 +280,6 @@ class TextView
   void (*_gtk_reserved7) (void);*/
 
   TextView (void);
-  TextView (TextBuffer *buffer);
-  ~TextView(void);
 
 void set_buffer            ( TextBuffer *buffer);
 TextBuffer *get_buffer            (void);
@@ -298,7 +301,8 @@ bool       move_mark_onscreen    (
                                                     TextMark   *mark);
 bool       place_cursor_onscreen (void);
 
-void           get_visible_rect      ( Rect  *visible_rect);
+//TODO uncomment 
+//void           get_visible_rect      ( Rect  *visible_rect);
 void           set_cursor_visible    ( bool       setting);
 bool       get_cursor_visible    (void);
 
@@ -558,8 +562,8 @@ void mark_set_handler       (TextBuffer     *buffer,
                                                   gpointer           data);
 void target_list_notify     ( void );
 
-
-void get_cursor_location    ( Rect      *pos);
+//TODO move from public to private
+//void get_cursor_location    ( Rect      *pos);
 void get_virtual_cursor_pos ( gint              *x, gint              *y);
 void set_virtual_cursor_pos ( gint               x, gint               y);
 

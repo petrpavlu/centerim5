@@ -193,8 +193,8 @@ class TextLayout
 		void               set_buffer            ( TextBuffer     *buffer);
 		TextBuffer     *get_buffer            (void);
 
-		void invalidate        ( const TextIter *start, const TextIter *end);
-		void invalidate_cursors( const TextIter *start, const TextIter *end);
+		void invalidate        ( TextIter *start, TextIter *end);
+		void invalidate_cursors( TextIter *start, TextIter *end);
 
 		void     changed              (
                                                gint               y,
@@ -272,10 +272,6 @@ GSList* get_lines (
 void set_screen_width       ( gint               width);
 
 void               default_style_changed (void);
-//TODO move to private
-  /* Default style used if no tags override it */
-
-  TextAttributes *default_style;
 
 void     validate        ( gint           max_pixels);
   //
@@ -304,8 +300,15 @@ void               set_default_style     ( TextAttributes *values);
 
 	void get_cursor_locations ( TextIter    *iter, Rect   *strong_pos, Rect   *weak_pos);;
 
+	//TODO make private
+  /* Default style used if no tags override it */
+  TextAttributes *default_style;
+
 	protected:
 	private:
+
+
+
   /* width of the display area on-screen,
    * i.e. pixels we should wrap to fit inside. */
   gint screen_width;

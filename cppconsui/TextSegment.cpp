@@ -69,11 +69,12 @@
 
 /* Constructors */
 
+
 TextLineSegment::TextLineSegment(void)
 : type(text_segment_none), next(NULL), char_count(0), byte_count(0), name(NULL), leftGravity(false)
 {
 }
-
+/*
 TextLineSegment::TextLineSegment(const gchar *text, guint len)
 : type(text_segment_none), next(NULL), char_count(0), byte_count(0), name(NULL), leftGravity(false)
 {
@@ -89,11 +90,7 @@ TextLineSegment::TextLineSegment(TextTagInfo *info, bool on)
 : type(text_segment_none), next(NULL), char_count(0), byte_count(0), name(NULL), leftGravity(false)
 {
 }
-
-TextLineSegment::TextLineSegment(TextMark *mark_obj)
-: type(text_segment_none), next(NULL), char_count(0), byte_count(0), name(NULL), leftGravity(false)
-{
-}
+*/
 
 void TextLineSegment::set_tree ( TextBTree *tree)
 {
@@ -508,28 +505,23 @@ void TextLineSegmentToggle::lineChangeFunc (TextLine *line)
     }
 }
 
-TextLineSegmentRightMark::TextLineSegmentRightMark (TextMark *mark_obj)
+TextLineSegmentLeftMark::TextLineSegmentLeftMark (TextMark *mark_obj)
 {
-//  TextLineSegment *mark;
+	body.mark.name = NULL;
+	type = text_segment_left_mark;
 
-//  mark = (TextLineSegment *) g_malloc0 (MSEG_SIZE);
-  body.mark.name = NULL;
-  type = text_segment_right_mark;
+	byte_count = 0;
+	char_count = 0;
 
-  //byte_count = 0;
-  //char_count = 0;
+	body.mark.obj = mark_obj;
+	mark_obj->segment = this;
 
-  body.mark.obj = mark_obj;
-  mark_obj->segment = this;
+	body.mark.tree = NULL;
+	body.mark.line = NULL;
+	next = NULL;
 
-  body.mark.tree = NULL;
-  body.mark.line = NULL;
-  //next = NULL;
-
-  body.mark.visible = false;
-  body.mark.not_deleteable = false;
-
-  //return mark;
+	body.mark.visible = false;
+	body.mark.not_deleteable = false;
 }
 
 /*
@@ -550,7 +542,7 @@ TextLineSegmentRightMark::TextLineSegmentRightMark (TextMark *mark_obj)
  *--------------------------------------------------------------
  */
 
-bool TextLineSegmentRightMark::deleteFunc (TextLineSegmentRightMark *segPtr,
+bool TextLineSegmentLeftMark::deleteFunc (TextLineSegmentLeftMark *segPtr,
                           TextLine        *line,
                           bool            tree_gone)
 {
@@ -580,7 +572,7 @@ bool TextLineSegmentRightMark::deleteFunc (TextLineSegmentRightMark *segPtr,
  *--------------------------------------------------------------
  */
 
-TextLineSegment* TextLineSegmentRightMark::cleanupFunc (TextLineSegmentRightMark *segPtr, 
+TextLineSegment* TextLineSegmentLeftMark::cleanupFunc (TextLineSegmentLeftMark *segPtr, 
                            TextLine        *line)
 {
   /* not sure why Tk did this here and not in LineChangeFunc */
@@ -606,7 +598,7 @@ TextLineSegment* TextLineSegmentRightMark::cleanupFunc (TextLineSegmentRightMark
  *--------------------------------------------------------------
  */
 
-void TextLineSegmentRightMark::checkFunc (
+void TextLineSegmentLeftMark::checkFunc (
                          TextLine        *line)
 {
   if (body.mark.line != line)

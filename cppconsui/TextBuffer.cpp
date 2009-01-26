@@ -109,6 +109,12 @@ static Signals signals[LAST_SIGNAL];
 //static void free_log_attr_cache (TextLogAttrCache *cache);
 
 TextBuffer::TextBuffer(void)
+: tag_table(NULL)
+, btree(NULL)
+, log_attr_cache(NULL)
+, user_action_count(0)
+, modified(0)
+, has_selection(0)
 {
   /*GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
@@ -538,7 +544,7 @@ TextBuffer::TextBuffer(void)
   g_type_class_add_private (object_class, sizeof (TextBufferPrivate));*/
 
   //buffer->clipboard_contents_buffers = NULL;
-  tag_table = NULL;
+  //tag_table = NULL;
 
   /* allow copying of arbiatray stuff in the internal rich text format */
   //gtk_text_buffer_register_serialize_tagset (buffer, NULL);
@@ -559,12 +565,10 @@ void TextBuffer::set_table (TextTagTable *table)
 
 TextTagTable* TextBuffer::get_table(void)
 {
-  TextBuffer* buffer=this;
-  TextTagTable *tag_table; //TODO fix
   if (tag_table == NULL)
     { //TODO careful with freeing memory
       tag_table = new TextTagTable();
-      tag_table->add_buffer (buffer);
+      tag_table->add_buffer (this);
     }
 
   return tag_table;
@@ -671,8 +675,13 @@ gtk_text_buffer_notify (GObject    *object,
  * Return value: a new text buffer
  **/
 TextBuffer::TextBuffer (TextTagTable *table)
+: tag_table(table)
+, btree(NULL)
+, log_attr_cache(NULL)
+, user_action_count(0)
+, modified(0)
+, has_selection(0)
 {
-	tag_table = table;
 }
 
 TextBuffer::~TextBuffer (void)
@@ -689,6 +698,8 @@ TextBuffer::~TextBuffer (void)
   if (btree)
     {
       //_gtk_text_btree_unref (buffer->btree);
+      //TODO make sure we never get a btree other than creating it ourselves
+      delete btree;
       btree = NULL;
     }
 
@@ -697,6 +708,7 @@ TextBuffer::~TextBuffer (void)
 
   log_attr_cache = NULL;*/
 
+  //TODO?
   //free_target_lists ();
 
   //G_OBJECT_CLASS (gtk_text_buffer_parent_class)->finalize (object);
@@ -791,7 +803,8 @@ void TextBuffer::emit_insert (
   
   if (len > 0)
     {
-	//TODO what to do here? preferably without signal
+      real_insert_text (iter, text, len);
+	//TODO what to do here? preferably without signal does the line above work?
       //g_signal_emit (buffer, signals[INSERT_TEXT], 0,
       //               iter, text, len);
     }
@@ -2213,6 +2226,25 @@ void TextBuffer::select_range (
   get_btree()->select_range (&real_ins, &real_bound);
   mark_set (&real_ins, get_insert ());
   mark_set (&real_bound, get_selection_bound ());
+}
+
+void TextBuffer::select_all(bool select)
+{
+  TextIter start_iter, end_iter, insert;
+
+  if (select) 
+    {
+      get_bounds (&start_iter, &end_iter);
+      select_range (&start_iter, &end_iter);
+    }
+  else 
+    {
+      get_iter_at_mark (&insert, get_insert ());
+      move_mark_by_name ("selection_bound", &insert);
+    }
+
+  //TODO signal that redraw is needed
+  //Redraw();
 }
 
 /*

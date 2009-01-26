@@ -92,14 +92,14 @@ class TextBuffer
 		/* table is NULL to create a new one */
 		TextBuffer(TextTagTable *table);
 
+		~TextBuffer(void);
+
 /* Delete whole buffer, then insert */
 void set_text (const gchar *text, gint len);
 
 /* Insert into the buffer */
 void insert ( TextIter   *iter, const gchar   *text, gint           len);
-void insert_at_cursor  (
-                                        const gchar   *text,
-                                        gint           len);
+void insert_at_cursor  ( const gchar   *text, gint           len);
 
 bool insert_interactive           (
                                                        TextIter   *iter,
@@ -197,6 +197,7 @@ void select_range (
                                    const TextIter *ins,
 				   const TextIter *bound);
 
+void select_all(bool select);
 
 
 /* Tag manipulation */
@@ -334,9 +335,9 @@ void notify_will_remove_tag ( TextTag    *tag);
   guint user_action_count;
 
   /* Whether the buffer has been modified since last save */
-  guint modified : 1;
+  guint modified ;//: 1;
 
-  guint has_selection : 1;
+  guint has_selection;// : 1;
 
 /*struct _TextBufferClass
 {
@@ -401,7 +402,6 @@ void notify_will_remove_tag ( TextTag    *tag);
 
 
 
-		~TextBuffer(void);
 
 		gint get_line_count (void);
 		gint get_char_count (void);

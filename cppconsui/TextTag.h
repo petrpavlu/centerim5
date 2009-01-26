@@ -301,7 +301,7 @@ class TextAttributes
   /* Individual chunks of this can be set/unset as a group */
   //PangoFontDescription *font;
 
-  gdouble font_scale;
+  //gdouble font_scale;
   
   gint left_margin;
 

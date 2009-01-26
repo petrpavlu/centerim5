@@ -103,28 +103,23 @@ TextMarkType gtk_text_mark_class_init (TextMarkType *klass)
 }*/
 
 TextMark::TextMark()
+: name(NULL)
+, left_gravity(true)
 {
-  segment = new TextLineSegment(this);
+  segment = new TextLineSegmentLeftMark(this);
 }
 
 TextMark::~TextMark()
 {
-//  TextMark *mark;
-  TextLineSegment *seg;
-
-//  mark = GTK_TEXT_MARK (obj);
-
-  seg = segment;
-
-  if (seg)
+  if (segment)
     {
-      if (seg->body.mark.tree != NULL)
+      if (segment->body.mark.tree != NULL)
         g_warning ("TextMark being finalized while still in the buffer; "
                    "someone removed a reference they didn't own! Crash "
                    "impending");
 
-      g_free (seg->body.mark.name);
-      g_free (seg);
+      g_free (segment->body.mark.name);
+      g_free (segment);
 
       segment = NULL;
     }
@@ -214,6 +209,7 @@ TextMark::TextMark(const gchar *name, bool     left_gravity)
 		       "name", name,
 		       "left-gravity", left_gravity,
 		       NULL);*/
+  segment = new TextLineSegmentLeftMark(this);
 }
 
 /**
@@ -227,11 +223,7 @@ TextMark::TextMark(const gchar *name, bool     left_gravity)
  **/
 bool TextMark::get_visible (void)
 {
-  TextLineSegment *seg;
-
-  seg = segment;
-
-  return seg->body.mark.visible;
+  return segment->body.mark.visible;
 }
 
 /**
@@ -244,11 +236,7 @@ bool TextMark::get_visible (void)
  **/
 const char * TextMark::get_name (void)
 {
-  TextLineSegment *seg;
-
-  seg = segment;
-
-  return seg->body.mark.name;
+  return segment->body.mark.name;
 }
 
 /**
@@ -263,16 +251,10 @@ const char * TextMark::get_name (void)
  **/
 bool TextMark::get_deleted (void)
 {
-  TextLineSegment *seg;
-
-//  g_return_val_if_fail (GTK_IS_TEXT_MARK (mark), false);
-
-  seg = segment;
-
-  if (seg == NULL)
+  if (segment == NULL)
     return true;
 
-  return seg->body.mark.tree == NULL;
+  return segment->body.mark.tree == NULL;
 }
 
 /**
@@ -286,16 +268,10 @@ bool TextMark::get_deleted (void)
  **/
 TextBuffer* TextMark::get_buffer (void)
 {
-  TextLineSegment *seg;
-
-//  g_return_val_if_fail (GTK_IS_TEXT_MARK (mark), NULL);
-
-  seg = segment;
-
-  if (seg->body.mark.tree == NULL)
+  if (segment->body.mark.tree == NULL)
     return NULL;
   else
-    return seg->body.mark.tree->get_buffer();
+    return segment->body.mark.tree->get_buffer();
 }
 
 /**
@@ -308,13 +284,7 @@ TextBuffer* TextMark::get_buffer (void)
  **/
 bool TextMark::get_left_gravity (void)
 {
-  TextLineSegment *seg;
-
-//  g_return_val_if_fail (GTK_IS_TEXT_MARK (mark), false);
-  
-  seg = segment;
-
-  return seg->type == text_segment_left_mark;
+  return segment->type == text_segment_left_mark;
 }
 
 /*

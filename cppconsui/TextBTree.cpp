@@ -97,8 +97,28 @@ inline void TextBTree::chars_changed (void)
 
 TextBTree::TextBTree(TextTagTable *table,
                      TextBuffer *buffer)
+: root_node(NULL)
+, table(table)
+, mark_table(NULL)
+, refcount(0)
+, insert_mark(NULL)
+, selection_bound_mark(NULL)
+, buffer(buffer)
+, views(NULL)
+, tag_infos(NULL)
+, tag_changed_handler(0)
+, chars_changed_stamp(0)
+, segments_changed_stamp(0)
+, last_line(NULL)
+, last_line_stamp(0)
+, end_iter_segment(NULL)
+, end_iter_segment_byte_index(0)
+, end_iter_segment_char_offset(0)
+, end_iter_line_stamp(0)
+, end_iter_segment_stamp(0)
+, child_anchor_table(NULL)
 {
-  TextBTreeNode *root_node;
+  //TextBTreeNode *root_node;
   TextLine *line, *line2;
 
   //TODOg_return_val_if_fail (GTK_IS_TEXT_TAG_TABLE (table), NULL);
@@ -136,6 +156,7 @@ TextBTree::TextBTree(TextTagTable *table,
   line2->next = NULL;
   line2->segments = new TextLineSegmentChar ("\n", 1);
 
+  //already done in initializer. this->table = table;
   views = NULL;
 
   /* Set these to values that are unlikely to be found
@@ -177,24 +198,14 @@ TextBTree::TextBTree(TextTagTable *table,
     get_iter_at_line_char (&start, 0, 0);
 
 
-    insert_mark = set_mark (
-                                                 NULL,
-                                                 "insert",
-                                                 false,
-                                                 &start,
-                                                 false);
+    insert_mark = set_mark ( NULL, "insert", false, &start, false);
 
     seg = insert_mark->segment;
 
     seg->body.mark.not_deleteable = true;
     seg->body.mark.visible = true;
 
-    selection_bound_mark = set_mark (
-                                                          NULL,
-                                                          "selection_bound",
-                                                          false,
-                                                          &start,
-                                                          false);
+    selection_bound_mark = set_mark ( NULL, "selection_bound", false, &start, false);
 
     seg = selection_bound_mark->segment;
 
@@ -877,10 +888,10 @@ void TextBTree::insert_text (TextIter *iter,
     {
       sol = eol;
       
-      /*TODOpango_find_paragraph_boundary (text + sol,
+      find_paragraph_boundary (text + sol,
                                      len - sol,
                                      &delim,
-                                     &eol);      */
+                                     &eol);
 
       /* make these relative to the start of the text */
       delim += sol;
@@ -1341,8 +1352,8 @@ void TextBTree::remove_view (
 }
 
 void TextBTree::invalidate_region (
-                                   const TextIter *start,
-                                   const TextIter *end,
+                                   TextIter *start,
+                                   TextIter *end,
                                    bool           cursors_only)
 {
   BTreeView *view;
@@ -2405,16 +2416,17 @@ TextBTree::real_set_mark (
   g_return_val_if_fail (where != NULL, NULL);
   g_return_val_if_fail (where->get_btree() == this, NULL);
 
-  if (existing_mark)
+  if (existing_mark != NULL)
     {
       if (existing_mark->get_buffer () != NULL)
 	mark = existing_mark->segment;
       else
 	mark = NULL;
     }
-  else if (name != NULL)
-    mark = (TextLineSegment*)g_hash_table_lookup (mark_table,
-                                name);
+  else if (name != NULL) 
+    {
+      mark = (TextLineSegment*)g_hash_table_lookup (mark_table, name);
+    }
   else
     mark = NULL;
 
@@ -2835,7 +2847,7 @@ TextLine* TextBTree::last_could_contain_tag (
 gint TextLine::get_number (void)
 {
   TextLine *line2;
-  TextBTreeNode *node, *parent, *node2;
+  TextBTreeNode *node, *node2, *parent_iter;
   int index;
 
   /*
@@ -2861,10 +2873,10 @@ gint TextLine::get_number (void)
    * TextBTreeNode.
    */
 
-  for (parent = node->parent ; parent != NULL;
-       node = parent, parent = parent->parent)
+  for (parent_iter = node->parent ; parent_iter != NULL;
+       node = parent_iter, parent_iter = parent_iter->parent)
     {
-      for (node2 = parent->children.node; node2 != node;
+      for (node2 = parent_iter->children.node; node2 != node;
            node2 = node2->next)
         {
           if (node2 == NULL)
@@ -4342,6 +4354,13 @@ TextLine* TextBTree::get_last_line ()
  */
 
 TextLine::TextLine ()
+: parent(NULL)
+, next(NULL)
+, segments(NULL)
+, views(NULL)
+, dir_strong(NULL)
+, dir_propagated_back(NULL)
+, dir_propagated_forward(NULL)
 {
   /*TODOline->dir_strong = PANGO_DIRECTION_NEUTRAL;
   line->dir_propagated_forward = PANGO_DIRECTION_NEUTRAL;
@@ -4474,6 +4493,13 @@ void TextBTree::summary_destroy (Summary *summary)
 }
 
 TextBTreeNode::TextBTreeNode (void)
+: parent(NULL)
+, next(NULL)
+, summary(NULL)
+, level(0)
+, num_children(0)
+, num_lines(0)
+, num_chars(0)
 {
 //  TextBTreeNode *node;
 

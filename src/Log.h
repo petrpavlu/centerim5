@@ -66,9 +66,9 @@ class Log
 			const gchar *msg, gpointer user_data)
 			{ Log::Instance()->glib_log_handler(domain, flags, msg, user_data); }
 		static void glib_print_(const char *msg)
-			{ Log::Instance()->glib_print_(msg); }
+			{ Log::Instance()->glib_print(msg); }
 		static void glib_printerr_(const char *msg)
-			{ Log::Instance()->glib_printerr_(msg); }
+			{ Log::Instance()->glib_printerr(msg); }
 
 		void purple_print(PurpleDebugLevel level, const char *category, const char *arg_s);
 		gboolean isenabled(PurpleDebugLevel level, const char *category);

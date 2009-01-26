@@ -1361,6 +1361,24 @@ void TextTag::array_sort (TextTag** tag_array_p,
  * Return value: a new #GtkTextAttributes
  **/
 TextAttributes::TextAttributes ()
+: refcount(0)
+//, TextAppearance appearance;
+, left_margin(0)
+, indent(0)
+, right_margin(0)
+, pixels_above_lines(0)
+, pixels_below_lines(0)
+, pixels_inside_wrap(0)
+, wrap_mode(WRAP_NONE)
+, pg_bg_color(NULL)
+, invisible(0)
+, bg_full_height(0)
+, editable(0)
+, realized(0)
+, pad1(0)
+, pad2(0)
+, pad3(0)
+, pad4(0)
 {
   editable = true;
 }

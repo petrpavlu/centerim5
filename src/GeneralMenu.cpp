@@ -23,8 +23,10 @@
 #include "CIMWindowManager.h"
 
 //TODO remove testing stuff
+#include "Log.h"
 #include <cppconsui/MessageDialog.h>
 #include <cppconsui/ComboBox.h>
+#include <cppconsui/TextView.h>
 
 //TODO remove when show() of window/dialog is implemented
 #include <cppconsui/WindowManager.h>
@@ -65,9 +67,38 @@ GeneralMenu::~GeneralMenu()
 
 void GeneralMenu::OpenTestWindow(void)
 {
+	TextView view(*this, 0, 0, w, h);
+	TextIter start_iter, end_iter, insert;
+	Rect r;
+	Rect c;
+	Log* log = Log::Instance();
+
+	Glib::ustring s("the foo was bar in the spring.");
+
+	view.insert_at_cursor(s.c_str());
+	view.insert_at_cursor(s.c_str());
+
+	view.get_visible_rect(&r);
+	view.get_cursor_location(&c);
+	log->Write(Log::Type_cim, Log::Level_debug, "rect: %d %d %d %d cursor: %d %d %d %d", 
+			r.Left(), r.Width(), r.Top(), r.Height(),
+			c.Left(), c.Width(), c.Top(), c.Height());
+
+
+	view.select_all(true);
+	view.backspace();
+
+	view.get_visible_rect(&r);
+	view.get_cursor_location(&c);
+	log->Write(Log::Type_cim, Log::Level_debug, "rect: %d %d %d %d cursor: %d %d %d %d", 
+			r.Left(), r.Width(), r.Top(), r.Height(),
+			c.Left(), c.Width(), c.Top(), c.Height());
+
+
+	/*
 	WindowManager *wm = WindowManager::Instance();
 	MessageDialog *dialog = new MessageDialog("Message.");
-	wm->Add(dialog);
+	wm->Add(dialog);*/
 	Close();
 }
 

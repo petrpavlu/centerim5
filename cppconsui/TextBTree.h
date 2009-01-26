@@ -282,7 +282,7 @@ class TextBTree
 								TextLayout     *layout);
 		void         remove_view       (
 								gpointer           view_id);
-		void         invalidate_region ( const TextIter *start, const TextIter *end, bool cursors_only);
+		void         invalidate_region ( TextIter *start, TextIter *end, bool cursors_only);
 		void         get_view_size     (
 								gpointer           view_id,
 								gint              *width,
@@ -452,6 +452,11 @@ class TextBTree
 
 	protected:
 	private:
+  		TextBTree();
+		TextBTree(const TextLineSegment&);
+
+		TextLineSegment& operator=(const TextLineSegment&);
+
 		void ref(void);
 		void unref(void);
 

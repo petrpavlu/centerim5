@@ -161,6 +161,21 @@ void TextLayout::class_init (TextLayoutClass *klass)
 }*/
 
 TextLayout::TextLayout (void)
+: default_style(NULL)
+, buffer(NULL)
+, screen_width(0)
+, width(0)
+, height(0)
+, one_style_cache(NULL)
+, one_display_cache(NULL)
+, wrap_loop_count(0)
+, cursor_visible(0)
+, cursor_direction(0)
+, keyboard_direction(0)
+, preedit_string(NULL)
+, preedit_len(0)
+, preedit_cursor(0)
+, overwrite_mode(0)
 {
   cursor_visible = true;
 }
@@ -228,19 +243,19 @@ TextLayout::~TextLayout()
   //TODO G_OBJECT_CLASS (gtk_text_layout_parent_class)->finalize (object);
 }
 
-void TextLayout::set_buffer ( TextBuffer *buffer)
+void TextLayout::set_buffer ( TextBuffer *new_buffer)
 {
 //  //g_return_if_fail (GTK_IS_TEXT_LAYOUT (layout));
-  g_return_if_fail (buffer == NULL /*|| GTK_IS_TEXT_BUFFER (buffer)*/);
+  g_return_if_fail (new_buffer != NULL);
 
-  if (this->buffer == buffer)
+  if (buffer == new_buffer)
     return;
 
   free_style_cache ();
 
-  if (this->buffer)
+  if (buffer)
     {
-      this->buffer->get_btree()->remove_view (this);
+      buffer->get_btree()->remove_view (this);
 
       /*TODO
       g_signal_handlers_disconnect_by_func (layout->buffer, 
@@ -255,12 +270,12 @@ void TextLayout::set_buffer ( TextBuffer *buffer)
 
       g_object_unref (layout->buffer);
       */
-      this->buffer = NULL;
+      buffer = NULL;
     }
 
-  if (buffer)
+  if (new_buffer)
     {
-      this->buffer = buffer;
+      buffer = new_buffer;
 
       //TODO g_object_ref (buffer);
 
@@ -598,25 +613,25 @@ TextLayout::free_line_data (
                                 TextLineData   *line_data)
 {
   //GTK_TEXT_LAYOUT_GET_CLASS (layout)->free_line_data (layout, line, line_data);
-  free_line_data (line, line_data);
+  real_free_line_data (line, line_data);
 }
 
 void
 TextLayout::invalidate (
-                            const TextIter *start_index,
-                            const TextIter *end_index)
+                            TextIter *start_index,
+                            TextIter *end_index)
 {
   //GTK_TEXT_LAYOUT_GET_CLASS (layout)->invalidate (layout, start_index, end_index);
-  invalidate (start_index, end_index);
+  real_invalidate (start_index, end_index);
 }
 
 void
 TextLayout::invalidate_cursors (
-				    const TextIter *start_index,
-				    const TextIter *end_index)
+				    TextIter *start_index,
+				    TextIter *end_index)
 {
   //GTK_TEXT_LAYOUT_GET_CLASS (layout)->invalidate_cursors (layout, start_index, end_index);
-  invalidate_cursors (start_index, end_index);
+  real_invalidate_cursors (start_index, end_index);
 }
 
 TextLineData*
@@ -626,7 +641,7 @@ TextLayout::wrap (
                       TextLineData *line_data)
 {
   //return GTK_TEXT_LAYOUT_GET_CLASS (layout)->wrap (layout, line, line_data);
-  return wrap (line, line_data);
+  return real_wrap (line, line_data);
 }
 
 GSList*
@@ -821,7 +836,7 @@ void TextLayout::real_invalidate ( TextIter *start, TextIter *end)
       TextLineData *line_data = line->get_data (this);
 
       invalidate_cache (line, false);
-      
+
       if (line_data)
         line->invalidate_wrap (line_data);
 

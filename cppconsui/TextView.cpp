@@ -274,13 +274,29 @@ void TextView::init (void)
                                 G_TYPE_NONE, 0);
    */ 
 
-  /*
-   * Key bindings
-   */
-
-	DeclareBindables();
-	BindActions();
-
+  im_spot_idle = 0;
+  layout = NULL;
+  buffer = NULL;
+  selection_drag_handler = 0;
+  scroll_timeout = 0;
+  overwrite_mode = false;
+  //need_im_reset = false;
+  width_changed = false;
+  onscreen_validated = false;
+  hadjustment = NULL;
+  vadjustment = NULL;
+  xoffset = 0;
+  yoffset = 0;
+  width = 0;
+  height = 0;
+  first_para_mark = NULL;
+  first_para_pixels = 0;
+  //dnd_mark = ;
+  //guint blink_timeout;
+  first_validate_idle = 0;        /* Idle to revalidate onscreen portion, runs before resize */
+  incremental_validate_idle = 0;  /* Idle to revalidate offscreen portions, runs after redraw */
+  children = NULL;
+  pending_scroll = NULL;
 
   /* Set up default style */
   wrap_mode = WRAP_NONE;
@@ -333,6 +349,14 @@ void TextView::init (void)
 
   /* We handle all our own redrawing */
   //gtk_widget_set_redraw_on_allocate (widget, false);
+  /*
+   * Key bindings
+   */
+
+	DeclareBindables();
+	BindActions();
+
+
 }
 
 TextView::TextView(Widget& parent, int x, int y, int w, int h)
@@ -419,7 +443,7 @@ TextView::set_buffer ( TextBuffer *buffer)
                                             gtk_text_view_target_list_notify,
                                             text_view);*/
 
-      dnd_mark = NULL;
+      //dnd_mark = NULL;
       first_para_mark = NULL;
 
       /*if (GTK_WIDGET_REALIZED (text_view))
@@ -441,13 +465,13 @@ TextView::set_buffer ( TextBuffer *buffer)
       if (layout)
         layout->set_buffer (buffer);
 
-      buffer->get_iter_at_offset (&start, 0);
+      get_buffer()->get_iter_at_offset (&start, 0);
 
-      dnd_mark = buffer->create_mark (
-                                                         "cim_drag_target",
-                                                         &start, false);
+      //dnd_mark = get_buffer()->create_mark (
+      //                                                   "cim_drag_target",
+      //                                                   &start, false);
 
-      first_para_mark = buffer->create_mark (
+      first_para_mark = get_buffer()->create_mark (
                                                                 NULL,
                                                                 &start, true);
 
@@ -528,7 +552,7 @@ TextView::get_iter_at_location (
   ////g_return_if_fail (GTK_IS_TEXT_VIEW (text_view))
   g_return_if_fail (iter != NULL);
 
-  ensure_layout ();
+  //TODO remove after testing ensure_layout ();
   
   layout->get_iter_at_pixel ( iter, x, y);
 }
@@ -863,7 +887,7 @@ void
 TextView::free_pending_scroll (TextPendingScroll *scroll)
 {
   if (!scroll->mark->get_deleted ())
-    buffer->delete_mark (
+    get_buffer()->delete_mark (
                                  scroll->mark);
   //g_object_unref (scroll->mark);
   g_free (scroll);
@@ -899,9 +923,9 @@ TextView::queue_scroll (
   scroll->xalign = xalign;
   scroll->yalign = yalign;
   
-  buffer->get_iter_at_mark (&iter, mark);
+  get_buffer()->get_iter_at_mark (&iter, mark);
 
-  scroll->mark = buffer->create_mark ( NULL,
+  scroll->mark = get_buffer()->create_mark ( NULL,
                                               &iter,
                                               mark->get_left_gravity ());
 
@@ -935,7 +959,7 @@ TextView::flush_scroll ()
   /* avoid recursion */
   pending_scroll = NULL;
   
-  buffer->get_iter_at_mark (&iter, scroll->mark);
+  get_buffer()->get_iter_at_mark (&iter, scroll->mark);
 
   /* Validate area around the scroll destination, so the adjustment
    * can meaningfully point into that area. We must validate
@@ -1210,11 +1234,11 @@ TextView::move_mark_onscreen (
   //g_return_val_if_fail (GTK_IS_TEXT_VIEW (text_view), false);
   g_return_val_if_fail (mark != NULL, false);
 
-  buffer->get_iter_at_mark (&iter, mark);
+  get_buffer()->get_iter_at_mark (&iter, mark);
 
   if (clamp_iter_onscreen (&iter))
     {
-      buffer->move_mark (mark, &iter);
+      get_buffer()->move_mark (mark, &iter);
       return true;
     }
   else
@@ -1788,12 +1812,12 @@ TextView::place_cursor_onscreen ()
 
  // g_return_val_if_fail (GTK_IS_TEXT_VIEW (text_view), false);
 
-  buffer->get_iter_at_mark (&insert,
-                                    buffer->get_insert ());
+  get_buffer()->get_iter_at_mark (&insert,
+                                    get_buffer()->get_insert ());
 
   if (clamp_iter_onscreen (&insert))
     {
-      buffer->place_cursor (&insert);
+      get_buffer()->place_cursor (&insert);
       return true;
     }
   else
@@ -2435,7 +2459,7 @@ TextView::size_allocate (GtkWidget *widget,
 void
 TextView::get_first_para_iter ( TextIter *iter)
 {
-  buffer->get_iter_at_mark (iter,
+  get_buffer()->get_iter_at_mark (iter,
                                     first_para_mark);
 }
 
@@ -2680,7 +2704,7 @@ TextView::changed_handler (TextLayout     *layout,
        * In short we are adding the height delta of the portion of the
        * changed region above first_para_mark to text_view->yoffset.
        *
-      buffer->get_iter_at_mark ( &first,
+      get_buffer()->get_iter_at_mark ( &first,
                                         text_view->first_para_mark);
 
       gtk_text_layout_get_line_yrange (layout, &first, &new_first_para_top, NULL);
@@ -3135,8 +3159,8 @@ TextView::event (GtkWidget *widget, GdkEvent *event)
     {
       TextIter iter;
 
-      buffer->get_iter_at_mark ( &iter,
-                                        buffer->get_insert ());
+      get_buffer()->get_iter_at_mark ( &iter,
+                                        get_buffer()->get_insert ());
 
       return emit_event_on_tags (widget, event, &iter);
     }
@@ -3162,8 +3186,8 @@ TextView::key_press_event (GtkWidget *widget, GdkEventKey *event)
   * Make sure input method knows where it is *
   flush_update_im_spot_location (text_view);
 
-  insert = buffer->get_insert ();
-  buffer->get_iter_at_mark ( &iter, insert);
+  insert = get_buffer()->get_insert ();
+  get_buffer()->get_iter_at_mark ( &iter, insert);
   can_insert = gtk_text_iter_can_insert (&iter, text_view->editable);
   if (gtk_im_context_filter_keypress (text_view->im_context, event))
     {
@@ -3238,8 +3262,8 @@ TextView::key_release_event (GtkWidget *widget, GdkEventKey *event)
   if (text_view->layout == NULL || buffer == NULL)
     return false;
       
-  insert = buffer->get_insert ();
-  buffer->get_iter_at_mark ( &iter, insert);
+  insert = get_buffer()->get_insert ();
+  get_buffer()->get_iter_at_mark ( &iter, insert);
   if (gtk_text_iter_can_insert (&iter, text_view->editable) &&
       gtk_im_context_filter_keypress (text_view->im_context, event))
     {
@@ -3795,8 +3819,8 @@ cursor_blinks (TextView *text_view)
       TextMark *insert;
       TextIter iter;
       
-      insert = buffer->get_insert ();
-      buffer->get_iter_at_mark ( &iter, insert);
+      insert = get_buffer()->get_insert ();
+      get_buffer()->get_iter_at_mark ( &iter, insert);
       
       if (gtk_text_iter_editable (&iter, text_view->editable))
 	return blink;
@@ -3993,9 +4017,9 @@ bool TextView::move_iter_by_lines ( TextIter *newplace, gint         count)
 void TextView::some_move_cursor ( TextIter *new_location, bool           extend_selection)
 {
   if (extend_selection)
-    buffer->move_mark_by_name ( "insert", new_location);
+    get_buffer()->move_mark_by_name ( "insert", new_location);
   else
-      buffer->place_cursor ( new_location);
+      get_buffer()->place_cursor ( new_location);
   //check_cursor_blink (text_view);
 }
 
@@ -4083,8 +4107,8 @@ TextView::move_cursor_internal (
       return;
     }
 
-  buffer->get_iter_at_mark (&insert,
-                                    buffer->get_insert ());
+  get_buffer()->get_iter_at_mark (&insert,
+                                    get_buffer()->get_insert ());
   newplace = insert;
 
   if (step == MOVE_DISPLAY_LINES)
@@ -4175,9 +4199,9 @@ TextView::move_cursor_internal (
 
     case MOVE_BUFFER_ENDS:
       if (count > 0)
-        buffer->get_end_iter (&newplace);
+        get_buffer()->get_end_iter (&newplace);
       else if (count < 0)
-        buffer->get_iter_at_offset (&newplace, 0);
+        get_buffer()->get_iter_at_offset (&newplace, 0);
      break;
       
     default:
@@ -4193,7 +4217,7 @@ TextView::move_cursor_internal (
     {
       //DV(g_print (G_STRLOC": scrolling onscreen\n"));
       scroll_mark_onscreen (
-                                          buffer->get_insert ());
+                                          get_buffer()->get_insert ());
 
       if (step == MOVE_DISPLAY_LINES)
         set_virtual_cursor_pos (cursor_x_pos, -1);
@@ -4285,10 +4309,10 @@ void TextView::set_anchor (void)
 {
   TextIter insert;
 
-  buffer->get_iter_at_mark ( &insert,
-                                    buffer->get_insert ());
+  get_buffer()->get_iter_at_mark ( &insert,
+                                    get_buffer()->get_insert ());
 
-  buffer->create_mark ("anchor", &insert, true);
+  get_buffer()->create_mark ("anchor", &insert, true);
 }
 
 bool
@@ -4310,7 +4334,7 @@ TextView::scroll_pages (
   
   adj = vadjustment;
 
-  insert_mark = buffer->get_insert ();
+  insert_mark = get_buffer()->get_insert ();
 
   /* Make sure we start from the current cursor position, even
    * if it was offscreen, but don't queue more scrolls if we're
@@ -4323,7 +4347,7 @@ TextView::scroll_pages (
 
   /* Validate the region that will be brought into view by the cursor motion
    */
-  buffer->get_iter_at_mark (
+  get_buffer()->get_iter_at_mark (
                                     &old_insert, insert_mark);
 
   if (count < 0)
@@ -4347,13 +4371,13 @@ TextView::scroll_pages (
   if (count < 0 && adj->value <= (adj->lower + 1e-12))
     {
       /* already at top, just be sure we are at offset 0 */
-      buffer->get_start_iter (&new_insert);
+      get_buffer()->get_start_iter (&new_insert);
       some_move_cursor (&new_insert, extend_selection);
     }
   else if (count > 0 && adj->value >= (adj->upper - adj->page_size - 1e-12))
     {
       /* already at bottom, just be sure we are at the end */
-      buffer->get_end_iter (&new_insert);
+      get_buffer()->get_end_iter (&new_insert);
       some_move_cursor (&new_insert, extend_selection);
     }
   else
@@ -4402,7 +4426,7 @@ TextView::scroll_hpages (
 
   adj = hadjustment;
 
-  insert_mark = buffer->get_insert ();
+  insert_mark = get_buffer()->get_insert ();
 
   /* Make sure we start from the current cursor position, even
    * if it was offscreen, but don't queue more scrolls if we're
@@ -4415,7 +4439,7 @@ TextView::scroll_hpages (
 
   /* Validate the line that we're moving within.
    */
-  buffer->get_iter_at_mark (
+  get_buffer()->get_iter_at_mark (
                                     &old_insert, insert_mark);
 
   layout->get_line_yrange (&old_insert, &y, &height);
@@ -4496,10 +4520,9 @@ bool TextView::find_whitepace_region (const TextIter *center,
 }
 
 void
-TextView::insert_at_cursor (
-                                const gchar *str)
+TextView::insert_at_cursor (const gchar *str)
 {
-  if (!buffer->insert_interactive_at_cursor ( str, -1,
+  if (!get_buffer()->insert_interactive_at_cursor ( str, -1,
                                                      editable))
     {
       //TODO beep! gtk_widget_error_bell (GTK_WIDGET (text_view));
@@ -4521,11 +4544,11 @@ TextView::delete_from_cursor (
   if (type == DELETE_CHARS)
     {
       /* Char delete deletes the selection, if one exists */
-      if (buffer->delete_selection (true, editable))
+      if (get_buffer()->delete_selection (true, editable))
         return;
     }
 
-  buffer->get_iter_at_mark ( &insert, buffer->get_insert ());
+  get_buffer()->get_iter_at_mark ( &insert, get_buffer()->get_insert ());
 
   start = insert;
   end = insert;
@@ -4622,13 +4645,13 @@ TextView::delete_from_cursor (
 
   if (!TextIter::equal (&start, &end))
     {
-      buffer->begin_user_action ();
+      get_buffer()->begin_user_action ();
 
-      if (buffer->delete_text_interactive (&start, &end,
+      if (get_buffer()->delete_text_interactive (&start, &end,
                                               editable))
         {
           if (leave_one)
-            buffer->insert_interactive_at_cursor (
+            get_buffer()->insert_interactive_at_cursor (
                                                           " ", 1,
                                                           editable);
         }
@@ -4637,12 +4660,12 @@ TextView::delete_from_cursor (
           //TODO beep! gtk_widget_error_bell (GTK_WIDGET (text_view));
         }
 
-      buffer->end_user_action ();
+      get_buffer()->end_user_action ();
       set_virtual_cursor_pos (-1, -1);
 
       DV(g_print (G_STRLOC": scrolling onscreen\n"));
       scroll_mark_onscreen (
-                                          buffer->get_insert ());
+                                          get_buffer()->get_insert ());
     }
   else
     {
@@ -4657,21 +4680,18 @@ void TextView::backspace (void)
   //gtk_text_view_reset_im_context (text_view);
 
   /* Backspace deletes the selection, if one exists */
-  if (buffer->delete_selection (true,
-                                        editable))
+  if (get_buffer()->delete_selection (true, editable))
     return;
 
-  buffer->get_iter_at_mark (
-                                    &insert,
-                                    buffer->get_insert ());
+  get_buffer()->get_iter_at_mark ( &insert, get_buffer()->get_insert ());
 
-  if (buffer->backspace (&insert,
+  if (get_buffer()->backspace (&insert,
 				 true, editable))
     {
       set_virtual_cursor_pos (-1, -1);
       DV(g_print (G_STRLOC": scrolling onscreen\n"));
       scroll_mark_onscreen (
-                                          buffer->get_insert ());
+                                          get_buffer()->get_insert ());
     }
   else
     {
@@ -4691,7 +4711,7 @@ TextView::cut_clipboard (TextView *text_view)
 				 text_view->editable);
   DV(g_print (G_STRLOC": scrolling onscreen\n"));
   scroll_mark_onscreen (
-                                      buffer->get_insert ());
+                                      get_buffer()->get_insert ());
 }
 
 static void
@@ -4718,7 +4738,7 @@ TextView::paste_clipboard (TextView *text_view)
 				   text_view->editable);
   DV(g_print (G_STRLOC": scrolling onscreen\n"));
   scroll_mark_onscreen (
-                                      buffer->get_insert ());
+                                      get_buffer()->get_insert ());
 }*/
 
 void TextView::toggle_overwrite (void)
@@ -4860,10 +4880,10 @@ void TextView::unselect (void)
 {
   TextIter insert;
 
-  buffer->get_iter_at_mark ( &insert,
-                                    buffer->get_insert ());
+  get_buffer()->get_iter_at_mark ( &insert,
+                                    get_buffer()->get_insert ());
 
-  buffer->move_mark ( buffer->get_selection_bound (), &insert);
+  get_buffer()->move_mark ( get_buffer()->get_selection_bound (), &insert);
 }
 
 /*TODO who uses this?
@@ -4898,12 +4918,12 @@ void TextView::move_mark_to_pointer_and_scroll ( const gchar *mark_name)
 
   get_iter_at_pointer (&newplace, NULL, NULL);
   
-  mark = buffer->get_mark (mark_name);
+  mark = get_buffer()->get_mark (mark_name);
   
   * This may invalidate the layout *
   DV(g_print (G_STRLOC": move mark\n"));
   
-  buffer->move_mark (
+  get_buffer()->move_mark (
 			     mark,
 			     &newplace);
   
@@ -4921,7 +4941,7 @@ bool TextView::selection_scan_timeout (gpointer data)
   text_view = (TextView*)data;
 
   //DV(g_print (G_STRLOC": calling move_mark_to_pointer_and_scroll\n"));
-  scroll_mark_onscreen ( buffer->get_insert ());
+  scroll_mark_onscreen ( get_buffer()->get_insert ());
 
   return true; /* remain installed. */
 }
@@ -4954,7 +4974,7 @@ drag_scan_timeout (gpointer data)
   get_iter_at_pointer (text_view, &newplace, &x, &y);
   gdk_drawable_get_size (text_view->text_window->bin_window, &width, &height);
 
-  buffer->move_mark (
+  get_buffer()->move_mark (
                              text_view->dnd_mark,
                              &newplace);
 
@@ -5084,8 +5104,8 @@ gint TextView::selection_motion_event_handler (
       
       buffer = buffer;
 
-      buffer->get_iter_at_mark ( &orig_start, data->orig_start);
-      buffer->get_iter_at_mark ( &orig_end, data->orig_end);
+      get_buffer()->get_iter_at_mark ( &orig_start, data->orig_start);
+      get_buffer()->get_iter_at_mark ( &orig_end, data->orig_end);
 
       get_iter_at_pointer (text_view, &cursor, NULL, NULL);
       
@@ -5099,7 +5119,7 @@ gint TextView::selection_motion_event_handler (
         gtk_text_buffer_select_range (buffer, &end, &orig_start);
 
       scroll_mark_onscreen (
-					  buffer->get_insert ());
+					  get_buffer()->get_insert ());
     }
 
   * If we had to scroll offscreen, insert a timeout to do so
@@ -5156,8 +5176,8 @@ TextView::start_selection_drag (TextView       *text_view,
       TextIter old_ins, old_bound;
       TextIter old_start, old_end;
 
-      buffer->get_iter_at_mark ( &old_ins, buffer->get_insert ());
-      buffer->get_iter_at_mark ( &old_bound, gtk_text_buffer_get_selection_bound (buffer));
+      get_buffer()->get_iter_at_mark ( &old_ins, get_buffer()->get_insert ());
+      get_buffer()->get_iter_at_mark ( &old_bound, gtk_text_buffer_get_selection_bound (buffer));
       old_start = old_ins;
       old_end = old_bound;
       gtk_text_iter_order (&old_start, &old_end);
@@ -5185,9 +5205,9 @@ TextView::start_selection_drag (TextView       *text_view,
   gtk_text_buffer_select_range (buffer, &ins, &bound);
 
   gtk_text_iter_order (&orig_start, &orig_end);
-  data->orig_start = buffer->create_mark (NULL,
+  data->orig_start = get_buffer()->create_mark (NULL,
                                                   &orig_start, true);
-  data->orig_end = buffer->create_mark (NULL,
+  data->orig_end = get_buffer()->create_mark (NULL,
                                                 &orig_end, true);
 
   gtk_text_view_check_cursor_blink (text_view);
@@ -5718,7 +5738,7 @@ TextView::drag_drop (GtkWidget        *widget,
 
   gtk_text_mark_set_visible (text_view->dnd_mark, false);
 
-  buffer->get_iter_at_mark (
+  get_buffer()->get_iter_at_mark (
                                     &drop_point,
                                     text_view->dnd_mark);
 
@@ -5776,7 +5796,7 @@ TextView::drag_data_received (GtkWidget        *widget,
 
   buffer = buffer;
 
-  buffer->get_iter_at_mark (
+  get_buffer()->get_iter_at_mark (
                                     &drop_point,
                                     text_view->dnd_mark);
   
@@ -5833,7 +5853,7 @@ TextView::drag_data_received (GtkWidget        *widget,
           if (target != GDK_NONE)
             {
               gtk_drag_get_data (widget, context, target, time);
-              buffer->end_user_action ();
+              get_buffer()->end_user_action ();
               return;
             }
         }
@@ -5889,12 +5909,12 @@ TextView::drag_data_received (GtkWidget        *widget,
 
   if (success)
     {
-      buffer->get_iter_at_mark (
+      get_buffer()->get_iter_at_mark (
                                         &drop_point,
                                         text_view->dnd_mark);
       gtk_text_buffer_place_cursor (buffer, &drop_point);
 
-      buffer->end_user_action ();
+      get_buffer()->end_user_action ();
     }
 }*/
 
@@ -6091,7 +6111,7 @@ void TextView::value_changed (Adjustment *adj)
         {
           layout->get_line_at_y (&iter, adj->value, &line_top);
 
-          buffer->move_mark ( first_para_mark, &iter);
+          get_buffer()->move_mark ( first_para_mark, &iter);
 
           first_para_pixels = adj->value - line_top;
         }
@@ -6203,15 +6223,15 @@ void TextView::commit_text ( const gchar   *str)
 {
   bool had_selection;
   
-  buffer->begin_user_action ();
+  get_buffer()->begin_user_action ();
 
-  had_selection = buffer->get_selection_bounds ( NULL, NULL);
+  had_selection = get_buffer()->get_selection_bounds ( NULL, NULL);
   
-  buffer->delete_selection (true, editable);
+  get_buffer()->delete_selection (true, editable);
 
   if (!strcmp (str, "\n"))
     {
-      if (!buffer->insert_interactive_at_cursor ( "\n", 1,
+      if (!get_buffer()->insert_interactive_at_cursor ( "\n", 1,
                                                          editable))
         {
           //TODO beep! gtk_widget_error_bell (GTK_WIDGET (text_view));
@@ -6223,25 +6243,25 @@ void TextView::commit_text ( const gchar   *str)
 	{
 	  TextIter insert;
 	  
-	  buffer->get_iter_at_mark ( &insert,
-					    buffer->get_insert ());
+	  get_buffer()->get_iter_at_mark ( &insert,
+					    get_buffer()->get_insert ());
 	  if (!insert.ends_line ())
 	    delete_from_cursor (DELETE_CHARS, 1);
 	}
 
-      if (!buffer->insert_interactive_at_cursor ( str, -1,
+      if (!get_buffer()->insert_interactive_at_cursor ( str, -1,
                                                          editable))
         {
           //TODO beep! gtk_widget_error_bell (GTK_WIDGET (text_view));
         }
     }
 
-  buffer->end_user_action ();
+  get_buffer()->end_user_action ();
 
   set_virtual_cursor_pos (-1, -1);
   DV(g_print (G_STRLOC": scrolling onscreen\n"));
   scroll_mark_onscreen (
-                                      buffer->get_insert ());
+                                      get_buffer()->get_insert ());
 }
 
 /*
@@ -6273,7 +6293,7 @@ TextView::preedit_changed_handler (GtkIMContext *context,
 
   if (GTK_WIDGET_HAS_FOCUS (text_view))
     scroll_mark_onscreen (
-					buffer->get_insert ());
+					get_buffer()->get_insert ());
 }*/
 
 /*
@@ -6317,7 +6337,7 @@ TextView::delete_surrounding_handler (GtkIMContext  *context,
   gtk_text_iter_forward_chars (&start, offset);
   gtk_text_iter_forward_chars (&end, offset + n_chars);
 
-  buffer->delete_interactive (&start, &end,
+  get_buffer()->delete_interactive (&start, &end,
 				      editable);
 
   return true;
@@ -6331,14 +6351,14 @@ void TextView::mark_set_handler (TextBuffer *buffer,
  // TextView *text_view = GTK_TEXT_VIEW (data);
   bool need_reset = false;
 
-  if (mark == buffer->get_insert ())
+  if (mark == get_buffer()->get_insert ())
     {
       virtual_cursor_x = -1;
       virtual_cursor_y = -1;
       //gtk_text_view_update_im_spot_location (text_view);
       need_reset = true;
     }
-  else if (mark == buffer->get_selection_bound ())
+  else if (mark == get_buffer()->get_selection_bound ())
     {
       need_reset = true;
     }
@@ -6397,8 +6417,10 @@ TextView::get_cursor_location  (
 {
   TextIter insert;
   
-  buffer->get_iter_at_mark (&insert,
-                            buffer->get_insert ());
+  get_buffer()->get_iter_at_mark (&insert,
+                            get_buffer()->get_insert ());
+
+  ensure_layout();
 
   layout->get_cursor_locations (&insert, pos, NULL);
 }
@@ -6479,28 +6501,6 @@ append_action_signal (TextView  *text_view,
 }*/
 
 /*
-void TextView::select_all (GtkWidget *widget,
-			  bool select)
-{
- // TextView *text_view = GTK_TEXT_VIEW (widget);
-//  TextBuffer *buffer;
-  TextIter start_iter, end_iter, insert;
-
-  //buffer = text_view->buffer;
-  if (select) 
-    {
-      buffer->get_bounds (&start_iter, &end_iter);
-      buffer->select_range (&start_iter, &end_iter);
-    }
-  else 
-    {
-      buffer->get_iter_at_mark (buffer, &insert,
-					buffer->get_insert ());
-      buffer->move_mark_by_name (buffer, "selection_bound", &insert);
-    }
-}*/
-
-/*
 static void
 select_all_cb (GtkWidget   *menuitem,
 	       TextView *text_view)
@@ -6511,7 +6511,7 @@ select_all_cb (GtkWidget   *menuitem,
 static void
 delete_cb (TextView *text_view)
 {
-  buffer->delete_selection (true,
+  get_buffer()->delete_selection (true,
 				    text_view->editable);
 }
 
@@ -6549,9 +6549,9 @@ popup_position_func (GtkMenu   *menu,
 
   gdk_window_get_origin (widget->window, &root_x, &root_y);
 
-  buffer->get_iter_at_mark (
+  get_buffer()->get_iter_at_mark (
                                     &iter,
-                                    buffer->get_insert ());
+                                    get_buffer()->get_insert ());
 
   gtk_text_view_get_iter_location (text_view,
                                    &iter,
@@ -6671,9 +6671,9 @@ popup_targets_received (GtkClipboard     *clipboard,
       have_selection = gtk_text_buffer_get_selection_bounds (buffer,
                                                              &sel_start, &sel_end);
       
-      buffer->get_iter_at_mark (
+      get_buffer()->get_iter_at_mark (
 					&iter,
-					buffer->get_insert ());
+					get_buffer()->get_insert ());
       
       can_insert = gtk_text_iter_can_insert (&iter, text_view->editable);
       
@@ -8081,16 +8081,28 @@ void TextView::ActionMoveCursor(CursorMovement step, int count, bool extend_sele
 	Redraw();
 }
 
-void TextView::ActionSelectAll(bool select_all)
+void TextView::select_all(bool select)
 {
-	if (select_all) {
-		ActionMoveCursor(MOVE_BUFFER_ENDS, -1, false);
-		ActionMoveCursor(MOVE_BUFFER_ENDS, 1, true);
-	} else {
-		ActionMoveCursor(MOVE_VISUAL_POSITIONS, 0, false);
-	}
+	get_buffer()->select_all(select);
+	//TODO when textbuffer emits signal that redraw is needed, remove next line
 	Redraw();
 }
+
+void TextView::ActionSelectAll(bool select)
+{
+	select_all(select);
+}
+
+/*
+void TextView::Draw(void)
+{
+	//TODO unicode drawing
+	//or draw with current locale?
+	mvwaddstr(area->w, 0, 0, text);
+	wclrtoeol(area->w);
+
+	Widget::Draw();
+}*/
 
 void TextView::ActionDelete(DeleteType type, gint count)
 {
