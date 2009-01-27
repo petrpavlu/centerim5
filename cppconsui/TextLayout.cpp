@@ -2643,9 +2643,17 @@ TextLayout::get_cursor_locations (
   if (TextIter::equal (iter, &insert_iter))
     index += preedit_cursor - preedit_len;
   
-  /*TODO pango_layout_get_cursor_pos (display->layout, index,
+  /*TODO done by the 4 lines below 
+   * pango_layout_get_cursor_pos (display->layout, index,
 			       strong_pos ? &pango_strong_pos : NULL,
 		       weak_pos ? &pango_weak_pos : NULL);*/
+
+  strong_pos->x = iter->get_offset();
+  strong_pos->y = iter->get_line();
+  strong_pos->width = g_unichar_iswide(iter->get_char()) ? 2 : 1;
+  strong_pos->height = 1;
+  
+  //TODO also do weak_pos
 
   if (strong_pos)
     {
