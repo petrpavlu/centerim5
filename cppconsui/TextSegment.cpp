@@ -71,7 +71,12 @@
 
 
 TextLineSegment::TextLineSegment(void)
-: type(text_segment_none), next(NULL), char_count(0), byte_count(0), name(NULL), leftGravity(false)
+: type(text_segment_none)
+, next(NULL)
+, char_count(0)
+, byte_count(0)
+, name(NULL)
+, leftGravity(false)
 {
 }
 /*
@@ -179,7 +184,8 @@ bool TextLineSegment::deleteFunc (TextLine *line, bool tree_gone)
 
 TextLineSegment* TextLineSegment::cleanupFunc (TextLineSegment *segPtr, TextLine *line)
 {
-	//TODO nothing to do here? perhaps make the class abstract?
+	/* if nothing has to be done, just return segPtr */
+	return segPtr;
 }
 
 void TextLineSegment::lineChangeFunc (TextLine *line)

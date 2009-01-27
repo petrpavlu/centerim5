@@ -80,9 +80,9 @@ void GeneralMenu::OpenTestWindow(void)
 
 	view.get_visible_rect(&r);
 	view.get_cursor_location(&c);
-	log->Write(Log::Type_cim, Log::Level_debug, "rect: %d %d %d %d cursor: %d %d %d %d", 
-			r.Left(), r.Width(), r.Top(), r.Height(),
-			c.Left(), c.Width(), c.Top(), c.Height());
+	log->Write(Log::Type_cim, Log::Level_debug, "rect: %d %d %d %d cursor: %d %d %d %d (x,y,w,h)", 
+			r.Left(), r.Top(), r.Width(), r.Height(),
+			c.Left(), c.Top(), c.Width(), c.Height());
 
 
 	view.select_all(true);
@@ -91,8 +91,8 @@ void GeneralMenu::OpenTestWindow(void)
 	view.get_visible_rect(&r);
 	view.get_cursor_location(&c);
 	log->Write(Log::Type_cim, Log::Level_debug, "rect: %d %d %d %d cursor: %d %d %d %d", 
-			r.Left(), r.Width(), r.Top(), r.Height(),
-			c.Left(), c.Width(), c.Top(), c.Height());
+			r.Left(), r.Top(), r.Width(), r.Height(),
+			c.Left(), c.Top(), c.Width(), c.Height());
 
 
 	/*

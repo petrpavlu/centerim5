@@ -7925,8 +7925,7 @@ TextView::move_child (TextView *text_view,
  * Return value: %true if @iter was moved and is not on the end iterator
  **/
 bool
-TextView::forward_display_line (
-                                    TextIter *iter)
+TextView::forward_display_line ( TextIter *iter)
 {
  // g_return_val_if_fail (GTK_IS_TEXT_VIEW (text_view), false);
   g_return_val_if_fail (iter != NULL, false);

@@ -4425,7 +4425,8 @@ void TextLine::cleanup_line()
       prev_p = &segments;
       for (seg = *prev_p; seg != NULL; seg = *prev_p)
         {
-	  /*TODO if (seg->cleanupFunc != NULL)
+		/* we always have a cleanupFunc */
+	  //TODO if (seg->cleanupFunc != NULL)
             {
               *prev_p = seg->cleanupFunc(seg, this);
               if (seg != *prev_p)
@@ -4433,7 +4434,7 @@ void TextLine::cleanup_line()
 		  changed = true;
 		  continue;
 		}
-            }*/
+            }
 
 	  prev_p = &(*prev_p)->next;
         }
