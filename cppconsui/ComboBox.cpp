@@ -62,7 +62,7 @@ void ComboBox::OnDropDown(void)
 	ComboBoxEntries::iterator i;
 
 	if (dropdown)
-		/*TODO this shoudn't happen*/;
+		{}/*TODO this shoudn't happen*/
 
 	//TODO position correctly according to absolute coords.
 	dropdown = new MenuWindow(0, 0, w, options.size()+2, LineStyle::LineStyleDefault());

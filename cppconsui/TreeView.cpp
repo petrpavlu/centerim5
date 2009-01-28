@@ -393,7 +393,7 @@ void TreeView::SetActive(int i)
 	TheTree::pre_order_iterator j;
 
 	if (i < thetree.size()) {
-		for (j = thetree.begin(); i > 0 &&j != thetree.end(); j++, i--);
+		for (j = thetree.begin(); i > 0 &&j != thetree.end(); j++, i--) {}
 		if (j != thetree.end() && (*j).widget)
 			(*j).widget->GrabFocus();
 	}

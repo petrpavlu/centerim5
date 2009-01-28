@@ -50,7 +50,7 @@ WindowManager::WindowManager(void)
 	start_color(); //TODO do something with the return value.
 
 	if (!defaultwindow)
-		;//TODO throw an exception that we can't init curses
+		{}//TODO throw an exception that we can't init curses
 
 	DeclareBindable(context, "redraw-screen", sigc::mem_fun(this, &WindowManager::Redraw),
 		_("Redraw the complete screen immediately"), InputProcessor::Bindable_Override);
@@ -62,7 +62,7 @@ WindowManager::WindowManager(void)
 WindowManager::~WindowManager(void)
 {
 	if (endwin() == ERR)
-		;//TODO throw an exeption
+		{}//TODO throw an exeption
 }
 
 void WindowManager::Delete(void)

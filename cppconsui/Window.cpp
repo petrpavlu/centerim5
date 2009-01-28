@@ -137,7 +137,7 @@ void Window::UpdateArea()
 	area->w = newpad(win_h, win_w);
 
 	if (area->w == NULL)
-		;//TODO throw an exception
+		{}//TODO throw an exception
 		//actually, dont!
 		//after a container resize, all widgets are updatearea()'d
 		//which will probably result (unless resizing to bigger) in

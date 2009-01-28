@@ -387,7 +387,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 
 AccountWindow::AccountOption::AccountOption(Widget& parent,
 	PurpleAccount *account, PurpleAccountOption *option)
-: Button(parent, x, y, "")
+: Button(parent, 0, 0, "")
 , account(account)
 , option(option)
 {
@@ -419,7 +419,7 @@ AccountWindow::AccountOptionBool::AccountOptionBool(Widget& parent,
 AccountWindow::AccountOptionBool::AccountOptionBool(Widget& parent,
 	PurpleAccount *account, bool remember_password)
 : AccountWindow::AccountOption::AccountOption(parent, account, NULL)
-, remember_password(false)
+, remember_password(remember_password)
 {
 	if (remember_password) {
 		this->remember_password = remember_password;
@@ -477,8 +477,8 @@ AccountWindow::AccountOptionString::AccountOptionString(Widget& parent,
 : AccountWindow::AccountOption::AccountOption(parent, account, NULL)
 , value(NULL)
 , dialog(NULL)
-, password(false)
-, alias(false)
+, password(password)
+, alias(alias)
 {
 	if (password) {
 		this->password = true;
@@ -532,7 +532,7 @@ void AccountWindow::AccountOptionString::ResponseHandler(Dialog::ResponseType re
 	switch (response) {
 		case Dialog::ResponseOK:
 			if (!dialog)
-				/*TODO something is very wrong here */;
+			  {} /*TODO something is very wrong here */
 
 			if (password) {
 				purple_account_set_password(account, dialog->GetText());
@@ -600,12 +600,12 @@ void AccountWindow::AccountOptionInt::ResponseHandler(Dialog::ResponseType respo
 	switch (response) {
 		case Dialog::ResponseOK:
 			if (!dialog)
-				/*TODO something is very wrong here */;
+				{}/*TODO something is very wrong here */
 
 			text = dialog->GetText();
 			i = strtol(text, NULL, 10);
 			if (errno == ERANGE) 
-				/*TODO handle error? */;
+				{}/*TODO handle error? */
 
 			purple_account_set_int(account, setting, i);
 			UpdateText();
@@ -662,7 +662,7 @@ void AccountWindow::AccountOptionSplit::UpdateText(void)
 void AccountWindow::AccountOptionSplit::UpdateSplits(void)
 {
 	AccountWindow::SplitWidgets::iterator split_widget;
-	PurpleAccountUserSplit *split;
+	PurpleAccountUserSplit *user_split;
 	AccountWindow::AccountOptionSplit *widget;
 	PurplePluginProtocolInfo *prplinfo;
 	SplitWidgets *split_widgets;
@@ -682,14 +682,14 @@ void AccountWindow::AccountOptionSplit::UpdateSplits(void)
 			iter && split_widget != split_widgets->end();
 			iter = iter->next, split_widget++)
 	{
-		split = (PurpleAccountUserSplit*)iter->data;
+		user_split = (PurpleAccountUserSplit*)iter->data;
 		widget = *split_widget;
 
 		value = widget->GetValue();
 		if (value == NULL || *value == '\0')
-			value = purple_account_user_split_get_default_value(split);
+			value = purple_account_user_split_get_default_value(user_split);
 		g_string_append_printf(username, "%c%s",
-				purple_account_user_split_get_separator(split),
+				purple_account_user_split_get_separator(user_split),
 				value);
 	}
 
@@ -718,7 +718,7 @@ void AccountWindow::AccountOptionSplit::ResponseHandler(Dialog::ResponseType res
 	switch (response) {
 		case Dialog::ResponseOK:
 			if (!dialog)
-				/*TODO something is very wrong here */;
+				{}/*TODO something is very wrong here */
 
 			SetValue(dialog->GetText());
 			UpdateSplits();

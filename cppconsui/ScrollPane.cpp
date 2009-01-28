@@ -34,7 +34,7 @@ ScrollPane::ScrollPane(Widget& parent, int x, int y, int w, int h, int scrollw, 
 	area->w = newpad(scrollh, scrollw);
 	UpdateArea();
 	if (area->w == NULL)
-		;//TODO throw an exception?
+		{}//TODO throw an exception?
 }
 
 ScrollPane::~ScrollPane()
@@ -54,7 +54,7 @@ void ScrollPane::UpdateArea()
 	scrollarea = a.w;
 
 	if (scrollarea == NULL)
-		;//TODO throw an exception
+		{}//TODO throw an exception
 		//actually, dont!
 		//after a container resize, all widgets are updatearea()'d
 		//which will probably result (unless resizing to bigger) in
@@ -139,7 +139,7 @@ void ScrollPane::SetScrollSize(const int width, const int height)
 
 	area->w = newpad(scrollh, scrollw);
 	if (area->w == NULL)
-		;//TODO throw an exception?
+		{}//TODO throw an exception?
 
 	UpdateAreas();
 
