@@ -160,10 +160,10 @@ gchar          *get_slice           (
                                             GdkPixbuf     *pixbuf);*/
 
 		/* Insert a child anchor */
-		void insert_child_anchor (TextIter *iter, TextChildAnchor *anchor);
+		//void insert_child_anchor (TextIter *iter, TextChildAnchor *anchor);
 
 		/* Convenience, create and insert a child anchor */
-		TextChildAnchor *create_child_anchor (TextIter *iter);
+		//TextChildAnchor *create_child_anchor (TextIter *iter);
 
 /* Mark manipulation */
 void           add_mark    (

@@ -73,7 +73,7 @@ void GeneralMenu::OpenTestWindow(void)
 	Rect c;
 	Log* log = Log::Instance();
 
-	Glib::ustring s("the foo was bar in the spring.");
+	Glib::ustring s("the foo was bar in the spring.\n");
 
 	view.insert_at_cursor(s.c_str());
 	view.insert_at_cursor(s.c_str());

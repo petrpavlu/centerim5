@@ -124,8 +124,8 @@ TextLineSegment* TextLineSegment::split_segment (TextIter *iter)
 
   count = iter->get_line_index ();
 
-  /*TODO if (gtk_debug_flags & GTK_DEBUG_TEXT)
-    _gtk_text_iter_check (iter);*/
+  if (true)//TODO(gtk_debug_flags & GTK_DEBUG_TEXT)
+    iter->check();
   
   prev = NULL;
   seg = line->segments;
@@ -274,8 +274,8 @@ TextLineSegmentChar::TextLineSegmentChar (const gchar *text1,
 
   char_count = chars1 + chars2;
 
-  /*TODO if (gtk_debug_flags & GTK_DEBUG_TEXT)
-    char_segment_self_check (seg);*/
+  if (true) //TODO (gtk_debug_flags & GTK_DEBUG_TEXT)
+    self_check();
 
 //  return seg;
 }
@@ -286,10 +286,8 @@ TextLineSegment* TextLineSegmentChar::split (gint index)
 
   g_assert (index < byte_count);
 
-  /*TODO if (gtk_debug_flags & GTK_DEBUG_TEXT)
-    {
-      char_segment_self_check (seg);
-    }*/
+  if (true)//TODO(gtk_debug_flags & GTK_DEBUG_TEXT)
+      self_check ();
 
   new1 = new TextLineSegmentChar (body.chars, index);
   new2 = new TextLineSegmentChar (body.chars + index, byte_count - index);
@@ -302,11 +300,11 @@ TextLineSegment* TextLineSegmentChar::split (gint index)
   new1->next = new2;
   new2->next = next;
 
-  /*TODO if (gtk_debug_flags & GTK_DEBUG_TEXT)
+  if (true)//TODO(gtk_debug_flags & GTK_DEBUG_TEXT)
     {
-      char_segment_self_check (new1);
-      char_segment_self_check (new2);
-    }*/
+      new1->self_check ();
+      new2->self_check ();
+    }
 
   //TODO implement delete seg;
   return new1;
@@ -317,8 +315,8 @@ TextLineSegment* TextLineSegmentChar::cleanupFunc (TextLineSegmentChar *segPtr, 
   TextLineSegment *segPtr2;
   TextLineSegmentChar *newPtr;
 
-  /*TODO if (gtk_debug_flags & GTK_DEBUG_TEXT)
-    char_segment_self_check (segPtr);*/
+  if (true)//TODO(gtk_debug_flags & GTK_DEBUG_TEXT)
+    segPtr->self_check ();
 
   segPtr2 = segPtr->next;
   if ((segPtr2 == NULL) || (segPtr2->type != text_segment_char))
@@ -336,8 +334,8 @@ TextLineSegment* TextLineSegmentChar::cleanupFunc (TextLineSegmentChar *segPtr, 
 
   newPtr->next = segPtr2->next;
 
-  /*TODO if (gtk_debug_flags & GTK_DEBUG_TEXT)
-    char_segment_self_check (newPtr);*/
+  if (true)//TODO(gtk_debug_flags & GTK_DEBUG_TEXT)
+    newPtr->self_check ();
 
   delete segPtr;
   delete segPtr2;

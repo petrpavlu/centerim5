@@ -42,16 +42,19 @@ enum
 
 guint64 adjustment_changed_stamp = 0; /* protected by global gdk lock */
 
-
-void
-Adjustment::Adjustment (void)
+Adjustment::Adjustment (double	  value,
+			double	  lower,
+			double	  upper,
+			double	  step_increment,
+			double	  page_increment,
+			double	  page_size)
+: value(value)
+, lower(lower)
+, upper(upper)
+, step_increment(step_increment)
+, page_increment(page_increment)
+, page_size(page_size)
 {
-  adjustment->value = 0.0;
-  adjustment->lower = 0.0;
-  adjustment->upper = 0.0;
-  adjustment->step_increment = 0.0;
-  adjustment->page_increment = 0.0;
-  adjustment->page_size = 0.0;
 }
 
 /**
@@ -63,7 +66,7 @@ Adjustment::Adjustment (void)
  *
  * Return value: The current value of the adjustment.
  **/
-gdouble
+double
 Adjustment::get_value (void)
 {
   //g_return_val_if_fail (GTK_IS_ADJUSTMENT (adjustment), 0.0);
@@ -72,17 +75,15 @@ Adjustment::get_value (void)
 }
 
 void
-Adjustment::set_value ( gdouble        value)
+Adjustment::set_value ( double        new_value)
 {
-  g_return_if_fail (GTK_IS_ADJUSTMENT (adjustment));
+  new_value = CLAMP (new_value, lower, upper);
 
-  value = CLAMP (value, adjustment->lower, adjustment->upper);
-
-  if (value != adjustment->value)
+  if (new_value != value)
     {
-      adjustment->value = value;
+      value = new_value;
 
-      gtk_adjustment_value_changed (adjustment);
+      value_changed ();
     }
 }
 
@@ -96,12 +97,10 @@ Adjustment::set_value ( gdouble        value)
  *
  * Since: 2.14
  **/
-gdouble
+double
 Adjustment::get_lower (void)
 {
-  g_return_val_if_fail (GTK_IS_ADJUSTMENT (adjustment), 0.0);
-
-  return adjustment->lower;
+  return lower;
 }
 
 /**
@@ -126,13 +125,10 @@ Adjustment::get_lower (void)
  * Since: 2.14
  **/
 void
-Adjustment::set_lower (
-                          gdouble        lower)
+Adjustment::set_lower ( double new_lower)
 {
-  g_return_if_fail (GTK_IS_ADJUSTMENT (adjustment));
-
-  if (lower != adjustment->lower)
-    g_object_set (adjustment, "lower", lower, NULL);
+  if (new_lower != lower)
+    lower = new_lower;
 }
 
 /**
@@ -145,12 +141,10 @@ Adjustment::set_lower (
  *
  * Since: 2.14
  **/
-gdouble
+double
 Adjustment::get_upper (void)
 {
-  g_return_val_if_fail (GTK_IS_ADJUSTMENT (adjustment), 0.0);
-
-  return adjustment->upper;
+  return upper;
 }
 
 /**
@@ -171,13 +165,10 @@ Adjustment::get_upper (void)
  * Since: 2.14
  **/
 void
-Adjustment::set_upper (
-                          gdouble        upper)
+Adjustment::set_upper ( double       new_upper)
 {
-  g_return_if_fail (GTK_IS_ADJUSTMENT (adjustment));
-
-  if (upper != adjustment->upper)
-    g_object_set (adjustment, "upper", upper, NULL);
+  if (new_upper != upper)
+    upper = new_upper;
 }
 
 /**
@@ -190,12 +181,10 @@ Adjustment::set_upper (
  *
  * Since: 2.14
  **/
-gdouble
+double
 Adjustment::get_step_increment (void)
 {
-  g_return_val_if_fail (GTK_IS_ADJUSTMENT (adjustment), 0.0);
-
-  return adjustment->step_increment;
+  return step_increment;
 }
 
 /**
@@ -212,13 +201,10 @@ Adjustment::get_step_increment (void)
  * Since: 2.14
  **/
 void
-Adjustment::set_step_increment (
-                                   gdouble        step_increment)
+Adjustment::set_step_increment ( double        new_step_increment)
 {
-  g_return_if_fail (GTK_IS_ADJUSTMENT (adjustment));
-
-  if (step_increment != adjustment->step_increment)
-    g_object_set (adjustment, "step-increment", step_increment, NULL);
+  if (new_step_increment != step_increment)
+    new_step_increment = step_increment;
 }
 
 /**
@@ -231,12 +217,10 @@ Adjustment::set_step_increment (
  *
  * Since: 2.14
  **/
-gdouble
+double
 Adjustment::get_page_increment (void)
 {
-  g_return_val_if_fail (GTK_IS_ADJUSTMENT (adjustment), 0.0);
-
-  return adjustment->page_increment;
+  return page_increment;
 }
 
 /**
@@ -254,12 +238,10 @@ Adjustment::get_page_increment (void)
  **/
 void
 Adjustment::set_page_increment (
-                                   gdouble        page_increment)
+                                   double        new_page_increment)
 {
-  g_return_if_fail (GTK_IS_ADJUSTMENT (adjustment));
-
-  if (page_increment != adjustment->page_increment)
-    g_object_set (adjustment, "page-increment", page_increment, NULL);
+  if (new_page_increment != page_increment)
+    new_page_increment = page_increment;
 }
 
 /**
@@ -272,12 +254,10 @@ Adjustment::set_page_increment (
  *
  * Since: 2.14
  **/
-gdouble
+double
 Adjustment::get_page_size (void)
 {
-  g_return_val_if_fail (GTK_IS_ADJUSTMENT (adjustment), 0.0);
-
-  return adjustment->page_size;
+  return page_size;
 }
 
 /**
@@ -294,13 +274,10 @@ Adjustment::get_page_size (void)
  * Since: 2.14
  **/
 void
-Adjustment::set_page_size (
-                              gdouble        page_size)
+Adjustment::set_page_size ( double       new_page_size)
 {
-  g_return_if_fail (GTK_IS_ADJUSTMENT (adjustment));
-
-  if (page_size != adjustment->page_size)
-    g_object_set (adjustment, "page-size", page_size, NULL);
+  if (new_page_size != page_size)
+    new_page_size = page_size;
 }
 
 /**
@@ -323,97 +300,84 @@ Adjustment::set_page_size (
  **/
 void
 Adjustment::configure (
-                          gdouble        value,
-                          gdouble        lower,
-                          gdouble        upper,
-                          gdouble        step_increment,
-                          gdouble        page_increment,
-                          gdouble        page_size)
+                          double     new_value,
+                          double     new_lower,
+                          double     new_upper,
+                          double     new_step_increment,
+                          double     new_page_increment,
+                          double     new_page_size)
 {
-  gboolean value_changed = FALSE;
+  bool my_value_changed = false;
   guint64 old_stamp = adjustment_changed_stamp;
 
-  g_return_if_fail (GTK_IS_ADJUSTMENT (adjustment));
 
-  g_object_freeze_notify (G_OBJECT (adjustment));
-
-  g_object_set (adjustment,
-                "lower", lower,
-                "upper", upper,
-                "step-increment", step_increment,
-                "page-increment", page_increment,
-                "page-size", page_size,
-                NULL);
+  lower = new_lower;
+  upper = new_upper;
+  step_increment = new_step_increment;
+  page_increment = new_page_increment;
+  page_size = new_page_size;
 
   /* don't use CLAMP() so we don't end up below lower if upper - page_size
    * is smaller than lower
    */
-  value = MIN (value, upper - page_size);
-  value = MAX (value, lower);
+  new_value = MIN (new_value, upper - page_size);
+  new_value = MAX (new_value, lower);
 
-  if (value != adjustment->value)
+  if (new_value != value)
     {
       /* set value manually to make sure "changed" is emitted with the
        * new value in place and is emitted before "value-changed"
        */
-      adjustment->value = value;
-      value_changed = TRUE;
+      value = new_value;
+      my_value_changed = true;
     }
 
-  g_object_thaw_notify (G_OBJECT (adjustment));
-
   if (old_stamp == adjustment_changed_stamp)
-    gtk_adjustment_changed (adjustment); /* force emission before ::value-changed */
+    changed (); /* force emission before ::value-changed */
 
-  if (value_changed)
-    gtk_adjustment_value_changed (adjustment);
+  if (my_value_changed)
+    value_changed ();
 }
 
 void
 Adjustment::changed (void)
 {
-  g_return_if_fail (GTK_IS_ADJUSTMENT (adjustment));
-
-  g_signal_emit (adjustment, adjustment_signals[CHANGED], 0);
+  //TODO g_signal_emit (adjustment, adjustment_signals[CHANGED], 0);
 }
 
 void
 Adjustment::value_changed (void)
 {
-  g_return_if_fail (GTK_IS_ADJUSTMENT (adjustment));
-
-  g_signal_emit (adjustment, adjustment_signals[VALUE_CHANGED], 0);
-  g_object_notify (G_OBJECT (adjustment), "value");
+  //TODO g_signal_emit (adjustment, adjustment_signals[VALUE_CHANGED], 0);
+  //TODO g_object_notify (G_OBJECT (adjustment), "value");
 }
 
 void
 Adjustment::clamp_page (
-			   gdouble        lower,
-			   gdouble        upper)
+			   double        new_lower,
+			   double        new_upper)
 {
-  gboolean need_emission;
+  bool need_emission;
 
-  g_return_if_fail (GTK_IS_ADJUSTMENT (adjustment));
+  new_lower = CLAMP (new_lower, lower, upper);
+  new_upper = CLAMP (new_upper, lower, upper);
 
-  lower = CLAMP (lower, adjustment->lower, adjustment->upper);
-  upper = CLAMP (upper, adjustment->lower, adjustment->upper);
+  need_emission = false;
 
-  need_emission = FALSE;
-
-  if (adjustment->value + adjustment->page_size < upper)
+  if (value + page_size < new_upper)
     {
-      adjustment->value = upper - adjustment->page_size;
-      need_emission = TRUE;
+      value = new_upper - page_size;
+      need_emission = true;
     }
-  if (adjustment->value > lower)
+  if (value > new_lower)
     {
-      adjustment->value = lower;
-      need_emission = TRUE;
+      value = new_lower;
+      need_emission = true;
     }
 
   if (need_emission)
-    gtk_adjustment_value_changed (adjustment);
+    value_changed ();
 }
 
 #define __GTK_ADJUSTMENT_C__
-#include "gtkaliasdef.c"
+//#include "gtkaliasdef.c"

@@ -1007,7 +1007,7 @@ TextView::set_adjustment_upper (Adjustment *adj, gdouble upper)
           value_changed = true;
         }
 
-      adj->adjustment_changed ();
+      adj->changed ();
       DV(g_print(">Changed adj upper to %g ("G_STRLOC")\n", upper));
       
       if (value_changed)
@@ -1060,8 +1060,8 @@ TextView::update_adjustments ()
       vadjustment->page_increment =
         Height() * 0.9;
 
-      hadjustment->adjustment_changed ();
-      vadjustment->adjustment_changed ();
+      hadjustment->changed ();
+      vadjustment->changed ();
     }
 }
 
@@ -6098,6 +6098,7 @@ void TextView::value_changed (Adjustment *adj)
 	{
 	  //if (GTK_WIDGET_REALIZED (text_view))
 	  //TODO?  gdk_window_invalidate_rect (text_view->text_window->bin_window, NULL, false);
+	  //request redraw here?
 	  
 	  width_changed = false;
 	}

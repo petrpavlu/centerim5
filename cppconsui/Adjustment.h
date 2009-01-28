@@ -33,8 +33,8 @@
 #define __ADJUSTMENT_H__
 
 
-#include <gdk/gdk.h>
-#include <gtk/gtkobject.h>
+#include <glib.h>
+//#include <gtk/gtkobject.h>
 
 //G_BEGIN_DECLS
 
@@ -53,60 +53,56 @@
 class Adjustment
 {
 	public:
-		Adjustment (	gdouble	  value,
-				gdouble	  lower,
-				gdouble	  upper,
-				gdouble	  step_increment,
-				gdouble	  page_increment,
-				gdouble	  page_size);
+		Adjustment (	double	  value,
+				double	  lower,
+				double	  upper,
+				double	  step_increment,
+				double	  page_increment,
+				double	  page_size);
 
 
 
-void	   changed		(GtkAdjustment	 *adjustment);
+void	   changed		(void);
 void	   value_changed		(void);
 void	   clamp_page		(
-						 gdouble	  lower,
-						 gdouble	  upper);
+						 double	  lower,
+						 double	  upper);
 
-gdouble	   get_value		(void);
+double	   get_value		(void);
 void	   set_value		(
-						 gdouble	  value);
-gdouble    get_lower             (void);
-void       set_lower             (GtkAdjustment   *adjustment,
-                                                 gdouble          lower);
-gdouble    get_upper             (void);
+						 double	  value);
+double    get_lower             (void);
+void       set_lower             (
+                                                 double          lower);
+double    get_upper             (void);
 void       set_upper             (
-                                                 gdouble          upper);
-gdouble    get_step_increment    (void);
-void       set_step_increment    (gdouble          step_increment);
-gdouble    get_page_increment    (void);
-void       set_page_increment    ( gdouble          page_increment);
-gdouble    get_page_size         (void);
-void       set_page_size         ( gdouble          page_size);
+                                                 double          upper);
+double    get_step_increment    (void);
+void       set_step_increment    (double          step_increment);
+double    get_page_increment    (void);
+void       set_page_increment    ( double          page_increment);
+double    get_page_size         (void);
+void       set_page_size         ( double          page_size);
 
-void       configure           ( gdouble          value,
-				 gdouble          lower,
-				 gdouble          upper,
-				 gdouble          step_increment,
-				 gdouble          page_increment,
-				 gdouble          page_size);
+void       configure           ( double          value,
+				 double          lower,
+				 double          upper,
+				 double          step_increment,
+				 double          page_increment,
+				 double          page_size);
+
+	double lower;
+	double upper;
+	double value;
+	double step_increment;
+	double page_increment;
+	double page_size;
 
 
 	protected:
 
 	private:
 		Adjustment (void);
-
-	gdouble lower;
-	gdouble upper;
-	gdouble value;
-	gdouble step_increment;
-	gdouble page_increment;
-	gdouble page_size;
-
-  void changed	 (void);
-  void value_changed (void);
-
 
 };
 

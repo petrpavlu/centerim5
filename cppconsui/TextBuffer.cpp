@@ -947,7 +947,8 @@ void TextBuffer::insert_text_range (
 
   text = iter->get_text (orig_start, orig_end);
 
-  //TODO do actual insert
+  //TODO do actual insert, done?
+  real_insert_text(iter, text, -1);
   //gtk_text_buffer_emit_insert (buffer, iter, text, -1);
 
   g_free (text);
@@ -1487,6 +1488,7 @@ void TextBuffer::emit_delete (TextIter *start, TextIter *end)
 
   TextIter::order (start, end);
 
+  real_delete_range(start, end);
   //TODO do actual delete
   /*g_signal_emit (buffer,
                  signals[DELETE_RANGE],
@@ -1803,16 +1805,19 @@ void TextBuffer::real_insert_anchor (TextIter *iter, TextChildAnchor *anchor)
  * alternative to this function. The buffer will add a reference to
  * the anchor, so you can unref it after insertion.
  **/
+/*
 void TextBuffer::insert_child_anchor (TextIter *iter, TextChildAnchor *anchor)
 {
   //g_return_if_fail (GTK_IS_TEXT_BUFFER (buffer));
   g_return_if_fail (iter != NULL);
+  g_return_if_fail (anchor != NULL);
   //TODO test for null? g_return_if_fail (GTK_IS_TEXT_CHILD_ANCHOR (anchor));
   g_return_if_fail (iter->get_buffer() == this);
   
+  real_insert_anchor(iter, anchor);
   //TODOg_signal_emit (buffer, signals[INSERT_CHILD_ANCHOR], 0,
   //               iter, anchor);
-}
+}*/
 
 /**
  * gtk_text_buffer_create_child_anchor:
@@ -1827,6 +1832,7 @@ void TextBuffer::insert_child_anchor (TextIter *iter, TextChildAnchor *anchor)
  * 
  * Return value: the created child anchor
  **/
+/*
 TextChildAnchor* TextBuffer::create_child_anchor(TextIter *iter)
 {
   TextChildAnchor *anchor;
@@ -1841,7 +1847,7 @@ TextChildAnchor* TextBuffer::create_child_anchor(TextIter *iter)
   //TODOg_object_unref (anchor);
 
   return anchor;
-}
+}*/
 
 /*
  * Mark manipulation
@@ -1944,8 +1950,9 @@ void TextBuffer::add_mark (
 {
   const gchar *name;
 
+  g_return_if_fail(mark != NULL);
   //TODO test for null? g_return_if_fail (GTK_IS_TEXT_MARK (mark));
-  //TODO test fror null?? g_return_if_fail (where != NULL);
+  g_return_if_fail (where != NULL);
   g_return_if_fail (mark->get_buffer() == NULL);
 
   name = mark->get_name ();
@@ -1972,9 +1979,8 @@ void TextBuffer::move_mark (
                            TextMark       *mark,
                            TextIter *where)
 {
-  //TODO test for null? g_return_if_fail (GTK_IS_TEXT_MARK (mark));
+  g_return_if_fail (mark != NULL);
   g_return_if_fail (!mark->get_deleted ());
-  //TODO check null g_return_if_fail (GTK_IS_TEXT_BUFFER (buffer));
 
   set_mark (mark, NULL, where, FALSE, TRUE);
 }
@@ -2128,7 +2134,6 @@ TextMark* TextBuffer::get_insert (void)
 {
   //g_return_val_if_fail (GTK_IS_TEXT_BUFFER (buffer), NULL);
 
-	//TODO get_btree does not need to be a function? so replace everywhere
   return get_btree()->get_insert();
 }
 
@@ -2346,11 +2351,13 @@ void TextBuffer::emit_tag (
   TextIter::order (&start_tmp, &end_tmp);
 
   if (apply)
-  {} /*TODOg_signal_emit (buffer, signals[APPLY_TAG],
+	  apply_tag(tag, &start_tmp, &end_tmp);
+   /*TODOg_signal_emit (buffer, signals[APPLY_TAG],
                    0,
                    tag, &start_tmp, &end_tmp);*/
   else
-  {}/*TODOg_signal_emit (buffer, signals[REMOVE_TAG],
+	  remove_tag(tag, &start_tmp, &end_tmp);
+  /*TODOg_signal_emit (buffer, signals[REMOVE_TAG],
                    0,
                    tag, &start_tmp, &end_tmp);*/
 }
@@ -2371,8 +2378,7 @@ void TextBuffer::apply_tag (
                            TextIter *start,
                            TextIter *end)
 {
-  //g_return_if_fail (GTK_IS_TEXT_BUFFER (buffer));
-  //g_return_if_fail (GTK_IS_TEXT_TAG (tag));
+  g_return_if_fail (tag != NULL);
   g_return_if_fail (start != NULL);
   g_return_if_fail (end != NULL);
   g_return_if_fail (start->get_buffer() == this);
@@ -2815,6 +2821,7 @@ void TextBuffer::set_modified (
   else
     {
       modified = fixed_setting;
+      //modified_changed(); there doesn't seem to be such a function for the signal below
       //TODOg_signal_emit (buffer, signals[MODIFIED_CHANGED], 0);
     }
 }

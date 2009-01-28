@@ -36,6 +36,7 @@
 #include "Widget.h"
 #include "TextBuffer.h"
 #include "TextTag.h"
+#include "Adjustment.h"
 //#include <gtk/gtkmenu.h>
 
 #include <glib.h>
@@ -69,31 +70,6 @@ typedef enum
 
 #define GTK_TEXT_VIEW_PRIORITY_VALIDATE (GDK_PRIORITY_REDRAW + 5)
 
-
-//TODO port more of gtkadjustment.c/h
-class Adjustment {
-	public:
-		Adjustment(gdouble lower, gdouble upper, gdouble value, gdouble step_increment, gdouble page_increment, gdouble page_size)
-			:lower(lower), upper(upper), value(value), step_increment(step_increment)
-			 ,page_increment(page_increment), page_size(page_size)
-				{ ;}
-
-		void set_value(gdouble value) { this->value = value;	}
-		void adjustment_changed(void) { ; }
-		void value_changed(void) { ; }
-		void set_upper(gdouble upper) { ; }
-		void set_lower(gdouble upper) { ; }
-
-		gdouble lower;
-		gdouble upper;
-		gdouble value;
-		gdouble step_increment;
-		gdouble page_increment;
-		gdouble page_size;
-
-	protected:
-	private:
-};
 
 typedef struct {
   TextMark   *mark;
