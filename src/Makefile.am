@@ -67,6 +67,6 @@ $(centerim_OBJECTS) git-version.h : $(ORDER_ONLY) git_version
 git_version: git-version.h.in
 	VER_FILE=`$(g_get_cur)` || true; \
 	VER_GIT=`cd $(top_srcdir); ./misc/git-version-gen .version`; \
-	if [ -z $$VER_FILE ] || [ $$VER_FILE != $$VER_GIT ]; then \
+	if [ -z "$$VER_FILE" ] || [ "$$VER_FILE" != "$$VER_GIT" ]; then \
 		$(g_subst_f); \
 	fi
