@@ -119,8 +119,6 @@ AM_CONDITIONAL(HAS_CURSES, test "$has_curses" = true)
 ##################################################
 # check whether make supports order-only targets #
 ##################################################
-# TODO this check does not seem to work correctly
-# it was taken from centerim 4's mob branch
 
 AC_CACHE_CHECK([whether ${MAKE-make} supports order-only targets],
 [centerim_cv_make_order_only],
@@ -129,7 +127,7 @@ SHELL = /bin/sh
 all: | say
 
 say:
-       echo say
+	echo say
 
 .PHONY: all say
 _ACEOF
