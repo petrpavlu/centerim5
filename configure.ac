@@ -164,6 +164,89 @@ if test "x$enable_debug" = "xyes" ; then
         AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
 fi
 
+if test "x$GCC" = "xyes"; then
+	dnl We enable -Wall later.
+	dnl If it's set after the warning CFLAGS in the compiler invocation, it counteracts the -Wno... flags.
+	dnl This leads to warnings we don't want.
+	CFLAGS=`echo $CFLAGS |$sedpath 's/-Wall//'`
+
+	dnl ENABLE WARNINGS SUPPORTED BY THE VERSION OF GCC IN USE
+	dnl
+	dnl Future Possibilities
+	dnl
+	dnl Consider adding -Wbad-function-cast.
+	dnl	This leads to spurious warnings using GPOINTER_TO_INT(), et al. directly on a function call.
+	dnl		We'd need an intermediate variable.
+	dnl
+	dnl Consider adding -Wfloat-equal.
+	dnl	This leads to warnings with Perl.
+	dnl		Perhaps we could write ugly configure magic and pass -Wno-float-equal down to that subdirectory.
+	dnl		On the other hand, it's probably actually broken, so maybe the Perl folks should fix that?
+	dnl
+	dnl Consider removing -Wno-sign-compare (from the -Wextra set) and fixing all those cases.
+	dnl	This is likely non-trivial.
+	dnl
+	for newflag in \
+			"-Wshadow" \
+			"-Waggregate-return" \
+			"-Wcast-align" \
+			"-Wdeclaration-after-statement" \
+			"-Wendif-labels" \
+			"-Werror-implicit-function-declaration" \
+			"-Wextra -Wno-sign-compare -Wno-unused-parameter" \
+			"-Wformat-security" \
+				"-Werror=format-security" \
+			"-Winit-self" \
+			"-Wmissing-declarations" \
+			"-Wmissing-noreturn" \
+			"-Wmissing-prototypes" \
+			"-Wpointer-arith" \
+			"-Wundef" \
+	; do
+		orig_CFLAGS="$CFLAGS"
+		CFLAGS="$CFLAGS $newflag"
+		AC_MSG_CHECKING(for $newflag option to gcc)
+		AC_TRY_COMPILE([], [
+			int main() {return 0;}
+		], [
+			AC_MSG_RESULT(yes)
+			CFLAGS="$orig_CFLAGS"
+			DEBUG_CFLAGS="$DEBUG_CFLAGS $newflag"
+		], [
+			AC_MSG_RESULT(no)
+			CFLAGS="$orig_CFLAGS"
+		])
+	done
+
+	if test "x$enable_fortify" = "xyes"; then
+		AC_MSG_CHECKING(for FORTIFY_SOURCE support)
+		AC_TRY_COMPILE([#include <features.h>], [
+			int main() {
+			#if !(__GNUC_PREREQ (4, 1) \
+				|| (defined __GNUC_RH_RELEASE__ && __GNUC_PREREQ (4, 0)) \
+				|| (defined __GNUC_RH_RELEASE__ && __GNUC_PREREQ (3, 4) \
+					&& __GNUC_MINOR__ == 4 \
+					&& (__GNUC_PATCHLEVEL__ > 2 \
+						|| (__GNUC_PATCHLEVEL__ == 2 && __GNUC_RH_RELEASE__ >= 8))))
+			#error No FORTIFY_SOURCE support
+			#endif
+				return 0;
+			}
+		], [
+			AC_MSG_RESULT(yes)
+			DEBUG_CFLAGS="$DEBUG_CFLAGS -Wp,-D_FORTIFY_SOURCE=2"
+		], [
+			AC_MSG_RESULT(no)
+		])
+	fi
+
+	DEBUG_CFLAGS="-Wall $DEBUG_CFLAGS"
+	CFLAGS="-g $CFLAGS"
+fi
+
+AC_SUBST(CFLAGS)
+AC_SUBST(DEBUG_CFLAGS)
+
 ########################
 # Create output files. #
 ########################

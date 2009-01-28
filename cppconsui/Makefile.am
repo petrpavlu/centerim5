@@ -2,6 +2,8 @@ lib_LTLIBRARIES = libcppconsui.la
 
 # When you add files here, also add them in po/POTFILES.in
 libcppconsui_la_SOURCES =\
+	Adjustment.cpp \
+	Adjustment.h \
 	Curses.h \
 	Container.cpp \
 	Container.h \
@@ -87,5 +89,5 @@ libcppconsui_la_SOURCES =\
 	TextTypes.h
 
 
-libcppconsui_la_CPPFLAGS = $(GLIBMM_CFLAGS) $(CURSES_INCLUDEDIR)
+libcppconsui_la_CPPFLAGS = $(DEBUG_CFLAGS) $(GLIBMM_CFLAGS) $(CURSES_INCLUDEDIR)
 libcppconsui_la_LIBADD = $(GLIBMM_LIBS) $(CURSES_LIBS)

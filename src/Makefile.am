@@ -38,6 +38,7 @@ centerim_SOURCES = \
 	git-version.h.in
 
 centerim_CPPFLAGS =\
+	$(DEBUG_CFLAGS) \
 	$(PURPLE_CFLAGS) \
 	$(GLIBMM_CFLAGS) \
 	$(CURSES_INCLUDEDIR) \
