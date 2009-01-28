@@ -64,7 +64,7 @@ std::vector<CenterIM::logbuf_item>* CenterIM::logbuf = NULL;
 typedef void (*signal_t)(int);
 signal_t old_handler = NULL;
 
-void signal_handler(int signum)
+void CenterIM::signal_handler(int signum)
 {
 	struct winsize size;
 
@@ -118,6 +118,10 @@ static PurpleCoreUiOps centerim_core_ui_ops =
 	NULL, //CenterIM::debug_ui_init_,   
 	NULL, //CenterIM::ui_init_,
 	CenterIM::ui_uninit_,
+	NULL, //CenterIM::get_ui_info,
+	NULL,
+	NULL,
+	NULL,
 };
 
 static PurpleEventLoopUiOps centerim_glib_eventloops =
@@ -126,7 +130,11 @@ static PurpleEventLoopUiOps centerim_glib_eventloops =
 	CenterIM::timeout_remove,
 	CenterIM::input_add,
 	CenterIM::input_remove,
-	NULL
+	NULL, //CenterIM::input_get_error,
+	NULL, //CenteRIM::timeout_add_seconds,
+	NULL,
+	NULL,
+	NULL,
 };
 
 CenterIM::CenterIM()

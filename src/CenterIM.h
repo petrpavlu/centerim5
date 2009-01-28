@@ -121,7 +121,9 @@ class CenterIM
 		Conf *conf;
 		Keys *keys;
 
-    Glib::RefPtr<Glib::MainLoop> gmainloop;
+		static void signal_handler(int signum);
+
+	    Glib::RefPtr<Glib::MainLoop> gmainloop;
 
 		//TODO: nice names
 		typedef struct logbuf_item {
