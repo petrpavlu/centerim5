@@ -187,19 +187,19 @@ if test "x$GCC" = "xyes"; then
 	dnl	This is likely non-trivial.
 	dnl
 	for newflag in \
-			"-Wshadow" \
-			"-Waggregate-return" \
+		dnl	"-Wshadow" \
+		dnl	"-Waggregate-return" \
 			"-Wcast-align" \
-			"-Wdeclaration-after-statement" \
+		dnl	"-Wdeclaration-after-statement" \
 			"-Wendif-labels" \
-			"-Werror-implicit-function-declaration" \
+		dnl	"-Werror-implicit-function-declaration" \
 			"-Wextra -Wno-sign-compare -Wno-unused-parameter" \
 			"-Wformat-security" \
 				"-Werror=format-security" \
 			"-Winit-self" \
 			"-Wmissing-declarations" \
 			"-Wmissing-noreturn" \
-			"-Wmissing-prototypes" \
+		dnl	"-Wmissing-prototypes" \
 			"-Wpointer-arith" \
 			"-Wundef" \
 	; do
