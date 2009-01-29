@@ -876,9 +876,9 @@ TextView::scroll_to_iter (
     }
   
   if (retval)
-    DV(g_print (">Actually scrolled ("G_STRLOC")\n"));
+    {}//TODO DV(g_print (">Actually scrolled ("G_STRLOC")\n"));
   else
-    DV(g_print (">Didn't end up scrolling ("G_STRLOC")\n"));
+    {}//TODO DV(g_print (">Didn't end up scrolling ("G_STRLOC")\n"));
   
   return retval;
 }
@@ -1343,14 +1343,14 @@ TextView::set_editable (
 	  if (HasFocus())
 	    //TODO move focus to next widget.
 	    // gtk_im_context_focus_out (text_view->im_context);
-	    ;
+	    {}
 	}
 
       editable = setting;
 
       if (setting && HasFocus())
 	//gtk_im_context_focus_in (text_view->im_context);
-	;
+        {}
 
       if (layout)
         {
@@ -2548,7 +2548,7 @@ TextView::flush_first_validate (void)
 bool
 TextView::first_validate_callback (gpointer data)
 {
-  TextView *text_view = (TextView*)data;
+  //TextView *text_view = (TextView*)data;
 
   /* Note that some of this code is duplicated at the end of size_allocate,
    * keep in sync with that.
@@ -2565,7 +2565,7 @@ TextView::first_validate_callback (gpointer data)
 bool
 TextView::incremental_validate_callback (gpointer data)
 {
-  TextView *text_view = (TextView*)data;
+  //TextView *text_view = (TextView*)data;
   bool result = true;
 
   //DV(g_print(G_STRLOC"\n"));
@@ -4090,7 +4090,7 @@ TextView::move_cursor_internal (
   if (step == MOVE_PAGES)
     {
       if (!scroll_pages (count, extend_selection))
-	     ;//TODO emit beep? also do this for all the error_bell calls
+        {}//TODO emit beep? also do this for all the error_bell calls
         //gtk_widget_error_bell (GTK_WIDGET (text_view));
 
       //check_cursor_blink ();
@@ -4100,7 +4100,7 @@ TextView::move_cursor_internal (
   else if (step == MOVE_HORIZONTAL_PAGES)
     {
       if (!scroll_hpages (count, extend_selection))
-        ;//gtk_widget_error_bell (GTK_WIDGET (text_view));
+        {}//gtk_widget_error_bell (GTK_WIDGET (text_view));
 
       //gtk_text_view_check_cursor_blink (text_view);
       //gtk_text_view_pend_cursor_blink (text_view);
@@ -5299,7 +5299,7 @@ void TextView::ensure_layout (void)
     {
       TextAttributes *style;
       //PangoContext *ltr_context, *rtl_context;
-      GSList *tmp_list;
+      //GSList *tmp_list;
 
       //DV(g_print(G_STRLOC"\n"));
       
@@ -5417,7 +5417,7 @@ void TextView::destroy_layout (void)
 {
   if (layout)
     {
-      GSList *tmp_list;
+      //GSList *tmp_list;
 
       remove_validate_idles ();
 
@@ -6120,7 +6120,7 @@ void TextView::value_changed (Adjustment *adj)
   
   if (dx != 0 || dy != 0)
     {
-      GSList *tmp_list;
+      //GSList *tmp_list;
 
       //if (GTK_WIDGET_REALIZED (text_view))
         {
@@ -6365,7 +6365,7 @@ void TextView::mark_set_handler (TextBuffer *buffer,
     }
 
   if (need_reset)
-    ;//gtk_text_view_reset_im_context (text_view);
+    {}//gtk_text_view_reset_im_context (text_view);
 }
 
 

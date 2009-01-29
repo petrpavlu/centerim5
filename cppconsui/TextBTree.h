@@ -616,6 +616,19 @@ class TextBTree
 		void ensure_end_iter_segment (void);
 	//TODO was moved to textline class	bool text_line_contains_end_iter (TextLine  *line);
 
+	typedef struct {
+	  TextIter *iters;
+	  guint count;
+	  guint alloced;
+	} IterStack;
+
+	static IterStack* iter_stack_new (void);
+	static void iter_stack_push (IterStack         *stack, const TextIter *iter);
+	static bool iter_stack_pop (IterStack   *stack, TextIter *iter);
+	static void iter_stack_free (IterStack *stack);
+	static void iter_stack_invert (IterStack *stack);
+	static void copy_segment (GString *string, bool include_hidden, bool include_nonchars, TextIter *start, TextIter *end);
+
 };
 
 /* Lines */

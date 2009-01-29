@@ -48,9 +48,9 @@ Adjustment::Adjustment (double	  value,
 			double	  step_increment,
 			double	  page_increment,
 			double	  page_size)
-: value(value)
-, lower(lower)
+: lower(lower)
 , upper(upper)
+, value(value)
 , step_increment(step_increment)
 , page_increment(page_increment)
 , page_size(page_size)

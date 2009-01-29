@@ -297,8 +297,7 @@ TextBTree::segments_changed (void)
  *  trying to do as little propagation as is needed.
  */
 void
-TextBTree::resolve_bidi (TextIter *start,
-			     TextIter *end)
+TextBTree::resolve_bidi (TextIter *start, TextIter *end)
 {
   TextBTree *tree = start->get_btree();
   TextLine *start_line, *end_line, *start_line_prev, *end_line_next, *line;
@@ -396,8 +395,8 @@ TextBTree::resolve_bidi (TextIter *start,
      * _text_line_previous is ok in that case as well.)
      */
     line = line->previous_line();
-    get_iter_at_line (&end_propagate, line, 0);
-    invalidate_region (end, &end_propagate, false);
+    tree->get_iter_at_line (&end_propagate, line, 0);
+    tree->invalidate_region (end, &end_propagate, false);
   }
   
   /* Sweep backward */
@@ -453,8 +452,8 @@ TextBTree::resolve_bidi (TextIter *start,
      */
     /*TODOif (line && line->dir_propagated_forward == PANGO_DIRECTION_NEUTRAL)
       {
-        get_iter_at_line (&start_propagate, line, 0);
-        invalidate_region (&start_propagate, start, false);
+        tree->get_iter_at_line (&start_propagate, line, 0);
+        tree->invalidate_region (&start_propagate, start, false);
       }*/
   }
 }
@@ -483,8 +482,8 @@ void TextBTree::delete_text (TextIter *start, TextIter *end)
 
   tree = start->get_btree();
  
-  /*TODOif (gtk_debug_flags & GTK_DEBUG_TEXT)
-    _text_btree_check (tree);*/
+  if (1)//TODO(gtk_debug_flags & GTK_DEBUG_TEXT)
+    tree->check ();
   
   /* Broadcast the need for redisplay before we break the iterators */
   DV (g_print ("invalidating due to deleting some text (%s)\n", G_STRLOC));
@@ -606,7 +605,7 @@ void TextBTree::delete_text (TextIter *start, TextIter *end)
       next = seg->next;
       char_count = seg->char_count;
 
-      if (seg->deleteFunc(curline, false) != 0)
+      if (seg->deleteFunc(seg, curline, false) != 0)
         {
           /*
            * This segment refuses to die.  Move it to prev_seg and
@@ -809,8 +808,8 @@ void TextBTree::delete_text (TextIter *start, TextIter *end)
   tree->chars_changed ();
   tree->segments_changed ();
 
-  /*TODOif (gtk_debug_flags & GTK_DEBUG_TEXT)
-    _text_btree_check (tree);*/
+  if (1)//TODO(gtk_debug_flags & GTK_DEBUG_TEXT)
+    tree->check ();
 
   /* Re-initialize our iterators */
   tree->get_iter_at_line (start, start_line, start_byte_offset);
@@ -1087,8 +1086,8 @@ TextLine* TextBTree::find_line_by_y ( BTreeView *view, TextBTreeNode *node, gint
 {
   gint current_y = 0;
 
-  /*TODOif (gtk_debug_flags & GTK_DEBUG_TEXT)
-    _text_btree_check (tree);*/
+  if (1)//TODO(gtk_debug_flags & GTK_DEBUG_TEXT)
+    check ();
 
   if (node->level == 0)
     {
@@ -1386,14 +1385,7 @@ void TextBTree::get_view_size (
  * Tag
  */
 
-typedef struct {
-  TextIter *iters;
-  guint count;
-  guint alloced;
-} IterStack;
-
- IterStack*
-iter_stack_new (void)
+TextBTree::IterStack* TextBTree::iter_stack_new (void)
 {
   IterStack *stack;
   stack = g_slice_new (IterStack);
@@ -1403,9 +1395,7 @@ iter_stack_new (void)
   return stack;
 }
 
- void
-iter_stack_push (IterStack         *stack, 
-		 const TextIter *iter)
+void TextBTree::iter_stack_push (IterStack         *stack, const TextIter *iter)
 {
   stack->count += 1;
   if (stack->count > stack->alloced)
@@ -1417,9 +1407,7 @@ iter_stack_push (IterStack         *stack,
   stack->iters[stack->count-1] = *iter;
 }
 
- bool
-iter_stack_pop (IterStack   *stack, 
-		TextIter *iter)
+bool TextBTree::iter_stack_pop (IterStack   *stack, TextIter *iter)
 {
   if (stack->count == 0)
     return false;
@@ -1431,15 +1419,13 @@ iter_stack_pop (IterStack   *stack,
     }
 }
 
- void
-iter_stack_free (IterStack *stack)
+void TextBTree::iter_stack_free (IterStack *stack)
 {
   g_free (stack->iters);
   g_slice_free (IterStack, stack);
 }
 
- void
-iter_stack_invert (IterStack *stack)
+void TextBTree::iter_stack_invert (IterStack *stack)
 {
   if (stack->count > 0)
     {
@@ -1731,8 +1717,8 @@ void TextBTree::tag (TextIter *start_orig,
 
   tree->queue_tag_redisplay (tag, &start, &end);
 
-  /*TODOif (gtk_debug_flags & GTK_DEBUG_TEXT)
-    _text_btree_check (tree);*/
+  if (1)//TODO(gtk_debug_flags & GTK_DEBUG_TEXT)
+    tree->check();
 }
 
 
@@ -2030,7 +2016,7 @@ TextTag** TextBTree::get_tags (TextIter *iter,
 }
 
 void
-copy_segment (GString *string,
+TextBTree::copy_segment (GString *string,
               bool include_hidden,
               bool include_nonchars,
               TextIter *start,
@@ -2442,8 +2428,8 @@ TextBTree::real_set_mark (
   
   iter = *where;
 
-  /*TODOif (gtk_debug_flags & GTK_DEBUG_TEXT)
-    _text_iter_check (&iter);*/
+  if (1)//TODO(gtk_debug_flags & GTK_DEBUG_TEXT)
+    iter.check ();
   
   if (mark != NULL)
     {
@@ -2499,9 +2485,9 @@ TextBTree::real_set_mark (
                              mark);
     }
 
-  /*TODOif (gtk_debug_flags & GTK_DEBUG_TEXT)
-    _text_iter_check (&iter);*/
-  
+  if (1)//TODO(gtk_debug_flags & GTK_DEBUG_TEXT)
+    iter.check ();
+
   /* Link mark into new location */
   TextBTree::link_segment (mark, &iter);
 
@@ -2514,11 +2500,11 @@ TextBTree::real_set_mark (
 
   redisplay_mark_if_visible (mark);
 
-  /*TODOif (gtk_debug_flags & GTK_DEBUG_TEXT)
-    _text_iter_check (&iter);*/
+  if (1)//TODO(gtk_debug_flags & GTK_DEBUG_TEXT)
+    iter.check ();
 
-  /*TODOif (gtk_debug_flags & GTK_DEBUG_TEXT)
-    _text_btree_check (tree);*/
+  if (1)//TODO(gtk_debug_flags & GTK_DEBUG_TEXT)
+    check ();
   
   return mark;
 }
@@ -3971,8 +3957,8 @@ TextLine* TextLine::next_could_contain_tag (
 
   //g_return_val_if_fail (line != NULL, NULL);
 
-  /*TODOif (gtk_debug_fla & GTK_DEBUG_TEXT)
-    _text_btree_check (tree);*/
+  if (1)//(gtk_debug_fla & GTK_DEBUG_TEXT)
+    tree->check ();
 
   if (tag == NULL)
     {
@@ -4130,8 +4116,8 @@ TextLine* TextLine::previous_could_contain_tag (TextBTree *tree,
 
   //g_return_val_if_fail (line != NULL, NULL);
 
-  /*TODOif (gtk_debug_flags & GTK_DEBUG_TEXT)
-    _text_btree_check (tree);*/
+  if (1)//TODO(gtk_debug_flags & GTK_DEBUG_TEXT)
+    tree->check ();
 
   if (tag == NULL)
     {
@@ -4887,8 +4873,8 @@ bool TextBTree::validate (
       if (new_height)
         *new_height = state.new_height;
 
-      /*TODOif (gtk_debug_flags & GTK_DEBUG_TEXT)
-        _text_btree_check (tree);*/
+      if (1)//TODO(gtk_debug_flags & GTK_DEBUG_TEXT)
+        check ();
 
       return true;
     }
@@ -5100,7 +5086,7 @@ void TextBTreeNode::node_destroy (TextBTree *tree, TextBTreeNode *node)
               seg = line->segments;
               line->segments = seg->next;
 
-              seg->deleteFunc (line, true);
+              seg->deleteFunc (seg, line, true);
             }
           tree->text_line_destroy (line);
         }
@@ -5576,8 +5562,8 @@ void TextBTree::post_insert_fixup (
       rebalance (node);
     }
 
-  /*TODOif (gtk_debug_flags & GTK_DEBUG_TEXT)
-    _text_btree_check (tree);*/
+  if (1)//TODO(gtk_debug_flags & GTK_DEBUG_TEXT)
+    check ();
 }
 
  TextTagInfo* TextBTree::get_existing_tag_info (
@@ -6134,8 +6120,8 @@ void TextBTreeNode::change_node_toggle_count (
   line->cleanup_line();
   tree->segments_changed ();
 
-  /*TODOif (gtk_debug_flags & GTK_DEBUG_TEXT)
-    _text_btree_check (tree);*/
+  if (1)//TODO(gtk_debug_flags & GTK_DEBUG_TEXT)
+    tree->check ();
 }
 
  void TextBTree::unlink_segment ( TextLineSegment *seg, TextLine *line)
@@ -6225,7 +6211,8 @@ void TextBTreeNode::change_node_toggle_count (
   Summary *summary, *summary2;
   TextLine *line;
   TextLineSegment *segPtr;
-  int num_children, num_lines, num_chars, toggle_count, min_children;
+  //int num_children, num_lines, num_chars;
+  int min_children, toggle_count;
   TextLineData *ld;
   NodeData *nd;
 

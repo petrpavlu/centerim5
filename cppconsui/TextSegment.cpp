@@ -132,8 +132,7 @@ TextLineSegment* TextLineSegment::split_segment (TextIter *iter)
 
   while (seg != NULL)
     {
-      if (seg->byte_count > count)
-        {
+      if (seg->byte_count > count) {
           if (count == 0)
             {
               return prev;
@@ -155,8 +154,7 @@ TextLineSegment* TextLineSegment::split_segment (TextIter *iter)
               return seg;
             }
         }
-      else if ((seg->byte_count == 0) && (count == 0)
-               && !seg->leftGravity)
+      else if ((seg->byte_count == 0) && (count == 0) && !seg->leftGravity)
         {
           return prev;
         }
@@ -171,35 +169,34 @@ TextLineSegment* TextLineSegment::split_segment (TextIter *iter)
 
 TextLineSegment* TextLineSegment::split (int index)
 {
+	g_assert(type == text_segment_none);
 	//TODO nothing to do here? perhaps make the class abstract?
 	return NULL;
 }
 
 
-bool TextLineSegment::deleteFunc (TextLine *line, bool tree_gone)
+bool TextLineSegment::deleteFunc (TextLineSegment *segPtr, TextLine *line, bool tree_gone)
 {
+	g_assert(type == text_segment_none);
 	//TODO nothing to do here? perhaps make the class abstract?
 }
 
-
 TextLineSegment* TextLineSegment::cleanupFunc (TextLineSegment *segPtr, TextLine *line)
 {
+	g_assert(type == text_segment_none);
 	/* if nothing has to be done, just return segPtr */
 	return segPtr;
 }
 
-void TextLineSegment::lineChangeFunc (TextLine *line)
-{
-	//TODO nothing to do here? perhaps make the class abstract?
-}
-
 void TextLineSegment::checkFunc (TextLine *line)
 {
+	g_assert(type == text_segment_none);
 	//TODO nothing to do here? perhaps make the class abstract?
 }
 
 void TextLineSegment::self_check (void)
 {
+	g_assert(type == text_segment_none);
 }
 
 void TextLineSegmentChar::self_check (void)
@@ -310,7 +307,13 @@ TextLineSegment* TextLineSegmentChar::split (gint index)
   return new1;
 }
 
-TextLineSegment* TextLineSegmentChar::cleanupFunc (TextLineSegmentChar *segPtr, TextLine *line)
+bool TextLineSegmentChar::deleteFunc (TextLineSegment *segPtr, TextLine *line, bool treeGone)
+{
+  delete segPtr;
+  return 0;
+}
+
+TextLineSegment* TextLineSegmentChar::cleanupFunc (TextLineSegment *segPtr, TextLine *line)
 {
   TextLineSegment *segPtr2;
   TextLineSegmentChar *newPtr;
@@ -343,10 +346,10 @@ TextLineSegment* TextLineSegmentChar::cleanupFunc (TextLineSegmentChar *segPtr, 
   return newPtr;
 }
 
-bool TextLineSegmentChar::deleteFunc (TextLineSegmentChar *segPtr, TextLine *line, bool treeGone)
+void TextLineSegmentChar::lineChangeFunc (TextLine *line)
 {
-  delete segPtr;
-  return 0;
+	g_assert(type == text_segment_char);
+	//TODO nothing to do here? perhaps make the class abstract?
 }
 
 void TextLineSegmentChar::checkFunc (TextLine *line)
@@ -385,7 +388,7 @@ TextLineSegmentToggle::TextLineSegmentToggle (TextTagInfo *info, bool on)
 //  return seg;
 }
 
-bool TextLineSegmentToggle::deleteFunc (TextLineSegmentToggle *segPtr, TextLine *line, bool treeGone)
+bool TextLineSegmentToggle::deleteFunc (TextLineSegment *segPtr, TextLine *line, bool treeGone)
 {
   if (treeGone)
     {
@@ -449,7 +452,7 @@ void TextLineSegmentToggle::checkFunc ( TextLine *line)
     }
 }
 
-TextLineSegment* TextLineSegmentToggle::cleanupFunc (TextLineSegmentToggle *segPtr, TextLine *line)
+TextLineSegment* TextLineSegmentToggle::cleanupFunc (TextLineSegment *segPtr, TextLine *line)
 {
   TextLineSegment *segPtr2, *prevPtr;
   int counts;
@@ -546,7 +549,7 @@ TextLineSegmentLeftMark::TextLineSegmentLeftMark (TextMark *mark_obj)
  *--------------------------------------------------------------
  */
 
-bool TextLineSegmentLeftMark::deleteFunc (TextLineSegmentLeftMark *segPtr,
+bool TextLineSegmentLeftMark::deleteFunc (TextLineSegment *segPtr,
                           TextLine        *line,
                           bool            tree_gone)
 {
@@ -576,13 +579,20 @@ bool TextLineSegmentLeftMark::deleteFunc (TextLineSegmentLeftMark *segPtr,
  *--------------------------------------------------------------
  */
 
-TextLineSegment* TextLineSegmentLeftMark::cleanupFunc (TextLineSegmentLeftMark *segPtr, 
+TextLineSegment* TextLineSegmentLeftMark::cleanupFunc (TextLineSegment *segPtr, 
                            TextLine        *line)
 {
   /* not sure why Tk did this here and not in LineChangeFunc */
   segPtr->body.mark.line = line;
   return segPtr;
 }
+
+void TextLineSegmentLeftMark::lineChangeFunc (TextLine *line)
+{
+	g_assert(type == text_segment_left_mark);
+	//TODO nothing to do here? perhaps make the class abstract?
+}
+
 
 /*
  *--------------------------------------------------------------

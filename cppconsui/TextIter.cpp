@@ -352,17 +352,11 @@ void TextIter::init_from_char_offset (
   return segment_byte_offset == 0 || segment_char_offset == 0;
 }
 
-#ifdef G_ENABLE_DEBUG
 void TextIter::check_invariants (void)
 {
-  /*TODO if (gtk_debug_flags & GTK_DEBUG_TEXT)
-    _gtk_text_iter_check (iter);*/
+  if (1)//TODO(gtk_debug_flags & GTK_DEBUG_TEXT)
+    check ();
 }
-#else
-void TextIter::check_invariants (void)
-{
-}
-#endif
 
 /**
  * gtk_text_iter_get_buffer:
@@ -399,6 +393,7 @@ TextBuffer* TextIter::get_buffer (void) //TODO function is const?
  *
  * Return value: a copy of the @iter, free with gtk_text_iter_free ()
  **/
+//TODO copy constructor
 TextIter*
 gtk_text_iter_copy (const TextIter *iter)
 {
@@ -5128,7 +5123,8 @@ void TextIter::order (TextIter *first,
 void TextIter::check (void)
 {
 //  const TextRealIter *real = (const TextRealIter*)iter;
-  gint line_char_offset, line_byte_offset, seg_char_offset, seg_byte_offset;
+  //gint line_char_offset, line_byte_offset;
+  gint  seg_byte_offset, seg_char_offset;;
   TextLineSegment *byte_segment = NULL;
   TextLineSegment *byte_any_segment = NULL;
   TextLineSegment *char_segment = NULL;

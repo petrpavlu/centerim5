@@ -183,24 +183,25 @@ class TextLineSegment
 		 * freed in its entirety, which may matter for some reason (?)
 		 * Return TRUE if the segment is not deleteable, e.g. a mark.
 		 */
-		virtual bool deleteFunc (TextLine *line, bool tree_gone);
+		virtual bool deleteFunc (TextLineSegment *segPtr, TextLine *line, bool tree_gone) = 0;
 
 		/* Called after segment structure of line changes, so segments can
 		 * cleanup (e.g. merge with adjacent segments). Returns a segment list
 		 * to replace the original segment list with. The line argument is
 		 * the current line.
 		 */
-		virtual TextLineSegment* cleanupFunc (TextLineSegment *segPtr, TextLine *line);
+		virtual TextLineSegment* cleanupFunc (TextLineSegment *segPtr, TextLine *line) = 0;
 
 		/* Called when a segment moves from one line to another. CleanupFunc is also
 		 * called in that case, so many segments just use CleanupFunc, I'm not sure
 		 * what's up with that (this function may not be needed...)
 		 */
-		virtual void lineChangeFunc (TextLine *line);
+		virtual void lineChangeFunc (TextLine *line) = 0;
 
 		/* Called to do debug checks on the segment. */
-		virtual void checkFunc (TextLine *line);
+		virtual void checkFunc (TextLine *line) = 0;
 
+		virtual void self_check (void);
 
 	protected:
   		TextLineSegment();
@@ -209,7 +210,6 @@ class TextLineSegment
 		TextLineSegment(const TextLineSegment&);
 
 		TextLineSegment& operator=(const TextLineSegment&);
-		void self_check (void);
 };
 
 /*
@@ -237,10 +237,11 @@ class TextLineSegmentLeftMark
 		static TextLineSegment* split(const TextIter *iter);
 
 		//TextLineSegment* split (gint index);
-		bool deleteFunc (TextLineSegmentLeftMark *segPtr, TextLine *line, bool tree_gone);
-		TextLineSegment* cleanupFunc (TextLineSegmentLeftMark *segPtr, TextLine *line);
-		//void lineChangeFunc (TextLine *line);
-		void checkFunc (TextLine *line);
+		virtual bool deleteFunc (TextLineSegment *segPtr, TextLine *line, bool tree_gone);
+		virtual TextLineSegment* cleanupFunc (TextLineSegment *segPtr, TextLine *line);
+		virtual void lineChangeFunc (TextLine *line);
+		virtual void checkFunc (TextLine *line);
+		//void self_check (void);
 
 	protected:
 
@@ -249,8 +250,6 @@ class TextLineSegmentLeftMark
 		TextLineSegmentLeftMark(const TextLineSegment&);
 
 		TextLineSegment& operator=(const TextLineSegment&);
-
-		void self_check (void);
 };
 
 class TextLineSegmentChar
@@ -265,9 +264,11 @@ class TextLineSegmentChar
 		static TextLineSegment* split(const TextIter *iter);
 
 		TextLineSegment* split (gint index);
-		bool deleteFunc (TextLineSegmentChar *segPtr, TextLine *line, bool tree_gone);
-		TextLineSegment* cleanupFunc (TextLineSegmentChar *segPtr, TextLine *line);
-		void checkFunc (TextLine *line);
+		virtual bool deleteFunc (TextLineSegment *segPtr, TextLine *line, bool tree_gone);
+		virtual TextLineSegment* cleanupFunc (TextLineSegment *segPtr, TextLine *line);
+		virtual void lineChangeFunc (TextLine *line);
+		virtual void checkFunc (TextLine *line);
+		void self_check (void);
 
 	protected:
 
@@ -277,7 +278,6 @@ class TextLineSegmentChar
 
 		TextLineSegment& operator=(const TextLineSegment&);
 
-		void self_check (void);
 };
 
 class TextLineSegmentToggle
@@ -292,10 +292,11 @@ class TextLineSegmentToggle
 		static TextLineSegment* split(const TextIter *iter);
 
 		//TextLineSegment* split (gint index);
-		bool deleteFunc (TextLineSegmentToggle *segPtr, TextLine *line, bool tree_gone);
-		TextLineSegment* cleanupFunc (TextLineSegmentToggle *segPtr, TextLine *line);
-		void lineChangeFunc (TextLine *line);
+		virtual bool deleteFunc (TextLineSegment *segPtr, TextLine *line, bool tree_gone);
+		virtual TextLineSegment* cleanupFunc (TextLineSegment *segPtr, TextLine *line);
+		virtual void lineChangeFunc (TextLine *line);
 		void checkFunc (TextLine *line);
+		//void self_check (void);
 
 	protected:
 
@@ -304,8 +305,6 @@ class TextLineSegmentToggle
 		TextLineSegmentToggle(const TextLineSegment&);
 
 		TextLineSegment& operator=(const TextLineSegment&);
-
-		void self_check (void);
 };
 
 /*
