@@ -91,7 +91,7 @@ void Widget::UpdateArea()
 	area->w = subpad(parent->area->w, h, w, y, x);
 
 	if (area->w == NULL)
-		;//TODO throw an exception
+		{}//TODO throw an exception
 		//actually, dont!
 		//after a container resize, all widgets are updatearea()'d
 		//which will probably result (unless resizing to bigger) in
