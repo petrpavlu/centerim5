@@ -18,33 +18,49 @@
  *
  * */
 
-#ifndef __TEXTBUFFER_H__
-#define __TEXTBUFFER_H__
+#include "TextLine.h"
 
-#include "config.h"
-
-#include "TextRBTree.h"
-
-class TextBuffer
+TextLine::TextLine()
 {
-	public:
-		typedef TextRBTree::char_iterator iterator;
+}
 
-		TextBuffer();
-		~TextBuffer();
+TextLine::TextLine(const TextLine& line, size_t index, size_t num)
+{
+	str = line.str.substr(index, num);
+}
 
-		iterator insert (const iterator iter, const char *text, int len);
-		void insert (const char *text, int len);
+TextLine::~TextLine()
+{
+}
 
-	protected:
+void TextLine::insert(size_t index, const char* cstr, size_t num)
+{
+	str.insert(index, cstr, num);
+}
 
-	private:
-		TextBuffer(const TextBuffer &);
+size_t TextLine::byte_count(void)
+{
+	return str.bytes();
+}
 
-		TextBuffer& operator=(const TextBuffer&);
+size_t TextLine::char_count(void)
+{
+	return str.size();
+}
 
-		TextRBTree tree;
-		iterator cursor;
-};
+size_t TextLine::byte_count_to_char_offset(size_t n)
+{
+	return str.substr(0, n).bytes();
+}
 
-#endif /* __TEXTBUFFER_H__ */
+size_t TextLine::char_count_to_byte_offset(size_t n)
+{
+	Glib::ustring l(str.c_str(), n);
+
+	return l.size();
+}
+
+const char* TextLine::c_str(void)
+{
+	return str.c_str();
+}

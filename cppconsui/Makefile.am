@@ -25,8 +25,6 @@ libcppconsui_la_SOURCES =\
 	TextWindow.h \
 	TextEntry.cpp \
 	TextEntry.h \
-	TextView.cpp \
-	TextView.h \
 	Widget.cpp \
 	Widget.h \
 	Window.cpp \
@@ -67,26 +65,12 @@ libcppconsui_la_SOURCES =\
 	InputProcessor.h \
 	CppConsUI.cpp \
 	CppConsUI.h \
-	TextBTree.cpp \
-	TextBTree.h \
+	TextRBTree.cpp \
+	TextRBTree.h \
 	TextBuffer.cpp \
 	TextBuffer.h \
-	TextChild.cpp \
-	TextChild.h \
-	TextIter.cpp \
-	TextIter.h \
-	TextLayout.cpp \
-	TextLayout.h \
-	TextMark.cpp \
-	TextMark.h \
-	TextSegment.cpp \
-	TextSegment.h \
-	TextTag.cpp \
-	TextTag.h \
-	TextTagTable.cpp \
-	TextTagTable.h \
-	TextTypes.cpp \
-	TextTypes.h
+	TextLine.cpp \
+	TextLine.h
 
 
 libcppconsui_la_CPPFLAGS = $(DEBUG_CFLAGS) $(GLIBMM_CFLAGS) $(CURSES_INCLUDEDIR)
