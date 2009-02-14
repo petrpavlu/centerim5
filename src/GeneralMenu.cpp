@@ -67,6 +67,7 @@ GeneralMenu::~GeneralMenu()
 
 void GeneralMenu::OpenTestWindow(void)
 {
+	/*
 	TextView view(*this, 0, 0, w, h);
 	TextIter start_iter, end_iter, insert;
 	Rect r;
@@ -93,7 +94,7 @@ void GeneralMenu::OpenTestWindow(void)
 	log->Write(Log::Type_cim, Log::Level_debug, "rect: %d %d %d %d cursor: %d %d %d %d", 
 			r.Left(), r.Top(), r.Width(), r.Height(),
 			c.Left(), c.Top(), c.Width(), c.Height());
-
+*/
 
 	/*
 	WindowManager *wm = WindowManager::Instance();
