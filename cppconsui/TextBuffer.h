@@ -28,14 +28,28 @@
 class TextBuffer
 {
 	public:
-		typedef TextRBTree::char_iterator iterator;
+		typedef TextRBTree::char_iterator char_iterator;
+		typedef TextRBTree::line_iterator line_iterator;
 
 		TextBuffer();
 		~TextBuffer();
 
-		iterator insert (const iterator iter, const char *text, int len);
-		void insert (const char *text, int len);
+		/* Getting iterators into the buffer. */
+		char_iterator begin(void) const;
+		char_iterator back(void) const;
+		char_iterator end(void) const;
 
+		char_iterator reverse_begin(void) const;
+		char_iterator reverse_back(void) const;
+		char_iterator reverse_end(void) const;
+
+		char_iterator insert (const char_iterator iter, const char *text, int len);
+		char_iterator insert (const char *text, int len);
+
+		char_iterator append (const char *text, int len);
+
+		char_iterator get_iter_at_cursor (void);
+		char_iterator get_iter_at_line (int top);
 	protected:
 
 	private:
@@ -44,7 +58,7 @@ class TextBuffer
 		TextBuffer& operator=(const TextBuffer&);
 
 		TextRBTree tree;
-		iterator cursor;
+		char_iterator cursor;
 };
 
 #endif /* __TEXTBUFFER_H__ */

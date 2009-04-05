@@ -166,7 +166,7 @@ if test "x$GCC" = "xyes"; then
 	dnl We enable -Wall later.
 	dnl If it's set after the warning CFLAGS in the compiler invocation, it counteracts the -Wno... flags.
 	dnl This leads to warnings we don't want.
-	CFLAGS=`echo $CFLAGS |$sedpath 's/-Wall//'`
+	CFLAGS=`echo $CFLAGS |sed 's/-Wall//'`
 
 	dnl ENABLE WARNINGS SUPPORTED BY THE VERSION OF GCC IN USE
 	dnl

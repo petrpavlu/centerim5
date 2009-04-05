@@ -26,6 +26,7 @@ class Scrollable
 	public:
 		Scrollable() { ; }
 		virtual ~Scrollable() { ; }
+
 		/* Get the size of the scrollable area */
 		virtual Rect GetScrollSize(void) = 0;
 
@@ -34,15 +35,6 @@ class Scrollable
 
 		/* Adjust the visible area to include the given coordinates */
 		virtual void AdjustScroll(const int x, const int y) = 0;
-		/* Adjust the visible area to include the given rectangle, and
-		 * to include _at_least_ (Rect.x, Rect.y). 
-		 * This is useful when e.g. text appears right-to-left. We want
-		 * to see the text, but at least the start of it, which is
-		 * at the right.
-		 *
-		 * In that case Rect.w and Rect.h will be negative.
-		 * */
-		virtual void AdjustScroll(const Rect) = 0;
 
 		/* Get the visible scroll area coordinates */
 		virtual Rect GetScrollPosition(void) = 0;

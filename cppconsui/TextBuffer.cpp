@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2008 by Mark Pustjens <pustjens@dds.nl>
  *
  * This file is part of CenterIM.
  *
@@ -35,15 +35,46 @@ TextBuffer::~TextBuffer()
 {
 }
 
-TextBuffer::iterator TextBuffer::insert (const TextBuffer::iterator _iter, const char *text, int len)
+TextBuffer::char_iterator TextBuffer::begin(void) const
+{
+	return tree.begin();
+}
+
+TextBuffer::char_iterator TextBuffer::back(void) const
+{
+	return tree.back();
+}
+
+TextBuffer::char_iterator TextBuffer::end(void) const
+{
+	return tree.end();
+}
+
+TextBuffer::char_iterator TextBuffer::reverse_begin(void) const
+{
+	return tree.reverse_begin();
+}
+
+TextBuffer::char_iterator TextBuffer::reverse_back(void) const
+{
+	return tree.reverse_back();
+}
+
+TextBuffer::char_iterator TextBuffer::reverse_end(void) const
+{
+	return tree.reverse_end();
+}
+
+TextBuffer::char_iterator TextBuffer::insert (const TextBuffer::char_iterator _iter, const char *text, int len)
 {
 	int chunk_len; /* number of characters in current chunk. */
 	int sol; /* start of line */
 	int eol; /* index of character just after last one in current chunk. */
 	int delim; /* index of paragraph delimiter */
-	TextRBTree::char_iterator line_iter(tree);
+	char_iterator line_iter(tree);
 	TextLine *line;
-	TextBuffer::iterator iter(_iter);
+	char_iterator iter(_iter);
+	line_iterator tmp;
 
 	eol = 0;
 	sol = 0;
@@ -72,7 +103,7 @@ TextBuffer::iterator TextBuffer::insert (const TextBuffer::iterator _iter, const
 		/* insert the paragraph in the current line just after the cursor position */
 		line_iter->insert(line_iter.byte_offset, &text[sol], chunk_len);
 
-		/* advance the iterator by chunk_len bytes */
+		/* advance the char_iterator by chunk_len bytes */
 		iter.forward_bytes(chunk_len);
 
 		if (delim == eol)
@@ -86,13 +117,14 @@ TextBuffer::iterator TextBuffer::insert (const TextBuffer::iterator _iter, const
 		 * The chunk ended with a newline, so create a new TextLine
 		 * and move the remainder of the old line to it.
 		 */
+		tmp = iter;
 		line = new TextLine(
-				*iter,
+				*tmp,
 				iter.byte_offset,
-				iter->byte_count());
+				iter->bytes());
 
 		/* insert the new line after the current line. The returned
-		 * iterator points to the beginning of the new line.
+		 * char_iterator points to the beginning of the new line.
 		 */
 		iter = tree.insert(++iter, *line);
 	}
@@ -100,7 +132,17 @@ TextBuffer::iterator TextBuffer::insert (const TextBuffer::iterator _iter, const
 	return iter;
 }
 
-void TextBuffer::insert (const char *text, int len)
+TextBuffer::char_iterator TextBuffer::insert (const char *text, int len)
 {
-	insert(cursor, text, len);
+	return insert (cursor, text, len);
+}
+
+TextBuffer::char_iterator TextBuffer::append (const char *text, int len)
+{
+	return insert (back(), text, len);
+}
+
+TextBuffer::char_iterator TextBuffer::get_iter_at_cursor (void)
+{
+	return cursor;
 }

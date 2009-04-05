@@ -27,3 +27,168 @@
 
 #include "CppConsUI.h"
 #include "TextView.h"
+
+#include <string.h>
+
+/* TODO implement copy operator for textbuffer and textrbtree
+TextView::TextView(Widget& parent, int x, int y, int w, int h, TextBuffer *buffer)
+: Widget(parent, x, y, w, h)
+{
+	this->buffer = buffer;
+}*/
+
+TextView::TextView(Widget& parent, int x, int y, int w, int h)
+: Widget(parent, x, y, w, h)
+, view_left(0)
+, view_top(0)
+, wrap_mode(WRAP_NONE)
+{
+}
+
+TextView::~TextView(void)
+{
+}
+
+TextView::char_iterator TextView::append (const char *text, int len)
+{
+	if (len < 0) {
+		len = strlen(text);
+	}
+
+	return buffer.insert(buffer.back(), text, len);
+}
+
+void TextView::Draw(void)
+{
+	char_iterator line_iter;	/* Current line to be drawm. */
+	char_iterator line_end;		/* Line just after the last line to be drawn. */
+	char_iterator char_iter;	/* Current character to be drawn. */
+	char_iterator char_end;		/* Char just after the lst char to be drawn. */
+	unsigned int x, y;
+
+	line_iter = line_end = begin();
+
+	/* Move the begin and end iterators to their positions. */
+	line_iter.forward_lines(wrap_mode, Width(), view_top);
+	line_end = line_iter;
+	line_end.forward_lines(wrap_mode, Width(), Height());
+
+	y = 1;
+	while (line_iter != line_end) {
+		char_iter = line_iter;
+
+		/* Move the line iterator to the next line. We also use this
+		 * as guard for the character drawing loop, as this next line
+		 * is where we should stop */
+		line_iter.forward_lines(wrap_mode, Width(), 1);
+
+		/* Skip view_left columns at the beginning of the string. */
+		char_iter.forward_columns(view_left);
+
+		x = 1;
+
+		/* After skipping columns we may have that we are at the
+		 * second column of a 2-column character. In this case
+		 * we need to draw an empty column. */
+		if (!char_iter.char_valid()) {
+			mvwaddstr(area->w, y, x, " ");
+			/* Move to the next valid char. */
+			char_iter.forward_chars(1);
+			x += 1;
+		}
+
+		/* Note that line_iter is at the next line at this point; eg
+		 * where we should stop drawing characters. */
+		while (char_iter != line_iter) {
+			mvwaddnstr(area->w, y, x, *char_iter,
+					char_iter.char_bytes());
+			x += char_iter.char_columns();
+		}
+
+		/* Clear until the end of the line. We
+		 * can use this function since mvwaddnstr() also
+		 * moves the cursor. */
+		wclrtoeol(area->w);
+
+		y++;
+	}
+
+	Widget::Draw();
+}
+
+Rect TextView::GetScrollSize(void)
+{
+	Rect r;
+
+	r.x = 0;
+	r.y = 0;
+	r.width = Width();
+	r.height = Height();
+
+	return r;
+}
+
+void TextView::SetScrollSize(const int width, const int height)
+{
+	//TODO omit warning that user should use Resize();
+}
+
+void TextView::AdjustScroll(const int newx, const int newy)
+{
+	if (newx < 0 || newy < 0 || newx > Width() || newy > Height())
+		return;
+
+	if (newx > view_left + w - 1) {
+		view_left = newx - w + 1;
+	} else if (newx < view_left) {
+		view_left = newx;
+	}
+
+	if (newy > view_top + h - 1) {
+		view_top = newy - h + 1;
+	} else if (newy < view_top) {
+		view_top = newy;
+	}
+}
+
+Rect TextView::GetScrollPosition(void)
+{
+	Rect r;
+
+	r.x = view_left;
+	r.y = view_top;
+	r.width = Width();
+	r.height = Height();
+
+	return r;
+}
+
+TextView::char_iterator TextView::begin(void) const
+{
+	return buffer.begin();
+}
+
+TextView::char_iterator TextView::back(void) const
+{
+	return buffer.back();
+}
+
+TextView::char_iterator TextView::end(void) const
+{
+	return buffer.end();
+}
+
+TextView::char_iterator TextView::reverse_begin(void) const
+{
+	return buffer.reverse_begin();
+}
+
+TextView::char_iterator TextView::reverse_back(void) const
+{
+	return buffer.reverse_back();
+}
+
+TextView::char_iterator TextView::reverse_end(void) const
+{
+	return buffer.reverse_end();
+}

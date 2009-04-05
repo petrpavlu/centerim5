@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2008 by Mark Pustjens <pustjens@dds.nl>
  *
  * This file is part of CenterIM.
  *
@@ -24,43 +24,36 @@ TextLine::TextLine()
 {
 }
 
-TextLine::TextLine(const TextLine& line, size_t index, size_t num)
+TextLine::TextLine(const TextLine &line, unsigned int index, unsigned int len)
 {
-	str = line.str.substr(index, num);
+	*this = line;
+	erase(index+len+1, chars());
+	erase(0, index);
 }
 
 TextLine::~TextLine()
 {
 }
 
-void TextLine::insert(size_t index, const char* cstr, size_t num)
+void TextLine::insert(unsigned int index, const char* str, unsigned int len)
 {
-	str.insert(index, cstr, num);
+	TextLine::char_iterator iter;
+
+	iter = tree.get_iterator_at_char_offset(index);
+	tree.insert(iter, str, len);
 }
 
-size_t TextLine::byte_count(void)
+unsigned int TextLine::bytes(void)
 {
-	return str.bytes();
+	return begin().bytes();
 }
 
-size_t TextLine::char_count(void)
+unsigned int TextLine::chars(void)
 {
-	return str.size();
+	return begin().chars();
 }
 
-size_t TextLine::byte_count_to_char_offset(size_t n)
+unsigned int TextLine::columns(void)
 {
-	return str.substr(0, n).bytes();
-}
-
-size_t TextLine::char_count_to_byte_offset(size_t n)
-{
-	Glib::ustring l(str.c_str(), n);
-
-	return l.size();
-}
-
-const char* TextLine::c_str(void)
-{
-	return str.c_str();
+	return begin().columns();
 }

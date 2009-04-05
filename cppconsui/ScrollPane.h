@@ -52,8 +52,6 @@ class ScrollPane
 
 		/* Adjust the visible area to include the given coordinates/rectangle */
 		void AdjustScroll(const int newx, const int newy);
-		void AdjustScroll(const Rect pos)
-			{ AdjustScroll(pos.x, pos.y);}
 
 		/* Get the visible scroll area coordinates */
 		Rect GetScrollPosition(void) { return Rect(xpos, ypos, 0, 0); }

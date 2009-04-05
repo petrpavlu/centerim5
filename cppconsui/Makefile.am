@@ -69,8 +69,12 @@ libcppconsui_la_SOURCES =\
 	TextRBTree.h \
 	TextBuffer.cpp \
 	TextBuffer.h \
+	TextLineRBTree.cpp \
+	TextLineRBTree.h \
 	TextLine.cpp \
-	TextLine.h
+	TextLine.h \
+	TextView.cpp \
+	TextView.h
 
 
 libcppconsui_la_CPPFLAGS = $(DEBUG_CFLAGS) $(GLIBMM_CFLAGS) $(CURSES_INCLUDEDIR)

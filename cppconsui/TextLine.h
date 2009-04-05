@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2008 by Mark Pustjens <pustjens@dds.nl>
  *
  * This file is part of CenterIM.
  *
@@ -23,52 +23,44 @@
 
 #include "config.h"
 
-#include <glibmm/ustring.h>
-
-#include <cstddef>
+#include "TextLineRBTree.h"
 
 class TextLine
 {
 	public:
+		typedef TextLineRBTree::char_iterator char_iterator;
+		typedef TextLineRBTree::column_iterator column_iterator;
+
 		TextLine();
-		TextLine(const TextLine& line, size_t index, size_t num);
+		TextLine(const TextLine& line, unsigned int index, unsigned int num);
 		~TextLine();
 
-		void insert (size_t index, const char* str, size_t num);
+		void insert (unsigned int index, const char* str, unsigned int num);
+		void erase (unsigned int from, unsigned int to);
 
-		/* Return number of bytes/chars in the line. */
-		size_t byte_count(void);
-		size_t char_count(void);
+		/* Return number of bytes/chars/columns in the line. */
+		unsigned int bytes(void);
+		unsigned int chars(void);
+		unsigned int columns(void);
 
 		/* Count the number of bytes until we reach the n'th character. */
-		size_t byte_count_to_char_offset(size_t n);
+		unsigned int byte_count_to_char_offset(unsigned int n);
 		/* Count the number of characters before the n'th byte. */
-		size_t char_count_to_byte_offset(size_t n);
+		unsigned int char_count_to_byte_offset(unsigned int n);
 
-		const char* c_str(void);
+		/* Getting iterators into the buffer. */
+		char_iterator begin(void) const;
+		char_iterator back(void) const;
+		char_iterator end(void) const;
 
-		/* Iterator for the line. */
-		class iterator
-		{
-			public:
-				iterator(void);
-				iterator(const iterator&);
+		char_iterator reverse_begin(void) const;
+		char_iterator reverse_back(void) const;
+		char_iterator reverse_end(void) const;
 
-				char*& operator*() const;
-				char* operator->() const;
+		char_iterator insert (const char_iterator iter, const char *text, int len);
+		char_iterator insert (const char *text, int len);
 
-				unsigned int byte_offset;
-				unsigned int char_offset;
-
-				bool operator==(const iterator&) const;
-				bool operator!=(const iterator&) const;
-				iterator& operator++();
-				iterator& operator--();
-				iterator operator++(int);
-				iterator operator--(int);
-				iterator& operator+=(unsigned int);
-				iterator& operator-=(unsigned int);
-		};
+		char_iterator append (const char *text, int len);
 
 	protected:
 
@@ -77,7 +69,7 @@ class TextLine
 
 		TextLine& operator=(const TextLine&);
 
-		Glib::ustring str;
+		TextLineRBTree tree;
 };
 
 #endif /* __TEXTLINE_H__ */

@@ -1,5 +1,6 @@
+/* -*- Mode: C; c-file-style: "gnu"; tab-width: 8 -*- */
 /* GTK - The GIMP Toolkit
- * gtktextview.h Copyright (C) 2000 Red Hat, Inc.
+ * gtktextview.c Copyright (C) 2000 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,30 +25,56 @@
  * GTK+ at ftp://ftp.gtk.org/pub/gtk/.
  */
 
-//#if defined(GTK_DISABLE_SINGLE_INCLUDES) && !defined (__GTK_H_INSIDE__) && !defined (GTK_COMPILATION)
-//#error "Only <gtk/gtk.h> can be included directly."
-//#endif
-
 #ifndef __TEXTVIEW_H__
 #define __TEXTVIEW_H__
 
 #include "Widget.h"
 #include "TextBuffer.h"
+#include "Scrollable.h"
 
 class TextView
-: public Widget
+: public Widget 
+, public Scrollable
 {
 	public:
-		enum Justification {LEFT, RIGHT, CENTER, FILL};
+		typedef TextBuffer::char_iterator char_iterator;
+		typedef TextBuffer::line_iterator line_iterator;
 
-		TextView(Widget& parent, int x, int y, int w, int h, TextBuffer *buffer);
 		TextView(Widget& parent, int x, int y, int w, int h);
-		~TextView(void);
+		~TextView();
+
+		char_iterator append (const char *text, int len);
+
+		/* Widget */
+		void Draw(void);
+
+		/* Scrollable */
+		Rect GetScrollSize(void);
+		void SetScrollSize(const int width, const int height);
+		void AdjustScroll(const int x, const int y);
+		void AdjustScroll(const Rect);
+		Rect GetScrollPosition(void);
+
+		/* Getting iterators into the buffer. */
+		char_iterator begin(void) const;
+		char_iterator back(void) const;
+		char_iterator end(void) const;
+
+		char_iterator reverse_begin(void) const;
+		char_iterator reverse_back(void) const;
+		char_iterator reverse_end(void) const;
+
 
 	protected:
+		int view_left, view_top;
+		WrapMode wrap_mode;
 
 	private:
+		TextView();
+		TextView(const TextView &);
+		TextView& operator=(const TextView&);
 
+		TextBuffer buffer;
 };
 
 #endif /* __TEXTVIEW_H__ */

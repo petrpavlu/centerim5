@@ -26,7 +26,7 @@
 #include "Conversations.h"
 
 #include <cppconsui/Window.h>
-#include <cppconsui/TextBrowser.h>
+#include <cppconsui/TextView.h>
 #include <cppconsui/TextInput.h>
 #include <cppconsui/LineStyle.h>
 #include <cppconsui/HorizontalLine.h>
@@ -65,11 +65,11 @@ class Conversation
 
 		Log *log;
 		Conf *conf;
-		TextBrowser *browser;
+		TextView *view;
 		TextInput *input;
 		HorizontalLine *line;
 		
-		int browserheight;
+		int view_height;
 		PurpleConversation *conv;
 		LineStyle *linestyle;
 

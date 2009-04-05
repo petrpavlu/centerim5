@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2009 by Mark Pustjens <pustjens@dds.nl>
  *
  * This file is part of CenterIM.
  *
@@ -18,37 +18,34 @@
  *
  * */
 
-#ifndef __TEXTRBTREE_H__
-#define __TEXTRBTREE_H__
+#ifndef __TEXTLINERBTREE_H__
+#define __TEXTLINERBTREE_H__
 
 #include "config.h"
 
 #include "CppConsUI.h"
 
-#include "TextLine.h"
-
-class TextRBTree
+class TextLineRBTree
 {
 	private:
 		class Node;
 
 	public:
 		class iterator_base;
-		class line_iterator;
 		class char_iterator;
+		class column_iterator;
 
-		TextRBTree();
-		~TextRBTree();
+		TextLineRBTree();
+		~TextLineRBTree();
 
-		char_iterator insert(const char_iterator& iter, const TextLine& line);
+		//TODO standard string insert methods, same for erase and such
+		char_iterator insert(const char_iterator& iter, const char* str, unsigned int len);
 
+		/* We can only erase characters, not columns. */
 		char_iterator erase(char_iterator pos);
-		line_iterator erase(line_iterator pos);
 		char_iterator erase(char_iterator start, char_iterator end);
-		line_iterator erase(line_iterator start, line_iterator end);
 
-		void print(void);
-
+		/* Obtaining iterators for the string. */
 		char_iterator begin(void) const;
 		char_iterator back(void) const;
 		char_iterator end(void) const;
@@ -57,51 +54,56 @@ class TextRBTree
 		char_iterator reverse_back(void) const;
 		char_iterator reverse_end(void) const;
 
+		char_iterator get_iterator_at_char_offset(unsigned int index) const;
+
 		/* Iterator for the tree. */
 		class iterator_base
 		{
 			public:
 				iterator_base(void);
-				iterator_base(TextRBTree &tree);
+				iterator_base(TextLineRBTree &tree);
 				iterator_base(Node &node);
 				iterator_base(const iterator_base &iter);
 
-				bool valid(void);
-
-				/* Is the byte pointed at by the cursor a valid character? */
-				bool char_valid(void);
+				bool valid(void) const;
+				bool valid_char(void) const;
 
 				/* Determine the number of bytes/columns used
 				 * by the character under the iterator. */
 				unsigned int char_bytes(void);
-				unsigned int char_columns(void);
+				unsigned int char_cols(void);
 
-				TextLine& operator*() const;
-				TextLine* operator->() const;
+				/* Determine the total number of chars/bytes/columns
+				 * stored in the node pointed at by the iterator
+				 * including children. */
+				unsigned int chars(void) const;
+				unsigned int bytes(void) const;
+				unsigned int cols(void) const;
+
+				char*& operator*() const;
+				/* This operator omitted to prevent confusion. */
+				//char** operator->() const;
 
 				iterator_base& operator=(const iterator_base&);
 				bool operator<(const iterator_base&);
 
-				TextRBTree *tree;
+				TextLineRBTree *tree;
 				Node *node;
 
+				/* These are the iterator location measured in bytes/chars/cols
+				 * from the node.str. */
 				unsigned int byte_offset;
 				unsigned int char_offset;
-
-				iterator_base& forward_lines(unsigned int);
-				iterator_base& backward_lines(unsigned int);
-
-				iterator_base& forward_lines(WrapMode, unsigned int width, unsigned int n);
-				iterator_base& backward_lines(WrapMode, unsigned int width, unsigned int n);
+				unsigned int col_offset;
 
 				iterator_base& forward_bytes(unsigned int);
 				iterator_base& backward_bytes(unsigned int);
 
 				iterator_base& forward_chars(unsigned int);
 				iterator_base& backward_chars(unsigned int);
-
-				iterator_base& forward_columns(unsigned int);
-				iterator_base& backward_columns(unsigned int);
+				
+				iterator_base& forward_cols(unsigned int);
+				iterator_base& backward_cols(unsigned int);
 
 			protected:
 
@@ -113,11 +115,9 @@ class TextRBTree
 		{
 			public:
 				char_iterator(void);
-				char_iterator(TextRBTree &tree);
+				char_iterator(TextLineRBTree &tree);
 				char_iterator(Node &node);
 				char_iterator(const iterator_base &iter);
-
-				char*& operator*() const;
 
 				char_iterator& operator=(const char_iterator&);
 				char_iterator& operator=(const iterator_base&);
@@ -135,26 +135,26 @@ class TextRBTree
 			private:
 		};
 
-		class line_iterator
+		class column_iterator
 		: public iterator_base
 		{
 			public:
-				line_iterator(void);
-				line_iterator(TextRBTree &tree);
-				line_iterator(Node &node);
-				line_iterator(const iterator_base &iter);
+				column_iterator(void);
+				column_iterator(TextLineRBTree &tree);
+				column_iterator(Node &node);
+				column_iterator(const iterator_base &iter);
 
-				line_iterator& operator=(const line_iterator&);
-				line_iterator& operator=(const iterator_base&);
-				bool operator==(const line_iterator&) const;
-				bool operator!=(const line_iterator&) const;
-				line_iterator& operator++();
-				line_iterator& operator--();
-				line_iterator operator++(int);
-				line_iterator operator--(int);
-				line_iterator& operator+=(unsigned int);
-				line_iterator& operator-=(unsigned int);
-
+				column_iterator& operator=(const column_iterator&);
+				column_iterator& operator=(const iterator_base&);
+				bool operator==(const column_iterator&) const;
+				bool operator!=(const column_iterator&) const;
+				column_iterator& operator++();
+				column_iterator& operator--();
+				column_iterator operator++(int);
+				column_iterator operator--(int);
+				column_iterator& operator+=(unsigned int);
+				column_iterator& operator-=(unsigned int);
+			
 			protected:
 
 			private:
@@ -165,58 +165,69 @@ class TextRBTree
 	private:
 		class Node;
 
-		TextRBTree(const TextRBTree &);
+		TextLineRBTree(const TextLineRBTree &);
 
-		TextRBTree& operator=(const TextRBTree&);
+		TextLineRBTree& operator=(const TextLineRBTree&);
 
+		/* Function to support RedBlackTree operations. */
 		void rotate_left(Node *x);
 		void rotate_right(Node *x);
 		void insert_fixup(Node *z);
 		void erase_node_fixup(Node *x);
 
-		void post_rotate_augmentation_fixup(Node *x, Node *y);
-		void post_insert_augmentation_fixup(Node *z);
-
 		Node* tree_minimum(Node *node) const;
 		Node* tree_maximum(Node *node) const;
 
-		unsigned int lines_before(const Node *node) const;
+		/* Functions specific to this augmented RBTree. */
+		void post_rotate_augmentation_fixup(Node *x, Node *y);
+		void post_insert_augmentation_fixup(Node *z);
 
+		/* This RBTree implementation also maintains
+		 * predecessor/successor pointers. This allows
+		 * fast iterator operations. */
 		Node* successor(Node *node) const;
 		Node* predecessor(Node *node) const;
 
+		/**/
 		char_iterator insert(Node *z, int line_nr);
-		line_iterator erase(Node *z);
+		column_iterator erase(Node *z);
 
+		//TODO only if debug build
+		void print(void);
 		void print_node(Node *node);
 
+		/* Data we store for the entire RBTree. */
 		Node *root; /* The root of the tree. */
 		Node *nil; /* The dummy node. */
 
 		enum Color {RED, BLACK};
 
+		/* Node type. */
 		class Node
 		{
 			public:
-				Node(TextRBTree *tree, Node *parent);
-				Node(TextRBTree *tree, Node *parent, const TextLine& line);
+				Node(TextLineRBTree *tree, Node *parent);
+				Node(TextLineRBTree *tree, Node *parent, const char *str);
 				~Node();
 
-				unsigned int line_nr(void) const;
-
-				TextRBTree *tree; /* Pointer to the tree this node belongs to */
+				TextLineRBTree *tree; /* Pointer to the tree this node belongs to.
+			       				 Used for sanity checks. */
 
 				Color color; /* Color of the node, RED or BLACK. */
 
 				Node *parent, *left, *right; /* Pointers to the parent and  left/right child */
 				Node *pred, *succ; /* Pointers to the predecessor nodes and successor nodes */
 
-				int lines; /* Number of lines in this subtree including this one. */
-				int lines_wrap; /* Number of lines in this subtree including this one
-			       			 * taking account of the current wrapping mode and maximum
-						 * display size. */
+				unsigned int bytes; /* Number of bytes stored in the substree rooted at this node. */
+				unsigned int chars; /* Number of characters... */
+				unsigned int cols; /* Number of terminal columns needed to display the text... */
 
-				TextLine line;
+				char *str; /* The data we store in a node. */
+				unsigned int str_bytes;
+				unsigned int str_chars;
+				unsigned int str_cols;
+				
+				//TODO text attributes
 
 			protected:
 
@@ -229,4 +240,4 @@ class TextRBTree
 		};
 };
 
-#endif /* __TEXTRBTREE_H__ */
+#endif /* __TEXTLINERBTREE_H__ */

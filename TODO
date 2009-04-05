@@ -56,3 +56,4 @@ Less important todo's which sometimes are just ideas:
 - Order switch statements, put most used cases on top
 - Replace `if (!window) return;'-like constructs with
   g_return_if_fail/succes ??
+- Use the fact noted about in g_utf8_offset_to_pointer doc.

@@ -27,7 +27,7 @@
 #include "CIMWindowManager.h"
 
 #include <cppconsui/HorizontalLine.h>
-#include <cppconsui/TextBrowser.h>
+#include <cppconsui/TextView.h>
 #include <cppconsui/LineStyle.h>
 #include <cppconsui/Keys.h>
 
@@ -44,12 +44,12 @@ Conversation::Conversation(PurpleBlistNode* node)
 	SetBorder(new Border());
 	linestyle = LineStyle::LineStyleDefault();
 
-	browser = new TextBrowser(*this, 2, 1, w-4, h-2);
+	view = new TextView(*this, 2, 1, w-4, h-2);
 	
 	input = new TextInput(*this, 2, 1, w-4, h-2);
-	line = new HorizontalLine(*this, linestyle, 1, browserheight, w-2);
+	line = new HorizontalLine(*this, linestyle, 1, view_height, w-2);
 
-	AddWidget(browser);
+	AddWidget(view);
 	AddWidget(input);
 	AddWidget(line);
 
@@ -93,10 +93,9 @@ void Conversation::Receive(const char *name, const char *alias, const char *mess
 	message = purple_markup_strip_html(html);
 	g_free(html);
 
-	Glib::ustring text = message;
 	//TODO iconv, write to a window
 	//printf("message from %s (%s) :\n%s\n", name, alias, message);
-	browser->AddLine(text);
+	view->append(message, -1);
 }
 
 //TODO if this remains empty, make it a pure virtual function
@@ -135,18 +134,18 @@ void Conversation::SetPartitioning(unsigned int percentage)
 
 	//TODO check for rare condition that windowheight < 3
 	// (in which case there is not enought room to draw anything)
-	browserheight = (h * percentage) / 100;
-	if (browserheight < 1) browserheight = 1;
+	view_height = (h * percentage) / 100;
+	if (view_height < 1) view_height = 1;
 
-	inputheight = h - browserheight - 2;
+	inputheight = h - view_height - 2;
 	if (inputheight < 1) {
 		inputheight = 1;
-		browserheight = h - inputheight - 1;
+		view_height = h - inputheight - 1;
 	}
 
-	browser->Resize(w-4, browserheight-2);
-	input->MoveResize(1, browserheight+1, w-4, inputheight);
-	line->MoveResize(1, browserheight, w-2, 1);
+	view->Resize(w-4, view_height-2);
+	input->MoveResize(1, view_height+1, w-4, inputheight);
+	line->MoveResize(1, view_height, w-2, 1);
 }
 
 //TODO if this remains empty, make it a pure virtual function
@@ -334,10 +333,10 @@ void ConversationIm::LoadHistory(void)
 	mflag = (PurpleMessageFlags)(PURPLE_MESSAGE_NO_LOG | PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_DELAYED);
 	history = purple_log_read((PurpleLog*)logs->data, &flags);
 
-	header = g_strdup_printf("<b>Conversation with %s on %s:</b><br>", alias,
+	header = g_strdup_printf("<b>Conversation with %s on %s:</b><br>\n", alias,
 							 purple_date_format_full(localtime(&((PurpleLog *)logs->data)->time)));
 
-	browser->AddLine(header);
+	view->append(header, -1);
 
 	purple_conversation_write(conv, "", header, mflag, time(NULL));
 
