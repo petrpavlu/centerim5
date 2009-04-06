@@ -82,10 +82,11 @@ TextLineRBTree::char_iterator TextLineRBTree::erase(const TextLineRBTree::char_i
 	erase(iter, ++iter);
 }
 
-TextLineRBTree::char_iterator erase(TextLineRBTree::char_iterator start, TextLineRBTree::char_iterator end)
+TextLineRBTree::char_iterator TextLineRBTree::erase(TextLineRBTree::char_iterator start, TextLineRBTree::char_iterator end)
 {
 	char* s;
 
+	assert(start.tree == this && end.tree == this);
 	assert(start.node == end.node);
 
 	if (start.byte_offset == end.byte_offset)
@@ -179,6 +180,485 @@ TextLineRBTree::char_iterator TextLineRBTree::get_iter_at_char_offset(unsigned i
 	iter.col_offset = ;
 
 	return iter;
+}
+
+void TextLineRBTree::rotate_left(Node *x)
+{
+	Node *y = NULL;
+
+	assert(x->tree == this);
+
+	/* NOTE: rotations do not destroy the order, so predecessor
+	 * and successor pointers remain the same.
+	 */
+
+	y = x->right; /* Set y */
+
+	x->right = y->left; /* Turn y's left subtree into x's right subtree */
+
+	if (y->left != nil)
+		y->left->parent = x;
+
+	y->parent = x->parent; /* Link x's parent to y */
+
+	if (x->parent == nil)
+		root = y;
+	else if (x == x->parent->left)
+		x->parent->left = y;
+	else
+		x->parent->right = y;
+
+	y->left = x; /* Put x on y's left */
+	x->parent = y;
+
+	post_rotate_augmentation_fixup(x, y); /* Update augmented data */
+}
+
+void TextLineRBTree::rotate_right(Node *x)
+{
+	Node *y = NULL;
+
+	assert(x->tree == this);
+
+	y = x->left; /* Set y */
+
+	x->left = y->right; /* Turn y's right subtree into x's left subtree */
+
+	if (y->right != nil)
+		y->right->parent = x;
+
+	y->parent = x->parent; /* Link x's parent to y */
+
+	if (x->parent == nil)
+		root = y;
+	else if (x == x->parent->right)
+		x->parent->right = y;
+	else
+		x->parent->left = y;
+
+	y->right = x; /* Put x on y's right */
+	x->parent = y;
+
+	post_rotate_augmentation_fixup(x, y); /* Update augmented data */
+}
+
+void TextLineRBTree::post_rotate_augmentation_fixup(Node *x, Node *y)
+{
+	/* Fix the order statistics data. Remember that x is now a
+	 * child of y so x needs to be recalculated first. */
+
+	x->bytes = x->str_bytes + x->left->bytes + x->right->bytes;
+	x->chars = x->str_chars + x->left->chars + x->right->chars;
+	x->cols = x->str_cols + x->left->cols + x->right->cols;
+
+	y->bytes = y->str_bytes + y->left->bytes + y->right->bytes;
+	y->chars = y->str_chars + y->left->chars + y->right->chars;
+	y->cols = y->str_cols + y->left->cols + y->right->cols;
+}
+
+TextLineRBTree::char_iterator TextLineRBTree::insert(Node *z, int line_nr)
+{
+	Node *y = NULL;
+	Node *x = root;
+	int line = 0;
+
+	assert(z->tree == this);
+
+	/* Find the insertion point. That is: find the parent
+	 * for the new node.
+	 *
+	 * Here we find the node with line number line_nr
+	 * and insert the new node before this node.
+	 *
+	 * If there are less than line_nr lines, the node is added
+	 * as the last node.
+	 */
+	while (x != nil)
+	{
+		y = x;
+
+		line = x->left->lines + 1;
+
+		if (line_nr < line)
+		{
+			x = x->left;
+		}
+		else
+		{
+			x = x->right;
+			line_nr -= line;
+		}
+	}
+
+	z->parent = y;
+
+	if (y == nil)
+		root = z;
+	else if (line_nr < line)
+		y->left = z;
+	else
+		y->right = z;
+
+	z->left = nil;
+	z->right = nil;
+	z->color = RED;
+
+	post_insert_augmentation_fixup(z);
+
+	insert_fixup(z);
+
+	return TextLineRBTree::char_iterator(*z);
+}
+
+TextLineRBTree::char_iterator TextLineRBTree::insert(const TextLineRBTree::char_iterator& iter, const TextLine& line)
+{
+	return insert(new Node(this, NULL, line),
+			iter.node->line_nr());
+}
+
+void TextLineRBTree::post_insert_augmentation_fixup(Node *z)
+{
+	Node *x = NULL;
+
+	/* Fix the order statistics data. Remember that z was
+	 * added, so the values of all ancestors should increase. */
+
+	z->bytes = z->str_bytes;
+	z->chars = z->str_chars;
+	z->cols = z->str_cols;
+
+	/* Increment the order statistic data for all ancestors. */
+	for (x = z->parent; x != nil; x = x->parent)
+	{
+		x->bytes += z->bytes;
+		x->chars += z->chars;
+		x->cols += z->cols;
+	}
+}
+
+void TextLineRBTree::insert_fixup(Node *z)
+{
+	Node *y = NULL;
+
+	while (z->parent->color == RED)
+	{
+		if (z->parent == z->parent->parent->left)
+		{
+			y = z->parent->parent->right;
+			if (y->color == RED)
+			{
+				z->parent->color = BLACK;
+				y->color = BLACK;
+				z->parent->parent->color = RED;
+				z = z->parent->parent;
+			}
+			else
+			{
+				if (z == z->parent->right)
+				{
+					z = z->parent;
+					rotate_left(z);
+				}
+
+				z->parent->color = BLACK;
+				z->parent->parent->color = RED;
+				rotate_right(z->parent->parent);
+			}
+		}
+		else
+		{
+			y = z->parent->parent->left;
+			if (y->color == RED)
+			{
+				z->parent->color = BLACK;
+				y->color = BLACK;
+				z->parent->parent->color = RED;
+				z = z->parent->parent;
+			}
+			else
+			{
+				if (z == z->parent->left)
+				{
+					z = z->parent;
+					rotate_right(z);
+				}
+
+				z->parent->color = BLACK;
+				z->parent->parent->color = RED;
+				rotate_left(z->parent->parent);
+			}
+		}
+	}
+}
+
+/* There are three cases when removing a node z from a Red-Black tree.
+ * 1) z has no children.
+ *    In this case we simply remove z and fix the order statistic data by following
+ *    the path from z->parent to the root.
+ * 2) z has one child.
+ *    In this case we replace z by its only child. Then we fix the order
+ *    statistic data as in case 1.
+ * 3) z has two children.
+ *    Now we need to swap z with its successor. After swapping z has at most
+ *    one child as the successor of z has at most one child when z has two
+ *    children. Now we can recursively call erase() to erase z from its new
+ *    position. */
+void TextLineRBTree::erase(Node *z)
+{
+	assert (z != NULL); 
+	assert (z->tree == this);
+
+	if ( (z->left == nil) || (z->right == nil) ) /* z has at most one child. */
+	{
+		if (z == z->parent->left) {
+			if (z->left != nil) z->parent->left = z->left;
+			else z->parent->left = z->right;
+		} else { /* z == z->parent->right */
+			if (z->left != nil) z->parent->right = z->left;
+			else z->parent->right = z->right;
+		}
+
+		/* Fix the predesessor/successor pointers. */
+		if (z->pred)
+			z->pred->succ = z->succ;
+
+		if (z->succ)
+			z->succ->pred = z->pred;
+
+		/* Fix the augmented data before fixing the RBTree properties. */
+		post_erase_augmentation_fixup(z->parent);
+
+		/* See if we need to fix the RBTree properties. */
+		if (z->color == BLACK)
+			erase_node_fixup(x);
+
+		/* Free the memory. */
+		z->left = nil;
+		z->right = nil;
+		delete z;
+
+	} else { /* z has two children*/
+		Node zcopy;
+		/* The book algorithm moves the key and satellite data to
+		 * y. We need to swap the actual nodes because iterators
+		 * point to nodes. If we would move the key and satellite
+		 * data, then deleting a node might invalidate any iterator.
+		 * By swapping the actual nodes, an iterator remains valid
+		 * until its node is deleted.
+		 *
+		 * The books code is as follows:
+		 * z->key = y->key;
+		 * z->data = y->data;
+		 */
+
+		/* We need to swap z with its successor, which we call y.
+		 * Note that we don't need to call successor() since this
+		 * implementation also stores prodecessor and successor
+		 * pointers.
+		 *
+		 * For each node 6 pointers need to be adjusted.
+		 * Each of the three forward pointers from z has is complement
+		 * in the node it points to.
+		 *
+		 * O     z->parent
+		 *  \
+		 *   O   z
+		 *  / \
+		 * O   O z->left / z->right
+		 *
+		 * */
+
+		y = z->succ;
+
+		/* Make a copy of z. */
+		zcopy.parent = z->parent;
+		zcopy.left = z->left;
+		zcopy.right = z->right;
+
+		/* First put z in it's new place. */
+		if (y == y->parent->left) y->parent->left = z;
+		else y->parent->right = z;
+		z->parent = y->parent;
+		z->left = y->left;
+		z->right = y->right;
+		z->left->parent = z;
+		z->right->parent = z;
+
+		/* Then put y in it's new place. */
+		if (zcopy == zcopy->parent->left) zcopy->parent->left = y;
+		else zcopy->parent->right = y;
+		y->parent = zcopy->parent;
+		y->left = zcopy->left;
+		y->right = zcopy->right;
+		y->left->parent = y;
+		y->right->parent = y;
+
+		/* Now z has at most one child, so this can be handles by the simple
+		 * case of erasing a node.
+		 * Note that when this recursive call fixes the order statistic data
+		 * it will also visit y, hence all is well */
+		erase(z);
+	}
+}		
+
+void TextLineRBTree::post_erase_augmentation_fixup(Node *z)
+{
+	Node *x = NULL;
+
+	/* Fix the order statistics data. Remember that z is the parent
+	 * of the node which was erased. */
+
+	/* Decrement the order statistic data for all ancestors. */
+	for (x = z; x != nil; x = x->parent)
+	{
+		x->bytes += x->left->bytes + x->right->bytes + x->str_bytes
+		x->chars += x->left->chars + x->right->chars + x->str_chars
+		x->cols += x->left->cols + x->right->cols + x->str_cols
+	}
+}
+
+void TextLineRBTree::erase_node_fixup(Node *x)
+{
+	Node *w = NULL;
+
+	while (x != root && x->color == BLACK)
+	{
+		if (x == x->parent->left)
+		{
+			w = x->parent->right;
+
+			if (w->color == RED)
+			{
+				w->color = BLACK;
+				x->parent->color = RED;
+				rotate_left(x->parent);
+				w = x->parent->right;
+			}
+
+			if (w->left->color == BLACK && w->right->color == BLACK)
+			{
+				w->color = RED;
+				x = x->parent;
+			}
+
+			else
+			{
+				if (w->right->color == BLACK)
+				{
+					w->left->color = BLACK;
+					w->color = RED;
+					rotate_right(w);
+					w = x->parent->right;
+				}
+
+				w->color = x->parent->color;
+				x->parent->color = BLACK;
+				w->right->color = BLACK;
+				rotate_left(x->parent);
+				x = root;
+			}
+		}
+		else
+		{
+			w = x->parent->left;
+			if (w->color == RED)
+			{
+				w->color = BLACK;
+				x->parent->color = RED;
+				rotate_right(x->parent);
+				w = x->parent->left;
+			}
+			if (w->right->color == BLACK && w->left->color == BLACK)
+			{
+				w->color = RED;
+				x = x->parent;
+			}
+			else
+			{
+				if (w->left->color == BLACK)
+				{
+					w->right->color = BLACK;
+					w->color = RED;
+					rotate_left(w);
+					w = x->parent->left;
+				}
+
+				w->color = x->parent->color;
+				x->parent->color = BLACK;
+				w->left->color = BLACK;
+				rotate_right(x->parent);
+				x = root;
+			}
+		}
+	}
+
+	x->color = BLACK;
+}
+
+TextLineRBTree::Node* TextLineRBTree::tree_minimum(Node *node) const
+{
+	Node *min = node;
+
+	assert(node->tree == this);
+
+	while (min->left != nil)
+		min = min->left;
+
+	return min;
+}
+
+TextLineRBTree::Node* TextLineRBTree::tree_maximum(Node *node) const
+{
+	Node *max = node;
+
+	assert(node->tree == this);
+
+	while (max->right != nil)
+		max = max->right;
+
+	return max;
+}
+
+TextLineRBTree::Node* TextLineRBTree::successor(Node *node) const
+{
+	Node *x = node;
+	Node *y = NULL;
+	
+	assert(node->tree == this);
+
+	if (x->right != nil)
+		return tree_minimum(x);
+
+	y = x->parent;
+
+	while (y != nil && x == x->right)
+	{
+		x = y;
+		y = y->parent;
+	}
+
+	return y;
+}
+
+TextLineRBTree::Node* TextLineRBTree::predecessor(Node *node) const
+{
+	Node *x = node;
+	Node *y = NULL;
+	
+	assert(node->tree == this);
+
+	if (x->left != nil)
+		return tree_maximum(x);
+
+	y = x->parent;
+
+	while (y != nil && x == x->left)
+	{
+		x = y;
+		y = y->parent;
+	}
+
+	return y;
 }
 
 TextLineRBTree::iterator_base::iterator_base(void)
@@ -423,131 +903,273 @@ TextLineRBTree::iterator_base& TextLineRBTree::iterator_base::backward_cols(unsi
 	return *this;
 }
 
-		class char_iterator
-		: public iterator_base
-		{
-			public:
-				char_iterator(void);
-				char_iterator(TextLineRBTree &tree);
-				char_iterator(Node &node);
-				char_iterator(const iterator_base &iter);
+TextLineRBTree::byte_iterator::byte_iterator(void)
+: iterator_base()
+{
+}
 
-				char_iterator& operator=(const char_iterator&);
-				char_iterator& operator=(const iterator_base&);
-				bool operator==(const char_iterator&) const;
-				bool operator!=(const char_iterator&) const;
-				char_iterator& operator++();
-				char_iterator& operator--();
-				char_iterator operator++(int);
-				char_iterator operator--(int);
-				char_iterator& operator+=(unsigned int);
-				char_iterator& operator-=(unsigned int);
+TextLineRBTree::byte_iterator::byte_iterator(TextLineRBTree &tree)
+: iterator_base(tree)
+{
+}
 
-			protected:
+TextLineRBTree::byte_iterator::byte_iterator(Node &node)
+: iterator_base(node)
+{
+}
 
-			private:
-		};
+TextLineRBTree::byte_iterator::byte_iterator(const iterator_base &iter)
+: iterator_base(iter)
+{
+}
 
-		class column_iterator
-		: public iterator_base
-		{
-			public:
-				column_iterator(void);
-				column_iterator(TextLineRBTree &tree);
-				column_iterator(Node &node);
-				column_iterator(const iterator_base &iter);
+TextLineRBTree::byte_iterator& TextLineRBTree::byte_iterator::operator=(const TextLineRBTree::byte_iterator& iter)
+{
+	if (this == &iter) return *this;
 
-				column_iterator& operator=(const column_iterator&);
-				column_iterator& operator=(const iterator_base&);
-				bool operator==(const column_iterator&) const;
-				bool operator!=(const column_iterator&) const;
-				column_iterator& operator++();
-				column_iterator& operator--();
-				column_iterator operator++(int);
-				column_iterator operator--(int);
-				column_iterator& operator+=(unsigned int);
-				column_iterator& operator-=(unsigned int);
-			
-			protected:
+	TextLineRBTree::iterator_base::operator=(iter);
 
-			private:
-		};
+	return *this;
+}
 
-	protected:
+TextLineRBTree::byte_iterator& TextLineRBTree::byte_iterator::operator=(const TextLineRBTree::iterator_base& iter)
+{
+	if (this == &iter) return *this;
 
-	private:
-		class Node;
+	TextLineRBTree::iterator_base::operator=(iter);
 
-		TextLineRBTree(const TextLineRBTree &);
+	return *this;
+}
 
-		TextLineRBTree& operator=(const TextLineRBTree&);
+bool TextRBTree::byte_iterator::operator==(const byte_iterator &other) const
+{
+	assert (tree != NULL);
+	return (other.node == this->node) && (other.byte_offset == this->byte_offset);
+}
 
-		/* Function to support RedBlackTree operations. */
-		void rotate_left(Node *x);
-		void rotate_right(Node *x);
-		void insert_fixup(Node *z);
-		void erase_node_fixup(Node *x);
+bool TextRBTree::byte_iterator::operator!=(const byte_iterator &other) const
+{
+	assert (tree != NULL);
+	return (other.node != this->node) || (other.byte_offset != this->byte_offset);
+}
 
-		Node* tree_minimum(Node *node) const;
-		Node* tree_maximum(Node *node) const;
+byte_iterator& TextRBTree::byte_iterator::operator++()
+{
+	return forward_bytes(1);
+}
 
-		/* Functions specific to this augmented RBTree. */
-		void post_rotate_augmentation_fixup(Node *x, Node *y);
-		void post_insert_augmentation_fixup(Node *z);
+byte_iterator& TextRBTree::byte_iterator::operator--()
+{
+	return backward_bytes(1);
+}
 
-		/* This RBTree implementation also maintains
-		 * predecessor/successor pointers. This allows
-		 * fast iterator operations. */
-		Node* successor(Node *node) const;
-		Node* predecessor(Node *node) const;
+byte_iterator TextRBTree::byte_iterator::operator++(int)
+{
+	byte_iterator copy = *this;
+	++(*this);
+	return copy;
+}
 
-		/**/
-		char_iterator insert(Node *z, int line_nr);
-		column_iterator erase(Node *z);
+byte_iterator TextRBTree::byte_iterator::operator--(int)
+{
+	byte_iterator copy = *this;
+	--(*this);
+	return copy;
+}
 
-		//TODO only if debug build
-		void print(void);
-		void print_node(Node *node);
+byte_iterator& TextRBTree::byte_iterator::operator+=(unsigned int n)
+{
+	return forward_bytes(n);
+}
 
-		/* Data we store for the entire RBTree. */
-		Node *root; /* The root of the tree. */
-		Node *nil; /* The dummy node. */
+byte_iterator& TextRBTree::byte_iterator::operator-=(unsigned int n)
+{
+	return backward_bytes(n);
+}
 
-		enum Color {RED, BLACK};
+TextLineRBTree::char_iterator::char_iterator(void)
+: iterator_base()
+{
+}
 
-		/* Node type. */
-		class Node
-		{
-			public:
-				Node(TextLineRBTree *tree, Node *parent);
-				Node(TextLineRBTree *tree, Node *parent, const char *str);
-				~Node();
+TextLineRBTree::char_iterator::char_iterator(TextLineRBTree &tree)
+: iterator_base(tree)
+{
+}
 
-				TextLineRBTree *tree; /* Pointer to the tree this node belongs to.
-			       				 Used for sanity checks. */
+TextLineRBTree::char_iterator::char_iterator(Node &node)
+: iterator_base(node)
+{
+}
 
-				Color color; /* Color of the node, RED or BLACK. */
+TextLineRBTree::char_iterator::char_iterator(const iterator_base &iter)
+: iterator_base(iter)
+{
+}
 
-				Node *parent, *left, *right; /* Pointers to the parent and  left/right child */
-				Node *pred, *succ; /* Pointers to the predecessor nodes and successor nodes */
+TextLineRBTree::char_iterator& TextLineRBTree::char_iterator::operator=(const TextLineRBTree::char_iterator& iter)
+{
+	if (this == &iter) return *this;
 
-				unsigned int bytes; /* Number of bytes stored in this node. */
-				unsigned int chars; /* Number of characters. */
-				unsigned int cols; /* Number of terminal columns needed to display the text */
+	TextLineRBTree::iterator_base::operator=(iter);
 
-				char *str; /* The data we store in a node. */
-				
-				//TODO text attributes
+	return *this;
+}
 
-			protected:
+TextLineRBTree::char_iterator& TextLineRBTree::char_iterator::operator=(const TextLineRBTree::iterator_base& iter)
+{
+	if (this == &iter) return *this;
 
-			private:
-				Node();
+	TextLineRBTree::iterator_base::operator=(iter);
 
-				Node(const Node &);
+	return *this;
+}
 
-				Node& operator=(const Node&);
-		};
-};
+bool TextRBTree::char_iterator::operator==(const char_iterator &other) const
+{
+	assert (tree != NULL);
+	return (other.node == this->node) && (other.char_offset == this->char_offset);
+}
 
-#endif /* __TEXTLINERBTREE_H__ */
+bool TextRBTree::char_iterator::operator!=(const char_iterator &other) const
+{
+	assert (tree != NULL);
+	return (other.node != this->node) || (other.char_offset != this->char_offset);
+}
+
+
+char_iterator& TextRBTree::char_iterator::operator++()
+{
+	return forward_chars(1);
+}
+
+char_iterator& TextRBTree::char_iterator::operator--()
+{
+	return backward_chars(1);
+}
+
+char_iterator TextRBTree::char_iterator::operator++(int)
+{
+	char_iterator copy = *this;
+	++(*this);
+	return copy;
+}
+
+char_iterator TextRBTree::char_iterator::operator--(int)
+{
+	char_iterator copy = *this;
+	--(*this);
+	return copy;
+}
+
+char_iterator& TextRBTree::char_iterator::operator+=(unsigned int n)
+{
+	return forward_chars(n);
+}
+
+char_iterator& TextRBTree::char_iterator::operator-=(unsigned int n)
+{
+	return backward_chars(n);
+}
+
+TextLineRBTree::col_iterator::col_iterator(void)
+: iterator_base()
+{
+}
+
+TextLineRBTree::col_iterator::col_iterator(TextLineRBTree &tree)
+: iterator_base(tree)
+{
+}
+
+TextLineRBTree::col_iterator::col_iterator(Node &node)
+: iterator_base(node)
+{
+}
+
+TextLineRBTree::col_iterator::col_iterator(const iterator_base &iter)
+: iterator_base(iter)
+{
+}
+
+TextLineRBTree::col_iterator& TextLineRBTree::col_iterator::operator=(const TextLineRBTree::col_iterator& iter)
+{
+	if (this == &iter) return *this;
+
+	TextLineRBTree::iterator_base::operator=(iter);
+
+	return *this;
+}
+
+TextLineRBTree::col_iterator& TextLineRBTree::col_iterator::operator=(const TextLineRBTree::iterator_base& iter)
+{
+	if (this == &iter) return *this;
+
+	TextLineRBTree::iterator_base::operator=(iter);
+
+	return *this;
+}
+
+bool TextRBTree::col_iterator::operator==(const col_iterator &other) const
+{
+	assert (tree != NULL);
+	return (other.node == this->node) && (other.col_offset == this->col_offset);
+}
+
+bool TextRBTree::col_iterator::operator!=(const col_iterator &other) const
+{
+	assert (tree != NULL);
+	return (other.node != this->node) || (other.col_offset != this->col_offset);
+}
+
+
+col_iterator& TextRBTree::col_iterator::operator++()
+{
+	return forward_cols(1);
+}
+
+col_iterator& TextRBTree::col_iterator::operator--()
+{
+	return backward_cols(1);
+}
+
+col_iterator TextRBTree::col_iterator::operator++(int)
+{
+	col_iterator copy = *this;
+	++(*this);
+	return copy;
+}
+
+col_iterator TextRBTree::col_iterator::operator--(int)
+{
+	col_iterator copy = *this;
+	--(*this);
+	return copy;
+}
+
+col_iterator& TextRBTree::col_iterator::operator+=(unsigned int n)
+{
+	return forward_cols(n);
+}
+
+col_iterator& TextRBTree::col_iterator::operator-=(unsigned int n)
+{
+	return backward_cols(n);
+}
+
+void TextRBTree::print(void)
+{
+	printf("BEGIN Redblack tree: %p", this);
+	print_node(root);
+	printf("END Redblack tree: %p", this);
+}
+
+void TextRBTree::print_node(Node *node)
+{
+	printf("BEGIN node: %p", node);
+	printf("left");
+	if (node->left != nil) print_node(node->left);
+	printf("right");
+	if (node->right!= nil) print_node(node->right);
+	printf("END node: %p", this);
+}

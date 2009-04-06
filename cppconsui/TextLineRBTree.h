@@ -110,6 +110,33 @@ class TextLineRBTree
 			private:
 		};
 
+		class byte_iterator
+		: public iterator_base
+		{
+			public:
+				byte_iterator(void);
+				byte_iterator(TextLineRBTree &tree);
+				byte_iterator(Node &node);
+				byte_iterator(const iterator_base &iter);
+
+				//TODO one of the following two is superfluos?
+				byte_iterator& operator=(const byte_iterator&);
+				byte_iterator& operator=(const iterator_base&);
+				bool operator==(const byte_iterator&) const;
+				bool operator!=(const byte_iterator&) const;
+				byte_iterator& operator++();
+				byte_iterator& operator--();
+				byte_iterator operator++(int);
+				byte_iterator operator--(int);
+				byte_iterator& operator+=(unsigned int);
+				byte_iterator& operator-=(unsigned int);
+			
+			protected:
+
+			private:
+		};
+
+
 		class char_iterator
 		: public iterator_base
 		{
@@ -119,6 +146,7 @@ class TextLineRBTree
 				char_iterator(Node &node);
 				char_iterator(const iterator_base &iter);
 
+				//TODO one of the following two is superfluos?
 				char_iterator& operator=(const char_iterator&);
 				char_iterator& operator=(const iterator_base&);
 				bool operator==(const char_iterator&) const;
@@ -135,25 +163,26 @@ class TextLineRBTree
 			private:
 		};
 
-		class column_iterator
+		class col_iterator
 		: public iterator_base
 		{
 			public:
-				column_iterator(void);
-				column_iterator(TextLineRBTree &tree);
-				column_iterator(Node &node);
-				column_iterator(const iterator_base &iter);
+				col_iterator(void);
+				col_iterator(TextLineRBTree &tree);
+				col_iterator(Node &node);
+				col_iterator(const iterator_base &iter);
 
-				column_iterator& operator=(const column_iterator&);
-				column_iterator& operator=(const iterator_base&);
-				bool operator==(const column_iterator&) const;
-				bool operator!=(const column_iterator&) const;
-				column_iterator& operator++();
-				column_iterator& operator--();
-				column_iterator operator++(int);
-				column_iterator operator--(int);
-				column_iterator& operator+=(unsigned int);
-				column_iterator& operator-=(unsigned int);
+				//TODO one of the following two is superfluos?
+				col_iterator& operator=(const col_iterator&);
+				col_iterator& operator=(const iterator_base&);
+				bool operator==(const col_iterator&) const;
+				bool operator!=(const col_iterator&) const;
+				col_iterator& operator++();
+				col_iterator& operator--();
+				col_iterator operator++(int);
+				col_iterator operator--(int);
+				col_iterator& operator+=(unsigned int);
+				col_iterator& operator-=(unsigned int);
 			
 			protected:
 
@@ -181,6 +210,7 @@ class TextLineRBTree
 		/* Functions specific to this augmented RBTree. */
 		void post_rotate_augmentation_fixup(Node *x, Node *y);
 		void post_insert_augmentation_fixup(Node *z);
+		void post_erase_augmentation_fixup(Node *z);
 
 		/* This RBTree implementation also maintains
 		 * predecessor/successor pointers. This allows

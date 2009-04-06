@@ -119,6 +119,7 @@ class TextRBTree
 
 				char*& operator*() const;
 
+				//TODO one of the following two is superfluos?
 				char_iterator& operator=(const char_iterator&);
 				char_iterator& operator=(const iterator_base&);
 				bool operator==(const char_iterator&) const;
@@ -144,6 +145,7 @@ class TextRBTree
 				line_iterator(Node &node);
 				line_iterator(const iterator_base &iter);
 
+				//TODO one of the following two is superfluos?
 				line_iterator& operator=(const line_iterator&);
 				line_iterator& operator=(const iterator_base&);
 				bool operator==(const line_iterator&) const;

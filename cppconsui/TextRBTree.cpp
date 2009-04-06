@@ -299,40 +299,54 @@ TextRBTree::line_iterator TextRBTree::erase(TextRBTree::line_iterator start, Tex
 	return _end;
 }
 
-TextRBTree::line_iterator TextRBTree::erase(Node *z)
+/* There are three cases when removing a node z from a Red-Black tree.
+ * 1) z has no children.
+ *    In this case we simply remove z and fix the augmented data by following
+ *    the path from z->parent to the root.
+ * 2) z has one child.
+ *    In this case we replace z by its only child. Then we fix the augmented
+ *    data as in case 1.
+ * 3) z has two children.
+ *    Now we need to swap z with its successor. After swapping z has at most
+ *    one child as the successor of z has at most one child when z has two
+ *    children. Now we can recursively call erase() to erase z from its new
+ *    position. */
+void TextRBTree::erase(Node *z)
 {
-	Node *y = NULL; /* The node taking z's place */
-	Node *x = NULL; /* The node taking y's place */
-	TextRBTree::line_iterator retval(*this);
+	assert (z != NULL); 
+	assert (z->tree == this);
 
-	assert(z->tree == this);
-
-	/* Get an iterator to the next node. */
-	retval = line_iterator(*z->succ);
-
-	/* Find the node which is going to replace z. */
 	if ( (z->left == nil) || (z->right == nil) )
-		y = z;
-	else
-		y = successor(z);
-
-	if ( y->left != nil)
-		x = y->left;
-	else
-		x = y->right;
-
-	x->parent = y->parent;
-
-	if (y->parent == nil)
-		root = x;
-	else if (y == y->parent->left)
-		y->parent->left = x;
-	else
-		y->parent->right = x;
-
-	if (y != z)
 	{
-		Color tmp;
+		if (z == z->parent->left) {
+			if (z->left != nil) z->parent->left = z->left;
+			else z->parent->left = z->right;
+		} else { /* z == z->parent->right */
+			if (z->left != nil) z->parent->right = z->left;
+			else z->parent->right = z->right;
+		}
+
+		/* Fix the predesessor/successor pointers. */
+		if (z->pred)
+			z->pred->succ = z->succ;
+
+		if (z->succ)
+			z->succ->pred = z->pred;
+
+		/* Fix the augmented data before fixing the RBTree properties. */
+		post_erase_augmentation_fixup(z->parent);
+
+		/* See if we need to fix the RBTree properties. */
+		if (z->color == BLACK)
+			erase_node_fixup(x);
+
+		/* Free the memory. */
+		z->left = nil;
+		z->right = nil;
+		delete z;
+
+	} else {
+		Node zcopy;
 		/* The book algorithm moves the key and satellite data to
 		 * y. We need to swap the actual nodes because iterators
 		 * point to nodes. If we would move the key and satellite
@@ -345,40 +359,52 @@ TextRBTree::line_iterator TextRBTree::erase(Node *z)
 		 * z->data = y->data;
 		 */
 
-		/* In the code below, y replaces z, and z is deleted. */
+		/* We need to swap z with its successor, which we call y.
+		 * Note that we don't need to call successor() since this
+		 * implementation also stores prodecessor and successor
+		 * pointers.
+		 *
+		 * For each node 6 pointers need to be adjusted.
+		 * Each of the three forward pointers from z has is complement
+		 * in the node it points to.
+		 *
+		 * O     z->parent
+		 *  \
+		 *   O   z
+		 *  / \
+		 * O   O z->left / z->right
+		 *
+		 * */
 
-		/* Fix the predesessor/successor pointers */
-		if (z->pred)
-			z->pred->succ = z->succ;
+		y = z->succ;
 
-		if (z->succ)
-			z->succ->pred = z->pred;
+		/* Make a copy of z. */
+		zcopy.parent = z->parent;
+		zcopy.left = z->left;
+		zcopy.right = z->right;
 
-		/* Swap the actual nodes. */
-		y->parent = z->parent;
+		/* First put z in it's new place. */
+		if (y == y->parent->left) y->parent->left = z;
+		else y->parent->right = z;
+		z->parent = y->parent;
+		z->left = y->left;
+		z->right = y->right;
+		z->left->parent = z;
+		z->right->parent = z;
 
-		tmp = y->color;
-		y->color = z->color;
-		z->color = tmp;
+		/* Then put y in it's new place. */
+		if (zcopy == zcopy->parent->left) zcopy->parent->left = y;
+		else zcopy->parent->right = y;
+		y->parent = zcopy->parent;
+		y->left = zcopy->left;
+		y->right = zcopy->right;
+		y->left->parent = y;
+		y->right->parent = y;
 
-		y->left = z->left;
-		y->right = z->right;
-
-		if (z == z->parent->left)
-			z->parent->left = y;
-		else
-			z->parent->right = y;
+		/* Now z has at most one child, so this can be handles by the simple
+		 * case of erasing a node. */
+		erase(z);
 	}
-
-	if (z->color == BLACK)
-		erase_node_fixup(x);
-
-	/* Free the memory. */
-	z->left = nil;
-	z->right = nil;
-	delete z;
-
-	return retval;
 }		
 
 void TextRBTree::erase_node_fixup(Node *x)
@@ -576,8 +602,6 @@ TextRBTree::Node* TextRBTree::tree_maximum(Node *node) const
 
 	return max;
 }
-				unsigned int line_nr(void);
-				unsigned int line_nr(void);
 
 unsigned int TextRBTree::lines_before(const TextRBTree::Node *x) const
 {
