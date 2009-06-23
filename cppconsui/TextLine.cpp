@@ -134,3 +134,33 @@ unsigned int TextLine::char_to_byte_offset(unsigned int offset)
 	
 	return iter.byte_offset;
 }
+
+TextLine::char_iterator TextLine::begin(void) const
+{
+	return tree.begin();
+}
+
+TextLine::char_iterator TextLine::back(void) const
+{
+	return tree.back();
+}
+
+TextLine::char_iterator TextLine::end(void) const
+{
+	return tree.end();
+}
+
+TextLine::char_iterator TextLine::reverse_begin(void) const
+{
+	return tree.reverse_begin();
+}
+
+TextLine::char_iterator TextLine::reverse_back(void) const
+{
+	return tree.reverse_back();
+}
+
+TextLine::char_iterator TextLine::reverse_end(void) const
+{
+	return tree.reverse_end();
+}
