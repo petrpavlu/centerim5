@@ -154,6 +154,18 @@ Glib::ustring::size_type width(const char *start, const char *end)
         return width;
 }
 
+gchar* col_offset_to_pointer(gchar *str, glong offset)
+{
+	glong width = 0;
+
+	while (width < offset) {
+		width += g_unichar_iswide(g_utf8_get_char(str)) ? 2 : 1;
+                str = g_utf8_next_char(str);
+	}
+
+	return str;
+}
+
 Point::Point()
 : x(0)
 , y(0)

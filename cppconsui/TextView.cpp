@@ -69,9 +69,9 @@ void TextView::Draw(void)
 	line_iter = line_end = begin();
 
 	/* Move the begin and end iterators to their positions. */
-	line_iter.forward_lines(wrap_mode, Width(), view_top);
+	line_iter.forward_lines(view_top);
 	line_end = line_iter;
-	line_end.forward_lines(wrap_mode, Width(), Height());
+	line_end.forward_lines(Height());
 
 	y = 1;
 	while (line_iter != line_end) {
@@ -80,17 +80,17 @@ void TextView::Draw(void)
 		/* Move the line iterator to the next line. We also use this
 		 * as guard for the character drawing loop, as this next line
 		 * is where we should stop */
-		line_iter.forward_lines(wrap_mode, Width(), 1);
+		line_iter.forward_lines(1);
 
 		/* Skip view_left columns at the beginning of the string. */
-		char_iter.forward_columns(view_left);
+		char_iter.forward_cols(view_left);
 
 		x = 1;
 
 		/* After skipping columns we may have that we are at the
 		 * second column of a 2-column character. In this case
 		 * we need to draw an empty column. */
-		if (!char_iter.char_valid()) {
+		if (!char_iter.valid_char()) {
 			mvwaddstr(area->w, y, x, " ");
 			/* Move to the next valid char. */
 			char_iter.forward_chars(1);
@@ -102,7 +102,7 @@ void TextView::Draw(void)
 		while (char_iter != line_iter) {
 			mvwaddnstr(area->w, y, x, *char_iter,
 					char_iter.char_bytes());
-			x += char_iter.char_columns();
+			x += char_iter.char_cols();
 		}
 
 		/* Clear until the end of the line. We

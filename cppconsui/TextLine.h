@@ -29,11 +29,16 @@ class TextLine
 {
 	public:
 		typedef TextLineRBTree::char_iterator char_iterator;
-		typedef TextLineRBTree::column_iterator column_iterator;
+		typedef TextLineRBTree::col_iterator col_iterator;
+		typedef TextLineRBTree::byte_iterator byte_iterator;
 
 		TextLine();
 		TextLine(const TextLine& line, unsigned int index, unsigned int num);
 		~TextLine();
+
+		TextLine(const TextLine &);
+
+		TextLine& operator=(const TextLine&);
 
 		void insert (unsigned int index, const char* str, unsigned int num);
 		void erase (unsigned int from, unsigned int to);
@@ -42,6 +47,13 @@ class TextLine
 		unsigned int bytes(void);
 		unsigned int chars(void);
 		unsigned int columns(void);
+		unsigned int lines(void); /* Number of display lines. */
+
+		gchar* get_pointer_at_char_offset(unsigned int offset);
+		unsigned int byte_to_char_offset(unsigned int offset);
+		unsigned int byte_to_col_offset(unsigned int offset);
+		unsigned int col_to_byte_offset(unsigned int offset);
+		unsigned int char_to_byte_offset(unsigned int offset);
 
 		/* Count the number of bytes until we reach the n'th character. */
 		unsigned int byte_count_to_char_offset(unsigned int n);
@@ -65,9 +77,6 @@ class TextLine
 	protected:
 
 	private:
-		TextLine(const TextLine &);
-
-		TextLine& operator=(const TextLine&);
 
 		TextLineRBTree tree;
 };

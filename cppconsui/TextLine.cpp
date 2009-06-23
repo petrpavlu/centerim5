@@ -20,6 +20,8 @@
 
 #include "TextLine.h"
 
+#include <cassert>
+
 TextLine::TextLine()
 {
 }
@@ -35,25 +37,100 @@ TextLine::~TextLine()
 {
 }
 
+TextLine::TextLine(const TextLine &line)
+{
+	*this = line;
+}
+
+TextLine& TextLine::operator=(const TextLine& line)
+{
+	if (this == &line) return *this;
+
+	tree = line.tree;
+
+	return *this;
+}
+
 void TextLine::insert(unsigned int index, const char* str, unsigned int len)
 {
 	TextLine::char_iterator iter;
 
-	iter = tree.get_iterator_at_char_offset(index);
+	iter = tree.get_iter_at_char_offset(index);
 	tree.insert(iter, str, len);
+}
+
+void TextLine::erase(unsigned int from, unsigned int to)
+{
+	assert(from < to);
+
+	tree.erase(tree.get_iter_at_char_offset(from), tree.get_iter_at_char_offset(to));
 }
 
 unsigned int TextLine::bytes(void)
 {
-	return begin().bytes();
+	return tree.begin().bytes();
 }
 
 unsigned int TextLine::chars(void)
 {
-	return begin().chars();
+	return tree.begin().chars();
 }
 
 unsigned int TextLine::columns(void)
 {
-	return begin().columns();
+	return tree.begin().cols();
+}
+
+unsigned int TextLine::lines(void)
+{
+	return tree.begin().lines();
+}
+
+gchar* TextLine::get_pointer_at_char_offset(unsigned int offset)
+{
+	TextLine::char_iterator iter;
+
+	iter = tree.get_iter_at_char_offset(offset);
+
+	return *iter;
+}
+
+unsigned int TextLine::byte_to_char_offset(unsigned int offset)
+{
+	TextLine::byte_iterator iter;
+
+	iter = tree.begin();
+	iter += offset;
+	
+	return iter.char_offset;
+}
+
+unsigned int TextLine::byte_to_col_offset(unsigned int offset)
+{
+	TextLine::byte_iterator iter;
+
+	iter = tree.begin();
+	iter += offset;
+	
+	return iter.col_offset;
+}
+
+unsigned int TextLine::col_to_byte_offset(unsigned int offset)
+{
+	TextLine::col_iterator iter;
+
+	iter = tree.begin();
+	iter += offset;
+	
+	return iter.byte_offset;
+}
+
+unsigned int TextLine::char_to_byte_offset(unsigned int offset)
+{
+	TextLine::char_iterator iter;
+
+	iter = tree.begin();
+	iter += offset;
+	
+	return iter.byte_offset;
 }

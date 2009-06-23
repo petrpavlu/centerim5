@@ -56,6 +56,7 @@ int RealScreenHeight(void);
 
 Glib::ustring::size_type width(const Glib::ustring &string);
 Glib::ustring::size_type width(const char *start, const char *end);
+gchar* col_offset_to_pointer(gchar *str, glong offset);
 void find_paragraph_boundary (const gchar *text,
 			       gint         length,
 			       gint        *paragraph_delimiter_index,

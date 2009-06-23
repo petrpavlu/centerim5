@@ -38,12 +38,14 @@ class TextLineRBTree
 		TextLineRBTree();
 		~TextLineRBTree();
 
+		TextLineRBTree& operator=(const TextLineRBTree&);
+
 		//TODO standard string insert methods, same for erase and such
 		char_iterator insert(const char_iterator& iter, const char* str, unsigned int len);
 
 		/* We can only erase characters, not columns. */
-		char_iterator erase(char_iterator pos);
-		char_iterator erase(char_iterator start, char_iterator end);
+		void erase(char_iterator pos);
+		void erase(char_iterator start, char_iterator end);
 
 		/* Obtaining iterators for the string. */
 		char_iterator begin(void) const;
@@ -54,7 +56,7 @@ class TextLineRBTree
 		char_iterator reverse_back(void) const;
 		char_iterator reverse_end(void) const;
 
-		char_iterator get_iterator_at_char_offset(unsigned int index) const;
+		char_iterator get_iter_at_char_offset(unsigned int index);
 
 		/* Iterator for the tree. */
 		class iterator_base
@@ -62,7 +64,7 @@ class TextLineRBTree
 			public:
 				iterator_base(void);
 				iterator_base(TextLineRBTree &tree);
-				iterator_base(Node &node);
+				iterator_base(const Node &node);
 				iterator_base(const iterator_base &iter);
 
 				bool valid(void) const;
@@ -75,12 +77,14 @@ class TextLineRBTree
 
 				/* Determine the total number of chars/bytes/columns
 				 * stored in the node pointed at by the iterator
-				 * including children. */
+				 * including children. lines() returns the number
+				 * of lines on screen when formatted. */
 				unsigned int chars(void) const;
 				unsigned int bytes(void) const;
 				unsigned int cols(void) const;
+				unsigned int lines(void) const;
 
-				char*& operator*() const;
+				char* operator*() const;
 				/* This operator omitted to prevent confusion. */
 				//char** operator->() const;
 
@@ -196,8 +200,6 @@ class TextLineRBTree
 
 		TextLineRBTree(const TextLineRBTree &);
 
-		TextLineRBTree& operator=(const TextLineRBTree&);
-
 		/* Function to support RedBlackTree operations. */
 		void rotate_left(Node *x);
 		void rotate_right(Node *x);
@@ -211,6 +213,7 @@ class TextLineRBTree
 		void post_rotate_augmentation_fixup(Node *x, Node *y);
 		void post_insert_augmentation_fixup(Node *z);
 		void post_erase_augmentation_fixup(Node *z);
+		void post_update_augmentation_fixup(Node *z);
 
 		/* This RBTree implementation also maintains
 		 * predecessor/successor pointers. This allows
@@ -220,7 +223,9 @@ class TextLineRBTree
 
 		/**/
 		char_iterator insert(Node *z, int line_nr);
-		column_iterator erase(Node *z);
+		void erase(Node *z);
+
+		Node* MakeNil(void);
 
 		//TODO only if debug build
 		void print(void);
