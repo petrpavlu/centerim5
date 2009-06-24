@@ -259,6 +259,8 @@ class TextRBTree
 		char_iterator insert(Node *z, int line_nr);
 		line_iterator erase(Node *z);
 
+		Node* MakeNil(void);
+
 		//TODO only if debug build
 		void print(void);
 		void print_node(Node *node);

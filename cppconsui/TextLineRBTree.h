@@ -64,7 +64,7 @@ class TextLineRBTree
 			public:
 				iterator_base(void);
 				iterator_base(TextLineRBTree &tree);
-				iterator_base(const Node &node);
+				iterator_base(Node &node);
 				iterator_base(const iterator_base &iter);
 
 				bool valid(void) const;

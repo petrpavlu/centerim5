@@ -1,4 +1,4 @@
-SUBDIRS = po cppconsui src
+SUBDIRS = po cppconsui tests src
 
 EXTRA_DIST = HACKING
 

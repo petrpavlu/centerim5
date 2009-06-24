@@ -33,23 +33,14 @@
 
 TextRBTree::TextRBTree()
 {
-	nil = new Node(this, NULL);
-	root = nil;
+	nil = MakeNil();
 
-	/* Set all pointers of the nil node to nil. The nil node is fake. */
-	nil->parent = nil;
-	nil->left = nil;
-	nil->right = nil;
-	nil->pred = nil;
-	nil->succ = nil;
-
-	/* The line is empty by default. */
-
-	/* Set all order statistic data of nil to 0 (or the unit element.) */
-	nil->bytes = 0;
-	nil->chars = 0;
-	nil->cols = 0;
-	nil->lines = 0;
+	root = MakeNil();
+	root->parent = nil;
+	root->left = nil;
+	root->right = nil;
+	root->pred = nil;
+	root->succ = nil;
 }
 
 TextRBTree::~TextRBTree()
@@ -60,6 +51,26 @@ TextRBTree::~TextRBTree()
 	delete nil;
 }
 
+TextRBTree::Node* TextRBTree::MakeNil(void)
+{
+	Node* nil = new Node(this, NULL);
+
+	/* Set all pointers of the nil node to nil. The nil node is fake. */
+	nil->parent = nil;
+	nil->left = nil;
+	nil->right = nil;
+	nil->pred = nil;
+	nil->succ = nil;
+
+	/* Line is empty by default. */
+
+	/* Set all order statistic data of nil to 0 (or the unit element.) */
+	nil->bytes = 0;
+	nil->chars = 0;
+	nil->cols = 0;
+
+	return nil;
+}
 
 TextRBTree::Node::Node(TextRBTree *tree, Node *parent)
 : tree(tree)
@@ -771,15 +782,15 @@ TextRBTree::iterator_base& TextRBTree::iterator_base::forward_chars(unsigned int
 	if (node == tree->nil)
 		return *this;
 
-	while ( (node != tree->nil) && (n > node->chars) ) {
+	while ( (node != tree->nil) && ((char_offset + n) > node->chars) ) {
 		n -= node->chars - char_offset;
 		node = node->succ;
 		char_offset = 0;
 	}
 
 	if (node != tree->nil) {
-		byte_offset = node->line.char_to_byte_offset(n);
-		char_offset = n;
+		char_offset += n;
+		byte_offset = node->line.char_to_byte_offset(char_offset);
 		col_offset = node->line.byte_to_col_offset(byte_offset);
 	} else {
 		byte_offset = 0;

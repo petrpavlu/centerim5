@@ -250,5 +250,6 @@ AC_SUBST(DEBUG_CFLAGS)
 ########################
 AC_CONFIG_FILES([Makefile po/Makefile.in
 		 cppconsui/Makefile
+		 tests/Makefile
 		 src/Makefile])
 AC_OUTPUT
