@@ -25,18 +25,29 @@
 
 #define STR1 "I do not feel obliged to believe that the same God who has endowed us with sense, reason, and intellect has intended us to forgo their use."
 #define STR2 "Just a test."
+#define STR3 "Hello world, Καλημέρα κόσμε, コンニチハ"
 
 int main(int argc, char **argv)
 {
 	char c;
+	char *s, locale;
 
-	TextLine *line = new TextLine();
+	TextLine *line = NULL;
 	TextLine::char_iterator iter, end;
+	TextLine::byte_iterator biter, bend;
+	TextLine::char_iterator chariter, charend;
+	TextLine::col_iterator coliter, colend;
 	TextLine::char_iterator reverse_end;
+	unsigned int bytecount, charcount, colcount;
 
+	/* Setup locale. */
+	setlocale(LC_ALL, "");
+
+	line = new TextLine();
 	line->insert(0, STR1, strlen(STR1));
 
-	std::cout << "The next two lines should be identical:" << std::endl;
+	/* Printing strings character per charactor. */
+	std::cout << "The next two lines should be identical (latin):" << std::endl;
 	std::cout << STR1 << std::endl;
 
 	end = line->end();
@@ -56,6 +67,34 @@ int main(int argc, char **argv)
 
 	delete line;
 
+	line = new TextLine();
+	line->insert(0, STR3, strlen(STR3));
+
+	std::cout << "The next two lines should be identical: (utf8)" << std::endl;
+	std::cout << STR3 << std::endl;
+
+	end = line->end();
+	for (iter = line->begin(); iter != end; iter++) {
+		s = *iter;
+		for (int i = 0; i < iter.char_bytes(); i++) {
+			printf("%c", s[i]);
+		}
+	}
+	printf("\n");
+
+	std::cout << "Reversed:" << std::endl;
+	reverse_end = line->reverse_end();
+	for (iter = line->reverse_begin(); iter != reverse_end; iter--) {
+		s = *iter;
+		for (int i = 0; i < iter.char_bytes(); i++) {
+			printf("%c", s[i]);
+		}
+	}
+	printf("\n");
+
+	delete line;
+
+	/* String editing functions. */
 	line = new TextLine();
 	line->insert(0, STR2, strlen(STR2));
 
@@ -80,4 +119,58 @@ int main(int argc, char **argv)
 
 	for (iter = line->begin(); iter != end; iter++) { printf("%c", *(*iter)); }
 	std::cout << std::endl;
+
+	delete line;
+
+	line = new TextLine();
+	line->insert(0, STR1, strlen(STR1));
+
+	/* Checking if the iterators work correctly. */
+	std::cout << "Counting the number of bytes, chars and colunms (latin, should be: 140, 140, 140):" << std::endl;
+	bytecount = charcount = colcount = 0;
+
+	bend = line->end();
+	for (biter = line->begin(); biter != bend; biter++) {
+		bytecount++;
+	}
+
+	charend = line->end();
+	for (chariter = line->begin(); chariter != charend; chariter++) {
+		charcount++;
+	}
+
+	colend = line->end();
+	for (coliter = line->begin(); coliter != colend; coliter++) {
+		colcount++;
+	}
+
+	std::cout << bytecount << ", " << charcount << ", " << colcount << std::endl;
+
+	delete line;
+
+	line = new TextLine();
+	line->insert(0, STR3, strlen(STR3));
+
+	std::cout << "Counting the number of bytes, chars and colunms (utf8, should be: 60, 35, 40):" << std::endl;
+	bytecount = charcount = colcount = 0;
+
+	bend = line->end();
+	for (biter = line->begin(); biter != bend; biter++) {
+		bytecount++;
+	}
+
+	charend = line->end();
+	for (chariter = line->begin(); chariter != charend; chariter++) {
+		charcount++;
+	}
+
+	colend = line->end();
+	for (coliter = line->begin(); coliter != colend; coliter++) {
+		colcount++;
+	}
+
+	std::cout << bytecount << ", " << charcount << ", " << colcount << std::endl;
+
+	delete line;
+
 }

@@ -70,6 +70,8 @@ class TextLineRBTree
 				bool valid(void) const;
 				bool valid_char(void) const;
 
+				unsigned int byte_index(void) const;
+
 				/* Determine the number of bytes/columns used
 				 * by the character under the iterator. */
 				unsigned int char_bytes(void);

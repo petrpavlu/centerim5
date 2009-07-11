@@ -41,7 +41,7 @@ class TextRBTree
 		~TextRBTree();
 
 		//TODO standard string insert methods, same for erase and such
-		char_iterator insert(const char_iterator& iter, const char* str, unsigned int len);
+		char_iterator insert(const char_iterator& iter, const char* str, int len);
 		char_iterator insert(const char_iterator& iter, const TextLine &line);
 
 		/* We can only erase characters, not columns. */
@@ -65,7 +65,7 @@ class TextRBTree
 			public:
 				iterator_base(void);
 				iterator_base(TextRBTree &tree);
-				iterator_base(const Node &node);
+				iterator_base(Node &node);
 				iterator_base(const iterator_base &iter);
 
 				bool valid(void) const;

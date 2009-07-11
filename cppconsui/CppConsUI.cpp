@@ -54,9 +54,9 @@ Glib::ustring::size_type width(const Glib::ustring &string)
  * thank you pango team
  */
 void find_paragraph_boundary (const gchar *text,
-			       gint         length,
-			       gint        *paragraph_delimiter_index,
-			       gint        *next_paragraph_start)
+			       int         length,
+			       int        *paragraph_delimiter_index,
+			       int        *next_paragraph_start)
 {
   const gchar *p = text;
   const gchar *end;
@@ -143,6 +143,9 @@ const gchar text_unknown_char_utf8[] = { '\xEF', '\xBF', '\xBC', '\0' };
 Glib::ustring::size_type width(const char *start, const char *end)
 {
         Glib::ustring::size_type width = 0;
+
+	if (start == NULL)
+		return 0;
 
         if (end == NULL)
                 end = start + strlen(start);

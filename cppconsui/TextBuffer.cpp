@@ -65,7 +65,7 @@ TextBuffer::char_iterator TextBuffer::reverse_end(void) const
 	return tree.reverse_end();
 }
 
-TextBuffer::char_iterator TextBuffer::insert (const TextBuffer::char_iterator _iter, const char *text, int len)
+TextBuffer::char_iterator TextBuffer::insert(const TextBuffer::char_iterator _iter, const char *text, int len)
 {
 	int chunk_len; /* number of characters in current chunk. */
 	int sol; /* start of line */
@@ -98,7 +98,7 @@ TextBuffer::char_iterator TextBuffer::insert (const TextBuffer::char_iterator _i
 
 		chunk_len = eol - sol;
 
-		assert (g_utf8_validate ((const gchar*)text[sol], chunk_len, NULL));
+		//TODO assert (g_utf8_validate ((const gchar*)text[sol]+1, 1, NULL));
 
 		/* insert the paragraph in the current line just after the cursor position */
 		line_iter->insert(line_iter.byte_offset, &text[sol], chunk_len);

@@ -58,9 +58,9 @@ Glib::ustring::size_type width(const Glib::ustring &string);
 Glib::ustring::size_type width(const char *start, const char *end);
 gchar* col_offset_to_pointer(gchar *str, glong offset);
 void find_paragraph_boundary (const gchar *text,
-			       gint         length,
-			       gint        *paragraph_delimiter_index,
-			       gint        *next_paragraph_start);
+			       int length,
+			       int *paragraph_delimiter_index,
+			       int *next_paragraph_start);
 
 //TODO move into editable abstract class?
 enum CursorMovement {
