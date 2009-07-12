@@ -124,6 +124,7 @@ TextLineRBTree::char_iterator TextLineRBTree::insert(const TextLineRBTree::char_
 		node->str_bytes = len;
 	} else {
 		char* s;
+		char* q;
 
 		if (iter.byte_offset == 0) {
 			s = g_strconcat(str, node->str, NULL);
@@ -133,8 +134,8 @@ TextLineRBTree::char_iterator TextLineRBTree::insert(const TextLineRBTree::char_
 			s = g_new0(char, node->str_bytes + len + 1);
 			g_strlcpy(s, node->str, iter.byte_offset);
 			g_strlcpy(s + iter.byte_offset - 1, str, len + 1);
-			g_strlcpy(s + iter.byte_offset + len - 1,
-					(gchar*)(node->str + iter.byte_offset - 1), node->str_bytes - iter.byte_offset + 2);
+			g_strlcpy(s + iter.byte_offset - 1 + len,
+					node->str + iter.byte_offset - 1, node->str_bytes - (iter.byte_offset - 2));
 					/* 2 because: 1 for the null terminator, and 1 because of counting from 0. */
 		}
 
@@ -143,7 +144,7 @@ TextLineRBTree::char_iterator TextLineRBTree::insert(const TextLineRBTree::char_
 		node->str_bytes = node->str_bytes + len;
 	}
 
-	node->str_chars = g_utf8_pointer_to_offset(node->str, node->str + node->str_bytes);
+	node->str_chars = g_utf8_strlen(node->str, -1);
 	node->str_cols = width(node->str, node->str + node->str_bytes);
 	post_update_augmentation_fixup(node);
 
@@ -275,14 +276,11 @@ TextLineRBTree::char_iterator TextLineRBTree::get_iter_at_char_offset(unsigned i
 	/* Now we have found the node, create the iterator. */
 	char_iterator iter;
 
-	/* Find the byte offset of the i'th character in node.str. */
-	bytes += (g_utf8_offset_to_pointer(node->str, i) - node->str);
-
 	iter.node = node;
 	iter.tree = this;
-	iter.byte_offset = bytes;
-	iter.char_offset = index;
-	iter.col_offset = node->left->cols + width(node->str, node->str + i);
+	iter.byte_offset = g_utf8_offset_to_pointer(node->str, i - 1) - node->str + 1;
+	iter.char_offset = g_utf8_pointer_to_offset(node->str, node->str +iter. byte_offset);
+	iter.col_offset = width(node->str, node->str + iter.byte_offset);
 
 	return iter;
 }

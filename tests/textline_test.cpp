@@ -26,6 +26,7 @@
 #define STR1 "I do not feel obliged to believe that the same God who has endowed us with sense, reason, and intellect has intended us to forgo their use."
 #define STR2 "Just a test."
 #define STR3 "Hello world, Καλημέρα κόσμε, コンニチハ"
+#define STR4 "Ｊｕｓｔ ａ ｔｅｓｔ."
 
 int main(int argc, char **argv)
 {
@@ -67,6 +68,8 @@ int main(int argc, char **argv)
 
 	delete line;
 
+	std::cout << std::endl;
+
 	line = new TextLine();
 	line->insert(0, STR3, strlen(STR3));
 
@@ -98,6 +101,10 @@ int main(int argc, char **argv)
 	line = new TextLine();
 	line->insert(0, STR2, strlen(STR2));
 
+	std::cout << std::endl;
+
+	std::cout <<"Text editing (latin):" << std::endl;
+
 	std::cout << "Original        : ";
 	for (iter = line->begin(); iter != end; iter++) { printf("%c", *(*iter)); }
 	std::cout << std::endl;
@@ -123,9 +130,42 @@ int main(int argc, char **argv)
 	delete line;
 
 	line = new TextLine();
+	line->insert(0, STR4, strlen(STR4));
+
+	std::cout << std::endl;
+
+	std::cout <<"Text editing (utf8):" << std::endl;
+
+	std::cout << "Original        : ";
+	for (biter = line->begin(); biter != end; biter++) { printf("%c", *(*biter)); }
+	std::cout << std::endl;
+
+	std::cout << "Insert \"very \"  : ";
+	line->insert(8, "ｖｅｒｙ ", strlen("ｖｅｒｙ "));
+
+	for (biter = line->begin(); biter != end; biter++) { printf("%c", *(*biter)); }
+	std::cout << std::endl;
+
+	std::cout << "Insert \" simple\": ";
+	line->insert(12, " ｓｉｍｐｌｅ", strlen(" ｓｉｍｐｌｅ"));
+
+	for (biter = line->begin(); biter != end; biter++) { printf("%c", *(*biter)); }
+	std::cout << std::endl;
+
+	std::cout << "Erase \" very simple\": ";
+	line->erase(8, 19);
+
+	for (biter = line->begin(); biter != end; biter++) { printf("%c", *(*biter)); }
+	std::cout << std::endl;
+
+	delete line;
+
+	std::cout << std::endl;
+	/* Checking if the iterators work correctly. */
+
+	line = new TextLine();
 	line->insert(0, STR1, strlen(STR1));
 
-	/* Checking if the iterators work correctly. */
 	std::cout << "Counting the number of bytes, chars and colunms (latin, should be: 140, 140, 140):" << std::endl;
 	bytecount = charcount = colcount = 0;
 
