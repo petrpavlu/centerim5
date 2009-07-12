@@ -4,6 +4,7 @@ textline_test_SOURCES = \
 	textline_test.cpp
 
 textline_test_CPPFLAGS =\
+	$(DEBUG_CFLAGS) \
 	$(GLIBMM_CFLAGS) \
 	$(CURSES_INCLUDEDIR) \
 	-I$(top_srcdir)

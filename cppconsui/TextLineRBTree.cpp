@@ -124,7 +124,6 @@ TextLineRBTree::char_iterator TextLineRBTree::insert(const TextLineRBTree::char_
 		node->str_bytes = len;
 	} else {
 		char* s;
-		char* q;
 
 		if (iter.byte_offset == 0) {
 			s = g_strconcat(str, node->str, NULL);
@@ -136,7 +135,6 @@ TextLineRBTree::char_iterator TextLineRBTree::insert(const TextLineRBTree::char_
 			g_strlcpy(s + iter.byte_offset - 1, str, len + 1);
 			g_strlcpy(s + iter.byte_offset - 1 + len,
 					node->str + iter.byte_offset - 1, node->str_bytes - (iter.byte_offset - 2));
-					/* 2 because: 1 for the null terminator, and 1 because of counting from 0. */
 		}
 
 		g_free(node->str);
