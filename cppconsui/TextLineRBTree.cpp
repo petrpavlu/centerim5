@@ -242,7 +242,7 @@ TextLineRBTree::char_iterator TextLineRBTree::reverse_end(void) const
 
 TextLineRBTree::char_iterator TextLineRBTree::get_iter_at_char_offset(unsigned int index)
 {
-	Node* node = root;	/* Current node we are looking at. */
+	Node* node;		/* Current node we are looking at. */
 	unsigned int r;		/* Number of chars in de left subtree of node and the node itself. */
 	unsigned int bytes;	/* byte_offset to the current node. */
 	unsigned int i;		/* The i'th character being looked for in the current subtree. */
@@ -255,18 +255,23 @@ TextLineRBTree::char_iterator TextLineRBTree::get_iter_at_char_offset(unsigned i
 		return end();
 	}
 
+
 	/* Initialisation for the while loop. */
-	r = root->left->chars + root->str_chars;
+	node = root;
 	i = index;
 	bytes = 0;
 
 	/* Find the node where the i'th character is stored. */
-	while ( !(i > root->left->chars && i < r) ) {
-		if (i < r) { /* Turn left. */
+	while (true) {
+		r = node->left->chars + node->str_chars;
+
+		if (node->left->chars < i && i <= r) {
+			break;
+		} else if ( i <= node->left->chars ) {
 			node = node->left;
-		} else { /* Turn right. */
+		} else { /* r < i */
 			i -= r;
-			bytes += root->left->bytes + root->str_bytes;
+			bytes += node->left->bytes + node->str_bytes;
 			node = node->right;
 		}
 	}
