@@ -111,7 +111,7 @@ TextRBTree::char_iterator TextRBTree::insert(const char_iterator& _iter, const c
 	int eol; /* index of character just after last one in current chunk. */
 	int delim; /* index of paragraph delimiter */
 	char_iterator line_iter(*this);
-	const TextLine *line;
+	TextLine *line;
 	char_iterator iter(_iter);
 	line_iterator tmp;
 
@@ -162,15 +162,19 @@ TextRBTree::char_iterator TextRBTree::insert(const char_iterator& _iter, const c
 		tmp = iter;
 		line = new TextLine(
 				*tmp,
-				iter.byte_offset,
-				iter->bytes() - iter.byte_offset);
+				iter.char_offset - 1,
+				iter->chars() - iter.char_offset + 1);
 		line_iter->erase(iter.char_offset, iter->chars());
 
 		/* insert the new line after the current line. The returned
 		 * char_iterator should point to the beginning of the new line.
 		 */
 		line_iter.forward_bytes(chunk_len); /* line_iter is still at the origional insert point, so we must move it. */
-		iter = insert(line_iter, *line);
+
+		if (line->chars() > 0)
+			iter = insert(line_iter, *line);
+		else
+			iter = line_iter;
 	}
 
 	return iter;

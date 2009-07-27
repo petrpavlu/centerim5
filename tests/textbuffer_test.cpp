@@ -53,9 +53,9 @@ int main(int argc, char **argv)
 	buffer = new TextBuffer();
 	buffer->append(STR12, strlen(STR12));
 	buffer->append(STR14, strlen(STR14));
-	//line_iter = buffer->begin();
-	//line_iter++;
-	//buffer->insert(line_iter, STR13, strlen(STR13));
+	line_iter = buffer->begin();
+	line_iter++;
+	buffer->insert(line_iter, STR13, strlen(STR13));
 	buffer->prefix(STR11, strlen(STR11));
 
 	std::cout << "== Printing a 4 line buffer ==" << std::endl;

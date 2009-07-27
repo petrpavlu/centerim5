@@ -43,7 +43,7 @@ TextLine::TextLine(const TextLine &line, unsigned int index, unsigned int len)
 	erase(from, to);
 
 	/* Erase everything upto the index'th byte. */
-	erase(0, index);
+	erase(0, MIN(index, to));
 }
 
 TextLine::~TextLine()
