@@ -581,7 +581,7 @@ TextRBTree::Node* TextRBTree::successor(Node *node) const
 
 	y = x->parent;
 
-	while (y != nil && x == x->right)
+	while (y != nil && x == y->right)
 	{
 		x = y;
 		y = y->parent;
@@ -602,7 +602,7 @@ TextRBTree::Node* TextRBTree::predecessor(Node *node) const
 
 	y = x->parent;
 
-	while (y != nil && x == x->left)
+	while (y != nil && x == y->left)
 	{
 		x = y;
 		y = y->parent;
