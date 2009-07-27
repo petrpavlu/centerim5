@@ -164,7 +164,7 @@ TextRBTree::char_iterator TextRBTree::insert(const char_iterator& _iter, const c
 				*tmp,
 				iter.byte_offset,
 				iter->bytes() - iter.byte_offset);
-		line_iter->erase(iter.byte_offset, iter->bytes());
+		line_iter->erase(iter.char_offset, iter->chars());
 
 		/* insert the new line after the current line. The returned
 		 * char_iterator should point to the beginning of the new line.

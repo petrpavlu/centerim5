@@ -131,10 +131,10 @@ TextLineRBTree::char_iterator TextLineRBTree::insert(const TextLineRBTree::char_
 			s = g_strconcat(node->str, str, NULL);
 		} else {
 			s = g_new0(char, node->str_bytes + len + 1);
-			g_strlcpy(s, node->str, iter.byte_offset);
-			g_strlcpy(s + iter.byte_offset - 1, str, len + 1);
-			g_strlcpy(s + iter.byte_offset - 1 + len,
-					node->str + iter.byte_offset - 1, node->str_bytes - (iter.byte_offset - 2));
+			g_strlcpy(s, node->str, iter.byte_offset + 1);
+			g_strlcpy(s + iter.byte_offset, str, len + 1);
+			g_strlcpy(s + iter.byte_offset + len,
+					node->str + iter.byte_offset, node->str_bytes - iter.byte_offset + 2);
 		}
 
 		g_free(node->str);
@@ -183,7 +183,9 @@ void TextLineRBTree::erase(const TextLineRBTree::char_iterator pos)
 
 void TextLineRBTree::erase(TextLineRBTree::char_iterator start, TextLineRBTree::char_iterator end)
 {
-	char* s;
+	char* from;
+	char* to;
+
 	Node *node = start.node;
 
 	assert(start.tree == this && end.tree == this);
@@ -195,12 +197,20 @@ void TextLineRBTree::erase(TextLineRBTree::char_iterator start, TextLineRBTree::
 	if (node->str == NULL)
 		return;
 
-	s = g_new0(char, start.byte_offset + node->str_bytes - end.byte_offset);
-	g_strlcpy(s, node->str, start.byte_offset);
-	g_strlcpy(s + start.byte_offset - 1, node->str + end.byte_offset, node->str_bytes - start.byte_offset + 2);
+	from = node->str + end.byte_offset;
+	to = node->str + start.byte_offset;
 
-	g_free(node->str);
-	node->str = s;
+	while (*from != '\0')
+	{
+		*to = *from;
+		from++;
+		to++;
+	}
+
+	*to = '\0';
+
+	node->str = g_renew(char, node->str, start.byte_offset + node->str_bytes - end.byte_offset + 1);
+
 	node->str_bytes = start.byte_offset + node->str_bytes - end.byte_offset;
 	node->str_chars = g_utf8_pointer_to_offset(node->str, node->str + node->str_bytes);
 	node->str_cols = width(node->str, node->str + node->str_bytes);
@@ -308,7 +318,7 @@ TextLineRBTree::char_iterator TextLineRBTree::get_iter_at_char_offset(unsigned i
 
 	iter.node = node;
 	iter.tree = this;
-	iter.byte_offset = g_utf8_offset_to_pointer(node->str, i - 1) - node->str + 1;
+	iter.byte_offset = g_utf8_offset_to_pointer(node->str, i) - node->str;
 	iter.char_offset = g_utf8_pointer_to_offset(node->str, node->str +iter. byte_offset);
 	iter.col_offset = width(node->str, node->str + iter.byte_offset);
 

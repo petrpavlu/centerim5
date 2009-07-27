@@ -29,10 +29,10 @@
 #define STR13 "and intellect has intended us to forgo their\n"
 #define STR14 "use.\n"
 */
-#define STR11 "1.\n"
-#define STR12 "2.\n"
-#define STR13 "3.\n"
-#define STR14 "4.\n"
+#define STR11 "1. Hello\n"
+#define STR12 "2. World\n"
+#define STR13 "3. Ｈｅｌｌｏ\n"
+#define STR14 "4. ｗｏｒｌｄ\n"
 
 #define STR2 "Just a test."
 #define STR3 "Hello world, Καλημέρα κόσμε, コンニチハ"
@@ -42,24 +42,32 @@ int main(int argc, char **argv)
 {
 	TextBuffer* buffer = NULL;
 	TextBuffer::char_iterator iter, end;
+	TextBuffer::line_iterator line_iter;
 	char c;
+	char *s;
+	int j;
 
 	/* Setup locale. */
 	setlocale(LC_ALL, "");
 
 	buffer = new TextBuffer();
 	buffer->append(STR12, strlen(STR12));
-	buffer->append(STR13, strlen(STR13));
 	buffer->append(STR14, strlen(STR14));
+	//line_iter = buffer->begin();
+	//line_iter++;
+	//buffer->insert(line_iter, STR13, strlen(STR13));
 	buffer->prefix(STR11, strlen(STR11));
 
-	std::cout << "== Printing a 4 line buffer, no linebreaks ==" << std::endl;
+	std::cout << "== Printing a 4 line buffer ==" << std::endl;
 	end = buffer->end();
 	for (iter = buffer->begin(); iter != end; iter++) {
-		c = *(*iter);
-		printf("%c", c);
+		s = *iter;
+		j = iter.char_bytes();
+		for (int i = 0; i < j; i++) {
+			printf("%c", s[i]);
+		}
 	}
-	std::cout << "=============================================" << std::endl;
+	std::cout << "==============================" << std::endl;
 
 	delete buffer;
 }

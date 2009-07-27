@@ -39,7 +39,7 @@ TextLine::TextLine(const TextLine &line, unsigned int index, unsigned int len)
 
 	/* Erase the back part of the line. */
 	to = chars();
-	from = MAX(index+len+1, to);
+	from = MIN(index+len, to);
 	erase(from, to);
 
 	/* Erase everything upto the index'th byte. */
