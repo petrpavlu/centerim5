@@ -238,11 +238,18 @@ if test "x$GCC" = "xyes"; then
 		])
 	fi
 
-	DEBUG_CFLAGS="-Wall $DEBUG_CFLAGS"
-	CFLAGS="-g $CFLAGS"
+	DEBUG_CFLAGS="-ggdb -O0 -ggdb -Wall $DEBUG_CFLAGS"
+	if test "x$enable_debug" != "xyes" ; then
+		CFLAGS="-g $CFLAGS"
+		CXXFLAGS="-g $CFLAGS"
+	else
+		CFLAGS=""
+		CXXFLAGS=""
+	fi
 fi
 
 AC_SUBST(CFLAGS)
+AC_SUBST(CXXFLAGS)
 AC_SUBST(DEBUG_CFLAGS)
 
 ########################
