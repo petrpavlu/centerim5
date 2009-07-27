@@ -197,6 +197,9 @@ void TextLineRBTree::erase(TextLineRBTree::char_iterator start, TextLineRBTree::
 	if (node->str == NULL)
 		return;
 
+	if (end.byte_offset < end.node->str_bytes)
+		end++;
+
 	from = node->str + end.byte_offset;
 	to = node->str + start.byte_offset;
 
@@ -207,7 +210,7 @@ void TextLineRBTree::erase(TextLineRBTree::char_iterator start, TextLineRBTree::
 		to++;
 	}
 
-	*to = '\0';
+	*to = *from;
 
 	node->str = g_renew(char, node->str, start.byte_offset + node->str_bytes - end.byte_offset + 1);
 
