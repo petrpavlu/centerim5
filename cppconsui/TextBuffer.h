@@ -46,7 +46,8 @@ class TextBuffer
 		char_iterator insert (const char_iterator iter, const char *text, int len);
 		char_iterator insert (const char *text, int len);
 
-		char_iterator append (const char *text, int len);
+		void append (const char *text, int len);
+		void prefix (const char *text, int len);
 
 		char_iterator get_iter_at_cursor (void);
 		char_iterator get_iter_at_line (int top);

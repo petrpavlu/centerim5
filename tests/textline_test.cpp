@@ -31,7 +31,7 @@
 int main(int argc, char **argv)
 {
 	char c;
-	char *s, locale;
+	char *s, *locale;
 
 	TextLine *line = NULL;
 	TextLine::char_iterator iter, end;
@@ -42,12 +42,12 @@ int main(int argc, char **argv)
 	unsigned int bytecount, charcount, colcount;
 
 	/* Setup locale. */
-	setlocale(LC_ALL, "");
+	locale = setlocale(LC_ALL, "");
 
+	/* Printing strings character per charactor. */
 	line = new TextLine();
 	line->insert(0, STR1, strlen(STR1));
 
-	/* Printing strings character per charactor. */
 	std::cout << "The next two lines should be identical (latin):" << std::endl;
 	std::cout << STR1 << std::endl;
 
@@ -166,7 +166,8 @@ int main(int argc, char **argv)
 	line = new TextLine();
 	line->insert(0, STR1, strlen(STR1));
 
-	std::cout << "Counting the number of bytes, chars and colunms (latin, should be: 140, 140, 140):" << std::endl;
+	std::cout << "Counting the number of bytes, chars and colunms (latin, should be: " 
+		<< line->bytes() << ", " << line->chars() << ", " << line->columns() << std::endl;
 	bytecount = charcount = colcount = 0;
 
 	bend = line->end();
@@ -191,7 +192,8 @@ int main(int argc, char **argv)
 	line = new TextLine();
 	line->insert(0, STR3, strlen(STR3));
 
-	std::cout << "Counting the number of bytes, chars and colunms (utf8, should be: 60, 35, 40):" << std::endl;
+	std::cout << "Counting the number of bytes, chars and colunms (latin, should be: " 
+		<< line->bytes() << ", " << line->chars() << ", " << line->columns() << std::endl;
 	bytecount = charcount = colcount = 0;
 
 	bend = line->end();
@@ -210,6 +212,7 @@ int main(int argc, char **argv)
 	}
 
 	std::cout << bytecount << ", " << charcount << ", " << colcount << std::endl;
+	std::cout << line->bytes() << ", " << line->chars() << ", " << line->columns() << std::endl;
 
 	delete line;
 

@@ -34,18 +34,14 @@
 TextRBTree::TextRBTree()
 {
 	nil = MakeNil();
-
-	root = MakeNil();
-	root->parent = nil;
-	root->left = nil;
-	root->right = nil;
-	root->pred = nil;
-	root->succ = nil;
+	root = nil;
 }
 
 TextRBTree::~TextRBTree()
 {
-	delete root; /* Deletes nodes recursively. */
+	if (root != nil)
+		delete root; /* Deletes nodes recursively. */
+
 	delete nil;
 }
 
@@ -82,6 +78,7 @@ TextRBTree::Node::Node(TextRBTree *tree, Node *parent)
 , chars(0)
 , cols(0)
 , lines(0)
+, line()
 {
 }
 
@@ -140,10 +137,13 @@ TextRBTree::char_iterator TextRBTree::insert(const char_iterator& _iter, const c
 
 		chunk_len = eol - sol;
 
-		assert (g_utf8_validate ((const gchar*)text[sol], chunk_len, NULL));
+		//TODO assert (g_utf8_validate ((const gchar*)text[sol], chunk_len, NULL));
 
-		/* insert the paragraph in the current line just after the cursor position */
+		/* insert the paragraph in the current line just after the cursor position. */
 		line_iter->insert(line_iter.byte_offset, &text[sol], chunk_len);
+
+		/* We modify an existing node, so we must fix the augmented data after insertion. */
+		post_insert_augmentation_fixup(line_iter.node);
 
 		/* advance the char_iterator by chunk_len bytes */
 		iter.forward_bytes(chunk_len);
@@ -163,13 +163,13 @@ TextRBTree::char_iterator TextRBTree::insert(const char_iterator& _iter, const c
 		line = new TextLine(
 				*tmp,
 				iter.byte_offset,
-				iter->bytes());
+				iter->bytes() - iter.byte_offset);
 		line_iter->erase(iter.byte_offset, iter->bytes());
 
 		/* insert the new line after the current line. The returned
 		 * char_iterator should point to the beginning of the new line.
 		 */
-		++line_iter;
+		line_iter.forward_bytes(chunk_len); /* line_iter is still at the origional insert point, so we must move it. */
 		iter = insert(line_iter, *line);
 	}
 
@@ -182,6 +182,82 @@ TextRBTree::char_iterator TextRBTree::insert(const char_iterator& iter, const Te
 	return insert(new Node(this, NULL, line), iter);
 }
 
+void TextRBTree::append(const TextLine& line)
+{
+	Node *z, *y;
+
+	/* Append line to the back of the buffer.
+	 * This means it must be a right child of the tree maximum. */
+
+	/* add z as child of y. */
+	z = new Node(this, NULL, line);
+
+	y = tree_maximum(root);
+
+	if (y == nil) /* Tree is emtpy. */
+	{
+		root = z;
+		z->parent = nil;
+	}
+	else
+	{
+		y->right = z;
+		z->parent = y;
+	}
+
+	z->left = nil;
+	z->right = nil;
+	z->color = RED;
+
+	/* Also fix predecessor and successor pointers. */
+	z->pred = y;
+	z->succ = nil;
+	if (z->pred != nil) z->pred->succ = z;
+	if (z->succ != nil) z->succ->pred = z;
+
+	post_insert_augmentation_fixup(z);
+
+	insert_fixup(z);
+}
+
+void TextRBTree::prefix(const TextLine& line)
+{
+	Node *z, *y;
+
+	/* Prefix line to the start of the buffer.
+	 * This means it must be a left child of the tree minimum. */
+
+	/* add z as child of y. */
+	z = new Node(this, NULL, line);
+
+	y = tree_minimum(root);
+
+	if (y == nil) /* Tree is emtpy. */
+	{
+		root = z;
+		z->parent = nil;
+	}
+	else
+	{
+		y->left = z;
+		z->parent = y;
+	}
+
+	z->left = nil;
+	z->right = nil;
+	z->color = RED;
+
+	/* Also fix predecessor and successor pointers. */
+	z->pred = nil;
+	z->succ = y;
+	if (z->pred != nil) z->pred->succ = z;
+	if (z->succ != nil) z->succ->pred = z;
+
+	post_insert_augmentation_fixup(z);
+
+	insert_fixup(z);
+}
+
 TextRBTree::char_iterator TextRBTree::begin(void) const
 {
 	return char_iterator(*tree_minimum(root));
@@ -190,9 +266,10 @@ TextRBTree::char_iterator TextRBTree::begin(void) const
 TextRBTree::char_iterator TextRBTree::back(void) const
 {
 	TextRBTree::char_iterator iter(*tree_maximum(root));
-	iter.byte_offset = iter.node->bytes - iter.node->left->bytes - iter.node->right->bytes;
-	iter.char_offset = iter.node->chars - iter.node->left->chars - iter.node->right->chars;
-	iter.col_offset = iter.node->cols - iter.node->left->cols - iter.node->right->cols;
+	iter.byte_offset = iter.node->line.bytes() - iter.node->left->bytes - iter.node->right->bytes;
+	iter.char_offset = iter.node->line.chars() - iter.node->left->chars - iter.node->right->chars;
+	iter.col_offset = iter.node->line.columns() - iter.node->left->cols - iter.node->right->cols;
+	iter.line_offset = iter.node->line.lines() - iter.node->left->lines - iter.node->right->lines;
 	return iter;
 }
 
@@ -369,6 +446,8 @@ void TextRBTree::insert_fixup(Node *z)
 			}
 		}
 	}
+	
+	root->color = BLACK;
 }
 
 void TextRBTree::post_erase_augmentation_fixup(Node *z)
@@ -534,8 +613,67 @@ TextRBTree::Node* TextRBTree::predecessor(Node *node) const
 
 TextRBTree::char_iterator TextRBTree::insert(Node *z, const iterator_base iter)
 {
-	return insert(z, iter.line_nr());
+	return insert(z, iter.node);
 }
+
+TextRBTree::char_iterator TextRBTree::insert(Node *z, Node *y)
+{
+	Node *x;
+	/* Insert z into the tree before y.
+	 * Returns an iterator to the inserted node.
+	 *
+	 * If the tree is emtpy, z becomes the root.
+	 * If iter is end() (and thus points to the nil node), append the line.
+	 * If y has a left subtree, insert as y->pred->right.
+	 * If y has no left subtree, insert as y->left.
+	 * */
+
+	/* Find the insert point for a node inserted before node y */
+
+	if (y == nil)
+	{
+		if (root == nil) /* the tree is empty. */
+		{
+			root = z;
+			z->parent = nil;
+		}
+		else /* iter is the end() iter, so append. */
+		{
+			x = tree_maximum(root);
+			x->right = z;
+			z->parent = x;
+		}
+	}
+	else if (y->left != nil) /* y has a left subtree. */
+	{
+		assert(tree_maximum(y->left) == y->pred);
+		y->pred->right = z;
+		z->parent = y->pred;
+	}
+	else  /* y has no left subtree. */
+	{
+		y->left = z;
+		z->parent = y;
+	}
+
+	z->left = nil;
+	z->right = nil;
+	z->color = RED;
+
+	/* Also fix predecessor and successor pointers. */
+	z->pred = predecessor(z);
+	z->succ = successor(z);
+	if (z->pred != nil) z->pred->succ = z;
+	if (z->succ != nil) z->succ->pred = z;
+
+	post_insert_augmentation_fixup(z);
+
+	insert_fixup(z);
+
+	/* Return a iterator to the inserted node. */
+	return TextRBTree::char_iterator(*z);
+}
+
 
 TextRBTree::char_iterator TextRBTree::insert(Node *z, int line_nr)
 {
@@ -571,6 +709,7 @@ TextRBTree::char_iterator TextRBTree::insert(Node *z, int line_nr)
 		}
 	}
 
+	/* add z as child of y. */
 	z->parent = y;
 
 	if (y == nil)
@@ -755,8 +894,8 @@ TextRBTree::iterator_base& TextRBTree::iterator_base::forward_bytes(unsigned int
 	if (node == tree->nil)
 		return *this;
 
-	while ( (node != tree->nil) && ((byte_offset + n) > node->bytes) ) {
-		n -= node->bytes - byte_offset;
+	while ( (node != tree->nil) && ((byte_offset + n) > (node->line.bytes() - 1)) ) {
+		n -= node->line.bytes() - byte_offset;
 		node = node->succ;
 		byte_offset = 0;
 	}
@@ -785,7 +924,7 @@ TextRBTree::iterator_base& TextRBTree::iterator_base::backward_bytes(unsigned in
 	while ( (node != tree->nil) && (byte_offset < n) ) {
 		n -= byte_offset;
 		node = node->pred;
-		byte_offset = node->bytes;
+		byte_offset = node->line.bytes() - 1;
 	}
 
 	if (node != tree->nil) {
@@ -809,8 +948,8 @@ TextRBTree::iterator_base& TextRBTree::iterator_base::forward_chars(unsigned int
 	if (node == tree->nil)
 		return *this;
 
-	while ( (node != tree->nil) && ((char_offset + n) > node->chars) ) {
-		n -= node->chars - char_offset;
+	while ( (node != tree->nil) && ((char_offset + n) > (node->line.chars() - 1)) ) {
+		n -= node->line.chars() - char_offset;
 		node = node->succ;
 		char_offset = 0;
 	}
@@ -839,7 +978,7 @@ TextRBTree::iterator_base& TextRBTree::iterator_base::backward_chars(unsigned in
 	while ( (node != tree->nil) && (char_offset < n) ) {
 		n -= char_offset;
 		node = node->pred;
-		char_offset = node->chars;
+		char_offset = node->line.chars() - 1;
 	}
 
 	if (node != tree->nil) {
@@ -863,8 +1002,8 @@ TextRBTree::iterator_base& TextRBTree::iterator_base::forward_cols(unsigned int 
 	if (node == tree->nil)
 		return *this;
 
-	while ( (node != tree->nil) && ((col_offset + n) > node->cols) ) {
-		n -= node->cols - col_offset;
+	while ( (node != tree->nil) && ((col_offset + n) > (node->line.columns() - 1)) ) {
+		n -= node->line.columns() - col_offset;
 		node = node->succ;
 		col_offset = 0;
 	}
@@ -893,7 +1032,7 @@ TextRBTree::iterator_base& TextRBTree::iterator_base::backward_cols(unsigned int
 	while ( (node != tree->nil) && (col_offset < n) ) {
 		n -= col_offset;
 		node = node->pred;
-		col_offset = node->cols;
+		col_offset = node->line.columns() - 1;
 	}
 
 	if (node != tree->nil) {
@@ -922,12 +1061,11 @@ TextRBTree::iterator_base& TextRBTree::iterator_base::forward_lines(unsigned int
 		node = node->succ;
 	}
 
-	if (node == tree->nil) {
-		byte_offset = 0;
-		char_offset = 0;
-		col_offset = 0;
-		line_offset = 0;
-	}
+	/* Always move to the start of the line. */
+	byte_offset = 0;
+	char_offset = 0;
+	col_offset = 0;
+	line_offset = 0;
 
 	return *this;
 }

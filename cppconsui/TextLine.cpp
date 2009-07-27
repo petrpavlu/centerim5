@@ -28,8 +28,21 @@ TextLine::TextLine()
 
 TextLine::TextLine(const TextLine &line, unsigned int index, unsigned int len)
 {
+	unsigned int from, to;
+
+	/* Do we need to copy the line at all? */
+	if (len == 0)
+		return;
+
+	/* Make this a copy of line. */
 	*this = line;
-	erase(index+len+1, chars());
+
+	/* Erase the back part of the line. */
+	to = chars();
+	from = MAX(index+len+1, to);
+	erase(from, to);
+
+	/* Erase everything upto the index'th byte. */
 	erase(0, index);
 }
 
@@ -61,29 +74,29 @@ void TextLine::insert(unsigned int index, const char* str, unsigned int len)
 
 void TextLine::erase(unsigned int from, unsigned int to)
 {
-	assert(from < to);
+	assert(from <= to);
 
 	tree.erase(tree.get_iter_at_char_offset(from), tree.get_iter_at_char_offset(to));
 }
 
 unsigned int TextLine::bytes(void)
 {
-	return tree.begin().bytes();
+	return tree.bytes();
 }
 
 unsigned int TextLine::chars(void)
 {
-	return tree.begin().chars();
+	return tree.chars();
 }
 
 unsigned int TextLine::columns(void)
 {
-	return tree.begin().cols();
+	return tree.cols();
 }
 
 unsigned int TextLine::lines(void)
 {
-	return tree.begin().lines();
+	return tree.lines();
 }
 
 gchar* TextLine::get_pointer_at_char_offset(unsigned int offset)
@@ -163,4 +176,19 @@ TextLine::char_iterator TextLine::reverse_back(void) const
 TextLine::char_iterator TextLine::reverse_end(void) const
 {
 	return tree.reverse_end();
+}
+
+TextLine::char_iterator TextLine::insert (const char_iterator iter, const char *text, int len)
+{
+	return tree.insert(iter, text, len);
+}
+
+/*TextLine::char_iterator TextLine::insert (const char *text, int len)
+{
+	return tree.insert(text, len);
+}*/
+
+TextLine::char_iterator TextLine::append (const char *text, int len)
+{
+	return tree.insert(tree.back(), text, len);
 }

@@ -44,6 +44,9 @@ class TextRBTree
 		char_iterator insert(const char_iterator& iter, const char* str, int len);
 		char_iterator insert(const char_iterator& iter, const TextLine &line);
 
+		void append(const TextLine& line);
+		void prefix(const TextLine& line);
+
 		/* We can only erase characters, not columns. */
 		char_iterator erase(char_iterator pos);
 		char_iterator erase(char_iterator start, char_iterator end);
@@ -257,6 +260,7 @@ class TextRBTree
 		/**/
 		char_iterator insert(Node *z, const iterator_base iter);
 		char_iterator insert(Node *z, int line_nr);
+		char_iterator insert(Node *z, Node *y);
 		line_iterator erase(Node *z);
 
 		Node* MakeNil(void);
@@ -294,6 +298,10 @@ class TextRBTree
 				unsigned int lines; /* Number of lines... */
 
 				TextLine line; /* The data we store in a node. */
+				unsigned int line_bytes;
+				unsigned int line_chars;
+				unsigned int line__cols;
+				
 
 			protected:
 

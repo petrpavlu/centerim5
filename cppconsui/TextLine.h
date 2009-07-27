@@ -70,7 +70,7 @@ class TextLine
 		char_iterator reverse_end(void) const;
 
 		char_iterator insert (const char_iterator iter, const char *text, int len);
-		char_iterator insert (const char *text, int len);
+		//char_iterator insert (const char *text, int len);
 
 		char_iterator append (const char *text, int len);
 

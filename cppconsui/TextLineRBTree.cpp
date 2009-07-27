@@ -58,7 +58,7 @@ TextLineRBTree& TextLineRBTree::operator=(const TextLineRBTree& tree)
 	root->pred = nil;
 	root->succ = nil;
 
-	iter = tree.begin();
+	iter = begin();
 	for (node = tree.tree_minimum(tree.root); node != tree.nil; node = node->succ) {
 		iter = insert(iter, node->str, node->str_bytes);
 	}	
@@ -142,8 +142,15 @@ TextLineRBTree::char_iterator TextLineRBTree::insert(const TextLineRBTree::char_
 		node->str_bytes = node->str_bytes + len;
 	}
 
-	node->str_chars = g_utf8_strlen(node->str, -1);
-	node->str_cols = width(node->str, node->str + node->str_bytes);
+	if (node->str == NULL) {
+		node->str_chars = 0;
+		node->str_cols = 0;
+	} else {
+		node->str_chars = g_utf8_strlen(node->str, -1);
+		node->str_cols = width(node->str, node->str + node->str_bytes);
+	}
+
+	/* node has changed, so update augmented data. */
 	post_update_augmentation_fixup(node);
 
 	retval.forward_bytes(len);
@@ -199,6 +206,26 @@ void TextLineRBTree::erase(TextLineRBTree::char_iterator start, TextLineRBTree::
 	node->str_cols = width(node->str, node->str + node->str_bytes);
 
 	post_update_augmentation_fixup(node);
+}
+
+unsigned int TextLineRBTree::chars(void) const
+{
+	return root->chars;
+}
+
+unsigned int TextLineRBTree::bytes(void) const
+{
+	return root->bytes;
+}
+
+unsigned int TextLineRBTree::cols(void) const
+{
+	return root->cols;
+}
+
+unsigned int TextLineRBTree::lines(void) const
+{
+	return root->lines;
 }
 
 TextLineRBTree::char_iterator TextLineRBTree::begin(void) const
@@ -869,6 +896,8 @@ unsigned int TextLineRBTree::iterator_base::lines(void) const
 
 char* TextLineRBTree::iterator_base::operator*() const
 {
+	assert(node->str != NULL);
+
 	return node->str + byte_offset;
 }
 
@@ -898,7 +927,7 @@ TextLineRBTree::iterator_base& TextLineRBTree::iterator_base::forward_bytes(unsi
 	if (node == tree->nil)
 		return *this;
 
-	while ( (node != tree->nil) && ((byte_offset + n) > node->str_bytes) ) {
+	while ( (node != tree->nil) && ((byte_offset + n) > (node->str_bytes - 1)) ) {
 		n -= node->str_bytes - byte_offset;
 		node = node->succ;
 		byte_offset = 0;
@@ -927,7 +956,7 @@ TextLineRBTree::iterator_base& TextLineRBTree::iterator_base::backward_bytes(uns
 	while ( (node != tree->nil) && (byte_offset < n) ) {
 		n -= byte_offset;
 		node = node->pred;
-		byte_offset = node->str_bytes;
+		byte_offset = node->str_bytes - 1;
 	}
 
 	if (node != tree->nil) {
@@ -950,7 +979,7 @@ TextLineRBTree::iterator_base& TextLineRBTree::iterator_base::forward_chars(unsi
 	if (node == tree->nil)
 		return *this;
 
-	while ( (node != tree->nil) && ((char_offset + n) > node->str_chars) ) {
+	while ( (node != tree->nil) && ((char_offset + n) > (node->str_chars - 1)) ) {
 		n -= node->str_chars - char_offset;
 		node = node->succ;
 		char_offset = 0;
@@ -979,7 +1008,7 @@ TextLineRBTree::iterator_base& TextLineRBTree::iterator_base::backward_chars(uns
 	while ( (node != tree->nil) && (char_offset < n) ) {
 		n -= char_offset;
 		node = node->pred;
-		char_offset = node->str_chars;
+		char_offset = node->str_chars - 1;
 	}
 
 	if (node != tree->nil) {
@@ -1002,7 +1031,7 @@ TextLineRBTree::iterator_base& TextLineRBTree::iterator_base::forward_cols(unsig
 	if (node == tree->nil)
 		return *this;
 
-	while ( (node != tree->nil) && ((col_offset + n) > node->str_cols) ) {
+	while ( (node != tree->nil) && ((col_offset + n) > (node->str_cols - 1)) ) {
 		n -= node->str_cols - col_offset;
 		node = node->succ;
 		col_offset = 0;
@@ -1031,7 +1060,7 @@ TextLineRBTree::iterator_base& TextLineRBTree::iterator_base::backward_cols(unsi
 	while ( (node != tree->nil) && (col_offset < n) ) {
 		n -= col_offset;
 		node = node->pred;
-		col_offset = node->str_cols;
+		col_offset = node->str_cols - 1;
 	}
 
 	if (node != tree->nil) {

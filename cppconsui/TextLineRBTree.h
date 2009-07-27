@@ -47,6 +47,14 @@ class TextLineRBTree
 		void erase(char_iterator pos);
 		void erase(char_iterator start, char_iterator end);
 
+		/* Determine the total number of chars/bytes/columns
+		 * stored in the tree. lines() returns the number
+		 * of lines on screen when formatted. */
+		unsigned int chars(void) const;
+		unsigned int bytes(void) const;
+		unsigned int cols(void) const;
+		unsigned int lines(void) const;
+
 		/* Obtaining iterators for the string. */
 		char_iterator begin(void) const;
 		char_iterator back(void) const;
@@ -258,6 +266,7 @@ class TextLineRBTree
 				unsigned int bytes; /* Number of bytes stored in the substree rooted at this node. */
 				unsigned int chars; /* Number of characters... */
 				unsigned int cols; /* Number of terminal columns needed to display the text... */
+				unsigned int lines; /* Number of lines on screen when formatted. */
 
 				char *str; /* The data we store in a node. */
 				unsigned int str_bytes;

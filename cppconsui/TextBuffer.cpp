@@ -65,12 +65,17 @@ TextBuffer::char_iterator TextBuffer::reverse_end(void) const
 	return tree.reverse_end();
 }
 
-TextBuffer::char_iterator TextBuffer::insert(const TextBuffer::char_iterator _iter, const char *text, int len)
+TextBuffer::char_iterator TextBuffer::insert(const TextBuffer::char_iterator iter, const char *text, int len) 
 {
-	int chunk_len; /* number of characters in current chunk. */
-	int sol; /* start of line */
-	int eol; /* index of character just after last one in current chunk. */
-	int delim; /* index of paragraph delimiter */
+	return tree.insert(iter, text, len);
+}
+
+/*TextBuffer::char_iterator TextBuffer::insert(const TextBuffer::char_iterator _iter, const char *text, int len)
+{
+	int chunk_len; / number of characters in current chunk. /
+	int sol; / start of line /
+	int eol; / index of character just after last one in current chunk. /
+	int delim; / index of paragraph delimiter /
 	char_iterator line_iter(tree);
 	TextLine *line;
 	char_iterator iter(_iter);
@@ -86,7 +91,7 @@ TextBuffer::char_iterator TextBuffer::insert(const TextBuffer::char_iterator _it
 
 		find_paragraph_boundary (text + sol, len - sol, &delim, &eol);
 
-		/* make these relative to the start of the text */
+		/ make these relative to the start of the text /
 		delim += sol;
 		eol += sol;
 
@@ -98,48 +103,61 @@ TextBuffer::char_iterator TextBuffer::insert(const TextBuffer::char_iterator _it
 
 		chunk_len = eol - sol;
 
-		//TODO assert (g_utf8_validate ((const gchar*)text[sol]+1, 1, NULL));
+		TODO assert (g_utf8_validate ((const gchar*)text[sol]+1, 1, NULL));
 
-		/* insert the paragraph in the current line just after the cursor position */
+		/ insert the paragraph in the current line just after the cursor position /
 		line_iter->insert(line_iter.byte_offset, &text[sol], chunk_len);
 
-		/* advance the char_iterator by chunk_len bytes */
+		/ advance the char_iterator by chunk_len bytes /
 		iter.forward_bytes(chunk_len);
 
 		if (delim == eol)
 		{
-			/* chunk didn't end with a paragraph separator */
+			/ chunk didn't end with a paragraph separator /
 			assert (eol == len);
 			break;
 		}
 
-		/*
-		 * The chunk ended with a newline, so create a new TextLine
-		 * and move the remainder of the old line to it.
-		 */
+		/
+		  The chunk ended with a newline, so create a new TextLine
+		  and move the remainder of the old line to it.
+		 /
 		tmp = iter;
 		line = new TextLine(
 				*tmp,
 				iter.byte_offset,
 				iter->bytes());
 
-		/* insert the new line after the current line. The returned
-		 * char_iterator points to the beginning of the new line.
-		 */
+		/ insert the new line after the current line. The returned
+		  char_iterator points to the beginning of the new line.
+		 /
 		iter = tree.insert(++iter, *line);
 	}
 
 	return iter;
-}
+}*/
 
 TextBuffer::char_iterator TextBuffer::insert (const char *text, int len)
 {
-	return insert (cursor, text, len);
+	return tree.insert (cursor, text, len);
 }
 
-TextBuffer::char_iterator TextBuffer::append (const char *text, int len)
+void TextBuffer::append (const char *text, int len)
 {
-	return insert (back(), text, len);
+	TextLine line;
+
+	line.insert(0, text, len);
+
+	tree.append (line);
+}
+
+void TextBuffer::prefix (const char *text, int len)
+{
+	TextLine line;
+
+	line.insert(0, text, len);
+
+	tree.prefix (line);
 }
 
 TextBuffer::char_iterator TextBuffer::get_iter_at_cursor (void)
