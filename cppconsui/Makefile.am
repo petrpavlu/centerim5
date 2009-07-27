@@ -77,5 +77,5 @@ libcppconsui_la_SOURCES =\
 	TextView.h
 
 
-libcppconsui_la_CPPFLAGS = $(DEBUG_CFLAGS) $(GLIBMM_CFLAGS) $(CURSES_INCLUDEDIR)
+libcppconsui_la_CPPFLAGS = $(CFLAGS) $(GLIBMM_CFLAGS) $(CURSES_INCLUDEDIR) $(DEBUG_CFLAGS)
 libcppconsui_la_LIBADD = $(GLIBMM_LIBS) $(CURSES_LIBS)
