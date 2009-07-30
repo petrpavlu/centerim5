@@ -33,7 +33,7 @@ class TextLine
 		typedef TextLineRBTree::byte_iterator byte_iterator;
 
 		TextLine();
-		TextLine(const TextLine& line, unsigned int index, unsigned int num);
+		TextLine(const TextLine& line, unsigned int from, unsigned int to);
 		~TextLine();
 
 		TextLine(const TextLine &);

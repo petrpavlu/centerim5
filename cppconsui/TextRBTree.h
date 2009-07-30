@@ -237,6 +237,9 @@ class TextRBTree
 
 		TextRBTree& operator=(const TextRBTree&);
 
+		/* Split node z after the given charater offset. */
+		void split_node(Node *z, unsigned int offset);
+
 		/* Function to support RedBlackTree operations. */
 		void rotate_left(Node *x);
 		void rotate_right(Node *x);

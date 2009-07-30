@@ -26,24 +26,20 @@ TextLine::TextLine()
 {
 }
 
-TextLine::TextLine(const TextLine &line, unsigned int index, unsigned int len)
+TextLine::TextLine(const TextLine &line, unsigned int from, unsigned int to)
 {
-	unsigned int from, to;
-
 	/* Do we need to copy the line at all? */
-	if (len == 0)
+	if (from == to)
 		return;
 
 	/* Make this a copy of line. */
 	*this = line;
 
 	/* Erase the back part of the line. */
-	to = chars();
-	from = MIN(index+len, to);
-	erase(from, to);
+	erase(MIN(to+1, chars()), chars());
 
-	/* Erase everything upto the index'th byte. */
-	erase(0, MIN(index, to));
+	/* Erase everything upto the from'th character. */
+	erase(0, MIN(chars(), from));
 }
 
 TextLine::~TextLine()

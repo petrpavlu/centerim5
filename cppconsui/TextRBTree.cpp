@@ -82,6 +82,7 @@ TextRBTree::Node::Node(TextRBTree *tree, Node *parent)
 {
 }
 
+/*TODO remove this constructor?*/
 TextRBTree::Node::Node(TextRBTree *tree, Node *parent, const TextLine &line)
 : tree(tree)
 , color(BLACK)
@@ -111,7 +112,6 @@ TextRBTree::char_iterator TextRBTree::insert(const char_iterator& _iter, const c
 	int eol; /* index of character just after last one in current chunk. */
 	int delim; /* index of paragraph delimiter */
 	char_iterator line_iter(*this);
-	TextLine *line;
 	char_iterator iter(_iter);
 	line_iterator tmp;
 
@@ -159,22 +159,23 @@ TextRBTree::char_iterator TextRBTree::insert(const char_iterator& _iter, const c
 		 * The chunk ended with a newline, so create a new TextLine
 		 * and move the remainder of the old line to it.
 		 */
-		tmp = iter;
-		line = new TextLine(
-				*tmp,
-				iter.char_offset - 1,
-				iter->chars() - iter.char_offset + 1);
-		line_iter->erase(iter.char_offset, iter->chars());
+		//tmp = iter;
+		//line = new TextLine(
+		//		*tmp,
+		//		iter.char_offset - 1,
+		//		iter->chars());
+		//line_iter->erase(iter.char_offset, iter->chars());
+		split_node(iter.node, iter.char_offset - 1);
 
 		/* insert the new line after the current line. The returned
 		 * char_iterator should point to the beginning of the new line.
 		 */
 		line_iter.forward_bytes(chunk_len); /* line_iter is still at the origional insert point, so we must move it. */
 
-		if (line->chars() > 0)
-			iter = insert(line_iter, *line);
-		else
-			iter = line_iter;
+		//if (line->chars() > 0)
+		//	iter = insert(line_iter, *line);
+		//else
+		//	iter = line_iter;
 	}
 
 	return iter;
@@ -295,6 +296,34 @@ TextRBTree::char_iterator TextRBTree::reverse_back(void) const
 TextRBTree::char_iterator TextRBTree::reverse_end(void) const
 {
 	return char_iterator(*nil);
+}
+
+/* Split node z after the given charater offset. */
+void TextRBTree::split_node(Node *node, unsigned int offset)
+{
+	TextLine* line;
+
+	/* Make sure we do not split a line at the end or beginning. */
+	if ( (offset == 0) || (offset >= node->line.chars()-1) )
+		return;
+
+	assert( *node->line.get_pointer_at_char_offset(offset) == '\n');
+
+	/* Make sure we split at a valid location. */
+	if ( *node->line.get_pointer_at_char_offset(offset) != '\n')
+		return;
+
+	/* Create a new line containing everything after the newline character. */
+	line = new TextLine(
+			node->line,
+			offset,
+			node->line.chars());
+
+	/* Remove everything after the newline character. */
+	node->line.erase(offset + 1, node->line.chars());
+
+	/* Insert the line. */
+	insert(new Node(this, NULL, *line), node->succ);
 }
 
 void TextRBTree::rotate_left(Node *x)
