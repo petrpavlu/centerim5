@@ -7,7 +7,7 @@ automatic resizing is implemented yet and this just happens
 to be the size of my terminal window i develop in. Also make
 sure you run in an utf-8 locale.
 
-If you dont like this the open ~/.centerim/prefs.xml and look
+If you dont like this the open ~/.centerim5/prefs.xml and look
 for `dimensions'. Here you can change the position and
 dimensions of the different windows.
 
@@ -27,7 +27,7 @@ will fill. Select a lead in this tree and press enter to open a
 conversation window. Start typing, and press ^x to send the message.
 
 If accounts do not automatically logon after adding them, open
-~/.centerim/accounts.xml and set the auto-login setting from 0 to 1.
+~/.centerim5/accounts.xml and set the auto-login setting from 0 to 1.
 
 You can also copy the pidgin xml files to configure cim5.
 
@@ -35,7 +35,7 @@ Incoming messages should automatically open a new conversation window.
 Incoming messages from a contact not in the list will currently cause
 cim5 to shutdown with an abort.
 
-Debugging can be enabled in ~/.centerim/prefs.xml. Look for settings
+Debugging can be enabled in ~/.centerim5/prefs.xml. Look for settings
 with a `log_level' prefix. Valid values are none and debug (and some
 others i dont remember right now).
 

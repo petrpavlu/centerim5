@@ -24,7 +24,7 @@
 #define _(s) gettext(s)
 
 //TODO: configurable path using ./configure
-#define CIM_CONFIG_PATH		".centerim"
+#define CIM_CONFIG_PATH		".centerim5"
 
 #define CONF_PLUGIN_SAVE_PREF	"/centerim/plugins/loaded"
 
