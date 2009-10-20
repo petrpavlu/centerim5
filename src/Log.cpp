@@ -130,8 +130,19 @@ void Log::Write(Log::Type type, Log::Level level, const std::string text)
 void Log::WriteToFile(const std::string test)
 {
 	if (conf->GetDebugEnabled()) {
-	//TODO if debugging is enabled, write to file
-	//TODO try to use the log.h api of libpurple
+		/*TODO DM added a quick and dirty debug to file function
+		 *It's not to nice to open and close the file all the time...
+		 *Anyway, it works for now and it should be reviewed again,
+		 *probably following the old todo which was:
+		 *
+		 *TODO try to use the log.h api of libpurple
+		 */
+
+		gchar *pref = g_strconcat(CONF_PREFIX, "log/filename", NULL);
+		gchar *filename = g_build_filename(purple_home_dir(), CIM_CONFIG_PATH, conf->GetString(pref, "debug"), NULL);
+		FILE *file = fopen(filename, "a+");
+		fprintf(file, "%s", test.c_str());
+		fclose(file);
 	}
 }
 
