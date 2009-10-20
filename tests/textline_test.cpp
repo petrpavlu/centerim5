@@ -167,7 +167,7 @@ int main(int argc, char **argv)
 	line = new TextLine();
 	line->insert(0, STR1, strlen(STR1));
 
-	std::cout << "Counting the number of bytes, chars and colunms (latin, should be: " 
+	std::cout << "Counting the number of bytes, chars and colunms (utf8), should be: " 
 		<< line->bytes() << ", " << line->chars() << ", " << line->columns() << std::endl;
 	bytecount = charcount = colcount = 0;
 
@@ -193,7 +193,7 @@ int main(int argc, char **argv)
 	line = new TextLine();
 	line->insert(0, STR3, strlen(STR3));
 
-	std::cout << "Counting the number of bytes, chars and colunms (latin, should be: " 
+	std::cout << "Counting the number of bytes, chars and colunms (latin), should be: " 
 		<< line->bytes() << ", " << line->chars() << ", " << line->columns() << std::endl;
 	bytecount = charcount = colcount = 0;
 
