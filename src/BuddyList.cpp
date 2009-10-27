@@ -18,13 +18,7 @@
  *
  * */
 
-//TODO: configurable path using ./configure
-#define CIM_CONFIG_PATH		".centerim"
-
-#define CONF_PLUGIN_SAVE_PREF	"/centerim/plugins/loaded"
-
-#define EXCEPTION_NONE			0
-#define EXCEPTION_PURPLE_CORE_INIT	100
+#include "Defines.h"
 
 #include "BuddyList.h"
 
