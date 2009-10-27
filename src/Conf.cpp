@@ -18,7 +18,6 @@
  *
  * */
 
-
 #include "Conf.h"
 
 #include <cppconsui/CppConsUI.h>

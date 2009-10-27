@@ -21,21 +21,11 @@
 #ifndef __DEFINES_H__
 #define __DEFINES_H__
 
-#ifdef ENABLE_NLS
-
-#include <libintl.h>
-#define _(s)	gettext(s)
-
-#else
-
-#define _(s)	(s)
-
-#endif
+#define _(s) gettext(s)
 
 //TODO: configurable path using ./configure
 #define CIM_CONFIG_PATH		".centerim5"
 
-#define CONF_PREFIX            "/centerim/"
 #define CONF_PLUGIN_SAVE_PREF	"/centerim/plugins/loaded"
 
 #define EXCEPTION_NONE			0

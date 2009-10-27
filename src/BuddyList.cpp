@@ -18,7 +18,13 @@
  *
  * */
 
-#include "Defines.h"
+//TODO: configurable path using ./configure
+#define CIM_CONFIG_PATH		".centerim5"
+
+#define CONF_PLUGIN_SAVE_PREF	"/centerim/plugins/loaded"
+
+#define EXCEPTION_NONE			0
+#define EXCEPTION_PURPLE_CORE_INIT	100
 
 #include "BuddyList.h"
 

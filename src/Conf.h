@@ -27,9 +27,15 @@
 
 #include <string>
 
-#include "Defines.h"
+//TODO: configurable path using ./configure
+#define CIM_CONFIG_PATH		".centerim5"
+#define CONF_PREFIX		"/centerim/"
 
-//TODO Do those REALLY belong here?
+#define CONF_PLUGIN_SAVE_PREF	"/centerim/plugins/loaded"
+
+#define EXCEPTION_NONE			0
+#define EXCEPTION_PURPLE_CORE_INIT	100
+
 #define CONF_DEFAULT_LOG_MAX_LINES	1000
 #define CONF_DEFAULT_LOG_MIN_LINES	10
 
