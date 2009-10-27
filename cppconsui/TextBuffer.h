@@ -43,6 +43,14 @@ class TextBuffer
 		char_iterator reverse_back(void) const;
 		char_iterator reverse_end(void) const;
 
+		line_iterator begin_line(void) const;
+		line_iterator back_line(void) const;
+		line_iterator end_line(void) const;
+
+		line_iterator reverse_begin_line(void) const;
+		line_iterator reverse_back_line(void) const;
+		line_iterator reverse_end_line(void) const;
+
 		char_iterator insert (const char_iterator iter, const char *text, int len);
 		char_iterator insert (const char *text, int len);
 

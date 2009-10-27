@@ -36,6 +36,7 @@ class TextRBTree
 		class iterator_base;
 		class char_iterator;
 		class column_iterator;
+		class line_iterator;
 
 		TextRBTree();
 		~TextRBTree();
@@ -51,7 +52,7 @@ class TextRBTree
 		char_iterator erase(char_iterator pos);
 		char_iterator erase(char_iterator start, char_iterator end);
 
-		/* Obtaining iterators for the string. */
+		/* Obtaining iterators for the stored text. */
 		char_iterator begin(void) const;
 		char_iterator back(void) const;
 		char_iterator end(void) const;
@@ -60,7 +61,15 @@ class TextRBTree
 		char_iterator reverse_back(void) const;
 		char_iterator reverse_end(void) const;
 
-		char_iterator get_iterator_at_char_offset(unsigned int index) const;
+		line_iterator begin_line(void) const;
+		line_iterator back_line(void) const;
+		line_iterator end_line(void) const;
+
+		line_iterator reverse_begin_line(void) const;
+		line_iterator reverse_back_line(void) const;
+		line_iterator reverse_end_line(void) const;
+
+		line_iterator get_iterator_at_char_offset(unsigned int index) const;
 
 		/* Iterator for the tree. */
 		class iterator_base

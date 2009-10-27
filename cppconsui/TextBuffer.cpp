@@ -65,6 +65,36 @@ TextBuffer::char_iterator TextBuffer::reverse_end(void) const
 	return tree.reverse_end();
 }
 
+TextBuffer::line_iterator TextBuffer::begin_line(void) const
+{
+	return tree.begin_line();
+}
+
+TextBuffer::line_iterator TextBuffer::back_line(void) const
+{
+	return tree.back_line();
+}
+
+TextBuffer::line_iterator TextBuffer::end_line(void) const
+{
+	return tree.end_line();
+}
+
+TextBuffer::line_iterator TextBuffer::reverse_begin_line(void) const
+{
+	return tree.reverse_begin_line();
+}
+
+TextBuffer::line_iterator TextBuffer::reverse_back_line(void) const
+{
+	return tree.reverse_back_line();
+}
+
+TextBuffer::line_iterator TextBuffer::reverse_end_line(void) const
+{
+	return tree.reverse_end_line();
+}
+
 TextBuffer::char_iterator TextBuffer::insert(const TextBuffer::char_iterator iter, const char *text, int len) 
 {
 	return tree.insert(iter, text, len);

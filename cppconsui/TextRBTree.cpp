@@ -298,6 +298,41 @@ TextRBTree::char_iterator TextRBTree::reverse_end(void) const
 	return char_iterator(*nil);
 }
 
+TextRBTree::line_iterator TextRBTree::begin_line(void) const
+{
+	return line_iterator(*tree_minimum(root));
+}
+
+TextRBTree::line_iterator TextRBTree::back_line(void) const
+{
+	TextRBTree::line_iterator iter(*tree_maximum(root));
+	iter.byte_offset = 0;
+	iter.char_offset = 0;
+	iter.col_offset = 0;
+	iter.line_offset = 0;
+	return iter;
+}
+
+TextRBTree::line_iterator TextRBTree::end_line(void) const
+{
+	return line_iterator(*nil);
+}
+
+TextRBTree::line_iterator TextRBTree::reverse_begin_line(void) const
+{
+	return back_line();
+}
+
+TextRBTree::line_iterator TextRBTree::reverse_back_line(void) const
+{
+	return begin_line();
+}
+
+TextRBTree::line_iterator TextRBTree::reverse_end_line(void) const
+{
+	return line_iterator(*nil);
+}
+
 /* Split node z after the given charater offset. */
 void TextRBTree::split_node(Node *node, unsigned int offset)
 {

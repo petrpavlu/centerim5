@@ -21,6 +21,8 @@
 #include <cppconsui/TextBuffer.cpp>
 
 #include <iostream>
+#include <ostream>
+#include <stdio.h>
 #include <string.h>
 
 /*
@@ -43,7 +45,7 @@ int main(int argc, char **argv)
 	TextBuffer* buffer = NULL;
 	TextBuffer::char_iterator iter, end;
 	TextBuffer::line_iterator line_iter;
-	char c;
+	//char c;
 	char *s;
 	int j;
 
@@ -58,13 +60,29 @@ int main(int argc, char **argv)
 	buffer->insert(line_iter, STR13, strlen(STR13));
 	buffer->prefix(STR11, strlen(STR11));
 
-	std::cout << "== Printing a 4 line buffer ==" << std::endl;
+	std::cout << "== Printing a 4 line buffer (char iter) ==" << std::endl;
 	end = buffer->end();
 	for (iter = buffer->begin(); iter != end; iter++) {
 		s = *iter;
 		j = iter.char_bytes();
 		for (int i = 0; i < j; i++) {
 			printf("%c", s[i]);
+		}
+	}
+	std::cout << "== Reversed == (line iter) ====" << std::endl;
+	line_iter = buffer->back();
+	for (line_iter = buffer->reverse_begin_line(); line_iter != buffer->reverse_end_line(); line_iter--) {
+		end = line_iter;
+		end.forward_lines(1);
+
+		for (iter = line_iter; iter != end; iter++) {
+			int i;
+
+			s = *iter;
+			j = iter.char_bytes();
+			for (i = 0; i < j; i++) {
+				printf("%c", s[i]);
+			}
 		}
 	}
 	std::cout << "==============================" << std::endl;
