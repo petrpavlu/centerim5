@@ -54,9 +54,9 @@ centerim_LDADD =\
 
 # regenerate git-version.h if its content differs from the output of
 # git-version-gen
-g_get_cur = sed -ne "s/^\#[ \x09]*define[ \x09]\+GIT_VERSION[ \x09]\+\"\([0-9]\+.*\)\"/\1/p" \
-             2>/dev/null < git-version.h | tr -d '\012'
-g_subst_f  = sed -e "s/@GIT_VERSION@/$$VER_GIT/" < git-version.h.in > git-version.h
+g_get_cur = sed -ne "s/^\#[ \x09]*define[ \x09]\+GIT_VERSION[ \x09]\+\"\([^\"]\+\)\"/\1/p" \
+             2>/dev/null < $(builddir)/git-version.h | tr -d '\012'
+g_subst_f  = sed -e "s/@GIT_VERSION@/$$VER_GIT/" < $(srcdir)/git-version.h.in > $(builddir)/git-version.h
 
 # If the make we are using supports order-only targets we make git_version is
 # made an order-only prerequisite.  Order-only prerequisites are build before
