@@ -18,19 +18,13 @@
  *
  * */
 
-//TODO: configurable path using ./configure
-#define CIM_CONFIG_PATH		".centerim5"
-
-#define CONF_PLUGIN_SAVE_PREF	"/centerim/plugins/loaded"
-
-#define EXCEPTION_NONE			0
-#define EXCEPTION_PURPLE_CORE_INIT	100
-
+//TODO Does this REALLY belong here?
 #define INPUT_BUF_SIZE			64	//TODO is this reasonable? (pasting needs a somewhat larger buffer to be efficient)
 
 #include "CenterIM.h"
 #include "AccountStatusMenu.h"
 #include "GeneralMenu.h"
+#include "Defines.h"
 
 #include "CIMWindowManager.h"
 

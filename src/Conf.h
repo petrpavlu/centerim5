@@ -27,20 +27,7 @@
 
 #include <string>
 
-//TODO: configurable path using ./configure
-#define CIM_CONFIG_PATH		".centerim5"
-#define CONF_PREFIX		"/centerim/"
-
-#define CONF_PLUGIN_SAVE_PREF	"/centerim/plugins/loaded"
-
-#define EXCEPTION_NONE			0
-#define EXCEPTION_PURPLE_CORE_INIT	100
-
-#define CONF_DEFAULT_LOG_MAX_LINES	1000
-#define CONF_DEFAULT_LOG_MIN_LINES	10
-
-#define CONF_DEFAULT_LOG_WINDOW_HEIGHT	6
-#define CONF_DEFAULT_LOG_WINDOW_WIDTH	80
+#include "Defines.h"
 
 class Log;
 

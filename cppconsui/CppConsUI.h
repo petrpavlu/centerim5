@@ -39,7 +39,6 @@
 
 #endif
 
-
 #if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
 //#define _XOPEN_SOURCE_EXTENDED
 #include <ncurses.h>

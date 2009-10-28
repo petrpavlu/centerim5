@@ -1,4 +1,4 @@
-bin_PROGRAMS = textline_test textbuffer_test
+check_PROGRAMS = textline_test textbuffer_test
 
 textline_test_SOURCES = \
 	textline_test.cpp

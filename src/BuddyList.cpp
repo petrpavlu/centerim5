@@ -18,20 +18,13 @@
  *
  * */
 
-//TODO: configurable path using ./configure
-#define CIM_CONFIG_PATH		".centerim5"
-
-#define CONF_PLUGIN_SAVE_PREF	"/centerim/plugins/loaded"
-
-#define EXCEPTION_NONE			0
-#define EXCEPTION_PURPLE_CORE_INIT	100
-
 #include "BuddyList.h"
 
 #include "Log.h"
 #include "Conf.h"
 
 #include "CIMWindowManager.h"
+#include "Defines.h"
 
 //TODO remove this include. non-cppconsui classes may not touch area member
 #include <cppconsui/ConsuiCurses.h>

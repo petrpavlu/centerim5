@@ -198,7 +198,7 @@ bool WindowManager::Draw(void)
 	WINDOW *window;
 
 	if (redrawpending) {
-		clear();
+		erase();
 		wnoutrefresh(stdscr);
 		
 		for (i = windows.rbegin(); i != windows.rend(); i++) {
