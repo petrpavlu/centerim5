@@ -18,14 +18,13 @@
  *
  * */
 
-#include "Defines.h"
-
 //TODO Does this REALLY belong here?
 #define INPUT_BUF_SIZE			64	//TODO is this reasonable? (pasting needs a somewhat larger buffer to be efficient)
 
 #include "CenterIM.h"
 #include "AccountStatusMenu.h"
 #include "GeneralMenu.h"
+#include "Defines.h"
 
 #include "CIMWindowManager.h"
 

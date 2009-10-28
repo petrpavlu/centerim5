@@ -18,14 +18,13 @@
  *
  * */
 
-#include "Defines.h"
-
 #include "BuddyList.h"
 
 #include "Log.h"
 #include "Conf.h"
 
 #include "CIMWindowManager.h"
+#include "Defines.h"
 
 //TODO remove this include. non-cppconsui classes may not touch area member
 #include <cppconsui/Curses.h>

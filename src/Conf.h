@@ -29,13 +29,6 @@
 
 #include "Defines.h"
 
-//TODO Do those REALLY belong here?
-#define CONF_DEFAULT_LOG_MAX_LINES	1000
-#define CONF_DEFAULT_LOG_MIN_LINES	10
-
-#define CONF_DEFAULT_LOG_WINDOW_HEIGHT	6
-#define CONF_DEFAULT_LOG_WINDOW_WIDTH	80
-
 class Log;
 
 class Conf
