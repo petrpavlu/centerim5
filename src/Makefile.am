@@ -54,20 +54,12 @@ centerim_LDADD =\
 
 # regenerate git-version.h if its content differs from the output of
 # git-version-gen
-g_get_cur = sed -ne "s/^\#[ \x09]*define[ \x09]\+GIT_VERSION[ \x09]\+\"\([0-9]\+.*\)\"/\1/p" \
-             2>/dev/null < git-version.h | tr -d '\012'
-g_subst_f  = sed -e "s/@GIT_VERSION@/$$VER_GIT/" < git-version.h.in > git-version.h
 
-# If the make we are using supports order-only targets we make git_version is
-# made an order-only prerequisite.  Order-only prerequisites are build before
-# the target(s) but do not lead to a rebuild of the target(s).
-ORDER_ONLY = @ORDER_ONLY@
-$(centerim_OBJECTS) git-version.h : $(ORDER_ONLY) git_version
-.PHONY: git_version
+git-version: .force_git_version
+	@$(top_srcdir)/misc/git-version-gen $(top_srcdir)/.version git-version || echo "GIT version updated successfuly"
 
-git_version: git-version.h.in
-	VER_FILE=`$(g_get_cur)` || true; \
-	VER_GIT=`cd $(top_srcdir); ./misc/git-version-gen .version`; \
-	if [ -z "$$VER_FILE" ] || [ "$$VER_FILE" != "$$VER_GIT" ]; then \
-		$(g_subst_f); \
-	fi
+git-version.h : git-version git-version.h.in
+	@VER_GIT=`cat git-version 2>/dev/null` || true; \
+	sed -e "s/@GIT_VERSION@/$$VER_GIT/" < git-version.h.in > git-version.h
+
+.PHONY: .force_git_version

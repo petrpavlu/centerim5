@@ -28,10 +28,12 @@ scriptversion=2007-11-03.22
 
 case $# in
     1) ;;
-    *) echo 1>&2 "Usage: $0 \$srcdir/.version"; exit 1;;
+    2) ;;
+    *) echo 1>&2 "Usage: $0 \$srcdir/.version [output_version_file]"; exit 1;;
 esac
 
 tarball_version_file=$1
+output_version_file=$2
 nl='
 '
 
@@ -52,11 +54,11 @@ fi
 if test -n "$v"
 then
     : # use $v
-elif test -d .git \
-    && v=`git describe --abbrev=4 HEAD 2>/dev/null` \
+elif v=`git describe --abbrev=4 HEAD 2>/dev/null` \
     && case $v in
 	 # FIXME: remove this after v6.10.
 	 COREUTILS-[0-9]*) v=`echo "$v" | sed 's/^COREUTILS-//;s/_/./g'` ;;
+	 cim[0-9]*) v=`echo "$v" | sed 's/^cim//;s/_/./g'` ;;
 	 [0-9]*) ;;
 	 *) (exit 1) ;;
        esac
@@ -81,8 +83,17 @@ case "$dirty" in
 	esac ;;
 esac
 
-# Omit the trailing newline, so that m4_esyscmd can use the result directly.
-echo "$v" | tr -d '\012'
+if test -z "$output_version_file" ; then 
+	# Omit the trailing newline, so that m4_esyscmd can use the result directly.
+	echo "$v" | tr -d '\012'
+else
+	old_v=`cat $output_version_file 2>/dev/null`
+	if test "$old_v" != "$v" ; then
+		echo "$v" > $output_version_file
+		exit 1
+	fi
+fi
+	
 
 # Local variables:
 # eval: (add-hook 'write-file-hooks 'time-stamp)
