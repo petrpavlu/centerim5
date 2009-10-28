@@ -93,3 +93,6 @@ TAGS
 /src/centerim
 /src/git-version.h
 /src/git-version
+doc/cppconsui*
+doc/html
+doc/latex
