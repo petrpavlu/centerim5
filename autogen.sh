@@ -6,9 +6,14 @@ sh() {
 }
 
 export WANT_AUTOMAKE=1.9
+libtoolize=`sh misc/PrintPath glibtoolize libtoolize libtoolize15 libtoolize14`
+if [ "x$libtoolize" = "x" ]; then
+	echo "libtoolize not found in path"
+	exit 1
+fi
 
 sh autopoint --force || exit 1 # for GNU gettext
-sh libtoolize --copy --force --automake || exit 1
+sh $libtoolize --copy --force --automake || exit 1
 sh aclocal -I m4 $ACLOCAL_FLAGS || exit 1
 sh autoheader || exit 1
 sh autoconf || exit 1

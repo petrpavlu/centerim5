@@ -18,7 +18,7 @@
  *
  * */
 
-#include "Curses.h"
+#include "ConsuiCurses.h"
 #include "Button.h"
 #include "Keys.h"
 

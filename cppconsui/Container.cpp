@@ -20,9 +20,9 @@
 
 #include <algorithm>
 
-#include <Curses.h>
-#include <Container.h>
-#include <Keys.h>
+#include "ConsuiCurses.h"
+#include "Container.h"
+#include "Keys.h"
 
 /* NOTES:
  * Widgets added to a container will be deleted by the

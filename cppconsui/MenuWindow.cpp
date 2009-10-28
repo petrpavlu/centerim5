@@ -18,7 +18,7 @@
  *
  * */
 
-#include "Curses.h"
+#include "ConsuiCurses.h"
 #include "TextBrowser.h"
 #include "Keys.h"
 

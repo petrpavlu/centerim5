@@ -28,7 +28,7 @@
 #include <curses.h>
 #endif
 
-#include "Curses.h"
+#include "ConsuiCurses.h"
 
 class ColorScheme
 {

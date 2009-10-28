@@ -24,7 +24,7 @@
 #include "Keys.h"
 #include "Container.h"
 
-#include "Curses.h"
+#include "ConsuiCurses.h"
 #if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
 #include <ncurses.h>
 #else

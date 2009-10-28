@@ -18,7 +18,7 @@
  *
  * */
 
-#include "Curses.h"
+#include "ConsuiCurses.h"
 #include "ScrollPane.h"
 
 ScrollPane::ScrollPane(Widget& parent, int x, int y, int w, int h, int scrollw, int scrollh)

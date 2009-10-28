@@ -18,7 +18,7 @@
  *
  * */
 
-#include "Curses.h"
+#include "ConsuiCurses.h"
 #include "Panel.h"
 #include "LineStyle.h"
 #include "Widget.h"

@@ -34,7 +34,7 @@
 #include "CIMWindowManager.h"
 
 //TODO remove this include. non-cppconsui classes may not touch area member
-#include <cppconsui/Curses.h>
+#include <cppconsui/ConsuiCurses.h>
 
 
 #include <cppconsui/Keys.h>

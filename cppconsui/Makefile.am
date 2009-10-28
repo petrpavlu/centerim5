@@ -4,7 +4,7 @@ lib_LTLIBRARIES = libcppconsui.la
 libcppconsui_la_SOURCES =\
 	Adjustment.cpp \
 	Adjustment.h \
-	Curses.h \
+	ConsuiCurses.h \
 	Container.cpp \
 	Container.h \
 	ColorScheme.h \

@@ -21,7 +21,7 @@
 /* LoadHistory taken almost verbatim from pidgin/plugins/history.c */
 
 //TODO remove this include
-#include <cppconsui/Curses.h>
+#include <cppconsui/ConsuiCurses.h>
 
 #include "Conversation.h"
 #include "CIMWindowManager.h"

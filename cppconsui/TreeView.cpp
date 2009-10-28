@@ -21,7 +21,7 @@
 #include "TreeView.h"
 #include "Keys.h"
 
-#include "Curses.h"
+#include "ConsuiCurses.h"
 
 #include "ScrollPane.h"
 #include "LineStyle.h"

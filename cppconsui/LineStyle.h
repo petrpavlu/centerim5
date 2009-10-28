@@ -22,7 +22,6 @@
 #define __LINESTYLE_H__
 
 #if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
-//#define _XOPEN_SOURCE_EXTENDED
 #include <ncurses.h>
 #else
 #include <curses.h>
