@@ -38,49 +38,29 @@
 
 #include <string.h>
 
-TextEntry::TextEntry(Widget& parent, int x, int y, int w, int h, const gchar *fmt, ...)
-: Label(parent, x, y, w, h, NULL)
+TextEntry::TextEntry(Widget& parent, int x, int y, int w, int h, const gchar *text_)
+: Label(parent, x, y, w, h, text_)
 , current_pos(0)
 , selection_bound(0)
 , editable(true)
 , obscured(false)
 , flags(0)
 {
-        va_list args;
-
-	g_free(text);
-
-        va_start(args, fmt);
-	text_size = g_vasprintf(&text, fmt, args);
-        va_end(args);
-
-	n_bytes = text_size;
-	text_length = g_utf8_strlen(text, text_size);
-	set_position(text_size);
+	set_position(text_size); // @TODO should it be text_size or text_length ?
 
 	can_focus = true;
 	DeclareBindables();
 	BindActions();
 }
 
-TextEntry::TextEntry(Widget& parent, int x, int y, const gchar *fmt, ...)
-: Label(parent, x, y, NULL)
+TextEntry::TextEntry(Widget& parent, int x, int y, const gchar *text_)
+: Label(parent, x, y, text_)
 , current_pos(0)
 , selection_bound(0)
 , editable(true)
 , obscured(false)
 , flags(0)
 {
-        va_list args;
-
-	g_free(text);
-
-        va_start(args, fmt);
-	text_size = g_vasprintf(&text, fmt, args);
-        va_end(args);
-
-	n_bytes = text_size;
-	text_length = g_utf8_strlen(text, text_size);
 	set_position(text_size);
 
 	Resize(width(text), 1);

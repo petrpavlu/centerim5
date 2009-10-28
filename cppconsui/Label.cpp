@@ -26,48 +26,26 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 
-Label::Label(Widget& parent, int x, int y, int w, int h, const char *fmt, ...)
+Label::Label(Widget& parent, int x, int y, int w, int h, const char *text_)
 : Widget(parent, x, y, w, h)
-, text(NULL)
 , text_max_length(MAX_SIZE)
+, text(NULL)
 {
-        va_list args;
-
-        va_start(args, fmt);
-	text_size = g_vasprintf(&text, fmt, args);
-        va_end(args);
-
-	n_bytes = text_size;
-	text_length = g_utf8_strlen(text, text_size);
-	//TODO text may be no longer than text_max_length
+	_SetText(text_);
 }
 
-Label::Label(Widget& parent, int x, int y, const char *fmt, ...)
+Label::Label(Widget& parent, int x, int y, const char *text_)
 : Widget(parent, x, y, 0, 0)
-, text(NULL)
 , text_max_length(MAX_SIZE)
+, text(NULL)
 {
-        va_list args;
-
-        va_start(args, fmt);
-	text_size = g_vasprintf(&text, fmt, args);
-        va_end(args);
-
-	n_bytes = text_size;
-	text_length = g_utf8_strlen(text, text_size);
-	//TODO  text may be no longer than text_max_length
-
-	if (text) {
-		Resize(width(text), 1);
-	} else {
-		Resize(1, 1);
-	}
+	_SetText(text_);
+	Resize(width(text), 1);
 }
 
 Label::~Label()
 {
-	if (text)
-		g_free(text);
+	g_free(text); // it is always allocated
 }
 
 void Label::Draw(void)
@@ -80,15 +58,10 @@ void Label::Draw(void)
 	Widget::Draw();
 }
 
-void Label::SetText(const gchar *str)
+void Label::SetText(const gchar *text_)
 {
-	//TODO may be no longer than text_max_length
-	if (text)
-		g_free(text);
-
-	text = g_strdup(str);
-	text_size = strlen(str);
-	text_length = g_utf8_strlen(text, text_size);
+	g_free(text); // it always needs to be allocated
+	_SetText(text_);
 
 	wclear(area->w);
 	signal_redraw(this);
@@ -97,4 +70,14 @@ void Label::SetText(const gchar *str)
 const gchar* Label::GetText(void)
 {
 	return text;
+}
+
+void Label::_SetText(const gchar *text_)
+{
+	assert(text_); 
+	//@TODO handle reallocation
+	text = g_strndup(text_,text_max_length);
+	text_size = strlen(text);
+	n_bytes = text_size;
+	text_length = g_utf8_strlen(text, text_size);
 }

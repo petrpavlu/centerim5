@@ -37,24 +37,25 @@ class Label
 : public Widget
 {
 	public:
-		Label(Widget& parent, int x, int y, int w, int h, const gchar *fmt, ...);
-		Label(Widget& parent, int x, int y, const char *fmt, ...);
+		Label(Widget& parent, int x, int y, int w, int h, const gchar *text_);
+		Label(Widget& parent, int x, int y, const char *text_);
 		virtual ~Label();
 
 		virtual void Draw(void);
 
-		void SetText(const gchar *str);
+		void SetText(const gchar *text_);
 		const gchar* GetText(void);
 
 	protected:
-		gchar *text; 
-		guint16 text_length;  /* length in use, in chars */
 		guint16 text_max_length;
+		gchar *text; 
 
 		guint16 text_size;    /* allocated size, in bytes */
 		guint16 n_bytes;      /* length in use, in bytes */
+		guint16 text_length;  /* length in use, in chars */
 
 	private:
+		void _SetText(const gchar *text_);
 		Label(void);
 		Label(const Label&);
 

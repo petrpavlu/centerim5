@@ -41,6 +41,7 @@ class Log
 			Level_critical,
 			Level_warning,
 			Level_debug }; //TODO check order with purpledebuglevel and glib log flags
+		// TODO -- why not use directly the either purpledebuglevel or glib log flags ? -- do we need this mapping ?
 
                 static Log* Instance(void);
                 static void Delete(void);

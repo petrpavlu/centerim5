@@ -52,7 +52,8 @@ Log* Log::Instance(void)
         return instance;
 }
 
-void Log::Delete(void)
+void Log::Delete(void) // TODO -- why this function ? it may cause crashes when it's deleted but some other objects keep the OLD object link
+
 {
         if (instance) {
                 delete instance;
@@ -92,7 +93,7 @@ Log::Log(void)
 
 Log::~Log(void)
 {
-	delete GetBorder(); //TODO what if NULL?
+	delete GetBorder(); //TODO what if NULL? -- if null then it does nothing.
 }
 
 void Log::Close(void)

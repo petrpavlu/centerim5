@@ -260,7 +260,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		TreeView::NodeReference parent_reference;
 
 		//TODO proper autosizing for labels
-		button = new Button(*accounts, 0, 0, width(label), 1, NULL,
+		button = new Button(*accounts, 0, 0, width(label), 1, "",
 				sigc::mem_fun(accounts, &TreeView::ActionToggleCollapsed));
 		parent_reference = accounts->AddNode(accounts->Root(), button, account);
 		accounts->Collapse(parent_reference);

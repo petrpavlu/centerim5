@@ -135,7 +135,7 @@ void Conversations::create_conversation(PurpleConversation *conv)
 {
 	g_assert(conv != NULL);
 
-	//TODO remov debug
+	//TODO remove debug
 	log->Write(Log::Type_cim, Log::Level_error, "create_conversation(purpleconv) calles: %p\n", conv);
 
 	PurpleConversationType type;

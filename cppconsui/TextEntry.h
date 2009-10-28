@@ -49,8 +49,8 @@ class TextEntry
 			FlagHidden = 1<<4
 		} Flag;
 
-		TextEntry(Widget& parent, int x, int y, int w, int h, const gchar *fmt, ...);
-		TextEntry(Widget& parent, int x, int y, const gchar *fmt, ...);
+		TextEntry(Widget& parent, int x, int y, int w, int h, const gchar *text_);
+		TextEntry(Widget& parent, int x, int y, const gchar *text_);
 
 		virtual ~TextEntry();
 
