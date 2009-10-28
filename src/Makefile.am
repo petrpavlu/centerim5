@@ -58,6 +58,8 @@ centerim_LDADD =\
 git-version: .force_git_version
 	@$(top_srcdir)/misc/git-version-gen $(top_srcdir)/.version git-version || echo "GIT version updated successfuly"
 
+git-version.cpp: git-version.h
+
 git-version.h : git-version git-version.h.in
 	@VER_GIT=`cat git-version 2>/dev/null` || true; \
 	sed -e "s/@GIT_VERSION@/$$VER_GIT/" < git-version.h.in > git-version.h

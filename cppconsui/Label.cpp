@@ -74,7 +74,7 @@ const gchar* Label::GetText(void)
 
 void Label::_SetText(const gchar *text_)
 {
-	assert(text_); 
+	g_assert(text_); 
 	//@TODO handle reallocation
 	text = g_strndup(text_,text_max_length);
 	text_size = strlen(text);
