@@ -31,7 +31,7 @@ Label::Label(Widget& parent, int x, int y, int w, int h, const char *text_)
 , text_max_length(MAX_SIZE)
 , text(NULL)
 {
-	_SetText(text_);
+	RealSetText(text_);
 }
 
 Label::Label(Widget& parent, int x, int y, const char *text_)
@@ -39,7 +39,7 @@ Label::Label(Widget& parent, int x, int y, const char *text_)
 , text_max_length(MAX_SIZE)
 , text(NULL)
 {
-	_SetText(text_);
+	RealSetText(text_);
 	Resize(width(text), 1);
 }
 
@@ -61,7 +61,7 @@ void Label::Draw(void)
 void Label::SetText(const gchar *text_)
 {
 	g_free(text); // it always needs to be allocated
-	_SetText(text_);
+	RealSetText(text_);
 
 	wclear(area->w);
 	signal_redraw(this);
@@ -72,7 +72,7 @@ const gchar* Label::GetText(void)
 	return text;
 }
 
-void Label::_SetText(const gchar *text_)
+void Label::RealSetText(const gchar *text_)
 {
 	g_assert(text_); 
 	//@TODO handle reallocation

@@ -55,7 +55,7 @@ class Label
 		guint16 text_length;  /* length in use, in chars */
 
 	private:
-		void _SetText(const gchar *text_);
+		void RealSetText(const gchar *text_);
 		Label(void);
 		Label(const Label&);
 
