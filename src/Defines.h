@@ -47,6 +47,7 @@
 #define CONF_PLUGIN_SAVE_PREF	"/centerim/plugins/loaded"
 
 #define EXCEPTION_NONE			0
+#define EXCEPTION_ICONV_INIT		1
 #define EXCEPTION_PURPLE_CORE_INIT	100
 
 #endif /* __DEFINES_H__ */

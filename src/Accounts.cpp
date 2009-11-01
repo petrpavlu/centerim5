@@ -20,12 +20,10 @@
 
 #define CONF_PLUGIN_SAVE_PREF	"/centerim/plugins/loaded"
 
-#define EXCEPTION_NONE			0
-#define EXCEPTION_PURPLE_CORE_INIT	100
-
 #include "Accounts.h"
 
 #include "Log.h"
+#include "Defines.h"
 
 #include <libpurple/account.h>
 #include <libpurple/savedstatuses.h>

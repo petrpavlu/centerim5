@@ -123,7 +123,7 @@ void BuddyListBuddy::Update(void)
 
 void BuddyListBuddy::ActionActivate(void)
 {
-	log->Write(Log::Level_debug, "Buddy activated!"); //TODO remove sometime
+	log->Write(Log::Level_debug, "Buddy activated!\n"); //TODO remove sometime
 
 	Conversations::Instance()->create_conversation(node);
 }
@@ -151,7 +151,7 @@ void BuddyListChat::Update(void)
 
 void BuddyListChat::ActionActivate(void)
 {
-	log->Write(Log::Level_debug, "Chat activated!");
+	log->Write(Log::Level_debug, "Chat activated!\n");
 
 	Conversations::Instance()->create_conversation(node);
 }
@@ -196,7 +196,7 @@ void BuddyListContact::Update(void)
 
 void BuddyListContact::ActionActivate(void)
 {
-	log->Write(Log::Level_debug, "Contact activated!");
+	log->Write(Log::Level_debug, "Contact activated!\n");
 }
 
 BuddyListGroup::BuddyListGroup(TreeView& parent, PurpleBlistNode *node)
@@ -222,6 +222,6 @@ void BuddyListGroup::Update(void)
 
 void BuddyListGroup::ActionActivate(void)
 {
-	log->Write(Log::Level_debug, "Group activated!");
+	log->Write(Log::Level_debug, "Group activated!\n");
 	treeview->ActionToggleCollapsed();
 }

@@ -62,6 +62,6 @@ git-version.cpp: git-version.h
 
 git-version.h : git-version git-version.h.in
 	@VER_GIT=`cat git-version 2>/dev/null` || true; \
-	sed -e "s/@GIT_VERSION@/$$VER_GIT/" < git-version.h.in > git-version.h
+	sed -e "s/@GIT_VERSION@/$$VER_GIT/" < $(srcdir)/git-version.h.in > git-version.h
 
 .PHONY: .force_git_version

@@ -41,6 +41,9 @@ int main (int argc, char **argv)
 		cim = CenterIM::Instance();
 	} catch (int i) {
 		switch (i) {
+		case EXCEPTION_ICONV_INIT:
+			fprintf(stderr, _("could not initialize iconv\n"));
+			break;
 		case EXCEPTION_PURPLE_CORE_INIT:
 			fprintf(stderr, _("could not initialize libpurple core\n"));
 			break;

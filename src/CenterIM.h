@@ -47,8 +47,7 @@ class CenterIM
 		void Quit(void);
 		void ScreenResized(void);
 
-		void SetLocale(const char *locale)
-			{ this->locale = locale; }
+		void SetLocale(const char *locale);
 		const char *GetLocale(void)
 			{ return locale; }
 
@@ -106,8 +105,9 @@ class CenterIM
 
 		static CenterIM* instance;
 
-		const char *locale;
 		const char *charset;
+		const char *locale;
+		GIConv converter;
 
 		GIOChannel *channel;
 		guint channel_id;

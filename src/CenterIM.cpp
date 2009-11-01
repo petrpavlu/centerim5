@@ -18,9 +18,6 @@
  *
  * */
 
-//TODO Does this REALLY belong here?
-#define INPUT_BUF_SIZE			64	//TODO is this reasonable? (pasting needs a somewhat larger buffer to be efficient)
-
 #include "CenterIM.h"
 #include "AccountStatusMenu.h"
 #include "GeneralMenu.h"
@@ -40,6 +37,8 @@
 
 #include <libintl.h>
 #include <sys/ioctl.h>
+#include <cstring>
+#include <cerrno>
 
 //TODO move inside CenterIM object
 static PurpleDebugUiOps logbuf_debug_ui_ops =
@@ -101,8 +100,14 @@ void CenterIM::Quit(void)
 
 void CenterIM::ScreenResized(void)
 {
-	log->Write(Log::Type_cim, Log::Level_debug, "CenterIM::ScreenResized()");
+	log->Write(Log::Type_cim, Log::Level_debug, "CenterIM::ScreenResized()\n");
 	windowmanager->ScreenResized();
+}
+
+void CenterIM::SetLocale(const char *locale)
+{
+	this->locale = locale;
+	log->Write(Log::Type_cim, Log::Level_debug, "locale: %s\n", locale);
 }
 
 //TODO: move next two static structs inside the CenterIM object
@@ -133,15 +138,11 @@ static PurpleEventLoopUiOps centerim_glib_eventloops =
 
 CenterIM::CenterIM()
 : locale(NULL)
-, charset(NULL)
 , channel(NULL)
 , channel_id(0)
 {
 	/* Declaring bindables must be done in CenterIM::io_init()
 	 * */
-
-	/* store the currently used character set*/
-	g_get_charset(&charset);
 
 	char *path;
 	/* set the configuration file location */
@@ -383,17 +384,23 @@ void CenterIM::io_init(void)
 	curs_set(0);
 	keypad(stdscr, 1); /* without this, some keys are not translated correctly */
 	nonl();
-	cbreak();
 	raw();
-        g_io_channel_set_encoding(channel, locale, NULL); //TODO how to convert input to UTF-8 automatically? perhaps in io_input
-        g_io_channel_set_buffered(channel, FALSE); //TODO not needed?
-//        g_io_channel_set_flags(channel, G_IO_FLAG_NONBLOCK, NULL ); //TODO not needed?
-//g_printerr("encoding = %s\n", g_io_channel_get_encoding(channel));        
+
+	// print the currently used character set
+	g_get_charset(&charset);
+	log->Write(Log::Type_cim, Log::Level_debug, "charset: %s\n", charset);
+	if ((converter = g_iconv_open("UTF-8", charset)) == (GIConv) -1) {
+		log->Write(Log::Type_cim, Log::Level_critical, "IConv initialization failed (%s)\n", strerror(errno));
+		throw EXCEPTION_ICONV_INIT;
+	}
 
 	channel = g_io_channel_unix_new(STDIN_FILENO);
+	// set channel encoding to NULL so it can be unbuffered
+	g_io_channel_set_encoding(channel, NULL, NULL);
+	g_io_channel_set_buffered(channel, FALSE);
 	g_io_channel_set_close_on_unref(channel, TRUE);
 
-	channel_id = g_io_add_watch_full(channel,  G_PRIORITY_HIGH,
+	channel_id = g_io_add_watch_full(channel, G_PRIORITY_HIGH,
 		(GIOCondition)(G_IO_IN | G_IO_HUP | G_IO_ERR | G_IO_PRI), io_input_, this, NULL);
 
 	g_io_add_watch_full(channel, G_PRIORITY_HIGH,
@@ -401,8 +408,7 @@ void CenterIM::io_init(void)
 
 	g_io_channel_unref(channel);
 
-	//doing this here breaks things
-	//g_printerr("gntmain: setting up IO\n"); //TODO is this an error??
+	log->Write(Log::Type_cim, Log::Level_debug, "IO initialized\n");
 }
 
 void CenterIM::io_uninit(void)
@@ -411,58 +417,103 @@ void CenterIM::io_uninit(void)
 	channel_id = 0;
 	g_io_channel_unref(channel);
 	channel = NULL;
-	if (keys) keys->Delete(); keys = NULL;
+
+	g_iconv_close(converter);
+
+	if (keys) {
+		keys->Delete();
+		keys = NULL;
+	}
 }
 
 gboolean CenterIM::io_input_error(GIOChannel *source, GIOCondition cond)
 {
-	g_source_remove(channel_id);
-	g_io_channel_unref(source);
+	// log an error and bail out if we lost stdin
+	log->Write(Log::Type_cim, Log::Level_critical, "stdin lost!\n");
+	Quit();
 
-	//TODO log an error, apparantly we lost stdin, which shoudn't happen
-	//we also try to reopen stdin
-
-	channel = NULL;
-	io_init();
 	return TRUE;
 }
 
 gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 {
+	// TODO is this reasonable? (pasting needs a somewhat larger buffer to be efficient)
+	gchar buf[64];
+	gsize rd;
+	GError *err = NULL;
+	// buffer for saving a part of char from a previous reading, max char len
+	// in bytes (currently 5 bytes for UTF-EBCDIC), size must be always
+	// <= sizeof(buf)
+	static gchar buf_part[5];
+	static gsize buf_part_len;
+	// every character in UTF-8 can be encoded with 4 bytes so this is enough
+	// room for any conversion
+	gchar converted[4 * sizeof(buf) + 1];
+	gsize converted_left = sizeof(converted);
+	gchar *pbuf = buf;
+	gchar *pconverted = converted;
 	static std::string input;
-	char buf[INPUT_BUF_SIZE];
-	int rd = read(STDIN_FILENO, buf, INPUT_BUF_SIZE-1), eaten;
-	//TODO convert to UTF-8 here?
+	int eaten;
 
-	/* Below this line we assume all input has been converted
-	 * to and UTF-8 encoded multibyte string
-	 * */
-
-	if (rd < 0) {
-		//TODO what to do on error?
-	} else if (rd == 0) {
-		//TODO this should not happen, should it?
-	} else if (rd == INPUT_BUF_SIZE-1) {
-		//TODO log an error about exausted read buffer
-		//if this ever happens, it would be best to
-		//implement a dynamically sized buffer
+	if (buf_part_len) {
+		memcpy(buf, buf_part, buf_part_len);
 	}
 
-	/* Fix the input string.
-	 * Some keys generate bytestrings which are different
-	 * from the strings  terminfo/ncurses expects
+	if (g_io_channel_read_chars(source, buf + buf_part_len,
+				sizeof(buf) - buf_part_len, &rd, &err) != G_IO_STATUS_NORMAL) {
+		log->Write(Log::Type_cim, Log::Level_error, "%s\n", err->message);
+		g_error_free(err);
+		return TRUE;
+	}
+	rd += buf_part_len;
+	buf_part_len = 0;
+
+	// we don't need to care much about this, GLib will notice us again that
+	// there are still bytes left
+	if (sizeof(buf) == rd) {
+		log->Write(Log::Type_cim, Log::Level_debug, "input buffer full\n");
+	}
+
+	/* TODO Fix the input string.
+	 * Some keys generate bytestrings which are different from the strings
+	 * terminfo/ncurses expects
 	 * */
 	//keys->Refine(buf, rd);
 
-	{
-	buf[rd] = '\0'; //TODO remove all this debug stuff
-	gunichar uc = g_utf8_get_char(buf);
-	if (rd>2)
-	log->Write(Log::Type_cim, Log::Level_debug, "input: %s (%02x %02x %02x) %d utf8? %d uc: %d %s (%02x %02x %02x)", buf, buf[0], buf[1], buf[2],
-		rd, g_utf8_validate(buf, rd, NULL), uc, key_up, key_up[0], key_up[1], key_up[2]); //TODO remove
+	// convert data from user charset to UTF-8
+	g_iconv(converter, NULL, NULL, NULL, NULL);
+	errno = 0;
+	if (g_iconv(converter, &pbuf, &rd, &pconverted, &converted_left) == (gsize) -1) {
+		switch (errno) {
+			case EILSEQ:
+				log->Write(Log::Type_cim, Log::Level_critical, _("IConv error: %s\n"), strerror(errno));
+				return TRUE;
+			case EINVAL:
+				// incomplete multibyte sequence is encountered in the input,
+				// save these bytes for further reading
+				memcpy(buf_part, pbuf, rd);
+				buf_part_len = rd;
+				break;
+			default:
+				log->Write(Log::Type_cim, Log::Level_critical,
+						_("Unexcepted IConv error: %s\n"), strerror(errno));
+				return TRUE;
+		}
 	}
+	*pconverted = '\0';
 
-	input.append(buf, rd);
+	/* Below this line we assume all input has been converted to UTF-8 encoded
+	 * multibyte string
+	 * */
+
+	// too noisy even for debug level
+	/*
+	for (gchar *iter = converted; *iter != '\0'; iter = g_utf8_next_char(iter)) {
+		log->Write(Log::Type_cim, Log::Level_debug, "input: U+%04"G_GINT32_FORMAT"X\n", g_utf8_get_char(iter));
+	}
+	*/
+
+	input.append(converted);
 
 	while (input.size()) {
 		eaten = ProcessInput(input.c_str(), input.size());
