@@ -40,27 +40,17 @@
 #define STR3 "Hello world, Καλημέρα κόσμε, コンニチハ"
 #define STR4 "Ｊｕｓｔ ａ ｔｅｓｔ."
 
-int main(int argc, char **argv)
+void printbuffer(TextBuffer* buffer);
+void reverse_printbuffer(TextBuffer* buffer);
+
+void printbuffer(TextBuffer* buffer)
 {
-	TextBuffer* buffer = NULL;
 	TextBuffer::char_iterator iter, end;
 	TextBuffer::line_iterator line_iter;
-	//char c;
+
 	char *s;
 	int j;
 
-	/* Setup locale. */
-	setlocale(LC_ALL, "");
-
-	buffer = new TextBuffer();
-	buffer->append(STR12, strlen(STR12));
-	buffer->append(STR14, strlen(STR14));
-	line_iter = buffer->begin();
-	line_iter++;
-	buffer->insert(line_iter, STR13, strlen(STR13));
-	buffer->prefix(STR11, strlen(STR11));
-
-	std::cout << "== Printing a 4 line buffer (char iter) ==" << std::endl;
 	end = buffer->end();
 	for (iter = buffer->begin(); iter != end; iter++) {
 		s = *iter;
@@ -69,8 +59,16 @@ int main(int argc, char **argv)
 			printf("%c", s[i]);
 		}
 	}
-	std::cout << "== Reversed == (line iter) ====" << std::endl;
-	line_iter = buffer->back();
+}
+
+void reverse_printbuffer(TextBuffer* buffer) 
+{
+	TextBuffer::char_iterator iter, end;
+	TextBuffer::line_iterator line_iter;
+
+	char *s;
+	int j;
+
 	for (line_iter = buffer->reverse_begin_line(); line_iter != buffer->reverse_end_line(); line_iter--) {
 		end = line_iter;
 		end.forward_lines(1);
@@ -85,7 +83,55 @@ int main(int argc, char **argv)
 			}
 		}
 	}
+}
+
+int main(int argc, char **argv)
+{
+	TextBuffer* buffer = NULL;
+	TextBuffer::char_iterator iter, end;
+	TextBuffer::line_iterator line_iter;
+
+	/* Setup locale. */
+	setlocale(LC_ALL, "");
+
+	buffer = new TextBuffer();
+	buffer->append(STR12, strlen(STR12));
+	buffer->append(STR14, strlen(STR14));
+	line_iter = buffer->begin();
+	line_iter++;
+	buffer->insert(line_iter, STR13, strlen(STR13));
+	buffer->prefix(STR11, strlen(STR11));
+
+	std::cout << "== Printing a 4 line buffer (char iter) ==" << std::endl;
+	printbuffer(buffer);
+
+	std::cout << "== Reversed == (line iter) ====" << std::endl;
+	reverse_printbuffer(buffer);
+	
 	std::cout << "==============================" << std::endl;
 
 	delete buffer;
+
+	buffer = new TextBuffer();
+
+	iter = buffer->begin();
+	buffer->insert(iter, STR11, strlen(STR11));
+	buffer->insert(iter, STR12, strlen(STR12));
+
+	std::cout << "== 2 line buffer ====" << std::endl;
+	printbuffer(buffer);
+
+	iter = buffer->begin();
+	iter.forward_chars(8);
+	buffer->insert(iter, " world", strlen(" world"));
+	
+	std::cout << "==== insert ' world' =====" << std::endl;
+	printbuffer(buffer);
+	
+	line_iter = buffer->reverse_begin_line();
+	line_iter.forward_chars(3);
+	buffer->insert(line_iter, "hello ", strlen("hello "));
+
+	std::cout << "==== insert 'hello ' =====" << std::endl;
+	printbuffer(buffer);
 }
