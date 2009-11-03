@@ -139,43 +139,36 @@ TextRBTree::char_iterator TextRBTree::insert(const char_iterator& _iter, const c
 
 		//TODO assert (g_utf8_validate ((const gchar*)text[sol], chunk_len, NULL));
 
-		/* insert the paragraph in the current line just after the cursor position. */
-		line_iter->insert(line_iter.byte_offset, &text[sol], chunk_len);
+		/* If the iterator points to the nil node, it means the iterator is at the
+		 * end of the text or the tree is empty. So we append the text. */
+		if (line_iter.node == nil) {
+			TextLine line;
+			line.insert(0, &text[sol], chunk_len);
+			append (line);
+			line_iter = back();
+		} else {
+			/* insert the paragraph in the current line just after the cursor position. */
+			line_iter->insert(line_iter.byte_offset, &text[sol], chunk_len);
 
-		/* We modify an existing node, so we must fix the augmented data after insertion. */
-		post_insert_augmentation_fixup(line_iter.node);
+			/* We modify an existing node, so we must fix the augmented data after insertion. */
+			post_insert_augmentation_fixup(line_iter.node);
 
-		/* advance the char_iterator by chunk_len bytes */
-		iter.forward_bytes(chunk_len);
+			/* advance the char_iterator by chunk_len bytes */
+			iter.forward_bytes(chunk_len);
 
-		if (delim == eol)
-		{
-			/* chunk didn't end with a paragraph separator */
-			assert (eol == len);
-			break;
+			if (delim == eol)
+			{
+				/* chunk didn't end with a paragraph separator */
+				assert (eol == len);
+				break;
+			}
+
+			/* The chunk ended with a newline, so split this node after the newline. */
+			//TODO if this return an iter to the newly created node for the text after the newline,
+			//set line_iter to that point.
+			split_node(iter.node, iter.char_offset - 1);
+			line_iter.forward_bytes(chunk_len); /* line_iter is still at the origional insert point, so we must move it. */
 		}
-
-		/*
-		 * The chunk ended with a newline, so create a new TextLine
-		 * and move the remainder of the old line to it.
-		 */
-		//tmp = iter;
-		//line = new TextLine(
-		//		*tmp,
-		//		iter.char_offset - 1,
-		//		iter->chars());
-		//line_iter->erase(iter.char_offset, iter->chars());
-		split_node(iter.node, iter.char_offset - 1);
-
-		/* insert the new line after the current line. The returned
-		 * char_iterator should point to the beginning of the new line.
-		 */
-		line_iter.forward_bytes(chunk_len); /* line_iter is still at the origional insert point, so we must move it. */
-
-		//if (line->chars() > 0)
-		//	iter = insert(line_iter, *line);
-		//else
-		//	iter = line_iter;
 	}
 
 	return iter;
@@ -860,6 +853,9 @@ unsigned int TextRBTree::iterator_base::line_nr(void) const
 	Node *y;
 	unsigned int line;
        
+	if (node == tree->nil)
+		return 0;
+
 	line = node->left->lines;
 	y = node;
 
