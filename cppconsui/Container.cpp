@@ -218,14 +218,12 @@ void Container::MoveFocus(FocusDirection direction)
 		}
 	}
 
-	FocusChain focus_chain;
+	FocusChain focus_chain(NULL);
 	FocusChain::pre_order_iterator iter;
 	FocusChain::pre_order_iterator focus_root = focus_chain.begin();
 	//bool (*cmp)(Widget*, Widget*) = NULL;
 	Widget *focus_widget;
 	const Container *container;
-
-	focus_chain.set_head(NULL);
 
 	GetFocusChain(focus_chain, focus_chain.begin());
 
@@ -258,8 +256,10 @@ void Container::MoveFocus(FocusDirection direction)
 		 * to the first widget in the list (if there is a widget
 		 * which accepts focus).
 		 * */
-		if (focus_chain.number_of_children(focus_chain.begin())) {
-			iter = focus_chain.begin().begin();
+		for (iter = focus_chain.begin(); iter != focus_chain.end(); iter++)
+			if (*iter) break;
+		
+		if (iter != focus_chain.end()){
 			(*iter)->GrabFocus();
 		} else {
 			/* No children, so there is nothing to receive

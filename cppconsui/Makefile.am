@@ -1,10 +1,13 @@
 lib_LTLIBRARIES = libcppconsui.la
 
+# @TODO make sure ConsuiLog.h and ConsuiCurses.h are not distributed
+
 # When you add files here, also add them in po/POTFILES.in
 libcppconsui_la_SOURCES =\
 	Adjustment.cpp \
 	Adjustment.h \
 	ConsuiCurses.h \
+	ConsuiLog.h \
 	Container.cpp \
 	Container.h \
 	ColorScheme.h \

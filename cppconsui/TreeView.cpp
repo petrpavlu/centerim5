@@ -27,6 +27,8 @@
 #include "LineStyle.h"
 #include "Keys.h"
 
+#include "ConsuiLog.h"
+
 /* Put this macro around variable that will be used in the future,
  * remove macro when variables are used.
  * This macro is to get rid of compiler warnings
@@ -79,7 +81,7 @@ TreeView::~TreeView()
 {
 	//TODO deletenode does not free the memory, do this
 	DeleteNode(thetree.begin(), false);
-	delete linestyle;
+	delete linestyle; //TODO this shouldn't be deletable, in fact fix the whole linestyle thingie (the principle)
 }
 
 void TreeView::Draw(void)
@@ -272,6 +274,8 @@ const TreeView::NodeReference TreeView::AddNode(const NodeReference &parent, Tre
 
 void TreeView::DeleteNode(const NodeReference &node, bool keepchildren)
 {
+	//LOG("/tmp/delete.log", "\tDeleteNode %p, %p, %d\n", GetWidget(node), GetData(node), (int)keepchildren);
+	StealFocus(); // TODO find a better fix - we need to steal the focus from the children in the case a child of the "node" has the focus.
 	if (focus_node == node) {
 		/* by folding this node and then moving focus forward 
 		 * we are sure that no child node of the node to be
@@ -293,10 +297,16 @@ void TreeView::DeleteChildren(const NodeReference &node, bool keepchildren)
 {
 	TheTree::sibling_iterator i;
 	//TODO does this disconnect the signals properly? i think so.
+	//LOG("/tmp/delete.log", "DeleteChildren %p, %p, %b\n", GetWidget(node), GetData(node), (int)keepchildren);
 	
+	while ((i=thetree.begin(node)) != thetree.end(node)){
+		DeleteNode(i, keepchildren);
+	}
+/*		
 	for (i = thetree.begin(node); i != thetree.end(node); i++) {
 		DeleteNode(i, keepchildren);
 	}
+ */
 }
 
 const TreeView::NodeReference& TreeView::GetSelected(void)
