@@ -947,8 +947,40 @@ TextRBTree::iterator_base& TextRBTree::iterator_base::operator=(const TextRBTree
 
 bool TextRBTree::iterator_base::operator<(const iterator_base& iter)
 {
+	/* Called as: this < iter */
+
+	/* If this is the nil node, then it is an iterator to the end.
+	 * and nothing lies beyond the end.
+	 */
+	if (this->node == this->node->tree->nil)
+		return false;
+
+	/* Everything is smaller than the nil node \ end iterator. 
+	 * (except the nil node itself, see previous case) */
+	if (iter.node == iter.node->tree->nil)
+		return true;
+
+	/* If neither this or iter is a end iterator, use the usual reasoning. */
 	return (this->line_nr() < iter.line_nr()) || 
 		((this->node == iter.node) && (this->byte_offset < iter.byte_offset));
+}
+
+bool TextRBTree::iterator_base::operator>(const iterator_base& iter)
+{
+	/* Called as: this > iter */
+
+	/* Nothing lies beyond the end iterator, so neither is this */
+	if (iter.node == iter.node->tree->nil)
+		return false;
+
+	/* The end iterator is greater than anything except itself,
+	 * which is handled by the previous case. */
+	if (this->node == this->node->tree->nil)
+		return false;
+
+	/* If neither this or iter is a end iterator, use the usual reasoning. */
+	return (this->line_nr() > iter.line_nr()) || 
+		((this->node == iter.node) && (this->byte_offset > iter.byte_offset));
 }
 
 TextRBTree::iterator_base& TextRBTree::iterator_base::forward_bytes(unsigned int n)
