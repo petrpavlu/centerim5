@@ -36,7 +36,6 @@ class WindowManager
 : public InputProcessor
 {
 	public:
-		~WindowManager(void);
 
 		static WindowManager* Instance(void);
 		void Delete(void);
@@ -59,6 +58,7 @@ class WindowManager
 		} WindowInfo;
 		typedef std::vector<WindowInfo> Windows;
 
+		virtual ~WindowManager(void); // we do not want to be able to delete it from outside
 		void Redraw(void);
 		void WindowRedraw(Widget* widget);
 

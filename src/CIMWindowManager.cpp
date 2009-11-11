@@ -4,25 +4,22 @@
 #include <glib.h>
 #include <glibmm/main.h>
 
+/** @TODO this function is a hack in fact. I don't know if it's good to inherit 
+singletons 
 
-CIMWindowManager* CIMWindowManager::cimInstance = NULL;
+The Instance() of CIMWindowManager needs to be called __before__ the Instance() of WindowManager
+*/
 
 CIMWindowManager* CIMWindowManager::Instance(void)
 {
-	if (!cimInstance)
-	{
-		cimInstance = new CIMWindowManager();
-		// TODO: import existing windows, solve contructor/destructor curses problems
-		if (instance)
-		{
-			fprintf(stderr, "WM instance already exists!\n");
-			delete instance;
-		}
-		instance = cimInstance;
+	CIMWindowManager * realInstance = dynamic_cast<CIMWindowManager*>(instance);
+	if (!realInstance){
+		assert(instance == NULL); // check that the WindowManager::instance wasn't created before nor deleted
+		realInstance = new CIMWindowManager();
+		instance = realInstance;
 	}
-	return cimInstance;
+	return realInstance;
 }
-
 
 bool CIMWindowManager::Resize(void)
 {

@@ -18,11 +18,11 @@ class CIMWindowManager
 		virtual void Add(Window *window);
 		
 	protected:
+		virtual ~CIMWindowManager(void){}
 		void calculate_sizes(void); // calculates area sizes
 		Rect areaSizes[Screen+1];
 		
 	private:
-		static CIMWindowManager *cimInstance;
 		static const int originalW = 139;
 		static const int originalH = 56;
 };
