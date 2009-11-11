@@ -102,6 +102,7 @@ class TextRBTree
 
 				iterator_base& operator=(const iterator_base&);
 				bool operator<(const iterator_base&);
+				bool operator>(const iterator_base&);
 
 				TextRBTree *tree;
 				Node *node;

@@ -1052,7 +1052,7 @@ TextLineRBTree::iterator_base& TextLineRBTree::iterator_base::forward_cols(unsig
 
 	if (node != tree->nil) {
 		col_offset += n;
-		byte_offset = node->str - col_offset_to_pointer(node->str, col_offset);
+		byte_offset = col_offset_to_pointer(node->str, col_offset) - node->str;
 		char_offset = g_utf8_pointer_to_offset(node->str, node->str + byte_offset);
 	} else {
 		byte_offset = 0;
@@ -1078,7 +1078,7 @@ TextLineRBTree::iterator_base& TextLineRBTree::iterator_base::backward_cols(unsi
 
 	if (node != tree->nil) {
 		col_offset -= n;
-		byte_offset = node->str - col_offset_to_pointer(node->str, col_offset);
+		byte_offset = col_offset_to_pointer(node->str, col_offset) - node->str;
 		char_offset = g_utf8_pointer_to_offset(node->str, node->str + byte_offset);
 	} else {
 		byte_offset = 0;

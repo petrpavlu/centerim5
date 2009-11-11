@@ -84,6 +84,16 @@ void TextView::Draw(void)
 
 		/* Skip view_left columns at the beginning of the string. */
 		char_iter.forward_cols(view_left);
+		char_end = char_iter;
+		char_end.forward_cols(Width());
+
+		/* We use char_end to indicate what the last char to draw is.
+		 * Line_iter here is on the first character of the next line.
+		 * Since the line starting from char_iter might not have Width()
+		 * columns left, we set the limit at min(line_iter, char_end) */
+		if (line_iter < char_end) {
+			char_end = line_iter;
+		}
 
 		x = 1;
 
@@ -99,10 +109,11 @@ void TextView::Draw(void)
 
 		/* Note that line_iter is at the next line at this point; eg
 		 * where we should stop drawing characters. */
-		while (char_iter != line_iter) {
+		while (char_iter < char_end) {
 			mvwaddnstr(area->w, y, x, *char_iter,
 					char_iter.char_bytes());
 			x += char_iter.char_cols();
+			char_iter.forward_chars(1);
 		}
 
 		/* Clear until the end of the line. We
