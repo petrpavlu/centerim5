@@ -59,12 +59,11 @@ Adjustment::Adjustment (double	  value,
 
 /**
  * gtk_adjustment_get_value:
- * @adjustment: a #GtkAdjustment
  *
  * Gets the current value of the adjustment. See
  * gtk_adjustment_set_value ().
  *
- * Return value: The current value of the adjustment.
+ * @return The current value of the adjustment.
  **/
 double
 Adjustment::get_value (void)
@@ -89,11 +88,10 @@ Adjustment::set_value ( double        new_value)
 
 /**
  * gtk_adjustment_get_lower:
- * @adjustment: a #GtkAdjustment
  *
  * Retrieves the minimum value of the adjustment.
  *
- * Return value: The current minimum value of the adjustment.
+ * @return The current minimum value of the adjustment.
  *
  * Since: 2.14
  **/
@@ -105,8 +103,7 @@ Adjustment::get_lower (void)
 
 /**
  * gtk_adjustment_set_lower:
- * @adjustment: a #GtkAdjustment
- * @lower: the new minimum value
+ * @param new_lower the new minimum value
  *
  * Sets the minimum value of the adjustment.
  *
@@ -133,11 +130,10 @@ Adjustment::set_lower ( double new_lower)
 
 /**
  * gtk_adjustment_get_upper:
- * @adjustment: a #GtkAdjustment
  *
  * Retrieves the maximum value of the adjustment.
  *
- * Return value: The current maximum value of the adjustment.
+ * @return The current maximum value of the adjustment.
  *
  * Since: 2.14
  **/
@@ -149,13 +145,12 @@ Adjustment::get_upper (void)
 
 /**
  * gtk_adjustment_set_upper:
- * @adjustment: a #GtkAdjustment
- * @upper: the new maximum value
+ * @param new_upper the new maximum value
  *
  * Sets the maximum value of the adjustment.
  *
  * Note that values will be restricted by
- * <literal>upper - page-size</literal> if the page-size
+ * <code>upper - page-size</code> if the page-size
  * property is nonzero.
  *
  * See gtk_adjustment_set_lower() about how to compress multiple
@@ -173,11 +168,10 @@ Adjustment::set_upper ( double       new_upper)
 
 /**
  * gtk_adjustment_get_step_increment:
- * @adjustment: a #GtkAdjustment
  *
  * Retrieves the step increment of the adjustment.
  *
- * Return value: The current step increment of the adjustment.
+ * @return The current step increment of the adjustment.
  *
  * Since: 2.14
  **/
@@ -189,8 +183,7 @@ Adjustment::get_step_increment (void)
 
 /**
  * gtk_adjustment_set_step_increment:
- * @adjustment: a #GtkAdjustment
- * @step_increment: the new step increment
+ * @param new_step_increment the new step increment
  *
  * Sets the step increment of the adjustment.
  *
@@ -209,11 +202,10 @@ Adjustment::set_step_increment ( double        new_step_increment)
 
 /**
  * gtk_adjustment_get_page_increment:
- * @adjustment: a #GtkAdjustment
  *
  * Retrieves the page increment of the adjustment.
  *
- * Return value: The current page increment of the adjustment.
+ * @return The current page increment of the adjustment.
  *
  * Since: 2.14
  **/
@@ -225,8 +217,7 @@ Adjustment::get_page_increment (void)
 
 /**
  * gtk_adjustment_set_page_increment:
- * @adjustment: a #GtkAdjustment
- * @page_increment: the new page increment
+ * @param new_page_increment the new page increment
  *
  * Sets the page increment of the adjustment.
  *
@@ -246,11 +237,10 @@ Adjustment::set_page_increment (
 
 /**
  * gtk_adjustment_get_page_size:
- * @adjustment: a #GtkAdjustment
  *
  * Retrieves the page size of the adjustment.
  *
- * Return value: The current page size of the adjustment.
+ * @return The current page size of the adjustment.
  *
  * Since: 2.14
  **/
@@ -262,8 +252,7 @@ Adjustment::get_page_size (void)
 
 /**
  * gtk_adjustment_set_page_size:
- * @adjustment: a #GtkAdjustment
- * @page_size: the new page size
+ * @param new_page_size the new page size
  *
  * Sets the page size of the adjustment.
  *
@@ -282,13 +271,12 @@ Adjustment::set_page_size ( double       new_page_size)
 
 /**
  * gtk_adjustment_configure:
- * @adjustment: a #GtkAdjustment
- * @value: the new value
- * @lower: the new minimum value
- * @upper: the new maximum value
- * @step_increment: the new step increment
- * @page_increment: the new page increment
- * @page_size: the new page size
+ * @param new_value: the new value
+ * @param new_lower: the new minimum value
+ * @param new_upper: the new maximum value
+ * @param new_step_increment: the new step increment
+ * @param new_page_increment: the new page increment
+ * @param new_page_size: the new page size
  *
  * Sets all properties of the adjustment at once.
  *
@@ -342,14 +330,14 @@ Adjustment::configure (
 void
 Adjustment::changed (void)
 {
-  //TODO g_signal_emit (adjustment, adjustment_signals[CHANGED], 0);
+  /// @todo g_signal_emit (adjustment, adjustment_signals[CHANGED], 0);
 }
 
 void
 Adjustment::value_changed (void)
 {
-  //TODO g_signal_emit (adjustment, adjustment_signals[VALUE_CHANGED], 0);
-  //TODO g_object_notify (G_OBJECT (adjustment), "value");
+  /// @todo g_signal_emit (adjustment, adjustment_signals[VALUE_CHANGED], 0);
+  /// @todo g_object_notify (G_OBJECT (adjustment), "value");
 }
 
 void

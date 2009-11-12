@@ -30,18 +30,18 @@ class Button
 {
 	public:
 		Button(Widget& parent, int x, int y, int w, int h, Glib::ustring &text, sigc::slot<void> callback);
-		Button(Widget& parent, int x, int y, int w, int h, const char *text, sigc::slot<void> callback);
-		Button(Widget& parent, int x, int y, int w, int h, const char *text);
-		Button(Widget& parent, int x, int y, const char *text, sigc::slot<void> callback);
-		Button(Widget& parent, int x, int y, const char *text);
+		Button(Widget& parent, int x, int y, int w, int h, const gchar *text, sigc::slot<void> callback);
+		Button(Widget& parent, int x, int y, int w, int h, const gchar *text);
+		Button(Widget& parent, int x, int y, const gchar *text, sigc::slot<void> callback);
+		Button(Widget& parent, int x, int y, const gchar *text);
 		virtual ~Button();
 
 		virtual void Draw(void);
 
-		//TODO rename to setcallback?
+		/// @todo rename to setcallback?
 		void SetFunction(sigc::slot<void> callback);
 
-		//TODO keep signal or the callback?
+		/// @todo keep signal or the callback?
 		sigc::signal<void, Button*> signal_activate;
 
 	protected:

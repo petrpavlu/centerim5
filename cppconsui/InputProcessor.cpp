@@ -19,7 +19,7 @@
 
 #include <cstring>
 
-//TODO this *must* leak memory somewhere :)
+/// @todo this *must* leak memory somewhere :)
 class InputProcessor::Bindable
 : public InputProcessor::KeyCombo
 {
@@ -36,11 +36,11 @@ class InputProcessor::Bindable
 		, type(type)
 		{ ; }
 
-		Bindable() { ; }
-
 		sigc::slot<void> function;
 		InputProcessor::BindableType type;
-
+	
+	public:
+		Bindable() { ; } ///< @todo Bindable() constructor should be private and not defined
 };
 
 InputProcessor::InputProcessor()
@@ -149,7 +149,7 @@ void InputProcessor::DeclareBindable(const gchar *context, const gchar *action,
 	sigc::slot<void> function, const gchar *description, BindableType type)
 {
 	if (HaveBindable(context, action))
-		return; //TODO maybe some error here
+		return; /// @todo maybe some error here
 
 	keybindings.insert(std::pair<char, Bindable>('\0', Bindable(context, action, description, '\0', function, type)));
 }

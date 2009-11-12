@@ -61,7 +61,7 @@ void find_paragraph_boundary (const gchar *text,
 			       int *paragraph_delimiter_index,
 			       int *next_paragraph_start);
 
-//TODO move into editable abstract class?
+/// @todo move into editable abstract class?
 enum CursorMovement {
 	MOVE_LOGICAL_POSITIONS,
 	MOVE_VISUAL_POSITIONS,

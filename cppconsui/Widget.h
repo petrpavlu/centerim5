@@ -54,20 +54,22 @@ class Widget
 
 		/* The difference between the Draw() and Redraw() functions should be
 		 * clarified.
-		 *
-		 * The Draw() function does the actual drawing on some (virtual) area
+		 */
+	
+		/**  The Draw() function does the actual drawing on some (virtual) area
 		 * of the screen. The WindowMananger object calls Draw() on all on-screen
 		 * Windows. This causes all Draw() implementations needed to draw the
 		 * screen to be called.
-		 *
+		 */
+		virtual void Draw(void);
+		/**
 		 * The Redraw() function can be called by a Widget to tell its 
 		 * Container object that the Widget has been updated and that it should
 		 * be redrawn. This implies that the Container of a Widget should
 		 * connect to the Redraw signal.
-		 * */
-		virtual void Draw(void);
+		 */
 		void Redraw(void);
-
+	
 		virtual bool SetFocusChild(Widget* child);
 		virtual bool StealFocus(void);
 		void RestoreFocus(void);
@@ -90,7 +92,7 @@ class Widget
 
 		void GetSubPad(curses_imp_t& a, const int x, const int y, const int w, const int h);
 
-		//TODO encapsulate with a function, make sure derived classed call Move()/Resize()/Redraw() to emit signal
+		/// @todo encapsulate with a function, make sure derived class call Move()/Resize()/Redraw() to emit signal
 		//also check if this is possible at all
 		sigc::signal<void, Widget*, Point&, Point&> signal_move;
 		sigc::signal<void, Widget*, Rect&, Rect&> signal_resize;

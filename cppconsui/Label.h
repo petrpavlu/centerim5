@@ -31,14 +31,14 @@
 /* Maximum size of text buffer, in bytes */
 #define MAX_SIZE G_MAXUSHORT
 
-//TODO proper autosizing
+/// @todo proper autosizing
 
 class Label
 : public Widget
 {
 	public:
 		Label(Widget& parent, int x, int y, int w, int h, const gchar *text_);
-		Label(Widget& parent, int x, int y, const char *text_);
+		Label(Widget& parent, int x, int y, const gchar *text_);
 		virtual ~Label();
 
 		virtual void Draw(void);

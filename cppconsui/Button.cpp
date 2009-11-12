@@ -22,8 +22,8 @@
 #include "Button.h"
 #include "Keys.h"
 
-//TODO add spaces around the label st there is always some room between the label and the left/right
-//side of the button.
+/// @todo add spaces around the label st there is always some room between the label and the left/right
+/// side of the button.
 
 Button::Button(Widget& parent, int x, int y, int w, int h, const gchar *text, sigc::slot<void> callback)
 : Label(parent, x, y, w, h, text)
@@ -40,7 +40,7 @@ Button::Button(Widget& parent, int x, int y, int w, int h, const gchar *text)
 	AddBindables();
 }
 
-Button::Button(Widget& parent, int x, int y, const char *text, sigc::slot<void> callback)
+Button::Button(Widget& parent, int x, int y, const gchar *text, sigc::slot<void> callback)
 : Label(parent, x, y, text)
 , callback(callback)
 {
@@ -48,7 +48,7 @@ Button::Button(Widget& parent, int x, int y, const char *text, sigc::slot<void> 
 	AddBindables();
 }
 
-Button::Button(Widget& parent, int x, int y, const char *text)
+Button::Button(Widget& parent, int x, int y, const gchar *text)
 : Label(parent, x, y, text)
 {
 	can_focus = true;
@@ -69,8 +69,8 @@ void Button::Draw(void)
 	if (has_focus)
 		colorscheme->Off(area, ColorScheme::Focus);
 
-	//TODO try setcolor, its shorter
-	//colorscheme->SetColor(area, 0, 0, w, ColorScheme::Focus);
+	/// @todo try setcolor, its shorter
+	/// colorscheme->SetColor(area, 0, 0, w, ColorScheme::Focus);
 }
 
 void Button::SetFunction(sigc::slot<void> callback)
@@ -86,7 +86,7 @@ void Button::AddBindables(void)
 	DeclareBindable(context, "activate", sigc::mem_fun(this, &Button::OnActivate),
 		_("Activate the button"), InputProcessor::Bindable_Normal);
 
-	//TODO get real binding from config
+	/// @todo get real binding from config
 	BindAction(context, "activate", Keys::Instance()->Key_enter(), false);
 }
 

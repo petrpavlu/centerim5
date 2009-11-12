@@ -30,7 +30,7 @@
 #include <curses.h>
 #endif
 
-//TODO getmaxx(stdscreen) just must have less overhead
+/// @todo getmaxx(stdscreen) just must have less overhead
 int RealScreenWidth(void)
 {
 	int x, y;
@@ -136,10 +136,10 @@ void find_paragraph_boundary (const gchar *text,
 const gchar text_unknown_char_utf8[] = { '\xEF', '\xBF', '\xBC', '\0' };
 
 //NOTE copied from libgnt/gntutils.c
-//TODO should g_unichar_iszerowidth be used?
-//TODO write a wrapper string class
-//if so, then also include drawing functions and a way to store colours
-//for a string.
+/// @todo should g_unichar_iszerowidth be used?
+/// @todo write a wrapper string class
+/// if so, then also include drawing functions and a way to store colours
+/// for a string.
 Glib::ustring::size_type width(const char *start, const char *end)
 {
         Glib::ustring::size_type width = 0;

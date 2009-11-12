@@ -26,7 +26,7 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 
-Label::Label(Widget& parent, int x, int y, int w, int h, const char *text_)
+Label::Label(Widget& parent, int x, int y, int w, int h, const gchar *text_)
 : Widget(parent, x, y, w, h)
 , text_max_length(MAX_SIZE)
 , text(NULL)
@@ -34,7 +34,7 @@ Label::Label(Widget& parent, int x, int y, int w, int h, const char *text_)
 	RealSetText(text_);
 }
 
-Label::Label(Widget& parent, int x, int y, const char *text_)
+Label::Label(Widget& parent, int x, int y, const gchar *text_)
 : Widget(parent, x, y, 0, 0)
 , text_max_length(MAX_SIZE)
 , text(NULL)
@@ -50,8 +50,8 @@ Label::~Label()
 
 void Label::Draw(void)
 {
-	//TODO unicode drawing
-	//or draw with current locale?
+	/// @todo unicode drawing
+	/// or draw with current locale?
 	mvwaddstr(area->w, 0, 0, text);
 	wclrtoeol(area->w);
 
@@ -75,7 +75,7 @@ const gchar* Label::GetText(void)
 void Label::RealSetText(const gchar *text_)
 {
 	g_assert(text_); 
-	//@TODO handle reallocation
+	/// @todo handle reallocation
 	text = g_strndup(text_,text_max_length);
 	text_size = strlen(text);
 	n_bytes = text_size;
