@@ -95,7 +95,7 @@ int InputProcessor::Process(InputProcessor::BindableType type, const char *input
 	g_assert(input != NULL);
 
 	Bindables::iterator begin, end, i;
-	Bindable bindable, largest;
+	Bindable bindable, largest; /// @todo perhaps use pointers or references, not the copy constructor
 	sigc::slot<void> function;
 	int m, max = 0;
 
@@ -104,12 +104,20 @@ int InputProcessor::Process(InputProcessor::BindableType type, const char *input
 
 	for (i = begin; i != end; i++) {
 		bindable = (*i).second;
+		/** @todo is it necessary to allow the Bindable_Override to be checked twice ?
+		 * I think the  (|| type == Bindable_Normal) should be removed
+		 */
 		if (bindable.type == type || type == Bindable_Normal) {
 			m = Match(bindable.keycombo, input, bytes);
 			if (m < 0) {
 				/* could match, but need btes more input to be sure */
 				if (m > max || max == 0) max = m;
 			} else if (m > 0 && m > max) {
+				/** @todo in fact, if the definition of Match() is correct
+				 * you do not need to check if (m > max) because if 
+				 * m > 0 then for sure m = bytes. So we can just call 
+				 * bindable.function and return max
+				 */
 				/* found a larger match, remember the action */
 				max = m;
 				function = bindable.function;
@@ -149,8 +157,8 @@ void InputProcessor::DeclareBindable(const gchar *context, const gchar *action,
 	sigc::slot<void> function, const gchar *description, BindableType type)
 {
 	if (HaveBindable(context, action))
-		return; /// @todo maybe some error here
-
+		return;
+	
 	keybindings.insert(std::pair<char, Bindable>('\0', Bindable(context, action, description, '\0', function, type)));
 }
 
@@ -159,7 +167,7 @@ void InputProcessor::ClearBindables(void)
 	keybindings.clear();
 }
 
-bool InputProcessor::BindAction(const gchar *context, const gchar *action, const char *keycombo, bool override)
+bool InputProcessor::BindAction(const gchar *context, const gchar *action, const char *keycombo, bool replace)
 {
 	Bindables::iterator i;
 	Bindable bindable;
@@ -172,7 +180,7 @@ bool InputProcessor::BindAction(const gchar *context, const gchar *action, const
 		if (strncmp(bindable.context, context, strlen(bindable.context)) == 0 &&
 			strncmp(bindable.action, action, strlen(bindable.action)) == 0) {
 
-			if (bindable.keycombo == NULL || override) {
+			if (bindable.keycombo == NULL || replace) {
 				bindable.keycombo = g_strdup(keycombo);
 				keybindings.erase(i);
 				keybindings.insert(std::pair<char, Bindable>(keycombo[0], bindable));

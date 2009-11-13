@@ -36,7 +36,16 @@
  *
  * It allows to define:
  * - key-action bindings
- * - a chain of input processors (top to bottom) @see SetInputChild
+ * - a chain of input processors (top to bottom)
+ * 
+ * Common usage for a derived class:
+ * - call DeclareBindable() for each action that your class needs to support (in the proper context)
+ * - call BindAction() for each declared bindable that has a key bound to it
+ * - call SetInputChild() if there is another object in the chain of input processing
+ *
+ * @todo At the moment, @ref InputProcessor::keybindings is used to keep both declared bindable and the bound keys. 
+ * It makes it difficult to reconfigure all keys from a unique place, like when the keybindings 
+ * configuration changes. 
  */
 class InputProcessor
 {
@@ -148,11 +157,24 @@ class InputProcessor
 		void SetInputChild(InputProcessor *child);
 		InputProcessor* GetInputChild(void) { return inputchild; }
 
-		/* Bind a keycombo to an action */
-		bool BindAction(const gchar *context, const gchar *action, const char *keycombo, bool override);
+		/** Binds a keycombo to an action 
+		 *
+		 * Probably a better name for this method would have been BindKey. It needs to be called after a Bindable has been @ref DeclareBindable "declared".
+		 * If the key has already been bound use the replace parameter. 
+		 * @return if the binding succeded
+		 * @todo check memory allocation, perhaps optimise things a bit. Also, perhaps it's a good idea to 
+		 *   throw an error or something if the keycombo exists and replace is set to false (it shouldn't happen).
+		 */
+		bool BindAction(const gchar *context, const gchar *action, const char *keycombo, bool replace);
 		bool RebindAction(const gchar *context, const gchar *action, const char *keycombo)
 			{ return BindAction(context, action, keycombo, true); }
 
+		/** Binds a (context,action) pair with a function. 
+		 *
+		 * The bind can be normal or override, depending on wether it needs to be called
+		 * after or before the @ref inputchild.
+		 * @todo should throw an error if the bindable has already been declared.
+		 */
 		void DeclareBindable(const gchar *context, const gchar *action,
 			sigc::slot<void> function, const gchar *description, BindableType type);
 
@@ -160,16 +182,32 @@ class InputProcessor
 
 	private:
 		InputProcessor& operator=(const InputProcessor&);
-
+	
+		/** Tries to match an appropriate bound action to the input and apply it
+		 * @return the best match:
+		 * - positive (and equal to <i>bytes</i>) if an action was taken
+		 * - the bigest negative number if a partial match was found
+		 * - 0 if no match was found
+		 */
 		int Process(BindableType type, const char *input, const int bytes);
+		/** Checks if they <i>bytes</i> chars from <i>input</i> matches fully or partially 
+		 * the <i>skey</i>
+		 * @return	
+		 *		- <i>bytes</i> if perfectly matches
+		 *		- -needed where needed is how many chars are needed for a match
+		 *		- 0 if they not match
+		 */
 		int Match(const std::string &skey, const char *input, const size_t bytes);
+		/** Checks if the input processor has declared a (context,action) pair,
+		 * even if it not yet bound to a keycombo
+		 */
 		bool HaveBindable(const gchar *context, const gchar *action);
 
 		///@todo Bindables GetBindables(void); maybe public
 
 		Bindables keybindings;
 
-		/* The child which will get to process the input */
+		/* The child that will get to process the input */
 		InputProcessor *inputchild;
 };
 
