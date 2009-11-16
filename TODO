@@ -48,7 +48,7 @@ TODO:
   done in cppconsui/Makefile.am!)
  
 Less important todo's which sometimes are just ideas:
-- Re-implement container to user red-black trees. Could be useful
+- Re-implement container to use red-black trees. Could be useful
   if we want to maintain some extra variables like maxheight over
   a collection of widgets. std::set and std::map probably already
   use rb-trees.

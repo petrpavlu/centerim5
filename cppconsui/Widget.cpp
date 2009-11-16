@@ -41,6 +41,7 @@ Widget::Widget(Widget& parent, int x, int y, int w, int h)
 
 Widget::~Widget()
 {
+	/// @todo should probably delete also @ref area
 	delwin(area->w);
 }
 
