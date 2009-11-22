@@ -21,10 +21,9 @@
 #ifndef __LOG_H__
 #define __LOG_H__
 
-
 #include <cppconsui/TextWindow.h>
 #include <libpurple/debug.h>
-#include <string>
+#include <libpurple/prefs.h>
 #include <vector>
 
 class Conf;
@@ -34,35 +33,31 @@ class Log
 {
 	public:
 		enum Type {Type_cim, Type_glib, Type_purple};
-		enum Level {Level_none,
+		// levels are 1:1 mapped to glib levels
+		enum Level {
+			Level_none,
+			Level_debug, // = misc in libpurple
 			Level_info,
-			Level_fatal,
-			Level_error,
-			Level_critical,
+			Level_message, // no such level in libpurple
 			Level_warning,
-			Level_debug }; //TODO check order with purpledebuglevel and glib log flags
-		// TODO -- why not use directly the either purpledebuglevel or glib log flags ? -- do we need this mapping ?
+			Level_critical, // = error in libpurple
+			Level_error // = fatal in libpurle
+		};
 
-                static Log* Instance(void);
-                static void Delete(void);
+		static Log *Instance(void);
 
-		void Close(void);
+		void Write(Log::Level level, const char *fmt, ...);
 
-		//TODO WriteFatal, WriteMisc etc
-		void WriteInfo(const std::string text)
-			{ Write(Log::Type_cim, Log::Level_info, text); }
-
-		void Write(Log::Type type, Log::Level level, const std::string text);
-		void Write(Log::Level level, const std::string text)
-			{ Write(Log::Type_cim, level, text);}
-		void Write(Log::Type type, Log::Level level, const char *fmt, ...);
-		void WriteToFile(const std::string test);
-
-		/* to catch libpurple's debug messages */
+		// to catch libpurple's debug messages
 		static void purple_print_(PurpleDebugLevel level, const char *category, const char *arg_s)
 			{ Log::Instance()->purple_print(level, category, arg_s); }
-		static gboolean isenabled_(PurpleDebugLevel level, const char *category)
-			{ return Log::Instance()->isenabled(level, category); }
+		static gboolean is_enabled_(PurpleDebugLevel level, const char *category)
+			{ return Log::Instance()->is_enabled(level, category); }
+
+		void purple_print(PurpleDebugLevel level, const char *category, const char *arg_s);
+		gboolean is_enabled(PurpleDebugLevel level, const char *category);
+
+		// to catch glib's messages
 		static void glib_log_handler_(const gchar *domain, GLogLevelFlags flags,
 			const gchar *msg, gpointer user_data)
 			{ Log::Instance()->glib_log_handler(domain, flags, msg, user_data); }
@@ -71,25 +66,34 @@ class Log
 		static void glib_printerr_(const char *msg)
 			{ Log::Instance()->glib_printerr(msg); }
 
-		void purple_print(PurpleDebugLevel level, const char *category, const char *arg_s);
-		gboolean isenabled(PurpleDebugLevel level, const char *category);
 		void glib_log_handler(const gchar *domain, GLogLevelFlags flags, const gchar *msg, gpointer user_data);
 		void glib_print(const char *msg);
 		void glib_printerr(const char *msg);
+
+		// called when log/debug pref changed
+		static void debug_change_(const char *name, PurplePrefType type,
+				gconstpointer val, gpointer data)
+			{ ((Log *) data)->debug_change(name, type, val); }
+		void debug_change(const char *name, PurplePrefType type, gconstpointer val);
 
 		virtual void ScreenResized();
 
 	protected:
 
 	private:
+		PurpleDebugUiOps centerim_debug_ui_ops;
+		GIOChannel *logfile;
+		void *prefs_handle;
+
+		int max_lines;
+		Conf *conf;
+
 		Log(void);
 		~Log(void);
 
-		static Log *instance;
-
-		std::vector<std::wstring> buffer;
-		int max_lines;
-		Conf *conf;
+		void Write(Log::Type type, Log::Level level, const char *fmt, ...);
+		void WriteToFile(const gchar *text);
+		Level ConvertPurpleDebugLevel(PurpleDebugLevel purplelevel);
 };
 
 #endif /* __LOG_H__ */

@@ -136,7 +136,7 @@ void Conversations::create_conversation(PurpleConversation *conv)
 	g_assert(conv != NULL);
 
 	//TODO remove debug
-	log->Write(Log::Type_cim, Log::Level_error, "create_conversation(purpleconv) calles: %p\n", conv);
+	log->Write(Log::Level_error, "create_conversation(purpleconv) calles: %p\n", conv);
 
 	PurpleConversationType type;
 
@@ -146,7 +146,7 @@ void Conversations::create_conversation(PurpleConversation *conv)
 	} else if (type == PURPLE_CONV_TYPE_CHAT) {
 		create_conversation_chat(conv);
 	} else {
-		log->Write(Log::Type_cim, Log::Level_error, "unhandled conversation type: %i\n", type);
+		log->Write(Log::Level_error, "unhandled conversation type: %i\n", type);
 	}
 }
 
@@ -162,7 +162,7 @@ void Conversations::create_conversation(PurpleBlistNode *node)
 	} else if (type == PURPLE_BLIST_CHAT_NODE) {
 		create_conversation_chat(node);
 	} else {
-		log->Write(Log::Type_cim, Log::Level_error, "unhandled conversation type: %i\n", type);
+		log->Write(Log::Level_error, "unhandled conversation type: %i\n", type);
 	}
 }
 
@@ -183,7 +183,7 @@ void Conversations::create_conversation_im(PurpleConversation *conv)
 	} else {
 		conversation = new ConversationIm(buddy);
 		//TODO remove debug
-		log->Write(Log::Type_cim, Log::Level_error, "new conversation: %p\n", conversation);
+		log->Write(Log::Level_error, "new conversation: %p\n", conversation);
 		AddConversation(conversation);
 		windowmanager->Add(conversation);
 	}
@@ -210,7 +210,7 @@ void Conversations::create_conversation_chat(PurpleConversation *conv)
 	} else {
 		conversation = new ConversationChat(chat);
 		//TODO remove debug
-		log->Write(Log::Type_cim, Log::Level_error, "new conversation: %p\n", conversation);
+		log->Write(Log::Level_error, "new conversation: %p\n", conversation);
 		AddConversation(conversation);
 		windowmanager->Add(conversation);
 	}
@@ -231,11 +231,11 @@ void Conversations::create_conversation_im(PurpleBlistNode *node)
 	} else {
 		conversation = new ConversationIm(buddy);
 		//TODO remove debug
-		log->Write(Log::Type_cim, Log::Level_error, "new conversation: %p\n", conversation);
+		log->Write(Log::Level_error, "new conversation: %p\n", conversation);
 		AddConversation(conversation);
 
 		//TODO remove debug
-		log->Write(Log::Type_cim, Log::Level_debug, "conversation: %p\n", conversation);
+		log->Write(Log::Level_debug, "conversation: %p\n", conversation);
 
 		/* If the account is connected, try to initiate a conversation conversation */
 		if (purple_account_is_connected(purple_buddy_get_account(buddy))) {
@@ -258,11 +258,11 @@ void Conversations::create_conversation_chat(PurpleBlistNode *node)
 	} else {
 		conversation = new ConversationChat(chat);
 		//TODO remove debug
-		log->Write(Log::Type_cim, Log::Level_error, "new conversation: %p\n", conversation);
+		log->Write(Log::Level_error, "new conversation: %p\n", conversation);
 		AddConversation(conversation);
 
 		//TODO remove debug
-		log->Write(Log::Type_cim, Log::Level_debug, "conversation: %p\n", conversation);
+		log->Write(Log::Level_debug, "conversation: %p\n", conversation);
 
 		/* If the account is connected, try to initiate a conversation conversation */
 		//if (purple_account_is_connected(purple_chat_get_account(chat))) {
@@ -281,7 +281,7 @@ void Conversations::destroy_conversation(PurpleConversation *conv)
 		conversation->UnsetConversation(NULL);
 	} else {
 		 //TODO should be debug() add some stuff to easily identify the conversation
-		log->Write(Log::Type_cim, Log::Level_error, "ERROR: conversation without a window is being destroyed: %p, %s\n", conv, conv->name);
+		log->Write(Log::Level_error, "ERROR: conversation without a window is being destroyed: %p, %s\n", conv, conv->name);
 	}
 }
 

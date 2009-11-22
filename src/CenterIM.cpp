@@ -52,7 +52,7 @@ static PurpleDebugUiOps logbuf_debug_ui_ops =
 };
 
 CenterIM* CenterIM::instance = NULL;
-std::vector<CenterIM::logbuf_item>* CenterIM::logbuf = NULL;
+std::vector<CenterIM::LogBufferItem> *CenterIM::logbuf = NULL;
 
 typedef void (*signal_t)(int);
 signal_t old_handler = NULL;
@@ -100,14 +100,14 @@ void CenterIM::Quit(void)
 
 void CenterIM::ScreenResized(void)
 {
-	log->Write(Log::Type_cim, Log::Level_debug, "CenterIM::ScreenResized()\n");
+	log->Write(Log::Level_debug, "CenterIM::ScreenResized()\n");
 	windowmanager->ScreenResized();
 }
 
 void CenterIM::SetLocale(const char *locale)
 {
 	this->locale = locale;
-	log->Write(Log::Type_cim, Log::Level_debug, "locale: %s\n", locale);
+	log->Write(Log::Level_debug, "locale: %s\n", locale);
 }
 
 //TODO: move next two static structs inside the CenterIM object
@@ -198,7 +198,6 @@ CenterIM::~CenterIM()
 	/* clean up */
 	io_uninit();
 	purple_core_quit();
-	log->Delete();
 	windowmanager->Delete();
 }
 
@@ -220,17 +219,15 @@ void CenterIM::ui_prefs_init(void)
 
 void CenterIM::debug_ui_init(void)
 {
-	std::vector<logbuf_item>::iterator i;
-	logbuf_item *item;
+	std::vector<LogBufferItem>::iterator i;
 	
 	windowmanager->Add(log = Log::Instance());
 
 	if (logbuf) {
 		for (i = logbuf->begin(); i != logbuf->end(); i++) {
-			item = &(*i);
-			log->purple_print(item->level, item->category, item->arg_s);
-			g_free(item->category);
-			g_free(item->arg_s);
+			log->purple_print(i->level, i->category, i->arg_s);
+			g_free(i->category);
+			g_free(i->arg_s);
 		}
 
 		delete logbuf;
@@ -351,9 +348,9 @@ void CenterIM::purple_glib_io_destroy(gpointer data)
 void CenterIM::tmp_purple_print_(PurpleDebugLevel level, const char *category, const char *arg_s)
 {
 	if (!logbuf)
-		logbuf = new std::vector<logbuf_item>;
+		logbuf = new std::vector<LogBufferItem>;
 
-	logbuf_item item;
+	LogBufferItem item;
 	item.level = level;
 	item.category = g_strdup(category);
 	item.arg_s = g_strdup(arg_s);
@@ -388,9 +385,9 @@ void CenterIM::io_init(void)
 
 	// print the currently used character set
 	g_get_charset(&charset);
-	log->Write(Log::Type_cim, Log::Level_debug, "charset: %s\n", charset);
+	log->Write(Log::Level_debug, "charset: %s\n", charset);
 	if ((converter = g_iconv_open("UTF-8", charset)) == (GIConv) -1) {
-		log->Write(Log::Type_cim, Log::Level_critical, "IConv initialization failed (%s)\n", strerror(errno));
+		log->Write(Log::Level_error, "IConv initialization failed (%s)\n", g_strerror(errno));
 		throw EXCEPTION_ICONV_INIT;
 	}
 
@@ -408,7 +405,7 @@ void CenterIM::io_init(void)
 
 	g_io_channel_unref(channel);
 
-	log->Write(Log::Type_cim, Log::Level_debug, "IO initialized\n");
+	log->Write(Log::Level_debug, "IO initialized\n");
 }
 
 void CenterIM::io_uninit(void)
@@ -429,7 +426,7 @@ void CenterIM::io_uninit(void)
 gboolean CenterIM::io_input_error(GIOChannel *source, GIOCondition cond)
 {
 	// log an error and bail out if we lost stdin
-	log->Write(Log::Type_cim, Log::Level_critical, "stdin lost!\n");
+	log->Write(Log::Level_error, "stdin lost!\n");
 	Quit();
 
 	return TRUE;
@@ -461,7 +458,7 @@ gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 
 	if (g_io_channel_read_chars(source, buf + buf_part_len,
 				sizeof(buf) - buf_part_len, &rd, &err) != G_IO_STATUS_NORMAL) {
-		log->Write(Log::Type_cim, Log::Level_error, "%s\n", err->message);
+		log->Write(Log::Level_error, "%s\n", err->message);
 		g_error_free(err);
 		return TRUE;
 	}
@@ -471,7 +468,7 @@ gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 	// we don't need to care much about this, GLib will notice us again that
 	// there are still bytes left
 	if (sizeof(buf) == rd) {
-		log->Write(Log::Type_cim, Log::Level_debug, "input buffer full\n");
+		log->Write(Log::Level_debug, "input buffer full\n");
 	}
 
 	/* TODO Fix the input string.
@@ -486,7 +483,7 @@ gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 	if (g_iconv(converter, &pbuf, &rd, &pconverted, &converted_left) == (gsize) -1) {
 		switch (errno) {
 			case EILSEQ:
-				log->Write(Log::Type_cim, Log::Level_critical, _("IConv error: %s\n"), strerror(errno));
+				log->Write(Log::Level_error, _("IConv error: %s\n"), g_strerror(errno));
 				return TRUE;
 			case EINVAL:
 				// incomplete multibyte sequence is encountered in the input,
@@ -495,8 +492,7 @@ gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 				buf_part_len = rd;
 				break;
 			default:
-				log->Write(Log::Type_cim, Log::Level_critical,
-						_("Unexcepted IConv error: %s\n"), strerror(errno));
+				log->Write(Log::Level_error, _("Unexcepted IConv error: %s\n"), g_strerror(errno));
 				return TRUE;
 		}
 	}
@@ -509,7 +505,7 @@ gboolean CenterIM::io_input(GIOChannel *source, GIOCondition cond)
 	// too noisy even for debug level
 	/*
 	for (gchar *iter = converted; *iter != '\0'; iter = g_utf8_next_char(iter)) {
-		log->Write(Log::Type_cim, Log::Level_debug, "input: U+%04"G_GINT32_FORMAT"X\n", g_utf8_get_char(iter));
+		log->Write(Log::Level_debug, "input: U+%04"G_GINT32_FORMAT"X\n", g_utf8_get_char(iter));
 	}
 	*/
 
@@ -540,6 +536,6 @@ void CenterIM::OpenAccountStatusMenu(void)
 void CenterIM::OpenGeneralMenu(void)
 {
 	//TODO get coords from config
-	windowmanager->Add(new GeneralMenu(40,0, 40, 20, LineStyle::LineStyleDefault()));
+	windowmanager->Add(new GeneralMenu(40, 0, 40, 22, LineStyle::LineStyleDefault()));
 }
 

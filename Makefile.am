@@ -6,6 +6,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 .PHONY: doc
 doc:
-	doxygen doc/doxygen-cppconsui.conf > /dev/null
-	doxygen doc/doxygen-cim5.conf > /dev/null
+	[ -d $(builddir)/doc ] || mkdir $(builddir)/doc
+	doxygen $(srcdir)/doc/doxygen-cppconsui.conf > /dev/null
+	doxygen $(srcdir)/doc/doxygen-cim5.conf > /dev/null
 	@echo "open doc/html/index.html"

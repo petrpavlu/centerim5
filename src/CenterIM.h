@@ -41,7 +41,7 @@ class CenterIM
 : public InputProcessor
 {
 	public:
-		static CenterIM* Instance();
+		static CenterIM *Instance();
 		static void Delete(void);
 		void Run(void);
 		void Quit(void);
@@ -85,7 +85,7 @@ class CenterIM
 		//TODO: nice names
 		static void tmp_purple_print_(PurpleDebugLevel level, const char *category, const char *arg_s);
 		static gboolean tmp_isenabled_(PurpleDebugLevel level, const char *category)
-			{ return true; }
+			{ return TRUE; }
 
 		void OpenAccountStatusMenu(void);
 		void OpenGeneralMenu(void);
@@ -125,13 +125,12 @@ class CenterIM
 
 	    Glib::RefPtr<Glib::MainLoop> gmainloop;
 
-		//TODO: nice names
-		typedef struct logbuf_item {
+		struct LogBufferItem {
 			PurpleDebugLevel level;
-			char* category;
-			char* arg_s;
-		} logbuf_item;
-		static std::vector<logbuf_item>* logbuf;
+			char *category;
+			char *arg_s;
+		};
+		static std::vector<LogBufferItem> *logbuf;
 };
 
 #endif /* __CENTERIM_H__ */

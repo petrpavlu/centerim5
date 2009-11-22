@@ -21,6 +21,7 @@
 #include "GeneralMenu.h"
 #include "AccountWindow.h"
 #include "CIMWindowManager.h"
+#include "CenterIM.h"
 
 //TODO remove testing stuff
 #include "Log.h"
@@ -59,6 +60,9 @@ GeneralMenu::GeneralMenu(int x, int y, int w, int h, LineStyle *linestyle)
         combobox->AddOption("twoo", NULL);
         combobox->AddOption("theree", NULL);
 	AddWidget(combobox);
+
+	AddSeparator();
+	AddItem(_("Quit"), sigc::mem_fun(CenterIM::Instance(), &CenterIM::Quit));
 }
 
 GeneralMenu::~GeneralMenu()

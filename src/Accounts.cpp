@@ -107,20 +107,14 @@ void Accounts::status_changed_(PurpleAccount *account, PurpleStatus *status)
 void Accounts::signed_on(PurpleConnection *gc)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	log->Write(Log::Type_cim,
-		Log::Level_info,
-		_("+ [%s] Logged in: %s\n"),
-		account->protocol_id,
-		account->username);
+	log->Write(Log::Level_info, _("+ [%s] Logged in: %s\n"),
+			account->protocol_id, account->username);
 }
 
 void Accounts::status_changed(PurpleAccount *account, PurpleStatus *status)
 {
-	log->Write(Log::Type_cim,
-		Log::Level_info,
-		_("+ [%s] Status changed to: %s\n"),
-		account->protocol_id,
-		purple_status_get_name(status));
+	log->Write(Log::Level_info, _("+ [%s] Status changed to: %s\n"),
+			account->protocol_id, purple_status_get_name(status));
 }
 
 void Accounts::SetStatus(PurpleAccount *account, PurpleStatusType *status_type, bool active)
