@@ -18,6 +18,10 @@
  *
  * */
 
+/** @file HorizontalLine.cpp HorizontalLine class implementation
+ * @ingroup cppconsui
+ */
+
 #include "ConsuiCurses.h"
 #include "HorizontalLine.h"
 #include "LineStyle.h"
@@ -42,7 +46,7 @@ HorizontalLine::~HorizontalLine()
 void HorizontalLine::Draw()
 {
 	if (!area->w || Width() == 0)
-		return; //TODO and throw an exception/log a warning?
+		return; /// @todo and throw an exception/log a warning?
 
 	if (Width() <= 1) {
 		mvwadd_wch(area->w, 0, 0, H());

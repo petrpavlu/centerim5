@@ -29,6 +29,10 @@
  * Ported to c++ and modified for cppconsui/centerim.
  */
 
+/** @file TextEntry.cpp TextEntry class implementation
+ * @ingroup cppconsui
+ */
+
 #include "TextEntry.h"
 
 #include "Keys.h"
@@ -46,7 +50,7 @@ TextEntry::TextEntry(Widget& parent, int x, int y, int w, int h, const gchar *te
 , obscured(false)
 , flags(0)
 {
-	set_position(text_size); // @TODO should it be text_size or text_length ?
+	set_position(text_size); // @todo should it be text_size or text_length ?
 
 	can_focus = true;
 	DeclareBindables();
@@ -78,8 +82,8 @@ void TextEntry::Draw(void)
 {
 	Label::Draw();
 
-	//TODO we can do better than this
-	//TODO cursor blinking
+	/// @todo we can do better than this
+	/// @todo cursor blinking
 	if (has_focus) {
 		gchar *ptr = g_utf8_offset_to_pointer(text, current_pos);
 		int i = width(text, ptr);
@@ -99,15 +103,15 @@ int TextEntry::ProcessInputText(const char *input, const int bytes)
 	 * control characters occurring anywhere else than in the first
 	 * byte. This means that pasting text with embedded control
 	 * characters will not work. */
-	//TODO also skip function keys
+	/// @todo also skip function keys
 	c = g_utf8_get_char_validated(input, bytes);
 	if (g_unichar_iscntrl(c))
 		return 0;
 
-	//TODO filter out invalid chars
+	/// @todo filter out invalid chars
 	
 	/* Filter out unwanted input */
-	//TODO move to seperate function?
+	/// @todo move to separate function?
 	if (flags) {
 		new_input = g_new0(char, bytes);
 		char *next;
@@ -163,8 +167,8 @@ void TextEntry::Flags(int _flags)
 
 void TextEntry::Obscured(bool obscure)
 {
-	//TODO how to actually obscure the text if we use label::draw?
-	//copy label::draw implementation here?
+	/// @todo how to actually obscure the text if we use label::draw?
+	///  copy label::draw implementation here?
 	obscured = obscure;
 	Redraw();
 }
@@ -176,6 +180,7 @@ void TextEntry::backspace(void)
   //cim doesn't support input methods
   //_gtk_this_reset_im_context (this);
 
+	/// @todo make sure that this->text cannot be NULL and remove the test from here
   if (!this->editable || !this->text)
     return;
 
@@ -370,7 +375,7 @@ void TextEntry::insert_text (const gchar *new_text, gint new_text_length, gint *
             }
         }
 
-	//TODO implement widgit visibility property?
+	/// @todo implement widget visibility property?
       //if (this->visible)
       //  this->text = g_realloc (this->text, this->text_size);
       //else
@@ -461,7 +466,7 @@ void TextEntry::delete_text (gint start_pos, gint end_pos)
        * the terminating zero.  Note, that the terminating zero already trashed
        * one byte.
        */
-      //TODO implement widget visibility?
+      /// @todo implement widget visibility?
       //if (!this->visible) 
       //  trash_area (this->text + this->n_bytes + 1, end_index - start_index - 1);
 
@@ -477,7 +482,7 @@ void TextEntry::delete_text (gint start_pos, gint end_pos)
 
       /* We might have deleted the selection
        */
-      /* We dont use the clipboard
+      /* We don't use the clipboard
       update_primary_selection(); */
 
       recompute();
@@ -486,7 +491,7 @@ void TextEntry::delete_text (gint start_pos, gint end_pos)
     }
 }
 
-/*
+/**
  * Overwrite a memory that might contain sensitive information.
  */
 void TextEntry::trash_area (gchar *area, gsize len)
@@ -498,7 +503,7 @@ void TextEntry::trash_area (gchar *area, gsize len)
 
 void TextEntry::recompute (void)
 {
-  /* TODO port this too :)
+  /** @todo port this too :)
   gtk_entry_reset_layout();
   gtk_entry_check_cursor_blink();
   
@@ -510,7 +515,7 @@ void TextEntry::recompute (void)
   */
 }   
 
-/* All changes to entry->current_pos and entry->selection_bound
+/** All changes to entry->current_pos and entry->selection_bound
  * should go through this function.
  */     
 void TextEntry::set_positions (gint current_pos, gint selection_bound)
@@ -525,7 +530,7 @@ void TextEntry::set_positions (gint current_pos, gint selection_bound)
       this->current_pos = current_pos;
       changed = true;           
 
-      //TODO would we like a cursor changed signal?
+      /// @todo would we like a cursor changed signal?
       //g_object_notify (G_OBJECT (this), "cursor-position");
     }
 
@@ -535,7 +540,7 @@ void TextEntry::set_positions (gint current_pos, gint selection_bound)
       this->selection_bound = selection_bound;
       changed = true;                         
       
-      //TODO would we like a selection changed signal?
+      /// @todo would we like a selection changed signal?
       //g_object_notify (G_OBJECT (this), "selection-bound"); 
     }
                   
@@ -650,13 +655,13 @@ void TextEntry::delete_from_cursor (DeleteType type, gint count)
       break;
     }
   
-  //TODO implement cursor blinking;
+  /// @todo implement cursor blinking;
   //gtk_this_pend_cursor_blink (this);
 }
 
 void TextEntry::delete_whitespace (void)
 {
-  /*TODO this is untested */
+  /** @todo this is untested */
   //gint n_attrs;
   gchar *start, *end;
 
@@ -678,7 +683,7 @@ gint TextEntry::move_logically (gint start, gint count)
   gint new_pos = start;
 
   /* Prevent any leak of information */
-  /*TODO implement widget visibility?
+  /** @todo implement widget visibility?
   if (!this->visible)
     {
       new_pos = CLAMP (start + count, 0, this->text_length);
@@ -729,7 +734,7 @@ gint TextEntry::move_logically (gint start, gint count)
 
 gint TextEntry::move_visually (gint start, gint count)
 {
-  /*TODO should cim5 support ltr and rtl and mixed text?
+  /** @todo should cim5 support ltr and rtl and mixed text?
   gint index;
   PangoLayout *layout = gtk_entry_ensure_layout (entry, FALSE);
   const gchar *text;
@@ -839,7 +844,7 @@ gint TextEntry::move_forward_word (gint start, gboolean allow_whitespace)
 gint TextEntry::move_backward_word (gint start, gboolean allow_whitespace)
 {
   gint new_pos = start;
-  /*TODO port this function also in textview
+  /** @todo port this function also in textview
 
   * Prevent any leak of information *
   if (!entry->visible)
@@ -1017,7 +1022,7 @@ void TextEntry::BindActions(void)
 {
 	const gchar *context = "textentry";
 
-	//TODO implement more of these
+	/// @todo implement more of these
 	BindAction(context, "cursor-right", KEYS->Key_right(), false);
 	BindAction(context, "cursor-left", KEYS->Key_left(), false);
 	BindAction(context, "cursor-right-word", KEYS->Key_ctrl_right(), false);

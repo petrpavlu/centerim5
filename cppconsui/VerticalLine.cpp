@@ -18,6 +18,10 @@
  *
  * */
 
+/** @file VerticalLine.cpp VerticalLine class implementation
+ * @ingroup cppconsui
+ */
+
 #include "ConsuiCurses.h"
 #include "VerticalLine.h"
 #include "LineStyle.h"

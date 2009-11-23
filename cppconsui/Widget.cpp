@@ -18,6 +18,10 @@
  *
  * */
 
+/** @file Widget.cpp Widget class implementation
+ * @ingroup cppconsui
+ */
+
 #include "ConsuiCurses.h"
 #include "Widget.h"
 
@@ -41,7 +45,7 @@ Widget::Widget(Widget& parent, int x, int y, int w, int h)
 
 Widget::~Widget()
 {
-	/// @todo should probably delete also @ref area
+	/// @todo should also delete @ref Widget::area
 	delwin(area->w);
 }
 
@@ -126,7 +130,7 @@ bool Widget::SetFocusChild(Widget* child)
 
 	if (parent == this) {
 		/* Current widget is a window. */
-		//TODO window should try to become topmost.
+		/// @todo window should try to become topmost.
 		focus_child = child;
 		SetInputChild(child);
 		return true;
@@ -170,7 +174,7 @@ bool Widget::StealFocus(void)
 	return false;
 }
 
-//TODO move to window and use getfocuswidget??
+/// @todo move to window and use getfocuswidget??
 void Widget::RestoreFocus(void)
 {
 	if (focus_child == NULL) {

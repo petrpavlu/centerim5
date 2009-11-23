@@ -18,6 +18,9 @@
  *
  * */
 
+/** @file Label.h Label class
+ *	@ingroup cppconsui
+ */
 #ifndef __LABEL_H__
 #define __LABEL_H__
 
@@ -42,7 +45,7 @@ class Label
 		virtual ~Label();
 
 		virtual void Draw(void);
-
+		/** Sets a new text and redraws the Widget */
 		void SetText(const gchar *text_);
 		const gchar* GetText(void);
 
@@ -50,11 +53,14 @@ class Label
 		guint16 text_max_length;
 		gchar *text; 
 
-		guint16 text_size;    /* allocated size, in bytes */
-		guint16 n_bytes;      /* length in use, in bytes */
-		guint16 text_length;  /* length in use, in chars */
+		guint16 text_size;    /**< allocated size, in bytes */
+		guint16 n_bytes;      /**< length in use, in bytes */
+		guint16 text_length;  /**< length in use, in chars */
 
 	private:
+		/** manages the text allocation and reallocation
+		 * without any Widget signals invloved
+		 */ 
 		void RealSetText(const gchar *text_);
 		Label(void);
 		Label(const Label&);

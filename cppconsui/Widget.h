@@ -63,7 +63,9 @@ class Widget
 		virtual void Move(const int newx, const int newy);
 		virtual void Resize(const int neww, const int newh);
 		virtual void MoveResize(const int newx, const int newy, const int neww, const int newh);
-		/** This function updates the \ref area.
+		/** The @ref area is recreated, the new area should be redrawn.
+		 * It is called whenever the coordinates of the widget change. The caller must ensure the 
+		 * proper signals are emitted.
 		 */
 		virtual void UpdateArea();
 
@@ -83,7 +85,7 @@ class Widget
 		 * connect to the @ref signal_redraw.
 		 */
 		void Redraw(void);
-		/** Resets the focus child (by @ref StealFocus "stealing" the focus 
+		/** Resets the focus child by @ref StealFocus "stealing" the focus 
 		 * from the current chain and also ensures the focus 
 		 * goes also UP the chain to the root widget. (normally a Window)
 		 * 
@@ -155,7 +157,7 @@ class Widget
 		 */
 		bool has_focus;
 		/** This defines a chain of focus
-		 * @todo explain the difference between this chain and @ref inputchild
+		 * @todo explain the difference between this chain and @ref InputProcessor::inputchild
 		 * Isn't this a duplication of functionality from inputchild ?
   		 */
 		Widget *focus_child;

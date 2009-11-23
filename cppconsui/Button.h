@@ -17,6 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * */
+/** @file Button.h Button class
+ * @ingroup cppconsui
+ */
 
 #ifndef __BUTTON_H__
 #define __BUTTON_H__
@@ -24,7 +27,12 @@
 #include "Label.h"
 
 #include <glibmm/ustring.h>
-
+/** This class implements a simple button behaviour
+ *
+ * The button doesn't keep states like pressed or not
+ * and it can call back one (or more) functions when
+ * pressed.
+ */
 class Button
 : public Label
 {
@@ -55,7 +63,7 @@ class Button
 		void AddBindables(void);
 		void OnActivate(void);
 
-		sigc::slot<void> callback;
+		sigc::slot<void> callback; ///< keeper of the callback function
 };
 
 #endif /* __BUTTON_H__ */

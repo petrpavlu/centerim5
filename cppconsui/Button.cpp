@@ -17,6 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * */
+/** @file Button.cpp Button class implementation
+ * @ingroup cppconsui
+ */
 
 #include "ConsuiCurses.h"
 #include "Button.h"

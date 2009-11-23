@@ -29,6 +29,10 @@
  * Ported to c++ and modified for cppconsui/centerim.
  */
 
+/** @file TextEntry.h TextEntry class
+ * @ingroup cppconsui
+ */
+
 #ifndef __TEXT_ENTRY_H__
 #define __TEXT_ENTRY_H__
 
@@ -60,7 +64,8 @@ class TextEntry
 
 		int Flags(void) { return flags; }
 		void Flags(int flags);
-
+		
+		/** @todo Obscured is not used nor implemented yet. Is it TextEntry specific ? Or is it Widget specific ? */
 		bool Obscured(void) { return obscured; }
 		void Obscured(bool obscure);
 

@@ -18,12 +18,16 @@
  *
  * */
 
+/** @file ComboBox.cpp ComboBox class implementation
+ * @ingroup cppconsui
+ */
+
 #include "ComboBox.h"
 
 #include "Keys.h"
 #include "Button.h"
 
-//TODO remove when show() of window/dialog is implemented
+/// @todo remove when show() of window/dialog is implemented
 #include "WindowManager.h"
 
 #include <glib.h>
@@ -64,7 +68,7 @@ void ComboBox::OnDropDown(void)
 	if (dropdown)
 		{}/*TODO this shoudn't happen*/
 
-	//TODO position correctly according to absolute coords.
+	/// @todo position correctly according to absolute coords.
 	dropdown = new MenuWindow(0, 0, w, options.size()+2, LineStyle::LineStyleDefault());
 	sig_dropdown_close = dropdown->signal_close.connect(sigc::mem_fun(this, &ComboBox::DropDownClose));
 
@@ -72,7 +76,7 @@ void ComboBox::OnDropDown(void)
 		dropdown->AddItem((*i).text, sigc::bind(sigc::mem_fun(this, &ComboBox::DropDownOk), this, *i));
 	}
 
-	//TODO implement show method of dialogs/windows
+	/// @todo implement show method of dialogs/windows
 	//dropdown->Show();
 	WindowManager *wm = WindowManager::Instance();
 	wm->Add(dropdown);
@@ -80,7 +84,7 @@ void ComboBox::OnDropDown(void)
 
 void ComboBox::DropDownOk(const ComboBox *combo_box, ComboBoxEntry new_entry)
 {
-	SetText(new_entry.text);
+	SetText(new_entry.text); /// @todo call SetText only if really changed
 	ComboBoxEntry old_entry;
 
 	old_entry = selected_entry;
@@ -115,7 +119,6 @@ void ComboBox::AddOption(const gchar *text, const void *data)
 void ComboBox::SetSelected(void *data)
 {
 	ComboBoxEntries::iterator i;
-	//TODO
 }
 
 void ComboBox::DeclareBindables(void)
