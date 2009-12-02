@@ -83,7 +83,7 @@ Log::~Log(void)
 	delete GetBorder();
 }
 
-void Log::Write(Level level, const gchar *fmt, ...)
+void Log::Write(Level level, const char *fmt, ...)
 {
 	va_list args;
 	gchar *text;
@@ -194,7 +194,7 @@ void Log::ScreenResized()
 	MoveResize((CIMWindowManager::Instance())->ScreenAreaSize(CIMWindowManager::Log));
 }
 
-void Log::Write(Type type, Level level, const gchar *fmt, ...)
+void Log::Write(Type type, Level level, const char *fmt, ...)
 {
 	va_list args;
 	gchar *text;

@@ -35,7 +35,7 @@
 
 struct curses_imp_t {
 	WINDOW* w;
-	curses_imp_t(WINDOW *w): w(w) {}
+	curses_imp_t(WINDOW *w=NULL): w(w) {}
 };
 
 #endif /* __CURSES_H__ */

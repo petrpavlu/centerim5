@@ -23,6 +23,7 @@
  */
 
 #include "ConsuiCurses.h"
+//include "ConsuiLog.h"
 #include "Widget.h"
 
 #include <string>
@@ -39,7 +40,7 @@ Widget::Widget(Widget& parent, int x, int y, int w, int h)
 , colorscheme(NULL)
 {
 	area = new curses_imp_t(NULL);
-	UpdateArea();
+	UpdateArea(); /// @todo It should be called whenever the parent decides, and not here in constructor.
 	colorscheme = ColorScheme::ColorSchemeNormal();
 }
 
@@ -90,11 +91,13 @@ void Widget::MoveResize(int newx, int newy, int neww, int newh)
 
 void Widget::UpdateArea()
 {
+	//LOG("/tmp/ua.log",">Widget::UpdateArea (%d,%d,%d,%d) parent: %x this: %x areaw: %x \n", x,y,w,h, this->parent, this, area->w);	
 	if (area->w)
 		delwin(area->w);
 
 	area->w = subpad(parent->area->w, h, w, y, x);
 
+	//LOG("/tmp/ua.log","<Widget::UpdateArea (%d,%d,%d,%d) parent: %x this: %x areaw: %x \n", x,y,w,h, this->parent, this, area->w);	
 	if (area->w == NULL)
 		{}//TODO throw an exception
 		//actually, dont!

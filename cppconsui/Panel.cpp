@@ -18,6 +18,10 @@
  *
  * */
 
+/** @file Panel.cpp Panel class implementation
+ * @ingroup cppconsui
+ */
+
 #include "ConsuiCurses.h"
 #include "Panel.h"
 #include "LineStyle.h"

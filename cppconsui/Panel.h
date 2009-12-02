@@ -17,6 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * */
+/** @file Panel.h Panel class
+ * @ingroup cppconsui
+ */
 
 #ifndef __PANEL_H__
 #define __PANEL_H__
@@ -26,6 +29,7 @@
 #include "Label.h"
 #include "Widget.h"
 
+/// @todo remove curses header from here, it's not used
 #if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
 //#define _XOPEN_SOURCE_EXTENDED
 #include <ncurses.h>
@@ -33,7 +37,12 @@
 #include <curses.h>
 #endif
 
-//TODO borders with colors are nice
+/** A widget representing a rectangular border with an optional
+ * label on the top border line.
+ * @todo borders with colors are nice 
+ * @todo remove LineStyle as a parent class and use it as a member object instead
+ * @todo perhaps add some constructors directly with the label text
+ */
 class Panel
 : public Widget
 , public LineStyle
@@ -45,7 +54,7 @@ class Panel
 		virtual ~Panel();
 
 		virtual void Draw(void);
-
+		/** Sets the text of the label */
 		void SetText(const gchar *str);
 		Glib::ustring GetText(void);
 

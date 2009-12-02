@@ -17,6 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * */
+/** @file Container.cpp Container class implementation
+ * @ingroup cppconsui
+ */
 
 #include "Window.h"
 
@@ -25,6 +28,7 @@
 #include "Container.h"
 
 #include "ConsuiCurses.h"
+//#include "ConsuiLog.h"
 #if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
 #include <ncurses.h>
 #else
@@ -118,19 +122,21 @@ void Window::Resize(int neww, int newh)
 
 void Window::MoveResize(int newx, int newy, int neww, int newh)
 {
-	//TODO this has an overhead of 1 Redraw()
-	//we cant combine the functions  move and resize
-	//here because then each subclass would have to
-	//combine its implementations of move and redaw too
-	//i dont think that is what we want
-	//update: the WindowManager should only do screen updates
-	//in its spare time. see the todo in WindowManager::Redraw()
+	/** @todo this has an overhead of 1 Redraw()
+	 * we cant combine the functions  move and resize
+	 * here because then each subclass would have to
+	 * combine its implementations of move and redaw too
+	 * i dont think that is what we want
+	 * update: the WindowManager should only do screen updates
+	 * in its spare time. See the todo in WindowManager::Redraw()
+	 */
 	Move(newx, newy);
 	Resize(neww, newh);
 }
 
 void Window::UpdateArea()
 {
+	//LOG("/tmp/ua.log","Window::UpdateArea (%d,%d,%d,%d) parent: %x this: %x areaw: %x \n", x,y,w,h, this->parent, this, area->w);
 	if (area->w)
 		delwin(area->w);
 

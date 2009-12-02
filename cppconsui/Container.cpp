@@ -17,6 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * */
+/** @file Container.cpp Container class implementation
+ * @ingroup cppconsui
+ */
 
 #include <algorithm>
 
@@ -29,11 +32,12 @@
  * container.
  * */
 
-//TODO when adding/removing child widgets
-//connect to signals
-//this also means making the children vector
-//private (protected?>
-//TODO dont accept focus when we have no focusable widgets
+/** @todo when adding/removing child widgets
+ * connect to signals
+ * this also means making the children vector
+ * private (protected?>
+ * @todo dont accept focus when we have no focusable widgets
+ */
 
 Container::Container(Widget& parent, const int x, const int y, const int w, const int h)
 : Widget(parent, x, y, w, h)
@@ -110,12 +114,13 @@ void Container::Draw(void)
 void Container::AddWidget(Widget *widget)
 {
 	Child child;
-
+	/** @todo I would say assert here, why should we add a NULL widget? Perhaps make it a reference ? */
 	g_return_if_fail(widget != NULL);
 
 	widget->UpdateArea();
-	//TODO also other widget signals. maybe a descendant class would like
-	//to do somethings. Eg a ListBox wants to undo move events.
+	/** @todo also other widget signals. maybe a descendant class would like
+	 *  to do somethings. Eg a ListBox wants to undo move events.
+	 */
 	child.sig_redraw = widget->signal_redraw.connect(sigc::mem_fun(this, &Container::OnChildRedraw));
 	child.widget = widget;
 	children.push_back(child);
@@ -129,7 +134,8 @@ void Container::RemoveWidget(Widget *widget)
 {
 	Children::iterator i;
 	Child *child = NULL;
-
+	
+	/** @todo I would say assert here, why should we add a NULL widget? Perhaps make it a reference ? */
 	g_return_if_fail(widget != NULL);
 
 	for (i = children.begin(); i != children.end(); i++) {
@@ -138,7 +144,7 @@ void Container::RemoveWidget(Widget *widget)
 			break;
 	}
 
-	if (!child) return; //TODO a warning also?
+	if (!child) return; /// @todo a warning also?
 
 	MoveFocus(FocusNext);
 
@@ -175,10 +181,11 @@ void Container::GetFocusChain(FocusChain& focus_chain, FocusChain::iterator pare
 		widget = (*i).widget;
 		container = dynamic_cast<Container*>(widget);
 
-		//TODO implement widget visibility.
-		//TODO dont filter out widgets in this function (or overriding
-		//functions in other classes. filter out somewhere else.
-		//eg when sorting before use.
+		/**@todo implement widget visibility.
+		 * @todo dont filter out widgets in this function (or overriding
+		 * functions in other classes. filter out somewhere else.
+		 * eg when sorting before use.
+		 */
 		if (widget->CanFocus() /*&& widget->Visible() */) {
 			iter = focus_chain.append_child(parent, widget);
 		} else if (container != NULL) {
@@ -193,7 +200,7 @@ void Container::GetFocusChain(FocusChain& focus_chain, FocusChain::iterator pare
 
 			/* If this is not a focusable widget and it has no focuasable
 			 * children, remove it from the chain. */
-			//TODO remove when widgets are filtered out elsewhere
+			/// @todo remove when widgets are filtered out elsewhere
 			if ((*iter) == NULL && !focus_chain.number_of_children(iter)) {
 				focus_chain.erase(iter);
 			}
@@ -204,7 +211,13 @@ void Container::GetFocusChain(FocusChain& focus_chain, FocusChain::iterator pare
 void Container::MoveFocus(FocusDirection direction)
 {
 	/* Make sure we always start at the root
-	 * of the widget tree. */
+	 * of the widget tree. 
+	 * @todo Should we make sure of this ? If we have focus and the focuscycle is Local
+	 *  then I don't see why we should start at the root. If we don't have focus, how come 
+	 *  that we request a move of focus ? Shouldn't it return just false ?
+	 *  Having focus and focuscycle being Global seems to be the only resonable condition 
+	 *  to move to the parent
+	 */
 	if (parent != this) {
 		Container *container;
 
@@ -212,9 +225,10 @@ void Container::MoveFocus(FocusDirection direction)
 			container->MoveFocus(direction);
 			return;
 		} else {
-			//TODO warning about custom container class??
-			//what to do now? perhaps move this function
-			//to the widget class?
+			/** @todo warning about custom container class??
+			 * what to do now? perhaps move this function
+			 * to the widget class?
+			 */
 		}
 	}
 
@@ -227,7 +241,7 @@ void Container::MoveFocus(FocusDirection direction)
 
 	GetFocusChain(focus_chain, focus_chain.begin());
 
-	/*TODO implement focus chain sorting functions
+	/** @todo implement focus chain sorting functions
 	switch (direction) {
 		* Order by the focus_order property of the widget. *
 		case FocusNext:

@@ -10,7 +10,7 @@ inline void LOG(const char* FN, const char* fmt, ...){
 	FILE * f = fopen(FN,"at"); 
 	va_list args;
 	va_start(args, fmt);
-	fprintf(f, fmt, args);
+	vfprintf(f, fmt, args);
 	va_end(args);
 	fclose(f);
 }
