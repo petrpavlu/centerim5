@@ -31,14 +31,14 @@
 #include <libpurple/util.h>
 #include <glib.h>
 
-Log* Log::Instance(void)
+Log* Log::Instance()
 {
 	static Log instance;
 	return &instance;
 }
 
 //TODO sensible defaults
-Log::Log(void)
+Log::Log()
 : TextWindow(0, 0, 80, 24, NULL)
 {
 	conf = Conf::Instance();
@@ -59,10 +59,6 @@ Log::Log(void)
 	REGISTER_G_LOG_HANDLER("GLib-GObject");
 	REGISTER_G_LOG_HANDLER("GThread");
 
-	// redirect the debug messages to log
-	g_set_print_handler(glib_print_);
-	g_set_printerr_handler(glib_printerr_);
-
 	// set the purple debug callbacks
 	centerim_debug_ui_ops.print = purple_print_;
 	centerim_debug_ui_ops.is_enabled = is_enabled_;
@@ -73,7 +69,7 @@ Log::Log(void)
 	purple_prefs_connect_callback(prefs_handle, CONF_PREFIX "log/debug", debug_change_, this);
 }
 
-Log::~Log(void)
+Log::~Log()
 {
 	purple_prefs_disconnect_by_handle(prefs_handle);
 
@@ -83,7 +79,7 @@ Log::~Log(void)
 	delete GetBorder();
 }
 
-void Log::Write(Level level, const char *fmt, ...)
+void Log::Write(Level level, const gchar *fmt, ...)
 {
 	va_list args;
 	gchar *text;
@@ -96,7 +92,7 @@ void Log::Write(Level level, const char *fmt, ...)
 	va_end(args);
 
 	WriteToFile(text);
-	AddLine(text);
+	AddTextToWindow(text);
 
 	g_free(text);
 }
@@ -143,7 +139,7 @@ void Log::glib_log_handler(const gchar *domain, GLogLevelFlags flags,
 	else if (flags & G_LOG_LEVEL_ERROR)
 		level = Level_error;
 	else {
-		Write(Type_cim, Level_warning, "centerim/log: Unknown glib logging level in %d.\n", flags);
+		Write(Level_warning, "centerim/log: Unknown glib logging level in %d.\n", flags);
 		/* This will never happen. Actually should not, because some day, it
 		 * will happen :) So lets initialize level, so that we don't have
 		 * uninitialized values :) */
@@ -164,22 +160,6 @@ void Log::glib_log_handler(const gchar *domain, GLogLevelFlags flags,
 	g_free(new_domain);
 }
 
-/* TODO I'm not quite sure if these two glib callbacks are really needed
- * because we don't use g_print() and g_printerr() anywhere...
- * see http://library.gnome.org/devel/glib/stable/glib-Warnings-and-Assertions.html#g-print
- */
-void Log::glib_print(const char *msg)
-{
-	// TODO other level more approriate?
-	Write(Type_glib, Level_debug, "glib/misc: %s", msg);
-}
-
-void Log::glib_printerr(const char *msg)
-{
-	// TODO other level more approriate?
-	Write(Type_glib, Level_debug, "glib/miscerr: %s", msg);
-}
-
 void Log::debug_change(const char *name, PurplePrefType type, gconstpointer val)
 {
 	// debug was disabled so close logfile if it's opened
@@ -194,14 +174,13 @@ void Log::ScreenResized()
 	MoveResize((CIMWindowManager::Instance())->ScreenAreaSize(CIMWindowManager::Log));
 }
 
-void Log::Write(Type type, Level level, const char *fmt, ...)
+void Log::Write(Type type, Level level, const gchar *fmt, ...)
 {
 	va_list args;
 	gchar *text;
 
 	if ((type == Type_glib && conf->GetLogLevelGlib() < level)
-		|| (type == Type_purple && conf->GetLogLevelPurple() < level)
-		|| (type == Type_cim && conf->GetLogLevelCIM() < level))
+		|| (type == Type_purple && conf->GetLogLevelPurple() < level))
 		return; // we don't want to see this log message
 
 	va_start(args, fmt);
@@ -209,7 +188,24 @@ void Log::Write(Type type, Level level, const char *fmt, ...)
 	va_end(args);
 
 	WriteToFile(text);
-	AddLine(text);
+	AddTextToWindow(text);
+
+	g_free(text);
+}
+
+void Log::WriteToWindow(Level level, const gchar *fmt, ...)
+{
+	va_list args;
+	gchar *text;
+
+	if (conf->GetLogLevelCIM() < level)
+		return; // we don't want to see this log message
+
+	va_start(args, fmt);
+	text = g_strdup_vprintf(fmt, args);
+	va_end(args);
+
+	AddTextToWindow(text);
 
 	g_free(text);
 }
@@ -225,7 +221,7 @@ void Log::WriteToFile(const gchar *text)
 					conf->GetString(CONF_PREFIX "log/filename", "debug"), NULL);
 			logfile = g_io_channel_new_file(filename, "a", &err);
 			if (err) {
-				Write(Type_cim, Level_error, _("Error opening logfile `%s' (%s).\n"), filename, err->message);
+				WriteToWindow(Level_error, _("centerim/log: Error opening logfile `%s' (%s).\n"), filename, err->message);
 				g_error_free(err);
 				err = NULL;
 			}
@@ -236,17 +232,45 @@ void Log::WriteToFile(const gchar *text)
 		if (logfile) {
 			g_io_channel_write_chars(logfile, text, -1, NULL, &err);
 			if (err) {
-				Write(Type_cim, Level_error, _("Error writing to logfile (%s).\n"), err->message);
+				WriteToWindow(Level_error, _("centerim/log: Error writing to logfile (%s).\n"), err->message);
 				g_error_free(err);
 				err = NULL;
 			}
 			g_io_channel_flush(logfile, &err);
 			if (err) {
-				Write(Type_cim, Level_error, _("Error flushing logfile (%s).\n"), err->message);
+				WriteToWindow(Level_error, _("centerim/log: Error flushing logfile (%s).\n"), err->message);
 				g_error_free(err);
 				err = NULL;
 			}
 		}
+	}
+}
+
+// TODO consider moving this to TextBrowser
+void Log::AddTextToWindow(gchar *text)
+{
+	gchar *start;
+	gchar *iter;
+	gchar bac;
+	GUnicodeBreakType btype;
+
+	start = iter = text;
+
+	// add text line by line
+	while (*iter != '\0') {
+		btype = g_unichar_break_type(g_utf8_get_char(iter));
+		if (btype == G_UNICODE_BREAK_CARRIAGE_RETURN
+				|| btype == G_UNICODE_BREAK_LINE_FEED) {
+			bac = *iter;
+			*iter = '\0';
+			// skip empty lines
+			if (start != iter)
+				AddLine(start);
+			*iter = bac;
+			start = iter = g_utf8_next_char(iter);
+		}
+		else
+			iter = g_utf8_next_char(iter);
 	}
 }
 

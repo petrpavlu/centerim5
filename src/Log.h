@@ -44,15 +44,15 @@ class Log
 			Level_error // = fatal in libpurle
 		};
 
-		static Log *Instance(void);
+		static Log *Instance();
 
-		void Write(Log::Level level, const char *fmt, ...);
+		void Write(Level level, const gchar *fmt, ...);
 
 		// to catch libpurple's debug messages
 		static void purple_print_(PurpleDebugLevel level, const char *category, const char *arg_s)
-			{ Log::Instance()->purple_print(level, category, arg_s); }
+			{ Instance()->purple_print(level, category, arg_s); }
 		static gboolean is_enabled_(PurpleDebugLevel level, const char *category)
-			{ return Log::Instance()->is_enabled(level, category); }
+			{ return Instance()->is_enabled(level, category); }
 
 		void purple_print(PurpleDebugLevel level, const char *category, const char *arg_s);
 		gboolean is_enabled(PurpleDebugLevel level, const char *category);
@@ -60,15 +60,8 @@ class Log
 		// to catch glib's messages
 		static void glib_log_handler_(const gchar *domain, GLogLevelFlags flags,
 			const gchar *msg, gpointer user_data)
-			{ Log::Instance()->glib_log_handler(domain, flags, msg, user_data); }
-		static void glib_print_(const char *msg)
-			{ Log::Instance()->glib_print(msg); }
-		static void glib_printerr_(const char *msg)
-			{ Log::Instance()->glib_printerr(msg); }
-
+			{ Instance()->glib_log_handler(domain, flags, msg, user_data); }
 		void glib_log_handler(const gchar *domain, GLogLevelFlags flags, const gchar *msg, gpointer user_data);
-		void glib_print(const char *msg);
-		void glib_printerr(const char *msg);
 
 		// called when log/debug pref changed
 		static void debug_change_(const char *name, PurplePrefType type,
@@ -88,11 +81,15 @@ class Log
 		int max_lines;
 		Conf *conf;
 
-		Log(void);
-		~Log(void);
+		Log();
+		Log(const Log &);
+		Log &operator=(const Log &);
+		~Log();
 
-		void Write(Log::Type type, Log::Level level, const char *fmt, ...);
+		void Write(Type type, Level level, const gchar *fmt, ...);
+		void WriteToWindow(Level level, const gchar *fmt, ...);
 		void WriteToFile(const gchar *text);
+		void AddTextToWindow(gchar *text);
 		Level ConvertPurpleDebugLevel(PurpleDebugLevel purplelevel);
 };
 

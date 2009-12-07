@@ -150,7 +150,8 @@ CenterIM::CenterIM()
 	purple_util_set_user_dir(path);
 	g_free(path);
 
-	/* This does not disable debugging, but rather it disables printing to stdout */
+	/* This does not disable debugging, but rather it disables printing to
+	 * stdout. Don't change this to TRUE or things will get messy. */
 	purple_debug_set_enabled(FALSE);
 
 	/* This catches and buffers libpurple debug messages until the Log object
