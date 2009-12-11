@@ -1,5 +1,7 @@
 # List of source files which contain translatable strings.
 
+# TODO check for missing files
+
 # CenterIM source files
 src/Accounts.cpp
 src/Accounts.h
@@ -28,6 +30,7 @@ src/Log.cpp
 src/Log.h
 
 # CppConsUI source files
+cppconsui/Application.cpp
 cppconsui/Container.cpp
 cppconsui/Container.h
 cppconsui/TextBrowser.cpp

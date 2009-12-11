@@ -24,20 +24,16 @@
 #include "Window.h"
 #include "InputProcessor.h"
 
-#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
-#include <ncurses.h>
-#else
-#include <curses.h>
-#endif
-
 #include <vector>
 
 class WindowManager
 : public InputProcessor
 {
 	public:
-
 		static WindowManager* Instance(void);
+
+		static void signal_handler(int signum);
+
 		void Delete(void);
 
 		void CloseWindow(Window *window);
@@ -50,6 +46,14 @@ class WindowManager
 		void ScreenResized(void);
 		virtual bool Resize(void);
 
+		void EnableResizing(void);
+		void DisableResizing(void);
+
+		int getScreenW(void) { return screenW; }
+		int getScreenH(void) { return screenH; }
+
+		sigc::signal<void> signal_resize;
+
 	protected:
 		typedef struct {
 			Window* window;
@@ -58,7 +62,6 @@ class WindowManager
 		} WindowInfo;
 		typedef std::vector<WindowInfo> Windows;
 
-		virtual ~WindowManager(void); // we do not want to be able to delete it from outside
 		void Redraw(void);
 		void WindowRedraw(Widget* widget);
 
@@ -69,7 +72,6 @@ class WindowManager
 
 		Windows windows;
 		WINDOW *defaultwindow;
-		sigc::signal<void> signal_resize;
 		int screenW, screenH;
 
 		bool redrawpending;
@@ -77,8 +79,8 @@ class WindowManager
 
 		WindowManager(void);
 		WindowManager(const WindowManager&);
-
 		WindowManager& operator=(const WindowManager&);
+		~WindowManager(void);
 
 		static WindowManager *instance;
 

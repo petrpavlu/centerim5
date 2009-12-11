@@ -20,7 +20,6 @@
 
 #include "GeneralMenu.h"
 #include "AccountWindow.h"
-#include "CIMWindowManager.h"
 #include "CenterIM.h"
 
 //TODO remove testing stuff
@@ -117,6 +116,6 @@ void GeneralMenu::OpenAccountsWindow(void)
 
 void GeneralMenu::ScreenResized()
 {
-	Rect chat = (CIMWindowManager::Instance())->ScreenAreaSize(CIMWindowManager::Chat);
+	Rect chat = CenterIM::Instance()->ScreenAreaSize(CenterIM::ChatArea);
 	Move(chat.x, chat.y);
 }

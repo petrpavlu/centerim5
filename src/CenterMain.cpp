@@ -53,10 +53,7 @@ int main (int argc, char **argv)
 		return i;
 	}
 
-	cim->SetLocale(locale);
 	cim->Run();
-
-	CenterIM::Delete();
 
 	return 0;
 }

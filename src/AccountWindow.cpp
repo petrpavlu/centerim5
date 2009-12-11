@@ -25,7 +25,7 @@
 #include <cppconsui/MessageDialog.h>
 #include <cppconsui/WindowManager.h>
 
-#include "CIMWindowManager.h"
+#include "CenterIM.h"
 
 #include <libpurple/account.h>
 #include <libpurple/accountopt.h>
@@ -83,7 +83,7 @@ void AccountWindow::Resize(int neww, int newh)
 
 void AccountWindow::ScreenResized()
 {
-	Rect screen = (CIMWindowManager::Instance())->ScreenAreaSize(CIMWindowManager::Screen);
+	Rect screen = CenterIM::Instance()->ScreenAreaSize(CenterIM::WholeArea);
 	Rect confSize = conf->GetAccountWindowDimensions();
 
 	// Check against screen size

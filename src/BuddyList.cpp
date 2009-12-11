@@ -23,7 +23,7 @@
 #include "Log.h"
 #include "Conf.h"
 
-#include "CIMWindowManager.h"
+#include "CenterIM.h"
 #include "Defines.h"
 
 //TODO remove this include. non-cppconsui classes may not touch area member
@@ -250,5 +250,5 @@ void BuddyList::Resize(int neww, int newh)
 
 void BuddyList::ScreenResized()
 {
-	MoveResize((CIMWindowManager::Instance())->ScreenAreaSize(CIMWindowManager::BuddyList));
+	MoveResize(CenterIM::Instance()->ScreenAreaSize(CenterIM::BuddyListArea));
 }

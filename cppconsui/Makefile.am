@@ -6,6 +6,8 @@ lib_LTLIBRARIES = libcppconsui.la
 libcppconsui_la_SOURCES =\
 	Adjustment.cpp \
 	Adjustment.h \
+	Application.cpp \
+	Application.h \
 	ConsuiCurses.h \
 	ConsuiLog.h \
 	Container.cpp \
@@ -80,5 +82,5 @@ libcppconsui_la_SOURCES =\
 	TextView.h
 
 
-libcppconsui_la_CPPFLAGS = $(CFLAGS) $(GLIBMM_CFLAGS) $(CURSES_INCLUDEDIR) $(DEBUG_CFLAGS)
+libcppconsui_la_CPPFLAGS = $(CFLAGS) $(GLIBMM_CFLAGS) $(CURSES_INCLUDEDIR) $(DEBUG_CFLAGS) -DG_LOG_DOMAIN=\"cppconsui\"
 libcppconsui_la_LIBADD = $(GLIBMM_LIBS) $(CURSES_LIBS)

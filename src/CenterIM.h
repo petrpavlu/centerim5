@@ -29,89 +29,95 @@
 #include "Log.h"
 #include "Conf.h"
 
-#include "CIMWindowManager.h"
+#include <libpurple/core.h>
+#include <libpurple/debug.h>
+#include <libpurple/eventloop.h>
 
+#include <cppconsui/Application.h>
 #include <cppconsui/Keys.h>
 #include <cppconsui/InputProcessor.h>
+#include <cppconsui/WindowManager.h>
 
-#include <glibmm/main.h>
 #include <vector>
 
 class CenterIM
-: public InputProcessor
+: public Application
 {
 	public:
-		static CenterIM *Instance();
-		static void Delete(void);
-		void Run(void);
-		void Quit(void);
-		void ScreenResized(void);
+		enum ScreenArea {BuddyListArea, LogArea, ChatArea, WholeArea, AreaMax};
 
-		void SetLocale(const char *locale);
-		const char *GetLocale(void)
-			{ return locale; }
+		static CenterIM *Instance(void);
 
-		/* for purple_core_set_ui_ops() */
-		//static void ui_prefs_init_(void) { CenterIM::Instance()->ui_prefs_init(); }
-		//static void debug_ui_init_(void) { CenterIM::Instance()->debug_ui_init(); }
-		//static void ui_init_(void) { CenterIM::Instance()->ui_init(); }
-		static void ui_uninit_(void) { CenterIM::Instance()->ui_uninit(); }
-		static gboolean io_input_error_(GIOChannel *source, GIOCondition cond, gpointer data)
-			{ return ((CenterIM*)data)->io_input_error(source, cond); }
-		static gboolean io_input_(GIOChannel *source, GIOCondition cond, gpointer data)
-			{ return ((CenterIM*)data)->io_input(source, cond); }
+		virtual void Run(void);
+		virtual void Quit(void);
 
-		void ui_prefs_init(void);
-		void debug_ui_init(void);
-		void ui_init(void);
-		void ui_uninit(void);
-		void io_init(void);
-		void io_uninit(void);
-		gboolean io_input_error(GIOChannel *source, GIOCondition cond);
-		gboolean io_input(GIOChannel *source, GIOCondition cond);
+		// PurpleCoreUiOps callbacks
+		/** Returns information about CenterIM such as name, website etc. */
+		static GHashTable *get_ui_info(void);
 
-		/* for purple_eventloop_set_ui_ops() */
+		// PurpleEventLoopUiOps callbacks
+		/** Adds timeout to glib main loop context. */
 		static guint timeout_add(guint interval, GSourceFunc function, gpointer data);
+		/** Removes timeout from glib main loop context. */
 		static gboolean timeout_remove(guint handle);
+		/** Adds IO watch to glib main loop context. */
 		static guint input_add(int fd, PurpleInputCondition condition,
 			PurpleInputFunction function, gpointer data);
+		/** Removes input from glib main loop context. */
 		static gboolean input_remove(guint handle);
 
-		/* helper functions for CenterIM::input_add_() */
-		//TODO better names
+		// helper function for input_add
+		/** Process IO input to purple callback. */
 		static gboolean purple_glib_io_input(GIOChannel *source, GIOCondition condition, gpointer data);
+		/** Destroyes libpurple io input callback internal data. */
+		static void purple_glib_io_destroy(gpointer data);
 
-		/* helper function to catch debug messages during libpurple initialisation */
-		//TODO: nice names
-		static void tmp_purple_print_(PurpleDebugLevel level, const char *category, const char *arg_s);
-		static gboolean tmp_isenabled_(PurpleDebugLevel level, const char *category)
+		// PurpleDebugUiOps callbacks
+		// helper function to catch debug messages during libpurple initialization
+		/** Catches and buffers libpurple debug messages until the Log object
+		 * can be instantiated. */
+		static void tmp_purple_print(PurpleDebugLevel level, const char *category, const char *arg_s);
+		static gboolean tmp_is_enabled(PurpleDebugLevel level, const char *category)
 			{ return TRUE; }
+
+		/** Returns size of selected area. */
+		Rect ScreenAreaSize(ScreenArea area);
+
+		/** Recalculates area sizes to fit into current screen size. */
+		virtual void ScreenResized(void);
 
 		void OpenAccountStatusMenu(void);
 		void OpenGeneralMenu(void);
 
-		static void purple_glib_io_destroy(gpointer data);
-
-		static char const * const version;
+		static const char * const version;
 
 	protected:
 
 	private:
-		CenterIM();
-		~CenterIM();
+		static const int originalW = 139;
+		static const int originalH = 56;
 
-		void register_resize_handler(void);
-		void unregister_resize_handler(void);
+		PurpleCoreUiOps centerim_core_ui_ops;
+		PurpleDebugUiOps logbuf_debug_ui_ops;
+		PurpleEventLoopUiOps centerim_glib_eventloops;
 
-		static CenterIM* instance;
+		struct IOClosure {
+			PurpleInputFunction function;
+			guint result;
+			gpointer data;
 
-		const char *charset;
-		const char *locale;
-		GIConv converter;
+			IOClosure(void) : function(NULL), result(0), data(NULL) {}
+		};
 
-		GIOChannel *channel;
-		guint channel_id;
-		CIMWindowManager *windowmanager;
+		static GHashTable *ui_info;
+
+		struct LogBufferItem {
+			PurpleDebugLevel level;
+			char *category;
+			char *arg_s;
+		};
+		static std::vector<LogBufferItem> *logbuf;
+
 		Accounts *accounts;
 		Connections *connections;
 		BuddyList *buddylist;
@@ -121,16 +127,19 @@ class CenterIM
 		Conf *conf;
 		Keys *keys;
 
-		static void signal_handler(int signum);
+		Rect areaSizes[AreaMax];
 
-	    Glib::RefPtr<Glib::MainLoop> gmainloop;
+		CenterIM(void);
+		CenterIM(const CenterIM &);
+		CenterIM &operator=(const CenterIM &);
+		~CenterIM(void) {};
 
-		struct LogBufferItem {
-			PurpleDebugLevel level;
-			char *category;
-			char *arg_s;
-		};
-		static std::vector<LogBufferItem> *logbuf;
+		void PurpleInit(void);
+		void DebugUIInit(void);
+		void UIInit(void);
+		void UIUnInit(void);
+		void IOInit(void);
+		void IOUnInit(void);
 };
 
 #endif /* __CENTERIM_H__ */

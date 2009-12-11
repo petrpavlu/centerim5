@@ -28,6 +28,9 @@
 #include <curses.h>
 #endif
 
+#include <sys/ioctl.h>
+#include <signal.h>
+#include <cstring>
 #include <glib.h>
 #include <glibmm/main.h>
 
@@ -39,8 +42,17 @@ WindowManager* WindowManager::Instance(void)
 	return instance;
 }
 
+void WindowManager::signal_handler(int signum)
+{
+	if (signum == SIGWINCH)
+		Instance()->ScreenResized();
+}
+
+
 WindowManager::WindowManager(void)
 : defaultwindow(NULL)
+, screenW(RealScreenWidth())
+, screenH(RealScreenHeight())
 , redrawpending(false)
 , resizepending(false)
 {
@@ -48,6 +60,10 @@ WindowManager::WindowManager(void)
 
 	defaultwindow = initscr();
 	start_color(); //TODO do something with the return value.
+	curs_set(0);
+	keypad(stdscr, 1); // without this, some keys are not translated correctly
+	nonl();
+	raw();
 
 	if (!defaultwindow)
 		{}//TODO throw an exception that we can't init curses
@@ -98,10 +114,11 @@ void WindowManager::Add(Window *window)
 	if (!HasWindow(window)) {
 		info.window = window;
 		info.redraw = window->signal_redraw.connect(sigc::mem_fun(this, &WindowManager::WindowRedraw));
-		info.resize = this->signal_resize.connect(sigc::mem_fun(window, &Window::ScreenResized));
+		info.resize = signal_resize.connect(sigc::mem_fun(window, &Window::ScreenResized));
 		windows.insert(windows.begin(), info);
 	}
 
+	window->ScreenResized();
 	FocusWindow();
 	Redraw();
 }
@@ -233,17 +250,44 @@ void WindowManager::WindowRedraw(Widget *widget)
 
 bool WindowManager::Resize(void)
 {
-	if (resizepending) {
-		// save new screen size
-		screenW = RealScreenWidth();
-		screenH = RealScreenHeight();
+	struct winsize size;
 
-		signal_resize();
-
+	if (resizepending)
 		resizepending = false;
+
+	if (ioctl(fileno(stdout), TIOCGWINSZ, &size) >= 0) {
+		resizeterm(size.ws_row, size.ws_col);
+		// TODO next line needed?
+		//wrefresh(curscr);
 	}
 
+	// save new screen size
+	screenW = size.ws_col;
+	screenH = size.ws_row;
+
+	signal_resize();
+
 	return false;
+}
+
+void WindowManager::EnableResizing(void)
+{
+	// register resize handler
+	struct sigaction sig;
+	sig.sa_handler = signal_handler;
+	sigemptyset(&sig.sa_mask);
+	sig.sa_flags = 0;
+	sigaction(SIGWINCH, &sig, NULL);
+}
+
+void WindowManager::DisableResizing(void)
+{
+	// unregister resize handler
+	struct sigaction sig;
+	sig.sa_handler = SIG_DFL;
+	sigemptyset(&sig.sa_mask);
+	sig.sa_flags = 0;
+	sigaction(SIGWINCH, &sig, NULL);
 }
 
 void WindowManager::ScreenResized(void)

@@ -19,10 +19,8 @@
  * */
 
 #include "Log.h"
-
 #include "Conf.h"
-
-#include "CIMWindowManager.h"
+#include "CenterIM.h"
 
 #include <cppconsui/CppConsUI.h>
 #include <cppconsui/TextWindow.h>
@@ -30,17 +28,24 @@
 #include <libpurple/debug.h>
 #include <libpurple/util.h>
 #include <glib.h>
+#include <cstring>
 
-Log* Log::Instance()
+Log* Log::Instance(void)
 {
 	static Log instance;
 	return &instance;
 }
 
 //TODO sensible defaults
-Log::Log()
+Log::Log(void)
 : TextWindow(0, 0, 80, 24, NULL)
-{
+, logfile(NULL)
+, prefs_handle(NULL)
+, max_lines(0)
+, conf(NULL)
+{ 
+	memset(&centerim_debug_ui_ops, 0, sizeof(centerim_debug_ui_ops));
+
 	conf = Conf::Instance();
 
 #define REGISTER_G_LOG_HANDLER(name) \
@@ -58,6 +63,7 @@ Log::Log()
 	REGISTER_G_LOG_HANDLER("GModule");
 	REGISTER_G_LOG_HANDLER("GLib-GObject");
 	REGISTER_G_LOG_HANDLER("GThread");
+	REGISTER_G_LOG_HANDLER("cppconsui");
 
 	// set the purple debug callbacks
 	centerim_debug_ui_ops.print = purple_print_;
@@ -69,7 +75,7 @@ Log::Log()
 	purple_prefs_connect_callback(prefs_handle, CONF_PREFIX "log/debug", debug_change_, this);
 }
 
-Log::~Log()
+Log::~Log(void)
 {
 	purple_prefs_disconnect_by_handle(prefs_handle);
 
@@ -153,7 +159,7 @@ void Log::glib_log_handler(const gchar *domain, GLogLevelFlags flags,
 		new_domain = purple_utf8_try_convert(domain);
 
 	if (new_msg != NULL) {
-		Write(Type_glib, level, "glib/%s: %s", (new_domain != NULL ? new_domain : "g_log"), new_msg);
+		Write(Type_glib, level, "%s: %s", (new_domain != NULL ? new_domain : "g_log"), new_msg);
 		g_free(new_msg);
 	}
 
@@ -169,9 +175,9 @@ void Log::debug_change(const char *name, PurplePrefType type, gconstpointer val)
 	}
 }
 
-void Log::ScreenResized()
+void Log::ScreenResized(void)
 {
-	MoveResize((CIMWindowManager::Instance())->ScreenAreaSize(CIMWindowManager::Log));
+	MoveResize(CenterIM::Instance()->ScreenAreaSize(CenterIM::LogArea));
 }
 
 void Log::Write(Type type, Level level, const gchar *fmt, ...)
@@ -219,8 +225,7 @@ void Log::WriteToFile(const gchar *text)
 		if (!logfile) {
 			gchar *filename = g_build_filename(purple_home_dir(), CIM_CONFIG_PATH,
 					conf->GetString(CONF_PREFIX "log/filename", "debug"), NULL);
-			logfile = g_io_channel_new_file(filename, "a", &err);
-			if (err) {
+			if ((logfile = g_io_channel_new_file(filename, "a", &err)) == NULL) {
 				WriteToWindow(Level_error, _("centerim/log: Error opening logfile `%s' (%s).\n"), filename, err->message);
 				g_error_free(err);
 				err = NULL;
@@ -230,14 +235,12 @@ void Log::WriteToFile(const gchar *text)
 
 		// write text into logfile
 		if (logfile) {
-			g_io_channel_write_chars(logfile, text, -1, NULL, &err);
-			if (err) {
+			if (g_io_channel_write_chars(logfile, text, -1, NULL, &err) != G_IO_STATUS_NORMAL) {
 				WriteToWindow(Level_error, _("centerim/log: Error writing to logfile (%s).\n"), err->message);
 				g_error_free(err);
 				err = NULL;
 			}
-			g_io_channel_flush(logfile, &err);
-			if (err) {
+			if (g_io_channel_flush(logfile, &err) != G_IO_STATUS_NORMAL) {
 				WriteToWindow(Level_error, _("centerim/log: Error flushing logfile (%s).\n"), err->message);
 				g_error_free(err);
 				err = NULL;
@@ -261,12 +264,13 @@ void Log::AddTextToWindow(gchar *text)
 		btype = g_unichar_break_type(g_utf8_get_char(iter));
 		if (btype == G_UNICODE_BREAK_CARRIAGE_RETURN
 				|| btype == G_UNICODE_BREAK_LINE_FEED) {
-			bac = *iter;
-			*iter = '\0';
 			// skip empty lines
-			if (start != iter)
+			if (start != iter) {
+				bac = *iter;
+				*iter = '\0';
 				AddLine(start);
-			*iter = bac;
+				*iter = bac;
+			}
 			start = iter = g_utf8_next_char(iter);
 		}
 		else

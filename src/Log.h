@@ -32,7 +32,6 @@ class Log
 : public TextWindow
 {
 	public:
-		enum Type {Type_cim, Type_glib, Type_purple};
 		// levels are 1:1 mapped to glib levels
 		enum Level {
 			Level_none,
@@ -44,7 +43,7 @@ class Log
 			Level_error // = fatal in libpurle
 		};
 
-		static Log *Instance();
+		static Log *Instance(void);
 
 		void Write(Level level, const gchar *fmt, ...);
 
@@ -69,22 +68,25 @@ class Log
 			{ ((Log *) data)->debug_change(name, type, val); }
 		void debug_change(const char *name, PurplePrefType type, gconstpointer val);
 
-		virtual void ScreenResized();
+		virtual void ScreenResized(void);
 
 	protected:
 
 	private:
+		enum Type {Type_cim, Type_glib, Type_purple};
+
 		PurpleDebugUiOps centerim_debug_ui_ops;
+
 		GIOChannel *logfile;
 		void *prefs_handle;
 
 		int max_lines;
 		Conf *conf;
 
-		Log();
+		Log(void);
 		Log(const Log &);
 		Log &operator=(const Log &);
-		~Log();
+		~Log(void);
 
 		void Write(Type type, Level level, const gchar *fmt, ...);
 		void WriteToWindow(Level level, const gchar *fmt, ...);

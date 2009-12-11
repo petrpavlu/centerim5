@@ -24,7 +24,7 @@
 #include <cppconsui/ConsuiCurses.h>
 
 #include "Conversation.h"
-#include "CIMWindowManager.h"
+#include "CenterIM.h"
 
 #include <cppconsui/HorizontalLine.h>
 #include <cppconsui/TextView.h>
@@ -120,7 +120,7 @@ void Conversation::Resize(int neww, int newh)
 
 void Conversation::ScreenResized()
 {
-	MoveResize((CIMWindowManager::Instance())->ScreenAreaSize(CIMWindowManager::Chat));
+	MoveResize(CenterIM::Instance()->ScreenAreaSize(CenterIM::ChatArea));
 }
 
 //TODO if this remains empty, make it a pure virtual function

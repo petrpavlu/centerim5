@@ -149,6 +149,7 @@ class Keys
 };
 
 /* Bad term.h! */
+#undef lines
 #undef buttons
 #undef columns
 #undef newline
