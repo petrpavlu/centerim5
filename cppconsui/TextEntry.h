@@ -116,10 +116,13 @@ class TextEntry
 		void ActionBackspace(void);
 		void ActionToggleOverwrite(void);
 
-		void DeclareBindables(void);
-		void BindActions(void);
-
 		virtual void OnActivate(void);
+	
+		/** it handles the automatic registration of defined keys */
+		DECLARE_SIG_REGISTERKEYS();
+		static bool RegisterKeys();
+		void DeclareBindables();
+
 };
 
 #endif /* __TEXT_ENTRY_H__ */

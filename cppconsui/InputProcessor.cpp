@@ -16,40 +16,40 @@
  * */
 
 #include "InputProcessor.h"
+#include "KeyConfig.h"
 
 #include <cstring>
 
-/// @todo this *must* leak memory somewhere :)
-class InputProcessor::Bindable
-: public InputProcessor::KeyCombo
-{
-	public:
-		Bindable(const gchar *context,
-			const gchar *action,
-			const gchar *description,
-			const gchar *keycombo,
-			sigc::slot<void> function,
-			InputProcessor::BindableType type
-		)
-		: KeyCombo(context, action, description, keycombo)
-		, function(function)
-		, type(type)
-		{ ; }
-
-		sigc::slot<void> function;
-		InputProcessor::BindableType type;
-	
-	public:
-		Bindable() { ; } ///< @todo Bindable() constructor should be private and not defined
+/** Holds a bound key definition
+ */
+class InputProcessor::Bindable {
+public:
+	Bindable(const KeyConfig::ustring& context_, 
+			 const KeyConfig::ustring& action_,
+			 sigc::slot<void> function_,
+			 InputProcessor::BindableType type_)
+	: keyvalue( KEYCONFIG->GetKeyValue(context_, action_) )
+	, function(function_)
+	, type(type_)
+	{ ; }
+	const KeyConfig::KeyValue& keyvalue;
+	sigc::slot<void> function;
+	InputProcessor::BindableType type;
 };
 
+
+
+/* ******************************* */
 InputProcessor::InputProcessor()
-: inputchild(NULL)
-{
-}
+: sig_reconfig(KEYCONFIG->AddReconfigCallback(
+					sigc::mem_fun(this, &InputProcessor::rebuild_keymap)))
+, inputchild(NULL)
+{ ; }
 
 InputProcessor::~InputProcessor()
 {
+	// disconnects the reconfig signal
+	sig_reconfig.disconnect();
 }
 
 int InputProcessor::ProcessInput(const char *input, const int bytes)
@@ -93,22 +93,20 @@ void InputProcessor::SetInputChild(InputProcessor *child)
 int InputProcessor::Process(InputProcessor::BindableType type, const char *input, const int bytes)
 {
 	g_assert(input != NULL);
-
-	Bindables::iterator begin, end, i;
-	Bindable bindable, largest; /// @todo perhaps use pointers or references, not the copy constructor
+	BindableMap::iterator begin, end, i;
 	sigc::slot<void> function;
 	int m, max = 0;
 
-	begin = keybindings.lower_bound(input[0]);
-	end = keybindings.upper_bound(input[0]);
+	begin = keymap.lower_bound(input[0]);
+	end = keymap.upper_bound(input[0]);
 
 	for (i = begin; i != end; i++) {
-		bindable = (*i).second;
+		const Bindable& bindable = *(i->second);
 		/** @todo is it necessary to allow the Bindable_Override to be checked twice ?
 		 * I think the  (|| type == Bindable_Normal) should be removed
 		 */
 		if (bindable.type == type || type == Bindable_Normal) {
-			m = Match(bindable.keycombo, input, bytes);
+			m = Match(bindable.keyvalue.value, input, bytes);
 			if (m < 0) {
 				/* could match, but need btes more input to be sure */
 				if (m > max || max == 0) max = m;
@@ -153,60 +151,43 @@ int InputProcessor::Match(const std::string &skeycombo, const char *input, const
 	}
 }
 
-void InputProcessor::DeclareBindable(const gchar *context, const gchar *action,
-	sigc::slot<void> function, const gchar *description, BindableType type)
+sigc::connection InputProcessor::AddRegisterCallback(const sigc::slot<bool>& function)
 {
-	if (HaveBindable(context, action))
-		return;
-	
-	keybindings.insert(std::pair<char, Bindable>('\0', Bindable(context, action, description, '\0', function, type)));
+	return KEYCONFIG->AddRegisterCallback(function);
+}
+bool InputProcessor::RegisterKeyDef(const gchar *context, const gchar *action, const gchar* desc, const char *defvalue)
+{
+	return KEYCONFIG->RegisterKeyDef( KeyConfig::KeyDef(context, action, desc, defvalue) );
+}
+
+
+void InputProcessor::DeclareBindable(const gchar *context, const gchar *action,
+	sigc::slot<void> function, BindableType type)
+{
+	keybindings.push_back(Bindable(context, action, function, type));
+	MapBindable(keybindings.back());
+}
+
+void InputProcessor::MapBindable(const Bindable& bindable)
+{
+	const gchar* keyvalue = bindable.keyvalue.value;
+	if (keyvalue[0] != '\0')
+		keymap.insert(std::make_pair(keyvalue[0], &bindable));
 }
 
 void InputProcessor::ClearBindables(void)
 {
+	// @todo not very useful, isn't it ?
+	keymap.clear();
 	keybindings.clear();
 }
 
-bool InputProcessor::BindAction(const gchar *context, const gchar *action, const char *keycombo, bool replace)
+bool InputProcessor::rebuild_keymap()
 {
-	Bindables::iterator i;
-	Bindable bindable;
-
-	g_return_val_if_fail((keycombo != NULL) && strncmp("\0", keycombo, strlen(keycombo)), false);
-
-	for (i = keybindings.begin(); i != keybindings.end(); i++) {
-		bindable = (*i).second;
-
-		if (strncmp(bindable.context, context, strlen(bindable.context)) == 0 &&
-			strncmp(bindable.action, action, strlen(bindable.action)) == 0) {
-
-			if (bindable.keycombo == NULL || replace) {
-				bindable.keycombo = g_strdup(keycombo);
-				keybindings.erase(i);
-				keybindings.insert(std::pair<char, Bindable>(keycombo[0], bindable));
-				return true;
-			} else 
-				return false;
-		}
+	// rebuild keymap
+	keymap.clear();
+	for (Bindables::const_iterator i = keybindings.begin(); i != keybindings.end(); i++) {
+		MapBindable(*i);
 	}
-
-	return false;
-}
-
-bool InputProcessor::HaveBindable(const gchar *context, const gchar *action)
-{
-	Bindables::iterator i;
-	Bindable bindable;
-
-	for (i = keybindings.begin(); i != keybindings.end(); i++) {
-		bindable = (*i).second;
-
-		if (strncmp(bindable.context, context, strlen(bindable.context)) == 0 &&
-			strncmp(bindable.action, action, strlen(bindable.action)) == 0) {
-
-			return true;
-		}
-	}
-
-	return false;
+	return true;
 }

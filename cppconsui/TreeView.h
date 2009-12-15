@@ -70,7 +70,7 @@ class TreeView
 
 		TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linestyle);
 		virtual ~TreeView();
-
+	
 		virtual void Draw(void);
 
 		virtual bool SetFocusChild(Widget* child);
@@ -129,6 +129,12 @@ class TreeView
 		void OnChildRedraw(Widget *widget);
 		void OnChildResize(Widget *widget, Rect &oldsize, Rect &newsize);
 		void OnChildFocus(Widget* widget, bool focus);
+
+		/** it handles the automatic registration of defined keys */
+		DECLARE_SIG_REGISTERKEYS();
+		static bool RegisterKeys();
+		void DeclareBindables();
+	
 };
 
 #endif /* __TREEVIEW_H__ */

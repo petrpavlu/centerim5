@@ -51,7 +51,7 @@ class Container
 
 		Container(Widget& parent, const int x, const int y, const int w, const int h);
 		virtual ~Container();
-		
+
 		/** These functions are used to call Widget::UpdateArea of all children when necessary 
 		 * @todo replace these functions by reimplementing the virtual UpdateArea method
 		 * @{
@@ -129,6 +129,11 @@ class Container
 		void OnChildRedraw(Widget* widget);
 		
 		Children children;
+		
+		/** it handles the automatic registration of defined keys */
+		DECLARE_SIG_REGISTERKEYS();
+		static bool RegisterKeys();
+		void DeclareBindables();
 };
 
 #endif /* __CONTAINER_H__ */

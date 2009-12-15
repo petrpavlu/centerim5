@@ -140,6 +140,11 @@ class CenterIM
 		void UIUnInit(void);
 		void IOInit(void);
 		void IOUnInit(void);
+
+		/** it handles the automatic registration of defined keys */
+		DECLARE_SIG_REGISTERKEYS();
+		static bool RegisterKeys();
+		void DeclareBindables();
 };
 
 #endif /* __CENTERIM_H__ */

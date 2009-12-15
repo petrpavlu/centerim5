@@ -26,35 +26,43 @@
 
 #include <glibmm/ustring.h>
 
+#define CONTEXT_MENUWINDOW "menuwindow"
+
 MenuWindow::MenuWindow(int x, int y, int w, int h, LineStyle *linestyle)
 : Window(x, y, w, h, NULL)
 {
-	const gchar *context = "menuwindow";
 
 	border = new Panel(*this, 0, 0, w, h, linestyle);
 	listbox = new ListBox(*this, 1, 1, w-2, h-2);
 	SetFocusChild(listbox);
 	Window::AddWidget(border);
 	Window::AddWidget(listbox);
-
-	//ClearBindables();
-
-	//DeclareBindable(context, "focus-previous", sigc::mem_fun(listbox, &Container::FocusCyclePrevious),
-	//	_("Focusses the previous menu item"), InputProcessor::Bindable_Normal);
-	//DeclareBindable(context, "focus-next", sigc::mem_fun(listbox, &Container::FocusCycleNext),
-	//	_("Focusses the next menu item"), InputProcessor::Bindable_Normal);
-	DeclareBindable(context, "close-window", sigc::mem_fun(this, &Window::Close),
-		_("Close the window"), InputProcessor::Bindable_Normal);
-
-	//TODO get real binding from config
-	//BindAction(context, "focus-previous", Keys::Instance()->Key_up(), false);
-	//BindAction(context, "focus-next", Keys::Instance()->Key_down(), false);
-	BindAction(context, "close-window", Keys::Instance()->Key_esc(), false);
+	DeclareBindables();
 }
 
 MenuWindow::~MenuWindow()
 {
 }
+
+void MenuWindow::DeclareBindables()
+{
+	//DeclareBindable(CONTEXT_MENUWINDOW, "focus-previous", sigc::mem_fun(listbox, &Container::FocusCyclePrevious),
+	//	InputProcessor::Bindable_Normal);
+	//DeclareBindable(CONTEXT_MENUWINDOW, "focus-next", sigc::mem_fun(listbox, &Container::FocusCycleNext),
+	//	InputProcessor::Bindable_Normal);
+	DeclareBindable(CONTEXT_MENUWINDOW, "close-window", sigc::mem_fun(this, &Window::Close),
+					InputProcessor::Bindable_Normal);
+}
+
+DEFINE_SIG_REGISTERKEYS(MenuWindow, RegisterKeys);
+bool MenuWindow::RegisterKeys()
+{
+	//RegisterKeyDef(CONTEXT_MENUWINDOW, "focus-previous", _("Focusses the previous menu item"), KEYS->Key_up());
+	//RegisterKeyDef(CONTEXT_MENUWINDOW, "focus-next", _("Focusses the next menu item"), KEYS->Key_down());
+	RegisterKeyDef(CONTEXT_MENUWINDOW, "close-window", _("Close the window"), KEYS->Key_esc());
+	return true;
+}
+
 
 void MenuWindow::Resize(int neww, int newh)
 {

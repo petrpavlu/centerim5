@@ -63,6 +63,7 @@ class ComboBox
 		ComboBox(Widget& parent, int x, int y, const gchar *text);
 
 		virtual ~ComboBox();
+	
 		/** @todo maybe call these methods SetOptions and GetOptions
 		 * also, use references instead of value as parameter/return values
 		 */
@@ -100,13 +101,15 @@ class ComboBox
 
 		ComboBox& operator=(const ComboBox&);
 
-		void DeclareBindables(void);
-		void BindActions(void);
-
 		void OnActivate(void)
 			{ OnDropDown(); }
 
 		sigc::connection sig_dropdown_close;
+	
+		/** it handles the automatic registration of defined keys */
+		DECLARE_SIG_REGISTERKEYS();
+		static bool RegisterKeys();	
+		void DeclareBindables();
 };
 
 #endif /* __COMBOBOX_H__ */

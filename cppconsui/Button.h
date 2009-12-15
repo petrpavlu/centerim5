@@ -60,10 +60,14 @@ class Button
 
 		Button& operator=(const Button&);
 
-		void AddBindables(void);
 		void OnActivate(void);
 
-		sigc::slot<void> callback; ///< keeper of the callback function
+		sigc::slot<void> callback; ///< the function called when button is pressed
+	
+		/** it handles the automatic registration of defined keys */
+		DECLARE_SIG_REGISTERKEYS();
+		static bool RegisterKeys();
+		void DeclareBindables();
 };
 
 #endif /* __BUTTON_H__ */

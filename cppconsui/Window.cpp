@@ -35,6 +35,8 @@
 #include <curses.h>
 #endif
 
+#define CONTEXT_WINDOW "window"
+
 Window::Window(int x, int y, int w, int h, Border *border)
 : Container(*this, 1, 1, w-2, h-2)
 , win_x(x)
@@ -44,7 +46,6 @@ Window::Window(int x, int y, int w, int h, Border *border)
 , realwindow(NULL)
 , border(border)
 {
-	const gchar *context = "window";
 
 	//TODO just call moveresize
 	if (win_w < 1) win_w = 1;
@@ -60,18 +61,26 @@ Window::Window(int x, int y, int w, int h, Border *border)
 		border->Resize(win_w, win_h);
 	}
 	Container::MoveResize(0, 0, win_w, win_h);
-
-	DeclareBindable(context, "close-window", sigc::mem_fun(this, &Window::Close),
-		_("Close the menu"), InputProcessor::Bindable_Normal);
-
-	BindAction(context, "close-window", Keys::Instance()->Key_esc(), false);
-
 	Redraw();
+	DeclareBindables();
 }
 
 Window::~Window()
 {
 	delwin(realwindow);
+}
+
+void Window::DeclareBindables()
+{
+	DeclareBindable(CONTEXT_WINDOW, "close-window", sigc::mem_fun(this, &Window::Close),
+					InputProcessor::Bindable_Normal);
+}
+
+DEFINE_SIG_REGISTERKEYS(Window, RegisterKeys);
+bool Window::RegisterKeys()
+{
+	RegisterKeyDef(CONTEXT_WINDOW, "close-window", _("Close the menu"), Keys::Instance()->Key_esc());
+	return true;
 }
 
 void Window::Close(void)

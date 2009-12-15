@@ -42,6 +42,8 @@
 
 #include <string.h>
 
+#define CONTEXT_TEXTENTRY "textentry"
+
 TextEntry::TextEntry(Widget& parent, int x, int y, int w, int h, const gchar *text_)
 : Label(parent, x, y, w, h, text_)
 , current_pos(0)
@@ -54,7 +56,6 @@ TextEntry::TextEntry(Widget& parent, int x, int y, int w, int h, const gchar *te
 
 	can_focus = true;
 	DeclareBindables();
-	BindActions();
 }
 
 TextEntry::TextEntry(Widget& parent, int x, int y, const gchar *text_)
@@ -71,11 +72,147 @@ TextEntry::TextEntry(Widget& parent, int x, int y, const gchar *text_)
 
 	can_focus = true;
 	DeclareBindables();
-	BindActions();
 }
 
 TextEntry::~TextEntry()
 {
+}
+
+void TextEntry::DeclareBindables()
+{
+	/* cursor movement */
+	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-right",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_VISUAL_POSITIONS, 1, false),
+					InputProcessor::Bindable_Override);
+	
+	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-left",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_VISUAL_POSITIONS, -1, false),
+					InputProcessor::Bindable_Override);
+	
+	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-right-word",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_WORDS, 1, false),
+					InputProcessor::Bindable_Override);
+	
+	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-left-word",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_WORDS, -1, false),
+					InputProcessor::Bindable_Override);
+	
+	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-end-line",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_DISPLAY_LINE_ENDS, 1, false),
+					InputProcessor::Bindable_Override);
+	
+	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-begin-line",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_DISPLAY_LINE_ENDS, -1, false),
+					InputProcessor::Bindable_Override);
+#if 0	
+	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-end",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_BUFFER_ENDS, 1, false),
+					InputProcessor::Bindable_Override);
+	
+	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-begin",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_BUFFER_ENDS, -1, false),
+					InputProcessor::Bindable_Override);
+	
+	/* selection extension variants */
+	DeclareBindable(CONTEXT_TEXTENTRY, "selection-right",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_VISUAL_POSITIONS, 1, true),
+					InputProcessor::Bindable_Override);
+	
+	DeclareBindable(CONTEXT_TEXTENTRY, "selection-left",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_VISUAL_POSITIONS, -1, true),
+					InputProcessor::Bindable_Override);
+	
+	DeclareBindable(CONTEXT_TEXTENTRY, "selection-right-word",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_WORDS, 1, true),
+					InputProcessor::Bindable_Override);
+	
+	DeclareBindable(CONTEXT_TEXTENTRY, "selection-left-word",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_WORDS, -1, true),
+					InputProcessor::Bindable_Override);
+	
+	DeclareBindable(CONTEXT_TEXTENTRY, "selection-end-line",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_DISPLAY_LINE_ENDS, 1, true),
+					InputProcessor::Bindable_Override);
+	
+	DeclareBindable(CONTEXT_TEXTENTRY, "selection-begin-line",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_DISPLAY_LINE_ENDS, -1, true),
+					InputProcessor::Bindable_Override);
+	
+	DeclareBindable(CONTEXT_TEXTENTRY, "selection-end",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_BUFFER_ENDS, 1, true),
+					InputProcessor::Bindable_Override);
+	
+	DeclareBindable(CONTEXT_TEXTENTRY, "selection-begin",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_BUFFER_ENDS, -1, true),
+					InputProcessor::Bindable_Override);
+	
+	/* select all */
+	DeclareBindable(CONTEXT_TEXTENTRY, "select-all",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionSelectAll), true),
+					InputProcessor::Bindable_Override);
+	
+	/* unselect all */
+	DeclareBindable(CONTEXT_TEXTENTRY, "unselect-all",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionSelectAll), false),
+					InputProcessor::Bindable_Override);
+#endif
+	/* deleting text */
+	DeclareBindable(CONTEXT_TEXTENTRY, "delete-char",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete), DELETE_CHARS, 1),
+					InputProcessor::Bindable_Override);
+	
+	DeclareBindable(CONTEXT_TEXTENTRY, "backspace",
+					sigc::mem_fun(this, &TextEntry::ActionBackspace),
+					InputProcessor::Bindable_Override);
+#if 0	
+	DeclareBindable(CONTEXT_TEXTENTRY, "delete-word-end",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete), DELETE_WORD_ENDS, 1),
+					InputProcessor::Bindable_Override);
+	
+	DeclareBindable(CONTEXT_TEXTENTRY, "delete-word-begin",
+					sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete), DELETE_WORD_ENDS, -1),
+					InputProcessor::Bindable_Override);
+	
+	/* overwrite */
+	DeclareBindable(CONTEXT_TEXTENTRY, "toggle-overwrite",
+					sigc::mem_fun(this, &TextEntry::ActionToggleOverwrite),
+					InputProcessor::Bindable_Override);
+#endif
+	/* non text editing bindables */
+	DeclareBindable(CONTEXT_TEXTENTRY, "activate", sigc::mem_fun(this, &TextEntry::OnActivate),
+					InputProcessor::Bindable_Override);
+}
+
+DEFINE_SIG_REGISTERKEYS(TextEntry, RegisterKeys);
+bool TextEntry::RegisterKeys(void)
+{
+	/// @todo implement more of these
+	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-right", _("Move the cursor to the right."), KEYS->Key_right());
+	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-left", _("Move the cursor to the left."), KEYS->Key_left());
+	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-right-word", _("Move the cursor to the right by one word."), KEYS->Key_ctrl_right());
+	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-left-word", _("Move the cursor to the left by one word."), KEYS->Key_ctrl_left());
+	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-end-line", _("Move the cursor to the end of the line."), KEYS->Key_end());
+	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-begin-line", _("Move the cursor to the beginning of the line."), KEYS->Key_home());
+	/*RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-end", _("Move the cursor to the end of the text."), KEYS->Key_ctrl_end());
+	 RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-begin", _("Move the cursor to the beginning of the text."), KEYS->Key_ctrl_home());
+	 RegisterKeyDef(CONTEXT_TEXTENTRY, "selection-right", _("Extend the selection to the right."), KEYS->Key_());
+	 RegisterKeyDef(CONTEXT_TEXTENTRY, "selection-left", _("Extend the selection to the left."), KEYS->Key_());
+	 RegisterKeyDef(CONTEXT_TEXTENTRY, "selection-right-word", _("Extend the selection to the right by one word."), KEYS->Key_());
+	 RegisterKeyDef(CONTEXT_TEXTENTRY, "selection-left-word", _("Extend the selection to the left by one word."), KEYS->Key_());
+	 RegisterKeyDef(CONTEXT_TEXTENTRY, "selection-end-line", _("Extend the selection to the end of the line"), KEYS->Key_());
+	 RegisterKeyDef(CONTEXT_TEXTENTRY, "selection-begin-line", _("Extend the selection to the beginning of the line."), KEYS->Key_());
+	 RegisterKeyDef(CONTEXT_TEXTENTRY, "selection-end", _("Extend the selection to the end of the text."), KEYS->Key_());
+	 RegisterKeyDef(CONTEXT_TEXTENTRY, "selection-begin", _("Extend the selection to the beginning of the text."), KEYS->Key_());
+	 RegisterKeyDef(CONTEXT_TEXTENTRY, "select-all", _("Select all text."), KEYS->Key_());
+	 RegisterKeyDef(CONTEXT_TEXTENTRY, "unselect-all", _("Unselect all text."), KEYS->Key_());*/
+	RegisterKeyDef(CONTEXT_TEXTENTRY, "delete-char",  _("Delete character under cursor."), KEYS->Key_del());
+	RegisterKeyDef(CONTEXT_TEXTENTRY, "backspace", _("Delete character before cursor."), KEYS->Key_backspace());
+	/*RegisterKeyDef(CONTEXT_TEXTENTRY, "delete-word-end", _("Delete text until the end of the word at the cursor."), KEYS->Key_());
+	 RegisterKeyDef(CONTEXT_TEXTENTRY, "delete-word-begin", _("Delete text until the beginning of the word at the cursor."), KEYS->Key_());
+	 RegisterKeyDef(CONTEXT_TEXTENTRY, "toggle-overwrite", _("Enable/Disable overwrite mode."), KEYS->Key_ins());*/
+	
+	RegisterKeyDef(CONTEXT_TEXTENTRY, "activate", _("Accept input and move focus."), KEYS->Key_enter());
+	return true;
 }
 
 void TextEntry::Draw(void)
@@ -909,145 +1046,6 @@ void TextEntry::ActionBackspace(void)
 void TextEntry::ActionToggleOverwrite(void)
 {
 	toggle_overwrite();
-}
-
-void TextEntry::DeclareBindables(void)
-{
-	const gchar *context = "textentry";
-
-	/* cursor movement */
-	DeclareBindable(context, "cursor-right",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_VISUAL_POSITIONS, 1, false),
-		_("Move the cursor to the right."), InputProcessor::Bindable_Override);
-
-	DeclareBindable(context, "cursor-left",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_VISUAL_POSITIONS, -1, false),
-		_("Move the cursor to the left."), InputProcessor::Bindable_Override);
-
-	DeclareBindable(context, "cursor-right-word",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_WORDS, 1, false),
-		_("Move the cursor to the right by one word."), InputProcessor::Bindable_Override);
-
-	DeclareBindable(context, "cursor-left-word",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_WORDS, -1, false),
-		_("Move the cursor to the left by one word."), InputProcessor::Bindable_Override);
-
-	DeclareBindable(context, "cursor-end-line",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_DISPLAY_LINE_ENDS, 1, false),
-		_("Move the cursor to the end of the line."), InputProcessor::Bindable_Override);
-
-	DeclareBindable(context, "cursor-begin-line",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_DISPLAY_LINE_ENDS, -1, false),
-		_("Move the cursor to the beginning of the line."), InputProcessor::Bindable_Override);
-
-	DeclareBindable(context, "cursor-end",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_BUFFER_ENDS, 1, false),
-		_("Move the cursor to the end of the text."), InputProcessor::Bindable_Override);
-
-	DeclareBindable(context, "cursor-begin",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_BUFFER_ENDS, -1, false),
-		_("Move the cursor to the beginning of the text."), InputProcessor::Bindable_Override);
-
-	/* selection extension variants */
-	DeclareBindable(context, "selection-right",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_VISUAL_POSITIONS, 1, true),
-		_("Extend the selection to the right."), InputProcessor::Bindable_Override);
-
-	DeclareBindable(context, "selection-left",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_VISUAL_POSITIONS, -1, true),
-		_("Extend the selection to the left."), InputProcessor::Bindable_Override);
-
-	DeclareBindable(context, "selection-right-word",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_WORDS, 1, true),
-		_("Extend the selection to the right by one word."), InputProcessor::Bindable_Override);
-
-	DeclareBindable(context, "selection-left-word",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_WORDS, -1, true),
-		_("Extend the selection to the left by one word."), InputProcessor::Bindable_Override);
-
-	DeclareBindable(context, "selection-end-line",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_DISPLAY_LINE_ENDS, 1, true),
-		_("Extend the selection to the end of the line"), InputProcessor::Bindable_Override);
-
-	DeclareBindable(context, "selection-begin-line",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_DISPLAY_LINE_ENDS, -1, true),
-		_("Extend the selection to the beginning of the line."), InputProcessor::Bindable_Override);
-
-	DeclareBindable(context, "selection-end",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_BUFFER_ENDS, 1, true),
-		_("Extend the selection to the end of the text."), InputProcessor::Bindable_Override);
-
-	DeclareBindable(context, "selection-begin",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_BUFFER_ENDS, -1, true),
-		_("Extend the selection to the beginning of the text."), InputProcessor::Bindable_Override);
-
-	/* select all */
-	DeclareBindable(context, "select-all",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionSelectAll), true),
-		_("Select all text."), InputProcessor::Bindable_Override);
-
-	/* unselect all */
-	DeclareBindable(context, "unselect-all",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionSelectAll), false),
-		_("Unselect all text."), InputProcessor::Bindable_Override);
-
-	/* deleting text */
-	DeclareBindable(context, "delete-char",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete), DELETE_CHARS, 1),
-		_("Delete character under cursor."), InputProcessor::Bindable_Override);
-
-	DeclareBindable(context, "backspace",
-		sigc::mem_fun(this, &TextEntry::ActionBackspace),
-		_("Delete character before cursor."), InputProcessor::Bindable_Override);
-
-	DeclareBindable(context, "delete-word-end",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete), DELETE_WORD_ENDS, 1),
-		_("Delete text until the end of the word at the cursor."), InputProcessor::Bindable_Override);
-
-	DeclareBindable(context, "delete-word-begin",
-		sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete), DELETE_WORD_ENDS, -1),
-		_("Delete text until the beginning of the word at the cursor."), InputProcessor::Bindable_Override);
-
-	/* overwrite */
-	DeclareBindable(context, "toggle-overwrite",
-		sigc::mem_fun(this, &TextEntry::ActionToggleOverwrite),
-		_("Enable/Disable overwrite mode."), InputProcessor::Bindable_Override);
-
-	/* non text editing bindables */
-	DeclareBindable(context, "activate", sigc::mem_fun(this, &TextEntry::OnActivate),
-		_("Accept input and move focus."), InputProcessor::Bindable_Override);
-}
-
-void TextEntry::BindActions(void)
-{
-	const gchar *context = "textentry";
-
-	/// @todo implement more of these
-	BindAction(context, "cursor-right", KEYS->Key_right(), false);
-	BindAction(context, "cursor-left", KEYS->Key_left(), false);
-	BindAction(context, "cursor-right-word", KEYS->Key_ctrl_right(), false);
-	BindAction(context, "cursor-left-word", KEYS->Key_ctrl_left(), false);
-	BindAction(context, "cursor-end-line", KEYS->Key_end(), false);
-	BindAction(context, "cursor-begin-line", KEYS->Key_home(), false);
-	/*BindAction(context, "cursor-end", KEYS->Key_ctrl_end(), false);
-	BindAction(context, "cursor-begin", KEYS->Key_ctrl_home(), false);
-	BindAction(context, "selection-right", KEYS->Key_(), false);
-	BindAction(context, "selection-left", KEYS->Key_(), false);
-	BindAction(context, "selection-right-word", KEYS->Key_(), false);
-	BindAction(context, "selection-left-word", KEYS->Key_(), false);
-	BindAction(context, "selection-end-line", KEYS->Key_(), false);
-	BindAction(context, "selection-begin-line", KEYS->Key_(), false);
-	BindAction(context, "selection-end", KEYS->Key_(), false);
-	BindAction(context, "selection-begin", KEYS->Key_(), false);
-	BindAction(context, "select-all", KEYS->Key_(), false);
-	BindAction(context, "unselect-all", KEYS->Key_(), false);*/
-	BindAction(context, "delete-char", KEYS->Key_del(), false);
-	BindAction(context, "backspace", KEYS->Key_backspace(), false);
-	/*BindAction(context, "delete-word-end", KEYS->Key_(), false);
-	BindAction(context, "delete-word-begin", KEYS->Key_(), false);
-	BindAction(context, "toggle-overwrite", KEYS->Key_ins(), false);*/
-
-	BindAction(context, "activate", Keys::Instance()->Key_enter(), false);
 }
 
 //TODO custom handlers?

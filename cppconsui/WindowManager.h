@@ -86,6 +86,11 @@ class WindowManager
 
 	private:
 		bool CloseWindowCallback(Window *window);
+	
+		/** it handles the automatic registration of defined keys */
+		DECLARE_SIG_REGISTERKEYS();
+		static bool RegisterKeys();
+		void DeclareBindables();
 };
 
 #endif /* __WINDOWMANAGER_H__ */

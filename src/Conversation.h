@@ -42,7 +42,7 @@ class Conversation
 	public:
 		Conversation(PurpleBlistNode* node);
 		~Conversation();
-
+	
 		virtual void SetConversation(PurpleConversation* conv);
 		virtual void UnsetConversation(PurpleConversation* conv);
 
@@ -77,6 +77,10 @@ class Conversation
 		Conversation();
 
 		void ConstructCommon(void);
+	
+		DECLARE_SIG_REGISTERKEYS();
+		static bool RegisterKeys();
+		void DeclareBindables();
 };
 
 class ConversationChat

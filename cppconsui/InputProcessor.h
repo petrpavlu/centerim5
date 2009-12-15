@@ -30,6 +30,24 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <list>
+
+#define DECLARE_SIG_REGISTERKEYS() static sigc::connection sig_register
+#define DEFINE_SIG_REGISTERKEYS(classname,staticmethod) sigc::connection classname::sig_register = InputProcessor::AddRegisterCallback(sigc::ptr_fun(& classname::staticmethod))
+
+/** Ideas for the new implementation
+ * The bindable is split into three parts:
+ * - @ref KeyConfig::KeyDef "KeyDef" holding the context,action, description and default value
+ * - @ref KeyConfig::KeyValue "KeyValue" holding a KeyDef and a configured value
+ * - @ref InputProcessor::Bindable "Bindable" holding a reference to a KeyValue, a function slot and a type
+ *
+ * The KeyDef should be defined statically by each class and be used to build
+ * the keybindings configuration section. @see KeyConfig
+ * 
+ * Each (or some) of the KeyDef defintions can be bound for the specific instance
+ * of the class. 
+ */
+
 
 /** 
  * Base class that takes care of input processing
@@ -37,15 +55,6 @@
  * It allows to define:
  * - key-action bindings
  * - a chain of input processors (top to bottom)
- * 
- * Common usage for a derived class:
- * - call DeclareBindable() for each action that your class needs to support (in the proper context)
- * - call BindAction() for each declared bindable that has a key bound to it
- * - call SetInputChild() if there is another object in the chain of input processing
- *
- * @todo At the moment, @ref InputProcessor::keybindings is used to keep both declared bindable and the bound keys. 
- * It makes it difficult to reconfigure all keys from a unique place, like when the keybindings 
- * configuration changes. 
  */
 class InputProcessor
 {
@@ -56,28 +65,7 @@ class InputProcessor
 			Bindable_Normal, ///< key bindings will be processed after the child input processor 
 			Bindable_Override ///< key bindings will be processed before the child input processor
 		};
-		/** Holder of a key definition */
-		class KeyCombo {
-			public:
-				KeyCombo(const gchar *context,
-					const gchar *action,
-					const gchar *description,
-					const gchar *keycombo
-				)
-				: context(context)
-				, action(action)
-				, description(description)
-				, keycombo(keycombo)
-				{ ; }
-
-				const gchar *context; ///< the context of the key definition, like (...)
-				const gchar *action; ///< the name of the action, like (...)
-				const gchar *description; ///< a description of the action
-				const gchar *keycombo; ///< the value, i.e. the key(s) that trigger the action - it is "" if no key is assigned yet
-			public:
-			KeyCombo(){;} ///<@todo KeyCombo() constructor should be private and not defined
-		};
-
+	
 		InputProcessor(void);
 		virtual ~InputProcessor();
 
@@ -129,10 +117,9 @@ class InputProcessor
 		int ProcessInput(const char *input, const int bytes);
 
 	protected:
-
-
 		class Bindable;
-		typedef std::vector<KeyCombo> KeyCombos;
+		typedef std::list<Bindable> Bindables;
+
 	
 	/** Notes on how key combinations are stored and searched
 	 *
@@ -148,7 +135,7 @@ class InputProcessor
 	 *
 	 * @see DeclareBindable,BindAction
 	 * */	
-		typedef std::multimap<char, Bindable> Bindables;
+		typedef std::multimap<char, const Bindable*> BindableMap;
 
 		virtual int ProcessInputText(const char *input, const int bytes);
 
@@ -156,27 +143,20 @@ class InputProcessor
 		 * */
 		void SetInputChild(InputProcessor *child);
 		InputProcessor* GetInputChild(void) { return inputchild; }
-
-		/** Binds a keycombo to an action 
-		 *
-		 * Probably a better name for this method would have been BindKey. It needs to be called after a Bindable has been @ref DeclareBindable "declared".
-		 * If the key has already been bound use the replace parameter. 
-		 * @return if the binding succeded
-		 * @todo check memory allocation, perhaps optimise things a bit. Also, perhaps it's a good idea to 
-		 *   throw an error or something if the keycombo exists and replace is set to false (it shouldn't happen).
-		 */
-		bool BindAction(const gchar *context, const gchar *action, const char *keycombo, bool replace);
-		bool RebindAction(const gchar *context, const gchar *action, const char *keycombo)
-			{ return BindAction(context, action, keycombo, true); }
+		
+		/** Wrapper for KEYCONFIG->AddRegisterCallback */
+		static sigc::connection AddRegisterCallback(const sigc::slot<bool>&);
+		/** it is just a wrapper for KEYCONFIG->RegisterKeyDef */
+		static bool RegisterKeyDef(const gchar *context, const gchar *action, const gchar* desc, const char *defvalue);
 
 		/** Binds a (context,action) pair with a function. 
 		 *
 		 * The bind can be normal or override, depending on wether it needs to be called
 		 * after or before the @ref inputchild.
-		 * @todo should throw an error if the bindable has already been declared.
+		 * @throws std::logic_error if the context,action pair hasn't been registered yet
 		 */
 		void DeclareBindable(const gchar *context, const gchar *action,
-			sigc::slot<void> function, const gchar *description, BindableType type);
+			sigc::slot<void> function, BindableType type);
 
 		void ClearBindables(void);
 
@@ -198,17 +178,21 @@ class InputProcessor
 		 *		- 0 if they not match
 		 */
 		int Match(const std::string &skey, const char *input, const size_t bytes);
-		/** Checks if the input processor has declared a (context,action) pair,
-		 * even if it not yet bound to a keycombo
-		 */
-		bool HaveBindable(const gchar *context, const gchar *action);
 
-		///@todo Bindables GetBindables(void); maybe public
+		/** adds the bindable to the keymap if it has a nonempty keyvalue defined */
+		void MapBindable(const Bindable& bindable);
+		
+		bool rebuild_keymap();
+		sigc::connection sig_reconfig;
 
+		/** the set of declared Bindables */
 		Bindables keybindings;
+		/** the map of keys used to efficiently match input */
+		BindableMap keymap;
 
 		/* The child that will get to process the input */
 		InputProcessor *inputchild;
+		
 };
 
 #endif /* __INPUTPROCESSOR_H__ */

@@ -35,15 +35,16 @@
 
 #include <string.h>
 
+#define CONTEXT_COMBOBOX "combobox"
+
+
 ComboBox::ComboBox(Widget& parent, int x, int y, int w, int h, const gchar *text)
 : TextEntry(parent, x, y, w, h, text)
 , dropdown(NULL)
 {
 	selected_entry.text = NULL;
 	selected_entry.data = NULL;
-
 	DeclareBindables();
-	BindActions();
 }
 
 ComboBox::ComboBox(Widget& parent, int x, int y, const gchar *text)
@@ -52,13 +53,24 @@ ComboBox::ComboBox(Widget& parent, int x, int y, const gchar *text)
 {
 	selected_entry.text = NULL;
 	selected_entry.data = NULL;
-
 	DeclareBindables();
-	BindActions();
 }
 
 ComboBox::~ComboBox()
 {
+}
+
+void ComboBox::DeclareBindables()
+{
+	DeclareBindable(CONTEXT_COMBOBOX, "dropdown", sigc::mem_fun(this, &ComboBox::OnDropDown),
+					InputProcessor::Bindable_Override);
+}
+
+DEFINE_SIG_REGISTERKEYS(ComboBox, RegisterKeys);
+bool ComboBox::RegisterKeys(void)
+{
+	RegisterKeyDef(CONTEXT_COMBOBOX, "dropdown", _("Show the dropdown menu."), KEYS->Key_enter());
+	return true;
 }
 
 void ComboBox::OnDropDown(void)
@@ -121,17 +133,3 @@ void ComboBox::SetSelected(void *data)
 	ComboBoxEntries::iterator i;
 }
 
-void ComboBox::DeclareBindables(void)
-{
-	const gchar *context = "combobox";
-
-	DeclareBindable(context, "dropdown", sigc::mem_fun(this, &ComboBox::OnDropDown),
-		_("Show the dropdown menu."), InputProcessor::Bindable_Override);
-}
-
-void ComboBox::BindActions(void)
-{
-	const gchar *context = "combobox";
-
-	BindAction(context, "dropdown", Keys::Instance()->Key_enter(), false);
-}

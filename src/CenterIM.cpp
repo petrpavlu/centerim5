@@ -25,6 +25,8 @@
 
 #include <cstring>
 
+#define CONTEXT_CENTERIM "centerim"
+
 std::vector<CenterIM::LogBufferItem> *CenterIM::logbuf = NULL;
 GHashTable *CenterIM::ui_info = NULL;
 
@@ -257,24 +259,30 @@ void CenterIM::UIUnInit(void)
 
 void CenterIM::IOInit(void)
 {
-	const gchar *context = "centerim";
 	keys = Keys::Instance();
-
-	/* Key combinations */
-	DeclareBindable(context, "quit", sigc::mem_fun(this, &CenterIM::Quit),
-		_("Quit CenterIM."), InputProcessor::Bindable_Override);
-	DeclareBindable(context, "accountstatusmenu", sigc::mem_fun(this, &CenterIM::OpenAccountStatusMenu),
-		_("Open the account status menu."), InputProcessor::Bindable_Override);
-	DeclareBindable(context, "generalmenu", sigc::mem_fun(this, &CenterIM::OpenGeneralMenu),
-		_("Open the general menu."), InputProcessor::Bindable_Override);
-
-	//TODO get real binding from config
-	BindAction(context, "quit", Keys::Instance()->Key_ctrl_q(), true);
-	BindAction(context, "accountstatusmenu", Keys::Instance()->Key_f3(), true);
-	BindAction(context, "generalmenu", Keys::Instance()->Key_f4(), true);
-
+	DeclareBindables();
 	log->Write(Log::Level_debug, "IO initialized\n");
 }
+
+void CenterIM::DeclareBindables()
+{
+	DeclareBindable(CONTEXT_CENTERIM, "quit", sigc::mem_fun(this, &CenterIM::Quit),
+					InputProcessor::Bindable_Override);
+	DeclareBindable(CONTEXT_CENTERIM, "accountstatusmenu", sigc::mem_fun(this, &CenterIM::OpenAccountStatusMenu),
+					InputProcessor::Bindable_Override);
+	DeclareBindable(CONTEXT_CENTERIM, "generalmenu", sigc::mem_fun(this, &CenterIM::OpenGeneralMenu),
+					InputProcessor::Bindable_Override);
+}
+
+DEFINE_SIG_REGISTERKEYS(CenterIM, RegisterKeys);
+bool CenterIM::RegisterKeys()
+{
+	RegisterKeyDef(CONTEXT_CENTERIM, "quit", _("Quit CenterIM."), Keys::Instance()->Key_ctrl_q());
+	RegisterKeyDef(CONTEXT_CENTERIM, "accountstatusmenu", _("Open the account status menu."), Keys::Instance()->Key_f3());
+	RegisterKeyDef(CONTEXT_CENTERIM, "generalmenu", _("Open the general menu."), Keys::Instance()->Key_f4());
+	return true;
+}
+
 
 void CenterIM::IOUnInit(void)
 {

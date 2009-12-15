@@ -25,6 +25,8 @@
 #include "Button.h"
 #include "Keys.h"
 
+#define CONTEXT_BUTTON "button"
+
 /// @todo add spaces around the label st there is always some room between the label and the left/right
 /// side of the button.
 
@@ -33,14 +35,14 @@ Button::Button(Widget& parent, int x, int y, int w, int h, const gchar *text, si
 , callback(callback)
 {
 	can_focus = true;
-	AddBindables();
+	DeclareBindables();
 }
 
 Button::Button(Widget& parent, int x, int y, int w, int h, const gchar *text)
 : Label(parent, x, y, w, h, text)
 {
 	can_focus = true;
-	AddBindables();
+	DeclareBindables();
 }
 
 Button::Button(Widget& parent, int x, int y, const gchar *text, sigc::slot<void> callback)
@@ -48,19 +50,34 @@ Button::Button(Widget& parent, int x, int y, const gchar *text, sigc::slot<void>
 , callback(callback)
 {
 	can_focus = true;
-	AddBindables();
+	DeclareBindables();
 }
 
 Button::Button(Widget& parent, int x, int y, const gchar *text)
 : Label(parent, x, y, text)
 {
 	can_focus = true;
-	AddBindables();
+	DeclareBindables();
 }
 
 Button::~Button()
 {
 }
+
+void Button::DeclareBindables(void)
+{
+	DeclareBindable(CONTEXT_BUTTON, "activate", sigc::mem_fun(this, &Button::OnActivate),
+					InputProcessor::Bindable_Normal);
+}
+
+DEFINE_SIG_REGISTERKEYS(Button, RegisterKeys);
+bool Button::RegisterKeys()
+{
+	RegisterKeyDef(CONTEXT_BUTTON, "activate", _("Activate the button"), Keys::Instance()->Key_enter());
+	return true;
+}
+
+
 
 void Button::Draw(void)
 {
@@ -79,18 +96,6 @@ void Button::Draw(void)
 void Button::SetFunction(sigc::slot<void> callback)
 {
 	this->callback = callback;
-}
-
-void Button::AddBindables(void)
-{
-	const gchar *context = "button";
-
-	//DeclareBindable(context, "push", sigc::mem_fun(this, &Window::Close),
-	DeclareBindable(context, "activate", sigc::mem_fun(this, &Button::OnActivate),
-		_("Activate the button"), InputProcessor::Bindable_Normal);
-
-	/// @todo get real binding from config
-	BindAction(context, "activate", Keys::Instance()->Key_enter(), false);
 }
 
 void Button::OnActivate(void)

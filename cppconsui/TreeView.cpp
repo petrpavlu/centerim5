@@ -35,6 +35,8 @@
  */
 #define VARIABLE_NOT_USED(x) x=x;
 
+#define CONTEXT_TREEVIEW "treeview"
+
 TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linestyle_)
 : ScrollPane(parent, x, y, w, h, w, h)
 , linestyle(linestyle_)
@@ -42,19 +44,7 @@ TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linest
 , itemsheight(0)
 , focus_cycle(false)
 {
-	const gchar *context = "treeview";
-
 	//TODO figure out how to make static_cast work
-	//DeclareBindable(context, "fold-subtree", sigc::mem_fun(this, static_cast<void (*)(void)>(&TreeView::Collapse)),
-	//	_("Collapse the selected subtree"), InputProcessor::Bindable_Normal);
-	DeclareBindable(context, "fold-subtree", sigc::mem_fun(this, &TreeView::ActionCollapse),
-		_("Collapse the selected subtree"), InputProcessor::Bindable_Normal);
-	DeclareBindable(context, "unfold-subtree", sigc::mem_fun(this, &TreeView::ActionExpand),
-		_("Expand the selected subtree"), InputProcessor::Bindable_Normal);
-
-	//TODO get real binding from config
-	BindAction(context, "fold-subtree", "-", false);
-	BindAction(context, "unfold-subtree", "+", false);
 
 	if (!linestyle)
 		linestyle = LineStyle::LineStyleDefault();
@@ -75,6 +65,7 @@ TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linest
 	SetScrollSize(w, 200);
 
 	AdjustScroll(0, 0);
+	DeclareBindables();
 }
 
 TreeView::~TreeView()
@@ -82,6 +73,22 @@ TreeView::~TreeView()
 	//TODO deletenode does not free the memory, do this
 	DeleteNode(thetree.begin(), false);
 	delete linestyle; //TODO this shouldn't be deletable, in fact fix the whole linestyle thingie (the principle)
+}
+
+void TreeView::DeclareBindables()
+{
+	DeclareBindable(CONTEXT_TREEVIEW, "fold-subtree", sigc::mem_fun(this, &TreeView::ActionCollapse),
+					InputProcessor::Bindable_Normal);
+	DeclareBindable(CONTEXT_TREEVIEW, "unfold-subtree", sigc::mem_fun(this, &TreeView::ActionExpand),
+					InputProcessor::Bindable_Normal);
+}
+
+DEFINE_SIG_REGISTERKEYS(TreeView, RegisterKeys);
+bool TreeView::RegisterKeys()
+{
+	RegisterKeyDef(CONTEXT_TREEVIEW, "fold-subtree", _("Collapse the selected subtree"), "-");
+	RegisterKeyDef(CONTEXT_TREEVIEW, "unfold-subtree", _("Expand the selected subtree"), "+");
+	return true;
 }
 
 void TreeView::Draw(void)

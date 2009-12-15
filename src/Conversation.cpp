@@ -31,12 +31,13 @@
 #include <cppconsui/LineStyle.h>
 #include <cppconsui/Keys.h>
 
+#define CONTEXT_CONVERSATION "conversation"
+
 Conversation::Conversation(PurpleBlistNode* node)
 : Window(0, 0, 80, 24, NULL)
 , node(node)
 , conv(NULL)
 {
-	const gchar *context = "conversation";
 	log = Log::Instance();
 	conf = Conf::Instance();
 	type = purple_blist_node_get_type(node);
@@ -56,20 +57,28 @@ Conversation::Conversation(PurpleBlistNode* node)
 	SetInputChild(input);
 	input->GrabFocus();
 
-	DeclareBindable(context, "send",  sigc::mem_fun(this, &Conversation::Send),
-		_("Send the message."), InputProcessor::Bindable_Override);
-
-	//TODO get real binding from config
-	BindAction(context, "send", Keys::Instance()->Key_ctrl_x(), false);
-
 	SetPartitioning(conf->GetChatPartitioning());
 	
 	MoveResize(conf->GetChatDimensions());
+	DeclareBindables();
 }
 
 Conversation::~Conversation()
 {
 	delete linestyle;
+}
+
+void Conversation::DeclareBindables()
+{
+	DeclareBindable(CONTEXT_CONVERSATION, "send",  sigc::mem_fun(this, &Conversation::Send),
+					InputProcessor::Bindable_Override);
+}
+
+DEFINE_SIG_REGISTERKEYS(Conversation, RegisterKeys);
+bool Conversation::RegisterKeys()
+{
+	RegisterKeyDef(CONTEXT_CONVERSATION, "send", _("Send the message."), KEYS->Key_ctrl_x());
+	return true;
 }
 
 void Conversation::SetConversation(PurpleConversation* conv_)

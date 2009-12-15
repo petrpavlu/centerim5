@@ -21,6 +21,7 @@
 #include "WindowManager.h"
 #include "Window.h"
 #include "Keys.h"
+#include "KeyConfig.h"
 
 #if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
 #include <ncurses.h>
@@ -33,6 +34,8 @@
 #include <cstring>
 #include <glib.h>
 #include <glibmm/main.h>
+
+#define CONTEXT_WINDOWMANAGER "windowmanager"
 
 WindowManager* WindowManager::instance = NULL;
 
@@ -56,8 +59,6 @@ WindowManager::WindowManager(void)
 , redrawpending(false)
 , resizepending(false)
 {
-	const gchar *context = "windowmanager";
-
 	defaultwindow = initscr();
 	start_color(); //TODO do something with the return value.
 	curs_set(0);
@@ -67,19 +68,30 @@ WindowManager::WindowManager(void)
 
 	if (!defaultwindow)
 		{}//TODO throw an exception that we can't init curses
-
-	DeclareBindable(context, "redraw-screen", sigc::mem_fun(this, &WindowManager::Redraw),
-		_("Redraw the complete screen immediately"), InputProcessor::Bindable_Override);
-
-	//TODO get real binding from config
-	BindAction(context, "redraw-screen", Keys::Instance()->Key_ctrl_l(), false);
+	KEYCONFIG->Register(); // registers all InputProcessor key configuration (it needs to be called before the first DeclareBindable)
+	DeclareBindables();
 }
 
 WindowManager::~WindowManager(void)
 {
+	KEYCONFIG->Clear();
 	if (endwin() == ERR)
 		{}//TODO throw an exeption
 }
+
+void WindowManager::DeclareBindables()
+{
+	DeclareBindable(CONTEXT_WINDOWMANAGER, "redraw-screen", sigc::mem_fun(this, &WindowManager::Redraw),
+					InputProcessor::Bindable_Override);
+}
+
+DEFINE_SIG_REGISTERKEYS(WindowManager, RegisterKeys);
+bool WindowManager::RegisterKeys()
+{
+	RegisterKeyDef(CONTEXT_WINDOWMANAGER, "redraw-screen", _("Redraw the complete screen immediately"), KEYS->Key_ctrl_l());
+	return true;
+}
+
 
 void WindowManager::Delete(void)
 {

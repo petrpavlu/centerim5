@@ -63,7 +63,7 @@ class Window
 	public:
 		Window(int x, int y, int w, int h, Border *border);
 		virtual ~Window();
-
+	
 		virtual void Close(void);
 		virtual void Move(int newx, int newy);
 		virtual void Resize(int neww, int newh);
@@ -123,6 +123,12 @@ class Window
 		Window& operator=(const Window&);
 
 		void MakeRealWindow(void);
+	
+		/** it handles the automatic registration of defined keys */
+		DECLARE_SIG_REGISTERKEYS();
+		static bool RegisterKeys();
+		void DeclareBindables();
+	
 };
 
 #endif /* __WINDOW_H__ */

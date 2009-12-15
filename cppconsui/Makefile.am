@@ -79,7 +79,9 @@ libcppconsui_la_SOURCES =\
 	TextLine.cpp \
 	TextLine.h \
 	TextView.cpp \
-	TextView.h
+	TextView.h \
+	KeyConfig.cpp \
+	KeyConfig.h
 
 
 libcppconsui_la_CPPFLAGS = $(CFLAGS) $(GLIBMM_CFLAGS) $(CURSES_INCLUDEDIR) $(DEBUG_CFLAGS) -DG_LOG_DOMAIN=\"cppconsui\"
