@@ -258,5 +258,8 @@ AC_SUBST(DEBUG_CFLAGS)
 AC_CONFIG_FILES([Makefile po/Makefile.in
 		 cppconsui/Makefile
 		 tests/Makefile
-		 src/Makefile])
+		 src/Makefile
+		 doc/Makefile
+		 doc/doxygen-cppconsui.conf
+		 doc/doxygen-cim5.conf])
 AC_OUTPUT

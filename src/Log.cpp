@@ -30,10 +30,10 @@
 #include <glib.h>
 #include <cstring>
 
-Log* Log::Instance(void)
+Log &Log::Instance(void)
 {
 	static Log instance;
-	return &instance;
+	return instance;
 }
 
 //TODO sensible defaults
@@ -177,7 +177,7 @@ void Log::debug_change(const char *name, PurplePrefType type, gconstpointer val)
 
 void Log::ScreenResized(void)
 {
-	MoveResize(CenterIM::Instance()->ScreenAreaSize(CenterIM::LogArea));
+	MoveResize(CenterIM::Instance().ScreenAreaSize(CenterIM::LogArea));
 }
 
 void Log::Write(Type type, Level level, const gchar *fmt, ...)
@@ -226,9 +226,13 @@ void Log::WriteToFile(const gchar *text)
 			gchar *filename = g_build_filename(purple_home_dir(), CIM_CONFIG_PATH,
 					conf->GetString(CONF_PREFIX "log/filename", "debug"), NULL);
 			if ((logfile = g_io_channel_new_file(filename, "a", &err)) == NULL) {
-				WriteToWindow(Level_error, _("centerim/log: Error opening logfile `%s' (%s).\n"), filename, err->message);
-				g_error_free(err);
-				err = NULL;
+				if (err) {
+					WriteToWindow(Level_error, _("centerim/log: Error opening logfile `%s' (%s).\n"), filename, err->message);
+					g_error_free(err);
+					err = NULL;
+				}
+				else
+					WriteToWindow(Level_error, _("centerim/log: Error opening logfile `%s'.\n"), filename);
 			}
 			g_free(filename);
 		}
@@ -236,14 +240,22 @@ void Log::WriteToFile(const gchar *text)
 		// write text into logfile
 		if (logfile) {
 			if (g_io_channel_write_chars(logfile, text, -1, NULL, &err) != G_IO_STATUS_NORMAL) {
-				WriteToWindow(Level_error, _("centerim/log: Error writing to logfile (%s).\n"), err->message);
-				g_error_free(err);
-				err = NULL;
+				if (err) {
+					WriteToWindow(Level_error, _("centerim/log: Error writing to logfile (%s).\n"), err->message);
+					g_error_free(err);
+					err = NULL;
+				}
+				else
+					WriteToWindow(Level_error, _("centerim/log: Error writing to logfile.\n"));
 			}
 			if (g_io_channel_flush(logfile, &err) != G_IO_STATUS_NORMAL) {
-				WriteToWindow(Level_error, _("centerim/log: Error flushing logfile (%s).\n"), err->message);
-				g_error_free(err);
-				err = NULL;
+				if (err) {
+					WriteToWindow(Level_error, _("centerim/log: Error flushing logfile (%s).\n"), err->message);
+					g_error_free(err);
+					err = NULL;
+				}
+				else
+					WriteToWindow(Level_error, _("centerim/log: Error flushing logfile.\n"));
 			}
 		}
 	}

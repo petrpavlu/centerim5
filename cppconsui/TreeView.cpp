@@ -281,18 +281,32 @@ const TreeView::NodeReference TreeView::AddNode(const NodeReference &parent, Tre
 
 void TreeView::DeleteNode(const NodeReference &node, bool keepchildren)
 {
-	//LOG("/tmp/delete.log", "\tDeleteNode %p, %p, %d\n", GetWidget(node), GetData(node), (int)keepchildren);
-	StealFocus(); // TODO find a better fix - we need to steal the focus from the children in the case a child of the "node" has the focus.
-	if (focus_node == node) {
-		/* by folding this node and then moving focus forward 
-		 * we are sure that no child node of the node to be
-		 * removed will get the focus.
-		 * */
-		(*focus_node).open = false;
+	// @todo This needs more testing.
+
+	/* If we don't keep children then make sure that focus isn't held by a
+	 * descendant. */
+	bool has_focus = false;
+	if (!keepchildren) {
+		NodeReference act = focus_node;
+		while (act.node) {
+			if (act == node) {
+				has_focus = true;
+				break;
+			}
+			act = act.node->parent;
+		}
+	}
+
+	if (node == focus_node // for keepchildren = true
+			|| has_focus // for keepchildren = false
+			) {
+		/* By folding this node and then moving focus forward we are sure that
+		 * no child node of the node to be removed will get the focus. */
+		(*node).open = false;
 		MoveFocus(Container::FocusNext);
 	}
 
-	/* If we want to keep child nodes we should flatten the tree */
+	// if we want to keep child nodes we should flatten the tree
 	if (keepchildren)
 		thetree.flatten(node);
 

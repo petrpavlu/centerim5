@@ -205,33 +205,32 @@ class AccountWindow
 				AccountEntry *account_entry;
 		};
 
-                class AccountOptionProtocol
-                : public ComboBox
-                {
-                        public:
-                                AccountOptionProtocol(Widget& parent, PurpleAccount *account,
+		class AccountOptionProtocol
+			: public ComboBox
+		{
+			public:
+				AccountOptionProtocol(Widget& parent, PurpleAccount *account,
 						AccountWindow *account_window);
-                                ~AccountOptionProtocol();
+				~AccountOptionProtocol();
 
-                        protected:
+			protected:
 				AccountWindow *account_window;
-                                PurpleAccount *account;
-                                PurpleAccountUserSplit *split;
+				PurpleAccount *account;
+				PurpleAccountUserSplit *split;
 
-                                const char *text;
-                                const gchar *value;
-                                InputDialog *dialog;
+				const char *text;
+				const gchar *value;
+				InputDialog *dialog;
 
-                        private:
-                                AccountOptionProtocol(void);
-                                AccountOptionProtocol(const AccountOptionProtocol&);
+			private:
+				AccountOptionProtocol(void);
+				AccountOptionProtocol(const AccountOptionProtocol&);
 
-                                AccountOptionProtocol& operator=(const AccountOptionProtocol&);
+				AccountOptionProtocol& operator=(const AccountOptionProtocol&);
 
 				void OnProtocolChanged(const ComboBox *combobox, const ComboBox::ComboBoxEntry old_entry,
 						ComboBox::ComboBoxEntry const new_entry);
-				bool OnProtocolChangedCallback(const ComboBox::ComboBoxEntry entry);
-                };
+		};
 
 		~AccountWindow();
 

@@ -38,7 +38,7 @@ int main (int argc, char **argv)
 #endif
 
 	try {
-		cim = CenterIM::Instance();
+		cim = &CenterIM::Instance();
 	} catch (int i) {
 		switch (i) {
 		case EXCEPTION_ICONV_INIT:

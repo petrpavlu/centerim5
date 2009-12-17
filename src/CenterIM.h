@@ -46,7 +46,7 @@ class CenterIM
 	public:
 		enum ScreenArea {BuddyListArea, LogArea, ChatArea, WholeArea, AreaMax};
 
-		static CenterIM *Instance(void);
+		static CenterIM &Instance(void);
 
 		virtual void Run(void);
 		virtual void Quit(void);

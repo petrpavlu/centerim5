@@ -102,10 +102,10 @@ void ComboBox::DropDownOk(const ComboBox *combo_box, ComboBoxEntry new_entry)
 	old_entry = selected_entry;
 	selected_entry = new_entry;
 
+	dropdown->Close();
+
 	if (old_entry.data != new_entry.data)
 		signal_selection_changed(this, old_entry, new_entry);
-
-	dropdown->Close();
 }
 
 void ComboBox::DropDownClose(Window *window)

@@ -34,7 +34,6 @@
 #include <errno.h>
 
 #include <glib.h>
-#include <glibmm/main.h>
 
 AccountWindow::AccountWindow()
 : Window(0, 0, 80, 24, NULL)
@@ -42,7 +41,7 @@ AccountWindow::AccountWindow()
 , accounts_index(1)
 {
 	//const gchar *context = "accountwindow";
-	log = Log::Instance();
+	log = &Log::Instance();
 	conf = Conf::Instance();
 
 	//TODO get linestyle from conf
@@ -83,7 +82,7 @@ void AccountWindow::Resize(int neww, int newh)
 
 void AccountWindow::ScreenResized()
 {
-	Rect screen = CenterIM::Instance()->ScreenAreaSize(CenterIM::WholeArea);
+	Rect screen = CenterIM::Instance().ScreenAreaSize(CenterIM::WholeArea);
 	Rect confSize = conf->GetAccountWindowDimensions();
 
 	// Check against screen size
@@ -109,12 +108,18 @@ void AccountWindow::Add(void)
 	GList *i;
 	PurpleAccount *account;
 
-        i = purple_plugins_get_protocols();
+	i = purple_plugins_get_protocols();
 	account = purple_account_new(_("Username"),
 			purple_plugin_get_id((PurplePlugin*)i->data));
-	purple_accounts_add(account);
 
-	PopulateAccount(account);
+	/* Stop here if libpurple returned an already created account. This
+	 * happens when user pressed Add button twice in a row. In that case there
+	 * is already one "empty" account that user can edit. */
+	if (account_entries.find(account) == account_entries.end()) {
+		purple_accounts_add(account);
+
+		PopulateAccount(account);
+	}
 }
 
 //TODO move to Accounts class
@@ -135,10 +140,7 @@ void AccountWindow::DropAccountResponseHandler(Dialog::ResponseType response, Pu
 	switch (response) {
 		case Dialog::ResponseOK:
 			purple_accounts_remove(account);
-			Glib::signal_timeout().connect(
-					sigc::bind(sigc::mem_fun(this,
-					&AccountWindow::ClearAccount), 
-					account, true), 0);
+			ClearAccount(account, true);
 			break;
 		default:
 			break;
@@ -176,38 +178,37 @@ void AccountWindow::MoveFocus(FocusDirection direction)
 
 void AccountWindow::Clear(void)
 {
-        GList *i;
-        PurpleAccount *account;
+	GList *i;
+	PurpleAccount *account;
 
-        for (i = purple_accounts_get_all(); i; i = i->next) {
-                account = (PurpleAccount*)i->data;
-                ClearAccount(account, true);
-        }
+	for (i = purple_accounts_get_all(); i; i = i->next) {
+		account = (PurpleAccount*)i->data;
+		ClearAccount(account, true);
+	}
 }
 
 bool AccountWindow::ClearAccount(PurpleAccount *account, bool full)
 {
-        AccountEntry* account_entry = &(account_entries[account]);
-        std::vector<Widget*>::iterator i;
+	AccountEntry* account_entry = &(account_entries[account]);
+	std::vector<Widget*>::iterator i;
 	std::list<AccountOptionSplit*>::iterator j;
 
 	/* Move focus */
 	account_entry->parent->GrabFocus();
 
-        /* First remove the nodes from the tree, then
-         * free() all the widgets. */
-        accounts->DeleteChildren(account_entry->parent_reference, false);
+	/* First remove the nodes from the tree, then free() all the widgets. */
+	accounts->DeleteChildren(account_entry->parent_reference, false);
 	if (full)
 		accounts->DeleteNode(account_entry->parent_reference, false);
 
-        for (i = account_entry->widgets.begin(); i != account_entry->widgets.end(); i++) {
-                delete *i;
-        }
+	for (i = account_entry->widgets.begin(); i != account_entry->widgets.end(); i++) {
+		delete *i;
+	}
 	if (full)
 		delete account_entry->parent;
 
-        account_entry->widgets.clear();
-        account_entry->split_widgets.clear();
+	account_entry->widgets.clear();
+	account_entry->split_widgets.clear();
 	if (full)
 		account_entries.erase(account);
 
@@ -216,13 +217,13 @@ bool AccountWindow::ClearAccount(PurpleAccount *account, bool full)
 
 void AccountWindow::Populate(void)
 {
-        GList *i;
-        PurpleAccount *account;
+	GList *i;
+	PurpleAccount *account;
 
-        for (i = purple_accounts_get_all(); i; i = i->next) {
-                account = (PurpleAccount*)i->data;
-                PopulateAccount(account);
-        }
+	for (i = purple_accounts_get_all(); i; i = i->next) {
+		account = (PurpleAccount*)i->data;
+		PopulateAccount(account);
+	}
 }
 
 void AccountWindow::PopulateAccount(PurpleAccount *account)
@@ -240,8 +241,8 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 	ComboBox *combobox;
 
 	label = g_strdup_printf(" [%s] %s",
-							  purple_account_get_protocol_name(account),
-							  purple_account_get_username(account));
+			purple_account_get_protocol_name(account),
+			purple_account_get_username(account));
 
 	if (account_entries.find(account) == account_entries.end()) {
 		/* No entry for this account, so add one. */
@@ -400,7 +401,7 @@ AccountWindow::AccountOption::AccountOption(Widget& parent,
 		setting = NULL;
 	}
 
-	SetFunction(sigc::mem_fun(this, 
+	SetFunction(sigc::mem_fun(this,
 		&AccountWindow::AccountOption::OnActivate));
 }
 
@@ -440,7 +441,7 @@ void AccountWindow::AccountOptionBool::UpdateText(void)
 	if (remember_password) {
 		value = purple_account_get_remember_password(account);
 	} else {
-		value = purple_account_get_bool(account, setting, 
+		value = purple_account_get_bool(account, setting,
 				purple_account_option_get_default_bool(option));
 	}
 
@@ -504,7 +505,7 @@ void AccountWindow::AccountOptionString::UpdateText(void)
 	} else if (alias) {
 		value = purple_account_get_alias(account);
 	} else {
-		value = purple_account_get_string(account, setting, 
+		value = purple_account_get_string(account, setting,
 				purple_account_option_get_default_string(option));
 	}
 
@@ -532,7 +533,7 @@ void AccountWindow::AccountOptionString::ResponseHandler(Dialog::ResponseType re
 	switch (response) {
 		case Dialog::ResponseOK:
 			if (!dialog)
-			  {} /*TODO something is very wrong here */
+			{} /*TODO something is very wrong here */
 
 			if (password) {
 				purple_account_set_password(account, dialog->GetText());
@@ -572,7 +573,7 @@ void AccountWindow::AccountOptionInt::UpdateText(void)
 	if (value)
 		g_free(value);
 
-	value = g_strdup_printf("%d", purple_account_get_int(account, setting, 
+	value = g_strdup_printf("%d", purple_account_get_int(account, setting,
 		purple_account_option_get_default_int(option)));
 
 	str = g_strdup_printf("%s: %s", text, value);
@@ -604,7 +605,7 @@ void AccountWindow::AccountOptionInt::ResponseHandler(Dialog::ResponseType respo
 
 			text = dialog->GetText();
 			i = strtol(text, NULL, 10);
-			if (errno == ERANGE) 
+			if (errno == ERANGE)
 				{}/*TODO handle error? */
 
 			purple_account_set_int(account, setting, i);
@@ -633,7 +634,7 @@ AccountWindow::AccountOptionSplit::AccountOptionSplit(Widget& parent,
 	}
 	value = "";
 
-	SetFunction(sigc::mem_fun(this, 
+	SetFunction(sigc::mem_fun(this,
 		&AccountWindow::AccountOptionSplit::OnActivate));
 
 	UpdateText();
@@ -729,49 +730,42 @@ void AccountWindow::AccountOptionSplit::ResponseHandler(Dialog::ResponseType res
 }
 
 AccountWindow::AccountOptionProtocol::AccountOptionProtocol(Widget& parent,
-        PurpleAccount *account, AccountWindow *account_window)
-: ComboBox(parent, 0, 0, 15, 1, "") 
+		PurpleAccount *account, AccountWindow *account_window)
+: ComboBox(parent, 0, 0, 15, 1, "")
 , account_window(account_window)
 , account(account)
 {
-        g_assert(account != NULL);
+	g_assert(account != NULL);
 
-        gchar *label;
-        GList *i; 
-        PurplePlugin *plugin;
+	gchar *label;
+	GList *i;
+	PurplePlugin *plugin;
 
-        plugin = purple_plugins_find_with_id(purple_account_get_protocol_id(account));
+	plugin = purple_plugins_find_with_id(purple_account_get_protocol_id(account));
 
-        for (i = purple_plugins_get_protocols(); i; i = i->next){
-                AddOption(((PurplePlugin*)i->data)->info->name, i->data);
-        }   
+	for (i = purple_plugins_get_protocols(); i; i = i->next){
+		AddOption(((PurplePlugin*)i->data)->info->name, i->data);
+	}
 
-        label = g_strdup_printf("Protocol: %s", plugin->info->name);
-        SetText(label);
-        g_free(label);
+	label = g_strdup_printf("Protocol: %s", plugin->info->name);
+	SetText(label);
+	g_free(label);
 
 	signal_selection_changed.connect(
-			sigc::mem_fun(this, &AccountWindow::AccountOptionProtocol::OnProtocolChanged));
+		sigc::mem_fun(this, &AccountWindow::AccountOptionProtocol::OnProtocolChanged));
 }
 
 AccountWindow::AccountOptionProtocol::~AccountOptionProtocol()
 {
-        //if (value)
-        //      g_free(value);
+	//if (value)
+	//	g_free(value);
 }
 
 void AccountWindow::AccountOptionProtocol::OnProtocolChanged(const ComboBox *combobox,
 		ComboBox::ComboBoxEntry const old_entry, ComboBox::ComboBoxEntry const new_entry)
 {
-	Glib::signal_timeout().connect(
-			sigc::bind(sigc::mem_fun(this,
-			&AccountWindow::AccountOptionProtocol::OnProtocolChangedCallback), 
-			new_entry), 0);
+	purple_account_set_protocol_id(account, purple_plugin_get_id((const PurplePlugin*)new_entry.data));
+	// this deletes us so don't touch any instance variable after
+	account_window->PopulateAccount(account);
 }
 
-bool AccountWindow::AccountOptionProtocol::OnProtocolChangedCallback(const ComboBox::ComboBoxEntry entry)
-{
-	purple_account_set_protocol_id(account, purple_plugin_get_id((const PurplePlugin*)entry.data));
-	account_window->PopulateAccount(account);
-	return false;
-}

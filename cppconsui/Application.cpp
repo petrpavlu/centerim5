@@ -1,4 +1,22 @@
-// TODO license
+/*
+ * Copyright (C) 2009 by CenterIM developers
+ *
+ * This file is part of CenterIM.
+ *
+ * CenterIM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * CenterIM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * */
 
 #include <cstring>
 #include <libintl.h>
@@ -7,12 +25,12 @@
 #include "ConsuiCurses.h"
 #include "Application.h"
 
-Application::Application(Application *i)
+Application::Application(void)
 : windowmanager(NULL), converter((GIConv) -1), channel(NULL), channel_id(0)
 {
 	windowmanager = WindowManager::Instance();
 
-	/* Application always needs to be first resize handler because users
+	/* Application always needs to be the first resize handler because users
 	 * usually want to recalculate sizes of all windows in ScreenResized
 	 * (virtual method) first and then resize the windows appropriately. */
 	resize = windowmanager->signal_resize.connect(sigc::mem_fun(this, &Application::ScreenResized));
@@ -45,13 +63,10 @@ void Application::Quit(void)
 	StdinInputUnInit();
 }
 
-void Application::ScreenResized(void)
-{}
-
 gboolean Application::io_input_error(GIOChannel *source, GIOCondition cond)
 {
 	// log an error and bail out if we lost stdin
-	g_error("Stdin lost!\n");
+	g_critical("Stdin lost!\n");
 	Quit();
 
 	return TRUE;
@@ -63,13 +78,13 @@ gboolean Application::io_input(GIOChannel *source, GIOCondition cond)
 	gchar buf[64];
 	gsize rd;
 	GError *err = NULL;
-	// buffer for saving a part of char from a previous reading, max char len
-	// in bytes (currently 5 bytes for UTF-EBCDIC), size must be always
-	// <= sizeof(buf)
+	/* Buffer for saving a part of char from a previous reading, max char len
+	 * in bytes (currently 5 bytes for UTF-EBCDIC), size must be always
+	 * <= sizeof(buf). */
 	static gchar buf_part[5];
 	static gsize buf_part_len;
-	// every character in UTF-8 can be encoded with 4 bytes so this is enough
-	// room for any conversion
+	/* Every character in UTF-8 can be encoded with 4 bytes so this is enough
+	 * room for any conversion. */
 	gchar converted[4 * sizeof(buf) + 1];
 	gsize converted_left = sizeof(converted);
 	gchar *pbuf = buf;
@@ -83,15 +98,19 @@ gboolean Application::io_input(GIOChannel *source, GIOCondition cond)
 
 	if (g_io_channel_read_chars(source, buf + buf_part_len,
 				sizeof(buf) - buf_part_len, &rd, &err) != G_IO_STATUS_NORMAL) {
-		g_error("%s\n", err->message);
-		g_error_free(err);
+		if (err) {
+			g_warning("Error reading chars from standard input (%s).\n", err->message);
+			g_error_free(err);
+		}
+		else
+			g_warning("Error reading chars from standard input.\n");
 		return TRUE;
 	}
 	rd += buf_part_len;
 	buf_part_len = 0;
 
-	// we don't need to care much about this, GLib will notice us again that
-	// there are still bytes left
+	/* We don't need to care much about this, glib will notice us again that
+	 * there are still bytes left. */
 	if (sizeof(buf) == rd) {
 		g_debug("Input buffer full.\n");
 	}
@@ -108,16 +127,16 @@ gboolean Application::io_input(GIOChannel *source, GIOCondition cond)
 	if (g_iconv(converter, &pbuf, &rd, &pconverted, &converted_left) == (gsize) -1) {
 		switch (errno) {
 			case EILSEQ:
-				g_error(_("IConv error: %s\n"), g_strerror(errno));
+				g_critical(_("IConv error: %s\n"), g_strerror(errno));
 				return TRUE;
 			case EINVAL:
-				// incomplete multibyte sequence is encountered in the input,
-				// save these bytes for further reading
+				/* Incomplete multibyte sequence is encountered in the input,
+				 * save these bytes for further reading. */
 				memcpy(buf_part, pbuf, rd);
 				buf_part_len = rd;
 				break;
 			default:
-				g_error(_("Unexcepted IConv error: %s\n"), g_strerror(errno));
+				g_critical(_("Unexcepted IConv error: %s\n"), g_strerror(errno));
 				return TRUE;
 		}
 	}
@@ -160,7 +179,7 @@ void Application::StdinInputInit(void)
 	const char *charset;
 	g_get_charset(&charset);
 	if ((converter = g_iconv_open("UTF-8", charset)) == (GIConv) -1) {
-		g_error(_("IConv initialization failed (%s)\n"), g_strerror(errno));
+		g_critical(_("IConv initialization failed (%s)\n"), g_strerror(errno));
 		// TODO !
 	}
 

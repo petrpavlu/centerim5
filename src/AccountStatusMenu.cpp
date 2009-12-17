@@ -188,6 +188,6 @@ void AccountStatusMenu::StatusPopup::SetStatusPrimitive(PurpleAccount *account, 
 
 void AccountStatusMenu::ScreenResized()
 {
-	Rect chat = CenterIM::Instance()->ScreenAreaSize(CenterIM::ChatArea);
+	Rect chat = CenterIM::Instance().ScreenAreaSize(CenterIM::ChatArea);
 	Move(chat.x, chat.y);
 }

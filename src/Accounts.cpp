@@ -60,7 +60,7 @@ static PurpleAccountUiOps centerim_accounts_ui_ops =
 
 Accounts::Accounts()
 {
-	log = Log::Instance();
+	log = &Log::Instance();
 	accounts_handle = purple_accounts_get_handle();
 
 	/* connect signal handlers */

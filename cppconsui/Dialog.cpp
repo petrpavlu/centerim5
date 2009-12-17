@@ -80,6 +80,7 @@ void Dialog::Close(void)
 
 void Dialog::Response(Dialog::ResponseType response)
 {
-	signal_response(response);
 	Window::Close();
+
+	signal_response(response);
 }

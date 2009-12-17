@@ -323,7 +323,7 @@ static PurpleConversationUiOps centerim_conv_uiops =
 
 Conversations::Conversations()
 {
-	log = Log::Instance();
+	log = &Log::Instance();
 	conf = Conf::Instance();
 
 	/* setup the callbacks for conversations */

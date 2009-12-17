@@ -31,7 +31,7 @@ BuddyListNode::BuddyListNode(TreeView& parent, PurpleBlistNode *node)
 , node(node)
 , treeview(&parent)
 {
-	log = Log::Instance();
+	log = &Log::Instance();
 	can_focus = true;
 
 	SetFunction(sigc::mem_fun(this, &BuddyListNode::ActionActivate));

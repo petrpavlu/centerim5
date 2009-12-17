@@ -116,6 +116,6 @@ void GeneralMenu::OpenAccountsWindow(void)
 
 void GeneralMenu::ScreenResized()
 {
-	Rect chat = CenterIM::Instance()->ScreenAreaSize(CenterIM::ChatArea);
+	Rect chat = CenterIM::Instance().ScreenAreaSize(CenterIM::ChatArea);
 	Move(chat.x, chat.y);
 }

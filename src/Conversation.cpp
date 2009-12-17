@@ -38,7 +38,7 @@ Conversation::Conversation(PurpleBlistNode* node)
 , node(node)
 , conv(NULL)
 {
-	log = Log::Instance();
+	log = &Log::Instance();
 	conf = Conf::Instance();
 	type = purple_blist_node_get_type(node);
 
@@ -129,7 +129,7 @@ void Conversation::Resize(int neww, int newh)
 
 void Conversation::ScreenResized()
 {
-	MoveResize(CenterIM::Instance()->ScreenAreaSize(CenterIM::ChatArea));
+	MoveResize(CenterIM::Instance().ScreenAreaSize(CenterIM::ChatArea));
 }
 
 //TODO if this remains empty, make it a pure virtual function

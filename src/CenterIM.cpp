@@ -30,14 +30,14 @@
 std::vector<CenterIM::LogBufferItem> *CenterIM::logbuf = NULL;
 GHashTable *CenterIM::ui_info = NULL;
 
-CenterIM *CenterIM::Instance(void)
+CenterIM &CenterIM::Instance(void)
 {
 	static CenterIM instance;
-	return &instance;
+	return instance;
 }
 
 CenterIM::CenterIM(void)
-: Application(this), accounts(NULL), connections(NULL), buddylist(NULL)
+: Application(), accounts(NULL), connections(NULL), buddylist(NULL)
 , conversations(NULL), transfers(NULL), log(NULL), conf(NULL), keys(NULL)
 {
 	memset(&centerim_core_ui_ops, 0, sizeof(centerim_core_ui_ops));
@@ -51,7 +51,6 @@ void CenterIM::Run(void)
 
 	// initialize Conf component so we can calculate area sizes of all windows
 	conf = Conf::Instance();
-	ScreenResized();
 
 	// initialize Log component
 	DebugUIInit();
@@ -207,7 +206,7 @@ void CenterIM::DebugUIInit(void)
 {
 	std::vector<LogBufferItem>::iterator i;
 	
-	windowmanager->Add(log = Log::Instance());
+	windowmanager->Add(log = &Log::Instance());
 
 	if (logbuf) {
 		for (i = logbuf->begin(); i != logbuf->end(); i++) {

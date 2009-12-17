@@ -85,7 +85,7 @@ static PurpleBlistUiOps centerim_blist_ui_ops =
 BuddyList::BuddyList()
 : Window(0, 0, 80, 24, NULL)
 {
-	log = Log::Instance();
+	log = &Log::Instance();
 	conf = Conf::Instance();
 
 	//TODO check if this has been moved to purple_blist_init
@@ -250,5 +250,5 @@ void BuddyList::Resize(int neww, int newh)
 
 void BuddyList::ScreenResized()
 {
-	MoveResize(CenterIM::Instance()->ScreenAreaSize(CenterIM::BuddyListArea));
+	MoveResize(CenterIM::Instance().ScreenAreaSize(CenterIM::BuddyListArea));
 }
