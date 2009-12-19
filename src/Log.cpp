@@ -65,14 +65,14 @@ Log::Log(void)
 	REGISTER_G_LOG_HANDLER("GThread");
 	REGISTER_G_LOG_HANDLER("cppconsui");
 
+	// connect callbacks
+	prefs_handle = purple_prefs_get_handle();
+	purple_prefs_connect_callback(prefs_handle, CONF_PREFIX "log/debug", debug_change_, this);
+
 	// set the purple debug callbacks
 	centerim_debug_ui_ops.print = purple_print_;
 	centerim_debug_ui_ops.is_enabled = is_enabled_;
 	purple_debug_set_ui_ops(&centerim_debug_ui_ops);
-
-	// connect callbacks
-	prefs_handle = purple_prefs_get_handle();
-	purple_prefs_connect_callback(prefs_handle, CONF_PREFIX "log/debug", debug_change_, this);
 }
 
 Log::~Log(void)
