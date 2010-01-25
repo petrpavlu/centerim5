@@ -95,60 +95,50 @@ int InputProcessor::Process(InputProcessor::BindableType type, const char *input
 	g_assert(input != NULL);
 	BindableMap::iterator begin, end, i;
 	sigc::slot<void> function;
-	int m, max = 0;
+	int m;
+	int needed = 0; // raise downward
 
 	begin = keymap.lower_bound(input[0]);
 	end = keymap.upper_bound(input[0]);
 
 	for (i = begin; i != end; i++) {
 		const Bindable& bindable = *(i->second);
-		/** @todo is it necessary to allow the Bindable_Override to be checked twice ?
-		 * I think the  (|| type == Bindable_Normal) should be removed
-		 */
-		if (bindable.type == type || type == Bindable_Normal) {
+		if (bindable.type == type) {
 			m = Match(bindable.keyvalue.value, input, bytes);
 			if (m < 0) {
-				/* could match, but need btes more input to be sure */
-				if (m > max || max == 0) max = m;
-			} else if (m > 0 && m > max) {
-				/** @todo in fact, if the definition of Match() is correct
-				 * you do not need to check if (m > max) because if 
-				 * m > 0 then for sure m = bytes. So we can just call 
-				 * bindable.function and return max
-				 */
-				/* found a larger match, remember the action */
-				max = m;
-				function = bindable.function;
-			} else {
-				/* do nothing */
+				// could match, but need more input bytes
+				if (m > needed || needed == 0)
+					needed = m;
+			} else if (m > 0) {
+				bindable.function();
+				return m;
 			}
 		}
 	}
 
-	if (max > 0)
-		function();
-
-	return max;
+	// return minimal needed characters for a match
+	return needed;
 }
 
-int InputProcessor::Match(const std::string &skeycombo, const char *input, const size_t bytes)
+int InputProcessor::Match(const std::string &skeycombo, const char *input, const int bytes)
 {
 	const char *keycombo = skeycombo.c_str();
-	
-	if (bytes > skeycombo.size()) 
-		/* more input than this keycombo */
-		return 0;
+	int size;
+	int min;
 
-	if (strncmp(keycombo, input, bytes) == 0) {
- 	        if (bytes < skeycombo.size())
-			/* need more input to determine a match */
-			return bytes - skeycombo.size();
+	size = skeycombo.size();
+	min = size < bytes ? size : bytes;
+	
+	if (strncmp(keycombo, input, min) == 0) {
+		if (bytes < size)
+			// need more input to determine a match
+			return bytes - size;
 		else
-			/* complete match found */
-			return bytes;
-	} else {
-		return 0;
+			// complete match found
+			return size;
 	}
+
+	return 0;
 }
 
 sigc::connection InputProcessor::AddRegisterCallback(const sigc::slot<bool>& function)

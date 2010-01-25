@@ -177,7 +177,7 @@ class InputProcessor
 		 *		- -needed where needed is how many chars are needed for a match
 		 *		- 0 if they not match
 		 */
-		int Match(const std::string &skey, const char *input, const size_t bytes);
+		int Match(const std::string &skey, const char *input, const int bytes);
 
 		/** adds the bindable to the keymap if it has a nonempty keyvalue defined */
 		void MapBindable(const Bindable& bindable);
