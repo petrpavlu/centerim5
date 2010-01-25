@@ -50,9 +50,6 @@
 #define PARAGRAPH_SEPARATOR 0x2029
 #define PARAGRAPH_SEPARATOR_STRING "\xE2\x80\xA9"
 
-int RealScreenWidth(void);
-int RealScreenHeight(void);
-
 Glib::ustring::size_type width(const Glib::ustring &string);
 Glib::ustring::size_type width(const char *start, const char *end);
 gchar* col_offset_to_pointer(gchar *str, glong offset);
@@ -60,6 +57,15 @@ void find_paragraph_boundary (const gchar *text,
 			       int length,
 			       int *paragraph_delimiter_index,
 			       int *next_paragraph_start);
+
+/**
+ * This function takes a formatted string and draws it on the screen. The
+ * formatting of the string happens when a '\v' is encountered. After the '\v'
+ * is a char, a switch in the code figures out what to do based on this. Based
+ * on giFTcurs drawing function.
+ */
+void mvwaddstring(WINDOW *win, int y, int x, int w, const gchar *str);
+void mvwaddstringf(WINDOW *win, int y, int x, int w, const gchar *fmt, ...);
 
 /// @todo move into editable abstract class?
 enum CursorMovement {

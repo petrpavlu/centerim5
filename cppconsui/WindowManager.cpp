@@ -54,8 +54,8 @@ void WindowManager::signal_handler(int signum)
 
 WindowManager::WindowManager(void)
 : defaultwindow(NULL)
-, screenW(RealScreenWidth())
-, screenH(RealScreenHeight())
+, screenW(getmaxx(stdscr))
+, screenH(getmaxy(stdscr))
 , redrawpending(false)
 , resizepending(false)
 {

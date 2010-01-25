@@ -24,32 +24,6 @@
 #include <wchar.h>
 #include <cstring>
 
-#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
-#include <ncurses.h>
-#else
-#include <curses.h>
-#endif
-
-/// @todo getmaxx(stdscreen) just must have less overhead
-int RealScreenWidth(void)
-{
-	int x, y;
-	getmaxyx(stdscr, y, x);
-	return x;
-}
-
-int RealScreenHeight(void)
-{
-	int x, y;
-	getmaxyx(stdscr, y, x);
-	return y;
-}
-
-Glib::ustring::size_type width(const Glib::ustring &string)
-{
-	return width(string.data(), string.data()+string.bytes());
-}
-
 /* NOTE: copied from pango/break.c, which has GNU GPL 2 or later
  * thank you pango team
  */
@@ -58,82 +32,83 @@ void find_paragraph_boundary (const gchar *text,
 			       int        *paragraph_delimiter_index,
 			       int        *next_paragraph_start)
 {
-  const gchar *p = text;
-  const gchar *end;
-  const gchar *start = NULL;
-  const gchar *delimiter = NULL;
+	const gchar *p = text;
+	const gchar *end;
+	const gchar *start = NULL;
+	const gchar *delimiter = NULL;
 
-  /* Only one character has type G_UNICODE_PARAGRAPH_SEPARATOR in
-   * Unicode 5.0; update the following code if that changes.
-   */
+	/* Only one character has type G_UNICODE_PARAGRAPH_SEPARATOR in
+	 * Unicode 5.0; update the following code if that changes.
+	 */
 
-  /* prev_sep is the first byte of the previous separator.  Since
-   * the valid separators are \r, \n, and PARAGRAPH_SEPARATOR, the
-   * first byte is enough to identify it.
-   */
-  gchar prev_sep;
+	/* prev_sep is the first byte of the previous separator.  Since
+	 * the valid separators are \r, \n, and PARAGRAPH_SEPARATOR, the
+	 * first byte is enough to identify it.
+	 */
+	gchar prev_sep;
 
+	if (length < 0)
+		length = strlen (text);
 
-  if (length < 0)
-    length = strlen (text);
+	end = text + length;
 
-  end = text + length;
+	if (paragraph_delimiter_index)
+		*paragraph_delimiter_index = length;
 
-  if (paragraph_delimiter_index)
-    *paragraph_delimiter_index = length;
+	if (next_paragraph_start)
+		*next_paragraph_start = length;
 
-  if (next_paragraph_start)
-    *next_paragraph_start = length;
+	if (length == 0)
+		return;
 
-  if (length == 0)
-    return;
-
-  prev_sep = 0;
-
-
-  while (p != end)
-    {
-      if (prev_sep == '\n' ||
-	  prev_sep == PARAGRAPH_SEPARATOR_STRING[0])
-	{
-	  g_assert (delimiter);
-	  start = p;
-	  break;
-	}
-      else if (prev_sep == '\r')
-	{
-	  /* don't break between \r and \n */
-	  if (*p != '\n')
-	    {
-	      g_assert (delimiter);
-	      start = p;
-	      break;
-	    }
-	}
-
-      if (*p == '\n' ||
-	   *p == '\r' ||
-	   !strncmp(p, PARAGRAPH_SEPARATOR_STRING,
-		    strlen(PARAGRAPH_SEPARATOR_STRING)))
-	{
-	  if (delimiter == NULL)
-	    delimiter = p;
-	  prev_sep = *p;
-	}
-      else
 	prev_sep = 0;
 
-      p = g_utf8_next_char (p);
-    }
+	while (p != end)
+	{
+		if (prev_sep == '\n' ||
+				prev_sep == PARAGRAPH_SEPARATOR_STRING[0])
+		{
+			g_assert (delimiter);
+			start = p;
+			break;
+		}
+		else if (prev_sep == '\r')
+		{
+			/* don't break between \r and \n */
+			if (*p != '\n')
+			{
+				g_assert (delimiter);
+				start = p;
+				break;
+			}
+		}
 
-  if (delimiter && paragraph_delimiter_index)
-    *paragraph_delimiter_index = delimiter - text;
+		if (*p == '\n' ||
+				*p == '\r' ||
+				!strncmp(p, PARAGRAPH_SEPARATOR_STRING,
+					strlen(PARAGRAPH_SEPARATOR_STRING)))
+		{
+			if (delimiter == NULL)
+				delimiter = p;
+			prev_sep = *p;
+		}
+		else
+			prev_sep = 0;
 
-  if (start && next_paragraph_start)
-    *next_paragraph_start = start - text;
+		p = g_utf8_next_char (p);
+	}
+
+	if (delimiter && paragraph_delimiter_index)
+		*paragraph_delimiter_index = delimiter - text;
+
+	if (start && next_paragraph_start)
+		*next_paragraph_start = start - text;
 }
 
-const gchar text_unknown_char_utf8[] = { '\xEF', '\xBF', '\xBC', '\0' };
+Glib::ustring::size_type width(const Glib::ustring &string)
+{
+	return width(string.data(), string.data()+string.bytes());
+}
 
 //NOTE copied from libgnt/gntutils.c
 /// @todo should g_unichar_iszerowidth be used?
@@ -142,19 +117,19 @@ const gchar text_unknown_char_utf8[] = { '\xEF', '\xBF', '\xBC', '\0' };
 /// for a string.
 Glib::ustring::size_type width(const char *start, const char *end)
 {
-        Glib::ustring::size_type width = 0;
+	Glib::ustring::size_type width = 0;
 
 	if (start == NULL)
 		return 0;
 
-        if (end == NULL)
-                end = start + strlen(start);
+	if (end == NULL)
+		end = start + strlen(start);
 
-        while (start < end) {
-                width += g_unichar_iswide(g_utf8_get_char(start)) ? 2 : 1;
-                start = g_utf8_next_char(start);
-        }
-        return width;
+	while (start < end) {
+		width += g_unichar_iswide(g_utf8_get_char(start)) ? 2 : 1;
+		start = g_utf8_next_char(start);
+	}
+	return width;
 }
 
 gchar* col_offset_to_pointer(gchar *str, glong offset)
@@ -163,10 +138,78 @@ gchar* col_offset_to_pointer(gchar *str, glong offset)
 
 	while (width < offset) {
 		width += g_unichar_iswide(g_utf8_get_char(str)) ? 2 : 1;
-                str = g_utf8_next_char(str);
+		str = g_utf8_next_char(str);
 	}
 
 	return str;
+}
+
+void mvwaddstring(WINDOW *win, int y, int x, int w, /* gboolean selected, */ const gchar *str)
+{
+	// @todo `\v' switch is not implemented yet
+
+	int printed = 0;
+	const gchar *u;
+
+	wmove(win, y, x);
+	//attrset(selection_color(selected, COLOR_STANDARD));
+
+	for (u = str; *u && printed < w; u++) {
+		/*
+		if (*u == COLOR_SELECT_CHAR) {
+			u++;
+			if (*u & COLOR_SPECIAL) {
+				attrset(selection_color_special(selected, *u & COLOR_MASK));
+			} else if (*u & COLOR_BOLD) {
+				attrset(selection_color(selected, *u & COLOR_MASK));
+				attron(A_BOLD);
+			} else {
+				attrset(selection_color(selected, *u & COLOR_MASK));
+			}
+			continue;
+		}
+		*/
+
+		if (((unsigned char) *u >= 0x7f && (unsigned char) *u < 0xa0)) {
+			// filter out C1 (8-bit) control characters
+			waddch(win, '?');
+			printed++;
+			continue;
+		}
+
+		// get a unicode character from the next few bytes
+		wchar_t wch[2];
+		cchar_t cc;
+
+		wch[0] = g_utf8_get_char_validated(u, -1);
+		wch[1] = L'\0';
+
+		// invalid utf-8 sequence
+		if (wch[0] < 0)
+			continue;
+
+		// control char symbols
+		if (wch[0] < 32)
+			wch[0] = 0x2400 + wch[0];
+
+		setcchar(&cc, wch, A_NORMAL, 0, NULL);
+		wadd_wch(win, &cc);
+		printed += g_unichar_iswide(wch[0]) ? 2 : 1;
+		u = g_utf8_next_char(u) - 1;
+	}
+	whline(win, ' ', w - printed);
+}
+
+void mvwaddstringf(WINDOW *win, int y, int x, int w, const gchar *fmt, ...)
+{
+	char *s;
+	va_list ap;
+
+	va_start(ap, fmt);
+	s = g_strdup_vprintf(fmt, ap);
+	va_end(ap);
+	mvwaddstring(win, y, x, w, s);
+	g_free(s);
 }
 
 Point::Point()
