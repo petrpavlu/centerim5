@@ -147,6 +147,9 @@ gchar* col_offset_to_pointer(gchar *str, glong offset)
 void mvwaddstring(WINDOW *win, int y, int x, int w, /* gboolean selected, */ const gchar *str)
 {
 	// @todo `\v' switch is not implemented yet
+	// @todo optimizations (don't translate to cchar if we have got utf8
+	// terminal, etc.)
+	// @todo error checking (setcchar)
 
 	int printed = 0;
 	const gchar *u;
@@ -154,7 +157,7 @@ void mvwaddstring(WINDOW *win, int y, int x, int w, /* gboolean selected, */ con
 	wmove(win, y, x);
 	//attrset(selection_color(selected, COLOR_STANDARD));
 
-	for (u = str; *u && printed < w; u++) {
+	for (u = str; *u && (w == -1 || printed < w); u++) {
 		/*
 		if (*u == COLOR_SELECT_CHAR) {
 			u++;
@@ -197,7 +200,8 @@ void mvwaddstring(WINDOW *win, int y, int x, int w, /* gboolean selected, */ con
 		printed += g_unichar_iswide(wch[0]) ? 2 : 1;
 		u = g_utf8_next_char(u) - 1;
 	}
-	whline(win, ' ', w - printed);
+	if (w != -1)
+		whline(win, ' ', w - printed);
 }
 
 void mvwaddstringf(WINDOW *win, int y, int x, int w, const gchar *fmt, ...)

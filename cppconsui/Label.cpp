@@ -50,10 +50,8 @@ Label::~Label()
 
 void Label::Draw(void)
 {
-	/// @todo unicode drawing
-	/// or draw with current locale?
-	mvwaddstr(area->w, 0, 0, text);
-	wclrtoeol(area->w);
+	mvwaddstring(area->w, 0, 0, -1, text);
+	wclrtobot(area->w);
 
 	Widget::Draw();
 }
