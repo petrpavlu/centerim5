@@ -2,13 +2,14 @@
 #include <cppconsui/Window.h>
 #include <cppconsui/Label.h>
 #include <cppconsui/Keys.h>
+#include <vector>
 
-/** LabelWindow class. */
-class LabelWindow
+/** TestWindow class. */
+class TestWindow
 : public Window
 {
 	public:
-		static LabelWindow &Instance();
+		TestWindow(int number, int x, int y, int w, int h);
 
 		virtual void ScreenResized();
 
@@ -16,36 +17,23 @@ class LabelWindow
 		Label *label;
 
 	private:
-		LabelWindow();
-		LabelWindow(const LabelWindow &);
-		LabelWindow &operator=(const LabelWindow &);
-		virtual ~LabelWindow() {}
+		TestWindow(const TestWindow &);
+		TestWindow &operator=(const TestWindow &);
+		virtual ~TestWindow() {}
 };
 
-LabelWindow &LabelWindow::Instance()
+TestWindow::TestWindow(int number, int x, int y, int w, int h)
+: Window(x, y, w, h, new Border())
 {
-	static LabelWindow instance;
-	return instance;
-}
-
-LabelWindow::LabelWindow()
-: Window(0, 0, 0, 0, new Border())
-{
-	label = new Label(*this, 2, 2, 20, 1, "Basic test");
-	AddWidget(label);
-
-	label = new Label(*this, 2, 5, 20, 1, "Too wide string, too wide string, too wide string");
-	AddWidget(label);
-
-	label = new Label(*this, 2, 7, 20, 3, "Multiline label, multiline label, multiline label");
+	gchar *t = g_strdup_printf("Win %d", number);
+	label = new Label(*this, 2, 1, w - 4, 1, t);
+	g_free(t);
 	AddWidget(label);
 }
 
-void LabelWindow::ScreenResized()
+void TestWindow::ScreenResized()
 {
-	MoveResize(0, 0,
-			WindowManager::Instance()->getScreenW(),
-			WindowManager::Instance()->getScreenH());
+	Redraw();
 }
 
 /** TestApp class. */
@@ -68,12 +56,13 @@ class TestApp
 			{}
 
 	protected:
+		std::vector<Window *> wins;
 
 	private:
 		TestApp();
 		TestApp(const TestApp &);
 		TestApp &operator=(const TestApp &);
-		virtual ~TestApp() {}
+		virtual ~TestApp();
 
 		DECLARE_SIG_REGISTERKEYS();
 		static bool RegisterKeys();
@@ -94,9 +83,19 @@ TestApp::TestApp()
 	DeclareBindables();
 }
 
+TestApp::~TestApp()
+{
+	for (std::vector<Window *>::iterator i = wins.begin(); i != wins.end(); i++)
+		delete *i;
+}
+
 void TestApp::Run()
 {
-	windowmanager->Add(&LabelWindow::Instance());
+	for (int i = 1; i <= 4; i++) {
+		Window *w = new TestWindow(i, (i - 1) % 2 * 30, (i - 1) / 2 * 10, 30, 10);
+		wins.push_back(w);
+		windowmanager->Add(w);
+	}
 
 	Application::Run();
 }

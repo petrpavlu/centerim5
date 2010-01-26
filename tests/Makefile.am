@@ -1,9 +1,10 @@
 check_PROGRAMS = \
 	textline_test \
 	textbuffer_test \
-	label_test
+	label_test \
+	window_test
 
-CPPFLAGS = \
+AM_CPPFLAGS = \
 	$(DEBUG_CFLAGS) \
 	$(GLIBMM_CFLAGS) \
 	$(CURSES_INCLUDEDIR) \
@@ -16,10 +17,6 @@ LDADD = \
 
 textline_test_SOURCES = \
 	textline_test.cpp
-textline_test_CPPFLAGS = $(CPPFLAGS)
-textline_test_LDADD = $(LDADD)
 
 textbuffer_test_SOURCES = \
 	textbuffer_test.cpp
-textbuffer_test_CPPFLAGS = $(CPPFLAGS)
-textbuffer_test_LDADD = $(LDADD)
