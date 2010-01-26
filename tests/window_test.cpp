@@ -4,12 +4,13 @@
 #include <cppconsui/Keys.h>
 #include <vector>
 
-/** TestWindow class. */
+// TestWindow class
 class TestWindow
 : public Window
 {
 	public:
 		TestWindow(int number, int x, int y, int w, int h);
+		virtual ~TestWindow() {}
 
 		virtual void ScreenResized();
 
@@ -19,7 +20,6 @@ class TestWindow
 	private:
 		TestWindow(const TestWindow &);
 		TestWindow &operator=(const TestWindow &);
-		virtual ~TestWindow() {}
 };
 
 TestWindow::TestWindow(int number, int x, int y, int w, int h)
@@ -29,6 +29,14 @@ TestWindow::TestWindow(int number, int x, int y, int w, int h)
 	label = new Label(*this, 2, 1, w - 4, 1, t);
 	g_free(t);
 	AddWidget(label);
+
+	if (number == 1) {
+		label = new Label(*this, 2, 2, w - 4, 1, "Press F10 to quit.");
+		AddWidget(label);
+
+		label = new Label(*this, 2, 3, w - 4, 1, "Press ESC to close a focused window.");
+		AddWidget(label);
+	}
 }
 
 void TestWindow::ScreenResized()
@@ -36,7 +44,7 @@ void TestWindow::ScreenResized()
 	Redraw();
 }
 
-/** TestApp class. */
+// TestApp class
 
 #define CONTEXT_TESTAPP "testapp"
 
@@ -56,13 +64,12 @@ class TestApp
 			{}
 
 	protected:
-		std::vector<Window *> wins;
 
 	private:
 		TestApp();
 		TestApp(const TestApp &);
 		TestApp &operator=(const TestApp &);
-		virtual ~TestApp();
+		virtual ~TestApp() {}
 
 		DECLARE_SIG_REGISTERKEYS();
 		static bool RegisterKeys();
@@ -83,17 +90,10 @@ TestApp::TestApp()
 	DeclareBindables();
 }
 
-TestApp::~TestApp()
-{
-	for (std::vector<Window *>::iterator i = wins.begin(); i != wins.end(); i++)
-		delete *i;
-}
-
 void TestApp::Run()
 {
 	for (int i = 1; i <= 4; i++) {
-		Window *w = new TestWindow(i, (i - 1) % 2 * 30, (i - 1) / 2 * 10, 30, 10);
-		wins.push_back(w);
+		Window *w = new TestWindow(i, (i - 1) % 2 * 40, (i - 1) / 2 * 10, 40, 10);
 		windowmanager->Add(w);
 	}
 
