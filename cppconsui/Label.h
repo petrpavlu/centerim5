@@ -26,16 +26,11 @@
 
 #include "Widget.h"
 
-#include <glibmm/ustring.h>
-
-/* Initial size of buffer, in bytes */
-#define MIN_SIZE 16
-
-/* Maximum size of text buffer, in bytes */
-#define MAX_SIZE G_MAXUSHORT
-
 /// @todo proper autosizing
 
+/**
+ * A widget that displays a small to medium amount of text.
+ */
 class Label
 : public Widget
 {
@@ -44,29 +39,22 @@ class Label
 		Label(Widget& parent, int x, int y, const gchar *text_);
 		virtual ~Label();
 
-		virtual void Draw(void);
+		virtual void Draw();
 		/** Sets a new text and redraws the Widget */
-		void SetText(const gchar *text_);
-		const gchar* GetText(void);
+		virtual void SetText(const gchar *text_);
+		const gchar* GetText();
 
 	protected:
-		guint16 text_max_length;
 		gchar *text; 
-
-		guint16 text_size;    /**< allocated size, in bytes */
-		guint16 n_bytes;      /**< length in use, in bytes */
-		guint16 text_length;  /**< length in use, in chars */
 
 	private:
 		/** manages the text allocation and reallocation
 		 * without any Widget signals invloved
 		 */ 
 		void RealSetText(const gchar *text_);
-		Label(void);
+		Label();
 		Label(const Label&);
-
 		Label& operator=(const Label&);
-
 };
 
 #endif /* __LABEL_H__ */

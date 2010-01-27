@@ -15,7 +15,6 @@ class TestWindow
 		virtual void ScreenResized();
 
 	protected:
-		Label *label;
 
 	private:
 		TestWindow(const TestWindow &);
@@ -25,6 +24,8 @@ class TestWindow
 TestWindow::TestWindow(int number, int x, int y, int w, int h)
 : Window(x, y, w, h, new Border())
 {
+	Label *label;
+
 	gchar *t = g_strdup_printf("Win %d", number);
 	label = new Label(*this, 2, 1, w - 4, 1, t);
 	g_free(t);

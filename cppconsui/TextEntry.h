@@ -38,8 +38,11 @@
 
 #include "Label.h"
 
-#include <glibmm/ustring.h>
-#include <vector>
+/* Initial size of buffer, in bytes */
+#define MIN_SIZE 16
+
+/* Maximum size of text buffer, in bytes */
+#define MAX_SIZE G_MAXUSHORT
 
 class TextEntry
 : public Label
@@ -71,6 +74,8 @@ class TextEntry
 
 		sigc::signal<void> signal_text_changed;
 
+		virtual void SetText(const gchar *text_);
+
 	protected:
 		void backspace(void);
 
@@ -97,6 +102,12 @@ class TextEntry
 		bool obscured;
 
 		int flags; /* Bitmask indicating which input we accept. */
+
+		guint16 text_max_length;
+		guint16 text_size;    /**< allocated size, in bytes */
+		guint16 n_bytes;      /**< length in use, in bytes */
+		guint16 text_length;  /**< length in use, in chars */
+
 	private:
 		TextEntry();
 		TextEntry(const TextEntry&);

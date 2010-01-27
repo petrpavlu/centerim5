@@ -21,14 +21,10 @@
 #include "ConsuiCurses.h"
 #include "Label.h"
 
-#include <cstring>
-
 #include <glib.h>
-#include <glib/gprintf.h>
 
 Label::Label(Widget& parent, int x, int y, int w, int h, const gchar *text_)
 : Widget(parent, x, y, w, h)
-, text_max_length(MAX_SIZE)
 , text(NULL)
 {
 	RealSetText(text_);
@@ -36,7 +32,6 @@ Label::Label(Widget& parent, int x, int y, int w, int h, const gchar *text_)
 
 Label::Label(Widget& parent, int x, int y, const gchar *text_)
 : Widget(parent, x, y, 0, 0)
-, text_max_length(MAX_SIZE)
 , text(NULL)
 {
 	RealSetText(text_);
@@ -45,10 +40,10 @@ Label::Label(Widget& parent, int x, int y, const gchar *text_)
 
 Label::~Label()
 {
-	g_free(text); // it is always allocated
+	g_free(text);
 }
 
-void Label::Draw(void)
+void Label::Draw()
 {
 	mvwaddstring(area->w, 0, 0, -1, text);
 	wclrtobot(area->w);
@@ -58,14 +53,12 @@ void Label::Draw(void)
 
 void Label::SetText(const gchar *text_)
 {
-	g_free(text); // it always needs to be allocated
 	RealSetText(text_);
 
-	wclear(area->w);
 	signal_redraw(this);
 }
 
-const gchar* Label::GetText(void)
+const gchar* Label::GetText()
 {
 	return text;
 }
@@ -73,9 +66,8 @@ const gchar* Label::GetText(void)
 void Label::RealSetText(const gchar *text_)
 {
 	g_assert(text_); 
-	/// @todo handle reallocation
-	text = g_strndup(text_,text_max_length);
-	text_size = strlen(text);
-	n_bytes = text_size;
-	text_length = g_utf8_strlen(text, text_size);
+
+	if (text)
+		g_free(text);
+	text = g_strdup(text_);
 }

@@ -34,13 +34,10 @@
  */
 
 #include "TextEntry.h"
-
 #include "Keys.h"
 
 #include <glib.h>
-#include <glib/gprintf.h>
-
-#include <string.h>
+#include <cstring>
 
 #define CONTEXT_TEXTENTRY "textentry"
 
@@ -51,6 +48,7 @@ TextEntry::TextEntry(Widget& parent, int x, int y, int w, int h, const gchar *te
 , editable(true)
 , obscured(false)
 , flags(0)
+, text_max_length(MAX_SIZE)
 {
 	set_position(text_size); // @todo should it be text_size or text_length ?
 
@@ -65,6 +63,7 @@ TextEntry::TextEntry(Widget& parent, int x, int y, const gchar *text_)
 , editable(true)
 , obscured(false)
 , flags(0)
+, text_max_length(MAX_SIZE)
 {
 	set_position(text_size);
 
@@ -308,6 +307,17 @@ void TextEntry::Obscured(bool obscure)
 	///  copy label::draw implementation here?
 	obscured = obscure;
 	Redraw();
+}
+
+void TextEntry::SetText(const gchar *text_)
+{
+	Label::SetText(text);
+
+	// @todo length checking?
+
+	text_size = strlen(text);
+	n_bytes = text_size;
+	text_length = g_utf8_strlen(text, text_size);
 }
 
 void TextEntry::backspace(void)
