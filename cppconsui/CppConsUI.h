@@ -39,13 +39,6 @@
 
 #endif
 
-#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
-//#define _XOPEN_SOURCE_EXTENDED
-#include <ncurses.h>
-#else
-#include <curses.h>
-#endif
-
 //from pango/break.c
 #define PARAGRAPH_SEPARATOR 0x2029
 #define PARAGRAPH_SEPARATOR_STRING "\xE2\x80\xA9"
@@ -57,15 +50,6 @@ void find_paragraph_boundary (const gchar *text,
 			       int length,
 			       int *paragraph_delimiter_index,
 			       int *next_paragraph_start);
-
-/**
- * This function takes a formatted string and draws it on the screen. The
- * formatting of the string happens when a '\v' is encountered. After the '\v'
- * is a char, a switch in the code figures out what to do based on this. Based
- * on giFTcurs drawing function.
- */
-void mvwaddstring(WINDOW *win, int y, int x, int w, const gchar *str);
-void mvwaddstringf(WINDOW *win, int y, int x, int w, const gchar *fmt, ...);
 
 /// @todo move into editable abstract class?
 enum CursorMovement {

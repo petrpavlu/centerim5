@@ -20,13 +20,6 @@
 
 #include "ColorScheme.h"
 
-#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
-#include <ncurses.h>
-#else
-#include <curses.h>
-#endif
-
-
 ColorScheme::ColorScheme()
 {
 	for (int i = 0; i <= Disabled; i++) {
@@ -48,23 +41,24 @@ ColorScheme::~ColorScheme(void)
 ColorScheme* ColorScheme::ColorSchemeNormal(void)
 {
 	ColorScheme *scheme = new ColorScheme();
-	scheme->schemes[Normal]   = A_NORMAL;
-	scheme->schemes[Focus]    = A_REVERSE;
-	scheme->schemes[Disabled] = A_DIM;
+	scheme->schemes[Normal]   = Curses::Attr::A_NORMAL_rename();
+	scheme->schemes[Focus]    = Curses::Attr::A_REVERSE_rename();
+	scheme->schemes[Disabled] = Curses::Attr::A_DIM_rename();
 	return scheme;
 }
 
-void ColorScheme::On(const curses_imp_t* area, const ColorType type)
+void ColorScheme::On(Curses::Window *area, const ColorType type)
 {
-	wattron(area->w, schemes[type]);
+	Curses::wattron(area, schemes[type]);
 }
 
-void ColorScheme::Off(const curses_imp_t* area, const ColorType type)
+void ColorScheme::Off(Curses::Window *area, const ColorType type)
 {
-	wattroff(area->w, schemes[type]);
+	Curses::wattroff(area, schemes[type]);
 }
 
-void ColorScheme::SetColor(const curses_imp_t* area, const int x, const int y, const int n, const ColorType type)
+void ColorScheme::SetColor(Curses::Window *area, const int x, const int y, const int n, const ColorType type)
 {
-	mvwchgat(area->w, y, x, n, schemes[type], 0, NULL);
+	Curses::mvwchgat(area, y, x, n, schemes[type], 0, NULL);
 }
+

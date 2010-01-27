@@ -107,7 +107,7 @@ void find_paragraph_boundary (const gchar *text,
 
 Glib::ustring::size_type width(const Glib::ustring &string)
 {
-	return width(string.data(), string.data()+string.bytes());
+	return width(string.data(), string.data() + string.bytes());
 }
 
 //NOTE copied from libgnt/gntutils.c
@@ -142,78 +142,6 @@ gchar* col_offset_to_pointer(gchar *str, glong offset)
 	}
 
 	return str;
-}
-
-void mvwaddstring(WINDOW *win, int y, int x, int w, /* gboolean selected, */ const gchar *str)
-{
-	// @todo `\v' switch is not implemented yet
-	// @todo optimizations (don't translate to cchar if we have got utf8
-	// terminal, etc.)
-	// @todo error checking (setcchar)
-
-	int printed = 0;
-	const gchar *u;
-
-	wmove(win, y, x);
-	//attrset(selection_color(selected, COLOR_STANDARD));
-
-	for (u = str; *u && (w == -1 || printed < w); u++) {
-		/*
-		if (*u == COLOR_SELECT_CHAR) {
-			u++;
-			if (*u & COLOR_SPECIAL) {
-				attrset(selection_color_special(selected, *u & COLOR_MASK));
-			} else if (*u & COLOR_BOLD) {
-				attrset(selection_color(selected, *u & COLOR_MASK));
-				attron(A_BOLD);
-			} else {
-				attrset(selection_color(selected, *u & COLOR_MASK));
-			}
-			continue;
-		}
-		*/
-
-		if (((unsigned char) *u >= 0x7f && (unsigned char) *u < 0xa0)) {
-			// filter out C1 (8-bit) control characters
-			waddch(win, '?');
-			printed++;
-			continue;
-		}
-
-		// get a unicode character from the next few bytes
-		wchar_t wch[2];
-		cchar_t cc;
-
-		wch[0] = g_utf8_get_char_validated(u, -1);
-		wch[1] = L'\0';
-
-		// invalid utf-8 sequence
-		if (wch[0] < 0)
-			continue;
-
-		// control char symbols
-		if (wch[0] < 32)
-			wch[0] = 0x2400 + wch[0];
-
-		setcchar(&cc, wch, A_NORMAL, 0, NULL);
-		wadd_wch(win, &cc);
-		printed += g_unichar_iswide(wch[0]) ? 2 : 1;
-		u = g_utf8_next_char(u) - 1;
-	}
-	if (w != -1)
-		whline(win, ' ', w - printed);
-}
-
-void mvwaddstringf(WINDOW *win, int y, int x, int w, const gchar *fmt, ...)
-{
-	char *s;
-	va_list ap;
-
-	va_start(ap, fmt);
-	s = g_strdup_vprintf(fmt, ap);
-	va_end(ap);
-	mvwaddstring(win, y, x, w, s);
-	g_free(s);
 }
 
 Point::Point()

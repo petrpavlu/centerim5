@@ -23,12 +23,6 @@
 #include "Keys.h"
 #include "KeyConfig.h"
 
-#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
-#include <ncurses.h>
-#else
-#include <curses.h>
-#endif
-
 #include <sys/ioctl.h>
 #include <signal.h>
 #include <cstring>
@@ -75,6 +69,9 @@ WindowManager::WindowManager(void)
 WindowManager::~WindowManager(void)
 {
 	KEYCONFIG->Clear();
+
+	// @todo close all windows?
+
 	if (endwin() == ERR)
 		{}//TODO throw an exeption
 }
@@ -156,8 +153,8 @@ void WindowManager::Remove(Window *window)
 	if (window == GetInputChild())
 		SetInputChild(NULL);
 
-	werase(info.window->GetWindow());
-	wnoutrefresh(info.window->GetWindow());
+	Curses::werase(info.window->GetWindow());
+	Curses::wnoutrefresh(info.window->GetWindow());
 
 	FocusWindow();
 	Draw();
@@ -224,7 +221,7 @@ bool WindowManager::HasWindow(Window *window)
 bool WindowManager::Draw(void)
 {
 	Windows::reverse_iterator i;
-	WINDOW *window;
+	Curses::Window *window;
 
 	if (redrawpending) {
 		erase();
@@ -234,12 +231,12 @@ bool WindowManager::Draw(void)
 			(*i).window->Draw();
 			/* this updates the virtual ncurses screen */
 			window = (*i).window->GetWindow();
-			touchwin(window);
-			wnoutrefresh(window);
+			Curses::touchwin(window);
+			Curses::wnoutrefresh(window);
 		}
 
 		/* this copies to virtual ncurses screen to the physical screen */
-		doupdate();
+		Curses::doupdate();
 
 		redrawpending = false;
 	}

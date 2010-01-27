@@ -8,6 +8,7 @@ libcppconsui_la_SOURCES =\
 	Adjustment.h \
 	Application.cpp \
 	Application.h \
+	ConsuiCurses.cpp \
 	ConsuiCurses.h \
 	ConsuiLog.h \
 	Container.cpp \

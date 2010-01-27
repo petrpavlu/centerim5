@@ -21,13 +21,6 @@
 #ifndef __COLORSCHEME_H__
 #define __COLORSCHEME_H__
 
-#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
-//#define _XOPEN_SOURCE_EXTENDED
-#include <ncurses.h>
-#else
-#include <curses.h>
-#endif
-
 #include "ConsuiCurses.h"
 
 class ColorScheme
@@ -42,10 +35,10 @@ class ColorScheme
 		#define ColorSchemeDefault ColorSchemeNormal
 		static ColorScheme* ColorSchemeNormal(void);
 
-		void On(const curses_imp_t* area, const ColorType type);
-		void Off(const curses_imp_t* area, const ColorType type);
+		void On(Curses::Window *area, const ColorType type);
+		void Off(Curses::Window *area, const ColorType type);
 
-		void SetColor(const curses_imp_t* area, const int x, const int y, const int n, const ColorType type);
+		void SetColor(Curses::Window *area, const int x, const int y, const int n, const ColorType type);
 
 		void SetColorType(ColorType type, int scheme);
 		void GetColorType(ColorType type);

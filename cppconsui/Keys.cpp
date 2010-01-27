@@ -39,7 +39,7 @@ Keys::Keys(void)
 }
 #define REM_LENGTH  (sizeof(key) - (cur - key))
 #define INSERT_COMBO(k, code) { \
-	snprintf(key, sizeof(key), "%s%s%s", controls[c], alts[a], k);  \
+	g_snprintf(key, sizeof(key), "%s%s%s", controls[c], alts[a], k);  \
 	INSERT_KEY(key, code);  \
 }
 

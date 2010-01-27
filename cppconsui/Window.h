@@ -29,14 +29,7 @@
 #include "Border.h"
 #include "CppConsUI.h"
 
-/// @todo remove curses header from here, and use the hidden implementation of curses_imp_t
-#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
-#include <ncurses.h>
-#else
-#include <curses.h>
-#endif
-
-/* ncurses has border as a macro thats not nice */
+// @todo remove me
 #undef border
 
 /** Window class is the class implementing the root node of the Widget chain defined by 
@@ -84,7 +77,7 @@ class Window
 		/** @todo this is not real nice. find a better way to let the windowmanager 
 		 * get this info.
 		 */
-		WINDOW* GetWindow(void) { return realwindow; };
+		Curses::Window *GetWindow(void) { return realwindow; };
 		/** @todo not implemented yet
 		 * @{
 		 */
@@ -106,10 +99,8 @@ class Window
 		/* dimensions to use when copying from pad to window */
 		int copy_x, copy_y, copy_w, copy_h;
 
-		/** the `real' window for this window 
-		 * @todo replace with curses_imp_t
-		 */
-		WINDOW *realwindow;
+		/** the `real' window for this window */
+		Curses::Window *realwindow;
 		/** @todo is adding a Border like this the proper way of doing it ? */
 		Border *border;
 

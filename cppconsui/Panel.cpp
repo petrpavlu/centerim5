@@ -50,23 +50,23 @@ Panel::~Panel()
 
 void Panel::Draw()
 {
-	if (!area->w || Width() == 0 || Height() == 0)
+	if (!area || Width() == 0 || Height() == 0)
 		return; //TODO and throw an exception/log a warning?
 
 
 	for (int i = 1; i < Width()-1; i++) {
-		mvwadd_wch(area->w, 0, i, H());
-		mvwadd_wch(area->w, Height()-1, i, H());
+		Curses::mvwadd_wch(area, 0, i, H());
+		Curses::mvwadd_wch(area, Height()-1, i, H());
 	}
 
 	for (int i = 1; i < Height()-1; i++) {
-		mvwadd_wch(area->w, i, 0, V());
-		mvwadd_wch(area->w, i, Width()-1, V());
+		Curses::mvwadd_wch(area, i, 0, V());
+		Curses::mvwadd_wch(area, i, Width()-1, V());
 	}
-	mvwadd_wch(area->w, 0, 0, CornerTL());
-	mvwadd_wch(area->w, Height()-1, 0, CornerBL());
-	mvwadd_wch(area->w, 0, Width()-1, CornerTR());
-	mvwadd_wch(area->w, Height()-1, Width()-1, CornerBR());
+	Curses::mvwadd_wch(area, 0, 0, CornerTL());
+	Curses::mvwadd_wch(area, Height()-1, 0, CornerBL());
+	Curses::mvwadd_wch(area, 0, Width()-1, CornerTR());
+	Curses::mvwadd_wch(area, Height()-1, Width()-1, CornerBR());
 }
 
 void Panel::SetText(const gchar *str)

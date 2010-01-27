@@ -494,7 +494,7 @@ void TextEntry::insert_text (const gchar *new_text, gint new_text_length, gint *
   if (text_max_length > 0 && n_chars + text_length > text_max_length)
     {
       //TODO: flash/blink display, or just beep? (a la screen)
-      beep();
+		Curses::beep();
       //gdk_display_beep (gtk_widget_get_display (GTK_WIDGET (this)));
       n_chars = text_max_length - text_length;
       new_text_length = g_utf8_offset_to_pointer (new_text, n_chars) - new_text;

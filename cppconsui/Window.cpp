@@ -27,14 +27,6 @@
 #include "Keys.h"
 #include "Container.h"
 
-#include "ConsuiCurses.h"
-//#include "ConsuiLog.h"
-#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
-#include <ncurses.h>
-#else
-#include <curses.h>
-#endif
-
 #define CONTEXT_WINDOW "window"
 
 Window::Window(int x, int y, int w, int h, Border *border)
@@ -67,7 +59,7 @@ Window::Window(int x, int y, int w, int h, Border *border)
 
 Window::~Window()
 {
-	delwin(realwindow);
+	Curses::delwin(realwindow);
 }
 
 void Window::DeclareBindables()
@@ -146,17 +138,19 @@ void Window::MoveResize(int newx, int newy, int neww, int newh)
 void Window::UpdateArea()
 {
 	//LOG("/tmp/ua.log","Window::UpdateArea (%d,%d,%d,%d) parent: %x this: %x areaw: %x \n", x,y,w,h, this->parent, this, area->w);
-	if (area->w)
-		delwin(area->w);
+	if (area)
+		Curses::delwin(area);
 
-	area->w = newpad(win_h, win_w);
+	area = Curses::newpad(win_h, win_w);
 
+	/*
 	if (area->w == NULL)
 		{}//TODO throw an exception
 		//actually, dont!
 		//after a container resize, all widgets are updatearea()'d
 		//which will probably result (unless resizing to bigger) in
 		//area == null because no pad can be made
+		*/
 }
 
 void Window::SetBorder(Border *border)
@@ -177,7 +171,7 @@ Border* Window::GetBorder(void)
  * dimensions do not exceed screen size */
 void Window::MakeRealWindow(void)
 {
-	WINDOW *win;
+	Curses::Window *win;
 	int left, right, top, bottom, maxx, maxy;
 
 	getmaxyx(stdscr, maxy, maxx);
@@ -195,9 +189,9 @@ void Window::MakeRealWindow(void)
 	/* this could fail if the window falls outside the visible
 	 * area
 	 * */
-	win = newwin(bottom - top, right - left, top, left);
+	win = Curses::newwin(bottom - top, right - left, top, left);
 
-	delwin(realwindow);
+	Curses::delwin(realwindow);
 	realwindow = win;
 }
 
@@ -207,14 +201,14 @@ void Window::Draw(void)
 		return;
 
 	if (border)
-		border->Draw(area->w); //TODO draw the border
+		border->Draw(area); //TODO draw the border
 	
 	Container::Draw();
 
 	/* copy the virtual window to a window, then display it
 	 * on screen.
 	 * */
-	copywin(area->w, realwindow, copy_y, copy_x, 0, 0, copy_h, copy_w, 0);
+	Curses::copywin(area, realwindow, copy_y, copy_x, 0, 0, copy_h, copy_w, 0);
 }
 
 void Window::Show()

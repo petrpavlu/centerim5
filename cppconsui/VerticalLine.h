@@ -30,14 +30,6 @@
 #include "Label.h"
 #include "Widget.h"
 
-/// @todo remove curses header from here, it's not used
-#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
-//#define _XOPEN_SOURCE_EXTENDED
-#include <ncurses.h>
-#else
-#include <curses.h>
-#endif
-
 /** A widget representing a vertical line
  * @todo borders with colors are nice 
  * @todo remove LineStyle as a parent Class and use it as a member object instead

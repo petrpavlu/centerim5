@@ -29,14 +29,6 @@
 #include "Label.h"
 #include "Widget.h"
 
-/// @todo remove curses header from here, it's not used
-#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
-//#define _XOPEN_SOURCE_EXTENDED
-#include <ncurses.h>
-#else
-#include <curses.h>
-#endif
-
 /** A widget representing a rectangular border with an optional
  * label on the top border line.
  * @todo borders with colors are nice 

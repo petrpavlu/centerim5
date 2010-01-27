@@ -52,8 +52,11 @@ LabelWindow::LabelWindow()
 	label = new Label(*this, 2, 6, 20, 3, "Multiline label, multiline label, multiline label");
 	AddWidget(label);
 
+	label = new Label(*this, 2, 10, "Autosize");
+	AddWidget(label);
+
 	// unicode test
-	label = new Label(*this, 2, 10, 30, 3,
+	label = new Label(*this, 2, 12, 30, 3,
 			"\x56\xc5\x99\x65\xc5\xa1\x74\xc3\xad\x63\xc3\xad\x20\x70\xc5\x99"
 			"\xc3\xad\xc5\xa1\x65\x72\x79\x20\x73\x65\x20\x64\x6f\xc5\xbe\x61"
 			"\x64\x6f\x76\x61\x6c\x79\x20\xc3\xba\x70\x6c\x6e\xc4\x9b\x20\xc4"

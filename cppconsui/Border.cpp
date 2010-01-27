@@ -22,13 +22,6 @@
 
 #include "LineStyle.h"
 
-#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
-//#define _XOPEN_SOURCE_EXTENDED
-#include <ncurses.h>
-#else
-#include <curses.h>
-#endif
-
 //TODO CppConsUI namespace
 
 Border::Border()
@@ -55,23 +48,22 @@ void Border::Resize(int newwidth, int newheight)
 	height = newheight;
 }
 
-void Border::Draw(WINDOW *window)
+void Border::Draw(Curses::Window *window)
 {
 	if (!window || width == 0 || height == 0)
 		return; //TODO and throw an exception/log a warning?
 
-
 	for (int i = 1; i < width-1; i++) {
-		mvwadd_wch(window, 0, i, h);
-		mvwadd_wch(window, height-1, i, h);
+		Curses::mvwadd_wch(window, 0, i, h);
+		Curses::mvwadd_wch(window, height-1, i, h);
 	}
 
 	for (int i = 1; i < height-1; i++) {
-		mvwadd_wch(window, i, 0, v);
-		mvwadd_wch(window, i, width-1, v);
+		Curses::mvwadd_wch(window, i, 0, v);
+		Curses::mvwadd_wch(window, i, width-1, v);
 	}
-	mvwadd_wch(window, 0, 0, corner_tl);
-	mvwadd_wch(window, height-1, 0, corner_bl);
-	mvwadd_wch(window, 0, width-1, corner_tr);
-	mvwadd_wch(window, height-1, width-1, corner_br);
+	Curses::mvwadd_wch(window, 0, 0, corner_tl);
+	Curses::mvwadd_wch(window, height-1, 0, corner_bl);
+	Curses::mvwadd_wch(window, 0, width-1, corner_tr);
+	Curses::mvwadd_wch(window, height-1, width-1, corner_br);
 }

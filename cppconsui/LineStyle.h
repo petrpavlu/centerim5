@@ -21,13 +21,16 @@
 #ifndef __LINESTYLE_H__
 #define __LINESTYLE_H__
 
+#include <glib.h>
+
+//#define _XOPEN_SOURCE_EXTENDED
+#define NCURSES_NOMACROS
+
 #if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
 #include <ncurses.h>
 #else
 #include <curses.h>
 #endif
-
-#include <glib.h>
 
 struct LineElements {
 	gchar *h, *h_begin, *h_end, *h_up, *h_down;

@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <string.h>
+#include <cstdio>
 
 #define STR1 "I do not feel obliged to believe that the same God who has endowed us with sense, reason, and intellect has intended us to forgo their use."
 #define STR2 "Just a test."

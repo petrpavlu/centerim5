@@ -39,7 +39,7 @@ Widget::Widget(Widget& parent, int x, int y, int w, int h)
 , parent(&parent)
 , colorscheme(NULL)
 {
-	area = new curses_imp_t(NULL);
+	area = new Curses::Window;
 	UpdateArea(); /// @todo It should be called whenever the parent decides, and not here in constructor.
 	colorscheme = ColorScheme::ColorSchemeNormal();
 }
@@ -47,7 +47,7 @@ Widget::Widget(Widget& parent, int x, int y, int w, int h)
 Widget::~Widget()
 {
 	/// @todo should also delete @ref Widget::area
-	delwin(area->w);
+	Curses::delwin(area);
 }
 
 void Widget::Move(int newx, int newy)
@@ -92,18 +92,21 @@ void Widget::MoveResize(int newx, int newy, int neww, int newh)
 void Widget::UpdateArea()
 {
 	//LOG("/tmp/ua.log",">Widget::UpdateArea (%d,%d,%d,%d) parent: %x this: %x areaw: %x \n", x,y,w,h, this->parent, this, area->w);	
-	if (area->w)
-		delwin(area->w);
+	if (area)
+		Curses::delwin(area);
 
-	area->w = subpad(parent->area->w, h, w, y, x);
+	// @todo use GetSubPad?
+	area = Curses::subpad(parent->area, h, w, y, x);
 
 	//LOG("/tmp/ua.log","<Widget::UpdateArea (%d,%d,%d,%d) parent: %x this: %x areaw: %x \n", x,y,w,h, this->parent, this, area->w);	
-	if (area->w == NULL)
+	/*
+	if (area == NULL)
 		{}//TODO throw an exception
 		//actually, dont!
 		//after a container resize, all widgets are updatearea()'d
 		//which will probably result (unless resizing to bigger) in
 		//area == null because no pad can be made
+		*/
 }
 
 void Widget::Draw(void)
@@ -231,7 +234,7 @@ void Widget::MoveFocus(FocusDirection direction)
 	}
 }
 
-void Widget::GetSubPad(curses_imp_t& a, const int x, const int y, const int w, const int h)
+Curses::Window *Widget::GetSubPad(int nlines, int ncols, int begin_y, int begin_x)
 {
-	a.w = subpad(area->w, h, w, y, x);
+	return Curses::subpad(area, nlines, ncols, begin_y, begin_x);
 }

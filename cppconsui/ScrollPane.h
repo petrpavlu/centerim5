@@ -66,7 +66,7 @@ class ScrollPane
 
 		ScrollPane& operator=(const ScrollPane&);
 
-		WINDOW* scrollarea;
+		Curses::Window *scrollarea;
 };
 
 #endif /* __SCROLLPANE_H__ */

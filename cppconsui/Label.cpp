@@ -36,6 +36,7 @@ Label::Label(Widget& parent, int x, int y, const gchar *text_)
 {
 	RealSetText(text_);
 	Resize(width(text), 1);
+	g_debug("label: w %d\n", w);
 }
 
 Label::~Label()
@@ -45,8 +46,11 @@ Label::~Label()
 
 void Label::Draw()
 {
-	mvwaddstring(area->w, 0, 0, -1, text);
-	wclrtobot(area->w);
+	Curses::mvwaddstring(area, 0, 0, -1, text);
+
+	// @todo why is not shown last text character with wclrtobot()
+	//Curses::wclrtobot(area);
+	Curses::wclrtoeol(area);
 
 	Widget::Draw();
 }

@@ -24,8 +24,13 @@
  * with a different implementation.
  */
 
-#ifndef __CURSES_H__
-#define __CURSES_H__
+#ifndef __CONSUICURSES_H__
+#define __CONSUICURSES_H__
+
+
+// @todo remove me
+//#define _XOPEN_SOURCE_EXTENDED
+#define NCURSES_NOMACROS
 
 #if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
 #include <ncurses.h>
@@ -33,9 +38,84 @@
 #include <curses.h>
 #endif
 
-struct curses_imp_t {
-	WINDOW* w;
-	curses_imp_t(WINDOW *w=NULL): w(w) {}
+#include <glib.h>
+
+class Curses
+{
+	public:
+		class Window
+		{
+			public:
+				Window();
+				~Window();
+
+				// @todo make private
+				struct WindowInternals;
+				WindowInternals *p;
+
+			protected:
+
+			private:
+				Window(const Window &);
+				Window &operator=(const Window &);
+		};
+
+		struct Attr
+		{
+			// @todo rename when we'll get rid of curses.h from all files
+			static int A_NORMAL_rename();
+			static int A_REVERSE_rename();
+			static int A_DIM_rename();
+		};
+
+		/**
+		 * @todo we should later create a window class and remove these static
+		 * functions...
+		 */
+
+		/**
+		 * This function takes a formatted string and draws it on the screen.
+		 * The formatting of the string happens when a '\v' is encountered.
+		 * After the '\v' is a char, a switch in the code figures out what to
+		 * do based on this. Based on giFTcurs drawing function.
+		 */
+		static void mvwaddstring(Window *area, int y, int x, int w, const gchar *str);
+		static void mvwaddstringf(Window *area, int y, int x, int w, const gchar *fmt, ...);
+
+		static int mvwaddstr(Window *area, int y, int x, const char *str);
+		static int mvwaddnstr(Window *area, int y, int x, const char *str, int n);
+
+		// @todo remove me
+		static int mvwadd_wch(Window *area, int y, int x, const cchar_t *wch);
+
+		static int mvwaddch(Window *area, int y, int x, const chtype ch);
+
+		static int wattron(Window *area, int attrs);
+		static int wattroff(Window *area, int attrs);
+		static int mvwchgat(Window *area, int y, int x, int n, /* attr_t */ int attr, short color, const void *opts);
+
+		static int werase(Window *area);
+		static int wclrtoeol(Window *area);
+		static int wclrtobot(Window *area);
+
+		static int wnoutrefresh(Window *area);
+		static int doupdate();
+
+		static int touchwin(Window *area);
+
+		static int beep();
+
+		static Window *newpad(int nlines, int ncols);
+		static Window *subpad(Window *orig, int nlines, int ncols, int begin_y, int begin_x);
+		static Window *newwin(int nlines, int ncols, int begin_y, int begin_x);
+		static int copywin(const Window *srcwin, Window *dstwin, int sminrow,
+				int smincol, int dminrow, int dmincol, int dmaxrow,
+				int dmaxcol, int overlay);
+		static int delwin(Window *area);
+
+	protected:
+
+	private:
 };
 
-#endif /* __CURSES_H__ */
+#endif /* __CONSUICURSES_H__ */

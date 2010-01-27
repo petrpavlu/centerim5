@@ -45,16 +45,16 @@ VerticalLine::~VerticalLine()
 
 void VerticalLine::Draw()
 {
-	if (!area->w || Height() == 0)
+	if (!area || Height() == 0)
 		return; //TODO and throw an exception/log a warning?
 
 	if (Height() <= 1) {
-		mvwadd_wch(area->w, 0, 0, V());
+		Curses::mvwadd_wch(area, 0, 0, V());
 	} else {
-		mvwadd_wch(area->w, 0, 0, VBegin());
+		Curses::mvwadd_wch(area, 0, 0, VBegin());
 		for (int i = 1; i < Height()-1; i++) {
-			mvwadd_wch(area->w, 0, i, V());
+			Curses::mvwadd_wch(area, 0, i, V());
 		}
-		mvwadd_wch(area->w, 0, Width()-1, VEnd());
+		Curses::mvwadd_wch(area, 0, Width()-1, VEnd());
 	}
 }

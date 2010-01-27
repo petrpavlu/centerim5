@@ -31,8 +31,6 @@
 #include <sigc++/sigc++.h>
 #include <sigc++/signal.h>
 
-struct curses_imp_t;
-
 class Widget
 : public sigc::trackable
 , public InputProcessor
@@ -139,7 +137,7 @@ class Widget
 		/** Changes <i>a</i> into a subpad of current widget with given coordinates
 		 * @todo use curses_imp_t.subpad()
 		 */
-		void GetSubPad(curses_imp_t& a, const int x, const int y, const int w, const int h);
+		Curses::Window *GetSubPad(int nlines, int ncols, int begin_y, int begin_x);
 
 		/// @todo encapsulate with a function, make sure derived class call Move()/Resize()/Redraw() to emit signal.
 		/// Also check if this is possible at all.
@@ -162,10 +160,8 @@ class Widget
   		 */
 		Widget *focus_child;
 		/** This is the implementation dependent area of the widget
-		 * @todo change the name of curses_imp_t into something more generic and 
-		 *   intuitive
 		 */
-		curses_imp_t* area;
+		Curses::Window *area;
 		/** Used to define a tree of Widgets
 		 * @todo make parent a reference
 		 */

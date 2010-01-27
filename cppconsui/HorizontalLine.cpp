@@ -45,16 +45,16 @@ HorizontalLine::~HorizontalLine()
 
 void HorizontalLine::Draw()
 {
-	if (!area->w || Width() == 0)
+	if (!area || Width() == 0)
 		return; /// @todo and throw an exception/log a warning?
 
 	if (Width() <= 1) {
-		mvwadd_wch(area->w, 0, 0, H());
+		Curses::mvwadd_wch(area, 0, 0, H());
 	} else {
-		mvwadd_wch(area->w, 0, 0, HBegin());
+		Curses::mvwadd_wch(area, 0, 0, HBegin());
 		for (int i = 1; i < Width()-1; i++) {
-			mvwadd_wch(area->w, 0, i, H());
+			Curses::mvwadd_wch(area, 0, i, H());
 		}
-		mvwadd_wch(area->w, 0, Width()-1, HEnd());
+		Curses::mvwadd_wch(area, 0, Width()-1, HEnd());
 	}
 }

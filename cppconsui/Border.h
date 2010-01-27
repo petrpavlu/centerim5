@@ -22,13 +22,7 @@
 #define __BORDER_H__
 
 #include "LineStyle.h"
-
-#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
-//#define _XOPEN_SOURCE_EXTENDED
-#include <ncurses.h>
-#else
-#include <curses.h>
-#endif
+#include "ConsuiCurses.h"
 
 //TODO borders with colors are nice
 class Border
@@ -41,7 +35,7 @@ class Border
 		virtual ~Border();
 
 		void Resize(int newwidth, int newhheight);
-		void Draw(WINDOW *window);
+		void Draw(Curses::Window *window);
 
 	protected:
 		int width, height;

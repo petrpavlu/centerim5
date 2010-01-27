@@ -21,6 +21,7 @@
 #include "TextLineRBTree.h"
 
 #include <cassert>
+#include <cstdio>
 
 TextLineRBTree::TextLineRBTree()
 {
