@@ -50,6 +50,8 @@ TextEntry::TextEntry(Widget& parent, int x, int y, int w, int h, const gchar *te
 , flags(0)
 , text_max_length(MAX_SIZE)
 {
+	RecalculateLengths();
+
 	set_position(text_size); // @todo should it be text_size or text_length ?
 
 	can_focus = true;
@@ -65,6 +67,8 @@ TextEntry::TextEntry(Widget& parent, int x, int y, const gchar *text_)
 , flags(0)
 , text_max_length(MAX_SIZE)
 {
+	RecalculateLengths();
+
 	set_position(text_size);
 
 	Resize(width(text), 1);
@@ -314,10 +318,9 @@ void TextEntry::SetText(const gchar *text_)
 	Label::SetText(text);
 
 	// @todo length checking?
+	// @todo move cursor somewhere?
 
-	text_size = strlen(text);
-	n_bytes = text_size;
-	text_length = g_utf8_strlen(text, text_size);
+	RecalculateLengths();
 }
 
 void TextEntry::backspace(void)
@@ -636,6 +639,13 @@ void TextEntry::delete_text (gint start_pos, gint end_pos)
 
       signal_text_changed();
     }
+}
+
+void TextEntry::RecalculateLengths()
+{
+	text_size = strlen(text);
+	n_bytes = text_size;
+	text_length = g_utf8_strlen(text, text_size);
 }
 
 /**

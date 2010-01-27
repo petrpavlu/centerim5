@@ -2,7 +2,6 @@
 #include <cppconsui/Window.h>
 #include <cppconsui/Label.h>
 #include <cppconsui/Keys.h>
-#include <vector>
 
 // TestWindow class
 class TestWindow
@@ -22,7 +21,7 @@ class TestWindow
 };
 
 TestWindow::TestWindow(int number, int x, int y, int w, int h)
-: Window(x, y, w, h, new Border())
+: Window(x, y, w, h, LineStyle::DEFAULT)
 {
 	Label *label;
 

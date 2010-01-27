@@ -36,7 +36,7 @@
 #include <glib.h>
 
 AccountWindow::AccountWindow()
-: Window(0, 0, 80, 24, NULL)
+: Window(0, 0, 80, 24, LineStyle::DEFAULT)
 , menu_index(2)
 , accounts_index(1)
 {

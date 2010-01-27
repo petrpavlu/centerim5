@@ -83,7 +83,7 @@ static PurpleBlistUiOps centerim_blist_ui_ops =
 };
 
 BuddyList::BuddyList()
-: Window(0, 0, 80, 24, NULL)
+: Window(0, 0, 80, 24, LineStyle::DEFAULT)
 {
 	log = &Log::Instance();
 	conf = Conf::Instance();

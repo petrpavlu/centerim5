@@ -31,7 +31,7 @@ LabelWindow &LabelWindow::Instance()
 }
 
 LabelWindow::LabelWindow()
-: Window(0, 0, 0, 0, new Border())
+: Window(0, 0, 0, 0, LineStyle::DEFAULT)
 {
 	Label *label;
 

@@ -70,35 +70,18 @@ static LineElements line_elements_heavy = {
 };
 
 LineStyle::LineStyle(Type t)
+: type(t)
 {
-	switch (t) {
-		case ASCII:
-			elems = &line_elements_ascii;
-			break;
-		case ASCII_ROUNDED:
-			elems = &line_elements_ascii_rounded;
-			break;
-		case DEFAULT:
-		case LIGHT:
-			elems = &line_elements_light;
-			break;
-		case LIGHT_ROUNDED:
-			elems = &line_elements_light_rounded;
-			break;
-		case HEAVY:
-			elems = &line_elements_heavy;
-			break;
-	}
 }
 
 LineStyle::LineStyle(const LineStyle &other)
+: type(other.type)
 {
-	elems = other.elems;
 }
 
 LineStyle &LineStyle::operator=(LineStyle &other)
 {
-	elems = other.elems;
+	type = other.type;
 	return *this;
 }
 
@@ -106,77 +89,104 @@ LineStyle::~LineStyle()
 {
 }
 
+void LineStyle::SetStyle(Type t)
+{
+	type = t;
+}
+
+LineStyle::Type LineStyle::GetStyle()
+{
+	return type;
+}
+
 const gchar *LineStyle::H()
 {
-	return elems->h;
+	return GetCurrentElems()->h;
 }
 
 const gchar *LineStyle::HBegin()
 {
-	return elems->h_begin;
+	return GetCurrentElems()->h_begin;
 }
 
 const gchar *LineStyle::HEnd()
 {
-	return elems->h_end;
+	return GetCurrentElems()->h_end;
 }
 
 const gchar *LineStyle::HUp()
 {
-	return elems->h_up;
+	return GetCurrentElems()->h_up;
 }
 
 const gchar *LineStyle::HDown()
 {
-	return elems->h_down;
+	return GetCurrentElems()->h_down;
 }
 
 const gchar *LineStyle::V()
 {
-	return elems->v;
+	return GetCurrentElems()->v;
 }
 
 const gchar *LineStyle::VBegin()
 {
-	return elems->v_begin;
+	return GetCurrentElems()->v_begin;
 }
 
 const gchar *LineStyle::VEnd()
 {
-	return elems->v_end;
+	return GetCurrentElems()->v_end;
 }
 
 const gchar *LineStyle::VLeft()
 {
-	return elems->v_left;
+	return GetCurrentElems()->v_left;
 }
 
 const gchar *LineStyle::VRight()
 {
-	return elems->v_right;
+	return GetCurrentElems()->v_right;
 }
 
 const gchar *LineStyle::Cross()
 {
-	return elems->cross;
+	return GetCurrentElems()->cross;
 }
 
 const gchar *LineStyle::CornerTL()
 {
-	return elems->corner_tl;
+	return GetCurrentElems()->corner_tl;
 }
 
 const gchar *LineStyle::CornerTR()
 {
-	return elems->corner_tr;
+	return GetCurrentElems()->corner_tr;
 }
 
 const gchar *LineStyle::CornerBL()
 {
-	return elems->corner_bl;
+	return GetCurrentElems()->corner_bl;
 }
 
 const gchar *LineStyle::CornerBR()
 {
-	return elems->corner_br;
+	return GetCurrentElems()->corner_br;
+}
+
+LineElements* LineStyle::GetCurrentElems()
+{
+	switch (type) {
+		case ASCII:
+			return &line_elements_ascii;
+		case ASCII_ROUNDED:
+			return &line_elements_ascii_rounded;
+		case DEFAULT:
+		case LIGHT:
+			return &line_elements_light;
+		case LIGHT_ROUNDED:
+			return &line_elements_light_rounded;
+		case HEAVY:
+			return &line_elements_heavy;
+	}
 }

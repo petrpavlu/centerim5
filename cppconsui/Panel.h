@@ -32,12 +32,10 @@
 /** A widget representing a rectangular border with an optional
  * label on the top border line.
  * @todo borders with colors are nice 
- * @todo remove LineStyle as a parent class and use it as a member object instead
  * @todo perhaps add some constructors directly with the label text
  */
 class Panel
 : public Widget
-, public LineStyle
 {
 	public:
 		Panel(Widget& parent, const int x, const int y, const int w, const int h);
@@ -45,20 +43,22 @@ class Panel
 
 		virtual ~Panel();
 
-		virtual void Draw(void);
+		virtual void Draw();
 		/** Sets the text of the label */
 		void SetText(const gchar *str);
-		Glib::ustring GetText(void);
+		Glib::ustring GetText();
+
+		virtual void SetBorderStyle(LineStyle::Type ltype);
+		virtual LineStyle::Type GetBorderStyle();
 
 	protected:
+		LineStyle *linestyle;
+		Label *label;
 
 	private:
-		Panel(void);
+		Panel();
 		Panel(const Panel&);
-
 		Panel& operator=(const Panel&);
-
-		Label *label;
 };
 
 #endif /* __PANEL_H__ */

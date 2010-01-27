@@ -43,6 +43,9 @@ class LineStyle
 		LineStyle &operator=(LineStyle &other);
 		virtual ~LineStyle();
 
+		void SetStyle(Type t);
+		Type GetStyle();
+
 		const gchar *H();
 		const gchar *HBegin();
 		const gchar *HEnd();
@@ -60,9 +63,10 @@ class LineStyle
 		const gchar *CornerBR();
 
 	protected:
-		LineElements *elems;
+		Type type;
 
 	private:
+		LineElements *GetCurrentElems();
 };
 
 #endif /* __LINESTYLE_H__ */

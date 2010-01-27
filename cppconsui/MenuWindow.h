@@ -51,7 +51,6 @@ class MenuWindow
 			{ return listbox; }
 
 	protected:
-		Panel *border;
 		ListBox *listbox;
 
 	private:

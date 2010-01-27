@@ -26,11 +26,8 @@
 #define __WINDOW_H__
 
 #include "Container.h"
-#include "Border.h"
+#include "Panel.h"
 #include "CppConsUI.h"
-
-// @todo remove me
-#undef border
 
 /** Window class is the class implementing the root node of the Widget chain defined by 
  *  Widget::parent.
@@ -54,7 +51,7 @@ class Window
 : public Container
 {
 	public:
-		Window(int x, int y, int w, int h, Border *border);
+		Window(int x, int y, int w, int h, LineStyle::Type ltype);
 		virtual ~Window();
 	
 		virtual void Close(void);
@@ -64,8 +61,6 @@ class Window
 			{ MoveResize(rect.x, rect.y, rect.width, rect.height); }
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
 		virtual void UpdateArea();
-		virtual void SetBorder(Border *border);
-		virtual Border* GetBorder(void);
 
 		virtual void Draw(void);
 
@@ -88,6 +83,9 @@ class Window
 	
 		/** this function is called when the screen is resized */
 		virtual void ScreenResized();
+
+		void SetBorderStyle(LineStyle::Type ltype);
+		LineStyle::Type GetBorderStyle();
 		
 		sigc::signal<void, Window*> signal_close;
 		//sigc::signal<void, Window*> signal_show;
@@ -101,11 +99,11 @@ class Window
 
 		/** the `real' window for this window */
 		Curses::Window *realwindow;
-		/** @todo is adding a Border like this the proper way of doing it ? */
-		Border *border;
 
 		/** @todo not used */
 		FocusChain focus_chain;
+
+		Panel *panel;
 
 	private:
 		Window(void);

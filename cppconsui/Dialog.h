@@ -38,7 +38,7 @@ class Dialog
 			ResponseNo
 		} ResponseType;
 
-		Dialog(int x, int y, int w, int h, Border *border);
+		Dialog(int x, int y, int w, int h, LineStyle::Type ltype);
 		Dialog();
 		virtual ~Dialog();
 

@@ -29,16 +29,14 @@
 
 #define CONTEXT_WINDOW "window"
 
-Window::Window(int x, int y, int w, int h, Border *border)
-: Container(*this, 1, 1, w-2, h-2)
+Window::Window(int x, int y, int w, int h, LineStyle::Type ltype)
+: Container(*this, 1, 1, w - 2, h - 2)
 , win_x(x)
 , win_y(y)
 , win_w(w)
 , win_h(h)
 , realwindow(NULL)
-, border(border)
 {
-
 	//TODO just call moveresize
 	if (win_w < 1) win_w = 1;
 	if (win_h < 1) win_h = 1;
@@ -49,10 +47,16 @@ Window::Window(int x, int y, int w, int h, Border *border)
 	MakeRealWindow();
 	UpdateArea();
 
+	/*
 	if (border) {
 		border->Resize(win_w, win_h);
 	}
 	Container::MoveResize(0, 0, win_w, win_h);
+	*/
+
+	panel = new Panel(*this, 0, 0, w, h, ltype);
+	AddWidget(panel);
+
 	Redraw();
 	DeclareBindables();
 }
@@ -112,9 +116,8 @@ void Window::Resize(int neww, int newh)
 	MakeRealWindow();
 	UpdateArea();
 
-	if (border) {
-		border->Resize(win_w, win_h);
-	}
+	// @todo is this a correct place where to do this?
+	panel->Resize(win_w, win_h);
 
 	Container::Resize(win_w, win_h);
 
@@ -153,20 +156,6 @@ void Window::UpdateArea()
 		*/
 }
 
-void Window::SetBorder(Border *border)
-{
-	this->border = border;
-	
-	if (border) {
-		border->Resize(win_w, win_h);
-	}
-}
-
-Border* Window::GetBorder(void)
-{
-	return border;
-}
-
 /* create the `real' window (not a pad) and make sure its
  * dimensions do not exceed screen size */
 void Window::MakeRealWindow(void)
@@ -200,9 +189,6 @@ void Window::Draw(void)
 	if (!realwindow)
 		return;
 
-	if (border)
-		border->Draw(area); //TODO draw the border
-	
 	Container::Draw();
 
 	/* copy the virtual window to a window, then display it
@@ -226,4 +212,14 @@ void Window::Hide()
 void Window::ScreenResized()
 {
 	// TODO: handle resize/reposition of child widgets/windows
+}
+
+void Window::SetBorderStyle(LineStyle::Type ltype)
+{
+	panel->SetBorderStyle(ltype);
+}
+
+LineStyle::Type Window::GetBorderStyle()
+{
+	return panel->GetBorderStyle();
 }

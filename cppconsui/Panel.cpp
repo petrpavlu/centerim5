@@ -24,27 +24,28 @@
 
 #include "ConsuiCurses.h"
 #include "Panel.h"
-#include "LineStyle.h"
-#include "Widget.h"
 
 Panel::Panel(Widget& parent, const int x, const int y, const int w, const int h)
 : Widget(parent, x, y, w, h)
-, LineStyle(LineStyle::DEFAULT)
+, linestyle(NULL)
 , label(NULL)
 {
-	label = new Label(*this, 2, 0, w-4, 1, "");
+	linestyle = new LineStyle(LineStyle::DEFAULT);
+	label = new Label(*this, 2, 0, w - 4, 1, "");
 }
 
 Panel::Panel(Widget& parent, const int x, const int y, const int w, const int h, LineStyle::Type ltype)
 : Widget(parent, x, y, w, h)
-, LineStyle(ltype)
+, linestyle(NULL)
 , label(NULL)
 {
-	label = new Label(*this, 2, 0, w-4, 1, "");
+	linestyle = new LineStyle(ltype);
+	label = new Label(*this, 2, 0, w - 4, 1, "");
 }
 
 Panel::~Panel()
 {
+	delete linestyle;
 	delete label;
 }
 
@@ -55,18 +56,18 @@ void Panel::Draw()
 
 	// @todo optimize
 	for (int i = 1; i < Width() - 1; i++) {
-		Curses::mvwaddstring(area, 0, i, 1, H());
-		Curses::mvwaddstring(area, Height() - 1, i, 1, H());
+		Curses::mvwaddstring(area, 0, i, 1, linestyle->H());
+		Curses::mvwaddstring(area, Height() - 1, i, 1, linestyle->H());
 	}
 
 	for (int i = 1; i < Height() - 1; i++) {
-		Curses::mvwaddstring(area, i, 0, 1, V());
-		Curses::mvwaddstring(area, i, Width() - 1, 1, V());
+		Curses::mvwaddstring(area, i, 0, 1, linestyle->V());
+		Curses::mvwaddstring(area, i, Width() - 1, 1, linestyle->V());
 	}
-	Curses::mvwaddstring(area, 0, 0, 1, CornerTL());
-	Curses::mvwaddstring(area, Height() - 1, 0, 1, CornerBL());
-	Curses::mvwaddstring(area, 0, Width() - 1, 1, CornerTR());
-	Curses::mvwaddstring(area, Height() - 1, Width() - 1, 1, CornerBR());
+	Curses::mvwaddstring(area, 0, 0, 1, linestyle->CornerTL());
+	Curses::mvwaddstring(area, Height() - 1, 0, 1, linestyle->CornerBL());
+	Curses::mvwaddstring(area, 0, Width() - 1, 1, linestyle->CornerTR());
+	Curses::mvwaddstring(area, Height() - 1, Width() - 1, 1, linestyle->CornerBR());
 }
 
 void Panel::SetText(const gchar *str)
@@ -77,4 +78,14 @@ void Panel::SetText(const gchar *str)
 Glib::ustring Panel::GetText(void)
 {
 	return label->GetText();
+}
+
+void Panel::SetBorderStyle(LineStyle::Type ltype)
+{
+	linestyle->SetStyle(ltype);
+}
+
+LineStyle::Type Panel::GetBorderStyle()
+{
+	return linestyle->GetStyle();
 }

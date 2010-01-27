@@ -38,7 +38,7 @@ Log &Log::Instance(void)
 
 //TODO sensible defaults
 Log::Log(void)
-: TextWindow(0, 0, 80, 24, NULL)
+: TextWindow(0, 0, 80, 24, LineStyle::DEFAULT)
 , logfile(NULL)
 , prefs_handle(NULL)
 , max_lines(0)
@@ -52,7 +52,6 @@ Log::Log(void)
 	g_log_set_handler((name), (GLogLevelFlags)(G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL \
 				| G_LOG_FLAG_RECURSION), glib_log_handler_, NULL)
 
-	SetBorder(new Border());
 	// TODO max_lines not used anywhere..
 	max_lines = conf->GetLogMaxLines();
 	MoveResize(conf->GetLogDimensions());
@@ -81,8 +80,6 @@ Log::~Log(void)
 
 	if (logfile)
 		g_io_channel_unref(logfile);
-
-	delete GetBorder();
 }
 
 void Log::Write(Level level, const gchar *fmt, ...)

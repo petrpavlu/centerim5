@@ -34,15 +34,13 @@
 #define CONTEXT_CONVERSATION "conversation"
 
 Conversation::Conversation(PurpleBlistNode* node)
-: Window(0, 0, 80, 24, NULL)
+: Window(0, 0, 80, 24, LineStyle::DEFAULT)
 , node(node)
 , conv(NULL)
 {
 	log = &Log::Instance();
 	conf = Conf::Instance();
 	type = purple_blist_node_get_type(node);
-
-	SetBorder(new Border());
 
 	view = new TextView(*this, 2, 1, w-4, h-2);
 	

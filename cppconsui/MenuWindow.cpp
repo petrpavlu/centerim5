@@ -29,13 +29,11 @@
 #define CONTEXT_MENUWINDOW "menuwindow"
 
 MenuWindow::MenuWindow(int x, int y, int w, int h, LineStyle::Type ltype)
-: Window(x, y, w, h, NULL)
+: Window(x, y, w, h, ltype)
 {
 
-	border = new Panel(*this, 0, 0, w, h, ltype);
 	listbox = new ListBox(*this, 1, 1, w-2, h-2);
 	SetFocusChild(listbox);
-	Window::AddWidget(border);
 	Window::AddWidget(listbox);
 	DeclareBindables();
 }
@@ -77,6 +75,5 @@ void MenuWindow::Resize(int neww, int newh)
 	 * what we want. in most cases you would need to recalculate
 	 * widget sizes based on window and/or container size.
 	 * */
-	border->Resize(w, h);
 	listbox->Resize(w-2, h-2);
 }

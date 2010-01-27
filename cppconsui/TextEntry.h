@@ -108,6 +108,8 @@ class TextEntry
 		guint16 n_bytes;      /**< length in use, in bytes */
 		guint16 text_length;  /**< length in use, in chars */
 
+		void RecalculateLengths();
+
 	private:
 		TextEntry();
 		TextEntry(const TextEntry&);

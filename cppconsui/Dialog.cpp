@@ -24,14 +24,14 @@
 
 #include "Panel.h"
 
-Dialog::Dialog(int x, int y, int w, int h, Border *border)
-: Window(x, y, w, h, border)
+Dialog::Dialog(int x, int y, int w, int h, LineStyle::Type ltype)
+: Window(x, y, w, h, ltype)
 {
 	AddWidgets();
 }
 
 Dialog::Dialog()
-: Window(0, 0, 1, 1, NULL)
+: Window(0, 0, 1, 1, LineStyle::DEFAULT)
 {
 	//TODO set correct position.
 	MoveResize(10, 10, 60, 12);

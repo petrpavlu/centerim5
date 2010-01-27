@@ -25,10 +25,10 @@
 
 #include <glibmm/ustring.h>
 
-TextWindow::TextWindow(int x, int y, int w, int h, Border *border)
-: Window(x, y, w, h, border)
+TextWindow::TextWindow(int x, int y, int w, int h, LineStyle::Type ltype)
+: Window(x, y, w, h, ltype)
 {
-	browser = new TextBrowser(*this, 2, 1, w-4, h-2);
+	browser = new TextBrowser(*this, 2, 1, w - 4, h - 2);
 	SetFocusChild(browser);
 	AddWidget(browser);
 }
