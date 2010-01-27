@@ -34,7 +34,7 @@ class AccountStatusMenu
 : public MenuWindow
 {
 	public:
-		AccountStatusMenu(int x, int y, int w, int h, LineStyle *linestyle);
+		AccountStatusMenu(int x, int y, int w, int h, LineStyle::Type ltype);
 		virtual ~AccountStatusMenu();
 
 		void Dummy(void) { ; } //TODO remove
@@ -47,7 +47,7 @@ class AccountStatusMenu
 		: public MenuWindow
 		{
 			public:
-				StatusPopup(int x, int y, int w, int h, LineStyle *linestyle, PurpleAccount *account);
+				StatusPopup(int x, int y, int w, int h, LineStyle::Type ltype, PurpleAccount *account);
 				~StatusPopup();
 
 				void Dummy(void) { ; } //TODO remove

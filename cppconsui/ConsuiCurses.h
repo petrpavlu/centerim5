@@ -27,17 +27,6 @@
 #ifndef __CONSUICURSES_H__
 #define __CONSUICURSES_H__
 
-
-// @todo remove me
-//#define _XOPEN_SOURCE_EXTENDED
-#define NCURSES_NOMACROS
-
-#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
-#include <ncurses.h>
-#else
-#include <curses.h>
-#endif
-
 #include <glib.h>
 
 class Curses
@@ -47,7 +36,7 @@ class Curses
 		{
 			public:
 				Window();
-				~Window();
+				virtual ~Window();
 
 				// @todo make private
 				struct WindowInternals;
@@ -85,15 +74,11 @@ class Curses
 		static int mvwaddstr(Window *area, int y, int x, const char *str);
 		static int mvwaddnstr(Window *area, int y, int x, const char *str, int n);
 
-		// @todo remove me
-		static int mvwadd_wch(Window *area, int y, int x, const cchar_t *wch);
-
-		static int mvwaddch(Window *area, int y, int x, const chtype ch);
-
 		static int wattron(Window *area, int attrs);
 		static int wattroff(Window *area, int attrs);
 		static int mvwchgat(Window *area, int y, int x, int n, /* attr_t */ int attr, short color, const void *opts);
 
+		static int erase();
 		static int werase(Window *area);
 		static int wclrtoeol(Window *area);
 		static int wclrtobot(Window *area);
@@ -112,6 +97,24 @@ class Curses
 				int smincol, int dminrow, int dmincol, int dmaxrow,
 				int dmaxcol, int overlay);
 		static int delwin(Window *area);
+
+		// @todo add noraw to raw, nl to nonl etc
+		static Window *initscr();
+		static int endwin();
+		static int start_color();
+		static int curs_set(int visibility);
+		static int keypad(Window *area, bool bf);
+		static int nonl();
+		static int raw();
+
+		static void ngetmaxyx(Window *area, int *y, int *x);
+		static int getmaxx(Window *area);
+		static int getmaxy(Window *area);
+
+		static int resizeterm(int lines, int columns);
+
+		static int C_OK();
+		static int C_ERR();
 
 	protected:
 

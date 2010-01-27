@@ -29,13 +29,13 @@
 
 HorizontalLine::HorizontalLine(Widget& parent, const int x, const int y, const int w)
 : Widget(parent, x, y, w, 1)
-, LineStyle(LineStyleDefault())
+, LineStyle(LineStyle::DEFAULT)
 {
 }
 
-HorizontalLine::HorizontalLine(Widget& parent, LineStyle *linestyle, const int x, const int y, const int w)
+HorizontalLine::HorizontalLine(Widget& parent, LineStyle::Type ltype, const int x, const int y, const int w)
 : Widget(parent, x, y, w, 1)
-, LineStyle(linestyle)
+, LineStyle(ltype)
 {
 }
 
@@ -49,12 +49,13 @@ void HorizontalLine::Draw()
 		return; /// @todo and throw an exception/log a warning?
 
 	if (Width() <= 1) {
-		Curses::mvwadd_wch(area, 0, 0, H());
+		Curses::mvwaddstring(area, 0, 0, 1, H());
 	} else {
-		Curses::mvwadd_wch(area, 0, 0, HBegin());
-		for (int i = 1; i < Width()-1; i++) {
-			Curses::mvwadd_wch(area, 0, i, H());
+		Curses::mvwaddstring(area, 0, 0, 1, HBegin());
+		// @todo optimize
+		for (int i = 1; i < Width() - 1; i++) {
+			Curses::mvwaddstring(area, 0, i, 1, H());
 		}
-		Curses::mvwadd_wch(area, 0, Width()-1, HEnd());
+		Curses::mvwaddstring(area, 0, Width() - 1, 1, HEnd());
 	}
 }

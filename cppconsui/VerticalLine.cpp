@@ -29,13 +29,13 @@
 
 VerticalLine::VerticalLine(Widget& parent, const int x, const int y, const int w)
 : Widget(parent, x, y, w, 1)
-, LineStyle(LineStyleDefault())
+, LineStyle(LineStyle::DEFAULT)
 {
 }
 
-VerticalLine::VerticalLine(Widget& parent, LineStyle *linestyle, const int x, const int y, const int w)
+VerticalLine::VerticalLine(Widget& parent, LineStyle::Type ltype, const int x, const int y, const int w)
 : Widget(parent, x, y, w, 1)
-, LineStyle(linestyle)
+, LineStyle(ltype)
 {
 }
 
@@ -49,12 +49,12 @@ void VerticalLine::Draw()
 		return; //TODO and throw an exception/log a warning?
 
 	if (Height() <= 1) {
-		Curses::mvwadd_wch(area, 0, 0, V());
+		Curses::mvwaddstring(area, 0, 0, 1, V());
 	} else {
-		Curses::mvwadd_wch(area, 0, 0, VBegin());
-		for (int i = 1; i < Height()-1; i++) {
-			Curses::mvwadd_wch(area, 0, i, V());
+		Curses::mvwaddstring(area, 0, 0, 1, VBegin());
+		for (int i = 1; i < Height() - 1; i++) {
+			Curses::mvwaddstring(area, 0, i, 1, V());
 		}
-		Curses::mvwadd_wch(area, 0, Width()-1, VEnd());
+		Curses::mvwaddstring(area, 0, Width() - 1, 1, VEnd());
 	}
 }

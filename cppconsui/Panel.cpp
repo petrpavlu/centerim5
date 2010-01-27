@@ -29,15 +29,15 @@
 
 Panel::Panel(Widget& parent, const int x, const int y, const int w, const int h)
 : Widget(parent, x, y, w, h)
-, LineStyle(LineStyleDefault())
+, LineStyle(LineStyle::DEFAULT)
 , label(NULL)
 {
 	label = new Label(*this, 2, 0, w-4, 1, "");
 }
 
-Panel::Panel(Widget& parent, const int x, const int y, const int w, const int h, LineStyle *linestyle)
+Panel::Panel(Widget& parent, const int x, const int y, const int w, const int h, LineStyle::Type ltype)
 : Widget(parent, x, y, w, h)
-, LineStyle(linestyle)
+, LineStyle(ltype)
 , label(NULL)
 {
 	label = new Label(*this, 2, 0, w-4, 1, "");
@@ -53,20 +53,20 @@ void Panel::Draw()
 	if (!area || Width() == 0 || Height() == 0)
 		return; //TODO and throw an exception/log a warning?
 
-
-	for (int i = 1; i < Width()-1; i++) {
-		Curses::mvwadd_wch(area, 0, i, H());
-		Curses::mvwadd_wch(area, Height()-1, i, H());
+	// @todo optimize
+	for (int i = 1; i < Width() - 1; i++) {
+		Curses::mvwaddstring(area, 0, i, 1, H());
+		Curses::mvwaddstring(area, Height() - 1, i, 1, H());
 	}
 
-	for (int i = 1; i < Height()-1; i++) {
-		Curses::mvwadd_wch(area, i, 0, V());
-		Curses::mvwadd_wch(area, i, Width()-1, V());
+	for (int i = 1; i < Height() - 1; i++) {
+		Curses::mvwaddstring(area, i, 0, 1, V());
+		Curses::mvwaddstring(area, i, Width() - 1, 1, V());
 	}
-	Curses::mvwadd_wch(area, 0, 0, CornerTL());
-	Curses::mvwadd_wch(area, Height()-1, 0, CornerBL());
-	Curses::mvwadd_wch(area, 0, Width()-1, CornerTR());
-	Curses::mvwadd_wch(area, Height()-1, Width()-1, CornerBR());
+	Curses::mvwaddstring(area, 0, 0, 1, CornerTL());
+	Curses::mvwaddstring(area, Height() - 1, 0, 1, CornerBL());
+	Curses::mvwaddstring(area, 0, Width() - 1, 1, CornerTR());
+	Curses::mvwaddstring(area, Height() - 1, Width() - 1, 1, CornerBR());
 }
 
 void Panel::SetText(const gchar *str)

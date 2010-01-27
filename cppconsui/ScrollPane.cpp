@@ -77,7 +77,7 @@ void ScrollPane::Draw(void)
 	copyw = (w > scrollw) ? scrollw-1 : w-1;
 	copyh = (h > scrollh) ? scrollh-1 : h-1;
 
-	if (Curses::copywin(area, scrollarea, ypos, xpos, 0, 0, copyh, copyw, 0) == ERR)
+	if (Curses::copywin(area, scrollarea, ypos, xpos, 0, 0, copyh, copyw, 0) == Curses::C_ERR())
 		g_assert(false); //TODO this is a big error
 
 	Widget::Draw();

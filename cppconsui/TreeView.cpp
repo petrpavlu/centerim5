@@ -37,17 +37,14 @@
 
 #define CONTEXT_TREEVIEW "treeview"
 
-TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle *linestyle_)
+TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle::Type ltype)
 : ScrollPane(parent, x, y, w, h, w, h)
-, linestyle(linestyle_)
+, linestyle(NULL)
 , itemswidth(0)
 , itemsheight(0)
 , focus_cycle(false)
 {
-	//TODO figure out how to make static_cast work
-
-	if (!linestyle)
-		linestyle = LineStyle::LineStyleDefault();
+	linestyle = new LineStyle(ltype);
 
 	/* initialise the tree */
 	TreeNode root;
@@ -117,36 +114,36 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 
 	if (parent->open) {
 		if (thetree.number_of_children(node) > 0) {
-			for (j = top+1; j < top+height; j++)
-				Curses::mvwadd_wch(area, j, depthoffset + 1, linestyle->V());
+			for (j = top+1; j < top + height; j++)
+				Curses::mvwaddstring(area, j, depthoffset + 1, 1, linestyle->V());
 		}
 
 		for (i = node.begin(); i != node.end(); i++) {
 			child = &(*i);
 
 			if (i != node.back())
-				Curses::mvwadd_wch(area, top+height,  depthoffset + 1, linestyle->VRight());
+				Curses::mvwaddstring(area, top + height,  depthoffset + 1, 1, linestyle->VRight());
 			else
-				Curses::mvwadd_wch(area, top+height,  depthoffset + 1, linestyle->CornerBL());
+				Curses::mvwaddstring(area, top + height,  depthoffset + 1, 1, linestyle->CornerBL());
 
-			Curses::mvwadd_wch(area, top+height,  depthoffset + 2, linestyle->H());
+			Curses::mvwaddstring(area, top + height, depthoffset + 2, 1, linestyle->H());
 			
 			if (child->collapsable && thetree.number_of_children(i) > 0) {
-				Curses::mvwaddch(area, top+height, depthoffset + 3, '[');
-				Curses::mvwaddch(area, top+height, depthoffset + 4, child->open ? '-' : '+');
-				Curses::mvwaddch(area, top+height, depthoffset + 5, ']');
+				Curses::mvwaddstring(area, top + height, depthoffset + 3, 1, "[");
+				Curses::mvwaddstring(area, top + height, depthoffset + 4, 1, child->open ? "-" : "+");
+				Curses::mvwaddstring(area, top + height, depthoffset + 5, 1, "]");
 			} else {
-				Curses::mvwadd_wch(area, top+height, depthoffset + 3, linestyle->H());
-				Curses::mvwadd_wch(area, top+height, depthoffset + 4, linestyle->H());
-				Curses::mvwadd_wch(area, top+height, depthoffset + 5, linestyle->HEnd());
+				Curses::mvwaddstring(area, top + height, depthoffset + 3, 1, linestyle->H());
+				Curses::mvwaddstring(area, top + height, depthoffset + 4, 1, linestyle->H());
+				Curses::mvwaddstring(area, top + height, depthoffset + 5, 1, linestyle->HEnd());
 			}
 
 			oldh = height;
-			height += DrawNode(i, top+height);
+			height += DrawNode(i, top + height);
 
 			if (i != node.back()) {
-				for (j = top+oldh+1; j < top+height ; j++)
-					Curses::mvwadd_wch(area, j, depthoffset + 1, linestyle->V());
+				for (j = top + oldh + 1; j < top + height ; j++)
+					Curses::mvwaddstring(area, j, depthoffset + 1, 1, linestyle->V());
 			}
 		}
 	}

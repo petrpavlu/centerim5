@@ -174,7 +174,7 @@ void Window::MakeRealWindow(void)
 	Curses::Window *win;
 	int left, right, top, bottom, maxx, maxy;
 
-	getmaxyx(stdscr, maxy, maxx);
+	Curses::ngetmaxyx(NULL, &maxy, &maxx);
 
 	left = (win_x < 0) ? 0 : win_x;
 	top = (win_y < 0) ? 0 : win_y;

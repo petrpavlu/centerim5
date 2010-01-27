@@ -40,7 +40,7 @@ class HorizontalLine
 {
 	public:
 		HorizontalLine(Widget& parent, const int x, const int y, const int w);
-		HorizontalLine(Widget& parent, LineStyle *linestyle, const int x, const int y, const int w);
+		HorizontalLine(Widget& parent, LineStyle::Type ltype, const int x, const int y, const int w);
 
 		virtual ~HorizontalLine();
 

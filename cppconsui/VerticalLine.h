@@ -40,7 +40,7 @@ class VerticalLine
 {
 	public:
 		VerticalLine(Widget& parent, const int x, const int y, const int w);
-		VerticalLine(Widget& parent, LineStyle *linestyle, const int x, const int y, const int w);
+		VerticalLine(Widget& parent, LineStyle::Type ltype, const int x, const int y, const int w);
 
 		virtual ~VerticalLine();
 

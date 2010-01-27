@@ -45,10 +45,10 @@ AccountWindow::AccountWindow()
 	conf = Conf::Instance();
 
 	//TODO get linestyle from conf
-	border = new Panel(*this, 0, 0, w, h, LineStyle::LineStyleDefault());
+	border = new Panel(*this, 0, 0, w, h, LineStyle::DEFAULT);
 	AddWidget(border);
 
-	accounts = new TreeView(*this, 1, 1, w-2, h-4, LineStyle::LineStyleDefault());
+	accounts = new TreeView(*this, 1, 1, w-2, h-4, LineStyle::DEFAULT);
 	menu = new HorizontalListBox(*this, 1, h-2, w-2, 1);
 	line = new HorizontalLine(*this, 1, h-3, w-2);
 

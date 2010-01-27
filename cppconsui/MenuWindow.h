@@ -32,7 +32,7 @@ class MenuWindow
 : public Window
 {
 	public:
-		MenuWindow(int x, int y, int w, int h, LineStyle *linestyle);
+		MenuWindow(int x, int y, int w, int h, LineStyle::Type ltype);
 		virtual ~MenuWindow();
 	
 		virtual void Resize(int neww, int newh);

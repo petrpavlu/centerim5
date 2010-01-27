@@ -41,7 +41,7 @@ class Panel
 {
 	public:
 		Panel(Widget& parent, const int x, const int y, const int w, const int h);
-		Panel(Widget& parent, const int x, const int y, const int w, const int h, LineStyle *linestyle);
+		Panel(Widget& parent, const int x, const int y, const int w, const int h, LineStyle::Type ltype);
 
 		virtual ~Panel();
 

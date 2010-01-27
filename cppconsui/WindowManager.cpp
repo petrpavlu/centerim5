@@ -26,6 +26,7 @@
 #include <sys/ioctl.h>
 #include <signal.h>
 #include <cstring>
+#include <cstdio>
 #include <glib.h>
 #include <glibmm/main.h>
 
@@ -48,17 +49,17 @@ void WindowManager::signal_handler(int signum)
 
 WindowManager::WindowManager(void)
 : defaultwindow(NULL)
-, screenW(getmaxx(stdscr))
-, screenH(getmaxy(stdscr))
+, screenW(Curses::getmaxx(NULL))
+, screenH(Curses::getmaxy(NULL))
 , redrawpending(false)
 , resizepending(false)
 {
-	defaultwindow = initscr();
-	start_color(); //TODO do something with the return value.
-	curs_set(0);
-	keypad(stdscr, 1); // without this, some keys are not translated correctly
-	nonl();
-	raw();
+	defaultwindow = Curses::initscr();
+	Curses::start_color(); //TODO do something with the return value.
+	Curses::curs_set(0);
+	Curses::keypad(NULL, 1); // without this, some keys are not translated correctly
+	Curses::nonl();
+	Curses::raw();
 
 	if (!defaultwindow)
 		{}//TODO throw an exception that we can't init curses
@@ -72,8 +73,10 @@ WindowManager::~WindowManager(void)
 
 	// @todo close all windows?
 
-	if (endwin() == ERR)
+	if (Curses::endwin() == Curses::C_ERR())
 		{}//TODO throw an exeption
+
+	delete defaultwindow;
 }
 
 void WindowManager::DeclareBindables()
@@ -224,8 +227,8 @@ bool WindowManager::Draw(void)
 	Curses::Window *window;
 
 	if (redrawpending) {
-		erase();
-		wnoutrefresh(stdscr);
+		Curses::erase();
+		Curses::wnoutrefresh(NULL);
 		
 		for (i = windows.rbegin(); i != windows.rend(); i++) {
 			(*i).window->Draw();
@@ -265,7 +268,7 @@ bool WindowManager::Resize(void)
 		resizepending = false;
 
 	if (ioctl(fileno(stdout), TIOCGWINSZ, &size) >= 0) {
-		resizeterm(size.ws_row, size.ws_col);
+		Curses::resizeterm(size.ws_row, size.ws_col);
 		// TODO next line needed?
 		//wrefresh(curscr);
 	}

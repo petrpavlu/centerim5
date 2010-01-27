@@ -31,8 +31,8 @@
 //TODO remove when show() of window/dialog is implemented
 #include <cppconsui/WindowManager.h>
 
-GeneralMenu::GeneralMenu(int x, int y, int w, int h, LineStyle *linestyle)
-: MenuWindow(x, y, w, h, linestyle)
+GeneralMenu::GeneralMenu(int x, int y, int w, int h, LineStyle::Type ltype)
+: MenuWindow(x, y, w, h, ltype)
 {
 	AddItem(_("Testing"), sigc::mem_fun(this, &GeneralMenu::OpenTestWindow));
 	AddItem(_("Change status"), sigc::mem_fun(this, &GeneralMenu::Dummy));

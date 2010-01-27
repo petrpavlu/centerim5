@@ -29,8 +29,8 @@ class Border
 : public LineStyle
 {
 	public:
-		Border(void);
-		Border(LineStyle *linestyle, int width, int height);
+		Border();
+		Border(LineStyle::Type ltype, int width, int height);
 
 		virtual ~Border();
 

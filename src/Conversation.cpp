@@ -43,12 +43,11 @@ Conversation::Conversation(PurpleBlistNode* node)
 	type = purple_blist_node_get_type(node);
 
 	SetBorder(new Border());
-	linestyle = LineStyle::LineStyleDefault();
 
 	view = new TextView(*this, 2, 1, w-4, h-2);
 	
 	input = new TextInput(*this, 2, 1, w-4, h-2);
-	line = new HorizontalLine(*this, linestyle, 1, view_height, w-2);
+	line = new HorizontalLine(*this, LineStyle::DEFAULT, 1, view_height, w-2);
 
 	AddWidget(view);
 	AddWidget(input);
@@ -65,7 +64,6 @@ Conversation::Conversation(PurpleBlistNode* node)
 
 Conversation::~Conversation()
 {
-	delete linestyle;
 }
 
 void Conversation::DeclareBindables()

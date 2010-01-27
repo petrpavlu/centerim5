@@ -28,11 +28,11 @@
 
 #define CONTEXT_MENUWINDOW "menuwindow"
 
-MenuWindow::MenuWindow(int x, int y, int w, int h, LineStyle *linestyle)
+MenuWindow::MenuWindow(int x, int y, int w, int h, LineStyle::Type ltype)
 : Window(x, y, w, h, NULL)
 {
 
-	border = new Panel(*this, 0, 0, w, h, linestyle);
+	border = new Panel(*this, 0, 0, w, h, ltype);
 	listbox = new ListBox(*this, 1, 1, w-2, h-2);
 	SetFocusChild(listbox);
 	Window::AddWidget(border);

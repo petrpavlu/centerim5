@@ -36,7 +36,6 @@ Label::Label(Widget& parent, int x, int y, const gchar *text_)
 {
 	RealSetText(text_);
 	Resize(width(text), 1);
-	g_debug("label: w %d\n", w);
 }
 
 Label::~Label()

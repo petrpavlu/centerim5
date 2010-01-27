@@ -20,184 +20,163 @@
 
 #include "LineStyle.h"
 
-#include <stdlib.h>
-
-/* Put this macro around variable that will be used in the future,
- * remove macro when variables are used.
- * This macro is to get rid of compiler warnings
- */
-#define VARIABLE_NOT_USED(x) x=x;
-
-/* the following are UTF-8 encoded multibyte characters */
-
-/* the *utf8 structures describe line drawing elements.
- * each element is a UTF-8 encoded multibyte character
- * */
+struct LineElements {
+	const gchar *h;		// Horizontal line
+	const gchar *h_begin;	// "        " line begin
+	const gchar *h_end;	// "        " line end
+	const gchar *h_up;	// "             " and line up
+	const gchar *h_down;	// "             " and line down
+	const gchar *v;		// Vertical line
+	const gchar *v_begin;	// "      " line begin
+	const gchar *v_end;	// "      " line end
+	const gchar *v_left;	// "           " and line left
+	const gchar *v_right;	// "           " and line right
+	const gchar *cross;	// Horizontal and Vertical line crossed
+	const gchar *corner_tl;	// Top-left corner
+	const gchar *corner_tr;	// Top-right corner
+	const gchar *corner_bl;	// Bottom-left corner
+	const gchar *corner_br;	// Bottom-right corner
+};
 
 //TODO add styles for double lines, block elements
-static LineElements lineelementsascii = {
+static LineElements line_elements_ascii = {
 	"-", "-", "-", "+", "+",
 	"|", "|", "|", "+", "+",
 	"+", "+", "+", "+", "+",
 };
 
-static LineElements lineelementsasciirounded = {
+static LineElements line_elements_ascii_rounded = {
 	"-", "-", "-", "-", "-",
 	"|", "|", "|", "|", "|",
 	"+", "/", "\\", "\\", "/",
 };
 
-static LineElements lineelementslight = {
+static LineElements line_elements_light = {
 	"\342\224\200", "\342\225\266", "\342\225\264", "\342\224\264", "\342\224\254",
 	"\342\224\202", "\342\225\267", "\342\225\265", "\342\224\244", "\342\224\234",
 	"\342\224\274", "\342\224\214", "\342\224\220", "\342\224\224", "\342\224\230",
 };
 
-static LineElements lineelementslightrounded = {
+static LineElements line_elements_light_rounded = {
 	"\342\224\200", "\342\225\266", "\342\225\264", "\342\224\264", "\342\224\254",
 	"\342\224\202", "\342\225\267", "\342\225\265", "\342\224\244", "\342\224\234",
 	"\342\224\274", "\342\225\255", "\342\225\256", "\342\225\257", "\342\225\260",
 };
 
-static LineElements lineelementsheavy = {
+static LineElements line_elements_heavy = {
 	"\342\224\201", "\342\225\272", "\342\225\270", "\342\224\273", "\342\224\263",
 	"\342\224\203", "\342\225\273", "\342\225\271", "\342\224\253", "\342\224\243",
 	"\342\225\213", "\342\224\217", "\342\224\223", "\342\224\227", "\342\224\233",
 };
 
-LineStyle::LineStyle()
+LineStyle::LineStyle(Type t)
 {
-        VARIABLE_NOT_USED(lineelementsasciirounded)
-#define MAKELINEELEMENT(elem,fallback) elem = MakeLineElement(lineelementsascii.elem, fallback);
-	MAKELINEELEMENT(h, "-");
-	MAKELINEELEMENT(h_begin, "-");
-	MAKELINEELEMENT(h_end, "-");
-	MAKELINEELEMENT(h_up, "+");
-	MAKELINEELEMENT(h_down, "+");
-	MAKELINEELEMENT(v, "-");
-	MAKELINEELEMENT(v_begin, "-");
-	MAKELINEELEMENT(v_end, "-");
-	MAKELINEELEMENT(v_left, "+");
-	MAKELINEELEMENT(v_right, "+");
-	MAKELINEELEMENT(cross, "+");
-	MAKELINEELEMENT(corner_tl, "+");
-	MAKELINEELEMENT(corner_tr, "+");
-	MAKELINEELEMENT(corner_bl, "+");
-	MAKELINEELEMENT(corner_br, "+");
-#undef MAKELINEELEMENT
-}
-
-LineStyle::LineStyle(const LineStyle *linestyle)
-{
-	h = (cchar_t*)g_memdup(linestyle->h, sizeof(cchar_t));
-	h_begin = (cchar_t*)g_memdup(linestyle->h_begin, sizeof(cchar_t));
-	h_end = (cchar_t*)g_memdup(linestyle->h_end, sizeof(cchar_t));
-	h_up = (cchar_t*)g_memdup(linestyle->h_up, sizeof(cchar_t));
-	h_down = (cchar_t*)g_memdup(linestyle->h_down, sizeof(cchar_t));
-	v = (cchar_t*)g_memdup(linestyle->v, sizeof(cchar_t));
-	v_begin = (cchar_t*)g_memdup(linestyle->v_begin, sizeof(cchar_t));
-	v_end = (cchar_t*)g_memdup(linestyle->v_end, sizeof(cchar_t));
-	v_left = (cchar_t*)g_memdup(linestyle->v_left, sizeof(cchar_t));
-	v_right = (cchar_t*)g_memdup(linestyle->v_right, sizeof(cchar_t));
-	cross = (cchar_t*)g_memdup(linestyle->cross, sizeof(cchar_t));
-	corner_tl = (cchar_t*)g_memdup(linestyle->corner_tl, sizeof(cchar_t));
-	corner_tr = (cchar_t*)g_memdup(linestyle->corner_tr, sizeof(cchar_t));
-	corner_bl = (cchar_t*)g_memdup(linestyle->corner_bl, sizeof(cchar_t));
-	corner_br = (cchar_t*)g_memdup(linestyle->corner_br, sizeof(cchar_t));
-}
-
-LineStyle::LineStyle(const LineElements *elements)
-{
-#define MAKELINEELEMENT(elem,fallback) elem = MakeLineElement(elements->elem, fallback);
-	MAKELINEELEMENT(h, "-");
-	MAKELINEELEMENT(h_begin, "-");
-	MAKELINEELEMENT(h_end, "-");
-	MAKELINEELEMENT(h_up, "+");
-	MAKELINEELEMENT(h_down, "+");
-	MAKELINEELEMENT(v, "-");
-	MAKELINEELEMENT(v_begin, "-");
-	MAKELINEELEMENT(v_end, "-");
-	MAKELINEELEMENT(v_left, "+");
-	MAKELINEELEMENT(v_right, "+");
-	MAKELINEELEMENT(cross, "+");
-	MAKELINEELEMENT(corner_tl, "+");
-	MAKELINEELEMENT(corner_tr, "+");
-	MAKELINEELEMENT(corner_bl, "+");
-	MAKELINEELEMENT(corner_br, "+");
-#undef MAKELINEELEMENT
-}
-
-LineStyle::~LineStyle(void)
-{
-	if (h) g_free(h);
-	if (h_begin) g_free(h_begin);
-	if (h_end) g_free(h_end);
-	if (h_up) g_free(h_up);
-	if (h_down) g_free(h_down);
-	if (v) g_free(v);
-	if (v_begin) g_free(v_begin);
-	if (v_end) g_free(v_end);
-	if (v_left) g_free(v_left);
-	if (v_right) g_free(v_right);
-	if (cross) g_free(cross);
-	if (corner_tl) g_free(corner_tl);
-	if (corner_tr) g_free(corner_tr);
-	if (corner_bl) g_free(corner_bl);
-	if (corner_br) g_free(corner_br);
-}
-
-LineStyle* LineStyle::LineStyleAscii(void)
-{
-	return (new LineStyle(&lineelementsascii));
-}
-
-LineStyle* LineStyle::LineStyleAsciiRounded(void)
-{
-	return (new LineStyle(&lineelementsascii));
-}
-
-LineStyle* LineStyle::LineStyleLight(void)
-{
-	return (new LineStyle(&lineelementslight));
-}
-
-LineStyle* LineStyle::LineStyleLightRounded(void)
-{
-	return (new LineStyle(&lineelementslightrounded));
-}
-
-LineStyle* LineStyle::LineStyleHeavy(void)
-{
-	return (new LineStyle(&lineelementsheavy));
-}
-
-cchar_t* LineStyle::MakeLineElement(const gchar *utf8, const gchar *fallback)
-{
-	gsize written;
-	gchar *locale;
-	cchar_t *element;
-	wchar_t wide[2];
-	//TODO: does cornersion fail if the current locale is UTF-8 encoded?
-
-	element = g_new(cchar_t, 1);
-	//TODO: from glib doc: some encodings may allow nul bytes to occur
-	//inside strings n that case, using -1 for the len parameter is unsafe
-	locale = g_locale_from_utf8(utf8, -1, NULL, &written, NULL);
-	//TODO: perhaps check if error is set (last arg in prev func) and report?
-	//probably a good idea, that way erorrs in theme files can be cought
-	
-	/* user supplied fallback */
-	if (!locale) locale = (gchar*)fallback;
-
-	/* cornert only one character */
-	if (mbtowc(wide, locale, written) < 1) {
-		/* real hard fallback character */
-		wide[0] = L'@'; //TODO does @ exists in *all* charsets? lets hope so
+	switch (t) {
+		case ASCII:
+			elems = &line_elements_ascii;
+			break;
+		case ASCII_ROUNDED:
+			elems = &line_elements_ascii_rounded;
+			break;
+		case DEFAULT:
+		case LIGHT:
+			elems = &line_elements_light;
+			break;
+		case LIGHT_ROUNDED:
+			elems = &line_elements_light_rounded;
+			break;
+		case HEAVY:
+			elems = &line_elements_heavy;
+			break;
 	}
-		wide[1] = L'\0';
+}
 
-	/* create a complex character, used in our line drawing functions */
-	setcchar(element, wide, A_NORMAL, 0, NULL);
+LineStyle::LineStyle(const LineStyle &other)
+{
+	elems = other.elems;
+}
 
-	return element;
+LineStyle &LineStyle::operator=(LineStyle &other)
+{
+	elems = other.elems;
+	return *this;
+}
+
+LineStyle::~LineStyle()
+{
+}
+
+const gchar *LineStyle::H()
+{
+	return elems->h;
+}
+
+const gchar *LineStyle::HBegin()
+{
+	return elems->h_begin;
+}
+
+const gchar *LineStyle::HEnd()
+{
+	return elems->h_end;
+}
+
+const gchar *LineStyle::HUp()
+{
+	return elems->h_up;
+}
+
+const gchar *LineStyle::HDown()
+{
+	return elems->h_down;
+}
+
+const gchar *LineStyle::V()
+{
+	return elems->v;
+}
+
+const gchar *LineStyle::VBegin()
+{
+	return elems->v_begin;
+}
+
+const gchar *LineStyle::VEnd()
+{
+	return elems->v_end;
+}
+
+const gchar *LineStyle::VLeft()
+{
+	return elems->v_left;
+}
+
+const gchar *LineStyle::VRight()
+{
+	return elems->v_right;
+}
+
+const gchar *LineStyle::Cross()
+{
+	return elems->cross;
+}
+
+const gchar *LineStyle::CornerTL()
+{
+	return elems->corner_tl;
+}
+
+const gchar *LineStyle::CornerTR()
+{
+	return elems->corner_tr;
+}
+
+const gchar *LineStyle::CornerBL()
+{
+	return elems->corner_bl;
+}
+
+const gchar *LineStyle::CornerBR()
+{
+	return elems->corner_br;
 }

@@ -49,7 +49,7 @@ void Dialog::AddWidgets(void)
 	seperator = new HorizontalLine(*this, 1, h-3, w-2);
 	AddWidget(buttons);
 	AddWidget(seperator);
-	AddWidget(new Panel(*this, 0, 0, w, h, LineStyle::LineStyleDefault()));
+	AddWidget(new Panel(*this, 0, 0, w, h, LineStyle::DEFAULT));
 }
 
 void Dialog::Resize(int neww, int newh)

@@ -71,7 +71,6 @@ class Conversation
 		
 		int view_height;
 		PurpleConversation *conv;
-		LineStyle *linestyle;
 
 	private:
 		Conversation();

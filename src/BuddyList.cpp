@@ -103,8 +103,8 @@ BuddyList::BuddyList()
 	Glib::signal_timeout().connect(sigc::mem_fun(this, &BuddyList::Load), 0);
 
 	//TODO get linestyle from conf
-	border = new Panel(*this, 0, 0, w, h, LineStyle::LineStyleDefault());
-	treeview = new TreeView(*this, 1, 1, w-2, h-2, LineStyle::LineStyleDefault());
+	border = new Panel(*this, 0, 0, w, h, LineStyle::DEFAULT);
+	treeview = new TreeView(*this, 1, 1, w-2, h-2, LineStyle::DEFAULT);
 	AddWidget(border);
 	AddWidget(treeview);
 	SetInputChild(treeview);

@@ -25,14 +25,14 @@
 //TODO CppConsUI namespace
 
 Border::Border()
-: LineStyle(LineStyleDefault())
+: LineStyle(LineStyle::DEFAULT)
 , width(0)
 , height(0)
 {
 }
 
-Border::Border(LineStyle *linestyle, int width, int height)
-: LineStyle(linestyle)
+Border::Border(LineStyle::Type ltype, int width, int height)
+: LineStyle(ltype)
 , width(width)
 , height(height)
 {
@@ -53,17 +53,18 @@ void Border::Draw(Curses::Window *window)
 	if (!window || width == 0 || height == 0)
 		return; //TODO and throw an exception/log a warning?
 
-	for (int i = 1; i < width-1; i++) {
-		Curses::mvwadd_wch(window, 0, i, h);
-		Curses::mvwadd_wch(window, height-1, i, h);
+	// @todo optimize
+	for (int i = 1; i < width - 1; i++) {
+		Curses::mvwaddstring(window, 0, i, 1, H());
+		Curses::mvwaddstring(window, height - 1, i, 1, H());
 	}
 
 	for (int i = 1; i < height-1; i++) {
-		Curses::mvwadd_wch(window, i, 0, v);
-		Curses::mvwadd_wch(window, i, width-1, v);
+		Curses::mvwaddstring(window, i, 0, 1, V());
+		Curses::mvwaddstring(window, i, width - 1, 1, V());
 	}
-	Curses::mvwadd_wch(window, 0, 0, corner_tl);
-	Curses::mvwadd_wch(window, height-1, 0, corner_bl);
-	Curses::mvwadd_wch(window, 0, width-1, corner_tr);
-	Curses::mvwadd_wch(window, height-1, width-1, corner_br);
+	Curses::mvwaddstring(window, 0, 0, 1, CornerTL());
+	Curses::mvwaddstring(window, height - 1, 0, 1, CornerBL());
+	Curses::mvwaddstring(window, 0, width - 1, 1, CornerTR());
+	Curses::mvwaddstring(window, height - 1, width - 1, 1, CornerBR());
 }

@@ -32,10 +32,10 @@ TestWindow::TestWindow(int number, int x, int y, int w, int h)
 	AddWidget(label);
 
 	if (number == 1) {
-		label = new Label(*this, 2, 2, w - 4, 1, "Press F10 to quit.");
+		label = new Label(*this, 2, 2, "Press F10 to quit.");
 		AddWidget(label);
 
-		label = new Label(*this, 2, 3, w - 4, 1, "Press ESC to close a focused window.");
+		label = new Label(*this, 2, 3, "Press ESC to close a focused window.");
 		AddWidget(label);
 	}
 }

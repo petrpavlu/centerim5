@@ -2,7 +2,8 @@ check_PROGRAMS = \
 	textline_test \
 	textbuffer_test \
 	label_test \
-	window_test
+	window_test \
+	linestyle_test
 
 AM_CPPFLAGS = \
 	$(DEBUG_CFLAGS) \
@@ -20,3 +21,12 @@ textline_test_SOURCES = \
 
 textbuffer_test_SOURCES = \
 	textbuffer_test.cpp
+
+label_test_SOURCES = \
+	label_test.cpp
+
+window_test_SOURCES = \
+	window_test.cpp
+
+linestyle_test_SOURCES = \
+	linestyle_test.cpp
