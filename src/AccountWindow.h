@@ -254,7 +254,6 @@ class AccountWindow
 		TreeView *accounts;
 		HorizontalListBox *menu;
 		HorizontalLine *line;
-		Panel *border;
 
 		AccountEntries account_entries;
 

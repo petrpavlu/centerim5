@@ -44,13 +44,9 @@ AccountWindow::AccountWindow()
 	log = &Log::Instance();
 	conf = Conf::Instance();
 
-	//TODO get linestyle from conf
-	border = new Panel(*this, 0, 0, w, h, LineStyle::DEFAULT);
-	AddWidget(border);
-
-	accounts = new TreeView(*this, 1, 1, w-2, h-4, LineStyle::DEFAULT);
-	menu = new HorizontalListBox(*this, 1, h-2, w-2, 1);
-	line = new HorizontalLine(*this, 1, h-3, w-2);
+	accounts = new TreeView(*this, 0, 0, w, h - 2, LineStyle::DEFAULT);
+	menu = new HorizontalListBox(*this, 1, h - 1, w, 1);
+	line = new HorizontalLine(*this, 1, h - 2, w);
 
 	accounts->FocusCycle(Container::FocusCycleLocal);
 	menu->FocusCycle(Container::FocusCycleLocal);
@@ -74,10 +70,9 @@ void AccountWindow::Resize(int neww, int newh)
 {
 	Window::Resize(neww, newh);
 
-	border->Resize(w, h);
-	accounts->Resize(w-2, h-4);
-	menu->MoveResize(1, h-2, w-2, 1);
-	line->MoveResize(1, h-3, w-2, 1);
+	accounts->Resize(w, h - 2);
+	menu->MoveResize(0, h - 1, w, 1);
+	line->MoveResize(0, h - 2, w, 1);
 }
 
 void AccountWindow::ScreenResized()

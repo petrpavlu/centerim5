@@ -51,7 +51,7 @@ class Window
 : public Container
 {
 	public:
-		Window(int x, int y, int w, int h, LineStyle::Type ltype);
+		Window(int x_, int y_, int w_, int h_, LineStyle::Type ltype);
 		virtual ~Window();
 	
 		virtual void Close(void);
@@ -86,6 +86,10 @@ class Window
 
 		void SetBorderStyle(LineStyle::Type ltype);
 		LineStyle::Type GetBorderStyle();
+
+		/** Returns a subpad of current widget with given coordinates.
+		 */
+		virtual Curses::Window *GetSubPad(Widget *child, int nlines, int ncols, int begin_y, int begin_x);
 		
 		sigc::signal<void, Window*> signal_close;
 		//sigc::signal<void, Window*> signal_show;

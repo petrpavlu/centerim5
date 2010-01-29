@@ -51,23 +51,27 @@ Panel::~Panel()
 
 void Panel::Draw()
 {
+	int realw, realh;
+
 	if (!area || Width() == 0 || Height() == 0)
 		return; //TODO and throw an exception/log a warning?
 
-	// @todo optimize
-	for (int i = 1; i < Width() - 1; i++) {
-		Curses::mvwaddstring(area, 0, i, 1, linestyle->H());
-		Curses::mvwaddstring(area, Height() - 1, i, 1, linestyle->H());
+	realw = area->getmaxx();
+	realh = area->getmaxy();
+
+	for (int i = 1; i < realw - 1; i++) {
+		area->mvaddstring(0, i, 1, linestyle->H());
+		area->mvaddstring(Height() - 1, i, 1, linestyle->H());
 	}
 
-	for (int i = 1; i < Height() - 1; i++) {
-		Curses::mvwaddstring(area, i, 0, 1, linestyle->V());
-		Curses::mvwaddstring(area, i, Width() - 1, 1, linestyle->V());
+	for (int i = 1; i < realh - 1; i++) {
+		area->mvaddstring(i, 0, 1, linestyle->V());
+		area->mvaddstring(i, realw - 1, 1, linestyle->V());
 	}
-	Curses::mvwaddstring(area, 0, 0, 1, linestyle->CornerTL());
-	Curses::mvwaddstring(area, Height() - 1, 0, 1, linestyle->CornerBL());
-	Curses::mvwaddstring(area, 0, Width() - 1, 1, linestyle->CornerTR());
-	Curses::mvwaddstring(area, Height() - 1, Width() - 1, 1, linestyle->CornerBR());
+	area->mvaddstring(0, 0, 1, linestyle->CornerTL());
+	area->mvaddstring(realh - 1, 0, 1, linestyle->CornerBL());
+	area->mvaddstring(0, realw - 1, 1, linestyle->CornerTR());
+	area->mvaddstring(realh - 1, realw - 1, 1, linestyle->CornerBR());
 }
 
 void Panel::SetText(const gchar *str)

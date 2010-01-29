@@ -103,9 +103,7 @@ BuddyList::BuddyList()
 	Glib::signal_timeout().connect(sigc::mem_fun(this, &BuddyList::Load), 0);
 
 	//TODO get linestyle from conf
-	border = new Panel(*this, 0, 0, w, h, LineStyle::DEFAULT);
-	treeview = new TreeView(*this, 1, 1, w-2, h-2, LineStyle::DEFAULT);
-	AddWidget(border);
+	treeview = new TreeView(*this, 0, 0, w - 2, h - 2, LineStyle::DEFAULT);
 	AddWidget(treeview);
 	SetInputChild(treeview);
 
@@ -127,11 +125,6 @@ BuddyList::~BuddyList()
 	 * when any change occurs, but lets do that anyway
 	 */
 	purple_blist_schedule_save(); //TODO: will this go wrong?! (probably)
-
-	/* The container class takes care of deleting widgets
-	delete treeview;
-	delete border;
-	*/
 }
 
 void BuddyList::Close(void)
@@ -244,8 +237,7 @@ void BuddyList::Resize(int neww, int newh)
 	 * what we want. in most cases you would need to recalculate
 	 * widget sizes based on window and/or container size.
 	 * */
-	border->Resize(neww, newh);
-	treeview->Resize(neww-2, newh-2);
+	treeview->Resize(neww - 2, newh - 2);
 }
 
 void BuddyList::ScreenResized()

@@ -46,23 +46,21 @@ void WindowManager::signal_handler(int signum)
 		Instance()->ScreenResized();
 }
 
-
 WindowManager::WindowManager(void)
-: defaultwindow(NULL)
-, screenW(Curses::getmaxx(NULL))
-, screenH(Curses::getmaxy(NULL))
+: screenW(Curses::getmaxx())
+, screenH(Curses::getmaxy())
 , redrawpending(false)
 , resizepending(false)
 {
-	defaultwindow = Curses::initscr();
+	Curses::initscr();
+	//TODO throw an exception that we can't init curses
+
 	Curses::start_color(); //TODO do something with the return value.
 	Curses::curs_set(0);
-	Curses::keypad(NULL, 1); // without this, some keys are not translated correctly
+	Curses::keypad(true); // without this, some keys are not translated correctly
 	Curses::nonl();
 	Curses::raw();
 
-	if (!defaultwindow)
-		{}//TODO throw an exception that we can't init curses
 	KEYCONFIG->Register(); // registers all InputProcessor key configuration (it needs to be called before the first DeclareBindable)
 	DeclareBindables();
 }
@@ -73,10 +71,8 @@ WindowManager::~WindowManager(void)
 
 	// @todo close all windows?
 
-	if (Curses::endwin() == Curses::C_ERR())
+	if (Curses::endwin() == Curses::C_ERR)
 		{}//TODO throw an exeption
-
-	delete defaultwindow;
 }
 
 void WindowManager::DeclareBindables()
@@ -156,8 +152,8 @@ void WindowManager::Remove(Window *window)
 	if (window == GetInputChild())
 		SetInputChild(NULL);
 
-	Curses::werase(info.window->GetWindow());
-	Curses::wnoutrefresh(info.window->GetWindow());
+	info.window->GetWindow()->erase();
+	info.window->GetWindow()->noutrefresh();
 
 	FocusWindow();
 	Draw();
@@ -228,14 +224,14 @@ bool WindowManager::Draw(void)
 
 	if (redrawpending) {
 		Curses::erase();
-		Curses::wnoutrefresh(NULL);
+		Curses::noutrefresh();
 		
 		for (i = windows.rbegin(); i != windows.rend(); i++) {
 			(*i).window->Draw();
 			/* this updates the virtual ncurses screen */
 			window = (*i).window->GetWindow();
-			Curses::touchwin(window);
-			Curses::wnoutrefresh(window);
+			window->touch();
+			window->noutrefresh();
 		}
 
 		/* this copies to virtual ncurses screen to the physical screen */

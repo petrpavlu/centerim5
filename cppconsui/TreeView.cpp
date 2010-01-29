@@ -90,7 +90,7 @@ bool TreeView::RegisterKeys()
 
 void TreeView::Draw(void)
 {
-	Curses::werase(area);
+	area->erase();
 	DrawNode(thetree.begin(), 0);
 	ScrollPane::Draw();
 }
@@ -107,35 +107,35 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 
 	/* draw the parent node first */
 	if (parent->widget) {
-		parent->widget->Move(depthoffset + 3, top);
+		parent->widget->Move(depthoffset + 2, top);
 		parent->widget->Draw();
 		height += parent->widget->Height();
 	}
 
 	if (parent->open) {
 		if (thetree.number_of_children(node) > 0) {
-			for (j = top+1; j < top + height; j++)
-				Curses::mvwaddstring(area, j, depthoffset + 1, 1, linestyle->V());
+			for (j = top + 1; j < top + height; j++)
+				area->mvaddstring(j, depthoffset, 1, linestyle->V());
 		}
 
 		for (i = node.begin(); i != node.end(); i++) {
 			child = &(*i);
 
 			if (i != node.back())
-				Curses::mvwaddstring(area, top + height,  depthoffset + 1, 1, linestyle->VRight());
+				area->mvaddstring(top + height, depthoffset, 1, linestyle->VRight());
 			else
-				Curses::mvwaddstring(area, top + height,  depthoffset + 1, 1, linestyle->CornerBL());
+				area->mvaddstring(top + height, depthoffset, 1, linestyle->CornerBL());
 
-			Curses::mvwaddstring(area, top + height, depthoffset + 2, 1, linestyle->H());
+			area->mvaddstring(top + height, depthoffset + 1, 1, linestyle->H());
 			
 			if (child->collapsable && thetree.number_of_children(i) > 0) {
-				Curses::mvwaddstring(area, top + height, depthoffset + 3, 1, "[");
-				Curses::mvwaddstring(area, top + height, depthoffset + 4, 1, child->open ? "-" : "+");
-				Curses::mvwaddstring(area, top + height, depthoffset + 5, 1, "]");
+				area->mvaddstring(top + height, depthoffset + 2, 1, "[");
+				area->mvaddstring(top + height, depthoffset + 3, 1, child->open ? "-" : "+");
+				area->mvaddstring(top + height, depthoffset + 4, 1, "]");
 			} else {
-				Curses::mvwaddstring(area, top + height, depthoffset + 3, 1, linestyle->H());
-				Curses::mvwaddstring(area, top + height, depthoffset + 4, 1, linestyle->H());
-				Curses::mvwaddstring(area, top + height, depthoffset + 5, 1, linestyle->HEnd());
+				area->mvaddstring(top + height, depthoffset + 2, 1, linestyle->H());
+				area->mvaddstring(top + height, depthoffset + 3, 1, linestyle->H());
+				area->mvaddstring(top + height, depthoffset + 4, 1, linestyle->HEnd());
 			}
 
 			oldh = height;
@@ -143,7 +143,7 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 
 			if (i != node.back()) {
 				for (j = top + oldh + 1; j < top + height ; j++)
-					Curses::mvwaddstring(area, j, depthoffset + 1, 1, linestyle->V());
+					area->mvaddstring(j, depthoffset, 1, linestyle->V());
 			}
 		}
 	}

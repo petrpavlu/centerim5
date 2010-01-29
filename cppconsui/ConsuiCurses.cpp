@@ -31,6 +31,13 @@
 #include <curses.h>
 #endif
 
+int Curses::Attr::NORMAL = A_NORMAL;
+int Curses::Attr::REVERSE = A_REVERSE;
+int Curses::Attr::DIM = A_DIM;
+
+int Curses::C_OK = OK;
+int Curses::C_ERR = ERR;
+
 struct Curses::Window::WindowInternals
 {
 	WINDOW *win;
@@ -38,31 +45,38 @@ struct Curses::Window::WindowInternals
 };
 
 Curses::Window::Window()
+: p(new WindowInternals)
 {
-	p = new WindowInternals();
 }
 
 Curses::Window::~Window()
 {
+	::delwin(p->win);
 	delete p;
 }
 
-int Curses::Attr::A_NORMAL_rename()
+Curses::Window *Curses::Window::newpad(int nlines, int ncols)
 {
-	return A_NORMAL;
+	Window *a = new Window;
+	a->p->win = ::newpad(nlines, ncols);
+	return a;
 }
 
-int Curses::Attr::A_REVERSE_rename()
+Curses::Window *Curses::Window::newwin(int nlines, int ncols, int begin_y, int begin_x)
 {
-	return A_REVERSE;
+	Window *a = new Window;
+	a->p->win = ::newwin(nlines, ncols, begin_y, begin_x);
+	return a;
 }
 
-int Curses::Attr::A_DIM_rename()
+Curses::Window *Curses::Window::subpad(int nlines, int ncols, int begin_y, int begin_x)
 {
-	return A_DIM;
+	Window *a = new Window;
+	a->p->win = ::subpad(p->win, nlines, ncols, begin_y, begin_x);
+	return a;
 }
 
-void Curses::mvwaddstring(Window *area, int y, int x, int w, /* gboolean selected, */ const gchar *str)
+void Curses::Window::mvaddstring(int y, int x, int w, const gchar *str)
 {
 	// @todo `\v' switch is not implemented yet
 	// @todo optimizations (don't translate to cchar if we have got utf8
@@ -72,7 +86,7 @@ void Curses::mvwaddstring(Window *area, int y, int x, int w, /* gboolean selecte
 	int printed = 0;
 	const gchar *u;
 
-	::wmove(area->p->win, y, x);
+	::wmove(p->win, y, x);
 	//attrset(selection_color(selected, COLOR_STANDARD));
 
 	for (u = str; *u && (w == -1 || printed < w); u++) {
@@ -93,7 +107,7 @@ void Curses::mvwaddstring(Window *area, int y, int x, int w, /* gboolean selecte
 
 		if (((unsigned char) *u >= 0x7f && (unsigned char) *u < 0xa0)) {
 			// filter out C1 (8-bit) control characters
-			::waddch(area->p->win, '?');
+			::waddch(p->win, '?');
 			printed++;
 			continue;
 		}
@@ -114,15 +128,15 @@ void Curses::mvwaddstring(Window *area, int y, int x, int w, /* gboolean selecte
 			wch[0] = 0x2400 + wch[0];
 
 		::setcchar(&cc, wch, A_NORMAL, 0, NULL);
-		::wadd_wch(area->p->win, &cc);
+		::wadd_wch(p->win, &cc);
 		printed += g_unichar_iswide(wch[0]) ? 2 : 1;
 		u = g_utf8_next_char(u) - 1;
 	}
 	if (w != -1)
-		::whline(area->p->win, ' ', w - printed);
+		::whline(p->win, ' ', w - printed);
 }
 
-void Curses::mvwaddstringf(Window *area, int y, int x, int w, const gchar *fmt, ...)
+void Curses::Window::mvaddstringf(int y, int x, int w, const gchar *fmt, ...)
 {
 	char *s;
 	va_list ap;
@@ -130,33 +144,84 @@ void Curses::mvwaddstringf(Window *area, int y, int x, int w, const gchar *fmt, 
 	va_start(ap, fmt);
 	s = g_strdup_vprintf(fmt, ap);
 	va_end(ap);
-	mvwaddstring(area, y, x, w, s);
+	mvaddstring(y, x, w, s);
 	g_free(s);
 }
 
-int Curses::mvwaddstr(Window *area, int y, int x, const char *str)
+int Curses::Window::mvaddstr(int y, int x, const char *str)
 {
-	return ::mvwaddstr(area->p->win, y, x, str);
+	return ::mvwaddstr(p->win, y, x, str);
 }
 
-int Curses::mvwaddnstr(Window *area, int y, int x, const char *str, int n)
+int Curses::Window::mvaddnstr(int y, int x, const char *str, int n)
 {
-	return ::mvwaddnstr(area->p->win, y, x, str, n);
+	return ::mvwaddnstr(p->win, y, x, str, n);
 }
 
-int Curses::wattron(Window *area, int attrs)
+int Curses::Window::attron(int attrs)
 {
-	return ::wattron(area->p->win, attrs);
+	return ::wattron(p->win, attrs);
 }
 
-int Curses::wattroff(Window *area, int attrs)
+int Curses::Window::attroff(int attrs)
 {
-	return ::wattroff(area->p->win, attrs);
+	return ::wattroff(p->win, attrs);
 }
 
-int Curses::mvwchgat(Window *area, int y, int x, int n, /* attr_t */ int attr, short color, const void *opts)
+int Curses::Window::mvchgat(int y, int x, int n, /* attr_t */ int attr, short color, const void *opts)
 {
-	return ::mvwchgat(area->p->win, y, x, n, attr, color, opts);
+	return ::mvwchgat(p->win, y, x, n, attr, color, opts);
+}
+
+int Curses::Window::erase()
+{
+	return ::werase(p->win);
+}
+
+int Curses::Window::clrtoeol()
+{
+	return ::wclrtoeol(p->win);
+}
+
+int Curses::Window::clrtobot()
+{
+	return ::wclrtobot(p->win);
+}
+
+int Curses::Window::noutrefresh()
+{
+	return ::wnoutrefresh(p->win);
+}
+
+int Curses::Window::touch()
+{
+	return ::touchwin(p->win);
+}
+
+int Curses::Window::copyto(Window *dstwin, int sminrow, int smincol,
+		int dminrow, int dmincol, int dmaxrow, int dmaxcol,
+		int overlay)
+{
+	if (!p->win || !dstwin->p->win)
+		return OK;
+
+	return ::copywin(p->win, dstwin->p->win, sminrow, smincol, dminrow, dmincol,
+			dmaxrow, dmaxcol, overlay);
+}
+
+int Curses::Window::getmaxx()
+{
+	return ::getmaxx(p->win);
+}
+
+int Curses::Window::getmaxy()
+{
+	return ::getmaxy(p->win);
+}
+
+int Curses::Window::keypad(bool bf)
+{
+	return ::keypad(p->win, bf);
 }
 
 int Curses::erase()
@@ -164,37 +229,9 @@ int Curses::erase()
 	return ::erase();
 }
 
-int Curses::werase(Window *area)
-{
-	return ::werase(area->p->win);
-}
-
-int Curses::wclrtoeol(Window *area)
-{
-	return ::wclrtoeol(area->p->win);
-}
-
-int Curses::wclrtobot(Window *area)
-{
-	return ::wclrtobot(area->p->win);
-}
-
-int Curses::wnoutrefresh(Window *area)
-{
-	if (area == NULL)
-		return ::wnoutrefresh(stdscr);
-
-	return ::wnoutrefresh(area->p->win);
-}
-
 int Curses::doupdate()
 {
 	return ::doupdate();
-}
-
-int Curses::touchwin(Window *area)
-{
-	return ::touchwin(area->p->win);
 }
 
 int Curses::beep()
@@ -202,58 +239,11 @@ int Curses::beep()
 	return ::beep();
 }
 
-Curses::Window *Curses::newpad(int nlines, int ncols)
+int Curses::initscr()
 {
-	Window *a = new Window;
-	a->p->win = ::newpad(nlines, ncols);
-	return a;
-}
-
-Curses::Window *Curses::subpad(Window *orig, int nlines, int ncols, int begin_y, int begin_x)
-{
-	Window *a = new Window;
-	a->p->win = ::subpad(orig->p->win, nlines, ncols, begin_y, begin_x);
-	return a;
-}
-
-Curses::Window *Curses::newwin(int nlines, int ncols, int begin_y, int begin_x)
-{
-	Window *a = new Window;
-	a->p->win = ::newwin(nlines, ncols, begin_y, begin_x);
-	return a;
-}
-
-int Curses::copywin(const Window *srcwin, Window *dstwin, int sminrow,
-		int smincol, int dminrow, int dmincol, int dmaxrow,
-		int dmaxcol, int overlay)
-{
-	if (!srcwin->p->win || !dstwin->p->win)
+	if (::initscr())
 		return OK;
-
-	return ::copywin(srcwin->p->win, dstwin->p->win, sminrow, smincol, dminrow, dmincol,
-			dmaxrow, dmaxcol, overlay);
-}
-
-int Curses::delwin(Window *area)
-{
-	int res;
-
-	if (area == NULL)
-		return OK;
-
-	// @todo review
-	res = ::delwin(area->p->win);
-	delete area;
-	area = NULL;
-
-	return res;
-}
-
-Curses::Window *Curses::initscr()
-{
-	Window *a = new Window;
-	a->p->win = ::initscr();
-	return a;
+	return ERR;
 }
 
 int Curses::endwin()
@@ -271,14 +261,6 @@ int Curses::curs_set(int visibility)
 	return ::curs_set(visibility);
 }
 
-int Curses::keypad(Window *area, bool bf)
-{
-	if (area == NULL)
-		return ::keypad(stdscr, bf);
-
-	return ::keypad(area->p->win, bf);
-}
-
 int Curses::nonl()
 {
 	return ::nonl();
@@ -289,45 +271,27 @@ int Curses::raw()
 	return ::raw();
 }
 
-void Curses::ngetmaxyx(Window *area, int *y, int *x)
+int Curses::noutrefresh()
 {
-	if (area == NULL) {
-		*y = ::getmaxy(stdscr);
-		*x = ::getmaxx(stdscr);
-	}
-	else {
-		*y = ::getmaxy(area->p->win);
-		*x = ::getmaxx(area->p->win);
-	}
+	return ::wnoutrefresh(stdscr);
 }
 
-int Curses::getmaxx(Window *area)
+int Curses::keypad(bool bf)
 {
-	if (area == NULL)
-		return ::getmaxx(stdscr);
-
-	return ::getmaxx(area->p->win);
+	return ::keypad(stdscr, bf);
 }
 
-int Curses::getmaxy(Window *area)
+int Curses::getmaxx()
 {
-	if (area == NULL)
-		return ::getmaxy(stdscr);
+	return ::getmaxx(stdscr);
+}
 
-	return ::getmaxy(area->p->win);
+int Curses::getmaxy()
+{
+	return ::getmaxy(stdscr);
 }
 
 int Curses::resizeterm(int lines, int columns)
 {
 	return ::resizeterm(lines, columns);
-}
-
-int Curses::C_OK()
-{
-	return OK;
-}
-
-int Curses::C_ERR()
-{
-	return ERR;
 }

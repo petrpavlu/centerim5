@@ -3,7 +3,9 @@ check_PROGRAMS = \
 	textbuffer_test \
 	label_test \
 	window_test \
-	linestyle_test
+	linestyle_test \
+	textentry_test \
+	treeview_test
 
 AM_CPPFLAGS = \
 	$(DEBUG_CFLAGS) \
@@ -30,3 +32,9 @@ window_test_SOURCES = \
 
 linestyle_test_SOURCES = \
 	linestyle_test.cpp
+
+textentry_test_SOURCES = \
+	textentry_test.cpp
+
+treeview_test_SOURCES = \
+	treeview_test.cpp

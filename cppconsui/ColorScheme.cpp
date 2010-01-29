@@ -41,24 +41,23 @@ ColorScheme::~ColorScheme(void)
 ColorScheme* ColorScheme::ColorSchemeNormal(void)
 {
 	ColorScheme *scheme = new ColorScheme();
-	scheme->schemes[Normal]   = Curses::Attr::A_NORMAL_rename();
-	scheme->schemes[Focus]    = Curses::Attr::A_REVERSE_rename();
-	scheme->schemes[Disabled] = Curses::Attr::A_DIM_rename();
+	scheme->schemes[Normal]   = Curses::Attr::NORMAL;
+	scheme->schemes[Focus]    = Curses::Attr::REVERSE;
+	scheme->schemes[Disabled] = Curses::Attr::DIM;
 	return scheme;
 }
 
 void ColorScheme::On(Curses::Window *area, const ColorType type)
 {
-	Curses::wattron(area, schemes[type]);
+	area->attron(schemes[type]);
 }
 
 void ColorScheme::Off(Curses::Window *area, const ColorType type)
 {
-	Curses::wattroff(area, schemes[type]);
+	area->attroff(schemes[type]);
 }
 
 void ColorScheme::SetColor(Curses::Window *area, const int x, const int y, const int n, const ColorType type)
 {
-	Curses::mvwchgat(area, y, x, n, schemes[type], 0, NULL);
+	area->mvchgat(y, x, n, schemes[type], 0, NULL);
 }
-

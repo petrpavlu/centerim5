@@ -36,18 +36,21 @@ Widget::Widget(Widget& parent, int x, int y, int w, int h)
 , can_focus(false)
 , has_focus(false)
 , focus_child(NULL)
+, area(NULL)
 , parent(&parent)
 , colorscheme(NULL)
 {
-	area = new Curses::Window;
-	UpdateArea(); /// @todo It should be called whenever the parent decides, and not here in constructor.
+	// insta crash, because Widget::UpdateArea() is called and it uses
+	// uninitilized area pointer, I think it isn't needed anyway, remove
+	// later...
+	//UpdateArea(); /// @todo It should be called whenever the parent decides, and not here in constructor.
+
 	colorscheme = ColorScheme::ColorSchemeNormal();
 }
 
 Widget::~Widget()
 {
-	/// @todo should also delete @ref Widget::area
-	Curses::delwin(area);
+	delete area;
 }
 
 void Widget::Move(int newx, int newy)
@@ -92,11 +95,10 @@ void Widget::MoveResize(int newx, int newy, int neww, int newh)
 void Widget::UpdateArea()
 {
 	//LOG("/tmp/ua.log",">Widget::UpdateArea (%d,%d,%d,%d) parent: %x this: %x areaw: %x \n", x,y,w,h, this->parent, this, area->w);	
-	if (area)
-		Curses::delwin(area);
 
-	// @todo use GetSubPad?
-	area = Curses::subpad(parent->area, h, w, y, x);
+	if (area)
+		delete area;
+	area = parent->GetSubPad(this, h, w, y, x);
 
 	//LOG("/tmp/ua.log","<Widget::UpdateArea (%d,%d,%d,%d) parent: %x this: %x areaw: %x \n", x,y,w,h, this->parent, this, area->w);	
 	/*
@@ -234,7 +236,7 @@ void Widget::MoveFocus(FocusDirection direction)
 	}
 }
 
-Curses::Window *Widget::GetSubPad(int nlines, int ncols, int begin_y, int begin_x)
+Curses::Window *Widget::GetSubPad(Widget *child, int nlines, int ncols, int begin_y, int begin_x)
 {
-	return Curses::subpad(area, nlines, ncols, begin_y, begin_x);
+	return area->subpad(nlines, ncols, begin_y, begin_x);
 }

@@ -71,7 +71,6 @@ class WindowManager
 		bool HasWindow(Window *window);
 
 		Windows windows;
-		Curses::Window *defaultwindow;
 		int screenW, screenH;
 
 		bool redrawpending;

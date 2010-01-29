@@ -134,10 +134,9 @@ class Widget
 		int Width() { return w; }
 		int Height() { return h; }
 
-		/** Changes <i>a</i> into a subpad of current widget with given coordinates
-		 * @todo use curses_imp_t.subpad()
+		/** Returns a subpad of current widget with given coordinates.
 		 */
-		Curses::Window *GetSubPad(int nlines, int ncols, int begin_y, int begin_x);
+		virtual Curses::Window *GetSubPad(Widget *child, int nlines, int ncols, int begin_y, int begin_x);
 
 		/// @todo encapsulate with a function, make sure derived class call Move()/Resize()/Redraw() to emit signal.
 		/// Also check if this is possible at all.

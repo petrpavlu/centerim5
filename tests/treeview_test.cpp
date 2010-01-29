@@ -1,16 +1,18 @@
 #include <cppconsui/Application.h>
 #include <cppconsui/Window.h>
 #include <cppconsui/Label.h>
+#include <cppconsui/Button.h>
+#include <cppconsui/TreeView.h>
 #include <cppconsui/Keys.h>
 
-// LabelWindow class
-class LabelWindow
+// TreeViewWindow class
+class TreeViewWindow
 : public Window
 {
 	public:
 		/* This is a main window, make sure it can not be closed with ESC key
 		 * by overriding Close() method. */
-		static LabelWindow &Instance();
+		static TreeViewWindow &Instance();
 		virtual void Close() {}
 
 		virtual void ScreenResized();
@@ -18,54 +20,47 @@ class LabelWindow
 	protected:
 
 	private:
-		LabelWindow();
-		virtual ~LabelWindow() {}
-		LabelWindow(const LabelWindow &);
-		LabelWindow &operator=(const LabelWindow &);
+		TreeViewWindow();
+		virtual ~TreeViewWindow() {}
+		TreeViewWindow(const TreeViewWindow &);
+		TreeViewWindow &operator=(const TreeViewWindow &);
 };
 
-LabelWindow &LabelWindow::Instance()
+TreeViewWindow &TreeViewWindow::Instance()
 {
-	static LabelWindow instance;
+	static TreeViewWindow instance;
 	return instance;
 }
 
-LabelWindow::LabelWindow()
+TreeViewWindow::TreeViewWindow()
 : Window(0, 0, 0, 0, LineStyle::DEFAULT)
 {
-	Label *label;
+	TreeView *tree;
+	TreeView::NodeReference node;
 
-	label = new Label(*this,		// parent
-			1,			// x
-			1,			// y
-			20,			// width
-			1,			// height
-			"Press F10 to quit.");	// text
-	/* Add label to container, container takes widget ownership and deletes it
-	 * when necessary.
-	 */
-	AddWidget(label);
+	AddWidget(new Label(*this, 1, 1, 20, 1, "Press F10 to quit."));
 
-	label = new Label(*this, 1, 3, 20, 1, "Too wide string, too wide string, too wide string");
-	AddWidget(label);
+	tree = new TreeView(*this, 1, 3, 30, 12, LineStyle::DEFAULT);
+	AddWidget(tree);
+	SetInputChild(tree);
 
-	label = new Label(*this, 1, 5, 20, 3, "Multiline label, multiline label, multiline label");
-	AddWidget(label);
+	node = tree->AddNode(tree->Root(), new Button(*tree, 0, 0, "Button node A"), NULL);
+	tree->AddNode(node, new Button(*tree, 0, 0, "Button node A-1"), NULL);
+	tree->AddNode(node, new Button(*tree, 0, 0, "Button node A-2"), NULL);
+	tree->AddNode(node, new Button(*tree, 0, 0, "Button node A-3"), NULL);
 
-	// unicode test
-	label = new Label(*this, 1, 9, 30, 3,
-			"\x56\xc5\x99\x65\xc5\xa1\x74\xc3\xad\x63\xc3\xad\x20\x70\xc5\x99"
-			"\xc3\xad\xc5\xa1\x65\x72\x79\x20\x73\x65\x20\x64\x6f\xc5\xbe\x61"
-			"\x64\x6f\x76\x61\x6c\x79\x20\xc3\xba\x70\x6c\x6e\xc4\x9b\x20\xc4"
-			"\x8d\x65\x72\x73\x74\x76\xc3\xbd\x63\x68\x20\xc5\x99\xc3\xad\x7a"
-			"\x65\xc4\x8d\x6b\xc5\xaf\x2e\x0a");
-	AddWidget(label);
+	node = tree->AddNode(tree->Root(), new Label(*tree, 0, 0, "Label node B"), NULL);
+	tree->AddNode(node, new Label(*tree, 0, 0, "Label node B-1"), NULL);
+	tree->AddNode(node, new Label(*tree, 0, 0, "Label node B-2"), NULL);
+	tree->AddNode(node, new Label(*tree, 0, 0, "Label node B-3"), NULL);
 
-	label = new Label(*this, 1, 13, "Autosize");
-	AddWidget(label);
+	node = tree->AddNode(tree->Root(), new Button(*tree, 0, 0, "Button node C"), NULL);
+	tree->AddNode(node, new Button(*tree, 0, 0, "Button node C-1"), NULL);
+	tree->AddNode(node, new Button(*tree, 0, 0, "Button node C-2"), NULL);
+	tree->AddNode(node, new Button(*tree, 0, 0, "Button node C-3"), NULL);
 }
 
-void LabelWindow::ScreenResized()
+void TreeViewWindow::ScreenResized()
 {
 	MoveResize(0, 0,
 			WindowManager::Instance()->getScreenW(),
@@ -120,8 +115,7 @@ TestApp::TestApp()
 
 void TestApp::Run()
 {
-	// TODO comment what happens here, who takes ownership etc.
-	windowmanager->Add(&LabelWindow::Instance());
+	windowmanager->Add(&TreeViewWindow::Instance());
 
 	Application::Run();
 }

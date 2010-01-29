@@ -49,13 +49,13 @@ void HorizontalLine::Draw()
 		return; /// @todo and throw an exception/log a warning?
 
 	if (Width() <= 1) {
-		Curses::mvwaddstring(area, 0, 0, 1, H());
+		area->mvaddstring(0, 0, 1, H());
 	} else {
-		Curses::mvwaddstring(area, 0, 0, 1, HBegin());
+		area->mvaddstring(0, 0, 1, HBegin());
 		// @todo optimize
 		for (int i = 1; i < Width() - 1; i++) {
-			Curses::mvwaddstring(area, 0, i, 1, H());
+			area->mvaddstring(0, i, 1, H());
 		}
-		Curses::mvwaddstring(area, 0, Width() - 1, 1, HEnd());
+		area->mvaddstring(0, Width() - 1, 1, HEnd());
 	}
 }

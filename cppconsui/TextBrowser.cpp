@@ -101,7 +101,7 @@ void TextBrowser::AddBytes(const char *s, int bytes)
 void TextBrowser::Clear(void)
 {
 	lines.clear();
-	Curses::werase(area);
+	area->erase();
 
 	Redraw();
 }
@@ -157,9 +157,9 @@ void TextBrowser::Draw(void)
 		//TODO prepare string for on-screen printing, or should Glib::ustring do this automatically?
 		//probably not, as Glib::ustring doesn't know the output width
 		//also should trim / wrap the string to fit the width of the widget
-		Curses::mvwaddstr(area, i-pos, 0, line.c_str());
+		area->mvaddstr(i - pos, 0, line.c_str());
 		/* clear until the end of the line */
-		Curses::wclrtoeol(area);
+		area->clrtoeol();
 	}
 
 	Widget::Draw();

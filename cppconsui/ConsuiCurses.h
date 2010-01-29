@@ -35,86 +35,88 @@ class Curses
 		class Window
 		{
 			public:
-				Window();
 				virtual ~Window();
 
-				// @todo make private
+				static Window *newpad(int nlines, int ncols);
+				static Window *newwin(int nlines, int ncols, int begin_y, int begin_x);
+
+				Window *subpad(int nlines, int ncols, int begin_y, int begin_x);
+
+				/**
+				 * This function takes a formatted string and draws it on the
+				 * screen. The formatting of the string happens when a '\v' is
+				 * encountered. After the '\v' is a char, a switch in the code
+				 * figures out what to do based on this. Based on giFTcurs
+				 * drawing function.
+				 */
+				void mvaddstring(int y, int x, int w, const gchar *str);
+				void mvaddstringf(int y, int x, int w, const gchar *fmt, ...);
+
+				// @todo remove
+				int mvaddstr(int y, int x, const char *str);
+				int mvaddnstr(int y, int x, const char *str, int n);
+
+				int attron(int attrs);
+				int attroff(int attrs);
+				int mvchgat(int y, int x, int n, /* attr_t */ int attr, short color, const void *opts);
+
+				int erase();
+				int clrtoeol();
+				int clrtobot();
+
+				int noutrefresh();
+
+				int touch();
+
+				int copyto(Window *dstwin, int sminrow, int smincol,
+						int dminrow, int dmincol, int dmaxrow, int dmaxcol,
+						int overlay);
+
+				int getmaxx();
+				int getmaxy();
+
+				int keypad(bool bf);
+
+			protected:
 				struct WindowInternals;
 				WindowInternals *p;
 
-			protected:
-
 			private:
-				Window(const Window &);
-				Window &operator=(const Window &);
+				Window();
+				Window(const Window &other);
+				Window &operator=(const Window &other);
 		};
 
 		struct Attr
 		{
-			// @todo rename when we'll get rid of curses.h from all files
-			static int A_NORMAL_rename();
-			static int A_REVERSE_rename();
-			static int A_DIM_rename();
+			static int NORMAL;
+			static int REVERSE;
+			static int DIM;
 		};
 
-		/**
-		 * @todo we should later create a window class and remove these static
-		 * functions...
-		 */
-
-		/**
-		 * This function takes a formatted string and draws it on the screen.
-		 * The formatting of the string happens when a '\v' is encountered.
-		 * After the '\v' is a char, a switch in the code figures out what to
-		 * do based on this. Based on giFTcurs drawing function.
-		 */
-		static void mvwaddstring(Window *area, int y, int x, int w, const gchar *str);
-		static void mvwaddstringf(Window *area, int y, int x, int w, const gchar *fmt, ...);
-
-		static int mvwaddstr(Window *area, int y, int x, const char *str);
-		static int mvwaddnstr(Window *area, int y, int x, const char *str, int n);
-
-		static int wattron(Window *area, int attrs);
-		static int wattroff(Window *area, int attrs);
-		static int mvwchgat(Window *area, int y, int x, int n, /* attr_t */ int attr, short color, const void *opts);
-
 		static int erase();
-		static int werase(Window *area);
-		static int wclrtoeol(Window *area);
-		static int wclrtobot(Window *area);
-
-		static int wnoutrefresh(Window *area);
 		static int doupdate();
-
-		static int touchwin(Window *area);
 
 		static int beep();
 
-		static Window *newpad(int nlines, int ncols);
-		static Window *subpad(Window *orig, int nlines, int ncols, int begin_y, int begin_x);
-		static Window *newwin(int nlines, int ncols, int begin_y, int begin_x);
-		static int copywin(const Window *srcwin, Window *dstwin, int sminrow,
-				int smincol, int dminrow, int dmincol, int dmaxrow,
-				int dmaxcol, int overlay);
-		static int delwin(Window *area);
-
 		// @todo add noraw to raw, nl to nonl etc
-		static Window *initscr();
+		static int initscr();
 		static int endwin();
 		static int start_color();
 		static int curs_set(int visibility);
-		static int keypad(Window *area, bool bf);
 		static int nonl();
 		static int raw();
 
-		static void ngetmaxyx(Window *area, int *y, int *x);
-		static int getmaxx(Window *area);
-		static int getmaxy(Window *area);
+		// stdscr
+		static int noutrefresh();
+		static int keypad(bool bf);
+		static int getmaxx();
+		static int getmaxy();
 
 		static int resizeterm(int lines, int columns);
 
-		static int C_OK();
-		static int C_ERR();
+		static int C_OK;
+		static int C_ERR;
 
 	protected:
 

@@ -49,12 +49,12 @@ void VerticalLine::Draw()
 		return; //TODO and throw an exception/log a warning?
 
 	if (Height() <= 1) {
-		Curses::mvwaddstring(area, 0, 0, 1, V());
+		area->mvaddstring(0, 0, 1, V());
 	} else {
-		Curses::mvwaddstring(area, 0, 0, 1, VBegin());
+		area->mvaddstring(0, 0, 1, VBegin());
 		for (int i = 1; i < Height() - 1; i++) {
-			Curses::mvwaddstring(area, 0, i, 1, V());
+			area->mvaddstring(0, i, 1, V());
 		}
-		Curses::mvwaddstring(area, 0, Width() - 1, 1, VEnd());
+		area->mvaddstring(0, Width() - 1, 1, VEnd());
 	}
 }

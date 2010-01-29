@@ -29,7 +29,7 @@ MessageDialog::MessageDialog(const gchar* text)
 {
 	AddButton(_("Ok"), Dialog::ResponseOK);
 
-	label = new Label(*this, 1, 1, text);
+	label = new Label(*this, 0, 0, text);
 	AddWidget(label);
 }
 

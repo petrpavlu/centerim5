@@ -73,7 +73,7 @@ void TextView::Draw(void)
 	line_end = line_iter;
 	line_end.forward_lines(Height());
 
-	y = 1;
+	y = 0;
 	while (line_iter != line_end) {
 		char_iter = line_iter;
 
@@ -95,13 +95,13 @@ void TextView::Draw(void)
 			char_end = line_iter;
 		}
 
-		x = 1;
+		x = 0;
 
 		/* After skipping columns we may have that we are at the
 		 * second column of a 2-column character. In this case
 		 * we need to draw an empty column. */
 		if (!char_iter.valid_char()) {
-			Curses::mvwaddstr(area, y, x, " ");
+			area->mvaddstr(y, x, " ");
 			/* Move to the next valid char. */
 			char_iter.forward_chars(1);
 			x += 1;
@@ -110,8 +110,7 @@ void TextView::Draw(void)
 		/* Note that line_iter is at the next line at this point; eg
 		 * where we should stop drawing characters. */
 		while (char_iter < char_end) {
-			Curses::mvwaddnstr(area, y, x, *char_iter,
-					char_iter.char_bytes());
+			area->mvaddnstr(y, x, *char_iter, char_iter.char_bytes());
 			x += char_iter.char_cols();
 			char_iter.forward_chars(1);
 		}
@@ -119,7 +118,7 @@ void TextView::Draw(void)
 		/* Clear until the end of the line. We
 		 * can use this function since mvwaddnstr() also
 		 * moves the cursor. */
-		Curses::wclrtoeol(area);
+		area->clrtoeol();
 
 		y++;
 	}

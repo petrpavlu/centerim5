@@ -88,7 +88,6 @@ class BuddyList
 		Conf *conf;
 
 		TreeView *treeview;
-		Panel *border;
 };
 
 #endif /* __BUDDYLIST_H__ */

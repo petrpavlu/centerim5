@@ -9,6 +9,8 @@ class LineStyleWindow
 : public Window
 {
 	public:
+		/* This is a main window, make sure it can not be closed with ESC key
+		 * by overriding Close() method. */
 		static LineStyleWindow &Instance();
 		virtual void Close() {}
 
@@ -46,22 +48,22 @@ LineStyleWindow::LineStyleWindow()
 	light_rounded_style = new LineStyle(LineStyle::LIGHT_ROUNDED);
 	heavy_style = new LineStyle(LineStyle::HEAVY);
 
-	label = new Label(*this, 2, 2, "Press F10 to quit.");
+	label = new Label(*this, 1, 1, "Press F10 to quit.");
 	AddWidget(label);
 
-	label = new Label(*this, 2, 4, "ASCII");
+	label = new Label(*this, 1, 3, "ASCII");
 	AddWidget(label);
 
-	label = new Label(*this, 2, 7, "ASCII rounded");
+	label = new Label(*this, 1, 6, "ASCII rounded");
 	AddWidget(label);
 
-	label = new Label(*this, 2, 10, "light");
+	label = new Label(*this, 1, 9, "light");
 	AddWidget(label);
 
-	label = new Label(*this, 2, 13, "light rounded");
+	label = new Label(*this, 1, 12, "light rounded");
 	AddWidget(label);
 
-	label = new Label(*this, 2, 16, "heavy");
+	label = new Label(*this, 1, 15, "heavy");
 	AddWidget(label);
 }
 
@@ -87,93 +89,93 @@ void LineStyleWindow::Draw()
 
 	// ASCII
 	i = 2;
-	Curses::mvwaddstring(area, 5, i++, 1, ascii_style->H());
-	Curses::mvwaddstring(area, 5, i++, 1, ascii_style->HBegin());
-	Curses::mvwaddstring(area, 5, i++, 1, ascii_style->HEnd());
-	Curses::mvwaddstring(area, 5, i++, 1, ascii_style->HUp());
-	Curses::mvwaddstring(area, 5, i++, 1, ascii_style->HDown());
-	Curses::mvwaddstring(area, 5, i++, 1, ascii_style->V());
-	Curses::mvwaddstring(area, 5, i++, 1, ascii_style->VBegin());
-	Curses::mvwaddstring(area, 5, i++, 1, ascii_style->VEnd());
-	Curses::mvwaddstring(area, 5, i++, 1, ascii_style->VLeft());
-	Curses::mvwaddstring(area, 5, i++, 1, ascii_style->VRight());
-	Curses::mvwaddstring(area, 5, i++, 1, ascii_style->Cross());
-	Curses::mvwaddstring(area, 5, i++, 1, ascii_style->CornerTL());
-	Curses::mvwaddstring(area, 5, i++, 1, ascii_style->CornerTR());
-	Curses::mvwaddstring(area, 5, i++, 1, ascii_style->CornerBL());
-	Curses::mvwaddstring(area, 5, i++, 1, ascii_style->CornerBR());
+	area->mvaddstring(4, i++, 1, ascii_style->H());
+	area->mvaddstring(4, i++, 1, ascii_style->HBegin());
+	area->mvaddstring(4, i++, 1, ascii_style->HEnd());
+	area->mvaddstring(4, i++, 1, ascii_style->HUp());
+	area->mvaddstring(4, i++, 1, ascii_style->HDown());
+	area->mvaddstring(4, i++, 1, ascii_style->V());
+	area->mvaddstring(4, i++, 1, ascii_style->VBegin());
+	area->mvaddstring(4, i++, 1, ascii_style->VEnd());
+	area->mvaddstring(4, i++, 1, ascii_style->VLeft());
+	area->mvaddstring(4, i++, 1, ascii_style->VRight());
+	area->mvaddstring(4, i++, 1, ascii_style->Cross());
+	area->mvaddstring(4, i++, 1, ascii_style->CornerTL());
+	area->mvaddstring(4, i++, 1, ascii_style->CornerTR());
+	area->mvaddstring(4, i++, 1, ascii_style->CornerBL());
+	area->mvaddstring(4, i++, 1, ascii_style->CornerBR());
 
 	// ASCII rounded
 	i = 2;
-	Curses::mvwaddstring(area, 8, i++, 1, ascii_rounded_style->H());
-	Curses::mvwaddstring(area, 8, i++, 1, ascii_rounded_style->HBegin());
-	Curses::mvwaddstring(area, 8, i++, 1, ascii_rounded_style->HEnd());
-	Curses::mvwaddstring(area, 8, i++, 1, ascii_rounded_style->HUp());
-	Curses::mvwaddstring(area, 8, i++, 1, ascii_rounded_style->HDown());
-	Curses::mvwaddstring(area, 8, i++, 1, ascii_rounded_style->V());
-	Curses::mvwaddstring(area, 8, i++, 1, ascii_rounded_style->VBegin());
-	Curses::mvwaddstring(area, 8, i++, 1, ascii_rounded_style->VEnd());
-	Curses::mvwaddstring(area, 8, i++, 1, ascii_rounded_style->VLeft());
-	Curses::mvwaddstring(area, 8, i++, 1, ascii_rounded_style->VRight());
-	Curses::mvwaddstring(area, 8, i++, 1, ascii_rounded_style->Cross());
-	Curses::mvwaddstring(area, 8, i++, 1, ascii_rounded_style->CornerTL());
-	Curses::mvwaddstring(area, 8, i++, 1, ascii_rounded_style->CornerTR());
-	Curses::mvwaddstring(area, 8, i++, 1, ascii_rounded_style->CornerBL());
-	Curses::mvwaddstring(area, 8, i++, 1, ascii_rounded_style->CornerBR());
+	area->mvaddstring(7, i++, 1, ascii_rounded_style->H());
+	area->mvaddstring(7, i++, 1, ascii_rounded_style->HBegin());
+	area->mvaddstring(7, i++, 1, ascii_rounded_style->HEnd());
+	area->mvaddstring(7, i++, 1, ascii_rounded_style->HUp());
+	area->mvaddstring(7, i++, 1, ascii_rounded_style->HDown());
+	area->mvaddstring(7, i++, 1, ascii_rounded_style->V());
+	area->mvaddstring(7, i++, 1, ascii_rounded_style->VBegin());
+	area->mvaddstring(7, i++, 1, ascii_rounded_style->VEnd());
+	area->mvaddstring(7, i++, 1, ascii_rounded_style->VLeft());
+	area->mvaddstring(7, i++, 1, ascii_rounded_style->VRight());
+	area->mvaddstring(7, i++, 1, ascii_rounded_style->Cross());
+	area->mvaddstring(7, i++, 1, ascii_rounded_style->CornerTL());
+	area->mvaddstring(7, i++, 1, ascii_rounded_style->CornerTR());
+	area->mvaddstring(7, i++, 1, ascii_rounded_style->CornerBL());
+	area->mvaddstring(7, i++, 1, ascii_rounded_style->CornerBR());
 
 	// light
 	i = 2;
-	Curses::mvwaddstring(area, 11, i++, 1, light_style->H());
-	Curses::mvwaddstring(area, 11, i++, 1, light_style->HBegin());
-	Curses::mvwaddstring(area, 11, i++, 1, light_style->HEnd());
-	Curses::mvwaddstring(area, 11, i++, 1, light_style->HUp());
-	Curses::mvwaddstring(area, 11, i++, 1, light_style->HDown());
-	Curses::mvwaddstring(area, 11, i++, 1, light_style->V());
-	Curses::mvwaddstring(area, 11, i++, 1, light_style->VBegin());
-	Curses::mvwaddstring(area, 11, i++, 1, light_style->VEnd());
-	Curses::mvwaddstring(area, 11, i++, 1, light_style->VLeft());
-	Curses::mvwaddstring(area, 11, i++, 1, light_style->VRight());
-	Curses::mvwaddstring(area, 11, i++, 1, light_style->Cross());
-	Curses::mvwaddstring(area, 11, i++, 1, light_style->CornerTL());
-	Curses::mvwaddstring(area, 11, i++, 1, light_style->CornerTR());
-	Curses::mvwaddstring(area, 11, i++, 1, light_style->CornerBL());
-	Curses::mvwaddstring(area, 11, i++, 1, light_style->CornerBR());
+	area->mvaddstring(10, i++, 1, light_style->H());
+	area->mvaddstring(10, i++, 1, light_style->HBegin());
+	area->mvaddstring(10, i++, 1, light_style->HEnd());
+	area->mvaddstring(10, i++, 1, light_style->HUp());
+	area->mvaddstring(10, i++, 1, light_style->HDown());
+	area->mvaddstring(10, i++, 1, light_style->V());
+	area->mvaddstring(10, i++, 1, light_style->VBegin());
+	area->mvaddstring(10, i++, 1, light_style->VEnd());
+	area->mvaddstring(10, i++, 1, light_style->VLeft());
+	area->mvaddstring(10, i++, 1, light_style->VRight());
+	area->mvaddstring(10, i++, 1, light_style->Cross());
+	area->mvaddstring(10, i++, 1, light_style->CornerTL());
+	area->mvaddstring(10, i++, 1, light_style->CornerTR());
+	area->mvaddstring(10, i++, 1, light_style->CornerBL());
+	area->mvaddstring(10, i++, 1, light_style->CornerBR());
 
 	// light rounded
 	i = 2;
-	Curses::mvwaddstring(area, 14, i++, 1, light_rounded_style->H());
-	Curses::mvwaddstring(area, 14, i++, 1, light_rounded_style->HBegin());
-	Curses::mvwaddstring(area, 14, i++, 1, light_rounded_style->HEnd());
-	Curses::mvwaddstring(area, 14, i++, 1, light_rounded_style->HUp());
-	Curses::mvwaddstring(area, 14, i++, 1, light_rounded_style->HDown());
-	Curses::mvwaddstring(area, 14, i++, 1, light_rounded_style->V());
-	Curses::mvwaddstring(area, 14, i++, 1, light_rounded_style->VBegin());
-	Curses::mvwaddstring(area, 14, i++, 1, light_rounded_style->VEnd());
-	Curses::mvwaddstring(area, 14, i++, 1, light_rounded_style->VLeft());
-	Curses::mvwaddstring(area, 14, i++, 1, light_rounded_style->VRight());
-	Curses::mvwaddstring(area, 14, i++, 1, light_rounded_style->Cross());
-	Curses::mvwaddstring(area, 14, i++, 1, light_rounded_style->CornerTL());
-	Curses::mvwaddstring(area, 14, i++, 1, light_rounded_style->CornerTR());
-	Curses::mvwaddstring(area, 14, i++, 1, light_rounded_style->CornerBL());
-	Curses::mvwaddstring(area, 14, i++, 1, light_rounded_style->CornerBR());
+	area->mvaddstring(13, i++, 1, light_rounded_style->H());
+	area->mvaddstring(13, i++, 1, light_rounded_style->HBegin());
+	area->mvaddstring(13, i++, 1, light_rounded_style->HEnd());
+	area->mvaddstring(13, i++, 1, light_rounded_style->HUp());
+	area->mvaddstring(13, i++, 1, light_rounded_style->HDown());
+	area->mvaddstring(13, i++, 1, light_rounded_style->V());
+	area->mvaddstring(13, i++, 1, light_rounded_style->VBegin());
+	area->mvaddstring(13, i++, 1, light_rounded_style->VEnd());
+	area->mvaddstring(13, i++, 1, light_rounded_style->VLeft());
+	area->mvaddstring(13, i++, 1, light_rounded_style->VRight());
+	area->mvaddstring(13, i++, 1, light_rounded_style->Cross());
+	area->mvaddstring(13, i++, 1, light_rounded_style->CornerTL());
+	area->mvaddstring(13, i++, 1, light_rounded_style->CornerTR());
+	area->mvaddstring(13, i++, 1, light_rounded_style->CornerBL());
+	area->mvaddstring(13, i++, 1, light_rounded_style->CornerBR());
 
 	// heavy
 	i = 2;
-	Curses::mvwaddstring(area, 17, i++, 1, heavy_style->H());
-	Curses::mvwaddstring(area, 17, i++, 1, heavy_style->HBegin());
-	Curses::mvwaddstring(area, 17, i++, 1, heavy_style->HEnd());
-	Curses::mvwaddstring(area, 17, i++, 1, heavy_style->HUp());
-	Curses::mvwaddstring(area, 17, i++, 1, heavy_style->HDown());
-	Curses::mvwaddstring(area, 17, i++, 1, heavy_style->V());
-	Curses::mvwaddstring(area, 17, i++, 1, heavy_style->VBegin());
-	Curses::mvwaddstring(area, 17, i++, 1, heavy_style->VEnd());
-	Curses::mvwaddstring(area, 17, i++, 1, heavy_style->VLeft());
-	Curses::mvwaddstring(area, 17, i++, 1, heavy_style->VRight());
-	Curses::mvwaddstring(area, 17, i++, 1, heavy_style->Cross());
-	Curses::mvwaddstring(area, 17, i++, 1, heavy_style->CornerTL());
-	Curses::mvwaddstring(area, 17, i++, 1, heavy_style->CornerTR());
-	Curses::mvwaddstring(area, 17, i++, 1, heavy_style->CornerBL());
-	Curses::mvwaddstring(area, 17, i++, 1, heavy_style->CornerBR());
+	area->mvaddstring(16, i++, 1, heavy_style->H());
+	area->mvaddstring(16, i++, 1, heavy_style->HBegin());
+	area->mvaddstring(16, i++, 1, heavy_style->HEnd());
+	area->mvaddstring(16, i++, 1, heavy_style->HUp());
+	area->mvaddstring(16, i++, 1, heavy_style->HDown());
+	area->mvaddstring(16, i++, 1, heavy_style->V());
+	area->mvaddstring(16, i++, 1, heavy_style->VBegin());
+	area->mvaddstring(16, i++, 1, heavy_style->VEnd());
+	area->mvaddstring(16, i++, 1, heavy_style->VLeft());
+	area->mvaddstring(16, i++, 1, heavy_style->VRight());
+	area->mvaddstring(16, i++, 1, heavy_style->Cross());
+	area->mvaddstring(16, i++, 1, heavy_style->CornerTL());
+	area->mvaddstring(16, i++, 1, heavy_style->CornerTR());
+	area->mvaddstring(16, i++, 1, heavy_style->CornerBL());
+	area->mvaddstring(16, i++, 1, heavy_style->CornerBR());
 
 	Window::Draw();
 }

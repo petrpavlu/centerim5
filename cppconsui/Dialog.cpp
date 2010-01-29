@@ -45,11 +45,10 @@ Dialog::~Dialog()
 
 void Dialog::AddWidgets(void)
 {
-	buttons = new HorizontalListBox(*this, 1, h-2, w-2, 1);
-	seperator = new HorizontalLine(*this, 1, h-3, w-2);
+	buttons = new HorizontalListBox(*this, 0, h - 1, w, 1);
+	seperator = new HorizontalLine(*this, 0, h - 2, w);
 	AddWidget(buttons);
 	AddWidget(seperator);
-	AddWidget(new Panel(*this, 0, 0, w, h, LineStyle::DEFAULT));
 }
 
 void Dialog::Resize(int neww, int newh)

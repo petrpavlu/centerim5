@@ -25,10 +25,10 @@
 
 #include <glibmm/ustring.h>
 
-TextWindow::TextWindow(int x, int y, int w, int h, LineStyle::Type ltype)
-: Window(x, y, w, h, ltype)
+TextWindow::TextWindow(int x_, int y_, int w_, int h_, LineStyle::Type ltype)
+: Window(x_, y_, w_, h_, ltype)
 {
-	browser = new TextBrowser(*this, 2, 1, w - 4, h - 2);
+	browser = new TextBrowser(*this, 1, 0, w - 2, h);
 	SetFocusChild(browser);
 	AddWidget(browser);
 }
@@ -85,5 +85,5 @@ void TextWindow::Resize(int neww, int newh)
 	 * what we want. in most cases you would need to recalculate
 	 * widget sizes based on window and/or container size.
 	 * */
-	browser->Resize(w-4, h-2);
+	browser->Resize(w - 2, h);
 }

@@ -45,11 +45,11 @@ Label::~Label()
 
 void Label::Draw()
 {
-	Curses::mvwaddstring(area, 0, 0, -1, text);
+	area->mvaddstring(0, 0, -1, text);
 
 	// @todo why is not shown last text character with wclrtobot()
-	//Curses::wclrtobot(area);
-	Curses::wclrtoeol(area);
+	//area->clrtobot();
+	area->clrtoeol();
 
 	Widget::Draw();
 }

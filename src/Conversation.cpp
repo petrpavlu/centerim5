@@ -42,10 +42,10 @@ Conversation::Conversation(PurpleBlistNode* node)
 	conf = Conf::Instance();
 	type = purple_blist_node_get_type(node);
 
-	view = new TextView(*this, 2, 1, w-4, h-2);
+	view = new TextView(*this, 1, 0, w - 2, h);
 	
-	input = new TextInput(*this, 2, 1, w-4, h-2);
-	line = new HorizontalLine(*this, LineStyle::DEFAULT, 1, view_height, w-2);
+	input = new TextInput(*this, 1, 1, w - 2, h);
+	line = new HorizontalLine(*this, LineStyle::DEFAULT, 0, view_height, w);
 
 	AddWidget(view);
 	AddWidget(input);
@@ -148,9 +148,9 @@ void Conversation::SetPartitioning(unsigned int percentage)
 		view_height = h - inputheight - 1;
 	}
 
-	view->Resize(w-4, view_height-2);
-	input->MoveResize(1, view_height+1, w-4, inputheight);
-	line->MoveResize(1, view_height, w-2, 1);
+	view->Resize(w - 2, view_height - 2);
+	input->MoveResize(0, view_height + 1, w - 2, inputheight);
+	line->MoveResize(0, view_height, w, 1);
 }
 
 //TODO if this remains empty, make it a pure virtual function

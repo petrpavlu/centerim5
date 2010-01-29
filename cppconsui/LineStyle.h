@@ -25,7 +25,6 @@
 
 struct LineElements;
 
-// @todo add line drawing functions?
 class LineStyle
 {
 	public:

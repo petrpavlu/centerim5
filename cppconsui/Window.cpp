@@ -29,17 +29,18 @@
 
 #define CONTEXT_WINDOW "window"
 
-Window::Window(int x, int y, int w, int h, LineStyle::Type ltype)
-: Container(*this, 1, 1, w - 2, h - 2)
-, win_x(x)
-, win_y(y)
-, win_w(w)
-, win_h(h)
+Window::Window(int x_, int y_, int w_, int h_, LineStyle::Type ltype)
+: Container(*this, 1, 1, w_ - 2, h_ - 2)
+, win_x(x_)
+, win_y(y_)
+, win_w(w_)
+, win_h(h_)
 , realwindow(NULL)
 {
 	//TODO just call moveresize
-	if (win_w < 1) win_w = 1;
-	if (win_h < 1) win_h = 1;
+	if (win_w < 2) win_w = 2;
+	if (win_h < 2) win_h = 2;
+	//Container::MoveResize(0, 0, win_w - 2, win_h - 2);
 
 	//TODO allow focus going to windows by default or not?
 	can_focus = true;
@@ -47,14 +48,7 @@ Window::Window(int x, int y, int w, int h, LineStyle::Type ltype)
 	MakeRealWindow();
 	UpdateArea();
 
-	/*
-	if (border) {
-		border->Resize(win_w, win_h);
-	}
-	Container::MoveResize(0, 0, win_w, win_h);
-	*/
-
-	panel = new Panel(*this, 0, 0, w, h, ltype);
+	panel = new Panel(*this, 0, 0, win_w, win_h, ltype);
 	AddWidget(panel);
 
 	Redraw();
@@ -63,7 +57,7 @@ Window::Window(int x, int y, int w, int h, LineStyle::Type ltype)
 
 Window::~Window()
 {
-	Curses::delwin(realwindow);
+	delete realwindow;
 }
 
 void Window::DeclareBindables()
@@ -119,7 +113,7 @@ void Window::Resize(int neww, int newh)
 	// @todo is this a correct place where to do this?
 	panel->Resize(win_w, win_h);
 
-	Container::Resize(win_w, win_h);
+	Container::Resize(win_w - 2, win_h - 2);
 
 	Redraw();
 }
@@ -141,10 +135,10 @@ void Window::MoveResize(int newx, int newy, int neww, int newh)
 void Window::UpdateArea()
 {
 	//LOG("/tmp/ua.log","Window::UpdateArea (%d,%d,%d,%d) parent: %x this: %x areaw: %x \n", x,y,w,h, this->parent, this, area->w);
-	if (area)
-		Curses::delwin(area);
 
-	area = Curses::newpad(win_h, win_w);
+	if (area)
+		delete area;
+	area = Curses::Window::newpad(win_h, win_w);
 
 	/*
 	if (area->w == NULL)
@@ -160,10 +154,10 @@ void Window::UpdateArea()
  * dimensions do not exceed screen size */
 void Window::MakeRealWindow(void)
 {
-	Curses::Window *win;
 	int left, right, top, bottom, maxx, maxy;
 
-	Curses::ngetmaxyx(NULL, &maxy, &maxx);
+	maxx = Curses::getmaxx();
+	maxy = Curses::getmaxy();
 
 	left = (win_x < 0) ? 0 : win_x;
 	top = (win_y < 0) ? 0 : win_y;
@@ -178,10 +172,9 @@ void Window::MakeRealWindow(void)
 	/* this could fail if the window falls outside the visible
 	 * area
 	 * */
-	win = Curses::newwin(bottom - top, right - left, top, left);
-
-	Curses::delwin(realwindow);
-	realwindow = win;
+	if (realwindow)
+		delete realwindow;
+	realwindow = Curses::Window::newwin(bottom - top, right - left, top, left);
 }
 
 void Window::Draw(void)
@@ -194,7 +187,7 @@ void Window::Draw(void)
 	/* copy the virtual window to a window, then display it
 	 * on screen.
 	 * */
-	Curses::copywin(area, realwindow, copy_y, copy_x, 0, 0, copy_h, copy_w, 0);
+	area->copyto(realwindow, copy_y, copy_x, 0, 0, copy_h, copy_w, 0);
 }
 
 void Window::Show()
@@ -222,4 +215,21 @@ void Window::SetBorderStyle(LineStyle::Type ltype)
 LineStyle::Type Window::GetBorderStyle()
 {
 	return panel->GetBorderStyle();
+}
+
+Curses::Window *Window::GetSubPad(Widget *child, int nlines, int ncols, int begin_y, int begin_x)
+{
+	/* Return subpad inside the panel and shrink subpad if it would fall
+	 * outside the panel. */
+
+	// @todo review, maybe move to Container class instead..
+
+	if (child == panel)
+		return area->subpad(nlines, ncols, begin_y, begin_x);
+
+	if (nlines > h - begin_y)
+		nlines = h - begin_y;
+	if (ncols > w - begin_x)
+		ncols = w - begin_x;
+	return area->subpad(nlines, ncols, begin_y + 1, begin_x + 1);
 }

@@ -1,16 +1,18 @@
 #include <cppconsui/Application.h>
 #include <cppconsui/Window.h>
 #include <cppconsui/Label.h>
+#include <cppconsui/TextEntry.h>
 #include <cppconsui/Keys.h>
+#include <cppconsui/Panel.h>
 
-// LabelWindow class
-class LabelWindow
+// TextEntryWindow class
+class TextEntryWindow
 : public Window
 {
 	public:
 		/* This is a main window, make sure it can not be closed with ESC key
 		 * by overriding Close() method. */
-		static LabelWindow &Instance();
+		static TextEntryWindow &Instance();
 		virtual void Close() {}
 
 		virtual void ScreenResized();
@@ -18,54 +20,52 @@ class LabelWindow
 	protected:
 
 	private:
-		LabelWindow();
-		virtual ~LabelWindow() {}
-		LabelWindow(const LabelWindow &);
-		LabelWindow &operator=(const LabelWindow &);
+		TextEntryWindow();
+		virtual ~TextEntryWindow() {}
+		TextEntryWindow(const TextEntryWindow &);
+		TextEntryWindow &operator=(const TextEntryWindow &);
 };
 
-LabelWindow &LabelWindow::Instance()
+TextEntryWindow &TextEntryWindow::Instance()
 {
-	static LabelWindow instance;
+	static TextEntryWindow instance;
 	return instance;
 }
 
-LabelWindow::LabelWindow()
+TextEntryWindow::TextEntryWindow()
 : Window(0, 0, 0, 0, LineStyle::DEFAULT)
 {
-	Label *label;
+	AddWidget(new Label(*this, 1, 1, "Press F10 to quit."));
+	AddWidget(new Label(*this, 1, 2, "Press TAB or up/down arrow keys to move focus."));
+	AddWidget(new Label(*this, 1, 3, "All TextEntry widgets are surrouned by Panel widget in this test (except the autosize example)."));
 
-	label = new Label(*this,		// parent
-			1,			// x
-			1,			// y
-			20,			// width
-			1,			// height
-			"Press F10 to quit.");	// text
-	/* Add label to container, container takes widget ownership and deletes it
-	 * when necessary.
-	 */
-	AddWidget(label);
+	AddWidget(new Panel(*this, 1, 5, 22, 3));
+	AddWidget(new TextEntry(*this,		// parent
+				2,		// x
+				6,		// y
+				20,		// width
+				1,		// height
+				"Edit me."));	// text
 
-	label = new Label(*this, 1, 3, 20, 1, "Too wide string, too wide string, too wide string");
-	AddWidget(label);
+	AddWidget(new Panel(*this, 1, 9, 22, 3));
+	AddWidget(new TextEntry(*this, 2, 10, 20, 1, "Too wide string, too wide string, too wide string"));
 
-	label = new Label(*this, 1, 5, 20, 3, "Multiline label, multiline label, multiline label");
-	AddWidget(label);
+	AddWidget(new Panel(*this, 1, 13, 22, 5));
+	AddWidget(new TextEntry(*this, 2, 14, 20, 3, "Multiline textentry, multiline textentry"));
 
 	// unicode test
-	label = new Label(*this, 1, 9, 30, 3,
+	AddWidget(new Panel(*this, 1, 19, 32, 5));
+	AddWidget(new TextEntry(*this, 2, 20, 30, 3,
 			"\x56\xc5\x99\x65\xc5\xa1\x74\xc3\xad\x63\xc3\xad\x20\x70\xc5\x99"
 			"\xc3\xad\xc5\xa1\x65\x72\x79\x20\x73\x65\x20\x64\x6f\xc5\xbe\x61"
 			"\x64\x6f\x76\x61\x6c\x79\x20\xc3\xba\x70\x6c\x6e\xc4\x9b\x20\xc4"
 			"\x8d\x65\x72\x73\x74\x76\xc3\xbd\x63\x68\x20\xc5\x99\xc3\xad\x7a"
-			"\x65\xc4\x8d\x6b\xc5\xaf\x2e\x0a");
-	AddWidget(label);
+			"\x65\xc4\x8d\x6b\xc5\xaf\x2e\x0a"));
 
-	label = new Label(*this, 1, 13, "Autosize");
-	AddWidget(label);
+	AddWidget(new TextEntry(*this, 2, 25, "Autosize"));
 }
 
-void LabelWindow::ScreenResized()
+void TextEntryWindow::ScreenResized()
 {
 	MoveResize(0, 0,
 			WindowManager::Instance()->getScreenW(),
@@ -120,8 +120,7 @@ TestApp::TestApp()
 
 void TestApp::Run()
 {
-	// TODO comment what happens here, who takes ownership etc.
-	windowmanager->Add(&LabelWindow::Instance());
+	windowmanager->Add(&TextEntryWindow::Instance());
 
 	Application::Run();
 }
