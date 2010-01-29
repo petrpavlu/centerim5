@@ -29,7 +29,7 @@
 #define CONTEXT_MENUWINDOW "menuwindow"
 
 MenuWindow::MenuWindow(int x_, int y_, int w_, int h_, LineStyle::Type ltype)
-: Window(x, y, w, h, ltype)
+: Window(x_, y_, w_, h_, ltype)
 {
 	listbox = new ListBox(*this, 0, 0, w, h);
 	SetFocusChild(listbox);

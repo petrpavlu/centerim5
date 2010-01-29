@@ -41,8 +41,8 @@
  * @todo dont accept focus when we have no focusable widgets
  */
 
-Container::Container(Widget& parent, const int x, const int y, const int w, const int h)
-: Widget(parent, x, y, w, h)
+Container::Container(Widget& parent, int x_, int y_, int w_, int h_)
+: Widget(parent, x_, y_, w_, h_)
 , focus_cycle_scope(FocusCycleGlobal)
 {
 	DeclareBindables();

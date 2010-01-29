@@ -45,17 +45,19 @@ HorizontalLine::~HorizontalLine()
 
 void HorizontalLine::Draw()
 {
-	if (!area || Width() == 0)
+	int realw;
+
+	if (!area || (realw = area->getmaxx()) == 0)
 		return; /// @todo and throw an exception/log a warning?
 
-	if (Width() <= 1) {
+	if (realw <= 1) {
 		area->mvaddstring(0, 0, 1, H());
 	} else {
 		area->mvaddstring(0, 0, 1, HBegin());
 		// @todo optimize
-		for (int i = 1; i < Width() - 1; i++) {
+		for (int i = 1; i < realw - 1; i++) {
 			area->mvaddstring(0, i, 1, H());
 		}
-		area->mvaddstring(0, Width() - 1, 1, HEnd());
+		area->mvaddstring(0, realw - 1, 1, HEnd());
 	}
 }

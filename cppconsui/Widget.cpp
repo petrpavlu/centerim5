@@ -28,11 +28,11 @@
 
 #include <string>
 
-Widget::Widget(Widget& parent, int x, int y, int w, int h)
-: x(x)
-, y(y)
-, w(w)
-, h(h)
+Widget::Widget(Widget& parent, int x_, int y_, int w_, int h_)
+: x(x_)
+, y(y_)
+, w(w_)
+, h(h_)
 , can_focus(false)
 , has_focus(false)
 , focus_child(NULL)

@@ -49,7 +49,7 @@ class Container
 			FocusCycleGlobal ///< the focus cycles also through the other containers windows
 		} FocusCycleScope;
 
-		Container(Widget& parent, const int x, const int y, const int w, const int h);
+		Container(Widget& parent, int x_, int y_, int w_, int h_);
 		virtual ~Container();
 
 		/** These functions are used to call Widget::UpdateArea of all children when necessary 

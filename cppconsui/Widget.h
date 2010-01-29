@@ -51,7 +51,7 @@ class Widget
 		 * @todo use the Point and Rect classes, perhaps implement a Size class 
 		 *   hold width and height variables, to enable easier usage
 		 */
-		Widget(Widget& parent, const int x, const int y, const int w, const int h);
+		Widget(Widget& parent, int x_, int y_, int w_, int h_);
 		virtual ~Widget();
 
 		/** This method, as well as Resize(), MoveResize() 
