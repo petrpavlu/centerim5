@@ -57,7 +57,8 @@ Window::Window(int x_, int y_, int w_, int h_, LineStyle::Type ltype)
 
 Window::~Window()
 {
-	delete realwindow;
+	if (realwindow)
+		delete realwindow;
 }
 
 void Window::DeclareBindables()
@@ -134,20 +135,9 @@ void Window::MoveResize(int newx, int newy, int neww, int newh)
 
 void Window::UpdateArea()
 {
-	//LOG("/tmp/ua.log","Window::UpdateArea (%d,%d,%d,%d) parent: %x this: %x areaw: %x \n", x,y,w,h, this->parent, this, area->w);
-
 	if (area)
 		delete area;
-	area = Curses::Window::newpad(win_h, win_w);
-
-	/*
-	if (area->w == NULL)
-		{}//TODO throw an exception
-		//actually, dont!
-		//after a container resize, all widgets are updatearea()'d
-		//which will probably result (unless resizing to bigger) in
-		//area == null because no pad can be made
-		*/
+	area = Curses::Window::newpad(win_w, win_h);
 }
 
 /* create the `real' window (not a pad) and make sure its
@@ -174,12 +164,12 @@ void Window::MakeRealWindow(void)
 	 * */
 	if (realwindow)
 		delete realwindow;
-	realwindow = Curses::Window::newwin(bottom - top, right - left, top, left);
+	realwindow = Curses::Window::newwin(left, top, right - left, bottom - top);
 }
 
 void Window::Draw(void)
 {
-	if (!realwindow)
+	if (!area || !realwindow)
 		return;
 
 	Container::Draw();
@@ -187,7 +177,7 @@ void Window::Draw(void)
 	/* copy the virtual window to a window, then display it
 	 * on screen.
 	 * */
-	area->copyto(realwindow, copy_y, copy_x, 0, 0, copy_h, copy_w, 0);
+	area->copyto(realwindow, copy_x, copy_y, 0, 0, copy_w, copy_h, 0);
 }
 
 void Window::Show()
@@ -217,19 +207,23 @@ LineStyle::Type Window::GetBorderStyle()
 	return panel->GetBorderStyle();
 }
 
-Curses::Window *Window::GetSubPad(Widget *child, int nlines, int ncols, int begin_y, int begin_x)
+Curses::Window *Window::GetSubPad(Widget &child, int begin_x, int begin_y, int ncols, int nlines)
 {
-	/* Return subpad inside the panel and shrink subpad if it would fall
-	 * outside the panel. */
+	if (!area)
+		return NULL;
 
-	// @todo review, maybe move to Container class instead..
+	// handle panel child specially
+	if (&child == panel)
+		return area->subpad(begin_x, begin_y, ncols, nlines);
 
-	if (child == panel)
-		return area->subpad(nlines, ncols, begin_y, begin_x);
-
-	if (nlines > h - begin_y)
+	/* Extend requested subpad to whole panel area or shrink requested area if
+	 * necessary. */
+	if (nlines == -1 || nlines > h - begin_y)
 		nlines = h - begin_y;
-	if (ncols > w - begin_x)
+
+	if (ncols == -1 || ncols > w - begin_x)
 		ncols = w - begin_x;
-	return area->subpad(nlines, ncols, begin_y + 1, begin_x + 1);
+
+	// add `+1' offset to normal childs so they can not overwrite the panel
+	return area->subpad(begin_x + 1, begin_y + 1, ncols, nlines);
 }

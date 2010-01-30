@@ -35,10 +35,10 @@ class ColorScheme
 		#define ColorSchemeDefault ColorSchemeNormal
 		static ColorScheme* ColorSchemeNormal(void);
 
-		void On(Curses::Window *area, const ColorType type);
-		void Off(Curses::Window *area, const ColorType type);
+		void On(Curses::Window *area, ColorType type);
+		void Off(Curses::Window *area, ColorType type);
 
-		void SetColor(Curses::Window *area, const int x, const int y, const int n, const ColorType type);
+		void SetColor(Curses::Window *area, int x, int y, int n, ColorType type);
 
 		void SetColorType(ColorType type, int scheme);
 		void GetColorType(ColorType type);

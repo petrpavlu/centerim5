@@ -37,10 +37,12 @@ class Curses
 			public:
 				virtual ~Window();
 
-				static Window *newpad(int nlines, int ncols);
-				static Window *newwin(int nlines, int ncols, int begin_y, int begin_x);
+				// these tree functions returns NULL if such pad/window can
+				// not be created
+				static Window *newpad(int cols, int nlines);
+				static Window *newwin(int begin_x, int begin_y, int ncols, int nlines);
 
-				Window *subpad(int nlines, int ncols, int begin_y, int begin_x);
+				Window *subpad(int begin_x, int begin_y, int ncols, int nlines);
 
 				/**
 				 * This function takes a formatted string and draws it on the
@@ -49,16 +51,15 @@ class Curses
 				 * figures out what to do based on this. Based on giFTcurs
 				 * drawing function.
 				 */
-				void mvaddstring(int y, int x, int w, const gchar *str);
-				void mvaddstringf(int y, int x, int w, const gchar *fmt, ...);
+				void mvaddstring(int x, int y, int w, const gchar *str);
 
 				// @todo remove
-				int mvaddstr(int y, int x, const char *str);
-				int mvaddnstr(int y, int x, const char *str, int n);
+				int mvaddstr(int x, int y, const char *str);
+				int mvaddnstr(int x, int y, const char *str, int n);
 
 				int attron(int attrs);
 				int attroff(int attrs);
-				int mvchgat(int y, int x, int n, /* attr_t */ int attr, short color, const void *opts);
+				int mvchgat(int x, int y, int n, /* attr_t */ int attr, short color, const void *opts);
 
 				int erase();
 				int clrtoeol();
@@ -68,8 +69,8 @@ class Curses
 
 				int touch();
 
-				int copyto(Window *dstwin, int sminrow, int smincol,
-						int dminrow, int dmincol, int dmaxrow, int dmaxcol,
+				int copyto(Window *dstwin, int smincol, int sminrow,
+						int dmincol, int dminrow, int dmaxcol, int dmaxrow,
 						int overlay);
 
 				int getmaxx();

@@ -40,7 +40,7 @@ void AbstractListBox::AddItem(const char *text, sigc::slot<void> function)
 {
 	Button *button;
 
-	button = new Button(*this, 0, 0, text, function);
+	button = new Button(*this, 0, 0, width(text), 1, text, function);
 	AddWidget(button);
 }
 

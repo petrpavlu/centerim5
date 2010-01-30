@@ -94,21 +94,9 @@ void Widget::MoveResize(int newx, int newy, int neww, int newh)
 
 void Widget::UpdateArea()
 {
-	//LOG("/tmp/ua.log",">Widget::UpdateArea (%d,%d,%d,%d) parent: %x this: %x areaw: %x \n", x,y,w,h, this->parent, this, area->w);	
-
 	if (area)
 		delete area;
-	area = parent->GetSubPad(this, h, w, y, x);
-
-	//LOG("/tmp/ua.log","<Widget::UpdateArea (%d,%d,%d,%d) parent: %x this: %x areaw: %x \n", x,y,w,h, this->parent, this, area->w);	
-	/*
-	if (area == NULL)
-		{}//TODO throw an exception
-		//actually, dont!
-		//after a container resize, all widgets are updatearea()'d
-		//which will probably result (unless resizing to bigger) in
-		//area == null because no pad can be made
-		*/
+	area = parent->GetSubPad(*this, x, y, w, h);
 }
 
 void Widget::Draw(void)
@@ -236,7 +224,18 @@ void Widget::MoveFocus(FocusDirection direction)
 	}
 }
 
-Curses::Window *Widget::GetSubPad(Widget *child, int nlines, int ncols, int begin_y, int begin_x)
+Curses::Window *Widget::GetSubPad(Widget &child, int begin_x, int begin_y, int ncols, int nlines)
 {
-	return area->subpad(nlines, ncols, begin_y, begin_x);
+	if (!area)
+		return NULL;
+
+	/* Extend requested subpad to whole parent area or shrink requested area
+	 * if necessary. */
+	if (nlines == -1 || nlines > h - begin_y)
+		nlines = h - begin_y;
+
+	if (ncols == -1 || ncols > w - begin_x)
+		ncols = w - begin_x;
+
+	return area->subpad(begin_x, begin_y, ncols, nlines);
 }

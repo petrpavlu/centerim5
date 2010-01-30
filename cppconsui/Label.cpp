@@ -31,11 +31,10 @@ Label::Label(Widget& parent, int x, int y, int w, int h, const gchar *text_)
 }
 
 Label::Label(Widget& parent, int x, int y, const gchar *text_)
-: Widget(parent, x, y, 0, 0)
+: Widget(parent, x, y, -1, 1)
 , text(NULL)
 {
 	RealSetText(text_);
-	Resize(width(text), 1);
 }
 
 Label::~Label()
@@ -45,11 +44,17 @@ Label::~Label()
 
 void Label::Draw()
 {
-	area->mvaddstring(0, 0, -1, text);
+	if (!area)
+		return;
 
-	// @todo why is not shown last text character with wclrtobot()
-	//area->clrtobot();
-	area->clrtoeol();
+	// @todo through this is not a widget for long text there are some cases
+	// in cim where we use it for a short but multiline text, so we should
+	// threat LF specially here
+
+	area->erase();
+
+	int max = area->getmaxx() * area->getmaxy();
+	area->mvaddstring(0, 0, max, text);
 
 	Widget::Draw();
 }

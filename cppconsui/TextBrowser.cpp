@@ -157,7 +157,7 @@ void TextBrowser::Draw(void)
 		//TODO prepare string for on-screen printing, or should Glib::ustring do this automatically?
 		//probably not, as Glib::ustring doesn't know the output width
 		//also should trim / wrap the string to fit the width of the widget
-		area->mvaddstr(i - pos, 0, line.c_str());
+		area->mvaddstr(0, i - pos, line.c_str());
 		/* clear until the end of the line */
 		area->clrtoeol();
 	}

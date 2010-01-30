@@ -63,6 +63,30 @@ LabelWindow::LabelWindow()
 
 	label = new Label(*this, 1, 13, "Autosize");
 	AddWidget(label);
+
+	const gchar *long_text = "Lorem ipsum dolor sit amet, consectetur"
+		"adipiscing elit. Duis dui dui, interdum eget tempor auctor, viverra"
+		"suscipit velit. Phasellus vel magna odio. Duis rutrum tortor at nisi"
+		"auctor tincidunt. Mauris libero neque, faucibus sit amet semper in, "
+		"dictum ut tortor. Duis lacinia justo non lorem blandit ultrices."
+		"Nullam vel purus erat, eget aliquam massa. Aenean eget mi a nunc"
+		"lacinia consectetur sed a neque. Cras varius, dolor nec rhoncus"
+		"ultricies, leo ipsum adipiscing mi, vel feugiat ipsum urna id "
+		"metus. Cras non pulvinar nisi. Vivamus nisi lorem, tempor tristique"
+		"cursus sit amet, ultricies interdum metus. Nullam tortor tortor, "
+		"iaculis sed tempor non, tincidunt ac mi. Quisque id diam vitae diam"
+		"dictum facilisis eget ac lacus. Vivamus at gravida felis. Curabitur"
+		"fermentum mattis eros, ut auctor urna tincidunt vitae. Praesent"
+		"tincidunt laoreet lobortis.";
+
+	label = new Label(*this, 42, 13, -1, 10, long_text);
+	AddWidget(label);
+
+	label = new Label(*this, 1, 24, 40, -1, long_text);
+	AddWidget(label);
+
+	label = new Label(*this, 42, 24, -1, -1, long_text);
+	AddWidget(label);
 }
 
 void LabelWindow::ScreenResized()

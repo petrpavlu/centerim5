@@ -81,6 +81,9 @@ bool Button::RegisterKeys()
 
 void Button::Draw(void)
 {
+	if (!area)
+		return;
+
 	if (has_focus)
 		colorscheme->On(area, ColorScheme::Focus);
 

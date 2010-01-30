@@ -47,17 +47,17 @@ ColorScheme* ColorScheme::ColorSchemeNormal(void)
 	return scheme;
 }
 
-void ColorScheme::On(Curses::Window *area, const ColorType type)
+void ColorScheme::On(Curses::Window *area, ColorType type)
 {
 	area->attron(schemes[type]);
 }
 
-void ColorScheme::Off(Curses::Window *area, const ColorType type)
+void ColorScheme::Off(Curses::Window *area, ColorType type)
 {
 	area->attroff(schemes[type]);
 }
 
-void ColorScheme::SetColor(Curses::Window *area, const int x, const int y, const int n, const ColorType type)
+void ColorScheme::SetColor(Curses::Window *area, int x, int y, int n, ColorType type)
 {
-	area->mvchgat(y, x, n, schemes[type], 0, NULL);
+	area->mvchgat(x, y, n, schemes[type], 0, NULL);
 }

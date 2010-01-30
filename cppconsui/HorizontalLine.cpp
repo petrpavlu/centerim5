@@ -48,16 +48,15 @@ void HorizontalLine::Draw()
 	int realw;
 
 	if (!area || (realw = area->getmaxx()) == 0)
-		return; /// @todo and throw an exception/log a warning?
+		return;
 
 	if (realw <= 1) {
 		area->mvaddstring(0, 0, 1, H());
 	} else {
 		area->mvaddstring(0, 0, 1, HBegin());
-		// @todo optimize
 		for (int i = 1; i < realw - 1; i++) {
-			area->mvaddstring(0, i, 1, H());
+			area->mvaddstring(i, 0, 1, H());
 		}
-		area->mvaddstring(0, realw - 1, 1, HEnd());
+		area->mvaddstring(realw - 1, 0, 1, HEnd());
 	}
 }

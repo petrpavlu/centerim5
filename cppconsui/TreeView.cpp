@@ -90,6 +90,9 @@ bool TreeView::RegisterKeys()
 
 void TreeView::Draw(void)
 {
+	if (!area)
+		return;
+
 	area->erase();
 	DrawNode(thetree.begin(), 0);
 	ScrollPane::Draw();
@@ -115,27 +118,27 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 	if (parent->open) {
 		if (thetree.number_of_children(node) > 0) {
 			for (j = top + 1; j < top + height; j++)
-				area->mvaddstring(j, depthoffset, 1, linestyle->V());
+				area->mvaddstring(depthoffset, j, 1, linestyle->V());
 		}
 
 		for (i = node.begin(); i != node.end(); i++) {
 			child = &(*i);
 
 			if (i != node.back())
-				area->mvaddstring(top + height, depthoffset, 1, linestyle->VRight());
+				area->mvaddstring(depthoffset, top + height, 1, linestyle->VRight());
 			else
-				area->mvaddstring(top + height, depthoffset, 1, linestyle->CornerBL());
+				area->mvaddstring(depthoffset, top + height, 1, linestyle->CornerBL());
 
-			area->mvaddstring(top + height, depthoffset + 1, 1, linestyle->H());
+			area->mvaddstring(depthoffset + 1, top + height, 1, linestyle->H());
 			
 			if (child->collapsable && thetree.number_of_children(i) > 0) {
-				area->mvaddstring(top + height, depthoffset + 2, 1, "[");
-				area->mvaddstring(top + height, depthoffset + 3, 1, child->open ? "-" : "+");
-				area->mvaddstring(top + height, depthoffset + 4, 1, "]");
+				area->mvaddstring(depthoffset + 2, top + height, 1, "[");
+				area->mvaddstring(depthoffset + 3, top + height, 1, child->open ? "-" : "+");
+				area->mvaddstring(depthoffset + 4, top + height, 1, "]");
 			} else {
-				area->mvaddstring(top + height, depthoffset + 2, 1, linestyle->H());
-				area->mvaddstring(top + height, depthoffset + 3, 1, linestyle->H());
-				area->mvaddstring(top + height, depthoffset + 4, 1, linestyle->HEnd());
+				area->mvaddstring(depthoffset + 2, top + height, 1, linestyle->H());
+				area->mvaddstring(depthoffset + 3, top + height, 1, linestyle->H());
+				area->mvaddstring(depthoffset + 4, top + height, 1, linestyle->HEnd());
 			}
 
 			oldh = height;
@@ -143,7 +146,7 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 
 			if (i != node.back()) {
 				for (j = top + oldh + 1; j < top + height ; j++)
-					area->mvaddstring(j, depthoffset, 1, linestyle->V());
+					area->mvaddstring(depthoffset, j, 1, linestyle->V());
 			}
 		}
 	}

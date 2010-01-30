@@ -53,25 +53,22 @@ void Panel::Draw()
 {
 	int realw, realh;
 
-	if (!area || Width() == 0 || Height() == 0)
-		return; //TODO and throw an exception/log a warning?
-
-	realw = area->getmaxx();
-	realh = area->getmaxy();
+	if (!area || (realw = area->getmaxx()) == 0 || (realh = area->getmaxy()) == 0)
+		return;
 
 	for (int i = 1; i < realw - 1; i++) {
-		area->mvaddstring(0, i, 1, linestyle->H());
-		area->mvaddstring(Height() - 1, i, 1, linestyle->H());
+		area->mvaddstring(i, 0, 1, linestyle->H());
+		area->mvaddstring(i, realh - 1, 1, linestyle->H());
 	}
 
 	for (int i = 1; i < realh - 1; i++) {
-		area->mvaddstring(i, 0, 1, linestyle->V());
-		area->mvaddstring(i, realw - 1, 1, linestyle->V());
+		area->mvaddstring(0, i, 1, linestyle->V());
+		area->mvaddstring(realw - 1, i, 1, linestyle->V());
 	}
 	area->mvaddstring(0, 0, 1, linestyle->CornerTL());
-	area->mvaddstring(realh - 1, 0, 1, linestyle->CornerBL());
-	area->mvaddstring(0, realw - 1, 1, linestyle->CornerTR());
-	area->mvaddstring(realh - 1, realw - 1, 1, linestyle->CornerBR());
+	area->mvaddstring(0, realh - 1, 1, linestyle->CornerBL());
+	area->mvaddstring(realw - 1, 0, 1, linestyle->CornerTR());
+	area->mvaddstring(realw - 1, realh - 1, 1, linestyle->CornerBR());
 }
 
 void Panel::SetText(const gchar *str)

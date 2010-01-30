@@ -31,7 +31,7 @@ ScrollPane::ScrollPane(Widget& parent, int x, int y, int w, int h, int scrollw, 
 {
 	//TODO scrollarea must be at least as largse as
 	//widget size?? no
-	area = Curses::Window::newpad(scrollh, scrollw);
+	area = Curses::Window::newpad(scrollw, scrollh);
 	//UpdateArea();
 	/*
 	if (area->w == NULL)
@@ -41,23 +41,15 @@ ScrollPane::ScrollPane(Widget& parent, int x, int y, int w, int h, int scrollw, 
 
 ScrollPane::~ScrollPane()
 {
-	delete scrollarea;
+	if (scrollarea)
+		delete scrollarea;
 }
 
 void ScrollPane::UpdateArea()
 {
 	if (scrollarea)
 		delete scrollarea;
-	scrollarea = parent->GetSubPad(this, h, w, y, x);
-
-	/*
-	if (scrollarea == NULL)
-		{}//TODO throw an exception
-		//actually, dont!
-		//after a container resize, all widgets are updatearea()'d
-		//which will probably result (unless resizing to bigger) in
-		//area == null because no pad can be made
-		*/
+	scrollarea = parent->GetSubPad(*this, x, y, w, h);
 }
 
 void ScrollPane::Draw(void)
@@ -75,7 +67,7 @@ void ScrollPane::Draw(void)
 	copyw = MIN(scrollw - 1, scrollarea->getmaxx() - 1);
 	copyh = MIN(scrollh - 1, scrollarea->getmaxy() - 1);
 
-	if (area->copyto(scrollarea, ypos, xpos, 0, 0, copyh, copyw, 0) == Curses::C_ERR)
+	if (area->copyto(scrollarea, xpos, ypos, 0, 0, copyw, copyh, 0) == Curses::C_ERR)
 		g_assert(false); //TODO this is a big error
 
 	Widget::Draw();
@@ -136,7 +128,7 @@ void ScrollPane::SetScrollSize(const int width, const int height)
 
 	if (area)
 		delete area;
-	area = Curses::Window::newpad(scrollh, scrollw);
+	area = Curses::Window::newpad(scrollw, scrollh);
 	/*
 	if (area->w == NULL)
 		{}//TODO throw an exception?

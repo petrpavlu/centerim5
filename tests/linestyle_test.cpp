@@ -18,11 +18,6 @@ class LineStyleWindow
 		virtual void Draw();
 
 	protected:
-		LineStyle *ascii_style;
-		LineStyle *ascii_rounded_style;
-		LineStyle *light_style;
-		LineStyle *light_rounded_style;
-		LineStyle *heavy_style;
 
 	private:
 		LineStyleWindow();
@@ -41,12 +36,6 @@ LineStyleWindow::LineStyleWindow()
 : Window(0, 0, 0, 0, LineStyle::DEFAULT)
 {
 	Label *label;
-
-	ascii_style = new LineStyle(LineStyle::ASCII);
-	ascii_rounded_style = new LineStyle(LineStyle::ASCII_ROUNDED);
-	light_style = new LineStyle(LineStyle::LIGHT);
-	light_rounded_style = new LineStyle(LineStyle::LIGHT_ROUNDED);
-	heavy_style = new LineStyle(LineStyle::HEAVY);
 
 	label = new Label(*this, 1, 1, "Press F10 to quit.");
 	AddWidget(label);
@@ -69,11 +58,6 @@ LineStyleWindow::LineStyleWindow()
 
 LineStyleWindow::~LineStyleWindow()
 {
-	delete ascii_style;
-	delete ascii_rounded_style;
-	delete light_style;
-	delete light_rounded_style;
-	delete heavy_style;
 }
 
 void LineStyleWindow::ScreenResized()
@@ -85,97 +69,103 @@ void LineStyleWindow::ScreenResized()
 
 void LineStyleWindow::Draw()
 {
+	LineStyle ascii_style(LineStyle::ASCII);
+	LineStyle ascii_rounded_style(LineStyle::ASCII_ROUNDED);
+	LineStyle light_style(LineStyle::LIGHT);
+	LineStyle light_rounded_style(LineStyle::LIGHT_ROUNDED);
+	LineStyle heavy_style(LineStyle::HEAVY);
+
 	int i;
 
 	// ASCII
 	i = 2;
-	area->mvaddstring(4, i++, 1, ascii_style->H());
-	area->mvaddstring(4, i++, 1, ascii_style->HBegin());
-	area->mvaddstring(4, i++, 1, ascii_style->HEnd());
-	area->mvaddstring(4, i++, 1, ascii_style->HUp());
-	area->mvaddstring(4, i++, 1, ascii_style->HDown());
-	area->mvaddstring(4, i++, 1, ascii_style->V());
-	area->mvaddstring(4, i++, 1, ascii_style->VBegin());
-	area->mvaddstring(4, i++, 1, ascii_style->VEnd());
-	area->mvaddstring(4, i++, 1, ascii_style->VLeft());
-	area->mvaddstring(4, i++, 1, ascii_style->VRight());
-	area->mvaddstring(4, i++, 1, ascii_style->Cross());
-	area->mvaddstring(4, i++, 1, ascii_style->CornerTL());
-	area->mvaddstring(4, i++, 1, ascii_style->CornerTR());
-	area->mvaddstring(4, i++, 1, ascii_style->CornerBL());
-	area->mvaddstring(4, i++, 1, ascii_style->CornerBR());
+	area->mvaddstring(i++, 5, 1, ascii_style.H());
+	area->mvaddstring(i++, 5, 1, ascii_style.HBegin());
+	area->mvaddstring(i++, 5, 1, ascii_style.HEnd());
+	area->mvaddstring(i++, 5, 1, ascii_style.HUp());
+	area->mvaddstring(i++, 5, 1, ascii_style.HDown());
+	area->mvaddstring(i++, 5, 1, ascii_style.V());
+	area->mvaddstring(i++, 5, 1, ascii_style.VBegin());
+	area->mvaddstring(i++, 5, 1, ascii_style.VEnd());
+	area->mvaddstring(i++, 5, 1, ascii_style.VLeft());
+	area->mvaddstring(i++, 5, 1, ascii_style.VRight());
+	area->mvaddstring(i++, 5, 1, ascii_style.Cross());
+	area->mvaddstring(i++, 5, 1, ascii_style.CornerTL());
+	area->mvaddstring(i++, 5, 1, ascii_style.CornerTR());
+	area->mvaddstring(i++, 5, 1, ascii_style.CornerBL());
+	area->mvaddstring(i++, 5, 1, ascii_style.CornerBR());
 
 	// ASCII rounded
 	i = 2;
-	area->mvaddstring(7, i++, 1, ascii_rounded_style->H());
-	area->mvaddstring(7, i++, 1, ascii_rounded_style->HBegin());
-	area->mvaddstring(7, i++, 1, ascii_rounded_style->HEnd());
-	area->mvaddstring(7, i++, 1, ascii_rounded_style->HUp());
-	area->mvaddstring(7, i++, 1, ascii_rounded_style->HDown());
-	area->mvaddstring(7, i++, 1, ascii_rounded_style->V());
-	area->mvaddstring(7, i++, 1, ascii_rounded_style->VBegin());
-	area->mvaddstring(7, i++, 1, ascii_rounded_style->VEnd());
-	area->mvaddstring(7, i++, 1, ascii_rounded_style->VLeft());
-	area->mvaddstring(7, i++, 1, ascii_rounded_style->VRight());
-	area->mvaddstring(7, i++, 1, ascii_rounded_style->Cross());
-	area->mvaddstring(7, i++, 1, ascii_rounded_style->CornerTL());
-	area->mvaddstring(7, i++, 1, ascii_rounded_style->CornerTR());
-	area->mvaddstring(7, i++, 1, ascii_rounded_style->CornerBL());
-	area->mvaddstring(7, i++, 1, ascii_rounded_style->CornerBR());
+	area->mvaddstring(i++, 8, 1, ascii_rounded_style.H());
+	area->mvaddstring(i++, 8, 1, ascii_rounded_style.HBegin());
+	area->mvaddstring(i++, 8, 1, ascii_rounded_style.HEnd());
+	area->mvaddstring(i++, 8, 1, ascii_rounded_style.HUp());
+	area->mvaddstring(i++, 8, 1, ascii_rounded_style.HDown());
+	area->mvaddstring(i++, 8, 1, ascii_rounded_style.V());
+	area->mvaddstring(i++, 8, 1, ascii_rounded_style.VBegin());
+	area->mvaddstring(i++, 8, 1, ascii_rounded_style.VEnd());
+	area->mvaddstring(i++, 8, 1, ascii_rounded_style.VLeft());
+	area->mvaddstring(i++, 8, 1, ascii_rounded_style.VRight());
+	area->mvaddstring(i++, 8, 1, ascii_rounded_style.Cross());
+	area->mvaddstring(i++, 8, 1, ascii_rounded_style.CornerTL());
+	area->mvaddstring(i++, 8, 1, ascii_rounded_style.CornerTR());
+	area->mvaddstring(i++, 8, 1, ascii_rounded_style.CornerBL());
+	area->mvaddstring(i++, 8, 1, ascii_rounded_style.CornerBR());
 
 	// light
 	i = 2;
-	area->mvaddstring(10, i++, 1, light_style->H());
-	area->mvaddstring(10, i++, 1, light_style->HBegin());
-	area->mvaddstring(10, i++, 1, light_style->HEnd());
-	area->mvaddstring(10, i++, 1, light_style->HUp());
-	area->mvaddstring(10, i++, 1, light_style->HDown());
-	area->mvaddstring(10, i++, 1, light_style->V());
-	area->mvaddstring(10, i++, 1, light_style->VBegin());
-	area->mvaddstring(10, i++, 1, light_style->VEnd());
-	area->mvaddstring(10, i++, 1, light_style->VLeft());
-	area->mvaddstring(10, i++, 1, light_style->VRight());
-	area->mvaddstring(10, i++, 1, light_style->Cross());
-	area->mvaddstring(10, i++, 1, light_style->CornerTL());
-	area->mvaddstring(10, i++, 1, light_style->CornerTR());
-	area->mvaddstring(10, i++, 1, light_style->CornerBL());
-	area->mvaddstring(10, i++, 1, light_style->CornerBR());
+	area->mvaddstring(i++, 11, 1, light_style.H());
+	area->mvaddstring(i++, 11, 1, light_style.HBegin());
+	area->mvaddstring(i++, 11, 1, light_style.HEnd());
+	area->mvaddstring(i++, 11, 1, light_style.HUp());
+	area->mvaddstring(i++, 11, 1, light_style.HDown());
+	area->mvaddstring(i++, 11, 1, light_style.V());
+	area->mvaddstring(i++, 11, 1, light_style.VBegin());
+	area->mvaddstring(i++, 11, 1, light_style.VEnd());
+	area->mvaddstring(i++, 11, 1, light_style.VLeft());
+	area->mvaddstring(i++, 11, 1, light_style.VRight());
+	area->mvaddstring(i++, 11, 1, light_style.Cross());
+	area->mvaddstring(i++, 11, 1, light_style.CornerTL());
+	area->mvaddstring(i++, 11, 1, light_style.CornerTR());
+	area->mvaddstring(i++, 11, 1, light_style.CornerBL());
+	area->mvaddstring(i++, 11, 1, light_style.CornerBR());
 
 	// light rounded
 	i = 2;
-	area->mvaddstring(13, i++, 1, light_rounded_style->H());
-	area->mvaddstring(13, i++, 1, light_rounded_style->HBegin());
-	area->mvaddstring(13, i++, 1, light_rounded_style->HEnd());
-	area->mvaddstring(13, i++, 1, light_rounded_style->HUp());
-	area->mvaddstring(13, i++, 1, light_rounded_style->HDown());
-	area->mvaddstring(13, i++, 1, light_rounded_style->V());
-	area->mvaddstring(13, i++, 1, light_rounded_style->VBegin());
-	area->mvaddstring(13, i++, 1, light_rounded_style->VEnd());
-	area->mvaddstring(13, i++, 1, light_rounded_style->VLeft());
-	area->mvaddstring(13, i++, 1, light_rounded_style->VRight());
-	area->mvaddstring(13, i++, 1, light_rounded_style->Cross());
-	area->mvaddstring(13, i++, 1, light_rounded_style->CornerTL());
-	area->mvaddstring(13, i++, 1, light_rounded_style->CornerTR());
-	area->mvaddstring(13, i++, 1, light_rounded_style->CornerBL());
-	area->mvaddstring(13, i++, 1, light_rounded_style->CornerBR());
+	area->mvaddstring(i++, 14, 1, light_rounded_style.H());
+	area->mvaddstring(i++, 14, 1, light_rounded_style.HBegin());
+	area->mvaddstring(i++, 14, 1, light_rounded_style.HEnd());
+	area->mvaddstring(i++, 14, 1, light_rounded_style.HUp());
+	area->mvaddstring(i++, 14, 1, light_rounded_style.HDown());
+	area->mvaddstring(i++, 14, 1, light_rounded_style.V());
+	area->mvaddstring(i++, 14, 1, light_rounded_style.VBegin());
+	area->mvaddstring(i++, 14, 1, light_rounded_style.VEnd());
+	area->mvaddstring(i++, 14, 1, light_rounded_style.VLeft());
+	area->mvaddstring(i++, 14, 1, light_rounded_style.VRight());
+	area->mvaddstring(i++, 14, 1, light_rounded_style.Cross());
+	area->mvaddstring(i++, 14, 1, light_rounded_style.CornerTL());
+	area->mvaddstring(i++, 14, 1, light_rounded_style.CornerTR());
+	area->mvaddstring(i++, 14, 1, light_rounded_style.CornerBL());
+	area->mvaddstring(i++, 14, 1, light_rounded_style.CornerBR());
 
 	// heavy
 	i = 2;
-	area->mvaddstring(16, i++, 1, heavy_style->H());
-	area->mvaddstring(16, i++, 1, heavy_style->HBegin());
-	area->mvaddstring(16, i++, 1, heavy_style->HEnd());
-	area->mvaddstring(16, i++, 1, heavy_style->HUp());
-	area->mvaddstring(16, i++, 1, heavy_style->HDown());
-	area->mvaddstring(16, i++, 1, heavy_style->V());
-	area->mvaddstring(16, i++, 1, heavy_style->VBegin());
-	area->mvaddstring(16, i++, 1, heavy_style->VEnd());
-	area->mvaddstring(16, i++, 1, heavy_style->VLeft());
-	area->mvaddstring(16, i++, 1, heavy_style->VRight());
-	area->mvaddstring(16, i++, 1, heavy_style->Cross());
-	area->mvaddstring(16, i++, 1, heavy_style->CornerTL());
-	area->mvaddstring(16, i++, 1, heavy_style->CornerTR());
-	area->mvaddstring(16, i++, 1, heavy_style->CornerBL());
-	area->mvaddstring(16, i++, 1, heavy_style->CornerBR());
+	area->mvaddstring(i++, 17, 1, heavy_style.H());
+	area->mvaddstring(i++, 17, 1, heavy_style.HBegin());
+	area->mvaddstring(i++, 17, 1, heavy_style.HEnd());
+	area->mvaddstring(i++, 17, 1, heavy_style.HUp());
+	area->mvaddstring(i++, 17, 1, heavy_style.HDown());
+	area->mvaddstring(i++, 17, 1, heavy_style.V());
+	area->mvaddstring(i++, 17, 1, heavy_style.VBegin());
+	area->mvaddstring(i++, 17, 1, heavy_style.VEnd());
+	area->mvaddstring(i++, 17, 1, heavy_style.VLeft());
+	area->mvaddstring(i++, 17, 1, heavy_style.VRight());
+	area->mvaddstring(i++, 17, 1, heavy_style.Cross());
+	area->mvaddstring(i++, 17, 1, heavy_style.CornerTL());
+	area->mvaddstring(i++, 17, 1, heavy_style.CornerTR());
+	area->mvaddstring(i++, 17, 1, heavy_style.CornerBL());
+	area->mvaddstring(i++, 17, 1, heavy_style.CornerBR());
 
 	Window::Draw();
 }

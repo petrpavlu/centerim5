@@ -45,16 +45,18 @@ VerticalLine::~VerticalLine()
 
 void VerticalLine::Draw()
 {
-	if (!area || Height() == 0)
-		return; //TODO and throw an exception/log a warning?
+	int realh;
 
-	if (Height() <= 1) {
+	if (!area || (realh = area->getmaxy()) == 0)
+		return;
+
+	if (realh <= 1) {
 		area->mvaddstring(0, 0, 1, V());
 	} else {
 		area->mvaddstring(0, 0, 1, VBegin());
-		for (int i = 1; i < Height() - 1; i++) {
-			area->mvaddstring(0, i, 1, V());
+		for (int i = 1; i < realh - 1; i++) {
+			area->mvaddstring(i, 0, 1, V());
 		}
-		area->mvaddstring(0, Width() - 1, 1, VEnd());
+		area->mvaddstring(realh - 1, 0, 1, VEnd());
 	}
 }

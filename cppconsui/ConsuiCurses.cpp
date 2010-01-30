@@ -20,8 +20,6 @@
 
 #include "ConsuiCurses.h"
 
-// @todo Window instances created here aren't usually deleted anywhere!!
-
 //#define _XOPEN_SOURCE_EXTENDED
 #define NCURSES_NOMACROS
 
@@ -55,28 +53,43 @@ Curses::Window::~Window()
 	delete p;
 }
 
-Curses::Window *Curses::Window::newpad(int nlines, int ncols)
+Curses::Window *Curses::Window::newpad(int ncols, int nlines)
 {
+	WINDOW *win;
+
+	if (!(win = ::newpad(nlines, ncols)))
+		return NULL;
+
 	Window *a = new Window;
-	a->p->win = ::newpad(nlines, ncols);
+	a->p->win = win;
 	return a;
 }
 
-Curses::Window *Curses::Window::newwin(int nlines, int ncols, int begin_y, int begin_x)
+Curses::Window *Curses::Window::newwin(int begin_x, int begin_y, int ncols, int nlines)
 {
+	WINDOW *win;
+
+	if (!(win = ::newwin(nlines, ncols, begin_y, begin_x)))
+		return NULL;
+
 	Window *a = new Window;
-	a->p->win = ::newwin(nlines, ncols, begin_y, begin_x);
+	a->p->win = win;
 	return a;
 }
 
-Curses::Window *Curses::Window::subpad(int nlines, int ncols, int begin_y, int begin_x)
+Curses::Window *Curses::Window::subpad(int begin_x, int begin_y, int ncols, int nlines)
 {
+	WINDOW *win;
+
+	if (!(win = ::subpad(p->win, nlines, ncols, begin_y, begin_x)))
+		return NULL;
+
 	Window *a = new Window;
-	a->p->win = ::subpad(p->win, nlines, ncols, begin_y, begin_x);
+	a->p->win = win;
 	return a;
 }
 
-void Curses::Window::mvaddstring(int y, int x, int w, const gchar *str)
+void Curses::Window::mvaddstring(int x, int y, int w, const gchar *str)
 {
 	// @todo `\v' switch is not implemented yet
 	// @todo optimizations (don't translate to cchar if we have got utf8
@@ -136,24 +149,12 @@ void Curses::Window::mvaddstring(int y, int x, int w, const gchar *str)
 		::whline(p->win, ' ', w - printed);
 }
 
-void Curses::Window::mvaddstringf(int y, int x, int w, const gchar *fmt, ...)
-{
-	char *s;
-	va_list ap;
-
-	va_start(ap, fmt);
-	s = g_strdup_vprintf(fmt, ap);
-	va_end(ap);
-	mvaddstring(y, x, w, s);
-	g_free(s);
-}
-
-int Curses::Window::mvaddstr(int y, int x, const char *str)
+int Curses::Window::mvaddstr(int x, int y, const char *str)
 {
 	return ::mvwaddstr(p->win, y, x, str);
 }
 
-int Curses::Window::mvaddnstr(int y, int x, const char *str, int n)
+int Curses::Window::mvaddnstr(int x, int y, const char *str, int n)
 {
 	return ::mvwaddnstr(p->win, y, x, str, n);
 }
@@ -168,7 +169,7 @@ int Curses::Window::attroff(int attrs)
 	return ::wattroff(p->win, attrs);
 }
 
-int Curses::Window::mvchgat(int y, int x, int n, /* attr_t */ int attr, short color, const void *opts)
+int Curses::Window::mvchgat(int x, int y, int n, /* attr_t */ int attr, short color, const void *opts)
 {
 	return ::mvwchgat(p->win, y, x, n, attr, color, opts);
 }
@@ -198,13 +199,10 @@ int Curses::Window::touch()
 	return ::touchwin(p->win);
 }
 
-int Curses::Window::copyto(Window *dstwin, int sminrow, int smincol,
-		int dminrow, int dmincol, int dmaxrow, int dmaxcol,
+int Curses::Window::copyto(Window *dstwin, int smincol, int sminrow,
+		int dmincol, int dminrow, int dmaxcol, int dmaxrow,
 		int overlay)
 {
-	if (!p->win || !dstwin->p->win)
-		return OK;
-
 	return ::copywin(p->win, dstwin->p->win, sminrow, smincol, dminrow, dmincol,
 			dmaxrow, dmaxcol, overlay);
 }

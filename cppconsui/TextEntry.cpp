@@ -220,14 +220,21 @@ bool TextEntry::RegisterKeys(void)
 
 void TextEntry::Draw(void)
 {
+	if (!area)
+		return;
+
 	Label::Draw();
 
 	/// @todo we can do better than this
 	/// @todo cursor blinking
+
 	if (has_focus) {
+		int realw = area->getmaxx();
 		gchar *ptr = g_utf8_offset_to_pointer(text, current_pos);
 		int i = width(text, ptr);
-		colorscheme->SetColor(area, i, 0, 1, ColorScheme::Focus);
+		int l = i / realw;
+		i -= l * realw;
+		colorscheme->SetColor(area, i, l, 1, ColorScheme::Focus);
 	}
 }
 

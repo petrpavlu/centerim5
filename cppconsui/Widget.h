@@ -136,7 +136,7 @@ class Widget
 
 		/** Returns a subpad of current widget with given coordinates.
 		 */
-		virtual Curses::Window *GetSubPad(Widget *child, int nlines, int ncols, int begin_y, int begin_x);
+		virtual Curses::Window *GetSubPad(Widget &child, int begin_x, int begin_y, int ncols, int nlines);
 
 		/// @todo encapsulate with a function, make sure derived class call Move()/Resize()/Redraw() to emit signal.
 		/// Also check if this is possible at all.
@@ -146,7 +146,10 @@ class Widget
 		sigc::signal<void, Widget*, bool> signal_focus;
 
 	protected:
-		int x, y, w, h; // screen area relative to parent area
+		/** Screen area relative to parent area. Note that this is a requested
+		 * area if parent window is big enough, real width/height can differ.
+		 */
+		int x, y, w, h;
 
 		bool can_focus;
 		/** Flag if the widget has the focus. Only one widget can have the focus in the application.
