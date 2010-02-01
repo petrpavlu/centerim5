@@ -58,13 +58,14 @@ Keys::Keys(void)
 	key_ctl_right = "\033" "[1;5C";
 	key_ctl_left = "\033" "[1;5D";
 
-	if (strncmp(term, "screen", strlen("screen")) == 0 || strcmp(term, "rxvt-unicode") == 0) {
+	if (/*strncmp(term, "screen", strlen("screen")) == 0 || */ strcmp(term, "rxvt-unicode") == 0) {
 		/* The check for screen includes other screen variants (eg: screen-bce)*/
 		key_ctl_up = "\033" "Oa";
 		key_ctl_down = "\033" "Ob";
 		key_ctl_right = "\033" "Oc";
 		key_ctl_left = "\033" "Od";
 	}
+
 	//TODO add more terms
 	//(tip use `cat|xxd' to see hex values of the keys)
 	//TODO where are the alt keys? add those too

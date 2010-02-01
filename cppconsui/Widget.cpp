@@ -224,7 +224,7 @@ void Widget::MoveFocus(FocusDirection direction)
 	}
 }
 
-Curses::Window *Widget::GetSubPad(Widget &child, int begin_x, int begin_y, int ncols, int nlines)
+Curses::Window *Widget::GetSubPad(const Widget &child, int begin_x, int begin_y, int ncols, int nlines)
 {
 	if (!area)
 		return NULL;

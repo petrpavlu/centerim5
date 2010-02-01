@@ -77,23 +77,16 @@ bool Button::RegisterKeys()
 	return true;
 }
 
-
-
 void Button::Draw(void)
 {
 	if (!area)
 		return;
 
-	if (has_focus)
-		colorscheme->On(area, ColorScheme::Focus);
-
 	Label::Draw();
 
+	/// @todo isn't calling width() everytime too slow?
 	if (has_focus)
-		colorscheme->Off(area, ColorScheme::Focus);
-
-	/// @todo try setcolor, its shorter
-	/// colorscheme->SetColor(area, 0, 0, w, ColorScheme::Focus);
+		colorscheme->SetColor(area, 0, 0, width(text), ColorScheme::Focus);
 }
 
 void Button::SetFunction(sigc::slot<void> callback)

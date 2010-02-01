@@ -39,8 +39,8 @@ class InputDialog
 
 		const char* GetText(void);
 
-		int Flags(void) { return entry->Flags(); }
-		void Flags(int flags) { entry->Flags(flags); }
+		int GetFlags() { return entry->GetFlags(); }
+		void SetFlags(int flags) { entry->SetFlags(flags); }
 
 	protected:
 		Label *label;

@@ -580,7 +580,7 @@ void AccountWindow::AccountOptionInt::OnActivate(void)
 {
 	WindowManager *wm = WindowManager::Instance();
 	dialog = new InputDialog(text, value);
-	dialog->Flags(TextEntry::FlagNumeric);
+	dialog->SetFlags(TextEntry::FlagNumeric);
 	sig_response = dialog->signal_response.connect(
 		sigc::mem_fun(this, &AccountWindow::AccountOptionInt::ResponseHandler));
 	//TODO add something to dialog class to show it. this removes the need

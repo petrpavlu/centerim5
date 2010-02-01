@@ -34,6 +34,7 @@ TAGS
 *.Z
 /ABOUT-NLS
 /aclocal.m4
+/build
 /config/config.guess
 /config/config.rpath
 /config/config.sub

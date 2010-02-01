@@ -38,75 +38,61 @@
 
 #include "Label.h"
 
-/* Initial size of buffer, in bytes */
+/** Initial size of buffer, in bytes. */
 #define MIN_SIZE 16
 
-/* Maximum size of text buffer, in bytes */
+/** Maximum size of text buffer, in bytes. */
 #define MAX_SIZE G_MAXUSHORT
 
 class TextEntry
 : public Label
 {
 	public:
-		typedef enum {
-			FlagAlphabetic = 1<<0,
-			FlagNumeric = 1<<1,
-			FlagNoSpace = 1<<2,
-			FlagNoPunctuation = 1<<3,
-			FlagHidden = 1<<4
-		} Flag;
+		enum Flag {
+			FlagAlphabetic = 1 << 0,
+			FlagNumeric = 1 << 1,
+			FlagNoSpace = 1 << 2,
+			FlagNoPunctuation = 1 << 3,
+			FlagHidden = 1 << 4
+		};
 
-		TextEntry(Widget& parent, int x, int y, int w, int h, const gchar *text_);
-		TextEntry(Widget& parent, int x, int y, const gchar *text_);
+		TextEntry(Widget &parent, int x_, int y_, int w_, int h_, const gchar *text_);
+		TextEntry(Widget &parent, int x_, int y_, const gchar *text_);
 
 		virtual ~TextEntry();
 
-		virtual void Draw(void);
+		virtual void Draw();
 
 		virtual int ProcessInputText(const char *input, const int bytes);
 
-		int Flags(void) { return flags; }
-		void Flags(int flags);
+		int GetFlags() { return flags; }
+		void SetFlags(int flags);
+		void SetPosition(int position);
 		
-		/** @todo Obscured is not used nor implemented yet. Is it TextEntry specific ? Or is it Widget specific ? */
-		bool Obscured(void) { return obscured; }
-		void Obscured(bool obscure);
-
 		sigc::signal<void> signal_text_changed;
 
 		virtual void SetText(const gchar *text_);
 
 	protected:
-		void backspace(void);
+		void InsertTextAtCursor(const gchar *new_text, int new_length);
+		void DeleteText(int start_pos, int end_pos);
 
-		void insert_text (const gchar *new_text, gint new_text_length, gint *position);
-		void delete_text (gint start_pos, gint end_pos);
-		void delete_selection (void);
-		void delete_whitespace (void);
+		void DeleteFromCursor(DeleteType type, int direction);
 
-		void insert_at_cursor (const gchar *str);
-		void delete_from_cursor (DeleteType type, gint count);
+		void MoveCursor(CursorMovement step, int direction);
+		void ToggleOverwrite();
 
-		void set_selection_bounds (gint start, gint end);
-		void set_positions (gint current_pos, gint selection_bound);
-		void set_position (gint position);
-		void recompute(void);
-		void move_cursor (CursorMovement step, gint count, gboolean extend_selection);
-		void toggle_overwrite (void);
-
-		gint current_pos; /* cursor position */
-		gint selection_bound;
+		int current_pos; ///< Current cursor position.
 
 		bool editable;
 		bool overwrite_mode;
-		bool obscured;
 
-		int flags; /* Bitmask indicating which input we accept. */
+		int flags; ///< Bitmask indicating which input we accept.
 
-		guint16 text_max_length;
-		guint16 text_size;    /**< allocated size, in bytes */
-		guint16 n_bytes;      /**< length in use, in bytes */
-		guint16 text_length;  /**< length in use, in chars */
+		int text_max_length; ///< Max char length.
+		int text_size; ///< Allocated size, in bytes.
+		int text_bytes; ///< Length in use, in bytes.
+		int text_length; ///< Length in use, in chars.
 
 		void RecalculateLengths();
 
@@ -116,20 +102,15 @@ class TextEntry
 
 		TextEntry& operator=(const TextEntry&);
 
-		void trash_area (gchar *area, gsize len);
-		gint move_logically (gint start, gint count);
-		gint move_visually (gint start, gint count);
-		gint move_backward_word (gint start, gboolean allow_whitespace);
-		gint move_forward_word (gint start, gboolean allow_whitespace);
-		gboolean get_selection_bounds (gint *start, gint *end);
+		int MoveLogically(int start, int count);
+		int MoveBackwardWord(int start, bool allow_whitespace);
+		int MoveForwardWord(int start, bool allow_whitespace);
 
-		void ActionMoveCursor(CursorMovement step, int count, bool extend_selection);
-		void ActionSelectAll(bool select_all);
-		void ActionDelete(DeleteType type, gint count);
-		void ActionBackspace(void);
-		void ActionToggleOverwrite(void);
+		void ActionMoveCursor(CursorMovement step, int direction);
+		void ActionDelete(DeleteType type, int direction);
+		void ActionToggleOverwrite();
 
-		virtual void OnActivate(void);
+		virtual void OnActivate();
 	
 		/** it handles the automatic registration of defined keys */
 		DECLARE_SIG_REGISTERKEYS();

@@ -207,7 +207,7 @@ LineStyle::Type Window::GetBorderStyle()
 	return panel->GetBorderStyle();
 }
 
-Curses::Window *Window::GetSubPad(Widget &child, int begin_x, int begin_y, int ncols, int nlines)
+Curses::Window *Window::GetSubPad(const Widget &child, int begin_x, int begin_y, int ncols, int nlines)
 {
 	if (!area)
 		return NULL;

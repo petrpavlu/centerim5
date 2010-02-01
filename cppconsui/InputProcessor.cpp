@@ -96,7 +96,10 @@ int InputProcessor::Process(InputProcessor::BindableType type, const char *input
 	BindableMap::iterator begin, end, i;
 	sigc::slot<void> function;
 	int m;
-	int needed = 0; // raise downward
+	/* If max is positive then it represents current longest match, if
+	 * negative then it represents a minimal amout of bytes to match some
+	 * bind. */
+	int max = 0;
 
 	begin = keymap.lower_bound(input[0]);
 	end = keymap.upper_bound(input[0]);
@@ -107,29 +110,36 @@ int InputProcessor::Process(InputProcessor::BindableType type, const char *input
 			m = Match(bindable.keyvalue.value, input, bytes);
 			if (m < 0) {
 				// could match, but need more input bytes
-				if (m > needed || needed == 0)
-					needed = m;
-			} else if (m > 0) {
-				bindable.function();
-				return m;
+				if (m > max || max == 0)
+					max = m;
+			}
+			else if (m > 0 && m > max) {
+				// found a larger match, remember the action
+				max = m;
+				function = bindable.function;
 			}
 		}
 	}
 
-	// return minimal needed characters for a match
-	return needed;
+	if (max > 0)
+		function();
+
+	return max;
 }
 
 int InputProcessor::Match(const std::string &skeycombo, const char *input, const int bytes)
 {
 	const char *keycombo = skeycombo.c_str();
 	int size;
-	int min;
 
 	size = skeycombo.size();
-	min = size < bytes ? size : bytes;
+
+	/// @todo this is an ESC hack, it breaks inserting burst of key combos
+	if (bytes > size) 
+		// more input than this keycombo
+		return 0;
 	
-	if (strncmp(keycombo, input, min) == 0) {
+	if (strncmp(keycombo, input, MIN(size, bytes)) == 0) {
 		if (bytes < size)
 			// need more input to determine a match
 			return bytes - size;
