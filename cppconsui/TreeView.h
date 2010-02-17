@@ -62,7 +62,7 @@ class TreeView
 
 			/* signal connection to the widget */
 			sigc::connection sig_redraw;
-			sigc::connection sig_resize;
+			sigc::connection sig_moveresize;
 			sigc::connection sig_focus;
 		} TreeNode;
 		typedef tree<TreeNode> TheTree;
@@ -127,7 +127,7 @@ class TreeView
 		
 		/* Handlers of signals */
 		void OnChildRedraw(Widget *widget);
-		void OnChildResize(Widget *widget, Rect &oldsize, Rect &newsize);
+		void OnChildMoveResize(Widget *widget, Rect &oldsize, Rect &newsize);
 		void OnChildFocus(Widget* widget, bool focus);
 
 		/** it handles the automatic registration of defined keys */

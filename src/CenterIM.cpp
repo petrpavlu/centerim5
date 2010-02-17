@@ -23,6 +23,8 @@
 #include "GeneralMenu.h"
 #include "Defines.h"
 
+#include "config.h"
+
 #include <cstring>
 
 #define CONTEXT_CENTERIM "centerim"

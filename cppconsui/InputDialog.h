@@ -35,8 +35,6 @@ class InputDialog
 		InputDialog(const gchar* text, const gchar* defaultvalue);
 		virtual ~InputDialog();
 
-		virtual void Resize(int neww, int newh);
-
 		const char* GetText(void);
 
 		int GetFlags() { return entry->GetFlags(); }

@@ -26,6 +26,7 @@
 #include "WindowManager.h"
 #include "Keys.h"
 #include "Container.h"
+#include "CppConsUIInternal.h"
 
 #define CONTEXT_WINDOW "window"
 
@@ -80,28 +81,17 @@ void Window::Close(void)
 	WindowManager::Instance()->CloseWindow(this);
 }
 
-void Window::Move(int newx, int newy)
-{
-	if (newx == win_x && newy == win_y)
-		return;
-
-	win_x = newx;
-	win_y = newy;
-
-	MakeRealWindow();
-
-	Redraw();
-}
-
 /* NOTE
  * subclasses should do something sensible with the container
  * widgets when resizing a window, see TextWindow for example
  * */
-void Window::Resize(int neww, int newh)
+void Window::MoveResize(int newx, int newy, int neww, int newh)
 {
-	if (neww == win_w && newh == win_h)
+	if (newx == win_x && newy == win_y && neww == win_w && newh == win_h)
 		return;
 
+	win_x = newx;
+	win_y = newy;
 	win_w = neww;
 	win_h = newh;
 
@@ -112,25 +102,11 @@ void Window::Resize(int neww, int newh)
 	UpdateArea();
 
 	// @todo is this a correct place where to do this?
-	panel->Resize(win_w, win_h);
+	panel->MoveResize(0, 0, win_w, win_h);
 
-	Container::Resize(win_w - 2, win_h - 2);
+	Container::MoveResize(1, 1, win_w - 2, win_h - 2);
 
 	Redraw();
-}
-
-void Window::MoveResize(int newx, int newy, int neww, int newh)
-{
-	/** @todo this has an overhead of 1 Redraw()
-	 * we cant combine the functions  move and resize
-	 * here because then each subclass would have to
-	 * combine its implementations of move and redaw too
-	 * i dont think that is what we want
-	 * update: the WindowManager should only do screen updates
-	 * in its spare time. See the todo in WindowManager::Redraw()
-	 */
-	Move(newx, newy);
-	Resize(neww, newh);
 }
 
 void Window::UpdateArea()
@@ -216,13 +192,16 @@ Curses::Window *Window::GetSubPad(const Widget &child, int begin_x, int begin_y,
 	if (&child == panel)
 		return area->subpad(begin_x, begin_y, ncols, nlines);
 
+	int realw = area->getmaxx() - 2;
+	int realh = area->getmaxy() - 2;
+
 	/* Extend requested subpad to whole panel area or shrink requested area if
 	 * necessary. */
-	if (nlines == -1 || nlines > h - begin_y)
-		nlines = h - begin_y;
+	if (nlines == -1 || nlines > realh - begin_y)
+		nlines = realh - begin_y;
 
-	if (ncols == -1 || ncols > w - begin_x)
-		ncols = w - begin_x;
+	if (ncols == -1 || ncols > realw - begin_x)
+		ncols = realw - begin_x;
 
 	// add `+1' offset to normal childs so they can not overwrite the panel
 	return area->subpad(begin_x + 1, begin_y + 1, ncols, nlines);

@@ -39,8 +39,7 @@ class BuddyList
 		static void Delete(void);
 
 		void Close(void);
-		virtual void Resize(int neww, int newh);
-
+		virtual void MoveResize(int newx, int newy, int neww, int newh);
 
 		static void new_list_(PurpleBuddyList *list)
 			{ BuddyList::Instance()->new_list(list); }

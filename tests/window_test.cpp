@@ -109,7 +109,7 @@ void TestApp::DeclareBindables()
 DEFINE_SIG_REGISTERKEYS(TestApp, RegisterKeys);
 bool TestApp::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_TESTAPP, "quit", _("Quit TestApp."), Keys::Instance()->Key_f10());
+	RegisterKeyDef(CONTEXT_TESTAPP, "quit", "Quit TestApp.", Keys::Instance()->Key_f10());
 	return true;
 }
 

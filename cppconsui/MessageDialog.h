@@ -34,8 +34,6 @@ class MessageDialog
 		MessageDialog(const gchar* label);
 		virtual ~MessageDialog();
 
-		virtual void Resize(int neww, int newh);
-
 	protected:
 		Label *label;
 

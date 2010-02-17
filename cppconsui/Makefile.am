@@ -1,87 +1,86 @@
 lib_LTLIBRARIES = libcppconsui.la
 
-# @TODO make sure ConsuiLog.h and ConsuiCurses.h are not distributed
+# @TODO make sure ConsuiLog.h and ConsuiCurses.h (*Internal.h) are not distributed
 
 # When you add files here, also add them in po/POTFILES.in
 libcppconsui_la_SOURCES =\
-	Adjustment.cpp \
-	Adjustment.h \
+	AbstractListBox.cpp \
+	AbstractListBox.h \
 	Application.cpp \
 	Application.h \
+	Button.cpp \
+	Button.h \
 	ConsuiCurses.cpp \
 	ConsuiCurses.h \
-	ConsuiLog.h \
 	Container.cpp \
 	Container.h \
 	ColorScheme.h \
 	ColorScheme.cpp \
 	ComboBox.cpp \
 	ComboBox.h \
-	AbstractListBox.cpp \
-	AbstractListBox.h \
-	ListBox.cpp \
-	ListBox.h \
+	CppConsUI.cpp \
+	CppConsUI.h \
+	CppConsUIInternal.h \
+	Dialog.cpp \
+	Dialog.h \
+	HorizontalLine.cpp \
+	HorizontalLine.h \
 	HorizontalListBox.cpp \
 	HorizontalListBox.h \
-	TextBrowser.cpp \
-	TextBrowser.h \
-	TextInput.cpp \
-	TextInput.h \
-	TextWindow.cpp \
-	TextWindow.h \
+	InputDialog.cpp \
+	InputDialog.h \
+	InputProcessor.cpp \
+	InputProcessor.h \
+	Label.cpp \
+	Label.h \
+	LineStyle.cpp \
+	LineStyle.h \
+	ListBox.cpp \
+	ListBox.h \
+	KeyConfig.cpp \
+	KeyConfig.h \
+	Keys.cpp \
+	Keys.h \
+	MenuWindow.cpp \
+	MenuWindow.h \
+	MessageDialog.cpp \
+	MessageDialog.h \
+	Panel.cpp \
+	Panel.h \
+	TextEdit.cpp \
+	TextEdit.h \
 	TextEntry.cpp \
 	TextEntry.h \
+	TextView.cpp \
+	TextView.h \
+	TreeView.cpp \
+	TreeView.h \
+	ScrollPane.cpp \
+	ScrollPane.h \
+	VerticalLine.cpp \
+	VerticalLine.h \
 	Widget.cpp \
 	Widget.h \
 	Window.cpp \
 	Window.h \
 	WindowManager.cpp \
 	WindowManager.h \
-	LineStyle.cpp \
-	LineStyle.h \
-	HorizontalLine.cpp \
-	HorizontalLine.h \
-	VerticalLine.cpp \
-	VerticalLine.h \
-	Panel.cpp \
-	Panel.h \
-	MenuWindow.cpp \
-	MenuWindow.h \
-	ScrollPane.cpp \
-	ScrollPane.h \
-	Scrollable.h \
-	Keys.cpp \
-	Keys.h \
-	TreeView.cpp \
-	TreeView.h \
 	tree.hh \
-	Label.cpp \
-	Label.h \
-	Button.cpp \
-	Button.h \
-	Dialog.cpp \
-	Dialog.h \
-	MessageDialog.cpp \
-	MessageDialog.h \
-	InputDialog.cpp \
-	InputDialog.h \
-	InputProcessor.cpp \
-	InputProcessor.h \
-	CppConsUI.cpp \
-	CppConsUI.h \
-	TextRBTree.cpp \
-	TextRBTree.h \
+	\
+	TextBrowser.cpp \
+	TextBrowser.h \
 	TextBuffer.cpp \
 	TextBuffer.h \
-	TextLineRBTree.cpp \
-	TextLineRBTree.h \
+	TextInput.cpp \
+	TextInput.h \
 	TextLine.cpp \
 	TextLine.h \
-	TextView.cpp \
-	TextView.h \
-	KeyConfig.cpp \
-	KeyConfig.h
-
+	TextLineRBTree.cpp \
+	TextLineRBTree.h \
+	TextRBTree.cpp \
+	TextRBTree.h \
+	TextRBView.cpp \
+	TextRBView.h
 
 libcppconsui_la_CPPFLAGS = $(CFLAGS) $(GLIBMM_CFLAGS) $(CURSES_INCLUDEDIR) $(DEBUG_CFLAGS) -DG_LOG_DOMAIN=\"cppconsui\"
 libcppconsui_la_LIBADD = $(GLIBMM_LIBS) $(CURSES_LIBS)

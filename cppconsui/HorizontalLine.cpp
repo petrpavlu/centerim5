@@ -51,12 +51,12 @@ void HorizontalLine::Draw()
 		return;
 
 	if (realw <= 1) {
-		area->mvaddstring(0, 0, 1, H());
+		area->mvaddstring(0, 0, H());
 	} else {
-		area->mvaddstring(0, 0, 1, HBegin());
+		area->mvaddstring(0, 0, HBegin());
 		for (int i = 1; i < realw - 1; i++) {
-			area->mvaddstring(i, 0, 1, H());
+			area->mvaddstring(i, 0, H());
 		}
-		area->mvaddstring(realw - 1, 0, 1, HEnd());
+		area->mvaddstring(realw - 1, 0, HEnd());
 	}
 }

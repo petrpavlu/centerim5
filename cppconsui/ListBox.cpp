@@ -50,7 +50,7 @@ void ListBox::AddWidget(Widget *widget)
 	y = GetScrollHeight();
 	
 	movingwidget = true;
-	widget->Move(0, y);
+	widget->MoveResize(0, y, widget->Width(), widget->Height());
 	movingwidget = false;
 	SetScrollHeight(y + widget->Height());
 	AbstractListBox::AddWidget(widget);
@@ -69,7 +69,7 @@ void ListBox::RemoveWidget(Widget *widget)
 	y = 0;
 	for (i = ChildrenBegin(); i != ChildrenEnd(); i++) {
 		w = (*i).widget;
-		w->Move(0, y);
+		w->MoveResize(0, y, w->Width(), w->Height());
 		y += w->Height();
 	}
 

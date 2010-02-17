@@ -26,6 +26,7 @@
 #include "ConsuiCurses.h"
 #include "Container.h"
 #include "Keys.h"
+#include "CppConsUIInternal.h"
 
 #define CONTEXT_CONTAINER "container"
 
@@ -96,22 +97,12 @@ void Container::UpdateAreas(void)
 		((*i).widget)->UpdateArea();
 }
 
-void Container::Move(const int newx, const int newy)
-{
-	Widget::Move(newx, newy);
-	UpdateAreas();
-}
-
-void Container::Resize(const int neww, const int newh)
-{
-	Widget::Resize(neww, newh);
-	UpdateAreas();
-}
-
 void Container::MoveResize(const int newx, const int newy, const int neww, const int newh)
 {
 	Widget::MoveResize(newx, newy, neww, newh);
-	UpdateAreas();
+
+	for (Children::iterator i = children.begin(); i != children.end(); i++)
+		((*i).widget)->MoveResize();
 }
 
 void Container::Draw(void)

@@ -107,7 +107,7 @@ BuddyList::BuddyList()
 	AddWidget(treeview);
 	SetInputChild(treeview);
 
-	MoveResize(conf->GetBuddyListDimensions());
+	MoveResizeRect(conf->GetBuddyListDimensions());
 }
 
 bool BuddyList::Load(void)
@@ -224,23 +224,23 @@ void BuddyList::destroy_list(PurpleBuddyList *list)
 {
 }
 
-void BuddyList::Resize(int neww, int newh)
+void BuddyList::MoveResize(int newx, int newy, int neww, int newh)
 {
 	/* Let parent's Resize() renew data structures (including
 	 * the area's of child widgets which will thus be done
 	 * twice)
 	 * */
-	Window::Resize(neww, newh);
+	Window::MoveResize(newx, newy, neww, newh);
 
 	/* resize all our widgets, in this case its only one widget
 	 * here, w and h are the size of the container, which is 
 	 * what we want. in most cases you would need to recalculate
 	 * widget sizes based on window and/or container size.
 	 * */
-	treeview->Resize(neww - 2, newh - 2);
+	treeview->MoveResize(0, 0, neww - 2, newh - 2);
 }
 
 void BuddyList::ScreenResized()
 {
-	MoveResize(CenterIM::Instance().ScreenAreaSize(CenterIM::BuddyListArea));
+	MoveResizeRect(CenterIM::Instance().ScreenAreaSize(CenterIM::BuddyListArea));
 }

@@ -50,7 +50,7 @@ void HorizontalListBox::AddWidget(Widget *widget)
 	x = GetScrollWidth();
 	
 	movingwidget = true;
-	widget->Move(x, 0);
+	widget->MoveResize(x, 0, widget->Width(), widget->Height());
 	movingwidget = false;
 	SetScrollWidth(x + widget->Width());
 	AbstractListBox::AddWidget(widget);
@@ -69,7 +69,7 @@ void HorizontalListBox::RemoveWidget(Widget *widget)
 	x = 0;
 	for (i = ChildrenBegin(); i != ChildrenEnd(); i++) {
 		w = (*i).widget;
-		widget->Move(x, 0);
+		widget->MoveResize(x, 0, widget->Width(), widget->Height());
 		x += widget->Width();
 	}
 

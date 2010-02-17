@@ -22,12 +22,11 @@
 #include "Keys.h"
 
 #include "ConsuiCurses.h"
+#include "CppConsUIInternal.h"
 
 #include "ScrollPane.h"
 #include "LineStyle.h"
 #include "Keys.h"
-
-#include "ConsuiLog.h"
 
 /* Put this macro around variable that will be used in the future,
  * remove macro when variables are used.
@@ -110,7 +109,9 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 
 	/* draw the parent node first */
 	if (parent->widget) {
-		parent->widget->Move(depthoffset + 2, top);
+		parent->widget->MoveResize(depthoffset + 2, top,
+				parent->widget->Width(),
+				parent->widget->Height());
 		parent->widget->Draw();
 		height += parent->widget->Height();
 	}
@@ -118,27 +119,27 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 	if (parent->open) {
 		if (thetree.number_of_children(node) > 0) {
 			for (j = top + 1; j < top + height; j++)
-				area->mvaddstring(depthoffset, j, 1, linestyle->V());
+				area->mvaddstring(depthoffset, j, linestyle->V());
 		}
 
 		for (i = node.begin(); i != node.end(); i++) {
 			child = &(*i);
 
 			if (i != node.back())
-				area->mvaddstring(depthoffset, top + height, 1, linestyle->VRight());
+				area->mvaddstring(depthoffset, top + height, linestyle->VRight());
 			else
-				area->mvaddstring(depthoffset, top + height, 1, linestyle->CornerBL());
+				area->mvaddstring(depthoffset, top + height, linestyle->CornerBL());
 
-			area->mvaddstring(depthoffset + 1, top + height, 1, linestyle->H());
+			area->mvaddstring(depthoffset + 1, top + height, linestyle->H());
 			
 			if (child->collapsable && thetree.number_of_children(i) > 0) {
-				area->mvaddstring(depthoffset + 2, top + height, 1, "[");
-				area->mvaddstring(depthoffset + 3, top + height, 1, child->open ? "-" : "+");
-				area->mvaddstring(depthoffset + 4, top + height, 1, "]");
+				area->mvaddstring(depthoffset + 2, top + height, "[");
+				area->mvaddstring(depthoffset + 3, top + height, child->open ? "-" : "+");
+				area->mvaddstring(depthoffset + 4, top + height, "]");
 			} else {
-				area->mvaddstring(depthoffset + 2, top + height, 1, linestyle->H());
-				area->mvaddstring(depthoffset + 3, top + height, 1, linestyle->H());
-				area->mvaddstring(depthoffset + 4, top + height, 1, linestyle->HEnd());
+				area->mvaddstring(depthoffset + 2, top + height, linestyle->H());
+				area->mvaddstring(depthoffset + 3, top + height, linestyle->H());
+				area->mvaddstring(depthoffset + 4, top + height, linestyle->HEnd());
 			}
 
 			oldh = height;
@@ -146,7 +147,7 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 
 			if (i != node.back()) {
 				for (j = top + oldh + 1; j < top + height ; j++)
-					area->mvaddstring(depthoffset, j, 1, linestyle->V());
+					area->mvaddstring(depthoffset, j, linestyle->V());
 			}
 		}
 	}
@@ -249,7 +250,7 @@ const TreeView::NodeReference TreeView::AddNode(const NodeReference &parent, Wid
 	}
 
 	node.sig_redraw = widget->signal_redraw.connect(sigc::mem_fun(this, &TreeView::OnChildRedraw));
-	node.sig_resize = widget->signal_resize.connect(sigc::mem_fun(this, &TreeView::OnChildResize));
+	node.sig_moveresize = widget->signal_moveresize.connect(sigc::mem_fun(this, &TreeView::OnChildMoveResize));
 	node.sig_focus = widget->signal_focus.connect(sigc::mem_fun(this, &TreeView::OnChildFocus));
 	
 	itemswidth += widget->Width();
@@ -371,7 +372,7 @@ void TreeView::OnChildRedraw(Widget *widget)
 	Redraw();
 }
 
-void TreeView::OnChildResize(Widget *widget, Rect &oldsize, Rect &newsize)
+void TreeView::OnChildMoveResize(Widget *widget, Rect &oldsize, Rect &newsize)
 {
 	//TODO redraw only on height change
 	Redraw();

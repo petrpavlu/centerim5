@@ -21,7 +21,8 @@
 #ifndef __LOG_H__
 #define __LOG_H__
 
-#include <cppconsui/TextWindow.h>
+#include <cppconsui/Window.h>
+#include <cppconsui/TextView.h>
 #include <libpurple/debug.h>
 #include <libpurple/prefs.h>
 #include <vector>
@@ -29,7 +30,7 @@
 class Conf;
 
 class Log
-: public TextWindow
+: public Window
 {
 	public:
 		// levels are 1:1 mapped to glib levels
@@ -44,6 +45,8 @@ class Log
 		};
 
 		static Log &Instance(void);
+
+		virtual void MoveResize(int newx, int newy, int neww, int newh);
 
 		void Write(Level level, const gchar *fmt, ...);
 
@@ -83,6 +86,8 @@ class Log
 		int max_lines;
 		Conf *conf;
 
+		TextView *textview;
+
 		Log(void);
 		Log(const Log &);
 		Log &operator=(const Log &);
@@ -91,7 +96,6 @@ class Log
 		void Write(Type type, Level level, const gchar *fmt, ...);
 		void WriteToWindow(Level level, const gchar *fmt, ...);
 		void WriteToFile(const gchar *text);
-		void AddTextToWindow(gchar *text);
 		Level ConvertPurpleDebugLevel(PurpleDebugLevel purplelevel);
 };
 

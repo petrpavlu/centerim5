@@ -1,204 +1,258 @@
-/* -*- Mode: C; c-file-style: "gnu"; tab-width: 8 -*- */
-/* GTK - The GIMP Toolkit
- * gtktextview.c Copyright (C) 2000 Red Hat, Inc.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
- */
-
-/*
- * Modified by the GTK+ Team and others 1997-2000.  See the AUTHORS
- * file for a list of people on the GTK+ Team.  See the ChangeLog
- * files for a list of changes.  These files are distributed with
- * GTK+ at ftp://ftp.gtk.org/pub/gtk/.
- */
-
 #include "CppConsUI.h"
 #include "TextView.h"
 
-#include <string.h>
-
-/* TODO implement copy operator for textbuffer and textrbtree
-TextView::TextView(Widget& parent, int x, int y, int w, int h, TextBuffer *buffer)
-: Widget(parent, x, y, w, h)
-{
-	this->buffer = buffer;
-}*/
-
-TextView::TextView(Widget& parent, int x, int y, int w, int h)
-: Widget(parent, x, y, w, h)
-, view_left(0)
+TextView::TextView(Widget& parent_, int x_, int y_, int w_, int h_, bool autoscroll_)
+: Widget(parent_, x_, y_, w_, h_)
 , view_top(0)
-, wrap_mode(WRAP_NONE)
+, autoscroll(autoscroll_)
 {
 }
 
-TextView::~TextView(void)
+TextView::~TextView()
 {
+	Clear();
 }
 
-TextView::char_iterator TextView::append (const char *text, int len)
+void TextView::Append(const gchar *text)
 {
-	if (len < 0) {
-		len = strlen(text);
+	Insert(lines.size(), text);
+}
+
+void TextView::Insert(int line_num, const gchar *text)
+{
+	g_assert(text);
+	g_assert(line_num >= 0);
+	g_assert(line_num <= lines.size());
+
+	const gchar *p = text;
+	const gchar *s = text;
+
+	// parse lines
+	while (*p) {
+		GUnicodeType t = g_unichar_type(g_utf8_get_char(p));
+		if ((*p == '\r' || *p == '\n' || t == G_UNICODE_LINE_SEPARATOR || t == G_UNICODE_PARAGRAPH_SEPARATOR)) {
+			if (s < p) {
+				Line *l = new Line(s, p - s);
+				lines.insert(lines.begin() + line_num, l);
+				UpdateScreenLines(line_num++);
+			}
+			s = p = g_utf8_next_char(p);
+			continue;
+		}
+
+		p = g_utf8_next_char(p);
 	}
 
-	return buffer.insert(buffer.back(), text, len);
-}
-
-void TextView::Draw(void)
-{
-	char_iterator line_iter;	/* Current line to be drawm. */
-	char_iterator line_end;		/* Line just after the last line to be drawn. */
-	char_iterator char_iter;	/* Current character to be drawn. */
-	char_iterator char_end;		/* Char just after the lst char to be drawn. */
-	unsigned int x, y;
-
-	line_iter = line_end = begin();
-
-	/* Move the begin and end iterators to their positions. */
-	line_iter.forward_lines(view_top);
-	line_end = line_iter;
-	line_end.forward_lines(Height());
-
-	y = 0;
-	while (line_iter != line_end) {
-		char_iter = line_iter;
-
-		/* Move the line iterator to the next line. We also use this
-		 * as guard for the character drawing loop, as this next line
-		 * is where we should stop */
-		line_iter.forward_lines(1);
-
-		/* Skip view_left columns at the beginning of the string. */
-		char_iter.forward_cols(view_left);
-		char_end = char_iter;
-		char_end.forward_cols(Width());
-
-		/* We use char_end to indicate what the last char to draw is.
-		 * Line_iter here is on the first character of the next line.
-		 * Since the line starting from char_iter might not have Width()
-		 * columns left, we set the limit at min(line_iter, char_end) */
-		if (line_iter < char_end) {
-			char_end = line_iter;
-		}
-
-		x = 0;
-
-		/* After skipping columns we may have that we are at the
-		 * second column of a 2-column character. In this case
-		 * we need to draw an empty column. */
-		if (!char_iter.valid_char()) {
-			area->mvaddstr(x, y, " ");
-			/* Move to the next valid char. */
-			char_iter.forward_chars(1);
-			x += 1;
-		}
-
-		/* Note that line_iter is at the next line at this point; eg
-		 * where we should stop drawing characters. */
-		while (char_iter < char_end) {
-			area->mvaddnstr(x, y, *char_iter, char_iter.char_bytes());
-			x += char_iter.char_cols();
-			char_iter.forward_chars(1);
-		}
-
-		/* Clear until the end of the line. We
-		 * can use this function since mvwaddnstr() also
-		 * moves the cursor. */
-		area->clrtoeol();
-
-		y++;
+	if (s < p) {
+		Line *l = new Line(s, p - s);
+		lines.insert(lines.begin() + line_num, l);
+		UpdateScreenLines(line_num++);
 	}
 
-	Widget::Draw();
+	Redraw();
 }
 
-Rect TextView::GetScrollSize(void)
+void TextView::Erase(int line_num)
 {
-	Rect r;
-
-	r.x = 0;
-	r.y = 0;
-	r.width = Width();
-	r.height = Height();
-
-	return r;
+	/// @todo
 }
 
-void TextView::SetScrollSize(const int width, const int height)
+void TextView::Erase(int start_line, int end_line)
 {
-	//TODO omit warning that user should use Resize();
+	/// @todo
 }
 
-void TextView::AdjustScroll(const int newx, const int newy)
+void TextView::Clear()
 {
-	if (newx < 0 || newy < 0 || newx > Width() || newy > Height())
+	for (std::vector<Line *>::iterator i = lines.begin(); i != lines.end(); i++)
+		delete *i;
+	lines.clear();
+
+	for (std::vector<ScreenLine *>::iterator i = screen_lines.begin(); i != screen_lines.end(); i++)
+		delete *i;
+	lines.clear();
+
+	view_top = 0;
+	Redraw();
+}
+
+const gchar *TextView::GetLine(int line_num) const
+{
+	g_assert(line_num >= 0);
+	g_assert(line_num < lines.size());
+
+	return lines[line_num]->text;
+}
+
+int TextView::GetLinesNumber() const
+{
+	return lines.size();
+}
+
+int TextView::ViewPosForLine(int line_num) const
+{
+	g_assert(line_num > 0);
+	g_assert(line_num < lines.size());
+
+	/// @todo
+	return 0;
+}
+
+void TextView::SetViewPos(int viewy)
+{
+	g_assert(viewy > 0);
+	g_assert(viewy <= screen_lines.size());
+
+	view_top = viewy;
+
+	Redraw();
+}
+
+void TextView::Draw()
+{
+	if (!area || lines.empty())
 		return;
 
-	if (newx > view_left + w - 1) {
-		view_left = newx - w + 1;
-	} else if (newx < view_left) {
-		view_left = newx;
+	area->erase();
+
+	int realh = area->getmaxy();
+
+	if (autoscroll && screen_lines.size()) {
+		view_top = screen_lines.size() - area->getmaxy();
+		if (view_top < 0)
+			view_top = 0;
 	}
 
-	if (newy > view_top + h - 1) {
-		view_top = newy - h + 1;
-	} else if (newy < view_top) {
-		view_top = newy;
+	std::vector<ScreenLine *>::iterator i;
+	int j;
+	for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end() && j < realh; i++, j++)
+		area->mvaddstring(0, j, (*i)->width, (*i)->text);
+}
+
+void TextView::MoveResize(int newx, int newy, int neww, int newh)
+{
+	Widget::MoveResize(newx, newy, neww, newh);
+
+	/// @todo optimize
+	for (int i = 0; i < lines.size(); i++)
+		UpdateScreenLines(i);
+
+	/// @todo comment out
+	Redraw();
+}
+
+const gchar *TextView::ProceedLine(const gchar *text, int area_width, int *res_width) const
+{
+	g_assert(text);
+	g_assert(area_width > 0);
+	g_assert(res_width);
+
+	const gchar *cur = text;
+	const gchar *res = text;
+	int prev_width = 0;
+	int cur_width = 0;
+	gunichar uni;
+	bool space = false;
+	*res_width = 0;
+
+	while (*cur) {
+		prev_width = cur_width;
+		uni = g_utf8_get_char(cur);
+		cur_width += g_unichar_iswide(uni) ? 2 : 1;
+
+		if (prev_width > area_width)
+			break;
+
+		// possibly too long word
+		if (cur_width > area_width && !*res_width) {
+			*res_width = prev_width;
+			res = cur;
+		}
+
+		if (g_unichar_type(uni) == G_UNICODE_SPACE_SEPARATOR)
+			space = true;
+		else if (space) {
+			/* Found start of a word and everything before that can fit into
+			 * a screen line. */
+			*res_width = prev_width;
+			res = cur;
+			space = false;
+		}
+
+		cur = g_utf8_next_char(cur);
 	}
+
+	// end of text
+	if (!*cur && cur_width <= area_width) {
+		*res_width = cur_width;
+		res = cur;
+	}
+
+	/* Fix for very small area_width and characters wider that 1 cell. For
+	 * example area_width = 1 and text = "W" where W is a wide character
+	 * (2 cells width). In that case we can not draw anything but we want to
+	 * skip to another character. */
+	if (res == text)
+		res = g_utf8_next_char(res);
+
+	return res;
 }
 
-Rect TextView::GetScrollPosition(void)
+void TextView::UpdateScreenLines(int line_num)
 {
-	Rect r;
+	g_assert(line_num >= 0);
+	g_assert(line_num < lines.size());
 
-	r.x = view_left;
-	r.y = view_top;
-	r.width = Width();
-	r.height = Height();
+	std::vector<ScreenLine *>::iterator i;
 
-	return r;
+	/* Find where new screen lines should be placed and remove previous screen
+	 * lines created for this line. */
+	i = screen_lines.begin();
+	while (i != screen_lines.end()) {
+		if ((*i)->parent == lines[line_num]) {
+			delete *i;
+			i = screen_lines.erase(i);
+		}
+		else if (line_num + 1 < lines.size() && (*i)->parent == lines[line_num + 1])
+			break;
+		else
+			i++;
+	}
+
+	if (!area)
+		return;
+
+	// parse line into screen lines
+	std::vector<ScreenLine *> new_lines;
+	const gchar *p = lines[line_num]->text;
+	const gchar *s;
+	int width;
+	while (*p) {
+		s = p;
+		p = ProceedLine(p, area->getmaxx(), &width);
+		new_lines.push_back(new ScreenLine(*lines[line_num], s, width));
+	}
+
+	screen_lines.insert(i, new_lines.begin(), new_lines.end());
 }
 
-TextView::char_iterator TextView::begin(void) const
+TextView::Line::Line(const gchar *text_, int bytes)
 {
-	return buffer.begin();
+	g_assert(text_);
+	g_assert(bytes > 0);
+
+	text = g_strndup(text_, bytes);
+	length = g_utf8_strlen(text, -1);
 }
 
-TextView::char_iterator TextView::back(void) const
+TextView::Line::~Line()
 {
-	return buffer.back();
+	g_assert(text);
+
+	g_free(text);
 }
 
-TextView::char_iterator TextView::end(void) const
+TextView::ScreenLine::ScreenLine(Line &parent_, const gchar *text_, int width_)
+: parent(&parent_), text(text_), width(width_)
 {
-	return buffer.end();
-}
-
-TextView::char_iterator TextView::reverse_begin(void) const
-{
-	return buffer.reverse_begin();
-}
-
-TextView::char_iterator TextView::reverse_back(void) const
-{
-	return buffer.reverse_back();
-}
-
-TextView::char_iterator TextView::reverse_end(void) const
-{
-	return buffer.reverse_end();
 }

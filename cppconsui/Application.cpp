@@ -24,6 +24,7 @@
 
 #include "ConsuiCurses.h"
 #include "Application.h"
+#include "CppConsUIInternal.h"
 
 Application::Application(void)
 : windowmanager(NULL), converter((GIConv) -1), channel(NULL), channel_id(0)
@@ -79,13 +80,13 @@ gboolean Application::io_input(GIOChannel *source, GIOCondition cond)
 	gsize rd;
 	GError *err = NULL;
 	/* Buffer for saving a part of char from a previous reading, max char len
-	 * in bytes (currently 5 bytes for UTF-EBCDIC), size must be always
+	 * in bytes (currently 6 bytes for UTF-8), size must be always
 	 * <= sizeof(buf). */
-	static gchar buf_part[5];
+	static gchar buf_part[6];
 	static gsize buf_part_len;
-	/* Every character in UTF-8 can be encoded with 4 bytes so this is enough
+	/* Every character in UTF-8 can be encoded with 6 bytes so this is enough
 	 * room for any conversion. */
-	gchar converted[4 * sizeof(buf) + 1];
+	gchar converted[6 * sizeof(buf) + 1];
 	gsize converted_left = sizeof(converted);
 	gchar *pbuf = buf;
 	gchar *pconverted = converted;

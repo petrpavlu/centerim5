@@ -51,22 +51,6 @@ void Dialog::AddWidgets(void)
 	AddWidget(seperator);
 }
 
-void Dialog::Resize(int neww, int newh)
-{
-	/* Let parent's Resize() renew data structures (including
-	 * the area's of child widgets which will thus be done
-	 * twice)
-	 * */
-	Window::Resize(neww, newh);
-
-	/* resize all our widgets, in this case its only one widget
-	 * here, w and h are the size of the container, which is 
-	 * what we want. in most cases you would need to recalculate
-	 * widget sizes based on window and/or container size.
-	 * */
-	//browser->Resize(w-4, h-2);
-}
-
 void Dialog::AddButton(const gchar *text, Dialog::ResponseType response)
 {
 	buttons->AddItem(text, sigc::bind(sigc::mem_fun(this, &Dialog::Response), response));

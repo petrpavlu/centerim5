@@ -29,13 +29,14 @@
 int main (int argc, char **argv)
 {
 	CenterIM* cim;
-	const char *locale = NULL;
 
 #ifdef ENABLE_NLS
-	locale = setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
+	bind_textdomain_codeset(PACKAGE, "UTF-8");
 	textdomain(PACKAGE);
 #endif
+
+	setlocale(LC_ALL, "");
 
 	try {
 		cim = &CenterIM::Instance();

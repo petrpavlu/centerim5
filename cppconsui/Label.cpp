@@ -47,9 +47,11 @@ void Label::Draw()
 	if (!area)
 		return;
 
-	// @todo through this is not a widget for long text there are some cases
-	// in cim where we use it for a short but multiline text, so we should
-	// threat LF specially here
+	/**
+	 * @todo though this is not a widget for long text there are some cases in
+	 * cim where we use it for a short but multiline text, so we should threat
+	 * LF specially here
+	 */
 
 	area->erase();
 

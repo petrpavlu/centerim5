@@ -19,8 +19,8 @@
  * */
 
 #include "ConsuiCurses.h"
-#include "TextBrowser.h"
 #include "Keys.h"
+#include "CppConsUIInternal.h"
 
 #include "MenuWindow.h"
 
@@ -61,18 +61,18 @@ bool MenuWindow::RegisterKeys()
 }
 
 
-void MenuWindow::Resize(int neww, int newh)
+void MenuWindow::MoveResize(int newx, int newy, int neww, int newh)
 {
 	/* Let parent's Resize() renew data structures (including
 	 * the area's of child widgets which will thus be done
 	 * twice)
 	 * */
-	Window::Resize(neww, newh);
+	Window::MoveResize(newx, newy, neww, newh);
 
 	/* resize all our widgets, in this case its only one widget
 	 * here, w and h are the size of the container, which is 
 	 * what we want. in most cases you would need to recalculate
 	 * widget sizes based on window and/or container size.
 	 * */
-	listbox->Resize(w, h);
+	listbox->MoveResize(0, 0, w, h);
 }

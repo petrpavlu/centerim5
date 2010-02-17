@@ -22,8 +22,7 @@
 #include "Conf.h"
 #include "CenterIM.h"
 
-#include <cppconsui/CppConsUI.h>
-#include <cppconsui/TextWindow.h>
+//#include <cppconsui/CppConsUI.h>
 #include <cppconsui/WindowManager.h>
 #include <libpurple/debug.h>
 #include <libpurple/util.h>
@@ -38,7 +37,7 @@ Log &Log::Instance(void)
 
 //TODO sensible defaults
 Log::Log(void)
-: TextWindow(0, 0, 80, 24, LineStyle::DEFAULT)
+: Window(0, 0, 80, 24, LineStyle::DEFAULT)
 , logfile(NULL)
 , prefs_handle(NULL)
 , max_lines(0)
@@ -48,13 +47,16 @@ Log::Log(void)
 
 	conf = Conf::Instance();
 
+	textview = new TextView(*this, 1, 0, w - 2, h, true);
+	AddWidget(textview);
+
 #define REGISTER_G_LOG_HANDLER(name) \
 	g_log_set_handler((name), (GLogLevelFlags)(G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL \
 				| G_LOG_FLAG_RECURSION), glib_log_handler_, NULL)
 
 	// TODO max_lines not used anywhere..
 	max_lines = conf->GetLogMaxLines();
-	MoveResize(conf->GetLogDimensions());
+	MoveResizeRect(conf->GetLogDimensions());
 
 	// register the glib log handlers
 	REGISTER_G_LOG_HANDLER(NULL);
@@ -82,6 +84,13 @@ Log::~Log(void)
 		g_io_channel_unref(logfile);
 }
 
+void Log::MoveResize(int newx, int newy, int neww, int newh)
+{
+	Window::MoveResize(newx, newy, neww, newh);
+
+	textview->MoveResize(1, 0, w - 2, h);
+}
+
 void Log::Write(Level level, const gchar *fmt, ...)
 {
 	va_list args;
@@ -95,7 +104,7 @@ void Log::Write(Level level, const gchar *fmt, ...)
 	va_end(args);
 
 	WriteToFile(text);
-	AddTextToWindow(text);
+	textview->Append(text);
 
 	g_free(text);
 }
@@ -174,7 +183,7 @@ void Log::debug_change(const char *name, PurplePrefType type, gconstpointer val)
 
 void Log::ScreenResized(void)
 {
-	MoveResize(CenterIM::Instance().ScreenAreaSize(CenterIM::LogArea));
+	MoveResizeRect(CenterIM::Instance().ScreenAreaSize(CenterIM::LogArea));
 }
 
 void Log::Write(Type type, Level level, const gchar *fmt, ...)
@@ -191,7 +200,7 @@ void Log::Write(Type type, Level level, const gchar *fmt, ...)
 	va_end(args);
 
 	WriteToFile(text);
-	AddTextToWindow(text);
+	textview->Append(text);
 
 	g_free(text);
 }
@@ -208,7 +217,7 @@ void Log::WriteToWindow(Level level, const gchar *fmt, ...)
 	text = g_strdup_vprintf(fmt, args);
 	va_end(args);
 
-	AddTextToWindow(text);
+	textview->Append(text);
 
 	g_free(text);
 }
@@ -255,35 +264,6 @@ void Log::WriteToFile(const gchar *text)
 					WriteToWindow(Level_error, _("centerim/log: Error flushing logfile.\n"));
 			}
 		}
-	}
-}
-
-// TODO consider moving this to TextBrowser
-void Log::AddTextToWindow(gchar *text)
-{
-	gchar *start;
-	gchar *iter;
-	gchar bac;
-	GUnicodeBreakType btype;
-
-	start = iter = text;
-
-	// add text line by line
-	while (*iter != '\0') {
-		btype = g_unichar_break_type(g_utf8_get_char(iter));
-		if (btype == G_UNICODE_BREAK_CARRIAGE_RETURN
-				|| btype == G_UNICODE_BREAK_LINE_FEED) {
-			// skip empty lines
-			if (start != iter) {
-				bac = *iter;
-				*iter = '\0';
-				AddLine(start);
-				*iter = bac;
-			}
-			start = iter = g_utf8_next_char(iter);
-		}
-		else
-			iter = g_utf8_next_char(iter);
 	}
 }
 

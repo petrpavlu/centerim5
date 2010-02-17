@@ -57,8 +57,6 @@ class Container
 		 * @{
 		 */
 		void UpdateAreas(void);
-		virtual void Move(const int newx, const int newy);
-		virtual void Resize(const int neww, const int newh);
 		virtual void MoveResize(const int newx, const int newy, const int neww, const int newh);
 		virtual void Draw(void);
 		 /** @} */

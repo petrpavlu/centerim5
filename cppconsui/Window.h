@@ -55,11 +55,9 @@ class Window
 		virtual ~Window();
 	
 		virtual void Close(void);
-		virtual void Move(int newx, int newy);
-		virtual void Resize(int neww, int newh);
-		virtual void MoveResize(const Rect &rect)
-			{ MoveResize(rect.x, rect.y, rect.width, rect.height); }
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
+		virtual void MoveResizeRect(const Rect &rect)
+			{ MoveResize(rect.x, rect.y, rect.width, rect.height); }
 		virtual void UpdateArea();
 
 		virtual void Draw(void);

@@ -22,6 +22,7 @@
 #include "Window.h"
 #include "Keys.h"
 #include "KeyConfig.h"
+#include "CppConsUIInternal.h"
 
 #include <sys/ioctl.h>
 #include <signal.h>

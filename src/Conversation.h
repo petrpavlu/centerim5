@@ -27,7 +27,7 @@
 
 #include <cppconsui/Window.h>
 #include <cppconsui/TextView.h>
-#include <cppconsui/TextInput.h>
+#include <cppconsui/TextEdit.h>
 #include <cppconsui/LineStyle.h>
 #include <cppconsui/HorizontalLine.h>
 
@@ -51,7 +51,7 @@ class Conversation
 		virtual void Send(void);
 		virtual void Close(void);
 
-		virtual void Resize(int neww, int newh);
+		virtual void MoveResize(int newx, int newy, int neww, int newh);
 		virtual void ScreenResized();
 
 	protected:
@@ -66,7 +66,7 @@ class Conversation
 		Log *log;
 		Conf *conf;
 		TextView *view;
-		TextInput *input;
+		TextEdit *input;
 		HorizontalLine *line;
 		
 		int view_height;

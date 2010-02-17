@@ -28,17 +28,6 @@
 #include <wchar.h>
 #include <glib.h>
 
-#ifdef ENABLE_NLS
-
-#include <libintl.h>
-#define _(s)	gettext(s)
-
-#else
-
-#define _(s)	(s)
-
-#endif
-
 //from pango/break.c
 #define PARAGRAPH_SEPARATOR 0x2029
 #define PARAGRAPH_SEPARATOR_STRING "\xE2\x80\xA9"

@@ -24,6 +24,7 @@
 #include "ConsuiCurses.h"
 #include "Button.h"
 #include "Keys.h"
+#include "CppConsUIInternal.h"
 
 #define CONTEXT_BUTTON "button"
 

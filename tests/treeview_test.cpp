@@ -37,6 +37,7 @@ TreeViewWindow::TreeViewWindow()
 {
 	TreeView *tree;
 	TreeView::NodeReference node;
+	TreeView::NodeReference node2;
 
 	AddWidget(new Label(*this, 1, 1, 20, 1, "Press F10 to quit."));
 
@@ -45,7 +46,10 @@ TreeViewWindow::TreeViewWindow()
 	SetInputChild(tree);
 
 	node = tree->AddNode(tree->Root(), new Button(*tree, 0, 0, "Button node A"), NULL);
-	tree->AddNode(node, new Button(*tree, 0, 0, "Button node A-1"), NULL);
+	node2 = tree->AddNode(node, new Button(*tree, 0, 0, "Button node A-1"), NULL);
+	tree->AddNode(node2, new Button(*tree, 0, 0, "Button node A-1-a"), NULL);
+	tree->AddNode(node2, new Button(*tree, 0, 0, "Button node A-1-b"), NULL);
+	tree->AddNode(node2, new Button(*tree, 0, 0, "Button node A-1-c"), NULL);
 	tree->AddNode(node, new Button(*tree, 0, 0, "Button node A-2"), NULL);
 	tree->AddNode(node, new Button(*tree, 0, 0, "Button node A-3"), NULL);
 
@@ -129,7 +133,7 @@ void TestApp::DeclareBindables()
 DEFINE_SIG_REGISTERKEYS(TestApp, RegisterKeys);
 bool TestApp::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_TESTAPP, "quit", _("Quit TestApp."), Keys::Instance()->Key_f10());
+	RegisterKeyDef(CONTEXT_TESTAPP, "quit", "Quit TestApp.", Keys::Instance()->Key_f10());
 	return true;
 }
 

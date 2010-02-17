@@ -35,6 +35,7 @@
 
 #include "TextEntry.h"
 #include "Keys.h"
+#include "CppConsUIInternal.h"
 
 #include <glib.h>
 #include <cstring>
@@ -230,8 +231,6 @@ int TextEntry::ProcessInputText(const char *input, const int bytes)
 	if (editable)
 		InsertTextAtCursor(new_input, new_bytes);
 
-	Redraw();
-
 	// don't forget to free the new input string
 	g_free(new_input);
 
@@ -261,9 +260,9 @@ void TextEntry::MoveCursor(CursorMovement step, int direction)
 			break;
 		case MOVE_WORDS:
 			if (direction > 0)
-				current_pos = MoveForwardWord(current_pos, false);
+				current_pos = MoveForwardWord(current_pos);
 			else if (direction < 0)
-				current_pos = MoveBackwardWord(current_pos, false);
+				current_pos = MoveBackwardWord(current_pos);
 			break;
 		case MOVE_BUFFER_ENDS:
 			current_pos = direction < 0 ? 0 : text_length;
@@ -344,6 +343,8 @@ void TextEntry::InsertTextAtCursor(const gchar *new_text, int new_text_bytes)
 
 	current_pos = current_pos + n_chars;
 
+	Redraw();
+
 	signal_text_changed();
 }
 
@@ -399,9 +400,9 @@ void TextEntry::DeleteFromCursor(DeleteType type, int direction)
 			break;
 		case DELETE_WORD_ENDS:
 			if (direction > 0)
-				end_pos = MoveForwardWord(end_pos, false);
+				end_pos = MoveForwardWord(end_pos);
 			else if (direction < 0)
-				start_pos = MoveBackwardWord(start_pos, false);
+				start_pos = MoveBackwardWord(start_pos);
 			DeleteText(start_pos, end_pos);
 			break;
 		default:
@@ -418,13 +419,13 @@ int TextEntry::MoveLogically(int start, int direction)
 	return start;
 }
 
-int TextEntry::MoveForwardWord(int start, bool allow_whitespace)
+int TextEntry::MoveForwardWord(int start)
 {
 	int new_pos = start;
 	gchar *cur = g_utf8_offset_to_pointer(text, start);
 	bool white = false;
 
-	// search for a first nonwhite character after white characters
+	// search for the first nonwhite character after white characters
 	while (new_pos < text_length) {
 		if (g_unichar_type(g_utf8_get_char(cur)) == G_UNICODE_SPACE_SEPARATOR)
 			white = true;
@@ -437,7 +438,7 @@ int TextEntry::MoveForwardWord(int start, bool allow_whitespace)
 	return new_pos;
 }
 
-int TextEntry::MoveBackwardWord(int start, bool allow_whitespace)
+int TextEntry::MoveBackwardWord(int start)
 {
 	int new_pos = start;
 	gchar *cur = g_utf8_offset_to_pointer(text, start);
@@ -450,7 +451,7 @@ int TextEntry::MoveBackwardWord(int start, bool allow_whitespace)
 	cur = g_utf8_prev_char(cur);
 	new_pos--;
 
-	// search for first white character before nonwhite characters
+	// search for the first white character before nonwhite characters
 	while (new_pos >= 0) {
 		if (g_unichar_type(g_utf8_get_char(cur)) != G_UNICODE_SPACE_SEPARATOR)
 			nonwhite = true;

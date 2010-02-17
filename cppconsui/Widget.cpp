@@ -50,31 +50,8 @@ Widget::Widget(Widget& parent, int x_, int y_, int w_, int h_)
 
 Widget::~Widget()
 {
-	delete area;
-}
-
-void Widget::Move(int newx, int newy)
-{
-	Point oldpos(x,y), newpos(newx, newy);
-
-	x = newx;
-	y = newy;
-
-	UpdateArea();
-
-	signal_move(this, oldpos, newpos);
-}
-
-void Widget::Resize(int neww, int newh)
-{
-	Rect oldsize(x, y, w, h), newsize(x, y, neww, newh);
-
-	w = neww;
-	h = newh;
-
-	UpdateArea();
-
-	signal_resize(this, oldsize, newsize);
+	if (area)
+		delete area;
 }
 
 void Widget::MoveResize(int newx, int newy, int neww, int newh)
@@ -88,8 +65,7 @@ void Widget::MoveResize(int newx, int newy, int neww, int newh)
 
 	UpdateArea();
 
-	signal_move(this, oldsize, newsize);
-	signal_resize(this, oldsize, newsize);
+	signal_moveresize(this, oldsize, newsize);
 }
 
 void Widget::UpdateArea()
@@ -229,13 +205,16 @@ Curses::Window *Widget::GetSubPad(const Widget &child, int begin_x, int begin_y,
 	if (!area)
 		return NULL;
 
+	int realw = area->getmaxx();
+	int realh = area->getmaxy();
+
 	/* Extend requested subpad to whole parent area or shrink requested area
 	 * if necessary. */
-	if (nlines == -1 || nlines > h - begin_y)
-		nlines = h - begin_y;
+	if (nlines == -1 || nlines > realh - begin_y)
+		nlines = realh - begin_y;
 
-	if (ncols == -1 || ncols > w - begin_x)
-		ncols = w - begin_x;
+	if (ncols == -1 || ncols > realw - begin_x)
+		ncols = realw - begin_x;
 
 	return area->subpad(begin_x, begin_y, ncols, nlines);
 }

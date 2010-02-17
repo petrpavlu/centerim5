@@ -26,6 +26,7 @@
 
 #include "Keys.h"
 #include "Button.h"
+#include "CppConsUIInternal.h"
 
 /// @todo remove when show() of window/dialog is implemented
 #include "WindowManager.h"

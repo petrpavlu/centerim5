@@ -54,13 +54,14 @@ class Widget
 		Widget(Widget& parent, int x_, int y_, int w_, int h_);
 		virtual ~Widget();
 
-		/** This method, as well as Resize(), MoveResize() 
+		/** @todo This method, as well as Resize(), MoveResize() 
 		 * are the methods to be called when the coordinates of the Widget should change.
 		 * they emit the appropriate signals after calling UpdateArea()
 		 */
-		virtual void Move(const int newx, const int newy);
-		virtual void Resize(const int neww, const int newh);
 		virtual void MoveResize(const int newx, const int newy, const int neww, const int newh);
+		virtual void MoveResize()
+			{ MoveResize(x, y, w, h); }
+
 		/** The @ref area is recreated, the new area should be redrawn.
 		 * It is called whenever the coordinates of the widget change. The caller must ensure the 
 		 * proper signals are emitted.
@@ -140,8 +141,7 @@ class Widget
 
 		/// @todo encapsulate with a function, make sure derived class call Move()/Resize()/Redraw() to emit signal.
 		/// Also check if this is possible at all.
-		sigc::signal<void, Widget*, Point&, Point&> signal_move;
-		sigc::signal<void, Widget*, Rect&, Rect&> signal_resize;
+		sigc::signal<void, Widget*, Rect&, Rect&> signal_moveresize;
 		sigc::signal<void, Widget*> signal_redraw;
 		sigc::signal<void, Widget*, bool> signal_focus;
 

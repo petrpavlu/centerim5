@@ -44,7 +44,7 @@ Conversation::Conversation(PurpleBlistNode* node)
 
 	view = new TextView(*this, 1, 0, w - 2, h);
 	
-	input = new TextInput(*this, 1, 1, w - 2, h);
+	input = new TextEdit(*this, 1, 1, w - 2, h);
 	line = new HorizontalLine(*this, LineStyle::DEFAULT, 0, view_height, w);
 
 	AddWidget(view);
@@ -56,7 +56,7 @@ Conversation::Conversation(PurpleBlistNode* node)
 
 	SetPartitioning(conf->GetChatPartitioning());
 	
-	MoveResize(conf->GetChatDimensions());
+	MoveResizeRect(conf->GetChatDimensions());
 	DeclareBindables();
 }
 
@@ -100,7 +100,7 @@ void Conversation::Receive(const char *name, const char *alias, const char *mess
 
 	//TODO iconv, write to a window
 	//printf("message from %s (%s) :\n%s\n", name, alias, message);
-	view->append(message, -1);
+	view->Append(message);
 }
 
 //TODO if this remains empty, make it a pure virtual function
@@ -116,16 +116,16 @@ void Conversation::Close(void)
 	Window::Close();
 }
 
-void Conversation::Resize(int neww, int newh)
+void Conversation::MoveResize(int newx, int newy, int neww, int newh)
 {
-	Window::Resize(neww, newh);
+	Window::MoveResize(newx, newy, neww, newh);
 
 	SetPartitioning(conf->GetChatPartitioning());
 }
 
 void Conversation::ScreenResized()
 {
-	MoveResize(CenterIM::Instance().ScreenAreaSize(CenterIM::ChatArea));
+	MoveResizeRect(CenterIM::Instance().ScreenAreaSize(CenterIM::ChatArea));
 }
 
 //TODO if this remains empty, make it a pure virtual function
@@ -142,14 +142,14 @@ void Conversation::SetPartitioning(unsigned int percentage)
 	view_height = (h * percentage) / 100;
 	if (view_height < 1) view_height = 1;
 
-	inputheight = h - view_height - 2;
+	inputheight = h - view_height - 1;
 	if (inputheight < 1) {
 		inputheight = 1;
 		view_height = h - inputheight - 1;
 	}
 
-	view->Resize(w - 2, view_height - 2);
-	input->MoveResize(0, view_height + 1, w - 2, inputheight);
+	view->MoveResize(1, 0, w - 2, view_height - 2);
+	input->MoveResize(1, view_height + 1, w - 2, inputheight);
 	line->MoveResize(0, view_height, w, 1);
 }
 
@@ -261,9 +261,12 @@ void ConversationIm::Send(void)
 	if (!convim)
 		CreatePurpleConv();
 
-	purple_conv_im_send(convim, input->AsString("<br/>").c_str());
-
-	input->Clear();
+	gchar *str = input->AsString("<br/>");
+	if (str) {
+		purple_conv_im_send(convim, str);
+		g_free(str);
+		input->Clear();
+	}
 }
 
 void ConversationIm::CreatePurpleConv(void)
@@ -341,7 +344,7 @@ void ConversationIm::LoadHistory(void)
 	header = g_strdup_printf("<b>Conversation with %s on %s:</b><br>\n", alias,
 							 purple_date_format_full(localtime(&((PurpleLog *)logs->data)->time)));
 
-	view->append(header, -1);
+	view->Append(header);
 
 	purple_conversation_write(conv, "", header, mflag, time(NULL));
 

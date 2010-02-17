@@ -99,12 +99,11 @@ class TextEntry
 	private:
 		TextEntry();
 		TextEntry(const TextEntry&);
-
 		TextEntry& operator=(const TextEntry&);
 
 		int MoveLogically(int start, int count);
-		int MoveBackwardWord(int start, bool allow_whitespace);
-		int MoveForwardWord(int start, bool allow_whitespace);
+		int MoveBackwardWord(int start);
+		int MoveForwardWord(int start);
 
 		void ActionMoveCursor(CursorMovement step, int direction);
 		void ActionDelete(DeleteType type, int direction);

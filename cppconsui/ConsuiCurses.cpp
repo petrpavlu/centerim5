@@ -20,7 +20,12 @@
 
 #include "ConsuiCurses.h"
 
-//#define _XOPEN_SOURCE_EXTENDED
+/* In order to get wide characters support we must define
+ * _XOPEN_SOURCE_EXTENDED when using ncurses.h. */
+#ifndef _XOPEN_SOURCE_EXTENDED
+#define _XOPEN_SOURCE_EXTENDED
+#endif
+
 #define NCURSES_NOMACROS
 
 #if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
@@ -89,64 +94,132 @@ Curses::Window *Curses::Window::subpad(int begin_x, int begin_y, int ncols, int 
 	return a;
 }
 
-void Curses::Window::mvaddstring(int x, int y, int w, const gchar *str)
+const gchar *Curses::Window::PrintChar(const gchar *ch, int *printed, const gchar *end)
 {
 	// @todo `\v' switch is not implemented yet
 	// @todo optimizations (don't translate to cchar if we have got utf8
 	// terminal, etc.)
 	// @todo error checking (setcchar)
 
-	int printed = 0;
-	const gchar *u;
+	/*
+	if (*u == COLOR_SELECT_CHAR) {
+		u++;
+		if (*u & COLOR_SPECIAL) {
+			attrset(selection_color_special(selected, *u & COLOR_MASK));
+		} else if (*u & COLOR_BOLD) {
+			attrset(selection_color(selected, *u & COLOR_MASK));
+			attron(A_BOLD);
+		} else {
+			attrset(selection_color(selected, *u & COLOR_MASK));
+		}
+		continue;
+	}
+	*/
+
+	g_assert(ch);
+	g_assert(*ch);
+	g_assert(printed);
+
+	*printed = 0;
+
+	if (((unsigned char) *ch >= 0x7f && (unsigned char) *ch < 0xa0)) {
+		// filter out C1 (8-bit) control characters
+		::waddch(p->win, '?');
+		*printed = 1;
+		return ch + 1;
+	}
+
+	// get a unicode character from the next few bytes
+	wchar_t wch[2];
+	cchar_t cc;
+
+	wch[0] = g_utf8_get_char(ch);
+	wch[1] = L'\0';
+
+	// invalid utf-8 sequence
+	if (wch[0] < 0)
+		return ch + 1;
+
+	// control char symbols
+	if (wch[0] < 32)
+		wch[0] = 0x2400 + wch[0];
+
+	::setcchar(&cc, wch, A_NORMAL, 0, NULL);
+	::wadd_wch(p->win, &cc);
+	*printed = g_unichar_iswide(wch[0]) ? 2 : 1;
+	return g_utf8_find_next_char(ch, end);
+}
+
+int Curses::Window::mvaddstring(int x, int y, int w, const gchar *str)
+{
+	g_assert(str);
 
 	::wmove(p->win, y, x);
 	//attrset(selection_color(selected, COLOR_STANDARD));
 
-	for (u = str; *u && (w == -1 || printed < w); u++) {
-		/*
-		if (*u == COLOR_SELECT_CHAR) {
-			u++;
-			if (*u & COLOR_SPECIAL) {
-				attrset(selection_color_special(selected, *u & COLOR_MASK));
-			} else if (*u & COLOR_BOLD) {
-				attrset(selection_color(selected, *u & COLOR_MASK));
-				attron(A_BOLD);
-			} else {
-				attrset(selection_color(selected, *u & COLOR_MASK));
-			}
-			continue;
-		}
-		*/
-
-		if (((unsigned char) *u >= 0x7f && (unsigned char) *u < 0xa0)) {
-			// filter out C1 (8-bit) control characters
-			::waddch(p->win, '?');
-			printed++;
-			continue;
-		}
-
-		// get a unicode character from the next few bytes
-		wchar_t wch[2];
-		cchar_t cc;
-
-		wch[0] = g_utf8_get_char_validated(u, -1);
-		wch[1] = L'\0';
-
-		// invalid utf-8 sequence
-		if (wch[0] < 0)
-			continue;
-
-		// control char symbols
-		if (wch[0] < 32)
-			wch[0] = 0x2400 + wch[0];
-
-		::setcchar(&cc, wch, A_NORMAL, 0, NULL);
-		::wadd_wch(p->win, &cc);
-		printed += g_unichar_iswide(wch[0]) ? 2 : 1;
-		u = g_utf8_next_char(u) - 1;
+	int printed = 0;
+	int p;
+	while (*str && printed < w) {
+		str = PrintChar(str, &p);
+		printed += p;
 	}
-	if (w != -1)
-		::whline(p->win, ' ', w - printed);
+	return printed;
+}
+
+int Curses::Window::mvaddstring(int x, int y, const gchar *str)
+{
+	g_assert(str);
+
+	::wmove(p->win, y, x);
+	//attrset(selection_color(selected, COLOR_STANDARD));
+
+	int printed = 0;
+	int p;
+	while (*str) {
+		str = PrintChar(str, &p);
+		printed += p;
+	}
+	return printed;
+}
+
+int Curses::Window::mvaddstring(int x, int y, int w, const gchar *str, const gchar *end)
+{
+	g_assert(str);
+	g_assert(end);
+
+	if (str >= end)
+		return 0;
+
+	::wmove(p->win, y, x);
+	//attrset(selection_color(selected, COLOR_STANDARD));
+
+	int printed = 0;
+	int p;
+	while (str && printed < w) {
+		str = PrintChar(str, &p, end);
+		printed += p;
+	}
+	return printed;
+}
+
+int Curses::Window::mvaddstring(int x, int y, const gchar *str, const gchar *end)
+{
+	g_assert(str);
+	g_assert(end);
+
+	if (str >= end)
+		return 0;
+
+	::wmove(p->win, y, x);
+	//attrset(selection_color(selected, COLOR_STANDARD));
+
+	int printed = 0;
+	int p;
+	while (str) {
+		str = PrintChar(str, &p, end);
+		printed += p;
+	}
+	return printed;
 }
 
 int Curses::Window::mvaddstr(int x, int y, const char *str)

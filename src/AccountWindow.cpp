@@ -59,18 +59,18 @@ AccountWindow::AccountWindow()
 	AddWidget(menu);
 	AddWidget(line);
 
-	MoveResize(conf->GetAccountWindowDimensions());
+	MoveResizeRect(conf->GetAccountWindowDimensions());
 	
 	Populate();
 
 	menu->GrabFocus();
 }
 
-void AccountWindow::Resize(int neww, int newh)
+void AccountWindow::MoveResize(int newx, int newy, int neww, int newh)
 {
-	Window::Resize(neww, newh);
+	Window::MoveResize(newx, newy, neww, newh);
 
-	accounts->Resize(w, h - 2);
+	accounts->MoveResize(0, 0, w, h - 2);
 	menu->MoveResize(0, h - 1, w, 1);
 	line->MoveResize(0, h - 2, w, 1);
 }
@@ -91,7 +91,7 @@ void AccountWindow::ScreenResized()
 	confSize.x = (screen.Width() - confSize.Width()) / 2;
 	confSize.y = (screen.Height() - confSize.Height()) / 2;
 	
-	MoveResize(confSize);
+	MoveResizeRect(confSize);
 }
 
 AccountWindow::~AccountWindow()

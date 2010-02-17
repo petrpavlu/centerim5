@@ -44,8 +44,6 @@ class Dialog
 
 		void Close(void);
 
-		virtual void Resize(int neww, int newh);
-
 		void AddButton(const gchar *label, ResponseType response);
 
 		void Response(ResponseType response);

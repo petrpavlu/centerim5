@@ -189,4 +189,7 @@ LineElements* LineStyle::GetCurrentElems()
 		case HEAVY:
 			return &line_elements_heavy;
 	}
+
+	g_assert_not_reached();
+	return NULL;
 }

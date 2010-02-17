@@ -117,7 +117,7 @@ void BuddyListBuddy::Update(void)
 	//clean this file up?
 	const gchar *text;
 	text = purple_buddy_get_alias(buddy);
-	Resize(width(text), 1);
+	MoveResize(x, y, width(text), 1);
 	SetText(text);
 }
 
@@ -145,7 +145,7 @@ void BuddyListChat::Update(void)
 {
 	const gchar *text;
 	text = purple_chat_get_name(chat);
-	Resize(width(text), 1);
+	MoveResize(x, y, width(text), 1);
 	SetText(text);
 }
 
@@ -190,7 +190,7 @@ void BuddyListContact::Update(void)
 		}
 	}
 
-	Resize(width(text), 1);
+	MoveResize(x, y, width(text), 1);
 	SetText(text);
 }
 
@@ -216,7 +216,7 @@ void BuddyListGroup::Update(void)
 {
 	const gchar *text;
 	text = purple_group_get_name(group);
-	Resize(width(text), 1);
+	MoveResize(x, y, width(text), 1);
 	SetText(text);
 }
 

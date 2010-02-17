@@ -22,11 +22,9 @@
 #define __SCROLLPANE_H__
 
 #include "Container.h"
-#include "Scrollable.h"
 
 class ScrollPane
-: public Scrollable
-, public Container
+: public Container
 {
 	public:
 		ScrollPane(Widget& parent, int x, int y, int w, int h, int scrollw, int scrollh);

@@ -2,15 +2,6 @@ Centerim 5 Alpha 1
 
 How to get this version to work after compiling?
 
-Make sure you run in a terminal of at least 139 by 56 cells. No
-automatic resizing is implemented yet and this just happens
-to be the size of my terminal window I develop in. Also make
-sure you run in an utf-8 locale.
-
-If you don't like this the open ~/.centerim5/prefs.xml and look
-for `dimensions'. Here you can change the position and
-dimensions of the different windows.
-
 Press ^Q at any time to shutdown cim5.
 Press F4 for a menu. In this menu there is an option "Accounts", this
 can be used to add, edit and delete accounts. There is also an

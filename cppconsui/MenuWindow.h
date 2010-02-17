@@ -35,7 +35,7 @@ class MenuWindow
 		MenuWindow(int x_, int y_, int w_, int h_, LineStyle::Type ltype);
 		virtual ~MenuWindow();
 	
-		virtual void Resize(int neww, int newh);
+		virtual void MoveResize(int newx, int newy, int neww, int newh);
 
 		void AddItem(const char *text, sigc::slot<void> callback)
 			{ listbox->AddItem(text, callback); }

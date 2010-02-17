@@ -45,13 +45,16 @@ class Curses
 				Window *subpad(int begin_x, int begin_y, int ncols, int nlines);
 
 				/**
-				 * This function takes a formatted string and draws it on the
+				 * This functions take a formatted string and draws it on the
 				 * screen. The formatting of the string happens when a '\v' is
 				 * encountered. After the '\v' is a char, a switch in the code
 				 * figures out what to do based on this. Based on giFTcurs
 				 * drawing function.
 				 */
-				void mvaddstring(int x, int y, int w, const gchar *str);
+				int mvaddstring(int x, int y, int w, const gchar *str);
+				int mvaddstring(int x, int y, const gchar *str);
+				int mvaddstring(int x, int y, int w, const gchar *str, const gchar *end);
+				int mvaddstring(int x, int y, const gchar *str, const gchar *end);
 
 				// @todo remove
 				int mvaddstr(int x, int y, const char *str);
@@ -81,6 +84,8 @@ class Curses
 			protected:
 				struct WindowInternals;
 				WindowInternals *p;
+
+				const gchar *PrintChar(const gchar *ch, int *printed, const gchar *end = NULL);
 
 			private:
 				Window();

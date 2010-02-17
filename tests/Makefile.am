@@ -1,11 +1,12 @@
 check_PROGRAMS = \
-	textline_test \
-	textbuffer_test \
 	label_test \
-	window_test \
 	linestyle_test \
+	textbuffer_test \
 	textentry_test \
-	treeview_test
+	textline_test \
+	textview_test \
+	treeview_test \
+	window_test
 
 AM_CPPFLAGS = \
 	$(DEBUG_CFLAGS) \
@@ -18,23 +19,26 @@ LDADD = \
 	$(CURSES_LIBS) \
 	$(top_builddir)/cppconsui/libcppconsui.la
 
-textline_test_SOURCES = \
-	textline_test.cpp
-
-textbuffer_test_SOURCES = \
-	textbuffer_test.cpp
-
 label_test_SOURCES = \
 	label_test.cpp
-
-window_test_SOURCES = \
-	window_test.cpp
 
 linestyle_test_SOURCES = \
 	linestyle_test.cpp
 
+textbuffer_test_SOURCES = \
+	textbuffer_test.cpp
+
 textentry_test_SOURCES = \
 	textentry_test.cpp
 
+textline_test_SOURCES = \
+	textline_test.cpp
+
+textview_test_SOURCES = \
+	textview_test.cpp
+
 treeview_test_SOURCES = \
 	treeview_test.cpp
+
+window_test_SOURCES = \
+	window_test.cpp

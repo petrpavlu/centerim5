@@ -57,18 +57,18 @@ void Panel::Draw()
 		return;
 
 	for (int i = 1; i < realw - 1; i++) {
-		area->mvaddstring(i, 0, 1, linestyle->H());
-		area->mvaddstring(i, realh - 1, 1, linestyle->H());
+		area->mvaddstring(i, 0, linestyle->H());
+		area->mvaddstring(i, realh - 1, linestyle->H());
 	}
 
 	for (int i = 1; i < realh - 1; i++) {
-		area->mvaddstring(0, i, 1, linestyle->V());
-		area->mvaddstring(realw - 1, i, 1, linestyle->V());
+		area->mvaddstring(0, i, linestyle->V());
+		area->mvaddstring(realw - 1, i, linestyle->V());
 	}
-	area->mvaddstring(0, 0, 1, linestyle->CornerTL());
-	area->mvaddstring(0, realh - 1, 1, linestyle->CornerBL());
-	area->mvaddstring(realw - 1, 0, 1, linestyle->CornerTR());
-	area->mvaddstring(realw - 1, realh - 1, 1, linestyle->CornerBR());
+	area->mvaddstring(0, 0, linestyle->CornerTL());
+	area->mvaddstring(0, realh - 1, linestyle->CornerBL());
+	area->mvaddstring(realw - 1, 0, linestyle->CornerTR());
+	area->mvaddstring(realw - 1, realh - 1, linestyle->CornerBR());
 }
 
 void Panel::SetText(const gchar *str)

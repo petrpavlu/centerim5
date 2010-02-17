@@ -51,12 +51,12 @@ void VerticalLine::Draw()
 		return;
 
 	if (realh <= 1) {
-		area->mvaddstring(0, 0, 1, V());
+		area->mvaddstring(0, 0, V());
 	} else {
-		area->mvaddstring(0, 0, 1, VBegin());
+		area->mvaddstring(0, 0, VBegin());
 		for (int i = 1; i < realh - 1; i++) {
-			area->mvaddstring(i, 0, 1, V());
+			area->mvaddstring(i, 0, V());
 		}
-		area->mvaddstring(realh - 1, 0, 1, VEnd());
+		area->mvaddstring(realh - 1, 0, VEnd());
 	}
 }

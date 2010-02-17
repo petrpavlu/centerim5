@@ -1,16 +1,16 @@
 #include <cppconsui/Application.h>
 #include <cppconsui/Window.h>
-#include <cppconsui/Label.h>
 #include <cppconsui/Keys.h>
+#include <cppconsui/TextView.h>
 
-// LabelWindow class
-class LabelWindow
+// TextViewWindow class
+class TextViewWindow
 : public Window
 {
 	public:
 		/* This is a main window, make sure it can not be closed with ESC key
 		 * by overriding Close() method. */
-		static LabelWindow &Instance();
+		static TextViewWindow &Instance();
 		virtual void Close() {}
 
 		virtual void ScreenResized();
@@ -18,52 +18,21 @@ class LabelWindow
 	protected:
 
 	private:
-		LabelWindow();
-		virtual ~LabelWindow() {}
-		LabelWindow(const LabelWindow &);
-		LabelWindow &operator=(const LabelWindow &);
+		TextViewWindow();
+		virtual ~TextViewWindow() {}
+		TextViewWindow(const TextViewWindow &);
+		TextViewWindow &operator=(const TextViewWindow &);
 };
 
-LabelWindow &LabelWindow::Instance()
+TextViewWindow &TextViewWindow::Instance()
 {
-	static LabelWindow instance;
+	static TextViewWindow instance;
 	return instance;
 }
 
-LabelWindow::LabelWindow()
+TextViewWindow::TextViewWindow()
 : Window(0, 0, 0, 0, LineStyle::DEFAULT)
 {
-	Label *label;
-
-	label = new Label(*this,		// parent
-			1,			// x
-			1,			// y
-			20,			// width
-			1,			// height
-			"Press F10 to quit.");	// text
-	/* Add label to container, container takes widget ownership and deletes it
-	 * when necessary.
-	 */
-	AddWidget(label);
-
-	label = new Label(*this, 1, 3, 20, 1, "Too wide string, too wide string, too wide string");
-	AddWidget(label);
-
-	label = new Label(*this, 1, 5, 20, 3, "Multiline label, multiline label, multiline label");
-	AddWidget(label);
-
-	// unicode test
-	label = new Label(*this, 1, 9, 30, 3,
-			"\x56\xc5\x99\x65\xc5\xa1\x74\xc3\xad\x63\xc3\xad\x20\x70\xc5\x99"
-			"\xc3\xad\xc5\xa1\x65\x72\x79\x20\x73\x65\x20\x64\x6f\xc5\xbe\x61"
-			"\x64\x6f\x76\x61\x6c\x79\x20\xc3\xba\x70\x6c\x6e\xc4\x9b\x20\xc4"
-			"\x8d\x65\x72\x73\x74\x76\xc3\xbd\x63\x68\x20\xc5\x99\xc3\xad\x7a"
-			"\x65\xc4\x8d\x6b\xc5\xaf\x2e\x0a");
-	AddWidget(label);
-
-	label = new Label(*this, 1, 13, "Autosize");
-	AddWidget(label);
-
 	const gchar *long_text = "Lorem ipsum dolor sit amet, consectetur"
 		"adipiscing elit. Duis dui dui, interdum eget tempor auctor, viverra"
 		"suscipit velit. Phasellus vel magna odio. Duis rutrum tortor at nisi"
@@ -79,17 +48,20 @@ LabelWindow::LabelWindow()
 		"fermentum mattis eros, ut auctor urna tincidunt vitae. Praesent"
 		"tincidunt laoreet lobortis.";
 
-	label = new Label(*this, 42, 13, -1, 10, long_text);
-	AddWidget(label);
+	//TextView *textview = new TextView(*this, 0, 0, 80, 20);
+	TextView *textview = new TextView(*this, 0, 0, -1, -1);
+	AddWidget(textview);
+	textview->Append(long_text);
 
-	label = new Label(*this, 1, 24, 40, -1, long_text);
-	AddWidget(label);
-
-	label = new Label(*this, 42, 24, -1, -1, long_text);
-	AddWidget(label);
+	char wide[13];
+	int l;
+	l = g_unichar_to_utf8(0x1100, wide);
+	l += g_unichar_to_utf8(0x40, wide + l);
+	wide[l] = '\0';
+	textview->Append(wide);
 }
 
-void LabelWindow::ScreenResized()
+void TextViewWindow::ScreenResized()
 {
 	MoveResize(0, 0,
 			WindowManager::Instance()->getScreenW(),
@@ -145,7 +117,7 @@ TestApp::TestApp()
 void TestApp::Run()
 {
 	// TODO comment what happens here, who takes ownership etc.
-	windowmanager->Add(&LabelWindow::Instance());
+	windowmanager->Add(&TextViewWindow::Instance());
 
 	Application::Run();
 }
