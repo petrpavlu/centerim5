@@ -27,7 +27,7 @@ class GeneralMenu
 : public MenuWindow
 {
 	public:
-		GeneralMenu(int x, int y, int w, int h, LineStyle::Type ltype);
+		GeneralMenu(int x, int y, int w, int h);
 		virtual ~GeneralMenu();
 
 		void Dummy(void) { ; } //TODO remove

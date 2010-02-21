@@ -21,7 +21,7 @@ class TestWindow
 };
 
 TestWindow::TestWindow(int number, int x, int y, int w, int h)
-: Window(x, y, w, h, LineStyle::DEFAULT)
+: Window(x, y, w, h)
 {
 	Label *label;
 

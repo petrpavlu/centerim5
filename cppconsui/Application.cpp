@@ -29,7 +29,8 @@
 #include "CppConsUIInternal.h"
 
 Application::Application()
-: windowmanager(NULL), channel(NULL), channel_id(0), tk(NULL), gmainloop(NULL)
+: windowmanager(NULL), channel(NULL), channel_id(0), tk(NULL), utf8(false)
+, gmainloop(NULL)
 {
 	StdinInputInit();
 
@@ -86,7 +87,7 @@ gboolean Application::io_input(GIOChannel *source, GIOCondition cond)
 	 * termkey_getkey_force(). See libtermkey async demo.
 	 */
 	while (termkey_getkey_force(tk, &key) == TERMKEY_RES_KEY) {
-		if (key.type == TERMKEY_TYPE_UNICODE) {
+		if (key.type == TERMKEY_TYPE_UNICODE && !utf8) {
 			gsize bwritten;
 			GError *err = NULL;
 			gchar *utf8;
@@ -123,6 +124,7 @@ void Application::StdinInputInit()
 		g_critical(_("Libtermkey initialization failed.\n"));
 		exit(1);
 	}
+	utf8 = g_get_charset(NULL);
 
 	channel = g_io_channel_unix_new(STDIN_FILENO);
 	// set channel encoding to NULL so it can be unbuffered

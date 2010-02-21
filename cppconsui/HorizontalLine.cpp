@@ -22,20 +22,13 @@
  * @ingroup cppconsui
  */
 
-#include "ConsuiCurses.h"
 #include "HorizontalLine.h"
-#include "LineStyle.h"
-#include "Widget.h"
 
-HorizontalLine::HorizontalLine(Widget& parent, const int x, const int y, const int w)
-: Widget(parent, x, y, w, 1)
-, LineStyle(LineStyle::DEFAULT)
-{
-}
+#include "ConsuiCurses.h"
 
-HorizontalLine::HorizontalLine(Widget& parent, LineStyle::Type ltype, const int x, const int y, const int w)
+HorizontalLine::HorizontalLine(Widget& parent, const int x, const int y, const int w, LineStyle::Type ltype)
 : Widget(parent, x, y, w, 1)
-, LineStyle(ltype)
+, linestyle(ltype)
 {
 }
 
@@ -51,12 +44,23 @@ void HorizontalLine::Draw()
 		return;
 
 	if (realw <= 1) {
-		area->mvaddstring(0, 0, H());
+		area->mvaddstring(0, 0, linestyle.H());
 	} else {
-		area->mvaddstring(0, 0, HBegin());
+		area->mvaddstring(0, 0, linestyle.HBegin());
 		for (int i = 1; i < realw - 1; i++) {
-			area->mvaddstring(i, 0, H());
+			area->mvaddstring(i, 0, linestyle.H());
 		}
-		area->mvaddstring(realw - 1, 0, HEnd());
+		area->mvaddstring(realw - 1, 0, linestyle.HEnd());
 	}
+}
+
+void HorizontalLine::SetLineStyle(LineStyle::Type ltype)
+{
+	linestyle.SetStyle(ltype);
+	Redraw();
+}
+
+LineStyle::Type HorizontalLine::GetLineStyle()
+{
+	return linestyle.GetStyle();
 }

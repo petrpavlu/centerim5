@@ -68,7 +68,8 @@ class TreeView
 		typedef tree<TreeNode> TheTree;
 		typedef TheTree::pre_order_iterator NodeReference;
 
-		TreeView(Widget& parent, int x, int y, int w, int h, LineStyle::Type ltype);
+		TreeView(Widget& parent, int x, int y, int w, int h,
+				LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~TreeView();
 	
 		virtual void Draw(void);
@@ -114,7 +115,7 @@ class TreeView
 		TheTree thetree;
 		NodeReference focus_node;
 
-		LineStyle *linestyle;
+		LineStyle linestyle;
 		int itemswidth, itemsheight;
 
 		bool focus_cycle;
@@ -134,7 +135,6 @@ class TreeView
 		DECLARE_SIG_REGISTERKEYS();
 		static bool RegisterKeys();
 		void DeclareBindables();
-	
 };
 
 #endif /* __TREEVIEW_H__ */

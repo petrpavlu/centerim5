@@ -22,20 +22,12 @@
  * @ingroup cppconsui
  */
 
-#include "ConsuiCurses.h"
 #include "VerticalLine.h"
-#include "LineStyle.h"
-#include "Widget.h"
+#include "ConsuiCurses.h"
 
-VerticalLine::VerticalLine(Widget& parent, const int x, const int y, const int w)
+VerticalLine::VerticalLine(Widget& parent, const int x, const int y, const int w, LineStyle::Type ltype)
 : Widget(parent, x, y, w, 1)
-, LineStyle(LineStyle::DEFAULT)
-{
-}
-
-VerticalLine::VerticalLine(Widget& parent, LineStyle::Type ltype, const int x, const int y, const int w)
-: Widget(parent, x, y, w, 1)
-, LineStyle(ltype)
+, linestyle(ltype)
 {
 }
 
@@ -51,12 +43,23 @@ void VerticalLine::Draw()
 		return;
 
 	if (realh <= 1) {
-		area->mvaddstring(0, 0, V());
+		area->mvaddstring(0, 0, linestyle.V());
 	} else {
-		area->mvaddstring(0, 0, VBegin());
+		area->mvaddstring(0, 0, linestyle.VBegin());
 		for (int i = 1; i < realh - 1; i++) {
-			area->mvaddstring(i, 0, V());
+			area->mvaddstring(i, 0, linestyle.V());
 		}
-		area->mvaddstring(realh - 1, 0, VEnd());
+		area->mvaddstring(realh - 1, 0, linestyle.VEnd());
 	}
+}
+
+void VerticalLine::SetLineStyle(LineStyle::Type ltype)
+{
+	linestyle.SetStyle(ltype);
+	Redraw();
+}
+
+LineStyle::Type VerticalLine::GetLineStyle()
+{
+	return linestyle.GetStyle();
 }

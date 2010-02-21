@@ -29,8 +29,8 @@
 #include <libpurple/account.h>
 #include <libpurple/savedstatuses.h>
 
-AccountStatusMenu::AccountStatusMenu(int x, int y, int w, int h, LineStyle::Type ltype)
-: MenuWindow(x, y, w, h, ltype)
+AccountStatusMenu::AccountStatusMenu(int x, int y, int w, int h)
+: MenuWindow(x, y, w, h)
 {
 	GList *iter;
 	gchar *text;
@@ -61,12 +61,12 @@ AccountStatusMenu::~AccountStatusMenu()
 
 void AccountStatusMenu::OpenStatusPopup(PurpleAccount *account)
 {
-	AccountStatusMenu::StatusPopup *status_popup = new StatusPopup(x, y, w, h, LineStyle::DEFAULT, account);
+	AccountStatusMenu::StatusPopup *status_popup = new StatusPopup(x, y, w, h, account);
 	windowmanager->Add(status_popup);
 }
 
-AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h, LineStyle::Type ltype, PurpleAccount *account)
-: MenuWindow(x, y, w, h, ltype)
+AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h, PurpleAccount *account)
+: MenuWindow(x, y, w, h)
 , account(account)
 {
 	GList *iter;

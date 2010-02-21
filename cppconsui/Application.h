@@ -108,6 +108,7 @@ class Application
 		guint channel_id;
 
 		TermKey *tk;
+		bool utf8;
 
 		GMainLoop *gmainloop;
 

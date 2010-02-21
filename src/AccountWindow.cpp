@@ -36,7 +36,7 @@
 #include <glib.h>
 
 AccountWindow::AccountWindow()
-: Window(0, 0, 80, 24, LineStyle::DEFAULT)
+: Window(0, 0, 80, 24)
 , menu_index(2)
 , accounts_index(1)
 {
@@ -44,7 +44,7 @@ AccountWindow::AccountWindow()
 	log = &Log::Instance();
 	conf = Conf::Instance();
 
-	accounts = new TreeView(*this, 0, 0, w, h - 2, LineStyle::DEFAULT);
+	accounts = new TreeView(*this, 0, 0, w, h - 2);
 	menu = new HorizontalListBox(*this, 1, h - 1, w, 1);
 	line = new HorizontalLine(*this, 1, h - 2, w);
 

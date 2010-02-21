@@ -51,7 +51,7 @@ class Window
 : public Container
 {
 	public:
-		Window(int x_, int y_, int w_, int h_, LineStyle::Type ltype);
+		Window(int x_, int y_, int w_, int h_, LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~Window();
 	
 		virtual void Close(void);

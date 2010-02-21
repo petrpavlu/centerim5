@@ -83,7 +83,7 @@ static PurpleBlistUiOps centerim_blist_ui_ops =
 };
 
 BuddyList::BuddyList()
-: Window(0, 0, 80, 24, LineStyle::DEFAULT)
+: Window(0, 0, 80, 24)
 {
 	log = &Log::Instance();
 	conf = Conf::Instance();
@@ -103,7 +103,7 @@ BuddyList::BuddyList()
 	Glib::signal_timeout().connect(sigc::mem_fun(this, &BuddyList::Load), 0);
 
 	//TODO get linestyle from conf
-	treeview = new TreeView(*this, 0, 0, w - 2, h - 2, LineStyle::DEFAULT);
+	treeview = new TreeView(*this, 0, 0, w - 2, h - 2);
 	AddWidget(treeview);
 	SetInputChild(*treeview);
 

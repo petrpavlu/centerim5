@@ -25,27 +25,16 @@
 #include "ConsuiCurses.h"
 #include "Panel.h"
 
-Panel::Panel(Widget& parent, const int x, const int y, const int w, const int h)
-: Widget(parent, x, y, w, h)
-, linestyle(NULL)
-, label(NULL)
-{
-	linestyle = new LineStyle(LineStyle::DEFAULT);
-	label = new Label(*this, 2, 0, w - 4, 1, "");
-}
-
 Panel::Panel(Widget& parent, const int x, const int y, const int w, const int h, LineStyle::Type ltype)
 : Widget(parent, x, y, w, h)
-, linestyle(NULL)
+, linestyle(ltype)
 , label(NULL)
 {
-	linestyle = new LineStyle(ltype);
 	label = new Label(*this, 2, 0, w - 4, 1, "");
 }
 
 Panel::~Panel()
 {
-	delete linestyle;
 	delete label;
 }
 
@@ -57,18 +46,18 @@ void Panel::Draw()
 		return;
 
 	for (int i = 1; i < realw - 1; i++) {
-		area->mvaddstring(i, 0, linestyle->H());
-		area->mvaddstring(i, realh - 1, linestyle->H());
+		area->mvaddstring(i, 0, linestyle.H());
+		area->mvaddstring(i, realh - 1, linestyle.H());
 	}
 
 	for (int i = 1; i < realh - 1; i++) {
-		area->mvaddstring(0, i, linestyle->V());
-		area->mvaddstring(realw - 1, i, linestyle->V());
+		area->mvaddstring(0, i, linestyle.V());
+		area->mvaddstring(realw - 1, i, linestyle.V());
 	}
-	area->mvaddstring(0, 0, linestyle->CornerTL());
-	area->mvaddstring(0, realh - 1, linestyle->CornerBL());
-	area->mvaddstring(realw - 1, 0, linestyle->CornerTR());
-	area->mvaddstring(realw - 1, realh - 1, linestyle->CornerBR());
+	area->mvaddstring(0, 0, linestyle.CornerTL());
+	area->mvaddstring(0, realh - 1, linestyle.CornerBL());
+	area->mvaddstring(realw - 1, 0, linestyle.CornerTR());
+	area->mvaddstring(realw - 1, realh - 1, linestyle.CornerBR());
 }
 
 void Panel::SetText(const gchar *str)
@@ -76,17 +65,18 @@ void Panel::SetText(const gchar *str)
 	label->SetText(str);
 }
 
-Glib::ustring Panel::GetText(void)
+const gchar *Panel::GetText()
 {
 	return label->GetText();
 }
 
 void Panel::SetBorderStyle(LineStyle::Type ltype)
 {
-	linestyle->SetStyle(ltype);
+	linestyle.SetStyle(ltype);
+	Redraw();
 }
 
 LineStyle::Type Panel::GetBorderStyle()
 {
-	return linestyle->GetStyle();
+	return linestyle.GetStyle();
 }

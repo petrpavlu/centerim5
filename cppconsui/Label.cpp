@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,8 +19,8 @@
  *
  * */
 
-#include "ConsuiCurses.h"
 #include "Label.h"
+#include "ConsuiCurses.h"
 
 #include <glib.h>
 

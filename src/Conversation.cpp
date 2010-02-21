@@ -34,7 +34,7 @@
 #define CONTEXT_CONVERSATION "conversation"
 
 Conversation::Conversation(PurpleBlistNode* node)
-: Window(0, 0, 80, 24, LineStyle::DEFAULT)
+: Window(0, 0, 80, 24)
 , node(node)
 , conv(NULL)
 {
@@ -45,7 +45,7 @@ Conversation::Conversation(PurpleBlistNode* node)
 	view = new TextView(*this, 1, 0, w - 2, h);
 	
 	input = new TextEdit(*this, 1, 1, w - 2, h);
-	line = new HorizontalLine(*this, LineStyle::DEFAULT, 0, view_height, w);
+	line = new HorizontalLine(*this, 0, view_height, w);
 
 	AddWidget(view);
 	AddWidget(input);

@@ -31,7 +31,7 @@ TextViewWindow &TextViewWindow::Instance()
 }
 
 TextViewWindow::TextViewWindow()
-: Window(0, 0, 0, 0, LineStyle::DEFAULT)
+: Window(0, 0, 0, 0)
 {
 	const gchar *long_text = "Lorem ipsum dolor sit amet, consectetur"
 		"adipiscing elit. Duis dui dui, interdum eget tempor auctor, viverra"

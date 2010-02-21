@@ -33,7 +33,7 @@ TreeViewWindow &TreeViewWindow::Instance()
 }
 
 TreeViewWindow::TreeViewWindow()
-: Window(0, 0, 0, 0, LineStyle::DEFAULT)
+: Window(0, 0, 0, 0)
 {
 	TreeView *tree;
 	TreeView::NodeReference node;
@@ -41,7 +41,7 @@ TreeViewWindow::TreeViewWindow()
 
 	AddWidget(new Label(*this, 1, 1, 20, 1, "Press F10 to quit."));
 
-	tree = new TreeView(*this, 1, 3, 30, 12, LineStyle::DEFAULT);
+	tree = new TreeView(*this, 1, 3, 30, 12);
 	AddWidget(tree);
 	SetInputChild(*tree);
 

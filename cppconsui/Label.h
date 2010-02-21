@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -26,8 +27,6 @@
 
 #include "Widget.h"
 
-/// @todo proper autosizing
-
 /**
  * A widget that displays a small to medium amount of text.
  */
@@ -39,7 +38,9 @@ class Label
 		Label(Widget& parent, int x, int y, const gchar *text_);
 		virtual ~Label();
 
+		// Widget
 		virtual void Draw();
+
 		/** Sets a new text and redraws the Widget */
 		virtual void SetText(const gchar *text_);
 		const gchar* GetText();
@@ -49,7 +50,7 @@ class Label
 
 	private:
 		/** manages the text allocation and reallocation
-		 * without any Widget signals invloved
+		 * without any Widget signals involved
 		 */ 
 		void RealSetText(const gchar *text_);
 		Label();

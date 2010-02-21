@@ -317,12 +317,12 @@ void CenterIM::ScreenResized(void) {
 void CenterIM::OpenAccountStatusMenu(void)
 {
 	//TODO get coords from config
-	windowmanager->Add(new AccountStatusMenu(40,0, 40, 20, LineStyle::DEFAULT));
+	windowmanager->Add(new AccountStatusMenu(40,0, 40, 20));
 }
 
 void CenterIM::OpenGeneralMenu(void)
 {
 	//TODO get coords from config
-	windowmanager->Add(new GeneralMenu(40, 0, 40, 22, LineStyle::DEFAULT));
+	windowmanager->Add(new GeneralMenu(40, 0, 40, 22));
 }
 

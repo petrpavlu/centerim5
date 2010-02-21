@@ -37,7 +37,7 @@ Log &Log::Instance(void)
 
 //TODO sensible defaults
 Log::Log(void)
-: Window(0, 0, 80, 24, LineStyle::DEFAULT)
+: Window(0, 0, 80, 24)
 , logfile(NULL)
 , prefs_handle(NULL)
 , max_lines(0)

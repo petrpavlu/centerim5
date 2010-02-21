@@ -25,33 +25,32 @@
 #ifndef __HORIZONTALLINE_H__
 #define __HORIZONTALLINE_H__
 
-#include "HorizontalLine.h"
 #include "LineStyle.h"
-#include "Label.h"
 #include "Widget.h"
 
-/** A widget representing an horizontal line
- * @todo borders with colors are nice 
- * @todo remove LineStyle as a parent Class and use it as a member object instead
+/**
+ * A widget representing a horizontal line.
  */
 class HorizontalLine
 : public Widget
-, public LineStyle
 {
 	public:
-		HorizontalLine(Widget& parent, const int x, const int y, const int w);
-		HorizontalLine(Widget& parent, LineStyle::Type ltype, const int x, const int y, const int w);
-
+		HorizontalLine(Widget& parent, const int x, const int y, const int w,
+				LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~HorizontalLine();
 
-		virtual void Draw(void);
+		// Widget
+		virtual void Draw();
+
+		void SetLineStyle(LineStyle::Type ltype);
+		LineStyle::Type GetLineStyle();
 
 	protected:
+		LineStyle linestyle;
 
 	private:
-		HorizontalLine(void);
+		HorizontalLine();
 		HorizontalLine(const HorizontalLine&);
-
 		HorizontalLine& operator=(const HorizontalLine&);
 };
 

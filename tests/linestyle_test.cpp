@@ -33,7 +33,7 @@ LineStyleWindow &LineStyleWindow::Instance()
 }
 
 LineStyleWindow::LineStyleWindow()
-: Window(0, 0, 0, 0, LineStyle::DEFAULT)
+: Window(0, 0, 0, 0)
 {
 	Label *label;
 

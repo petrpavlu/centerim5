@@ -24,7 +24,6 @@
 #ifndef __PANEL_H__
 #define __PANEL_H__
 
-#include "Panel.h"
 #include "LineStyle.h"
 #include "Label.h"
 #include "Widget.h"
@@ -38,21 +37,22 @@ class Panel
 : public Widget
 {
 	public:
-		Panel(Widget& parent, const int x, const int y, const int w, const int h);
-		Panel(Widget& parent, const int x, const int y, const int w, const int h, LineStyle::Type ltype);
-
+		Panel(Widget& parent, const int x, const int y, const int w,
+				const int h, LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~Panel();
 
+		// Widget
 		virtual void Draw();
+
 		/** Sets the text of the label */
 		void SetText(const gchar *str);
-		Glib::ustring GetText();
+		const gchar *GetText();
 
-		virtual void SetBorderStyle(LineStyle::Type ltype);
-		virtual LineStyle::Type GetBorderStyle();
+		void SetBorderStyle(LineStyle::Type ltype);
+		LineStyle::Type GetBorderStyle();
 
 	protected:
-		LineStyle *linestyle;
+		LineStyle linestyle;
 		Label *label;
 
 	private:

@@ -33,7 +33,7 @@ TextEntryWindow &TextEntryWindow::Instance()
 }
 
 TextEntryWindow::TextEntryWindow()
-: Window(0, 0, 0, 0, LineStyle::DEFAULT)
+: Window(0, 0, 0, 0)
 {
 	AddWidget(new Label(*this, 1, 1, "Press F10 to quit."));
 	AddWidget(new Label(*this, 1, 2, "Press TAB or up/down arrow keys to move focus."));

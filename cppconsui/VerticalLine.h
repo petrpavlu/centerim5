@@ -25,33 +25,32 @@
 #ifndef __VERTICALLINE_H__
 #define __VERTICALLINE_H__
 
-#include "VerticalLine.h"
 #include "LineStyle.h"
-#include "Label.h"
 #include "Widget.h"
 
-/** A widget representing a vertical line
- * @todo borders with colors are nice 
- * @todo remove LineStyle as a parent Class and use it as a member object instead
+/**
+ * A widget representing a vertical line.
  */
 class VerticalLine
 : public Widget
-, public LineStyle
 {
 	public:
-		VerticalLine(Widget& parent, const int x, const int y, const int w);
-		VerticalLine(Widget& parent, LineStyle::Type ltype, const int x, const int y, const int w);
-
+		VerticalLine(Widget& parent, const int x, const int y, const int w,
+				LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~VerticalLine();
 
-		virtual void Draw(void);
+		// Widget
+		virtual void Draw();
+
+		void SetLineStyle(LineStyle::Type ltype);
+		LineStyle::Type GetLineStyle();
 
 	protected:
+		LineStyle linestyle;
 
 	private:
-		VerticalLine(void);
+		VerticalLine();
 		VerticalLine(const VerticalLine&);
-
 		VerticalLine& operator=(const VerticalLine&);
 };
 

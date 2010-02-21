@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -38,7 +39,7 @@ struct LineElements {
 	const gchar *corner_br;	// Bottom-right corner
 };
 
-//TODO add styles for double lines, block elements
+/// @todo Add styles for double lines, block elements.
 static LineElements line_elements_ascii = {
 	"-", "-", "-", "+", "+",
 	"|", "|", "|", "+", "+",
@@ -72,17 +73,7 @@ static LineElements line_elements_heavy = {
 LineStyle::LineStyle(Type t)
 : type(t)
 {
-}
-
-LineStyle::LineStyle(const LineStyle &other)
-: type(other.type)
-{
-}
-
-LineStyle &LineStyle::operator=(LineStyle &other)
-{
-	type = other.type;
-	return *this;
+	utf8 = g_get_charset(NULL);
 }
 
 LineStyle::~LineStyle()
@@ -181,13 +172,17 @@ LineElements* LineStyle::GetCurrentElems()
 			return &line_elements_ascii;
 		case ASCII_ROUNDED:
 			return &line_elements_ascii_rounded;
-		case DEFAULT:
 		case LIGHT:
 			return &line_elements_light;
 		case LIGHT_ROUNDED:
 			return &line_elements_light_rounded;
 		case HEAVY:
 			return &line_elements_heavy;
+		case DEFAULT:
+			if (utf8)
+				return &line_elements_light;
+			else
+				return &line_elements_ascii;
 	}
 
 	g_assert_not_reached();

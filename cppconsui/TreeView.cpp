@@ -38,13 +38,11 @@
 
 TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle::Type ltype)
 : ScrollPane(parent, x, y, w, h, w, h)
-, linestyle(NULL)
+, linestyle(ltype)
 , itemswidth(0)
 , itemsheight(0)
 , focus_cycle(false)
 {
-	linestyle = new LineStyle(ltype);
-
 	/* initialise the tree */
 	TreeNode root;
 	root.widget = NULL;
@@ -68,7 +66,6 @@ TreeView::~TreeView()
 {
 	//TODO deletenode does not free the memory, do this
 	DeleteNode(thetree.begin(), false);
-	delete linestyle; //TODO this shouldn't be deletable, in fact fix the whole linestyle thingie (the principle)
 }
 
 void TreeView::DeclareBindables()
@@ -125,27 +122,27 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 	if (parent->open) {
 		if (thetree.number_of_children(node) > 0) {
 			for (j = top + 1; j < top + height; j++)
-				area->mvaddstring(depthoffset, j, linestyle->V());
+				area->mvaddstring(depthoffset, j, linestyle.V());
 		}
 
 		for (i = node.begin(); i != node.end(); i++) {
 			child = &(*i);
 
 			if (i != node.back())
-				area->mvaddstring(depthoffset, top + height, linestyle->VRight());
+				area->mvaddstring(depthoffset, top + height, linestyle.VRight());
 			else
-				area->mvaddstring(depthoffset, top + height, linestyle->CornerBL());
+				area->mvaddstring(depthoffset, top + height, linestyle.CornerBL());
 
-			area->mvaddstring(depthoffset + 1, top + height, linestyle->H());
+			area->mvaddstring(depthoffset + 1, top + height, linestyle.H());
 			
 			if (child->collapsable && thetree.number_of_children(i) > 0) {
 				area->mvaddstring(depthoffset + 2, top + height, "[");
 				area->mvaddstring(depthoffset + 3, top + height, child->open ? "-" : "+");
 				area->mvaddstring(depthoffset + 4, top + height, "]");
 			} else {
-				area->mvaddstring(depthoffset + 2, top + height, linestyle->H());
-				area->mvaddstring(depthoffset + 3, top + height, linestyle->H());
-				area->mvaddstring(depthoffset + 4, top + height, linestyle->HEnd());
+				area->mvaddstring(depthoffset + 2, top + height, linestyle.H());
+				area->mvaddstring(depthoffset + 3, top + height, linestyle.H());
+				area->mvaddstring(depthoffset + 4, top + height, linestyle.HEnd());
 			}
 
 			oldh = height;
@@ -153,7 +150,7 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 
 			if (i != node.back()) {
 				for (j = top + oldh + 1; j < top + height ; j++)
-					area->mvaddstring(depthoffset, j, linestyle->V());
+					area->mvaddstring(depthoffset, j, linestyle.V());
 			}
 		}
 	}
