@@ -230,7 +230,7 @@ bool TextEntry::ProcessInputText(const TermKeyKey &key)
 
 void TextEntry::SetText(const gchar *text_)
 {
-	Label::SetText(text);
+	Label::SetText(text_);
 
 	RecalculateLengths();
 	current_pos = text_length;

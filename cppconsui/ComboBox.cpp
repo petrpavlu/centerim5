@@ -85,7 +85,7 @@ void ComboBox::OnDropDown(void)
 		{}/*TODO this shoudn't happen*/
 
 	/// @todo position correctly according to absolute coords.
-	dropdown = new MenuWindow(0, 0, w, options.size()+2, LineStyle::DEFAULT);
+	dropdown = new MenuWindow(0, 0, w, options.size() + 2);
 	sig_dropdown_close = dropdown->signal_close.connect(sigc::mem_fun(this, &ComboBox::DropDownClose));
 
 	for (i = options.begin(); i != options.end(); i++) {
