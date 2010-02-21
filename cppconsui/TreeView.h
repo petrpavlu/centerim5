@@ -73,7 +73,7 @@ class TreeView
 	
 		virtual void Draw(void);
 
-		virtual bool SetFocusChild(Widget* child);
+		virtual bool SetFocusChild(Widget &child);
 		virtual bool StealFocus(void);
 
 		/* Actions for keybindings */

@@ -125,7 +125,6 @@ class CenterIM
 		Transfers *transfers;
 		Log *log;
 		Conf *conf;
-		Keys *keys;
 
 		Rect areaSizes[AreaMax];
 
@@ -138,8 +137,6 @@ class CenterIM
 		void DebugUIInit(void);
 		void UIInit(void);
 		void UIUnInit(void);
-		void IOInit(void);
-		void IOUnInit(void);
 
 		/** it handles the automatic registration of defined keys */
 		DECLARE_SIG_REGISTERKEYS();

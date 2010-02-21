@@ -26,11 +26,11 @@
 #include <sigc++/signal.h>
 
 #include <glib.h>
+#include <libtermkey/termkey.h>
 
 #include <vector>
 #include <map>
 #include <string>
-#include <list>
 
 #define DECLARE_SIG_REGISTERKEYS() static sigc::connection sig_register
 #define DEFINE_SIG_REGISTERKEYS(classname,staticmethod) sigc::connection classname::sig_register = InputProcessor::AddRegisterCallback(sigc::ptr_fun(& classname::staticmethod))
@@ -66,7 +66,7 @@ class InputProcessor
 			Bindable_Override ///< key bindings will be processed before the child input processor
 		};
 	
-		InputProcessor(void);
+		InputProcessor();
 		virtual ~InputProcessor();
 
 		/** 
@@ -114,40 +114,43 @@ class InputProcessor
 		 * not count as a match.
 		 *
 		 * */
-		int ProcessInput(const char *input, const int bytes);
+		bool ProcessInput(const TermKeyKey &key);
 
 	protected:
-		class Bindable;
-		typedef std::list<Bindable> Bindables;
+		class Bindable
+		{
+			public:
+				Bindable();
+				Bindable(const gchar *desc_,
+						sigc::slot<void> function_,
+						BindableType type_);
+				Bindable(const Bindable &other);
+				Bindable &operator=(const Bindable &other);
+				~Bindable();
 
-	
-	/** Notes on how key combinations are stored and searched
-	 *
-	 * Key combinations are stored in a multimap 
-	 * indexed on the first byte of the key value only, this
-	 * allows for partial matching.
-	 *
-	 * @todo When adding a new combination to the map, care must be
-	 * taken to look for `shadowing'. This occurs when when two
-	 * key combinations have the same prefix. In this case the
-	 * first definition is used. The user should be notified of
-	 * an error in the configuration. 
-	 *
-	 * @see DeclareBindable,BindAction
-	 * */	
-		typedef std::multimap<char, const Bindable*> BindableMap;
+				gchar *desc;
+				sigc::slot<void> function;
+				BindableType type;
+		};
 
-		virtual int ProcessInputText(const char *input, const int bytes);
+		/** Holds all actions and Bindables for a context, { action: Bindable }. */
+		typedef std::map<std::string, Bindable> BindableContext;
+		/** Holds all Key contexts for this class, { context : KeyContext }. */
+		typedef std::map<std::string, BindableContext> Bindables;
+
+		virtual bool ProcessInputText(const TermKeyKey &key);
 
 		/* Set the child object that must process input before this object
 		 * */
-		void SetInputChild(InputProcessor *child);
-		InputProcessor* GetInputChild(void) { return inputchild; }
+		void SetInputChild(InputProcessor &child);
+		void ClearInputChild();
+		InputProcessor *GetInputChild(void) { return inputchild; }
 		
 		/** Wrapper for KEYCONFIG->AddRegisterCallback */
-		static sigc::connection AddRegisterCallback(const sigc::slot<bool>&);
-		/** it is just a wrapper for KEYCONFIG->RegisterKeyDef */
-		static bool RegisterKeyDef(const gchar *context, const gchar *action, const gchar* desc, const char *defvalue);
+		static sigc::connection AddRegisterCallback(const sigc::slot<bool> &);
+		/** it is just a wrapper for KEYCONFIG->Bind */
+		static void RegisterKeyDef(const char *context, const char *action,
+				const TermKeyKey &key);
 
 		/** Binds a (context,action) pair with a function. 
 		 *
@@ -155,44 +158,23 @@ class InputProcessor
 		 * after or before the @ref inputchild.
 		 * @throws std::logic_error if the context,action pair hasn't been registered yet
 		 */
-		void DeclareBindable(const gchar *context, const gchar *action,
+		void DeclareBindable(const char *context, const char *action, const char *desc,
 			sigc::slot<void> function, BindableType type);
 
-		void ClearBindables(void);
-
 	private:
-		InputProcessor& operator=(const InputProcessor&);
+		InputProcessor(const InputProcessor &);
+		InputProcessor& operator=(const InputProcessor &);
 	
 		/** Tries to match an appropriate bound action to the input and apply it
-		 * @return the best match:
-		 * - positive (and equal to <i>bytes</i>) if an action was taken
-		 * - the bigest negative number if a partial match was found
-		 * - 0 if no match was found
+		 * @return true if a match was found and processed
 		 */
-		int Process(BindableType type, const char *input, const int bytes);
-		/** Checks if they <i>bytes</i> chars from <i>input</i> matches fully or partially 
-		 * the <i>skey</i>
-		 * @return	
-		 *		- <i>bytes</i> if perfectly matches
-		 *		- -needed where needed is how many chars are needed for a match
-		 *		- 0 if they not match
-		 */
-		int Match(const std::string &skey, const char *input, const int bytes);
-
-		/** adds the bindable to the keymap if it has a nonempty keyvalue defined */
-		void MapBindable(const Bindable& bindable);
+		bool Process(BindableType type, const TermKeyKey &key);
 		
-		bool rebuild_keymap();
-		sigc::connection sig_reconfig;
-
 		/** the set of declared Bindables */
 		Bindables keybindings;
-		/** the map of keys used to efficiently match input */
-		BindableMap keymap;
 
 		/* The child that will get to process the input */
 		InputProcessor *inputchild;
-		
 };
 
 #endif /* __INPUTPROCESSOR_H__ */

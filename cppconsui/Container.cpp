@@ -57,34 +57,46 @@ Container::~Container()
 void Container::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_CONTAINER, "focus-previous",
-					sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusPrevious),
-					InputProcessor::Bindable_Normal);
+			_("Focusses the previous widget"),
+			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusPrevious),
+			InputProcessor::Bindable_Normal);
 	DeclareBindable(CONTEXT_CONTAINER, "focus-next",
-					sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusNext),
-					InputProcessor::Bindable_Normal);
+			_("Focusses the next widget"),
+			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusNext),
+			InputProcessor::Bindable_Normal);
 	DeclareBindable(CONTEXT_CONTAINER, "focus-left",
-					sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusLeft),
-					InputProcessor::Bindable_Normal);
+			_("Focus the next widget to the left."),
+			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusLeft),
+			InputProcessor::Bindable_Normal);
 	DeclareBindable(CONTEXT_CONTAINER, "focus-right",
-					sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusRight),
-					InputProcessor::Bindable_Normal);
+			_("Focus the next widget to the right."),
+			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusRight),
+			InputProcessor::Bindable_Normal);
 	DeclareBindable(CONTEXT_CONTAINER, "focus-up",
-					sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusUp),
-					InputProcessor::Bindable_Normal);
+			_("Focus the next widget above."),
+			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusUp),
+			InputProcessor::Bindable_Normal);
 	DeclareBindable(CONTEXT_CONTAINER, "focus-down",
-					sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusDown),
-					InputProcessor::Bindable_Normal);
+			_("Focus the next widget below."),
+			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusDown),
+			InputProcessor::Bindable_Normal);
 }
 
 DEFINE_SIG_REGISTERKEYS(Container, RegisterKeys);
 bool Container::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_CONTAINER, "focus-previous", _("Focusses the previous widget"), KEYS->Key_shift_tab());
-	RegisterKeyDef(CONTEXT_CONTAINER, "focus-next", _("Focusses the next widget"), KEYS->Key_tab());
-	RegisterKeyDef(CONTEXT_CONTAINER, "focus-left", _("Focus the next widget to the left."), KEYS->Key_left());
-	RegisterKeyDef(CONTEXT_CONTAINER, "focus-right", _("Focus the next widget to the right."), KEYS->Key_right());
-	RegisterKeyDef(CONTEXT_CONTAINER, "focus-up", _("Focus the next widget above."), KEYS->Key_up());
-	RegisterKeyDef(CONTEXT_CONTAINER, "focus-down", _("Focus the next widget below."), KEYS->Key_down());
+	RegisterKeyDef(CONTEXT_CONTAINER, "focus-previous",
+			Keys::SymbolTermKey(TERMKEY_SYM_TAB, TERMKEY_KEYMOD_SHIFT));
+	RegisterKeyDef(CONTEXT_CONTAINER, "focus-next",
+			Keys::SymbolTermKey(TERMKEY_SYM_TAB));
+	RegisterKeyDef(CONTEXT_CONTAINER, "focus-left",
+			Keys::SymbolTermKey(TERMKEY_SYM_LEFT));
+	RegisterKeyDef(CONTEXT_CONTAINER, "focus-right",
+			Keys::SymbolTermKey(TERMKEY_SYM_RIGHT));
+	RegisterKeyDef(CONTEXT_CONTAINER, "focus-up",
+			Keys::SymbolTermKey(TERMKEY_SYM_UP));
+	RegisterKeyDef(CONTEXT_CONTAINER, "focus-down",
+			Keys::SymbolTermKey(TERMKEY_SYM_DOWN));
 	return true;
 }
 	

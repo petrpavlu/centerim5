@@ -17,177 +17,131 @@
 
 #include "InputProcessor.h"
 #include "KeyConfig.h"
+#include "Keys.h"
 
-#include <cstring>
+InputProcessor::Bindable::Bindable()
+: desc(NULL), type(Bindable_Normal)
+{}
 
-/** Holds a bound key definition
- */
-class InputProcessor::Bindable {
-public:
-	Bindable(const KeyConfig::ustring& context_, 
-			 const KeyConfig::ustring& action_,
-			 sigc::slot<void> function_,
-			 InputProcessor::BindableType type_)
-	: keyvalue( KEYCONFIG->GetKeyValue(context_, action_) )
-	, function(function_)
-	, type(type_)
-	{ ; }
-	const KeyConfig::KeyValue& keyvalue;
-	sigc::slot<void> function;
-	InputProcessor::BindableType type;
-};
+InputProcessor::Bindable::Bindable(const gchar *desc_,
+		sigc::slot<void> function_,
+		BindableType type_)
+: function(function_), type(type_)
+{
+	g_assert(desc_);
+	desc = g_strdup(desc_);
+}
 
+InputProcessor::Bindable::Bindable(const Bindable &other)
+: desc(NULL)
+{
+	if (other.desc)
+		desc = g_strdup(other.desc);
+	function = other.function;
+	type = other.type;
+}
 
+InputProcessor::Bindable::Bindable &InputProcessor::Bindable::operator=(const Bindable &other)
+{
+	if (desc) {
+		g_free(desc);
+		desc = NULL;
+	}
 
-/* ******************************* */
+	if (other.desc)
+		desc = g_strdup(other.desc);
+	function = other.function;
+	type = other.type;
+
+	return *this;
+}
+
+InputProcessor::Bindable::~Bindable()
+{
+	if (desc)
+		g_free(desc);
+}
+
 InputProcessor::InputProcessor()
-: sig_reconfig(KEYCONFIG->AddReconfigCallback(
-					sigc::mem_fun(this, &InputProcessor::rebuild_keymap)))
-, inputchild(NULL)
+: inputchild(NULL)
 { ; }
 
 InputProcessor::~InputProcessor()
 {
-	// disconnects the reconfig signal
-	sig_reconfig.disconnect();
 }
 
-int InputProcessor::ProcessInput(const char *input, const int bytes)
+bool InputProcessor::ProcessInput(const TermKeyKey &key)
 {
-	int i, needed = 0;
-
 	/* Process overriding key combinations first */
-	i = Process(Bindable_Override, input, bytes);
-	if (i > 0) return i;
-	if (i < 0) needed = i;
+	if (Process(Bindable_Override, key))
+		return true;
 	
 	/* Hand of input to a child */
-	if (inputchild)
-		i = inputchild->ProcessInput(input, bytes);
-	if (i > 0) return i;
-	if (i < 0) needed = i;
+	if (inputchild && inputchild->ProcessInput(key))
+		return true;
 
 	/* Process other key combinations */
-	i = Process(Bindable_Normal, input, bytes);
-	if (i > 0) return i;
-	if (i < 0) needed = i;
+	if (Process(Bindable_Normal, key))
+		return true;
 
 	/* Do non-combo input processing */
-	i = ProcessInputText(input, bytes);
-	if (i > 0) return i;
-	if (i < 0) needed = i;
+	if (key.type == TERMKEY_TYPE_UNICODE && ProcessInputText(key))
+		return true;
 
-	return needed;
+	return false;
 }
 
-int InputProcessor::ProcessInputText(const char *input, const int bytes)
+bool InputProcessor::ProcessInputText(const TermKeyKey &key)
 {
-	return 0;
+	return false;
 }
 
-void InputProcessor::SetInputChild(InputProcessor *child)
+void InputProcessor::SetInputChild(InputProcessor &child)
 {
-	inputchild = child;
+	inputchild = &child;
 }
 
-int InputProcessor::Process(InputProcessor::BindableType type, const char *input, const int bytes)
+void InputProcessor::ClearInputChild()
 {
-	g_assert(input != NULL);
-	BindableMap::iterator begin, end, i;
-	sigc::slot<void> function;
-	int m;
-	/* If max is positive then it represents current longest match, if
-	 * negative then it represents a minimal amout of bytes to match some
-	 * bind. */
-	int max = 0;
+	inputchild = NULL;
+}
 
-	begin = keymap.lower_bound(input[0]);
-	end = keymap.upper_bound(input[0]);
+bool InputProcessor::Process(BindableType type, const TermKeyKey &key)
+{
+	for (Bindables::iterator i = keybindings.begin(); i != keybindings.end(); i++) {
+		// get keys for this context
+		const KeyConfig::KeyContext *keys = KEYCONFIG->GetContext(i->first.c_str());
+		if (!keys)
+			continue;
 
-	for (i = begin; i != end; i++) {
-		const Bindable& bindable = *(i->second);
-		if (bindable.type == type) {
-			m = Match(bindable.keyvalue.value, input, bytes);
-			if (m < 0) {
-				// could match, but need more input bytes
-				if (m > max || max == 0)
-					max = m;
-			}
-			else if (m > 0 && m > max) {
-				// found a larger match, remember the action
-				max = m;
-				function = bindable.function;
+		/// @todo make this quicker
+		for (KeyConfig::KeyContext::const_iterator j = keys->begin(); j != keys->end(); j++) {
+			if (Keys::Compare(key, j->first)) {
+				BindableContext::iterator k = i->second.find(j->second);
+				if (k != i->second.end() && k->second.type == type) {
+					k->second.function();
+					return true;
+				}
 			}
 		}
 	}
 
-	if (max > 0)
-		function();
-
-	return max;
+	return false;
 }
 
-int InputProcessor::Match(const std::string &skeycombo, const char *input, const int bytes)
-{
-	const char *keycombo = skeycombo.c_str();
-	int size;
-
-	size = skeycombo.size();
-
-	/// @todo this is an ESC hack, it breaks inserting burst of key combos
-	if (bytes > size) 
-		// more input than this keycombo
-		return 0;
-	
-	if (strncmp(keycombo, input, MIN(size, bytes)) == 0) {
-		if (bytes < size)
-			// need more input to determine a match
-			return bytes - size;
-		else
-			// complete match found
-			return size;
-	}
-
-	return 0;
-}
-
-sigc::connection InputProcessor::AddRegisterCallback(const sigc::slot<bool>& function)
+sigc::connection InputProcessor::AddRegisterCallback(const sigc::slot<bool> &function)
 {
 	return KEYCONFIG->AddRegisterCallback(function);
 }
-bool InputProcessor::RegisterKeyDef(const gchar *context, const gchar *action, const gchar* desc, const char *defvalue)
+
+void InputProcessor::RegisterKeyDef(const char *context,
+		const char *action, const TermKeyKey &key)
 {
-	return KEYCONFIG->RegisterKeyDef( KeyConfig::KeyDef(context, action, desc, defvalue) );
+	KEYCONFIG->Bind(context, action, key);
 }
 
-
-void InputProcessor::DeclareBindable(const gchar *context, const gchar *action,
-	sigc::slot<void> function, BindableType type)
+void InputProcessor::DeclareBindable(const char *context, const char *action,
+		const char *desc, sigc::slot<void> function, BindableType type)
 {
-	keybindings.push_back(Bindable(context, action, function, type));
-	MapBindable(keybindings.back());
-}
-
-void InputProcessor::MapBindable(const Bindable& bindable)
-{
-	const gchar* keyvalue = bindable.keyvalue.value;
-	if (keyvalue[0] != '\0')
-		keymap.insert(std::make_pair(keyvalue[0], &bindable));
-}
-
-void InputProcessor::ClearBindables(void)
-{
-	// @todo not very useful, isn't it ?
-	keymap.clear();
-	keybindings.clear();
-}
-
-bool InputProcessor::rebuild_keymap()
-{
-	// rebuild keymap
-	keymap.clear();
-	for (Bindables::const_iterator i = keybindings.begin(); i != keybindings.end(); i++) {
-		MapBindable(*i);
-	}
-	return true;
+	keybindings[context][action] = Bindable(desc, function, type);
 }

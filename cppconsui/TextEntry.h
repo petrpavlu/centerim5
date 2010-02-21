@@ -61,9 +61,12 @@ class TextEntry
 
 		virtual ~TextEntry();
 
+		// Widget
 		virtual void Draw();
+		virtual bool ProcessInputText(const TermKeyKey &key);
 
-		virtual int ProcessInputText(const char *input, const int bytes);
+		// Label
+		virtual void SetText(const gchar *text_);
 
 		int GetFlags() { return flags; }
 		void SetFlags(int flags);
@@ -71,10 +74,8 @@ class TextEntry
 		
 		sigc::signal<void> signal_text_changed;
 
-		virtual void SetText(const gchar *text_);
-
 	protected:
-		void InsertTextAtCursor(const gchar *new_text, int new_length);
+		void InsertTextAtCursor(const gchar *new_text, int new_text_bytes = -1);
 		void DeleteText(int start_pos, int end_pos);
 
 		void DeleteFromCursor(DeleteType type, int direction);
@@ -108,6 +109,7 @@ class TextEntry
 		void ActionMoveCursor(CursorMovement step, int direction);
 		void ActionDelete(DeleteType type, int direction);
 		void ActionToggleOverwrite();
+		void ActionInsertSpace();
 
 		virtual void OnActivate();
 	

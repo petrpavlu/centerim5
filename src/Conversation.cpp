@@ -51,7 +51,7 @@ Conversation::Conversation(PurpleBlistNode* node)
 	AddWidget(input);
 	AddWidget(line);
 
-	SetInputChild(input);
+	SetInputChild(*input);
 	input->GrabFocus();
 
 	SetPartitioning(conf->GetChatPartitioning());
@@ -66,14 +66,16 @@ Conversation::~Conversation()
 
 void Conversation::DeclareBindables()
 {
-	DeclareBindable(CONTEXT_CONVERSATION, "send",  sigc::mem_fun(this, &Conversation::Send),
-					InputProcessor::Bindable_Override);
+	DeclareBindable(CONTEXT_CONVERSATION, "send", _("Send the message."),
+			sigc::mem_fun(this, &Conversation::Send),
+			InputProcessor::Bindable_Override);
 }
 
 DEFINE_SIG_REGISTERKEYS(Conversation, RegisterKeys);
 bool Conversation::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_CONVERSATION, "send", _("Send the message."), KEYS->Key_ctrl_x());
+	RegisterKeyDef(CONTEXT_CONVERSATION, "send",
+			Keys::UnicodeTermKey("x", TERMKEY_KEYMOD_CTRL));
 	return true;
 }
 
@@ -148,7 +150,7 @@ void Conversation::SetPartitioning(unsigned int percentage)
 		view_height = h - inputheight - 1;
 	}
 
-	view->MoveResize(1, 0, w - 2, view_height - 2);
+	view->MoveResize(1, 0, w - 2, view_height);
 	input->MoveResize(1, view_height + 1, w - 2, inputheight);
 	line->MoveResize(0, view_height, w, 1);
 }

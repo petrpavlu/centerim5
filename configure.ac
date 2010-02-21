@@ -193,7 +193,7 @@ if test "x$GCC" = "xyes"; then
 		dnl	"-Werror-implicit-function-declaration" \
 			"-Wextra -Wno-sign-compare -Wno-unused-parameter" \
 			"-Wformat-security" \
-				"-Werror=format-security" \
+			"-Werror=format-security" \
 			"-Winit-self" \
 			"-Wmissing-declarations" \
 			"-Wmissing-noreturn" \
@@ -255,11 +255,13 @@ AC_SUBST(DEBUG_CFLAGS)
 ########################
 # Create output files. #
 ########################
-AC_CONFIG_FILES([Makefile po/Makefile.in
+AC_CONFIG_FILES([Makefile
+		 libtermkey/Makefile
 		 cppconsui/Makefile
-		 tests/Makefile
-		 src/Makefile
 		 doc/Makefile
 		 doc/doxygen-cppconsui.conf
-		 doc/doxygen-cim5.conf])
+		 doc/doxygen-cim5.conf
+		 po/Makefile.in
+		 src/Makefile
+		 tests/Makefile])
 AC_OUTPUT

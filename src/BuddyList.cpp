@@ -105,7 +105,7 @@ BuddyList::BuddyList()
 	//TODO get linestyle from conf
 	treeview = new TreeView(*this, 0, 0, w - 2, h - 2, LineStyle::DEFAULT);
 	AddWidget(treeview);
-	SetInputChild(treeview);
+	SetInputChild(*treeview);
 
 	MoveResizeRect(conf->GetBuddyListDimensions());
 }

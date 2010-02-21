@@ -27,7 +27,8 @@
 #include "InputProcessor.h"
 #include "WindowManager.h"
 
-#include <glibmm.h>
+#include <glib.h>
+#include <libtermkey/termkey.h>
 
 /**
  * This class implements a simple application class.
@@ -68,9 +69,9 @@ class Application
 	public:
 		/** Sets itself as a standard input watcher and runs glib main loop.
 		 * */
-		virtual void Run(void);
+		virtual void Run();
 		/** Quits glib main loop and stops watching the standard input. */
-		virtual void Quit(void);
+		virtual void Quit();
 
 		// glib IO callbacks
 		/** Handle standard input IO errors (logs an error) and quits the
@@ -88,7 +89,7 @@ class Application
 		 * processed when the screen is resized (then window callbacks are
 		 * processed). Application should recalculate area size of all windows
 		 * in this method. */
-		virtual void ScreenResized(void) = 0;
+		virtual void ScreenResized() = 0;
 
 	protected:
 		/** @ref WindowManager instance. */
@@ -97,26 +98,26 @@ class Application
 		/** Constructs @ref Application class. Connects Application as the
 		 * first resize handler to @ref windowmanager. Enables windowmanager's
 		 * screen resizing. */
-		Application(void);
+		Application();
 		Application(const Application &);
 		Application &operator=(const Application &);
-		~Application(void);
+		~Application();
 
 	private:
-		GIConv converter;
-
 		GIOChannel *channel;
 		guint channel_id;
 
-		Glib::RefPtr<Glib::MainLoop> gmainloop;
+		TermKey *tk;
+
+		GMainLoop *gmainloop;
 
 		sigc::connection resize;
 
 		gboolean io_input_error(GIOChannel *source, GIOCondition cond);
 		gboolean io_input(GIOChannel *source, GIOCondition cond);
 
-		void StdinInputInit(void);
-		void StdinInputUnInit(void);
+		void StdinInputInit();
+		void StdinInputUnInit();
 };
 
 #endif /* __APPLICATION_H__ */

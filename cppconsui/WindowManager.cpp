@@ -58,7 +58,7 @@ WindowManager::WindowManager(void)
 
 	Curses::start_color(); //TODO do something with the return value.
 	Curses::curs_set(0);
-	Curses::keypad(true); // without this, some keys are not translated correctly
+	//Curses::keypad(true); // without this, some keys are not translated correctly
 	Curses::nonl();
 	Curses::raw();
 
@@ -78,14 +78,17 @@ WindowManager::~WindowManager(void)
 
 void WindowManager::DeclareBindables()
 {
-	DeclareBindable(CONTEXT_WINDOWMANAGER, "redraw-screen", sigc::mem_fun(this, &WindowManager::Redraw),
-					InputProcessor::Bindable_Override);
+	DeclareBindable(CONTEXT_WINDOWMANAGER, "redraw-screen",
+			_("Redraw the complete screen immediately"),
+			sigc::mem_fun(this, &WindowManager::Redraw),
+			InputProcessor::Bindable_Override);
 }
 
 DEFINE_SIG_REGISTERKEYS(WindowManager, RegisterKeys);
 bool WindowManager::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_WINDOWMANAGER, "redraw-screen", _("Redraw the complete screen immediately"), KEYS->Key_ctrl_l());
+	RegisterKeyDef(CONTEXT_WINDOWMANAGER, "redraw-screen",
+			Keys::UnicodeTermKey("l", TERMKEY_KEYMOD_CTRL));
 	return true;
 }
 
@@ -151,7 +154,7 @@ void WindowManager::Remove(Window *window)
 	windows.erase(i);
 
 	if (window == GetInputChild())
-		SetInputChild(NULL);
+		ClearInputChild();
 
 	info.window->GetWindow()->erase();
 	info.window->GetWindow()->noutrefresh();
@@ -177,7 +180,7 @@ void WindowManager::FocusWindow(void)
 		widget = focus->GetFocusWidget();
 		if (widget)
 			widget->UngrabFocus();
-		SetInputChild(NULL);
+		ClearInputChild();
 	}
 
 	/* Check if there are any windows left */
@@ -189,7 +192,7 @@ void WindowManager::FocusWindow(void)
 
 	/* Give the focus to the top window if there is one */
 	if (win) {
-		SetInputChild(win);
+		SetInputChild(*win);
 		win->RestoreFocus();
 	}
 }

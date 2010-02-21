@@ -84,11 +84,9 @@ void Widget::Redraw(void)
 	signal_redraw(this);
 }
 
-bool Widget::SetFocusChild(Widget* child)
+bool Widget::SetFocusChild(Widget &child)
 {
-	g_assert(child != NULL);
-
-	if (focus_child == child)
+	if (focus_child == &child)
 		/* The focus child is already correct. */
 		return true;
 
@@ -103,16 +101,16 @@ bool Widget::SetFocusChild(Widget* child)
 	if (parent == this) {
 		/* Current widget is a window. */
 		/// @todo window should try to become topmost.
-		focus_child = child;
+		focus_child = &child;
 		SetInputChild(child);
 		return true;
 	}
 
-	if (parent->SetFocusChild(this)) {
+	if (parent->SetFocusChild(*this)) {
 		/* Only if we can grab the focus all the way up the widget
 		 * tree do we set the focus child.
 		 * */
-		focus_child = child;
+		focus_child = &child;
 		SetInputChild(child);
 		return true;
 	}
@@ -139,7 +137,7 @@ bool Widget::StealFocus(void)
 	 * If theft is successful, then unset focus_child. */
 	if (focus_child->StealFocus()) {
 		focus_child = NULL;
-		SetInputChild(NULL);
+		ClearInputChild();
 		return true;
 	}
 
@@ -175,7 +173,7 @@ Widget* Widget::GetFocusWidget(void)
 
 bool Widget::GrabFocus(void)
 {
-	if (can_focus && parent != NULL && parent->SetFocusChild(this)) {
+	if (can_focus && parent != NULL && parent->SetFocusChild(*this)) {
 		//TODO only set if window has focus.
 		has_focus = true;
 		signal_focus(this, true);

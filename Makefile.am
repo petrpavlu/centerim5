@@ -1,4 +1,4 @@
-SUBDIRS = po cppconsui tests src doc
+SUBDIRS = libtermkey cppconsui doc po src tests
 
 EXTRA_DIST = HACKING
 

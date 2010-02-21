@@ -40,11 +40,13 @@ CenterIM &CenterIM::Instance(void)
 
 CenterIM::CenterIM(void)
 : Application(), accounts(NULL), connections(NULL), buddylist(NULL)
-, conversations(NULL), transfers(NULL), log(NULL), conf(NULL), keys(NULL)
+, conversations(NULL), transfers(NULL), log(NULL), conf(NULL)
 {
 	memset(&centerim_core_ui_ops, 0, sizeof(centerim_core_ui_ops));
 	memset(&logbuf_debug_ui_ops, 0, sizeof(logbuf_debug_ui_ops));
 	memset(&centerim_glib_eventloops, 0, sizeof(centerim_glib_eventloops));
+
+	DeclareBindables();
 }
 
 void CenterIM::Run(void)
@@ -60,9 +62,6 @@ void CenterIM::Run(void)
 	// initialize UI
 	UIInit();
 
-	// declare bindables and bind actions
-	IOInit();
-
 	Application::Run();
 }
 
@@ -70,7 +69,6 @@ void CenterIM::Quit(void) {
 	Application::Quit();
 
 	// clean up
-	IOUnInit();
 	purple_core_quit();
 }
 
@@ -258,39 +256,31 @@ void CenterIM::UIUnInit(void)
 	if (conf) conf->Delete(); conf = NULL;
 }
 
-void CenterIM::IOInit(void)
-{
-	keys = Keys::Instance();
-	DeclareBindables();
-	log->Write(Log::Level_debug, "IO initialized\n");
-}
-
 void CenterIM::DeclareBindables()
 {
-	DeclareBindable(CONTEXT_CENTERIM, "quit", sigc::mem_fun(this, &CenterIM::Quit),
-					InputProcessor::Bindable_Override);
-	DeclareBindable(CONTEXT_CENTERIM, "accountstatusmenu", sigc::mem_fun(this, &CenterIM::OpenAccountStatusMenu),
-					InputProcessor::Bindable_Override);
-	DeclareBindable(CONTEXT_CENTERIM, "generalmenu", sigc::mem_fun(this, &CenterIM::OpenGeneralMenu),
-					InputProcessor::Bindable_Override);
+	DeclareBindable(CONTEXT_CENTERIM, "quit", _("Quit CenterIM."),
+			sigc::mem_fun(this, &CenterIM::Quit),
+			InputProcessor::Bindable_Override);
+	DeclareBindable(CONTEXT_CENTERIM, "accountstatusmenu",
+			_("Open the account status menu."),
+			sigc::mem_fun(this, &CenterIM::OpenAccountStatusMenu),
+			InputProcessor::Bindable_Override);
+	DeclareBindable(CONTEXT_CENTERIM, "generalmenu",
+			_("Open the general menu."),
+			sigc::mem_fun(this, &CenterIM::OpenGeneralMenu),
+			InputProcessor::Bindable_Override);
 }
 
 DEFINE_SIG_REGISTERKEYS(CenterIM, RegisterKeys);
 bool CenterIM::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_CENTERIM, "quit", _("Quit CenterIM."), Keys::Instance()->Key_ctrl_q());
-	RegisterKeyDef(CONTEXT_CENTERIM, "accountstatusmenu", _("Open the account status menu."), Keys::Instance()->Key_f3());
-	RegisterKeyDef(CONTEXT_CENTERIM, "generalmenu", _("Open the general menu."), Keys::Instance()->Key_f4());
+	RegisterKeyDef(CONTEXT_CENTERIM, "quit",
+			Keys::UnicodeTermKey("q", TERMKEY_KEYMOD_CTRL));
+	RegisterKeyDef(CONTEXT_CENTERIM, "accountstatusmenu",
+			Keys::FunctionTermKey(3));
+	RegisterKeyDef(CONTEXT_CENTERIM, "generalmenu",
+			Keys::FunctionTermKey(4));
 	return true;
-}
-
-
-void CenterIM::IOUnInit(void)
-{
-	if (keys) {
-		keys->Delete();
-		keys = NULL;
-	}
 }
 
 Rect CenterIM::ScreenAreaSize(ScreenArea area)

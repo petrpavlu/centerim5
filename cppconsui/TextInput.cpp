@@ -45,6 +45,7 @@ void TextInput::Draw(void)
 	TextBrowser::Draw();
 }
 
+/// @todo update to new libtermkey input handling
 int TextInput::ProcessInputText(const char *input, const int bytes)
 {
 	const char *nl, *start;

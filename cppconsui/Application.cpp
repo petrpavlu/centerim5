@@ -23,50 +23,53 @@
 #include <cerrno>
 
 #include "ConsuiCurses.h"
+
 #include "Application.h"
+
 #include "CppConsUIInternal.h"
 
-Application::Application(void)
-: windowmanager(NULL), converter((GIConv) -1), channel(NULL), channel_id(0)
+Application::Application()
+: windowmanager(NULL), channel(NULL), channel_id(0), tk(NULL), gmainloop(NULL)
 {
+	StdinInputInit();
+
 	windowmanager = WindowManager::Instance();
+	SetInputChild(*windowmanager);
 
 	/* Application always needs to be the first resize handler because users
 	 * usually want to recalculate sizes of all windows in ScreenResized
 	 * (virtual method) first and then resize the windows appropriately. */
 	resize = windowmanager->signal_resize.connect(sigc::mem_fun(this, &Application::ScreenResized));
-	windowmanager->EnableResizing();
 
 	// create a new loop
-	gmainloop = Glib::MainLoop::create();
+	gmainloop = g_main_loop_new(NULL, FALSE);
 }
 
-Application::~Application(void)
+Application::~Application()
 {
 	resize.disconnect();
 
 	windowmanager->Delete();
-}
-
-void Application::Run(void)
-{
-	windowmanager->ScreenResized();
-
-	StdinInputInit();
-
-	gmainloop->run();
-}
-
-void Application::Quit(void)
-{
-	gmainloop->quit();
 
 	StdinInputUnInit();
 }
 
+void Application::Run()
+{
+	windowmanager->EnableResizing();
+	windowmanager->ScreenResized();
+
+	g_main_loop_run(gmainloop);
+}
+
+void Application::Quit()
+{
+	g_main_loop_quit(gmainloop);
+}
+
 gboolean Application::io_input_error(GIOChannel *source, GIOCondition cond)
 {
-	// log an error and bail out if we lost stdin
+	// log a critical warning and bail out if we lost stdin
 	g_critical("Stdin lost!\n");
 	Quit();
 
@@ -75,113 +78,50 @@ gboolean Application::io_input_error(GIOChannel *source, GIOCondition cond)
 
 gboolean Application::io_input(GIOChannel *source, GIOCondition cond)
 {
-	// TODO is this reasonable? (pasting needs a somewhat larger buffer to be efficient)
-	gchar buf[64];
-	gsize rd;
-	GError *err = NULL;
-	/* Buffer for saving a part of char from a previous reading, max char len
-	 * in bytes (currently 6 bytes for UTF-8), size must be always
-	 * <= sizeof(buf). */
-	static gchar buf_part[6];
-	static gsize buf_part_len;
-	/* Every character in UTF-8 can be encoded with 6 bytes so this is enough
-	 * room for any conversion. */
-	gchar converted[6 * sizeof(buf) + 1];
-	gsize converted_left = sizeof(converted);
-	gchar *pbuf = buf;
-	gchar *pconverted = converted;
-	static std::string input;
-	int eaten;
+	termkey_advisereadable(tk);
 
-	if (buf_part_len) {
-		memcpy(buf, buf_part, buf_part_len);
-	}
+	TermKeyKey key;
+	/**
+	 * @todo Actually we should call termkey_getkey() instead of
+	 * termkey_getkey_force(). See libtermkey async demo.
+	 */
+	while (termkey_getkey_force(tk, &key) == TERMKEY_RES_KEY) {
+		if (key.type == TERMKEY_TYPE_UNICODE) {
+			gsize bwritten;
+			GError *err = NULL;
+			gchar *utf8;
 
-	if (g_io_channel_read_chars(source, buf + buf_part_len,
-				sizeof(buf) - buf_part_len, &rd, &err) != G_IO_STATUS_NORMAL) {
-		if (err) {
-			g_warning("Error reading chars from standard input (%s).\n", err->message);
-			g_error_free(err);
+			// convert data from user charset to UTF-8
+			if (!(utf8 = g_locale_to_utf8(key.utf8, -1, NULL, &bwritten, &err))) {
+				if (err) {
+					g_warning(_("Error converting input to UTF-8 (%s).\n"), err->message);
+					g_error_free(err);
+					err = NULL;
+				}
+				else
+					g_warning(_("Error converting input to UTF-8.\n"));
+				continue;
+			}
+
+			memcpy(key.utf8, utf8, bwritten + 1);
+			g_free(utf8);
+
+			key.code.codepoint = g_utf8_get_char(key.utf8);
 		}
-		else
-			g_warning("Error reading chars from standard input.\n");
-		return TRUE;
-	}
-	rd += buf_part_len;
-	buf_part_len = 0;
 
-	/* We don't need to care much about this, glib will notice us again that
-	 * there are still bytes left. */
-	if (sizeof(buf) == rd) {
-		g_debug("Input buffer full.\n");
-	}
-
-	/* TODO Fix the input string.
-	 * Some keys generate bytestrings which are different from the strings
-	 * terminfo/ncurses expects
-	 * */
-	//keys->Refine(buf, rd);
-
-	// convert data from user charset to UTF-8
-	g_iconv(converter, NULL, NULL, NULL, NULL);
-	errno = 0;
-	if (g_iconv(converter, &pbuf, &rd, &pconverted, &converted_left) == (gsize) -1) {
-		switch (errno) {
-			case EILSEQ:
-				g_critical(_("IConv error: %s\n"), g_strerror(errno));
-				return TRUE;
-			case EINVAL:
-				/* Incomplete multibyte sequence is encountered in the input,
-				 * save these bytes for further reading. */
-				memcpy(buf_part, pbuf, rd);
-				buf_part_len = rd;
-				break;
-			default:
-				g_critical(_("Unexcepted IConv error: %s\n"), g_strerror(errno));
-				return TRUE;
-		}
-	}
-	*pconverted = '\0';
-
-	/* Below this line we assume all input has been converted to UTF-8 encoded
-	 * multibyte string
-	 * */
-
-	// too noisy even for debug level
-	/*
-	for (gchar *iter = converted; *iter != '\0'; iter = g_utf8_next_char(iter)) {
-		g_debug("input: U+%04"G_GINT32_FORMAT"X\n", g_utf8_get_char(iter));
-	}
-	*/
-
-	input.append(converted);
-
-	while (input.size()) {
-		eaten = ProcessInput(input.c_str(), input.size());
-		if (eaten < 0) {
-			return TRUE;
-		} else if (eaten == 0) {
-			//TODO find out if there is a more intelligent way
-			//to discard input. eg: key_left is 6 bytes, so
-			//remove 6 bytes (*must* be *fast*)
-			eaten = 1;
-		}
-		input.erase(0, eaten);
+		ProcessInput(key);
 	}
 
 	return TRUE;
 }
 
-void Application::StdinInputInit(void)
+void Application::StdinInputInit()
 {
-	SetInputChild(windowmanager);
-
-	// print the currently used character set
-	const char *charset;
-	g_get_charset(&charset);
-	if ((converter = g_iconv_open("UTF-8", charset)) == (GIConv) -1) {
-		g_critical(_("IConv initialization failed (%s)\n"), g_strerror(errno));
-		// TODO !
+	// init libtermkey
+	TERMKEY_CHECK_VERSION;
+	if (!(tk = termkey_new(STDIN_FILENO, 0))) {
+		g_critical(_("Libtermkey initialization failed.\n"));
+		exit(1);
 	}
 
 	channel = g_io_channel_unix_new(STDIN_FILENO);
@@ -198,12 +138,12 @@ void Application::StdinInputInit(void)
 	g_io_channel_unref(channel);
 }
 
-void Application::StdinInputUnInit(void)
+void Application::StdinInputUnInit()
 {
 	g_source_remove(channel_id);
 	channel_id = 0;
 	g_io_channel_unref(channel);
 	channel = NULL;
 
-	g_iconv_close(converter);
+	termkey_destroy(tk);
 }

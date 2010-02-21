@@ -64,14 +64,16 @@ Window::~Window()
 
 void Window::DeclareBindables()
 {
-	DeclareBindable(CONTEXT_WINDOW, "close-window", sigc::mem_fun(this, &Window::Close),
-					InputProcessor::Bindable_Normal);
+	DeclareBindable(CONTEXT_WINDOW, "close-window", _("Close the menu"),
+			sigc::mem_fun(this, &Window::Close),
+			InputProcessor::Bindable_Normal);
 }
 
 DEFINE_SIG_REGISTERKEYS(Window, RegisterKeys);
 bool Window::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_WINDOW, "close-window", _("Close the menu"), Keys::Instance()->Key_esc());
+	RegisterKeyDef(CONTEXT_WINDOW, "close-window",
+			Keys::SymbolTermKey(TERMKEY_SYM_ESCAPE));
 	return true;
 }
 

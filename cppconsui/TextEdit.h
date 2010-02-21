@@ -24,7 +24,7 @@ class TextEdit
 		// Widget
 		virtual void Draw();
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
-		virtual int ProcessInputText(const char *input, const int bytes);
+		virtual bool ProcessInputText(const TermKeyKey &key);
 		
 		sigc::signal<void> signal_text_changed;
 
@@ -46,7 +46,7 @@ class TextEdit
 
 		void UpdateScreenCursor();
 
-		void InsertTextAtCursor(const gchar *new_text, int new_length);
+		void InsertTextAtCursor(const gchar *new_text, int new_text_bytes = -1);
 		void DeleteFromCursor(DeleteType type, int direction);
 		void MoveCursor(CursorMovement step, int direction);
 
@@ -95,6 +95,7 @@ class TextEdit
 		void ActionDelete(DeleteType type, int direction);
 		void ActionToggleOverwrite();
 		void ActionInsertEOL();
+		void ActionInsertSpace();
 	
 		/** it handles the automatic registration of defined keys */
 		DECLARE_SIG_REGISTERKEYS();

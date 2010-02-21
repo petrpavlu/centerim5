@@ -43,7 +43,7 @@ TreeViewWindow::TreeViewWindow()
 
 	tree = new TreeView(*this, 1, 3, 30, 12, LineStyle::DEFAULT);
 	AddWidget(tree);
-	SetInputChild(tree);
+	SetInputChild(*tree);
 
 	node = tree->AddNode(tree->Root(), new Button(*tree, 0, 0, "Button node A"), NULL);
 	node2 = tree->AddNode(node, new Button(*tree, 0, 0, "Button node A-1"), NULL);
@@ -126,14 +126,15 @@ void TestApp::Run()
 
 void TestApp::DeclareBindables()
 {
-	DeclareBindable(CONTEXT_TESTAPP, "quit", sigc::mem_fun(this, &TestApp::Quit),
+	DeclareBindable(CONTEXT_TESTAPP, "quit", "Quit TestApp.",
+			sigc::mem_fun(this, &TestApp::Quit),
 			InputProcessor::Bindable_Override);
 }
 
 DEFINE_SIG_REGISTERKEYS(TestApp, RegisterKeys);
 bool TestApp::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_TESTAPP, "quit", "Quit TestApp.", Keys::Instance()->Key_f10());
+	RegisterKeyDef(CONTEXT_TESTAPP, "quit", Keys::FunctionTermKey(10));
 	return true;
 }
 

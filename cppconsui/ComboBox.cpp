@@ -63,14 +63,17 @@ ComboBox::~ComboBox()
 
 void ComboBox::DeclareBindables()
 {
-	DeclareBindable(CONTEXT_COMBOBOX, "dropdown", sigc::mem_fun(this, &ComboBox::OnDropDown),
-					InputProcessor::Bindable_Override);
+	DeclareBindable(CONTEXT_COMBOBOX, "dropdown",
+			_("Show the dropdown menu."),
+			sigc::mem_fun(this, &ComboBox::OnDropDown),
+			InputProcessor::Bindable_Override);
 }
 
 DEFINE_SIG_REGISTERKEYS(ComboBox, RegisterKeys);
 bool ComboBox::RegisterKeys(void)
 {
-	RegisterKeyDef(CONTEXT_COMBOBOX, "dropdown", _("Show the dropdown menu."), KEYS->Key_enter());
+	RegisterKeyDef(CONTEXT_COMBOBOX, "dropdown",
+			Keys::SymbolTermKey(TERMKEY_SYM_ENTER));
 	return true;
 }
 

@@ -14,43 +14,48 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * */
+
 /** @file KeyConfig.cpp KeyConfig implementation 
  */
 
 #include "KeyConfig.h"
-#include <stdexcept>
 
-KeyConfig& KeyConfig::Instance(){
+KeyConfig *KeyConfig::Instance()
+{
 	static KeyConfig instance;
-	return instance;
+	return &instance;
 }
 
-bool KeyConfig::RegisterKeyDef(const KeyDef& keydef){
-	KeyContext &kc = keys.insert(KeyGlobals::value_type(keydef.context, KeyGlobals::mapped_type())).first->second;
-	return kc.insert(KeyContext::value_type(keydef.action, KeyContext::mapped_type(keydef, keydef.defvalue))).second;
+void KeyConfig::Bind(const char *context, const char *action, const TermKeyKey &key)
+{
+	keys[context][key] = action;
 }
 
-const KeyConfig::KeyValue& KeyConfig::GetKeyValue(const ustring& context, const ustring& action) const {
-	const KeyContext& key_context = GetContext(context);
-	KeyContext::const_iterator j = key_context.find(action);
-	if (j == key_context.end()) throw std::logic_error("Action " + context + "." + action + " not found!");
-	return j->second;
-}
-
-const KeyConfig::KeyContext& KeyConfig::GetContext(const ustring& context) const {
+const KeyConfig::KeyContext *KeyConfig::GetContext(const char *context) const
+{
 	KeyGlobals::const_iterator i = keys.find(context);
-	if (i == keys.end()) throw std::logic_error("Context " + context + " not found!");
-	return i->second;
+	if (i == keys.end())
+		return NULL;
+	return &i->second;
 }
 
-bool KeyConfig::Reconfig(){
+void KeyConfig::Clear()
+{
+	signal_register.clear();
+	signal_reconfig.clear();
+	keys.clear();
+}
+
+bool KeyConfig::Reconfig()
+{
 	/** @todo read the config and assign it to keys
 	 */
 	signal_reconfig.emit();
 	return true;
 }
 
-bool KeyConfig::Register(){
+bool KeyConfig::Register()
+{
 	/* it calls all registered init functions, that will
 	 fill up keys by calling RegisterKeyDef themselves */
 	signal_register.emit();

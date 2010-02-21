@@ -32,7 +32,7 @@ MenuWindow::MenuWindow(int x_, int y_, int w_, int h_, LineStyle::Type ltype)
 : Window(x_, y_, w_, h_, ltype)
 {
 	listbox = new ListBox(*this, 0, 0, w, h);
-	SetFocusChild(listbox);
+	SetFocusChild(*listbox);
 	Window::AddWidget(listbox);
 	DeclareBindables();
 }
@@ -43,20 +43,16 @@ MenuWindow::~MenuWindow()
 
 void MenuWindow::DeclareBindables()
 {
-	//DeclareBindable(CONTEXT_MENUWINDOW, "focus-previous", sigc::mem_fun(listbox, &Container::FocusCyclePrevious),
-	//	InputProcessor::Bindable_Normal);
-	//DeclareBindable(CONTEXT_MENUWINDOW, "focus-next", sigc::mem_fun(listbox, &Container::FocusCycleNext),
-	//	InputProcessor::Bindable_Normal);
-	DeclareBindable(CONTEXT_MENUWINDOW, "close-window", sigc::mem_fun(this, &Window::Close),
-					InputProcessor::Bindable_Normal);
+	DeclareBindable(CONTEXT_MENUWINDOW, "close-window", _("Close the window"),
+			sigc::mem_fun(this, &Window::Close),
+			InputProcessor::Bindable_Normal);
 }
 
 DEFINE_SIG_REGISTERKEYS(MenuWindow, RegisterKeys);
 bool MenuWindow::RegisterKeys()
 {
-	//RegisterKeyDef(CONTEXT_MENUWINDOW, "focus-previous", _("Focusses the previous menu item"), KEYS->Key_up());
-	//RegisterKeyDef(CONTEXT_MENUWINDOW, "focus-next", _("Focusses the next menu item"), KEYS->Key_down());
-	RegisterKeyDef(CONTEXT_MENUWINDOW, "close-window", _("Close the window"), KEYS->Key_esc());
+	RegisterKeyDef(CONTEXT_MENUWINDOW, "close-window",
+			Keys::SymbolTermKey(TERMKEY_SYM_ESCAPE));
 	return true;
 }
 

@@ -73,17 +73,23 @@ TreeView::~TreeView()
 
 void TreeView::DeclareBindables()
 {
-	DeclareBindable(CONTEXT_TREEVIEW, "fold-subtree", sigc::mem_fun(this, &TreeView::ActionCollapse),
-					InputProcessor::Bindable_Normal);
-	DeclareBindable(CONTEXT_TREEVIEW, "unfold-subtree", sigc::mem_fun(this, &TreeView::ActionExpand),
-					InputProcessor::Bindable_Normal);
+	DeclareBindable(CONTEXT_TREEVIEW, "fold-subtree",
+			_("Collapse the selected subtree"),
+			sigc::mem_fun(this, &TreeView::ActionCollapse),
+			InputProcessor::Bindable_Normal);
+	DeclareBindable(CONTEXT_TREEVIEW, "unfold-subtree",
+			_("Expand the selected subtree"),
+			sigc::mem_fun(this, &TreeView::ActionExpand),
+			InputProcessor::Bindable_Normal);
 }
 
 DEFINE_SIG_REGISTERKEYS(TreeView, RegisterKeys);
 bool TreeView::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_TREEVIEW, "fold-subtree", _("Collapse the selected subtree"), "-");
-	RegisterKeyDef(CONTEXT_TREEVIEW, "unfold-subtree", _("Expand the selected subtree"), "+");
+	RegisterKeyDef(CONTEXT_TREEVIEW, "fold-subtree",
+			Keys::UnicodeTermKey("-"));
+	RegisterKeyDef(CONTEXT_TREEVIEW, "unfold-subtree",
+			Keys::UnicodeTermKey("+"));
 	return true;
 }
 
@@ -154,17 +160,15 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 	return height;
 }
 
-bool TreeView::SetFocusChild(Widget* child)
+bool TreeView::SetFocusChild(Widget &child)
 {
 	TheTree::pre_order_iterator i;
-
-	g_assert(child != NULL);
 
 	if (ScrollPane::SetFocusChild(child)) {
 		//TODO do we want to use widget.data for this? or is
 		//this better?
 		for (i = thetree.begin(); i != thetree.end(); i++) {
-			if ((*i).widget == child) {
+			if ((*i).widget == &child) {
 				focus_node = i;
 				break;
 			}

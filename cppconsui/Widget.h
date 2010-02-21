@@ -92,7 +92,7 @@ class Widget
 		 * parent->SetFocusChild(this) always succeeds. (Otherwise, the focus is not set, but stolen from the current widget)
 		 * The child Widget should not be null (perhaps reference ?)
 		 */
-		virtual bool SetFocusChild(Widget* child);
+		virtual bool SetFocusChild(Widget &child);
 		/** It deletes the focus (and input) chain starting from this widget.
 		 * @return true if the focus belonged to this widget's chain and was 
 		 * successfuly removed

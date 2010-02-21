@@ -67,14 +67,15 @@ Button::~Button()
 
 void Button::DeclareBindables(void)
 {
-	DeclareBindable(CONTEXT_BUTTON, "activate", sigc::mem_fun(this, &Button::OnActivate),
-					InputProcessor::Bindable_Normal);
+	DeclareBindable(CONTEXT_BUTTON, "activate", _("Activate the button"),
+			sigc::mem_fun(this, &Button::OnActivate),
+			InputProcessor::Bindable_Normal);
 }
 
 DEFINE_SIG_REGISTERKEYS(Button, RegisterKeys);
 bool Button::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_BUTTON, "activate", _("Activate the button"), Keys::Instance()->Key_enter());
+	RegisterKeyDef(CONTEXT_BUTTON, "activate", Keys::SymbolTermKey(TERMKEY_SYM_ENTER));
 	return true;
 }
 
