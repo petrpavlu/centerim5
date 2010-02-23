@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include <cppconsui/ColorScheme.h>
 #include <cstring>
 
 #define CONTEXT_CENTERIM "centerim"
@@ -222,6 +223,32 @@ void CenterIM::DebugUIInit(void)
 
 void CenterIM::UIInit(void)
 {
+	// default colors init
+	/// @todo move this to a default cfg
+	COLORSCHEME->SetColorPair("accountstatusmenu",	"panel",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("accountstatusmenu",	"verticalline",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("accountstatusmenu",	"button",		"normal",	Curses::Color::CYAN,	Curses::Color::BLACK);
+
+	COLORSCHEME->SetColorPair("accountstatuspopup",	"panel",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("accountstatuspopup",	"verticalline",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("accountstatuspopup",	"button",		"normal",	Curses::Color::CYAN,	Curses::Color::BLACK);
+
+	COLORSCHEME->SetColorPair("accountwindow",	"panel",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("accountwindow",	"horizontaline",	"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("accountwindow",	"verticalline",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+
+	COLORSCHEME->SetColorPair("buddylist",		"treeview",		"line",		Curses::Color::GREEN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("buddylist",		"panel",		"line",		Curses::Color::BLUE,	Curses::Color::BLACK,	Curses::Attr::BOLD);
+	COLORSCHEME->SetColorPair("buddylist",		"button",		"normal",	Curses::Color::GREEN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("buddylistgroup",	"button",		"normal",	Curses::Color::YELLOW,	Curses::Color::BLACK,	Curses::Attr::BOLD);
+
+	COLORSCHEME->SetColorPair("generalmenu",	"panel",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("generalmenu",	"verticalline",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("generalmenu",	"button",		"normal",	Curses::Color::CYAN,	Curses::Color::BLACK);
+
+	COLORSCHEME->SetColorPair("log",		"panel",		"line",		Curses::Color::BLUE,	Curses::Color::BLACK,	Curses::Attr::BOLD);
+	COLORSCHEME->SetColorPair("log",		"textview",		"text",		Curses::Color::CYAN,	Curses::Color::BLACK);
+
 	//TODO when these objecs are windows, add them to the windowmanager
 	accounts = Accounts::Instance();
 //	windowmanager->Add(accounts = new Accounts());

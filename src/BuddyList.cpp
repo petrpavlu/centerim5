@@ -26,9 +26,7 @@
 #include "CenterIM.h"
 #include "Defines.h"
 
-//TODO remove this include. non-cppconsui classes may not touch area member
 #include <cppconsui/ConsuiCurses.h>
-
 
 #include <cppconsui/Keys.h>
 #include <cppconsui/Window.h>
@@ -44,7 +42,6 @@
 #include <libpurple/debug.h>
 #include <libpurple/savedstatuses.h>
 
-//#include <glib.h>
 #include <glibmm/main.h>
 
 BuddyList* BuddyList::instance = NULL;
@@ -85,6 +82,8 @@ static PurpleBlistUiOps centerim_blist_ui_ops =
 BuddyList::BuddyList()
 : Window(0, 0, 80, 24)
 {
+	SetColorScheme("buddylist");
+
 	log = &Log::Instance();
 	conf = Conf::Instance();
 
@@ -102,7 +101,6 @@ BuddyList::BuddyList()
 
 	Glib::signal_timeout().connect(sigc::mem_fun(this, &BuddyList::Load), 0);
 
-	//TODO get linestyle from conf
 	treeview = new TreeView(*this, 0, 0, w - 2, h - 2);
 	AddWidget(treeview);
 	SetInputChild(*treeview);

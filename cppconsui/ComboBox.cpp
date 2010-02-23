@@ -23,37 +23,32 @@
  */
 
 #include "ComboBox.h"
-
 #include "Keys.h"
-#include "Button.h"
 #include "CppConsUIInternal.h"
 
 /// @todo remove when show() of window/dialog is implemented
 #include "WindowManager.h"
 
-#include <glib.h>
-#include <glib/gprintf.h>
-
-#include <string.h>
-
 #define CONTEXT_COMBOBOX "combobox"
 
 
 ComboBox::ComboBox(Widget& parent, int x, int y, int w, int h, const gchar *text)
-: TextEntry(parent, x, y, w, h, text)
+: Button(parent, x, y, w, h, text)
 , dropdown(NULL)
 {
 	selected_entry.text = NULL;
 	selected_entry.data = NULL;
+
 	DeclareBindables();
 }
 
 ComboBox::ComboBox(Widget& parent, int x, int y, const gchar *text)
-: TextEntry(parent, x, y, text)
+: Button(parent, x, y, text)
 , dropdown(NULL)
 {
 	selected_entry.text = NULL;
 	selected_entry.data = NULL;
+
 	DeclareBindables();
 }
 

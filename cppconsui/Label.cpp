@@ -20,9 +20,9 @@
  * */
 
 #include "Label.h"
-#include "ConsuiCurses.h"
 
-#include <glib.h>
+#include "ConsuiCurses.h"
+#include "ColorScheme.h"
 
 Label::Label(Widget& parent, int x, int y, int w, int h, const gchar *text_)
 : Widget(parent, x, y, w, h)
@@ -45,6 +45,11 @@ Label::~Label()
 
 void Label::Draw()
 {
+	DrawEx(true);
+}
+
+void Label::DrawEx(bool color)
+{
 	if (!area)
 		return;
 
@@ -56,10 +61,17 @@ void Label::Draw()
 
 	area->erase();
 
+	int attrs;
+	if (color) {
+		attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "label", "text");
+		area->attron(attrs);
+	}
+
 	int max = area->getmaxx() * area->getmaxy();
 	area->mvaddstring(0, 0, max, text);
 
-	Widget::Draw();
+	if (color)
+		area->attroff(attrs);
 }
 
 void Label::SetText(const gchar *text_)

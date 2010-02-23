@@ -40,7 +40,8 @@ AccountWindow::AccountWindow()
 , menu_index(2)
 , accounts_index(1)
 {
-	//const gchar *context = "accountwindow";
+	SetColorScheme("accountwindow");
+
 	log = &Log::Instance();
 	conf = Conf::Instance();
 

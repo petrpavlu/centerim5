@@ -25,7 +25,7 @@
 #ifndef __COMBOBOX_H__
 #define __COMBOBOX_H__
 
-#include "TextEntry.h"
+#include "Button.h"
 
 #include "MenuWindow.h"
 
@@ -33,18 +33,9 @@
 
 /** This class should be used when the user must choose 
  * one value from several options. 
- * It is derived from TextEntry, as it's display text can change.
- * @todo not sure if it should be derived from TextEntry, as the 
- *  functionality of a TextEntry is not used here (except for the fact 
- *  that the label text could change).
- *  A better solution could be to modify the Label class so that it's text 
- *  may change, and derive directly from there.
- *  Also, the text as the default value for label is not good to be given
- *  to the constructor, it should be chosen as the first value from the 
- *  options, or a selected value.
  */
 class ComboBox
-: public TextEntry
+: public Button
 {
 	public:
 		/** Keeps a pair of {display text, value}

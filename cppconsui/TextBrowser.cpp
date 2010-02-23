@@ -161,6 +161,4 @@ void TextBrowser::Draw(void)
 		/* clear until the end of the line */
 		area->clrtoeol();
 	}
-
-	Widget::Draw();
 }

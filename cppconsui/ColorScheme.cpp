@@ -20,44 +20,49 @@
 
 #include "ColorScheme.h"
 
+#include "ConsuiCurses.h"
+
+ColorScheme *ColorScheme::Instance()
+{
+	static ColorScheme instance;
+	return &instance;
+}
+
 ColorScheme::ColorScheme()
 {
-	for (int i = 0; i <= Disabled; i++) {
-		schemes[i] = 0;
+}
+
+ColorScheme::~ColorScheme()
+{
+}
+
+int ColorScheme::GetColorPair(const char *scheme, const char *widget,
+		const char *property)
+{
+	g_assert(widget);
+	g_assert(property);
+
+	if (scheme != NULL && schemes.find(scheme) != schemes.end()
+			&& schemes[scheme].find(widget) != schemes[scheme].end()
+			&& schemes[scheme][widget].find(property) != schemes[scheme][widget].end()) {
+		Color c = schemes[scheme][widget][property];
+		return Curses::getcolorpair(c.foreground, c.background) | c.attrs;
 	}
+	return 0;
 }
 
-ColorScheme::ColorScheme(const ColorScheme *colorscheme)
+bool ColorScheme::SetColorPair(const char *scheme, const char *widget,
+		const char *property, int foreground, int background, int attrs,
+		bool overwrite)
 {
-	for (int i = 0; i <= Disabled; i++) {
-		schemes[i] = colorscheme->schemes[i];
-	}
-}
+	g_assert(widget);
+	g_assert(property);
 
-ColorScheme::~ColorScheme(void)
-{
-}
+	if (!overwrite && scheme != NULL && schemes.find(scheme) != schemes.end()
+			&& schemes[scheme].find(widget) != schemes[scheme].end()
+			&& schemes[scheme][widget].find(property) != schemes[scheme][widget].end())
+		return false;
 
-ColorScheme* ColorScheme::ColorSchemeNormal(void)
-{
-	ColorScheme *scheme = new ColorScheme();
-	scheme->schemes[Normal]   = Curses::Attr::NORMAL;
-	scheme->schemes[Focus]    = Curses::Attr::REVERSE;
-	scheme->schemes[Disabled] = Curses::Attr::DIM;
-	return scheme;
-}
-
-void ColorScheme::On(Curses::Window *area, ColorType type)
-{
-	area->attron(schemes[type]);
-}
-
-void ColorScheme::Off(Curses::Window *area, ColorType type)
-{
-	area->attroff(schemes[type]);
-}
-
-void ColorScheme::SetColor(Curses::Window *area, int x, int y, int n, ColorType type)
-{
-	area->mvchgat(x, y, n, schemes[type], 0, NULL);
+	schemes[scheme][widget][property] = Color(foreground, background, attrs);
+	return true;
 }

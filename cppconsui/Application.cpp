@@ -142,10 +142,10 @@ void Application::StdinInputInit()
 
 void Application::StdinInputUnInit()
 {
+	termkey_destroy(tk);
+
 	g_source_remove(channel_id);
 	channel_id = 0;
 	g_io_channel_unref(channel);
 	channel = NULL;
-
-	termkey_destroy(tk);
 }

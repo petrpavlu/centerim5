@@ -22,8 +22,6 @@
 #include "CenterIM.h"
 
 #include <cppconsui/Label.h>
-#include <cppconsui/HorizontalLine.h>
-#include <cppconsui/LineStyle.h>
 #include <cppconsui/WindowManager.h>
 
 #include <libpurple/account.h>
@@ -32,6 +30,8 @@
 AccountStatusMenu::AccountStatusMenu(int x, int y, int w, int h)
 : MenuWindow(x, y, w, h)
 {
+	SetColorScheme("accountstatusmenu");
+
 	GList *iter;
 	gchar *text;
 
@@ -69,6 +69,8 @@ AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h, PurpleAc
 : MenuWindow(x, y, w, h)
 , account(account)
 {
+	SetColorScheme("accountstatuspopup");
+
 	GList *iter;
 	PurpleStatusType *status_type;
 	gchar *label;

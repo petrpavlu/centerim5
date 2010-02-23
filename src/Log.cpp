@@ -22,7 +22,6 @@
 #include "Conf.h"
 #include "CenterIM.h"
 
-//#include <cppconsui/CppConsUI.h>
 #include <cppconsui/WindowManager.h>
 #include <libpurple/debug.h>
 #include <libpurple/util.h>
@@ -43,6 +42,8 @@ Log::Log(void)
 , max_lines(0)
 , conf(NULL)
 { 
+	SetColorScheme("log");
+
 	memset(&centerim_debug_ui_ops, 0, sizeof(centerim_debug_ui_ops));
 
 	conf = Conf::Instance();
@@ -56,6 +57,7 @@ Log::Log(void)
 
 	// TODO max_lines not used anywhere..
 	max_lines = conf->GetLogMaxLines();
+
 	MoveResizeRect(conf->GetLogDimensions());
 
 	// register the glib log handlers

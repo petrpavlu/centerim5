@@ -22,8 +22,10 @@
  * @ingroup cppconsui
  */
 
-#include "ConsuiCurses.h"
 #include "Panel.h"
+
+#include "ConsuiCurses.h"
+#include "ColorScheme.h"
 
 Panel::Panel(Widget& parent, const int x, const int y, const int w, const int h, LineStyle::Type ltype)
 : Widget(parent, x, y, w, h)
@@ -45,6 +47,9 @@ void Panel::Draw()
 	if (!area || (realw = area->getmaxx()) == 0 || (realh = area->getmaxy()) == 0)
 		return;
 
+	int attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "panel", "line");
+	area->attron(attrs);
+
 	for (int i = 1; i < realw - 1; i++) {
 		area->mvaddstring(i, 0, linestyle.H());
 		area->mvaddstring(i, realh - 1, linestyle.H());
@@ -58,6 +63,8 @@ void Panel::Draw()
 	area->mvaddstring(0, realh - 1, linestyle.CornerBL());
 	area->mvaddstring(realw - 1, 0, linestyle.CornerTR());
 	area->mvaddstring(realw - 1, realh - 1, linestyle.CornerBR());
+
+	area->attroff(attrs);
 }
 
 void Panel::SetText(const gchar *str)

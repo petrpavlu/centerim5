@@ -88,7 +88,7 @@ class Window
 		/** Returns a subpad of current widget with given coordinates.
 		 */
 		virtual Curses::Window *GetSubPad(const Widget &child, int begin_x, int begin_y, int ncols, int nlines);
-		
+
 		sigc::signal<void, Window*> signal_close;
 		//sigc::signal<void, Window*> signal_show;
 		//sigc::signal<void, Window*> signal_hide;

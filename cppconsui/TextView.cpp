@@ -1,5 +1,7 @@
-#include "CppConsUI.h"
 #include "TextView.h"
+
+#include "CppConsUI.h"
+#include "ColorScheme.h"
 
 TextView::TextView(Widget& parent_, int x_, int y_, int w_, int h_, bool autoscroll_)
 : Widget(parent_, x_, y_, w_, h_)
@@ -123,10 +125,15 @@ void TextView::Draw()
 			view_top = 0;
 	}
 
+	int attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "textview", "text");
+	area->attron(attrs);
+
 	std::vector<ScreenLine *>::iterator i;
 	int j;
 	for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end() && j < realh; i++, j++)
 		area->mvaddstring(0, j, (*i)->width, (*i)->text);
+
+	area->attroff(attrs);
 }
 
 void TextView::MoveResize(int newx, int newy, int neww, int newh)

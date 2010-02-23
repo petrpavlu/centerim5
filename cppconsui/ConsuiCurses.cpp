@@ -34,12 +34,24 @@
 #include <curses.h>
 #endif
 
-int Curses::Attr::NORMAL = A_NORMAL;
-int Curses::Attr::REVERSE = A_REVERSE;
-int Curses::Attr::DIM = A_DIM;
+#include <map>
 
-int Curses::C_OK = OK;
-int Curses::C_ERR = ERR;
+const int Curses::Color::BLACK = COLOR_BLACK;
+const int Curses::Color::RED = COLOR_RED;
+const int Curses::Color::GREEN = COLOR_GREEN;
+const int Curses::Color::YELLOW = COLOR_YELLOW;
+const int Curses::Color::BLUE = COLOR_BLUE;
+const int Curses::Color::MAGENTA = COLOR_MAGENTA;
+const int Curses::Color::CYAN = COLOR_CYAN;
+const int Curses::Color::WHITE = COLOR_WHITE;
+
+const int Curses::Attr::NORMAL = A_NORMAL;
+const int Curses::Attr::REVERSE = A_REVERSE;
+const int Curses::Attr::DIM = A_DIM;
+const int Curses::Attr::BOLD = A_BOLD;
+
+const int Curses::C_OK = OK;
+const int Curses::C_ERR = ERR;
 
 struct Curses::Window::WindowInternals
 {
@@ -54,7 +66,7 @@ Curses::Window::Window()
 
 Curses::Window::~Window()
 {
-	::delwin(p->win);
+	delwin(p->win);
 	delete p;
 }
 
@@ -124,7 +136,7 @@ const gchar *Curses::Window::PrintChar(const gchar *ch, int *printed, const gcha
 
 	if (((unsigned char) *ch >= 0x7f && (unsigned char) *ch < 0xa0)) {
 		// filter out C1 (8-bit) control characters
-		::waddch(p->win, '?');
+		waddch(p->win, '?');
 		*printed = 1;
 		return ch + 1;
 	}
@@ -144,8 +156,8 @@ const gchar *Curses::Window::PrintChar(const gchar *ch, int *printed, const gcha
 	if (wch[0] < 32)
 		wch[0] = 0x2400 + wch[0];
 
-	::setcchar(&cc, wch, A_NORMAL, 0, NULL);
-	::wadd_wch(p->win, &cc);
+	setcchar(&cc, wch, A_NORMAL, 0, NULL);
+	wadd_wch(p->win, &cc);
 	*printed = g_unichar_iswide(wch[0]) ? 2 : 1;
 	return g_utf8_find_next_char(ch, end);
 }
@@ -154,7 +166,7 @@ int Curses::Window::mvaddstring(int x, int y, int w, const gchar *str)
 {
 	g_assert(str);
 
-	::wmove(p->win, y, x);
+	wmove(p->win, y, x);
 	//attrset(selection_color(selected, COLOR_STANDARD));
 
 	int printed = 0;
@@ -170,7 +182,7 @@ int Curses::Window::mvaddstring(int x, int y, const gchar *str)
 {
 	g_assert(str);
 
-	::wmove(p->win, y, x);
+	wmove(p->win, y, x);
 	//attrset(selection_color(selected, COLOR_STANDARD));
 
 	int printed = 0;
@@ -190,7 +202,7 @@ int Curses::Window::mvaddstring(int x, int y, int w, const gchar *str, const gch
 	if (str >= end)
 		return 0;
 
-	::wmove(p->win, y, x);
+	wmove(p->win, y, x);
 	//attrset(selection_color(selected, COLOR_STANDARD));
 
 	int printed = 0;
@@ -210,7 +222,7 @@ int Curses::Window::mvaddstring(int x, int y, const gchar *str, const gchar *end
 	if (str >= end)
 		return 0;
 
-	::wmove(p->win, y, x);
+	wmove(p->win, y, x);
 	//attrset(selection_color(selected, COLOR_STANDARD));
 
 	int printed = 0;
@@ -224,59 +236,80 @@ int Curses::Window::mvaddstring(int x, int y, const gchar *str, const gchar *end
 
 int Curses::Window::mvaddstr(int x, int y, const char *str)
 {
-	return ::mvwaddstr(p->win, y, x, str);
+	return mvwaddstr(p->win, y, x, str);
 }
 
 int Curses::Window::mvaddnstr(int x, int y, const char *str, int n)
 {
-	return ::mvwaddnstr(p->win, y, x, str, n);
+	return mvwaddnstr(p->win, y, x, str, n);
 }
 
 int Curses::Window::attron(int attrs)
 {
-	return ::wattron(p->win, attrs);
+	return wattron(p->win, attrs);
 }
 
 int Curses::Window::attroff(int attrs)
 {
-	return ::wattroff(p->win, attrs);
+	return wattroff(p->win, attrs);
 }
 
 int Curses::Window::mvchgat(int x, int y, int n, /* attr_t */ int attr, short color, const void *opts)
 {
-	return ::mvwchgat(p->win, y, x, n, attr, color, opts);
+	return mvwchgat(p->win, y, x, n, attr, color, opts);
+}
+
+int Curses::getcolorpair(int fg, int bg)
+{
+	typedef std::map<std::pair<int, int>, int> Colors;
+	static Colors c;
+
+	Colors::const_iterator i;
+	if ((i = c.find(std::make_pair(fg, bg))) != c.end())
+		return i->second;
+
+	if (c.size() >= COLOR_PAIRS) {
+		g_debug("Color pairs limit exceeded.\n");
+		return 0;
+	}
+
+	if (init_pair(c.size() + 1, fg, bg) == ERR)
+		return 0;
+	int res = COLOR_PAIR(c.size() + 1);
+	c[std::make_pair(fg, bg)] = res;
+	return res;
 }
 
 int Curses::Window::erase()
 {
-	return ::werase(p->win);
+	return werase(p->win);
 }
 
 int Curses::Window::clrtoeol()
 {
-	return ::wclrtoeol(p->win);
+	return wclrtoeol(p->win);
 }
 
 int Curses::Window::clrtobot()
 {
-	return ::wclrtobot(p->win);
+	return wclrtobot(p->win);
 }
 
 int Curses::Window::noutrefresh()
 {
-	return ::wnoutrefresh(p->win);
+	return wnoutrefresh(p->win);
 }
 
 int Curses::Window::touch()
 {
-	return ::touchwin(p->win);
+	return touchwin(p->win);
 }
 
 int Curses::Window::copyto(Window *dstwin, int smincol, int sminrow,
 		int dmincol, int dminrow, int dmaxcol, int dmaxrow,
 		int overlay)
 {
-	return ::copywin(p->win, dstwin->p->win, sminrow, smincol, dminrow, dmincol,
+	return copywin(p->win, dstwin->p->win, sminrow, smincol, dminrow, dmincol,
 			dmaxrow, dmaxcol, overlay);
 }
 

@@ -41,6 +41,8 @@ class Label
 		// Widget
 		virtual void Draw();
 
+		void DrawEx(bool color);
+
 		/** Sets a new text and redraws the Widget */
 		virtual void SetText(const gchar *text_);
 		const gchar* GetText();

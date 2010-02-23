@@ -34,6 +34,8 @@
 GeneralMenu::GeneralMenu(int x, int y, int w, int h)
 : MenuWindow(x, y, w, h)
 {
+	SetColorScheme("generalmenu");
+
 	AddItem(_("Testing"), sigc::mem_fun(this, &GeneralMenu::OpenTestWindow));
 	AddItem(_("Change status"), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	AddItem(_("Go to contact..."), sigc::mem_fun(this, &GeneralMenu::Dummy));

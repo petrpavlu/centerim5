@@ -38,20 +38,20 @@ Widget::Widget(Widget& parent, int x_, int y_, int w_, int h_)
 , focus_child(NULL)
 , area(NULL)
 , parent(&parent)
-, colorscheme(NULL)
+, color_scheme(NULL)
 {
 	// insta crash, because Widget::UpdateArea() is called and it uses
 	// uninitilized area pointer, I think it isn't needed anyway, remove
 	// later...
 	//UpdateArea(); /// @todo It should be called whenever the parent decides, and not here in constructor.
-
-	colorscheme = ColorScheme::ColorSchemeNormal();
 }
 
 Widget::~Widget()
 {
 	if (area)
 		delete area;
+	if (color_scheme)
+		g_free(color_scheme);
 }
 
 void Widget::MoveResize(int newx, int newy, int neww, int newh)
@@ -73,10 +73,6 @@ void Widget::UpdateArea()
 	if (area)
 		delete area;
 	area = parent->GetSubPad(*this, x, y, w, h);
-}
-
-void Widget::Draw(void)
-{
 }
 
 void Widget::Redraw(void)
@@ -215,4 +211,25 @@ Curses::Window *Widget::GetSubPad(const Widget &child, int begin_x, int begin_y,
 		ncols = realw - begin_x;
 
 	return area->subpad(begin_x, begin_y, ncols, nlines);
+}
+
+void Widget::SetColorScheme(const char *scheme)
+{
+	if (color_scheme)
+		g_free(color_scheme);
+
+	if (scheme)
+		color_scheme = g_strdup(scheme);
+	else
+		color_scheme = NULL;
+}
+
+const char *Widget::GetColorScheme()
+{
+	if (color_scheme)
+		return color_scheme;
+	else if (parent != this)
+		return parent->GetColorScheme();
+
+	return NULL;
 }

@@ -100,6 +100,8 @@ BuddyListNode* BuddyListNode::GetParent(void)
 BuddyListBuddy::BuddyListBuddy(TreeView& parent, PurpleBlistNode *node)
 : BuddyListNode(parent, node)
 {
+	SetColorScheme("buddylistbuddy");
+
 	buddy = (PurpleBuddy*)node;
 	node->ui_data = this;
 	Update();
@@ -131,6 +133,8 @@ void BuddyListBuddy::ActionActivate(void)
 BuddyListChat::BuddyListChat(TreeView& parent, PurpleBlistNode *node)
 : BuddyListNode(parent, node)
 {
+	SetColorScheme("buddylistchat");
+
 	chat = (PurpleChat*)node;
 	node->ui_data = this;
 	Update();
@@ -159,6 +163,8 @@ void BuddyListChat::ActionActivate(void)
 BuddyListContact::BuddyListContact(TreeView& parent, PurpleBlistNode *node)
 : BuddyListNode(parent, node)
 {
+	SetColorScheme("buddylistcontact");
+
 	contact = (PurpleContact*)node;
 	node->ui_data = this;
 	Update();
@@ -202,6 +208,8 @@ void BuddyListContact::ActionActivate(void)
 BuddyListGroup::BuddyListGroup(TreeView& parent, PurpleBlistNode *node)
 : BuddyListNode(parent, node)
 {
+	SetColorScheme("buddylistgroup");
+
 	group = (PurpleGroup*)node;
 	node->ui_data = this;
 	Update();

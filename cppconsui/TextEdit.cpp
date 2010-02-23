@@ -258,7 +258,7 @@ void TextEdit::Draw()
 		const gchar *line = screen_lines[current_sc_line]->start;
 		int sc_x = Width(line, current_sc_linepos);
 		int sc_y = current_sc_line - view_top;
-		colorscheme->SetColor(area, sc_x, sc_y, 1, ColorScheme::Focus);
+		area->mvchgat(sc_x, sc_y, 1, Curses::Attr::REVERSE, 0, NULL);
 	}
 }
 
@@ -507,7 +507,7 @@ void TextEdit::UpdateScreenLines()
 	}
 	/* An empty line has to be manually inserted if there is a '\n' character
 	 * just in front of bufend. */
-	if (p > buffer && *PrevChar(p) == '\n')
+	if (BufferSize() && *PrevChar(p) == '\n')
 		screen_lines.push_back(new ScreenLine(p, p, 0, 0));
 }
 

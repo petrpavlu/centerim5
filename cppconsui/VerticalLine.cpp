@@ -23,7 +23,9 @@
  */
 
 #include "VerticalLine.h"
+
 #include "ConsuiCurses.h"
+#include "ColorScheme.h"
 
 VerticalLine::VerticalLine(Widget& parent, const int x, const int y, const int w, LineStyle::Type ltype)
 : Widget(parent, x, y, w, 1)
@@ -42,6 +44,8 @@ void VerticalLine::Draw()
 	if (!area || (realh = area->getmaxy()) == 0)
 		return;
 
+	int attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "verticalline", "line");
+	area->attron(attrs);
 	if (realh <= 1) {
 		area->mvaddstring(0, 0, linestyle.V());
 	} else {
@@ -51,6 +55,7 @@ void VerticalLine::Draw()
 		}
 		area->mvaddstring(realh - 1, 0, linestyle.VEnd());
 	}
+	area->attroff(attrs);
 }
 
 void VerticalLine::SetLineStyle(LineStyle::Type ltype)

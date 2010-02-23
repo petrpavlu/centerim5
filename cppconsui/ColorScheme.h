@@ -23,33 +23,44 @@
 
 #include "ConsuiCurses.h"
 
+#include <map>
+#include <string>
+
+#define COLORSCHEME (ColorScheme::Instance())
+
 class ColorScheme
 {
 	public:
-		enum ColorType {Normal = 0, Focus, Disabled};
+		static ColorScheme *Instance();
 
-		ColorScheme(void);
-		ColorScheme(const ColorScheme *colorscheme);
-		~ColorScheme();
-
-		#define ColorSchemeDefault ColorSchemeNormal
-		static ColorScheme* ColorSchemeNormal(void);
-
-		void On(Curses::Window *area, ColorType type);
-		void Off(Curses::Window *area, ColorType type);
-
-		void SetColor(Curses::Window *area, int x, int y, int n, ColorType type);
-
-		void SetColorType(ColorType type, int scheme);
-		void GetColorType(ColorType type);
+		int GetColorPair(const char *scheme, const char *widget,
+				const char *property);
+		bool SetColorPair(const char *scheme, const char *widget,
+				const char *property, int foreground, int background,
+				int attrs = Curses::Attr::NORMAL, bool overwrite = false);
 
 	protected:
-		int schemes[Disabled+1];
+		struct Color
+		{
+			int foreground;
+			int background;
+			int attrs;
+
+			Color(int f = Curses::Color::WHITE, int b = Curses::Color::BLACK,
+					int a = Curses::Attr::NORMAL) : foreground(f), background(b), attrs(a) {}
+
+		};
+		typedef std::map<std::string, Color> Properties;
+		typedef std::map<std::string, Properties> Widgets;
+		typedef std::map<std::string, Widgets> Schemes;
+
+		Schemes schemes;
 
 	private:
-		ColorScheme(const ColorScheme&);
-
-		ColorScheme& operator=(ColorScheme&);
+		ColorScheme();
+		ColorScheme(const ColorScheme &);
+		ColorScheme &operator=(ColorScheme &);
+		virtual ~ColorScheme();
 };
 
 #endif /* __COLORSCHEME_H__ */

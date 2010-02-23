@@ -25,6 +25,7 @@
 #include "HorizontalLine.h"
 
 #include "ConsuiCurses.h"
+#include "ColorScheme.h"
 
 HorizontalLine::HorizontalLine(Widget& parent, const int x, const int y, const int w, LineStyle::Type ltype)
 : Widget(parent, x, y, w, 1)
@@ -43,6 +44,8 @@ void HorizontalLine::Draw()
 	if (!area || (realw = area->getmaxx()) == 0)
 		return;
 
+	int attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "verticalline", "line");
+	area->attron(attrs);
 	if (realw <= 1) {
 		area->mvaddstring(0, 0, linestyle.H());
 	} else {
@@ -52,6 +55,7 @@ void HorizontalLine::Draw()
 		}
 		area->mvaddstring(realw - 1, 0, linestyle.HEnd());
 	}
+	area->attroff(attrs);
 }
 
 void HorizontalLine::SetLineStyle(LineStyle::Type ltype)

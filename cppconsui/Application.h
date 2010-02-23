@@ -101,7 +101,7 @@ class Application
 		Application();
 		Application(const Application &);
 		Application &operator=(const Application &);
-		~Application();
+		virtual ~Application();
 
 	private:
 		GIOChannel *channel;

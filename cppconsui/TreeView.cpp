@@ -26,7 +26,7 @@
 
 #include "ScrollPane.h"
 #include "LineStyle.h"
-#include "Keys.h"
+#include "ColorScheme.h"
 
 /* Put this macro around variable that will be used in the future,
  * remove macro when variables are used.
@@ -96,6 +96,7 @@ void TreeView::Draw(void)
 		return;
 
 	area->erase();
+
 	DrawNode(thetree.begin(), 0);
 	ScrollPane::Draw();
 }
@@ -104,30 +105,27 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 {
 	int height = 0, j = top, oldh, depthoffset;
 	TheTree::sibling_iterator i;
-	TreeNode *child, *parent;
 
 	depthoffset = thetree.depth(node) * 3;
 
-	parent = &(*node);
-
-	/* draw the parent node first */
-	if (parent->widget) {
-		parent->widget->MoveResize(depthoffset + 2, top,
-				parent->widget->Width(),
-				parent->widget->Height());
-		parent->widget->Draw();
-		height += parent->widget->Height();
+	// draw the node Widget first
+	if (node->widget) {
+		node->widget->MoveResize(depthoffset + 3, top,
+				node->widget->Width(),
+				node->widget->Height());
+		node->widget->Draw();
+		height += node->widget->Height();
 	}
 
-	if (parent->open) {
+	if (node->open) {
+		int attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "treeview", "line");
+		area->attron(attrs);
 		if (thetree.number_of_children(node) > 0) {
 			for (j = top + 1; j < top + height; j++)
 				area->mvaddstring(depthoffset, j, linestyle.V());
 		}
 
 		for (i = node.begin(); i != node.end(); i++) {
-			child = &(*i);
-
 			if (i != node.back())
 				area->mvaddstring(depthoffset, top + height, linestyle.VRight());
 			else
@@ -135,9 +133,9 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 
 			area->mvaddstring(depthoffset + 1, top + height, linestyle.H());
 			
-			if (child->collapsable && thetree.number_of_children(i) > 0) {
+			if (i->collapsable && thetree.number_of_children(i) > 0) {
 				area->mvaddstring(depthoffset + 2, top + height, "[");
-				area->mvaddstring(depthoffset + 3, top + height, child->open ? "-" : "+");
+				area->mvaddstring(depthoffset + 3, top + height, i->open ? "-" : "+");
 				area->mvaddstring(depthoffset + 4, top + height, "]");
 			} else {
 				area->mvaddstring(depthoffset + 2, top + height, linestyle.H());
@@ -145,15 +143,19 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 				area->mvaddstring(depthoffset + 4, top + height, linestyle.HEnd());
 			}
 
+			area->attroff(attrs);
 			oldh = height;
 			height += DrawNode(i, top + height);
+			area->attron(attrs);
 
 			if (i != node.back()) {
 				for (j = top + oldh + 1; j < top + height ; j++)
 					area->mvaddstring(depthoffset, j, linestyle.V());
 			}
 		}
+		area->attroff(attrs);
 	}
+
 	return height;
 }
 

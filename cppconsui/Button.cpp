@@ -25,6 +25,7 @@
 #include "Button.h"
 #include "Keys.h"
 #include "CppConsUIInternal.h"
+#include "ColorScheme.h"
 
 #define CONTEXT_BUTTON "button"
 
@@ -84,11 +85,23 @@ void Button::Draw(void)
 	if (!area)
 		return;
 
-	Label::Draw();
+	int attrs;
+	if (has_focus) {
+		attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "button", "focus");
+		area->attron(attrs | Curses::Attr::REVERSE);
+	}
+	else {
+		attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "button", "normal");
+		area->attron(attrs);
+	}
 
-	/// @todo isn't calling width() everytime too slow?
+
+	Label::DrawEx(false);
+
 	if (has_focus)
-		colorscheme->SetColor(area, 0, 0, width(text), ColorScheme::Focus);
+		area->attroff(attrs | Curses::Attr::REVERSE);
+	else
+		area->attroff(attrs);
 }
 
 void Button::SetFunction(sigc::slot<void> callback)

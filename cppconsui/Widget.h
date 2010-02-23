@@ -26,7 +26,7 @@
 
 #include "CppConsUI.h"
 #include "InputProcessor.h"
-#include "ColorScheme.h"
+#include "ConsuiCurses.h"
 
 #include <sigc++/sigc++.h>
 #include <sigc++/signal.h>
@@ -77,7 +77,7 @@ class Widget
 		 * Windows. This causes all Draw() implementations needed to draw the
 		 * screen to be called.
 		 */
-		virtual void Draw(void);
+		virtual void Draw() = 0;
 		/** The Redraw() function can be called by a Widget to tell its 
 		 * @ref Container object that the Widget has been updated and that it should
 		 * be redrawn. This implies that the @ref Container of a Widget should
@@ -139,6 +139,9 @@ class Widget
 		 */
 		virtual Curses::Window *GetSubPad(const Widget &child, int begin_x, int begin_y, int ncols, int nlines);
 
+		void SetColorScheme(const char *scheme);
+		const char *GetColorScheme();
+
 		/// @todo encapsulate with a function, make sure derived class call Move()/Resize()/Redraw() to emit signal.
 		/// Also check if this is possible at all.
 		sigc::signal<void, Widget*, Rect&, Rect&> signal_moveresize;
@@ -169,7 +172,7 @@ class Widget
 		 */
 		Widget *parent;
 
-		ColorScheme *colorscheme;
+		char *color_scheme;
 
 	private:
 		Widget();

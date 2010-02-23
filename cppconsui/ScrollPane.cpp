@@ -69,8 +69,6 @@ void ScrollPane::Draw(void)
 
 	if (area->copyto(scrollarea, xpos, ypos, 0, 0, copyw, copyh, 0) == Curses::C_ERR)
 		g_assert(false); //TODO this is a big error
-
-	Widget::Draw();
 }
 
 void ScrollPane::AdjustScroll(int newx, int newy)

@@ -35,7 +35,8 @@ class MenuWindow
 		MenuWindow(int x_, int y_, int w_, int h_,
 				LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~MenuWindow();
-	
+
+		// Widget
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
 
 		void AddItem(const char *text, sigc::slot<void> callback)
@@ -59,12 +60,11 @@ class MenuWindow
 		MenuWindow(const MenuWindow&);
 
 		MenuWindow& operator=(const MenuWindow&);
-	
+
 		/** it handles the automatic registration of defined keys */
 		DECLARE_SIG_REGISTERKEYS();
 		static bool RegisterKeys();
 		void DeclareBindables();
-	
 };
 
 #endif /* __MENUWINDOW_H__ */

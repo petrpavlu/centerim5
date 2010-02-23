@@ -122,8 +122,6 @@ void TextRBView::Draw(void)
 
 		y++;
 	}
-
-	Widget::Draw();
 }
 
 Rect TextRBView::GetScrollSize(void)

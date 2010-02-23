@@ -82,23 +82,43 @@ class Curses
 				int keypad(bool bf);
 
 			protected:
-				struct WindowInternals;
-				WindowInternals *p;
-
 				const gchar *PrintChar(const gchar *ch, int *printed, const gchar *end = NULL);
 
 			private:
+				struct WindowInternals;
+				WindowInternals *p;
+
 				Window();
 				Window(const Window &other);
 				Window &operator=(const Window &other);
 		};
 
+		struct Color
+		{
+			const static int MIN;
+			const static int BLACK;
+			const static int RED;
+			const static int GREEN;
+			const static int YELLOW;
+			const static int BLUE;
+			const static int MAGENTA;
+			const static int CYAN;
+			const static int WHITE;
+			const static int MAX;
+		};
+
 		struct Attr
 		{
-			static int NORMAL;
-			static int REVERSE;
-			static int DIM;
+			const static int NORMAL;
+			const static int REVERSE;
+			const static int DIM;
+			const static int BOLD;
 		};
+
+		const static int C_OK;
+		const static int C_ERR;
+
+		static int getcolorpair(int fg, int bg);
 
 		static int erase();
 		static int doupdate();
@@ -120,9 +140,6 @@ class Curses
 		static int getmaxy();
 
 		static int resizeterm(int lines, int columns);
-
-		static int C_OK;
-		static int C_ERR;
 
 	protected:
 
