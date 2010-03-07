@@ -50,7 +50,7 @@ TextViewWindow::TextViewWindow()
 
 	//TextView *textview = new TextView(*this, 0, 0, 80, 20);
 	TextView *textview = new TextView(*this, 0, 0, -1, -1);
-	AddWidget(textview);
+	AddWidget(*textview);
 	textview->Append(long_text);
 
 	char wide[13];

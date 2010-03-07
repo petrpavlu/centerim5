@@ -45,9 +45,9 @@ AccountWindow::AccountWindow()
 	log = &Log::Instance();
 	conf = Conf::Instance();
 
-	accounts = new TreeView(*this, 0, 0, w, h - 2);
-	menu = new HorizontalListBox(*this, 1, h - 1, w, 1);
-	line = new HorizontalLine(*this, 1, h - 2, w);
+	accounts = new TreeView(*this, 0, 0, width, height - 2);
+	menu = new HorizontalListBox(*this, 1, height - 1, width, 1);
+	line = new HorizontalLine(*this, 1, height - 2, width);
 
 	accounts->FocusCycle(Container::FocusCycleLocal);
 	menu->FocusCycle(Container::FocusCycleLocal);
@@ -56,9 +56,9 @@ AccountWindow::AccountWindow()
 	menu->AddSeparator();
 	menu->AddItem(_("Done"), sigc::mem_fun(this, &AccountWindow::Close));
 
-	AddWidget(accounts);
-	AddWidget(menu);
-	AddWidget(line);
+	AddWidget(*accounts);
+	AddWidget(*menu);
+	AddWidget(*line);
 
 	MoveResizeRect(conf->GetAccountWindowDimensions());
 	
@@ -71,9 +71,9 @@ void AccountWindow::MoveResize(int newx, int newy, int neww, int newh)
 {
 	Window::MoveResize(newx, newy, neww, newh);
 
-	accounts->MoveResize(0, 0, w, h - 2);
-	menu->MoveResize(0, h - 1, w, 1);
-	line->MoveResize(0, h - 2, w, 1);
+	accounts->MoveResize(0, 0, width, height - 2);
+	menu->MoveResize(0, height - 1, width, 1);
+	line->MoveResize(0, height - 2, width, 1);
 }
 
 void AccountWindow::ScreenResized()
@@ -257,7 +257,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		TreeView::NodeReference parent_reference;
 
 		//TODO proper autosizing for labels
-		button = new Button(*accounts, 0, 0, width(label), 1, "",
+		button = new Button(*accounts, 0, 0, ::width(label), 1, "",
 				sigc::mem_fun(accounts, &TreeView::ActionToggleCollapsed));
 		parent_reference = accounts->AddNode(accounts->Root(), button, account);
 		accounts->Collapse(parent_reference);
@@ -397,8 +397,8 @@ AccountWindow::AccountOption::AccountOption(Widget& parent,
 		setting = NULL;
 	}
 
-	SetFunction(sigc::mem_fun(this,
-		&AccountWindow::AccountOption::OnActivate));
+	signal_activate.connect(sigc::mem_fun(this,
+				&AccountWindow::AccountOption::OnActivate));
 }
 
 AccountWindow::AccountOption::~AccountOption()
@@ -630,8 +630,8 @@ AccountWindow::AccountOptionSplit::AccountOptionSplit(Widget& parent,
 	}
 	value = "";
 
-	SetFunction(sigc::mem_fun(this,
-		&AccountWindow::AccountOptionSplit::OnActivate));
+	signal_activate.connect(sigc::mem_fun(this,
+				&AccountWindow::AccountOptionSplit::OnActivate));
 
 	UpdateText();
 }

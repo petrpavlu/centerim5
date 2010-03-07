@@ -2,8 +2,8 @@
  * @ingroup cppconsui
  */
 
-#ifndef __TEXT_EDIT_H__
-#define __TEXT_EDIT_H__
+#ifndef __TEXTEDIT_H__
+#define __TEXTEDIT_H__
 
 #include "Widget.h"
 
@@ -94,8 +94,6 @@ class TextEdit
 		void ActionMoveCursor(CursorMovement step, int direction);
 		void ActionDelete(DeleteType type, int direction);
 		void ActionToggleOverwrite();
-		void ActionInsertEOL();
-		void ActionInsertSpace();
 	
 		/** it handles the automatic registration of defined keys */
 		DECLARE_SIG_REGISTERKEYS();
@@ -103,4 +101,4 @@ class TextEdit
 		void DeclareBindables();
 };
 
-#endif // __TEXT_EDIT_H__
+#endif /* __TEXTEDIT_H__ */

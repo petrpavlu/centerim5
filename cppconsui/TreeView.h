@@ -127,9 +127,9 @@ class TreeView
 		TreeView& operator=(const TreeView&);
 		
 		/* Handlers of signals */
-		void OnChildRedraw(Widget *widget);
-		void OnChildMoveResize(Widget *widget, Rect &oldsize, Rect &newsize);
-		void OnChildFocus(Widget* widget, bool focus);
+		void OnChildRedraw(Widget& widget);
+		void OnChildMoveResize(Widget& widget, Rect &oldsize, Rect &newsize);
+		void OnChildFocus(Widget& widget, bool focus);
 
 		/** it handles the automatic registration of defined keys */
 		DECLARE_SIG_REGISTERKEYS();

@@ -30,6 +30,7 @@
 #include <libtermkey/termkey.h>
 
 #include <string>
+#include <vector>
 #include <map>
 
 /**
@@ -67,23 +68,57 @@
 class KeyConfig
 {
 	public:
-		/** Holds all KeyValue instances for a context, { key: action }. */
-		typedef std::map<TermKeyKey, std::string, Keys::TermKeyCmp> KeyContext;
-		/** Holds all Key contexts, { context : KeyContext }. */
-		typedef std::map<std::string, KeyContext> KeyGlobals;
+		// Helper classes
+
+		/**
+		 * External part of bindable (see InputProcessor::Bindable for
+		 * an internal part). Holds description and a default key for every
+		 * bindable.
+		 */
+		class Bindable
+		{
+			public:
+				Bindable(const char *context_,
+						const char *action_,
+						const gchar *description_,
+						const TermKeyKey &defkey_)
+					/* Given values should be always statically allocated so
+					 * just save pointers to them. */
+					: context(context_)
+					  , action(action_)
+					  , description(description_)
+					  , defkey(defkey_) {}
+
+				const char *context; ///< the context of the key definition, like (...)
+				const char *action; ///< the name of the action, like (...)
+				const gchar *description; ///< a description of the action
+				TermKeyKey defkey; ///< the default value, i.e. the key(s) that trigger the action
+		};
+
+		/** Maps keys to actions for one context, { key: action }. */
+		typedef std::map<TermKeyKey, std::string, Keys::TermKeyCmp> KeyBindContext;
+		/** Maps context to key binds in such a context, { context : KeyContext }. */
+		typedef std::map<std::string, KeyBindContext> KeyBinds;
+
+		/** Holds all bindables declared in a program. */
+		typedef std::vector<Bindable> Bindables;
 
 		/** Returns the singleton class instance. */
 		static KeyConfig *Instance();
 
-		/** Adds a key bind to the globals. */
-		void Bind(const char *context, const char *action, const TermKeyKey &key);
+		/**
+		 * Adds an action declaration and registers a default key to trigger
+		 * this action.
+		 */
+		void RegisterKeyDef(const char *context, const char *action,
+				const gchar *desc, const TermKeyKey &key);
 
-		/** Returns all keys. */
-		const KeyGlobals *GetGlobals() const { return &keys; }
-		/** Returns all keys for a context. */
-		const KeyContext *GetContext(const char *context) const;
-
-		void Clear();
+		/** Returns all key binds. */
+		const KeyBinds *GetKeyBinds() const { return &binds; }
+		/** Returns all key binds for a given context. */
+		const KeyBindContext *GetKeyBinds(const char *context) const;
+		/** Returns all bindables. */
+		const Bindables *GetBindables() const { return &bindables; }
 
 		/** Adds a new callback function that is used when
 		 * the Key values are changed.
@@ -116,7 +151,14 @@ class KeyConfig
 		KeyConfig &operator=(const KeyConfig &);
 		virtual ~KeyConfig() { ; }
 
-		KeyGlobals keys; ///< The key actions defined in all InputProcessor subclasses. {context : {action : key } }
+		/**
+		 * Current key binds.
+		 */
+		KeyBinds binds;
+		/**
+		 * Bindables defined in all InputProcessor subclasses.
+		 */
+		Bindables bindables;
 		sigc::signal<bool> signal_register; ///< Signal used to call the register function of all the InputProcessor classes
 		sigc::signal<bool> signal_reconfig; ///< Signal used to call the reconfig function of all the InputProcessor instances
 };

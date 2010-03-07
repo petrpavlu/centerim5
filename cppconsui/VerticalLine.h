@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,35 +19,33 @@
  *
  * */
 
-/** @file HorizontalLine.h HorizontalLine class
+/**
+ * @file
+ * HorizontalLine class.
+ *
  * @ingroup cppconsui
  */
 
 #ifndef __VERTICALLINE_H__
 #define __VERTICALLINE_H__
 
-#include "LineStyle.h"
-#include "Widget.h"
+#include "AbstractLine.h"
 
 /**
  * A widget representing a vertical line.
  */
 class VerticalLine
-: public Widget
+: public AbstractLine
 {
 	public:
 		VerticalLine(Widget& parent, const int x, const int y, const int w,
 				LineStyle::Type ltype = LineStyle::DEFAULT);
-		virtual ~VerticalLine();
+		virtual ~VerticalLine() {}
 
 		// Widget
 		virtual void Draw();
 
-		void SetLineStyle(LineStyle::Type ltype);
-		LineStyle::Type GetLineStyle();
-
 	protected:
-		LineStyle linestyle;
 
 	private:
 		VerticalLine();

@@ -30,8 +30,7 @@ MessageDialog::MessageDialog(const gchar* text)
 {
 	AddButton(_("Ok"), Dialog::ResponseOK);
 
-	label = new Label(*this, 0, 0, text);
-	AddWidget(label);
+	AddWidget(*(new Label(*this, 0, 0, text)));
 }
 
 MessageDialog::~MessageDialog()

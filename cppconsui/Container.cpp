@@ -57,27 +57,21 @@ Container::~Container()
 void Container::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_CONTAINER, "focus-previous",
-			_("Focusses the previous widget"),
 			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusPrevious),
 			InputProcessor::Bindable_Normal);
 	DeclareBindable(CONTEXT_CONTAINER, "focus-next",
-			_("Focusses the next widget"),
 			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusNext),
 			InputProcessor::Bindable_Normal);
 	DeclareBindable(CONTEXT_CONTAINER, "focus-left",
-			_("Focus the next widget to the left."),
 			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusLeft),
 			InputProcessor::Bindable_Normal);
 	DeclareBindable(CONTEXT_CONTAINER, "focus-right",
-			_("Focus the next widget to the right."),
 			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusRight),
 			InputProcessor::Bindable_Normal);
 	DeclareBindable(CONTEXT_CONTAINER, "focus-up",
-			_("Focus the next widget above."),
 			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusUp),
 			InputProcessor::Bindable_Normal);
 	DeclareBindable(CONTEXT_CONTAINER, "focus-down",
-			_("Focus the next widget below."),
 			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusDown),
 			InputProcessor::Bindable_Normal);
 }
@@ -86,16 +80,22 @@ DEFINE_SIG_REGISTERKEYS(Container, RegisterKeys);
 bool Container::RegisterKeys()
 {
 	RegisterKeyDef(CONTEXT_CONTAINER, "focus-previous",
+			_("Focusses the previous widget"),
 			Keys::SymbolTermKey(TERMKEY_SYM_TAB, TERMKEY_KEYMOD_SHIFT));
 	RegisterKeyDef(CONTEXT_CONTAINER, "focus-next",
+			_("Focusses the next widget"),
 			Keys::SymbolTermKey(TERMKEY_SYM_TAB));
 	RegisterKeyDef(CONTEXT_CONTAINER, "focus-left",
+			_("Focus the next widget to the left."),
 			Keys::SymbolTermKey(TERMKEY_SYM_LEFT));
 	RegisterKeyDef(CONTEXT_CONTAINER, "focus-right",
+			_("Focus the next widget to the right."),
 			Keys::SymbolTermKey(TERMKEY_SYM_RIGHT));
 	RegisterKeyDef(CONTEXT_CONTAINER, "focus-up",
+			_("Focus the next widget above."),
 			Keys::SymbolTermKey(TERMKEY_SYM_UP));
 	RegisterKeyDef(CONTEXT_CONTAINER, "focus-down",
+			_("Focus the next widget below."),
 			Keys::SymbolTermKey(TERMKEY_SYM_DOWN));
 	return true;
 }
@@ -125,50 +125,42 @@ void Container::Draw(void)
 		((*i).widget)->Draw();
 }
 
-void Container::AddWidget(Widget *widget)
+void Container::AddWidget(Widget& widget)
 {
 	Child child;
-	/** @todo I would say assert here, why should we add a NULL widget? Perhaps make it a reference ? */
-	g_return_if_fail(widget != NULL);
 
-	widget->UpdateArea();
+	widget.UpdateArea();
 	/** @todo also other widget signals. maybe a descendant class would like
 	 *  to do somethings. Eg a ListBox wants to undo move events.
 	 */
-	child.sig_redraw = widget->signal_redraw.connect(sigc::mem_fun(this, &Container::OnChildRedraw));
-	child.widget = widget;
+	child.sig_redraw = widget.signal_redraw.connect(sigc::mem_fun(this, &Container::OnChildRedraw));
+	child.widget = &widget;
 	children.push_back(child);
 
-	if (!focus_child) {
-		widget->GrabFocus();;
-	}
+	if (!focus_child)
+		widget.GrabFocus();
 }
 
-void Container::RemoveWidget(Widget *widget)
+void Container::RemoveWidget(Widget& widget)
 {
 	Children::iterator i;
-	Child *child = NULL;
-	
-	/** @todo I would say assert here, why should we add a NULL widget? Perhaps make it a reference ? */
-	g_return_if_fail(widget != NULL);
 
-	for (i = children.begin(); i != children.end(); i++) {
-		child = &(*i);
-		if (child->widget == widget)
+	for (i = children.begin(); i != children.end(); i++)
+		if (i->widget == &widget)
 			break;
-	}
 
-	if (!child) return; /// @todo a warning also?
+	if (i == children.end())
+		return; /// @todo a warning also?
 
 	MoveFocus(FocusNext);
 
-	child->sig_redraw.disconnect();
+	i->sig_redraw.disconnect();
 	children.erase(i);
 }
 
-void Container::OnChildRedraw(Widget* widget)
+void Container::OnChildRedraw(Widget& widget)
 {
-	signal_redraw(this);
+	signal_redraw(*this);
 }
 
 void Container::Clear(void)

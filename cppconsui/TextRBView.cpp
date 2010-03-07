@@ -146,14 +146,14 @@ void TextRBView::AdjustScroll(const int newx, const int newy)
 	if (newx < 0 || newy < 0 || newx > Width() || newy > Height())
 		return;
 
-	if (newx > view_left + w - 1) {
-		view_left = newx - w + 1;
+	if (newx > view_left + width - 1) {
+		view_left = newx - width + 1;
 	} else if (newx < view_left) {
 		view_left = newx;
 	}
 
-	if (newy > view_top + h - 1) {
-		view_top = newy - h + 1;
+	if (newy > view_top + height - 1) {
+		view_top = newy - height + 1;
 	} else if (newy < view_top) {
 		view_top = newy;
 	}

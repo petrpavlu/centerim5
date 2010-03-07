@@ -47,11 +47,11 @@ void TextBrowser::SetLines(std::vector<Glib::ustring> &lines_)
 	lines.assign(lines_.begin(), lines_.end());
 
 	if (follow)
-		pos = (h > (int)lines.size()) ? 0 : (int)lines.size()-h;
+		pos = (height > (int)lines.size()) ? 0 : (int)lines.size()-height;
 	else
 		pos = 0;
 
-	Redraw();
+	signal_redraw(*this);
 }
 
 //TODO remove code duplication for redraw on follow
@@ -63,10 +63,10 @@ void TextBrowser::AddLines(std::vector<Glib::ustring> &lines)
 		lines.push_back(*i);
 
 	if (follow) {
-                pos = (h > (int)lines.size()) ? 0 : (int)lines.size()-h;
-		Redraw();
-	} else if ((int)lines.size() <= h) {
-		Redraw();
+                pos = (height > (int)lines.size()) ? 0 : (int)lines.size()-height;
+		signal_redraw(*this);
+	} else if ((int)lines.size() <= height) {
+		signal_redraw(*this);
 	}
 }
 
@@ -75,10 +75,10 @@ void TextBrowser::AddLine(Glib::ustring line)
 	lines.push_back(line);
 
 	if (follow) {
-	        pos = (h > (int)lines.size()) ? 0 : (int)lines.size()-h;
-		Redraw();
-	} else if ((int)lines.size() <= h) {
-		Redraw();
+	        pos = (height > (int)lines.size()) ? 0 : (int)lines.size()-height;
+		signal_redraw(*this);
+	} else if ((int)lines.size() <= height) {
+		signal_redraw(*this);
 	}
 }
 
@@ -89,13 +89,13 @@ void TextBrowser::AddBytes(const char *s, int bytes)
 	if (!lines.size()) {
 		AddLine("");
 		if (follow)
-			pos = (h > (int)lines.size()) ? 0 : (int)lines.size()-h;
+			pos = (height > (int)lines.size()) ? 0 : (int)lines.size()-height;
 	}
 	line = &lines.back();
 
 	line->append(s, bytes);
 
-	Redraw();
+	signal_redraw(*this);
 }
 
 void TextBrowser::Clear(void)
@@ -103,7 +103,7 @@ void TextBrowser::Clear(void)
 	lines.clear();
 	area->erase();
 
-	Redraw();
+	signal_redraw(*this);
 }
 
 int TextBrowser::Size(void)
@@ -116,7 +116,7 @@ void TextBrowser::RemoveFront(void)
 	if (lines.size()) {
 		lines.erase(lines.begin());
 		pos--;
-		Redraw();
+		signal_redraw(*this);
 	}
 }
 
@@ -125,7 +125,7 @@ void TextBrowser::RemoveBack(void)
 	if (lines.size() > 0) {
 		lines.pop_back();
 		pos--;
-		Redraw();
+		signal_redraw(*this);
 	}
 }
 
@@ -152,7 +152,7 @@ void TextBrowser::Draw(void)
 	int i, j; // i for current lines, j for the number of wrapped lines
 	Glib::ustring line;
 
-	for (i = pos, j = 0; (i+j-pos < h) && (i < (int)lines.size()); i++) {
+	for (i = pos, j = 0; (i+j-pos < height) && (i < (int)lines.size()); i++) {
 		line = lines.at(i);
 		//TODO prepare string for on-screen printing, or should Glib::ustring do this automatically?
 		//probably not, as Glib::ustring doesn't know the output width

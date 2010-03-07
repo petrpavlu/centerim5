@@ -61,7 +61,7 @@ AccountStatusMenu::~AccountStatusMenu()
 
 void AccountStatusMenu::OpenStatusPopup(PurpleAccount *account)
 {
-	AccountStatusMenu::StatusPopup *status_popup = new StatusPopup(x, y, w, h, account);
+	AccountStatusMenu::StatusPopup *status_popup = new StatusPopup(xpos, ypos, width, height, account);
 	windowmanager->Add(status_popup);
 }
 

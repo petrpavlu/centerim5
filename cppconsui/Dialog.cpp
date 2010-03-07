@@ -45,10 +45,10 @@ Dialog::~Dialog()
 
 void Dialog::AddWidgets(void)
 {
-	buttons = new HorizontalListBox(*this, 0, h - 1, w, 1);
-	seperator = new HorizontalLine(*this, 0, h - 2, w);
-	AddWidget(buttons);
-	AddWidget(seperator);
+	buttons = new HorizontalListBox(*this, 0, height - 1, width, 1);
+	seperator = new HorizontalLine(*this, 0, height - 2, width);
+	AddWidget(*buttons);
+	AddWidget(*seperator);
 }
 
 void Dialog::AddButton(const gchar *text, Dialog::ResponseType response)

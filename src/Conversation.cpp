@@ -42,14 +42,12 @@ Conversation::Conversation(PurpleBlistNode* node)
 	conf = Conf::Instance();
 	type = purple_blist_node_get_type(node);
 
-	view = new TextView(*this, 1, 0, w - 2, h);
-	
-	input = new TextEdit(*this, 1, 1, w - 2, h);
-	line = new HorizontalLine(*this, 0, view_height, w);
-
-	AddWidget(view);
-	AddWidget(input);
-	AddWidget(line);
+	view = new TextView(*this, 1, 0, width - 2, height);
+	input = new TextEdit(*this, 1, 1, width - 2, height);
+	line = new HorizontalLine(*this, 0, view_height, width);
+	AddWidget(*view);
+	AddWidget(*input);
+	AddWidget(*line);
 
 	SetInputChild(*input);
 	input->GrabFocus();
@@ -66,7 +64,7 @@ Conversation::~Conversation()
 
 void Conversation::DeclareBindables()
 {
-	DeclareBindable(CONTEXT_CONVERSATION, "send", _("Send the message."),
+	DeclareBindable(CONTEXT_CONVERSATION, "send",
 			sigc::mem_fun(this, &Conversation::Send),
 			InputProcessor::Bindable_Override);
 }
@@ -74,7 +72,7 @@ void Conversation::DeclareBindables()
 DEFINE_SIG_REGISTERKEYS(Conversation, RegisterKeys);
 bool Conversation::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_CONVERSATION, "send",
+	RegisterKeyDef(CONTEXT_CONVERSATION, "send", _("Send the message."),
 			Keys::UnicodeTermKey("x", TERMKEY_KEYMOD_CTRL));
 	return true;
 }
@@ -141,18 +139,18 @@ void Conversation::SetPartitioning(unsigned int percentage)
 
 	//TODO check for rare condition that windowheight < 3
 	// (in which case there is not enought room to draw anything)
-	view_height = (h * percentage) / 100;
+	view_height = (height * percentage) / 100;
 	if (view_height < 1) view_height = 1;
 
-	inputheight = h - view_height - 1;
+	inputheight = height - view_height - 1;
 	if (inputheight < 1) {
 		inputheight = 1;
-		view_height = h - inputheight - 1;
+		view_height = height - inputheight - 1;
 	}
 
-	view->MoveResize(1, 0, w - 2, view_height);
-	input->MoveResize(1, view_height + 1, w - 2, inputheight);
-	line->MoveResize(0, view_height, w, 1);
+	view->MoveResize(1, 0, width - 2, view_height);
+	input->MoveResize(1, view_height + 1, width - 2, inputheight);
+	line->MoveResize(0, view_height, width, 1);
 }
 
 //TODO if this remains empty, make it a pure virtual function

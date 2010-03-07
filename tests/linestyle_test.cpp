@@ -38,22 +38,22 @@ LineStyleWindow::LineStyleWindow()
 	Label *label;
 
 	label = new Label(*this, 1, 1, "Press F10 to quit.");
-	AddWidget(label);
+	AddWidget(*label);
 
 	label = new Label(*this, 1, 3, "ASCII");
-	AddWidget(label);
+	AddWidget(*label);
 
 	label = new Label(*this, 1, 6, "ASCII rounded");
-	AddWidget(label);
+	AddWidget(*label);
 
 	label = new Label(*this, 1, 9, "light");
-	AddWidget(label);
+	AddWidget(*label);
 
 	label = new Label(*this, 1, 12, "light rounded");
-	AddWidget(label);
+	AddWidget(*label);
 
 	label = new Label(*this, 1, 15, "heavy");
-	AddWidget(label);
+	AddWidget(*label);
 }
 
 LineStyleWindow::~LineStyleWindow()

@@ -8,4 +8,4 @@
 #define _(s)	(s)
 #endif // ENABLE_NLS
 
-#endif // __CPPCONSUIINTERNAL_H__
+#endif /* __CPPCONSUIINTERNAL_H__ */

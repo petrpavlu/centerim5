@@ -39,10 +39,10 @@ TreeViewWindow::TreeViewWindow()
 	TreeView::NodeReference node;
 	TreeView::NodeReference node2;
 
-	AddWidget(new Label(*this, 1, 1, 20, 1, "Press F10 to quit."));
+	AddWidget(*(new Label(*this, 1, 1, 20, 1, "Press F10 to quit.")));
 
 	tree = new TreeView(*this, 1, 3, 30, 12);
-	AddWidget(tree);
+	AddWidget(*tree);
 	SetInputChild(*tree);
 
 	node = tree->AddNode(tree->Root(), new Button(*tree, 0, 0, "Button node A"), NULL);

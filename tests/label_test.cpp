@@ -44,13 +44,13 @@ LabelWindow::LabelWindow()
 	/* Add label to container, container takes widget ownership and deletes it
 	 * when necessary.
 	 */
-	AddWidget(label);
+	AddWidget(*label);
 
 	label = new Label(*this, 1, 3, 20, 1, "Too wide string, too wide string, too wide string");
-	AddWidget(label);
+	AddWidget(*label);
 
 	label = new Label(*this, 1, 5, 20, 3, "Multiline label, multiline label, multiline label");
-	AddWidget(label);
+	AddWidget(*label);
 
 	// unicode test
 	label = new Label(*this, 1, 9, 30, 3,
@@ -59,10 +59,10 @@ LabelWindow::LabelWindow()
 			"\x64\x6f\x76\x61\x6c\x79\x20\xc3\xba\x70\x6c\x6e\xc4\x9b\x20\xc4"
 			"\x8d\x65\x72\x73\x74\x76\xc3\xbd\x63\x68\x20\xc5\x99\xc3\xad\x7a"
 			"\x65\xc4\x8d\x6b\xc5\xaf\x2e\x0a");
-	AddWidget(label);
+	AddWidget(*label);
 
 	label = new Label(*this, 1, 13, "Autosize");
-	AddWidget(label);
+	AddWidget(*label);
 
 	const gchar *long_text = "Lorem ipsum dolor sit amet, consectetur"
 		"adipiscing elit. Duis dui dui, interdum eget tempor auctor, viverra"
@@ -80,13 +80,13 @@ LabelWindow::LabelWindow()
 		"tincidunt laoreet lobortis.";
 
 	label = new Label(*this, 42, 13, -1, 10, long_text);
-	AddWidget(label);
+	AddWidget(*label);
 
 	label = new Label(*this, 1, 24, 40, -1, long_text);
-	AddWidget(label);
+	AddWidget(*label);
 
 	label = new Label(*this, 42, 24, -1, -1, long_text);
-	AddWidget(label);
+	AddWidget(*label);
 }
 
 void LabelWindow::ScreenResized()

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -17,25 +18,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * */
-/** @file Button.cpp Button class implementation
+
+/**
+ * @file
+ * Button class implementation.
+ *
  * @ingroup cppconsui
  */
 
-#include "ConsuiCurses.h"
 #include "Button.h"
+
+#include "ConsuiCurses.h"
 #include "Keys.h"
-#include "CppConsUIInternal.h"
 #include "ColorScheme.h"
+#include "CppConsUIInternal.h"
 
 #define CONTEXT_BUTTON "button"
 
-/// @todo add spaces around the label st there is always some room between the label and the left/right
-/// side of the button.
-
 Button::Button(Widget& parent, int x, int y, int w, int h, const gchar *text, sigc::slot<void> callback)
 : Label(parent, x, y, w, h, text)
-, callback(callback)
 {
+	signal_activate.connect(callback);
 	can_focus = true;
 	DeclareBindables();
 }
@@ -49,8 +52,8 @@ Button::Button(Widget& parent, int x, int y, int w, int h, const gchar *text)
 
 Button::Button(Widget& parent, int x, int y, const gchar *text, sigc::slot<void> callback)
 : Label(parent, x, y, text)
-, callback(callback)
 {
+	signal_activate.connect(callback);
 	can_focus = true;
 	DeclareBindables();
 }
@@ -62,25 +65,22 @@ Button::Button(Widget& parent, int x, int y, const gchar *text)
 	DeclareBindables();
 }
 
-Button::~Button()
+void Button::DeclareBindables()
 {
-}
-
-void Button::DeclareBindables(void)
-{
-	DeclareBindable(CONTEXT_BUTTON, "activate", _("Activate the button"),
-			sigc::mem_fun(this, &Button::OnActivate),
+	DeclareBindable(CONTEXT_BUTTON, "activate",
+			sigc::mem_fun(this, &Button::ActionActivate),
 			InputProcessor::Bindable_Normal);
 }
 
 DEFINE_SIG_REGISTERKEYS(Button, RegisterKeys);
 bool Button::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_BUTTON, "activate", Keys::SymbolTermKey(TERMKEY_SYM_ENTER));
+	RegisterKeyDef(CONTEXT_BUTTON, "activate", _("Activate the button"),
+			Keys::SymbolTermKey(TERMKEY_SYM_ENTER));
 	return true;
 }
 
-void Button::Draw(void)
+void Button::Draw()
 {
 	if (!area)
 		return;
@@ -104,13 +104,7 @@ void Button::Draw(void)
 		area->attroff(attrs);
 }
 
-void Button::SetFunction(sigc::slot<void> callback)
+void Button::ActionActivate()
 {
-	this->callback = callback;
-}
-
-void Button::OnActivate(void)
-{
-	signal_activate(this);
-	callback();
+	signal_activate();
 }

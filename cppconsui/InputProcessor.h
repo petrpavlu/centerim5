@@ -117,18 +117,20 @@ class InputProcessor
 		bool ProcessInput(const TermKeyKey &key);
 
 	protected:
+		/*
+		 * Internal part of bindable (see KeyConfig::Bindable for an external
+		 * part). Holds a function and type for every bindable.
+		 */
 		class Bindable
 		{
 			public:
 				Bindable();
-				Bindable(const gchar *desc_,
-						sigc::slot<void> function_,
+				Bindable(sigc::slot<void> function_,
 						BindableType type_);
-				Bindable(const Bindable &other);
-				Bindable &operator=(const Bindable &other);
-				~Bindable();
+				//Bindable(const Bindable &other);
+				//Bindable &operator=(const Bindable &other);
+				virtual ~Bindable() {}
 
-				gchar *desc;
 				sigc::slot<void> function;
 				BindableType type;
 		};
@@ -150,7 +152,7 @@ class InputProcessor
 		static sigc::connection AddRegisterCallback(const sigc::slot<bool> &);
 		/** it is just a wrapper for KEYCONFIG->Bind */
 		static void RegisterKeyDef(const char *context, const char *action,
-				const TermKeyKey &key);
+				const gchar *desc, const TermKeyKey &key);
 
 		/** Binds a (context,action) pair with a function. 
 		 *
@@ -158,8 +160,8 @@ class InputProcessor
 		 * after or before the @ref inputchild.
 		 * @throws std::logic_error if the context,action pair hasn't been registered yet
 		 */
-		void DeclareBindable(const char *context, const char *action, const char *desc,
-			sigc::slot<void> function, BindableType type);
+		void DeclareBindable(const char *context, const char *action,
+				sigc::slot<void> function, BindableType type);
 
 	private:
 		InputProcessor(const InputProcessor &);

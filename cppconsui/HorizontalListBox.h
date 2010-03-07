@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,31 +19,41 @@
  *
  * */
 
+/**
+ * @file
+ * HorizontalListBox class.
+ *
+ * @ingroup cppconsui
+ */
+
 #ifndef __HORIZONTALLISTBOX_H__
 #define __HORIZONTALLISTBOX_H__
 
 #include "AbstractListBox.h"
 
+/**
+ * Implementation of AbstractListBox class where widgets are placed
+ * horizontally.
+ */
 class HorizontalListBox
 : public AbstractListBox
 {
 	public:
 		HorizontalListBox(Widget& parent, int x, int y, int w, int h);
-		virtual ~HorizontalListBox();
+		virtual ~HorizontalListBox() {}
 
+		// AbstractListBox
 		void AddSeparator();
 
-		virtual void AddWidget(Widget *widget);
-		virtual void RemoveWidget(Widget *widget);
+		// Container
+		virtual void AddWidget(Widget& widget);
+		virtual void RemoveWidget(Widget& widget);
 
 	protected:
 
 	private:
-		bool movingwidget;
-
-		HorizontalListBox(void);
+		HorizontalListBox();
 		HorizontalListBox(const HorizontalListBox&);
-
 		HorizontalListBox& operator=(const HorizontalListBox&);
 };
 

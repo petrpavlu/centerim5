@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -70,6 +71,30 @@ bool Compare(const TermKeyKey &a, const TermKeyKey &b)
 			break;
 	}
 	return false;
+}
+
+TermKeyKey RefineKey(const TermKeyKey &k)
+{
+	if (k.type != TERMKEY_TYPE_KEYSYM)
+		return k;
+
+	TermKeyKey res = k;
+	if (res.code.sym == TERMKEY_SYM_TAB) {
+		res.type = TERMKEY_TYPE_UNICODE;
+		strcpy(res.utf8, "\t");
+		res.code.codepoint = g_utf8_get_char(res.utf8);
+	}
+	else if (res.code.sym == TERMKEY_SYM_ENTER) {
+		res.type = TERMKEY_TYPE_UNICODE;
+		strcpy(res.utf8, "\n");
+		res.code.codepoint = g_utf8_get_char(res.utf8);
+	}
+	else if (res.code.sym == TERMKEY_SYM_SPACE) {
+		res.type = TERMKEY_TYPE_UNICODE;
+		strcpy(res.utf8, " ");
+		res.code.codepoint = g_utf8_get_char(res.utf8);
+	}
+	return res;
 }
 
 TermKeyKey UnicodeTermKey(const gchar *symbol, int modifiers)

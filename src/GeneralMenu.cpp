@@ -53,15 +53,6 @@ GeneralMenu::GeneralMenu(int x, int y, int w, int h)
 	AddItem(_("Show offline users"), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	AddItem(_("Organize contact groups"), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	AddItem(_("Mass group move..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
-
-	//TODO remove testing stuff
-	ComboBox *combobox = new ComboBox(*(this->GetListBox()), 0, 0, w-2, 1, "Combo Test!");
-	std::vector<const gchar*> options;
-        combobox->AddOption("onne", NULL);
-        combobox->AddOption("twoo", NULL);
-        combobox->AddOption("theree", NULL);
-	AddWidget(combobox);
-
 	AddSeparator();
 	AddItem(_("Quit"), sigc::mem_fun(CenterIM::Instance(), &CenterIM::Quit));
 }

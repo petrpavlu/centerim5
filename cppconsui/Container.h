@@ -66,11 +66,11 @@ class Container
 		 * @todo should we check if the widget has the current container as parent ? Should this be 
 		 *  mandatory ?
 		 */
-		void AddWidget(Widget *widget);
+		virtual void AddWidget(Widget &widget);
 		/** Removes the widget from the children list but it doesn't delete the widget.
 		 * The caller must ensure proper deletion of the widget.
 		 */
-		void RemoveWidget(Widget *widget);
+		virtual void RemoveWidget(Widget &widget);
 		
 		/** Does the proper cleanup of all the children widgets
 		 */
@@ -124,7 +124,7 @@ class Container
 
 		Container& operator=(const Container&);
 
-		void OnChildRedraw(Widget* widget);
+		void OnChildRedraw(Widget& widget);
 		
 		Children children;
 		

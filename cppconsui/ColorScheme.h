@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,6 +19,13 @@
  *
  * */
 
+/**
+ * @file
+ * ColorScheme class.
+ *
+ * @ingroup cppconsui
+ */
+
 #ifndef __COLORSCHEME_H__
 #define __COLORSCHEME_H__
 
@@ -33,8 +41,17 @@ class ColorScheme
 	public:
 		static ColorScheme *Instance();
 
+		/**
+		 * Returns color pair and Curses attributes (that can be passed to
+		 * Curses::Window::attron()) for a given scheme, widget and property
+		 * combination.
+		 */
 		int GetColorPair(const char *scheme, const char *widget,
 				const char *property);
+		/**
+		 * Sets color pair and Curses attributes for a given scheme, widget,
+		 * property combination.
+		 */
 		bool SetColorPair(const char *scheme, const char *widget,
 				const char *property, int foreground, int background,
 				int attrs = Curses::Attr::NORMAL, bool overwrite = false);
@@ -57,10 +74,10 @@ class ColorScheme
 		Schemes schemes;
 
 	private:
-		ColorScheme();
+		ColorScheme() {}
 		ColorScheme(const ColorScheme &);
 		ColorScheme &operator=(ColorScheme &);
-		virtual ~ColorScheme();
+		virtual ~ColorScheme() {}
 };
 
 #endif /* __COLORSCHEME_H__ */

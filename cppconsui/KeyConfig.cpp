@@ -26,24 +26,19 @@ KeyConfig *KeyConfig::Instance()
 	return &instance;
 }
 
-void KeyConfig::Bind(const char *context, const char *action, const TermKeyKey &key)
+void KeyConfig::RegisterKeyDef(const char *context, const char *action,
+		const gchar *desc, const TermKeyKey &key)
 {
-	keys[context][key] = action;
+	bindables.push_back(Bindable(context, action, desc, key));
+	binds[context][key] = action;
 }
 
-const KeyConfig::KeyContext *KeyConfig::GetContext(const char *context) const
+const KeyConfig::KeyBindContext *KeyConfig::GetKeyBinds(const char *context) const
 {
-	KeyGlobals::const_iterator i = keys.find(context);
-	if (i == keys.end())
+	KeyBinds::const_iterator i = binds.find(context);
+	if (i == binds.end())
 		return NULL;
 	return &i->second;
-}
-
-void KeyConfig::Clear()
-{
-	signal_register.clear();
-	signal_reconfig.clear();
-	keys.clear();
 }
 
 bool KeyConfig::Reconfig()

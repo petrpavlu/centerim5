@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,59 +19,45 @@
  *
  * */
 
-#include "HorizontalListBox.h"
-#include "VerticalLine.h"
-#include "Keys.h"
+/**
+ * @file
+ * HorizontalListBox class implementation.
+ *
+ * @ingroup cppconsui
+ */
 
-#include "ScrollPane.h"
+#include "HorizontalListBox.h"
+
+#include "VerticalLine.h"
 
 HorizontalListBox::HorizontalListBox(Widget& parent, int x, int y, int w, int h)
 : AbstractListBox(parent, x, y, w, h)
-, movingwidget(false)
 {
 	SetScrollSize(0, h);
 }
 
-HorizontalListBox::~HorizontalListBox()
-{
-}
-
 void HorizontalListBox::AddSeparator()
 {
-	VerticalLine *line;
-
-	line = new VerticalLine(*this, 0, 0, 1);
-	AddWidget(line);
+	AddWidget(*(new VerticalLine(*this, 0, 0, 1)));
 }
 
-void HorizontalListBox::AddWidget(Widget *widget)
+void HorizontalListBox::AddWidget(Widget& widget)
 {
-	int x;
-
-	x = GetScrollWidth();
-	
-	movingwidget = true;
-	widget->MoveResize(x, 0, widget->Width(), widget->Height());
-	movingwidget = false;
-	SetScrollWidth(x + widget->Width());
+	int x = GetScrollWidth();
+	widget.MoveResize(x, 0, widget.Width(), widget.Height());
+	SetScrollWidth(x + widget.Width());
 	AbstractListBox::AddWidget(widget);
 }
 
-void HorizontalListBox::RemoveWidget(Widget *widget)
+void HorizontalListBox::RemoveWidget(Widget& widget)
 {
-	Children::iterator i;
-	Widget *w = NULL;
-	int x;
-
-	g_return_if_fail(widget != NULL);
-
 	AbstractListBox::RemoveWidget(widget);
 
-	x = 0;
-	for (i = ChildrenBegin(); i != ChildrenEnd(); i++) {
-		w = (*i).widget;
-		widget->MoveResize(x, 0, widget->Width(), widget->Height());
-		x += widget->Width();
+	int x = 0;
+	for (Children::iterator i = ChildrenBegin(); i != ChildrenEnd(); i++) {
+		Widget *w = i->widget;
+		w->MoveResize(x, 0, w->Width(), w->Height());
+		x += w->Width();
 	}
 
 	SetScrollWidth(x);

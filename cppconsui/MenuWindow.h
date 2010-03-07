@@ -44,9 +44,9 @@ class MenuWindow
 		void AddSeparator()
 			{ listbox->AddSeparator(); }
 
-		void AddWidget(Widget *widget)
+		void AddWidget(Widget& widget)
 			{ listbox->AddWidget(widget); }
-		void RemoveWidget(Widget *widget)
+		void RemoveWidget(Widget& widget)
 			{ listbox->RemoveWidget(widget); }
 
 		ListBox* GetListBox(void)

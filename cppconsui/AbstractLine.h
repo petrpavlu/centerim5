@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
  * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
@@ -21,21 +20,45 @@
 
 /**
  * @file
- * AbstractListBox class implementation.
+ * AbstractLine class.
  *
  * @ingroup cppconsui
  */
 
-#include "AbstractListBox.h"
+#ifndef __ABSTRACTLINE_H__
+#define __ABSTRACTLINE_H__
 
-#include "Button.h"
+#include "Widget.h"
+#include "LineStyle.h"
 
-AbstractListBox::AbstractListBox(Widget& parent, int x, int y, int w, int h)
-: ScrollPane(parent, x, y, w, h, 0, 0)
+/**
+ * Abstract class that defines common interface for VerticalLine and
+ * HorizontalLine.
+ */
+class AbstractLine
+: public Widget
 {
-}
+	public:
+		AbstractLine(Widget& parent, int x, int y, int w, int h,
+				LineStyle::Type ltype = LineStyle::DEFAULT);
+		virtual ~AbstractLine() {}
 
-void AbstractListBox::AddItem(const gchar *title, sigc::slot<void> function)
-{
-	AddWidget(*(new Button(*this, 0, 0, ::width(title), 1, title, function)));
-}
+		/**
+		 * Sets a new line style.
+		 */
+		void SetLineStyle(LineStyle::Type ltype);
+		/**
+		 * Returns a current line style.
+		 */
+		LineStyle::Type GetLineStyle();
+
+	protected:
+		LineStyle linestyle;
+
+	private:
+		AbstractLine();
+		AbstractLine(const AbstractLine&);
+		AbstractLine& operator=(const AbstractLine&);
+};
+
+#endif /* __ABSTRACTLINE_H__ */

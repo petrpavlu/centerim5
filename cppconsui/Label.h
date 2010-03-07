@@ -19,9 +19,13 @@
  *
  * */
 
-/** @file Label.h Label class
- *	@ingroup cppconsui
+/**
+ * @file
+ * Label class.
+ *
+ * @ingroup cppconsui
  */
+
 #ifndef __LABEL_H__
 #define __LABEL_H__
 
@@ -41,23 +45,33 @@ class Label
 		// Widget
 		virtual void Draw();
 
+		/**
+		 * Extended version of Draw() method.
+		 */
 		void DrawEx(bool color);
 
-		/** Sets a new text and redraws the Widget */
+		/**
+		 * Sets a new text and redraws itself.
+		 */
 		virtual void SetText(const gchar *text_);
+		/**
+		 * Returns previously set text.
+		 */
 		const gchar* GetText();
 
 	protected:
 		gchar *text; 
 
 	private:
-		/** manages the text allocation and reallocation
-		 * without any Widget signals involved
-		 */ 
-		void RealSetText(const gchar *text_);
 		Label();
 		Label(const Label&);
 		Label& operator=(const Label&);
+
+		/**
+		 * Manages text allocation and reallocation without any Widget signals
+		 * involved.
+		 */ 
+		void RealSetText(const gchar *text_);
 };
 
 #endif /* __LABEL_H__ */

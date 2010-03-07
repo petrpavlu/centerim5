@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,33 +19,44 @@
  *
  * */
 
+/**
+ * @file
+ * AbstractListBox class.
+ *
+ * @ingroup cppconsui
+ */
+
 #ifndef __ABSTRACTLISTBOX_H__
 #define __ABSTRACTLISTBOX_H__
 
 #include "ScrollPane.h"
 
+/**
+ * Abstract class that defines common interface for ListBox and
+ * HorizontalListBox.
+ */
 class AbstractListBox
 : public ScrollPane
 {
 	public:
 		AbstractListBox(Widget& parent, int x, int y, int w, int h);
-		virtual ~AbstractListBox();
+		virtual ~AbstractListBox() {}
 
-		virtual void AddItem(const char *text, sigc::slot<void> function);
-		virtual void AddSeparator() =0;
-
-		virtual void AddWidget(Widget *widget);
-		virtual void RemoveWidget(Widget *widget); //TODO might not be needed?
-
-		virtual void Clear(void);
+		/**
+		 * Adds a new button into the ListBox.
+		 */
+		virtual void AddItem(const gchar *title, sigc::slot<void> function);
+		/**
+		 * Inserts a separator (usually horizontal or vertical line) into the
+		 * ListBox.
+		 */
+		virtual void AddSeparator() = 0;
 
 	protected:
-		int maxheight, maxwidth;
 
 	private:
-		AbstractListBox(void);
+		AbstractListBox();
 		AbstractListBox(const AbstractListBox&);
-
 		AbstractListBox& operator=(const AbstractListBox&);
 };
 

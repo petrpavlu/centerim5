@@ -31,9 +31,9 @@
 MenuWindow::MenuWindow(int x_, int y_, int w_, int h_, LineStyle::Type ltype)
 : Window(x_, y_, w_, h_, ltype)
 {
-	listbox = new ListBox(*this, 0, 0, w, h);
+	listbox = new ListBox(*this, 0, 0, width, height);
 	SetFocusChild(*listbox);
-	Window::AddWidget(listbox);
+	Window::AddWidget(*listbox);
 	DeclareBindables();
 }
 
@@ -43,7 +43,7 @@ MenuWindow::~MenuWindow()
 
 void MenuWindow::DeclareBindables()
 {
-	DeclareBindable(CONTEXT_MENUWINDOW, "close-window", _("Close the window"),
+	DeclareBindable(CONTEXT_MENUWINDOW, "close-window",
 			sigc::mem_fun(this, &Window::Close),
 			InputProcessor::Bindable_Normal);
 }
@@ -51,7 +51,7 @@ void MenuWindow::DeclareBindables()
 DEFINE_SIG_REGISTERKEYS(MenuWindow, RegisterKeys);
 bool MenuWindow::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_MENUWINDOW, "close-window",
+	RegisterKeyDef(CONTEXT_MENUWINDOW, "close-window", _("Close the window"),
 			Keys::SymbolTermKey(TERMKEY_SYM_ESCAPE));
 	return true;
 }
@@ -70,5 +70,5 @@ void MenuWindow::MoveResize(int newx, int newy, int neww, int newh)
 	 * what we want. in most cases you would need to recalculate
 	 * widget sizes based on window and/or container size.
 	 * */
-	listbox->MoveResize(0, 0, w, h);
+	listbox->MoveResize(0, 0, width, height);
 }

@@ -50,9 +50,9 @@ Window::Window(int x_, int y_, int w_, int h_, LineStyle::Type ltype)
 	UpdateArea();
 
 	panel = new Panel(*this, 0, 0, win_w, win_h, ltype);
-	AddWidget(panel);
+	AddWidget(*panel);
 
-	Redraw();
+	signal_redraw(*this);
 	DeclareBindables();
 }
 
@@ -64,7 +64,7 @@ Window::~Window()
 
 void Window::DeclareBindables()
 {
-	DeclareBindable(CONTEXT_WINDOW, "close-window", _("Close the menu"),
+	DeclareBindable(CONTEXT_WINDOW, "close-window",
 			sigc::mem_fun(this, &Window::Close),
 			InputProcessor::Bindable_Normal);
 }
@@ -73,6 +73,7 @@ DEFINE_SIG_REGISTERKEYS(Window, RegisterKeys);
 bool Window::RegisterKeys()
 {
 	RegisterKeyDef(CONTEXT_WINDOW, "close-window",
+			_("Close the window."),
 			Keys::SymbolTermKey(TERMKEY_SYM_ESCAPE));
 	return true;
 }
@@ -108,7 +109,7 @@ void Window::MoveResize(int newx, int newy, int neww, int newh)
 
 	Container::MoveResize(1, 1, win_w - 2, win_h - 2);
 
-	Redraw();
+	signal_redraw(*this);
 }
 
 void Window::UpdateArea()

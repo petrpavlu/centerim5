@@ -59,7 +59,6 @@ ComboBox::~ComboBox()
 void ComboBox::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_COMBOBOX, "dropdown",
-			_("Show the dropdown menu."),
 			sigc::mem_fun(this, &ComboBox::OnDropDown),
 			InputProcessor::Bindable_Override);
 }
@@ -67,7 +66,7 @@ void ComboBox::DeclareBindables()
 DEFINE_SIG_REGISTERKEYS(ComboBox, RegisterKeys);
 bool ComboBox::RegisterKeys(void)
 {
-	RegisterKeyDef(CONTEXT_COMBOBOX, "dropdown",
+	RegisterKeyDef(CONTEXT_COMBOBOX, "dropdown", _("Show the dropdown menu."),
 			Keys::SymbolTermKey(TERMKEY_SYM_ENTER));
 	return true;
 }
@@ -80,7 +79,7 @@ void ComboBox::OnDropDown(void)
 		{}/*TODO this shoudn't happen*/
 
 	/// @todo position correctly according to absolute coords.
-	dropdown = new MenuWindow(0, 0, w, options.size() + 2);
+	dropdown = new MenuWindow(0, 0, width, options.size() + 2);
 	sig_dropdown_close = dropdown->signal_close.connect(sigc::mem_fun(this, &ComboBox::DropDownClose));
 
 	for (i = options.begin(); i != options.end(); i++) {

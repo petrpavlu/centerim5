@@ -53,123 +53,108 @@ void TextEdit::DeclareBindables()
 {
 	// cursor movement
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-right",
-			_("Move the cursor to the right."),
 			sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor), MOVE_LOGICAL_POSITIONS, 1),
 			InputProcessor::Bindable_Override);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-left",
-			_("Move the cursor to the left."),
 			sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor), MOVE_LOGICAL_POSITIONS, -1),
 			InputProcessor::Bindable_Override);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-down",
-			_("Move the cursor one line down."),
 			sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor), MOVE_DISPLAY_LINES, 1),
 			InputProcessor::Bindable_Override);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-up",
-			_("Move the cursor one line up."),
 			sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor), MOVE_DISPLAY_LINES, -1),
 			InputProcessor::Bindable_Override);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-right-word",
-			_("Move the cursor to the right by one word."),
 			sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor), MOVE_WORDS, 1),
 			InputProcessor::Bindable_Override);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-left-word",
-			_("Move the cursor to the left by one word."),
 			sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor), MOVE_WORDS, -1),
 			InputProcessor::Bindable_Override);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-end",
-			_("Move the cursor to the end of the text."),
 			sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor), MOVE_DISPLAY_LINE_ENDS, 1),
 			InputProcessor::Bindable_Override);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-begin",
-			_("Move the cursor to the beginning of the text."),
 			sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor), MOVE_DISPLAY_LINE_ENDS, -1),
 			InputProcessor::Bindable_Override);
 
 	// deleting text
 	DeclareBindable(CONTEXT_TEXTENTRY, "delete-char",
-			_("Delete character under cursor."),
 			sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete), DELETE_CHARS, 1),
 			InputProcessor::Bindable_Override);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "backspace",
-			_("Delete character before cursor."),
 			sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete), DELETE_CHARS, -1),
 			InputProcessor::Bindable_Override);
 
 	/*
 	DeclareBindable(CONTEXT_TEXTENTRY, "delete-word-end",
-			_("Delete text until the end of the word at the cursor."),
 			sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete), DELETE_WORD_ENDS, 1),
 			InputProcessor::Bindable_Override);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "delete-word-begin",
-			_("Delete text until the beginning of the word at the cursor."),
 			sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete), DELETE_WORD_ENDS, -1),
 			InputProcessor::Bindable_Override);
 
 	// overwrite
 	DeclareBindable(CONTEXT_TEXTENTRY, "toggle-overwrite",
-			_("Enable/Disable overwrite mode."),
 			sigc::mem_fun(this, &TextEdit::ActionToggleOverwrite),
 			InputProcessor::Bindable_Override);
 	*/
-
-	DeclareBindable(CONTEXT_TEXTENTRY, "insert-eol", _("Insert end of line."),
-			sigc::mem_fun(this, &TextEdit::ActionInsertEOL),
-			InputProcessor::Bindable_Override);
-
-	// uh-oh, ye, it's slightly retarted
-	DeclareBindable(CONTEXT_TEXTENTRY, "insert-space", _("Insert space into the text."),
-			sigc::mem_fun(this, &TextEdit::ActionInsertSpace),
-			InputProcessor::Bindable_Override);
 }
 
 DEFINE_SIG_REGISTERKEYS(TextEdit, RegisterKeys);
 bool TextEdit::RegisterKeys()
 {
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-right",
+			_("Move the cursor to the right."),
 			Keys::SymbolTermKey(TERMKEY_SYM_RIGHT));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-left",
+			_("Move the cursor to the left."),
 			Keys::SymbolTermKey(TERMKEY_SYM_LEFT));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-down",
+			_("Move the cursor one line down."),
 			Keys::SymbolTermKey(TERMKEY_SYM_DOWN));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-up",
+			_("Move the cursor to the right by one word."),
 			Keys::SymbolTermKey(TERMKEY_SYM_UP));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-right-word",
+			_("Move the cursor to the right by one word."),
 			Keys::SymbolTermKey(TERMKEY_SYM_RIGHT, TERMKEY_KEYMOD_CTRL));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-left-word",
+			_("Move the cursor to the left by one word."),
 			Keys::SymbolTermKey(TERMKEY_SYM_LEFT, TERMKEY_KEYMOD_CTRL));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-end",
+			_("Move the cursor to the end of the text."),
 			Keys::SymbolTermKey(TERMKEY_SYM_END));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-begin",
+			_("Move the cursor to the beginning of the text."),
 			Keys::SymbolTermKey(TERMKEY_SYM_HOME));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "delete-char",
+			_("Delete character under cursor."),
 			Keys::SymbolTermKey(TERMKEY_SYM_DELETE));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "backspace",
+			_("Delete character before cursor."),
 			Keys::SymbolTermKey(TERMKEY_SYM_BACKSPACE));
 
 	/// @todo enable
 	/*
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "delete-word-end",
+			_("Delete text until the end of the word at the cursor."),
 			Keys::SymbolTermKey(TERMKEY_SYM_DELETE, TERMKEY_KEYMOD_CTRL));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "delete-word-begin",
+			_("Delete text until the beginning of the word at the cursor."),
 			Keys::SymbolTermKey(TERMKEY_SYM_BACKSPACE, TERMKEY_KEYMOD_CTRL));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "toggle-overwrite",
+			_("Enable/Disable overwrite mode."),
 			Keys::SymbolTermKey(TERMKEY_SYM_INSERT));
 	*/
-
-	RegisterKeyDef(CONTEXT_TEXTENTRY, "insert-eol",
-			Keys::SymbolTermKey(TERMKEY_SYM_ENTER));
-
-	RegisterKeyDef(CONTEXT_TEXTENTRY, "insert-space",
-			Keys::SymbolTermKey(TERMKEY_SYM_SPACE));
 
 	return true;
 }
@@ -178,7 +163,7 @@ void TextEdit::Clear()
 {
 	InitBuffer(gap_size);
 	UpdateScreenLines();
-	Redraw();
+	signal_redraw(*this);
 }
 
 gchar *TextEdit::AsString(const gchar *separator)
@@ -269,8 +254,7 @@ void TextEdit::MoveResize(int newx, int newy, int neww, int newh)
 	UpdateScreenLines();
 	UpdateScreenCursor();
 
-	/// @todo comment out?
-	Redraw();
+	signal_redraw(*this);
 }
 
 bool TextEdit::ProcessInputText(const TermKeyKey &key)
@@ -579,7 +563,7 @@ void TextEdit::InsertTextAtCursor(const gchar *new_text, int new_text_bytes)
 
 	UpdateScreenLines();
 	UpdateScreenCursor();
-	Redraw();
+	signal_redraw(*this);
 
 	signal_text_changed();
 }
@@ -627,7 +611,7 @@ void TextEdit::DeleteFromCursor(DeleteType type, int direction)
 
 		UpdateScreenLines();
 		UpdateScreenCursor();
-		Redraw();
+		signal_redraw(*this);
 
 		signal_text_changed();
 	}
@@ -760,30 +744,18 @@ int TextEdit::MoveBackwardWordFromCursor()
 void TextEdit::ActionMoveCursor(CursorMovement step, int direction)
 {
 	MoveCursor(step, direction);
-	Redraw();
+	signal_redraw(*this);
 }
 
 void TextEdit::ActionDelete(DeleteType type, int direction)
 {
 	DeleteFromCursor(type, direction);
-	Redraw();
+	signal_redraw(*this);
 }
 
 void TextEdit::ActionToggleOverwrite()
 {
 	ToggleOverwrite();
-}
-
-void TextEdit::ActionInsertEOL()
-{
-	if (editable)
-		InsertTextAtCursor("\n");
-}
-
-void TextEdit::ActionInsertSpace()
-{
-	if (editable)
-		InsertTextAtCursor(" ");
 }
 
 TextEdit::ScreenLine::ScreenLine(const gchar *start, const gchar *end, int length, int width)

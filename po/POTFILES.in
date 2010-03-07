@@ -32,6 +32,8 @@ src/Transfers.cpp
 src/Transfers.h
 
 # CppConsUI source files
+cppconsui/AbstractLine.cpp
+cppconsui/AbstractLine.h
 cppconsui/AbstractListBox.cpp
 cppconsui/AbstractListBox.h
 cppconsui/Application.cpp

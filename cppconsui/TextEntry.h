@@ -109,9 +109,7 @@ class TextEntry
 		void ActionMoveCursor(CursorMovement step, int direction);
 		void ActionDelete(DeleteType type, int direction);
 		void ActionToggleOverwrite();
-		void ActionInsertSpace();
-
-		virtual void OnActivate();
+		void ActionActivate();
 	
 		/** it handles the automatic registration of defined keys */
 		DECLARE_SIG_REGISTERKEYS();

@@ -23,10 +23,10 @@
 
 ScrollPane::ScrollPane(Widget& parent, int x, int y, int w, int h, int scrollw, int scrollh)
 : Container(parent, x, y, w, h)
-, scrollw(scrollw)
-, scrollh(scrollh)
-, xpos(0)
-, ypos(0)
+, scroll_xpos(0)
+, scroll_ypos(0)
+, scroll_width(scrollw)
+, scroll_height(scrollh)
 , scrollarea(NULL)
 {
 	//TODO scrollarea must be at least as largse as
@@ -49,7 +49,7 @@ void ScrollPane::UpdateArea()
 {
 	if (scrollarea)
 		delete scrollarea;
-	scrollarea = parent->GetSubPad(*this, x, y, w, h);
+	scrollarea = parent->GetSubPad(*this, xpos, ypos, width, height);
 }
 
 void ScrollPane::Draw(void)
@@ -64,28 +64,28 @@ void ScrollPane::Draw(void)
 	/* if the defined scrollable area is smaller than the 
 	 * widget, make sure the copy works.
 	 * */
-	copyw = MIN(scrollw - 1, scrollarea->getmaxx() - 1);
-	copyh = MIN(scrollh - 1, scrollarea->getmaxy() - 1);
+	copyw = MIN(scroll_width - 1, scrollarea->getmaxx() - 1);
+	copyh = MIN(scroll_height - 1, scrollarea->getmaxy() - 1);
 
-	if (area->copyto(scrollarea, xpos, ypos, 0, 0, copyw, copyh, 0) == Curses::C_ERR)
+	if (area->copyto(scrollarea, scroll_xpos, scroll_ypos, 0, 0, copyw, copyh, 0) == Curses::C_ERR)
 		g_assert(false); //TODO this is a big error
 }
 
 void ScrollPane::AdjustScroll(int newx, int newy)
 {
-	if (newx < 0 || newy < 0 || newx > scrollw || newy > scrollh)
+	if (newx < 0 || newy < 0 || newx > scroll_width || newy > scroll_height)
 		return;
 
-	if (newx > xpos + w - 1) {
-		xpos = newx - w + 1;
-	} else if (newx < xpos) {
-		xpos = newx;
+	if (newx > scroll_xpos + width - 1) {
+		scroll_xpos = newx - width + 1;
+	} else if (newx < scroll_xpos) {
+		scroll_xpos = newx;
 	}
 
-	if (newy > ypos + h - 1) {
-		ypos = newy - h + 1;
-	} else if (newy < ypos) {
-		ypos = newy;
+	if (newy > scroll_ypos + height - 1) {
+		scroll_ypos = newy - height + 1;
+	} else if (newy < scroll_ypos) {
+		scroll_ypos = newy;
 	}
 }
 
@@ -114,19 +114,19 @@ void ScrollPane::AdjustScroll(int newx, int newy)
 	Redraw();
 }*/
 
-void ScrollPane::SetScrollSize(const int width, const int height)
+void ScrollPane::SetScrollSize(int swidth, int sheight)
 {
 	//TODO: deltax and deltay aren't used in this function
 
-	if (width == scrollw && height == scrollh)
+	if (swidth == scroll_width && sheight == scroll_height)
 		return;
 
-	scrollw = width;
-	scrollh = height;
+	scroll_width = swidth;
+	scroll_height = sheight;
 
 	if (area)
 		delete area;
-	area = Curses::Window::newpad(scrollw, scrollh);
+	area = Curses::Window::newpad(scroll_width, scroll_height);
 	/*
 	if (area->w == NULL)
 		{}//TODO throw an exception?
@@ -135,8 +135,12 @@ void ScrollPane::SetScrollSize(const int width, const int height)
 	UpdateAreas();
 
 	//TODO not overflow safe (probably not a problem. but fix anyway)
-	if (xpos > scrollw - w) xpos = scrollw - w;
-	if (ypos > scrollh - h) ypos = scrollh - h;
-	if (xpos < 0) xpos = 0;
-	if (ypos < 0) ypos = 0;
+	if (scroll_xpos > scroll_width - width)
+		scroll_xpos = scroll_width - width;
+	if (scroll_ypos > scroll_height - height)
+		scroll_ypos = scroll_height - height;
+	if (scroll_xpos < 0)
+		scroll_xpos = 0;
+	if (scroll_ypos < 0)
+		scroll_ypos = 0;
 }

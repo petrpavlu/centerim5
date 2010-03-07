@@ -29,10 +29,10 @@
 #include <string>
 
 Widget::Widget(Widget& parent, int x_, int y_, int w_, int h_)
-: x(x_)
-, y(y_)
-, w(w_)
-, h(h_)
+: xpos(x_)
+, ypos(y_)
+, width(w_)
+, height(h_)
 , can_focus(false)
 , has_focus(false)
 , focus_child(NULL)
@@ -56,28 +56,28 @@ Widget::~Widget()
 
 void Widget::MoveResize(int newx, int newy, int neww, int newh)
 {
-	Rect oldsize(x, y, w, h), newsize(newx, newy, neww, newh);
+	Rect oldsize(xpos, ypos, width, height), newsize(newx, newy, neww, newh);
 
-	x = newx;
-	y = newy;
-	w = neww;
-	h = newh;
+	xpos = newx;
+	ypos = newy;
+	width = neww;
+	height = newh;
 
 	UpdateArea();
 
-	signal_moveresize(this, oldsize, newsize);
+	signal_moveresize(*this, oldsize, newsize);
+}
+
+void Widget::MoveResize()
+{
+	MoveResize(xpos, ypos, width, height);
 }
 
 void Widget::UpdateArea()
 {
 	if (area)
 		delete area;
-	area = parent->GetSubPad(*this, x, y, w, h);
-}
-
-void Widget::Redraw(void)
-{
-	signal_redraw(this);
+	area = parent->GetSubPad(*this, xpos, ypos, width, height);
 }
 
 bool Widget::SetFocusChild(Widget &child)
@@ -119,7 +119,7 @@ bool Widget::StealFocus(void)
 	/* If has_focus is true, then this is the widget with focus. */
 	if (has_focus) {
 		has_focus = false;
-		signal_focus(this, false);
+		signal_focus(*this, false);
 		return true;
 	}
 
@@ -146,7 +146,7 @@ void Widget::RestoreFocus(void)
 	if (focus_child == NULL) {
 		if (can_focus) {
 			has_focus = true;
-			Redraw();
+			signal_redraw(*this);
 		}
 	} else {
 		focus_child->RestoreFocus();
@@ -172,8 +172,8 @@ bool Widget::GrabFocus(void)
 	if (can_focus && parent != NULL && parent->SetFocusChild(*this)) {
 		//TODO only set if window has focus.
 		has_focus = true;
-		signal_focus(this, true);
-		Redraw();
+		signal_focus(*this, true);
+		signal_redraw(*this);
 		return true;
 	}
 

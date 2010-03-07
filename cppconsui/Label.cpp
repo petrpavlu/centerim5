@@ -19,6 +19,13 @@
  *
  * */
 
+/**
+ * @file
+ * Label class implementation.
+ *
+ * @ingroup cppconsui
+ */
+
 #include "Label.h"
 
 #include "ConsuiCurses.h"
@@ -54,9 +61,9 @@ void Label::DrawEx(bool color)
 		return;
 
 	/**
-	 * @todo though this is not a widget for long text there are some cases in
+	 * @todo Though this is not a widget for long text there are some cases in
 	 * cim where we use it for a short but multiline text, so we should threat
-	 * LF specially here
+	 * LF specially here.
 	 */
 
 	area->erase();
@@ -78,7 +85,7 @@ void Label::SetText(const gchar *text_)
 {
 	RealSetText(text_);
 
-	signal_redraw(this);
+	signal_redraw(*this);
 }
 
 const gchar* Label::GetText()

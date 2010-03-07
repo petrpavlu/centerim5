@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -17,7 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * */
-/** @file Panel.h Panel class
+
+/**
+ * @file
+ * Panel class.
+ *
  * @ingroup cppconsui
  */
 
@@ -28,10 +33,12 @@
 #include "Label.h"
 #include "Widget.h"
 
-/** A widget representing a rectangular border with an optional
- * label on the top border line.
- * @todo borders with colors are nice 
- * @todo perhaps add some constructors directly with the label text
+/**
+ * A widget representing a rectangular border with an optional label on the
+ * top border line.
+ *
+ * @todo Add some constructor directly with the label text.
+ * @todo Label drawing.
  */
 class Panel
 : public Widget
@@ -44,11 +51,22 @@ class Panel
 		// Widget
 		virtual void Draw();
 
-		/** Sets the text of the label */
+		/**
+		 * Sets the text of the Label.
+		 */
 		void SetText(const gchar *str);
+		/**
+		 * Returns Label text.
+		 */
 		const gchar *GetText();
 
+		/**
+		 * Sets a new border style.
+		 */
 		void SetBorderStyle(LineStyle::Type ltype);
+		/**
+		 * Returns a current border style.
+		 */
 		LineStyle::Type GetBorderStyle();
 
 	protected:

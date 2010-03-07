@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,7 +19,10 @@
  *
  * */
 
-/** @file HorizontalLine.cpp HorizontalLine class implementation
+/**
+ * @file
+ * HorizontalLine class implementation
+ *
  * @ingroup cppconsui
  */
 
@@ -28,12 +32,7 @@
 #include "ColorScheme.h"
 
 HorizontalLine::HorizontalLine(Widget& parent, const int x, const int y, const int w, LineStyle::Type ltype)
-: Widget(parent, x, y, w, 1)
-, linestyle(ltype)
-{
-}
-
-HorizontalLine::~HorizontalLine()
+: AbstractLine(parent, x, y, w, 1, ltype)
 {
 }
 
@@ -41,7 +40,7 @@ void HorizontalLine::Draw()
 {
 	int realw;
 
-	if (!area || (realw = area->getmaxx()) == 0)
+	if (!area || (realw = area->getmaxx()) == 0 || area->getmaxy() != 1)
 		return;
 
 	int attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "verticalline", "line");
@@ -56,15 +55,4 @@ void HorizontalLine::Draw()
 		area->mvaddstring(realw - 1, 0, linestyle.HEnd());
 	}
 	area->attroff(attrs);
-}
-
-void HorizontalLine::SetLineStyle(LineStyle::Type ltype)
-{
-	linestyle.SetStyle(ltype);
-	Redraw();
-}
-
-LineStyle::Type HorizontalLine::GetLineStyle()
-{
-	return linestyle.GetStyle();
 }

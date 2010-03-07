@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,32 +19,42 @@
  *
  * */
 
+/**
+ * @file
+ * ListBox class.
+ *
+ * @ingroup cppconsui
+ */
+
 #ifndef __LISTBOX_H__
 #define __LISTBOX_H__
 
 #include "AbstractListBox.h"
 
+/**
+ * Implementation of AbstractListBox class where widgets are placed
+ * vertically.
+ */
 class ListBox
 : public AbstractListBox
 {
 	public:
 		ListBox(Widget& parent, int x, int y, int w, int h);
-		virtual ~ListBox();
+		virtual ~ListBox() {}
 
+		// AbstractListBox
 		void AddSeparator();
 
-		virtual void AddWidget(Widget *widget);
-		virtual void RemoveWidget(Widget *widget);
+		// Container
+		virtual void AddWidget(Widget& widget);
+		virtual void RemoveWidget(Widget& widget);
 
 	protected:
 
 	private:
 		ListBox();
 		ListBox(const ListBox&);
-
 		ListBox& operator=(const ListBox&);
-
-		bool movingwidget;
 };
 
 #endif /* __LISTBOX_H__ */

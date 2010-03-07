@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,7 +19,10 @@
  *
  * */
 
-/** @file VerticalLine.cpp VerticalLine class implementation
+/**
+ * @file
+ * VerticalLine class implementation.
+ *
  * @ingroup cppconsui
  */
 
@@ -28,12 +32,7 @@
 #include "ColorScheme.h"
 
 VerticalLine::VerticalLine(Widget& parent, const int x, const int y, const int w, LineStyle::Type ltype)
-: Widget(parent, x, y, w, 1)
-, linestyle(ltype)
-{
-}
-
-VerticalLine::~VerticalLine()
+: AbstractLine(parent, x, y, w, 1, ltype)
 {
 }
 
@@ -41,14 +40,15 @@ void VerticalLine::Draw()
 {
 	int realh;
 
-	if (!area || (realh = area->getmaxy()) == 0)
+	if (!area || (realh = area->getmaxy()) == 0 || area->getmaxx() != 1)
 		return;
 
 	int attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "verticalline", "line");
 	area->attron(attrs);
 	if (realh <= 1) {
 		area->mvaddstring(0, 0, linestyle.V());
-	} else {
+	}
+	else {
 		area->mvaddstring(0, 0, linestyle.VBegin());
 		for (int i = 1; i < realh - 1; i++) {
 			area->mvaddstring(i, 0, linestyle.V());
@@ -56,15 +56,4 @@ void VerticalLine::Draw()
 		area->mvaddstring(realh - 1, 0, linestyle.VEnd());
 	}
 	area->attroff(attrs);
-}
-
-void VerticalLine::SetLineStyle(LineStyle::Type ltype)
-{
-	linestyle.SetStyle(ltype);
-	Redraw();
-}
-
-LineStyle::Type VerticalLine::GetLineStyle()
-{
-	return linestyle.GetStyle();
 }

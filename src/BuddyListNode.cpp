@@ -34,7 +34,7 @@ BuddyListNode::BuddyListNode(TreeView& parent, PurpleBlistNode *node)
 	log = &Log::Instance();
 	can_focus = true;
 
-	SetFunction(sigc::mem_fun(this, &BuddyListNode::ActionActivate));
+	signal_activate.connect(sigc::mem_fun(this, &BuddyListNode::OnActivate));
 }
 
 BuddyListNode::~BuddyListNode()
@@ -119,11 +119,11 @@ void BuddyListBuddy::Update(void)
 	//clean this file up?
 	const gchar *text;
 	text = purple_buddy_get_alias(buddy);
-	MoveResize(x, y, width(text), 1);
+	MoveResize(xpos, ypos, ::width(text), 1);
 	SetText(text);
 }
 
-void BuddyListBuddy::ActionActivate(void)
+void BuddyListBuddy::OnActivate(void)
 {
 	log->Write(Log::Level_debug, "Buddy activated!\n"); //TODO remove sometime
 
@@ -149,11 +149,11 @@ void BuddyListChat::Update(void)
 {
 	const gchar *text;
 	text = purple_chat_get_name(chat);
-	MoveResize(x, y, width(text), 1);
+	MoveResize(xpos, ypos, ::width(text), 1);
 	SetText(text);
 }
 
-void BuddyListChat::ActionActivate(void)
+void BuddyListChat::OnActivate(void)
 {
 	log->Write(Log::Level_debug, "Chat activated!\n");
 
@@ -196,11 +196,11 @@ void BuddyListContact::Update(void)
 		}
 	}
 
-	MoveResize(x, y, width(text), 1);
+	MoveResize(xpos, ypos, ::width(text), 1);
 	SetText(text);
 }
 
-void BuddyListContact::ActionActivate(void)
+void BuddyListContact::OnActivate(void)
 {
 	log->Write(Log::Level_debug, "Contact activated!\n");
 }
@@ -224,11 +224,11 @@ void BuddyListGroup::Update(void)
 {
 	const gchar *text;
 	text = purple_group_get_name(group);
-	MoveResize(x, y, width(text), 1);
+	MoveResize(xpos, ypos, ::width(text), 1);
 	SetText(text);
 }
 
-void BuddyListGroup::ActionActivate(void)
+void BuddyListGroup::OnActivate(void)
 {
 	log->Write(Log::Level_debug, "Group activated!\n");
 	treeview->ActionToggleCollapsed();

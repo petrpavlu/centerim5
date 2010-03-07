@@ -51,7 +51,7 @@ void TextView::Insert(int line_num, const gchar *text)
 		UpdateScreenLines(line_num++);
 	}
 
-	Redraw();
+	signal_redraw(*this);
 }
 
 void TextView::Erase(int line_num)
@@ -75,7 +75,7 @@ void TextView::Clear()
 	lines.clear();
 
 	view_top = 0;
-	Redraw();
+	signal_redraw(*this);
 }
 
 const gchar *TextView::GetLine(int line_num) const
@@ -107,7 +107,7 @@ void TextView::SetViewPos(int viewy)
 
 	view_top = viewy;
 
-	Redraw();
+	signal_redraw(*this);
 }
 
 void TextView::Draw()
@@ -143,9 +143,6 @@ void TextView::MoveResize(int newx, int newy, int neww, int newh)
 	/// @todo optimize
 	for (int i = 0; i < lines.size(); i++)
 		UpdateScreenLines(i);
-
-	/// @todo comment out
-	Redraw();
 }
 
 const gchar *TextView::ProceedLine(const gchar *text, int area_width, int *res_width) const

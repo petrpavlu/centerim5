@@ -101,8 +101,8 @@ BuddyList::BuddyList()
 
 	Glib::signal_timeout().connect(sigc::mem_fun(this, &BuddyList::Load), 0);
 
-	treeview = new TreeView(*this, 0, 0, w - 2, h - 2);
-	AddWidget(treeview);
+	treeview = new TreeView(*this, 0, 0, width - 2, height - 2);
+	AddWidget(*treeview);
 	SetInputChild(*treeview);
 
 	MoveResizeRect(conf->GetBuddyListDimensions());

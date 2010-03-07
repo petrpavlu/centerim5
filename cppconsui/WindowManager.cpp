@@ -68,8 +68,6 @@ WindowManager::WindowManager(void)
 
 WindowManager::~WindowManager(void)
 {
-	KEYCONFIG->Clear();
-
 	// @todo close all windows?
 
 	if (Curses::endwin() == Curses::C_ERR)
@@ -79,7 +77,6 @@ WindowManager::~WindowManager(void)
 void WindowManager::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_WINDOWMANAGER, "redraw-screen",
-			_("Redraw the complete screen immediately"),
 			sigc::mem_fun(this, &WindowManager::Redraw),
 			InputProcessor::Bindable_Override);
 }
@@ -88,6 +85,7 @@ DEFINE_SIG_REGISTERKEYS(WindowManager, RegisterKeys);
 bool WindowManager::RegisterKeys()
 {
 	RegisterKeyDef(CONTEXT_WINDOWMANAGER, "redraw-screen",
+			_("Redraw the complete screen immediately"),
 			Keys::UnicodeTermKey("l", TERMKEY_KEYMOD_CTRL));
 	return true;
 }
@@ -255,7 +253,7 @@ void WindowManager::Redraw(void)
 	}
 }
 
-void WindowManager::WindowRedraw(Widget *widget)
+void WindowManager::WindowRedraw(Widget& widget)
 {
 	Redraw();
 }

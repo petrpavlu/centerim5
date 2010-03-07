@@ -19,6 +19,13 @@
  *
  * */
 
+/**
+ * @file
+ * LineStyle class implementation.
+ *
+ * @ingroup cppconsui
+ */
+
 #include "LineStyle.h"
 
 struct LineElements {
@@ -74,10 +81,6 @@ LineStyle::LineStyle(Type t)
 : type(t)
 {
 	utf8 = g_get_charset(NULL);
-}
-
-LineStyle::~LineStyle()
-{
 }
 
 void LineStyle::SetStyle(Type t)

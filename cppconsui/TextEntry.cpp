@@ -78,72 +78,56 @@ void TextEntry::DeclareBindables()
 {
 	// cursor movement
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-right",
-			_("Move the cursor to the right."),
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_LOGICAL_POSITIONS, 1),
 			InputProcessor::Bindable_Override);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-left",
-			_("Move the cursor to the left."),
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_LOGICAL_POSITIONS, -1),
 			InputProcessor::Bindable_Override);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-right-word",
-			_("Move the cursor to the right by one word."),
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_WORDS, 1),
 			InputProcessor::Bindable_Override);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-left-word",
-			_("Move the cursor to the left by one word."),
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_WORDS, -1),
 			InputProcessor::Bindable_Override);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-end",
-			_("Move the cursor to the end of the text."),
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_DISPLAY_LINE_ENDS, 1),
 			InputProcessor::Bindable_Override);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-begin",
-			_("Move the cursor to the beginning of the text."),
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_DISPLAY_LINE_ENDS, -1),
 			InputProcessor::Bindable_Override);
 
 	// deleting text
 	DeclareBindable(CONTEXT_TEXTENTRY, "delete-char",
-			_("Delete character under cursor."),
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete), DELETE_CHARS, 1),
 			InputProcessor::Bindable_Override);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "backspace",
-			_("Delete character before cursor."),
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete), DELETE_CHARS, -1),
 			InputProcessor::Bindable_Override);
 
 	/*
 	DeclareBindable(CONTEXT_TEXTENTRY, "delete-word-end",
-			_("Delete text until the end of the word at the cursor."),
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete), DELETE_WORD_ENDS, 1),
 			InputProcessor::Bindable_Override);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "delete-word-begin",
-			_("Delete text until the beginning of the word at the cursor."),
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete), DELETE_WORD_ENDS, -1),
 			InputProcessor::Bindable_Override);
 
 	// overwrite
 	DeclareBindable(CONTEXT_TEXTENTRY, "toggle-overwrite",
-			_("Enable/Disable overwrite mode."),
 			sigc::mem_fun(this, &TextEntry::ActionToggleOverwrite),
 			InputProcessor::Bindable_Override);
 	*/
 
-	DeclareBindable(CONTEXT_TEXTENTRY, "insert-space", _("Insert space into the text."),
-			sigc::mem_fun(this, &TextEntry::ActionInsertSpace),
-			InputProcessor::Bindable_Override);
-
 	// non text editing bindables
 	DeclareBindable(CONTEXT_TEXTENTRY, "activate",
-			_("Accept input and move focus."),
-			sigc::mem_fun(this, &TextEntry::OnActivate),
+			sigc::mem_fun(this, &TextEntry::ActionActivate),
 			InputProcessor::Bindable_Override);
 }
 
@@ -151,36 +135,45 @@ DEFINE_SIG_REGISTERKEYS(TextEntry, RegisterKeys);
 bool TextEntry::RegisterKeys()
 {
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-right",
+			_("Move the cursor to the right."),
 			Keys::SymbolTermKey(TERMKEY_SYM_RIGHT));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-left",
+			_("Move the cursor to the left."),
 			Keys::SymbolTermKey(TERMKEY_SYM_LEFT));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-right-word",
+			_("Move the cursor to the right by one word."),
 			Keys::SymbolTermKey(TERMKEY_SYM_RIGHT, TERMKEY_KEYMOD_CTRL));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-left-word",
+			_("Move the cursor to the left by one word."),
 			Keys::SymbolTermKey(TERMKEY_SYM_LEFT, TERMKEY_KEYMOD_CTRL));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-end",
+			_("Move the cursor to the end of the text."),
 			Keys::SymbolTermKey(TERMKEY_SYM_END));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-begin",
+			_("Move the cursor to the beginning of the text."),
 			Keys::SymbolTermKey(TERMKEY_SYM_HOME));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "delete-char",
+			_("Delete character under cursor."),
 			Keys::SymbolTermKey(TERMKEY_SYM_DELETE));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "backspace",
+			_("Delete character before cursor."),
 			Keys::SymbolTermKey(TERMKEY_SYM_BACKSPACE));
 
 	/// @todo enable
 	/*
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "delete-word-end",
+			_("Delete text until the end of the word at the cursor."),
 			Keys::SymbolTermKey(TERMKEY_SYM_DELETE, TERMKEY_KEYMOD_CTRL));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "delete-word-begin",
+			_("Delete text until the beginning of the word at the cursor."),
 			Keys::SymbolTermKey(TERMKEY_SYM_BACKSPACE, TERMKEY_KEYMOD_CTRL));
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "toggle-overwrite",
+			_("Enable/Disable overwrite mode."),
 			Keys::SymbolTermKey(TERMKEY_SYM_INSERT));
 	*/
 
-	RegisterKeyDef(CONTEXT_TEXTENTRY, "insert-space",
-			Keys::SymbolTermKey(TERMKEY_SYM_SPACE));
-
 	RegisterKeyDef(CONTEXT_TEXTENTRY, "activate",
+			_("Accept input and move focus."),
 			Keys::SymbolTermKey(TERMKEY_SYM_ENTER));
 	return true;
 }
@@ -198,7 +191,7 @@ void TextEntry::Draw()
 	if (has_focus) {
 		int realw = area->getmaxx();
 		gchar *ptr = g_utf8_offset_to_pointer(text, current_pos);
-		int sc_x = width(text, ptr);
+		int sc_x = ::width(text, ptr);
 		int sc_y = sc_x / realw;
 		sc_x -= sc_y * realw;
 		area->mvchgat(sc_x, sc_y, 1, Curses::Attr::REVERSE, 0, NULL);
@@ -336,7 +329,7 @@ void TextEntry::InsertTextAtCursor(const gchar *new_text, int new_text_bytes)
 
 	current_pos = current_pos + n_chars;
 
-	Redraw();
+	signal_redraw(*this);
 
 	signal_text_changed();
 }
@@ -467,13 +460,13 @@ void TextEntry::ToggleOverwrite()
 void TextEntry::ActionMoveCursor(CursorMovement step, int direction)
 {
 	MoveCursor(step, direction);
-	Redraw();
+	signal_redraw(*this);
 }
 
 void TextEntry::ActionDelete(DeleteType type, int direction)
 {
 	DeleteFromCursor(type, direction);
-	Redraw();
+	signal_redraw(*this);
 }
 
 void TextEntry::ActionToggleOverwrite()
@@ -481,14 +474,8 @@ void TextEntry::ActionToggleOverwrite()
 	ToggleOverwrite();
 }
 
-void TextEntry::ActionInsertSpace()
-{
-	if (editable)
-		InsertTextAtCursor(" ");
-}
-
 //TODO custom handlers?
-void TextEntry::OnActivate()
+void TextEntry::ActionActivate()
 {
 	if (parent)
 		parent->MoveFocus(FocusNext);

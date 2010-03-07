@@ -51,7 +51,7 @@ class Widget
 		 * @todo use the Point and Rect classes, perhaps implement a Size class 
 		 *   hold width and height variables, to enable easier usage
 		 */
-		Widget(Widget& parent, int x_, int y_, int w_, int h_);
+		Widget(Widget& parent, int x, int y, int w, int h);
 		virtual ~Widget();
 
 		/** @todo This method, as well as Resize(), MoveResize() 
@@ -59,8 +59,7 @@ class Widget
 		 * they emit the appropriate signals after calling UpdateArea()
 		 */
 		virtual void MoveResize(const int newx, const int newy, const int neww, const int newh);
-		virtual void MoveResize()
-			{ MoveResize(x, y, w, h); }
+		virtual void MoveResize();
 
 		/** The @ref area is recreated, the new area should be redrawn.
 		 * It is called whenever the coordinates of the widget change. The caller must ensure the 
@@ -78,12 +77,6 @@ class Widget
 		 * screen to be called.
 		 */
 		virtual void Draw() = 0;
-		/** The Redraw() function can be called by a Widget to tell its 
-		 * @ref Container object that the Widget has been updated and that it should
-		 * be redrawn. This implies that the @ref Container of a Widget should
-		 * connect to the @ref signal_redraw.
-		 */
-		void Redraw(void);
 		/** Resets the focus child by @ref StealFocus "stealing" the focus 
 		 * from the current chain and also ensures the focus 
 		 * goes also UP the chain to the root widget. (normally a Window)
@@ -128,12 +121,12 @@ class Widget
 		bool HasFocus(void) const { return has_focus; }
 		const Widget* Parent(void) const { return parent; }
 
-		int Left() const { return x; }
-		int Top() const { return y; }
-		int X() const { return x; }
-		int Y() const { return y; }
-		int Width() { return w; }
-		int Height() { return h; }
+		int Left() const { return xpos; }
+		int Top() const { return ypos; }
+		int X() const { return xpos; }
+		int Y() const { return ypos; }
+		int Width() { return width; }
+		int Height() { return height; }
 
 		/** Returns a subpad of current widget with given coordinates.
 		 */
@@ -144,15 +137,21 @@ class Widget
 
 		/// @todo encapsulate with a function, make sure derived class call Move()/Resize()/Redraw() to emit signal.
 		/// Also check if this is possible at all.
-		sigc::signal<void, Widget*, Rect&, Rect&> signal_moveresize;
-		sigc::signal<void, Widget*> signal_redraw;
-		sigc::signal<void, Widget*, bool> signal_focus;
+		sigc::signal<void, Widget&, Rect&, Rect&> signal_moveresize;
+		/**
+		 * Redraw signal is used by a Widget to tell its @ref Container object
+		 * that the Widget has been updated and that it should be redrawn.
+		 * Usually only the @ref Container of a Widget is connected to this
+		 * signal.
+		 */
+		sigc::signal<void, Widget&> signal_redraw;
+		sigc::signal<void, Widget&, bool> signal_focus;
 
 	protected:
 		/** Screen area relative to parent area. Note that this is a requested
 		 * area if parent window is big enough, real width/height can differ.
 		 */
-		int x, y, w, h;
+		int xpos, ypos, width, height;
 
 		bool can_focus;
 		/** Flag if the widget has the focus. Only one widget can have the focus in the application.

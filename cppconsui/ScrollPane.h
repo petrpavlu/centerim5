@@ -37,16 +37,16 @@ class ScrollPane
 		/* Functions required by scrollpane abstract class */
 
 		/* Get the size of the scrollable area */
-		Rect GetScrollSize(void) { return Rect(0, 0, scrollw, scrollh); }
-		int GetScrollWidth(void) { return scrollw; }
-		int GetScrollHeight(void) { return scrollh; }
+		Rect GetScrollSize(void) { return Rect(0, 0, scroll_width, scroll_height); }
+		int GetScrollWidth(void) { return scroll_width; }
+		int GetScrollHeight(void) { return scroll_height; }
 
 		/* Set the size of the scrollable area*/
-		void SetScrollSize(const int width, const int height);
-		void SetScrollWidth(const int width)
-			{ SetScrollSize(width, scrollh); }
-		void SetScrollHeight(const int height)
-			{ SetScrollSize(scrollw, height); }
+		void SetScrollSize(int swidth, int sheight);
+		void SetScrollWidth(int swidth)
+			{ SetScrollSize(swidth, scroll_height); }
+		void SetScrollHeight(int sheight)
+			{ SetScrollSize(scroll_width, sheight); }
 
 		/* Adjust the visible area to include the given coordinates/rectangle */
 		void AdjustScroll(int newx, int newy);
@@ -55,8 +55,7 @@ class ScrollPane
 		Rect GetScrollPosition(void) { return Rect(xpos, ypos, 0, 0); }
 
 	protected:
-		int scrollw, scrollh;
-		int xpos, ypos;
+		int scroll_xpos, scroll_ypos, scroll_width, scroll_height;
 
 	private:
 		ScrollPane();

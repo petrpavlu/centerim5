@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
  * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
@@ -19,32 +18,29 @@
  *
  * */
 
-#ifndef __KEYS_H__
-#define __KEYS_H__
-
-#include <glib.h>
-#include <libtermkey/termkey.h>
-
-namespace Keys {
-
-/** Compares two keys. */
-struct TermKeyCmp
-{
-	bool operator()(const TermKeyKey &a, const TermKeyKey &b) const;
-};
-
-bool Compare(const TermKeyKey &a, const TermKeyKey &b);
-
 /**
- * Changes symbol termkeys TERMKEY_SYM_TAB, TERMKEY_SYM_ENTER,
- * TERMKEY_SYM_SPACE to unicode termkeys.
+ * @file
+ * AbstractLine class implementation.
+ *
+ * @ingroup cppconsui
  */
-TermKeyKey RefineKey(const TermKeyKey &k);
 
-TermKeyKey UnicodeTermKey(const gchar *symbol, int modifiers = 0);
-TermKeyKey FunctionTermKey(int number, int modifiers = 0);
-TermKeyKey SymbolTermKey(TermKeySym sym, int modifiers = 0);
+#include "AbstractLine.h"
 
-} // namespace Keys
+AbstractLine::AbstractLine(Widget& parent, int x, int y, int w, int h,
+		LineStyle::Type ltype)
+: Widget(parent, x, y, w, h)
+, linestyle(ltype)
+{
+}
 
-#endif /* __KEYS_H__ */
+void AbstractLine::SetLineStyle(LineStyle::Type ltype)
+{
+	linestyle.SetStyle(ltype);
+	signal_redraw(*this);
+}
+
+LineStyle::Type AbstractLine::GetLineStyle()
+{
+	return linestyle.GetStyle();
+}

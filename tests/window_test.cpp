@@ -28,14 +28,14 @@ TestWindow::TestWindow(int number, int x, int y, int w, int h)
 	gchar *t = g_strdup_printf("Win %d", number);
 	label = new Label(*this, 2, 1, w - 4, 1, t);
 	g_free(t);
-	AddWidget(label);
+	AddWidget(*label);
 
 	if (number == 1) {
 		label = new Label(*this, 2, 2, "Press F10 to quit.");
-		AddWidget(label);
+		AddWidget(*label);
 
 		label = new Label(*this, 2, 3, "Press ESC to close a focused window.");
-		AddWidget(label);
+		AddWidget(*label);
 	}
 }
 

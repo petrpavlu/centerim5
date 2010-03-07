@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -17,7 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * */
-/** @file Button.h Button class
+
+/**
+ * @file
+ * Button class.
+ *
  * @ingroup cppconsui
  */
 
@@ -26,45 +31,42 @@
 
 #include "Label.h"
 
-#include <glibmm/ustring.h>
-/** This class implements a simple button behaviour
+/**
+ * This class implements a simple button behaviour.
  *
- * The button doesn't keep states like pressed or not
- * and it can call back one (or more) functions when
- * pressed.
+ * The button doesn't keep states like pressed or not and it can call back one
+ * (or more) functions when pressed.
  */
 class Button
 : public Label
 {
 	public:
-		Button(Widget& parent, int x, int y, int w, int h, Glib::ustring &text, sigc::slot<void> callback);
 		Button(Widget& parent, int x, int y, int w, int h, const gchar *text, sigc::slot<void> callback);
 		Button(Widget& parent, int x, int y, int w, int h, const gchar *text);
 		Button(Widget& parent, int x, int y, const gchar *text, sigc::slot<void> callback);
 		Button(Widget& parent, int x, int y, const gchar *text);
-		virtual ~Button();
+		virtual ~Button() {}
 
-		virtual void Draw(void);
+		// Widget
+		virtual void Draw();
 
-		/// @todo rename to setcallback?
-		void SetFunction(sigc::slot<void> callback);
-
-		/// @todo keep signal or the callback?
-		sigc::signal<void, Button*> signal_activate;
+		/**
+		 * Emited signal when a button is pressed/activated.
+		 */
+		sigc::signal<void> signal_activate;
 
 	protected:
 
 	private:
-		Button(void);
+		Button();
 		Button(const Button&);
-
 		Button& operator=(const Button&);
 
-		void OnActivate(void);
+		void ActionActivate();
 
-		sigc::slot<void> callback; ///< the function called when button is pressed
-	
-		/** it handles the automatic registration of defined keys */
+		/**
+		 * Registration of defined keys.
+		 */
 		DECLARE_SIG_REGISTERKEYS();
 		static bool RegisterKeys();
 		void DeclareBindables();

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,7 +19,10 @@
  *
  * */
 
-/** @file Panel.cpp Panel class implementation
+/**
+ * @file
+ * Panel class implementation.
+ *
  * @ingroup cppconsui
  */
 
@@ -50,15 +54,19 @@ void Panel::Draw()
 	int attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "panel", "line");
 	area->attron(attrs);
 
+	// draw top and bottom horizontal line
 	for (int i = 1; i < realw - 1; i++) {
 		area->mvaddstring(i, 0, linestyle.H());
 		area->mvaddstring(i, realh - 1, linestyle.H());
 	}
 
+	// draw left and right vertical line
 	for (int i = 1; i < realh - 1; i++) {
 		area->mvaddstring(0, i, linestyle.V());
 		area->mvaddstring(realw - 1, i, linestyle.V());
 	}
+
+	// draw corners
 	area->mvaddstring(0, 0, linestyle.CornerTL());
 	area->mvaddstring(0, realh - 1, linestyle.CornerBL());
 	area->mvaddstring(realw - 1, 0, linestyle.CornerTR());
@@ -80,7 +88,7 @@ const gchar *Panel::GetText()
 void Panel::SetBorderStyle(LineStyle::Type ltype)
 {
 	linestyle.SetStyle(ltype);
-	Redraw();
+	signal_redraw(*this);
 }
 
 LineStyle::Type Panel::GetBorderStyle()

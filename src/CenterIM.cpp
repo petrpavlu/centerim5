@@ -285,15 +285,13 @@ void CenterIM::UIUnInit(void)
 
 void CenterIM::DeclareBindables()
 {
-	DeclareBindable(CONTEXT_CENTERIM, "quit", _("Quit CenterIM."),
+	DeclareBindable(CONTEXT_CENTERIM, "quit",
 			sigc::mem_fun(this, &CenterIM::Quit),
 			InputProcessor::Bindable_Override);
 	DeclareBindable(CONTEXT_CENTERIM, "accountstatusmenu",
-			_("Open the account status menu."),
 			sigc::mem_fun(this, &CenterIM::OpenAccountStatusMenu),
 			InputProcessor::Bindable_Override);
 	DeclareBindable(CONTEXT_CENTERIM, "generalmenu",
-			_("Open the general menu."),
 			sigc::mem_fun(this, &CenterIM::OpenGeneralMenu),
 			InputProcessor::Bindable_Override);
 }
@@ -301,11 +299,13 @@ void CenterIM::DeclareBindables()
 DEFINE_SIG_REGISTERKEYS(CenterIM, RegisterKeys);
 bool CenterIM::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_CENTERIM, "quit",
+	RegisterKeyDef(CONTEXT_CENTERIM, "quit", _("Quit CenterIM."),
 			Keys::UnicodeTermKey("q", TERMKEY_KEYMOD_CTRL));
 	RegisterKeyDef(CONTEXT_CENTERIM, "accountstatusmenu",
+			_("Open the account status menu."),
 			Keys::FunctionTermKey(3));
 	RegisterKeyDef(CONTEXT_CENTERIM, "generalmenu",
+			_("Open the general menu."),
 			Keys::FunctionTermKey(4));
 	return true;
 }
@@ -350,6 +350,6 @@ void CenterIM::OpenAccountStatusMenu(void)
 void CenterIM::OpenGeneralMenu(void)
 {
 	//TODO get coords from config
-	windowmanager->Add(new GeneralMenu(40, 0, 40, 22));
+	windowmanager->Add(new GeneralMenu(40, 0, 40, 21));
 }
 

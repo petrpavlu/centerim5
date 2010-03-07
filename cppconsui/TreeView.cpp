@@ -71,11 +71,9 @@ TreeView::~TreeView()
 void TreeView::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_TREEVIEW, "fold-subtree",
-			_("Collapse the selected subtree"),
 			sigc::mem_fun(this, &TreeView::ActionCollapse),
 			InputProcessor::Bindable_Normal);
 	DeclareBindable(CONTEXT_TREEVIEW, "unfold-subtree",
-			_("Expand the selected subtree"),
 			sigc::mem_fun(this, &TreeView::ActionExpand),
 			InputProcessor::Bindable_Normal);
 }
@@ -84,8 +82,10 @@ DEFINE_SIG_REGISTERKEYS(TreeView, RegisterKeys);
 bool TreeView::RegisterKeys()
 {
 	RegisterKeyDef(CONTEXT_TREEVIEW, "fold-subtree",
+			_("Collapse the selected subtree"),
 			Keys::UnicodeTermKey("-"));
 	RegisterKeyDef(CONTEXT_TREEVIEW, "unfold-subtree",
+			_("Expand the selected subtree"),
 			Keys::UnicodeTermKey("+"));
 	return true;
 }
@@ -193,7 +193,7 @@ void TreeView::Collapse(const NodeReference node)
 {
 	if (node->open && node->collapsable) {
 		node->open = false;
-		Redraw();
+		signal_redraw(*this);
 	}
 }
 
@@ -201,7 +201,7 @@ void TreeView::Expand(const NodeReference node)
 {
 	if (!(*node).open && (*node).collapsable) {
 		(*node).open = true;
-		Redraw();
+		signal_redraw(*this);
 	}
 }
 
@@ -209,7 +209,7 @@ void TreeView::ToggleCollapsed(const NodeReference node)
 {
 	if ((*node).collapsable) {
 		(*node).open = !(*node).open;
-		Redraw();
+		signal_redraw(*this);
 	}
 }
 
@@ -263,9 +263,9 @@ const TreeView::NodeReference TreeView::AddNode(const NodeReference &parent, Wid
 	 * add a bit (read: a lot) of slack space
 	 * */
 	//TODO change width calculation for configurable tree drawing
-	if (scrollw < itemswidth)
+	if (scroll_width < itemswidth)
 		newwidth = itemswidth * 2;
-	if (scrollh < itemsheight)
+	if (scroll_height < itemsheight)
 		newheight = itemsheight * 2;
 
 	//ResizeScroll(newwidth, newheight);
@@ -370,22 +370,22 @@ void TreeView::SetParent(NodeReference node, NodeReference newparent)
 		thetree.move_ontop(thetree.append_child(newparent), node);
 }
 
-void TreeView::OnChildRedraw(Widget *widget)
+void TreeView::OnChildRedraw(Widget& widget)
 {
-	Redraw();
+	signal_redraw(*this);
 }
 
-void TreeView::OnChildMoveResize(Widget *widget, Rect &oldsize, Rect &newsize)
+void TreeView::OnChildMoveResize(Widget& widget, Rect &oldsize, Rect &newsize)
 {
 	//TODO redraw only on height change
-	Redraw();
+	signal_redraw(*this);
 }
 
-void TreeView::OnChildFocus(Widget* widget, bool focus)
+void TreeView::OnChildFocus(Widget& widget, bool focus)
 {
 	/* Only adjust scroll position if the widget got focus. */
 	if (focus)
-		AdjustScroll(widget->Left(), widget->Top());
+		AdjustScroll(widget.Left(), widget.Top());
 }
 
 void TreeView::GetFocusChain(FocusChain& focus_chain, FocusChain::iterator parent)

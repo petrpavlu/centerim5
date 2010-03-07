@@ -46,7 +46,7 @@ class BuddyListNode
 		virtual void TakeFocus(void);
 
 		/* Actions for keybindings */
-		virtual void ActionActivate(void) =0;
+		virtual void OnActivate(void) =0;
 
 		BuddyListNode* GetParent(void);
 
@@ -72,7 +72,7 @@ class BuddyListBuddy
 		virtual void Draw(void);
 		virtual void Update(void);
 
-		virtual void ActionActivate(void);
+		virtual void OnActivate(void);
 
 	protected:
 		PurpleBuddy *buddy;
@@ -89,7 +89,7 @@ class BuddyListChat
 		virtual void Draw(void);
 		virtual void Update(void);
 
-		virtual void ActionActivate(void);
+		virtual void OnActivate(void);
 
 	protected:
 		PurpleChat *chat;
@@ -106,7 +106,7 @@ class BuddyListContact
 		virtual void Draw(void);
 		virtual void Update(void);
 
-		virtual void ActionActivate(void);
+		virtual void OnActivate(void);
 
 	protected:
 		PurpleContact *contact;
@@ -123,7 +123,7 @@ class BuddyListGroup
 		virtual void Draw(void);
 		virtual void Update(void);
 
-		virtual void ActionActivate(void);
+		virtual void OnActivate(void);
 
 	protected:
 		PurpleGroup *group;

@@ -48,8 +48,8 @@ Log::Log(void)
 
 	conf = Conf::Instance();
 
-	textview = new TextView(*this, 1, 0, w - 2, h, true);
-	AddWidget(textview);
+	textview = new TextView(*this, 1, 0, width - 2, height, true);
+	AddWidget(*textview);
 
 #define REGISTER_G_LOG_HANDLER(name) \
 	g_log_set_handler((name), (GLogLevelFlags)(G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL \
@@ -90,7 +90,7 @@ void Log::MoveResize(int newx, int newy, int neww, int newh)
 {
 	Window::MoveResize(newx, newy, neww, newh);
 
-	textview->MoveResize(1, 0, w - 2, h);
+	textview->MoveResize(1, 0, width - 2, height);
 }
 
 void Log::Write(Level level, const gchar *fmt, ...)

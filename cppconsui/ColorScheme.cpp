@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,6 +19,13 @@
  *
  * */
 
+/**
+ * @file
+ * ColorScheme class implementation.
+ *
+ * @ingroup cppconsui
+ */
+
 #include "ColorScheme.h"
 
 #include "ConsuiCurses.h"
@@ -26,14 +34,6 @@ ColorScheme *ColorScheme::Instance()
 {
 	static ColorScheme instance;
 	return &instance;
-}
-
-ColorScheme::ColorScheme()
-{
-}
-
-ColorScheme::~ColorScheme()
-{
 }
 
 int ColorScheme::GetColorPair(const char *scheme, const char *widget,
