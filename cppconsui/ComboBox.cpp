@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,11 +19,15 @@
  *
  * */
 
-/** @file ComboBox.cpp ComboBox class implementation
+/**
+ * @file
+ * ComboBox class implementation.
+ *
  * @ingroup cppconsui
  */
 
 #include "ComboBox.h"
+
 #include "Keys.h"
 #include "CppConsUIInternal.h"
 
@@ -31,24 +36,67 @@
 
 #define CONTEXT_COMBOBOX "combobox"
 
+ComboBox::ComboBoxEntry::ComboBoxEntry(const gchar *text_, const void *data_)
+: data(data_)
+{
+	// text has to be always valid
+	g_assert(text_);
+
+	text = g_strdup(text_);
+}
+
+ComboBox::ComboBoxEntry::ComboBoxEntry(const ComboBoxEntry& other)
+: data(other.data)
+{
+	text = g_strdup(other.text);
+}
+
+ComboBox::ComboBoxEntry::ComboBoxEntry &ComboBox::ComboBoxEntry::operator=(const ComboBoxEntry& other)
+{
+	if (this != &other) {
+		g_free(text);
+		text = g_strdup(other.text);
+		data = other.data;
+	}
+
+	return *this;
+}
+
+ComboBox::ComboBoxEntry::~ComboBoxEntry()
+{
+	g_free(text);
+}
+
+void ComboBox::ComboBoxEntry::SetText(gchar *new_text)
+{
+	g_assert(new_text);
+
+	g_free(text);
+	g_strdup(new_text);
+}
+
+const gchar *ComboBox::ComboBoxEntry::GetText() const
+{
+	return text;
+}
 
 ComboBox::ComboBox(Widget& parent, int x, int y, int w, int h, const gchar *text)
 : Button(parent, x, y, w, h, text)
 , dropdown(NULL)
+, selected_entry(options.end())
+, max_option_width(0)
 {
-	selected_entry.text = NULL;
-	selected_entry.data = NULL;
-
+	signal_activate.connect(sigc::mem_fun(this, &ComboBox::OnDropDown));
 	DeclareBindables();
 }
 
 ComboBox::ComboBox(Widget& parent, int x, int y, const gchar *text)
 : Button(parent, x, y, text)
 , dropdown(NULL)
+, selected_entry(options.end())
+, max_option_width(0)
 {
-	selected_entry.text = NULL;
-	selected_entry.data = NULL;
-
+	signal_activate.connect(sigc::mem_fun(this, &ComboBox::OnDropDown));
 	DeclareBindables();
 }
 
@@ -64,27 +112,62 @@ void ComboBox::DeclareBindables()
 }
 
 DEFINE_SIG_REGISTERKEYS(ComboBox, RegisterKeys);
-bool ComboBox::RegisterKeys(void)
+bool ComboBox::RegisterKeys()
 {
 	RegisterKeyDef(CONTEXT_COMBOBOX, "dropdown", _("Show the dropdown menu."),
 			Keys::SymbolTermKey(TERMKEY_SYM_ENTER));
 	return true;
 }
 
-void ComboBox::OnDropDown(void)
+void ComboBox::SetOptions(const ComboBoxEntries& new_options)
 {
-	ComboBoxEntries::iterator i;
+	ClearOptions();
 
-	if (dropdown)
-		{}/*TODO this shoudn't happen*/
+	for (ComboBoxEntries::const_iterator i = new_options.begin(); i != new_options.end(); i++)
+		AddOption(*i);
+}
 
-	/// @todo position correctly according to absolute coords.
-	dropdown = new MenuWindow(0, 0, width, options.size() + 2);
-	sig_dropdown_close = dropdown->signal_close.connect(sigc::mem_fun(this, &ComboBox::DropDownClose));
+void ComboBox::ClearOptions()
+{
+	options.clear();
+	selected_entry = options.end();
+	max_option_width = 0;
+}
 
-	for (i = options.begin(); i != options.end(); i++) {
-		dropdown->AddItem((*i).text, sigc::bind(sigc::mem_fun(this, &ComboBox::DropDownOk), this, *i));
-	}
+void ComboBox::AddOption(const gchar *text, const void *data)
+{
+	AddOption(ComboBoxEntry(text, data));
+}
+
+void ComboBox::AddOption(const ComboBoxEntry& option)
+{
+	int w = ::width(option.GetText());
+	if (w > max_option_width)
+		max_option_width = w;
+
+	options.push_back(option);
+}
+
+const ComboBox::ComboBoxEntry *ComboBox::GetSelected() const
+{
+	if (selected_entry == options.end())
+		return NULL;
+	return &(*selected_entry);
+}
+
+void ComboBox::SetSelected(void *data)
+{
+}
+
+void ComboBox::OnDropDown()
+{
+	/// @todo Position correctly according to absolute coords.
+	/// @todo Make sure that requested MenuWindow size can fit into the screen.
+	dropdown = new MenuWindow(0, 0, max_option_width + 2, options.size() + 2);
+	dropdown->signal_close.connect(sigc::mem_fun(this, &ComboBox::DropDownClose));
+
+	for (ComboBoxEntries::const_iterator i = options.begin(); i != options.end(); i++)
+		dropdown->AddItem(i->GetText(), sigc::bind(sigc::mem_fun(this, &ComboBox::DropDownOk), i));
 
 	/// @todo implement show method of dialogs/windows
 	//dropdown->Show();
@@ -92,42 +175,21 @@ void ComboBox::OnDropDown(void)
 	wm->Add(dropdown);
 }
 
-void ComboBox::DropDownOk(const ComboBox *combo_box, ComboBoxEntry new_entry)
+void ComboBox::DropDownOk(ComboBoxEntries::const_iterator new_entry)
 {
-	SetText(new_entry.text); /// @todo call SetText only if really changed
-	ComboBoxEntry old_entry;
-
-	old_entry = selected_entry;
-	selected_entry = new_entry;
-
 	dropdown->Close();
+	dropdown = NULL;
 
-	if (old_entry.data != new_entry.data)
-		signal_selection_changed(this, old_entry, new_entry);
+	// selected option didn't change
+	if (selected_entry == new_entry)
+		return;
+
+	selected_entry = new_entry;
+	SetText(new_entry->GetText());
+	signal_selection_changed(*new_entry);
 }
 
 void ComboBox::DropDownClose(Window *window)
 {
 	dropdown = NULL;
 }
-
-void ComboBox::Options(const ComboBoxEntries options)
-{
-	this->options = options;
-}
-
-void ComboBox::AddOption(const gchar *text, const void *data)
-{
-	ComboBoxEntry entry;
-
-	entry.text = text;
-	entry.data = data;
-
-	options.push_back(entry);
-}
-
-void ComboBox::SetSelected(void *data)
-{
-	ComboBoxEntries::iterator i;
-}
-

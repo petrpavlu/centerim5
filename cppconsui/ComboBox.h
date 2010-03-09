@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,7 +19,10 @@
  *
  * */
 
-/** @file ComboBox.h ComboBox class
+/**
+ * @file
+ * ComboBox class.
+ *
  * @ingroup cppconsui
  */
 
@@ -26,80 +30,109 @@
 #define __COMBOBOX_H__
 
 #include "Button.h"
-
 #include "MenuWindow.h"
 
 #include <vector>
 
-/** This class should be used when the user must choose 
- * one value from several options. 
+/**
+ * This class should be used when the user must choose one value from several
+ * options.
  */
 class ComboBox
 : public Button
 {
 	public:
-		/** Keeps a pair of {display text, value}
-		 * @todo handle memory allocation and destruction
-		 *   or make sure the pointers are not destroyed 
-		 *   while being used by the combo box
-		 * @todo add constructor to this struct to build it easier
+		/**
+		 * Keeps a pair of {display text, value}.
 		 */
-		typedef struct {
-			const gchar *text;
-			const void *data;
-		} ComboBoxEntry;
+		class ComboBoxEntry
+		{
+			public:
+				ComboBoxEntry(const gchar *text_, const void *data_);
+				ComboBoxEntry(const ComboBoxEntry& other);
+				ComboBoxEntry &operator=(const ComboBoxEntry& other);
+				virtual ~ComboBoxEntry();
+
+				void SetText(gchar *new_text);
+				const gchar *GetText() const;
+
+				const void *data;
+
+			protected:
+
+			private:
+				gchar *text;
+		};
 		typedef std::vector<ComboBoxEntry> ComboBoxEntries;
 
 		ComboBox(Widget& parent, int x, int y, int w, int h, const gchar *text);
 		ComboBox(Widget& parent, int x, int y, const gchar *text);
 
 		virtual ~ComboBox();
-	
-		/** @todo maybe call these methods SetOptions and GetOptions
-		 * also, use references instead of value as parameter/return values
+
+		/**
+		 * Sets new options.
 		 */
-		void Options(const ComboBoxEntries options);
-		const ComboBoxEntries Options(void) { return options; }
-		/** @todo add option given as ComboBoxEntry ? 
+		void SetOptions(const ComboBoxEntries& new_options);
+		/**
+		 * Returns current options.
+		 */
+		const ComboBoxEntries *GetOptions() const { return &options; }
+		/**
+		 * Removes all options.
+		 */
+		void ClearOptions();
+
+		/**
+		 * Appends a new option.
 		 */
 		void AddOption(const gchar *text, const void *data);
-		/** @todo return reference ? 
+		/**
+		 * @overload AddOption(const gchar *text, const void *data);
 		 */
-		ComboBoxEntry GetSelected(void) { return selected_entry; }
+		void AddOption(const ComboBoxEntry& option);
+
+		/**
+		 * Returns last selested option.
+		 */
+		const ComboBoxEntry *GetSelected() const;
+
 		/** @todo implement this */
 		void SetSelected(void *data);
 
-		sigc::signal<void, const ComboBox*,
-			const ComboBoxEntry, const ComboBoxEntry> signal_selection_changed;
+		sigc::signal<void, const ComboBoxEntry&> signal_selection_changed;
 
 	protected:
 		MenuWindow *dropdown;
-		/** Prepares and displays the dropdown MenuWindow 
+		/**
+		 * Prepares and displays the dropdown MenuWindow.
 		 */
-		void OnDropDown(void);
-		/** @todo use references ? */
-		void DropDownOk(const ComboBox *combo_box, ComboBoxEntry new_entry);
+		void OnDropDown();
+		void DropDownOk(ComboBoxEntries::const_iterator new_entry);
 		void DropDownClose(Window *window);
-		
-		/** @todo implement this as an iterator of ComboBoxEntries ? */
-		ComboBoxEntry selected_entry;
-		/** all options */
+
+		/**
+		 * Holds reference to currently selected entry.
+		 */
+		ComboBoxEntries::const_iterator selected_entry;
+		/**
+		 * All options.
+		 */
 		ComboBoxEntries options;
+
+		/**
+		 * Maximal option width. Used for dropdown menu width.
+		 */
+		int max_option_width;
 
 	private:
 		ComboBox();
 		ComboBox(const ComboBox&);
-
 		ComboBox& operator=(const ComboBox&);
 
-		void OnActivate(void)
-			{ OnDropDown(); }
-
-		sigc::connection sig_dropdown_close;
-	
 		/** it handles the automatic registration of defined keys */
 		DECLARE_SIG_REGISTERKEYS();
-		static bool RegisterKeys();	
+		static bool RegisterKeys();
 		void DeclareBindables();
 };
 

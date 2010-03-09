@@ -727,7 +727,7 @@ void AccountWindow::AccountOptionSplit::ResponseHandler(Dialog::ResponseType res
 
 AccountWindow::AccountOptionProtocol::AccountOptionProtocol(Widget& parent,
 		PurpleAccount *account, AccountWindow *account_window)
-: ComboBox(parent, 0, 0, 15, 1, "")
+: ComboBox(parent, 0, 0, "")
 , account_window(account_window)
 , account(account)
 {
@@ -757,8 +757,7 @@ AccountWindow::AccountOptionProtocol::~AccountOptionProtocol()
 	//	g_free(value);
 }
 
-void AccountWindow::AccountOptionProtocol::OnProtocolChanged(const ComboBox *combobox,
-		ComboBox::ComboBoxEntry const old_entry, ComboBox::ComboBoxEntry const new_entry)
+void AccountWindow::AccountOptionProtocol::OnProtocolChanged(const ComboBox::ComboBoxEntry& new_entry)
 {
 	purple_account_set_protocol_id(account, purple_plugin_get_id((const PurplePlugin*)new_entry.data));
 	// this deletes us so don't touch any instance variable after

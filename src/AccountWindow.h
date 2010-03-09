@@ -228,8 +228,7 @@ class AccountWindow
 
 				AccountOptionProtocol& operator=(const AccountOptionProtocol&);
 
-				void OnProtocolChanged(const ComboBox *combobox, const ComboBox::ComboBoxEntry old_entry,
-						ComboBox::ComboBoxEntry const new_entry);
+				void OnProtocolChanged(const ComboBox::ComboBoxEntry& new_entry);
 		};
 
 		~AccountWindow();

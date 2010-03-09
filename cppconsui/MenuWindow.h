@@ -26,8 +26,6 @@
 #include "Panel.h"
 #include "ListBox.h"
 
-#include <glibmm/ustring.h>
-
 class MenuWindow
 : public Window
 {

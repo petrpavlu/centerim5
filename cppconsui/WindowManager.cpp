@@ -125,7 +125,7 @@ void WindowManager::Add(Window *window)
 		info.window = window;
 		info.redraw = window->signal_redraw.connect(sigc::mem_fun(this, &WindowManager::WindowRedraw));
 		info.resize = signal_resize.connect(sigc::mem_fun(window, &Window::ScreenResized));
-		windows.insert(windows.begin(), info);
+		windows.push_back(info);
 	}
 
 	window->ScreenResized();
@@ -183,7 +183,7 @@ void WindowManager::FocusWindow(void)
 
 	/* Check if there are any windows left */
 	if (windows.size()) {
-		win = windows.front().window;
+		win = windows.back().window;
 	} else {
 		win = NULL;
 	}
@@ -221,14 +221,14 @@ bool WindowManager::HasWindow(Window *window)
 
 bool WindowManager::Draw(void)
 {
-	Windows::reverse_iterator i;
+	Windows::iterator i;
 	Curses::Window *window;
 
 	if (redrawpending) {
 		Curses::erase();
 		Curses::noutrefresh();
 		
-		for (i = windows.rbegin(); i != windows.rend(); i++) {
+		for (i = windows.begin(); i != windows.end(); i++) {
 			(*i).window->Draw();
 			/* this updates the virtual ncurses screen */
 			window = (*i).window->GetWindow();
