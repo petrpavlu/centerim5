@@ -53,12 +53,15 @@ WindowManager::WindowManager(void)
 , redrawpending(false)
 , resizepending(false)
 {
+	/**
+	 * @todo Check all return values here. Throw an exception if we can't init
+	 * curses.
+	 */
 	Curses::initscr();
-	//TODO throw an exception that we can't init curses
 
-	Curses::start_color(); //TODO do something with the return value.
+	if (Curses::has_colors())
+		Curses::start_color();
 	Curses::curs_set(0);
-	//Curses::keypad(true); // without this, some keys are not translated correctly
 	Curses::nonl();
 	Curses::raw();
 

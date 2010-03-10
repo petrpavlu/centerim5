@@ -23,7 +23,8 @@
 
 #include <cstring>
 
-namespace Keys {
+namespace Keys
+{
 
 bool TermKeyCmp::operator()(const TermKeyKey &a, const TermKeyKey &b) const
 {

@@ -102,6 +102,7 @@ ComboBox::ComboBox(Widget& parent, int x, int y, const gchar *text)
 
 ComboBox::~ComboBox()
 {
+	// WindowManager will take care about freeing dropdown menu
 }
 
 void ComboBox::DeclareBindables()

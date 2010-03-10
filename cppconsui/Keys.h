@@ -25,7 +25,8 @@
 #include <glib.h>
 #include <libtermkey/termkey.h>
 
-namespace Keys {
+namespace Keys
+{
 
 /** Compares two keys. */
 struct TermKeyCmp
