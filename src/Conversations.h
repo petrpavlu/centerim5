@@ -72,7 +72,6 @@ class Conversations
 		Conversations();
 		~Conversations();
 
-		Log *log; // TODO is this necessary ? Log is not singleton ?
 		Conf *conf;
 
 		std::vector<Conversation*> conversations;

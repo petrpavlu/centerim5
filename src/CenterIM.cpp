@@ -41,7 +41,7 @@ CenterIM &CenterIM::Instance(void)
 
 CenterIM::CenterIM(void)
 : Application(), accounts(NULL), connections(NULL), buddylist(NULL)
-, conversations(NULL), transfers(NULL), log(NULL), conf(NULL)
+, conversations(NULL), transfers(NULL), conf(NULL)
 {
 	memset(&centerim_core_ui_ops, 0, sizeof(centerim_core_ui_ops));
 	memset(&logbuf_debug_ui_ops, 0, sizeof(logbuf_debug_ui_ops));
@@ -197,7 +197,7 @@ void CenterIM::PurpleInit(void)
 	purple_plugins_add_search_path(path);
 	g_free(path);
 
-	if (!purple_core_init("centerim")) {
+	if (!purple_core_init(PACKAGE_NAME)) {
 		// can't do much without libpurple
 		throw EXCEPTION_PURPLE_CORE_INIT;
 	}
@@ -207,11 +207,11 @@ void CenterIM::DebugUIInit(void)
 {
 	std::vector<LogBufferItem>::iterator i;
 	
-	windowmanager->Add(log = &Log::Instance());
+	windowmanager->Add(Log::Instance());
 
 	if (logbuf) {
 		for (i = logbuf->begin(); i != logbuf->end(); i++) {
-			log->purple_print(i->level, i->category, i->arg_s);
+			LOG->purple_print(i->level, i->category, i->arg_s);
 			g_free(i->category);
 			g_free(i->arg_s);
 		}

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -28,7 +29,6 @@
 #include <cppconsui/TreeView.h>
 #include <cppconsui/HorizontalListBox.h>
 #include <cppconsui/HorizontalLine.h>
-#include <cppconsui/Panel.h>
 #include <cppconsui/Button.h>
 #include <cppconsui/ComboBox.h>
 #include <cppconsui/InputDialog.h>
@@ -52,12 +52,12 @@ class AccountWindow
 		typedef std::list<AccountOptionSplit*> SplitWidgets;
 		typedef std::vector<Widget*> Widgets;
 
-		typedef struct {
+		struct AccountEntry {
 			Button *parent;
 			TreeView::NodeReference parent_reference;
 			Widgets widgets;
 			SplitWidgets split_widgets;
-		} AccountEntry;
+		};
 		typedef std::map<PurpleAccount*, AccountEntry> AccountEntries;
 
 		class AccountOption
@@ -65,8 +65,8 @@ class AccountWindow
 		{
 			public:
 				AccountOption(Widget& parent, PurpleAccount *account,
-					PurpleAccountOption *option);
-				~AccountOption();
+					PurpleAccountOption *option = NULL);
+				virtual ~AccountOption() {}
 
 			protected:
 				PurpleAccount *account;
@@ -76,13 +76,11 @@ class AccountWindow
 				const char *text;
 
 			private:
-				AccountOption(void);
 				AccountOption(const AccountOption&);
-
 				AccountOption& operator=(const AccountOption&);
 
-				virtual void UpdateText(void) = 0;
-				virtual void OnActivate(void) = 0;
+				virtual void UpdateText() = 0;
+				virtual void OnActivate() = 0;
 		};
 
 		class AccountOptionBool
@@ -91,24 +89,21 @@ class AccountWindow
 			public:
 				AccountOptionBool(Widget& parent, PurpleAccount *account,
 					PurpleAccountOption *option);
-				AccountOptionBool(Widget& parent,
-					PurpleAccount *account, bool remember_password);
-				~AccountOptionBool();
+				AccountOptionBool(Widget& parent, PurpleAccount *account,
+					bool remember_password, bool enable_account);
+				virtual ~AccountOptionBool() {}
 
 			protected:
-
-			private:
-				AccountOptionBool(void);
-				AccountOptionBool(const AccountOptionBool&);
-
-				AccountOptionBool& operator=(const AccountOptionBool&);
-
-				virtual void UpdateText(void);
-				virtual void OnActivate(void);
-
 				gboolean value;
 
-				bool remember_password;
+				bool remember_password, enable_account;
+
+			private:
+				AccountOptionBool(const AccountOptionBool&);
+				AccountOptionBool& operator=(const AccountOptionBool&);
+
+				virtual void UpdateText();
+				virtual void OnActivate();
 		};
 
 		class AccountOptionString
@@ -119,27 +114,22 @@ class AccountWindow
 					PurpleAccountOption *option);
 				AccountOptionString(Widget& parent,
 					PurpleAccount *account, bool password, bool alias);
-				~AccountOptionString();
+				virtual ~AccountOptionString() {}
 
 			protected:
-
-			private:
-				AccountOptionString(void);
-				AccountOptionString(const AccountOptionString&);
-
-				AccountOptionString& operator=(const AccountOptionString&);
-
-				void UpdateText(void);
-				void OnActivate(void);
-
-				void ResponseHandler(Dialog::ResponseType response);
-
 				const gchar *value;
 				InputDialog *dialog;
 
 				bool password, alias;
 
-				sigc::connection sig_response;
+			private:
+				AccountOptionString(const AccountOptionString&);
+				AccountOptionString& operator=(const AccountOptionString&);
+
+				virtual void UpdateText();
+				virtual void OnActivate();
+
+				void ResponseHandler(Dialog::ResponseType response);
 		};
 
 		class AccountOptionInt
@@ -148,25 +138,20 @@ class AccountWindow
 			public:
 				AccountOptionInt(Widget& parent, PurpleAccount *account,
 					PurpleAccountOption *option);
-				~AccountOptionInt();
+				virtual ~AccountOptionInt() {}
 
 			protected:
-
-			private:
-				AccountOptionInt(void);
-				AccountOptionInt(const AccountOptionInt&);
-
-				AccountOptionInt& operator=(const AccountOptionInt&);
-
-				void UpdateText(void);
-				void OnActivate(void);
-
-				void ResponseHandler(Dialog::ResponseType response);
-
-				gchar *value;
+				const gchar *value;
 				InputDialog *dialog;
 
-				sigc::connection sig_response;
+			private:
+				AccountOptionInt(const AccountOptionInt&);
+				AccountOptionInt& operator=(const AccountOptionInt&);
+
+				virtual void UpdateText();
+				virtual void OnActivate();
+
+				void ResponseHandler(Dialog::ResponseType response);
 		};
 
 		class AccountOptionSplit
@@ -175,43 +160,39 @@ class AccountWindow
 			public:
 				AccountOptionSplit(Widget& parent, PurpleAccount *account,
 					PurpleAccountUserSplit *split, AccountEntry *account_entry);
-				~AccountOptionSplit();
+				virtual ~AccountOptionSplit();
 
-				void SetValue(const gchar *value);
-				const gchar* GetValue(void) { return value; }
-				void UpdateText(void);
+				void SetValue(const gchar *new_value);
+				const gchar* GetValue() { return value; }
 
 			protected:
 				PurpleAccount *account;
 				PurpleAccountUserSplit *split;
+				AccountEntry *account_entry;
 
 				const char *text;
-				const gchar *value;
+				gchar *value;
 				InputDialog *dialog;
 
-			private:
-				AccountOptionSplit(void);
-				AccountOptionSplit(const AccountOptionSplit&);
+				void UpdateSplits();
 
+			private:
+				AccountOptionSplit(const AccountOptionSplit&);
 				AccountOptionSplit& operator=(const AccountOptionSplit&);
 
-				void OnActivate(void);
-				void UpdateSplits(void);
+				virtual void UpdateText();
+				virtual void OnActivate();
 
 				void ResponseHandler(Dialog::ResponseType response);
-
-				sigc::connection sig_response;
-
-				AccountEntry *account_entry;
 		};
 
 		class AccountOptionProtocol
-			: public ComboBox
+		: public ComboBox
 		{
 			public:
 				AccountOptionProtocol(Widget& parent, PurpleAccount *account,
-						AccountWindow *account_window);
-				~AccountOptionProtocol();
+						AccountWindow &account_window);
+				virtual ~AccountOptionProtocol() {}
 
 			protected:
 				AccountWindow *account_window;
@@ -219,27 +200,26 @@ class AccountWindow
 				PurpleAccountUserSplit *split;
 
 				const char *text;
-				const gchar *value;
 				InputDialog *dialog;
 
 			private:
-				AccountOptionProtocol(void);
 				AccountOptionProtocol(const AccountOptionProtocol&);
-
 				AccountOptionProtocol& operator=(const AccountOptionProtocol&);
 
 				void OnProtocolChanged(const ComboBox::ComboBoxEntry& new_entry);
 		};
 
-		~AccountWindow();
+		AccountWindow(const AccountWindow&);
+		AccountWindow& operator=(const AccountWindow&);
+		virtual ~AccountWindow() {}
 
-		void Clear(void);
+		void Clear();
 		bool ClearAccount(PurpleAccount *account, bool full);
 
-		void Populate(void);
+		void Populate();
 		void PopulateAccount(PurpleAccount *account);
 
-		void Add(void);
+		void Add();
 		void DropAccount(PurpleAccount *account);
 		void DropAccountResponseHandler(Dialog::ResponseType response, PurpleAccount *account);
 
@@ -247,7 +227,6 @@ class AccountWindow
 		//void FocusCycleUpDown(Container::FocusDirection direction);
 		void MoveFocus(FocusDirection direction);
 
-		Log *log;
 		Conf *conf;
 
 		TreeView *accounts;

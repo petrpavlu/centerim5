@@ -38,7 +38,6 @@ Conversation::Conversation(PurpleBlistNode* node)
 , node(node)
 , conv(NULL)
 {
-	log = &Log::Instance();
 	conf = Conf::Instance();
 	type = purple_blist_node_get_type(node);
 
@@ -278,7 +277,7 @@ void ConversationIm::CreatePurpleConv(void)
 
 
 	if (!convim) //TODO only log an error if account is connected
-		log->Write(Log::Level_error, "unable to open conversation with `%s'\n", buddy->name);
+		LOG->Write(Log::Level_error, "unable to open conversation with `%s'\n", buddy->name);
 		//TODO add some info based on buddy
 }
 

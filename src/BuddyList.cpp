@@ -84,7 +84,6 @@ BuddyList::BuddyList()
 {
 	SetColorScheme("buddylist");
 
-	log = &Log::Instance();
 	conf = Conf::Instance();
 
 	//TODO check if this has been moved to purple_blist_init
@@ -95,6 +94,9 @@ BuddyList::BuddyList()
 	buddylist = purple_blist_new();
 	buddylist->ui_data = this;
 	purple_set_blist(buddylist);
+
+	// load the pounces
+	purple_pounces_load();
 
 	/* setup the callbacks for the buddylist */
 	purple_blist_set_ui_ops(&centerim_blist_ui_ops);
@@ -156,12 +158,12 @@ void BuddyList::new_list(PurpleBuddyList *list)
 	if (buddylist != list) {
 		//TODO if this happens, then the first todo in Load should
 		//be checked again.
-		log->Write(Log::Level_error, "Different Buddylist detected!\n");
+		LOG->Write(Log::Level_error, "Different Buddylist detected!\n");
 	}
 	if (buddylist->ui_data != this)
 	{
 		//TODO actually, this amounts to the same as the error above this one :).
-		log->Write(Log::Level_error, "New Buddylist detected, but we only support one buddylist.\n");
+		LOG->Write(Log::Level_error, "New Buddylist detected, but we only support one buddylist.\n");
 	}
 }
 
@@ -190,7 +192,7 @@ void BuddyList::update_node(PurpleBuddyList *list, PurpleBlistNode *node)
 
 	if (!node->ui_data) {
 		//TODO remove when this never happens :) (yeah, try to catch that one! :)
-		log->Write(Log::Level_error, "BuddyList::update called before BuddyList::new_node\n");
+		LOG->Write(Log::Level_error, "BuddyList::update called before BuddyList::new_node\n");
 		new_node(node);
 	}
 

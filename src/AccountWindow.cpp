@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -19,13 +20,13 @@
  * */
 
 #include "AccountWindow.h"
+#include "CenterIM.h"
+#include "config.h"
 
 #include <cppconsui/Button.h>
 #include <cppconsui/Keys.h>
 #include <cppconsui/MessageDialog.h>
 #include <cppconsui/WindowManager.h>
-
-#include "CenterIM.h"
 
 #include <libpurple/account.h>
 #include <libpurple/accountopt.h>
@@ -42,7 +43,6 @@ AccountWindow::AccountWindow()
 {
 	SetColorScheme("accountwindow");
 
-	log = &Log::Instance();
 	conf = Conf::Instance();
 
 	accounts = new TreeView(*this, 0, 0, width, height - 2);
@@ -95,11 +95,7 @@ void AccountWindow::ScreenResized()
 	MoveResizeRect(confSize);
 }
 
-AccountWindow::~AccountWindow()
-{
-}
-
-void AccountWindow::Add(void)
+void AccountWindow::Add()
 {
 	GList *i;
 	PurpleAccount *account;
@@ -172,7 +168,7 @@ void AccountWindow::MoveFocus(FocusDirection direction)
 	}
 }
 
-void AccountWindow::Clear(void)
+void AccountWindow::Clear()
 {
 	GList *i;
 	PurpleAccount *account;
@@ -189,10 +185,10 @@ bool AccountWindow::ClearAccount(PurpleAccount *account, bool full)
 	std::vector<Widget*>::iterator i;
 	std::list<AccountOptionSplit*>::iterator j;
 
-	/* Move focus */
+	// move focus
 	account_entry->parent->GrabFocus();
 
-	/* First remove the nodes from the tree, then free() all the widgets. */
+	// first remove the nodes from the tree, then free() all the widgets
 	accounts->DeleteChildren(account_entry->parent_reference, false);
 	if (full)
 		accounts->DeleteNode(account_entry->parent_reference, false);
@@ -211,7 +207,7 @@ bool AccountWindow::ClearAccount(PurpleAccount *account, bool full)
 	return false;
 }
 
-void AccountWindow::Populate(void)
+void AccountWindow::Populate()
 {
 	GList *i;
 	PurpleAccount *account;
@@ -241,12 +237,12 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 			purple_account_get_username(account));
 
 	if (account_entries.find(account) == account_entries.end()) {
-		/* No entry for this account, so add one. */
+		// no entry for this account, so add one
 		AccountEntry entry;
 		entry.parent = NULL;
 		account_entries[account] = entry;
 	} else {
-		/* The account exists, so clear all data. */
+		// the account exists, so clear all data
 		ClearAccount(account, false);
 	}
 
@@ -256,8 +252,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		Button *button;
 		TreeView::NodeReference parent_reference;
 
-		//TODO proper autosizing for labels
-		button = new Button(*accounts, 0, 0, ::width(label), 1, "",
+		button = new Button(*accounts, 0, 0, "",
 				sigc::mem_fun(accounts, &TreeView::ActionToggleCollapsed));
 		parent_reference = accounts->AddNode(accounts->Root(), button, account);
 		accounts->Collapse(parent_reference);
@@ -274,17 +269,17 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 	if (prpl == NULL) {
 		Label *label;
 
-		/* we cannot change the settings of an unknown account */
+		// we cannot change the settings of an unknown account
 		label = new Label(*accounts, 0, 0, _("Invalid account or protocol plugin not loaded"));
 		accounts->AddNode(account_entry->parent_reference, label, account);
 		account_entry->widgets.push_back(label);
 
-	} else {
-
+	}
+	else {
 		prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	
-		/* Protocols combobox */
-		combobox = new AccountOptionProtocol(*accounts, account, this);
+		// protocols combobox
+		combobox = new AccountOptionProtocol(*accounts, account, *this);
 		accounts->AddNode(account_entry->parent_reference, combobox, account);
 		account_entry->widgets.push_back(combobox);
 
@@ -309,10 +304,9 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 				value = purple_account_user_split_get_default_value(split);
 			}
 
-			/* Create widget for the username split and remember */
+			// create widget for the username split and remember
 			widget_split = new AccountOptionSplit(*accounts, account, split, account_entry);
 			widget_split->SetValue(value);
-			widget_split->UpdateText();
 			account_entry->split_widgets.push_front(widget_split);
 			account_entry->widgets.push_back(widget_split);
 
@@ -323,23 +317,22 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		//TODO add this widget as the first widget in this subtree. Treeview needs to support this.
 		widget_split = new AccountOptionSplit(*accounts, account, NULL, account_entry);
 		widget_split->SetValue(username);
-		widget_split->UpdateText();
 		account_entry->split_widgets.push_front(widget_split);
 		account_entry->widgets.push_back(widget_split);
 		accounts->AddNode(account_entry->parent_reference, widget_split, NULL);
 		g_free(username);
 
-		/* Password */
+		// password
 		widget = new AccountOptionString(*accounts, account, true, false);
 		accounts->AddNode(account_entry->parent_reference, widget, NULL);
 		account_entry->widgets.push_back(widget);
 
-		/* Remember Password */
-		widget = new AccountOptionBool(*accounts, account, true);
+		// remember password
+		widget = new AccountOptionBool(*accounts, account, true, false);
 		accounts->AddNode(account_entry->parent_reference, widget, NULL);
 		account_entry->widgets.push_back(widget);
 
-		/* Alias */
+		// alias
 		widget = new AccountOptionString(*accounts, account, false, true);
 		accounts->AddNode(account_entry->parent_reference, widget, NULL);
 		account_entry->widgets.push_back(widget);
@@ -373,9 +366,13 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 			}
 		}
 
+		// enable/disable account
+		widget = new AccountOptionBool(*accounts, account, false, true);
+		accounts->AddNode(account_entry->parent_reference, widget, NULL);
+		account_entry->widgets.push_back(widget);
 	}
 
-	/* Drop account */
+	// drop account
 	widget = new Button(*accounts, 0, 0, _("Drop account"),
 			sigc::bind(sigc::mem_fun(this, &AccountWindow::DropAccount), account));
 	accounts->AddNode(account_entry->parent_reference, widget, NULL);
@@ -383,78 +380,72 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 }
 
 AccountWindow::AccountOption::AccountOption(Widget& parent,
-	PurpleAccount *account, PurpleAccountOption *option)
+		PurpleAccount *account, PurpleAccountOption *option)
 : Button(parent, 0, 0, "")
 , account(account)
 , option(option)
 {
-	g_assert(account != NULL);
+	g_assert(account);
 
 	if (option) {
 		setting = purple_account_option_get_setting(option);
 		text = purple_account_option_get_text(option);
-	} else {
-		setting = NULL;
 	}
+	else
+		setting = NULL;
 
 	signal_activate.connect(sigc::mem_fun(this,
 				&AccountWindow::AccountOption::OnActivate));
 }
 
-AccountWindow::AccountOption::~AccountOption()
-{
-}
-
 AccountWindow::AccountOptionBool::AccountOptionBool(Widget& parent,
 	PurpleAccount *account, PurpleAccountOption *option)
 : AccountWindow::AccountOption::AccountOption(parent, account, option)
-, remember_password(false)
+, remember_password(false), enable_account(false)
 {
+	value = purple_account_get_bool(account, setting,
+			purple_account_option_get_default_bool(option));
+
 	UpdateText();
 }
 
 AccountWindow::AccountOptionBool::AccountOptionBool(Widget& parent,
-	PurpleAccount *account, bool remember_password)
-: AccountWindow::AccountOption::AccountOption(parent, account, NULL)
-, remember_password(remember_password)
+		PurpleAccount *account, bool remember_password, bool enable_account)
+: AccountWindow::AccountOption::AccountOption(parent, account)
+, remember_password(remember_password), enable_account(enable_account)
 {
-	if (remember_password) {
-		this->remember_password = remember_password;
+	if (remember_password)
 		text = _("Remember password");
-	}
+	else if (enable_account)
+		text = _("Account enabled");
 
 	UpdateText();
 }
 
-AccountWindow::AccountOptionBool::~AccountOptionBool()
+void AccountWindow::AccountOptionBool::UpdateText()
 {
-}
-
-void AccountWindow::AccountOptionBool::UpdateText(void)
-{
-	gchar *str;
-	
-	if (remember_password) {
+	if (remember_password)
 		value = purple_account_get_remember_password(account);
-	} else {
+	else if (enable_account)
+		value = purple_account_get_enabled(account, PACKAGE_NAME);
+	else
 		value = purple_account_get_bool(account, setting,
 				purple_account_option_get_default_bool(option));
-	}
 
-	//TODO create some DEFAULT_TEXT_YES etc, also for use in dialogs
-	str = g_strdup_printf("%s: %s", text, value ? _("yes") : _("no"));
+	/// @todo Create some DEFAULT_TEXT_YES etc, also for use in dialogs.
+	gchar *str = g_strdup_printf("%s: %s", text, value ? _("yes") : _("no"));
 	SetText(str);
 	g_free(str);
 }
 
-
-void AccountWindow::AccountOptionBool::OnActivate(void)
+void AccountWindow::AccountOptionBool::OnActivate()
 {
-	if (remember_password) {
+	if (remember_password)
 		purple_account_set_remember_password(account, !value);
-	} else {
+	else if (enable_account)
+		purple_account_set_enabled(account, PACKAGE_NAME, !value);
+	else
 		purple_account_set_bool(account, setting, !value);
-	}
 	UpdateText();
 }
 
@@ -477,48 +468,35 @@ AccountWindow::AccountOptionString::AccountOptionString(Widget& parent,
 , password(password)
 , alias(alias)
 {
-	if (password) {
-		this->password = true;
+	if (password)
 		text = _("Password");
-	} else if (alias) {
-		this->alias = true;
+	else if (alias)
 		text = _("Alias");
-	}
 
 	UpdateText();
 }
 
-AccountWindow::AccountOptionString::~AccountOptionString()
+void AccountWindow::AccountOptionString::UpdateText()
 {
-}
-
-void AccountWindow::AccountOptionString::UpdateText(void)
-{
-	gchar *str;
-	
-	if (password) {
+	if (password)
 		value = purple_account_get_password(account);
-	} else if (alias) {
+	else if (alias)
 		value = purple_account_get_alias(account);
-	} else {
+	else
 		value = purple_account_get_string(account, setting,
 				purple_account_option_get_default_string(option));
-	}
 
-	if (value == NULL)
-		value = "";
-
-	str = g_strdup_printf("%s: %s", text, value);
+	gchar *str = g_strdup_printf("%s: %s", text, value ? value : "");
 	SetText(str);
 	g_free(str);
 }
 
-void AccountWindow::AccountOptionString::OnActivate(void)
+void AccountWindow::AccountOptionString::OnActivate()
 {
 	WindowManager *wm = WindowManager::Instance();
 	dialog = new InputDialog(text, value);
-	sig_response = dialog->signal_response.connect(
-		sigc::mem_fun(this, &AccountWindow::AccountOptionString::ResponseHandler));
+	dialog->signal_response.connect(
+			sigc::mem_fun(this, &AccountWindow::AccountOptionString::ResponseHandler));
 	//TODO add something to dialog class to show it. this removes the need
 	//for including windowmanager.h, and is easier to use.
 	wm->Add(dialog);
@@ -526,25 +504,23 @@ void AccountWindow::AccountOptionString::OnActivate(void)
 
 void AccountWindow::AccountOptionString::ResponseHandler(Dialog::ResponseType response)
 {
+	g_assert(dialog);
+
 	switch (response) {
 		case Dialog::ResponseOK:
-			if (!dialog)
-			{} /*TODO something is very wrong here */
-
-			if (password) {
+			if (password)
 				purple_account_set_password(account, dialog->GetText());
-			} else if (alias) {
+			else if (alias)
 				purple_account_set_alias(account, dialog->GetText());
-			} else {
+			else
 				purple_account_set_string(account, setting, dialog->GetText());
-			}
 
 			UpdateText();
-
 			break;
 		default:
 			break;
 	}
+	dialog = NULL;
 }
 
 AccountWindow::AccountOptionInt::AccountOptionInt(Widget& parent,
@@ -556,34 +532,22 @@ AccountWindow::AccountOptionInt::AccountOptionInt(Widget& parent,
 	UpdateText();
 }
 
-AccountWindow::AccountOptionInt::~AccountOptionInt()
+void AccountWindow::AccountOptionInt::UpdateText()
 {
-	if (value)
-		g_free(value);
-}
-
-void AccountWindow::AccountOptionInt::UpdateText(void)
-{
-	gchar *str;
-
-	if (value)
-		g_free(value);
-
-	value = g_strdup_printf("%d", purple_account_get_int(account, setting,
-		purple_account_option_get_default_int(option)));
-
-	str = g_strdup_printf("%s: %s", text, value);
+	gchar *str = g_strdup_printf("%s: %d", text,
+			purple_account_get_int(account, setting,
+				purple_account_option_get_default_int(option)));
 	SetText(str);
 	g_free(str);
 }
 
-void AccountWindow::AccountOptionInt::OnActivate(void)
+void AccountWindow::AccountOptionInt::OnActivate()
 {
 	WindowManager *wm = WindowManager::Instance();
 	dialog = new InputDialog(text, value);
 	dialog->SetFlags(TextEntry::FlagNumeric);
-	sig_response = dialog->signal_response.connect(
-		sigc::mem_fun(this, &AccountWindow::AccountOptionInt::ResponseHandler));
+	dialog->signal_response.connect(
+			sigc::mem_fun(this, &AccountWindow::AccountOptionInt::ResponseHandler));
 	//TODO add something to dialog class to show it. this removes the need
 	//for including windowmanager.h, and is easier to use.
 	wm->Add(dialog);
@@ -591,26 +555,26 @@ void AccountWindow::AccountOptionInt::OnActivate(void)
 
 void AccountWindow::AccountOptionInt::ResponseHandler(Dialog::ResponseType response)
 {
+	g_assert(dialog);
+
 	const gchar* text;
 	long int i;
 
 	switch (response) {
 		case Dialog::ResponseOK:
-			if (!dialog)
-				{}/*TODO something is very wrong here */
-
 			text = dialog->GetText();
+			errno = 0;
 			i = strtol(text, NULL, 10);
 			if (errno == ERANGE)
-				{}/*TODO handle error? */
-
+				Log::Instance()->Write(Log::Level_warning, _("Value out of range.\n"));
 			purple_account_set_int(account, setting, i);
-			UpdateText();
 
+			UpdateText();
 			break;
 		default:
 			break;
 	}
+	dialog = NULL;
 }
 
 AccountWindow::AccountOptionSplit::AccountOptionSplit(Widget& parent,
@@ -620,15 +584,15 @@ AccountWindow::AccountOptionSplit::AccountOptionSplit(Widget& parent,
 , account(account)
 , split(split)
 , account_entry(account_entry)
+, value(NULL)
 {
-	g_assert(account != NULL);
+	g_assert(account);
 
-	if (split) {
+	if (split)
 		text = purple_account_user_split_get_text(split);
-	} else {
+	else
 		text = _("Username");
-	}
-	value = "";
+	value =	g_strdup(purple_account_user_split_get_text(split));
 
 	signal_activate.connect(sigc::mem_fun(this,
 				&AccountWindow::AccountOptionSplit::OnActivate));
@@ -638,25 +602,20 @@ AccountWindow::AccountOptionSplit::AccountOptionSplit(Widget& parent,
 
 AccountWindow::AccountOptionSplit::~AccountOptionSplit()
 {
-	//if (value)
-	//	g_free(value);
+	if (value)
+		g_free(value);
 }
 
-void AccountWindow::AccountOptionSplit::UpdateText(void)
+void AccountWindow::AccountOptionSplit::UpdateText()
 {
 	gchar *str;
 	
-	if (value == NULL)
-		value =	g_strdup(purple_account_user_split_get_text(split));
-	if (value == NULL)
-		value = g_strdup("");
-
-	str = g_strdup_printf("%s: %s", text, value);
+	str = g_strdup_printf("%s: %s", text, value ? value : "");
 	SetText(str);
 	g_free(str);
 }
 
-void AccountWindow::AccountOptionSplit::UpdateSplits(void)
+void AccountWindow::AccountOptionSplit::UpdateSplits()
 {
 	AccountWindow::SplitWidgets::iterator split_widget;
 	PurpleAccountUserSplit *user_split;
@@ -664,15 +623,15 @@ void AccountWindow::AccountOptionSplit::UpdateSplits(void)
 	PurplePluginProtocolInfo *prplinfo;
 	SplitWidgets *split_widgets;
 	GList *iter;
-	const gchar *value;
+	const gchar *val;
 
 	split_widgets = &(account_entry->split_widgets);
 	split_widget = split_widgets->begin();
 	widget = *split_widget;
-	value = widget->GetValue();
+	val = widget->GetValue();
 	split_widget++;
 
-	GString *username = g_string_new(value);
+	GString *username = g_string_new(val);
 	prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(account)));
 
 	for (iter = prplinfo->user_splits;
@@ -682,29 +641,31 @@ void AccountWindow::AccountOptionSplit::UpdateSplits(void)
 		user_split = (PurpleAccountUserSplit*)iter->data;
 		widget = *split_widget;
 
-		value = widget->GetValue();
-		if (value == NULL || *value == '\0')
-			value = purple_account_user_split_get_default_value(user_split);
+		val = widget->GetValue();
+		if (val == NULL || *val == '\0')
+			val = purple_account_user_split_get_default_value(user_split);
 		g_string_append_printf(username, "%c%s",
-				purple_account_user_split_get_separator(user_split),
-				value);
+				purple_account_user_split_get_separator(user_split), val);
 	}
 
 	purple_account_set_username(account, username->str);
+	g_string_free(username, TRUE);
 }
 
-void AccountWindow::AccountOptionSplit::SetValue(const gchar *value)
+void AccountWindow::AccountOptionSplit::SetValue(const gchar *new_value)
 {
-	this->value = g_strdup(value);
+	if (value)
+		g_free(value);
+	value = g_strdup(new_value);
 	UpdateText();
 }
 
-void AccountWindow::AccountOptionSplit::OnActivate(void)
+void AccountWindow::AccountOptionSplit::OnActivate()
 {
 	WindowManager *wm = WindowManager::Instance();
 	dialog = new InputDialog(text, value);
-	sig_response = dialog->signal_response.connect(
-		sigc::mem_fun(this, &AccountWindow::AccountOptionSplit::ResponseHandler));
+	dialog->signal_response.connect(
+			sigc::mem_fun(this, &AccountWindow::AccountOptionSplit::ResponseHandler));
 	//TODO add something to dialog class to show it. this removes the need
 	//for including windowmanager.h, and is easier to use.
 	wm->Add(dialog);
@@ -712,49 +673,41 @@ void AccountWindow::AccountOptionSplit::OnActivate(void)
 
 void AccountWindow::AccountOptionSplit::ResponseHandler(Dialog::ResponseType response)
 {
+	g_assert(dialog);
+
 	switch (response) {
 		case Dialog::ResponseOK:
-			if (!dialog)
-				{}/*TODO something is very wrong here */
-
 			SetValue(dialog->GetText());
 			UpdateSplits();
 			break;
 		default:
 			break;
 	}
+	dialog = NULL;
 }
 
 AccountWindow::AccountOptionProtocol::AccountOptionProtocol(Widget& parent,
-		PurpleAccount *account, AccountWindow *account_window)
+		PurpleAccount *account, AccountWindow &account_window)
 : ComboBox(parent, 0, 0, "")
-, account_window(account_window)
+, account_window(&account_window)
 , account(account)
 {
-	g_assert(account != NULL);
+	g_assert(account);
 
-	gchar *label;
 	GList *i;
 	PurplePlugin *plugin;
 
 	plugin = purple_plugins_find_with_id(purple_account_get_protocol_id(account));
 
-	for (i = purple_plugins_get_protocols(); i; i = i->next){
+	for (i = purple_plugins_get_protocols(); i; i = i->next)
 		AddOption(((PurplePlugin*)i->data)->info->name, i->data);
-	}
 
-	label = g_strdup_printf("Protocol: %s", plugin->info->name);
+	gchar *label = g_strdup_printf("Protocol: %s", plugin->info->name);
 	SetText(label);
 	g_free(label);
 
 	signal_selection_changed.connect(
 		sigc::mem_fun(this, &AccountWindow::AccountOptionProtocol::OnProtocolChanged));
-}
-
-AccountWindow::AccountOptionProtocol::~AccountOptionProtocol()
-{
-	//if (value)
-	//	g_free(value);
 }
 
 void AccountWindow::AccountOptionProtocol::OnProtocolChanged(const ComboBox::ComboBoxEntry& new_entry)
@@ -763,4 +716,3 @@ void AccountWindow::AccountOptionProtocol::OnProtocolChanged(const ComboBox::Com
 	// this deletes us so don't touch any instance variable after
 	account_window->PopulateAccount(account);
 }
-

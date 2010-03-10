@@ -60,7 +60,6 @@ static PurpleAccountUiOps centerim_accounts_ui_ops =
 
 Accounts::Accounts()
 {
-	log = &Log::Instance();
 	accounts_handle = purple_accounts_get_handle();
 
 	/* connect signal handlers */
@@ -107,13 +106,13 @@ void Accounts::status_changed_(PurpleAccount *account, PurpleStatus *status)
 void Accounts::signed_on(PurpleConnection *gc)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	log->Write(Log::Level_info, _("+ [%s] Logged in: %s\n"),
+	LOG->Write(Log::Level_info, _("+ [%s] Logged in: %s\n"),
 			account->protocol_id, account->username);
 }
 
 void Accounts::status_changed(PurpleAccount *account, PurpleStatus *status)
 {
-	log->Write(Log::Level_info, _("+ [%s] Status changed to: %s\n"),
+	LOG->Write(Log::Level_info, _("+ [%s] Status changed to: %s\n"),
 			account->protocol_id, purple_status_get_name(status));
 }
 

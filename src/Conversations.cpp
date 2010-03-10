@@ -107,7 +107,7 @@ void Conversations::AddConversation(Conversation *conv)
 	for (i = conversations.begin(); i != conversations.end(); i++) {
 		conversation = (Conversation*)(*i);
 		if (conversation == conv) {
-			log->Write(Log::Level_error, "connot add a conversation to the stack twice\n");
+			LOG->Write(Log::Level_error, "connot add a conversation to the stack twice\n");
 			return;
 		}
 	}
@@ -128,7 +128,7 @@ void Conversations::RemoveConversation(Conversation *conv)
 		}
 	}
 
-	log->Write(Log::Level_error, "connot remove a conversation not on the stack\n");
+	LOG->Write(Log::Level_error, "connot remove a conversation not on the stack\n");
 }
 
 void Conversations::create_conversation(PurpleConversation *conv)
@@ -136,7 +136,7 @@ void Conversations::create_conversation(PurpleConversation *conv)
 	g_assert(conv != NULL);
 
 	//TODO remove debug
-	log->Write(Log::Level_error, "create_conversation(purpleconv) calles: %p\n", conv);
+	LOG->Write(Log::Level_error, "create_conversation(purpleconv) calles: %p\n", conv);
 
 	PurpleConversationType type;
 
@@ -146,7 +146,7 @@ void Conversations::create_conversation(PurpleConversation *conv)
 	} else if (type == PURPLE_CONV_TYPE_CHAT) {
 		create_conversation_chat(conv);
 	} else {
-		log->Write(Log::Level_error, "unhandled conversation type: %i\n", type);
+		LOG->Write(Log::Level_error, "unhandled conversation type: %i\n", type);
 	}
 }
 
@@ -162,7 +162,7 @@ void Conversations::create_conversation(PurpleBlistNode *node)
 	} else if (type == PURPLE_BLIST_CHAT_NODE) {
 		create_conversation_chat(node);
 	} else {
-		log->Write(Log::Level_error, "unhandled conversation type: %i\n", type);
+		LOG->Write(Log::Level_error, "unhandled conversation type: %i\n", type);
 	}
 }
 
@@ -177,13 +177,13 @@ void Conversations::create_conversation_im(PurpleConversation *conv)
 	/* if we already have a window do nothing special */
 	if ((conversation = Find(buddy)) != NULL) {
 		 //TODO remove debug
-		log->Write(Log::Level_error, "create_conversation_im(conversation): already have an object\n");
+		LOG->Write(Log::Level_error, "create_conversation_im(conversation): already have an object\n");
 
 	/* otherwise create a conversation window first */
 	} else {
 		conversation = new ConversationIm(buddy);
 		//TODO remove debug
-		log->Write(Log::Level_error, "new conversation: %p\n", conversation);
+		LOG->Write(Log::Level_error, "new conversation: %p\n", conversation);
 		AddConversation(conversation);
 		windowmanager->Add(conversation);
 	}
@@ -204,13 +204,13 @@ void Conversations::create_conversation_chat(PurpleConversation *conv)
 	/* if we already have a window do nothing special */
 	if ((conversation = Find(chat)) != NULL) {
 		 //TODO remove debug
-		log->Write(Log::Level_error, "create_conversation_chat(conversation): already have an object\n");
+		LOG->Write(Log::Level_error, "create_conversation_chat(conversation): already have an object\n");
 
 	/* otherwise create a conversation window first */
 	} else {
 		conversation = new ConversationChat(chat);
 		//TODO remove debug
-		log->Write(Log::Level_error, "new conversation: %p\n", conversation);
+		LOG->Write(Log::Level_error, "new conversation: %p\n", conversation);
 		AddConversation(conversation);
 		windowmanager->Add(conversation);
 	}
@@ -227,15 +227,15 @@ void Conversations::create_conversation_im(PurpleBlistNode *node)
 	buddy = (PurpleBuddy*)node;
 	if ((conversation = Find(buddy)) != NULL) {
 		//TODO move window to the top and give focus, no debug
-		log->Write(Log::Level_error, "create_conversation_im(buddy): already have an object\n");
+		LOG->Write(Log::Level_error, "create_conversation_im(buddy): already have an object\n");
 	} else {
 		conversation = new ConversationIm(buddy);
 		//TODO remove debug
-		log->Write(Log::Level_error, "new conversation: %p\n", conversation);
+		LOG->Write(Log::Level_error, "new conversation: %p\n", conversation);
 		AddConversation(conversation);
 
 		//TODO remove debug
-		log->Write(Log::Level_debug, "conversation: %p\n", conversation);
+		LOG->Write(Log::Level_debug, "conversation: %p\n", conversation);
 
 		/* If the account is connected, try to initiate a conversation conversation */
 		if (purple_account_is_connected(purple_buddy_get_account(buddy))) {
@@ -254,15 +254,15 @@ void Conversations::create_conversation_chat(PurpleBlistNode *node)
 	chat = (PurpleChat*)node;
 	if ((conversation = Find(chat)) != NULL) {
 		//TODO move window to the top and give focus, no debug
-		log->Write(Log::Level_debug, "create_conversation_chat(buddy): already have an object\n");
+		LOG->Write(Log::Level_debug, "create_conversation_chat(buddy): already have an object\n");
 	} else {
 		conversation = new ConversationChat(chat);
 		//TODO remove debug
-		log->Write(Log::Level_error, "new conversation: %p\n", conversation);
+		LOG->Write(Log::Level_error, "new conversation: %p\n", conversation);
 		AddConversation(conversation);
 
 		//TODO remove debug
-		log->Write(Log::Level_debug, "conversation: %p\n", conversation);
+		LOG->Write(Log::Level_debug, "conversation: %p\n", conversation);
 
 		/* If the account is connected, try to initiate a conversation conversation */
 		//if (purple_account_is_connected(purple_chat_get_account(chat))) {
@@ -281,7 +281,7 @@ void Conversations::destroy_conversation(PurpleConversation *conv)
 		conversation->UnsetConversation(NULL);
 	} else {
 		 //TODO should be debug() add some stuff to easily identify the conversation
-		log->Write(Log::Level_error, "ERROR: conversation without a window is being destroyed: %p, %s\n", conv, conv->name);
+		LOG->Write(Log::Level_error, "ERROR: conversation without a window is being destroyed: %p, %s\n", conv, conv->name);
 	}
 }
 
@@ -323,7 +323,6 @@ static PurpleConversationUiOps centerim_conv_uiops =
 
 Conversations::Conversations()
 {
-	log = &Log::Instance();
 	conf = Conf::Instance();
 
 	/* setup the callbacks for conversations */

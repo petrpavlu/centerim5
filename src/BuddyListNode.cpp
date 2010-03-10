@@ -31,7 +31,6 @@ BuddyListNode::BuddyListNode(TreeView& parent, PurpleBlistNode *node)
 , node(node)
 , treeview(&parent)
 {
-	log = &Log::Instance();
 	can_focus = true;
 
 	signal_activate.connect(sigc::mem_fun(this, &BuddyListNode::OnActivate));
@@ -89,7 +88,7 @@ BuddyListNode* BuddyListNode::GetParent(void)
 	if (!parent) return NULL; //TODO emit warning?
 
 	if (!parent->ui_data) {
-		log->Write(Log::Level_error, "child added before its parent\n");
+		LOG->Write(Log::Level_error, "child added before its parent\n");
 		//TODO how to solve this?
 		return NULL;
 	}
@@ -125,7 +124,7 @@ void BuddyListBuddy::Update(void)
 
 void BuddyListBuddy::OnActivate(void)
 {
-	log->Write(Log::Level_debug, "Buddy activated!\n"); //TODO remove sometime
+	LOG->Write(Log::Level_debug, "Buddy activated!\n"); //TODO remove sometime
 
 	Conversations::Instance()->create_conversation(node);
 }
@@ -155,7 +154,7 @@ void BuddyListChat::Update(void)
 
 void BuddyListChat::OnActivate(void)
 {
-	log->Write(Log::Level_debug, "Chat activated!\n");
+	LOG->Write(Log::Level_debug, "Chat activated!\n");
 
 	Conversations::Instance()->create_conversation(node);
 }
@@ -202,7 +201,7 @@ void BuddyListContact::Update(void)
 
 void BuddyListContact::OnActivate(void)
 {
-	log->Write(Log::Level_debug, "Contact activated!\n");
+	LOG->Write(Log::Level_debug, "Contact activated!\n");
 }
 
 BuddyListGroup::BuddyListGroup(TreeView& parent, PurpleBlistNode *node)
@@ -230,6 +229,6 @@ void BuddyListGroup::Update(void)
 
 void BuddyListGroup::OnActivate(void)
 {
-	log->Write(Log::Level_debug, "Group activated!\n");
+	LOG->Write(Log::Level_debug, "Group activated!\n");
 	treeview->ActionToggleCollapsed();
 }

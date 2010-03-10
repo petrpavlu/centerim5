@@ -28,10 +28,10 @@
 #include <glib.h>
 #include <cstring>
 
-Log &Log::Instance(void)
+Log *Log::Instance()
 {
 	static Log instance;
-	return instance;
+	return &instance;
 }
 
 //TODO sensible defaults

@@ -78,7 +78,7 @@ void Conf::Delete(void)
 
 void Conf::Reload(void)
 {
-	purple_prefs_load();
+	//purple_prefs_load();
 }
 
 void Conf::Save(void)
@@ -355,16 +355,13 @@ void Conf::AddPath(const std::string &s)
 Conf::Conf()
 {
 	/* let libpurple load the configuration file */
-	purple_prefs_load();
+	//purple_prefs_load();
 	/* convert settings from older libpurple versions */
-	purple_prefs_update_old();
+	//purple_prefs_update_old();
 
-        /* Load the desired plugins. The client should save the list of loaded plugins in
-         * the preferences using purple_plugins_save_loaded(PLUGIN_SAVE_PREF) */
-        purple_plugins_load_saved(CONF_PLUGIN_SAVE_PREF);
-
-	/* Load the pounces. */
-        purple_pounces_load();
+	/* Load the desired plugins. The client should save the list of loaded
+	 * plugins in the preferences using purple_plugins_save_loaded(PLUGIN_SAVE_PREF). */
+	purple_plugins_load_saved(CONF_PLUGIN_SAVE_PREF);
 }
 
 Conf::~Conf()

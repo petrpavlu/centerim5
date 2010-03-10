@@ -123,7 +123,6 @@ class CenterIM
 		BuddyList *buddylist;
 		Conversations *conversations;
 		Transfers *transfers;
-		Log *log;
 		Conf *conf;
 
 		Rect areaSizes[AreaMax];

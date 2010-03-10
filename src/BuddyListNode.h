@@ -57,7 +57,6 @@ class BuddyListNode
 
 		TreeView *treeview;
 
-		Log *log;
 		Conf *conf;
 
 	private:

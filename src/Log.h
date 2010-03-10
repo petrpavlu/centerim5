@@ -27,6 +27,8 @@
 #include <libpurple/prefs.h>
 #include <vector>
 
+#define LOG (Log::Instance())
+
 class Conf;
 
 class Log
@@ -44,7 +46,7 @@ class Log
 			Level_error // = fatal in libpurle
 		};
 
-		static Log &Instance(void);
+		static Log *Instance();
 
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
 
@@ -52,9 +54,9 @@ class Log
 
 		// to catch libpurple's debug messages
 		static void purple_print_(PurpleDebugLevel level, const char *category, const char *arg_s)
-			{ Instance().purple_print(level, category, arg_s); }
+			{ LOG->purple_print(level, category, arg_s); }
 		static gboolean is_enabled_(PurpleDebugLevel level, const char *category)
-			{ return Instance().is_enabled(level, category); }
+			{ return LOG->is_enabled(level, category); }
 
 		void purple_print(PurpleDebugLevel level, const char *category, const char *arg_s);
 		gboolean is_enabled(PurpleDebugLevel level, const char *category);
@@ -62,7 +64,7 @@ class Log
 		// to catch glib's messages
 		static void glib_log_handler_(const gchar *domain, GLogLevelFlags flags,
 			const gchar *msg, gpointer user_data)
-			{ Instance().glib_log_handler(domain, flags, msg, user_data); }
+			{ LOG->glib_log_handler(domain, flags, msg, user_data); }
 		void glib_log_handler(const gchar *domain, GLogLevelFlags flags, const gchar *msg, gpointer user_data);
 
 		// called when log/debug pref changed

@@ -83,7 +83,6 @@ class BuddyList
 
 		PurpleBuddyList *buddylist;
 
-		Log *log;
 		Conf *conf;
 
 		TreeView *treeview;

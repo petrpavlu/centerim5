@@ -48,9 +48,6 @@ class Accounts
 		static void signed_on_(PurpleConnection *gc, gpointer p);
 		void signed_on(PurpleConnection *gc);
 
-
-		Log *log;
-
 		void *accounts_handle;
 };
 

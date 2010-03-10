@@ -63,7 +63,6 @@ class Conversation
 		PurpleBlistNodeType type;
 		PurpleBlistNode* node;
 
-		Log *log;
 		Conf *conf;
 		TextView *view;
 		TextEdit *input;
