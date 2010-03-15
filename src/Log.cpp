@@ -27,6 +27,7 @@
 #include <libpurple/util.h>
 #include <glib.h>
 #include <cstring>
+#include "gettext.h"
 
 Log *Log::Instance()
 {

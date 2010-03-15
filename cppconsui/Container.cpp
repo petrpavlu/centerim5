@@ -21,12 +21,13 @@
  * @ingroup cppconsui
  */
 
-#include <algorithm>
+#include "Container.h"
 
 #include "ConsuiCurses.h"
-#include "Container.h"
 #include "Keys.h"
-#include "CppConsUIInternal.h"
+
+#include <algorithm>
+#include "gettext.h"
 
 #define CONTEXT_CONTAINER "container"
 

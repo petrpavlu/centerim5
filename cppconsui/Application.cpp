@@ -18,15 +18,14 @@
  *
  * */
 
-#include <cstring>
-#include <libintl.h>
-#include <cerrno>
+#include "Application.h"
 
 #include "ConsuiCurses.h"
 
-#include "Application.h"
-
-#include "CppConsUIInternal.h"
+#include <cstring>
+#include <libintl.h>
+#include <cerrno>
+#include "gettext.h"
 
 Application::Application()
 : windowmanager(NULL), channel(NULL), channel_id(0), tk(NULL), utf8(false)

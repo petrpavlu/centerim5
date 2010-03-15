@@ -30,6 +30,7 @@
 #include <cppconsui/TextView.h>
 #include <cppconsui/LineStyle.h>
 #include <cppconsui/Keys.h>
+#include "gettext.h"
 
 #define CONTEXT_CONVERSATION "conversation"
 

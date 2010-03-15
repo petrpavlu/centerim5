@@ -19,14 +19,14 @@
  * */
 
 #include "TreeView.h"
-#include "Keys.h"
 
-#include "ConsuiCurses.h"
-#include "CppConsUIInternal.h"
-
-#include "ScrollPane.h"
-#include "LineStyle.h"
 #include "ColorScheme.h"
+#include "ConsuiCurses.h"
+#include "Keys.h"
+#include "LineStyle.h"
+#include "ScrollPane.h"
+
+#include "gettext.h"
 
 /* Put this macro around variable that will be used in the future,
  * remove macro when variables are used.

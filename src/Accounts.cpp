@@ -23,10 +23,10 @@
 #include "Accounts.h"
 
 #include "Log.h"
-#include "Defines.h"
 
 #include <libpurple/account.h>
 #include <libpurple/savedstatuses.h>
+#include "gettext.h"
 
 Accounts* Accounts::instance = NULL;
 

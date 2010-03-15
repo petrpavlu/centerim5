@@ -85,7 +85,7 @@ typedef enum {
   TERMKEY_SYM_KPDIV,
   TERMKEY_SYM_KPCOMMA,
   TERMKEY_SYM_KPPERIOD,
-  TERMKEY_SYM_KPEQUALS,
+  TERMKEY_SYM_KPEQUALS
 
   // et cetera ad nauseum
 } TermKeySym;
@@ -94,27 +94,27 @@ typedef enum {
   TERMKEY_TYPE_UNICODE,
   TERMKEY_TYPE_FUNCTION,
   TERMKEY_TYPE_KEYSYM,
-  TERMKEY_TYPE_MOUSE,
+  TERMKEY_TYPE_MOUSE
 } TermKeyType;
 
 typedef enum {
   TERMKEY_RES_NONE,
   TERMKEY_RES_KEY,
   TERMKEY_RES_EOF,
-  TERMKEY_RES_AGAIN,
+  TERMKEY_RES_AGAIN
 } TermKeyResult;
 
 typedef enum {
   TERMKEY_MOUSE_UNKNOWN,
   TERMKEY_MOUSE_PRESS,
   TERMKEY_MOUSE_DRAG,
-  TERMKEY_MOUSE_RELEASE,
+  TERMKEY_MOUSE_RELEASE
 } TermKeyMouseEvent;
 
 enum {
   TERMKEY_KEYMOD_SHIFT = 1 << 0,
   TERMKEY_KEYMOD_ALT   = 1 << 1,
-  TERMKEY_KEYMOD_CTRL  = 1 << 2,
+  TERMKEY_KEYMOD_CTRL  = 1 << 2
 };
 
 typedef struct {
@@ -141,7 +141,7 @@ enum {
   TERMKEY_FLAG_CONVERTKP   = 1 << 1, // Convert KP codes to regular keypresses
   TERMKEY_FLAG_RAW         = 1 << 2, // Input is raw bytes, not UTF-8
   TERMKEY_FLAG_UTF8        = 1 << 3, // Input is definitely UTF-8
-  TERMKEY_FLAG_NOTERMIOS   = 1 << 4, // Do not make initial termios calls on construction
+  TERMKEY_FLAG_NOTERMIOS   = 1 << 4  // Do not make initial termios calls on construction
 };
 
 void termkey_check_version(int major, int minor);
@@ -179,7 +179,7 @@ typedef enum {
   TERMKEY_FORMAT_ALTISMETA   = 1 << 2, // Meta- or M- instead of Alt- or A-
   TERMKEY_FORMAT_WRAPBRACKET = 1 << 3, // Wrap special keys in brackets like <Escape>
 
-  TERMKEY_FORMAT_MOUSE_POS   = 1 << 8, // Include mouse position if relevant; @ col,line
+  TERMKEY_FORMAT_MOUSE_POS   = 1 << 8  // Include mouse position if relevant; @ col,line
 } TermKeyFormat;
 
 // Some useful combinations

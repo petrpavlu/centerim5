@@ -27,6 +27,7 @@
 
 #include <cppconsui/ColorScheme.h>
 #include <cstring>
+#include "gettext.h"
 
 #define CONTEXT_CENTERIM "centerim"
 

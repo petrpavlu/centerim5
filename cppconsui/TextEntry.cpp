@@ -34,11 +34,12 @@
  */
 
 #include "TextEntry.h"
+
 #include "Keys.h"
-#include "CppConsUIInternal.h"
 
 #include <glib.h>
 #include <cstring>
+#include "gettext.h"
 
 #define CONTEXT_TEXTENTRY "textentry"
 

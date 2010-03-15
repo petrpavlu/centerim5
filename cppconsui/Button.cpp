@@ -31,7 +31,8 @@
 #include "ConsuiCurses.h"
 #include "Keys.h"
 #include "ColorScheme.h"
-#include "CppConsUIInternal.h"
+
+#include "gettext.h"
 
 #define CONTEXT_BUTTON "button"
 

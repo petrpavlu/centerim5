@@ -24,7 +24,6 @@
 #include "Conf.h"
 
 #include "CenterIM.h"
-#include "Defines.h"
 
 #include <cppconsui/ConsuiCurses.h>
 

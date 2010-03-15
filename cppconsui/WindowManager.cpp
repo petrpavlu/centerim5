@@ -19,10 +19,10 @@
  * */
 
 #include "WindowManager.h"
+
 #include "Window.h"
 #include "Keys.h"
 #include "KeyConfig.h"
-#include "CppConsUIInternal.h"
 
 #include <sys/ioctl.h>
 #include <signal.h>
@@ -30,6 +30,7 @@
 #include <cstdio>
 #include <glib.h>
 #include <glibmm/main.h>
+#include "gettext.h"
 
 #define CONTEXT_WINDOWMANAGER "windowmanager"
 

@@ -23,10 +23,11 @@
 
 #include "Window.h"
 
-#include "WindowManager.h"
 #include "Keys.h"
 #include "Container.h"
-#include "CppConsUIInternal.h"
+#include "WindowManager.h"
+
+#include "gettext.h"
 
 #define CONTEXT_WINDOW "window"
 

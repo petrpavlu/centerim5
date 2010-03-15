@@ -85,13 +85,11 @@ libcppconsui_la_SOURCES =\
 	TextRBView.h
 
 libcppconsui_la_CPPFLAGS =\
-	$(CFLAGS) \
 	$(GLIBMM_CFLAGS) \
-	$(CURSES_INCLUDEDIR) \
-	$(DEBUG_CFLAGS) \
+	$(NCURSESW_CFLAGS) \
 	-I$(top_srcdir) \
 	-DG_LOG_DOMAIN=\"cppconsui\"
 libcppconsui_la_LIBADD =\
 	$(GLIBMM_LIBS) \
-	$(CURSES_LIBS) \
+	$(NCURSESW_LIBS) \
 	$(top_builddir)/libtermkey/libtermkey.la

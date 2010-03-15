@@ -30,6 +30,7 @@
 
 //TODO remove when show() of window/dialog is implemented
 #include <cppconsui/WindowManager.h>
+#include "gettext.h"
 
 GeneralMenu::GeneralMenu(int x, int y, int w, int h)
 : MenuWindow(x, y, w, h)

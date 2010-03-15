@@ -29,10 +29,11 @@
 #include "ComboBox.h"
 
 #include "Keys.h"
-#include "CppConsUIInternal.h"
 
 /// @todo remove when show() of window/dialog is implemented
 #include "WindowManager.h"
+
+#include "gettext.h"
 
 #define CONTEXT_COMBOBOX "combobox"
 

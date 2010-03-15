@@ -24,6 +24,7 @@
 #include <cppconsui/Keys.h>
 
 #include <libpurple/blist.h>
+#include "gettext.h"
 
 BuddyListNode::BuddyListNode(TreeView& parent, PurpleBlistNode *node)
 : Button(parent, 0, 0, "")

@@ -18,13 +18,12 @@
  *
  * */
 
-#include "ConsuiCurses.h"
-#include "Keys.h"
-#include "CppConsUIInternal.h"
-
 #include "MenuWindow.h"
 
-#include <glibmm/ustring.h>
+#include "ConsuiCurses.h"
+#include "Keys.h"
+
+#include "gettext.h"
 
 #define CONTEXT_MENUWINDOW "menuwindow"
 

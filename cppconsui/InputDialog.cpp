@@ -18,12 +18,11 @@
  *
  * */
 
-#include "ConsuiCurses.h"
-#include "CppConsUIInternal.h"
-
 #include "InputDialog.h"
 
-#include <glibmm/ustring.h>
+#include "ConsuiCurses.h"
+
+#include "gettext.h"
 
 InputDialog::InputDialog(const gchar* text, const gchar* defaultvalue)
 : Dialog()

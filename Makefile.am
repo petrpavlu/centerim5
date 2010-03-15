@@ -1,6 +1,8 @@
 SUBDIRS = libtermkey cppconsui doc po src tests
 
-EXTRA_DIST = HACKING
+EXTRA_DIST =\
+	HACKING \
+	gettext.h
 
 ACLOCAL_AMFLAGS = -I m4
 

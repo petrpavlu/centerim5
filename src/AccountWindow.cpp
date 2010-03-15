@@ -35,6 +35,7 @@
 #include <errno.h>
 
 #include <glib.h>
+#include "gettext.h"
 
 AccountWindow::AccountWindow()
 : Window(0, 0, 80, 24)

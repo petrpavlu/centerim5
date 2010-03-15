@@ -18,12 +18,11 @@
  *
  * */
 
-#include "ConsuiCurses.h"
-#include "CppConsUIInternal.h"
-
 #include "MessageDialog.h"
 
-#include <glibmm/ustring.h>
+#include "ConsuiCurses.h"
+
+#include "gettext.h"
 
 MessageDialog::MessageDialog(const gchar* text)
 : Dialog()

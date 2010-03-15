@@ -26,6 +26,7 @@
 
 #include <libpurple/account.h>
 #include <libpurple/savedstatuses.h>
+#include "gettext.h"
 
 AccountStatusMenu::AccountStatusMenu(int x, int y, int w, int h)
 : MenuWindow(x, y, w, h)
