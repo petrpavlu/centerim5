@@ -21,7 +21,6 @@
 
 #include "AccountWindow.h"
 #include "CenterIM.h"
-#include "config.h"
 
 #include <cppconsui/Button.h>
 #include <cppconsui/Keys.h>

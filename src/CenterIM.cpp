@@ -23,8 +23,6 @@
 #include "GeneralMenu.h"
 #include "Defines.h"
 
-#include "config.h"
-
 #include <cppconsui/ColorScheme.h>
 #include <cstring>
 #include "gettext.h"

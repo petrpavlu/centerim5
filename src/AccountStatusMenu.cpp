@@ -38,7 +38,7 @@ AccountStatusMenu::AccountStatusMenu(int x, int y, int w, int h)
 
 	windowmanager = WindowManager::Instance();
 
-	AddItem(_("All protocols"), sigc::mem_fun(this, &AccountStatusMenu::Dummy));
+	AddItem(_("All accounts"), sigc::mem_fun(this, &AccountStatusMenu::Dummy));
 	AddItem(_("Already logged in only"), sigc::mem_fun(this, &AccountStatusMenu::Dummy));
 	AddSeparator();
 

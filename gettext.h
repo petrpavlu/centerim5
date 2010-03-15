@@ -1,5 +1,5 @@
 /*
- * Slightly edited for centerim. Added _() macro,
+ * Slightly edited for centerim. Added _() macro, added config.h include,
  * _LIBGETTEXT_HAVE_VARIABLE_SIZE_ARRAYS is always 0.
  */
 /* Convenience header for conditional use of GNU <libintl.h>.
@@ -22,6 +22,8 @@
 
 #ifndef _LIBGETTEXT_H
 #define _LIBGETTEXT_H 1
+
+#include "config.h"
 
 /* NLS can be disabled through the configure --disable-nls option.  */
 #if ENABLE_NLS

@@ -18,30 +18,32 @@
  *
  * */
 
-#include <config.h>
-#include <locale.h>
-
 #include "CenterMain.h"
 
 #include "CenterIM.h"
 #include "Defines.h"
 #include "gettext.h"
 
-int main (int argc, char **argv)
+int main(int argc, char **argv)
 {
 	CenterIM* cim;
 
+	g_thread_init(NULL);
+
+	g_set_prgname(PACKAGE_NAME);
+
 #ifdef ENABLE_NLS
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	bind_textdomain_codeset(PACKAGE, "UTF-8");
-	textdomain(PACKAGE);
+	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
+	bind_textdomain_codeset(PACKAGE_NAME, "UTF-8");
+	textdomain(PACKAGE_NAME);
 #endif
 
 	setlocale(LC_ALL, "");
 
 	try {
 		cim = &CenterIM::Instance();
-	} catch (int i) {
+	}
+	catch (int i) {
 		switch (i) {
 		case EXCEPTION_ICONV_INIT:
 			fprintf(stderr, _("could not initialize iconv\n"));
