@@ -36,8 +36,6 @@ class WindowManager
 
 		void Delete(void);
 
-		void CloseWindow(Window *window);
-
 		virtual void Add(Window *window);
 		void Remove(Window *window);
 
@@ -84,8 +82,6 @@ class WindowManager
 		static WindowManager *instance;
 
 	private:
-		bool CloseWindowCallback(Window *window);
-	
 		/** it handles the automatic registration of defined keys */
 		DECLARE_SIG_REGISTERKEYS();
 		static bool RegisterKeys();

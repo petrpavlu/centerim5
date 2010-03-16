@@ -59,6 +59,7 @@ Window::Window(int x_, int y_, int w_, int h_, LineStyle::Type ltype)
 
 Window::~Window()
 {
+	WindowManager::Instance()->Remove(this);
 	if (realwindow)
 		delete realwindow;
 }
@@ -66,7 +67,7 @@ Window::~Window()
 void Window::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_WINDOW, "close-window",
-			sigc::mem_fun(this, &Window::Close),
+			sigc::mem_fun(this, &Window::ActionClose),
 			InputProcessor::Bindable_Normal);
 }
 
@@ -79,10 +80,15 @@ bool Window::RegisterKeys()
 	return true;
 }
 
-void Window::Close(void)
+void Window::Close()
+{
+	delete this;
+}
+
+void Window::ActionClose()
 {
 	signal_close(this);
-	WindowManager::Instance()->CloseWindow(this);
+	Close();
 }
 
 /* NOTE

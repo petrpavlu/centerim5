@@ -225,15 +225,15 @@ void CenterIM::UIInit(void)
 	// default colors init
 	/// @todo move this to a default cfg
 	COLORSCHEME->SetColorPair("accountstatusmenu",	"panel",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
-	COLORSCHEME->SetColorPair("accountstatusmenu",	"verticalline",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("accountstatusmenu",	"horizontalline",	"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
 	COLORSCHEME->SetColorPair("accountstatusmenu",	"button",		"normal",	Curses::Color::CYAN,	Curses::Color::BLACK);
 
 	COLORSCHEME->SetColorPair("accountstatuspopup",	"panel",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
-	COLORSCHEME->SetColorPair("accountstatuspopup",	"verticalline",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("accountstatuspopup",	"horizontalline",	"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
 	COLORSCHEME->SetColorPair("accountstatuspopup",	"button",		"normal",	Curses::Color::CYAN,	Curses::Color::BLACK);
 
 	COLORSCHEME->SetColorPair("accountwindow",	"panel",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
-	COLORSCHEME->SetColorPair("accountwindow",	"horizontaline",	"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("accountwindow",	"horizontalline",	"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
 	COLORSCHEME->SetColorPair("accountwindow",	"verticalline",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
 
 	COLORSCHEME->SetColorPair("buddylist",		"treeview",		"line",		Curses::Color::GREEN,	Curses::Color::BLACK);
@@ -242,11 +242,17 @@ void CenterIM::UIInit(void)
 	COLORSCHEME->SetColorPair("buddylistgroup",	"button",		"normal",	Curses::Color::YELLOW,	Curses::Color::BLACK,	Curses::Attr::BOLD);
 
 	COLORSCHEME->SetColorPair("generalmenu",	"panel",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
-	COLORSCHEME->SetColorPair("generalmenu",	"verticalline",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("generalmenu",	"horizontalline",	"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
 	COLORSCHEME->SetColorPair("generalmenu",	"button",		"normal",	Curses::Color::CYAN,	Curses::Color::BLACK);
 
 	COLORSCHEME->SetColorPair("log",		"panel",		"line",		Curses::Color::BLUE,	Curses::Color::BLACK,	Curses::Attr::BOLD);
 	COLORSCHEME->SetColorPair("log",		"textview",		"text",		Curses::Color::CYAN,	Curses::Color::BLACK);
+
+	COLORSCHEME->SetColorPair("conversation",	"textview",		"text",		Curses::Color::MAGENTA,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("conversation",	"textview",		"color1",	Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("conversation",	"textview",		"color2",	Curses::Color::YELLOW,	Curses::Color::BLACK,	Curses::Attr::BOLD);
+	COLORSCHEME->SetColorPair("conversation",	"panel",		"line",		Curses::Color::BLUE,	Curses::Color::BLACK,	Curses::Attr::BOLD);
+	COLORSCHEME->SetColorPair("conversation",	"horizontalline",	"line",		Curses::Color::BLUE,	Curses::Color::BLACK,	Curses::Attr::BOLD);
 
 	//TODO when these objecs are windows, add them to the windowmanager
 	accounts = Accounts::Instance();
@@ -272,9 +278,6 @@ void CenterIM::UIUnInit(void)
 
 	windowmanager->Remove(buddylist);
 	if (buddylist) { buddylist->Delete(); buddylist = NULL; }
-
-//	windowmanager->Remove(conversations);
-	if (conversations) conversations->Delete(); conversations = NULL;
 
 //	windowmanager->Remove(transfers);
 	delete transfers; transfers = NULL;

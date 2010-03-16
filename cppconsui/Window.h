@@ -54,7 +54,7 @@ class Window
 		Window(int x_, int y_, int w_, int h_, LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~Window();
 	
-		virtual void Close(void);
+		virtual void Close();
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
 		virtual void MoveResizeRect(const Rect &rect)
 			{ MoveResize(rect.x, rect.y, rect.width, rect.height); }
@@ -110,8 +110,9 @@ class Window
 	private:
 		Window(void);
 		Window(const Window&);
-
 		Window& operator=(const Window&);
+
+		virtual void ActionClose();
 
 		void MakeRealWindow(void);
 	

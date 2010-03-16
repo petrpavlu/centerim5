@@ -20,9 +20,6 @@
 
 /* LoadHistory taken almost verbatim from pidgin/plugins/history.c */
 
-//TODO remove this include
-#include <cppconsui/ConsuiCurses.h>
-
 #include "Conversation.h"
 #include "CenterIM.h"
 
@@ -34,17 +31,19 @@
 
 #define CONTEXT_CONVERSATION "conversation"
 
-Conversation::Conversation(PurpleBlistNode* node)
+Conversation::Conversation(PurpleConversation *conv_)
 : Window(0, 0, 80, 24)
-, node(node)
-, conv(NULL)
+, conv(conv_)
 {
+	g_assert(conv);
+
+	SetColorScheme("conversation");
+
 	conf = Conf::Instance();
-	type = purple_blist_node_get_type(node);
 
 	view = new TextView(*this, 1, 0, width - 2, height);
 	input = new TextEdit(*this, 1, 1, width - 2, height);
-	line = new HorizontalLine(*this, 0, view_height, width);
+	line = new HorizontalLine(*this, 0, height, width);
 	AddWidget(*view);
 	AddWidget(*input);
 	AddWidget(*line);
@@ -56,10 +55,6 @@ Conversation::Conversation(PurpleBlistNode* node)
 	
 	MoveResizeRect(conf->GetChatDimensions());
 	DeclareBindables();
-}
-
-Conversation::~Conversation()
-{
 }
 
 void Conversation::DeclareBindables()
@@ -77,43 +72,30 @@ bool Conversation::RegisterKeys()
 	return true;
 }
 
-void Conversation::SetConversation(PurpleConversation* conv_)
-{
-	g_assert(conv == NULL);
-	conv = conv_;
-}
-
-void Conversation::UnsetConversation(PurpleConversation* conv_)
-{
-	conv = NULL;
-}
-
 void Conversation::Receive(const char *name, const char *alias, const char *message,
 	PurpleMessageFlags flags, time_t mtime)
 {
-	/* we should actually parse the html in the message to text attributes
-	 * but i've not decided how to implement it.
-	 **/
-	char *html = purple_strdup_withhtml(message);
-	message = purple_markup_strip_html(html);
-	g_free(html);
+	// we currently don't support displaying HTML in any way
+	char *nohtml = purple_markup_strip_html(message);
 
-	//TODO iconv, write to a window
-	//printf("message from %s (%s) :\n%s\n", name, alias, message);
-	view->Append(message);
+	int color = 0;
+	if (flags & PURPLE_MESSAGE_SEND)
+		color = 1;
+	else if (flags & PURPLE_MESSAGE_RECV)
+		color = 2;
+
+	char *msg = g_strdup_printf("%s %s", purple_date_format_long(localtime(&mtime)), nohtml);
+	g_free(nohtml);
+	view->Append(msg, color);
+	g_free(msg);
+
 }
 
-//TODO if this remains empty, make it a pure virtual function
-void Conversation::Send(void)
+void Conversation::Close()
 {
-}
-
-void Conversation::Close(void)
-{
-	/* close the open conversation, if any */
-	Conversations::Instance()->Close(this);
-	/* close the conversation window */
-	Window::Close();
+	/* Let libpurple and Conversations know that this conversation should be
+	 * destroyed. */
+	purple_conversation_destroy(conv);
 }
 
 void Conversation::MoveResize(int newx, int newy, int neww, int newh)
@@ -128,76 +110,40 @@ void Conversation::ScreenResized()
 	MoveResizeRect(CenterIM::Instance().ScreenAreaSize(CenterIM::ChatArea));
 }
 
-//TODO if this remains empty, make it a pure virtual function
-void Conversation::CreatePurpleConv(void)
+void Conversation::SetPartitioning(unsigned percentage)
 {
-}
-
-void Conversation::SetPartitioning(unsigned int percentage)
-{
-	int inputheight;
+	int input_height;
+	int view_height;
 
 	//TODO check for rare condition that windowheight < 3
-	// (in which case there is not enought room to draw anything)
+	// (in which case there is not enough room to draw anything)
 	view_height = (height * percentage) / 100;
 	if (view_height < 1) view_height = 1;
 
-	inputheight = height - view_height - 1;
-	if (inputheight < 1) {
-		inputheight = 1;
-		view_height = height - inputheight - 1;
+	input_height = height - view_height - 1;
+	if (input_height < 1) {
+		input_height = 1;
+		view_height = height - input_height - 1;
 	}
 
 	view->MoveResize(1, 0, width - 2, view_height);
-	input->MoveResize(1, view_height + 1, width - 2, inputheight);
+	input->MoveResize(1, view_height + 1, width - 2, input_height);
 	line->MoveResize(0, view_height, width, 1);
 }
 
-//TODO if this remains empty, make it a pure virtual function
-void Conversation::LoadHistory(void)
+ConversationChat::ConversationChat(PurpleConversation *conv)
+: Conversation(conv)
 {
-}
-
-ConversationChat::ConversationChat(PurpleChat* chat)
-: Conversation(&chat->node)
-, convchat(NULL)
-, chat(chat)
-{
-	g_assert(chat != NULL);
-	//CreatePurpleConv();
+	convchat = PURPLE_CONV_CHAT(conv);
 	LoadHistory();
 }
 
-ConversationChat::~ConversationChat()
-{
-}
-
-void ConversationChat::SetConversation(PurpleConversation* conv)
-{
-	Conversation::SetConversation(conv);
-	convchat = PURPLE_CONV_CHAT(conv);
-}
-
-void ConversationChat::UnsetConversation(PurpleConversation* conv)
-{
-	convchat = NULL;
-	Conversation::UnsetConversation(conv);
-}
-
-void ConversationChat::CreatePurpleConv(void)
-{
-	//TODO adapt from conversationim::createpurpleconv
-	//if (!convchat) {
-	//	convchat = purple_conversation_new(PURPLE_CONV_TYPE_CHAT, purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
-	//}
-}
-
-void ConversationChat::LoadHistory(void)
+void ConversationChat::LoadHistory()
 {
 	g_return_if_fail(conf->GetLogChats());
 
-	PurpleAccount *account = chat->account;
-	const char *name = purple_chat_get_name(chat);
+	PurpleAccount *account = purple_conversation_get_account(conv);
+	const char *name = purple_conversation_get_name(conv);
 	GList *logs = NULL;
 	const char *alias = name;
 	PurpleLogReadFlags flags;
@@ -215,79 +161,37 @@ void ConversationChat::LoadHistory(void)
 
 	header = g_strdup_printf("<b>Conversation with %s on %s:</b><br>", alias,
 							 purple_date_format_full(localtime(&((PurpleLog *)logs->data)->time)));
-
-	purple_conversation_write(conv, "", header, mflag, time(NULL));
-
+	view->Append(header);
 	g_free(header);
 
 	if (flags & PURPLE_LOG_READ_NO_NEWLINE)
 		purple_str_strip_char(history, '\n');
-	purple_conversation_write(conv, "", history, mflag, time(NULL));
+	char *nohtml = purple_markup_strip_html(history);
 	g_free(history);
-	purple_conversation_write(conv, "", "<hr>", mflag, time(NULL));
+	view->Append(nohtml);
+	g_free(nohtml);
 
 	g_list_foreach(logs, (GFunc)purple_log_free, NULL);
 	g_list_free(logs);
 }
 
-ConversationIm::ConversationIm(PurpleBuddy* buddy)
-: Conversation(&buddy->node)
-, convim(NULL)
-, buddy(buddy)
+void ConversationChat::Send()
 {
-	g_assert(buddy != NULL);
-	//CreatePurpleConv();
+}
+
+ConversationIm::ConversationIm(PurpleConversation *conv)
+: Conversation(conv)
+{
+	convim = PURPLE_CONV_IM(conv);
 	LoadHistory();
 }
 
-ConversationIm::~ConversationIm()
-{
-}
-
-void ConversationIm::SetConversation(PurpleConversation* conv)
-{
-	Conversation::SetConversation(conv);
-	convim = PURPLE_CONV_IM(conv);
-}
-
-void ConversationIm::UnsetConversation(PurpleConversation* conv)
-{
-	convim = NULL;
-	Conversation::UnsetConversation(conv);
-}
-
-void ConversationIm::Send(void)
-{
-	if (!convim)
-		CreatePurpleConv();
-
-	gchar *str = input->AsString("<br/>");
-	if (str) {
-		purple_conv_im_send(convim, str);
-		g_free(str);
-		input->Clear();
-	}
-}
-
-void ConversationIm::CreatePurpleConv(void)
-{
-	if (!convim) {
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
-		convim = PURPLE_CONV_IM(conv);
-	}
-
-
-	if (!convim) //TODO only log an error if account is connected
-		LOG->Write(Log::Level_error, "unable to open conversation with `%s'\n", buddy->name);
-		//TODO add some info based on buddy
-}
-
-void ConversationIm::LoadHistory(void)
+void ConversationIm::LoadHistory()
 {
 	g_return_if_fail(conf->GetLogIms());
 
-	PurpleAccount *account = purple_buddy_get_account(buddy);
-	const char *name = purple_buddy_get_name(buddy);
+	PurpleAccount *account = purple_conversation_get_account(conv);
+	const char *name = purple_conversation_get_name(conv);
 	GList *logs = NULL;
 	const char *alias = name;
 	PurpleLogReadFlags flags;
@@ -341,21 +245,28 @@ void ConversationIm::LoadHistory(void)
 	mflag = (PurpleMessageFlags)(PURPLE_MESSAGE_NO_LOG | PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_DELAYED);
 	history = purple_log_read((PurpleLog*)logs->data, &flags);
 
-	header = g_strdup_printf("<b>Conversation with %s on %s:</b><br>\n", alias,
+	header = g_strdup_printf("Conversation with %s on %s:\n", alias,
 							 purple_date_format_full(localtime(&((PurpleLog *)logs->data)->time)));
-
 	view->Append(header);
-
-	purple_conversation_write(conv, "", header, mflag, time(NULL));
-
 	g_free(header);
 
 	if (flags & PURPLE_LOG_READ_NO_NEWLINE)
 		purple_str_strip_char(history, '\n');
-	purple_conversation_write(conv, "", history, mflag, time(NULL));
+	char *nohtml = purple_markup_strip_html(history);
 	g_free(history);
-	purple_conversation_write(conv, "", "<hr>", mflag, time(NULL));
+	view->Append(nohtml);
+	g_free(nohtml);
 
 	g_list_foreach(logs, (GFunc)purple_log_free, NULL);
 	g_list_free(logs);
+}
+
+void ConversationIm::Send()
+{
+	gchar *str = input->AsString("<br/>");
+	if (str) {
+		purple_conv_im_send(convim, str);
+		g_free(str);
+		input->Clear();
+	}
 }

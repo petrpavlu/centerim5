@@ -15,12 +15,12 @@ TextView::~TextView()
 	Clear();
 }
 
-void TextView::Append(const gchar *text)
+void TextView::Append(const gchar *text, int color)
 {
-	Insert(lines.size(), text);
+	Insert(lines.size(), text, color);
 }
 
-void TextView::Insert(int line_num, const gchar *text)
+void TextView::Insert(int line_num, const gchar *text, int color)
 {
 	g_assert(text);
 	g_assert(line_num >= 0);
@@ -34,7 +34,7 @@ void TextView::Insert(int line_num, const gchar *text)
 		GUnicodeType t = g_unichar_type(g_utf8_get_char(p));
 		if ((*p == '\r' || *p == '\n' || t == G_UNICODE_LINE_SEPARATOR || t == G_UNICODE_PARAGRAPH_SEPARATOR)) {
 			if (s < p) {
-				Line *l = new Line(s, p - s);
+				Line *l = new Line(s, p - s, color);
 				lines.insert(lines.begin() + line_num, l);
 				UpdateScreenLines(line_num++);
 			}
@@ -46,7 +46,7 @@ void TextView::Insert(int line_num, const gchar *text)
 	}
 
 	if (s < p) {
-		Line *l = new Line(s, p - s);
+		Line *l = new Line(s, p - s, color);
 		lines.insert(lines.begin() + line_num, l);
 		UpdateScreenLines(line_num++);
 	}
@@ -66,13 +66,13 @@ void TextView::Erase(int start_line, int end_line)
 
 void TextView::Clear()
 {
-	for (std::vector<Line *>::iterator i = lines.begin(); i != lines.end(); i++)
+	for (Lines::iterator i = lines.begin(); i != lines.end(); i++)
 		delete *i;
 	lines.clear();
 
-	for (std::vector<ScreenLine *>::iterator i = screen_lines.begin(); i != screen_lines.end(); i++)
+	for (ScreenLines::iterator i = screen_lines.begin(); i != screen_lines.end(); i++)
 		delete *i;
-	lines.clear();
+	screen_lines.clear();
 
 	view_top = 0;
 	signal_redraw(*this);
@@ -128,10 +128,25 @@ void TextView::Draw()
 	int attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "textview", "text");
 	area->attron(attrs);
 
-	std::vector<ScreenLine *>::iterator i;
+	ScreenLines::iterator i;
 	int j;
-	for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end() && j < realh; i++, j++)
+	for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end() && j < realh; i++, j++) {
+		int attrs2 = 0;
+		if ((*i)->parent->color) {
+			gchar *color = g_strdup_printf("color%d", (*i)->parent->color);
+			attrs2 = COLORSCHEME->GetColorPair(GetColorScheme(), "textview", color);
+			g_free(color);
+			area->attroff(attrs);
+			area->attron(attrs2);
+		}
+
 		area->mvaddstring(0, j, (*i)->width, (*i)->text);
+
+		if (attrs2) {
+			area->attroff(attrs2);
+			area->attron(attrs);
+		}
+	}
 
 	area->attroff(attrs);
 }
@@ -207,7 +222,7 @@ void TextView::UpdateScreenLines(int line_num)
 	g_assert(line_num >= 0);
 	g_assert(line_num < lines.size());
 
-	std::vector<ScreenLine *>::iterator i;
+	ScreenLines::iterator i;
 
 	/* Find where new screen lines should be placed and remove previous screen
 	 * lines created for this line. */
@@ -227,7 +242,7 @@ void TextView::UpdateScreenLines(int line_num)
 		return;
 
 	// parse line into screen lines
-	std::vector<ScreenLine *> new_lines;
+	ScreenLines new_lines;
 	const gchar *p = lines[line_num]->text;
 	const gchar *s;
 	int width;
@@ -240,7 +255,8 @@ void TextView::UpdateScreenLines(int line_num)
 	screen_lines.insert(i, new_lines.begin(), new_lines.end());
 }
 
-TextView::Line::Line(const gchar *text_, int bytes)
+TextView::Line::Line(const gchar *text_, int bytes, int color_)
+: color(color_)
 {
 	g_assert(text_);
 	g_assert(bytes > 0);

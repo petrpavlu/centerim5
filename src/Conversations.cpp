@@ -22,310 +22,34 @@
 #include "Conversation.h"
 
 #include <vector>
+#include <cstring>
 
-Conversations* Conversations::instance = NULL;
-
-Conversations* Conversations::Instance(void)
+Conversations *Conversations::Instance()
 {
-	if (!instance) instance = new Conversations();
-	return instance;
+	static Conversations instance;
+	return &instance;
 }
-
-void Conversations::Delete(void)
-{
-	if (instance) {
-		delete instance;
-		instance = NULL;
-	}
-}
-
-Conversation* Conversations::Find(PurpleBuddy* buddy)
-{
-	std::vector<Conversation*>::iterator i;
-	Conversation* conv;
-	ConversationIm* im;
-	ConversationChat* chat;
-
-	for (i = conversations.begin(); i != conversations.end(); i++) {
-		conv = (Conversation*)(*i);
-		if ((im = dynamic_cast<ConversationIm*>(conv)) && im->buddy == buddy) {
-			return conv;
-		} else if ((chat = dynamic_cast<ConversationChat*>(conv))) {
-			/* we are not looking for a chat */;
-		} //TODO throw exception or log error
-	}
-
-	return NULL;
-}
-
-Conversation* Conversations::Find(PurpleChat* chat)
-{
-	std::vector<Conversation*>::iterator i;
-	Conversation* conv;
-	ConversationIm* im;
-	ConversationChat* convchat;
-
-	for (i = conversations.begin(); i != conversations.end(); i++) {
-		conv = (Conversation*)(*i);
-		if ((convchat = dynamic_cast<ConversationChat*>(conv)) && convchat->chat == chat) {
-			return conv;
-		} else if ((im = dynamic_cast<ConversationIm*>(conv))) {
-			/* we are not looking for a chat */;
-		} //TODO throw exception or log error
-	}
-
-	return NULL;
-}
-
-Conversation* Conversations::Find(PurpleConversation* conv)
-{
-	std::vector<Conversation*>::iterator i;
-	Conversation* conversation;
-
-	for (i = conversations.begin(); i != conversations.end(); i++) {
-		conversation = (Conversation*)(*i);
-		if (conversation->conv == conv)
-			return conversation;
-	}
-
-	return NULL;
-}
-
-void Conversations::Close(Conversation* conversation)
-{
-	if (conversation->conv)
-		purple_conversation_destroy(conversation->conv);
-
-	RemoveConversation(conversation);
-}
-
-void Conversations::AddConversation(Conversation *conv)
-{
-	std::vector<Conversation*>::iterator i;
-	Conversation* conversation;
-
-	for (i = conversations.begin(); i != conversations.end(); i++) {
-		conversation = (Conversation*)(*i);
-		if (conversation == conv) {
-			LOG->Write(Log::Level_error, "connot add a conversation to the stack twice\n");
-			return;
-		}
-	}
-
-	conversations.push_back(conv);
-}
-
-void Conversations::RemoveConversation(Conversation *conv)
-{
-	std::vector<Conversation*>::iterator i;
-	Conversation* conversation;
-
-	for (i = conversations.begin(); i != conversations.end(); i++) {
-		conversation = (Conversation*)(*i);
-		if (conversation == conv) {
-			conversations.erase(i);
-			return;
-		}
-	}
-
-	LOG->Write(Log::Level_error, "connot remove a conversation not on the stack\n");
-}
-
-void Conversations::create_conversation(PurpleConversation *conv)
-{
-	g_assert(conv != NULL);
-
-	//TODO remove debug
-	LOG->Write(Log::Level_error, "create_conversation(purpleconv) calles: %p\n", conv);
-
-	PurpleConversationType type;
-
-	type = purple_conversation_get_type(conv);
-	if (type == PURPLE_CONV_TYPE_IM) {
-		create_conversation_im(conv);
-	} else if (type == PURPLE_CONV_TYPE_CHAT) {
-		create_conversation_chat(conv);
-	} else {
-		LOG->Write(Log::Level_error, "unhandled conversation type: %i\n", type);
-	}
-}
-
-void Conversations::create_conversation(PurpleBlistNode *node)
-{
-	g_assert(node != NULL);
-
-	PurpleBlistNodeType type;
-
-	type = purple_blist_node_get_type(node);
-	if (type == PURPLE_BLIST_BUDDY_NODE) {
-		create_conversation_im(node);
-	} else if (type == PURPLE_BLIST_CHAT_NODE) {
-		create_conversation_chat(node);
-	} else {
-		LOG->Write(Log::Level_error, "unhandled conversation type: %i\n", type);
-	}
-}
-
-void Conversations::create_conversation_im(PurpleConversation *conv)
-{
-	PurpleBuddy* buddy;
-	Conversation* conversation;
-
-	buddy = purple_find_buddy(conv->account, conv->name);
-	//TODO what if buddy not in list yet?
-
-	/* if we already have a window do nothing special */
-	if ((conversation = Find(buddy)) != NULL) {
-		 //TODO remove debug
-		LOG->Write(Log::Level_error, "create_conversation_im(conversation): already have an object\n");
-
-	/* otherwise create a conversation window first */
-	} else {
-		conversation = new ConversationIm(buddy);
-		//TODO remove debug
-		LOG->Write(Log::Level_error, "new conversation: %p\n", conversation);
-		AddConversation(conversation);
-		windowmanager->Add(conversation);
-	}
-
-	/* assign the conversation to the window */
-	conversation->SetConversation(conv);
-}
-
-void Conversations::create_conversation_chat(PurpleConversation *conv)
-{
-	PurpleChat *chat = NULL;
-	Conversation* conversation;
-
-	//TODO chats not really implemented
-	//chat = purple_find_chat(purple_conversation_get_gc(conv), conv->id);
-	//TODO what if buddy not in list yet?
-
-	/* if we already have a window do nothing special */
-	if ((conversation = Find(chat)) != NULL) {
-		 //TODO remove debug
-		LOG->Write(Log::Level_error, "create_conversation_chat(conversation): already have an object\n");
-
-	/* otherwise create a conversation window first */
-	} else {
-		conversation = new ConversationChat(chat);
-		//TODO remove debug
-		LOG->Write(Log::Level_error, "new conversation: %p\n", conversation);
-		AddConversation(conversation);
-		windowmanager->Add(conversation);
-	}
-
-	/* assign the conversation to the window */
-	conversation->SetConversation(conv);
-}
-
-void Conversations::create_conversation_im(PurpleBlistNode *node)
-{
-	Conversation* conversation;
-	PurpleBuddy* buddy;
-
-	buddy = (PurpleBuddy*)node;
-	if ((conversation = Find(buddy)) != NULL) {
-		//TODO move window to the top and give focus, no debug
-		LOG->Write(Log::Level_error, "create_conversation_im(buddy): already have an object\n");
-	} else {
-		conversation = new ConversationIm(buddy);
-		//TODO remove debug
-		LOG->Write(Log::Level_error, "new conversation: %p\n", conversation);
-		AddConversation(conversation);
-
-		//TODO remove debug
-		LOG->Write(Log::Level_debug, "conversation: %p\n", conversation);
-
-		/* If the account is connected, try to initiate a conversation conversation */
-		if (purple_account_is_connected(purple_buddy_get_account(buddy))) {
-			purple_conversation_new(PURPLE_CONV_TYPE_IM, purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
-		}
-
-		windowmanager->Add(conversation);
-	}
-}
-
-void Conversations::create_conversation_chat(PurpleBlistNode *node)
-{
-	Conversation* conversation;
-	PurpleChat* chat;
-
-	chat = (PurpleChat*)node;
-	if ((conversation = Find(chat)) != NULL) {
-		//TODO move window to the top and give focus, no debug
-		LOG->Write(Log::Level_debug, "create_conversation_chat(buddy): already have an object\n");
-	} else {
-		conversation = new ConversationChat(chat);
-		//TODO remove debug
-		LOG->Write(Log::Level_error, "new conversation: %p\n", conversation);
-		AddConversation(conversation);
-
-		//TODO remove debug
-		LOG->Write(Log::Level_debug, "conversation: %p\n", conversation);
-
-		/* If the account is connected, try to initiate a conversation conversation */
-		//if (purple_account_is_connected(purple_chat_get_account(chat))) {
-		//	purple_conversation_new(PURPLE_CONV_TYPE_IM, purple_chat_get_account(buddy), purple_chat_get_name(buddy));
-		//}
-
-		windowmanager->Add(conversation);
-	}
-}
-
-void Conversations::destroy_conversation(PurpleConversation *conv)
-{
-	Conversation* conversation;
-
-	if ((conversation = Find(conv)) != NULL) {
-		conversation->UnsetConversation(NULL);
-	} else {
-		 //TODO should be debug() add some stuff to easily identify the conversation
-		LOG->Write(Log::Level_error, "ERROR: conversation without a window is being destroyed: %p, %s\n", conv, conv->name);
-	}
-}
-
-void Conversations::write_conv(PurpleConversation *conv, const char *name,
-	const char *alias, const char *message, PurpleMessageFlags flags, time_t mtime)
-{
-	Conversation *conversation = Find(conv);
-
-	g_return_if_fail(conversation != NULL);//TODO create new conversation here or throw exception?
-						// we should have created a conversation before, so this might not even happen
-						// so add some error logging here if it does
-
-	conversation->Receive(name, alias, message, flags, mtime);
-}
-
-//TODO move this struct inside the conversations object
-static PurpleConversationUiOps centerim_conv_uiops =
-{
-        Conversations::create_conversation_,
-        Conversations::destroy_conversation_,
-        NULL, //Conversations::write_chat_,
-        NULL, //Conversations::write_im_,
-        Conversations::write_conv_,
-        NULL, //Conversations::chat_add_users_,
-        NULL, //Conversations::chat_rename_user_,
-        NULL, //Conversations::chat_remove_users_,
-        NULL, //Conversations::chat_update_user_,
-        NULL, //Conversations::present_,
-        NULL, //Conversations::has_focus_,
-        NULL, //Conversations::custom_smiley_add_,
-        NULL, //Conversations::custom_smiley_write_,
-        NULL, //Conversations::custom_smiley_close_,
-        NULL, //Conversations::send_confirm_,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-};
 
 Conversations::Conversations()
 {
-	conf = Conf::Instance();
+	memset(&centerim_conv_uiops, 0, sizeof(centerim_conv_uiops));
+	centerim_conv_uiops.create_conversation = create_conversation_;
+	centerim_conv_uiops.destroy_conversation = destroy_conversation_;
+	//centerim_conv_uiops.write_chat = ;
+	//centerim_conv_uiops.write_im = ;
+	centerim_conv_uiops.write_conv = write_conv_;
+	//centerim_conv_uiops.chat_add_users = ;
+	//centerim_conv_uiops.chat_rename_user = ;
+	//centerim_conv_uiops.chat_remove_users = ;
+	//centerim_conv_uiops.chat_update_user = ;
+	//centerim_conv_uiops.present = ;
+	//centerim_conv_uiops.has_focus = ;
+	//centerim_conv_uiops.custom_smiley_add = ;
+	//centerim_conv_uiops.custom_smiley_write = ;
+	//centerim_conv_uiops.custom_smiley_close = ;
+	//centerim_conv_uiops.send_confirm = ;
 
-	/* setup the callbacks for conversations */
+	// setup the callbacks for conversations
 	purple_conversations_set_ui_ops(&centerim_conv_uiops);
 
 	windowmanager = WindowManager::Instance();
@@ -333,20 +57,59 @@ Conversations::Conversations()
 
 Conversations::~Conversations()
 {
-	/* remove the callbacks for conversations
-	 * after this no new conversations can be
-	 * initiated/stopped, so make sure every
-	 * conversation has been closed */
-	//TODO close all conversations
-	//
-	std::vector<Conversation*>::iterator i;
-	Conversation* conv;
-
-	while (conversations.size() > 0) {
-		conv = conversations[0];
-		Close(conv);
-	}
+	/* We can't simply iterate over conversations because iterator's element
+	 * is removed from conversations when we call
+	 * purple_conversation_destroy(). */
+	while (conversations.size())
+		purple_conversation_destroy(conversations.begin()->second->GetPurpleConversation());
 
 	purple_conversations_set_ui_ops(NULL);
 }
 
+void Conversations::create_conversation(PurpleConversation *conv)
+{
+	g_assert(conv);
+	g_assert(conversations.find(conv) == conversations.end());
+
+	Conversation *conversation;
+
+	PurpleConversationType type = purple_conversation_get_type(conv);
+	if (type == PURPLE_CONV_TYPE_IM)
+		conversation = new ConversationIm(conv);
+	else if (type == PURPLE_CONV_TYPE_CHAT)
+		conversation = new ConversationChat(conv);
+	else {
+		LOG->Write(Log::Level_error, "unhandled conversation type: %i\n", type);
+		return;
+	}
+
+	conversations[conv] = conversation;
+	windowmanager->Add(conversation);
+}
+
+void Conversations::destroy_conversation(PurpleConversation *conv)
+{
+	g_assert(conv);
+
+	ConversationMap::iterator i = conversations.find(conv);
+	// destroying unhandled conversation type
+	if (i == conversations.end())
+		return;
+
+	delete i->second;
+	conversations.erase(conv);
+}
+
+void Conversations::write_conv(PurpleConversation *conv, const char *name,
+	const char *alias, const char *message, PurpleMessageFlags flags, time_t mtime)
+{
+	g_assert(conv);
+
+	ConversationMap::iterator i = conversations.find(conv);
+	// message to unhandled conversation type
+	if (i == conversations.end())
+		return;
+
+	// delegate it to Conversation object
+	i->second->Receive(name, alias, message, flags, mtime);
+}

@@ -43,7 +43,7 @@ void HorizontalLine::Draw()
 	if (!area || (realw = area->getmaxx()) == 0 || area->getmaxy() != 1)
 		return;
 
-	int attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "verticalline", "line");
+	int attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "horizontalline", "line");
 	area->attron(attrs);
 	if (realw <= 1) {
 		area->mvaddstring(0, 0, linestyle.H());

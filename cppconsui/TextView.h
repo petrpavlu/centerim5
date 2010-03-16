@@ -13,9 +13,9 @@ class TextView
 		TextView(Widget& parent_, int x_, int y_, int w_, int h_, bool autoscroll_ = false);
 		virtual ~TextView();
 
-		void Append(const gchar *text);
+		void Append(const gchar *text, int color = 0);
 		/** Inserts text before specified line number. */
-		void Insert(int line_num, const gchar *text);
+		void Insert(int line_num, const gchar *text, int color = 0);
 		void Erase(int line_num);
 		void Erase(int start_line, int end_line);
 		void Clear();
@@ -34,8 +34,9 @@ class TextView
 		{
 			gchar *text; ///< UTF-8 encoded text.
 			int length; ///< Text length in characters.
+			int color;
 
-			Line(const gchar *text_, int bytes);
+			Line(const gchar *text_, int bytes, int color_);
 			virtual ~Line();
 		};
 
@@ -48,11 +49,14 @@ class TextView
 			ScreenLine(Line &parent_, const gchar *text_, int width_);
 		};
 
+		typedef std::vector<Line *> Lines;
+		typedef std::vector<ScreenLine *> ScreenLines;
+
 		int view_top;
 		bool autoscroll;
 
-		std::vector<Line *> lines;
-		std::vector<ScreenLine *> screen_lines;
+		Lines lines;
+		ScreenLines screen_lines;
 
 		const gchar *ProceedLine(const gchar *text, int area_width, int *res_width) const;
 		void UpdateScreenLines(int line_num);

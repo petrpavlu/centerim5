@@ -23,7 +23,6 @@
 
 #include "Log.h"
 #include "Conf.h"
-#include "Conversations.h"
 
 #include <cppconsui/Window.h>
 #include <cppconsui/TextView.h>
@@ -37,44 +36,41 @@
 class Conversation
 : public Window
 {
-	friend class Conversations;
-
 	public:
-		Conversation(PurpleBlistNode* node);
-		~Conversation();
-	
-		virtual void SetConversation(PurpleConversation* conv);
-		virtual void UnsetConversation(PurpleConversation* conv);
+		Conversation(PurpleConversation *conv_);
+		virtual ~Conversation() {}
 
-		void Receive(const char *name, const char *alias, const char *message,
-			PurpleMessageFlags flags, time_t mtime);
-		virtual void Send(void);
-		virtual void Close(void);
-
-		virtual void MoveResize(int newx, int newy, int neww, int newh);
+		// Window
+		virtual void Close();
 		virtual void ScreenResized();
 
+		// Widget
+		virtual void MoveResize(int newx, int newy, int neww, int newh);
+	
+		void Receive(const char *name, const char *alias, const char *message,
+			PurpleMessageFlags flags, time_t mtime);
+
+		PurpleConversation *GetPurpleConversation() { return conv; };
+
 	protected:
-		virtual void CreatePurpleConv(void);
+		void SetPartitioning(unsigned percentage);
 
-		void SetPartitioning(unsigned int percentage);
-		virtual void LoadHistory(void);
-
-		PurpleBlistNodeType type;
-		PurpleBlistNode* node;
+		virtual void LoadHistory() = 0;
 
 		Conf *conf;
+
 		TextView *view;
 		TextEdit *input;
 		HorizontalLine *line;
 		
-		int view_height;
 		PurpleConversation *conv;
 
 	private:
 		Conversation();
+		Conversation(const Conversation&);
+		Conversation& operator=(const Conversation&);
 
-		void ConstructCommon(void);
+		virtual void Send() = 0;
 	
 		DECLARE_SIG_REGISTERKEYS();
 		static bool RegisterKeys();
@@ -84,53 +80,45 @@ class Conversation
 class ConversationChat
 : public Conversation
 {
-	friend class Conversations;
-
 	public:
-		ConversationChat(PurpleChat *chat);
-		~ConversationChat();
-
-		virtual void SetConversation(PurpleConversation* conv);
-		virtual void UnsetConversation(PurpleConversation* conv);
-
-		//void Send(void);
+		ConversationChat(PurpleConversation *conv);
+		virtual ~ConversationChat() {}
 
 	protected:
-		void CreatePurpleConv(void);
-
-		void LoadHistory(void);
+		// Conversation
+		virtual void LoadHistory();
 
 	private:
 		ConversationChat();
+		ConversationChat(const ConversationChat&);
+		ConversationChat& operator=(const ConversationChat&);
+
+		// Conversation
+		virtual void Send();
 
 		PurpleConvChat* convchat;
-		PurpleChat* chat;
 };
 
 class ConversationIm
 : public Conversation
 {
-	friend class Conversations;
-
 	public:
-		ConversationIm(PurpleBuddy *buddy);
-		~ConversationIm();
-
-		virtual void SetConversation(PurpleConversation* conv);
-		virtual void UnsetConversation(PurpleConversation* conv);
-
-		void Send(void);
+		ConversationIm(PurpleConversation *conv);
+		virtual ~ConversationIm() {}
 
 	protected:
-		void CreatePurpleConv(void);
-
-		void LoadHistory(void);
+		// Conversation
+		virtual void LoadHistory();
 
 	private:
 		ConversationIm();
+		ConversationIm(const ConversationIm&);
+		ConversationIm& operator=(const ConversationIm&);
+
+		// Conversation
+		virtual void Send();
 
 		PurpleConvIm* convim;
-		PurpleBuddy* buddy;
 };
 
 

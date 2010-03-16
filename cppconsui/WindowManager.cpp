@@ -103,24 +103,6 @@ void WindowManager::Delete(void)
 	}
 }
 
-void WindowManager::CloseWindow(Window *window)
-{
-	if (HasWindow(window)) {
-		Glib::signal_timeout().connect(
-				sigc::bind(sigc::mem_fun(this, &WindowManager::CloseWindowCallback), window), 0);
-	}
-}
-
-bool WindowManager::CloseWindowCallback(Window *window)
-{
-	window->Hide();
-	Remove(window);
-	delete window;
-	Redraw();
-
-	return false;
-}
-
 void WindowManager::Add(Window *window)
 {
 	WindowInfo info;
