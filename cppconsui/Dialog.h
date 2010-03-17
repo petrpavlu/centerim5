@@ -42,7 +42,7 @@ class Dialog
 		Dialog();
 		virtual ~Dialog();
 
-		void Close(void);
+		virtual void Close();
 
 		void AddButton(const gchar *label, ResponseType response);
 

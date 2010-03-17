@@ -486,7 +486,10 @@ void AccountWindow::AccountOptionString::UpdateText()
 		value = purple_account_get_string(account, setting,
 				purple_account_option_get_default_string(option));
 
-	gchar *str = g_strdup_printf("%s: %s", text, value ? value : "");
+	if (!value)
+		value = "";
+
+	gchar *str = g_strdup_printf("%s: %s", text, value);
 	SetText(str);
 	g_free(str);
 }

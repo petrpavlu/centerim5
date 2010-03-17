@@ -56,14 +56,14 @@ void Dialog::AddButton(const gchar *text, Dialog::ResponseType response)
 	buttons->AddItem(text, sigc::bind(sigc::mem_fun(this, &Dialog::Response), response));
 }
 
-void Dialog::Close(void)
+void Dialog::Close()
 {
 	Response(ResponseCancel);
 }
 
 void Dialog::Response(Dialog::ResponseType response)
 {
-	Window::Close();
-
 	signal_response(response);
+
+	Window::Close();
 }
