@@ -23,7 +23,6 @@
 
 #include "Conversation.h"
 
-#include <cppconsui/WindowManager.h>
 #include <libpurple/conversation.h>
 #include <map>
 
@@ -47,6 +46,9 @@ class Conversations
 		void create_conversation(PurpleConversation *conv);
 		void destroy_conversation(PurpleConversation *conv);
 
+		void ShowConversation(PurpleConversationType type,
+				PurpleAccount *account, const char *name);
+
 	protected:
 
 	private:
@@ -59,10 +61,6 @@ class Conversations
 
 		typedef std::map<PurpleConversation *, Conversation *> ConversationMap;
 		ConversationMap conversations;
-
-		WindowManager *windowmanager;
-
-		void RemoveConversation(Conversation *conv);
 };
 
 #endif /* __CONVERSATIONS_H__ */

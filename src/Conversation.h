@@ -31,18 +31,19 @@
 #include <cppconsui/HorizontalLine.h>
 
 #include <libpurple/conversation.h>
-#include <libpurple/blist.h>
 
 class Conversation
 : public Window
 {
 	public:
 		Conversation(PurpleConversation *conv_);
-		virtual ~Conversation() {}
+		virtual ~Conversation();
 
 		// Window
 		virtual void Close();
 		virtual void ScreenResized();
+
+		void Show();
 
 		// Widget
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
@@ -64,6 +65,10 @@ class Conversation
 		HorizontalLine *line;
 		
 		PurpleConversation *conv;
+
+		GIOChannel *logfile;
+
+		guint destroy_id;
 
 	private:
 		Conversation();
@@ -104,7 +109,7 @@ class ConversationIm
 {
 	public:
 		ConversationIm(PurpleConversation *conv);
-		virtual ~ConversationIm() {}
+		virtual ~ConversationIm();
 
 	protected:
 		// Conversation

@@ -59,7 +59,6 @@ Window::Window(int x_, int y_, int w_, int h_, LineStyle::Type ltype)
 
 Window::~Window()
 {
-	WindowManager::Instance()->Remove(this);
 	if (realwindow)
 		delete realwindow;
 }
@@ -82,6 +81,7 @@ bool Window::RegisterKeys()
 
 void Window::Close()
 {
+	WindowManager::Instance()->Remove(this);
 	delete this;
 }
 

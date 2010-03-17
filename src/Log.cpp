@@ -138,8 +138,6 @@ void Log::glib_log_handler(const gchar *domain, GLogLevelFlags flags,
 	const gchar *msg, gpointer user_data)
 {
 	Level level;
-	char *new_msg = NULL;
-	char *new_domain = NULL;
 
 	if (flags & G_LOG_LEVEL_DEBUG)
 		level = Level_debug;
@@ -161,18 +159,8 @@ void Log::glib_log_handler(const gchar *domain, GLogLevelFlags flags,
 		level = Level_debug;
 	}
 
-	if (msg != NULL)
-		new_msg = purple_utf8_try_convert(msg);
-
-	if (domain != NULL)
-		new_domain = purple_utf8_try_convert(domain);
-
-	if (new_msg != NULL) {
-		Write(Type_glib, level, "%s: %s", (new_domain != NULL ? new_domain : "g_log"), new_msg);
-		g_free(new_msg);
-	}
-
-	g_free(new_domain);
+	if (msg)
+		Write(Type_glib, level, "%s: %s", (domain != NULL ? domain : "g_log"), msg);
 }
 
 void Log::debug_change(const char *name, PurplePrefType type, gconstpointer val)
@@ -232,7 +220,7 @@ void Log::WriteToFile(const gchar *text)
 	if (conf->GetDebugEnabled()) {
 		// open logfile if it isn't already opened
 		if (!logfile) {
-			gchar *filename = g_build_filename(purple_home_dir(), CIM_CONFIG_PATH,
+			gchar *filename = g_build_filename(purple_user_dir(),
 					conf->GetString(CONF_PREFIX "log/filename", "debug"), NULL);
 			if ((logfile = g_io_channel_new_file(filename, "a", &err)) == NULL) {
 				if (err) {

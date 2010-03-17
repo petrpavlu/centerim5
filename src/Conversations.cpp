@@ -51,8 +51,6 @@ Conversations::Conversations()
 
 	// setup the callbacks for conversations
 	purple_conversations_set_ui_ops(&centerim_conv_uiops);
-
-	windowmanager = WindowManager::Instance();
 }
 
 Conversations::~Conversations()
@@ -84,7 +82,7 @@ void Conversations::create_conversation(PurpleConversation *conv)
 	}
 
 	conversations[conv] = conversation;
-	windowmanager->Add(conversation);
+	conversation->Show();
 }
 
 void Conversations::destroy_conversation(PurpleConversation *conv)
@@ -112,4 +110,24 @@ void Conversations::write_conv(PurpleConversation *conv, const char *name,
 
 	// delegate it to Conversation object
 	i->second->Receive(name, alias, message, flags, mtime);
+}
+
+void Conversations::ShowConversation(PurpleConversationType type,
+		PurpleAccount *account, const char *name)
+{
+	g_assert(account);
+	g_assert(name);
+
+	PurpleConversation *conv = purple_find_conversation_with_account(type, name, account);
+	if (conv) {
+		ConversationMap::iterator i = conversations.find(conv);
+		// unhandled conversation type
+		if (i == conversations.end())
+			return;
+
+		i->second->Show();
+		return;
+	}
+
+	purple_conversation_new(type, account, name);
 }

@@ -19,6 +19,7 @@
  * */
 
 #include "BuddyListNode.h"
+#include "Conversations.h"
 
 #include <cppconsui/Keys.h>
 
@@ -127,7 +128,7 @@ void BuddyListBuddy::OnActivate(void)
 {
 	LOG->Write(Log::Level_debug, "Buddy activated!\n"); //TODO remove sometime
 
-	purple_conversation_new(PURPLE_CONV_TYPE_IM, purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
+	CONVERSATIONS->ShowConversation(PURPLE_CONV_TYPE_IM, purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
 }
 
 BuddyListChat::BuddyListChat(TreeView& parent, PurpleBlistNode *node)
@@ -157,7 +158,7 @@ void BuddyListChat::OnActivate(void)
 {
 	LOG->Write(Log::Level_debug, "Chat activated!\n");
 
-	purple_conversation_new(PURPLE_CONV_TYPE_CHAT, purple_chat_get_account(chat), purple_chat_get_name(chat));
+	CONVERSATIONS->ShowConversation(PURPLE_CONV_TYPE_CHAT, purple_chat_get_account(chat), purple_chat_get_name(chat));
 }
 
 BuddyListContact::BuddyListContact(TreeView& parent, PurpleBlistNode *node)
