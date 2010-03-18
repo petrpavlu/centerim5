@@ -66,6 +66,7 @@ class Conversation
 		
 		PurpleConversation *conv;
 
+		char *filename;
 		GIOChannel *logfile;
 
 		guint destroy_id;
@@ -74,6 +75,8 @@ class Conversation
 		Conversation();
 		Conversation(const Conversation&);
 		Conversation& operator=(const Conversation&);
+
+		void BuildLogFilename();
 
 		virtual void Send() = 0;
 	

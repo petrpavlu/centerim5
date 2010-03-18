@@ -55,11 +55,8 @@ Conversations::Conversations()
 
 Conversations::~Conversations()
 {
-	/* We can't simply iterate over conversations because iterator's element
-	 * is removed from conversations when we call
-	 * purple_conversation_destroy(). */
-	while (conversations.size())
-		purple_conversation_destroy(conversations.begin()->second->GetPurpleConversation());
+	// all conversations should be closed at this time
+	g_assert(conversations.empty());
 
 	purple_conversations_set_ui_ops(NULL);
 }

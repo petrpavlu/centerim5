@@ -18,8 +18,6 @@
  *
  * */
 
-/* LoadHistory taken almost verbatim from pidgin/plugins/history.c */
-
 #include "Conversation.h"
 #include "CenterIM.h"
 
@@ -27,6 +25,7 @@
 #include <cppconsui/TextView.h>
 #include <cppconsui/LineStyle.h>
 #include <cppconsui/Keys.h>
+#include <sys/stat.h>
 #include "gettext.h"
 
 #define CONTEXT_CONVERSATION "conversation"
@@ -47,6 +46,7 @@ static gboolean timeout_once_purple_conversation_destroy(gpointer data)
 Conversation::Conversation(PurpleConversation *conv_)
 : Window(0, 0, 80, 24)
 , conv(conv_)
+, filename(NULL)
 , logfile(NULL)
 , destroy_id(0)
 {
@@ -71,16 +71,9 @@ Conversation::Conversation(PurpleConversation *conv_)
 	MoveResizeRect(conf->GetChatDimensions());
 
 	// open logfile
+	BuildLogFilename();
+
 	GError *err = NULL;
-	const char *name = purple_conversation_get_name(conv);
-	const char *acc = purple_account_get_username(purple_conversation_get_account(conv));
-
-	gchar *dirname = g_build_filename(purple_user_dir(), LOGS_DIR, name, NULL);
-	if (g_mkdir_with_parents(dirname, 0700) == -1)
-		LOG->Write(Log::Level_error, _("Error creating directory `%s'.\n"), dirname);
-	g_free(dirname);
-
-	gchar *filename = g_build_filename(purple_user_dir(), LOGS_DIR, name, acc, NULL);
 	if ((logfile = g_io_channel_new_file(filename, "a", &err)) == NULL) {
 		if (err) {
 			LOG->Write(Log::Level_error, _("Error opening conversation logfile `%s' (%s).\n"), filename, err->message);
@@ -90,13 +83,13 @@ Conversation::Conversation(PurpleConversation *conv_)
 		else
 			LOG->Write(Log::Level_error, _("Error opening conversation logfile `%s'.\n"), filename);
 	}
-	g_free(filename);
 
 	DeclareBindables();
 }
 
 Conversation::~Conversation()
 {
+	g_free(filename);
 	if (logfile)
 		g_io_channel_unref(logfile);
 }
@@ -114,6 +107,41 @@ bool Conversation::RegisterKeys()
 	RegisterKeyDef(CONTEXT_CONVERSATION, "send", _("Send the message."),
 			Keys::UnicodeTermKey("x", TERMKEY_KEYMOD_CTRL));
 	return true;
+}
+
+void Conversation::BuildLogFilename()
+{
+	// based on purple_log_get_log_dir()
+
+	PurpleAccount *account;
+	PurplePlugin *prpl;
+	PurplePluginProtocolInfo *prpl_info;
+	const char *prpl_name;
+	char *acct_name;
+	char *dir;
+	const char *name;
+
+	account = purple_conversation_get_account(conv);
+	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+	g_assert(prpl);
+
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	prpl_name = prpl_info->list_icon(account, NULL);
+
+	acct_name = g_strdup(purple_escape_filename(purple_normalize(account,
+					purple_account_get_username(account))));
+
+	name = purple_conversation_get_name(conv);
+
+	filename = g_build_filename(purple_user_dir(), LOGS_DIR, prpl_name, acct_name,
+			purple_escape_filename(purple_normalize(account, name)), NULL);
+
+	dir = g_path_get_dirname(filename);
+	if (g_mkdir_with_parents(dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
+		LOG->Write(Log::Level_error, _("Error creating directory `%s'.\n"), dir);
+	g_free(dir);
+
+	g_free(acct_name);
 }
 
 void Conversation::Close()
@@ -285,10 +313,7 @@ void ConversationIm::LoadHistory()
 	// open logfile
 	GError *err = NULL;
 	GIOChannel *chan;
-	const char *name = purple_conversation_get_name(conv);
-	const char *acc = purple_account_get_username(purple_conversation_get_account(conv));
 
-	gchar *filename = g_build_filename(purple_user_dir(), LOGS_DIR, name, acc, NULL);
 	if ((chan = g_io_channel_new_file(filename, "r", &err)) == NULL) {
 		if (err) {
 			LOG->Write(Log::Level_error, _("Error opening conversation logfile `%s' (%s).\n"), filename, err->message);
@@ -355,7 +380,6 @@ void ConversationIm::LoadHistory()
 		else
 			LOG->Write(Log::Level_error, _("Error reading from conversation logfile `%s'.\n"), filename);
 	}
-	g_free(filename);
 }
 
 void ConversationIm::Send()
