@@ -57,7 +57,7 @@ class Conversations
 		Conversations& operator=(const Conversations&);
 		~Conversations();
 
-		PurpleConversationUiOps centerim_conv_uiops;
+		PurpleConversationUiOps centerim_conv_ui_ops;
 
 		typedef std::map<PurpleConversation *, Conversation *> ConversationMap;
 		ConversationMap conversations;

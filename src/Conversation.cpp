@@ -111,12 +111,9 @@ bool Conversation::RegisterKeys()
 
 void Conversation::BuildLogFilename()
 {
-	// based on purple_log_get_log_dir()
-
 	PurpleAccount *account;
 	PurplePlugin *prpl;
-	PurplePluginProtocolInfo *prpl_info;
-	const char *prpl_name;
+	const char *proto_name;
 	char *acct_name;
 	char *dir;
 	const char *name;
@@ -125,16 +122,16 @@ void Conversation::BuildLogFilename()
 	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
 	g_assert(prpl);
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	prpl_name = prpl_info->list_icon(account, NULL);
+	proto_name = purple_account_get_protocol_name(account);
 
 	acct_name = g_strdup(purple_escape_filename(purple_normalize(account,
 					purple_account_get_username(account))));
 
 	name = purple_conversation_get_name(conv);
 
-	filename = g_build_filename(purple_user_dir(), LOGS_DIR, prpl_name, acct_name,
-			purple_escape_filename(purple_normalize(account, name)), NULL);
+	filename = g_build_filename(purple_user_dir(), LOGS_DIR, proto_name,
+			acct_name, purple_escape_filename(
+				purple_normalize(account, name)), NULL);
 
 	dir = g_path_get_dirname(filename);
 	if (g_mkdir_with_parents(dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)

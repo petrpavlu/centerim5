@@ -28,21 +28,20 @@ class GeneralMenu
 {
 	public:
 		GeneralMenu(int x, int y, int w, int h);
-		virtual ~GeneralMenu();
+		virtual ~GeneralMenu() {}
 
-		void Dummy(void) { ; } //TODO remove
-
+		// Window
 		virtual void ScreenResized();
+
 	protected:
 
 	private:
 		GeneralMenu();
 		GeneralMenu(const GeneralMenu&);
-
 		GeneralMenu& operator=(const GeneralMenu&);
 
-		void OpenAccountsWindow(void);
-		void OpenTestWindow(void);
+		void OpenAccountsWindow();
+		void OpenAddBuddyRequest();
 };
 
 #endif /* __GENERALMENU_H__ */

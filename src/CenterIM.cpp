@@ -258,7 +258,7 @@ void CenterIM::UIInit(void)
 	accounts = Accounts::Instance();
 //	windowmanager->Add(accounts = new Accounts());
 //	windowmanager->Add(connections = new Connections());
-	windowmanager->Add(buddylist = BuddyList::Instance());
+	windowmanager->Add(buddylist = BUDDYLIST);
 //	windowmanager->Add(conversations = Conversations::Instance());
 //	windowmanager->Add(transfers = new Transfers());
 
@@ -352,6 +352,6 @@ void CenterIM::OpenAccountStatusMenu(void)
 void CenterIM::OpenGeneralMenu(void)
 {
 	//TODO get coords from config
-	windowmanager->Add(new GeneralMenu(40, 0, 40, 21));
+	windowmanager->Add(new GeneralMenu(40, 0, 40, 6));
 }
 

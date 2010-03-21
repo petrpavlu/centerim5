@@ -141,7 +141,7 @@ class AccountWindow
 				virtual ~AccountOptionInt() {}
 
 			protected:
-				const gchar *value;
+				int value;
 				InputDialog *dialog;
 
 			private:
@@ -197,10 +197,6 @@ class AccountWindow
 			protected:
 				AccountWindow *account_window;
 				PurpleAccount *account;
-				PurpleAccountUserSplit *split;
-
-				const char *text;
-				InputDialog *dialog;
 
 			private:
 				AccountOptionProtocol(const AccountOptionProtocol&);

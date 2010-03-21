@@ -50,7 +50,7 @@ class ComboBox
 			public:
 				ComboBoxEntry(const gchar *text_, const void *data_);
 				ComboBoxEntry(const ComboBoxEntry& other);
-				ComboBoxEntry &operator=(const ComboBoxEntry& other);
+				ComboBoxEntry& operator=(const ComboBoxEntry& other);
 				virtual ~ComboBoxEntry();
 
 				void SetText(gchar *new_text);
@@ -65,8 +65,8 @@ class ComboBox
 		};
 		typedef std::vector<ComboBoxEntry> ComboBoxEntries;
 
-		ComboBox(Widget& parent, int x, int y, int w, int h, const gchar *text);
-		ComboBox(Widget& parent, int x, int y, const gchar *text);
+		ComboBox(Widget& parent, int x, int y, int w, int h, const gchar *text = "");
+		ComboBox(Widget& parent, int x, int y, const gchar *text = "");
 
 		virtual ~ComboBox();
 
@@ -86,7 +86,7 @@ class ComboBox
 		/**
 		 * Appends a new option.
 		 */
-		void AddOption(const gchar *text, const void *data);
+		void AddOption(const gchar *text, const void *data = NULL);
 		/**
 		 * @overload AddOption(const gchar *text, const void *data);
 		 */
@@ -126,7 +126,6 @@ class ComboBox
 		int max_option_width;
 
 	private:
-		ComboBox();
 		ComboBox(const ComboBox&);
 		ComboBox& operator=(const ComboBox&);
 

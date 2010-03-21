@@ -28,34 +28,39 @@
 #include <cppconsui/Window.h>
 #include <cppconsui/TreeView.h>
 #include <cppconsui/Panel.h>
+#include <cppconsui/ComboBox.h>
+#include <cppconsui/InputDialog.h>
 
 #include <libpurple/blist.h>
+
+#define BUDDYLIST (BuddyList::Instance())
 
 class BuddyList
 : public Window
 {
 	public:
-		static BuddyList* Instance(void);
-		static void Delete(void);
+		static BuddyList *Instance();
+		void Delete();
 
 		void Close(void);
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
 
 		static void new_list_(PurpleBuddyList *list)
-			{ BuddyList::Instance()->new_list(list); }
+			{ BUDDYLIST->new_list(list); }
 		static void new_node_(PurpleBlistNode *node) 
-			{ BuddyList::Instance()->new_node(node); }
+			{ BUDDYLIST->new_node(node); }
 		static void update_node_(PurpleBuddyList *list, PurpleBlistNode *node)  
-			{ BuddyList::Instance()->update_node(list, node); }
+			{ BUDDYLIST->update_node(list, node); }
 		static void remove_node_(PurpleBuddyList *list, PurpleBlistNode *node)
-			{ BuddyList::Instance()->remove_node(list, node); }
+			{ BUDDYLIST->remove_node(list, node); }
 		static void destroy_list_(PurpleBuddyList *list)
-			{ BuddyList::Instance()->destroy_list(list); }
-		static void request_add_buddy(PurpleAccount *account, const char *username, const char *group, const char *alias)
+			{ BUDDYLIST->destroy_list(list); }
+		static void request_add_buddy_(PurpleAccount *account,
+				const char *username, const char *group, const char *alias)
+			{ BUDDYLIST->request_add_buddy(account, username, group, alias); }
+		static void request_add_chat_(PurpleAccount *account, PurpleGroup *group, const char *alias, const char *name)
 			{ /*TODO hand of to Request object*/ ; }
-		static void request_add_chat(PurpleAccount *account, PurpleGroup *group, const char *alias, const char *name)
-			{ /*TODO hand of to Request object*/ ; }
-		static void request_add_group(void)
+		static void request_add_group_()
 			{ /*TODO hand of to Request object*/ ; }
 
 		void new_list(PurpleBuddyList *list);
@@ -63,13 +68,107 @@ class BuddyList
 		void update_node(PurpleBuddyList *list, PurpleBlistNode *node);
 		void remove_node(PurpleBuddyList *list, PurpleBlistNode *node);
 		void destroy_list(PurpleBuddyList *list);
+		void request_add_buddy(PurpleAccount *account, const char *username,
+				const char *group, const char *alias);
 		
 		virtual void ScreenResized();
 	
 	protected:
 
 	private:
+		class AccountsBox
+		: public ComboBox
+		{
+			public:
+				AccountsBox(Widget& parent, int x, int y, PurpleAccount *account);
+				virtual ~AccountsBox() {}
+
+				PurpleAccount *GetSelected() { return selected; }
+
+			protected:
+				PurpleAccount *selected;
+
+				void UpdateText();
+
+			private:
+				AccountsBox(const AccountsBox&);
+				AccountsBox& operator=(const AccountsBox&);
+
+				void OnAccountChanged(const ComboBox::ComboBoxEntry& new_entry);
+		};
+
+		class NameButton
+		: public Button
+		{
+			public:
+				NameButton(Widget& parent, int x, int y, bool alias, const gchar *val);
+				virtual ~NameButton();
+
+				const gchar *GetValue() { return value; }
+
+			protected:
+				const gchar *text;
+				gchar *value;
+				InputDialog *dialog;
+
+				void UpdateText();
+
+			private:
+				NameButton(const NameButton&);
+				NameButton& operator=(const NameButton&);
+
+				virtual void OnActivate();
+
+				void ResponseHandler(Dialog::ResponseType response);
+		};
+
+		class GroupBox
+		: public ComboBox
+		{
+			public:
+				GroupBox(Widget& parent, int x, int y, const gchar *group);
+				virtual ~GroupBox();
+
+				const gchar *GetSelected() { return selected; }
+
+			protected:
+				gchar *selected;
+
+				void UpdateText();
+
+			private:
+				GroupBox(const GroupBox&);
+				GroupBox& operator=(const GroupBox&);
+
+				void OnAccountChanged(const ComboBox::ComboBoxEntry& new_entry);
+		};
+
+		class AddBuddyWindow
+		: public Window
+		{
+			public:
+				AddBuddyWindow(PurpleAccount *account, const char *username,
+						const char *group, const char *alias);
+				virtual ~AddBuddyWindow() {}
+
+			protected:
+				AccountsBox *accounts_box;
+				NameButton *name_button;
+				NameButton *alias_button;
+				GroupBox *group_box;
+				HorizontalLine *line;
+				HorizontalListBox *menu;
+
+			private:
+				AddBuddyWindow(const AddBuddyWindow&);
+				AddBuddyWindow& operator=(const AddBuddyWindow&);
+
+				void Add();
+		};
+
 		BuddyList();
+		BuddyList(const BuddyList&);
+		BuddyList& operator=(const BuddyList&);
 		~BuddyList();
 
 		bool Load(void);

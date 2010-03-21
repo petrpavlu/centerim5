@@ -22,12 +22,6 @@
 #include "AccountWindow.h"
 #include "CenterIM.h"
 
-//TODO remove testing stuff
-#include "Log.h"
-#include <cppconsui/MessageDialog.h>
-#include <cppconsui/ComboBox.h>
-#include <cppconsui/TextView.h>
-
 //TODO remove when show() of window/dialog is implemented
 #include <cppconsui/WindowManager.h>
 #include "gettext.h"
@@ -37,10 +31,14 @@ GeneralMenu::GeneralMenu(int x, int y, int w, int h)
 {
 	SetColorScheme("generalmenu");
 
+	/*
 	AddItem(_("Testing"), sigc::mem_fun(this, &GeneralMenu::OpenTestWindow));
 	AddItem(_("Change status"), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	AddItem(_("Go to contact..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
+	*/
 	AddItem(_("Accounts..."), sigc::mem_fun(this, &GeneralMenu::OpenAccountsWindow));
+	AddItem(_("Add buddy"), sigc::mem_fun(this, &GeneralMenu::OpenAddBuddyRequest));
+	/*
 	AddItem(_("CenterIM config options..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	AddSeparator();
 	AddItem(_("Find/add users"), sigc::mem_fun(this, &GeneralMenu::Dummy));
@@ -54,53 +52,18 @@ GeneralMenu::GeneralMenu(int x, int y, int w, int h)
 	AddItem(_("Show offline users"), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	AddItem(_("Organize contact groups"), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	AddItem(_("Mass group move..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
+	*/
 	AddSeparator();
 	AddItem(_("Quit"), sigc::mem_fun(CenterIM::Instance(), &CenterIM::Quit));
 }
 
-GeneralMenu::~GeneralMenu()
+void GeneralMenu::ScreenResized()
 {
+	Rect chat = CenterIM::Instance().ScreenAreaSize(CenterIM::ChatArea);
+	MoveResize(chat.x, chat.y, win_w, win_h);
 }
 
-void GeneralMenu::OpenTestWindow(void)
-{
-	/*
-	TextView view(*this, 0, 0, w, h);
-	TextIter start_iter, end_iter, insert;
-	Rect r;
-	Rect c;
-	Log* log = Log::Instance();
-
-	Glib::ustring s("the foo was bar in the spring.\n");
-
-	view.insert_at_cursor(s.c_str());
-	view.insert_at_cursor(s.c_str());
-
-	view.get_visible_rect(&r);
-	view.get_cursor_location(&c);
-	log->Write(Log::Type_cim, Log::Level_debug, "rect: %d %d %d %d cursor: %d %d %d %d (x,y,w,h)\n", 
-			r.Left(), r.Top(), r.Width(), r.Height(),
-			c.Left(), c.Top(), c.Width(), c.Height());
-
-
-	view.select_all(true);
-	view.backspace();
-
-	view.get_visible_rect(&r);
-	view.get_cursor_location(&c);
-	log->Write(Log::Type_cim, Log::Level_debug, "rect: %d %d %d %d cursor: %d %d %d %d\n", 
-			r.Left(), r.Top(), r.Width(), r.Height(),
-			c.Left(), c.Top(), c.Width(), c.Height());
-*/
-
-	/*
-	WindowManager *wm = WindowManager::Instance();
-	MessageDialog *dialog = new MessageDialog("Message.");
-	wm->Add(dialog);*/
-	Close();
-}
-
-void GeneralMenu::OpenAccountsWindow(void)
+void GeneralMenu::OpenAccountsWindow()
 {
 	//TODO adding to the windowmanager should be done by the windows themselves?
 	WindowManager *wm = WindowManager::Instance();
@@ -108,8 +71,7 @@ void GeneralMenu::OpenAccountsWindow(void)
 	Close();
 }
 
-void GeneralMenu::ScreenResized()
+void GeneralMenu::OpenAddBuddyRequest()
 {
-	Rect chat = CenterIM::Instance().ScreenAreaSize(CenterIM::ChatArea);
-	MoveResize(chat.x, chat.y, win_w, win_h);
+	purple_blist_request_add_buddy(NULL, NULL, NULL, NULL);
 }

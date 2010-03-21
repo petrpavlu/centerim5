@@ -529,7 +529,7 @@ void AccountWindow::AccountOptionString::ResponseHandler(Dialog::ResponseType re
 AccountWindow::AccountOptionInt::AccountOptionInt(Widget& parent,
 	PurpleAccount *account, PurpleAccountOption *option)
 : AccountWindow::AccountOption::AccountOption(parent, account, option)
-, value(NULL)
+, value(0)
 , dialog(NULL)
 {
 	UpdateText();
@@ -537,9 +537,10 @@ AccountWindow::AccountOptionInt::AccountOptionInt(Widget& parent,
 
 void AccountWindow::AccountOptionInt::UpdateText()
 {
-	gchar *str = g_strdup_printf("%s: %d", text,
-			purple_account_get_int(account, setting,
-				purple_account_option_get_default_int(option)));
+	value = purple_account_get_int(account, setting,
+			purple_account_option_get_default_int(option));
+
+	gchar *str = g_strdup_printf("%s: %d", text, value);
 	SetText(str);
 	g_free(str);
 }
@@ -547,7 +548,11 @@ void AccountWindow::AccountOptionInt::UpdateText()
 void AccountWindow::AccountOptionInt::OnActivate()
 {
 	WindowManager *wm = WindowManager::Instance();
-	dialog = new InputDialog(text, value);
+
+	gchar *value_string = g_strdup_printf("%d", value);
+	dialog = new InputDialog(text, value_string);
+	g_free(value_string);
+
 	dialog->SetFlags(TextEntry::FlagNumeric);
 	dialog->signal_response.connect(
 			sigc::mem_fun(this, &AccountWindow::AccountOptionInt::ResponseHandler));
@@ -560,7 +565,7 @@ void AccountWindow::AccountOptionInt::ResponseHandler(Dialog::ResponseType respo
 {
 	g_assert(dialog);
 
-	const gchar* text;
+	const gchar *text;
 	long int i;
 
 	switch (response) {
@@ -697,15 +702,11 @@ AccountWindow::AccountOptionProtocol::AccountOptionProtocol(Widget& parent,
 {
 	g_assert(account);
 
-	GList *i;
-	PurplePlugin *plugin;
+	for (GList *i = purple_plugins_get_protocols(); i; i = i->next)
+		AddOption(((PurplePlugin *) i->data)->info->name, i->data);
 
-	plugin = purple_plugins_find_with_id(purple_account_get_protocol_id(account));
-
-	for (i = purple_plugins_get_protocols(); i; i = i->next)
-		AddOption(((PurplePlugin*)i->data)->info->name, i->data);
-
-	gchar *label = g_strdup_printf("Protocol: %s", plugin->info->name);
+	PurplePlugin *plugin = purple_plugins_find_with_id(purple_account_get_protocol_id(account));
+	gchar *label = g_strdup_printf(_("Protocol: %s"), plugin->info->name);
 	SetText(label);
 	g_free(label);
 

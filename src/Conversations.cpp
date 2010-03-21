@@ -32,25 +32,25 @@ Conversations *Conversations::Instance()
 
 Conversations::Conversations()
 {
-	memset(&centerim_conv_uiops, 0, sizeof(centerim_conv_uiops));
-	centerim_conv_uiops.create_conversation = create_conversation_;
-	centerim_conv_uiops.destroy_conversation = destroy_conversation_;
-	//centerim_conv_uiops.write_chat = ;
-	//centerim_conv_uiops.write_im = ;
-	centerim_conv_uiops.write_conv = write_conv_;
-	//centerim_conv_uiops.chat_add_users = ;
-	//centerim_conv_uiops.chat_rename_user = ;
-	//centerim_conv_uiops.chat_remove_users = ;
-	//centerim_conv_uiops.chat_update_user = ;
-	//centerim_conv_uiops.present = ;
-	//centerim_conv_uiops.has_focus = ;
-	//centerim_conv_uiops.custom_smiley_add = ;
-	//centerim_conv_uiops.custom_smiley_write = ;
-	//centerim_conv_uiops.custom_smiley_close = ;
-	//centerim_conv_uiops.send_confirm = ;
+	memset(&centerim_conv_ui_ops, 0, sizeof(centerim_conv_ui_ops));
+	centerim_conv_ui_ops.create_conversation = create_conversation_;
+	centerim_conv_ui_ops.destroy_conversation = destroy_conversation_;
+	//centerim_conv_ui_ops.write_chat = ;
+	//centerim_conv_ui_ops.write_im = ;
+	centerim_conv_ui_ops.write_conv = write_conv_;
+	//centerim_conv_ui_ops.chat_add_users = ;
+	//centerim_conv_ui_ops.chat_rename_user = ;
+	//centerim_conv_ui_ops.chat_remove_users = ;
+	//centerim_conv_ui_ops.chat_update_user = ;
+	//centerim_conv_ui_ops.present = ;
+	//centerim_conv_ui_ops.has_focus = ;
+	//centerim_conv_ui_ops.custom_smiley_add = ;
+	//centerim_conv_ui_ops.custom_smiley_write = ;
+	//centerim_conv_ui_ops.custom_smiley_close = ;
+	//centerim_conv_ui_ops.send_confirm = ;
 
 	// setup the callbacks for conversations
-	purple_conversations_set_ui_ops(&centerim_conv_uiops);
+	purple_conversations_set_ui_ops(&centerim_conv_ui_ops);
 }
 
 Conversations::~Conversations()

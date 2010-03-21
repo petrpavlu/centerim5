@@ -292,12 +292,12 @@ void TreeView::DeleteNode(const NodeReference &node, bool keepchildren)
 	bool has_focus = false;
 	if (!keepchildren) {
 		NodeReference act = focus_node;
-		while (act.node) {
+		while (thetree.is_valid(act)) {
 			if (act == node) {
 				has_focus = true;
 				break;
 			}
-			act = act.node->parent;
+			act = thetree.parent(act);
 		}
 	}
 

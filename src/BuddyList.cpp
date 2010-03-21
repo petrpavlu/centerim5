@@ -40,6 +40,7 @@
 #include <libpurple/pounce.h>
 #include <libpurple/debug.h>
 #include <libpurple/savedstatuses.h>
+#include "gettext.h"
 
 #include <glibmm/main.h>
 
@@ -69,9 +70,9 @@ static PurpleBlistUiOps centerim_blist_ui_ops =
 	BuddyList::remove_node_,
 	BuddyList::destroy_list_,
 	NULL, /* set_visible */
-	BuddyList::request_add_buddy,
-	BuddyList::request_add_chat,
-	BuddyList::request_add_group,
+	BuddyList::request_add_buddy_,
+	BuddyList::request_add_chat_,
+	BuddyList::request_add_group_,
 	NULL,
 	NULL,
 	NULL,
@@ -123,7 +124,7 @@ BuddyList::~BuddyList()
 	 * this is done automatically by libpurple
 	 * when any change occurs, but lets do that anyway
 	 */
-	purple_blist_schedule_save(); //TODO: will this go wrong?! (probably)
+	//purple_blist_schedule_save(); //TODO: will this go wrong?! (probably)
 }
 
 void BuddyList::Close(void)
@@ -223,6 +224,11 @@ void BuddyList::destroy_list(PurpleBuddyList *list)
 {
 }
 
+void BuddyList::request_add_buddy(PurpleAccount *account, const char *username, const char *group, const char *alias)
+{
+	WindowManager::Instance()->Add(new AddBuddyWindow(account, username, group, alias));
+}
+
 void BuddyList::MoveResize(int newx, int newy, int neww, int newh)
 {
 	/* Let parent's Resize() renew data structures (including
@@ -242,4 +248,189 @@ void BuddyList::MoveResize(int newx, int newy, int neww, int newh)
 void BuddyList::ScreenResized()
 {
 	MoveResizeRect(CenterIM::Instance().ScreenAreaSize(CenterIM::BuddyListArea));
+}
+
+BuddyList::AccountsBox::AccountsBox(Widget& parent, int x, int y, PurpleAccount *account)
+: ComboBox(parent, x, y)
+, selected(account)
+{
+	GList *i = purple_accounts_get_all();
+
+	if (!selected && i)
+		selected = (PurpleAccount *) i->data;
+
+	for ( ; i; i = i->next) {
+		PurpleAccount *account = (PurpleAccount *) i->data;
+		gchar *label = g_strdup_printf("[%s] %s",
+				purple_account_get_protocol_name(account),
+				purple_account_get_username(account));
+		AddOption(label, account);
+		g_free(label);
+	}
+
+	UpdateText();
+
+	signal_selection_changed.connect(
+			sigc::mem_fun(this, &BuddyList::AccountsBox::OnAccountChanged));
+}
+
+void BuddyList::AccountsBox::UpdateText()
+{
+	gchar *label = g_strdup_printf("%s: [%s] %s", _("Account"),
+			purple_account_get_protocol_name(selected),
+			purple_account_get_username(selected));
+	SetText(label);
+	g_free(label);
+}
+
+void BuddyList::AccountsBox::OnAccountChanged(const ComboBox::ComboBoxEntry& new_entry)
+{
+	selected = (PurpleAccount *) new_entry.data;
+	UpdateText();
+}
+
+BuddyList::NameButton::NameButton(Widget& parent, int x, int y, bool alias, const gchar *val)
+: Button(parent, x, y, "")
+, dialog(NULL)
+{
+	if (alias)
+		text = _("Alias");
+	else
+		text = _("Buddy name");
+
+	// value always points to an allocated string
+	if (val)
+		value = g_strdup(value);
+	else
+		value = g_strdup("");
+
+	UpdateText();
+
+	signal_activate.connect(sigc::mem_fun(this,
+				&BuddyList::NameButton::OnActivate));
+}
+
+BuddyList::NameButton::~NameButton()
+{
+	g_free(value);
+}
+
+void BuddyList::NameButton::UpdateText()
+{
+	gchar *label = g_strdup_printf("%s: %s", text, value);
+	SetText(label);
+	g_free(label);
+}
+
+void BuddyList::NameButton::OnActivate()
+{
+	g_assert(!dialog);
+
+	WindowManager *wm = WindowManager::Instance();
+
+	dialog = new InputDialog(text, value);
+	dialog->signal_response.connect(
+			sigc::mem_fun(this, &BuddyList::NameButton::ResponseHandler));
+	wm->Add(dialog);
+}
+
+void BuddyList::NameButton::ResponseHandler(Dialog::ResponseType response)
+{
+	g_assert(dialog);
+
+	switch (response) {
+		case Dialog::ResponseOK:
+			g_free(value);
+			value = g_strdup(dialog->GetText());
+
+			UpdateText();
+			break;
+		default:
+			break;
+	}
+	dialog = NULL;
+}
+
+BuddyList::GroupBox::GroupBox(Widget& parent, int x, int y, const gchar *group)
+: ComboBox(parent, x, y)
+{
+	PurpleBlistNode *i = purple_blist_get_root();
+
+	if (i == NULL) {
+		AddOption(_("Buddies"));
+		selected = g_strdup(_("Buddies"));
+	}
+	else {
+		selected = g_strdup(purple_group_get_name(PURPLE_GROUP(i)));
+		while (i) {
+			if (PURPLE_BLIST_NODE_IS_GROUP(i))
+				AddOption(purple_group_get_name(PURPLE_GROUP(i)));
+			i = i->next;
+		}
+	}
+
+	UpdateText();
+
+	signal_selection_changed.connect(
+			sigc::mem_fun(this, &BuddyList::GroupBox::OnAccountChanged));
+}
+
+BuddyList::GroupBox::~GroupBox()
+{
+	g_free(selected);
+}
+
+void BuddyList::GroupBox::UpdateText()
+{
+	gchar *label = g_strdup_printf("%s: %s", _("Group"), selected);
+	SetText(label);
+	g_free(label);
+}
+
+void BuddyList::GroupBox::OnAccountChanged(const ComboBox::ComboBoxEntry& new_entry)
+{
+	g_free(selected);
+	selected = g_strdup(new_entry.GetText());
+	UpdateText();
+}
+
+BuddyList::AddBuddyWindow::AddBuddyWindow(PurpleAccount *account,
+		const char *username, const char *group, const char *alias)
+: Window(0, 0, 50, 10)
+{
+	accounts_box = new AccountsBox(*this, 0, 0, account);
+	name_button = new NameButton(*this, 0, 1, false, username);
+	alias_button = new NameButton(*this, 0, 2, true, alias);
+	group_box = new GroupBox(*this, 0, 3, group);
+	line = new HorizontalLine(*this, 0, 4, width);
+
+	menu = new HorizontalListBox(*this, 0, 5, width, 1);
+	//menu->FocusCycle(Container::FocusCycleLocal);
+	menu->AddItem(_("Add"), sigc::mem_fun(this, &BuddyList::AddBuddyWindow::Add));
+
+	AddWidget(*accounts_box);
+	AddWidget(*name_button);
+	AddWidget(*alias_button);
+	AddWidget(*group_box);
+	AddWidget(*line);
+	AddWidget(*menu);
+}
+
+void BuddyList::AddBuddyWindow::Add()
+{
+	PurpleAccount *account = accounts_box->GetSelected();
+	const char *who = name_button->GetValue();
+	const char *whoalias = alias_button->GetValue();
+	const char *grp = group_box->GetSelected();
+
+	PurpleGroup *g = purple_find_group(grp);
+	PurpleBuddy *b = purple_find_buddy_in_group(account, who, g);
+
+	if (!b) {
+		b = purple_buddy_new(account, who, whoalias[0] != '\0' ? whoalias : NULL);
+		purple_blist_add_buddy(b, NULL, g, NULL);
+		purple_account_add_buddy(account, b);
+	}
+
+	Close();
 }
