@@ -49,9 +49,15 @@ AC_SUBST(GLIBMM_CFLAGS)
 AC_SUBST(GLIBMM_LIBS)
 
 # TODO -- verify which should be the latest ncurses library supported and check it too
-PKG_CHECK_MODULES([NCURSESW], [ncursesw >= 5.7])
-AC_SUBST(NCURSESW_LIBS)
-AC_SUBST(NCURSESW_CFLAGS)
+#PKG_CHECK_MODULES([NCURSESW], [ncursesw >= 5.7])
+#AC_SUBST(NCURSESW_LIBS)
+#AC_SUBST(NCURSESW_CFLAGS)
+
+AC_PATH_LIB_LIBCONFIG
+AC_PATH_LIB(ncursesw, , ncurses.h, ncursesw5-config, , , [
+	AC_MSG_RESULT(no)
+	AC_ERROR(You must have the ncursesw library and developement headers installed to build.)
+	])
 
 ############################
 # Checks for header files. #

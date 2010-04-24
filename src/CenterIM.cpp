@@ -30,7 +30,6 @@
 #define CONTEXT_CENTERIM "centerim"
 
 std::vector<CenterIM::LogBufferItem> *CenterIM::logbuf = NULL;
-GHashTable *CenterIM::ui_info = NULL;
 
 CenterIM &CenterIM::Instance(void)
 {
@@ -74,6 +73,8 @@ void CenterIM::Quit(void) {
 
 GHashTable *CenterIM::get_ui_info(void)
 { 
+	static GHashTable *ui_info = NULL;
+
 	if (ui_info == NULL) {
 		ui_info = g_hash_table_new(g_str_hash, g_str_equal);
 
@@ -181,7 +182,7 @@ void CenterIM::PurpleInit(void)
 	logbuf_debug_ui_ops.is_enabled = tmp_is_enabled;
 	purple_debug_set_ui_ops(&logbuf_debug_ui_ops);
 
-	//centerim_core_ui_ops.get_ui_info = get_ui_info;
+	centerim_core_ui_ops.get_ui_info = get_ui_info;
 	purple_core_set_ui_ops(&centerim_core_ui_ops);
 
 	// set the uiops for the eventloop

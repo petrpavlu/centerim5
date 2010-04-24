@@ -109,8 +109,6 @@ class CenterIM
 			IOClosure(void) : function(NULL), result(0), data(NULL) {}
 		};
 
-		static GHashTable *ui_info;
-
 		struct LogBufferItem {
 			PurpleDebugLevel level;
 			char *category;

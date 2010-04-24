@@ -41,7 +41,7 @@ TestWindow::TestWindow(int number, int x, int y, int w, int h)
 
 void TestWindow::ScreenResized()
 {
-	Redraw();
+	signal_redraw(*this);
 }
 
 // TestApp class
@@ -102,7 +102,7 @@ void TestApp::Run()
 
 void TestApp::DeclareBindables()
 {
-	DeclareBindable(CONTEXT_TESTAPP, "quit", "Quit TestApp.",
+	DeclareBindable(CONTEXT_TESTAPP, "quit",
 			sigc::mem_fun(this, &TestApp::Quit),
 			InputProcessor::Bindable_Override);
 }
@@ -110,7 +110,8 @@ void TestApp::DeclareBindables()
 DEFINE_SIG_REGISTERKEYS(TestApp, RegisterKeys);
 bool TestApp::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_TESTAPP, "quit", Keys::FunctionTermKey(10));
+	RegisterKeyDef(CONTEXT_TESTAPP, "quit",
+			"Quit TestApp.", Keys::FunctionTermKey(10));
 	return true;
 }
 
