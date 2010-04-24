@@ -5,6 +5,8 @@ _$*
 *$
 #*
 *.a
+*.la
+*.lo
 autom4te.cache
 *.bak
 *.BAK
@@ -49,8 +51,6 @@ TAGS
 /config/missing
 /config.status
 /configure
-/cppconsui/libcppconsui.la
-/cppconsui/libcppconsui_la-*.lo
 /intl
 /libtool
 /m4/codeset.m4
