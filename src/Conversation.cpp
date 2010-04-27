@@ -56,14 +56,12 @@ Conversation::Conversation(PurpleConversation *conv_)
 
 	conf = Conf::Instance();
 
-	view = new TextView(1, 0, width - 2, height, true);
-	input = new TextEdit(1, 1, width - 2, height);
-	line = new HorizontalLine(0, height, width);
-	AddWidget(*view);
-	AddWidget(*input);
-	AddWidget(*line);
-
-	input->GrabFocus();
+	view = new TextView(width - 2, height, true);
+	input = new TextEdit(width - 2, height);
+	line = new HorizontalLine(width);
+	AddWidget(*view, 1, 0);
+	AddWidget(*input, 1, 1);
+	AddWidget(*line, 0, height);
 
 	SetPartitioning(conf->GetChatPartitioning());
 	

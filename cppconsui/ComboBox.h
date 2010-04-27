@@ -65,8 +65,8 @@ class ComboBox
 		};
 		typedef std::vector<ComboBoxEntry> ComboBoxEntries;
 
-		ComboBox(int x, int y, int w, int h, const gchar *text = "");
-		ComboBox(int x, int y, const gchar *text = "");
+		ComboBox(int w, int h, const gchar *text = "");
+		ComboBox(const gchar *text = "");
 
 		virtual ~ComboBox();
 

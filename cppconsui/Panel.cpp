@@ -31,12 +31,13 @@
 #include "ConsuiCurses.h"
 #include "ColorScheme.h"
 
-Panel::Panel(int x, int y, int w, int h, LineStyle::Type ltype)
-: Widget(x, y, w, h)
+Panel::Panel(int w, int h, LineStyle::Type ltype)
+: Widget(w, h)
 , linestyle(ltype)
 , label(NULL)
 {
-	label = new Label(2, 0, w - 4, 1, "");
+	/// @todo Finish label showing.
+	label = new Label(/*2, 0,*/ w - 4, 1, "");
 }
 
 Panel::~Panel()

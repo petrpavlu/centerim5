@@ -31,8 +31,8 @@
 #include "ConsuiCurses.h"
 #include "ColorScheme.h"
 
-HorizontalLine::HorizontalLine(int x, int y, int w, LineStyle::Type ltype)
-: AbstractLine(x, y, w, 1, ltype)
+HorizontalLine::HorizontalLine(int w, LineStyle::Type ltype)
+: AbstractLine(w, 1, ltype)
 {
 }
 

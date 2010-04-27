@@ -3,8 +3,8 @@
 #include "CppConsUI.h"
 #include "ColorScheme.h"
 
-TextView::TextView(int x, int y, int w, int h, bool autoscroll_)
-: Widget(x, y, w, h)
+TextView::TextView(int w, int h, bool autoscroll_)
+: Widget(w, h)
 , view_top(0)
 , autoscroll(autoscroll_)
 {

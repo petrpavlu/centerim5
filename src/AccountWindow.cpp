@@ -45,9 +45,9 @@ AccountWindow::AccountWindow()
 
 	conf = Conf::Instance();
 
-	accounts = new TreeView(0, 0, width, height - 2);
-	menu = new HorizontalListBox(1, height - 1, width, 1);
-	line = new HorizontalLine(1, height - 2, width);
+	accounts = new TreeView(width, height - 2);
+	menu = new HorizontalListBox(width, 1);
+	line = new HorizontalLine(width);
 
 	accounts->FocusCycle(Container::FocusCycleLocal);
 	menu->FocusCycle(Container::FocusCycleLocal);
@@ -56,9 +56,9 @@ AccountWindow::AccountWindow()
 	menu->AddSeparator();
 	menu->AddItem(_("Done"), sigc::mem_fun(this, &AccountWindow::Close));
 
-	AddWidget(*accounts);
-	AddWidget(*menu);
-	AddWidget(*line);
+	AddWidget(*accounts, 0, 0);
+	AddWidget(*menu, 1, height - 1);
+	AddWidget(*line, 1, height - 2);
 
 	MoveResizeRect(conf->GetAccountWindowDimensions());
 	
@@ -250,8 +250,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		Button *button;
 		TreeView::NodeReference parent_reference;
 
-		button = new Button(0, 0, "",
-				sigc::mem_fun(accounts, &TreeView::ActionToggleCollapsed));
+		button = new Button("", sigc::mem_fun(accounts, &TreeView::ActionToggleCollapsed));
 		parent_reference = accounts->AddNode(accounts->Root(), button, account);
 		accounts->Collapse(parent_reference);
 		account_entry->parent = button;
@@ -268,7 +267,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		Label *label;
 
 		// we cannot change the settings of an unknown account
-		label = new Label(0, 0, _("Invalid account or protocol plugin not loaded"));
+		label = new Label(_("Invalid account or protocol plugin not loaded"));
 		accounts->AddNode(account_entry->parent_reference, label, account);
 		account_entry->widgets.push_back(label);
 
@@ -371,7 +370,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 	}
 
 	// drop account
-	widget = new Button(0, 0, _("Drop account"),
+	widget = new Button(_("Drop account"),
 			sigc::bind(sigc::mem_fun(this, &AccountWindow::DropAccount), account));
 	accounts->AddNode(account_entry->parent_reference, widget, NULL);
 	account_entry->widgets.push_back(widget);
@@ -379,7 +378,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 
 AccountWindow::AccountOption::AccountOption(PurpleAccount *account,
 		PurpleAccountOption *option)
-: Button(0, 0, "")
+: Button("")
 , account(account)
 , option(option)
 {
@@ -585,7 +584,7 @@ void AccountWindow::AccountOptionInt::ResponseHandler(Dialog::ResponseType respo
 
 AccountWindow::AccountOptionSplit::AccountOptionSplit(PurpleAccount *account,
 		PurpleAccountUserSplit *split, AccountEntry *account_entry)
-: Button(0, 0, "")
+: Button("")
 , account(account)
 , split(split)
 , account_entry(account_entry)
@@ -693,7 +692,7 @@ void AccountWindow::AccountOptionSplit::ResponseHandler(Dialog::ResponseType res
 
 AccountWindow::AccountOptionProtocol::AccountOptionProtocol(PurpleAccount *account,
 		AccountWindow &account_window)
-: ComboBox(0, 0, "")
+: ComboBox("")
 , account_window(&account_window)
 , account(account)
 {

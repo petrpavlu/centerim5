@@ -28,9 +28,9 @@
 
 #include <string>
 
-Widget::Widget(int x, int y, int w, int h)
-: xpos(x)
-, ypos(y)
+Widget::Widget(int w, int h)
+: xpos(0)
+, ypos(0)
 , width(w)
 , height(h)
 , can_focus(false)

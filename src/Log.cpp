@@ -49,8 +49,8 @@ Log::Log(void)
 
 	conf = Conf::Instance();
 
-	textview = new TextView(1, 0, width - 2, height, true);
-	AddWidget(*textview);
+	textview = new TextView(width - 2, height, true);
+	AddWidget(*textview, 1, 0);
 
 #define REGISTER_G_LOG_HANDLER(name) \
 	g_log_set_handler((name), (GLogLevelFlags)(G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL \

@@ -31,8 +31,8 @@ class TextBrowser
 : public Widget
 {
 	public:
-		TextBrowser(int x, int y, int w, int h);
-		TextBrowser(int x, int y, int w, int h, std::vector<Glib::ustring> &lines);
+		TextBrowser(int w, int h);
+		TextBrowser(int w, int h, std::vector<Glib::ustring> &lines);
 		virtual ~TextBrowser();
 
 		//TODO remove hackish interface and add nice functions

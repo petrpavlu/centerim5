@@ -38,8 +38,7 @@ class HorizontalLine
 : public AbstractLine
 {
 	public:
-		HorizontalLine(int x, int y, int w,
-				LineStyle::Type ltype = LineStyle::DEFAULT);
+		HorizontalLine(int w, LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~HorizontalLine() {}
 
 		// Widget

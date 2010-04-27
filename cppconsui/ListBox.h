@@ -39,14 +39,14 @@ class ListBox
 : public AbstractListBox
 {
 	public:
-		ListBox(int x, int y, int w, int h);
+		ListBox(int w, int h);
 		virtual ~ListBox() {}
 
 		// AbstractListBox
 		void AddSeparator();
 
 		// Container
-		virtual void AddWidget(Widget& widget);
+		virtual void AddWidget(Widget& widget, int x = 0, int y = 0);
 		virtual void RemoveWidget(Widget& widget);
 
 	protected:

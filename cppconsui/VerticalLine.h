@@ -38,8 +38,7 @@ class VerticalLine
 : public AbstractLine
 {
 	public:
-		VerticalLine(int x, int y, int w,
-				LineStyle::Type ltype = LineStyle::DEFAULT);
+		VerticalLine(int w, LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~VerticalLine() {}
 
 		// Widget

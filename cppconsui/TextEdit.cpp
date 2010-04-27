@@ -30,8 +30,8 @@
 
 #define CONTEXT_TEXTENTRY "textedit"
 
-TextEdit::TextEdit(int x, int y, int w, int h)
-: Widget(x, y, w, h)
+TextEdit::TextEdit(int w, int h)
+: Widget(w, h)
 , editable(true)
 , buffer(NULL)
 , gap_size(20) /// @todo

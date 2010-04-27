@@ -51,7 +51,7 @@ class Widget
 		 * @todo use the Point and Rect classes, perhaps implement a Size class 
 		 *   hold width and height variables, to enable easier usage
 		 */
-		Widget(int x, int y, int w, int h);
+		Widget(int w, int h);
 		virtual ~Widget();
 
 		/** @todo This method, as well as Resize(), MoveResize() 

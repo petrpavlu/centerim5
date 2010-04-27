@@ -30,8 +30,8 @@
 
 #define CONTEXT_TREEVIEW "treeview"
 
-TreeView::TreeView(int x, int y, int w, int h, LineStyle::Type ltype)
-: ScrollPane(x, y, w, h, w, h)
+TreeView::TreeView(int w, int h, LineStyle::Type ltype)
+: ScrollPane(w, h, w, h)
 , linestyle(ltype)
 , itemswidth(0)
 , itemsheight(0)

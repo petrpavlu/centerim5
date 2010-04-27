@@ -27,9 +27,8 @@
 
 #include "AbstractLine.h"
 
-AbstractLine::AbstractLine(int x, int y, int w, int h,
-		LineStyle::Type ltype)
-: Widget(x, y, w, h)
+AbstractLine::AbstractLine(int w, int h, LineStyle::Type ltype)
+: Widget(w, h)
 , linestyle(ltype)
 {
 }

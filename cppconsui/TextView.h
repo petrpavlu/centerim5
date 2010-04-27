@@ -10,7 +10,7 @@ class TextView
 : public Widget 
 {
 	public:
-		TextView(int x, int y, int w, int h, bool autoscroll_ = false);
+		TextView(int w, int h, bool autoscroll_ = false);
 		virtual ~TextView();
 
 		void Append(const gchar *text, int color = 0);

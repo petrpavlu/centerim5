@@ -27,7 +27,7 @@ class ScrollPane
 : public Container
 {
 	public:
-		ScrollPane(int x, int y, int w, int h, int scrollw, int scrollh);
+		ScrollPane(int w, int h, int scrollw, int scrollh);
 		virtual ~ScrollPane();
 
 		void UpdateArea();

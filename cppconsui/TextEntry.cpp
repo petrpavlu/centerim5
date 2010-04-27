@@ -43,8 +43,8 @@
 
 #define CONTEXT_TEXTENTRY "textentry"
 
-TextEntry::TextEntry(int x, int y, int w, int h, const gchar *text_)
-: Label(x, y, w, h, text_)
+TextEntry::TextEntry(int w, int h, const gchar *text_)
+: Label(w, h, text_)
 , current_pos(0)
 , editable(true)
 , flags(0)
@@ -57,8 +57,8 @@ TextEntry::TextEntry(int x, int y, int w, int h, const gchar *text_)
 	DeclareBindables();
 }
 
-TextEntry::TextEntry(int x, int y, const gchar *text_)
-: Label(x, y, text_)
+TextEntry::TextEntry(const gchar *text_)
+: Label(text_)
 , current_pos(0)
 , editable(true)
 , flags(0)

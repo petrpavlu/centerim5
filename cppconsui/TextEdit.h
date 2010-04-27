@@ -13,7 +13,7 @@ class TextEdit
 : public Widget
 {
 	public:
-		TextEdit(int x, int y, int w, int h);
+		TextEdit(int w, int h);
 		virtual ~TextEdit();
 
 		void Clear();

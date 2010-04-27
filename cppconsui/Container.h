@@ -49,7 +49,7 @@ class Container
 			FocusCycleGlobal ///< the focus cycles also through the other containers windows
 		} FocusCycleScope;
 
-		Container(int x, int y, int w, int h);
+		Container(int w, int h);
 		virtual ~Container();
 
 		/** These functions are used to call Widget::UpdateArea of all children when necessary 
@@ -66,7 +66,7 @@ class Container
 		 * @todo should we check if the widget has the current container as parent ? Should this be 
 		 *  mandatory ?
 		 */
-		virtual void AddWidget(Widget &widget);
+		virtual void AddWidget(Widget &widget, int x = 0, int y = 0);
 		/** Removes the widget from the children list but it doesn't delete the widget.
 		 * The caller must ensure proper deletion of the widget.
 		 */

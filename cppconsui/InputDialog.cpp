@@ -34,12 +34,12 @@ InputDialog::InputDialog(const gchar* text, const gchar* defaultvalue)
 	//for default buttons
 	AddButton(_("Ok"), InputDialog::ResponseOK);
 
-	label = new Label(0, 0, text);
-	seperator = new HorizontalLine(0, 1, width);
-	entry = new TextEntry(0, 2, width, height - 4, defaultvalue);
-	AddWidget(*label);
-	AddWidget(*seperator);
-	AddWidget(*entry);
+	label = new Label(text);
+	seperator = new HorizontalLine(width);
+	entry = new TextEntry(width, height - 4, defaultvalue);
+	AddWidget(*label, 0, 0);
+	AddWidget(*seperator, 0, 1);
+	AddWidget(*entry, 0, 2);
 
 	entry->GrabFocus();
 }

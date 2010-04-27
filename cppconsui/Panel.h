@@ -44,8 +44,7 @@ class Panel
 : public Widget
 {
 	public:
-		Panel(int x, int y, int w, int h,
-				LineStyle::Type ltype = LineStyle::DEFAULT);
+		Panel(int w, int h, LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~Panel();
 
 		// Widget

@@ -28,7 +28,7 @@
 #include "gettext.h"
 
 BuddyListNode::BuddyListNode(PurpleBlistNode *node)
-: Button(0, 0, "")
+: Button("")
 , node(node)
 {
 	can_focus = true;

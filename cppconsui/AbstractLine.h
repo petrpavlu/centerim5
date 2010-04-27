@@ -39,7 +39,7 @@ class AbstractLine
 : public Widget
 {
 	public:
-		AbstractLine(int x, int y, int w, int h,
+		AbstractLine(int w, int h,
 				LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~AbstractLine() {}
 

@@ -43,8 +43,8 @@
  * @todo dont accept focus when we have no focusable widgets
  */
 
-Container::Container(int x, int y, int w, int h)
-: Widget(x, y, w, h)
+Container::Container(int w, int h)
+: Widget(w, h)
 , focus_cycle_scope(FocusCycleGlobal)
 {
 	DeclareBindables();
@@ -126,10 +126,11 @@ void Container::Draw(void)
 		((*i).widget)->Draw();
 }
 
-void Container::AddWidget(Widget& widget)
+void Container::AddWidget(Widget& widget, int x, int y)
 {
 	Child child;
 
+	widget.MoveResize(x, y, widget.Width(), widget.Height());
 	widget.SetParent(*this);
 	/** @todo also other widget signals. maybe a descendant class would like
 	 *  to do somethings. Eg a ListBox wants to undo move events.

@@ -39,7 +39,7 @@ class AbstractListBox
 : public ScrollPane
 {
 	public:
-		AbstractListBox(int x, int y, int w, int h);
+		AbstractListBox(int w, int h);
 		virtual ~AbstractListBox() {}
 
 		/**

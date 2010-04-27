@@ -30,23 +30,22 @@
 
 #include "HorizontalLine.h"
 
-ListBox::ListBox(int x, int y, int w, int h)
-: AbstractListBox(x, y, w, h)
+ListBox::ListBox(int w, int h)
+: AbstractListBox(w, h)
 {
 	SetScrollSize(w, 0);
 }
 
 void ListBox::AddSeparator()
 {
-	AddWidget(*(new HorizontalLine(0, 0, Width())));
+	AddWidget(*(new HorizontalLine(Width())));
 }
 
-void ListBox::AddWidget(Widget& widget)
+void ListBox::AddWidget(Widget& widget, int x, int y)
 {
-	int y = GetScrollHeight();
-	widget.MoveResize(0, y, widget.Width(), widget.Height());
-	SetScrollHeight(y + widget.Height());
-	AbstractListBox::AddWidget(widget);
+	int h = GetScrollHeight();
+	SetScrollHeight(h + widget.Height());
+	AbstractListBox::AddWidget(widget, 0, h);
 }
 
 void ListBox::RemoveWidget(Widget& widget)

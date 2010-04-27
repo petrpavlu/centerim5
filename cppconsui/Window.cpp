@@ -32,7 +32,7 @@
 #define CONTEXT_WINDOW "window"
 
 Window::Window(int x, int y, int w, int h, LineStyle::Type ltype)
-: Container(1, 1, w - 2, h - 2)
+: Container(w - 2, h - 2)
 , win_x(x)
 , win_y(y)
 , win_w(w)
@@ -50,8 +50,8 @@ Window::Window(int x, int y, int w, int h, LineStyle::Type ltype)
 	MakeRealWindow();
 	UpdateArea();
 
-	panel = new Panel(0, 0, win_w, win_h, ltype);
-	AddWidget(*panel);
+	panel = new Panel(win_w, win_h, ltype);
+	AddWidget(*panel, 0, 0);
 
 	signal_redraw(*this);
 	DeclareBindables();

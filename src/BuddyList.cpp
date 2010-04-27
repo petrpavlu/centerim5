@@ -103,9 +103,8 @@ BuddyList::BuddyList()
 
 	Glib::signal_timeout().connect(sigc::mem_fun(this, &BuddyList::Load), 0);
 
-	treeview = new TreeView(0, 0, width - 2, height - 2);
-	AddWidget(*treeview);
-	SetInputChild(*treeview);
+	treeview = new TreeView(width - 2, height - 2);
+	AddWidget(*treeview, 0, 0);
 
 	MoveResizeRect(conf->GetBuddyListDimensions());
 }
@@ -250,9 +249,8 @@ void BuddyList::ScreenResized()
 	MoveResizeRect(CenterIM::Instance().ScreenAreaSize(CenterIM::BuddyListArea));
 }
 
-BuddyList::AccountsBox::AccountsBox(int x, int y, PurpleAccount *account)
-: ComboBox(x, y)
-, selected(account)
+BuddyList::AccountsBox::AccountsBox(PurpleAccount *account)
+: selected(account)
 {
 	GList *i = purple_accounts_get_all();
 
@@ -289,8 +287,8 @@ void BuddyList::AccountsBox::OnAccountChanged(const ComboBox::ComboBoxEntry& new
 	UpdateText();
 }
 
-BuddyList::NameButton::NameButton(int x, int y, bool alias, const gchar *val)
-: Button(x, y, "")
+BuddyList::NameButton::NameButton(bool alias, const gchar *val)
+: Button("")
 , dialog(NULL)
 {
 	if (alias)
@@ -351,8 +349,7 @@ void BuddyList::NameButton::ResponseHandler(Dialog::ResponseType response)
 	dialog = NULL;
 }
 
-BuddyList::GroupBox::GroupBox(int x, int y, const gchar *group)
-: ComboBox(x, y)
+BuddyList::GroupBox::GroupBox(const gchar *group)
 {
 	PurpleBlistNode *i = purple_blist_get_root();
 
@@ -398,22 +395,22 @@ BuddyList::AddBuddyWindow::AddBuddyWindow(PurpleAccount *account,
 		const char *username, const char *group, const char *alias)
 : Window(0, 0, 50, 10)
 {
-	accounts_box = new AccountsBox(0, 0, account);
-	name_button = new NameButton(0, 1, false, username);
-	alias_button = new NameButton(0, 2, true, alias);
-	group_box = new GroupBox(0, 3, group);
-	line = new HorizontalLine(0, 4, width);
+	accounts_box = new AccountsBox(account);
+	name_button = new NameButton(false, username);
+	alias_button = new NameButton(true, alias);
+	group_box = new GroupBox(group);
+	line = new HorizontalLine(width);
 
-	menu = new HorizontalListBox(0, 5, width, 1);
+	menu = new HorizontalListBox(width, 1);
 	//menu->FocusCycle(Container::FocusCycleLocal);
 	menu->AddItem(_("Add"), sigc::mem_fun(this, &BuddyList::AddBuddyWindow::Add));
 
-	AddWidget(*accounts_box);
-	AddWidget(*name_button);
-	AddWidget(*alias_button);
-	AddWidget(*group_box);
-	AddWidget(*line);
-	AddWidget(*menu);
+	AddWidget(*accounts_box, 0, 0);
+	AddWidget(*name_button, 0, 1);
+	AddWidget(*alias_button, 0, 2);
+	AddWidget(*group_box, 0, 3);
+	AddWidget(*line, 0, 4);
+	AddWidget(*menu, 0, 5);
 }
 
 void BuddyList::AddBuddyWindow::Add()

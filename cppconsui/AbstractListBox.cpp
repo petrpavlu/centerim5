@@ -30,12 +30,12 @@
 
 #include "Button.h"
 
-AbstractListBox::AbstractListBox(int x, int y, int w, int h)
-: ScrollPane(x, y, w, h, 0, 0)
+AbstractListBox::AbstractListBox(int w, int h)
+: ScrollPane(w, h, 0, 0)
 {
 }
 
 void AbstractListBox::AddItem(const gchar *title, sigc::slot<void> function)
 {
-	AddWidget(*(new Button(0, 0, ::width(title), 1, title, function)));
+	AddWidget(*(new Button(::width(title), 1, title, function)), 0, 0);
 }

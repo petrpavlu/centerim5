@@ -30,9 +30,8 @@
 MenuWindow::MenuWindow(int x, int y, int w, int h, LineStyle::Type ltype)
 : Window(x, y, w, h, ltype)
 {
-	listbox = new ListBox(0, 0, width, height);
-	SetFocusChild(*listbox);
-	Window::AddWidget(*listbox);
+	listbox = new ListBox(width, height);
+	Window::AddWidget(*listbox, 0, 0);
 	DeclareBindables();
 }
 

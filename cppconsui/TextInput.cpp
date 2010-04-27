@@ -22,14 +22,14 @@
 
 #include <string.h>
 
-TextInput::TextInput(int x, int y, int w, int h)
-: TextBrowser(x, y, w, h)
+TextInput::TextInput(int w, int h)
+: TextBrowser(w, h)
 {
 	can_focus = true;
 }
 
-TextInput::TextInput(int x, int y, int w, int h, std::vector<Glib::ustring> &lines)
-: TextBrowser(x, y, w, h, lines)
+TextInput::TextInput(int w, int h, std::vector<Glib::ustring> &lines)
+: TextBrowser(w, h, lines)
 {
 	can_focus = true;
 }

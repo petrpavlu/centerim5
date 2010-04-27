@@ -36,31 +36,31 @@
 
 #define CONTEXT_BUTTON "button"
 
-Button::Button(int x, int y, int w, int h, const gchar *text, sigc::slot<void> callback)
-: Label(x, y, w, h, text)
+Button::Button(int w, int h, const gchar *text, sigc::slot<void> callback)
+: Label(w, h, text)
 {
 	signal_activate.connect(callback);
 	can_focus = true;
 	DeclareBindables();
 }
 
-Button::Button(int x, int y, int w, int h, const gchar *text)
-: Label(x, y, w, h, text)
+Button::Button(int w, int h, const gchar *text)
+: Label(w, h, text)
 {
 	can_focus = true;
 	DeclareBindables();
 }
 
-Button::Button(int x, int y, const gchar *text, sigc::slot<void> callback)
-: Label(x, y, text)
+Button::Button(const gchar *text, sigc::slot<void> callback)
+: Label(text)
 {
 	signal_activate.connect(callback);
 	can_focus = true;
 	DeclareBindables();
 }
 
-Button::Button(int x, int y, const gchar *text)
-: Label(x, y, text)
+Button::Button(const gchar *text)
+: Label(text)
 {
 	can_focus = true;
 	DeclareBindables();
