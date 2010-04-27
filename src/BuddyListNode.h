@@ -33,12 +33,12 @@ class BuddyListNode
 : public Button
 {
 	public:
-		BuddyListNode(TreeView& parent, PurpleBlistNode *node);
+		BuddyListNode(PurpleBlistNode *node);
 		virtual ~BuddyListNode();
 
 		virtual void Draw(void);
 
-		static BuddyListNode* CreateNode(TreeView& parent, PurpleBlistNode *node);
+		static BuddyListNode* CreateNode(PurpleBlistNode *node);
 
 		virtual void Update(void) =0;
 
@@ -48,14 +48,12 @@ class BuddyListNode
 		/* Actions for keybindings */
 		virtual void OnActivate(void) =0;
 
-		BuddyListNode* GetParent(void);
+		BuddyListNode* GetParentNode(void);
 
 		TreeView::NodeReference ref;
 
 	protected:
 		PurpleBlistNode *node;
-
-		TreeView *treeview;
 
 		Conf *conf;
 
@@ -66,7 +64,7 @@ class BuddyListBuddy
 : public BuddyListNode
 {
 	public:
-		BuddyListBuddy(TreeView& parent, PurpleBlistNode *node);
+		BuddyListBuddy(PurpleBlistNode *node);
 
 		virtual void Draw(void);
 		virtual void Update(void);
@@ -83,7 +81,7 @@ class BuddyListChat
 : public BuddyListNode
 {
 	public:
-		BuddyListChat(TreeView& parent, PurpleBlistNode *node);
+		BuddyListChat(PurpleBlistNode *node);
 
 		virtual void Draw(void);
 		virtual void Update(void);
@@ -100,7 +98,7 @@ class BuddyListContact
 : public BuddyListNode
 {
 	public:
-		BuddyListContact(TreeView& parent, PurpleBlistNode *node);
+		BuddyListContact(PurpleBlistNode *node);
 
 		virtual void Draw(void);
 		virtual void Update(void);
@@ -117,7 +115,7 @@ class BuddyListGroup
 : public BuddyListNode
 {
 	public:
-		BuddyListGroup(TreeView& parent, PurpleBlistNode *node);
+		BuddyListGroup(PurpleBlistNode *node);
 
 		virtual void Draw(void);
 		virtual void Update(void);

@@ -49,7 +49,7 @@ Log::Log(void)
 
 	conf = Conf::Instance();
 
-	textview = new TextView(*this, 1, 0, width - 2, height, true);
+	textview = new TextView(1, 0, width - 2, height, true);
 	AddWidget(*textview);
 
 #define REGISTER_G_LOG_HANDLER(name) \

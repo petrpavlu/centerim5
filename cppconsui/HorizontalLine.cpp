@@ -31,8 +31,8 @@
 #include "ConsuiCurses.h"
 #include "ColorScheme.h"
 
-HorizontalLine::HorizontalLine(Widget& parent, const int x, const int y, const int w, LineStyle::Type ltype)
-: AbstractLine(parent, x, y, w, 1, ltype)
+HorizontalLine::HorizontalLine(int x, int y, int w, LineStyle::Type ltype)
+: AbstractLine(x, y, w, 1, ltype)
 {
 }
 

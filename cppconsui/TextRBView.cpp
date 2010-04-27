@@ -37,8 +37,8 @@ TextRBView::TextRBView(Widget& parent, int x, int y, int w, int h, TextBuffer *b
 	this->buffer = buffer;
 }*/
 
-TextRBView::TextRBView(Widget& parent, int x, int y, int w, int h)
-: Widget(parent, x, y, w, h)
+TextRBView::TextRBView(int x, int y, int w, int h)
+: Widget(x, y, w, h)
 , view_left(0)
 , view_top(0)
 , wrap_mode(WRAP_NONE)

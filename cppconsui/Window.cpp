@@ -31,12 +31,12 @@
 
 #define CONTEXT_WINDOW "window"
 
-Window::Window(int x_, int y_, int w_, int h_, LineStyle::Type ltype)
-: Container(*this, 1, 1, w_ - 2, h_ - 2)
-, win_x(x_)
-, win_y(y_)
-, win_w(w_)
-, win_h(h_)
+Window::Window(int x, int y, int w, int h, LineStyle::Type ltype)
+: Container(1, 1, w - 2, h - 2)
+, win_x(x)
+, win_y(y)
+, win_w(w)
+, win_h(h)
 , realwindow(NULL)
 {
 	//TODO just call moveresize
@@ -50,7 +50,7 @@ Window::Window(int x_, int y_, int w_, int h_, LineStyle::Type ltype)
 	MakeRealWindow();
 	UpdateArea();
 
-	panel = new Panel(*this, 0, 0, win_w, win_h, ltype);
+	panel = new Panel(0, 0, win_w, win_h, ltype);
 	AddWidget(*panel);
 
 	signal_redraw(*this);
@@ -164,6 +164,26 @@ void Window::Draw(void)
 	 * on screen.
 	 * */
 	area->copyto(realwindow, copy_x, copy_y, 0, 0, copy_w, copy_h, 0);
+}
+
+bool Window::SetFocusChild(Widget& child)
+{
+	if (focus_child == &child)
+		/* The focus child is already correct. */
+		return true;
+
+	if (focus_child != NULL) {
+		/* The currently focussed widget is in a different branch
+		 * of the widget tree, so unfocus that widget first.
+		 * */
+		if (!focus_child->StealFocus())
+			return false;
+	}
+
+	/// @todo window should try to become topmost.
+	focus_child = &child;
+	SetInputChild(child);
+	return true;
 }
 
 void Window::Show()

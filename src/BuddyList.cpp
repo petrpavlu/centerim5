@@ -103,7 +103,7 @@ BuddyList::BuddyList()
 
 	Glib::signal_timeout().connect(sigc::mem_fun(this, &BuddyList::Load), 0);
 
-	treeview = new TreeView(*this, 0, 0, width - 2, height - 2);
+	treeview = new TreeView(0, 0, width - 2, height - 2);
 	AddWidget(*treeview);
 	SetInputChild(*treeview);
 
@@ -133,13 +133,13 @@ void BuddyList::Close(void)
 
 void BuddyList::AddNode(BuddyListNode *node)
 {
-	BuddyListNode *parent = node->GetParent();
+	BuddyListNode *parent = node->GetParentNode();
 	node->ref = treeview->AddNode(parent ? parent->ref : treeview->Root(), node, NULL);
 }
 
 void BuddyList::UpdateNode(BuddyListNode *node)
 {
-	BuddyListNode *parent = node->GetParent();
+	BuddyListNode *parent = node->GetParentNode();
 	/* The parent could have changed, so re-parent the node */
 	if (parent)
 		treeview->SetParent(node->ref, parent->ref);
@@ -172,7 +172,7 @@ void BuddyList::new_node(PurpleBlistNode *node)
 	BuddyListNode *bnode;
 
 	if (!node->ui_data) {
-		node->ui_data = bnode = BuddyListNode::CreateNode(*treeview, node);
+		node->ui_data = bnode = BuddyListNode::CreateNode(node);
 		AddNode((BuddyListNode*)node->ui_data);
 
 		if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
@@ -250,8 +250,8 @@ void BuddyList::ScreenResized()
 	MoveResizeRect(CenterIM::Instance().ScreenAreaSize(CenterIM::BuddyListArea));
 }
 
-BuddyList::AccountsBox::AccountsBox(Widget& parent, int x, int y, PurpleAccount *account)
-: ComboBox(parent, x, y)
+BuddyList::AccountsBox::AccountsBox(int x, int y, PurpleAccount *account)
+: ComboBox(x, y)
 , selected(account)
 {
 	GList *i = purple_accounts_get_all();
@@ -289,8 +289,8 @@ void BuddyList::AccountsBox::OnAccountChanged(const ComboBox::ComboBoxEntry& new
 	UpdateText();
 }
 
-BuddyList::NameButton::NameButton(Widget& parent, int x, int y, bool alias, const gchar *val)
-: Button(parent, x, y, "")
+BuddyList::NameButton::NameButton(int x, int y, bool alias, const gchar *val)
+: Button(x, y, "")
 , dialog(NULL)
 {
 	if (alias)
@@ -351,8 +351,8 @@ void BuddyList::NameButton::ResponseHandler(Dialog::ResponseType response)
 	dialog = NULL;
 }
 
-BuddyList::GroupBox::GroupBox(Widget& parent, int x, int y, const gchar *group)
-: ComboBox(parent, x, y)
+BuddyList::GroupBox::GroupBox(int x, int y, const gchar *group)
+: ComboBox(x, y)
 {
 	PurpleBlistNode *i = purple_blist_get_root();
 
@@ -398,13 +398,13 @@ BuddyList::AddBuddyWindow::AddBuddyWindow(PurpleAccount *account,
 		const char *username, const char *group, const char *alias)
 : Window(0, 0, 50, 10)
 {
-	accounts_box = new AccountsBox(*this, 0, 0, account);
-	name_button = new NameButton(*this, 0, 1, false, username);
-	alias_button = new NameButton(*this, 0, 2, true, alias);
-	group_box = new GroupBox(*this, 0, 3, group);
-	line = new HorizontalLine(*this, 0, 4, width);
+	accounts_box = new AccountsBox(0, 0, account);
+	name_button = new NameButton(0, 1, false, username);
+	alias_button = new NameButton(0, 2, true, alias);
+	group_box = new GroupBox(0, 3, group);
+	line = new HorizontalLine(0, 4, width);
 
-	menu = new HorizontalListBox(*this, 0, 5, width, 1);
+	menu = new HorizontalListBox(0, 5, width, 1);
 	//menu->FocusCycle(Container::FocusCycleLocal);
 	menu->AddItem(_("Add"), sigc::mem_fun(this, &BuddyList::AddBuddyWindow::Add));
 

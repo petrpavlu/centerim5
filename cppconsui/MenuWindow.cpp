@@ -27,10 +27,10 @@
 
 #define CONTEXT_MENUWINDOW "menuwindow"
 
-MenuWindow::MenuWindow(int x_, int y_, int w_, int h_, LineStyle::Type ltype)
-: Window(x_, y_, w_, h_, ltype)
+MenuWindow::MenuWindow(int x, int y, int w, int h, LineStyle::Type ltype)
+: Window(x, y, w, h, ltype)
 {
-	listbox = new ListBox(*this, 0, 0, width, height);
+	listbox = new ListBox(0, 0, width, height);
 	SetFocusChild(*listbox);
 	Window::AddWidget(*listbox);
 	DeclareBindables();

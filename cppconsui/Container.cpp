@@ -43,8 +43,8 @@
  * @todo dont accept focus when we have no focusable widgets
  */
 
-Container::Container(Widget& parent, int x_, int y_, int w_, int h_)
-: Widget(parent, x_, y_, w_, h_)
+Container::Container(int x, int y, int w, int h)
+: Widget(x, y, w, h)
 , focus_cycle_scope(FocusCycleGlobal)
 {
 	DeclareBindables();
@@ -130,7 +130,7 @@ void Container::AddWidget(Widget& widget)
 {
 	Child child;
 
-	widget.UpdateArea();
+	widget.SetParent(*this);
 	/** @todo also other widget signals. maybe a descendant class would like
 	 *  to do somethings. Eg a ListBox wants to undo move events.
 	 */
@@ -140,6 +140,8 @@ void Container::AddWidget(Widget& widget)
 
 	if (!focus_child)
 		widget.GrabFocus();
+	else
+		widget.StealFocus();
 }
 
 void Container::RemoveWidget(Widget& widget)
@@ -298,7 +300,7 @@ void Container::MoveFocus(FocusDirection direction)
 		return;
 	}
 
-	container = dynamic_cast<const Container*>(focus_widget->Parent());
+	container = dynamic_cast<const Container*>(focus_widget->GetParent());
 
 	FocusChain::iterator cycle_root, cycle_back, cycle_begin, cycle_iter;
 

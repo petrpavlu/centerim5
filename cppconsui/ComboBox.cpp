@@ -81,8 +81,8 @@ const gchar *ComboBox::ComboBoxEntry::GetText() const
 	return text;
 }
 
-ComboBox::ComboBox(Widget& parent, int x, int y, int w, int h, const gchar *text)
-: Button(parent, x, y, w, h, text)
+ComboBox::ComboBox(int x, int y, int w, int h, const gchar *text)
+: Button(x, y, w, h, text)
 , dropdown(NULL)
 , selected_entry(options.end())
 , max_option_width(0)
@@ -91,8 +91,8 @@ ComboBox::ComboBox(Widget& parent, int x, int y, int w, int h, const gchar *text
 	DeclareBindables();
 }
 
-ComboBox::ComboBox(Widget& parent, int x, int y, const gchar *text)
-: Button(parent, x, y, text)
+ComboBox::ComboBox(int x, int y, const gchar *text)
+: Button(x, y, text)
 , dropdown(NULL)
 , selected_entry(options.end())
 , max_option_width(0)

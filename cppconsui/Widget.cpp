@@ -28,22 +28,18 @@
 
 #include <string>
 
-Widget::Widget(Widget& parent, int x_, int y_, int w_, int h_)
-: xpos(x_)
-, ypos(y_)
-, width(w_)
-, height(h_)
+Widget::Widget(int x, int y, int w, int h)
+: xpos(x)
+, ypos(y)
+, width(w)
+, height(h)
 , can_focus(false)
 , has_focus(false)
 , focus_child(NULL)
 , area(NULL)
-, parent(&parent)
+, parent(NULL)
 , color_scheme(NULL)
 {
-	// insta crash, because Widget::UpdateArea() is called and it uses
-	// uninitilized area pointer, I think it isn't needed anyway, remove
-	// later...
-	//UpdateArea(); /// @todo It should be called whenever the parent decides, and not here in constructor.
 }
 
 Widget::~Widget()
@@ -63,7 +59,8 @@ void Widget::MoveResize(int newx, int newy, int neww, int newh)
 	width = neww;
 	height = newh;
 
-	UpdateArea();
+	if (parent)
+		UpdateArea();
 
 	signal_moveresize(*this, oldsize, newsize);
 }
@@ -75,6 +72,8 @@ void Widget::MoveResize()
 
 void Widget::UpdateArea()
 {
+	g_assert(parent);
+
 	if (area)
 		delete area;
 	area = parent->GetSubPad(*this, xpos, ypos, width, height);
@@ -82,6 +81,10 @@ void Widget::UpdateArea()
 
 bool Widget::SetFocusChild(Widget &child)
 {
+	// focus cannot be set for widget without a parent
+	if (!parent)
+		return false;
+
 	if (focus_child == &child)
 		/* The focus child is already correct. */
 		return true;
@@ -92,14 +95,6 @@ bool Widget::SetFocusChild(Widget &child)
 		 * */
 		if (!focus_child->StealFocus())
 			return false;
-	}
-
-	if (parent == this) {
-		/* Current widget is a window. */
-		/// @todo window should try to become topmost.
-		focus_child = &child;
-		SetInputChild(child);
-		return true;
 	}
 
 	if (parent->SetFocusChild(*this)) {
@@ -169,7 +164,7 @@ Widget* Widget::GetFocusWidget(void)
 
 bool Widget::GrabFocus(void)
 {
-	if (can_focus && parent != NULL && parent->SetFocusChild(*this)) {
+	if (can_focus && parent && parent->SetFocusChild(*this)) {
 		//TODO only set if window has focus.
 		has_focus = true;
 		signal_focus(*this, true);
@@ -192,6 +187,15 @@ void Widget::MoveFocus(FocusDirection direction)
 	if (parent) {
 		parent->MoveFocus(direction);
 	}
+}
+
+void Widget::SetParent(Widget& parent)
+{
+	// we don't support parent change
+	g_assert(!this->parent);
+
+	this->parent = &parent;
+	UpdateArea();
 }
 
 Curses::Window *Widget::GetSubPad(const Widget &child, int begin_x, int begin_y, int ncols, int nlines)
@@ -228,7 +232,7 @@ const char *Widget::GetColorScheme()
 {
 	if (color_scheme)
 		return color_scheme;
-	else if (parent != this)
+	else if (parent)
 		return parent->GetColorScheme();
 
 	return NULL;

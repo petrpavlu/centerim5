@@ -30,15 +30,15 @@
 
 #include "VerticalLine.h"
 
-HorizontalListBox::HorizontalListBox(Widget& parent, int x, int y, int w, int h)
-: AbstractListBox(parent, x, y, w, h)
+HorizontalListBox::HorizontalListBox(int x, int y, int w, int h)
+: AbstractListBox(x, y, w, h)
 {
 	SetScrollSize(0, h);
 }
 
 void HorizontalListBox::AddSeparator()
 {
-	AddWidget(*(new VerticalLine(*this, 0, 0, 1)));
+	AddWidget(*(new VerticalLine(0, 0, 1)));
 }
 
 void HorizontalListBox::AddWidget(Widget& widget)

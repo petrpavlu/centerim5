@@ -38,7 +38,7 @@ class TextRBView
 		typedef TextBuffer::char_iterator char_iterator;
 		typedef TextBuffer::line_iterator line_iterator;
 
-		TextRBView(Widget& parent, int x, int y, int w, int h);
+		TextRBView(int x, int y, int w, int h);
 		~TextRBView();
 
 		char_iterator append (const char *text, int len);

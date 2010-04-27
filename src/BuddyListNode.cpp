@@ -27,11 +27,9 @@
 #include <libpurple/blist.h>
 #include "gettext.h"
 
-BuddyListNode::BuddyListNode(TreeView& parent, PurpleBlistNode *node)
-: Button(parent, 0, 0, "")
-, ref(parent.Root())
+BuddyListNode::BuddyListNode(PurpleBlistNode *node)
+: Button(0, 0, "")
 , node(node)
-, treeview(&parent)
 {
 	can_focus = true;
 
@@ -48,18 +46,18 @@ void BuddyListNode::Draw(void)
 	Button::Draw();
 }
 
-BuddyListNode* BuddyListNode::CreateNode(TreeView& parent, PurpleBlistNode *node)
+BuddyListNode* BuddyListNode::CreateNode(PurpleBlistNode *node)
 {
 	BuddyListNode *bnode = NULL;
 
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
-		bnode = new BuddyListBuddy(parent, node);
+		bnode = new BuddyListBuddy(node);
 	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
-		bnode = new BuddyListChat(parent, node);
+		bnode = new BuddyListChat(node);
 	} else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-		bnode = new BuddyListContact(parent, node);
+		bnode = new BuddyListContact(node);
 	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
-		bnode = new BuddyListGroup(parent, node);
+		bnode = new BuddyListGroup(node);
 	} //TODO log some error if no match here
 
 	return bnode;
@@ -79,7 +77,7 @@ void BuddyListNode::TakeFocus(void)
 	Draw();
 }
 
-BuddyListNode* BuddyListNode::GetParent(void)
+BuddyListNode* BuddyListNode::GetParentNode(void)
 {
 	//TODO here I made the assumption that parents are *always* added before children
 	//(groups before its contacts/buddies, contacts before its buddies)
@@ -98,8 +96,8 @@ BuddyListNode* BuddyListNode::GetParent(void)
 	return (BuddyListNode*)parent->ui_data;
 }
 
-BuddyListBuddy::BuddyListBuddy(TreeView& parent, PurpleBlistNode *node)
-: BuddyListNode(parent, node)
+BuddyListBuddy::BuddyListBuddy(PurpleBlistNode *node)
+: BuddyListNode(node)
 {
 	SetColorScheme("buddylistbuddy");
 
@@ -131,8 +129,8 @@ void BuddyListBuddy::OnActivate(void)
 	CONVERSATIONS->ShowConversation(PURPLE_CONV_TYPE_IM, purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
 }
 
-BuddyListChat::BuddyListChat(TreeView& parent, PurpleBlistNode *node)
-: BuddyListNode(parent, node)
+BuddyListChat::BuddyListChat(PurpleBlistNode *node)
+: BuddyListNode(node)
 {
 	SetColorScheme("buddylistchat");
 
@@ -161,8 +159,8 @@ void BuddyListChat::OnActivate(void)
 	CONVERSATIONS->ShowConversation(PURPLE_CONV_TYPE_CHAT, purple_chat_get_account(chat), purple_chat_get_name(chat));
 }
 
-BuddyListContact::BuddyListContact(TreeView& parent, PurpleBlistNode *node)
-: BuddyListNode(parent, node)
+BuddyListContact::BuddyListContact(PurpleBlistNode *node)
+: BuddyListNode(node)
 {
 	SetColorScheme("buddylistcontact");
 
@@ -206,8 +204,8 @@ void BuddyListContact::OnActivate(void)
 	LOG->Write(Log::Level_debug, "Contact activated!\n");
 }
 
-BuddyListGroup::BuddyListGroup(TreeView& parent, PurpleBlistNode *node)
-: BuddyListNode(parent, node)
+BuddyListGroup::BuddyListGroup(PurpleBlistNode *node)
+: BuddyListNode(node)
 {
 	SetColorScheme("buddylistgroup");
 
@@ -232,5 +230,7 @@ void BuddyListGroup::Update(void)
 void BuddyListGroup::OnActivate(void)
 {
 	LOG->Write(Log::Level_debug, "Group activated!\n");
-	treeview->ActionToggleCollapsed();
+	TreeView *t = dynamic_cast<TreeView *>(parent);
+	if (t) // should be always true
+		t->ActionToggleCollapsed();
 }

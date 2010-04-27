@@ -34,9 +34,9 @@ InputDialog::InputDialog(const gchar* text, const gchar* defaultvalue)
 	//for default buttons
 	AddButton(_("Ok"), InputDialog::ResponseOK);
 
-	label = new Label(*this, 0, 0, text);
-	seperator = new HorizontalLine(*this, 0, 1, width);
-	entry = new TextEntry(*this, 0, 2, width, height - 4, defaultvalue);
+	label = new Label(0, 0, text);
+	seperator = new HorizontalLine(0, 1, width);
+	entry = new TextEntry(0, 2, width, height - 4, defaultvalue);
 	AddWidget(*label);
 	AddWidget(*seperator);
 	AddWidget(*entry);

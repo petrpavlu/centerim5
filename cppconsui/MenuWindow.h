@@ -30,7 +30,7 @@ class MenuWindow
 : public Window
 {
 	public:
-		MenuWindow(int x_, int y_, int w_, int h_,
+		MenuWindow(int x, int y, int w, int h,
 				LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~MenuWindow();
 

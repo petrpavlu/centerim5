@@ -80,7 +80,7 @@ class BuddyList
 		: public ComboBox
 		{
 			public:
-				AccountsBox(Widget& parent, int x, int y, PurpleAccount *account);
+				AccountsBox(int x, int y, PurpleAccount *account);
 				virtual ~AccountsBox() {}
 
 				PurpleAccount *GetSelected() { return selected; }
@@ -101,7 +101,7 @@ class BuddyList
 		: public Button
 		{
 			public:
-				NameButton(Widget& parent, int x, int y, bool alias, const gchar *val);
+				NameButton(int x, int y, bool alias, const gchar *val);
 				virtual ~NameButton();
 
 				const gchar *GetValue() { return value; }
@@ -126,7 +126,7 @@ class BuddyList
 		: public ComboBox
 		{
 			public:
-				GroupBox(Widget& parent, int x, int y, const gchar *group);
+				GroupBox(int x, int y, const gchar *group);
 				virtual ~GroupBox();
 
 				const gchar *GetSelected() { return selected; }

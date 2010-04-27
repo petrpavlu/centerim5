@@ -41,10 +41,10 @@ class Button
 : public Label
 {
 	public:
-		Button(Widget& parent, int x, int y, int w, int h, const gchar *text, sigc::slot<void> callback);
-		Button(Widget& parent, int x, int y, int w, int h, const gchar *text);
-		Button(Widget& parent, int x, int y, const gchar *text, sigc::slot<void> callback);
-		Button(Widget& parent, int x, int y, const gchar *text);
+		Button(int x, int y, int w, int h, const gchar *text, sigc::slot<void> callback);
+		Button(int x, int y, int w, int h, const gchar *text);
+		Button(int x, int y, const gchar *text, sigc::slot<void> callback);
+		Button(int x, int y, const gchar *text);
 		virtual ~Button() {}
 
 		// Widget

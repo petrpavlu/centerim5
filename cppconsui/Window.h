@@ -51,7 +51,7 @@ class Window
 : public Container
 {
 	public:
-		Window(int x_, int y_, int w_, int h_, LineStyle::Type ltype = LineStyle::DEFAULT);
+		Window(int x, int y, int w, int h, LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~Window();
 	
 		virtual void Close();
@@ -61,6 +61,7 @@ class Window
 		virtual void UpdateArea();
 
 		virtual void Draw(void);
+		virtual bool SetFocusChild(Widget& child);
 
 		virtual int Left() { return win_x; }
 		virtual int Top() { return win_y; }

@@ -64,7 +64,7 @@ class AccountWindow
 		: public Button
 		{
 			public:
-				AccountOption(Widget& parent, PurpleAccount *account,
+				AccountOption(PurpleAccount *account,
 					PurpleAccountOption *option = NULL);
 				virtual ~AccountOption() {}
 
@@ -87,9 +87,9 @@ class AccountWindow
 		: public AccountOption
 		{
 			public:
-				AccountOptionBool(Widget& parent, PurpleAccount *account,
+				AccountOptionBool(PurpleAccount *account,
 					PurpleAccountOption *option);
-				AccountOptionBool(Widget& parent, PurpleAccount *account,
+				AccountOptionBool(PurpleAccount *account,
 					bool remember_password, bool enable_account);
 				virtual ~AccountOptionBool() {}
 
@@ -110,10 +110,10 @@ class AccountWindow
 		: public AccountOption
 		{
 			public:
-				AccountOptionString(Widget& parent, PurpleAccount *account,
+				AccountOptionString(PurpleAccount *account,
 					PurpleAccountOption *option);
-				AccountOptionString(Widget& parent,
-					PurpleAccount *account, bool password, bool alias);
+				AccountOptionString(PurpleAccount *account, bool password,
+						bool alias);
 				virtual ~AccountOptionString() {}
 
 			protected:
@@ -136,7 +136,7 @@ class AccountWindow
 		: public AccountOption
 		{
 			public:
-				AccountOptionInt(Widget& parent, PurpleAccount *account,
+				AccountOptionInt(PurpleAccount *account,
 					PurpleAccountOption *option);
 				virtual ~AccountOptionInt() {}
 
@@ -158,7 +158,7 @@ class AccountWindow
 		: public Button
 		{
 			public:
-				AccountOptionSplit(Widget& parent, PurpleAccount *account,
+				AccountOptionSplit(PurpleAccount *account,
 					PurpleAccountUserSplit *split, AccountEntry *account_entry);
 				virtual ~AccountOptionSplit();
 
@@ -190,7 +190,7 @@ class AccountWindow
 		: public ComboBox
 		{
 			public:
-				AccountOptionProtocol(Widget& parent, PurpleAccount *account,
+				AccountOptionProtocol(PurpleAccount *account,
 						AccountWindow &account_window);
 				virtual ~AccountOptionProtocol() {}
 

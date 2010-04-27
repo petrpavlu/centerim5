@@ -45,9 +45,9 @@ AccountWindow::AccountWindow()
 
 	conf = Conf::Instance();
 
-	accounts = new TreeView(*this, 0, 0, width, height - 2);
-	menu = new HorizontalListBox(*this, 1, height - 1, width, 1);
-	line = new HorizontalLine(*this, 1, height - 2, width);
+	accounts = new TreeView(0, 0, width, height - 2);
+	menu = new HorizontalListBox(1, height - 1, width, 1);
+	line = new HorizontalLine(1, height - 2, width);
 
 	accounts->FocusCycle(Container::FocusCycleLocal);
 	menu->FocusCycle(Container::FocusCycleLocal);
@@ -63,8 +63,6 @@ AccountWindow::AccountWindow()
 	MoveResizeRect(conf->GetAccountWindowDimensions());
 	
 	Populate();
-
-	menu->GrabFocus();
 }
 
 void AccountWindow::MoveResize(int newx, int newy, int neww, int newh)
@@ -252,7 +250,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		Button *button;
 		TreeView::NodeReference parent_reference;
 
-		button = new Button(*accounts, 0, 0, "",
+		button = new Button(0, 0, "",
 				sigc::mem_fun(accounts, &TreeView::ActionToggleCollapsed));
 		parent_reference = accounts->AddNode(accounts->Root(), button, account);
 		accounts->Collapse(parent_reference);
@@ -270,7 +268,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		Label *label;
 
 		// we cannot change the settings of an unknown account
-		label = new Label(*accounts, 0, 0, _("Invalid account or protocol plugin not loaded"));
+		label = new Label(0, 0, _("Invalid account or protocol plugin not loaded"));
 		accounts->AddNode(account_entry->parent_reference, label, account);
 		account_entry->widgets.push_back(label);
 
@@ -279,7 +277,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	
 		// protocols combobox
-		combobox = new AccountOptionProtocol(*accounts, account, *this);
+		combobox = new AccountOptionProtocol(account, *this);
 		accounts->AddNode(account_entry->parent_reference, combobox, account);
 		account_entry->widgets.push_back(combobox);
 
@@ -305,7 +303,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 			}
 
 			// create widget for the username split and remember
-			widget_split = new AccountOptionSplit(*accounts, account, split, account_entry);
+			widget_split = new AccountOptionSplit(account, split, account_entry);
 			widget_split->SetValue(value);
 			account_entry->split_widgets.push_front(widget_split);
 			account_entry->widgets.push_back(widget_split);
@@ -315,7 +313,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 
 
 		//TODO add this widget as the first widget in this subtree. Treeview needs to support this.
-		widget_split = new AccountOptionSplit(*accounts, account, NULL, account_entry);
+		widget_split = new AccountOptionSplit(account, NULL, account_entry);
 		widget_split->SetValue(username);
 		account_entry->split_widgets.push_front(widget_split);
 		account_entry->widgets.push_back(widget_split);
@@ -323,17 +321,17 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		g_free(username);
 
 		// password
-		widget = new AccountOptionString(*accounts, account, true, false);
+		widget = new AccountOptionString(account, true, false);
 		accounts->AddNode(account_entry->parent_reference, widget, NULL);
 		account_entry->widgets.push_back(widget);
 
 		// remember password
-		widget = new AccountOptionBool(*accounts, account, true, false);
+		widget = new AccountOptionBool(account, true, false);
 		accounts->AddNode(account_entry->parent_reference, widget, NULL);
 		account_entry->widgets.push_back(widget);
 
 		// alias
-		widget = new AccountOptionString(*accounts, account, false, true);
+		widget = new AccountOptionString(account, false, true);
 		accounts->AddNode(account_entry->parent_reference, widget, NULL);
 		account_entry->widgets.push_back(widget);
 
@@ -343,17 +341,17 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 
 			switch (type) {
 			case PURPLE_PREF_STRING:
-				widget = new AccountOptionString(*accounts, account, option);
+				widget = new AccountOptionString(account, option);
 				accounts->AddNode(account_entry->parent_reference, widget, NULL);
 				account_entry->widgets.push_back(widget);
 				break;
 			case PURPLE_PREF_INT:
-				widget = new AccountOptionInt(*accounts, account, option);
+				widget = new AccountOptionInt(account, option);
 				accounts->AddNode(account_entry->parent_reference, widget, NULL);
 				account_entry->widgets.push_back(widget);
 				break;
 			case PURPLE_PREF_BOOLEAN:
-				widget = new AccountOptionBool(*accounts, account, option);
+				widget = new AccountOptionBool(account, option);
 				accounts->AddNode(account_entry->parent_reference, widget, NULL);
 				account_entry->widgets.push_back(widget);
 				break;
@@ -367,21 +365,21 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		}
 
 		// enable/disable account
-		widget = new AccountOptionBool(*accounts, account, false, true);
+		widget = new AccountOptionBool(account, false, true);
 		accounts->AddNode(account_entry->parent_reference, widget, NULL);
 		account_entry->widgets.push_back(widget);
 	}
 
 	// drop account
-	widget = new Button(*accounts, 0, 0, _("Drop account"),
+	widget = new Button(0, 0, _("Drop account"),
 			sigc::bind(sigc::mem_fun(this, &AccountWindow::DropAccount), account));
 	accounts->AddNode(account_entry->parent_reference, widget, NULL);
 	account_entry->widgets.push_back(widget);
 }
 
-AccountWindow::AccountOption::AccountOption(Widget& parent,
-		PurpleAccount *account, PurpleAccountOption *option)
-: Button(parent, 0, 0, "")
+AccountWindow::AccountOption::AccountOption(PurpleAccount *account,
+		PurpleAccountOption *option)
+: Button(0, 0, "")
 , account(account)
 , option(option)
 {
@@ -398,9 +396,9 @@ AccountWindow::AccountOption::AccountOption(Widget& parent,
 				&AccountWindow::AccountOption::OnActivate));
 }
 
-AccountWindow::AccountOptionBool::AccountOptionBool(Widget& parent,
-	PurpleAccount *account, PurpleAccountOption *option)
-: AccountWindow::AccountOption::AccountOption(parent, account, option)
+AccountWindow::AccountOptionBool::AccountOptionBool(PurpleAccount *account,
+		PurpleAccountOption *option)
+: AccountWindow::AccountOption::AccountOption(account, option)
 , remember_password(false), enable_account(false)
 {
 	value = purple_account_get_bool(account, setting,
@@ -409,9 +407,9 @@ AccountWindow::AccountOptionBool::AccountOptionBool(Widget& parent,
 	UpdateText();
 }
 
-AccountWindow::AccountOptionBool::AccountOptionBool(Widget& parent,
-		PurpleAccount *account, bool remember_password, bool enable_account)
-: AccountWindow::AccountOption::AccountOption(parent, account)
+AccountWindow::AccountOptionBool::AccountOptionBool(PurpleAccount *account,
+		bool remember_password, bool enable_account)
+: AccountWindow::AccountOption::AccountOption(account)
 , remember_password(remember_password), enable_account(enable_account)
 {
 	if (remember_password)
@@ -449,9 +447,9 @@ void AccountWindow::AccountOptionBool::OnActivate()
 	UpdateText();
 }
 
-AccountWindow::AccountOptionString::AccountOptionString(Widget& parent,
-	PurpleAccount *account, PurpleAccountOption *option)
-: AccountWindow::AccountOption::AccountOption(parent, account, option)
+AccountWindow::AccountOptionString::AccountOptionString(PurpleAccount *account,
+		PurpleAccountOption *option)
+: AccountWindow::AccountOption::AccountOption(account, option)
 , value(NULL)
 , dialog(NULL)
 , password(false)
@@ -460,9 +458,9 @@ AccountWindow::AccountOptionString::AccountOptionString(Widget& parent,
 	UpdateText();
 }
 
-AccountWindow::AccountOptionString::AccountOptionString(Widget& parent,
-	PurpleAccount *account, bool password, bool alias)
-: AccountWindow::AccountOption::AccountOption(parent, account, NULL)
+AccountWindow::AccountOptionString::AccountOptionString(PurpleAccount *account,
+		bool password, bool alias)
+: AccountWindow::AccountOption::AccountOption(account, NULL)
 , value(NULL)
 , dialog(NULL)
 , password(password)
@@ -526,9 +524,9 @@ void AccountWindow::AccountOptionString::ResponseHandler(Dialog::ResponseType re
 	dialog = NULL;
 }
 
-AccountWindow::AccountOptionInt::AccountOptionInt(Widget& parent,
-	PurpleAccount *account, PurpleAccountOption *option)
-: AccountWindow::AccountOption::AccountOption(parent, account, option)
+AccountWindow::AccountOptionInt::AccountOptionInt(PurpleAccount *account,
+		PurpleAccountOption *option)
+: AccountWindow::AccountOption::AccountOption(account, option)
 , value(0)
 , dialog(NULL)
 {
@@ -585,10 +583,9 @@ void AccountWindow::AccountOptionInt::ResponseHandler(Dialog::ResponseType respo
 	dialog = NULL;
 }
 
-AccountWindow::AccountOptionSplit::AccountOptionSplit(Widget& parent,
-	PurpleAccount *account, PurpleAccountUserSplit *split,
-	AccountEntry *account_entry)
-: Button(parent, 0, 0, "")
+AccountWindow::AccountOptionSplit::AccountOptionSplit(PurpleAccount *account,
+		PurpleAccountUserSplit *split, AccountEntry *account_entry)
+: Button(0, 0, "")
 , account(account)
 , split(split)
 , account_entry(account_entry)
@@ -694,9 +691,9 @@ void AccountWindow::AccountOptionSplit::ResponseHandler(Dialog::ResponseType res
 	dialog = NULL;
 }
 
-AccountWindow::AccountOptionProtocol::AccountOptionProtocol(Widget& parent,
-		PurpleAccount *account, AccountWindow &account_window)
-: ComboBox(parent, 0, 0, "")
+AccountWindow::AccountOptionProtocol::AccountOptionProtocol(PurpleAccount *account,
+		AccountWindow &account_window)
+: ComboBox(0, 0, "")
 , account_window(&account_window)
 , account(account)
 {

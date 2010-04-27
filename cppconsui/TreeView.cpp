@@ -28,16 +28,10 @@
 
 #include "gettext.h"
 
-/* Put this macro around variable that will be used in the future,
- * remove macro when variables are used.
- * This macro is to get rid of compiler warnings
- */
-#define VARIABLE_NOT_USED(x) x=x;
-
 #define CONTEXT_TREEVIEW "treeview"
 
-TreeView::TreeView(Widget& parent, int x, int y, int w, int h, LineStyle::Type ltype)
-: ScrollPane(parent, x, y, w, h, w, h)
+TreeView::TreeView(int x, int y, int w, int h, LineStyle::Type ltype)
+: ScrollPane(x, y, w, h, w, h)
 , linestyle(ltype)
 , itemswidth(0)
 , itemsheight(0)
@@ -235,6 +229,8 @@ const TreeView::NodeReference TreeView::AddNode(const NodeReference &parent, Wid
 
 	//TODO check input and throw some errors (or return -1?)
 	g_assert(widget != NULL);
+
+	widget->SetParent(*this);
 
 	/* construct the new node */
 	TreeNode node;

@@ -31,15 +31,15 @@
 #include "ConsuiCurses.h"
 #include "ColorScheme.h"
 
-Label::Label(Widget& parent, int x, int y, int w, int h, const gchar *text_)
-: Widget(parent, x, y, w, h)
+Label::Label(int x, int y, int w, int h, const gchar *text_)
+: Widget(x, y, w, h)
 , text(NULL)
 {
 	RealSetText(text_);
 }
 
-Label::Label(Widget& parent, int x, int y, const gchar *text_)
-: Widget(parent, x, y, -1, 1)
+Label::Label(int x, int y, const gchar *text_)
+: Widget(x, y, -1, 1)
 , text(NULL)
 {
 	RealSetText(text_);

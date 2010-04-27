@@ -21,8 +21,8 @@
 #include "ConsuiCurses.h"
 #include "ScrollPane.h"
 
-ScrollPane::ScrollPane(Widget& parent, int x, int y, int w, int h, int scrollw, int scrollh)
-: Container(parent, x, y, w, h)
+ScrollPane::ScrollPane(int x, int y, int w, int h, int scrollw, int scrollh)
+: Container(x, y, w, h)
 , scroll_xpos(0)
 , scroll_ypos(0)
 , scroll_width(scrollw)

@@ -68,7 +68,7 @@ class TreeView
 		typedef tree<TreeNode> TheTree;
 		typedef TheTree::pre_order_iterator NodeReference;
 
-		TreeView(Widget& parent, int x, int y, int w, int h,
+		TreeView(int x, int y, int w, int h,
 				LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~TreeView();
 	

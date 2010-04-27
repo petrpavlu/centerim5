@@ -51,7 +51,7 @@ class Widget
 		 * @todo use the Point and Rect classes, perhaps implement a Size class 
 		 *   hold width and height variables, to enable easier usage
 		 */
-		Widget(Widget& parent, int x, int y, int w, int h);
+		Widget(int x, int y, int w, int h);
 		virtual ~Widget();
 
 		/** @todo This method, as well as Resize(), MoveResize() 
@@ -119,7 +119,9 @@ class Widget
 		 */
 		void CanFocus(bool val) { can_focus = val; }
 		bool HasFocus(void) const { return has_focus; }
-		const Widget* Parent(void) const { return parent; }
+
+		void SetParent(Widget& parent);
+		const Widget* GetParent() const { return parent; }
 
 		int Left() const { return xpos; }
 		int Top() const { return ypos; }

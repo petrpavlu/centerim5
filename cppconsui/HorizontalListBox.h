@@ -39,7 +39,7 @@ class HorizontalListBox
 : public AbstractListBox
 {
 	public:
-		HorizontalListBox(Widget& parent, int x, int y, int w, int h);
+		HorizontalListBox(int x, int y, int w, int h);
 		virtual ~HorizontalListBox() {}
 
 		// AbstractListBox
