@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -26,23 +27,25 @@
 #include <libpurple/connection.h>
 #include <libpurple/savedstatuses.h>
 
+#define ACCOUNTS (Accounts::Instance())
+
 class Accounts
 {
 	public:
-		static Accounts* Instance(void);
-		static void Delete(void);
+		static Accounts *Instance();
 
 		void SetStatus(PurpleAccount *account, PurpleStatusType *status_type, bool active);
 
-		static void status_changed_(PurpleAccount *account, PurpleStatus *status);
+		static void status_changed_(PurpleAccount *account, PurpleStatus *status)
+			{ ACCOUNTS->status_changed(account, status); }
 		void status_changed(PurpleAccount *account, PurpleStatus *status);
 	protected:
 
 	private:
 		Accounts();
+		Accounts(const Accounts&);
+		Accounts &operator=(const Accounts&);
 		~Accounts();
-
-		static Accounts* instance;
 
 		/* callbacks */
 		static void signed_on_(PurpleConnection *gc, gpointer p);

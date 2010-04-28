@@ -24,6 +24,8 @@
 #include "Defines.h"
 #include "gettext.h"
 
+#include <cstdio>
+
 int main(int argc, char **argv)
 {
 	CenterIM* cim;
@@ -41,7 +43,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 
 	try {
-		cim = &CenterIM::Instance();
+		cim = CenterIM::Instance();
 	}
 	catch (int i) {
 		switch (i) {

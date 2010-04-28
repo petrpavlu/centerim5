@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -19,6 +20,15 @@
  * */
 
 #include "CenterIM.h"
+
+#include "Accounts.h"
+#include "BuddyList.h"
+#include "Conf.h"
+#include "Connections.h"
+#include "Conversations.h"
+#include "Log.h"
+#include "Transfers.h"
+
 #include "AccountStatusMenu.h"
 #include "GeneralMenu.h"
 #include "Defines.h"
@@ -31,15 +41,13 @@
 
 std::vector<CenterIM::LogBufferItem> *CenterIM::logbuf = NULL;
 
-CenterIM &CenterIM::Instance(void)
+CenterIM *CenterIM::Instance(void)
 {
 	static CenterIM instance;
-	return instance;
+	return &instance;
 }
 
 CenterIM::CenterIM(void)
-: Application(), accounts(NULL), connections(NULL), buddylist(NULL)
-, conversations(NULL), transfers(NULL), conf(NULL)
 {
 	memset(&centerim_core_ui_ops, 0, sizeof(centerim_core_ui_ops));
 	memset(&logbuf_debug_ui_ops, 0, sizeof(logbuf_debug_ui_ops));
@@ -53,13 +61,28 @@ void CenterIM::Run(void)
 	PurpleInit();
 
 	// initialize Conf component so we can calculate area sizes of all windows
-	conf = Conf::Instance();
+	Conf::Instance();
+
+	ColorSchemeInit();
 
 	// initialize Log component
-	DebugUIInit();
+	windowmanager->Add(Log::Instance());
+	if (logbuf) {
+		for (LogBufferItems::iterator i = logbuf->begin(); i != logbuf->end(); i++) {
+			LOG->purple_print(i->level, i->category, i->arg_s);
+			g_free(i->category);
+			g_free(i->arg_s);
+		}
+
+		delete logbuf;
+		logbuf = NULL;
+	}
+
+	Accounts::Instance();
+	Conversations::Instance();
 
 	// initialize UI
-	UIInit();
+	windowmanager->Add(BuddyList::Instance());
 
 	Application::Run();
 }
@@ -203,25 +226,7 @@ void CenterIM::PurpleInit(void)
 	}
 }
 
-void CenterIM::DebugUIInit(void)
-{
-	std::vector<LogBufferItem>::iterator i;
-	
-	windowmanager->Add(Log::Instance());
-
-	if (logbuf) {
-		for (i = logbuf->begin(); i != logbuf->end(); i++) {
-			LOG->purple_print(i->level, i->category, i->arg_s);
-			g_free(i->category);
-			g_free(i->arg_s);
-		}
-
-		delete logbuf;
-		logbuf = NULL;
-	}
-}
-
-void CenterIM::UIInit(void)
+void CenterIM::ColorSchemeInit()
 {
 	// default colors init
 	/// @todo move this to a default cfg
@@ -254,36 +259,6 @@ void CenterIM::UIInit(void)
 	COLORSCHEME->SetColorPair("conversation",	"textview",		"color2",	Curses::Color::YELLOW,	Curses::Color::BLACK,	Curses::Attr::BOLD);
 	COLORSCHEME->SetColorPair("conversation",	"panel",		"line",		Curses::Color::BLUE,	Curses::Color::BLACK,	Curses::Attr::BOLD);
 	COLORSCHEME->SetColorPair("conversation",	"horizontalline",	"line",		Curses::Color::BLUE,	Curses::Color::BLACK,	Curses::Attr::BOLD);
-
-	//TODO when these objecs are windows, add them to the windowmanager
-	accounts = Accounts::Instance();
-//	windowmanager->Add(accounts = new Accounts());
-//	windowmanager->Add(connections = new Connections());
-	windowmanager->Add(buddylist = BUDDYLIST);
-//	windowmanager->Add(conversations = Conversations::Instance());
-//	windowmanager->Add(transfers = new Transfers());
-
-	connections = new Connections();
-	conversations = Conversations::Instance();
-	transfers = new Transfers();
-}
-
-void CenterIM::UIUnInit(void)
-{
-	//TODO when these objecs are windows, remove them from the windowmanager
-//	windowmanager->Remove(accounts);
-	if (accounts) { accounts->Delete(); accounts = NULL; }
-
-//	windowmanager->Remove(connections);
-	delete connections; connections = NULL;
-
-	windowmanager->Remove(buddylist);
-	if (buddylist) { buddylist->Delete(); buddylist = NULL; }
-
-//	windowmanager->Remove(transfers);
-	delete transfers; transfers = NULL;
-
-	if (conf) conf->Delete(); conf = NULL;
 }
 
 void CenterIM::DeclareBindables()
@@ -319,14 +294,12 @@ Rect CenterIM::ScreenAreaSize(ScreenArea area)
 }
 
 void CenterIM::ScreenResized(void) {
-	g_assert(conf);
-
-	Rect size = conf->GetBuddyListDimensions();
+	Rect size = CONF->GetBuddyListDimensions();
 	size.width = (int) (size.width * (windowmanager->getScreenW() / (double) originalW));
 	size.height = windowmanager->getScreenH();
 	areaSizes[BuddyListArea] = size;
 	
-	size = conf->GetLogDimensions();
+	size = CONF->GetLogDimensions();
 	size.x = areaSizes[BuddyListArea].width;
 	size.width = windowmanager->getScreenW() - size.x;
 	size.height = (int) (size.height * (windowmanager->getScreenH() / (double) originalH));

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -29,13 +30,14 @@
 
 #include "Defines.h"
 
+#define CONF (Conf::Instance())
+
 class Log;
 
 class Conf
 {
 	public:
-		static Conf* Instance(void);
-		static void Delete(void);
+		static Conf *Instance();
 
 		void Reload(void);
 		void Save(void);
@@ -83,9 +85,9 @@ class Conf
 	protected:
 
 	private:
-		static Conf* instance;
-
 		Conf();
+		Conf(const Conf&);
+		Conf& operator=(const Conf&);
 		~Conf();
 
 		void AddPath(const std::string &s);

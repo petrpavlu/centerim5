@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -54,8 +55,6 @@ Conversation::Conversation(PurpleConversation *conv_)
 
 	SetColorScheme("conversation");
 
-	conf = Conf::Instance();
-
 	view = new TextView(width - 2, height, true);
 	input = new TextEdit(width - 2, height);
 	line = new HorizontalLine(width);
@@ -63,9 +62,9 @@ Conversation::Conversation(PurpleConversation *conv_)
 	AddWidget(*input, 1, 1);
 	AddWidget(*line, 0, height);
 
-	SetPartitioning(conf->GetChatPartitioning());
+	SetPartitioning(CONF->GetChatPartitioning());
 	
-	MoveResizeRect(conf->GetChatDimensions());
+	MoveResizeRect(CONF->GetChatDimensions());
 
 	// open logfile
 	BuildLogFilename();
@@ -148,7 +147,7 @@ void Conversation::Close()
 
 void Conversation::ScreenResized()
 {
-	MoveResizeRect(CenterIM::Instance().ScreenAreaSize(CenterIM::ChatArea));
+	MoveResizeRect(CENTERIM->ScreenAreaSize(CenterIM::ChatArea));
 }
 
 void Conversation::Show()
@@ -164,7 +163,7 @@ void Conversation::MoveResize(int newx, int newy, int neww, int newh)
 {
 	Window::MoveResize(newx, newy, neww, newh);
 
-	SetPartitioning(conf->GetChatPartitioning());
+	SetPartitioning(CONF->GetChatPartitioning());
 }
 
 void Conversation::Receive(const char *name, const char *alias, const char *message,
@@ -250,7 +249,7 @@ ConversationChat::ConversationChat(PurpleConversation *conv)
 
 void ConversationChat::LoadHistory()
 {
-	g_return_if_fail(conf->GetLogChats());
+	g_return_if_fail(CONF->GetLogChats());
 
 	PurpleAccount *account = purple_conversation_get_account(conv);
 	const char *name = purple_conversation_get_name(conv);

@@ -43,8 +43,6 @@ AccountWindow::AccountWindow()
 {
 	SetColorScheme("accountwindow");
 
-	conf = Conf::Instance();
-
 	accounts = new TreeView(width, height - 2);
 	menu = new HorizontalListBox(width, 1);
 	line = new HorizontalLine(width);
@@ -60,7 +58,7 @@ AccountWindow::AccountWindow()
 	AddWidget(*menu, 1, height - 1);
 	AddWidget(*line, 1, height - 2);
 
-	MoveResizeRect(conf->GetAccountWindowDimensions());
+	MoveResizeRect(CONF->GetAccountWindowDimensions());
 	
 	Populate();
 }
@@ -76,8 +74,8 @@ void AccountWindow::MoveResize(int newx, int newy, int neww, int newh)
 
 void AccountWindow::ScreenResized()
 {
-	Rect screen = CenterIM::Instance().ScreenAreaSize(CenterIM::WholeArea);
-	Rect confSize = conf->GetAccountWindowDimensions();
+	Rect screen = CENTERIM->ScreenAreaSize(CenterIM::WholeArea);
+	Rect confSize = CONF->GetAccountWindowDimensions();
 
 	// Check against screen size
 	if (screen.Width() < (confSize.Width()+4))
@@ -571,7 +569,7 @@ void AccountWindow::AccountOptionInt::ResponseHandler(Dialog::ResponseType respo
 			errno = 0;
 			i = strtol(text, NULL, 10);
 			if (errno == ERANGE)
-				Log::Instance()->Write(Log::Level_warning, _("Value out of range.\n"));
+				LOG->Write(Log::Level_warning, _("Value out of range.\n"));
 			purple_account_set_int(account, setting, i);
 
 			UpdateText();

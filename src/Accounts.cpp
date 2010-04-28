@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -28,20 +29,10 @@
 #include <libpurple/savedstatuses.h>
 #include "gettext.h"
 
-Accounts* Accounts::instance = NULL;
-
-Accounts* Accounts::Instance(void)
+Accounts *Accounts::Instance()
 {
-	if (!instance) instance = new Accounts();
-	return instance;
-}
-
-void Accounts::Delete(void)
-{
-	if (instance) {
-		delete instance;
-		instance = NULL;
-	}
+	static Accounts instance;
+	return &instance;
 }
 
 //TODO move inside accounts class and make callbacks private
@@ -66,9 +57,6 @@ Accounts::Accounts()
 	purple_signal_connect(purple_connections_get_handle(), "signed-on", this,
 		PURPLE_CALLBACK(signed_on_), this);
 
-	/* setup the callbacks for the buddylist */
-	purple_accounts_set_ui_ops(&centerim_accounts_ui_ops);
-
 	/*TODO always set all accounts enabled
 	GList *i;
 	PurpleAccount *account;
@@ -85,6 +73,9 @@ Accounts::Accounts()
 	
 	/* restore last know status on all accounts. */
 	purple_accounts_restore_current_statuses();
+
+	/* setup the callbacks for the buddylist */
+	purple_accounts_set_ui_ops(&centerim_accounts_ui_ops);
 }
 
 Accounts::~Accounts()
@@ -96,11 +87,6 @@ void Accounts::signed_on_(PurpleConnection *gc, gpointer p)
 {
 	Accounts *accounts = (Accounts*)p;
 	accounts->signed_on(gc);
-}
-
-void Accounts::status_changed_(PurpleAccount *account, PurpleStatus *status)
-{
-	Accounts::Instance()->status_changed(account, status);
 }
 
 void Accounts::signed_on(PurpleConnection *gc)

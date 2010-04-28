@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -60,20 +61,27 @@
 #define CONF_LOG_CHATS_DEFAULT		TRUE
 #define CONF_LOG_SYSTEM_DEFAULT		FALSE
 
-Conf* Conf::instance = NULL;
-
-Conf* Conf::Instance(void)
+Conf *Conf::Instance()
 {
-	if (!instance) instance = new Conf();
-	return instance;
+	static Conf instance;
+	return &instance;
 }
 
-void Conf::Delete(void)
+Conf::Conf()
 {
-	if (instance) {
-		delete instance;
-		instance = NULL;
-	}
+	/* let libpurple load the configuration file */
+	//purple_prefs_load();
+	/* convert settings from older libpurple versions */
+	//purple_prefs_update_old();
+
+	/* Load the desired plugins. The client should save the list of loaded
+	 * plugins in the preferences using purple_plugins_save_loaded(PLUGIN_SAVE_PREF). */
+	purple_plugins_load_saved(CONF_PLUGIN_SAVE_PREF);
+}
+
+Conf::~Conf()
+{
+	//Save();
 }
 
 void Conf::Reload(void)
@@ -350,21 +358,4 @@ void Conf::AddPath(const std::string &s)
 		ss = s.substr(0, i);
 		purple_prefs_add_none(ss.c_str());
 	}
-}
-
-Conf::Conf()
-{
-	/* let libpurple load the configuration file */
-	//purple_prefs_load();
-	/* convert settings from older libpurple versions */
-	//purple_prefs_update_old();
-
-	/* Load the desired plugins. The client should save the list of loaded
-	 * plugins in the preferences using purple_plugins_save_loaded(PLUGIN_SAVE_PREF). */
-	purple_plugins_load_saved(CONF_PLUGIN_SAVE_PREF);
-}
-
-Conf::~Conf()
-{
-	Save();
 }

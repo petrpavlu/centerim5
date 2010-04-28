@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -21,13 +22,7 @@
 #ifndef __CENTERIM_H__
 #define __CENTERIM_H__
 
-#include "Accounts.h"
-#include "Connections.h"
-#include "BuddyList.h"
-#include "Conversations.h"
-#include "Transfers.h"
-#include "Log.h"
-#include "Conf.h"
+#include <glib.h>
 
 #include <libpurple/core.h>
 #include <libpurple/debug.h>
@@ -40,13 +35,15 @@
 
 #include <vector>
 
+#define CENTERIM (CenterIM::Instance())
+
 class CenterIM
 : public Application
 {
 	public:
 		enum ScreenArea {BuddyListArea, LogArea, ChatArea, WholeArea, AreaMax};
 
-		static CenterIM &Instance(void);
+		static CenterIM *Instance(void);
 
 		virtual void Run(void);
 		virtual void Quit(void);
@@ -114,26 +111,18 @@ class CenterIM
 			char *category;
 			char *arg_s;
 		};
-		static std::vector<LogBufferItem> *logbuf;
-
-		Accounts *accounts;
-		Connections *connections;
-		BuddyList *buddylist;
-		Conversations *conversations;
-		Transfers *transfers;
-		Conf *conf;
+		typedef std::vector<LogBufferItem> LogBufferItems;
+		static LogBufferItems *logbuf;
 
 		Rect areaSizes[AreaMax];
 
-		CenterIM(void);
+		CenterIM();
 		CenterIM(const CenterIM &);
 		CenterIM &operator=(const CenterIM &);
-		~CenterIM(void) {};
+		~CenterIM() {}
 
-		void PurpleInit(void);
-		void DebugUIInit(void);
-		void UIInit(void);
-		void UIUnInit(void);
+		void PurpleInit();
+		void ColorSchemeInit();
 
 		/** it handles the automatic registration of defined keys */
 		DECLARE_SIG_REGISTERKEYS();

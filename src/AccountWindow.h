@@ -223,8 +223,6 @@ class AccountWindow
 		//void FocusCycleUpDown(Container::FocusDirection direction);
 		void MoveFocus(FocusDirection direction);
 
-		Conf *conf;
-
 		TreeView *accounts;
 		HorizontalListBox *menu;
 		HorizontalLine *line;

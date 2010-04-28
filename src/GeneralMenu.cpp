@@ -54,12 +54,12 @@ GeneralMenu::GeneralMenu(int x, int y, int w, int h)
 	AppendItem(_("Mass group move..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	*/
 	AppendSeparator();
-	AppendItem(_("Quit"), sigc::mem_fun(CenterIM::Instance(), &CenterIM::Quit));
+	AppendItem(_("Quit"), sigc::mem_fun(CENTERIM, &CenterIM::Quit));
 }
 
 void GeneralMenu::ScreenResized()
 {
-	Rect chat = CenterIM::Instance().ScreenAreaSize(CenterIM::ChatArea);
+	Rect chat = CENTERIM->ScreenAreaSize(CenterIM::ChatArea);
 	MoveResize(chat.x, chat.y, win_w, win_h);
 }
 

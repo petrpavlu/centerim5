@@ -84,8 +84,6 @@ BuddyList::BuddyList()
 {
 	SetColorScheme("buddylist");
 
-	conf = Conf::Instance();
-
 	//TODO check if this has been moved to purple_blist_init
 	//renove these lines if it was
 	//as this will probably move to purple_init, the buddylist 
@@ -106,7 +104,7 @@ BuddyList::BuddyList()
 	treeview = new TreeView(width - 2, height - 2);
 	AddWidget(*treeview, 0, 0);
 
-	MoveResizeRect(conf->GetBuddyListDimensions());
+	MoveResizeRect(CONF->GetBuddyListDimensions());
 }
 
 bool BuddyList::Load(void)
@@ -246,7 +244,7 @@ void BuddyList::MoveResize(int newx, int newy, int neww, int newh)
 
 void BuddyList::ScreenResized()
 {
-	MoveResizeRect(CenterIM::Instance().ScreenAreaSize(CenterIM::BuddyListArea));
+	MoveResizeRect(CENTERIM->ScreenAreaSize(CenterIM::BuddyListArea));
 }
 
 BuddyList::AccountsBox::AccountsBox(PurpleAccount *account)

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -174,7 +175,7 @@ void Log::debug_change(const char *name, PurplePrefType type, gconstpointer val)
 
 void Log::ScreenResized(void)
 {
-	MoveResizeRect(CenterIM::Instance().ScreenAreaSize(CenterIM::LogArea));
+	MoveResizeRect(CENTERIM->ScreenAreaSize(CenterIM::LogArea));
 }
 
 void Log::Write(Type type, Level level, const gchar *fmt, ...)

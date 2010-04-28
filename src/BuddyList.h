@@ -182,8 +182,6 @@ class BuddyList
 
 		PurpleBuddyList *buddylist;
 
-		Conf *conf;
-
 		TreeView *treeview;
 };
 

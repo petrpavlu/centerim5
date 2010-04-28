@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -57,8 +58,6 @@ class Conversation
 		void SetPartitioning(unsigned percentage);
 
 		virtual void LoadHistory() = 0;
-
-		Conf *conf;
 
 		TextView *view;
 		TextEdit *input;
