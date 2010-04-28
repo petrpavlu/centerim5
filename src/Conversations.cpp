@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -19,9 +20,7 @@
  * */
 
 #include "Conversations.h"
-#include "Conversation.h"
 
-#include <vector>
 #include <cstring>
 
 Conversations *Conversations::Instance()

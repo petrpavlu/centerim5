@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -20,9 +21,6 @@
 
 #ifndef _BUDDYLISTNODE_H__
 #define _BUDDYLISTNODE_H__
-
-#include "Log.h"
-#include "Conf.h"
 
 #include <cppconsui/Button.h>
 #include <cppconsui/TreeView.h>
@@ -54,8 +52,6 @@ class BuddyListNode
 
 	protected:
 		PurpleBlistNode *node;
-
-		Conf *conf;
 
 	private:
 };

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -19,13 +20,10 @@
  * */
 
 #include "AccountStatusMenu.h"
+
+#include "Accounts.h"
 #include "CenterIM.h"
 
-#include <cppconsui/Label.h>
-#include <cppconsui/WindowManager.h>
-
-#include <libpurple/account.h>
-#include <libpurple/savedstatuses.h>
 #include "gettext.h"
 
 AccountStatusMenu::AccountStatusMenu(int x, int y, int w, int h)
@@ -35,8 +33,6 @@ AccountStatusMenu::AccountStatusMenu(int x, int y, int w, int h)
 
 	GList *iter;
 	gchar *text;
-
-	windowmanager = WindowManager::Instance();
 
 	AppendItem(_("All accounts"), sigc::mem_fun(this, &AccountStatusMenu::Dummy));
 	AppendItem(_("Already logged in only"), sigc::mem_fun(this, &AccountStatusMenu::Dummy));
@@ -63,7 +59,7 @@ AccountStatusMenu::~AccountStatusMenu()
 void AccountStatusMenu::OpenStatusPopup(PurpleAccount *account)
 {
 	AccountStatusMenu::StatusPopup *status_popup = new StatusPopup(xpos, ypos, width, height, account);
-	windowmanager->Add(status_popup);
+	status_popup->Show();
 }
 
 AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h, PurpleAccount *account)

@@ -26,15 +26,15 @@
 
 #include <vector>
 
+#define WINDOWMANAGER (WindowManager::Instance())
+
 class WindowManager
 : public InputProcessor
 {
 	public:
-		static WindowManager* Instance(void);
+		static WindowManager *Instance();
 
 		static void signal_handler(int signum);
-
-		void Delete(void);
 
 		virtual void Add(Window *window);
 		void Remove(Window *window);
@@ -78,8 +78,6 @@ class WindowManager
 		WindowManager(const WindowManager&);
 		WindowManager& operator=(const WindowManager&);
 		~WindowManager(void);
-
-		static WindowManager *instance;
 
 	private:
 		/** it handles the automatic registration of defined keys */

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -19,11 +20,10 @@
  * */
 
 #include "GeneralMenu.h"
+
 #include "AccountWindow.h"
 #include "CenterIM.h"
 
-//TODO remove when show() of window/dialog is implemented
-#include <cppconsui/WindowManager.h>
 #include "gettext.h"
 
 GeneralMenu::GeneralMenu(int x, int y, int w, int h)
@@ -65,9 +65,8 @@ void GeneralMenu::ScreenResized()
 
 void GeneralMenu::OpenAccountsWindow()
 {
-	//TODO adding to the windowmanager should be done by the windows themselves?
-	WindowManager *wm = WindowManager::Instance();
-	wm->Add(new AccountWindow());
+	AccountWindow *aw = new AccountWindow;
+	aw->Show();
 	Close();
 }
 

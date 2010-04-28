@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -22,14 +23,11 @@
 #define __BUDDYLIST_H__
 
 #include "BuddyListNode.h"
-#include "Log.h"
-#include "Conf.h"
 
-#include <cppconsui/Window.h>
-#include <cppconsui/TreeView.h>
-#include <cppconsui/Panel.h>
 #include <cppconsui/ComboBox.h>
 #include <cppconsui/InputDialog.h>
+#include <cppconsui/TreeView.h>
+#include <cppconsui/Window.h>
 
 #include <libpurple/blist.h>
 
@@ -40,7 +38,6 @@ class BuddyList
 {
 	public:
 		static BuddyList *Instance();
-		void Delete();
 
 		void Close(void);
 		virtual void MoveResize(int newx, int newy, int neww, int newh);

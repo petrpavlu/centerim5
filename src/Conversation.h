@@ -22,16 +22,16 @@
 #ifndef __CONVERSATION_H__
 #define __CONVERSATION_H__
 
-#include "Log.h"
 #include "Conf.h"
-
-#include <cppconsui/Window.h>
-#include <cppconsui/TextView.h>
-#include <cppconsui/TextEdit.h>
-#include <cppconsui/LineStyle.h>
-#include <cppconsui/HorizontalLine.h>
+#include "Log.h"
 
 #include <libpurple/conversation.h>
+
+#include <cppconsui/HorizontalLine.h>
+#include <cppconsui/LineStyle.h>
+#include <cppconsui/TextEdit.h>
+#include <cppconsui/TextView.h>
+#include <cppconsui/Window.h>
 
 class Conversation
 : public Window
@@ -43,8 +43,7 @@ class Conversation
 		// Window
 		virtual void Close();
 		virtual void ScreenResized();
-
-		void Show();
+		virtual void Show();
 
 		// Widget
 		virtual void MoveResize(int newx, int newy, int neww, int newh);

@@ -22,8 +22,6 @@
 #ifndef __ACCOUNTS_H__
 #define __ACCOUNTS_H__
 
-#include "Log.h"
-
 #include <libpurple/connection.h>
 #include <libpurple/savedstatuses.h>
 

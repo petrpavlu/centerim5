@@ -22,16 +22,13 @@
 #ifndef __ACCOUNTSWINDOW_H__
 #define __ACCOUNTSWINDOW_H__
 
-#include "Log.h"
-#include "Conf.h"
-
-#include <cppconsui/Window.h>
-#include <cppconsui/TreeView.h>
-#include <cppconsui/HorizontalListBox.h>
-#include <cppconsui/HorizontalLine.h>
 #include <cppconsui/Button.h>
 #include <cppconsui/ComboBox.h>
 #include <cppconsui/InputDialog.h>
+#include <cppconsui/HorizontalLine.h>
+#include <cppconsui/HorizontalListBox.h>
+#include <cppconsui/TreeView.h>
+#include <cppconsui/Window.h>
 
 #include <libpurple/account.h>
 #include <libpurple/accountopt.h>

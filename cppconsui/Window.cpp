@@ -190,12 +190,14 @@ void Window::Show()
 {
 	//TODO emit signal to show window
 	//(while keeping stacking order)
+	WINDOWMANAGER->Add(this);
 }
 
 void Window::Hide()
 {
 	//TODO emit signal to hide window
 	//(while keeping stacking order)
+	WINDOWMANAGER->Remove(this);
 }
 
 void Window::ScreenResized()

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -19,12 +20,11 @@
  * */
 
 #include "BuddyListNode.h"
+
 #include "Conversations.h"
 
 #include <cppconsui/Keys.h>
 
-#include <libpurple/conversation.h>
-#include <libpurple/blist.h>
 #include "gettext.h"
 
 BuddyListNode::BuddyListNode(PurpleBlistNode *node)

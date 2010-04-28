@@ -19,15 +19,13 @@
  *
  * */
 
-#define CONF_PLUGIN_SAVE_PREF	"/centerim/plugins/loaded"
-
 #include "Accounts.h"
 
 #include "Log.h"
 
-#include <libpurple/account.h>
-#include <libpurple/savedstatuses.h>
 #include "gettext.h"
+
+#define CONF_PLUGIN_SAVE_PREF	"/centerim/plugins/loaded"
 
 Accounts *Accounts::Instance()
 {

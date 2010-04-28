@@ -49,8 +49,6 @@ Application::~Application()
 {
 	resize.disconnect();
 
-	windowmanager->Delete();
-
 	StdinInputUnInit();
 }
 

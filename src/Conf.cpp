@@ -21,12 +21,10 @@
 
 
 #include "Conf.h"
-
-#include <cppconsui/CppConsUI.h>
+#include "Defines.h"
 
 #include <libpurple/prefs.h>
 #include <libpurple/plugin.h>
-#include <libpurple/pounce.h>
 
 //TODO sensible values
 #define CONF_PERCENTAGE_MIN		0

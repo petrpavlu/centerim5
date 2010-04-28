@@ -20,20 +20,17 @@
  * */
 
 #include "AccountWindow.h"
-#include "CenterIM.h"
 
-#include <cppconsui/Button.h>
+#include "CenterIM.h"
+#include "Conf.h"
+#include "Log.h"
+
 #include <cppconsui/Keys.h>
 #include <cppconsui/MessageDialog.h>
-#include <cppconsui/WindowManager.h>
-
-#include <libpurple/account.h>
-#include <libpurple/accountopt.h>
 
 #include <cstring>
 #include <errno.h>
 
-#include <glib.h>
 #include "gettext.h"
 
 AccountWindow::AccountWindow()
@@ -113,13 +110,10 @@ void AccountWindow::Add()
 //TODO move to Accounts class
 void AccountWindow::DropAccount(PurpleAccount *account)
 {
-	WindowManager *wm = WindowManager::Instance();
 	MessageDialog *dialog = new MessageDialog(_("Are you sure you want to delete this account?"));
 	dialog->signal_response.connect(
 		sigc::bind(sigc::mem_fun(this, &AccountWindow::DropAccountResponseHandler), account));
-	//TODO add something to dialog class to show it. this removes the need
-	//for including windowmanager.h, and is easier to use.
-	wm->Add(dialog);
+	dialog->Show();
 }
 
 //TODO move to Accounts.cpp
@@ -491,13 +485,10 @@ void AccountWindow::AccountOptionString::UpdateText()
 
 void AccountWindow::AccountOptionString::OnActivate()
 {
-	WindowManager *wm = WindowManager::Instance();
 	dialog = new InputDialog(text, value);
 	dialog->signal_response.connect(
 			sigc::mem_fun(this, &AccountWindow::AccountOptionString::ResponseHandler));
-	//TODO add something to dialog class to show it. this removes the need
-	//for including windowmanager.h, and is easier to use.
-	wm->Add(dialog);
+	dialog->Show();
 }
 
 void AccountWindow::AccountOptionString::ResponseHandler(Dialog::ResponseType response)
@@ -542,7 +533,6 @@ void AccountWindow::AccountOptionInt::UpdateText()
 
 void AccountWindow::AccountOptionInt::OnActivate()
 {
-	WindowManager *wm = WindowManager::Instance();
 
 	gchar *value_string = g_strdup_printf("%d", value);
 	dialog = new InputDialog(text, value_string);
@@ -551,9 +541,7 @@ void AccountWindow::AccountOptionInt::OnActivate()
 	dialog->SetFlags(TextEntry::FlagNumeric);
 	dialog->signal_response.connect(
 			sigc::mem_fun(this, &AccountWindow::AccountOptionInt::ResponseHandler));
-	//TODO add something to dialog class to show it. this removes the need
-	//for including windowmanager.h, and is easier to use.
-	wm->Add(dialog);
+	dialog->Show();
 }
 
 void AccountWindow::AccountOptionInt::ResponseHandler(Dialog::ResponseType response)
@@ -664,13 +652,10 @@ void AccountWindow::AccountOptionSplit::SetValue(const gchar *new_value)
 
 void AccountWindow::AccountOptionSplit::OnActivate()
 {
-	WindowManager *wm = WindowManager::Instance();
 	dialog = new InputDialog(text, value);
 	dialog->signal_response.connect(
 			sigc::mem_fun(this, &AccountWindow::AccountOptionSplit::ResponseHandler));
-	//TODO add something to dialog class to show it. this removes the need
-	//for including windowmanager.h, and is easier to use.
-	wm->Add(dialog);
+	dialog->Show();
 }
 
 void AccountWindow::AccountOptionSplit::ResponseHandler(Dialog::ResponseType response)

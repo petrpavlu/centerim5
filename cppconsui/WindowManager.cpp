@@ -34,12 +34,10 @@
 
 #define CONTEXT_WINDOWMANAGER "windowmanager"
 
-WindowManager* WindowManager::instance = NULL;
-
-WindowManager* WindowManager::Instance(void)
+WindowManager *WindowManager::Instance()
 {
-	if (!instance) instance = new WindowManager();
-	return instance;
+	static WindowManager instance;
+	return &instance;
 }
 
 void WindowManager::signal_handler(int signum)
@@ -92,15 +90,6 @@ bool WindowManager::RegisterKeys()
 			_("Redraw the complete screen immediately"),
 			Keys::UnicodeTermKey("l", TERMKEY_KEYMOD_CTRL));
 	return true;
-}
-
-
-void WindowManager::Delete(void)
-{
-	if (instance) {
-		delete instance;
-		instance = NULL;
-	}
 }
 
 void WindowManager::Add(Window *window)

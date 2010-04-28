@@ -22,9 +22,9 @@
 
 #include "CenterIM.h"
 #include "Defines.h"
-#include "gettext.h"
 
 #include <cstdio>
+#include "gettext.h"
 
 int main(int argc, char **argv)
 {

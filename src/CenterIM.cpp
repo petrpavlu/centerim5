@@ -34,6 +34,7 @@
 #include "Defines.h"
 
 #include <cppconsui/ColorScheme.h>
+#include <cppconsui/Keys.h>
 #include <cstring>
 #include "gettext.h"
 
@@ -66,7 +67,7 @@ void CenterIM::Run(void)
 	ColorSchemeInit();
 
 	// initialize Log component
-	windowmanager->Add(Log::Instance());
+	Log::Instance()->Show();
 	if (logbuf) {
 		for (LogBufferItems::iterator i = logbuf->begin(); i != logbuf->end(); i++) {
 			LOG->purple_print(i->level, i->category, i->arg_s);
@@ -82,7 +83,7 @@ void CenterIM::Run(void)
 	Conversations::Instance();
 
 	// initialize UI
-	windowmanager->Add(BuddyList::Instance());
+	BuddyList::Instance()->Show();
 
 	Application::Run();
 }
@@ -320,12 +321,14 @@ void CenterIM::ScreenResized(void) {
 void CenterIM::OpenAccountStatusMenu(void)
 {
 	//TODO get coords from config
-	windowmanager->Add(new AccountStatusMenu(40,0, 40, 20));
+	AccountStatusMenu *menu = new AccountStatusMenu(40,0, 40, 20);
+	menu->Show();
 }
 
 void CenterIM::OpenGeneralMenu(void)
 {
 	//TODO get coords from config
-	windowmanager->Add(new GeneralMenu(40, 0, 40, 6));
+	GeneralMenu *menu = new GeneralMenu(40, 0, 40, 6);
+	menu->Show();
 }
 

@@ -29,10 +29,6 @@
 #include <libpurple/eventloop.h>
 
 #include <cppconsui/Application.h>
-#include <cppconsui/Keys.h>
-#include <cppconsui/InputProcessor.h>
-#include <cppconsui/WindowManager.h>
-
 #include <vector>
 
 #define CENTERIM (CenterIM::Instance())

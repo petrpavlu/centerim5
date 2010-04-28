@@ -22,15 +22,15 @@
 #ifndef __LOG_H__
 #define __LOG_H__
 
-#include <cppconsui/Window.h>
-#include <cppconsui/TextView.h>
 #include <libpurple/debug.h>
 #include <libpurple/prefs.h>
+
+#include <cppconsui/TextView.h>
+#include <cppconsui/Window.h>
+
 #include <vector>
 
 #define LOG (Log::Instance())
-
-class Conf;
 
 class Log
 : public Window
@@ -87,7 +87,6 @@ class Log
 		void *prefs_handle;
 
 		int max_lines;
-		Conf *conf;
 
 		TextView *textview;
 

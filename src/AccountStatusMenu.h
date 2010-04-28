@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -21,10 +22,7 @@
 #ifndef __ACOUNTSTATUSMENU_H__
 #define __ACOUNTSTATUSMENU_H__
 
-#include "Accounts.h"
-
 #include <cppconsui/MenuWindow.h>
-#include <cppconsui/WindowManager.h>
 
 #include <libpurple/account.h>
 #include <libpurple/savedstatuses.h>
@@ -68,8 +66,6 @@ class AccountStatusMenu
 		AccountStatusMenu& operator=(const AccountStatusMenu&);
 
 		void OpenStatusPopup(PurpleAccount *account);
-
-		WindowManager *windowmanager;
 };
 
 #endif /* __ACOUNTSTATUSMENU_H__ */

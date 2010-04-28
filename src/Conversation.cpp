@@ -20,12 +20,11 @@
  * */
 
 #include "Conversation.h"
+
 #include "CenterIM.h"
 
-#include <cppconsui/HorizontalLine.h>
-#include <cppconsui/TextView.h>
-#include <cppconsui/LineStyle.h>
 #include <cppconsui/Keys.h>
+
 #include <sys/stat.h>
 #include "gettext.h"
 
@@ -139,7 +138,7 @@ void Conversation::BuildLogFilename()
 
 void Conversation::Close()
 {
-	WindowManager::Instance()->Remove(this);
+	Hide();
 	/* Let libpurple and Conversations know that this conversation should be
 	 * destroyed after some time. */
 	destroy_id = g_timeout_add(CONVERSATION_DESTROY_TIMEOUT, timeout_once_purple_conversation_destroy, conv);
@@ -156,7 +155,7 @@ void Conversation::Show()
 		g_source_remove(destroy_id);
 		destroy_id = 0;
 	}
-	WindowManager::Instance()->Add(this);
+	Window::Show();
 }
 
 void Conversation::MoveResize(int newx, int newy, int neww, int newh)

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -20,44 +21,22 @@
 
 #include "BuddyList.h"
 
-#include "Log.h"
 #include "Conf.h"
-
 #include "CenterIM.h"
-
-#include <cppconsui/ConsuiCurses.h>
+#include "Log.h"
 
 #include <cppconsui/Keys.h>
-#include <cppconsui/Window.h>
-#include <cppconsui/TreeView.h>
 
-//TODO remove stuff we dont need here
-#include <libpurple/blist.h>
-#include <libpurple/prefs.h>
-#include <libpurple/core.h>
-#include <libpurple/plugin.h>
-#include <libpurple/util.h>
 #include <libpurple/pounce.h>
-#include <libpurple/debug.h>
-#include <libpurple/savedstatuses.h>
+
 #include "gettext.h"
 
 #include <glibmm/main.h>
 
-BuddyList* BuddyList::instance = NULL;
-
-BuddyList* BuddyList::Instance(void)
+BuddyList *BuddyList::Instance()
 {
-	if (!instance) instance = new BuddyList();
-	return instance;
-}
-
-void BuddyList::Delete(void)
-{
-	if (instance) {
-		delete instance;
-		instance = NULL;
-	}
+	static BuddyList instance;
+	return &instance;
 }
 
 //TODO move this struct inside the buddylist object
@@ -223,7 +202,8 @@ void BuddyList::destroy_list(PurpleBuddyList *list)
 
 void BuddyList::request_add_buddy(PurpleAccount *account, const char *username, const char *group, const char *alias)
 {
-	WindowManager::Instance()->Add(new AddBuddyWindow(account, username, group, alias));
+	AddBuddyWindow *bud = new AddBuddyWindow(account, username, group, alias);
+	bud->Show();
 }
 
 void BuddyList::MoveResize(int newx, int newy, int neww, int newh)
@@ -322,12 +302,10 @@ void BuddyList::NameButton::OnActivate()
 {
 	g_assert(!dialog);
 
-	WindowManager *wm = WindowManager::Instance();
-
 	dialog = new InputDialog(text, value);
 	dialog->signal_response.connect(
 			sigc::mem_fun(this, &BuddyList::NameButton::ResponseHandler));
-	wm->Add(dialog);
+	dialog->Show();
 }
 
 void BuddyList::NameButton::ResponseHandler(Dialog::ResponseType response)

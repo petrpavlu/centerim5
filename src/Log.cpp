@@ -20,13 +20,14 @@
  * */
 
 #include "Log.h"
+
 #include "Conf.h"
 #include "CenterIM.h"
+#include "Defines.h"
 
-#include <cppconsui/WindowManager.h>
 #include <libpurple/debug.h>
 #include <libpurple/util.h>
-#include <glib.h>
+
 #include <cstring>
 #include "gettext.h"
 
@@ -42,13 +43,10 @@ Log::Log(void)
 , logfile(NULL)
 , prefs_handle(NULL)
 , max_lines(0)
-, conf(NULL)
 { 
 	SetColorScheme("log");
 
 	memset(&centerim_debug_ui_ops, 0, sizeof(centerim_debug_ui_ops));
-
-	conf = Conf::Instance();
 
 	textview = new TextView(width - 2, height, true);
 	AddWidget(*textview, 1, 0);
@@ -58,9 +56,9 @@ Log::Log(void)
 				| G_LOG_FLAG_RECURSION), glib_log_handler_, NULL)
 
 	// TODO max_lines not used anywhere..
-	max_lines = conf->GetLogMaxLines();
+	max_lines = CONF->GetLogMaxLines();
 
-	MoveResizeRect(conf->GetLogDimensions());
+	MoveResizeRect(CONF->GetLogDimensions());
 
 	// register the glib log handlers
 	REGISTER_G_LOG_HANDLER(NULL);
@@ -100,7 +98,7 @@ void Log::Write(Level level, const gchar *fmt, ...)
 	va_list args;
 	gchar *text;
 
-	if (conf->GetLogLevelCIM() < level)
+	if (CONF->GetLogLevelCIM() < level)
 		return; // we don't want to see this log message
 
 	va_start(args, fmt);
@@ -129,7 +127,7 @@ gboolean Log::is_enabled(PurpleDebugLevel purplelevel, const char *category)
 {
 	Level level = ConvertPurpleDebugLevel(purplelevel);
 
-	if (conf->GetLogLevelPurple() < level)
+	if (CONF->GetLogLevelPurple() < level)
 		return FALSE;
 
 	return TRUE;
@@ -167,7 +165,7 @@ void Log::glib_log_handler(const gchar *domain, GLogLevelFlags flags,
 void Log::debug_change(const char *name, PurplePrefType type, gconstpointer val)
 {
 	// debug was disabled so close logfile if it's opened
-	if (!conf->GetBool(CONF_PREFIX "log/debug", false) && logfile) {
+	if (!CONF->GetBool(CONF_PREFIX "log/debug", false) && logfile) {
 		g_io_channel_unref(logfile);
 		logfile = NULL;
 	}
@@ -183,8 +181,8 @@ void Log::Write(Type type, Level level, const gchar *fmt, ...)
 	va_list args;
 	gchar *text;
 
-	if ((type == Type_glib && conf->GetLogLevelGlib() < level)
-		|| (type == Type_purple && conf->GetLogLevelPurple() < level))
+	if ((type == Type_glib && CONF->GetLogLevelGlib() < level)
+		|| (type == Type_purple && CONF->GetLogLevelPurple() < level))
 		return; // we don't want to see this log message
 
 	va_start(args, fmt);
@@ -202,7 +200,7 @@ void Log::WriteToWindow(Level level, const gchar *fmt, ...)
 	va_list args;
 	gchar *text;
 
-	if (conf->GetLogLevelCIM() < level)
+	if (CONF->GetLogLevelCIM() < level)
 		return; // we don't want to see this log message
 
 	va_start(args, fmt);
@@ -218,11 +216,11 @@ void Log::WriteToFile(const gchar *text)
 {
 	GError *err = NULL;
 
-	if (conf->GetDebugEnabled()) {
+	if (CONF->GetDebugEnabled()) {
 		// open logfile if it isn't already opened
 		if (!logfile) {
 			gchar *filename = g_build_filename(purple_user_dir(),
-					conf->GetString(CONF_PREFIX "log/filename", "debug"), NULL);
+					CONF->GetString(CONF_PREFIX "log/filename", "debug"), NULL);
 			if ((logfile = g_io_channel_new_file(filename, "a", &err)) == NULL) {
 				if (err) {
 					WriteToWindow(Level_error, _("centerim/log: Error opening logfile `%s' (%s).\n"), filename, err->message);

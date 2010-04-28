@@ -24,15 +24,9 @@
 
 #include "Log.h"
 
-#include <cppconsui/CppConsUI.h>
-
 #include <string>
 
-#include "Defines.h"
-
 #define CONF (Conf::Instance())
-
-class Log;
 
 class Conf
 {
