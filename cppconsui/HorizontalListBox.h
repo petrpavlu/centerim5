@@ -43,10 +43,10 @@ class HorizontalListBox
 		virtual ~HorizontalListBox() {}
 
 		// AbstractListBox
-		void AddSeparator();
+		virtual void AppendSeparator();
+		virtual void AppendWidget(Widget& widget);
 
 		// Container
-		virtual void AddWidget(Widget& widget, int x = 0, int y = 0);
 		virtual void RemoveWidget(Widget& widget);
 
 	protected:

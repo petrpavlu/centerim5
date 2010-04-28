@@ -107,6 +107,9 @@ class TreeView
 		int GetActive(void); //TODO better name?
 
 	protected:
+		// Container
+		virtual void AddWidget(Widget &widget, int x, int y);
+
 		void DeleteNode(const NodeReference &node);
 		const NodeReference AddNode(const NodeReference &parent, TreeNode &node);
 		int DrawNode(TheTree::sibling_iterator node, int top);
@@ -122,7 +125,6 @@ class TreeView
 	private:
 		TreeView();
 		TreeView(const TreeView&);
-
 		TreeView& operator=(const TreeView&);
 		
 		/* Handlers of signals */

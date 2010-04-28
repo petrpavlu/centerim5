@@ -66,7 +66,7 @@ class Container
 		 * @todo should we check if the widget has the current container as parent ? Should this be 
 		 *  mandatory ?
 		 */
-		virtual void AddWidget(Widget &widget, int x = 0, int y = 0);
+		virtual void AddWidget(Widget &widget, int x, int y);
 		/** Removes the widget from the children list but it doesn't delete the widget.
 		 * The caller must ensure proper deletion of the widget.
 		 */

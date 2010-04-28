@@ -38,9 +38,9 @@ AccountStatusMenu::AccountStatusMenu(int x, int y, int w, int h)
 
 	windowmanager = WindowManager::Instance();
 
-	AddItem(_("All accounts"), sigc::mem_fun(this, &AccountStatusMenu::Dummy));
-	AddItem(_("Already logged in only"), sigc::mem_fun(this, &AccountStatusMenu::Dummy));
-	AddSeparator();
+	AppendItem(_("All accounts"), sigc::mem_fun(this, &AccountStatusMenu::Dummy));
+	AppendItem(_("Already logged in only"), sigc::mem_fun(this, &AccountStatusMenu::Dummy));
+	AppendSeparator();
 
 	for (iter = purple_accounts_get_all(); iter; iter = iter->next) {
 
@@ -50,7 +50,7 @@ AccountStatusMenu::AccountStatusMenu(int x, int y, int w, int h)
 			purple_account_get_protocol_name(account),
 			purple_account_get_username(account));
 
-		AddItem(text, sigc::bind(sigc::mem_fun(this, &AccountStatusMenu::OpenStatusPopup), account));
+		AppendItem(text, sigc::bind(sigc::mem_fun(this, &AccountStatusMenu::OpenStatusPopup), account));
 
 		g_free(text);
 	}
@@ -97,7 +97,7 @@ AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h, PurpleAc
 			label = g_strdup(purple_status_type_get_name(status_type));
 		}
 
-		AddItem(label, sigc::bind(
+		AppendItem(label, sigc::bind(
 					sigc::mem_fun(this, &AccountStatusMenu::StatusPopup::SetStatus),
 					account,
 					status_type,
@@ -109,7 +109,7 @@ AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h, PurpleAc
 	if (!has_independents)
 		return;
 
-	AddSeparator();
+	AppendSeparator();
 
 	for (iter = purple_account_get_status_types(account); iter; iter = iter->next) {
 		status_type = (PurpleStatusType*)iter->data;
@@ -127,7 +127,7 @@ AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h, PurpleAc
 			label = g_strdup(purple_status_type_get_name(status_type));
 		}
 
-		AddItem(label, sigc::bind(
+		AppendItem(label, sigc::bind(
 					sigc::mem_fun(this, &AccountStatusMenu::StatusPopup::SetStatus),
 					account,
 					status_type,

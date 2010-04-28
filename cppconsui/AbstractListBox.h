@@ -43,16 +43,22 @@ class AbstractListBox
 		virtual ~AbstractListBox() {}
 
 		/**
-		 * Adds a new button into the ListBox.
+		 * Adds a new button in the end of ListBox.
 		 */
-		virtual void AddItem(const gchar *title, sigc::slot<void> function);
+		void AppendItem(const gchar *title, sigc::slot<void> function);
 		/**
-		 * Inserts a separator (usually horizontal or vertical line) into the
+		 * Appends a separator (usually horizontal or vertical line) into the
 		 * ListBox.
 		 */
-		virtual void AddSeparator() = 0;
+		virtual void AppendSeparator() = 0;
+		/**
+		 * Appends a widget into the ListBox.
+		 */
+		virtual void AppendWidget(Widget& widget) = 0;
 
 	protected:
+		// Container
+		virtual void AddWidget(Widget& widget, int x, int y);
 
 	private:
 		AbstractListBox();

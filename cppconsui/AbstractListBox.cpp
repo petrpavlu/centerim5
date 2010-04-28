@@ -35,7 +35,12 @@ AbstractListBox::AbstractListBox(int w, int h)
 {
 }
 
-void AbstractListBox::AddItem(const gchar *title, sigc::slot<void> function)
+void AbstractListBox::AppendItem(const gchar *title, sigc::slot<void> function)
 {
-	AddWidget(*(new Button(::width(title), 1, title, function)), 0, 0);
+	AppendWidget(*(new Button(::width(title), 1, title, function)));
+}
+
+void AbstractListBox::AddWidget(Widget& widget, int x, int y)
+{
+	ScrollPane::AddWidget(widget, x, y);
 }

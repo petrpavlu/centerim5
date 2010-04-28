@@ -36,16 +36,16 @@ HorizontalListBox::HorizontalListBox(int w, int h)
 	SetScrollSize(0, h);
 }
 
-void HorizontalListBox::AddSeparator()
+void HorizontalListBox::AppendSeparator()
 {
-	AddWidget(*(new VerticalLine(1)));
+	AppendWidget(*(new VerticalLine(1)));
 }
 
-void HorizontalListBox::AddWidget(Widget& widget, int x, int y)
+void HorizontalListBox::AppendWidget(Widget& widget)
 {
 	int w = GetScrollWidth();
 	SetScrollWidth(w + widget.Width());
-	AbstractListBox::AddWidget(widget, w, 0);
+	AddWidget(widget, w, 0);
 }
 
 void HorizontalListBox::RemoveWidget(Widget& widget)

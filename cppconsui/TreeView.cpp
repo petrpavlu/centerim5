@@ -222,6 +222,11 @@ void TreeView::ActionToggleCollapsed(void)
 	ToggleCollapsed(focus_node);
 }
 
+void TreeView::AddWidget(Widget &widget, int x, int y)
+{
+	ScrollPane::AddWidget(widget, x, y);
+}
+
 const TreeView::NodeReference TreeView::AddNode(const NodeReference &parent, Widget *widget, void *data)
 {
 	int newwidth = 0, newheight = 0;

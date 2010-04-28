@@ -403,7 +403,7 @@ BuddyList::AddBuddyWindow::AddBuddyWindow(PurpleAccount *account,
 
 	menu = new HorizontalListBox(width, 1);
 	//menu->FocusCycle(Container::FocusCycleLocal);
-	menu->AddItem(_("Add"), sigc::mem_fun(this, &BuddyList::AddBuddyWindow::Add));
+	menu->AppendItem(_("Add"), sigc::mem_fun(this, &BuddyList::AddBuddyWindow::Add));
 
 	AddWidget(*accounts_box, 0, 0);
 	AddWidget(*name_button, 0, 1);

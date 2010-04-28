@@ -36,16 +36,16 @@ ListBox::ListBox(int w, int h)
 	SetScrollSize(w, 0);
 }
 
-void ListBox::AddSeparator()
+void ListBox::AppendSeparator()
 {
-	AddWidget(*(new HorizontalLine(Width())));
+	AppendWidget(*(new HorizontalLine(Width())));
 }
 
-void ListBox::AddWidget(Widget& widget, int x, int y)
+void ListBox::AppendWidget(Widget& widget)
 {
 	int h = GetScrollHeight();
 	SetScrollHeight(h + widget.Height());
-	AbstractListBox::AddWidget(widget, 0, h);
+	AddWidget(widget, 0, h);
 }
 
 void ListBox::RemoveWidget(Widget& widget)

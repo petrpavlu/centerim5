@@ -32,29 +32,29 @@ GeneralMenu::GeneralMenu(int x, int y, int w, int h)
 	SetColorScheme("generalmenu");
 
 	/*
-	AddItem(_("Testing"), sigc::mem_fun(this, &GeneralMenu::OpenTestWindow));
-	AddItem(_("Change status"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AddItem(_("Go to contact..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
+	AppendItem(_("Testing"), sigc::mem_fun(this, &GeneralMenu::OpenTestWindow));
+	AppendItem(_("Change status"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+	AppendItem(_("Go to contact..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	*/
-	AddItem(_("Accounts..."), sigc::mem_fun(this, &GeneralMenu::OpenAccountsWindow));
-	AddItem(_("Add buddy"), sigc::mem_fun(this, &GeneralMenu::OpenAddBuddyRequest));
+	AppendItem(_("Accounts..."), sigc::mem_fun(this, &GeneralMenu::OpenAccountsWindow));
+	AppendItem(_("Add buddy"), sigc::mem_fun(this, &GeneralMenu::OpenAddBuddyRequest));
 	/*
-	AddItem(_("CenterIM config options..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AddSeparator();
-	AddItem(_("Find/add users"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AddItem(_("Join channel/conference"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AddItem(_("Link an RSS feed"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AddSeparator();
-	AddItem(_("View/edit ignore list"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AddItem(_("View/edit invisible list"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AddItem(_("View/edit visible list"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AddSeparator();
-	AddItem(_("Show offline users"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AddItem(_("Organize contact groups"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AddItem(_("Mass group move..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
+	AppendItem(_("CenterIM config options..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
+	AppendSeparator();
+	AppendItem(_("Find/add users"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+	AppendItem(_("Join channel/conference"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+	AppendItem(_("Link an RSS feed"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+	AppendSeparator();
+	AppendItem(_("View/edit ignore list"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+	AppendItem(_("View/edit invisible list"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+	AppendItem(_("View/edit visible list"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+	AppendSeparator();
+	AppendItem(_("Show offline users"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+	AppendItem(_("Organize contact groups"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+	AppendItem(_("Mass group move..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	*/
-	AddSeparator();
-	AddItem(_("Quit"), sigc::mem_fun(CenterIM::Instance(), &CenterIM::Quit));
+	AppendSeparator();
+	AppendItem(_("Quit"), sigc::mem_fun(CenterIM::Instance(), &CenterIM::Quit));
 }
 
 void GeneralMenu::ScreenResized()

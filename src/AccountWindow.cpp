@@ -52,9 +52,9 @@ AccountWindow::AccountWindow()
 	accounts->FocusCycle(Container::FocusCycleLocal);
 	menu->FocusCycle(Container::FocusCycleLocal);
 
-	menu->AddItem(_("Add"), sigc::mem_fun(this, &AccountWindow::Add));
-	menu->AddSeparator();
-	menu->AddItem(_("Done"), sigc::mem_fun(this, &AccountWindow::Close));
+	menu->AppendItem(_("Add"), sigc::mem_fun(this, &AccountWindow::Add));
+	menu->AppendSeparator();
+	menu->AppendItem(_("Done"), sigc::mem_fun(this, &AccountWindow::Close));
 
 	AddWidget(*accounts, 0, 0);
 	AddWidget(*menu, 1, height - 1);

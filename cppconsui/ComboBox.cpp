@@ -169,7 +169,7 @@ void ComboBox::OnDropDown()
 	dropdown->signal_close.connect(sigc::mem_fun(this, &ComboBox::DropDownClose));
 
 	for (ComboBoxEntries::const_iterator i = options.begin(); i != options.end(); i++)
-		dropdown->AddItem(i->GetText(), sigc::bind(sigc::mem_fun(this, &ComboBox::DropDownOk), i));
+		dropdown->AppendItem(i->GetText(), sigc::bind(sigc::mem_fun(this, &ComboBox::DropDownOk), i));
 
 	/// @todo implement show method of dialogs/windows
 	//dropdown->Show();

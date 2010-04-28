@@ -53,7 +53,7 @@ void Dialog::AddWidgets(void)
 
 void Dialog::AddButton(const gchar *text, Dialog::ResponseType response)
 {
-	buttons->AddItem(text, sigc::bind(sigc::mem_fun(this, &Dialog::Response), response));
+	buttons->AppendItem(text, sigc::bind(sigc::mem_fun(this, &Dialog::Response), response));
 }
 
 void Dialog::Close()
