@@ -39,35 +39,15 @@ BuddyList *BuddyList::Instance()
 	return &instance;
 }
 
-//TODO move this struct inside the buddylist object
-static PurpleBlistUiOps centerim_blist_ui_ops =
-{
-	BuddyList::new_list_,
-	BuddyList::new_node_,
-	NULL, /* show */
-	BuddyList::update_node_,
-	BuddyList::remove_node_,
-	BuddyList::destroy_list_,
-	NULL, /* set_visible */
-	BuddyList::request_add_buddy_,
-	BuddyList::request_add_chat_,
-	BuddyList::request_add_group_,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-};
-
 BuddyList::BuddyList()
 : Window(0, 0, 80, 24)
 {
 	SetColorScheme("buddylist");
 
-	//TODO check if this has been moved to purple_blist_init
-	//renove these lines if it was
-	//as this will probably move to purple_init, the buddylist 
-	//object should be available a lot more early and the uiops should
-	//be set a lot more early. (all in all a lot of work)
+	/* TODO Check if this has been moved to purple_blist_init(). Remove these
+	 * lines if it was as this will probably move to purple_init(), the
+	 * buddylist object should be available a lot more early and the uiops
+	 * should be set a lot more early. (All in all a lot of work.) */
 	buddylist = purple_blist_new();
 	buddylist->ui_data = this;
 	purple_set_blist(buddylist);
@@ -75,7 +55,22 @@ BuddyList::BuddyList()
 	// load the pounces
 	purple_pounces_load();
 
-	/* setup the callbacks for the buddylist */
+	// setup the callbacks for the buddylist
+	memset(&centerim_blist_ui_ops, 0, sizeof(centerim_blist_ui_ops));
+	centerim_blist_ui_ops.new_list = new_list_;
+	centerim_blist_ui_ops.new_node = new_node_;
+	//centerim_blist_ui_ops.show = show_;
+	centerim_blist_ui_ops.update = update_;
+	centerim_blist_ui_ops.remove = remove_;
+	centerim_blist_ui_ops.destroy = destroy_;
+	//centerim_blist_ui_ops.set_visible = set_visible_;
+	centerim_blist_ui_ops.request_add_buddy = request_add_buddy_;
+	centerim_blist_ui_ops.request_add_chat = request_add_chat_;
+	centerim_blist_ui_ops.request_add_group = request_add_group_;
+	// since 2.6.0
+	//centerim_blist_ui_ops.save_node = save_node_;
+	//centerim_blist_ui_ops.remove_node = remove_node_;
+	//centerim_blist_ui_ops.save_account = save_account_;
 	purple_blist_set_ui_ops(&centerim_blist_ui_ops);
 
 	Glib::signal_timeout().connect(sigc::mem_fun(this, &BuddyList::Load), 0);
@@ -86,117 +81,80 @@ BuddyList::BuddyList()
 	MoveResizeRect(CONF->GetBuddyListDimensions());
 }
 
-bool BuddyList::Load(void)
+bool BuddyList::Load()
 {
-	/* Loads the buddy list from ~/.cim/blist.xml. */
+	// loads the buddy list from ~/.centerim5/blist.xml
 	purple_blist_load();
 
 	return false;
 }
 
-BuddyList::~BuddyList()
+void BuddyList::Close()
 {
-	/* Schedule a save of the blist.xml file. 
-	 * this is done automatically by libpurple
-	 * when any change occurs, but lets do that anyway
-	 */
-	//purple_blist_schedule_save(); //TODO: will this go wrong?! (probably)
-}
-
-void BuddyList::Close(void)
-{
-}
-
-void BuddyList::AddNode(BuddyListNode *node)
-{
-	BuddyListNode *parent = node->GetParentNode();
-	node->ref = treeview->AddNode(parent ? parent->ref : treeview->Root(), node, NULL);
-}
-
-void BuddyList::UpdateNode(BuddyListNode *node)
-{
-	BuddyListNode *parent = node->GetParentNode();
-	/* The parent could have changed, so re-parent the node */
-	if (parent)
-		treeview->SetParent(node->ref, parent->ref);
-
-	node->Update();
-}
-
-void BuddyList::RemoveNode(BuddyListNode *node)
-{
-	//TODO check for subnodes (if this is a group for instance)
-	treeview->DeleteNode(node->ref, false);
 }
 
 void BuddyList::new_list(PurpleBuddyList *list)
 {
-	if (buddylist != list) {
-		//TODO if this happens, then the first todo in Load should
-		//be checked again.
+	if (buddylist != list)
 		LOG->Write(Log::Level_error, "Different Buddylist detected!\n");
-	}
-	if (buddylist->ui_data != this)
-	{
-		//TODO actually, this amounts to the same as the error above this one :).
-		LOG->Write(Log::Level_error, "New Buddylist detected, but we only support one buddylist.\n");
-	}
 }
 
 void BuddyList::new_node(PurpleBlistNode *node)
 {
+	g_assert(!node->ui_data);
+
 	BuddyListNode *bnode;
 
-	if (!node->ui_data) {
-		node->ui_data = bnode = BuddyListNode::CreateNode(node);
-		AddNode((BuddyListNode*)node->ui_data);
+	node->ui_data = bnode = BuddyListNode::CreateNode(node);
 
-		if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-			/* The core seems to expect the UI to add the buddies.
-			 * (according to finch)
-			 * */
-			for (node = node->child; node; node = node->next)
-				new_node(node);
-		}
+	BuddyListNode *parent = bnode->GetParentNode();
+	bnode->ref = treeview->AddNode(parent ? parent->ref : treeview->Root(), bnode, NULL);
+	treeview->Collapse(bnode->ref);
+
+	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+		/* The core seems to expect the UI to add the buddies (according
+		 * to finch). */
+		for (node = node->child; node; node = node->next)
+			new_node(node);
 	}
 }
 
-void BuddyList::update_node(PurpleBuddyList *list, PurpleBlistNode *node)
+void BuddyList::update(PurpleBuddyList *list, PurpleBlistNode *node)
 {
-	/* finch does this */
-	g_return_if_fail(node != NULL);
+	BuddyListNode *bnode = (BuddyListNode *) node->ui_data;
+	g_assert(bnode);
 
-	if (!node->ui_data) {
-		//TODO remove when this never happens :) (yeah, try to catch that one! :)
-		LOG->Write(Log::Level_error, "BuddyList::update called before BuddyList::new_node\n");
-		new_node(node);
-	}
+	// update the node data
+	BuddyListNode *parent = bnode->GetParentNode();
+	// the parent could have changed, so re-parent the node
+	if (parent)
+		treeview->SetParent(bnode->ref, parent->ref);
 
-	/* Update the node data */
-	UpdateNode((BuddyListNode*)node->ui_data);
+	bnode->Update();
 
-	/* if the node is a buddy, we also have to update the contact
-	 * this buddy belongs to.
-	 * */
+	/* If the node is a buddy, we also have to update the contact this buddy
+	 * belongs to. */
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
-		update_node(list, node->parent);
-		//TODO is it possible for a nodes parent not to be a contact?
-		//if so, then this call could use some checks
+		update(list, node->parent);
+		/* TODO Is it possible for a node's parent not to be a contact? If so,
+		 * then this call could use some checks. */
 	}
 }
 
-void BuddyList::remove_node(PurpleBuddyList *list, PurpleBlistNode *node)
+void BuddyList::remove(PurpleBuddyList *list, PurpleBlistNode *node)
 {
-	BuddyListNode* bnode;
+	// XXX how does this happen?
+	g_return_if_fail(node->ui_data);
 
-	if (!node->ui_data) return; /* nothing to remove */
+	BuddyListNode *bnode = (BuddyListNode*)node->ui_data;
 
-	bnode = (BuddyListNode*)node->ui_data;
-	RemoveNode(bnode);
+	// TODO check for subnodes (if this is a group for instance)
+	treeview->DeleteNode(bnode->ref, false);
+
 	delete bnode;
 }
 
-void BuddyList::destroy_list(PurpleBuddyList *list)
+void BuddyList::destroy(PurpleBuddyList *list)
 {
 }
 
@@ -208,17 +166,8 @@ void BuddyList::request_add_buddy(PurpleAccount *account, const char *username, 
 
 void BuddyList::MoveResize(int newx, int newy, int neww, int newh)
 {
-	/* Let parent's Resize() renew data structures (including
-	 * the area's of child widgets which will thus be done
-	 * twice)
-	 * */
 	Window::MoveResize(newx, newy, neww, newh);
 
-	/* resize all our widgets, in this case its only one widget
-	 * here, w and h are the size of the container, which is 
-	 * what we want. in most cases you would need to recalculate
-	 * widget sizes based on window and/or container size.
-	 * */
 	treeview->MoveResize(0, 0, neww - 2, newh - 2);
 }
 
@@ -326,20 +275,21 @@ void BuddyList::NameButton::ResponseHandler(Dialog::ResponseType response)
 }
 
 BuddyList::GroupBox::GroupBox(const gchar *group)
+: selected(NULL)
 {
 	PurpleBlistNode *i = purple_blist_get_root();
 
-	if (i == NULL) {
+	while (i) {
+		if (PURPLE_BLIST_NODE_IS_GROUP(i)) {
+			if (!selected)
+				selected = g_strdup(purple_group_get_name((PurpleGroup *)(i)));
+			AddOption(purple_group_get_name((PurpleGroup *)(i)));
+		}
+		i = i->next;
+	}
+	if (!selected) {
 		AddOption(_("Buddies"));
 		selected = g_strdup(_("Buddies"));
-	}
-	else {
-		selected = g_strdup(purple_group_get_name(PURPLE_GROUP(i)));
-		while (i) {
-			if (PURPLE_BLIST_NODE_IS_GROUP(i))
-				AddOption(purple_group_get_name(PURPLE_GROUP(i)));
-			i = i->next;
-		}
 	}
 
 	UpdateText();

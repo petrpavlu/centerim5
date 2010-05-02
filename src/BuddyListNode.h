@@ -34,24 +34,27 @@ class BuddyListNode
 		BuddyListNode(PurpleBlistNode *node);
 		virtual ~BuddyListNode();
 
-		virtual void Draw(void);
+		static BuddyListNode *CreateNode(PurpleBlistNode *node);
 
-		static BuddyListNode* CreateNode(PurpleBlistNode *node);
+		virtual void Update() = 0;
 
-		virtual void Update(void) =0;
+		// activate action
+		virtual void OnActivate() = 0;
 
-		virtual void GiveFocus(void);
-		virtual void TakeFocus(void);
+		BuddyListNode *GetParentNode();
 
-		/* Actions for keybindings */
-		virtual void OnActivate(void) =0;
-
-		BuddyListNode* GetParentNode(void);
-
+		// TODO encapsulate
 		TreeView::NodeReference ref;
 
 	protected:
 		PurpleBlistNode *node;
+
+		/*
+		 * Called by BuddyListBuddy and BuddyListContact to get presence
+		 * status char. Returned value should be used as a prefix of
+		 * buddy/contact name.
+		 */
+		const gchar *GetBuddyStatus(PurpleBuddy *buddy);
 
 	private:
 };
@@ -61,16 +64,18 @@ class BuddyListBuddy
 {
 	public:
 		BuddyListBuddy(PurpleBlistNode *node);
+		virtual ~BuddyListBuddy() {}
 
-		virtual void Draw(void);
-		virtual void Update(void);
-
-		virtual void OnActivate(void);
+		// BuddyListNode
+		virtual void Update();
+		virtual void OnActivate();
 
 	protected:
 		PurpleBuddy *buddy;
 
 	private:
+		BuddyListBuddy(const BuddyListBuddy&);
+		BuddyListBuddy& operator=(const BuddyListBuddy&);
 };
 
 class BuddyListChat
@@ -78,16 +83,18 @@ class BuddyListChat
 {
 	public:
 		BuddyListChat(PurpleBlistNode *node);
+		virtual ~BuddyListChat() {}
 
-		virtual void Draw(void);
-		virtual void Update(void);
-
-		virtual void OnActivate(void);
+		// BuddyListNode
+		virtual void Update();
+		virtual void OnActivate();
 
 	protected:
 		PurpleChat *chat;
 
 	private:
+		BuddyListChat(const BuddyListChat&);
+		BuddyListChat& operator=(const BuddyListChat&);
 };
 
 class BuddyListContact
@@ -95,16 +102,18 @@ class BuddyListContact
 {
 	public:
 		BuddyListContact(PurpleBlistNode *node);
+		virtual ~BuddyListContact() {}
 
-		virtual void Draw(void);
-		virtual void Update(void);
-
-		virtual void OnActivate(void);
+		// BuddyListNode
+		virtual void Update();
+		virtual void OnActivate();
 
 	protected:
 		PurpleContact *contact;
 
 	private:
+		BuddyListContact(const BuddyListContact&);
+		BuddyListContact& operator=(const BuddyListContact&);
 };
 
 class BuddyListGroup
@@ -112,16 +121,18 @@ class BuddyListGroup
 {
 	public:
 		BuddyListGroup(PurpleBlistNode *node);
+		virtual ~BuddyListGroup() {}
 
-		virtual void Draw(void);
-		virtual void Update(void);
-
-		virtual void OnActivate(void);
+		// BuddyListNode
+		virtual void Update();
+		virtual void OnActivate();
 
 	protected:
 		PurpleGroup *group;
 
 	private:
+		BuddyListGroup(const BuddyListGroup&);
+		BuddyListGroup& operator=(const BuddyListGroup&);
 };
 
 #endif /* _BUDDYLISTNODE_H__ */

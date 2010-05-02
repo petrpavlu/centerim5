@@ -58,8 +58,9 @@ TreeView::TreeView(int w, int h, LineStyle::Type ltype)
 
 TreeView::~TreeView()
 {
-	//TODO deletenode does not free the memory, do this
-	DeleteNode(thetree.begin(), false);
+	// TODO deletenode does not free the memory, do this
+	// TODO review, it crashes BuddyList..
+	//DeleteNode(thetree.begin(), false);
 }
 
 void TreeView::DeclareBindables()

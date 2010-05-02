@@ -141,8 +141,6 @@ void Container::AddWidget(Widget& widget, int x, int y)
 
 	if (!focus_child)
 		widget.GrabFocus();
-	else
-		widget.StealFocus();
 }
 
 void Container::RemoveWidget(Widget& widget)

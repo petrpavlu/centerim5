@@ -39,35 +39,9 @@ class BuddyList
 	public:
 		static BuddyList *Instance();
 
-		void Close(void);
+		// Window
+		void Close();
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
-
-		static void new_list_(PurpleBuddyList *list)
-			{ BUDDYLIST->new_list(list); }
-		static void new_node_(PurpleBlistNode *node) 
-			{ BUDDYLIST->new_node(node); }
-		static void update_node_(PurpleBuddyList *list, PurpleBlistNode *node)  
-			{ BUDDYLIST->update_node(list, node); }
-		static void remove_node_(PurpleBuddyList *list, PurpleBlistNode *node)
-			{ BUDDYLIST->remove_node(list, node); }
-		static void destroy_list_(PurpleBuddyList *list)
-			{ BUDDYLIST->destroy_list(list); }
-		static void request_add_buddy_(PurpleAccount *account,
-				const char *username, const char *group, const char *alias)
-			{ BUDDYLIST->request_add_buddy(account, username, group, alias); }
-		static void request_add_chat_(PurpleAccount *account, PurpleGroup *group, const char *alias, const char *name)
-			{ /*TODO hand of to Request object*/ ; }
-		static void request_add_group_()
-			{ /*TODO hand of to Request object*/ ; }
-
-		void new_list(PurpleBuddyList *list);
-		void new_node(PurpleBlistNode *node);
-		void update_node(PurpleBuddyList *list, PurpleBlistNode *node);
-		void remove_node(PurpleBuddyList *list, PurpleBlistNode *node);
-		void destroy_list(PurpleBuddyList *list);
-		void request_add_buddy(PurpleAccount *account, const char *username,
-				const char *group, const char *alias);
-		
 		virtual void ScreenResized();
 	
 	protected:
@@ -163,23 +137,45 @@ class BuddyList
 				void Add();
 		};
 
-		BuddyList();
-		BuddyList(const BuddyList&);
-		BuddyList& operator=(const BuddyList&);
-		~BuddyList();
-
-		bool Load(void);
-
-		BuddyListNode* CreateNode(PurpleBlistNode *node);
-		void AddNode(BuddyListNode *node);
-		void UpdateNode(BuddyListNode *node);
-		void RemoveNode(BuddyListNode *node);
-
-		static BuddyList* instance;
+		PurpleBlistUiOps centerim_blist_ui_ops;
 
 		PurpleBuddyList *buddylist;
 
 		TreeView *treeview;
+
+		BuddyList();
+		BuddyList(const BuddyList&);
+		BuddyList& operator=(const BuddyList&);
+		~BuddyList() {}
+
+		bool Load();
+
+		static void new_list_(PurpleBuddyList *list)
+			{ BUDDYLIST->new_list(list); }
+		static void new_node_(PurpleBlistNode *node) 
+			{ BUDDYLIST->new_node(node); }
+		static void update_(PurpleBuddyList *list, PurpleBlistNode *node)  
+			{ BUDDYLIST->update(list, node); }
+		static void remove_(PurpleBuddyList *list, PurpleBlistNode *node)
+			{ BUDDYLIST->remove(list, node); }
+		static void destroy_(PurpleBuddyList *list)
+			{ BUDDYLIST->destroy(list); }
+		static void request_add_buddy_(PurpleAccount *account,
+				const char *username, const char *group, const char *alias)
+			{ BUDDYLIST->request_add_buddy(account, username, group, alias); }
+		static void request_add_chat_(PurpleAccount *account,
+				PurpleGroup *group, const char *alias, const char *name)
+			{ /* TODO */ ; }
+		static void request_add_group_()
+			{ /* TODO */ ; }
+
+		void new_list(PurpleBuddyList *list);
+		void new_node(PurpleBlistNode *node);
+		void update(PurpleBuddyList *list, PurpleBlistNode *node);
+		void remove(PurpleBuddyList *list, PurpleBlistNode *node);
+		void destroy(PurpleBuddyList *list);
+		void request_add_buddy(PurpleAccount *account, const char *username,
+				const char *group, const char *alias);
 };
 
 #endif /* __BUDDYLIST_H__ */

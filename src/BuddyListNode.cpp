@@ -41,40 +41,19 @@ BuddyListNode::~BuddyListNode()
 	node->ui_data = NULL;
 }
 
-void BuddyListNode::Draw(void)
+BuddyListNode *BuddyListNode::CreateNode(PurpleBlistNode *node)
 {
-	Button::Draw();
-}
+	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+		return new BuddyListBuddy(node);
+	if (PURPLE_BLIST_NODE_IS_CHAT(node))
+		return new BuddyListChat(node);
+	else if (PURPLE_BLIST_NODE_IS_CONTACT(node))
+		return new BuddyListContact(node);
+	else if (PURPLE_BLIST_NODE_IS_GROUP(node))
+		return new BuddyListGroup(node);
 
-BuddyListNode* BuddyListNode::CreateNode(PurpleBlistNode *node)
-{
-	BuddyListNode *bnode = NULL;
-
-	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
-		bnode = new BuddyListBuddy(node);
-	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
-		bnode = new BuddyListChat(node);
-	} else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-		bnode = new BuddyListContact(node);
-	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
-		bnode = new BuddyListGroup(node);
-	} //TODO log some error if no match here
-
-	return bnode;
-}
-
-void BuddyListNode::GiveFocus(void)
-{
-	has_focus = true;
-	Update();
-	Draw();
-}
-
-void BuddyListNode::TakeFocus(void)
-{
-	has_focus = false;
-	Update();
-	Draw();
+	// TODO log some error if no match here
+	return NULL;
 }
 
 BuddyListNode* BuddyListNode::GetParentNode(void)
@@ -96,6 +75,40 @@ BuddyListNode* BuddyListNode::GetParentNode(void)
 	return (BuddyListNode*)parent->ui_data;
 }
 
+const gchar *BuddyListNode::GetBuddyStatus(PurpleBuddy *buddy)
+{
+	if (!purple_account_is_connected(purple_buddy_get_account(buddy)))
+		return "";
+
+	PurplePresence *presence = purple_buddy_get_presence(buddy);
+	PurpleStatus *status = purple_presence_get_active_status(presence);
+	PurpleStatusType *status_type = purple_status_get_type(status);
+	PurpleStatusPrimitive prim = purple_status_type_get_primitive(status_type);
+
+	switch (prim) {
+		case PURPLE_STATUS_UNSET:
+			return "[x] ";
+		case PURPLE_STATUS_OFFLINE:
+			return "";
+		case PURPLE_STATUS_AVAILABLE:
+			return "[o] ";
+		case PURPLE_STATUS_UNAVAILABLE:
+			return "[u] ";
+		case PURPLE_STATUS_INVISIBLE:
+			return "[i] ";
+		case PURPLE_STATUS_AWAY:
+			return "[a] ";
+		case PURPLE_STATUS_EXTENDED_AWAY:
+			return "[A] ";
+		case PURPLE_STATUS_MOBILE:
+			return "[m] ";
+		case PURPLE_STATUS_TUNE:
+			return "[t] ";
+		default:
+			return "[X] ";
+	}
+}
+
 BuddyListBuddy::BuddyListBuddy(PurpleBlistNode *node)
 : BuddyListNode(node)
 {
@@ -106,20 +119,11 @@ BuddyListBuddy::BuddyListBuddy(PurpleBlistNode *node)
 	Update();
 }
 
-void BuddyListBuddy::Draw(void)
-{
-	BuddyListNode::Draw();
-}
-
 void BuddyListBuddy::Update(void)
 {
-	//TODO this doesn't seem optimal
-	//add a Width function to Label class and
-	//clean this file up?
-	const gchar *text;
-	text = purple_buddy_get_alias(buddy);
-	MoveResize(xpos, ypos, ::width(text), 1);
+	gchar *text = g_strdup_printf("%s%s", GetBuddyStatus(buddy), purple_buddy_get_alias(buddy));
 	SetText(text);
+	g_free(text);
 }
 
 void BuddyListBuddy::OnActivate(void)
@@ -139,16 +143,10 @@ BuddyListChat::BuddyListChat(PurpleBlistNode *node)
 	Update();
 }
 
-void BuddyListChat::Draw(void)
-{
-	BuddyListNode::Draw();
-}
-
 void BuddyListChat::Update(void)
 {
 	const gchar *text;
 	text = purple_chat_get_name(chat);
-	MoveResize(xpos, ypos, ::width(text), 1);
 	SetText(text);
 }
 
@@ -169,39 +167,30 @@ BuddyListContact::BuddyListContact(PurpleBlistNode *node)
 	Update();
 }
 
-void BuddyListContact::Draw(void)
-{
-	BuddyListNode::Draw();
-}
-
 void BuddyListContact::Update(void)
 {
-	PurpleBlistNode *bnode;
-	const gchar *text;
+	const gchar *name;
+	PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
 
-	if (contact->alias) {
-		text = contact->alias;
-	} else {
-		for (bnode = ((PurpleBlistNode*)contact)->child; bnode != NULL; bnode = bnode->next) {
-			if (PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-				break;
-		}
+	if (contact->alias)
+		name = contact->alias;
+	else if (buddy)
+		name = purple_buddy_get_alias(buddy);
+	else
+		// TODO error message or is this too common?
+		name = _("New Contact");
 
-		if (!bnode) {
-			//TODO error message or is this too common?
-			text = _("New Contact");
-		} else {
-			text = purple_buddy_get_alias((PurpleBuddy*)bnode);
-		}
-	}
-
-	MoveResize(xpos, ypos, ::width(text), 1);
+	gchar *text = g_strdup_printf("%s%s", GetBuddyStatus(buddy), name);
 	SetText(text);
+	g_free(text);
 }
 
 void BuddyListContact::OnActivate(void)
 {
 	LOG->Write(Log::Level_debug, "Contact activated!\n");
+
+	PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
+	CONVERSATIONS->ShowConversation(PURPLE_CONV_TYPE_IM, purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
 }
 
 BuddyListGroup::BuddyListGroup(PurpleBlistNode *node)
@@ -214,16 +203,10 @@ BuddyListGroup::BuddyListGroup(PurpleBlistNode *node)
 	Update();
 }
 
-void BuddyListGroup::Draw(void)
-{
-	BuddyListNode::Draw();
-}
-
 void BuddyListGroup::Update(void)
 {
 	const gchar *text;
 	text = purple_group_get_name(group);
-	MoveResize(xpos, ypos, ::width(text), 1);
 	SetText(text);
 }
 
