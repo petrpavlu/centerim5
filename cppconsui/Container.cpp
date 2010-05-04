@@ -301,7 +301,7 @@ void Container::MoveFocus(FocusDirection direction)
 
 	container = dynamic_cast<const Container*>(focus_widget->GetParent());
 
-	FocusChain::iterator cycle_root, cycle_back, cycle_begin, cycle_iter;
+	FocusChain::iterator cycle_root, cycle_begin, cycle_end, cycle_iter;
 
 	/* Find the correct widget to focus. */
 	switch (direction) {
@@ -312,7 +312,7 @@ void Container::MoveFocus(FocusDirection direction)
 			 * focus cycling.
 			 * */
 			cycle_begin = focus_chain.begin();
-			cycle_back = focus_chain.back();
+			cycle_end = focus_chain.end();
 			cycle_iter = iter;
 
 			if (container) {
@@ -326,7 +326,7 @@ void Container::MoveFocus(FocusDirection direction)
 						 * within focused widgets parent container).
 						 * */
 						cycle_begin = parent_iter.begin();
-						cycle_back = parent_iter.back();
+						cycle_end = parent_iter.end();
 						cycle_iter = child_iter;
 
 						break;
@@ -351,7 +351,8 @@ void Container::MoveFocus(FocusDirection direction)
 			/* Finally, find the next widget which will get focus. */
 			do {
 				if (cycle_iter == cycle_begin) {
-					cycle_iter = cycle_back;
+					cycle_iter = cycle_end;
+					cycle_iter--;
 				} else {
 					cycle_iter--;
 				}
@@ -363,7 +364,7 @@ void Container::MoveFocus(FocusDirection direction)
 		case FocusRight:
 		default:
 			cycle_begin = focus_chain.begin();
-			cycle_back = focus_chain.back();
+			cycle_end = focus_chain.end();
 			cycle_iter = iter;
 
 			if (container) {
@@ -374,12 +375,12 @@ void Container::MoveFocus(FocusDirection direction)
 				switch (container->FocusCycle()) {
 					case FocusCycleLocal:
 						cycle_begin = parent_iter.begin();
-						cycle_back = parent_iter.back();
+						cycle_end = parent_iter.end();
 						cycle_iter = child_iter;
 
 						break;
 					case FocusCycleNone:
-						if (child_iter == parent_iter.back())
+						if (child_iter == --parent_iter.end())
 							return;
 
 					default:
@@ -389,11 +390,9 @@ void Container::MoveFocus(FocusDirection direction)
 
 			/* Finally, find the next widget which will get focus. */
 			do {
-				if (cycle_iter == cycle_back) {
+				cycle_iter++;
+				if (cycle_iter == cycle_end)
 					cycle_iter = cycle_begin;
-				} else {
-					cycle_iter++;
-				}
 			} while ((*cycle_iter) == NULL);
 
 			break;

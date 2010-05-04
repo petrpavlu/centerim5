@@ -60,7 +60,7 @@ TreeView::~TreeView()
 {
 	// TODO deletenode does not free the memory, do this
 	// TODO review, it crashes BuddyList..
-	//DeleteNode(thetree.begin(), false);
+	DeleteNode(thetree.begin(), false);
 }
 
 void TreeView::DeclareBindables()
@@ -121,7 +121,7 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 		}
 
 		for (i = node.begin(); i != node.end(); i++) {
-			if (i != node.back())
+			if (i != --node.end())
 				area->mvaddstring(depthoffset, top + height, linestyle.VRight());
 			else
 				area->mvaddstring(depthoffset, top + height, linestyle.CornerBL());
@@ -143,7 +143,7 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 			height += DrawNode(i, top + height);
 			area->attron(attrs);
 
-			if (i != node.back()) {
+			if (i != --node.end()) {
 				for (j = top + oldh + 1; j < top + height ; j++)
 					area->mvaddstring(depthoffset, j, linestyle.V());
 			}
@@ -292,7 +292,7 @@ void TreeView::DeleteNode(const NodeReference &node, bool keepchildren)
 	/* If we don't keep children then make sure that focus isn't held by a
 	 * descendant. */
 	bool has_focus = false;
-	if (!keepchildren) {
+	if (!keepchildren && node != thetree.begin()) {
 		NodeReference act = focus_node;
 		while (thetree.is_valid(act)) {
 			if (act == node) {
@@ -303,9 +303,9 @@ void TreeView::DeleteNode(const NodeReference &node, bool keepchildren)
 		}
 	}
 
-	if (node == focus_node // for keepchildren = true
-			|| has_focus // for keepchildren = false
-			) {
+	if (node != thetree.begin()
+			&& (node == focus_node // for keepchildren = true
+				|| has_focus)) { // for keepchildren = false
 		/* By folding this node and then moving focus forward we are sure that
 		 * no child node of the node to be removed will get the focus. */
 		(*node).open = false;
