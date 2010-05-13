@@ -25,7 +25,6 @@
 #ifndef __CPPCONSUI_H__
 #define __CPPCONSUI_H__
 
-#include <glibmm/ustring.h>
 #include <wchar.h>
 #include <glib.h>
 
@@ -33,8 +32,8 @@
 #define PARAGRAPH_SEPARATOR 0x2029
 #define PARAGRAPH_SEPARATOR_STRING "\xE2\x80\xA9"
 
-Glib::ustring::size_type width(const Glib::ustring &string);
-Glib::ustring::size_type width(const char *start, const char *end);
+int width(const char *text);
+int width(const char *start, const char *end);
 gchar* col_offset_to_pointer(gchar *str, glong offset);
 void find_paragraph_boundary (const gchar *text,
 			       int length,

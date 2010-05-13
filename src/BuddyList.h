@@ -148,7 +148,7 @@ class BuddyList
 		BuddyList& operator=(const BuddyList&);
 		~BuddyList() {}
 
-		bool Load();
+		static gboolean timeout_once_load(gpointer data);
 
 		static void new_list_(PurpleBuddyList *list)
 			{ BUDDYLIST->new_list(list); }

@@ -39,29 +39,29 @@ TreeViewWindow::TreeViewWindow()
 	TreeView::NodeReference node;
 	TreeView::NodeReference node2;
 
-	AddWidget(*(new Label(*this, 1, 1, 20, 1, "Press F10 to quit.")));
+	AddWidget(*(new Label(20, 1, "Press F10 to quit.")), 1, 1);
 
-	tree = new TreeView(*this, 1, 3, 30, 12);
-	AddWidget(*tree);
+	tree = new TreeView(30, 12);
+	AddWidget(*tree, 1, 3);
 	SetInputChild(*tree);
 
-	node = tree->AddNode(tree->Root(), new Button(*tree, 0, 0, "Button node A"), NULL);
-	node2 = tree->AddNode(node, new Button(*tree, 0, 0, "Button node A-1"), NULL);
-	tree->AddNode(node2, new Button(*tree, 0, 0, "Button node A-1-a"), NULL);
-	tree->AddNode(node2, new Button(*tree, 0, 0, "Button node A-1-b"), NULL);
-	tree->AddNode(node2, new Button(*tree, 0, 0, "Button node A-1-c"), NULL);
-	tree->AddNode(node, new Button(*tree, 0, 0, "Button node A-2"), NULL);
-	tree->AddNode(node, new Button(*tree, 0, 0, "Button node A-3"), NULL);
+	node = tree->AddNode(tree->Root(), new Button("Button node A"), NULL);
+	node2 = tree->AddNode(node, new Button("Button node A-1"), NULL);
+	tree->AddNode(node2, new Button("Button node A-1-a"), NULL);
+	tree->AddNode(node2, new Button("Button node A-1-b"), NULL);
+	tree->AddNode(node2, new Button("Button node A-1-c"), NULL);
+	tree->AddNode(node, new Button("Button node A-2"), NULL);
+	tree->AddNode(node, new Button("Button node A-3"), NULL);
 
-	node = tree->AddNode(tree->Root(), new Label(*tree, 0, 0, "Label node B"), NULL);
-	tree->AddNode(node, new Label(*tree, 0, 0, "Label node B-1"), NULL);
-	tree->AddNode(node, new Label(*tree, 0, 0, "Label node B-2"), NULL);
-	tree->AddNode(node, new Label(*tree, 0, 0, "Label node B-3"), NULL);
+	node = tree->AddNode(tree->Root(), new Label("Label node B"), NULL);
+	tree->AddNode(node, new Label("Label node B-1"), NULL);
+	tree->AddNode(node, new Label("Label node B-2"), NULL);
+	tree->AddNode(node, new Label("Label node B-3"), NULL);
 
-	node = tree->AddNode(tree->Root(), new Button(*tree, 0, 0, "Button node C"), NULL);
-	tree->AddNode(node, new Button(*tree, 0, 0, "Button node C-1"), NULL);
-	tree->AddNode(node, new Button(*tree, 0, 0, "Button node C-2"), NULL);
-	tree->AddNode(node, new Button(*tree, 0, 0, "Button node C-3"), NULL);
+	node = tree->AddNode(tree->Root(), new Button("Button node C"), NULL);
+	tree->AddNode(node, new Button("Button node C-1"), NULL);
+	tree->AddNode(node, new Button("Button node C-2"), NULL);
+	tree->AddNode(node, new Button("Button node C-3"), NULL);
 }
 
 void TreeViewWindow::ScreenResized()

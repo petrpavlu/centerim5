@@ -89,11 +89,18 @@ class Container
 		 */
 		virtual void MoveFocus(FocusDirection direction);
 
+		/**
+		 * Set focused widget.
+		 */
 		virtual void SetActive(int i);
-		virtual int GetActive(void); //TODO better name?
+
+		/**
+		 * Returns index of focused widget or -1 if there is not any.
+		 */
+		virtual int GetActive() const;
 		
-		void FocusCycle(FocusCycleScope scope) { focus_cycle_scope = scope; }
-		FocusCycleScope FocusCycle(void) const { return focus_cycle_scope; }
+		void SetFocusCycle(FocusCycleScope scope) { focus_cycle_scope = scope; }
+		FocusCycleScope GetFocusCycle() const { return focus_cycle_scope; }
 		/** @} */
 
 	protected:
@@ -101,14 +108,14 @@ class Container
 		 * @todo implement some constructor to easily connect to the widget's redraw signal
 		 * @todo use reference to widget instead of pointer ?
 		 */
-		typedef struct {
+		struct Child {
 			Widget *widget;
 
 			/* signal connection to the widget */
 			sigc::connection sig_redraw;
 			//sigc::connection sig_resize;
 			//sigc::connection sig_focus;
-		} Child;
+		};
 		typedef std::vector<Child> Children;
 
 		FocusCycleScope focus_cycle_scope;

@@ -68,27 +68,29 @@ libcppconsui_la_SOURCES =\
 	WindowManager.h \
 	tree.hh \
 	\
-	TextBrowser.cpp \
-	TextBrowser.h \
-	TextBuffer.cpp \
-	TextBuffer.h \
-	TextInput.cpp \
-	TextInput.h \
-	TextLine.cpp \
-	TextLine.h \
-	TextLineRBTree.cpp \
-	TextLineRBTree.h \
-	TextRBTree.cpp \
-	TextRBTree.h \
-	TextRBView.cpp \
-	TextRBView.h
+	#TextBrowser.cpp \
+	#TextBrowser.h \
+	#TextBuffer.cpp \
+	#TextBuffer.h \
+	#TextInput.cpp \
+	#TextInput.h \
+	#TextLine.cpp \
+	#TextLine.h \
+	#TextLineRBTree.cpp \
+	#TextLineRBTree.h \
+	#TextRBTree.cpp \
+	#TextRBTree.h \
+	#TextRBView.cpp \
+	#TextRBView.h
 
 libcppconsui_la_CPPFLAGS =\
-	$(GLIBMM_CFLAGS) \
+	$(GLIB_CFLAGS) \
+	$(SIGC_CFLAGS) \
 	$(NCURSESW_CFLAGS) \
 	-I$(top_srcdir) \
 	-DG_LOG_DOMAIN=\"cppconsui\"
 libcppconsui_la_LIBADD =\
-	$(GLIBMM_LIBS) \
+	$(GLIB_LIBS) \
+	$(SIGC_LIBS) \
 	$(NCURSESW_LIBS) \
 	$(top_builddir)/libtermkey/libtermkey.la

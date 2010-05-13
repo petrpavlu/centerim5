@@ -98,6 +98,7 @@ TAGS
 /po/remove-potcdate.sed
 /po/remove-potcdate.sin
 /po/Rules-quot
+/po/*.gmo
 /src/centerim
 /src/git-version.h
 /src/git-version

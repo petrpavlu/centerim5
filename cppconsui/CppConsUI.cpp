@@ -21,7 +21,6 @@
 
 #include "CppConsUI.h"
 
-#include <glibmm/ustring.h>
 #include <wchar.h>
 #include <cstring>
 
@@ -106,9 +105,9 @@ void find_paragraph_boundary (const gchar *text,
 		*next_paragraph_start = start - text;
 }
 
-Glib::ustring::size_type width(const Glib::ustring &string)
+int width(const char *text)
 {
-	return width(string.data(), string.data() + string.bytes());
+	return width(text, text + strlen(text));
 }
 
 //NOTE copied from libgnt/gntutils.c
@@ -116,9 +115,9 @@ Glib::ustring::size_type width(const Glib::ustring &string)
 /// @todo write a wrapper string class
 /// if so, then also include drawing functions and a way to store colours
 /// for a string.
-Glib::ustring::size_type width(const char *start, const char *end)
+int width(const char *start, const char *end)
 {
-	Glib::ustring::size_type width = 0;
+	int width = 0;
 
 	if (start == NULL)
 		return 0;

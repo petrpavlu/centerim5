@@ -29,7 +29,6 @@
 #include <cstring>
 #include <cstdio>
 #include <glib.h>
-#include <glibmm/main.h>
 #include "gettext.h"
 
 #define CONTEXT_WINDOWMANAGER "windowmanager"
@@ -38,12 +37,6 @@ WindowManager *WindowManager::Instance()
 {
 	static WindowManager instance;
 	return &instance;
-}
-
-void WindowManager::signal_handler(int signum)
-{
-	if (signum == SIGWINCH)
-		Instance()->ScreenResized();
 }
 
 WindowManager::WindowManager(void)
@@ -74,6 +67,24 @@ WindowManager::~WindowManager(void)
 
 	if (Curses::endwin() == Curses::C_ERR)
 		{}//TODO throw an exeption
+}
+
+void WindowManager::signal_handler(int signum)
+{
+	if (signum == SIGWINCH)
+		Instance()->ScreenResized();
+}
+
+gboolean WindowManager::timeout_once_draw(gpointer data)
+{
+	static_cast<WindowManager *>(data)->Draw();
+	return FALSE;
+}
+
+gboolean WindowManager::timeout_once_resize(gpointer data)
+{
+	static_cast<WindowManager *>(data)->Resize();
+	return FALSE;
 }
 
 void WindowManager::DeclareBindables()
@@ -224,7 +235,7 @@ void WindowManager::Redraw(void)
 {
 	if (!redrawpending) {
 		redrawpending = true;
-		Glib::signal_timeout().connect(sigc::mem_fun(this, &WindowManager::Draw), 0);
+		g_timeout_add(0, timeout_once_draw, this);
 	}
 }
 
@@ -279,6 +290,6 @@ void WindowManager::ScreenResized(void)
 {
 	if (!resizepending) {
 		resizepending = true;
-		Glib::signal_timeout().connect(sigc::mem_fun(this, &WindowManager::Resize), 0);
+		g_timeout_add(0, timeout_once_resize, this);
 	}
 }

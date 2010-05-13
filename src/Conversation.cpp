@@ -37,12 +37,6 @@
 //#define CONVERSATION_DESTROY_TIMEOUT 1800000
 #define CONVERSATION_DESTROY_TIMEOUT 6000
 
-static gboolean timeout_once_purple_conversation_destroy(gpointer data)
-{
-	purple_conversation_destroy(static_cast<PurpleConversation *>(data));
-	return FALSE;
-}
-
 Conversation::Conversation(PurpleConversation *conv_)
 : Window(0, 0, 80, 24)
 , conv(conv_)
@@ -87,6 +81,12 @@ Conversation::~Conversation()
 	g_free(filename);
 	if (logfile)
 		g_io_channel_unref(logfile);
+}
+
+gboolean Conversation::timeout_once_purple_conversation_destroy(gpointer data)
+{
+	purple_conversation_destroy(static_cast<PurpleConversation *>(data));
+	return FALSE;
 }
 
 void Conversation::DeclareBindables()

@@ -37,23 +37,23 @@ LineStyleWindow::LineStyleWindow()
 {
 	Label *label;
 
-	label = new Label(*this, 1, 1, "Press F10 to quit.");
-	AddWidget(*label);
+	label = new Label("Press F10 to quit.");
+	AddWidget(*label, 1, 1);
 
-	label = new Label(*this, 1, 3, "ASCII");
-	AddWidget(*label);
+	label = new Label("ASCII");
+	AddWidget(*label, 1, 3);
 
-	label = new Label(*this, 1, 6, "ASCII rounded");
-	AddWidget(*label);
+	label = new Label("ASCII rounded");
+	AddWidget(*label, 1, 6);
 
-	label = new Label(*this, 1, 9, "light");
-	AddWidget(*label);
+	label = new Label("light");
+	AddWidget(*label, 1, 9);
 
-	label = new Label(*this, 1, 12, "light rounded");
-	AddWidget(*label);
+	label = new Label("light rounded");
+	AddWidget(*label, 1, 12);
 
-	label = new Label(*this, 1, 15, "heavy");
-	AddWidget(*label);
+	label = new Label("heavy");
+	AddWidget(*label, 1, 15);
 }
 
 LineStyleWindow::~LineStyleWindow()
@@ -218,7 +218,6 @@ TestApp::TestApp()
 
 void TestApp::Run()
 {
-	// TODO comment what happens here, who takes ownership etc.
 	windowmanager->Add(&LineStyleWindow::Instance());
 
 	Application::Run();

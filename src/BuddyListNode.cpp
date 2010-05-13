@@ -215,5 +215,5 @@ void BuddyListGroup::OnActivate(void)
 	LOG->Write(Log::Level_debug, "Group activated!\n");
 	TreeView *t = dynamic_cast<TreeView *>(parent);
 	if (t) // should be always true
-		t->ActionToggleCollapsed();
+		t->ToggleCollapsed(ref);
 }

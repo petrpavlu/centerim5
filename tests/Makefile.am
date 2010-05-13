@@ -1,22 +1,21 @@
 check_PROGRAMS = \
 	label_test \
 	linestyle_test \
-	textbuffer_test \
 	textentry_test \
-	textline_test \
 	textview_test \
 	treeview_test \
 	window_test
+#textline_test
+#textbuffer_test
 
 AM_CPPFLAGS = \
-	$(DEBUG_CFLAGS) \
-	$(GLIBMM_CFLAGS) \
-	$(CURSES_INCLUDEDIR) \
+	$(GLIB_CFLAGS) \
+	$(SIGC_CFLAGS) \
 	-I$(top_srcdir)
 
 LDADD = \
-	$(GLIBMM_LIBS) \
-	$(CURSES_LIBS) \
+	$(GLIB_LIBS) \
+	$(SIGC_LIBS) \
 	$(top_builddir)/cppconsui/libcppconsui.la
 
 label_test_SOURCES = \

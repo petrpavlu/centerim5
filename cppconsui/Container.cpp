@@ -320,7 +320,7 @@ void Container::MoveFocus(FocusDirection direction)
 				child_iter = iter; /* Convert pre_order_iterator to sibling_iterator */
 				parent_iter = focus_chain.parent(child_iter);
 
-				switch (container->FocusCycle()) {
+				switch (container->GetFocusCycle()) {
 					case FocusCycleLocal:
 						/* Local focus cycling is allowed (cycling
 						 * within focused widgets parent container).
@@ -372,7 +372,7 @@ void Container::MoveFocus(FocusDirection direction)
 				child_iter = iter;
 				parent_iter = focus_chain.parent(child_iter);
 
-				switch (container->FocusCycle()) {
+				switch (container->GetFocusCycle()) {
 					case FocusCycleLocal:
 						cycle_begin = parent_iter.begin();
 						cycle_end = parent_iter.end();
@@ -406,22 +406,17 @@ void Container::MoveFocus(FocusDirection direction)
 
 void Container::SetActive(int i)
 {
-	Children::iterator j;
+	g_assert(i >= 0);
+	g_assert(i < (int) children.size());
 
-	if (i < (int)children.size()) {
-		children[i].widget->GrabFocus();
-	}
+	children[i].widget->GrabFocus();
 }
 
-int Container::GetActive(void)
+int Container::GetActive() const
 {
-	Children::iterator j;
+	for (Children::const_iterator j = children.begin(); j != children.end(); j++)
+		if (j->widget->HasFocus())
+			return j - children.begin();
 
-	for (unsigned int i = 0; i < children.size(); i++) {
-		if (children[i].widget->HasFocus()) {
-			return i;
-		}
-	}
-
-	return 0;
+	return -1;
 }

@@ -226,8 +226,8 @@ class AccountWindow
 
 		AccountEntries account_entries;
 
-		unsigned int menu_index;
-		unsigned int accounts_index;
+		int menu_index;
+		int accounts_index;
 };
 
 #endif /* __ACCOUNTSWINDOW_H__ */

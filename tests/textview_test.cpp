@@ -48,9 +48,8 @@ TextViewWindow::TextViewWindow()
 		"fermentum mattis eros, ut auctor urna tincidunt vitae. Praesent"
 		"tincidunt laoreet lobortis.";
 
-	//TextView *textview = new TextView(*this, 0, 0, 80, 20);
-	TextView *textview = new TextView(*this, 0, 0, -1, -1);
-	AddWidget(*textview);
+	TextView *textview = new TextView(-1, -1);
+	AddWidget(*textview, 0, 0);
 	textview->Append(long_text);
 
 	char wide[13];
@@ -116,7 +115,6 @@ TestApp::TestApp()
 
 void TestApp::Run()
 {
-	// TODO comment what happens here, who takes ownership etc.
 	windowmanager->Add(&TextViewWindow::Instance());
 
 	Application::Run();

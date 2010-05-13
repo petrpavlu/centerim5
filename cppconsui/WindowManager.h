@@ -34,8 +34,6 @@ class WindowManager
 	public:
 		static WindowManager *Instance();
 
-		static void signal_handler(int signum);
-
 		virtual void Add(Window *window);
 		void Remove(Window *window);
 
@@ -80,6 +78,11 @@ class WindowManager
 		~WindowManager(void);
 
 	private:
+		static void signal_handler(int signum);
+
+		static gboolean timeout_once_draw(gpointer data);
+		static gboolean timeout_once_resize(gpointer data);
+
 		/** it handles the automatic registration of defined keys */
 		DECLARE_SIG_REGISTERKEYS();
 		static bool RegisterKeys();

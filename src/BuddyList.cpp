@@ -31,8 +31,6 @@
 
 #include "gettext.h"
 
-#include <glibmm/main.h>
-
 BuddyList *BuddyList::Instance()
 {
 	static BuddyList instance;
@@ -73,7 +71,7 @@ BuddyList::BuddyList()
 	//centerim_blist_ui_ops.save_account = save_account_;
 	purple_blist_set_ui_ops(&centerim_blist_ui_ops);
 
-	Glib::signal_timeout().connect(sigc::mem_fun(this, &BuddyList::Load), 0);
+	g_timeout_add(0, timeout_once_load, NULL);
 
 	treeview = new TreeView(width - 2, height - 2);
 	AddWidget(*treeview, 0, 0);
@@ -81,12 +79,12 @@ BuddyList::BuddyList()
 	MoveResizeRect(CONF->GetBuddyListDimensions());
 }
 
-bool BuddyList::Load()
+gboolean BuddyList::timeout_once_load(gpointer data)
 {
 	// loads the buddy list from ~/.centerim5/blist.xml
 	purple_blist_load();
 
-	return false;
+	return FALSE;
 }
 
 void BuddyList::Close()
@@ -108,10 +106,12 @@ void BuddyList::new_node(PurpleBlistNode *node)
 	node->ui_data = bnode = BuddyListNode::CreateNode(node);
 
 	BuddyListNode *parent = bnode->GetParentNode();
-	bnode->ref = treeview->AddNode(parent ? parent->ref : treeview->Root(), bnode, NULL);
+	bnode->ref = treeview->AddNode(parent ? parent->ref : treeview->Root(), *bnode);
 	treeview->Collapse(bnode->ref);
 
 	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+		treeview->SetStyle(bnode->ref, TreeView::STYLE_VOID);
+
 		/* The core seems to expect the UI to add the buddies (according
 		 * to finch). */
 		for (node = node->child; node; node = node->next)
@@ -150,8 +150,6 @@ void BuddyList::remove(PurpleBuddyList *list, PurpleBlistNode *node)
 
 	// TODO check for subnodes (if this is a group for instance)
 	treeview->DeleteNode(bnode->ref, false);
-
-	delete bnode;
 }
 
 void BuddyList::destroy(PurpleBuddyList *list)

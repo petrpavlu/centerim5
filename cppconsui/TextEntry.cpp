@@ -201,6 +201,10 @@ void TextEntry::Draw()
 
 bool TextEntry::ProcessInputText(const TermKeyKey &key)
 {
+	// tab moves a focus
+	if (key.code.codepoint == '\t')
+		return false;
+
 	// filter out unwanted input
 	if (flags) {
 		if (!(flags & FlagAlphabetic) && g_unichar_isalpha(key.code.codepoint))

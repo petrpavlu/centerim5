@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -23,8 +24,6 @@
 #include "ColorScheme.h"
 #include "ConsuiCurses.h"
 #include "Keys.h"
-#include "LineStyle.h"
-#include "ScrollPane.h"
 
 #include "gettext.h"
 
@@ -35,13 +34,11 @@ TreeView::TreeView(int w, int h, LineStyle::Type ltype)
 , linestyle(ltype)
 , itemswidth(0)
 , itemsheight(0)
-, focus_cycle(false)
 {
 	/* initialise the tree */
 	TreeNode root;
 	root.widget = NULL;
 	root.widgetheight = 0;
-	root.collapsable = false;
 	root.open = true;
 	thetree.set_head(root);
 	focus_node = thetree.begin();
@@ -58,18 +55,16 @@ TreeView::TreeView(int w, int h, LineStyle::Type ltype)
 
 TreeView::~TreeView()
 {
-	// TODO deletenode does not free the memory, do this
-	// TODO review, it crashes BuddyList..
 	DeleteNode(thetree.begin(), false);
 }
 
 void TreeView::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_TREEVIEW, "fold-subtree",
-			sigc::mem_fun(this, &TreeView::ActionCollapse),
+			sigc::mem_fun(this, &TreeView::OnActionCollapse),
 			InputProcessor::Bindable_Normal);
 	DeclareBindable(CONTEXT_TREEVIEW, "unfold-subtree",
-			sigc::mem_fun(this, &TreeView::ActionExpand),
+			sigc::mem_fun(this, &TreeView::OnActionExpand),
 			InputProcessor::Bindable_Normal);
 }
 
@@ -85,7 +80,7 @@ bool TreeView::RegisterKeys()
 	return true;
 }
 
-void TreeView::Draw(void)
+void TreeView::Draw()
 {
 	if (!area)
 		return;
@@ -96,77 +91,15 @@ void TreeView::Draw(void)
 	ScrollPane::Draw();
 }
 
-int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
+bool TreeView::SetFocusChild(Widget& child)
 {
-	int height = 0, j = top, oldh, depthoffset;
-	TheTree::sibling_iterator i;
-
-	depthoffset = thetree.depth(node) * 3;
-
-	// draw the node Widget first
-	if (node->widget) {
-		node->widget->MoveResize(depthoffset + 3, top,
-				node->widget->Width(),
-				node->widget->Height());
-		node->widget->Draw();
-		height += node->widget->Height();
-	}
-
-	if (node->open) {
-		int attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "treeview", "line");
-		area->attron(attrs);
-		if (thetree.number_of_children(node) > 0) {
-			for (j = top + 1; j < top + height; j++)
-				area->mvaddstring(depthoffset, j, linestyle.V());
-		}
-
-		for (i = node.begin(); i != node.end(); i++) {
-			if (i != --node.end())
-				area->mvaddstring(depthoffset, top + height, linestyle.VRight());
-			else
-				area->mvaddstring(depthoffset, top + height, linestyle.CornerBL());
-
-			area->mvaddstring(depthoffset + 1, top + height, linestyle.H());
-			
-			if (i->collapsable && thetree.number_of_children(i) > 0) {
-				area->mvaddstring(depthoffset + 2, top + height, "[");
-				area->mvaddstring(depthoffset + 3, top + height, i->open ? "-" : "+");
-				area->mvaddstring(depthoffset + 4, top + height, "]");
-			} else {
-				area->mvaddstring(depthoffset + 2, top + height, linestyle.H());
-				area->mvaddstring(depthoffset + 3, top + height, linestyle.H());
-				area->mvaddstring(depthoffset + 4, top + height, linestyle.HEnd());
-			}
-
-			area->attroff(attrs);
-			oldh = height;
-			height += DrawNode(i, top + height);
-			area->attron(attrs);
-
-			if (i != --node.end()) {
-				for (j = top + oldh + 1; j < top + height ; j++)
-					area->mvaddstring(depthoffset, j, linestyle.V());
-			}
-		}
-		area->attroff(attrs);
-	}
-
-	return height;
-}
-
-bool TreeView::SetFocusChild(Widget &child)
-{
-	TheTree::pre_order_iterator i;
-
 	if (ScrollPane::SetFocusChild(child)) {
-		//TODO do we want to use widget.data for this? or is
-		//this better?
-		for (i = thetree.begin(); i != thetree.end(); i++) {
-			if ((*i).widget == &child) {
+		/// @todo Speed up this algorithm using extra node data.
+		for (TheTree::pre_order_iterator i = thetree.begin(); i != thetree.end(); i++)
+			if (i->widget == &child) {
 				focus_node = i;
 				break;
 			}
-		}
 
 		return true;
 	}
@@ -174,7 +107,7 @@ bool TreeView::SetFocusChild(Widget &child)
 	return false;
 }
 
-bool TreeView::StealFocus(void)
+bool TreeView::StealFocus()
 {
 	if (ScrollPane::StealFocus()) {
 		focus_node = thetree.begin();
@@ -182,212 +115,6 @@ bool TreeView::StealFocus(void)
 	}
 
 	return false;
-}
-
-void TreeView::Collapse(const NodeReference node)
-{
-	if (node->open && node->collapsable) {
-		node->open = false;
-		signal_redraw(*this);
-	}
-}
-
-void TreeView::Expand(const NodeReference node)
-{
-	if (!(*node).open && (*node).collapsable) {
-		(*node).open = true;
-		signal_redraw(*this);
-	}
-}
-
-void TreeView::ToggleCollapsed(const NodeReference node)
-{
-	if ((*node).collapsable) {
-		(*node).open = !(*node).open;
-		signal_redraw(*this);
-	}
-}
-
-void TreeView::ActionCollapse(void)
-{
-	Collapse(focus_node);
-}
-
-void TreeView::ActionExpand(void)
-{
-	Expand(focus_node);
-}
-
-void TreeView::ActionToggleCollapsed(void)
-{
-	ToggleCollapsed(focus_node);
-}
-
-void TreeView::AddWidget(Widget &widget, int x, int y)
-{
-	ScrollPane::AddWidget(widget, x, y);
-}
-
-const TreeView::NodeReference TreeView::AddNode(const NodeReference &parent, Widget *widget, void *data)
-{
-	int newwidth = 0, newheight = 0;
-	TheTree::pre_order_iterator iter;
-
-	//TODO check input and throw some errors (or return -1?)
-	g_assert(widget != NULL);
-
-	widget->SetParent(*this);
-
-	/* construct the new node */
-	TreeNode node;
-	node.widget = widget;
-	node.widgetheight = 0;
-	node.data = data;
-	node.collapsable = true;
-	node.open = true;
-
-	iter = thetree.append_child(parent, node);
-	(*parent).widgetheight += node.widget->Height();
-
-	if ((*focus_node).widget == NULL) {
-		focus_node = iter;
-		widget->GrabFocus();
-	}
-
-	node.sig_redraw = widget->signal_redraw.connect(sigc::mem_fun(this, &TreeView::OnChildRedraw));
-	node.sig_moveresize = widget->signal_moveresize.connect(sigc::mem_fun(this, &TreeView::OnChildMoveResize));
-	node.sig_focus = widget->signal_focus.connect(sigc::mem_fun(this, &TreeView::OnChildFocus));
-	
-	itemswidth += widget->Width();
-	itemsheight += widget->Height();
-
-	/* only really resize if needed and 
-	 * add a bit (read: a lot) of slack space
-	 * */
-	//TODO change width calculation for configurable tree drawing
-	if (scroll_width < itemswidth)
-		newwidth = itemswidth * 2;
-	if (scroll_height < itemsheight)
-		newheight = itemsheight * 2;
-
-	//ResizeScroll(newwidth, newheight);
-
-	return iter;
-}
-
-const TreeView::NodeReference TreeView::AddNode(const NodeReference &parent, TreeNode &node)
-{
-	TheTree::pre_order_iterator iter;
-
-	iter = thetree.append_child(parent, node);
-	(*parent).widgetheight += node.widget->Height();
-
-	return iter;
-}
-
-void TreeView::DeleteNode(const NodeReference &node, bool keepchildren)
-{
-	// @todo This needs more testing.
-
-	/* If we don't keep children then make sure that focus isn't held by a
-	 * descendant. */
-	bool has_focus = false;
-	if (!keepchildren && node != thetree.begin()) {
-		NodeReference act = focus_node;
-		while (thetree.is_valid(act)) {
-			if (act == node) {
-				has_focus = true;
-				break;
-			}
-			act = thetree.parent(act);
-		}
-	}
-
-	if (node != thetree.begin()
-			&& (node == focus_node // for keepchildren = true
-				|| has_focus)) { // for keepchildren = false
-		/* By folding this node and then moving focus forward we are sure that
-		 * no child node of the node to be removed will get the focus. */
-		(*node).open = false;
-		MoveFocus(Container::FocusNext);
-	}
-
-	// if we want to keep child nodes we should flatten the tree
-	if (keepchildren)
-		thetree.flatten(node);
-
-	//TODO does this disconnect the signals properly? i think so.
-	thetree.erase(node);
-}
-
-void TreeView::DeleteChildren(const NodeReference &node, bool keepchildren)
-{
-	TheTree::sibling_iterator i;
-	//TODO does this disconnect the signals properly? i think so.
-	//LOG("/tmp/delete.log", "DeleteChildren %p, %p, %b\n", GetWidget(node), GetData(node), (int)keepchildren);
-	
-	while ((i=thetree.begin(node)) != thetree.end(node)){
-		DeleteNode(i, keepchildren);
-	}
-/*		
-	for (i = thetree.begin(node); i != thetree.end(node); i++) {
-		DeleteNode(i, keepchildren);
-	}
- */
-}
-
-const TreeView::NodeReference& TreeView::GetSelected(void)
-{
-	return focus_node;
-}
-
-int TreeView::GetDepth(const NodeReference &node)
-{
-	return thetree.depth(node);
-}
-
-void* TreeView::SetData(const NodeReference &node, void *newdata)
-{
-	void *olddata = NULL;
-
-	olddata = (*node).data;
-	(*node).data = newdata;
-
-	return olddata;
-}
-
-void* TreeView::GetData(const NodeReference &node)
-{
-	return (*node).data;
-}
-
-Widget* TreeView::GetWidget(const NodeReference &node)
-{
-	return (*node).widget;
-}
-
-void TreeView::SetParent(NodeReference node, NodeReference newparent)
-{
-	if (thetree.parent(node) != newparent)
-		thetree.move_ontop(thetree.append_child(newparent), node);
-}
-
-void TreeView::OnChildRedraw(Widget& widget)
-{
-	signal_redraw(*this);
-}
-
-void TreeView::OnChildMoveResize(Widget& widget, Rect &oldsize, Rect &newsize)
-{
-	//TODO redraw only on height change
-	signal_redraw(*this);
-}
-
-void TreeView::OnChildFocus(Widget& widget, bool focus)
-{
-	/* Only adjust scroll position if the widget got focus. */
-	if (focus)
-		AdjustScroll(widget.Left(), widget.Top());
 }
 
 void TreeView::GetFocusChain(FocusChain& focus_chain, FocusChain::iterator parent)
@@ -425,27 +152,265 @@ void TreeView::GetFocusChain(FocusChain& focus_chain, FocusChain::iterator paren
 		}
 	}
 }
+
 void TreeView::SetActive(int i)
 {
-	TheTree::pre_order_iterator j;
+	g_assert(i >= 0);
+	g_assert(i < (int) thetree.size());
 
-	if (i < thetree.size()) {
-		for (j = thetree.begin(); i > 0 &&j != thetree.end(); j++, i--) {}
-		if (j != thetree.end() && (*j).widget)
-			(*j).widget->GrabFocus();
-	}
+	TheTree::pre_order_iterator j;
+	for (j = thetree.begin(); i > 0 && j != thetree.end(); j++, i--)
+		;
+	if (j != thetree.end() && j->widget)
+		j->widget->GrabFocus();
 }
 
-int TreeView::GetActive(void)
+int TreeView::GetActive() const
 {
 	TheTree::pre_order_iterator j;
 	int i;
 
-	for (j = thetree.begin(), i = 0; j != thetree.end(); j++, i++) {
-		if ((*j).widget  && (*j).widget->HasFocus()) {
+	for (j = thetree.begin(), i = 0; j != thetree.end(); j++, i++)
+		if (j->widget && j->widget->HasFocus())
 			return i;
+
+	return -1;
+}
+
+void TreeView::Collapse(const NodeReference node)
+{
+	if (node->open) {
+		node->open = false;
+		signal_redraw(*this);
+	}
+}
+
+void TreeView::Expand(const NodeReference node)
+{
+	if (!node->open) {
+		node->open = true;
+		signal_redraw(*this);
+	}
+}
+
+void TreeView::ToggleCollapsed(const NodeReference node)
+{
+	node->open = !node->open;
+	signal_redraw(*this);
+}
+
+void TreeView::OnActionToggleCollapsed()
+{
+	ToggleCollapsed(focus_node);
+}
+
+const TreeView::NodeReference TreeView::AddNode(const NodeReference parent, Widget& widget)
+{
+	int newwidth = 0, newheight = 0;
+	TheTree::pre_order_iterator iter;
+
+	widget.SetParent(*this);
+
+	/* construct the new node */
+	TreeNode node;
+	node.open = true;
+	node.style = STYLE_NORMAL;
+	node.widget = &widget;
+	node.widgetheight = 0;
+
+	iter = thetree.append_child(parent, node);
+	parent->widgetheight += node.widget->Height();
+
+	if (focus_node->widget == NULL) {
+		focus_node = iter;
+		widget.GrabFocus();
+	}
+
+	node.sig_redraw = widget.signal_redraw.connect(sigc::mem_fun(this, &TreeView::OnChildRedraw));
+	node.sig_moveresize = widget.signal_moveresize.connect(sigc::mem_fun(this, &TreeView::OnChildMoveResize));
+	node.sig_focus = widget.signal_focus.connect(sigc::mem_fun(this, &TreeView::OnChildFocus));
+	
+	itemswidth += widget.Width();
+	itemsheight += widget.Height();
+
+	/* only really resize if needed and 
+	 * add a bit (read: a lot) of slack space
+	 * */
+	//TODO change width calculation for configurable tree drawing
+	if (scroll_width < itemswidth)
+		newwidth = itemswidth * 2;
+	if (scroll_height < itemsheight)
+		newheight = itemsheight * 2;
+
+	//ResizeScroll(newwidth, newheight);
+
+	return iter;
+}
+
+void TreeView::DeleteNode(const NodeReference node, bool keepchildren)
+{
+	// @todo This needs more testing.
+
+	/* If we don't keep children then make sure that focus isn't held by a
+	 * descendant. */
+	bool has_focus = false;
+	if (!keepchildren && node != thetree.begin()) {
+		NodeReference act = focus_node;
+		while (thetree.is_valid(act)) {
+			if (act == node) {
+				has_focus = true;
+				break;
+			}
+			act = thetree.parent(act);
 		}
 	}
 
-	return 0;
+	if (node != thetree.begin()
+			&& (node == focus_node // for keepchildren = true
+				|| has_focus)) { // for keepchildren = false
+		/* By folding this node and then moving focus forward we are sure that
+		 * no child node of the node to be removed will get the focus. */
+		(*node).open = false;
+		MoveFocus(Container::FocusNext);
+	}
+
+	// if we want to keep child nodes we should flatten the tree
+	if (keepchildren)
+		thetree.flatten(node);
+
+	delete node->widget;
+	thetree.erase(node);
+}
+
+void TreeView::DeleteChildren(const NodeReference node, bool keepchildren)
+{
+	TheTree::sibling_iterator i;
+	
+	while ((i = thetree.begin(node)) != thetree.end(node)){
+		DeleteNode(i, keepchildren);
+	}
+}
+
+const TreeView::NodeReference TreeView::GetSelected()
+{
+	return focus_node;
+}
+
+int TreeView::GetDepth(const NodeReference node)
+{
+	return thetree.depth(node);
+}
+
+Widget *TreeView::GetWidget(const NodeReference node)
+{
+	return node->widget;
+}
+
+void TreeView::SetParent(const NodeReference node, const NodeReference newparent)
+{
+	if (thetree.parent(node) != newparent)
+		thetree.move_ontop(thetree.append_child(newparent), node);
+}
+
+void TreeView::SetStyle(const NodeReference node, Style s)
+{
+	node->style = s;
+	/// @todo Send signal only if necessary.
+	signal_redraw(*this);
+}
+
+TreeView::Style TreeView::GetStyle(const NodeReference node) const
+{
+	return node->style;
+}
+
+void TreeView::AddWidget(Widget& widget, int x, int y)
+{
+	ScrollPane::AddWidget(widget, x, y);
+}
+
+int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
+{
+	int height = 0, j = top, oldh, depthoffset;
+	TheTree::sibling_iterator i;
+
+	depthoffset = thetree.depth(node) * 3;
+
+	// draw the node Widget first
+	if (node->widget) {
+		node->widget->MoveResize(depthoffset + 3, top,
+				node->widget->Width(),
+				node->widget->Height());
+		node->widget->Draw();
+		height += node->widget->Height();
+	}
+
+	if (node->open) {
+		int attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "treeview", "line");
+		area->attron(attrs);
+		if (thetree.number_of_children(node) > 0) {
+			for (j = top + 1; j < top + height; j++)
+				area->mvaddstring(depthoffset, j, linestyle.V());
+		}
+
+		for (i = node.begin(); i != node.end(); i++) {
+			if (i != --node.end())
+				area->mvaddstring(depthoffset, top + height, linestyle.VRight());
+			else
+				area->mvaddstring(depthoffset, top + height, linestyle.CornerBL());
+
+			area->mvaddstring(depthoffset + 1, top + height, linestyle.H());
+			
+			if (i->style == STYLE_NORMAL && thetree.number_of_children(i) > 0) {
+				area->mvaddstring(depthoffset + 2, top + height, "[");
+				area->mvaddstring(depthoffset + 3, top + height, i->open ? "-" : "+");
+				area->mvaddstring(depthoffset + 4, top + height, "]");
+			}
+			else {
+				area->mvaddstring(depthoffset + 2, top + height, linestyle.H());
+				area->mvaddstring(depthoffset + 3, top + height, linestyle.H());
+				area->mvaddstring(depthoffset + 4, top + height, linestyle.HEnd());
+			}
+
+			area->attroff(attrs);
+			oldh = height;
+			height += DrawNode(i, top + height);
+			area->attron(attrs);
+
+			if (i != --node.end())
+				for (j = top + oldh + 1; j < top + height ; j++)
+					area->mvaddstring(depthoffset, j, linestyle.V());
+		}
+		area->attroff(attrs);
+	}
+
+	return height;
+}
+
+void TreeView::OnChildRedraw(Widget& widget)
+{
+	signal_redraw(*this);
+}
+
+void TreeView::OnChildMoveResize(Widget& widget, Rect &oldsize, Rect &newsize)
+{
+	//TODO redraw only on height change
+	signal_redraw(*this);
+}
+
+void TreeView::OnChildFocus(Widget& widget, bool focus)
+{
+	/* Only adjust scroll position if the widget got focus. */
+	if (focus)
+		AdjustScroll(widget.Left(), widget.Top());
+}
+
+void TreeView::OnActionCollapse()
+{
+	Collapse(focus_node);
+}
+
+void TreeView::OnActionExpand()
+{
+	Expand(focus_node);
 }

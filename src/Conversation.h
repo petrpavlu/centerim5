@@ -74,6 +74,8 @@ class Conversation
 		Conversation(const Conversation&);
 		Conversation& operator=(const Conversation&);
 
+		static gboolean timeout_once_purple_conversation_destroy(gpointer data);
+
 		void BuildLogFilename();
 
 		virtual void Send() = 0;

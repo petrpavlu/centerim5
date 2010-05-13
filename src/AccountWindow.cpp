@@ -44,8 +44,8 @@ AccountWindow::AccountWindow()
 	menu = new HorizontalListBox(width, 1);
 	line = new HorizontalLine(width);
 
-	accounts->FocusCycle(Container::FocusCycleLocal);
-	menu->FocusCycle(Container::FocusCycleLocal);
+	accounts->SetFocusCycle(Container::FocusCycleLocal);
+	menu->SetFocusCycle(Container::FocusCycleLocal);
 
 	menu->AppendItem(_("Add"), sigc::mem_fun(this, &AccountWindow::Add));
 	menu->AppendSeparator();
@@ -183,12 +183,6 @@ bool AccountWindow::ClearAccount(PurpleAccount *account, bool full)
 	if (full)
 		accounts->DeleteNode(account_entry->parent_reference, false);
 
-	for (i = account_entry->widgets.begin(); i != account_entry->widgets.end(); i++) {
-		delete *i;
-	}
-	if (full)
-		delete account_entry->parent;
-
 	account_entry->widgets.clear();
 	account_entry->split_widgets.clear();
 	if (full)
@@ -242,8 +236,8 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		Button *button;
 		TreeView::NodeReference parent_reference;
 
-		button = new Button("", sigc::mem_fun(accounts, &TreeView::ActionToggleCollapsed));
-		parent_reference = accounts->AddNode(accounts->Root(), button, account);
+		button = new Button("", sigc::mem_fun(accounts, &TreeView::OnActionToggleCollapsed));
+		parent_reference = accounts->AddNode(accounts->Root(), *button);
 		accounts->Collapse(parent_reference);
 		account_entry->parent = button;
 		account_entry->parent_reference = parent_reference;
@@ -260,7 +254,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 
 		// we cannot change the settings of an unknown account
 		label = new Label(_("Invalid account or protocol plugin not loaded"));
-		accounts->AddNode(account_entry->parent_reference, label, account);
+		accounts->AddNode(account_entry->parent_reference, *label);
 		account_entry->widgets.push_back(label);
 
 	}
@@ -269,7 +263,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 	
 		// protocols combobox
 		combobox = new AccountOptionProtocol(account, *this);
-		accounts->AddNode(account_entry->parent_reference, combobox, account);
+		accounts->AddNode(account_entry->parent_reference, *combobox);
 		account_entry->widgets.push_back(combobox);
 
 		/* The username must be treated in a special way because it can contain
@@ -299,7 +293,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 			account_entry->split_widgets.push_front(widget_split);
 			account_entry->widgets.push_back(widget_split);
 
-			accounts->AddNode(account_entry->parent_reference, widget_split, NULL);
+			accounts->AddNode(account_entry->parent_reference, *widget_split);
 		}
 
 
@@ -308,22 +302,22 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		widget_split->SetValue(username);
 		account_entry->split_widgets.push_front(widget_split);
 		account_entry->widgets.push_back(widget_split);
-		accounts->AddNode(account_entry->parent_reference, widget_split, NULL);
+		accounts->AddNode(account_entry->parent_reference, *widget_split);
 		g_free(username);
 
 		// password
 		widget = new AccountOptionString(account, true, false);
-		accounts->AddNode(account_entry->parent_reference, widget, NULL);
+		accounts->AddNode(account_entry->parent_reference, *widget);
 		account_entry->widgets.push_back(widget);
 
 		// remember password
 		widget = new AccountOptionBool(account, true, false);
-		accounts->AddNode(account_entry->parent_reference, widget, NULL);
+		accounts->AddNode(account_entry->parent_reference, *widget);
 		account_entry->widgets.push_back(widget);
 
 		// alias
 		widget = new AccountOptionString(account, false, true);
-		accounts->AddNode(account_entry->parent_reference, widget, NULL);
+		accounts->AddNode(account_entry->parent_reference, *widget);
 		account_entry->widgets.push_back(widget);
 
 		for (pref = prplinfo->protocol_options; pref; pref = pref->next) {
@@ -333,17 +327,17 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 			switch (type) {
 			case PURPLE_PREF_STRING:
 				widget = new AccountOptionString(account, option);
-				accounts->AddNode(account_entry->parent_reference, widget, NULL);
+				accounts->AddNode(account_entry->parent_reference, *widget);
 				account_entry->widgets.push_back(widget);
 				break;
 			case PURPLE_PREF_INT:
 				widget = new AccountOptionInt(account, option);
-				accounts->AddNode(account_entry->parent_reference, widget, NULL);
+				accounts->AddNode(account_entry->parent_reference, *widget);
 				account_entry->widgets.push_back(widget);
 				break;
 			case PURPLE_PREF_BOOLEAN:
 				widget = new AccountOptionBool(account, option);
-				accounts->AddNode(account_entry->parent_reference, widget, NULL);
+				accounts->AddNode(account_entry->parent_reference, *widget);
 				account_entry->widgets.push_back(widget);
 				break;
 			case PURPLE_PREF_STRING_LIST:
@@ -357,14 +351,14 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 
 		// enable/disable account
 		widget = new AccountOptionBool(account, false, true);
-		accounts->AddNode(account_entry->parent_reference, widget, NULL);
+		accounts->AddNode(account_entry->parent_reference, *widget);
 		account_entry->widgets.push_back(widget);
 	}
 
 	// drop account
 	widget = new Button(_("Drop account"),
 			sigc::bind(sigc::mem_fun(this, &AccountWindow::DropAccount), account));
-	accounts->AddNode(account_entry->parent_reference, widget, NULL);
+	accounts->AddNode(account_entry->parent_reference, *widget);
 	account_entry->widgets.push_back(widget);
 }
 

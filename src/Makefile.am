@@ -37,13 +37,14 @@ centerim_SOURCES = \
 
 centerim_CPPFLAGS =\
 	$(PURPLE_CFLAGS) \
-	$(GLIBMM_CFLAGS) \
+	$(GLIB_CFLAGS) \
+	$(SIGC_CFLAGS) \
 	-I$(top_srcdir)
 
 centerim_LDADD =\
 	$(PURPLE_LIBS) \
-	$(GLIBMM_LIBS) \
-	$(LIBINTL) \
+	$(GLIB_LIBS) \
+	$(SIGC_LIBS) \
 	$(top_builddir)/cppconsui/libcppconsui.la
 
 # regenerate git-version.h if its content differs from the output of
