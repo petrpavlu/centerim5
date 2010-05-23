@@ -85,6 +85,7 @@ void CenterIM::Run(void)
 	// initialize UI
 	BuddyList::Instance()->Show();
 
+	LOG->Write(Log::Level_info, _("Welcome to CenterIM 5. Press F4 to display main menu.\n"));
 	Application::Run();
 }
 

@@ -1,8 +1,4 @@
 TODO:
-- Should containers take ownership of widgets and free() them
-  when done with them? currently this is done in (some) destructors
-  but it is not assumed in remove widget functions.
-- modify diagram for colorscheme
 - Horizontal ListBox: add option to make every item the same width
 - All classes should have a copy constructor and an
   operator=().
@@ -19,18 +15,14 @@ TODO:
   exist until the app exits.
   (so lets leave things like they are for now)
 - purple_pounces_load
-- purple_debug_set_enabled
 - better error catching in main
 - reference counters for singletons, only delete when noone else
   references this class
 - grep for todo's and fix them
 - add const in a lot of places
 - put everything (in cppconsui) in a CppConsUI namespace ?
-- purple_pounces_load
-- purple_debug_set_enabled
 - purple_conversations_set_ui_ops which was in null_ui_init
   where should it go? probably in the Centerim object
-- better error catching in main
 - put something in: README AUTHORS ChangeLog NEWS
 - make sure default constructors are not callable for all
   classes where this applies
@@ -39,12 +31,19 @@ TODO:
   <http://www.gnu.org/software/gettext/manual/gettext.html#Libraries>
   also make the translations proper)
 - see what more files can be removed from git
-- see wether we can lose gettext.h from src/
 - add function descriptions in the header files
-  you pick a format (Doxygen? you choose!)
-- make sure the copy constructor of singletons is private
-- make sure Curses.h is not distributed with cppconsui (can be
-  done in cppconsui/Makefile.am!)
+- colorscheme should use same concept as KeyConfig so it is possible to get
+  all registered colorschemes at startup time
+- add fill() method to curses wrapper
+- options window, for the start with debug options
+- statusbar and top-statusbar as known from cim4
+- TextEntry -- hide passwords with asterisks, fix cursor movement that goes
+  outside the area
+- pending auth and auth request windows
+- buddy list sorting
+- request UI ops implementation
+- notice UI ops implementation
+- fix cmake build
  
 Less important todo's which sometimes are just ideas:
 - Re-implement container to use red-black trees. Could be useful

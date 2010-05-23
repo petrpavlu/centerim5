@@ -58,8 +58,6 @@ Log::Log(void)
 	// TODO max_lines not used anywhere..
 	max_lines = CONF->GetLogMaxLines();
 
-	MoveResizeRect(CONF->GetLogDimensions());
-
 	// register the glib log handlers
 	REGISTER_G_LOG_HANDLER(NULL);
 	REGISTER_G_LOG_HANDLER("GLib");

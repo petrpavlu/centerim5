@@ -270,8 +270,14 @@ void TreeView::DeleteNode(const NodeReference node, bool keepchildren)
 				|| has_focus)) { // for keepchildren = false
 		/* By folding this node and then moving focus forward we are sure that
 		 * no child node of the node to be removed will get the focus. */
-		(*node).open = false;
+		node->open = false;
 		MoveFocus(Container::FocusNext);
+
+		// clear focus/input child if the move was not successful
+		if (node == focus_node) {
+			focus_child = NULL;
+			ClearInputChild();
+		}
 	}
 
 	// if we want to keep child nodes we should flatten the tree

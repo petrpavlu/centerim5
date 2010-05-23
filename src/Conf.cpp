@@ -267,19 +267,20 @@ Log::Level Conf::GetLogLevel(const gchar *type)
 	const gchar *slevel;
 	Log::Level level = Log::Level_debug;
 	
-	if (!g_ascii_strncasecmp(type, "cim", 3))
+	if (!g_ascii_strcasecmp(type, "cim"))
 		slevel = GetString(pref, "info");
 	else
 		slevel = GetString(pref, "none");
 
-	if (!g_ascii_strncasecmp(slevel,"none", 4)) level = Log::Level_none;
-	else if (!g_ascii_strncasecmp(slevel, "info", 4)) level = Log::Level_info;
-	else if (!g_ascii_strncasecmp(slevel, "warning", 7)) level = Log::Level_warning;
-	else if (!g_ascii_strncasecmp(slevel, "critical", 8)) level = Log::Level_critical;
-	else if (!g_ascii_strncasecmp(slevel, "error", 5)) level = Log::Level_error;
-	else if (!g_ascii_strncasecmp(slevel, "debug", 5)) level = Log::Level_debug;
+	if (!g_ascii_strcasecmp(slevel,"none")) level = Log::Level_none;
+	else if (!g_ascii_strcasecmp(slevel, "debug")) level = Log::Level_debug;
+	else if (!g_ascii_strcasecmp(slevel, "info")) level = Log::Level_info;
+	else if (!g_ascii_strcasecmp(slevel, "message")) level = Log::Level_message;
+	else if (!g_ascii_strcasecmp(slevel, "warning")) level = Log::Level_warning;
+	else if (!g_ascii_strcasecmp(slevel, "critical")) level = Log::Level_critical;
+	else if (!g_ascii_strcasecmp(slevel, "error")) level = Log::Level_error;
 	else {
-		if (!g_ascii_strncasecmp(type, "cim", 3))
+		if (!g_ascii_strcasecmp(type, "cim"))
 			SetLogLevel(type, Log::Level_info);
 		else
 			SetLogLevel(type, Log::Level_none);

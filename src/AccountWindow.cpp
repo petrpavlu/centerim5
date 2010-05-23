@@ -35,8 +35,7 @@
 
 AccountWindow::AccountWindow()
 : Window(0, 0, 80, 24)
-, menu_index(2)
-, accounts_index(1)
+, accounts_index(0)
 {
 	SetColorScheme("accountwindow");
 
@@ -58,6 +57,10 @@ AccountWindow::AccountWindow()
 	MoveResizeRect(CONF->GetAccountWindowDimensions());
 	
 	Populate();
+
+	// move focus to Add button if there is not any account
+	if (account_entries.empty())
+		menu->SetActive(0);
 }
 
 void AccountWindow::MoveResize(int newx, int newy, int neww, int newh)
@@ -136,20 +139,18 @@ void AccountWindow::MoveFocus(FocusDirection direction)
 		case FocusRight:
 			if (focus_child != menu) {
 				accounts_index = accounts->GetActive();
-				menu->SetActive(menu_index);
+				menu->SetActive(0);
 			}
-
-			Window::MoveFocus(direction);
+			else
+				Window::MoveFocus(direction);
 
 			break;
 		case FocusUp:
 		case FocusDown:
-			if (focus_child != accounts) {
-				menu_index = menu->GetActive();
+			if (focus_child != accounts)
 				accounts->SetActive(accounts_index);
-			}
-
-			Window::MoveFocus(direction);
+			else
+				Window::MoveFocus(direction);
 
 			break;
 		default:
@@ -187,6 +188,9 @@ bool AccountWindow::ClearAccount(PurpleAccount *account, bool full)
 	account_entry->split_widgets.clear();
 	if (full)
 		account_entries.erase(account);
+
+	if (account_entries.empty())
+		menu->SetActive(0);
 
 	return false;
 }

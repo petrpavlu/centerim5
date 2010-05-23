@@ -226,7 +226,6 @@ class AccountWindow
 
 		AccountEntries account_entries;
 
-		int menu_index;
 		int accounts_index;
 };
 
