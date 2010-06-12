@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
  * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
@@ -19,32 +18,36 @@
  *
  * */
 
-#ifndef __ACCOUNTS_H__
-#define __ACCOUNTS_H__
+#ifndef __NOTIFY_H__
+#define __NOTIFY_H__
 
-#include <libpurple/account.h>
+#include <libpurple/notify.h>
 
-#define ACCOUNTS (Accounts::Instance())
+#define NOTIFY (Notify::Instance())
 
-class Accounts
+class Notify
 {
 	public:
-		static Accounts *Instance();
+		static Notify *Instance();
+
+		static void *notify_message_(PurpleNotifyMsgType type,
+				const char *title, const char *primary,
+				const char *secondary)
+			{ return NOTIFY->notify_message(type, title, primary, secondary); }
 
 	protected:
 
 	private:
-		PurpleAccountUiOps centerim_account_ui_ops;
+		PurpleNotifyUiOps centerim_notify_ui_ops;
 
-		Accounts();
-		Accounts(const Accounts&);
-		Accounts &operator=(const Accounts&);
-		~Accounts() {};
+		Notify();
+		Notify(const Notify&);
+		Notify& operator=(const Notify&);
+		~Notify();
 
-		static void status_changed_(PurpleAccount *account, PurpleStatus *status)
-			{ ACCOUNTS->status_changed(account, status); }
-
-		void status_changed(PurpleAccount *account, PurpleStatus *status);
+		void *notify_message(PurpleNotifyMsgType type,
+				const char *title, const char *primary,
+				const char *secondary);
 };
 
-#endif /* __ACCOUNTS_H__ */
+#endif /* __NOTIFY_H__ */

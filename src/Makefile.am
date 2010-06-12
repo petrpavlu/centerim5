@@ -30,6 +30,8 @@ centerim_SOURCES = \
 	GeneralMenu.h \
 	Log.cpp \
 	Log.h \
+	Notify.cpp \
+	Notify.h \
 	Transfers.cpp \
 	Transfers.h \
 	git-version.cpp \

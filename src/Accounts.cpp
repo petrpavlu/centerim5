@@ -23,9 +23,9 @@
 
 #include "Log.h"
 
+#include <libpurple/savedstatuses.h>
+#include <cstring>
 #include "gettext.h"
-
-#define CONF_PLUGIN_SAVE_PREF	"/centerim/plugins/loaded"
 
 Accounts *Accounts::Instance()
 {
@@ -33,76 +33,29 @@ Accounts *Accounts::Instance()
 	return &instance;
 }
 
-//TODO move inside accounts class and make callbacks private
-static PurpleAccountUiOps centerim_accounts_ui_ops =
-{
-	NULL, //TODO BuddyList::notify_added_,
-	Accounts::status_changed_,
-	NULL, //BuddyList::request_add_,
-	NULL, //BuddyList::request_authorize_,
-	NULL, //BuddyList::close_account_request_,
-	NULL, /* reserverd */
-	NULL,
-	NULL,
-	NULL
-};
-
 Accounts::Accounts()
 {
-	accounts_handle = purple_accounts_get_handle();
-
-	/* connect signal handlers */
-	purple_signal_connect(purple_connections_get_handle(), "signed-on", this,
-		PURPLE_CALLBACK(signed_on_), this);
-
-	/*TODO always set all accounts enabled
-	GList *i;
-	PurpleAccount *account;
-
-	for (i = purple_accounts_get_all(); i; i = i->next) {
-		account = (PurpleAccount*)i->data;
-		purple_account_set_enabled(account, "centerim" , true);
-	}*/
-
-	/* if the statuses are not known, set them all
-	 * to the default */
+	// if the statuses are not known, set them all to the default
 	if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
 		purple_savedstatus_activate(purple_savedstatus_get_startup());
 	
-	/* restore last know status on all accounts. */
+	// restore last know status on all accounts
 	purple_accounts_restore_current_statuses();
 
-	/* setup the callbacks for the buddylist */
-	purple_accounts_set_ui_ops(&centerim_accounts_ui_ops);
-}
-
-Accounts::~Accounts()
-{
-	accounts_handle = NULL;
-}
-
-void Accounts::signed_on_(PurpleConnection *gc, gpointer p)
-{
-	Accounts *accounts = (Accounts*)p;
-	accounts->signed_on(gc);
-}
-
-void Accounts::signed_on(PurpleConnection *gc)
-{
-	PurpleAccount *account = purple_connection_get_account(gc);
-	LOG->Write(Log::Level_info, _("+ [%s] Logged in: %s\n"),
-			account->protocol_id, account->username);
+	// set the purple account callbacks
+	memset(&centerim_account_ui_ops, 0, sizeof(centerim_account_ui_ops));
+	//centerim_account_ui_ops.notify_added = notify_added_;
+	centerim_account_ui_ops.status_changed = status_changed_;
+	//centerim_account_ui_ops.request_add = request_add_;
+	//centerim_account_ui_ops.request_authorize = request_authorize_;
+	//centerim_account_ui_ops.close_account_request = close_account_request_;
+	purple_accounts_set_ui_ops(&centerim_account_ui_ops);
 }
 
 void Accounts::status_changed(PurpleAccount *account, PurpleStatus *status)
 {
-	LOG->Write(Log::Level_info, _("+ [%s] Status changed to: %s\n"),
-			account->protocol_id, purple_status_get_name(status));
-}
-
-void Accounts::SetStatus(PurpleAccount *account, PurpleStatusType *status_type, bool active)
-{
-	purple_account_set_status(account,
-			purple_status_type_get_id(status_type),
-			active, NULL);
+	LOG->Write(Log::Level_message, _("+ [%s] %s: Status changed to: %s\n"),
+			purple_account_get_protocol_name(account),
+			purple_account_get_username(account),
+			purple_status_get_name(status));
 }

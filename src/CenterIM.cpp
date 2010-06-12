@@ -27,6 +27,7 @@
 #include "Connections.h"
 #include "Conversations.h"
 #include "Log.h"
+#include "Notify.h"
 #include "Transfers.h"
 
 #include "AccountStatusMenu.h"
@@ -80,7 +81,9 @@ void CenterIM::Run(void)
 	}
 
 	Accounts::Instance();
+	Connections::Instance();
 	Conversations::Instance();
+	Notify::Instance();
 
 	// initialize UI
 	BuddyList::Instance()->Show();

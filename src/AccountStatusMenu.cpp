@@ -167,8 +167,9 @@ AccountStatusMenu::StatusPopup::~StatusPopup()
 
 void AccountStatusMenu::StatusPopup::SetStatus(PurpleAccount *account, PurpleStatusType *status_type, bool active)
 {
-	Accounts *accounts = Accounts::Instance();
-	accounts->SetStatus(account, status_type, active);
+	purple_account_set_status(account,
+			purple_status_type_get_id(status_type),
+			active, NULL);
 	Close();
 }
 /*
