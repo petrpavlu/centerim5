@@ -11,7 +11,7 @@ class LineStyleWindow
 	public:
 		/* This is a main window, make sure it can not be closed with ESC key
 		 * by overriding Close() method. */
-		static LineStyleWindow &Instance();
+		static LineStyleWindow *Instance();
 		virtual void Close() {}
 
 		virtual void ScreenResized();
@@ -22,14 +22,14 @@ class LineStyleWindow
 	private:
 		LineStyleWindow();
 		virtual ~LineStyleWindow();
-		LineStyleWindow(const LineStyleWindow &);
-		LineStyleWindow &operator=(const LineStyleWindow &);
+		LineStyleWindow(const LineStyleWindow&);
+		LineStyleWindow& operator=(const LineStyleWindow&);
 };
 
-LineStyleWindow &LineStyleWindow::Instance()
+LineStyleWindow *LineStyleWindow::Instance()
 {
 	static LineStyleWindow instance;
-	return instance;
+	return &instance;
 }
 
 LineStyleWindow::LineStyleWindow()
@@ -62,9 +62,8 @@ LineStyleWindow::~LineStyleWindow()
 
 void LineStyleWindow::ScreenResized()
 {
-	MoveResize(0, 0,
-			WindowManager::Instance()->getScreenW(),
-			WindowManager::Instance()->getScreenH());
+	MoveResize(0, 0, WINDOWMANAGER->getScreenW(),
+			WINDOWMANAGER->getScreenH());
 }
 
 void LineStyleWindow::Draw()
@@ -178,7 +177,7 @@ class TestApp
 : public Application
 {
 	public:
-		static TestApp &Instance();
+		static TestApp *Instance();
 
 		virtual void Run();
 		virtual void Quit();
@@ -193,8 +192,8 @@ class TestApp
 
 	private:
 		TestApp();
-		TestApp(const TestApp &);
-		TestApp &operator=(const TestApp &);
+		TestApp(const TestApp&);
+		TestApp& operator=(const TestApp&);
 		virtual ~TestApp() {}
 
 		DECLARE_SIG_REGISTERKEYS();
@@ -202,10 +201,10 @@ class TestApp
 		void DeclareBindables();
 };
 
-TestApp &TestApp::Instance()
+TestApp *TestApp::Instance()
 {
 	static TestApp instance;
-	return instance;
+	return &instance;
 }
 
 TestApp::TestApp()
@@ -218,7 +217,7 @@ TestApp::TestApp()
 
 void TestApp::Run()
 {
-	windowmanager->Add(&LineStyleWindow::Instance());
+	windowmanager->Add(LineStyleWindow::Instance());
 
 	Application::Run();
 }
@@ -244,11 +243,11 @@ void TestApp::Quit()
 }
 
 // main function
-int main(void)
+int main()
 {
 	setlocale(LC_ALL, "");
 
-	TestApp *app = &TestApp::Instance();
+	TestApp *app = TestApp::Instance();
 
 	app->Run();
 

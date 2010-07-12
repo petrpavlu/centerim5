@@ -63,7 +63,6 @@ class Label
 		gchar *text; 
 
 	private:
-		Label();
 		Label(const Label&);
 		Label& operator=(const Label&);
 

@@ -10,7 +10,7 @@ class TextViewWindow
 	public:
 		/* This is a main window, make sure it can not be closed with ESC key
 		 * by overriding Close() method. */
-		static TextViewWindow &Instance();
+		static TextViewWindow *Instance();
 		virtual void Close() {}
 
 		virtual void ScreenResized();
@@ -20,14 +20,14 @@ class TextViewWindow
 	private:
 		TextViewWindow();
 		virtual ~TextViewWindow() {}
-		TextViewWindow(const TextViewWindow &);
-		TextViewWindow &operator=(const TextViewWindow &);
+		TextViewWindow(const TextViewWindow&);
+		TextViewWindow& operator=(const TextViewWindow&);
 };
 
-TextViewWindow &TextViewWindow::Instance()
+TextViewWindow *TextViewWindow::Instance()
 {
 	static TextViewWindow instance;
-	return instance;
+	return &instance;
 }
 
 TextViewWindow::TextViewWindow()
@@ -62,9 +62,8 @@ TextViewWindow::TextViewWindow()
 
 void TextViewWindow::ScreenResized()
 {
-	MoveResize(0, 0,
-			WindowManager::Instance()->getScreenW(),
-			WindowManager::Instance()->getScreenH());
+	MoveResize(0, 0, WINDOWMANAGER->getScreenW(),
+			WINDOWMANAGER->getScreenH());
 }
 
 // TestApp class
@@ -75,7 +74,7 @@ class TestApp
 : public Application
 {
 	public:
-		static TestApp &Instance();
+		static TestApp *Instance();
 
 		virtual void Run();
 		virtual void Quit();
@@ -90,8 +89,8 @@ class TestApp
 
 	private:
 		TestApp();
-		TestApp(const TestApp &);
-		TestApp &operator=(const TestApp &);
+		TestApp(const TestApp&);
+		TestApp& operator=(const TestApp&);
 		virtual ~TestApp() {}
 
 		DECLARE_SIG_REGISTERKEYS();
@@ -99,10 +98,10 @@ class TestApp
 		void DeclareBindables();
 };
 
-TestApp &TestApp::Instance()
+TestApp *TestApp::Instance()
 {
 	static TestApp instance;
-	return instance;
+	return &instance;
 }
 
 TestApp::TestApp()
@@ -115,7 +114,7 @@ TestApp::TestApp()
 
 void TestApp::Run()
 {
-	windowmanager->Add(&TextViewWindow::Instance());
+	windowmanager->Add(TextViewWindow::Instance());
 
 	Application::Run();
 }
@@ -141,11 +140,11 @@ void TestApp::Quit()
 }
 
 // main function
-int main(void)
+int main()
 {
 	setlocale(LC_ALL, "");
 
-	TestApp *app = &TestApp::Instance();
+	TestApp *app = TestApp::Instance();
 
 	app->Run();
 

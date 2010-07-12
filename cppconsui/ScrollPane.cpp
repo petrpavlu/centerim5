@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,7 +19,13 @@
  *
  * */
 
-#include "ConsuiCurses.h"
+/**
+ * @file
+ * ScrollPane class implementation.
+ *
+ * @ingroup cppconsui
+ */
+
 #include "ScrollPane.h"
 
 ScrollPane::ScrollPane(int w, int h, int scrollw, int scrollh)
@@ -29,14 +36,7 @@ ScrollPane::ScrollPane(int w, int h, int scrollw, int scrollh)
 , scroll_height(scrollh)
 , scrollarea(NULL)
 {
-	//TODO scrollarea must be at least as largse as
-	//widget size?? no
-	area = Curses::Window::newpad(scrollw, scrollh);
-	//UpdateArea();
-	/*
-	if (area->w == NULL)
-		{}//TODO throw an exception?
-		*/
+	area = Curses::Window::newpad(scroll_width, scroll_height);
 }
 
 ScrollPane::~ScrollPane()
@@ -50,74 +50,30 @@ void ScrollPane::UpdateArea()
 	if (scrollarea)
 		delete scrollarea;
 	scrollarea = parent->GetSubPad(*this, xpos, ypos, width, height);
+
+	// fix scroll position if necessary
+	AdjustScroll(scroll_xpos, scroll_ypos);
 }
 
-void ScrollPane::Draw(void)
+void ScrollPane::Draw()
 {
 	int copyw, copyh;
 
-	if (!scrollarea || !area)
+	if (!area || !scrollarea)
 		return;
 
 	Container::Draw();
 
-	/* if the defined scrollable area is smaller than the 
-	 * widget, make sure the copy works.
-	 * */
+	/* If the defined scrollable area is smaller than the widget, make sure
+	 * the copy works. */
 	copyw = MIN(scroll_width - 1, scrollarea->getmaxx() - 1);
 	copyh = MIN(scroll_height - 1, scrollarea->getmaxy() - 1);
 
-	if (area->copyto(scrollarea, scroll_xpos, scroll_ypos, 0, 0, copyw, copyh, 0) == Curses::C_ERR)
-		g_assert(false); //TODO this is a big error
+	area->copyto(scrollarea, scroll_xpos, scroll_ypos, 0, 0, copyw, copyh, 0);
 }
-
-void ScrollPane::AdjustScroll(int newx, int newy)
-{
-	if (newx < 0 || newy < 0 || newx > scroll_width || newy > scroll_height)
-		return;
-
-	if (newx > scroll_xpos + width - 1) {
-		scroll_xpos = newx - width + 1;
-	} else if (newx < scroll_xpos) {
-		scroll_xpos = newx;
-	}
-
-	if (newy > scroll_ypos + height - 1) {
-		scroll_ypos = newy - height + 1;
-	} else if (newy < scroll_ypos) {
-		scroll_ypos = newy;
-	}
-}
-
-/*void ScrollPane::Scroll(const int deltax, const int deltay)
-{
- TODO do this with key combos
-	int deltay = 0, deltax = 0;
-
-
-	if (Keys::Compare(Key_up, key)) deltay = -1;
-	else if (Keys::Compare(CUI_KEY_DOWN, key)) deltay = 1;
-	else if (Keys::Compare(CUI_KEY_LEFT, key)) deltax = -1;
-	else if (Keys::Compare(CUI_KEY_RIGHT, key)) deltax = 1;
-	else if (Keys::Compare(CUI_KEY_PGUP, key)) deltay = -h;
-	else if (Keys::Compare(CUI_KEY_PGDOWN, key)) deltay = h;
-	else if (Keys::Compare(CUI_KEY_HOME, key)) deltay = -scrollh;
-	else if (Keys::Compare(CUI_KEY_END, key)) deltay = scrollh;
-	//TODO more scroll posibilities?
-	
-	//TODO not overflow safe
-	if (xpos + deltax > scrollw - w) xpos = scrollw - w;
-	if (ypos + deltay > scrollh - h) ypos = scrollh - h;
-	if (xpos + deltax < 0) xpos = 0;
-	if (ypos + deltay < 0) ypos = 0;
-
-	Redraw();
-}*/
 
 void ScrollPane::SetScrollSize(int swidth, int sheight)
 {
-	//TODO: deltax and deltay aren't used in this function
-
 	if (swidth == scroll_width && sheight == scroll_height)
 		return;
 
@@ -127,20 +83,68 @@ void ScrollPane::SetScrollSize(int swidth, int sheight)
 	if (area)
 		delete area;
 	area = Curses::Window::newpad(scroll_width, scroll_height);
-	/*
-	if (area->w == NULL)
-		{}//TODO throw an exception?
-		*/
 
 	UpdateAreas();
 
-	//TODO not overflow safe (probably not a problem. but fix anyway)
-	if (scroll_xpos > scroll_width - width)
-		scroll_xpos = scroll_width - width;
-	if (scroll_ypos > scroll_height - height)
-		scroll_ypos = scroll_height - height;
-	if (scroll_xpos < 0)
+	// fix scroll position if necessary
+	AdjustScroll(scroll_xpos, scroll_ypos);
+}
+
+void ScrollPane::AdjustScroll(int newx, int newy)
+{
+	if (scrollarea) {
+		scroll_xpos = newx;
+		scroll_ypos = newy;
+
+		int real_width = scrollarea->getmaxx();
+		int real_height = scrollarea->getmaxy();
+
+		if (scroll_xpos + real_width > scroll_width)
+			scroll_xpos = scroll_width - real_width;
+		if (scroll_xpos < 0)
+			scroll_xpos = 0;
+
+		if (scroll_ypos + real_height > scroll_height)
+			scroll_ypos = scroll_height - real_height;
+		if (scroll_ypos < 0)
+			scroll_ypos = 0;
+	}
+	else {
 		scroll_xpos = 0;
-	if (scroll_ypos < 0)
 		scroll_ypos = 0;
+	}
+	signal_redraw(*this);
+}
+
+void ScrollPane::MakeVisible(int x, int y)
+{
+	// fix parameters
+	if (x < 0)
+		x = 0;
+	else if (x >= scroll_width)
+		x = scroll_width - 1;
+	if (y < 0)
+		y = 0;
+	else if (y >= scroll_height)
+		y = scroll_height - 1;
+
+	if (!scrollarea) {
+		AdjustScroll(x, y);
+		return;
+	}
+
+	int real_width = scrollarea->getmaxx();
+	int real_height = scrollarea->getmaxy();
+
+	if (x > scroll_xpos + real_width - 1)
+		scroll_xpos = x - real_width + 1;
+	else if (x < scroll_xpos)
+		scroll_xpos = x;
+
+	if (y > scroll_ypos + real_height - 1)
+		scroll_ypos = y - real_height + 1;
+	else if (y < scroll_ypos)
+		scroll_ypos = y;
+
+	signal_redraw(*this);
 }

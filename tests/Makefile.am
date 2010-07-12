@@ -4,6 +4,7 @@ check_PROGRAMS = \
 	textentry_test \
 	textview_test \
 	treeview_test \
+	scrollpane_test \
 	window_test
 #textline_test
 #textbuffer_test
@@ -38,6 +39,9 @@ textview_test_SOURCES = \
 
 treeview_test_SOURCES = \
 	treeview_test.cpp
+
+scrollpane_test_SOURCES = \
+	scrollpane_test.cpp
 
 window_test_SOURCES = \
 	window_test.cpp

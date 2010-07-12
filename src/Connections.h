@@ -39,7 +39,7 @@ class Connections
 		Connections();
 		Connections(const Connections&);
 		Connections& operator=(const Connections&);
-		~Connections();
+		~Connections() {}
 
 		static void connect_progress_(PurpleConnection *gc, const char *text,
 				size_t step, size_t step_count)

@@ -16,8 +16,8 @@ class TestWindow
 	protected:
 
 	private:
-		TestWindow(const TestWindow &);
-		TestWindow &operator=(const TestWindow &);
+		TestWindow(const TestWindow&);
+		TestWindow& operator=(const TestWindow&);
 };
 
 TestWindow::TestWindow(int number, int x, int y, int w, int h)
@@ -52,7 +52,7 @@ class TestApp
 : public Application
 {
 	public:
-		static TestApp &Instance();
+		static TestApp *Instance();
 
 		virtual void Run();
 		virtual void Quit();
@@ -67,8 +67,8 @@ class TestApp
 
 	private:
 		TestApp();
-		TestApp(const TestApp &);
-		TestApp &operator=(const TestApp &);
+		TestApp(const TestApp&);
+		TestApp& operator=(const TestApp&);
 		virtual ~TestApp() {}
 
 		DECLARE_SIG_REGISTERKEYS();
@@ -76,10 +76,10 @@ class TestApp
 		void DeclareBindables();
 };
 
-TestApp &TestApp::Instance()
+TestApp *TestApp::Instance()
 {
 	static TestApp instance;
-	return instance;
+	return &instance;
 }
 
 TestApp::TestApp()
@@ -120,12 +120,12 @@ void TestApp::Quit()
 	Application::Quit();
 }
 
-/** Main function. */
-int main(void)
+// main function
+int main()
 {
 	setlocale(LC_ALL, "");
 
-	TestApp *app = &TestApp::Instance();
+	TestApp *app = TestApp::Instance();
 
 	app->Run();
 

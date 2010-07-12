@@ -408,7 +408,7 @@ void TreeView::OnChildFocus(Widget& widget, bool focus)
 {
 	/* Only adjust scroll position if the widget got focus. */
 	if (focus)
-		AdjustScroll(widget.Left(), widget.Top());
+		MakeVisible(widget.Left(), widget.Top());
 }
 
 void TreeView::OnActionCollapse()

@@ -12,7 +12,7 @@ class TreeViewWindow
 	public:
 		/* This is a main window, make sure it can not be closed with ESC key
 		 * by overriding Close() method. */
-		static TreeViewWindow &Instance();
+		static TreeViewWindow *Instance();
 		virtual void Close() {}
 
 		virtual void ScreenResized();
@@ -22,14 +22,14 @@ class TreeViewWindow
 	private:
 		TreeViewWindow();
 		virtual ~TreeViewWindow() {}
-		TreeViewWindow(const TreeViewWindow &);
-		TreeViewWindow &operator=(const TreeViewWindow &);
+		TreeViewWindow(const TreeViewWindow&);
+		TreeViewWindow& operator=(const TreeViewWindow&);
 };
 
-TreeViewWindow &TreeViewWindow::Instance()
+TreeViewWindow *TreeViewWindow::Instance()
 {
 	static TreeViewWindow instance;
-	return instance;
+	return &instance;
 }
 
 TreeViewWindow::TreeViewWindow()
@@ -45,30 +45,29 @@ TreeViewWindow::TreeViewWindow()
 	AddWidget(*tree, 1, 3);
 	SetInputChild(*tree);
 
-	node = tree->AddNode(tree->Root(), new Button("Button node A"), NULL);
-	node2 = tree->AddNode(node, new Button("Button node A-1"), NULL);
-	tree->AddNode(node2, new Button("Button node A-1-a"), NULL);
-	tree->AddNode(node2, new Button("Button node A-1-b"), NULL);
-	tree->AddNode(node2, new Button("Button node A-1-c"), NULL);
-	tree->AddNode(node, new Button("Button node A-2"), NULL);
-	tree->AddNode(node, new Button("Button node A-3"), NULL);
+	node = tree->AddNode(tree->Root(), *(new Button("Button node A")));
+	node2 = tree->AddNode(node, *(new Button("Button node A-1")));
+	tree->AddNode(node2, *(new Button("Button node A-1-a")));
+	tree->AddNode(node2, *(new Button("Button node A-1-b")));
+	tree->AddNode(node2, *(new Button("Button node A-1-c")));
+	tree->AddNode(node, *(new Button("Button node A-2")));
+	tree->AddNode(node, *(new Button("Button node A-3")));
 
-	node = tree->AddNode(tree->Root(), new Label("Label node B"), NULL);
-	tree->AddNode(node, new Label("Label node B-1"), NULL);
-	tree->AddNode(node, new Label("Label node B-2"), NULL);
-	tree->AddNode(node, new Label("Label node B-3"), NULL);
+	node = tree->AddNode(tree->Root(), *(new Label("Label node B")));
+	tree->AddNode(node, *(new Label("Label node B-1")));
+	tree->AddNode(node, *(new Label("Label node B-2")));
+	tree->AddNode(node, *(new Label("Label node B-3")));
 
-	node = tree->AddNode(tree->Root(), new Button("Button node C"), NULL);
-	tree->AddNode(node, new Button("Button node C-1"), NULL);
-	tree->AddNode(node, new Button("Button node C-2"), NULL);
-	tree->AddNode(node, new Button("Button node C-3"), NULL);
+	node = tree->AddNode(tree->Root(), *(new Button("Button node C")));
+	tree->AddNode(node, *(new Button("Button node C-1")));
+	tree->AddNode(node, *(new Button("Button node C-2")));
+	tree->AddNode(node, *(new Button("Button node C-3")));
 }
 
 void TreeViewWindow::ScreenResized()
 {
-	MoveResize(0, 0,
-			WindowManager::Instance()->getScreenW(),
-			WindowManager::Instance()->getScreenH());
+	MoveResize(0, 0, WINDOWMANAGER->getScreenW(),
+			WINDOWMANAGER->getScreenH());
 }
 
 // TestApp class
@@ -79,7 +78,7 @@ class TestApp
 : public Application
 {
 	public:
-		static TestApp &Instance();
+		static TestApp *Instance();
 
 		virtual void Run();
 		virtual void Quit();
@@ -94,8 +93,8 @@ class TestApp
 
 	private:
 		TestApp();
-		TestApp(const TestApp &);
-		TestApp &operator=(const TestApp &);
+		TestApp(const TestApp&);
+		TestApp& operator=(const TestApp&);
 		virtual ~TestApp() {}
 
 		DECLARE_SIG_REGISTERKEYS();
@@ -103,10 +102,10 @@ class TestApp
 		void DeclareBindables();
 };
 
-TestApp &TestApp::Instance()
+TestApp *TestApp::Instance()
 {
 	static TestApp instance;
-	return instance;
+	return &instance;
 }
 
 TestApp::TestApp()
@@ -119,7 +118,7 @@ TestApp::TestApp()
 
 void TestApp::Run()
 {
-	windowmanager->Add(&TreeViewWindow::Instance());
+	windowmanager->Add(TreeViewWindow::Instance());
 
 	Application::Run();
 }
@@ -145,11 +144,11 @@ void TestApp::Quit()
 }
 
 // main function
-int main(void)
+int main()
 {
 	setlocale(LC_ALL, "");
 
-	TestApp *app = &TestApp::Instance();
+	TestApp *app = TestApp::Instance();
 
 	app->Run();
 

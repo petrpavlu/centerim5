@@ -48,10 +48,6 @@ Connections::Connections()
 	purple_connections_set_ui_ops(&centerim_connection_ui_ops);
 }
 
-Connections::~Connections()
-{
-}
-
 void Connections::connect_progress(PurpleConnection *gc, const char *text,
 		size_t step, size_t step_count)
 {
