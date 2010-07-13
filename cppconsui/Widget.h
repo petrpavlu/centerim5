@@ -130,9 +130,11 @@ class Widget
 		int Width() { return width; }
 		int Height() { return height; }
 
-		/** Returns a subpad of current widget with given coordinates.
+		/**
+		 * Returns a subpad of current widget with given coordinates.
 		 */
-		virtual Curses::Window *GetSubPad(const Widget &child, int begin_x, int begin_y, int ncols, int nlines);
+		virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
+				int begin_y, int ncols, int nlines);
 
 		void SetColorScheme(const char *scheme);
 		const char *GetColorScheme();

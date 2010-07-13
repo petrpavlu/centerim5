@@ -136,15 +136,25 @@ void ScrollPane::MakeVisible(int x, int y)
 	int real_width = scrollarea->getmaxx();
 	int real_height = scrollarea->getmaxy();
 
-	if (x > scroll_xpos + real_width - 1)
+	bool redraw = false;
+	if (x > scroll_xpos + real_width - 1) {
 		scroll_xpos = x - real_width + 1;
-	else if (x < scroll_xpos)
+		redraw = true;
+	}
+	else if (x < scroll_xpos) {
 		scroll_xpos = x;
+		redraw = true;
+	}
 
-	if (y > scroll_ypos + real_height - 1)
+	if (y > scroll_ypos + real_height - 1) {
 		scroll_ypos = y - real_height + 1;
-	else if (y < scroll_ypos)
+		redraw = true;
+	}
+	else if (y < scroll_ypos) {
 		scroll_ypos = y;
+		redraw = true;
+	}
 
-	signal_redraw(*this);
+	if (redraw)
+		signal_redraw(*this);
 }

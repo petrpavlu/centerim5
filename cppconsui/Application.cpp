@@ -117,7 +117,7 @@ void Application::StdinInputInit()
 {
 	// init libtermkey
 	TERMKEY_CHECK_VERSION;
-	if (!(tk = termkey_new(STDIN_FILENO, 0))) {
+	if (!(tk = termkey_new(STDIN_FILENO, TERMKEY_FLAG_NOTERMIOS))) {
 		g_critical(_("Libtermkey initialization failed.\n"));
 		exit(1);
 	}

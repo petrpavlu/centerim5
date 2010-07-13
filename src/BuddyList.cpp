@@ -106,7 +106,7 @@ void BuddyList::new_node(PurpleBlistNode *node)
 	node->ui_data = bnode = BuddyListNode::CreateNode(node);
 
 	BuddyListNode *parent = bnode->GetParentNode();
-	bnode->ref = treeview->AddNode(parent ? parent->ref : treeview->Root(), *bnode);
+	bnode->ref = treeview->AppendNode(parent ? parent->ref : treeview->Root(), *bnode);
 	treeview->Collapse(bnode->ref);
 
 	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {

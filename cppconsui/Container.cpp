@@ -101,29 +101,28 @@ bool Container::RegisterKeys()
 	return true;
 }
 	
-
-void Container::UpdateAreas(void)
+void Container::UpdateAreas()
 {
 	Children::iterator i;
 
 	for (i = children.begin(); i != children.end(); i++)
-		((*i).widget)->UpdateArea();
+		i->widget->UpdateArea();
 }
 
-void Container::MoveResize(const int newx, const int newy, const int neww, const int newh)
+void Container::MoveResize(int newx, int newy, int neww, int newh)
 {
 	Widget::MoveResize(newx, newy, neww, newh);
 
 	for (Children::iterator i = children.begin(); i != children.end(); i++)
-		((*i).widget)->MoveResize();
+		i->widget->MoveResize();
 }
 
-void Container::Draw(void)
+void Container::Draw()
 {
 	Children::iterator i;
 
 	for (i = children.begin(); i != children.end(); i++)
-		((*i).widget)->Draw();
+		i->widget->Draw();
 }
 
 void Container::AddWidget(Widget& widget, int x, int y)

@@ -32,7 +32,7 @@
 #define CONTEXT_WINDOW "window"
 
 Window::Window(int x, int y, int w, int h, LineStyle::Type ltype)
-: Container(w - 2, h - 2)
+: Container(w < 2 ? 0 : w - 2, h < 2 ? 0 : h - 2)
 , win_x(x)
 , win_y(y)
 , win_w(w)
@@ -229,10 +229,10 @@ Curses::Window *Window::GetSubPad(const Widget &child, int begin_x, int begin_y,
 
 	/* Extend requested subpad to whole panel area or shrink requested area if
 	 * necessary. */
-	if (nlines == -1 || nlines > realh - begin_y)
+	if (nlines < 0 || nlines > realh - begin_y)
 		nlines = realh - begin_y;
 
-	if (ncols == -1 || ncols > realw - begin_x)
+	if (ncols < 0 || ncols > realw - begin_x)
 		ncols = realw - begin_x;
 
 	// add `+1' offset to normal childs so they can not overwrite the panel

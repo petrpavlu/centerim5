@@ -56,7 +56,7 @@ BuddyListNode *BuddyListNode::CreateNode(PurpleBlistNode *node)
 	return NULL;
 }
 
-BuddyListNode* BuddyListNode::GetParentNode(void)
+BuddyListNode *BuddyListNode::GetParentNode()
 {
 	//TODO here I made the assumption that parents are *always* added before children
 	//(groups before its contacts/buddies, contacts before its buddies)

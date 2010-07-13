@@ -56,9 +56,9 @@ class Container
 		 * @todo replace these functions by reimplementing the virtual UpdateArea method
 		 * @{
 		 */
-		void UpdateAreas(void);
-		virtual void MoveResize(const int newx, const int newy, const int neww, const int newh);
-		virtual void Draw(void);
+		void UpdateAreas();
+		virtual void MoveResize(int newx, int newy, int neww, int newh);
+		virtual void Draw();
 		 /** @} */
 		/** Adds the widget to the children list and steals the reference. It means that 
 		 * the widget will get deleted by the Container if not @ref RemoveWidget "removed" 

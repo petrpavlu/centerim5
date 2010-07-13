@@ -136,9 +136,9 @@ bool Widget::StealFocus(void)
 }
 
 /// @todo move to window and use getfocuswidget??
-void Widget::RestoreFocus(void)
+void Widget::RestoreFocus()
 {
-	if (focus_child == NULL) {
+	if (!focus_child) {
 		if (can_focus) {
 			has_focus = true;
 			signal_redraw(*this);
@@ -148,9 +148,9 @@ void Widget::RestoreFocus(void)
 	}
 }
 
-Widget* Widget::GetFocusWidget(void)
+Widget* Widget::GetFocusWidget()
 {
-	if (focus_child == NULL) {
+	if (!focus_child) {
 		if (can_focus) {
 			return this;
 		} else {
@@ -198,7 +198,7 @@ void Widget::SetParent(Widget& parent)
 	UpdateArea();
 }
 
-Curses::Window *Widget::GetSubPad(const Widget &child, int begin_x, int begin_y, int ncols, int nlines)
+Curses::Window *Widget::GetSubPad(const Widget& child, int begin_x, int begin_y, int ncols, int nlines)
 {
 	if (!area)
 		return NULL;
@@ -208,10 +208,10 @@ Curses::Window *Widget::GetSubPad(const Widget &child, int begin_x, int begin_y,
 
 	/* Extend requested subpad to whole parent area or shrink requested area
 	 * if necessary. */
-	if (nlines == -1 || nlines > realh - begin_y)
+	if (nlines < 0 || nlines > realh - begin_y)
 		nlines = realh - begin_y;
 
-	if (ncols == -1 || ncols > realw - begin_x)
+	if (ncols < 0 || ncols > realw - begin_x)
 		ncols = realw - begin_x;
 
 	return area->subpad(begin_x, begin_y, ncols, nlines);

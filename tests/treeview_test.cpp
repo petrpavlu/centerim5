@@ -45,23 +45,23 @@ TreeViewWindow::TreeViewWindow()
 	AddWidget(*tree, 1, 3);
 	SetInputChild(*tree);
 
-	node = tree->AddNode(tree->Root(), *(new Button("Button node A")));
-	node2 = tree->AddNode(node, *(new Button("Button node A-1")));
-	tree->AddNode(node2, *(new Button("Button node A-1-a")));
-	tree->AddNode(node2, *(new Button("Button node A-1-b")));
-	tree->AddNode(node2, *(new Button("Button node A-1-c")));
-	tree->AddNode(node, *(new Button("Button node A-2")));
-	tree->AddNode(node, *(new Button("Button node A-3")));
+	node = tree->AppendNode(tree->Root(), *(new Button("Button node A")));
+	node2 = tree->AppendNode(node, *(new Button("Button node A-1")));
+	tree->AppendNode(node2, *(new Button("Button node A-1-a")));
+	tree->AppendNode(node2, *(new Button("Button node A-1-b")));
+	tree->AppendNode(node2, *(new Button("Button node A-1-c")));
+	tree->AppendNode(node, *(new Button("Button node A-2")));
+	tree->AppendNode(node, *(new Button("Button node A-3")));
 
-	node = tree->AddNode(tree->Root(), *(new Label("Label node B")));
-	tree->AddNode(node, *(new Label("Label node B-1")));
-	tree->AddNode(node, *(new Label("Label node B-2")));
-	tree->AddNode(node, *(new Label("Label node B-3")));
+	node = tree->AppendNode(tree->Root(), *(new Label("Label node B")));
+	tree->AppendNode(node, *(new Label("Label node B-1")));
+	tree->AppendNode(node, *(new Label("Label node B-2")));
+	tree->AppendNode(node, *(new Label("Label node B-3")));
 
-	node = tree->AddNode(tree->Root(), *(new Button("Button node C")));
-	tree->AddNode(node, *(new Button("Button node C-1")));
-	tree->AddNode(node, *(new Button("Button node C-2")));
-	tree->AddNode(node, *(new Button("Button node C-3")));
+	node = tree->AppendNode(tree->Root(), *(new Button("Button node C")));
+	tree->AppendNode(node, *(new Button("Button node C-1")));
+	tree->AppendNode(node, *(new Button("Button node C-2")));
+	tree->AppendNode(node, *(new Button("Button node C-3")));
 }
 
 void TreeViewWindow::ScreenResized()
