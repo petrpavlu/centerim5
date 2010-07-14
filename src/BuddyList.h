@@ -28,7 +28,6 @@
 #include <cppconsui/InputDialog.h>
 #include <cppconsui/TreeView.h>
 #include <cppconsui/Window.h>
-
 #include <libpurple/blist.h>
 
 #define BUDDYLIST (BuddyList::Instance())
@@ -40,7 +39,7 @@ class BuddyList
 		static BuddyList *Instance();
 
 		// Window
-		void Close();
+		virtual void Close();
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
 		virtual void ScreenResized();
 	
@@ -146,7 +145,7 @@ class BuddyList
 		BuddyList();
 		BuddyList(const BuddyList&);
 		BuddyList& operator=(const BuddyList&);
-		~BuddyList() {}
+		virtual ~BuddyList() {}
 
 		static gboolean timeout_once_load(gpointer data);
 

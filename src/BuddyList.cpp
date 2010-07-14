@@ -26,9 +26,7 @@
 #include "Log.h"
 
 #include <cppconsui/Keys.h>
-
 #include <libpurple/pounce.h>
-
 #include "gettext.h"
 
 BuddyList *BuddyList::Instance()
@@ -94,7 +92,7 @@ void BuddyList::Close()
 void BuddyList::new_list(PurpleBuddyList *list)
 {
 	if (buddylist != list)
-		LOG->Write(Log::Level_error, "Different Buddylist detected!\n");
+		LOG->Write(Log::Level_error, _("Different Buddylist detected!\n"));
 }
 
 void BuddyList::new_node(PurpleBlistNode *node)
@@ -105,31 +103,31 @@ void BuddyList::new_node(PurpleBlistNode *node)
 
 	node->ui_data = bnode = BuddyListNode::CreateNode(node);
 
-	BuddyListNode *parent = bnode->GetParentNode();
-	bnode->ref = treeview->AppendNode(parent ? parent->ref : treeview->Root(), *bnode);
-	treeview->Collapse(bnode->ref);
+	if (bnode) {
+		BuddyListNode *parent = bnode->GetParentNode();
+		TreeView::NodeReference nref = treeview->AppendNode(
+				parent ? parent->GetRefNode() : treeview->Root(), *bnode);
+		treeview->Collapse(nref);
+		bnode->SetRefNode(nref);
+		bnode->Update();
 
-	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-		treeview->SetStyle(bnode->ref, TreeView::STYLE_VOID);
+		if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+			treeview->SetStyle(nref, TreeView::STYLE_VOID);
 
-		/* The core seems to expect the UI to add the buddies (according
-		 * to finch). */
-		for (node = node->child; node; node = node->next)
-			new_node(node);
+			/* The core seems to expect the UI to add the buddies (according
+			 * to finch). */
+			for (node = node->child; node; node = node->next)
+				new_node(node);
+		}
 	}
 }
 
 void BuddyList::update(PurpleBuddyList *list, PurpleBlistNode *node)
 {
-	BuddyListNode *bnode = (BuddyListNode *) node->ui_data;
-	g_assert(bnode);
+	BuddyListNode *bnode = reinterpret_cast<BuddyListNode *>(node->ui_data);
+	g_return_if_fail(bnode);
 
 	// update the node data
-	BuddyListNode *parent = bnode->GetParentNode();
-	// the parent could have changed, so re-parent the node
-	if (parent)
-		treeview->SetParent(bnode->ref, parent->ref);
-
 	bnode->Update();
 
 	/* If the node is a buddy, we also have to update the contact this buddy
@@ -143,20 +141,19 @@ void BuddyList::update(PurpleBuddyList *list, PurpleBlistNode *node)
 
 void BuddyList::remove(PurpleBuddyList *list, PurpleBlistNode *node)
 {
-	// XXX how does this happen?
-	g_return_if_fail(node->ui_data);
-
-	BuddyListNode *bnode = (BuddyListNode*)node->ui_data;
+	BuddyListNode *bnode = reinterpret_cast<BuddyListNode *>(node->ui_data);
+	g_return_if_fail(bnode);
 
 	// TODO check for subnodes (if this is a group for instance)
-	treeview->DeleteNode(bnode->ref, false);
+	treeview->DeleteNode(bnode->GetRefNode(), false);
 }
 
 void BuddyList::destroy(PurpleBuddyList *list)
 {
 }
 
-void BuddyList::request_add_buddy(PurpleAccount *account, const char *username, const char *group, const char *alias)
+void BuddyList::request_add_buddy(PurpleAccount *account,
+		const char *username, const char *group, const char *alias)
 {
 	AddBuddyWindow *bud = new AddBuddyWindow(account, username, group, alias);
 	bud->Show();
@@ -206,7 +203,8 @@ void BuddyList::AccountsBox::UpdateText()
 	g_free(label);
 }
 
-void BuddyList::AccountsBox::OnAccountChanged(const ComboBox::ComboBoxEntry& new_entry)
+void BuddyList::AccountsBox::OnAccountChanged(
+		const ComboBox::ComboBoxEntry& new_entry)
 {
 	selected = (PurpleAccount *) new_entry.data;
 	UpdateText();

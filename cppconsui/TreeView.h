@@ -44,6 +44,7 @@ class TreeView
 
 		typedef tree<TreeNode> TheTree;
 		typedef TheTree::pre_order_iterator NodeReference;
+		typedef TheTree::sibling_iterator SiblingIterator;
 
 		TreeView(int w, int h, LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~TreeView();
@@ -79,32 +80,31 @@ class TreeView
 		/**
 		 * Returns root node reference.
 		 */
-		const NodeReference Root()
-			{ return thetree.begin(); }
+		NodeReference Root() const { return thetree.begin(); }
 
 		/**
 		 * Inserts a widget before a specified position. TreeView takes
 		 * ownership of the widget.
 		 */
-		const NodeReference InsertNode(const NodeReference position,
+		NodeReference InsertNode(const NodeReference position,
 				Widget& widget);
 		/**
 		 * Inserts a widget after a specified position. TreeView takes
 		 * ownership of the widget.
 		 */
-		const NodeReference InsertNodeAfter(const NodeReference position,
+		NodeReference InsertNodeAfter(const NodeReference position,
 				Widget& widget);
 		/**
 		 * Prepends a widget to a specified parent. TreeView takes ownership
 		 * of the widget.
 		 */
-		const NodeReference PrependNode(const NodeReference parent,
+		NodeReference PrependNode(const NodeReference parent,
 				Widget& widget);
 		/**
 		 * Appends a widget to a specified parent. TreeView takes ownership of
 		 * the widget.
 		 */
-		const NodeReference AppendNode(const NodeReference parent,
+		NodeReference AppendNode(const NodeReference parent,
 				Widget& widget);
 
 		/**
@@ -119,14 +119,13 @@ class TreeView
 		/**
 		 * Returns reference to currently focused node/widget.
 		 */
-		const NodeReference GetSelected();
+		const NodeReference GetSelected() const;
 
 		/**
 		 * Returns node depth.
 		 */
-		int GetDepth(const NodeReference node);
+		int GetDepth(const NodeReference node) const;
 
-		Widget *GetWidget(const NodeReference node);
 		/**
 		 * Detaches a given node from its current location and moves it before
 		 * a given position.
@@ -150,17 +149,27 @@ class TreeView
 		Style GetStyle(const NodeReference node) const;
 
 	protected:
-		class TreeNode {
+		class TreeNode
+		{
 			/* If TreeNode would be just protected/private and all variables
 			 * public then variables can be accessed from outside using
 			 * NodeReference. */
 			friend class TreeView;
 
 			public:
+				TreeView *GetTreeView() const { return treeview; }
+				bool GetOpen() const { return open; }
+				Style GetStyle() const { return style; }
+				Widget *GetWidget() const { return widget; }
 
 			protected:
 
 			private:
+				/**
+				 * Pointer to TreeView this node belongs to.
+				 */
+				TreeView *treeview;
+
 				/**
 				 * Flag whether the subtree is unfolded.
 				 */
@@ -190,7 +199,7 @@ class TreeView
 		// Container
 		virtual void AddWidget(Widget& widget, int x, int y);
 
-		int DrawNode(TheTree::sibling_iterator node, int top);
+		int DrawNode(SiblingIterator node, int top);
 
 		TreeNode AddNodeInit(Widget& widget);
 		void AddNodeFinalize(NodeReference& iter);

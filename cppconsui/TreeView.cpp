@@ -222,7 +222,7 @@ void TreeView::ActionToggleCollapsed()
 	ToggleCollapsed(focus_node);
 }
 
-const TreeView::NodeReference TreeView::InsertNode(
+TreeView::NodeReference TreeView::InsertNode(
 		const NodeReference position, Widget& widget)
 {
 	TreeNode node = AddNodeInit(widget);
@@ -231,7 +231,7 @@ const TreeView::NodeReference TreeView::InsertNode(
 	return iter;
 }
 
-const TreeView::NodeReference TreeView::InsertNodeAfter(
+TreeView::NodeReference TreeView::InsertNodeAfter(
 		const NodeReference position, Widget& widget)
 {
 	TreeNode node = AddNodeInit(widget);
@@ -240,9 +240,8 @@ const TreeView::NodeReference TreeView::InsertNodeAfter(
 	return iter;
 }
 
-const TreeView::NodeReference TreeView::PrependNode(
+TreeView::NodeReference TreeView::PrependNode(
 		const NodeReference parent, Widget& widget)
-
 {
 	TreeNode node = AddNodeInit(widget);
 	NodeReference iter = thetree.prepend_child(parent, node);
@@ -250,7 +249,7 @@ const TreeView::NodeReference TreeView::PrependNode(
 	return iter;
 }
 
-const TreeView::NodeReference TreeView::AppendNode(
+TreeView::NodeReference TreeView::AppendNode(
 		const NodeReference parent, Widget& widget)
 {
 	TreeNode node = AddNodeInit(widget);
@@ -318,23 +317,18 @@ void TreeView::DeleteNode(const NodeReference node, bool keepchildren)
 
 void TreeView::DeleteChildren(const NodeReference node, bool keepchildren)
 {
-	for (TheTree::sibling_iterator i = node.begin(); i != node.end(); i++)
+	for (SiblingIterator i = node.begin(); i != node.end(); i++)
 		DeleteNode(i, keepchildren);
 }
 
-const TreeView::NodeReference TreeView::GetSelected()
+const TreeView::NodeReference TreeView::GetSelected() const
 {
 	return focus_node;
 }
 
-int TreeView::GetDepth(const NodeReference node)
+int TreeView::GetDepth(const NodeReference node) const
 {
 	return thetree.depth(node);
-}
-
-Widget *TreeView::GetWidget(const NodeReference node)
-{
-	return node->widget;
 }
 
 void TreeView::MoveBefore(const NodeReference node, const NodeReference position)
@@ -379,10 +373,10 @@ void TreeView::AddWidget(Widget& widget, int x, int y)
 	ScrollPane::AddWidget(widget, x, y);
 }
 
-int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
+int TreeView::DrawNode(SiblingIterator node, int top)
 {
 	int height = 0, j = top, oldh, depthoffset;
-	TheTree::sibling_iterator i;
+	SiblingIterator i;
 
 	depthoffset = thetree.depth(node) * 3;
 
@@ -403,7 +397,7 @@ int TreeView::DrawNode(TheTree::sibling_iterator node, int top)
 				area->mvaddstring(depthoffset, j, linestyle.V());
 		}
 
-		TheTree::sibling_iterator last = --node.end();
+		SiblingIterator last = --node.end();
 		for (i = node.begin(); i != node.end(); i++) {
 			if (i != last)
 				area->mvaddstring(depthoffset, top + height, linestyle.VRight());
@@ -452,6 +446,7 @@ TreeView::TreeNode TreeView::AddNodeInit(Widget& widget)
 
 	// construct the new node
 	TreeNode node;
+	node.treeview = this;
 	node.open = true;
 	node.style = STYLE_NORMAL;
 	node.widget = &widget;

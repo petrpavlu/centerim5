@@ -49,9 +49,30 @@ class Log
 
 		static Log *Instance();
 
+		// Window
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
+		virtual void ScreenResized();
 
 		void Write(Level level, const gchar *fmt, ...);
+
+	protected:
+
+	private:
+		enum Type {Type_cim, Type_glib, Type_purple};
+
+		PurpleDebugUiOps centerim_debug_ui_ops;
+
+		GIOChannel *logfile;
+		void *prefs_handle;
+
+		int max_lines;
+
+		TextView *textview;
+
+		Log();
+		Log(const Log&);
+		Log &operator=(const Log&);
+		virtual ~Log();
 
 		// to catch libpurple's debug messages
 		static void purple_print_(PurpleDebugLevel level, const char *category, const char *arg_s)
@@ -73,27 +94,6 @@ class Log
 				gconstpointer val, gpointer data)
 			{ ((Log *) data)->debug_change(name, type, val); }
 		void debug_change(const char *name, PurplePrefType type, gconstpointer val);
-
-		virtual void ScreenResized(void);
-
-	protected:
-
-	private:
-		enum Type {Type_cim, Type_glib, Type_purple};
-
-		PurpleDebugUiOps centerim_debug_ui_ops;
-
-		GIOChannel *logfile;
-		void *prefs_handle;
-
-		int max_lines;
-
-		TextView *textview;
-
-		Log(void);
-		Log(const Log &);
-		Log &operator=(const Log &);
-		~Log(void);
 
 		void Write(Type type, Level level, const gchar *fmt, ...);
 		void WriteToWindow(Level level, const gchar *fmt, ...);
