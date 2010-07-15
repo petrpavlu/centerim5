@@ -68,17 +68,8 @@ class Window
 		virtual int Width() { return win_w; }
 		virtual int Height() { return win_h; }
 
-		/** @todo this is not real nice. find a better way to let the windowmanager 
-		 * get this info.
-		 */
-		Curses::Window *GetWindow(void) { return realwindow; };
-		/** @todo not implemented yet
-		 * @{
-		 */
 		virtual void Show();
 		virtual void Hide();
-		 /** @}
-		 */
 	
 		/** this function is called when the screen is resized */
 		virtual void ScreenResized();
@@ -90,7 +81,7 @@ class Window
 		 */
 		virtual Curses::Window *GetSubPad(const Widget &child, int begin_x, int begin_y, int ncols, int nlines);
 
-		sigc::signal<void, Window*> signal_close;
+		sigc::signal<void, Window&> signal_close;
 		//sigc::signal<void, Window*> signal_show;
 		//sigc::signal<void, Window*> signal_hide;
 

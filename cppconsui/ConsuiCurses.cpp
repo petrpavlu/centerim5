@@ -34,14 +34,10 @@
 #endif
 
 #define NCURSES_NOMACROS
-
-#if defined(USE_NCURSES) && !defined(RENAMED_NCURSES)
 #include <ncurses.h>
-#else
-#include <curses.h>
-#endif
 
 #include <map>
+#include "gettext.h"
 
 namespace Curses
 {
@@ -281,7 +277,7 @@ int getcolorpair(int fg, int bg)
 		return i->second;
 
 	if (c.size() >= COLOR_PAIRS) {
-		g_debug("Color pairs limit exceeded.\n");
+		g_warning(_("Color pairs limit exceeded.\n"));
 		return 0;
 	}
 

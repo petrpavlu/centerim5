@@ -206,7 +206,6 @@ class AccountWindow
 		AccountWindow& operator=(const AccountWindow&);
 		virtual ~AccountWindow() {}
 
-		void Clear();
 		bool ClearAccount(PurpleAccount *account, bool full);
 
 		void Populate();

@@ -30,9 +30,6 @@
 
 #include "Keys.h"
 
-/// @todo remove when show() of window/dialog is implemented
-#include "WindowManager.h"
-
 #include "gettext.h"
 
 #define CONTEXT_COMBOBOX "combobox"
@@ -171,10 +168,7 @@ void ComboBox::OnDropDown()
 	for (ComboBoxEntries::const_iterator i = options.begin(); i != options.end(); i++)
 		dropdown->AppendItem(i->GetText(), sigc::bind(sigc::mem_fun(this, &ComboBox::DropDownOk), i));
 
-	/// @todo implement show method of dialogs/windows
-	//dropdown->Show();
-	WindowManager *wm = WindowManager::Instance();
-	wm->Add(dropdown);
+	dropdown->Show();
 }
 
 void ComboBox::DropDownOk(ComboBoxEntries::const_iterator new_entry)
@@ -191,7 +185,7 @@ void ComboBox::DropDownOk(ComboBoxEntries::const_iterator new_entry)
 	signal_selection_changed(*new_entry);
 }
 
-void ComboBox::DropDownClose(Window *window)
+void ComboBox::DropDownClose(Window& window)
 {
 	dropdown = NULL;
 }

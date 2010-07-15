@@ -109,7 +109,7 @@ class ComboBox
 		 */
 		void OnDropDown();
 		void DropDownOk(ComboBoxEntries::const_iterator new_entry);
-		void DropDownClose(Window *window);
+		void DropDownClose(Window& window);
 
 		/**
 		 * Holds reference to currently selected entry.

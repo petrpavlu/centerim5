@@ -22,12 +22,10 @@
 #ifndef __LOG_H__
 #define __LOG_H__
 
-#include <libpurple/debug.h>
-#include <libpurple/prefs.h>
-
 #include <cppconsui/TextView.h>
 #include <cppconsui/Window.h>
-
+#include <libpurple/debug.h>
+#include <libpurple/prefs.h>
 #include <vector>
 
 #define LOG (Log::Instance())

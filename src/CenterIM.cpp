@@ -43,14 +43,18 @@
 
 std::vector<CenterIM::LogBufferItem> *CenterIM::logbuf = NULL;
 
-CenterIM *CenterIM::Instance(void)
+CenterIM *CenterIM::Instance()
 {
 	static CenterIM instance;
 	return &instance;
 }
 
-CenterIM::CenterIM(void)
+CenterIM::CenterIM()
 {
+	mngr = CoreManager::Instance();
+	resize = mngr->signal_resize.connect(sigc::mem_fun(this,
+				&CenterIM::ScreenResized));
+
 	memset(&centerim_core_ui_ops, 0, sizeof(centerim_core_ui_ops));
 	memset(&logbuf_debug_ui_ops, 0, sizeof(logbuf_debug_ui_ops));
 	memset(&centerim_glib_eventloops, 0, sizeof(centerim_glib_eventloops));
@@ -58,7 +62,7 @@ CenterIM::CenterIM(void)
 	DeclareBindables();
 }
 
-void CenterIM::Run(void)
+void CenterIM::Run()
 {
 	PurpleInit();
 
@@ -89,17 +93,23 @@ void CenterIM::Run(void)
 	BuddyList::Instance()->Show();
 
 	LOG->Write(Log::Level_info, _("Welcome to CenterIM 5. Press F4 to display main menu.\n"));
-	Application::Run();
+
+	mngr->SetTopInputProcessor(*this);
+	mngr->EnableResizing();
+	mngr->StartMainLoop();
 }
 
-void CenterIM::Quit(void) {
-	Application::Quit();
+void CenterIM::Quit()
+{
+	mngr->QuitMainLoop();
+
+	resize.disconnect();
 
 	// clean up
 	purple_core_quit();
 }
 
-GHashTable *CenterIM::get_ui_info(void)
+GHashTable *CenterIM::get_ui_info()
 { 
 	static GHashTable *ui_info = NULL;
 
@@ -179,7 +189,8 @@ void CenterIM::purple_glib_io_destroy(gpointer data)
 	delete (IOClosure *) data;
 }
 
-void CenterIM::tmp_purple_print(PurpleDebugLevel level, const char *category, const char *arg_s)
+void CenterIM::tmp_purple_print(PurpleDebugLevel level, const char *category,
+		const char *arg_s)
 {
 	if (!logbuf)
 		logbuf = new std::vector<LogBufferItem>;
@@ -298,41 +309,41 @@ Rect CenterIM::ScreenAreaSize(ScreenArea area)
 	return areaSizes[area];
 }
 
-void CenterIM::ScreenResized(void) {
+void CenterIM::ScreenResized()
+{
 	Rect size = CONF->GetBuddyListDimensions();
-	size.width = (int) (size.width * (windowmanager->getScreenW() / (double) originalW));
-	size.height = windowmanager->getScreenH();
+	size.width = (int) (size.width * (mngr->GetScreenWidth() / (double) originalW));
+	size.height = mngr->GetScreenHeight();
 	areaSizes[BuddyListArea] = size;
 	
 	size = CONF->GetLogDimensions();
 	size.x = areaSizes[BuddyListArea].width;
-	size.width = windowmanager->getScreenW() - size.x;
-	size.height = (int) (size.height * (windowmanager->getScreenH() / (double) originalH));
-	size.y = windowmanager->getScreenH() - size.height;
+	size.width = mngr->GetScreenWidth() - size.x;
+	size.height = (int) (size.height * (mngr->GetScreenHeight() / (double) originalH));
+	size.y = mngr->GetScreenHeight() - size.height;
 	areaSizes[LogArea] = size;
 
 	areaSizes[ChatArea].x = areaSizes[BuddyListArea].width;
 	areaSizes[ChatArea].y = 0;
-	areaSizes[ChatArea].width = windowmanager->getScreenW() - areaSizes[ChatArea].x;
-	areaSizes[ChatArea].height = windowmanager->getScreenH() - areaSizes[LogArea].height;
+	areaSizes[ChatArea].width = mngr->GetScreenWidth() - areaSizes[ChatArea].x;
+	areaSizes[ChatArea].height = mngr->GetScreenHeight() - areaSizes[LogArea].height;
 
 	areaSizes[WholeArea].x = 0;
 	areaSizes[WholeArea].y = 0;
-	areaSizes[WholeArea].width = windowmanager->getScreenW();
-	areaSizes[WholeArea].height = windowmanager->getScreenH();
+	areaSizes[WholeArea].width = mngr->GetScreenWidth();
+	areaSizes[WholeArea].height = mngr->GetScreenHeight();
 }
 
-void CenterIM::OpenAccountStatusMenu(void)
+void CenterIM::OpenAccountStatusMenu()
 {
 	//TODO get coords from config
-	AccountStatusMenu *menu = new AccountStatusMenu(40,0, 40, 20);
+	AccountStatusMenu *menu = new AccountStatusMenu(40, 0, 40, 20);
 	menu->Show();
 }
 
-void CenterIM::OpenGeneralMenu(void)
+void CenterIM::OpenGeneralMenu()
 {
 	//TODO get coords from config
 	GeneralMenu *menu = new GeneralMenu(40, 0, 40, 6);
 	menu->Show();
 }
-

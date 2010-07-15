@@ -114,7 +114,7 @@ class InputProcessor
 		 * not count as a match.
 		 *
 		 * */
-		bool ProcessInput(const TermKeyKey &key);
+		virtual bool ProcessInput(const TermKeyKey &key);
 
 	protected:
 		/*

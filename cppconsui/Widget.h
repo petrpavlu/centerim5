@@ -29,7 +29,6 @@
 #include "ConsuiCurses.h"
 
 #include <sigc++/sigc++.h>
-#include <sigc++/signal.h>
 
 class Widget
 : public sigc::trackable

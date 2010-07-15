@@ -23,9 +23,9 @@
 
 #include "Window.h"
 
+#include "CoreManager.h"
 #include "Keys.h"
 #include "Container.h"
-#include "WindowManager.h"
 
 #include "gettext.h"
 
@@ -81,13 +81,13 @@ bool Window::RegisterKeys()
 
 void Window::Close()
 {
-	WindowManager::Instance()->Remove(this);
+	COREMANAGER->RemoveWindow(*this);
 	delete this;
 }
 
 void Window::ActionClose()
 {
-	signal_close(this);
+	signal_close(*this);
 	Close();
 }
 
@@ -153,17 +153,20 @@ void Window::MakeRealWindow(void)
 	realwindow = Curses::Window::newwin(left, top, right - left, bottom - top);
 }
 
-void Window::Draw(void)
+void Window::Draw()
 {
 	if (!area || !realwindow)
 		return;
 
 	Container::Draw();
 
-	/* copy the virtual window to a window, then display it
-	 * on screen.
-	 * */
+	/* Copy the virtual window to a window, then display it
+	 * on screen. */
 	area->copyto(realwindow, copy_x, copy_y, 0, 0, copy_w, copy_h, 0);
+
+	// update virtual ncurses screen
+	realwindow->touch();
+	realwindow->noutrefresh();
 }
 
 bool Window::SetFocusChild(Widget& child)
@@ -190,14 +193,14 @@ void Window::Show()
 {
 	//TODO emit signal to show window
 	//(while keeping stacking order)
-	WINDOWMANAGER->Add(this);
+	COREMANAGER->AddWindow(*this);
 }
 
 void Window::Hide()
 {
 	//TODO emit signal to hide window
 	//(while keeping stacking order)
-	WINDOWMANAGER->Remove(this);
+	COREMANAGER->RemoveWindow(*this);
 }
 
 void Window::ScreenResized()

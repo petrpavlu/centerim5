@@ -8,8 +8,6 @@ libcppconsui_la_SOURCES =\
 	AbstractLine.h \
 	AbstractListBox.cpp \
 	AbstractListBox.h \
-	Application.cpp \
-	Application.h \
 	Button.cpp \
 	Button.h \
 	ConsuiCurses.cpp \
@@ -20,6 +18,8 @@ libcppconsui_la_SOURCES =\
 	ColorScheme.cpp \
 	ComboBox.cpp \
 	ComboBox.h \
+	CoreManager.cpp \
+	CoreManager.h \
 	CppConsUI.cpp \
 	CppConsUI.h \
 	Dialog.cpp \
@@ -64,8 +64,6 @@ libcppconsui_la_SOURCES =\
 	Widget.h \
 	Window.cpp \
 	Window.h \
-	WindowManager.cpp \
-	WindowManager.h \
 	tree.hh \
 	\
 	#TextBrowser.cpp \

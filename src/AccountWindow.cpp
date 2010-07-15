@@ -159,17 +159,6 @@ void AccountWindow::MoveFocus(FocusDirection direction)
 	}
 }
 
-void AccountWindow::Clear()
-{
-	GList *i;
-	PurpleAccount *account;
-
-	for (i = purple_accounts_get_all(); i; i = i->next) {
-		account = (PurpleAccount*)i->data;
-		ClearAccount(account, true);
-	}
-}
-
 bool AccountWindow::ClearAccount(PurpleAccount *account, bool full)
 {
 	AccountEntry* account_entry = &(account_entries[account]);
