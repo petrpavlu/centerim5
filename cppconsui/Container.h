@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,8 +19,11 @@
  *
  * */
 
-/** @file Container.h Container class
- *  @ingroup cppconsui
+/**
+ * @file
+ * Container class.
+ *
+ * @ingroup cppconsui
  */
 
 #ifndef __CONTAINER_H__

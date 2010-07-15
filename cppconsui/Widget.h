@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -17,7 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * */
-/** @file Widget.h Widget class
+
+/**
+ * @file
+ * Widget class.
+ *
  * @ingroup cppconsui
  */
 
@@ -112,12 +117,17 @@ class Widget
 		 */
 		virtual void MoveFocus(FocusDirection direction);
 		
-		bool CanFocus(void) const { return can_focus; }
 		/** @todo check if this CanFocus() should be public
 		 * instead of protected
+		 * @todo Drop focus if this widget is focused.
 		 */
-		void CanFocus(bool val) { can_focus = val; }
+		void SetFocusAbility(bool val) { can_focus = val; }
+		bool CanFocus(void) const { return can_focus; }
+
 		bool HasFocus(void) const { return has_focus; }
+
+		void SetVisibility(bool visible) { this->visible = visible; }
+		bool IsVisible() { return visible; }
 
 		void SetParent(Widget& parent);
 		const Widget* GetParent() const { return parent; }
@@ -151,7 +161,8 @@ class Widget
 		sigc::signal<void, Widget&, bool> signal_focus;
 
 	protected:
-		/** Screen area relative to parent area. Note that this is a requested
+		/**
+		 * Screen area relative to parent area. Note that this is a requested
 		 * area if parent window is big enough, real width/height can differ.
 		 */
 		int xpos, ypos, width, height;
@@ -166,20 +177,23 @@ class Widget
 		 * Isn't this a duplication of functionality from inputchild ?
   		 */
 		Widget *focus_child;
-		/** This is the implementation dependent area of the widget
+		/**
+		 * Visibility flag.
+		 */
+		bool visible;
+		/**
+		 * This is the implementation dependent area of the widget.
 		 */
 		Curses::Window *area;
-		/** Used to define a tree of Widgets
-		 * @todo make parent a reference
+		/**
+		 * Parent widget.
 		 */
 		Widget *parent;
 
 		char *color_scheme;
 
 	private:
-		Widget();
 		Widget(const Widget &);
-
 		Widget& operator=(const Widget&);
 };
 

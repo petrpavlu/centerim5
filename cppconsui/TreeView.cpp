@@ -145,29 +145,28 @@ Curses::Window *TreeView::GetSubPad(const Widget& child, int begin_x,
 void TreeView::GetFocusChain(FocusChain& focus_chain,
 		FocusChain::iterator parent)
 {
-	Widget *widget;
-	Container *container;
-	FocusChain::pre_order_iterator iter;
-	TheTree::pre_order_iterator i;
-	TreeNode *node;
-
 	// the preorder iterator starts with the root so we must skip it
-	for (i = ++thetree.begin(); i != thetree.end(); i++) {
-		node = &(*i);
-		widget = node->widget;
-		container = dynamic_cast<Container*>(widget);
+	for (TheTree::pre_order_iterator i = ++thetree.begin();
+			i != thetree.end(); i++) {
+		Widget *widget = i->widget;
+		Container *container = dynamic_cast<Container *>(widget);
 
-		if (widget->CanFocus())
+		FocusChain::pre_order_iterator iter;
+		if (widget->CanFocus() && widget->IsVisible())
 			iter = focus_chain.append_child(parent, widget);
-		else if (container != NULL)
+		else if (container) {
+			// the widget is a container so add its widgets as well
 			iter = focus_chain.append_child(parent, NULL);
-
-		if (!node->open)
-			i.skip_children();
-
-		// if the widget is a container add its widgets as well
-		if (container)
 			container->GetFocusChain(focus_chain, iter);
+
+			/* If this is not a focusable widget and it has no focusable
+			 * children, remove it from the chain. */
+			if (!focus_chain.number_of_children(iter))
+				focus_chain.erase(iter);
+		}
+
+		if (!i->open)
+			i.skip_children();
 	}
 }
 
@@ -382,6 +381,8 @@ int TreeView::DrawNode(SiblingIterator node, int top)
 
 	// draw the node Widget first
 	if (node->widget) {
+		if (!node->widget->IsVisible())
+			return 0;
 		node->widget->MoveResize(depthoffset + 3, top,
 				node->widget->Width(),
 				node->widget->Height());

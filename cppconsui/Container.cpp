@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -17,7 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * */
-/** @file Container.cpp Container class implementation
+
+/**
+ * @file
+ * Container class implementation.
+ *
  * @ingroup cppconsui
  */
 
@@ -40,7 +45,6 @@
  * connect to signals
  * this also means making the children vector
  * private (protected?>
- * @todo dont accept focus when we have no focusable widgets
  */
 
 Container::Container(int w, int h)
@@ -122,7 +126,8 @@ void Container::Draw()
 	Children::iterator i;
 
 	for (i = children.begin(); i != children.end(); i++)
-		i->widget->Draw();
+		if (i->widget->IsVisible())
+			i->widget->Draw();
 }
 
 void Container::AddWidget(Widget& widget, int x, int y)
@@ -177,40 +182,25 @@ void Container::Clear(void)
 	}
 }
 
-void Container::GetFocusChain(FocusChain& focus_chain, FocusChain::iterator parent)
+void Container::GetFocusChain(FocusChain& focus_chain,
+		FocusChain::iterator parent)
 {
-	Children::iterator i;
-	Widget *widget;
-	Container *container;
-	FocusChain::pre_order_iterator iter;
+	for (Children::iterator i = children.begin(); i != children.end(); i++) {
+		Widget *widget = i->widget;
+		Container *container = dynamic_cast<Container *>(widget);
 
-	for (i = children.begin(); i != children.end(); i++) {
-		widget = (*i).widget;
-		container = dynamic_cast<Container*>(widget);
-
-		/**@todo implement widget visibility.
-		 * @todo dont filter out widgets in this function (or overriding
-		 * functions in other classes. filter out somewhere else.
-		 * eg when sorting before use.
-		 */
-		if (widget->CanFocus() /*&& widget->Visible() */) {
+		FocusChain::pre_order_iterator iter;
+		if (widget->CanFocus() && widget->IsVisible())
 			iter = focus_chain.append_child(parent, widget);
-		} else if (container != NULL) {
+		else if (container) {
+			// the widget is a container so add its widgets as well
 			iter = focus_chain.append_child(parent, NULL);
-		}
-
-		if (container) {
-			/* The widget is a container so add its widgets
-			 * as well.
-			 * */
 			container->GetFocusChain(focus_chain, iter);
 
-			/* If this is not a focusable widget and it has no focuasable
+			/* If this is not a focusable widget and it has no focusable
 			 * children, remove it from the chain. */
-			/// @todo remove when widgets are filtered out elsewhere
-			if ((*iter) == NULL && !focus_chain.number_of_children(iter)) {
+			if (!focus_chain.number_of_children(iter))
 				focus_chain.erase(iter);
-			}
 		}
 	}
 }

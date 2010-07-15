@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,26 +19,22 @@
  *
  * */
 
-/** @file Widget.cpp Widget class implementation
+/**
+ * @file
+ * Widget class implementation.
+ *
  * @ingroup cppconsui
  */
 
-#include "ConsuiCurses.h"
-//include "ConsuiLog.h"
 #include "Widget.h"
+
+#include "ConsuiCurses.h"
 
 #include <string>
 
 Widget::Widget(int w, int h)
-: xpos(0)
-, ypos(0)
-, width(w)
-, height(h)
-, can_focus(false)
-, has_focus(false)
-, focus_child(NULL)
-, area(NULL)
-, parent(NULL)
+: xpos(0), ypos(0), width(w), height(h), can_focus(false), has_focus(false)
+, focus_child(NULL), visible(true), area(NULL), parent(NULL)
 , color_scheme(NULL)
 {
 }
