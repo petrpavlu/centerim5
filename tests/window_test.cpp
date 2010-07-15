@@ -1,4 +1,4 @@
-#include <cppconsui/Application.h>
+#include <cppconsui/CoreManager.h>
 #include <cppconsui/Window.h>
 #include <cppconsui/Label.h>
 #include <cppconsui/Keys.h>
@@ -49,15 +49,12 @@ void TestWindow::ScreenResized()
 #define CONTEXT_TESTAPP "testapp"
 
 class TestApp
-: public Application
+: public InputProcessor
 {
 	public:
 		static TestApp *Instance();
 
-		virtual void Run();
-		virtual void Quit();
-
-		virtual void ScreenResized() {}
+		void Run();
 
 		// ignore every message
 		static void g_log_func_(const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer user_data)
@@ -66,6 +63,8 @@ class TestApp
 	protected:
 
 	private:
+		CoreManager *mngr;
+
 		TestApp();
 		TestApp(const TestApp&);
 		TestApp& operator=(const TestApp&);
@@ -83,8 +82,10 @@ TestApp *TestApp::Instance()
 }
 
 TestApp::TestApp()
-: Application()
+: InputProcessor()
 {
+	mngr = CoreManager::Instance();
+
 	g_log_set_default_handler(g_log_func_, this);
 
 	DeclareBindables();
@@ -94,16 +95,18 @@ void TestApp::Run()
 {
 	for (int i = 1; i <= 4; i++) {
 		Window *w = new TestWindow(i, (i - 1) % 2 * 40, (i - 1) / 2 * 10, 40, 10);
-		windowmanager->Add(w);
+		mngr->AddWindow(*w);
 	}
 
-	Application::Run();
+	mngr->SetTopInputProcessor(*this);
+	mngr->EnableResizing();
+	mngr->StartMainLoop();
 }
 
 void TestApp::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_TESTAPP, "quit",
-			sigc::mem_fun(this, &TestApp::Quit),
+			sigc::mem_fun(mngr, &CoreManager::QuitMainLoop),
 			InputProcessor::Bindable_Override);
 }
 
@@ -113,11 +116,6 @@ bool TestApp::RegisterKeys()
 	RegisterKeyDef(CONTEXT_TESTAPP, "quit",
 			"Quit TestApp.", Keys::FunctionTermKey(10));
 	return true;
-}
-
-void TestApp::Quit()
-{
-	Application::Quit();
 }
 
 // main function

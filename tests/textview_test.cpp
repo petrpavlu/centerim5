@@ -1,4 +1,4 @@
-#include <cppconsui/Application.h>
+#include <cppconsui/CoreManager.h>
 #include <cppconsui/Window.h>
 #include <cppconsui/Keys.h>
 #include <cppconsui/TextView.h>
@@ -62,8 +62,8 @@ TextViewWindow::TextViewWindow()
 
 void TextViewWindow::ScreenResized()
 {
-	MoveResize(0, 0, WINDOWMANAGER->getScreenW(),
-			WINDOWMANAGER->getScreenH());
+	MoveResize(0, 0, COREMANAGER->GetScreenWidth(),
+			COREMANAGER->GetScreenHeight());
 }
 
 // TestApp class
@@ -71,15 +71,12 @@ void TextViewWindow::ScreenResized()
 #define CONTEXT_TESTAPP "testapp"
 
 class TestApp
-: public Application
+: public InputProcessor
 {
 	public:
 		static TestApp *Instance();
 
-		virtual void Run();
-		virtual void Quit();
-
-		virtual void ScreenResized() {}
+		void Run();
 
 		// ignore every message
 		static void g_log_func_(const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer user_data)
@@ -88,6 +85,8 @@ class TestApp
 	protected:
 
 	private:
+		CoreManager *mngr;
+
 		TestApp();
 		TestApp(const TestApp&);
 		TestApp& operator=(const TestApp&);
@@ -105,8 +104,10 @@ TestApp *TestApp::Instance()
 }
 
 TestApp::TestApp()
-: Application()
+: InputProcessor()
 {
+	mngr = CoreManager::Instance();
+
 	g_log_set_default_handler(g_log_func_, this);
 
 	DeclareBindables();
@@ -114,15 +115,16 @@ TestApp::TestApp()
 
 void TestApp::Run()
 {
-	windowmanager->Add(TextViewWindow::Instance());
-
-	Application::Run();
+	mngr->AddWindow(*TextViewWindow::Instance());
+	mngr->SetTopInputProcessor(*this);
+	mngr->EnableResizing();
+	mngr->StartMainLoop();
 }
 
 void TestApp::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_TESTAPP, "quit",
-			sigc::mem_fun(this, &TestApp::Quit),
+			sigc::mem_fun(mngr, &CoreManager::QuitMainLoop),
 			InputProcessor::Bindable_Override);
 }
 
@@ -132,11 +134,6 @@ bool TestApp::RegisterKeys()
 	RegisterKeyDef(CONTEXT_TESTAPP, "quit",
 			"Quit TestApp.", Keys::FunctionTermKey(10));
 	return true;
-}
-
-void TestApp::Quit()
-{
-	Application::Quit();
 }
 
 // main function
