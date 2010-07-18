@@ -52,16 +52,17 @@ class TreeView
 		// Widget
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
 		virtual void Draw();
-		virtual bool SetFocusChild(Widget& child);
-		virtual bool StealFocus();
-		virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
-				int begin_y, int ncols, int nlines);
+		virtual void CleanFocus();
 
 		// Container
+		virtual bool IsWidgetVisible(const Widget& widget) const;
+		virtual bool SetFocusChild(Widget& child);
 		virtual void GetFocusChain(FocusChain& focus_chain,
 				FocusChain::iterator parent);
 		virtual void SetActive(int i);
 		virtual int GetActive() const;
+		virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
+				int begin_y, int ncols, int nlines);
 
 		/**
 		 * Folds given node.
@@ -193,30 +194,37 @@ class TreeView
 				 */
 				sigc::connection sig_redraw;
 				sigc::connection sig_moveresize;
-				sigc::connection sig_focus;
+				sigc::connection sig_visible;
 		};
-
-		// Container
-		virtual void AddWidget(Widget& widget, int x, int y);
-
-		int DrawNode(SiblingIterator node, int top);
-
-		TreeNode AddNodeInit(Widget& widget);
-		void AddNodeFinalize(NodeReference& iter);
 
 		TheTree thetree;
 		NodeReference focus_node;
 
 		LineStyle linestyle;
 
+		// Container
+		virtual void AddWidget(Widget& widget, int x, int y);
+		virtual void RemoveWidget(Widget& widget);
+		virtual void Clear(); ///< @todo Implemement.
+
+		int DrawNode(SiblingIterator node, int top);
+
+		TreeNode AddNodeInit(Widget& widget);
+		void AddNodeFinalize(NodeReference& iter);
+
+		NodeReference FindNode(const Widget& child) const;
+
+		bool IsNodeOpenable(const SiblingIterator& node) const;
+		bool IsNodeVisible(const NodeReference& node) const;
+		
+		// handlers of signals
+		virtual void OnChildRedraw(Widget& widget);
+		virtual void OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize);
+		virtual void OnChildVisible(Widget& widget, bool visible);
+
 	private:
 		TreeView(const TreeView&);
 		TreeView& operator=(const TreeView&);
-		
-		/* Handlers of signals */
-		void OnChildRedraw(Widget& widget);
-		void OnChildMoveResize(Widget& widget, Rect &oldsize, Rect &newsize);
-		void OnChildFocus(Widget& widget, bool focus);
 
 		void ActionCollapse();
 		void ActionExpand();

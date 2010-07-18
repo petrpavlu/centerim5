@@ -54,7 +54,7 @@ void ListBox::RemoveWidget(Widget& widget)
 
 	// recalculate height
 	int y = 0;
-	for (Children::iterator i = ChildrenBegin(); i != ChildrenEnd(); i++) {
+	for (Children::iterator i = children.begin(); i != children.end(); i++) {
 		Widget *w = i->widget;
 		w->MoveResize(0, y, w->Width(), w->Height());
 		y += w->Height();

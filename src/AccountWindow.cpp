@@ -108,6 +108,7 @@ void AccountWindow::Add()
 
 		PopulateAccount(account);
 	}
+	account_entries[account].parent->GrabFocus();
 }
 
 //TODO move to Accounts class
@@ -161,22 +162,19 @@ void AccountWindow::MoveFocus(FocusDirection direction)
 
 bool AccountWindow::ClearAccount(PurpleAccount *account, bool full)
 {
-	AccountEntry* account_entry = &(account_entries[account]);
-	std::vector<Widget*>::iterator i;
-	std::list<AccountOptionSplit*>::iterator j;
+	AccountEntry *account_entry = &account_entries[account];
+	std::vector<Widget *>::iterator i;
+	std::list<AccountOptionSplit *>::iterator j;
 
 	// move focus
 	account_entry->parent->GrabFocus();
 
-	// first remove the nodes from the tree, then free() all the widgets
+	// remove the nodes from the tree
 	accounts->DeleteChildren(account_entry->parent_reference, false);
-	if (full)
+	if (full) {
 		accounts->DeleteNode(account_entry->parent_reference, false);
-
-	account_entry->widgets.clear();
-	account_entry->split_widgets.clear();
-	if (full)
 		account_entries.erase(account);
+	}
 
 	if (account_entries.empty())
 		menu->SetActive(0);
@@ -249,7 +247,6 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		// we cannot change the settings of an unknown account
 		label = new Label(_("Invalid account or protocol plugin not loaded"));
 		accounts->AppendNode(account_entry->parent_reference, *label);
-		account_entry->widgets.push_back(label);
 
 	}
 	else {
@@ -258,7 +255,6 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		// protocols combobox
 		combobox = new AccountOptionProtocol(account, *this);
 		accounts->AppendNode(account_entry->parent_reference, *combobox);
-		account_entry->widgets.push_back(combobox);
 
 		/* The username must be treated in a special way because it can contain
 		 * multiple values. (eg user@server:port/resource) */
@@ -285,7 +281,6 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 			widget_split = new AccountOptionSplit(account, split, account_entry);
 			widget_split->SetValue(value);
 			account_entry->split_widgets.push_front(widget_split);
-			account_entry->widgets.push_back(widget_split);
 
 			accounts->AppendNode(account_entry->parent_reference, *widget_split);
 		}
@@ -295,24 +290,20 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		widget_split = new AccountOptionSplit(account, NULL, account_entry);
 		widget_split->SetValue(username);
 		account_entry->split_widgets.push_front(widget_split);
-		account_entry->widgets.push_back(widget_split);
 		accounts->AppendNode(account_entry->parent_reference, *widget_split);
 		g_free(username);
 
 		// password
 		widget = new AccountOptionString(account, true, false);
 		accounts->AppendNode(account_entry->parent_reference, *widget);
-		account_entry->widgets.push_back(widget);
 
 		// remember password
 		widget = new AccountOptionBool(account, true, false);
 		accounts->AppendNode(account_entry->parent_reference, *widget);
-		account_entry->widgets.push_back(widget);
 
 		// alias
 		widget = new AccountOptionString(account, false, true);
 		accounts->AppendNode(account_entry->parent_reference, *widget);
-		account_entry->widgets.push_back(widget);
 
 		for (pref = prplinfo->protocol_options; pref; pref = pref->next) {
 			PurpleAccountOption *option = (PurpleAccountOption*)pref->data;
@@ -322,17 +313,14 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 			case PURPLE_PREF_STRING:
 				widget = new AccountOptionString(account, option);
 				accounts->AppendNode(account_entry->parent_reference, *widget);
-				account_entry->widgets.push_back(widget);
 				break;
 			case PURPLE_PREF_INT:
 				widget = new AccountOptionInt(account, option);
 				accounts->AppendNode(account_entry->parent_reference, *widget);
-				account_entry->widgets.push_back(widget);
 				break;
 			case PURPLE_PREF_BOOLEAN:
 				widget = new AccountOptionBool(account, option);
 				accounts->AppendNode(account_entry->parent_reference, *widget);
-				account_entry->widgets.push_back(widget);
 				break;
 			case PURPLE_PREF_STRING_LIST:
 				//TODO implement, but for now, an error!
@@ -346,14 +334,12 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		// enable/disable account
 		widget = new AccountOptionBool(account, false, true);
 		accounts->AppendNode(account_entry->parent_reference, *widget);
-		account_entry->widgets.push_back(widget);
 	}
 
 	// drop account
 	widget = new Button(_("Drop account"),
 			sigc::bind(sigc::mem_fun(this, &AccountWindow::DropAccount), account));
 	accounts->AppendNode(account_entry->parent_reference, *widget);
-	account_entry->widgets.push_back(widget);
 }
 
 AccountWindow::AccountOption::AccountOption(PurpleAccount *account,
@@ -603,7 +589,7 @@ void AccountWindow::AccountOptionSplit::UpdateSplits()
 	GList *iter;
 	const gchar *val;
 
-	split_widgets = &(account_entry->split_widgets);
+	split_widgets = &account_entry->split_widgets;
 	split_widget = split_widgets->begin();
 	widget = *split_widget;
 	val = widget->GetValue();

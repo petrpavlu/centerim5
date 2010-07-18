@@ -53,7 +53,7 @@ void HorizontalListBox::RemoveWidget(Widget& widget)
 	AbstractListBox::RemoveWidget(widget);
 
 	int x = 0;
-	for (Children::iterator i = ChildrenBegin(); i != ChildrenEnd(); i++) {
+	for (Children::iterator i = children.begin(); i != children.end(); i++) {
 		Widget *w = i->widget;
 		w->MoveResize(x, 0, w->Width(), w->Height());
 		x += w->Width();

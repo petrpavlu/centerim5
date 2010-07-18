@@ -52,7 +52,6 @@ class AccountWindow
 		struct AccountEntry {
 			Button *parent;
 			TreeView::NodeReference parent_reference;
-			Widgets widgets;
 			SplitWidgets split_widgets;
 		};
 		typedef std::map<PurpleAccount*, AccountEntry> AccountEntries;

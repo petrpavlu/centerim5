@@ -59,8 +59,11 @@ void ScrollPane::Draw()
 {
 	int copyw, copyh;
 
-	if (!area || !scrollarea)
+	if (!area || !scrollarea) {
+		if (scrollarea)
+			scrollarea->erase();
 		return;
+	}
 
 	Container::Draw();
 

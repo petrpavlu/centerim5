@@ -88,87 +88,87 @@ void LineStyle::SetStyle(Type t)
 	type = t;
 }
 
-LineStyle::Type LineStyle::GetStyle()
+LineStyle::Type LineStyle::GetStyle() const
 {
 	return type;
 }
 
-const gchar *LineStyle::H()
+const gchar *LineStyle::H() const
 {
 	return GetCurrentElems()->h;
 }
 
-const gchar *LineStyle::HBegin()
+const gchar *LineStyle::HBegin() const
 {
 	return GetCurrentElems()->h_begin;
 }
 
-const gchar *LineStyle::HEnd()
+const gchar *LineStyle::HEnd() const
 {
 	return GetCurrentElems()->h_end;
 }
 
-const gchar *LineStyle::HUp()
+const gchar *LineStyle::HUp() const
 {
 	return GetCurrentElems()->h_up;
 }
 
-const gchar *LineStyle::HDown()
+const gchar *LineStyle::HDown() const
 {
 	return GetCurrentElems()->h_down;
 }
 
-const gchar *LineStyle::V()
+const gchar *LineStyle::V() const
 {
 	return GetCurrentElems()->v;
 }
 
-const gchar *LineStyle::VBegin()
+const gchar *LineStyle::VBegin() const
 {
 	return GetCurrentElems()->v_begin;
 }
 
-const gchar *LineStyle::VEnd()
+const gchar *LineStyle::VEnd() const
 {
 	return GetCurrentElems()->v_end;
 }
 
-const gchar *LineStyle::VLeft()
+const gchar *LineStyle::VLeft() const
 {
 	return GetCurrentElems()->v_left;
 }
 
-const gchar *LineStyle::VRight()
+const gchar *LineStyle::VRight() const
 {
 	return GetCurrentElems()->v_right;
 }
 
-const gchar *LineStyle::Cross()
+const gchar *LineStyle::Cross() const
 {
 	return GetCurrentElems()->cross;
 }
 
-const gchar *LineStyle::CornerTL()
+const gchar *LineStyle::CornerTL() const
 {
 	return GetCurrentElems()->corner_tl;
 }
 
-const gchar *LineStyle::CornerTR()
+const gchar *LineStyle::CornerTR() const
 {
 	return GetCurrentElems()->corner_tr;
 }
 
-const gchar *LineStyle::CornerBL()
+const gchar *LineStyle::CornerBL() const
 {
 	return GetCurrentElems()->corner_bl;
 }
 
-const gchar *LineStyle::CornerBR()
+const gchar *LineStyle::CornerBR() const
 {
 	return GetCurrentElems()->corner_br;
 }
 
-LineElements* LineStyle::GetCurrentElems()
+LineElements *LineStyle::GetCurrentElems() const
 {
 	switch (type) {
 		case ASCII:

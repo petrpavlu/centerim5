@@ -46,6 +46,7 @@ BuddyListNode::BuddyListNode(PurpleBlistNode *node)
 : Button("")
 , node(node)
 {
+	node->ui_data = this;
 	signal_activate.connect(sigc::mem_fun(this, &BuddyListNode::OnActivate));
 }
 
@@ -186,7 +187,6 @@ BuddyListBuddy::BuddyListBuddy(PurpleBlistNode *node)
 	SetColorScheme("buddylistbuddy");
 
 	buddy = reinterpret_cast<PurpleBuddy *>(node);
-	node->ui_data = this;
 }
 
 bool BuddyListBuddy::LessThan(const BuddyListNode& other) const
@@ -214,6 +214,9 @@ void BuddyListBuddy::Update()
 	g_free(text);
 
 	SortIn();
+
+	// hide if account is offline
+	SetVisibility(purple_account_is_connected(purple_buddy_get_account(buddy)));
 }
 
 void BuddyListBuddy::OnActivate()
@@ -222,13 +225,17 @@ void BuddyListBuddy::OnActivate()
 			purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
 }
 
+const gchar *BuddyListBuddy::ToString() const
+{
+	return purple_buddy_get_alias(buddy);
+}
+
 BuddyListChat::BuddyListChat(PurpleBlistNode *node)
 : BuddyListNode(node)
 {
 	SetColorScheme("buddylistchat");
 
 	chat = reinterpret_cast<PurpleChat *>(node);
-	node->ui_data = this;
 }
 
 bool BuddyListChat::LessThan(const BuddyListNode& other) const
@@ -248,6 +255,9 @@ void BuddyListChat::Update()
 	SetText(purple_chat_get_name(chat));
 
 	SortIn();
+
+	// hide if account is offline
+	SetVisibility(purple_account_is_connected(purple_chat_get_account(chat)));
 }
 
 void BuddyListChat::OnActivate()
@@ -256,13 +266,17 @@ void BuddyListChat::OnActivate()
 			purple_chat_get_account(chat), purple_chat_get_name(chat));
 }
 
+const gchar *BuddyListChat::ToString() const
+{
+	return purple_chat_get_name(chat);
+}
+
 BuddyListContact::BuddyListContact(PurpleBlistNode *node)
 : BuddyListNode(node)
 {
 	SetColorScheme("buddylistcontact");
 
 	contact = reinterpret_cast<PurpleContact *>(node);
-	node->ui_data = this;
 }
 
 bool BuddyListContact::LessThan(const BuddyListNode& other) const
@@ -293,6 +307,9 @@ void BuddyListContact::Update()
 	g_free(text);
 
 	SortIn();
+
+	// hide if account is offline
+	SetVisibility(purple_account_is_connected(purple_buddy_get_account(buddy)));
 }
 
 void BuddyListContact::OnActivate()
@@ -302,13 +319,17 @@ void BuddyListContact::OnActivate()
 			purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
 }
 
+const gchar *BuddyListContact::ToString() const
+{
+	return purple_contact_get_alias(contact);
+}
+
 BuddyListGroup::BuddyListGroup(PurpleBlistNode *node)
 : BuddyListNode(node)
 {
 	SetColorScheme("buddylistgroup");
 
 	group = reinterpret_cast<PurpleGroup *>(node);
-	node->ui_data = this;
 }
 
 bool BuddyListGroup::LessThan(const BuddyListNode& other) const
@@ -325,11 +346,25 @@ void BuddyListGroup::Update()
 {
 	BuddyListNode::Update();
 
-	const gchar *text;
-	text = purple_group_get_name(group);
-	SetText(text);
+	SetText(purple_group_get_name(group));
 
 	SortIn();
+
+	// hide if account is offline
+	GSList *accounts, *p;
+	accounts = p = purple_group_get_accounts(group);
+	bool vis = false;
+	while (p) {
+		if (purple_account_is_connected(
+					reinterpret_cast<PurpleAccount *>(p->data))) {
+			vis = true;
+			break;
+		}
+		p = g_slist_next(p);
+	}
+	g_slist_free(accounts);
+
+	SetVisibility(vis);
 }
 
 void BuddyListGroup::OnActivate()
@@ -337,6 +372,11 @@ void BuddyListGroup::OnActivate()
 	TreeView *t = dynamic_cast<TreeView *>(parent);
 	g_assert(t);
 	t->ToggleCollapsed(ref);
+}
+
+const gchar *BuddyListGroup::ToString() const
+{
+	return purple_group_get_name(group);
 }
 
 void BuddyListGroup::SortIn()

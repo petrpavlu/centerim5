@@ -153,6 +153,8 @@ CoreManager::~CoreManager()
 {
 	StdinInputUnInit();
 
+	/// @todo Close all windows?
+
 	Curses::endwin();
 }
 
@@ -205,29 +207,35 @@ void CoreManager::RemoveWindow(Window& window)
 		if (i->window == &window)
 			break;
 
-	if (i == windows.end()) {
-		g_warning(_("Detected an attempt to remove non-managed window.\n"));
-		return;
-	}
+	g_assert(i != windows.end());
 
 	i->redraw.disconnect();
 	i->resize.disconnect();
 	windows.erase(i);
 
-	if (GetInputChild() == &window)
+	if (GetInputChild() == &window) {
+		window.CleanFocus();
 		ClearInputChild();
+	}
 
 	FocusWindow();
-	Draw();
+	Redraw();
 }
 
-bool CoreManager::HasWindow(Window& window)
+bool CoreManager::HasWindow(Window& window) const
 {
-	for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
+	for (Windows::const_iterator i = windows.begin(); i != windows.end(); i++)
 		if (i->window == &window)
 			return true;
 
 	return false;
+}
+
+Window *CoreManager::GetTopWindow()
+{
+	if (windows.size())
+		return windows.back().window;
+	return NULL;
 }
 
 void CoreManager::EnableResizing()

@@ -28,14 +28,13 @@
 
 #include "Widget.h"
 
-#include "ConsuiCurses.h"
+#include "Container.h"
 
 #include <string>
 
 Widget::Widget(int w, int h)
 : xpos(0), ypos(0), width(w), height(h), can_focus(false), has_focus(false)
-, focus_child(NULL), visible(true), area(NULL), parent(NULL)
-, color_scheme(NULL)
+, visible(true), area(NULL), parent(NULL), color_scheme(NULL)
 {
 }
 
@@ -62,11 +61,6 @@ void Widget::MoveResize(int newx, int newy, int neww, int newh)
 	signal_moveresize(*this, oldsize, newsize);
 }
 
-void Widget::MoveResize()
-{
-	MoveResize(xpos, ypos, width, height);
-}
-
 void Widget::UpdateArea()
 {
 	g_assert(parent);
@@ -74,95 +68,54 @@ void Widget::UpdateArea()
 	if (area)
 		delete area;
 	area = parent->GetSubPad(*this, xpos, ypos, width, height);
+	signal_redraw(*this);
 }
 
-bool Widget::SetFocusChild(Widget &child)
+Window *Widget::GetWindow()
 {
-	// focus cannot be set for widget without a parent
-	if (!parent)
-		return false;
-
-	if (focus_child == &child)
-		/* The focus child is already correct. */
-		return true;
-
-	if (focus_child != NULL) {
-		/* The currently focussed widget is in a different branch
-		 * of the widget tree, so unfocus that widget first.
-		 * */
-		if (!focus_child->StealFocus())
-			return false;
-	}
-
-	if (parent->SetFocusChild(*this)) {
-		/* Only if we can grab the focus all the way up the widget
-		 * tree do we set the focus child.
-		 * */
-		focus_child = &child;
-		SetInputChild(child);
-		return true;
-	}
-
-	return false;
+	if (parent)
+		return parent->GetWindow();
+	return NULL;
 }
 
-bool Widget::StealFocus(void)
+Widget *Widget::GetFocusWidget()
 {
-	/* If has_focus is true, then this is the widget with focus. */
-	if (has_focus) {
-		has_focus = false;
-		signal_focus(*this, false);
-		return true;
-	}
-
-	if (!focus_child) {
-		/* Apparently there is no widget with focus because
-		 * the chain ends here. */
-		return true;
-	}
-
-	/* First propagate focus stealing to the widget with focus.
-	 * If theft is successful, then unset focus_child. */
-	if (focus_child->StealFocus()) {
-		focus_child = NULL;
-		ClearInputChild();
-		return true;
-	}
-
-	return false;
+	if (can_focus)
+		return this;
+	return NULL;
 }
 
-/// @todo move to window and use getfocuswidget??
+void Widget::CleanFocus()
+{
+	if (!has_focus)
+		return;
+
+	has_focus = false;
+	signal_focus(*this, false);
+	signal_redraw(*this);
+}
+
 void Widget::RestoreFocus()
 {
-	if (!focus_child) {
-		if (can_focus) {
-			has_focus = true;
-			signal_redraw(*this);
-		}
-	} else {
-		focus_child->RestoreFocus();
-	}
+	GrabFocus();
 }
 
-Widget* Widget::GetFocusWidget()
+void Widget::UngrabFocus()
 {
-	if (!focus_child) {
-		if (can_focus) {
-			return this;
-		} else {
-			return NULL;
-		}
-	} else {
-		return focus_child->GetFocusWidget();
-	}
+	if (!parent || !has_focus)
+		return;
 
+	has_focus = false;
+	signal_focus(*this, false);
+	signal_redraw(*this);
 }
 
-bool Widget::GrabFocus(void)
+bool Widget::GrabFocus()
 {
-	if (can_focus && parent && parent->SetFocusChild(*this)) {
-		//TODO only set if window has focus.
+	if (!parent || has_focus)
+		return false;
+
+	if (can_focus && visible && parent->SetFocusChild(*this)) {
 		has_focus = true;
 		signal_focus(*this, true);
 		signal_redraw(*this);
@@ -172,46 +125,22 @@ bool Widget::GrabFocus(void)
 	return false;
 }
 
-void Widget::UngrabFocus(void)
+void Widget::SetVisibility(bool visible)
 {
-	has_focus = false;
-}
-
-void Widget::MoveFocus(FocusDirection direction)
-{
-	/* Make sure we always start at the root
-	 * of the widget tree. */
-	if (parent) {
-		parent->MoveFocus(direction);
+	if (this->visible != visible) {
+		this->visible = visible;
+		signal_visible(*this, visible);
+		// note: parent will take care about losing focus if necessary
 	}
 }
 
-void Widget::SetParent(Widget& parent)
+void Widget::SetParent(Container& parent)
 {
 	// we don't support parent change
 	g_assert(!this->parent);
 
 	this->parent = &parent;
 	UpdateArea();
-}
-
-Curses::Window *Widget::GetSubPad(const Widget& child, int begin_x, int begin_y, int ncols, int nlines)
-{
-	if (!area)
-		return NULL;
-
-	int realw = area->getmaxx();
-	int realh = area->getmaxy();
-
-	/* Extend requested subpad to whole parent area or shrink requested area
-	 * if necessary. */
-	if (nlines < 0 || nlines > realh - begin_y)
-		nlines = realh - begin_y;
-
-	if (ncols < 0 || ncols > realw - begin_x)
-		ncols = realw - begin_x;
-
-	return area->subpad(begin_x, begin_y, ncols, nlines);
 }
 
 void Widget::SetColorScheme(const char *scheme)

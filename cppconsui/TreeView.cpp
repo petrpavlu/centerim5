@@ -24,6 +24,7 @@
 #include "ColorScheme.h"
 #include "ConsuiCurses.h"
 #include "Keys.h"
+#include "Window.h"
 
 #include "gettext.h"
 
@@ -82,44 +83,128 @@ void TreeView::MoveResize(int newx, int newy, int neww, int newh)
 
 void TreeView::Draw()
 {
-	if (!area)
+	if (!area) {
+		// scrollpane will clear the scroll (real) area
+		ScrollPane::Draw();
 		return;
+	}
 
 	area->erase();
 
 	DrawNode(thetree.begin(), 0);
 
 	// make sure that currently focused widget is visible
-	if (focus_node->widget)
+	if (focus_node != thetree.begin())
 		MakeVisible(focus_node->widget->Left(), focus_node->widget->Top());
 
 	ScrollPane::Draw();
 }
 
-bool TreeView::SetFocusChild(Widget& child)
+void TreeView::CleanFocus()
 {
-	if (ScrollPane::SetFocusChild(child)) {
-		/// @todo Speed up this algorithm.
-		for (TheTree::pre_order_iterator i = thetree.begin(); i != thetree.end(); i++)
-			if (i->widget == &child) {
-				focus_node = i;
-				break;
-			}
-
-		return true;
-	}
-
-	return false;
+	ScrollPane::CleanFocus();
+	focus_node = thetree.begin();
 }
 
-bool TreeView::StealFocus()
+bool TreeView::IsWidgetVisible(const Widget& child) const
 {
-	if (ScrollPane::StealFocus()) {
-		focus_node = thetree.begin();
+	if (!parent || !visible)
+		return false;
+
+	NodeReference node = FindNode(child);
+	if (!IsNodeVisible(node))
+		return false;
+
+	return parent->IsWidgetVisible(*this);
+}
+
+bool TreeView::SetFocusChild(Widget& child)
+{
+	NodeReference node = FindNode(child);
+	if (!IsNodeVisible(node))
+		return false;
+
+	bool res = ScrollPane::SetFocusChild(child);
+	focus_node = node;
+	return res;
+	/*
+	if (ScrollPane::SetFocusChild(child)) {
+		focus_node = node;
 		return true;
 	}
-
 	return false;
+	*/
+}
+
+void TreeView::GetFocusChain(FocusChain& focus_chain,
+		FocusChain::iterator parent)
+{
+	/* It's possible that the predecessor of focused node was just made
+	 * invisible and MoveFocus() is called so other widget can take the focus.
+	 * In this case we find top invisible predecessor of focused node and
+	 * later the focused node is placed into the focus chain when this
+	 * predecessor is reached. */
+	NodeReference act = focus_node;
+	NodeReference top = thetree.begin();
+	while (act != thetree.begin()) {
+		if (!act->widget->IsVisible())
+			top = act;
+		act = thetree.parent(act);
+	}
+
+	// the preorder iterator starts with the root so we must skip it
+	for (TheTree::pre_order_iterator i = ++thetree.begin();
+			i != thetree.end(); i++) {
+		Widget *widget = i->widget;
+		Container *container = dynamic_cast<Container *>(widget);
+
+		if (container && container->IsVisible()) {
+			// the widget is a container so add its widgets as well
+			FocusChain::pre_order_iterator iter
+				= focus_chain.append_child(parent, NULL);
+			container->GetFocusChain(focus_chain, iter);
+
+			/* If this is not a focusable widget and it has no focusable
+			 * children, remove it from the chain. */
+			if (!focus_chain.number_of_children(iter))
+				focus_chain.erase(iter);
+		}
+		else if (widget->CanFocus() && widget->IsVisible()) {
+			// widget can be focused
+			focus_chain.append_child(parent, widget);
+		}
+		else if (i == top) {
+			// focused node is in subtree of this node
+			focus_chain.append_child(parent, focus_child);
+		}
+
+		if (!i->open || !widget->IsVisible())
+			i.skip_children();
+	}
+}
+
+void TreeView::SetActive(int i)
+{
+	if (i < 0 || (int) thetree.size() - 1 <= i)
+		i = 0;
+
+	TheTree::pre_order_iterator j;
+	for (j = ++thetree.begin(); i > 0 && j != thetree.end(); j++, i--)
+		;
+	if (j != thetree.end() && j->widget)
+		j->widget->GrabFocus();
+}
+
+int TreeView::GetActive() const
+{
+	TheTree::pre_order_iterator j;
+	int i;
+
+	for (j = ++thetree.begin(), i = 0; j != thetree.end(); j++, i++)
+		if (j->widget && j->widget->HasFocus())
+			return i;
+
+	return -1;
 }
 
 Curses::Window *TreeView::GetSubPad(const Widget& child, int begin_x,
@@ -140,58 +225,6 @@ Curses::Window *TreeView::GetSubPad(const Widget& child, int begin_x,
 		ncols = realw - begin_x;
 
 	return area->subpad(begin_x, begin_y, ncols, nlines);
-}
-
-void TreeView::GetFocusChain(FocusChain& focus_chain,
-		FocusChain::iterator parent)
-{
-	// the preorder iterator starts with the root so we must skip it
-	for (TheTree::pre_order_iterator i = ++thetree.begin();
-			i != thetree.end(); i++) {
-		Widget *widget = i->widget;
-		Container *container = dynamic_cast<Container *>(widget);
-
-		FocusChain::pre_order_iterator iter;
-		if (widget->CanFocus() && widget->IsVisible())
-			iter = focus_chain.append_child(parent, widget);
-		else if (container) {
-			// the widget is a container so add its widgets as well
-			iter = focus_chain.append_child(parent, NULL);
-			container->GetFocusChain(focus_chain, iter);
-
-			/* If this is not a focusable widget and it has no focusable
-			 * children, remove it from the chain. */
-			if (!focus_chain.number_of_children(iter))
-				focus_chain.erase(iter);
-		}
-
-		if (!i->open)
-			i.skip_children();
-	}
-}
-
-void TreeView::SetActive(int i)
-{
-	g_assert(i >= 0);
-	g_assert(i < (int) thetree.size());
-
-	TheTree::pre_order_iterator j;
-	for (j = thetree.begin(); i > 0 && j != thetree.end(); j++, i--)
-		;
-	if (j != thetree.end() && j->widget)
-		j->widget->GrabFocus();
-}
-
-int TreeView::GetActive() const
-{
-	TheTree::pre_order_iterator j;
-	int i;
-
-	for (j = thetree.begin(), i = 0; j != thetree.end(); j++, i++)
-		if (j->widget && j->widget->HasFocus())
-			return i;
-
-	return -1;
 }
 
 void TreeView::Collapse(const NodeReference node)
@@ -261,33 +294,13 @@ void TreeView::DeleteNode(const NodeReference node, bool keepchildren)
 {
 	/// @todo This needs more testing.
 
-	/* If we don't keep children then make sure that focus isn't held by a
-	 * descendant. */
-	bool has_focus = false;
-	if (!keepchildren && node != thetree.begin()) {
-		NodeReference act = focus_node;
-		while (thetree.is_valid(act)) {
-			if (act == node) {
-				has_focus = true;
-				break;
-			}
-			act = thetree.parent(act);
-		}
-	}
+	// if we want to keep child nodes we should flatten the tree
+	if (keepchildren)
+		thetree.flatten(node);
 
-	if (node != thetree.begin()
-			&& (node == focus_node // for keepchildren = true
-				|| has_focus)) { // for keepchildren = false
-		/* By folding this node and then moving focus forward we are sure that
-		 * no child node of the node to be removed will get the focus. */
-		node->open = false;
-		MoveFocus(Container::FocusNext);
-
-		// clear focus/input child if the move was not successful
-		if (node == focus_node) {
-			focus_child = NULL;
-			ClearInputChild();
-		}
+	if (node->widget) {
+		// focus gets moved if this hides the focused node
+		node->widget->SetVisibility(false);
 	}
 
 	int shrink = 0;
@@ -296,27 +309,25 @@ void TreeView::DeleteNode(const NodeReference node, bool keepchildren)
 		shrink += h < 0 ? 1 : h;
 	}
 
-	// if we want to keep child nodes we should flatten the tree
-	if (keepchildren)
-		thetree.flatten(node);
-	else
-		for (TheTree::pre_order_iterator i = thetree.begin(node);
-				i != thetree.end(node); i++) {
-			int h = i->widget->Height();
-			shrink += h < 0 ? 1 : h;
-			delete i->widget;
-		}
+	for (TheTree::pre_order_iterator i = thetree.begin(node);
+			i != thetree.end(node); i++) {
+		int h = i->widget->Height();
+		shrink += h < 0 ? 1 : h;
+		delete i->widget;
+	}
 
 	if (node->widget)
 		delete node->widget;
-	thetree.erase(node);
 
+	thetree.erase(node);
 	SetScrollHeight(GetScrollHeight() - shrink);
+	signal_redraw(*this);
 }
 
 void TreeView::DeleteChildren(const NodeReference node, bool keepchildren)
 {
-	for (SiblingIterator i = node.begin(); i != node.end(); i++)
+	SiblingIterator i;
+	while ((i = node.begin()) != node.end())
 		DeleteNode(i, keepchildren);
 }
 
@@ -372,6 +383,16 @@ void TreeView::AddWidget(Widget& widget, int x, int y)
 	ScrollPane::AddWidget(widget, x, y);
 }
 
+void TreeView::RemoveWidget(Widget& widget)
+{
+	ScrollPane::RemoveWidget(widget);
+}
+
+void TreeView::Clear()
+{
+	ScrollPane::Clear();
+}
+
 int TreeView::DrawNode(SiblingIterator node, int top)
 {
 	int height = 0, j = top, oldh, depthoffset;
@@ -390,16 +411,21 @@ int TreeView::DrawNode(SiblingIterator node, int top)
 		height += node->widget->Height();
 	}
 
-	if (node->open) {
+	if (node->open && IsNodeOpenable(node)) {
 		int attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "treeview", "line");
 		area->attron(attrs);
-		if (thetree.number_of_children(node) > 0) {
-			for (j = top + 1; j < top + height; j++)
-				area->mvaddstring(depthoffset, j, linestyle.V());
-		}
+		for (j = top + 1; j < top + height; j++)
+			area->mvaddstring(depthoffset, j, linestyle.V());
 
-		SiblingIterator last = --node.end();
-		for (i = node.begin(); i != node.end(); i++) {
+		/* Note: it would be better to start from end towards begin but for
+		 * some reason it doesn't seem to work. */
+		SiblingIterator last = node.begin();
+		for (i = node.begin(); i != node.end(); i++)
+			if (i->widget && i->widget->Height() && i->widget->IsVisible())
+				last = i;
+		SiblingIterator end = last;
+		end++;
+		for (i = node.begin(); i != end; i++) {
 			if (i != last)
 				area->mvaddstring(depthoffset, top + height, linestyle.VRight());
 			else
@@ -407,7 +433,7 @@ int TreeView::DrawNode(SiblingIterator node, int top)
 
 			area->mvaddstring(depthoffset + 1, top + height, linestyle.H());
 
-			if (i->style == STYLE_NORMAL && thetree.number_of_children(i) > 0) {
+			if (i->style == STYLE_NORMAL && IsNodeOpenable(i)) {
 				area->mvaddstring(depthoffset + 2, top + height, "[");
 				area->mvaddstring(depthoffset + 3, top + height, i->open ? "-" : "+");
 				area->mvaddstring(depthoffset + 4, top + height, "]");
@@ -457,16 +483,51 @@ TreeView::TreeNode TreeView::AddNodeInit(Widget& widget)
 
 void TreeView::AddNodeFinalize(NodeReference& iter)
 {
-	if (!focus_node->widget) {
-		focus_node = iter;
-		iter->widget->GrabFocus();
-	}
+	Widget *w = iter->widget;
 
-	iter->sig_redraw = iter->widget->signal_redraw.connect(sigc::mem_fun(this, &TreeView::OnChildRedraw));
-	iter->sig_moveresize = iter->widget->signal_moveresize.connect(sigc::mem_fun(this, &TreeView::OnChildMoveResize));
-	iter->sig_focus = iter->widget->signal_focus.connect(sigc::mem_fun(this, &TreeView::OnChildFocus));
+	Window *win = GetWindow();
+	if (win && !win->GetFocusWidget())
+		w->GrabFocus();
+
+	iter->sig_redraw = w->signal_redraw.connect(sigc::mem_fun(this,
+				&TreeView::OnChildRedraw));
+	iter->sig_moveresize = w->signal_moveresize.connect(sigc::mem_fun(this,
+					&TreeView::OnChildMoveResize));
+	iter->sig_visible = w->signal_visible.connect(sigc::mem_fun(this,
+					&TreeView::OnChildVisible));
 
 	signal_redraw(*this);
+}
+
+TreeView::NodeReference TreeView::FindNode(const Widget& child) const
+{
+	/// @todo Speed up this algorithm.
+	TheTree::pre_order_iterator i;
+	for (i = thetree.begin(); i != thetree.end(); i++)
+		if (i->widget == &child)
+			break;
+	g_assert(i != thetree.end());
+	return i;
+}
+
+bool TreeView::IsNodeOpenable(const SiblingIterator& node) const
+{
+	for (SiblingIterator i = node.begin(); i != node.end(); i++)
+		if (i->widget && i->widget->Height() && i->widget->IsVisible())
+			return true;
+	return false;
+}
+
+bool TreeView::IsNodeVisible(const NodeReference& node) const
+{
+	// node is visible if all predecessors are visible
+	NodeReference act = node;
+	while (act != thetree.begin()) {
+		if (!act->widget->IsVisible())
+			return false;
+		act = thetree.parent(act);
+	}
+	return true;
 }
 
 void TreeView::OnChildRedraw(Widget& widget)
@@ -490,11 +551,18 @@ void TreeView::OnChildMoveResize(Widget& widget, Rect &oldsize, Rect &newsize)
 		signal_redraw(*this);
 }
 
-void TreeView::OnChildFocus(Widget& widget, bool focus)
+void TreeView::OnChildVisible(Widget& widget, bool visible)
 {
-	// only adjust scroll position if the widget got focus
-	if (focus)
-		MakeVisible(widget.Left(), widget.Top());
+	if (!IsNodeVisible(focus_node))
+		MoveFocus(Container::FocusNext);
+	else if (visible) {
+		Window *win = GetWindow();
+		if (win && !win->GetFocusWidget()) {
+			/* The widget is now visible and there is no focus widget, try to
+			 * grab it. */
+			widget.GrabFocus();
+		}
+	}
 }
 
 void TreeView::ActionCollapse()

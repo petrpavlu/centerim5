@@ -29,22 +29,22 @@
 #include "Panel.h"
 #include "CppConsUI.h"
 
-/** Window class is the class implementing the root node of the Widget chain defined by 
+/** Window class is the class implementing the root node of the Widget chain defined by
  *  Widget::parent.
  *
- * It handles the drawing of it's pad and subpads of it's children to a 
+ * It handles the drawing of it's pad and subpads of it's children to a
  * @ref realwindow "real window".
- * 
- * @todo I have the following idea about how to change the implementation of Window. 
+ *
+ * @todo I have the following idea about how to change the implementation of Window.
  *  First, I think it's the WindowManager's job to create the "realwindow" for this
- *  window. Also, give instructions where on this "realwindow" to copy the pad of 
- *  the Window. This way, we keep the Widget as a pad and not as a window. 
- *  Also, the border should be handled also by the WindowManager, directly on the 
+ *  window. Also, give instructions where on this "realwindow" to copy the pad of
+ *  the Window. This way, we keep the Widget as a pad and not as a window.
+ *  Also, the border should be handled also by the WindowManager, directly on the
  *  "realwindow". However, it's Window's job to specify if it wants a border and what
  *  kind of border.
  * @todo Make the difference between the pad dimensions and the window dimensions clearer.
- *  E.g. the Move, Resize, etc are referring to the window's dimensions and not pad's 
- *  dimensions. Are those the same ? (don't mind the border) Can a window be larger than 
+ *  E.g. the Move, Resize, etc are referring to the window's dimensions and not pad's
+ *  dimensions. Are those the same ? (don't mind the border) Can a window be larger than
  *  its physical window ?
  */
 class Window
@@ -53,33 +53,35 @@ class Window
 	public:
 		Window(int x, int y, int w, int h, LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~Window();
-	
-		virtual void Close();
+
+		// Widget
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
 		virtual void MoveResizeRect(const Rect &rect)
 			{ MoveResize(rect.x, rect.y, rect.width, rect.height); }
-		virtual void UpdateArea();
+		virtual void Draw();
+		virtual Window *GetWindow();
+		/// @todo override IsVisible() method
 
-		virtual void Draw(void);
+		// Container
 		virtual bool SetFocusChild(Widget& child);
+		virtual bool IsWidgetVisible(const Widget& widget) const;
+		virtual Curses::Window *GetSubPad(const Widget &child, int begin_x,
+				int begin_y, int ncols, int nlines);
 
-		virtual int Left() { return win_x; }
-		virtual int Top() { return win_y; }
-		virtual int Width() { return win_w; }
-		virtual int Height() { return win_h; }
+		virtual int Left() const { return win_x; }
+		virtual int Top() const { return win_y; }
+		virtual int Width() const { return win_w; }
+		virtual int Height() const { return win_h; }
 
 		virtual void Show();
 		virtual void Hide();
-	
+		virtual void Close();
+
 		/** this function is called when the screen is resized */
 		virtual void ScreenResized();
 
 		void SetBorderStyle(LineStyle::Type ltype);
-		LineStyle::Type GetBorderStyle();
-
-		/** Returns a subpad of current widget with given coordinates.
-		 */
-		virtual Curses::Window *GetSubPad(const Widget &child, int begin_x, int begin_y, int ncols, int nlines);
+		LineStyle::Type GetBorderStyle() const;
 
 		sigc::signal<void, Window&> signal_close;
 		//sigc::signal<void, Window*> signal_show;
@@ -94,25 +96,21 @@ class Window
 		/** the `real' window for this window */
 		Curses::Window *realwindow;
 
-		/** @todo not used */
-		FocusChain focus_chain;
-
 		Panel *panel;
 
+		virtual void UpdateArea();
+		virtual void MakeRealWindow();
+
 	private:
-		Window(void);
 		Window(const Window&);
 		Window& operator=(const Window&);
 
 		virtual void ActionClose();
 
-		void MakeRealWindow(void);
-	
 		/** it handles the automatic registration of defined keys */
 		DECLARE_SIG_REGISTERKEYS();
 		static bool RegisterKeys();
 		void DeclareBindables();
-	
 };
 
 #endif /* __WINDOW_H__ */

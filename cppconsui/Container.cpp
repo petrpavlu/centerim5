@@ -30,6 +30,7 @@
 
 #include "ConsuiCurses.h"
 #include "Keys.h"
+#include "Window.h"
 
 #include <algorithm>
 #include "gettext.h"
@@ -41,15 +42,10 @@
  * container.
  * */
 
-/** @todo when adding/removing child widgets
- * connect to signals
- * this also means making the children vector
- * private (protected?>
- */
-
 Container::Container(int w, int h)
 : Widget(w, h)
 , focus_cycle_scope(FocusCycleGlobal)
+, focus_child(NULL)
 {
 	DeclareBindables();
 }
@@ -104,21 +100,12 @@ bool Container::RegisterKeys()
 			Keys::SymbolTermKey(TERMKEY_SYM_DOWN));
 	return true;
 }
-	
-void Container::UpdateAreas()
-{
-	Children::iterator i;
-
-	for (i = children.begin(); i != children.end(); i++)
-		i->widget->UpdateArea();
-}
 
 void Container::MoveResize(int newx, int newy, int neww, int newh)
 {
 	Widget::MoveResize(newx, newy, neww, newh);
 
-	for (Children::iterator i = children.begin(); i != children.end(); i++)
-		i->widget->MoveResize();
+	UpdateAreas();
 }
 
 void Container::Draw()
@@ -130,20 +117,52 @@ void Container::Draw()
 			i->widget->Draw();
 }
 
+Widget *Container::GetFocusWidget()
+{
+	if (focus_child)
+		return focus_child->GetFocusWidget();
+	return NULL;
+}
+
+void Container::CleanFocus()
+{
+	if (!focus_child) {
+		/* Apparently there is no widget with focus because the chain ends
+		 * here. */
+		return;
+	}
+
+	// first propagate focus stealing to the widget with focus
+	focus_child->CleanFocus();
+	focus_child = NULL;
+	ClearInputChild();
+}
+
+void Container::RestoreFocus()
+{
+	if (focus_child)
+		focus_child->RestoreFocus();
+}
+
 void Container::AddWidget(Widget& widget, int x, int y)
 {
 	Child child;
 
 	widget.MoveResize(x, y, widget.Width(), widget.Height());
 	widget.SetParent(*this);
-	/** @todo also other widget signals. maybe a descendant class would like
-	 *  to do somethings. Eg a ListBox wants to undo move events.
+	/**
+	 * @todo Also other widget signals. Maybe a descendant class would like to
+	 * do somethings. Eg a ListBox wants to undo move events.
 	 */
-	child.sig_redraw = widget.signal_redraw.connect(sigc::mem_fun(this, &Container::OnChildRedraw));
+	child.sig_redraw = widget.signal_redraw.connect(sigc::mem_fun(this,
+				&Container::OnChildRedraw));
+	child.sig_visible = widget.signal_visible.connect(sigc::mem_fun(this,
+				&Container::OnChildVisible));
 	child.widget = &widget;
 	children.push_back(child);
 
-	if (!focus_child)
+	Window *win = GetWindow();
+	if (win && !win->GetFocusWidget())
 		widget.GrabFocus();
 }
 
@@ -155,31 +174,41 @@ void Container::RemoveWidget(Widget& widget)
 		if (i->widget == &widget)
 			break;
 
-	if (i == children.end())
-		return; /// @todo a warning also?
+	g_assert(i != children.end());
 
-	MoveFocus(FocusNext);
+	// hide the widget first so focus gets moved if necessary
+	i->widget->SetVisibility(false);
 
 	i->sig_redraw.disconnect();
+	i->sig_visible.disconnect();
 	children.erase(i);
 }
 
-void Container::OnChildRedraw(Widget& widget)
+void Container::Clear()
 {
-	signal_redraw(*this);
+	for (Children::iterator i = children.begin(); i != children.end(); i++)
+		delete i->widget;
+	children.clear();
 }
 
-void Container::Clear(void)
+bool Container::IsWidgetVisible(const Widget& widget) const
 {
-	Children::iterator i;
-	Widget *widget;
+	if (!parent || !visible)
+		return false;
 
-	while((i = children.begin()) != children.end()) {
-		widget = (*i).widget;
-		//TODO should we do this???? (line below)
-		delete widget;
-		children.erase(i);
-	}
+	return parent->IsWidgetVisible(*this);
+}
+
+bool Container::SetFocusChild(Widget& child)
+{
+	// focus cannot be set for widget without a parent
+	if (!parent || !visible)
+		return false;
+
+	bool res = parent->SetFocusChild(*this);
+	focus_child = &child;
+	SetInputChild(child);
+	return res;
 }
 
 void Container::GetFocusChain(FocusChain& focus_chain,
@@ -189,12 +218,10 @@ void Container::GetFocusChain(FocusChain& focus_chain,
 		Widget *widget = i->widget;
 		Container *container = dynamic_cast<Container *>(widget);
 
-		FocusChain::pre_order_iterator iter;
-		if (widget->CanFocus() && widget->IsVisible())
-			iter = focus_chain.append_child(parent, widget);
-		else if (container) {
+		if (container && container->IsVisible()) {
 			// the widget is a container so add its widgets as well
-			iter = focus_chain.append_child(parent, NULL);
+			FocusChain::pre_order_iterator iter
+				= focus_chain.append_child(parent, NULL);
 			container->GetFocusChain(focus_chain, iter);
 
 			/* If this is not a focusable widget and it has no focusable
@@ -202,150 +229,139 @@ void Container::GetFocusChain(FocusChain& focus_chain,
 			if (!focus_chain.number_of_children(iter))
 				focus_chain.erase(iter);
 		}
+		else if ((widget->CanFocus() && widget->IsVisible())
+				|| widget == focus_child) {
+			// widget can be focused or is focused already
+			focus_chain.append_child(parent, widget);
+		}
 	}
 }
 
 void Container::MoveFocus(FocusDirection direction)
 {
-	/* Make sure we always start at the root
-	 * of the widget tree. 
-	 * @todo Should we make sure of this ? If we have focus and the focuscycle is Local
-	 *  then I don't see why we should start at the root. If we don't have focus, how come 
-	 *  that we request a move of focus ? Shouldn't it return just false ?
-	 *  Having focus and focuscycle being Global seems to be the only resonable condition 
-	 *  to move to the parent
+	/**
+	 * @todo Don't move up if focus cycle is local.
 	 */
-	if (parent != this) {
-		Container *container;
-
-		if ((container = dynamic_cast<Container*>(parent))) {
-			container->MoveFocus(direction);
-			return;
-		} else {
-			/** @todo warning about custom container class??
-			 * what to do now? perhaps move this function
-			 * to the widget class?
-			 */
-		}
+	/* Make sure we always start at the root of the widget tree, things are
+	 * a bit easier then. */
+	if (parent) {
+		parent->MoveFocus(direction);
+		return;
 	}
 
 	FocusChain focus_chain(NULL);
-	FocusChain::pre_order_iterator iter;
-	FocusChain::pre_order_iterator focus_root = focus_chain.begin();
-	//bool (*cmp)(Widget*, Widget*) = NULL;
-	Widget *focus_widget;
-	const Container *container;
 
 	GetFocusChain(focus_chain, focus_chain.begin());
+	FocusChain::pre_order_iterator iter = focus_chain.begin();
+	Widget *focus_widget = GetFocusWidget();
 
-	/** @todo implement focus chain sorting functions
-	switch (direction) {
-		* Order by the focus_order property of the widget. *
-		case FocusNext:
-		case FocusPrevious:
-			cmp = Container::FocusChainSortFocusOrder;
-			break;
-		case FocusDown:
-		case FocusUp:
-			cmp = Container::FocusChainSortVertical;
-			break;
-		case FocusRight:
-		case FocusLeft:
-			cmp = Container::FocusChainSortHorizontal;
-			break;
-		default:
-			cmp = Container::FocusChainSortFocusOrder;
-			break;
+	if (focus_widget) {
+		iter = std::find(focus_chain.begin(), focus_chain.end(), focus_widget);
+
+		// we have a focused widget but we couldn't find it
+		g_assert(iter != focus_chain.end());
+
+		Widget *widget = *iter;
+		Container *parent = widget->GetParent();
+		if (!widget->IsVisible() || !parent->IsWidgetVisible(*widget)) {
+			/* Currently focused widget is no longer visible, MoveFocus was
+			 * called to fix it. */
+
+			// try to change focus locally first
+			FocusChain::pre_order_iterator parent_iter
+				= focus_chain.parent(iter);
+			iter = focus_chain.erase(iter);
+			FocusChain::pre_order_iterator i = iter;
+			while (i != parent_iter.end()) {
+				if (*i)
+					break;
+				i++;
+			}
+			if (i == parent_iter.end()) {
+				for (i = parent_iter.begin(); i != iter; i++) {
+					if (*i)
+						break;
+				}
+			}
+			if (i != parent_iter.end() && (*i)) {
+				// local focus change was sucessful
+				(*i)->GrabFocus();
+				return;
+			}
+
+			/* Focus widget couldn't be changed in local scope, give focus to
+			 * any widget. */
+			CleanFocus();
+			focus_widget = NULL;
+		}
 	}
 
-	focus_chain.sort(focus_chain.begin(), focus_chain.end(), cmp);
-	*/
-
-	focus_widget = GetFocusWidget();
 	if (!focus_widget) {
-		/* there is no node assigned to receive focus so give focus
-		 * to the first widget in the list (if there is a widget
-		 * which accepts focus).
-		 * */
-		for (iter = focus_chain.begin(); iter != focus_chain.end(); iter++)
-			if (*iter) break;
-		
-		if (iter != focus_chain.end()){
-			(*iter)->GrabFocus();
-		} else {
-			/* No children, so there is nothing to receive
-			 * focus.
-			 * */
+		/* There is no node assigned to receive focus so give focus to the
+		 * first widget. */
+		FocusChain::pre_order_iterator i = iter;
+		while (i != focus_chain.end()) {
+			if (*i)
+				break;
+			i++;
+		}
+		if (i == focus_chain.end()) {
+			for (i = focus_chain.begin(); i != iter; i++) {
+				if (*i)
+					break;
+			}
 		}
 
+		if (i != focus_chain.end() && (*i))
+			(*i)->GrabFocus();
+
 		return;
 	}
 
-	iter = std::find(focus_chain.begin(), focus_chain.end(), focus_widget);
+	Container *container = focus_widget->GetParent();
+	FocusChain::pre_order_iterator cycle_begin, cycle_end, parent_iter;
 
-	if (iter == focus_chain.end()) {
-		/* We have a focussed widget but we couldn't find it. */
-		return;
-	}
-
-	container = dynamic_cast<const Container*>(focus_widget->GetParent());
-
-	FocusChain::iterator cycle_root, cycle_begin, cycle_end, cycle_iter;
-
-	/* Find the correct widget to focus. */
+	// find the correct widget to focus
 	switch (direction) {
 		case FocusPrevious:
 		case FocusUp:
 		case FocusLeft:
-			/* Setup variables for handling different scopes of
-			 * focus cycling.
-			 * */
+			// setup variables for handling different scopes of focus cycling
 			cycle_begin = focus_chain.begin();
 			cycle_end = focus_chain.end();
-			cycle_iter = iter;
+			parent_iter = focus_chain.parent(iter);
 
-			if (container) {
-				FocusChain::sibling_iterator parent_iter, child_iter;
-				child_iter = iter; /* Convert pre_order_iterator to sibling_iterator */
-				parent_iter = focus_chain.parent(child_iter);
+			switch (container->GetFocusCycle()) {
+				case FocusCycleLocal:
+					/* Local focus cycling is allowed (cycling amongs all
+					 * widgets of a parent container). */
+					cycle_begin = parent_iter.begin();
+					cycle_end = parent_iter.end();
+					break;
+				case FocusCycleNone:
+					/* If no focus cycling is allowed, stop if the widget with
+					 * focus is a first/last child. */
+					if (iter == parent_iter.begin())
+						return;
 
-				switch (container->GetFocusCycle()) {
-					case FocusCycleLocal:
-						/* Local focus cycling is allowed (cycling
-						 * within focused widgets parent container).
-						 * */
-						cycle_begin = parent_iter.begin();
-						cycle_end = parent_iter.end();
-						cycle_iter = child_iter;
-
-						break;
-					case FocusCycleNone:
-						/* If no focus cycling is allowed, stop if the widget
-						 * with focus is a first/last child.
-						 * */
-						if (child_iter == parent_iter.begin())
-							return;
-
-						/* If not a first/last child, then handle as
-						 * the default case.
-						 * */
-					default:
-						/* Global focus cycling is allowed (cycling
-						 * amongst all widgets in a window).
-						 * */
-						break;
-				}
+					/* If not a first/last child, then handle as the default
+					 * case. */
+				default:
+					/* Global focus cycling is allowed (cycling amongst all
+					 * widgets in a window). */
+					break;
 			}
 
-			/* Finally, find the next widget which will get focus. */
+			// finally, find the next widget which will get the focus
 			do {
-				if (cycle_iter == cycle_begin) {
-					cycle_iter = cycle_end;
-					cycle_iter--;
-				} else {
-					cycle_iter--;
+				if (iter == cycle_begin) {
+					iter = cycle_end;
+					iter--;
 				}
-			} while ((*cycle_iter) == NULL);
+				else {
+					iter--;
+				}
+			} while (!*iter);
 
 			break;
 		case FocusNext:
@@ -354,49 +370,45 @@ void Container::MoveFocus(FocusDirection direction)
 		default:
 			cycle_begin = focus_chain.begin();
 			cycle_end = focus_chain.end();
-			cycle_iter = iter;
+			parent_iter = focus_chain.parent(iter);
 
-			if (container) {
-				FocusChain::sibling_iterator parent_iter, child_iter;
-				child_iter = iter;
-				parent_iter = focus_chain.parent(child_iter);
+			switch (container->GetFocusCycle()) {
+				case FocusCycleLocal:
+					cycle_begin = parent_iter.begin();
+					cycle_end = parent_iter.end();
+					break;
+				case FocusCycleNone:
+					if (iter == --parent_iter.end())
+						return;
 
-				switch (container->GetFocusCycle()) {
-					case FocusCycleLocal:
-						cycle_begin = parent_iter.begin();
-						cycle_end = parent_iter.end();
-						cycle_iter = child_iter;
-
-						break;
-					case FocusCycleNone:
-						if (child_iter == --parent_iter.end())
-							return;
-
-					default:
-						break;
-				}
+				default:
+					break;
 			}
 
-			/* Finally, find the next widget which will get focus. */
+			// finally, find the next widget which will get focus
 			do {
-				cycle_iter++;
-				if (cycle_iter == cycle_end)
-					cycle_iter = cycle_begin;
-			} while ((*cycle_iter) == NULL);
+				iter++;
+				if (iter == cycle_end)
+					iter = cycle_begin;
+			} while (!*iter);
 
 			break;
 	}
 
 	/* Make sure the widget is valid and the let it grab focus. */
-	if ((*cycle_iter) != NULL) {
-		(*cycle_iter)->GrabFocus();
+	if (*iter) {
+		(*iter)->GrabFocus();
 	}
 }
 
 void Container::SetActive(int i)
 {
-	g_assert(i >= 0);
-	g_assert(i < (int) children.size());
+	if (i < 0 || (int) children.size() <= i) {
+		if (children.size())
+			i = 0;
+		else
+			return;
+	}
 
 	children[i].widget->GrabFocus();
 }
@@ -408,4 +420,53 @@ int Container::GetActive() const
 			return j - children.begin();
 
 	return -1;
+}
+
+Curses::Window *Container::GetSubPad(const Widget& child, int begin_x, int begin_y, int ncols, int nlines)
+{
+	if (!area)
+		return NULL;
+
+	int realw = area->getmaxx();
+	int realh = area->getmaxy();
+
+	/* Extend requested subpad to whole parent area or shrink requested area
+	 * if necessary. */
+	if (nlines < 0 || nlines > realh - begin_y)
+		nlines = realh - begin_y;
+
+	if (ncols < 0 || ncols > realw - begin_x)
+		ncols = realw - begin_x;
+
+	return area->subpad(begin_x, begin_y, ncols, nlines);
+}
+
+void Container::UpdateAreas()
+{
+	Children::iterator i;
+
+	for (i = children.begin(); i != children.end(); i++)
+		i->widget->UpdateArea();
+}
+
+void Container::OnChildRedraw(Widget& widget)
+{
+	signal_redraw(*this);
+}
+
+void Container::OnChildVisible(Widget& widget, bool visible)
+{
+	if (!visible && widget.HasFocus()) {
+		// the widget was hiden so move the focus
+		MoveFocus(Container::FocusNext);
+		return;
+	}
+	else if (visible) {
+		Window *win = GetWindow();
+		if (win && !win->GetFocusWidget()) {
+			/* The widget is now visible and there is no focus widget, try to
+			 * grab it. */
+			widget.GrabFocus();
+		}
+	}
 }

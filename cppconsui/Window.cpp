@@ -79,22 +79,6 @@ bool Window::RegisterKeys()
 	return true;
 }
 
-void Window::Close()
-{
-	COREMANAGER->RemoveWindow(*this);
-	delete this;
-}
-
-void Window::ActionClose()
-{
-	signal_close(*this);
-	Close();
-}
-
-/* NOTE
- * subclasses should do something sensible with the container
- * widgets when resizing a window, see TextWindow for example
- * */
 void Window::MoveResize(int newx, int newy, int neww, int newh)
 {
 	if (newx == win_x && newy == win_y && neww == win_w && newh == win_h)
@@ -105,18 +89,119 @@ void Window::MoveResize(int newx, int newy, int neww, int newh)
 	win_w = neww;
 	win_h = newh;
 
+	// TODO
 	if (win_w < 1) win_w = 1;
 	if (win_h < 1) win_h = 1;
 
 	MakeRealWindow();
 	UpdateArea();
 
-	// @todo is this a correct place where to do this?
 	panel->MoveResize(0, 0, win_w, win_h);
 
 	Container::MoveResize(1, 1, win_w - 2, win_h - 2);
+}
 
-	signal_redraw(*this);
+void Window::Draw()
+{
+	if (!area || !realwindow)
+		return;
+
+	Container::Draw();
+
+	/* Copy the virtual window to a window, then display it
+	 * on screen. */
+	area->copyto(realwindow, copy_x, copy_y, 0, 0, copy_w, copy_h, 0);
+
+	// update virtual ncurses screen
+	realwindow->touch();
+	realwindow->noutrefresh();
+}
+
+Window *Window::GetWindow()
+{
+	return this;
+}
+
+bool Window::SetFocusChild(Widget& child)
+{
+	if (focus_child) {
+		/* The currently focused widget is in a different branch of the widget
+		 * tree, so unfocus that widget first.*/
+		focus_child->CleanFocus();
+	}
+
+	focus_child = &child;
+	SetInputChild(child);
+
+	if (COREMANAGER->HasWindow(*this) && COREMANAGER->GetTopWindow() != this)
+		return false;
+
+	return true;
+}
+
+bool Window::IsWidgetVisible(const Widget& child) const
+{
+	/// @todo Return false if this isn't a top window.
+	return true;
+}
+
+Curses::Window *Window::GetSubPad(const Widget &child, int begin_x, int begin_y, int ncols, int nlines)
+{
+	if (!area)
+		return NULL;
+
+	// handle panel child specially
+	if (&child == panel)
+		return area->subpad(begin_x, begin_y, ncols, nlines);
+
+	int realw = area->getmaxx() - 2;
+	int realh = area->getmaxy() - 2;
+
+	/* Extend requested subpad to whole panel area or shrink requested area if
+	 * necessary. */
+	if (nlines < 0 || nlines > realh - begin_y)
+		nlines = realh - begin_y;
+
+	if (ncols < 0 || ncols > realw - begin_x)
+		ncols = realw - begin_x;
+
+	// add `+1' offset to normal childs so they can not overwrite the panel
+	return area->subpad(begin_x + 1, begin_y + 1, ncols, nlines);
+}
+
+void Window::Show()
+{
+	//TODO emit signal to show window
+	//(while keeping stacking order)
+	COREMANAGER->AddWindow(*this);
+}
+
+void Window::Hide()
+{
+	//TODO emit signal to hide window
+	//(while keeping stacking order)
+	COREMANAGER->RemoveWindow(*this);
+}
+
+void Window::Close()
+{
+	COREMANAGER->RemoveWindow(*this);
+	delete this;
+}
+
+void Window::ScreenResized()
+{
+	// TODO: handle resize/reposition of child widgets/windows
+}
+
+void Window::SetBorderStyle(LineStyle::Type ltype)
+{
+	panel->SetBorderStyle(ltype);
+}
+
+LineStyle::Type Window::GetBorderStyle() const
+{
+	return panel->GetBorderStyle();
 }
 
 void Window::UpdateArea()
@@ -124,6 +209,7 @@ void Window::UpdateArea()
 	if (area)
 		delete area;
 	area = Curses::Window::newpad(win_w, win_h);
+	signal_redraw(*this);
 }
 
 /* create the `real' window (not a pad) and make sure its
@@ -153,91 +239,8 @@ void Window::MakeRealWindow(void)
 	realwindow = Curses::Window::newwin(left, top, right - left, bottom - top);
 }
 
-void Window::Draw()
+void Window::ActionClose()
 {
-	if (!area || !realwindow)
-		return;
-
-	Container::Draw();
-
-	/* Copy the virtual window to a window, then display it
-	 * on screen. */
-	area->copyto(realwindow, copy_x, copy_y, 0, 0, copy_w, copy_h, 0);
-
-	// update virtual ncurses screen
-	realwindow->touch();
-	realwindow->noutrefresh();
-}
-
-bool Window::SetFocusChild(Widget& child)
-{
-	if (focus_child == &child)
-		/* The focus child is already correct. */
-		return true;
-
-	if (focus_child != NULL) {
-		/* The currently focussed widget is in a different branch
-		 * of the widget tree, so unfocus that widget first.
-		 * */
-		if (!focus_child->StealFocus())
-			return false;
-	}
-
-	/// @todo window should try to become topmost.
-	focus_child = &child;
-	SetInputChild(child);
-	return true;
-}
-
-void Window::Show()
-{
-	//TODO emit signal to show window
-	//(while keeping stacking order)
-	COREMANAGER->AddWindow(*this);
-}
-
-void Window::Hide()
-{
-	//TODO emit signal to hide window
-	//(while keeping stacking order)
-	COREMANAGER->RemoveWindow(*this);
-}
-
-void Window::ScreenResized()
-{
-	// TODO: handle resize/reposition of child widgets/windows
-}
-
-void Window::SetBorderStyle(LineStyle::Type ltype)
-{
-	panel->SetBorderStyle(ltype);
-}
-
-LineStyle::Type Window::GetBorderStyle()
-{
-	return panel->GetBorderStyle();
-}
-
-Curses::Window *Window::GetSubPad(const Widget &child, int begin_x, int begin_y, int ncols, int nlines)
-{
-	if (!area)
-		return NULL;
-
-	// handle panel child specially
-	if (&child == panel)
-		return area->subpad(begin_x, begin_y, ncols, nlines);
-
-	int realw = area->getmaxx() - 2;
-	int realh = area->getmaxy() - 2;
-
-	/* Extend requested subpad to whole panel area or shrink requested area if
-	 * necessary. */
-	if (nlines < 0 || nlines > realh - begin_y)
-		nlines = realh - begin_y;
-
-	if (ncols < 0 || ncols > realw - begin_x)
-		ncols = realw - begin_x;
-
-	// add `+1' offset to normal childs so they can not overwrite the panel
-	return area->subpad(begin_x + 1, begin_y + 1, ncols, nlines);
+	signal_close(*this);
+	Close();
 }

@@ -59,10 +59,11 @@ class CoreManager
 
 		void AddWindow(Window& window);
 		void RemoveWindow(Window& window);
-		bool HasWindow(Window& window);
+		bool HasWindow(Window& window) const;
+		Window *GetTopWindow();
 
-		int GetScreenWidth() { return screen_width; }
-		int GetScreenHeight() { return screen_height; }
+		int GetScreenWidth() const { return screen_width; }
+		int GetScreenHeight() const { return screen_height; }
 
 		void EnableResizing();
 		void DisableResizing();

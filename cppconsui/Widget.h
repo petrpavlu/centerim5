@@ -35,130 +35,99 @@
 
 #include <sigc++/sigc++.h>
 
+class Container;
+class Window;
+
 class Widget
 : public sigc::trackable
 , public InputProcessor
 {
 	public:
-		typedef enum {
-			FocusNext,
-			FocusPrevious,
-			FocusDown,
-			FocusUp,
-			FocusRight,
-			FocusLeft
-		} FocusDirection;
-
-		/** All widgets must have a parent. 
-		 * The test for the root Widget is (parent == this), so the 
-		 * root object should initialize the Widget with *this as the parent.
-		 * @todo use the Point and Rect classes, perhaps implement a Size class 
-		 *   hold width and height variables, to enable easier usage
-		 */
 		Widget(int w, int h);
 		virtual ~Widget();
 
-		/** @todo This method, as well as Resize(), MoveResize() 
-		 * are the methods to be called when the coordinates of the Widget should change.
-		 * they emit the appropriate signals after calling UpdateArea()
+		/**
+		 * Moves and resizes this widget. Emits signal_moveresize.
 		 */
-		virtual void MoveResize(const int newx, const int newy, const int neww, const int newh);
-		virtual void MoveResize();
-
-		/** The @ref area is recreated, the new area should be redrawn.
-		 * It is called whenever the coordinates of the widget change. The caller must ensure the 
-		 * proper signals are emitted.
+		virtual void MoveResize(int newx, int newy, int neww, int newh);
+		/**
+		 * The @ref area is recreated, redraw signal is emitted. It is called
+		 * whenever the coordinates of the widget change.
 		 */
 		virtual void UpdateArea();
-
-		/* The difference between the Draw() and Redraw() functions should be
-		 * clarified.
-		 */
-	
-		/**  The Draw() function does the actual drawing on some (virtual) area
-		 * of the screen. The WindowMananger object calls Draw() on all on-screen
-		 * Windows. This causes all Draw() implementations needed to draw the
-		 * screen to be called.
+		/**
+		 * The Draw() method does the actual drawing on a (virtual) area of
+		 * the screen. The @ref CoreMananager singleton calls Draw() on all
+		 * on-screen Windows. This causes all Draw() implementations needed to
+		 * draw the screen to be called.
 		 */
 		virtual void Draw() = 0;
-		/** Resets the focus child by @ref StealFocus "stealing" the focus 
-		 * from the current chain and also ensures the focus 
-		 * goes also UP the chain to the root widget. (normally a Window)
-		 * 
-		 * @todo It must be always true that if the focus is stolen from the child, then the call
-		 * parent->SetFocusChild(this) always succeeds. (Otherwise, the focus is not set, but stolen from the current widget)
-		 * The child Widget should not be null (perhaps reference ?)
+		/**
+		 * @todo
 		 */
-		virtual bool SetFocusChild(Widget &child);
-		/** It deletes the focus (and input) chain starting from this widget.
-		 * @return true if the focus belonged to this widget's chain and was 
-		 * successfuly removed
+		virtual Window *GetWindow();
+		/**
+		 * Finds the widget that could be the focus widget from the focus
+		 * chain starting with this widget:
 		 */
-		virtual bool StealFocus(void);
-		/** Sets the focus to the FocusWidget (@ref GetFocusWidget)
-		 * @todo if no focus widget exists in the chain, it silently 
-		 * returns with no indication of this
+		virtual Widget *GetFocusWidget();
+		/**
+		 * Deletes the focus (and input) chain starting from this widget.
 		 */
-		void RestoreFocus(void);
-		/** finds the widget that could be the focus widget from the 
-		 * focus chain starting with this widget
+		virtual void CleanFocus();
+		/**
+		 * @todo
 		 */
-		Widget* GetFocusWidget(void);
-		/** Makes this widget the widget that has focus,
-		 * only if the parent window has focus.
-		 * @todo Difference between this and StealFocus() ?
+		virtual void RestoreFocus();
+		/**
+		 * Takes focus from the widget. Used when this window is no longer
+		 * a top window.
 		 */
-		virtual bool GrabFocus(void);
-		/** Takes focus from the widget.
-		 * @todo perhaps find a better name for this one
+		virtual void UngrabFocus();
+		/**
+		 * Makes this widget the widget that has the focus. This operation is
+		 * successful if the widget is visible and all predecessors are
+		 * visible too.
 		 */
-		void UngrabFocus(void);
-		/** Explain a bit the algoritm
-		 */
-		virtual void MoveFocus(FocusDirection direction);
+		virtual bool GrabFocus();
 		
-		/** @todo check if this CanFocus() should be public
-		 * instead of protected
-		 * @todo Drop focus if this widget is focused.
-		 */
 		void SetFocusAbility(bool val) { can_focus = val; }
-		bool CanFocus(void) const { return can_focus; }
+		bool CanFocus() const { return can_focus; }
 
-		bool HasFocus(void) const { return has_focus; }
+		bool HasFocus() const { return has_focus; }
 
-		void SetVisibility(bool visible) { this->visible = visible; }
-		bool IsVisible() { return visible; }
+		void SetVisibility(bool visible);
+		bool IsVisible() const { return visible; };
 
-		void SetParent(Widget& parent);
-		const Widget* GetParent() const { return parent; }
+		void SetParent(Container& parent);
+		Container *GetParent() const { return parent; }
 
 		int Left() const { return xpos; }
 		int Top() const { return ypos; }
 		int X() const { return xpos; }
 		int Y() const { return ypos; }
-		int Width() { return width; }
-		int Height() { return height; }
-
-		/**
-		 * Returns a subpad of current widget with given coordinates.
-		 */
-		virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
-				int begin_y, int ncols, int nlines);
+		int Width() const { return width; }
+		int Height() const { return height; }
 
 		void SetColorScheme(const char *scheme);
 		const char *GetColorScheme();
 
-		/// @todo encapsulate with a function, make sure derived class call Move()/Resize()/Redraw() to emit signal.
-		/// Also check if this is possible at all.
 		sigc::signal<void, Widget&, Rect&, Rect&> signal_moveresize;
 		/**
-		 * Redraw signal is used by a Widget to tell its @ref Container object
-		 * that the Widget has been updated and that it should be redrawn.
-		 * Usually only the @ref Container of a Widget is connected to this
+		 * Redraw signal is used by a widget to tell its @ref Container object
+		 * that the widget has been updated and that it should be redrawn.
+		 * Usually only the @ref Container of a widget is connected to this
 		 * signal.
 		 */
 		sigc::signal<void, Widget&> signal_redraw;
+		/**
+		 * Signal emitted whenever a widget grabs or looses the focus.
+		 */
 		sigc::signal<void, Widget&, bool> signal_focus;
+		/**
+		 * Signal emmited whenever a visible property is changed.
+		 */
+		sigc::signal<void, Widget&, bool> signal_visible;
 
 	protected:
 		/**
@@ -166,17 +135,15 @@ class Widget
 		 * area if parent window is big enough, real width/height can differ.
 		 */
 		int xpos, ypos, width, height;
-
+		/**
+		 * Flag if the widget can grab the focus.
+		 */
 		bool can_focus;
-		/** Flag if the widget has the focus. Only one widget can have the focus in the application.
-		 *  (check if this is a condition)
+		/**
+		 * Flag if the widget has the focus. Only one widget can have the
+		 * focus in the application.
 		 */
 		bool has_focus;
-		/** This defines a chain of focus
-		 * @todo explain the difference between this chain and @ref InputProcessor::inputchild
-		 * Isn't this a duplication of functionality from inputchild ?
-  		 */
-		Widget *focus_child;
 		/**
 		 * Visibility flag.
 		 */
@@ -188,12 +155,14 @@ class Widget
 		/**
 		 * Parent widget.
 		 */
-		Widget *parent;
-
+		Container *parent;
+		/**
+		 * Color scheme.
+		 */
 		char *color_scheme;
 
 	private:
-		Widget(const Widget &);
+		Widget(const Widget&);
 		Widget& operator=(const Widget&);
 };
 

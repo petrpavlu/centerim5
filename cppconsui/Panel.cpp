@@ -81,7 +81,7 @@ void Panel::SetText(const gchar *str)
 	label->SetText(str);
 }
 
-const gchar *Panel::GetText()
+const gchar *Panel::GetText() const
 {
 	return label->GetText();
 }
@@ -92,7 +92,7 @@ void Panel::SetBorderStyle(LineStyle::Type ltype)
 	signal_redraw(*this);
 }
 
-LineStyle::Type Panel::GetBorderStyle()
+LineStyle::Type Panel::GetBorderStyle() const
 {
 	return linestyle.GetStyle();
 }

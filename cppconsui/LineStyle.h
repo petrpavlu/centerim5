@@ -51,30 +51,30 @@ class LineStyle
 		virtual ~LineStyle() {}
 
 		void SetStyle(Type t);
-		Type GetStyle();
+		Type GetStyle() const;
 
-		const gchar *H();
-		const gchar *HBegin();
-		const gchar *HEnd();
-		const gchar *HUp();
-		const gchar *HDown();
-		const gchar *V();
-		const gchar *VBegin();
-		const gchar *VEnd();
-		const gchar *VLeft();
-		const gchar *VRight();
-		const gchar *Cross();
-		const gchar *CornerTL();
-		const gchar *CornerTR();
-		const gchar *CornerBL();
-		const gchar *CornerBR();
+		const gchar *H() const;
+		const gchar *HBegin() const;
+		const gchar *HEnd() const;
+		const gchar *HUp() const;
+		const gchar *HDown() const;
+		const gchar *V() const;
+		const gchar *VBegin() const;
+		const gchar *VEnd() const;
+		const gchar *VLeft() const;
+		const gchar *VRight() const;
+		const gchar *Cross() const;
+		const gchar *CornerTL() const;
+		const gchar *CornerTR() const;
+		const gchar *CornerBL() const;
+		const gchar *CornerBR() const;
 
 	protected:
 		Type type;
 
 	private:
 		bool utf8;
-		LineElements *GetCurrentElems();
+		LineElements *GetCurrentElems() const;
 };
 
 #endif /* __LINESTYLE_H__ */

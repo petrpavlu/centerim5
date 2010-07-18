@@ -57,7 +57,7 @@ class Panel
 		/**
 		 * Returns Label text.
 		 */
-		const gchar *GetText();
+		const gchar *GetText() const;
 
 		/**
 		 * Sets a new border style.
@@ -66,7 +66,7 @@ class Panel
 		/**
 		 * Returns a current border style.
 		 */
-		LineStyle::Type GetBorderStyle();
+		LineStyle::Type GetBorderStyle() const;
 
 	protected:
 		LineStyle linestyle;

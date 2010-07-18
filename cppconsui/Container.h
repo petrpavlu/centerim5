@@ -33,6 +33,7 @@
 
 #include "Widget.h"
 #include "tree.hh"
+
 /** The generic widget container class
  * 
  * It implements @ref MoveFocus "moving focus" in different @ref Widget::FocusDirection "directions".
@@ -43,55 +44,86 @@ class Container
 : public Widget
 {
 	public:
-		/** type to keep a tree of "focusable" widgets as leaves and 
-		 *   Containers as internal nodes
+		/**
+		 * Type to keep a tree of "focusable" widgets as leaves and Containers
+		 * as internal nodes.
 		 */
 		typedef tree<Widget*> FocusChain;
-		typedef enum {
-			FocusCycleNone, ///< the focus doesn't cycle, it ends at the last widget from the focus chain
-			FocusCycleLocal, ///< the focus cycles only 
-			FocusCycleGlobal ///< the focus cycles also through the other containers windows
-		} FocusCycleScope;
+		enum FocusCycleScope {
+			/**
+			 * The focus doesn't cycle, it ends at the last widget from the
+			 * focus chain.
+			 */
+			FocusCycleNone,
+			/**
+			 * The focus cycles only locally.
+			 */
+			FocusCycleLocal,
+			/**
+			 * The focus cycles also through the other containers windows.
+			 */
+			FocusCycleGlobal
+		};
+
+		enum FocusDirection {
+			FocusNext,
+			FocusPrevious,
+			FocusDown,
+			FocusUp,
+			FocusRight,
+			FocusLeft
+		};
 
 		Container(int w, int h);
 		virtual ~Container();
 
-		/** These functions are used to call Widget::UpdateArea of all children when necessary 
-		 * @todo replace these functions by reimplementing the virtual UpdateArea method
-		 * @{
-		 */
-		void UpdateAreas();
+		// Widget
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
 		virtual void Draw();
-		 /** @} */
-		/** Adds the widget to the children list and steals the reference. It means that 
-		 * the widget will get deleted by the Container if not @ref RemoveWidget "removed" 
-		 * before the Container gets deleted.
-		 * @todo should we check if the widget has the current container as parent ? Should this be 
-		 *  mandatory ?
-		 */
-		virtual void AddWidget(Widget &widget, int x, int y);
-		/** Removes the widget from the children list but it doesn't delete the widget.
-		 * The caller must ensure proper deletion of the widget.
-		 */
-		virtual void RemoveWidget(Widget &widget);
-		
-		/** Does the proper cleanup of all the children widgets
-		 */
-		virtual void Clear(void);
+		virtual Widget *GetFocusWidget();
+		virtual void CleanFocus();
+		virtual void RestoreFocus();
 
-		/** The following functions implement the focus cycling between the 
-		 * children widgets.
-		 * @{
+		/**
+		 * Adds a widget to the children list. The Container takes ownership
+		 * of the widget. It means that the widget will get deleted by the
+		 * Container.
 		 */
-		/** It builds the tree of the focus chain starting from this container and puts it into
-		 * the focus_chain tree as a subtree of @ref parent.
+		virtual void AddWidget(Widget& widget, int x, int y);
+		/**
+		 * Removes the widget from the children list but it doesn't delete the
+		 * widget. The caller must ensure proper deletion of the widget.
+		 */
+		virtual void RemoveWidget(Widget& widget);
+		
+		/**
+		 * Removes (and deletes) all children widgets.
+		 */
+		virtual void Clear();
+
+		/**
+		 * Returns true if a widget is visible in current context.
+		 */
+		virtual bool IsWidgetVisible(const Widget& widget) const;
+
+		/**
+		 * Resets the focus child by @ref CleanFocus "stealing" the focus from
+		 * the current chain and also ensures the focus goes also UP the chain
+		 * to the root widget (normally a Window).
+		 */
+		virtual bool SetFocusChild(Widget& child);
+		/**
+		 * Guilds a tree of the focus chain starting from this container and
+		 * puts it into the focus_chain tree as a subtree of @ref parent.
 		 */
 		virtual void GetFocusChain(FocusChain& focus_chain, FocusChain::iterator parent);
 		/** 
 		 * @todo have a return value (to see if focus was moved successfully or not) ?
 		 */
 		virtual void MoveFocus(FocusDirection direction);
+		
+		void SetFocusCycle(FocusCycleScope scope) { focus_cycle_scope = scope; }
+		FocusCycleScope GetFocusCycle() const { return focus_cycle_scope; }
 
 		/**
 		 * Set focused widget.
@@ -102,42 +134,44 @@ class Container
 		 * Returns index of focused widget or -1 if there is not any.
 		 */
 		virtual int GetActive() const;
-		
-		void SetFocusCycle(FocusCycleScope scope) { focus_cycle_scope = scope; }
-		FocusCycleScope GetFocusCycle() const { return focus_cycle_scope; }
-		/** @} */
+
+		/**
+		 * Returns a subpad of current widget with given coordinates.
+		 */
+		virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
+				int begin_y, int ncols, int nlines);
 
 	protected:
-		/** It keeps a child widget, along with the redraw connection
-		 * @todo implement some constructor to easily connect to the widget's redraw signal
-		 * @todo use reference to widget instead of pointer ?
+		/**
+		 * Structure to keep a child widget.
 		 */
 		struct Child {
 			Widget *widget;
 
-			/* signal connection to the widget */
+			// signal connection to the widget
 			sigc::connection sig_redraw;
-			//sigc::connection sig_resize;
-			//sigc::connection sig_focus;
+			sigc::connection sig_visible;
 		};
 		typedef std::vector<Child> Children;
 
 		FocusCycleScope focus_cycle_scope;
 
-		Children::iterator ChildrenBegin(void)
-			{ return children.begin(); }
-		Children::iterator ChildrenEnd(void)
-			{ return children.end(); }
+		/** This defines a chain of focus
+		 * @todo explain the difference between this chain and @ref InputProcessor::inputchild
+		 * Isn't this a duplication of functionality from inputchild ?
+  		 */
+		Widget *focus_child;
+		
+		Children children;
+
+		virtual void UpdateAreas();
 
 	private:
-		Container(void);
 		Container(const Container&);
-
 		Container& operator=(const Container&);
 
 		void OnChildRedraw(Widget& widget);
-		
-		Children children;
+		void OnChildVisible(Widget& widget, bool visible);
 		
 		/** it handles the automatic registration of defined keys */
 		DECLARE_SIG_REGISTERKEYS();

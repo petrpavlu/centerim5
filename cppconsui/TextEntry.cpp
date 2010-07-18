@@ -35,6 +35,7 @@
 
 #include "TextEntry.h"
 
+#include "Container.h"
 #include "Keys.h"
 
 #include <glib.h>
@@ -483,5 +484,5 @@ void TextEntry::ActionToggleOverwrite()
 void TextEntry::ActionActivate()
 {
 	if (parent)
-		parent->MoveFocus(FocusNext);
+		parent->MoveFocus(Container::FocusNext);
 }

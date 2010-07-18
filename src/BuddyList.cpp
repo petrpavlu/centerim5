@@ -89,6 +89,18 @@ void BuddyList::Close()
 {
 }
 
+void BuddyList::MoveResize(int newx, int newy, int neww, int newh)
+{
+	Window::MoveResize(newx, newy, neww, newh);
+
+	treeview->MoveResize(0, 0, neww - 2, newh - 2);
+}
+
+void BuddyList::ScreenResized()
+{
+	MoveResizeRect(CENTERIM->ScreenAreaSize(CenterIM::BuddyListArea));
+}
+
 void BuddyList::new_list(PurpleBuddyList *list)
 {
 	if (buddylist != list)
@@ -99,9 +111,7 @@ void BuddyList::new_node(PurpleBlistNode *node)
 {
 	g_assert(!node->ui_data);
 
-	BuddyListNode *bnode;
-
-	node->ui_data = bnode = BuddyListNode::CreateNode(node);
+	BuddyListNode *bnode = BuddyListNode::CreateNode(node);
 
 	if (bnode) {
 		BuddyListNode *parent = bnode->GetParentNode();
@@ -111,32 +121,24 @@ void BuddyList::new_node(PurpleBlistNode *node)
 		bnode->SetRefNode(nref);
 		bnode->Update();
 
-		if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+		if (PURPLE_BLIST_NODE_IS_CONTACT(node))
 			treeview->SetStyle(nref, TreeView::STYLE_VOID);
-
-			/* The core seems to expect the UI to add the buddies (according
-			 * to finch). */
-			for (node = node->child; node; node = node->next)
-				new_node(node);
-		}
 	}
 }
 
 void BuddyList::update(PurpleBuddyList *list, PurpleBlistNode *node)
 {
+	// not cool, but necessary because libpurple doesn't always behave nice
+	if (!node->ui_data)
+		new_node(node);
+
 	BuddyListNode *bnode = reinterpret_cast<BuddyListNode *>(node->ui_data);
-	g_return_if_fail(bnode);
 
 	// update the node data
 	bnode->Update();
 
-	/* If the node is a buddy, we also have to update the contact this buddy
-	 * belongs to. */
-	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+	if (node->parent)
 		update(list, node->parent);
-		/* TODO Is it possible for a node's parent not to be a contact? If so,
-		 * then this call could use some checks. */
-	}
 }
 
 void BuddyList::remove(PurpleBuddyList *list, PurpleBlistNode *node)
@@ -146,6 +148,9 @@ void BuddyList::remove(PurpleBuddyList *list, PurpleBlistNode *node)
 
 	// TODO check for subnodes (if this is a group for instance)
 	treeview->DeleteNode(bnode->GetRefNode(), false);
+
+	if (node->parent)
+		update(list, node->parent);
 }
 
 void BuddyList::destroy(PurpleBuddyList *list)
@@ -157,18 +162,6 @@ void BuddyList::request_add_buddy(PurpleAccount *account,
 {
 	AddBuddyWindow *bud = new AddBuddyWindow(account, username, group, alias);
 	bud->Show();
-}
-
-void BuddyList::MoveResize(int newx, int newy, int neww, int newh)
-{
-	Window::MoveResize(newx, newy, neww, newh);
-
-	treeview->MoveResize(0, 0, neww - 2, newh - 2);
-}
-
-void BuddyList::ScreenResized()
-{
-	MoveResizeRect(CENTERIM->ScreenAreaSize(CenterIM::BuddyListArea));
 }
 
 BuddyList::AccountsBox::AccountsBox(PurpleAccount *account)
