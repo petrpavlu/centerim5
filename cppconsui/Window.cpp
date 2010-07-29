@@ -117,11 +117,6 @@ void Window::Draw()
 	realwindow->noutrefresh();
 }
 
-Window *Window::GetWindow()
-{
-	return this;
-}
-
 bool Window::SetFocusChild(Widget& child)
 {
 	if (focus_child) {
@@ -141,7 +136,6 @@ bool Window::SetFocusChild(Widget& child)
 
 bool Window::IsWidgetVisible(const Widget& child) const
 {
-	/// @todo Return false if this isn't a top window.
 	return true;
 }
 
@@ -186,6 +180,7 @@ void Window::Hide()
 void Window::Close()
 {
 	COREMANAGER->RemoveWindow(*this);
+
 	delete this;
 }
 

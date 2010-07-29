@@ -83,6 +83,7 @@ class Container
 		virtual Widget *GetFocusWidget();
 		virtual void CleanFocus();
 		virtual void RestoreFocus();
+		virtual void SetParent(Container& parent);
 
 		/**
 		 * Adds a widget to the children list. The Container takes ownership
@@ -150,7 +151,6 @@ class Container
 
 			// signal connection to the widget
 			sigc::connection sig_redraw;
-			sigc::connection sig_visible;
 		};
 		typedef std::vector<Child> Children;
 
@@ -171,7 +171,6 @@ class Container
 		Container& operator=(const Container&);
 
 		void OnChildRedraw(Widget& widget);
-		void OnChildVisible(Widget& widget, bool visible);
 		
 		/** it handles the automatic registration of defined keys */
 		DECLARE_SIG_REGISTERKEYS();

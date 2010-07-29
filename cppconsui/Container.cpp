@@ -52,6 +52,8 @@ Container::Container(int w, int h)
 
 Container::~Container()
 {
+	CleanFocus();
+
 	Clear();
 }
 
@@ -144,6 +146,18 @@ void Container::RestoreFocus()
 		focus_child->RestoreFocus();
 }
 
+void Container::SetParent(Container& parent)
+{
+	Widget::SetParent(parent);
+
+	Widget *focus = GetFocusWidget();
+	if (!GetTopContainer()->GetFocusWidget() && focus) {
+		/* There is no focused widget in a top container but we've got a
+		 * focused widget so link up the chain. */
+		focus->GrabFocus();
+	}
+}
+
 void Container::AddWidget(Widget& widget, int x, int y)
 {
 	Child child;
@@ -156,14 +170,8 @@ void Container::AddWidget(Widget& widget, int x, int y)
 	 */
 	child.sig_redraw = widget.signal_redraw.connect(sigc::mem_fun(this,
 				&Container::OnChildRedraw));
-	child.sig_visible = widget.signal_visible.connect(sigc::mem_fun(this,
-				&Container::OnChildVisible));
 	child.widget = &widget;
 	children.push_back(child);
-
-	Window *win = GetWindow();
-	if (win && !win->GetFocusWidget())
-		widget.GrabFocus();
 }
 
 void Container::RemoveWidget(Widget& widget)
@@ -176,11 +184,7 @@ void Container::RemoveWidget(Widget& widget)
 
 	g_assert(i != children.end());
 
-	// hide the widget first so focus gets moved if necessary
-	i->widget->SetVisibility(false);
-
-	i->sig_redraw.disconnect();
-	i->sig_visible.disconnect();
+	delete i->widget;
 	children.erase(i);
 }
 
@@ -452,21 +456,4 @@ void Container::UpdateAreas()
 void Container::OnChildRedraw(Widget& widget)
 {
 	signal_redraw(*this);
-}
-
-void Container::OnChildVisible(Widget& widget, bool visible)
-{
-	if (!visible && widget.HasFocus()) {
-		// the widget was hiden so move the focus
-		MoveFocus(Container::FocusNext);
-		return;
-	}
-	else if (visible) {
-		Window *win = GetWindow();
-		if (win && !win->GetFocusWidget()) {
-			/* The widget is now visible and there is no focus widget, try to
-			 * grab it. */
-			widget.GrabFocus();
-		}
-	}
 }

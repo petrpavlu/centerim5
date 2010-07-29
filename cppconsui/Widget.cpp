@@ -40,6 +40,8 @@ Widget::Widget(int w, int h)
 
 Widget::~Widget()
 {
+	SetVisibility(false);
+
 	if (area)
 		delete area;
 	if (color_scheme)
@@ -69,13 +71,6 @@ void Widget::UpdateArea()
 		delete area;
 	area = parent->GetSubPad(*this, xpos, ypos, width, height);
 	signal_redraw(*this);
-}
-
-Window *Widget::GetWindow()
-{
-	if (parent)
-		return parent->GetWindow();
-	return NULL;
 }
 
 Widget *Widget::GetFocusWidget()
@@ -129,9 +124,35 @@ void Widget::SetVisibility(bool visible)
 {
 	if (this->visible != visible) {
 		this->visible = visible;
+
+		Container *t = GetTopContainer();
+		if (t) {
+			if (visible) {
+				if (!t->GetFocusWidget()) {
+					// there is no focused widget, try to grab it
+					GrabFocus();
+				}
+			}
+			else {
+				Widget *focus = t->GetFocusWidget();
+				if (focus && !focus->IsVisibleRecursive()) {
+					// focused widget was hidden, move the focus
+					t->MoveFocus(Container::FocusNext);
+				}
+			}
+		}
+
 		signal_visible(*this, visible);
-		// note: parent will take care about losing focus if necessary
+		signal_redraw(*this);
 	}
+}
+
+bool Widget::IsVisibleRecursive() const
+{
+	if (!parent || !visible)
+		return false;
+
+	return parent->IsWidgetVisible(*this);
 }
 
 void Widget::SetParent(Container& parent)
@@ -140,6 +161,12 @@ void Widget::SetParent(Container& parent)
 	g_assert(!this->parent);
 
 	this->parent = &parent;
+
+	if (!GetTopContainer()->GetFocusWidget()) {
+		// there is no focused widget, try to grab it
+		GrabFocus();
+	}
+
 	UpdateArea();
 }
 
@@ -162,4 +189,17 @@ const char *Widget::GetColorScheme()
 		return parent->GetColorScheme();
 
 	return NULL;
+}
+
+Container *Widget::GetTopContainer()
+{
+	Container *c, *top;
+
+	top = NULL;
+	c = parent;
+	while (c) {
+		top = c;
+		c = c->GetParent();
+	}
+	return top;
 }

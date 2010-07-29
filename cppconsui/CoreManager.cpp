@@ -213,11 +213,6 @@ void CoreManager::RemoveWindow(Window& window)
 	i->resize.disconnect();
 	windows.erase(i);
 
-	if (GetInputChild() == &window) {
-		window.CleanFocus();
-		ClearInputChild();
-	}
-
 	FocusWindow();
 	Redraw();
 }
@@ -444,27 +439,20 @@ void CoreManager::WindowRedraw(Widget& widget)
 
 void CoreManager::FocusWindow()
 {
-	Window *win, *focus;
-	InputProcessor *inputchild;
-	Widget *widget = NULL;
-
-	inputchild = GetInputChild();
-
-	focus = dynamic_cast<Window *>(inputchild);
+	Window *focus = dynamic_cast<Window *>(GetInputChild());
 
 	// take the focus from the old window with the focus
 	if (focus) {
-		widget = focus->GetFocusWidget();
+		Widget *widget = focus->GetFocusWidget();
 		if (widget)
 			widget->UngrabFocus();
 		ClearInputChild();
 	}
 
 	// check if there are any windows left
+	Window *win = NULL;
 	if (windows.size())
 		win = windows.back().window;
-	else
-		win = NULL;
 
 	// give the focus to the top window if there is one
 	if (win) {

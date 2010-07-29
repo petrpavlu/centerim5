@@ -59,8 +59,6 @@ class Window
 		virtual void MoveResizeRect(const Rect &rect)
 			{ MoveResize(rect.x, rect.y, rect.width, rect.height); }
 		virtual void Draw();
-		virtual Window *GetWindow();
-		/// @todo override IsVisible() method
 
 		// Container
 		virtual bool SetFocusChild(Widget& child);

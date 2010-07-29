@@ -63,10 +63,6 @@ class Widget
 		 */
 		virtual void Draw() = 0;
 		/**
-		 * @todo
-		 */
-		virtual Window *GetWindow();
-		/**
 		 * Finds the widget that could be the focus widget from the focus
 		 * chain starting with this widget:
 		 */
@@ -98,16 +94,15 @@ class Widget
 
 		void SetVisibility(bool visible);
 		bool IsVisible() const { return visible; };
+		bool IsVisibleRecursive() const;
 
-		void SetParent(Container& parent);
+		virtual void SetParent(Container& parent);
 		Container *GetParent() const { return parent; }
 
-		int Left() const { return xpos; }
-		int Top() const { return ypos; }
-		int X() const { return xpos; }
-		int Y() const { return ypos; }
-		int Width() const { return width; }
-		int Height() const { return height; }
+		virtual int Left() const { return xpos; }
+		virtual int Top() const { return ypos; }
+		virtual int Width() const { return width; }
+		virtual int Height() const { return height; }
 
 		void SetColorScheme(const char *scheme);
 		const char *GetColorScheme();
@@ -160,6 +155,11 @@ class Widget
 		 * Color scheme.
 		 */
 		char *color_scheme;
+
+		/**
+		 * @todo
+		 */
+		virtual Container *GetTopContainer();
 
 	private:
 		Widget(const Widget&);

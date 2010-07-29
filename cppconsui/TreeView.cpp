@@ -469,8 +469,6 @@ TreeView::TreeNode TreeView::AddNodeInit(Widget& widget)
 		new_height += widget.Height();
 	SetScrollHeight(new_height);
 
-	widget.SetParent(*this);
-
 	// construct the new node
 	TreeNode node;
 	node.treeview = this;
@@ -485,16 +483,12 @@ void TreeView::AddNodeFinalize(NodeReference& iter)
 {
 	Widget *w = iter->widget;
 
-	Window *win = GetWindow();
-	if (win && !win->GetFocusWidget())
-		w->GrabFocus();
+	w->SetParent(*this);
 
 	iter->sig_redraw = w->signal_redraw.connect(sigc::mem_fun(this,
 				&TreeView::OnChildRedraw));
 	iter->sig_moveresize = w->signal_moveresize.connect(sigc::mem_fun(this,
 					&TreeView::OnChildMoveResize));
-	iter->sig_visible = w->signal_visible.connect(sigc::mem_fun(this,
-					&TreeView::OnChildVisible));
 
 	signal_redraw(*this);
 }
@@ -549,20 +543,6 @@ void TreeView::OnChildMoveResize(Widget& widget, Rect &oldsize, Rect &newsize)
 	if (oldsize.Height() != newsize.Height()
 			|| oldsize.Width() != newsize.Width())
 		signal_redraw(*this);
-}
-
-void TreeView::OnChildVisible(Widget& widget, bool visible)
-{
-	if (!IsNodeVisible(focus_node))
-		MoveFocus(Container::FocusNext);
-	else if (visible) {
-		Window *win = GetWindow();
-		if (win && !win->GetFocusWidget()) {
-			/* The widget is now visible and there is no focus widget, try to
-			 * grab it. */
-			widget.GrabFocus();
-		}
-	}
 }
 
 void TreeView::ActionCollapse()

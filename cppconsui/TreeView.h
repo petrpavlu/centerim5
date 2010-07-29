@@ -194,7 +194,6 @@ class TreeView
 				 */
 				sigc::connection sig_redraw;
 				sigc::connection sig_moveresize;
-				sigc::connection sig_visible;
 		};
 
 		TheTree thetree;
@@ -220,7 +219,6 @@ class TreeView
 		// handlers of signals
 		virtual void OnChildRedraw(Widget& widget);
 		virtual void OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize);
-		virtual void OnChildVisible(Widget& widget, bool visible);
 
 	private:
 		TreeView(const TreeView&);
