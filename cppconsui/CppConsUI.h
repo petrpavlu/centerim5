@@ -101,8 +101,8 @@ class Point
 		Point();
 		Point(int x, int y);
 
-		int X(void) { return x; }
-		int Y(void) { return y; }
+		int X() { return x; }
+		int Y() { return y; }
 
 		int x, y;
 	protected:
@@ -116,12 +116,12 @@ class Rect: public Point
 		Rect();
 		Rect(int x, int y, int w, int h);
 
-		int Width(void) { return width; }
-		int Height(void) { return height; }
-		int Left(void) { return x; }
-		int Top(void) { return y; }
-		int Right(void) { return x+width; }
-		int Bottom(void) { return y+height; }
+		int Width() { return width; }
+		int Height() { return height; }
+		int Left() { return x; }
+		int Top() { return y; }
+		int Right() { return x + width - 1; }
+		int Bottom() { return y + height - 1; }
 
 		int width, height;
 

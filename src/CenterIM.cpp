@@ -86,10 +86,11 @@ void CenterIM::Run()
 
 	Accounts::Instance();
 	Connections::Instance();
-	Conversations::Instance();
 	Notify::Instance();
 
 	// initialize UI
+	Conversations::Instance()->Show();
+	// init BuddyList last so it takes the focus
 	BuddyList::Instance()->Show();
 
 	LOG->Write(Log::Level_info, _("Welcome to CenterIM 5. Press F4 to display main menu.\n"));

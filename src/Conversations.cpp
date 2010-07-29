@@ -21,6 +21,8 @@
 
 #include "Conversations.h"
 
+#include "CenterIM.h"
+
 #include <cstring>
 
 Conversations *Conversations::Instance()
@@ -30,7 +32,11 @@ Conversations *Conversations::Instance()
 }
 
 Conversations::Conversations()
+: FreeWindow(0, 0, 80, 1)
 {
+	label = new Label(" \\placeholder/\\placeholder/");
+	AddWidget(*label, 0, 0);
+
 	memset(&centerim_conv_ui_ops, 0, sizeof(centerim_conv_ui_ops));
 	centerim_conv_ui_ops.create_conversation = create_conversation_;
 	centerim_conv_ui_ops.destroy_conversation = destroy_conversation_;
@@ -58,6 +64,19 @@ Conversations::~Conversations()
 	g_assert(conversations.empty());
 
 	purple_conversations_set_ui_ops(NULL);
+}
+
+void Conversations::Close()
+{
+}
+
+void Conversations::ScreenResized()
+{
+	Rect r = CENTERIM->ScreenAreaSize(CenterIM::ChatArea);
+	r.y = r.Bottom();
+	r.height = 1;
+
+	MoveResizeRect(r);
 }
 
 void Conversations::create_conversation(PurpleConversation *conv)

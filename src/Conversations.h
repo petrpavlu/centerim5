@@ -24,15 +24,21 @@
 
 #include "Conversation.h"
 
+#include <cppconsui/FreeWindow.h>
 #include <libpurple/conversation.h>
 #include <map>
 
 #define CONVERSATIONS (Conversations::Instance())
 
 class Conversations
+: public FreeWindow
 {
 	public:
 		static Conversations *Instance();
+
+		// Window
+		virtual void Close();
+		virtual void ScreenResized();
 
 		void ShowConversation(PurpleConversationType type,
 				PurpleAccount *account, const char *name);
@@ -40,10 +46,12 @@ class Conversations
 	protected:
 
 	private:
+		Label *label;
+
 		Conversations();
 		Conversations(const Conversations&);
 		Conversations& operator=(const Conversations&);
-		~Conversations();
+		virtual ~Conversations();
 
 		PurpleConversationUiOps centerim_conv_ui_ops;
 
