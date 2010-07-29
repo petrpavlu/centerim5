@@ -185,7 +185,7 @@ void ComboBox::DropDownOk(ComboBoxEntries::const_iterator new_entry)
 	signal_selection_changed(*new_entry);
 }
 
-void ComboBox::DropDownClose(Window& window)
+void ComboBox::DropDownClose(FreeWindow& window)
 {
 	dropdown = NULL;
 }

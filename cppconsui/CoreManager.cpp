@@ -184,13 +184,13 @@ void CoreManager::QuitMainLoop()
 	g_main_loop_quit(gmainloop);
 }
 
-void CoreManager::AddWindow(Window& window)
+void CoreManager::AddWindow(FreeWindow& window)
 {
 	if (!HasWindow(window)) {
 		WindowInfo info;
 		info.window = &window;
 		info.redraw = window.signal_redraw.connect(sigc::mem_fun(this, &CoreManager::WindowRedraw));
-		info.resize = signal_resize.connect(sigc::mem_fun(&window, &Window::ScreenResized));
+		info.resize = signal_resize.connect(sigc::mem_fun(&window, &FreeWindow::ScreenResized));
 		windows.push_back(info);
 	}
 
@@ -199,7 +199,7 @@ void CoreManager::AddWindow(Window& window)
 	Redraw();
 }
 
-void CoreManager::RemoveWindow(Window& window)
+void CoreManager::RemoveWindow(FreeWindow& window)
 {
 	Windows::iterator i;
 
@@ -217,7 +217,7 @@ void CoreManager::RemoveWindow(Window& window)
 	Redraw();
 }
 
-bool CoreManager::HasWindow(Window& window) const
+bool CoreManager::HasWindow(FreeWindow& window) const
 {
 	for (Windows::const_iterator i = windows.begin(); i != windows.end(); i++)
 		if (i->window == &window)
@@ -226,7 +226,7 @@ bool CoreManager::HasWindow(Window& window) const
 	return false;
 }
 
-Window *CoreManager::GetTopWindow()
+FreeWindow *CoreManager::GetTopWindow()
 {
 	if (windows.size())
 		return windows.back().window;
@@ -439,7 +439,7 @@ void CoreManager::WindowRedraw(Widget& widget)
 
 void CoreManager::FocusWindow()
 {
-	Window *focus = dynamic_cast<Window *>(GetInputChild());
+	FreeWindow *focus = dynamic_cast<FreeWindow *>(GetInputChild());
 
 	// take the focus from the old window with the focus
 	if (focus) {
@@ -450,7 +450,7 @@ void CoreManager::FocusWindow()
 	}
 
 	// check if there are any windows left
-	Window *win = NULL;
+	FreeWindow *win = NULL;
 	if (windows.size())
 		win = windows.back().window;
 

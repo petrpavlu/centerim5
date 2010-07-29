@@ -24,6 +24,8 @@ libcppconsui_la_SOURCES =\
 	CppConsUI.h \
 	Dialog.cpp \
 	Dialog.h \
+	FreeWindow.cpp \
+	FreeWindow.h \
 	HorizontalLine.cpp \
 	HorizontalLine.h \
 	HorizontalListBox.cpp \

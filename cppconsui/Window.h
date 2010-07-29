@@ -29,7 +29,7 @@
 #ifndef __WINDOW_H__
 #define __WINDOW_H__
 
-#include "Container.h"
+#include "FreeWindow.h"
 #include "Panel.h"
 
 /** Window class is the class implementing the root node of the Widget chain defined by
@@ -51,76 +51,28 @@
  *  its physical window ?
  */
 class Window
-: public Container
+: public FreeWindow
 {
 	public:
 		Window(int x, int y, int w, int h, LineStyle::Type ltype = LineStyle::DEFAULT);
-		virtual ~Window();
+		virtual ~Window() {}
 
 		// Widget
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
-		virtual void MoveResizeRect(const Rect &rect)
-			{ MoveResize(rect.x, rect.y, rect.width, rect.height); }
-		virtual void UpdateArea();
-		virtual void Draw();
-		virtual int Left() const { return win_x; }
-		virtual int Top() const { return win_y; }
-		virtual int Width() const { return win_w; }
-		virtual int Height() const { return win_h; }
 
 		// Container
-		virtual bool SetFocusChild(Widget& child);
-		virtual bool IsWidgetVisible(const Widget& widget) const;
 		virtual Curses::Window *GetSubPad(const Widget &child, int begin_x,
 				int begin_y, int ncols, int nlines);
-
-		virtual void Show();
-		virtual void Hide();
-		virtual void Close();
-
-		/** this function is called when the screen is resized */
-		virtual void ScreenResized();
 
 		void SetBorderStyle(LineStyle::Type ltype);
 		LineStyle::Type GetBorderStyle() const;
 
-		sigc::signal<void, Window&> signal_close;
-		sigc::signal<void, Window&> signal_show;
-		sigc::signal<void, Window&> signal_hide;
-
 	protected:
-		/**
-		 * The window on-screen dimensions.
-		 */
-		int win_x, win_y, win_w, win_h;
-		/**
-		 * Dimensions to use when copying from pad to window.
-		 */
-		int copy_w, copy_h;
-
-		/**
-		 * The `real' window for this window.
-		 */
-		Curses::Window *realwindow;
-
 		Panel *panel;
-
-		/**
-		 * Create the `real' window (not a pad) and makes sure its dimensions
-		 * do not exceed screen size
-		 */
-		virtual void MakeRealWindow();
 
 	private:
 		Window(const Window&);
 		Window& operator=(const Window&);
-
-		virtual void ActionClose();
-
-		/** it handles the automatic registration of defined keys */
-		DECLARE_SIG_REGISTERKEYS();
-		static bool RegisterKeys();
-		void DeclareBindables();
 };
 
 #endif /* __WINDOW_H__ */

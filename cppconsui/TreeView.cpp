@@ -22,9 +22,7 @@
 #include "TreeView.h"
 
 #include "ColorScheme.h"
-#include "ConsuiCurses.h"
 #include "Keys.h"
-#include "Window.h"
 
 #include "gettext.h"
 

@@ -55,10 +55,6 @@ Conversation::Conversation(PurpleConversation *conv_)
 	AddWidget(*input, 1, 1);
 	AddWidget(*line, 0, height);
 
-	SetPartitioning(CONF->GetChatPartitioning());
-	
-	MoveResizeRect(CONF->GetChatDimensions());
-
 	// open logfile
 	BuildLogFilename();
 
@@ -146,7 +142,11 @@ void Conversation::Close()
 
 void Conversation::ScreenResized()
 {
-	MoveResizeRect(CENTERIM->ScreenAreaSize(CenterIM::ChatArea));
+	Rect r = CENTERIM->ScreenAreaSize(CenterIM::ChatArea);
+	// make room for conversations list
+	r.height--;
+
+	MoveResizeRect(r);
 }
 
 void Conversation::Show()
@@ -220,19 +220,13 @@ void Conversation::Receive(const char *name, const char *alias, const char *mess
 
 void Conversation::SetPartitioning(unsigned percentage)
 {
-	int input_height;
-	int view_height;
+	int view_height = (height * percentage) / 100;
+	if (view_height < 1)
+		view_height = 1;
 
-	//TODO check for rare condition that windowheight < 3
-	// (in which case there is not enough room to draw anything)
-	view_height = (height * percentage) / 100;
-	if (view_height < 1) view_height = 1;
-
-	input_height = height - view_height - 1;
-	if (input_height < 1) {
+	int input_height = height - view_height - 1;
+	if (input_height < 1)
 		input_height = 1;
-		view_height = height - input_height - 1;
-	}
 
 	view->MoveResize(1, 0, width - 2, view_height);
 	input->MoveResize(1, view_height + 1, width - 2, input_height);

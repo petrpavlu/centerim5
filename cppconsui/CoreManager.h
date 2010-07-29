@@ -30,7 +30,7 @@
 #define __COREMANAGER_H__
 
 #include "InputProcessor.h"
-#include "Window.h"
+#include "FreeWindow.h"
 
 #include <glib.h>
 #include <libtermkey/termkey.h>
@@ -57,10 +57,10 @@ class CoreManager
 		 */
 		void QuitMainLoop();
 
-		void AddWindow(Window& window);
-		void RemoveWindow(Window& window);
-		bool HasWindow(Window& window) const;
-		Window *GetTopWindow();
+		void AddWindow(FreeWindow& window);
+		void RemoveWindow(FreeWindow& window);
+		bool HasWindow(FreeWindow& window) const;
+		FreeWindow *GetTopWindow();
 
 		int GetScreenWidth() const { return screen_width; }
 		int GetScreenHeight() const { return screen_height; }
@@ -85,7 +85,7 @@ class CoreManager
 	private:
 		struct WindowInfo
 		{
-			Window *window;
+			FreeWindow *window;
 			sigc::connection redraw;
 			sigc::connection resize;
 		};
