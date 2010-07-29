@@ -28,6 +28,8 @@
 #include <wchar.h>
 #include <glib.h>
 
+#define OK_BUTTON_TEXT "Ok"
+
 //from pango/break.c
 #define PARAGRAPH_SEPARATOR 0x2029
 #define PARAGRAPH_SEPARATOR_STRING "\xE2\x80\xA9"

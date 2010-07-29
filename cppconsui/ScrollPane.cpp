@@ -57,8 +57,6 @@ void ScrollPane::UpdateArea()
 
 void ScrollPane::Draw()
 {
-	int copyw, copyh;
-
 	if (!area || !scrollarea) {
 		if (scrollarea)
 			scrollarea->erase();
@@ -69,8 +67,8 @@ void ScrollPane::Draw()
 
 	/* If the defined scrollable area is smaller than the widget, make sure
 	 * the copy works. */
-	copyw = MIN(scroll_width - 1, scrollarea->getmaxx() - 1);
-	copyh = MIN(scroll_height - 1, scrollarea->getmaxy() - 1);
+	int copyw = MIN(scroll_width - 1, scrollarea->getmaxx() - 1);
+	int copyh = MIN(scroll_height - 1, scrollarea->getmaxy() - 1);
 
 	area->copyto(scrollarea, scroll_xpos, scroll_ypos, 0, 0, copyw, copyh, 0);
 }

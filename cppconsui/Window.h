@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,8 +19,11 @@
  *
  * */
 
-/** @file Window.h Window class
- *  @ingroup cppconsui
+/**
+ * @file
+ * Window class.
+ *
+ * @ingroup cppconsui
  */
 
 #ifndef __WINDOW_H__
@@ -27,7 +31,6 @@
 
 #include "Container.h"
 #include "Panel.h"
-#include "CppConsUI.h"
 
 /** Window class is the class implementing the root node of the Widget chain defined by
  *  Widget::parent.
@@ -58,18 +61,18 @@ class Window
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
 		virtual void MoveResizeRect(const Rect &rect)
 			{ MoveResize(rect.x, rect.y, rect.width, rect.height); }
+		virtual void UpdateArea();
 		virtual void Draw();
+		virtual int Left() const { return win_x; }
+		virtual int Top() const { return win_y; }
+		virtual int Width() const { return win_w; }
+		virtual int Height() const { return win_h; }
 
 		// Container
 		virtual bool SetFocusChild(Widget& child);
 		virtual bool IsWidgetVisible(const Widget& widget) const;
 		virtual Curses::Window *GetSubPad(const Widget &child, int begin_x,
 				int begin_y, int ncols, int nlines);
-
-		virtual int Left() const { return win_x; }
-		virtual int Top() const { return win_y; }
-		virtual int Width() const { return win_w; }
-		virtual int Height() const { return win_h; }
 
 		virtual void Show();
 		virtual void Hide();
@@ -82,21 +85,30 @@ class Window
 		LineStyle::Type GetBorderStyle() const;
 
 		sigc::signal<void, Window&> signal_close;
-		//sigc::signal<void, Window*> signal_show;
-		//sigc::signal<void, Window*> signal_hide;
+		sigc::signal<void, Window&> signal_show;
+		sigc::signal<void, Window&> signal_hide;
 
 	protected:
-		/* the window on-screen dimensions */
+		/**
+		 * The window on-screen dimensions.
+		 */
 		int win_x, win_y, win_w, win_h;
-		/* dimensions to use when copying from pad to window */
-		int copy_x, copy_y, copy_w, copy_h;
+		/**
+		 * Dimensions to use when copying from pad to window.
+		 */
+		int copy_w, copy_h;
 
-		/** the `real' window for this window */
+		/**
+		 * The `real' window for this window.
+		 */
 		Curses::Window *realwindow;
 
 		Panel *panel;
 
-		virtual void UpdateArea();
+		/**
+		 * Create the `real' window (not a pad) and makes sure its dimensions
+		 * do not exceed screen size
+		 */
 		virtual void MakeRealWindow();
 
 	private:

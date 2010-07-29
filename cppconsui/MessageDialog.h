@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,29 +19,31 @@
  *
  * */
 
+/**
+ * @file
+ * MessageDialog class.
+ *
+ * @ingroup cppconsui
+ */
+
 #ifndef __MESSAGEDIALOG_H__
 #define __MESSAGEDIALOG_H__
 
 #include "Dialog.h"
-
-#include "HorizontalListBox.h"
-#include "HorizontalLine.h"
 #include "Label.h"
 
 class MessageDialog
 : public Dialog
 {
 	public:
-		MessageDialog(const gchar* label);
-		virtual ~MessageDialog();
+		MessageDialog(const gchar *label);
+		virtual ~MessageDialog() {}
 
 	protected:
 		Label *label;
 
 	private:
-		MessageDialog();
 		MessageDialog(const MessageDialog&);
-
 		MessageDialog& operator=(const MessageDialog&);
 };
 

@@ -88,7 +88,7 @@ void Label::SetText(const gchar *text_)
 	signal_redraw(*this);
 }
 
-const gchar* Label::GetText()
+const gchar *Label::GetText() const
 {
 	return text;
 }

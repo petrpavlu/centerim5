@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,37 +19,33 @@
  *
  * */
 
-#include "InputDialog.h"
+/**
+ * @file
+ * InputDialog class implementation.
+ *
+ * @ingroup cppconsui
+ */
 
-#include "ConsuiCurses.h"
+#include "InputDialog.h"
 
 #include "gettext.h"
 
 InputDialog::InputDialog(const gchar* text, const gchar* defaultvalue)
 : Dialog()
-, label(NULL)
-, entry(NULL)
-, seperator(NULL)
 {
-	//TODO add a way such that each dialog uses the same strings
-	//for default buttons
-	AddButton(_("Ok"), InputDialog::ResponseOK);
+	AddButton(_(OK_BUTTON_TEXT), InputDialog::ResponseOK);
 
 	label = new Label(text);
-	seperator = new HorizontalLine(width);
+	separator = new HorizontalLine(width);
 	entry = new TextEntry(width, height - 4, defaultvalue);
 	AddWidget(*label, 0, 0);
-	AddWidget(*seperator, 0, 1);
+	AddWidget(*separator, 0, 1);
 	AddWidget(*entry, 0, 2);
 
 	entry->GrabFocus();
 }
 
-InputDialog::~InputDialog()
-{
-}
-
-const char* InputDialog::GetText(void)
+const gchar *InputDialog::GetText() const
 {
 	return entry->GetText();
 }

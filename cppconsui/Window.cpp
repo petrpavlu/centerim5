@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -17,7 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * */
-/** @file Container.cpp Container class implementation
+
+/**
+ * @file
+ * Window class implementation.
+ *
  * @ingroup cppconsui
  */
 
@@ -25,7 +30,6 @@
 
 #include "CoreManager.h"
 #include "Keys.h"
-#include "Container.h"
 
 #include "gettext.h"
 
@@ -39,14 +43,6 @@ Window::Window(int x, int y, int w, int h, LineStyle::Type ltype)
 , win_h(h)
 , realwindow(NULL)
 {
-	//TODO just call moveresize
-	if (win_w < 2) win_w = 2;
-	if (win_h < 2) win_h = 2;
-	//Container::MoveResize(0, 0, win_w - 2, win_h - 2);
-
-	//TODO allow focus going to windows by default or not?
-	can_focus = true;
-
 	MakeRealWindow();
 	UpdateArea();
 
@@ -81,24 +77,26 @@ bool Window::RegisterKeys()
 
 void Window::MoveResize(int newx, int newy, int neww, int newh)
 {
-	if (newx == win_x && newy == win_y && neww == win_w && newh == win_h)
-		return;
-
 	win_x = newx;
 	win_y = newy;
 	win_w = neww;
 	win_h = newh;
-
-	// TODO
-	if (win_w < 1) win_w = 1;
-	if (win_h < 1) win_h = 1;
 
 	MakeRealWindow();
 	UpdateArea();
 
 	panel->MoveResize(0, 0, win_w, win_h);
 
-	Container::MoveResize(1, 1, win_w - 2, win_h - 2);
+	Container::MoveResize(1, 1, win_w < 2 ? 0 : win_w - 2,
+			win_h < 2 ? 0 : win_h - 2);
+}
+
+void Window::UpdateArea()
+{
+	if (area)
+		delete area;
+	area = Curses::Window::newpad(win_w, win_h);
+	signal_redraw(*this);
 }
 
 void Window::Draw()
@@ -108,9 +106,8 @@ void Window::Draw()
 
 	Container::Draw();
 
-	/* Copy the virtual window to a window, then display it
-	 * on screen. */
-	area->copyto(realwindow, copy_x, copy_y, 0, 0, copy_w, copy_h, 0);
+	// copy the virtual window to a window, then display it on screen
+	area->copyto(realwindow, 0, 0, 0, 0, copy_w, copy_h, 0);
 
 	// update virtual ncurses screen
 	realwindow->touch();
@@ -139,7 +136,8 @@ bool Window::IsWidgetVisible(const Widget& child) const
 	return true;
 }
 
-Curses::Window *Window::GetSubPad(const Widget &child, int begin_x, int begin_y, int ncols, int nlines)
+Curses::Window *Window::GetSubPad(const Widget &child, int begin_x,
+		int begin_y, int ncols, int nlines)
 {
 	if (!area)
 		return NULL;
@@ -165,16 +163,14 @@ Curses::Window *Window::GetSubPad(const Widget &child, int begin_x, int begin_y,
 
 void Window::Show()
 {
-	//TODO emit signal to show window
-	//(while keeping stacking order)
 	COREMANAGER->AddWindow(*this);
+	signal_show(*this);
 }
 
 void Window::Hide()
 {
-	//TODO emit signal to hide window
-	//(while keeping stacking order)
 	COREMANAGER->RemoveWindow(*this);
+	signal_hide(*this);
 }
 
 void Window::Close()
@@ -186,7 +182,6 @@ void Window::Close()
 
 void Window::ScreenResized()
 {
-	// TODO: handle resize/reposition of child widgets/windows
 }
 
 void Window::SetBorderStyle(LineStyle::Type ltype)
@@ -199,38 +194,22 @@ LineStyle::Type Window::GetBorderStyle() const
 	return panel->GetBorderStyle();
 }
 
-void Window::UpdateArea()
+void Window::MakeRealWindow()
 {
-	if (area)
-		delete area;
-	area = Curses::Window::newpad(win_w, win_h);
-	signal_redraw(*this);
-}
+	int maxx = Curses::getmaxx();
+	int maxy = Curses::getmaxy();
 
-/* create the `real' window (not a pad) and make sure its
- * dimensions do not exceed screen size */
-void Window::MakeRealWindow(void)
-{
-	int left, right, top, bottom, maxx, maxy;
+	int left = win_x < 0 ? 0 : win_x;
+	int top = win_y < 0 ? 0 : win_y;
+	int right = win_x + win_w >= maxx ? maxx : win_x + win_w;
+	int bottom = win_y + win_h >= maxy ? maxy : win_y + win_h;
 
-	maxx = Curses::getmaxx();
-	maxy = Curses::getmaxy();
-
-	left = (win_x < 0) ? 0 : win_x;
-	top = (win_y < 0) ? 0 : win_y;
-	right = (win_x + win_w >= maxx) ? maxx : win_x + win_w;
-	bottom = (win_y + win_h >= maxy) ? maxy : win_y + win_h;
-
-	copy_x = left - win_x;
-	copy_y = top - win_y;
 	copy_w = right - left - 1;
 	copy_h = bottom - top - 1;
 
-	/* this could fail if the window falls outside the visible
-	 * area
-	 * */
 	if (realwindow)
 		delete realwindow;
+	// this could fail if the window falls outside the visible area
 	realwindow = Curses::Window::newwin(left, top, right - left, bottom - top);
 }
 

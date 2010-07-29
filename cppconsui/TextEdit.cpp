@@ -476,7 +476,7 @@ void TextEdit::UpdateScreenLines()
 {
 	ClearScreenLines();
 
-	if (!area)
+	if (!area || area->getmaxx() <= 1)
 		return;
 
 	gchar *p = buffer;

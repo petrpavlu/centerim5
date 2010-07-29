@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,14 +19,20 @@
  *
  * */
 
+/**
+ * @file
+ * InputDialog class.
+ *
+ * @ingroup cppconsui
+ */
+
 #ifndef __INPUTDIALOG_H__
 #define __INPUTDIALOG_H__
 
 #include "Dialog.h"
 
-#include "HorizontalListBox.h"
-#include "HorizontalLine.h"
 #include "Label.h"
+#include "HorizontalLine.h"
 #include "TextEntry.h"
 
 class InputDialog
@@ -33,9 +40,9 @@ class InputDialog
 {
 	public:
 		InputDialog(const gchar* text, const gchar* defaultvalue);
-		virtual ~InputDialog();
+		virtual ~InputDialog() {}
 
-		const char* GetText(void);
+		const gchar *GetText() const;
 
 		int GetFlags() { return entry->GetFlags(); }
 		void SetFlags(int flags) { entry->SetFlags(flags); }
@@ -43,7 +50,7 @@ class InputDialog
 	protected:
 		Label *label;
 		TextEntry *entry;
-		HorizontalLine *seperator;
+		HorizontalLine *separator;
 
 	private:
 		InputDialog();

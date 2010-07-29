@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,12 +19,17 @@
  *
  * */
 
+/**
+ * @file
+ * MenuWindow class.
+ *
+ * @ingroup cppconsui
+ */
+
 #ifndef __MENUWINDOW_H__
 #define __MENUWINDOW_H__
 
-#include "MenuWindow.h"
 #include "Window.h"
-#include "Panel.h"
 #include "ListBox.h"
 
 class MenuWindow
@@ -32,7 +38,7 @@ class MenuWindow
 	public:
 		MenuWindow(int x, int y, int w, int h,
 				LineStyle::Type ltype = LineStyle::DEFAULT);
-		virtual ~MenuWindow();
+		virtual ~MenuWindow() {}
 
 		// Widget
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
@@ -47,22 +53,12 @@ class MenuWindow
 		void RemoveWidget(Widget& widget)
 			{ listbox->RemoveWidget(widget); }
 
-		ListBox* GetListBox(void)
-			{ return listbox; }
-
 	protected:
 		ListBox *listbox;
 
 	private:
-		MenuWindow();
 		MenuWindow(const MenuWindow&);
-
 		MenuWindow& operator=(const MenuWindow&);
-
-		/** it handles the automatic registration of defined keys */
-		DECLARE_SIG_REGISTERKEYS();
-		static bool RegisterKeys();
-		void DeclareBindables();
 };
 
 #endif /* __MENUWINDOW_H__ */

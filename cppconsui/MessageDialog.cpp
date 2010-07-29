@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,20 +19,22 @@
  *
  * */
 
-#include "MessageDialog.h"
+/**
+ * @file
+ * MessageDialog class implementation.
+ *
+ * @ingroup cppconsui
+ */
 
-#include "ConsuiCurses.h"
+#include "MessageDialog.h"
 
 #include "gettext.h"
 
-MessageDialog::MessageDialog(const gchar* text)
+MessageDialog::MessageDialog(const gchar *text)
 : Dialog()
 {
-	AddButton(_("Ok"), Dialog::ResponseOK);
+	AddButton(_(OK_BUTTON_TEXT), Dialog::ResponseOK);
 
-	AddWidget(*(new Label(text)), 0, 0);
-}
-
-MessageDialog::~MessageDialog()
-{
+	label = new Label(text);
+	AddWidget(*label, 0, 0);
 }

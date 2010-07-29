@@ -57,7 +57,7 @@ class Label
 		/**
 		 * Returns previously set text.
 		 */
-		const gchar* GetText();
+		const gchar *GetText() const;
 
 	protected:
 		gchar *text; 
