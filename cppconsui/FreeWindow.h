@@ -34,7 +34,13 @@ class FreeWindow
 : public Container
 {
 	public:
-		FreeWindow(int x, int y, int w, int h);
+		enum Type {
+			TYPE_NON_FOCUSABLE,
+			TYPE_NORMAL,
+			TYPE_TOP
+		};
+
+		FreeWindow(int x, int y, int w, int h, Type t = TYPE_NORMAL);
 		virtual ~FreeWindow();
 
 		// Widget
@@ -56,6 +62,9 @@ class FreeWindow
 		virtual void Hide();
 		virtual void Close();
 
+		virtual void SetType(Type t) { type = t; }
+		virtual Type GetType() { return type; }
+
 		/** this function is called when the screen is resized */
 		virtual void ScreenResized();
 
@@ -72,11 +81,12 @@ class FreeWindow
 		 * Dimensions to use when copying from pad to window.
 		 */
 		int copy_w, copy_h;
-
 		/**
 		 * The `real' window for this window.
 		 */
 		Curses::Window *realwindow;
+
+		Type type;
 
 		/**
 		 * Create the `real' window (not a pad) and makes sure its dimensions

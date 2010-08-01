@@ -28,8 +28,8 @@
 
 #include "Window.h"
 
-Window::Window(int x, int y, int w, int h, LineStyle::Type ltype)
-: FreeWindow(x, y, w, h)
+Window::Window(int x, int y, int w, int h, Type t, LineStyle::Type ltype)
+: FreeWindow(x, y, w, h, t)
 {
 	panel = new Panel(win_w, win_h, ltype);
 	AddWidget(*panel, 0, 0);

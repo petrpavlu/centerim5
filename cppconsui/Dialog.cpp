@@ -25,7 +25,7 @@
 #include "Panel.h"
 
 Dialog::Dialog(int x, int y, int w, int h, LineStyle::Type ltype)
-: Window(x, y, w, h, ltype)
+: Window(x, y, w, h, TYPE_TOP, ltype)
 {
 	AddWidgets();
 }

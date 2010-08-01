@@ -54,7 +54,8 @@ class Window
 : public FreeWindow
 {
 	public:
-		Window(int x, int y, int w, int h, LineStyle::Type ltype = LineStyle::DEFAULT);
+		Window(int x, int y, int w, int h, Type t = TYPE_NORMAL,
+				LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~Window() {}
 
 		// Widget

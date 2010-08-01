@@ -29,7 +29,7 @@
 #include "MenuWindow.h"
 
 MenuWindow::MenuWindow(int x, int y, int w, int h, LineStyle::Type ltype)
-: Window(x, y, w, h, ltype)
+: Window(x, y, w, h, TYPE_TOP, ltype)
 {
 	listbox = new ListBox(width, height);
 	Window::AddWidget(*listbox, 0, 0);

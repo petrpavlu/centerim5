@@ -34,7 +34,7 @@
 #include "gettext.h"
 
 AccountWindow::AccountWindow()
-: Window(0, 0, 80, 24)
+: Window(0, 0, 80, 24, TYPE_TOP)
 , accounts_index(0)
 {
 	SetColorScheme("accountwindow");

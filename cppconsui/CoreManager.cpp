@@ -228,8 +228,16 @@ bool CoreManager::HasWindow(FreeWindow& window) const
 
 FreeWindow *CoreManager::GetTopWindow()
 {
-	if (windows.size())
-		return windows.back().window;
+	Windows::reverse_iterator i;
+	for (i = windows.rbegin(); i != windows.rend(); i++)
+		if (i->window->GetType() == FreeWindow::TYPE_TOP)
+			return i->window;
+
+	for (i = windows.rbegin(); i != windows.rend(); i++)
+		if (i->window->GetType() == FreeWindow::TYPE_NORMAL)
+			return i->window;
+
+	// note non-focusable window cannot be a top window
 	return NULL;
 }
 
@@ -414,8 +422,18 @@ void CoreManager::Draw()
 		Curses::erase();
 		Curses::noutrefresh();
 		
+		// non-focusable -> normal -> top
 		for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
-			i->window->Draw();
+			if (i->window->GetType() == FreeWindow::TYPE_NON_FOCUSABLE)
+				i->window->Draw();
+
+		for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
+			if (i->window->GetType() == FreeWindow::TYPE_NORMAL)
+				i->window->Draw();
+
+		for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
+			if (i->window->GetType() == FreeWindow::TYPE_TOP)
+				i->window->Draw();
 
 		// copy virtual ncurses screen to the physical screen
 		Curses::doupdate();
@@ -451,10 +469,24 @@ void CoreManager::FocusWindow()
 
 	// check if there are any windows left
 	FreeWindow *win = NULL;
-	if (windows.size())
-		win = windows.back().window;
+	Windows::reverse_iterator i;
 
-	// give the focus to the top window if there is one
+	// try to find a top window first
+	for (i = windows.rbegin(); i != windows.rend(); i++)
+		if (i->window->GetType() == FreeWindow::TYPE_TOP) {
+			win = i->window;
+			break;
+		}
+
+	// normal windows
+	if (!win)
+		for (i = windows.rbegin(); i != windows.rend(); i++)
+			if (i->window->GetType() == FreeWindow::TYPE_NORMAL) {
+				win = i->window;
+				break;
+			}
+
+	// give the focus to the window
 	if (win) {
 		SetInputChild(*win);
 		win->RestoreFocus();

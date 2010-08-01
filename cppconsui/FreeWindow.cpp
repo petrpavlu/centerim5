@@ -34,13 +34,14 @@
 
 #define CONTEXT_WINDOW "window"
 
-FreeWindow::FreeWindow(int x, int y, int w, int h)
+FreeWindow::FreeWindow(int x, int y, int w, int h, Type t)
 : Container(w, h)
 , win_x(x)
 , win_y(y)
 , win_w(w)
 , win_h(h)
 , realwindow(NULL)
+, type(t)
 {
 	MakeRealWindow();
 	UpdateArea();

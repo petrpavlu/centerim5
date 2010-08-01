@@ -37,8 +37,8 @@ Log *Log::Instance()
 }
 
 //TODO sensible defaults
-Log::Log(void)
-: Window(0, 0, 80, 24)
+Log::Log()
+: Window(0, 0, 80, 24, TYPE_NON_FOCUSABLE)
 , logfile(NULL)
 , prefs_handle(NULL)
 , max_lines(0)
@@ -75,7 +75,7 @@ Log::Log(void)
 	purple_debug_set_ui_ops(&centerim_debug_ui_ops);
 }
 
-Log::~Log(void)
+Log::~Log()
 {
 	purple_prefs_disconnect_by_handle(prefs_handle);
 
@@ -168,7 +168,7 @@ void Log::debug_change(const char *name, PurplePrefType type, gconstpointer val)
 	}
 }
 
-void Log::ScreenResized(void)
+void Log::ScreenResized()
 {
 	MoveResizeRect(CENTERIM->ScreenAreaSize(CenterIM::LogArea));
 }

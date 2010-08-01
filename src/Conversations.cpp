@@ -32,7 +32,7 @@ Conversations *Conversations::Instance()
 }
 
 Conversations::Conversations()
-: FreeWindow(0, 0, 80, 1)
+: FreeWindow(0, 0, 80, 1, TYPE_NON_FOCUSABLE)
 {
 	label = new Label(" \\placeholder/\\placeholder/");
 	AddWidget(*label, 0, 0);
