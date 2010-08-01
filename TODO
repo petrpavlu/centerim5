@@ -6,23 +6,11 @@ TODO:
   what is needed is simple enough to implement with
   panels.
 - see if `derwin' and similar can be used for scrollables.
-- currently singletons use the Gamma singleton pattern
-  change this to the Meyers singelton pattern, which
-  has the automatic destruction advantage.
-  Actually i like some discussion on this.
-  The meyers variant has the disadvantage of not being
-  able to control when the singleton is destroyed. It will
-  exist until the app exits.
-  (so lets leave things like they are for now)
 - purple_pounces_load
 - better error catching in main
-- reference counters for singletons, only delete when noone else
-  references this class
 - grep for todo's and fix them
 - add const in a lot of places
 - put everything (in cppconsui) in a CppConsUI namespace ?
-- purple_conversations_set_ui_ops which was in null_ui_init
-  where should it go? probably in the Centerim object
 - put something in: README AUTHORS ChangeLog NEWS
 - make sure default constructors are not callable for all
   classes where this applies
@@ -30,7 +18,6 @@ TODO:
   bindtextdomain (PACKAGE, LOCALEDIR); (as explained by
   <http://www.gnu.org/software/gettext/manual/gettext.html#Libraries>
   also make the translations proper)
-- see what more files can be removed from git
 - add function descriptions in the header files
 - colorscheme should use same concept as KeyConfig so it is possible to get
   all registered colorschemes at startup time
@@ -40,18 +27,10 @@ TODO:
 - TextEntry -- hide passwords with asterisks, fix cursor movement that goes
   outside the area
 - pending auth and auth request windows
-- buddy list sorting
 - request UI ops implementation
 - notice UI ops implementation
-- fix cmake build
+- fix and put back cmake build
  
 Less important todo's which sometimes are just ideas:
-- Re-implement container to use red-black trees. Could be useful
-  if we want to maintain some extra variables like maxheight over
-  a collection of widgets. std::set and std::map probably already
-  use rb-trees.
 - Add option to save/display buddy icon
-- Order switch statements, put most used cases on top
-- Replace `if (!window) return;'-like constructs with
-  g_return_if_fail/succes ??
 - Use the fact noted about in g_utf8_offset_to_pointer doc.

@@ -3,19 +3,15 @@ Centerim 5 Alpha 1
 How to get this version to work after compiling?
 
 Press ^Q at any time to shutdown cim5.
-Press F4 for a menu. In this menu there is an option "Accounts", this
-can be used to add, edit and delete accounts. There is also an
-option to test the combobox widget. The rest of the options are not
-implemented yet.
-Backspace for some reason does not work, use ^H.
+Press F4 for a menu. In this menu there is an option "Accounts", this can be
+used to add, edit and delete accounts.
 
-Pressing escape once will close almost any window. Use tab, shift-tab or
-the arrow keys to move focus from widget to widget. Moving focus between
-windows is not implemented yet.
+Pressing escape once will close almost any window. Use tab, shift-tab or the
+arrow keys to move focus from widget to widget.
 
-Once you have added an account the buddylist on the left of the window
-will fill. Select a lead in this tree and press enter to open a
-conversation window. Start typing, and press ^x to send the message.
+Once you have added (and enabled) an account the buddylist on the left of the
+screen will fill. Select a lead in this tree and press enter to open
+a conversation window. Start typing, and press ^x to send the message.
 
 If accounts do not automatically logon after adding them, open
 ~/.centerim5/accounts.xml and set the auto-login setting from 0 to 1.
@@ -28,16 +24,13 @@ section within <account>:
 You can also copy the pidgin xml files to configure cim5.
 
 Incoming messages should automatically open a new conversation window.
-Incoming messages from a contact not in the list will currently cause
-cim5 to shutdown with an abort.
 
-Debugging can be enabled in ~/.centerim5/prefs.xml. Look for settings
-with a `log_level' prefix. Valid values are none, critical, warning, error,
-debug and info. We strongly recommend to use either none or debug, since
-log_levels need to be reviewed.
+Debugging can be enabled in ~/.centerim5/prefs.xml. Look for settings with a
+`log_level' prefix. Valid values are none, error, critical, warning, info and
+debug.
 
-Don't complain about a lack of features or usability. This is an alpha
-release intended for developers who know how to fix this.
+Don't complain about a lack of features or usability. This is an alpha release
+intended for developers who know how to fix this.
 
 Happy Hacking!
 

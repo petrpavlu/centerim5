@@ -30,8 +30,6 @@ int main(int argc, char **argv)
 {
 	CenterIM* cim;
 
-	g_thread_init(NULL);
-
 	g_set_prgname(PACKAGE_NAME);
 
 #ifdef ENABLE_NLS

@@ -14,19 +14,21 @@ src/Conversation.cpp
 src/Conversations.cpp
 src/GeneralMenu.cpp
 src/Log.cpp
+src/Notify.cpp
 src/Transfers.cpp
 
 # CppConsUI source files
 cppconsui/AbstractLine.cpp
 cppconsui/AbstractListBox.cpp
-cppconsui/Application.cpp
 cppconsui/Button.cpp
 cppconsui/ColorScheme.cpp
 cppconsui/ComboBox.cpp
 cppconsui/ConsuiCurses.cpp
 cppconsui/Container.cpp
+cppconsui/CoreManager.cpp
 cppconsui/CppConsUI.cpp
 cppconsui/Dialog.cpp
+cppconsui/FreeWindow.cpp
 cppconsui/HorizontalLine.cpp
 cppconsui/HorizontalListBox.cpp
 cppconsui/InputDialog.cpp
@@ -47,12 +49,3 @@ cppconsui/TreeView.cpp
 cppconsui/VerticalLine.cpp
 cppconsui/Widget.cpp
 cppconsui/Window.cpp
-cppconsui/WindowManager.cpp
-# TextRB follows
-cppconsui/TextBuffer.cpp
-cppconsui/TextBrowser.cpp
-cppconsui/TextInput.cpp
-cppconsui/TextLine.cpp
-cppconsui/TextLineRBTree.cpp
-cppconsui/TextRBTree.cpp
-cppconsui/TextRBView.cpp

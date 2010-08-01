@@ -66,22 +66,7 @@ libcppconsui_la_SOURCES =\
 	Widget.h \
 	Window.cpp \
 	Window.h \
-	tree.hh \
-	\
-	#TextBrowser.cpp \
-	#TextBrowser.h \
-	#TextBuffer.cpp \
-	#TextBuffer.h \
-	#TextInput.cpp \
-	#TextInput.h \
-	#TextLine.cpp \
-	#TextLine.h \
-	#TextLineRBTree.cpp \
-	#TextLineRBTree.h \
-	#TextRBTree.cpp \
-	#TextRBTree.h \
-	#TextRBView.cpp \
-	#TextRBView.h
+	tree.hh
 
 libcppconsui_la_CPPFLAGS =\
 	$(GLIB_CFLAGS) \
