@@ -92,8 +92,8 @@ void TreeView::Draw()
 	DrawNode(thetree.begin(), 0);
 
 	// make sure that currently focused widget is visible
-	if (focus_node != thetree.begin())
-		MakeVisible(focus_node->widget->Left(), focus_node->widget->Top());
+	if (focus_child)
+		MakeVisible(focus_child->Left(), focus_child->Top());
 
 	ScrollPane::Draw();
 }
@@ -208,21 +208,11 @@ int TreeView::GetActive() const
 Curses::Window *TreeView::GetSubPad(const Widget& child, int begin_x,
 		int begin_y, int ncols, int nlines)
 {
-	if (!area)
-		return NULL;
-
-	int realw = area->getmaxx();
-
 	// if height is set to negative number (autosize) then return height `1'
 	if (nlines < 0)
 		nlines = 1;
 
-	/* Extend requested subpad to whole parent area or shrink requested area
-	 * if necessary. */
-	if (ncols < 0 || ncols > realw - begin_x)
-		ncols = realw - begin_x;
-
-	return area->subpad(begin_x, begin_y, ncols, nlines);
+	return ScrollPane::GetSubPad(child, begin_x, begin_y, ncols, nlines);
 }
 
 void TreeView::Collapse(const NodeReference node)
@@ -537,10 +527,6 @@ void TreeView::OnChildMoveResize(Widget& widget, Rect &oldsize, Rect &newsize)
 
 		SetScrollHeight(GetScrollHeight() - old_height + new_height);
 	}
-
-	if (oldsize.Height() != newsize.Height()
-			|| oldsize.Width() != newsize.Width())
-		signal_redraw(*this);
 }
 
 void TreeView::ActionCollapse()

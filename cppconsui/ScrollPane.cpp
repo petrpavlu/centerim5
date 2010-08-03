@@ -84,11 +84,6 @@ void ScrollPane::SetScrollSize(int swidth, int sheight)
 	if (area)
 		delete area;
 	area = Curses::Window::newpad(scroll_width, scroll_height);
-
-	UpdateAreas();
-
-	// fix scroll position if necessary
-	AdjustScroll(scroll_xpos, scroll_ypos);
 }
 
 void ScrollPane::AdjustScroll(int newx, int newy)

@@ -42,17 +42,25 @@ class HorizontalListBox
 		HorizontalListBox(int w, int h);
 		virtual ~HorizontalListBox() {}
 
+		// Widget
+		virtual void MoveResize(int newx, int newy, int neww, int newh);
+		virtual void Draw();
+
 		// AbstractListBox
 		virtual void AppendSeparator();
 		virtual void AppendWidget(Widget& widget);
 
 		// Container
 		virtual void RemoveWidget(Widget& widget);
+		virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
+				int begin_y, int ncols, int nlines);
 
 	protected:
+		// Container
+		virtual void OnChildMoveResize(Widget& widget, Rect &oldsize,
+				Rect &newsize);
 
 	private:
-		HorizontalListBox();
 		HorizontalListBox(const HorizontalListBox&);
 		HorizontalListBox& operator=(const HorizontalListBox&);
 };

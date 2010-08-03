@@ -186,13 +186,13 @@ void CoreManager::QuitMainLoop()
 
 void CoreManager::AddWindow(FreeWindow& window)
 {
-	if (!HasWindow(window)) {
-		WindowInfo info;
-		info.window = &window;
-		info.redraw = window.signal_redraw.connect(sigc::mem_fun(this, &CoreManager::WindowRedraw));
-		info.resize = signal_resize.connect(sigc::mem_fun(&window, &FreeWindow::ScreenResized));
-		windows.push_back(info);
-	}
+	g_assert(!HasWindow(window));
+
+	WindowInfo info;
+	info.window = &window;
+	info.redraw = window.signal_redraw.connect(sigc::mem_fun(this, &CoreManager::WindowRedraw));
+	info.resize = signal_resize.connect(sigc::mem_fun(&window, &FreeWindow::ScreenResized));
+	windows.push_back(info);
 
 	window.ScreenResized();
 	FocusWindow();
@@ -285,10 +285,10 @@ sigc::connection CoreManager::TimeoutConnect(const sigc::slot<bool>& slot,
 	return connection;
 }
 
-void CoreManager::TimeoutOnceConnect(const sigc::slot<void>& slot,
+sigc::connection CoreManager::TimeoutOnceConnect(const sigc::slot<void>& slot,
 		unsigned interval, int priority)
 {
-	TimeoutConnect(sigc::bind_return(slot, FALSE), interval, priority);
+	return TimeoutConnect(sigc::bind_return(slot, FALSE), interval, priority);
 }
 
 bool CoreManager::ProcessInput(const TermKeyKey& key)

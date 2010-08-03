@@ -37,6 +37,11 @@ class Conversation
 : public Window
 {
 	public:
+		enum Status {
+			STATUS_ACTIVE,
+			STATUS_TRASH
+		};
+
 		Conversation(PurpleConversation *conv_);
 		virtual ~Conversation();
 
@@ -51,7 +56,9 @@ class Conversation
 		void Receive(const char *name, const char *alias, const char *message,
 			PurpleMessageFlags flags, time_t mtime);
 
-		PurpleConversation *GetPurpleConversation() { return conv; };
+		Status GetStatus() const { return status; }
+
+		PurpleConversation *GetPurpleConversation() const { return conv; };
 
 	protected:
 		void SetPartitioning(unsigned percentage);
@@ -66,6 +73,8 @@ class Conversation
 
 		char *filename;
 		GIOChannel *logfile;
+
+		Status status;
 
 		guint destroy_id;
 

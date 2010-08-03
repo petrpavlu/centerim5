@@ -112,9 +112,7 @@ void Container::MoveResize(int newx, int newy, int neww, int newh)
 
 void Container::Draw()
 {
-	Children::iterator i;
-
-	for (i = children.begin(); i != children.end(); i++)
+	for (Children::iterator i = children.begin(); i != children.end(); i++)
 		if (i->widget->IsVisible())
 			i->widget->Draw();
 }
@@ -170,6 +168,8 @@ void Container::AddWidget(Widget& widget, int x, int y)
 	 */
 	child.sig_redraw = widget.signal_redraw.connect(sigc::mem_fun(this,
 				&Container::OnChildRedraw));
+	child.sig_moveresize = widget.signal_moveresize.connect(sigc::mem_fun(
+				this, &Container::OnChildMoveResize));
 	child.widget = &widget;
 	children.push_back(child);
 }
@@ -447,13 +447,15 @@ Curses::Window *Container::GetSubPad(const Widget& child, int begin_x, int begin
 
 void Container::UpdateAreas()
 {
-	Children::iterator i;
-
-	for (i = children.begin(); i != children.end(); i++)
+	for (Children::iterator i = children.begin(); i != children.end(); i++)
 		i->widget->UpdateArea();
 }
 
 void Container::OnChildRedraw(Widget& widget)
 {
 	signal_redraw(*this);
+}
+
+void Container::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize)
+{
 }

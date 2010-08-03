@@ -43,18 +43,21 @@ class MenuWindow
 		// Widget
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
 
-		void AppendItem(const char *text, sigc::slot<void> callback)
+		virtual void AppendItem(const char *text, sigc::slot<void> callback)
 			{ listbox->AppendItem(text, callback); }
-		void AppendSeparator()
+		virtual void AppendSeparator()
 			{ listbox->AppendSeparator(); }
 
-		void AppendWidget(Widget& widget)
+		virtual void AppendWidget(Widget& widget)
 			{ listbox->AppendWidget(widget); }
-		void RemoveWidget(Widget& widget)
+		virtual void RemoveWidget(Widget& widget)
 			{ listbox->RemoveWidget(widget); }
 
 	protected:
 		ListBox *listbox;
+
+		// Container
+		virtual void AddWidget(Widget& widget, int x, int y);
 
 	private:
 		MenuWindow(const MenuWindow&);

@@ -41,3 +41,8 @@ void MenuWindow::MoveResize(int newx, int newy, int neww, int newh)
 
 	listbox->MoveResize(0, 0, width, height);
 }
+
+void MenuWindow::AddWidget(Widget& widget, int x, int y)
+{
+	Window::AddWidget(widget, x, y);
+}

@@ -218,7 +218,8 @@ class TreeView
 		
 		// handlers of signals
 		virtual void OnChildRedraw(Widget& widget);
-		virtual void OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize);
+		virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
+				Rect& newsize);
 
 	private:
 		TreeView(const TreeView&);

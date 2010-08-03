@@ -42,6 +42,7 @@ Conversation::Conversation(PurpleConversation *conv_)
 , conv(conv_)
 , filename(NULL)
 , logfile(NULL)
+, status(STATUS_ACTIVE)
 , destroy_id(0)
 {
 	g_assert(conv);
@@ -134,10 +135,12 @@ void Conversation::BuildLogFilename()
 
 void Conversation::Close()
 {
-	Hide();
 	/* Let libpurple and Conversations know that this conversation should be
 	 * destroyed after some time. */
 	destroy_id = g_timeout_add(CONVERSATION_DESTROY_TIMEOUT, timeout_once_purple_conversation_destroy, conv);
+	status = STATUS_TRASH;
+
+	signal_close(*this);
 }
 
 void Conversation::ScreenResized()
@@ -154,6 +157,7 @@ void Conversation::Show()
 	if (destroy_id) {
 		g_source_remove(destroy_id);
 		destroy_id = 0;
+		status = STATUS_ACTIVE;
 	}
 	Window::Show();
 }

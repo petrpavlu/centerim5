@@ -75,7 +75,7 @@ class CoreManager
 
 		sigc::connection TimeoutConnect(const sigc::slot<bool>& slot,
 				unsigned interval, int priority);
-		void TimeoutOnceConnect(const sigc::slot<void>& slot,
+		sigc::connection TimeoutOnceConnect(const sigc::slot<void>& slot,
 				unsigned interval, int priority);
 
 		sigc::signal<void> signal_resize;

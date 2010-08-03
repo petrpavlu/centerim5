@@ -51,6 +51,8 @@ FreeWindow::FreeWindow(int x, int y, int w, int h, Type t)
 
 FreeWindow::~FreeWindow()
 {
+	Hide();
+
 	if (realwindow)
 		delete realwindow;
 }
@@ -133,20 +135,23 @@ bool FreeWindow::IsWidgetVisible(const Widget& child) const
 
 void FreeWindow::Show()
 {
-	COREMANAGER->AddWindow(*this);
-	signal_show(*this);
+	if (!COREMANAGER->HasWindow(*this)) {
+		COREMANAGER->AddWindow(*this);
+		signal_show(*this);
+	}
 }
 
 void FreeWindow::Hide()
 {
-	COREMANAGER->RemoveWindow(*this);
-	signal_hide(*this);
+	if (COREMANAGER->HasWindow(*this)) {
+		COREMANAGER->RemoveWindow(*this);
+		signal_hide(*this);
+	}
 }
 
 void FreeWindow::Close()
 {
-	COREMANAGER->RemoveWindow(*this);
-
+	signal_close(*this);
 	delete this;
 }
 
@@ -175,6 +180,5 @@ void FreeWindow::MakeRealWindow()
 
 void FreeWindow::ActionClose()
 {
-	signal_close(*this);
 	Close();
 }

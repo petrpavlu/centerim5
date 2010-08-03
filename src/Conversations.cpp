@@ -33,9 +33,10 @@ Conversations *Conversations::Instance()
 
 Conversations::Conversations()
 : FreeWindow(0, 0, 80, 1, TYPE_NON_FOCUSABLE)
+, active(-1)
 {
-	label = new Label(" \\placeholder/\\placeholder/");
-	AddWidget(*label, 0, 0);
+	list = new HorizontalListBox(width - 2, 1);
+	AddWidget(*list, 2, 0);
 
 	memset(&centerim_conv_ui_ops, 0, sizeof(centerim_conv_ui_ops));
 	centerim_conv_ui_ops.create_conversation = create_conversation_;
@@ -66,6 +67,13 @@ Conversations::~Conversations()
 	purple_conversations_set_ui_ops(NULL);
 }
 
+void Conversations::MoveResize(int newx, int newy, int neww, int newh)
+{
+	FreeWindow::MoveResize(newx, newy, neww, newh);
+
+	list->MoveResize(1, 0, neww - 2, 1);
+}
+
 void Conversations::Close()
 {
 }
@@ -79,10 +87,126 @@ void Conversations::ScreenResized()
 	MoveResizeRect(r);
 }
 
+void Conversations::ShowConversation(PurpleConversationType type,
+		PurpleAccount *account, const char *name)
+{
+	// this is called by cim directly, so assert instead of return_if_fail
+	g_assert(account);
+	g_assert(name);
+
+	PurpleConversation *conv = purple_find_conversation_with_account(type,
+			name, account);
+	if (conv) {
+		int i = FindConversation(conv);
+
+		// unhandled conversation type
+		if (i == -1)
+			return;
+
+		if (i != active)
+			ActivateConversation(i);
+
+		return;
+	}
+
+	conv = purple_conversation_new(type, account, name);
+
+	// this conversation was opened from the buddy list so force the show
+	int i = FindConversation(conv);
+
+	// unhandled conversation type
+	if (i == -1)
+		return;
+
+	ActivateConversation(i);
+}
+
+int Conversations::FindConversation(PurpleConversation *conv)
+{
+	for (int i = 0; i < (int) conversations.size(); i++)
+		if (conversations[i].purple_conv == conv)
+			return i;
+
+	return -1;
+}
+
+int Conversations::PrevActiveConversation(int current)
+{
+	g_assert(current < (int) conversations.size());
+
+	int i = current - 1;
+	while (i >= 0) {
+		if (conversations[i].conv->GetStatus() == Conversation::STATUS_ACTIVE)
+			return i;
+		i--;
+	}
+	i = conversations.size() - 1;
+	while (i > current) {
+		if (conversations[i].conv->GetStatus() == Conversation::STATUS_ACTIVE)
+			return i;
+		i--;
+	}
+
+	return -1;
+}
+
+int Conversations::NextActiveConversation(int current)
+{
+	g_assert(current < (int) conversations.size());
+
+	int i = current + 1;
+	while (i < (int) conversations.size()) {
+		if (conversations[i].conv->GetStatus() == Conversation::STATUS_ACTIVE)
+			return i;
+		i++;
+	}
+	i = 0;
+	while (i < current) {
+		if (conversations[i].conv->GetStatus() == Conversation::STATUS_ACTIVE)
+			return i;
+		i++;
+	}
+
+	return -1;
+}
+
+void Conversations::ActivateConversation(int i)
+{
+	g_assert(i >= -1);
+	g_assert(i < (int) conversations.size());
+
+	// hide old active conversation if there is any
+	if (active != -1) {
+		conversations[active].label->SetVisibility(false);
+		conversations[active].conv->Hide();
+	}
+
+	if (i == -1) {
+		active = -1;
+		return;
+	}
+
+	// show a new active conversation
+	conversations[i].label->SetVisibility(true);
+	conversations[i].conv->Show();
+	active = i;
+}
+
+void Conversations::OnConversationClose(Conversation& conv)
+{
+	int i = FindConversation(conv.GetPurpleConversation());
+	g_assert(i != -1);
+
+	if (i == active) {
+		i = PrevActiveConversation(i);
+		ActivateConversation(i);
+	}
+}
+
 void Conversations::create_conversation(PurpleConversation *conv)
 {
-	g_assert(conv);
-	g_assert(conversations.find(conv) == conversations.end());
+	g_return_if_fail(conv);
+	g_return_if_fail(FindConversation(conv) == -1);
 
 	Conversation *conversation;
 
@@ -96,53 +220,56 @@ void Conversations::create_conversation(PurpleConversation *conv)
 		return;
 	}
 
-	conversations[conv] = conversation;
-	conversation->Show();
+	ConvChild c;
+	c.purple_conv = conv;
+	c.conv = conversation;
+	c.sig_close = conversation->signal_close.connect(sigc::group(sigc::mem_fun(this,
+				&Conversations::OnConversationClose), sigc::ref(*conversation)));
+	char *name = g_strdup_printf("\\%s/", purple_conversation_get_name(conv));
+	c.label = new Label(::width(name), 1, name);
+	g_free(name);
+	list->AppendWidget(*c.label);
+	conversations.push_back(c);
+
+	// show the first conversation if there isn't any already
+	if (active == -1)
+		ActivateConversation(conversations.size() - 1);
 }
 
 void Conversations::destroy_conversation(PurpleConversation *conv)
 {
-	g_assert(conv);
+	g_return_if_fail(conv);
 
-	ConversationMap::iterator i = conversations.find(conv);
+	int i = FindConversation(conv);
+
 	// destroying unhandled conversation type
-	if (i == conversations.end())
+	if (i == -1)
 		return;
 
-	delete i->second;
-	conversations.erase(conv);
+	if (i == active) {
+		i = PrevActiveConversation(i);
+		ActivateConversation(i);
+	}
+
+	delete conversations[i].conv;
+	list->RemoveWidget(*conversations[i].label);
+	conversations.erase(conversations.begin() + i);
+	if (active > i)
+		active--;
 }
 
 void Conversations::write_conv(PurpleConversation *conv, const char *name,
-	const char *alias, const char *message, PurpleMessageFlags flags, time_t mtime)
+		const char *alias, const char *message, PurpleMessageFlags flags,
+		time_t mtime)
 {
-	g_assert(conv);
+	g_return_if_fail(conv);
 
-	ConversationMap::iterator i = conversations.find(conv);
+	int i = FindConversation(conv);
+
 	// message to unhandled conversation type
-	if (i == conversations.end())
+	if (i == -1)
 		return;
 
 	// delegate it to Conversation object
-	i->second->Receive(name, alias, message, flags, mtime);
-}
-
-void Conversations::ShowConversation(PurpleConversationType type,
-		PurpleAccount *account, const char *name)
-{
-	g_assert(account);
-	g_assert(name);
-
-	PurpleConversation *conv = purple_find_conversation_with_account(type, name, account);
-	if (conv) {
-		ConversationMap::iterator i = conversations.find(conv);
-		// unhandled conversation type
-		if (i == conversations.end())
-			return;
-
-		i->second->Show();
-		return;
-	}
-
-	purple_conversation_new(type, account, name);
+	conversations[i].conv->Receive(name, alias, message, flags, mtime);
 }

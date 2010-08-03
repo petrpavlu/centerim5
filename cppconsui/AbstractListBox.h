@@ -61,7 +61,6 @@ class AbstractListBox
 		virtual void AddWidget(Widget& widget, int x, int y);
 
 	private:
-		AbstractListBox();
 		AbstractListBox(const AbstractListBox&);
 		AbstractListBox& operator=(const AbstractListBox&);
 };

@@ -36,28 +36,84 @@ HorizontalListBox::HorizontalListBox(int w, int h)
 	SetScrollSize(0, h);
 }
 
+void HorizontalListBox::MoveResize(int newx, int newy, int neww, int newh)
+{
+	SetScrollHeight(newh);
+
+	AbstractListBox::MoveResize(newx, newy, neww, newh);
+}
+
+void HorizontalListBox::Draw()
+{
+	if (!area) {
+		// scrollpane will clear the scroll (real) area
+		AbstractListBox::Draw();
+		return;
+	}
+
+	area->erase();
+
+	int x = 0;
+	for (Children::iterator i = children.begin(); i != children.end(); i++) {
+		Widget *widget = i->widget;
+		if (widget->IsVisible()) {
+			widget->MoveResize(x, 0, widget->Width(), widget->Height());
+			widget->Draw();
+
+			int w = widget->Width();
+			w = w < 0 ? 1 : w;
+			x += w;
+		}
+	}
+
+	// make sure that currently focused widget is visible
+	if (focus_child)
+		MakeVisible(focus_child->Left(), focus_child->Top());
+
+	AbstractListBox::Draw();
+}
+
 void HorizontalListBox::AppendSeparator()
 {
-	AppendWidget(*(new VerticalLine(1)));
+	AppendWidget(*(new VerticalLine(-1)));
 }
 
 void HorizontalListBox::AppendWidget(Widget& widget)
 {
-	int w = GetScrollWidth();
-	SetScrollWidth(w + widget.Width());
-	AddWidget(widget, w, 0);
+	int w = widget.Width();
+	w = w < 0 ? 1 : w;
+	int sw = GetScrollWidth();
+	SetScrollWidth(sw + w);
+	AddWidget(widget, sw, 0);
 }
 
 void HorizontalListBox::RemoveWidget(Widget& widget)
 {
+	int w = widget.Width();
+	w = w < 0 ? 1 : w;
+	SetScrollWidth(GetScrollWidth() - w);
+
 	AbstractListBox::RemoveWidget(widget);
+}
 
-	int x = 0;
-	for (Children::iterator i = children.begin(); i != children.end(); i++) {
-		Widget *w = i->widget;
-		w->MoveResize(x, 0, w->Width(), w->Height());
-		x += w->Width();
+Curses::Window *HorizontalListBox::GetSubPad(const Widget& child, int begin_x,
+		int begin_y, int ncols, int nlines)
+{
+	// if width is set to negative number (autosize) then return width `1'
+	if (ncols < 0)
+		ncols = 1;
+
+	return AbstractListBox::GetSubPad(child, begin_x, begin_y, ncols, nlines);
+}
+
+void HorizontalListBox::OnChildMoveResize(Widget& widget, Rect &oldsize, Rect &newsize)
+{
+	int old_width = oldsize.Width();
+	int new_width = newsize.Width();
+	if (old_width != new_width) {
+		old_width = old_width < 0 ? 1 : old_width;
+		new_width = new_width < 0 ? 1 : new_width;
+
+		SetScrollWidth(GetScrollWidth() - old_width + new_width);
 	}
-
-	SetScrollWidth(x);
 }

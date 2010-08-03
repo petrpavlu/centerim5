@@ -151,6 +151,7 @@ class Container
 
 			// signal connection to the widget
 			sigc::connection sig_redraw;
+			sigc::connection sig_moveresize;
 		};
 		typedef std::vector<Child> Children;
 
@@ -166,11 +167,13 @@ class Container
 
 		virtual void UpdateAreas();
 
+		virtual void OnChildRedraw(Widget& widget);
+		virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
+				Rect& newsize);
+
 	private:
 		Container(const Container&);
 		Container& operator=(const Container&);
-
-		void OnChildRedraw(Widget& widget);
 		
 		/** it handles the automatic registration of defined keys */
 		DECLARE_SIG_REGISTERKEYS();
