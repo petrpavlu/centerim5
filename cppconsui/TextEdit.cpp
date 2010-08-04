@@ -476,7 +476,8 @@ void TextEdit::UpdateScreenLines()
 {
 	ClearScreenLines();
 
-	if (!area || area->getmaxx() <= 1)
+	int realw;
+	if (!area || (realw = area->getmaxx()) <= 1)
 		return;
 
 	gchar *p = buffer;
@@ -487,7 +488,7 @@ void TextEdit::UpdateScreenLines()
 	while (p < bufend) {
 		s = p;
 		// lower max width by one to make a room for the cursor
-		p = GetScreenLine(p, area->getmaxx() - 1, &width, &length);
+		p = GetScreenLine(p, realw - 1, &width, &length);
 		screen_lines.push_back(new ScreenLine(s, p, length, width));
 	}
 	/* An empty line has to be manually inserted if there is a '\n' character

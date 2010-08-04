@@ -153,7 +153,17 @@ CoreManager::~CoreManager()
 {
 	StdinInputUnInit();
 
-	/// @todo Close all windows?
+	// close all windows
+	int i = 0;
+	while (i < (int) windows.size()) {
+		FreeWindow *win = windows[i].window;
+		/* There are two possibilities, either window is in Close() method
+		 * removed from the core manager or not, in the first case we don't
+		 * increase i. */
+		win->Close();
+		if (windows[i].window == win)
+			i++;
+	}
 
 	Curses::endwin();
 }

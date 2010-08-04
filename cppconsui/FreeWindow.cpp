@@ -122,7 +122,7 @@ bool FreeWindow::SetFocusChild(Widget& child)
 	focus_child = &child;
 	SetInputChild(child);
 
-	if (COREMANAGER->HasWindow(*this) && COREMANAGER->GetTopWindow() != this)
+	if (COREMANAGER->GetTopWindow() != this)
 		return false;
 
 	return true;
