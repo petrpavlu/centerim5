@@ -31,7 +31,7 @@ Dialog::Dialog(int x, int y, int w, int h, LineStyle::Type ltype)
 }
 
 Dialog::Dialog()
-: Window(0, 0, 1, 1)
+: Window(0, 0, 1, 1, TYPE_TOP)
 {
 	//TODO set correct position.
 	MoveResize(10, 10, 60, 12);

@@ -312,6 +312,7 @@ void ConversationIm::LoadHistory()
 		}
 		else
 			LOG->Write(Log::Level_error, _("Error opening conversation logfile `%s'.\n"), filename);
+		return;
 	}
 
 	GIOStatus st;
@@ -370,6 +371,7 @@ void ConversationIm::LoadHistory()
 		else
 			LOG->Write(Log::Level_error, _("Error reading from conversation logfile `%s'.\n"), filename);
 	}
+	g_io_channel_unref(chan);
 }
 
 void ConversationIm::Send()

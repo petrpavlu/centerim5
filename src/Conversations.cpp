@@ -247,8 +247,8 @@ void Conversations::destroy_conversation(PurpleConversation *conv)
 		return;
 
 	if (i == active) {
-		i = PrevActiveConversation(i);
-		ActivateConversation(i);
+		int j = PrevActiveConversation(i);
+		ActivateConversation(j);
 	}
 
 	delete conversations[i].conv;
