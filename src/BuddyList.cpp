@@ -308,7 +308,7 @@ void BuddyList::GroupBox::OnAccountChanged(const ComboBox::ComboBoxEntry& new_en
 
 BuddyList::AddBuddyWindow::AddBuddyWindow(PurpleAccount *account,
 		const char *username, const char *group, const char *alias)
-: Window(0, 0, 50, 10)
+: Window(0, 0, 50, 10, TYPE_TOP)
 {
 	accounts_box = new AccountsBox(account);
 	name_button = new NameButton(false, username);

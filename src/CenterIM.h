@@ -47,9 +47,6 @@ class CenterIM
 		/** Returns size of selected area. */
 		Rect ScreenAreaSize(ScreenArea area);
 
-		void OpenAccountStatusMenu();
-		void OpenGeneralMenu();
-
 		static const char * const version;
 
 	protected:
@@ -125,6 +122,13 @@ class CenterIM
 		static void tmp_purple_print(PurpleDebugLevel level, const char *category, const char *arg_s);
 		static gboolean tmp_is_enabled(PurpleDebugLevel level, const char *category)
 			{ return TRUE; }
+
+		void ActionFocusBuddyList();
+		void ActionFocusActiveConversation();
+		void ActionOpenAccountStatusMenu();
+		void ActionOpenGeneralMenu();
+		void ActionFocusPrevConversation();
+		void ActionFocusNextConversation();
 
 		/** it handles the automatic registration of defined keys */
 		DECLARE_SIG_REGISTERKEYS();

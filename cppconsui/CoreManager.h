@@ -150,6 +150,7 @@ class CoreManager
 		void Redraw();
 		void WindowRedraw(Widget& widget);
 
+		Windows::iterator FindWindow(FreeWindow& window);
 		void FocusWindow();
 
 		/** it handles the automatic registration of defined keys */

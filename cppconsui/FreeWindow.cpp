@@ -135,10 +135,8 @@ bool FreeWindow::IsWidgetVisible(const Widget& child) const
 
 void FreeWindow::Show()
 {
-	if (!COREMANAGER->HasWindow(*this)) {
-		COREMANAGER->AddWindow(*this);
-		signal_show(*this);
-	}
+	COREMANAGER->AddWindow(*this);
+	signal_show(*this);
 }
 
 void FreeWindow::Hide()

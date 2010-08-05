@@ -196,15 +196,25 @@ void CoreManager::QuitMainLoop()
 
 void CoreManager::AddWindow(FreeWindow& window)
 {
-	g_assert(!HasWindow(window));
-
 	WindowInfo info;
-	info.window = &window;
-	info.redraw = window.signal_redraw.connect(sigc::mem_fun(this, &CoreManager::WindowRedraw));
-	info.resize = signal_resize.connect(sigc::mem_fun(&window, &FreeWindow::ScreenResized));
-	windows.push_back(info);
 
-	window.ScreenResized();
+	Windows::iterator i = FindWindow(window);
+
+	if (i != windows.end()) {
+		/* Window is already added, AddWindow() was called to bring the window
+		 * to the top. */
+		info = *i;
+		windows.erase(i);
+		windows.push_back(info);
+	}
+	else {
+		info.window = &window;
+		info.redraw = window.signal_redraw.connect(sigc::mem_fun(this, &CoreManager::WindowRedraw));
+		info.resize = signal_resize.connect(sigc::mem_fun(&window, &FreeWindow::ScreenResized));
+		windows.push_back(info);
+		window.ScreenResized();
+	}
+
 	FocusWindow();
 	Redraw();
 }
@@ -463,6 +473,14 @@ void CoreManager::Redraw()
 void CoreManager::WindowRedraw(Widget& widget)
 {
 	Redraw();
+}
+
+CoreManager::Windows::iterator CoreManager::FindWindow(FreeWindow& window)
+{
+	for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
+		if (i->window == &window)
+			return i;
+	return windows.end();
 }
 
 void CoreManager::FocusWindow()

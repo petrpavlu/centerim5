@@ -47,8 +47,10 @@ class Conversations
 		// force show the conversation, used by buddy list
 		void ShowConversation(PurpleConversationType type,
 				PurpleAccount *account, const char *name);
-		// force hide the conversation
-		void HideConversation(PurpleConversation *conv);
+
+		void FocusActiveConversation();
+		void FocusPrevConversation();
+		void FocusNextConversation();
 
 	protected:
 

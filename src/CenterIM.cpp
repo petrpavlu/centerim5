@@ -247,35 +247,39 @@ void CenterIM::ColorSchemeInit()
 {
 	// default colors init
 	/// @todo move this to a default cfg
-	COLORSCHEME->SetColorPair("accountstatusmenu",	"panel",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
-	COLORSCHEME->SetColorPair("accountstatusmenu",	"horizontalline",	"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
-	COLORSCHEME->SetColorPair("accountstatusmenu",	"button",		"normal",	Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("accountstatusmenu",		"panel",			"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("accountstatusmenu",		"horizontalline",	"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("accountstatusmenu",		"button",			"normal",	Curses::Color::CYAN,	Curses::Color::BLACK);
 
-	COLORSCHEME->SetColorPair("accountstatuspopup",	"panel",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
-	COLORSCHEME->SetColorPair("accountstatuspopup",	"horizontalline",	"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
-	COLORSCHEME->SetColorPair("accountstatuspopup",	"button",		"normal",	Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("accountstatuspopup",		"panel",			"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("accountstatuspopup",		"horizontalline",	"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("accountstatuspopup",		"button",			"normal",	Curses::Color::CYAN,	Curses::Color::BLACK);
 
-	COLORSCHEME->SetColorPair("accountwindow",	"panel",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
-	COLORSCHEME->SetColorPair("accountwindow",	"horizontalline",	"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
-	COLORSCHEME->SetColorPair("accountwindow",	"verticalline",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("accountwindow",			"panel",			"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("accountwindow",			"horizontalline",	"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("accountwindow",			"verticalline",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
 
-	COLORSCHEME->SetColorPair("buddylist",		"treeview",		"line",		Curses::Color::GREEN,	Curses::Color::BLACK);
-	COLORSCHEME->SetColorPair("buddylist",		"panel",		"line",		Curses::Color::BLUE,	Curses::Color::BLACK,	Curses::Attr::BOLD);
-	COLORSCHEME->SetColorPair("buddylist",		"button",		"normal",	Curses::Color::GREEN,	Curses::Color::BLACK);
-	COLORSCHEME->SetColorPair("buddylistgroup",	"button",		"normal",	Curses::Color::YELLOW,	Curses::Color::BLACK,	Curses::Attr::BOLD);
+	COLORSCHEME->SetColorPair("buddylist",				"treeview",			"line",		Curses::Color::GREEN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("buddylist",				"panel",			"line",		Curses::Color::BLUE,	Curses::Color::BLACK,	Curses::Attr::BOLD);
+	COLORSCHEME->SetColorPair("buddylist",				"button",			"normal",	Curses::Color::GREEN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("buddylistgroup",			"button",			"normal",	Curses::Color::YELLOW,	Curses::Color::BLACK,	Curses::Attr::BOLD);
 
-	COLORSCHEME->SetColorPair("generalmenu",	"panel",		"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
-	COLORSCHEME->SetColorPair("generalmenu",	"horizontalline",	"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
-	COLORSCHEME->SetColorPair("generalmenu",	"button",		"normal",	Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("generalmenu",			"panel",			"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("generalmenu",			"horizontalline",	"line",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("generalmenu",			"button",			"normal",	Curses::Color::CYAN,	Curses::Color::BLACK);
 
-	COLORSCHEME->SetColorPair("log",		"panel",		"line",		Curses::Color::BLUE,	Curses::Color::BLACK,	Curses::Attr::BOLD);
-	COLORSCHEME->SetColorPair("log",		"textview",		"text",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("log",					"panel",			"line",		Curses::Color::BLUE,	Curses::Color::BLACK,	Curses::Attr::BOLD);
+	COLORSCHEME->SetColorPair("log",					"textview",			"text",		Curses::Color::CYAN,	Curses::Color::BLACK);
 
-	COLORSCHEME->SetColorPair("conversation",	"textview",		"text",		Curses::Color::MAGENTA,	Curses::Color::BLACK);
-	COLORSCHEME->SetColorPair("conversation",	"textview",		"color1",	Curses::Color::CYAN,	Curses::Color::BLACK);
-	COLORSCHEME->SetColorPair("conversation",	"textview",		"color2",	Curses::Color::YELLOW,	Curses::Color::BLACK,	Curses::Attr::BOLD);
-	COLORSCHEME->SetColorPair("conversation",	"panel",		"line",		Curses::Color::BLUE,	Curses::Color::BLACK,	Curses::Attr::BOLD);
-	COLORSCHEME->SetColorPair("conversation",	"horizontalline",	"line",		Curses::Color::BLUE,	Curses::Color::BLACK,	Curses::Attr::BOLD);
+	COLORSCHEME->SetColorPair("conversation",			"textview",			"text",		Curses::Color::MAGENTA,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("conversation",			"textview",			"color1",	Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("conversation",			"textview",			"color2",	Curses::Color::YELLOW,	Curses::Color::BLACK,	Curses::Attr::BOLD);
+	COLORSCHEME->SetColorPair("conversation",			"panel",			"line",		Curses::Color::BLUE,	Curses::Color::BLACK,	Curses::Attr::BOLD);
+	COLORSCHEME->SetColorPair("conversation",			"horizontalline",	"line",		Curses::Color::BLUE,	Curses::Color::BLACK,	Curses::Attr::BOLD);
+
+	COLORSCHEME->SetColorPair("conversation",			"label",			"text",		Curses::Color::CYAN,	Curses::Color::BLACK);
+	COLORSCHEME->SetColorPair("conversation-active",	"label",			"text",		Curses::Color::YELLOW,	Curses::Color::BLACK,	Curses::Attr::BOLD);
+	COLORSCHEME->SetColorPair("conversation-new",		"label",			"text",		Curses::Color::CYAN,	Curses::Color::BLACK,	Curses::Attr::BOLD);
 }
 
 void CenterIM::DeclareBindables()
@@ -283,11 +287,23 @@ void CenterIM::DeclareBindables()
 	DeclareBindable(CONTEXT_CENTERIM, "quit",
 			sigc::mem_fun(this, &CenterIM::Quit),
 			InputProcessor::Bindable_Override);
+	DeclareBindable(CONTEXT_CENTERIM, "buddylist",
+			sigc::mem_fun(this, &CenterIM::ActionFocusBuddyList),
+			InputProcessor::Bindable_Override);
+	DeclareBindable(CONTEXT_CENTERIM, "conversation-active",
+			sigc::mem_fun(this, &CenterIM::ActionFocusActiveConversation),
+			InputProcessor::Bindable_Override);
 	DeclareBindable(CONTEXT_CENTERIM, "accountstatusmenu",
-			sigc::mem_fun(this, &CenterIM::OpenAccountStatusMenu),
+			sigc::mem_fun(this, &CenterIM::ActionOpenAccountStatusMenu),
 			InputProcessor::Bindable_Override);
 	DeclareBindable(CONTEXT_CENTERIM, "generalmenu",
-			sigc::mem_fun(this, &CenterIM::OpenGeneralMenu),
+			sigc::mem_fun(this, &CenterIM::ActionOpenGeneralMenu),
+			InputProcessor::Bindable_Override);
+	DeclareBindable(CONTEXT_CENTERIM, "conversation-prev",
+			sigc::mem_fun(this, &CenterIM::ActionFocusPrevConversation),
+			InputProcessor::Bindable_Override);
+	DeclareBindable(CONTEXT_CENTERIM, "conversation-next",
+			sigc::mem_fun(this, &CenterIM::ActionFocusNextConversation),
 			InputProcessor::Bindable_Override);
 }
 
@@ -296,12 +312,24 @@ bool CenterIM::RegisterKeys()
 {
 	RegisterKeyDef(CONTEXT_CENTERIM, "quit", _("Quit CenterIM."),
 			Keys::UnicodeTermKey("q", TERMKEY_KEYMOD_CTRL));
+	RegisterKeyDef(CONTEXT_CENTERIM, "buddylist",
+			_("Switch the focus to the buddy list."),
+			Keys::FunctionTermKey(1));
+	RegisterKeyDef(CONTEXT_CENTERIM, "conversation-active",
+			_("Switch the focus to the active conversation."),
+			Keys::FunctionTermKey(2));
 	RegisterKeyDef(CONTEXT_CENTERIM, "accountstatusmenu",
 			_("Open the account status menu."),
 			Keys::FunctionTermKey(3));
 	RegisterKeyDef(CONTEXT_CENTERIM, "generalmenu",
 			_("Open the general menu."),
 			Keys::FunctionTermKey(4));
+	RegisterKeyDef(CONTEXT_CENTERIM, "conversation-prev",
+			_("Switch the focus to the previous conversation."),
+			Keys::UnicodeTermKey("p", TERMKEY_KEYMOD_ALT));
+	RegisterKeyDef(CONTEXT_CENTERIM, "conversation-next",
+			_("Switch the focus to the next conversation."),
+			Keys::UnicodeTermKey("n", TERMKEY_KEYMOD_ALT));
 	return true;
 }
 
@@ -335,16 +363,36 @@ void CenterIM::ScreenResized()
 	areaSizes[WholeArea].height = mngr->GetScreenHeight();
 }
 
-void CenterIM::OpenAccountStatusMenu()
+void CenterIM::ActionFocusBuddyList()
+{
+	BUDDYLIST->Show();
+}
+
+void CenterIM::ActionFocusActiveConversation()
+{
+	CONVERSATIONS->FocusActiveConversation();
+}
+
+void CenterIM::ActionOpenAccountStatusMenu()
 {
 	//TODO get coords from config
 	AccountStatusMenu *menu = new AccountStatusMenu(40, 0, 40, 20);
 	menu->Show();
 }
 
-void CenterIM::OpenGeneralMenu()
+void CenterIM::ActionOpenGeneralMenu()
 {
 	//TODO get coords from config
 	GeneralMenu *menu = new GeneralMenu(40, 0, 40, 6);
 	menu->Show();
+}
+
+void CenterIM::ActionFocusPrevConversation()
+{
+	CONVERSATIONS->FocusPrevConversation();
+}
+
+void CenterIM::ActionFocusNextConversation()
+{
+	CONVERSATIONS->FocusNextConversation();
 }

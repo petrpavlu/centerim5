@@ -35,6 +35,8 @@ Conversations::Conversations()
 : FreeWindow(0, 0, 80, 1, TYPE_NON_FOCUSABLE)
 , active(-1)
 {
+	SetColorScheme("conversation");
+
 	list = new HorizontalListBox(width - 2, 1);
 	AddWidget(*list, 2, 0);
 
@@ -121,6 +123,29 @@ void Conversations::ShowConversation(PurpleConversationType type,
 	ActivateConversation(i);
 }
 
+void Conversations::FocusActiveConversation()
+{
+	ActivateConversation(active);
+}
+
+void Conversations::FocusPrevConversation()
+{
+	int i = PrevActiveConversation(active);
+	if (i == -1)
+		ActivateConversation(active);
+	else
+		ActivateConversation(i);
+}
+
+void Conversations::FocusNextConversation()
+{
+	int i = NextActiveConversation(active);
+	if (i == -1)
+		ActivateConversation(active);
+	else
+		ActivateConversation(i);
+}
+
 int Conversations::FindConversation(PurpleConversation *conv)
 {
 	for (int i = 0; i < (int) conversations.size(); i++)
@@ -175,9 +200,15 @@ void Conversations::ActivateConversation(int i)
 	g_assert(i >= -1);
 	g_assert(i < (int) conversations.size());
 
+	if (active == i) {
+		if (active != -1)
+			conversations[active].conv->Show();
+		return;
+	}
+
 	// hide old active conversation if there is any
 	if (active != -1) {
-		conversations[active].label->SetVisibility(false);
+		conversations[active].label->SetColorScheme(NULL);
 		conversations[active].conv->Hide();
 	}
 
@@ -188,6 +219,7 @@ void Conversations::ActivateConversation(int i)
 
 	// show a new active conversation
 	conversations[i].label->SetVisibility(true);
+	conversations[i].label->SetColorScheme("conversation-active");
 	conversations[i].conv->Show();
 	active = i;
 }
@@ -196,6 +228,8 @@ void Conversations::OnConversationClose(Conversation& conv)
 {
 	int i = FindConversation(conv.GetPurpleConversation());
 	g_assert(i != -1);
+
+	conversations[i].label->SetVisibility(false);
 
 	if (i == active) {
 		i = PrevActiveConversation(i);
@@ -269,6 +303,9 @@ void Conversations::write_conv(PurpleConversation *conv, const char *name,
 	// message to unhandled conversation type
 	if (i == -1)
 		return;
+
+	if (i != active)
+		conversations[i].label->SetColorScheme("conversation-new");
 
 	// delegate it to Conversation object
 	conversations[i].conv->Receive(name, alias, message, flags, mtime);
