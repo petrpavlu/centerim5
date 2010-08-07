@@ -161,7 +161,7 @@ CoreManager::~CoreManager()
 		 * removed from the core manager or not, in the first case we don't
 		 * increase i. */
 		win->Close();
-		if (windows[i].window == win)
+		if (i < (int) windows.size() && windows[i].window == win)
 			i++;
 	}
 

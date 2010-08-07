@@ -179,6 +179,8 @@ void Widget::SetColorScheme(const char *scheme)
 		color_scheme = g_strdup(scheme);
 	else
 		color_scheme = NULL;
+
+	signal_redraw(*this);
 }
 
 const char *Widget::GetColorScheme()
