@@ -266,8 +266,7 @@ void Container::MoveFocus(FocusDirection direction)
 		g_assert(iter != focus_chain.end());
 
 		Widget *widget = *iter;
-		Container *parent = widget->GetParent();
-		if (!widget->IsVisible() || !parent->IsWidgetVisible(*widget)) {
+		if (!widget->IsVisibleRecursive()) {
 			/* Currently focused widget is no longer visible, MoveFocus was
 			 * called to fix it. */
 
@@ -288,7 +287,7 @@ void Container::MoveFocus(FocusDirection direction)
 				}
 			}
 			if (i != parent_iter.end() && (*i)) {
-				// local focus change was sucessful
+				// local focus change was successful
 				(*i)->GrabFocus();
 				return;
 			}
@@ -389,7 +388,7 @@ void Container::MoveFocus(FocusDirection direction)
 					break;
 			}
 
-			// finally, find the next widget which will get focus
+			// finally, find the next widget which will get the focus
 			do {
 				iter++;
 				if (iter == cycle_end)
@@ -399,10 +398,9 @@ void Container::MoveFocus(FocusDirection direction)
 			break;
 	}
 
-	/* Make sure the widget is valid and the let it grab focus. */
-	if (*iter) {
+	// make sure the widget is valid and then let it grab the focus
+	if (*iter)
 		(*iter)->GrabFocus();
-	}
 }
 
 void Container::SetActive(int i)

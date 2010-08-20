@@ -211,6 +211,8 @@ class TreeView
 		TreeNode AddNodeInit(Widget& widget);
 		void AddNodeFinalize(NodeReference& iter);
 
+		void FocusFix();
+
 		NodeReference FindNode(const Widget& child) const;
 
 		bool IsNodeOpenable(const SiblingIterator& node) const;

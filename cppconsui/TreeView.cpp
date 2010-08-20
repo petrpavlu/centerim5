@@ -45,9 +45,6 @@ TreeView::TreeView(int w, int h, LineStyle::Type ltype)
 TreeView::~TreeView()
 {
 	DeleteNode(thetree.begin(), false);
-
-	/// @todo Remove later.
-	g_assert_cmpint(GetScrollHeight(), ==, 0);
 }
 
 void TreeView::DeclareBindables()
@@ -125,13 +122,6 @@ bool TreeView::SetFocusChild(Widget& child)
 	bool res = ScrollPane::SetFocusChild(child);
 	focus_node = node;
 	return res;
-	/*
-	if (ScrollPane::SetFocusChild(child)) {
-		focus_node = node;
-		return true;
-	}
-	return false;
-	*/
 }
 
 void TreeView::GetFocusChain(FocusChain& focus_chain,
@@ -219,6 +209,7 @@ void TreeView::Collapse(const NodeReference node)
 {
 	if (node->open) {
 		node->open = false;
+		FocusFix();
 		signal_redraw(*this);
 	}
 }
@@ -333,6 +324,7 @@ void TreeView::MoveBefore(const NodeReference node, const NodeReference position
 {
 	if (thetree.previous_sibling(position) != node) {
 		thetree.move_before(position, node);
+		FocusFix();
 		signal_redraw(*this);
 	}
 }
@@ -341,6 +333,7 @@ void TreeView::MoveAfter(const NodeReference node, const NodeReference position)
 {
 	if (thetree.next_sibling(position) != node) {
 		thetree.move_after(position, node);
+		FocusFix();
 		signal_redraw(*this);
 	}
 }
@@ -349,6 +342,7 @@ void TreeView::SetParent(const NodeReference node, const NodeReference newparent
 {
 	if (thetree.parent(node) != newparent) {
 		thetree.move_ontop(thetree.append_child(newparent), node);
+		FocusFix();
 		signal_redraw(*this);
 	}
 }
@@ -481,6 +475,27 @@ void TreeView::AddNodeFinalize(NodeReference& iter)
 	signal_redraw(*this);
 }
 
+void TreeView::FocusFix()
+{
+	/* This function is called when a widget tree is reorganized (a node was
+	 * moved in another position in the tree). In this case it's possible that
+	 * there can be revealed a widget that could grab the focus (if there is
+	 * no focused widget yet) or it's also possible that currently focused
+	 * widget was hidden by this reorganization (then the focus has to be
+	 * handled to another widget). */
+
+	Container *t = GetTopContainer();
+	Widget *focus = t->GetFocusWidget();
+	if (!focus) {
+		// try to grab the focus
+		t->MoveFocus(Container::FocusNext);
+	}
+	else if (!focus->IsVisibleRecursive()) {
+		// move focus
+		t->MoveFocus(Container::FocusNext);
+	}
+}
+
 TreeView::NodeReference TreeView::FindNode(const Widget& child) const
 {
 	/// @todo Speed up this algorithm.
@@ -502,11 +517,13 @@ bool TreeView::IsNodeOpenable(const SiblingIterator& node) const
 
 bool TreeView::IsNodeVisible(const NodeReference& node) const
 {
-	// node is visible if all predecessors are visible
+	// node is visible if all predecessors are visible and open
 	NodeReference act = node;
+	bool first = true;
 	while (act != thetree.begin()) {
-		if (!act->widget->IsVisible())
+		if (!act->widget->IsVisible() || (!first && !act->open))
 			return false;
+		first = false;
 		act = thetree.parent(act);
 	}
 	return true;

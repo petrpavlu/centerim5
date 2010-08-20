@@ -110,7 +110,7 @@ bool Widget::GrabFocus()
 	if (!parent || has_focus)
 		return false;
 
-	if (can_focus && visible && parent->SetFocusChild(*this)) {
+	if (can_focus && IsVisibleRecursive() && parent->SetFocusChild(*this)) {
 		has_focus = true;
 		signal_focus(*this, true);
 		signal_redraw(*this);
@@ -129,8 +129,9 @@ void Widget::SetVisibility(bool visible)
 		if (t) {
 			if (visible) {
 				if (!t->GetFocusWidget()) {
-					// there is no focused widget, try to grab it
-					GrabFocus();
+					/* There is no focused widget, try if this or a widget
+					 * that was revealed can grab it. */
+					t->MoveFocus(Container::FocusNext);
 				}
 			}
 			else {
@@ -162,9 +163,11 @@ void Widget::SetParent(Container& parent)
 
 	this->parent = &parent;
 
-	if (!GetTopContainer()->GetFocusWidget()) {
-		// there is no focused widget, try to grab it
-		GrabFocus();
+	Container *t = GetTopContainer();
+	if (!t->GetFocusWidget()) {
+		/* There is no focused widget, try if this or a child widget (in case
+		 * of Container) can grab it. */
+		t->MoveFocus(Container::FocusNext);
 	}
 
 	UpdateArea();
@@ -197,7 +200,7 @@ Container *Widget::GetTopContainer()
 {
 	Container *c, *top;
 
-	top = NULL;
+	top = dynamic_cast<Container *>(this);
 	c = parent;
 	while (c) {
 		top = c;
