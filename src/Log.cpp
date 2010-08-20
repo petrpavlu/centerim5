@@ -41,7 +41,6 @@ Log::Log()
 : Window(0, 0, 80, 24, TYPE_NON_FOCUSABLE)
 , logfile(NULL)
 , prefs_handle(NULL)
-, max_lines(0)
 { 
 	SetColorScheme("log");
 
@@ -53,9 +52,6 @@ Log::Log()
 #define REGISTER_G_LOG_HANDLER(name) \
 	g_log_set_handler((name), (GLogLevelFlags)(G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL \
 				| G_LOG_FLAG_RECURSION), glib_log_handler_, NULL)
-
-	// TODO max_lines not used anywhere..
-	max_lines = CONF->GetLogMaxLines();
 
 	// register the glib log handlers
 	REGISTER_G_LOG_HANDLER(NULL);
@@ -104,6 +100,7 @@ void Log::Write(Level level, const gchar *fmt, ...)
 
 	WriteToFile(text);
 	textview->Append(text);
+	ShortenWindowText();
 
 	g_free(text);
 }
@@ -173,6 +170,17 @@ void Log::ScreenResized()
 	MoveResizeRect(CENTERIM->ScreenAreaSize(CenterIM::LogArea));
 }
 
+void Log::ShortenWindowText()
+{
+	int max_lines = CONF->GetLogMaxLines();
+	int lines_num = textview->GetLinesNumber();
+
+	if (lines_num > max_lines) {
+		// remove 20 extra lines
+		textview->Erase(0, lines_num - max_lines + 20);
+	}
+}
+
 void Log::Write(Type type, Level level, const gchar *fmt, ...)
 {
 	va_list args;
@@ -188,6 +196,7 @@ void Log::Write(Type type, Level level, const gchar *fmt, ...)
 
 	WriteToFile(text);
 	textview->Append(text);
+	ShortenWindowText();
 
 	g_free(text);
 }
@@ -205,6 +214,7 @@ void Log::WriteToWindow(Level level, const gchar *fmt, ...)
 	va_end(args);
 
 	textview->Append(text);
+	ShortenWindowText();
 
 	g_free(text);
 }

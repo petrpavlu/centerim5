@@ -203,7 +203,7 @@ void CenterIM::tmp_purple_print(PurpleDebugLevel level, const char *category,
 	logbuf->push_back(item);
 }
 
-void CenterIM::PurpleInit(void)
+void CenterIM::PurpleInit()
 {
 	// set the configuration file location
 	char *path;

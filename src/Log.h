@@ -63,8 +63,6 @@ class Log
 		GIOChannel *logfile;
 		void *prefs_handle;
 
-		int max_lines;
-
 		TextView *textview;
 
 		Log();
@@ -73,26 +71,32 @@ class Log
 		virtual ~Log();
 
 		// to catch libpurple's debug messages
-		static void purple_print_(PurpleDebugLevel level, const char *category, const char *arg_s)
+		static void purple_print_(PurpleDebugLevel level,
+				const char *category, const char *arg_s)
 			{ LOG->purple_print(level, category, arg_s); }
-		static gboolean is_enabled_(PurpleDebugLevel level, const char *category)
+		static gboolean is_enabled_(PurpleDebugLevel level,
+				const char *category)
 			{ return LOG->is_enabled(level, category); }
 
-		void purple_print(PurpleDebugLevel level, const char *category, const char *arg_s);
+		void purple_print(PurpleDebugLevel level, const char *category,
+				const char *arg_s);
 		gboolean is_enabled(PurpleDebugLevel level, const char *category);
 
 		// to catch glib's messages
 		static void glib_log_handler_(const gchar *domain, GLogLevelFlags flags,
 			const gchar *msg, gpointer user_data)
 			{ LOG->glib_log_handler(domain, flags, msg, user_data); }
-		void glib_log_handler(const gchar *domain, GLogLevelFlags flags, const gchar *msg, gpointer user_data);
+		void glib_log_handler(const gchar *domain, GLogLevelFlags flags,
+				const gchar *msg, gpointer user_data);
 
 		// called when log/debug pref changed
 		static void debug_change_(const char *name, PurplePrefType type,
 				gconstpointer val, gpointer data)
 			{ ((Log *) data)->debug_change(name, type, val); }
-		void debug_change(const char *name, PurplePrefType type, gconstpointer val);
+		void debug_change(const char *name, PurplePrefType type,
+				gconstpointer val);
 
+		void ShortenWindowText();
 		void Write(Type type, Level level, const gchar *fmt, ...);
 		void WriteToWindow(Level level, const gchar *fmt, ...);
 		void WriteToFile(const gchar *text);

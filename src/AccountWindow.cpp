@@ -58,9 +58,9 @@ AccountWindow::AccountWindow()
 	
 	Populate();
 
-	// move focus to Add button if there is not any account
-	if (account_entries.empty())
-		menu->SetActive(0);
+	// move focus to accounts if there is any
+	if (account_entries.size())
+		accounts->SetActive(0);
 }
 
 void AccountWindow::MoveResize(int newx, int newy, int neww, int newh)
