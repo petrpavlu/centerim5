@@ -356,8 +356,8 @@ void ConversationIm::LoadHistory()
 		// write text to the window
 		char *nohtml = purple_markup_strip_html(cur);
 		char *msg = g_strdup_printf("%s %s", purple_utf8_strftime(TIME_FORMAT, localtime(&time)), nohtml);
-		g_free(nohtml);
 		view->Append(msg, color);
+		g_free(nohtml);
 		g_free(msg);
 
 		g_free(line);

@@ -1,3 +1,30 @@
+/*
+ * Copyright (C) 2010 by CenterIM developers
+ *
+ * This file is part of CenterIM.
+ *
+ * CenterIM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * CenterIM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * */
+
+/**
+ * @file
+ * TextView class implementation.
+ *
+ * @ingroup cppconsui
+ */
+
 #include "TextView.h"
 
 #include "CppConsUI.h"
@@ -24,20 +51,17 @@ void TextView::Insert(int line_num, const gchar *text, int color)
 {
 	g_assert(text);
 	g_assert(line_num >= 0);
-	g_assert(line_num <= lines.size());
+	g_assert(line_num <= (int) lines.size());
 
 	const gchar *p = text;
 	const gchar *s = text;
 
 	// parse lines
 	while (*p) {
-		GUnicodeType t = g_unichar_type(g_utf8_get_char(p));
-		if ((*p == '\r' || *p == '\n' || t == G_UNICODE_LINE_SEPARATOR || t == G_UNICODE_PARAGRAPH_SEPARATOR)) {
-			if (s < p) {
-				Line *l = new Line(s, p - s, color);
-				lines.insert(lines.begin() + line_num, l);
-				UpdateScreenLines(line_num++);
-			}
+		if (*p == '\n') {
+			Line *l = new Line(s, p - s, color);
+			lines.insert(lines.begin() + line_num, l);
+			UpdateScreenLines(line_num++);
 			s = p = g_utf8_next_char(p);
 			continue;
 		}
@@ -56,12 +80,30 @@ void TextView::Insert(int line_num, const gchar *text, int color)
 
 void TextView::Erase(int line_num)
 {
-	/// @todo
+	g_assert(line_num >= 0);
+	g_assert(line_num < (int) lines.size());
+
+	EraseScreenLines(line_num);
+	lines.erase(lines.begin() + line_num);
+
+	/// @todo Update view.
+	signal_redraw(*this);
 }
 
 void TextView::Erase(int start_line, int end_line)
 {
-	/// @todo
+	g_assert(start_line >= 0);
+	g_assert(start_line < (int) lines.size());
+	g_assert(end_line >= 0);
+	g_assert(end_line < (int) lines.size());
+	g_assert(start_line < end_line);
+
+	for (int i = start_line, advice = 0; i < end_line; i++)
+		advice = EraseScreenLines(i, advice);
+	lines.erase(lines.begin() + start_line, lines.begin() + end_line);
+
+	/// @todo Update view.
+	signal_redraw(*this);
 }
 
 void TextView::Clear()
@@ -81,7 +123,7 @@ void TextView::Clear()
 const gchar *TextView::GetLine(int line_num) const
 {
 	g_assert(line_num >= 0);
-	g_assert(line_num < lines.size());
+	g_assert(line_num < (int) lines.size());
 
 	return lines[line_num]->text;
 }
@@ -93,8 +135,8 @@ int TextView::GetLinesNumber() const
 
 int TextView::ViewPosForLine(int line_num) const
 {
-	g_assert(line_num > 0);
-	g_assert(line_num < lines.size());
+	g_assert(line_num >= 0);
+	g_assert(line_num < (int) lines.size());
 
 	/// @todo
 	return 0;
@@ -102,8 +144,8 @@ int TextView::ViewPosForLine(int line_num) const
 
 void TextView::SetViewPos(int viewy)
 {
-	g_assert(viewy > 0);
-	g_assert(viewy <= screen_lines.size());
+	g_assert(viewy >= 0);
+	g_assert(viewy < (int) screen_lines.size());
 
 	view_top = viewy;
 
@@ -156,7 +198,7 @@ void TextView::MoveResize(int newx, int newy, int neww, int newh)
 	Widget::MoveResize(newx, newy, neww, newh);
 
 	/// @todo optimize
-	for (int i = 0; i < lines.size(); i++)
+	for (int i = 0; i < (int) lines.size(); i++)
 		UpdateScreenLines(i);
 }
 
@@ -220,23 +262,11 @@ const gchar *TextView::ProceedLine(const gchar *text, int area_width, int *res_w
 void TextView::UpdateScreenLines(int line_num)
 {
 	g_assert(line_num >= 0);
-	g_assert(line_num < lines.size());
-
-	ScreenLines::iterator i;
+	g_assert(line_num < (int) lines.size());
 
 	/* Find where new screen lines should be placed and remove previous screen
 	 * lines created for this line. */
-	i = screen_lines.begin();
-	while (i != screen_lines.end()) {
-		if ((*i)->parent == lines[line_num]) {
-			delete *i;
-			i = screen_lines.erase(i);
-		}
-		else if (line_num + 1 < lines.size() && (*i)->parent == lines[line_num + 1])
-			break;
-		else
-			i++;
-	}
+	ScreenLines::iterator i = screen_lines.begin() + EraseScreenLines(line_num);
 
 	if (!area)
 		return;
@@ -252,14 +282,40 @@ void TextView::UpdateScreenLines(int line_num)
 		new_lines.push_back(new ScreenLine(*lines[line_num], s, width));
 	}
 
+	// empty line
+	if (new_lines.empty())
+		new_lines.push_back(new ScreenLine(*lines[line_num], p, 0));
+
 	screen_lines.insert(i, new_lines.begin(), new_lines.end());
+}
+
+int TextView::EraseScreenLines(int line_num, int start)
+{
+	g_assert(line_num >= 0);
+	g_assert(line_num < (int) lines.size());
+	g_assert(start >= 0);
+	g_assert(start < (int) lines.size());
+
+	int i = start;
+	while (i < (int) screen_lines.size()) {
+		if (screen_lines[i]->parent == lines[line_num]) {
+			delete screen_lines[i];
+			screen_lines.erase(screen_lines.begin() + i);
+		}
+		else if (line_num + 1 < (int) lines.size()
+				&& screen_lines[i]->parent == lines[line_num + 1])
+			break;
+		else
+			i++;
+	}
+	return i;
 }
 
 TextView::Line::Line(const gchar *text_, int bytes, int color_)
 : color(color_)
 {
 	g_assert(text_);
-	g_assert(bytes > 0);
+	g_assert(bytes >= 0);
 
 	text = g_strndup(text_, bytes);
 	length = g_utf8_strlen(text, -1);
@@ -267,8 +323,6 @@ TextView::Line::Line(const gchar *text_, int bytes, int color_)
 
 TextView::Line::~Line()
 {
-	g_assert(text);
-
 	g_free(text);
 }
 
