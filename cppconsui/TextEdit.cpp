@@ -389,7 +389,7 @@ int TextEdit::Width(const gchar *start, int chars) const
 	int width = 0;
 
 	while (chars--) {
-		width += g_unichar_iswide(g_utf8_get_char(start)) ? 2 : 1;
+		width += Curses::onscreen_width(g_utf8_get_char(start));
 		start = NextChar(start);
 	}
 	return width;
@@ -419,7 +419,7 @@ gchar *TextEdit::GetScreenLine(gchar *text, int max_width, int *res_width, int *
 	while (cur < bufend) {
 		prev_width = cur_width;
 		uni = g_utf8_get_char(cur);
-		cur_width += g_unichar_iswide(uni) ? 2 : 1;
+		cur_width += Curses::onscreen_width(uni);
 		cur_length++;
 
 		if (prev_width > max_width)
@@ -640,7 +640,7 @@ void TextEdit::MoveCursor(CursorMovement step, int direction)
 				/* First move to end of current line then move to
 				 * current_sc_linepos on next line (and make sure there is
 				 * such position). */
-				if (current_sc_line + 1 < screen_lines.size())
+				if (current_sc_line + 1 < (int) screen_lines.size())
 					current_pos += (screen_lines[current_sc_line]->length - current_sc_linepos)
 						+ MIN(current_sc_linepos, screen_lines[current_sc_line + 1]->length);
 			}
@@ -657,7 +657,7 @@ void TextEdit::MoveCursor(CursorMovement step, int direction)
 			if (direction > 0) {
 				/* Last line needs to be handled specially when moving to end
 				 * of line. */
-				if (current_sc_line + 1 == screen_lines.size())
+				if (current_sc_line + 1 == (int) screen_lines.size())
 					current_pos += screen_lines[current_sc_line]->length - current_sc_linepos;
 				else
 					current_pos += screen_lines[current_sc_line]->length - current_sc_linepos - 1;

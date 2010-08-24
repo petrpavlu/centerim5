@@ -145,6 +145,9 @@ int getmaxy();
 
 int resizeterm(int lines, int columns);
 
+int onscreen_width(const char *start, const char *end = NULL);
+int onscreen_width(gunichar uc);
+
 } // namespace Curses
 
 #endif /* __CONSUICURSES_H__ */

@@ -193,7 +193,7 @@ void TextEntry::Draw()
 	if (has_focus) {
 		int realw = area->getmaxx();
 		gchar *ptr = g_utf8_offset_to_pointer(text, current_pos);
-		int sc_x = ::width(text, ptr);
+		int sc_x = Curses::onscreen_width(text, ptr);
 		int sc_y = sc_x / realw;
 		sc_x -= sc_y * realw;
 		area->mvchgat(sc_x, sc_y, 1, Curses::Attr::REVERSE, 0, NULL);

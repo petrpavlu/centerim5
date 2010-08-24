@@ -19,28 +19,19 @@
  *
  * */
 
-/// @file CppConsUI.h
-/// @todo CppConsUI namespace
+/**
+ * @file
+ * General classes, functions and enumerations.
+ *
+ * @ingroup cppconsui
+ *
+ * @todo CppConsUI namespace
+ */
 
 #ifndef __CPPCONSUI_H__
 #define __CPPCONSUI_H__
 
-#include <wchar.h>
-#include <glib.h>
-
 #define OK_BUTTON_TEXT "Ok"
-
-//from pango/break.c
-#define PARAGRAPH_SEPARATOR 0x2029
-#define PARAGRAPH_SEPARATOR_STRING "\xE2\x80\xA9"
-
-int width(const char *text);
-int width(const char *start, const char *end);
-gchar* col_offset_to_pointer(gchar *str, glong offset);
-void find_paragraph_boundary (const gchar *text,
-			       int length,
-			       int *paragraph_delimiter_index,
-			       int *next_paragraph_start);
 
 /// @todo move into editable abstract class?
 enum CursorMovement {
@@ -55,6 +46,7 @@ enum CursorMovement {
 	MOVE_BUFFER_ENDS,
 	MOVE_HORIZONTAL_PAGES
 };
+
 enum DeleteType {
 	DELETE_CHARS,
 	DELETE_WORDS,
@@ -67,33 +59,30 @@ enum DeleteType {
 };
 
 enum WrapMode {
-  WRAP_NONE,
-  WRAP_CHAR,
-  WRAP_WORD,
-  WRAP_WORD_CHAR
+	WRAP_NONE,
+	WRAP_CHAR,
+	WRAP_WORD,
+	WRAP_WORD_CHAR
 };
 
 enum DirectionType {
-  DIR_TAB_FORWARD,
-  DIR_TAB_BACKWARD,
-  DIR_UP,
-  DIR_DOWN,
-  DIR_LEFT,
-  DIR_RIGHT,
-  DIR_NONE
+	DIR_TAB_FORWARD,
+	DIR_TAB_BACKWARD,
+	DIR_UP,
+	DIR_DOWN,
+	DIR_LEFT,
+	DIR_RIGHT,
+	DIR_NONE
 };
 
-typedef enum {
-  SCROLL_STEPS,
-  SCROLL_PAGES,
-  SCROLL_ENDS,
-  SCROLL_HORIZONTAL_STEPS,
-  SCROLL_HORIZONTAL_PAGES,
-  SCROLL_HORIZONTAL_ENDS
-} ScrollStep;
-
-
-/// @todo perhaps move to its own files?
+enum ScrollStep {
+	SCROLL_STEPS,
+	SCROLL_PAGES,
+	SCROLL_ENDS,
+	SCROLL_HORIZONTAL_STEPS,
+	SCROLL_HORIZONTAL_PAGES,
+	SCROLL_HORIZONTAL_ENDS
+};
 
 class Point
 {

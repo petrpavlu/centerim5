@@ -140,7 +140,7 @@ void ComboBox::AddOption(const gchar *text, const void *data)
 
 void ComboBox::AddOption(const ComboBoxEntry& option)
 {
-	int w = ::width(option.GetText());
+	int w = Curses::onscreen_width(option.GetText());
 	if (w > max_option_width)
 		max_option_width = w;
 

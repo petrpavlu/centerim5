@@ -19,130 +19,14 @@
  *
  * */
 
-#include "CppConsUI.h"
-
-#include <wchar.h>
-#include <cstring>
-
-/* NOTE: copied from pango/break.c, which has GNU GPL 2 or later
- * thank you pango team
+/**
+ * @file
+ * General classes, functions and enumerations.
+ *
+ * @ingroup cppconsui
  */
-void find_paragraph_boundary (const gchar *text,
-			       int         length,
-			       int        *paragraph_delimiter_index,
-			       int        *next_paragraph_start)
-{
-	const gchar *p = text;
-	const gchar *end;
-	const gchar *start = NULL;
-	const gchar *delimiter = NULL;
 
-	/* Only one character has type G_UNICODE_PARAGRAPH_SEPARATOR in
-	 * Unicode 5.0; update the following code if that changes.
-	 */
-
-	/* prev_sep is the first byte of the previous separator.  Since
-	 * the valid separators are \r, \n, and PARAGRAPH_SEPARATOR, the
-	 * first byte is enough to identify it.
-	 */
-	gchar prev_sep;
-
-	if (length < 0)
-		length = strlen (text);
-
-	end = text + length;
-
-	if (paragraph_delimiter_index)
-		*paragraph_delimiter_index = length;
-
-	if (next_paragraph_start)
-		*next_paragraph_start = length;
-
-	if (length == 0)
-		return;
-
-	prev_sep = 0;
-
-	while (p != end)
-	{
-		if (prev_sep == '\n' ||
-				prev_sep == PARAGRAPH_SEPARATOR_STRING[0])
-		{
-			g_assert (delimiter);
-			start = p;
-			break;
-		}
-		else if (prev_sep == '\r')
-		{
-			/* don't break between \r and \n */
-			if (*p != '\n')
-			{
-				g_assert (delimiter);
-				start = p;
-				break;
-			}
-		}
-
-		if (*p == '\n' ||
-				*p == '\r' ||
-				!strncmp(p, PARAGRAPH_SEPARATOR_STRING,
-					strlen(PARAGRAPH_SEPARATOR_STRING)))
-		{
-			if (delimiter == NULL)
-				delimiter = p;
-			prev_sep = *p;
-		}
-		else
-			prev_sep = 0;
-
-		p = g_utf8_next_char (p);
-	}
-
-	if (delimiter && paragraph_delimiter_index)
-		*paragraph_delimiter_index = delimiter - text;
-
-	if (start && next_paragraph_start)
-		*next_paragraph_start = start - text;
-}
-
-int width(const char *text)
-{
-	return width(text, text + strlen(text));
-}
-
-//NOTE copied from libgnt/gntutils.c
-/// @todo should g_unichar_iszerowidth be used?
-/// @todo write a wrapper string class
-/// if so, then also include drawing functions and a way to store colours
-/// for a string.
-int width(const char *start, const char *end)
-{
-	int width = 0;
-
-	if (start == NULL)
-		return 0;
-
-	if (end == NULL)
-		end = start + strlen(start);
-
-	while (start < end) {
-		width += g_unichar_iswide(g_utf8_get_char(start)) ? 2 : 1;
-		start = g_utf8_next_char(start);
-	}
-	return width;
-}
-
-gchar* col_offset_to_pointer(gchar *str, glong offset)
-{
-	glong width = 0;
-
-	while (width < offset) {
-		width += g_unichar_iswide(g_utf8_get_char(str)) ? 2 : 1;
-		str = g_utf8_next_char(str);
-	}
-
-	return str;
-}
+#include "CppConsUI.h"
 
 Point::Point()
 : x(0)

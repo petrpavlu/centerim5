@@ -258,7 +258,7 @@ const gchar *TextView::ProceedLine(const gchar *text, int area_width, int *res_w
 	while (*cur) {
 		prev_width = cur_width;
 		uni = g_utf8_get_char(cur);
-		cur_width += g_unichar_iswide(uni) ? 2 : 1;
+		cur_width += Curses::onscreen_width(uni);
 
 		if (prev_width > area_width)
 			break;

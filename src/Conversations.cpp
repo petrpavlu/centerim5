@@ -260,7 +260,7 @@ void Conversations::create_conversation(PurpleConversation *conv)
 	c.sig_close = conversation->signal_close.connect(sigc::group(sigc::mem_fun(this,
 				&Conversations::OnConversationClose), sigc::ref(*conversation)));
 	char *name = g_strdup_printf("\\%s/", purple_conversation_get_name(conv));
-	c.label = new Label(::width(name), 1, name);
+	c.label = new Label(Curses::onscreen_width(name), 1, name);
 	g_free(name);
 	list->AppendWidget(*c.label);
 	conversations.push_back(c);

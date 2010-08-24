@@ -37,7 +37,7 @@ AbstractListBox::AbstractListBox(int w, int h)
 
 void AbstractListBox::AppendItem(const gchar *title, sigc::slot<void> function)
 {
-	AppendWidget(*(new Button(::width(title), 1, title, function)));
+	AppendWidget(*(new Button(Curses::onscreen_width(title), 1, title, function)));
 }
 
 void AbstractListBox::AddWidget(Widget& widget, int x, int y)

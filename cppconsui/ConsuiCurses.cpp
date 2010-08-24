@@ -166,7 +166,7 @@ const gchar *Window::PrintChar(const gchar *ch, int *printed, const gchar *end)
 
 	setcchar(&cc, wch, A_NORMAL, 0, NULL);
 	wadd_wch(p->win, &cc);
-	*printed = g_unichar_iswide(wch[0]) ? 2 : 1;
+	*printed = onscreen_width(wch[0]);
 	return g_utf8_find_next_char(ch, end);
 }
 
@@ -276,7 +276,7 @@ int getcolorpair(int fg, int bg)
 	if ((i = c.find(std::make_pair(fg, bg))) != c.end())
 		return i->second;
 
-	if (c.size() >= COLOR_PAIRS) {
+	if ((int) c.size() >= COLOR_PAIRS) {
 		g_warning(_("Color pairs limit exceeded.\n"));
 		return 0;
 	}
@@ -401,6 +401,29 @@ int getmaxy()
 int resizeterm(int lines, int columns)
 {
 	return ::resizeterm(lines, columns);
+}
+
+/// @todo should g_unichar_iszerowidth be used?
+int onscreen_width(const char *start, const char *end)
+{
+	int width = 0;
+
+	if (start == NULL)
+		return 0;
+
+	if (end == NULL)
+		end = start + strlen(start);
+
+	while (start < end) {
+		width += g_unichar_iswide(g_utf8_get_char(start)) ? 2 : 1;
+		start = g_utf8_next_char(start);
+	}
+	return width;
+}
+
+int onscreen_width(gunichar uc)
+{
+	return g_unichar_iswide(uc) ? 2 : 1;
 }
 
 } // namespace Curses
