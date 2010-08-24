@@ -157,9 +157,9 @@ class TextView
 		/**
 		 * Recalculates on-screen lines for a specified line number.
 		 */
-		void UpdateScreenLines(int line_num);
+		int UpdateScreenLines(int line_num, int start = 0);
 
-		int EraseScreenLines(int line_num, int start = 0);
+		int EraseScreenLines(int line_num, int start = 0, int *deleted = NULL);
 
 	private:
 		TextView(const TextView &);

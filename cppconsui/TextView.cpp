@@ -57,11 +57,13 @@ void TextView::Insert(int line_num, const gchar *text, int color)
 	const gchar *s = text;
 
 	// parse lines
+	int advice = 0;
 	while (*p) {
 		if (*p == '\n') {
 			Line *l = new Line(s, p - s, color);
 			lines.insert(lines.begin() + line_num, l);
-			UpdateScreenLines(line_num++);
+			advice = UpdateScreenLines(line_num, advice);
+			line_num++;
 			s = p = g_utf8_next_char(p);
 			continue;
 		}
@@ -72,7 +74,8 @@ void TextView::Insert(int line_num, const gchar *text, int color)
 	if (s < p) {
 		Line *l = new Line(s, p - s, color);
 		lines.insert(lines.begin() + line_num, l);
-		UpdateScreenLines(line_num++);
+		advice = UpdateScreenLines(line_num, advice);
+		line_num++;
 	}
 
 	signal_redraw(*this);
@@ -83,10 +86,22 @@ void TextView::Erase(int line_num)
 	g_assert(line_num >= 0);
 	g_assert(line_num < (int) lines.size());
 
-	EraseScreenLines(line_num);
+	/// @todo Untested...
+	int deleted, pos;
+	pos = EraseScreenLines(line_num, 0, &deleted);
+	delete lines[line_num];
 	lines.erase(lines.begin() + line_num);
 
-	/// @todo Update view.
+	// adjust view_top
+	if (view_top >= pos + deleted)
+		view_top -= deleted;
+	else if (view_top >= (int) screen_lines.size()) {
+		if (screen_lines.size())
+			view_top = screen_lines.size() - 1;
+		else
+			view_top = 0;
+	}
+
 	signal_redraw(*this);
 }
 
@@ -96,13 +111,30 @@ void TextView::Erase(int start_line, int end_line)
 	g_assert(start_line < (int) lines.size());
 	g_assert(end_line >= 0);
 	g_assert(end_line < (int) lines.size());
-	g_assert(start_line < end_line);
+	g_assert(start_line <= end_line);
 
-	for (int i = start_line, advice = 0; i < end_line; i++)
-		advice = EraseScreenLines(i, advice);
+	/// @todo Untested...
+	int deleted = 0;
+	int advice = 0;
+	for (int i = start_line; i < end_line; i++) {
+		int d;
+		advice = EraseScreenLines(i, advice, &d);
+		deleted += d;
+	}
+	for (int i = start_line; i < end_line; i++)
+		delete lines[i];
 	lines.erase(lines.begin() + start_line, lines.begin() + end_line);
 
-	/// @todo Update view.
+	// adjust view_top
+	if (view_top >= advice + deleted)
+		view_top -= deleted;
+	else if (view_top >= (int) screen_lines.size()) {
+		if (screen_lines.size())
+			view_top = screen_lines.size() - 1;
+		else
+			view_top = 0;
+	}
+
 	signal_redraw(*this);
 }
 
@@ -138,7 +170,10 @@ int TextView::ViewPosForLine(int line_num) const
 	g_assert(line_num >= 0);
 	g_assert(line_num < (int) lines.size());
 
-	/// @todo
+	for (int i = 0; i < (int) screen_lines.size(); i++)
+		if (screen_lines[i]->parent == lines[line_num])
+			return i;
+
 	return 0;
 }
 
@@ -197,9 +232,13 @@ void TextView::MoveResize(int newx, int newy, int neww, int newh)
 {
 	Widget::MoveResize(newx, newy, neww, newh);
 
-	/// @todo optimize
-	for (int i = 0; i < (int) lines.size(); i++)
-		UpdateScreenLines(i);
+	// delete all screen lines
+	for (ScreenLines::iterator i = screen_lines.begin(); i != screen_lines.end(); i++)
+		delete *i;
+	screen_lines.clear();
+
+	for (int i = 0, advice = 0; i < (int) lines.size(); i++)
+		advice = UpdateScreenLines(i, advice);
 }
 
 const gchar *TextView::ProceedLine(const gchar *text, int area_width, int *res_width) const
@@ -259,17 +298,20 @@ const gchar *TextView::ProceedLine(const gchar *text, int area_width, int *res_w
 	return res;
 }
 
-void TextView::UpdateScreenLines(int line_num)
+int TextView::UpdateScreenLines(int line_num, int start)
 {
 	g_assert(line_num >= 0);
 	g_assert(line_num < (int) lines.size());
+	g_assert(start >= 0);
+	g_assert(start <= (int) screen_lines.size());
 
 	/* Find where new screen lines should be placed and remove previous screen
 	 * lines created for this line. */
-	ScreenLines::iterator i = screen_lines.begin() + EraseScreenLines(line_num);
+	ScreenLines::iterator i = screen_lines.begin()
+		+ EraseScreenLines(line_num, start);
 
 	if (!area)
-		return;
+		return 0;
 
 	// parse line into screen lines
 	ScreenLines new_lines;
@@ -286,28 +328,45 @@ void TextView::UpdateScreenLines(int line_num)
 	if (new_lines.empty())
 		new_lines.push_back(new ScreenLine(*lines[line_num], p, 0));
 
+	int res = i - screen_lines.begin() + new_lines.size();
 	screen_lines.insert(i, new_lines.begin(), new_lines.end());
+
+	return res;
 }
 
-int TextView::EraseScreenLines(int line_num, int start)
+int TextView::EraseScreenLines(int line_num, int start, int *deleted)
 {
 	g_assert(line_num >= 0);
 	g_assert(line_num < (int) lines.size());
 	g_assert(start >= 0);
-	g_assert(start < (int) lines.size());
+	g_assert(start <= (int) screen_lines.size());
 
 	int i = start;
+	int begin = -1;
+	int end = -1;
 	while (i < (int) screen_lines.size()) {
 		if (screen_lines[i]->parent == lines[line_num]) {
+			if (begin == -1)
+				begin = i;
 			delete screen_lines[i];
-			screen_lines.erase(screen_lines.begin() + i);
 		}
-		else if (line_num + 1 < (int) lines.size()
-				&& screen_lines[i]->parent == lines[line_num + 1])
+		else if (begin != -1) {
+			end = i;
 			break;
-		else
-			i++;
+		}
+		i++;
 	}
+	if (begin != -1) {
+		if (end == -1)
+			end = screen_lines.size();
+		screen_lines.erase(screen_lines.begin() + begin, screen_lines.begin()
+				+ end);
+		i -= (end - begin);
+	}
+
+	if (deleted)
+		*deleted = end - begin;
+
 	return i;
 }
 
