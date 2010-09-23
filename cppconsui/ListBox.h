@@ -56,9 +56,16 @@ class ListBox
 				int begin_y, int ncols, int nlines);
 
 	protected:
+		int children_height;
+		int autosize_children;
+		int autosize_height;
+		std::set<const Widget *> autosize_extra;
+
 		// Container
 		virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
 				Rect& newsize);
+
+		void UpdateScrollHeight();
 
 	private:
 		ListBox(const ListBox&);

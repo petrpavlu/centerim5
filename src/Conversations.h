@@ -37,9 +37,6 @@ class Conversations
 	public:
 		static Conversations *Instance();
 
-		// Widget
-		virtual void MoveResize(int newx, int newy, int neww, int newh);
-
 		// Window
 		virtual void Close();
 		virtual void ScreenResized();

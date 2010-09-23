@@ -32,6 +32,9 @@
 
 HorizontalListBox::HorizontalListBox(int w, int h)
 : AbstractListBox(w, h)
+, children_width(0)
+, autosize_children(0)
+, autosize_width(0)
 {
 }
 
@@ -54,16 +57,33 @@ void HorizontalListBox::Draw()
 
 	area->erase();
 
+	autosize_width = 1;
+	int autosize_width_extra = 0;
+	int realw = area->getmaxx();
+	if (autosize_children && children_width < realw) {
+		int space = realw - (children_width - autosize_children);
+		autosize_width = space / autosize_children;
+		autosize_width_extra = space % autosize_children;
+	}
+	autosize_extra.clear();
+
 	int x = 0;
 	for (Children::iterator i = children.begin(); i != children.end(); i++) {
 		Widget *widget = i->widget;
 		if (widget->IsVisible()) {
+			int w = widget->Width();
+			if (w == AUTOSIZE) {
+				w = autosize_width;
+				if (autosize_width_extra) {
+					autosize_extra.insert(widget);
+					autosize_width_extra--;
+					w++;
+				}
+			}
+
 			widget->MoveResize(x, 0, widget->Width(), widget->Height());
 			widget->Draw();
 
-			int w = widget->Width();
-			if (w == AUTOSIZE)
-				w = 1;
 			x += w;
 		}
 	}
@@ -83,19 +103,26 @@ void HorizontalListBox::AppendSeparator()
 void HorizontalListBox::AppendWidget(Widget& widget)
 {
 	int w = widget.Width();
-	if (w == AUTOSIZE)
+	if (w == AUTOSIZE) {
 		w = 1;
-	int sw = GetScrollWidth();
-	SetScrollWidth(sw + w);
-	AddWidget(widget, sw, 0);
+		autosize_children++;
+	}
+	children_width += w;
+	UpdateScrollWidth();
+
+	// note: widget is moved to a correct position in Draw() method
+	AddWidget(widget, 0, 0);
 }
 
 void HorizontalListBox::RemoveWidget(Widget& widget)
 {
 	int w = widget.Width();
-	if (w == AUTOSIZE)
+	if (w == AUTOSIZE) {
 		w = 1;
-	SetScrollWidth(GetScrollWidth() - w);
+		autosize_children--;
+	}
+	children_width -= w;
+	UpdateScrollWidth();
 
 	AbstractListBox::RemoveWidget(widget);
 }
@@ -103,9 +130,12 @@ void HorizontalListBox::RemoveWidget(Widget& widget)
 Curses::Window *HorizontalListBox::GetSubPad(const Widget& child, int begin_x,
 		int begin_y, int ncols, int nlines)
 {
-	// if width is set to autosize then return width `1'
-	if (ncols == AUTOSIZE)
-		ncols = 1;
+	// autosize
+	if (ncols == AUTOSIZE) {
+		ncols = autosize_width;
+		if (autosize_extra.find(&child) != autosize_extra.end())
+			ncols++;
+	}
 
 	return AbstractListBox::GetSubPad(child, begin_x, begin_y, ncols, nlines);
 }
@@ -115,11 +145,24 @@ void HorizontalListBox::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& n
 	int old_width = oldsize.Width();
 	int new_width = newsize.Width();
 	if (old_width != new_width) {
-		if (old_width == AUTOSIZE)
+		if (old_width == AUTOSIZE) {
 			old_width = 1;
-		if (new_width == AUTOSIZE)
+			autosize_children--;
+		}
+		if (new_width == AUTOSIZE) {
 			new_width = 1;
-
-		SetScrollWidth(GetScrollWidth() - old_width + new_width);
+			autosize_children++;
+		}
+		children_width += new_width - old_width;
+		UpdateScrollWidth();
 	}
+}
+
+void HorizontalListBox::UpdateScrollWidth()
+{
+	int realw = 0;
+	if (scrollarea)
+		realw = scrollarea->getmaxx();
+
+	SetScrollWidth(MAX(realw, children_width));
 }

@@ -37,8 +37,8 @@ Conversations::Conversations()
 {
 	SetColorScheme("conversation");
 
-	list = new HorizontalListBox(width - 2, 1);
-	AddWidget(*list, 2, 0);
+	list = new HorizontalListBox(AUTOSIZE, 1);
+	AddWidget(*list, 0, 0);
 
 	memset(&centerim_conv_ui_ops, 0, sizeof(centerim_conv_ui_ops));
 	centerim_conv_ui_ops.create_conversation = create_conversation_;
@@ -67,13 +67,6 @@ Conversations::~Conversations()
 	g_assert(conversations.empty());
 
 	purple_conversations_set_ui_ops(NULL);
-}
-
-void Conversations::MoveResize(int newx, int newy, int neww, int newh)
-{
-	FreeWindow::MoveResize(newx, newy, neww, newh);
-
-	list->MoveResize(1, 0, neww - 2, 1);
 }
 
 void Conversations::Close()
@@ -259,8 +252,8 @@ void Conversations::create_conversation(PurpleConversation *conv)
 	c.conv = conversation;
 	c.sig_close = conversation->signal_close.connect(sigc::group(sigc::mem_fun(this,
 				&Conversations::OnConversationClose), sigc::ref(*conversation)));
-	char *name = g_strdup_printf("\\%s/", purple_conversation_get_name(conv));
-	c.label = new Label(Curses::onscreen_width(name), 1, name);
+	char *name = g_strdup_printf(" |%s", purple_conversation_get_name(conv));
+	c.label = new Label(AUTOSIZE, 1, name);
 	g_free(name);
 	list->AppendWidget(*c.label);
 	conversations.push_back(c);

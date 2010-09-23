@@ -32,6 +32,9 @@
 
 ListBox::ListBox(int w, int h)
 : AbstractListBox(w, h)
+, children_height(0)
+, autosize_children(0)
+, autosize_height(0)
 {
 }
 
@@ -54,16 +57,33 @@ void ListBox::Draw()
 
 	area->erase();
 
+	autosize_height = 1;
+	int autosize_height_extra = 0;
+	int realh = area->getmaxy();
+	if (autosize_children && children_height < realh) {
+		int space = realh - (children_height - autosize_children);
+		autosize_height = space / autosize_children;
+		autosize_height_extra = space % autosize_children;
+	}
+	autosize_extra.clear();
+
 	int y = 0;
 	for (Children::iterator i = children.begin(); i != children.end(); i++) {
 		Widget *widget = i->widget;
 		if (widget->IsVisible()) {
+			int h = widget->Height();
+			if (h == AUTOSIZE) {
+				h = autosize_height;
+				if (autosize_height_extra) {
+					autosize_extra.insert(widget);
+					autosize_height_extra--;
+					h++;
+				}
+			}
+
 			widget->MoveResize(0, y, widget->Width(), widget->Height());
 			widget->Draw();
 
-			int h = widget->Height();
-			if (h == AUTOSIZE)
-				h = 1;
 			y += h;
 		}
 	}
@@ -83,19 +103,26 @@ void ListBox::AppendSeparator()
 void ListBox::AppendWidget(Widget& widget)
 {
 	int h = widget.Height();
-	if (h == AUTOSIZE)
+	if (h == AUTOSIZE) {
 		h = 1;
-	int sh = GetScrollHeight();
-	SetScrollHeight(sh + h);
-	AddWidget(widget, 0, sh);
+		autosize_children++;
+	}
+	children_height += h;
+	UpdateScrollHeight();
+
+	// note: widget is moved to a correct position in Draw() method
+	AddWidget(widget, 0, 0);
 }
 
 void ListBox::RemoveWidget(Widget& widget)
 {
 	int h = widget.Height();
-	if (h == AUTOSIZE)
+	if (h == AUTOSIZE) {
 		h = 1;
-	SetScrollHeight(GetScrollHeight() - h);
+		autosize_children--;
+	}
+	children_height -= h;
+	UpdateScrollHeight();
 
 	AbstractListBox::RemoveWidget(widget);
 }
@@ -103,9 +130,12 @@ void ListBox::RemoveWidget(Widget& widget)
 Curses::Window *ListBox::GetSubPad(const Widget& child, int begin_x,
 		int begin_y, int ncols, int nlines)
 {
-	// if height is set to autosize then return height `1'
-	if (nlines == AUTOSIZE)
-		nlines = 1;
+	// autosize
+	if (nlines == AUTOSIZE) {
+		nlines = autosize_height;
+		if (autosize_extra.find(&child) != autosize_extra.end())
+			nlines++;
+	}
 
 	return AbstractListBox::GetSubPad(child, begin_x, begin_y, ncols, nlines);
 }
@@ -115,11 +145,24 @@ void ListBox::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize)
 	int old_height = oldsize.Height();
 	int new_height = newsize.Height();
 	if (old_height != new_height) {
-		if (old_height == AUTOSIZE)
+		if (old_height == AUTOSIZE) {
 			old_height = 1;
-		if (new_height == AUTOSIZE)
+			autosize_children--;
+		}
+		if (new_height == AUTOSIZE) {
 			new_height = 1;
-
-		SetScrollHeight(GetScrollHeight() - old_height + new_height);
+			autosize_children++;
+		}
+		children_height += new_height - old_height;
+		UpdateScrollHeight();
 	}
+}
+
+void ListBox::UpdateScrollHeight()
+{
+	int realh = 0;
+	if (scrollarea)
+		realh = scrollarea->getmaxy();
+
+	SetScrollHeight(MAX(realh, children_height));
 }

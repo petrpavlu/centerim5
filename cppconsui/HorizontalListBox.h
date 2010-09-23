@@ -56,9 +56,16 @@ class HorizontalListBox
 				int begin_y, int ncols, int nlines);
 
 	protected:
+		int children_width;
+		int autosize_children;
+		int autosize_width;
+		std::set<const Widget *> autosize_extra;
+
 		// Container
 		virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
 				Rect& newsize);
+
+		void UpdateScrollWidth();
 
 	private:
 		HorizontalListBox(const HorizontalListBox&);
