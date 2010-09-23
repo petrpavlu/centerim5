@@ -43,7 +43,7 @@ class HorizontalListBox
 		virtual ~HorizontalListBox() {}
 
 		// Widget
-		virtual void MoveResize(int newx, int newy, int neww, int newh);
+		virtual void UpdateArea();
 		virtual void Draw();
 
 		// AbstractListBox
@@ -57,8 +57,8 @@ class HorizontalListBox
 
 	protected:
 		// Container
-		virtual void OnChildMoveResize(Widget& widget, Rect &oldsize,
-				Rect &newsize);
+		virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
+				Rect& newsize);
 
 	private:
 		HorizontalListBox(const HorizontalListBox&);

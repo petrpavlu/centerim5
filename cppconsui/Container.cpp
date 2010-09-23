@@ -434,10 +434,10 @@ Curses::Window *Container::GetSubPad(const Widget& child, int begin_x, int begin
 
 	/* Extend requested subpad to whole parent area or shrink requested area
 	 * if necessary. */
-	if (nlines < 0 || nlines > realh - begin_y)
+	if (nlines == AUTOSIZE || nlines > realh - begin_y)
 		nlines = realh - begin_y;
 
-	if (ncols < 0 || ncols > realw - begin_x)
+	if (ncols == AUTOSIZE || ncols > realw - begin_x)
 		ncols = realw - begin_x;
 
 	return area->subpad(begin_x, begin_y, ncols, nlines);

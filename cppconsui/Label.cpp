@@ -39,7 +39,7 @@ Label::Label(int w, int h, const gchar *text_)
 }
 
 Label::Label(const gchar *text_)
-: Widget(-1, 1)
+: Widget(AUTOSIZE, 1)
 , text(NULL)
 {
 	RealSetText(text_);

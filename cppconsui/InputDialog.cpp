@@ -33,7 +33,7 @@
 InputDialog::InputDialog(const gchar* text, const gchar* defaultvalue)
 : Dialog()
 {
-	AddButton(_(OK_BUTTON_TEXT), InputDialog::ResponseOK);
+	AddButton(_(OK_BUTTON_TEXT), InputDialog::RESPONSE_OK);
 
 	label = new Label(text);
 	separator = new HorizontalLine(width);

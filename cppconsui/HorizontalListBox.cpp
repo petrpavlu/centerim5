@@ -33,14 +33,15 @@
 HorizontalListBox::HorizontalListBox(int w, int h)
 : AbstractListBox(w, h)
 {
-	SetScrollSize(0, h);
 }
 
-void HorizontalListBox::MoveResize(int newx, int newy, int neww, int newh)
+void HorizontalListBox::UpdateArea()
 {
-	SetScrollHeight(newh);
+	AbstractListBox::UpdateArea();
 
-	AbstractListBox::MoveResize(newx, newy, neww, newh);
+	// set virtual scroll area height
+	if (scrollarea)
+		SetScrollHeight(scrollarea->getmaxy());
 }
 
 void HorizontalListBox::Draw()
@@ -61,7 +62,8 @@ void HorizontalListBox::Draw()
 			widget->Draw();
 
 			int w = widget->Width();
-			w = w < 0 ? 1 : w;
+			if (w == AUTOSIZE)
+				w = 1;
 			x += w;
 		}
 	}
@@ -75,13 +77,14 @@ void HorizontalListBox::Draw()
 
 void HorizontalListBox::AppendSeparator()
 {
-	AppendWidget(*(new VerticalLine(-1)));
+	AppendWidget(*(new VerticalLine(AUTOSIZE)));
 }
 
 void HorizontalListBox::AppendWidget(Widget& widget)
 {
 	int w = widget.Width();
-	w = w < 0 ? 1 : w;
+	if (w == AUTOSIZE)
+		w = 1;
 	int sw = GetScrollWidth();
 	SetScrollWidth(sw + w);
 	AddWidget(widget, sw, 0);
@@ -90,7 +93,8 @@ void HorizontalListBox::AppendWidget(Widget& widget)
 void HorizontalListBox::RemoveWidget(Widget& widget)
 {
 	int w = widget.Width();
-	w = w < 0 ? 1 : w;
+	if (w == AUTOSIZE)
+		w = 1;
 	SetScrollWidth(GetScrollWidth() - w);
 
 	AbstractListBox::RemoveWidget(widget);
@@ -99,20 +103,22 @@ void HorizontalListBox::RemoveWidget(Widget& widget)
 Curses::Window *HorizontalListBox::GetSubPad(const Widget& child, int begin_x,
 		int begin_y, int ncols, int nlines)
 {
-	// if width is set to negative number (autosize) then return width `1'
-	if (ncols < 0)
+	// if width is set to autosize then return width `1'
+	if (ncols == AUTOSIZE)
 		ncols = 1;
 
 	return AbstractListBox::GetSubPad(child, begin_x, begin_y, ncols, nlines);
 }
 
-void HorizontalListBox::OnChildMoveResize(Widget& widget, Rect &oldsize, Rect &newsize)
+void HorizontalListBox::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize)
 {
 	int old_width = oldsize.Width();
 	int new_width = newsize.Width();
 	if (old_width != new_width) {
-		old_width = old_width < 0 ? 1 : old_width;
-		new_width = new_width < 0 ? 1 : new_width;
+		if (old_width == AUTOSIZE)
+			old_width = 1;
+		if (new_width == AUTOSIZE)
+			new_width = 1;
 
 		SetScrollWidth(GetScrollWidth() - old_width + new_width);
 	}

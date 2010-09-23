@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,11 +19,14 @@
  *
  * */
 
-#include "ConsuiCurses.h"
+/**
+ * @file
+ * Dialog class implementation.
+ *
+ * @ingroup cppconsui
+ */
 
 #include "Dialog.h"
-
-#include "Panel.h"
 
 Dialog::Dialog(int x, int y, int w, int h, LineStyle::Type ltype)
 : Window(x, y, w, h, TYPE_TOP, ltype)
@@ -39,16 +43,12 @@ Dialog::Dialog()
 	AddWidgets();
 }
 
-Dialog::~Dialog()
+void Dialog::AddWidgets()
 {
-}
-
-void Dialog::AddWidgets(void)
-{
-	buttons = new HorizontalListBox(width, 1);
-	seperator = new HorizontalLine(width);
+	buttons = new HorizontalListBox(AUTOSIZE, 1);
+	separator = new HorizontalLine(AUTOSIZE);
 	AddWidget(*buttons, 0, height - 1);
-	AddWidget(*seperator, 0, height - 2);
+	AddWidget(*separator, 0, height - 2);
 }
 
 void Dialog::AddButton(const gchar *text, Dialog::ResponseType response)
@@ -58,7 +58,7 @@ void Dialog::AddButton(const gchar *text, Dialog::ResponseType response)
 
 void Dialog::Close()
 {
-	Response(ResponseCancel);
+	Response(RESPONSE_CANCEL);
 }
 
 void Dialog::Response(Dialog::ResponseType response)

@@ -43,7 +43,7 @@ class ListBox
 		virtual ~ListBox() {}
 
 		// Widget
-		virtual void MoveResize(int newx, int newy, int neww, int newh);
+		virtual void UpdateArea();
 		virtual void Draw();
 
 		// AbstractListBox
@@ -57,8 +57,8 @@ class ListBox
 
 	protected:
 		// Container
-		virtual void OnChildMoveResize(Widget& widget, Rect &oldsize,
-				Rect &newsize);
+		virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
+				Rect& newsize);
 
 	private:
 		ListBox(const ListBox&);

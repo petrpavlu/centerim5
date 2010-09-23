@@ -198,8 +198,8 @@ int TreeView::GetActive() const
 Curses::Window *TreeView::GetSubPad(const Widget& child, int begin_x,
 		int begin_y, int ncols, int nlines)
 {
-	// if height is set to negative number (autosize) then return height `1'
-	if (nlines < 0)
+	// if height is set to autosize then return height `1'
+	if (nlines == AUTOSIZE)
 		nlines = 1;
 
 	return ScrollPane::GetSubPad(child, begin_x, begin_y, ncols, nlines);
@@ -285,13 +285,17 @@ void TreeView::DeleteNode(const NodeReference node, bool keepchildren)
 	int shrink = 0;
 	if (node->widget) {
 		int h = node->widget->Height();
-		shrink += h < 0 ? 1 : h;
+		if (h == AUTOSIZE)
+			h = 1;
+		shrink += h;
 	}
 
 	for (TheTree::pre_order_iterator i = thetree.begin(node);
 			i != thetree.end(node); i++) {
 		int h = i->widget->Height();
-		shrink += h < 0 ? 1 : h;
+		if (h == AUTOSIZE)
+			h = 1;
+		shrink += h;
 		delete i->widget;
 	}
 
@@ -445,7 +449,7 @@ TreeView::TreeNode TreeView::AddNodeInit(Widget& widget)
 {
 	// make room for this widget
 	int new_height = GetScrollHeight();
-	if (widget.Height() < 0)
+	if (widget.Height() == AUTOSIZE)
 		new_height += 1;
 	else
 		new_height += widget.Height();
@@ -539,8 +543,10 @@ void TreeView::OnChildMoveResize(Widget& widget, Rect &oldsize, Rect &newsize)
 	int old_height = oldsize.Height();
 	int new_height = newsize.Height();
 	if (old_height != new_height) {
-		old_height = old_height < 0 ? 1 : old_height;
-		new_height = new_height < 0 ? 1 : new_height;
+		if (old_height == AUTOSIZE)
+			old_height = 1;
+		if (new_height == AUTOSIZE)
+			new_height = 1;
 
 		SetScrollHeight(GetScrollHeight() - old_height + new_height);
 	}

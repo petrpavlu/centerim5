@@ -251,7 +251,7 @@ void BuddyList::NameButton::ResponseHandler(Dialog::ResponseType response)
 	g_assert(dialog);
 
 	switch (response) {
-		case Dialog::ResponseOK:
+		case Dialog::RESPONSE_OK:
 			g_free(value);
 			value = g_strdup(dialog->GetText());
 

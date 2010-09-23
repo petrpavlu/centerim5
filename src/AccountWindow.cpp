@@ -124,7 +124,7 @@ void AccountWindow::DropAccount(PurpleAccount *account)
 void AccountWindow::DropAccountResponseHandler(Dialog::ResponseType response, PurpleAccount *account)
 {
 	switch (response) {
-		case Dialog::ResponseOK:
+		case Dialog::RESPONSE_OK:
 			purple_accounts_remove(account);
 			ClearAccount(account, true);
 			break;
@@ -470,7 +470,7 @@ void AccountWindow::AccountOptionString::ResponseHandler(Dialog::ResponseType re
 	g_assert(dialog);
 
 	switch (response) {
-		case Dialog::ResponseOK:
+		case Dialog::RESPONSE_OK:
 			if (password)
 				purple_account_set_password(account, dialog->GetText());
 			else if (alias)
@@ -526,7 +526,7 @@ void AccountWindow::AccountOptionInt::ResponseHandler(Dialog::ResponseType respo
 	long int i;
 
 	switch (response) {
-		case Dialog::ResponseOK:
+		case Dialog::RESPONSE_OK:
 			text = dialog->GetText();
 			errno = 0;
 			i = strtol(text, NULL, 10);
@@ -637,7 +637,7 @@ void AccountWindow::AccountOptionSplit::ResponseHandler(Dialog::ResponseType res
 	g_assert(dialog);
 
 	switch (response) {
-		case Dialog::ResponseOK:
+		case Dialog::RESPONSE_OK:
 			SetValue(dialog->GetText());
 			UpdateSplits();
 			break;

@@ -68,10 +68,10 @@ Curses::Window *Window::GetSubPad(const Widget &child, int begin_x,
 
 	/* Extend requested subpad to whole panel area or shrink requested area if
 	 * necessary. */
-	if (nlines < 0 || nlines > realh - begin_y)
+	if (nlines == AUTOSIZE || nlines > realh - begin_y)
 		nlines = realh - begin_y;
 
-	if (ncols < 0 || ncols > realw - begin_x)
+	if (ncols == AUTOSIZE || ncols > realw - begin_x)
 		ncols = realw - begin_x;
 
 	// add `+1' offset to normal childs so they can not overwrite the panel

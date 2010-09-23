@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 by Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -18,29 +19,36 @@
  *
  * */
 
+/**
+ * @file
+ * Dialog class.
+ *
+ * @ingroup cppconsui
+ */
+
 #ifndef __DIALOG_H__
 #define __DIALOG_H__
 
-#include "TextEntry.h"
-#include "Window.h"
+#define OK_BUTTON_TEXT "Ok"
 
-#include "HorizontalListBox.h"
 #include "HorizontalLine.h"
+#include "HorizontalListBox.h"
+#include "Window.h"
 
 class Dialog
 : public Window
 {
 	public:
-		typedef enum {
-			ResponseOK,
-			ResponseCancel, /* Cancel button or close dialog. */
-			ResponseYes,
-			ResponseNo
-		} ResponseType;
+		enum ResponseType {
+			RESPONSE_OK,
+			RESPONSE_CANCEL, ///< Cancel button or close dialog.
+			RESPONSE_YES,
+			RESPONSE_NO
+		};
 
 		Dialog(int x, int y, int w, int h, LineStyle::Type ltype);
 		Dialog();
-		virtual ~Dialog();
+		virtual ~Dialog() {}
 
 		virtual void Close();
 
@@ -53,15 +61,13 @@ class Dialog
 
 	protected:
 		HorizontalListBox *buttons;
-		HorizontalLine *seperator;
+		HorizontalLine *separator;
 
 	private:
 		Dialog(const Dialog&);
-
 		Dialog& operator=(const Dialog&);
 
-		//TODO better name?
-		void AddWidgets(void);
+		void AddWidgets();
 };
 
 #endif /* __DIALOG_H__ */

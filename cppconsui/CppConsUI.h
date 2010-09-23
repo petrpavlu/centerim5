@@ -31,8 +31,6 @@
 #ifndef __CPPCONSUI_H__
 #define __CPPCONSUI_H__
 
-#define OK_BUTTON_TEXT "Ok"
-
 /// @todo move into editable abstract class?
 enum CursorMovement {
 	MOVE_LOGICAL_POSITIONS,

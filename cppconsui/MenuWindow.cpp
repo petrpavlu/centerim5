@@ -31,15 +31,8 @@
 MenuWindow::MenuWindow(int x, int y, int w, int h, LineStyle::Type ltype)
 : Window(x, y, w, h, TYPE_TOP, ltype)
 {
-	listbox = new ListBox(width, height);
+	listbox = new ListBox(AUTOSIZE, AUTOSIZE);
 	Window::AddWidget(*listbox, 0, 0);
-}
-
-void MenuWindow::MoveResize(int newx, int newy, int neww, int newh)
-{
-	Window::MoveResize(newx, newy, neww, newh);
-
-	listbox->MoveResize(0, 0, width, height);
 }
 
 void MenuWindow::AddWidget(Widget& widget, int x, int y)

@@ -29,6 +29,8 @@
 #ifndef __WIDGET_H__
 #define __WIDGET_H__
 
+#define AUTOSIZE INT_MIN
+
 #include "CppConsUI.h"
 #include "InputProcessor.h"
 #include "ConsuiCurses.h"

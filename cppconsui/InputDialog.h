@@ -53,9 +53,7 @@ class InputDialog
 		HorizontalLine *separator;
 
 	private:
-		InputDialog();
 		InputDialog(const InputDialog&);
-
 		InputDialog& operator=(const InputDialog&);
 };
 

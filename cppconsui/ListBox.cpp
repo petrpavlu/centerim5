@@ -33,14 +33,15 @@
 ListBox::ListBox(int w, int h)
 : AbstractListBox(w, h)
 {
-	SetScrollSize(w, 0);
 }
 
-void ListBox::MoveResize(int newx, int newy, int neww, int newh)
+void ListBox::UpdateArea()
 {
-	SetScrollWidth(neww);
+	AbstractListBox::UpdateArea();
 
-	AbstractListBox::MoveResize(newx, newy, neww, newh);
+	// set virtual scroll area width
+	if (scrollarea)
+		SetScrollWidth(scrollarea->getmaxx());
 }
 
 void ListBox::Draw()
@@ -61,7 +62,8 @@ void ListBox::Draw()
 			widget->Draw();
 
 			int h = widget->Height();
-			h = h < 0 ? 1 : h;
+			if (h == AUTOSIZE)
+				h = 1;
 			y += h;
 		}
 	}
@@ -75,13 +77,14 @@ void ListBox::Draw()
 
 void ListBox::AppendSeparator()
 {
-	AppendWidget(*(new HorizontalLine(-1)));
+	AppendWidget(*(new HorizontalLine(AUTOSIZE)));
 }
 
 void ListBox::AppendWidget(Widget& widget)
 {
 	int h = widget.Height();
-	h = h < 0 ? 1 : h;
+	if (h == AUTOSIZE)
+		h = 1;
 	int sh = GetScrollHeight();
 	SetScrollHeight(sh + h);
 	AddWidget(widget, 0, sh);
@@ -90,7 +93,8 @@ void ListBox::AppendWidget(Widget& widget)
 void ListBox::RemoveWidget(Widget& widget)
 {
 	int h = widget.Height();
-	h = h < 0 ? 1 : h;
+	if (h == AUTOSIZE)
+		h = 1;
 	SetScrollHeight(GetScrollHeight() - h);
 
 	AbstractListBox::RemoveWidget(widget);
@@ -99,20 +103,22 @@ void ListBox::RemoveWidget(Widget& widget)
 Curses::Window *ListBox::GetSubPad(const Widget& child, int begin_x,
 		int begin_y, int ncols, int nlines)
 {
-	// if height is set to negative number (autosize) then return height `1'
-	if (nlines < 0)
+	// if height is set to autosize then return height `1'
+	if (nlines == AUTOSIZE)
 		nlines = 1;
 
 	return AbstractListBox::GetSubPad(child, begin_x, begin_y, ncols, nlines);
 }
 
-void ListBox::OnChildMoveResize(Widget& widget, Rect &oldsize, Rect &newsize)
+void ListBox::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize)
 {
 	int old_height = oldsize.Height();
 	int new_height = newsize.Height();
 	if (old_height != new_height) {
-		old_height = old_height < 0 ? 1 : old_height;
-		new_height = new_height < 0 ? 1 : new_height;
+		if (old_height == AUTOSIZE)
+			old_height = 1;
+		if (new_height == AUTOSIZE)
+			new_height = 1;
 
 		SetScrollHeight(GetScrollHeight() - old_height + new_height);
 	}
