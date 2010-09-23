@@ -90,7 +90,7 @@ void Conversation::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_CONVERSATION, "send",
 			sigc::mem_fun(this, &Conversation::Send),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_OVERRIDE);
 }
 
 DEFINE_SIG_REGISTERKEYS(Conversation, RegisterKeys);

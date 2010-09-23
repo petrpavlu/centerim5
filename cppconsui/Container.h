@@ -54,24 +54,24 @@ class Container
 			 * The focus doesn't cycle, it ends at the last widget from the
 			 * focus chain.
 			 */
-			FocusCycleNone,
+			FOCUS_CYCLE_NONE,
 			/**
 			 * The focus cycles only locally.
 			 */
-			FocusCycleLocal,
+			FOCUS_CYCLE_LOCAL,
 			/**
 			 * The focus cycles also through the other containers windows.
 			 */
-			FocusCycleGlobal
+			FOCUS_CYCLE_GLOBAL
 		};
 
 		enum FocusDirection {
-			FocusNext,
-			FocusPrevious,
-			FocusDown,
-			FocusUp,
-			FocusRight,
-			FocusLeft
+			FOCUS_NEXT,
+			FOCUS_PREVIOUS,
+			FOCUS_DOWN,
+			FOCUS_UP,
+			FOCUS_RIGHT,
+			FOCUS_LEFT
 		};
 
 		Container(int w, int h);

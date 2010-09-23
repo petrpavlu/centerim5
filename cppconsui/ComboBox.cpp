@@ -107,7 +107,7 @@ void ComboBox::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_COMBOBOX, "dropdown",
 			sigc::mem_fun(this, &ComboBox::OnDropDown),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_OVERRIDE);
 }
 
 DEFINE_SIG_REGISTERKEYS(ComboBox, RegisterKeys);

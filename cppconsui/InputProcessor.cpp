@@ -20,7 +20,7 @@
 #include "Keys.h"
 
 InputProcessor::Bindable::Bindable()
-: type(Bindable_Normal)
+: type(BINDABLE_NORMAL)
 {}
 
 InputProcessor::Bindable::Bindable(sigc::slot<void> function_,
@@ -40,7 +40,7 @@ InputProcessor::~InputProcessor()
 bool InputProcessor::ProcessInput(const TermKeyKey &key)
 {
 	/* Process overriding key combinations first */
-	if (Process(Bindable_Override, key))
+	if (Process(BINDABLE_OVERRIDE, key))
 		return true;
 	
 	/* Hand of input to a child */
@@ -48,7 +48,7 @@ bool InputProcessor::ProcessInput(const TermKeyKey &key)
 		return true;
 
 	/* Process other key combinations */
-	if (Process(Bindable_Normal, key))
+	if (Process(BINDABLE_NORMAL, key))
 		return true;
 
 	/* Do non-combo input processing */

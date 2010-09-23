@@ -131,14 +131,14 @@ void Widget::SetVisibility(bool visible)
 				if (!t->GetFocusWidget()) {
 					/* There is no focused widget, try if this or a widget
 					 * that was revealed can grab it. */
-					t->MoveFocus(Container::FocusNext);
+					t->MoveFocus(Container::FOCUS_NEXT);
 				}
 			}
 			else {
 				Widget *focus = t->GetFocusWidget();
 				if (focus && !focus->IsVisibleRecursive()) {
 					// focused widget was hidden, move the focus
-					t->MoveFocus(Container::FocusNext);
+					t->MoveFocus(Container::FOCUS_NEXT);
 				}
 			}
 		}
@@ -167,7 +167,7 @@ void Widget::SetParent(Container& parent)
 	if (!t->GetFocusWidget()) {
 		/* There is no focused widget, try if this or a child widget (in case
 		 * of Container) can grab it. */
-		t->MoveFocus(Container::FocusNext);
+		t->MoveFocus(Container::FOCUS_NEXT);
 	}
 
 	UpdateArea();

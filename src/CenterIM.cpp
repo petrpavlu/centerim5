@@ -286,25 +286,25 @@ void CenterIM::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_CENTERIM, "quit",
 			sigc::mem_fun(this, &CenterIM::Quit),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_OVERRIDE);
 	DeclareBindable(CONTEXT_CENTERIM, "buddylist",
 			sigc::mem_fun(this, &CenterIM::ActionFocusBuddyList),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_OVERRIDE);
 	DeclareBindable(CONTEXT_CENTERIM, "conversation-active",
 			sigc::mem_fun(this, &CenterIM::ActionFocusActiveConversation),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_OVERRIDE);
 	DeclareBindable(CONTEXT_CENTERIM, "accountstatusmenu",
 			sigc::mem_fun(this, &CenterIM::ActionOpenAccountStatusMenu),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_OVERRIDE);
 	DeclareBindable(CONTEXT_CENTERIM, "generalmenu",
 			sigc::mem_fun(this, &CenterIM::ActionOpenGeneralMenu),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_OVERRIDE);
 	DeclareBindable(CONTEXT_CENTERIM, "conversation-prev",
 			sigc::mem_fun(this, &CenterIM::ActionFocusPrevConversation),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_OVERRIDE);
 	DeclareBindable(CONTEXT_CENTERIM, "conversation-next",
 			sigc::mem_fun(this, &CenterIM::ActionFocusNextConversation),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_OVERRIDE);
 }
 
 DEFINE_SIG_REGISTERKEYS(CenterIM, RegisterKeys);

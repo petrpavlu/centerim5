@@ -172,7 +172,7 @@ void CoreManager::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_COREMANAGER, "redraw-screen",
 			sigc::mem_fun(this, &CoreManager::Redraw),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_OVERRIDE);
 }
 
 DEFINE_SIG_REGISTERKEYS(CoreManager, RegisterKeys);

@@ -51,10 +51,10 @@ void TreeView::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_TREEVIEW, "fold-subtree",
 			sigc::mem_fun(this, &TreeView::ActionCollapse),
-			InputProcessor::Bindable_Normal);
+			InputProcessor::BINDABLE_NORMAL);
 	DeclareBindable(CONTEXT_TREEVIEW, "unfold-subtree",
 			sigc::mem_fun(this, &TreeView::ActionExpand),
-			InputProcessor::Bindable_Normal);
+			InputProcessor::BINDABLE_NORMAL);
 }
 
 DEFINE_SIG_REGISTERKEYS(TreeView, RegisterKeys);
@@ -492,11 +492,11 @@ void TreeView::FocusFix()
 	Widget *focus = t->GetFocusWidget();
 	if (!focus) {
 		// try to grab the focus
-		t->MoveFocus(Container::FocusNext);
+		t->MoveFocus(Container::FOCUS_NEXT);
 	}
 	else if (!focus->IsVisibleRecursive()) {
 		// move focus
-		t->MoveFocus(Container::FocusNext);
+		t->MoveFocus(Container::FOCUS_NEXT);
 	}
 }
 

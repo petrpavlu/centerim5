@@ -62,8 +62,8 @@ class InputProcessor
 		/** Defines when a key binding will be processed comparing with the child input processor @see ProcessInput
 		 */
 		enum BindableType {
-			Bindable_Normal, ///< key bindings will be processed after the child input processor 
-			Bindable_Override ///< key bindings will be processed before the child input processor
+			BINDABLE_NORMAL, ///< key bindings will be processed after the child input processor 
+			BINDABLE_OVERRIDE ///< key bindings will be processed before the child input processor
 		};
 	
 		InputProcessor();

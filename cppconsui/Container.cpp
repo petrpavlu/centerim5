@@ -44,7 +44,7 @@
 
 Container::Container(int w, int h)
 : Widget(w, h)
-, focus_cycle_scope(FocusCycleGlobal)
+, focus_cycle_scope(FOCUS_CYCLE_GLOBAL)
 , focus_child(NULL)
 {
 	DeclareBindables();
@@ -60,23 +60,23 @@ Container::~Container()
 void Container::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_CONTAINER, "focus-previous",
-			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusPrevious),
-			InputProcessor::Bindable_Normal);
+			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FOCUS_PREVIOUS),
+			InputProcessor::BINDABLE_NORMAL);
 	DeclareBindable(CONTEXT_CONTAINER, "focus-next",
-			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusNext),
-			InputProcessor::Bindable_Normal);
+			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FOCUS_NEXT),
+			InputProcessor::BINDABLE_NORMAL);
 	DeclareBindable(CONTEXT_CONTAINER, "focus-left",
-			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusLeft),
-			InputProcessor::Bindable_Normal);
+			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FOCUS_LEFT),
+			InputProcessor::BINDABLE_NORMAL);
 	DeclareBindable(CONTEXT_CONTAINER, "focus-right",
-			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusRight),
-			InputProcessor::Bindable_Normal);
+			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FOCUS_RIGHT),
+			InputProcessor::BINDABLE_NORMAL);
 	DeclareBindable(CONTEXT_CONTAINER, "focus-up",
-			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusUp),
-			InputProcessor::Bindable_Normal);
+			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FOCUS_UP),
+			InputProcessor::BINDABLE_NORMAL);
 	DeclareBindable(CONTEXT_CONTAINER, "focus-down",
-			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FocusDown),
-			InputProcessor::Bindable_Normal);
+			sigc::bind(sigc::mem_fun(this, &Container::MoveFocus), Container::FOCUS_DOWN),
+			InputProcessor::BINDABLE_NORMAL);
 }
 
 DEFINE_SIG_REGISTERKEYS(Container, RegisterKeys);
@@ -313,22 +313,22 @@ void Container::MoveFocus(FocusDirection direction)
 
 	// find the correct widget to focus
 	switch (direction) {
-		case FocusPrevious:
-		case FocusUp:
-		case FocusLeft:
+		case FOCUS_PREVIOUS:
+		case FOCUS_UP:
+		case FOCUS_LEFT:
 			// setup variables for handling different scopes of focus cycling
 			cycle_begin = focus_chain.begin();
 			cycle_end = focus_chain.end();
 			parent_iter = focus_chain.parent(iter);
 
 			switch (container->GetFocusCycle()) {
-				case FocusCycleLocal:
+				case FOCUS_CYCLE_LOCAL:
 					/* Local focus cycling is allowed (cycling amongs all
 					 * widgets of a parent container). */
 					cycle_begin = parent_iter.begin();
 					cycle_end = parent_iter.end();
 					break;
-				case FocusCycleNone:
+				case FOCUS_CYCLE_NONE:
 					/* If no focus cycling is allowed, stop if the widget with
 					 * focus is a first/last child. */
 					if (iter == parent_iter.begin())
@@ -354,20 +354,20 @@ void Container::MoveFocus(FocusDirection direction)
 			} while (!*iter);
 
 			break;
-		case FocusNext:
-		case FocusDown:
-		case FocusRight:
+		case FOCUS_NEXT:
+		case FOCUS_DOWN:
+		case FOCUS_RIGHT:
 		default:
 			cycle_begin = focus_chain.begin();
 			cycle_end = focus_chain.end();
 			parent_iter = focus_chain.parent(iter);
 
 			switch (container->GetFocusCycle()) {
-				case FocusCycleLocal:
+				case FOCUS_CYCLE_LOCAL:
 					cycle_begin = parent_iter.begin();
 					cycle_end = parent_iter.end();
 					break;
-				case FocusCycleNone:
+				case FOCUS_CYCLE_NONE:
 					if (iter == --parent_iter.end())
 						return;
 

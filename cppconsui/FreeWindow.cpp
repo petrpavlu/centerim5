@@ -61,7 +61,7 @@ void FreeWindow::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_WINDOW, "close-window",
 			sigc::mem_fun(this, &FreeWindow::ActionClose),
-			InputProcessor::Bindable_Normal);
+			InputProcessor::BINDABLE_NORMAL);
 }
 
 DEFINE_SIG_REGISTERKEYS(FreeWindow, RegisterKeys);

@@ -81,56 +81,56 @@ void TextEntry::DeclareBindables()
 	// cursor movement
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-right",
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_LOGICAL_POSITIONS, 1),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_NORMAL);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-left",
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_LOGICAL_POSITIONS, -1),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_NORMAL);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-right-word",
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_WORDS, 1),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_NORMAL);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-left-word",
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_WORDS, -1),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_NORMAL);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-end",
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_DISPLAY_LINE_ENDS, 1),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_NORMAL);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "cursor-begin",
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor), MOVE_DISPLAY_LINE_ENDS, -1),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_NORMAL);
 
 	// deleting text
 	DeclareBindable(CONTEXT_TEXTENTRY, "delete-char",
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete), DELETE_CHARS, 1),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_NORMAL);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "backspace",
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete), DELETE_CHARS, -1),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_NORMAL);
 
 	/*
 	DeclareBindable(CONTEXT_TEXTENTRY, "delete-word-end",
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete), DELETE_WORD_ENDS, 1),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_NORMAL);
 
 	DeclareBindable(CONTEXT_TEXTENTRY, "delete-word-begin",
 			sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete), DELETE_WORD_ENDS, -1),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_NORMAL);
 
 	// overwrite
 	DeclareBindable(CONTEXT_TEXTENTRY, "toggle-overwrite",
 			sigc::mem_fun(this, &TextEntry::ActionToggleOverwrite),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_NORMAL);
 	*/
 
 	// non text editing bindables
 	DeclareBindable(CONTEXT_TEXTENTRY, "activate",
 			sigc::mem_fun(this, &TextEntry::ActionActivate),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_NORMAL);
 }
 
 DEFINE_SIG_REGISTERKEYS(TextEntry, RegisterKeys);
@@ -208,14 +208,14 @@ bool TextEntry::ProcessInputText(const TermKeyKey &key)
 
 	// filter out unwanted input
 	if (flags) {
-		if (!(flags & FlagAlphabetic) && g_unichar_isalpha(key.code.codepoint))
+		if (!(flags & FLAG_ALPHABETIC) && g_unichar_isalpha(key.code.codepoint))
 			return false;
-		if (!(flags & FlagNumeric) && g_unichar_isdigit(key.code.codepoint))
+		if (!(flags & FLAG_NUMERIC) && g_unichar_isdigit(key.code.codepoint))
 			return false;
 		/// @todo move
-		if (!(flags & FlagNoSpace) && g_unichar_isspace(key.code.codepoint))
+		if (!(flags & FLAG_NOSPACE) && g_unichar_isspace(key.code.codepoint))
 			return false;
-		if (!(flags & FlagNoPunctuation) && g_unichar_ispunct(key.code.codepoint))
+		if (!(flags & FLAG_NOPUNCTUATION) && g_unichar_ispunct(key.code.codepoint))
 			return false;
 	}
 
@@ -484,5 +484,5 @@ void TextEntry::ActionToggleOverwrite()
 void TextEntry::ActionActivate()
 {
 	if (parent)
-		parent->MoveFocus(Container::FocusNext);
+		parent->MoveFocus(Container::FOCUS_NEXT);
 }

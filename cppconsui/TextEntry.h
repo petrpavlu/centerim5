@@ -49,11 +49,11 @@ class TextEntry
 {
 	public:
 		enum Flag {
-			FlagAlphabetic = 1 << 0,
-			FlagNumeric = 1 << 1,
-			FlagNoSpace = 1 << 2,
-			FlagNoPunctuation = 1 << 3,
-			FlagHidden = 1 << 4
+			FLAG_ALPHABETIC = 1 << 0,
+			FLAG_NUMERIC = 1 << 1,
+			FLAG_NOSPACE = 1 << 2,
+			FLAG_NOPUNCTUATION = 1 << 3,
+			FLAG_HIDDEN = 1 << 4
 		};
 
 		TextEntry(int w, int h, const gchar *text_);

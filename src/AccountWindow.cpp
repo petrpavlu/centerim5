@@ -43,8 +43,8 @@ AccountWindow::AccountWindow()
 	menu = new HorizontalListBox(width, 1);
 	line = new HorizontalLine(width);
 
-	accounts->SetFocusCycle(Container::FocusCycleLocal);
-	menu->SetFocusCycle(Container::FocusCycleLocal);
+	accounts->SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
+	menu->SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
 
 	menu->AppendItem(_("Add"), sigc::mem_fun(this, &AccountWindow::Add));
 	menu->AppendSeparator();
@@ -136,8 +136,8 @@ void AccountWindow::DropAccountResponseHandler(Dialog::ResponseType response, Pu
 void AccountWindow::MoveFocus(FocusDirection direction)
 {
 	switch (direction) {
-		case FocusLeft:
-		case FocusRight:
+		case FOCUS_LEFT:
+		case FOCUS_RIGHT:
 			if (focus_child != menu) {
 				accounts_index = accounts->GetActive();
 				menu->SetActive(0);
@@ -146,8 +146,8 @@ void AccountWindow::MoveFocus(FocusDirection direction)
 				Window::MoveFocus(direction);
 
 			break;
-		case FocusUp:
-		case FocusDown:
+		case FOCUS_UP:
+		case FOCUS_DOWN:
 			if (focus_child != accounts)
 				accounts->SetActive(accounts_index);
 			else
@@ -512,7 +512,7 @@ void AccountWindow::AccountOptionInt::OnActivate()
 	dialog = new InputDialog(text, value_string);
 	g_free(value_string);
 
-	dialog->SetFlags(TextEntry::FlagNumeric);
+	dialog->SetFlags(TextEntry::FLAG_NUMERIC);
 	dialog->signal_response.connect(
 			sigc::mem_fun(this, &AccountWindow::AccountOptionInt::ResponseHandler));
 	dialog->Show();

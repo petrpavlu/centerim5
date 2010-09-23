@@ -70,7 +70,7 @@ void Button::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_BUTTON, "activate",
 			sigc::mem_fun(this, &Button::ActionActivate),
-			InputProcessor::Bindable_Normal);
+			InputProcessor::BINDABLE_NORMAL);
 }
 
 DEFINE_SIG_REGISTERKEYS(Button, RegisterKeys);
