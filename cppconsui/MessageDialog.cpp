@@ -35,6 +35,6 @@ MessageDialog::MessageDialog(const gchar *text)
 {
 	AddButton(_(OK_BUTTON_TEXT), Dialog::RESPONSE_OK);
 
-	label = new Label(text);
-	AddWidget(*label, 0, 0);
+	label = new Label(AUTOSIZE, AUTOSIZE, text);
+	layout->InsertWidget(0, *label);
 }

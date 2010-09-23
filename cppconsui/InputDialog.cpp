@@ -36,11 +36,11 @@ InputDialog::InputDialog(const gchar* text, const gchar* defaultvalue)
 	AddButton(_(OK_BUTTON_TEXT), InputDialog::RESPONSE_OK);
 
 	label = new Label(text);
-	separator = new HorizontalLine(width);
-	entry = new TextEntry(width, height - 4, defaultvalue);
-	AddWidget(*label, 0, 0);
-	AddWidget(*separator, 0, 1);
-	AddWidget(*entry, 0, 2);
+	separator = new HorizontalLine(AUTOSIZE);
+	entry = new TextEntry(AUTOSIZE, AUTOSIZE, defaultvalue);
+	layout->InsertWidget(0, *label);
+	layout->InsertWidget(1, *separator);
+	layout->InsertWidget(2, *entry);
 
 	entry->GrabFocus();
 }

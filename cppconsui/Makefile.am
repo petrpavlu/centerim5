@@ -60,6 +60,8 @@ libcppconsui_la_SOURCES =\
 	TreeView.h \
 	ScrollPane.cpp \
 	ScrollPane.h \
+	Spacer.cpp \
+	Spacer.h \
 	VerticalLine.cpp \
 	VerticalLine.h \
 	Widget.cpp \

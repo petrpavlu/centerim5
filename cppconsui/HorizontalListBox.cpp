@@ -95,12 +95,17 @@ void HorizontalListBox::Draw()
 	AbstractListBox::Draw();
 }
 
+void HorizontalListBox::InsertSeparator(size_t pos)
+{
+	InsertWidget(pos, *(new VerticalLine(AUTOSIZE)));
+}
+
 void HorizontalListBox::AppendSeparator()
 {
 	AppendWidget(*(new VerticalLine(AUTOSIZE)));
 }
 
-void HorizontalListBox::AppendWidget(Widget& widget)
+void HorizontalListBox::InsertWidget(size_t pos, Widget& widget)
 {
 	int w = widget.Width();
 	if (w == AUTOSIZE) {
@@ -111,7 +116,12 @@ void HorizontalListBox::AppendWidget(Widget& widget)
 	UpdateScrollWidth();
 
 	// note: widget is moved to a correct position in Draw() method
-	AddWidget(widget, 0, 0);
+	ScrollPane::InsertWidget(pos, widget, 0, 0);
+}
+
+void HorizontalListBox::AppendWidget(Widget& widget)
+{
+	InsertWidget(children.size(), widget);
 }
 
 void HorizontalListBox::RemoveWidget(Widget& widget)

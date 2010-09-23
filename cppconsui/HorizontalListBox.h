@@ -47,7 +47,9 @@ class HorizontalListBox
 		virtual void Draw();
 
 		// AbstractListBox
+		virtual void InsertSeparator(size_t pos);
 		virtual void AppendSeparator();
+		virtual void InsertWidget(size_t pos, Widget& widget);
 		virtual void AppendWidget(Widget& widget);
 
 		// Container

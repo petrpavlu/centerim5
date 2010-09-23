@@ -87,7 +87,7 @@ class Container
 
 		/**
 		 * Adds a widget to the children list. The Container takes ownership
-		 * of the widget. It means that the widget will get deleted by the
+		 * of the widget. It means that the widget will be deleted by the
 		 * Container.
 		 */
 		virtual void AddWidget(Widget& widget, int x, int y);
@@ -164,6 +164,15 @@ class Container
 		Widget *focus_child;
 		
 		Children children;
+
+		/**
+		 * Inserts a widget in the children list at a given position. The
+		 * Container takes ownership of the widget. It means that the widget
+		 * will be deleted by the Container. This function is intended to be
+		 * used by derived classes that needs to keep child widgets in order
+		 * (see ListBox and HorizontalListBox).
+		 */
+		virtual void InsertWidget(size_t pos, Widget& widget, int x, int y);
 
 		virtual void UpdateAreas();
 

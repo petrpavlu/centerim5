@@ -33,6 +33,7 @@
 
 #include "HorizontalLine.h"
 #include "HorizontalListBox.h"
+#include "ListBox.h"
 #include "Window.h"
 
 class Dialog
@@ -60,8 +61,9 @@ class Dialog
 		sigc::signal<void, ResponseType> signal_response;
 
 	protected:
-		HorizontalListBox *buttons;
+		ListBox *layout;
 		HorizontalLine *separator;
+		HorizontalListBox *buttons;
 
 	private:
 		Dialog(const Dialog&);

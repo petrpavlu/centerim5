@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
  * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
@@ -21,35 +20,18 @@
 
 /**
  * @file
- * AbstractListBox class implementation.
+ * Spacer class implementation.
  *
  * @ingroup cppconsui
  */
 
-#include "AbstractListBox.h"
+#include "Spacer.h"
 
-#include "Button.h"
-
-AbstractListBox::AbstractListBox(int w, int h)
-: ScrollPane(w, h, 0, 0)
+Spacer::Spacer(int w, int h)
+: Widget(w, h)
 {
 }
 
-void AbstractListBox::InsertItem(size_t pos, const gchar *title,
-		sigc::slot<void> function)
+void Spacer::Draw()
 {
-	InsertWidget(pos, *(new Button(Curses::onscreen_width(title), 1, title,
-					function)));
-}
-
-void AbstractListBox::AppendItem(const gchar *title,
-		sigc::slot<void> function)
-{
-	AppendWidget(*(new Button(Curses::onscreen_width(title), 1, title,
-					function)));
-}
-
-void AbstractListBox::AddWidget(Widget& widget, int x, int y)
-{
-	ScrollPane::AddWidget(widget, x, y);
 }

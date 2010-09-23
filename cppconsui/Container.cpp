@@ -158,20 +158,7 @@ void Container::SetParent(Container& parent)
 
 void Container::AddWidget(Widget& widget, int x, int y)
 {
-	Child child;
-
-	widget.MoveResize(x, y, widget.Width(), widget.Height());
-	widget.SetParent(*this);
-	/**
-	 * @todo Also other widget signals. Maybe a descendant class would like to
-	 * do somethings. Eg a ListBox wants to undo move events.
-	 */
-	child.sig_redraw = widget.signal_redraw.connect(sigc::mem_fun(this,
-				&Container::OnChildRedraw));
-	child.sig_moveresize = widget.signal_moveresize.connect(sigc::mem_fun(
-				this, &Container::OnChildMoveResize));
-	child.widget = &widget;
-	children.push_back(child);
+	InsertWidget(children.size(), widget, x, y);
 }
 
 void Container::RemoveWidget(Widget& widget)
@@ -417,14 +404,16 @@ void Container::SetActive(int i)
 
 int Container::GetActive() const
 {
-	for (Children::const_iterator j = children.begin(); j != children.end(); j++)
+	for (Children::const_iterator j = children.begin(); j != children.end();
+			j++)
 		if (j->widget->HasFocus())
 			return j - children.begin();
 
 	return -1;
 }
 
-Curses::Window *Container::GetSubPad(const Widget& child, int begin_x, int begin_y, int ncols, int nlines)
+Curses::Window *Container::GetSubPad(const Widget& child, int begin_x,
+		int begin_y, int ncols, int nlines)
 {
 	if (!area)
 		return NULL;
@@ -441,6 +430,27 @@ Curses::Window *Container::GetSubPad(const Widget& child, int begin_x, int begin
 		ncols = realw - begin_x;
 
 	return area->subpad(begin_x, begin_y, ncols, nlines);
+}
+
+void Container::InsertWidget(size_t pos, Widget& widget, int x, int y)
+{
+	g_assert(pos <= children.size());
+
+	Child child;
+
+	widget.MoveResize(x, y, widget.Width(), widget.Height());
+	widget.SetParent(*this);
+	/**
+	 * @todo Also other widget signals. Maybe a descendant class would like to
+	 * do somethings. Eg a ListBox wants to undo move events.
+	 */
+	child.sig_redraw = widget.signal_redraw.connect(sigc::mem_fun(this,
+				&Container::OnChildRedraw));
+	child.sig_moveresize = widget.signal_moveresize.connect(sigc::mem_fun(
+				this, &Container::OnChildMoveResize));
+	child.widget = &widget;
+
+	children.insert(children.begin() + pos, child);
 }
 
 void Container::UpdateAreas()
