@@ -83,8 +83,6 @@ void HorizontalListBox::Draw()
 			}
 
 			widget->MoveResize(x, 0, widget->Width(), widget->Height());
-			widget->Draw();
-
 			x += w;
 		}
 	}

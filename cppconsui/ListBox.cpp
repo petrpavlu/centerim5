@@ -83,8 +83,6 @@ void ListBox::Draw()
 			}
 
 			widget->MoveResize(0, y, widget->Width(), widget->Height());
-			widget->Draw();
-
 			y += h;
 		}
 	}
