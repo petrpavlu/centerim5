@@ -62,6 +62,8 @@ libcppconsui_la_SOURCES =\
 	ScrollPane.h \
 	Spacer.cpp \
 	Spacer.h \
+	SplitDialog.cpp \
+	SplitDialog.h \
 	VerticalLine.cpp \
 	VerticalLine.h \
 	Widget.cpp \

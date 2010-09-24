@@ -47,7 +47,7 @@ class Log
 
 		static Log *Instance();
 
-		// Window
+		// FreeWindow
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
 		virtual void ScreenResized();
 

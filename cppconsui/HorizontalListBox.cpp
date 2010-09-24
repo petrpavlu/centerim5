@@ -45,6 +45,7 @@ void HorizontalListBox::UpdateArea()
 	// set virtual scroll area height
 	if (scrollarea)
 		SetScrollHeight(scrollarea->getmaxy());
+	UpdateScrollWidth();
 }
 
 void HorizontalListBox::Draw()

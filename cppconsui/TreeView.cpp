@@ -29,7 +29,7 @@
 #define CONTEXT_TREEVIEW "treeview"
 
 TreeView::TreeView(int w, int h, LineStyle::Type ltype)
-: ScrollPane(w, h, w, 0)
+: ScrollPane(w, h, 0, 0)
 , linestyle(ltype)
 {
 	/* initialise the tree */
@@ -69,11 +69,13 @@ bool TreeView::RegisterKeys()
 	return true;
 }
 
-void TreeView::MoveResize(int newx, int newy, int neww, int newh)
+void TreeView::UpdateArea()
 {
-	SetScrollWidth(neww);
+	ScrollPane::UpdateArea();
 
-	ScrollPane::MoveResize(newx, newy, neww, newh);
+	// set virtual scroll area width
+	if (scrollarea)
+		SetScrollWidth(scrollarea->getmaxx());
 }
 
 void TreeView::Draw()
@@ -474,7 +476,7 @@ void TreeView::AddNodeFinalize(NodeReference& iter)
 	iter->sig_redraw = w->signal_redraw.connect(sigc::mem_fun(this,
 				&TreeView::OnChildRedraw));
 	iter->sig_moveresize = w->signal_moveresize.connect(sigc::mem_fun(this,
-					&TreeView::OnChildMoveResize));
+				&TreeView::OnChildMoveResize));
 
 	signal_redraw(*this);
 }

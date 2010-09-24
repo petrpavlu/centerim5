@@ -47,6 +47,8 @@ ScrollPane::~ScrollPane()
 
 void ScrollPane::UpdateArea()
 {
+	g_assert(parent);
+
 	if (scrollarea)
 		delete scrollarea;
 	scrollarea = parent->GetSubPad(*this, xpos, ypos, width, height);

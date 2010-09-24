@@ -45,6 +45,7 @@ void ListBox::UpdateArea()
 	// set virtual scroll area width
 	if (scrollarea)
 		SetScrollWidth(scrollarea->getmaxx());
+	UpdateScrollHeight();
 }
 
 void ListBox::Draw()

@@ -53,4 +53,5 @@ void *Notify::notify_message(PurpleNotifyMsgType type,
 		const char *title, const char *primary,
 		const char *secondary)
 {
+	return NULL;
 }

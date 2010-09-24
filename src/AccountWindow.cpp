@@ -34,25 +34,16 @@
 #include "gettext.h"
 
 AccountWindow::AccountWindow()
-: Window(0, 0, 80, 24, TYPE_TOP)
-, accounts_index(0)
+: SplitDialog(0, 0, 80, 24)
 {
 	SetColorScheme("accountwindow");
 
-	accounts = new TreeView(width, height - 2);
-	menu = new HorizontalListBox(width, 1);
-	line = new HorizontalLine(width);
+	buttons->AppendItem(_("Add"), sigc::mem_fun(this, &AccountWindow::Add));
+	buttons->AppendSeparator();
+	buttons->AppendItem(_("Done"), sigc::mem_fun(this, &AccountWindow::Close));
 
-	accounts->SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
-	menu->SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
-
-	menu->AppendItem(_("Add"), sigc::mem_fun(this, &AccountWindow::Add));
-	menu->AppendSeparator();
-	menu->AppendItem(_("Done"), sigc::mem_fun(this, &AccountWindow::Close));
-
-	AddWidget(*accounts, 0, 0);
-	AddWidget(*menu, 1, height - 1);
-	AddWidget(*line, 1, height - 2);
+	accounts = new TreeView(AUTOSIZE, AUTOSIZE);
+	SetContainer(*accounts);
 
 	MoveResizeRect(CONF->GetAccountWindowDimensions());
 	
@@ -61,15 +52,6 @@ AccountWindow::AccountWindow()
 	// move focus to accounts if there is any
 	if (account_entries.size())
 		accounts->SetActive(0);
-}
-
-void AccountWindow::MoveResize(int newx, int newy, int neww, int newh)
-{
-	Window::MoveResize(newx, newy, neww, newh);
-
-	accounts->MoveResize(0, 0, width, height - 2);
-	menu->MoveResize(0, height - 1, width, 1);
-	line->MoveResize(0, height - 2, width, 1);
 }
 
 void AccountWindow::ScreenResized()
@@ -87,6 +69,7 @@ void AccountWindow::ScreenResized()
 	// Center on screen
 	confSize.x = (screen.Width() - confSize.Width()) / 2;
 	confSize.y = (screen.Height() - confSize.Height()) / 2;
+	confSize.y /= 3;
 	
 	MoveResizeRect(confSize);
 }
@@ -133,33 +116,6 @@ void AccountWindow::DropAccountResponseHandler(Dialog::ResponseType response, Pu
 	}
 }
 
-void AccountWindow::MoveFocus(FocusDirection direction)
-{
-	switch (direction) {
-		case FOCUS_LEFT:
-		case FOCUS_RIGHT:
-			if (focus_child != menu) {
-				accounts_index = accounts->GetActive();
-				menu->SetActive(0);
-			}
-			else
-				Window::MoveFocus(direction);
-
-			break;
-		case FOCUS_UP:
-		case FOCUS_DOWN:
-			if (focus_child != accounts)
-				accounts->SetActive(accounts_index);
-			else
-				Window::MoveFocus(direction);
-
-			break;
-		default:
-			Window::MoveFocus(direction);
-			break;
-	}
-}
-
 bool AccountWindow::ClearAccount(PurpleAccount *account, bool full)
 {
 	AccountEntry *account_entry = &account_entries[account];
@@ -177,7 +133,7 @@ bool AccountWindow::ClearAccount(PurpleAccount *account, bool full)
 	}
 
 	if (account_entries.empty())
-		menu->SetActive(0);
+		buttons->SetActive(0);
 
 	return false;
 }

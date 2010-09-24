@@ -38,7 +38,7 @@ class BuddyList
 	public:
 		static BuddyList *Instance();
 
-		// Window
+		// FreeWindow
 		virtual void Close();
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
 		virtual void ScreenResized();

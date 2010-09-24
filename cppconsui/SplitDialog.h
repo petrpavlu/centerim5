@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
  * Copyright (C) 2010 by CenterIM developers
  *
  * This file is part of CenterIM.
@@ -19,30 +18,42 @@
  *
  * */
 
-#ifndef __GENERALMENU_H__
-#define __GENERALMENU_H__
+/**
+ * @file
+ * SplitDialog class.
+ *
+ * @ingroup cppconsui
+ */
 
-#include <cppconsui/MenuWindow.h>
+#ifndef __SPLITDIALOG_H__
+#define __SPLITDIALOG_H__
 
-class GeneralMenu
-: public MenuWindow
+#include "Container.h"
+#include "Dialog.h"
+
+class SplitDialog
+: public Dialog
 {
 	public:
-		GeneralMenu(int x, int y, int w, int h);
-		virtual ~GeneralMenu() {}
+		SplitDialog(int x, int y, int w, int h,
+				LineStyle::Type ltype = LineStyle::DEFAULT);
+		SplitDialog();
+		virtual ~SplitDialog() {}
 
-		// FreeWindow
-		virtual void ScreenResized();
+		// Container
+		void MoveFocus(FocusDirection direction);
+
+		void SetContainer(Container& cont);
+		Container *GetContainer() { return container; }
 
 	protected:
+		Container *container;
+		int container_index;
+		int buttons_index;
 
 	private:
-		GeneralMenu();
-		GeneralMenu(const GeneralMenu&);
-		GeneralMenu& operator=(const GeneralMenu&);
-
-		void OpenAccountsWindow();
-		void OpenAddBuddyRequest();
+		SplitDialog(const SplitDialog&);
+		SplitDialog& operator=(const SplitDialog&);
 };
 
-#endif /* __GENERALMENU_H__ */
+#endif /* __SPLITDIALOG_H__ */

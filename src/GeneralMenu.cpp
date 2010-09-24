@@ -23,6 +23,7 @@
 
 #include "AccountWindow.h"
 #include "CenterIM.h"
+#include "Log.h"
 
 #include "gettext.h"
 

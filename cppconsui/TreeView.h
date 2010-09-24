@@ -50,7 +50,7 @@ class TreeView
 		virtual ~TreeView();
 	
 		// Widget
-		virtual void MoveResize(int newx, int newy, int neww, int newh);
+		virtual void UpdateArea();
 		virtual void Draw();
 		virtual void CleanFocus();
 

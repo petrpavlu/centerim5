@@ -45,7 +45,7 @@ class Conversation
 		Conversation(PurpleConversation *conv_);
 		virtual ~Conversation();
 
-		// Window
+		// FreeWindow
 		virtual void Close();
 		virtual void ScreenResized();
 		virtual void Show();

@@ -31,8 +31,8 @@
 #include "ConsuiCurses.h"
 #include "ColorScheme.h"
 
-VerticalLine::VerticalLine(int w, LineStyle::Type ltype)
-: AbstractLine(w, 1, ltype)
+VerticalLine::VerticalLine(int h, LineStyle::Type ltype)
+: AbstractLine(1, h, ltype)
 {
 }
 

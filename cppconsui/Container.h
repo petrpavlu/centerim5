@@ -113,6 +113,7 @@ class Container
 		 * to the root widget (normally a Window).
 		 */
 		virtual bool SetFocusChild(Widget& child);
+		Widget *GetFocusChild() const { return focus_child; }
 		/**
 		 * Guilds a tree of the focus chain starting from this container and
 		 * puts it into the focus_chain tree as a subtree of @ref parent.

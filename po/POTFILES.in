@@ -43,6 +43,7 @@ cppconsui/MessageDialog.cpp
 cppconsui/Panel.cpp
 cppconsui/ScrollPane.cpp
 cppconsui/Spacer.cpp
+cppconsui/SplitDialog.cpp
 cppconsui/TextEdit.cpp
 cppconsui/TextEntry.cpp
 cppconsui/TextView.cpp

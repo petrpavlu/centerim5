@@ -31,7 +31,7 @@
 Dialog::Dialog(int x, int y, int w, int h, LineStyle::Type ltype)
 : Window(x, y, w, h, TYPE_TOP, ltype)
 {
-	AddWidgets();
+	InitLayout();
 }
 
 Dialog::Dialog()
@@ -40,10 +40,28 @@ Dialog::Dialog()
 	//TODO set correct position.
 	MoveResize(10, 10, 60, 12);
 
-	AddWidgets();
+	InitLayout();
 }
 
-void Dialog::AddWidgets()
+void Dialog::Close()
+{
+	Response(RESPONSE_CANCEL);
+}
+
+void Dialog::AddButton(const gchar *text, Dialog::ResponseType response)
+{
+	buttons->AppendItem(text, sigc::bind(sigc::mem_fun(this,
+					&Dialog::Response), response));
+}
+
+void Dialog::Response(Dialog::ResponseType response)
+{
+	signal_response(response);
+
+	Window::Close();
+}
+
+void Dialog::InitLayout()
 {
 	layout = new ListBox(AUTOSIZE, AUTOSIZE);
 	AddWidget(*layout, 0, 0);
@@ -52,21 +70,4 @@ void Dialog::AddWidgets()
 	layout->AppendWidget(*separator);
 	buttons = new HorizontalListBox(AUTOSIZE, 1);
 	layout->AppendWidget(*buttons);
-}
-
-void Dialog::AddButton(const gchar *text, Dialog::ResponseType response)
-{
-	buttons->AppendItem(text, sigc::bind(sigc::mem_fun(this, &Dialog::Response), response));
-}
-
-void Dialog::Close()
-{
-	Response(RESPONSE_CANCEL);
-}
-
-void Dialog::Response(Dialog::ResponseType response)
-{
-	signal_response(response);
-
-	Window::Close();
 }

@@ -25,21 +25,19 @@
 #include <cppconsui/Button.h>
 #include <cppconsui/ComboBox.h>
 #include <cppconsui/InputDialog.h>
-#include <cppconsui/HorizontalLine.h>
-#include <cppconsui/HorizontalListBox.h>
+#include <cppconsui/SplitDialog.h>
 #include <cppconsui/TreeView.h>
-#include <cppconsui/Window.h>
 
 #include <libpurple/account.h>
 #include <libpurple/accountopt.h>
 
 class AccountWindow
-: public Window
+: public SplitDialog
 {
 	public:
 		AccountWindow();
 
-		virtual void MoveResize(int newx, int newy, int neww, int newh);
+		// FreeWindow
 		virtual void ScreenResized();
 
 	protected:
@@ -214,17 +212,9 @@ class AccountWindow
 		void DropAccount(PurpleAccount *account);
 		void DropAccountResponseHandler(Dialog::ResponseType response, PurpleAccount *account);
 
-		//void FocusCycleLeftRight(Container::FocusDirection direction);
-		//void FocusCycleUpDown(Container::FocusDirection direction);
-		void MoveFocus(FocusDirection direction);
-
 		TreeView *accounts;
-		HorizontalListBox *menu;
-		HorizontalLine *line;
 
 		AccountEntries account_entries;
-
-		int accounts_index;
 };
 
 #endif /* __ACCOUNTSWINDOW_H__ */

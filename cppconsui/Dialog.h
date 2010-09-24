@@ -47,14 +47,15 @@ class Dialog
 			RESPONSE_NO
 		};
 
-		Dialog(int x, int y, int w, int h, LineStyle::Type ltype);
+		Dialog(int x, int y, int w, int h,
+				LineStyle::Type ltype = LineStyle::DEFAULT);
 		Dialog();
 		virtual ~Dialog() {}
 
+		// FreeWindow
 		virtual void Close();
 
 		void AddButton(const gchar *label, ResponseType response);
-
 		void Response(ResponseType response);
 
 		/* Signal emitted when the user closes the dialog indicating. */
@@ -69,7 +70,7 @@ class Dialog
 		Dialog(const Dialog&);
 		Dialog& operator=(const Dialog&);
 
-		void AddWidgets();
+		void InitLayout();
 };
 
 #endif /* __DIALOG_H__ */

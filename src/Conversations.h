@@ -37,7 +37,7 @@ class Conversations
 	public:
 		static Conversations *Instance();
 
-		// Window
+		// FreeWindow
 		virtual void Close();
 		virtual void ScreenResized();
 
