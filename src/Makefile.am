@@ -32,6 +32,8 @@ centerim_SOURCES = \
 	Log.h \
 	Notify.cpp \
 	Notify.h \
+	Request.cpp \
+	Request.h \
 	Transfers.cpp \
 	Transfers.h \
 	git-version.cpp \

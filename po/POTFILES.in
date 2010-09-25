@@ -15,6 +15,7 @@ src/Conversations.cpp
 src/GeneralMenu.cpp
 src/Log.cpp
 src/Notify.cpp
+src/Request.cpp
 src/Transfers.cpp
 
 # CppConsUI source files

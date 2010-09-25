@@ -30,11 +30,6 @@ class Notify
 	public:
 		static Notify *Instance();
 
-		static void *notify_message_(PurpleNotifyMsgType type,
-				const char *title, const char *primary,
-				const char *secondary)
-			{ return NOTIFY->notify_message(type, title, primary, secondary); }
-
 	protected:
 
 	private:
@@ -44,6 +39,11 @@ class Notify
 		Notify(const Notify&);
 		Notify& operator=(const Notify&);
 		~Notify();
+
+		static void *notify_message_(PurpleNotifyMsgType type,
+				const char *title, const char *primary,
+				const char *secondary)
+			{ return NOTIFY->notify_message(type, title, primary, secondary); }
 
 		void *notify_message(PurpleNotifyMsgType type,
 				const char *title, const char *primary,
