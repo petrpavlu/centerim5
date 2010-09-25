@@ -46,7 +46,7 @@ AccountWindow::AccountWindow()
 	SetContainer(*accounts);
 
 	MoveResizeRect(CONF->GetAccountWindowDimensions());
-	
+
 	Populate();
 
 	// move focus to accounts if there is any
@@ -69,8 +69,7 @@ void AccountWindow::ScreenResized()
 	// Center on screen
 	confSize.x = (screen.Width() - confSize.Width()) / 2;
 	confSize.y = (screen.Height() - confSize.Height()) / 2;
-	confSize.y /= 3;
-	
+
 	MoveResizeRect(confSize);
 }
 
@@ -207,7 +206,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 	}
 	else {
 		prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	
+
 		// protocols combobox
 		combobox = new AccountOptionProtocol(account, *this);
 		accounts->AppendNode(account_entry->parent_reference, *combobox);
@@ -215,7 +214,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		/* The username must be treated in a special way because it can contain
 		 * multiple values. (eg user@server:port/resource) */
 		username = g_strdup(purple_account_get_username(account));
-		
+
 		for (iter = g_list_last(prplinfo->user_splits); iter; iter = iter->prev) {
 			PurpleAccountUserSplit *split = (PurpleAccountUserSplit*)iter->data;
 
@@ -529,7 +528,7 @@ AccountWindow::AccountOptionSplit::~AccountOptionSplit()
 void AccountWindow::AccountOptionSplit::UpdateText()
 {
 	gchar *str;
-	
+
 	str = g_strdup_printf("%s: %s", text, value ? value : "");
 	SetText(str);
 	g_free(str);

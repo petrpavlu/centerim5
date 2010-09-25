@@ -42,7 +42,7 @@ class BuddyList
 		virtual void Close();
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
 		virtual void ScreenResized();
-	
+
 	protected:
 
 	private:
@@ -151,9 +151,9 @@ class BuddyList
 
 		static void new_list_(PurpleBuddyList *list)
 			{ BUDDYLIST->new_list(list); }
-		static void new_node_(PurpleBlistNode *node) 
+		static void new_node_(PurpleBlistNode *node)
 			{ BUDDYLIST->new_node(node); }
-		static void update_(PurpleBuddyList *list, PurpleBlistNode *node)  
+		static void update_(PurpleBuddyList *list, PurpleBlistNode *node)
 			{ BUDDYLIST->update(list, node); }
 		static void remove_(PurpleBuddyList *list, PurpleBlistNode *node)
 			{ BUDDYLIST->remove(list, node); }

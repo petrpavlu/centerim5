@@ -15,7 +15,7 @@
  *
  * */
 
-/** @file KeyConfig.cpp KeyConfig implementation 
+/** @file KeyConfig.cpp KeyConfig implementation
  */
 
 #include "KeyConfig.h"

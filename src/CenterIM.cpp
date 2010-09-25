@@ -111,7 +111,7 @@ void CenterIM::Quit()
 }
 
 GHashTable *CenterIM::get_ui_info()
-{ 
+{
 	static GHashTable *ui_info = NULL;
 
 	if (ui_info == NULL) {
@@ -344,7 +344,7 @@ void CenterIM::ScreenResized()
 	size.width = (int) (size.width * (mngr->GetScreenWidth() / (double) originalW));
 	size.height = mngr->GetScreenHeight();
 	areaSizes[BuddyListArea] = size;
-	
+
 	size = CONF->GetLogDimensions();
 	size.x = areaSizes[BuddyListArea].width;
 	size.width = mngr->GetScreenWidth() - size.x;

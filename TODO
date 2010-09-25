@@ -30,7 +30,7 @@ TODO:
 - request UI ops implementation
 - notice UI ops implementation
 - fix and put back cmake build
- 
+
 Less important todo's which sometimes are just ideas:
 - Add option to save/display buddy icon
 - Use the fact noted about in g_utf8_offset_to_pointer doc.

@@ -48,7 +48,7 @@ class TreeView
 
 		TreeView(int w, int h, LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~TreeView();
-	
+
 		// Widget
 		virtual void UpdateArea();
 		virtual void Draw();
@@ -217,7 +217,7 @@ class TreeView
 
 		bool IsNodeOpenable(const SiblingIterator& node) const;
 		bool IsNodeVisible(const NodeReference& node) const;
-		
+
 		// handlers of signals
 		virtual void OnChildRedraw(Widget& widget);
 		virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,

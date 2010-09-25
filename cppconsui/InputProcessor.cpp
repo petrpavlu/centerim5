@@ -42,7 +42,7 @@ bool InputProcessor::ProcessInput(const TermKeyKey &key)
 	/* Process overriding key combinations first */
 	if (Process(BINDABLE_OVERRIDE, key))
 		return true;
-	
+
 	/* Hand of input to a child */
 	if (inputchild && inputchild->ProcessInput(key))
 		return true;

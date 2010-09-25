@@ -52,7 +52,7 @@ class Conversation
 
 		// Widget
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
-	
+
 		void Receive(const char *name, const char *alias, const char *message,
 			PurpleMessageFlags flags, time_t mtime);
 
@@ -68,7 +68,7 @@ class Conversation
 		TextView *view;
 		TextEdit *input;
 		HorizontalLine *line;
-		
+
 		PurpleConversation *conv;
 
 		char *filename;
@@ -88,7 +88,7 @@ class Conversation
 		void BuildLogFilename();
 
 		virtual void Send() = 0;
-	
+
 		DECLARE_SIG_REGISTERKEYS();
 		static bool RegisterKeys();
 		void DeclareBindables();

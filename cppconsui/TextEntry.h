@@ -21,7 +21,7 @@
  * Modified by the GTK+ Team and others 1997-2000.  See the AUTHORS
  * file for a list of people on the GTK+ Team.  See the ChangeLog
  * files for a list of changes.  These files are distributed with
- * GTK+ at ftp://ftp.gtk.org/pub/gtk/. 
+ * GTK+ at ftp://ftp.gtk.org/pub/gtk/.
  */
 
 /*
@@ -70,7 +70,7 @@ class TextEntry
 		int GetFlags() { return flags; }
 		void SetFlags(int flags);
 		void SetPosition(int position);
-		
+
 		sigc::signal<void> signal_text_changed;
 
 	protected:
@@ -109,7 +109,7 @@ class TextEntry
 		void ActionDelete(DeleteType type, int direction);
 		void ActionToggleOverwrite();
 		void ActionActivate();
-	
+
 		/** it handles the automatic registration of defined keys */
 		DECLARE_SIG_REGISTERKEYS();
 		static bool RegisterKeys();

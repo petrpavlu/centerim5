@@ -41,7 +41,7 @@ Log::Log()
 : Window(0, 0, 80, 24, TYPE_NON_FOCUSABLE)
 , logfile(NULL)
 , prefs_handle(NULL)
-{ 
+{
 	SetColorScheme("log");
 
 	memset(&centerim_debug_ui_ops, 0, sizeof(centerim_debug_ui_ops));

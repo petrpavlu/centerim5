@@ -35,10 +35,10 @@
 #include "tree.hh"
 
 /** The generic widget container class
- * 
+ *
  * It implements @ref MoveFocus "moving focus" in different @ref Widget::FocusDirection "directions".
  *
- * 
+ *
  */
 class Container
 : public Widget
@@ -96,7 +96,7 @@ class Container
 		 * widget. The caller must ensure proper deletion of the widget.
 		 */
 		virtual void RemoveWidget(Widget& widget);
-		
+
 		/**
 		 * Removes (and deletes) all children widgets.
 		 */
@@ -119,11 +119,11 @@ class Container
 		 * puts it into the focus_chain tree as a subtree of @ref parent.
 		 */
 		virtual void GetFocusChain(FocusChain& focus_chain, FocusChain::iterator parent);
-		/** 
+		/**
 		 * @todo have a return value (to see if focus was moved successfully or not) ?
 		 */
 		virtual void MoveFocus(FocusDirection direction);
-		
+
 		void SetFocusCycle(FocusCycleScope scope) { focus_cycle_scope = scope; }
 		FocusCycleScope GetFocusCycle() const { return focus_cycle_scope; }
 
@@ -163,7 +163,7 @@ class Container
 		 * Isn't this a duplication of functionality from inputchild ?
   		 */
 		Widget *focus_child;
-		
+
 		Children children;
 
 		/**
@@ -184,7 +184,7 @@ class Container
 	private:
 		Container(const Container&);
 		Container& operator=(const Container&);
-		
+
 		/** it handles the automatic registration of defined keys */
 		DECLARE_SIG_REGISTERKEYS();
 		static bool RegisterKeys();

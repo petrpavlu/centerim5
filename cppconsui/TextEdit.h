@@ -25,7 +25,7 @@ class TextEdit
 		virtual void Draw();
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
 		virtual bool ProcessInputText(const TermKeyKey &key);
-		
+
 		sigc::signal<void> signal_text_changed;
 
 	protected:
@@ -94,7 +94,7 @@ class TextEdit
 		void ActionMoveCursor(CursorMovement step, int direction);
 		void ActionDelete(DeleteType type, int direction);
 		void ActionToggleOverwrite();
-	
+
 		/** it handles the automatic registration of defined keys */
 		DECLARE_SIG_REGISTERKEYS();
 		static bool RegisterKeys();

@@ -60,7 +60,7 @@ class Label
 		const gchar *GetText() const;
 
 	protected:
-		gchar *text; 
+		gchar *text;
 
 	private:
 		Label(const Label&);
@@ -69,7 +69,7 @@ class Label
 		/**
 		 * Manages text allocation and reallocation without any Widget signals
 		 * involved.
-		 */ 
+		 */
 		void RealSetText(const gchar *text_);
 };
 

@@ -5,7 +5,7 @@
 #include <cppconsui/ScrollPane.h>
 #include <cppconsui/Keys.h>
 
-static const char *pic[] = 
+static const char *pic[] =
 {
 " ______                                __          __         __   __                       ",
 "|      |.-----.-----.-----.----.---.-.|  |_.--.--.|  |.---.-.|  |_|__|.-----.-----.-----.   ",

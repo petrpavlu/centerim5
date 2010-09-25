@@ -88,7 +88,7 @@ class Widget
 		 * visible too.
 		 */
 		virtual bool GrabFocus();
-		
+
 		void SetFocusAbility(bool val) { can_focus = val; }
 		bool CanFocus() const { return can_focus; }
 

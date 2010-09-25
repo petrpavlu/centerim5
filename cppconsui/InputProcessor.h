@@ -43,13 +43,13 @@
  *
  * The KeyDef should be defined statically by each class and be used to build
  * the keybindings configuration section. @see KeyConfig
- * 
+ *
  * Each (or some) of the KeyDef defintions can be bound for the specific instance
- * of the class. 
+ * of the class.
  */
 
 
-/** 
+/**
  * Base class that takes care of input processing
  *
  * It allows to define:
@@ -62,21 +62,21 @@ class InputProcessor
 		/** Defines when a key binding will be processed comparing with the child input processor @see ProcessInput
 		 */
 		enum BindableType {
-			BINDABLE_NORMAL, ///< key bindings will be processed after the child input processor 
+			BINDABLE_NORMAL, ///< key bindings will be processed after the child input processor
 			BINDABLE_OVERRIDE ///< key bindings will be processed before the child input processor
 		};
-	
+
 		InputProcessor();
 		virtual ~InputProcessor();
 
-		/** 
+		/**
 		 * There are 4 steps when processing input:
 		 * <OL>
 		 * <LI><I>
 		 *       Overriding key combos
 		 * </I><BR>Input is processed by checking for overriding
 		 * key combinations. If a match is found, the signal for
-		 * that combo is sent, and the function returns 
+		 * that combo is sent, and the function returns
 		 * the number of bytes used by that combo.
 		 * </LI>
 		 * <LI><I>
@@ -92,7 +92,7 @@ class InputProcessor
 		 * </I><BR>
 		 * Input is processed by checking for normal
 		 * key combinations. If a match is found, the signal for
-		 * that combo is sent, and the function returns 
+		 * that combo is sent, and the function returns
 		 * the number of bytes used by that combo.
 		 * </LI>
 		 * <LI><I>
@@ -102,7 +102,7 @@ class InputProcessor
 		 * for e.g. input widgets.
 		 * </LI>
 		 * </OL>
-		 * 
+		 *
 		 * @return When checking for matches and no match is found but
 		 * a partial match was found, the number of bytes
 		 * needed to be able to make a full match is returned
@@ -147,14 +147,14 @@ class InputProcessor
 		void SetInputChild(InputProcessor &child);
 		void ClearInputChild();
 		InputProcessor *GetInputChild(void) { return inputchild; }
-		
+
 		/** Wrapper for KEYCONFIG->AddRegisterCallback */
 		static sigc::connection AddRegisterCallback(const sigc::slot<bool> &);
 		/** it is just a wrapper for KEYCONFIG->Bind */
 		static void RegisterKeyDef(const char *context, const char *action,
 				const gchar *desc, const TermKeyKey &key);
 
-		/** Binds a (context,action) pair with a function. 
+		/** Binds a (context,action) pair with a function.
 		 *
 		 * The bind can be normal or override, depending on wether it needs to be called
 		 * after or before the @ref inputchild.
@@ -166,12 +166,12 @@ class InputProcessor
 	private:
 		InputProcessor(const InputProcessor &);
 		InputProcessor& operator=(const InputProcessor &);
-	
+
 		/** Tries to match an appropriate bound action to the input and apply it
 		 * @return true if a match was found and processed
 		 */
 		bool Process(BindableType type, const TermKeyKey &key);
-		
+
 		/** the set of declared Bindables */
 		Bindables keybindings;
 

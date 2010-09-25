@@ -266,7 +266,7 @@ Log::Level Conf::GetLogLevel(const gchar *type)
 	gchar *pref = g_strconcat(CONF_PREFIX, "log/log_level_", type, NULL);
 	const gchar *slevel;
 	Log::Level level = Log::Level_debug;
-	
+
 	if (!g_ascii_strcasecmp(type, "cim"))
 		slevel = GetString(pref, "info");
 	else

@@ -36,7 +36,7 @@
  * Line oriented text view widget.
  */
 class TextView
-: public Widget 
+: public Widget
 {
 	public:
 		TextView(int w, int h, bool autoscroll_ = false);

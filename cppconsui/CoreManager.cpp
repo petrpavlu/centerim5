@@ -441,7 +441,7 @@ void CoreManager::Draw()
 	if (redrawpending) {
 		Curses::erase();
 		Curses::noutrefresh();
-		
+
 		// non-focusable -> normal -> top
 		for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
 			if (i->window->GetType() == FreeWindow::TYPE_NON_FOCUSABLE)
