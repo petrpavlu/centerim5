@@ -129,7 +129,7 @@ void TestApp::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_TESTAPP, "quit",
 			sigc::mem_fun(mngr, &CoreManager::QuitMainLoop),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_OVERRIDE);
 }
 
 DEFINE_SIG_REGISTERKEYS(TestApp, RegisterKeys);

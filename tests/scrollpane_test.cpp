@@ -139,16 +139,16 @@ void ScrollPaneWindow::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-up",
 			sigc::mem_fun(this, &ScrollPaneWindow::ScrollUp),
-			InputProcessor::Bindable_Normal);
+			InputProcessor::BINDABLE_NORMAL);
 	DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-down",
 			sigc::mem_fun(this, &ScrollPaneWindow::ScrollDown),
-			InputProcessor::Bindable_Normal);
+			InputProcessor::BINDABLE_NORMAL);
 	DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-left",
 			sigc::mem_fun(this, &ScrollPaneWindow::ScrollLeft),
-			InputProcessor::Bindable_Normal);
+			InputProcessor::BINDABLE_NORMAL);
 	DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-right",
 			sigc::mem_fun(this, &ScrollPaneWindow::ScrollRight),
-			InputProcessor::Bindable_Normal);
+			InputProcessor::BINDABLE_NORMAL);
 }
 
 DEFINE_SIG_REGISTERKEYS(ScrollPaneWindow, RegisterKeys);
@@ -230,7 +230,7 @@ void TestApp::DeclareBindables()
 {
 	DeclareBindable(CONTEXT_TESTAPP, "quit",
 			sigc::mem_fun(mngr, &CoreManager::QuitMainLoop),
-			InputProcessor::Bindable_Override);
+			InputProcessor::BINDABLE_OVERRIDE);
 }
 
 DEFINE_SIG_REGISTERKEYS(TestApp, RegisterKeys);
