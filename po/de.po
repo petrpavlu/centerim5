@@ -1,0 +1,321 @@
+# Czech translations for centerim package.
+# Copyright (C) 2010 Mark Pustjens <pustjens@dds.nl>
+# This file is distributed under the same license as the centerim package.
+# Petr Pavlu <setup@dagobah.cz>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: centerim 5.0-alpha1\n"
+"Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
+"projects/centerim\n"
+"POT-Creation-Date: 2010-03-15 18:45+0100\n"
+"PO-Revision-Date: 2010-03-15 18:57+0100\n"
+"Last-Translator: Petr Pavlu <setup@dagobah.cz>\n"
+"Language-Team: Czech\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+#: src/AccountStatusMenu.cpp:41
+msgid "All accounts"
+msgstr "Alle Accounts"
+
+#: src/AccountStatusMenu.cpp:42
+msgid "Already logged in only"
+msgstr "Bereits nur eingeloggt"
+
+#: src/AccountWindow.cpp:55
+msgid "Add"
+msgstr "Hinzufügen"
+
+#: src/AccountWindow.cpp:57
+msgid "Done"
+msgstr "Fertig"
+
+#: src/AccountWindow.cpp:104 src/AccountWindow.cpp:594
+msgid "Username"
+msgstr "Nutzername"
+
+#: src/AccountWindow.cpp:121
+msgid "Are you sure you want to delete this account?"
+msgstr "Diesen Account wirklich löschen?"
+
+#: src/AccountWindow.cpp:273
+msgid "Invalid account or protocol plugin not loaded"
+msgstr "Ungültiger Account oder Protokollplugin nicht geladen"
+
+#: src/AccountWindow.cpp:376
+msgid "Drop account"
+msgstr "Account löschen"
+
+#: src/AccountWindow.cpp:418
+msgid "Remember password"
+msgstr "Paßwort speichern"
+
+#: src/AccountWindow.cpp:420
+msgid "Account enabled"
+msgstr "Account aktiviert"
+
+#: src/AccountWindow.cpp:436
+msgid "yes"
+msgstr "ja"
+
+#: src/AccountWindow.cpp:436
+msgid "no"
+msgstr "nein"
+
+#: src/AccountWindow.cpp:472
+msgid "Password"
+msgstr "Paßwort"
+
+#: src/AccountWindow.cpp:474
+msgid "Alias"
+msgstr "Alias"
+
+#: src/AccountWindow.cpp:569
+msgid "Value out of range.\n"
+msgstr "Wert außerhalb des Wertebereiches.\n"
+
+#: src/Accounts.cpp:109
+#, c-format
+msgid "+ [%s] Logged in: %s\n"
+msgstr "+ [%s] Eingeloggt: %s\n"
+
+#: src/Accounts.cpp:115
+#, c-format
+msgid "+ [%s] Status changed to: %s\n"
+msgstr "+ [%s] Status geändert: %s\n"
+
+#: src/BuddyListNode.cpp:193
+msgid "New Contact"
+msgstr "Neuer Kontakt"
+
+#: src/CenterIM.cpp:301
+msgid "Quit CenterIM."
+msgstr "CenterIM verlassen."
+
+#: src/CenterIM.cpp:304
+msgid "Open the account status menu."
+msgstr "Accountstatusmenü öffnen."
+
+#: src/CenterIM.cpp:307
+msgid "Open the general menu."
+msgstr "Allgemeines Menü öffnen."
+
+#: src/CenterMain.cpp:49
+#, c-format
+msgid "could not initialize iconv\n"
+msgstr "konnte iconv nicht initialisieren\n"
+
+#: src/CenterMain.cpp:52
+#, c-format
+msgid "could not initialize libpurple core\n"
+msgstr "konnte libpurple-Kern nicht initialisieren\n"
+
+#: src/CenterMain.cpp:55
+#, c-format
+msgid "unknown error `%d'\n"
+msgstr "unbekannter Fehler `%d'\n"
+
+#: src/Conversation.cpp:75
+msgid "Send the message."
+msgstr "Nachricht senden."
+
+#: src/GeneralMenu.cpp:40
+msgid "Testing"
+msgstr "Teste"
+
+#: src/GeneralMenu.cpp:41
+msgid "Change status"
+msgstr "Status ändern"
+
+#: src/GeneralMenu.cpp:42
+msgid "Go to contact..."
+msgstr "Gehe zu Kontakten..."
+
+#: src/GeneralMenu.cpp:43
+msgid "Accounts..."
+msgstr "Accounts..."
+
+#: src/GeneralMenu.cpp:44
+msgid "CenterIM config options..."
+msgstr "CenterIM Konfigurationsoptionen"
+
+#: src/GeneralMenu.cpp:46
+msgid "Find/add users"
+msgstr "Nutzer finden/hinzufügen"
+
+#: src/GeneralMenu.cpp:47
+msgid "Join channel/conference"
+msgstr "Channel/Konferenz beitreten"
+
+#: src/GeneralMenu.cpp:48
+msgid "Link an RSS feed"
+msgstr "RSS-Feed einbinden"
+
+#: src/GeneralMenu.cpp:50
+msgid "View/edit ignore list"
+msgstr "Ignore-Liste anzeigen/bearbeiten"
+
+#: src/GeneralMenu.cpp:51
+msgid "View/edit invisible list"
+msgstr "Unsichtbar-Liste anzeigen/bearbeiten"
+
+#: src/GeneralMenu.cpp:52
+msgid "View/edit visible list"
+msgstr "Sichtbar-Liste anzeigen/bearbeiten"
+
+#: src/GeneralMenu.cpp:54
+msgid "Show offline users"
+msgstr "Offline-Nutzer anzeigen"
+
+#: src/GeneralMenu.cpp:55
+msgid "Organize contact groups"
+msgstr "Kontaktgruppen organisieren"
+
+#: src/GeneralMenu.cpp:56
+msgid "Mass group move..."
+msgstr "Massengruppen-Verschiebung"
+
+#: src/GeneralMenu.cpp:58
+msgid "Quit"
+msgstr "Beenden"
+
+#: src/Log.cpp:239
+#, c-format
+msgid "centerim/log: Error opening logfile `%s' (%s).\n"
+msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s' (%s).\n"
+
+#: src/Log.cpp:244
+#, c-format
+msgid "centerim/log: Error opening logfile `%s'.\n"
+msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s'.\n"
+
+#: src/Log.cpp:253
+#, c-format
+msgid "centerim/log: Error writing to logfile (%s).\n"
+msgstr "centerim/log: Fehler beim Schreiben in Logdatei (%s).\n"
+
+#: src/Log.cpp:258
+msgid "centerim/log: Error writing to logfile.\n"
+msgstr "centerim/log: Fehler beim Schreiben in Logdatei.\n"
+
+#: src/Log.cpp:262
+#, c-format
+msgid "centerim/log: Error flushing logfile (%s).\n"
+msgstr "centerim/log: Fehler beim Ausschreiben der Logdatei (%s).\n"
+
+#: src/Log.cpp:267
+msgid "centerim/log: Error flushing logfile.\n"
+msgstr "centerim/log: Fehler beim Ausschreiben der Logdatei.\n"
+
+#: cppconsui/Application.cpp:97
+#, c-format
+msgid "Error converting input to UTF-8 (%s).\n"
+msgstr "Fehler beim Konvertieren der Eingabe nach UTF-8 (%s).\n"
+
+#: cppconsui/Application.cpp:102
+msgid "Error converting input to UTF-8.\n"
+msgstr "Fehler beim Konvertieren der Eingabe nach UTF-8.\n"
+
+#: cppconsui/Application.cpp:123
+msgid "Libtermkey initialization failed.\n"
+msgstr "Initialisierung von libtermkey fehlgeschlagen.\n"
+
+#: cppconsui/Button.cpp:79
+msgid "Activate the button"
+msgstr "Knopf aktivieren"
+
+#: cppconsui/ComboBox.cpp:119
+msgid "Show the dropdown menu."
+msgstr "Aufklappmenü anzeigen."
+
+#: cppconsui/Container.cpp:84
+msgid "Focusses the previous widget"
+msgstr "Fokusiert vorheriges Element"
+
+#: cppconsui/Container.cpp:87
+msgid "Focusses the next widget"
+msgstr "Fokusiert nächstes Element"
+
+#: cppconsui/Container.cpp:90
+msgid "Focus the next widget to the left."
+msgstr "Fokusiert nächstes Element links."
+
+#: cppconsui/Container.cpp:93
+msgid "Focus the next widget to the right."
+msgstr "Fokusiert nächstes Element rechts."
+
+#: cppconsui/Container.cpp:96
+msgid "Focus the next widget above."
+msgstr "Fokusiert nächstes Widget oberhalb."
+
+#: cppconsui/Container.cpp:99
+msgid "Focus the next widget below."
+msgstr "Fokusiert nächstes Widget unterhalb."
+
+#: cppconsui/InputDialog.cpp:35 cppconsui/MessageDialog.cpp:30
+msgid "Ok"
+msgstr "Ok"
+
+#: cppconsui/MenuWindow.cpp:53
+msgid "Close the window"
+msgstr "Fenster schließen"
+
+#: cppconsui/TextEdit.cpp:117 cppconsui/TextEntry.cpp:139
+msgid "Move the cursor to the right."
+msgstr "Cursor nach rechts bewegen."
+
+#: cppconsui/TextEdit.cpp:120 cppconsui/TextEntry.cpp:142
+msgid "Move the cursor to the left."
+msgstr "Cursor nach links bewegen."
+
+#: cppconsui/TextEdit.cpp:123
+msgid "Move the cursor one line down."
+msgstr ""
+
+#: cppconsui/TextEdit.cpp:126 cppconsui/TextEdit.cpp:129
+#: cppconsui/TextEntry.cpp:145
+msgid "Move the cursor to the right by one word."
+msgstr "Cursor ein Wort nach rechts"
+
+#: cppconsui/TextEdit.cpp:132 cppconsui/TextEntry.cpp:148
+msgid "Move the cursor to the left by one word."
+msgstr "Cursor ein Wort nach links"
+
+#: cppconsui/TextEdit.cpp:135 cppconsui/TextEntry.cpp:151
+msgid "Move the cursor to the end of the text."
+msgstr "Cursor ans Textende bewegen"
+
+#: cppconsui/TextEdit.cpp:138 cppconsui/TextEntry.cpp:154
+msgid "Move the cursor to the beginning of the text."
+msgstr "Cursor an Textanfang bewegen"
+
+#: cppconsui/TextEdit.cpp:141 cppconsui/TextEntry.cpp:157
+msgid "Delete character under cursor."
+msgstr "Buchstabe unter Cursor löschen"
+
+#: cppconsui/TextEdit.cpp:144 cppconsui/TextEntry.cpp:160
+msgid "Delete character before cursor."
+msgstr "Buchstabe vor Cursor löschen"
+
+#: cppconsui/TextEntry.cpp:177
+msgid "Accept input and move focus."
+msgstr "Eingabe akzeptieren und Fokus bewegen"
+
+#: cppconsui/TreeView.cpp:85
+msgid "Collapse the selected subtree"
+msgstr "Gewählten Unterbaum einklappen"
+
+#: cppconsui/TreeView.cpp:88
+msgid "Expand the selected subtree"
+msgstr "Gewählten Unterbaum ausklappen"
+
+#: cppconsui/Window.cpp:77
+msgid "Close the window."
+msgstr "Fenster schließen"
+
+#: cppconsui/WindowManager.cpp:92
+msgid "Redraw the complete screen immediately"
+msgstr "Kompletten Bildschirm neuzeichnen"
