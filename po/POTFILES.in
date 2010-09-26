@@ -13,10 +13,12 @@ src/Connections.cpp
 src/Conversation.cpp
 src/Conversations.cpp
 src/GeneralMenu.cpp
+src/Header.cpp
 src/Log.cpp
 src/Notify.cpp
 src/Request.cpp
 src/Transfers.cpp
+src/Utils.cpp
 
 # CppConsUI source files
 cppconsui/AbstractLine.cpp

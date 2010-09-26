@@ -37,7 +37,7 @@ class CenterIM
 : public InputProcessor
 {
 	public:
-		enum ScreenArea {BuddyListArea, LogArea, ChatArea, WholeArea, AreaMax};
+		enum ScreenArea {HeaderArea, BuddyListArea, LogArea, ChatArea, WholeArea, AreaMax};
 
 		static CenterIM *Instance();
 

@@ -28,6 +28,8 @@ centerim_SOURCES = \
 	Defines.h \
 	GeneralMenu.cpp \
 	GeneralMenu.h \
+	Header.cpp \
+	Header.h \
 	Log.cpp \
 	Log.h \
 	Notify.cpp \
@@ -36,6 +38,8 @@ centerim_SOURCES = \
 	Request.h \
 	Transfers.cpp \
 	Transfers.h \
+	Utils.cpp \
+	Utils.h \
 	git-version.cpp \
 	git-version.h.in
 

@@ -26,6 +26,7 @@
 #include "Conf.h"
 #include "Connections.h"
 #include "Conversations.h"
+#include "Header.h"
 #include "Log.h"
 #include "Notify.h"
 #include "Transfers.h"
@@ -84,12 +85,14 @@ void CenterIM::Run()
 		logbuf = NULL;
 	}
 
+	Header::Instance();
 	Accounts::Instance();
 	Connections::Instance();
 	Notify::Instance();
 
 	// initialize UI
 	Conversations::Instance()->Show();
+	Header::Instance()->Show();
 	// init BuddyList last so it takes the focus
 	BuddyList::Instance()->Show();
 
@@ -280,6 +283,9 @@ void CenterIM::ColorSchemeInit()
 	COLORSCHEME->SetColorPair("conversation",			"label",			"text",		Curses::Color::CYAN,	Curses::Color::BLACK);
 	COLORSCHEME->SetColorPair("conversation-active",	"label",			"text",		Curses::Color::YELLOW,	Curses::Color::BLACK,	Curses::Attr::BOLD);
 	COLORSCHEME->SetColorPair("conversation-new",		"label",			"text",		Curses::Color::CYAN,	Curses::Color::BLACK,	Curses::Attr::BOLD);
+
+	COLORSCHEME->SetColorPair("header",					"panel",			"line",		Curses::Color::BLACK,	Curses::Color::WHITE,	Curses::Attr::BOLD);
+	COLORSCHEME->SetColorPair("header",					"label",			"text",		Curses::Color::BLACK,	Curses::Color::WHITE);
 }
 
 void CenterIM::DeclareBindables()
@@ -342,7 +348,7 @@ void CenterIM::ScreenResized()
 {
 	Rect size = CONF->GetBuddyListDimensions();
 	size.width = (int) (size.width * (mngr->GetScreenWidth() / (double) originalW));
-	size.height = mngr->GetScreenHeight();
+	size.height = mngr->GetScreenHeight() - size.y;
 	areaSizes[BuddyListArea] = size;
 
 	size = CONF->GetLogDimensions();
@@ -353,9 +359,16 @@ void CenterIM::ScreenResized()
 	areaSizes[LogArea] = size;
 
 	areaSizes[ChatArea].x = areaSizes[BuddyListArea].width;
-	areaSizes[ChatArea].y = 0;
+	areaSizes[ChatArea].y = 1;
 	areaSizes[ChatArea].width = mngr->GetScreenWidth() - areaSizes[ChatArea].x;
-	areaSizes[ChatArea].height = mngr->GetScreenHeight() - areaSizes[LogArea].height;
+	//areaSizes[ChatArea].height = mngr->GetScreenHeight() - areaSizes[LogArea].height;
+	areaSizes[ChatArea].height = mngr->GetScreenHeight()
+		- (areaSizes[ChatArea].y + areaSizes[LogArea].height);
+
+	areaSizes[HeaderArea].x = 0;
+	areaSizes[HeaderArea].y = 0;
+	areaSizes[HeaderArea].width = mngr->GetScreenWidth();
+	areaSizes[HeaderArea].height = 1;
 
 	areaSizes[WholeArea].x = 0;
 	areaSizes[WholeArea].y = 0;

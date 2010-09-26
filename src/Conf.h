@@ -67,6 +67,7 @@ class Conf
 		unsigned int GetLogMaxLines(void);
 		unsigned int GetChatPartitioning(void);
 
+		Rect GetHeaderDimensions(void);
 		Rect GetLogDimensions(void);
 		Rect GetBuddyListDimensions(void);
 		Rect GetChatDimensions(void);

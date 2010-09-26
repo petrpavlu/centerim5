@@ -22,6 +22,7 @@
 #include "BuddyListNode.h"
 
 #include "Conversations.h"
+#include "Utils.h"
 
 #include <cppconsui/Keys.h>
 #include <libpurple/version.h>
@@ -112,35 +113,7 @@ const gchar *BuddyListNode::GetBuddyStatus(PurpleBuddy *buddy) const
 
 	PurplePresence *presence = purple_buddy_get_presence(buddy);
 	PurpleStatus *status = purple_presence_get_active_status(presence);
-	PurpleStatusType *status_type = purple_status_get_type(status);
-	PurpleStatusPrimitive prim = purple_status_type_get_primitive(status_type);
-
-	switch (prim) {
-		case PURPLE_STATUS_UNSET:
-			return "[x] ";
-		case PURPLE_STATUS_OFFLINE:
-			return "";
-		case PURPLE_STATUS_AVAILABLE:
-			return "[o] ";
-		case PURPLE_STATUS_UNAVAILABLE:
-			return "[u] ";
-		case PURPLE_STATUS_INVISIBLE:
-			return "[i] ";
-		case PURPLE_STATUS_AWAY:
-			return "[a] ";
-		case PURPLE_STATUS_EXTENDED_AWAY:
-			return "[A] ";
-		case PURPLE_STATUS_MOBILE:
-			return "[m] ";
-		case PURPLE_STATUS_TUNE:
-			return "[t] ";
-#if PURPLE_VERSION_CHECK(2, 7, 0)
-		case PURPLE_STATUS_MOOD:
-			return "[d] ";
-#endif
-		default:
-			return "[X] ";
-	}
+	return Utils::GetStatusIndicator(status);
 }
 
 int BuddyListNode::GetBuddyStatusWeight(PurpleBuddy *buddy) const
@@ -208,7 +181,7 @@ void BuddyListBuddy::Update()
 {
 	BuddyListNode::Update();
 
-	gchar *text = g_strdup_printf("%s%s", GetBuddyStatus(buddy),
+	gchar *text = g_strdup_printf("%s %s", GetBuddyStatus(buddy),
 			purple_buddy_get_alias(buddy));
 	SetText(text);
 	g_free(text);
@@ -301,7 +274,7 @@ void BuddyListContact::Update()
 	BuddyListNode::Update();
 
 	PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
-	gchar *text = g_strdup_printf("%s%s", GetBuddyStatus(buddy),
+	gchar *text = g_strdup_printf("%s %s", GetBuddyStatus(buddy),
 			purple_contact_get_alias(contact));
 	SetText(text);
 	g_free(text);
