@@ -100,6 +100,8 @@ class ScrollPane
 
 		Curses::Window *scrollarea;
 
+		void DrawEx(bool container_draw);
+
 	private:
 		ScrollPane(const ScrollPane&);
 		ScrollPane& operator=(const ScrollPane&);

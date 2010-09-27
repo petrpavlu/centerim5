@@ -28,6 +28,8 @@
 
 #include "ScrollPane.h"
 
+#include "ColorScheme.h"
+
 ScrollPane::ScrollPane(int w, int h, int scrollw, int scrollh)
 : Container(w, h)
 , scroll_xpos(0)
@@ -59,20 +61,7 @@ void ScrollPane::UpdateArea()
 
 void ScrollPane::Draw()
 {
-	if (!area || !scrollarea) {
-		if (scrollarea)
-			scrollarea->erase();
-		return;
-	}
-
-	Container::Draw();
-
-	/* If the defined scrollable area is smaller than the widget, make sure
-	 * the copy works. */
-	int copyw = MIN(scroll_width - 1, scrollarea->getmaxx() - 1);
-	int copyh = MIN(scroll_height - 1, scrollarea->getmaxy() - 1);
-
-	area->copyto(scrollarea, scroll_xpos, scroll_ypos, 0, 0, copyw, copyh, 0);
+	DrawEx(true);
 }
 
 void ScrollPane::SetScrollSize(int swidth, int sheight)
@@ -155,4 +144,24 @@ void ScrollPane::MakeVisible(int x, int y)
 
 	if (redraw)
 		signal_redraw(*this);
+}
+
+void ScrollPane::DrawEx(bool container_draw)
+{
+	if (!area || !scrollarea) {
+		if (scrollarea)
+			scrollarea->fill(COLORSCHEME->GetColorPair(GetColorScheme(),
+						"container", "background"));
+		return;
+	}
+
+	if (container_draw)
+		Container::Draw();
+
+	/* If the defined scrollable area is smaller than the widget, make sure
+	 * the copy works. */
+	int copyw = MIN(scroll_width - 1, scrollarea->getmaxx() - 1);
+	int copyh = MIN(scroll_height - 1, scrollarea->getmaxy() - 1);
+
+	area->copyto(scrollarea, scroll_xpos, scroll_ypos, 0, 0, copyw, copyh, 0);
 }

@@ -66,8 +66,6 @@ void Label::DrawEx(bool color)
 	 * LF specially here.
 	 */
 
-	area->erase();
-
 	int attrs;
 	if (color) {
 		attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "label", "text");

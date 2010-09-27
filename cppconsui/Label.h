@@ -46,11 +46,6 @@ class Label
 		virtual void Draw();
 
 		/**
-		 * Extended version of Draw() method.
-		 */
-		void DrawEx(bool color);
-
-		/**
 		 * Sets a new text and redraws itself.
 		 */
 		virtual void SetText(const gchar *text_);
@@ -61,6 +56,11 @@ class Label
 
 	protected:
 		gchar *text;
+
+		/**
+		 * Extended version of Draw() method.
+		 */
+		void DrawEx(bool color);
 
 	private:
 		Label(const Label&);

@@ -288,6 +288,29 @@ int getcolorpair(int fg, int bg)
 	return res;
 }
 
+int Window::fill(int attrs)
+{
+	if (attron(attrs) == ERR)
+		return ERR;
+
+	int w = getmaxx();
+	int h = getmaxy();
+
+	for (int i = 0; i < w; i++)
+		for (int j = 0; j < h; j++)
+			mvwaddch(p->win, j, i, ' ');
+	/// @todo Function mvwaddch() returns ERR here, why?
+#if 0
+			if (mvwaddch(p->win, j, i, ' ') == ERR)
+				return ERR;
+#endif
+
+	if (attroff(attrs) == ERR)
+		return ERR;
+
+	return OK;
+}
+
 int Window::erase()
 {
 	return werase(p->win);

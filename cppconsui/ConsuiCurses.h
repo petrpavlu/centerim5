@@ -50,7 +50,6 @@ class Window
 
 		virtual ~Window();
 
-
 		/**
 		 * This functions take a formatted string and draws it on the screen.
 		 * The formatting of the string happens when a '\v' is encountered.
@@ -70,6 +69,7 @@ class Window
 		int attroff(int attrs);
 		int mvchgat(int x, int y, int n, /* attr_t */ int attr, short color, const void *opts);
 
+		int fill(int attrs);
 		int erase();
 		int clrtoeol();
 		int clrtobot();

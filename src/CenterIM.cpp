@@ -285,6 +285,7 @@ void CenterIM::ColorSchemeInit()
 	COLORSCHEME->SetColorPair("conversation-new",		"label",			"text",		Curses::Color::CYAN,	Curses::Color::BLACK,	Curses::Attr::BOLD);
 
 	COLORSCHEME->SetColorPair("header",					"label",			"text",		Curses::Color::BLACK,	Curses::Color::WHITE);
+	COLORSCHEME->SetColorPair("header",					"container",		"background",	Curses::Color::BLACK,	Curses::Color::WHITE);
 }
 
 void CenterIM::DeclareBindables()

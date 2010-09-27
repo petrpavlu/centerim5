@@ -86,7 +86,8 @@ void TreeView::Draw()
 		return;
 	}
 
-	area->erase();
+	area->fill(COLORSCHEME->GetColorPair(GetColorScheme(), "container",
+				"background"));
 
 	DrawNode(thetree.begin(), 0);
 
@@ -94,7 +95,7 @@ void TreeView::Draw()
 	if (focus_child)
 		MakeVisible(focus_child->Left(), focus_child->Top());
 
-	ScrollPane::Draw();
+	ScrollPane::DrawEx(false);
 }
 
 void TreeView::CleanFocus()

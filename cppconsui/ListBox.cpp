@@ -56,8 +56,6 @@ void ListBox::Draw()
 		return;
 	}
 
-	area->erase();
-
 	autosize_height = 1;
 	int autosize_height_extra = 0;
 	int realh = area->getmaxy();

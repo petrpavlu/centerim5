@@ -56,8 +56,6 @@ void HorizontalListBox::Draw()
 		return;
 	}
 
-	area->erase();
-
 	autosize_width = 1;
 	int autosize_width_extra = 0;
 	int realw = area->getmaxx();

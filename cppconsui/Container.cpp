@@ -28,6 +28,7 @@
 
 #include "Container.h"
 
+#include "ColorScheme.h"
 #include "ConsuiCurses.h"
 #include "Keys.h"
 #include "Window.h"
@@ -112,6 +113,12 @@ void Container::MoveResize(int newx, int newy, int neww, int newh)
 
 void Container::Draw()
 {
+	if (!area)
+		return;
+
+	area->fill(COLORSCHEME->GetColorPair(GetColorScheme(), "container",
+				"background"));
+
 	for (Children::iterator i = children.begin(); i != children.end(); i++)
 		if (i->widget->IsVisible())
 			i->widget->Draw();
