@@ -106,13 +106,15 @@ void ListBox::AppendSeparator()
 
 void ListBox::InsertWidget(size_t pos, Widget& widget)
 {
-	int h = widget.Height();
-	if (h == AUTOSIZE) {
-		h = 1;
-		autosize_children++;
+	if (widget.IsVisible()) {
+		int h = widget.Height();
+		if (h == AUTOSIZE) {
+			h = 1;
+			autosize_children++;
+		}
+		children_height += h;
+		UpdateScrollHeight();
 	}
-	children_height += h;
-	UpdateScrollHeight();
 
 	// note: widget is moved to a correct position in Draw() method
 	ScrollPane::InsertWidget(pos, widget, 0, 0);
@@ -165,6 +167,23 @@ void ListBox::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize)
 		children_height += new_height - old_height;
 		UpdateScrollHeight();
 	}
+}
+
+void ListBox::OnChildVisible(Widget& widget, bool visible)
+{
+	int height = widget.Height();
+
+	int sign = 1;
+	if (!visible)
+		sign = -1;
+
+	if (height == AUTOSIZE) {
+		autosize_children += sign;
+		height = 1;
+	}
+
+	children_height += sign * height;
+	UpdateScrollHeight();
 }
 
 void ListBox::UpdateScrollHeight()

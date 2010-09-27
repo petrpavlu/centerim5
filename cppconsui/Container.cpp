@@ -444,10 +444,12 @@ void Container::InsertWidget(size_t pos, Widget& widget, int x, int y)
 	 * @todo Also other widget signals. Maybe a descendant class would like to
 	 * do somethings. Eg a ListBox wants to undo move events.
 	 */
-	child.sig_redraw = widget.signal_redraw.connect(sigc::mem_fun(this,
-				&Container::OnChildRedraw));
 	child.sig_moveresize = widget.signal_moveresize.connect(sigc::mem_fun(
 				this, &Container::OnChildMoveResize));
+	child.sig_redraw = widget.signal_redraw.connect(sigc::mem_fun(this,
+				&Container::OnChildRedraw));
+	child.sig_visible = widget.signal_visible.connect(sigc::mem_fun(this,
+				&Container::OnChildVisible));
 	child.widget = &widget;
 
 	children.insert(children.begin() + pos, child);
@@ -459,11 +461,15 @@ void Container::UpdateAreas()
 		i->widget->UpdateArea();
 }
 
+void Container::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize)
+{
+}
+
 void Container::OnChildRedraw(Widget& widget)
 {
 	signal_redraw(*this);
 }
 
-void Container::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize)
+void Container::OnChildVisible(Widget& widget, bool visible)
 {
 }

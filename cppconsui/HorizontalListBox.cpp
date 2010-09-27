@@ -106,13 +106,15 @@ void HorizontalListBox::AppendSeparator()
 
 void HorizontalListBox::InsertWidget(size_t pos, Widget& widget)
 {
-	int w = widget.Width();
-	if (w == AUTOSIZE) {
-		w = 1;
-		autosize_children++;
+	if (widget.IsVisible()) {
+		int w = widget.Width();
+		if (w == AUTOSIZE) {
+			w = 1;
+			autosize_children++;
+		}
+		children_width += w;
+		UpdateScrollWidth();
 	}
-	children_width += w;
-	UpdateScrollWidth();
 
 	// note: widget is moved to a correct position in Draw() method
 	ScrollPane::InsertWidget(pos, widget, 0, 0);
@@ -165,6 +167,23 @@ void HorizontalListBox::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& n
 		children_width += new_width - old_width;
 		UpdateScrollWidth();
 	}
+}
+
+void HorizontalListBox::OnChildVisible(Widget& widget, bool visible)
+{
+	int width = widget.Width();
+
+	int sign = 1;
+	if (!visible)
+		sign = -1;
+
+	if (width == AUTOSIZE) {
+		autosize_children += sign;
+		width = 1;
+	}
+
+	children_width += sign * width;
+	UpdateScrollWidth();
 }
 
 void HorizontalListBox::UpdateScrollWidth()

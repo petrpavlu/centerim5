@@ -66,6 +66,7 @@ class ListBox
 		// Container
 		virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
 				Rect& newsize);
+		virtual void OnChildVisible(Widget& widget, bool visible);
 
 		void UpdateScrollHeight();
 
