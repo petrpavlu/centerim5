@@ -53,7 +53,6 @@ class ListBox
 		virtual void AppendWidget(Widget& widget);
 
 		// Container
-		virtual void RemoveWidget(Widget& widget);
 		virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
 				int begin_y, int ncols, int nlines);
 

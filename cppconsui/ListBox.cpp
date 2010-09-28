@@ -123,19 +123,6 @@ void ListBox::AppendWidget(Widget& widget)
 	InsertWidget(children.size(), widget);
 }
 
-void ListBox::RemoveWidget(Widget& widget)
-{
-	int h = widget.Height();
-	if (h == AUTOSIZE) {
-		h = 1;
-		autosize_children--;
-	}
-	children_height -= h;
-	UpdateScrollHeight();
-
-	AbstractListBox::RemoveWidget(widget);
-}
-
 Curses::Window *ListBox::GetSubPad(const Widget& child, int begin_x,
 		int begin_y, int ncols, int nlines)
 {
@@ -169,6 +156,8 @@ void ListBox::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize)
 
 void ListBox::OnChildVisible(Widget& widget, bool visible)
 {
+	// the widget is being hidden or deleted
+
 	int height = widget.Height();
 
 	int sign = 1;

@@ -123,19 +123,6 @@ void HorizontalListBox::AppendWidget(Widget& widget)
 	InsertWidget(children.size(), widget);
 }
 
-void HorizontalListBox::RemoveWidget(Widget& widget)
-{
-	int w = widget.Width();
-	if (w == AUTOSIZE) {
-		w = 1;
-		autosize_children--;
-	}
-	children_width -= w;
-	UpdateScrollWidth();
-
-	AbstractListBox::RemoveWidget(widget);
-}
-
 Curses::Window *HorizontalListBox::GetSubPad(const Widget& child, int begin_x,
 		int begin_y, int ncols, int nlines)
 {
@@ -169,6 +156,8 @@ void HorizontalListBox::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& n
 
 void HorizontalListBox::OnChildVisible(Widget& widget, bool visible)
 {
+	// the widget is being hidden or deleted
+
 	int width = widget.Width();
 
 	int sign = 1;
