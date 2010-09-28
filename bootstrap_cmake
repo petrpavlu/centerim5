@@ -1,0 +1,17 @@
+#! /bin/sh
+# script shamelessly taken from openbox
+
+sh() {
+  /bin/sh -c "set -x; $*"
+}
+
+# TODO autopoint from gettext 0.18 contains support for multiple po
+# directories, split cppconsui/cim po directory when it comes out...
+mkdir build
+cd build
+cmake CMAKE_C_FLAGS=-std=c99../
+cd ..
+
+echo
+echo You are now ready to run ./configure
+echo enjoy!
