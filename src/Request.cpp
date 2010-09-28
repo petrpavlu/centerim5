@@ -20,6 +20,9 @@
 
 #include "Request.h"
 
+#include "CenterIM.h"
+#include "Log.h"
+
 #include <cstring>
 
 Request *Request::Instance()
@@ -55,7 +58,13 @@ void *Request::request_input(const char *title, const char *primary,
 		const char *cancel_text, GCallback cancel_cb, PurpleAccount *account,
 		const char *who, PurpleConversation *conv, void *user_data)
 {
-	return NULL;
+	LOG->Write(Log::Level_debug, "request_input\n");
+
+	InputDialog *dialog = new InputDialog(title, primary, secondary,
+			default_value, masked, ok_text, ok_cb, cancel_text, cancel_cb,
+			user_data);
+	dialog->Show();
+	return dialog;
 }
 
 void *Request::request_choice(const char *title, const char *primary,
@@ -110,4 +119,55 @@ void *Request::request_action_with_icon(const char *title,
 		size_t action_count, va_list actions)
 {
 	return NULL;
+}
+
+Request::RequestDialog::RequestDialog(const gchar *title,
+		const gchar *primary, const gchar *secondary, const gchar *ok_text,
+		GCallback ok_cb, const gchar *cancel_text, GCallback cancel_cb,
+		void *user_data)
+: SplitDialog()
+, ok_cb(ok_cb)
+, cancel_cb(cancel_cb)
+, user_data(user_data)
+{
+	ListBox *l = new ListBox(AUTOSIZE, AUTOSIZE);
+	if (title)
+		l->AppendWidget(*(new Label(title)));
+	if (primary)
+		l->AppendWidget(*(new Label(primary)));
+	if (secondary)
+		l->AppendWidget(*(new Label(secondary)));
+	SetContainer(*l);
+
+	if (ok_text)
+		AddButton(ok_text, RESPONSE_OK);
+	if (ok_text && cancel_text)
+		AddSeparator();
+	if (cancel_text)
+		AddButton(cancel_text, RESPONSE_CANCEL);
+}
+
+Request::RequestDialog::~RequestDialog()
+{
+}
+
+void Request::RequestDialog::ScreenResized()
+{
+	Rect screen = CENTERIM->ScreenAreaSize(CenterIM::WholeArea);
+
+	MoveResize(screen.Width() / 4, screen.Height() / 4, screen.Width() / 2,
+			screen.Height() / 2);
+}
+
+Request::InputDialog::InputDialog(const gchar *title, const gchar *primary,
+		const gchar *secondary, const gchar *default_value, bool masked,
+		const gchar *ok_text, GCallback ok_cb, const gchar *cancel_text,
+		GCallback cancel_cb, void *user_data)
+: RequestDialog(title, primary, secondary, ok_text, ok_cb, cancel_text,
+		cancel_cb, user_data)
+{
+}
+
+Request::InputDialog::~InputDialog()
+{
 }

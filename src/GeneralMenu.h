@@ -43,6 +43,11 @@ class GeneralMenu
 
 		void OpenAccountsWindow();
 		void OpenAddBuddyRequest();
+		void RequestTest();
+
+		static void ok_cb_(void *data, const gchar *text)
+			{ reinterpret_cast<GeneralMenu *>(data)->ok_cb(text); }
+		void ok_cb(const gchar *text);
 };
 
 #endif /* __GENERALMENU_H__ */

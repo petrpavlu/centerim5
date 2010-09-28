@@ -29,6 +29,7 @@
 #include "Header.h"
 #include "Log.h"
 #include "Notify.h"
+#include "Request.h"
 #include "Transfers.h"
 
 #include "AccountStatusMenu.h"
@@ -85,10 +86,11 @@ void CenterIM::Run()
 		logbuf = NULL;
 	}
 
-	Header::Instance();
 	Accounts::Instance();
 	Connections::Instance();
+	Header::Instance();
 	Notify::Instance();
+	Request::Instance();
 
 	// initialize UI
 	Conversations::Instance()->Show();
@@ -396,7 +398,7 @@ void CenterIM::ActionOpenAccountStatusMenu()
 void CenterIM::ActionOpenGeneralMenu()
 {
 	//TODO get coords from config
-	GeneralMenu *menu = new GeneralMenu(40, 0, 40, 6);
+	GeneralMenu *menu = new GeneralMenu(40, 0, 40, 8);
 	menu->Show();
 }
 

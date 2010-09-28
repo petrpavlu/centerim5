@@ -21,6 +21,7 @@
 #ifndef __REQUEST_H__
 #define __REQUEST_H__
 
+#include <cppconsui/SplitDialog.h>
 #include <libpurple/request.h>
 
 #define REQUEST (Request::Instance())
@@ -33,6 +34,46 @@ class Request
 	protected:
 
 	private:
+		class RequestDialog
+		: public SplitDialog
+		{
+			public:
+				RequestDialog(const gchar *title, const gchar *primary,
+						const gchar *secondary, const gchar *ok_text,
+						GCallback ok_cb, const gchar *cancel_text,
+						GCallback cancel_cb, void *user_data);
+				virtual ~RequestDialog();
+
+				// FreeWindow
+				virtual void ScreenResized();
+
+			protected:
+				GCallback ok_cb;
+				GCallback cancel_cb;
+				void *user_data;
+
+			private:
+				RequestDialog(const RequestDialog&);
+				RequestDialog operator=(const RequestDialog&);
+		};
+
+		class InputDialog
+		: public RequestDialog
+		{
+			public:
+				InputDialog(const gchar *title, const gchar *primary,
+						const gchar *secondary, const gchar *default_value,
+						bool masked, const gchar *ok_text, GCallback ok_cb,
+						const gchar *cancel_text, GCallback cancel_cb,
+						void *user_data);
+				virtual ~InputDialog();
+
+			protected:
+
+			private:
+				InputDialog(const InputDialog&);
+				InputDialog operator=(const InputDialog&);
+		};
 
 		PurpleRequestUiOps centerim_request_ui_ops;
 

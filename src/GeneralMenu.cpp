@@ -25,6 +25,8 @@
 #include "CenterIM.h"
 #include "Log.h"
 
+#include <libpurple/request.h>
+
 #include "gettext.h"
 
 GeneralMenu::GeneralMenu(int x, int y, int w, int h)
@@ -55,6 +57,9 @@ GeneralMenu::GeneralMenu(int x, int y, int w, int h)
 	AppendItem(_("Mass group move..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
 	*/
 	AppendSeparator();
+	AppendItem(_("Request test"), sigc::mem_fun(this,
+				&GeneralMenu::RequestTest));
+	AppendSeparator();
 	AppendItem(_("Quit"), sigc::mem_fun(CENTERIM, &CenterIM::Quit));
 }
 
@@ -74,4 +79,16 @@ void GeneralMenu::OpenAccountsWindow()
 void GeneralMenu::OpenAddBuddyRequest()
 {
 	purple_blist_request_add_buddy(NULL, NULL, NULL, NULL);
+}
+
+void GeneralMenu::RequestTest()
+{
+	purple_request_input(NULL, "Title", "Primary", "Secondary",
+			"default_value", FALSE, FALSE, NULL, "ok_text",
+			G_CALLBACK(ok_cb_), "cancel_text", NULL, NULL, NULL, NULL, this);
+}
+
+void GeneralMenu::ok_cb(const gchar *text)
+{
+	LOG->Write(Log::Level_debug, "%s\n", text);
 }
