@@ -273,7 +273,7 @@ msgstr "Cursor nach links bewegen."
 
 #: cppconsui/TextEdit.cpp:123
 msgid "Move the cursor one line down."
-msgstr ""
+msgstr "Cursor eine Zeile nach unten bewegen"
 
 #: cppconsui/TextEdit.cpp:126 cppconsui/TextEdit.cpp:129
 #: cppconsui/TextEntry.cpp:145
