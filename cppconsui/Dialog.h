@@ -56,6 +56,7 @@ class Dialog
 		virtual void Close();
 
 		void AddButton(const gchar *label, ResponseType response);
+		void AddSeparator();
 		void Response(ResponseType response);
 
 		/* Signal emitted when the user closes the dialog indicating. */
@@ -66,11 +67,11 @@ class Dialog
 		HorizontalLine *separator;
 		HorizontalListBox *buttons;
 
+		void InitLayout();
+
 	private:
 		Dialog(const Dialog&);
 		Dialog& operator=(const Dialog&);
-
-		void InitLayout();
 };
 
 #endif /* __DIALOG_H__ */

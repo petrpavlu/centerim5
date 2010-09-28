@@ -54,6 +54,11 @@ void Dialog::AddButton(const gchar *text, Dialog::ResponseType response)
 					&Dialog::Response), response));
 }
 
+void Dialog::AddSeparator()
+{
+	buttons->AppendSeparator();
+}
+
 void Dialog::Response(Dialog::ResponseType response)
 {
 	signal_response(response);
