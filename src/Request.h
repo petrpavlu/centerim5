@@ -47,6 +47,8 @@ class Request
 				// FreeWindow
 				virtual void ScreenResized();
 
+				virtual PurpleRequestType GetRequestType() = 0;
+
 			protected:
 				GCallback ok_cb;
 				GCallback cancel_cb;
@@ -54,7 +56,7 @@ class Request
 
 			private:
 				RequestDialog(const RequestDialog&);
-				RequestDialog operator=(const RequestDialog&);
+				RequestDialog& operator=(const RequestDialog&);
 		};
 
 		class InputDialog
@@ -68,12 +70,18 @@ class Request
 						void *user_data);
 				virtual ~InputDialog();
 
+				virtual PurpleRequestType GetRequestType();
+
 			protected:
 
 			private:
 				InputDialog(const InputDialog&);
-				InputDialog operator=(const InputDialog&);
+				InputDialog& operator=(const InputDialog&);
 		};
+
+		typedef std::set<InputDialog *> Requests;
+
+		Requests requests;
 
 		PurpleRequestUiOps centerim_request_ui_ops;
 
@@ -81,6 +89,9 @@ class Request
 		Request(const Request&);
 		Request& operator=(const Request&);
 		~Request();
+
+		void OnDialogResponse(InputDialog& dialog,
+				Dialog::ResponseType response);
 
 		static void *request_input_(const char *title, const char *primary,
 				const char *secondary, const char *default_value,

@@ -59,7 +59,9 @@ class Dialog
 		void AddSeparator();
 		void Response(ResponseType response);
 
-		/* Signal emitted when the user closes the dialog indicating. */
+		/** 
+		 * Signal emitted when the user closes the dialog.
+		 */
 		sigc::signal<void, ResponseType> signal_response;
 
 	protected:

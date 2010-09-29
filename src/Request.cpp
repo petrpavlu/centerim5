@@ -52,6 +52,13 @@ Request::~Request()
 {
 }
 
+void Request::OnDialogResponse(InputDialog& dialog,
+		Dialog::ResponseType response)
+{
+	requests.erase(&dialog);
+	purple_request_close(dialog.GetRequestType(), &dialog);
+}
+
 void *Request::request_input(const char *title, const char *primary,
 		const char *secondary, const char *default_value, gboolean multiline,
 		gboolean masked, gchar *hint, const char *ok_text, GCallback ok_cb,
@@ -63,6 +70,8 @@ void *Request::request_input(const char *title, const char *primary,
 	InputDialog *dialog = new InputDialog(title, primary, secondary,
 			default_value, masked, ok_text, ok_cb, cancel_text, cancel_cb,
 			user_data);
+	dialog->signal_response.connect(sigc::bind<0>(sigc::mem_fun(this,
+					&Request::OnDialogResponse), sigc::ref(*dialog)));
 	dialog->Show();
 	return dialog;
 }
@@ -103,6 +112,15 @@ void *Request::request_file(const char *title, const char *filename,
 
 void Request::close_request(PurpleRequestType type, void *ui_handle)
 {
+	LOG->Write(Log::Level_debug, "close_request\n");
+
+	g_assert(ui_handle);
+
+	InputDialog *dialog = reinterpret_cast<InputDialog *>(ui_handle);
+	if (requests.find(dialog) != requests.end()) {
+		requests.erase(dialog);
+		delete dialog;
+	}
 }
 
 void *Request::request_folder(const char *title, const char *dirname,
@@ -170,4 +188,9 @@ Request::InputDialog::InputDialog(const gchar *title, const gchar *primary,
 
 Request::InputDialog::~InputDialog()
 {
+}
+
+PurpleRequestType Request::InputDialog::GetRequestType()
+{
+	return PURPLE_REQUEST_INPUT;
 }

@@ -448,8 +448,9 @@ void Container::InsertWidget(size_t pos, Widget& widget, int x, int y)
 
 	widget.MoveResize(x, y, widget.Width(), widget.Height());
 
-	/* Insert the widget early into children so it can get grab the focus in
-	 * SetParent() method if it detects there isn't any focused widget. */
+	/* Insert a widget early into children vector so the widget can grab the
+	 * focus in SetParent() method if it detects that there isn't any focused
+	 * widget. */
 	children.insert(children.begin() + pos, child);
 	widget.SetParent(*this);
 
