@@ -41,10 +41,10 @@ class SplitDialog
 		virtual ~SplitDialog() {}
 
 		// Container
-		void MoveFocus(FocusDirection direction);
+		virtual void MoveFocus(FocusDirection direction);
 
-		void SetContainer(Container& cont);
-		Container *GetContainer() { return container; }
+		virtual void SetContainer(Container& cont);
+		virtual Container *GetContainer() { return container; }
 
 	protected:
 		Container *container;

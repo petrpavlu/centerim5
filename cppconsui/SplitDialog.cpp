@@ -55,30 +55,81 @@ void SplitDialog::MoveFocus(FocusDirection direction)
 	}
 
 	switch (direction) {
+		case FOCUS_PREVIOUS:
+			if (layout->GetFocusChild() == container) {
+				// focus is held by container, give it to the last button
+				container_index = container->GetActive();
+
+				FocusChain focus_chain(NULL);
+				buttons->GetFocusChain(focus_chain, focus_chain.begin());
+
+				FocusChain::pre_order_iterator iter = --focus_chain.end();
+				if (*iter && (*iter)->GrabFocus())
+					return;
+			}
+			else if (layout->GetFocusChild() == buttons) {
+				FocusChain focus_chain(NULL);
+				buttons->GetFocusChain(focus_chain, focus_chain.begin());
+
+				FocusChain::leaf_iterator iter = focus_chain.begin_leaf();
+				if (GetFocusWidget() == *iter) {
+					/* Focus is held by the first button, give it to the
+					 * container. */
+					buttons_index = buttons->GetActive();
+					if (container->SetActive(container_index)
+							|| container->GrabFocus())
+						return;
+				}
+			}
+			break;
+		case FOCUS_NEXT:
+			if (layout->GetFocusChild() == container) {
+				// focus is held by container, give it to the first button
+				container_index = container->GetActive();
+				if (buttons->GrabFocus())
+					return;
+			}
+			else if (layout->GetFocusChild() == buttons) {
+				FocusChain focus_chain(NULL);
+				buttons->GetFocusChain(focus_chain, focus_chain.begin());
+
+				FocusChain::pre_order_iterator iter = --focus_chain.end();
+				if (GetFocusWidget() == *iter) {
+					/* Focus is held by the last button, give it to the
+					 * container. */
+					buttons_index = buttons->GetActive();
+					if (container->SetActive(container_index)
+							|| container->GrabFocus())
+						return;
+				}
+			}
+			break;
 		case FOCUS_LEFT:
 		case FOCUS_RIGHT:
 			if (layout->GetFocusChild() != buttons) {
 				container_index = container->GetActive();
-				buttons->SetActive(buttons_index);
+				/* First try to focus the previously focused widget, if it
+				 * fails then try any widget. */
+				if (!buttons->SetActive(buttons_index)
+						|| buttons->GrabFocus())
+					return;
 			}
-			else
-				Dialog::MoveFocus(direction);
-
 			break;
 		case FOCUS_UP:
 		case FOCUS_DOWN:
 			if (layout->GetFocusChild() != container) {
 				buttons_index = buttons->GetActive();
-				container->SetActive(container_index);
+				/* First try to focus the previously focused widget, if it
+				 * fails then try any widget. */
+				if (container->SetActive(container_index)
+						|| container->GrabFocus())
+					return;
 			}
-			else
-				Dialog::MoveFocus(direction);
-
 			break;
 		default:
-			Dialog::MoveFocus(direction);
 			break;
 	}
+	Dialog::MoveFocus(direction);
 }
 
 void SplitDialog::SetContainer(Container& cont)
