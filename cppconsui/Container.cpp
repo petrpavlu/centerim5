@@ -151,6 +151,14 @@ void Container::RestoreFocus()
 		focus_child->RestoreFocus();
 }
 
+bool Container::GrabFocus()
+{
+	for (Children::iterator i = children.begin(); i != children.end(); i++)
+		if (i->widget->GrabFocus())
+			return true;
+	return false;
+}
+
 void Container::SetParent(Container& parent)
 {
 	Widget::SetParent(parent);
@@ -397,24 +405,26 @@ void Container::MoveFocus(FocusDirection direction)
 		(*iter)->GrabFocus();
 }
 
-void Container::SetActive(int i)
+bool Container::SetActive(int i)
 {
 	if (i < 0 || (int) children.size() <= i) {
 		if (children.size())
 			i = 0;
 		else
-			return;
+			return false;
 	}
 
-	children[i].widget->GrabFocus();
+	if (children[i].widget->GrabFocus())
+		return true;
+	return false;
 }
 
 int Container::GetActive() const
 {
-	for (Children::const_iterator j = children.begin(); j != children.end();
-			j++)
-		if (j->widget->HasFocus())
-			return j - children.begin();
+	for (Children::const_iterator i = children.begin(); i != children.end();
+			i++)
+		if (i->widget->HasFocus())
+			return i - children.begin();
 
 	return -1;
 }

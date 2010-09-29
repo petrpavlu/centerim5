@@ -53,13 +53,14 @@ class TreeView
 		virtual void UpdateArea();
 		virtual void Draw();
 		virtual void CleanFocus();
+		virtual bool GrabFocus();
 
 		// Container
 		virtual bool IsWidgetVisible(const Widget& widget) const;
 		virtual bool SetFocusChild(Widget& child);
 		virtual void GetFocusChain(FocusChain& focus_chain,
 				FocusChain::iterator parent);
-		virtual void SetActive(int i);
+		virtual bool SetActive(int i);
 		virtual int GetActive() const;
 		virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
 				int begin_y, int ncols, int nlines);

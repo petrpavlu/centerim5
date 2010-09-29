@@ -97,7 +97,6 @@ class TextEntry
 		void RecalculateLengths();
 
 	private:
-		TextEntry();
 		TextEntry(const TextEntry&);
 		TextEntry& operator=(const TextEntry&);
 

@@ -83,6 +83,7 @@ class Container
 		virtual Widget *GetFocusWidget();
 		virtual void CleanFocus();
 		virtual void RestoreFocus();
+		virtual bool GrabFocus();
 		virtual void SetParent(Container& parent);
 
 		/**
@@ -130,7 +131,7 @@ class Container
 		/**
 		 * Set focused widget.
 		 */
-		virtual void SetActive(int i);
+		virtual bool SetActive(int i);
 
 		/**
 		 * Returns index of focused widget or -1 if there is not any.

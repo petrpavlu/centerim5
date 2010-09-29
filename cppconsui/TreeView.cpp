@@ -104,6 +104,15 @@ void TreeView::CleanFocus()
 	focus_node = thetree.begin();
 }
 
+bool TreeView::GrabFocus()
+{
+	for (TheTree::pre_order_iterator i = ++thetree.begin();
+			i != thetree.end(); i++)
+		if (i->widget->GrabFocus())
+			return true;
+	return false;
+}
+
 bool TreeView::IsWidgetVisible(const Widget& child) const
 {
 	if (!parent || !visible)
@@ -174,7 +183,7 @@ void TreeView::GetFocusChain(FocusChain& focus_chain,
 	}
 }
 
-void TreeView::SetActive(int i)
+bool TreeView::SetActive(int i)
 {
 	if (i < 0 || (int) thetree.size() - 1 <= i)
 		i = 0;
@@ -183,7 +192,9 @@ void TreeView::SetActive(int i)
 	for (j = ++thetree.begin(); i > 0 && j != thetree.end(); j++, i--)
 		;
 	if (j != thetree.end() && j->widget)
-		j->widget->GrabFocus();
+		if (j->widget->GrabFocus())
+			return true;
+	return false;
 }
 
 int TreeView::GetActive() const
