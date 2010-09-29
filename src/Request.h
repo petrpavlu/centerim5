@@ -21,6 +21,7 @@
 #ifndef __REQUEST_H__
 #define __REQUEST_H__
 
+#include <cppconsui/TextEntry.h>
 #include <cppconsui/SplitDialog.h>
 #include <libpurple/request.h>
 
@@ -42,7 +43,7 @@ class Request
 						const gchar *secondary, const gchar *ok_text,
 						GCallback ok_cb, const gchar *cancel_text,
 						GCallback cancel_cb, void *user_data);
-				virtual ~RequestDialog();
+				virtual ~RequestDialog() {}
 
 				// FreeWindow
 				virtual void ScreenResized();
@@ -54,9 +55,14 @@ class Request
 				GCallback cancel_cb;
 				void *user_data;
 
+				// convenient var, same as dynamic_cast<ListBox *>(container)
+				ListBox *lbox;
+
 			private:
 				RequestDialog(const RequestDialog&);
 				RequestDialog& operator=(const RequestDialog&);
+
+				virtual void ResponseHandler(ResponseType response) = 0;
 		};
 
 		class InputDialog
@@ -68,15 +74,18 @@ class Request
 						bool masked, const gchar *ok_text, GCallback ok_cb,
 						const gchar *cancel_text, GCallback cancel_cb,
 						void *user_data);
-				virtual ~InputDialog();
+				virtual ~InputDialog() {}
 
 				virtual PurpleRequestType GetRequestType();
 
 			protected:
+				TextEntry *entry;
 
 			private:
 				InputDialog(const InputDialog&);
 				InputDialog& operator=(const InputDialog&);
+
+				virtual void ResponseHandler(ResponseType response);
 		};
 
 		typedef std::set<InputDialog *> Requests;

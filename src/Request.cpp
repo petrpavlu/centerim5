@@ -148,14 +148,14 @@ Request::RequestDialog::RequestDialog(const gchar *title,
 , cancel_cb(cancel_cb)
 , user_data(user_data)
 {
-	ListBox *l = new ListBox(AUTOSIZE, AUTOSIZE);
+	lbox = new ListBox(AUTOSIZE, AUTOSIZE);
 	if (title)
-		l->AppendWidget(*(new Label(title)));
+		lbox->AppendWidget(*(new Label(title)));
 	if (primary)
-		l->AppendWidget(*(new Label(primary)));
+		lbox->AppendWidget(*(new Label(primary)));
 	if (secondary)
-		l->AppendWidget(*(new Label(secondary)));
-	SetContainer(*l);
+		lbox->AppendWidget(*(new Label(secondary)));
+	SetContainer(*lbox);
 
 	if (ok_text)
 		AddButton(ok_text, RESPONSE_OK);
@@ -163,10 +163,8 @@ Request::RequestDialog::RequestDialog(const gchar *title,
 		AddSeparator();
 	if (cancel_text)
 		AddButton(cancel_text, RESPONSE_CANCEL);
-}
-
-Request::RequestDialog::~RequestDialog()
-{
+	signal_response.connect(sigc::mem_fun(this,
+				&Request::RequestDialog::ResponseHandler));
 }
 
 void Request::RequestDialog::ScreenResized()
@@ -184,13 +182,31 @@ Request::InputDialog::InputDialog(const gchar *title, const gchar *primary,
 : RequestDialog(title, primary, secondary, ok_text, ok_cb, cancel_text,
 		cancel_cb, user_data)
 {
-}
-
-Request::InputDialog::~InputDialog()
-{
+	entry = new TextEntry(AUTOSIZE, AUTOSIZE, default_value);
+	lbox->AppendWidget(*entry);
+	entry->GrabFocus();
 }
 
 PurpleRequestType Request::InputDialog::GetRequestType()
 {
 	return PURPLE_REQUEST_INPUT;
+}
+
+void Request::InputDialog::ResponseHandler(ResponseType response)
+{
+	switch (response) {
+		case Dialog::RESPONSE_OK:
+			if (ok_cb)
+				reinterpret_cast<PurpleRequestInputCb>(ok_cb)(user_data,
+						entry->GetText());
+			break;
+		case Dialog::RESPONSE_CANCEL:
+			if (cancel_cb)
+				reinterpret_cast<PurpleRequestInputCb>(cancel_cb)(user_data,
+						entry->GetText());
+			break;
+		default:
+			g_assert_not_reached();
+			break;
+	}
 }
