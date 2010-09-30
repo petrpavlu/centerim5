@@ -254,7 +254,7 @@ void TextEntry::MoveCursor(CursorMovement step, int direction)
 			else if (direction < 0)
 				current_pos = MoveBackwardWord(current_pos);
 			break;
-		case MOVE_BUFFER_ENDS:
+		case MOVE_DISPLAY_LINE_ENDS:
 			current_pos = direction < 0 ? 0 : text_length;
 			break;
 		default:
