@@ -29,8 +29,9 @@
 
 #include "gettext.h"
 
-SplitDialog::SplitDialog(int x, int y, int w, int h, LineStyle::Type ltype)
-: Dialog(x, y, w, h, ltype)
+SplitDialog::SplitDialog(int x, int y, int w, int h, const gchar *title,
+		LineStyle::Type ltype)
+: Dialog(x, y, w, h, title, ltype)
 , container(NULL)
 , container_index(0)
 , buttons_index(0)
@@ -38,8 +39,8 @@ SplitDialog::SplitDialog(int x, int y, int w, int h, LineStyle::Type ltype)
 	buttons->SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
 }
 
-SplitDialog::SplitDialog()
-: Dialog()
+SplitDialog::SplitDialog(const gchar *title, LineStyle::Type ltype)
+: Dialog(title, ltype)
 , container(NULL)
 , container_index(0)
 , buttons_index(0)
@@ -110,7 +111,7 @@ void SplitDialog::MoveFocus(FocusDirection direction)
 				container_index = container->GetActive();
 				/* First try to focus the previously focused widget, if it
 				 * fails then try any widget. */
-				if (!buttons->SetActive(buttons_index)
+				if (buttons->SetActive(buttons_index)
 						|| buttons->GrabFocus())
 					return;
 			}

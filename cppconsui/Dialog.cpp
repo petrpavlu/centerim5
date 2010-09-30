@@ -28,17 +28,17 @@
 
 #include "Dialog.h"
 
-Dialog::Dialog(int x, int y, int w, int h, LineStyle::Type ltype)
-: Window(x, y, w, h, TYPE_TOP, ltype)
+Dialog::Dialog(int x, int y, int w, int h, const gchar *title,
+		LineStyle::Type ltype)
+: Window(x, y, w, h, title, TYPE_TOP, ltype)
 {
 	InitLayout();
 }
 
-Dialog::Dialog()
-: Window(0, 0, 1, 1, TYPE_TOP)
+Dialog::Dialog(const gchar *title, LineStyle::Type ltype)
+: Window(10, 10, 60, 12, title, TYPE_TOP, ltype)
 {
-	//TODO set correct position.
-	MoveResize(10, 10, 60, 12);
+	/// @todo Set correct position.
 
 	InitLayout();
 }

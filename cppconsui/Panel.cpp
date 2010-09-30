@@ -31,18 +31,19 @@
 #include "ConsuiCurses.h"
 #include "ColorScheme.h"
 
-Panel::Panel(int w, int h, LineStyle::Type ltype)
+Panel::Panel(int w, int h, const gchar *text, LineStyle::Type ltype)
 : Widget(w, h)
 , linestyle(ltype)
-, label(NULL)
+, title(NULL)
+, title_width(0)
 {
-	/// @todo Finish label showing.
-	label = new Label(/*2, 0,*/ w - 4, 1, "");
+	SetTitle(text);
 }
 
 Panel::~Panel()
 {
-	delete label;
+	if (title)
+		g_free(title);
 }
 
 void Panel::Draw()
@@ -52,17 +53,44 @@ void Panel::Draw()
 	if (!area || (realw = area->getmaxx()) == 0 || (realh = area->getmaxy()) == 0)
 		return;
 
-	int attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "panel", "line");
-	area->attron(attrs);
+	int attrs, i;
 
-	// draw top and bottom horizontal line
-	for (int i = 1; i < realw - 1; i++) {
-		area->mvaddstring(i, 0, linestyle.H());
-		area->mvaddstring(i, realh - 1, linestyle.H());
+	// calc title width
+	int draw_title_width = 0;
+	if (realw > 4)
+		draw_title_width = realw - 4;
+	draw_title_width = MIN(draw_title_width, title_width);
+
+	// calc horizontal line length (one segment width)
+	int hline_len = 0;
+	int extra = draw_title_width ? 4 : 2;
+	if (realw > draw_title_width + extra)
+		hline_len = (realw - draw_title_width - extra) / 2;
+
+	if (draw_title_width) {
+		// draw title
+		attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "panel", "title");
+		area->attron(attrs);
+		area->mvaddstring(2 + hline_len, 0, draw_title_width, title);
+		area->attroff(attrs);
 	}
 
+	// draw lines
+	attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "panel", "line");
+	area->attron(attrs);
+
+	// draw top horizontal line
+	for (i = 1; i < 1 + hline_len; i++)
+		area->mvaddstring(i, 0, linestyle.H());
+	for (i = 1 + hline_len + extra - 2 + draw_title_width; i < realw - 1; i++)
+		area->mvaddstring(i, 0, linestyle.H());
+
+	// draw bottom horizontal line
+	for (i = 1; i < realw - 1; i++)
+		area->mvaddstring(i, realh - 1, linestyle.H());
+
 	// draw left and right vertical line
-	for (int i = 1; i < realh - 1; i++) {
+	for (i = 1; i < realh - 1; i++) {
 		area->mvaddstring(0, i, linestyle.V());
 		area->mvaddstring(realw - 1, i, linestyle.V());
 	}
@@ -76,14 +104,26 @@ void Panel::Draw()
 	area->attroff(attrs);
 }
 
-void Panel::SetText(const gchar *str)
+void Panel::SetTitle(const gchar *text)
 {
-	label->SetText(str);
+	if (title)
+		g_free(title);
+
+	if (text) {
+		title = g_strdup(text);
+		title_width = Curses::onscreen_width(title);
+	}
+	else {
+		title = NULL;
+		title_width = 0;
+	}
+
+	signal_redraw(*this);
 }
 
-const gchar *Panel::GetText() const
+const gchar *Panel::GetTitle() const
 {
-	return label->GetText();
+	return title;
 }
 
 void Panel::SetBorderStyle(LineStyle::Type ltype)

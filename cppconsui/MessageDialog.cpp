@@ -30,8 +30,8 @@
 
 #include "gettext.h"
 
-MessageDialog::MessageDialog(const gchar *text)
-: Dialog()
+MessageDialog::MessageDialog(const gchar *title, const gchar *text)
+: Dialog(title)
 {
 	AddButton(_(OK_BUTTON_TEXT), Dialog::RESPONSE_OK);
 

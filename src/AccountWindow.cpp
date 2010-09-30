@@ -34,7 +34,7 @@
 #include "gettext.h"
 
 AccountWindow::AccountWindow()
-: SplitDialog(0, 0, 80, 24)
+: SplitDialog(0, 0, 80, 24, _("Accounts"))
 {
 	SetColorScheme("accountwindow");
 
@@ -96,14 +96,16 @@ void AccountWindow::Add()
 //TODO move to Accounts class
 void AccountWindow::DropAccount(PurpleAccount *account)
 {
-	MessageDialog *dialog = new MessageDialog(_("Are you sure you want to delete this account?"));
-	dialog->signal_response.connect(
-		sigc::bind(sigc::mem_fun(this, &AccountWindow::DropAccountResponseHandler), account));
+	MessageDialog *dialog = new MessageDialog(_("Account deletion"),
+			_("Are you sure you want to delete this account?"));
+	dialog->signal_response.connect(sigc::bind(sigc::mem_fun(this,
+					&AccountWindow::DropAccountResponseHandler), account));
 	dialog->Show();
 }
 
 //TODO move to Accounts.cpp
-void AccountWindow::DropAccountResponseHandler(Dialog::ResponseType response, PurpleAccount *account)
+void AccountWindow::DropAccountResponseHandler(Dialog::ResponseType response,
+		PurpleAccount *account)
 {
 	switch (response) {
 		case Dialog::RESPONSE_OK:

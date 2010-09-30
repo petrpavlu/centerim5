@@ -31,15 +31,13 @@
 
 #include "Dialog.h"
 
-#include "Label.h"
-#include "HorizontalLine.h"
 #include "TextEntry.h"
 
 class InputDialog
 : public Dialog
 {
 	public:
-		InputDialog(const gchar* text, const gchar* defaultvalue);
+		InputDialog(const gchar *title, const gchar *defaultvalue);
 		virtual ~InputDialog() {}
 
 		const gchar *GetText() const;
@@ -48,9 +46,7 @@ class InputDialog
 		void SetFlags(int flags) { entry->SetFlags(flags); }
 
 	protected:
-		Label *label;
 		TextEntry *entry;
-		HorizontalLine *separator;
 
 	private:
 		InputDialog(const InputDialog&);

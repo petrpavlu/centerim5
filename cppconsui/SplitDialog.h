@@ -35,9 +35,10 @@ class SplitDialog
 : public Dialog
 {
 	public:
-		SplitDialog(int x, int y, int w, int h,
+		SplitDialog(int x, int y, int w, int h, const gchar *title = NULL,
 				LineStyle::Type ltype = LineStyle::DEFAULT);
-		SplitDialog();
+		explicit SplitDialog(const gchar *title = NULL,
+				LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~SplitDialog() {}
 
 		// Container

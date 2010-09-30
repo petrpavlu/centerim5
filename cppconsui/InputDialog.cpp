@@ -30,17 +30,13 @@
 
 #include "gettext.h"
 
-InputDialog::InputDialog(const gchar* text, const gchar* defaultvalue)
-: Dialog()
+InputDialog::InputDialog(const gchar *title, const gchar *defaultvalue)
+: Dialog(title)
 {
 	AddButton(_(OK_BUTTON_TEXT), InputDialog::RESPONSE_OK);
 
-	label = new Label(text);
-	separator = new HorizontalLine(AUTOSIZE);
 	entry = new TextEntry(AUTOSIZE, AUTOSIZE, defaultvalue);
-	layout->InsertWidget(0, *label);
-	layout->InsertWidget(1, *separator);
-	layout->InsertWidget(2, *entry);
+	layout->InsertWidget(0, *entry);
 
 	entry->GrabFocus();
 }

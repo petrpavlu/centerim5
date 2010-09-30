@@ -47,9 +47,10 @@ class Dialog
 			RESPONSE_NO
 		};
 
-		Dialog(int x, int y, int w, int h,
+		Dialog(int x, int y, int w, int h, const gchar *title = NULL,
 				LineStyle::Type ltype = LineStyle::DEFAULT);
-		Dialog();
+		explicit Dialog(const gchar *title = NULL,
+				LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~Dialog() {}
 
 		// FreeWindow

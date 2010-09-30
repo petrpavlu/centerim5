@@ -28,13 +28,12 @@
 
 #include "Window.h"
 
-Window::Window(int x, int y, int w, int h, Type t, LineStyle::Type ltype)
+Window::Window(int x, int y, int w, int h, const gchar *title, Type t,
+		LineStyle::Type ltype)
 : FreeWindow(x, y, w, h, t)
 {
-	panel = new Panel(win_w, win_h, ltype);
+	panel = new Panel(win_w, win_h, title, ltype);
 	AddWidget(*panel, 0, 0);
-
-	//signal_redraw(*this);
 }
 
 void Window::MoveResize(int newx, int newy, int neww, int newh)

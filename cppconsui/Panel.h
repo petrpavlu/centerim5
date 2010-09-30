@@ -34,30 +34,28 @@
 #include "Widget.h"
 
 /**
- * A widget representing a rectangular border with an optional label on the
+ * A widget representing a rectangular border with an optional caption on the
  * top border line.
- *
- * @todo Add some constructor directly with the label text.
- * @todo Label drawing.
  */
 class Panel
 : public Widget
 {
 	public:
-		Panel(int w, int h, LineStyle::Type ltype = LineStyle::DEFAULT);
+		Panel(int w, int h, const gchar *text = NULL,
+				LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~Panel();
 
 		// Widget
 		virtual void Draw();
 
 		/**
-		 * Sets the text of the Label.
+		 * Sets the caption text.
 		 */
-		void SetText(const gchar *str);
+		void SetTitle(const gchar *text);
 		/**
-		 * Returns Label text.
+		 * Returns caption text.
 		 */
-		const gchar *GetText() const;
+		const gchar *GetTitle() const;
 
 		/**
 		 * Sets a new border style.
@@ -70,7 +68,14 @@ class Panel
 
 	protected:
 		LineStyle linestyle;
-		Label *label;
+		/**
+		 * Caption text.
+		 */
+		gchar *title;
+		/**
+		 * On-screen caption width.
+		 */
+		int title_width;
 
 	private:
 		Panel();

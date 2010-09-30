@@ -38,7 +38,7 @@ Log *Log::Instance()
 
 //TODO sensible defaults
 Log::Log()
-: Window(0, 0, 80, 24, TYPE_NON_FOCUSABLE)
+: Window(0, 0, 80, 24, NULL, TYPE_NON_FOCUSABLE)
 , logfile(NULL)
 , prefs_handle(NULL)
 {
