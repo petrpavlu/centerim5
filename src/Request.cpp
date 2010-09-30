@@ -23,6 +23,7 @@
 #include "CenterIM.h"
 #include "Log.h"
 
+#include <cppconsui/Spacer.h>
 #include <cstring>
 
 Request *Request::Instance()
@@ -143,18 +144,20 @@ Request::RequestDialog::RequestDialog(const gchar *title,
 		const gchar *primary, const gchar *secondary, const gchar *ok_text,
 		GCallback ok_cb, const gchar *cancel_text, GCallback cancel_cb,
 		void *user_data)
-: SplitDialog()
+: SplitDialog(title)
 , ok_cb(ok_cb)
 , cancel_cb(cancel_cb)
 , user_data(user_data)
 {
 	lbox = new ListBox(AUTOSIZE, AUTOSIZE);
-	if (title)
-		lbox->AppendWidget(*(new Label(title)));
 	if (primary)
 		lbox->AppendWidget(*(new Label(primary)));
+	if (primary && secondary)
+		lbox->AppendWidget(*(new Spacer(AUTOSIZE, 1)));
 	if (secondary)
 		lbox->AppendWidget(*(new Label(secondary)));
+	if (primary || secondary)
+		lbox->AppendWidget(*(new HorizontalLine(AUTOSIZE)));
 	SetContainer(*lbox);
 
 	if (ok_text)
