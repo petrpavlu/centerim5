@@ -57,7 +57,7 @@ configure_file(	config.in.h config.h)
 include_directories(	${CURSES_INCLUDE_DIR}
 			${GLIB2_INCLUDE_DIRS}
 			${PURPLE_INCLUDE_DIRS}
-			${LIBSIGC_INCLUDE_DIRS}
+			${SIGC_INCLUDE_DIRS}
 			${centerim_BINARY_DIR}
 			${centerim_SOURCE_DIR}
 		)
