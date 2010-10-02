@@ -83,5 +83,5 @@ target_link_libraries( cppconsui
 		termkey
 		${CURSES_LIBRARIES}
 		${GLIB2_LIBRARIES}
-		${LIBSIGC_LIBRARY}
+		${SIGC_LIBRARIES}
 	)

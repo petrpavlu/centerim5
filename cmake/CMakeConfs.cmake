@@ -5,12 +5,7 @@
 find_package( PkgConfig)
 pkg_check_modules(GLIB2 glib-2.0)
 pkg_check_modules(PURPLE purple)
-
-#####################################################################
-##                    handling sigc++ library                      ##
-#####################################################################
-
-include( cmake/FindSigc.cmake)
+pkg_check_modules(SIGC sigc++-2.0)
 
 #####################################################################
 ##              handling of (n)curses wide character               ##
