@@ -58,9 +58,20 @@ add_executable( centerim
 	)
 
 add_dependencies( centerim git-version.h )
+add_dependencies( centerim translations )
 
 target_link_libraries( centerim
 		termkey
 		cppconsui
 		${PURPLE_LIBRARIES}
 	)
+
+install( TARGETS	centerim
+	 DESTINATION	bin/
+	 PERMISSIONS	OWNER_READ
+	 		OWNER_EXECUTE
+			GROUP_READ
+			GROUP_EXECUTE
+			WORLD_READ
+			WORLD_EXECUTE
+)

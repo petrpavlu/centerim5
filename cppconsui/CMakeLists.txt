@@ -74,7 +74,7 @@ set( cppconsui_HEADERS
 	tree.hh
 )
 
-add_library(	cppconsui SHARED
+add_library(	cppconsui STATIC
 		${cppconsui_SOURCES}
 		${cppconsui_HEADERS}
 	)

@@ -9,7 +9,7 @@ set (	termkey_HEADERS
 		termkey.h
 	)
 
-add_library (	termkey SHARED
+add_library (	termkey STATIC
 			${termkey_HEADERS}
 			${termkey_SOURCES}
 	)
