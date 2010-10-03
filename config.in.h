@@ -22,4 +22,8 @@
 /* Version number of package */
 #define VERSION "5.0-alpha2"
 
+/* directory containing translations */
+#define LOCALEDIR @centerim_LOCALE_DIR@
 
+/* see if to use NLS features */
+#cmakedefine01 ENABLE_NLS

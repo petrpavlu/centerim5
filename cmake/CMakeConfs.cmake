@@ -45,12 +45,6 @@ else ( IS_DIRECTORY ${CURSESW_DIR})
 endif ( IS_DIRECTORY ${CURSESW_DIR})
 
 #####################################################################
-##                   generation of config file                     ##
-#####################################################################
-
-configure_file(	config.in.h config.h)
-
-#####################################################################
 ##                  populating include directories                 ##
 #####################################################################
 
@@ -69,9 +63,12 @@ include_directories(	${CURSES_INCLUDE_DIR}
 find_package( Gettext)
 
 if (GETTEXT_FOUND)
-	message( "-- Found Gettext: " ${GETTEXT_MSGMERGE_EXECUTABLE} " " ${GETTEXT_MSGFMT_EXECUTABLE} )
+	message( STATUS "-- Found Gettext: " ${GETTEXT_MSGMERGE_EXECUTABLE} " " ${GETTEXT_MSGFMT_EXECUTABLE} )
+	set( centerim_LOCALE_DIR \"${CMAKE_INSTALL_PREFIX}/share/locale/\" )
+	set( ENABLE_NLS true )
 else (GETTEXT_FOUND)
 	message( SEND_ERROR "-- Gettext not found, translation not possible")
+	set( ENABLE_NLS false )
 endif (GETTEXT_FOUND)
 
 #####################################################################
@@ -79,3 +76,9 @@ endif (GETTEXT_FOUND)
 #####################################################################
 
 find_package( Doxygen)
+
+#####################################################################
+##                   generation of config file                     ##
+#####################################################################
+
+configure_file(	config.in.h config.h)
