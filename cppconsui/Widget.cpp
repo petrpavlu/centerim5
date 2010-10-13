@@ -110,10 +110,12 @@ bool Widget::GrabFocus()
 	if (!parent || has_focus)
 		return false;
 
-	if (can_focus && IsVisibleRecursive() && parent->SetFocusChild(*this)) {
-		has_focus = true;
-		signal_focus(*this, true);
-		signal_redraw(*this);
+	if (can_focus && IsVisibleRecursive()) {
+		if (parent->SetFocusChild(*this)) {
+			has_focus = true;
+			signal_focus(*this, true);
+			signal_redraw(*this);
+		}
 		return true;
 	}
 

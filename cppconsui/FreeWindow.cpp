@@ -111,13 +111,15 @@ void FreeWindow::Draw()
 	realwindow->noutrefresh();
 }
 
+bool FreeWindow::IsWidgetVisible(const Widget& child) const
+{
+	return true;
+}
+
 bool FreeWindow::SetFocusChild(Widget& child)
 {
-	if (focus_child) {
-		/* The currently focused widget is in a different branch of the widget
-		 * tree, so unfocus that widget first.*/
+	if (focus_child)
 		focus_child->CleanFocus();
-	}
 
 	focus_child = &child;
 	SetInputChild(child);
@@ -125,11 +127,6 @@ bool FreeWindow::SetFocusChild(Widget& child)
 	if (COREMANAGER->GetTopWindow() != this)
 		return false;
 
-	return true;
-}
-
-bool FreeWindow::IsWidgetVisible(const Widget& child) const
-{
 	return true;
 }
 

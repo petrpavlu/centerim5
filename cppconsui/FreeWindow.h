@@ -55,8 +55,8 @@ class FreeWindow
 		virtual int Height() const { return win_h; }
 
 		// Container
-		virtual bool SetFocusChild(Widget& child);
 		virtual bool IsWidgetVisible(const Widget& widget) const;
+		virtual bool SetFocusChild(Widget& child);
 
 		virtual void Show();
 		virtual void Hide();

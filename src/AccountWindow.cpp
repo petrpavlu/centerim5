@@ -51,7 +51,7 @@ AccountWindow::AccountWindow()
 
 	// move focus to accounts if there is any
 	if (account_entries.size())
-		accounts->SetActive(0);
+		accounts->GrabFocus();
 }
 
 void AccountWindow::ScreenResized()
