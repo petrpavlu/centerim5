@@ -38,15 +38,17 @@ AbstractListBox::AbstractListBox(int w, int h)
 void AbstractListBox::InsertItem(size_t pos, const gchar *title,
 		sigc::slot<void> function)
 {
-	InsertWidget(pos, *(new Button(Curses::onscreen_width(title), 1, title,
-					function)));
+	Button *b = new Button(Curses::onscreen_width(title), 1, title);
+	b->signal_activate.connect(function);
+	InsertWidget(pos, *b);
 }
 
 void AbstractListBox::AppendItem(const gchar *title,
 		sigc::slot<void> function)
 {
-	AppendWidget(*(new Button(Curses::onscreen_width(title), 1, title,
-					function)));
+	Button *b = new Button(Curses::onscreen_width(title), 1, title);
+	b->signal_activate.connect(function);
+	AppendWidget(*b);
 }
 
 void AbstractListBox::AddWidget(Widget& widget, int x, int y)

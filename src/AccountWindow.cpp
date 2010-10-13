@@ -185,7 +185,8 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		Button *button;
 		TreeView::NodeReference parent_reference;
 
-		button = new Button("", sigc::mem_fun(accounts, &TreeView::ActionToggleCollapsed));
+		button = new Button;
+		button->signal_activate.connect(sigc::mem_fun(accounts, &TreeView::ActionToggleCollapsed));
 		parent_reference = accounts->AppendNode(accounts->Root(), *button);
 		accounts->Collapse(parent_reference);
 		account_entry->parent = button;
@@ -294,9 +295,10 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 	}
 
 	// drop account
-	widget = new Button(_("Drop account"),
-			sigc::bind(sigc::mem_fun(this, &AccountWindow::DropAccount), account));
-	accounts->AppendNode(account_entry->parent_reference, *widget);
+	Button *drop_button = new Button(_("Drop account"));
+	drop_button->signal_activate.connect(sigc::bind(sigc::mem_fun(this,
+					&AccountWindow::DropAccount), account));
+	accounts->AppendNode(account_entry->parent_reference, *drop_button);
 }
 
 AccountWindow::AccountOption::AccountOption(PurpleAccount *account,

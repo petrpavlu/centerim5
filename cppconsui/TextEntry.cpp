@@ -45,7 +45,7 @@
 #define CONTEXT_TEXTENTRY "textentry"
 
 TextEntry::TextEntry(int w, int h, const gchar *text_)
-: Label(w, h, text_)
+: Label(w, h, text_ ? text_ : "")
 , current_pos(0)
 , editable(true)
 , flags(0)
@@ -59,7 +59,7 @@ TextEntry::TextEntry(int w, int h, const gchar *text_)
 }
 
 TextEntry::TextEntry(const gchar *text_)
-: Label(text_)
+: Label(text_ ? text_ : "")
 , current_pos(0)
 , editable(true)
 , flags(0)
@@ -229,7 +229,7 @@ bool TextEntry::ProcessInputText(const TermKeyKey &key)
 
 void TextEntry::SetText(const gchar *text_)
 {
-	Label::SetText(text_);
+	Label::SetText(text_ ? text : "");
 
 	RecalculateLengths();
 	current_pos = text_length;

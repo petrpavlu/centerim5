@@ -57,7 +57,7 @@ void Label::Draw()
 
 void Label::DrawEx(bool color)
 {
-	if (!area)
+	if (!area || !text)
 		return;
 
 	/**
@@ -93,9 +93,11 @@ const gchar *Label::GetText() const
 
 void Label::RealSetText(const gchar *text_)
 {
-	g_assert(text_);
-
 	if (text)
 		g_free(text);
-	text = g_strdup(text_);
+
+	if (text_)
+		text = g_strdup(text_);
+	else
+		text = NULL;
 }

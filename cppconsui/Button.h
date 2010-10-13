@@ -41,10 +41,8 @@ class Button
 : public Label
 {
 	public:
-		Button(int w, int h, const gchar *text, sigc::slot<void> callback);
-		Button(int w, int h, const gchar *text);
-		Button(const gchar *text, sigc::slot<void> callback);
-		Button(const gchar *text);
+		Button(int w, int h, const gchar *text = NULL);
+		explicit Button(const gchar *text = NULL);
 		virtual ~Button() {}
 
 		// Widget
@@ -58,7 +56,6 @@ class Button
 	protected:
 
 	private:
-		Button();
 		Button(const Button&);
 		Button& operator=(const Button&);
 

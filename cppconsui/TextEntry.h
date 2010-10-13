@@ -56,8 +56,8 @@ class TextEntry
 			FLAG_HIDDEN = 1 << 4
 		};
 
-		TextEntry(int w, int h, const gchar *text_);
-		TextEntry(const gchar *text_);
+		TextEntry(int w, int h, const gchar *text_ = NULL);
+		explicit TextEntry(const gchar *text_ = NULL);
 		virtual ~TextEntry();
 
 		// Widget

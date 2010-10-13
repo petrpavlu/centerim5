@@ -38,8 +38,8 @@ class Label
 : public Widget
 {
 	public:
-		Label(int w, int h, const gchar *text_);
-		Label(const gchar *text_);
+		Label(int w, int h, const gchar *text_ = NULL);
+		explicit Label(const gchar *text_ = NULL);
 		virtual ~Label();
 
 		// Widget
