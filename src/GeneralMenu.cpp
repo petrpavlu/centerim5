@@ -83,12 +83,31 @@ void GeneralMenu::OpenAddBuddyRequest()
 
 void GeneralMenu::RequestTest()
 {
+#if 0
 	purple_request_input(NULL, "Title", "Primary", "Secondary",
 			"default_value", FALSE, FALSE, NULL, "ok_text",
-			G_CALLBACK(ok_cb_), "cancel_text", NULL, NULL, NULL, NULL, this);
+			G_CALLBACK(input_ok_cb_), "cancel_text", NULL, NULL, NULL, NULL,
+			this);
+#endif
+
+	purple_request_choice(NULL, "Title", "Primary",
+			"Secondary", 1,
+			"ok_text", G_CALLBACK(choice_ok_cb_),
+			"cancel_text", NULL,
+			NULL, NULL, NULL,
+			this,
+			"Option 0", 0,
+			"Option 1", 1,
+			"Option 2", 2,
+			NULL);
 }
 
-void GeneralMenu::ok_cb(const gchar *text)
+void GeneralMenu::input_ok_cb(const gchar *text)
 {
-	LOG->Write(Log::Level_debug, "%s\n", text);
+	LOG->Write(Log::Level_debug, "input_ok_cb: %s\n", text);
+}
+
+void GeneralMenu::choice_ok_cb(int selected)
+{
+	LOG->Write(Log::Level_debug, "choice_ok_cb: %d\n", selected);
 }

@@ -53,7 +53,7 @@ Request::~Request()
 {
 }
 
-void Request::OnDialogResponse(InputDialog& dialog,
+void Request::OnDialogResponse(RequestDialog& dialog,
 		Dialog::ResponseType response)
 {
 	requests.erase(&dialog);
@@ -83,7 +83,15 @@ void *Request::request_choice(const char *title, const char *primary,
 		PurpleAccount *account, const char *who, PurpleConversation *conv,
 		void *user_data, va_list choices)
 {
-	return NULL;
+	LOG->Write(Log::Level_debug, "request_choice\n");
+
+	ChoiceDialog *dialog = new ChoiceDialog(title, primary, secondary,
+			default_value, ok_text, ok_cb, cancel_text, cancel_cb, user_data,
+			choices);
+	dialog->signal_response.connect(sigc::bind<0>(sigc::mem_fun(this,
+					&Request::OnDialogResponse), sigc::ref(*dialog)));
+	dialog->Show();
+	return dialog;
 }
 
 void *Request::request_action(const char *title, const char *primary,
@@ -207,6 +215,53 @@ void Request::InputDialog::ResponseHandler(ResponseType response)
 			if (cancel_cb)
 				reinterpret_cast<PurpleRequestInputCb>(cancel_cb)(user_data,
 						entry->GetText());
+			break;
+		default:
+			g_assert_not_reached();
+			break;
+	}
+}
+
+Request::ChoiceDialog::ChoiceDialog(const gchar *title, const gchar *primary,
+		const gchar *secondary, int default_value, const gchar *ok_text,
+		GCallback ok_cb, const gchar *cancel_text, GCallback cancel_cb,
+		void *user_data, va_list choices)
+: RequestDialog(title, primary, secondary, ok_text, ok_cb, cancel_text,
+		cancel_cb, user_data)
+{
+	combo = new ComboBox;
+	lbox->AppendWidget(*combo);
+	combo->GrabFocus();
+
+	gchar *text;
+	while ((text = va_arg(choices, gchar *))) {
+		int resp = va_arg(choices, int);
+		combo->AddOption(text, resp);
+		if (resp == default_value)
+			combo->SetSelectedByData(resp);
+	}
+}
+
+PurpleRequestType Request::ChoiceDialog::GetRequestType()
+{
+	return PURPLE_REQUEST_CHOICE;
+}
+
+void Request::ChoiceDialog::ResponseHandler(ResponseType response)
+{
+	size_t selected = combo->GetSelected();
+	int data = combo->GetData(selected);
+
+	switch (response) {
+		case Dialog::RESPONSE_OK:
+			if (ok_cb)
+				reinterpret_cast<PurpleRequestChoiceCb>(ok_cb)(user_data,
+						data);
+			break;
+		case Dialog::RESPONSE_CANCEL:
+			if (cancel_cb)
+				reinterpret_cast<PurpleRequestChoiceCb>(cancel_cb)(user_data,
+						data);
 			break;
 		default:
 			g_assert_not_reached();

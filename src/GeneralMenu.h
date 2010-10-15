@@ -45,9 +45,13 @@ class GeneralMenu
 		void OpenAddBuddyRequest();
 		void RequestTest();
 
-		static void ok_cb_(void *data, const gchar *text)
-			{ reinterpret_cast<GeneralMenu *>(data)->ok_cb(text); }
-		void ok_cb(const gchar *text);
+		static void input_ok_cb_(void *data, const gchar *text)
+			{ reinterpret_cast<GeneralMenu *>(data)->input_ok_cb(text); }
+		void input_ok_cb(const gchar *text);
+
+		static void choice_ok_cb_(void *data, int selected)
+			{ reinterpret_cast<GeneralMenu *>(data)->choice_ok_cb(selected); }
+		void choice_ok_cb(int selected);
 };
 
 #endif /* __GENERALMENU_H__ */

@@ -21,6 +21,7 @@
 #ifndef __REQUEST_H__
 #define __REQUEST_H__
 
+#include <cppconsui/ComboBox.h>
 #include <cppconsui/TextEntry.h>
 #include <cppconsui/SplitDialog.h>
 #include <libpurple/request.h>
@@ -88,7 +89,30 @@ class Request
 				virtual void ResponseHandler(ResponseType response);
 		};
 
-		typedef std::set<InputDialog *> Requests;
+		class ChoiceDialog
+		: public RequestDialog
+		{
+			public:
+				ChoiceDialog(const gchar *title, const gchar *primary,
+						const gchar *secondary, int default_value,
+						const gchar *ok_text, GCallback ok_cb,
+						const gchar *cancel_text, GCallback cancel_cb,
+						void *user_data, va_list choices);
+				virtual ~ChoiceDialog() {}
+
+				virtual PurpleRequestType GetRequestType();
+
+			protected:
+				ComboBox *combo;
+
+			private:
+				ChoiceDialog(const ChoiceDialog&);
+				ChoiceDialog& operator=(const ChoiceDialog&);
+
+				virtual void ResponseHandler(ResponseType response);
+		};
+
+		typedef std::set<RequestDialog *> Requests;
 
 		Requests requests;
 
@@ -99,7 +123,7 @@ class Request
 		Request& operator=(const Request&);
 		~Request();
 
-		void OnDialogResponse(InputDialog& dialog,
+		void OnDialogResponse(RequestDialog& dialog,
 				Dialog::ResponseType response);
 
 		static void *request_input_(const char *title, const char *primary,
