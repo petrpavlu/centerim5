@@ -608,27 +608,33 @@ void AccountWindow::AccountOptionSplit::ResponseHandler(Dialog::ResponseType res
 
 AccountWindow::AccountOptionProtocol::AccountOptionProtocol(PurpleAccount *account,
 		AccountWindow &account_window)
-: ComboBox("")
+: ComboBox()
 , account_window(&account_window)
 , account(account)
 {
 	g_assert(account);
 
 	for (GList *i = purple_plugins_get_protocols(); i; i = i->next)
-		AddOption(((PurplePlugin *) i->data)->info->name, i->data);
+		AddOption(((PurplePlugin *) i->data)->info->name,
+				reinterpret_cast<intptr_t>(i->data));
 
-	PurplePlugin *plugin = purple_plugins_find_with_id(purple_account_get_protocol_id(account));
+	const char *proto_id = purple_account_get_protocol_id(account);
+	PurplePlugin *plugin = purple_plugins_find_with_id(proto_id);
+	SetSelectedByData(reinterpret_cast<intptr_t>(plugin));
 	gchar *label = g_strdup_printf(_("Protocol: %s"), plugin->info->name);
 	SetText(label);
 	g_free(label);
 
-	signal_selection_changed.connect(
-		sigc::mem_fun(this, &AccountWindow::AccountOptionProtocol::OnProtocolChanged));
+	signal_selection_changed.connect(sigc::mem_fun(this,
+				&AccountWindow::AccountOptionProtocol::OnProtocolChanged));
 }
 
-void AccountWindow::AccountOptionProtocol::OnProtocolChanged(const ComboBox::ComboBoxEntry& new_entry)
+void AccountWindow::AccountOptionProtocol::OnProtocolChanged(size_t new_entry,
+		const gchar *title, intptr_t data)
 {
-	purple_account_set_protocol_id(account, purple_plugin_get_id((const PurplePlugin*)new_entry.data));
+	purple_account_set_protocol_id(account, purple_plugin_get_id(
+				reinterpret_cast<PurplePlugin*>(data)));
+
 	// this deletes us so don't touch any instance variable after
 	account_window->PopulateAccount(account);
 }

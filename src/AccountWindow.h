@@ -196,7 +196,8 @@ class AccountWindow
 				AccountOptionProtocol(const AccountOptionProtocol&);
 				AccountOptionProtocol& operator=(const AccountOptionProtocol&);
 
-				void OnProtocolChanged(const ComboBox::ComboBoxEntry& new_entry);
+				void OnProtocolChanged(size_t new_entry, const gchar *title,
+						intptr_t data);
 		};
 
 		AccountWindow(const AccountWindow&);

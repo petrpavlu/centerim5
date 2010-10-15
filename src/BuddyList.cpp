@@ -177,7 +177,7 @@ BuddyList::AccountsBox::AccountsBox(PurpleAccount *account)
 		gchar *label = g_strdup_printf("[%s] %s",
 				purple_account_get_protocol_name(account),
 				purple_account_get_username(account));
-		AddOption(label, account);
+		AddOption(label, reinterpret_cast<intptr_t>(account));
 		g_free(label);
 	}
 
@@ -196,10 +196,10 @@ void BuddyList::AccountsBox::UpdateText()
 	g_free(label);
 }
 
-void BuddyList::AccountsBox::OnAccountChanged(
-		const ComboBox::ComboBoxEntry& new_entry)
+void BuddyList::AccountsBox::OnAccountChanged(size_t new_entry,
+		const gchar *title, intptr_t data)
 {
-	selected = (PurpleAccount *) new_entry.data;
+	selected = reinterpret_cast<PurpleAccount *>(data);
 	UpdateText();
 }
 
@@ -284,7 +284,7 @@ BuddyList::GroupBox::GroupBox(const gchar *group)
 	UpdateText();
 
 	signal_selection_changed.connect(
-			sigc::mem_fun(this, &BuddyList::GroupBox::OnAccountChanged));
+			sigc::mem_fun(this, &BuddyList::GroupBox::OnGroupChanged));
 }
 
 BuddyList::GroupBox::~GroupBox()
@@ -299,10 +299,11 @@ void BuddyList::GroupBox::UpdateText()
 	g_free(label);
 }
 
-void BuddyList::GroupBox::OnAccountChanged(const ComboBox::ComboBoxEntry& new_entry)
+void BuddyList::GroupBox::OnGroupChanged(size_t new_entry,
+		const gchar *title, intptr_t data)
 {
 	g_free(selected);
-	selected = g_strdup(new_entry.GetText());
+	selected = g_strdup(title);
 	UpdateText();
 }
 

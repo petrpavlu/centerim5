@@ -42,42 +42,11 @@ class ComboBox
 : public Button
 {
 	public:
-		/**
-		 * Keeps a pair of {display text, value}.
-		 */
-		class ComboBoxEntry
-		{
-			public:
-				ComboBoxEntry(const gchar *text_, const void *data_);
-				ComboBoxEntry(const ComboBoxEntry& other);
-				ComboBoxEntry& operator=(const ComboBoxEntry& other);
-				virtual ~ComboBoxEntry();
-
-				void SetText(gchar *new_text);
-				const gchar *GetText() const;
-
-				const void *data;
-
-			protected:
-
-			private:
-				gchar *text;
-		};
-		typedef std::vector<ComboBoxEntry> ComboBoxEntries;
-
-		ComboBox(int w, int h, const gchar *text = "");
-		ComboBox(const gchar *text = "");
+		ComboBox(int w, int h, const gchar *text_ = NULL);
+		explicit ComboBox(const gchar *text_ = NULL);
 
 		virtual ~ComboBox();
 
-		/**
-		 * Sets new options.
-		 */
-		void SetOptions(const ComboBoxEntries& new_options);
-		/**
-		 * Returns current options.
-		 */
-		const ComboBoxEntries *GetOptions() const { return &options; }
 		/**
 		 * Removes all options.
 		 */
@@ -86,35 +55,49 @@ class ComboBox
 		/**
 		 * Appends a new option.
 		 */
-		void AddOption(const gchar *text, const void *data = NULL);
-		/**
-		 * @overload AddOption(const gchar *text, const void *data);
-		 */
-		void AddOption(const ComboBoxEntry& option);
+		void AddOption(const gchar *text = NULL, intptr_t data = NULL);
 
 		/**
-		 * Returns last selested option.
+		 * Returns last selected option.
+		 * Note: returned value is invalid if any options weren't added.
 		 */
-		const ComboBoxEntry *GetSelected() const;
+		size_t GetSelected() const { return selected_entry; };
+
+		size_t GetOptionsCount() const { return options.size(); }
+
+		const gchar *GetTitle(size_t entry) const;
+		intptr_t GetData(size_t entry) const;
 
 		/** @todo implement this */
-		void SetSelected(void *data);
+		void SetSelected(size_t new_entry);
+		/** @todo implement this */
+		void SetSelectedByData(intptr_t data);
 
-		sigc::signal<void, const ComboBoxEntry&> signal_selection_changed;
+		sigc::signal<void, size_t, const gchar *, intptr_t>
+			signal_selection_changed;
 
 	protected:
+		/**
+		 * Keeps a pair of {display text, value}.
+		 */
+		struct ComboBoxEntry {
+			gchar *title;
+			intptr_t data;
+		};
+		typedef std::vector<ComboBoxEntry> ComboBoxEntries;
+
 		MenuWindow *dropdown;
 		/**
 		 * Prepares and displays the dropdown MenuWindow.
 		 */
 		void OnDropDown();
-		void DropDownOk(ComboBoxEntries::const_iterator new_entry);
+		void DropDownOk(size_t new_entry);
 		void DropDownClose(FreeWindow& window);
 
 		/**
-		 * Holds reference to currently selected entry.
+		 * Number of currently selected entry.
 		 */
-		ComboBoxEntries::const_iterator selected_entry;
+		size_t selected_entry;
 		/**
 		 * All options.
 		 */
@@ -128,11 +111,6 @@ class ComboBox
 	private:
 		ComboBox(const ComboBox&);
 		ComboBox& operator=(const ComboBox&);
-
-		/** it handles the automatic registration of defined keys */
-		DECLARE_SIG_REGISTERKEYS();
-		static bool RegisterKeys();
-		void DeclareBindables();
 };
 
 #endif /* __COMBOBOX_H__ */

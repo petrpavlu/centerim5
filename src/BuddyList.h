@@ -64,7 +64,8 @@ class BuddyList
 				AccountsBox(const AccountsBox&);
 				AccountsBox& operator=(const AccountsBox&);
 
-				void OnAccountChanged(const ComboBox::ComboBoxEntry& new_entry);
+				void OnAccountChanged(size_t new_entry, const gchar *title,
+						intptr_t data);
 		};
 
 		class NameButton
@@ -110,7 +111,8 @@ class BuddyList
 				GroupBox(const GroupBox&);
 				GroupBox& operator=(const GroupBox&);
 
-				void OnAccountChanged(const ComboBox::ComboBoxEntry& new_entry);
+				void OnGroupChanged(size_t new_entry, const gchar *title,
+						intptr_t data);
 		};
 
 		class AddBuddyWindow
