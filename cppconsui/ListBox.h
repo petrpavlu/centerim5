@@ -30,6 +30,7 @@
 #define __LISTBOX_H__
 
 #include "AbstractListBox.h"
+#include "HorizontalLine.h"
 
 /**
  * Implementation of AbstractListBox class where widgets are placed
@@ -47,8 +48,8 @@ class ListBox
 		virtual void Draw();
 
 		// AbstractListBox
-		virtual void InsertSeparator(size_t pos);
-		virtual void AppendSeparator();
+		virtual HorizontalLine *InsertSeparator(size_t pos);
+		virtual HorizontalLine *AppendSeparator();
 		virtual void InsertWidget(size_t pos, Widget& widget);
 		virtual void AppendWidget(Widget& widget);
 

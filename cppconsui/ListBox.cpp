@@ -28,8 +28,6 @@
 
 #include "ListBox.h"
 
-#include "HorizontalLine.h"
-
 ListBox::ListBox(int w, int h)
 : AbstractListBox(w, h)
 , children_height(0)
@@ -92,14 +90,18 @@ void ListBox::Draw()
 	AbstractListBox::Draw();
 }
 
-void ListBox::InsertSeparator(size_t pos)
+HorizontalLine *ListBox::InsertSeparator(size_t pos)
 {
-	InsertWidget(pos, *(new HorizontalLine(AUTOSIZE)));
+	HorizontalLine *l = new HorizontalLine(AUTOSIZE);
+	InsertWidget(pos, *l);
+	return l;
 }
 
-void ListBox::AppendSeparator()
+HorizontalLine *ListBox::AppendSeparator()
 {
-	AppendWidget(*(new HorizontalLine(AUTOSIZE)));
+	HorizontalLine *l = new HorizontalLine(AUTOSIZE);
+	AppendWidget(*l);
+	return l;
 }
 
 void ListBox::InsertWidget(size_t pos, Widget& widget)

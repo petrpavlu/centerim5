@@ -35,20 +35,22 @@ AbstractListBox::AbstractListBox(int w, int h)
 {
 }
 
-void AbstractListBox::InsertItem(size_t pos, const gchar *title,
+Button *AbstractListBox::InsertItem(size_t pos, const gchar *title,
 		sigc::slot<void> function)
 {
 	Button *b = new Button(Curses::onscreen_width(title), 1, title);
 	b->signal_activate.connect(function);
 	InsertWidget(pos, *b);
+	return b;
 }
 
-void AbstractListBox::AppendItem(const gchar *title,
+Button *AbstractListBox::AppendItem(const gchar *title,
 		sigc::slot<void> function)
 {
 	Button *b = new Button(Curses::onscreen_width(title), 1, title);
 	b->signal_activate.connect(function);
 	AppendWidget(*b);
+	return b;
 }
 
 void AbstractListBox::AddWidget(Widget& widget, int x, int y)
