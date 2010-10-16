@@ -35,7 +35,7 @@ class AccountStatusMenu
 		AccountStatusMenu(int x, int y, int w, int h);
 		virtual ~AccountStatusMenu();
 
-		void Dummy(void) { ; } //TODO remove
+		void Dummy(Button& activator) { ; } //TODO remove
 
 		virtual void ScreenResized();
 	protected:
@@ -53,7 +53,8 @@ class AccountStatusMenu
 			protected:
 
 			private:
-				void SetStatus(PurpleAccount *account, PurpleStatusType *status_type, bool active);
+				void SetStatus(Button& activator, PurpleAccount *account,
+						PurpleStatusType *status_type, bool active);
 				//void SetSavedStatus(PurpleAccount *account, PurpleSavedStatus *status);
 				//void SetStatusPrimitive(PurpleAccount *account, PurpleStatusPrimitive primitive);
 
@@ -65,7 +66,7 @@ class AccountStatusMenu
 
 		AccountStatusMenu& operator=(const AccountStatusMenu&);
 
-		void OpenStatusPopup(PurpleAccount *account);
+		void OpenStatusPopup(Button& activator, PurpleAccount *account);
 };
 
 #endif /* __ACOUNTSTATUSMENU_H__ */

@@ -64,8 +64,8 @@ class BuddyList
 				AccountsBox(const AccountsBox&);
 				AccountsBox& operator=(const AccountsBox&);
 
-				void OnAccountChanged(size_t new_entry, const gchar *title,
-						intptr_t data);
+				void OnAccountChanged(Button& activator, size_t new_entry,
+						const gchar *title, intptr_t data);
 		};
 
 		class NameButton
@@ -88,9 +88,10 @@ class BuddyList
 				NameButton(const NameButton&);
 				NameButton& operator=(const NameButton&);
 
-				virtual void OnActivate();
+				virtual void OnActivate(Button& activator);
 
-				void ResponseHandler(Dialog::ResponseType response);
+				void ResponseHandler(Dialog& activator,
+						Dialog::ResponseType response);
 		};
 
 		class GroupBox
@@ -111,8 +112,8 @@ class BuddyList
 				GroupBox(const GroupBox&);
 				GroupBox& operator=(const GroupBox&);
 
-				void OnGroupChanged(size_t new_entry, const gchar *title,
-						intptr_t data);
+				void OnGroupChanged(Button& activator, size_t new_entry,
+						const gchar *title, intptr_t data);
 		};
 
 		class AddBuddyWindow
@@ -135,7 +136,7 @@ class BuddyList
 				AddBuddyWindow(const AddBuddyWindow&);
 				AddBuddyWindow& operator=(const AddBuddyWindow&);
 
-				void Add();
+				void Add(Button& activator);
 		};
 
 		PurpleBlistUiOps centerim_blist_ui_ops;

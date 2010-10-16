@@ -51,7 +51,7 @@ void Dialog::Close()
 void Dialog::AddButton(const gchar *text, Dialog::ResponseType response)
 {
 	buttons->AppendItem(text, sigc::bind(sigc::mem_fun(this,
-					&Dialog::Response), response));
+					&Dialog::OnButtonResponse), response));
 }
 
 void Dialog::AddSeparator()
@@ -61,7 +61,7 @@ void Dialog::AddSeparator()
 
 void Dialog::Response(Dialog::ResponseType response)
 {
-	signal_response(response);
+	signal_response(*this, response);
 
 	Window::Close();
 }
@@ -75,4 +75,9 @@ void Dialog::InitLayout()
 	layout->AppendWidget(*separator);
 	buttons = new HorizontalListBox(AUTOSIZE, 1);
 	layout->AppendWidget(*buttons);
+}
+
+void Dialog::OnButtonResponse(Button& activator, ResponseType response)
+{
+	Response(response);
 }

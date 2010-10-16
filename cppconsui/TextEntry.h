@@ -71,7 +71,7 @@ class TextEntry
 		void SetFlags(int flags);
 		void SetPosition(int position);
 
-		sigc::signal<void> signal_text_changed;
+		sigc::signal<void, TextEntry&> signal_text_changed;
 
 	protected:
 		void InsertTextAtCursor(const gchar *new_text, int new_text_bytes = -1);

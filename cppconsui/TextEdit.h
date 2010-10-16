@@ -26,7 +26,7 @@ class TextEdit
 		virtual void MoveResize(int newx, int newy, int neww, int newh);
 		virtual bool ProcessInputText(const TermKeyKey &key);
 
-		sigc::signal<void> signal_text_changed;
+		sigc::signal<void, TextEdit&> signal_text_changed;
 
 	protected:
 		void InitBuffer(int size);

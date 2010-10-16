@@ -46,7 +46,8 @@ AccountStatusMenu::AccountStatusMenu(int x, int y, int w, int h)
 			purple_account_get_protocol_name(account),
 			purple_account_get_username(account));
 
-		AppendItem(text, sigc::bind(sigc::mem_fun(this, &AccountStatusMenu::OpenStatusPopup), account));
+		AppendItem(text, sigc::bind(sigc::mem_fun(this,
+						&AccountStatusMenu::OpenStatusPopup), account));
 
 		g_free(text);
 	}
@@ -56,9 +57,11 @@ AccountStatusMenu::~AccountStatusMenu()
 {
 }
 
-void AccountStatusMenu::OpenStatusPopup(PurpleAccount *account)
+void AccountStatusMenu::OpenStatusPopup(Button& activator,
+		PurpleAccount *account)
 {
-	AccountStatusMenu::StatusPopup *status_popup = new StatusPopup(xpos, ypos, width, height, account);
+	AccountStatusMenu::StatusPopup *status_popup = new StatusPopup(xpos, ypos,
+			width, height, account);
 	status_popup->Show();
 }
 
@@ -87,17 +90,14 @@ AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h, PurpleAc
 				purple_account_get_presence(account),
 				purple_status_type_get_id(status_type));
 
-		if (active) {
+		if (active)
 			label = g_strdup_printf("* %s", purple_status_type_get_name(status_type));
-		} else {
+		else
 			label = g_strdup(purple_status_type_get_name(status_type));
-		}
 
-		AppendItem(label, sigc::bind(
-					sigc::mem_fun(this, &AccountStatusMenu::StatusPopup::SetStatus),
-					account,
-					status_type,
-					true));
+		AppendItem(label, sigc::bind(sigc::mem_fun(this,
+						&AccountStatusMenu::StatusPopup::SetStatus), account,
+					status_type, true));
 
 		g_free(label);
 	}
@@ -117,17 +117,14 @@ AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h, PurpleAc
 				purple_account_get_presence(account),
 				purple_status_type_get_id(status_type));
 
-		if (active) {
+		if (active)
 			label = g_strdup_printf("* %s", purple_status_type_get_name(status_type));
-		} else {
+		else
 			label = g_strdup(purple_status_type_get_name(status_type));
-		}
 
-		AppendItem(label, sigc::bind(
-					sigc::mem_fun(this, &AccountStatusMenu::StatusPopup::SetStatus),
-					account,
-					status_type,
-					!active));
+		AppendItem(label, sigc::bind(sigc::mem_fun(this,
+						&AccountStatusMenu::StatusPopup::SetStatus), account,
+					status_type, !active));
 
 		g_free(label);
 	}
@@ -165,7 +162,8 @@ AccountStatusMenu::StatusPopup::~StatusPopup()
 {
 }
 
-void AccountStatusMenu::StatusPopup::SetStatus(PurpleAccount *account, PurpleStatusType *status_type, bool active)
+void AccountStatusMenu::StatusPopup::SetStatus(Button& activator,
+		PurpleAccount *account, PurpleStatusType *status_type, bool active)
 {
 	purple_account_set_status(account,
 			purple_status_type_get_id(status_type),

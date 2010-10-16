@@ -41,9 +41,9 @@ class GeneralMenu
 		GeneralMenu(const GeneralMenu&);
 		GeneralMenu& operator=(const GeneralMenu&);
 
-		void OpenAccountsWindow();
-		void OpenAddBuddyRequest();
-		void RequestTest();
+		void OpenAccountsWindow(Button& activator);
+		void OpenAddBuddyRequest(Button& activator);
+		void RequestTest(Button& activator);
 
 		static void input_ok_cb_(void *data, const gchar *text)
 			{ reinterpret_cast<GeneralMenu *>(data)->input_ok_cb(text); }

@@ -183,8 +183,8 @@ BuddyList::AccountsBox::AccountsBox(PurpleAccount *account)
 
 	UpdateText();
 
-	signal_selection_changed.connect(
-			sigc::mem_fun(this, &BuddyList::AccountsBox::OnAccountChanged));
+	signal_selection_changed.connect(sigc::mem_fun(this,
+				&BuddyList::AccountsBox::OnAccountChanged));
 }
 
 void BuddyList::AccountsBox::UpdateText()
@@ -196,8 +196,8 @@ void BuddyList::AccountsBox::UpdateText()
 	g_free(label);
 }
 
-void BuddyList::AccountsBox::OnAccountChanged(size_t new_entry,
-		const gchar *title, intptr_t data)
+void BuddyList::AccountsBox::OnAccountChanged(Button& activator,
+		size_t new_entry, const gchar *title, intptr_t data)
 {
 	selected = reinterpret_cast<PurpleAccount *>(data);
 	UpdateText();
@@ -236,17 +236,18 @@ void BuddyList::NameButton::UpdateText()
 	g_free(label);
 }
 
-void BuddyList::NameButton::OnActivate()
+void BuddyList::NameButton::OnActivate(Button& activator)
 {
 	g_assert(!dialog);
 
 	dialog = new InputDialog(text, value);
-	dialog->signal_response.connect(
-			sigc::mem_fun(this, &BuddyList::NameButton::ResponseHandler));
+	dialog->signal_response.connect(sigc::mem_fun(this,
+				&BuddyList::NameButton::ResponseHandler));
 	dialog->Show();
 }
 
-void BuddyList::NameButton::ResponseHandler(Dialog::ResponseType response)
+void BuddyList::NameButton::ResponseHandler(Dialog& activator,
+		Dialog::ResponseType response)
 {
 	g_assert(dialog);
 
@@ -283,8 +284,8 @@ BuddyList::GroupBox::GroupBox(const gchar *group)
 
 	UpdateText();
 
-	signal_selection_changed.connect(
-			sigc::mem_fun(this, &BuddyList::GroupBox::OnGroupChanged));
+	signal_selection_changed.connect(sigc::mem_fun(this,
+				&BuddyList::GroupBox::OnGroupChanged));
 }
 
 BuddyList::GroupBox::~GroupBox()
@@ -299,7 +300,7 @@ void BuddyList::GroupBox::UpdateText()
 	g_free(label);
 }
 
-void BuddyList::GroupBox::OnGroupChanged(size_t new_entry,
+void BuddyList::GroupBox::OnGroupChanged(Button& activator, size_t new_entry,
 		const gchar *title, intptr_t data)
 {
 	g_free(selected);
@@ -329,7 +330,7 @@ BuddyList::AddBuddyWindow::AddBuddyWindow(PurpleAccount *account,
 	AddWidget(*menu, 0, 5);
 }
 
-void BuddyList::AddBuddyWindow::Add()
+void BuddyList::AddBuddyWindow::Add(Button& activator)
 {
 	PurpleAccount *account = accounts_box->GetSelected();
 	const char *who = name_button->GetValue();

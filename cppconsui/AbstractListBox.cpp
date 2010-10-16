@@ -36,7 +36,7 @@ AbstractListBox::AbstractListBox(int w, int h)
 }
 
 Button *AbstractListBox::InsertItem(size_t pos, const gchar *title,
-		sigc::slot<void> function)
+		sigc::slot<void, Button&> function)
 {
 	Button *b = new Button(Curses::onscreen_width(title), 1, title);
 	b->signal_activate.connect(function);
@@ -45,7 +45,7 @@ Button *AbstractListBox::InsertItem(size_t pos, const gchar *title,
 }
 
 Button *AbstractListBox::AppendItem(const gchar *title,
-		sigc::slot<void> function)
+		sigc::slot<void, Button&> function)
 {
 	Button *b = new Button(Curses::onscreen_width(title), 1, title);
 	b->signal_activate.connect(function);

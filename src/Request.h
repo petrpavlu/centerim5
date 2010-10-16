@@ -63,7 +63,8 @@ class Request
 				RequestDialog(const RequestDialog&);
 				RequestDialog& operator=(const RequestDialog&);
 
-				virtual void ResponseHandler(ResponseType response) = 0;
+				virtual void ResponseHandler(Dialog& activator,
+						ResponseType response) = 0;
 		};
 
 		class InputDialog
@@ -86,7 +87,8 @@ class Request
 				InputDialog(const InputDialog&);
 				InputDialog& operator=(const InputDialog&);
 
-				virtual void ResponseHandler(ResponseType response);
+				virtual void ResponseHandler(Dialog& activator,
+						ResponseType response);
 		};
 
 		class ChoiceDialog
@@ -109,7 +111,8 @@ class Request
 				ChoiceDialog(const ChoiceDialog&);
 				ChoiceDialog& operator=(const ChoiceDialog&);
 
-				virtual void ResponseHandler(ResponseType response);
+				virtual void ResponseHandler(Dialog& activator,
+						ResponseType response);
 		};
 
 		typedef std::set<RequestDialog *> Requests;
@@ -123,8 +126,7 @@ class Request
 		Request& operator=(const Request&);
 		~Request();
 
-		void OnDialogResponse(RequestDialog& dialog,
-				Dialog::ResponseType response);
+		void OnDialogResponse(Dialog& dialog, Dialog::ResponseType response);
 
 		static void *request_input_(const char *title, const char *primary,
 				const char *secondary, const char *default_value,

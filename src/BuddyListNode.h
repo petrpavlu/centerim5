@@ -34,7 +34,7 @@ class BuddyListNode
 
 		virtual bool LessThan(const BuddyListNode& other) const = 0;
 		virtual void Update();
-		virtual void OnActivate() = 0;
+		virtual void OnActivate(Button& activator) = 0;
 		// debugging method
 		virtual const gchar *ToString() const = 0;
 		/* Sorts in this node. It supposes that all siblings are in correct
@@ -76,7 +76,7 @@ class BuddyListBuddy
 		// BuddyListNode
 		virtual bool LessThan(const BuddyListNode& other) const;
 		virtual void Update();
-		virtual void OnActivate();
+		virtual void OnActivate(Button& activator);
 		virtual const gchar *ToString() const;
 
 	protected:
@@ -97,7 +97,7 @@ class BuddyListChat
 		// BuddyListNode
 		virtual bool LessThan(const BuddyListNode& other) const;
 		virtual void Update();
-		virtual void OnActivate();
+		virtual void OnActivate(Button& activator);
 		virtual const gchar *ToString() const;
 
 	protected:
@@ -118,7 +118,7 @@ class BuddyListContact
 		// BuddyListNode
 		virtual bool LessThan(const BuddyListNode& other) const;
 		virtual void Update();
-		virtual void OnActivate();
+		virtual void OnActivate(Button& activator);
 		virtual const gchar *ToString() const;
 
 	protected:
@@ -139,7 +139,7 @@ class BuddyListGroup
 		// BuddyListNode
 		virtual bool LessThan(const BuddyListNode& other) const;
 		virtual void Update();
-		virtual void OnActivate();
+		virtual void OnActivate(Button& activator);
 		virtual const gchar *ToString() const;
 		virtual void SortIn();
 

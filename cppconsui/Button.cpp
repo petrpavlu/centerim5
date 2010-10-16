@@ -91,5 +91,5 @@ void Button::Draw()
 
 void Button::ActionActivate()
 {
-	signal_activate();
+	signal_activate(*this);
 }

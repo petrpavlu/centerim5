@@ -51,7 +51,7 @@ class Button
 		/**
 		 * Emited signal when a button is pressed/activated.
 		 */
-		sigc::signal<void> signal_activate;
+		sigc::signal<void, Button&> signal_activate;
 
 	protected:
 

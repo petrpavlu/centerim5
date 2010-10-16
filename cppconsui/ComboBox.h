@@ -73,7 +73,7 @@ class ComboBox
 		/** @todo implement this */
 		void SetSelectedByData(intptr_t data);
 
-		sigc::signal<void, size_t, const gchar *, intptr_t>
+		sigc::signal<void, ComboBox&, size_t, const gchar *, intptr_t>
 			signal_selection_changed;
 
 	protected:
@@ -90,8 +90,8 @@ class ComboBox
 		/**
 		 * Prepares and displays the dropdown MenuWindow.
 		 */
-		void OnDropDown();
-		void DropDownOk(size_t new_entry);
+		void OnDropDown(Button& activator);
+		void DropDownOk(Button& activator, size_t new_entry);
 		void DropDownClose(FreeWindow& window);
 
 		/**

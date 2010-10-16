@@ -63,7 +63,7 @@ class Dialog
 		/** 
 		 * Signal emitted when the user closes the dialog.
 		 */
-		sigc::signal<void, ResponseType> signal_response;
+		sigc::signal<void, Dialog&, ResponseType> signal_response;
 
 	protected:
 		ListBox *layout;
@@ -71,6 +71,8 @@ class Dialog
 		HorizontalListBox *buttons;
 
 		void InitLayout();
+
+		void OnButtonResponse(Button& activator, ResponseType response);
 
 	private:
 		Dialog(const Dialog&);

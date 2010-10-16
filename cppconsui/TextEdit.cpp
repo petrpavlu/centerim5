@@ -567,7 +567,7 @@ void TextEdit::InsertTextAtCursor(const gchar *new_text, int new_text_bytes)
 	UpdateScreenCursor();
 	signal_redraw(*this);
 
-	signal_text_changed();
+	signal_text_changed(*this);
 }
 
 void TextEdit::DeleteFromCursor(DeleteType type, int direction)
@@ -615,7 +615,7 @@ void TextEdit::DeleteFromCursor(DeleteType type, int direction)
 		UpdateScreenCursor();
 		signal_redraw(*this);
 
-		signal_text_changed();
+		signal_text_changed(*this);
 	}
 }
 

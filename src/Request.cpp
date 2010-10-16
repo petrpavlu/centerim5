@@ -53,11 +53,14 @@ Request::~Request()
 {
 }
 
-void Request::OnDialogResponse(RequestDialog& dialog,
+void Request::OnDialogResponse(Dialog& dialog,
 		Dialog::ResponseType response)
 {
-	requests.erase(&dialog);
-	purple_request_close(dialog.GetRequestType(), &dialog);
+	RequestDialog *rdialog = dynamic_cast<RequestDialog*>(&dialog);
+	g_assert(rdialog);
+
+	requests.erase(rdialog);
+	purple_request_close(rdialog->GetRequestType(), rdialog);
 }
 
 void *Request::request_input(const char *title, const char *primary,
@@ -71,8 +74,8 @@ void *Request::request_input(const char *title, const char *primary,
 	InputDialog *dialog = new InputDialog(title, primary, secondary,
 			default_value, masked, ok_text, ok_cb, cancel_text, cancel_cb,
 			user_data);
-	dialog->signal_response.connect(sigc::bind<0>(sigc::mem_fun(this,
-					&Request::OnDialogResponse), sigc::ref(*dialog)));
+	dialog->signal_response.connect(sigc::mem_fun(this,
+				&Request::OnDialogResponse));
 	dialog->Show();
 	return dialog;
 }
@@ -88,8 +91,8 @@ void *Request::request_choice(const char *title, const char *primary,
 	ChoiceDialog *dialog = new ChoiceDialog(title, primary, secondary,
 			default_value, ok_text, ok_cb, cancel_text, cancel_cb, user_data,
 			choices);
-	dialog->signal_response.connect(sigc::bind<0>(sigc::mem_fun(this,
-					&Request::OnDialogResponse), sigc::ref(*dialog)));
+	dialog->signal_response.connect(sigc::mem_fun(this,
+				&Request::OnDialogResponse));
 	dialog->Show();
 	return dialog;
 }
@@ -203,7 +206,8 @@ PurpleRequestType Request::InputDialog::GetRequestType()
 	return PURPLE_REQUEST_INPUT;
 }
 
-void Request::InputDialog::ResponseHandler(ResponseType response)
+void Request::InputDialog::ResponseHandler(Dialog& activator,
+		ResponseType response)
 {
 	switch (response) {
 		case Dialog::RESPONSE_OK:
@@ -247,7 +251,8 @@ PurpleRequestType Request::ChoiceDialog::GetRequestType()
 	return PURPLE_REQUEST_CHOICE;
 }
 
-void Request::ChoiceDialog::ResponseHandler(ResponseType response)
+void Request::ChoiceDialog::ResponseHandler(Dialog& activator,
+		ResponseType response)
 {
 	size_t selected = combo->GetSelected();
 	int data = combo->GetData(selected);

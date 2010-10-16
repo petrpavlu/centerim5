@@ -74,7 +74,7 @@ class AccountWindow
 				AccountOption& operator=(const AccountOption&);
 
 				virtual void UpdateText() = 0;
-				virtual void OnActivate() = 0;
+				virtual void OnActivate(Button& activator) = 0;
 		};
 
 		class AccountOptionBool
@@ -97,7 +97,7 @@ class AccountWindow
 				AccountOptionBool& operator=(const AccountOptionBool&);
 
 				virtual void UpdateText();
-				virtual void OnActivate();
+				virtual void OnActivate(Button& activator);
 		};
 
 		class AccountOptionString
@@ -112,7 +112,6 @@ class AccountWindow
 
 			protected:
 				const gchar *value;
-				InputDialog *dialog;
 
 				bool password, alias;
 
@@ -121,9 +120,10 @@ class AccountWindow
 				AccountOptionString& operator=(const AccountOptionString&);
 
 				virtual void UpdateText();
-				virtual void OnActivate();
+				virtual void OnActivate(Button& activator);
 
-				void ResponseHandler(Dialog::ResponseType response);
+				void ResponseHandler(Dialog& activator,
+						Dialog::ResponseType response);
 		};
 
 		class AccountOptionInt
@@ -136,16 +136,16 @@ class AccountWindow
 
 			protected:
 				int value;
-				InputDialog *dialog;
 
 			private:
 				AccountOptionInt(const AccountOptionInt&);
 				AccountOptionInt& operator=(const AccountOptionInt&);
 
 				virtual void UpdateText();
-				virtual void OnActivate();
+				virtual void OnActivate(Button& activator);
 
-				void ResponseHandler(Dialog::ResponseType response);
+				void ResponseHandler(Dialog& activator,
+						Dialog::ResponseType response);
 		};
 
 		class AccountOptionSplit
@@ -166,7 +166,6 @@ class AccountWindow
 
 				const char *text;
 				gchar *value;
-				InputDialog *dialog;
 
 				void UpdateSplits();
 
@@ -175,9 +174,10 @@ class AccountWindow
 				AccountOptionSplit& operator=(const AccountOptionSplit&);
 
 				virtual void UpdateText();
-				virtual void OnActivate();
+				virtual void OnActivate(Button& activator);
 
-				void ResponseHandler(Dialog::ResponseType response);
+				void ResponseHandler(Dialog& activator,
+						Dialog::ResponseType response);
 		};
 
 		class AccountOptionProtocol
@@ -196,8 +196,8 @@ class AccountWindow
 				AccountOptionProtocol(const AccountOptionProtocol&);
 				AccountOptionProtocol& operator=(const AccountOptionProtocol&);
 
-				void OnProtocolChanged(size_t new_entry, const gchar *title,
-						intptr_t data);
+				void OnProtocolChanged(Button& activator, size_t new_entry,
+						const gchar *title, intptr_t data);
 		};
 
 		AccountWindow(const AccountWindow&);
@@ -209,9 +209,10 @@ class AccountWindow
 		void Populate();
 		void PopulateAccount(PurpleAccount *account);
 
-		void Add();
-		void DropAccount(PurpleAccount *account);
-		void DropAccountResponseHandler(Dialog::ResponseType response, PurpleAccount *account);
+		void Add(Button& activator);
+		void DropAccount(Button& activator, PurpleAccount *account);
+		void DropAccountResponseHandler(Dialog& activator,
+				Dialog::ResponseType response, PurpleAccount *account);
 
 		TreeView *accounts;
 

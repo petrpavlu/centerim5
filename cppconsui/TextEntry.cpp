@@ -337,7 +337,7 @@ void TextEntry::InsertTextAtCursor(const gchar *new_text, int new_text_bytes)
 
 	signal_redraw(*this);
 
-	signal_text_changed();
+	signal_text_changed(*this);
 }
 
 void TextEntry::DeleteText(int start_pos, int end_pos)
@@ -356,7 +356,7 @@ void TextEntry::DeleteText(int start_pos, int end_pos)
 		if (current_pos > start_pos)
 			current_pos -= MIN(current_pos, end_pos) - start_pos;
 
-		signal_text_changed();
+		signal_text_changed(*this);
 	}
 }
 

@@ -192,7 +192,7 @@ void BuddyListBuddy::Update()
 	SetVisibility(purple_account_is_connected(purple_buddy_get_account(buddy)));
 }
 
-void BuddyListBuddy::OnActivate()
+void BuddyListBuddy::OnActivate(Button& activator)
 {
 	CONVERSATIONS->ShowConversation(PURPLE_CONV_TYPE_IM,
 			purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
@@ -233,7 +233,7 @@ void BuddyListChat::Update()
 	SetVisibility(purple_account_is_connected(purple_chat_get_account(chat)));
 }
 
-void BuddyListChat::OnActivate()
+void BuddyListChat::OnActivate(Button& activator)
 {
 	CONVERSATIONS->ShowConversation(PURPLE_CONV_TYPE_CHAT,
 			purple_chat_get_account(chat), purple_chat_get_name(chat));
@@ -285,7 +285,7 @@ void BuddyListContact::Update()
 	SetVisibility(purple_account_is_connected(purple_buddy_get_account(buddy)));
 }
 
-void BuddyListContact::OnActivate()
+void BuddyListContact::OnActivate(Button& activator)
 {
 	PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
 	CONVERSATIONS->ShowConversation(PURPLE_CONV_TYPE_IM,
@@ -340,7 +340,7 @@ void BuddyListGroup::Update()
 	SetVisibility(vis);
 }
 
-void BuddyListGroup::OnActivate()
+void BuddyListGroup::OnActivate(Button& activator)
 {
 	TreeView *t = dynamic_cast<TreeView *>(parent);
 	g_assert(t);

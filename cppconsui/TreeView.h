@@ -77,6 +77,9 @@ class TreeView
 		 * Toggles folding for given node.
 		 */
 		void ToggleCollapsed(const NodeReference node);
+		/**
+		 * Convenient method to toggle folding of the current active node.
+		 */
 		void ActionToggleCollapsed();
 
 		/**

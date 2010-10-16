@@ -40,7 +40,8 @@ class MenuWindow
 				LineStyle::Type ltype = LineStyle::DEFAULT);
 		virtual ~MenuWindow() {}
 
-		virtual Button *AppendItem(const char *text, sigc::slot<void> callback)
+		virtual Button *AppendItem(const char *text,
+				sigc::slot<void, Button&> callback)
 			{ return listbox->AppendItem(text, callback); }
 		virtual HorizontalLine *AppendSeparator()
 			{ return listbox->AppendSeparator(); }

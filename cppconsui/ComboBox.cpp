@@ -116,7 +116,7 @@ void ComboBox::SetSelected(size_t new_entry)
 	SetText(options[new_entry].title);
 
 	/// @todo Emit signal here?
-	//signal_selection_changed(new_entry, e.title, e.data);
+	//signal_selection_changed(*this, new_entry, e.title, e.data);
 }
 
 void ComboBox::SetSelectedByData(intptr_t data)
@@ -128,7 +128,7 @@ void ComboBox::SetSelectedByData(intptr_t data)
 			SetSelected(i);
 }
 
-void ComboBox::OnDropDown()
+void ComboBox::OnDropDown(Button& activator)
 {
 	/// @todo Position correctly according to absolute coords.
 	/// @todo Make sure that requested MenuWindow size can fit into the screen.
@@ -148,7 +148,7 @@ void ComboBox::OnDropDown()
 	dropdown->Show();
 }
 
-void ComboBox::DropDownOk(size_t new_entry)
+void ComboBox::DropDownOk(Button& activator, size_t new_entry)
 {
 	dropdown->Close();
 	dropdown = NULL;
@@ -160,7 +160,7 @@ void ComboBox::DropDownOk(size_t new_entry)
 	selected_entry = new_entry;
 	ComboBoxEntry e = options[new_entry];
 	SetText(e.title);
-	signal_selection_changed(new_entry, e.title, e.data);
+	signal_selection_changed(*this, new_entry, e.title, e.data);
 }
 
 void ComboBox::DropDownClose(FreeWindow& window)

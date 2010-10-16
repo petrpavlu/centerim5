@@ -40,7 +40,8 @@ AccountWindow::AccountWindow()
 
 	buttons->AppendItem(_("Add"), sigc::mem_fun(this, &AccountWindow::Add));
 	buttons->AppendSeparator();
-	buttons->AppendItem(_("Done"), sigc::mem_fun(this, &AccountWindow::Close));
+	buttons->AppendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
+					&AccountWindow::Close)));
 
 	accounts = new TreeView(AUTOSIZE, AUTOSIZE);
 	SetContainer(*accounts);
@@ -73,7 +74,7 @@ void AccountWindow::ScreenResized()
 	MoveResizeRect(confSize);
 }
 
-void AccountWindow::Add()
+void AccountWindow::Add(Button& activator)
 {
 	GList *i;
 	PurpleAccount *account;
@@ -94,7 +95,7 @@ void AccountWindow::Add()
 }
 
 //TODO move to Accounts class
-void AccountWindow::DropAccount(PurpleAccount *account)
+void AccountWindow::DropAccount(Button& activator, PurpleAccount *account)
 {
 	MessageDialog *dialog = new MessageDialog(_("Account deletion"),
 			_("Are you sure you want to delete this account?"));
@@ -104,8 +105,8 @@ void AccountWindow::DropAccount(PurpleAccount *account)
 }
 
 //TODO move to Accounts.cpp
-void AccountWindow::DropAccountResponseHandler(Dialog::ResponseType response,
-		PurpleAccount *account)
+void AccountWindow::DropAccountResponseHandler(Dialog& activator,
+		Dialog::ResponseType response, PurpleAccount *account)
 {
 	switch (response) {
 		case Dialog::RESPONSE_OK:
@@ -186,7 +187,8 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 		TreeView::NodeReference parent_reference;
 
 		button = new Button;
-		button->signal_activate.connect(sigc::mem_fun(accounts, &TreeView::ActionToggleCollapsed));
+		button->signal_activate.connect(sigc::hide(sigc::mem_fun(accounts,
+					&TreeView::ActionToggleCollapsed)));
 		parent_reference = accounts->AppendNode(accounts->Root(), *button);
 		accounts->Collapse(parent_reference);
 		account_entry->parent = button;
@@ -360,7 +362,7 @@ void AccountWindow::AccountOptionBool::UpdateText()
 	g_free(str);
 }
 
-void AccountWindow::AccountOptionBool::OnActivate()
+void AccountWindow::AccountOptionBool::OnActivate(Button& activator)
 {
 	if (remember_password)
 		purple_account_set_remember_password(account, !value);
@@ -375,7 +377,6 @@ AccountWindow::AccountOptionString::AccountOptionString(PurpleAccount *account,
 		PurpleAccountOption *option)
 : AccountWindow::AccountOption::AccountOption(account, option)
 , value(NULL)
-, dialog(NULL)
 , password(false)
 , alias(false)
 {
@@ -386,7 +387,6 @@ AccountWindow::AccountOptionString::AccountOptionString(PurpleAccount *account,
 		bool password, bool alias)
 : AccountWindow::AccountOption::AccountOption(account, NULL)
 , value(NULL)
-, dialog(NULL)
 , password(password)
 , alias(alias)
 {
@@ -416,16 +416,18 @@ void AccountWindow::AccountOptionString::UpdateText()
 	g_free(str);
 }
 
-void AccountWindow::AccountOptionString::OnActivate()
+void AccountWindow::AccountOptionString::OnActivate(Button& activator)
 {
-	dialog = new InputDialog(text, value);
-	dialog->signal_response.connect(
-			sigc::mem_fun(this, &AccountWindow::AccountOptionString::ResponseHandler));
+	InputDialog *dialog = new InputDialog(text, value);
+	dialog->signal_response.connect(sigc::mem_fun(this,
+				&AccountWindow::AccountOptionString::ResponseHandler));
 	dialog->Show();
 }
 
-void AccountWindow::AccountOptionString::ResponseHandler(Dialog::ResponseType response)
+void AccountWindow::AccountOptionString::ResponseHandler(Dialog& activator,
+		Dialog::ResponseType response)
 {
+	InputDialog *dialog = dynamic_cast<InputDialog*>(&activator);
 	g_assert(dialog);
 
 	switch (response) {
@@ -435,21 +437,20 @@ void AccountWindow::AccountOptionString::ResponseHandler(Dialog::ResponseType re
 			else if (alias)
 				purple_account_set_alias(account, dialog->GetText());
 			else
-				purple_account_set_string(account, setting, dialog->GetText());
+				purple_account_set_string(account, setting,
+						dialog->GetText());
 
 			UpdateText();
 			break;
 		default:
 			break;
 	}
-	dialog = NULL;
 }
 
 AccountWindow::AccountOptionInt::AccountOptionInt(PurpleAccount *account,
 		PurpleAccountOption *option)
 : AccountWindow::AccountOption::AccountOption(account, option)
 , value(0)
-, dialog(NULL)
 {
 	UpdateText();
 }
@@ -464,11 +465,11 @@ void AccountWindow::AccountOptionInt::UpdateText()
 	g_free(str);
 }
 
-void AccountWindow::AccountOptionInt::OnActivate()
+void AccountWindow::AccountOptionInt::OnActivate(Button& activator)
 {
 
 	gchar *value_string = g_strdup_printf("%d", value);
-	dialog = new InputDialog(text, value_string);
+	InputDialog *dialog = new InputDialog(text, value_string);
 	g_free(value_string);
 
 	dialog->SetFlags(TextEntry::FLAG_NUMERIC);
@@ -477,8 +478,10 @@ void AccountWindow::AccountOptionInt::OnActivate()
 	dialog->Show();
 }
 
-void AccountWindow::AccountOptionInt::ResponseHandler(Dialog::ResponseType response)
+void AccountWindow::AccountOptionInt::ResponseHandler(Dialog& activator,
+		Dialog::ResponseType response)
 {
+	InputDialog *dialog = dynamic_cast<InputDialog*>(&activator);
 	g_assert(dialog);
 
 	const gchar *text;
@@ -498,7 +501,6 @@ void AccountWindow::AccountOptionInt::ResponseHandler(Dialog::ResponseType respo
 		default:
 			break;
 	}
-	dialog = NULL;
 }
 
 AccountWindow::AccountOptionSplit::AccountOptionSplit(PurpleAccount *account,
@@ -583,16 +585,18 @@ void AccountWindow::AccountOptionSplit::SetValue(const gchar *new_value)
 	UpdateText();
 }
 
-void AccountWindow::AccountOptionSplit::OnActivate()
+void AccountWindow::AccountOptionSplit::OnActivate(Button& activator)
 {
-	dialog = new InputDialog(text, value);
-	dialog->signal_response.connect(
-			sigc::mem_fun(this, &AccountWindow::AccountOptionSplit::ResponseHandler));
+	InputDialog *dialog = new InputDialog(text, value);
+	dialog->signal_response.connect(sigc::mem_fun(this,
+				&AccountWindow::AccountOptionSplit::ResponseHandler));
 	dialog->Show();
 }
 
-void AccountWindow::AccountOptionSplit::ResponseHandler(Dialog::ResponseType response)
+void AccountWindow::AccountOptionSplit::ResponseHandler(Dialog& activator,
+		Dialog::ResponseType response)
 {
+	InputDialog *dialog = dynamic_cast<InputDialog*>(&activator);
 	g_assert(dialog);
 
 	switch (response) {
@@ -603,7 +607,6 @@ void AccountWindow::AccountOptionSplit::ResponseHandler(Dialog::ResponseType res
 		default:
 			break;
 	}
-	dialog = NULL;
 }
 
 AccountWindow::AccountOptionProtocol::AccountOptionProtocol(PurpleAccount *account,
@@ -629,8 +632,9 @@ AccountWindow::AccountOptionProtocol::AccountOptionProtocol(PurpleAccount *accou
 				&AccountWindow::AccountOptionProtocol::OnProtocolChanged));
 }
 
-void AccountWindow::AccountOptionProtocol::OnProtocolChanged(size_t new_entry,
-		const gchar *title, intptr_t data)
+void AccountWindow::AccountOptionProtocol::OnProtocolChanged(
+		Button& activator, size_t new_entry, const gchar *title,
+		intptr_t data)
 {
 	purple_account_set_protocol_id(account, purple_plugin_get_id(
 				reinterpret_cast<PurplePlugin*>(data)));

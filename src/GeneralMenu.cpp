@@ -60,7 +60,8 @@ GeneralMenu::GeneralMenu(int x, int y, int w, int h)
 	AppendItem(_("Request test"), sigc::mem_fun(this,
 				&GeneralMenu::RequestTest));
 	AppendSeparator();
-	AppendItem(_("Quit"), sigc::mem_fun(CENTERIM, &CenterIM::Quit));
+	AppendItem(_("Quit"), sigc::hide(sigc::mem_fun(CENTERIM,
+					&CenterIM::Quit)));
 }
 
 void GeneralMenu::ScreenResized()
@@ -69,19 +70,19 @@ void GeneralMenu::ScreenResized()
 	MoveResize(chat.x, chat.y, win_w, win_h);
 }
 
-void GeneralMenu::OpenAccountsWindow()
+void GeneralMenu::OpenAccountsWindow(Button& activator)
 {
 	AccountWindow *aw = new AccountWindow;
 	aw->Show();
 	Close();
 }
 
-void GeneralMenu::OpenAddBuddyRequest()
+void GeneralMenu::OpenAddBuddyRequest(Button& activator)
 {
 	purple_blist_request_add_buddy(NULL, NULL, NULL, NULL);
 }
 
-void GeneralMenu::RequestTest()
+void GeneralMenu::RequestTest(Button& activator)
 {
 #if 0
 	purple_request_input(NULL, "Title", "Primary", "Secondary",
