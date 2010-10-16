@@ -36,21 +36,21 @@
 class InputDialog
 : public Dialog
 {
-	public:
-		InputDialog(const gchar *title, const gchar *defaultvalue);
-		virtual ~InputDialog() {}
+public:
+	InputDialog(const gchar *title, const gchar *defaultvalue);
+	virtual ~InputDialog() {}
 
-		const gchar *GetText() const;
+	const gchar *GetText() const;
 
-		int GetFlags() { return entry->GetFlags(); }
-		void SetFlags(int flags) { entry->SetFlags(flags); }
+	int GetFlags() { return entry->GetFlags(); }
+	void SetFlags(int flags) { entry->SetFlags(flags); }
 
-	protected:
-		TextEntry *entry;
+protected:
+	TextEntry *entry;
 
-	private:
-		InputDialog(const InputDialog&);
-		InputDialog& operator=(const InputDialog&);
+private:
+	InputDialog(const InputDialog&);
+	InputDialog& operator=(const InputDialog&);
 };
 
 #endif /* __INPUTDIALOG_H__ */

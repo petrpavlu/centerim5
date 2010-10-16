@@ -43,155 +43,158 @@
 class Container
 : public Widget
 {
-	public:
+public:
+	/**
+	 * Type to keep a tree of "focusable" widgets as leaves and Containers as
+	 * internal nodes.
+	 */
+	typedef tree<Widget*> FocusChain;
+	enum FocusCycleScope {
 		/**
-		 * Type to keep a tree of "focusable" widgets as leaves and Containers
-		 * as internal nodes.
+		 * The focus doesn't cycle, it ends at the last widget from the focus
+		 * chain.
 		 */
-		typedef tree<Widget*> FocusChain;
-		enum FocusCycleScope {
-			/**
-			 * The focus doesn't cycle, it ends at the last widget from the
-			 * focus chain.
-			 */
-			FOCUS_CYCLE_NONE,
-			/**
-			 * The focus cycles only locally.
-			 */
-			FOCUS_CYCLE_LOCAL,
-			/**
-			 * The focus cycles also through the other containers windows.
-			 */
-			FOCUS_CYCLE_GLOBAL
-		};
-
-		enum FocusDirection {
-			FOCUS_NEXT,
-			FOCUS_PREVIOUS,
-			FOCUS_DOWN,
-			FOCUS_UP,
-			FOCUS_RIGHT,
-			FOCUS_LEFT
-		};
-
-		Container(int w, int h);
-		virtual ~Container();
-
-		// Widget
-		virtual void MoveResize(int newx, int newy, int neww, int newh);
-		virtual void Draw();
-		virtual Widget *GetFocusWidget();
-		virtual void CleanFocus();
-		virtual void RestoreFocus();
-		virtual bool GrabFocus();
-		virtual void SetParent(Container& parent);
-
+		FOCUS_CYCLE_NONE,
 		/**
-		 * Adds a widget to the children list. The Container takes ownership
-		 * of the widget. It means that the widget will be deleted by the
-		 * Container.
+		 * The focus cycles only locally.
 		 */
-		virtual void AddWidget(Widget& widget, int x, int y);
+		FOCUS_CYCLE_LOCAL,
 		/**
-		 * Removes the widget from the children list but it doesn't delete the
-		 * widget. The caller must ensure proper deletion of the widget.
+		 * The focus cycles also through the other containers windows.
 		 */
-		virtual void RemoveWidget(Widget& widget);
+		FOCUS_CYCLE_GLOBAL
+	};
 
-		/**
-		 * Removes (and deletes) all children widgets.
-		 */
-		virtual void Clear();
+	enum FocusDirection {
+		FOCUS_NEXT,
+		FOCUS_PREVIOUS,
+		FOCUS_DOWN,
+		FOCUS_UP,
+		FOCUS_RIGHT,
+		FOCUS_LEFT
+	};
 
-		/**
-		 * Returns true if a widget is visible in current context.
-		 */
-		virtual bool IsWidgetVisible(const Widget& widget) const;
+	Container(int w, int h);
+	virtual ~Container();
 
-		/**
-		 * Resets the focus child by @ref CleanFocus "stealing" the focus from
-		 * the current chain and also ensures the focus goes also UP the chain
-		 * to the root widget (normally a Window).
-		 */
-		virtual bool SetFocusChild(Widget& child);
-		Widget *GetFocusChild() const { return focus_child; }
-		/**
-		 * Guilds a tree of the focus chain starting from this container and
-		 * puts it into the focus_chain tree as a subtree of @ref parent.
-		 */
-		virtual void GetFocusChain(FocusChain& focus_chain, FocusChain::iterator parent);
-		/**
-		 * @todo have a return value (to see if focus was moved successfully or not) ?
-		 */
-		virtual void MoveFocus(FocusDirection direction);
+	// Widget
+	virtual void MoveResize(int newx, int newy, int neww, int newh);
+	virtual void Draw();
+	virtual Widget *GetFocusWidget();
+	virtual void CleanFocus();
+	virtual void RestoreFocus();
+	virtual bool GrabFocus();
+	virtual void SetParent(Container& parent);
 
-		void SetFocusCycle(FocusCycleScope scope) { focus_cycle_scope = scope; }
-		FocusCycleScope GetFocusCycle() const { return focus_cycle_scope; }
+	/**
+	 * Adds a widget to the children list. The Container takes ownership of
+	 * the widget. It means that the widget will be deleted by the Container.
+	 */
+	virtual void AddWidget(Widget& widget, int x, int y);
+	/**
+	 * Removes the widget from the children list but it doesn't delete the
+	 * widget. The caller must ensure proper deletion of the widget.
+	 */
+	virtual void RemoveWidget(Widget& widget);
 
-		/**
-		 * Set focused widget.
-		 */
-		virtual bool SetActive(int i);
+	/**
+	 * Removes (and deletes) all children widgets.
+	 */
+	virtual void Clear();
 
-		/**
-		 * Returns index of focused widget or -1 if there is not any.
-		 */
-		virtual int GetActive() const;
+	/**
+	 * Returns true if a widget is visible in current context.
+	 */
+	virtual bool IsWidgetVisible(const Widget& widget) const;
 
-		/**
-		 * Returns a subpad of current widget with given coordinates.
-		 */
-		virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
-				int begin_y, int ncols, int nlines);
+	/**
+	 * Resets the focus child by @ref CleanFocus "stealing" the focus from the
+	 * current chain and also ensures the focus goes also UP the chain to the
+	 * root widget (normally a Window).
+	 */
+	virtual bool SetFocusChild(Widget& child);
+	Widget *GetFocusChild() const { return focus_child; }
+	/**
+	 * Guilds a tree of the focus chain starting from this container and puts
+	 * it into the focus_chain tree as a subtree of @ref parent.
+	 */
+	virtual void GetFocusChain(FocusChain& focus_chain,
+			FocusChain::iterator parent);
+	/**
+	 * @todo Have a return value (to see if focus was moved successfully or
+	 * not)?
+	 */
+	virtual void MoveFocus(FocusDirection direction);
 
-	protected:
-		/**
-		 * Structure to keep a child widget.
-		 */
-		struct Child {
-			Widget *widget;
+	void SetFocusCycle(FocusCycleScope scope) { focus_cycle_scope = scope; }
+	FocusCycleScope GetFocusCycle() const { return focus_cycle_scope; }
 
-			// signal connection to the widget
-			sigc::connection sig_moveresize;
-			sigc::connection sig_redraw;
-			sigc::connection sig_visible;
-		};
-		typedef std::vector<Child> Children;
+	/**
+	 * Set focused widget.
+	 */
+	virtual bool SetActive(int i);
 
-		FocusCycleScope focus_cycle_scope;
+	/**
+	 * Returns index of focused widget or -1 if there is not any.
+	 */
+	virtual int GetActive() const;
 
-		/** This defines a chain of focus
-		 * @todo explain the difference between this chain and @ref InputProcessor::inputchild
-		 * Isn't this a duplication of functionality from inputchild ?
-  		 */
-		Widget *focus_child;
+	/**
+	 * Returns a subpad of current widget with given coordinates.
+	 */
+	virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
+			int begin_y, int ncols, int nlines);
 
-		Children children;
+protected:
+	/**
+	 * Structure to keep a child widget.
+	 */
+	struct Child {
+		Widget *widget;
 
-		/**
-		 * Inserts a widget in the children list at a given position. The
-		 * Container takes ownership of the widget. It means that the widget
-		 * will be deleted by the Container. This function is intended to be
-		 * used by derived classes that needs to keep child widgets in order
-		 * (see ListBox and HorizontalListBox).
-		 */
-		virtual void InsertWidget(size_t pos, Widget& widget, int x, int y);
+		// signal connection to the widget
+		sigc::connection sig_moveresize;
+		sigc::connection sig_redraw;
+		sigc::connection sig_visible;
+	};
+	typedef std::vector<Child> Children;
 
-		virtual void UpdateAreas();
+	FocusCycleScope focus_cycle_scope;
 
-		virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
-				Rect& newsize);
-		virtual void OnChildRedraw(Widget& widget);
-		virtual void OnChildVisible(Widget& widget, bool visible);
+	/**
+	 * This defines a chain of focus
+	 * @todo explain the difference between this chain and @ref
+	 * InputProcessor::inputchild Isn't this a duplication of functionality
+	 * from inputchild ?
+	 */
+	Widget *focus_child;
 
-	private:
-		Container(const Container&);
-		Container& operator=(const Container&);
+	Children children;
 
-		/** it handles the automatic registration of defined keys */
-		DECLARE_SIG_REGISTERKEYS();
-		static bool RegisterKeys();
-		void DeclareBindables();
+	/**
+	 * Inserts a widget in the children list at a given position. The
+	 * Container takes ownership of the widget. It means that the widget will
+	 * be deleted by the Container. This function is intended to be used by
+	 * derived classes that needs to keep child widgets in order (see ListBox
+	 * and HorizontalListBox).
+	 */
+	virtual void InsertWidget(size_t pos, Widget& widget, int x, int y);
+
+	virtual void UpdateAreas();
+
+	virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
+			Rect& newsize);
+	virtual void OnChildRedraw(Widget& widget);
+	virtual void OnChildVisible(Widget& widget, bool visible);
+
+private:
+	Container(const Container&);
+	Container& operator=(const Container&);
+
+	/** it handles the automatic registration of defined keys */
+	DECLARE_SIG_REGISTERKEYS();
+	static bool RegisterKeys();
+	void DeclareBindables();
 };
 
 #endif /* __CONTAINER_H__ */

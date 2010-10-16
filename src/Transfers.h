@@ -23,13 +23,13 @@
 
 class Transfers
 {
-	public:
-		Transfers();
-		~Transfers();
+public:
+	Transfers();
+	~Transfers();
 
-	protected:
+protected:
 
-	private:
+private:
 };
 
 #endif /* __TRANSFERS_H__ */

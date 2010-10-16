@@ -34,27 +34,27 @@
 class SplitDialog
 : public Dialog
 {
-	public:
-		SplitDialog(int x, int y, int w, int h, const gchar *title = NULL,
-				LineStyle::Type ltype = LineStyle::DEFAULT);
-		explicit SplitDialog(const gchar *title = NULL,
-				LineStyle::Type ltype = LineStyle::DEFAULT);
-		virtual ~SplitDialog() {}
+public:
+	SplitDialog(int x, int y, int w, int h, const gchar *title = NULL,
+			LineStyle::Type ltype = LineStyle::DEFAULT);
+	explicit SplitDialog(const gchar *title = NULL,
+			LineStyle::Type ltype = LineStyle::DEFAULT);
+	virtual ~SplitDialog() {}
 
-		// Container
-		virtual void MoveFocus(FocusDirection direction);
+	// Container
+	virtual void MoveFocus(FocusDirection direction);
 
-		virtual void SetContainer(Container& cont);
-		virtual Container *GetContainer() { return container; }
+	virtual void SetContainer(Container& cont);
+	virtual Container *GetContainer() { return container; }
 
-	protected:
-		Container *container;
-		int container_index;
-		int buttons_index;
+protected:
+	Container *container;
+	int container_index;
+	int buttons_index;
 
-	private:
-		SplitDialog(const SplitDialog&);
-		SplitDialog& operator=(const SplitDialog&);
+private:
+	SplitDialog(const SplitDialog&);
+	SplitDialog& operator=(const SplitDialog&);
 };
 
 #endif /* __SPLITDIALOG_H__ */

@@ -39,44 +39,44 @@
 class Dialog
 : public Window
 {
-	public:
-		enum ResponseType {
-			RESPONSE_OK,
-			RESPONSE_CANCEL, ///< Cancel button or close dialog.
-			RESPONSE_YES,
-			RESPONSE_NO
-		};
+public:
+	enum ResponseType {
+		RESPONSE_OK,
+		RESPONSE_CANCEL, ///< Cancel button or close dialog.
+		RESPONSE_YES,
+		RESPONSE_NO
+	};
 
-		Dialog(int x, int y, int w, int h, const gchar *title = NULL,
-				LineStyle::Type ltype = LineStyle::DEFAULT);
-		explicit Dialog(const gchar *title = NULL,
-				LineStyle::Type ltype = LineStyle::DEFAULT);
-		virtual ~Dialog() {}
+	Dialog(int x, int y, int w, int h, const gchar *title = NULL,
+			LineStyle::Type ltype = LineStyle::DEFAULT);
+	explicit Dialog(const gchar *title = NULL,
+			LineStyle::Type ltype = LineStyle::DEFAULT);
+	virtual ~Dialog() {}
 
-		// FreeWindow
-		virtual void Close();
+	// FreeWindow
+	virtual void Close();
 
-		void AddButton(const gchar *label, ResponseType response);
-		void AddSeparator();
-		void Response(ResponseType response);
+	void AddButton(const gchar *label, ResponseType response);
+	void AddSeparator();
+	void Response(ResponseType response);
 
-		/** 
-		 * Signal emitted when the user closes the dialog.
-		 */
-		sigc::signal<void, Dialog&, ResponseType> signal_response;
+	/** 
+	 * Signal emitted when the user closes the dialog.
+	 */
+	sigc::signal<void, Dialog&, ResponseType> signal_response;
 
-	protected:
-		ListBox *layout;
-		HorizontalLine *separator;
-		HorizontalListBox *buttons;
+protected:
+	ListBox *layout;
+	HorizontalLine *separator;
+	HorizontalListBox *buttons;
 
-		void InitLayout();
+	void InitLayout();
 
-		void OnButtonResponse(Button& activator, ResponseType response);
+	void OnButtonResponse(Button& activator, ResponseType response);
 
-	private:
-		Dialog(const Dialog&);
-		Dialog& operator=(const Dialog&);
+private:
+	Dialog(const Dialog&);
+	Dialog& operator=(const Dialog&);
 };
 
 #endif /* __DIALOG_H__ */

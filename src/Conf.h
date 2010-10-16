@@ -30,65 +30,65 @@
 
 class Conf
 {
-	public:
-		static Conf *Instance();
+public:
+	static Conf *Instance();
 
-		void Reload(void);
-		void Save(void);
+	void Reload(void);
+	void Save(void);
 
-		/* Configuration base get/set methods */
-		int GetInt(const gchar *pref, const int defaultvalue);
-		int GetInt(const gchar *pref, const int defaultvalue, const int min, const int max);
-		void SetInt(const gchar *pref, const int value);
-		bool GetBool(const gchar *pref, const bool defaultvalue);
-		void SetBool(const gchar *pref, const bool value);
-		const gchar* GetString(const gchar *pref, const gchar *defaultvalue);
-		void SetString(const gchar *pref, const gchar *value);
+	/* Configuration base get/set methods */
+	int GetInt(const gchar *pref, const int defaultvalue);
+	int GetInt(const gchar *pref, const int defaultvalue, const int min, const int max);
+	void SetInt(const gchar *pref, const int value);
+	bool GetBool(const gchar *pref, const bool defaultvalue);
+	void SetBool(const gchar *pref, const bool value);
+	const gchar* GetString(const gchar *pref, const gchar *defaultvalue);
+	void SetString(const gchar *pref, const gchar *value);
 
-		Rect GetDimensions(const gchar *window, const int defx, const int defy, const int defwidth, const int defheight);
-		void SetDimensions(const gchar *window, const Rect &rect);
-		void SetDimensions(const gchar *window, const int x, const int y, const int width, const int height);
+	Rect GetDimensions(const gchar *window, const int defx, const int defy, const int defwidth, const int defheight);
+	void SetDimensions(const gchar *window, const Rect &rect);
+	void SetDimensions(const gchar *window, const int x, const int y, const int width, const int height);
 
-		/* for debugging and logging */
-		bool GetDebugEnabled(void);
-		Log::Level GetLogLevelGlib(void)
-			{ return GetLogLevel("glib"); }
-		Log::Level GetLogLevelPurple(void)
-			{ return GetLogLevel("purple"); }
-		Log::Level GetLogLevelCIM(void)
-			{ return GetLogLevel("cim"); }
-		void SetLogLevelGlib(Log::Level level)
-			{ SetLogLevel("glib", level); }
-		void SetLogLevelPurple(Log::Level level)
-			{ SetLogLevel("purple", level); }
-		void SetLogLevelCIM(Log::Level level)
-			{ SetLogLevel("cim", level); }
+	/* for debugging and logging */
+	bool GetDebugEnabled(void);
+	Log::Level GetLogLevelGlib(void)
+		{ return GetLogLevel("glib"); }
+	Log::Level GetLogLevelPurple(void)
+		{ return GetLogLevel("purple"); }
+	Log::Level GetLogLevelCIM(void)
+		{ return GetLogLevel("cim"); }
+	void SetLogLevelGlib(Log::Level level)
+		{ SetLogLevel("glib", level); }
+	void SetLogLevelPurple(Log::Level level)
+		{ SetLogLevel("purple", level); }
+	void SetLogLevelCIM(Log::Level level)
+		{ SetLogLevel("cim", level); }
 
-		unsigned int GetLogMaxLines(void);
-		unsigned int GetChatPartitioning(void);
+	unsigned int GetLogMaxLines(void);
+	unsigned int GetChatPartitioning(void);
 
-		Rect GetHeaderDimensions(void);
-		Rect GetLogDimensions(void);
-		Rect GetBuddyListDimensions(void);
-		Rect GetChatDimensions(void);
-		Rect GetAccountWindowDimensions(void);
+	Rect GetHeaderDimensions(void);
+	Rect GetLogDimensions(void);
+	Rect GetBuddyListDimensions(void);
+	Rect GetChatDimensions(void);
+	Rect GetAccountWindowDimensions(void);
 
-		bool GetLogIms(void);
-		bool GetLogChats(void);
-		bool GetLogSystem(void);
+	bool GetLogIms(void);
+	bool GetLogChats(void);
+	bool GetLogSystem(void);
 
-	protected:
+protected:
 
-	private:
-		Conf();
-		Conf(const Conf&);
-		Conf& operator=(const Conf&);
-		~Conf();
+private:
+	Conf();
+	Conf(const Conf&);
+	Conf& operator=(const Conf&);
+	~Conf();
 
-		void AddPath(const std::string &s);
+	void AddPath(const std::string &s);
 
-		Log::Level GetLogLevel(const gchar *type);
-		void SetLogLevel(const gchar *type, Log::Level level);
+	Log::Level GetLogLevel(const gchar *type);
+	void SetLogLevel(const gchar *type, Log::Level level);
 };
 
 #endif /* __CONF_H__ */

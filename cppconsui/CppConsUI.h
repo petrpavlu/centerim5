@@ -84,37 +84,37 @@ enum ScrollStep {
 
 class Point
 {
-	public:
-		Point();
-		Point(int x, int y);
+public:
+	Point();
+	Point(int x, int y);
 
-		int X() { return x; }
-		int Y() { return y; }
+	int X() { return x; }
+	int Y() { return y; }
 
-		int x, y;
-	protected:
+	int x, y;
+protected:
 
-	private:
+private:
 };
 
 class Rect: public Point
 {
-	public:
-		Rect();
-		Rect(int x, int y, int w, int h);
+public:
+	Rect();
+	Rect(int x, int y, int w, int h);
 
-		int Width() { return width; }
-		int Height() { return height; }
-		int Left() { return x; }
-		int Top() { return y; }
-		int Right() { return x + width - 1; }
-		int Bottom() { return y + height - 1; }
+	int Width() { return width; }
+	int Height() { return height; }
+	int Left() { return x; }
+	int Top() { return y; }
+	int Right() { return x + width - 1; }
+	int Bottom() { return y + height - 1; }
 
-		int width, height;
+	int width, height;
 
-	protected:
+protected:
 
-	private:
+private:
 };
 
 #endif /* __CPPCONSUI_H__ */

@@ -33,77 +33,77 @@
 class FreeWindow
 : public Container
 {
-	public:
-		enum Type {
-			TYPE_NON_FOCUSABLE,
-			TYPE_NORMAL,
-			TYPE_TOP
-		};
+public:
+	enum Type {
+		TYPE_NON_FOCUSABLE,
+		TYPE_NORMAL,
+		TYPE_TOP
+	};
 
-		FreeWindow(int x, int y, int w, int h, Type t = TYPE_NORMAL);
-		virtual ~FreeWindow();
+	FreeWindow(int x, int y, int w, int h, Type t = TYPE_NORMAL);
+	virtual ~FreeWindow();
 
-		// Widget
-		virtual void MoveResize(int newx, int newy, int neww, int newh);
-		virtual void MoveResizeRect(const Rect &rect)
-			{ MoveResize(rect.x, rect.y, rect.width, rect.height); }
-		virtual void UpdateArea();
-		virtual void Draw();
-		virtual int Left() const { return win_x; }
-		virtual int Top() const { return win_y; }
-		virtual int Width() const { return win_w; }
-		virtual int Height() const { return win_h; }
+	// Widget
+	virtual void MoveResize(int newx, int newy, int neww, int newh);
+	virtual void MoveResizeRect(const Rect &rect)
+		{ MoveResize(rect.x, rect.y, rect.width, rect.height); }
+	virtual void UpdateArea();
+	virtual void Draw();
+	virtual int Left() const { return win_x; }
+	virtual int Top() const { return win_y; }
+	virtual int Width() const { return win_w; }
+	virtual int Height() const { return win_h; }
 
-		// Container
-		virtual bool IsWidgetVisible(const Widget& widget) const;
-		virtual bool SetFocusChild(Widget& child);
+	// Container
+	virtual bool IsWidgetVisible(const Widget& widget) const;
+	virtual bool SetFocusChild(Widget& child);
 
-		virtual void Show();
-		virtual void Hide();
-		virtual void Close();
+	virtual void Show();
+	virtual void Hide();
+	virtual void Close();
 
-		virtual void SetType(Type t) { type = t; }
-		virtual Type GetType() { return type; }
+	virtual void SetType(Type t) { type = t; }
+	virtual Type GetType() { return type; }
 
-		/** this function is called when the screen is resized */
-		virtual void ScreenResized();
+	/** this function is called when the screen is resized */
+	virtual void ScreenResized();
 
-		sigc::signal<void, FreeWindow&> signal_close;
-		sigc::signal<void, FreeWindow&> signal_show;
-		sigc::signal<void, FreeWindow&> signal_hide;
+	sigc::signal<void, FreeWindow&> signal_close;
+	sigc::signal<void, FreeWindow&> signal_show;
+	sigc::signal<void, FreeWindow&> signal_hide;
 
-	protected:
-		/**
-		 * The window on-screen dimensions.
-		 */
-		int win_x, win_y, win_w, win_h;
-		/**
-		 * Dimensions to use when copying from pad to window.
-		 */
-		int copy_w, copy_h;
-		/**
-		 * The `real' window for this window.
-		 */
-		Curses::Window *realwindow;
+protected:
+	/**
+	 * The window on-screen dimensions.
+	 */
+	int win_x, win_y, win_w, win_h;
+	/**
+	 * Dimensions to use when copying from pad to window.
+	 */
+	int copy_w, copy_h;
+	/**
+	 * The `real' window for this window.
+	 */
+	Curses::Window *realwindow;
 
-		Type type;
+	Type type;
 
-		/**
-		 * Create the `real' window (not a pad) and makes sure its dimensions
-		 * do not exceed screen size
-		 */
-		virtual void MakeRealWindow();
+	/**
+	 * Create the `real' window (not a pad) and makes sure its dimensions do
+	 * not exceed screen size
+	 */
+	virtual void MakeRealWindow();
 
-	private:
-		FreeWindow(const FreeWindow&);
-		FreeWindow& operator=(const FreeWindow&);
+private:
+	FreeWindow(const FreeWindow&);
+	FreeWindow& operator=(const FreeWindow&);
 
-		virtual void ActionClose();
+	virtual void ActionClose();
 
-		/** it handles the automatic registration of defined keys */
-		DECLARE_SIG_REGISTERKEYS();
-		static bool RegisterKeys();
-		void DeclareBindables();
+	/** it handles the automatic registration of defined keys */
+	DECLARE_SIG_REGISTERKEYS();
+	static bool RegisterKeys();
+	void DeclareBindables();
 };
 
 #endif /* __FREEWINDOW_H__ */

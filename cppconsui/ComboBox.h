@@ -41,76 +41,76 @@
 class ComboBox
 : public Button
 {
-	public:
-		ComboBox(int w, int h, const gchar *text_ = NULL);
-		explicit ComboBox(const gchar *text_ = NULL);
+public:
+	ComboBox(int w, int h, const gchar *text_ = NULL);
+	explicit ComboBox(const gchar *text_ = NULL);
 
-		virtual ~ComboBox();
+	virtual ~ComboBox();
 
-		/**
-		 * Removes all options.
-		 */
-		void ClearOptions();
+	/**
+	 * Removes all options.
+	 */
+	void ClearOptions();
 
-		/**
-		 * Appends a new option.
-		 */
-		void AddOption(const gchar *text = NULL, intptr_t data = NULL);
+	/**
+	 * Appends a new option.
+	 */
+	void AddOption(const gchar *text = NULL, intptr_t data = NULL);
 
-		/**
-		 * Returns last selected option.
-		 * Note: returned value is invalid if any options weren't added.
-		 */
-		size_t GetSelected() const { return selected_entry; };
+	/**
+	 * Returns last selected option.
+	 * Note: returned value is invalid if any options weren't added.
+	 */
+	size_t GetSelected() const { return selected_entry; };
 
-		size_t GetOptionsCount() const { return options.size(); }
+	size_t GetOptionsCount() const { return options.size(); }
 
-		const gchar *GetTitle(size_t entry) const;
-		intptr_t GetData(size_t entry) const;
+	const gchar *GetTitle(size_t entry) const;
+	intptr_t GetData(size_t entry) const;
 
-		/** @todo implement this */
-		void SetSelected(size_t new_entry);
-		/** @todo implement this */
-		void SetSelectedByData(intptr_t data);
+	/** @todo implement this */
+	void SetSelected(size_t new_entry);
+	/** @todo implement this */
+	void SetSelectedByData(intptr_t data);
 
-		sigc::signal<void, ComboBox&, size_t, const gchar *, intptr_t>
-			signal_selection_changed;
+	sigc::signal<void, ComboBox&, size_t, const gchar *, intptr_t>
+		signal_selection_changed;
 
-	protected:
-		/**
-		 * Keeps a pair of {display text, value}.
-		 */
-		struct ComboBoxEntry {
-			gchar *title;
-			intptr_t data;
-		};
-		typedef std::vector<ComboBoxEntry> ComboBoxEntries;
+protected:
+	/**
+	 * Keeps a pair of {display text, value}.
+	 */
+	struct ComboBoxEntry {
+		gchar *title;
+		intptr_t data;
+	};
+	typedef std::vector<ComboBoxEntry> ComboBoxEntries;
 
-		MenuWindow *dropdown;
-		/**
-		 * Prepares and displays the dropdown MenuWindow.
-		 */
-		void OnDropDown(Button& activator);
-		void DropDownOk(Button& activator, size_t new_entry);
-		void DropDownClose(FreeWindow& window);
+	MenuWindow *dropdown;
+	/**
+	 * Prepares and displays the dropdown MenuWindow.
+	 */
+	void OnDropDown(Button& activator);
+	void DropDownOk(Button& activator, size_t new_entry);
+	void DropDownClose(FreeWindow& window);
 
-		/**
-		 * Number of currently selected entry.
-		 */
-		size_t selected_entry;
-		/**
-		 * All options.
-		 */
-		ComboBoxEntries options;
+	/**
+	 * Number of currently selected entry.
+	 */
+	size_t selected_entry;
+	/**
+	 * All options.
+	 */
+	ComboBoxEntries options;
 
-		/**
-		 * Maximal option width. Used for dropdown menu width.
-		 */
-		int max_option_width;
+	/**
+	 * Maximal option width. Used for dropdown menu width.
+	 */
+	int max_option_width;
 
-	private:
-		ComboBox(const ComboBox&);
-		ComboBox& operator=(const ComboBox&);
+private:
+	ComboBox(const ComboBox&);
+	ComboBox& operator=(const ComboBox&);
 };
 
 #endif /* __COMBOBOX_H__ */

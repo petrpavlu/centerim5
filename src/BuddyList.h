@@ -35,149 +35,149 @@
 class BuddyList
 : public Window
 {
-	public:
-		static BuddyList *Instance();
+public:
+	static BuddyList *Instance();
 
-		// FreeWindow
-		virtual void Close();
-		virtual void MoveResize(int newx, int newy, int neww, int newh);
-		virtual void ScreenResized();
+	// FreeWindow
+	virtual void Close();
+	virtual void MoveResize(int newx, int newy, int neww, int newh);
+	virtual void ScreenResized();
+
+protected:
+
+private:
+	class AccountsBox
+	: public ComboBox
+	{
+	public:
+		AccountsBox(PurpleAccount *account);
+		virtual ~AccountsBox() {}
+
+		PurpleAccount *GetSelected() { return selected; }
 
 	protected:
+		PurpleAccount *selected;
+
+		void UpdateText();
 
 	private:
-		class AccountsBox
-		: public ComboBox
-		{
-			public:
-				AccountsBox(PurpleAccount *account);
-				virtual ~AccountsBox() {}
+		AccountsBox(const AccountsBox&);
+		AccountsBox& operator=(const AccountsBox&);
 
-				PurpleAccount *GetSelected() { return selected; }
+		void OnAccountChanged(Button& activator, size_t new_entry,
+				const gchar *title, intptr_t data);
+	};
 
-			protected:
-				PurpleAccount *selected;
+	class NameButton
+	: public Button
+	{
+	public:
+		NameButton(bool alias, const gchar *val);
+		virtual ~NameButton();
 
-				void UpdateText();
+		const gchar *GetValue() { return value; }
 
-			private:
-				AccountsBox(const AccountsBox&);
-				AccountsBox& operator=(const AccountsBox&);
+	protected:
+		const gchar *text;
+		gchar *value;
+		InputDialog *dialog;
 
-				void OnAccountChanged(Button& activator, size_t new_entry,
-						const gchar *title, intptr_t data);
-		};
+		void UpdateText();
 
-		class NameButton
-		: public Button
-		{
-			public:
-				NameButton(bool alias, const gchar *val);
-				virtual ~NameButton();
+	private:
+		NameButton(const NameButton&);
+		NameButton& operator=(const NameButton&);
 
-				const gchar *GetValue() { return value; }
+		virtual void OnActivate(Button& activator);
 
-			protected:
-				const gchar *text;
-				gchar *value;
-				InputDialog *dialog;
+		void ResponseHandler(Dialog& activator,
+				Dialog::ResponseType response);
+	};
 
-				void UpdateText();
+	class GroupBox
+	: public ComboBox
+	{
+	public:
+		GroupBox(const gchar *group);
+		virtual ~GroupBox();
 
-			private:
-				NameButton(const NameButton&);
-				NameButton& operator=(const NameButton&);
+		const gchar *GetSelected() { return selected; }
 
-				virtual void OnActivate(Button& activator);
+	protected:
+		gchar *selected;
 
-				void ResponseHandler(Dialog& activator,
-						Dialog::ResponseType response);
-		};
+		void UpdateText();
 
-		class GroupBox
-		: public ComboBox
-		{
-			public:
-				GroupBox(const gchar *group);
-				virtual ~GroupBox();
+	private:
+		GroupBox(const GroupBox&);
+		GroupBox& operator=(const GroupBox&);
 
-				const gchar *GetSelected() { return selected; }
+		void OnGroupChanged(Button& activator, size_t new_entry,
+				const gchar *title, intptr_t data);
+	};
 
-			protected:
-				gchar *selected;
-
-				void UpdateText();
-
-			private:
-				GroupBox(const GroupBox&);
-				GroupBox& operator=(const GroupBox&);
-
-				void OnGroupChanged(Button& activator, size_t new_entry,
-						const gchar *title, intptr_t data);
-		};
-
-		class AddBuddyWindow
-		: public Window
-		{
-			public:
-				AddBuddyWindow(PurpleAccount *account, const char *username,
-						const char *group, const char *alias);
-				virtual ~AddBuddyWindow() {}
-
-			protected:
-				AccountsBox *accounts_box;
-				NameButton *name_button;
-				NameButton *alias_button;
-				GroupBox *group_box;
-				HorizontalLine *line;
-				HorizontalListBox *menu;
-
-			private:
-				AddBuddyWindow(const AddBuddyWindow&);
-				AddBuddyWindow& operator=(const AddBuddyWindow&);
-
-				void Add(Button& activator);
-		};
-
-		PurpleBlistUiOps centerim_blist_ui_ops;
-
-		PurpleBuddyList *buddylist;
-
-		TreeView *treeview;
-
-		BuddyList();
-		BuddyList(const BuddyList&);
-		BuddyList& operator=(const BuddyList&);
-		virtual ~BuddyList() {}
-
-		static gboolean timeout_once_load(gpointer data);
-
-		static void new_list_(PurpleBuddyList *list)
-			{ BUDDYLIST->new_list(list); }
-		static void new_node_(PurpleBlistNode *node)
-			{ BUDDYLIST->new_node(node); }
-		static void update_(PurpleBuddyList *list, PurpleBlistNode *node)
-			{ BUDDYLIST->update(list, node); }
-		static void remove_(PurpleBuddyList *list, PurpleBlistNode *node)
-			{ BUDDYLIST->remove(list, node); }
-		static void destroy_(PurpleBuddyList *list)
-			{ BUDDYLIST->destroy(list); }
-		static void request_add_buddy_(PurpleAccount *account,
-				const char *username, const char *group, const char *alias)
-			{ BUDDYLIST->request_add_buddy(account, username, group, alias); }
-		static void request_add_chat_(PurpleAccount *account,
-				PurpleGroup *group, const char *alias, const char *name)
-			{ /* TODO */ ; }
-		static void request_add_group_()
-			{ /* TODO */ ; }
-
-		void new_list(PurpleBuddyList *list);
-		void new_node(PurpleBlistNode *node);
-		void update(PurpleBuddyList *list, PurpleBlistNode *node);
-		void remove(PurpleBuddyList *list, PurpleBlistNode *node);
-		void destroy(PurpleBuddyList *list);
-		void request_add_buddy(PurpleAccount *account, const char *username,
+	class AddBuddyWindow
+	: public Window
+	{
+	public:
+		AddBuddyWindow(PurpleAccount *account, const char *username,
 				const char *group, const char *alias);
+		virtual ~AddBuddyWindow() {}
+
+	protected:
+		AccountsBox *accounts_box;
+		NameButton *name_button;
+		NameButton *alias_button;
+		GroupBox *group_box;
+		HorizontalLine *line;
+		HorizontalListBox *menu;
+
+	private:
+		AddBuddyWindow(const AddBuddyWindow&);
+		AddBuddyWindow& operator=(const AddBuddyWindow&);
+
+		void Add(Button& activator);
+	};
+
+	PurpleBlistUiOps centerim_blist_ui_ops;
+
+	PurpleBuddyList *buddylist;
+
+	TreeView *treeview;
+
+	BuddyList();
+	BuddyList(const BuddyList&);
+	BuddyList& operator=(const BuddyList&);
+	virtual ~BuddyList() {}
+
+	static gboolean timeout_once_load(gpointer data);
+
+	static void new_list_(PurpleBuddyList *list)
+		{ BUDDYLIST->new_list(list); }
+	static void new_node_(PurpleBlistNode *node)
+		{ BUDDYLIST->new_node(node); }
+	static void update_(PurpleBuddyList *list, PurpleBlistNode *node)
+		{ BUDDYLIST->update(list, node); }
+	static void remove_(PurpleBuddyList *list, PurpleBlistNode *node)
+		{ BUDDYLIST->remove(list, node); }
+	static void destroy_(PurpleBuddyList *list)
+		{ BUDDYLIST->destroy(list); }
+	static void request_add_buddy_(PurpleAccount *account,
+			const char *username, const char *group, const char *alias)
+		{ BUDDYLIST->request_add_buddy(account, username, group, alias); }
+	static void request_add_chat_(PurpleAccount *account,
+			PurpleGroup *group, const char *alias, const char *name)
+		{ /* TODO */ ; }
+	static void request_add_group_()
+		{ /* TODO */ ; }
+
+	void new_list(PurpleBuddyList *list);
+	void new_node(PurpleBlistNode *node);
+	void update(PurpleBuddyList *list, PurpleBlistNode *node);
+	void remove(PurpleBuddyList *list, PurpleBlistNode *node);
+	void destroy(PurpleBuddyList *list);
+	void request_add_buddy(PurpleAccount *account, const char *username,
+			const char *group, const char *alias);
 };
 
 #endif /* __BUDDYLIST_H__ */

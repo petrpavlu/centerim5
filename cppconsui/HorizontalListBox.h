@@ -39,40 +39,40 @@
 class HorizontalListBox
 : public AbstractListBox
 {
-	public:
-		HorizontalListBox(int w, int h);
-		virtual ~HorizontalListBox() {}
+public:
+	HorizontalListBox(int w, int h);
+	virtual ~HorizontalListBox() {}
 
-		// Widget
-		virtual void UpdateArea();
-		virtual void Draw();
+	// Widget
+	virtual void UpdateArea();
+	virtual void Draw();
 
-		// AbstractListBox
-		virtual VerticalLine *InsertSeparator(size_t pos);
-		virtual VerticalLine *AppendSeparator();
-		virtual void InsertWidget(size_t pos, Widget& widget);
-		virtual void AppendWidget(Widget& widget);
+	// AbstractListBox
+	virtual VerticalLine *InsertSeparator(size_t pos);
+	virtual VerticalLine *AppendSeparator();
+	virtual void InsertWidget(size_t pos, Widget& widget);
+	virtual void AppendWidget(Widget& widget);
 
-		// Container
-		virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
-				int begin_y, int ncols, int nlines);
+	// Container
+	virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
+			int begin_y, int ncols, int nlines);
 
-	protected:
-		int children_width;
-		int autosize_children;
-		int autosize_width;
-		std::set<const Widget *> autosize_extra;
+protected:
+	int children_width;
+	int autosize_children;
+	int autosize_width;
+	std::set<const Widget *> autosize_extra;
 
-		// Container
-		virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
-				Rect& newsize);
-		virtual void OnChildVisible(Widget& widget, bool visible);
+	// Container
+	virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
+			Rect& newsize);
+	virtual void OnChildVisible(Widget& widget, bool visible);
 
-		void UpdateScrollWidth();
+	void UpdateScrollWidth();
 
-	private:
-		HorizontalListBox(const HorizontalListBox&);
-		HorizontalListBox& operator=(const HorizontalListBox&);
+private:
+	HorizontalListBox(const HorizontalListBox&);
+	HorizontalListBox& operator=(const HorizontalListBox&);
 };
 
 #endif /* __HORIZONTALLISTBOX_H__ */

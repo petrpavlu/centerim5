@@ -35,31 +35,31 @@
 class MenuWindow
 : public Window
 {
-	public:
-		MenuWindow(int x, int y, int w, int h, const gchar *title = NULL,
-				LineStyle::Type ltype = LineStyle::DEFAULT);
-		virtual ~MenuWindow() {}
+public:
+	MenuWindow(int x, int y, int w, int h, const gchar *title = NULL,
+			LineStyle::Type ltype = LineStyle::DEFAULT);
+	virtual ~MenuWindow() {}
 
-		virtual Button *AppendItem(const char *text,
-				sigc::slot<void, Button&> callback)
-			{ return listbox->AppendItem(text, callback); }
-		virtual HorizontalLine *AppendSeparator()
-			{ return listbox->AppendSeparator(); }
+	virtual Button *AppendItem(const char *text,
+			sigc::slot<void, Button&> callback)
+		{ return listbox->AppendItem(text, callback); }
+	virtual HorizontalLine *AppendSeparator()
+		{ return listbox->AppendSeparator(); }
 
-		virtual void AppendWidget(Widget& widget)
-			{ listbox->AppendWidget(widget); }
-		virtual void RemoveWidget(Widget& widget)
-			{ listbox->RemoveWidget(widget); }
+	virtual void AppendWidget(Widget& widget)
+		{ listbox->AppendWidget(widget); }
+	virtual void RemoveWidget(Widget& widget)
+		{ listbox->RemoveWidget(widget); }
 
-	protected:
-		ListBox *listbox;
+protected:
+	ListBox *listbox;
 
-		// Container
-		virtual void AddWidget(Widget& widget, int x, int y);
+	// Container
+	virtual void AddWidget(Widget& widget, int x, int y);
 
-	private:
-		MenuWindow(const MenuWindow&);
-		MenuWindow& operator=(const MenuWindow&);
+private:
+	MenuWindow(const MenuWindow&);
+	MenuWindow& operator=(const MenuWindow&);
 };
 
 #endif /* __MENUWINDOW_H__ */

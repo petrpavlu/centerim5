@@ -34,73 +34,73 @@
 class Conversations
 : public FreeWindow
 {
-	public:
-		static Conversations *Instance();
+public:
+	static Conversations *Instance();
 
-		// FreeWindow
-		virtual void Close();
-		virtual void ScreenResized();
+	// FreeWindow
+	virtual void Close();
+	virtual void ScreenResized();
 
-		// force show the conversation, used by buddy list
-		void ShowConversation(PurpleConversationType type,
-				PurpleAccount *account, const char *name);
+	// force show the conversation, used by buddy list
+	void ShowConversation(PurpleConversationType type,
+			PurpleAccount *account, const char *name);
 
-		void FocusActiveConversation();
-		void FocusPrevConversation();
-		void FocusNextConversation();
+	void FocusActiveConversation();
+	void FocusPrevConversation();
+	void FocusNextConversation();
 
-	protected:
+protected:
 
-	private:
-		struct ConvChild
-		{
-			PurpleConversation *purple_conv;
-			Conversation *conv;
-			Label *label;
-			sigc::connection sig_close;
-		};
+private:
+	struct ConvChild
+	{
+		PurpleConversation *purple_conv;
+		Conversation *conv;
+		Label *label;
+		sigc::connection sig_close;
+	};
 
-		typedef std::vector<ConvChild> ConversationsVector;
+	typedef std::vector<ConvChild> ConversationsVector;
 
-		ConversationsVector conversations;
+	ConversationsVector conversations;
 
-		// active conversation, -1 if none
-		int active;
+	// active conversation, -1 if none
+	int active;
 
-		HorizontalListBox *list;
+	HorizontalListBox *list;
 
-		PurpleConversationUiOps centerim_conv_ui_ops;
+	PurpleConversationUiOps centerim_conv_ui_ops;
 
-		Conversations();
-		Conversations(const Conversations&);
-		Conversations& operator=(const Conversations&);
-		virtual ~Conversations();
+	Conversations();
+	Conversations(const Conversations&);
+	Conversations& operator=(const Conversations&);
+	virtual ~Conversations();
 
-		// find PurpleConversation in conversations
-		int FindConversation(PurpleConversation *conv);
+	// find PurpleConversation in conversations
+	int FindConversation(PurpleConversation *conv);
 
-		int PrevActiveConversation(int current);
-		int NextActiveConversation(int current);
+	int PrevActiveConversation(int current);
+	int NextActiveConversation(int current);
 
-		void ActivateConversation(int i);
+	void ActivateConversation(int i);
 
-		void OnConversationClose(Conversation& conv);
+	void OnConversationClose(Conversation& conv);
 
-		static void write_conv_(PurpleConversation *conv, const char *name,
-				const char *alias, const char *message, PurpleMessageFlags
-				flags, time_t mtime)
-			{ CONVERSATIONS->write_conv(conv, name, alias, message, flags,
-					mtime); }
-		static void create_conversation_(PurpleConversation *conv)
-			{ CONVERSATIONS->create_conversation(conv); }
-		static void destroy_conversation_(PurpleConversation *conv)
-			{ CONVERSATIONS->destroy_conversation(conv); }
-
-		void write_conv(PurpleConversation *conv, const char *name,
+	static void write_conv_(PurpleConversation *conv, const char *name,
 			const char *alias, const char *message, PurpleMessageFlags flags,
-			time_t mtime);
-		void create_conversation(PurpleConversation *conv);
-		void destroy_conversation(PurpleConversation *conv);
+			time_t mtime)
+		{ CONVERSATIONS->write_conv(conv, name, alias, message, flags,
+				mtime); }
+	static void create_conversation_(PurpleConversation *conv)
+		{ CONVERSATIONS->create_conversation(conv); }
+	static void destroy_conversation_(PurpleConversation *conv)
+		{ CONVERSATIONS->destroy_conversation(conv); }
+
+	void write_conv(PurpleConversation *conv, const char *name,
+		const char *alias, const char *message, PurpleMessageFlags flags,
+		time_t mtime);
+	void create_conversation(PurpleConversation *conv);
+	void destroy_conversation(PurpleConversation *conv);
 };
 
 #endif /* __CONVERSATIONS_H__ */

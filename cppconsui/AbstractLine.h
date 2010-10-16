@@ -38,27 +38,26 @@
 class AbstractLine
 : public Widget
 {
-	public:
-		AbstractLine(int w, int h,
-				LineStyle::Type ltype = LineStyle::DEFAULT);
-		virtual ~AbstractLine() {}
+public:
+	AbstractLine(int w, int h, LineStyle::Type ltype = LineStyle::DEFAULT);
+	virtual ~AbstractLine() {}
 
-		/**
-		 * Sets a new line style.
-		 */
-		void SetLineStyle(LineStyle::Type ltype);
-		/**
-		 * Returns a current line style.
-		 */
-		LineStyle::Type GetLineStyle();
+	/**
+	 * Sets a new line style.
+	 */
+	void SetLineStyle(LineStyle::Type ltype);
+	/**
+	 * Returns a current line style.
+	 */
+	LineStyle::Type GetLineStyle();
 
-	protected:
-		LineStyle linestyle;
+protected:
+	LineStyle linestyle;
 
-	private:
-		AbstractLine();
-		AbstractLine(const AbstractLine&);
-		AbstractLine& operator=(const AbstractLine&);
+private:
+	AbstractLine();
+	AbstractLine(const AbstractLine&);
+	AbstractLine& operator=(const AbstractLine&);
 };
 
 #endif /* __ABSTRACTLINE_H__ */

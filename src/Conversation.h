@@ -36,62 +36,62 @@
 class Conversation
 : public Window
 {
-	public:
-		enum Status {
-			STATUS_ACTIVE,
-			STATUS_TRASH
-		};
+public:
+	enum Status {
+		STATUS_ACTIVE,
+		STATUS_TRASH
+	};
 
-		Conversation(PurpleConversation *conv_);
-		virtual ~Conversation();
+	Conversation(PurpleConversation *conv_);
+	virtual ~Conversation();
 
-		// FreeWindow
-		virtual void Close();
-		virtual void ScreenResized();
-		virtual void Show();
+	// FreeWindow
+	virtual void Close();
+	virtual void ScreenResized();
+	virtual void Show();
 
-		// Widget
-		virtual void MoveResize(int newx, int newy, int neww, int newh);
+	// Widget
+	virtual void MoveResize(int newx, int newy, int neww, int newh);
 
-		void Receive(const char *name, const char *alias, const char *message,
-			PurpleMessageFlags flags, time_t mtime);
+	void Receive(const char *name, const char *alias, const char *message,
+		PurpleMessageFlags flags, time_t mtime);
 
-		Status GetStatus() const { return status; }
+	Status GetStatus() const { return status; }
 
-		PurpleConversation *GetPurpleConversation() const { return conv; };
+	PurpleConversation *GetPurpleConversation() const { return conv; };
 
-	protected:
-		void SetPartitioning(unsigned percentage);
+protected:
+	void SetPartitioning(unsigned percentage);
 
-		virtual void LoadHistory() = 0;
+	virtual void LoadHistory() = 0;
 
-		TextView *view;
-		TextEdit *input;
-		HorizontalLine *line;
+	TextView *view;
+	TextEdit *input;
+	HorizontalLine *line;
 
-		PurpleConversation *conv;
+	PurpleConversation *conv;
 
-		char *filename;
-		GIOChannel *logfile;
+	char *filename;
+	GIOChannel *logfile;
 
-		Status status;
+	Status status;
 
-		guint destroy_id;
+	guint destroy_id;
 
-	private:
-		Conversation();
-		Conversation(const Conversation&);
-		Conversation& operator=(const Conversation&);
+private:
+	Conversation();
+	Conversation(const Conversation&);
+	Conversation& operator=(const Conversation&);
 
-		static gboolean timeout_once_purple_conversation_destroy(gpointer data);
+	static gboolean timeout_once_purple_conversation_destroy(gpointer data);
 
-		void BuildLogFilename();
+	void BuildLogFilename();
 
-		virtual void Send() = 0;
+	virtual void Send() = 0;
 
-		DECLARE_SIG_REGISTERKEYS();
-		static bool RegisterKeys();
-		void DeclareBindables();
+	DECLARE_SIG_REGISTERKEYS();
+	static bool RegisterKeys();
+	void DeclareBindables();
 };
 
 class ConversationChat

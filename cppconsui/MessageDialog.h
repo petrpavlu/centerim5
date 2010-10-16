@@ -35,16 +35,16 @@
 class MessageDialog
 : public Dialog
 {
-	public:
-		MessageDialog(const gchar *title, const gchar *text);
-		virtual ~MessageDialog() {}
+public:
+	MessageDialog(const gchar *title, const gchar *text);
+	virtual ~MessageDialog() {}
 
-	protected:
-		Label *label;
+protected:
+	Label *label;
 
-	private:
-		MessageDialog(const MessageDialog&);
-		MessageDialog& operator=(const MessageDialog&);
+private:
+	MessageDialog(const MessageDialog&);
+	MessageDialog& operator=(const MessageDialog&);
 };
 
 #endif /* __MESSAGEDIALOG_H__ */

@@ -33,74 +33,73 @@
 class Log
 : public Window
 {
-	public:
-		// levels are 1:1 mapped to glib levels
-		enum Level {
-			Level_none,
-			Level_error, // = fatal in libpurle
-			Level_critical, // = error in libpurple
-			Level_warning,
-			Level_message, // no such level in libpurple
-			Level_info,
-			Level_debug // = misc in libpurple
-		};
+public:
+	// levels are 1:1 mapped to glib levels
+	enum Level {
+		Level_none,
+		Level_error, // = fatal in libpurle
+		Level_critical, // = error in libpurple
+		Level_warning,
+		Level_message, // no such level in libpurple
+		Level_info,
+		Level_debug // = misc in libpurple
+	};
 
-		static Log *Instance();
+	static Log *Instance();
 
-		// FreeWindow
-		virtual void MoveResize(int newx, int newy, int neww, int newh);
-		virtual void ScreenResized();
+	// FreeWindow
+	virtual void MoveResize(int newx, int newy, int neww, int newh);
+	virtual void ScreenResized();
 
-		void Write(Level level, const gchar *fmt, ...);
+	void Write(Level level, const gchar *fmt, ...);
 
-	protected:
+protected:
 
-	private:
-		enum Type {Type_cim, Type_glib, Type_purple};
+private:
+	enum Type {Type_cim, Type_glib, Type_purple};
 
-		PurpleDebugUiOps centerim_debug_ui_ops;
+	PurpleDebugUiOps centerim_debug_ui_ops;
 
-		GIOChannel *logfile;
-		void *prefs_handle;
+	GIOChannel *logfile;
+	void *prefs_handle;
 
-		TextView *textview;
+	TextView *textview;
 
-		Log();
-		Log(const Log&);
-		Log &operator=(const Log&);
-		virtual ~Log();
+	Log();
+	Log(const Log&);
+	Log &operator=(const Log&);
+	virtual ~Log();
 
-		// to catch libpurple's debug messages
-		static void purple_print_(PurpleDebugLevel level,
-				const char *category, const char *arg_s)
-			{ LOG->purple_print(level, category, arg_s); }
-		static gboolean is_enabled_(PurpleDebugLevel level,
-				const char *category)
-			{ return LOG->is_enabled(level, category); }
+	// to catch libpurple's debug messages
+	static void purple_print_(PurpleDebugLevel level, const char *category,
+			const char *arg_s)
+		{ LOG->purple_print(level, category, arg_s); }
+	static gboolean is_enabled_(PurpleDebugLevel level, const char *category)
+		{ return LOG->is_enabled(level, category); }
 
-		void purple_print(PurpleDebugLevel level, const char *category,
-				const char *arg_s);
-		gboolean is_enabled(PurpleDebugLevel level, const char *category);
+	void purple_print(PurpleDebugLevel level, const char *category,
+			const char *arg_s);
+	gboolean is_enabled(PurpleDebugLevel level, const char *category);
 
-		// to catch glib's messages
-		static void glib_log_handler_(const gchar *domain, GLogLevelFlags flags,
-			const gchar *msg, gpointer user_data)
-			{ LOG->glib_log_handler(domain, flags, msg, user_data); }
-		void glib_log_handler(const gchar *domain, GLogLevelFlags flags,
-				const gchar *msg, gpointer user_data);
+	// to catch glib's messages
+	static void glib_log_handler_(const gchar *domain, GLogLevelFlags flags,
+		const gchar *msg, gpointer user_data)
+		{ LOG->glib_log_handler(domain, flags, msg, user_data); }
+	void glib_log_handler(const gchar *domain, GLogLevelFlags flags,
+			const gchar *msg, gpointer user_data);
 
-		// called when log/debug pref changed
-		static void debug_change_(const char *name, PurplePrefType type,
-				gconstpointer val, gpointer data)
-			{ ((Log *) data)->debug_change(name, type, val); }
-		void debug_change(const char *name, PurplePrefType type,
-				gconstpointer val);
+	// called when log/debug pref changed
+	static void debug_change_(const char *name, PurplePrefType type,
+			gconstpointer val, gpointer data)
+		{ ((Log *) data)->debug_change(name, type, val); }
+	void debug_change(const char *name, PurplePrefType type,
+			gconstpointer val);
 
-		void ShortenWindowText();
-		void Write(Type type, Level level, const gchar *fmt, ...);
-		void WriteToWindow(Level level, const gchar *fmt, ...);
-		void WriteToFile(const gchar *text);
-		Level ConvertPurpleDebugLevel(PurpleDebugLevel purplelevel);
+	void ShortenWindowText();
+	void Write(Type type, Level level, const gchar *fmt, ...);
+	void WriteToWindow(Level level, const gchar *fmt, ...);
+	void WriteToFile(const gchar *text);
+	Level ConvertPurpleDebugLevel(PurpleDebugLevel purplelevel);
 };
 
 #endif /* __LOG_H__ */

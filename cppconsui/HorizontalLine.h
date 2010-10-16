@@ -37,19 +37,19 @@
 class HorizontalLine
 : public AbstractLine
 {
-	public:
-		HorizontalLine(int w, LineStyle::Type ltype = LineStyle::DEFAULT);
-		virtual ~HorizontalLine() {}
+public:
+	HorizontalLine(int w, LineStyle::Type ltype = LineStyle::DEFAULT);
+	virtual ~HorizontalLine() {}
 
-		// Widget
-		virtual void Draw();
+	// Widget
+	virtual void Draw();
 
-	protected:
+protected:
 
-	private:
-		HorizontalLine();
-		HorizontalLine(const HorizontalLine&);
-		HorizontalLine& operator=(const HorizontalLine&);
+private:
+	HorizontalLine();
+	HorizontalLine(const HorizontalLine&);
+	HorizontalLine& operator=(const HorizontalLine&);
 };
 
 #endif /* __HORIZONTALLINE_H__ */

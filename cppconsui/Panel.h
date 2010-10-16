@@ -40,47 +40,47 @@
 class Panel
 : public Widget
 {
-	public:
-		Panel(int w, int h, const gchar *text = NULL,
-				LineStyle::Type ltype = LineStyle::DEFAULT);
-		virtual ~Panel();
+public:
+	Panel(int w, int h, const gchar *text = NULL,
+			LineStyle::Type ltype = LineStyle::DEFAULT);
+	virtual ~Panel();
 
-		// Widget
-		virtual void Draw();
+	// Widget
+	virtual void Draw();
 
-		/**
-		 * Sets the caption text.
-		 */
-		void SetTitle(const gchar *text);
-		/**
-		 * Returns caption text.
-		 */
-		const gchar *GetTitle() const;
+	/**
+	 * Sets the caption text.
+	 */
+	void SetTitle(const gchar *text);
+	/**
+	 * Returns caption text.
+	 */
+	const gchar *GetTitle() const;
 
-		/**
-		 * Sets a new border style.
-		 */
-		void SetBorderStyle(LineStyle::Type ltype);
-		/**
-		 * Returns a current border style.
-		 */
-		LineStyle::Type GetBorderStyle() const;
+	/**
+	 * Sets a new border style.
+	 */
+	void SetBorderStyle(LineStyle::Type ltype);
+	/**
+	 * Returns a current border style.
+	 */
+	LineStyle::Type GetBorderStyle() const;
 
-	protected:
-		LineStyle linestyle;
-		/**
-		 * Caption text.
-		 */
-		gchar *title;
-		/**
-		 * On-screen caption width.
-		 */
-		int title_width;
+protected:
+	LineStyle linestyle;
+	/**
+	 * Caption text.
+	 */
+	gchar *title;
+	/**
+	 * On-screen caption width.
+	 */
+	int title_width;
 
-	private:
-		Panel();
-		Panel(const Panel&);
-		Panel& operator=(const Panel&);
+private:
+	Panel();
+	Panel(const Panel&);
+	Panel& operator=(const Panel&);
 };
 
 #endif /* __PANEL_H__ */

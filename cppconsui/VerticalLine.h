@@ -37,19 +37,19 @@
 class VerticalLine
 : public AbstractLine
 {
-	public:
-		VerticalLine(int w, LineStyle::Type ltype = LineStyle::DEFAULT);
-		virtual ~VerticalLine() {}
+public:
+	VerticalLine(int w, LineStyle::Type ltype = LineStyle::DEFAULT);
+	virtual ~VerticalLine() {}
 
-		// Widget
-		virtual void Draw();
+	// Widget
+	virtual void Draw();
 
-	protected:
+protected:
 
-	private:
-		VerticalLine();
-		VerticalLine(const VerticalLine&);
-		VerticalLine& operator=(const VerticalLine&);
+private:
+	VerticalLine();
+	VerticalLine(const VerticalLine&);
+	VerticalLine& operator=(const VerticalLine&);
 };
 
 #endif /* __VERTICALLINE_H__ */

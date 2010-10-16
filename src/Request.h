@@ -30,195 +30,191 @@
 
 class Request
 {
+public:
+	static Request *Instance();
+
+protected:
+
+private:
+	class RequestDialog
+	: public SplitDialog
+	{
 	public:
-		static Request *Instance();
+		RequestDialog(const gchar *title, const gchar *primary,
+				const gchar *secondary, const gchar *ok_text, GCallback ok_cb,
+				const gchar *cancel_text, GCallback cancel_cb,
+				void *user_data);
+		virtual ~RequestDialog() {}
+
+		// FreeWindow
+		virtual void ScreenResized();
+
+		virtual PurpleRequestType GetRequestType() = 0;
 
 	protected:
+		GCallback ok_cb;
+		GCallback cancel_cb;
+		void *user_data;
+
+		// convenient var, same as dynamic_cast<ListBox *>(container)
+		ListBox *lbox;
 
 	private:
-		class RequestDialog
-		: public SplitDialog
-		{
-			public:
-				RequestDialog(const gchar *title, const gchar *primary,
-						const gchar *secondary, const gchar *ok_text,
-						GCallback ok_cb, const gchar *cancel_text,
-						GCallback cancel_cb, void *user_data);
-				virtual ~RequestDialog() {}
+		RequestDialog(const RequestDialog&);
+		RequestDialog& operator=(const RequestDialog&);
 
-				// FreeWindow
-				virtual void ScreenResized();
+		virtual void ResponseHandler(Dialog& activator,
+				ResponseType response) = 0;
+	};
 
-				virtual PurpleRequestType GetRequestType() = 0;
+	class InputDialog
+	: public RequestDialog
+	{
+	public:
+		InputDialog(const gchar *title, const gchar *primary,
+				const gchar *secondary, const gchar *default_value,
+				bool masked, const gchar *ok_text, GCallback ok_cb,
+				const gchar *cancel_text, GCallback cancel_cb,
+				void *user_data);
+		virtual ~InputDialog() {}
 
-			protected:
-				GCallback ok_cb;
-				GCallback cancel_cb;
-				void *user_data;
+		virtual PurpleRequestType GetRequestType();
 
-				// convenient var, same as dynamic_cast<ListBox *>(container)
-				ListBox *lbox;
+	protected:
+		TextEntry *entry;
 
-			private:
-				RequestDialog(const RequestDialog&);
-				RequestDialog& operator=(const RequestDialog&);
+	private:
+		InputDialog(const InputDialog&);
+		InputDialog& operator=(const InputDialog&);
 
-				virtual void ResponseHandler(Dialog& activator,
-						ResponseType response) = 0;
-		};
+		virtual void ResponseHandler(Dialog& activator,
+				ResponseType response);
+	};
 
-		class InputDialog
-		: public RequestDialog
-		{
-			public:
-				InputDialog(const gchar *title, const gchar *primary,
-						const gchar *secondary, const gchar *default_value,
-						bool masked, const gchar *ok_text, GCallback ok_cb,
-						const gchar *cancel_text, GCallback cancel_cb,
-						void *user_data);
-				virtual ~InputDialog() {}
+	class ChoiceDialog
+	: public RequestDialog
+	{
+	public:
+		ChoiceDialog(const gchar *title, const gchar *primary,
+				const gchar *secondary, int default_value,
+				const gchar *ok_text, GCallback ok_cb,
+				const gchar *cancel_text, GCallback cancel_cb,
+				void *user_data, va_list choices);
+		virtual ~ChoiceDialog() {}
 
-				virtual PurpleRequestType GetRequestType();
+		virtual PurpleRequestType GetRequestType();
 
-			protected:
-				TextEntry *entry;
+	protected:
+		ComboBox *combo;
 
-			private:
-				InputDialog(const InputDialog&);
-				InputDialog& operator=(const InputDialog&);
+	private:
+		ChoiceDialog(const ChoiceDialog&);
+		ChoiceDialog& operator=(const ChoiceDialog&);
 
-				virtual void ResponseHandler(Dialog& activator,
-						ResponseType response);
-		};
+		virtual void ResponseHandler(Dialog& activator,
+				ResponseType response);
+	};
 
-		class ChoiceDialog
-		: public RequestDialog
-		{
-			public:
-				ChoiceDialog(const gchar *title, const gchar *primary,
-						const gchar *secondary, int default_value,
-						const gchar *ok_text, GCallback ok_cb,
-						const gchar *cancel_text, GCallback cancel_cb,
-						void *user_data, va_list choices);
-				virtual ~ChoiceDialog() {}
+	typedef std::set<RequestDialog *> Requests;
 
-				virtual PurpleRequestType GetRequestType();
+	Requests requests;
 
-			protected:
-				ComboBox *combo;
+	PurpleRequestUiOps centerim_request_ui_ops;
 
-			private:
-				ChoiceDialog(const ChoiceDialog&);
-				ChoiceDialog& operator=(const ChoiceDialog&);
+	Request();
+	Request(const Request&);
+	Request& operator=(const Request&);
+	~Request();
 
-				virtual void ResponseHandler(Dialog& activator,
-						ResponseType response);
-		};
+	void OnDialogResponse(Dialog& dialog, Dialog::ResponseType response);
 
-		typedef std::set<RequestDialog *> Requests;
+	static void *request_input_(const char *title, const char *primary,
+			const char *secondary, const char *default_value,
+			gboolean multiline, gboolean masked, gchar *hint,
+			const char *ok_text, GCallback ok_cb, const char *cancel_text,
+			GCallback cancel_cb, PurpleAccount *account, const char *who,
+			PurpleConversation *conv, void *user_data)
+		{ return REQUEST->request_input(title, primary, secondary,
+				default_value, multiline, masked, hint, ok_text, ok_cb,
+				cancel_text, cancel_cb, account, who, conv, user_data); }
+	static void *request_choice_(const char *title, const char *primary,
+			const char *secondary, int default_value, const char *ok_text,
+			GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
+			PurpleAccount *account, const char *who, PurpleConversation *conv,
+			void *user_data, va_list choices)
+		{ return REQUEST->request_choice(title, primary, secondary,
+				default_value, ok_text, ok_cb, cancel_text, cancel_cb,
+				account, who, conv, user_data, choices); }
+	static void *request_action_(const char *title, const char *primary,
+			const char *secondary, int default_action, PurpleAccount *account,
+			const char *who, PurpleConversation *conv, void *user_data,
+			size_t action_count, va_list actions)
+		{ return REQUEST->request_action(title, primary, secondary,
+				default_action, account, who, conv, user_data, action_count,
+				actions); }
+	static void *request_fields_(const char *title, const char *primary,
+			const char *secondary, PurpleRequestFields *fields,
+			const char *ok_text, GCallback ok_cb, const char *cancel_text,
+			GCallback cancel_cb, PurpleAccount *account, const char *who,
+			PurpleConversation *conv, void *user_data)
+		{ return REQUEST->request_fields(title, primary, secondary, fields,
+				ok_text, ok_cb, cancel_text, cancel_cb, account, who, conv,
+				user_data); }
+	static void *request_file_(const char *title, const char *filename,
+			gboolean savedialog, GCallback ok_cb, GCallback cancel_cb,
+			PurpleAccount *account, const char *who, PurpleConversation *conv,
+			void *user_data)
+		{ return REQUEST->request_file(title, filename, savedialog, ok_cb,
+				cancel_cb, account, who, conv, user_data); }
+	static void close_request_(PurpleRequestType type, void *ui_handle)
+		{ REQUEST->close_request(type, ui_handle); }
+	static void *request_folder_(const char *title, const char *dirname,
+			GCallback ok_cb, GCallback cancel_cb, PurpleAccount *account,
+			const char *who, PurpleConversation *conv, void *user_data)
+		{ return REQUEST->request_folder(title, dirname, ok_cb, cancel_cb,
+				account, who, conv, user_data); }
+	static void *request_action_with_icon_(const char *title,
+			const char *primary, const char *secondary, int default_action,
+			PurpleAccount *account, const char *who, PurpleConversation *conv,
+			gconstpointer icon_data, gsize icon_size, void *user_data, size_t
+			action_count, va_list actions)
+		{ return REQUEST->request_action_with_icon(title, primary, secondary,
+				default_action, account, who, conv, icon_data, icon_size,
+				user_data, action_count, actions); }
 
-		Requests requests;
-
-		PurpleRequestUiOps centerim_request_ui_ops;
-
-		Request();
-		Request(const Request&);
-		Request& operator=(const Request&);
-		~Request();
-
-		void OnDialogResponse(Dialog& dialog, Dialog::ResponseType response);
-
-		static void *request_input_(const char *title, const char *primary,
-				const char *secondary, const char *default_value,
-				gboolean multiline, gboolean masked, gchar *hint,
-				const char *ok_text, GCallback ok_cb, const char *cancel_text,
-				GCallback cancel_cb, PurpleAccount *account, const char *who,
-				PurpleConversation *conv, void *user_data)
-			{ return REQUEST->request_input(title, primary, secondary,
-					default_value, multiline, masked, hint, ok_text, ok_cb,
-					cancel_text, cancel_cb, account, who, conv, user_data); }
-		static void *request_choice_(const char *title, const char *primary,
-				const char *secondary, int default_value, const char *ok_text,
-				GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
-				PurpleAccount *account, const char *who,
-				PurpleConversation *conv, void *user_data, va_list choices)
-			{ return REQUEST->request_choice(title, primary, secondary,
-					default_value, ok_text, ok_cb, cancel_text, cancel_cb,
-					account, who, conv, user_data, choices); }
-		static void *request_action_(const char *title, const char *primary,
-				const char *secondary, int default_action,
-				PurpleAccount *account, const char *who,
-				PurpleConversation *conv, void *user_data,
-				size_t action_count, va_list actions)
-			{ return REQUEST->request_action(title, primary, secondary,
-					default_action, account, who, conv, user_data,
-					action_count, actions); }
-		static void *request_fields_(const char *title, const char *primary,
-				const char *secondary, PurpleRequestFields *fields,
-				const char *ok_text, GCallback ok_cb, const char *cancel_text,
-				GCallback cancel_cb, PurpleAccount *account, const char *who,
-				PurpleConversation *conv, void *user_data)
-			{ return REQUEST->request_fields(title, primary, secondary,
-					fields, ok_text, ok_cb, cancel_text, cancel_cb, account,
-					who, conv, user_data); }
-		static void *request_file_(const char *title, const char *filename,
-				gboolean savedialog, GCallback ok_cb, GCallback cancel_cb,
-				PurpleAccount *account, const char *who,
-				PurpleConversation *conv, void *user_data)
-			{ return REQUEST->request_file(title, filename, savedialog, ok_cb,
-					cancel_cb, account, who, conv, user_data); }
-		static void close_request_(PurpleRequestType type, void *ui_handle)
-			{ REQUEST->close_request(type, ui_handle); }
-		static void *request_folder_(const char *title, const char *dirname,
-				GCallback ok_cb, GCallback cancel_cb, PurpleAccount *account,
-				const char *who, PurpleConversation *conv, void *user_data)
-			{ return REQUEST->request_folder(title, dirname, ok_cb, cancel_cb,
-					account, who, conv, user_data); }
-		static void *request_action_with_icon_(const char *title,
-				const char *primary, const char *secondary,
-				int default_action, PurpleAccount *account, const char *who,
-				PurpleConversation *conv, gconstpointer icon_data,
-				gsize icon_size, void *user_data, size_t action_count,
-				va_list actions)
-			{ return REQUEST->request_action_with_icon(title, primary,
-					secondary, default_action, account, who, conv, icon_data,
-					icon_size, user_data, action_count, actions); }
-
-		void *request_input(const char *title, const char *primary,
-				const char *secondary, const char *default_value,
-				gboolean multiline, gboolean masked, gchar *hint,
-				const char *ok_text, GCallback ok_cb, const char *cancel_text,
-				GCallback cancel_cb, PurpleAccount *account, const char *who,
-				PurpleConversation *conv, void *user_data);
-		void *request_choice(const char *title, const char *primary,
-				const char *secondary, int default_value, const char *ok_text,
-				GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
-				PurpleAccount *account, const char *who,
-				PurpleConversation *conv, void *user_data, va_list choices);
-		void *request_action(const char *title, const char *primary,
-				const char *secondary, int default_action,
-				PurpleAccount *account, const char *who,
-				PurpleConversation *conv, void *user_data,
-				size_t action_count, va_list actions);
-		void *request_fields(const char *title, const char *primary,
-				const char *secondary, PurpleRequestFields *fields,
-				const char *ok_text, GCallback ok_cb, const char *cancel_text,
-				GCallback cancel_cb, PurpleAccount *account, const char *who,
-				PurpleConversation *conv, void *user_data);
-		void *request_file(const char *title, const char *filename,
-				gboolean savedialog, GCallback ok_cb, GCallback cancel_cb,
-				PurpleAccount *account, const char *who,
-				PurpleConversation *conv, void *user_data);
-		void close_request(PurpleRequestType type, void *ui_handle);
-		void *request_folder(const char *title, const char *dirname,
-				GCallback ok_cb, GCallback cancel_cb, PurpleAccount *account,
-				const char *who, PurpleConversation *conv, void *user_data);
-		void *request_action_with_icon(const char *title, const char *primary,
-				const char *secondary, int default_action,
-				PurpleAccount *account, const char *who,
-				PurpleConversation *conv, gconstpointer icon_data,
-				gsize icon_size, void *user_data, size_t action_count,
-				va_list actions);
+	void *request_input(const char *title, const char *primary,
+			const char *secondary, const char *default_value,
+			gboolean multiline, gboolean masked, gchar *hint,
+			const char *ok_text, GCallback ok_cb, const char *cancel_text,
+			GCallback cancel_cb, PurpleAccount *account, const char *who,
+			PurpleConversation *conv, void *user_data);
+	void *request_choice(const char *title, const char *primary,
+			const char *secondary, int default_value, const char *ok_text,
+			GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
+			PurpleAccount *account, const char *who, PurpleConversation *conv,
+			void *user_data, va_list choices);
+	void *request_action(const char *title, const char *primary,
+			const char *secondary, int default_action, PurpleAccount *account,
+			const char *who, PurpleConversation *conv, void *user_data,
+			size_t action_count, va_list actions);
+	void *request_fields(const char *title, const char *primary,
+			const char *secondary, PurpleRequestFields *fields,
+			const char *ok_text, GCallback ok_cb, const char *cancel_text,
+			GCallback cancel_cb, PurpleAccount *account, const char *who,
+			PurpleConversation *conv, void *user_data);
+	void *request_file(const char *title, const char *filename,
+			gboolean savedialog, GCallback ok_cb, GCallback cancel_cb,
+			PurpleAccount *account, const char *who, PurpleConversation *conv,
+			void *user_data);
+	void close_request(PurpleRequestType type, void *ui_handle);
+	void *request_folder(const char *title, const char *dirname,
+			GCallback ok_cb, GCallback cancel_cb, PurpleAccount *account,
+			const char *who, PurpleConversation *conv, void *user_data);
+	void *request_action_with_icon(const char *title, const char *primary,
+			const char *secondary, int default_action, PurpleAccount *account,
+			const char *who, PurpleConversation *conv,
+			gconstpointer icon_data, gsize icon_size, void *user_data,
+			size_t action_count, va_list actions);
 };
 
 #endif /* __REQUEST_H__ */

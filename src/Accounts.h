@@ -28,23 +28,23 @@
 
 class Accounts
 {
-	public:
-		static Accounts *Instance();
+public:
+	static Accounts *Instance();
 
-	protected:
+protected:
 
-	private:
-		PurpleAccountUiOps centerim_account_ui_ops;
+private:
+	PurpleAccountUiOps centerim_account_ui_ops;
 
-		Accounts();
-		Accounts(const Accounts&);
-		Accounts &operator=(const Accounts&);
-		~Accounts() {};
+	Accounts();
+	Accounts(const Accounts&);
+	Accounts &operator=(const Accounts&);
+	~Accounts() {};
 
-		static void status_changed_(PurpleAccount *account, PurpleStatus *status)
-			{ ACCOUNTS->status_changed(account, status); }
+	static void status_changed_(PurpleAccount *account, PurpleStatus *status)
+		{ ACCOUNTS->status_changed(account, status); }
 
-		void status_changed(PurpleAccount *account, PurpleStatus *status);
+	void status_changed(PurpleAccount *account, PurpleStatus *status);
 };
 
 #endif /* __ACCOUNTS_H__ */

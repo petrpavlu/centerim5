@@ -27,31 +27,31 @@
 class GeneralMenu
 : public MenuWindow
 {
-	public:
-		GeneralMenu(int x, int y, int w, int h);
-		virtual ~GeneralMenu() {}
+public:
+	GeneralMenu(int x, int y, int w, int h);
+	virtual ~GeneralMenu() {}
 
-		// FreeWindow
-		virtual void ScreenResized();
+	// FreeWindow
+	virtual void ScreenResized();
 
-	protected:
+protected:
 
-	private:
-		GeneralMenu();
-		GeneralMenu(const GeneralMenu&);
-		GeneralMenu& operator=(const GeneralMenu&);
+private:
+	GeneralMenu();
+	GeneralMenu(const GeneralMenu&);
+	GeneralMenu& operator=(const GeneralMenu&);
 
-		void OpenAccountsWindow(Button& activator);
-		void OpenAddBuddyRequest(Button& activator);
-		void RequestTest(Button& activator);
+	void OpenAccountsWindow(Button& activator);
+	void OpenAddBuddyRequest(Button& activator);
+	void RequestTest(Button& activator);
 
-		static void input_ok_cb_(void *data, const gchar *text)
-			{ reinterpret_cast<GeneralMenu *>(data)->input_ok_cb(text); }
-		void input_ok_cb(const gchar *text);
+	static void input_ok_cb_(void *data, const gchar *text)
+		{ reinterpret_cast<GeneralMenu *>(data)->input_ok_cb(text); }
+	void input_ok_cb(const gchar *text);
 
-		static void choice_ok_cb_(void *data, int selected)
-			{ reinterpret_cast<GeneralMenu *>(data)->choice_ok_cb(selected); }
-		void choice_ok_cb(int selected);
+	static void choice_ok_cb_(void *data, int selected)
+		{ reinterpret_cast<GeneralMenu *>(data)->choice_ok_cb(selected); }
+	void choice_ok_cb(int selected);
 };
 
 #endif /* __GENERALMENU_H__ */

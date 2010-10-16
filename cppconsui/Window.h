@@ -53,31 +53,30 @@
 class Window
 : public FreeWindow
 {
-	public:
-		Window(int x, int y, int w, int h, const gchar *title = NULL,
-				Type t = TYPE_NORMAL,
-				LineStyle::Type ltype = LineStyle::DEFAULT);
-		virtual ~Window() {}
+public:
+	Window(int x, int y, int w, int h, const gchar *title = NULL,
+			Type t = TYPE_NORMAL, LineStyle::Type ltype = LineStyle::DEFAULT);
+	virtual ~Window() {}
 
-		// Widget
-		virtual void MoveResize(int newx, int newy, int neww, int newh);
+	// Widget
+	virtual void MoveResize(int newx, int newy, int neww, int newh);
 
-		// Container
-		virtual Curses::Window *GetSubPad(const Widget &child, int begin_x,
-				int begin_y, int ncols, int nlines);
+	// Container
+	virtual Curses::Window *GetSubPad(const Widget &child, int begin_x,
+			int begin_y, int ncols, int nlines);
 
-		void SetBorderStyle(LineStyle::Type ltype);
-		LineStyle::Type GetBorderStyle() const;
+	void SetBorderStyle(LineStyle::Type ltype);
+	LineStyle::Type GetBorderStyle() const;
 
-		void SetTitle(const gchar *text) { panel->SetTitle(text); }
-		const gchar *GetTitle() const { return panel->GetTitle(); }
+	void SetTitle(const gchar *text) { panel->SetTitle(text); }
+	const gchar *GetTitle() const { return panel->GetTitle(); }
 
-	protected:
-		Panel *panel;
+protected:
+	Panel *panel;
 
-	private:
-		Window(const Window&);
-		Window& operator=(const Window&);
+private:
+	Window(const Window&);
+	Window& operator=(const Window&);
 };
 
 #endif /* __WINDOW_H__ */

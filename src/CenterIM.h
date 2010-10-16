@@ -36,104 +36,106 @@
 class CenterIM
 : public InputProcessor
 {
-	public:
-		enum ScreenArea {HeaderArea, BuddyListArea, LogArea, ChatArea, WholeArea, AreaMax};
+public:
+	enum ScreenArea {HeaderArea, BuddyListArea, LogArea, ChatArea, WholeArea, AreaMax};
 
-		static CenterIM *Instance();
+	static CenterIM *Instance();
 
-		void Run();
-		void Quit();
+	void Run();
+	void Quit();
 
-		/** Returns size of selected area. */
-		Rect ScreenAreaSize(ScreenArea area);
+	/** Returns size of selected area. */
+	Rect ScreenAreaSize(ScreenArea area);
 
-		static const char * const version;
+	static const char * const version;
 
-	protected:
+protected:
 
-	private:
-		static const int originalW = 139;
-		static const int originalH = 56;
+private:
+	static const int originalW = 139;
+	static const int originalH = 56;
 
-		CoreManager *mngr;
-		sigc::connection resize;
+	CoreManager *mngr;
+	sigc::connection resize;
 
-		PurpleCoreUiOps centerim_core_ui_ops;
-		PurpleDebugUiOps logbuf_debug_ui_ops;
-		PurpleEventLoopUiOps centerim_glib_eventloops;
+	PurpleCoreUiOps centerim_core_ui_ops;
+	PurpleDebugUiOps logbuf_debug_ui_ops;
+	PurpleEventLoopUiOps centerim_glib_eventloops;
 
-		struct IOClosure
-		{
-			PurpleInputFunction function;
-			guint result;
-			gpointer data;
+	struct IOClosure
+	{
+		PurpleInputFunction function;
+		guint result;
+		gpointer data;
 
-			IOClosure() : function(NULL), result(0), data(NULL) {}
-		};
+		IOClosure() : function(NULL), result(0), data(NULL) {}
+	};
 
-		struct LogBufferItem
-		{
-			PurpleDebugLevel level;
-			char *category;
-			char *arg_s;
-		};
-		typedef std::vector<LogBufferItem> LogBufferItems;
-		static LogBufferItems *logbuf;
+	struct LogBufferItem
+	{
+		PurpleDebugLevel level;
+		char *category;
+		char *arg_s;
+	};
+	typedef std::vector<LogBufferItem> LogBufferItems;
+	static LogBufferItems *logbuf;
 
-		Rect areaSizes[AreaMax];
+	Rect areaSizes[AreaMax];
 
-		CenterIM();
-		CenterIM(const CenterIM&);
-		CenterIM& operator=(const CenterIM&);
-		~CenterIM() {}
+	CenterIM();
+	CenterIM(const CenterIM&);
+	CenterIM& operator=(const CenterIM&);
+	~CenterIM() {}
 
-		/** Recalculates area sizes to fit into current screen size. */
-		void ScreenResized();
+	/** Recalculates area sizes to fit into current screen size. */
+	void ScreenResized();
 
-		void PurpleInit();
-		void ColorSchemeInit();
+	void PurpleInit();
+	void ColorSchemeInit();
 
-		// PurpleCoreUiOps callbacks
-		/** Returns information about CenterIM such as name, website etc. */
-		static GHashTable *get_ui_info();
+	// PurpleCoreUiOps callbacks
+	/** Returns information about CenterIM such as name, website etc. */
+	static GHashTable *get_ui_info();
 
-		// PurpleEventLoopUiOps callbacks
-		/** Adds timeout to glib main loop context. */
-		static guint timeout_add(guint interval, GSourceFunc function, gpointer data);
-		/** Removes timeout from glib main loop context. */
-		static gboolean timeout_remove(guint handle);
-		/** Adds IO watch to glib main loop context. */
-		static guint input_add(int fd, PurpleInputCondition condition,
-			PurpleInputFunction function, gpointer data);
-		/** Removes input from glib main loop context. */
-		static gboolean input_remove(guint handle);
+	// PurpleEventLoopUiOps callbacks
+	/** Adds timeout to glib main loop context. */
+	static guint timeout_add(guint interval, GSourceFunc function, gpointer data);
+	/** Removes timeout from glib main loop context. */
+	static gboolean timeout_remove(guint handle);
+	/** Adds IO watch to glib main loop context. */
+	static guint input_add(int fd, PurpleInputCondition condition,
+		PurpleInputFunction function, gpointer data);
+	/** Removes input from glib main loop context. */
+	static gboolean input_remove(guint handle);
 
-		// helper function for input_add
-		/** Process IO input to purple callback. */
-		static gboolean purple_glib_io_input(GIOChannel *source,
-				GIOCondition condition, gpointer data);
-		/** Destroyes libpurple io input callback internal data. */
-		static void purple_glib_io_destroy(gpointer data);
+	// helper function for input_add
+	/** Process IO input to purple callback. */
+	static gboolean purple_glib_io_input(GIOChannel *source,
+			GIOCondition condition, gpointer data);
+	/** Destroyes libpurple io input callback internal data. */
+	static void purple_glib_io_destroy(gpointer data);
 
-		// PurpleDebugUiOps callbacks
-		// helper function to catch debug messages during libpurple initialization
-		/** Catches and buffers libpurple debug messages until the Log object
-		 * can be instantiated. */
-		static void tmp_purple_print(PurpleDebugLevel level, const char *category, const char *arg_s);
-		static gboolean tmp_is_enabled(PurpleDebugLevel level, const char *category)
-			{ return TRUE; }
+	// PurpleDebugUiOps callbacks
+	// helper function to catch debug messages during libpurple initialization
+	/** Catches and buffers libpurple debug messages until the Log object
+	 * can be instantiated. */
+	static void tmp_purple_print(PurpleDebugLevel level, const char *category,
+			const char *arg_s);
+	static gboolean tmp_is_enabled(PurpleDebugLevel level,
+			const char *category)
+		{ return TRUE; }
 
-		void ActionFocusBuddyList();
-		void ActionFocusActiveConversation();
-		void ActionOpenAccountStatusMenu();
-		void ActionOpenGeneralMenu();
-		void ActionFocusPrevConversation();
-		void ActionFocusNextConversation();
+	void ActionFocusBuddyList();
+	void ActionFocusActiveConversation();
+	void ActionOpenAccountStatusMenu();
+	void ActionOpenGeneralMenu();
+	void ActionFocusPrevConversation();
+	void ActionFocusNextConversation();
 
-		/** it handles the automatic registration of defined keys */
-		DECLARE_SIG_REGISTERKEYS();
-		static bool RegisterKeys();
-		void DeclareBindables();
+	/** it handles the automatic registration of defined keys */
+	DECLARE_SIG_REGISTERKEYS();
+	static bool RegisterKeys();
+	void DeclareBindables();
 };
 
 #endif /* __CENTERIM_H__ */

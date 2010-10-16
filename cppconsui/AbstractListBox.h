@@ -40,46 +40,46 @@
 class AbstractListBox
 : public ScrollPane
 {
-	public:
-		AbstractListBox(int w, int h);
-		virtual ~AbstractListBox() {}
+public:
+	AbstractListBox(int w, int h);
+	virtual ~AbstractListBox() {}
 
-		/**
-		 * Inserts a new button into ListBox before a given position.
-		 */
-		Button *InsertItem(size_t pos, const gchar *title,
-				sigc::slot<void, Button&> function);
-		/**
-		 * Adds a new button in the end of ListBox.
-		 */
-		Button *AppendItem(const gchar *title,
-				sigc::slot<void, Button&> function);
-		/**
-		 * Inserts a separator (usually a horizontal or vertical line) into
-		 * the ListBox before a given position.
-		 */
-		virtual AbstractLine *InsertSeparator(size_t pos) = 0;
-		/**
-		 * Appends a separator (usually a horizontal or vertical line) into
-		 * the ListBox.
-		 */
-		virtual AbstractLine *AppendSeparator() = 0;
-		/**
-		 * Inserts a widget into the ListBox before a given position.
-		 */
-		virtual void InsertWidget(size_t pos, Widget& widget) = 0;
-		/**
-		 * Appends a widget into the ListBox.
-		 */
-		virtual void AppendWidget(Widget& widget) = 0;
+	/**
+	 * Inserts a new button into ListBox before a given position.
+	 */
+	Button *InsertItem(size_t pos, const gchar *title,
+			sigc::slot<void, Button&> function);
+	/**
+	 * Adds a new button in the end of ListBox.
+	 */
+	Button *AppendItem(const gchar *title,
+			sigc::slot<void, Button&> function);
+	/**
+	 * Inserts a separator (usually a horizontal or vertical line) into the
+	 * ListBox before a given position.
+	 */
+	virtual AbstractLine *InsertSeparator(size_t pos) = 0;
+	/**
+	 * Appends a separator (usually a horizontal or vertical line) into the
+	 * ListBox.
+	 */
+	virtual AbstractLine *AppendSeparator() = 0;
+	/**
+	 * Inserts a widget into the ListBox before a given position.
+	 */
+	virtual void InsertWidget(size_t pos, Widget& widget) = 0;
+	/**
+	 * Appends a widget into the ListBox.
+	 */
+	virtual void AppendWidget(Widget& widget) = 0;
 
-	protected:
-		// Container
-		virtual void AddWidget(Widget& widget, int x, int y);
+protected:
+	// Container
+	virtual void AddWidget(Widget& widget, int x, int y);
 
-	private:
-		AbstractListBox(const AbstractListBox&);
-		AbstractListBox& operator=(const AbstractListBox&);
+private:
+	AbstractListBox(const AbstractListBox&);
+	AbstractListBox& operator=(const AbstractListBox&);
 };
 
 #endif /* __ABSTRACTLISTBOX_H__ */
