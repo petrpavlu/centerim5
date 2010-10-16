@@ -30,6 +30,9 @@
 #define __DIALOG_H__
 
 #define OK_BUTTON_TEXT "Ok"
+#define CANCEL_BUTTON_TEXT "Cancel"
+#define YES_BUTTON_TEXT "Yes"
+#define NO_BUTTON_TEXT "No"
 
 #include "HorizontalLine.h"
 #include "HorizontalListBox.h"

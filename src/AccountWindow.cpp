@@ -356,8 +356,8 @@ void AccountWindow::AccountOptionBool::UpdateText()
 		value = purple_account_get_bool(account, setting,
 				purple_account_option_get_default_bool(option));
 
-	/// @todo Create some DEFAULT_TEXT_YES etc, also for use in dialogs.
-	gchar *str = g_strdup_printf("%s: %s", text, value ? _("yes") : _("no"));
+	gchar *str = g_strdup_printf("%s: %s", text,
+			value ? _(YES_BUTTON_TEXT) : _(NO_BUTTON_TEXT));
 	SetText(str);
 	g_free(str);
 }
