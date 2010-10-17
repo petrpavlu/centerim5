@@ -52,6 +52,10 @@ private:
 	static void choice_ok_cb_(void *data, int selected)
 		{ reinterpret_cast<GeneralMenu *>(data)->choice_ok_cb(selected); }
 	void choice_ok_cb(int selected);
+
+	static void action_cb_(void *data, int action)
+		{ reinterpret_cast<GeneralMenu *>(data)->action_cb(action); }
+	void action_cb(int action);
 };
 
 #endif /* __GENERALMENU_H__ */

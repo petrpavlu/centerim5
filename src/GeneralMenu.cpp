@@ -91,6 +91,7 @@ void GeneralMenu::RequestTest(Button& activator)
 			this);
 #endif
 
+#if 0
 	purple_request_choice(NULL, "Title", "Primary",
 			"Secondary", 1,
 			"ok_text", G_CALLBACK(choice_ok_cb_),
@@ -101,6 +102,13 @@ void GeneralMenu::RequestTest(Button& activator)
 			"Option 1", 1,
 			"Option 2", 2,
 			NULL);
+#endif
+
+	purple_request_action(NULL, "Title", "Primary", "Secondary", 1, NULL,
+			NULL, NULL, this, 3,
+			"Action 0", G_CALLBACK(action_cb_),
+			"Action 1", NULL,
+			"Action 2", G_CALLBACK(action_cb_));
 }
 
 void GeneralMenu::input_ok_cb(const gchar *text)
@@ -111,4 +119,9 @@ void GeneralMenu::input_ok_cb(const gchar *text)
 void GeneralMenu::choice_ok_cb(int selected)
 {
 	LOG->Write(Log::Level_debug, "choice_ok_cb: %d\n", selected);
+}
+
+void GeneralMenu::action_cb(int action)
+{
+	LOG->Write(Log::Level_debug, "action_cb: %d\n", action);
 }

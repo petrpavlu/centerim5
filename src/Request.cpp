@@ -102,7 +102,14 @@ void *Request::request_action(const char *title, const char *primary,
 		const char *who, PurpleConversation *conv, void *user_data,
 		size_t action_count, va_list actions)
 {
-	return NULL;
+	LOG->Write(Log::Level_debug, "request_action\n");
+
+	ActionDialog *dialog = new ActionDialog(title, primary, secondary,
+			default_action, user_data, action_count, actions);
+	dialog->signal_response.connect(sigc::mem_fun(this,
+				&Request::OnDialogResponse));
+	dialog->Show();
+	return dialog;
 }
 
 void *Request::request_fields(const char *title, const char *primary,
@@ -238,12 +245,11 @@ Request::ChoiceDialog::ChoiceDialog(const gchar *title, const gchar *primary,
 	combo->GrabFocus();
 
 	gchar *text;
-	while ((text = va_arg(choices, gchar *))) {
+	while ((text = va_arg(choices, gchar*))) {
 		int resp = va_arg(choices, int);
 		combo->AddOption(text, resp);
-		if (resp == default_value)
-			combo->SetSelectedByData(resp);
 	}
+	combo->SetSelectedByData(default_value);
 }
 
 PurpleRequestType Request::ChoiceDialog::GetRequestType()
@@ -272,4 +278,42 @@ void Request::ChoiceDialog::ResponseHandler(Dialog& activator,
 			g_assert_not_reached();
 			break;
 	}
+}
+
+Request::ActionDialog::ActionDialog(const gchar *title, const gchar *primary,
+		const gchar *secondary, int default_value, void *user_data,
+		size_t action_count, va_list actions)
+: RequestDialog(title, primary, secondary, NULL, NULL, NULL, NULL, user_data)
+{
+	for (size_t i = 0; i < action_count; i++) {
+		gchar *title = va_arg(actions, gchar*);
+		GCallback cb = va_arg(actions, GCallback);
+
+		Button *b = buttons->AppendItem(title, sigc::bind(sigc::mem_fun(this,
+						&Request::ActionDialog::OnActionChoice), i, cb));
+		if ((int) i == default_value)
+			b->GrabFocus();
+
+		if (i != action_count - 1)
+			buttons->AppendSeparator();
+	}
+}
+
+PurpleRequestType Request::ActionDialog::GetRequestType()
+{
+	return PURPLE_REQUEST_ACTION;
+}
+
+void Request::ActionDialog::ResponseHandler(Dialog& activator,
+		ResponseType response)
+{
+}
+
+void Request::ActionDialog::OnActionChoice(Button& activator, size_t i,
+		GCallback cb)
+{
+	if (cb)
+		reinterpret_cast<PurpleRequestActionCb>(cb)(user_data, i);
+
+	Close();
 }

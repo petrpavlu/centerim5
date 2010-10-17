@@ -115,6 +115,29 @@ private:
 				ResponseType response);
 	};
 
+	class ActionDialog
+	: public RequestDialog
+	{
+	public:
+		ActionDialog(const gchar *title, const gchar *primary,
+				const gchar *secondary, int default_value, void *user_data,
+				size_t action_count, va_list actions);
+		virtual ~ActionDialog() {}
+
+		virtual PurpleRequestType GetRequestType();
+
+	protected:
+
+	private:
+		ActionDialog(const ActionDialog&);
+		ActionDialog& operator=(const ActionDialog&);
+
+		virtual void ResponseHandler(Dialog& activator,
+				ResponseType response);
+
+		void OnActionChoice(Button& activator, size_t i, GCallback cb);
+	};
+
 	typedef std::set<RequestDialog *> Requests;
 
 	Requests requests;
