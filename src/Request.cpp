@@ -25,6 +25,7 @@
 
 #include <cppconsui/Spacer.h>
 #include <cstring>
+#include "gettext.h"
 
 Request *Request::Instance()
 {
@@ -118,7 +119,14 @@ void *Request::request_fields(const char *title, const char *primary,
 		GCallback cancel_cb, PurpleAccount *account, const char *who,
 		PurpleConversation *conv, void *user_data)
 {
-	return NULL;
+	LOG->Write(Log::Level_debug, "request_fields\n");
+
+	FieldsDialog *dialog = new FieldsDialog(title, primary, secondary,
+			fields, ok_text, ok_cb, cancel_text, cancel_cb, user_data);
+	dialog->signal_response.connect(sigc::mem_fun(this,
+				&Request::OnDialogResponse));
+	dialog->Show();
+	return dialog;
 }
 
 void *Request::request_file(const char *title, const char *filename,
@@ -316,4 +324,135 @@ void Request::ActionDialog::OnActionChoice(Button& activator, size_t i,
 		reinterpret_cast<PurpleRequestActionCb>(cb)(user_data, i);
 
 	Close();
+}
+
+Request::FieldsDialog::FieldsDialog(const gchar *title, const gchar *primary,
+		const gchar *secondary, PurpleRequestFields *request_fields,
+		const gchar *ok_text, GCallback ok_cb, const gchar *cancel_text,
+		GCallback cancel_cb, void *user_data)
+: RequestDialog(title, primary, secondary, ok_text, ok_cb, cancel_text,
+		cancel_cb, user_data)
+, fields(request_fields)
+{
+	for (GList *groups = purple_request_fields_get_groups(fields); groups;
+			groups = groups->next) {
+		PurpleRequestFieldGroup *group
+			= reinterpret_cast<PurpleRequestFieldGroup*>(groups->data);
+
+		const gchar *title = purple_request_field_group_get_title(group);
+
+		if (title) {
+			Label *l = new Label(title);
+			lbox->AppendWidget(*l);
+		}
+
+		for (GList *gfields = purple_request_field_group_get_fields(group);
+				gfields; gfields = gfields->next) {
+			PurpleRequestField *field
+				= reinterpret_cast<PurpleRequestField*>(gfields->data);
+
+			if (!purple_request_field_is_visible(field))
+				continue;
+
+			PurpleRequestFieldType type = purple_request_field_get_type(field);
+			const gchar *label = purple_request_field_get_label(field);
+
+			if (type != PURPLE_REQUEST_FIELD_BOOLEAN && label) {
+				Label *l = new Label(label);
+				if (purple_request_field_is_required(field))
+					; // TODO
+				lbox->AppendWidget(*l);
+			}
+
+			switch (type) {
+				case PURPLE_REQUEST_FIELD_STRING:
+					CreateStringField(field);
+					break;
+				case PURPLE_REQUEST_FIELD_INTEGER:
+					CreateIntegerField(field);
+					break;
+				case PURPLE_REQUEST_FIELD_BOOLEAN:
+					CreateBooleanField(field);
+					break;
+				case PURPLE_REQUEST_FIELD_CHOICE:
+					CreateChoiceField(field);
+					break;
+				case PURPLE_REQUEST_FIELD_LIST:
+					CreateListField(field);
+					break;
+				case PURPLE_REQUEST_FIELD_LABEL:
+					CreateLabelField(field);
+					break;
+				case PURPLE_REQUEST_FIELD_IMAGE:
+					CreateImageField(field);
+					break;
+				case PURPLE_REQUEST_FIELD_ACCOUNT:
+					CreateAccountField(field);
+					break;
+				default:
+					LOG->Write(Log::Level_error,
+							_("Not implemented Request field type.\n"));
+					break;
+			}
+		}
+		if (groups->next)
+			lbox->AppendSeparator();
+	}
+}
+
+PurpleRequestType Request::FieldsDialog::GetRequestType()
+{
+	return PURPLE_REQUEST_FIELDS;
+}
+
+void Request::FieldsDialog::CreateStringField(PurpleRequestField *field)
+{
+}
+
+void Request::FieldsDialog::CreateIntegerField(PurpleRequestField *field)
+{
+}
+
+void Request::FieldsDialog::CreateBooleanField(PurpleRequestField *field)
+{
+}
+
+void Request::FieldsDialog::CreateChoiceField(PurpleRequestField *field)
+{
+}
+
+void Request::FieldsDialog::CreateListField(PurpleRequestField *field)
+{
+}
+
+void Request::FieldsDialog::CreateLabelField(PurpleRequestField *field)
+{
+}
+
+void Request::FieldsDialog::CreateImageField(PurpleRequestField *field)
+{
+}
+
+void Request::FieldsDialog::CreateAccountField(PurpleRequestField *field)
+{
+}
+
+void Request::FieldsDialog::ResponseHandler(Dialog& activator,
+		ResponseType response)
+{
+	switch (response) {
+		case Dialog::RESPONSE_OK:
+			if (ok_cb)
+				reinterpret_cast<PurpleRequestFieldsCb>(ok_cb)(user_data,
+						fields);
+			break;
+		case Dialog::RESPONSE_CANCEL:
+			if (cancel_cb)
+				reinterpret_cast<PurpleRequestFieldsCb>(cancel_cb)(user_data,
+						fields);
+			break;
+		default:
+			g_assert_not_reached();
+			break;
+	}
 }

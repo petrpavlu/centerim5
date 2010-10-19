@@ -59,12 +59,12 @@ private:
 		// convenient var, same as dynamic_cast<ListBox *>(container)
 		ListBox *lbox;
 
+		virtual void ResponseHandler(Dialog& activator,
+				ResponseType response) = 0;
+
 	private:
 		RequestDialog(const RequestDialog&);
 		RequestDialog& operator=(const RequestDialog&);
-
-		virtual void ResponseHandler(Dialog& activator,
-				ResponseType response) = 0;
 	};
 
 	class InputDialog
@@ -83,12 +83,12 @@ private:
 	protected:
 		TextEntry *entry;
 
+		virtual void ResponseHandler(Dialog& activator,
+				ResponseType response);
+
 	private:
 		InputDialog(const InputDialog&);
 		InputDialog& operator=(const InputDialog&);
-
-		virtual void ResponseHandler(Dialog& activator,
-				ResponseType response);
 	};
 
 	class ChoiceDialog
@@ -107,12 +107,12 @@ private:
 	protected:
 		ComboBox *combo;
 
+		virtual void ResponseHandler(Dialog& activator,
+				ResponseType response);
+
 	private:
 		ChoiceDialog(const ChoiceDialog&);
 		ChoiceDialog& operator=(const ChoiceDialog&);
-
-		virtual void ResponseHandler(Dialog& activator,
-				ResponseType response);
 	};
 
 	class ActionDialog
@@ -128,14 +128,47 @@ private:
 
 	protected:
 
+		virtual void ResponseHandler(Dialog& activator,
+				ResponseType response);
+
 	private:
 		ActionDialog(const ActionDialog&);
 		ActionDialog& operator=(const ActionDialog&);
 
+		void OnActionChoice(Button& activator, size_t i, GCallback cb);
+	};
+
+	class FieldsDialog
+	: public RequestDialog
+	{
+	public:
+		FieldsDialog(const gchar *title, const gchar *primary,
+				const gchar *secondary, PurpleRequestFields *request_fields,
+				const gchar *ok_text, GCallback ok_cb,
+				const gchar *cancel_text, GCallback cancel_cb,
+				void *user_data);
+		virtual ~FieldsDialog() {}
+
+		virtual PurpleRequestType GetRequestType();
+
+	protected:
+		PurpleRequestFields *fields;
+
+		void CreateStringField(PurpleRequestField *field);
+		void CreateIntegerField(PurpleRequestField *field);
+		void CreateBooleanField(PurpleRequestField *field);
+		void CreateChoiceField(PurpleRequestField *field);
+		void CreateListField(PurpleRequestField *field);
+		void CreateLabelField(PurpleRequestField *field);
+		void CreateImageField(PurpleRequestField *field);
+		void CreateAccountField(PurpleRequestField *field);
+
 		virtual void ResponseHandler(Dialog& activator,
 				ResponseType response);
 
-		void OnActionChoice(Button& activator, size_t i, GCallback cb);
+	private:
+		FieldsDialog(const FieldsDialog&);
+		FieldsDialog& operator=(const FieldsDialog&);
 	};
 
 	typedef std::set<RequestDialog *> Requests;
