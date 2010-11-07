@@ -110,5 +110,5 @@ void Header::account_alias_changed(PurpleAccount *account, const gchar *old)
 
 void Header::ScreenResized()
 {
-	MoveResizeRect(CENTERIM->ScreenAreaSize(CenterIM::HeaderArea));
+	MoveResizeRect(CENTERIM->ScreenAreaSize(CenterIM::HEADER_AREA));
 }

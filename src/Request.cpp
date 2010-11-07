@@ -70,7 +70,7 @@ void *Request::request_input(const char *title, const char *primary,
 		const char *cancel_text, GCallback cancel_cb, PurpleAccount *account,
 		const char *who, PurpleConversation *conv, void *user_data)
 {
-	LOG->Write(Log::Level_debug, "request_input\n");
+	LOG->Write(Log::LEVEL_DEBUG, "request_input\n");
 
 	InputDialog *dialog = new InputDialog(title, primary, secondary,
 			default_value, masked, ok_text, ok_cb, cancel_text, cancel_cb,
@@ -87,7 +87,7 @@ void *Request::request_choice(const char *title, const char *primary,
 		PurpleAccount *account, const char *who, PurpleConversation *conv,
 		void *user_data, va_list choices)
 {
-	LOG->Write(Log::Level_debug, "request_choice\n");
+	LOG->Write(Log::LEVEL_DEBUG, "request_choice\n");
 
 	ChoiceDialog *dialog = new ChoiceDialog(title, primary, secondary,
 			default_value, ok_text, ok_cb, cancel_text, cancel_cb, user_data,
@@ -103,7 +103,7 @@ void *Request::request_action(const char *title, const char *primary,
 		const char *who, PurpleConversation *conv, void *user_data,
 		size_t action_count, va_list actions)
 {
-	LOG->Write(Log::Level_debug, "request_action\n");
+	LOG->Write(Log::LEVEL_DEBUG, "request_action\n");
 
 	ActionDialog *dialog = new ActionDialog(title, primary, secondary,
 			default_action, user_data, action_count, actions);
@@ -119,7 +119,7 @@ void *Request::request_fields(const char *title, const char *primary,
 		GCallback cancel_cb, PurpleAccount *account, const char *who,
 		PurpleConversation *conv, void *user_data)
 {
-	LOG->Write(Log::Level_debug, "request_fields\n");
+	LOG->Write(Log::LEVEL_DEBUG, "request_fields\n");
 
 	FieldsDialog *dialog = new FieldsDialog(title, primary, secondary,
 			fields, ok_text, ok_cb, cancel_text, cancel_cb, user_data);
@@ -139,7 +139,7 @@ void *Request::request_file(const char *title, const char *filename,
 
 void Request::close_request(PurpleRequestType type, void *ui_handle)
 {
-	LOG->Write(Log::Level_debug, "close_request\n");
+	LOG->Write(Log::LEVEL_DEBUG, "close_request\n");
 
 	g_assert(ui_handle);
 
@@ -198,7 +198,7 @@ Request::RequestDialog::RequestDialog(const gchar *title,
 
 void Request::RequestDialog::ScreenResized()
 {
-	Rect screen = CENTERIM->ScreenAreaSize(CenterIM::WholeArea);
+	Rect screen = CENTERIM->ScreenAreaSize(CenterIM::WHOLE_AREA);
 
 	MoveResize(screen.Width() / 4, screen.Height() / 4, screen.Width() / 2,
 			screen.Height() / 2);
@@ -396,8 +396,8 @@ Request::FieldsDialog::FieldsDialog(const gchar *title, const gchar *primary,
 					CreateAccountField(hbox, field);
 					break;
 				default:
-					LOG->Write(Log::Level_error,
-							_("Not implemented Request field type.\n"));
+					LOG->Write(Log::LEVEL_ERROR,
+							_("Unimplemented Request field type.\n"));
 					break;
 			}
 		}

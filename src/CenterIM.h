@@ -37,7 +37,14 @@ class CenterIM
 : public InputProcessor
 {
 public:
-	enum ScreenArea {HeaderArea, BuddyListArea, LogArea, ChatArea, WholeArea, AreaMax};
+	enum ScreenArea {
+		HEADER_AREA,
+		BUDDY_LIST_AREA,
+		LOG_AREA,
+		CHAT_AREA,
+		WHOLE_AREA,
+		AREAS_NUM
+	};
 
 	static CenterIM *Instance();
 
@@ -80,7 +87,7 @@ private:
 	typedef std::vector<LogBufferItem> LogBufferItems;
 	static LogBufferItems *logbuf;
 
-	Rect areaSizes[AreaMax];
+	Rect areaSizes[AREAS_NUM];
 
 	CenterIM();
 	CenterIM(const CenterIM&);

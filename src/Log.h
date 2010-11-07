@@ -36,13 +36,13 @@ class Log
 public:
 	// levels are 1:1 mapped to glib levels
 	enum Level {
-		Level_none,
-		Level_error, // = fatal in libpurle
-		Level_critical, // = error in libpurple
-		Level_warning,
-		Level_message, // no such level in libpurple
-		Level_info,
-		Level_debug // = misc in libpurple
+		LEVEL_NONE,
+		LEVEL_ERROR, // = fatal in libpurle
+		LEVEL_CRITICAL, // = error in libpurple
+		LEVEL_WARNING,
+		LEVEL_MESSAGE, // no such level in libpurple
+		LEVEL_INFO,
+		LEVEL_DEBUG // = misc in libpurple
 	};
 
 	static Log *Instance();

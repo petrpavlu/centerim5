@@ -66,7 +66,7 @@ GeneralMenu::GeneralMenu(int x, int y, int w, int h)
 
 void GeneralMenu::ScreenResized()
 {
-	Rect chat = CENTERIM->ScreenAreaSize(CenterIM::ChatArea);
+	Rect chat = CENTERIM->ScreenAreaSize(CenterIM::CHAT_AREA);
 	MoveResize(chat.x, chat.y, win_w, win_h);
 }
 
@@ -134,20 +134,20 @@ void GeneralMenu::RequestTest(Button& activator)
 
 void GeneralMenu::input_ok_cb(const gchar *text)
 {
-	LOG->Write(Log::Level_debug, "input_ok_cb: %s\n", text);
+	LOG->Write(Log::LEVEL_DEBUG, "input_ok_cb: %s\n", text);
 }
 
 void GeneralMenu::choice_ok_cb(int selected)
 {
-	LOG->Write(Log::Level_debug, "choice_ok_cb: %d\n", selected);
+	LOG->Write(Log::LEVEL_DEBUG, "choice_ok_cb: %d\n", selected);
 }
 
 void GeneralMenu::action_cb(int action)
 {
-	LOG->Write(Log::Level_debug, "action_cb: %d\n", action);
+	LOG->Write(Log::LEVEL_DEBUG, "action_cb: %d\n", action);
 }
 
 void GeneralMenu::fields_ok_cb(PurpleRequestFields *fields)
 {
-	LOG->Write(Log::Level_debug, "fields_ok_cb\n");
+	LOG->Write(Log::LEVEL_DEBUG, "fields_ok_cb\n");
 }

@@ -277,25 +277,25 @@ Log::Level Conf::GetLogLevel(const gchar *type)
 {
 	gchar *pref = g_strconcat(CONF_PREFIX, "log/log_level_", type, NULL);
 	const gchar *slevel;
-	Log::Level level = Log::Level_debug;
+	Log::Level level = Log::LEVEL_DEBUG;
 
 	if (!g_ascii_strcasecmp(type, "cim"))
 		slevel = GetString(pref, "info");
 	else
 		slevel = GetString(pref, "none");
 
-	if (!g_ascii_strcasecmp(slevel,"none")) level = Log::Level_none;
-	else if (!g_ascii_strcasecmp(slevel, "debug")) level = Log::Level_debug;
-	else if (!g_ascii_strcasecmp(slevel, "info")) level = Log::Level_info;
-	else if (!g_ascii_strcasecmp(slevel, "message")) level = Log::Level_message;
-	else if (!g_ascii_strcasecmp(slevel, "warning")) level = Log::Level_warning;
-	else if (!g_ascii_strcasecmp(slevel, "critical")) level = Log::Level_critical;
-	else if (!g_ascii_strcasecmp(slevel, "error")) level = Log::Level_error;
+	if (!g_ascii_strcasecmp(slevel,"none")) level = Log::LEVEL_NONE;
+	else if (!g_ascii_strcasecmp(slevel, "debug")) level = Log::LEVEL_DEBUG;
+	else if (!g_ascii_strcasecmp(slevel, "info")) level = Log::LEVEL_INFO;
+	else if (!g_ascii_strcasecmp(slevel, "message")) level = Log::LEVEL_MESSAGE;
+	else if (!g_ascii_strcasecmp(slevel, "warning")) level = Log::LEVEL_WARNING;
+	else if (!g_ascii_strcasecmp(slevel, "critical")) level = Log::LEVEL_CRITICAL;
+	else if (!g_ascii_strcasecmp(slevel, "error")) level = Log::LEVEL_ERROR;
 	else {
 		if (!g_ascii_strcasecmp(type, "cim"))
-			SetLogLevel(type, Log::Level_info);
+			SetLogLevel(type, Log::LEVEL_INFO);
 		else
-			SetLogLevel(type, Log::Level_none);
+			SetLogLevel(type, Log::LEVEL_NONE);
 	}
 	g_free(pref);
 
@@ -307,12 +307,12 @@ void Conf::SetLogLevel(const gchar *type, const Log::Level level)
 	gchar *pref = g_strconcat(CONF_PREFIX, "log/log_level_", type, NULL);
 	const gchar *slevel;
 
-	if (level == Log::Level_none) slevel = "none";
-	else if (level == Log::Level_info) slevel = "info";
-	else if (level == Log::Level_warning) slevel = "warning";
-	else if (level == Log::Level_critical) slevel = "critical";
-	else if (level == Log::Level_error) slevel = "error";
-	else if (level == Log::Level_debug) slevel = "debug";
+	if (level == Log::LEVEL_NONE) slevel = "none";
+	else if (level == Log::LEVEL_INFO) slevel = "info";
+	else if (level == Log::LEVEL_WARNING) slevel = "warning";
+	else if (level == Log::LEVEL_CRITICAL) slevel = "critical";
+	else if (level == Log::LEVEL_ERROR) slevel = "error";
+	else if (level == Log::LEVEL_DEBUG) slevel = "debug";
 	else {
 		//TODO error!
 	}

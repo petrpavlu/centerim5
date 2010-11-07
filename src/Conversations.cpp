@@ -75,7 +75,7 @@ void Conversations::Close()
 
 void Conversations::ScreenResized()
 {
-	Rect r = CENTERIM->ScreenAreaSize(CenterIM::ChatArea);
+	Rect r = CENTERIM->ScreenAreaSize(CenterIM::CHAT_AREA);
 	r.y = r.Bottom();
 	r.height = 1;
 
@@ -243,15 +243,17 @@ void Conversations::create_conversation(PurpleConversation *conv)
 	else if (type == PURPLE_CONV_TYPE_CHAT)
 		conversation = new ConversationChat(conv);
 	else {
-		LOG->Write(Log::Level_error, "unhandled conversation type: %i\n", type);
+		LOG->Write(Log::LEVEL_ERROR, "unhandled conversation type: %i\n",
+				type);
 		return;
 	}
 
 	ConvChild c;
 	c.purple_conv = conv;
 	c.conv = conversation;
-	c.sig_close = conversation->signal_close.connect(sigc::group(sigc::mem_fun(this,
-				&Conversations::OnConversationClose), sigc::ref(*conversation)));
+	c.sig_close = conversation->signal_close.connect(sigc::group(
+				sigc::mem_fun(this, &Conversations::OnConversationClose),
+				sigc::ref(*conversation)));
 	char *name = g_strdup_printf(" |%s", purple_conversation_get_name(conv));
 	c.label = new Label(AUTOSIZE, 1, name);
 	g_free(name);

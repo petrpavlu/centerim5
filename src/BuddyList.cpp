@@ -98,13 +98,13 @@ void BuddyList::MoveResize(int newx, int newy, int neww, int newh)
 
 void BuddyList::ScreenResized()
 {
-	MoveResizeRect(CENTERIM->ScreenAreaSize(CenterIM::BuddyListArea));
+	MoveResizeRect(CENTERIM->ScreenAreaSize(CenterIM::BUDDY_LIST_AREA));
 }
 
 void BuddyList::new_list(PurpleBuddyList *list)
 {
 	if (buddylist != list)
-		LOG->Write(Log::Level_error, _("Different Buddylist detected!\n"));
+		LOG->Write(Log::LEVEL_ERROR, _("Different Buddylist detected!\n"));
 }
 
 void BuddyList::new_node(PurpleBlistNode *node)

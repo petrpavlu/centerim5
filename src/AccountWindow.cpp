@@ -57,7 +57,7 @@ AccountWindow::AccountWindow()
 
 void AccountWindow::ScreenResized()
 {
-	Rect screen = CENTERIM->ScreenAreaSize(CenterIM::WholeArea);
+	Rect screen = CENTERIM->ScreenAreaSize(CenterIM::WHOLE_AREA);
 	Rect confSize = CONF->GetAccountWindowDimensions();
 
 	// Check against screen size
@@ -493,7 +493,7 @@ void AccountWindow::AccountOptionInt::ResponseHandler(Dialog& activator,
 			errno = 0;
 			i = strtol(text, NULL, 10);
 			if (errno == ERANGE)
-				LOG->Write(Log::Level_warning, _("Value out of range.\n"));
+				LOG->Write(Log::LEVEL_WARNING, _("Value out of range.\n"));
 			purple_account_set_int(account, setting, i);
 
 			UpdateText();

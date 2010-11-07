@@ -98,7 +98,7 @@ void CenterIM::Run()
 	// init BuddyList last so it takes the focus
 	BuddyList::Instance()->Show();
 
-	LOG->Write(Log::Level_info, _("Welcome to CenterIM 5. Press F4 to display main menu.\n"));
+	LOG->Write(Log::LEVEL_INFO, _("Welcome to CenterIM 5. Press F4 to display main menu.\n"));
 
 	mngr->SetTopInputProcessor(*this);
 	mngr->EnableResizing();
@@ -351,31 +351,31 @@ void CenterIM::ScreenResized()
 	Rect size = CONF->GetBuddyListDimensions();
 	size.width = (int) (size.width * (mngr->GetScreenWidth() / (double) originalW));
 	size.height = mngr->GetScreenHeight() - size.y;
-	areaSizes[BuddyListArea] = size;
+	areaSizes[BUDDY_LIST_AREA] = size;
 
 	size = CONF->GetLogDimensions();
-	size.x = areaSizes[BuddyListArea].width;
+	size.x = areaSizes[BUDDY_LIST_AREA].width;
 	size.width = mngr->GetScreenWidth() - size.x;
 	size.height = (int) (size.height * (mngr->GetScreenHeight() / (double) originalH));
 	size.y = mngr->GetScreenHeight() - size.height;
-	areaSizes[LogArea] = size;
+	areaSizes[LOG_AREA] = size;
 
-	areaSizes[ChatArea].x = areaSizes[BuddyListArea].width;
-	areaSizes[ChatArea].y = 1;
-	areaSizes[ChatArea].width = mngr->GetScreenWidth() - areaSizes[ChatArea].x;
-	//areaSizes[ChatArea].height = mngr->GetScreenHeight() - areaSizes[LogArea].height;
-	areaSizes[ChatArea].height = mngr->GetScreenHeight()
-		- (areaSizes[ChatArea].y + areaSizes[LogArea].height);
+	areaSizes[CHAT_AREA].x = areaSizes[BUDDY_LIST_AREA].width;
+	areaSizes[CHAT_AREA].y = 1;
+	areaSizes[CHAT_AREA].width = mngr->GetScreenWidth() - areaSizes[CHAT_AREA].x;
+	//areaSizes[CHAT_AREA].height = mngr->GetScreenHeight() - areaSizes[LOG_AREA].height;
+	areaSizes[CHAT_AREA].height = mngr->GetScreenHeight()
+		- (areaSizes[CHAT_AREA].y + areaSizes[LOG_AREA].height);
 
-	areaSizes[HeaderArea].x = 0;
-	areaSizes[HeaderArea].y = 0;
-	areaSizes[HeaderArea].width = mngr->GetScreenWidth();
-	areaSizes[HeaderArea].height = 1;
+	areaSizes[HEADER_AREA].x = 0;
+	areaSizes[HEADER_AREA].y = 0;
+	areaSizes[HEADER_AREA].width = mngr->GetScreenWidth();
+	areaSizes[HEADER_AREA].height = 1;
 
-	areaSizes[WholeArea].x = 0;
-	areaSizes[WholeArea].y = 0;
-	areaSizes[WholeArea].width = mngr->GetScreenWidth();
-	areaSizes[WholeArea].height = mngr->GetScreenHeight();
+	areaSizes[WHOLE_AREA].x = 0;
+	areaSizes[WHOLE_AREA].y = 0;
+	areaSizes[WHOLE_AREA].width = mngr->GetScreenWidth();
+	areaSizes[WHOLE_AREA].height = mngr->GetScreenHeight();
 }
 
 void CenterIM::ActionFocusBuddyList()
