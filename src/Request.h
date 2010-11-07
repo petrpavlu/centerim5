@@ -154,14 +154,22 @@ private:
 	protected:
 		PurpleRequestFields *fields;
 
-		void CreateStringField(PurpleRequestField *field);
-		void CreateIntegerField(PurpleRequestField *field);
-		void CreateBooleanField(PurpleRequestField *field);
-		void CreateChoiceField(PurpleRequestField *field);
-		void CreateListField(PurpleRequestField *field);
-		void CreateLabelField(PurpleRequestField *field);
-		void CreateImageField(PurpleRequestField *field);
-		void CreateAccountField(PurpleRequestField *field);
+		void CreateStringField(HorizontalListBox *hbox,
+				PurpleRequestField *field);
+		void CreateIntegerField(HorizontalListBox *hbox,
+				PurpleRequestField *field);
+		void CreateBooleanField(HorizontalListBox *hbox,
+				PurpleRequestField *field);
+		void CreateChoiceField(HorizontalListBox *hbox,
+				PurpleRequestField *field);
+		void CreateListField(HorizontalListBox *hbox,
+				PurpleRequestField *field);
+		void CreateLabelField(HorizontalListBox *hbox,
+				PurpleRequestField *field);
+		void CreateImageField(HorizontalListBox *hbox,
+				PurpleRequestField *field);
+		void CreateAccountField(HorizontalListBox *hbox,
+				PurpleRequestField *field);
 
 		virtual void ResponseHandler(Dialog& activator,
 				ResponseType response);

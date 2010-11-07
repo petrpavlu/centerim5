@@ -24,6 +24,8 @@
 
 #include <cppconsui/MenuWindow.h>
 
+#include <libpurple/request.h>
+
 class GeneralMenu
 : public MenuWindow
 {
@@ -56,6 +58,10 @@ private:
 	static void action_cb_(void *data, int action)
 		{ reinterpret_cast<GeneralMenu *>(data)->action_cb(action); }
 	void action_cb(int action);
+
+	static void fields_ok_cb_(void *data, PurpleRequestFields *fields)
+		{ reinterpret_cast<GeneralMenu *>(data)->fields_ok_cb(fields); }
+	void fields_ok_cb(PurpleRequestFields *fields);
 };
 
 #endif /* __GENERALMENU_H__ */

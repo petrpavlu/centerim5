@@ -357,37 +357,43 @@ Request::FieldsDialog::FieldsDialog(const gchar *title, const gchar *primary,
 			PurpleRequestFieldType type = purple_request_field_get_type(field);
 			const gchar *label = purple_request_field_get_label(field);
 
+			HorizontalListBox *hbox = new HorizontalListBox(AUTOSIZE, 1);
+			lbox->AppendWidget(*hbox);
+
 			if (type != PURPLE_REQUEST_FIELD_BOOLEAN && label) {
-				Label *l = new Label(label);
-				if (purple_request_field_is_required(field))
-					; // TODO
-				lbox->AppendWidget(*l);
+				gchar *label_new = g_strdup_printf("%s%s: ",
+						purple_request_field_is_required(field) ? "*" : "",
+						label);
+				Label *l = new Label(Curses::onscreen_width(label_new), 1,
+						label_new);
+				g_free(label_new);
+				hbox->AppendWidget(*l);
 			}
 
 			switch (type) {
 				case PURPLE_REQUEST_FIELD_STRING:
-					CreateStringField(field);
+					CreateStringField(hbox, field);
 					break;
 				case PURPLE_REQUEST_FIELD_INTEGER:
-					CreateIntegerField(field);
+					CreateIntegerField(hbox, field);
 					break;
 				case PURPLE_REQUEST_FIELD_BOOLEAN:
-					CreateBooleanField(field);
+					CreateBooleanField(hbox, field);
 					break;
 				case PURPLE_REQUEST_FIELD_CHOICE:
-					CreateChoiceField(field);
+					CreateChoiceField(hbox, field);
 					break;
 				case PURPLE_REQUEST_FIELD_LIST:
-					CreateListField(field);
+					CreateListField(hbox, field);
 					break;
 				case PURPLE_REQUEST_FIELD_LABEL:
-					CreateLabelField(field);
+					CreateLabelField(hbox, field);
 					break;
 				case PURPLE_REQUEST_FIELD_IMAGE:
-					CreateImageField(field);
+					CreateImageField(hbox, field);
 					break;
 				case PURPLE_REQUEST_FIELD_ACCOUNT:
-					CreateAccountField(field);
+					CreateAccountField(hbox, field);
 					break;
 				default:
 					LOG->Write(Log::Level_error,
@@ -405,35 +411,49 @@ PurpleRequestType Request::FieldsDialog::GetRequestType()
 	return PURPLE_REQUEST_FIELDS;
 }
 
-void Request::FieldsDialog::CreateStringField(PurpleRequestField *field)
+void Request::FieldsDialog::CreateStringField(HorizontalListBox *hbox,
+		PurpleRequestField *field)
+{
+	const gchar *def = purple_request_field_string_get_default_value(field);
+	TextEntry *te = new TextEntry(AUTOSIZE, 1, def);
+	if (purple_request_field_string_is_masked(field))
+		; // TODO
+	hbox->AppendWidget(*te);
+	purple_request_field_set_ui_data(field, te);
+}
+
+void Request::FieldsDialog::CreateIntegerField(HorizontalListBox *hbox,
+		PurpleRequestField *field)
 {
 }
 
-void Request::FieldsDialog::CreateIntegerField(PurpleRequestField *field)
+void Request::FieldsDialog::CreateBooleanField(HorizontalListBox *hbox,
+		PurpleRequestField *field)
 {
 }
 
-void Request::FieldsDialog::CreateBooleanField(PurpleRequestField *field)
+void Request::FieldsDialog::CreateChoiceField(HorizontalListBox *hbox,
+		PurpleRequestField *field)
 {
 }
 
-void Request::FieldsDialog::CreateChoiceField(PurpleRequestField *field)
+void Request::FieldsDialog::CreateListField(HorizontalListBox *hbox,
+		PurpleRequestField *field)
 {
 }
 
-void Request::FieldsDialog::CreateListField(PurpleRequestField *field)
+void Request::FieldsDialog::CreateLabelField(HorizontalListBox *hbox,
+		PurpleRequestField *field)
 {
 }
 
-void Request::FieldsDialog::CreateLabelField(PurpleRequestField *field)
+void Request::FieldsDialog::CreateImageField(HorizontalListBox *hbox,
+		PurpleRequestField *field)
 {
 }
 
-void Request::FieldsDialog::CreateImageField(PurpleRequestField *field)
-{
-}
-
-void Request::FieldsDialog::CreateAccountField(PurpleRequestField *field)
+void Request::FieldsDialog::CreateAccountField(HorizontalListBox *hbox,
+		PurpleRequestField *field)
 {
 }
 
@@ -455,4 +475,6 @@ void Request::FieldsDialog::ResponseHandler(Dialog& activator,
 			g_assert_not_reached();
 			break;
 	}
+
+	purple_request_fields_destroy(fields);
 }

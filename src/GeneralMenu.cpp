@@ -104,11 +104,32 @@ void GeneralMenu::RequestTest(Button& activator)
 			NULL);
 #endif
 
+#if 0
 	purple_request_action(NULL, "Title", "Primary", "Secondary", 1, NULL,
 			NULL, NULL, this, 3,
 			"Action 0", G_CALLBACK(action_cb_),
 			"Action 1", NULL,
 			"Action 2", G_CALLBACK(action_cb_));
+#endif
+
+	PurpleRequestFields *fields = purple_request_fields_new();
+	PurpleRequestFieldGroup *g = purple_request_field_group_new("Group 0");;
+
+	purple_request_fields_add_group(fields, g);
+
+	PurpleRequestField *f;
+	f = purple_request_field_string_new("text0", "String field 0", NULL,
+			FALSE);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_string_new("text1", "String field 1", NULL,
+			FALSE);
+	purple_request_field_group_add_field(g, f);
+
+	purple_request_fields(NULL, "Title", "Primary", "Secondary", fields,
+			"ok_text", G_CALLBACK(fields_ok_cb_),
+			"cancel_text", NULL,
+			NULL, NULL, NULL, this);
+
 }
 
 void GeneralMenu::input_ok_cb(const gchar *text)
@@ -124,4 +145,9 @@ void GeneralMenu::choice_ok_cb(int selected)
 void GeneralMenu::action_cb(int action)
 {
 	LOG->Write(Log::Level_debug, "action_cb: %d\n", action);
+}
+
+void GeneralMenu::fields_ok_cb(PurpleRequestFields *fields)
+{
+	LOG->Write(Log::Level_debug, "fields_ok_cb\n");
 }
