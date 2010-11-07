@@ -28,10 +28,7 @@
 
 #include "Container.h"
 
-#include "ColorScheme.h"
-#include "ConsuiCurses.h"
 #include "Keys.h"
-#include "Window.h"
 
 #include <algorithm>
 #include "gettext.h"
@@ -108,7 +105,8 @@ void Container::MoveResize(int newx, int newy, int neww, int newh)
 {
 	Widget::MoveResize(newx, newy, neww, newh);
 
-	UpdateAreas();
+	for (Children::iterator i = children.begin(); i != children.end(); i++)
+		i->widget->UpdateArea();
 }
 
 void Container::Draw()
@@ -116,8 +114,7 @@ void Container::Draw()
 	if (!area)
 		return;
 
-	area->fill(COLORSCHEME->GetColorPair(GetColorScheme(), "container",
-				"background"));
+	area->fill(GetColorPair("container", "background"));
 
 	for (Children::iterator i = children.begin(); i != children.end(); i++)
 		if (i->widget->IsVisible())
@@ -476,12 +473,6 @@ void Container::InsertWidget(size_t pos, Widget& widget, int x, int y)
 	children[pos].sig_visible
 		= widget.signal_visible.connect(sigc::mem_fun(this,
 					&Container::OnChildVisible));
-}
-
-void Container::UpdateAreas()
-{
-	for (Children::iterator i = children.begin(); i != children.end(); i++)
-		i->widget->UpdateArea();
 }
 
 void Container::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize)

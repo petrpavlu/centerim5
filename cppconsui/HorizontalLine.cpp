@@ -28,9 +28,6 @@
 
 #include "HorizontalLine.h"
 
-#include "ConsuiCurses.h"
-#include "ColorScheme.h"
-
 HorizontalLine::HorizontalLine(int w, LineStyle::Type ltype)
 : AbstractLine(w, 1, ltype)
 {
@@ -43,7 +40,7 @@ void HorizontalLine::Draw()
 	if (!area || (realw = area->getmaxx()) == 0 || area->getmaxy() != 1)
 		return;
 
-	int attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "horizontalline", "line");
+	int attrs = GetColorPair("horizontalline", "line");
 	area->attron(attrs);
 	if (realw <= 1) {
 		area->mvaddstring(0, 0, linestyle.H());

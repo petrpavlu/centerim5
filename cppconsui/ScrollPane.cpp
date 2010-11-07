@@ -28,8 +28,6 @@
 
 #include "ScrollPane.h"
 
-#include "ColorScheme.h"
-
 ScrollPane::ScrollPane(int w, int h, int scrollw, int scrollh)
 : Container(w, h)
 , scroll_xpos(0)
@@ -150,8 +148,7 @@ void ScrollPane::DrawEx(bool container_draw)
 {
 	if (!area || !scrollarea) {
 		if (scrollarea)
-			scrollarea->fill(COLORSCHEME->GetColorPair(GetColorScheme(),
-						"container", "background"));
+			scrollarea->fill(GetColorPair("container", "background"));
 		return;
 	}
 

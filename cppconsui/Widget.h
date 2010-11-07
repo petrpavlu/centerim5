@@ -158,6 +158,12 @@ protected:
 	char *color_scheme;
 
 	/**
+	 * Convenient method that calls
+	 * COLORSCHEME->GetColorPair(GetColorScheme(), widget, property).
+	 */
+	int GetColorPair(const char *widget, const char *property);
+
+	/**
 	 * @todo
 	 */
 	virtual Container *GetTopContainer();

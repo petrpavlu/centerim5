@@ -21,7 +21,6 @@
 
 #include "TreeView.h"
 
-#include "ColorScheme.h"
 #include "Keys.h"
 
 #include "gettext.h"
@@ -86,8 +85,7 @@ void TreeView::Draw()
 		return;
 	}
 
-	area->fill(COLORSCHEME->GetColorPair(GetColorScheme(), "container",
-				"background"));
+	area->fill(GetColorPair("container", "background"));
 
 	DrawNode(thetree.begin(), 0);
 
@@ -412,7 +410,7 @@ int TreeView::DrawNode(SiblingIterator node, int top)
 	}
 
 	if (node->open && IsNodeOpenable(node)) {
-		int attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "treeview", "line");
+		int attrs = GetColorPair("treeview", "line");
 		area->attron(attrs);
 		for (j = top + 1; j < top + height; j++)
 			area->mvaddstring(depthoffset, j, linestyle.V());

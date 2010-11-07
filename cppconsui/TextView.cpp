@@ -28,7 +28,6 @@
 #include "TextView.h"
 
 #include "CppConsUI.h"
-#include "ColorScheme.h"
 
 TextView::TextView(int w, int h, bool autoscroll_)
 : Widget(w, h)
@@ -202,16 +201,17 @@ void TextView::Draw()
 			view_top = 0;
 	}
 
-	int attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "textview", "text");
+	int attrs = GetColorPair("textview", "text");
 	area->attron(attrs);
 
 	ScreenLines::iterator i;
 	int j;
-	for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end() && j < realh; i++, j++) {
+	for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end()
+			&& j < realh; i++, j++) {
 		int attrs2 = 0;
 		if ((*i)->parent->color) {
 			gchar *color = g_strdup_printf("color%d", (*i)->parent->color);
-			attrs2 = COLORSCHEME->GetColorPair(GetColorScheme(), "textview", color);
+			attrs2 = GetColorPair("textview", color);
 			g_free(color);
 			area->attroff(attrs);
 			area->attron(attrs2);

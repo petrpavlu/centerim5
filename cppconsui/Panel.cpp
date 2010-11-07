@@ -28,9 +28,6 @@
 
 #include "Panel.h"
 
-#include "ConsuiCurses.h"
-#include "ColorScheme.h"
-
 Panel::Panel(int w, int h, const gchar *text, LineStyle::Type ltype)
 : Widget(w, h)
 , linestyle(ltype)
@@ -69,14 +66,14 @@ void Panel::Draw()
 
 	if (draw_title_width) {
 		// draw title
-		attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "panel", "title");
+		attrs = GetColorPair("panel", "title");
 		area->attron(attrs);
 		area->mvaddstring(2 + hline_len, 0, draw_title_width, title);
 		area->attroff(attrs);
 	}
 
 	// draw lines
-	attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "panel", "line");
+	attrs = GetColorPair("panel", "line");
 	area->attron(attrs);
 
 	// draw top horizontal line

@@ -28,9 +28,7 @@
 
 #include "Button.h"
 
-#include "ConsuiCurses.h"
 #include "Keys.h"
-#include "ColorScheme.h"
 
 #include "gettext.h"
 
@@ -72,11 +70,11 @@ void Button::Draw()
 
 	int attrs;
 	if (has_focus) {
-		attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "button", "focus");
+		attrs = GetColorPair("button", "focus");
 		area->attron(attrs | Curses::Attr::REVERSE);
 	}
 	else {
-		attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "button", "normal");
+		attrs = GetColorPair("button", "normal");
 		area->attron(attrs);
 	}
 

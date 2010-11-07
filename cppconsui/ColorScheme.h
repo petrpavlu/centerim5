@@ -77,7 +77,7 @@ private:
 	ColorScheme() {}
 	ColorScheme(const ColorScheme &);
 	ColorScheme &operator=(ColorScheme &);
-	virtual ~ColorScheme() {}
+	~ColorScheme() {}
 };
 
 #endif /* __COLORSCHEME_H__ */

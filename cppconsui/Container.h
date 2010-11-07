@@ -180,8 +180,6 @@ protected:
 	 */
 	virtual void InsertWidget(size_t pos, Widget& widget, int x, int y);
 
-	virtual void UpdateAreas();
-
 	virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
 			Rect& newsize);
 	virtual void OnChildRedraw(Widget& widget);

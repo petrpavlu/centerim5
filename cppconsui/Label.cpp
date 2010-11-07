@@ -28,9 +28,6 @@
 
 #include "Label.h"
 
-#include "ConsuiCurses.h"
-#include "ColorScheme.h"
-
 Label::Label(int w, int h, const gchar *text_)
 : Widget(w, h)
 , text(NULL)
@@ -68,7 +65,7 @@ void Label::DrawEx(bool color)
 
 	int attrs;
 	if (color) {
-		attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "label", "text");
+		attrs = GetColorPair("label", "text");
 		area->attron(attrs);
 	}
 

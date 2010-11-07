@@ -28,9 +28,6 @@
 
 #include "VerticalLine.h"
 
-#include "ConsuiCurses.h"
-#include "ColorScheme.h"
-
 VerticalLine::VerticalLine(int h, LineStyle::Type ltype)
 : AbstractLine(1, h, ltype)
 {
@@ -43,7 +40,7 @@ void VerticalLine::Draw()
 	if (!area || (realh = area->getmaxy()) == 0 || area->getmaxx() != 1)
 		return;
 
-	int attrs = COLORSCHEME->GetColorPair(GetColorScheme(), "verticalline", "line");
+	int attrs = GetColorPair("verticalline", "line");
 	area->attron(attrs);
 	if (realh <= 1) {
 		area->mvaddstring(0, 0, linestyle.V());

@@ -28,8 +28,6 @@
 
 #include "ColorScheme.h"
 
-#include "ConsuiCurses.h"
-
 ColorScheme *ColorScheme::Instance()
 {
 	static ColorScheme instance;

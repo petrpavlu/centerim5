@@ -28,6 +28,7 @@
 
 #include "Widget.h"
 
+#include "ColorScheme.h"
 #include "Container.h"
 
 #include <string>
@@ -196,6 +197,11 @@ const char *Widget::GetColorScheme()
 		return parent->GetColorScheme();
 
 	return NULL;
+}
+
+int Widget::GetColorPair(const char *widget, const char *property)
+{
+	return COLORSCHEME->GetColorPair(GetColorScheme(), widget, property);
 }
 
 Container *Widget::GetTopContainer()

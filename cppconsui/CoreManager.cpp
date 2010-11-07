@@ -21,7 +21,6 @@
 
 #include "CoreManager.h"
 
-#include "ConsuiCurses.h"
 #include "KeyConfig.h"
 
 #include <sys/ioctl.h>

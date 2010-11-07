@@ -111,7 +111,7 @@ private:
 	CoreManager();
 	CoreManager(const CoreManager&);
 	CoreManager& operator=(const CoreManager&);
-	virtual ~CoreManager();
+	~CoreManager();
 
 	// InputProcessor
 	virtual bool ProcessInput(const TermKeyKey& key);
