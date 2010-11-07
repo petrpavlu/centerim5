@@ -21,4 +21,4 @@
 #ifndef __CENTERMAIN_H__
 #define __CENTERMAIN_H__
 
-#endif /* __CENTERMAIN_H__ */
+#endif // __CENTERMAIN_H__

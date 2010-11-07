@@ -32,41 +32,41 @@ class AccountStatusMenu
 : public MenuWindow
 {
 public:
-	AccountStatusMenu(int x, int y, int w, int h);
-	virtual ~AccountStatusMenu();
+  AccountStatusMenu(int x, int y, int w, int h);
+  virtual ~AccountStatusMenu();
 
-	void Dummy(Button& activator) { ; } //TODO remove
+  void Dummy(Button& activator) { ; } //TODO remove
 
-	virtual void ScreenResized();
+  virtual void ScreenResized();
 protected:
 
 private:
-	class StatusPopup
-	: public MenuWindow
-	{
-	public:
-		StatusPopup(int x, int y, int w, int h, PurpleAccount *account);
-		virtual ~StatusPopup();
+  class StatusPopup
+  : public MenuWindow
+  {
+  public:
+    StatusPopup(int x, int y, int w, int h, PurpleAccount *account);
+    virtual ~StatusPopup();
 
-		void Dummy(void) { ; } //TODO remove
+    void Dummy(void) { ; } //TODO remove
 
-	protected:
+  protected:
 
-	private:
-		void SetStatus(Button& activator, PurpleAccount *account,
-				PurpleStatusType *status_type, bool active);
-		//void SetSavedStatus(PurpleAccount *account, PurpleSavedStatus *status);
-		//void SetStatusPrimitive(PurpleAccount *account, PurpleStatusPrimitive primitive);
+  private:
+    void SetStatus(Button& activator, PurpleAccount *account,
+        PurpleStatusType *status_type, bool active);
+    //void SetSavedStatus(PurpleAccount *account, PurpleSavedStatus *status);
+    //void SetStatusPrimitive(PurpleAccount *account, PurpleStatusPrimitive primitive);
 
-		PurpleAccount *account;
-	};
+    PurpleAccount *account;
+  };
 
-	AccountStatusMenu();
-	AccountStatusMenu(const AccountStatusMenu&);
+  AccountStatusMenu();
+  AccountStatusMenu(const AccountStatusMenu&);
 
-	AccountStatusMenu& operator=(const AccountStatusMenu&);
+  AccountStatusMenu& operator=(const AccountStatusMenu&);
 
-	void OpenStatusPopup(Button& activator, PurpleAccount *account);
+  void OpenStatusPopup(Button& activator, PurpleAccount *account);
 };
 
-#endif /* __ACOUNTSTATUSMENU_H__ */
+#endif // __ACOUNTSTATUSMENU_H__

@@ -33,15 +33,15 @@
 InputDialog::InputDialog(const gchar *title, const gchar *defaultvalue)
 : Dialog(title)
 {
-	AddButton(_(OK_BUTTON_TEXT), InputDialog::RESPONSE_OK);
+  AddButton(_(OK_BUTTON_TEXT), InputDialog::RESPONSE_OK);
 
-	entry = new TextEntry(AUTOSIZE, AUTOSIZE, defaultvalue);
-	layout->InsertWidget(0, *entry);
+  entry = new TextEntry(AUTOSIZE, AUTOSIZE, defaultvalue);
+  layout->InsertWidget(0, *entry);
 
-	entry->GrabFocus();
+  entry->GrabFocus();
 }
 
 const gchar *InputDialog::GetText() const
 {
-	return entry->GetText();
+  return entry->GetText();
 }

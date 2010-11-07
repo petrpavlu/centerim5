@@ -36,24 +36,24 @@ AbstractListBox::AbstractListBox(int w, int h)
 }
 
 Button *AbstractListBox::InsertItem(size_t pos, const gchar *title,
-		sigc::slot<void, Button&> function)
+    sigc::slot<void, Button&> function)
 {
-	Button *b = new Button(Curses::onscreen_width(title), 1, title);
-	b->signal_activate.connect(function);
-	InsertWidget(pos, *b);
-	return b;
+  Button *b = new Button(Curses::onscreen_width(title), 1, title);
+  b->signal_activate.connect(function);
+  InsertWidget(pos, *b);
+  return b;
 }
 
 Button *AbstractListBox::AppendItem(const gchar *title,
-		sigc::slot<void, Button&> function)
+    sigc::slot<void, Button&> function)
 {
-	Button *b = new Button(Curses::onscreen_width(title), 1, title);
-	b->signal_activate.connect(function);
-	AppendWidget(*b);
-	return b;
+  Button *b = new Button(Curses::onscreen_width(title), 1, title);
+  b->signal_activate.connect(function);
+  AppendWidget(*b);
+  return b;
 }
 
 void AbstractListBox::AddWidget(Widget& widget, int x, int y)
 {
-	ScrollPane::AddWidget(widget, x, y);
+  ScrollPane::AddWidget(widget, x, y);
 }

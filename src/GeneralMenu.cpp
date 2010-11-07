@@ -32,122 +32,122 @@
 GeneralMenu::GeneralMenu(int x, int y, int w, int h)
 : MenuWindow(x, y, w, h)
 {
-	SetColorScheme("generalmenu");
+  SetColorScheme("generalmenu");
 
-	/*
-	AppendItem(_("Testing"), sigc::mem_fun(this, &GeneralMenu::OpenTestWindow));
-	AppendItem(_("Change status"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AppendItem(_("Go to contact..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	*/
-	AppendItem(_("Accounts..."), sigc::mem_fun(this, &GeneralMenu::OpenAccountsWindow));
-	AppendItem(_("Add buddy"), sigc::mem_fun(this, &GeneralMenu::OpenAddBuddyRequest));
-	/*
-	AppendItem(_("CenterIM config options..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AppendSeparator();
-	AppendItem(_("Find/add users"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AppendItem(_("Join channel/conference"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AppendItem(_("Link an RSS feed"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AppendSeparator();
-	AppendItem(_("View/edit ignore list"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AppendItem(_("View/edit invisible list"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AppendItem(_("View/edit visible list"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AppendSeparator();
-	AppendItem(_("Show offline users"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AppendItem(_("Organize contact groups"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	AppendItem(_("Mass group move..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
-	*/
-	AppendSeparator();
-	AppendItem(_("Request test"), sigc::mem_fun(this,
-				&GeneralMenu::RequestTest));
-	AppendSeparator();
-	AppendItem(_("Quit"), sigc::hide(sigc::mem_fun(CENTERIM,
-					&CenterIM::Quit)));
+  /*
+  AppendItem(_("Testing"), sigc::mem_fun(this, &GeneralMenu::OpenTestWindow));
+  AppendItem(_("Change status"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+  AppendItem(_("Go to contact..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
+  */
+  AppendItem(_("Accounts..."), sigc::mem_fun(this, &GeneralMenu::OpenAccountsWindow));
+  AppendItem(_("Add buddy"), sigc::mem_fun(this, &GeneralMenu::OpenAddBuddyRequest));
+  /*
+  AppendItem(_("CenterIM config options..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
+  AppendSeparator();
+  AppendItem(_("Find/add users"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+  AppendItem(_("Join channel/conference"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+  AppendItem(_("Link an RSS feed"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+  AppendSeparator();
+  AppendItem(_("View/edit ignore list"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+  AppendItem(_("View/edit invisible list"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+  AppendItem(_("View/edit visible list"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+  AppendSeparator();
+  AppendItem(_("Show offline users"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+  AppendItem(_("Organize contact groups"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+  AppendItem(_("Mass group move..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
+  */
+  AppendSeparator();
+  AppendItem(_("Request test"), sigc::mem_fun(this,
+        &GeneralMenu::RequestTest));
+  AppendSeparator();
+  AppendItem(_("Quit"), sigc::hide(sigc::mem_fun(CENTERIM,
+          &CenterIM::Quit)));
 }
 
 void GeneralMenu::ScreenResized()
 {
-	Rect chat = CENTERIM->ScreenAreaSize(CenterIM::CHAT_AREA);
-	MoveResize(chat.x, chat.y, win_w, win_h);
+  Rect chat = CENTERIM->ScreenAreaSize(CenterIM::CHAT_AREA);
+  MoveResize(chat.x, chat.y, win_w, win_h);
 }
 
 void GeneralMenu::OpenAccountsWindow(Button& activator)
 {
-	AccountWindow *aw = new AccountWindow;
-	aw->Show();
-	Close();
+  AccountWindow *aw = new AccountWindow;
+  aw->Show();
+  Close();
 }
 
 void GeneralMenu::OpenAddBuddyRequest(Button& activator)
 {
-	purple_blist_request_add_buddy(NULL, NULL, NULL, NULL);
+  purple_blist_request_add_buddy(NULL, NULL, NULL, NULL);
 }
 
 void GeneralMenu::RequestTest(Button& activator)
 {
 #if 0
-	purple_request_input(NULL, "Title", "Primary", "Secondary",
-			"default_value", FALSE, FALSE, NULL, "ok_text",
-			G_CALLBACK(input_ok_cb_), "cancel_text", NULL, NULL, NULL, NULL,
-			this);
+  purple_request_input(NULL, "Title", "Primary", "Secondary",
+      "default_value", FALSE, FALSE, NULL, "ok_text",
+      G_CALLBACK(input_ok_cb_), "cancel_text", NULL, NULL, NULL, NULL,
+      this);
 #endif
 
 #if 0
-	purple_request_choice(NULL, "Title", "Primary",
-			"Secondary", 1,
-			"ok_text", G_CALLBACK(choice_ok_cb_),
-			"cancel_text", NULL,
-			NULL, NULL, NULL,
-			this,
-			"Option 0", 0,
-			"Option 1", 1,
-			"Option 2", 2,
-			NULL);
+  purple_request_choice(NULL, "Title", "Primary",
+      "Secondary", 1,
+      "ok_text", G_CALLBACK(choice_ok_cb_),
+      "cancel_text", NULL,
+      NULL, NULL, NULL,
+      this,
+      "Option 0", 0,
+      "Option 1", 1,
+      "Option 2", 2,
+      NULL);
 #endif
 
 #if 0
-	purple_request_action(NULL, "Title", "Primary", "Secondary", 1, NULL,
-			NULL, NULL, this, 3,
-			"Action 0", G_CALLBACK(action_cb_),
-			"Action 1", NULL,
-			"Action 2", G_CALLBACK(action_cb_));
+  purple_request_action(NULL, "Title", "Primary", "Secondary", 1, NULL,
+      NULL, NULL, this, 3,
+      "Action 0", G_CALLBACK(action_cb_),
+      "Action 1", NULL,
+      "Action 2", G_CALLBACK(action_cb_));
 #endif
 
-	PurpleRequestFields *fields = purple_request_fields_new();
-	PurpleRequestFieldGroup *g = purple_request_field_group_new("Group 0");;
+  PurpleRequestFields *fields = purple_request_fields_new();
+  PurpleRequestFieldGroup *g = purple_request_field_group_new("Group 0");;
 
-	purple_request_fields_add_group(fields, g);
+  purple_request_fields_add_group(fields, g);
 
-	PurpleRequestField *f;
-	f = purple_request_field_string_new("text0", "String field 0", NULL,
-			FALSE);
-	purple_request_field_group_add_field(g, f);
-	f = purple_request_field_string_new("text1", "String field 1", NULL,
-			FALSE);
-	purple_request_field_group_add_field(g, f);
+  PurpleRequestField *f;
+  f = purple_request_field_string_new("text0", "String field 0", NULL,
+      FALSE);
+  purple_request_field_group_add_field(g, f);
+  f = purple_request_field_string_new("text1", "String field 1", NULL,
+      FALSE);
+  purple_request_field_group_add_field(g, f);
 
-	purple_request_fields(NULL, "Title", "Primary", "Secondary", fields,
-			"ok_text", G_CALLBACK(fields_ok_cb_),
-			"cancel_text", NULL,
-			NULL, NULL, NULL, this);
+  purple_request_fields(NULL, "Title", "Primary", "Secondary", fields,
+      "ok_text", G_CALLBACK(fields_ok_cb_),
+      "cancel_text", NULL,
+      NULL, NULL, NULL, this);
 
 }
 
 void GeneralMenu::input_ok_cb(const gchar *text)
 {
-	LOG->Write(Log::LEVEL_DEBUG, "input_ok_cb: %s\n", text);
+  LOG->Write(Log::LEVEL_DEBUG, "input_ok_cb: %s\n", text);
 }
 
 void GeneralMenu::choice_ok_cb(int selected)
 {
-	LOG->Write(Log::LEVEL_DEBUG, "choice_ok_cb: %d\n", selected);
+  LOG->Write(Log::LEVEL_DEBUG, "choice_ok_cb: %d\n", selected);
 }
 
 void GeneralMenu::action_cb(int action)
 {
-	LOG->Write(Log::LEVEL_DEBUG, "action_cb: %d\n", action);
+  LOG->Write(Log::LEVEL_DEBUG, "action_cb: %d\n", action);
 }
 
 void GeneralMenu::fields_ok_cb(PurpleRequestFields *fields)
 {
-	LOG->Write(Log::LEVEL_DEBUG, "fields_ok_cb\n");
+  LOG->Write(Log::LEVEL_DEBUG, "fields_ok_cb\n");
 }

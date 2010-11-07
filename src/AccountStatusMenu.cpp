@@ -29,28 +29,29 @@
 AccountStatusMenu::AccountStatusMenu(int x, int y, int w, int h)
 : MenuWindow(x, y, w, h)
 {
-	SetColorScheme("accountstatusmenu");
+  SetColorScheme("accountstatusmenu");
 
-	GList *iter;
-	gchar *text;
+  GList *iter;
+  gchar *text;
 
-	AppendItem(_("All accounts"), sigc::mem_fun(this, &AccountStatusMenu::Dummy));
-	AppendItem(_("Already logged in only"), sigc::mem_fun(this, &AccountStatusMenu::Dummy));
-	AppendSeparator();
+  AppendItem(_("All accounts"), sigc::mem_fun(this,
+        &AccountStatusMenu::Dummy));
+  AppendItem(_("Already logged in only"), sigc::mem_fun(this,
+        &AccountStatusMenu::Dummy));
+  AppendSeparator();
 
-	for (iter = purple_accounts_get_all(); iter; iter = iter->next) {
+  for (iter = purple_accounts_get_all(); iter; iter = iter->next) {
+    PurpleAccount *account = (PurpleAccount*)iter->data;
 
-		PurpleAccount *account = (PurpleAccount*)iter->data;
+    text = g_strdup_printf("[%s] %s",
+        purple_account_get_protocol_name(account),
+        purple_account_get_username(account));
 
-		text = g_strdup_printf("[%s] %s",
-			purple_account_get_protocol_name(account),
-			purple_account_get_username(account));
+    AppendItem(text, sigc::bind(sigc::mem_fun(this,
+            &AccountStatusMenu::OpenStatusPopup), account));
 
-		AppendItem(text, sigc::bind(sigc::mem_fun(this,
-						&AccountStatusMenu::OpenStatusPopup), account));
-
-		g_free(text);
-	}
+    g_free(text);
+  }
 }
 
 AccountStatusMenu::~AccountStatusMenu()
@@ -58,103 +59,105 @@ AccountStatusMenu::~AccountStatusMenu()
 }
 
 void AccountStatusMenu::OpenStatusPopup(Button& activator,
-		PurpleAccount *account)
+    PurpleAccount *account)
 {
-	AccountStatusMenu::StatusPopup *status_popup = new StatusPopup(xpos, ypos,
-			width, height, account);
-	status_popup->Show();
+  AccountStatusMenu::StatusPopup *status_popup = new StatusPopup(xpos, ypos,
+      width, height, account);
+  status_popup->Show();
 }
 
-AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h, PurpleAccount *account)
+AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h,
+    PurpleAccount *account)
 : MenuWindow(x, y, w, h)
 , account(account)
 {
-	SetColorScheme("accountstatuspopup");
+  SetColorScheme("accountstatuspopup");
 
-	GList *iter;
-	PurpleStatusType *status_type;
-	gchar *label;
-	bool has_independents;
-	bool active;
+  GList *iter;
+  PurpleStatusType *status_type;
+  gchar *label;
+  bool has_independents;
+  bool active;
 
-	has_independents = false;
-	for (iter = purple_account_get_status_types(account); iter; iter = iter->next) {
-		status_type = (PurpleStatusType*)iter->data;
+  has_independents = false;
+  for (iter = purple_account_get_status_types(account); iter;
+      iter = iter->next) {
+    status_type = (PurpleStatusType*)iter->data;
 
-		if (purple_status_type_is_independent(status_type)) {
-			has_independents = true;
-			continue;
-		}
+    if (purple_status_type_is_independent(status_type)) {
+      has_independents = true;
+      continue;
+    }
 
-		active = purple_presence_is_status_active(
-				purple_account_get_presence(account),
-				purple_status_type_get_id(status_type));
+    active = purple_presence_is_status_active(
+        purple_account_get_presence(account),
+        purple_status_type_get_id(status_type));
 
-		if (active)
-			label = g_strdup_printf("* %s", purple_status_type_get_name(status_type));
-		else
-			label = g_strdup(purple_status_type_get_name(status_type));
+    if (active)
+      label = g_strdup_printf("* %s", purple_status_type_get_name(status_type));
+    else
+      label = g_strdup(purple_status_type_get_name(status_type));
 
-		AppendItem(label, sigc::bind(sigc::mem_fun(this,
-						&AccountStatusMenu::StatusPopup::SetStatus), account,
-					status_type, true));
+    AppendItem(label, sigc::bind(
+          sigc::mem_fun(this, &AccountStatusMenu::StatusPopup::SetStatus),
+          account, status_type, true));
 
-		g_free(label);
-	}
+    g_free(label);
+  }
 
-	if (!has_independents)
-		return;
+  if (!has_independents)
+    return;
 
-	AppendSeparator();
+  AppendSeparator();
 
-	for (iter = purple_account_get_status_types(account); iter; iter = iter->next) {
-		status_type = (PurpleStatusType*)iter->data;
+  for (iter = purple_account_get_status_types(account); iter;
+      iter = iter->next) {
+    status_type = (PurpleStatusType*)iter->data;
 
-		if (!purple_status_type_is_independent(status_type))
-			continue;
+    if (!purple_status_type_is_independent(status_type))
+      continue;
 
-		active = purple_presence_is_status_active(
-				purple_account_get_presence(account),
-				purple_status_type_get_id(status_type));
+    active = purple_presence_is_status_active(
+        purple_account_get_presence(account),
+        purple_status_type_get_id(status_type));
 
-		if (active)
-			label = g_strdup_printf("* %s", purple_status_type_get_name(status_type));
-		else
-			label = g_strdup(purple_status_type_get_name(status_type));
+    if (active)
+      label = g_strdup_printf("* %s",
+          purple_status_type_get_name(status_type));
+    else
+      label = g_strdup(purple_status_type_get_name(status_type));
 
-		AppendItem(label, sigc::bind(sigc::mem_fun(this,
-						&AccountStatusMenu::StatusPopup::SetStatus), account,
-					status_type, !active));
+    AppendItem(label, sigc::bind(
+          sigc::mem_fun(this, &AccountStatusMenu::StatusPopup::SetStatus),
+          account, status_type, !active));
 
-		g_free(label);
-	}
-
-
+    g_free(label);
+  }
 
 /*
-	* Primitive (default) statuses (taken from gtksavedstatuses.c)*
-	for (i = PURPLE_STATUS_UNSET + 1; i < PURPLE_STATUS_NUM_PRIMITIVES; i++) {
+  * Primitive (default) statuses (taken from gtksavedstatuses.c)*
+  for (i = PURPLE_STATUS_UNSET + 1; i < PURPLE_STATUS_NUM_PRIMITIVES; i++) {
                 if (i == PURPLE_STATUS_MOBILE || i == PURPLE_STATUS_TUNE)
                         *
                          * Special-case these.  They're intended to be independent
                          * status types, so don't show them in the list.
                          *
                         continue;
-		PurpleStatusPrimitive primitive = (PurpleStatusPrimitive)i;
+    PurpleStatusPrimitive primitive = (PurpleStatusPrimitive)i;
 
-		AddItem(purple_primitive_get_name_from_type(primitive),
-				sigc::bind(sigc::mem_fun(this, &AccountStatusMenu::StatusPopup::SetStatusPrimitive), account, primitive));
-	}
+    AddItem(purple_primitive_get_name_from_type(primitive),
+        sigc::bind(sigc::mem_fun(this, &AccountStatusMenu::StatusPopup::SetStatusPrimitive), account, primitive));
+  }
 
 
-	* Custom statuses *
-	//TODO only use `popular' statuses here (like pidgin and finch do)?
-	for (iter = purple_savedstatuses_get_all(); iter; iter = iter->next) {
-		PurpleSavedStatus *status = (PurpleSavedStatus*)iter->data;
+  * Custom statuses *
+  //TODO only use `popular' statuses here (like pidgin and finch do)?
+  for (iter = purple_savedstatuses_get_all(); iter; iter = iter->next) {
+    PurpleSavedStatus *status = (PurpleSavedStatus*)iter->data;
 
-		AddItem(purple_savedstatus_get_title(status),
-				sigc::bind(sigc::mem_fun(this, &AccountStatusMenu::StatusPopup::SetSavedStatus), account, status));
-	}
+    AddItem(purple_savedstatus_get_title(status),
+        sigc::bind(sigc::mem_fun(this, &AccountStatusMenu::StatusPopup::SetSavedStatus), account, status));
+  }
 */
 }
 
@@ -163,29 +166,28 @@ AccountStatusMenu::StatusPopup::~StatusPopup()
 }
 
 void AccountStatusMenu::StatusPopup::SetStatus(Button& activator,
-		PurpleAccount *account, PurpleStatusType *status_type, bool active)
+    PurpleAccount *account, PurpleStatusType *status_type, bool active)
 {
-	purple_account_set_status(account,
-			purple_status_type_get_id(status_type),
-			active, NULL);
-	Close();
+  purple_account_set_status(account, purple_status_type_get_id(status_type),
+      active, NULL);
+  Close();
 }
 /*
 void AccountStatusMenu::StatusPopup::SetStatus(PurpleAccount *account, PurpleSavedStatus *status)
 {
-	accounts->SetStatus(account, status);
-	Close();
+  accounts->SetStatus(account, status);
+  Close();
 }
 
 void AccountStatusMenu::StatusPopup::SetStatusPrimitive(PurpleAccount *account, PurpleStatusPrimitive primitive)
 {
-	Accounts *accounts = Accounts::Instance();
-	accounts->SetStatus(account, primitive);
-	Close();
+  Accounts *accounts = Accounts::Instance();
+  accounts->SetStatus(account, primitive);
+  Close();
 }*/
 
 void AccountStatusMenu::ScreenResized()
 {
-	Rect chat = CENTERIM->ScreenAreaSize(CenterIM::CHAT_AREA);
-	MoveResize(chat.x, chat.y, win_w, win_h);
+  Rect chat = CENTERIM->ScreenAreaSize(CenterIM::CHAT_AREA);
+  MoveResize(chat.x, chat.y, win_w, win_h);
 }

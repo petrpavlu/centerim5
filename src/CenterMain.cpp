@@ -28,36 +28,37 @@
 
 int main(int argc, char **argv)
 {
-	CenterIM* cim;
+  CenterIM* cim;
 
-	g_set_prgname(PACKAGE_NAME);
+  g_set_prgname(PACKAGE_NAME);
 
 #ifdef ENABLE_NLS
-	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
-	bind_textdomain_codeset(PACKAGE_NAME, "UTF-8");
-	textdomain(PACKAGE_NAME);
+  bindtextdomain(PACKAGE_NAME, LOCALEDIR);
+  bind_textdomain_codeset(PACKAGE_NAME, "UTF-8");
+  textdomain(PACKAGE_NAME);
 #endif
 
-	setlocale(LC_ALL, "");
+  setlocale(LC_ALL, "");
 
-	try {
-		cim = CenterIM::Instance();
-	}
-	catch (int i) {
-		switch (i) {
-		case EXCEPTION_ICONV_INIT:
-			fprintf(stderr, _("could not initialize iconv\n"));
-			break;
-		case EXCEPTION_PURPLE_CORE_INIT:
-			fprintf(stderr, _("could not initialize libpurple core\n"));
-			break;
-		default:
-			fprintf(stderr, _("unknown error `%d'\n"), i);
-		}
-		return i;
-	}
+  try {
+    cim = CenterIM::Instance();
+  }
+  catch (int i) {
+    // FIXME
+    switch (i) {
+    case EXCEPTION_ICONV_INIT:
+      fprintf(stderr, _("could not initialize iconv\n"));
+      break;
+    case EXCEPTION_PURPLE_CORE_INIT:
+      fprintf(stderr, _("could not initialize libpurple core\n"));
+      break;
+    default:
+      fprintf(stderr, _("unknown error `%d'\n"), i);
+    }
+    return i;
+  }
 
-	cim->Run();
+  cim->Run();
 
-	return 0;
+  return 0;
 }

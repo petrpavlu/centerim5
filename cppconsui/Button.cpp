@@ -37,57 +37,57 @@
 Button::Button(int w, int h, const gchar *text)
 : Label(w, h, text)
 {
-	can_focus = true;
-	DeclareBindables();
+  can_focus = true;
+  DeclareBindables();
 }
 
 Button::Button(const gchar *text)
 : Label(text)
 {
-	can_focus = true;
-	DeclareBindables();
+  can_focus = true;
+  DeclareBindables();
 }
 
 void Button::DeclareBindables()
 {
-	DeclareBindable(CONTEXT_BUTTON, "activate",
-			sigc::mem_fun(this, &Button::ActionActivate),
-			InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable(CONTEXT_BUTTON, "activate",
+      sigc::mem_fun(this, &Button::ActionActivate),
+      InputProcessor::BINDABLE_NORMAL);
 }
 
 DEFINE_SIG_REGISTERKEYS(Button, RegisterKeys);
 bool Button::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_BUTTON, "activate", _("Activate the button"),
-			Keys::SymbolTermKey(TERMKEY_SYM_ENTER));
-	return true;
+  RegisterKeyDef(CONTEXT_BUTTON, "activate", _("Activate the button"),
+      Keys::SymbolTermKey(TERMKEY_SYM_ENTER));
+  return true;
 }
 
 void Button::Draw()
 {
-	if (!area)
-		return;
+  if (!area)
+    return;
 
-	int attrs;
-	if (has_focus) {
-		attrs = GetColorPair("button", "focus");
-		area->attron(attrs | Curses::Attr::REVERSE);
-	}
-	else {
-		attrs = GetColorPair("button", "normal");
-		area->attron(attrs);
-	}
+  int attrs;
+  if (has_focus) {
+    attrs = GetColorPair("button", "focus");
+    area->attron(attrs | Curses::Attr::REVERSE);
+  }
+  else {
+    attrs = GetColorPair("button", "normal");
+    area->attron(attrs);
+  }
 
 
-	Label::DrawEx(false);
+  Label::DrawEx(false);
 
-	if (has_focus)
-		area->attroff(attrs | Curses::Attr::REVERSE);
-	else
-		area->attroff(attrs);
+  if (has_focus)
+    area->attroff(attrs | Curses::Attr::REVERSE);
+  else
+    area->attroff(attrs);
 }
 
 void Button::ActionActivate()
 {
-	signal_activate(*this);
+  signal_activate(*this);
 }

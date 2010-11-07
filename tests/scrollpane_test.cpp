@@ -28,18 +28,18 @@ static const char *pic[] =
 class MyScrollPane
 : public ScrollPane
 {
-	public:
-		MyScrollPane(int w, int h, int scrollw, int scrollh);
-		virtual ~MyScrollPane() {}
+  public:
+    MyScrollPane(int w, int h, int scrollw, int scrollh);
+    virtual ~MyScrollPane() {}
 
-		// Widget
-		virtual void Draw();
+    // Widget
+    virtual void Draw();
 
-	protected:
+  protected:
 
-	private:
-		MyScrollPane(const MyScrollPane&);
-		MyScrollPane& operator=(const MyScrollPane&);
+  private:
+    MyScrollPane(const MyScrollPane&);
+    MyScrollPane& operator=(const MyScrollPane&);
 };
 
 MyScrollPane::MyScrollPane(int w, int h, int scrollw, int scrollh)
@@ -49,14 +49,15 @@ MyScrollPane::MyScrollPane(int w, int h, int scrollw, int scrollh)
 
 void MyScrollPane::Draw()
 {
-	if (!area || !scrollarea)
-		return;
+  if (!area || !scrollarea)
+    return;
 
-	int real_height = area->getmaxy();
-	for (int i = 0; i < real_height && i < (int) (sizeof(pic) / sizeof(pic[0])); i++)
-		area->mvaddstring(0, i, pic[i]);
+  int real_height = area->getmaxy();
+  for (int i = 0; i < real_height && i < (int) (sizeof(pic) / sizeof(pic[0]));
+      i++)
+    area->mvaddstring(0, i, pic[i]);
 
-	ScrollPane::Draw();
+  ScrollPane::Draw();
 }
 
 // ScrollPaneWindow class
@@ -66,109 +67,106 @@ void MyScrollPane::Draw()
 class ScrollPaneWindow
 : public Window
 {
-	public:
-		/* This is a main window, make sure it can not be closed with ESC key
-		 * by overriding Close() method. */
-		static ScrollPaneWindow *Instance();
-		virtual void Close() {}
+  public:
+    /* This is a main window, make sure it can not be closed with ESC key by
+     * overriding Close() method. */
+    static ScrollPaneWindow *Instance();
+    virtual void Close() {}
 
-		virtual void ScreenResized();
+    virtual void ScreenResized();
 
-	protected:
-		MyScrollPane *pane;
+  protected:
+    MyScrollPane *pane;
 
-	private:
-		ScrollPaneWindow();
-		virtual ~ScrollPaneWindow() {}
-		ScrollPaneWindow(const ScrollPaneWindow&);
-		ScrollPaneWindow& operator=(const ScrollPaneWindow&);
+  private:
+    ScrollPaneWindow();
+    virtual ~ScrollPaneWindow() {}
+    ScrollPaneWindow(const ScrollPaneWindow&);
+    ScrollPaneWindow& operator=(const ScrollPaneWindow&);
 
-		void ScrollUp();
-		void ScrollDown();
-		void ScrollLeft();
-		void ScrollRight();
+    void ScrollUp();
+    void ScrollDown();
+    void ScrollLeft();
+    void ScrollRight();
 
-		DECLARE_SIG_REGISTERKEYS();
-		static bool RegisterKeys();
-		void DeclareBindables();
+    DECLARE_SIG_REGISTERKEYS();
+    static bool RegisterKeys();
+    void DeclareBindables();
 };
 
 ScrollPaneWindow *ScrollPaneWindow::Instance()
 {
-	static ScrollPaneWindow instance;
-	return &instance;
+  static ScrollPaneWindow instance;
+  return &instance;
 }
 
 ScrollPaneWindow::ScrollPaneWindow()
 : Window(0, 0, 0, 0)
 {
-	AddWidget(*(new Label(25, 1, "Press F10 to quit.")), 1, 1);
-	AddWidget(*(new Label(25, 1, "WASD to move the picture.")), 1, 2);
+  AddWidget(*(new Label(25, 1, "Press F10 to quit.")), 1, 1);
+  AddWidget(*(new Label(25, 1, "WASD to move the picture.")), 1, 2);
 
-	pane = new MyScrollPane(20, 10, 111, 23);
-	AddWidget(*pane, 1, 4);
+  pane = new MyScrollPane(20, 10, 111, 23);
+  AddWidget(*pane, 1, 4);
 
-	DeclareBindables();
+  DeclareBindables();
 }
 
 void ScrollPaneWindow::ScrollUp()
 {
-	pane->AdjustScroll(pane->GetScrollPositionX(),
-			pane->GetScrollPositionY() - 1);
+  pane->AdjustScroll(pane->GetScrollPositionX(),
+      pane->GetScrollPositionY() - 1);
 }
 
 void ScrollPaneWindow::ScrollDown()
 {
-	pane->AdjustScroll(pane->GetScrollPositionX(),
-			pane->GetScrollPositionY() + 1);
+  pane->AdjustScroll(pane->GetScrollPositionX(),
+      pane->GetScrollPositionY() + 1);
 }
 
 void ScrollPaneWindow::ScrollLeft()
 {
-	pane->AdjustScroll(pane->GetScrollPositionX() - 1,
-			pane->GetScrollPositionY());
+  pane->AdjustScroll(pane->GetScrollPositionX() - 1,
+      pane->GetScrollPositionY());
 }
 
 void ScrollPaneWindow::ScrollRight()
 {
-	pane->AdjustScroll(pane->GetScrollPositionX() + 1,
-			pane->GetScrollPositionY());
+  pane->AdjustScroll(pane->GetScrollPositionX() + 1,
+      pane->GetScrollPositionY());
 }
 
 void ScrollPaneWindow::DeclareBindables()
 {
-	DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-up",
-			sigc::mem_fun(this, &ScrollPaneWindow::ScrollUp),
-			InputProcessor::BINDABLE_NORMAL);
-	DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-down",
-			sigc::mem_fun(this, &ScrollPaneWindow::ScrollDown),
-			InputProcessor::BINDABLE_NORMAL);
-	DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-left",
-			sigc::mem_fun(this, &ScrollPaneWindow::ScrollLeft),
-			InputProcessor::BINDABLE_NORMAL);
-	DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-right",
-			sigc::mem_fun(this, &ScrollPaneWindow::ScrollRight),
-			InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-up", sigc::mem_fun(this,
+        &ScrollPaneWindow::ScrollUp), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-down", sigc::mem_fun(this,
+        &ScrollPaneWindow::ScrollDown), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-left", sigc::mem_fun(this,
+        &ScrollPaneWindow::ScrollLeft), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-right",
+      sigc::mem_fun(this, &ScrollPaneWindow::ScrollRight),
+      InputProcessor::BINDABLE_NORMAL);
 }
 
 DEFINE_SIG_REGISTERKEYS(ScrollPaneWindow, RegisterKeys);
 bool ScrollPaneWindow::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-up",
-			"Scroll up.", Keys::UnicodeTermKey("w"));
-	RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-down",
-			"Scroll down.", Keys::UnicodeTermKey("s"));
-	RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-left",
-			"Scroll left.", Keys::UnicodeTermKey("a"));
-	RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-right",
-			"Scroll right.", Keys::UnicodeTermKey("d"));
-	return true;
+  RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-up", "Scroll up.",
+      Keys::UnicodeTermKey("w"));
+  RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-down", "Scroll down.",
+      Keys::UnicodeTermKey("s"));
+  RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-left", "Scroll left.",
+      Keys::UnicodeTermKey("a"));
+  RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-right", "Scroll right.",
+      Keys::UnicodeTermKey("d"));
+  return true;
 }
 
 void ScrollPaneWindow::ScreenResized()
 {
-	MoveResize(0, 0, COREMANAGER->GetScreenWidth(),
-			COREMANAGER->GetScreenHeight());
+  MoveResize(0, 0, COREMANAGER->GetScreenWidth(),
+      COREMANAGER->GetScreenHeight());
 }
 
 // TestApp class
@@ -178,77 +176,77 @@ void ScrollPaneWindow::ScreenResized()
 class TestApp
 : public InputProcessor
 {
-	public:
-		static TestApp *Instance();
+  public:
+    static TestApp *Instance();
 
-		void Run();
+    void Run();
 
-		// ignore every message
-		static void g_log_func_(const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer user_data)
-			{}
+    // ignore every message
+    static void g_log_func_(const gchar *log_domain, GLogLevelFlags log_level,
+        const gchar *message, gpointer user_data)
+      {}
 
-	protected:
+  protected:
 
-	private:
-		CoreManager *mngr;
+  private:
+    CoreManager *mngr;
 
-		TestApp();
-		TestApp(const TestApp&);
-		TestApp& operator=(const TestApp&);
-		virtual ~TestApp() {}
+    TestApp();
+    TestApp(const TestApp&);
+    TestApp& operator=(const TestApp&);
+    virtual ~TestApp() {}
 
-		DECLARE_SIG_REGISTERKEYS();
-		static bool RegisterKeys();
-		void DeclareBindables();
+    DECLARE_SIG_REGISTERKEYS();
+    static bool RegisterKeys();
+    void DeclareBindables();
 };
 
 TestApp *TestApp::Instance()
 {
-	static TestApp instance;
-	return &instance;
+  static TestApp instance;
+  return &instance;
 }
 
 TestApp::TestApp()
 : InputProcessor()
 {
-	mngr = CoreManager::Instance();
+  mngr = CoreManager::Instance();
 
-	g_log_set_default_handler(g_log_func_, this);
+  g_log_set_default_handler(g_log_func_, this);
 
-	DeclareBindables();
+  DeclareBindables();
 }
 
 void TestApp::Run()
 {
-	mngr->AddWindow(*ScrollPaneWindow::Instance());
-	mngr->SetTopInputProcessor(*this);
-	mngr->EnableResizing();
-	mngr->StartMainLoop();
+  mngr->AddWindow(*ScrollPaneWindow::Instance());
+  mngr->SetTopInputProcessor(*this);
+  mngr->EnableResizing();
+  mngr->StartMainLoop();
 }
 
 void TestApp::DeclareBindables()
 {
-	DeclareBindable(CONTEXT_TESTAPP, "quit",
-			sigc::mem_fun(mngr, &CoreManager::QuitMainLoop),
-			InputProcessor::BINDABLE_OVERRIDE);
+  DeclareBindable(CONTEXT_TESTAPP, "quit", sigc::mem_fun(mngr,
+        &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
 }
 
 DEFINE_SIG_REGISTERKEYS(TestApp, RegisterKeys);
 bool TestApp::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_TESTAPP, "quit",
-			"Quit TestApp.", Keys::FunctionTermKey(10));
-	return true;
+  RegisterKeyDef(CONTEXT_TESTAPP, "quit", "Quit TestApp.",
+      Keys::FunctionTermKey(10));
+  return true;
 }
 
 // main function
 int main()
 {
-	setlocale(LC_ALL, "");
+  setlocale(LC_ALL, "");
 
-	TestApp *app = TestApp::Instance();
+  TestApp *app = TestApp::Instance();
 
-	app->Run();
+  app->Run();
 
-	return 0;
+  return 0;
 }

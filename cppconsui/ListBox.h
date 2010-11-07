@@ -40,39 +40,39 @@ class ListBox
 : public AbstractListBox
 {
 public:
-	ListBox(int w, int h);
-	virtual ~ListBox() {}
+  ListBox(int w, int h);
+  virtual ~ListBox() {}
 
-	// Widget
-	virtual void UpdateArea();
-	virtual void Draw();
+  // Widget
+  virtual void UpdateArea();
+  virtual void Draw();
 
-	// AbstractListBox
-	virtual HorizontalLine *InsertSeparator(size_t pos);
-	virtual HorizontalLine *AppendSeparator();
-	virtual void InsertWidget(size_t pos, Widget& widget);
-	virtual void AppendWidget(Widget& widget);
+  // AbstractListBox
+  virtual HorizontalLine *InsertSeparator(size_t pos);
+  virtual HorizontalLine *AppendSeparator();
+  virtual void InsertWidget(size_t pos, Widget& widget);
+  virtual void AppendWidget(Widget& widget);
 
-	// Container
-	virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
-			int begin_y, int ncols, int nlines);
+  // Container
+  virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
+      int begin_y, int ncols, int nlines);
 
 protected:
-	int children_height;
-	int autosize_children;
-	int autosize_height;
-	std::set<const Widget *> autosize_extra;
+  int children_height;
+  int autosize_children;
+  int autosize_height;
+  std::set<const Widget *> autosize_extra;
 
-	// Container
-	virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
-			Rect& newsize);
-	virtual void OnChildVisible(Widget& widget, bool visible);
+  // Container
+  virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
+      Rect& newsize);
+  virtual void OnChildVisible(Widget& widget, bool visible);
 
-	void UpdateScrollHeight();
+  void UpdateScrollHeight();
 
 private:
-	ListBox(const ListBox&);
-	ListBox& operator=(const ListBox&);
+  ListBox(const ListBox&);
+  ListBox& operator=(const ListBox&);
 };
 
-#endif /* __LISTBOX_H__ */
+#endif // __LISTBOX_H__

@@ -28,24 +28,24 @@
 class Notify
 {
 public:
-	static Notify *Instance();
+  static Notify *Instance();
 
 protected:
 
 private:
-	PurpleNotifyUiOps centerim_notify_ui_ops;
+  PurpleNotifyUiOps centerim_notify_ui_ops;
 
-	Notify();
-	Notify(const Notify&);
-	Notify& operator=(const Notify&);
-	~Notify();
+  Notify();
+  Notify(const Notify&);
+  Notify& operator=(const Notify&);
+  ~Notify();
 
-	static void *notify_message_(PurpleNotifyMsgType type, const char *title,
-			const char *primary, const char *secondary)
-		{ return NOTIFY->notify_message(type, title, primary, secondary); }
+  static void *notify_message_(PurpleNotifyMsgType type, const char *title,
+      const char *primary, const char *secondary)
+    { return NOTIFY->notify_message(type, title, primary, secondary); }
 
-	void *notify_message(PurpleNotifyMsgType type, const char *title,
-			const char *primary, const char *secondary);
+  void *notify_message(PurpleNotifyMsgType type, const char *title,
+      const char *primary, const char *secondary);
 };
 
-#endif /* __NOTIFY_H__ */
+#endif // __NOTIFY_H__

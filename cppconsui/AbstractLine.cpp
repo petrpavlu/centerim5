@@ -35,11 +35,11 @@ AbstractLine::AbstractLine(int w, int h, LineStyle::Type ltype)
 
 void AbstractLine::SetLineStyle(LineStyle::Type ltype)
 {
-	linestyle.SetStyle(ltype);
-	signal_redraw(*this);
+  linestyle.SetStyle(ltype);
+  signal_redraw(*this);
 }
 
 LineStyle::Type AbstractLine::GetLineStyle()
 {
-	return linestyle.GetStyle();
+  return linestyle.GetStyle();
 }

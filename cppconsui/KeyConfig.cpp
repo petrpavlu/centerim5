@@ -22,37 +22,39 @@
 
 KeyConfig *KeyConfig::Instance()
 {
-	static KeyConfig instance;
-	return &instance;
+  static KeyConfig instance;
+  return &instance;
 }
 
 void KeyConfig::RegisterKeyDef(const char *context, const char *action,
-		const gchar *desc, const TermKeyKey &key)
+    const gchar *desc, const TermKeyKey &key)
 {
-	bindables.push_back(Bindable(context, action, desc, key));
-	binds[context][key] = action;
+  bindables.push_back(Bindable(context, action, desc, key));
+  binds[context][key] = action;
 }
 
-const KeyConfig::KeyBindContext *KeyConfig::GetKeyBinds(const char *context) const
+const KeyConfig::KeyBindContext *KeyConfig::GetKeyBinds(
+    const char *context) const
 {
-	KeyBinds::const_iterator i = binds.find(context);
-	if (i == binds.end())
-		return NULL;
-	return &i->second;
+  KeyBinds::const_iterator i = binds.find(context);
+  if (i == binds.end())
+    return NULL;
+  return &i->second;
 }
 
 bool KeyConfig::Reconfig()
 {
-	/** @todo read the config and assign it to keys
-	 */
-	signal_reconfig.emit();
-	return true;
+  /**
+   * @todo Read the config and assign it to keys.
+   */
+  signal_reconfig.emit();
+  return true;
 }
 
 bool KeyConfig::Register()
 {
-	/* it calls all registered init functions, that will
-	 fill up keys by calling RegisterKeyDef themselves */
-	signal_register.emit();
-	return true;
+  /* Call all registered init functions, that will fill up keys by calling
+   * RegisterKeyDef() themselves. */
+  signal_register.emit();
+  return true;
 }

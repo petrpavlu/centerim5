@@ -33,65 +33,65 @@
 
 /// @todo move into editable abstract class?
 enum CursorMovement {
-	MOVE_LOGICAL_POSITIONS,
-	MOVE_VISUAL_POSITIONS,
-	MOVE_WORDS,
-	MOVE_DISPLAY_LINES,
-	MOVE_DISPLAY_LINE_ENDS,
-	MOVE_PARAGRAPHS,
-	MOVE_PARAGRAPH_ENDS,
-	MOVE_PAGES,
-	MOVE_BUFFER_ENDS,
-	MOVE_HORIZONTAL_PAGES
+  MOVE_LOGICAL_POSITIONS,
+  MOVE_VISUAL_POSITIONS,
+  MOVE_WORDS,
+  MOVE_DISPLAY_LINES,
+  MOVE_DISPLAY_LINE_ENDS,
+  MOVE_PARAGRAPHS,
+  MOVE_PARAGRAPH_ENDS,
+  MOVE_PAGES,
+  MOVE_BUFFER_ENDS,
+  MOVE_HORIZONTAL_PAGES
 };
 
 enum DeleteType {
-	DELETE_CHARS,
-	DELETE_WORDS,
-	DELETE_WORD_ENDS,
-	DELETE_DISPLAY_LINE_ENDS,
-	DELETE_PARAGRAPH_ENDS,
-	DELETE_DISPLAY_LINES,
-	DELETE_PARAGRAPHS,
-	DELETE_WHITESPACE
+  DELETE_CHARS,
+  DELETE_WORDS,
+  DELETE_WORD_ENDS,
+  DELETE_DISPLAY_LINE_ENDS,
+  DELETE_PARAGRAPH_ENDS,
+  DELETE_DISPLAY_LINES,
+  DELETE_PARAGRAPHS,
+  DELETE_WHITESPACE
 };
 
 enum WrapMode {
-	WRAP_NONE,
-	WRAP_CHAR,
-	WRAP_WORD,
-	WRAP_WORD_CHAR
+  WRAP_NONE,
+  WRAP_CHAR,
+  WRAP_WORD,
+  WRAP_WORD_CHAR
 };
 
 enum DirectionType {
-	DIR_TAB_FORWARD,
-	DIR_TAB_BACKWARD,
-	DIR_UP,
-	DIR_DOWN,
-	DIR_LEFT,
-	DIR_RIGHT,
-	DIR_NONE
+  DIR_TAB_FORWARD,
+  DIR_TAB_BACKWARD,
+  DIR_UP,
+  DIR_DOWN,
+  DIR_LEFT,
+  DIR_RIGHT,
+  DIR_NONE
 };
 
 enum ScrollStep {
-	SCROLL_STEPS,
-	SCROLL_PAGES,
-	SCROLL_ENDS,
-	SCROLL_HORIZONTAL_STEPS,
-	SCROLL_HORIZONTAL_PAGES,
-	SCROLL_HORIZONTAL_ENDS
+  SCROLL_STEPS,
+  SCROLL_PAGES,
+  SCROLL_ENDS,
+  SCROLL_HORIZONTAL_STEPS,
+  SCROLL_HORIZONTAL_PAGES,
+  SCROLL_HORIZONTAL_ENDS
 };
 
 class Point
 {
 public:
-	Point();
-	Point(int x, int y);
+  Point();
+  Point(int x, int y);
 
-	int X() { return x; }
-	int Y() { return y; }
+  int X() { return x; }
+  int Y() { return y; }
 
-	int x, y;
+  int x, y;
 protected:
 
 private:
@@ -100,21 +100,21 @@ private:
 class Rect: public Point
 {
 public:
-	Rect();
-	Rect(int x, int y, int w, int h);
+  Rect();
+  Rect(int x, int y, int w, int h);
 
-	int Width() { return width; }
-	int Height() { return height; }
-	int Left() { return x; }
-	int Top() { return y; }
-	int Right() { return x + width - 1; }
-	int Bottom() { return y + height - 1; }
+  int Width() { return width; }
+  int Height() { return height; }
+  int Left() { return x; }
+  int Top() { return y; }
+  int Right() { return x + width - 1; }
+  int Bottom() { return y + height - 1; }
 
-	int width, height;
+  int width, height;
 
 protected:
 
 private:
 };
 
-#endif /* __CPPCONSUI_H__ */
+#endif // __CPPCONSUI_H__

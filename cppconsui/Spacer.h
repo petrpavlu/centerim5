@@ -34,17 +34,17 @@ class Spacer
 : public Widget
 {
 public:
-	Spacer(int w, int h);
-	virtual ~Spacer() {}
+  Spacer(int w, int h);
+  virtual ~Spacer() {}
 
-	// Widget
-	virtual void Draw();
+  // Widget
+  virtual void Draw();
 
 protected:
 
 private:
-	Spacer(const Spacer&);
-	Spacer& operator=(const Spacer&);
+  Spacer(const Spacer&);
+  Spacer& operator=(const Spacer&);
 };
 
-#endif /* __SPACER_H__ */
+#endif // __SPACER_H__

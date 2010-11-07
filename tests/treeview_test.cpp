@@ -9,65 +9,65 @@
 class TreeViewWindow
 : public Window
 {
-	public:
-		/* This is a main window, make sure it can not be closed with ESC key
-		 * by overriding Close() method. */
-		static TreeViewWindow *Instance();
-		virtual void Close() {}
+  public:
+    /* This is a main window, make sure it can not be closed with ESC key by
+     * overriding Close() method. */
+    static TreeViewWindow *Instance();
+    virtual void Close() {}
 
-		virtual void ScreenResized();
+    virtual void ScreenResized();
 
-	protected:
+  protected:
 
-	private:
-		TreeViewWindow();
-		virtual ~TreeViewWindow() {}
-		TreeViewWindow(const TreeViewWindow&);
-		TreeViewWindow& operator=(const TreeViewWindow&);
+  private:
+    TreeViewWindow();
+    virtual ~TreeViewWindow() {}
+    TreeViewWindow(const TreeViewWindow&);
+    TreeViewWindow& operator=(const TreeViewWindow&);
 };
 
 TreeViewWindow *TreeViewWindow::Instance()
 {
-	static TreeViewWindow instance;
-	return &instance;
+  static TreeViewWindow instance;
+  return &instance;
 }
 
 TreeViewWindow::TreeViewWindow()
 : Window(0, 0, 0, 0)
 {
-	TreeView *tree;
-	TreeView::NodeReference node;
-	TreeView::NodeReference node2;
+  TreeView *tree;
+  TreeView::NodeReference node;
+  TreeView::NodeReference node2;
 
-	AddWidget(*(new Label(20, 1, "Press F10 to quit.")), 1, 1);
+  AddWidget(*(new Label(20, 1, "Press F10 to quit.")), 1, 1);
 
-	tree = new TreeView(30, 12);
-	AddWidget(*tree, 1, 3);
-	SetInputChild(*tree);
+  tree = new TreeView(30, 12);
+  AddWidget(*tree, 1, 3);
+  SetInputChild(*tree);
 
-	node = tree->AppendNode(tree->Root(), *(new Button("Button node A")));
-	node2 = tree->AppendNode(node, *(new Button("Button node A-1")));
-	tree->AppendNode(node2, *(new Button("Button node A-1-a")));
-	tree->AppendNode(node2, *(new Button("Button node A-1-b")));
-	tree->AppendNode(node2, *(new Button("Button node A-1-c")));
-	tree->AppendNode(node, *(new Button("Button node A-2")));
-	tree->AppendNode(node, *(new Button("Button node A-3")));
+  node = tree->AppendNode(tree->Root(), *(new Button("Button node A")));
+  node2 = tree->AppendNode(node, *(new Button("Button node A-1")));
+  tree->AppendNode(node2, *(new Button("Button node A-1-a")));
+  tree->AppendNode(node2, *(new Button("Button node A-1-b")));
+  tree->AppendNode(node2, *(new Button("Button node A-1-c")));
+  tree->AppendNode(node, *(new Button("Button node A-2")));
+  tree->AppendNode(node, *(new Button("Button node A-3")));
 
-	node = tree->AppendNode(tree->Root(), *(new Label("Label node B")));
-	tree->AppendNode(node, *(new Label("Label node B-1")));
-	tree->AppendNode(node, *(new Label("Label node B-2")));
-	tree->AppendNode(node, *(new Label("Label node B-3")));
+  node = tree->AppendNode(tree->Root(), *(new Label("Label node B")));
+  tree->AppendNode(node, *(new Label("Label node B-1")));
+  tree->AppendNode(node, *(new Label("Label node B-2")));
+  tree->AppendNode(node, *(new Label("Label node B-3")));
 
-	node = tree->AppendNode(tree->Root(), *(new Button("Button node C")));
-	tree->AppendNode(node, *(new Button("Button node C-1")));
-	tree->AppendNode(node, *(new Button("Button node C-2")));
-	tree->AppendNode(node, *(new Button("Button node C-3")));
+  node = tree->AppendNode(tree->Root(), *(new Button("Button node C")));
+  tree->AppendNode(node, *(new Button("Button node C-1")));
+  tree->AppendNode(node, *(new Button("Button node C-2")));
+  tree->AppendNode(node, *(new Button("Button node C-3")));
 }
 
 void TreeViewWindow::ScreenResized()
 {
-	MoveResize(0, 0, COREMANAGER->GetScreenWidth(),
-			COREMANAGER->GetScreenHeight());
+  MoveResize(0, 0, COREMANAGER->GetScreenWidth(),
+      COREMANAGER->GetScreenHeight());
 }
 
 // TestApp class
@@ -77,77 +77,77 @@ void TreeViewWindow::ScreenResized()
 class TestApp
 : public InputProcessor
 {
-	public:
-		static TestApp *Instance();
+  public:
+    static TestApp *Instance();
 
-		void Run();
+    void Run();
 
-		// ignore every message
-		static void g_log_func_(const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer user_data)
-			{}
+    // ignore every message
+    static void g_log_func_(const gchar *log_domain, GLogLevelFlags log_level,
+        const gchar *message, gpointer user_data)
+      {}
 
-	protected:
+  protected:
 
-	private:
-		CoreManager *mngr;
+  private:
+    CoreManager *mngr;
 
-		TestApp();
-		TestApp(const TestApp&);
-		TestApp& operator=(const TestApp&);
-		virtual ~TestApp() {}
+    TestApp();
+    TestApp(const TestApp&);
+    TestApp& operator=(const TestApp&);
+    virtual ~TestApp() {}
 
-		DECLARE_SIG_REGISTERKEYS();
-		static bool RegisterKeys();
-		void DeclareBindables();
+    DECLARE_SIG_REGISTERKEYS();
+    static bool RegisterKeys();
+    void DeclareBindables();
 };
 
 TestApp *TestApp::Instance()
 {
-	static TestApp instance;
-	return &instance;
+  static TestApp instance;
+  return &instance;
 }
 
 TestApp::TestApp()
 : InputProcessor()
 {
-	mngr = CoreManager::Instance();
+  mngr = CoreManager::Instance();
 
-	g_log_set_default_handler(g_log_func_, this);
+  g_log_set_default_handler(g_log_func_, this);
 
-	DeclareBindables();
+  DeclareBindables();
 }
 
 void TestApp::Run()
 {
-	mngr->AddWindow(*TreeViewWindow::Instance());
-	mngr->SetTopInputProcessor(*this);
-	mngr->EnableResizing();
-	mngr->StartMainLoop();
+  mngr->AddWindow(*TreeViewWindow::Instance());
+  mngr->SetTopInputProcessor(*this);
+  mngr->EnableResizing();
+  mngr->StartMainLoop();
 }
 
 void TestApp::DeclareBindables()
 {
-	DeclareBindable(CONTEXT_TESTAPP, "quit",
-			sigc::mem_fun(mngr, &CoreManager::QuitMainLoop),
-			InputProcessor::BINDABLE_OVERRIDE);
+  DeclareBindable(CONTEXT_TESTAPP, "quit", sigc::mem_fun(mngr,
+        &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
 }
 
 DEFINE_SIG_REGISTERKEYS(TestApp, RegisterKeys);
 bool TestApp::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_TESTAPP, "quit",
-			"Quit TestApp.", Keys::FunctionTermKey(10));
-	return true;
+  RegisterKeyDef(CONTEXT_TESTAPP, "quit", "Quit TestApp.",
+      Keys::FunctionTermKey(10));
+  return true;
 }
 
 // main function
 int main()
 {
-	setlocale(LC_ALL, "");
+  setlocale(LC_ALL, "");
 
-	TestApp *app = TestApp::Instance();
+  TestApp *app = TestApp::Instance();
 
-	app->Run();
+  app->Run();
 
-	return 0;
+  return 0;
 }

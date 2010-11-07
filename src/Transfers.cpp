@@ -27,5 +27,3 @@ Transfers::Transfers()
 Transfers::~Transfers()
 {
 }
-
-

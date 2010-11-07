@@ -29,165 +29,165 @@
 #include "LineStyle.h"
 
 struct LineElements {
-	const gchar *h;		// Horizontal line
-	const gchar *h_begin;	// "        " line begin
-	const gchar *h_end;	// "        " line end
-	const gchar *h_up;	// "             " and line up
-	const gchar *h_down;	// "             " and line down
-	const gchar *v;		// Vertical line
-	const gchar *v_begin;	// "      " line begin
-	const gchar *v_end;	// "      " line end
-	const gchar *v_left;	// "           " and line left
-	const gchar *v_right;	// "           " and line right
-	const gchar *cross;	// Horizontal and Vertical line crossed
-	const gchar *corner_tl;	// Top-left corner
-	const gchar *corner_tr;	// Top-right corner
-	const gchar *corner_bl;	// Bottom-left corner
-	const gchar *corner_br;	// Bottom-right corner
+  const gchar *h;         // Horizontal line
+  const gchar *h_begin;   // "        " line begin
+  const gchar *h_end;     // "        " line end
+  const gchar *h_up;      // "             " and line up
+  const gchar *h_down;    // "             " and line down
+  const gchar *v;         // Vertical line
+  const gchar *v_begin;   // "      " line begin
+  const gchar *v_end;     // "      " line end
+  const gchar *v_left;    // "           " and line left
+  const gchar *v_right;   // "           " and line right
+  const gchar *cross;     // Horizontal and Vertical line crossed
+  const gchar *corner_tl; // Top-left corner
+  const gchar *corner_tr; // Top-right corner
+  const gchar *corner_bl; // Bottom-left corner
+  const gchar *corner_br; // Bottom-right corner
 };
 
 /// @todo Add styles for double lines, block elements.
 static LineElements line_elements_ascii = {
-	"-", "-", "-", "+", "+",
-	"|", "|", "|", "+", "+",
-	"+", "+", "+", "+", "+",
+  "-", "-", "-", "+", "+",
+  "|", "|", "|", "+", "+",
+  "+", "+", "+", "+", "+",
 };
 
 static LineElements line_elements_ascii_rounded = {
-	"-", "-", "-", "-", "-",
-	"|", "|", "|", "|", "|",
-	"+", "/", "\\", "\\", "/",
+  "-", "-", "-", "-", "-",
+  "|", "|", "|", "|", "|",
+  "+", "/", "\\", "\\", "/",
 };
 
 static LineElements line_elements_light = {
-	"\342\224\200", "\342\225\266", "\342\225\264", "\342\224\264", "\342\224\254",
-	"\342\224\202", "\342\225\267", "\342\225\265", "\342\224\244", "\342\224\234",
-	"\342\224\274", "\342\224\214", "\342\224\220", "\342\224\224", "\342\224\230",
+  "\342\224\200", "\342\225\266", "\342\225\264", "\342\224\264", "\342\224\254",
+  "\342\224\202", "\342\225\267", "\342\225\265", "\342\224\244", "\342\224\234",
+  "\342\224\274", "\342\224\214", "\342\224\220", "\342\224\224", "\342\224\230",
 };
 
 static LineElements line_elements_light_rounded = {
-	"\342\224\200", "\342\225\266", "\342\225\264", "\342\224\264", "\342\224\254",
-	"\342\224\202", "\342\225\267", "\342\225\265", "\342\224\244", "\342\224\234",
-	"\342\224\274", "\342\225\255", "\342\225\256", "\342\225\257", "\342\225\260",
+  "\342\224\200", "\342\225\266", "\342\225\264", "\342\224\264", "\342\224\254",
+  "\342\224\202", "\342\225\267", "\342\225\265", "\342\224\244", "\342\224\234",
+  "\342\224\274", "\342\225\255", "\342\225\256", "\342\225\257", "\342\225\260",
 };
 
 static LineElements line_elements_heavy = {
-	"\342\224\201", "\342\225\272", "\342\225\270", "\342\224\273", "\342\224\263",
-	"\342\224\203", "\342\225\273", "\342\225\271", "\342\224\253", "\342\224\243",
-	"\342\225\213", "\342\224\217", "\342\224\223", "\342\224\227", "\342\224\233",
+  "\342\224\201", "\342\225\272", "\342\225\270", "\342\224\273", "\342\224\263",
+  "\342\224\203", "\342\225\273", "\342\225\271", "\342\224\253", "\342\224\243",
+  "\342\225\213", "\342\224\217", "\342\224\223", "\342\224\227", "\342\224\233",
 };
 
 LineStyle::LineStyle(Type t)
 : type(t)
 {
-	utf8 = g_get_charset(NULL);
+  utf8 = g_get_charset(NULL);
 }
 
 void LineStyle::SetStyle(Type t)
 {
-	type = t;
+  type = t;
 }
 
 LineStyle::Type LineStyle::GetStyle() const
 {
-	return type;
+  return type;
 }
 
 const gchar *LineStyle::H() const
 {
-	return GetCurrentElems()->h;
+  return GetCurrentElems()->h;
 }
 
 const gchar *LineStyle::HBegin() const
 {
-	return GetCurrentElems()->h_begin;
+  return GetCurrentElems()->h_begin;
 }
 
 const gchar *LineStyle::HEnd() const
 {
-	return GetCurrentElems()->h_end;
+  return GetCurrentElems()->h_end;
 }
 
 const gchar *LineStyle::HUp() const
 {
-	return GetCurrentElems()->h_up;
+  return GetCurrentElems()->h_up;
 }
 
 const gchar *LineStyle::HDown() const
 {
-	return GetCurrentElems()->h_down;
+  return GetCurrentElems()->h_down;
 }
 
 const gchar *LineStyle::V() const
 {
-	return GetCurrentElems()->v;
+  return GetCurrentElems()->v;
 }
 
 const gchar *LineStyle::VBegin() const
 {
-	return GetCurrentElems()->v_begin;
+  return GetCurrentElems()->v_begin;
 }
 
 const gchar *LineStyle::VEnd() const
 {
-	return GetCurrentElems()->v_end;
+  return GetCurrentElems()->v_end;
 }
 
 const gchar *LineStyle::VLeft() const
 {
-	return GetCurrentElems()->v_left;
+  return GetCurrentElems()->v_left;
 }
 
 const gchar *LineStyle::VRight() const
 {
-	return GetCurrentElems()->v_right;
+  return GetCurrentElems()->v_right;
 }
 
 const gchar *LineStyle::Cross() const
 {
-	return GetCurrentElems()->cross;
+  return GetCurrentElems()->cross;
 }
 
 const gchar *LineStyle::CornerTL() const
 {
-	return GetCurrentElems()->corner_tl;
+  return GetCurrentElems()->corner_tl;
 }
 
 const gchar *LineStyle::CornerTR() const
 {
-	return GetCurrentElems()->corner_tr;
+  return GetCurrentElems()->corner_tr;
 }
 
 const gchar *LineStyle::CornerBL() const
 {
-	return GetCurrentElems()->corner_bl;
+  return GetCurrentElems()->corner_bl;
 }
 
 const gchar *LineStyle::CornerBR() const
 {
-	return GetCurrentElems()->corner_br;
+  return GetCurrentElems()->corner_br;
 }
 
 LineElements *LineStyle::GetCurrentElems() const
 {
-	switch (type) {
-		case ASCII:
-			return &line_elements_ascii;
-		case ASCII_ROUNDED:
-			return &line_elements_ascii_rounded;
-		case LIGHT:
-			return &line_elements_light;
-		case LIGHT_ROUNDED:
-			return &line_elements_light_rounded;
-		case HEAVY:
-			return &line_elements_heavy;
-		case DEFAULT:
-			if (utf8)
-				return &line_elements_light;
-			else
-				return &line_elements_ascii;
-	}
+  switch (type) {
+    case ASCII:
+      return &line_elements_ascii;
+    case ASCII_ROUNDED:
+      return &line_elements_ascii_rounded;
+    case LIGHT:
+      return &line_elements_light;
+    case LIGHT_ROUNDED:
+      return &line_elements_light_rounded;
+    case HEAVY:
+      return &line_elements_heavy;
+    case DEFAULT:
+      if (utf8)
+        return &line_elements_light;
+      else
+        return &line_elements_ascii;
+  }
 
-	g_assert_not_reached();
-	return NULL;
+  g_assert_not_reached();
+  return NULL;
 }

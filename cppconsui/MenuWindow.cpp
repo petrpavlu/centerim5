@@ -29,14 +29,14 @@
 #include "MenuWindow.h"
 
 MenuWindow::MenuWindow(int x, int y, int w, int h, const gchar *title,
-		LineStyle::Type ltype)
+    LineStyle::Type ltype)
 : Window(x, y, w, h, title, TYPE_TOP, ltype)
 {
-	listbox = new ListBox(AUTOSIZE, AUTOSIZE);
-	Window::AddWidget(*listbox, 0, 0);
+  listbox = new ListBox(AUTOSIZE, AUTOSIZE);
+  Window::AddWidget(*listbox, 0, 0);
 }
 
 void MenuWindow::AddWidget(Widget& widget, int x, int y)
 {
-	Window::AddWidget(widget, x, y);
+  Window::AddWidget(widget, x, y);
 }

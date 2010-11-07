@@ -35,188 +35,180 @@ class AccountWindow
 : public SplitDialog
 {
 public:
-	AccountWindow();
+  AccountWindow();
 
-	// FreeWindow
-	virtual void ScreenResized();
+  // FreeWindow
+  virtual void ScreenResized();
 
 protected:
 
 private:
-	class AccountOptionSplit;
-	typedef std::list<AccountOptionSplit*> SplitWidgets;
-	typedef std::vector<Widget*> Widgets;
+  class AccountOptionSplit;
+  typedef std::list<AccountOptionSplit*> SplitWidgets;
+  typedef std::vector<Widget*> Widgets;
 
-	struct AccountEntry {
-		Button *parent;
-		TreeView::NodeReference parent_reference;
-		SplitWidgets split_widgets;
-	};
-	typedef std::map<PurpleAccount*, AccountEntry> AccountEntries;
+  struct AccountEntry {
+    Button *parent;
+    TreeView::NodeReference parent_reference;
+    SplitWidgets split_widgets;
+  };
+  typedef std::map<PurpleAccount*, AccountEntry> AccountEntries;
 
-	class AccountOption
-	: public Button
-	{
-	public:
-		AccountOption(PurpleAccount *account,
-			PurpleAccountOption *option = NULL);
-		virtual ~AccountOption() {}
+  class AccountOption
+  : public Button
+  {
+  public:
+    AccountOption(PurpleAccount *account, PurpleAccountOption *option = NULL);
+    virtual ~AccountOption() {}
 
-	protected:
-		PurpleAccount *account;
-		PurpleAccountOption *option;
+  protected:
+    PurpleAccount *account;
+    PurpleAccountOption *option;
 
-		const char *setting;
-		const char *text;
+    const char *setting;
+    const char *text;
 
-	private:
-		AccountOption(const AccountOption&);
-		AccountOption& operator=(const AccountOption&);
+  private:
+    AccountOption(const AccountOption&);
+    AccountOption& operator=(const AccountOption&);
 
-		virtual void UpdateText() = 0;
-		virtual void OnActivate(Button& activator) = 0;
-	};
+    virtual void UpdateText() = 0;
+    virtual void OnActivate(Button& activator) = 0;
+  };
 
-	class AccountOptionBool
-	: public AccountOption
-	{
-	public:
-		AccountOptionBool(PurpleAccount *account,
-			PurpleAccountOption *option);
-		AccountOptionBool(PurpleAccount *account, bool remember_password,
-				bool enable_account);
-		virtual ~AccountOptionBool() {}
+  class AccountOptionBool
+  : public AccountOption
+  {
+  public:
+    AccountOptionBool(PurpleAccount *account, PurpleAccountOption *option);
+    AccountOptionBool(PurpleAccount *account, bool remember_password,
+        bool enable_account);
+    virtual ~AccountOptionBool() {}
 
-	protected:
-		gboolean value;
+  protected:
+    gboolean value;
 
-		bool remember_password, enable_account;
+    bool remember_password, enable_account;
 
-	private:
-		AccountOptionBool(const AccountOptionBool&);
-		AccountOptionBool& operator=(const AccountOptionBool&);
+  private:
+    AccountOptionBool(const AccountOptionBool&);
+    AccountOptionBool& operator=(const AccountOptionBool&);
 
-		virtual void UpdateText();
-		virtual void OnActivate(Button& activator);
-	};
+    virtual void UpdateText();
+    virtual void OnActivate(Button& activator);
+  };
 
-	class AccountOptionString
-	: public AccountOption
-	{
-	public:
-		AccountOptionString(PurpleAccount *account,
-			PurpleAccountOption *option);
-		AccountOptionString(PurpleAccount *account, bool password,
-				bool alias);
-		virtual ~AccountOptionString() {}
+  class AccountOptionString
+  : public AccountOption
+  {
+  public:
+    AccountOptionString(PurpleAccount *account, PurpleAccountOption *option);
+    AccountOptionString(PurpleAccount *account, bool password, bool alias);
+    virtual ~AccountOptionString() {}
 
-	protected:
-		const gchar *value;
+  protected:
+    const gchar *value;
 
-		bool password, alias;
+    bool password, alias;
 
-	private:
-		AccountOptionString(const AccountOptionString&);
-		AccountOptionString& operator=(const AccountOptionString&);
+  private:
+    AccountOptionString(const AccountOptionString&);
+    AccountOptionString& operator=(const AccountOptionString&);
 
-		virtual void UpdateText();
-		virtual void OnActivate(Button& activator);
+    virtual void UpdateText();
+    virtual void OnActivate(Button& activator);
 
-		void ResponseHandler(Dialog& activator,
-				Dialog::ResponseType response);
-	};
+    void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
+  };
 
-	class AccountOptionInt
-	: public AccountOption
-	{
-	public:
-		AccountOptionInt(PurpleAccount *account,
-			PurpleAccountOption *option);
-		virtual ~AccountOptionInt() {}
+  class AccountOptionInt
+  : public AccountOption
+  {
+  public:
+    AccountOptionInt(PurpleAccount *account, PurpleAccountOption *option);
+    virtual ~AccountOptionInt() {}
 
-	protected:
-		int value;
+  protected:
+    int value;
 
-	private:
-		AccountOptionInt(const AccountOptionInt&);
-		AccountOptionInt& operator=(const AccountOptionInt&);
+  private:
+    AccountOptionInt(const AccountOptionInt&);
+    AccountOptionInt& operator=(const AccountOptionInt&);
 
-		virtual void UpdateText();
-		virtual void OnActivate(Button& activator);
+    virtual void UpdateText();
+    virtual void OnActivate(Button& activator);
 
-		void ResponseHandler(Dialog& activator,
-				Dialog::ResponseType response);
-	};
+    void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
+  };
 
-	class AccountOptionSplit
-	: public Button
-	{
-	public:
-		AccountOptionSplit(PurpleAccount *account,
-			PurpleAccountUserSplit *split, AccountEntry *account_entry);
-		virtual ~AccountOptionSplit();
+  class AccountOptionSplit
+  : public Button
+  {
+  public:
+    AccountOptionSplit(PurpleAccount *account, PurpleAccountUserSplit *split,
+        AccountEntry *account_entry);
+    virtual ~AccountOptionSplit();
 
-		void SetValue(const gchar *new_value);
-		const gchar* GetValue() { return value; }
+    void SetValue(const gchar *new_value);
+    const gchar* GetValue() { return value; }
 
-	protected:
-		PurpleAccount *account;
-		PurpleAccountUserSplit *split;
-		AccountEntry *account_entry;
+  protected:
+    PurpleAccount *account;
+    PurpleAccountUserSplit *split;
+    AccountEntry *account_entry;
 
-		const char *text;
-		gchar *value;
+    const char *text;
+    gchar *value;
 
-		void UpdateSplits();
+    void UpdateSplits();
 
-	private:
-		AccountOptionSplit(const AccountOptionSplit&);
-		AccountOptionSplit& operator=(const AccountOptionSplit&);
+  private:
+    AccountOptionSplit(const AccountOptionSplit&);
+    AccountOptionSplit& operator=(const AccountOptionSplit&);
 
-		virtual void UpdateText();
-		virtual void OnActivate(Button& activator);
+    virtual void UpdateText();
+    virtual void OnActivate(Button& activator);
 
-		void ResponseHandler(Dialog& activator,
-				Dialog::ResponseType response);
-	};
+    void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
+  };
 
-	class AccountOptionProtocol
-	: public ComboBox
-	{
-	public:
-		AccountOptionProtocol(PurpleAccount *account,
-				AccountWindow &account_window);
-		virtual ~AccountOptionProtocol() {}
+  class AccountOptionProtocol
+  : public ComboBox
+  {
+  public:
+    AccountOptionProtocol(PurpleAccount *account,
+        AccountWindow& account_window);
+    virtual ~AccountOptionProtocol() {}
 
-	protected:
-		AccountWindow *account_window;
-		PurpleAccount *account;
+  protected:
+    AccountWindow *account_window;
+    PurpleAccount *account;
 
-	private:
-		AccountOptionProtocol(const AccountOptionProtocol&);
-		AccountOptionProtocol& operator=(const AccountOptionProtocol&);
+  private:
+    AccountOptionProtocol(const AccountOptionProtocol&);
+    AccountOptionProtocol& operator=(const AccountOptionProtocol&);
 
-		void OnProtocolChanged(Button& activator, size_t new_entry,
-				const gchar *title, intptr_t data);
-	};
+    void OnProtocolChanged(Button& activator, size_t new_entry,
+        const gchar *title, intptr_t data);
+  };
 
-	AccountWindow(const AccountWindow&);
-	AccountWindow& operator=(const AccountWindow&);
-	virtual ~AccountWindow() {}
+  AccountWindow(const AccountWindow&);
+  AccountWindow& operator=(const AccountWindow&);
+  virtual ~AccountWindow() {}
 
-	bool ClearAccount(PurpleAccount *account, bool full);
+  bool ClearAccount(PurpleAccount *account, bool full);
 
-	void Populate();
-	void PopulateAccount(PurpleAccount *account);
+  void Populate();
+  void PopulateAccount(PurpleAccount *account);
 
-	void Add(Button& activator);
-	void DropAccount(Button& activator, PurpleAccount *account);
-	void DropAccountResponseHandler(Dialog& activator,
-			Dialog::ResponseType response, PurpleAccount *account);
+  void Add(Button& activator);
+  void DropAccount(Button& activator, PurpleAccount *account);
+  void DropAccountResponseHandler(Dialog& activator,
+      Dialog::ResponseType response, PurpleAccount *account);
 
-	TreeView *accounts;
+  TreeView *accounts;
 
-	AccountEntries account_entries;
+  AccountEntries account_entries;
 };
 
-#endif /* __ACCOUNTSWINDOW_H__ */
+#endif // __ACCOUNTSWINDOW_H__

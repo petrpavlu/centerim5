@@ -30,13 +30,13 @@
 #include "gettext.h"
 
 SplitDialog::SplitDialog(int x, int y, int w, int h, const gchar *title,
-		LineStyle::Type ltype)
+    LineStyle::Type ltype)
 : Dialog(x, y, w, h, title, ltype)
 , container(NULL)
 , container_index(0)
 , buttons_index(0)
 {
-	buttons->SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
+  buttons->SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
 }
 
 SplitDialog::SplitDialog(const gchar *title, LineStyle::Type ltype)
@@ -45,101 +45,95 @@ SplitDialog::SplitDialog(const gchar *title, LineStyle::Type ltype)
 , container_index(0)
 , buttons_index(0)
 {
-	buttons->SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
+  buttons->SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
 }
 
 void SplitDialog::MoveFocus(FocusDirection direction)
 {
-	if (!container) {
-		Dialog::MoveFocus(direction);
-		return;
-	}
+  if (!container) {
+    Dialog::MoveFocus(direction);
+    return;
+  }
 
-	switch (direction) {
-		case FOCUS_PREVIOUS:
-			if (layout->GetFocusChild() == container) {
-				// focus is held by container, give it to the last button
-				container_index = container->GetActive();
+  switch (direction) {
+    case FOCUS_PREVIOUS:
+      if (layout->GetFocusChild() == container) {
+        // focus is held by container, give it to the last button
+        container_index = container->GetActive();
 
-				FocusChain focus_chain(NULL);
-				buttons->GetFocusChain(focus_chain, focus_chain.begin());
+        FocusChain focus_chain(NULL);
+        buttons->GetFocusChain(focus_chain, focus_chain.begin());
 
-				FocusChain::pre_order_iterator iter = --focus_chain.end();
-				if (*iter && (*iter)->GrabFocus())
-					return;
-			}
-			else if (layout->GetFocusChild() == buttons) {
-				FocusChain focus_chain(NULL);
-				buttons->GetFocusChain(focus_chain, focus_chain.begin());
+        FocusChain::pre_order_iterator iter = --focus_chain.end();
+        if (*iter && (*iter)->GrabFocus())
+          return;
+      }
+      else if (layout->GetFocusChild() == buttons) {
+        FocusChain focus_chain(NULL);
+        buttons->GetFocusChain(focus_chain, focus_chain.begin());
 
-				FocusChain::leaf_iterator iter = focus_chain.begin_leaf();
-				if (GetFocusWidget() == *iter) {
-					/* Focus is held by the first button, give it to the
-					 * container. */
-					buttons_index = buttons->GetActive();
-					if (container->SetActive(container_index)
-							|| container->GrabFocus())
-						return;
-				}
-			}
-			break;
-		case FOCUS_NEXT:
-			if (layout->GetFocusChild() == container) {
-				// focus is held by container, give it to the first button
-				container_index = container->GetActive();
-				if (buttons->GrabFocus())
-					return;
-			}
-			else if (layout->GetFocusChild() == buttons) {
-				FocusChain focus_chain(NULL);
-				buttons->GetFocusChain(focus_chain, focus_chain.begin());
+        FocusChain::leaf_iterator iter = focus_chain.begin_leaf();
+        if (GetFocusWidget() == *iter) {
+          // focus is held by the first button, give it to the container
+          buttons_index = buttons->GetActive();
+          if (container->SetActive(container_index) || container->GrabFocus())
+            return;
+        }
+      }
+      break;
+    case FOCUS_NEXT:
+      if (layout->GetFocusChild() == container) {
+        // focus is held by container, give it to the first button
+        container_index = container->GetActive();
+        if (buttons->GrabFocus())
+          return;
+      }
+      else if (layout->GetFocusChild() == buttons) {
+        FocusChain focus_chain(NULL);
+        buttons->GetFocusChain(focus_chain, focus_chain.begin());
 
-				FocusChain::pre_order_iterator iter = --focus_chain.end();
-				if (GetFocusWidget() == *iter) {
-					/* Focus is held by the last button, give it to the
-					 * container. */
-					buttons_index = buttons->GetActive();
-					if (container->SetActive(container_index)
-							|| container->GrabFocus())
-						return;
-				}
-			}
-			break;
-		case FOCUS_LEFT:
-		case FOCUS_RIGHT:
-			if (layout->GetFocusChild() != buttons) {
-				container_index = container->GetActive();
-				/* First try to focus the previously focused widget, if it
-				 * fails then try any widget. */
-				if (buttons->SetActive(buttons_index)
-						|| buttons->GrabFocus())
-					return;
-			}
-			break;
-		case FOCUS_UP:
-		case FOCUS_DOWN:
-			if (layout->GetFocusChild() != container) {
-				buttons_index = buttons->GetActive();
-				/* First try to focus the previously focused widget, if it
-				 * fails then try any widget. */
-				if (container->SetActive(container_index)
-						|| container->GrabFocus())
-					return;
-			}
-			break;
-		default:
-			break;
-	}
-	Dialog::MoveFocus(direction);
+        FocusChain::pre_order_iterator iter = --focus_chain.end();
+        if (GetFocusWidget() == *iter) {
+          // focus is held by the last button, give it to the container
+          buttons_index = buttons->GetActive();
+          if (container->SetActive(container_index) || container->GrabFocus())
+            return;
+        }
+      }
+      break;
+    case FOCUS_LEFT:
+    case FOCUS_RIGHT:
+      if (layout->GetFocusChild() != buttons) {
+        container_index = container->GetActive();
+        /* First try to focus the previously focused widget, if it fails then
+         * try any widget. */
+        if (buttons->SetActive(buttons_index) || buttons->GrabFocus())
+          return;
+      }
+      break;
+    case FOCUS_UP:
+    case FOCUS_DOWN:
+      if (layout->GetFocusChild() != container) {
+        buttons_index = buttons->GetActive();
+        /* First try to focus the previously focused widget, if it fails then
+         * try any widget. */
+        if (container->SetActive(container_index) || container->GrabFocus())
+          return;
+      }
+      break;
+    default:
+      break;
+  }
+  Dialog::MoveFocus(direction);
 }
 
 void SplitDialog::SetContainer(Container& cont)
 {
-	g_assert(!container);
-	g_warn_if_fail(cont.Width() == AUTOSIZE);
-	g_warn_if_fail(cont.Height() == AUTOSIZE);
+  g_assert(!container);
+  g_warn_if_fail(cont.Width() == AUTOSIZE);
+  g_warn_if_fail(cont.Height() == AUTOSIZE);
 
-	container = &cont;
-	cont.SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
-	layout->InsertWidget(0, cont);
+  container = &cont;
+  cont.SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
+  layout->InsertWidget(0, cont);
 }

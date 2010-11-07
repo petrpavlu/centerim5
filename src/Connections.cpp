@@ -28,74 +28,74 @@
 
 Connections *Connections::Instance()
 {
-	static Connections instance;
-	return &instance;
+  static Connections instance;
+  return &instance;
 }
 
 Connections::Connections()
 {
-	// set the purple connection callbacks
-	memset(&centerim_connection_ui_ops, 0, sizeof(centerim_connection_ui_ops));
-	centerim_connection_ui_ops.connect_progress = connect_progress_;
-	centerim_connection_ui_ops.connected = connected_;
-	centerim_connection_ui_ops.disconnected = disconnected_;
-	centerim_connection_ui_ops.notice = notice_;
-	// deprecated in favour of report_disconnect_reason()
-	//centerim_connection_ui_ops.report_disconnect = report_disconnect_;
-	centerim_connection_ui_ops.network_connected = network_connected_;
-	centerim_connection_ui_ops.network_disconnected = network_disconnected_;
-	centerim_connection_ui_ops.report_disconnect_reason = report_disconnect_reason_;
-	purple_connections_set_ui_ops(&centerim_connection_ui_ops);
+  // set the purple connection callbacks
+  memset(&centerim_connection_ui_ops, 0, sizeof(centerim_connection_ui_ops));
+  centerim_connection_ui_ops.connect_progress = connect_progress_;
+  centerim_connection_ui_ops.connected = connected_;
+  centerim_connection_ui_ops.disconnected = disconnected_;
+  centerim_connection_ui_ops.notice = notice_;
+  // deprecated in favour of report_disconnect_reason()
+  //centerim_connection_ui_ops.report_disconnect = report_disconnect_;
+  centerim_connection_ui_ops.network_connected = network_connected_;
+  centerim_connection_ui_ops.network_disconnected = network_disconnected_;
+  centerim_connection_ui_ops.report_disconnect_reason = report_disconnect_reason_;
+  purple_connections_set_ui_ops(&centerim_connection_ui_ops);
 }
 
 void Connections::connect_progress(PurpleConnection *gc, const char *text,
-		size_t step, size_t step_count)
+    size_t step, size_t step_count)
 {
-	PurpleAccount *account = purple_connection_get_account(gc);
-	LOG->Write(Log::LEVEL_MESSAGE, _("+ [%s] %s: %s\n"),
-			purple_account_get_protocol_name(account),
-			purple_account_get_username(account), text);
+  PurpleAccount *account = purple_connection_get_account(gc);
+  LOG->Write(Log::LEVEL_MESSAGE, _("+ [%s] %s: %s\n"),
+      purple_account_get_protocol_name(account),
+      purple_account_get_username(account), text);
 }
 
 void Connections::connected(PurpleConnection *gc)
 {
-	PurpleAccount *account = purple_connection_get_account(gc);
-	LOG->Write(Log::LEVEL_MESSAGE, _("+ [%s] %s: Connected\n"),
-			purple_account_get_protocol_name(account),
-			purple_account_get_username(account));
+  PurpleAccount *account = purple_connection_get_account(gc);
+  LOG->Write(Log::LEVEL_MESSAGE, _("+ [%s] %s: Connected\n"),
+      purple_account_get_protocol_name(account),
+      purple_account_get_username(account));
 }
 
 void Connections::disconnected(PurpleConnection *gc)
 {
-	PurpleAccount *account = purple_connection_get_account(gc);
-	LOG->Write(Log::LEVEL_MESSAGE, _("+ [%s] %s: Disconnected\n"),
-			purple_account_get_protocol_name(account),
-			purple_account_get_username(account));
+  PurpleAccount *account = purple_connection_get_account(gc);
+  LOG->Write(Log::LEVEL_MESSAGE, _("+ [%s] %s: Disconnected\n"),
+      purple_account_get_protocol_name(account),
+      purple_account_get_username(account));
 }
 
 void Connections::notice(PurpleConnection *gc, const char *text)
 {
-	PurpleAccount *account = purple_connection_get_account(gc);
-	LOG->Write(Log::LEVEL_MESSAGE, _("+ [%s] %s: %s\n"),
-			purple_account_get_protocol_name(account),
-			purple_account_get_username(account), text);
+  PurpleAccount *account = purple_connection_get_account(gc);
+  LOG->Write(Log::LEVEL_MESSAGE, _("+ [%s] %s: %s\n"),
+      purple_account_get_protocol_name(account),
+      purple_account_get_username(account), text);
 }
 
 void Connections::network_connected()
 {
-	LOG->Write(Log::LEVEL_MESSAGE, _("+ Network connected\n"));
+  LOG->Write(Log::LEVEL_MESSAGE, _("+ Network connected\n"));
 }
 
 void Connections::network_disconnected()
 {
-	LOG->Write(Log::LEVEL_MESSAGE, _("+ Network disconnected\n"));
+  LOG->Write(Log::LEVEL_MESSAGE, _("+ Network disconnected\n"));
 }
 
 void Connections::report_disconnect_reason(PurpleConnection *gc,
-		PurpleConnectionError reason, const char *text)
+    PurpleConnectionError reason, const char *text)
 {
-	PurpleAccount *account = purple_connection_get_account(gc);
-	LOG->Write(Log::LEVEL_MESSAGE, _("+ [%s] %s: %s\n"),
-			purple_account_get_protocol_name(account),
-			purple_account_get_username(account), text);
+  PurpleAccount *account = purple_connection_get_account(gc);
+  LOG->Write(Log::LEVEL_MESSAGE, _("+ [%s] %s: %s\n"),
+      purple_account_get_protocol_name(account),
+      purple_account_get_username(account), text);
 }

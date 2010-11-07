@@ -32,69 +32,69 @@ Label::Label(int w, int h, const gchar *text_)
 : Widget(w, h)
 , text(NULL)
 {
-	RealSetText(text_);
+  RealSetText(text_);
 }
 
 Label::Label(const gchar *text_)
 : Widget(AUTOSIZE, 1)
 , text(NULL)
 {
-	RealSetText(text_);
+  RealSetText(text_);
 }
 
 Label::~Label()
 {
-	g_free(text);
+  g_free(text);
 }
 
 void Label::Draw()
 {
-	DrawEx(true);
+  DrawEx(true);
 }
 
 void Label::DrawEx(bool color)
 {
-	if (!area || !text)
-		return;
+  if (!area || !text)
+    return;
 
-	/**
-	 * @todo Though this is not a widget for long text there are some cases in
-	 * cim where we use it for a short but multiline text, so we should threat
-	 * LF specially here.
-	 */
+  /**
+   * @todo Though this is not a widget for long text there are some cases in
+   * cim where we use it for a short but multiline text, so we should threat
+   * LF specially here.
+   */
 
-	int attrs;
-	if (color) {
-		attrs = GetColorPair("label", "text");
-		area->attron(attrs);
-	}
+  int attrs;
+  if (color) {
+    attrs = GetColorPair("label", "text");
+    area->attron(attrs);
+  }
 
-	int max = area->getmaxx() * area->getmaxy();
-	area->mvaddstring(0, 0, max, text);
+  int max = area->getmaxx() * area->getmaxy();
+  area->mvaddstring(0, 0, max, text);
 
-	if (color)
-		area->attroff(attrs);
+  if (color)
+    area->attroff(attrs);
 }
 
 void Label::SetText(const gchar *text_)
 {
-	RealSetText(text_);
+  RealSetText(text_);
 
-	signal_redraw(*this);
+  signal_redraw(*this);
 }
 
 const gchar *Label::GetText() const
 {
-	return text;
+  return text;
 }
 
 void Label::RealSetText(const gchar *text_)
 {
-	if (text)
-		g_free(text);
+  if (text)
+    g_free(text);
 
-	if (text_)
-		text = g_strdup(text_);
-	else
-		text = NULL;
+  if (text_)
+    text = g_strdup(text_);
+  else
+    text = NULL;
 }

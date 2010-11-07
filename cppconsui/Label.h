@@ -38,39 +38,39 @@ class Label
 : public Widget
 {
 public:
-	Label(int w, int h, const gchar *text_ = NULL);
-	explicit Label(const gchar *text_ = NULL);
-	virtual ~Label();
+  Label(int w, int h, const gchar *text_ = NULL);
+  explicit Label(const gchar *text_ = NULL);
+  virtual ~Label();
 
-	// Widget
-	virtual void Draw();
+  // Widget
+  virtual void Draw();
 
-	/**
-	 * Sets a new text and redraws itself.
-	 */
-	virtual void SetText(const gchar *text_);
-	/**
-	 * Returns previously set text.
-	 */
-	const gchar *GetText() const;
+  /**
+   * Sets a new text and redraws itself.
+   */
+  virtual void SetText(const gchar *text_);
+  /**
+   * Returns previously set text.
+   */
+  const gchar *GetText() const;
 
 protected:
-	gchar *text;
+  gchar *text;
 
-	/**
-	 * Extended version of Draw() method.
-	 */
-	void DrawEx(bool color);
+  /**
+   * Extended version of Draw() method.
+   */
+  void DrawEx(bool color);
 
 private:
-	Label(const Label&);
-	Label& operator=(const Label&);
+  Label(const Label&);
+  Label& operator=(const Label&);
 
-	/**
-	 * Manages text allocation and reallocation without any Widget signals
-	 * involved.
-	 */
-	void RealSetText(const gchar *text_);
+  /**
+   * Manages text allocation and reallocation without any Widget signals
+   * involved.
+   */
+  void RealSetText(const gchar *text_);
 };
 
-#endif /* __LABEL_H__ */
+#endif // __LABEL_H__

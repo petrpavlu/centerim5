@@ -35,21 +35,20 @@ HorizontalLine::HorizontalLine(int w, LineStyle::Type ltype)
 
 void HorizontalLine::Draw()
 {
-	int realw;
+  int realw;
 
-	if (!area || (realw = area->getmaxx()) == 0 || area->getmaxy() != 1)
-		return;
+  if (!area || (realw = area->getmaxx()) == 0 || area->getmaxy() != 1)
+    return;
 
-	int attrs = GetColorPair("horizontalline", "line");
-	area->attron(attrs);
-	if (realw <= 1) {
-		area->mvaddstring(0, 0, linestyle.H());
-	} else {
-		area->mvaddstring(0, 0, linestyle.HBegin());
-		for (int i = 1; i < realw - 1; i++) {
-			area->mvaddstring(i, 0, linestyle.H());
-		}
-		area->mvaddstring(realw - 1, 0, linestyle.HEnd());
-	}
-	area->attroff(attrs);
+  int attrs = GetColorPair("horizontalline", "line");
+  area->attron(attrs);
+  if (realw <= 1)
+    area->mvaddstring(0, 0, linestyle.H());
+  else {
+    area->mvaddstring(0, 0, linestyle.HBegin());
+    for (int i = 1; i < realw - 1; i++)
+      area->mvaddstring(i, 0, linestyle.H());
+    area->mvaddstring(realw - 1, 0, linestyle.HEnd());
+  }
+  area->attroff(attrs);
 }

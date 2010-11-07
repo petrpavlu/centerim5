@@ -29,33 +29,33 @@
 
 Accounts *Accounts::Instance()
 {
-	static Accounts instance;
-	return &instance;
+  static Accounts instance;
+  return &instance;
 }
 
 Accounts::Accounts()
 {
-	// if the statuses are not known, set them all to the default
-	if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
-		purple_savedstatus_activate(purple_savedstatus_get_startup());
+  // if the statuses are not known, set them all to the default
+  if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
+    purple_savedstatus_activate(purple_savedstatus_get_startup());
 
-	// restore last know status on all accounts
-	purple_accounts_restore_current_statuses();
+  // restore last know status on all accounts
+  purple_accounts_restore_current_statuses();
 
-	// set the purple account callbacks
-	memset(&centerim_account_ui_ops, 0, sizeof(centerim_account_ui_ops));
-	//centerim_account_ui_ops.notify_added = notify_added_;
-	centerim_account_ui_ops.status_changed = status_changed_;
-	//centerim_account_ui_ops.request_add = request_add_;
-	//centerim_account_ui_ops.request_authorize = request_authorize_;
-	//centerim_account_ui_ops.close_account_request = close_account_request_;
-	purple_accounts_set_ui_ops(&centerim_account_ui_ops);
+  // set the purple account callbacks
+  memset(&centerim_account_ui_ops, 0, sizeof(centerim_account_ui_ops));
+  //centerim_account_ui_ops.notify_added = notify_added_;
+  centerim_account_ui_ops.status_changed = status_changed_;
+  //centerim_account_ui_ops.request_add = request_add_;
+  //centerim_account_ui_ops.request_authorize = request_authorize_;
+  //centerim_account_ui_ops.close_account_request = close_account_request_;
+  purple_accounts_set_ui_ops(&centerim_account_ui_ops);
 }
 
 void Accounts::status_changed(PurpleAccount *account, PurpleStatus *status)
 {
-	LOG->Write(Log::LEVEL_MESSAGE, _("+ [%s] %s: Status changed to: %s\n"),
-			purple_account_get_protocol_name(account),
-			purple_account_get_username(account),
-			purple_status_get_name(status));
+  LOG->Write(Log::LEVEL_MESSAGE, _("+ [%s] %s: Status changed to: %s\n"),
+      purple_account_get_protocol_name(account),
+      purple_account_get_username(account),
+      purple_status_get_name(status));
 }

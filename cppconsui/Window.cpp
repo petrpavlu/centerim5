@@ -29,60 +29,60 @@
 #include "Window.h"
 
 Window::Window(int x, int y, int w, int h, const gchar *title, Type t,
-		LineStyle::Type ltype)
+    LineStyle::Type ltype)
 : FreeWindow(x, y, w, h, t)
 {
-	panel = new Panel(win_w, win_h, title, ltype);
-	AddWidget(*panel, 0, 0);
+  panel = new Panel(win_w, win_h, title, ltype);
+  AddWidget(*panel, 0, 0);
 }
 
 void Window::MoveResize(int newx, int newy, int neww, int newh)
 {
-	win_x = newx;
-	win_y = newy;
-	win_w = neww;
-	win_h = newh;
+  win_x = newx;
+  win_y = newy;
+  win_w = neww;
+  win_h = newh;
 
-	MakeRealWindow();
-	UpdateArea();
+  MakeRealWindow();
+  UpdateArea();
 
-	panel->MoveResize(0, 0, win_w, win_h);
+  panel->MoveResize(0, 0, win_w, win_h);
 
-	Container::MoveResize(1, 1, win_w < 2 ? 0 : win_w - 2,
-			win_h < 2 ? 0 : win_h - 2);
+  Container::MoveResize(1, 1, win_w < 2 ? 0 : win_w - 2,
+      win_h < 2 ? 0 : win_h - 2);
 }
 
 Curses::Window *Window::GetSubPad(const Widget &child, int begin_x,
-		int begin_y, int ncols, int nlines)
+    int begin_y, int ncols, int nlines)
 {
-	if (!area)
-		return NULL;
+  if (!area)
+    return NULL;
 
-	// handle panel child specially
-	if (&child == panel)
-		return area->subpad(begin_x, begin_y, ncols, nlines);
+  // handle panel child specially
+  if (&child == panel)
+    return area->subpad(begin_x, begin_y, ncols, nlines);
 
-	int realw = area->getmaxx() - 2;
-	int realh = area->getmaxy() - 2;
+  int realw = area->getmaxx() - 2;
+  int realh = area->getmaxy() - 2;
 
-	/* Extend requested subpad to whole panel area or shrink requested area if
-	 * necessary. */
-	if (nlines == AUTOSIZE || nlines > realh - begin_y)
-		nlines = realh - begin_y;
+  /* Extend requested subpad to whole panel area or shrink requested area if
+   * necessary. */
+  if (nlines == AUTOSIZE || nlines > realh - begin_y)
+    nlines = realh - begin_y;
 
-	if (ncols == AUTOSIZE || ncols > realw - begin_x)
-		ncols = realw - begin_x;
+  if (ncols == AUTOSIZE || ncols > realw - begin_x)
+    ncols = realw - begin_x;
 
-	// add `+1' offset to normal childs so they can not overwrite the panel
-	return area->subpad(begin_x + 1, begin_y + 1, ncols, nlines);
+  // add `+1' offset to normal childs so they can not overwrite the panel
+  return area->subpad(begin_x + 1, begin_y + 1, ncols, nlines);
 }
 
 void Window::SetBorderStyle(LineStyle::Type ltype)
 {
-	panel->SetBorderStyle(ltype);
+  panel->SetBorderStyle(ltype);
 }
 
 LineStyle::Type Window::GetBorderStyle() const
 {
-	return panel->GetBorderStyle();
+  return panel->GetBorderStyle();
 }

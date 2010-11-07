@@ -32,51 +32,40 @@
 #include "FreeWindow.h"
 #include "Panel.h"
 
-/** Window class is the class implementing the root node of the Widget chain defined by
- *  Widget::parent.
+/**
+ * Window class is the class implementing the root node of the Widget chain
+ * defined by Widget::parent.
  *
- * It handles the drawing of it's pad and subpads of it's children to a
- * @ref realwindow "real window".
- *
- * @todo I have the following idea about how to change the implementation of Window.
- *  First, I think it's the WindowManager's job to create the "realwindow" for this
- *  window. Also, give instructions where on this "realwindow" to copy the pad of
- *  the Window. This way, we keep the Widget as a pad and not as a window.
- *  Also, the border should be handled also by the WindowManager, directly on the
- *  "realwindow". However, it's Window's job to specify if it wants a border and what
- *  kind of border.
- * @todo Make the difference between the pad dimensions and the window dimensions clearer.
- *  E.g. the Move, Resize, etc are referring to the window's dimensions and not pad's
- *  dimensions. Are those the same ? (don't mind the border) Can a window be larger than
- *  its physical window ?
+ * It handles the drawing of its pad and subpads of its children to a @ref
+ * realwindow "real window".
  */
 class Window
 : public FreeWindow
 {
 public:
-	Window(int x, int y, int w, int h, const gchar *title = NULL,
-			Type t = TYPE_NORMAL, LineStyle::Type ltype = LineStyle::DEFAULT);
-	virtual ~Window() {}
+  Window(int x, int y, int w, int h, const gchar *title = NULL,
+      Type t = TYPE_NORMAL, LineStyle::Type ltype = LineStyle::DEFAULT);
+  virtual ~Window() {}
 
-	// Widget
-	virtual void MoveResize(int newx, int newy, int neww, int newh);
+  // Widget
+  virtual void MoveResize(int newx, int newy, int neww, int newh);
 
-	// Container
-	virtual Curses::Window *GetSubPad(const Widget &child, int begin_x,
-			int begin_y, int ncols, int nlines);
+  // Container
+  virtual Curses::Window *GetSubPad(const Widget &child, int begin_x,
+      int begin_y, int ncols, int nlines);
 
-	void SetBorderStyle(LineStyle::Type ltype);
-	LineStyle::Type GetBorderStyle() const;
+  void SetBorderStyle(LineStyle::Type ltype);
+  LineStyle::Type GetBorderStyle() const;
 
-	void SetTitle(const gchar *text) { panel->SetTitle(text); }
-	const gchar *GetTitle() const { return panel->GetTitle(); }
+  void SetTitle(const gchar *text) { panel->SetTitle(text); }
+  const gchar *GetTitle() const { return panel->GetTitle(); }
 
 protected:
-	Panel *panel;
+  Panel *panel;
 
 private:
-	Window(const Window&);
-	Window& operator=(const Window&);
+  Window(const Window&);
+  Window& operator=(const Window&);
 };
 
-#endif /* __WINDOW_H__ */
+#endif // __WINDOW_H__

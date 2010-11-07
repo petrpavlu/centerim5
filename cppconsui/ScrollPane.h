@@ -38,73 +38,73 @@ class ScrollPane
 : public Container
 {
 public:
-	ScrollPane(int w, int h, int scrollw, int scrollh);
-	virtual ~ScrollPane();
+  ScrollPane(int w, int h, int scrollw, int scrollh);
+  virtual ~ScrollPane();
 
-	// Widget
-	virtual void UpdateArea();
-	virtual void Draw();
+  // Widget
+  virtual void UpdateArea();
+  virtual void Draw();
 
-	/**
-	 * Returns a size of the scrollable area.
-	 */
-	Rect GetScrollSize() { return Rect(0, 0, scroll_width, scroll_height); }
-	/**
-	 * Returns a width of the scrollable area.
-	 */
-	int GetScrollWidth() { return scroll_width; }
-	/**
-	 * Returns a height of the scrollable area.
-	 */
-	int GetScrollHeight() { return scroll_height; }
+  /**
+   * Returns a size of the scrollable area.
+   */
+  Rect GetScrollSize() { return Rect(0, 0, scroll_width, scroll_height); }
+  /**
+   * Returns a width of the scrollable area.
+   */
+  int GetScrollWidth() { return scroll_width; }
+  /**
+   * Returns a height of the scrollable area.
+   */
+  int GetScrollHeight() { return scroll_height; }
 
-	/**
-	 * Sets a size of the scrollable area.
-	 */
-	void SetScrollSize(int swidth, int sheight);
-	/**
-	 * Sets a width of the scrollable area.
-	 */
-	void SetScrollWidth(int swidth)
-		{ SetScrollSize(swidth, scroll_height); }
-	/**
-	 * Sets a height of the scrollable area.
-	 */
-	void SetScrollHeight(int sheight)
-		{ SetScrollSize(scroll_width, sheight); }
+  /**
+   * Sets a size of the scrollable area.
+   */
+  void SetScrollSize(int swidth, int sheight);
+  /**
+   * Sets a width of the scrollable area.
+   */
+  void SetScrollWidth(int swidth)
+    { SetScrollSize(swidth, scroll_height); }
+  /**
+   * Sets a height of the scrollable area.
+   */
+  void SetScrollHeight(int sheight)
+    { SetScrollSize(scroll_width, sheight); }
 
-	/**
-	 * Adjusts a visible area to a given position.
-	 */
-	void AdjustScroll(int newx, int newy);
-	/**
-	 * Returns a visible scroll area coordinates.
-	 */
-	Point GetScrollPosition() { return Point(scroll_xpos, scroll_ypos); }
-	/**
-	 * Returns a visible scroll area x position.
-	 */
-	int GetScrollPositionX() { return scroll_xpos; }
-	/**
-	 * Returns a visible scroll area y position.
-	 */
-	int GetScrollPositionY() { return scroll_ypos; }
+  /**
+   * Adjusts a visible area to a given position.
+   */
+  void AdjustScroll(int newx, int newy);
+  /**
+   * Returns a visible scroll area coordinates.
+   */
+  Point GetScrollPosition() { return Point(scroll_xpos, scroll_ypos); }
+  /**
+   * Returns a visible scroll area x position.
+   */
+  int GetScrollPositionX() { return scroll_xpos; }
+  /**
+   * Returns a visible scroll area y position.
+   */
+  int GetScrollPositionY() { return scroll_ypos; }
 
-	/**
-	 * Adjusts a scroll area to make a given position visible.
-	 */
-	void MakeVisible(int x, int y);
+  /**
+   * Adjusts a scroll area to make a given position visible.
+   */
+  void MakeVisible(int x, int y);
 
 protected:
-	int scroll_xpos, scroll_ypos, scroll_width, scroll_height;
+  int scroll_xpos, scroll_ypos, scroll_width, scroll_height;
 
-	Curses::Window *scrollarea;
+  Curses::Window *scrollarea;
 
-	void DrawEx(bool container_draw);
+  void DrawEx(bool container_draw);
 
 private:
-	ScrollPane(const ScrollPane&);
-	ScrollPane& operator=(const ScrollPane&);
+  ScrollPane(const ScrollPane&);
+  ScrollPane& operator=(const ScrollPane&);
 };
 
-#endif /* __SCROLLPANE_H__ */
+#endif // __SCROLLPANE_H__

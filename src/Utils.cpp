@@ -27,35 +27,35 @@ namespace Utils
 
 const gchar *GetStatusIndicator(PurpleStatus *status)
 {
-	PurpleStatusType *status_type = purple_status_get_type(status);
-	PurpleStatusPrimitive prim = purple_status_type_get_primitive(status_type);
+  PurpleStatusType *status_type = purple_status_get_type(status);
+  PurpleStatusPrimitive prim = purple_status_type_get_primitive(status_type);
 
-	switch (prim) {
-		case PURPLE_STATUS_UNSET:
-			return "[x]";
-		case PURPLE_STATUS_OFFLINE:
-			return "";
-		case PURPLE_STATUS_AVAILABLE:
-			return "[o]";
-		case PURPLE_STATUS_UNAVAILABLE:
-			return "[u]";
-		case PURPLE_STATUS_INVISIBLE:
-			return "[i]";
-		case PURPLE_STATUS_AWAY:
-			return "[a]";
-		case PURPLE_STATUS_EXTENDED_AWAY:
-			return "[A]";
-		case PURPLE_STATUS_MOBILE:
-			return "[m]";
-		case PURPLE_STATUS_TUNE:
-			return "[t]";
+  switch (prim) {
+    case PURPLE_STATUS_UNSET:
+      return "[x]";
+    case PURPLE_STATUS_OFFLINE:
+      return "";
+    case PURPLE_STATUS_AVAILABLE:
+      return "[o]";
+    case PURPLE_STATUS_UNAVAILABLE:
+      return "[u]";
+    case PURPLE_STATUS_INVISIBLE:
+      return "[i]";
+    case PURPLE_STATUS_AWAY:
+      return "[a]";
+    case PURPLE_STATUS_EXTENDED_AWAY:
+      return "[A]";
+    case PURPLE_STATUS_MOBILE:
+      return "[m]";
+    case PURPLE_STATUS_TUNE:
+      return "[t]";
 #if PURPLE_VERSION_CHECK(2, 7, 0)
-		case PURPLE_STATUS_MOOD:
-			return "[d]";
+    case PURPLE_STATUS_MOOD:
+      return "[d]";
 #endif
-		default:
-			return "[X]";
-	}
+    default:
+      return "[X]";
+  }
 }
 
 } // namespace utils

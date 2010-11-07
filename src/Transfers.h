@@ -24,12 +24,12 @@
 class Transfers
 {
 public:
-	Transfers();
-	~Transfers();
+  Transfers();
+  ~Transfers();
 
 protected:
 
 private:
 };
 
-#endif /* __TRANSFERS_H__ */
+#endif // __TRANSFERS_H__

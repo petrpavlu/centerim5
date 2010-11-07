@@ -30,42 +30,42 @@ class BuddyListNode
 : public Button
 {
 public:
-	static BuddyListNode *CreateNode(PurpleBlistNode *node);
+  static BuddyListNode *CreateNode(PurpleBlistNode *node);
 
-	virtual bool LessThan(const BuddyListNode& other) const = 0;
-	virtual void Update();
-	virtual void OnActivate(Button& activator) = 0;
-	// debugging method
-	virtual const gchar *ToString() const = 0;
-	/* Sorts in this node. It supposes that all siblings are in correct order.
-	 * */
-	virtual void SortIn();
+  virtual bool LessThan(const BuddyListNode& other) const = 0;
+  virtual void Update();
+  virtual void OnActivate(Button& activator) = 0;
+  // debugging method
+  virtual const gchar *ToString() const = 0;
+  /* Sorts in this node. It supposes that all siblings are in correct order.
+   * */
+  virtual void SortIn();
 
-	BuddyListNode *GetParentNode() const;
+  BuddyListNode *GetParentNode() const;
 
-	void SetRefNode(TreeView::NodeReference n) { ref = n; }
-	TreeView::NodeReference GetRefNode() const { return ref; }
+  void SetRefNode(TreeView::NodeReference n) { ref = n; }
+  TreeView::NodeReference GetRefNode() const { return ref; }
 
 protected:
-	TreeView::NodeReference ref;
+  TreeView::NodeReference ref;
 
-	PurpleBlistNode *node;
+  PurpleBlistNode *node;
 
-	BuddyListNode(PurpleBlistNode *node);
-	virtual ~BuddyListNode();
+  BuddyListNode(PurpleBlistNode *node);
+  virtual ~BuddyListNode();
 
-	/* Called by BuddyListBuddy and BuddyListContact to get presence status
-	 * char. Returned value should be used as a prefix of buddy/contact name.
-	 * */
-	const gchar *GetBuddyStatus(PurpleBuddy *buddy) const;
+  /* Called by BuddyListBuddy and BuddyListContact to get presence status
+   * char. Returned value should be used as a prefix of buddy/contact name.
+   * */
+  const gchar *GetBuddyStatus(PurpleBuddy *buddy) const;
 
-	/* Returns weight of buddy status (available > away > offline...). Used
-	 * for sorting. */
-	int GetBuddyStatusWeight(PurpleBuddy *buddy) const;
+  /* Returns weight of buddy status (available > away > offline...). Used
+   * for sorting. */
+  int GetBuddyStatusWeight(PurpleBuddy *buddy) const;
 
 private:
-	BuddyListNode(BuddyListNode&);
-	BuddyListNode& operator=(BuddyListNode&);
+  BuddyListNode(BuddyListNode&);
+  BuddyListNode& operator=(BuddyListNode&);
 };
 
 class BuddyListBuddy
@@ -73,20 +73,20 @@ class BuddyListBuddy
 {
 friend class BuddyListNode;
 public:
-	// BuddyListNode
-	virtual bool LessThan(const BuddyListNode& other) const;
-	virtual void Update();
-	virtual void OnActivate(Button& activator);
-	virtual const gchar *ToString() const;
+  // BuddyListNode
+  virtual bool LessThan(const BuddyListNode& other) const;
+  virtual void Update();
+  virtual void OnActivate(Button& activator);
+  virtual const gchar *ToString() const;
 
 protected:
-	PurpleBuddy *buddy;
+  PurpleBuddy *buddy;
 
 private:
-	BuddyListBuddy(PurpleBlistNode *node);
-	BuddyListBuddy(const BuddyListBuddy&);
-	BuddyListBuddy& operator=(const BuddyListBuddy&);
-	virtual ~BuddyListBuddy() {}
+  BuddyListBuddy(PurpleBlistNode *node);
+  BuddyListBuddy(const BuddyListBuddy&);
+  BuddyListBuddy& operator=(const BuddyListBuddy&);
+  virtual ~BuddyListBuddy() {}
 };
 
 class BuddyListChat
@@ -94,20 +94,20 @@ class BuddyListChat
 {
 friend class BuddyListNode;
 public:
-	// BuddyListNode
-	virtual bool LessThan(const BuddyListNode& other) const;
-	virtual void Update();
-	virtual void OnActivate(Button& activator);
-	virtual const gchar *ToString() const;
+  // BuddyListNode
+  virtual bool LessThan(const BuddyListNode& other) const;
+  virtual void Update();
+  virtual void OnActivate(Button& activator);
+  virtual const gchar *ToString() const;
 
 protected:
-	PurpleChat *chat;
+  PurpleChat *chat;
 
 private:
-	BuddyListChat(PurpleBlistNode *node);
-	BuddyListChat(const BuddyListChat&);
-	BuddyListChat& operator=(const BuddyListChat&);
-	virtual ~BuddyListChat() {}
+  BuddyListChat(PurpleBlistNode *node);
+  BuddyListChat(const BuddyListChat&);
+  BuddyListChat& operator=(const BuddyListChat&);
+  virtual ~BuddyListChat() {}
 };
 
 class BuddyListContact
@@ -115,20 +115,20 @@ class BuddyListContact
 {
 friend class BuddyListNode;
 public:
-	// BuddyListNode
-	virtual bool LessThan(const BuddyListNode& other) const;
-	virtual void Update();
-	virtual void OnActivate(Button& activator);
-	virtual const gchar *ToString() const;
+  // BuddyListNode
+  virtual bool LessThan(const BuddyListNode& other) const;
+  virtual void Update();
+  virtual void OnActivate(Button& activator);
+  virtual const gchar *ToString() const;
 
 protected:
-	PurpleContact *contact;
+  PurpleContact *contact;
 
 private:
-	BuddyListContact(PurpleBlistNode *node);
-	BuddyListContact(const BuddyListContact&);
-	BuddyListContact& operator=(const BuddyListContact&);
-	virtual ~BuddyListContact() {}
+  BuddyListContact(PurpleBlistNode *node);
+  BuddyListContact(const BuddyListContact&);
+  BuddyListContact& operator=(const BuddyListContact&);
+  virtual ~BuddyListContact() {}
 };
 
 class BuddyListGroup
@@ -136,21 +136,21 @@ class BuddyListGroup
 {
 friend class BuddyListNode;
 public:
-	// BuddyListNode
-	virtual bool LessThan(const BuddyListNode& other) const;
-	virtual void Update();
-	virtual void OnActivate(Button& activator);
-	virtual const gchar *ToString() const;
-	virtual void SortIn();
+  // BuddyListNode
+  virtual bool LessThan(const BuddyListNode& other) const;
+  virtual void Update();
+  virtual void OnActivate(Button& activator);
+  virtual const gchar *ToString() const;
+  virtual void SortIn();
 
 protected:
-	PurpleGroup *group;
+  PurpleGroup *group;
 
 private:
-	BuddyListGroup(PurpleBlistNode *node);
-	BuddyListGroup(const BuddyListGroup&);
-	BuddyListGroup& operator=(const BuddyListGroup&);
-	virtual ~BuddyListGroup() {}
+  BuddyListGroup(PurpleBlistNode *node);
+  BuddyListGroup(const BuddyListGroup&);
+  BuddyListGroup& operator=(const BuddyListGroup&);
+  virtual ~BuddyListGroup() {}
 };
 
-#endif /* _BUDDYLISTNODE_H__ */
+#endif // _BUDDYLISTNODE_H__

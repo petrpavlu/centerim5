@@ -34,39 +34,39 @@
 /**
  * This class implements a simple button behaviour.
  *
- * The button doesn't keep states like pressed or not and it can call back one
- * (or more) functions when pressed.
+ * The button does not keep states like pressed or not and it can call back
+ * one (or more) functions when pressed.
  */
 class Button
 : public Label
 {
 public:
-	Button(int w, int h, const gchar *text = NULL);
-	explicit Button(const gchar *text = NULL);
-	virtual ~Button() {}
+  Button(int w, int h, const gchar *text = NULL);
+  explicit Button(const gchar *text = NULL);
+  virtual ~Button() {}
 
-	// Widget
-	virtual void Draw();
+  // Widget
+  virtual void Draw();
 
-	/**
-	 * Emited signal when a button is pressed/activated.
-	 */
-	sigc::signal<void, Button&> signal_activate;
+  /**
+   * Emited signal when a button is pressed/activated.
+   */
+  sigc::signal<void, Button&> signal_activate;
 
 protected:
 
 private:
-	Button(const Button&);
-	Button& operator=(const Button&);
+  Button(const Button&);
+  Button& operator=(const Button&);
 
-	void ActionActivate();
+  void ActionActivate();
 
-	/**
-	 * Registration of defined keys.
-	 */
-	DECLARE_SIG_REGISTERKEYS();
-	static bool RegisterKeys();
-	void DeclareBindables();
+  /**
+   * Registration of defined keys.
+   */
+  DECLARE_SIG_REGISTERKEYS();
+  static bool RegisterKeys();
+  void DeclareBindables();
 };
 
-#endif /* __BUTTON_H__ */
+#endif // __BUTTON_H__

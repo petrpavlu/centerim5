@@ -30,4 +30,4 @@ const gchar *GetStatusIndicator(PurpleStatus *status);
 
 } // namespace Utils
 
-#endif /* __UTILS_H__ */
+#endif // __UTILS_H__

@@ -35,22 +35,21 @@ VerticalLine::VerticalLine(int h, LineStyle::Type ltype)
 
 void VerticalLine::Draw()
 {
-	int realh;
+  int realh;
 
-	if (!area || (realh = area->getmaxy()) == 0 || area->getmaxx() != 1)
-		return;
+  if (!area || (realh = area->getmaxy()) == 0 || area->getmaxx() != 1)
+    return;
 
-	int attrs = GetColorPair("verticalline", "line");
-	area->attron(attrs);
-	if (realh <= 1) {
-		area->mvaddstring(0, 0, linestyle.V());
-	}
-	else {
-		area->mvaddstring(0, 0, linestyle.VBegin());
-		for (int i = 1; i < realh - 1; i++) {
-			area->mvaddstring(i, 0, linestyle.V());
-		}
-		area->mvaddstring(realh - 1, 0, linestyle.VEnd());
-	}
-	area->attroff(attrs);
+  int attrs = GetColorPair("verticalline", "line");
+  area->attron(attrs);
+  if (realh <= 1)
+    area->mvaddstring(0, 0, linestyle.V());
+  else {
+    area->mvaddstring(0, 0, linestyle.VBegin());
+    for (int i = 1; i < realh - 1; i++) {
+      area->mvaddstring(i, 0, linestyle.V());
+    }
+    area->mvaddstring(realh - 1, 0, linestyle.VEnd());
+  }
+  area->attroff(attrs);
 }

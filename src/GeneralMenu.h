@@ -30,38 +30,38 @@ class GeneralMenu
 : public MenuWindow
 {
 public:
-	GeneralMenu(int x, int y, int w, int h);
-	virtual ~GeneralMenu() {}
+  GeneralMenu(int x, int y, int w, int h);
+  virtual ~GeneralMenu() {}
 
-	// FreeWindow
-	virtual void ScreenResized();
+  // FreeWindow
+  virtual void ScreenResized();
 
 protected:
 
 private:
-	GeneralMenu();
-	GeneralMenu(const GeneralMenu&);
-	GeneralMenu& operator=(const GeneralMenu&);
+  GeneralMenu();
+  GeneralMenu(const GeneralMenu&);
+  GeneralMenu& operator=(const GeneralMenu&);
 
-	void OpenAccountsWindow(Button& activator);
-	void OpenAddBuddyRequest(Button& activator);
-	void RequestTest(Button& activator);
+  void OpenAccountsWindow(Button& activator);
+  void OpenAddBuddyRequest(Button& activator);
+  void RequestTest(Button& activator);
 
-	static void input_ok_cb_(void *data, const gchar *text)
-		{ reinterpret_cast<GeneralMenu *>(data)->input_ok_cb(text); }
-	void input_ok_cb(const gchar *text);
+  static void input_ok_cb_(void *data, const gchar *text)
+    { reinterpret_cast<GeneralMenu *>(data)->input_ok_cb(text); }
+  void input_ok_cb(const gchar *text);
 
-	static void choice_ok_cb_(void *data, int selected)
-		{ reinterpret_cast<GeneralMenu *>(data)->choice_ok_cb(selected); }
-	void choice_ok_cb(int selected);
+  static void choice_ok_cb_(void *data, int selected)
+    { reinterpret_cast<GeneralMenu *>(data)->choice_ok_cb(selected); }
+  void choice_ok_cb(int selected);
 
-	static void action_cb_(void *data, int action)
-		{ reinterpret_cast<GeneralMenu *>(data)->action_cb(action); }
-	void action_cb(int action);
+  static void action_cb_(void *data, int action)
+    { reinterpret_cast<GeneralMenu *>(data)->action_cb(action); }
+  void action_cb(int action);
 
-	static void fields_ok_cb_(void *data, PurpleRequestFields *fields)
-		{ reinterpret_cast<GeneralMenu *>(data)->fields_ok_cb(fields); }
-	void fields_ok_cb(PurpleRequestFields *fields);
+  static void fields_ok_cb_(void *data, PurpleRequestFields *fields)
+    { reinterpret_cast<GeneralMenu *>(data)->fields_ok_cb(fields); }
+  void fields_ok_cb(PurpleRequestFields *fields);
 };
 
-#endif /* __GENERALMENU_H__ */
+#endif // __GENERALMENU_H__

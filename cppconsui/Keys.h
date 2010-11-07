@@ -31,7 +31,7 @@ namespace Keys
 /** Compares two keys. */
 struct TermKeyCmp
 {
-	bool operator()(const TermKeyKey &a, const TermKeyKey &b) const;
+  bool operator()(const TermKeyKey &a, const TermKeyKey &b) const;
 };
 
 bool Compare(const TermKeyKey &a, const TermKeyKey &b);
@@ -48,4 +48,4 @@ TermKeyKey SymbolTermKey(TermKeySym sym, int modifiers = 0);
 
 } // namespace Keys
 
-#endif /* __KEYS_H__ */
+#endif // __KEYS_H__

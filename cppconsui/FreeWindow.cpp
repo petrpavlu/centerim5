@@ -43,111 +43,110 @@ FreeWindow::FreeWindow(int x, int y, int w, int h, Type t)
 , realwindow(NULL)
 , type(t)
 {
-	MakeRealWindow();
-	UpdateArea();
+  MakeRealWindow();
+  UpdateArea();
 
-	DeclareBindables();
+  DeclareBindables();
 }
 
 FreeWindow::~FreeWindow()
 {
-	Hide();
+  Hide();
 
-	if (realwindow)
-		delete realwindow;
+  if (realwindow)
+    delete realwindow;
 }
 
 void FreeWindow::DeclareBindables()
 {
-	DeclareBindable(CONTEXT_WINDOW, "close-window",
-			sigc::mem_fun(this, &FreeWindow::ActionClose),
-			InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable(CONTEXT_WINDOW, "close-window",
+      sigc::mem_fun(this, &FreeWindow::ActionClose),
+      InputProcessor::BINDABLE_NORMAL);
 }
 
 DEFINE_SIG_REGISTERKEYS(FreeWindow, RegisterKeys);
 bool FreeWindow::RegisterKeys()
 {
-	RegisterKeyDef(CONTEXT_WINDOW, "close-window",
-			_("Close the window."),
-			Keys::SymbolTermKey(TERMKEY_SYM_ESCAPE));
-	return true;
+  RegisterKeyDef(CONTEXT_WINDOW, "close-window", _("Close the window."),
+      Keys::SymbolTermKey(TERMKEY_SYM_ESCAPE));
+  return true;
 }
 
 void FreeWindow::MoveResize(int newx, int newy, int neww, int newh)
 {
-	win_x = newx;
-	win_y = newy;
-	win_w = neww;
-	win_h = newh;
+  win_x = newx;
+  win_y = newy;
+  win_w = neww;
+  win_h = newh;
 
-	MakeRealWindow();
-	UpdateArea();
+  MakeRealWindow();
+  UpdateArea();
 
-	Container::MoveResize(0, 0, win_w, win_h);
+  Container::MoveResize(0, 0, win_w, win_h);
 }
 
 void FreeWindow::UpdateArea()
 {
-	if (area)
-		delete area;
-	area = Curses::Window::newpad(win_w, win_h);
-	signal_redraw(*this);
+  if (area)
+    delete area;
+  area = Curses::Window::newpad(win_w, win_h);
+  signal_redraw(*this);
 }
 
 void FreeWindow::Draw()
 {
-	if (!area || !realwindow)
-		return;
+  if (!area || !realwindow)
+    return;
 
-	area->erase();
+  area->erase();
 
-	Container::Draw();
+  Container::Draw();
 
-	// copy the virtual window to a window, then display it on screen
-	area->copyto(realwindow, 0, 0, 0, 0, copy_w, copy_h, 0);
+  // copy the virtual window to a window, then display it on screen
+  area->copyto(realwindow, 0, 0, 0, 0, copy_w, copy_h, 0);
 
-	// update virtual ncurses screen
-	realwindow->touch();
-	realwindow->noutrefresh();
+  // update virtual ncurses screen
+  realwindow->touch();
+  realwindow->noutrefresh();
 }
 
 bool FreeWindow::IsWidgetVisible(const Widget& child) const
 {
-	return true;
+  return true;
 }
 
 bool FreeWindow::SetFocusChild(Widget& child)
 {
-	if (focus_child)
-		focus_child->CleanFocus();
+  if (focus_child)
+    focus_child->CleanFocus();
 
-	focus_child = &child;
-	SetInputChild(child);
+  focus_child = &child;
+  SetInputChild(child);
 
-	if (COREMANAGER->GetTopWindow() != this)
-		return false;
+  if (COREMANAGER->GetTopWindow() != this)
+    return false;
 
-	return true;
+  return true;
 }
 
 void FreeWindow::Show()
 {
-	COREMANAGER->AddWindow(*this);
-	signal_show(*this);
+  COREMANAGER->AddWindow(*this);
+  signal_show(*this);
 }
 
 void FreeWindow::Hide()
 {
-	if (COREMANAGER->HasWindow(*this)) {
-		COREMANAGER->RemoveWindow(*this);
-		signal_hide(*this);
-	}
+  if (COREMANAGER->HasWindow(*this)) {
+    COREMANAGER->RemoveWindow(*this);
+    signal_hide(*this);
+  }
 }
 
 void FreeWindow::Close()
 {
-	signal_close(*this);
-	delete this;
+  signal_close(*this);
+  delete this;
 }
 
 void FreeWindow::ScreenResized()
@@ -156,24 +155,24 @@ void FreeWindow::ScreenResized()
 
 void FreeWindow::MakeRealWindow()
 {
-	int maxx = Curses::getmaxx();
-	int maxy = Curses::getmaxy();
+  int maxx = Curses::getmaxx();
+  int maxy = Curses::getmaxy();
 
-	int left = win_x < 0 ? 0 : win_x;
-	int top = win_y < 0 ? 0 : win_y;
-	int right = win_x + win_w >= maxx ? maxx : win_x + win_w;
-	int bottom = win_y + win_h >= maxy ? maxy : win_y + win_h;
+  int left = win_x < 0 ? 0 : win_x;
+  int top = win_y < 0 ? 0 : win_y;
+  int right = win_x + win_w >= maxx ? maxx : win_x + win_w;
+  int bottom = win_y + win_h >= maxy ? maxy : win_y + win_h;
 
-	copy_w = right - left - 1;
-	copy_h = bottom - top - 1;
+  copy_w = right - left - 1;
+  copy_h = bottom - top - 1;
 
-	if (realwindow)
-		delete realwindow;
-	// this could fail if the window falls outside the visible area
-	realwindow = Curses::Window::newwin(left, top, right - left, bottom - top);
+  if (realwindow)
+    delete realwindow;
+  // this could fail if the window falls outside the visible area
+  realwindow = Curses::Window::newwin(left, top, right - left, bottom - top);
 }
 
 void FreeWindow::ActionClose()
 {
-	Close();
+  Close();
 }

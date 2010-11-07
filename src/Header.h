@@ -36,40 +36,39 @@ class Header
 : public FreeWindow
 {
 public:
-	static Header *Instance();
+  static Header *Instance();
 
-	// FreeWindow
-	virtual void ScreenResized();
+  // FreeWindow
+  virtual void ScreenResized();
 
 protected:
 
 private:
-	HorizontalListBox *container;
-	std::map<PurpleAccount *, Label *> statuses;
+  HorizontalListBox *container;
+  std::map<PurpleAccount *, Label *> statuses;
 
-	Header();
-	Header(const Header&);
-	Header &operator=(const Header&);
-	virtual ~Header();
+  Header();
+  Header(const Header&);
+  Header &operator=(const Header&);
+  virtual ~Header();
 
-	static void account_signed_on_(PurpleAccount *account, gpointer data)
-		{ reinterpret_cast<Header *>(data)->account_signed_on(account); }
-	static void account_signed_off_(PurpleAccount *account, gpointer data)
-		{ reinterpret_cast<Header *>(data)->account_signed_off(account); }
-	static void account_status_changed_(PurpleAccount *account,
-			PurpleStatus *old, PurpleStatus *cur, gpointer data)
-		{ reinterpret_cast<Header *>(data)->account_status_changed(account,
-				old, cur); }
-	static void account_alias_changed_(PurpleAccount *account,
-			const gchar *old, gpointer data)
-		{ reinterpret_cast<Header *>(data)->account_alias_changed(account,
-				old); }
+  static void account_signed_on_(PurpleAccount *account, gpointer data)
+    { reinterpret_cast<Header *>(data)->account_signed_on(account); }
+  static void account_signed_off_(PurpleAccount *account, gpointer data)
+    { reinterpret_cast<Header *>(data)->account_signed_off(account); }
+  static void account_status_changed_(PurpleAccount *account,
+      PurpleStatus *old, PurpleStatus *cur, gpointer data)
+    { reinterpret_cast<Header *>(data)->account_status_changed(account, old,
+        cur); }
+  static void account_alias_changed_(PurpleAccount *account, const gchar *old,
+      gpointer data)
+    { reinterpret_cast<Header *>(data)->account_alias_changed(account, old); }
 
-	void account_signed_on(PurpleAccount *account);
-	void account_signed_off(PurpleAccount *account);
-	void account_status_changed(PurpleAccount *account, PurpleStatus *old,
-			PurpleStatus *cur);
-	void account_alias_changed(PurpleAccount *account, const gchar *old);
+  void account_signed_on(PurpleAccount *account);
+  void account_signed_off(PurpleAccount *account);
+  void account_status_changed(PurpleAccount *account, PurpleStatus *old,
+      PurpleStatus *cur);
+  void account_alias_changed(PurpleAccount *account, const gchar *old);
 };
 
-#endif /* __HEADER_H__ */
+#endif // __HEADER_H__

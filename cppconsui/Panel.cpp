@@ -34,102 +34,103 @@ Panel::Panel(int w, int h, const gchar *text, LineStyle::Type ltype)
 , title(NULL)
 , title_width(0)
 {
-	SetTitle(text);
+  SetTitle(text);
 }
 
 Panel::~Panel()
 {
-	if (title)
-		g_free(title);
+  if (title)
+    g_free(title);
 }
 
 void Panel::Draw()
 {
-	int realw, realh;
+  int realw, realh;
 
-	if (!area || (realw = area->getmaxx()) == 0 || (realh = area->getmaxy()) == 0)
-		return;
+  if (!area || (realw = area->getmaxx()) == 0
+      || (realh = area->getmaxy()) == 0)
+    return;
 
-	int attrs, i;
+  int attrs, i;
 
-	// calc title width
-	int draw_title_width = 0;
-	if (realw > 4)
-		draw_title_width = realw - 4;
-	draw_title_width = MIN(draw_title_width, title_width);
+  // calc title width
+  int draw_title_width = 0;
+  if (realw > 4)
+    draw_title_width = realw - 4;
+  draw_title_width = MIN(draw_title_width, title_width);
 
-	// calc horizontal line length (one segment width)
-	int hline_len = 0;
-	int extra = draw_title_width ? 4 : 2;
-	if (realw > draw_title_width + extra)
-		hline_len = (realw - draw_title_width - extra) / 2;
+  // calc horizontal line length (one segment width)
+  int hline_len = 0;
+  int extra = draw_title_width ? 4 : 2;
+  if (realw > draw_title_width + extra)
+    hline_len = (realw - draw_title_width - extra) / 2;
 
-	if (draw_title_width) {
-		// draw title
-		attrs = GetColorPair("panel", "title");
-		area->attron(attrs);
-		area->mvaddstring(2 + hline_len, 0, draw_title_width, title);
-		area->attroff(attrs);
-	}
+  if (draw_title_width) {
+    // draw title
+    attrs = GetColorPair("panel", "title");
+    area->attron(attrs);
+    area->mvaddstring(2 + hline_len, 0, draw_title_width, title);
+    area->attroff(attrs);
+  }
 
-	// draw lines
-	attrs = GetColorPair("panel", "line");
-	area->attron(attrs);
+  // draw lines
+  attrs = GetColorPair("panel", "line");
+  area->attron(attrs);
 
-	// draw top horizontal line
-	for (i = 1; i < 1 + hline_len; i++)
-		area->mvaddstring(i, 0, linestyle.H());
-	for (i = 1 + hline_len + extra - 2 + draw_title_width; i < realw - 1; i++)
-		area->mvaddstring(i, 0, linestyle.H());
+  // draw top horizontal line
+  for (i = 1; i < 1 + hline_len; i++)
+    area->mvaddstring(i, 0, linestyle.H());
+  for (i = 1 + hline_len + extra - 2 + draw_title_width; i < realw - 1; i++)
+    area->mvaddstring(i, 0, linestyle.H());
 
-	// draw bottom horizontal line
-	for (i = 1; i < realw - 1; i++)
-		area->mvaddstring(i, realh - 1, linestyle.H());
+  // draw bottom horizontal line
+  for (i = 1; i < realw - 1; i++)
+    area->mvaddstring(i, realh - 1, linestyle.H());
 
-	// draw left and right vertical line
-	for (i = 1; i < realh - 1; i++) {
-		area->mvaddstring(0, i, linestyle.V());
-		area->mvaddstring(realw - 1, i, linestyle.V());
-	}
+  // draw left and right vertical line
+  for (i = 1; i < realh - 1; i++) {
+    area->mvaddstring(0, i, linestyle.V());
+    area->mvaddstring(realw - 1, i, linestyle.V());
+  }
 
-	// draw corners
-	area->mvaddstring(0, 0, linestyle.CornerTL());
-	area->mvaddstring(0, realh - 1, linestyle.CornerBL());
-	area->mvaddstring(realw - 1, 0, linestyle.CornerTR());
-	area->mvaddstring(realw - 1, realh - 1, linestyle.CornerBR());
+  // draw corners
+  area->mvaddstring(0, 0, linestyle.CornerTL());
+  area->mvaddstring(0, realh - 1, linestyle.CornerBL());
+  area->mvaddstring(realw - 1, 0, linestyle.CornerTR());
+  area->mvaddstring(realw - 1, realh - 1, linestyle.CornerBR());
 
-	area->attroff(attrs);
+  area->attroff(attrs);
 }
 
 void Panel::SetTitle(const gchar *text)
 {
-	if (title)
-		g_free(title);
+  if (title)
+    g_free(title);
 
-	if (text) {
-		title = g_strdup(text);
-		title_width = Curses::onscreen_width(title);
-	}
-	else {
-		title = NULL;
-		title_width = 0;
-	}
+  if (text) {
+    title = g_strdup(text);
+    title_width = Curses::onscreen_width(title);
+  }
+  else {
+    title = NULL;
+    title_width = 0;
+  }
 
-	signal_redraw(*this);
+  signal_redraw(*this);
 }
 
 const gchar *Panel::GetTitle() const
 {
-	return title;
+  return title;
 }
 
 void Panel::SetBorderStyle(LineStyle::Type ltype)
 {
-	linestyle.SetStyle(ltype);
-	signal_redraw(*this);
+  linestyle.SetStyle(ltype);
+  signal_redraw(*this);
 }
 
 LineStyle::Type Panel::GetBorderStyle() const
 {
-	return linestyle.GetStyle();
+  return linestyle.GetStyle();
 }

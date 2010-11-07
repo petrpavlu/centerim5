@@ -24,7 +24,7 @@ InputProcessor::Bindable::Bindable()
 {}
 
 InputProcessor::Bindable::Bindable(sigc::slot<void> function_,
-		BindableType type_)
+    BindableType type_)
 : function(function_), type(type_)
 {
 }
@@ -39,77 +39,81 @@ InputProcessor::~InputProcessor()
 
 bool InputProcessor::ProcessInput(const TermKeyKey &key)
 {
-	/* Process overriding key combinations first */
-	if (Process(BINDABLE_OVERRIDE, key))
-		return true;
+  /* Process overriding key combinations first */
+  if (Process(BINDABLE_OVERRIDE, key))
+    return true;
 
-	/* Hand of input to a child */
-	if (inputchild && inputchild->ProcessInput(key))
-		return true;
+  /* Hand of input to a child */
+  if (inputchild && inputchild->ProcessInput(key))
+    return true;
 
-	/* Process other key combinations */
-	if (Process(BINDABLE_NORMAL, key))
-		return true;
+  /* Process other key combinations */
+  if (Process(BINDABLE_NORMAL, key))
+    return true;
 
-	/* Do non-combo input processing */
-	TermKeyKey keyn = Keys::RefineKey(key);
-	if (keyn.type == TERMKEY_TYPE_UNICODE && ProcessInputText(keyn))
-		return true;
+  /* Do non-combo input processing */
+  TermKeyKey keyn = Keys::RefineKey(key);
+  if (keyn.type == TERMKEY_TYPE_UNICODE && ProcessInputText(keyn))
+    return true;
 
-	return false;
+  return false;
 }
 
 bool InputProcessor::ProcessInputText(const TermKeyKey &key)
 {
-	return false;
+  return false;
 }
 
 void InputProcessor::SetInputChild(InputProcessor &child)
 {
-	inputchild = &child;
+  inputchild = &child;
 }
 
 void InputProcessor::ClearInputChild()
 {
-	inputchild = NULL;
+  inputchild = NULL;
 }
 
 bool InputProcessor::Process(BindableType type, const TermKeyKey &key)
 {
-	for (Bindables::iterator i = keybindings.begin(); i != keybindings.end(); i++) {
-		// get keys for this context
-		const KeyConfig::KeyBindContext *keys = KEYCONFIG->GetKeyBinds(i->first.c_str());
-		if (!keys)
-			continue;
+  for (Bindables::iterator i = keybindings.begin(); i != keybindings.end();
+      i++) {
+    // get keys for this context
+    const KeyConfig::KeyBindContext *keys
+      = KEYCONFIG->GetKeyBinds(i->first.c_str());
+    if (!keys)
+      continue;
 
-		/// @todo make this quicker
-		for (KeyConfig::KeyBindContext::const_iterator j = keys->begin(); j != keys->end(); j++) {
-			if (Keys::Compare(key, j->first)) {
-				BindableContext::iterator k = i->second.find(j->second);
-				if (k != i->second.end() && k->second.type == type) {
-					k->second.function();
-					return true;
-				}
-			}
-		}
-	}
+    /// @todo make this quicker
+    for (KeyConfig::KeyBindContext::const_iterator j = keys->begin();
+        j != keys->end(); j++) {
+      if (Keys::Compare(key, j->first)) {
+        BindableContext::iterator k = i->second.find(j->second);
+        if (k != i->second.end() && k->second.type == type) {
+          k->second.function();
+          return true;
+        }
+      }
+    }
+  }
 
-	return false;
+  return false;
 }
 
-sigc::connection InputProcessor::AddRegisterCallback(const sigc::slot<bool> &function)
+sigc::connection InputProcessor::AddRegisterCallback(
+    const sigc::slot<bool> &function)
 {
-	return KEYCONFIG->AddRegisterCallback(function);
+  return KEYCONFIG->AddRegisterCallback(function);
 }
 
-void InputProcessor::RegisterKeyDef(const char *context,
-		const char *action, const gchar *desc, const TermKeyKey &key)
+void InputProcessor::RegisterKeyDef(const char *context, const char *action,
+    const gchar *desc, const TermKeyKey &key)
 {
-	KEYCONFIG->RegisterKeyDef(context, action, desc, key);
+  KEYCONFIG->RegisterKeyDef(context, action, desc, key);
 }
 
 void InputProcessor::DeclareBindable(const char *context, const char *action,
-		sigc::slot<void> function, BindableType type)
+    sigc::slot<void> function, BindableType type)
 {
-	keybindings[context][action] = Bindable(function, type);
+  keybindings[context][action] = Bindable(function, type);
 }

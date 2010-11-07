@@ -39,45 +39,45 @@
 class ColorScheme
 {
 public:
-	static ColorScheme *Instance();
+  static ColorScheme *Instance();
 
-	/**
-	 * Returns color pair and Curses attributes (that can be passed to
-	 * Curses::Window::attron()) for a given scheme, widget and property
-	 * combination.
-	 */
-	int GetColorPair(const char *scheme, const char *widget,
-			const char *property);
-	/**
-	 * Sets color pair and Curses attributes for a given scheme, widget,
-	 * property combination.
-	 */
-	bool SetColorPair(const char *scheme, const char *widget,
-			const char *property, int foreground, int background,
-			int attrs = Curses::Attr::NORMAL, bool overwrite = false);
+  /**
+   * Returns color pair and Curses attributes (that can be passed to
+   * Curses::Window::attron()) for a given scheme, widget and property
+   * combination.
+   */
+  int GetColorPair(const char *scheme, const char *widget,
+      const char *property);
+  /**
+   * Sets color pair and Curses attributes for a given scheme, widget,
+   * property combination.
+   */
+  bool SetColorPair(const char *scheme, const char *widget,
+      const char *property, int foreground, int background,
+      int attrs = Curses::Attr::NORMAL, bool overwrite = false);
 
 protected:
-	struct Color
-	{
-		int foreground;
-		int background;
-		int attrs;
+  struct Color
+  {
+    int foreground;
+    int background;
+    int attrs;
 
-		Color(int f = Curses::Color::WHITE, int b = Curses::Color::BLACK,
-				int a = Curses::Attr::NORMAL) : foreground(f), background(b)
-												, attrs(a) {}
-	};
-	typedef std::map<std::string, Color> Properties;
-	typedef std::map<std::string, Properties> Widgets;
-	typedef std::map<std::string, Widgets> Schemes;
+    Color(int f = Curses::Color::WHITE, int b = Curses::Color::BLACK,
+        int a = Curses::Attr::NORMAL) : foreground(f), background(b)
+                        , attrs(a) {}
+  };
+  typedef std::map<std::string, Color> Properties;
+  typedef std::map<std::string, Properties> Widgets;
+  typedef std::map<std::string, Widgets> Schemes;
 
-	Schemes schemes;
+  Schemes schemes;
 
 private:
-	ColorScheme() {}
-	ColorScheme(const ColorScheme &);
-	ColorScheme &operator=(ColorScheme &);
-	~ColorScheme() {}
+  ColorScheme() {}
+  ColorScheme(const ColorScheme &);
+  ColorScheme &operator=(ColorScheme &);
+  ~ColorScheme() {}
 };
 
-#endif /* __COLORSCHEME_H__ */
+#endif // __COLORSCHEME_H__
