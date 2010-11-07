@@ -246,8 +246,12 @@ void Container::GetFocusChain(FocusChain& focus_chain,
 void Container::MoveFocus(FocusDirection direction)
 {
 	/**
-	 * @todo Don't move up if focus cycle is local.
+	 * @todo Focus chain shouldn't be gathered at every call to MoveFocus().
+	 * We should either keep the current focus chain based on
+	 * (Add|Remove)Widget()/SetVisibility() calls or these calls should set
+	 * a dirty flag that would cause a recreation of the focus chain.
 	 */
+
 	/* Make sure we always start at the root of the widget tree, things are
 	 * a bit easier then. */
 	if (parent) {
@@ -288,7 +292,7 @@ void Container::MoveFocus(FocusDirection direction)
 						break;
 				}
 			}
-			if (i != parent_iter.end() && (*i)) {
+			if (i != parent_iter.end() && *i) {
 				// local focus change was successful
 				(*i)->GrabFocus();
 				return;
@@ -317,44 +321,52 @@ void Container::MoveFocus(FocusDirection direction)
 			}
 		}
 
-		if (i != focus_chain.end() && (*i))
+		if (i != focus_chain.end() && *i)
 			(*i)->GrabFocus();
 
 		return;
 	}
 
-	Container *container = focus_widget->GetParent();
 	FocusChain::pre_order_iterator cycle_begin, cycle_end, parent_iter;
+	parent_iter = focus_chain.parent(iter);
+
+	// search for a parent that has set local or none focus cycling
+	FocusCycleScope scope = FOCUS_CYCLE_GLOBAL;
+	Container *container = focus_widget->GetParent();
+	while (container) {
+		scope = container->GetFocusCycle();
+		if (scope == FOCUS_CYCLE_LOCAL || scope == FOCUS_CYCLE_NONE)
+			break;
+		container = container->GetParent();
+		parent_iter = focus_chain.parent(parent_iter);
+	}
+
+	if (scope == FOCUS_CYCLE_GLOBAL) {
+		/* Global focus cycling is allowed (cycling amongst all widgets in the
+		 * window). */
+		cycle_begin = focus_chain.begin();
+		cycle_end = focus_chain.end();
+	}
+	else if (scope == FOCUS_CYCLE_LOCAL) {
+		/* Local focus cycling is allowed (cycling amongs all widgets of the
+		 * parent container). */
+		cycle_begin = parent_iter.begin();
+		cycle_end = parent_iter.end();
+	}
+	else {
+		// none focus cycling is allowed, see below
+	}
 
 	// find the correct widget to focus
 	switch (direction) {
 		case FOCUS_PREVIOUS:
 		case FOCUS_UP:
 		case FOCUS_LEFT:
-			// setup variables for handling different scopes of focus cycling
-			cycle_begin = focus_chain.begin();
-			cycle_end = focus_chain.end();
-			parent_iter = focus_chain.parent(iter);
-
-			switch (container->GetFocusCycle()) {
-				case FOCUS_CYCLE_LOCAL:
-					/* Local focus cycling is allowed (cycling amongs all
-					 * widgets of a parent container). */
-					cycle_begin = parent_iter.begin();
-					cycle_end = parent_iter.end();
-					break;
-				case FOCUS_CYCLE_NONE:
-					/* If no focus cycling is allowed, stop if the widget with
-					 * focus is a first/last child. */
-					if (iter == parent_iter.begin())
-						return;
-
-					/* If not a first/last child, then handle as the default
-					 * case. */
-				default:
-					/* Global focus cycling is allowed (cycling amongst all
-					 * widgets in a window). */
-					break;
+			if (scope == FOCUS_CYCLE_NONE) {
+				/* If no focus cycling is allowed, stop if the widget with
+				 * focus is a first/last child. */
+				if (iter == parent_iter.begin())
+					return;
 			}
 
 			// finally, find the next widget which will get the focus
@@ -373,22 +385,9 @@ void Container::MoveFocus(FocusDirection direction)
 		case FOCUS_DOWN:
 		case FOCUS_RIGHT:
 		default:
-			cycle_begin = focus_chain.begin();
-			cycle_end = focus_chain.end();
-			parent_iter = focus_chain.parent(iter);
-
-			switch (container->GetFocusCycle()) {
-				case FOCUS_CYCLE_LOCAL:
-					cycle_begin = parent_iter.begin();
-					cycle_end = parent_iter.end();
-					break;
-				case FOCUS_CYCLE_NONE:
-					if (iter == --parent_iter.end())
-						return;
-
-				default:
-					break;
-			}
+			if (scope == FOCUS_CYCLE_NONE)
+				if (iter == --parent_iter.end())
+					return;
 
 			// finally, find the next widget which will get the focus
 			do {
