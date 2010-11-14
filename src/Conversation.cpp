@@ -62,17 +62,14 @@ Conversation::Conversation(PurpleConversation *conv_)
   GError *err = NULL;
   if ((logfile = g_io_channel_new_file(filename, "a", &err)) == NULL) {
     if (err) {
-      LOG->Write(Log::LEVEL_ERROR,
-          _("Error opening conversation logfile `%s' (%s).\n"),
+      LOG->Error(_("Error opening conversation logfile `%s' (%s).\n"),
           filename, err->message);
 
       g_error_free(err);
       err = NULL;
     }
     else
-      LOG->Write(Log::LEVEL_ERROR,
-          _("Error opening conversation logfile `%s'.\n"),
-          filename);
+      LOG->Error(_("Error opening conversation logfile `%s'.\n"), filename);
   }
 
   DeclareBindables();
@@ -132,8 +129,7 @@ void Conversation::BuildLogFilename()
 
   dir = g_path_get_dirname(filename);
   if (g_mkdir_with_parents(dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
-    LOG->Write(Log::LEVEL_ERROR, _("Error creating directory `%s'.\n"),
-        dir);
+    LOG->Error(_("Error creating directory `%s'.\n"), dir);
   g_free(dir);
 
   g_free(acct_name);
@@ -204,27 +200,23 @@ void Conversation::Receive(const char *name, const char *alias, const char *mess
     if (g_io_channel_write_chars(logfile, msg, -1, NULL, &err)
         != G_IO_STATUS_NORMAL) {
       if (err) {
-        LOG->Write(Log::LEVEL_ERROR,
-            _("Error writing to conversation logfile (%s).\n"),
+        LOG->Error(_("Error writing to conversation logfile (%s).\n"),
             err->message);
         g_error_free(err);
         err = NULL;
       }
       else
-        LOG->Write(Log::LEVEL_ERROR,
-            _("Error writing to conversation logfile.\n"));
+        LOG->Error(_("Error writing to conversation logfile.\n"));
     }
     if (g_io_channel_flush(logfile, &err) != G_IO_STATUS_NORMAL) {
       if (err) {
-        LOG->Write(Log::LEVEL_ERROR,
-            _("Error flushing conversation logfile (%s).\n"),
+        LOG->Error(_("Error flushing conversation logfile (%s).\n"),
             err->message);
         g_error_free(err);
         err = NULL;
       }
       else
-        LOG->Write(Log::LEVEL_ERROR,
-            _("Error flushing conversation logfile.\n"));
+        LOG->Error(_("Error flushing conversation logfile.\n"));
     }
   }
   g_free(msg);
@@ -305,12 +297,12 @@ ConversationIm::ConversationIm(PurpleConversation *conv)
 {
   convim = PURPLE_CONV_IM(conv);
   LoadHistory();
-  LOG->Write(Log::LEVEL_DEBUG, "%p constructor()\n", this);
+  LOG->Debug("%p constructor()\n", this);
 }
 
 ConversationIm::~ConversationIm()
 {
-  LOG->Write(Log::LEVEL_DEBUG, "%p destructor()\n", this);
+  LOG->Debug("%p destructor()\n", this);
 }
 
 void ConversationIm::LoadHistory()
@@ -321,16 +313,13 @@ void ConversationIm::LoadHistory()
 
   if ((chan = g_io_channel_new_file(filename, "r", &err)) == NULL) {
     if (err) {
-      LOG->Write(Log::LEVEL_ERROR,
-          _("Error opening conversation logfile `%s' (%s).\n"),
+      LOG->Error(_("Error opening conversation logfile `%s' (%s).\n"),
           filename, err->message);
       g_error_free(err);
       err = NULL;
     }
     else
-      LOG->Write(Log::LEVEL_ERROR,
-          _("Error opening conversation logfile `%s'.\n"),
-          filename);
+      LOG->Error(_("Error opening conversation logfile `%s'.\n"), filename);
     return;
   }
 
@@ -384,15 +373,13 @@ void ConversationIm::LoadHistory()
   }
   if (st != G_IO_STATUS_EOF) {
     if (err) {
-      LOG->Write(Log::LEVEL_ERROR,
-          _("Error reading from conversation logfile `%s' (%s).\n"),
+      LOG->Error(_("Error reading from conversation logfile `%s' (%s).\n"),
           filename, err->message);
       g_error_free(err);
       err = NULL;
     }
     else
-      LOG->Write(Log::LEVEL_ERROR,
-          _("Error reading from conversation logfile `%s'.\n"),
+      LOG->Error(_("Error reading from conversation logfile `%s'.\n"),
           filename);
   }
   g_io_channel_unref(chan);

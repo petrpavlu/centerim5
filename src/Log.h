@@ -51,7 +51,12 @@ public:
   virtual void MoveResize(int newx, int newy, int neww, int newh);
   virtual void ScreenResized();
 
-  void Write(Level level, const gchar *fmt, ...);
+  void Error(const gchar *fmt, ...);
+  void Critical(const gchar *fmt, ...);
+  void Warning(const gchar *fmt, ...);
+  void Message(const gchar *fmt, ...);
+  void Info(const gchar *fmt, ...);
+  void Debug(const gchar *fmt, ...);
 
 protected:
 
@@ -100,8 +105,9 @@ private:
       gconstpointer val);
 
   void ShortenWindowText();
+  void Write(const gchar *text);
   void Write(Type type, Level level, const gchar *fmt, ...);
-  void WriteToWindow(Level level, const gchar *fmt, ...);
+  void WriteErrorToWindow(const gchar *fmt, ...);
   void WriteToFile(const gchar *text);
   Level ConvertPurpleDebugLevel(PurpleDebugLevel purplelevel);
 };

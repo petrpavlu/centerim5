@@ -70,7 +70,7 @@ void *Request::request_input(const char *title, const char *primary,
     const char *cancel_text, GCallback cancel_cb, PurpleAccount *account,
     const char *who, PurpleConversation *conv, void *user_data)
 {
-  LOG->Write(Log::LEVEL_DEBUG, "request_input\n");
+  LOG->Debug("request_input\n");
 
   InputDialog *dialog = new InputDialog(title, primary, secondary,
       default_value, masked, ok_text, ok_cb, cancel_text, cancel_cb,
@@ -87,7 +87,7 @@ void *Request::request_choice(const char *title, const char *primary,
     PurpleAccount *account, const char *who, PurpleConversation *conv,
     void *user_data, va_list choices)
 {
-  LOG->Write(Log::LEVEL_DEBUG, "request_choice\n");
+  LOG->Debug("request_choice\n");
 
   ChoiceDialog *dialog = new ChoiceDialog(title, primary, secondary,
       default_value, ok_text, ok_cb, cancel_text, cancel_cb, user_data,
@@ -103,7 +103,7 @@ void *Request::request_action(const char *title, const char *primary,
     const char *who, PurpleConversation *conv, void *user_data,
     size_t action_count, va_list actions)
 {
-  LOG->Write(Log::LEVEL_DEBUG, "request_action\n");
+  LOG->Debug("request_action\n");
 
   ActionDialog *dialog = new ActionDialog(title, primary, secondary,
       default_action, user_data, action_count, actions);
@@ -119,7 +119,7 @@ void *Request::request_fields(const char *title, const char *primary,
     GCallback cancel_cb, PurpleAccount *account, const char *who,
     PurpleConversation *conv, void *user_data)
 {
-  LOG->Write(Log::LEVEL_DEBUG, "request_fields\n");
+  LOG->Debug("request_fields\n");
 
   FieldsDialog *dialog = new FieldsDialog(title, primary, secondary,
       fields, ok_text, ok_cb, cancel_text, cancel_cb, user_data);
@@ -139,7 +139,7 @@ void *Request::request_file(const char *title, const char *filename,
 
 void Request::close_request(PurpleRequestType type, void *ui_handle)
 {
-  LOG->Write(Log::LEVEL_DEBUG, "close_request\n");
+  LOG->Debug("close_request\n");
 
   g_assert(ui_handle);
 
@@ -394,8 +394,7 @@ Request::FieldsDialog::FieldsDialog(const gchar *title, const gchar *primary,
           CreateAccountField(hbox, field);
           break;
         default:
-          LOG->Write(Log::LEVEL_ERROR,
-              _("Unimplemented Request field type.\n"));
+          LOG->Error(_("Unimplemented Request field type.\n"));
           break;
       }
     }

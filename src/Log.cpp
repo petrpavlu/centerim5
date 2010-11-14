@@ -36,7 +36,7 @@ Log *Log::Instance()
   return &instance;
 }
 
-//TODO sensible defaults
+// TODO sensible defaults
 Log::Log()
 : Window(0, 0, 80, 24, NULL, TYPE_NON_FOCUSABLE)
 , logfile(NULL)
@@ -86,24 +86,31 @@ void Log::MoveResize(int newx, int newy, int neww, int newh)
   textview->MoveResize(1, 0, width - 2, height);
 }
 
-void Log::Write(Level level, const gchar *fmt, ...)
-{
-  va_list args;
-  gchar *text;
-
-  if (CONF->GetLogLevelCIM() < level)
-    return; // we don't want to see this log message
-
-  va_start(args, fmt);
-  text = g_strdup_vprintf(fmt, args);
-  va_end(args);
-
-  WriteToFile(text);
-  textview->Append(text);
-  ShortenWindowText();
-
-  g_free(text);
+#define WRITE_METHOD(name, level)                       \
+void Log::name(const gchar *fmt, ...)                   \
+{                                                       \
+  va_list args;                                         \
+  gchar *text;                                          \
+                                                        \
+  if (CONF->GetLogLevelCIM() < level)                   \
+    return; /* we don't want to see this log message */ \
+                                                        \
+  va_start(args, fmt);                                  \
+  text = g_strdup_vprintf(fmt, args);                   \
+  va_end(args);                                         \
+                                                        \
+  Write(text);                                          \
+  g_free(text);                                         \
 }
+
+WRITE_METHOD(Error, LEVEL_ERROR)
+WRITE_METHOD(Critical, LEVEL_CRITICAL)
+WRITE_METHOD(Warning, LEVEL_WARNING)
+WRITE_METHOD(Message, LEVEL_MESSAGE)
+WRITE_METHOD(Info, LEVEL_INFO)
+WRITE_METHOD(Debug, LEVEL_DEBUG)
+
+#undef WRITE_METHOD
 
 void Log::purple_print(PurpleDebugLevel purplelevel, const char *category, const char *arg_s)
 {
@@ -111,8 +118,7 @@ void Log::purple_print(PurpleDebugLevel purplelevel, const char *category, const
 
   if (!category) {
     category = "misc";
-    Write(LEVEL_WARNING, "centerim/log: purple_print() parameter category"
-        " was not defined.\n");
+    Warning("centerim/log: purple_print() parameter category was not defined.\n");
   }
 
   Write(TYPE_PURPLE, level, "libpurple/%s: %s", category, arg_s);
@@ -146,8 +152,7 @@ void Log::glib_log_handler(const gchar *domain, GLogLevelFlags flags,
   else if (flags & G_LOG_LEVEL_ERROR)
     level = LEVEL_ERROR;
   else {
-    Write(LEVEL_WARNING,
-        "centerim/log: Unknown glib logging level in %d.\n", flags);
+    Warning("centerim/log: Unknown glib logging level in %d.\n", flags);
     /* This will never happen. Actually should not, because some day, it
      * will happen :) So lets initialize level, so that we don't have
      * uninitialized values :) */
@@ -155,7 +160,7 @@ void Log::glib_log_handler(const gchar *domain, GLogLevelFlags flags,
   }
 
   if (msg)
-    Write(TYPE_GLIB, level, "%s: %s", (domain != NULL ? domain : "g_log"), msg);
+    Write(TYPE_GLIB, level, "%s: %s", domain ? domain : "g_log", msg);
 }
 
 void Log::debug_change(const char *name, PurplePrefType type, gconstpointer val)
@@ -183,6 +188,13 @@ void Log::ShortenWindowText()
   }
 }
 
+void Log::Write(const gchar *text)
+{
+  WriteToFile(text);
+  textview->Append(text);
+  ShortenWindowText();
+}
+
 void Log::Write(Type type, Level level, const gchar *fmt, ...)
 {
   va_list args;
@@ -196,19 +208,17 @@ void Log::Write(Type type, Level level, const gchar *fmt, ...)
   text = g_strdup_vprintf(fmt, args);
   va_end(args);
 
-  WriteToFile(text);
-  textview->Append(text);
-  ShortenWindowText();
+  Write(text);
 
   g_free(text);
 }
 
-void Log::WriteToWindow(Level level, const gchar *fmt, ...)
+void Log::WriteErrorToWindow(const gchar *fmt, ...)
 {
   va_list args;
   gchar *text;
 
-  if (CONF->GetLogLevelCIM() < level)
+  if (CONF->GetLogLevelCIM() < LEVEL_ERROR)
     return; // we don't want to see this log message
 
   va_start(args, fmt);
@@ -234,16 +244,14 @@ void Log::WriteToFile(const gchar *text)
       if ((logfile = g_io_channel_new_file(filename, "a", &err))
           == NULL) {
         if (err) {
-          WriteToWindow(LEVEL_ERROR, _("centerim/log: Error opening"
-                " logfile `%s' (%s).\n"), filename,
+          WriteErrorToWindow(
+              _("centerim/log: Error opening logfile `%s' (%s).\n"), filename,
               err->message);
-
           g_error_free(err);
           err = NULL;
         }
         else
-          WriteToWindow(LEVEL_ERROR,
-              _("centerim/log: Error opening logfile `%s'.\n"),
+          WriteErrorToWindow(_("centerim/log: Error opening logfile `%s'.\n"),
               filename);
       }
       g_free(filename);
@@ -254,26 +262,25 @@ void Log::WriteToFile(const gchar *text)
       if (g_io_channel_write_chars(logfile, text, -1, NULL, &err)
           != G_IO_STATUS_NORMAL) {
         if (err) {
-          WriteToWindow(LEVEL_ERROR, _("centerim/log: Error writing"
-                " to logfile (%s).\n"), err->message);
+          WriteErrorToWindow(
+              _("centerim/log: Error writing to logfile (%s).\n"),
+              err->message);
           g_error_free(err);
           err = NULL;
         }
         else
-          WriteToWindow(LEVEL_ERROR,
-              _("centerim/log: Error writing to logfile.\n"));
+          WriteErrorToWindow(_("centerim/log: Error writing to logfile.\n"));
       }
       if (g_io_channel_flush(logfile, &err) != G_IO_STATUS_NORMAL) {
         if (err) {
-          WriteToWindow(LEVEL_ERROR,
+          WriteErrorToWindow(
               _("centerim/log: Error flushing logfile (%s).\n"),
               err->message);
           g_error_free(err);
           err = NULL;
         }
         else
-          WriteToWindow(LEVEL_ERROR,
-              _("centerim/log: Error flushing logfile.\n"));
+          WriteErrorToWindow(_("centerim/log: Error flushing logfile.\n"));
       }
     }
   }
@@ -294,8 +301,7 @@ Log::Level Log::ConvertPurpleDebugLevel(PurpleDebugLevel purplelevel)
   if (purplelevel == PURPLE_DEBUG_ALL)
     return LEVEL_ERROR; // use error level so this message is always printed
 
-  Write(LEVEL_WARNING,
-      "centerim/log: Unknown libpurple logging level: %d.\n",
+  Warning("centerim/log: Unknown libpurple logging level: %d.\n",
       purplelevel);
   /* This will never happen. Actually should not, because some day, it will
    * happen :) So lets initialize level, so that we don't have uninitialized

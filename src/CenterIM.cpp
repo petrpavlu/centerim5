@@ -98,7 +98,7 @@ void CenterIM::Run()
   // init BuddyList last so it takes the focus
   BuddyList::Instance()->Show();
 
-  LOG->Write(Log::LEVEL_INFO, _("Welcome to CenterIM 5. Press F4 to display main menu.\n"));
+  LOG->Info(_("Welcome to CenterIM 5. Press F4 to display main menu.\n"));
 
   mngr->SetTopInputProcessor(*this);
   mngr->EnableResizing();

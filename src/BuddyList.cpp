@@ -104,7 +104,7 @@ void BuddyList::ScreenResized()
 void BuddyList::new_list(PurpleBuddyList *list)
 {
   if (buddylist != list)
-    LOG->Write(Log::LEVEL_ERROR, _("Different Buddylist detected!\n"));
+    LOG->Error(_("Different Buddylist detected!\n"));
 }
 
 void BuddyList::new_node(PurpleBlistNode *node)

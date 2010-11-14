@@ -494,7 +494,7 @@ void AccountWindow::AccountOptionInt::ResponseHandler(Dialog& activator,
       errno = 0;
       i = strtol(text, NULL, 10);
       if (errno == ERANGE)
-        LOG->Write(Log::LEVEL_WARNING, _("Value out of range.\n"));
+        LOG->Warning(_("Value out of range.\n"));
       purple_account_set_int(account, setting, i);
 
       UpdateText();

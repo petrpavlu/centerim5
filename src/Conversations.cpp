@@ -24,6 +24,7 @@
 #include "CenterIM.h"
 
 #include <cstring>
+#include "gettext.h"
 
 Conversations *Conversations::Instance()
 {
@@ -243,8 +244,7 @@ void Conversations::create_conversation(PurpleConversation *conv)
   else if (type == PURPLE_CONV_TYPE_CHAT)
     conversation = new ConversationChat(conv);
   else {
-    LOG->Write(Log::LEVEL_ERROR, "unhandled conversation type: %i\n",
-        type);
+    LOG->Error(_("Unhandled conversation type: %i.\n"), type);
     return;
   }
 

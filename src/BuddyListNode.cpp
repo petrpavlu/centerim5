@@ -39,7 +39,7 @@ BuddyListNode *BuddyListNode::CreateNode(PurpleBlistNode *node)
   else if (PURPLE_BLIST_NODE_IS_GROUP(node))
     return new BuddyListGroup(node);
 
-  LOG->Write(Log::LEVEL_WARNING, _("Unrecognized BuddyList node.\n"));
+  LOG->Warning(_("Unrecognized BuddyList node.\n"));
   return NULL;
 }
 

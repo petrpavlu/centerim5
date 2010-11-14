@@ -52,7 +52,7 @@ void Connections::connect_progress(PurpleConnection *gc, const char *text,
     size_t step, size_t step_count)
 {
   PurpleAccount *account = purple_connection_get_account(gc);
-  LOG->Write(Log::LEVEL_MESSAGE, _("+ [%s] %s: %s\n"),
+  LOG->Message(_("+ [%s] %s: %s\n"),
       purple_account_get_protocol_name(account),
       purple_account_get_username(account), text);
 }
@@ -60,7 +60,7 @@ void Connections::connect_progress(PurpleConnection *gc, const char *text,
 void Connections::connected(PurpleConnection *gc)
 {
   PurpleAccount *account = purple_connection_get_account(gc);
-  LOG->Write(Log::LEVEL_MESSAGE, _("+ [%s] %s: Connected\n"),
+  LOG->Message(_("+ [%s] %s: Connected\n"),
       purple_account_get_protocol_name(account),
       purple_account_get_username(account));
 }
@@ -68,7 +68,7 @@ void Connections::connected(PurpleConnection *gc)
 void Connections::disconnected(PurpleConnection *gc)
 {
   PurpleAccount *account = purple_connection_get_account(gc);
-  LOG->Write(Log::LEVEL_MESSAGE, _("+ [%s] %s: Disconnected\n"),
+  LOG->Message(_("+ [%s] %s: Disconnected\n"),
       purple_account_get_protocol_name(account),
       purple_account_get_username(account));
 }
@@ -76,26 +76,26 @@ void Connections::disconnected(PurpleConnection *gc)
 void Connections::notice(PurpleConnection *gc, const char *text)
 {
   PurpleAccount *account = purple_connection_get_account(gc);
-  LOG->Write(Log::LEVEL_MESSAGE, _("+ [%s] %s: %s\n"),
+  LOG->Message(_("+ [%s] %s: %s\n"),
       purple_account_get_protocol_name(account),
       purple_account_get_username(account), text);
 }
 
 void Connections::network_connected()
 {
-  LOG->Write(Log::LEVEL_MESSAGE, _("+ Network connected\n"));
+  LOG->Message(_("+ Network connected\n"));
 }
 
 void Connections::network_disconnected()
 {
-  LOG->Write(Log::LEVEL_MESSAGE, _("+ Network disconnected\n"));
+  LOG->Message(_("+ Network disconnected\n"));
 }
 
 void Connections::report_disconnect_reason(PurpleConnection *gc,
     PurpleConnectionError reason, const char *text)
 {
   PurpleAccount *account = purple_connection_get_account(gc);
-  LOG->Write(Log::LEVEL_MESSAGE, _("+ [%s] %s: %s\n"),
+  LOG->Message(_("+ [%s] %s: %s\n"),
       purple_account_get_protocol_name(account),
       purple_account_get_username(account), text);
 }

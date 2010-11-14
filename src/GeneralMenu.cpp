@@ -134,20 +134,20 @@ void GeneralMenu::RequestTest(Button& activator)
 
 void GeneralMenu::input_ok_cb(const gchar *text)
 {
-  LOG->Write(Log::LEVEL_DEBUG, "input_ok_cb: %s\n", text);
+  LOG->Debug("input_ok_cb: %s\n", text);
 }
 
 void GeneralMenu::choice_ok_cb(int selected)
 {
-  LOG->Write(Log::LEVEL_DEBUG, "choice_ok_cb: %d\n", selected);
+  LOG->Debug("choice_ok_cb: %d\n", selected);
 }
 
 void GeneralMenu::action_cb(int action)
 {
-  LOG->Write(Log::LEVEL_DEBUG, "action_cb: %d\n", action);
+  LOG->Debug("action_cb: %d\n", action);
 }
 
 void GeneralMenu::fields_ok_cb(PurpleRequestFields *fields)
 {
-  LOG->Write(Log::LEVEL_DEBUG, "fields_ok_cb\n");
+  LOG->Debug("fields_ok_cb\n");
 }
