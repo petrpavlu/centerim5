@@ -26,6 +26,7 @@
 #include "Log.h"
 
 #include <cppconsui/Keys.h>
+#include <cppconsui/Spacer.h>
 #include <libpurple/pounce.h>
 #include "gettext.h"
 
@@ -63,37 +64,32 @@ BuddyList::BuddyList()
   centerim_blist_ui_ops.request_add_buddy = request_add_buddy_;
   centerim_blist_ui_ops.request_add_chat = request_add_chat_;
   centerim_blist_ui_ops.request_add_group = request_add_group_;
-  // since 2.6.0
+  // since libpurple 2.6.0
   //centerim_blist_ui_ops.save_node = save_node_;
   //centerim_blist_ui_ops.remove_node = remove_node_;
   //centerim_blist_ui_ops.save_account = save_account_;
   purple_blist_set_ui_ops(&centerim_blist_ui_ops);
 
-  g_timeout_add(0, timeout_once_load, NULL);
+  COREMANAGER->TimeoutOnceConnect(sigc::mem_fun(this, &BuddyList::Load), 0);
 
-  treeview = new TreeView(width - 2, height - 2);
-  AddWidget(*treeview, 0, 0);
+  HorizontalListBox *lbox = new HorizontalListBox(AUTOSIZE, AUTOSIZE);
+  lbox->AppendWidget(*(new Spacer(1, AUTOSIZE)));
+  treeview = new TreeView(AUTOSIZE, AUTOSIZE);
+  lbox->AppendWidget(*treeview);
+  lbox->AppendWidget(*(new Spacer(1, AUTOSIZE)));
+  AddWidget(*lbox, 0, 0);
 
   MoveResizeRect(CONF->GetBuddyListDimensions());
 }
 
-gboolean BuddyList::timeout_once_load(gpointer data)
+void BuddyList::Load()
 {
   // loads the buddy list from ~/.centerim5/blist.xml
   purple_blist_load();
-
-  return FALSE;
 }
 
 void BuddyList::Close()
 {
-}
-
-void BuddyList::MoveResize(int newx, int newy, int neww, int newh)
-{
-  Window::MoveResize(newx, newy, neww, newh);
-
-  treeview->MoveResize(0, 0, neww - 2, newh - 2);
 }
 
 void BuddyList::ScreenResized()

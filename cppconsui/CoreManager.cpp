@@ -411,7 +411,7 @@ void CoreManager::ScreenResized()
 {
   if (!resizepending) {
     resizepending = true;
-    TimeoutOnceConnect(sigc::mem_fun(this, &CoreManager::Resize), 0, 0);
+    TimeoutOnceConnect(sigc::mem_fun(this, &CoreManager::Resize), 0);
   }
 }
 
@@ -462,7 +462,7 @@ void CoreManager::Redraw()
 {
   if (!redrawpending) {
     redrawpending = true;
-    TimeoutOnceConnect(sigc::mem_fun(this, &CoreManager::Draw), 0, 0);
+    TimeoutOnceConnect(sigc::mem_fun(this, &CoreManager::Draw), 0);
   }
 }
 

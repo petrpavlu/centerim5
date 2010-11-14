@@ -76,14 +76,14 @@ protected:
 
   Status status;
 
-  guint destroy_id;
+  sigc::connection destroy_conn;
 
 private:
   Conversation();
   Conversation(const Conversation&);
   Conversation& operator=(const Conversation&);
 
-  static gboolean timeout_once_purple_conversation_destroy(gpointer data);
+  void DestroyPurpleConversation(PurpleConversation *conv);
 
   void BuildLogFilename();
 

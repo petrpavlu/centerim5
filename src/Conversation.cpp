@@ -43,7 +43,6 @@ Conversation::Conversation(PurpleConversation *conv_)
 , filename(NULL)
 , logfile(NULL)
 , status(STATUS_ACTIVE)
-, destroy_id(0)
 {
   g_assert(conv);
 
@@ -82,10 +81,9 @@ Conversation::~Conversation()
     g_io_channel_unref(logfile);
 }
 
-gboolean Conversation::timeout_once_purple_conversation_destroy(gpointer data)
+void Conversation::DestroyPurpleConversation(PurpleConversation *conv)
 {
-  purple_conversation_destroy(static_cast<PurpleConversation *>(data));
-  return FALSE;
+  purple_conversation_destroy(conv);
 }
 
 void Conversation::DeclareBindables()
@@ -139,8 +137,9 @@ void Conversation::Close()
 {
   /* Let libpurple and Conversations know that this conversation should be
    * destroyed after some time. */
-  destroy_id = g_timeout_add(CONVERSATION_DESTROY_TIMEOUT,
-      timeout_once_purple_conversation_destroy, conv);
+  destroy_conn = COREMANAGER->TimeoutOnceConnect(sigc::bind(sigc::mem_fun(
+          this, &Conversation::DestroyPurpleConversation), conv),
+      CONVERSATION_DESTROY_TIMEOUT);
   status = STATUS_TRASH;
 
   signal_close(*this);
@@ -157,9 +156,8 @@ void Conversation::ScreenResized()
 
 void Conversation::Show()
 {
-  if (destroy_id) {
-    g_source_remove(destroy_id);
-    destroy_id = 0;
+  if (destroy_conn.connected()) {
+    destroy_conn.disconnect();
     status = STATUS_ACTIVE;
   }
   Window::Show();

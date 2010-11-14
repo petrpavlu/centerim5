@@ -46,7 +46,6 @@ TODO:
 - purple_blist_get_group_size(), purple_blist_get_group_online_count()
 - gtkblist.c: buddy_is_displayable(), redo_buddy_list()
 - remove SetCanFocus()?
-- TimeoutConnect replacement
 - TreeView/HorizontalListBox/ListBox -- optimize drawing, don't call
   MoveResize() if not necessary
 - Window::SetVisibility() -- hide in protected

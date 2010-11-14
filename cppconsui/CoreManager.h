@@ -74,9 +74,9 @@ public:
     { return top_input_processor; }
 
   sigc::connection TimeoutConnect(const sigc::slot<bool>& slot,
-      unsigned interval, int priority);
+      unsigned interval, int priority = G_PRIORITY_DEFAULT);
   sigc::connection TimeoutOnceConnect(const sigc::slot<void>& slot,
-      unsigned interval, int priority);
+      unsigned interval, int priority = G_PRIORITY_DEFAULT);
 
   sigc::signal<void> signal_resize;
 

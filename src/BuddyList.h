@@ -40,7 +40,6 @@ public:
 
   // FreeWindow
   virtual void Close();
-  virtual void MoveResize(int newx, int newy, int neww, int newh);
   virtual void ScreenResized();
 
 protected:
@@ -147,9 +146,9 @@ private:
   BuddyList();
   BuddyList(const BuddyList&);
   BuddyList& operator=(const BuddyList&);
-  virtual ~BuddyList() {}
+  ~BuddyList() {}
 
-  static gboolean timeout_once_load(gpointer data);
+  void Load();
 
   static void new_list_(PurpleBuddyList *list)
     { BUDDYLIST->new_list(list); }
