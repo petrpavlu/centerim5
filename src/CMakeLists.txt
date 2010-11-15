@@ -28,12 +28,10 @@ set( centerim_HEADERS
 	BuddyList.h
 	BuddyListNode.h
 	CenterIM.h
-	CenterMain.h
 	Conf.h
 	Conversation.h
 	Conversations.h
 	Connections.h
-	Defines.h
 	GeneralMenu.h
 	Header.h
 	Log.h

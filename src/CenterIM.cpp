@@ -34,7 +34,6 @@
 
 #include "AccountStatusMenu.h"
 #include "GeneralMenu.h"
-#include "Defines.h"
 
 #include <cppconsui/ColorScheme.h>
 #include <cppconsui/Keys.h>
@@ -42,6 +41,14 @@
 #include "gettext.h"
 
 #define CONTEXT_CENTERIM "centerim"
+
+// TODO configurable path via command line option
+#define CIM_CONFIG_PATH ".centerim5"
+
+#define CONF_ACCOUNTS_DIMENSIONS_X 10
+#define CONF_ACCOUNTS_DIMENSIONS_Y 50
+#define CONF_ACCOUNTS_DIMENSIONS_WIDTH 80
+#define CONF_ACCOUNTS_DIMENSIONS_HEIGHT 40
 
 std::vector<CenterIM::LogBufferItem> *CenterIM::logbuf = NULL;
 
@@ -64,9 +71,61 @@ CenterIM::CenterIM()
   DeclareBindables();
 }
 
-void CenterIM::Run()
+void CenterIM::DeclareBindables()
 {
-  PurpleInit();
+  DeclareBindable(CONTEXT_CENTERIM, "quit",
+      sigc::mem_fun(this, &CenterIM::Quit),
+      InputProcessor::BINDABLE_OVERRIDE);
+  DeclareBindable(CONTEXT_CENTERIM, "buddylist",
+      sigc::mem_fun(this, &CenterIM::ActionFocusBuddyList),
+      InputProcessor::BINDABLE_OVERRIDE);
+  DeclareBindable(CONTEXT_CENTERIM, "conversation-active",
+      sigc::mem_fun(this, &CenterIM::ActionFocusActiveConversation),
+      InputProcessor::BINDABLE_OVERRIDE);
+  DeclareBindable(CONTEXT_CENTERIM, "accountstatusmenu",
+      sigc::mem_fun(this, &CenterIM::ActionOpenAccountStatusMenu),
+      InputProcessor::BINDABLE_OVERRIDE);
+  DeclareBindable(CONTEXT_CENTERIM, "generalmenu",
+      sigc::mem_fun(this, &CenterIM::ActionOpenGeneralMenu),
+      InputProcessor::BINDABLE_OVERRIDE);
+  DeclareBindable(CONTEXT_CENTERIM, "conversation-prev",
+      sigc::mem_fun(this, &CenterIM::ActionFocusPrevConversation),
+      InputProcessor::BINDABLE_OVERRIDE);
+  DeclareBindable(CONTEXT_CENTERIM, "conversation-next",
+      sigc::mem_fun(this, &CenterIM::ActionFocusNextConversation),
+      InputProcessor::BINDABLE_OVERRIDE);
+}
+
+DEFINE_SIG_REGISTERKEYS(CenterIM, RegisterKeys);
+bool CenterIM::RegisterKeys()
+{
+  RegisterKeyDef(CONTEXT_CENTERIM, "quit", _("Quit CenterIM."),
+      Keys::UnicodeTermKey("q", TERMKEY_KEYMOD_CTRL));
+  RegisterKeyDef(CONTEXT_CENTERIM, "buddylist",
+      _("Switch the focus to the buddy list."),
+      Keys::FunctionTermKey(1));
+  RegisterKeyDef(CONTEXT_CENTERIM, "conversation-active",
+      _("Switch the focus to the active conversation."),
+      Keys::FunctionTermKey(2));
+  RegisterKeyDef(CONTEXT_CENTERIM, "accountstatusmenu",
+      _("Open the account status menu."),
+      Keys::FunctionTermKey(3));
+  RegisterKeyDef(CONTEXT_CENTERIM, "generalmenu",
+      _("Open the general menu."),
+      Keys::FunctionTermKey(4));
+  RegisterKeyDef(CONTEXT_CENTERIM, "conversation-prev",
+      _("Switch the focus to the previous conversation."),
+      Keys::UnicodeTermKey("p", TERMKEY_KEYMOD_ALT));
+  RegisterKeyDef(CONTEXT_CENTERIM, "conversation-next",
+      _("Switch the focus to the next conversation."),
+      Keys::UnicodeTermKey("n", TERMKEY_KEYMOD_ALT));
+  return true;
+}
+
+int CenterIM::Run()
+{
+  if (PurpleInit())
+    return 1;
 
   // initialize Conf component so we can calculate area sizes of all windows
   Conf::Instance();
@@ -103,6 +162,8 @@ void CenterIM::Run()
   mngr->SetTopInputProcessor(*this);
   mngr->EnableResizing();
   mngr->StartMainLoop();
+
+  return 0;
 }
 
 void CenterIM::Quit()
@@ -113,6 +174,184 @@ void CenterIM::Quit()
 
   // clean up
   purple_core_quit();
+}
+
+Rect CenterIM::GetScreenAreaSize(ScreenArea area)
+{
+  return areaSizes[area];
+}
+
+Rect CenterIM::GetDimensions(const char *window, int defx, int defy, int defw,
+    int defh)
+{
+  char *prefx = g_strconcat(CONF_PREFIX, window, "dimensions/x", NULL);
+  char *prefy = g_strconcat(CONF_PREFIX, window, "dimensions/y", NULL);
+  char *prefw = g_strconcat(CONF_PREFIX, window, "dimensions/width", NULL);
+  char *prefh = g_strconcat(CONF_PREFIX, window, "dimensions/height", NULL);
+
+  int x = CONF->GetInt(prefx, defx);
+  int y = CONF->GetInt(prefy, defy);
+  int w = CONF->GetInt(prefw, defw);
+  int h = CONF->GetInt(prefh, defh);
+
+  g_free(prefx);
+  g_free(prefy);
+  g_free(prefw);
+  g_free(prefh);
+
+  return Rect(x, y, w, h);
+}
+
+void CenterIM::SetDimensions(const char *window, int x, int y, int width,
+    int height)
+{
+  char *prefx = g_strconcat(CONF_PREFIX, window, "/dimensions/x", NULL);
+  char *prefy = g_strconcat(CONF_PREFIX, window, "/dimensions/y", NULL);
+  char *prefw = g_strconcat(CONF_PREFIX, window, "/dimensions/width", NULL);
+  char *prefh = g_strconcat(CONF_PREFIX, window, "/dimensions/height", NULL);
+
+  CONF->SetInt(prefx, x);
+  CONF->SetInt(prefy, y);
+  CONF->SetInt(prefw, width);
+  CONF->SetInt(prefh, height);
+
+  g_free(prefx);
+  g_free(prefy);
+  g_free(prefw);
+  g_free(prefh);
+}
+
+void CenterIM::SetDimensions(const char *window, const Rect& rect)
+{
+  SetDimensions(window, rect.x, rect.y, rect.width, rect.height);
+}
+
+Rect CenterIM::GetAccountWindowDimensions()
+{
+  return GetDimensions("accounts", CONF_ACCOUNTS_DIMENSIONS_X,
+      CONF_ACCOUNTS_DIMENSIONS_Y, CONF_ACCOUNTS_DIMENSIONS_WIDTH,
+      CONF_ACCOUNTS_DIMENSIONS_HEIGHT);
+}
+
+int CenterIM::PurpleInit()
+{
+  // set the configuration file location
+  char *path;
+  path = g_build_filename(purple_home_dir(), CIM_CONFIG_PATH, NULL);
+  purple_util_set_user_dir(path);
+  g_free(path);
+
+  /* This does not disable debugging, but rather it disables printing to
+   * stdout. Don't change this to TRUE or things will get messy. */
+  purple_debug_set_enabled(FALSE);
+
+  /* This catches and buffers libpurple debug messages until the Log object
+   * can be instantiated
+   * */
+  logbuf_debug_ui_ops.print = tmp_purple_print;
+  logbuf_debug_ui_ops.is_enabled = tmp_is_enabled;
+  purple_debug_set_ui_ops(&logbuf_debug_ui_ops);
+
+  centerim_core_ui_ops.get_ui_info = get_ui_info;
+  purple_core_set_ui_ops(&centerim_core_ui_ops);
+
+  // set the uiops for the eventloop
+  centerim_glib_eventloops.timeout_add = timeout_add;
+  centerim_glib_eventloops.timeout_remove = timeout_remove;
+  centerim_glib_eventloops.input_add = input_add;
+  centerim_glib_eventloops.input_remove = input_remove;
+  purple_eventloop_set_ui_ops(&centerim_glib_eventloops);
+
+  // in case we ever write centerim specific plugins
+  path = g_build_filename(purple_user_dir(), "plugins", NULL);
+  purple_plugins_add_search_path(path);
+  g_free(path);
+
+  if (!purple_core_init(PACKAGE_NAME)) {
+    // can't do much without libpurple
+    fprintf(stderr, _("Could not initialize libpurple core.\n"));
+    return 1;
+  }
+  return 0;
+}
+
+void CenterIM::ColorSchemeInit()
+{
+  // default colors init
+  /// @todo move this to a default cfg
+  COLORSCHEME->SetColorPair("accountstatusmenu",   "panel",          "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("accountstatusmenu",   "horizontalline", "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("accountstatusmenu",   "button",         "normal",     Curses::Color::CYAN,    Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("accountstatuspopup",  "panel",          "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("accountstatuspopup",  "horizontalline", "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("accountstatuspopup",  "button",         "normal",     Curses::Color::CYAN,    Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("accountwindow",       "panel",          "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("accountwindow",       "horizontalline", "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("accountwindow",       "verticalline",   "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("buddylist",           "treeview",       "line",       Curses::Color::GREEN,   Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylist",           "panel",          "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("buddylist",           "button",         "normal",     Curses::Color::GREEN,   Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistgroup",      "button",         "normal",     Curses::Color::YELLOW,  Curses::Color::BLACK, Curses::Attr::BOLD);
+
+  COLORSCHEME->SetColorPair("generalmenu",         "panel",          "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("generalmenu",         "horizontalline", "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("generalmenu",         "button",         "normal",     Curses::Color::CYAN,    Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("log",                 "panel",          "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("log",                 "textview",       "text",       Curses::Color::CYAN,    Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("conversation",        "textview",       "text",       Curses::Color::MAGENTA, Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("conversation",        "textview",       "color1",     Curses::Color::CYAN,    Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("conversation",        "textview",       "color2",     Curses::Color::YELLOW,  Curses::Color::BLACK, Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation",        "panel",          "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation",        "horizontalline", "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
+
+  COLORSCHEME->SetColorPair("conversation",        "label",          "text",       Curses::Color::CYAN,    Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("conversation-active", "label",          "text",       Curses::Color::YELLOW,  Curses::Color::BLACK, Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation-new",    "label",          "text",       Curses::Color::CYAN,    Curses::Color::BLACK, Curses::Attr::BOLD);
+
+  COLORSCHEME->SetColorPair("header",              "label",          "text",       Curses::Color::BLACK,   Curses::Color::WHITE);
+  COLORSCHEME->SetColorPair("header",              "container",      "background", Curses::Color::BLACK,   Curses::Color::WHITE);
+}
+
+void CenterIM::ScreenResized()
+{
+  // TODO make configurable
+  Rect size;
+
+  size.x = 0;
+  size.y = 1;
+  size.width = mngr->GetScreenWidth() / 4;
+  size.height = mngr->GetScreenHeight() - 1;
+  areaSizes[BUDDY_LIST_AREA] = size;
+
+  size.x = areaSizes[BUDDY_LIST_AREA].width;
+  size.width = mngr->GetScreenWidth() - size.x;
+  size.height = 15;
+  size.y = mngr->GetScreenHeight() - size.height;
+  areaSizes[LOG_AREA] = size;
+
+  size.x = areaSizes[BUDDY_LIST_AREA].width;
+  size.y = 1;
+  size.width = mngr->GetScreenWidth() - size.x;
+  size.height = mngr->GetScreenHeight() - (size.y +
+      areaSizes[LOG_AREA].height);
+  areaSizes[CHAT_AREA] = size;
+
+  size.x = 0;
+  size.y = 0;
+  size.width = mngr->GetScreenWidth();
+  size.height = 1;
+  areaSizes[HEADER_AREA] = size;
+
+  size.x = 0;
+  size.y = 0;
+  size.width = mngr->GetScreenWidth();
+  size.height = mngr->GetScreenHeight();
+  areaSizes[WHOLE_AREA] = size;
 }
 
 GHashTable *CenterIM::get_ui_info()
@@ -126,11 +365,11 @@ GHashTable *CenterIM::get_ui_info()
     g_hash_table_insert(ui_info, (void *) "version",
         (void *) PACKAGE_VERSION);
     g_hash_table_insert(ui_info, (void *) "website",
-        (void *) "http://www.centerim.org");
+        (void *) "http://www.centerim.org/");
 
     // TODO
     g_hash_table_insert(ui_info, (void *) "dev_website",
-        (void *) "http://www.centerim.org");
+        (void *) "http://www.centerim.org/");
     g_hash_table_insert(ui_info, (void *) "client_type", (void *) "pc");
   }
 
@@ -212,176 +451,6 @@ void CenterIM::tmp_purple_print(PurpleDebugLevel level, const char *category,
   item.category = g_strdup(category);
   item.arg_s = g_strdup(arg_s);
   logbuf->push_back(item);
-}
-
-void CenterIM::PurpleInit()
-{
-  // set the configuration file location
-  char *path;
-  path = g_build_filename(purple_home_dir(), CIM_CONFIG_PATH, NULL);
-  purple_util_set_user_dir(path);
-  g_free(path);
-
-  /* This does not disable debugging, but rather it disables printing to
-   * stdout. Don't change this to TRUE or things will get messy. */
-  purple_debug_set_enabled(FALSE);
-
-  /* This catches and buffers libpurple debug messages until the Log object
-   * can be instantiated
-   * */
-  logbuf_debug_ui_ops.print = tmp_purple_print;
-  logbuf_debug_ui_ops.is_enabled = tmp_is_enabled;
-  purple_debug_set_ui_ops(&logbuf_debug_ui_ops);
-
-  centerim_core_ui_ops.get_ui_info = get_ui_info;
-  purple_core_set_ui_ops(&centerim_core_ui_ops);
-
-  // set the uiops for the eventloop
-  centerim_glib_eventloops.timeout_add = timeout_add;
-  centerim_glib_eventloops.timeout_remove = timeout_remove;
-  centerim_glib_eventloops.input_add = input_add;
-  centerim_glib_eventloops.input_remove = input_remove;
-  purple_eventloop_set_ui_ops(&centerim_glib_eventloops);
-
-  // in case we ever write centerim specific plugins
-  path = g_build_filename(purple_user_dir(), "plugins", NULL);
-  purple_plugins_add_search_path(path);
-  g_free(path);
-
-  if (!purple_core_init(PACKAGE_NAME)) {
-    // can't do much without libpurple
-    throw EXCEPTION_PURPLE_CORE_INIT;
-  }
-}
-
-void CenterIM::ColorSchemeInit()
-{
-  // default colors init
-  /// @todo move this to a default cfg
-  COLORSCHEME->SetColorPair("accountstatusmenu",   "panel",          "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("accountstatusmenu",   "horizontalline", "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("accountstatusmenu",   "button",         "normal",     Curses::Color::CYAN,    Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("accountstatuspopup",  "panel",          "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("accountstatuspopup",  "horizontalline", "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("accountstatuspopup",  "button",         "normal",     Curses::Color::CYAN,    Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("accountwindow",       "panel",          "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("accountwindow",       "horizontalline", "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("accountwindow",       "verticalline",   "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("buddylist",           "treeview",       "line",       Curses::Color::GREEN,   Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylist",           "panel",          "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("buddylist",           "button",         "normal",     Curses::Color::GREEN,   Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylistgroup",      "button",         "normal",     Curses::Color::YELLOW,  Curses::Color::BLACK, Curses::Attr::BOLD);
-
-  COLORSCHEME->SetColorPair("generalmenu",         "panel",          "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("generalmenu",         "horizontalline", "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("generalmenu",         "button",         "normal",     Curses::Color::CYAN,    Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("log",                 "panel",          "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("log",                 "textview",       "text",       Curses::Color::CYAN,    Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("conversation",        "textview",       "text",       Curses::Color::MAGENTA, Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("conversation",        "textview",       "color1",     Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("conversation",        "textview",       "color2",     Curses::Color::YELLOW,  Curses::Color::BLACK, Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation",        "panel",          "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation",        "horizontalline", "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
-
-  COLORSCHEME->SetColorPair("conversation",        "label",          "text",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("conversation-active", "label",          "text",       Curses::Color::YELLOW,  Curses::Color::BLACK, Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation-new",    "label",          "text",       Curses::Color::CYAN,    Curses::Color::BLACK, Curses::Attr::BOLD);
-
-  COLORSCHEME->SetColorPair("header",              "label",          "text",       Curses::Color::BLACK,   Curses::Color::WHITE);
-  COLORSCHEME->SetColorPair("header",              "container",      "background", Curses::Color::BLACK,   Curses::Color::WHITE);
-}
-
-void CenterIM::DeclareBindables()
-{
-  DeclareBindable(CONTEXT_CENTERIM, "quit",
-      sigc::mem_fun(this, &CenterIM::Quit),
-      InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable(CONTEXT_CENTERIM, "buddylist",
-      sigc::mem_fun(this, &CenterIM::ActionFocusBuddyList),
-      InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable(CONTEXT_CENTERIM, "conversation-active",
-      sigc::mem_fun(this, &CenterIM::ActionFocusActiveConversation),
-      InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable(CONTEXT_CENTERIM, "accountstatusmenu",
-      sigc::mem_fun(this, &CenterIM::ActionOpenAccountStatusMenu),
-      InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable(CONTEXT_CENTERIM, "generalmenu",
-      sigc::mem_fun(this, &CenterIM::ActionOpenGeneralMenu),
-      InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable(CONTEXT_CENTERIM, "conversation-prev",
-      sigc::mem_fun(this, &CenterIM::ActionFocusPrevConversation),
-      InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable(CONTEXT_CENTERIM, "conversation-next",
-      sigc::mem_fun(this, &CenterIM::ActionFocusNextConversation),
-      InputProcessor::BINDABLE_OVERRIDE);
-}
-
-DEFINE_SIG_REGISTERKEYS(CenterIM, RegisterKeys);
-bool CenterIM::RegisterKeys()
-{
-  RegisterKeyDef(CONTEXT_CENTERIM, "quit", _("Quit CenterIM."),
-      Keys::UnicodeTermKey("q", TERMKEY_KEYMOD_CTRL));
-  RegisterKeyDef(CONTEXT_CENTERIM, "buddylist",
-      _("Switch the focus to the buddy list."),
-      Keys::FunctionTermKey(1));
-  RegisterKeyDef(CONTEXT_CENTERIM, "conversation-active",
-      _("Switch the focus to the active conversation."),
-      Keys::FunctionTermKey(2));
-  RegisterKeyDef(CONTEXT_CENTERIM, "accountstatusmenu",
-      _("Open the account status menu."),
-      Keys::FunctionTermKey(3));
-  RegisterKeyDef(CONTEXT_CENTERIM, "generalmenu",
-      _("Open the general menu."),
-      Keys::FunctionTermKey(4));
-  RegisterKeyDef(CONTEXT_CENTERIM, "conversation-prev",
-      _("Switch the focus to the previous conversation."),
-      Keys::UnicodeTermKey("p", TERMKEY_KEYMOD_ALT));
-  RegisterKeyDef(CONTEXT_CENTERIM, "conversation-next",
-      _("Switch the focus to the next conversation."),
-      Keys::UnicodeTermKey("n", TERMKEY_KEYMOD_ALT));
-  return true;
-}
-
-Rect CenterIM::ScreenAreaSize(ScreenArea area)
-{
-  return areaSizes[area];
-}
-
-void CenterIM::ScreenResized()
-{
-  Rect size = CONF->GetBuddyListDimensions();
-  size.width = (int) (size.width * (mngr->GetScreenWidth() / (double) originalW));
-  size.height = mngr->GetScreenHeight() - size.y;
-  areaSizes[BUDDY_LIST_AREA] = size;
-
-  size = CONF->GetLogDimensions();
-  size.x = areaSizes[BUDDY_LIST_AREA].width;
-  size.width = mngr->GetScreenWidth() - size.x;
-  size.height = (int) (size.height * (mngr->GetScreenHeight() / (double) originalH));
-  size.y = mngr->GetScreenHeight() - size.height;
-  areaSizes[LOG_AREA] = size;
-
-  areaSizes[CHAT_AREA].x = areaSizes[BUDDY_LIST_AREA].width;
-  areaSizes[CHAT_AREA].y = 1;
-  areaSizes[CHAT_AREA].width = mngr->GetScreenWidth() - areaSizes[CHAT_AREA].x;
-  //areaSizes[CHAT_AREA].height = mngr->GetScreenHeight() - areaSizes[LOG_AREA].height;
-  areaSizes[CHAT_AREA].height = mngr->GetScreenHeight()
-    - (areaSizes[CHAT_AREA].y + areaSizes[LOG_AREA].height);
-
-  areaSizes[HEADER_AREA].x = 0;
-  areaSizes[HEADER_AREA].y = 0;
-  areaSizes[HEADER_AREA].width = mngr->GetScreenWidth();
-  areaSizes[HEADER_AREA].height = 1;
-
-  areaSizes[WHOLE_AREA].x = 0;
-  areaSizes[WHOLE_AREA].y = 0;
-  areaSizes[WHOLE_AREA].width = mngr->GetScreenWidth();
-  areaSizes[WHOLE_AREA].height = mngr->GetScreenHeight();
 }
 
 void CenterIM::ActionFocusBuddyList()

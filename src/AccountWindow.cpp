@@ -46,8 +46,6 @@ AccountWindow::AccountWindow()
   accounts = new TreeView(AUTOSIZE, AUTOSIZE);
   SetContainer(*accounts);
 
-  MoveResizeRect(CONF->GetAccountWindowDimensions());
-
   Populate();
 
   // move focus to accounts if there is any
@@ -57,17 +55,17 @@ AccountWindow::AccountWindow()
 
 void AccountWindow::ScreenResized()
 {
-  Rect screen = CENTERIM->ScreenAreaSize(CenterIM::WHOLE_AREA);
-  Rect confSize = CONF->GetAccountWindowDimensions();
+  Rect screen = CENTERIM->GetScreenAreaSize(CenterIM::WHOLE_AREA);
+  Rect confSize = CENTERIM->GetAccountWindowDimensions();
 
-  // Check against screen size
+  // check against the screen size
   if (screen.Width() < confSize.Width() + 4)
     confSize.width = screen.Width() - 4;
 
   if (screen.Height() < confSize.Height() + 4)
     confSize.height = screen.Height() - 4;
 
-  // Center on screen
+  // center on the screen
   confSize.x = (screen.Width() - confSize.Width()) / 2;
   confSize.y = (screen.Height() - confSize.Height()) / 2;
 

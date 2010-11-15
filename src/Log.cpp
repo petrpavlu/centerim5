@@ -23,12 +23,15 @@
 
 #include "Conf.h"
 #include "CenterIM.h"
-#include "Defines.h"
 
 #include <libpurple/debug.h>
 #include <libpurple/util.h>
 #include <cstring>
 #include "gettext.h"
+
+#define CONF_LOG_MAX_LINES_MIN 100
+#define CONF_LOG_MAX_LINES_MAX 1000
+#define CONF_LOG_MAX_LINES_DEFAULT 500
 
 Log *Log::Instance()
 {
@@ -49,17 +52,17 @@ Log::Log()
   textview = new TextView(width - 2, height, true);
   AddWidget(*textview, 1, 0);
 
-#define REGISTER_G_LOG_HANDLER(name) \
+#define REGISTER_G_LOG_HANDLER(name, handler) \
   g_log_set_handler((name), (GLogLevelFlags)(G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL \
-        | G_LOG_FLAG_RECURSION), glib_log_handler_, NULL)
+        | G_LOG_FLAG_RECURSION), handler, this)
 
   // register the glib log handlers
-  REGISTER_G_LOG_HANDLER(NULL);
-  REGISTER_G_LOG_HANDLER("GLib");
-  REGISTER_G_LOG_HANDLER("GModule");
-  REGISTER_G_LOG_HANDLER("GLib-GObject");
-  REGISTER_G_LOG_HANDLER("GThread");
-  REGISTER_G_LOG_HANDLER("cppconsui");
+  REGISTER_G_LOG_HANDLER(NULL, default_log_handler_);
+  REGISTER_G_LOG_HANDLER("GLib", glib_log_handler_);
+  REGISTER_G_LOG_HANDLER("GModule", glib_log_handler_);
+  REGISTER_G_LOG_HANDLER("GLib-GObject", glib_log_handler_);
+  REGISTER_G_LOG_HANDLER("GThread", glib_log_handler_);
+  REGISTER_G_LOG_HANDLER("cppconsui", cppconsui_log_handler_);
 
   // connect callbacks
   prefs_handle = purple_prefs_get_handle();
@@ -92,7 +95,7 @@ void Log::name(const gchar *fmt, ...)                   \
   va_list args;                                         \
   gchar *text;                                          \
                                                         \
-  if (CONF->GetLogLevelCIM() < level)                   \
+  if (GetLogLevel("cim") < level)                       \
     return; /* we don't want to see this log message */ \
                                                         \
   va_start(args, fmt);                                  \
@@ -114,53 +117,69 @@ WRITE_METHOD(Debug, LEVEL_DEBUG)
 
 void Log::purple_print(PurpleDebugLevel purplelevel, const char *category, const char *arg_s)
 {
-  Level level = ConvertPurpleDebugLevel(purplelevel);
+  if (GetLogLevel("purple") < ConvertPurpleDebugLevel(purplelevel))
+    return; // we don't want to see this log message
 
   if (!category) {
     category = "misc";
     Warning("centerim/log: purple_print() parameter category was not defined.\n");
   }
 
-  Write(TYPE_PURPLE, level, "libpurple/%s: %s", category, arg_s);
+  gchar *text = g_strdup_printf("libpurple/%s: %s", category, arg_s);
+  Write(text);
+  g_free(text);
 }
 
 gboolean Log::is_enabled(PurpleDebugLevel purplelevel, const char *category)
 {
   Level level = ConvertPurpleDebugLevel(purplelevel);
 
-  if (CONF->GetLogLevelPurple() < level)
+  if (GetLogLevel("purple") < level)
     return FALSE;
 
   return TRUE;
 }
 
-void Log::glib_log_handler(const gchar *domain, GLogLevelFlags flags,
-  const gchar *msg, gpointer user_data)
+void Log::default_log_handler(const gchar *domain, GLogLevelFlags flags,
+  const gchar *msg)
 {
-  Level level;
+  if (GetLogLevel("cim") < ConvertGlibDebugLevel(flags))
+    return; // we don't want to see this log message
 
-  if (flags & G_LOG_LEVEL_DEBUG)
-    level = LEVEL_DEBUG;
-  else if (flags & G_LOG_LEVEL_INFO)
-    level = LEVEL_INFO;
-  else if (flags & G_LOG_LEVEL_MESSAGE)
-    level = LEVEL_MESSAGE;
-  else if (flags & G_LOG_LEVEL_WARNING)
-    level = LEVEL_WARNING;
-  else if (flags & G_LOG_LEVEL_CRITICAL)
-    level = LEVEL_CRITICAL;
-  else if (flags & G_LOG_LEVEL_ERROR)
-    level = LEVEL_ERROR;
-  else {
-    Warning("centerim/log: Unknown glib logging level in %d.\n", flags);
-    /* This will never happen. Actually should not, because some day, it
-     * will happen :) So lets initialize level, so that we don't have
-     * uninitialized values :) */
-    level = LEVEL_DEBUG;
-  }
+  if (!msg)
+    return;
 
-  if (msg)
-    Write(TYPE_GLIB, level, "%s: %s", domain ? domain : "g_log", msg);
+  gchar *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
+  Write(text);
+  g_free(text);
+}
+
+void Log::glib_log_handler(const gchar *domain, GLogLevelFlags flags,
+  const gchar *msg)
+{
+  if (GetLogLevel("glib") < ConvertGlibDebugLevel(flags))
+    return; // we don't want to see this log message
+
+  if (!msg)
+    return;
+
+  gchar *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
+  Write(text);
+  g_free(text);
+}
+
+void Log::cppconsui_log_handler(const gchar *domain, GLogLevelFlags flags,
+  const gchar *msg)
+{
+  if (GetLogLevel("cppconsui") < ConvertGlibDebugLevel(flags))
+    return; // we don't want to see this log message
+
+  if (!msg)
+    return;
+
+  gchar *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
+  Write(text);
+  g_free(text);
 }
 
 void Log::debug_change(const char *name, PurplePrefType type, gconstpointer val)
@@ -174,12 +193,16 @@ void Log::debug_change(const char *name, PurplePrefType type, gconstpointer val)
 
 void Log::ScreenResized()
 {
-  MoveResizeRect(CENTERIM->ScreenAreaSize(CenterIM::LOG_AREA));
+  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::LOG_AREA));
 }
 
 void Log::ShortenWindowText()
 {
-  int max_lines = CONF->GetLogMaxLines();
+  char *pref = g_strconcat(CONF_PREFIX, "log/log_max_lines", NULL);
+  int max_lines = CONF->GetInt(pref, CONF_LOG_MAX_LINES_DEFAULT,
+      CONF_LOG_MAX_LINES_MIN, CONF_LOG_MAX_LINES_MAX);
+  g_free(pref);
+
   int lines_num = textview->GetLinesNumber();
 
   if (lines_num > max_lines) {
@@ -195,30 +218,12 @@ void Log::Write(const gchar *text)
   ShortenWindowText();
 }
 
-void Log::Write(Type type, Level level, const gchar *fmt, ...)
-{
-  va_list args;
-  gchar *text;
-
-  if ((type == TYPE_GLIB && CONF->GetLogLevelGlib() < level)
-    || (type == TYPE_PURPLE && CONF->GetLogLevelPurple() < level))
-    return; // we don't want to see this log message
-
-  va_start(args, fmt);
-  text = g_strdup_vprintf(fmt, args);
-  va_end(args);
-
-  Write(text);
-
-  g_free(text);
-}
-
 void Log::WriteErrorToWindow(const gchar *fmt, ...)
 {
   va_list args;
   gchar *text;
 
-  if (CONF->GetLogLevelCIM() < LEVEL_ERROR)
+  if (GetLogLevel("cim") < LEVEL_ERROR)
     return; // we don't want to see this log message
 
   va_start(args, fmt);
@@ -235,7 +240,7 @@ void Log::WriteToFile(const gchar *text)
 {
   GError *err = NULL;
 
-  if (CONF->GetDebugEnabled()) {
+  if (GetDebugEnabled()) {
     // open logfile if it isn't already opened
     if (!logfile) {
       gchar *filename = g_build_filename(purple_user_dir(),
@@ -288,23 +293,85 @@ void Log::WriteToFile(const gchar *text)
 
 Log::Level Log::ConvertPurpleDebugLevel(PurpleDebugLevel purplelevel)
 {
-  if (purplelevel == PURPLE_DEBUG_MISC)
-    return LEVEL_DEBUG;
-  if (purplelevel == PURPLE_DEBUG_INFO)
-    return LEVEL_INFO;
-  if (purplelevel == PURPLE_DEBUG_WARNING)
-    return LEVEL_WARNING;
-  if (purplelevel == PURPLE_DEBUG_ERROR)
-    return LEVEL_CRITICAL;
-  if (purplelevel == PURPLE_DEBUG_FATAL)
-    return LEVEL_ERROR;
-  if (purplelevel == PURPLE_DEBUG_ALL)
-    return LEVEL_ERROR; // use error level so this message is always printed
+  switch (purplelevel) {
+    case PURPLE_DEBUG_MISC:
+      return LEVEL_DEBUG;
+    case PURPLE_DEBUG_INFO:
+      return LEVEL_INFO;
+    case PURPLE_DEBUG_WARNING:
+      return LEVEL_WARNING;
+    case PURPLE_DEBUG_ERROR:
+      return LEVEL_CRITICAL;
+    case PURPLE_DEBUG_FATAL:
+      return LEVEL_ERROR;
+    case PURPLE_DEBUG_ALL:
+      return LEVEL_ERROR; // use error level so this message is always printed
+  }
 
   Warning("centerim/log: Unknown libpurple logging level: %d.\n",
       purplelevel);
-  /* This will never happen. Actually should not, because some day, it will
-   * happen :) So lets initialize level, so that we don't have uninitialized
-   * values :) */
   return LEVEL_DEBUG;
+}
+
+Log::Level Log::ConvertGlibDebugLevel(GLogLevelFlags gliblevel)
+{
+  if (gliblevel & G_LOG_LEVEL_DEBUG)
+    return LEVEL_DEBUG;
+  if (gliblevel & G_LOG_LEVEL_INFO)
+    return LEVEL_INFO;
+  if (gliblevel & G_LOG_LEVEL_MESSAGE)
+    return LEVEL_MESSAGE;
+  if (gliblevel & G_LOG_LEVEL_WARNING)
+    return LEVEL_WARNING;
+  if (gliblevel & G_LOG_LEVEL_CRITICAL)
+    return LEVEL_CRITICAL;
+  if (gliblevel & G_LOG_LEVEL_ERROR)
+    return LEVEL_ERROR;
+
+  Warning("centerim/log: Unknown glib logging level in %d.\n", gliblevel);
+  /* This will never happen. Actually should not, because some day, it will
+   * happen. :) So lets initialize level, so that we don't have uninitialized
+   * values. :) */
+  return LEVEL_DEBUG;
+}
+
+Log::Level Log::GetLogLevel(const gchar *type)
+{
+  gchar *pref = g_strconcat(CONF_PREFIX, "log/log_level_", type, NULL);
+  const gchar *def;
+  if (!g_ascii_strcasecmp(type, "cim"))
+    def = "info";
+  else
+    def = "critical";
+
+  const gchar *slevel = CONF->GetString(pref, def);
+
+  Level level = LEVEL_DEBUG;
+  if (!g_ascii_strcasecmp(slevel,"none"))
+    level = LEVEL_NONE;
+  else if (!g_ascii_strcasecmp(slevel, "debug"))
+    level = LEVEL_DEBUG;
+  else if (!g_ascii_strcasecmp(slevel, "info"))
+    level = LEVEL_INFO;
+  else if (!g_ascii_strcasecmp(slevel, "message"))
+    level = LEVEL_MESSAGE;
+  else if (!g_ascii_strcasecmp(slevel, "warning"))
+    level = LEVEL_WARNING;
+  else if (!g_ascii_strcasecmp(slevel, "critical"))
+    level = LEVEL_CRITICAL;
+  else if (!g_ascii_strcasecmp(slevel, "error"))
+    level = LEVEL_ERROR;
+  else
+    CONF->SetString(pref, def);
+  g_free(pref);
+
+  return level;
+}
+
+bool Log::GetDebugEnabled()
+{
+  gchar *pref = g_strconcat(CONF_PREFIX, "log/debug", NULL);
+  bool b = CONF->GetBool(pref, false);
+  g_free(pref);
+  return b;
 }

@@ -76,7 +76,7 @@ void Conversations::Close()
 
 void Conversations::ScreenResized()
 {
-  Rect r = CENTERIM->ScreenAreaSize(CenterIM::CHAT_AREA);
+  Rect r = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
   r.y = r.Bottom();
   r.height = 1;
 

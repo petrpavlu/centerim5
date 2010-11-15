@@ -22,9 +22,7 @@
 #ifndef __CONF_H__
 #define __CONF_H__
 
-#include "Log.h"
-
-#include <string>
+#include <glib.h>
 
 #define CONF (Conf::Instance())
 
@@ -33,49 +31,16 @@ class Conf
 public:
   static Conf *Instance();
 
-  void Reload(void);
-  void Save(void);
+  // configuration base get/set methods
+  int GetInt(const char *pref, int defaultvalue);
+  int GetInt(const char *pref, int defaultvalue, int min, int max);
+  void SetInt(const char *pref, int value);
 
-  /* Configuration base get/set methods */
-  int GetInt(const gchar *pref, const int defaultvalue);
-  int GetInt(const gchar *pref, const int defaultvalue, const int min, const int max);
-  void SetInt(const gchar *pref, const int value);
-  bool GetBool(const gchar *pref, const bool defaultvalue);
-  void SetBool(const gchar *pref, const bool value);
-  const gchar* GetString(const gchar *pref, const gchar *defaultvalue);
-  void SetString(const gchar *pref, const gchar *value);
+  bool GetBool(const char *pref, bool defaultvalue);
+  void SetBool(const char *pref, bool value);
 
-  Rect GetDimensions(const gchar *window, const int defx, const int defy, const int defwidth, const int defheight);
-  void SetDimensions(const gchar *window, const Rect &rect);
-  void SetDimensions(const gchar *window, const int x, const int y, const int width, const int height);
-
-  /* for debugging and logging */
-  bool GetDebugEnabled(void);
-  Log::Level GetLogLevelGlib(void)
-    { return GetLogLevel("glib"); }
-  Log::Level GetLogLevelPurple(void)
-    { return GetLogLevel("purple"); }
-  Log::Level GetLogLevelCIM(void)
-    { return GetLogLevel("cim"); }
-  void SetLogLevelGlib(Log::Level level)
-    { SetLogLevel("glib", level); }
-  void SetLogLevelPurple(Log::Level level)
-    { SetLogLevel("purple", level); }
-  void SetLogLevelCIM(Log::Level level)
-    { SetLogLevel("cim", level); }
-
-  unsigned int GetLogMaxLines(void);
-  unsigned int GetChatPartitioning(void);
-
-  Rect GetHeaderDimensions(void);
-  Rect GetLogDimensions(void);
-  Rect GetBuddyListDimensions(void);
-  Rect GetChatDimensions(void);
-  Rect GetAccountWindowDimensions(void);
-
-  bool GetLogIms(void);
-  bool GetLogChats(void);
-  bool GetLogSystem(void);
+  const gchar *GetString(const char *pref, const gchar *defaultvalue);
+  void SetString(const char *pref, const gchar *value);
 
 protected:
 
@@ -83,12 +48,9 @@ private:
   Conf();
   Conf(const Conf&);
   Conf& operator=(const Conf&);
-  ~Conf();
+  ~Conf() {}
 
-  void AddPath(const std::string &s);
-
-  Log::Level GetLogLevel(const gchar *type);
-  void SetLogLevel(const gchar *type, Log::Level level);
+  void AddPath(const char *s);
 };
 
 #endif // __CONF_H__

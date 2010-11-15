@@ -198,7 +198,7 @@ Request::RequestDialog::RequestDialog(const gchar *title,
 
 void Request::RequestDialog::ScreenResized()
 {
-  Rect screen = CENTERIM->ScreenAreaSize(CenterIM::WHOLE_AREA);
+  Rect screen = CENTERIM->GetScreenAreaSize(CenterIM::WHOLE_AREA);
 
   MoveResize(screen.Width() / 4, screen.Height() / 4, screen.Width() / 2,
       screen.Height() / 2);

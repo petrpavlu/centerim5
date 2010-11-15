@@ -59,6 +59,11 @@ Header::~Header()
   //purple_signals_disconnect_by_handle(this);
 }
 
+void Header::ScreenResized()
+{
+  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::HEADER_AREA));
+}
+
 void Header::account_signed_on(PurpleAccount *account)
 {
   g_return_if_fail(account);
@@ -105,9 +110,4 @@ void Header::account_alias_changed(PurpleAccount *account, const gchar *old)
 
   account_status_changed(account, NULL,
       purple_account_get_active_status(account));
-}
-
-void Header::ScreenResized()
-{
-  MoveResizeRect(CENTERIM->ScreenAreaSize(CenterIM::HEADER_AREA));
 }

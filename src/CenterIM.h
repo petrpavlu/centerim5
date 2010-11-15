@@ -31,6 +31,8 @@
 #include <cppconsui/CoreManager.h>
 #include <vector>
 
+#define CONF_PREFIX "/centerim/"
+
 #define CENTERIM (CenterIM::Instance())
 
 class CenterIM
@@ -48,20 +50,25 @@ public:
 
   static CenterIM *Instance();
 
-  void Run();
+  int Run();
   void Quit();
 
   // returns size of selected area
-  Rect ScreenAreaSize(ScreenArea area);
+  Rect GetScreenAreaSize(ScreenArea area);
+
+  Rect GetDimensions(const char *window, int defx, int defy, int defwidth,
+      int defheight);
+
+  void SetDimensions(const char *window, int x, int y, int width, int height);
+  void SetDimensions(const char *window, const Rect& rect);
+
+  Rect GetAccountWindowDimensions();
 
   static const char * const version;
 
 protected:
 
 private:
-  static const int originalW = 139;
-  static const int originalH = 56;
-
   CoreManager *mngr;
   sigc::connection resize;
 
@@ -94,11 +101,11 @@ private:
   CenterIM& operator=(const CenterIM&);
   ~CenterIM() {}
 
+  int PurpleInit();
+  void ColorSchemeInit();
+
   // recalculates area sizes to fit into current screen size
   void ScreenResized();
-
-  void PurpleInit();
-  void ColorSchemeInit();
 
   // PurpleCoreUiOps callbacks
   // returns information about CenterIM such as name, website etc.

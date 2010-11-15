@@ -18,12 +18,7 @@
  *
  * */
 
-#include "CenterMain.h"
-
 #include "CenterIM.h"
-#include "Defines.h"
-
-#include <cstdio>
 #include "gettext.h"
 
 int main(int argc, char **argv)
@@ -40,25 +35,7 @@ int main(int argc, char **argv)
 
   setlocale(LC_ALL, "");
 
-  try {
-    cim = CenterIM::Instance();
-  }
-  catch (int i) {
-    // FIXME
-    switch (i) {
-    case EXCEPTION_ICONV_INIT:
-      fprintf(stderr, _("could not initialize iconv\n"));
-      break;
-    case EXCEPTION_PURPLE_CORE_INIT:
-      fprintf(stderr, _("could not initialize libpurple core\n"));
-      break;
-    default:
-      fprintf(stderr, _("unknown error `%d'\n"), i);
-    }
-    return i;
-  }
+  cim = CenterIM::Instance();
 
-  cim->Run();
-
-  return 0;
+  return cim->Run();
 }

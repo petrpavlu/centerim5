@@ -37,6 +37,8 @@
 //#define CONVERSATION_DESTROY_TIMEOUT 1800000
 #define CONVERSATION_DESTROY_TIMEOUT 6000
 
+#define CONF_CHAT_PARTITIONING_DEFAULT 80 /* 20% for the input window */
+
 Conversation::Conversation(PurpleConversation *conv_)
 : Window(0, 0, 80, 24)
 , conv(conv_)
@@ -147,7 +149,7 @@ void Conversation::Close()
 
 void Conversation::ScreenResized()
 {
-  Rect r = CENTERIM->ScreenAreaSize(CenterIM::CHAT_AREA);
+  Rect r = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
   // make room for conversations list
   r.height--;
 
@@ -167,7 +169,21 @@ void Conversation::MoveResize(int newx, int newy, int neww, int newh)
 {
   Window::MoveResize(newx, newy, neww, newh);
 
-  SetPartitioning(CONF->GetChatPartitioning());
+  char *pref = g_strconcat(CONF_PREFIX, "chat/partitioning", NULL);
+  int percentage = CONF->GetInt(pref, CONF_CHAT_PARTITIONING_DEFAULT, 0, 100);
+  g_free(pref);
+
+  int view_height = (height * percentage) / 100;
+  if (view_height < 1)
+    view_height = 1;
+
+  int input_height = height - view_height - 1;
+  if (input_height < 1)
+    input_height = 1;
+
+  view->MoveResize(1, 0, width - 2, view_height);
+  input->MoveResize(1, view_height + 1, width - 2, input_height);
+  line->MoveResize(0, view_height, width, 1);
 }
 
 void Conversation::Receive(const char *name, const char *alias, const char *message,
@@ -227,21 +243,6 @@ void Conversation::Receive(const char *name, const char *alias, const char *mess
   g_free(nohtml);
 }
 
-void Conversation::SetPartitioning(unsigned percentage)
-{
-  int view_height = (height * percentage) / 100;
-  if (view_height < 1)
-    view_height = 1;
-
-  int input_height = height - view_height - 1;
-  if (input_height < 1)
-    input_height = 1;
-
-  view->MoveResize(1, 0, width - 2, view_height);
-  input->MoveResize(1, view_height + 1, width - 2, input_height);
-  line->MoveResize(0, view_height, width, 1);
-}
-
 ConversationChat::ConversationChat(PurpleConversation *conv)
 : Conversation(conv)
 {
@@ -251,7 +252,7 @@ ConversationChat::ConversationChat(PurpleConversation *conv)
 
 void ConversationChat::LoadHistory()
 {
-  g_return_if_fail(CONF->GetLogChats());
+  //g_return_if_fail(CONF->GetLogChats());
 
   PurpleAccount *account = purple_conversation_get_account(conv);
   const char *name = purple_conversation_get_name(conv);

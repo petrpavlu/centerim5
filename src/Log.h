@@ -90,12 +90,29 @@ private:
       const char *arg_s);
   gboolean is_enabled(PurpleDebugLevel level, const char *category);
 
+  // to catch default messages
+  static void default_log_handler_(const gchar *domain, GLogLevelFlags flags,
+      const gchar *msg, gpointer user_data)
+    { reinterpret_cast<Log*>(user_data)->default_log_handler(domain, flags,
+        msg); }
+  void default_log_handler(const gchar *domain, GLogLevelFlags flags,
+      const gchar *msg);
+
   // to catch glib's messages
   static void glib_log_handler_(const gchar *domain, GLogLevelFlags flags,
-    const gchar *msg, gpointer user_data)
-    { LOG->glib_log_handler(domain, flags, msg, user_data); }
+      const gchar *msg, gpointer user_data)
+    { reinterpret_cast<Log*>(user_data)->glib_log_handler(domain, flags,
+        msg); }
   void glib_log_handler(const gchar *domain, GLogLevelFlags flags,
-      const gchar *msg, gpointer user_data);
+      const gchar *msg);
+
+  // to catch cppconsui messages
+  static void cppconsui_log_handler_(const gchar *domain,
+      GLogLevelFlags flags, const gchar *msg, gpointer user_data)
+    { reinterpret_cast<Log*>(user_data)->glib_log_handler(domain, flags,
+        msg); }
+  void cppconsui_log_handler(const gchar *domain, GLogLevelFlags flags,
+      const gchar *msg);
 
   // called when log/debug pref changed
   static void debug_change_(const char *name, PurplePrefType type,
@@ -106,10 +123,12 @@ private:
 
   void ShortenWindowText();
   void Write(const gchar *text);
-  void Write(Type type, Level level, const gchar *fmt, ...);
   void WriteErrorToWindow(const gchar *fmt, ...);
   void WriteToFile(const gchar *text);
   Level ConvertPurpleDebugLevel(PurpleDebugLevel purplelevel);
+  Level ConvertGlibDebugLevel(GLogLevelFlags gliblevel);
+  Level GetLogLevel(const char *type);
+  bool GetDebugEnabled();
 };
 
 #endif // __LOG_H__

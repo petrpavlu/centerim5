@@ -78,8 +78,6 @@ BuddyList::BuddyList()
   lbox->AppendWidget(*treeview);
   lbox->AppendWidget(*(new Spacer(1, AUTOSIZE)));
   AddWidget(*lbox, 0, 0);
-
-  MoveResizeRect(CONF->GetBuddyListDimensions());
 }
 
 void BuddyList::Load()
@@ -94,7 +92,7 @@ void BuddyList::Close()
 
 void BuddyList::ScreenResized()
 {
-  MoveResizeRect(CENTERIM->ScreenAreaSize(CenterIM::BUDDY_LIST_AREA));
+  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::BUDDY_LIST_AREA));
 }
 
 void BuddyList::new_list(PurpleBuddyList *list)

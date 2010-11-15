@@ -61,8 +61,6 @@ public:
   PurpleConversation *GetPurpleConversation() const { return conv; };
 
 protected:
-  void SetPartitioning(unsigned percentage);
-
   virtual void LoadHistory() = 0;
 
   TextView *view;
