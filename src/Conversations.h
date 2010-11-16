@@ -71,10 +71,16 @@ private:
 
   PurpleConversationUiOps centerim_conv_ui_ops;
 
+  static Conversations *instance;
+
   Conversations();
   Conversations(const Conversations&);
   Conversations& operator=(const Conversations&);
   virtual ~Conversations();
+
+  static void Init();
+  static void Finalize();
+  friend class CenterIM;
 
   // find PurpleConversation in conversations
   int FindConversation(PurpleConversation *conv);

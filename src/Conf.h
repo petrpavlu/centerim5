@@ -45,10 +45,16 @@ public:
 protected:
 
 private:
+  static Conf *instance;
+
   Conf();
   Conf(const Conf&);
   Conf& operator=(const Conf&);
-  ~Conf() {}
+  ~Conf();
+
+  static void Init();
+  static void Finalize();
+  friend class CenterIM;
 
   void AddPath(const char *s);
 };

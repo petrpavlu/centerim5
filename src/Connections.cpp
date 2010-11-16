@@ -26,10 +26,11 @@
 #include <cstring>
 #include "gettext.h"
 
+Connections *Connections::instance = NULL;
+
 Connections *Connections::Instance()
 {
-  static Connections instance;
-  return &instance;
+  return instance;
 }
 
 Connections::Connections()
@@ -46,6 +47,26 @@ Connections::Connections()
   centerim_connection_ui_ops.network_disconnected = network_disconnected_;
   centerim_connection_ui_ops.report_disconnect_reason = report_disconnect_reason_;
   purple_connections_set_ui_ops(&centerim_connection_ui_ops);
+}
+
+Connections::~Connections()
+{
+  purple_connections_set_ui_ops(NULL);
+}
+
+void Connections::Init()
+{
+  g_assert(!instance);
+
+  instance = new Connections;
+}
+
+void Connections::Finalize()
+{
+  g_assert(instance);
+
+  delete instance;
+  instance = NULL;
 }
 
 void Connections::connect_progress(PurpleConnection *gc, const char *text,

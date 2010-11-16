@@ -27,10 +27,11 @@
 #include <cstring>
 #include "gettext.h"
 
+Request *Request::instance = NULL;
+
 Request *Request::Instance()
 {
-  static Request instance;
-  return &instance;
+  return instance;
 }
 
 Request::Request()
@@ -52,6 +53,28 @@ Request::Request()
 
 Request::~Request()
 {
+  // close all opened requests
+  while (requests.size()) {
+    RequestDialog *rdialog = *(requests.begin());
+    purple_request_close(rdialog->GetRequestType(), rdialog);
+  }
+
+  purple_request_set_ui_ops(NULL);
+}
+
+void Request::Init()
+{
+  g_assert(!instance);
+
+  instance = new Request;
+}
+
+void Request::Finalize()
+{
+  g_assert(instance);
+
+  delete instance;
+  instance = NULL;
 }
 
 void Request::OnDialogResponse(Dialog& dialog,

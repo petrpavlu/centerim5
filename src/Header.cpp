@@ -24,10 +24,11 @@
 #include "Utils.h"
 #include "config.h"
 
+Header *Header::instance = NULL;
+
 Header *Header::Instance()
 {
-  static Header instance;
-  return &instance;
+  return instance;
 }
 
 Header::Header()
@@ -56,7 +57,23 @@ Header::Header()
 
 Header::~Header()
 {
-  //purple_signals_disconnect_by_handle(this);
+  purple_signals_disconnect_by_handle(this);
+}
+
+void Header::Init()
+{
+  g_assert(!instance);
+
+  instance = new Header;
+  instance->Show();
+}
+
+void Header::Finalize()
+{
+  g_assert(instance);
+
+  delete instance;
+  instance = NULL;
 }
 
 void Header::ScreenResized()

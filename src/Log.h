@@ -70,14 +70,26 @@ private:
   PurpleDebugUiOps centerim_debug_ui_ops;
 
   GIOChannel *logfile;
-  void *prefs_handle;
 
   TextView *textview;
+
+  guint default_handler;
+  guint glib_handler;
+  guint gmodule_handler;
+  guint glib_gobject_handler;
+  guint gthread_handler;
+  guint cppconsui_handler;
+
+  static Log *instance;
 
   Log();
   Log(const Log&);
   Log& operator=(const Log&);
   virtual ~Log();
+
+  static void Init();
+  static void Finalize();
+  friend class CenterIM;
 
   // to catch libpurple's debug messages
   static void purple_print_(PurpleDebugLevel level, const char *category,

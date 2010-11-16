@@ -143,10 +143,16 @@ private:
 
   TreeView *treeview;
 
+  static BuddyList *instance;
+
   BuddyList();
   BuddyList(const BuddyList&);
   BuddyList& operator=(const BuddyList&);
-  ~BuddyList() {}
+  ~BuddyList();
+
+  static void Init();
+  static void Finalize();
+  friend class CenterIM;
 
   void Load();
 

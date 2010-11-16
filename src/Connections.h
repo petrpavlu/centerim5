@@ -36,10 +36,16 @@ protected:
 private:
   PurpleConnectionUiOps centerim_connection_ui_ops;
 
+  static Connections *instance;
+
   Connections();
   Connections(const Connections&);
   Connections& operator=(const Connections&);
-  ~Connections() {}
+  ~Connections();
+
+  static void Init();
+  static void Finalize();
+  friend class CenterIM;
 
   static void connect_progress_(PurpleConnection *gc, const char *text,
       size_t step, size_t step_count)

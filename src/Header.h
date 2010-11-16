@@ -47,10 +47,16 @@ private:
   HorizontalListBox *container;
   std::map<PurpleAccount *, Label *> statuses;
 
+  static Header *instance;
+
   Header();
   Header(const Header&);
   Header &operator=(const Header&);
-  virtual ~Header();
+  ~Header();
+
+  static void Init();
+  static void Finalize();
+  friend class CenterIM;
 
   static void account_signed_on_(PurpleAccount *account, gpointer data)
     { reinterpret_cast<Header *>(data)->account_signed_on(account); }

@@ -128,12 +128,12 @@ int CenterIM::Run()
     return 1;
 
   // initialize Conf component so we can calculate area sizes of all windows
-  Conf::Instance();
+  Conf::Init();
 
   ColorSchemeInit();
 
   // initialize Log component
-  Log::Instance()->Show();
+  Log::Init();
   if (logbuf) {
     for (LogBufferItems::iterator i = logbuf->begin(); i != logbuf->end(); i++) {
       purple_debug(i->level, i->category, i->arg_s);
@@ -145,17 +145,16 @@ int CenterIM::Run()
     logbuf = NULL;
   }
 
-  Accounts::Instance();
-  Connections::Instance();
-  Header::Instance();
-  Notify::Instance();
-  Request::Instance();
+  Accounts::Init();
+  Connections::Init();
+  Notify::Init();
+  Request::Init();
 
   // initialize UI
-  Conversations::Instance()->Show();
-  Header::Instance()->Show();
+  Conversations::Init();
+  Header::Init();
   // init BuddyList last so it takes the focus
-  BuddyList::Instance()->Show();
+  BuddyList::Init();
 
   LOG->Info(_("Welcome to CenterIM 5. Press F4 to display main menu.\n"));
 
@@ -163,17 +162,29 @@ int CenterIM::Run()
   mngr->EnableResizing();
   mngr->StartMainLoop();
 
+  resize.disconnect();
+
+  Conversations::Finalize();
+  Header::Finalize();
+  BuddyList::Finalize();
+
+  Accounts::Finalize();
+  Connections::Finalize();
+  Notify::Finalize();
+  Request::Finalize();
+
+  Log::Finalize();
+
+  Conf::Finalize();
+
+  PurpleFinalize();
+
   return 0;
 }
 
 void CenterIM::Quit()
 {
   mngr->QuitMainLoop();
-
-  resize.disconnect();
-
-  // clean up
-  purple_core_quit();
 }
 
 Rect CenterIM::GetScreenAreaSize(ScreenArea area)
@@ -273,6 +284,13 @@ int CenterIM::PurpleInit()
     return 1;
   }
   return 0;
+}
+
+void CenterIM::PurpleFinalize()
+{
+  purple_core_set_ui_ops(NULL);
+  //purple_eventloop_set_ui_ops(NULL);
+  purple_core_quit();
 }
 
 void CenterIM::ColorSchemeInit()

@@ -33,17 +33,17 @@
 #define CONF_LOG_MAX_LINES_MAX 1000
 #define CONF_LOG_MAX_LINES_DEFAULT 500
 
+Log *Log::instance = NULL;
+
 Log *Log::Instance()
 {
-  static Log instance;
-  return &instance;
+  return instance;
 }
 
 // TODO sensible defaults
 Log::Log()
 : Window(0, 0, 80, 24, NULL, TYPE_NON_FOCUSABLE)
 , logfile(NULL)
-, prefs_handle(NULL)
 {
   SetColorScheme("log");
 
@@ -54,19 +54,20 @@ Log::Log()
 
 #define REGISTER_G_LOG_HANDLER(name, handler) \
   g_log_set_handler((name), (GLogLevelFlags)(G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL \
-        | G_LOG_FLAG_RECURSION), handler, this)
+        | G_LOG_FLAG_RECURSION), (handler), this)
 
   // register the glib log handlers
-  REGISTER_G_LOG_HANDLER(NULL, default_log_handler_);
-  REGISTER_G_LOG_HANDLER("GLib", glib_log_handler_);
-  REGISTER_G_LOG_HANDLER("GModule", glib_log_handler_);
-  REGISTER_G_LOG_HANDLER("GLib-GObject", glib_log_handler_);
-  REGISTER_G_LOG_HANDLER("GThread", glib_log_handler_);
-  REGISTER_G_LOG_HANDLER("cppconsui", cppconsui_log_handler_);
+  default_handler = REGISTER_G_LOG_HANDLER(NULL, default_log_handler_);
+  glib_handler = REGISTER_G_LOG_HANDLER("GLib", glib_log_handler_);
+  gmodule_handler = REGISTER_G_LOG_HANDLER("GModule", glib_log_handler_);
+  glib_gobject_handler = REGISTER_G_LOG_HANDLER("GLib-GObject",
+      glib_log_handler_);
+  gthread_handler = REGISTER_G_LOG_HANDLER("GThread", glib_log_handler_);
+  cppconsui_handler = REGISTER_G_LOG_HANDLER("cppconsui",
+      cppconsui_log_handler_);
 
   // connect callbacks
-  prefs_handle = purple_prefs_get_handle();
-  purple_prefs_connect_callback(prefs_handle, CONF_PREFIX "log/debug", debug_change_, this);
+  purple_prefs_connect_callback(this, CONF_PREFIX "log/debug", debug_change_, this);
 
   // set the purple debug callbacks
   centerim_debug_ui_ops.print = purple_print_;
@@ -76,10 +77,35 @@ Log::Log()
 
 Log::~Log()
 {
-  purple_prefs_disconnect_by_handle(prefs_handle);
+  purple_debug_set_ui_ops(NULL);
+
+  g_log_remove_handler(NULL, default_handler);
+  g_log_remove_handler("GLib", glib_handler);
+  g_log_remove_handler("GModule", gmodule_handler);
+  g_log_remove_handler("GLib-GObject", glib_gobject_handler);
+  g_log_remove_handler("GThread", gthread_handler);
+  g_log_remove_handler("cppconsui", cppconsui_handler);
+
+  purple_prefs_disconnect_by_handle(this);
 
   if (logfile)
     g_io_channel_unref(logfile);
+}
+
+void Log::Init()
+{
+  g_assert(!instance);
+
+  instance = new Log;
+  instance->Show();
+}
+
+void Log::Finalize()
+{
+  g_assert(instance);
+
+  delete instance;
+  instance = NULL;
 }
 
 void Log::MoveResize(int newx, int newy, int neww, int newh)

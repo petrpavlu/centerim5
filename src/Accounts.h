@@ -36,10 +36,16 @@ protected:
 private:
   PurpleAccountUiOps centerim_account_ui_ops;
 
+  static Accounts *instance;
+
   Accounts();
   Accounts(const Accounts&);
-  Accounts &operator=(const Accounts&);
-  ~Accounts() {};
+  Accounts& operator=(const Accounts&);
+  ~Accounts();
+
+  static void Init();
+  static void Finalize();
+  friend class CenterIM;
 
   static void status_changed_(PurpleAccount *account, PurpleStatus *status)
     { ACCOUNTS->status_changed(account, status); }

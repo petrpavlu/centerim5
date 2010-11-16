@@ -30,10 +30,11 @@
 #include <libpurple/pounce.h>
 #include "gettext.h"
 
+BuddyList *BuddyList::instance = NULL;
+
 BuddyList *BuddyList::Instance()
 {
-  static BuddyList instance;
-  return &instance;
+  return instance;
 }
 
 BuddyList::BuddyList()
@@ -78,6 +79,27 @@ BuddyList::BuddyList()
   lbox->AppendWidget(*treeview);
   lbox->AppendWidget(*(new Spacer(1, AUTOSIZE)));
   AddWidget(*lbox, 0, 0);
+}
+
+BuddyList::~BuddyList()
+{
+  purple_blist_set_ui_ops(NULL);
+}
+
+void BuddyList::Init()
+{
+  g_assert(!instance);
+
+  instance = new BuddyList;
+  instance->Show();
+}
+
+void BuddyList::Finalize()
+{
+  g_assert(instance);
+
+  delete instance;
+  instance = NULL;
 }
 
 void BuddyList::Load()

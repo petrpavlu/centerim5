@@ -57,6 +57,8 @@ public:
       int attrs = Curses::Attr::NORMAL, bool overwrite = false);
 
 protected:
+
+private:
   struct Color
   {
     int foreground;
@@ -73,7 +75,6 @@ protected:
 
   Schemes schemes;
 
-private:
   ColorScheme() {}
   ColorScheme(const ColorScheme &);
   ColorScheme &operator=(ColorScheme &);

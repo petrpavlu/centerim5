@@ -28,18 +28,37 @@
 
 #define CONF_PLUGIN_SAVE_PREF "/centerim/plugins/loaded"
 
+Conf *Conf::instance = NULL;
+
 Conf *Conf::Instance()
 {
-  static Conf instance;
-  return &instance;
+  return instance;
 }
 
 Conf::Conf()
 {
-  /* Load the desired plugins. The client should save the list of loaded
-   * plugins in the preferences using
-   * purple_plugins_save_loaded(PLUGIN_SAVE_PREF). */
+  // load the desired plugins
   purple_plugins_load_saved(CONF_PLUGIN_SAVE_PREF);
+}
+
+Conf::~Conf()
+{
+  purple_plugins_save_loaded(CONF_PLUGIN_SAVE_PREF);
+}
+
+void Conf::Init()
+{
+  g_assert(!instance);
+
+  instance = new Conf;
+}
+
+void Conf::Finalize()
+{
+  g_assert(instance);
+
+  delete instance;
+  instance = NULL;
 }
 
 int Conf::GetInt(const char *pref, int defaultvalue)

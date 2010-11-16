@@ -124,10 +124,9 @@ private:
    */
   static gboolean io_input_error_(GIOChannel *source, GIOCondition cond,
       gpointer data)
-    { return reinterpret_cast<CoreManager *>(data)->io_input_error(
-        source, cond); }
-  gboolean io_input_error(GIOChannel *source,
-      GIOCondition cond);
+    { return reinterpret_cast<CoreManager *>(data)->io_input_error(source,
+        cond); }
+  gboolean io_input_error(GIOChannel *source, GIOCondition cond);
   /**
    * Reads data from the standard input. The data are at first converted from
    * user locales to an internal representation (UTF-8) and then processed by
@@ -135,8 +134,7 @@ private:
    */
   static gboolean io_input_(GIOChannel *source, GIOCondition cond,
       gpointer data)
-    { return reinterpret_cast<CoreManager *>(data)->io_input(source,
-        cond); }
+    { return reinterpret_cast<CoreManager *>(data)->io_input(source, cond); }
   gboolean io_input(GIOChannel *source, GIOCondition cond);
 
   void StdinInputInit();

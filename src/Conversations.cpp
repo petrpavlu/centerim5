@@ -26,10 +26,11 @@
 #include <cstring>
 #include "gettext.h"
 
+Conversations *Conversations::instance = NULL;
+
 Conversations *Conversations::Instance()
 {
-  static Conversations instance;
-  return &instance;
+  return instance;
 }
 
 Conversations::Conversations()
@@ -64,10 +65,27 @@ Conversations::Conversations()
 
 Conversations::~Conversations()
 {
-  // all conversations should be closed at this time
-  g_assert(conversations.empty());
+  // close all opened conversations
+  while (conversations.size())
+    purple_conversation_destroy(conversations.front().purple_conv);
 
   purple_conversations_set_ui_ops(NULL);
+}
+
+void Conversations::Init()
+{
+  g_assert(!instance);
+
+  instance = new Conversations;
+  instance->Show();
+}
+
+void Conversations::Finalize()
+{
+  g_assert(instance);
+
+  delete instance;
+  instance = NULL;
 }
 
 void Conversations::Close()

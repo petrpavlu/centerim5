@@ -35,10 +35,16 @@ protected:
 private:
   PurpleNotifyUiOps centerim_notify_ui_ops;
 
+  static Notify *instance;
+
   Notify();
   Notify(const Notify&);
   Notify& operator=(const Notify&);
   ~Notify();
+
+  static void Init();
+  static void Finalize();
+  friend class CenterIM;
 
   static void *notify_message_(PurpleNotifyMsgType type, const char *title,
       const char *primary, const char *secondary)

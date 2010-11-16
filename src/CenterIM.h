@@ -102,6 +102,7 @@ private:
   ~CenterIM() {}
 
   int PurpleInit();
+  void PurpleFinalize();
   void ColorSchemeInit();
 
   // recalculates area sizes to fit into current screen size

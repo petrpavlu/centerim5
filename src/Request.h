@@ -181,10 +181,16 @@ private:
 
   PurpleRequestUiOps centerim_request_ui_ops;
 
+  static Request *instance;
+
   Request();
   Request(const Request&);
   Request& operator=(const Request&);
   ~Request();
+
+  static void Init();
+  static void Finalize();
+  friend class CenterIM;
 
   void OnDialogResponse(Dialog& dialog, Dialog::ResponseType response);
 

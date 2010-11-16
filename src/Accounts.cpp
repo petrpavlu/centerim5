@@ -27,10 +27,11 @@
 #include <cstring>
 #include "gettext.h"
 
+Accounts *Accounts::instance = NULL;
+
 Accounts *Accounts::Instance()
 {
-  static Accounts instance;
-  return &instance;
+  return instance;
 }
 
 Accounts::Accounts()
@@ -50,6 +51,26 @@ Accounts::Accounts()
   //centerim_account_ui_ops.request_authorize = request_authorize_;
   //centerim_account_ui_ops.close_account_request = close_account_request_;
   purple_accounts_set_ui_ops(&centerim_account_ui_ops);
+}
+
+Accounts::~Accounts()
+{
+  purple_accounts_set_ui_ops(NULL);
+}
+
+void Accounts::Init()
+{
+  g_assert(!instance);
+
+  instance = new Accounts;
+}
+
+void Accounts::Finalize()
+{
+  g_assert(instance);
+
+  delete instance;
+  instance = NULL;
 }
 
 void Accounts::status_changed(PurpleAccount *account, PurpleStatus *status)

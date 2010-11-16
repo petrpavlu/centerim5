@@ -84,9 +84,9 @@ public:
       /* Given values should be always statically allocated so just save
        * pointers to them. */
       : context(context_)
-        , action(action_)
-        , description(description_)
-        , defkey(defkey_) {}
+      , action(action_)
+      , description(description_)
+      , defkey(defkey_) {}
 
     const char *context; ///< the context of the key definition, like (...)
     const char *action; ///< the name of the action, like (...)
@@ -144,11 +144,6 @@ public:
   bool Register();
 
 private:
-  KeyConfig() {}
-  KeyConfig(const KeyConfig &);
-  KeyConfig &operator=(const KeyConfig &);
-  ~KeyConfig() {}
-
   /**
    * Current key binds.
    */
@@ -168,6 +163,11 @@ private:
    * instances.
    */
   sigc::signal<bool> signal_reconfig;
+
+  KeyConfig() {}
+  KeyConfig(const KeyConfig&);
+  KeyConfig &operator=(const KeyConfig&);
+  ~KeyConfig() {}
 };
 
 #endif // __KEYCONFIG_H__

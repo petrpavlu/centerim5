@@ -22,10 +22,11 @@
 
 #include <cstring>
 
+Notify *Notify::instance = NULL;
+
 Notify *Notify::Instance()
 {
-  static Notify instance;
-  return &instance;
+  return instance;
 }
 
 Notify::Notify()
@@ -47,6 +48,22 @@ Notify::Notify()
 
 Notify::~Notify()
 {
+  purple_notify_set_ui_ops(NULL);
+}
+
+void Notify::Init()
+{
+  g_assert(!instance);
+
+  instance = new Notify;
+}
+
+void Notify::Finalize()
+{
+  g_assert(instance);
+
+  delete instance;
+  instance = NULL;
 }
 
 void *Notify::notify_message(PurpleNotifyMsgType type, const char *title,
