@@ -48,7 +48,7 @@ public:
   void Append(const gchar *text, int color = 0);
   /**
    * Inserts text before specified line number. Text can contain multiple
-   * lines and should end with `\n' character just in front of `\0'
+   * lines and should end with `\\n' character just in front of `\\0'
    * character.
    */
   void Insert(int line_num, const gchar *text, int color = 0);

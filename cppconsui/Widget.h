@@ -59,7 +59,7 @@ public:
   virtual void UpdateArea();
   /**
    * The Draw() method does the actual drawing on a (virtual) area of the
-   * screen. The @ref CoreMananager singleton calls Draw() on all on-screen
+   * screen. The @ref CoreManager singleton calls Draw() on all on-screen
    * Windows. This causes all Draw() implementations needed to draw the screen
    * to be called.
    */

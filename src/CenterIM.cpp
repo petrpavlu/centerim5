@@ -257,8 +257,7 @@ int CenterIM::PurpleInit()
   purple_debug_set_enabled(FALSE);
 
   /* This catches and buffers libpurple debug messages until the Log object
-   * can be instantiated
-   * */
+   * can be instantiated. */
   logbuf_debug_ui_ops.print = tmp_purple_print;
   logbuf_debug_ui_ops.is_enabled = tmp_is_enabled;
   purple_debug_set_ui_ops(&logbuf_debug_ui_ops);

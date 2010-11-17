@@ -119,8 +119,8 @@ private:
   // glib IO callbacks
   /**
    * Handles standard input IO errors (logs an error) and quits the
-   * application using @ref Quit() call. This function is a glib main loop
-   * callback for the standard input watcher.
+   * application. This function is a glib main loop callback for the standard
+   * input watcher.
    */
   static gboolean io_input_error_(GIOChannel *source, GIOCondition cond,
       gpointer data)

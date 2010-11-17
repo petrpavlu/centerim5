@@ -115,7 +115,7 @@ Window *Window::subpad(int begin_x, int begin_y, int ncols, int nlines)
 const gchar *Window::PrintChar(const gchar *ch, int *printed, const gchar *end)
 {
   /**
-   * @todo `\v' switch is not implemented yet.
+   * @todo `\\v' switch is not implemented yet.
    * @todo Optimizations (don't translate to cchar if utf8 terminal is
    * presented, etc.)
    * @todo Error checking (setcchar).

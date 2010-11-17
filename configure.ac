@@ -96,7 +96,6 @@ AC_CONFIG_FILES([Makefile
 		 cppconsui/Makefile
 		 doc/Makefile
 		 doc/doxygen-cppconsui.conf
-		 doc/doxygen-cim5.conf
 		 po/Makefile.in
 		 src/Makefile
 		 tests/Makefile])

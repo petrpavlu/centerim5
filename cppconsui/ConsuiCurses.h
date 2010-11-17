@@ -51,8 +51,8 @@ public:
 
   /**
    * This functions take a formatted string and draws it on the screen. The
-   * formatting of the string happens when a '\v' is encountered. After the
-   * '\v' is a char, a switch in the code figures out what to do based on
+   * formatting of the string happens when a '\\v' is encountered. After the
+   * '\\v' is a char, a switch in the code figures out what to do based on
    * this. Based on giFTcurs drawing function.
    */
   int mvaddstring(int x, int y, int w, const gchar *str);

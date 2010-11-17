@@ -38,7 +38,7 @@
  * The generic widget container class.
  *
  * It implements @ref MoveFocus "moving focus" in different @ref
- * Widget::FocusDirection "directions".
+ * FocusDirection "directions".
  */
 class Container
 : public Widget
