@@ -9,9 +9,10 @@ sh() {
 # directories, split cppconsui/cim po directory when it comes out...
 mkdir build
 cd build
-cmake CMAKE_C_FLAGS=-std=c99../
+CFLAGS="-std=c99" cmake ../
 cd ..
 
 echo
-echo You are now ready to run ./configure
+echo You are now ready to run make in the build/ directory
+echo For further options run ccmake ../ in build/ directory
 echo enjoy!
