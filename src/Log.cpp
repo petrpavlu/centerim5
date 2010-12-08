@@ -264,6 +264,8 @@ void Log::WriteErrorToWindow(const gchar *fmt, ...)
 
 void Log::WriteToFile(const gchar *text)
 {
+  g_return_if_fail(text);
+
   GError *err = NULL;
 
   if (GetDebugEnabled()) {
@@ -302,6 +304,15 @@ void Log::WriteToFile(const gchar *text)
         else
           WriteErrorToWindow(_("centerim/log: Error writing to logfile.\n"));
       }
+      else {
+        // if necessary write missing EOL character
+        size_t len = strlen(text);
+        if (len && text[len - 1] != '\n') {
+          // ignore all errors
+          g_io_channel_write_chars(logfile, "\n", -1, NULL, NULL);
+        }
+      }
+
       if (g_io_channel_flush(logfile, &err) != G_IO_STATUS_NORMAL) {
         if (err) {
           WriteErrorToWindow(
