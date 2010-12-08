@@ -41,7 +41,7 @@ public:
   virtual ~MenuWindow() {}
 
   virtual Button *AppendItem(const char *text,
-      sigc::slot<void, Button&> callback)
+      const sigc::slot<void, Button&>& callback)
     { return listbox->AppendItem(text, callback); }
   virtual HorizontalLine *AppendSeparator()
     { return listbox->AppendSeparator(); }
