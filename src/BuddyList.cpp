@@ -193,7 +193,7 @@ BuddyList::AccountsBox::AccountsBox(PurpleAccount *account)
     gchar *label = g_strdup_printf("[%s] %s",
         purple_account_get_protocol_name(account),
         purple_account_get_username(account));
-    AddOption(label, reinterpret_cast<intptr_t>(account));
+    AddOptionPtr(label, account);
     g_free(label);
   }
 

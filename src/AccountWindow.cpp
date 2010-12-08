@@ -618,8 +618,7 @@ AccountWindow::AccountOptionProtocol::AccountOptionProtocol(
   g_assert(account);
 
   for (GList *i = purple_plugins_get_protocols(); i; i = i->next)
-    AddOption(((PurplePlugin *) i->data)->info->name,
-        reinterpret_cast<intptr_t>(i->data));
+    AddOptionPtr(((PurplePlugin *) i->data)->info->name, i->data);
 
   const char *proto_id = purple_account_get_protocol_id(account);
   PurplePlugin *plugin = purple_plugins_find_with_id(proto_id);
