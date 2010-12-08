@@ -361,7 +361,7 @@ Log::Level Log::ConvertGlibDebugLevel(GLogLevelFlags gliblevel)
   return LEVEL_DEBUG;
 }
 
-Log::Level Log::GetLogLevel(const gchar *type)
+Log::Level Log::GetLogLevel(const char *type)
 {
   gchar *pref = g_strconcat(CONF_PREFIX, "log/log_level_", type, NULL);
   const gchar *def;

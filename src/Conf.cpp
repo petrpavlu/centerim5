@@ -102,7 +102,7 @@ bool Conf::GetBool(const char *pref, bool defaultvalue)
   return defaultvalue;
 }
 
-void Conf::SetBool(const gchar *pref, const bool value)
+void Conf::SetBool(const char *pref, const bool value)
 {
   purple_prefs_set_bool(pref, value);
 }
