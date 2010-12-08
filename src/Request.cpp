@@ -101,6 +101,8 @@ void *Request::request_input(const char *title, const char *primary,
   dialog->signal_response.connect(sigc::mem_fun(this,
         &Request::OnDialogResponse));
   dialog->Show();
+
+  requests.insert(dialog);
   return dialog;
 }
 
@@ -118,6 +120,8 @@ void *Request::request_choice(const char *title, const char *primary,
   dialog->signal_response.connect(sigc::mem_fun(this,
         &Request::OnDialogResponse));
   dialog->Show();
+
+  requests.insert(dialog);
   return dialog;
 }
 
@@ -133,6 +137,8 @@ void *Request::request_action(const char *title, const char *primary,
   dialog->signal_response.connect(sigc::mem_fun(this,
         &Request::OnDialogResponse));
   dialog->Show();
+
+  requests.insert(dialog);
   return dialog;
 }
 
@@ -149,6 +155,8 @@ void *Request::request_fields(const char *title, const char *primary,
   dialog->signal_response.connect(sigc::mem_fun(this,
         &Request::OnDialogResponse));
   dialog->Show();
+
+  requests.insert(dialog);
   return dialog;
 }
 
@@ -166,10 +174,10 @@ void Request::close_request(PurpleRequestType type, void *ui_handle)
 
   g_assert(ui_handle);
 
-  InputDialog *dialog = reinterpret_cast<InputDialog *>(ui_handle);
+  RequestDialog *dialog = reinterpret_cast<RequestDialog *>(ui_handle);
   if (requests.find(dialog) != requests.end()) {
     requests.erase(dialog);
-    delete dialog;
+    dialog->Close();
   }
 }
 
