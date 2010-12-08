@@ -58,7 +58,7 @@ void SplitDialog::MoveFocus(FocusDirection direction)
   switch (direction) {
     case FOCUS_PREVIOUS:
       if (layout->GetFocusChild() == container) {
-        // focus is held by container, give it to the last button
+        // focus is held by the container, give it to the last button
         container_index = container->GetActive();
 
         FocusChain focus_chain(NULL);
@@ -83,7 +83,7 @@ void SplitDialog::MoveFocus(FocusDirection direction)
       break;
     case FOCUS_NEXT:
       if (layout->GetFocusChild() == container) {
-        // focus is held by container, give it to the first button
+        // focus is held by the container, give it to the first button
         container_index = container->GetActive();
         if (buttons->GrabFocus())
           return;

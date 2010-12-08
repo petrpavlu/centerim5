@@ -1,4 +1,7 @@
-/* This file is part of CenterIM.
+/*
+ * Copyright (C) 2009-2010 by CenterIM developers
+ *
+ * This file is part of CenterIM.
  *
  * CenterIM is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +18,11 @@
  *
  * */
 
-/** @file KeyConfig.cpp KeyConfig implementation
+/**
+ * @file
+ * KeyConfig class implementation.
+ *
+ * @ingroup cppconsui
  */
 
 #include "KeyConfig.h"

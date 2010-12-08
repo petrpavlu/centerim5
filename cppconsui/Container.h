@@ -162,10 +162,8 @@ protected:
   FocusCycleScope focus_cycle_scope;
 
   /**
-   * This defines a chain of focus
-   * @todo explain the difference between this chain and @ref
-   * InputProcessor::inputchild Isn't this a duplication of functionality
-   * from inputchild ?
+   * This defines a chain of focus. Same as
+   * dynamic_cast<Widget*>(input_child).
    */
   Widget *focus_child;
 
