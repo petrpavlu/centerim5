@@ -47,6 +47,8 @@ Widget::~Widget()
     delete area;
   if (color_scheme)
     g_free(color_scheme);
+
+  signal_delete(*this);
 }
 
 void Widget::MoveResize(int newx, int newy, int neww, int newh)

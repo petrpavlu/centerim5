@@ -39,7 +39,7 @@ public:
       LineStyle::Type ltype = LineStyle::DEFAULT);
   explicit SplitDialog(const gchar *title = NULL,
       LineStyle::Type ltype = LineStyle::DEFAULT);
-  virtual ~SplitDialog() {}
+  virtual ~SplitDialog();
 
   // Container
   virtual void MoveFocus(FocusDirection direction);
@@ -49,8 +49,11 @@ public:
 
 protected:
   Container *container;
-  int container_index;
-  int buttons_index;
+
+  Widget *old_focus;
+  sigc::connection old_focus_conn;
+
+  virtual void OnOldFocusDelete(Widget& activator);
 
 private:
   SplitDialog(const SplitDialog&);

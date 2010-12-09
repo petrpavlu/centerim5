@@ -133,7 +133,7 @@ bool AccountWindow::ClearAccount(PurpleAccount *account, bool full)
   }
 
   if (account_entries.empty())
-    buttons->SetActive(0);
+    buttons->GrabFocus();
 
   return false;
 }

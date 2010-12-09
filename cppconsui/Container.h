@@ -130,16 +130,6 @@ public:
   FocusCycleScope GetFocusCycle() const { return focus_cycle_scope; }
 
   /**
-   * Set focused widget.
-   */
-  virtual bool SetActive(int i);
-
-  /**
-   * Returns index of focused widget or -1 if there is not any.
-   */
-  virtual int GetActive() const;
-
-  /**
    * Returns a subpad of current widget with given coordinates.
    */
   virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,

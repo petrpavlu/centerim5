@@ -124,6 +124,8 @@ public:
    */
   sigc::signal<void, Widget&, bool> signal_visible;
 
+  sigc::signal<void, Widget&> signal_delete;
+
 protected:
   /**
    * Screen area relative to parent area. Note that this is a requested area

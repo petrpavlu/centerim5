@@ -399,30 +399,6 @@ void Container::MoveFocus(FocusDirection direction)
     (*iter)->GrabFocus();
 }
 
-bool Container::SetActive(int i)
-{
-  if (i < 0 || (int) children.size() <= i) {
-    if (children.size())
-      i = 0;
-    else
-      return false;
-  }
-
-  if (children[i].widget->GrabFocus())
-    return true;
-  return false;
-}
-
-int Container::GetActive() const
-{
-  for (Children::const_iterator i = children.begin(); i != children.end();
-      i++)
-    if (i->widget->HasFocus())
-      return i - children.begin();
-
-  return -1;
-}
-
 Curses::Window *Container::GetSubPad(const Widget& child, int begin_x,
     int begin_y, int ncols, int nlines)
 {
