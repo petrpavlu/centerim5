@@ -186,7 +186,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 
     button = new Button;
     button->signal_activate.connect(sigc::hide(sigc::mem_fun(accounts,
-          &TreeView::ActionToggleCollapsed)));
+            &TreeView::ActionToggleCollapsed)));
     parent_reference = accounts->AppendNode(accounts->Root(), *button);
     accounts->Collapse(parent_reference);
     account_entry->parent = button;
@@ -304,7 +304,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 
 AccountWindow::AccountOption::AccountOption(PurpleAccount *account,
     PurpleAccountOption *option)
-: Button("")
+: Button()
 , account(account)
 , option(option)
 {
@@ -504,7 +504,7 @@ void AccountWindow::AccountOptionInt::ResponseHandler(Dialog& activator,
 
 AccountWindow::AccountOptionSplit::AccountOptionSplit(PurpleAccount *account,
     PurpleAccountUserSplit *split, AccountEntry *account_entry)
-: Button("")
+: Button()
 , account(account)
 , split(split)
 , account_entry(account_entry)

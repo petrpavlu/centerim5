@@ -23,6 +23,7 @@
 #include "CenterIM.h"
 #include "Log.h"
 
+#include <cppconsui/InputDialog.h>
 #include <cppconsui/Spacer.h>
 #include <cstring>
 #include "gettext.h"
@@ -95,7 +96,7 @@ void *Request::request_input(const char *title, const char *primary,
 {
   LOG->Debug("request_input\n");
 
-  InputDialog *dialog = new InputDialog(title, primary, secondary,
+  InputTextDialog *dialog = new InputTextDialog(title, primary, secondary,
       default_value, masked, ok_text, ok_cb, cancel_text, cancel_cb,
       user_data);
   dialog->signal_response.connect(sigc::mem_fun(this,
@@ -235,10 +236,10 @@ void Request::RequestDialog::ScreenResized()
       screen.Height() / 2);
 }
 
-Request::InputDialog::InputDialog(const gchar *title, const gchar *primary,
-    const gchar *secondary, const gchar *default_value, bool masked,
-    const gchar *ok_text, GCallback ok_cb, const gchar *cancel_text,
-    GCallback cancel_cb, void *user_data)
+Request::InputTextDialog::InputTextDialog(const gchar *title,
+    const gchar *primary, const gchar *secondary, const gchar *default_value,
+    bool masked, const gchar *ok_text, GCallback ok_cb,
+    const gchar *cancel_text, GCallback cancel_cb, void *user_data)
 : RequestDialog(title, primary, secondary, ok_text, ok_cb, cancel_text,
     cancel_cb, user_data)
 {
@@ -247,12 +248,12 @@ Request::InputDialog::InputDialog(const gchar *title, const gchar *primary,
   entry->GrabFocus();
 }
 
-PurpleRequestType Request::InputDialog::GetRequestType()
+PurpleRequestType Request::InputTextDialog::GetRequestType()
 {
   return PURPLE_REQUEST_INPUT;
 }
 
-void Request::InputDialog::ResponseHandler(Dialog& activator,
+void Request::InputTextDialog::ResponseHandler(Dialog& activator,
     ResponseType response)
 {
   switch (response) {
@@ -365,17 +366,22 @@ Request::FieldsDialog::FieldsDialog(const gchar *title, const gchar *primary,
     cancel_cb, user_data)
 , fields(request_fields)
 {
+  tree = new TreeView(AUTOSIZE, AUTOSIZE);
+  lbox->AppendWidget(*tree);
+
   for (GList *groups = purple_request_fields_get_groups(fields); groups;
       groups = groups->next) {
     PurpleRequestFieldGroup *group
       = reinterpret_cast<PurpleRequestFieldGroup*>(groups->data);
 
     const gchar *title = purple_request_field_group_get_title(group);
+    if (!title)
+      title = _("Settings group");
 
-    if (title) {
-      Label *l = new Label(title);
-      lbox->AppendWidget(*l);
-    }
+    Button *button = new Button(title);
+    button->signal_activate.connect(sigc::hide(sigc::mem_fun(tree,
+            &TreeView::ActionToggleCollapsed)));
+    TreeView::NodeReference parent = tree->AppendNode(tree->Root(), *button);
 
     for (GList *gfields = purple_request_field_group_get_fields(group);
         gfields; gfields = gfields->next) {
@@ -386,51 +392,37 @@ Request::FieldsDialog::FieldsDialog(const gchar *title, const gchar *primary,
         continue;
 
       PurpleRequestFieldType type = purple_request_field_get_type(field);
-      const gchar *label = purple_request_field_get_label(field);
-
-      HorizontalListBox *hbox = new HorizontalListBox(AUTOSIZE, 1);
-      lbox->AppendWidget(*hbox);
-
-      if (type != PURPLE_REQUEST_FIELD_BOOLEAN && label) {
-        gchar *label_new = g_strdup_printf("%s%s: ",
-            purple_request_field_is_required(field) ? "*" : "", label);
-        Label *l = new Label(Curses::onscreen_width(label_new), 1, label_new);
-        g_free(label_new);
-        hbox->AppendWidget(*l);
-      }
 
       switch (type) {
         case PURPLE_REQUEST_FIELD_STRING:
-          CreateStringField(hbox, field);
+          tree->AppendNode(parent, *(new StringField(field)));
           break;
         case PURPLE_REQUEST_FIELD_INTEGER:
-          CreateIntegerField(hbox, field);
+          tree->AppendNode(parent, *(new IntegerField(field)));
           break;
         case PURPLE_REQUEST_FIELD_BOOLEAN:
-          CreateBooleanField(hbox, field);
+          tree->AppendNode(parent, *(new BooleanField(field)));
           break;
         case PURPLE_REQUEST_FIELD_CHOICE:
-          CreateChoiceField(hbox, field);
+          tree->AppendNode(parent, *(new ChoiceField(field)));
           break;
         case PURPLE_REQUEST_FIELD_LIST:
-          CreateListField(hbox, field);
+          tree->AppendNode(parent, *(new ListField(field)));
           break;
         case PURPLE_REQUEST_FIELD_LABEL:
-          CreateLabelField(hbox, field);
+          tree->AppendNode(parent, *(new LabelField(field)));
           break;
         case PURPLE_REQUEST_FIELD_IMAGE:
-          CreateImageField(hbox, field);
+          tree->AppendNode(parent, *(new ImageField(field)));
           break;
         case PURPLE_REQUEST_FIELD_ACCOUNT:
-          CreateAccountField(hbox, field);
+          tree->AppendNode(parent, *(new AccountField(field)));
           break;
         default:
           LOG->Error(_("Unimplemented Request field type.\n"));
           break;
       }
     }
-    if (groups->next)
-      lbox->AppendSeparator();
   }
 }
 
@@ -439,49 +431,154 @@ PurpleRequestType Request::FieldsDialog::GetRequestType()
   return PURPLE_REQUEST_FIELDS;
 }
 
-void Request::FieldsDialog::CreateStringField(HorizontalListBox *hbox,
-    PurpleRequestField *field)
+Request::FieldsDialog::RequestField::RequestField(PurpleRequestField *field)
+: Button(), field(field)
 {
-  const gchar *def = purple_request_field_string_get_default_value(field);
-  TextEntry *te = new TextEntry(AUTOSIZE, 1, def);
+  purple_request_field_set_ui_data(field, this);
+
+  signal_activate.connect(sigc::mem_fun(this,
+        &RequestField::RequestField::OnActivate));
+}
+
+Request::FieldsDialog::StringField::StringField(PurpleRequestField *field)
+: RequestField(field)
+{
   if (purple_request_field_string_is_masked(field))
     ; // TODO
-  hbox->AppendWidget(*te);
-  purple_request_field_set_ui_data(field, te);
+
+  UpdateText();
 }
 
-void Request::FieldsDialog::CreateIntegerField(HorizontalListBox *hbox,
-    PurpleRequestField *field)
+void Request::FieldsDialog::StringField::UpdateText()
+{
+  const gchar *label = purple_request_field_get_label(field);
+
+  if (!label)
+    label = _("Unnamed string field");
+
+  const char *value = purple_request_field_string_get_value(field);
+  if (!value)
+    value = "";
+
+  gchar *text = g_strdup_printf("%s%s: %s",
+      purple_request_field_is_required(field) ? "*" : "", label, value);
+  SetText(text);
+  g_free(text);
+}
+
+void Request::FieldsDialog::StringField::OnActivate(Button& activator)
+{
+  InputDialog *dialog = new InputDialog(purple_request_field_get_label(field),
+      purple_request_field_string_get_value(field));
+  dialog->signal_response.connect(sigc::mem_fun(this,
+        &Request::FieldsDialog::StringField::ResponseHandler));
+  dialog->Show();
+}
+
+void Request::FieldsDialog::StringField::ResponseHandler(Dialog& activator,
+    Dialog::ResponseType response)
+{
+  InputDialog *dialog = dynamic_cast<InputDialog*>(&activator);
+  g_assert(dialog);
+
+  switch (response) {
+    case Dialog::RESPONSE_OK:
+      purple_request_field_string_set_value(field, dialog->GetText());
+      UpdateText();
+      break;
+    default:
+      break;
+  }
+}
+
+Request::FieldsDialog::IntegerField::IntegerField(PurpleRequestField *field)
+: RequestField(field)
 {
 }
 
-void Request::FieldsDialog::CreateBooleanField(HorizontalListBox *hbox,
-    PurpleRequestField *field)
+void Request::FieldsDialog::IntegerField::UpdateText()
 {
 }
 
-void Request::FieldsDialog::CreateChoiceField(HorizontalListBox *hbox,
-    PurpleRequestField *field)
+void Request::FieldsDialog::IntegerField::OnActivate(Button& activator)
 {
 }
 
-void Request::FieldsDialog::CreateListField(HorizontalListBox *hbox,
-    PurpleRequestField *field)
+Request::FieldsDialog::BooleanField::BooleanField(PurpleRequestField *field)
+: RequestField(field)
 {
 }
 
-void Request::FieldsDialog::CreateLabelField(HorizontalListBox *hbox,
-    PurpleRequestField *field)
+void Request::FieldsDialog::BooleanField::UpdateText()
 {
 }
 
-void Request::FieldsDialog::CreateImageField(HorizontalListBox *hbox,
-    PurpleRequestField *field)
+void Request::FieldsDialog::BooleanField::OnActivate(Button& activator)
 {
 }
 
-void Request::FieldsDialog::CreateAccountField(HorizontalListBox *hbox,
-    PurpleRequestField *field)
+Request::FieldsDialog::ChoiceField::ChoiceField(PurpleRequestField *field)
+: RequestField(field)
+{
+}
+
+void Request::FieldsDialog::ChoiceField::UpdateText()
+{
+}
+
+void Request::FieldsDialog::ChoiceField::OnActivate(Button& activator)
+{
+}
+
+Request::FieldsDialog::ListField::ListField(PurpleRequestField *field)
+: RequestField(field)
+{
+}
+
+void Request::FieldsDialog::ListField::UpdateText()
+{
+}
+
+void Request::FieldsDialog::ListField::OnActivate(Button& activator)
+{
+}
+
+Request::FieldsDialog::LabelField::LabelField(PurpleRequestField *field)
+: RequestField(field)
+{
+}
+
+void Request::FieldsDialog::LabelField::UpdateText()
+{
+}
+
+void Request::FieldsDialog::LabelField::OnActivate(Button& activator)
+{
+}
+
+Request::FieldsDialog::ImageField::ImageField(PurpleRequestField *field)
+: RequestField(field)
+{
+}
+
+void Request::FieldsDialog::ImageField::UpdateText()
+{
+}
+
+void Request::FieldsDialog::ImageField::OnActivate(Button& activator)
+{
+}
+
+Request::FieldsDialog::AccountField::AccountField(PurpleRequestField *field)
+: RequestField(field)
+{
+}
+
+void Request::FieldsDialog::AccountField::UpdateText()
+{
+}
+
+void Request::FieldsDialog::AccountField::OnActivate(Button& activator)
 {
 }
 
@@ -491,13 +588,11 @@ void Request::FieldsDialog::ResponseHandler(Dialog& activator,
   switch (response) {
     case Dialog::RESPONSE_OK:
       if (ok_cb)
-        reinterpret_cast<PurpleRequestFieldsCb>(ok_cb)(user_data,
-            fields);
+        reinterpret_cast<PurpleRequestFieldsCb>(ok_cb)(user_data, fields);
       break;
     case Dialog::RESPONSE_CANCEL:
       if (cancel_cb)
-        reinterpret_cast<PurpleRequestFieldsCb>(cancel_cb)(user_data,
-            fields);
+        reinterpret_cast<PurpleRequestFieldsCb>(cancel_cb)(user_data, fields);
       break;
     default:
       g_assert_not_reached();

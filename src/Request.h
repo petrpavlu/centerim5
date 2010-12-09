@@ -23,6 +23,7 @@
 
 #include <cppconsui/ComboBox.h>
 #include <cppconsui/TextEntry.h>
+#include <cppconsui/TreeView.h>
 #include <cppconsui/SplitDialog.h>
 #include <libpurple/request.h>
 
@@ -66,27 +67,26 @@ private:
     RequestDialog& operator=(const RequestDialog&);
   };
 
-  class InputDialog
+  class InputTextDialog
   : public RequestDialog
   {
   public:
-    InputDialog(const gchar *title, const gchar *primary,
+    InputTextDialog(const gchar *title, const gchar *primary,
         const gchar *secondary, const gchar *default_value, bool masked,
         const gchar *ok_text, GCallback ok_cb, const gchar *cancel_text,
         GCallback cancel_cb, void *user_data);
-    virtual ~InputDialog() {}
+    virtual ~InputTextDialog() {}
 
     virtual PurpleRequestType GetRequestType();
 
   protected:
     TextEntry *entry;
 
-    virtual void ResponseHandler(Dialog& activator,
-        ResponseType response);
+    virtual void ResponseHandler(Dialog& activator, ResponseType response);
 
   private:
-    InputDialog(const InputDialog&);
-    InputDialog& operator=(const InputDialog&);
+    InputTextDialog(const InputTextDialog&);
+    InputTextDialog& operator=(const InputTextDialog&);
   };
 
   class ChoiceDialog
@@ -104,8 +104,7 @@ private:
   protected:
     ComboBox *combo;
 
-    virtual void ResponseHandler(Dialog& activator,
-        ResponseType response);
+    virtual void ResponseHandler(Dialog& activator, ResponseType response);
 
   private:
     ChoiceDialog(const ChoiceDialog&);
@@ -125,8 +124,7 @@ private:
 
   protected:
 
-    virtual void ResponseHandler(Dialog& activator,
-        ResponseType response);
+    virtual void ResponseHandler(Dialog& activator, ResponseType response);
 
   private:
     ActionDialog(const ActionDialog&);
@@ -149,26 +147,158 @@ private:
 
   protected:
     PurpleRequestFields *fields;
+    TreeView *tree;
 
-    void CreateStringField(HorizontalListBox *hbox,
-        PurpleRequestField *field);
-    void CreateIntegerField(HorizontalListBox *hbox,
-        PurpleRequestField *field);
-    void CreateBooleanField(HorizontalListBox *hbox,
-        PurpleRequestField *field);
-    void CreateChoiceField(HorizontalListBox *hbox,
-        PurpleRequestField *field);
-    void CreateListField(HorizontalListBox *hbox,
-        PurpleRequestField *field);
-    void CreateLabelField(HorizontalListBox *hbox,
-        PurpleRequestField *field);
-    void CreateImageField(HorizontalListBox *hbox,
-        PurpleRequestField *field);
-    void CreateAccountField(HorizontalListBox *hbox,
-        PurpleRequestField *field);
+    class RequestField
+    : public Button
+    {
+      public:
+        RequestField(PurpleRequestField *field);
+        virtual ~RequestField() {}
 
-    virtual void ResponseHandler(Dialog& activator,
-        ResponseType response);
+      protected:
+        PurpleRequestField *field;
+
+        virtual void UpdateText() = 0;
+        virtual void OnActivate(Button& activator) = 0;
+
+      private:
+        RequestField(const RequestField&);
+        RequestField& operator=(const RequestField&);
+    };
+
+    class StringField
+    : public RequestField
+    {
+      public:
+        StringField(PurpleRequestField *field);
+        virtual ~StringField() {}
+
+      protected:
+        virtual void UpdateText();
+        virtual void OnActivate(Button& activator);
+
+      private:
+        StringField(const StringField&);
+        StringField& operator=(const StringField&);
+
+        void ResponseHandler(Dialog& activator,
+            Dialog::ResponseType response);
+    };
+
+    class IntegerField
+    : public RequestField
+    {
+      public:
+        IntegerField(PurpleRequestField *field);
+        virtual ~IntegerField() {}
+
+      protected:
+        virtual void UpdateText();
+        virtual void OnActivate(Button& activator);
+
+      private:
+        IntegerField(const IntegerField&);
+        IntegerField& operator=(const IntegerField&);
+    };
+
+    class BooleanField
+    : public RequestField
+    {
+      public:
+        BooleanField(PurpleRequestField *field);
+        virtual ~BooleanField() {}
+
+      protected:
+        virtual void UpdateText();
+        virtual void OnActivate(Button& activator);
+
+      private:
+        BooleanField(const BooleanField&);
+        BooleanField& operator=(const BooleanField&);
+    };
+
+    class ChoiceField
+    : public RequestField
+    {
+      public:
+        ChoiceField(PurpleRequestField *field);
+        virtual ~ChoiceField() {}
+
+      protected:
+        virtual void UpdateText();
+        virtual void OnActivate(Button& activator);
+
+      private:
+        ChoiceField(const ChoiceField&);
+        ChoiceField& operator=(const ChoiceField&);
+    };
+
+    class ListField
+    : public RequestField
+    {
+      public:
+        ListField(PurpleRequestField *field);
+        virtual ~ListField() {}
+
+      protected:
+        virtual void UpdateText();
+        virtual void OnActivate(Button& activator);
+
+      private:
+        ListField(const ListField&);
+        ListField& operator=(const ListField&);
+    };
+
+    class LabelField
+    : public RequestField
+    {
+      public:
+        LabelField(PurpleRequestField *field);
+        virtual ~LabelField() {}
+
+      protected:
+        virtual void UpdateText();
+        virtual void OnActivate(Button& activator);
+
+      private:
+        LabelField(const LabelField&);
+        LabelField& operator=(const LabelField&);
+    };
+
+    class ImageField
+    : public RequestField
+    {
+      public:
+        ImageField(PurpleRequestField *field);
+        virtual ~ImageField() {}
+
+      protected:
+        virtual void UpdateText();
+        virtual void OnActivate(Button& activator);
+
+      private:
+        ImageField(const ImageField&);
+        ImageField& operator=(const ImageField&);
+    };
+
+    class AccountField
+    : public RequestField
+    {
+      public:
+        AccountField(PurpleRequestField *field);
+        virtual ~AccountField() {}
+
+      protected:
+        virtual void UpdateText();
+        virtual void OnActivate(Button& activator);
+
+      private:
+        AccountField(const AccountField&);
+        AccountField& operator=(const AccountField&);
+    };
+
+    virtual void ResponseHandler(Dialog& activator, ResponseType response);
 
   private:
     FieldsDialog(const FieldsDialog&);

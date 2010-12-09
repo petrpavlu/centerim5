@@ -118,7 +118,7 @@ void GeneralMenu::RequestTest(Button& activator)
   purple_request_fields_add_group(fields, g);
 
   PurpleRequestField *f;
-  f = purple_request_field_string_new("text0", "String field 0", NULL,
+  f = purple_request_field_string_new("text0", "String field 0", "def0",
       FALSE);
   purple_request_field_group_add_field(g, f);
   f = purple_request_field_string_new("text1", "String field 1", NULL,
