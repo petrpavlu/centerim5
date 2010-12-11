@@ -32,27 +32,23 @@ Label::Label(int w, int h, const gchar *text_)
 : Widget(w, h)
 , text(NULL)
 {
-  RealSetText(text_);
+  SetText(text_);
 }
 
 Label::Label(const gchar *text_)
 : Widget(AUTOSIZE, 1)
 , text(NULL)
 {
-  RealSetText(text_);
+  SetText(text_);
 }
 
 Label::~Label()
 {
-  g_free(text);
+  if (text)
+    g_free(text);
 }
 
 void Label::Draw()
-{
-  DrawEx(true);
-}
-
-void Label::DrawEx(bool color)
 {
   if (!area || !text)
     return;
@@ -63,38 +59,24 @@ void Label::DrawEx(bool color)
    * LF specially here.
    */
 
-  int attrs;
-  if (color) {
-    attrs = GetColorPair("label", "text");
-    area->attron(attrs);
-  }
+  int attrs = GetColorPair("label", "text");
+  area->attron(attrs);
 
   int max = area->getmaxx() * area->getmaxy();
   area->mvaddstring(0, 0, max, text);
 
-  if (color)
-    area->attroff(attrs);
+  area->attroff(attrs);
 }
 
-void Label::SetText(const gchar *text_)
-{
-  RealSetText(text_);
-
-  signal_redraw(*this);
-}
-
-const gchar *Label::GetText() const
-{
-  return text;
-}
-
-void Label::RealSetText(const gchar *text_)
+void Label::SetText(const gchar *new_text)
 {
   if (text)
     g_free(text);
 
-  if (text_)
-    text = g_strdup(text_);
+  if (new_text)
+    text = g_strdup(new_text);
   else
     text = NULL;
+
+  signal_redraw(*this);
 }

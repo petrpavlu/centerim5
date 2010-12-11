@@ -48,23 +48,19 @@ TreeView::~TreeView()
 
 void TreeView::DeclareBindables()
 {
-  DeclareBindable(CONTEXT_TREEVIEW, "fold-subtree",
-      sigc::mem_fun(this, &TreeView::ActionCollapse),
-      InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable(CONTEXT_TREEVIEW, "unfold-subtree",
-      sigc::mem_fun(this, &TreeView::ActionExpand),
-      InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable(CONTEXT_TREEVIEW, "fold-subtree", sigc::mem_fun(this,
+        &TreeView::ActionCollapse), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable(CONTEXT_TREEVIEW, "unfold-subtree", sigc::mem_fun(this,
+        &TreeView::ActionExpand), InputProcessor::BINDABLE_NORMAL);
 }
 
 DEFINE_SIG_REGISTERKEYS(TreeView, RegisterKeys);
 bool TreeView::RegisterKeys()
 {
   RegisterKeyDef(CONTEXT_TREEVIEW, "fold-subtree",
-      _("Collapse the selected subtree"),
-      Keys::UnicodeTermKey("-"));
+      _("Collapse the selected subtree"), Keys::UnicodeTermKey("-"));
   RegisterKeyDef(CONTEXT_TREEVIEW, "unfold-subtree",
-      _("Expand the selected subtree"),
-      Keys::UnicodeTermKey("+"));
+      _("Expand the selected subtree"), Keys::UnicodeTermKey("+"));
   return true;
 }
 

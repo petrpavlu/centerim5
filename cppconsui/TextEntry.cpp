@@ -48,28 +48,28 @@
 #define CONTEXT_TEXTENTRY "textentry"
 
 TextEntry::TextEntry(int w, int h, const gchar *text_)
-: Label(w, h, text_ ? text_ : "")
+: Widget(w, h)
+, text(NULL)
 , current_pos(0)
 , editable(true)
 , flags(0)
 , text_max_length(MAX_SIZE)
 {
-  RecalculateLengths();
-  current_pos = text_length;
+  SetText(text_);
 
   can_focus = true;
   DeclareBindables();
 }
 
 TextEntry::TextEntry(const gchar *text_)
-: Label(text_ ? text_ : "")
+: Widget(AUTOSIZE, 1)
+, text(NULL)
 , current_pos(0)
 , editable(true)
 , flags(0)
 , text_max_length(MAX_SIZE)
 {
-  RecalculateLengths();
-  current_pos = text_length;
+  SetText(text_);
 
   can_focus = true;
   DeclareBindables();
@@ -77,6 +77,8 @@ TextEntry::TextEntry(const gchar *text_)
 
 TextEntry::~TextEntry()
 {
+  if (text)
+    g_free(text);
 }
 
 void TextEntry::DeclareBindables()
@@ -186,10 +188,15 @@ void TextEntry::Draw()
   if (!area)
     return;
 
-  Label::Draw();
+  /// @todo We can do better than this.
 
-  /// @todo we can do better than this
-  /// @todo cursor blinking
+  int attrs = GetColorPair("textentry", "text");
+  area->attron(attrs);
+
+  int max = area->getmaxx() * area->getmaxy();
+  area->mvaddstring(0, 0, max, text);
+
+  area->attroff(attrs);
 
   if (has_focus) {
     int realw = area->getmaxx();
@@ -228,12 +235,17 @@ bool TextEntry::ProcessInputText(const TermKeyKey &key)
   return false;
 }
 
-void TextEntry::SetText(const gchar *text_)
+void TextEntry::SetText(const gchar *new_text)
 {
-  Label::SetText(text_ ? text : "");
+  if (text)
+    g_free(text);
+
+  text = g_strdup(new_text ? new_text : "");
 
   RecalculateLengths();
   current_pos = text_length;
+
+  signal_redraw(*this);
 }
 
 void TextEntry::SetFlags(int flags_)

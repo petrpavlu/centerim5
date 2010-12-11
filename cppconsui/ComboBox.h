@@ -70,10 +70,10 @@ public:
   const gchar *GetTitle(size_t entry) const;
   intptr_t GetData(size_t entry) const;
 
-  /** @todo implement this */
   void SetSelected(size_t new_entry);
-  /** @todo implement this */
   void SetSelectedByData(intptr_t data);
+  void SetSelectedByDataPtr(void *data)
+    { SetSelectedByData(reinterpret_cast<intptr_t>(data)); }
 
   sigc::signal<void, ComboBox&, size_t, const gchar *, intptr_t>
     signal_selection_changed;

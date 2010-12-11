@@ -29,7 +29,7 @@
 #ifndef __BUTTON_H__
 #define __BUTTON_H__
 
-#include "Label.h"
+#include "Widget.h"
 
 /**
  * This class implements a simple button behaviour.
@@ -38,15 +38,24 @@
  * one (or more) functions when pressed.
  */
 class Button
-: public Label
+: public Widget
 {
 public:
-  Button(int w, int h, const gchar *text = NULL);
-  explicit Button(const gchar *text = NULL);
-  virtual ~Button() {}
+  Button(int w, int h, const gchar *text_ = NULL);
+  explicit Button(const gchar *text_ = NULL);
+  virtual ~Button();
 
   // Widget
   virtual void Draw();
+
+  /**
+   * Sets a new text and redraws itself.
+   */
+  virtual void SetText(const gchar *new_text);
+  /**
+   * Returns previously set text.
+   */
+  virtual const gchar *GetText() const { return text; }
 
   /**
    * Emited signal when a button is pressed/activated.
@@ -54,6 +63,7 @@ public:
   sigc::signal<void, Button&> signal_activate;
 
 protected:
+  gchar *text;
 
 private:
   Button(const Button&);

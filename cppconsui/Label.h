@@ -48,29 +48,18 @@ public:
   /**
    * Sets a new text and redraws itself.
    */
-  virtual void SetText(const gchar *text_);
+  virtual void SetText(const gchar *new_text);
   /**
    * Returns previously set text.
    */
-  const gchar *GetText() const;
+  virtual const gchar *GetText() const { return text; }
 
 protected:
   gchar *text;
 
-  /**
-   * Extended version of Draw() method.
-   */
-  void DrawEx(bool color);
-
 private:
   Label(const Label&);
   Label& operator=(const Label&);
-
-  /**
-   * Manages text allocation and reallocation without any Widget signals
-   * involved.
-   */
-  void RealSetText(const gchar *text_);
 };
 
 #endif // __LABEL_H__

@@ -39,7 +39,7 @@
 #ifndef __TEXT_ENTRY_H__
 #define __TEXT_ENTRY_H__
 
-#include "Label.h"
+#include "Widget.h"
 
 /** Initial size of buffer, in bytes. */
 #define MIN_SIZE 16
@@ -48,7 +48,7 @@
 #define MAX_SIZE G_MAXUSHORT
 
 class TextEntry
-: public Label
+: public Widget
 {
 public:
   enum Flag {
@@ -67,23 +67,23 @@ public:
   virtual void Draw();
   virtual bool ProcessInputText(const TermKeyKey &key);
 
-  // Label
-  virtual void SetText(const gchar *text_);
+  /**
+   * Sets a new text and redraws itself.
+   */
+  virtual void SetText(const gchar *new_text);
+  /**
+   * Returns previously set text.
+   */
+  virtual const gchar *GetText() const { return text; }
 
-  int GetFlags() { return flags; }
+  int GetFlags() const { return flags; }
   void SetFlags(int flags);
   void SetPosition(int position);
 
   sigc::signal<void, TextEntry&> signal_text_changed;
 
 protected:
-  void InsertTextAtCursor(const gchar *new_text, int new_text_bytes = -1);
-  void DeleteText(int start_pos, int end_pos);
-
-  void DeleteFromCursor(DeleteType type, int direction);
-
-  void MoveCursor(CursorMovement step, int direction);
-  void ToggleOverwrite();
+  gchar *text;
 
   int current_pos; ///< Current cursor position.
 
@@ -97,15 +97,23 @@ protected:
   int text_bytes; ///< Length in use, in bytes.
   int text_length; ///< Length in use, in chars.
 
-  void RecalculateLengths();
+  void InsertTextAtCursor(const gchar *new_text, int new_text_bytes = -1);
+  void DeleteText(int start_pos, int end_pos);
 
-private:
-  TextEntry(const TextEntry&);
-  TextEntry& operator=(const TextEntry&);
+  void DeleteFromCursor(DeleteType type, int direction);
+
+  void MoveCursor(CursorMovement step, int direction);
+  void ToggleOverwrite();
+
+  void RecalculateLengths();
 
   int MoveLogically(int start, int count);
   int MoveBackwardWord(int start);
   int MoveForwardWord(int start);
+
+private:
+  TextEntry(const TextEntry&);
+  TextEntry& operator=(const TextEntry&);
 
   void ActionMoveCursor(CursorMovement step, int direction);
   void ActionDelete(DeleteType type, int direction);

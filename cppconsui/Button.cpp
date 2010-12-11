@@ -34,25 +34,36 @@
 
 #define CONTEXT_BUTTON "button"
 
-Button::Button(int w, int h, const gchar *text)
-: Label(w, h, text)
+Button::Button(int w, int h, const gchar *text_)
+: Widget(w, h)
+, text(NULL)
 {
+  SetText(text_);
+
   can_focus = true;
   DeclareBindables();
 }
 
-Button::Button(const gchar *text)
-: Label(text)
+Button::Button(const gchar *text_)
+: Widget(AUTOSIZE, 1)
+, text(NULL)
 {
+  SetText(text_);
+
   can_focus = true;
   DeclareBindables();
+}
+
+Button::~Button()
+{
+  if (text)
+    g_free(text);
 }
 
 void Button::DeclareBindables()
 {
-  DeclareBindable(CONTEXT_BUTTON, "activate",
-      sigc::mem_fun(this, &Button::ActionActivate),
-      InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable(CONTEXT_BUTTON, "activate", sigc::mem_fun(this,
+        &Button::ActionActivate), InputProcessor::BINDABLE_NORMAL);
 }
 
 DEFINE_SIG_REGISTERKEYS(Button, RegisterKeys);
@@ -65,7 +76,7 @@ bool Button::RegisterKeys()
 
 void Button::Draw()
 {
-  if (!area)
+  if (!area || !text)
     return;
 
   int attrs;
@@ -78,13 +89,32 @@ void Button::Draw()
     area->attron(attrs);
   }
 
+  /**
+   * @todo Though this is not a widget for long text there are some cases in
+   * cim where we use it for a short but multiline text, so we should threat
+   * LF specially here.
+   */
 
-  Label::DrawEx(false);
+  int max = area->getmaxx() * area->getmaxy();
+  area->mvaddstring(0, 0, max, text);
 
   if (has_focus)
     area->attroff(attrs | Curses::Attr::REVERSE);
   else
     area->attroff(attrs);
+}
+
+void Button::SetText(const gchar *new_text)
+{
+  if (text)
+    g_free(text);
+
+  if (new_text)
+    text = g_strdup(new_text);
+  else
+    text = NULL;
+
+  signal_redraw(*this);
 }
 
 void Button::ActionActivate()
