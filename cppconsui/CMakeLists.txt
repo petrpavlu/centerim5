@@ -5,6 +5,7 @@ set( cppconsui_SOURCES
 	AbstractLine.cpp
 	AbstractListBox.cpp
 	Button.cpp
+	CheckBox.cpp
 	ConsuiCurses.cpp
 	Container.cpp
 	ColorScheme.cpp
@@ -41,6 +42,7 @@ set( cppconsui_HEADERS
 	AbstractLine.h
 	AbstractListBox.h
 	Button.h
+	CheckBox.h
 	ConsuiCurses.h
 	Container.h
 	ColorScheme.h

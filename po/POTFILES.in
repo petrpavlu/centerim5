@@ -24,6 +24,7 @@ src/Utils.cpp
 cppconsui/AbstractLine.cpp
 cppconsui/AbstractListBox.cpp
 cppconsui/Button.cpp
+cppconsui/CheckBox.cpp
 cppconsui/ColorScheme.cpp
 cppconsui/ComboBox.cpp
 cppconsui/ConsuiCurses.cpp

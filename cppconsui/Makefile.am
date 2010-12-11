@@ -10,6 +10,8 @@ libcppconsui_la_SOURCES =\
 	AbstractListBox.h \
 	Button.cpp \
 	Button.h \
+	CheckBox.cpp \
+	CheckBox.h \
 	ConsuiCurses.cpp \
 	ConsuiCurses.h \
 	Container.cpp \
