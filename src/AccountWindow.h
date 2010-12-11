@@ -23,6 +23,7 @@
 #define __ACCOUNTSWINDOW_H__
 
 #include <cppconsui/Button.h>
+#include <cppconsui/CheckBox.h>
 #include <cppconsui/ComboBox.h>
 #include <cppconsui/InputDialog.h>
 #include <cppconsui/SplitDialog.h>
@@ -54,91 +55,82 @@ private:
   };
   typedef std::map<PurpleAccount*, AccountEntry> AccountEntries;
 
-  class AccountOption
-  : public Button
+  class AccountOptionBool
+  : public CheckBox
   {
   public:
-    AccountOption(PurpleAccount *account, PurpleAccountOption *option = NULL);
-    virtual ~AccountOption() {}
+    enum Type {
+      TYPE_PURPLE,
+      TYPE_REMEMBER_PASSWORD,
+      TYPE_ENABLE_ACCOUNT
+    };
+
+    AccountOptionBool(PurpleAccount *account, PurpleAccountOption *option);
+    AccountOptionBool(PurpleAccount *account, Type type);
+    virtual ~AccountOptionBool() {}
 
   protected:
     PurpleAccount *account;
     PurpleAccountOption *option;
+    Type type;
 
-    const char *setting;
-    const char *text;
-
-  private:
-    AccountOption(const AccountOption&);
-    AccountOption& operator=(const AccountOption&);
-
-    virtual void UpdateText() = 0;
-    virtual void OnActivate(Button& activator) = 0;
-  };
-
-  class AccountOptionBool
-  : public AccountOption
-  {
-  public:
-    AccountOptionBool(PurpleAccount *account, PurpleAccountOption *option);
-    AccountOptionBool(PurpleAccount *account, bool remember_password,
-        bool enable_account);
-    virtual ~AccountOptionBool() {}
-
-  protected:
-    gboolean value;
-
-    bool remember_password, enable_account;
+    void OnToggle(CheckBox& activator, bool new_state);
 
   private:
     AccountOptionBool(const AccountOptionBool&);
     AccountOptionBool& operator=(const AccountOptionBool&);
-
-    virtual void UpdateText();
-    virtual void OnActivate(Button& activator);
   };
 
   class AccountOptionString
-  : public AccountOption
+  : public Button
   {
   public:
+    enum Type {
+      TYPE_PURPLE,
+      TYPE_PASSWORD,
+      TYPE_ALIAS
+    };
+
     AccountOptionString(PurpleAccount *account, PurpleAccountOption *option);
-    AccountOptionString(PurpleAccount *account, bool password, bool alias);
+    AccountOptionString(PurpleAccount *account, Type type);
     virtual ~AccountOptionString() {}
 
   protected:
+    PurpleAccount *account;
+    PurpleAccountOption *option;
+    Type type;
+    const gchar *text;
     const gchar *value;
 
-    bool password, alias;
+    void UpdateText();
+    void OnActivate(Button& activator);
+    void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
 
   private:
     AccountOptionString(const AccountOptionString&);
     AccountOptionString& operator=(const AccountOptionString&);
-
-    virtual void UpdateText();
-    virtual void OnActivate(Button& activator);
-
-    void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
   };
 
   class AccountOptionInt
-  : public AccountOption
+  : public Button
   {
   public:
     AccountOptionInt(PurpleAccount *account, PurpleAccountOption *option);
     virtual ~AccountOptionInt() {}
 
   protected:
+    PurpleAccount *account;
+    PurpleAccountOption *option;
+    const gchar *text;
     int value;
+
+    void UpdateText();
+    void OnActivate(Button& activator);
+    void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
 
   private:
     AccountOptionInt(const AccountOptionInt&);
     AccountOptionInt& operator=(const AccountOptionInt&);
-
-    virtual void UpdateText();
-    virtual void OnActivate(Button& activator);
-
-    void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
   };
 
   class AccountOptionSplit
@@ -150,26 +142,23 @@ private:
     virtual ~AccountOptionSplit();
 
     void SetValue(const gchar *new_value);
-    const gchar* GetValue() { return value; }
+    const gchar *GetValue() const { return value; }
 
   protected:
     PurpleAccount *account;
     PurpleAccountUserSplit *split;
     AccountEntry *account_entry;
-
     const char *text;
     gchar *value;
 
     void UpdateSplits();
+    void UpdateText();
+    void OnActivate(Button& activator);
+    void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
 
   private:
     AccountOptionSplit(const AccountOptionSplit&);
     AccountOptionSplit& operator=(const AccountOptionSplit&);
-
-    virtual void UpdateText();
-    virtual void OnActivate(Button& activator);
-
-    void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
   };
 
   class AccountOptionProtocol
@@ -184,12 +173,12 @@ private:
     AccountWindow *account_window;
     PurpleAccount *account;
 
+    void OnProtocolChanged(Button& activator, size_t new_entry,
+        const gchar *title, intptr_t data);
+
   private:
     AccountOptionProtocol(const AccountOptionProtocol&);
     AccountOptionProtocol& operator=(const AccountOptionProtocol&);
-
-    void OnProtocolChanged(Button& activator, size_t new_entry,
-        const gchar *title, intptr_t data);
   };
 
   AccountWindow(const AccountWindow&);

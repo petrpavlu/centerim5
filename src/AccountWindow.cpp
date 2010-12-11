@@ -215,25 +215,24 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
     accounts->AppendNode(account_entry->parent_reference, *combobox);
 
     /* The username must be treated in a special way because it can contain
-     * multiple values. (eg user@server:port/resource) */
+     * multiple values (e.g. user@server:port/resource). */
     username = g_strdup(purple_account_get_username(account));
 
     for (iter = g_list_last(prplinfo->user_splits); iter; iter = iter->prev) {
       PurpleAccountUserSplit *split = (PurpleAccountUserSplit*)iter->data;
 
-      if(purple_account_user_split_get_reverse(split))
+      if (purple_account_user_split_get_reverse(split))
         s = strrchr(username, purple_account_user_split_get_separator(split));
       else
         s = strchr(username, purple_account_user_split_get_separator(split));
 
-      if (s != NULL)
-      {
+      if (s) {
         *s = '\0';
         s++;
         value = s;
-      } else {
-        value = purple_account_user_split_get_default_value(split);
       }
+      else
+        value = purple_account_user_split_get_default_value(split);
 
       // create widget for the username split and remember
       widget_split = new AccountOptionSplit(account, split, account_entry);
@@ -242,7 +241,6 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 
       accounts->AppendNode(account_entry->parent_reference, *widget_split);
     }
-
 
     /* TODO Add this widget as the first widget in this subtree. Treeview
      * needs to support this. */
@@ -253,15 +251,18 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
     g_free(username);
 
     // password
-    widget = new AccountOptionString(account, true, false);
+    widget = new AccountOptionString(account,
+        AccountOptionString::TYPE_PASSWORD);
     accounts->AppendNode(account_entry->parent_reference, *widget);
 
     // remember password
-    widget = new AccountOptionBool(account, true, false);
+    widget = new AccountOptionBool(account,
+        AccountOptionBool::TYPE_REMEMBER_PASSWORD);
     accounts->AppendNode(account_entry->parent_reference, *widget);
 
     // alias
-    widget = new AccountOptionString(account, false, true);
+    widget = new AccountOptionString(account,
+        AccountOptionString::TYPE_ALIAS);
     accounts->AppendNode(account_entry->parent_reference, *widget);
 
     for (pref = prplinfo->protocol_options; pref; pref = pref->next) {
@@ -291,7 +292,8 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
     }
 
     // enable/disable account
-    widget = new AccountOptionBool(account, false, true);
+    widget = new AccountOptionBool(account,
+        AccountOptionBool::TYPE_ENABLE_ACCOUNT);
     accounts->AppendNode(account_entry->parent_reference, *widget);
   }
 
@@ -302,110 +304,93 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
   accounts->AppendNode(account_entry->parent_reference, *drop_button);
 }
 
-AccountWindow::AccountOption::AccountOption(PurpleAccount *account,
+AccountWindow::AccountOptionBool::AccountOptionBool(PurpleAccount *account,
     PurpleAccountOption *option)
-: Button()
-, account(account)
-, option(option)
+: CheckBox(), account(account), option(option), type(TYPE_PURPLE)
+{
+  g_assert(account);
+  g_assert(option);
+
+  SetText(purple_account_option_get_text(option));
+  SetState(purple_account_get_bool(account,
+        purple_account_option_get_setting(option),
+        purple_account_option_get_default_bool(option)));
+
+  signal_toggle.connect(sigc::mem_fun(this,
+        &AccountWindow::AccountOptionBool::OnToggle));
+}
+
+AccountWindow::AccountOptionBool::AccountOptionBool(PurpleAccount *account,
+    Type type)
+: CheckBox(), account(account), option(NULL), type(type)
 {
   g_assert(account);
 
-  if (option) {
-    setting = purple_account_option_get_setting(option);
-    text = purple_account_option_get_text(option);
+  if (type == TYPE_REMEMBER_PASSWORD) {
+    SetText(_("Remember password"));
+    SetState(purple_account_get_remember_password(account));
   }
+  else if (type == TYPE_ENABLE_ACCOUNT) {
+    SetText(_("Account enabled"));
+    SetState(purple_account_get_enabled(account, PACKAGE_NAME));
+  }
+
+  signal_toggle.connect(sigc::mem_fun(this,
+        &AccountWindow::AccountOptionBool::OnToggle));
+}
+
+void AccountWindow::AccountOptionBool::OnToggle(CheckBox& activator,
+    bool new_state)
+{
+  if (type == TYPE_REMEMBER_PASSWORD)
+    purple_account_set_remember_password(account, new_state);
+  else if (type == TYPE_ENABLE_ACCOUNT)
+    purple_account_set_enabled(account, PACKAGE_NAME, new_state);
   else
-    setting = NULL;
-
-  signal_activate.connect(sigc::mem_fun(this,
-        &AccountWindow::AccountOption::OnActivate));
-}
-
-AccountWindow::AccountOptionBool::AccountOptionBool(PurpleAccount *account,
-    PurpleAccountOption *option)
-: AccountWindow::AccountOption::AccountOption(account, option)
-, remember_password(false), enable_account(false)
-{
-  value = purple_account_get_bool(account, setting,
-      purple_account_option_get_default_bool(option));
-
-  UpdateText();
-}
-
-AccountWindow::AccountOptionBool::AccountOptionBool(PurpleAccount *account,
-    bool remember_password, bool enable_account)
-: AccountWindow::AccountOption::AccountOption(account)
-, remember_password(remember_password), enable_account(enable_account)
-{
-  if (remember_password)
-    text = _("Remember password");
-  else if (enable_account)
-    text = _("Account enabled");
-
-  UpdateText();
-}
-
-void AccountWindow::AccountOptionBool::UpdateText()
-{
-  if (remember_password)
-    value = purple_account_get_remember_password(account);
-  else if (enable_account)
-    value = purple_account_get_enabled(account, PACKAGE_NAME);
-  else
-    value = purple_account_get_bool(account, setting,
-        purple_account_option_get_default_bool(option));
-
-  gchar *str = g_strdup_printf("%s: %s", text,
-      value ? _(YES_BUTTON_TEXT) : _(NO_BUTTON_TEXT));
-  SetText(str);
-  g_free(str);
-}
-
-void AccountWindow::AccountOptionBool::OnActivate(Button& activator)
-{
-  if (remember_password)
-    purple_account_set_remember_password(account, !value);
-  else if (enable_account)
-    purple_account_set_enabled(account, PACKAGE_NAME, !value);
-  else
-    purple_account_set_bool(account, setting, !value);
-  UpdateText();
+    purple_account_set_bool(account,
+        purple_account_option_get_setting(option), new_state);
 }
 
 AccountWindow::AccountOptionString::AccountOptionString(
     PurpleAccount *account, PurpleAccountOption *option)
-: AccountWindow::AccountOption::AccountOption(account, option)
+: Button(), account(account), option(option), type(TYPE_PURPLE), text(NULL)
 , value(NULL)
-, password(false)
-, alias(false)
 {
+  g_assert(account);
+  g_assert(option);
+
   UpdateText();
+  signal_activate.connect(sigc::mem_fun(this,
+        &AccountWindow::AccountOptionString::OnActivate));
 }
 
 AccountWindow::AccountOptionString::AccountOptionString(
-    PurpleAccount *account, bool password, bool alias)
-: AccountWindow::AccountOption::AccountOption(account, NULL)
-, value(NULL)
-, password(password)
-, alias(alias)
+    PurpleAccount *account, Type type)
+: Button(), account(account), option(NULL), type(type)
 {
-  if (password)
-    text = _("Password");
-  else if (alias)
-    text = _("Alias");
+  g_assert(account);
 
   UpdateText();
+  signal_activate.connect(sigc::mem_fun(this,
+        &AccountWindow::AccountOptionString::OnActivate));
 }
 
 void AccountWindow::AccountOptionString::UpdateText()
 {
-  if (password)
+  if (type == TYPE_PASSWORD) {
+    text = _("Password");
     value = purple_account_get_password(account);
-  else if (alias)
+  }
+  else if (type == TYPE_ALIAS) {
+    text = _("Alias");
     value = purple_account_get_alias(account);
-  else
-    value = purple_account_get_string(account, setting,
+  }
+  else {
+    text = purple_account_option_get_text(option);
+    value = purple_account_get_string(account,
+        purple_account_option_get_setting(option),
         purple_account_option_get_default_string(option));
+  }
 
   if (!value)
     value = "";
@@ -431,13 +416,13 @@ void AccountWindow::AccountOptionString::ResponseHandler(Dialog& activator,
 
   switch (response) {
     case Dialog::RESPONSE_OK:
-      if (password)
+      if (type == TYPE_PASSWORD)
         purple_account_set_password(account, dialog->GetText());
-      else if (alias)
+      else if (type == TYPE_ALIAS)
         purple_account_set_alias(account, dialog->GetText());
       else
-        purple_account_set_string(account, setting,
-            dialog->GetText());
+        purple_account_set_string(account,
+            purple_account_option_get_setting(option), dialog->GetText());
 
       UpdateText();
       break;
@@ -448,15 +433,21 @@ void AccountWindow::AccountOptionString::ResponseHandler(Dialog& activator,
 
 AccountWindow::AccountOptionInt::AccountOptionInt(PurpleAccount *account,
     PurpleAccountOption *option)
-: AccountWindow::AccountOption::AccountOption(account, option)
-, value(0)
+: Button(), account(account), option(option), text(NULL), value(0)
 {
+  g_assert(account);
+  g_assert(option);
+
   UpdateText();
+  signal_activate.connect(sigc::mem_fun(this,
+        &AccountWindow::AccountOptionInt::OnActivate));
 }
 
 void AccountWindow::AccountOptionInt::UpdateText()
 {
-  value = purple_account_get_int(account, setting,
+  text = purple_account_option_get_text(option);
+  value = purple_account_get_int(account,
+      purple_account_option_get_setting(option),
       purple_account_option_get_default_int(option));
 
   gchar *str = g_strdup_printf("%s: %d", text, value);
@@ -466,7 +457,6 @@ void AccountWindow::AccountOptionInt::UpdateText()
 
 void AccountWindow::AccountOptionInt::OnActivate(Button& activator)
 {
-
   gchar *value_string = g_strdup_printf("%d", value);
   InputDialog *dialog = new InputDialog(text, value_string);
   g_free(value_string);
@@ -493,7 +483,8 @@ void AccountWindow::AccountOptionInt::ResponseHandler(Dialog& activator,
       i = strtol(text, NULL, 10);
       if (errno == ERANGE)
         LOG->Warning(_("Value out of range.\n"));
-      purple_account_set_int(account, setting, i);
+      purple_account_set_int(account,
+          purple_account_option_get_setting(option), i);
 
       UpdateText();
       break;
@@ -504,24 +495,22 @@ void AccountWindow::AccountOptionInt::ResponseHandler(Dialog& activator,
 
 AccountWindow::AccountOptionSplit::AccountOptionSplit(PurpleAccount *account,
     PurpleAccountUserSplit *split, AccountEntry *account_entry)
-: Button()
-, account(account)
-, split(split)
-, account_entry(account_entry)
+: Button(), account(account), split(split), account_entry(account_entry)
 , value(NULL)
 {
   g_assert(account);
 
   if (split)
     text = purple_account_user_split_get_text(split);
-  else
+  else {
     text = _("Username");
-  value =  g_strdup(purple_account_user_split_get_text(split));
+    value =  g_strdup(purple_account_user_split_get_text(split));
+  }
+
+  UpdateText();
 
   signal_activate.connect(sigc::mem_fun(this,
         &AccountWindow::AccountOptionSplit::OnActivate));
-
-  UpdateText();
 }
 
 AccountWindow::AccountOptionSplit::~AccountOptionSplit()
@@ -532,9 +521,7 @@ AccountWindow::AccountOptionSplit::~AccountOptionSplit()
 
 void AccountWindow::AccountOptionSplit::UpdateText()
 {
-  gchar *str;
-
-  str = g_strdup_printf("%s: %s", text, value ? value : "");
+  gchar *str = g_strdup_printf("%s: %s", text, value ? value : "");
   SetText(str);
   g_free(str);
 }
