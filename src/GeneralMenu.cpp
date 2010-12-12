@@ -124,12 +124,15 @@ void GeneralMenu::RequestTest(Button& activator)
   f = purple_request_field_string_new("text1", "String field 1", NULL,
       FALSE);
   purple_request_field_group_add_field(g, f);
+  f = purple_request_field_int_new("int0", "Int field 0", INT_MAX);
+  purple_request_field_group_add_field(g, f);
+  f = purple_request_field_bool_new("bool0", "Bool field 0", FALSE);
+  purple_request_field_group_add_field(g, f);
 
   purple_request_fields(NULL, "Title", "Primary", "Secondary", fields,
       "ok_text", G_CALLBACK(fields_ok_cb_),
       "cancel_text", NULL,
       NULL, NULL, NULL, this);
-
 }
 
 void GeneralMenu::input_ok_cb(const gchar *text)
@@ -149,5 +152,9 @@ void GeneralMenu::action_cb(int action)
 
 void GeneralMenu::fields_ok_cb(PurpleRequestFields *fields)
 {
-  LOG->Debug("fields_ok_cb\n");
+  LOG->Debug("fields_ok_cb (%s, %s, %d, %d)\n",
+      purple_request_fields_get_string(fields, "text0"),
+      purple_request_fields_get_string(fields, "text1"),
+      purple_request_fields_get_integer(fields, "int0"),
+      purple_request_fields_get_bool(fields, "bool0"));
 }

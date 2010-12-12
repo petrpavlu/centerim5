@@ -173,7 +173,7 @@ private:
     AccountWindow *account_window;
     PurpleAccount *account;
 
-    void OnProtocolChanged(Button& activator, size_t new_entry,
+    void OnProtocolChanged(ComboBox& activator, size_t new_entry,
         const gchar *title, intptr_t data);
 
   private:

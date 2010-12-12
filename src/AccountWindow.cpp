@@ -316,8 +316,7 @@ AccountWindow::AccountOptionBool::AccountOptionBool(PurpleAccount *account,
         purple_account_option_get_setting(option),
         purple_account_option_get_default_bool(option)));
 
-  signal_toggle.connect(sigc::mem_fun(this,
-        &AccountWindow::AccountOptionBool::OnToggle));
+  signal_toggle.connect(sigc::mem_fun(this, &AccountOptionBool::OnToggle));
 }
 
 AccountWindow::AccountOptionBool::AccountOptionBool(PurpleAccount *account,
@@ -335,8 +334,7 @@ AccountWindow::AccountOptionBool::AccountOptionBool(PurpleAccount *account,
     SetState(purple_account_get_enabled(account, PACKAGE_NAME));
   }
 
-  signal_toggle.connect(sigc::mem_fun(this,
-        &AccountWindow::AccountOptionBool::OnToggle));
+  signal_toggle.connect(sigc::mem_fun(this, &AccountOptionBool::OnToggle));
 }
 
 void AccountWindow::AccountOptionBool::OnToggle(CheckBox& activator,
@@ -361,7 +359,7 @@ AccountWindow::AccountOptionString::AccountOptionString(
 
   UpdateText();
   signal_activate.connect(sigc::mem_fun(this,
-        &AccountWindow::AccountOptionString::OnActivate));
+        &AccountOptionString::OnActivate));
 }
 
 AccountWindow::AccountOptionString::AccountOptionString(
@@ -372,7 +370,7 @@ AccountWindow::AccountOptionString::AccountOptionString(
 
   UpdateText();
   signal_activate.connect(sigc::mem_fun(this,
-        &AccountWindow::AccountOptionString::OnActivate));
+        &AccountOptionString::OnActivate));
 }
 
 void AccountWindow::AccountOptionString::UpdateText()
@@ -404,7 +402,7 @@ void AccountWindow::AccountOptionString::OnActivate(Button& activator)
 {
   InputDialog *dialog = new InputDialog(text, value);
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &AccountWindow::AccountOptionString::ResponseHandler));
+        &AccountOptionString::ResponseHandler));
   dialog->Show();
 }
 
@@ -439,8 +437,7 @@ AccountWindow::AccountOptionInt::AccountOptionInt(PurpleAccount *account,
   g_assert(option);
 
   UpdateText();
-  signal_activate.connect(sigc::mem_fun(this,
-        &AccountWindow::AccountOptionInt::OnActivate));
+  signal_activate.connect(sigc::mem_fun(this, &AccountOptionInt::OnActivate));
 }
 
 void AccountWindow::AccountOptionInt::UpdateText()
@@ -463,7 +460,7 @@ void AccountWindow::AccountOptionInt::OnActivate(Button& activator)
 
   dialog->SetFlags(TextEntry::FLAG_NUMERIC);
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &AccountWindow::AccountOptionInt::ResponseHandler));
+        &AccountOptionInt::ResponseHandler));
   dialog->Show();
 }
 
@@ -510,7 +507,7 @@ AccountWindow::AccountOptionSplit::AccountOptionSplit(PurpleAccount *account,
   UpdateText();
 
   signal_activate.connect(sigc::mem_fun(this,
-        &AccountWindow::AccountOptionSplit::OnActivate));
+        &AccountOptionSplit::OnActivate));
 }
 
 AccountWindow::AccountOptionSplit::~AccountOptionSplit()
@@ -576,7 +573,7 @@ void AccountWindow::AccountOptionSplit::OnActivate(Button& activator)
 {
   InputDialog *dialog = new InputDialog(text, value);
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &AccountWindow::AccountOptionSplit::ResponseHandler));
+        &AccountOptionSplit::ResponseHandler));
   dialog->Show();
 }
 
@@ -615,12 +612,11 @@ AccountWindow::AccountOptionProtocol::AccountOptionProtocol(
   g_free(label);
 
   signal_selection_changed.connect(sigc::mem_fun(this,
-        &AccountWindow::AccountOptionProtocol::OnProtocolChanged));
+        &AccountOptionProtocol::OnProtocolChanged));
 }
 
 void AccountWindow::AccountOptionProtocol::OnProtocolChanged(
-    Button& activator, size_t new_entry, const gchar *title,
-    intptr_t data)
+    ComboBox& activator, size_t new_entry, const gchar *title, intptr_t data)
 {
   purple_account_set_protocol_id(account, purple_plugin_get_id(
         reinterpret_cast<PurplePlugin*>(data)));

@@ -26,6 +26,7 @@
 #include <cppconsui/InputDialog.h>
 #include <cppconsui/Spacer.h>
 #include <cstring>
+#include <errno.h>
 #include "gettext.h"
 
 Request *Request::instance = NULL;
@@ -225,7 +226,7 @@ Request::RequestDialog::RequestDialog(const gchar *title,
   if (cancel_text)
     AddButton(cancel_text, RESPONSE_CANCEL);
   signal_response.connect(sigc::mem_fun(this,
-        &Request::RequestDialog::ResponseHandler));
+        &RequestDialog::ResponseHandler));
 }
 
 void Request::RequestDialog::ScreenResized()
@@ -431,31 +432,21 @@ PurpleRequestType Request::FieldsDialog::GetRequestType()
   return PURPLE_REQUEST_FIELDS;
 }
 
-Request::FieldsDialog::RequestField::RequestField(PurpleRequestField *field)
+Request::FieldsDialog::StringField::StringField(PurpleRequestField *field)
 : Button(), field(field)
 {
-  purple_request_field_set_ui_data(field, this);
+  g_assert(field);
 
-  signal_activate.connect(sigc::mem_fun(this,
-        &RequestField::RequestField::OnActivate));
-}
-
-Request::FieldsDialog::StringField::StringField(PurpleRequestField *field)
-: RequestField(field)
-{
   if (purple_request_field_string_is_masked(field))
     ; // TODO
 
   UpdateText();
+  signal_activate.connect(sigc::mem_fun(this, &StringField::OnActivate));
 }
 
 void Request::FieldsDialog::StringField::UpdateText()
 {
   const gchar *label = purple_request_field_get_label(field);
-
-  if (!label)
-    label = _("Unnamed string field");
-
   const char *value = purple_request_field_string_get_value(field);
   if (!value)
     value = "";
@@ -471,7 +462,7 @@ void Request::FieldsDialog::StringField::OnActivate(Button& activator)
   InputDialog *dialog = new InputDialog(purple_request_field_get_label(field),
       purple_request_field_string_get_value(field));
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &Request::FieldsDialog::StringField::ResponseHandler));
+        &StringField::ResponseHandler));
   dialog->Show();
 }
 
@@ -492,34 +483,85 @@ void Request::FieldsDialog::StringField::ResponseHandler(Dialog& activator,
 }
 
 Request::FieldsDialog::IntegerField::IntegerField(PurpleRequestField *field)
-: RequestField(field)
+: Button(), field(field)
 {
+  g_assert(field);
+
+  UpdateText();
+  signal_activate.connect(sigc::mem_fun(this, &IntegerField::OnActivate));
 }
 
 void Request::FieldsDialog::IntegerField::UpdateText()
 {
+  const gchar *label = purple_request_field_get_label(field);
+  int value = purple_request_field_int_get_value(field);
+
+  gchar *text = g_strdup_printf("%s%s: %d",
+      purple_request_field_is_required(field) ? "*" : "", label, value);
+  SetText(text);
+  g_free(text);
+}
+
+void Request::FieldsDialog::IntegerField::ResponseHandler(Dialog& activator,
+    Dialog::ResponseType response)
+{
+  InputDialog *dialog = dynamic_cast<InputDialog*>(&activator);
+  g_assert(dialog);
+
+  const gchar *text;
+  long int i;
+
+  switch (response) {
+    case Dialog::RESPONSE_OK:
+      text = dialog->GetText();
+      errno = 0;
+      i = strtol(text, NULL, 10);
+      if (errno == ERANGE)
+        LOG->Warning(_("Value out of range.\n"));
+      purple_request_field_int_set_value(field, i);
+
+      UpdateText();
+      break;
+    default:
+      break;
+  }
 }
 
 void Request::FieldsDialog::IntegerField::OnActivate(Button& activator)
 {
+  gchar *value = g_strdup_printf("%d", purple_request_field_int_get_value(field));
+  InputDialog *dialog = new InputDialog(purple_request_field_get_label(field),
+      value);
+  g_free(value);
+  dialog->SetFlags(TextEntry::FLAG_NUMERIC);
+  dialog->signal_response.connect(sigc::mem_fun(this,
+        &IntegerField::ResponseHandler));
+  dialog->Show();
 }
 
 Request::FieldsDialog::BooleanField::BooleanField(PurpleRequestField *field)
-: RequestField(field)
+: CheckBox(), field(field)
 {
+  g_assert(field);
+
+  SetText(purple_request_field_get_label(field));
+  SetState(purple_request_field_bool_get_value(field));
+  signal_toggle.connect(sigc::mem_fun(this, &BooleanField::OnToggle));
 }
 
-void Request::FieldsDialog::BooleanField::UpdateText()
+void Request::FieldsDialog::BooleanField::OnToggle(CheckBox& activator,
+    bool new_state)
 {
-}
-
-void Request::FieldsDialog::BooleanField::OnActivate(Button& activator)
-{
+  purple_request_field_bool_set_value(field, new_state);
 }
 
 Request::FieldsDialog::ChoiceField::ChoiceField(PurpleRequestField *field)
-: RequestField(field)
+: Button(), field(field)
 {
+  g_assert(field);
+
+  UpdateText();
+  signal_activate.connect(sigc::mem_fun(this, &ChoiceField::OnActivate));
 }
 
 void Request::FieldsDialog::ChoiceField::UpdateText()
@@ -531,8 +573,12 @@ void Request::FieldsDialog::ChoiceField::OnActivate(Button& activator)
 }
 
 Request::FieldsDialog::ListField::ListField(PurpleRequestField *field)
-: RequestField(field)
+: Button(), field(field)
 {
+  g_assert(field);
+
+  UpdateText();
+  signal_activate.connect(sigc::mem_fun(this, &ListField::OnActivate));
 }
 
 void Request::FieldsDialog::ListField::UpdateText()
@@ -544,21 +590,17 @@ void Request::FieldsDialog::ListField::OnActivate(Button& activator)
 }
 
 Request::FieldsDialog::LabelField::LabelField(PurpleRequestField *field)
-: RequestField(field)
-{
-}
-
-void Request::FieldsDialog::LabelField::UpdateText()
-{
-}
-
-void Request::FieldsDialog::LabelField::OnActivate(Button& activator)
+: Label(), field(field)
 {
 }
 
 Request::FieldsDialog::ImageField::ImageField(PurpleRequestField *field)
-: RequestField(field)
+: Button(), field(field)
 {
+  g_assert(field);
+
+  UpdateText();
+  signal_activate.connect(sigc::mem_fun(this, &ImageField::OnActivate));
 }
 
 void Request::FieldsDialog::ImageField::UpdateText()
@@ -570,15 +612,21 @@ void Request::FieldsDialog::ImageField::OnActivate(Button& activator)
 }
 
 Request::FieldsDialog::AccountField::AccountField(PurpleRequestField *field)
-: RequestField(field)
+: ComboBox(), field(field)
 {
+  g_assert(field);
+
+  UpdateText();
+  signal_selection_changed.connect(sigc::mem_fun(this,
+        &AccountField::OnAccountChanged));
 }
 
 void Request::FieldsDialog::AccountField::UpdateText()
 {
 }
 
-void Request::FieldsDialog::AccountField::OnActivate(Button& activator)
+void Request::FieldsDialog::AccountField::OnAccountChanged(Button& activator,
+    size_t new_entry, const gchar *title, intptr_t data)
 {
 }
 
