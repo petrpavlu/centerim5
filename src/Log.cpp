@@ -53,8 +53,7 @@ Log::Log()
   AddWidget(*textview, 1, 0);
 
 #define REGISTER_G_LOG_HANDLER(name, handler) \
-  g_log_set_handler((name), (GLogLevelFlags)(G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL \
-        | G_LOG_FLAG_RECURSION), (handler), this)
+  g_log_set_handler((name), (GLogLevelFlags)G_LOG_LEVEL_MASK, (handler), this)
 
   // register the glib log handlers
   default_handler = REGISTER_G_LOG_HANDLER(NULL, default_log_handler_);
@@ -67,7 +66,8 @@ Log::Log()
       cppconsui_log_handler_);
 
   // connect callbacks
-  purple_prefs_connect_callback(this, CONF_PREFIX "log/debug", debug_change_, this);
+  purple_prefs_connect_callback(this, CONF_PREFIX "log/debug", debug_change_,
+      this);
 
   // set the purple debug callbacks
   centerim_debug_ui_ops.print = purple_print_;
@@ -376,15 +376,19 @@ Log::Level Log::GetLogLevel(const char *type)
 {
   gchar *pref = g_strconcat(CONF_PREFIX, "log/log_level_", type, NULL);
   const gchar *def;
-  if (!g_ascii_strcasecmp(type, "cim"))
+  Level level;
+  if (!g_ascii_strcasecmp(type, "cim")) {
     def = "info";
-  else
+    level = LEVEL_INFO;
+  }
+  else {
     def = "critical";
+    level = LEVEL_CRITICAL;
+  }
 
   const gchar *slevel = CONF->GetString(pref, def);
 
-  Level level = LEVEL_DEBUG;
-  if (!g_ascii_strcasecmp(slevel,"none"))
+  if (!g_ascii_strcasecmp(slevel, "none"))
     level = LEVEL_NONE;
   else if (!g_ascii_strcasecmp(slevel, "debug"))
     level = LEVEL_DEBUG;

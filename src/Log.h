@@ -121,7 +121,7 @@ private:
   // to catch cppconsui messages
   static void cppconsui_log_handler_(const gchar *domain,
       GLogLevelFlags flags, const gchar *msg, gpointer user_data)
-    { reinterpret_cast<Log*>(user_data)->glib_log_handler(domain, flags,
+    { reinterpret_cast<Log*>(user_data)->cppconsui_log_handler(domain, flags,
         msg); }
   void cppconsui_log_handler(const gchar *domain, GLogLevelFlags flags,
       const gchar *msg);
