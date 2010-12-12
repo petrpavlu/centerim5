@@ -72,6 +72,13 @@ AC_PATH_LIB(ncursesw, , ncurses.h, ncursesw5-config, , , [
 # Checks for library functions. #
 #################################
 
+###############################
+# Set default compiler flags. #
+###############################
+
+CFLAGS="-Wall -pedantic $CFLAGS"
+CXXFLAGS="-Wall -pedantic -Wno-long-long $CXXFLAGS"
+
 ###########
 # Options #
 ###########
@@ -80,11 +87,11 @@ AC_ARG_ENABLE([debug], [AC_HELP_STRING([--enable-debug],
 	[compile with debugging support])])
 
 AS_IF([test "x$enable_debug" = "xyes"],
-	[CFLAGS="-ggdb -O0 -Wall -pedantic $CFLAGS"
-	 CXXFLAGS="-ggdb -O0 -Wall -pedantic $CXXFLAGS"
+	[CFLAGS="-ggdb -O0 $CFLAGS"
+	 CXXFLAGS="-ggdb -O0 $CXXFLAGS"
 	 AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])],
-	[CFLAGS="-O2 -Wall -pedantic $CFLAGS"
-	 CXXFLAGS="-O2 -Wall -pedantic $CXXFLAGS"])
+	[CFLAGS="-O2 $CFLAGS"
+	 CXXFLAGS="-O2 $CXXFLAGS"])
 AC_SUBST(CFLAGS)
 AC_SUBST(CXXFLAGS)
 
