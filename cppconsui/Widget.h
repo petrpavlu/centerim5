@@ -123,7 +123,9 @@ public:
    * Signal emmited whenever a visible property is changed.
    */
   sigc::signal<void, Widget&, bool> signal_visible;
-
+  /**
+   * Signal emitted when the widget is being destroyed.
+   */
   sigc::signal<void, Widget&> signal_delete;
 
 protected:

@@ -50,10 +50,15 @@ public:
 protected:
   Container *container;
 
-  Widget *old_focus;
-  sigc::connection old_focus_conn;
+  Widget *cont_old_focus;
+  Widget *buttons_old_focus;
+  sigc::connection cont_old_focus_conn;
+  sigc::connection buttons_old_focus_conn;
+  sigc::connection buttons_conn;
+  sigc::connection cont_conn;
 
   virtual void OnOldFocusDelete(Widget& activator);
+  virtual void OnFocusChildChange(Widget& activator, bool in_chain);
 
 private:
   SplitDialog(const SplitDialog&);

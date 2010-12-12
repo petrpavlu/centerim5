@@ -136,6 +136,10 @@ void Container::CleanFocus()
   }
 
   // first propagate focus stealing to the widget with focus
+  if (signal_focus_child_last) {
+    signal_focus_child(*this, false);
+    signal_focus_child_last = false;
+  }
   focus_child->CleanFocus();
   focus_child = NULL;
   ClearInputChild();
@@ -153,18 +157,6 @@ bool Container::GrabFocus()
     if (i->widget->GrabFocus())
       return true;
   return false;
-}
-
-void Container::SetParent(Container& parent)
-{
-  Widget::SetParent(parent);
-
-  Widget *focus = GetFocusWidget();
-  if (!GetTopContainer()->GetFocusWidget() && focus) {
-    /* There is no focused widget in a top container but we've got a focused
-     * widget so link up the chain. */
-    focus->GrabFocus();
-  }
 }
 
 void Container::AddWidget(Widget& widget, int x, int y)
@@ -210,6 +202,10 @@ bool Container::SetFocusChild(Widget& child)
   bool res = parent->SetFocusChild(*this);
   focus_child = &child;
   SetInputChild(child);
+  if (!signal_focus_child_last) {
+    signal_focus_child(*this, true);
+    signal_focus_child_last = true;
+  }
   return res;
 }
 

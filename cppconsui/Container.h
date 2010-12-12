@@ -84,7 +84,6 @@ public:
   virtual void CleanFocus();
   virtual void RestoreFocus();
   virtual bool GrabFocus();
-  virtual void SetParent(Container& parent);
 
   /**
    * Adds a widget to the children list. The Container takes ownership of the
@@ -135,6 +134,12 @@ public:
   virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
       int begin_y, int ncols, int nlines);
 
+  /**
+   * Signal emitted whenever focus_child is changed from valid Widget to NULL
+   * or vice versa.
+   */
+  sigc::signal<void, Widget&, bool> signal_focus_child;
+
 protected:
   /**
    * Structure to keep a child widget.
@@ -156,6 +161,10 @@ protected:
    * dynamic_cast<Widget*>(input_child).
    */
   Widget *focus_child;
+  /**
+   * Stores parameter of the last emitted signal_focus_child.
+   */
+  bool signal_focus_child_last;
 
   Children children;
 
