@@ -117,15 +117,10 @@ bool FreeWindow::IsWidgetVisible(const Widget& child) const
 
 bool FreeWindow::SetFocusChild(Widget& child)
 {
-  if (focus_child)
-    focus_child->CleanFocus();
+  CleanFocus();
 
   focus_child = &child;
   SetInputChild(child);
-  if (!signal_focus_child_last) {
-    signal_focus_child(*this, true);
-    signal_focus_child_last = true;
-  }
 
   if (COREMANAGER->GetTopWindow() != this)
     return false;

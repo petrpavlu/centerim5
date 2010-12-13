@@ -41,11 +41,14 @@ public:
       LineStyle::Type ltype = LineStyle::DEFAULT);
   virtual ~SplitDialog();
 
+  // Widget
+  virtual void CleanFocus();
+
   // Container
   virtual void MoveFocus(FocusDirection direction);
 
   virtual void SetContainer(Container& cont);
-  virtual Container *GetContainer() { return container; }
+  virtual Container *GetContainer() const { return container; }
 
 protected:
   Container *container;
@@ -54,11 +57,8 @@ protected:
   Widget *buttons_old_focus;
   sigc::connection cont_old_focus_conn;
   sigc::connection buttons_old_focus_conn;
-  sigc::connection buttons_conn;
-  sigc::connection cont_conn;
 
   virtual void OnOldFocusDelete(Widget& activator);
-  virtual void OnFocusChildChange(Widget& activator, bool in_chain);
 
 private:
   SplitDialog(const SplitDialog&);

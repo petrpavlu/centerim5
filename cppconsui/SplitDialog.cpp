@@ -35,8 +35,6 @@ SplitDialog::SplitDialog(int x, int y, int w, int h, const gchar *title,
 , buttons_old_focus(NULL)
 {
   buttons->SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
-  buttons_conn = buttons->signal_focus_child.connect(sigc::mem_fun(this,
-        &SplitDialog::OnFocusChildChange));
 }
 
 SplitDialog::SplitDialog(const gchar *title, LineStyle::Type ltype)
@@ -44,19 +42,37 @@ SplitDialog::SplitDialog(const gchar *title, LineStyle::Type ltype)
 , buttons_old_focus(NULL)
 {
   buttons->SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
-  buttons_conn = buttons->signal_focus_child.connect(sigc::mem_fun(this,
-        &SplitDialog::OnFocusChildChange));
 }
 
 SplitDialog::~SplitDialog()
 {
-  cont_conn.disconnect();
-  buttons_conn.disconnect();
-
   cont_old_focus_conn.disconnect();
   cont_old_focus = NULL;
   buttons_old_focus_conn.disconnect();
   buttons_old_focus = NULL;
+}
+
+void SplitDialog::CleanFocus()
+{
+  Widget *f = layout->GetFocusChild();
+  if (f) {
+    if (f == container) {
+      cont_old_focus_conn.disconnect();
+      cont_old_focus = container->GetFocusWidget();
+      if (cont_old_focus)
+        cont_old_focus_conn = cont_old_focus->signal_delete.connect(
+            sigc::mem_fun(this, &SplitDialog::OnOldFocusDelete));
+    }
+    else if (f == buttons) {
+      buttons_old_focus_conn.disconnect();
+      buttons_old_focus = buttons->GetFocusWidget();
+      if (buttons_old_focus)
+        buttons_old_focus_conn = buttons_old_focus->signal_delete.connect(
+            sigc::mem_fun(this, &SplitDialog::OnOldFocusDelete));
+    }
+  }
+
+  Dialog::CleanFocus();
 }
 
 void SplitDialog::MoveFocus(FocusDirection direction)
@@ -143,8 +159,6 @@ void SplitDialog::SetContainer(Container& cont)
 
   container = &cont;
   cont.SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
-  cont_conn = cont.signal_focus_child.connect(sigc::mem_fun(this,
-        &SplitDialog::OnFocusChildChange));
   layout->InsertWidget(0, cont);
 }
 
@@ -160,24 +174,4 @@ void SplitDialog::OnOldFocusDelete(Widget& activator)
   }
   else
     g_assert_not_reached();
-}
-
-void SplitDialog::OnFocusChildChange(Widget& activator, bool in_chain)
-{
-  if (!in_chain) {
-    if (&activator == container) {
-      cont_old_focus_conn.disconnect();
-      cont_old_focus = container->GetFocusWidget();
-      if (cont_old_focus)
-        cont_old_focus_conn = cont_old_focus->signal_delete.connect(
-            sigc::mem_fun(this, &SplitDialog::OnOldFocusDelete));
-    }
-    else if (&activator == buttons) {
-      buttons_old_focus_conn.disconnect();
-      buttons_old_focus = buttons->GetFocusWidget();
-      if (buttons_old_focus)
-        buttons_old_focus_conn = buttons_old_focus->signal_delete.connect(
-            sigc::mem_fun(this, &SplitDialog::OnOldFocusDelete));
-    }
-  }
 }

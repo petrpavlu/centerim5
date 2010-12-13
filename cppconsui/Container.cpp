@@ -136,10 +136,6 @@ void Container::CleanFocus()
   }
 
   // first propagate focus stealing to the widget with focus
-  if (signal_focus_child_last) {
-    signal_focus_child(*this, false);
-    signal_focus_child_last = false;
-  }
   focus_child->CleanFocus();
   focus_child = NULL;
   ClearInputChild();
@@ -202,10 +198,6 @@ bool Container::SetFocusChild(Widget& child)
   bool res = parent->SetFocusChild(*this);
   focus_child = &child;
   SetInputChild(child);
-  if (!signal_focus_child_last) {
-    signal_focus_child(*this, true);
-    signal_focus_child_last = true;
-  }
   return res;
 }
 

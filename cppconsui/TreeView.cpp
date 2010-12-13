@@ -474,11 +474,11 @@ void TreeView::FocusFix()
   Widget *focus = t->GetFocusWidget();
   if (!focus) {
     // try to grab the focus
-    t->MoveFocus(Container::FOCUS_NEXT);
+    t->MoveFocus(Container::FOCUS_DOWN);
   }
   else if (!focus->IsVisibleRecursive()) {
     // move focus
-    t->MoveFocus(Container::FOCUS_NEXT);
+    t->MoveFocus(Container::FOCUS_DOWN);
   }
 }
 
