@@ -93,23 +93,26 @@ void ComboBox::AddOption(const gchar *text, intptr_t data)
   options.push_back(e);
 }
 
-const gchar *ComboBox::GetTitle(size_t entry) const
+const gchar *ComboBox::GetTitle(int entry) const
 {
-  g_assert(entry < options.size());
+  g_assert(entry < (int) options.size());
+  g_return_val_if_fail(entry >= 0, NULL);
 
   return options[entry].title;
 }
 
-intptr_t ComboBox::GetData(size_t entry) const
+intptr_t ComboBox::GetData(int entry) const
 {
-  g_assert(entry < options.size());
+  g_assert(entry < (int) options.size());
+  g_return_val_if_fail(entry >= 0, 0);
 
   return options[entry].data;
 }
 
-void ComboBox::SetSelected(size_t new_entry)
+void ComboBox::SetSelected(int new_entry)
 {
-  g_assert(new_entry < options.size());
+  g_assert(new_entry >= 0);
+  g_assert(new_entry < (int) options.size());
 
   selected_entry = new_entry;
   SetText(options[new_entry].title);
@@ -120,7 +123,7 @@ void ComboBox::SetSelected(size_t new_entry)
 
 void ComboBox::SetSelectedByData(intptr_t data)
 {
-  size_t i;
+  int i;
   ComboBoxEntries::iterator j;
   for (i = 0, j = options.begin(); j != options.end(); i++, j++)
     if (j->data == data)
@@ -135,7 +138,7 @@ void ComboBox::OnDropDown(Button& activator)
   dropdown->signal_close.connect(sigc::mem_fun(this,
         &ComboBox::DropDownClose));
 
-  size_t i;
+  int i;
   ComboBoxEntries::iterator j;
   for (i = 0, j = options.begin(); j != options.end(); i++, j++) {
     Button *b = dropdown->AppendItem(j->title, sigc::bind(sigc::mem_fun(this,
@@ -147,7 +150,7 @@ void ComboBox::OnDropDown(Button& activator)
   dropdown->Show();
 }
 
-void ComboBox::DropDownOk(Button& activator, size_t new_entry)
+void ComboBox::DropDownOk(Button& activator, int new_entry)
 {
   dropdown->Close();
   dropdown = NULL;

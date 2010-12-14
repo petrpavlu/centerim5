@@ -556,16 +556,29 @@ Request::FieldsDialog::ChoiceField::ChoiceField(PurpleRequestField *field)
 {
   g_assert(field);
 
+  for (GList *list = purple_request_field_choice_get_labels(field); list;
+      list = list->next)
+    AddOption(reinterpret_cast<const gchar*>(list->data));
+  SetSelected(purple_request_field_choice_get_default_value(field));
+
   UpdateText();
-  signal_activate.connect(sigc::mem_fun(this, &ChoiceField::OnActivate));
+  signal_selection_changed.connect(sigc::mem_fun(this,
+        &ChoiceField::OnSelectionChanged));
 }
 
 void Request::FieldsDialog::ChoiceField::UpdateText()
 {
+  gchar *label = g_strdup_printf("%s: %s",
+      purple_request_field_get_label(field), GetSelectedTitle());
+  SetText(label);
+  g_free(label);
 }
 
-void Request::FieldsDialog::ChoiceField::OnActivate(Button& activator)
+void Request::FieldsDialog::ChoiceField::OnSelectionChanged(
+    ComboBox& activator, int new_entry, const gchar *title, intptr_t data)
 {
+  purple_request_field_choice_set_value(field, new_entry);
+  UpdateText();
 }
 
 Request::FieldsDialog::ListField::ListField(PurpleRequestField *field)

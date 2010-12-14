@@ -129,6 +129,13 @@ void GeneralMenu::RequestTest(Button& activator)
   f = purple_request_field_bool_new("bool0", "Bool field 0", FALSE);
   purple_request_field_group_add_field(g, f);
 
+  f = purple_request_field_choice_new("choice0", "Choice field 0", 2);
+  purple_request_field_choice_add(f, "One");
+  purple_request_field_choice_add(f, "Two");
+  purple_request_field_choice_add(f, "Three");
+  purple_request_field_choice_add(f, "Four");
+  purple_request_field_group_add_field(g, f);
+
   purple_request_fields(NULL, "Title", "Primary", "Secondary", fields,
       "ok_text", G_CALLBACK(fields_ok_cb_),
       "cancel_text", NULL,
@@ -152,9 +159,10 @@ void GeneralMenu::action_cb(int action)
 
 void GeneralMenu::fields_ok_cb(PurpleRequestFields *fields)
 {
-  LOG->Debug("fields_ok_cb (%s, %s, %d, %d)\n",
+  LOG->Debug("fields_ok_cb (%s, %s, %d, %d, %d)\n",
       purple_request_fields_get_string(fields, "text0"),
       purple_request_fields_get_string(fields, "text1"),
       purple_request_fields_get_integer(fields, "int0"),
-      purple_request_fields_get_bool(fields, "bool0"));
+      purple_request_fields_get_bool(fields, "bool0"),
+      purple_request_fields_get_choice(fields, "choice0"));
 }

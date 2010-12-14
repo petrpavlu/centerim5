@@ -208,7 +208,7 @@ private:
     };
 
     class ChoiceField
-    : public Button
+    : public ComboBox
     {
       public:
         ChoiceField(PurpleRequestField *field);
@@ -218,7 +218,8 @@ private:
         PurpleRequestField *field;
 
         void UpdateText();
-        void OnActivate(Button& activator);
+        void OnSelectionChanged(ComboBox& activator, int new_entry,
+            const gchar *title, intptr_t data);
 
       private:
         ChoiceField(const ChoiceField&);

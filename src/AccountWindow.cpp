@@ -598,11 +598,12 @@ AccountWindow::AccountOptionProtocol::AccountOptionProtocol(
   g_assert(account);
 
   for (GList *i = purple_plugins_get_protocols(); i; i = i->next)
-    AddOptionPtr(((PurplePlugin *) i->data)->info->name, i->data);
+    AddOptionPtr(reinterpret_cast<PurplePlugin*>(i->data)->info->name,
+        i->data);
 
   const char *proto_id = purple_account_get_protocol_id(account);
   PurplePlugin *plugin = purple_plugins_find_with_id(proto_id);
-  SetSelectedByData(reinterpret_cast<intptr_t>(plugin));
+  SetSelectedByDataPtr(plugin);
   gchar *label = g_strdup_printf(_("Protocol: %s"), plugin->info->name);
   SetText(label);
   g_free(label);

@@ -61,21 +61,22 @@ public:
 
   /**
    * Returns last selected option.
-   * Note: returned value is invalid if any options weren't added.
    */
-  size_t GetSelected() const { return selected_entry; };
+  int GetSelected() const { return selected_entry; };
+  const gchar *GetSelectedTitle()
+    { return GetTitle(selected_entry); }
 
-  size_t GetOptionsCount() const { return options.size(); }
+  int GetOptionsCount() const { return options.size(); }
 
-  const gchar *GetTitle(size_t entry) const;
-  intptr_t GetData(size_t entry) const;
+  const gchar *GetTitle(int entry) const;
+  intptr_t GetData(int entry) const;
 
-  void SetSelected(size_t new_entry);
+  void SetSelected(int new_entry);
   void SetSelectedByData(intptr_t data);
   void SetSelectedByDataPtr(void *data)
     { SetSelectedByData(reinterpret_cast<intptr_t>(data)); }
 
-  sigc::signal<void, ComboBox&, size_t, const gchar *, intptr_t>
+  sigc::signal<void, ComboBox&, int, const gchar *, intptr_t>
     signal_selection_changed;
 
 protected:
@@ -93,13 +94,13 @@ protected:
    * Prepares and displays the dropdown MenuWindow.
    */
   void OnDropDown(Button& activator);
-  void DropDownOk(Button& activator, size_t new_entry);
+  void DropDownOk(Button& activator, int new_entry);
   void DropDownClose(FreeWindow& window);
 
   /**
    * Number of currently selected entry.
    */
-  size_t selected_entry;
+  int selected_entry;
   /**
    * All options.
    */
