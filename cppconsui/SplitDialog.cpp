@@ -46,6 +46,8 @@ SplitDialog::SplitDialog(const gchar *title, LineStyle::Type ltype)
 
 SplitDialog::~SplitDialog()
 {
+  /* Slots has to be disconnected manually because sigc::~trackable() is
+   * called too late. */
   cont_old_focus_conn.disconnect();
   cont_old_focus = NULL;
   buttons_old_focus_conn.disconnect();

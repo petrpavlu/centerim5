@@ -220,8 +220,7 @@ void BuddyList::AccountsBox::OnAccountChanged(Button& activator,
 }
 
 BuddyList::NameButton::NameButton(bool alias, const gchar *val)
-: Button("")
-, dialog(NULL)
+: dialog(NULL)
 {
   if (alias)
     text = _("Alias");

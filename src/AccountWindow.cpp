@@ -306,7 +306,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 
 AccountWindow::AccountOptionBool::AccountOptionBool(PurpleAccount *account,
     PurpleAccountOption *option)
-: CheckBox(), account(account), option(option), type(TYPE_PURPLE)
+: account(account), option(option), type(TYPE_PURPLE)
 {
   g_assert(account);
   g_assert(option);
@@ -321,7 +321,7 @@ AccountWindow::AccountOptionBool::AccountOptionBool(PurpleAccount *account,
 
 AccountWindow::AccountOptionBool::AccountOptionBool(PurpleAccount *account,
     Type type)
-: CheckBox(), account(account), option(NULL), type(type)
+: account(account), option(NULL), type(type)
 {
   g_assert(account);
 
@@ -351,8 +351,7 @@ void AccountWindow::AccountOptionBool::OnToggle(CheckBox& activator,
 
 AccountWindow::AccountOptionString::AccountOptionString(
     PurpleAccount *account, PurpleAccountOption *option)
-: Button(), account(account), option(option), type(TYPE_PURPLE), text(NULL)
-, value(NULL)
+: account(account), option(option), type(TYPE_PURPLE), text(NULL), value(NULL)
 {
   g_assert(account);
   g_assert(option);
@@ -364,7 +363,7 @@ AccountWindow::AccountOptionString::AccountOptionString(
 
 AccountWindow::AccountOptionString::AccountOptionString(
     PurpleAccount *account, Type type)
-: Button(), account(account), option(NULL), type(type)
+: account(account), option(NULL), type(type)
 {
   g_assert(account);
 
@@ -431,7 +430,7 @@ void AccountWindow::AccountOptionString::ResponseHandler(Dialog& activator,
 
 AccountWindow::AccountOptionInt::AccountOptionInt(PurpleAccount *account,
     PurpleAccountOption *option)
-: Button(), account(account), option(option), text(NULL), value(0)
+: account(account), option(option), text(NULL), value(0)
 {
   g_assert(account);
   g_assert(option);
@@ -492,8 +491,7 @@ void AccountWindow::AccountOptionInt::ResponseHandler(Dialog& activator,
 
 AccountWindow::AccountOptionSplit::AccountOptionSplit(PurpleAccount *account,
     PurpleAccountUserSplit *split, AccountEntry *account_entry)
-: Button(), account(account), split(split), account_entry(account_entry)
-, value(NULL)
+: account(account), split(split), account_entry(account_entry), value(NULL)
 {
   g_assert(account);
 
@@ -595,9 +593,7 @@ void AccountWindow::AccountOptionSplit::ResponseHandler(Dialog& activator,
 
 AccountWindow::AccountOptionProtocol::AccountOptionProtocol(
     PurpleAccount *account, AccountWindow &account_window)
-: ComboBox()
-, account_window(&account_window)
-, account(account)
+: account_window(&account_window), account(account)
 {
   g_assert(account);
 

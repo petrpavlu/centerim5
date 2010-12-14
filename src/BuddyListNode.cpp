@@ -44,8 +44,7 @@ BuddyListNode *BuddyListNode::CreateNode(PurpleBlistNode *node)
 }
 
 BuddyListNode::BuddyListNode(PurpleBlistNode *node)
-: Button("")
-, node(node)
+: node(node)
 {
   node->ui_data = this;
   signal_activate.connect(sigc::mem_fun(this, &BuddyListNode::OnActivate));

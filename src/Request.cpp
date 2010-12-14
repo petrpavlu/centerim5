@@ -203,10 +203,7 @@ Request::RequestDialog::RequestDialog(const gchar *title,
     const gchar *primary, const gchar *secondary, const gchar *ok_text,
     GCallback ok_cb, const gchar *cancel_text, GCallback cancel_cb,
     void *user_data)
-: SplitDialog(title)
-, ok_cb(ok_cb)
-, cancel_cb(cancel_cb)
-, user_data(user_data)
+: SplitDialog(title), ok_cb(ok_cb), cancel_cb(cancel_cb), user_data(user_data)
 {
   lbox = new ListBox(AUTOSIZE, AUTOSIZE);
   if (primary)
@@ -364,8 +361,7 @@ Request::FieldsDialog::FieldsDialog(const gchar *title, const gchar *primary,
     const gchar *ok_text, GCallback ok_cb, const gchar *cancel_text,
     GCallback cancel_cb, void *user_data)
 : RequestDialog(title, primary, secondary, ok_text, ok_cb, cancel_text,
-    cancel_cb, user_data)
-, fields(request_fields)
+    cancel_cb, user_data), fields(request_fields)
 {
   tree = new TreeView(AUTOSIZE, AUTOSIZE);
   lbox->AppendWidget(*tree);
@@ -433,7 +429,7 @@ PurpleRequestType Request::FieldsDialog::GetRequestType()
 }
 
 Request::FieldsDialog::StringField::StringField(PurpleRequestField *field)
-: Button(), field(field)
+: field(field)
 {
   g_assert(field);
 
@@ -483,7 +479,7 @@ void Request::FieldsDialog::StringField::ResponseHandler(Dialog& activator,
 }
 
 Request::FieldsDialog::IntegerField::IntegerField(PurpleRequestField *field)
-: Button(), field(field)
+: field(field)
 {
   g_assert(field);
 
@@ -540,7 +536,7 @@ void Request::FieldsDialog::IntegerField::OnActivate(Button& activator)
 }
 
 Request::FieldsDialog::BooleanField::BooleanField(PurpleRequestField *field)
-: CheckBox(), field(field)
+: field(field)
 {
   g_assert(field);
 
@@ -556,7 +552,7 @@ void Request::FieldsDialog::BooleanField::OnToggle(CheckBox& activator,
 }
 
 Request::FieldsDialog::ChoiceField::ChoiceField(PurpleRequestField *field)
-: Button(), field(field)
+: field(field)
 {
   g_assert(field);
 
@@ -573,7 +569,7 @@ void Request::FieldsDialog::ChoiceField::OnActivate(Button& activator)
 }
 
 Request::FieldsDialog::ListField::ListField(PurpleRequestField *field)
-: Button(), field(field)
+: field(field)
 {
   g_assert(field);
 
@@ -590,12 +586,12 @@ void Request::FieldsDialog::ListField::OnActivate(Button& activator)
 }
 
 Request::FieldsDialog::LabelField::LabelField(PurpleRequestField *field)
-: Label(), field(field)
+: field(field)
 {
 }
 
 Request::FieldsDialog::ImageField::ImageField(PurpleRequestField *field)
-: Button(), field(field)
+: field(field)
 {
   g_assert(field);
 
@@ -612,7 +608,7 @@ void Request::FieldsDialog::ImageField::OnActivate(Button& activator)
 }
 
 Request::FieldsDialog::AccountField::AccountField(PurpleRequestField *field)
-: ComboBox(), field(field)
+: field(field)
 {
   g_assert(field);
 
