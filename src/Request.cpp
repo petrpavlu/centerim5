@@ -228,10 +228,7 @@ Request::RequestDialog::RequestDialog(const gchar *title,
 
 void Request::RequestDialog::ScreenResized()
 {
-  Rect screen = CENTERIM->GetScreenAreaSize(CenterIM::WHOLE_AREA);
-
-  MoveResize(screen.Width() / 4, screen.Height() / 4, screen.Width() / 2,
-      screen.Height() / 2);
+  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA));
 }
 
 Request::InputTextDialog::InputTextDialog(const gchar *title,

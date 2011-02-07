@@ -51,14 +51,6 @@ public:
   // returns size of selected area
   Rect GetScreenAreaSize(ScreenArea area);
 
-  Rect GetDimensions(const char *window, int defx, int defy, int defwidth,
-      int defheight);
-
-  void SetDimensions(const char *window, int x, int y, int width, int height);
-  void SetDimensions(const char *window, const Rect& rect);
-
-  Rect GetAccountWindowDimensions();
-
   static const char * const version;
 
 protected:

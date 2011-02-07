@@ -55,21 +55,7 @@ AccountWindow::AccountWindow()
 
 void AccountWindow::ScreenResized()
 {
-  Rect screen = CENTERIM->GetScreenAreaSize(CenterIM::WHOLE_AREA);
-  Rect confSize = CENTERIM->GetAccountWindowDimensions();
-
-  // check against the screen size
-  if (screen.Width() < confSize.Width() + 4)
-    confSize.width = screen.Width() - 4;
-
-  if (screen.Height() < confSize.Height() + 4)
-    confSize.height = screen.Height() - 4;
-
-  // center on the screen
-  confSize.x = (screen.Width() - confSize.Width()) / 2;
-  confSize.y = (screen.Height() - confSize.Height()) / 2;
-
-  MoveResizeRect(confSize);
+  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA));
 }
 
 void AccountWindow::Add(Button& activator)

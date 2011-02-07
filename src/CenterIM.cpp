@@ -198,58 +198,6 @@ Rect CenterIM::GetScreenAreaSize(ScreenArea area)
   return areaSizes[area];
 }
 
-Rect CenterIM::GetDimensions(const char *window, int defx, int defy, int defw,
-    int defh)
-{
-  char *prefx = g_strconcat(CONF_PREFIX, window, "dimensions/x", NULL);
-  char *prefy = g_strconcat(CONF_PREFIX, window, "dimensions/y", NULL);
-  char *prefw = g_strconcat(CONF_PREFIX, window, "dimensions/width", NULL);
-  char *prefh = g_strconcat(CONF_PREFIX, window, "dimensions/height", NULL);
-
-  int x = CONF->GetInt(prefx, defx);
-  int y = CONF->GetInt(prefy, defy);
-  int w = CONF->GetInt(prefw, defw);
-  int h = CONF->GetInt(prefh, defh);
-
-  g_free(prefx);
-  g_free(prefy);
-  g_free(prefw);
-  g_free(prefh);
-
-  return Rect(x, y, w, h);
-}
-
-void CenterIM::SetDimensions(const char *window, int x, int y, int width,
-    int height)
-{
-  char *prefx = g_strconcat(CONF_PREFIX, window, "/dimensions/x", NULL);
-  char *prefy = g_strconcat(CONF_PREFIX, window, "/dimensions/y", NULL);
-  char *prefw = g_strconcat(CONF_PREFIX, window, "/dimensions/width", NULL);
-  char *prefh = g_strconcat(CONF_PREFIX, window, "/dimensions/height", NULL);
-
-  CONF->SetInt(prefx, x);
-  CONF->SetInt(prefy, y);
-  CONF->SetInt(prefw, width);
-  CONF->SetInt(prefh, height);
-
-  g_free(prefx);
-  g_free(prefy);
-  g_free(prefw);
-  g_free(prefh);
-}
-
-void CenterIM::SetDimensions(const char *window, const Rect& rect)
-{
-  SetDimensions(window, rect.x, rect.y, rect.width, rect.height);
-}
-
-Rect CenterIM::GetAccountWindowDimensions()
-{
-  return GetDimensions("accounts", CONF_ACCOUNTS_DIMENSIONS_X,
-      CONF_ACCOUNTS_DIMENSIONS_Y, CONF_ACCOUNTS_DIMENSIONS_WIDTH,
-      CONF_ACCOUNTS_DIMENSIONS_HEIGHT);
-}
-
 int CenterIM::PurpleInit()
 {
   // set the configuration file location
