@@ -24,7 +24,7 @@
 
 #include <cppconsui/Button.h>
 #include <cppconsui/TreeView.h>
-#include <libpurple/blist.h>
+#include <libpurple/purple.h>
 
 class BuddyListNode
 : public Button

@@ -26,7 +26,7 @@
 #include <cppconsui/TextEntry.h>
 #include <cppconsui/TreeView.h>
 #include <cppconsui/SplitDialog.h>
-#include <libpurple/request.h>
+#include <libpurple/purple.h>
 
 #define REQUEST (Request::Instance())
 

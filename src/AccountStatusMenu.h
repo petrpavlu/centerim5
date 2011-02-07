@@ -23,10 +23,7 @@
 #define __ACOUNTSTATUSMENU_H__
 
 #include <cppconsui/MenuWindow.h>
-
-#include <libpurple/account.h>
-#include <libpurple/savedstatuses.h>
-#include <libpurple/status.h>
+#include <libpurple/purple.h>
 
 class AccountStatusMenu
 : public MenuWindow

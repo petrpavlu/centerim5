@@ -25,7 +25,6 @@
 #include "Utils.h"
 
 #include <cppconsui/Keys.h>
-#include <libpurple/version.h>
 #include "gettext.h"
 
 BuddyListNode *BuddyListNode::CreateNode(PurpleBlistNode *node)

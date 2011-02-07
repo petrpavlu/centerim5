@@ -28,7 +28,7 @@
 #include <cppconsui/InputDialog.h>
 #include <cppconsui/TreeView.h>
 #include <cppconsui/Window.h>
-#include <libpurple/blist.h>
+#include <libpurple/purple.h>
 
 #define BUDDYLIST (BuddyList::Instance())
 

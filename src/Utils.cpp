@@ -20,8 +20,6 @@
 
 #include "Utils.h"
 
-#include <libpurple/version.h>
-
 namespace Utils
 {
 

@@ -22,12 +22,7 @@
 #ifndef __CENTERIM_H__
 #define __CENTERIM_H__
 
-#include <glib.h>
-
-#include <libpurple/core.h>
-#include <libpurple/debug.h>
-#include <libpurple/eventloop.h>
-
+#include <libpurple/purple.h>
 #include <cppconsui/CoreManager.h>
 #include <vector>
 

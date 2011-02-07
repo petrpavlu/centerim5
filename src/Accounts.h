@@ -22,7 +22,7 @@
 #ifndef __ACCOUNTS_H__
 #define __ACCOUNTS_H__
 
-#include <libpurple/account.h>
+#include <libpurple/purple.h>
 
 #define ACCOUNTS (Accounts::Instance())
 

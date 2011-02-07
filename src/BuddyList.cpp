@@ -27,7 +27,6 @@
 
 #include <cppconsui/Keys.h>
 #include <cppconsui/Spacer.h>
-#include <libpurple/pounce.h>
 #include "gettext.h"
 
 BuddyList *BuddyList::instance = NULL;

@@ -22,7 +22,7 @@
 #ifndef __CONNECTIONS_H__
 #define __CONNECTIONS_H__
 
-#include <libpurple/connection.h>
+#include <libpurple/purple.h>
 
 #define CONNECTIONS (Connections::Instance())
 

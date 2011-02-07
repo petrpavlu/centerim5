@@ -24,8 +24,6 @@
 #include "Conf.h"
 #include "CenterIM.h"
 
-#include <libpurple/debug.h>
-#include <libpurple/util.h>
 #include <cstring>
 #include "gettext.h"
 

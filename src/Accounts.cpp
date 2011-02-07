@@ -23,7 +23,6 @@
 
 #include "Log.h"
 
-#include <libpurple/savedstatuses.h>
 #include <cstring>
 #include "gettext.h"
 

@@ -26,7 +26,7 @@
 
 #include <cppconsui/FreeWindow.h>
 #include <cppconsui/HorizontalListBox.h>
-#include <libpurple/conversation.h>
+#include <libpurple/purple.h>
 #include <vector>
 
 #define CONVERSATIONS (Conversations::Instance())

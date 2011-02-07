@@ -24,9 +24,7 @@
 #include <cppconsui/FreeWindow.h>
 #include <cppconsui/Label.h>
 #include <cppconsui/HorizontalListBox.h>
-
-#include <libpurple/account.h>
-
+#include <libpurple/purple.h>
 #include <map>
 
 #define HEADER (Header::Instance())

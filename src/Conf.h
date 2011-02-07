@@ -22,7 +22,7 @@
 #ifndef __CONF_H__
 #define __CONF_H__
 
-#include <glib.h>
+#include <libpurple/purple.h>
 
 #define CONF (Conf::Instance())
 

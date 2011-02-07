@@ -25,13 +25,12 @@
 #include "Conf.h"
 #include "Log.h"
 
-#include <libpurple/conversation.h>
-
 #include <cppconsui/HorizontalLine.h>
 #include <cppconsui/LineStyle.h>
 #include <cppconsui/TextEdit.h>
 #include <cppconsui/TextView.h>
 #include <cppconsui/Window.h>
+#include <libpurple/purple.h>
 
 class Conversation
 : public Window

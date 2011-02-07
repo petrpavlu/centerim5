@@ -22,8 +22,6 @@
 
 #include "Conf.h"
 
-#include <libpurple/prefs.h>
-#include <libpurple/plugin.h>
 #include <cstring>
 
 #define CONF_PLUGIN_SAVE_PREF "/centerim/plugins/loaded"

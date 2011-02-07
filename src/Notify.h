@@ -21,7 +21,7 @@
 #ifndef __NOTIFY_H__
 #define __NOTIFY_H__
 
-#include <libpurple/notify.h>
+#include <libpurple/purple.h>
 
 #define NOTIFY (Notify::Instance())
 

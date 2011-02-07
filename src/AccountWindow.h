@@ -28,9 +28,7 @@
 #include <cppconsui/InputDialog.h>
 #include <cppconsui/SplitDialog.h>
 #include <cppconsui/TreeView.h>
-
-#include <libpurple/account.h>
-#include <libpurple/accountopt.h>
+#include <libpurple/purple.h>
 
 class AccountWindow
 : public SplitDialog

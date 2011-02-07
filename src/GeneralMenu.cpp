@@ -25,8 +25,6 @@
 #include "CenterIM.h"
 #include "Log.h"
 
-#include <libpurple/request.h>
-
 #include "gettext.h"
 
 GeneralMenu::GeneralMenu(int x, int y, int w, int h)

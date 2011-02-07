@@ -23,8 +23,7 @@
 #define __GENERALMENU_H__
 
 #include <cppconsui/MenuWindow.h>
-
-#include <libpurple/request.h>
+#include <libpurple/purple.h>
 
 class GeneralMenu
 : public MenuWindow
