@@ -404,7 +404,10 @@ Request::FieldsDialog::FieldsDialog(const gchar *title, const gchar *primary,
           tree->AppendNode(parent, *(new ChoiceField(field)));
           break;
         case PURPLE_REQUEST_FIELD_LIST:
-          tree->AppendNode(parent, *(new ListField(field)));
+          if (purple_request_field_list_get_multi_select(field))
+            tree->AppendNode(parent, *(new ListFieldMultiple(field)));
+          else
+            tree->AppendNode(parent, *(new ListFieldSingle(field)));
           break;
         case PURPLE_REQUEST_FIELD_LABEL:
           tree->AppendNode(parent, *(new LabelField(field)));
@@ -581,32 +584,107 @@ void Request::FieldsDialog::ChoiceField::OnSelectionChanged(
   UpdateText();
 }
 
-Request::FieldsDialog::ListField::ListField(PurpleRequestField *field)
+Request::FieldsDialog::ListFieldMultiple::ListFieldMultiple(
+    PurpleRequestField *field)
+: ListBox(AUTOSIZE, 1), field(field)
+{
+  g_assert(field);
+
+  // TODO display label of the field somewhere
+
+  int height = 0;
+  for (GList *list = purple_request_field_list_get_items(field); list;
+      list = list->next, height++)
+    AppendWidget(*(new ListFieldItem(field,
+            reinterpret_cast<const gchar*>(list->data))));
+  MoveResize(Left(), Top(), Width(), height);
+}
+
+Request::FieldsDialog::ListFieldMultiple::ListFieldItem::ListFieldItem(
+    PurpleRequestField *field, const gchar *text)
 : field(field)
 {
   g_assert(field);
 
+  SetText(text);
+  SetState(purple_request_field_list_is_selected(field, text));
+  signal_toggle.connect(sigc::mem_fun(this, &ListFieldItem::OnToggle));
+}
+
+void Request::FieldsDialog::ListFieldMultiple::ListFieldItem::OnToggle(
+    CheckBox& activator, bool new_state)
+{
+  if (new_state)
+    purple_request_field_list_add_selected(field, GetText());
+  else {
+    /* XXX This chunk is super-slow, libpurple should provide
+     * purple_request_field_list_remove_selected() function. */
+    GList *new_selected = NULL;
+    for (GList *selected = purple_request_field_list_get_selected(field);
+        selected; selected = selected->next) {
+      const gchar *data = reinterpret_cast<const gchar*>(selected->data);
+      if (strcmp(GetText(), data))
+        new_selected = g_list_append(new_selected, g_strdup(data));
+    }
+
+    if (new_selected) {
+      purple_request_field_list_set_selected(field, new_selected);
+      g_list_foreach(new_selected, reinterpret_cast<GFunc>(g_free), NULL);
+    }
+    else
+      purple_request_field_list_clear_selected(field);
+  }
+}
+
+Request::FieldsDialog::ListFieldSingle::ListFieldSingle(
+    PurpleRequestField *field)
+: field(field)
+{
+  g_assert(field);
+
+  GList *list = purple_request_field_list_get_items(field);
+  for (int i = 0; list; i++, list = list->next) {
+    const gchar *text = reinterpret_cast<const gchar*>(list->data);
+    AddOption(text);
+    if (purple_request_field_list_is_selected(field, text))
+      SetSelected(i);
+  }
+
   UpdateText();
-  signal_activate.connect(sigc::mem_fun(this, &ListField::OnActivate));
+  signal_selection_changed.connect(sigc::mem_fun(this,
+        &ListFieldSingle::OnSelectionChanged));
 }
 
-void Request::FieldsDialog::ListField::UpdateText()
+void Request::FieldsDialog::ListFieldSingle::UpdateText()
 {
+  gchar *label = g_strdup_printf("%s: %s",
+      purple_request_field_get_label(field), GetSelectedTitle());
+  SetText(label);
+  g_free(label);
 }
 
-void Request::FieldsDialog::ListField::OnActivate(Button& activator)
+void Request::FieldsDialog::ListFieldSingle::OnSelectionChanged(
+    ComboBox& activator, int new_entry, const gchar *title, intptr_t data)
 {
+  purple_request_field_list_clear_selected(field);
+  purple_request_field_list_add_selected(field, title);
+  UpdateText();
 }
 
 Request::FieldsDialog::LabelField::LabelField(PurpleRequestField *field)
 : field(field)
 {
+  g_assert(field);
+
+  SetText(purple_request_field_get_label(field));
 }
 
 Request::FieldsDialog::ImageField::ImageField(PurpleRequestField *field)
 : field(field)
 {
   g_assert(field);
+
+  // TODO
 
   UpdateText();
   signal_activate.connect(sigc::mem_fun(this, &ImageField::OnActivate));

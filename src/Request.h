@@ -153,49 +153,93 @@ private:
     class StringField
     : public Button
     {
-      public:
-        StringField(PurpleRequestField *field);
-        virtual ~StringField() {}
+    public:
+      StringField(PurpleRequestField *field);
+      virtual ~StringField() {}
 
-      protected:
-        PurpleRequestField *field;
+    protected:
+      PurpleRequestField *field;
 
-        void UpdateText();
-        void OnActivate(Button& activator);
-        void ResponseHandler(Dialog& activator,
-            Dialog::ResponseType response);
+      void UpdateText();
+      void OnActivate(Button& activator);
+      void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
 
-      private:
-        StringField(const StringField&);
-        StringField& operator=(const StringField&);
+    private:
+      StringField(const StringField&);
+      StringField& operator=(const StringField&);
     };
 
     class IntegerField
     : public Button
     {
-      public:
-        IntegerField(PurpleRequestField *field);
-        virtual ~IntegerField() {}
+    public:
+      IntegerField(PurpleRequestField *field);
+      virtual ~IntegerField() {}
 
-      protected:
-        PurpleRequestField *field;
+    protected:
+      PurpleRequestField *field;
 
-        void UpdateText();
-        void OnActivate(Button& activator);
-        void ResponseHandler(Dialog& activator,
-            Dialog::ResponseType response);
+      void UpdateText();
+      void OnActivate(Button& activator);
+      void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
 
-      private:
-        IntegerField(const IntegerField&);
-        IntegerField& operator=(const IntegerField&);
+    private:
+      IntegerField(const IntegerField&);
+      IntegerField& operator=(const IntegerField&);
     };
 
     class BooleanField
     : public CheckBox
     {
+    public:
+      BooleanField(PurpleRequestField *field);
+      virtual ~BooleanField() {}
+
+    protected:
+      PurpleRequestField *field;
+
+      void OnToggle(CheckBox& activator, bool new_state);
+
+    private:
+      BooleanField(const BooleanField&);
+      BooleanField& operator=(const BooleanField&);
+    };
+
+    class ChoiceField
+    : public ComboBox
+    {
+    public:
+      ChoiceField(PurpleRequestField *field);
+      virtual ~ChoiceField() {}
+
+    protected:
+      PurpleRequestField *field;
+
+      void UpdateText();
+      void OnSelectionChanged(ComboBox& activator, int new_entry,
+          const gchar *title, intptr_t data);
+
+    private:
+      ChoiceField(const ChoiceField&);
+      ChoiceField& operator=(const ChoiceField&);
+    };
+
+    class ListFieldMultiple
+    : public ListBox
+    {
+    public:
+      ListFieldMultiple(PurpleRequestField *field);
+      virtual ~ListFieldMultiple() {}
+
+    protected:
+      PurpleRequestField *field;
+
+      class ListFieldItem
+      : public CheckBox
+      {
       public:
-        BooleanField(PurpleRequestField *field);
-        virtual ~BooleanField() {}
+        ListFieldItem(PurpleRequestField *field, const gchar *text);
+        virtual ~ListFieldItem() {}
 
       protected:
         PurpleRequestField *field;
@@ -203,97 +247,84 @@ private:
         void OnToggle(CheckBox& activator, bool new_state);
 
       private:
-        BooleanField(const BooleanField&);
-        BooleanField& operator=(const BooleanField&);
+        ListFieldItem(const ListFieldItem&);
+        ListFieldItem& operator=(const ListFieldItem&);
+      };
+
+    private:
+      ListFieldMultiple(const ListFieldMultiple&);
+      ListFieldMultiple& operator=(const ListFieldMultiple&);
     };
 
-    class ChoiceField
+    class ListFieldSingle
     : public ComboBox
     {
-      public:
-        ChoiceField(PurpleRequestField *field);
-        virtual ~ChoiceField() {}
+    public:
+      ListFieldSingle(PurpleRequestField *field);
+      virtual ~ListFieldSingle() {}
 
-      protected:
-        PurpleRequestField *field;
+    protected:
+      PurpleRequestField *field;
 
-        void UpdateText();
-        void OnSelectionChanged(ComboBox& activator, int new_entry,
-            const gchar *title, intptr_t data);
+      void UpdateText();
+      void OnSelectionChanged(ComboBox& activator, int new_entry,
+          const gchar *title, intptr_t data);
 
-      private:
-        ChoiceField(const ChoiceField&);
-        ChoiceField& operator=(const ChoiceField&);
-    };
-
-    class ListField
-    : public Button
-    {
-      public:
-        ListField(PurpleRequestField *field);
-        virtual ~ListField() {}
-
-      protected:
-        PurpleRequestField *field;
-
-        void UpdateText();
-        void OnActivate(Button& activator);
-
-      private:
-        ListField(const ListField&);
-        ListField& operator=(const ListField&);
+    private:
+      ListFieldSingle(const ListFieldSingle&);
+      ListFieldSingle& operator=(const ListFieldSingle&);
     };
 
     class LabelField
     : public Label
     {
-      public:
-        LabelField(PurpleRequestField *field);
-        virtual ~LabelField() {}
+    public:
+      LabelField(PurpleRequestField *field);
+      virtual ~LabelField() {}
 
-      protected:
-        PurpleRequestField *field;
+    protected:
+      PurpleRequestField *field;
 
-      private:
-        LabelField(const LabelField&);
-        LabelField& operator=(const LabelField&);
+    private:
+      LabelField(const LabelField&);
+      LabelField& operator=(const LabelField&);
     };
 
     class ImageField
     : public Button
     {
-      public:
-        ImageField(PurpleRequestField *field);
-        virtual ~ImageField() {}
+    public:
+      ImageField(PurpleRequestField *field);
+      virtual ~ImageField() {}
 
-      protected:
-        PurpleRequestField *field;
+    protected:
+      PurpleRequestField *field;
 
-        void UpdateText();
-        void OnActivate(Button& activator);
+      void UpdateText();
+      void OnActivate(Button& activator);
 
-      private:
-        ImageField(const ImageField&);
-        ImageField& operator=(const ImageField&);
+    private:
+      ImageField(const ImageField&);
+      ImageField& operator=(const ImageField&);
     };
 
     class AccountField
     : public ComboBox
     {
-      public:
-        AccountField(PurpleRequestField *field);
-        virtual ~AccountField() {}
+    public:
+      AccountField(PurpleRequestField *field);
+      virtual ~AccountField() {}
 
-      protected:
-        PurpleRequestField *field;
+    protected:
+      PurpleRequestField *field;
 
-        void UpdateText();
-        void OnAccountChanged(Button& activator, size_t new_entry,
-            const gchar *title, intptr_t data);
+      void UpdateText();
+      void OnAccountChanged(Button& activator, size_t new_entry,
+          const gchar *title, intptr_t data);
 
-      private:
-        AccountField(const AccountField&);
-        AccountField& operator=(const AccountField&);
+    private:
+      AccountField(const AccountField&);
+      AccountField& operator=(const AccountField&);
     };
 
     virtual void ResponseHandler(Dialog& activator, ResponseType response);

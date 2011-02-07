@@ -63,8 +63,7 @@ public:
    * Returns last selected option.
    */
   int GetSelected() const { return selected_entry; };
-  const gchar *GetSelectedTitle()
-    { return GetTitle(selected_entry); }
+  const gchar *GetSelectedTitle() const;
 
   int GetOptionsCount() const { return options.size(); }
 

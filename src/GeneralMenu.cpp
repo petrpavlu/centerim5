@@ -136,10 +136,29 @@ void GeneralMenu::RequestTest(Button& activator)
   purple_request_field_choice_add(f, "Four");
   purple_request_field_group_add_field(g, f);
 
+  f = purple_request_field_list_new("list0", "List field 0, multiple");
+  purple_request_field_list_set_multi_select(f, TRUE);
+  purple_request_field_list_add(f, "One", this);
+  purple_request_field_list_add(f, "Two", this);
+  purple_request_field_list_add(f, "Three", this);
+  purple_request_field_list_add(f, "Four", this);
+  purple_request_field_list_add_selected(f, "Three");
+  purple_request_field_group_add_field(g, f);
+
+  f = purple_request_field_list_new("list1", "List field 1, single");
+  purple_request_field_list_set_multi_select(f, FALSE);
+  purple_request_field_list_add(f, "One", this);
+  purple_request_field_list_add(f, "Two", this);
+  purple_request_field_list_add(f, "Three", this);
+  purple_request_field_list_add(f, "Four", this);
+  purple_request_field_list_add_selected(f, "Three");
+  purple_request_field_group_add_field(g, f);
+
   purple_request_fields(NULL, "Title", "Primary", "Secondary", fields,
       "ok_text", G_CALLBACK(fields_ok_cb_),
       "cancel_text", NULL,
       NULL, NULL, NULL, this);
+  Close();
 }
 
 void GeneralMenu::input_ok_cb(const gchar *text)
@@ -159,10 +178,23 @@ void GeneralMenu::action_cb(int action)
 
 void GeneralMenu::fields_ok_cb(PurpleRequestFields *fields)
 {
-  LOG->Debug("fields_ok_cb (%s, %s, %d, %d, %d)\n",
+  LOG->Debug(
+      "fields_ok_cb: text0=%s, text1=%s, int0=%d, bool0=%d, choice0=%d\n",
       purple_request_fields_get_string(fields, "text0"),
       purple_request_fields_get_string(fields, "text1"),
       purple_request_fields_get_integer(fields, "int0"),
       purple_request_fields_get_bool(fields, "bool0"),
       purple_request_fields_get_choice(fields, "choice0"));
+
+  for (GList *list = purple_request_field_list_get_selected(
+        purple_request_fields_get_field(fields, "list0")); list;
+      list = list->next)
+    LOG->Debug("fields_ok_cb: list0=%s\n",
+        reinterpret_cast<const gchar*>(list->data));
+
+  for (GList *list = purple_request_field_list_get_selected(
+        purple_request_fields_get_field(fields, "list1")); list;
+      list = list->next)
+    LOG->Debug("fields_ok_cb: list1=%s\n",
+        reinterpret_cast<const gchar*>(list->data));
 }

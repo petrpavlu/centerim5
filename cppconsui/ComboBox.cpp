@@ -93,6 +93,14 @@ void ComboBox::AddOption(const gchar *text, intptr_t data)
   options.push_back(e);
 }
 
+const gchar *ComboBox::GetSelectedTitle() const
+{
+  if (options.empty())
+    return NULL;
+
+  return GetTitle(selected_entry);
+}
+
 const gchar *ComboBox::GetTitle(int entry) const
 {
   g_assert(entry < (int) options.size());
