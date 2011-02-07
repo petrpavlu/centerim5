@@ -703,6 +703,23 @@ Request::FieldsDialog::AccountField::AccountField(PurpleRequestField *field)
 {
   g_assert(field);
 
+  // TODO filter (purple_request_field_account_get_filter())
+  // TODO signals (signed-on, signed-off, account-added, account-removed)
+
+  gboolean show_all = purple_request_field_account_get_show_all(field);
+  for (GList *list = purple_accounts_get_all(); list; list = list->next) {
+    PurpleAccount *account = reinterpret_cast<PurpleAccount*>(list->data);
+    if (!show_all && !purple_account_is_connected(account))
+      continue;
+
+    gchar *label = g_strdup_printf("[%s] %s",
+        purple_account_get_protocol_name(account),
+        purple_account_get_username(account));
+    AddOptionPtr(label, account);
+    g_free(label);
+  }
+  SetSelectedByDataPtr(purple_request_field_account_get_default_value(field));
+
   UpdateText();
   signal_selection_changed.connect(sigc::mem_fun(this,
         &AccountField::OnAccountChanged));
@@ -710,11 +727,21 @@ Request::FieldsDialog::AccountField::AccountField(PurpleRequestField *field)
 
 void Request::FieldsDialog::AccountField::UpdateText()
 {
+  PurpleAccount *account = purple_request_field_account_get_value(field);
+  gchar *label = g_strdup_printf("%s: [%s] %s",
+      purple_request_field_get_label(field),
+      purple_account_get_protocol_name(account),
+      purple_account_get_username(account));
+  SetText(label);
+  g_free(label);
 }
 
 void Request::FieldsDialog::AccountField::OnAccountChanged(Button& activator,
     size_t new_entry, const gchar *title, intptr_t data)
 {
+  purple_request_field_account_set_value(field,
+      reinterpret_cast<PurpleAccount*>(data));
+  UpdateText();
 }
 
 void Request::FieldsDialog::ResponseHandler(Dialog& activator,

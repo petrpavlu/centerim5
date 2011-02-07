@@ -154,6 +154,10 @@ void GeneralMenu::RequestTest(Button& activator)
   purple_request_field_list_add_selected(f, "Three");
   purple_request_field_group_add_field(g, f);
 
+  f = purple_request_field_account_new("account0", "Account field 0", NULL);
+  purple_request_field_account_set_show_all(f, TRUE);
+  purple_request_field_group_add_field(g, f);
+
   purple_request_fields(NULL, "Title", "Primary", "Secondary", fields,
       "ok_text", G_CALLBACK(fields_ok_cb_),
       "cancel_text", NULL,
@@ -197,4 +201,10 @@ void GeneralMenu::fields_ok_cb(PurpleRequestFields *fields)
       list = list->next)
     LOG->Debug("fields_ok_cb: list1=%s\n",
         reinterpret_cast<const gchar*>(list->data));
+
+  PurpleAccount *account = purple_request_fields_get_account(fields,
+      "account0");
+  LOG->Debug("fields_ok_cb: account0=[%s] %s\n",
+      purple_account_get_protocol_name(account),
+      purple_account_get_username(account));
 }
