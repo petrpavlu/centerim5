@@ -231,7 +231,8 @@ void TextEdit::Draw()
 
   std::vector<ScreenLine *>::iterator i;
   int j;
-  for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end() && j < realh; i++, j++) {
+  for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end()
+      && j < realh; i++, j++) {
     /// @todo
     if (gapstart >= (*i)->start && gapstart < (*i)->end) {
       int p;
@@ -397,7 +398,8 @@ int TextEdit::Width(const gchar *start, int chars) const
   return width;
 }
 
-gchar *TextEdit::GetScreenLine(gchar *text, int max_width, int *res_width, int *res_length) const
+gchar *TextEdit::GetScreenLine(gchar *text, int max_width, int *res_width,
+    int *res_length) const
 {
   g_assert(text);
   g_assert(text < bufend);
@@ -501,7 +503,8 @@ void TextEdit::UpdateScreenLines()
 
 void TextEdit::ClearScreenLines()
 {
-  for (std::vector<ScreenLine *>::iterator i = screen_lines.begin(); i != screen_lines.end(); i++)
+  for (std::vector<ScreenLine *>::iterator i = screen_lines.begin();
+      i != screen_lines.end(); i++)
     delete *i;
   screen_lines.clear();
 }
@@ -643,8 +646,9 @@ void TextEdit::MoveCursor(CursorMovement step, int direction)
          * current_sc_linepos on next line (and make sure there is
          * such position). */
         if (current_sc_line + 1 < (int) screen_lines.size())
-          current_pos += (screen_lines[current_sc_line]->length - current_sc_linepos)
-            + MIN(current_sc_linepos, screen_lines[current_sc_line + 1]->length);
+          current_pos += (screen_lines[current_sc_line]->length
+              - current_sc_linepos) + MIN(current_sc_linepos,
+                screen_lines[current_sc_line + 1]->length);
       }
       else if (direction < 0) {
         /* First move to start of current line then move to
@@ -660,9 +664,11 @@ void TextEdit::MoveCursor(CursorMovement step, int direction)
         /* Last line needs to be handled specially when moving to end
          * of line. */
         if (current_sc_line + 1 == (int) screen_lines.size())
-          current_pos += screen_lines[current_sc_line]->length - current_sc_linepos;
+          current_pos += screen_lines[current_sc_line]->length
+            - current_sc_linepos;
         else
-          current_pos += screen_lines[current_sc_line]->length - current_sc_linepos - 1;
+          current_pos += screen_lines[current_sc_line]->length
+            - current_sc_linepos - 1;
       }
       else if (direction < 0)
         current_pos -= current_sc_linepos;
@@ -706,7 +712,8 @@ int TextEdit::MoveForwardWordFromCursor()
 
   // search for the first nonwhite character after white characters
   while (new_pos < text_length) {
-    if (g_unichar_type(g_utf8_get_char(cur)) == G_UNICODE_SPACE_SEPARATOR || *cur == '\n')
+    if (g_unichar_type(g_utf8_get_char(cur)) == G_UNICODE_SPACE_SEPARATOR
+        || *cur == '\n')
       white = true;
     else if (white)
       break;
@@ -732,7 +739,8 @@ int TextEdit::MoveBackwardWordFromCursor()
 
   // search for the first white character before nonwhite characters
   while (new_pos >= 0) {
-    if (g_unichar_type(g_utf8_get_char(cur)) != G_UNICODE_SPACE_SEPARATOR && *cur != '\n')
+    if (g_unichar_type(g_utf8_get_char(cur)) != G_UNICODE_SPACE_SEPARATOR
+        && *cur != '\n')
       nonwhite = true;
     else if (nonwhite)
       break;
@@ -762,7 +770,8 @@ void TextEdit::ActionToggleOverwrite()
   ToggleOverwrite();
 }
 
-TextEdit::ScreenLine::ScreenLine(const gchar *start, const gchar *end, int length, int width)
+TextEdit::ScreenLine::ScreenLine(const gchar *start, const gchar *end,
+    int length, int width)
 : start(start), end(end), length(length), width(width)
 {
 }

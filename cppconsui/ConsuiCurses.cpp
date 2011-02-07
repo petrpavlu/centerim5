@@ -179,7 +179,7 @@ int Window::mvaddstring(int x, int y, int w, const gchar *str)
 
   int printed = 0;
   int p;
-  while (printed < w && *str) {
+  while (printed < w && str && *str) {
     str = PrintChar(str, &p);
     printed += p;
   }
@@ -195,7 +195,7 @@ int Window::mvaddstring(int x, int y, const gchar *str)
 
   int printed = 0;
   int p;
-  while (*str) {
+  while (str && *str) {
     str = PrintChar(str, &p);
     printed += p;
   }
@@ -215,7 +215,7 @@ int Window::mvaddstring(int x, int y, int w, const gchar *str, const gchar *end)
 
   int printed = 0;
   int p;
-  while (printed < w && *str) {
+  while (printed < w && str < end && str && *str) {
     str = PrintChar(str, &p, end);
     printed += p;
   }
@@ -235,7 +235,7 @@ int Window::mvaddstring(int x, int y, const gchar *str, const gchar *end)
 
   int printed = 0;
   int p;
-  while (str) {
+  while (str < end && str && *str) {
     str = PrintChar(str, &p, end);
     printed += p;
   }
