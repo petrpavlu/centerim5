@@ -100,6 +100,9 @@ bool Conversation::RegisterKeys()
 {
   RegisterKeyDef(CONTEXT_CONVERSATION, "send", _("Send the message."),
       Keys::UnicodeTermKey("x", TERMKEY_KEYMOD_CTRL));
+  // XXX move to default key bindings config
+  RegisterKeyDef(CONTEXT_CONVERSATION, "send", _("Send the message."),
+      Keys::SymbolTermKey(TERMKEY_SYM_ENTER));
   return true;
 }
 
