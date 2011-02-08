@@ -88,6 +88,9 @@ protected:
 
   Type type;
 
+  // Widget
+  virtual void Redraw();
+
   /**
    * Create the `real' window (not a pad) and makes sure its dimensions do
    * not exceed screen size

@@ -98,7 +98,7 @@ void ScrollPane::AdjustScroll(int newx, int newy)
     scroll_xpos = 0;
     scroll_ypos = 0;
   }
-  signal_redraw(*this);
+  Redraw();
 }
 
 void ScrollPane::MakeVisible(int x, int y)
@@ -141,7 +141,7 @@ void ScrollPane::MakeVisible(int x, int y)
   }
 
   if (redraw)
-    signal_redraw(*this);
+    Redraw();
 }
 
 void ScrollPane::DrawEx(bool container_draw)

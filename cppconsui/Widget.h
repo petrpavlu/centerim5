@@ -110,12 +110,6 @@ public:
 
   sigc::signal<void, Widget&, Rect&, Rect&> signal_moveresize;
   /**
-   * Redraw signal is used by a widget to tell its @ref Container object that
-   * the widget has been updated and that it should be redrawn. Usually only
-   * the @ref Container of a widget is connected to this signal.
-   */
-  sigc::signal<void, Widget&> signal_redraw;
-  /**
    * Signal emitted whenever a widget grabs or looses the focus.
    */
   sigc::signal<void, Widget&, bool> signal_focus;
@@ -159,6 +153,12 @@ protected:
    * Color scheme.
    */
   char *color_scheme;
+
+  /**
+   * Redraw() method is used by a widget to tell the CoreManager object that
+   * the widget has been updated and that the screen should be redrawn.
+   */
+  virtual void Redraw();
 
   /**
    * Convenient method that calls COLORSCHEME->GetColorPair(GetColorScheme(),

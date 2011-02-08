@@ -118,7 +118,7 @@ CoreManager *CoreManager::Instance()
 CoreManager::CoreManager()
 : top_input_processor(NULL), channel(NULL), channel_id(0), tk(NULL)
 , utf8(false), gmainloop(NULL) , screen_width(0), screen_height(0)
-, redrawpending(false), resizepending(false)
+, redraw_pending(false), resize_pending(false)
 {
   StdinInputInit();
 
@@ -153,11 +153,11 @@ CoreManager::~CoreManager()
   // close all windows
   int i = 0;
   while (i < (int) windows.size()) {
-    FreeWindow *win = windows[i].window;
+    FreeWindow *win = windows[i];
     /* There are two possibilities, either window is in Close() method removed
      * from the core manager or not, in the first case we don't increase i. */
     win->Close();
-    if (i < (int) windows.size() && windows[i].window == win)
+    if (i < (int) windows.size() && windows[i] == win)
       i++;
   }
 
@@ -192,24 +192,16 @@ void CoreManager::QuitMainLoop()
 
 void CoreManager::AddWindow(FreeWindow& window)
 {
-  WindowInfo info;
-
   Windows::iterator i = FindWindow(window);
 
   if (i != windows.end()) {
     /* Window is already added, AddWindow() was called to bring the window to
      * the top. */
-    info = *i;
     windows.erase(i);
-    windows.push_back(info);
+    windows.push_back(&window);
   }
   else {
-    info.window = &window;
-    info.redraw = window.signal_redraw.connect(sigc::mem_fun(this,
-          &CoreManager::WindowRedraw));
-    info.resize = signal_resize.connect(sigc::mem_fun(&window,
-          &FreeWindow::ScreenResized));
-    windows.push_back(info);
+    windows.push_back(&window);
     window.ScreenResized();
   }
 
@@ -222,13 +214,11 @@ void CoreManager::RemoveWindow(FreeWindow& window)
   Windows::iterator i;
 
   for (i = windows.begin(); i != windows.end(); i++)
-    if (i->window == &window)
+    if (*i == &window)
       break;
 
   g_assert(i != windows.end());
 
-  i->redraw.disconnect();
-  i->resize.disconnect();
   windows.erase(i);
 
   FocusWindow();
@@ -238,7 +228,7 @@ void CoreManager::RemoveWindow(FreeWindow& window)
 bool CoreManager::HasWindow(FreeWindow& window) const
 {
   for (Windows::const_iterator i = windows.begin(); i != windows.end(); i++)
-    if (i->window == &window)
+    if (*i == &window)
       return true;
 
   return false;
@@ -248,12 +238,12 @@ FreeWindow *CoreManager::GetTopWindow()
 {
   Windows::reverse_iterator i;
   for (i = windows.rbegin(); i != windows.rend(); i++)
-    if (i->window->GetType() == FreeWindow::TYPE_TOP)
-      return i->window;
+    if ((*i)->GetType() == FreeWindow::TYPE_TOP)
+      return *i;
 
   for (i = windows.rbegin(); i != windows.rend(); i++)
-    if (i->window->GetType() == FreeWindow::TYPE_NORMAL)
-      return i->window;
+    if ((*i)->GetType() == FreeWindow::TYPE_NORMAL)
+      return *i;
 
   // note non-focusable window cannot be a top window
   return NULL;
@@ -279,6 +269,14 @@ void CoreManager::DisableResizing()
   sigemptyset(&sig.sa_mask);
   sig.sa_flags = 0;
   sigaction(SIGWINCH, &sig, NULL);
+}
+
+void CoreManager::Redraw()
+{
+  if (!redraw_pending) {
+    redraw_pending = true;
+    TimeoutOnceConnect(sigc::mem_fun(this, &CoreManager::Draw), 0);
+  }
 }
 
 sigc::connection CoreManager::TimeoutConnect(const sigc::slot<bool>& slot,
@@ -409,8 +407,8 @@ void CoreManager::SignalHandler(int signum)
 
 void CoreManager::ScreenResized()
 {
-  if (!resizepending) {
-    resizepending = true;
+  if (!resize_pending) {
+    resize_pending = true;
     TimeoutOnceConnect(sigc::mem_fun(this, &CoreManager::Resize), 0);
   }
 }
@@ -419,8 +417,8 @@ void CoreManager::Resize()
 {
   struct winsize size;
 
-  if (resizepending)
-    resizepending = false;
+  if (resize_pending)
+    resize_pending = false;
 
   if (ioctl(fileno(stdout), TIOCGWINSZ, &size) >= 0)
     Curses::resizeterm(size.ws_row, size.ws_col);
@@ -434,47 +432,34 @@ void CoreManager::Resize()
 
 void CoreManager::Draw()
 {
-  if (redrawpending) {
+  if (redraw_pending) {
     Curses::erase();
     Curses::noutrefresh();
 
     // non-focusable -> normal -> top
     for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
-      if (i->window->GetType() == FreeWindow::TYPE_NON_FOCUSABLE)
-        i->window->Draw();
+      if ((*i)->GetType() == FreeWindow::TYPE_NON_FOCUSABLE)
+        (*i)->Draw();
 
     for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
-      if (i->window->GetType() == FreeWindow::TYPE_NORMAL)
-        i->window->Draw();
+      if ((*i)->GetType() == FreeWindow::TYPE_NORMAL)
+        (*i)->Draw();
 
     for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
-      if (i->window->GetType() == FreeWindow::TYPE_TOP)
-        i->window->Draw();
+      if ((*i)->GetType() == FreeWindow::TYPE_TOP)
+        (*i)->Draw();
 
     // copy virtual ncurses screen to the physical screen
     Curses::doupdate();
 
-    redrawpending = false;
+    redraw_pending = false;
   }
-}
-
-void CoreManager::Redraw()
-{
-  if (!redrawpending) {
-    redrawpending = true;
-    TimeoutOnceConnect(sigc::mem_fun(this, &CoreManager::Draw), 0);
-  }
-}
-
-void CoreManager::WindowRedraw(Widget& widget)
-{
-  Redraw();
 }
 
 CoreManager::Windows::iterator CoreManager::FindWindow(FreeWindow& window)
 {
   for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
-    if (i->window == &window)
+    if (*i == &window)
       return i;
   return windows.end();
 }
@@ -497,16 +482,16 @@ void CoreManager::FocusWindow()
 
   // try to find a top window first
   for (i = windows.rbegin(); i != windows.rend(); i++)
-    if (i->window->GetType() == FreeWindow::TYPE_TOP) {
-      win = i->window;
+    if ((*i)->GetType() == FreeWindow::TYPE_TOP) {
+      win = *i;
       break;
     }
 
   // normal windows
   if (!win)
     for (i = windows.rbegin(); i != windows.rend(); i++)
-      if (i->window->GetType() == FreeWindow::TYPE_NORMAL) {
-        win = i->window;
+      if ((*i)->GetType() == FreeWindow::TYPE_NORMAL) {
+        win = *i;
         break;
       }
 

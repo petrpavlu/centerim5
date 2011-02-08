@@ -73,6 +73,8 @@ public:
   InputProcessor *GetTopInputProcessor()
     { return top_input_processor; }
 
+  void Redraw();
+
   sigc::connection TimeoutConnect(const sigc::slot<bool>& slot,
       unsigned interval, int priority = G_PRIORITY_DEFAULT);
   sigc::connection TimeoutOnceConnect(const sigc::slot<void>& slot,
@@ -83,13 +85,7 @@ public:
 protected:
 
 private:
-  struct WindowInfo
-  {
-    FreeWindow *window;
-    sigc::connection redraw;
-    sigc::connection resize;
-  };
-  typedef std::vector<WindowInfo> Windows;
+  typedef std::vector<FreeWindow *> Windows;
 
   Windows windows;
 
@@ -105,8 +101,8 @@ private:
 
   int screen_width, screen_height;
 
-  bool redrawpending;
-  bool resizepending;
+  bool redraw_pending;
+  bool resize_pending;
 
   CoreManager();
   CoreManager(const CoreManager&);
@@ -145,8 +141,6 @@ private:
   void Resize();
 
   void Draw();
-  void Redraw();
-  void WindowRedraw(Widget& widget);
 
   Windows::iterator FindWindow(FreeWindow& window);
   void FocusWindow();

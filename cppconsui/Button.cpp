@@ -114,7 +114,7 @@ void Button::SetText(const gchar *new_text)
   else
     text = NULL;
 
-  signal_redraw(*this);
+  Redraw();
 }
 
 void Button::ActionActivate()

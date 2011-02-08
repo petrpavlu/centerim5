@@ -129,7 +129,7 @@ void CheckBox::SetText(const gchar *new_text)
   else
     text = NULL;
 
-  signal_redraw(*this);
+  Redraw();
 }
 
 void CheckBox::SetState(bool new_state)
@@ -139,18 +139,18 @@ void CheckBox::SetState(bool new_state)
 
   if (state != old_state)
     signal_toggle(*this, state);
-  signal_redraw(*this);
+  Redraw();
 }
 
 void CheckBox::SetStyle(Style new_style)
 {
   style = new_style;
-  signal_redraw(*this);
+  Redraw();
 }
 
 void CheckBox::ActionToggle()
 {
   state = !state;
-  signal_redraw(*this);
   signal_toggle(*this, state);
+  Redraw();
 }

@@ -77,7 +77,7 @@ void TextView::Insert(int line_num, const gchar *text, int color)
     line_num++;
   }
 
-  signal_redraw(*this);
+  Redraw();
 }
 
 void TextView::Erase(int line_num)
@@ -101,7 +101,7 @@ void TextView::Erase(int line_num)
       view_top = 0;
   }
 
-  signal_redraw(*this);
+  Redraw();
 }
 
 void TextView::Erase(int start_line, int end_line)
@@ -134,7 +134,7 @@ void TextView::Erase(int start_line, int end_line)
       view_top = 0;
   }
 
-  signal_redraw(*this);
+  Redraw();
 }
 
 void TextView::Clear()
@@ -149,7 +149,7 @@ void TextView::Clear()
   screen_lines.clear();
 
   view_top = 0;
-  signal_redraw(*this);
+  Redraw();
 }
 
 const gchar *TextView::GetLine(int line_num) const
@@ -184,7 +184,7 @@ void TextView::SetViewPos(int viewy)
 
   view_top = viewy;
 
-  signal_redraw(*this);
+  Redraw();
 }
 
 void TextView::Draw()

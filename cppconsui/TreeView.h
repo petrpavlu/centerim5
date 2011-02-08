@@ -185,7 +185,6 @@ protected:
      * Signal connection to the widget.
      * @todo Review.
      */
-    sigc::connection sig_redraw;
     sigc::connection sig_moveresize;
   };
 
@@ -212,7 +211,6 @@ protected:
   bool IsNodeVisible(const NodeReference& node) const;
 
   // handlers of signals
-  virtual void OnChildRedraw(Widget& widget);
   virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
       Rect& newsize);
 

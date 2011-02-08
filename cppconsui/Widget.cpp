@@ -29,6 +29,7 @@
 #include "Widget.h"
 
 #include "ColorScheme.h"
+#include "CoreManager.h"
 #include "Container.h"
 
 #include <string>
@@ -73,7 +74,7 @@ void Widget::UpdateArea()
   if (area)
     delete area;
   area = parent->GetSubPad(*this, xpos, ypos, width, height);
-  signal_redraw(*this);
+  Redraw();
 }
 
 Widget *Widget::GetFocusWidget()
@@ -90,7 +91,7 @@ void Widget::CleanFocus()
 
   has_focus = false;
   signal_focus(*this, false);
-  signal_redraw(*this);
+  Redraw();
 }
 
 void Widget::RestoreFocus()
@@ -105,7 +106,7 @@ void Widget::UngrabFocus()
 
   has_focus = false;
   signal_focus(*this, false);
-  signal_redraw(*this);
+  Redraw();
 }
 
 bool Widget::GrabFocus()
@@ -117,7 +118,7 @@ bool Widget::GrabFocus()
     if (parent->SetFocusChild(*this)) {
       has_focus = true;
       signal_focus(*this, true);
-      signal_redraw(*this);
+      Redraw();
     }
     return true;
   }
@@ -149,7 +150,7 @@ void Widget::SetVisibility(bool visible)
     }
 
     signal_visible(*this, visible);
-    signal_redraw(*this);
+    Redraw();
   }
 }
 
@@ -195,7 +196,7 @@ void Widget::SetColorScheme(const char *scheme)
   else
     color_scheme = NULL;
 
-  signal_redraw(*this);
+  Redraw();
 }
 
 const char *Widget::GetColorScheme()
@@ -206,6 +207,12 @@ const char *Widget::GetColorScheme()
     return parent->GetColorScheme();
 
   return NULL;
+}
+
+void Widget::Redraw()
+{
+  if (parent)
+    COREMANAGER->Redraw();
 }
 
 int Widget::GetColorPair(const char *widget, const char *property)

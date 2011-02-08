@@ -251,7 +251,7 @@ void TextEntry::SetText(const gchar *new_text)
   RecalculateLengths();
   current_pos = text_length;
 
-  signal_redraw(*this);
+  Redraw();
 }
 
 void TextEntry::SetFlags(int flags_)
@@ -354,7 +354,7 @@ void TextEntry::InsertTextAtCursor(const gchar *new_text, int new_text_bytes)
 
   current_pos = current_pos + n_chars;
 
-  signal_redraw(*this);
+  Redraw();
 
   signal_text_changed(*this);
 }
@@ -485,13 +485,13 @@ void TextEntry::ToggleOverwrite()
 void TextEntry::ActionMoveCursor(CursorMovement step, int direction)
 {
   MoveCursor(step, direction);
-  signal_redraw(*this);
+  Redraw();
 }
 
 void TextEntry::ActionDelete(DeleteType type, int direction)
 {
   DeleteFromCursor(type, direction);
-  signal_redraw(*this);
+  Redraw();
 }
 
 void TextEntry::ActionToggleOverwrite()

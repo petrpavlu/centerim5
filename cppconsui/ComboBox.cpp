@@ -140,6 +140,9 @@ void ComboBox::SetSelectedByData(intptr_t data)
 
 void ComboBox::OnDropDown(Button& activator)
 {
+  if (options.empty())
+    return;
+
   /// @todo Position correctly according to absolute coords.
   /// @todo Make sure that requested MenuWindow size can fit into the screen.
   dropdown = new MenuWindow(0, 0, max_option_width + 2, options.size() + 2);

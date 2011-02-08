@@ -428,19 +428,12 @@ void Container::InsertWidget(size_t pos, Widget& widget, int x, int y)
    */
   children[pos].sig_moveresize = widget.signal_moveresize.connect(
       sigc::mem_fun(this, &Container::OnChildMoveResize));
-  children[pos].sig_redraw = widget.signal_redraw.connect(
-      sigc::mem_fun(this, &Container::OnChildRedraw));
   children[pos].sig_visible = widget.signal_visible.connect(
       sigc::mem_fun(this, &Container::OnChildVisible));
 }
 
 void Container::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize)
 {
-}
-
-void Container::OnChildRedraw(Widget& widget)
-{
-  signal_redraw(*this);
 }
 
 void Container::OnChildVisible(Widget& widget, bool visible)

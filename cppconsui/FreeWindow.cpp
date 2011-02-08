@@ -46,6 +46,9 @@ FreeWindow::FreeWindow(int x, int y, int w, int h, Type t)
   MakeRealWindow();
   UpdateArea();
 
+  COREMANAGER->signal_resize.connect(sigc::mem_fun(this,
+        &FreeWindow::ScreenResized));
+
   DeclareBindables();
 }
 
@@ -90,7 +93,7 @@ void FreeWindow::UpdateArea()
   if (area)
     delete area;
   area = Curses::Window::newpad(win_w, win_h);
-  signal_redraw(*this);
+  Redraw();
 }
 
 void FreeWindow::Draw()
@@ -150,6 +153,11 @@ void FreeWindow::Close()
 
 void FreeWindow::ScreenResized()
 {
+}
+
+void FreeWindow::Redraw()
+{
+  COREMANAGER->Redraw();
 }
 
 void FreeWindow::MakeRealWindow()

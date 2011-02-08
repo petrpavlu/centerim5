@@ -172,7 +172,7 @@ void TextEdit::Clear()
 {
   InitBuffer(gap_size);
   UpdateScreenLines();
-  signal_redraw(*this);
+  Redraw();
 }
 
 gchar *TextEdit::AsString(const gchar *separator)
@@ -264,7 +264,7 @@ void TextEdit::MoveResize(int newx, int newy, int neww, int newh)
   UpdateScreenLines();
   UpdateScreenCursor();
 
-  signal_redraw(*this);
+  Redraw();
 }
 
 bool TextEdit::ProcessInputText(const TermKeyKey &key)
@@ -576,7 +576,7 @@ void TextEdit::InsertTextAtCursor(const gchar *new_text, int new_text_bytes)
 
   UpdateScreenLines();
   UpdateScreenCursor();
-  signal_redraw(*this);
+  Redraw();
 
   signal_text_changed(*this);
 }
@@ -624,7 +624,7 @@ void TextEdit::DeleteFromCursor(DeleteType type, int direction)
 
     UpdateScreenLines();
     UpdateScreenCursor();
-    signal_redraw(*this);
+    Redraw();
 
     signal_text_changed(*this);
   }
@@ -762,13 +762,13 @@ int TextEdit::MoveBackwardWordFromCursor()
 void TextEdit::ActionMoveCursor(CursorMovement step, int direction)
 {
   MoveCursor(step, direction);
-  signal_redraw(*this);
+  Redraw();
 }
 
 void TextEdit::ActionDelete(DeleteType type, int direction)
 {
   DeleteFromCursor(type, direction);
-  signal_redraw(*this);
+  Redraw();
 }
 
 void TextEdit::ActionToggleOverwrite()

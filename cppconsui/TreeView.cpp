@@ -192,7 +192,7 @@ void TreeView::Collapse(const NodeReference node)
   if (node->open) {
     node->open = false;
     FocusFix();
-    signal_redraw(*this);
+    Redraw();
   }
 }
 
@@ -200,14 +200,14 @@ void TreeView::Expand(const NodeReference node)
 {
   if (!node->open) {
     node->open = true;
-    signal_redraw(*this);
+    Redraw();
   }
 }
 
 void TreeView::ToggleCollapsed(const NodeReference node)
 {
   node->open = !node->open;
-  signal_redraw(*this);
+  Redraw();
 }
 
 void TreeView::ActionToggleCollapsed()
@@ -286,7 +286,7 @@ void TreeView::DeleteNode(const NodeReference node, bool keepchildren)
 
   thetree.erase(node);
   SetScrollHeight(GetScrollHeight() - shrink);
-  signal_redraw(*this);
+  Redraw();
 }
 
 void TreeView::DeleteChildren(const NodeReference node, bool keepchildren)
@@ -311,7 +311,7 @@ void TreeView::MoveBefore(const NodeReference node, const NodeReference position
   if (thetree.previous_sibling(position) != node) {
     thetree.move_before(position, node);
     FocusFix();
-    signal_redraw(*this);
+    Redraw();
   }
 }
 
@@ -320,7 +320,7 @@ void TreeView::MoveAfter(const NodeReference node, const NodeReference position)
   if (thetree.next_sibling(position) != node) {
     thetree.move_after(position, node);
     FocusFix();
-    signal_redraw(*this);
+    Redraw();
   }
 }
 
@@ -329,7 +329,7 @@ void TreeView::SetParent(const NodeReference node, const NodeReference newparent
   if (thetree.parent(node) != newparent) {
     thetree.move_ontop(thetree.append_child(newparent), node);
     FocusFix();
-    signal_redraw(*this);
+    Redraw();
   }
 }
 
@@ -337,7 +337,7 @@ void TreeView::SetStyle(const NodeReference node, Style s)
 {
   if (node->style != s) {
     node->style = s;
-    signal_redraw(*this);
+    Redraw();
   }
 }
 
@@ -453,12 +453,10 @@ void TreeView::AddNodeFinalize(NodeReference& iter)
 
   w->SetParent(*this);
 
-  iter->sig_redraw = w->signal_redraw.connect(sigc::mem_fun(this,
-        &TreeView::OnChildRedraw));
   iter->sig_moveresize = w->signal_moveresize.connect(sigc::mem_fun(this,
         &TreeView::OnChildMoveResize));
 
-  signal_redraw(*this);
+  Redraw();
 }
 
 void TreeView::FocusFix()
@@ -513,11 +511,6 @@ bool TreeView::IsNodeVisible(const NodeReference& node) const
     act = thetree.parent(act);
   }
   return true;
-}
-
-void TreeView::OnChildRedraw(Widget& widget)
-{
-  signal_redraw(*this);
 }
 
 void TreeView::OnChildMoveResize(Widget& widget, Rect &oldsize, Rect &newsize)

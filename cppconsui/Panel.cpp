@@ -116,7 +116,7 @@ void Panel::SetTitle(const gchar *text)
     title_width = 0;
   }
 
-  signal_redraw(*this);
+  Redraw();
 }
 
 const gchar *Panel::GetTitle() const
@@ -127,7 +127,7 @@ const gchar *Panel::GetTitle() const
 void Panel::SetBorderStyle(LineStyle::Type ltype)
 {
   linestyle.SetStyle(ltype);
-  signal_redraw(*this);
+  Redraw();
 }
 
 LineStyle::Type Panel::GetBorderStyle() const

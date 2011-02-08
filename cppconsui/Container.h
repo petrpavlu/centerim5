@@ -143,7 +143,6 @@ protected:
 
     // signal connection to the widget
     sigc::connection sig_moveresize;
-    sigc::connection sig_redraw;
     sigc::connection sig_visible;
   };
   typedef std::vector<Child> Children;
@@ -169,7 +168,6 @@ protected:
 
   virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
       Rect& newsize);
-  virtual void OnChildRedraw(Widget& widget);
   virtual void OnChildVisible(Widget& widget, bool visible);
 
 private:
