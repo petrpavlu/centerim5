@@ -163,6 +163,9 @@ bool TextEntry::RegisterKeys()
   RegisterKeyDef(CONTEXT_TEXTENTRY, "backspace",
       _("Delete character before cursor."),
       Keys::SymbolTermKey(TERMKEY_SYM_BACKSPACE));
+  RegisterKeyDef(CONTEXT_TEXTENTRY, "backspace",
+      _("Delete character before cursor."),
+      Keys::SymbolTermKey(TERMKEY_SYM_DEL));
 
   /// @todo enable
   /*
@@ -172,6 +175,9 @@ bool TextEntry::RegisterKeys()
   RegisterKeyDef(CONTEXT_TEXTENTRY, "delete-word-begin",
       _("Delete text until the beginning of the word at the cursor."),
       Keys::SymbolTermKey(TERMKEY_SYM_BACKSPACE, TERMKEY_KEYMOD_CTRL));
+  RegisterKeyDef(CONTEXT_TEXTENTRY, "delete-word-begin",
+      _("Delete text until the beginning of the word at the cursor."),
+      Keys::SymbolTermKey(TERMKEY_SYM_DEL, TERMKEY_KEYMOD_CTRL));
   RegisterKeyDef(CONTEXT_TEXTENTRY, "toggle-overwrite",
       _("Enable/Disable overwrite mode."),
       Keys::SymbolTermKey(TERMKEY_SYM_INSERT));
