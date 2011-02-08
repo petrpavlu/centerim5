@@ -113,6 +113,12 @@ bool CenterIM::RegisterKeys()
   RegisterKeyDef(CONTEXT_CENTERIM, "generalmenu",
       _("Open the general menu."),
       Keys::FunctionTermKey(4));
+  RegisterKeyDef(CONTEXT_CENTERIM, "generalmenu",
+      _("Open the general menu."),
+      Keys::UnicodeTermKey("g", TERMKEY_KEYMOD_CTRL));
+  RegisterKeyDef(CONTEXT_CENTERIM, "generalmenu",
+      _("Open the general menu."),
+      Keys::UnicodeTermKey("4", TERMKEY_KEYMOD_ALT));
   RegisterKeyDef(CONTEXT_CENTERIM, "conversation-prev",
       _("Switch the focus to the previous conversation."),
       Keys::UnicodeTermKey("p", TERMKEY_KEYMOD_ALT));
