@@ -80,7 +80,7 @@ private:
   };
 
   class AccountOptionString
-  : public Button
+  : public Button2
   {
   public:
     enum Type {
@@ -97,11 +97,10 @@ private:
     PurpleAccount *account;
     PurpleAccountOption *option;
     Type type;
-    const gchar *text;
-    const gchar *value;
 
-    void UpdateText();
-    void OnActivate(Button& activator);
+    void Initialize();
+    void UpdateValue();
+    void OnActivate(Button2& activator);
     void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
 
   private:
@@ -110,7 +109,7 @@ private:
   };
 
   class AccountOptionInt
-  : public Button
+  : public Button2
   {
   public:
     AccountOptionInt(PurpleAccount *account, PurpleAccountOption *option);
@@ -119,11 +118,9 @@ private:
   protected:
     PurpleAccount *account;
     PurpleAccountOption *option;
-    const gchar *text;
-    int value;
 
-    void UpdateText();
-    void OnActivate(Button& activator);
+    void UpdateValue();
+    void OnActivate(Button2& activator);
     void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
 
   private:
@@ -132,26 +129,20 @@ private:
   };
 
   class AccountOptionSplit
-  : public Button
+  : public Button2
   {
   public:
     AccountOptionSplit(PurpleAccount *account, PurpleAccountUserSplit *split,
         AccountEntry *account_entry);
-    virtual ~AccountOptionSplit();
-
-    void SetValue(const gchar *new_value);
-    const gchar *GetValue() const { return value; }
+    virtual ~AccountOptionSplit() {}
 
   protected:
     PurpleAccount *account;
     PurpleAccountUserSplit *split;
     AccountEntry *account_entry;
-    const char *text;
-    gchar *value;
 
     void UpdateSplits();
-    void UpdateText();
-    void OnActivate(Button& activator);
+    void OnActivate(Button2& activator);
     void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
 
   private:

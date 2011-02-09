@@ -337,14 +337,12 @@ void AccountWindow::AccountOptionBool::OnToggle(CheckBox& activator,
 
 AccountWindow::AccountOptionString::AccountOptionString(
     PurpleAccount *account, PurpleAccountOption *option)
-: account(account), option(option), type(TYPE_PURPLE), text(NULL), value(NULL)
+: account(account), option(option), type(TYPE_PURPLE)
 {
   g_assert(account);
   g_assert(option);
 
-  UpdateText();
-  signal_activate.connect(sigc::mem_fun(this,
-        &AccountOptionString::OnActivate));
+  Initialize();
 }
 
 AccountWindow::AccountOptionString::AccountOptionString(
@@ -353,39 +351,38 @@ AccountWindow::AccountOptionString::AccountOptionString(
 {
   g_assert(account);
 
-  UpdateText();
+  Initialize();
+}
+
+void AccountWindow::AccountOptionString::Initialize()
+{
+  if (type == TYPE_PASSWORD)
+    SetText(_("Password"));
+  else if (type == TYPE_ALIAS)
+    SetText(_("Alias"));
+  else
+    SetText(purple_account_option_get_text(option));
+
+  UpdateValue();
   signal_activate.connect(sigc::mem_fun(this,
         &AccountOptionString::OnActivate));
 }
 
-void AccountWindow::AccountOptionString::UpdateText()
+void AccountWindow::AccountOptionString::UpdateValue()
 {
-  if (type == TYPE_PASSWORD) {
-    text = _("Password");
-    value = purple_account_get_password(account);
-  }
-  else if (type == TYPE_ALIAS) {
-    text = _("Alias");
-    value = purple_account_get_alias(account);
-  }
-  else {
-    text = purple_account_option_get_text(option);
-    value = purple_account_get_string(account,
-        purple_account_option_get_setting(option),
-        purple_account_option_get_default_string(option));
-  }
-
-  if (!value)
-    value = "";
-
-  gchar *str = g_strdup_printf("%s: %s", text, value);
-  SetText(str);
-  g_free(str);
+  if (type == TYPE_PASSWORD)
+    SetValue(purple_account_get_password(account));
+  else if (type == TYPE_ALIAS)
+    SetValue(purple_account_get_alias(account));
+  else
+    SetValue(purple_account_get_string(account,
+          purple_account_option_get_setting(option),
+          purple_account_option_get_default_string(option)));
 }
 
-void AccountWindow::AccountOptionString::OnActivate(Button& activator)
+void AccountWindow::AccountOptionString::OnActivate(Button2& activator)
 {
-  InputDialog *dialog = new InputDialog(text, value);
+  InputDialog *dialog = new InputDialog(GetText(), GetValue());
   dialog->signal_response.connect(sigc::mem_fun(this,
         &AccountOptionString::ResponseHandler));
   dialog->Show();
@@ -407,7 +404,7 @@ void AccountWindow::AccountOptionString::ResponseHandler(Dialog& activator,
         purple_account_set_string(account,
             purple_account_option_get_setting(option), dialog->GetText());
 
-      UpdateText();
+      UpdateValue();
       break;
     default:
       break;
@@ -416,33 +413,26 @@ void AccountWindow::AccountOptionString::ResponseHandler(Dialog& activator,
 
 AccountWindow::AccountOptionInt::AccountOptionInt(PurpleAccount *account,
     PurpleAccountOption *option)
-: account(account), option(option), text(NULL), value(0)
+: account(account), option(option)
 {
   g_assert(account);
   g_assert(option);
 
-  UpdateText();
+  SetText(purple_account_option_get_text(option));
+  UpdateValue();
   signal_activate.connect(sigc::mem_fun(this, &AccountOptionInt::OnActivate));
 }
 
-void AccountWindow::AccountOptionInt::UpdateText()
+void AccountWindow::AccountOptionInt::UpdateValue()
 {
-  text = purple_account_option_get_text(option);
-  value = purple_account_get_int(account,
-      purple_account_option_get_setting(option),
-      purple_account_option_get_default_int(option));
-
-  gchar *str = g_strdup_printf("%s: %d", text, value);
-  SetText(str);
-  g_free(str);
+  SetValue(purple_account_get_int(account,
+        purple_account_option_get_setting(option),
+        purple_account_option_get_default_int(option)));
 }
 
-void AccountWindow::AccountOptionInt::OnActivate(Button& activator)
+void AccountWindow::AccountOptionInt::OnActivate(Button2& activator)
 {
-  gchar *value_string = g_strdup_printf("%d", value);
-  InputDialog *dialog = new InputDialog(text, value_string);
-  g_free(value_string);
-
+  InputDialog *dialog = new InputDialog(GetText(), GetValue());
   dialog->SetFlags(TextEntry::FLAG_NUMERIC);
   dialog->signal_response.connect(sigc::mem_fun(this,
         &AccountOptionInt::ResponseHandler));
@@ -468,7 +458,7 @@ void AccountWindow::AccountOptionInt::ResponseHandler(Dialog& activator,
       purple_account_set_int(account,
           purple_account_option_get_setting(option), i);
 
-      UpdateText();
+      UpdateValue();
       break;
     default:
       break;
@@ -477,34 +467,17 @@ void AccountWindow::AccountOptionInt::ResponseHandler(Dialog& activator,
 
 AccountWindow::AccountOptionSplit::AccountOptionSplit(PurpleAccount *account,
     PurpleAccountUserSplit *split, AccountEntry *account_entry)
-: account(account), split(split), account_entry(account_entry), value(NULL)
+: account(account), split(split), account_entry(account_entry)
 {
   g_assert(account);
 
   if (split)
-    text = purple_account_user_split_get_text(split);
-  else {
-    text = _("Username");
-    value =  g_strdup(purple_account_user_split_get_text(split));
-  }
-
-  UpdateText();
+    SetText(purple_account_user_split_get_text(split));
+  else
+    SetText(_("Username"));
 
   signal_activate.connect(sigc::mem_fun(this,
         &AccountOptionSplit::OnActivate));
-}
-
-AccountWindow::AccountOptionSplit::~AccountOptionSplit()
-{
-  if (value)
-    g_free(value);
-}
-
-void AccountWindow::AccountOptionSplit::UpdateText()
-{
-  gchar *str = g_strdup_printf("%s: %s", text, value ? value : "");
-  SetText(str);
-  g_free(str);
 }
 
 void AccountWindow::AccountOptionSplit::UpdateSplits()
@@ -529,8 +502,7 @@ void AccountWindow::AccountOptionSplit::UpdateSplits()
 
   for (iter = prplinfo->user_splits;
       iter && split_widget != split_widgets->end();
-      iter = iter->next, split_widget++)
-  {
+      iter = iter->next, split_widget++) {
     user_split = (PurpleAccountUserSplit*)iter->data;
     widget = *split_widget;
 
@@ -545,15 +517,7 @@ void AccountWindow::AccountOptionSplit::UpdateSplits()
   g_string_free(username, TRUE);
 }
 
-void AccountWindow::AccountOptionSplit::SetValue(const gchar *new_value)
-{
-  if (value)
-    g_free(value);
-  value = g_strdup(new_value);
-  UpdateText();
-}
-
-void AccountWindow::AccountOptionSplit::OnActivate(Button& activator)
+void AccountWindow::AccountOptionSplit::OnActivate(Button2& activator)
 {
   InputDialog *dialog = new InputDialog(text, value);
   dialog->signal_response.connect(sigc::mem_fun(this,

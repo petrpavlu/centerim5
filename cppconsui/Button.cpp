@@ -172,7 +172,8 @@ void Button2::Draw()
   int max = area->getmaxx() * area->getmaxy();
   int l = area->mvaddstring(0, 0, max, text);
   l += area->mvaddstring(l, 0, max - l, ": ");
-  area->mvaddstring(l, 0, max - l, value);
+  if (value)
+    area->mvaddstring(l, 0, max - l, value);
 
   if (has_focus)
     area->attroff(attrs | Curses::Attr::REVERSE);
@@ -190,6 +191,15 @@ void Button2::SetValue(const gchar *new_value)
   else
     value = NULL;
 
+  Redraw();
+}
+
+void Button2::SetValue(int new_value)
+{
+  if (value)
+    g_free(value);
+
+  value = g_strdup_printf("%d", new_value);
   Redraw();
 }
 

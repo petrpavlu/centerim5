@@ -110,6 +110,7 @@ public:
   virtual void Draw();
 
   virtual void SetValue(const gchar *new_value);
+  virtual void SetValue(int new_value);
   virtual const gchar *GetValue() const { return value; }
 
   /**
