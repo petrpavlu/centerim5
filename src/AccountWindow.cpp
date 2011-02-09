@@ -104,8 +104,6 @@ void AccountWindow::DropAccountResponseHandler(MessageDialog& activator,
 bool AccountWindow::ClearAccount(PurpleAccount *account, bool full)
 {
   AccountEntry *account_entry = &account_entries[account];
-  std::vector<Widget *>::iterator i;
-  std::list<AccountOptionSplit *>::iterator j;
 
   // move focus
   account_entry->parent->GrabFocus();
