@@ -26,7 +26,6 @@
 #include "Log.h"
 
 #include <cppconsui/Keys.h>
-#include <cppconsui/MessageDialog.h>
 
 #include <cstring>
 #include <errno.h>
@@ -89,11 +88,11 @@ void AccountWindow::DropAccount(Button& activator, PurpleAccount *account)
 }
 
 //TODO move to Accounts.cpp
-void AccountWindow::DropAccountResponseHandler(Dialog& activator,
-    Dialog::ResponseType response, PurpleAccount *account)
+void AccountWindow::DropAccountResponseHandler(MessageDialog& activator,
+    AbstractDialog::ResponseType response, PurpleAccount *account)
 {
   switch (response) {
-    case Dialog::RESPONSE_OK:
+    case AbstractDialog::RESPONSE_OK:
       purple_accounts_remove(account);
       ClearAccount(account, true);
       break;
@@ -388,21 +387,18 @@ void AccountWindow::AccountOptionString::OnActivate(Button2& activator)
   dialog->Show();
 }
 
-void AccountWindow::AccountOptionString::ResponseHandler(Dialog& activator,
-    Dialog::ResponseType response)
+void AccountWindow::AccountOptionString::ResponseHandler(
+    InputDialog& activator, AbstractDialog::ResponseType response)
 {
-  InputDialog *dialog = dynamic_cast<InputDialog*>(&activator);
-  g_assert(dialog);
-
   switch (response) {
-    case Dialog::RESPONSE_OK:
+    case AbstractDialog::RESPONSE_OK:
       if (type == TYPE_PASSWORD)
-        purple_account_set_password(account, dialog->GetText());
+        purple_account_set_password(account, activator.GetText());
       else if (type == TYPE_ALIAS)
-        purple_account_set_alias(account, dialog->GetText());
+        purple_account_set_alias(account, activator.GetText());
       else
         purple_account_set_string(account,
-            purple_account_option_get_setting(option), dialog->GetText());
+            purple_account_option_get_setting(option), activator.GetText());
 
       UpdateValue();
       break;
@@ -439,18 +435,15 @@ void AccountWindow::AccountOptionInt::OnActivate(Button2& activator)
   dialog->Show();
 }
 
-void AccountWindow::AccountOptionInt::ResponseHandler(Dialog& activator,
-    Dialog::ResponseType response)
+void AccountWindow::AccountOptionInt::ResponseHandler(InputDialog& activator,
+    AbstractDialog::ResponseType response)
 {
-  InputDialog *dialog = dynamic_cast<InputDialog*>(&activator);
-  g_assert(dialog);
-
   const gchar *text;
   long int i;
 
   switch (response) {
-    case Dialog::RESPONSE_OK:
-      text = dialog->GetText();
+    case AbstractDialog::RESPONSE_OK:
+      text = activator.GetText();
       errno = 0;
       i = strtol(text, NULL, 10);
       if (errno == ERANGE)
@@ -525,15 +518,12 @@ void AccountWindow::AccountOptionSplit::OnActivate(Button2& activator)
   dialog->Show();
 }
 
-void AccountWindow::AccountOptionSplit::ResponseHandler(Dialog& activator,
-    Dialog::ResponseType response)
+void AccountWindow::AccountOptionSplit::ResponseHandler(
+    InputDialog& activator, AbstractDialog::ResponseType response)
 {
-  InputDialog *dialog = dynamic_cast<InputDialog*>(&activator);
-  g_assert(dialog);
-
   switch (response) {
-    case Dialog::RESPONSE_OK:
-      SetValue(dialog->GetText());
+    case AbstractDialog::RESPONSE_OK:
+      SetValue(activator.GetText());
       UpdateSplits();
       break;
     default:

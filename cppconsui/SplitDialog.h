@@ -29,10 +29,10 @@
 #define __SPLITDIALOG_H__
 
 #include "Container.h"
-#include "Dialog.h"
+#include "AbstractDialog.h"
 
 class SplitDialog
-: public Dialog
+: public AbstractDialog
 {
 public:
   SplitDialog(int x, int y, int w, int h, const gchar *title = NULL,
@@ -50,6 +50,11 @@ public:
   virtual void SetContainer(Container& cont);
   virtual Container *GetContainer() const { return container; }
 
+  /**
+   * Signal emitted when the user closes the dialog.
+   */
+  sigc::signal<void, SplitDialog&, ResponseType> signal_response;
+
 protected:
   Container *container;
 
@@ -57,6 +62,9 @@ protected:
   Widget *buttons_old_focus;
   sigc::connection cont_old_focus_conn;
   sigc::connection buttons_old_focus_conn;
+
+  // AbstractDialog
+  virtual void EmitResponse(ResponseType response);
 
   virtual void OnOldFocusDelete(Widget& activator);
 

@@ -23,6 +23,7 @@
 
 #include <cppconsui/CheckBox.h>
 #include <cppconsui/ComboBox.h>
+#include <cppconsui/InputDialog.h>
 #include <cppconsui/TextEntry.h>
 #include <cppconsui/TreeView.h>
 #include <cppconsui/SplitDialog.h>
@@ -60,7 +61,7 @@ private:
     // convenient var, same as dynamic_cast<ListBox *>(container)
     ListBox *lbox;
 
-    virtual void ResponseHandler(Dialog& activator,
+    virtual void ResponseHandler(SplitDialog& activator,
         ResponseType response) = 0;
 
   private:
@@ -83,7 +84,8 @@ private:
   protected:
     TextEntry *entry;
 
-    virtual void ResponseHandler(Dialog& activator, ResponseType response);
+    virtual void ResponseHandler(SplitDialog& activator,
+        ResponseType response);
 
   private:
     InputTextDialog(const InputTextDialog&);
@@ -105,7 +107,8 @@ private:
   protected:
     ComboBox *combo;
 
-    virtual void ResponseHandler(Dialog& activator, ResponseType response);
+    virtual void ResponseHandler(SplitDialog& activator,
+        ResponseType response);
 
   private:
     ChoiceDialog(const ChoiceDialog&);
@@ -124,8 +127,8 @@ private:
     virtual PurpleRequestType GetRequestType();
 
   protected:
-
-    virtual void ResponseHandler(Dialog& activator, ResponseType response);
+    virtual void ResponseHandler(SplitDialog& activator,
+        ResponseType response);
 
   private:
     ActionDialog(const ActionDialog&);
@@ -162,7 +165,8 @@ private:
 
       void UpdateText();
       void OnActivate(Button& activator);
-      void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
+      void ResponseHandler(InputDialog& activator,
+          AbstractDialog::ResponseType response);
 
     private:
       StringField(const StringField&);
@@ -181,7 +185,8 @@ private:
 
       void UpdateText();
       void OnActivate(Button& activator);
-      void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
+      void ResponseHandler(InputDialog& activator,
+          AbstractDialog::ResponseType response);
 
     private:
       IntegerField(const IntegerField&);
@@ -327,7 +332,8 @@ private:
       AccountField& operator=(const AccountField&);
     };
 
-    virtual void ResponseHandler(Dialog& activator, ResponseType response);
+    virtual void ResponseHandler(SplitDialog& activator,
+        ResponseType response);
 
   private:
     FieldsDialog(const FieldsDialog&);
@@ -351,7 +357,8 @@ private:
   static void Finalize();
   friend class CenterIM;
 
-  void OnDialogResponse(Dialog& dialog, Dialog::ResponseType response);
+  void OnDialogResponse(SplitDialog& dialog,
+      AbstractDialog::ResponseType response);
 
   static void *request_input_(const char *title, const char *primary,
       const char *secondary, const char *default_value, gboolean multiline,

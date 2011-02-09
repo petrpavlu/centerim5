@@ -4,6 +4,8 @@ lib_LTLIBRARIES = libcppconsui.la
 
 # When you add files here, also add them in po/POTFILES.in
 libcppconsui_la_SOURCES =\
+	AbstractDialog.cpp \
+	AbstractDialog.h \
 	AbstractLine.cpp \
 	AbstractLine.h \
 	AbstractListBox.cpp \

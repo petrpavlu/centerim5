@@ -79,8 +79,8 @@ void Request::Finalize()
   instance = NULL;
 }
 
-void Request::OnDialogResponse(Dialog& dialog,
-    Dialog::ResponseType response)
+void Request::OnDialogResponse(SplitDialog& dialog,
+    AbstractDialog::ResponseType response)
 {
   RequestDialog *rdialog = dynamic_cast<RequestDialog*>(&dialog);
   g_assert(rdialog);
@@ -248,16 +248,16 @@ PurpleRequestType Request::InputTextDialog::GetRequestType()
   return PURPLE_REQUEST_INPUT;
 }
 
-void Request::InputTextDialog::ResponseHandler(Dialog& activator,
+void Request::InputTextDialog::ResponseHandler(SplitDialog& activator,
     ResponseType response)
 {
   switch (response) {
-    case Dialog::RESPONSE_OK:
+    case AbstractDialog::RESPONSE_OK:
       if (ok_cb)
         reinterpret_cast<PurpleRequestInputCb>(ok_cb)(user_data,
             entry->GetText());
       break;
-    case Dialog::RESPONSE_CANCEL:
+    case AbstractDialog::RESPONSE_CANCEL:
       if (cancel_cb)
         reinterpret_cast<PurpleRequestInputCb>(cancel_cb)(user_data,
             entry->GetText());
@@ -292,19 +292,19 @@ PurpleRequestType Request::ChoiceDialog::GetRequestType()
   return PURPLE_REQUEST_CHOICE;
 }
 
-void Request::ChoiceDialog::ResponseHandler(Dialog& activator,
+void Request::ChoiceDialog::ResponseHandler(SplitDialog& activator,
     ResponseType response)
 {
   size_t selected = combo->GetSelected();
   int data = combo->GetData(selected);
 
   switch (response) {
-    case Dialog::RESPONSE_OK:
+    case AbstractDialog::RESPONSE_OK:
       if (ok_cb)
         reinterpret_cast<PurpleRequestChoiceCb>(ok_cb)(user_data,
             data);
       break;
-    case Dialog::RESPONSE_CANCEL:
+    case AbstractDialog::RESPONSE_CANCEL:
       if (cancel_cb)
         reinterpret_cast<PurpleRequestChoiceCb>(cancel_cb)(user_data,
             data);
@@ -339,7 +339,7 @@ PurpleRequestType Request::ActionDialog::GetRequestType()
   return PURPLE_REQUEST_ACTION;
 }
 
-void Request::ActionDialog::ResponseHandler(Dialog& activator,
+void Request::ActionDialog::ResponseHandler(SplitDialog& activator,
     ResponseType response)
 {
 }
@@ -462,15 +462,12 @@ void Request::FieldsDialog::StringField::OnActivate(Button& activator)
   dialog->Show();
 }
 
-void Request::FieldsDialog::StringField::ResponseHandler(Dialog& activator,
-    Dialog::ResponseType response)
+void Request::FieldsDialog::StringField::ResponseHandler(
+    InputDialog& activator, AbstractDialog::ResponseType response)
 {
-  InputDialog *dialog = dynamic_cast<InputDialog*>(&activator);
-  g_assert(dialog);
-
   switch (response) {
-    case Dialog::RESPONSE_OK:
-      purple_request_field_string_set_value(field, dialog->GetText());
+    case AbstractDialog::RESPONSE_OK:
+      purple_request_field_string_set_value(field, activator.GetText());
       UpdateText();
       break;
     default:
@@ -498,18 +495,15 @@ void Request::FieldsDialog::IntegerField::UpdateText()
   g_free(text);
 }
 
-void Request::FieldsDialog::IntegerField::ResponseHandler(Dialog& activator,
-    Dialog::ResponseType response)
+void Request::FieldsDialog::IntegerField::ResponseHandler(
+    InputDialog& activator, AbstractDialog::ResponseType response)
 {
-  InputDialog *dialog = dynamic_cast<InputDialog*>(&activator);
-  g_assert(dialog);
-
   const gchar *text;
   long int i;
 
   switch (response) {
-    case Dialog::RESPONSE_OK:
-      text = dialog->GetText();
+    case AbstractDialog::RESPONSE_OK:
+      text = activator.GetText();
       errno = 0;
       i = strtol(text, NULL, 10);
       if (errno == ERANGE)
@@ -741,15 +735,15 @@ void Request::FieldsDialog::AccountField::OnAccountChanged(Button& activator,
   UpdateText();
 }
 
-void Request::FieldsDialog::ResponseHandler(Dialog& activator,
+void Request::FieldsDialog::ResponseHandler(SplitDialog& activator,
     ResponseType response)
 {
   switch (response) {
-    case Dialog::RESPONSE_OK:
+    case AbstractDialog::RESPONSE_OK:
       if (ok_cb)
         reinterpret_cast<PurpleRequestFieldsCb>(ok_cb)(user_data, fields);
       break;
-    case Dialog::RESPONSE_CANCEL:
+    case AbstractDialog::RESPONSE_CANCEL:
       if (cancel_cb)
         reinterpret_cast<PurpleRequestFieldsCb>(cancel_cb)(user_data, fields);
       break;

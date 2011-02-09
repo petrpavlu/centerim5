@@ -30,54 +30,16 @@
 
 Dialog::Dialog(int x, int y, int w, int h, const gchar *title,
     LineStyle::Type ltype)
-: Window(x, y, w, h, title, TYPE_TOP, ltype)
+: AbstractDialog(x, y, w, h, title, ltype)
 {
-  InitLayout();
 }
 
 Dialog::Dialog(const gchar *title, LineStyle::Type ltype)
-: Window(10, 10, 60, 12, title, TYPE_TOP, ltype)
+: AbstractDialog(title, ltype)
 {
-  /// @todo Set correct position.
-
-  InitLayout();
 }
 
-void Dialog::Close()
-{
-  Response(RESPONSE_CANCEL);
-}
-
-void Dialog::AddButton(const gchar *text, Dialog::ResponseType response)
-{
-  buttons->AppendItem(text, sigc::bind(sigc::mem_fun(this,
-          &Dialog::OnButtonResponse), response));
-}
-
-void Dialog::AddSeparator()
-{
-  buttons->AppendSeparator();
-}
-
-void Dialog::Response(Dialog::ResponseType response)
+void Dialog::EmitResponse(ResponseType response)
 {
   signal_response(*this, response);
-
-  Window::Close();
-}
-
-void Dialog::InitLayout()
-{
-  layout = new ListBox(AUTOSIZE, AUTOSIZE);
-  AddWidget(*layout, 0, 0);
-
-  separator = new HorizontalLine(AUTOSIZE);
-  layout->AppendWidget(*separator);
-  buttons = new HorizontalListBox(AUTOSIZE, 1);
-  layout->AppendWidget(*buttons);
-}
-
-void Dialog::OnButtonResponse(Button& activator, ResponseType response)
-{
-  Response(response);
 }

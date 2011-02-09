@@ -29,18 +29,25 @@
 #ifndef __MESSAGEDIALOG_H__
 #define __MESSAGEDIALOG_H__
 
-#include "Dialog.h"
-#include "Label.h"
+#include "AbstractDialog.h"
 
 class MessageDialog
-: public Dialog
+: public AbstractDialog
 {
 public:
   MessageDialog(const gchar *title, const gchar *text);
   virtual ~MessageDialog() {}
 
+  /**
+   * Signal emitted when the user closes the dialog.
+   */
+  sigc::signal<void, MessageDialog&, ResponseType> signal_response;
+
 protected:
   Label *label;
+
+  // AbstractDialog
+  virtual void EmitResponse(ResponseType response);
 
 private:
   MessageDialog(const MessageDialog&);

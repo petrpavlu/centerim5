@@ -31,7 +31,7 @@
 #include "gettext.h"
 
 InputDialog::InputDialog(const gchar *title, const gchar *defaultvalue)
-: Dialog(title)
+: AbstractDialog(title)
 {
   AddButton(_(OK_BUTTON_TEXT), InputDialog::RESPONSE_OK);
 
@@ -44,4 +44,9 @@ InputDialog::InputDialog(const gchar *title, const gchar *defaultvalue)
 const gchar *InputDialog::GetText() const
 {
   return entry->GetText();
+}
+
+void InputDialog::EmitResponse(ResponseType response)
+{
+  signal_response(*this, response);
 }

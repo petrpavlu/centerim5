@@ -29,39 +29,17 @@
 #ifndef __DIALOG_H__
 #define __DIALOG_H__
 
-#define OK_BUTTON_TEXT "Ok"
-#define CANCEL_BUTTON_TEXT "Cancel"
-#define YES_BUTTON_TEXT "Yes"
-#define NO_BUTTON_TEXT "No"
-
-#include "HorizontalLine.h"
-#include "HorizontalListBox.h"
-#include "ListBox.h"
-#include "Window.h"
+#include "AbstractDialog.h"
 
 class Dialog
-: public Window
+: public AbstractDialog
 {
 public:
-  enum ResponseType {
-    RESPONSE_OK,
-    RESPONSE_CANCEL, ///< Cancel button or close dialog.
-    RESPONSE_YES,
-    RESPONSE_NO
-  };
-
   Dialog(int x, int y, int w, int h, const gchar *title = NULL,
       LineStyle::Type ltype = LineStyle::DEFAULT);
   explicit Dialog(const gchar *title = NULL,
       LineStyle::Type ltype = LineStyle::DEFAULT);
   virtual ~Dialog() {}
-
-  // FreeWindow
-  virtual void Close();
-
-  void AddButton(const gchar *label, ResponseType response);
-  void AddSeparator();
-  void Response(ResponseType response);
 
   /**
    * Signal emitted when the user closes the dialog.
@@ -69,13 +47,8 @@ public:
   sigc::signal<void, Dialog&, ResponseType> signal_response;
 
 protected:
-  ListBox *layout;
-  HorizontalLine *separator;
-  HorizontalListBox *buttons;
-
-  void InitLayout();
-
-  void OnButtonResponse(Button& activator, ResponseType response);
+  // AbstractDialog
+  virtual void EmitResponse(ResponseType response);
 
 private:
   Dialog(const Dialog&);

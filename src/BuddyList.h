@@ -89,7 +89,8 @@ private:
 
     virtual void OnActivate(Button& activator);
 
-    void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
+    void ResponseHandler(InputDialog& activator,
+        AbstractDialog::ResponseType response);
   };
 
   class GroupBox

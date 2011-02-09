@@ -26,6 +26,7 @@
 #include <cppconsui/CheckBox.h>
 #include <cppconsui/ComboBox.h>
 #include <cppconsui/InputDialog.h>
+#include <cppconsui/MessageDialog.h>
 #include <cppconsui/SplitDialog.h>
 #include <cppconsui/TreeView.h>
 #include <libpurple/purple.h>
@@ -101,7 +102,8 @@ private:
     void Initialize();
     void UpdateValue();
     void OnActivate(Button2& activator);
-    void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
+    void ResponseHandler(InputDialog& activator,
+        AbstractDialog::ResponseType response);
 
   private:
     AccountOptionString(const AccountOptionString&);
@@ -121,7 +123,8 @@ private:
 
     void UpdateValue();
     void OnActivate(Button2& activator);
-    void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
+    void ResponseHandler(InputDialog& activator,
+        AbstractDialog::ResponseType response);
 
   private:
     AccountOptionInt(const AccountOptionInt&);
@@ -143,7 +146,8 @@ private:
 
     void UpdateSplits();
     void OnActivate(Button2& activator);
-    void ResponseHandler(Dialog& activator, Dialog::ResponseType response);
+    void ResponseHandler(InputDialog& activator,
+        AbstractDialog::ResponseType response);
 
   private:
     AccountOptionSplit(const AccountOptionSplit&);
@@ -181,8 +185,8 @@ private:
 
   void Add(Button& activator);
   void DropAccount(Button& activator, PurpleAccount *account);
-  void DropAccountResponseHandler(Dialog& activator,
-      Dialog::ResponseType response, PurpleAccount *account);
+  void DropAccountResponseHandler(MessageDialog& activator,
+      AbstractDialog::ResponseType response, PurpleAccount *account);
 
   TreeView *accounts;
 

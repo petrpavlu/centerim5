@@ -29,12 +29,12 @@
 #ifndef __INPUTDIALOG_H__
 #define __INPUTDIALOG_H__
 
-#include "Dialog.h"
+#include "AbstractDialog.h"
 
 #include "TextEntry.h"
 
 class InputDialog
-: public Dialog
+: public AbstractDialog
 {
 public:
   InputDialog(const gchar *title, const gchar *defaultvalue);
@@ -45,8 +45,16 @@ public:
   int GetFlags() { return entry->GetFlags(); }
   void SetFlags(int flags) { entry->SetFlags(flags); }
 
+  /**
+   * Signal emitted when the user closes the dialog.
+   */
+  sigc::signal<void, InputDialog&, ResponseType> signal_response;
+
 protected:
   TextEntry *entry;
+
+  // AbstractDialog
+  virtual void EmitResponse(ResponseType response);
 
 private:
   InputDialog(const InputDialog&);

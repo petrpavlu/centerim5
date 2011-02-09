@@ -31,14 +31,14 @@
 
 SplitDialog::SplitDialog(int x, int y, int w, int h, const gchar *title,
     LineStyle::Type ltype)
-: Dialog(x, y, w, h, title, ltype), container(NULL), cont_old_focus(NULL)
-, buttons_old_focus(NULL)
+: AbstractDialog(x, y, w, h, title, ltype), container(NULL)
+, cont_old_focus(NULL) , buttons_old_focus(NULL)
 {
   buttons->SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
 }
 
 SplitDialog::SplitDialog(const gchar *title, LineStyle::Type ltype)
-: Dialog(title, ltype), container(NULL), cont_old_focus(NULL)
+: AbstractDialog(title, ltype), container(NULL), cont_old_focus(NULL)
 , buttons_old_focus(NULL)
 {
   buttons->SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
@@ -74,13 +74,13 @@ void SplitDialog::CleanFocus()
     }
   }
 
-  Dialog::CleanFocus();
+  AbstractDialog::CleanFocus();
 }
 
 void SplitDialog::MoveFocus(FocusDirection direction)
 {
   if (!container) {
-    Dialog::MoveFocus(direction);
+    AbstractDialog::MoveFocus(direction);
     return;
   }
 
@@ -150,7 +150,7 @@ void SplitDialog::MoveFocus(FocusDirection direction)
     default:
       break;
   }
-  Dialog::MoveFocus(direction);
+  AbstractDialog::MoveFocus(direction);
 }
 
 void SplitDialog::SetContainer(Container& cont)
@@ -162,6 +162,11 @@ void SplitDialog::SetContainer(Container& cont)
   container = &cont;
   cont.SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
   layout->InsertWidget(0, cont);
+}
+
+void SplitDialog::EmitResponse(SplitDialog::ResponseType response)
+{
+  signal_response(*this, response);
 }
 
 void SplitDialog::OnOldFocusDelete(Widget& activator)

@@ -2,6 +2,7 @@
 
 # When you add files here, also add them in po/POTFILES.in
 set( cppconsui_SOURCES
+	AbstractDialog.cpp
 	AbstractLine.cpp
 	AbstractListBox.cpp
 	Button.cpp
@@ -39,6 +40,7 @@ set( cppconsui_SOURCES
 )
 
 set( cppconsui_HEADERS
+	AbstractDialog.h
 	AbstractLine.h
 	AbstractListBox.h
 	Button.h

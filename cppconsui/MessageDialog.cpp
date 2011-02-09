@@ -31,10 +31,15 @@
 #include "gettext.h"
 
 MessageDialog::MessageDialog(const gchar *title, const gchar *text)
-: Dialog(title)
+: AbstractDialog(title)
 {
-  AddButton(_(OK_BUTTON_TEXT), Dialog::RESPONSE_OK);
+  AddButton(_(OK_BUTTON_TEXT), RESPONSE_OK);
 
   label = new Label(AUTOSIZE, AUTOSIZE, text);
   layout->InsertWidget(0, *label);
+}
+
+void MessageDialog::EmitResponse(ResponseType response)
+{
+  signal_response(*this, response);
 }

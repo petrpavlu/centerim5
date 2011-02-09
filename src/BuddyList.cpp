@@ -260,13 +260,13 @@ void BuddyList::NameButton::OnActivate(Button& activator)
   dialog->Show();
 }
 
-void BuddyList::NameButton::ResponseHandler(Dialog& activator,
-    Dialog::ResponseType response)
+void BuddyList::NameButton::ResponseHandler(InputDialog& activator,
+    AbstractDialog::ResponseType response)
 {
   g_assert(dialog);
 
   switch (response) {
-    case Dialog::RESPONSE_OK:
+    case AbstractDialog::RESPONSE_OK:
       g_free(value);
       value = g_strdup(dialog->GetText());
 
