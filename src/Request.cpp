@@ -275,7 +275,7 @@ Request::ChoiceDialog::ChoiceDialog(const gchar *title, const gchar *primary,
 : RequestDialog(title, primary, secondary, ok_text, ok_cb, cancel_text,
     cancel_cb, user_data)
 {
-  combo = new ComboBox;
+  combo = new ComboBox(_("Selected value"));
   lbox->AppendWidget(*combo);
   combo->GrabFocus();
 
@@ -436,21 +436,16 @@ Request::FieldsDialog::StringField::StringField(PurpleRequestField *field)
   if (purple_request_field_string_is_masked(field))
     ; // TODO
 
-  UpdateText();
-  signal_activate.connect(sigc::mem_fun(this, &StringField::OnActivate));
-}
+  SetValueVisibility(true);
 
-void Request::FieldsDialog::StringField::UpdateText()
-{
-  const gchar *label = purple_request_field_get_label(field);
-  const char *value = purple_request_field_string_get_value(field);
-  if (!value)
-    value = "";
-
-  gchar *text = g_strdup_printf("%s%s: %s",
-      purple_request_field_is_required(field) ? "*" : "", label, value);
+  gchar *text = g_strdup_printf("%s%s",
+      purple_request_field_is_required(field) ? "*" : "",
+      purple_request_field_get_label(field));
   SetText(text);
   g_free(text);
+
+  SetValue(purple_request_field_string_get_value(field));
+  signal_activate.connect(sigc::mem_fun(this, &StringField::OnActivate));
 }
 
 void Request::FieldsDialog::StringField::OnActivate(Button& activator)
@@ -468,7 +463,7 @@ void Request::FieldsDialog::StringField::ResponseHandler(
   switch (response) {
     case AbstractDialog::RESPONSE_OK:
       purple_request_field_string_set_value(field, activator.GetText());
-      UpdateText();
+      SetValue(purple_request_field_string_get_value(field));
       break;
     default:
       break;
@@ -480,19 +475,16 @@ Request::FieldsDialog::IntegerField::IntegerField(PurpleRequestField *field)
 {
   g_assert(field);
 
-  UpdateText();
-  signal_activate.connect(sigc::mem_fun(this, &IntegerField::OnActivate));
-}
+  SetValueVisibility(true);
 
-void Request::FieldsDialog::IntegerField::UpdateText()
-{
-  const gchar *label = purple_request_field_get_label(field);
-  int value = purple_request_field_int_get_value(field);
-
-  gchar *text = g_strdup_printf("%s%s: %d",
-      purple_request_field_is_required(field) ? "*" : "", label, value);
+  gchar *text = g_strdup_printf("%s%s",
+      purple_request_field_is_required(field) ? "*" : "",
+      purple_request_field_get_label(field));
   SetText(text);
   g_free(text);
+
+  SetValue(purple_request_field_int_get_value(field));
+  signal_activate.connect(sigc::mem_fun(this, &IntegerField::OnActivate));
 }
 
 void Request::FieldsDialog::IntegerField::ResponseHandler(
@@ -509,8 +501,7 @@ void Request::FieldsDialog::IntegerField::ResponseHandler(
       if (errno == ERANGE)
         LOG->Warning(_("Value out of range.\n"));
       purple_request_field_int_set_value(field, i);
-
-      UpdateText();
+      SetValue(purple_request_field_int_get_value(field));
       break;
     default:
       break;
@@ -534,7 +525,12 @@ Request::FieldsDialog::BooleanField::BooleanField(PurpleRequestField *field)
 {
   g_assert(field);
 
-  SetText(purple_request_field_get_label(field));
+  gchar *text = g_strdup_printf("%s%s",
+      purple_request_field_is_required(field) ? "*" : "",
+      purple_request_field_get_label(field));
+  SetText(text);
+  g_free(text);
+
   SetState(purple_request_field_bool_get_value(field));
   signal_toggle.connect(sigc::mem_fun(this, &BooleanField::OnToggle));
 }
@@ -550,29 +546,25 @@ Request::FieldsDialog::ChoiceField::ChoiceField(PurpleRequestField *field)
 {
   g_assert(field);
 
+  gchar *text = g_strdup_printf("%s%s",
+      purple_request_field_is_required(field) ? "*" : "",
+      purple_request_field_get_label(field));
+  SetText(text);
+  g_free(text);
+
   for (GList *list = purple_request_field_choice_get_labels(field); list;
       list = list->next)
     AddOption(reinterpret_cast<const gchar*>(list->data));
   SetSelected(purple_request_field_choice_get_default_value(field));
 
-  UpdateText();
   signal_selection_changed.connect(sigc::mem_fun(this,
         &ChoiceField::OnSelectionChanged));
-}
-
-void Request::FieldsDialog::ChoiceField::UpdateText()
-{
-  gchar *label = g_strdup_printf("%s: %s",
-      purple_request_field_get_label(field), GetSelectedTitle());
-  SetText(label);
-  g_free(label);
 }
 
 void Request::FieldsDialog::ChoiceField::OnSelectionChanged(
     ComboBox& activator, int new_entry, const gchar *title, intptr_t data)
 {
   purple_request_field_choice_set_value(field, new_entry);
-  UpdateText();
 }
 
 Request::FieldsDialog::ListFieldMultiple::ListFieldMultiple(
@@ -633,6 +625,12 @@ Request::FieldsDialog::ListFieldSingle::ListFieldSingle(
 {
   g_assert(field);
 
+  gchar *text = g_strdup_printf("%s%s",
+      purple_request_field_is_required(field) ? "*" : "",
+      purple_request_field_get_label(field));
+  SetText(text);
+  g_free(text);
+
   GList *list = purple_request_field_list_get_items(field);
   for (int i = 0; list; i++, list = list->next) {
     const gchar *text = reinterpret_cast<const gchar*>(list->data);
@@ -641,17 +639,8 @@ Request::FieldsDialog::ListFieldSingle::ListFieldSingle(
       SetSelected(i);
   }
 
-  UpdateText();
   signal_selection_changed.connect(sigc::mem_fun(this,
         &ListFieldSingle::OnSelectionChanged));
-}
-
-void Request::FieldsDialog::ListFieldSingle::UpdateText()
-{
-  gchar *label = g_strdup_printf("%s: %s",
-      purple_request_field_get_label(field), GetSelectedTitle());
-  SetText(label);
-  g_free(label);
 }
 
 void Request::FieldsDialog::ListFieldSingle::OnSelectionChanged(
@@ -659,7 +648,6 @@ void Request::FieldsDialog::ListFieldSingle::OnSelectionChanged(
 {
   purple_request_field_list_clear_selected(field);
   purple_request_field_list_add_selected(field, title);
-  UpdateText();
 }
 
 Request::FieldsDialog::LabelField::LabelField(PurpleRequestField *field)
@@ -675,14 +663,15 @@ Request::FieldsDialog::ImageField::ImageField(PurpleRequestField *field)
 {
   g_assert(field);
 
+  gchar *text = g_strdup_printf("%s%s",
+      purple_request_field_is_required(field) ? "*" : "",
+      purple_request_field_get_label(field));
+  SetText(text);
+  g_free(text);
+
   // TODO
 
-  UpdateText();
   signal_activate.connect(sigc::mem_fun(this, &ImageField::OnActivate));
-}
-
-void Request::FieldsDialog::ImageField::UpdateText()
-{
 }
 
 void Request::FieldsDialog::ImageField::OnActivate(Button& activator)
@@ -696,6 +685,12 @@ Request::FieldsDialog::AccountField::AccountField(PurpleRequestField *field)
 
   // TODO filter (purple_request_field_account_get_filter())
   // TODO signals (signed-on, signed-off, account-added, account-removed)
+
+  gchar *text = g_strdup_printf("%s%s",
+      purple_request_field_is_required(field) ? "*" : "",
+      purple_request_field_get_label(field));
+  SetText(text);
+  g_free(text);
 
   gboolean show_all = purple_request_field_account_get_show_all(field);
   for (GList *list = purple_accounts_get_all(); list; list = list->next) {
@@ -711,20 +706,8 @@ Request::FieldsDialog::AccountField::AccountField(PurpleRequestField *field)
   }
   SetSelectedByDataPtr(purple_request_field_account_get_default_value(field));
 
-  UpdateText();
   signal_selection_changed.connect(sigc::mem_fun(this,
         &AccountField::OnAccountChanged));
-}
-
-void Request::FieldsDialog::AccountField::UpdateText()
-{
-  PurpleAccount *account = purple_request_field_account_get_value(field);
-  gchar *label = g_strdup_printf("%s: [%s] %s",
-      purple_request_field_get_label(field),
-      purple_account_get_protocol_name(account),
-      purple_account_get_username(account));
-  SetText(label);
-  g_free(label);
 }
 
 void Request::FieldsDialog::AccountField::OnAccountChanged(Button& activator,
@@ -732,7 +715,6 @@ void Request::FieldsDialog::AccountField::OnAccountChanged(Button& activator,
 {
   purple_request_field_account_set_value(field,
       reinterpret_cast<PurpleAccount*>(data));
-  UpdateText();
 }
 
 void Request::FieldsDialog::ResponseHandler(SplitDialog& activator,

@@ -38,6 +38,7 @@ ComboBox::ComboBox(int w, int h, const gchar *text)
 , selected_entry(0)
 , max_option_width(0)
 {
+  SetValueVisibility(true);
   signal_activate.connect(sigc::mem_fun(this, &ComboBox::OnDropDown));
 }
 
@@ -47,6 +48,7 @@ ComboBox::ComboBox(const gchar *text)
 , selected_entry(0)
 , max_option_width(0)
 {
+  SetValueVisibility(true);
   signal_activate.connect(sigc::mem_fun(this, &ComboBox::OnDropDown));
 }
 
@@ -87,7 +89,7 @@ void ComboBox::AddOption(const gchar *text, intptr_t data)
   // set this option as selected if there isn't any other yet
   if (options.empty()) {
     selected_entry = 0;
-    SetText(text);
+    SetValue(text);
   }
 
   options.push_back(e);
@@ -123,7 +125,7 @@ void ComboBox::SetSelected(int new_entry)
   g_assert(new_entry < (int) options.size());
 
   selected_entry = new_entry;
-  SetText(options[new_entry].title);
+  SetValue(options[new_entry].title);
 
   /// @todo Emit signal here?
   //signal_selection_changed(*this, new_entry, e.title, e.data);
@@ -172,7 +174,7 @@ void ComboBox::DropDownOk(Button& activator, int new_entry)
 
   selected_entry = new_entry;
   ComboBoxEntry e = options[new_entry];
-  SetText(e.title);
+  SetValue(e.title);
   signal_selection_changed(*this, new_entry, e.title, e.data);
 }
 

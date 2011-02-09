@@ -541,16 +541,15 @@ AccountWindow::AccountOptionProtocol::AccountOptionProtocol(
 {
   g_assert(account);
 
+  SetText(_("Protocol"));
+
   for (GList *i = purple_plugins_get_protocols(); i; i = i->next)
-    AddOptionPtr(reinterpret_cast<PurplePlugin*>(i->data)->info->name,
-        i->data);
+    AddOptionPtr(purple_plugin_get_name(
+          reinterpret_cast<PurplePlugin*>(i->data)), i->data);
 
   const char *proto_id = purple_account_get_protocol_id(account);
   PurplePlugin *plugin = purple_plugins_find_with_id(proto_id);
   SetSelectedByDataPtr(plugin);
-  gchar *label = g_strdup_printf(_("Protocol: %s"), plugin->info->name);
-  SetText(label);
-  g_free(label);
 
   signal_selection_changed.connect(sigc::mem_fun(this,
         &AccountOptionProtocol::OnProtocolChanged));

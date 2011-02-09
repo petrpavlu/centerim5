@@ -110,6 +110,7 @@ void GeneralMenu::RequestTest(Button& activator)
       "Action 2", G_CALLBACK(action_cb_));
 #endif
 
+#if 1
   PurpleRequestFields *fields = purple_request_fields_new();
   PurpleRequestFieldGroup *g = purple_request_field_group_new("Group 0");;
 
@@ -160,6 +161,7 @@ void GeneralMenu::RequestTest(Button& activator)
       "ok_text", G_CALLBACK(fields_ok_cb_),
       "cancel_text", NULL,
       NULL, NULL, NULL, this);
+#endif
   Close();
 }
 

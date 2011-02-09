@@ -163,7 +163,6 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void UpdateText();
       void OnActivate(Button& activator);
       void ResponseHandler(InputDialog& activator,
           AbstractDialog::ResponseType response);
@@ -183,7 +182,6 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void UpdateText();
       void OnActivate(Button& activator);
       void ResponseHandler(InputDialog& activator,
           AbstractDialog::ResponseType response);
@@ -220,7 +218,6 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void UpdateText();
       void OnSelectionChanged(ComboBox& activator, int new_entry,
           const gchar *title, intptr_t data);
 
@@ -271,7 +268,6 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void UpdateText();
       void OnSelectionChanged(ComboBox& activator, int new_entry,
           const gchar *title, intptr_t data);
 
@@ -305,7 +301,6 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void UpdateText();
       void OnActivate(Button& activator);
 
     private:
@@ -323,7 +318,6 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void UpdateText();
       void OnAccountChanged(Button& activator, size_t new_entry,
           const gchar *title, intptr_t data);
 
