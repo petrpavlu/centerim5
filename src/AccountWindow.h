@@ -81,7 +81,7 @@ private:
   };
 
   class AccountOptionString
-  : public Button2
+  : public Button
   {
   public:
     enum Type {
@@ -101,7 +101,7 @@ private:
 
     void Initialize();
     void UpdateValue();
-    void OnActivate(Button2& activator);
+    void OnActivate(Button& activator);
     void ResponseHandler(InputDialog& activator,
         AbstractDialog::ResponseType response);
 
@@ -111,7 +111,7 @@ private:
   };
 
   class AccountOptionInt
-  : public Button2
+  : public Button
   {
   public:
     AccountOptionInt(PurpleAccount *account, PurpleAccountOption *option);
@@ -122,7 +122,7 @@ private:
     PurpleAccountOption *option;
 
     void UpdateValue();
-    void OnActivate(Button2& activator);
+    void OnActivate(Button& activator);
     void ResponseHandler(InputDialog& activator,
         AbstractDialog::ResponseType response);
 
@@ -132,7 +132,7 @@ private:
   };
 
   class AccountOptionSplit
-  : public Button2
+  : public Button
   {
   public:
     AccountOptionSplit(PurpleAccount *account, PurpleAccountUserSplit *split,
@@ -145,7 +145,7 @@ private:
     AccountEntry *account_entry;
 
     void UpdateSplits();
-    void OnActivate(Button2& activator);
+    void OnActivate(Button& activator);
     void ResponseHandler(InputDialog& activator,
         AbstractDialog::ResponseType response);
 

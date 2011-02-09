@@ -31,13 +31,22 @@
 
 #include "Widget.h"
 
-class AbstractButton
+/**
+ * This class implements a simple button behaviour.
+ *
+ * The button does not keep states like pressed or not and it can call back
+ * one (or more) functions when pressed.
+ */
+class Button
 : public Widget
 {
 public:
-  AbstractButton(int w, int h, const gchar *text_ = NULL);
-  explicit AbstractButton(const gchar *text_ = NULL);
-  virtual ~AbstractButton();
+  Button(int w, int h, const gchar *text_ = NULL, const gchar *value_ = NULL);
+  explicit Button(const gchar *text_ = NULL, const gchar *value_ = NULL);
+  virtual ~Button();
+
+  // Widget
+  virtual void Draw();
 
   /**
    * Sets a new text and redraws itself.
@@ -48,39 +57,12 @@ public:
    */
   virtual const gchar *GetText() const { return text; }
 
-protected:
-  gchar *text;
+  virtual void SetValue(const gchar *new_value);
+  virtual void SetValue(int new_value);
+  virtual const gchar *GetValue() const { return value; }
 
-private:
-  AbstractButton(const AbstractButton&);
-  AbstractButton& operator=(const AbstractButton&);
-
-  virtual void ActionActivate() = 0;
-
-  /**
-   * Registration of defined keys.
-   */
-  DECLARE_SIG_REGISTERKEYS();
-  static bool RegisterKeys();
-  void DeclareBindables();
-};
-
-/**
- * This class implements a simple button behaviour.
- *
- * The button does not keep states like pressed or not and it can call back
- * one (or more) functions when pressed.
- */
-class Button
-: public AbstractButton
-{
-public:
-  Button(int w, int h, const gchar *text_ = NULL);
-  explicit Button(const gchar *text_ = NULL);
-  virtual ~Button() {}
-
-  // Widget
-  virtual void Draw();
+  virtual void SetValueVisibility(bool visible);
+  virtual bool GetValueVisibility() const { return value_visible; }
 
   /**
    * Emited signal when the button is pressed/activated.
@@ -88,44 +70,22 @@ public:
   sigc::signal<void, Button&> signal_activate;
 
 protected:
+  gchar *text;
+  gchar *value;
+  bool value_visible;
 
 private:
   Button(const Button&);
   Button& operator=(const Button&);
 
-  virtual void ActionActivate();
-};
-
-/**
- */
-class Button2
-: public AbstractButton
-{
-public:
-  Button2(int w, int h, const gchar *text_ = NULL, const gchar *value_ = NULL);
-  Button2(const gchar *text_ = NULL, const gchar *value_ = NULL);
-  virtual ~Button2();
-
-  // Widget
-  virtual void Draw();
-
-  virtual void SetValue(const gchar *new_value);
-  virtual void SetValue(int new_value);
-  virtual const gchar *GetValue() const { return value; }
+  void ActionActivate();
 
   /**
-   * Emited signal when the button is pressed/activated.
+   * Registration of defined keys.
    */
-  sigc::signal<void, Button2&> signal_activate;
-
-protected:
-  gchar *value;
-
-private:
-  Button2(const Button2&);
-  Button2& operator=(const Button2&);
-
-  virtual void ActionActivate();
+  DECLARE_SIG_REGISTERKEYS();
+  static bool RegisterKeys();
+  void DeclareBindables();
 };
 
 #endif // __BUTTON_H__

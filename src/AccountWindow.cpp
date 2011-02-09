@@ -355,6 +355,8 @@ AccountWindow::AccountOptionString::AccountOptionString(
 
 void AccountWindow::AccountOptionString::Initialize()
 {
+  SetValueVisibility(true);
+
   if (type == TYPE_PASSWORD)
     SetText(_("Password"));
   else if (type == TYPE_ALIAS)
@@ -379,7 +381,7 @@ void AccountWindow::AccountOptionString::UpdateValue()
           purple_account_option_get_default_string(option)));
 }
 
-void AccountWindow::AccountOptionString::OnActivate(Button2& activator)
+void AccountWindow::AccountOptionString::OnActivate(Button& activator)
 {
   InputDialog *dialog = new InputDialog(GetText(), GetValue());
   dialog->signal_response.connect(sigc::mem_fun(this,
@@ -414,6 +416,7 @@ AccountWindow::AccountOptionInt::AccountOptionInt(PurpleAccount *account,
   g_assert(account);
   g_assert(option);
 
+  SetValueVisibility(true);
   SetText(purple_account_option_get_text(option));
   UpdateValue();
   signal_activate.connect(sigc::mem_fun(this, &AccountOptionInt::OnActivate));
@@ -426,7 +429,7 @@ void AccountWindow::AccountOptionInt::UpdateValue()
         purple_account_option_get_default_int(option)));
 }
 
-void AccountWindow::AccountOptionInt::OnActivate(Button2& activator)
+void AccountWindow::AccountOptionInt::OnActivate(Button& activator)
 {
   InputDialog *dialog = new InputDialog(GetText(), GetValue());
   dialog->SetFlags(TextEntry::FLAG_NUMERIC);
@@ -464,6 +467,7 @@ AccountWindow::AccountOptionSplit::AccountOptionSplit(PurpleAccount *account,
 {
   g_assert(account);
 
+  SetValueVisibility(true);
   if (split)
     SetText(purple_account_user_split_get_text(split));
   else
@@ -510,7 +514,7 @@ void AccountWindow::AccountOptionSplit::UpdateSplits()
   g_string_free(username, TRUE);
 }
 
-void AccountWindow::AccountOptionSplit::OnActivate(Button2& activator)
+void AccountWindow::AccountOptionSplit::OnActivate(Button& activator)
 {
   InputDialog *dialog = new InputDialog(text, value);
   dialog->signal_response.connect(sigc::mem_fun(this,

@@ -34,66 +34,48 @@
 
 #define CONTEXT_BUTTON "button"
 
-AbstractButton::AbstractButton(int w, int h, const gchar *text_)
-: Widget(w, h), text(NULL)
+Button::Button(int w, int h, const gchar *text_, const gchar *value_)
+: Widget(w, h), text(NULL), value(NULL), value_visible(false)
 {
   SetText(text_);
+  SetValue(value_);
 
   can_focus = true;
   DeclareBindables();
 }
 
-AbstractButton::AbstractButton(const gchar *text_)
-: Widget(AUTOSIZE, 1), text(NULL)
+Button::Button(const gchar *text_, const gchar *value_)
+: Widget(AUTOSIZE, 1), text(NULL), value(NULL), value_visible(false)
 {
   SetText(text_);
+  SetValue(value_);
 
   can_focus = true;
   DeclareBindables();
 }
 
-AbstractButton::~AbstractButton()
+Button::~Button()
 {
   if (text)
     g_free(text);
+  if (value)
+    g_free(value);
 }
 
-void AbstractButton::DeclareBindables()
+void Button::DeclareBindables()
 {
   DeclareBindable(CONTEXT_BUTTON, "activate", sigc::mem_fun(this,
-        &AbstractButton::ActionActivate), InputProcessor::BINDABLE_NORMAL);
+        &Button::ActionActivate), InputProcessor::BINDABLE_NORMAL);
 }
 
-DEFINE_SIG_REGISTERKEYS(AbstractButton, RegisterKeys);
-bool AbstractButton::RegisterKeys()
+DEFINE_SIG_REGISTERKEYS(Button, RegisterKeys);
+bool Button::RegisterKeys()
 {
   RegisterKeyDef(CONTEXT_BUTTON, "activate", _("Activate the button"),
       Keys::SymbolTermKey(TERMKEY_SYM_ENTER));
   return true;
 }
 
-void AbstractButton::SetText(const gchar *new_text)
-{
-  if (text)
-    g_free(text);
-
-  if (new_text)
-    text = g_strdup(new_text);
-  else
-    text = NULL;
-
-  Redraw();
-}
-
-Button::Button(int w, int h, const gchar *text_)
-: AbstractButton(w, h, text_)
-{
-}
-
-Button::Button(const gchar *text_)
-: AbstractButton(text_)
-{
-}
 
 void Button::Draw()
 {
@@ -117,63 +99,12 @@ void Button::Draw()
    */
 
   int max = area->getmaxx() * area->getmaxy();
-  area->mvaddstring(0, 0, max, text);
-
-  if (has_focus)
-    area->attroff(attrs | Curses::Attr::REVERSE);
-  else
-    area->attroff(attrs);
-}
-
-void Button::ActionActivate()
-{
-  signal_activate(*this);
-}
-
-Button2::Button2(int w, int h, const gchar *text_, const gchar *value_)
-: AbstractButton(w, h, text_), value(NULL)
-{
-  SetValue(value_);
-}
-
-Button2::Button2(const gchar *text_, const gchar *value_)
-: AbstractButton(text_), value(NULL)
-{
-  SetValue(value_);
-}
-
-Button2::~Button2()
-{
-  if (value)
-    g_free(value);
-}
-
-void Button2::Draw()
-{
-  if (!area || !text)
-    return;
-
-  int attrs;
-  if (has_focus) {
-    attrs = GetColorPair("button", "focus");
-    area->attron(attrs | Curses::Attr::REVERSE);
-  }
-  else {
-    attrs = GetColorPair("button", "normal");
-    area->attron(attrs);
-  }
-
-  /**
-   * @todo Though this is not a widget for long text there are some cases in
-   * cim where we use it for a short but multiline text, so we should threat
-   * LF specially here.
-   */
-
-  int max = area->getmaxx() * area->getmaxy();
   int l = area->mvaddstring(0, 0, max, text);
-  l += area->mvaddstring(l, 0, max - l, ": ");
-  if (value)
-    area->mvaddstring(l, 0, max - l, value);
+  if (value_visible) {
+    l += area->mvaddstring(l, 0, max - l, ": ");
+    if (value)
+      area->mvaddstring(l, 0, max - l, value);
+  }
 
   if (has_focus)
     area->attroff(attrs | Curses::Attr::REVERSE);
@@ -181,7 +112,20 @@ void Button2::Draw()
     area->attroff(attrs);
 }
 
-void Button2::SetValue(const gchar *new_value)
+void Button::SetText(const gchar *new_text)
+{
+  if (text)
+    g_free(text);
+
+  if (new_text)
+    text = g_strdup(new_text);
+  else
+    text = NULL;
+
+  Redraw();
+}
+
+void Button::SetValue(const gchar *new_value)
 {
   if (value)
     g_free(value);
@@ -194,7 +138,7 @@ void Button2::SetValue(const gchar *new_value)
   Redraw();
 }
 
-void Button2::SetValue(int new_value)
+void Button::SetValue(int new_value)
 {
   if (value)
     g_free(value);
@@ -203,7 +147,12 @@ void Button2::SetValue(int new_value)
   Redraw();
 }
 
-void Button2::ActionActivate()
+void Button::SetValueVisibility(bool visible)
+{
+  value_visible = visible;
+}
+
+void Button::ActionActivate()
 {
   signal_activate(*this);
 }

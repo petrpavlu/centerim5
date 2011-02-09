@@ -44,7 +44,6 @@ class ComboBox
 public:
   ComboBox(int w, int h, const gchar *text_ = NULL);
   explicit ComboBox(const gchar *text_ = NULL);
-
   virtual ~ComboBox();
 
   /**
