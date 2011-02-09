@@ -175,191 +175,69 @@ void BuddyList::destroy(PurpleBuddyList *list)
 void BuddyList::request_add_buddy(PurpleAccount *account,
     const char *username, const char *group, const char *alias)
 {
-  AddBuddyWindow *bud = new AddBuddyWindow(account, username, group, alias);
-  bud->Show();
-}
-
-BuddyList::AccountsBox::AccountsBox(PurpleAccount *account)
-: selected(account)
-{
-  GList *i = purple_accounts_get_all();
-
-  if (!selected && i)
-    selected = (PurpleAccount *) i->data;
-
-  for ( ; i; i = i->next) {
-    PurpleAccount *account = (PurpleAccount *) i->data;
-    gchar *label = g_strdup_printf("[%s] %s",
-        purple_account_get_protocol_name(account),
-        purple_account_get_username(account));
-    AddOptionPtr(label, account);
-    g_free(label);
-  }
-
-  UpdateText();
-
-  signal_selection_changed.connect(sigc::mem_fun(this,
-        &BuddyList::AccountsBox::OnAccountChanged));
-}
-
-void BuddyList::AccountsBox::UpdateText()
-{
-  gchar *label = g_strdup_printf("%s: [%s] %s", _("Account"),
-      purple_account_get_protocol_name(selected),
-      purple_account_get_username(selected));
-  SetText(label);
-  g_free(label);
-}
-
-void BuddyList::AccountsBox::OnAccountChanged(Button& activator,
-    size_t new_entry, const gchar *title, intptr_t data)
-{
-  selected = reinterpret_cast<PurpleAccount *>(data);
-  UpdateText();
-}
-
-BuddyList::NameButton::NameButton(bool alias, const gchar *val)
-: dialog(NULL)
-{
-  if (alias)
-    text = _("Alias");
-  else
-    text = _("Buddy name");
-
-  // value always points to an allocated string
-  if (val)
-    value = g_strdup(value);
-  else
-    value = g_strdup("");
-
-  UpdateText();
-
-  signal_activate.connect(sigc::mem_fun(this,
-        &BuddyList::NameButton::OnActivate));
-}
-
-BuddyList::NameButton::~NameButton()
-{
-  g_free(value);
-}
-
-void BuddyList::NameButton::UpdateText()
-{
-  gchar *label = g_strdup_printf("%s: %s", text, value);
-  SetText(label);
-  g_free(label);
-}
-
-void BuddyList::NameButton::OnActivate(Button& activator)
-{
-  g_assert(!dialog);
-
-  dialog = new InputDialog(text, value);
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &BuddyList::NameButton::ResponseHandler));
-  dialog->Show();
-}
-
-void BuddyList::NameButton::ResponseHandler(InputDialog& activator,
-    AbstractDialog::ResponseType response)
-{
-  g_assert(dialog);
-
-  switch (response) {
-    case AbstractDialog::RESPONSE_OK:
-      g_free(value);
-      value = g_strdup(dialog->GetText());
-
-      UpdateText();
+  bool connected = false;
+  for (GList *list = purple_accounts_get_all(); list; list = list->next) {
+    PurpleAccount *account = reinterpret_cast<PurpleAccount*>(list->data);
+    if (purple_account_is_connected(account)) {
+      connected = true;
       break;
-    default:
-      break;
-  }
-  dialog = NULL;
-}
-
-BuddyList::GroupBox::GroupBox(const gchar *group)
-: selected(NULL)
-{
-  PurpleBlistNode *i = purple_blist_get_root();
-
-  while (i) {
-    if (PURPLE_BLIST_NODE_IS_GROUP(i)) {
-      if (!selected)
-        selected = g_strdup(purple_group_get_name((PurpleGroup *)(i)));
-      AddOption(purple_group_get_name((PurpleGroup *)(i)));
     }
-    i = i->next;
   }
-  if (!selected) {
-    AddOption(_("Buddies"));
-    selected = g_strdup(_("Buddies"));
+  if (!connected) {
+    LOG->Message(_("No connected accounts"));
+    return;
   }
 
-  UpdateText();
+  PurpleRequestFields *fields = purple_request_fields_new();
+  PurpleRequestFieldGroup *g = purple_request_field_group_new(NULL);
 
-  signal_selection_changed.connect(sigc::mem_fun(this,
-        &BuddyList::GroupBox::OnGroupChanged));
+  purple_request_fields_add_group(fields, g);
+
+  PurpleRequestField *f;
+  f = purple_request_field_account_new("account", _("Account"), NULL);
+  purple_request_field_group_add_field(g, f);
+  f = purple_request_field_string_new("name", _("Buddy name"), NULL, FALSE);
+  purple_request_field_group_add_field(g, f);
+  f = purple_request_field_string_new("alias", _("Alias"), NULL, FALSE);
+  purple_request_field_group_add_field(g, f);
+
+  f = purple_request_field_choice_new("group", _("Group"), 0);
+  bool add_default_group = true;
+  for (PurpleBlistNode *i = purple_blist_get_root(); i; i = i->next)
+    if (PURPLE_BLIST_NODE_IS_GROUP(i)) {
+      purple_request_field_choice_add(f,
+          purple_group_get_name(reinterpret_cast<PurpleGroup*>(i)));
+      add_default_group = false;
+    }
+  if (add_default_group)
+      purple_request_field_choice_add(f, _("Buddies"));
+  purple_request_field_group_add_field(g, f);
+
+  purple_request_fields(NULL, _("Add buddy"), NULL, NULL, fields, _("Add"),
+      G_CALLBACK(add_buddy_ok_cb_), _("Cancel"), NULL, NULL, NULL, NULL,
+      this);
 }
 
-BuddyList::GroupBox::~GroupBox()
+void BuddyList::add_buddy_ok_cb(PurpleRequestFields *fields)
 {
-  g_free(selected);
-}
+  PurpleAccount *account = purple_request_fields_get_account(fields, "account");
+  const char *who = purple_request_fields_get_string(fields, "name");
+  const char *whoalias = purple_request_fields_get_string(fields, "alias");
+  int selected = purple_request_fields_get_choice(fields, "group");
+  GList *list = purple_request_field_choice_get_labels(
+      purple_request_fields_get_field(fields, "group"));
+  const char *grp
+    = reinterpret_cast<const char *>(g_list_nth_data(list, selected));
 
-void BuddyList::GroupBox::UpdateText()
-{
-  gchar *label = g_strdup_printf("%s: %s", _("Group"), selected);
-  SetText(label);
-  g_free(label);
-}
-
-void BuddyList::GroupBox::OnGroupChanged(Button& activator, size_t new_entry,
-    const gchar *title, intptr_t data)
-{
-  g_free(selected);
-  selected = g_strdup(title);
-  UpdateText();
-}
-
-BuddyList::AddBuddyWindow::AddBuddyWindow(PurpleAccount *account,
-    const char *username, const char *group, const char *alias)
-: Window(0, 0, 50, 10, _("Add Buddy"), TYPE_TOP)
-{
-  accounts_box = new AccountsBox(account);
-  name_button = new NameButton(false, username);
-  alias_button = new NameButton(true, alias);
-  group_box = new GroupBox(group);
-  line = new HorizontalLine(width);
-
-  menu = new HorizontalListBox(width, 1);
-  //menu->FocusCycle(Container::FocusCycleLocal);
-  menu->AppendItem(_("Add"), sigc::mem_fun(this,
-        &BuddyList::AddBuddyWindow::Add));
-
-  AddWidget(*accounts_box, 0, 0);
-  AddWidget(*name_button, 0, 1);
-  AddWidget(*alias_button, 0, 2);
-  AddWidget(*group_box, 0, 3);
-  AddWidget(*line, 0, 4);
-  AddWidget(*menu, 0, 5);
-}
-
-void BuddyList::AddBuddyWindow::Add(Button& activator)
-{
-  PurpleAccount *account = accounts_box->GetSelected();
-  const char *who = name_button->GetValue();
-  const char *whoalias = alias_button->GetValue();
-  const char *grp = group_box->GetSelected();
+  if (!who || !who[0])
+    return;
 
   PurpleGroup *g = purple_find_group(grp);
   PurpleBuddy *b = purple_find_buddy_in_group(account, who, g);
+  if (b)
+    return;
 
-  if (!b) {
-    b = purple_buddy_new(account, who, whoalias[0] != '\0' ? whoalias : NULL);
-    purple_blist_add_buddy(b, NULL, g, NULL);
-    purple_account_add_buddy(account, b);
-  }
-
-  Close();
+  b = purple_buddy_new(account, who, whoalias);
+  purple_blist_add_buddy(b, NULL, g, NULL);
+  purple_account_add_buddy(account, b);
 }

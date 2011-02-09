@@ -50,7 +50,7 @@ private:
   Header();
   Header(const Header&);
   Header &operator=(const Header&);
-  ~Header();
+  virtual ~Header();
 
   static void Init();
   static void Finalize();

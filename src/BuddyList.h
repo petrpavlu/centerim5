@@ -45,103 +45,8 @@ public:
 protected:
 
 private:
-  class AccountsBox
-  : public ComboBox
-  {
-  public:
-    AccountsBox(PurpleAccount *account);
-    virtual ~AccountsBox() {}
-
-    PurpleAccount *GetSelected() { return selected; }
-
-  protected:
-    PurpleAccount *selected;
-
-    void UpdateText();
-
-  private:
-    AccountsBox(const AccountsBox&);
-    AccountsBox& operator=(const AccountsBox&);
-
-    void OnAccountChanged(Button& activator, size_t new_entry,
-        const gchar *title, intptr_t data);
-  };
-
-  class NameButton
-  : public Button
-  {
-  public:
-    NameButton(bool alias, const gchar *val);
-    virtual ~NameButton();
-
-    const gchar *GetValue() { return value; }
-
-  protected:
-    const gchar *text;
-    gchar *value;
-    InputDialog *dialog;
-
-    void UpdateText();
-
-  private:
-    NameButton(const NameButton&);
-    NameButton& operator=(const NameButton&);
-
-    virtual void OnActivate(Button& activator);
-
-    void ResponseHandler(InputDialog& activator,
-        AbstractDialog::ResponseType response);
-  };
-
-  class GroupBox
-  : public ComboBox
-  {
-  public:
-    GroupBox(const gchar *group);
-    virtual ~GroupBox();
-
-    const gchar *GetSelected() { return selected; }
-
-  protected:
-    gchar *selected;
-
-    void UpdateText();
-
-  private:
-    GroupBox(const GroupBox&);
-    GroupBox& operator=(const GroupBox&);
-
-    void OnGroupChanged(Button& activator, size_t new_entry,
-        const gchar *title, intptr_t data);
-  };
-
-  class AddBuddyWindow
-  : public Window
-  {
-  public:
-    AddBuddyWindow(PurpleAccount *account, const char *username,
-        const char *group, const char *alias);
-    virtual ~AddBuddyWindow() {}
-
-  protected:
-    AccountsBox *accounts_box;
-    NameButton *name_button;
-    NameButton *alias_button;
-    GroupBox *group_box;
-    HorizontalLine *line;
-    HorizontalListBox *menu;
-
-  private:
-    AddBuddyWindow(const AddBuddyWindow&);
-    AddBuddyWindow& operator=(const AddBuddyWindow&);
-
-    void Add(Button& activator);
-  };
-
   PurpleBlistUiOps centerim_blist_ui_ops;
-
   PurpleBuddyList *buddylist;
-
   TreeView *treeview;
 
   static BuddyList *instance;
@@ -149,7 +54,7 @@ private:
   BuddyList();
   BuddyList(const BuddyList&);
   BuddyList& operator=(const BuddyList&);
-  ~BuddyList();
+  virtual ~BuddyList();
 
   static void Init();
   static void Finalize();
@@ -183,6 +88,10 @@ private:
   void destroy(PurpleBuddyList *list);
   void request_add_buddy(PurpleAccount *account, const char *username,
       const char *group, const char *alias);
+
+  static void add_buddy_ok_cb_(void *data, PurpleRequestFields *fields)
+    { reinterpret_cast<BuddyList *>(data)->add_buddy_ok_cb(fields); }
+  void add_buddy_ok_cb(PurpleRequestFields *fields);
 };
 
 #endif // __BUDDYLIST_H__

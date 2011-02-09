@@ -38,7 +38,7 @@ GeneralMenu::GeneralMenu(int x, int y, int w, int h)
   AppendItem(_("Go to contact..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
   */
   AppendItem(_("Accounts..."), sigc::mem_fun(this, &GeneralMenu::OpenAccountsWindow));
-  AppendItem(_("Add buddy"), sigc::mem_fun(this, &GeneralMenu::OpenAddBuddyRequest));
+  AppendItem(_("Add buddy..."), sigc::mem_fun(this, &GeneralMenu::OpenAddBuddyRequest));
   /*
   AppendItem(_("CenterIM config options..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
   AppendSeparator();
@@ -55,7 +55,7 @@ GeneralMenu::GeneralMenu(int x, int y, int w, int h)
   AppendItem(_("Mass group move..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
   */
   AppendSeparator();
-  AppendItem(_("Request test"), sigc::mem_fun(this,
+  AppendItem("Request test...", sigc::mem_fun(this,
         &GeneralMenu::RequestTest));
   AppendSeparator();
   AppendItem(_("Quit"), sigc::hide(sigc::mem_fun(CENTERIM,
@@ -78,6 +78,7 @@ void GeneralMenu::OpenAccountsWindow(Button& activator)
 void GeneralMenu::OpenAddBuddyRequest(Button& activator)
 {
   purple_blist_request_add_buddy(NULL, NULL, NULL, NULL);
+  Close();
 }
 
 void GeneralMenu::RequestTest(Button& activator)
@@ -112,7 +113,7 @@ void GeneralMenu::RequestTest(Button& activator)
 
 #if 1
   PurpleRequestFields *fields = purple_request_fields_new();
-  PurpleRequestFieldGroup *g = purple_request_field_group_new("Group 0");;
+  PurpleRequestFieldGroup *g = purple_request_field_group_new("Group 0");
 
   purple_request_fields_add_group(fields, g);
 
