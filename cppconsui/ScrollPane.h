@@ -42,7 +42,6 @@ public:
   virtual ~ScrollPane();
 
   // Widget
-  virtual void UpdateArea();
   virtual void Draw();
 
   /**
@@ -99,6 +98,9 @@ protected:
   int scroll_xpos, scroll_ypos, scroll_width, scroll_height;
 
   Curses::Window *scrollarea;
+
+  // Widget
+  virtual void RealUpdateArea();
 
   void DrawEx(bool container_draw);
 

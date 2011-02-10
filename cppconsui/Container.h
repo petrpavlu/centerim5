@@ -112,7 +112,7 @@ public:
    * root widget (normally a Window).
    */
   virtual bool SetFocusChild(Widget& child);
-  Widget *GetFocusChild() const { return focus_child; }
+  virtual Widget *GetFocusChild() const { return focus_child; }
   /**
    * Guilds a tree of the focus chain starting from this container and puts it
    * into the focus_chain tree as a subtree of @ref parent.
@@ -125,8 +125,9 @@ public:
    */
   virtual void MoveFocus(FocusDirection direction);
 
-  void SetFocusCycle(FocusCycleScope scope) { focus_cycle_scope = scope; }
-  FocusCycleScope GetFocusCycle() const { return focus_cycle_scope; }
+  virtual void SetFocusCycle(FocusCycleScope scope)
+    { focus_cycle_scope = scope; }
+  virtual FocusCycleScope GetFocusCycle() const { return focus_cycle_scope; }
 
   /**
    * Returns a subpad of current widget with given coordinates.

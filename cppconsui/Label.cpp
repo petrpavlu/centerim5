@@ -50,6 +50,8 @@ Label::~Label()
 
 void Label::Draw()
 {
+  RealUpdateArea();
+
   if (!area || !text)
     return;
 

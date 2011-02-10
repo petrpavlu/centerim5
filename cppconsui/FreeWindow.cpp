@@ -88,16 +88,10 @@ void FreeWindow::MoveResize(int newx, int newy, int neww, int newh)
   Container::MoveResize(0, 0, win_w, win_h);
 }
 
-void FreeWindow::UpdateArea()
-{
-  if (area)
-    delete area;
-  area = Curses::Window::newpad(win_w, win_h);
-  Redraw();
-}
-
 void FreeWindow::Draw()
 {
+  RealUpdateArea();
+
   if (!area || !realwindow)
     return;
 
@@ -153,6 +147,16 @@ void FreeWindow::Close()
 
 void FreeWindow::ScreenResized()
 {
+}
+
+void FreeWindow::RealUpdateArea()
+{
+  if (update_area) {
+    if (area)
+      delete area;
+    area = Curses::Window::newpad(win_w, win_h);
+    update_area = false;
+  }
 }
 
 void FreeWindow::Redraw()

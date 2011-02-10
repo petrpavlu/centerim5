@@ -35,6 +35,8 @@ HorizontalLine::HorizontalLine(int w, LineStyle::Type ltype)
 
 void HorizontalLine::Draw()
 {
+  RealUpdateArea();
+
   int realw;
 
   if (!area || (realw = area->getmaxx()) == 0 || area->getmaxy() != 1)

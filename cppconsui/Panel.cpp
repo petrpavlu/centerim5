@@ -45,6 +45,8 @@ Panel::~Panel()
 
 void Panel::Draw()
 {
+  RealUpdateArea();
+
   int realw, realh;
 
   if (!area || (realw = area->getmaxx()) == 0

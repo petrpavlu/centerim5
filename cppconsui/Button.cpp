@@ -79,6 +79,8 @@ bool Button::RegisterKeys()
 
 void Button::Draw()
 {
+  RealUpdateArea();
+
   if (!area || !text)
     return;
 

@@ -47,7 +47,6 @@ public:
   virtual void MoveResize(int newx, int newy, int neww, int newh);
   virtual void MoveResizeRect(const Rect &rect)
     { MoveResize(rect.x, rect.y, rect.width, rect.height); }
-  virtual void UpdateArea();
   virtual void Draw();
   virtual int Left() const { return win_x; }
   virtual int Top() const { return win_y; }
@@ -89,6 +88,7 @@ protected:
   Type type;
 
   // Widget
+  virtual void RealUpdateArea();
   virtual void Redraw();
 
   /**

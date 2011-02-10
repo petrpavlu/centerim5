@@ -50,7 +50,6 @@ public:
   virtual ~TreeView();
 
   // Widget
-  virtual void UpdateArea();
   virtual void Draw();
   virtual void CleanFocus();
   virtual bool GrabFocus();
@@ -192,6 +191,9 @@ protected:
   NodeReference focus_node;
 
   LineStyle linestyle;
+
+  // Widget
+  virtual void RealUpdateArea();
 
   // Container
   virtual void AddWidget(Widget& widget, int x, int y);

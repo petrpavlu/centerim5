@@ -36,18 +36,10 @@ HorizontalListBox::HorizontalListBox(int w, int h)
 {
 }
 
-void HorizontalListBox::UpdateArea()
-{
-  AbstractListBox::UpdateArea();
-
-  // set virtual scroll area height
-  if (scrollarea)
-    SetScrollHeight(scrollarea->getmaxy());
-  UpdateScrollWidth();
-}
-
 void HorizontalListBox::Draw()
 {
+  RealUpdateArea();
+
   if (!area) {
     // scrollpane will clear the scroll (real) area
     AbstractListBox::Draw();
@@ -136,6 +128,19 @@ Curses::Window *HorizontalListBox::GetSubPad(const Widget& child, int begin_x,
   }
 
   return AbstractListBox::GetSubPad(child, begin_x, begin_y, ncols, nlines);
+}
+
+void HorizontalListBox::RealUpdateArea()
+{
+  if (update_area) {
+    // note: update_area flag is reset by AbstractListBox (aka Widget)
+    AbstractListBox::RealUpdateArea();
+
+    // set virtual scroll area height
+    if (scrollarea)
+      SetScrollHeight(scrollarea->getmaxy());
+    UpdateScrollWidth();
+  }
 }
 
 void HorizontalListBox::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize)

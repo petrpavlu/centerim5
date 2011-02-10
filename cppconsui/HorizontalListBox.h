@@ -44,7 +44,6 @@ public:
   virtual ~HorizontalListBox() {}
 
   // Widget
-  virtual void UpdateArea();
   virtual void Draw();
 
   // AbstractListBox
@@ -63,12 +62,15 @@ protected:
   int autosize_width;
   std::set<const Widget *> autosize_extra;
 
+  // Widget
+  virtual void RealUpdateArea();
+
   // Container
   virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
       Rect& newsize);
   virtual void OnChildVisible(Widget& widget, bool visible);
 
-  void UpdateScrollWidth();
+  virtual void UpdateScrollWidth();
 
 private:
   HorizontalListBox(const HorizontalListBox&);

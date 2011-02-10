@@ -45,18 +45,6 @@ ScrollPane::~ScrollPane()
     delete scrollarea;
 }
 
-void ScrollPane::UpdateArea()
-{
-  g_assert(parent);
-
-  if (scrollarea)
-    delete scrollarea;
-  scrollarea = parent->GetSubPad(*this, xpos, ypos, width, height);
-
-  // fix scroll position if necessary
-  AdjustScroll(scroll_xpos, scroll_ypos);
-}
-
 void ScrollPane::Draw()
 {
   DrawEx(true);
@@ -144,8 +132,25 @@ void ScrollPane::MakeVisible(int x, int y)
     Redraw();
 }
 
+void ScrollPane::RealUpdateArea()
+{
+  g_assert(parent);
+
+  if (update_area) {
+    if (scrollarea)
+      delete scrollarea;
+    scrollarea = parent->GetSubPad(*this, xpos, ypos, width, height);
+
+    // fix scroll position if necessary
+    AdjustScroll(scroll_xpos, scroll_ypos);
+    update_area = false;
+  }
+}
+
 void ScrollPane::DrawEx(bool container_draw)
 {
+  RealUpdateArea();
+
   if (!area || !scrollarea) {
     if (scrollarea)
       scrollarea->fill(GetColorPair("container", "background"));

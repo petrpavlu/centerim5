@@ -30,15 +30,9 @@
 
 #include "Keys.h"
 
-#include <algorithm>
 #include "gettext.h"
 
 #define CONTEXT_CONTAINER "container"
-
-/* NOTES:
- * Widgets added to a container will be deleted by the
- * container.
- * */
 
 Container::Container(int w, int h)
 : Widget(w, h)
@@ -111,6 +105,8 @@ void Container::MoveResize(int newx, int newy, int neww, int newh)
 
 void Container::Draw()
 {
+  RealUpdateArea();
+
   if (!area)
     return;
 
@@ -422,10 +418,6 @@ void Container::InsertWidget(size_t pos, Widget& widget, int x, int y)
   children.insert(children.begin() + pos, child);
   widget.SetParent(*this);
 
-  /**
-   * @todo Also other widget signals. Maybe a descendant class would like to
-   * do somethings. Eg a ListBox wants to undo move events.
-   */
   children[pos].sig_moveresize = widget.signal_moveresize.connect(
       sigc::mem_fun(this, &Container::OnChildMoveResize));
   children[pos].sig_visible = widget.signal_visible.connect(

@@ -88,25 +88,23 @@ public:
    */
   virtual bool GrabFocus();
 
-  void SetFocusAbility(bool val) { can_focus = val; }
-  bool CanFocus() const { return can_focus; }
+  virtual bool CanFocus() const { return can_focus; }
+  virtual bool HasFocus() const { return has_focus; }
 
-  bool HasFocus() const { return has_focus; }
-
-  void SetVisibility(bool visible);
-  bool IsVisible() const { return visible; };
-  bool IsVisibleRecursive() const;
+  virtual void SetVisibility(bool visible);
+  virtual bool IsVisible() const { return visible; };
+  virtual bool IsVisibleRecursive() const;
 
   virtual void SetParent(Container& parent);
-  Container *GetParent() const { return parent; }
+  virtual Container *GetParent() const { return parent; }
 
   virtual int Left() const { return xpos; }
   virtual int Top() const { return ypos; }
   virtual int Width() const { return width; }
   virtual int Height() const { return height; }
 
-  void SetColorScheme(const char *scheme);
-  const char *GetColorScheme();
+  virtual void SetColorScheme(const char *scheme);
+  virtual const char *GetColorScheme();
 
   sigc::signal<void, Widget&, Rect&, Rect&> signal_moveresize;
   /**
@@ -145,6 +143,8 @@ protected:
    * This is the implementation dependent area of the widget.
    */
   Curses::Window *area;
+
+  bool update_area;
   /**
    * Parent widget.
    */
@@ -153,6 +153,8 @@ protected:
    * Color scheme.
    */
   char *color_scheme;
+
+  virtual void RealUpdateArea();
 
   /**
    * Redraw() method is used by a widget to tell the CoreManager object that
@@ -164,7 +166,7 @@ protected:
    * Convenient method that calls COLORSCHEME->GetColorPair(GetColorScheme(),
    * widget, property).
    */
-  int GetColorPair(const char *widget, const char *property);
+  virtual int GetColorPair(const char *widget, const char *property);
 
   /**
    * @todo

@@ -64,17 +64,10 @@ bool TreeView::RegisterKeys()
   return true;
 }
 
-void TreeView::UpdateArea()
-{
-  ScrollPane::UpdateArea();
-
-  // set virtual scroll area width
-  if (scrollarea)
-    SetScrollWidth(scrollarea->getmaxx());
-}
-
 void TreeView::Draw()
 {
+  RealUpdateArea();
+
   if (!area) {
     // scrollpane will clear the scroll (real) area
     ScrollPane::Draw();
@@ -344,6 +337,18 @@ void TreeView::SetStyle(const NodeReference node, Style s)
 TreeView::Style TreeView::GetStyle(const NodeReference node) const
 {
   return node->style;
+}
+
+void TreeView::RealUpdateArea()
+{
+  if (update_area) {
+    // note: update_area flag is reset by AbstractListBox (aka Widget)
+    ScrollPane::RealUpdateArea();
+
+    // set virtual scroll area width
+    if (scrollarea)
+      SetScrollWidth(scrollarea->getmaxx());
+  }
 }
 
 void TreeView::AddWidget(Widget& widget, int x, int y)

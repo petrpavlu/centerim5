@@ -189,6 +189,8 @@ void TextView::SetViewPos(int viewy)
 
 void TextView::Draw()
 {
+  RealUpdateArea();
+
   if (!area || lines.empty())
     return;
 

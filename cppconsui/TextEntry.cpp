@@ -196,6 +196,8 @@ bool TextEntry::RegisterKeys()
 
 void TextEntry::Draw()
 {
+  RealUpdateArea();
+
   if (!area)
     return;
 

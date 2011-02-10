@@ -36,7 +36,8 @@
 
 Widget::Widget(int w, int h)
 : xpos(0), ypos(0), width(w), height(h), can_focus(false), has_focus(false)
-, visible(true), area(NULL), parent(NULL), color_scheme(NULL)
+, visible(true), area(NULL), update_area(false), parent(NULL)
+, color_scheme(NULL)
 {
 }
 
@@ -61,19 +62,14 @@ void Widget::MoveResize(int newx, int newy, int neww, int newh)
   width = neww;
   height = newh;
 
-  if (parent)
-    UpdateArea();
+  UpdateArea();
 
   signal_moveresize(*this, oldsize, newsize);
 }
 
 void Widget::UpdateArea()
 {
-  g_assert(parent);
-
-  if (area)
-    delete area;
-  area = parent->GetSubPad(*this, xpos, ypos, width, height);
+  update_area = true;
   Redraw();
 }
 
@@ -207,6 +203,18 @@ const char *Widget::GetColorScheme()
     return parent->GetColorScheme();
 
   return NULL;
+}
+
+void Widget::RealUpdateArea()
+{
+  g_assert(parent);
+
+  if (update_area) {
+    if (area)
+      delete area;
+    area = parent->GetSubPad(*this, xpos, ypos, width, height);
+    update_area = false;
+  }
 }
 
 void Widget::Redraw()

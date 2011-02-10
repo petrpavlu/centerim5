@@ -35,6 +35,8 @@ VerticalLine::VerticalLine(int h, LineStyle::Type ltype)
 
 void VerticalLine::Draw()
 {
+  RealUpdateArea();
+
   int realh;
 
   if (!area || (realh = area->getmaxy()) == 0 || area->getmaxx() != 1)

@@ -230,6 +230,8 @@ gchar *TextEdit::AsString(const gchar *separator)
 
 void TextEdit::Draw()
 {
+  RealUpdateArea();
+
   if (!area)
     return;
 

@@ -80,6 +80,8 @@ bool CheckBox::RegisterKeys()
 
 void CheckBox::Draw()
 {
+  RealUpdateArea();
+
   if (!area || !text)
     return;
 
