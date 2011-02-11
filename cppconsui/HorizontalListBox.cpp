@@ -164,18 +164,12 @@ void HorizontalListBox::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& n
 void HorizontalListBox::OnChildVisible(Widget& widget, bool visible)
 {
   // the widget is being hidden or deleted
-
   int width = widget.Width();
-
-  int sign = 1;
-  if (!visible)
-    sign = -1;
-
+  int sign = visible ? 1 : - 1;
   if (width == AUTOSIZE) {
     autosize_children += sign;
     width = 1;
   }
-
   children_width += sign * width;
   UpdateScrollWidth();
 }

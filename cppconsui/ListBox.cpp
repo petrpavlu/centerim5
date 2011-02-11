@@ -164,18 +164,12 @@ void ListBox::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize)
 void ListBox::OnChildVisible(Widget& widget, bool visible)
 {
   // the widget is being hidden or deleted
-
   int height = widget.Height();
-
-  int sign = 1;
-  if (!visible)
-    sign = -1;
-
+  int sign = visible ? 1 : -1;
   if (height == AUTOSIZE) {
     autosize_children += sign;
     height = 1;
   }
-
   children_height += sign * height;
   UpdateScrollHeight();
 }
