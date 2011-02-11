@@ -78,7 +78,7 @@ public:
   virtual ~Container();
 
   // Widget
-  virtual void MoveResize(int newx, int newy, int neww, int newh);
+  virtual void UpdateArea();
   virtual void Draw();
   virtual Widget *GetFocusWidget();
   virtual void CleanFocus();

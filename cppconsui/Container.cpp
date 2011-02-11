@@ -95,9 +95,9 @@ bool Container::RegisterKeys()
   return true;
 }
 
-void Container::MoveResize(int newx, int newy, int neww, int newh)
+void Container::UpdateArea()
 {
-  Widget::MoveResize(newx, newy, neww, newh);
+  Widget::UpdateArea();
 
   for (Children::iterator i = children.begin(); i != children.end(); i++)
     i->widget->UpdateArea();
