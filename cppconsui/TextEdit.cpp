@@ -237,8 +237,11 @@ void TextEdit::Draw()
 
   area->erase();
 
-  if (screen_lines.empty())
+  if (screen_lines.empty()) {
+    if (has_focus)
+      area->mvchgat(0, 0, 1, Curses::Attr::REVERSE, 0, NULL);
     return;
+  }
 
   int realh = area->getmaxy();
 
