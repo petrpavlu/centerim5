@@ -66,6 +66,10 @@ bool TreeView::RegisterKeys()
 void TreeView::Draw()
 {
   RealUpdateArea();
+  // set virtual scroll area width
+  if (screen_area)
+    SetScrollWidth(screen_area->getmaxx());
+  RealUpdateVirtualArea();
 
   if (!area) {
     // scrollpane will clear the scroll (real) area
@@ -211,36 +215,36 @@ void TreeView::ActionToggleCollapsed()
 TreeView::NodeReference TreeView::InsertNode(
     const NodeReference position, Widget& widget)
 {
-  TreeNode node = AddNodeInit(widget);
+  TreeNode node = AddNode(widget);
   NodeReference iter = thetree.insert(position, node);
-  AddNodeFinalize(iter);
+  AddWidget(widget, 0, 0);
   return iter;
 }
 
 TreeView::NodeReference TreeView::InsertNodeAfter(
     const NodeReference position, Widget& widget)
 {
-  TreeNode node = AddNodeInit(widget);
+  TreeNode node = AddNode(widget);
   NodeReference iter = thetree.insert_after(position, node);
-  AddNodeFinalize(iter);
+  AddWidget(widget, 0, 0);
   return iter;
 }
 
 TreeView::NodeReference TreeView::PrependNode(
     const NodeReference parent, Widget& widget)
 {
-  TreeNode node = AddNodeInit(widget);
+  TreeNode node = AddNode(widget);
   NodeReference iter = thetree.prepend_child(parent, node);
-  AddNodeFinalize(iter);
+  AddWidget(widget, 0, 0);
   return iter;
 }
 
 TreeView::NodeReference TreeView::AppendNode(
     const NodeReference parent, Widget& widget)
 {
-  TreeNode node = AddNodeInit(widget);
+  TreeNode node = AddNode(widget);
   NodeReference iter = thetree.append_child(parent, node);
-  AddNodeFinalize(iter);
+  AddWidget(widget, 0, 0);
   return iter;
 }
 
@@ -251,11 +255,6 @@ void TreeView::DeleteNode(const NodeReference node, bool keepchildren)
   // if we want to keep child nodes we should flatten the tree
   if (keepchildren)
     thetree.flatten(node);
-
-  if (node->widget) {
-    // focus gets moved if this hides the focused node
-    node->widget->SetVisibility(false);
-  }
 
   int shrink = 0;
   if (node->widget) {
@@ -271,11 +270,11 @@ void TreeView::DeleteNode(const NodeReference node, bool keepchildren)
     if (h == AUTOSIZE)
       h = 1;
     shrink += h;
-    delete i->widget;
+    RemoveWidget(*i->widget);
   }
 
   if (node->widget)
-    delete node->widget;
+    RemoveWidget(*node->widget);
 
   thetree.erase(node);
   SetScrollHeight(GetScrollHeight() - shrink);
@@ -337,18 +336,6 @@ void TreeView::SetStyle(const NodeReference node, Style s)
 TreeView::Style TreeView::GetStyle(const NodeReference node) const
 {
   return node->style;
-}
-
-void TreeView::RealUpdateArea()
-{
-  if (update_area) {
-    // note: update_area flag is reset by AbstractListBox (aka Widget)
-    ScrollPane::RealUpdateArea();
-
-    // set virtual scroll area width
-    if (scrollarea)
-      SetScrollWidth(scrollarea->getmaxx());
-  }
 }
 
 void TreeView::AddWidget(Widget& widget, int x, int y)
@@ -432,7 +419,7 @@ int TreeView::DrawNode(SiblingIterator node, int top)
   return height;
 }
 
-TreeView::TreeNode TreeView::AddNodeInit(Widget& widget)
+TreeView::TreeNode TreeView::AddNode(Widget& widget)
 {
   // make room for this widget
   int new_height = GetScrollHeight();
@@ -450,18 +437,6 @@ TreeView::TreeNode TreeView::AddNodeInit(Widget& widget)
   node.widget = &widget;
 
   return node;
-}
-
-void TreeView::AddNodeFinalize(NodeReference& iter)
-{
-  Widget *w = iter->widget;
-
-  w->SetParent(*this);
-
-  iter->sig_moveresize = w->signal_moveresize.connect(sigc::mem_fun(this,
-        &TreeView::OnChildMoveResize));
-
-  Redraw();
 }
 
 void TreeView::FixFocus()

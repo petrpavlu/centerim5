@@ -146,7 +146,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
   Widget *widget;
   ComboBox *combobox;
 
-  label = g_strdup_printf(" [%s] %s",
+  label = g_strdup_printf("[%s] %s",
       purple_account_get_protocol_name(account),
       purple_account_get_username(account));
 

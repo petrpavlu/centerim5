@@ -43,9 +43,6 @@ void Window::MoveResize(int newx, int newy, int neww, int newh)
   win_w = neww;
   win_h = newh;
 
-  MakeRealWindow();
-  UpdateArea();
-
   panel->MoveResize(0, 0, win_w, win_h);
 
   Container::MoveResize(1, 1, win_w < 2 ? 0 : win_w - 2,

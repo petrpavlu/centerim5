@@ -63,9 +63,6 @@ protected:
   std::set<const Widget *> autosize_extra;
   bool reposition_widgets;
 
-  // Widget
-  virtual void RealUpdateArea();
-
   // Container
   virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
       Rect& newsize);

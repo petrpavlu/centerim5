@@ -179,20 +179,11 @@ protected:
      * can show `...' when the text does not fit in the given space.
      */
     Widget *widget;
-
-    /**
-     * Signal connection to the widget.
-     * @todo Review.
-     */
-    sigc::connection sig_moveresize;
   };
 
   TheTree thetree;
   NodeReference focus_node;
   LineStyle linestyle;
-
-  // Widget
-  virtual void RealUpdateArea();
 
   // Container
   virtual void AddWidget(Widget& widget, int x, int y);
@@ -201,8 +192,7 @@ protected:
 
   int DrawNode(SiblingIterator node, int top);
 
-  TreeNode AddNodeInit(Widget& widget);
-  void AddNodeFinalize(NodeReference& iter);
+  TreeNode AddNode(Widget& widget);
 
   void FixFocus();
 

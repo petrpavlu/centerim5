@@ -96,13 +96,18 @@ public:
 
 protected:
   int scroll_xpos, scroll_ypos, scroll_width, scroll_height;
+  bool update_screen_area;
 
-  Curses::Window *scrollarea;
+  Curses::Window *screen_area;
 
   // Widget
+  virtual void UpdateArea();
   virtual void RealUpdateArea();
 
-  void DrawEx(bool container_draw);
+  virtual void UpdateVirtualArea();
+  virtual void RealUpdateVirtualArea();
+
+  virtual void DrawEx(bool container_draw);
 
 private:
   ScrollPane(const ScrollPane&);

@@ -35,15 +35,9 @@
 #define CONTEXT_WINDOW "window"
 
 FreeWindow::FreeWindow(int x, int y, int w, int h, Type t)
-: Container(w, h)
-, win_x(x)
-, win_y(y)
-, win_w(w)
-, win_h(h)
-, realwindow(NULL)
+: Container(w, h), win_x(x), win_y(y), win_w(w), win_h(h), realwindow(NULL)
 , type(t)
 {
-  MakeRealWindow();
   UpdateArea();
 
   COREMANAGER->signal_resize.connect(sigc::mem_fun(this,
@@ -81,9 +75,6 @@ void FreeWindow::MoveResize(int newx, int newy, int neww, int newh)
   win_y = newy;
   win_w = neww;
   win_h = newh;
-
-  MakeRealWindow();
-  UpdateArea();
 
   Container::MoveResize(0, 0, win_w, win_h);
 }
@@ -152,9 +143,29 @@ void FreeWindow::ScreenResized()
 void FreeWindow::RealUpdateArea()
 {
   if (update_area) {
+    // update virtual area
     if (area)
       delete area;
     area = Curses::Window::newpad(win_w, win_h);
+
+    // update real area
+    int maxx = Curses::getmaxx();
+    int maxy = Curses::getmaxy();
+
+    int left = win_x < 0 ? 0 : win_x;
+    int top = win_y < 0 ? 0 : win_y;
+    int right = win_x + win_w >= maxx ? maxx : win_x + win_w;
+    int bottom = win_y + win_h >= maxy ? maxy : win_y + win_h;
+
+    copy_w = right - left - 1;
+    copy_h = bottom - top - 1;
+
+    if (realwindow)
+      delete realwindow;
+    // this could fail if the window falls outside the visible area
+    realwindow = Curses::Window::newwin(left, top, right - left,
+        bottom - top);
+
     update_area = false;
   }
 }
@@ -162,25 +173,6 @@ void FreeWindow::RealUpdateArea()
 void FreeWindow::Redraw()
 {
   COREMANAGER->Redraw();
-}
-
-void FreeWindow::MakeRealWindow()
-{
-  int maxx = Curses::getmaxx();
-  int maxy = Curses::getmaxy();
-
-  int left = win_x < 0 ? 0 : win_x;
-  int top = win_y < 0 ? 0 : win_y;
-  int right = win_x + win_w >= maxx ? maxx : win_x + win_w;
-  int bottom = win_y + win_h >= maxy ? maxy : win_y + win_h;
-
-  copy_w = right - left - 1;
-  copy_h = bottom - top - 1;
-
-  if (realwindow)
-    delete realwindow;
-  // this could fail if the window falls outside the visible area
-  realwindow = Curses::Window::newwin(left, top, right - left, bottom - top);
 }
 
 void FreeWindow::ActionClose()

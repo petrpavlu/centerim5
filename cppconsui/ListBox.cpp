@@ -36,7 +36,15 @@ ListBox::ListBox(int w, int h)
 
 void ListBox::Draw()
 {
+  if (update_area)
+    reposition_widgets = true;
+
   RealUpdateArea();
+  // set virtual scroll area width
+  if (screen_area)
+    SetScrollWidth(screen_area->getmaxx());
+  UpdateScrollHeight();
+  RealUpdateVirtualArea();
 
   if (!area) {
     // scrollpane will clear the scroll (real) area
@@ -132,19 +140,6 @@ Curses::Window *ListBox::GetSubPad(const Widget& child, int begin_x,
   return AbstractListBox::GetSubPad(child, begin_x, begin_y, ncols, nlines);
 }
 
-void ListBox::RealUpdateArea()
-{
-  if (update_area) {
-    // note: update_area flag is reset by AbstractListBox (aka Widget)
-    AbstractListBox::RealUpdateArea();
-
-    // set virtual scroll area width
-    if (scrollarea)
-      SetScrollWidth(scrollarea->getmaxx());
-    UpdateScrollHeight();
-  }
-}
-
 void ListBox::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize)
 {
   int old_height = oldsize.Height();
@@ -181,8 +176,8 @@ void ListBox::OnChildVisible(Widget& widget, bool visible)
 void ListBox::UpdateScrollHeight()
 {
   int realh = 0;
-  if (scrollarea)
-    realh = scrollarea->getmaxy();
+  if (screen_area)
+    realh = screen_area->getmaxy();
 
   SetScrollHeight(MAX(realh, children_height));
 }

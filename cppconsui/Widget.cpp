@@ -55,18 +55,19 @@ Widget::~Widget()
 
 void Widget::MoveResize(int newx, int newy, int neww, int newh)
 {
-  if (newx != xpos || newy != ypos || neww != width || newh != height) {
-    Rect oldsize(xpos, ypos, width, height);
-    Rect newsize(newx, newy, neww, newh);
+  if (newx == xpos && newy == ypos && neww == width && newh == height)
+    return;
 
-    xpos = newx;
-    ypos = newy;
-    width = neww;
-    height = newh;
+  Rect oldsize(xpos, ypos, width, height);
+  Rect newsize(newx, newy, neww, newh);
 
-    UpdateArea();
-    signal_moveresize(*this, oldsize, newsize);
-  }
+  xpos = newx;
+  ypos = newy;
+  width = neww;
+  height = newh;
+
+  UpdateArea();
+  signal_moveresize(*this, oldsize, newsize);
 }
 
 void Widget::UpdateArea()

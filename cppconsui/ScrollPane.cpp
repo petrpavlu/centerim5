@@ -29,20 +29,15 @@
 #include "ScrollPane.h"
 
 ScrollPane::ScrollPane(int w, int h, int scrollw, int scrollh)
-: Container(w, h)
-, scroll_xpos(0)
-, scroll_ypos(0)
-, scroll_width(scrollw)
-, scroll_height(scrollh)
-, scrollarea(NULL)
+: Container(w, h), scroll_xpos(0), scroll_ypos(0), scroll_width(scrollw)
+, scroll_height(scrollh), update_screen_area(true), screen_area(NULL)
 {
-  area = Curses::Window::newpad(scroll_width, scroll_height);
 }
 
 ScrollPane::~ScrollPane()
 {
-  if (scrollarea)
-    delete scrollarea;
+  if (screen_area)
+    delete screen_area;
 }
 
 void ScrollPane::Draw()
@@ -57,20 +52,17 @@ void ScrollPane::SetScrollSize(int swidth, int sheight)
 
   scroll_width = swidth;
   scroll_height = sheight;
-
-  if (area)
-    delete area;
-  area = Curses::Window::newpad(scroll_width, scroll_height);
+  UpdateVirtualArea();
 }
 
 void ScrollPane::AdjustScroll(int newx, int newy)
 {
-  if (scrollarea) {
+  if (screen_area) {
     scroll_xpos = newx;
     scroll_ypos = newy;
 
-    int real_width = scrollarea->getmaxx();
-    int real_height = scrollarea->getmaxy();
+    int real_width = screen_area->getmaxx();
+    int real_height = screen_area->getmaxy();
 
     if (scroll_xpos + real_width > scroll_width)
       scroll_xpos = scroll_width - real_width;
@@ -101,13 +93,13 @@ void ScrollPane::MakeVisible(int x, int y)
   else if (y >= scroll_height)
     y = scroll_height - 1;
 
-  if (!scrollarea) {
+  if (!screen_area) {
     AdjustScroll(x, y);
     return;
   }
 
-  int real_width = scrollarea->getmaxx();
-  int real_height = scrollarea->getmaxy();
+  int real_width = screen_area->getmaxx();
+  int real_height = screen_area->getmaxy();
 
   bool redraw = false;
   if (x > scroll_xpos + real_width - 1) {
@@ -132,17 +124,43 @@ void ScrollPane::MakeVisible(int x, int y)
     Redraw();
 }
 
+void ScrollPane::UpdateArea()
+{
+  update_screen_area = true;
+  Redraw();
+}
+
 void ScrollPane::RealUpdateArea()
 {
   g_assert(parent);
 
-  if (update_area) {
-    if (scrollarea)
-      delete scrollarea;
-    scrollarea = parent->GetSubPad(*this, xpos, ypos, width, height);
+  if (update_screen_area) {
+    if (screen_area)
+      delete screen_area;
+    screen_area = parent->GetSubPad(*this, xpos, ypos, width, height);
 
     // fix scroll position if necessary
     AdjustScroll(scroll_xpos, scroll_ypos);
+
+    update_screen_area = false;
+  }
+}
+
+void ScrollPane::UpdateVirtualArea()
+{
+  update_area = true;
+
+  for (Children::iterator i = children.begin(); i != children.end(); i++)
+    i->widget->UpdateArea();
+}
+
+void ScrollPane::RealUpdateVirtualArea()
+{
+  if (update_area) {
+    if (area)
+      delete area;
+    area = Curses::Window::newpad(scroll_width, scroll_height);
+
     update_area = false;
   }
 }
@@ -150,10 +168,11 @@ void ScrollPane::RealUpdateArea()
 void ScrollPane::DrawEx(bool container_draw)
 {
   RealUpdateArea();
+  RealUpdateVirtualArea();
 
-  if (!area || !scrollarea) {
-    if (scrollarea)
-      scrollarea->fill(GetColorPair("container", "background"));
+  if (!area || !screen_area) {
+    if (screen_area)
+      screen_area->fill(GetColorPair("container", "background"));
     return;
   }
 
@@ -162,8 +181,8 @@ void ScrollPane::DrawEx(bool container_draw)
 
   /* If the defined scrollable area is smaller than the widget, make sure
    * the copy works. */
-  int copyw = MIN(scroll_width, scrollarea->getmaxx()) - 1;
-  int copyh = MIN(scroll_height, scrollarea->getmaxy()) - 1;
+  int copyw = MIN(scroll_width, screen_area->getmaxx()) - 1;
+  int copyh = MIN(scroll_height, screen_area->getmaxy()) - 1;
 
-  area->copyto(scrollarea, scroll_xpos, scroll_ypos, 0, 0, copyw, copyh, 0);
+  area->copyto(screen_area, scroll_xpos, scroll_ypos, 0, 0, copyw, copyh, 0);
 }
