@@ -183,7 +183,7 @@ void TreeView::Collapse(const NodeReference node)
 {
   if (node->open) {
     node->open = false;
-    FocusFix();
+    FixFocus();
     Redraw();
   }
 }
@@ -199,7 +199,7 @@ void TreeView::Expand(const NodeReference node)
 void TreeView::ToggleCollapsed(const NodeReference node)
 {
   node->open = !node->open;
-  FocusFix();
+  FixFocus();
   Redraw();
 }
 
@@ -303,7 +303,7 @@ void TreeView::MoveBefore(const NodeReference node, const NodeReference position
 {
   if (thetree.previous_sibling(position) != node) {
     thetree.move_before(position, node);
-    FocusFix();
+    FixFocus();
     Redraw();
   }
 }
@@ -312,7 +312,7 @@ void TreeView::MoveAfter(const NodeReference node, const NodeReference position)
 {
   if (thetree.next_sibling(position) != node) {
     thetree.move_after(position, node);
-    FocusFix();
+    FixFocus();
     Redraw();
   }
 }
@@ -321,7 +321,7 @@ void TreeView::SetParent(const NodeReference node, const NodeReference newparent
 {
   if (thetree.parent(node) != newparent) {
     thetree.move_ontop(thetree.append_child(newparent), node);
-    FocusFix();
+    FixFocus();
     Redraw();
   }
 }
@@ -464,7 +464,7 @@ void TreeView::AddNodeFinalize(NodeReference& iter)
   Redraw();
 }
 
-void TreeView::FocusFix()
+void TreeView::FixFocus()
 {
   /* This function is called when a widget tree is reorganized (a node was
    * moved in another position in the tree). In this case it's possible that
@@ -474,6 +474,7 @@ void TreeView::FocusFix()
    * another widget). */
 
   Container *t = GetTopContainer();
+  t->UpdateFocusChain();
   Widget *focus = t->GetFocusWidget();
   if (!focus) {
     // try to grab the focus

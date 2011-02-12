@@ -35,9 +35,8 @@
 #define CONTEXT_CONTAINER "container"
 
 Container::Container(int w, int h)
-: Widget(w, h)
-, focus_cycle_scope(FOCUS_CYCLE_GLOBAL)
-, focus_child(NULL)
+: Widget(w, h), focus_cycle_scope(FOCUS_CYCLE_GLOBAL)
+, update_focus_chain(false), focus_child(NULL)
 {
   DeclareBindables();
 }
@@ -151,6 +150,15 @@ bool Container::GrabFocus()
   return false;
 }
 
+void Container::SetParent(Container& parent)
+{
+  /* The parent will take care about focus changing and focus chain caching
+   * from now on. */
+  focus_chain.clear();
+
+  Widget::SetParent(parent);
+}
+
 void Container::AddWidget(Widget& widget, int x, int y)
 {
   InsertWidget(children.size(), widget, x, y);
@@ -223,15 +231,13 @@ void Container::GetFocusChain(FocusChain& focus_chain,
   }
 }
 
+void Container::UpdateFocusChain()
+{
+  update_focus_chain = true;
+}
+
 void Container::MoveFocus(FocusDirection direction)
 {
-  /**
-   * @todo Focus chain shouldn't be gathered at every call to MoveFocus().
-   * We should either keep the current focus chain based on
-   * (Add|Remove)Widget()/SetVisibility() calls or these calls should set
-   * a dirty flag that would cause a recreation of the focus chain.
-   */
-
   /* Make sure we always start at the root of the widget tree, things are
    * a bit easier then. */
   if (parent) {
@@ -239,9 +245,13 @@ void Container::MoveFocus(FocusDirection direction)
     return;
   }
 
-  FocusChain focus_chain(NULL);
+  if (update_focus_chain) {
+    focus_chain.clear();
+    focus_chain.set_head(NULL);
+    GetFocusChain(focus_chain, focus_chain.begin());
+    update_focus_chain = false;
+  }
 
-  GetFocusChain(focus_chain, focus_chain.begin());
   FocusChain::pre_order_iterator iter = focus_chain.begin();
   Widget *focus_widget = GetFocusWidget();
 

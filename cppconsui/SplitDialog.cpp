@@ -84,6 +84,10 @@ void SplitDialog::MoveFocus(FocusDirection direction)
     return;
   }
 
+  /**
+   * @todo Rewrite to take advantage of focus chain caching.
+   */
+
   switch (direction) {
     case FOCUS_PREVIOUS:
       if (layout->GetFocusChild() == container) {

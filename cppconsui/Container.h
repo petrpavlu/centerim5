@@ -84,6 +84,7 @@ public:
   virtual void CleanFocus();
   virtual void RestoreFocus();
   virtual bool GrabFocus();
+  virtual void SetParent(Container& parent);
 
   /**
    * Adds a widget to the children list. The Container takes ownership of the
@@ -120,6 +121,10 @@ public:
   virtual void GetFocusChain(FocusChain& focus_chain,
       FocusChain::iterator parent);
   /**
+   *
+   */
+  virtual void UpdateFocusChain();
+  /**
    * @todo Have a return value (to see if focus was moved successfully or
    * not)?
    */
@@ -149,6 +154,16 @@ protected:
   typedef std::vector<Child> Children;
 
   FocusCycleScope focus_cycle_scope;
+
+  /**
+   * Cached focus chain. Note: only the top container is caching the focus
+   * chain.
+   */
+  FocusChain focus_chain;
+  /**
+   *
+   */
+  bool update_focus_chain;
 
   /**
    * This defines a chain of focus. Same as

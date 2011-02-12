@@ -204,7 +204,7 @@ protected:
   TreeNode AddNodeInit(Widget& widget);
   void AddNodeFinalize(NodeReference& iter);
 
-  void FocusFix();
+  void FixFocus();
 
   NodeReference FindNode(const Widget& child) const;
 
