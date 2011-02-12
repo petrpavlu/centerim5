@@ -59,11 +59,23 @@ const int Attr::BOLD = A_BOLD;
 const int C_OK = OK;
 const int C_ERR = ERR;
 
+static Stats stats = {0};
+
 struct Window::WindowInternals
 {
   WINDOW *win;
   WindowInternals(WINDOW *w = NULL) : win(w) {}
 };
+
+const Stats *GetStats()
+{
+  return &stats;
+}
+
+void ResetStats()
+{
+  memset(&stats, 0, sizeof(stats));
+}
 
 Window::Window()
 : p(new WindowInternals)
@@ -78,6 +90,8 @@ Window::~Window()
 
 Window *Window::newpad(int ncols, int nlines)
 {
+  stats.newpad_calls++;
+
   WINDOW *win;
 
   if (!(win = ::newpad(nlines, ncols)))
@@ -90,6 +104,8 @@ Window *Window::newpad(int ncols, int nlines)
 
 Window *Window::newwin(int begin_x, int begin_y, int ncols, int nlines)
 {
+  stats.newwin_calls++;
+
   WINDOW *win;
 
   if (!(win = ::newwin(nlines, ncols, begin_y, begin_x)))
@@ -102,6 +118,8 @@ Window *Window::newwin(int begin_x, int begin_y, int ncols, int nlines)
 
 Window *Window::subpad(int begin_x, int begin_y, int ncols, int nlines)
 {
+  stats.subpad_calls++;
+
   WINDOW *win;
 
   if (!(win = ::subpad(p->win, nlines, ncols, begin_y, begin_x)))

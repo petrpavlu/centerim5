@@ -37,6 +37,14 @@
 
 namespace Curses
 {
+struct Stats {
+  unsigned newpad_calls;
+  unsigned newwin_calls;
+  unsigned subpad_calls;
+};
+
+const Stats *GetStats();
+void ResetStats();
 
 class Window
 {

@@ -452,6 +452,11 @@ void CoreManager::Draw()
     // copy virtual ncurses screen to the physical screen
     Curses::doupdate();
 
+    const Curses::Stats *stats = Curses::GetStats();
+    g_debug("newpad calls: %u, newwin calls: %u, subpad calls: %u\n",
+        stats->newpad_calls, stats->newwin_calls, stats->subpad_calls);
+    Curses::ResetStats();
+
     redraw_pending = false;
   }
 }
