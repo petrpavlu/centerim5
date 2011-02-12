@@ -35,9 +35,9 @@
 #include <string>
 
 Widget::Widget(int w, int h)
-: xpos(0), ypos(0), width(w), height(h), can_focus(false), has_focus(false)
-, visible(true), area(NULL), update_area(false), parent(NULL)
-, color_scheme(NULL)
+: xpos(UNSET), ypos(UNSET), width(w), height(h), can_focus(false)
+, has_focus(false), visible(true), area(NULL), update_area(false)
+, parent(NULL) , color_scheme(NULL)
 {
 }
 
@@ -55,16 +55,18 @@ Widget::~Widget()
 
 void Widget::MoveResize(int newx, int newy, int neww, int newh)
 {
-  Rect oldsize(xpos, ypos, width, height), newsize(newx, newy, neww, newh);
+  if (newx != xpos || newy != ypos || neww != width || newh != height) {
+    Rect oldsize(xpos, ypos, width, height);
+    Rect newsize(newx, newy, neww, newh);
 
-  xpos = newx;
-  ypos = newy;
-  width = neww;
-  height = newh;
+    xpos = newx;
+    ypos = newy;
+    width = neww;
+    height = newh;
 
-  UpdateArea();
-
-  signal_moveresize(*this, oldsize, newsize);
+    UpdateArea();
+    signal_moveresize(*this, oldsize, newsize);
+  }
 }
 
 void Widget::UpdateArea()
@@ -219,7 +221,8 @@ void Widget::RealUpdateArea()
 
 void Widget::Redraw()
 {
-  if (parent)
+  FreeWindow *win = dynamic_cast<FreeWindow*>(GetTopContainer());
+  if (win && COREMANAGER->HasWindow(*win))
     COREMANAGER->Redraw();
 }
 
@@ -230,13 +233,7 @@ int Widget::GetColorPair(const char *widget, const char *property)
 
 Container *Widget::GetTopContainer()
 {
-  Container *c, *top;
-
-  top = dynamic_cast<Container *>(this);
-  c = parent;
-  while (c) {
-    top = c;
-    c = c->GetParent();
-  }
-  return top;
+  if (parent)
+    return parent->GetTopContainer();
+  return dynamic_cast<Container*>(this);
 }

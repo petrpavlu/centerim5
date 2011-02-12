@@ -29,10 +29,8 @@
 #include "ListBox.h"
 
 ListBox::ListBox(int w, int h)
-: AbstractListBox(w, h)
-, children_height(0)
-, autosize_children(0)
-, autosize_height(0)
+: AbstractListBox(w, h), children_height(0), autosize_children(0)
+, autosize_height(0), reposition_widgets(false)
 {
 }
 
@@ -46,33 +44,36 @@ void ListBox::Draw()
     return;
   }
 
-  autosize_height = 1;
-  int autosize_height_extra = 0;
-  int realh = area->getmaxy();
-  if (autosize_children && children_height < realh) {
-    int space = realh - (children_height - autosize_children);
-    autosize_height = space / autosize_children;
-    autosize_height_extra = space % autosize_children;
-  }
-  autosize_extra.clear();
-
-  int y = 0;
-  for (Children::iterator i = children.begin(); i != children.end(); i++) {
-    Widget *widget = i->widget;
-    if (widget->IsVisible()) {
-      int h = widget->Height();
-      if (h == AUTOSIZE) {
-        h = autosize_height;
-        if (autosize_height_extra) {
-          autosize_extra.insert(widget);
-          autosize_height_extra--;
-          h++;
-        }
-      }
-
-      widget->MoveResize(0, y, widget->Width(), widget->Height());
-      y += h;
+  if (reposition_widgets) {
+    autosize_height = 1;
+    int autosize_height_extra = 0;
+    int realh = area->getmaxy();
+    if (autosize_children && children_height < realh) {
+      int space = realh - (children_height - autosize_children);
+      autosize_height = space / autosize_children;
+      autosize_height_extra = space % autosize_children;
     }
+    autosize_extra.clear();
+
+    int y = 0;
+    for (Children::iterator i = children.begin(); i != children.end(); i++) {
+      Widget *widget = i->widget;
+      if (widget->IsVisible()) {
+        int h = widget->Height();
+        if (h == AUTOSIZE) {
+          h = autosize_height;
+          if (autosize_height_extra) {
+            autosize_extra.insert(widget);
+            autosize_height_extra--;
+            h++;
+          }
+        }
+
+        widget->MoveResize(0, y, widget->Width(), widget->Height());
+        y += h;
+      }
+    }
+    reposition_widgets = false;
   }
 
   // make sure that currently focused widget is visible
@@ -110,6 +111,7 @@ void ListBox::InsertWidget(size_t pos, Widget& widget)
 
   // note: widget is moved to a correct position in Draw() method
   ScrollPane::InsertWidget(pos, widget, 0, 0);
+  reposition_widgets = true;
 }
 
 void ListBox::AppendWidget(Widget& widget)
@@ -157,6 +159,7 @@ void ListBox::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize)
       autosize_children++;
     }
     children_height += new_height - old_height;
+    reposition_widgets = true;
     UpdateScrollHeight();
   }
 }
@@ -171,6 +174,7 @@ void ListBox::OnChildVisible(Widget& widget, bool visible)
     height = 1;
   }
   children_height += sign * height;
+  reposition_widgets = true;
   UpdateScrollHeight();
 }
 

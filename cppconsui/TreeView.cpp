@@ -28,8 +28,7 @@
 #define CONTEXT_TREEVIEW "treeview"
 
 TreeView::TreeView(int w, int h, LineStyle::Type ltype)
-: ScrollPane(w, h, 0, 0)
-, linestyle(ltype)
+: ScrollPane(w, h, 0, 0), linestyle(ltype)
 {
   /* initialise the tree */
   TreeNode root;
@@ -200,6 +199,7 @@ void TreeView::Expand(const NodeReference node)
 void TreeView::ToggleCollapsed(const NodeReference node)
 {
   node->open = !node->open;
+  FocusFix();
   Redraw();
 }
 

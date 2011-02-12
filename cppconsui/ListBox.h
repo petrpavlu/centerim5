@@ -61,6 +61,7 @@ protected:
   int autosize_children;
   int autosize_height;
   std::set<const Widget *> autosize_extra;
+  bool reposition_widgets;
 
   // Widget
   virtual void RealUpdateArea();

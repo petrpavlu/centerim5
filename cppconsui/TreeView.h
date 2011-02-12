@@ -145,8 +145,8 @@ public:
 protected:
   class TreeNode
   {
-  /* Note: If TreeNode would be just protected/private and all variables
-   * public then variables can be accessed from outside using NodeReference.
+  /* Note: If TreeNode is just protected/private and all its variables are
+   * public, then variables can be accessed from outside using NodeReference.
    */
   friend class TreeView;
 
@@ -189,7 +189,6 @@ protected:
 
   TheTree thetree;
   NodeReference focus_node;
-
   LineStyle linestyle;
 
   // Widget

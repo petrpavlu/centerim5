@@ -29,7 +29,8 @@
 #ifndef __WIDGET_H__
 #define __WIDGET_H__
 
-#define AUTOSIZE INT_MIN
+#define AUTOSIZE -1
+#define UNSET -2
 
 #include "CppConsUI.h"
 #include "InputProcessor.h"

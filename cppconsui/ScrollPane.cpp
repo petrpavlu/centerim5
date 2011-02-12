@@ -162,8 +162,8 @@ void ScrollPane::DrawEx(bool container_draw)
 
   /* If the defined scrollable area is smaller than the widget, make sure
    * the copy works. */
-  int copyw = MIN(scroll_width - 1, scrollarea->getmaxx() - 1);
-  int copyh = MIN(scroll_height - 1, scrollarea->getmaxy() - 1);
+  int copyw = MIN(scroll_width, scrollarea->getmaxx()) - 1;
+  int copyh = MIN(scroll_height, scrollarea->getmaxy()) - 1;
 
   area->copyto(scrollarea, scroll_xpos, scroll_ypos, 0, 0, copyw, copyh, 0);
 }

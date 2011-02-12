@@ -29,10 +29,8 @@
 #include "HorizontalListBox.h"
 
 HorizontalListBox::HorizontalListBox(int w, int h)
-: AbstractListBox(w, h)
-, children_width(0)
-, autosize_children(0)
-, autosize_width(0)
+: AbstractListBox(w, h), children_width(0), autosize_children(0)
+, autosize_width(0), reposition_widgets(false)
 {
 }
 
@@ -46,33 +44,36 @@ void HorizontalListBox::Draw()
     return;
   }
 
-  autosize_width = 1;
-  int autosize_width_extra = 0;
-  int realw = area->getmaxx();
-  if (autosize_children && children_width < realw) {
-    int space = realw - (children_width - autosize_children);
-    autosize_width = space / autosize_children;
-    autosize_width_extra = space % autosize_children;
-  }
-  autosize_extra.clear();
-
-  int x = 0;
-  for (Children::iterator i = children.begin(); i != children.end(); i++) {
-    Widget *widget = i->widget;
-    if (widget->IsVisible()) {
-      int w = widget->Width();
-      if (w == AUTOSIZE) {
-        w = autosize_width;
-        if (autosize_width_extra) {
-          autosize_extra.insert(widget);
-          autosize_width_extra--;
-          w++;
-        }
-      }
-
-      widget->MoveResize(x, 0, widget->Width(), widget->Height());
-      x += w;
+  if (reposition_widgets) {
+    autosize_width = 1;
+    int autosize_width_extra = 0;
+    int realw = area->getmaxx();
+    if (autosize_children && children_width < realw) {
+      int space = realw - (children_width - autosize_children);
+      autosize_width = space / autosize_children;
+      autosize_width_extra = space % autosize_children;
     }
+    autosize_extra.clear();
+
+    int x = 0;
+    for (Children::iterator i = children.begin(); i != children.end(); i++) {
+      Widget *widget = i->widget;
+      if (widget->IsVisible()) {
+        int w = widget->Width();
+        if (w == AUTOSIZE) {
+          w = autosize_width;
+          if (autosize_width_extra) {
+            autosize_extra.insert(widget);
+            autosize_width_extra--;
+            w++;
+          }
+        }
+
+        widget->MoveResize(x, 0, widget->Width(), widget->Height());
+        x += w;
+      }
+    }
+    reposition_widgets = false;
   }
 
   // make sure that currently focused widget is visible
@@ -110,6 +111,7 @@ void HorizontalListBox::InsertWidget(size_t pos, Widget& widget)
 
   // note: widget is moved to a correct position in Draw() method
   ScrollPane::InsertWidget(pos, widget, 0, 0);
+  reposition_widgets = true;
 }
 
 void HorizontalListBox::AppendWidget(Widget& widget)
@@ -157,6 +159,7 @@ void HorizontalListBox::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& n
       autosize_children++;
     }
     children_width += new_width - old_width;
+    reposition_widgets = true;
     UpdateScrollWidth();
   }
 }
