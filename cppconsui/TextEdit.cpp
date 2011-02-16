@@ -230,18 +230,21 @@ gchar *TextEdit::AsString(const gchar *separator)
 
 void TextEdit::Draw()
 {
+  int origw = area ? area->getmaxx() : 0;
   RealUpdateArea();
 
   if (!area)
     return;
 
+  if (origw != area->getmaxx()) {
+    UpdateScreenLines();
+    UpdateScreenCursor();
+  }
+
   area->erase();
 
-  if (screen_lines.empty()) {
-    if (has_focus)
-      area->mvchgat(0, 0, 1, Curses::Attr::REVERSE, 0, NULL);
+  if (screen_lines.empty())
     return;
-  }
 
   int realh = area->getmaxy();
 
@@ -265,16 +268,6 @@ void TextEdit::Draw()
     int sc_y = current_sc_line - view_top;
     area->mvchgat(sc_x, sc_y, 1, Curses::Attr::REVERSE, 0, NULL);
   }
-}
-
-void TextEdit::MoveResize(int newx, int newy, int neww, int newh)
-{
-  Widget::MoveResize(newx, newy, neww, newh);
-
-  UpdateScreenLines();
-  UpdateScreenCursor();
-
-  Redraw();
 }
 
 bool TextEdit::ProcessInputText(const TermKeyKey &key)

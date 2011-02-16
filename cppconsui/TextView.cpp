@@ -189,10 +189,22 @@ void TextView::SetViewPos(int viewy)
 
 void TextView::Draw()
 {
+  int origw = area ? area->getmaxx() : 0;
   RealUpdateArea();
 
   if (!area || lines.empty())
     return;
+
+  if (origw != area->getmaxx()) {
+    // delete all screen lines
+    for (ScreenLines::iterator i = screen_lines.begin();
+        i != screen_lines.end(); i++)
+      delete *i;
+    screen_lines.clear();
+
+    for (int i = 0, advice = 0; i < (int) lines.size(); i++)
+      advice = UpdateScreenLines(i, advice);
+  }
 
   area->erase();
 
@@ -229,20 +241,6 @@ void TextView::Draw()
   }
 
   area->attroff(attrs);
-}
-
-void TextView::MoveResize(int newx, int newy, int neww, int newh)
-{
-  Widget::MoveResize(newx, newy, neww, newh);
-
-  // delete all screen lines
-  for (ScreenLines::iterator i = screen_lines.begin();
-      i != screen_lines.end(); i++)
-    delete *i;
-  screen_lines.clear();
-
-  for (int i = 0, advice = 0; i < (int) lines.size(); i++)
-    advice = UpdateScreenLines(i, advice);
 }
 
 const gchar *TextView::ProceedLine(const gchar *text, int area_width, int *res_width) const

@@ -36,18 +36,17 @@ ListBox::ListBox(int w, int h)
 
 void ListBox::Draw()
 {
-  if (update_area)
-    reposition_widgets = true;
-
   RealUpdateArea();
   // set virtual scroll area width
   if (screen_area)
     SetScrollWidth(screen_area->getmaxx());
   UpdateScrollHeight();
+  if (update_area)
+    reposition_widgets = true;
   RealUpdateVirtualArea();
 
   if (!area) {
-    // scrollpane will clear the scroll (real) area
+    // scrollpane will clear the screen (real) area
     AbstractListBox::Draw();
     return;
   }

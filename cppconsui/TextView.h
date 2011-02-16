@@ -86,7 +86,6 @@ public:
 
   // Widget
   virtual void Draw();
-  virtual void MoveResize(int newx, int newy, int neww, int newh);
 
 protected:
   /**
