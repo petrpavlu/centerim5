@@ -27,6 +27,27 @@
 
 #define CONTEXT_TREEVIEW "treeview"
 
+TreeView::ToggleCollapseButton::ToggleCollapseButton(int w, int h,
+    const char *text_)
+: Button(w, h, text_)
+{
+}
+
+TreeView::ToggleCollapseButton::ToggleCollapseButton(const char *text_)
+: Button(text_)
+{
+}
+
+void TreeView::ToggleCollapseButton::SetParent(Container& parent)
+{
+  TreeView *tree = dynamic_cast<TreeView*>(&parent);
+  g_assert(tree);
+
+  Button::SetParent(parent);
+  signal_activate.connect(sigc::hide(sigc::mem_fun(tree,
+          &TreeView::ActionToggleCollapsed)));
+}
+
 TreeView::TreeView(int w, int h, LineStyle::Type ltype)
 : ScrollPane(w, h, 0, 0), linestyle(ltype)
 {

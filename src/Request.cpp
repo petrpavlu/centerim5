@@ -372,9 +372,8 @@ Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,
     if (!title)
       title = _("Settings group");
 
-    Button *button = new Button(title);
-    button->signal_activate.connect(sigc::hide(sigc::mem_fun(tree,
-            &TreeView::ActionToggleCollapsed)));
+    TreeView::ToggleCollapseButton *button
+      = new TreeView::ToggleCollapseButton(title);
     TreeView::NodeReference parent = tree->AppendNode(tree->Root(), *button);
 
     for (GList *gfields = purple_request_field_group_get_fields(group);

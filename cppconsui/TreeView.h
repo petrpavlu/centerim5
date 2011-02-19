@@ -22,6 +22,7 @@
 #ifndef __TREEVIEW_H__
 #define __TREEVIEW_H__
 
+#include "Button.h"
 #include "ScrollPane.h"
 #include "LineStyle.h"
 
@@ -34,6 +35,24 @@ protected:
   class TreeNode;
 
 public:
+  class ToggleCollapseButton
+  : public Button
+  {
+  public:
+    ToggleCollapseButton(int w, int h, const char *text_ = NULL);
+    explicit ToggleCollapseButton(const char *text_ = NULL);
+    virtual ~ToggleCollapseButton() {}
+
+    // Widget
+    virtual void SetParent(Container& parent);
+
+  protected:
+
+  private:
+    ToggleCollapseButton(const ToggleCollapseButton&);
+    ToggleCollapseButton& operator=(const ToggleCollapseButton&);
+  };
+
   /**
    * Node drawing style.
    */

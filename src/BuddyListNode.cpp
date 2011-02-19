@@ -339,6 +339,7 @@ void BuddyListGroup::Update()
 
 void BuddyListGroup::OnActivate(Button& activator)
 {
+  // XXX use TreeView::ToggleCollapseButton
   TreeView *t = dynamic_cast<TreeView *>(parent);
   g_assert(t);
   t->ToggleCollapsed(ref);
