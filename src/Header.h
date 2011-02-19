@@ -64,7 +64,7 @@ private:
       PurpleStatus *old, PurpleStatus *cur, gpointer data)
     { reinterpret_cast<Header *>(data)->account_status_changed(account, old,
         cur); }
-  static void account_alias_changed_(PurpleAccount *account, const gchar *old,
+  static void account_alias_changed_(PurpleAccount *account, const char *old,
       gpointer data)
     { reinterpret_cast<Header *>(data)->account_alias_changed(account, old); }
 
@@ -72,7 +72,7 @@ private:
   void account_signed_off(PurpleAccount *account);
   void account_status_changed(PurpleAccount *account, PurpleStatus *old,
       PurpleStatus *cur);
-  void account_alias_changed(PurpleAccount *account, const gchar *old);
+  void account_alias_changed(PurpleAccount *account, const char *old);
 };
 
 #endif // __HEADER_H__

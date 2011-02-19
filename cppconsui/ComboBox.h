@@ -42,8 +42,8 @@ class ComboBox
 : public Button
 {
 public:
-  ComboBox(int w, int h, const gchar *text_ = NULL);
-  explicit ComboBox(const gchar *text_ = NULL);
+  ComboBox(int w, int h, const char *text_ = NULL);
+  explicit ComboBox(const char *text_ = NULL);
   virtual ~ComboBox();
 
   /**
@@ -54,19 +54,19 @@ public:
   /**
    * Appends a new option.
    */
-  void AddOption(const gchar *text = NULL, intptr_t data = 0);
-  void AddOptionPtr(const gchar *text = NULL, void *data = NULL)
+  void AddOption(const char *text = NULL, intptr_t data = 0);
+  void AddOptionPtr(const char *text = NULL, void *data = NULL)
     { AddOption(text, reinterpret_cast<intptr_t>(data)); }
 
   /**
    * Returns last selected option.
    */
   int GetSelected() const { return selected_entry; };
-  const gchar *GetSelectedTitle() const;
+  const char *GetSelectedTitle() const;
 
   int GetOptionsCount() const { return options.size(); }
 
-  const gchar *GetTitle(int entry) const;
+  const char *GetTitle(int entry) const;
   intptr_t GetData(int entry) const;
 
   void SetSelected(int new_entry);
@@ -74,7 +74,7 @@ public:
   void SetSelectedByDataPtr(void *data)
     { SetSelectedByData(reinterpret_cast<intptr_t>(data)); }
 
-  sigc::signal<void, ComboBox&, int, const gchar *, intptr_t>
+  sigc::signal<void, ComboBox&, int, const char *, intptr_t>
     signal_selection_changed;
 
 protected:
@@ -82,7 +82,7 @@ protected:
    * Keeps a pair of {display text, value}.
    */
   struct ComboBoxEntry {
-    gchar *title;
+    char *title;
     intptr_t data;
   };
   typedef std::vector<ComboBoxEntry> ComboBoxEntries;

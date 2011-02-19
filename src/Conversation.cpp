@@ -326,12 +326,12 @@ void ConversationIm::LoadHistory()
   }
 
   GIOStatus st;
-  gchar *line;
+  char *line;
   // read conversation logfile line by line
   while ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err))
       == G_IO_STATUS_NORMAL && line != NULL) {
     // parse type
-    const gchar *cur = line;
+    const char *cur = line;
     int color = 0;
     switch (*cur) {
       case 'O': // other
@@ -389,7 +389,7 @@ void ConversationIm::LoadHistory()
 
 void ConversationIm::Send()
 {
-  gchar *str = input->AsString("<br/>");
+  char *str = input->AsString("<br/>");
   if (str) {
     purple_conv_im_send(convim, str);
     g_free(str);

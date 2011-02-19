@@ -34,7 +34,7 @@
 
 #define CONTEXT_CHECKBOX "checkbox"
 
-CheckBox::CheckBox(int w, int h, const gchar *text_, bool default_state)
+CheckBox::CheckBox(int w, int h, const char *text_, bool default_state)
 : Widget(w, h)
 , text(NULL)
 , state(default_state)
@@ -46,7 +46,7 @@ CheckBox::CheckBox(int w, int h, const gchar *text_, bool default_state)
   DeclareBindables();
 }
 
-CheckBox::CheckBox(const gchar *text_, bool default_state)
+CheckBox::CheckBox(const char *text_, bool default_state)
 : Widget(AUTOSIZE, 1)
 , text(NULL)
 , state(default_state)
@@ -121,7 +121,7 @@ void CheckBox::Draw()
     area->attroff(attrs);
 }
 
-void CheckBox::SetText(const gchar *new_text)
+void CheckBox::SetText(const char *new_text)
 {
   if (text)
     g_free(text);

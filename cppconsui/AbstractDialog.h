@@ -49,16 +49,16 @@ public:
     RESPONSE_NO
   };
 
-  AbstractDialog(int x, int y, int w, int h, const gchar *title = NULL,
+  AbstractDialog(int x, int y, int w, int h, const char *title = NULL,
       LineStyle::Type ltype = LineStyle::DEFAULT);
-  explicit AbstractDialog(const gchar *title = NULL,
+  explicit AbstractDialog(const char *title = NULL,
       LineStyle::Type ltype = LineStyle::DEFAULT);
   virtual ~AbstractDialog() {}
 
   // FreeWindow
   virtual void Close();
 
-  virtual void AddButton(const gchar *label, ResponseType response);
+  virtual void AddButton(const char *label, ResponseType response);
   virtual void AddSeparator();
   virtual void Response(ResponseType response);
 

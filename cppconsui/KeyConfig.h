@@ -96,7 +96,7 @@ public:
   public:
     Bindable(const char *context_,
         const char *action_,
-        const gchar *description_,
+        const char *description_,
         const TermKeyKey &defkey_)
       /* Passed values should be always statically allocated so just save
        * pointers to them. */
@@ -116,7 +116,7 @@ public:
     /**
      * A description of the action.
      */
-    const gchar *description;
+    const char *description;
     /**
      * The default value, i.e. the key(s) that trigger the action.
      */
@@ -147,7 +147,7 @@ public:
    * action.
    */
   void RegisterKeyDef(const char *context, const char *action,
-      const gchar *desc, const TermKeyKey &key);
+      const char *desc, const TermKeyKey &key);
 
   /**
    * Returns all key binds.

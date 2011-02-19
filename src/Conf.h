@@ -39,8 +39,8 @@ public:
   bool GetBool(const char *pref, bool defaultvalue);
   void SetBool(const char *pref, bool value);
 
-  const gchar *GetString(const char *pref, const gchar *defaultvalue);
-  void SetString(const char *pref, const gchar *value);
+  const char *GetString(const char *pref, const char *defaultvalue);
+  void SetString(const char *pref, const char *value);
 
 protected:
 

@@ -98,7 +98,7 @@ TermKeyKey RefineKey(const TermKeyKey &k)
   return res;
 }
 
-TermKeyKey UnicodeTermKey(const gchar *symbol, int modifiers)
+TermKeyKey UnicodeTermKey(const char *symbol, int modifiers)
 {
   g_assert(symbol);
   int len = strlen(symbol);

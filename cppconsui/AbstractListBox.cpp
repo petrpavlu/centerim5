@@ -35,7 +35,7 @@ AbstractListBox::AbstractListBox(int w, int h)
 {
 }
 
-Button *AbstractListBox::InsertItem(size_t pos, const gchar *title,
+Button *AbstractListBox::InsertItem(size_t pos, const char *title,
     const sigc::slot<void, Button&>& function)
 {
   Button *b = new Button(Curses::onscreen_width(title), 1, title);
@@ -44,7 +44,7 @@ Button *AbstractListBox::InsertItem(size_t pos, const gchar *title,
   return b;
 }
 
-Button *AbstractListBox::AppendItem(const gchar *title,
+Button *AbstractListBox::AppendItem(const char *title,
     const sigc::slot<void, Button&>& function)
 {
   Button *b = new Button(Curses::onscreen_width(title), 1, title);

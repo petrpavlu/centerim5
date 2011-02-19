@@ -32,7 +32,7 @@
 
 #include "gettext.h"
 
-ComboBox::ComboBox(int w, int h, const gchar *text)
+ComboBox::ComboBox(int w, int h, const char *text)
 : Button(w, h, text)
 , dropdown(NULL)
 , selected_entry(0)
@@ -42,7 +42,7 @@ ComboBox::ComboBox(int w, int h, const gchar *text)
   signal_activate.connect(sigc::mem_fun(this, &ComboBox::OnDropDown));
 }
 
-ComboBox::ComboBox(const gchar *text)
+ComboBox::ComboBox(const char *text)
 : Button(text)
 , dropdown(NULL)
 , selected_entry(0)
@@ -70,7 +70,7 @@ void ComboBox::ClearOptions()
   max_option_width = 0;
 }
 
-void ComboBox::AddOption(const gchar *text, intptr_t data)
+void ComboBox::AddOption(const char *text, intptr_t data)
 {
   ComboBoxEntry e;
   int w = 0;
@@ -95,7 +95,7 @@ void ComboBox::AddOption(const gchar *text, intptr_t data)
   options.push_back(e);
 }
 
-const gchar *ComboBox::GetSelectedTitle() const
+const char *ComboBox::GetSelectedTitle() const
 {
   if (options.empty())
     return NULL;
@@ -103,7 +103,7 @@ const gchar *ComboBox::GetSelectedTitle() const
   return GetTitle(selected_entry);
 }
 
-const gchar *ComboBox::GetTitle(int entry) const
+const char *ComboBox::GetTitle(int entry) const
 {
   g_assert(entry < (int) options.size());
   g_return_val_if_fail(entry >= 0, NULL);

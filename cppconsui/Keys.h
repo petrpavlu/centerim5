@@ -42,7 +42,7 @@ bool Compare(const TermKeyKey &a, const TermKeyKey &b);
  */
 TermKeyKey RefineKey(const TermKeyKey &k);
 
-TermKeyKey UnicodeTermKey(const gchar *symbol, int modifiers = 0);
+TermKeyKey UnicodeTermKey(const char *symbol, int modifiers = 0);
 TermKeyKey FunctionTermKey(int number, int modifiers = 0);
 TermKeyKey SymbolTermKey(TermKeySym sym, int modifiers = 0);
 

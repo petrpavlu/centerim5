@@ -27,14 +27,14 @@
 
 #include "AbstractDialog.h"
 
-AbstractDialog::AbstractDialog(int x, int y, int w, int h, const gchar *title,
+AbstractDialog::AbstractDialog(int x, int y, int w, int h, const char *title,
     LineStyle::Type ltype)
 : Window(x, y, w, h, title, TYPE_TOP, ltype)
 {
   InitLayout();
 }
 
-AbstractDialog::AbstractDialog(const gchar *title, LineStyle::Type ltype)
+AbstractDialog::AbstractDialog(const char *title, LineStyle::Type ltype)
 : Window(10, 10, 60, 12, title, TYPE_TOP, ltype)
 {
   /// @todo Set correct position.
@@ -47,7 +47,7 @@ void AbstractDialog::Close()
   Response(RESPONSE_CANCEL);
 }
 
-void AbstractDialog::AddButton(const gchar *text,
+void AbstractDialog::AddButton(const char *text,
     AbstractDialog::ResponseType response)
 {
   buttons->AppendItem(text, sigc::bind(sigc::mem_fun(this,

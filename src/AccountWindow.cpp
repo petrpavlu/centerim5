@@ -439,7 +439,7 @@ void AccountWindow::AccountOptionInt::OnActivate(Button& activator)
 void AccountWindow::AccountOptionInt::ResponseHandler(InputDialog& activator,
     AbstractDialog::ResponseType response)
 {
-  const gchar *text;
+  const char *text;
   long int i;
 
   switch (response) {
@@ -483,7 +483,7 @@ void AccountWindow::AccountOptionSplit::UpdateSplits()
   PurplePluginProtocolInfo *prplinfo;
   SplitWidgets *split_widgets;
   GList *iter;
-  const gchar *val;
+  const char *val;
 
   split_widgets = &account_entry->split_widgets;
   split_widget = split_widgets->begin();
@@ -554,7 +554,7 @@ AccountWindow::AccountOptionProtocol::AccountOptionProtocol(
 }
 
 void AccountWindow::AccountOptionProtocol::OnProtocolChanged(
-    ComboBox& activator, size_t new_entry, const gchar *title, intptr_t data)
+    ComboBox& activator, size_t new_entry, const char *title, intptr_t data)
 {
   purple_account_set_protocol_id(account, purple_plugin_get_id(
         reinterpret_cast<PurplePlugin*>(data)));

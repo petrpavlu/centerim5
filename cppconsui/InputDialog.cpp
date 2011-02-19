@@ -30,7 +30,7 @@
 
 #include "gettext.h"
 
-InputDialog::InputDialog(const gchar *title, const gchar *defaultvalue)
+InputDialog::InputDialog(const char *title, const char *defaultvalue)
 : AbstractDialog(title)
 {
   AddButton(_(OK_BUTTON_TEXT), InputDialog::RESPONSE_OK);
@@ -41,7 +41,7 @@ InputDialog::InputDialog(const gchar *title, const gchar *defaultvalue)
   entry->GrabFocus();
 }
 
-const gchar *InputDialog::GetText() const
+const char *InputDialog::GetText() const
 {
   return entry->GetText();
 }

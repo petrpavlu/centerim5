@@ -47,7 +47,7 @@
 
 #define CONTEXT_TEXTENTRY "textentry"
 
-TextEntry::TextEntry(int w, int h, const gchar *text_)
+TextEntry::TextEntry(int w, int h, const char *text_)
 : Widget(w, h)
 , text(NULL)
 , current_pos(0)
@@ -61,7 +61,7 @@ TextEntry::TextEntry(int w, int h, const gchar *text_)
   DeclareBindables();
 }
 
-TextEntry::TextEntry(const gchar *text_)
+TextEntry::TextEntry(const char *text_)
 : Widget(AUTOSIZE, 1)
 , text(NULL)
 , current_pos(0)
@@ -213,7 +213,7 @@ void TextEntry::Draw()
 
   if (has_focus) {
     int realw = area->getmaxx();
-    gchar *ptr = g_utf8_offset_to_pointer(text, current_pos);
+    char *ptr = g_utf8_offset_to_pointer(text, current_pos);
     int sc_x = Curses::onscreen_width(text, ptr);
     int sc_y = sc_x / realw;
     sc_x -= sc_y * realw;
@@ -248,7 +248,7 @@ bool TextEntry::ProcessInputText(const TermKeyKey &key)
   return false;
 }
 
-void TextEntry::SetText(const gchar *new_text)
+void TextEntry::SetText(const char *new_text)
 {
   if (text)
     g_free(text);
@@ -288,7 +288,7 @@ void TextEntry::MoveCursor(CursorMovement step, int direction)
   }
 }
 
-void TextEntry::InsertTextAtCursor(const gchar *new_text, int new_text_bytes)
+void TextEntry::InsertTextAtCursor(const char *new_text, int new_text_bytes)
 {
   int index;
   int n_chars;
@@ -336,11 +336,11 @@ void TextEntry::InsertTextAtCursor(const gchar *new_text, int new_text_bytes)
     }
 
     // allocate a new buffer and copy old data into it
-    gchar *et_new = (gchar *) g_malloc(text_size);
+    char *et_new = (char *) g_malloc(text_size);
     memcpy(et_new, text, prev_size);
 
     // overwrite a memory that might contain sensitive information
-    gchar *varea = text;
+    char *varea = text;
     while (prev_size-- > 0)
       *varea++ = 0;
 
@@ -440,7 +440,7 @@ int TextEntry::MoveLogically(int start, int direction)
 int TextEntry::MoveForwardWord(int start)
 {
   int new_pos = start;
-  gchar *cur = g_utf8_offset_to_pointer(text, start);
+  char *cur = g_utf8_offset_to_pointer(text, start);
   bool white = false;
 
   // search for the first nonwhite character after white characters
@@ -459,7 +459,7 @@ int TextEntry::MoveForwardWord(int start)
 int TextEntry::MoveBackwardWord(int start)
 {
   int new_pos = start;
-  gchar *cur = g_utf8_offset_to_pointer(text, start);
+  char *cur = g_utf8_offset_to_pointer(text, start);
   bool nonwhite = false;
 
   if (start <= 0)

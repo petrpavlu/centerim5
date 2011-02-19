@@ -180,7 +180,7 @@ void TextEdit::Clear()
   Redraw();
 }
 
-gchar *TextEdit::AsString(const gchar *separator)
+char *TextEdit::AsString(const char *separator)
 {
   g_assert(separator);
 
@@ -193,7 +193,7 @@ gchar *TextEdit::AsString(const gchar *separator)
   /** @todo Calculate lines number continuously during text
    * inserting/removing. */
   int lines = 0;
-  const gchar *p = buffer;
+  const char *p = buffer;
   while (p < bufend) {
     if (*p == '\n')
       lines++;
@@ -201,11 +201,11 @@ gchar *TextEdit::AsString(const gchar *separator)
   }
   /* Allocate memory for all chars (without internal line separator `\n' but
    * with enough room for a given separator). */
-  gchar *res = g_new(char, BufferSize() + lines * (sep_len - 1) + 1);
+  char *res = g_new(char, BufferSize() + lines * (sep_len - 1) + 1);
 
   p = buffer;
-  const gchar *q;
-  gchar *r = res;
+  const char *q;
+  char *r = res;
   while (p < bufend) {
     q = p;
     p = NextChar(p);
@@ -263,7 +263,7 @@ void TextEdit::Draw()
   }
 
   if (has_focus) {
-    const gchar *line = screen_lines[current_sc_line]->start;
+    const char *line = screen_lines[current_sc_line]->start;
     int sc_x = Width(line, current_sc_linepos);
     int sc_y = current_sc_line - view_top;
     area->mvchgat(sc_x, sc_y, 1, Curses::Attr::REVERSE, 0, NULL);
@@ -286,7 +286,7 @@ void TextEdit::InitBuffer(int size)
   if (buffer)
     g_free(buffer);
 
-  buffer = g_new(gchar, size);
+  buffer = g_new(char, size);
 
   current_pos = 0;
   point = gapstart = buffer;
@@ -317,7 +317,7 @@ void TextEdit::ExpandGap(int size)
   if (size > SizeOfGap()) {
     size += gap_size;
 
-    gchar *origbuffer = buffer;
+    char *origbuffer = buffer;
 
     buffer = g_renew(char, buffer, (bufend - buffer) + size);
 
@@ -360,22 +360,22 @@ void TextEdit::MoveGapToCursor()
   }
 }
 
-gchar *TextEdit::PrevChar(const gchar *p) const
+char *TextEdit::PrevChar(const char *p) const
 {
   if (p >= gapend) {
     if ((p = g_utf8_find_prev_char(gapend, p)))
-      return (gchar *) p;
+      return (char *) p;
     else
       p = gapstart;
   }
 
   if ((p = g_utf8_find_prev_char(buffer, p)))
-    return (gchar *) p;
+    return (char *) p;
   else
-    return (gchar *) buffer;
+    return (char *) buffer;
 }
 
-gchar *TextEdit::NextChar(const gchar *p) const
+char *TextEdit::NextChar(const char *p) const
 {
   // this should happen only if (gapstart == buffer)
   if (p == gapstart)
@@ -383,18 +383,18 @@ gchar *TextEdit::NextChar(const gchar *p) const
 
   if (p < gapstart) {
     if ((p = g_utf8_find_next_char(p, gapstart)))
-      return (gchar *) p;
+      return (char *) p;
     else
-      return (gchar *) gapend;
+      return (char *) gapend;
   }
 
   if ((p = g_utf8_find_next_char(p, bufend)))
-    return (gchar *) p;
+    return (char *) p;
   else
-    return (gchar *) bufend;
+    return (char *) bufend;
 }
 
-int TextEdit::Width(const gchar *start, int chars) const
+int TextEdit::Width(const char *start, int chars) const
 {
   g_assert(start);
 
@@ -407,7 +407,7 @@ int TextEdit::Width(const gchar *start, int chars) const
   return width;
 }
 
-gchar *TextEdit::GetScreenLine(gchar *text, int max_width, int *res_width,
+char *TextEdit::GetScreenLine(char *text, int max_width, int *res_width,
     int *res_length) const
 {
   g_assert(text);
@@ -416,8 +416,8 @@ gchar *TextEdit::GetScreenLine(gchar *text, int max_width, int *res_width,
   g_assert(res_width);
   g_assert(res_length);
 
-  gchar *cur = text;
-  gchar *res = text;
+  char *cur = text;
+  char *res = text;
   int prev_width = 0;
   int cur_width = 0;
   int cur_length = 0;
@@ -493,8 +493,8 @@ void TextEdit::UpdateScreenLines()
   if (!area || (realw = area->getmaxx()) <= 1)
     return;
 
-  gchar *p = buffer;
-  gchar *s;
+  char *p = buffer;
+  char *s;
   int width;
   int length;
 
@@ -552,7 +552,7 @@ void TextEdit::UpdateScreenCursor()
     view_top++;
 }
 
-void TextEdit::InsertTextAtCursor(const gchar *new_text, int new_text_bytes)
+void TextEdit::InsertTextAtCursor(const char *new_text, int new_text_bytes)
 {
   g_assert(new_text);
 
@@ -716,7 +716,7 @@ int TextEdit::MoveLogically(int start, int direction)
 int TextEdit::MoveForwardWordFromCursor()
 {
   int new_pos = current_pos;
-  gchar *cur = point;
+  char *cur = point;
   bool white = false;
 
   // search for the first nonwhite character after white characters
@@ -736,7 +736,7 @@ int TextEdit::MoveForwardWordFromCursor()
 int TextEdit::MoveBackwardWordFromCursor()
 {
   int new_pos = current_pos;
-  gchar *cur = point;
+  char *cur = point;
   bool nonwhite = false;
 
   if (new_pos <= 0)
@@ -779,7 +779,7 @@ void TextEdit::ActionToggleOverwrite()
   ToggleOverwrite();
 }
 
-TextEdit::ScreenLine::ScreenLine(const gchar *start, const gchar *end,
+TextEdit::ScreenLine::ScreenLine(const char *start, const char *end,
     int length, int width)
 : start(start), end(end), length(length), width(width)
 {

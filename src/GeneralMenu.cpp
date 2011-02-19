@@ -166,7 +166,7 @@ void GeneralMenu::RequestTest(Button& activator)
   Close();
 }
 
-void GeneralMenu::input_ok_cb(const gchar *text)
+void GeneralMenu::input_ok_cb(const char *text)
 {
   LOG->Debug("input_ok_cb: %s\n", text);
 }
@@ -195,13 +195,13 @@ void GeneralMenu::fields_ok_cb(PurpleRequestFields *fields)
         purple_request_fields_get_field(fields, "list0")); list;
       list = list->next)
     LOG->Debug("fields_ok_cb: list0=%s\n",
-        reinterpret_cast<const gchar*>(list->data));
+        reinterpret_cast<const char*>(list->data));
 
   for (GList *list = purple_request_field_list_get_selected(
         purple_request_fields_get_field(fields, "list1")); list;
       list = list->next)
     LOG->Debug("fields_ok_cb: list1=%s\n",
-        reinterpret_cast<const gchar*>(list->data));
+        reinterpret_cast<const char*>(list->data));
 
   PurpleAccount *account = purple_request_fields_get_account(fields,
       "account0");

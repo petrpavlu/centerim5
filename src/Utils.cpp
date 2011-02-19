@@ -23,7 +23,7 @@
 namespace Utils
 {
 
-const gchar *GetStatusIndicator(PurpleStatus *status)
+const char *GetStatusIndicator(PurpleStatus *status)
 {
   PurpleStatusType *status_type = purple_status_get_type(status);
   PurpleStatusPrimitive prim = purple_status_type_get_primitive(status_type);

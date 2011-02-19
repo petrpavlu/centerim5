@@ -114,10 +114,10 @@ void Log::MoveResize(int newx, int newy, int neww, int newh)
 }
 
 #define WRITE_METHOD(name, level)                       \
-void Log::name(const gchar *fmt, ...)                   \
+void Log::name(const char *fmt, ...)                   \
 {                                                       \
   va_list args;                                         \
-  gchar *text;                                          \
+  char *text;                                          \
                                                         \
   if (GetLogLevel("cim") < level)                       \
     return; /* we don't want to see this log message */ \
@@ -149,7 +149,7 @@ void Log::purple_print(PurpleDebugLevel purplelevel, const char *category, const
     Warning("centerim/log: purple_print() parameter category was not defined.\n");
   }
 
-  gchar *text = g_strdup_printf("libpurple/%s: %s", category, arg_s);
+  char *text = g_strdup_printf("libpurple/%s: %s", category, arg_s);
   Write(text);
   g_free(text);
 }
@@ -164,8 +164,8 @@ gboolean Log::is_enabled(PurpleDebugLevel purplelevel, const char *category)
   return TRUE;
 }
 
-void Log::default_log_handler(const gchar *domain, GLogLevelFlags flags,
-  const gchar *msg)
+void Log::default_log_handler(const char *domain, GLogLevelFlags flags,
+  const char *msg)
 {
   if (GetLogLevel("cim") < ConvertGlibDebugLevel(flags))
     return; // we don't want to see this log message
@@ -173,13 +173,13 @@ void Log::default_log_handler(const gchar *domain, GLogLevelFlags flags,
   if (!msg)
     return;
 
-  gchar *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
+  char *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
   Write(text);
   g_free(text);
 }
 
-void Log::glib_log_handler(const gchar *domain, GLogLevelFlags flags,
-  const gchar *msg)
+void Log::glib_log_handler(const char *domain, GLogLevelFlags flags,
+  const char *msg)
 {
   if (GetLogLevel("glib") < ConvertGlibDebugLevel(flags))
     return; // we don't want to see this log message
@@ -187,13 +187,13 @@ void Log::glib_log_handler(const gchar *domain, GLogLevelFlags flags,
   if (!msg)
     return;
 
-  gchar *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
+  char *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
   Write(text);
   g_free(text);
 }
 
-void Log::cppconsui_log_handler(const gchar *domain, GLogLevelFlags flags,
-  const gchar *msg)
+void Log::cppconsui_log_handler(const char *domain, GLogLevelFlags flags,
+  const char *msg)
 {
   if (GetLogLevel("cppconsui") < ConvertGlibDebugLevel(flags))
     return; // we don't want to see this log message
@@ -201,7 +201,7 @@ void Log::cppconsui_log_handler(const gchar *domain, GLogLevelFlags flags,
   if (!msg)
     return;
 
-  gchar *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
+  char *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
   Write(text);
   g_free(text);
 }
@@ -235,17 +235,17 @@ void Log::ShortenWindowText()
   }
 }
 
-void Log::Write(const gchar *text)
+void Log::Write(const char *text)
 {
   WriteToFile(text);
   textview->Append(text);
   ShortenWindowText();
 }
 
-void Log::WriteErrorToWindow(const gchar *fmt, ...)
+void Log::WriteErrorToWindow(const char *fmt, ...)
 {
   va_list args;
-  gchar *text;
+  char *text;
 
   if (GetLogLevel("cim") < LEVEL_ERROR)
     return; // we don't want to see this log message
@@ -260,7 +260,7 @@ void Log::WriteErrorToWindow(const gchar *fmt, ...)
   g_free(text);
 }
 
-void Log::WriteToFile(const gchar *text)
+void Log::WriteToFile(const char *text)
 {
   g_return_if_fail(text);
 
@@ -269,7 +269,7 @@ void Log::WriteToFile(const gchar *text)
   if (GetDebugEnabled()) {
     // open logfile if it isn't already opened
     if (!logfile) {
-      gchar *filename = g_build_filename(purple_user_dir(),
+      char *filename = g_build_filename(purple_user_dir(),
           CONF->GetString(CONF_PREFIX "log/filename", "debug"),
           NULL);
       if ((logfile = g_io_channel_new_file(filename, "a", &err))
@@ -372,8 +372,8 @@ Log::Level Log::ConvertGlibDebugLevel(GLogLevelFlags gliblevel)
 
 Log::Level Log::GetLogLevel(const char *type)
 {
-  gchar *pref = g_strconcat(CONF_PREFIX, "log/log_level_", type, NULL);
-  const gchar *def;
+  char *pref = g_strconcat(CONF_PREFIX, "log/log_level_", type, NULL);
+  const char *def;
   Level level;
   if (!g_ascii_strcasecmp(type, "cim")) {
     def = "info";
@@ -384,7 +384,7 @@ Log::Level Log::GetLogLevel(const char *type)
     level = LEVEL_CRITICAL;
   }
 
-  const gchar *slevel = CONF->GetString(pref, def);
+  const char *slevel = CONF->GetString(pref, def);
 
   if (!g_ascii_strcasecmp(slevel, "none"))
     level = LEVEL_NONE;
@@ -409,7 +409,7 @@ Log::Level Log::GetLogLevel(const char *type)
 
 bool Log::GetDebugEnabled()
 {
-  gchar *pref = g_strconcat(CONF_PREFIX, "log/debug", NULL);
+  char *pref = g_strconcat(CONF_PREFIX, "log/debug", NULL);
   bool b = CONF->GetBool(pref, false);
   g_free(pref);
   return b;

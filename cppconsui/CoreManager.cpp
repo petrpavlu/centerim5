@@ -336,7 +336,7 @@ gboolean CoreManager::io_input(GIOChannel *source, GIOCondition cond)
     if (key.type == TERMKEY_TYPE_UNICODE && !utf8) {
       gsize bwritten;
       GError *err = NULL;
-      gchar *utf8;
+      char *utf8;
 
       // convert data from user charset to UTF-8
       if (!(utf8 = g_locale_to_utf8(key.utf8, -1, NULL, &bwritten, &err))) {

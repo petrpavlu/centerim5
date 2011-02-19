@@ -29,7 +29,7 @@
 
 #include "gettext.h"
 
-SplitDialog::SplitDialog(int x, int y, int w, int h, const gchar *title,
+SplitDialog::SplitDialog(int x, int y, int w, int h, const char *title,
     LineStyle::Type ltype)
 : AbstractDialog(x, y, w, h, title, ltype), container(NULL)
 , cont_old_focus(NULL) , buttons_old_focus(NULL)
@@ -37,7 +37,7 @@ SplitDialog::SplitDialog(int x, int y, int w, int h, const gchar *title,
   buttons->SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
 }
 
-SplitDialog::SplitDialog(const gchar *title, LineStyle::Type ltype)
+SplitDialog::SplitDialog(const char *title, LineStyle::Type ltype)
 : AbstractDialog(title, ltype), container(NULL), cont_old_focus(NULL)
 , buttons_old_focus(NULL)
 {

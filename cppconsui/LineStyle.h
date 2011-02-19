@@ -53,21 +53,21 @@ public:
   void SetStyle(Type t);
   Type GetStyle() const;
 
-  const gchar *H() const;
-  const gchar *HBegin() const;
-  const gchar *HEnd() const;
-  const gchar *HUp() const;
-  const gchar *HDown() const;
-  const gchar *V() const;
-  const gchar *VBegin() const;
-  const gchar *VEnd() const;
-  const gchar *VLeft() const;
-  const gchar *VRight() const;
-  const gchar *Cross() const;
-  const gchar *CornerTL() const;
-  const gchar *CornerTR() const;
-  const gchar *CornerBL() const;
-  const gchar *CornerBR() const;
+  const char *H() const;
+  const char *HBegin() const;
+  const char *HEnd() const;
+  const char *HUp() const;
+  const char *HDown() const;
+  const char *V() const;
+  const char *VBegin() const;
+  const char *VEnd() const;
+  const char *VLeft() const;
+  const char *VRight() const;
+  const char *Cross() const;
+  const char *CornerTL() const;
+  const char *CornerTR() const;
+  const char *CornerBL() const;
+  const char *CornerBR() const;
 
 protected:
   Type type;

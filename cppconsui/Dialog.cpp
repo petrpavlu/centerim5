@@ -28,13 +28,13 @@
 
 #include "Dialog.h"
 
-Dialog::Dialog(int x, int y, int w, int h, const gchar *title,
+Dialog::Dialog(int x, int y, int w, int h, const char *title,
     LineStyle::Type ltype)
 : AbstractDialog(x, y, w, h, title, ltype)
 {
 }
 
-Dialog::Dialog(const gchar *title, LineStyle::Type ltype)
+Dialog::Dialog(const char *title, LineStyle::Type ltype)
 : AbstractDialog(title, ltype)
 {
 }

@@ -38,8 +38,8 @@ class Label
 : public Widget
 {
 public:
-  Label(int w, int h, const gchar *text_ = NULL);
-  explicit Label(const gchar *text_ = NULL);
+  Label(int w, int h, const char *text_ = NULL);
+  explicit Label(const char *text_ = NULL);
   virtual ~Label();
 
   // Widget
@@ -48,14 +48,14 @@ public:
   /**
    * Sets a new text and redraws itself.
    */
-  virtual void SetText(const gchar *new_text);
+  virtual void SetText(const char *new_text);
   /**
    * Returns previously set text.
    */
-  virtual const gchar *GetText() const { return text; }
+  virtual const char *GetText() const { return text; }
 
 protected:
-  gchar *text;
+  char *text;
 
 private:
   Label(const Label&);

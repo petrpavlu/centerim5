@@ -59,8 +59,8 @@ public:
     FLAG_HIDDEN = 1 << 4
   };
 
-  TextEntry(int w, int h, const gchar *text_ = NULL);
-  explicit TextEntry(const gchar *text_ = NULL);
+  TextEntry(int w, int h, const char *text_ = NULL);
+  explicit TextEntry(const char *text_ = NULL);
   virtual ~TextEntry();
 
   // Widget
@@ -70,11 +70,11 @@ public:
   /**
    * Sets a new text and redraws itself.
    */
-  virtual void SetText(const gchar *new_text);
+  virtual void SetText(const char *new_text);
   /**
    * Returns previously set text.
    */
-  virtual const gchar *GetText() const { return text; }
+  virtual const char *GetText() const { return text; }
 
   int GetFlags() const { return flags; }
   void SetFlags(int flags);
@@ -83,7 +83,7 @@ public:
   sigc::signal<void, TextEntry&> signal_text_changed;
 
 protected:
-  gchar *text;
+  char *text;
 
   int current_pos; ///< Current cursor position.
 
@@ -97,7 +97,7 @@ protected:
   int text_bytes; ///< Length in use, in bytes.
   int text_length; ///< Length in use, in chars.
 
-  void InsertTextAtCursor(const gchar *new_text, int new_text_bytes = -1);
+  void InsertTextAtCursor(const char *new_text, int new_text_bytes = -1);
   void DeleteText(int start_pos, int end_pos);
 
   void DeleteFromCursor(DeleteType type, int direction);

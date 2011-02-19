@@ -170,7 +170,7 @@ protected:
    * Convenient wrapper for KEYCONFIG->Bind().
    */
   static void RegisterKeyDef(const char *context, const char *action,
-      const gchar *desc, const TermKeyKey& key);
+      const char *desc, const TermKeyKey& key);
 
 private:
   InputProcessor(const InputProcessor&);

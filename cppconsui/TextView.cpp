@@ -41,19 +41,19 @@ TextView::~TextView()
   Clear();
 }
 
-void TextView::Append(const gchar *text, int color)
+void TextView::Append(const char *text, int color)
 {
   Insert(lines.size(), text, color);
 }
 
-void TextView::Insert(int line_num, const gchar *text, int color)
+void TextView::Insert(int line_num, const char *text, int color)
 {
   g_assert(text);
   g_assert(line_num >= 0);
   g_assert(line_num <= (int) lines.size());
 
-  const gchar *p = text;
-  const gchar *s = text;
+  const char *p = text;
+  const char *s = text;
 
   // parse lines
   int advice = 0;
@@ -152,7 +152,7 @@ void TextView::Clear()
   Redraw();
 }
 
-const gchar *TextView::GetLine(int line_num) const
+const char *TextView::GetLine(int line_num) const
 {
   g_assert(line_num >= 0);
   g_assert(line_num < (int) lines.size());
@@ -225,7 +225,7 @@ void TextView::Draw()
       && j < realh; i++, j++) {
     int attrs2 = 0;
     if ((*i)->parent->color) {
-      gchar *color = g_strdup_printf("color%d", (*i)->parent->color);
+      char *color = g_strdup_printf("color%d", (*i)->parent->color);
       attrs2 = GetColorPair("textview", color);
       g_free(color);
       area->attroff(attrs);
@@ -243,14 +243,14 @@ void TextView::Draw()
   area->attroff(attrs);
 }
 
-const gchar *TextView::ProceedLine(const gchar *text, int area_width, int *res_width) const
+const char *TextView::ProceedLine(const char *text, int area_width, int *res_width) const
 {
   g_assert(text);
   g_assert(area_width > 0);
   g_assert(res_width);
 
-  const gchar *cur = text;
-  const gchar *res = text;
+  const char *cur = text;
+  const char *res = text;
   int prev_width = 0;
   int cur_width = 0;
   gunichar uni;
@@ -317,8 +317,8 @@ int TextView::UpdateScreenLines(int line_num, int start)
 
   // parse line into screen lines
   ScreenLines new_lines;
-  const gchar *p = lines[line_num]->text;
-  const gchar *s;
+  const char *p = lines[line_num]->text;
+  const char *s;
   int width;
   while (*p) {
     s = p;
@@ -372,7 +372,7 @@ int TextView::EraseScreenLines(int line_num, int start, int *deleted)
   return i;
 }
 
-TextView::Line::Line(const gchar *text_, int bytes, int color_)
+TextView::Line::Line(const char *text_, int bytes, int color_)
 : color(color_)
 {
   g_assert(text_);
@@ -387,7 +387,7 @@ TextView::Line::~Line()
   g_free(text);
 }
 
-TextView::ScreenLine::ScreenLine(Line &parent_, const gchar *text_, int width_)
+TextView::ScreenLine::ScreenLine(Line &parent_, const char *text_, int width_)
 : parent(&parent_), text(text_), width(width_)
 {
 }

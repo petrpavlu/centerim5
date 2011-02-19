@@ -41,8 +41,8 @@ class Button
 : public Widget
 {
 public:
-  Button(int w, int h, const gchar *text_ = NULL, const gchar *value_ = NULL);
-  explicit Button(const gchar *text_ = NULL, const gchar *value_ = NULL);
+  Button(int w, int h, const char *text_ = NULL, const char *value_ = NULL);
+  explicit Button(const char *text_ = NULL, const char *value_ = NULL);
   virtual ~Button();
 
   // Widget
@@ -51,15 +51,15 @@ public:
   /**
    * Sets a new text and redraws itself.
    */
-  virtual void SetText(const gchar *new_text);
+  virtual void SetText(const char *new_text);
   /**
    * Returns previously set text.
    */
-  virtual const gchar *GetText() const { return text; }
+  virtual const char *GetText() const { return text; }
 
-  virtual void SetValue(const gchar *new_value);
+  virtual void SetValue(const char *new_value);
   virtual void SetValue(int new_value);
-  virtual const gchar *GetValue() const { return value; }
+  virtual const char *GetValue() const { return value; }
 
   virtual void SetValueVisibility(bool visible);
   virtual bool GetValueVisibility() const { return value_visible; }
@@ -70,8 +70,8 @@ public:
   sigc::signal<void, Button&> signal_activate;
 
 protected:
-  gchar *text;
-  gchar *value;
+  char *text;
+  char *value;
   bool value_visible;
 
 private:

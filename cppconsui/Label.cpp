@@ -28,14 +28,14 @@
 
 #include "Label.h"
 
-Label::Label(int w, int h, const gchar *text_)
+Label::Label(int w, int h, const char *text_)
 : Widget(w, h)
 , text(NULL)
 {
   SetText(text_);
 }
 
-Label::Label(const gchar *text_)
+Label::Label(const char *text_)
 : Widget(AUTOSIZE, 1)
 , text(NULL)
 {
@@ -70,7 +70,7 @@ void Label::Draw()
   area->attroff(attrs);
 }
 
-void Label::SetText(const gchar *new_text)
+void Label::SetText(const char *new_text)
 {
   if (text)
     g_free(text);

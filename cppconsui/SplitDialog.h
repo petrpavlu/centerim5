@@ -35,9 +35,9 @@ class SplitDialog
 : public AbstractDialog
 {
 public:
-  SplitDialog(int x, int y, int w, int h, const gchar *title = NULL,
+  SplitDialog(int x, int y, int w, int h, const char *title = NULL,
       LineStyle::Type ltype = LineStyle::DEFAULT);
-  explicit SplitDialog(const gchar *title = NULL,
+  explicit SplitDialog(const char *title = NULL,
       LineStyle::Type ltype = LineStyle::DEFAULT);
   virtual ~SplitDialog();
 

@@ -34,7 +34,7 @@
 
 #define CONTEXT_BUTTON "button"
 
-Button::Button(int w, int h, const gchar *text_, const gchar *value_)
+Button::Button(int w, int h, const char *text_, const char *value_)
 : Widget(w, h), text(NULL), value(NULL), value_visible(false)
 {
   SetText(text_);
@@ -44,7 +44,7 @@ Button::Button(int w, int h, const gchar *text_, const gchar *value_)
   DeclareBindables();
 }
 
-Button::Button(const gchar *text_, const gchar *value_)
+Button::Button(const char *text_, const char *value_)
 : Widget(AUTOSIZE, 1), text(NULL), value(NULL), value_visible(false)
 {
   SetText(text_);
@@ -114,7 +114,7 @@ void Button::Draw()
     area->attroff(attrs);
 }
 
-void Button::SetText(const gchar *new_text)
+void Button::SetText(const char *new_text)
 {
   if (text)
     g_free(text);
@@ -127,7 +127,7 @@ void Button::SetText(const gchar *new_text)
   Redraw();
 }
 
-void Button::SetValue(const gchar *new_value)
+void Button::SetValue(const char *new_value)
 {
   if (value)
     g_free(value);

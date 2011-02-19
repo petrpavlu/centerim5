@@ -28,7 +28,7 @@
 
 #include "MenuWindow.h"
 
-MenuWindow::MenuWindow(int x, int y, int w, int h, const gchar *title,
+MenuWindow::MenuWindow(int x, int y, int w, int h, const char *title,
     LineStyle::Type ltype)
 : Window(x, y, w, h, title, TYPE_TOP, ltype)
 {

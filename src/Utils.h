@@ -26,7 +26,7 @@
 namespace Utils
 {
 
-const gchar *GetStatusIndicator(PurpleStatus *status);
+const char *GetStatusIndicator(PurpleStatus *status);
 
 } // namespace Utils
 

@@ -36,7 +36,7 @@ public:
   virtual void Update();
   virtual void OnActivate(Button& activator) = 0;
   // debugging method
-  virtual const gchar *ToString() const = 0;
+  virtual const char *ToString() const = 0;
   /* Sorts in this node. It supposes that all siblings are in correct order.
    * */
   virtual void SortIn();
@@ -57,7 +57,7 @@ protected:
   /* Called by BuddyListBuddy and BuddyListContact to get presence status
    * char. Returned value should be used as a prefix of buddy/contact name.
    * */
-  const gchar *GetBuddyStatus(PurpleBuddy *buddy) const;
+  const char *GetBuddyStatus(PurpleBuddy *buddy) const;
 
   /* Returns weight of buddy status (available > away > offline...). Used
    * for sorting. */
@@ -77,7 +77,7 @@ public:
   virtual bool LessThan(const BuddyListNode& other) const;
   virtual void Update();
   virtual void OnActivate(Button& activator);
-  virtual const gchar *ToString() const;
+  virtual const char *ToString() const;
 
 protected:
   PurpleBuddy *buddy;
@@ -98,7 +98,7 @@ public:
   virtual bool LessThan(const BuddyListNode& other) const;
   virtual void Update();
   virtual void OnActivate(Button& activator);
-  virtual const gchar *ToString() const;
+  virtual const char *ToString() const;
 
 protected:
   PurpleChat *chat;
@@ -119,7 +119,7 @@ public:
   virtual bool LessThan(const BuddyListNode& other) const;
   virtual void Update();
   virtual void OnActivate(Button& activator);
-  virtual const gchar *ToString() const;
+  virtual const char *ToString() const;
 
 protected:
   PurpleContact *contact;
@@ -140,7 +140,7 @@ public:
   virtual bool LessThan(const BuddyListNode& other) const;
   virtual void Update();
   virtual void OnActivate(Button& activator);
-  virtual const gchar *ToString() const;
+  virtual const char *ToString() const;
   virtual void SortIn();
 
 protected:

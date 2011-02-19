@@ -43,7 +43,7 @@ class Window
 : public FreeWindow
 {
 public:
-  Window(int x, int y, int w, int h, const gchar *title = NULL,
+  Window(int x, int y, int w, int h, const char *title = NULL,
       Type t = TYPE_NORMAL, LineStyle::Type ltype = LineStyle::DEFAULT);
   virtual ~Window() {}
 
@@ -57,8 +57,8 @@ public:
   void SetBorderStyle(LineStyle::Type ltype);
   LineStyle::Type GetBorderStyle() const;
 
-  void SetTitle(const gchar *text) { panel->SetTitle(text); }
-  const gchar *GetTitle() const { return panel->GetTitle(); }
+  void SetTitle(const char *text) { panel->SetTitle(text); }
+  const char *GetTitle() const { return panel->GetTitle(); }
 
 protected:
   Panel *panel;

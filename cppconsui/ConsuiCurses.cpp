@@ -130,7 +130,7 @@ Window *Window::subpad(int begin_x, int begin_y, int ncols, int nlines)
   return a;
 }
 
-const gchar *Window::PrintChar(const gchar *ch, int *printed, const gchar *end)
+const char *Window::PrintChar(const char *ch, int *printed, const char *end)
 {
   /**
    * @todo `\\v' switch is not implemented yet.
@@ -188,7 +188,7 @@ const gchar *Window::PrintChar(const gchar *ch, int *printed, const gchar *end)
   return g_utf8_find_next_char(ch, end);
 }
 
-int Window::mvaddstring(int x, int y, int w, const gchar *str)
+int Window::mvaddstring(int x, int y, int w, const char *str)
 {
   g_assert(str);
 
@@ -204,7 +204,7 @@ int Window::mvaddstring(int x, int y, int w, const gchar *str)
   return printed;
 }
 
-int Window::mvaddstring(int x, int y, const gchar *str)
+int Window::mvaddstring(int x, int y, const char *str)
 {
   g_assert(str);
 
@@ -220,7 +220,7 @@ int Window::mvaddstring(int x, int y, const gchar *str)
   return printed;
 }
 
-int Window::mvaddstring(int x, int y, int w, const gchar *str, const gchar *end)
+int Window::mvaddstring(int x, int y, int w, const char *str, const char *end)
 {
   g_assert(str);
   g_assert(end);
@@ -240,7 +240,7 @@ int Window::mvaddstring(int x, int y, int w, const gchar *str, const gchar *end)
   return printed;
 }
 
-int Window::mvaddstring(int x, int y, const gchar *str, const gchar *end)
+int Window::mvaddstring(int x, int y, const char *str, const char *end)
 {
   g_assert(str);
   g_assert(end);

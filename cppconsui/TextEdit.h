@@ -24,7 +24,7 @@ public:
    * Returns inserted text. Lines are separated by a given separator. Caller
    * is responsible for freeing returned data.
    */
-  gchar *AsString(const gchar *separator = "\n");
+  char *AsString(const char *separator = "\n");
 
   // Widget
   virtual void Draw();
@@ -39,18 +39,18 @@ protected:
   void ExpandGap(int size);
   void MoveGapToCursor();
 
-  gchar *PrevChar(const gchar *p) const;
-  gchar *NextChar(const gchar *p) const;
-  int Width(const gchar *start, int chars) const;
+  char *PrevChar(const char *p) const;
+  char *NextChar(const char *p) const;
+  int Width(const char *start, int chars) const;
 
-  gchar *GetScreenLine(gchar *text, int max_width, int *res_width,
+  char *GetScreenLine(char *text, int max_width, int *res_width,
       int *res_length) const;
   void UpdateScreenLines();
   void ClearScreenLines();
 
   void UpdateScreenCursor();
 
-  void InsertTextAtCursor(const gchar *new_text, int new_text_bytes = -1);
+  void InsertTextAtCursor(const char *new_text, int new_text_bytes = -1);
   void DeleteFromCursor(DeleteType type, int direction);
   void MoveCursor(CursorMovement step, int direction);
 
@@ -60,28 +60,28 @@ protected:
   bool overwrite_mode;
 
   int current_pos; ///< Character position from the start of buffer.
-  gchar *point; ///< Cursor location in the buffer.
+  char *point; ///< Cursor location in the buffer.
 
   int current_sc_line; ///< Current cursor line (derived from current_pos and screen_lines).
   int current_sc_linepos; ///< Current cursor character number (in the current line).
   int view_top;
 
-  gchar *buffer; ///< Start of text buffer.
-  gchar *bufend; ///< First location outside buffer.
-  gchar *gapstart; ///< Start of gap.
-  gchar *gapend; ///< First location after end of gap.
+  char *buffer; ///< Start of text buffer.
+  char *bufend; ///< First location outside buffer.
+  char *gapstart; ///< Start of gap.
+  char *gapend; ///< First location after end of gap.
   int text_length; ///< Length in use, in chars.
 
   int gap_size; ///< Expand gap by this value.
 
   struct ScreenLine
   {
-    const gchar *start; ///< Pointer to start of line (points into buffer).
-    const gchar *end; ///< Pointer to first byte that is not part of line.
+    const char *start; ///< Pointer to start of line (points into buffer).
+    const char *end; ///< Pointer to first byte that is not part of line.
     int length; ///< Precalculated length.
     int width; ///< Precalculated on screen width.
 
-    ScreenLine(const gchar *start, const gchar *end, int length, int width);
+    ScreenLine(const char *start, const char *end, int length, int width);
   };
 
   std::vector<ScreenLine *> screen_lines;

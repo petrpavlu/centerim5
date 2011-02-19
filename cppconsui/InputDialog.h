@@ -37,10 +37,10 @@ class InputDialog
 : public AbstractDialog
 {
 public:
-  InputDialog(const gchar *title, const gchar *defaultvalue);
+  InputDialog(const char *title, const char *defaultvalue);
   virtual ~InputDialog() {}
 
-  const gchar *GetText() const;
+  const char *GetText() const;
 
   int GetFlags() { return entry->GetFlags(); }
   void SetFlags(int flags) { entry->SetFlags(flags); }

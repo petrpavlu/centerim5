@@ -41,7 +41,7 @@ class Panel
 : public Widget
 {
 public:
-  Panel(int w, int h, const gchar *text = NULL,
+  Panel(int w, int h, const char *text = NULL,
       LineStyle::Type ltype = LineStyle::DEFAULT);
   virtual ~Panel();
 
@@ -51,11 +51,11 @@ public:
   /**
    * Sets the caption text.
    */
-  void SetTitle(const gchar *text);
+  void SetTitle(const char *text);
   /**
    * Returns caption text.
    */
-  const gchar *GetTitle() const;
+  const char *GetTitle() const;
 
   /**
    * Sets a new border style.
@@ -71,7 +71,7 @@ protected:
   /**
    * Caption text.
    */
-  gchar *title;
+  char *title;
   /**
    * On-screen caption width.
    */

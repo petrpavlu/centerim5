@@ -50,12 +50,12 @@ public:
   virtual void MoveResize(int newx, int newy, int neww, int newh);
   virtual void ScreenResized();
 
-  void Error(const gchar *fmt, ...);
-  void Critical(const gchar *fmt, ...);
-  void Warning(const gchar *fmt, ...);
-  void Message(const gchar *fmt, ...);
-  void Info(const gchar *fmt, ...);
-  void Debug(const gchar *fmt, ...);
+  void Error(const char *fmt, ...);
+  void Critical(const char *fmt, ...);
+  void Warning(const char *fmt, ...);
+  void Message(const char *fmt, ...);
+  void Info(const char *fmt, ...);
+  void Debug(const char *fmt, ...);
 
 protected:
 
@@ -102,28 +102,28 @@ private:
   gboolean is_enabled(PurpleDebugLevel level, const char *category);
 
   // to catch default messages
-  static void default_log_handler_(const gchar *domain, GLogLevelFlags flags,
-      const gchar *msg, gpointer user_data)
+  static void default_log_handler_(const char *domain, GLogLevelFlags flags,
+      const char *msg, gpointer user_data)
     { reinterpret_cast<Log*>(user_data)->default_log_handler(domain, flags,
         msg); }
-  void default_log_handler(const gchar *domain, GLogLevelFlags flags,
-      const gchar *msg);
+  void default_log_handler(const char *domain, GLogLevelFlags flags,
+      const char *msg);
 
   // to catch glib's messages
-  static void glib_log_handler_(const gchar *domain, GLogLevelFlags flags,
-      const gchar *msg, gpointer user_data)
+  static void glib_log_handler_(const char *domain, GLogLevelFlags flags,
+      const char *msg, gpointer user_data)
     { reinterpret_cast<Log*>(user_data)->glib_log_handler(domain, flags,
         msg); }
-  void glib_log_handler(const gchar *domain, GLogLevelFlags flags,
-      const gchar *msg);
+  void glib_log_handler(const char *domain, GLogLevelFlags flags,
+      const char *msg);
 
   // to catch cppconsui messages
-  static void cppconsui_log_handler_(const gchar *domain,
-      GLogLevelFlags flags, const gchar *msg, gpointer user_data)
+  static void cppconsui_log_handler_(const char *domain,
+      GLogLevelFlags flags, const char *msg, gpointer user_data)
     { reinterpret_cast<Log*>(user_data)->cppconsui_log_handler(domain, flags,
         msg); }
-  void cppconsui_log_handler(const gchar *domain, GLogLevelFlags flags,
-      const gchar *msg);
+  void cppconsui_log_handler(const char *domain, GLogLevelFlags flags,
+      const char *msg);
 
   // called when log/debug pref changed
   static void debug_change_(const char *name, PurplePrefType type,
@@ -133,9 +133,9 @@ private:
       gconstpointer val);
 
   void ShortenWindowText();
-  void Write(const gchar *text);
-  void WriteErrorToWindow(const gchar *fmt, ...);
-  void WriteToFile(const gchar *text);
+  void Write(const char *text);
+  void WriteErrorToWindow(const char *fmt, ...);
+  void WriteToFile(const char *text);
   Level ConvertPurpleDebugLevel(PurpleDebugLevel purplelevel);
   Level ConvertGlibDebugLevel(GLogLevelFlags gliblevel);
   Level GetLogLevel(const char *type);

@@ -28,7 +28,7 @@
 
 #include "Panel.h"
 
-Panel::Panel(int w, int h, const gchar *text, LineStyle::Type ltype)
+Panel::Panel(int w, int h, const char *text, LineStyle::Type ltype)
 : Widget(w, h)
 , linestyle(ltype)
 , title(NULL)
@@ -104,7 +104,7 @@ void Panel::Draw()
   area->attroff(attrs);
 }
 
-void Panel::SetTitle(const gchar *text)
+void Panel::SetTitle(const char *text)
 {
   if (title)
     g_free(title);
@@ -121,7 +121,7 @@ void Panel::SetTitle(const gchar *text)
   Redraw();
 }
 
-const gchar *Panel::GetTitle() const
+const char *Panel::GetTitle() const
 {
   return title;
 }

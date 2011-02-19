@@ -36,6 +36,7 @@ class AccountWindow
 {
 public:
   AccountWindow();
+  virtual ~AccountWindow() {}
 
   // FreeWindow
   virtual void ScreenResized();
@@ -167,7 +168,7 @@ private:
     PurpleAccount *account;
 
     void OnProtocolChanged(ComboBox& activator, size_t new_entry,
-        const gchar *title, intptr_t data);
+        const char *title, intptr_t data);
 
   private:
     AccountOptionProtocol(const AccountOptionProtocol&);
@@ -176,7 +177,6 @@ private:
 
   AccountWindow(const AccountWindow&);
   AccountWindow& operator=(const AccountWindow&);
-  virtual ~AccountWindow() {}
 
   bool ClearAccount(PurpleAccount *account, bool full);
 

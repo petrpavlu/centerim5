@@ -36,7 +36,7 @@ class MenuWindow
 : public Window
 {
 public:
-  MenuWindow(int x, int y, int w, int h, const gchar *title = NULL,
+  MenuWindow(int x, int y, int w, int h, const char *title = NULL,
       LineStyle::Type ltype = LineStyle::DEFAULT);
   virtual ~MenuWindow() {}
 

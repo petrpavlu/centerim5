@@ -104,7 +104,7 @@ BuddyListNode *BuddyListNode::GetParentNode() const
   return reinterpret_cast<BuddyListNode *>(parent->ui_data);
 }
 
-const gchar *BuddyListNode::GetBuddyStatus(PurpleBuddy *buddy) const
+const char *BuddyListNode::GetBuddyStatus(PurpleBuddy *buddy) const
 {
   if (!purple_account_is_connected(purple_buddy_get_account(buddy)))
     return "";
@@ -179,7 +179,7 @@ void BuddyListBuddy::Update()
 {
   BuddyListNode::Update();
 
-  gchar *text = g_strdup_printf("%s %s", GetBuddyStatus(buddy),
+  char *text = g_strdup_printf("%s %s", GetBuddyStatus(buddy),
       purple_buddy_get_alias(buddy));
   SetText(text);
   g_free(text);
@@ -196,7 +196,7 @@ void BuddyListBuddy::OnActivate(Button& activator)
       purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
 }
 
-const gchar *BuddyListBuddy::ToString() const
+const char *BuddyListBuddy::ToString() const
 {
   return purple_buddy_get_alias(buddy);
 }
@@ -236,7 +236,7 @@ void BuddyListChat::OnActivate(Button& activator)
       purple_chat_get_account(chat), purple_chat_get_name(chat));
 }
 
-const gchar *BuddyListChat::ToString() const
+const char *BuddyListChat::ToString() const
 {
   return purple_chat_get_name(chat);
 }
@@ -271,7 +271,7 @@ void BuddyListContact::Update()
   BuddyListNode::Update();
 
   PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
-  gchar *text = g_strdup_printf("%s %s", GetBuddyStatus(buddy),
+  char *text = g_strdup_printf("%s %s", GetBuddyStatus(buddy),
       purple_contact_get_alias(contact));
   SetText(text);
   g_free(text);
@@ -289,7 +289,7 @@ void BuddyListContact::OnActivate(Button& activator)
       purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
 }
 
-const gchar *BuddyListContact::ToString() const
+const char *BuddyListContact::ToString() const
 {
   return purple_contact_get_alias(contact);
 }
@@ -344,7 +344,7 @@ void BuddyListGroup::OnActivate(Button& activator)
   t->ToggleCollapsed(ref);
 }
 
-const gchar *BuddyListGroup::ToString() const
+const char *BuddyListGroup::ToString() const
 {
   return purple_group_get_name(group);
 }

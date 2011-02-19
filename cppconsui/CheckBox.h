@@ -43,9 +43,9 @@ public:
     STYLE_BOX
   };
 
-  CheckBox(int w, int h, const gchar *text_ = NULL,
+  CheckBox(int w, int h, const char *text_ = NULL,
       bool default_state = false);
-  explicit CheckBox(const gchar *text_ = NULL, bool default_state = false);
+  explicit CheckBox(const char *text_ = NULL, bool default_state = false);
   virtual ~CheckBox();
 
   // Widget
@@ -54,11 +54,11 @@ public:
   /**
    * Sets a new text and redraws itself.
    */
-  virtual void SetText(const gchar *new_text);
+  virtual void SetText(const char *new_text);
   /**
    * Returns previously set text.
    */
-  virtual const gchar *GetText() const { return text; }
+  virtual const char *GetText() const { return text; }
 
   virtual void SetState(bool new_state);
   virtual bool GetState() const { return state; }
@@ -72,7 +72,7 @@ public:
   sigc::signal<void, CheckBox&, bool> signal_toggle;
 
 protected:
-  gchar *text;
+  char *text;
   bool state;
   Style style;
 

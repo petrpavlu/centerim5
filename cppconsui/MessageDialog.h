@@ -35,7 +35,7 @@ class MessageDialog
 : public AbstractDialog
 {
 public:
-  MessageDialog(const gchar *title, const gchar *text);
+  MessageDialog(const char *title, const char *text);
   virtual ~MessageDialog() {}
 
   /**

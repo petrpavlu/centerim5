@@ -63,10 +63,10 @@ public:
    * '\\v' is a char, a switch in the code figures out what to do based on
    * this. Based on giFTcurs drawing function.
    */
-  int mvaddstring(int x, int y, int w, const gchar *str);
-  int mvaddstring(int x, int y, const gchar *str);
-  int mvaddstring(int x, int y, int w, const gchar *str, const gchar *end);
-  int mvaddstring(int x, int y, const gchar *str, const gchar *end);
+  int mvaddstring(int x, int y, int w, const char *str);
+  int mvaddstring(int x, int y, const char *str);
+  int mvaddstring(int x, int y, int w, const char *str, const char *end);
+  int mvaddstring(int x, int y, const char *str, const char *end);
 
   // @todo remove
   int mvaddstr(int x, int y, const char *str);
@@ -93,8 +93,8 @@ public:
   int getmaxy();
 
 protected:
-  const gchar *PrintChar(const gchar *ch, int *printed,
-      const gchar *end = NULL);
+  const char *PrintChar(const char *ch, int *printed,
+      const char *end = NULL);
 
 private:
   struct WindowInternals;

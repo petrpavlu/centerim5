@@ -43,9 +43,9 @@ private:
   : public SplitDialog
   {
   public:
-    RequestDialog(const gchar *title, const gchar *primary,
-        const gchar *secondary, const gchar *ok_text, GCallback ok_cb,
-        const gchar *cancel_text, GCallback cancel_cb, void *user_data);
+    RequestDialog(const char *title, const char *primary,
+        const char *secondary, const char *ok_text, GCallback ok_cb,
+        const char *cancel_text, GCallback cancel_cb, void *user_data);
     virtual ~RequestDialog() {}
 
     // FreeWindow
@@ -73,9 +73,9 @@ private:
   : public RequestDialog
   {
   public:
-    InputTextDialog(const gchar *title, const gchar *primary,
-        const gchar *secondary, const gchar *default_value, bool masked,
-        const gchar *ok_text, GCallback ok_cb, const gchar *cancel_text,
+    InputTextDialog(const char *title, const char *primary,
+        const char *secondary, const char *default_value, bool masked,
+        const char *ok_text, GCallback ok_cb, const char *cancel_text,
         GCallback cancel_cb, void *user_data);
     virtual ~InputTextDialog() {}
 
@@ -96,9 +96,9 @@ private:
   : public RequestDialog
   {
   public:
-    ChoiceDialog(const gchar *title, const gchar *primary,
-        const gchar *secondary, int default_value, const gchar *ok_text,
-        GCallback ok_cb, const gchar *cancel_text, GCallback cancel_cb,
+    ChoiceDialog(const char *title, const char *primary,
+        const char *secondary, int default_value, const char *ok_text,
+        GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
         void *user_data, va_list choices);
     virtual ~ChoiceDialog() {}
 
@@ -119,8 +119,8 @@ private:
   : public RequestDialog
   {
   public:
-    ActionDialog(const gchar *title, const gchar *primary,
-        const gchar *secondary, int default_value, void *user_data,
+    ActionDialog(const char *title, const char *primary,
+        const char *secondary, int default_value, void *user_data,
         size_t action_count, va_list actions);
     virtual ~ActionDialog() {}
 
@@ -141,9 +141,9 @@ private:
   : public RequestDialog
   {
   public:
-    FieldsDialog(const gchar *title, const gchar *primary,
-        const gchar *secondary, PurpleRequestFields *request_fields,
-        const gchar *ok_text, GCallback ok_cb, const gchar *cancel_text,
+    FieldsDialog(const char *title, const char *primary,
+        const char *secondary, PurpleRequestFields *request_fields,
+        const char *ok_text, GCallback ok_cb, const char *cancel_text,
         GCallback cancel_cb, void *user_data);
     virtual ~FieldsDialog() {}
 
@@ -219,7 +219,7 @@ private:
       PurpleRequestField *field;
 
       void OnSelectionChanged(ComboBox& activator, int new_entry,
-          const gchar *title, intptr_t data);
+          const char *title, intptr_t data);
 
     private:
       ChoiceField(const ChoiceField&);
@@ -240,7 +240,7 @@ private:
       : public CheckBox
       {
       public:
-        ListFieldItem(PurpleRequestField *field, const gchar *text);
+        ListFieldItem(PurpleRequestField *field, const char *text);
         virtual ~ListFieldItem() {}
 
       protected:
@@ -269,7 +269,7 @@ private:
       PurpleRequestField *field;
 
       void OnSelectionChanged(ComboBox& activator, int new_entry,
-          const gchar *title, intptr_t data);
+          const char *title, intptr_t data);
 
     private:
       ListFieldSingle(const ListFieldSingle&);
@@ -319,7 +319,7 @@ private:
       PurpleRequestField *field;
 
       void OnAccountChanged(Button& activator, size_t new_entry,
-          const gchar *title, intptr_t data);
+          const char *title, intptr_t data);
 
     private:
       AccountField(const AccountField&);
@@ -356,7 +356,7 @@ private:
 
   static void *request_input_(const char *title, const char *primary,
       const char *secondary, const char *default_value, gboolean multiline,
-      gboolean masked, gchar *hint, const char *ok_text, GCallback ok_cb,
+      gboolean masked, char *hint, const char *ok_text, GCallback ok_cb,
       const char *cancel_text, GCallback cancel_cb, PurpleAccount *account,
       const char *who, PurpleConversation *conv, void *user_data)
     { return REQUEST->request_input(title, primary, secondary, default_value,
@@ -409,7 +409,7 @@ private:
 
   void *request_input(const char *title, const char *primary,
       const char *secondary, const char *default_value, gboolean multiline,
-      gboolean masked, gchar *hint, const char *ok_text, GCallback ok_cb,
+      gboolean masked, char *hint, const char *ok_text, GCallback ok_cb,
       const char *cancel_text, GCallback cancel_cb, PurpleAccount *account,
       const char *who, PurpleConversation *conv, void *user_data);
   void *request_choice(const char *title, const char *primary,

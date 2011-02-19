@@ -46,9 +46,9 @@ private:
   void OpenAddBuddyRequest(Button& activator);
   void RequestTest(Button& activator);
 
-  static void input_ok_cb_(void *data, const gchar *text)
+  static void input_ok_cb_(void *data, const char *text)
     { reinterpret_cast<GeneralMenu *>(data)->input_ok_cb(text); }
-  void input_ok_cb(const gchar *text);
+  void input_ok_cb(const char *text);
 
   static void choice_ok_cb_(void *data, int selected)
     { reinterpret_cast<GeneralMenu *>(data)->choice_ok_cb(selected); }

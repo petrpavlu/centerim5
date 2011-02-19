@@ -45,13 +45,13 @@ public:
   /**
    * Appends text after the last line.
    */
-  void Append(const gchar *text, int color = 0);
+  void Append(const char *text, int color = 0);
   /**
    * Inserts text before specified line number. Text can contain multiple
    * lines and should end with `\\n' character just in front of `\\0'
    * character.
    */
-  void Insert(int line_num, const gchar *text, int color = 0);
+  void Insert(int line_num, const char *text, int color = 0);
   /**
    * Removes a specified line.
    */
@@ -69,7 +69,7 @@ public:
   /**
    * Returns string for a specified line number.
    */
-  const gchar *GetLine(int line_num) const;
+  const char *GetLine(int line_num) const;
   /**
    * Returns count of all lines.
    */
@@ -97,7 +97,7 @@ protected:
     /**
      * UTF-8 encoded text. Note: Newline character is not part of text.
      */
-    gchar *text;
+    char *text;
     /**
      * Text length in characters.
      */
@@ -107,7 +107,7 @@ protected:
      */
     int color;
 
-    Line(const gchar *text_, int bytes, int color_);
+    Line(const char *text_, int bytes, int color_);
     virtual ~Line();
   };
 
@@ -123,13 +123,13 @@ protected:
     /**
      * Pointer into parent's text where this ScreenLine starts.
      */
-    const gchar *text;
+    const char *text;
     /**
      * On-screen width.
      */
     int width;
 
-    ScreenLine(Line &parent_, const gchar *text_, int width_);
+    ScreenLine(Line &parent_, const char *text_, int width_);
   };
 
   typedef std::deque<Line *> Lines;
@@ -150,7 +150,7 @@ protected:
   /**
    * FIXME
    */
-  const gchar *ProceedLine(const gchar *text, int area_width,
+  const char *ProceedLine(const char *text, int area_width,
       int *res_width) const;
   /**
    * Recalculates on-screen lines for a specified line number.

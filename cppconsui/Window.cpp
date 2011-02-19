@@ -28,7 +28,7 @@
 
 #include "Window.h"
 
-Window::Window(int x, int y, int w, int h, const gchar *title, Type t,
+Window::Window(int x, int y, int w, int h, const char *title, Type t,
     LineStyle::Type ltype)
 : FreeWindow(x, y, w, h, t)
 {

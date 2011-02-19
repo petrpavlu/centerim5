@@ -105,7 +105,7 @@ void Conf::SetBool(const char *pref, const bool value)
   purple_prefs_set_bool(pref, value);
 }
 
-const gchar *Conf::GetString(const char *pref, const gchar *defaultvalue)
+const char *Conf::GetString(const char *pref, const char *defaultvalue)
 {
   if (purple_prefs_exists(pref))
     return purple_prefs_get_string(pref);
@@ -115,7 +115,7 @@ const gchar *Conf::GetString(const char *pref, const gchar *defaultvalue)
   return defaultvalue;
 }
 
-void Conf::SetString(const char *pref, const gchar *value)
+void Conf::SetString(const char *pref, const char *value)
 {
   purple_prefs_set_string(pref, value);
 }

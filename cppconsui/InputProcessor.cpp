@@ -121,7 +121,7 @@ sigc::connection InputProcessor::AddRegisterCallback(
 }
 
 void InputProcessor::RegisterKeyDef(const char *context, const char *action,
-    const gchar *desc, const TermKeyKey& key)
+    const char *desc, const TermKeyKey& key)
 {
   KEYCONFIG->RegisterKeyDef(context, action, desc, key);
 }

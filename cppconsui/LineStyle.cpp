@@ -29,21 +29,21 @@
 #include "LineStyle.h"
 
 struct LineElements {
-  const gchar *h;         // Horizontal line
-  const gchar *h_begin;   // "        " line begin
-  const gchar *h_end;     // "        " line end
-  const gchar *h_up;      // "             " and line up
-  const gchar *h_down;    // "             " and line down
-  const gchar *v;         // Vertical line
-  const gchar *v_begin;   // "      " line begin
-  const gchar *v_end;     // "      " line end
-  const gchar *v_left;    // "           " and line left
-  const gchar *v_right;   // "           " and line right
-  const gchar *cross;     // Horizontal and Vertical line crossed
-  const gchar *corner_tl; // Top-left corner
-  const gchar *corner_tr; // Top-right corner
-  const gchar *corner_bl; // Bottom-left corner
-  const gchar *corner_br; // Bottom-right corner
+  const char *h;         // Horizontal line
+  const char *h_begin;   // "        " line begin
+  const char *h_end;     // "        " line end
+  const char *h_up;      // "             " and line up
+  const char *h_down;    // "             " and line down
+  const char *v;         // Vertical line
+  const char *v_begin;   // "      " line begin
+  const char *v_end;     // "      " line end
+  const char *v_left;    // "           " and line left
+  const char *v_right;   // "           " and line right
+  const char *cross;     // Horizontal and Vertical line crossed
+  const char *corner_tl; // Top-left corner
+  const char *corner_tr; // Top-right corner
+  const char *corner_bl; // Bottom-left corner
+  const char *corner_br; // Bottom-right corner
 };
 
 /// @todo Add styles for double lines, block elements.
@@ -93,77 +93,77 @@ LineStyle::Type LineStyle::GetStyle() const
   return type;
 }
 
-const gchar *LineStyle::H() const
+const char *LineStyle::H() const
 {
   return GetCurrentElems()->h;
 }
 
-const gchar *LineStyle::HBegin() const
+const char *LineStyle::HBegin() const
 {
   return GetCurrentElems()->h_begin;
 }
 
-const gchar *LineStyle::HEnd() const
+const char *LineStyle::HEnd() const
 {
   return GetCurrentElems()->h_end;
 }
 
-const gchar *LineStyle::HUp() const
+const char *LineStyle::HUp() const
 {
   return GetCurrentElems()->h_up;
 }
 
-const gchar *LineStyle::HDown() const
+const char *LineStyle::HDown() const
 {
   return GetCurrentElems()->h_down;
 }
 
-const gchar *LineStyle::V() const
+const char *LineStyle::V() const
 {
   return GetCurrentElems()->v;
 }
 
-const gchar *LineStyle::VBegin() const
+const char *LineStyle::VBegin() const
 {
   return GetCurrentElems()->v_begin;
 }
 
-const gchar *LineStyle::VEnd() const
+const char *LineStyle::VEnd() const
 {
   return GetCurrentElems()->v_end;
 }
 
-const gchar *LineStyle::VLeft() const
+const char *LineStyle::VLeft() const
 {
   return GetCurrentElems()->v_left;
 }
 
-const gchar *LineStyle::VRight() const
+const char *LineStyle::VRight() const
 {
   return GetCurrentElems()->v_right;
 }
 
-const gchar *LineStyle::Cross() const
+const char *LineStyle::Cross() const
 {
   return GetCurrentElems()->cross;
 }
 
-const gchar *LineStyle::CornerTL() const
+const char *LineStyle::CornerTL() const
 {
   return GetCurrentElems()->corner_tl;
 }
 
-const gchar *LineStyle::CornerTR() const
+const char *LineStyle::CornerTR() const
 {
   return GetCurrentElems()->corner_tr;
 }
 
-const gchar *LineStyle::CornerBL() const
+const char *LineStyle::CornerBL() const
 {
   return GetCurrentElems()->corner_bl;
 }
 
-const gchar *LineStyle::CornerBR() const
+const char *LineStyle::CornerBR() const
 {
   return GetCurrentElems()->corner_br;
 }

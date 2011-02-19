@@ -40,7 +40,7 @@ Header::Header()
   AddWidget(*container, 0, 0);
 
   // CenterIM name will always be top-left so we can "forget about" it
-  gchar *cimname = g_strdup_printf("CENTERIM %s", PACKAGE_VERSION);
+  char *cimname = g_strdup_printf("CENTERIM %s", PACKAGE_VERSION);
   container->AppendWidget(*(new Label(cimname)));
   g_free(cimname);
 
@@ -112,7 +112,7 @@ void Header::account_status_changed(PurpleAccount *account, PurpleStatus *old,
 
   // update label
   Label *label = statuses[account];
-  gchar *text = g_strdup_printf(" %s [%s] %s", Utils::GetStatusIndicator(cur),
+  char *text = g_strdup_printf(" %s [%s] %s", Utils::GetStatusIndicator(cur),
       purple_account_get_protocol_name(account),
       purple_account_get_username(account));
   label->SetText(text);
@@ -121,7 +121,7 @@ void Header::account_status_changed(PurpleAccount *account, PurpleStatus *old,
   g_free(text);
 }
 
-void Header::account_alias_changed(PurpleAccount *account, const gchar *old)
+void Header::account_alias_changed(PurpleAccount *account, const char *old)
 {
   g_return_if_fail(account);
 

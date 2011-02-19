@@ -32,7 +32,7 @@ AccountStatusMenu::AccountStatusMenu(int x, int y, int w, int h)
   SetColorScheme("accountstatusmenu");
 
   GList *iter;
-  gchar *text;
+  char *text;
 
   AppendItem(_("All accounts"), sigc::mem_fun(this,
         &AccountStatusMenu::Dummy));
@@ -75,7 +75,7 @@ AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h,
 
   GList *iter;
   PurpleStatusType *status_type;
-  gchar *label;
+  char *label;
   bool has_independents;
   bool active;
 
