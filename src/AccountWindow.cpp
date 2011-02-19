@@ -334,7 +334,7 @@ void AccountWindow::AccountOptionBool::OnToggle(CheckBox& activator,
 
 AccountWindow::AccountOptionString::AccountOptionString(
     PurpleAccount *account, PurpleAccountOption *option)
-: account(account), option(option), type(TYPE_PURPLE)
+: Button(TYPE_DOUBLE), account(account), option(option), type(TYPE_PURPLE)
 {
   g_assert(account);
   g_assert(option);
@@ -344,7 +344,7 @@ AccountWindow::AccountOptionString::AccountOptionString(
 
 AccountWindow::AccountOptionString::AccountOptionString(
     PurpleAccount *account, Type type)
-: account(account), option(NULL), type(type)
+: Button(TYPE_DOUBLE), account(account), option(NULL), type(type)
 {
   g_assert(account);
 
@@ -353,8 +353,6 @@ AccountWindow::AccountOptionString::AccountOptionString(
 
 void AccountWindow::AccountOptionString::Initialize()
 {
-  SetValueVisibility(true);
-
   if (type == TYPE_PASSWORD)
     SetText(_("Password"));
   else if (type == TYPE_ALIAS)
@@ -409,12 +407,11 @@ void AccountWindow::AccountOptionString::ResponseHandler(
 
 AccountWindow::AccountOptionInt::AccountOptionInt(PurpleAccount *account,
     PurpleAccountOption *option)
-: account(account), option(option)
+: Button(TYPE_DOUBLE), account(account), option(option)
 {
   g_assert(account);
   g_assert(option);
 
-  SetValueVisibility(true);
   SetText(purple_account_option_get_text(option));
   UpdateValue();
   signal_activate.connect(sigc::mem_fun(this, &AccountOptionInt::OnActivate));
@@ -461,11 +458,11 @@ void AccountWindow::AccountOptionInt::ResponseHandler(InputDialog& activator,
 
 AccountWindow::AccountOptionSplit::AccountOptionSplit(PurpleAccount *account,
     PurpleAccountUserSplit *split, AccountEntry *account_entry)
-: account(account), split(split), account_entry(account_entry)
+: Button(TYPE_DOUBLE), account(account), split(split)
+, account_entry(account_entry)
 {
   g_assert(account);
 
-  SetValueVisibility(true);
   if (split)
     SetText(purple_account_user_split_get_text(split));
   else

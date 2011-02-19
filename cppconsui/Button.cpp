@@ -34,8 +34,27 @@
 
 #define CONTEXT_BUTTON "button"
 
-Button::Button(int w, int h, const char *text_, const char *value_)
-: Widget(w, h), text(NULL), value(NULL), value_visible(false)
+Button::Button(int w, int h, const char *text_)
+: Widget(w, h), type(TYPE_SIMPLE), text(NULL), value(NULL)
+{
+  SetText(text_);
+
+  can_focus = true;
+  DeclareBindables();
+}
+
+Button::Button(const char *text_)
+: Widget(AUTOSIZE, 1), type(TYPE_SIMPLE), text(NULL), value(NULL)
+{
+  SetText(text_);
+
+  can_focus = true;
+  DeclareBindables();
+}
+
+Button::Button(Type type_, int w, int h, const char *text_,
+    const char *value_)
+: Widget(w, h), type(type_), text(NULL), value(NULL)
 {
   SetText(text_);
   SetValue(value_);
@@ -44,8 +63,8 @@ Button::Button(int w, int h, const char *text_, const char *value_)
   DeclareBindables();
 }
 
-Button::Button(const char *text_, const char *value_)
-: Widget(AUTOSIZE, 1), text(NULL), value(NULL), value_visible(false)
+Button::Button(Type type_, const char *text_, const char *value_)
+: Widget(AUTOSIZE, 1), type(type_), text(NULL), value(NULL)
 {
   SetText(text_);
   SetValue(value_);
@@ -76,7 +95,6 @@ bool Button::RegisterKeys()
   return true;
 }
 
-
 void Button::Draw()
 {
   RealUpdateArea();
@@ -102,7 +120,7 @@ void Button::Draw()
 
   int max = area->getmaxx() * area->getmaxy();
   int l = area->mvaddstring(0, 0, max, text);
-  if (value_visible) {
+  if (type == TYPE_DOUBLE) {
     l += area->mvaddstring(l, 0, max - l, ": ");
     if (value)
       area->mvaddstring(l, 0, max - l, value);
@@ -112,6 +130,14 @@ void Button::Draw()
     area->attroff(attrs | Curses::Attr::REVERSE);
   else
     area->attroff(attrs);
+}
+
+void Button::SetType(Type new_type)
+{
+  if (type != new_type) {
+    type = new_type;
+    Redraw();
+  }
 }
 
 void Button::SetText(const char *new_text)
@@ -147,11 +173,6 @@ void Button::SetValue(int new_value)
 
   value = g_strdup_printf("%d", new_value);
   Redraw();
-}
-
-void Button::SetValueVisibility(bool visible)
-{
-  value_visible = visible;
 }
 
 void Button::ActionActivate()

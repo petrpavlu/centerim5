@@ -41,12 +41,25 @@ class Button
 : public Widget
 {
 public:
-  Button(int w, int h, const char *text_ = NULL, const char *value_ = NULL);
-  explicit Button(const char *text_ = NULL, const char *value_ = NULL);
+  enum Type {
+    TYPE_SIMPLE, // text
+    TYPE_DOUBLE // text: value
+    //TYPE_TRIPLE  // text: value [unit]
+  };
+
+  Button(int w, int h, const char *text_ = NULL);
+  explicit Button(const char *text_ = NULL);
+  Button(Type type_, int w, int h, const char *text_ = NULL,
+      const char *value_ = NULL);
+  Button(Type type_, const char *text_ = NULL,
+      const char *value_ = NULL);
   virtual ~Button();
 
   // Widget
   virtual void Draw();
+
+  virtual void SetType(Type new_type);
+  virtual Type GetType() const { return type; }
 
   /**
    * Sets a new text and redraws itself.
@@ -61,18 +74,15 @@ public:
   virtual void SetValue(int new_value);
   virtual const char *GetValue() const { return value; }
 
-  virtual void SetValueVisibility(bool visible);
-  virtual bool GetValueVisibility() const { return value_visible; }
-
   /**
    * Emited signal when the button is pressed/activated.
    */
   sigc::signal<void, Button&> signal_activate;
 
 protected:
+  Type type;
   char *text;
   char *value;
-  bool value_visible;
 
 private:
   Button(const Button&);

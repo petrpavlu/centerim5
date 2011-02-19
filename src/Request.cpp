@@ -429,14 +429,12 @@ PurpleRequestType Request::FieldsDialog::GetRequestType()
 }
 
 Request::FieldsDialog::StringField::StringField(PurpleRequestField *field)
-: field(field)
+: Button(TYPE_DOUBLE), field(field)
 {
   g_assert(field);
 
   if (purple_request_field_string_is_masked(field))
     ; // TODO
-
-  SetValueVisibility(true);
 
   char *text = g_strdup_printf("%s%s",
       purple_request_field_is_required(field) ? "*" : "",
@@ -471,11 +469,9 @@ void Request::FieldsDialog::StringField::ResponseHandler(
 }
 
 Request::FieldsDialog::IntegerField::IntegerField(PurpleRequestField *field)
-: field(field)
+: Button(TYPE_DOUBLE), field(field)
 {
   g_assert(field);
-
-  SetValueVisibility(true);
 
   char *text = g_strdup_printf("%s%s",
       purple_request_field_is_required(field) ? "*" : "",
