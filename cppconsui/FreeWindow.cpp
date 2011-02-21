@@ -71,12 +71,16 @@ bool FreeWindow::RegisterKeys()
 
 void FreeWindow::MoveResize(int newx, int newy, int neww, int newh)
 {
+  if (newx == win_x && newy == win_y && neww == win_w && newh == win_h)
+    return;
+
   win_x = newx;
   win_y = newy;
   win_w = neww;
   win_h = newh;
 
   Container::MoveResize(0, 0, win_w, win_h);
+  UpdateArea();
 }
 
 void FreeWindow::Draw()

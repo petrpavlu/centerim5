@@ -38,15 +38,20 @@ Window::Window(int x, int y, int w, int h, const char *title, Type t,
 
 void Window::MoveResize(int newx, int newy, int neww, int newh)
 {
+  if (newx == win_x && newy == win_y && neww == win_w && newh == win_h)
+    return;
+
   win_x = newx;
   win_y = newy;
   win_w = neww;
   win_h = newh;
 
   panel->MoveResize(0, 0, win_w, win_h);
+  panel->UpdateArea();
 
   Container::MoveResize(1, 1, win_w < 2 ? 0 : win_w - 2,
       win_h < 2 ? 0 : win_h - 2);
+  UpdateArea();
 }
 
 Curses::Window *Window::GetSubPad(const Widget &child, int begin_x,
