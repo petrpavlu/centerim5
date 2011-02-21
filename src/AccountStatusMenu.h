@@ -29,7 +29,7 @@ class AccountStatusMenu
 : public MenuWindow
 {
 public:
-  AccountStatusMenu(int x, int y, int w, int h);
+  AccountStatusMenu();
   virtual ~AccountStatusMenu();
 
   void Dummy(Button& activator) { ; } //TODO remove
@@ -58,9 +58,7 @@ private:
     PurpleAccount *account;
   };
 
-  AccountStatusMenu();
   AccountStatusMenu(const AccountStatusMenu&);
-
   AccountStatusMenu& operator=(const AccountStatusMenu&);
 
   void OpenStatusPopup(Button& activator, PurpleAccount *account);

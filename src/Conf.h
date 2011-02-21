@@ -32,14 +32,14 @@ public:
   static Conf *Instance();
 
   // configuration base get/set methods
-  int GetInt(const char *pref, int defaultvalue);
+  int GetInt(const char *pref, int defaultvalue = 0);
   int GetInt(const char *pref, int defaultvalue, int min, int max);
   void SetInt(const char *pref, int value);
 
-  bool GetBool(const char *pref, bool defaultvalue);
+  bool GetBool(const char *pref, bool defaultvalue = false);
   void SetBool(const char *pref, bool value);
 
-  const char *GetString(const char *pref, const char *defaultvalue);
+  const char *GetString(const char *pref, const char *defaultvalue = NULL);
   void SetString(const char *pref, const char *value);
 
 protected:

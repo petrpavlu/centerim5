@@ -24,11 +24,12 @@
 #include "AccountWindow.h"
 #include "CenterIM.h"
 #include "Log.h"
+#include "OptionWindow.h"
 
 #include "gettext.h"
 
-GeneralMenu::GeneralMenu(int x, int y, int w, int h)
-: MenuWindow(x, y, w, h)
+GeneralMenu::GeneralMenu()
+: MenuWindow(0, 0, 40, 9)
 {
   SetColorScheme("generalmenu");
 
@@ -37,10 +38,13 @@ GeneralMenu::GeneralMenu(int x, int y, int w, int h)
   AppendItem(_("Change status"), sigc::mem_fun(this, &GeneralMenu::Dummy));
   AppendItem(_("Go to contact..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
   */
-  AppendItem(_("Accounts..."), sigc::mem_fun(this, &GeneralMenu::OpenAccountsWindow));
-  AppendItem(_("Add buddy..."), sigc::mem_fun(this, &GeneralMenu::OpenAddBuddyRequest));
+  AppendItem(_("Accounts..."), sigc::mem_fun(this,
+        &GeneralMenu::OpenAccountWindow));
+  AppendItem(_("Add buddy..."), sigc::mem_fun(this,
+        &GeneralMenu::OpenAddBuddyRequest));
+  AppendItem(_("Config options..."), sigc::mem_fun(this,
+        &GeneralMenu::OpenOptionWindow));
   /*
-  AppendItem(_("CenterIM config options..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
   AppendSeparator();
   AppendItem(_("Find/add users"), sigc::mem_fun(this, &GeneralMenu::Dummy));
   AppendItem(_("Join channel/conference"), sigc::mem_fun(this, &GeneralMenu::Dummy));
@@ -68,16 +72,23 @@ void GeneralMenu::ScreenResized()
   MoveResize(chat.x, chat.y, win_w, win_h);
 }
 
-void GeneralMenu::OpenAccountsWindow(Button& activator)
+void GeneralMenu::OpenAccountWindow(Button& activator)
 {
-  AccountWindow *aw = new AccountWindow;
-  aw->Show();
+  AccountWindow *win = new AccountWindow;
+  win->Show();
   Close();
 }
 
 void GeneralMenu::OpenAddBuddyRequest(Button& activator)
 {
   purple_blist_request_add_buddy(NULL, NULL, NULL, NULL);
+  Close();
+}
+
+void GeneralMenu::OpenOptionWindow(Button& activator)
+{
+  OptionWindow *win = new OptionWindow;
+  win->Show();
   Close();
 }
 

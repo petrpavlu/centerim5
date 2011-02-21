@@ -54,9 +54,9 @@ public:
   /**
    * Appends a new option.
    */
-  void AddOption(const char *text = NULL, intptr_t data = 0);
-  void AddOptionPtr(const char *text = NULL, void *data = NULL)
-    { AddOption(text, reinterpret_cast<intptr_t>(data)); }
+  int AddOption(const char *text = NULL, intptr_t data = 0);
+  int AddOptionPtr(const char *text = NULL, void *data = NULL)
+    { return AddOption(text, reinterpret_cast<intptr_t>(data)); }
 
   /**
    * Returns last selected option.

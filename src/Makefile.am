@@ -32,6 +32,8 @@ centerim_SOURCES = \
 	Log.h \
 	Notify.cpp \
 	Notify.h \
+	OptionWindow.cpp \
+	OptionWindow.h \
 	Request.cpp \
 	Request.h \
 	Transfers.cpp \

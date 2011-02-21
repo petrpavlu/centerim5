@@ -26,8 +26,8 @@
 
 #include "gettext.h"
 
-AccountStatusMenu::AccountStatusMenu(int x, int y, int w, int h)
-: MenuWindow(x, y, w, h)
+AccountStatusMenu::AccountStatusMenu()
+: MenuWindow(0, 0, 40, 20)
 {
   SetColorScheme("accountstatusmenu");
 

@@ -68,7 +68,7 @@ void ComboBox::ClearOptions()
   max_option_width = 0;
 }
 
-void ComboBox::AddOption(const char *text, intptr_t data)
+int ComboBox::AddOption(const char *text, intptr_t data)
 {
   ComboBoxEntry e;
   int w = 0;
@@ -91,6 +91,7 @@ void ComboBox::AddOption(const char *text, intptr_t data)
   }
 
   options.push_back(e);
+  return options.size() - 1;
 }
 
 const char *ComboBox::GetSelectedTitle() const

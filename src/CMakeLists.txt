@@ -15,6 +15,7 @@ set( centerim_SOURCES
 	Header.cpp
 	Log.cpp
 	Notify.cpp
+	OptionWindow.cpp
 	Request.cpp
 	Transfers.cpp
 	Utils.cpp
@@ -36,6 +37,7 @@ set( centerim_HEADERS
 	Header.h
 	Log.h
 	Notify.h
+	OptionWindow.h
 	Request.h
 	Transfers.h
 	Utils.h

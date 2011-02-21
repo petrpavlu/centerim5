@@ -439,15 +439,13 @@ void CenterIM::ActionFocusActiveConversation()
 
 void CenterIM::ActionOpenAccountStatusMenu()
 {
-  //TODO get coords from config
-  AccountStatusMenu *menu = new AccountStatusMenu(40, 0, 40, 20);
+  AccountStatusMenu *menu = new AccountStatusMenu;
   menu->Show();
 }
 
 void CenterIM::ActionOpenGeneralMenu()
 {
-  //TODO get coords from config
-  GeneralMenu *menu = new GeneralMenu(40, 0, 40, 8);
+  GeneralMenu *menu = new GeneralMenu;
   menu->Show();
 }
 

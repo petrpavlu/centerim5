@@ -29,7 +29,7 @@ class GeneralMenu
 : public MenuWindow
 {
 public:
-  GeneralMenu(int x, int y, int w, int h);
+  GeneralMenu();
   virtual ~GeneralMenu() {}
 
   // FreeWindow
@@ -38,12 +38,12 @@ public:
 protected:
 
 private:
-  GeneralMenu();
   GeneralMenu(const GeneralMenu&);
   GeneralMenu& operator=(const GeneralMenu&);
 
-  void OpenAccountsWindow(Button& activator);
+  void OpenAccountWindow(Button& activator);
   void OpenAddBuddyRequest(Button& activator);
+  void OpenOptionWindow(Button& activator);
   void RequestTest(Button& activator);
 
   static void input_ok_cb_(void *data, const char *text)
