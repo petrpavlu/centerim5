@@ -44,8 +44,8 @@ public:
 protected:
 
 private:
-  class AccountOptionSplit;
-  typedef std::list<AccountOptionSplit*> SplitWidgets;
+  class SplitOption;
+  typedef std::list<SplitOption*> SplitWidgets;
   typedef std::vector<Widget*> Widgets;
 
   struct AccountEntry {
@@ -55,7 +55,7 @@ private:
   };
   typedef std::map<PurpleAccount*, AccountEntry> AccountEntries;
 
-  class AccountOptionBool
+  class BoolOption
   : public CheckBox
   {
   public:
@@ -65,9 +65,9 @@ private:
       TYPE_ENABLE_ACCOUNT
     };
 
-    AccountOptionBool(PurpleAccount *account, PurpleAccountOption *option);
-    AccountOptionBool(PurpleAccount *account, Type type);
-    virtual ~AccountOptionBool() {}
+    BoolOption(PurpleAccount *account, PurpleAccountOption *option);
+    BoolOption(PurpleAccount *account, Type type);
+    virtual ~BoolOption() {}
 
   protected:
     PurpleAccount *account;
@@ -77,11 +77,11 @@ private:
     void OnToggle(CheckBox& activator, bool new_state);
 
   private:
-    AccountOptionBool(const AccountOptionBool&);
-    AccountOptionBool& operator=(const AccountOptionBool&);
+    BoolOption(const BoolOption&);
+    BoolOption& operator=(const BoolOption&);
   };
 
-  class AccountOptionString
+  class StringOption
   : public Button
   {
   public:
@@ -91,9 +91,9 @@ private:
       TYPE_ALIAS
     };
 
-    AccountOptionString(PurpleAccount *account, PurpleAccountOption *option);
-    AccountOptionString(PurpleAccount *account, Type type);
-    virtual ~AccountOptionString() {}
+    StringOption(PurpleAccount *account, PurpleAccountOption *option);
+    StringOption(PurpleAccount *account, Type type);
+    virtual ~StringOption() {}
 
   protected:
     PurpleAccount *account;
@@ -107,16 +107,16 @@ private:
         AbstractDialog::ResponseType response);
 
   private:
-    AccountOptionString(const AccountOptionString&);
-    AccountOptionString& operator=(const AccountOptionString&);
+    StringOption(const StringOption&);
+    StringOption& operator=(const StringOption&);
   };
 
-  class AccountOptionInt
+  class IntOption
   : public Button
   {
   public:
-    AccountOptionInt(PurpleAccount *account, PurpleAccountOption *option);
-    virtual ~AccountOptionInt() {}
+    IntOption(PurpleAccount *account, PurpleAccountOption *option);
+    virtual ~IntOption() {}
 
   protected:
     PurpleAccount *account;
@@ -128,17 +128,17 @@ private:
         AbstractDialog::ResponseType response);
 
   private:
-    AccountOptionInt(const AccountOptionInt&);
-    AccountOptionInt& operator=(const AccountOptionInt&);
+    IntOption(const IntOption&);
+    IntOption& operator=(const IntOption&);
   };
 
-  class AccountOptionSplit
+  class SplitOption
   : public Button
   {
   public:
-    AccountOptionSplit(PurpleAccount *account, PurpleAccountUserSplit *split,
+    SplitOption(PurpleAccount *account, PurpleAccountUserSplit *split,
         AccountEntry *account_entry);
-    virtual ~AccountOptionSplit() {}
+    virtual ~SplitOption() {}
 
   protected:
     PurpleAccount *account;
@@ -151,17 +151,16 @@ private:
         AbstractDialog::ResponseType response);
 
   private:
-    AccountOptionSplit(const AccountOptionSplit&);
-    AccountOptionSplit& operator=(const AccountOptionSplit&);
+    SplitOption(const SplitOption&);
+    SplitOption& operator=(const SplitOption&);
   };
 
-  class AccountOptionProtocol
+  class ProtocolOption
   : public ComboBox
   {
   public:
-    AccountOptionProtocol(PurpleAccount *account,
-        AccountWindow& account_window);
-    virtual ~AccountOptionProtocol() {}
+    ProtocolOption(PurpleAccount *account, AccountWindow& account_window);
+    virtual ~ProtocolOption() {}
 
   protected:
     AccountWindow *account_window;
@@ -171,8 +170,8 @@ private:
         const char *title, intptr_t data);
 
   private:
-    AccountOptionProtocol(const AccountOptionProtocol&);
-    AccountOptionProtocol& operator=(const AccountOptionProtocol&);
+    ProtocolOption(const ProtocolOption&);
+    ProtocolOption& operator=(const ProtocolOption&);
   };
 
   AccountWindow(const AccountWindow&);

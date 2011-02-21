@@ -482,6 +482,18 @@ Request::FieldsDialog::IntegerField::IntegerField(PurpleRequestField *field)
   signal_activate.connect(sigc::mem_fun(this, &IntegerField::OnActivate));
 }
 
+void Request::FieldsDialog::IntegerField::OnActivate(Button& activator)
+{
+  char *value = g_strdup_printf("%d", purple_request_field_int_get_value(field));
+  InputDialog *dialog = new InputDialog(purple_request_field_get_label(field),
+      value);
+  g_free(value);
+  dialog->SetFlags(TextEntry::FLAG_NUMERIC);
+  dialog->signal_response.connect(sigc::mem_fun(this,
+        &IntegerField::ResponseHandler));
+  dialog->Show();
+}
+
 void Request::FieldsDialog::IntegerField::ResponseHandler(
     InputDialog& activator, AbstractDialog::ResponseType response)
 {
@@ -501,18 +513,6 @@ void Request::FieldsDialog::IntegerField::ResponseHandler(
     default:
       break;
   }
-}
-
-void Request::FieldsDialog::IntegerField::OnActivate(Button& activator)
-{
-  char *value = g_strdup_printf("%d", purple_request_field_int_get_value(field));
-  InputDialog *dialog = new InputDialog(purple_request_field_get_label(field),
-      value);
-  g_free(value);
-  dialog->SetFlags(TextEntry::FLAG_NUMERIC);
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &IntegerField::ResponseHandler));
-  dialog->Show();
 }
 
 Request::FieldsDialog::BooleanField::BooleanField(PurpleRequestField *field)

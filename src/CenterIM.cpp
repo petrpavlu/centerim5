@@ -45,11 +45,6 @@
 // TODO configurable path via command line option
 #define CIM_CONFIG_PATH ".centerim5"
 
-#define CONF_ACCOUNTS_DIMENSIONS_X 10
-#define CONF_ACCOUNTS_DIMENSIONS_Y 50
-#define CONF_ACCOUNTS_DIMENSIONS_WIDTH 80
-#define CONF_ACCOUNTS_DIMENSIONS_HEIGHT 40
-
 std::vector<CenterIM::LogBufferItem> *CenterIM::logbuf = NULL;
 
 CenterIM *CenterIM::Instance()
