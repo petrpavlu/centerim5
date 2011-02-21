@@ -27,10 +27,6 @@
 #include <cstring>
 #include "gettext.h"
 
-#define CONF_LOG_MAX_LINES_MIN 100
-#define CONF_LOG_MAX_LINES_MAX 1000
-#define CONF_LOG_MAX_LINES_DEFAULT 500
-
 Log *Log::instance = NULL;
 
 Log *Log::Instance()
@@ -266,7 +262,7 @@ void Log::WriteToFile(const char *text)
 
   GError *err = NULL;
 
-  if (GetDebugEnabled()) {
+  if (CONF->GetBool(CONF_PREFIX "log/debug", false)) {
     // open logfile if it isn't already opened
     if (!logfile) {
       char *filename = g_build_filename(purple_user_dir(),
@@ -375,17 +371,19 @@ Log::Level Log::GetLogLevel(const char *type)
   char *pref = g_strconcat(CONF_PREFIX, "log/log_level_", type, NULL);
   const char *def;
   Level level;
-  if (!g_ascii_strcasecmp(type, "cim")) {
-    def = "info";
-    level = LEVEL_INFO;
-  }
-  else {
-    def = "critical";
-    level = LEVEL_CRITICAL;
-  }
+  if (!g_ascii_strcasecmp(type, "cim"))
+    def = CONF_LOG_LEVEL_CIM_DEFAULT;
+  else if (!g_ascii_strcasecmp(type, "cppconsui"))
+    def = CONF_LOG_LEVEL_CPPCONSUI_DEFAULT;
+  else if (!g_ascii_strcasecmp(type, "purple"))
+    def = CONF_LOG_LEVEL_PURPLE_DEFAULT;
+  else // glib
+    def = CONF_LOG_LEVEL_GLIB_DEFAULT;
 
   const char *slevel = CONF->GetString(pref, def);
 
+  bool second_try = true;
+type_parse:
   if (!g_ascii_strcasecmp(slevel, "none"))
     level = LEVEL_NONE;
   else if (!g_ascii_strcasecmp(slevel, "debug"))
@@ -400,17 +398,18 @@ Log::Level Log::GetLogLevel(const char *type)
     level = LEVEL_CRITICAL;
   else if (!g_ascii_strcasecmp(slevel, "error"))
     level = LEVEL_ERROR;
-  else
+  else {
     CONF->SetString(pref, def);
+    slevel = def;
+    if (!second_try) {
+      // try to parse the log level again
+      second_try = true;
+      goto type_parse;
+    }
+    else
+      level = LEVEL_ERROR;
+  }
   g_free(pref);
 
   return level;
-}
-
-bool Log::GetDebugEnabled()
-{
-  char *pref = g_strconcat(CONF_PREFIX, "log/debug", NULL);
-  bool b = CONF->GetBool(pref, false);
-  g_free(pref);
-  return b;
 }

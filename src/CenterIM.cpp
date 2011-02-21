@@ -162,9 +162,14 @@ int CenterIM::Run()
 
   LOG->Info(_("Welcome to CenterIM 5. Press F4 to display main menu.\n"));
 
+  purple_prefs_connect_callback(this, CONF_PREFIX "dimensions",
+      dimensions_change_, this);
+
   mngr->SetTopInputProcessor(*this);
   mngr->EnableResizing();
   mngr->StartMainLoop();
+
+  purple_prefs_disconnect_by_handle(this);
 
   resize.disconnect();
 
@@ -293,13 +298,17 @@ void CenterIM::ScreenResized()
 
   size.x = 0;
   size.y = 1;
-  size.width = mngr->GetScreenWidth() / 4;
+  size.width = mngr->GetScreenWidth() / 100.0 * CONF->GetInt(
+      CONF_PREFIX "dimensions/buddylist_width", CONF_BUDDYLIST_WIDTH_DEFAULT,
+      CONF_BUDDYLIST_WIDTH_MIN, CONF_BUDDYLIST_WIDTH_MAX);
   size.height = mngr->GetScreenHeight() - 1;
   areaSizes[BUDDY_LIST_AREA] = size;
 
   size.x = areaSizes[BUDDY_LIST_AREA].width;
   size.width = mngr->GetScreenWidth() - size.x;
-  size.height = 15;
+  size.height = mngr->GetScreenHeight() / 100.0 * CONF->GetInt(
+      CONF_PREFIX "dimensions/log_height", CONF_LOG_HEIGHT_DEFAULT,
+      CONF_LOG_HEIGHT_MIN, CONF_LOG_HEIGHT_MAX);
   size.y = mngr->GetScreenHeight() - size.height;
   areaSizes[LOG_AREA] = size;
 
@@ -420,6 +429,12 @@ void CenterIM::tmp_purple_print(PurpleDebugLevel level, const char *category,
   item.category = g_strdup(category);
   item.arg_s = g_strdup(arg_s);
   logbuf->push_back(item);
+}
+
+void CenterIM::dimensions_change(const char *name, PurplePrefType type,
+    gconstpointer val)
+{
+  mngr->ScreenResized();
 }
 
 void CenterIM::ActionFocusBuddyList()

@@ -271,6 +271,14 @@ void CoreManager::DisableResizing()
   sigaction(SIGWINCH, &sig, NULL);
 }
 
+void CoreManager::ScreenResized()
+{
+  if (!resize_pending) {
+    resize_pending = true;
+    TimeoutOnceConnect(sigc::mem_fun(this, &CoreManager::Resize), 0);
+  }
+}
+
 void CoreManager::Redraw()
 {
   if (!redraw_pending) {
@@ -403,14 +411,6 @@ void CoreManager::SignalHandler(int signum)
 {
   if (signum == SIGWINCH)
     COREMANAGER->ScreenResized();
-}
-
-void CoreManager::ScreenResized()
-{
-  if (!resize_pending) {
-    resize_pending = true;
-    TimeoutOnceConnect(sigc::mem_fun(this, &CoreManager::Resize), 0);
-  }
 }
 
 void CoreManager::Resize()

@@ -59,30 +59,30 @@ void Conf::Finalize()
   instance = NULL;
 }
 
-int Conf::GetInt(const char *pref, int defaultvalue)
+int Conf::GetInt(const char *pref, int default_value)
 {
   if (purple_prefs_exists(pref))
     return purple_prefs_get_int(pref);
 
   AddPath(pref);
-  purple_prefs_add_int(pref, defaultvalue);
-  return defaultvalue;
+  purple_prefs_add_int(pref, default_value);
+  return default_value;
 }
 
-int Conf::GetInt(const char *pref, int defaultvalue, int min, int max)
+int Conf::GetInt(const char *pref, int default_value, int min, int max)
 {
   if (purple_prefs_exists(pref)) {
     int i = purple_prefs_get_int(pref);
     if (i < min || i > max) {
-      SetInt(pref, defaultvalue);
-      return defaultvalue;
+      SetInt(pref, default_value);
+      return default_value;
     }
     return i;
   }
 
   AddPath(pref);
-  purple_prefs_add_int(pref, defaultvalue);
-  return defaultvalue;
+  purple_prefs_add_int(pref, default_value);
+  return default_value;
 }
 
 void Conf::SetInt(const char *pref, int value)
@@ -90,14 +90,14 @@ void Conf::SetInt(const char *pref, int value)
   purple_prefs_set_int(pref, value);
 }
 
-bool Conf::GetBool(const char *pref, bool defaultvalue)
+bool Conf::GetBool(const char *pref, bool default_value)
 {
   if (purple_prefs_exists(pref))
     return purple_prefs_get_bool(pref);
 
   AddPath(pref);
-  purple_prefs_add_bool(pref, defaultvalue);
-  return defaultvalue;
+  purple_prefs_add_bool(pref, default_value);
+  return default_value;
 }
 
 void Conf::SetBool(const char *pref, const bool value)
@@ -105,14 +105,14 @@ void Conf::SetBool(const char *pref, const bool value)
   purple_prefs_set_bool(pref, value);
 }
 
-const char *Conf::GetString(const char *pref, const char *defaultvalue)
+const char *Conf::GetString(const char *pref, const char *default_value)
 {
   if (purple_prefs_exists(pref))
     return purple_prefs_get_string(pref);
 
   AddPath(pref);
-  purple_prefs_add_string(pref, defaultvalue);
-  return defaultvalue;
+  purple_prefs_add_string(pref, default_value);
+  return default_value;
 }
 
 void Conf::SetString(const char *pref, const char *value)

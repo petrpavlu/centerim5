@@ -28,6 +28,14 @@
 
 #define CONF_PREFIX "/centerim/"
 
+// percentage
+#define CONF_BUDDYLIST_WIDTH_MIN 0
+#define CONF_BUDDYLIST_WIDTH_MAX 50
+#define CONF_BUDDYLIST_WIDTH_DEFAULT 20
+#define CONF_LOG_HEIGHT_MIN 0
+#define CONF_LOG_HEIGHT_MAX 50
+#define CONF_LOG_HEIGHT_DEFAULT 25
+
 #define CENTERIM (CenterIM::Instance())
 
 class CenterIM
@@ -125,6 +133,13 @@ private:
       const char *arg_s);
   static gboolean tmp_is_enabled(PurpleDebugLevel level, const char *category)
     { return TRUE; }
+
+  // called when dimensions pref is changed
+  static void dimensions_change_(const char *name, PurplePrefType type,
+      gconstpointer val, gpointer data)
+    { reinterpret_cast<CenterIM*>(data)->dimensions_change(name, type, val); }
+  void dimensions_change(const char *name, PurplePrefType type,
+      gconstpointer val);
 
   void ActionFocusBuddyList();
   void ActionFocusActiveConversation();

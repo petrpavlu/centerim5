@@ -67,6 +67,7 @@ public:
 
   void EnableResizing();
   void DisableResizing();
+  void ScreenResized();
 
   void SetTopInputProcessor(InputProcessor& top)
     { top_input_processor = &top; }
@@ -137,7 +138,6 @@ private:
   void StdinInputUnInit();
 
   static void SignalHandler(int signum);
-  void ScreenResized();
   void Resize();
 
   void Draw();

@@ -27,6 +27,14 @@
 #include <libpurple/purple.h>
 #include <vector>
 
+#define CONF_LOG_MAX_LINES_MIN 100
+#define CONF_LOG_MAX_LINES_MAX 1000
+#define CONF_LOG_MAX_LINES_DEFAULT 500
+#define CONF_LOG_LEVEL_CIM_DEFAULT "info"
+#define CONF_LOG_LEVEL_CPPCONSUI_DEFAULT "critical"
+#define CONF_LOG_LEVEL_PURPLE_DEFAULT "critical"
+#define CONF_LOG_LEVEL_GLIB_DEFAULT "critical"
+
 #define LOG (Log::Instance())
 
 class Log
@@ -125,7 +133,7 @@ private:
   void cppconsui_log_handler(const char *domain, GLogLevelFlags flags,
       const char *msg);
 
-  // called when log/debug pref changed
+  // called when log/debug pref is changed
   static void debug_change_(const char *name, PurplePrefType type,
       gconstpointer val, gpointer data)
     { reinterpret_cast<Log *>(data)->debug_change(name, type, val); }
@@ -139,7 +147,6 @@ private:
   Level ConvertPurpleDebugLevel(PurpleDebugLevel purplelevel);
   Level ConvertGlibDebugLevel(GLogLevelFlags gliblevel);
   Level GetLogLevel(const char *type);
-  bool GetDebugEnabled();
 };
 
 #endif // __LOG_H__
