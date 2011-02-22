@@ -113,15 +113,3 @@ void InputProcessor::DeclareBindable(const char *context, const char *action,
 {
   keybindings[context][action] = Bindable(function, type);
 }
-
-sigc::connection InputProcessor::AddRegisterCallback(
-    const sigc::slot<bool>& function)
-{
-  return KEYCONFIG->AddRegisterCallback(function);
-}
-
-void InputProcessor::RegisterKeyDef(const char *context, const char *action,
-    const char *desc, const TermKeyKey& key)
-{
-  KEYCONFIG->RegisterKeyDef(context, action, desc, key);
-}

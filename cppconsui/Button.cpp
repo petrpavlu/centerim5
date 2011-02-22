@@ -32,8 +32,6 @@
 
 #include "gettext.h"
 
-#define CONTEXT_BUTTON "button"
-
 Button::Button(int w, int h, const char *text_)
 : Widget(w, h), type(TYPE_SIMPLE), text(NULL), value(NULL)
 {
@@ -83,16 +81,8 @@ Button::~Button()
 
 void Button::DeclareBindables()
 {
-  DeclareBindable(CONTEXT_BUTTON, "activate", sigc::mem_fun(this,
+  DeclareBindable("button", "activate", sigc::mem_fun(this,
         &Button::ActionActivate), InputProcessor::BINDABLE_NORMAL);
-}
-
-DEFINE_SIG_REGISTERKEYS(Button, RegisterKeys);
-bool Button::RegisterKeys()
-{
-  RegisterKeyDef(CONTEXT_BUTTON, "activate", _("Activate the button"),
-      Keys::SymbolTermKey(TERMKEY_SYM_ENTER));
-  return true;
 }
 
 void Button::Draw()

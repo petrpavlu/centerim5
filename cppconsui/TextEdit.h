@@ -99,11 +99,6 @@ private:
   void ActionDelete(DeleteType type, int direction);
   void ActionToggleOverwrite();
 
-  /**
-   * Automatic registration of defined keys.
-   */
-  DECLARE_SIG_REGISTERKEYS();
-  static bool RegisterKeys();
   void DeclareBindables();
 };
 

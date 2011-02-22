@@ -28,8 +28,6 @@
 #include <sys/stat.h>
 #include "gettext.h"
 
-#define CONTEXT_CONVERSATION "conversation"
-
 #define LOGS_DIR "clogs"
 #define TIME_FORMAT _("%d.%m.%y %H:%M")
 
@@ -90,20 +88,9 @@ void Conversation::DestroyPurpleConversation(PurpleConversation *conv)
 
 void Conversation::DeclareBindables()
 {
-  DeclareBindable(CONTEXT_CONVERSATION, "send",
+  DeclareBindable("conversation", "send",
       sigc::mem_fun(this, &Conversation::Send),
       InputProcessor::BINDABLE_OVERRIDE);
-}
-
-DEFINE_SIG_REGISTERKEYS(Conversation, RegisterKeys);
-bool Conversation::RegisterKeys()
-{
-  RegisterKeyDef(CONTEXT_CONVERSATION, "send", _("Send the message."),
-      Keys::UnicodeTermKey("x", TERMKEY_KEYMOD_CTRL));
-  // XXX move to default key bindings config
-  RegisterKeyDef(CONTEXT_CONVERSATION, "send", _("Send the message."),
-      Keys::SymbolTermKey(TERMKEY_SYM_ENTER));
-  return true;
 }
 
 void Conversation::BuildLogFilename()

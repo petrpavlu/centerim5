@@ -25,8 +25,6 @@
 
 #include "gettext.h"
 
-#define CONTEXT_TREEVIEW "treeview"
-
 TreeView::ToggleCollapseButton::ToggleCollapseButton(int w, int h,
     const char *text_)
 : Button(w, h, text_)
@@ -68,20 +66,10 @@ TreeView::~TreeView()
 
 void TreeView::DeclareBindables()
 {
-  DeclareBindable(CONTEXT_TREEVIEW, "fold-subtree", sigc::mem_fun(this,
+  DeclareBindable("treeview", "fold-subtree", sigc::mem_fun(this,
         &TreeView::ActionCollapse), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable(CONTEXT_TREEVIEW, "unfold-subtree", sigc::mem_fun(this,
+  DeclareBindable("treeview", "unfold-subtree", sigc::mem_fun(this,
         &TreeView::ActionExpand), InputProcessor::BINDABLE_NORMAL);
-}
-
-DEFINE_SIG_REGISTERKEYS(TreeView, RegisterKeys);
-bool TreeView::RegisterKeys()
-{
-  RegisterKeyDef(CONTEXT_TREEVIEW, "fold-subtree",
-      _("Collapse the selected subtree"), Keys::UnicodeTermKey("-"));
-  RegisterKeyDef(CONTEXT_TREEVIEW, "unfold-subtree",
-      _("Expand the selected subtree"), Keys::UnicodeTermKey("+"));
-  return true;
 }
 
 void TreeView::Draw()
@@ -217,6 +205,7 @@ void TreeView::Expand(const NodeReference node)
 {
   if (!node->open) {
     node->open = true;
+    FixFocus();
     Redraw();
   }
 }

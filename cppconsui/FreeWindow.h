@@ -97,11 +97,6 @@ private:
 
   virtual void ActionClose();
 
-  /**
-   * Automatic registration of defined keys.
-   */
-  DECLARE_SIG_REGISTERKEYS();
-  static bool RegisterKeys();
   void DeclareBindables();
 };
 

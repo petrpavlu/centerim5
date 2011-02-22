@@ -31,8 +31,6 @@
 #include <cstring>
 #include "gettext.h"
 
-#define CONTEXT_TEXTENTRY "textedit"
-
 TextEdit::TextEdit(int w, int h)
 : Widget(w, h)
 , editable(true)
@@ -56,121 +54,60 @@ TextEdit::~TextEdit()
 void TextEdit::DeclareBindables()
 {
   // cursor movement
-  DeclareBindable(CONTEXT_TEXTENTRY, "cursor-right",
+  DeclareBindable("textentry", "cursor-right",
       sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
         MOVE_LOGICAL_POSITIONS, 1), InputProcessor::BINDABLE_NORMAL);
 
-  DeclareBindable(CONTEXT_TEXTENTRY, "cursor-left",
+  DeclareBindable("textentry", "cursor-left",
       sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
         MOVE_LOGICAL_POSITIONS, -1), InputProcessor::BINDABLE_NORMAL);
 
-  DeclareBindable(CONTEXT_TEXTENTRY, "cursor-down",
+  DeclareBindable("textentry", "cursor-down",
       sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
         MOVE_DISPLAY_LINES, 1), InputProcessor::BINDABLE_NORMAL);
 
-  DeclareBindable(CONTEXT_TEXTENTRY, "cursor-up",
+  DeclareBindable("textentry", "cursor-up",
       sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
         MOVE_DISPLAY_LINES, -1), InputProcessor::BINDABLE_NORMAL);
 
-  DeclareBindable(CONTEXT_TEXTENTRY, "cursor-right-word",
+  DeclareBindable("textentry", "cursor-right-word",
       sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
         MOVE_WORDS, 1), InputProcessor::BINDABLE_NORMAL);
 
-  DeclareBindable(CONTEXT_TEXTENTRY, "cursor-left-word",
+  DeclareBindable("textentry", "cursor-left-word",
       sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
         MOVE_WORDS, -1), InputProcessor::BINDABLE_NORMAL);
 
-  DeclareBindable(CONTEXT_TEXTENTRY, "cursor-end",
+  DeclareBindable("textentry", "cursor-end",
       sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
         MOVE_DISPLAY_LINE_ENDS, 1), InputProcessor::BINDABLE_NORMAL);
 
-  DeclareBindable(CONTEXT_TEXTENTRY, "cursor-begin",
+  DeclareBindable("textentry", "cursor-begin",
       sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
         MOVE_DISPLAY_LINE_ENDS, -1), InputProcessor::BINDABLE_NORMAL);
 
   // deleting text
-  DeclareBindable(CONTEXT_TEXTENTRY, "delete-char",
+  DeclareBindable("textentry", "delete-char",
       sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete),
         DELETE_CHARS, 1), InputProcessor::BINDABLE_NORMAL);
 
-  DeclareBindable(CONTEXT_TEXTENTRY, "backspace",
+  DeclareBindable("textentry", "backspace",
       sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete),
         DELETE_CHARS, -1), InputProcessor::BINDABLE_NORMAL);
 
   /*
-  DeclareBindable(CONTEXT_TEXTENTRY, "delete-word-end",
+  DeclareBindable("textentry", "delete-word-end",
       sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete),
         DELETE_WORD_ENDS, 1), InputProcessor::BINDALBE_NORMAL);
 
-  DeclareBindable(CONTEXT_TEXTENTRY, "delete-word-begin",
+  DeclareBindable("textentry", "delete-word-begin",
       sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete),
         DELETE_WORD_ENDS, -1), InputProcessor::BINDABLE_NORMAL);
 
   // overwrite
-  DeclareBindable(CONTEXT_TEXTENTRY, "toggle-overwrite", sigc::mem_fun(this,
+  DeclareBindable("textentry", "toggle-overwrite", sigc::mem_fun(this,
         &TextEdit::ActionToggleOverwrite), InputProcessor::BINDABLE_NORMAL);
   */
-}
-
-DEFINE_SIG_REGISTERKEYS(TextEdit, RegisterKeys);
-bool TextEdit::RegisterKeys()
-{
-  RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-right",
-      _("Move the cursor to the right."),
-      Keys::SymbolTermKey(TERMKEY_SYM_RIGHT));
-  RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-left",
-      _("Move the cursor to the left."),
-      Keys::SymbolTermKey(TERMKEY_SYM_LEFT));
-  RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-down",
-      _("Move the cursor one line down."),
-      Keys::SymbolTermKey(TERMKEY_SYM_DOWN));
-  RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-up",
-      _("Move the cursor to the right by one word."),
-      Keys::SymbolTermKey(TERMKEY_SYM_UP));
-  RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-right-word",
-      _("Move the cursor to the right by one word."),
-      Keys::SymbolTermKey(TERMKEY_SYM_RIGHT, TERMKEY_KEYMOD_CTRL));
-  RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-left-word",
-      _("Move the cursor to the left by one word."),
-      Keys::SymbolTermKey(TERMKEY_SYM_LEFT, TERMKEY_KEYMOD_CTRL));
-  RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-end",
-      _("Move the cursor to the end of the text."),
-      Keys::SymbolTermKey(TERMKEY_SYM_END));
-  RegisterKeyDef(CONTEXT_TEXTENTRY, "cursor-begin",
-      _("Move the cursor to the beginning of the text."),
-      Keys::SymbolTermKey(TERMKEY_SYM_HOME));
-  RegisterKeyDef(CONTEXT_TEXTENTRY, "delete-char",
-      _("Delete character under cursor."),
-      Keys::SymbolTermKey(TERMKEY_SYM_DELETE));
-  RegisterKeyDef(CONTEXT_TEXTENTRY, "backspace",
-      _("Delete character before cursor."),
-      Keys::SymbolTermKey(TERMKEY_SYM_BACKSPACE));
-
-  // XXX move to default key bindings config
-  RegisterKeyDef(CONTEXT_TEXTENTRY, "backspace",
-      _("Delete character before cursor."),
-      Keys::SymbolTermKey(TERMKEY_SYM_DEL));
-
-  /// @todo enable
-  /*
-  RegisterKeyDef(CONTEXT_TEXTENTRY, "delete-word-end",
-      _("Delete text until the end of the word at the cursor."),
-      Keys::SymbolTermKey(TERMKEY_SYM_DELETE, TERMKEY_KEYMOD_CTRL));
-  RegisterKeyDef(CONTEXT_TEXTENTRY, "delete-word-begin",
-      _("Delete text until the beginning of the word at the cursor."),
-      Keys::SymbolTermKey(TERMKEY_SYM_BACKSPACE, TERMKEY_KEYMOD_CTRL));
-
-  // XXX move to default key bindings config
-  RegisterKeyDef(CONTEXT_TEXTENTRY, "delete-word-begin",
-      _("Delete text until the beginning of the word at the cursor."),
-      Keys::SymbolTermKey(TERMKEY_SYM_DEL, TERMKEY_KEYMOD_CTRL));
-
-  RegisterKeyDef(CONTEXT_TEXTENTRY, "toggle-overwrite",
-      _("Enable/Disable overwrite mode."),
-      Keys::SymbolTermKey(TERMKEY_SYM_INSERT));
-  */
-
-  return true;
 }
 
 void TextEdit::Clear()

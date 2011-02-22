@@ -107,8 +107,6 @@ inline sigc::slot_base *SourceConnectionNode::get_slot()
   return &slot;
 }
 
-#define CONTEXT_COREMANAGER "coremanager"
-
 CoreManager *CoreManager::Instance()
 {
   static CoreManager instance;
@@ -166,18 +164,9 @@ CoreManager::~CoreManager()
 
 void CoreManager::DeclareBindables()
 {
-  DeclareBindable(CONTEXT_COREMANAGER, "redraw-screen",
+  DeclareBindable("coremanager", "redraw-screen",
       sigc::mem_fun(this, &CoreManager::Redraw),
       InputProcessor::BINDABLE_OVERRIDE);
-}
-
-DEFINE_SIG_REGISTERKEYS(CoreManager, RegisterKeys);
-bool CoreManager::RegisterKeys()
-{
-  RegisterKeyDef(CONTEXT_COREMANAGER, "redraw-screen",
-      _("Redraw the complete screen immediately"),
-      Keys::UnicodeTermKey("l", TERMKEY_KEYMOD_CTRL));
-  return true;
 }
 
 void CoreManager::StartMainLoop()

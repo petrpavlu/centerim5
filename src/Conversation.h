@@ -86,8 +86,6 @@ private:
 
   virtual void Send() = 0;
 
-  DECLARE_SIG_REGISTERKEYS();
-  static bool RegisterKeys();
   void DeclareBindables();
 };
 

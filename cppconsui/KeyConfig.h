@@ -50,20 +50,8 @@
  * \code
  * class X : public Y {
  * private:
- *   static sigc::connection sig_register;
- *   static bool RegisterKeyDefs();
  *   void DeclareBindables();
  * };
- * sigc::connection X::sig_register = InputProcessor::AddRegisterCallback(
- *   sigc::ptr_fun(&X::RegisterKeyDefs));
- *
- * bool X::RegisterKeyDefs()
- * {
- *   KEYCONFIG->RegisterKeyDef("context", "action", _("description"),
- *     Keys::SymbolTermKey(TERMKEY_SYM_END, TERMKEY_KEYMOD_CTRL));
- *   KEYCONFIG->RegisterKeyDef("context", "action2", _("description2"),
- *     Keys::SymbolTermKey(TERMKEY_SYM_HOME, TERMKEY_KEYMOD_CTRL));
- * }
  *
  * void X::DeclareBindable()
  * {
@@ -74,9 +62,6 @@
  *   if (some condition)
  *     DeclareBindable("context", "action2", sigc::mem_fun(this,
  *       X::OnAction2Do));
- *
- *   // Note: You cannot register a bindable default key it the bindable
- *   // was not registered previously by this class or other classes.
  * }
  * \endcode
  *
@@ -96,13 +81,11 @@ public:
   public:
     Bindable(const char *context_,
         const char *action_,
-        const char *description_,
         const TermKeyKey &defkey_)
       /* Passed values should be always statically allocated so just save
        * pointers to them. */
       : context(context_)
       , action(action_)
-      , description(description_)
       , defkey(defkey_) {}
 
     /**
@@ -113,10 +96,6 @@ public:
      * The name of the action.
      */
     const char *action;
-    /**
-     * A description of the action.
-     */
-    const char *description;
     /**
      * The default value, i.e. the key(s) that trigger the action.
      */
@@ -147,7 +126,7 @@ public:
    * action.
    */
   void RegisterKeyDef(const char *context, const char *action,
-      const char *desc, const TermKeyKey &key);
+      const TermKeyKey &key);
 
   /**
    * Returns all key binds.
@@ -163,27 +142,14 @@ public:
   const Bindables *GetBindables() const { return &bindables; }
 
   /**
-   * Adds a new callback function that is used when the Key values are
-   * changed.
-   */
-  sigc::connection AddReconfigCallback(const sigc::slot<bool>& function)
-    { return signal_reconfig.connect(function); }
-  /**
    * It is called when needed to read the config and reread the defined
-   * keys. It will also emit the signal_reconfig.
+   * keys.
    */
-  bool Reconfig();
+  void Reconfig();
 
   /**
-   * Adds a new callback function that registers the caller's key defs.
    */
-  sigc::connection AddRegisterCallback(const sigc::slot<bool> &function)
-    { return signal_register.connect(function); }
-  /**
-   * Calls out the register members of the InputProcessor classes by emitting
-   * the signal_register.
-   */
-  bool Register();
+  void Register();
 
 protected:
 
@@ -196,17 +162,6 @@ private:
    * Bindables defined in all InputProcessor subclasses.
    */
   Bindables bindables;
-
-  /**
-   * Signal used to call the register function of all the InputProcessor
-   * classes.
-   */
-  sigc::signal<bool> signal_register;
-  /**
-   * Signal used to call the reconfig function of all the InputProcessor
-   * instances.
-   */
-  sigc::signal<bool> signal_reconfig;
 
   KeyConfig() {}
   KeyConfig(const KeyConfig&);

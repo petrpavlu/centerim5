@@ -148,9 +148,7 @@ private:
   void ActionFocusPrevConversation();
   void ActionFocusNextConversation();
 
-  /* Automatic registration of defined keys. */
-  DECLARE_SIG_REGISTERKEYS();
-  static bool RegisterKeys();
+  void RegisterDefaultKeys();
   void DeclareBindables();
 };
 

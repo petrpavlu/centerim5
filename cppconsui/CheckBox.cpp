@@ -32,8 +32,6 @@
 
 #include "gettext.h"
 
-#define CONTEXT_CHECKBOX "checkbox"
-
 CheckBox::CheckBox(int w, int h, const char *text_, bool default_state)
 : Widget(w, h)
 , text(NULL)
@@ -66,16 +64,8 @@ CheckBox::~CheckBox()
 
 void CheckBox::DeclareBindables()
 {
-  DeclareBindable(CONTEXT_CHECKBOX, "toggle", sigc::mem_fun(this,
+  DeclareBindable("checkbox", "toggle", sigc::mem_fun(this,
         &CheckBox::ActionToggle), InputProcessor::BINDABLE_NORMAL);
-}
-
-DEFINE_SIG_REGISTERKEYS(CheckBox, RegisterKeys);
-bool CheckBox::RegisterKeys()
-{
-  RegisterKeyDef(CONTEXT_CHECKBOX, "toggle", _("Toggle the checkbox"),
-      Keys::SymbolTermKey(TERMKEY_SYM_ENTER));
-  return true;
 }
 
 void CheckBox::Draw()

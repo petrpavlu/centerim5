@@ -190,11 +190,6 @@ private:
   Container(const Container&);
   Container& operator=(const Container&);
 
-  /**
-   * Automatic registration of defined keys.
-   */
-  DECLARE_SIG_REGISTERKEYS();
-  static bool RegisterKeys();
   void DeclareBindables();
 };
 

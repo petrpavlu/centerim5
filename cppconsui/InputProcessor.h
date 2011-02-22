@@ -38,11 +38,6 @@
 #include <map>
 #include <string>
 
-#define DECLARE_SIG_REGISTERKEYS() static sigc::connection sig_register
-#define DEFINE_SIG_REGISTERKEYS(classname, staticmethod) \
-sigc::connection classname::sig_register \
-= InputProcessor::AddRegisterCallback(sigc::ptr_fun(&classname::staticmethod))
-
 /**
  * Base class that takes care of input processing.
  *
@@ -160,17 +155,6 @@ protected:
   virtual bool Process(BindableType type, const TermKeyKey& key);
 
   virtual bool ProcessInputText(const TermKeyKey& key);
-
-  /**
-   * Convenient wrapper for KEYCONFIG->AddRegisterCallback().
-   */
-  static sigc::connection AddRegisterCallback(
-      const sigc::slot<bool>& function);
-  /**
-   * Convenient wrapper for KEYCONFIG->Bind().
-   */
-  static void RegisterKeyDef(const char *context, const char *action,
-      const char *desc, const TermKeyKey& key);
 
 private:
   InputProcessor(const InputProcessor&);

@@ -145,11 +145,6 @@ private:
   Windows::iterator FindWindow(FreeWindow& window);
   void FocusWindow();
 
-  /**
-   * Automatic registration of defined keys.
-   */
-  DECLARE_SIG_REGISTERKEYS();
-  static bool RegisterKeys();
   void DeclareBindables();
 };
 

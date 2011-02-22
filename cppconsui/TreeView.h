@@ -231,11 +231,6 @@ private:
   void ActionCollapse();
   void ActionExpand();
 
-  /**
-   * Automatic registration of defined keys.
-   */
-  DECLARE_SIG_REGISTERKEYS();
-  static bool RegisterKeys();
   void DeclareBindables();
 };
 

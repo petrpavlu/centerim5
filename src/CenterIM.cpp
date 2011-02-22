@@ -36,11 +36,10 @@
 #include "GeneralMenu.h"
 
 #include <cppconsui/ColorScheme.h>
+#include <cppconsui/KeyConfig.h>
 #include <cppconsui/Keys.h>
 #include <cstring>
 #include "gettext.h"
-
-#define CONTEXT_CENTERIM "centerim"
 
 // TODO configurable path via command line option
 #define CIM_CONFIG_PATH ".centerim5"
@@ -68,68 +67,63 @@ CenterIM::CenterIM()
 
 void CenterIM::DeclareBindables()
 {
-  DeclareBindable(CONTEXT_CENTERIM, "quit",
+  DeclareBindable("centerim", "quit",
       sigc::mem_fun(this, &CenterIM::Quit),
       InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable(CONTEXT_CENTERIM, "buddylist",
+  DeclareBindable("centerim", "buddylist",
       sigc::mem_fun(this, &CenterIM::ActionFocusBuddyList),
       InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable(CONTEXT_CENTERIM, "conversation-active",
+  DeclareBindable("centerim", "conversation-active",
       sigc::mem_fun(this, &CenterIM::ActionFocusActiveConversation),
       InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable(CONTEXT_CENTERIM, "accountstatusmenu",
+  DeclareBindable("centerim", "accountstatusmenu",
       sigc::mem_fun(this, &CenterIM::ActionOpenAccountStatusMenu),
       InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable(CONTEXT_CENTERIM, "generalmenu",
+  DeclareBindable("centerim", "generalmenu",
       sigc::mem_fun(this, &CenterIM::ActionOpenGeneralMenu),
       InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable(CONTEXT_CENTERIM, "conversation-prev",
+  DeclareBindable("centerim", "conversation-prev",
       sigc::mem_fun(this, &CenterIM::ActionFocusPrevConversation),
       InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable(CONTEXT_CENTERIM, "conversation-next",
+  DeclareBindable("centerim", "conversation-next",
       sigc::mem_fun(this, &CenterIM::ActionFocusNextConversation),
       InputProcessor::BINDABLE_OVERRIDE);
 }
 
-DEFINE_SIG_REGISTERKEYS(CenterIM, RegisterKeys);
-bool CenterIM::RegisterKeys()
+void CenterIM::RegisterDefaultKeys()
 {
-  RegisterKeyDef(CONTEXT_CENTERIM, "quit", _("Quit CenterIM."),
+  KEYCONFIG->RegisterKeyDef("centerim", "quit",
       Keys::UnicodeTermKey("q", TERMKEY_KEYMOD_CTRL));
-  RegisterKeyDef(CONTEXT_CENTERIM, "buddylist",
-      _("Switch the focus to the buddy list."),
+  KEYCONFIG->RegisterKeyDef("centerim", "buddylist",
       Keys::FunctionTermKey(1));
-  RegisterKeyDef(CONTEXT_CENTERIM, "conversation-active",
-      _("Switch the focus to the active conversation."),
+  KEYCONFIG->RegisterKeyDef("centerim", "conversation-active",
       Keys::FunctionTermKey(2));
-  RegisterKeyDef(CONTEXT_CENTERIM, "accountstatusmenu",
-      _("Open the account status menu."),
+  KEYCONFIG->RegisterKeyDef("centerim", "accountstatusmenu",
       Keys::FunctionTermKey(3));
-  RegisterKeyDef(CONTEXT_CENTERIM, "generalmenu",
-      _("Open the general menu."),
+  KEYCONFIG->RegisterKeyDef("centerim", "generalmenu",
       Keys::FunctionTermKey(4));
 
   // XXX move to default key bindings config
-  RegisterKeyDef(CONTEXT_CENTERIM, "generalmenu",
-      _("Open the general menu."),
+  KEYCONFIG->RegisterKeyDef("centerim", "generalmenu",
       Keys::UnicodeTermKey("g", TERMKEY_KEYMOD_CTRL));
-  RegisterKeyDef(CONTEXT_CENTERIM, "generalmenu",
-      _("Open the general menu."),
+  KEYCONFIG->RegisterKeyDef("centerim", "generalmenu",
       Keys::UnicodeTermKey("4", TERMKEY_KEYMOD_ALT));
 
-  RegisterKeyDef(CONTEXT_CENTERIM, "conversation-prev",
-      _("Switch the focus to the previous conversation."),
+  KEYCONFIG->RegisterKeyDef("centerim", "conversation-prev",
       Keys::UnicodeTermKey("p", TERMKEY_KEYMOD_ALT));
-  RegisterKeyDef(CONTEXT_CENTERIM, "conversation-next",
-      _("Switch the focus to the next conversation."),
+  KEYCONFIG->RegisterKeyDef("centerim", "conversation-next",
       Keys::UnicodeTermKey("n", TERMKEY_KEYMOD_ALT));
-  return true;
+
+  KEYCONFIG->RegisterKeyDef("conversation", "send",
+      Keys::UnicodeTermKey("x", TERMKEY_KEYMOD_CTRL));
 }
 
 int CenterIM::Run()
 {
   if (PurpleInit())
     return 1;
+
+  RegisterDefaultKeys();
 
   // initialize Conf component so we can calculate area sizes of all windows
   Conf::Init();

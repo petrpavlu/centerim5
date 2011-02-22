@@ -32,9 +32,6 @@
 OptionWindow::OptionWindow()
 : SplitDialog(0, 0, 80, 24, _("Config options"))
 {
-  buttons->AppendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
-          &OptionWindow::Close)));
-
   TreeView *tree = new TreeView(AUTOSIZE, AUTOSIZE);
   SetContainer(*tree);
 
@@ -91,6 +88,9 @@ do {                                       \
   ADD_DEBUG_OPTIONS();
   tree->AppendNode(parent, *c);
 #undef ADD_DEBUG_OPTIONS
+
+  buttons->AppendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
+          &OptionWindow::Close)));
 }
 
 void OptionWindow::ScreenResized()

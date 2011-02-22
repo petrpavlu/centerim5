@@ -120,11 +120,6 @@ private:
   void ActionToggleOverwrite();
   void ActionActivate();
 
-  /**
-   * Automatic registration of defined keys.
-   */
-  DECLARE_SIG_REGISTERKEYS();
-  static bool RegisterKeys();
   void DeclareBindables();
 };
 
