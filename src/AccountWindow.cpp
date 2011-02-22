@@ -35,7 +35,7 @@
 AccountWindow::AccountWindow()
 : SplitDialog(0, 0, 80, 24, _("Accounts"))
 {
-  SetColorScheme("accountwindow");
+  SetColorScheme("generalwindow");
 
   buttons->AppendItem(_("Add"), sigc::mem_fun(this, &AccountWindow::Add));
   buttons->AppendSeparator();

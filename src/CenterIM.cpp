@@ -255,10 +255,6 @@ void CenterIM::ColorSchemeInit()
   COLORSCHEME->SetColorPair("accountstatuspopup",  "horizontalline", "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
   COLORSCHEME->SetColorPair("accountstatuspopup",  "button",         "normal",     Curses::Color::CYAN,    Curses::Color::BLACK);
 
-  COLORSCHEME->SetColorPair("accountwindow",       "panel",          "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("accountwindow",       "horizontalline", "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("accountwindow",       "verticalline",   "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-
   COLORSCHEME->SetColorPair("buddylist",           "treeview",       "line",       Curses::Color::GREEN,   Curses::Color::BLACK);
   COLORSCHEME->SetColorPair("buddylist",           "panel",          "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
   COLORSCHEME->SetColorPair("buddylist",           "button",         "normal",     Curses::Color::GREEN,   Curses::Color::BLACK);
@@ -267,6 +263,10 @@ void CenterIM::ColorSchemeInit()
   COLORSCHEME->SetColorPair("generalmenu",         "panel",          "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
   COLORSCHEME->SetColorPair("generalmenu",         "horizontalline", "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
   COLORSCHEME->SetColorPair("generalmenu",         "button",         "normal",     Curses::Color::CYAN,    Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("generalwindow",       "panel",          "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("generalwindow",       "horizontalline", "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("generalwindow",       "verticalline",   "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
 
   COLORSCHEME->SetColorPair("log",                 "panel",          "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
   COLORSCHEME->SetColorPair("log",                 "textview",       "text",       Curses::Color::CYAN,    Curses::Color::BLACK);

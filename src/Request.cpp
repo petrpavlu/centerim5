@@ -205,6 +205,8 @@ Request::RequestDialog::RequestDialog(const char *title,
     void *user_data)
 : SplitDialog(title), ok_cb(ok_cb), cancel_cb(cancel_cb), user_data(user_data)
 {
+  SetColorScheme("generalwindow");
+
   lbox = new ListBox(AUTOSIZE, AUTOSIZE);
   if (primary)
     lbox->AppendWidget(*(new Label(primary)));

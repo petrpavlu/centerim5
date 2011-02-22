@@ -32,6 +32,8 @@
 OptionWindow::OptionWindow()
 : SplitDialog(0, 0, 80, 24, _("Config options"))
 {
+  SetColorScheme("generalwindow");
+
   TreeView *tree = new TreeView(AUTOSIZE, AUTOSIZE);
   SetContainer(*tree);
 
