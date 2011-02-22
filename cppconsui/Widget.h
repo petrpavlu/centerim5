@@ -93,7 +93,7 @@ public:
   virtual bool HasFocus() const { return has_focus; }
 
   virtual void SetVisibility(bool visible);
-  virtual bool IsVisible() const { return visible; };
+  virtual bool IsVisible() const { return visible; }
   virtual bool IsVisibleRecursive() const;
 
   virtual void SetParent(Container& parent);

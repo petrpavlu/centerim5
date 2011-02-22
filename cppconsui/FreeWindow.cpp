@@ -92,6 +92,17 @@ void FreeWindow::Draw()
   realwindow->noutrefresh();
 }
 
+void FreeWindow::SetVisibility(bool visible)
+{
+  visible ? Show() : Hide();
+}
+
+void FreeWindow::SetParent(Container& parent)
+{
+  // Window can not have a parent
+  g_assert_not_reached();
+}
+
 bool FreeWindow::IsWidgetVisible(const Widget& child) const
 {
   return true;
@@ -113,6 +124,7 @@ bool FreeWindow::SetFocusChild(Widget& child)
 void FreeWindow::Show()
 {
   COREMANAGER->AddWindow(*this);
+  visible = true;
   signal_show(*this);
 }
 
@@ -120,6 +132,7 @@ void FreeWindow::Hide()
 {
   if (COREMANAGER->HasWindow(*this)) {
     COREMANAGER->RemoveWindow(*this);
+    visible = false;
     signal_hide(*this);
   }
 }

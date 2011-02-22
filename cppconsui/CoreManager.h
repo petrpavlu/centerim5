@@ -59,7 +59,7 @@ public:
 
   void AddWindow(FreeWindow& window);
   void RemoveWindow(FreeWindow& window);
-  bool HasWindow(FreeWindow& window) const;
+  bool HasWindow(const FreeWindow& window) const;
   FreeWindow *GetTopWindow();
 
   int GetScreenWidth() const { return screen_width; }

@@ -214,7 +214,7 @@ void CoreManager::RemoveWindow(FreeWindow& window)
   Redraw();
 }
 
-bool CoreManager::HasWindow(FreeWindow& window) const
+bool CoreManager::HasWindow(const FreeWindow& window) const
 {
   for (Windows::const_iterator i = windows.begin(); i != windows.end(); i++)
     if (*i == &window)

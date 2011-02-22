@@ -48,6 +48,9 @@ public:
   virtual void MoveResizeRect(const Rect &rect)
     { MoveResize(rect.x, rect.y, rect.width, rect.height); }
   virtual void Draw();
+  virtual void SetVisibility(bool visible);
+  virtual bool IsVisibleRecursive() const { return IsVisible(); }
+  virtual void SetParent(Container& parent);
   virtual int Left() const { return win_x; }
   virtual int Top() const { return win_y; }
   virtual int Width() const { return win_w; }
