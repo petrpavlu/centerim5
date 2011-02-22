@@ -1,36 +1,21 @@
-Centerim 5 Alpha 1
+Centerim 5 Alpha 2
 
 How to get this version to work after compiling?
 
-Press ^Q at any time to shutdown cim5.
-Press F4 for a menu. In this menu there is an option "Accounts", this can be
-used to add, edit and delete accounts.
-
-Pressing escape once will close almost any window. Use tab, shift-tab or the
-arrow keys to move focus from widget to widget.
+Press ^Q at any time to shutdown cim5. Pressing escape once will close almost
+any window. Use tab, shift-tab or the arrow keys to move the focus from widget
+to widget. Press F4 for a menu. In this menu there is an "Accounts..." option,
+this can be used to add, edit and delete accounts. You can also copy the
+pidgin xml files to configure cim5.
 
 Once you have added (and enabled) an account the buddylist on the left of the
 screen will fill. Select a lead in this tree and press enter to open
-a conversation window. Start typing, and press ^x to send the message.
+a conversation window. Type your message and press ^x to send it to
+a recipient.
 
-If accounts do not automatically logon after adding them, open
-~/.centerim5/accounts.xml and set the auto-login setting from 0 to 1.
-If you don't have an auto-login setting in your accounts.xml, add the following
-section within <account>:
-| <settings ui='centerim'>
-| 	<setting name='auto-login' type='bool'>1</setting>
-| </settings>
+Incoming messages open automatically a new conversation window.
 
-You can also copy the pidgin xml files to configure cim5.
-
-Incoming messages should automatically open a new conversation window.
-
-Debugging can be enabled in ~/.centerim5/prefs.xml. Look for settings with a
-`log_level' prefix. Valid values are none, error, critical, warning, info and
-debug.
-
-Don't complain about a lack of features or usability. This is an alpha release
-intended for developers who know how to fix this.
+Please keep in mind that this is an alpha release.
 
 Happy Hacking!
 
