@@ -38,9 +38,6 @@ Window::Window(int x, int y, int w, int h, const char *title, Type t,
 
 void Window::MoveResize(int newx, int newy, int neww, int newh)
 {
-  if (newx == win_x && newy == win_y && neww == win_w && newh == win_h)
-    return;
-
   win_x = newx;
   win_y = newy;
   win_w = neww;
