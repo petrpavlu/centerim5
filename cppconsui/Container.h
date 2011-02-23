@@ -182,9 +182,9 @@ protected:
    */
   virtual void InsertWidget(size_t pos, Widget& widget, int x, int y);
 
-  virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
-      Rect& newsize);
-  virtual void OnChildVisible(Widget& widget, bool visible);
+  virtual void OnChildMoveResize(Widget& activator, const Rect& oldsize,
+      const Rect& newsize);
+  virtual void OnChildVisible(Widget& activator, bool visible);
 
 private:
   Container(const Container&);

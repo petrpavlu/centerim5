@@ -504,7 +504,8 @@ bool TreeView::IsNodeVisible(const NodeReference& node) const
   return true;
 }
 
-void TreeView::OnChildMoveResize(Widget& widget, Rect &oldsize, Rect &newsize)
+void TreeView::OnChildMoveResize(Widget& activator, const Rect &oldsize,
+    const Rect &newsize)
 {
   int old_height = oldsize.Height();
   int new_height = newsize.Height();

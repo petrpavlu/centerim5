@@ -221,8 +221,8 @@ protected:
   bool IsNodeVisible(const NodeReference& node) const;
 
   // handlers of signals
-  virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
-      Rect& newsize);
+  virtual void OnChildMoveResize(Widget& activator, const Rect& oldsize,
+      const Rect& newsize);
 
 private:
   TreeView(const TreeView&);

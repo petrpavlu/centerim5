@@ -139,7 +139,8 @@ Curses::Window *HorizontalListBox::GetSubPad(const Widget& child, int begin_x,
   return AbstractListBox::GetSubPad(child, begin_x, begin_y, ncols, nlines);
 }
 
-void HorizontalListBox::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize)
+void HorizontalListBox::OnChildMoveResize(Widget& activator,
+    const Rect& oldsize, const Rect& newsize)
 {
   int old_width = oldsize.Width();
   int new_width = newsize.Width();
@@ -158,10 +159,10 @@ void HorizontalListBox::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& n
   }
 }
 
-void HorizontalListBox::OnChildVisible(Widget& widget, bool visible)
+void HorizontalListBox::OnChildVisible(Widget& activator, bool visible)
 {
   // the widget is being hidden or deleted
-  int width = widget.Width();
+  int width = activator.Width();
   int sign = visible ? 1 : - 1;
   if (width == AUTOSIZE) {
     autosize_children += sign;

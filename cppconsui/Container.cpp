@@ -408,10 +408,11 @@ void Container::InsertWidget(size_t pos, Widget& widget, int x, int y)
       sigc::mem_fun(this, &Container::OnChildVisible));
 }
 
-void Container::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize)
+void Container::OnChildMoveResize(Widget& activator, const Rect& oldsize,
+    const Rect& newsize)
 {
 }
 
-void Container::OnChildVisible(Widget& widget, bool visible)
+void Container::OnChildVisible(Widget& activator, bool visible)
 {
 }

@@ -64,9 +64,9 @@ protected:
   bool reposition_widgets;
 
   // Container
-  virtual void OnChildMoveResize(Widget& widget, Rect& oldsize,
-      Rect& newsize);
-  virtual void OnChildVisible(Widget& widget, bool visible);
+  virtual void OnChildMoveResize(Widget& activator, const Rect& oldsize,
+      const Rect& newsize);
+  virtual void OnChildVisible(Widget& activator, bool visible);
 
   virtual void UpdateScrollHeight();
 

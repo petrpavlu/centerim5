@@ -107,7 +107,7 @@ public:
   virtual void SetColorScheme(const char *scheme);
   virtual const char *GetColorScheme();
 
-  sigc::signal<void, Widget&, Rect&, Rect&> signal_moveresize;
+  sigc::signal<void, Widget&, const Rect&, const Rect&> signal_moveresize;
   /**
    * Signal emitted whenever a widget grabs or looses the focus.
    */

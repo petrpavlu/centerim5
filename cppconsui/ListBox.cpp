@@ -139,7 +139,8 @@ Curses::Window *ListBox::GetSubPad(const Widget& child, int begin_x,
   return AbstractListBox::GetSubPad(child, begin_x, begin_y, ncols, nlines);
 }
 
-void ListBox::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize)
+void ListBox::OnChildMoveResize(Widget& activator, const Rect& oldsize,
+    const Rect& newsize)
 {
   int old_height = oldsize.Height();
   int new_height = newsize.Height();
@@ -158,10 +159,10 @@ void ListBox::OnChildMoveResize(Widget& widget, Rect& oldsize, Rect& newsize)
   }
 }
 
-void ListBox::OnChildVisible(Widget& widget, bool visible)
+void ListBox::OnChildVisible(Widget& activator, bool visible)
 {
   // the widget is being hidden or deleted
-  int height = widget.Height();
+  int height = activator.Height();
   int sign = visible ? 1 : -1;
   if (height == AUTOSIZE) {
     autosize_children += sign;
