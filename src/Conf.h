@@ -42,6 +42,15 @@ public:
   const char *GetString(const char *pref, const char *default_value);
   void SetString(const char *pref, const char *value);
 
+  void ConnectCallbackPath(void *handle, const char *name,
+      PurplePrefCallback cb);
+  void ConnectCallbackInt(void *handle, const char *name,
+      PurplePrefCallback cb, int default_value);
+  void ConnectCallbackBool(void *handle, const char *name,
+      PurplePrefCallback cb, bool default_value);
+  void ConnectCallbackString(void *handle, const char *name,
+      PurplePrefCallback cb, const char *default_value);
+
 protected:
 
 private:

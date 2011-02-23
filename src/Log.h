@@ -34,6 +34,8 @@
 #define CONF_LOG_LEVEL_CPPCONSUI_DEFAULT "critical"
 #define CONF_LOG_LEVEL_PURPLE_DEFAULT "critical"
 #define CONF_LOG_LEVEL_GLIB_DEFAULT "critical"
+#define CONF_LOG_DEBUG_DEFAULT false
+#define CONF_LOG_FILENAME_DEFAULT "debug.log"
 
 #define LOG (Log::Instance())
 

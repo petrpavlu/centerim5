@@ -60,8 +60,8 @@ Log::Log()
       cppconsui_log_handler_);
 
   // connect callbacks
-  purple_prefs_connect_callback(this, CONF_PREFIX "log/debug", debug_change_,
-      this);
+  CONF->ConnectCallbackBool(this, CONF_PREFIX "log/debug", debug_change_,
+      CONF_LOG_DEBUG_DEFAULT);
 
   // set the purple debug callbacks
   centerim_debug_ui_ops.print = purple_print_;
@@ -135,14 +135,15 @@ WRITE_METHOD(Debug, LEVEL_DEBUG)
 
 #undef WRITE_METHOD
 
-void Log::purple_print(PurpleDebugLevel purplelevel, const char *category, const char *arg_s)
+void Log::purple_print(PurpleDebugLevel purplelevel, const char *category,
+    const char *arg_s)
 {
   if (GetLogLevel("purple") < ConvertPurpleDebugLevel(purplelevel))
     return; // we don't want to see this log message
 
   if (!category) {
     category = "misc";
-    Warning("centerim/log: purple_print() parameter category was not defined.\n");
+    Warning(_("centerim/log: purple_print() parameter category was not defined.\n"));
   }
 
   char *text = g_strdup_printf("libpurple/%s: %s", category, arg_s);
@@ -202,10 +203,12 @@ void Log::cppconsui_log_handler(const char *domain, GLogLevelFlags flags,
   g_free(text);
 }
 
-void Log::debug_change(const char *name, PurplePrefType type, gconstpointer val)
+void Log::debug_change(const char *name, PurplePrefType type,
+    gconstpointer val)
 {
   // debug was disabled so close logfile if it's opened
-  if (!CONF->GetBool(CONF_PREFIX "log/debug", false) && logfile) {
+  if (!CONF->GetBool(CONF_PREFIX "log/debug", CONF_LOG_DEBUG_DEFAULT)
+      && logfile) {
     g_io_channel_unref(logfile);
     logfile = NULL;
   }
@@ -262,12 +265,12 @@ void Log::WriteToFile(const char *text)
 
   GError *err = NULL;
 
-  if (CONF->GetBool(CONF_PREFIX "log/debug", false)) {
+  if (CONF->GetBool(CONF_PREFIX "log/debug", CONF_LOG_DEBUG_DEFAULT)) {
     // open logfile if it isn't already opened
     if (!logfile) {
       char *filename = g_build_filename(purple_user_dir(),
-          CONF->GetString(CONF_PREFIX "log/filename", "debug"),
-          NULL);
+          CONF->GetString(CONF_PREFIX "log/filename",
+            CONF_LOG_FILENAME_DEFAULT), NULL);
       if ((logfile = g_io_channel_new_file(filename, "a", &err))
           == NULL) {
         if (err) {
@@ -339,7 +342,7 @@ Log::Level Log::ConvertPurpleDebugLevel(PurpleDebugLevel purplelevel)
       return LEVEL_ERROR; // use error level so this message is always printed
   }
 
-  Warning("centerim/log: Unknown libpurple logging level: %d.\n",
+  Warning(_("centerim/log: Unknown libpurple logging level: %d.\n"),
       purplelevel);
   return LEVEL_DEBUG;
 }
@@ -359,7 +362,7 @@ Log::Level Log::ConvertGlibDebugLevel(GLogLevelFlags gliblevel)
   if (gliblevel & G_LOG_LEVEL_ERROR)
     return LEVEL_ERROR;
 
-  Warning("centerim/log: Unknown glib logging level in %d.\n", gliblevel);
+  Warning(_("centerim/log: Unknown glib logging level in %d.\n"), gliblevel);
   /* This will never happen. Actually should not, because some day, it will
    * happen. :) So lets initialize level, so that we don't have uninitialized
    * values. :) */

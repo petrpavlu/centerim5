@@ -153,8 +153,8 @@ int CenterIM::Run(const char *config_path)
 
   LOG->Info(_("Welcome to CenterIM 5. Press F4 to display main menu.\n"));
 
-  purple_prefs_connect_callback(this, CONF_PREFIX "dimensions",
-      dimensions_change_, this);
+  CONF->ConnectCallbackPath(this, CONF_PREFIX "dimensions",
+      dimensions_change_);
 
   mngr->SetTopInputProcessor(*this);
   mngr->EnableResizing();

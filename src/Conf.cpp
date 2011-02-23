@@ -120,6 +120,35 @@ void Conf::SetString(const char *pref, const char *value)
   purple_prefs_set_string(pref, value);
 }
 
+void Conf::ConnectCallbackPath(void *handle, const char *name,
+    PurplePrefCallback cb)
+{
+  AddPath(name);
+  purple_prefs_add_none(name);
+  purple_prefs_connect_callback(handle, name, cb, handle);
+}
+
+void Conf::ConnectCallbackInt(void *handle, const char *name,
+    PurplePrefCallback cb, int default_value)
+{
+  GetInt(name, default_value);
+  purple_prefs_connect_callback(handle, name, cb, handle);
+}
+
+void Conf::ConnectCallbackBool(void *handle, const char *name,
+    PurplePrefCallback cb, bool default_value)
+{
+  GetBool(name, default_value);
+  purple_prefs_connect_callback(handle, name, cb, handle);
+}
+
+void Conf::ConnectCallbackString(void *handle, const char *name,
+    PurplePrefCallback cb, const char *default_value)
+{
+  GetString(name, default_value);
+  purple_prefs_connect_callback(handle, name, cb, handle);
+}
+
 void Conf::AddPath(const char *s)
 {
   const char *p = s;
