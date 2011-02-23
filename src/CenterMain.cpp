@@ -22,10 +22,15 @@
 #include "CenterIM.h"
 #include "gettext.h"
 
-int main(int argc, char **argv)
-{
-  CenterIM* cim;
+#define CIM_CONFIG_PATH ".centerim5"
 
+void print_usage(FILE *out, const char *prg_name)
+{
+  fprintf(out, _("Usage: %s [-c config_path]\n"), prg_name);
+}
+
+int main(int argc, char *argv[])
+{
   g_set_prgname(PACKAGE_NAME);
 
 #ifdef ENABLE_NLS
@@ -36,7 +41,28 @@ int main(int argc, char **argv)
 
   setlocale(LC_ALL, "");
 
-  cim = CenterIM::Instance();
+  // parse args
+  const char *config_path = CIM_CONFIG_PATH;
+  int opt;
+  while ((opt = getopt(argc, argv, "hc:")) != -1) {
+    switch (opt) {
+      case 'c':
+        config_path = optarg;
+        break;
+      case 'h':
+        print_usage(stdout, argv[0]);
+        return 0;
+      default:
+        print_usage(stderr, argv[0]);
+        return 1;
+    }
+  }
+  if (optind < argc) {
+    fprintf(stderr, _("%s: unexpected argument after options\n"), argv[0]);
+    print_usage(stderr, argv[0]);
+    return 1;
+  }
 
-  return cim->Run();
+  CenterIM *cim = CenterIM::Instance();
+  return cim->Run(config_path);
 }

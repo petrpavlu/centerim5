@@ -53,7 +53,7 @@ public:
 
   static CenterIM *Instance();
 
-  int Run();
+  int Run(const char *config_path);
   void Quit();
 
   // returns size of selected area
@@ -96,7 +96,7 @@ private:
   CenterIM& operator=(const CenterIM&);
   ~CenterIM() {}
 
-  int PurpleInit();
+  int PurpleInit(const char *config_path);
   void PurpleFinalize();
   void ColorSchemeInit();
 

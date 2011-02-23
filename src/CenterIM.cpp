@@ -41,9 +41,6 @@
 #include <cstring>
 #include "gettext.h"
 
-// TODO configurable path via command line option
-#define CIM_CONFIG_PATH ".centerim5"
-
 std::vector<CenterIM::LogBufferItem> *CenterIM::logbuf = NULL;
 
 CenterIM *CenterIM::Instance()
@@ -118,9 +115,9 @@ void CenterIM::RegisterDefaultKeys()
       Keys::UnicodeTermKey("x", TERMKEY_KEYMOD_CTRL));
 }
 
-int CenterIM::Run()
+int CenterIM::Run(const char *config_path)
 {
-  if (PurpleInit())
+  if (PurpleInit(config_path))
     return 1;
 
   RegisterDefaultKeys();
@@ -195,13 +192,21 @@ Rect CenterIM::GetScreenAreaSize(ScreenArea area)
   return areaSizes[area];
 }
 
-int CenterIM::PurpleInit()
+int CenterIM::PurpleInit(const char *config_path)
 {
+  g_assert(config_path);
+
   // set the configuration file location
-  char *path;
-  path = g_build_filename(purple_home_dir(), CIM_CONFIG_PATH, NULL);
-  purple_util_set_user_dir(path);
-  g_free(path);
+  if (config_path[0] == '/') {
+    // absolute path
+    purple_util_set_user_dir(config_path);
+  }
+  else {
+    char *path;
+    path = g_build_filename(purple_home_dir(), config_path, NULL);
+    purple_util_set_user_dir(path);
+    g_free(path);
+  }
 
   /* This does not disable debugging, but rather it disables printing to
    * stdout. Don't change this to TRUE or things will get messy. */
@@ -224,7 +229,7 @@ int CenterIM::PurpleInit()
   purple_eventloop_set_ui_ops(&centerim_glib_eventloops);
 
   // in case we ever write centerim specific plugins
-  path = g_build_filename(purple_user_dir(), "plugins", NULL);
+  char *path = g_build_filename(purple_user_dir(), "plugins", NULL);
   purple_plugins_add_search_path(path);
   g_free(path);
 
