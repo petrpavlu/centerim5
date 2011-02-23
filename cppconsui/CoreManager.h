@@ -92,8 +92,12 @@ private:
 
   InputProcessor *top_input_processor;
 
-  GIOChannel *channel;
-  guint channel_id;
+  GIOChannel *io_input_channel;
+  guint io_input_channel_id;
+  GIOChannel *resize_channel;
+  guint resize_channel_id;
+  int pipefd[2];
+  bool pipe_valid;
 
   TermKey *tk;
   bool utf8;
@@ -134,8 +138,14 @@ private:
     { return reinterpret_cast<CoreManager *>(data)->io_input(source, cond); }
   gboolean io_input(GIOChannel *source, GIOCondition cond);
 
-  void StdinInputInit();
-  void StdinInputUnInit();
+  static gboolean resize_input_(GIOChannel *source, GIOCondition cond,
+      gpointer data)
+    { return reinterpret_cast<CoreManager *>(data)->resize_input(source,
+        cond); }
+  gboolean resize_input(GIOChannel *source, GIOCondition cond);
+
+  void InputInit();
+  void InputUnInit();
 
   static void SignalHandler(int signum);
   void Resize();

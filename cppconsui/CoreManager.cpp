@@ -114,11 +114,12 @@ CoreManager *CoreManager::Instance()
 }
 
 CoreManager::CoreManager()
-: top_input_processor(NULL), channel(NULL), channel_id(0), tk(NULL)
+: top_input_processor(NULL), io_input_channel(NULL), io_input_channel_id(0)
+, resize_channel(NULL), resize_channel_id(0), pipe_valid(false), tk(NULL)
 , utf8(false), gmainloop(NULL) , screen_width(0), screen_height(0)
 , redraw_pending(false), resize_pending(false)
 {
-  StdinInputInit();
+  InputInit();
 
   /**
    * @todo Check all return values here. Throw an exception if we can't init
@@ -146,7 +147,7 @@ CoreManager::CoreManager()
 
 CoreManager::~CoreManager()
 {
-  StdinInputUnInit();
+  InputUnInit();
 
   // close all windows
   int i = 0;
@@ -262,9 +263,9 @@ void CoreManager::DisableResizing()
 
 void CoreManager::ScreenResized()
 {
-  if (!resize_pending) {
+  if (pipe_valid && !resize_pending) {
+    write(pipefd[1], "@", 1);
     resize_pending = true;
-    TimeoutOnceConnect(sigc::mem_fun(this, &CoreManager::Resize), 0);
   }
 }
 
@@ -360,7 +361,22 @@ gboolean CoreManager::io_input(GIOChannel *source, GIOCondition cond)
   return TRUE;
 }
 
-void CoreManager::StdinInputInit()
+gboolean CoreManager::resize_input(GIOChannel *source, GIOCondition cond)
+{
+  char buf[1024];
+  gsize bytes_read;
+  GError *error = NULL;
+  g_io_channel_read_chars(source, buf, sizeof(buf), &bytes_read, &error);
+  if (error)
+    g_error_free(error);
+
+  if (resize_pending)
+    Resize();
+
+  return TRUE;
+}
+
+void CoreManager::InputInit()
 {
   // init libtermkey
   TERMKEY_CHECK_VERSION;
@@ -370,30 +386,49 @@ void CoreManager::StdinInputInit()
   }
   utf8 = g_get_charset(NULL);
 
-  channel = g_io_channel_unix_new(STDIN_FILENO);
+  io_input_channel = g_io_channel_unix_new(STDIN_FILENO);
   // set channel encoding to NULL so it can be unbuffered
-  g_io_channel_set_encoding(channel, NULL, NULL);
-  g_io_channel_set_buffered(channel, FALSE);
-  g_io_channel_set_close_on_unref(channel, TRUE);
+  g_io_channel_set_encoding(io_input_channel, NULL, NULL);
+  g_io_channel_set_buffered(io_input_channel, FALSE);
+  g_io_channel_set_close_on_unref(io_input_channel, TRUE);
 
-  channel_id = g_io_add_watch_full(channel, G_PRIORITY_HIGH,
-      (GIOCondition)(G_IO_IN | G_IO_HUP | G_IO_ERR | G_IO_PRI), io_input_,
-      this, NULL);
+  io_input_channel_id = g_io_add_watch_full(io_input_channel, G_PRIORITY_HIGH,
+      static_cast<GIOCondition>(G_IO_IN | G_IO_HUP | G_IO_ERR | G_IO_PRI),
+      io_input_, this, NULL);
+  g_io_add_watch_full(io_input_channel, G_PRIORITY_HIGH, G_IO_NVAL,
+      io_input_error_, this, NULL);
+  g_io_channel_unref(io_input_channel);
 
-  g_io_add_watch_full(channel, G_PRIORITY_HIGH, (G_IO_NVAL), io_input_error_,
-      this, NULL);
+  // screen resizing
+  if (!pipe(pipefd)) {
+    pipe_valid = true;
+    resize_channel = g_io_channel_unix_new(pipefd[0]);
+    g_io_channel_set_encoding(resize_channel, NULL, NULL);
+    g_io_channel_set_buffered(resize_channel, FALSE);
+    g_io_channel_set_close_on_unref(resize_channel, TRUE);
 
-  g_io_channel_unref(channel);
+    resize_channel_id = g_io_add_watch_full(resize_channel, G_PRIORITY_HIGH,
+        G_IO_IN, resize_input_, this, NULL);
+  }
 }
 
-void CoreManager::StdinInputUnInit()
+void CoreManager::InputUnInit()
 {
   termkey_destroy(tk);
 
-  g_source_remove(channel_id);
-  channel_id = 0;
-  g_io_channel_unref(channel);
-  channel = NULL;
+  g_source_remove(io_input_channel_id);
+  io_input_channel_id = 0;
+  g_io_channel_unref(io_input_channel);
+  io_input_channel = NULL;
+
+  if (pipe_valid) {
+    g_source_remove(resize_channel_id);
+    resize_channel_id = 0;
+    g_io_channel_unref(resize_channel);
+    resize_channel = NULL;
+    close(pipefd[0]);
+    close(pipefd[1]);
+  }
 }
 
 void CoreManager::SignalHandler(int signum)
@@ -406,8 +441,7 @@ void CoreManager::Resize()
 {
   struct winsize size;
 
-  if (resize_pending)
-    resize_pending = false;
+  resize_pending = false;
 
   if (ioctl(fileno(stdout), TIOCGWINSZ, &size) >= 0)
     Curses::resizeterm(size.ws_row, size.ws_col);
