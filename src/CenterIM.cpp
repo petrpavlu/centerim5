@@ -444,12 +444,22 @@ void CenterIM::ActionFocusActiveConversation()
 
 void CenterIM::ActionOpenAccountStatusMenu()
 {
+  // don't allow to open the account status menu if there is any `top' window
+  FreeWindow *top = mngr->GetTopWindow();
+  if (top && top->GetType() == FreeWindow::TYPE_TOP)
+    return;
+
   AccountStatusMenu *menu = new AccountStatusMenu;
   menu->Show();
 }
 
 void CenterIM::ActionOpenGeneralMenu()
 {
+  // don't allow to open the general menu if there is any `top' window
+  FreeWindow *top = mngr->GetTopWindow();
+  if (top && top->GetType() == FreeWindow::TYPE_TOP)
+    return;
+
   GeneralMenu *menu = new GeneralMenu;
   menu->Show();
 }
