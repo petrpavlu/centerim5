@@ -131,13 +131,13 @@ void BuddyList::new_node(PurpleBlistNode *node)
   if (bnode) {
     BuddyListNode *parent = bnode->GetParentNode();
     TreeView::NodeReference nref = treeview->AppendNode(
-        parent ? parent->GetRefNode() : treeview->Root(), *bnode);
-    treeview->Collapse(nref);
+        parent ? parent->GetRefNode() : treeview->GetRootNode(), *bnode);
+    treeview->CollapseNode(nref);
     bnode->SetRefNode(nref);
     bnode->Update();
 
     if (PURPLE_BLIST_NODE_IS_CONTACT(node))
-      treeview->SetStyle(nref, TreeView::STYLE_VOID);
+      treeview->SetNodeStyle(nref, TreeView::STYLE_VOID);
   }
 }
 

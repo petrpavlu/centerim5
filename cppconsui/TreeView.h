@@ -84,82 +84,84 @@ public:
   /**
    * Folds given node.
    */
-  void Collapse(const NodeReference node);
+  virtual void CollapseNode(NodeReference node);
   /**
    * Unfolds given node.
    */
-  void Expand(const NodeReference node);
+  virtual void ExpandNode(NodeReference node);
   /**
    * Toggles folding for given node.
    */
-  void ToggleCollapsed(const NodeReference node);
+  virtual void ToggleCollapsed(NodeReference node);
   /**
    * Convenient method to toggle folding of the current active node.
    */
-  void ActionToggleCollapsed();
+  virtual void ActionToggleCollapsed();
 
   /**
    * Returns root node reference.
    */
-  NodeReference Root() const { return thetree.begin(); }
+  virtual NodeReference GetRootNode() const { return thetree.begin(); }
 
   /**
    * Inserts a widget before a specified position. TreeView takes ownership of
    * the widget.
    */
-  NodeReference InsertNode(const NodeReference position, Widget& widget);
+  virtual NodeReference InsertNode(NodeReference position,
+      Widget& widget);
   /**
    * Inserts a widget after a specified position. TreeView takes ownership of
    * the widget.
    */
-  NodeReference InsertNodeAfter(const NodeReference position, Widget& widget);
+  virtual NodeReference InsertNodeAfter(NodeReference position,
+      Widget& widget);
   /**
    * Prepends a widget to a specified parent. TreeView takes ownership of the
    * widget.
    */
-  NodeReference PrependNode(const NodeReference parent, Widget& widget);
+  virtual NodeReference PrependNode(NodeReference parent, Widget& widget);
   /**
    * Appends a widget to a specified parent. TreeView takes ownership of the
    * widget.
    */
-  NodeReference AppendNode(const NodeReference parent, Widget& widget);
+  virtual NodeReference AppendNode(NodeReference parent, Widget& widget);
 
   /**
    * Deletes given node.
    */
-  void DeleteNode(const NodeReference node, bool keepchildren);
+  virtual void DeleteNode(NodeReference node, bool keepchildren);
   /**
    * Deletes all children of given node.
    */
-  void DeleteChildren(const NodeReference node, bool keepchildren);
+  virtual void DeleteNodeChildren(NodeReference node, bool keepchildren);
 
   /**
    * Returns reference to currently focused node/widget.
    */
-  const NodeReference GetSelected() const;
+  virtual NodeReference GetSelectedNode() const;
 
   /**
    * Returns node depth.
    */
-  int GetDepth(const NodeReference node) const;
+  virtual int GetNodeDepth(NodeReference node) const;
 
   /**
    * Detaches a given node from its current location and moves it before
    * a given position.
    */
-  void MoveBefore(const NodeReference node, const NodeReference position);
+  virtual void MoveNodeBefore(NodeReference node, NodeReference position);
   /**
    * Detaches a given node from its current location and moves it after
    * a given position.
    */
-  void MoveAfter(const NodeReference node, const NodeReference position);
+  virtual void MoveNodeAfter(NodeReference node, NodeReference position);
   /**
    * Detaches a given node from its current location and appents it to a new
    * parent.
    */
-  void SetParent(const NodeReference node, const NodeReference newparent);
-  void SetStyle(const NodeReference node, Style s);
-  Style GetStyle(const NodeReference node) const;
+  virtual void SetNodeParent(NodeReference node, NodeReference newparent);
+  virtual void SetNodeStyle(NodeReference node, Style s);
+  virtual Style GetNodeStyle(NodeReference node) const;
 
 protected:
   class TreeNode
@@ -209,16 +211,16 @@ protected:
   virtual void RemoveWidget(Widget& widget);
   virtual void Clear(); ///< @todo Implemement.
 
-  int DrawNode(SiblingIterator node, int top);
+  virtual int DrawNode(SiblingIterator node, int top);
 
-  TreeNode AddNode(Widget& widget);
+  virtual TreeNode AddNode(Widget& widget);
 
-  void FixFocus();
+  virtual void FixFocus();
 
-  NodeReference FindNode(const Widget& child) const;
+  virtual NodeReference FindNode(const Widget& child) const;
 
-  bool IsNodeOpenable(const SiblingIterator& node) const;
-  bool IsNodeVisible(const NodeReference& node) const;
+  virtual bool IsNodeOpenable(SiblingIterator& node) const;
+  virtual bool IsNodeVisible(NodeReference& node) const;
 
   // handlers of signals
   virtual void OnChildMoveResize(Widget& activator, const Rect& oldsize,

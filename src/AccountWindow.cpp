@@ -104,7 +104,7 @@ bool AccountWindow::ClearAccount(PurpleAccount *account, bool full)
   account_entry->parent->GrabFocus();
 
   // remove the nodes from the tree
-  accounts->DeleteChildren(account_entry->parent_reference, false);
+  accounts->DeleteNodeChildren(account_entry->parent_reference, false);
   if (full) {
     accounts->DeleteNode(account_entry->parent_reference, false);
     account_entries.erase(account);
@@ -143,8 +143,8 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
     TreeView::ToggleCollapseButton *button
       = new TreeView::ToggleCollapseButton;
     TreeView::NodeReference parent_reference
-      = accounts->AppendNode(accounts->Root(), *button);
-    accounts->Collapse(parent_reference);
+      = accounts->AppendNode(accounts->GetRootNode(), *button);
+    accounts->CollapseNode(parent_reference);
     account_entry->parent = button;
     account_entry->parent_reference = parent_reference;
   }

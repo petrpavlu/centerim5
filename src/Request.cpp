@@ -376,7 +376,8 @@ Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,
 
     TreeView::ToggleCollapseButton *button
       = new TreeView::ToggleCollapseButton(title);
-    TreeView::NodeReference parent = tree->AppendNode(tree->Root(), *button);
+    TreeView::NodeReference parent = tree->AppendNode(tree->GetRootNode(),
+        *button);
 
     for (GList *gfields = purple_request_field_group_get_fields(group);
         gfields; gfields = gfields->next) {

@@ -62,7 +62,7 @@ void BuddyListNode::Update()
   BuddyListNode *parent_node = GetParentNode();
   // the parent could have changed, so re-parent the node
   if (parent_node)
-    t->SetParent(ref, parent_node->GetRefNode());
+    t->SetNodeParent(ref, parent_node->GetRefNode());
 }
 
 void BuddyListNode::SortIn()
@@ -84,13 +84,13 @@ void BuddyListNode::SortIn()
       g_assert(n);
 
       if (LessThan(*n)) {
-        t->MoveBefore(ref, i);
+        t->MoveNodeBefore(ref, i);
         break;
       }
     }
     // the ref is last in a list
     if (i == parent_ref.end())
-      t->MoveAfter(ref, --i);
+      t->MoveNodeAfter(ref, --i);
   }
 }
 
@@ -354,7 +354,7 @@ void BuddyListGroup::SortIn()
 {
   TreeView *t = dynamic_cast<TreeView *>(parent);
   g_assert(t);
-  TreeView::NodeReference parent_ref = t->Root();
+  TreeView::NodeReference parent_ref = t->GetRootNode();
 
   TreeView::SiblingIterator i;
   for (i = parent_ref.begin(); i != parent_ref.end(); i++) {
@@ -366,11 +366,11 @@ void BuddyListGroup::SortIn()
     g_assert(n);
 
     if (LessThan(*n)) {
-      t->MoveBefore(ref, i);
+      t->MoveNodeBefore(ref, i);
       break;
     }
   }
   // the ref is last in a list
   if (i == parent_ref.end())
-    t->MoveAfter(ref, --i);
+    t->MoveNodeAfter(ref, --i);
 }

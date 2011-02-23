@@ -38,7 +38,7 @@ OptionWindow::OptionWindow()
   SetContainer(*tree);
 
   TreeView::NodeReference parent;
-  parent = tree->AppendNode(tree->Root(),
+  parent = tree->AppendNode(tree->GetRootNode(),
       *(new TreeView::ToggleCollapseButton(_("Buddy list"))));
   tree->AppendNode(parent, *(new BooleanOption(_("Show offline buddies"),
           CONF_PREFIX "blist/show_offline_buddies",
@@ -47,7 +47,7 @@ OptionWindow::OptionWindow()
           CONF_PREFIX "blist/show_empty_groups",
           CONF_SHOW_EMPTY_GROUPS_DEFAULT)));
 
-  parent = tree->AppendNode(tree->Root(),
+  parent = tree->AppendNode(tree->GetRootNode(),
       *(new TreeView::ToggleCollapseButton(_("Dimensions (percentage)"))));
   tree->AppendNode(parent, *(new IntegerOption(_("Buddy list width"),
           CONF_PREFIX "dimensions/buddylist_width",
@@ -57,7 +57,7 @@ OptionWindow::OptionWindow()
           CONF_PREFIX "dimensions/log_height", CONF_LOG_HEIGHT_DEFAULT,
           CONF_LOG_HEIGHT_MIN, CONF_LOG_HEIGHT_MAX)));
 
-  parent = tree->AppendNode(tree->Root(),
+  parent = tree->AppendNode(tree->GetRootNode(),
       *(new TreeView::ToggleCollapseButton(_("Logging"))));
 #define ADD_DEBUG_OPTIONS()                \
 do {                                       \
