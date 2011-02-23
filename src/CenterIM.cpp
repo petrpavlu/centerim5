@@ -256,10 +256,6 @@ void CenterIM::ColorSchemeInit()
   COLORSCHEME->SetColorPair("accountstatusmenu",   "horizontalline", "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
   COLORSCHEME->SetColorPair("accountstatusmenu",   "button",         "normal",     Curses::Color::CYAN,    Curses::Color::BLACK);
 
-  COLORSCHEME->SetColorPair("accountstatuspopup",  "panel",          "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("accountstatuspopup",  "horizontalline", "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("accountstatuspopup",  "button",         "normal",     Curses::Color::CYAN,    Curses::Color::BLACK);
-
   COLORSCHEME->SetColorPair("buddylist",           "treeview",       "line",       Curses::Color::GREEN,   Curses::Color::BLACK);
   COLORSCHEME->SetColorPair("buddylist",           "panel",          "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
   COLORSCHEME->SetColorPair("buddylist",           "button",         "normal",     Curses::Color::GREEN,   Curses::Color::BLACK);

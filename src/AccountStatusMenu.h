@@ -30,11 +30,11 @@ class AccountStatusMenu
 {
 public:
   AccountStatusMenu();
-  virtual ~AccountStatusMenu();
+  virtual ~AccountStatusMenu() {}
 
-  void Dummy(Button& activator) { ; } //TODO remove
-
+  // FreeWindow
   virtual void ScreenResized();
+
 protected:
 
 private:
@@ -43,19 +43,18 @@ private:
   {
   public:
     StatusPopup(int x, int y, int w, int h, PurpleAccount *account);
-    virtual ~StatusPopup();
+    virtual ~StatusPopup() {}
 
-    void Dummy(void) { ; } //TODO remove
+    // FreeWindow
+    virtual void ScreenResized();
 
   protected:
+    PurpleAccount *account;
 
-  private:
     void SetStatus(Button& activator, PurpleAccount *account,
         PurpleStatusType *status_type, bool active);
-    //void SetSavedStatus(PurpleAccount *account, PurpleSavedStatus *status);
-    //void SetStatusPrimitive(PurpleAccount *account, PurpleStatusPrimitive primitive);
 
-    PurpleAccount *account;
+  private:
   };
 
   AccountStatusMenu(const AccountStatusMenu&);
