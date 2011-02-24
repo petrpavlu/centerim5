@@ -45,6 +45,16 @@ void ScrollPane::Draw()
   DrawEx(true);
 }
 
+Point ScrollPane::GetAbsolutePositionOf(const Widget& child) const
+{
+  g_assert(child.GetParent() == this);
+  g_assert(parent);
+
+  Point p = parent->GetAbsolutePositionOf(*this);
+  return Point(p.X() + child.Left() - scroll_xpos,
+      p.Y() + child.Top() - scroll_ypos);
+}
+
 void ScrollPane::SetScrollSize(int swidth, int sheight)
 {
   if (swidth == scroll_width && sheight == scroll_height)

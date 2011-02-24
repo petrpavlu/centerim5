@@ -144,9 +144,10 @@ void ComboBox::OnDropDown(Button& activator)
   if (options.empty())
     return;
 
-  /// @todo Position correctly according to absolute coords.
   /// @todo Make sure that requested MenuWindow size can fit into the screen.
-  dropdown = new MenuWindow(0, 0, max_option_width + 2, options.size() + 2);
+  Point p = GetAbsolutePosition();
+  dropdown = new MenuWindow(p.X(), p.Y() + 1, max_option_width + 2,
+      options.size() + 2);
   dropdown->signal_close.connect(sigc::mem_fun(this,
         &ComboBox::DropDownClose));
 

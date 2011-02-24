@@ -104,8 +104,10 @@ public:
   virtual int Width() const { return width; }
   virtual int Height() const { return height; }
 
+  virtual Point GetAbsolutePosition() const;
+
   virtual void SetColorScheme(const char *scheme);
-  virtual const char *GetColorScheme();
+  virtual const char *GetColorScheme() const;
 
   sigc::signal<void, Widget&, const Rect&, const Rect&> signal_moveresize;
   /**

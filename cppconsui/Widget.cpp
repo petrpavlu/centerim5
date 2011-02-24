@@ -188,6 +188,12 @@ void Widget::SetParent(Container& parent)
   UpdateArea();
 }
 
+Point Widget::GetAbsolutePosition() const
+{
+  g_assert(parent);
+  return parent->GetAbsolutePositionOf(*this);
+}
+
 void Widget::SetColorScheme(const char *scheme)
 {
   if (color_scheme)
@@ -201,7 +207,7 @@ void Widget::SetColorScheme(const char *scheme)
   Redraw();
 }
 
-const char *Widget::GetColorScheme()
+const char *Widget::GetColorScheme() const
 {
   if (color_scheme)
     return color_scheme;

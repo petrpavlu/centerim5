@@ -51,6 +51,7 @@ public:
   virtual void MoveResize(int newx, int newy, int neww, int newh);
 
   // Container
+  virtual Point GetAbsolutePositionOf(const Widget& child) const;
   virtual Curses::Window *GetSubPad(const Widget &child, int begin_x,
       int begin_y, int ncols, int nlines);
 

@@ -367,6 +367,15 @@ void Container::MoveFocus(FocusDirection direction)
     (*iter)->GrabFocus();
 }
 
+Point Container::GetAbsolutePositionOf(const Widget& child) const
+{
+  g_assert(child.GetParent() == this);
+  g_assert(parent);
+
+  Point p = parent->GetAbsolutePositionOf(*this);
+  return Point(p.X() + child.Left(), p.Y() + child.Top());
+}
+
 Curses::Window *Container::GetSubPad(const Widget& child, int begin_x,
     int begin_y, int ncols, int nlines)
 {

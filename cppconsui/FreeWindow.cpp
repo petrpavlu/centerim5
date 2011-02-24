@@ -100,6 +100,11 @@ void FreeWindow::SetParent(Container& parent)
   g_assert_not_reached();
 }
 
+Point FreeWindow::GetAbsolutePosition()
+{
+  return Point(win_x, win_y);
+}
+
 bool FreeWindow::IsWidgetVisible(const Widget& child) const
 {
   return true;
@@ -116,6 +121,13 @@ bool FreeWindow::SetFocusChild(Widget& child)
     return false;
 
   return true;
+}
+
+Point FreeWindow::GetAbsolutePositionOf(const Widget& child) const
+{
+  g_assert(child.GetParent() == this);
+
+  return Point(win_x + child.Left(), win_y + child.Top());
 }
 
 void FreeWindow::Show()

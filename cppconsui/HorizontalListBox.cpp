@@ -169,6 +169,7 @@ void HorizontalListBox::OnChildVisible(Widget& activator, bool visible)
     width = 1;
   }
   children_width += sign * width;
+  reposition_widgets = true;
   UpdateScrollWidth();
 }
 

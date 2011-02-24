@@ -55,10 +55,12 @@ public:
   virtual int Top() const { return win_y; }
   virtual int Width() const { return win_w; }
   virtual int Height() const { return win_h; }
+  virtual Point GetAbsolutePosition();
 
   // Container
   virtual bool IsWidgetVisible(const Widget& widget) const;
   virtual bool SetFocusChild(Widget& child);
+  virtual Point GetAbsolutePositionOf(const Widget& child) const;
 
   virtual void Show();
   virtual void Hide();
