@@ -21,7 +21,6 @@
 
 #include "BuddyList.h"
 
-#include "Conf.h"
 #include "CenterIM.h"
 #include "Log.h"
 
@@ -41,6 +40,13 @@ BuddyList::BuddyList()
 {
   SetColorScheme("buddylist");
 
+  HorizontalListBox *lbox = new HorizontalListBox(AUTOSIZE, AUTOSIZE);
+  lbox->AppendWidget(*(new Spacer(1, AUTOSIZE)));
+  treeview = new TreeView(AUTOSIZE, AUTOSIZE);
+  lbox->AppendWidget(*treeview);
+  lbox->AppendWidget(*(new Spacer(1, AUTOSIZE)));
+  AddWidget(*lbox, 0, 0);
+
   /* TODO Check if this has been moved to purple_blist_init(). Remove these
    * lines if it was as this will probably move to purple_init(), the
    * buddylist object should be available a lot more early and the uiops
@@ -51,6 +57,11 @@ BuddyList::BuddyList()
 
   // load the pounces
   purple_pounces_load();
+
+  // init prefs
+  purple_prefs_add_none(CONF_PREFIX "/blist");
+  purple_prefs_add_bool(CONF_PREFIX "/blist/show_offline_buddies", true);
+  purple_prefs_add_bool(CONF_PREFIX "/blist/show_empty_groups", true);
 
   // setup the callbacks for the buddylist
   memset(&centerim_blist_ui_ops, 0, sizeof(centerim_blist_ui_ops));
@@ -71,13 +82,6 @@ BuddyList::BuddyList()
   purple_blist_set_ui_ops(&centerim_blist_ui_ops);
 
   COREMANAGER->TimeoutOnceConnect(sigc::mem_fun(this, &BuddyList::Load), 0);
-
-  HorizontalListBox *lbox = new HorizontalListBox(AUTOSIZE, AUTOSIZE);
-  lbox->AppendWidget(*(new Spacer(1, AUTOSIZE)));
-  treeview = new TreeView(AUTOSIZE, AUTOSIZE);
-  lbox->AppendWidget(*treeview);
-  lbox->AppendWidget(*(new Spacer(1, AUTOSIZE)));
-  AddWidget(*lbox, 0, 0);
 }
 
 BuddyList::~BuddyList()

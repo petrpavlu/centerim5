@@ -22,7 +22,6 @@
 #ifndef __CONVERSATION_H__
 #define __CONVERSATION_H__
 
-#include "Conf.h"
 #include "Log.h"
 
 #include <cppconsui/HorizontalLine.h>

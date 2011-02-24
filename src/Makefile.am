@@ -16,8 +16,6 @@ centerim_SOURCES = \
 	CenterIM.cpp \
 	CenterIM.h \
 	CenterMain.cpp \
-	Conf.cpp \
-	Conf.h \
 	Conversation.cpp \
 	Conversation.h \
 	Conversations.cpp \

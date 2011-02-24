@@ -26,15 +26,7 @@
 #include <cppconsui/CoreManager.h>
 #include <vector>
 
-#define CONF_PREFIX "/centerim/"
-
-// percentage
-#define CONF_BUDDYLIST_WIDTH_MIN 0
-#define CONF_BUDDYLIST_WIDTH_MAX 50
-#define CONF_BUDDYLIST_WIDTH_DEFAULT 20
-#define CONF_LOG_HEIGHT_MIN 0
-#define CONF_LOG_HEIGHT_MAX 50
-#define CONF_LOG_HEIGHT_DEFAULT 25
+#define CONF_PREFIX "/centerim"
 
 #define CENTERIM (CenterIM::Instance())
 
@@ -99,6 +91,7 @@ private:
   int PurpleInit(const char *config_path);
   void PurpleFinalize();
   void ColorSchemeInit();
+  void PrefsInit();
 
   // recalculates area sizes to fit into current screen size
   void ScreenResized();

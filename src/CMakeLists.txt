@@ -7,7 +7,6 @@ set( centerim_SOURCES
 	BuddyListNode.cpp
 	CenterIM.cpp
 	CenterMain.cpp
-	Conf.cpp
 	Conversation.cpp
 	Conversations.cpp
 	Connections.cpp
@@ -29,7 +28,6 @@ set( centerim_HEADERS
 	BuddyList.h
 	BuddyListNode.h
 	CenterIM.h
-	Conf.h
 	Conversation.h
 	Conversations.h
 	Connections.h

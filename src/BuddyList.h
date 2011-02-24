@@ -30,9 +30,6 @@
 #include <cppconsui/Window.h>
 #include <libpurple/purple.h>
 
-#define CONF_SHOW_OFFLINE_BUDDIES_DEFAULT true
-#define CONF_SHOW_EMPTY_GROUPS_DEFAULT true
-
 #define BUDDYLIST (BuddyList::Instance())
 
 class BuddyList

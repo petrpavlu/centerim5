@@ -35,8 +35,6 @@
 //#define CONVERSATION_DESTROY_TIMEOUT 1800000
 #define CONVERSATION_DESTROY_TIMEOUT 6000
 
-#define CONF_CHAT_PARTITIONING_DEFAULT 80 /* 20% for the input window */
-
 Conversation::Conversation(PurpleConversation *conv_)
 : Window(0, 0, 80, 24)
 , conv(conv_)
@@ -159,9 +157,8 @@ void Conversation::MoveResize(int newx, int newy, int neww, int newh)
 {
   Window::MoveResize(newx, newy, neww, newh);
 
-  char *pref = g_strconcat(CONF_PREFIX, "chat/partitioning", NULL);
-  int percentage = CONF->GetInt(pref, CONF_CHAT_PARTITIONING_DEFAULT, 0, 100);
-  g_free(pref);
+  int percentage = purple_prefs_get_int(CONF_PREFIX "/chat/partitioning");
+  percentage = CLAMP(percentage, 0, 100);
 
   int view_height = (height * percentage) / 100;
   if (view_height < 1)

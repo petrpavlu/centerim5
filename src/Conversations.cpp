@@ -42,6 +42,10 @@ Conversations::Conversations()
   list = new HorizontalListBox(AUTOSIZE, 1);
   AddWidget(*list, 0, 0);
 
+  // init prefs
+  purple_prefs_add_none(CONF_PREFIX "/chat");
+  purple_prefs_add_int(CONF_PREFIX "/chat/partitioning", 80);
+
   memset(&centerim_conv_ui_ops, 0, sizeof(centerim_conv_ui_ops));
   centerim_conv_ui_ops.create_conversation = create_conversation_;
   centerim_conv_ui_ops.destroy_conversation = destroy_conversation_;

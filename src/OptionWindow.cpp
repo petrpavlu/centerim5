@@ -22,7 +22,6 @@
 
 #include "BuddyList.h"
 #include "CenterIM.h"
-#include "Conf.h"
 #include "Log.h"
 
 #include <cppconsui/TreeView.h>
@@ -41,21 +40,16 @@ OptionWindow::OptionWindow()
   parent = tree->AppendNode(tree->GetRootNode(),
       *(new TreeView::ToggleCollapseButton(_("Buddy list"))));
   tree->AppendNode(parent, *(new BooleanOption(_("Show offline buddies"),
-          CONF_PREFIX "blist/show_offline_buddies",
-          CONF_SHOW_OFFLINE_BUDDIES_DEFAULT)));
+          CONF_PREFIX "/blist/show_offline_buddies")));
   tree->AppendNode(parent, *(new BooleanOption(_("Show empty groups"),
-          CONF_PREFIX "blist/show_empty_groups",
-          CONF_SHOW_EMPTY_GROUPS_DEFAULT)));
+          CONF_PREFIX "/blist/show_empty_groups")));
 
   parent = tree->AppendNode(tree->GetRootNode(),
       *(new TreeView::ToggleCollapseButton(_("Dimensions (percentage)"))));
   tree->AppendNode(parent, *(new IntegerOption(_("Buddy list width"),
-          CONF_PREFIX "dimensions/buddylist_width",
-          CONF_BUDDYLIST_WIDTH_DEFAULT, CONF_BUDDYLIST_WIDTH_MIN,
-          CONF_BUDDYLIST_WIDTH_MAX)));
+          CONF_PREFIX "/dimensions/buddylist_width")));
   tree->AppendNode(parent, *(new IntegerOption(_("Log height"),
-          CONF_PREFIX "dimensions/log_height", CONF_LOG_HEIGHT_DEFAULT,
-          CONF_LOG_HEIGHT_MIN, CONF_LOG_HEIGHT_MAX)));
+          CONF_PREFIX "/dimensions/log_height")));
 
   parent = tree->AppendNode(tree->GetRootNode(),
       *(new TreeView::ToggleCollapseButton(_("Logging"))));
@@ -70,23 +64,22 @@ do {                                       \
   c->AddOption(_("Debug"), "debug");       \
 } while (0)
   ChoiceOption *c = new ChoiceOption(_("CIM log level"),
-      CONF_PREFIX "log/log_level_cim", CONF_LOG_LEVEL_CIM_DEFAULT);
+      CONF_PREFIX "/log/log_level_cim");
   ADD_DEBUG_OPTIONS();
   tree->AppendNode(parent, *c);
 
   c = new ChoiceOption(_("CppConsUI log level"),
-      CONF_PREFIX "log/log_level_cppconsui",
-      CONF_LOG_LEVEL_CPPCONSUI_DEFAULT);
+      CONF_PREFIX "/log/log_level_cppconsui");
   ADD_DEBUG_OPTIONS();
   tree->AppendNode(parent, *c);
 
   c = new ChoiceOption(_("Purple log level"),
-      CONF_PREFIX "log/log_level_purple", CONF_LOG_LEVEL_PURPLE_DEFAULT);
+      CONF_PREFIX "/log/log_level_purple");
   ADD_DEBUG_OPTIONS();
   tree->AppendNode(parent, *c);
 
   c = new ChoiceOption(_("GLib log level"),
-      CONF_PREFIX "log/log_level_glib", CONF_LOG_LEVEL_GLIB_DEFAULT);
+      CONF_PREFIX "/log/log_level_glib");
   ADD_DEBUG_OPTIONS();
   tree->AppendNode(parent, *c);
 #undef ADD_DEBUG_OPTIONS
@@ -101,14 +94,14 @@ void OptionWindow::ScreenResized()
 }
 
 OptionWindow::BooleanOption::BooleanOption(const char *text,
-    const char *config, bool default_value)
+    const char *config)
 : CheckBox(text)
 {
   g_assert(text);
   g_assert(config);
 
   pref = g_strdup(config);
-  SetState(CONF->GetBool(config, default_value));
+  SetState(purple_prefs_get_bool(config));
   signal_toggle.connect(sigc::mem_fun(this, &BooleanOption::OnToggle));
 }
 
@@ -120,18 +113,18 @@ OptionWindow::BooleanOption::~BooleanOption()
 void OptionWindow::BooleanOption::OnToggle(CheckBox& activator,
     bool new_state)
 {
-  CONF->SetBool(pref, new_state);
+  purple_prefs_set_bool(pref, new_state);
 }
 
-OptionWindow::StringOption::StringOption(const char *text, const char *config,
-    const char *default_value)
+OptionWindow::StringOption::StringOption(const char *text,
+    const char *config)
 : Button(TYPE_DOUBLE, text)
 {
   g_assert(text);
   g_assert(config);
 
   pref = g_strdup(config);
-  SetValue(CONF->GetString(config, default_value));
+  SetValue(purple_prefs_get_string(config));
   signal_activate.connect(sigc::mem_fun(this, &StringOption::OnActivate));
 }
 
@@ -153,8 +146,8 @@ void OptionWindow::StringOption::ResponseHandler(InputDialog& activator,
 {
   switch (response) {
     case AbstractDialog::RESPONSE_OK:
-      CONF->SetString(pref, activator.GetText());
-      SetValue(CONF->GetString(pref, activator.GetText()));
+      purple_prefs_set_string(pref, activator.GetText());
+      SetValue(purple_prefs_get_string(pref));
       break;
     default:
       break;
@@ -162,27 +155,14 @@ void OptionWindow::StringOption::ResponseHandler(InputDialog& activator,
 }
 
 OptionWindow::IntegerOption::IntegerOption(const char *text,
-    const char *config, int default_value)
-: Button(TYPE_DOUBLE, text), bounds_check(false), min(0), max(0)
+    const char *config)
+: Button(TYPE_DOUBLE, text)
 {
   g_assert(text);
   g_assert(config);
 
   pref = g_strdup(config);
-  SetValue(CONF->GetInt(config, default_value));
-  signal_activate.connect(sigc::mem_fun(this, &IntegerOption::OnActivate));
-}
-
-OptionWindow::IntegerOption::IntegerOption(const char *text,
-    const char *config, int default_value, int min_, int max_)
-: Button(TYPE_DOUBLE, text), bounds_check(true), min(min_), max(max_)
-{
-  g_assert(text);
-  g_assert(config);
-  g_assert(min <= max);
-
-  pref = g_strdup(config);
-  SetValue(CONF->GetInt(config, default_value, min, max));
+  SetValue(purple_prefs_get_int(config));
   signal_activate.connect(sigc::mem_fun(this, &IntegerOption::OnActivate));
 }
 
@@ -213,33 +193,23 @@ void OptionWindow::IntegerOption::ResponseHandler(InputDialog& activator,
       i = strtol(text, NULL, 10);
       if (errno == ERANGE)
         LOG->Warning(_("Value out of range.\n"));
-      else if (bounds_check) {
-        if (i < min) {
-          LOG->Warning(_("Value too small (minimal value allowed: %d).\n"), min);
-          i = min;
-        }
-        else if (i > max) {
-          LOG->Warning(_("Value too big (maximal value allowed: %d).\n"), max);
-          i = max;
-        }
-      }
-      CONF->SetInt(pref, i);
-      SetValue(CONF->GetInt(pref, i));
+
+      purple_prefs_set_int(pref, i);
+      SetValue(purple_prefs_get_int(pref));
       break;
     default:
       break;
   }
 }
 
-OptionWindow::ChoiceOption::ChoiceOption(const char *text, const char *config,
-    const char *default_value)
+OptionWindow::ChoiceOption::ChoiceOption(const char *text,
+    const char *config)
 : ComboBox(text)
 {
   g_assert(text);
   g_assert(config);
 
   pref = g_strdup(config);
-  CONF->GetString(config, default_value);
   signal_selection_changed.connect(sigc::mem_fun(this,
         &ChoiceOption::OnSelectionChanged));
 }
@@ -259,12 +229,12 @@ void OptionWindow::ChoiceOption::AddOption(const char *title,
   g_assert(value);
 
   int item = AddOptionPtr(title, g_strdup(value));
-  if (!g_ascii_strcasecmp(CONF->GetString(pref, value), value))
+  if (!g_ascii_strcasecmp(purple_prefs_get_string(pref), value))
     SetSelected(item);
 }
 
 void OptionWindow::ChoiceOption::OnSelectionChanged(ComboBox& activator,
     int new_entry, const char *title, intptr_t data)
 {
-  CONF->SetString(pref, reinterpret_cast<const char*>(data));
+  purple_prefs_set_string(pref, reinterpret_cast<const char*>(data));
 }

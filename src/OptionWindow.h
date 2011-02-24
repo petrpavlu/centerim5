@@ -42,7 +42,7 @@ protected:
   : public CheckBox
   {
   public:
-    BooleanOption(const char *text, const char *config, bool default_value);
+    BooleanOption(const char *text, const char *config);
     virtual ~BooleanOption();
 
   protected:
@@ -59,8 +59,7 @@ protected:
   : public Button
   {
   public:
-    StringOption(const char *text, const char *config,
-        const char *default_value);
+    StringOption(const char *text, const char *config);
     virtual ~StringOption();
 
   protected:
@@ -79,16 +78,11 @@ protected:
   : public Button
   {
   public:
-    IntegerOption(const char *text, const char *config, int default_value);
-    IntegerOption(const char *text, const char *config, int default_value,
-        int min_, int max_);
+    IntegerOption(const char *text, const char *config);
     virtual ~IntegerOption();
 
   protected:
     char *pref;
-    bool bounds_check;
-    int min;
-    int max;
 
     void OnActivate(Button& activator);
     void ResponseHandler(InputDialog& activator,
@@ -103,8 +97,7 @@ protected:
   : public ComboBox
   {
   public:
-    ChoiceOption(const char *text, const char *config,
-        const char *default_value);
+    ChoiceOption(const char *text, const char *config);
     virtual ~ChoiceOption();
 
     void AddOption(const char *title, const char *value);

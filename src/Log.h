@@ -27,16 +27,6 @@
 #include <libpurple/purple.h>
 #include <vector>
 
-#define CONF_LOG_MAX_LINES_MIN 100
-#define CONF_LOG_MAX_LINES_MAX 1000
-#define CONF_LOG_MAX_LINES_DEFAULT 500
-#define CONF_LOG_LEVEL_CIM_DEFAULT "info"
-#define CONF_LOG_LEVEL_CPPCONSUI_DEFAULT "critical"
-#define CONF_LOG_LEVEL_PURPLE_DEFAULT "critical"
-#define CONF_LOG_LEVEL_GLIB_DEFAULT "critical"
-#define CONF_LOG_DEBUG_DEFAULT false
-#define CONF_LOG_FILENAME_DEFAULT "debug.log"
-
 #define LOG (Log::Instance())
 
 class Log

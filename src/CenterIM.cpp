@@ -23,7 +23,6 @@
 
 #include "Accounts.h"
 #include "BuddyList.h"
-#include "Conf.h"
 #include "Connections.h"
 #include "Conversations.h"
 #include "Header.h"
@@ -40,6 +39,8 @@
 #include <cppconsui/Keys.h>
 #include <cstring>
 #include "gettext.h"
+
+#define CONF_PLUGIN_SAVE_PREF CONF_PREFIX "/plugins/loaded"
 
 std::vector<CenterIM::LogBufferItem> *CenterIM::logbuf = NULL;
 
@@ -122,9 +123,7 @@ int CenterIM::Run(const char *config_path)
 
   RegisterDefaultKeys();
 
-  // initialize Conf component so we can calculate area sizes of all windows
-  Conf::Init();
-
+  PrefsInit();
   ColorSchemeInit();
 
   // initialize Log component
@@ -153,9 +152,6 @@ int CenterIM::Run(const char *config_path)
 
   LOG->Info(_("Welcome to CenterIM 5. Press F4 to display main menu.\n"));
 
-  CONF->ConnectCallbackPath(this, CONF_PREFIX "dimensions",
-      dimensions_change_);
-
   mngr->SetTopInputProcessor(*this);
   mngr->EnableResizing();
   mngr->StartMainLoop();
@@ -174,8 +170,6 @@ int CenterIM::Run(const char *config_path)
   Request::Finalize();
 
   Log::Finalize();
-
-  Conf::Finalize();
 
   PurpleFinalize();
 
@@ -238,14 +232,33 @@ int CenterIM::PurpleInit(const char *config_path)
     fprintf(stderr, _("Could not initialize libpurple core.\n"));
     return 1;
   }
+
+  purple_prefs_add_none(CONF_PREFIX);
+
+  // load the desired plugins
+  if (purple_prefs_exists(CONF_PLUGIN_SAVE_PREF))
+      purple_plugins_load_saved(CONF_PLUGIN_SAVE_PREF);
+
   return 0;
 }
 
 void CenterIM::PurpleFinalize()
 {
+  purple_plugins_save_loaded(CONF_PLUGIN_SAVE_PREF);
+
   purple_core_set_ui_ops(NULL);
   //purple_eventloop_set_ui_ops(NULL);
   purple_core_quit();
+}
+
+void CenterIM::PrefsInit()
+{
+  // init prefs
+  purple_prefs_add_none(CONF_PREFIX "/dimensions");
+  purple_prefs_add_int(CONF_PREFIX "/dimensions/buddylist_width", 20);
+  purple_prefs_add_int(CONF_PREFIX "/dimensions/log_height", 25);
+  purple_prefs_connect_callback(this, CONF_PREFIX "/dimensions",
+      dimensions_change_, this);
 }
 
 void CenterIM::ColorSchemeInit()
@@ -298,19 +311,21 @@ void CenterIM::ScreenResized()
   if (screen_height < 24)
     screen_height = 24;
 
+  int buddylist_width = purple_prefs_get_int(CONF_PREFIX
+      "/dimensions/buddylist_width");
+  buddylist_width = CLAMP(buddylist_width, 0, 50);
+  int log_height = purple_prefs_get_int(CONF_PREFIX "/dimensions/log_height");
+  log_height = CLAMP(log_height, 0, 50);
+
   size.x = 0;
   size.y = 1;
-  size.width = screen_width / 100.0 * CONF->GetInt(
-      CONF_PREFIX "dimensions/buddylist_width", CONF_BUDDYLIST_WIDTH_DEFAULT,
-      CONF_BUDDYLIST_WIDTH_MIN, CONF_BUDDYLIST_WIDTH_MAX);
+  size.width = screen_width / 100.0 * buddylist_width;
   size.height = screen_height - 1;
   areaSizes[BUDDY_LIST_AREA] = size;
 
   size.x = areaSizes[BUDDY_LIST_AREA].width;
   size.width = screen_width - size.x;
-  size.height = screen_height / 100.0 * CONF->GetInt(
-      CONF_PREFIX "dimensions/log_height", CONF_LOG_HEIGHT_DEFAULT,
-      CONF_LOG_HEIGHT_MIN, CONF_LOG_HEIGHT_MAX);
+  size.height = screen_height / 100.0 * log_height;
   size.y = screen_height - size.height;
   areaSizes[LOG_AREA] = size;
 

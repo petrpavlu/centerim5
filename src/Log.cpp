@@ -21,7 +21,6 @@
 
 #include "Log.h"
 
-#include "Conf.h"
 #include "CenterIM.h"
 
 #include <cstring>
@@ -59,9 +58,19 @@ Log::Log()
   cppconsui_handler = REGISTER_G_LOG_HANDLER("cppconsui",
       cppconsui_log_handler_);
 
+  // init prefs
+  purple_prefs_add_none(CONF_PREFIX "/log");
+  purple_prefs_add_int(CONF_PREFIX "/log/log_max_lines", 500);
+  purple_prefs_add_bool(CONF_PREFIX "/log/debug", false);
+  purple_prefs_add_string(CONF_PREFIX "/log/filename", "debug.log");
+  purple_prefs_add_string(CONF_PREFIX "/log/log_level_cim", "info");
+  purple_prefs_add_string(CONF_PREFIX "/log/log_level_cppconsui", "error");
+  purple_prefs_add_string(CONF_PREFIX "/log/log_level_purple", "error");
+  purple_prefs_add_string(CONF_PREFIX "/log/log_level_glib", "error");
+
   // connect callbacks
-  CONF->ConnectCallbackBool(this, CONF_PREFIX "log/debug", debug_change_,
-      CONF_LOG_DEBUG_DEFAULT);
+  purple_prefs_connect_callback(this, CONF_PREFIX "/log/debug", debug_change_,
+      this);
 
   // set the purple debug callbacks
   centerim_debug_ui_ops.print = purple_print_;
@@ -207,8 +216,7 @@ void Log::debug_change(const char *name, PurplePrefType type,
     gconstpointer val)
 {
   // debug was disabled so close logfile if it's opened
-  if (!CONF->GetBool(CONF_PREFIX "log/debug", CONF_LOG_DEBUG_DEFAULT)
-      && logfile) {
+  if (!purple_prefs_get_bool(CONF_PREFIX "/log/debug") && logfile) {
     g_io_channel_unref(logfile);
     logfile = NULL;
   }
@@ -221,11 +229,8 @@ void Log::ScreenResized()
 
 void Log::ShortenWindowText()
 {
-  char *pref = g_strconcat(CONF_PREFIX, "log/log_max_lines", NULL);
-  int max_lines = CONF->GetInt(pref, CONF_LOG_MAX_LINES_DEFAULT,
-      CONF_LOG_MAX_LINES_MIN, CONF_LOG_MAX_LINES_MAX);
-  g_free(pref);
-
+  int max_lines = purple_prefs_get_int(CONF_PREFIX "/log/log_max_lines");
+  max_lines = CLAMP(max_lines, 10, 1000);
   int lines_num = textview->GetLinesNumber();
 
   if (lines_num > max_lines) {
@@ -265,12 +270,11 @@ void Log::WriteToFile(const char *text)
 
   GError *err = NULL;
 
-  if (CONF->GetBool(CONF_PREFIX "log/debug", CONF_LOG_DEBUG_DEFAULT)) {
+  if (purple_prefs_get_bool(CONF_PREFIX "/log/debug")) {
     // open logfile if it isn't already opened
     if (!logfile) {
       char *filename = g_build_filename(purple_user_dir(),
-          CONF->GetString(CONF_PREFIX "log/filename",
-            CONF_LOG_FILENAME_DEFAULT), NULL);
+          purple_prefs_get_string(CONF_PREFIX "/log/filename"), NULL);
       if ((logfile = g_io_channel_new_file(filename, "a", &err))
           == NULL) {
         if (err) {
@@ -371,22 +375,13 @@ Log::Level Log::ConvertGlibDebugLevel(GLogLevelFlags gliblevel)
 
 Log::Level Log::GetLogLevel(const char *type)
 {
-  char *pref = g_strconcat(CONF_PREFIX, "log/log_level_", type, NULL);
-  const char *def;
+  char *pref = g_strconcat(CONF_PREFIX, "/log/log_level_", type, NULL);
+  const char *slevel = "none";
+  if (purple_prefs_exists(pref))
+    slevel = purple_prefs_get_string(pref);
+  g_free(pref);
+
   Level level;
-  if (!g_ascii_strcasecmp(type, "cim"))
-    def = CONF_LOG_LEVEL_CIM_DEFAULT;
-  else if (!g_ascii_strcasecmp(type, "cppconsui"))
-    def = CONF_LOG_LEVEL_CPPCONSUI_DEFAULT;
-  else if (!g_ascii_strcasecmp(type, "purple"))
-    def = CONF_LOG_LEVEL_PURPLE_DEFAULT;
-  else // glib
-    def = CONF_LOG_LEVEL_GLIB_DEFAULT;
-
-  const char *slevel = CONF->GetString(pref, def);
-
-  bool second_try = true;
-type_parse:
   if (!g_ascii_strcasecmp(slevel, "none"))
     level = LEVEL_NONE;
   else if (!g_ascii_strcasecmp(slevel, "debug"))
@@ -401,18 +396,8 @@ type_parse:
     level = LEVEL_CRITICAL;
   else if (!g_ascii_strcasecmp(slevel, "error"))
     level = LEVEL_ERROR;
-  else {
-    CONF->SetString(pref, def);
-    slevel = def;
-    if (!second_try) {
-      // try to parse the log level again
-      second_try = true;
-      goto type_parse;
-    }
-    else
-      level = LEVEL_ERROR;
-  }
-  g_free(pref);
+  else
+    level = LEVEL_NONE;
 
   return level;
 }

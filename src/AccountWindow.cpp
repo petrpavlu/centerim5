@@ -22,7 +22,6 @@
 #include "AccountWindow.h"
 
 #include "CenterIM.h"
-#include "Conf.h"
 #include "Log.h"
 
 #include <cppconsui/Keys.h>

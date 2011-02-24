@@ -8,7 +8,6 @@ src/BuddyList.cpp
 src/BuddyListNode.cpp
 src/CenterIM.cpp
 src/CenterMain.cpp
-src/Conf.cpp
 src/Connections.cpp
 src/Conversation.cpp
 src/Conversations.cpp
