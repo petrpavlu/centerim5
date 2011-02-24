@@ -288,42 +288,48 @@ void CenterIM::ColorSchemeInit()
 
 void CenterIM::ScreenResized()
 {
-  // TODO make configurable
   Rect size;
+
+  // minimal supported screen size is 80x24
+  int screen_width = mngr->GetScreenWidth();
+  if (screen_width < 80)
+    screen_width = 80;
+  int screen_height = mngr->GetScreenHeight();
+  if (screen_height < 24)
+    screen_height = 24;
 
   size.x = 0;
   size.y = 1;
-  size.width = mngr->GetScreenWidth() / 100.0 * CONF->GetInt(
+  size.width = screen_width / 100.0 * CONF->GetInt(
       CONF_PREFIX "dimensions/buddylist_width", CONF_BUDDYLIST_WIDTH_DEFAULT,
       CONF_BUDDYLIST_WIDTH_MIN, CONF_BUDDYLIST_WIDTH_MAX);
-  size.height = mngr->GetScreenHeight() - 1;
+  size.height = screen_height - 1;
   areaSizes[BUDDY_LIST_AREA] = size;
 
   size.x = areaSizes[BUDDY_LIST_AREA].width;
-  size.width = mngr->GetScreenWidth() - size.x;
-  size.height = mngr->GetScreenHeight() / 100.0 * CONF->GetInt(
+  size.width = screen_width - size.x;
+  size.height = screen_height / 100.0 * CONF->GetInt(
       CONF_PREFIX "dimensions/log_height", CONF_LOG_HEIGHT_DEFAULT,
       CONF_LOG_HEIGHT_MIN, CONF_LOG_HEIGHT_MAX);
-  size.y = mngr->GetScreenHeight() - size.height;
+  size.y = screen_height - size.height;
   areaSizes[LOG_AREA] = size;
 
   size.x = areaSizes[BUDDY_LIST_AREA].width;
   size.y = 1;
-  size.width = mngr->GetScreenWidth() - size.x;
-  size.height = mngr->GetScreenHeight() - (size.y +
-      areaSizes[LOG_AREA].height);
+  size.width = screen_width - size.x;
+  size.height = screen_height - (size.y + areaSizes[LOG_AREA].height);
   areaSizes[CHAT_AREA] = size;
 
   size.x = 0;
   size.y = 0;
-  size.width = mngr->GetScreenWidth();
+  size.width = screen_width;
   size.height = 1;
   areaSizes[HEADER_AREA] = size;
 
   size.x = 0;
   size.y = 0;
-  size.width = mngr->GetScreenWidth();
-  size.height = mngr->GetScreenHeight();
+  size.width = screen_width;
+  size.height = screen_height;
   areaSizes[WHOLE_AREA] = size;
 }
 
