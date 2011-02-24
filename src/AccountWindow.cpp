@@ -163,7 +163,6 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
     // we cannot change the settings of an unknown account
     label = new Label(_("Invalid account or protocol plugin not loaded"));
     accounts->AppendNode(account_entry->parent_reference, *label);
-
   }
   else {
     PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
@@ -171,6 +170,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
     // protocols combobox
     ComboBox *combobox = new ProtocolOption(account, *this);
     accounts->AppendNode(account_entry->parent_reference, *combobox);
+    combobox->GrabFocus();
 
     /* The username must be treated in a special way because it can contain
      * multiple values (e.g. user@server:port/resource). */
