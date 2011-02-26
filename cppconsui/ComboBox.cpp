@@ -53,8 +53,8 @@ ComboBox::ComboBox(const char *text)
 ComboBox::~ComboBox()
 {
   ClearOptions();
-  // XXX
-  // WindowManager will take care about freeing dropdown menu
+  if (dropdown)
+    dropdown->Close();
 }
 
 void ComboBox::ClearOptions()
@@ -139,6 +139,34 @@ void ComboBox::SetSelectedByData(intptr_t data)
       SetSelected(i);
 }
 
+ComboBox::ExtMenuWindow::ExtMenuWindow(ComboBox& ref_, int w, int h)
+: MenuWindow(0, 0, w, h), ref(&ref_), wish_height(h)
+{
+}
+
+void ComboBox::ExtMenuWindow::Draw()
+{
+  Point p = ref->GetAbsolutePosition();
+  int h = Curses::getmaxy();
+  int above = p.Y();
+  int below = h - p.Y() - 1;
+
+  if (below > wish_height) {
+    // draw the window under the combobox
+    MoveResize(p.X(), p.Y() + 1, win_w, wish_height);
+  }
+  else if (above > wish_height) {
+    // draw the window above the combobox
+    MoveResize(p.X(), p.Y() - wish_height, win_w, wish_height);
+  }
+  else if (below >= above)
+    MoveResize(p.X(), p.Y() + 1, win_w, below);
+  else
+    MoveResize(p.X(), p.Y() - above, win_w, above);
+
+  MenuWindow::Draw();
+}
+
 void ComboBox::OnDropDown(Button& activator)
 {
   if (options.empty())
@@ -146,7 +174,7 @@ void ComboBox::OnDropDown(Button& activator)
 
   /// @todo Make sure that requested MenuWindow size can fit into the screen.
   Point p = GetAbsolutePosition();
-  dropdown = new MenuWindow(p.X(), p.Y() + 1, max_option_width + 2,
+  dropdown = new ExtMenuWindow(*this, max_option_width + 2,
       options.size() + 2);
   dropdown->signal_close.connect(sigc::mem_fun(this,
         &ComboBox::DropDownClose));

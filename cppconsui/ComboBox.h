@@ -87,6 +87,25 @@ protected:
   };
   typedef std::vector<ComboBoxEntry> ComboBoxEntries;
 
+  class ExtMenuWindow
+  : public MenuWindow
+  {
+  public:
+    ExtMenuWindow(ComboBox& ref_, int w, int h);
+    virtual ~ExtMenuWindow() {}
+
+    // Widget
+    virtual void Draw();
+
+  protected:
+    ComboBox *ref;
+    int wish_height;
+
+  private:
+    ExtMenuWindow(const ExtMenuWindow&);
+    ExtMenuWindow& operator=(const ExtMenuWindow&);
+  };
+
   MenuWindow *dropdown;
   /**
    * Prepares and displays the dropdown MenuWindow.
