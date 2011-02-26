@@ -83,7 +83,7 @@ protected:
   /**
    * Dimensions to use when copying from pad to window.
    */
-  int copy_w, copy_h;
+  int copy_x, copy_y, copy_w, copy_h;
   /**
    * The `real' window for this window.
    */

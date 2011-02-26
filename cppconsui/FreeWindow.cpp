@@ -33,8 +33,8 @@
 #include "gettext.h"
 
 FreeWindow::FreeWindow(int x, int y, int w, int h, Type t)
-: Container(w, h), win_x(x), win_y(y), win_w(w), win_h(h), realwindow(NULL)
-, type(t)
+: Container(w, h), win_x(x), win_y(y), win_w(w), win_h(h), copy_x(0)
+, copy_y(0), copy_w(0), copy_h(0), realwindow(NULL), type(t)
 {
   UpdateArea();
 
@@ -85,7 +85,7 @@ void FreeWindow::Draw()
   Container::Draw();
 
   // copy the virtual window to a window, then display it on screen
-  area->copyto(realwindow, 0, 0, 0, 0, copy_w, copy_h, 0);
+  area->copyto(realwindow, copy_x, copy_y, 0, 0, copy_w, copy_h, 0);
 
   // update virtual ncurses screen
   realwindow->touch();
@@ -165,11 +165,13 @@ void FreeWindow::RealUpdateArea()
     int maxx = Curses::getmaxx();
     int maxy = Curses::getmaxy();
 
-    int left = win_x < 0 ? 0 : win_x;
-    int top = win_y < 0 ? 0 : win_y;
-    int right = win_x + win_w >= maxx ? maxx : win_x + win_w;
-    int bottom = win_y + win_h >= maxy ? maxy : win_y + win_h;
+    int left = MAX(0, win_x);
+    int top = MAX(0, win_y);
+    int right = MIN(win_x + win_w, maxx);
+    int bottom = MIN(win_y + win_h, maxy);
 
+    copy_x = left - win_x;
+    copy_y = top - win_y;
     copy_w = right - left - 1;
     copy_h = bottom - top - 1;
 
