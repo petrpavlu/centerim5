@@ -224,6 +224,8 @@ void Log::debug_change(const char *name, PurplePrefType type,
 
 void Log::ScreenResized()
 {
+  Window::ScreenResized();
+
   MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::LOG_AREA));
 }
 

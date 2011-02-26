@@ -230,6 +230,8 @@ Request::RequestDialog::RequestDialog(const char *title,
 
 void Request::RequestDialog::ScreenResized()
 {
+  SplitDialog::ScreenResized();
+
   MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA));
 }
 

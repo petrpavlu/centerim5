@@ -137,6 +137,8 @@ void Conversation::Close()
 
 void Conversation::ScreenResized()
 {
+  Window::ScreenResized();
+
   Rect r = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
   // make room for conversations list
   r.height--;

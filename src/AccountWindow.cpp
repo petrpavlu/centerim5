@@ -53,6 +53,8 @@ AccountWindow::AccountWindow()
 
 void AccountWindow::ScreenResized()
 {
+  SplitDialog::ScreenResized();
+
   MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA));
 }
 

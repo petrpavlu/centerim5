@@ -90,6 +90,8 @@ do {                                       \
 
 void OptionWindow::ScreenResized()
 {
+  SplitDialog::ScreenResized();
+
   MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA));
 }
 
