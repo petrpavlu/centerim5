@@ -45,12 +45,27 @@ void ScrollPane::Draw()
   DrawEx(true);
 }
 
-Point ScrollPane::GetAbsolutePositionOf(const Widget& child) const
+Point ScrollPane::GetAbsolutePosition(const Container& ref,
+    const Widget& child) const
 {
   g_assert(child.GetParent() == this);
-  g_assert(parent);
 
-  Point p = parent->GetAbsolutePositionOf(*this);
+  if (!parent || this == &ref)
+    return Point(child.Left() - scroll_xpos, child.Top() - scroll_ypos);
+
+  Point p = parent->GetAbsolutePosition(ref, *this);
+  return Point(p.X() + child.Left() - scroll_xpos,
+      p.Y() + child.Top() - scroll_ypos);
+}
+
+Point ScrollPane::GetAbsolutePosition(const Widget& child) const
+{
+  g_assert(child.GetParent() == this);
+
+  if (!parent)
+    return Point(child.Left() - scroll_xpos, child.Top() - scroll_ypos);
+
+  Point p = parent->GetAbsolutePosition(*this);
   return Point(p.X() + child.Left() - scroll_xpos,
       p.Y() + child.Top() - scroll_ypos);
 }

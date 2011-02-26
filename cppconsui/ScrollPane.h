@@ -45,7 +45,9 @@ public:
   virtual void Draw();
 
   // Container
-  virtual Point GetAbsolutePositionOf(const Widget& child) const;
+  virtual Point GetAbsolutePosition(const Container& ref,
+      const Widget& child) const;
+  virtual Point GetAbsolutePosition(const Widget& child) const;
 
   /**
    * Returns a size of the scrollable area.

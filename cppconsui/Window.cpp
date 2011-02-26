@@ -51,14 +51,33 @@ void Window::MoveResize(int newx, int newy, int neww, int newh)
   UpdateArea();
 }
 
-Point Window::GetAbsolutePositionOf(const Widget& child) const
+
+Point Window::GetAbsolutePosition(const Container& ref,
+    const Widget& child) const
+{
+  g_assert(child.GetParent() == this);
+
+  if (this == &ref) {
+    if (&child == panel)
+      return Point(0, 0);
+
+    return Point(child.Left() + 1, child.Top() + 1);
+  }
+
+  if (&child == panel)
+    return Point(win_x, win_y);
+
+  return Point(win_x + child.Left() + 1, win_y + child.Top() + 1);
+}
+
+Point Window::GetAbsolutePosition(const Widget& child) const
 {
   g_assert(child.GetParent() == this);
 
   if (&child == panel)
     return Point(win_x, win_y);
 
-  return Point(win_x + 1 + child.Left(), win_y + 1 + child.Top());
+  return Point(win_x + child.Left() + 1, win_y + child.Top() + 1);
 }
 
 Curses::Window *Window::GetSubPad(const Widget &child, int begin_x,

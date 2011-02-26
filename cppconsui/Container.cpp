@@ -367,12 +367,26 @@ void Container::MoveFocus(FocusDirection direction)
     (*iter)->GrabFocus();
 }
 
-Point Container::GetAbsolutePositionOf(const Widget& child) const
+Point Container::GetAbsolutePosition(const Container& ref,
+    const Widget& child) const
 {
   g_assert(child.GetParent() == this);
-  g_assert(parent);
 
-  Point p = parent->GetAbsolutePositionOf(*this);
+  if (!parent || this == &ref)
+    return Point(child.Left(), child.Top());
+
+  Point p = parent->GetAbsolutePosition(ref, *this);
+  return Point(p.X() + child.Left(), p.Y() + child.Top());
+}
+
+Point Container::GetAbsolutePosition(const Widget& child) const
+{
+  g_assert(child.GetParent() == this);
+
+  if (!parent)
+    return Point(child.Left(), child.Top());
+
+  Point p = parent->GetAbsolutePosition(*this);
   return Point(p.X() + child.Left(), p.Y() + child.Top());
 }
 

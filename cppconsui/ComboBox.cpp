@@ -166,7 +166,6 @@ void ComboBox::OnDropDown(Button& activator)
 void ComboBox::DropDownOk(Button& activator, int new_entry)
 {
   dropdown->Close();
-  dropdown = NULL;
 
   // selected option didn't change
   if (selected_entry == new_entry)

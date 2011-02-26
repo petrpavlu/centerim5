@@ -134,7 +134,9 @@ public:
     { focus_cycle_scope = scope; }
   virtual FocusCycleScope GetFocusCycle() const { return focus_cycle_scope; }
 
-  virtual Point GetAbsolutePositionOf(const Widget& child) const;
+  virtual Point GetAbsolutePosition(const Container& ref,
+      const Widget& child) const;
+  virtual Point GetAbsolutePosition(const Widget& child) const;
 
   /**
    * Returns a subpad of current widget with given coordinates.

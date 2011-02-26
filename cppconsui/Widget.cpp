@@ -190,8 +190,10 @@ void Widget::SetParent(Container& parent)
 
 Point Widget::GetAbsolutePosition() const
 {
-  g_assert(parent);
-  return parent->GetAbsolutePositionOf(*this);
+  if (!parent)
+    return Point(0, 0);
+
+  return parent->GetAbsolutePosition(*this);
 }
 
 void Widget::SetColorScheme(const char *scheme)
