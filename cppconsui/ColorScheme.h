@@ -47,7 +47,7 @@ public:
    * combination.
    */
   int GetColorPair(const char *scheme, const char *widget,
-      const char *property);
+      const char *property) const;
   /**
    * Sets color pair and Curses attributes for a given scheme, widget,
    * property combination.

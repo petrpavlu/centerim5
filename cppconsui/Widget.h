@@ -169,7 +169,7 @@ protected:
    * Convenient method that calls COLORSCHEME->GetColorPair(GetColorScheme(),
    * widget, property).
    */
-  virtual int GetColorPair(const char *widget, const char *property);
+  virtual int GetColorPair(const char *widget, const char *property) const;
 
   /**
    * @todo

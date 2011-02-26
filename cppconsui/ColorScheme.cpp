@@ -35,17 +35,21 @@ ColorScheme *ColorScheme::Instance()
 }
 
 int ColorScheme::GetColorPair(const char *scheme, const char *widget,
-    const char *property)
+    const char *property) const
 {
   g_assert(widget);
   g_assert(property);
 
-  if (scheme != NULL && schemes.find(scheme) != schemes.end()
-      && schemes[scheme].find(widget) != schemes[scheme].end()
-      && schemes[scheme][widget].find(property) != schemes[scheme][widget].end()) {
-    Color c = schemes[scheme][widget][property];
+  Schemes::const_iterator i;
+  Widgets::const_iterator j;
+  Properties::const_iterator k;
+  if (scheme && (i = schemes.find(scheme)) != schemes.end()
+      && (j = i->second.find(widget)) != i->second.end()
+      && (k = j->second.find(property)) != j->second.end()) {
+    Color c = k->second;
     return Curses::getcolorpair(c.foreground, c.background) | c.attrs;
   }
+
   return 0;
 }
 
@@ -56,9 +60,12 @@ bool ColorScheme::SetColorPair(const char *scheme, const char *widget,
   g_assert(widget);
   g_assert(property);
 
-  if (!overwrite && scheme != NULL && schemes.find(scheme) != schemes.end()
-      && schemes[scheme].find(widget) != schemes[scheme].end()
-      && schemes[scheme][widget].find(property) != schemes[scheme][widget].end())
+  Schemes::const_iterator i;
+  Widgets::const_iterator j;
+  Properties::const_iterator k;
+  if (!overwrite && scheme && (i = schemes.find(scheme)) != schemes.end()
+      && (j = i->second.find(widget)) != i->second.end()
+      && (k = j->second.find(property)) != j->second.end())
     return false;
 
   schemes[scheme][widget][property] = Color(foreground, background, attrs);

@@ -236,7 +236,7 @@ void Widget::Redraw()
     COREMANAGER->Redraw();
 }
 
-int Widget::GetColorPair(const char *widget, const char *property)
+int Widget::GetColorPair(const char *widget, const char *property) const
 {
   return COLORSCHEME->GetColorPair(GetColorScheme(), widget, property);
 }
