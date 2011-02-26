@@ -173,10 +173,11 @@ void ScrollPane::RealUpdateArea()
 
 void ScrollPane::UpdateVirtualArea()
 {
-  update_area = true;
+  if (!update_area)
+    for (Children::iterator i = children.begin(); i != children.end(); i++)
+      i->widget->UpdateArea();
 
-  for (Children::iterator i = children.begin(); i != children.end(); i++)
-    i->widget->UpdateArea();
+  update_area = true;
 }
 
 void ScrollPane::RealUpdateVirtualArea()

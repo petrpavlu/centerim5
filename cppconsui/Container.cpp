@@ -70,10 +70,11 @@ void Container::DeclareBindables()
 
 void Container::UpdateArea()
 {
-  Widget::UpdateArea();
+  if (!update_area)
+    for (Children::iterator i = children.begin(); i != children.end(); i++)
+      i->widget->UpdateArea();
 
-  for (Children::iterator i = children.begin(); i != children.end(); i++)
-    i->widget->UpdateArea();
+  Widget::UpdateArea();
 }
 
 void Container::Draw()
