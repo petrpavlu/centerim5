@@ -20,7 +20,7 @@
 
 #include "Notify.h"
 
-#include <cstring>
+#include <string.h>
 
 Notify *Notify::instance = NULL;
 

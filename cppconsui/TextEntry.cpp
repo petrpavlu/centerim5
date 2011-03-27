@@ -62,7 +62,7 @@
 #include "Keys.h"
 
 #include <glib.h>
-#include <cstring>
+#include <string.h>
 #include "gettext.h"
 
 TextEntry::TextEntry(int w, int h, const char *text_)

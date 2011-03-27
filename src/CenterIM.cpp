@@ -37,7 +37,7 @@
 #include <cppconsui/ColorScheme.h>
 #include <cppconsui/KeyConfig.h>
 #include <cppconsui/Keys.h>
-#include <cstring>
+#include <string.h>
 #include "gettext.h"
 
 #define CONF_PLUGIN_SAVE_PREF CONF_PREFIX "/plugins/loaded"

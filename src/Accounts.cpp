@@ -23,7 +23,7 @@
 
 #include "Log.h"
 
-#include <cstring>
+#include <string.h>
 #include "gettext.h"
 
 Accounts *Accounts::instance = NULL;

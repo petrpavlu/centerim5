@@ -48,7 +48,7 @@
 #include "Keys.h"
 
 #include <glib.h>
-#include <cstring>
+#include <string.h>
 #include "gettext.h"
 
 TextEdit::TextEdit(int w, int h)

@@ -23,9 +23,11 @@
 
 #include "KeyConfig.h"
 
+#include <termios.h>
 #include <sys/ioctl.h>
-#include <cstring>
-#include <cstdio>
+#include <unistd.h>
+#include <string.h>
+#include <stdio.h>
 #include "gettext.h"
 
 // based on glibmm code

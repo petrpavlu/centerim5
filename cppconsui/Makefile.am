@@ -1,7 +1,5 @@
 lib_LTLIBRARIES = libcppconsui.la
 
-# @TODO make sure ConsuiLog.h and ConsuiCurses.h (*Internal.h) are not distributed
-
 # When you add files here, also add them in po/POTFILES.in
 libcppconsui_la_SOURCES =\
 	AbstractDialog.cpp \

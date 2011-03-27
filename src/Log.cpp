@@ -23,7 +23,7 @@
 
 #include "CenterIM.h"
 
-#include <cstring>
+#include <string.h>
 #include "gettext.h"
 
 Log *Log::instance = NULL;

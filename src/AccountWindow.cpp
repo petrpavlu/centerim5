@@ -26,7 +26,7 @@
 
 #include <cppconsui/Keys.h>
 
-#include <cstring>
+#include <string.h>
 #include <errno.h>
 
 #include "gettext.h"

@@ -34,7 +34,7 @@
 #endif
 
 #define NCURSES_NOMACROS
-#include <ncurses.h>
+#include <cursesw.h>
 
 #include <map>
 #include "gettext.h"

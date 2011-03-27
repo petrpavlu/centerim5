@@ -1,4 +1,4 @@
-#                                               -*- Autoconf -*-
+# *- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
 # Hurray for <http://www-src.lip6.fr/homepages/Alexandre.Duret-Lutz/autotools.html>
@@ -27,12 +27,25 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_PROG_LIBTOOL
 
-AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.17])
+# Inspired by code found in configure.ac of OpenChange project.
+AC_CACHE_CHECK(
+[whether we are using the Sun C++ compiler],
+[ac_cv_cxx_compiler_suncc], [
+	AC_LANG_PUSH([C++])
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [[
+		#ifndef __SUNPRO_CC
+			choke me
+		#endif
+		]])], [ac_compiler_suncc=yes], [ac_compiler_suncc=no])
+	AC_LANG_POP([C++])
+	ac_cv_cxx_compiler_suncc=$ac_compiler_suncc])
 
 #########################
 # Checks for libraries. #
 #########################
+
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.17])
 
 # libpurple
 PKG_CHECK_MODULES([PURPLE], [purple >= 2.4.0])
@@ -76,22 +89,30 @@ AC_PATH_LIB(ncursesw, , ncurses.h, ncursesw5-config, , , [
 # Set default compiler flags. #
 ###############################
 
-CFLAGS="-Wall -pedantic $CFLAGS"
-CXXFLAGS="-Wall -pedantic -Wno-long-long $CXXFLAGS"
+if test "$GCC" = yes; then
+	CFLAGS="-Wall -pedantic $CFLAGS"
+	CXXFLAGS="-Wall -pedantic -Wno-long-long $CXXFLAGS"
+fi
 
 ###########
 # Options #
 ###########
 
-AC_ARG_ENABLE([debug], [AC_HELP_STRING([--enable-debug],
-	[compile with debugging support])])
+# TODO provide correct switches for Sun C++ compiler too
+if test "$GCC" = yes; then
+	AC_ARG_ENABLE([debug], [AC_HELP_STRING([--enable-debug],
+		[compile with debugging support])])
 
-AS_IF([test "x$enable_debug" = "xyes"],
-	[CFLAGS="-ggdb -O0 $CFLAGS"
-	 CXXFLAGS="-ggdb -O0 $CXXFLAGS"
-	 AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])],
-	[CFLAGS="-O2 $CFLAGS"
-	 CXXFLAGS="-O2 $CXXFLAGS"])
+	AS_IF([test "$enable_debug" = yes],
+		[CFLAGS="-ggdb -O0 $CFLAGS"
+	 	CXXFLAGS="-ggdb -O0 $CXXFLAGS"
+	 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])],
+		[CFLAGS="-O2 $CFLAGS"
+	 	CXXFLAGS="-O2 $CXXFLAGS"])
+fi
+if test "$ac_cv_cxx_compiler_suncc" = yes; then
+	CXXFLAGS="-library=stdcxx4 $CXXFLAGS"
+fi
 AC_SUBST(CFLAGS)
 AC_SUBST(CXXFLAGS)
 

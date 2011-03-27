@@ -25,7 +25,7 @@
 
 #include <cppconsui/InputDialog.h>
 #include <cppconsui/Spacer.h>
-#include <cstring>
+#include <string.h>
 #include <errno.h>
 #include "gettext.h"
 
