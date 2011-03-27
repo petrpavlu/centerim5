@@ -77,7 +77,7 @@ public:
   /**
    * @todo
    */
-  virtual void RestoreFocus();
+  virtual bool RestoreFocus();
   /**
    * Takes focus from the widget. Used when this window is no longer a top
    * window.

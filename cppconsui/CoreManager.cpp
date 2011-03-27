@@ -228,17 +228,7 @@ bool CoreManager::HasWindow(const FreeWindow& window) const
 
 FreeWindow *CoreManager::GetTopWindow()
 {
-  Windows::reverse_iterator i;
-  for (i = windows.rbegin(); i != windows.rend(); i++)
-    if ((*i)->GetType() == FreeWindow::TYPE_TOP)
-      return *i;
-
-  for (i = windows.rbegin(); i != windows.rend(); i++)
-    if ((*i)->GetType() == FreeWindow::TYPE_NORMAL)
-      return *i;
-
-  // note non-focusable window cannot be a top window
-  return NULL;
+  return dynamic_cast<FreeWindow*>(input_child);
 }
 
 void CoreManager::EnableResizing()
@@ -508,27 +498,24 @@ void CoreManager::FocusWindow()
   }
 
   // check if there are any windows left
-  FreeWindow *win = NULL;
   Windows::reverse_iterator i;
-
   // try to find a top window first
   for (i = windows.rbegin(); i != windows.rend(); i++)
     if ((*i)->GetType() == FreeWindow::TYPE_TOP) {
-      win = *i;
-      break;
+      /* SetInputChild() has to be called first because it will set the top
+       * window (RestoreFocus() depends on it). */
+      SetInputChild(**i);
+      if ((*i)->RestoreFocus())
+        return;
+      ClearInputChild();
     }
 
   // normal windows
-  if (!win)
-    for (i = windows.rbegin(); i != windows.rend(); i++)
-      if ((*i)->GetType() == FreeWindow::TYPE_NORMAL) {
-        win = *i;
-        break;
-      }
-
-  // give the focus to the window
-  if (win) {
-    SetInputChild(*win);
-    win->RestoreFocus();
-  }
+  for (i = windows.rbegin(); i != windows.rend(); i++)
+    if ((*i)->GetType() == FreeWindow::TYPE_NORMAL) {
+      SetInputChild(**i);
+      if ((*i)->RestoreFocus())
+        return;
+      ClearInputChild();
+    }
 }

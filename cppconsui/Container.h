@@ -82,7 +82,7 @@ public:
   virtual void Draw();
   virtual Widget *GetFocusWidget();
   virtual void CleanFocus();
-  virtual void RestoreFocus();
+  virtual bool RestoreFocus();
   virtual bool GrabFocus();
   virtual void SetParent(Container& parent);
 

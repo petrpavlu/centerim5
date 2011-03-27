@@ -93,9 +93,9 @@ void Widget::CleanFocus()
   Redraw();
 }
 
-void Widget::RestoreFocus()
+bool Widget::RestoreFocus()
 {
-  GrabFocus();
+  return GrabFocus();
 }
 
 void Widget::UngrabFocus()

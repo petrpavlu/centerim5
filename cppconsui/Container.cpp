@@ -111,10 +111,11 @@ void Container::CleanFocus()
   ClearInputChild();
 }
 
-void Container::RestoreFocus()
+bool Container::RestoreFocus()
 {
   if (focus_child)
-    focus_child->RestoreFocus();
+    return focus_child->RestoreFocus();
+  return false;
 }
 
 bool Container::GrabFocus()
