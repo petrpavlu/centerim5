@@ -498,24 +498,27 @@ void CoreManager::FocusWindow()
   }
 
   // check if there are any windows left
+  FreeWindow *win = NULL;
   Windows::reverse_iterator i;
+
   // try to find a top window first
   for (i = windows.rbegin(); i != windows.rend(); i++)
     if ((*i)->GetType() == FreeWindow::TYPE_TOP) {
-      /* SetInputChild() has to be called first because it will set the top
-       * window (RestoreFocus() depends on it). */
-      SetInputChild(**i);
-      if ((*i)->RestoreFocus())
-        return;
-      ClearInputChild();
+      win = *i;
+      break;
     }
 
   // normal windows
-  for (i = windows.rbegin(); i != windows.rend(); i++)
-    if ((*i)->GetType() == FreeWindow::TYPE_NORMAL) {
-      SetInputChild(**i);
-      if ((*i)->RestoreFocus())
-        return;
-      ClearInputChild();
-    }
+  if (!win)
+    for (i = windows.rbegin(); i != windows.rend(); i++)
+      if ((*i)->GetType() == FreeWindow::TYPE_NORMAL) {
+        win = *i;
+        break;
+      }
+
+  // give the focus to the window
+  if (win) {
+    SetInputChild(*win);
+    win->RestoreFocus();
+  }
 }
