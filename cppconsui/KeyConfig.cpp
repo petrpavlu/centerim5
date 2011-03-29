@@ -143,6 +143,8 @@ void KeyConfig::Register()
   // XXX move to default key bindings config
   RegisterKeyDef("textentry", "backspace",
       Keys::SymbolTermKey(TERMKEY_SYM_DEL));
+  RegisterKeyDef("textentry", "tab",
+      Keys::SymbolTermKey(TERMKEY_SYM_TAB));
 
   /// @todo enable
   /*

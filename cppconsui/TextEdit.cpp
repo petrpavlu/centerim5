@@ -115,6 +115,11 @@ void TextEdit::DeclareBindables()
       sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete),
         DELETE_CHARS, -1), InputProcessor::BINDABLE_NORMAL);
 
+  // tabifying
+  DeclareBindable("textentry", "tab",
+      sigc::bind(sigc::mem_fun(this, &TextEdit::InsertTextAtCursor),
+        "    ", 4), InputProcessor::BINDABLE_NORMAL);
+
   /*
   DeclareBindable("textentry", "delete-word-end",
       sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete),
