@@ -84,6 +84,12 @@ void FreeWindow::Draw()
 
   Container::Draw();
 
+  /* Reverse the top right corner of the window if there isn't any focused
+   * widget and the window is the top window. This way the user knows which
+   * window is on the top and can be closed using the Esc key. */
+  if (!input_child && COREMANAGER->GetTopWindow() == this)
+    area->mvchgat(win_w - 1, 0, 1, Curses::Attr::REVERSE, 0, NULL);
+
   // copy the virtual window to a window, then display it on screen
   area->copyto(realwindow, copy_x, copy_y, 0, 0, copy_w, copy_h, 0);
 
