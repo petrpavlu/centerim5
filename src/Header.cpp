@@ -32,7 +32,7 @@ Header *Header::Instance()
 }
 
 Header::Header()
-: FreeWindow(0, 0, 10, 1, TYPE_NON_FOCUSABLE)
+: FreeWindow(0, 0, 80, 1, TYPE_NON_FOCUSABLE)
 {
   SetColorScheme("header");
 

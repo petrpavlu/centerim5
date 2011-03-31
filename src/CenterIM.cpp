@@ -25,6 +25,7 @@
 #include "BuddyList.h"
 #include "Connections.h"
 #include "Conversations.h"
+#include "Footer.h"
 #include "Header.h"
 #include "Log.h"
 #include "Notify.h"
@@ -139,6 +140,8 @@ int CenterIM::Run(const char *config_path)
     logbuf = NULL;
   }
 
+  Footer::Init();
+
   Accounts::Init();
   Connections::Init();
   Notify::Init();
@@ -168,6 +171,8 @@ int CenterIM::Run(const char *config_path)
   Connections::Finalize();
   Notify::Finalize();
   Request::Finalize();
+
+  Footer::Finalize();
 
   Log::Finalize();
 
@@ -274,6 +279,19 @@ void CenterIM::ColorSchemeInit()
   COLORSCHEME->SetColorPair("buddylist",           "button",         "normal",     Curses::Color::GREEN,   Curses::Color::BLACK);
   COLORSCHEME->SetColorPair("buddylistgroup",      "button",         "normal",     Curses::Color::YELLOW,  Curses::Color::BLACK, Curses::Attr::BOLD);
 
+  COLORSCHEME->SetColorPair("conversation",        "textview",       "text",       Curses::Color::MAGENTA, Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("conversation",        "textview",       "color1",     Curses::Color::CYAN,    Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("conversation",        "textview",       "color2",     Curses::Color::YELLOW,  Curses::Color::BLACK, Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation",        "panel",          "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation",        "horizontalline", "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
+
+  COLORSCHEME->SetColorPair("conversation",        "label",          "text",       Curses::Color::CYAN,    Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("conversation-active", "label",          "text",       Curses::Color::YELLOW,  Curses::Color::BLACK, Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation-new",    "label",          "text",       Curses::Color::CYAN,    Curses::Color::BLACK, Curses::Attr::BOLD);
+
+  COLORSCHEME->SetColorPair("footer",              "label",          "text",       Curses::Color::BLACK,   Curses::Color::WHITE);
+  COLORSCHEME->SetColorPair("footer",              "container",      "background", Curses::Color::BLACK,   Curses::Color::WHITE);
+
   COLORSCHEME->SetColorPair("generalmenu",         "panel",          "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
   COLORSCHEME->SetColorPair("generalmenu",         "horizontalline", "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
   COLORSCHEME->SetColorPair("generalmenu",         "button",         "normal",     Curses::Color::CYAN,    Curses::Color::BLACK);
@@ -284,16 +302,6 @@ void CenterIM::ColorSchemeInit()
 
   COLORSCHEME->SetColorPair("log",                 "panel",          "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
   COLORSCHEME->SetColorPair("log",                 "textview",       "text",       Curses::Color::CYAN,    Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("conversation",        "textview",       "text",       Curses::Color::MAGENTA, Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("conversation",        "textview",       "color1",     Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("conversation",        "textview",       "color2",     Curses::Color::YELLOW,  Curses::Color::BLACK, Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation",        "panel",          "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation",        "horizontalline", "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
-
-  COLORSCHEME->SetColorPair("conversation",        "label",          "text",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("conversation-active", "label",          "text",       Curses::Color::YELLOW,  Curses::Color::BLACK, Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation-new",    "label",          "text",       Curses::Color::CYAN,    Curses::Color::BLACK, Curses::Attr::BOLD);
 
   COLORSCHEME->SetColorPair("header",              "label",          "text",       Curses::Color::BLACK,   Curses::Color::WHITE);
   COLORSCHEME->SetColorPair("header",              "container",      "background", Curses::Color::BLACK,   Curses::Color::WHITE);
@@ -320,19 +328,19 @@ void CenterIM::ScreenResized()
   size.x = 0;
   size.y = 1;
   size.width = screen_width / 100.0 * buddylist_width;
-  size.height = screen_height - 1;
+  size.height = screen_height - 2;
   areaSizes[BUDDY_LIST_AREA] = size;
 
   size.x = areaSizes[BUDDY_LIST_AREA].width;
   size.width = screen_width - size.x;
   size.height = screen_height / 100.0 * log_height;
-  size.y = screen_height - size.height;
+  size.y = screen_height - size.height - 1;
   areaSizes[LOG_AREA] = size;
 
   size.x = areaSizes[BUDDY_LIST_AREA].width;
   size.y = 1;
   size.width = screen_width - size.x;
-  size.height = screen_height - (size.y + areaSizes[LOG_AREA].height);
+  size.height = screen_height - size.y - areaSizes[LOG_AREA].height - 1;
   areaSizes[CHAT_AREA] = size;
 
   size.x = 0;
@@ -340,6 +348,12 @@ void CenterIM::ScreenResized()
   size.width = screen_width;
   size.height = 1;
   areaSizes[HEADER_AREA] = size;
+
+  size.x = 0;
+  size.y = screen_height - 1;
+  size.width = screen_width;
+  size.height = 1;
+  areaSizes[FOOTER_AREA] = size;
 
   size.x = 0;
   size.y = 0;

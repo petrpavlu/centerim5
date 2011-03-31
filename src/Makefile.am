@@ -22,6 +22,8 @@ centerim_SOURCES = \
 	Conversations.h \
 	Connections.cpp \
 	Connections.h \
+	Footer.cpp \
+	Footer.h \
 	GeneralMenu.cpp \
 	GeneralMenu.h \
 	Header.cpp \

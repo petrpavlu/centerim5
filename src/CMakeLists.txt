@@ -10,6 +10,7 @@ set( centerim_SOURCES
 	Conversation.cpp
 	Conversations.cpp
 	Connections.cpp
+	Footer.cpp
 	GeneralMenu.cpp
 	Header.cpp
 	Log.cpp
@@ -31,6 +32,7 @@ set( centerim_HEADERS
 	Conversation.h
 	Conversations.h
 	Connections.h
+	Footer.h
 	GeneralMenu.h
 	Header.h
 	Log.h

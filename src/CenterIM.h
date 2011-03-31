@@ -35,10 +35,11 @@ class CenterIM
 {
 public:
   enum ScreenArea {
-    HEADER_AREA,
     BUDDY_LIST_AREA,
-    LOG_AREA,
     CHAT_AREA,
+    FOOTER_AREA,
+    HEADER_AREA,
+    LOG_AREA,
     WHOLE_AREA,
     AREAS_NUM
   };

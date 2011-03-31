@@ -11,6 +11,7 @@ src/CenterMain.cpp
 src/Connections.cpp
 src/Conversation.cpp
 src/Conversations.cpp
+src/Footer.cpp
 src/GeneralMenu.cpp
 src/Header.cpp
 src/Log.cpp
