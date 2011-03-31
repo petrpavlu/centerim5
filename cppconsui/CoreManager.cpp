@@ -179,6 +179,9 @@ void CoreManager::StartMainLoop()
 
 void CoreManager::QuitMainLoop()
 {
+  Curses::erase();
+  Curses::noutrefresh();
+  Curses::doupdate();
   g_main_loop_quit(gmainloop);
 }
 
