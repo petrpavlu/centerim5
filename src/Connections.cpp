@@ -23,8 +23,13 @@
 
 #include "Log.h"
 
+#include <cppconsui/CoreManager.h>
+
 #include <string.h>
 #include "gettext.h"
+
+#define RECONNECTION_DELAY_MIN 60000
+#define RECONNECTION_DELAY_MAX 120000
 
 Connections *Connections::instance = NULL;
 
@@ -69,6 +74,17 @@ void Connections::Finalize()
   instance = NULL;
 }
 
+void Connections::AccountReconnect(PurpleAccount *account)
+{
+  g_return_if_fail(account);
+
+  if (!purple_account_is_disconnected(account)
+      || !purple_status_is_online(purple_account_get_active_status(account)))
+    return;
+
+  purple_account_connect(account);
+}
+
 void Connections::connect_progress(PurpleConnection *gc, const char *text,
     size_t step, size_t step_count)
 {
@@ -105,18 +121,59 @@ void Connections::notice(PurpleConnection *gc, const char *text)
 void Connections::network_connected()
 {
   LOG->Message(_("+ Network connected\n"));
+
+  GList *list, *l;
+  l = list = purple_accounts_get_all_active();
+  while (l) {
+    PurpleAccount *account = reinterpret_cast<PurpleAccount*>(l->data);
+    if (purple_account_is_disconnected(account))
+      AccountReconnect(account);
+
+    l = l->next;
+  }
+  g_list_free(list);
 }
 
 void Connections::network_disconnected()
 {
   LOG->Message(_("+ Network disconnected\n"));
+
+  GList *list, *l;
+  l = list = purple_accounts_get_all_active();
+  while (l) {
+    PurpleAccount *a = reinterpret_cast<PurpleAccount*>(l->data);
+    if (!purple_account_is_disconnected(a)) {
+      // XXX why is this needed? (code chunk from pidgin)
+      char *password = g_strdup(purple_account_get_password(a));
+      purple_account_disconnect(a);
+      purple_account_set_password(a, password);
+      g_free(password);
+    }
+
+    l = l->next;
+  }
+  g_list_free(list);
 }
 
 void Connections::report_disconnect_reason(PurpleConnection *gc,
     PurpleConnectionError reason, const char *text)
 {
   PurpleAccount *account = purple_connection_get_account(gc);
-  LOG->Message(_("+ [%s] %s: %s\n"),
-      purple_account_get_protocol_name(account),
-      purple_account_get_username(account), text);
+  const char *protocol = purple_account_get_protocol_name(account);
+  const char *username = purple_account_get_username(account);
+
+  LOG->Message(_("+ [%s] %s: %s\n"), protocol, username, text);
+
+  if (!purple_connection_error_is_fatal(reason)) {
+    unsigned delay = g_random_int_range(RECONNECTION_DELAY_MIN,
+        RECONNECTION_DELAY_MAX);
+    COREMANAGER->TimeoutOnceConnect(sigc::bind(sigc::mem_fun(this,
+            &Connections::AccountReconnect), account), delay);
+    LOG->Message(_("+ [%s] %s: Auto-reconnection in %d seconds\n"), protocol,
+        username, delay / 1000);
+  }
+  else {
+    purple_account_set_enabled(account, PACKAGE_NAME, FALSE);
+    LOG->Message(_("+ [%s] %s: Account disabled\n"), protocol, username);
+  }
 }

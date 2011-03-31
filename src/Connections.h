@@ -47,6 +47,8 @@ private:
   static void Finalize();
   friend class CenterIM;
 
+  void AccountReconnect(PurpleAccount *account);
+
   static void connect_progress_(PurpleConnection *gc, const char *text,
       size_t step, size_t step_count)
     { CONNECTIONS->connect_progress(gc, text, step, step_count); }
