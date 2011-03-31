@@ -40,9 +40,10 @@ AccountStatusMenu::AccountStatusMenu()
   AppendSeparator();
   */
 
-  for (GList *iter = purple_accounts_get_all_active(); iter;
-      iter = iter->next) {
-    PurpleAccount *account = reinterpret_cast<PurpleAccount*>(iter->data);
+  GList *list, *l;
+  list = l = purple_accounts_get_all_active();
+  while (l) {
+    PurpleAccount *account = reinterpret_cast<PurpleAccount*>(l->data);
 
     char *text = g_strdup_printf("[%s] %s",
         purple_account_get_protocol_name(account),
@@ -50,7 +51,10 @@ AccountStatusMenu::AccountStatusMenu()
     AppendItem(text, sigc::bind(sigc::mem_fun(this,
             &AccountStatusMenu::OpenStatusPopup), account));
     g_free(text);
+
+    l = l->next;
   }
+  g_list_free(list);
 }
 
 void AccountStatusMenu::ScreenResized()
