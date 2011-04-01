@@ -6,3 +6,8 @@ libtermkey_la_SOURCES =\
 	termkey-internal.h \
 	termkey.c \
 	termkey.h
+
+libtermkey_la_CPPFLAGS =\
+	$(NCURSESW_CFLAGS)
+libtermkey_la_LIBADD =\
+	$(NCURSESW_LIBS)
