@@ -377,6 +377,11 @@ int erase()
   return ::erase();
 }
 
+int clear()
+{
+  return ::clear();
+}
+
 int doupdate()
 {
   return ::doupdate();

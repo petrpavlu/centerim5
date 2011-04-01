@@ -133,6 +133,7 @@ extern const int C_ERR;
 int getcolorpair(int fg, int bg);
 
 int erase();
+int clear();
 int doupdate();
 
 int beep();

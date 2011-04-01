@@ -162,6 +162,9 @@ CoreManager::~CoreManager()
       i++;
   }
 
+  Curses::clear();
+  Curses::noutrefresh();
+  Curses::doupdate();
   Curses::endwin();
 }
 
@@ -179,9 +182,6 @@ void CoreManager::StartMainLoop()
 
 void CoreManager::QuitMainLoop()
 {
-  Curses::erase();
-  Curses::noutrefresh();
-  Curses::doupdate();
   g_main_loop_quit(gmainloop);
 }
 
@@ -438,8 +438,12 @@ void CoreManager::Resize()
 
   resize_pending = false;
 
-  if (ioctl(fileno(stdout), TIOCGWINSZ, &size) >= 0)
+  if (ioctl(fileno(stdout), TIOCGWINSZ, &size) >= 0) {
     Curses::resizeterm(size.ws_row, size.ws_col);
+
+    // make sure everything is redrawn from the scratch
+    Curses::clear();
+  }
 
   // save new screen size
   screen_width = size.ws_col;
