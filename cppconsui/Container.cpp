@@ -375,10 +375,10 @@ Point Container::GetAbsolutePosition(const Container& ref,
   g_assert(child.GetParent() == this);
 
   if (!parent || this == &ref)
-    return Point(child.Left(), child.Top());
+    return Point(child.GetLeft(), child.GetTop());
 
   Point p = parent->GetAbsolutePosition(ref, *this);
-  return Point(p.X() + child.Left(), p.Y() + child.Top());
+  return Point(p.GetX() + child.GetLeft(), p.GetY() + child.GetTop());
 }
 
 Point Container::GetAbsolutePosition(const Widget& child) const
@@ -386,10 +386,10 @@ Point Container::GetAbsolutePosition(const Widget& child) const
   g_assert(child.GetParent() == this);
 
   if (!parent)
-    return Point(child.Left(), child.Top());
+    return Point(child.GetLeft(), child.GetTop());
 
   Point p = parent->GetAbsolutePosition(*this);
-  return Point(p.X() + child.Left(), p.Y() + child.Top());
+  return Point(p.GetX() + child.GetLeft(), p.GetY() + child.GetTop());
 }
 
 Curses::Window *Container::GetSubPad(const Widget& child, int begin_x,
@@ -419,7 +419,7 @@ void Container::InsertWidget(size_t pos, Widget& widget, int x, int y)
   Child child;
   child.widget = &widget;
 
-  widget.MoveResize(x, y, widget.Width(), widget.Height());
+  widget.Move(x, y);
 
   /* Insert a widget early into children vector so the widget can grab the
    * focus in SetParent() method if it detects that there isn't any focused

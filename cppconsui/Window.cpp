@@ -62,13 +62,13 @@ Point Window::GetAbsolutePosition(const Container& ref,
     if (&child == panel)
       return Point(0, 0);
 
-    return Point(child.Left() + 1, child.Top() + 1);
+    return Point(child.GetLeft() + 1, child.GetTop() + 1);
   }
 
   if (&child == panel)
     return Point(win_x, win_y);
 
-  return Point(win_x + child.Left() + 1, win_y + child.Top() + 1);
+  return Point(win_x + child.GetLeft() + 1, win_y + child.GetTop() + 1);
 }
 
 Point Window::GetAbsolutePosition(const Widget& child) const
@@ -78,7 +78,7 @@ Point Window::GetAbsolutePosition(const Widget& child) const
   if (&child == panel)
     return Point(win_x, win_y);
 
-  return Point(win_x + child.Left() + 1, win_y + child.Top() + 1);
+  return Point(win_x + child.GetLeft() + 1, win_y + child.GetTop() + 1);
 }
 
 Curses::Window *Window::GetSubPad(const Widget &child, int begin_x,

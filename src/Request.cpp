@@ -580,7 +580,7 @@ Request::FieldsDialog::ListFieldMultiple::ListFieldMultiple(
       list = list->next, height++)
     AppendWidget(*(new ListFieldItem(field,
             reinterpret_cast<const char*>(list->data))));
-  MoveResize(Left(), Top(), Width(), height);
+  SetHeight(height);
 }
 
 Request::FieldsDialog::ListFieldMultiple::ListFieldItem::ListFieldItem(

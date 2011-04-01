@@ -88,8 +88,8 @@ public:
   Point();
   Point(int x, int y);
 
-  int X() const { return x; }
-  int Y() const { return y; }
+  int GetX() const { return x; }
+  int GetY() const { return y; }
 
   int x, y;
 protected:
@@ -103,12 +103,12 @@ public:
   Rect();
   Rect(int x, int y, int w, int h);
 
-  int Width() const { return width; }
-  int Height() const { return height; }
-  int Left() const { return x; }
-  int Top() const { return y; }
-  int Right() const { return x + width - 1; }
-  int Bottom() const { return y + height - 1; }
+  int GetWidth() const { return width; }
+  int GetHeight() const { return height; }
+  int GetLeft() const { return x; }
+  int GetTop() const { return y; }
+  int GetRight() const { return x + width - 1; }
+  int GetBottom() const { return y + height - 1; }
 
   int width, height;
 

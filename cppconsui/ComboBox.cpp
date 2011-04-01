@@ -148,21 +148,21 @@ void ComboBox::ExtMenuWindow::Draw()
 {
   Point p = ref->GetAbsolutePosition();
   int h = Curses::getmaxy();
-  int above = p.Y();
-  int below = h - p.Y() - 1;
+  int above = p.GetY();
+  int below = h - p.GetY() - 1;
 
   if (below > wish_height) {
     // draw the window under the combobox
-    MoveResize(p.X(), p.Y() + 1, win_w, wish_height);
+    MoveResize(p.GetX(), p.GetY() + 1, win_w, wish_height);
   }
   else if (above > wish_height) {
     // draw the window above the combobox
-    MoveResize(p.X(), p.Y() - wish_height, win_w, wish_height);
+    MoveResize(p.GetX(), p.GetY() - wish_height, win_w, wish_height);
   }
   else if (below >= above)
-    MoveResize(p.X(), p.Y() + 1, win_w, below);
+    MoveResize(p.GetX(), p.GetY() + 1, win_w, below);
   else
-    MoveResize(p.X(), p.Y() - above, win_w, above);
+    MoveResize(p.GetX(), p.GetY() - above, win_w, above);
 
   MenuWindow::Draw();
 }

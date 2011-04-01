@@ -51,11 +51,11 @@ Point ScrollPane::GetAbsolutePosition(const Container& ref,
   g_assert(child.GetParent() == this);
 
   if (!parent || this == &ref)
-    return Point(child.Left() - scroll_xpos, child.Top() - scroll_ypos);
+    return Point(child.GetLeft() - scroll_xpos, child.GetTop() - scroll_ypos);
 
   Point p = parent->GetAbsolutePosition(ref, *this);
-  return Point(p.X() + child.Left() - scroll_xpos,
-      p.Y() + child.Top() - scroll_ypos);
+  return Point(p.GetX() + child.GetLeft() - scroll_xpos,
+      p.GetY() + child.GetTop() - scroll_ypos);
 }
 
 Point ScrollPane::GetAbsolutePosition(const Widget& child) const
@@ -63,11 +63,11 @@ Point ScrollPane::GetAbsolutePosition(const Widget& child) const
   g_assert(child.GetParent() == this);
 
   if (!parent)
-    return Point(child.Left() - scroll_xpos, child.Top() - scroll_ypos);
+    return Point(child.GetLeft() - scroll_xpos, child.GetTop() - scroll_ypos);
 
   Point p = parent->GetAbsolutePosition(*this);
-  return Point(p.X() + child.Left() - scroll_xpos,
-      p.Y() + child.Top() - scroll_ypos);
+  return Point(p.GetX() + child.GetLeft() - scroll_xpos,
+      p.GetY() + child.GetTop() - scroll_ypos);
 }
 
 void ScrollPane::SetScrollSize(int swidth, int sheight)

@@ -62,7 +62,7 @@ void AccountStatusMenu::ScreenResized()
   MenuWindow::ScreenResized();
 
   Rect chat = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
-  MoveResize(chat.x, chat.y, win_w, win_h);
+  Move(chat.x, chat.y);
 }
 
 AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h,
@@ -135,7 +135,7 @@ AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h,
     }
   }
 
-  MoveResize(Left(), Top(), Width(), height);
+  SetHeight(height);
 }
 
 void AccountStatusMenu::StatusPopup::ScreenResized()
@@ -143,7 +143,7 @@ void AccountStatusMenu::StatusPopup::ScreenResized()
   MenuWindow::ScreenResized();
 
   Rect chat = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
-  MoveResize(chat.x, chat.y, win_w, win_h);
+  Move(chat.x, chat.y);
 }
 
 void AccountStatusMenu::StatusPopup::SetStatus(Button& activator,

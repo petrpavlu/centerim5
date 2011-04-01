@@ -99,11 +99,42 @@ public:
   virtual void SetParent(Container& parent);
   virtual Container *GetParent() const { return parent; }
 
-  virtual int Left() const { return xpos; }
-  virtual int Top() const { return ypos; }
-  virtual int Width() const { return width; }
-  virtual int Height() const { return height; }
+  virtual int GetLeft() const { return xpos; }
+  virtual int GetTop() const { return ypos; }
+  virtual int GetWidth() const { return width; }
+  virtual int GetHeight() const { return height; }
 
+  /**
+   * Convenient MoveResize() wrapper.
+   */
+  virtual void Move(int newx, int newy);
+  /**
+   * Convenient MoveResize() wrapper.
+   */
+  virtual void Resize(int neww, int newh);
+  /**
+   * Convenient MoveResize() wrapper.
+   */
+  virtual void SetLeft(int newx);
+  /**
+   * Convenient MoveResize() wrapper.
+   */
+  virtual void SetTop(int newy);
+  /**
+   * Convenient MoveResize() wrapper.
+   */
+  virtual void SetWidth(int neww);
+  /**
+   * Convenient MoveResize() wrapper.
+   */
+  virtual void SetHeight(int newh);
+
+  /**
+   * Returns absolute position of the widget. Note: special care has to be
+   * taken when calling this method because CppConsUI uses deferred drawing.
+   * The returned value is correct only if the drawing of all parent widgets
+   * already occured.
+   */
   virtual Point GetAbsolutePosition() const;
 
   virtual void SetColorScheme(const char *scheme);

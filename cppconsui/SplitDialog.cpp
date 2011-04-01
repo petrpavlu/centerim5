@@ -160,8 +160,8 @@ void SplitDialog::MoveFocus(FocusDirection direction)
 void SplitDialog::SetContainer(Container& cont)
 {
   g_assert(!container);
-  g_warn_if_fail(cont.Width() == AUTOSIZE);
-  g_warn_if_fail(cont.Height() == AUTOSIZE);
+  g_warn_if_fail(cont.GetWidth() == AUTOSIZE);
+  g_warn_if_fail(cont.GetHeight() == AUTOSIZE);
 
   container = &cont;
   cont.SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);

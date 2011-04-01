@@ -66,7 +66,7 @@ void ListBox::Draw()
     for (Children::iterator i = children.begin(); i != children.end(); i++) {
       Widget *widget = i->widget;
       if (widget->IsVisible()) {
-        int h = widget->Height();
+        int h = widget->GetHeight();
         if (h == AUTOSIZE) {
           h = autosize_height;
           if (autosize_height_extra) {
@@ -76,7 +76,7 @@ void ListBox::Draw()
           }
         }
 
-        widget->MoveResize(0, y, widget->Width(), widget->Height());
+        widget->Move(0, y);
         y += h;
       }
     }
@@ -85,7 +85,7 @@ void ListBox::Draw()
 
   // make sure that currently focused widget is visible
   if (focus_child)
-    MakeVisible(focus_child->Left(), focus_child->Top());
+    MakeVisible(focus_child->GetLeft(), focus_child->GetTop());
 
   AbstractListBox::Draw();
 }
@@ -107,7 +107,7 @@ HorizontalLine *ListBox::AppendSeparator()
 void ListBox::InsertWidget(size_t pos, Widget& widget)
 {
   if (widget.IsVisible()) {
-    int h = widget.Height();
+    int h = widget.GetHeight();
     if (h == AUTOSIZE) {
       h = 1;
       autosize_children++;
@@ -142,8 +142,8 @@ Curses::Window *ListBox::GetSubPad(const Widget& child, int begin_x,
 void ListBox::OnChildMoveResize(Widget& activator, const Rect& oldsize,
     const Rect& newsize)
 {
-  int old_height = oldsize.Height();
-  int new_height = newsize.Height();
+  int old_height = oldsize.GetHeight();
+  int new_height = newsize.GetHeight();
   if (old_height != new_height) {
     if (old_height == AUTOSIZE) {
       old_height = 1;
@@ -162,7 +162,7 @@ void ListBox::OnChildMoveResize(Widget& activator, const Rect& oldsize,
 void ListBox::OnChildVisible(Widget& activator, bool visible)
 {
   // the widget is being hidden or deleted
-  int height = activator.Height();
+  int height = activator.GetHeight();
   int sign = visible ? 1 : -1;
   if (height == AUTOSIZE) {
     autosize_children += sign;

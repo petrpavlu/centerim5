@@ -92,7 +92,7 @@ void TreeView::Draw()
 
   // make sure that currently focused widget is visible
   if (focus_child)
-    MakeVisible(focus_child->Left(), focus_child->Top());
+    MakeVisible(focus_child->GetLeft(), focus_child->GetTop());
 
   ScrollPane::DrawEx(false);
 }
@@ -268,7 +268,7 @@ void TreeView::DeleteNode(NodeReference node, bool keepchildren)
 
   int shrink = 0;
   if (node->widget) {
-    int h = node->widget->Height();
+    int h = node->widget->GetHeight();
     if (h == AUTOSIZE)
       h = 1;
     shrink += h;
@@ -276,7 +276,7 @@ void TreeView::DeleteNode(NodeReference node, bool keepchildren)
 
   for (TheTree::pre_order_iterator i = thetree.begin(node);
       i != thetree.end(node); i++) {
-    int h = i->widget->Height();
+    int h = i->widget->GetHeight();
     if (h == AUTOSIZE)
       h = 1;
     shrink += h;
@@ -374,11 +374,9 @@ int TreeView::DrawNode(SiblingIterator node, int top)
   if (node->widget) {
     if (!node->widget->IsVisible())
       return 0;
-    node->widget->MoveResize(depthoffset + 3, top,
-        node->widget->Width(),
-        node->widget->Height());
+    node->widget->Move(depthoffset + 3, top);
     node->widget->Draw();
-    height += node->widget->Height();
+    height += node->widget->GetHeight();
   }
 
   if (node->open && IsNodeOpenable(node)) {
@@ -391,7 +389,7 @@ int TreeView::DrawNode(SiblingIterator node, int top)
      * reason it doesn't seem to work. */
     SiblingIterator last = node.begin();
     for (i = node.begin(); i != node.end(); i++)
-      if (i->widget && i->widget->Height() && i->widget->IsVisible())
+      if (i->widget && i->widget->GetHeight() && i->widget->IsVisible())
         last = i;
     SiblingIterator end = last;
     end++;
@@ -433,10 +431,10 @@ TreeView::TreeNode TreeView::AddNode(Widget& widget)
 {
   // make room for this widget
   int new_height = GetScrollHeight();
-  if (widget.Height() == AUTOSIZE)
+  if (widget.GetHeight() == AUTOSIZE)
     new_height += 1;
   else
-    new_height += widget.Height();
+    new_height += widget.GetHeight();
   SetScrollHeight(new_height);
 
   // construct the new node
@@ -485,7 +483,7 @@ TreeView::NodeReference TreeView::FindNode(const Widget& child) const
 bool TreeView::IsNodeOpenable(SiblingIterator& node) const
 {
   for (SiblingIterator i = node.begin(); i != node.end(); i++)
-    if (i->widget && i->widget->Height() && i->widget->IsVisible())
+    if (i->widget && i->widget->GetHeight() && i->widget->IsVisible())
       return true;
   return false;
 }
@@ -507,8 +505,8 @@ bool TreeView::IsNodeVisible(NodeReference& node) const
 void TreeView::OnChildMoveResize(Widget& activator, const Rect &oldsize,
     const Rect &newsize)
 {
-  int old_height = oldsize.Height();
-  int new_height = newsize.Height();
+  int old_height = oldsize.GetHeight();
+  int new_height = newsize.GetHeight();
   if (old_height != new_height) {
     if (old_height == AUTOSIZE)
       old_height = 1;

@@ -188,6 +188,39 @@ void Widget::SetParent(Container& parent)
   UpdateArea();
 }
 
+/* All following MoveResize() wrappers should always call member methods to
+ * get xpos, ypos, width, height and never use member variables directly. See
+ * FreeWindow GetLeft(), GetTop(), GetWidth(), GetHeight(). */
+void Widget::Move(int newx, int newy)
+{
+  MoveResize(newx, newy, GetWidth(), GetHeight());
+}
+
+void Widget::Resize(int neww, int newh)
+{
+  MoveResize(GetLeft(), GetTop(), neww, newh);
+}
+
+void Widget::SetLeft(int newx)
+{
+  MoveResize(newx, GetTop(), GetWidth(), GetHeight());
+}
+
+void Widget::SetTop(int newy)
+{
+  MoveResize(GetLeft(), newy, GetWidth(), GetHeight());
+}
+
+void Widget::SetWidth(int neww)
+{
+  MoveResize(GetLeft(), GetTop(), neww, GetHeight());
+}
+
+void Widget::SetHeight(int newh)
+{
+  MoveResize(GetLeft(), GetTop(), GetWidth(), newh);
+}
+
 Point Widget::GetAbsolutePosition() const
 {
   if (!parent)

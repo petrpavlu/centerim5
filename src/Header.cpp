@@ -118,8 +118,7 @@ void Header::account_status_changed(PurpleAccount *account, PurpleStatus *old,
       purple_account_get_protocol_name(account),
       purple_account_get_username(account));
   label->SetText(text);
-  label->MoveResize(label->Left(), label->Top(), Curses::onscreen_width(text),
-      label->Height());
+  label->SetWidth(Curses::onscreen_width(text));
   g_free(text);
 }
 

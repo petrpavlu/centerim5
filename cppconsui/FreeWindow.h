@@ -51,10 +51,10 @@ public:
   virtual void SetVisibility(bool visible);
   virtual bool IsVisibleRecursive() const { return IsVisible(); }
   virtual void SetParent(Container& parent);
-  virtual int Left() const { return win_x; }
-  virtual int Top() const { return win_y; }
-  virtual int Width() const { return win_w; }
-  virtual int Height() const { return win_h; }
+  virtual int GetLeft() const { return win_x; }
+  virtual int GetTop() const { return win_y; }
+  virtual int GetWidth() const { return win_w; }
+  virtual int GetHeight() const { return win_h; }
   virtual Point GetAbsolutePosition();
 
   // Container

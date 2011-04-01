@@ -66,7 +66,7 @@ void HorizontalListBox::Draw()
     for (Children::iterator i = children.begin(); i != children.end(); i++) {
       Widget *widget = i->widget;
       if (widget->IsVisible()) {
-        int w = widget->Width();
+        int w = widget->GetWidth();
         if (w == AUTOSIZE) {
           w = autosize_width;
           if (autosize_width_extra) {
@@ -76,7 +76,7 @@ void HorizontalListBox::Draw()
           }
         }
 
-        widget->MoveResize(x, 0, widget->Width(), widget->Height());
+        widget->Move(x, 0);
         x += w;
       }
     }
@@ -85,7 +85,7 @@ void HorizontalListBox::Draw()
 
   // make sure that currently focused widget is visible
   if (focus_child)
-    MakeVisible(focus_child->Left(), focus_child->Top());
+    MakeVisible(focus_child->GetLeft(), focus_child->GetTop());
 
   AbstractListBox::Draw();
 }
@@ -107,7 +107,7 @@ VerticalLine *HorizontalListBox::AppendSeparator()
 void HorizontalListBox::InsertWidget(size_t pos, Widget& widget)
 {
   if (widget.IsVisible()) {
-    int w = widget.Width();
+    int w = widget.GetWidth();
     if (w == AUTOSIZE) {
       w = 1;
       autosize_children++;
@@ -142,8 +142,8 @@ Curses::Window *HorizontalListBox::GetSubPad(const Widget& child, int begin_x,
 void HorizontalListBox::OnChildMoveResize(Widget& activator,
     const Rect& oldsize, const Rect& newsize)
 {
-  int old_width = oldsize.Width();
-  int new_width = newsize.Width();
+  int old_width = oldsize.GetWidth();
+  int new_width = newsize.GetWidth();
   if (old_width != new_width) {
     if (old_width == AUTOSIZE) {
       old_width = 1;
@@ -162,7 +162,7 @@ void HorizontalListBox::OnChildMoveResize(Widget& activator,
 void HorizontalListBox::OnChildVisible(Widget& activator, bool visible)
 {
   // the widget is being hidden or deleted
-  int width = activator.Width();
+  int width = activator.GetWidth();
   int sign = visible ? 1 : - 1;
   if (width == AUTOSIZE) {
     autosize_children += sign;
