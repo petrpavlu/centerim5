@@ -28,6 +28,8 @@
 
 #include "LineStyle.h"
 
+#include <wchar.h>
+
 struct LineElements {
   const char *h;         // Horizontal line
   const char *h_begin;   // "        " line begin
@@ -77,10 +79,13 @@ static LineElements line_elements_heavy = {
   "\342\225\213", "\342\224\217", "\342\224\223", "\342\224\227", "\342\224\233",
 };
 
+bool LineStyle::default_type_is_ascii = false;
+
 LineStyle::LineStyle(Type t)
 : type(t)
 {
-  utf8 = g_get_charset(NULL);
+  // if charset isn't utf8 or wcwidth() implementation is broken
+  default_type_is_ascii = !g_get_charset(NULL) || wcwidth(0x2500) != 1;
 }
 
 void LineStyle::SetStyle(Type t)
@@ -182,10 +187,9 @@ LineElements *LineStyle::GetCurrentElems() const
     case HEAVY:
       return &line_elements_heavy;
     case DEFAULT:
-      if (utf8)
-        return &line_elements_light;
-      else
+      if (default_type_is_ascii)
         return &line_elements_ascii;
+      return &line_elements_light;
   }
 
   g_assert_not_reached();

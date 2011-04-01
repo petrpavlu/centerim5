@@ -73,7 +73,8 @@ protected:
   Type type;
 
 private:
-  bool utf8;
+  static bool default_type_is_ascii;
+
   LineElements *GetCurrentElems() const;
 };
 
