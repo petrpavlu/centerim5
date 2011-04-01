@@ -27,7 +27,7 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_PROG_LIBTOOL
 
-# Inspired by code found in configure.ac of OpenChange project.
+# inspired by code found in configure.ac of OpenChange project
 AC_CACHE_CHECK(
 [whether we are using the Sun C++ compiler],
 [ac_cv_cxx_compiler_suncc], [
@@ -62,11 +62,7 @@ PKG_CHECK_MODULES([SIGC], [sigc++-2.0 >= 2.0.0])
 AC_SUBST(SIGC_CFLAGS)
 AC_SUBST(SIGC_LIBS)
 
-# TODO -- verify which should be the latest ncurses library supported and check it too
-#PKG_CHECK_MODULES([NCURSESW], [ncursesw >= 5.7])
-#AC_SUBST(NCURSESW_LIBS)
-#AC_SUBST(NCURSESW_CFLAGS)
-
+# ncursesw
 AC_PATH_LIB_LIBCONFIG
 AC_PATH_LIB(ncursesw, , ncurses.h, ncursesw5-config, , , [
 	AC_MSG_RESULT(no)
