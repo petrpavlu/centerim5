@@ -74,15 +74,6 @@ public:
    * Returns count of all lines.
    */
   int GetLinesNumber() const;
-  /**
-   * Returns an on-screen line number where a text specified by line number
-   * is located. Note: this number can change if the widget is resized.
-   */
-  int ViewPosForLine(int line_num) const;
-  /**
-   * Sets an on-screen line number.
-   */
-  void SetViewPos(int viewy);
 
   // Widget
   virtual void Draw();

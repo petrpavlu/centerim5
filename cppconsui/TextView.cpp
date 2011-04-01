@@ -165,28 +165,6 @@ int TextView::GetLinesNumber() const
   return lines.size();
 }
 
-int TextView::ViewPosForLine(int line_num) const
-{
-  g_assert(line_num >= 0);
-  g_assert(line_num < (int) lines.size());
-
-  for (int i = 0; i < (int) screen_lines.size(); i++)
-    if (screen_lines[i]->parent == lines[line_num])
-      return i;
-
-  return 0;
-}
-
-void TextView::SetViewPos(int viewy)
-{
-  g_assert(viewy >= 0);
-  g_assert(viewy < (int) screen_lines.size());
-
-  view_top = viewy;
-
-  Redraw();
-}
-
 void TextView::Draw()
 {
   int origw = area ? area->getmaxx() : 0;
