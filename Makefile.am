@@ -1,6 +1,7 @@
-SUBDIRS = libtermkey cppconsui doc po src tests
+SUBDIRS = libtermkey cppconsui doc misc po src tests
 
 EXTRA_DIST =\
+	bootstrap \
 	HACKING \
 	gettext.h
 

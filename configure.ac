@@ -120,6 +120,7 @@ AC_CONFIG_FILES([Makefile
 		 cppconsui/Makefile
 		 doc/Makefile
 		 doc/doxygen-cppconsui.conf
+		 misc/Makefile
 		 po/Makefile.in
 		 src/Makefile
 		 tests/Makefile])
