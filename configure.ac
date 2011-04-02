@@ -4,7 +4,9 @@
 # Hurray for <http://www-src.lip6.fr/homepages/Alexandre.Duret-Lutz/autotools.html>
 
 AC_PREREQ(2.59)
-AC_INIT([centerim], [5.0-alpha2], [http://sourceforge.net/projects/centerim])
+AC_INIT([centerim],
+	m4_esyscmd([misc/git-version-gen .tarball-version]),
+	[http://sourceforge.net/projects/centerim])
 # prevent AC_PROG_CC, AC_PROG_CXX from initializing CFLAGS and CXXFLAGS
 : ${CFLAGS=""}
 : ${CXXFLAGS=""}

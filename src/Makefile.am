@@ -55,16 +55,7 @@ centerim_LDADD =\
 	$(SIGC_LIBS) \
 	$(top_builddir)/cppconsui/libcppconsui.la
 
-# regenerate git-version.h if its content differs from the output of
-# git-version-gen
-
-git-version: .force_git_version
-	@$(top_srcdir)/misc/git-version-gen $(top_srcdir)/.version git-version || echo "GIT version updated successfully"
-
 git-version.cpp: git-version.h
 
-git-version.h : git-version git-version.h.in
-	@VER_GIT=`cat git-version 2>/dev/null` || true; \
-	sed -e "s/@GIT_VERSION@/$$VER_GIT/" < $(srcdir)/git-version.h.in > git-version.h
-
-.PHONY: .force_git_version
+git-version.h : $(top_srcdir)/.version git-version.h.in
+	@sed -e "s/@GIT_VERSION@/`cat $(top_srcdir)/.version`/" < $(srcdir)/git-version.h.in > git-version.h
