@@ -384,7 +384,7 @@ static struct {
   { "suspend",   TERMKEY_TYPE_KEYSYM, TERMKEY_SYM_SUSPEND,   0 },
   { "undo",      TERMKEY_TYPE_KEYSYM, TERMKEY_SYM_UNDO,      0 },
   { "up",        TERMKEY_TYPE_KEYSYM, TERMKEY_SYM_UP,        0 },
-  { NULL, 0, 0, 0 },
+  { NULL },
 };
 
 static int funcname2keysym(const char *funcname, TermKeyType *typep, TermKeySym *symp, int *modmaskp, int *modsetp)

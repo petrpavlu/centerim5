@@ -9,7 +9,7 @@ extern "C" {
 #include <stdlib.h>
 
 #define TERMKEY_VERSION_MAJOR 0
-#define TERMKEY_VERSION_MINOR 5
+#define TERMKEY_VERSION_MINOR 6
 
 #define TERMKEY_CHECK_VERSION \
         termkey_check_version(TERMKEY_VERSION_MAJOR, TERMKEY_VERSION_MINOR)
@@ -137,11 +137,13 @@ typedef struct {
 typedef struct _TermKey TermKey;
 
 enum {
-  TERMKEY_FLAG_NOINTERPRET = 1 << 0, // Do not interpret C0//G1 codes if possible
+  TERMKEY_FLAG_NOINTERPRET = 1 << 0, // Do not interpret C0//DEL codes if possible
   TERMKEY_FLAG_CONVERTKP   = 1 << 1, // Convert KP codes to regular keypresses
   TERMKEY_FLAG_RAW         = 1 << 2, // Input is raw bytes, not UTF-8
   TERMKEY_FLAG_UTF8        = 1 << 3, // Input is definitely UTF-8
-  TERMKEY_FLAG_NOTERMIOS   = 1 << 4  // Do not make initial termios calls on construction
+  TERMKEY_FLAG_NOTERMIOS   = 1 << 4, // Do not make initial termios calls on construction
+  TERMKEY_FLAG_SPACESYMBOL = 1 << 5, // Space is symbolic rather than Unicode
+  TERMKEY_FLAG_CTRLC       = 1 << 6  // Allow Ctrl-C to be read as normal, disabling SIGINT
 };
 
 void termkey_check_version(int major, int minor);
