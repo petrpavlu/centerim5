@@ -107,7 +107,6 @@ private:
 
 struct Color
 {
-  const static int MIN;
   const static int BLACK;
   const static int RED;
   const static int GREEN;
@@ -116,7 +115,6 @@ struct Color
   const static int MAGENTA;
   const static int CYAN;
   const static int WHITE;
-  const static int MAX;
 };
 
 struct Attr

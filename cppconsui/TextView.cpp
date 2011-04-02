@@ -30,9 +30,7 @@
 #include "CppConsUI.h"
 
 TextView::TextView(int w, int h, bool autoscroll_)
-: Widget(w, h)
-, view_top(0)
-, autoscroll(autoscroll_)
+: Widget(w, h), view_top(0), autoscroll(autoscroll_)
 {
 }
 
