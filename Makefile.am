@@ -8,10 +8,14 @@ EXTRA_DIST =\
 	gettext.h
 
 BUILT_SOURCES = $(top_srcdir)/.version
+# we want to execute this target everytime make is run
+.PHONY: $(top_srcdir)/.version
 $(top_srcdir)/.version:
-	echo $(VERSION) > $@-t && mv $@-t $@
+	@cd $(top_srcdir); version=`misc/git-version-gen .tarball-version`; \
+	if test $$version != "`cat .version 2> /dev/null`"; then printf '%s' $$version > .version; fi
+
 dist-hook:
-	echo $(VERSION) > $(distdir)/.tarball-version
+	@cd $(top_srcdir); printf '%s' `misc/git-version-gen .tarball-version` > $(distdir)/.tarball-version
 
 .PHONY: doc
 doc:
