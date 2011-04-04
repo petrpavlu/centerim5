@@ -12,10 +12,11 @@ BUILT_SOURCES = $(top_srcdir)/.version
 .PHONY: $(top_srcdir)/.version
 $(top_srcdir)/.version:
 	@cd $(top_srcdir); version=`misc/git-version-gen .tarball-version`; \
-	if test $$version != "`cat .version 2> /dev/null`"; then printf '%s' $$version > .version; fi
+	if test "$$version" != "`cat .version 2> /dev/null`"; then printf '%s' "$$version" > .version; fi
 
 dist-hook:
-	@cd $(top_srcdir); printf '%s' `misc/git-version-gen .tarball-version` > $(distdir)/.tarball-version
+	@cd $(top_srcdir); misc/git-version-gen .tarball-version > .tarball-version
+	@mv $(top_srcdir)/.tarball-version $(top_distdir)
 
 .PHONY: doc
 doc:
