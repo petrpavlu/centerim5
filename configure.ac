@@ -29,18 +29,9 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_PROG_LIBTOOL
 
-# inspired by code found in configure.ac of OpenChange project
-AC_CACHE_CHECK(
-[whether we are using the Sun C++ compiler],
-[ac_cv_cxx_compiler_suncc], [
-	AC_LANG_PUSH([C++])
-	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [[
-		#ifndef __SUNPRO_CC
-			choke me
-		#endif
-		]])], [ac_compiler_suncc=yes], [ac_compiler_suncc=no])
-	AC_LANG_POP([C++])
-	ac_cv_cxx_compiler_suncc=$ac_compiler_suncc])
+AC_LANG_PUSH([C++])
+AC_CHECK_DECL([__SUNPRO_CC], [SUNCC="yes"], [SUNCC="no"])
+AC_LANG_POP([C++])
 
 #########################
 # Checks for libraries. #
@@ -108,7 +99,7 @@ if test "$GCC" = yes; then
 		[CFLAGS="-O2 $CFLAGS"
 	 	CXXFLAGS="-O2 $CXXFLAGS"])
 fi
-if test "$ac_cv_cxx_compiler_suncc" = yes; then
+if test "$SUNCC" = yes; then
 	CXXFLAGS="-library=stdcxx4 $CXXFLAGS"
 fi
 AC_SUBST(CFLAGS)
