@@ -1,9 +1,10 @@
-#include <cppconsui/CoreManager.h>
-#include <cppconsui/Window.h>
-#include <cppconsui/Label.h>
 #include <cppconsui/Button.h>
-#include <cppconsui/TreeView.h>
+#include <cppconsui/CoreManager.h>
+#include <cppconsui/Label.h>
+#include <cppconsui/KeyConfig.h>
 #include <cppconsui/Keys.h>
+#include <cppconsui/TreeView.h>
+#include <cppconsui/Window.h>
 
 // TreeViewWindow class
 class TreeViewWindow
@@ -45,7 +46,8 @@ TreeViewWindow::TreeViewWindow()
   AddWidget(*tree, 1, 3);
   SetInputChild(*tree);
 
-  node = tree->AppendNode(tree->Root(), *(new Button("Button node A")));
+  node = tree->AppendNode(tree->GetRootNode(),
+      *(new Button("Button node A")));
   node2 = tree->AppendNode(node, *(new Button("Button node A-1")));
   tree->AppendNode(node2, *(new Button("Button node A-1-a")));
   tree->AppendNode(node2, *(new Button("Button node A-1-b")));
@@ -53,12 +55,14 @@ TreeViewWindow::TreeViewWindow()
   tree->AppendNode(node, *(new Button("Button node A-2")));
   tree->AppendNode(node, *(new Button("Button node A-3")));
 
-  node = tree->AppendNode(tree->Root(), *(new Label("Label node B")));
+  node = tree->AppendNode(tree->GetRootNode(),
+      *(new Label("Label node B")));
   tree->AppendNode(node, *(new Label("Label node B-1")));
   tree->AppendNode(node, *(new Label("Label node B-2")));
   tree->AppendNode(node, *(new Label("Label node B-3")));
 
-  node = tree->AppendNode(tree->Root(), *(new Button("Button node C")));
+  node = tree->AppendNode(tree->GetRootNode(),
+      *(new Button("Button node C")));
   tree->AppendNode(node, *(new Button("Button node C-1")));
   tree->AppendNode(node, *(new Button("Button node C-2")));
   tree->AppendNode(node, *(new Button("Button node C-3")));
@@ -96,10 +100,6 @@ class TestApp
     TestApp(const TestApp&);
     TestApp& operator=(const TestApp&);
     virtual ~TestApp() {}
-
-    DECLARE_SIG_REGISTERKEYS();
-    static bool RegisterKeys();
-    void DeclareBindables();
 };
 
 TestApp *TestApp::Instance()
@@ -115,7 +115,10 @@ TestApp::TestApp()
 
   g_log_set_default_handler(g_log_func_, this);
 
-  DeclareBindables();
+  DeclareBindable(CONTEXT_TESTAPP, "quit", sigc::mem_fun(mngr,
+        &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
+  KEYCONFIG->RegisterKeyDef(CONTEXT_TESTAPP, "quit",
+      Keys::FunctionTermKey(10));
 }
 
 void TestApp::Run()
@@ -126,27 +129,12 @@ void TestApp::Run()
   mngr->StartMainLoop();
 }
 
-void TestApp::DeclareBindables()
-{
-  DeclareBindable(CONTEXT_TESTAPP, "quit", sigc::mem_fun(mngr,
-        &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
-}
-
-DEFINE_SIG_REGISTERKEYS(TestApp, RegisterKeys);
-bool TestApp::RegisterKeys()
-{
-  RegisterKeyDef(CONTEXT_TESTAPP, "quit", "Quit TestApp.",
-      Keys::FunctionTermKey(10));
-  return true;
-}
-
 // main function
 int main()
 {
   setlocale(LC_ALL, "");
 
   TestApp *app = TestApp::Instance();
-
   app->Run();
 
   return 0;

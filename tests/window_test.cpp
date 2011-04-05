@@ -1,7 +1,8 @@
 #include <cppconsui/CoreManager.h>
-#include <cppconsui/Window.h>
-#include <cppconsui/Label.h>
+#include <cppconsui/KeyConfig.h>
 #include <cppconsui/Keys.h>
+#include <cppconsui/Label.h>
+#include <cppconsui/Window.h>
 
 // TestWindow class
 class TestWindow
@@ -10,8 +11,6 @@ class TestWindow
   public:
     TestWindow(int number, int x, int y, int w, int h);
     virtual ~TestWindow() {}
-
-    virtual void ScreenResized();
 
   protected:
 
@@ -37,11 +36,6 @@ TestWindow::TestWindow(int number, int x, int y, int w, int h)
     label = new Label("Press ESC to close a focused window.");
     AddWidget(*label, 2, 3);
   }
-}
-
-void TestWindow::ScreenResized()
-{
-  signal_redraw(*this);
 }
 
 // TestApp class
@@ -70,10 +64,6 @@ class TestApp
     TestApp(const TestApp&);
     TestApp& operator=(const TestApp&);
     virtual ~TestApp() {}
-
-    DECLARE_SIG_REGISTERKEYS();
-    static bool RegisterKeys();
-    void DeclareBindables();
 };
 
 TestApp *TestApp::Instance()
@@ -89,7 +79,10 @@ TestApp::TestApp()
 
   g_log_set_default_handler(g_log_func_, this);
 
-  DeclareBindables();
+  DeclareBindable(CONTEXT_TESTAPP, "quit", sigc::mem_fun(mngr,
+        &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
+  KEYCONFIG->RegisterKeyDef(CONTEXT_TESTAPP, "quit",
+      Keys::FunctionTermKey(10));
 }
 
 void TestApp::Run()
@@ -104,27 +97,12 @@ void TestApp::Run()
   mngr->StartMainLoop();
 }
 
-void TestApp::DeclareBindables()
-{
-  DeclareBindable(CONTEXT_TESTAPP, "quit", sigc::mem_fun(mngr,
-        &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
-}
-
-DEFINE_SIG_REGISTERKEYS(TestApp, RegisterKeys);
-bool TestApp::RegisterKeys()
-{
-  RegisterKeyDef(CONTEXT_TESTAPP, "quit", "Quit TestApp.",
-      Keys::FunctionTermKey(10));
-  return true;
-}
-
 // main function
 int main()
 {
   setlocale(LC_ALL, "");
 
   TestApp *app = TestApp::Instance();
-
   app->Run();
 
   return 0;

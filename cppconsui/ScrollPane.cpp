@@ -30,8 +30,9 @@
 
 ScrollPane::ScrollPane(int w, int h, int scrollw, int scrollh)
 : Container(w, h), scroll_xpos(0), scroll_ypos(0), scroll_width(scrollw)
-, scroll_height(scrollh), update_screen_area(true), screen_area(NULL)
+, scroll_height(scrollh), update_screen_area(false), screen_area(NULL)
 {
+  update_area = true;
 }
 
 ScrollPane::~ScrollPane()

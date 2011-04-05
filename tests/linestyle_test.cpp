@@ -1,8 +1,9 @@
 #include <cppconsui/CoreManager.h>
-#include <cppconsui/Window.h>
-#include <cppconsui/Label.h>
-#include <cppconsui/Keys.h>
 #include <cppconsui/ConsuiCurses.h>
+#include <cppconsui/KeyConfig.h>
+#include <cppconsui/Keys.h>
+#include <cppconsui/Label.h>
+#include <cppconsui/Window.h>
 
 // LineStyleWindow class
 class LineStyleWindow
@@ -15,13 +16,12 @@ class LineStyleWindow
     virtual void Close() {}
 
     virtual void ScreenResized();
-    virtual void Draw();
 
   protected:
 
   private:
     LineStyleWindow();
-    virtual ~LineStyleWindow();
+    virtual ~LineStyleWindow() {}
     LineStyleWindow(const LineStyleWindow&);
     LineStyleWindow& operator=(const LineStyleWindow&);
 };
@@ -35,138 +35,120 @@ LineStyleWindow *LineStyleWindow::Instance()
 LineStyleWindow::LineStyleWindow()
 : Window(0, 0, 0, 0)
 {
-  Label *label;
+  char *text;
 
-  label = new Label("Press F10 to quit.");
-  AddWidget(*label, 1, 1);
+  AddWidget(*(new Label("Press F10 to quit.")), 1, 1);
 
-  label = new Label("ASCII");
-  AddWidget(*label, 1, 3);
+  AddWidget(*(new Label("ASCII")), 1, 3);
+  LineStyle ascii_style(LineStyle::ASCII);
+  text = g_strdup_printf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+      ascii_style.H(),
+      ascii_style.HBegin(),
+      ascii_style.HEnd(),
+      ascii_style.HUp(),
+      ascii_style.HDown(),
+      ascii_style.V(),
+      ascii_style.VBegin(),
+      ascii_style.VEnd(),
+      ascii_style.VLeft(),
+      ascii_style.VRight(),
+      ascii_style.Cross(),
+      ascii_style.CornerTL(),
+      ascii_style.CornerTR(),
+      ascii_style.CornerBL(),
+      ascii_style.CornerBR());
+  AddWidget(*(new Label(text)), 1, 4);
+  g_free(text);
 
-  label = new Label("ASCII rounded");
-  AddWidget(*label, 1, 6);
+  AddWidget(*(new Label("ASCII rounded")), 1, 6);
+  LineStyle ascii_rounded_style(LineStyle::ASCII_ROUNDED);
+  text = g_strdup_printf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+      ascii_rounded_style.H(),
+      ascii_rounded_style.HBegin(),
+      ascii_rounded_style.HEnd(),
+      ascii_rounded_style.HUp(),
+      ascii_rounded_style.HDown(),
+      ascii_rounded_style.V(),
+      ascii_rounded_style.VBegin(),
+      ascii_rounded_style.VEnd(),
+      ascii_rounded_style.VLeft(),
+      ascii_rounded_style.VRight(),
+      ascii_rounded_style.Cross(),
+      ascii_rounded_style.CornerTL(),
+      ascii_rounded_style.CornerTR(),
+      ascii_rounded_style.CornerBL(),
+      ascii_rounded_style.CornerBR());
+  AddWidget(*(new Label(text)), 1, 7);
+  g_free(text);
 
-  label = new Label("light");
-  AddWidget(*label, 1, 9);
+  AddWidget(*(new Label("light")), 1, 9);
+  LineStyle light_style(LineStyle::LIGHT);
+  text = g_strdup_printf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+      light_style.H(),
+      light_style.HBegin(),
+      light_style.HEnd(),
+      light_style.HUp(),
+      light_style.HDown(),
+      light_style.V(),
+      light_style.VBegin(),
+      light_style.VEnd(),
+      light_style.VLeft(),
+      light_style.VRight(),
+      light_style.Cross(),
+      light_style.CornerTL(),
+      light_style.CornerTR(),
+      light_style.CornerBL(),
+      light_style.CornerBR());
+  AddWidget(*(new Label(text)), 1, 10);
+  g_free(text);
 
-  label = new Label("light rounded");
-  AddWidget(*label, 1, 12);
+  AddWidget(*(new Label("light rounded")), 1, 12);
+  LineStyle light_rounded_style(LineStyle::LIGHT_ROUNDED);
+  text = g_strdup_printf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+      light_rounded_style.H(),
+      light_rounded_style.HBegin(),
+      light_rounded_style.HEnd(),
+      light_rounded_style.HUp(),
+      light_rounded_style.HDown(),
+      light_rounded_style.V(),
+      light_rounded_style.VBegin(),
+      light_rounded_style.VEnd(),
+      light_rounded_style.VLeft(),
+      light_rounded_style.VRight(),
+      light_rounded_style.Cross(),
+      light_rounded_style.CornerTL(),
+      light_rounded_style.CornerTR(),
+      light_rounded_style.CornerBL(),
+      light_rounded_style.CornerBR());
+  AddWidget(*(new Label(text)), 1, 13);
+  g_free(text);
 
-  label = new Label("heavy");
-  AddWidget(*label, 1, 15);
-}
-
-LineStyleWindow::~LineStyleWindow()
-{
+  AddWidget(*(new Label("heavy")), 1, 15);
+  LineStyle heavy_style(LineStyle::HEAVY);
+  text = g_strdup_printf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+      heavy_style.H(),
+      heavy_style.HBegin(),
+      heavy_style.HEnd(),
+      heavy_style.HUp(),
+      heavy_style.HDown(),
+      heavy_style.V(),
+      heavy_style.VBegin(),
+      heavy_style.VEnd(),
+      heavy_style.VLeft(),
+      heavy_style.VRight(),
+      heavy_style.Cross(),
+      heavy_style.CornerTL(),
+      heavy_style.CornerTR(),
+      heavy_style.CornerBL(),
+      heavy_style.CornerBR());
+  AddWidget(*(new Label(text)), 1, 16);
+  g_free(text);
 }
 
 void LineStyleWindow::ScreenResized()
 {
   MoveResize(0, 0, COREMANAGER->GetScreenWidth(),
       COREMANAGER->GetScreenHeight());
-}
-
-void LineStyleWindow::Draw()
-{
-  LineStyle ascii_style(LineStyle::ASCII);
-  LineStyle ascii_rounded_style(LineStyle::ASCII_ROUNDED);
-  LineStyle light_style(LineStyle::LIGHT);
-  LineStyle light_rounded_style(LineStyle::LIGHT_ROUNDED);
-  LineStyle heavy_style(LineStyle::HEAVY);
-
-  int i;
-
-  // ASCII
-  i = 2;
-  area->mvaddstring(i++, 5, 1, ascii_style.H());
-  area->mvaddstring(i++, 5, 1, ascii_style.HBegin());
-  area->mvaddstring(i++, 5, 1, ascii_style.HEnd());
-  area->mvaddstring(i++, 5, 1, ascii_style.HUp());
-  area->mvaddstring(i++, 5, 1, ascii_style.HDown());
-  area->mvaddstring(i++, 5, 1, ascii_style.V());
-  area->mvaddstring(i++, 5, 1, ascii_style.VBegin());
-  area->mvaddstring(i++, 5, 1, ascii_style.VEnd());
-  area->mvaddstring(i++, 5, 1, ascii_style.VLeft());
-  area->mvaddstring(i++, 5, 1, ascii_style.VRight());
-  area->mvaddstring(i++, 5, 1, ascii_style.Cross());
-  area->mvaddstring(i++, 5, 1, ascii_style.CornerTL());
-  area->mvaddstring(i++, 5, 1, ascii_style.CornerTR());
-  area->mvaddstring(i++, 5, 1, ascii_style.CornerBL());
-  area->mvaddstring(i++, 5, 1, ascii_style.CornerBR());
-
-  // ASCII rounded
-  i = 2;
-  area->mvaddstring(i++, 8, 1, ascii_rounded_style.H());
-  area->mvaddstring(i++, 8, 1, ascii_rounded_style.HBegin());
-  area->mvaddstring(i++, 8, 1, ascii_rounded_style.HEnd());
-  area->mvaddstring(i++, 8, 1, ascii_rounded_style.HUp());
-  area->mvaddstring(i++, 8, 1, ascii_rounded_style.HDown());
-  area->mvaddstring(i++, 8, 1, ascii_rounded_style.V());
-  area->mvaddstring(i++, 8, 1, ascii_rounded_style.VBegin());
-  area->mvaddstring(i++, 8, 1, ascii_rounded_style.VEnd());
-  area->mvaddstring(i++, 8, 1, ascii_rounded_style.VLeft());
-  area->mvaddstring(i++, 8, 1, ascii_rounded_style.VRight());
-  area->mvaddstring(i++, 8, 1, ascii_rounded_style.Cross());
-  area->mvaddstring(i++, 8, 1, ascii_rounded_style.CornerTL());
-  area->mvaddstring(i++, 8, 1, ascii_rounded_style.CornerTR());
-  area->mvaddstring(i++, 8, 1, ascii_rounded_style.CornerBL());
-  area->mvaddstring(i++, 8, 1, ascii_rounded_style.CornerBR());
-
-  // light
-  i = 2;
-  area->mvaddstring(i++, 11, 1, light_style.H());
-  area->mvaddstring(i++, 11, 1, light_style.HBegin());
-  area->mvaddstring(i++, 11, 1, light_style.HEnd());
-  area->mvaddstring(i++, 11, 1, light_style.HUp());
-  area->mvaddstring(i++, 11, 1, light_style.HDown());
-  area->mvaddstring(i++, 11, 1, light_style.V());
-  area->mvaddstring(i++, 11, 1, light_style.VBegin());
-  area->mvaddstring(i++, 11, 1, light_style.VEnd());
-  area->mvaddstring(i++, 11, 1, light_style.VLeft());
-  area->mvaddstring(i++, 11, 1, light_style.VRight());
-  area->mvaddstring(i++, 11, 1, light_style.Cross());
-  area->mvaddstring(i++, 11, 1, light_style.CornerTL());
-  area->mvaddstring(i++, 11, 1, light_style.CornerTR());
-  area->mvaddstring(i++, 11, 1, light_style.CornerBL());
-  area->mvaddstring(i++, 11, 1, light_style.CornerBR());
-
-  // light rounded
-  i = 2;
-  area->mvaddstring(i++, 14, 1, light_rounded_style.H());
-  area->mvaddstring(i++, 14, 1, light_rounded_style.HBegin());
-  area->mvaddstring(i++, 14, 1, light_rounded_style.HEnd());
-  area->mvaddstring(i++, 14, 1, light_rounded_style.HUp());
-  area->mvaddstring(i++, 14, 1, light_rounded_style.HDown());
-  area->mvaddstring(i++, 14, 1, light_rounded_style.V());
-  area->mvaddstring(i++, 14, 1, light_rounded_style.VBegin());
-  area->mvaddstring(i++, 14, 1, light_rounded_style.VEnd());
-  area->mvaddstring(i++, 14, 1, light_rounded_style.VLeft());
-  area->mvaddstring(i++, 14, 1, light_rounded_style.VRight());
-  area->mvaddstring(i++, 14, 1, light_rounded_style.Cross());
-  area->mvaddstring(i++, 14, 1, light_rounded_style.CornerTL());
-  area->mvaddstring(i++, 14, 1, light_rounded_style.CornerTR());
-  area->mvaddstring(i++, 14, 1, light_rounded_style.CornerBL());
-  area->mvaddstring(i++, 14, 1, light_rounded_style.CornerBR());
-
-  // heavy
-  i = 2;
-  area->mvaddstring(i++, 17, 1, heavy_style.H());
-  area->mvaddstring(i++, 17, 1, heavy_style.HBegin());
-  area->mvaddstring(i++, 17, 1, heavy_style.HEnd());
-  area->mvaddstring(i++, 17, 1, heavy_style.HUp());
-  area->mvaddstring(i++, 17, 1, heavy_style.HDown());
-  area->mvaddstring(i++, 17, 1, heavy_style.V());
-  area->mvaddstring(i++, 17, 1, heavy_style.VBegin());
-  area->mvaddstring(i++, 17, 1, heavy_style.VEnd());
-  area->mvaddstring(i++, 17, 1, heavy_style.VLeft());
-  area->mvaddstring(i++, 17, 1, heavy_style.VRight());
-  area->mvaddstring(i++, 17, 1, heavy_style.Cross());
-  area->mvaddstring(i++, 17, 1, heavy_style.CornerTL());
-  area->mvaddstring(i++, 17, 1, heavy_style.CornerTR());
-  area->mvaddstring(i++, 17, 1, heavy_style.CornerBL());
-  area->mvaddstring(i++, 17, 1, heavy_style.CornerBR());
-
-  Window::Draw();
 }
 
 // TestApp class
@@ -195,10 +177,6 @@ class TestApp
     TestApp(const TestApp&);
     TestApp& operator=(const TestApp&);
     virtual ~TestApp() {}
-
-    DECLARE_SIG_REGISTERKEYS();
-    static bool RegisterKeys();
-    void DeclareBindables();
 };
 
 TestApp *TestApp::Instance()
@@ -214,7 +192,10 @@ TestApp::TestApp()
 
   g_log_set_default_handler(g_log_func_, this);
 
-  DeclareBindables();
+  DeclareBindable(CONTEXT_TESTAPP, "quit", sigc::mem_fun(mngr,
+        &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
+  KEYCONFIG->RegisterKeyDef(CONTEXT_TESTAPP, "quit",
+      Keys::FunctionTermKey(10));
 }
 
 void TestApp::Run()
@@ -225,27 +206,12 @@ void TestApp::Run()
   mngr->StartMainLoop();
 }
 
-void TestApp::DeclareBindables()
-{
-  DeclareBindable(CONTEXT_TESTAPP, "quit", sigc::mem_fun(mngr,
-        &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
-}
-
-DEFINE_SIG_REGISTERKEYS(TestApp, RegisterKeys);
-bool TestApp::RegisterKeys()
-{
-  RegisterKeyDef(CONTEXT_TESTAPP, "quit", "Quit TestApp.",
-      Keys::FunctionTermKey(10));
-  return true;
-}
-
 // main function
 int main()
 {
   setlocale(LC_ALL, "");
 
   TestApp *app = TestApp::Instance();
-
   app->Run();
 
   return 0;

@@ -1,9 +1,10 @@
-#include <cppconsui/CoreManager.h>
-#include <cppconsui/Window.h>
-#include <cppconsui/Label.h>
 #include <cppconsui/Button.h>
-#include <cppconsui/ScrollPane.h>
+#include <cppconsui/CoreManager.h>
+#include <cppconsui/KeyConfig.h>
 #include <cppconsui/Keys.h>
+#include <cppconsui/Label.h>
+#include <cppconsui/ScrollPane.h>
+#include <cppconsui/Window.h>
 
 static const char *pic[] =
 {
@@ -49,15 +50,23 @@ MyScrollPane::MyScrollPane(int w, int h, int scrollw, int scrollh)
 
 void MyScrollPane::Draw()
 {
-  if (!area || !scrollarea)
+  RealUpdateArea();
+  RealUpdateVirtualArea();
+
+  if (!area) {
+    // scrollpane will clear the scroll (real) area
+    ScrollPane::Draw();
     return;
+  }
+
+  area->fill(GetColorPair("container", "background"));
 
   int real_height = area->getmaxy();
   for (int i = 0; i < real_height && i < (int) (sizeof(pic) / sizeof(pic[0]));
       i++)
     area->mvaddstring(0, i, pic[i]);
 
-  ScrollPane::Draw();
+  ScrollPane::DrawEx(false);
 }
 
 // ScrollPaneWindow class
@@ -88,10 +97,6 @@ class ScrollPaneWindow
     void ScrollDown();
     void ScrollLeft();
     void ScrollRight();
-
-    DECLARE_SIG_REGISTERKEYS();
-    static bool RegisterKeys();
-    void DeclareBindables();
 };
 
 ScrollPaneWindow *ScrollPaneWindow::Instance()
@@ -109,7 +114,23 @@ ScrollPaneWindow::ScrollPaneWindow()
   pane = new MyScrollPane(20, 10, 111, 23);
   AddWidget(*pane, 1, 4);
 
-  DeclareBindables();
+  DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-up", sigc::mem_fun(this,
+        &ScrollPaneWindow::ScrollUp), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-down", sigc::mem_fun(this,
+        &ScrollPaneWindow::ScrollDown), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-left", sigc::mem_fun(this,
+        &ScrollPaneWindow::ScrollLeft), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-right",
+      sigc::mem_fun(this, &ScrollPaneWindow::ScrollRight),
+      InputProcessor::BINDABLE_NORMAL);
+  KEYCONFIG->RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-up",
+      Keys::UnicodeTermKey("w"));
+  KEYCONFIG->RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-down",
+      Keys::UnicodeTermKey("s"));
+  KEYCONFIG->RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-left",
+      Keys::UnicodeTermKey("a"));
+  KEYCONFIG->RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-right",
+      Keys::UnicodeTermKey("d"));
 }
 
 void ScrollPaneWindow::ScrollUp()
@@ -134,33 +155,6 @@ void ScrollPaneWindow::ScrollRight()
 {
   pane->AdjustScroll(pane->GetScrollPositionX() + 1,
       pane->GetScrollPositionY());
-}
-
-void ScrollPaneWindow::DeclareBindables()
-{
-  DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-up", sigc::mem_fun(this,
-        &ScrollPaneWindow::ScrollUp), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-down", sigc::mem_fun(this,
-        &ScrollPaneWindow::ScrollDown), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-left", sigc::mem_fun(this,
-        &ScrollPaneWindow::ScrollLeft), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-right",
-      sigc::mem_fun(this, &ScrollPaneWindow::ScrollRight),
-      InputProcessor::BINDABLE_NORMAL);
-}
-
-DEFINE_SIG_REGISTERKEYS(ScrollPaneWindow, RegisterKeys);
-bool ScrollPaneWindow::RegisterKeys()
-{
-  RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-up", "Scroll up.",
-      Keys::UnicodeTermKey("w"));
-  RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-down", "Scroll down.",
-      Keys::UnicodeTermKey("s"));
-  RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-left", "Scroll left.",
-      Keys::UnicodeTermKey("a"));
-  RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-right", "Scroll right.",
-      Keys::UnicodeTermKey("d"));
-  return true;
 }
 
 void ScrollPaneWindow::ScreenResized()
@@ -195,10 +189,6 @@ class TestApp
     TestApp(const TestApp&);
     TestApp& operator=(const TestApp&);
     virtual ~TestApp() {}
-
-    DECLARE_SIG_REGISTERKEYS();
-    static bool RegisterKeys();
-    void DeclareBindables();
 };
 
 TestApp *TestApp::Instance()
@@ -214,7 +204,10 @@ TestApp::TestApp()
 
   g_log_set_default_handler(g_log_func_, this);
 
-  DeclareBindables();
+  DeclareBindable(CONTEXT_TESTAPP, "quit", sigc::mem_fun(mngr,
+        &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
+  KEYCONFIG->RegisterKeyDef(CONTEXT_TESTAPP, "quit",
+      Keys::FunctionTermKey(10));
 }
 
 void TestApp::Run()
@@ -225,27 +218,12 @@ void TestApp::Run()
   mngr->StartMainLoop();
 }
 
-void TestApp::DeclareBindables()
-{
-  DeclareBindable(CONTEXT_TESTAPP, "quit", sigc::mem_fun(mngr,
-        &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
-}
-
-DEFINE_SIG_REGISTERKEYS(TestApp, RegisterKeys);
-bool TestApp::RegisterKeys()
-{
-  RegisterKeyDef(CONTEXT_TESTAPP, "quit", "Quit TestApp.",
-      Keys::FunctionTermKey(10));
-  return true;
-}
-
 // main function
 int main()
 {
   setlocale(LC_ALL, "");
 
   TestApp *app = TestApp::Instance();
-
   app->Run();
 
   return 0;

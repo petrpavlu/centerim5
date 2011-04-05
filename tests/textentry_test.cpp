@@ -1,9 +1,10 @@
 #include <cppconsui/CoreManager.h>
-#include <cppconsui/Window.h>
-#include <cppconsui/Label.h>
-#include <cppconsui/TextEntry.h>
+#include <cppconsui/KeyConfig.h>
 #include <cppconsui/Keys.h>
+#include <cppconsui/Label.h>
 #include <cppconsui/Panel.h>
+#include <cppconsui/TextEntry.h>
+#include <cppconsui/Window.h>
 
 // TextEntryWindow class
 class TextEntryWindow
@@ -92,10 +93,6 @@ class TestApp
     TestApp(const TestApp&);
     TestApp& operator=(const TestApp&);
     virtual ~TestApp() {}
-
-    DECLARE_SIG_REGISTERKEYS();
-    static bool RegisterKeys();
-    void DeclareBindables();
 };
 
 TestApp *TestApp::Instance()
@@ -111,7 +108,10 @@ TestApp::TestApp()
 
   g_log_set_default_handler(g_log_func_, this);
 
-  DeclareBindables();
+  DeclareBindable(CONTEXT_TESTAPP, "quit", sigc::mem_fun(mngr,
+        &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
+  KEYCONFIG->RegisterKeyDef(CONTEXT_TESTAPP, "quit",
+      Keys::FunctionTermKey(10));
 }
 
 void TestApp::Run()
@@ -122,27 +122,12 @@ void TestApp::Run()
   mngr->StartMainLoop();
 }
 
-void TestApp::DeclareBindables()
-{
-  DeclareBindable(CONTEXT_TESTAPP, "quit", sigc::mem_fun(mngr,
-        &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
-}
-
-DEFINE_SIG_REGISTERKEYS(TestApp, RegisterKeys);
-bool TestApp::RegisterKeys()
-{
-  RegisterKeyDef(CONTEXT_TESTAPP, "quit", "Quit TestApp.",
-      Keys::FunctionTermKey(10));
-  return true;
-}
-
 // main function
 int main()
 {
   setlocale(LC_ALL, "");
 
   TestApp *app = TestApp::Instance();
-
   app->Run();
 
   return 0;
