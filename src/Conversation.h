@@ -43,6 +43,9 @@ public:
   Conversation(PurpleConversation *conv_);
   virtual ~Conversation();
 
+  // InputProcessor
+  virtual bool ProcessInput(const TermKeyKey& key);
+
   // Widget
   virtual void MoveResize(int newx, int newy, int neww, int newh);
 

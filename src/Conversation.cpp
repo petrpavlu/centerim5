@@ -52,6 +52,7 @@ Conversation::Conversation(PurpleConversation *conv_)
   AddWidget(*view, 1, 0);
   AddWidget(*input, 1, 1);
   AddWidget(*line, 0, height);
+  input->GrabFocus();
 
   // open logfile
   BuildLogFilename();
@@ -123,6 +124,12 @@ void Conversation::BuildLogFilename()
   g_free(acct_name);
 }
 
+bool Conversation::ProcessInput(const TermKeyKey& key)
+{
+  if (Window::ProcessInput(key))
+    return true;
+  return view->ProcessInput(key);
+}
 
 void Conversation::MoveResize(int newx, int newy, int neww, int newh)
 {
