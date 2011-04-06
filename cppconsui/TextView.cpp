@@ -128,9 +128,11 @@ void TextView::Draw()
 
   area->attroff(attrs);
 
+  /*
   char pos[128];
   g_snprintf(pos, sizeof(pos), "%d/%d ", view_top, screen_lines.size());
   area->mvaddstring(0, 0, pos);
+  */
 }
 
 void TextView::Append(const char *text, int color)
