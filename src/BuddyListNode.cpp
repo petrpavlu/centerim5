@@ -179,10 +179,15 @@ void BuddyListBuddy::Update()
 {
   BuddyListNode::Update();
 
-  char *text = g_strdup_printf("%s %s", GetBuddyStatus(buddy),
-      purple_buddy_get_alias(buddy));
-  SetText(text);
-  g_free(text);
+  const char *status = GetBuddyStatus(buddy);
+  const char *alias = purple_buddy_get_alias(buddy);
+  if (*status) {
+    char *text = g_strdup_printf("%s %s", status, alias);
+    SetText(text);
+    g_free(text);
+  }
+  else
+    SetText(alias);
 
   SortIn();
 
@@ -271,10 +276,15 @@ void BuddyListContact::Update()
   BuddyListNode::Update();
 
   PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
-  char *text = g_strdup_printf("%s %s", GetBuddyStatus(buddy),
-      purple_contact_get_alias(contact));
-  SetText(text);
-  g_free(text);
+  const char *status = GetBuddyStatus(buddy);
+  const char *alias = purple_buddy_get_alias(buddy);
+  if (*status) {
+    char *text = g_strdup_printf("%s %s", status, alias);
+    SetText(text);
+    g_free(text);
+  }
+  else
+    SetText(alias);
 
   SortIn();
 
