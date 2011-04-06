@@ -43,13 +43,13 @@ public:
   Conversation(PurpleConversation *conv_);
   virtual ~Conversation();
 
+  // Widget
+  virtual void MoveResize(int newx, int newy, int neww, int newh);
+
   // FreeWindow
   virtual void Close();
   virtual void ScreenResized();
   virtual void Show();
-
-  // Widget
-  virtual void MoveResize(int newx, int newy, int neww, int newh);
 
   void Receive(const char *name, const char *alias, const char *message,
     PurpleMessageFlags flags, time_t mtime);
@@ -79,12 +79,10 @@ private:
   Conversation(const Conversation&);
   Conversation& operator=(const Conversation&);
 
+  virtual void ActionSend() = 0;
+
   void DestroyPurpleConversation(PurpleConversation *conv);
-
   void BuildLogFilename();
-
-  virtual void Send() = 0;
-
   void DeclareBindables();
 };
 
@@ -105,7 +103,7 @@ class ConversationChat
     ConversationChat& operator=(const ConversationChat&);
 
     // Conversation
-    virtual void Send();
+    virtual void ActionSend();
 
     PurpleConvChat* convchat;
 };
@@ -127,7 +125,7 @@ class ConversationIm
     ConversationIm& operator=(const ConversationIm&);
 
     // Conversation
-    virtual void Send();
+    virtual void ActionSend();
 
     PurpleConvIm* convim;
 };

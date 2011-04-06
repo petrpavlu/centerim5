@@ -79,16 +79,16 @@ Conversation::~Conversation()
     g_io_channel_unref(logfile);
 }
 
-void Conversation::DestroyPurpleConversation(PurpleConversation *conv)
-{
-  purple_conversation_destroy(conv);
-}
-
 void Conversation::DeclareBindables()
 {
   DeclareBindable("conversation", "send",
-      sigc::mem_fun(this, &Conversation::Send),
+      sigc::mem_fun(this, &Conversation::ActionSend),
       InputProcessor::BINDABLE_OVERRIDE);
+}
+
+void Conversation::DestroyPurpleConversation(PurpleConversation *conv)
+{
+  purple_conversation_destroy(conv);
 }
 
 void Conversation::BuildLogFilename()
@@ -123,6 +123,27 @@ void Conversation::BuildLogFilename()
   g_free(acct_name);
 }
 
+
+void Conversation::MoveResize(int newx, int newy, int neww, int newh)
+{
+  Window::MoveResize(newx, newy, neww, newh);
+
+  int percentage = purple_prefs_get_int(CONF_PREFIX "/chat/partitioning");
+  percentage = CLAMP(percentage, 0, 100);
+
+  int view_height = (height * percentage) / 100;
+  if (view_height < 1)
+    view_height = 1;
+
+  int input_height = height - view_height - 1;
+  if (input_height < 1)
+    input_height = 1;
+
+  view->MoveResize(1, 0, width - 2, view_height);
+  input->MoveResize(1, view_height + 1, width - 2, input_height);
+  line->MoveResize(0, view_height, width, 1);
+}
+
 void Conversation::Close()
 {
   /* Let libpurple and Conversations know that this conversation should be
@@ -151,26 +172,6 @@ void Conversation::Show()
     status = STATUS_ACTIVE;
   }
   Window::Show();
-}
-
-void Conversation::MoveResize(int newx, int newy, int neww, int newh)
-{
-  Window::MoveResize(newx, newy, neww, newh);
-
-  int percentage = purple_prefs_get_int(CONF_PREFIX "/chat/partitioning");
-  percentage = CLAMP(percentage, 0, 100);
-
-  int view_height = (height * percentage) / 100;
-  if (view_height < 1)
-    view_height = 1;
-
-  int input_height = height - view_height - 1;
-  if (input_height < 1)
-    input_height = 1;
-
-  view->MoveResize(1, 0, width - 2, view_height);
-  input->MoveResize(1, view_height + 1, width - 2, input_height);
-  line->MoveResize(0, view_height, width, 1);
 }
 
 void Conversation::Receive(const char *name, const char *alias, const char *message,
@@ -274,7 +275,7 @@ void ConversationChat::LoadHistory()
   g_list_free(logs);
 }
 
-void ConversationChat::Send()
+void ConversationChat::ActionSend()
 {
 }
 
@@ -371,7 +372,7 @@ void ConversationIm::LoadHistory()
   g_io_channel_unref(chan);
 }
 
-void ConversationIm::Send()
+void ConversationIm::ActionSend()
 {
   char *str = input->AsString("<br/>");
   if (str) {
