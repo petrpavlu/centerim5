@@ -39,16 +39,16 @@ public:
   TextEdit(int w, int h);
   virtual ~TextEdit();
 
+  // Widget
+  virtual void Draw();
+  virtual bool ProcessInputText(const TermKeyKey &key);
+
   void Clear();
   /**
    * Returns inserted text. Lines are separated by a given separator. Caller
    * is responsible for freeing returned data.
    */
   char *AsString(const char *separator = "\n");
-
-  // Widget
-  virtual void Draw();
-  virtual bool ProcessInputText(const TermKeyKey &key);
 
   sigc::signal<void, TextEdit&> signal_text_changed;
 

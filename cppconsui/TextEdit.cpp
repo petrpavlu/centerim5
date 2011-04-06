@@ -135,6 +135,57 @@ void TextEdit::DeclareBindables()
   */
 }
 
+void TextEdit::Draw()
+{
+  int origw = area ? area->getmaxx() : 0;
+  RealUpdateArea();
+
+  if (!area)
+    return;
+
+  if (origw != area->getmaxx()) {
+    UpdateScreenLines();
+    UpdateScreenCursor();
+  }
+
+  area->erase();
+
+  if (screen_lines.empty())
+    return;
+
+  int realh = area->getmaxy();
+
+  std::vector<ScreenLine *>::iterator i;
+  int j;
+  for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end()
+      && j < realh; i++, j++) {
+    /// @todo
+    if (gapstart >= (*i)->start && gapstart < (*i)->end) {
+      int p;
+      p = area->mvaddstring(0, j, (*i)->width, (*i)->start, gapstart);
+      area->mvaddstring(p, j, (*i)->width - p, gapend);
+    }
+    else
+      area->mvaddstring(0, j, (*i)->width, (*i)->start);
+  }
+
+  if (has_focus) {
+    const char *line = screen_lines[current_sc_line]->start;
+    int sc_x = Width(line, current_sc_linepos);
+    int sc_y = current_sc_line - view_top;
+    area->mvchgat(sc_x, sc_y, 1, Curses::Attr::REVERSE, 0, NULL);
+  }
+}
+
+bool TextEdit::ProcessInputText(const TermKeyKey &key)
+{
+  if (editable) {
+    InsertTextAtCursor(key.utf8);
+    return true;
+  }
+  return false;
+}
+
 void TextEdit::Clear()
 {
   InitBuffer(gap_size);
@@ -188,57 +239,6 @@ char *TextEdit::AsString(const char *separator)
   }
   *r = '\0';
   return res;
-}
-
-void TextEdit::Draw()
-{
-  int origw = area ? area->getmaxx() : 0;
-  RealUpdateArea();
-
-  if (!area)
-    return;
-
-  if (origw != area->getmaxx()) {
-    UpdateScreenLines();
-    UpdateScreenCursor();
-  }
-
-  area->erase();
-
-  if (screen_lines.empty())
-    return;
-
-  int realh = area->getmaxy();
-
-  std::vector<ScreenLine *>::iterator i;
-  int j;
-  for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end()
-      && j < realh; i++, j++) {
-    /// @todo
-    if (gapstart >= (*i)->start && gapstart < (*i)->end) {
-      int p;
-      p = area->mvaddstring(0, j, (*i)->width, (*i)->start, gapstart);
-      area->mvaddstring(p, j, (*i)->width - p, gapend);
-    }
-    else
-      area->mvaddstring(0, j, (*i)->width, (*i)->start);
-  }
-
-  if (has_focus) {
-    const char *line = screen_lines[current_sc_line]->start;
-    int sc_x = Width(line, current_sc_linepos);
-    int sc_y = current_sc_line - view_top;
-    area->mvchgat(sc_x, sc_y, 1, Curses::Attr::REVERSE, 0, NULL);
-  }
-}
-
-bool TextEdit::ProcessInputText(const TermKeyKey &key)
-{
-  if (editable) {
-    InsertTextAtCursor(key.utf8);
-    return true;
-  }
-  return false;
 }
 
 void TextEdit::InitBuffer(int size)
