@@ -164,6 +164,11 @@ void KeyConfig::Register()
   RegisterKeyDef("textentry", "activate",
       Keys::SymbolTermKey(TERMKEY_SYM_ENTER));
 
+  RegisterKeyDef("textview", "scroll-up",
+      Keys::SymbolTermKey(TERMKEY_SYM_PAGEUP));
+  RegisterKeyDef("textview", "scroll-down",
+      Keys::SymbolTermKey(TERMKEY_SYM_PAGEDOWN));
+
   RegisterKeyDef("treeview", "fold-subtree", Keys::UnicodeTermKey("-"));
   RegisterKeyDef("treeview", "unfold-subtree", Keys::UnicodeTermKey("+"));
 }

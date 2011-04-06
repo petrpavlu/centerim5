@@ -31,12 +31,106 @@
 
 TextView::TextView(int w, int h, bool autoscroll_)
 : Widget(w, h), view_top(0), autoscroll(autoscroll_)
+, autoscroll_suspended(false), scroll(0)
 {
+  can_focus = true;
+  DeclareBindables();
 }
 
 TextView::~TextView()
 {
   Clear();
+}
+
+void TextView::DeclareBindables()
+{
+  DeclareBindable("textview", "scroll-up",
+      sigc::bind(sigc::mem_fun(this, &TextView::ActionScroll), -1),
+      InputProcessor::BINDABLE_NORMAL);
+
+  DeclareBindable("textview", "scroll-down",
+      sigc::bind(sigc::mem_fun(this, &TextView::ActionScroll), 1),
+      InputProcessor::BINDABLE_NORMAL);
+}
+
+void TextView::Draw()
+{
+  int origw = area ? area->getmaxx() : 0;
+  RealUpdateArea();
+
+  if (!area)
+    return;
+
+  if (lines.empty()) {
+    area->erase();
+    return;
+  }
+
+  if (origw != area->getmaxx()) {
+    // delete all screen lines
+    for (ScreenLines::iterator i = screen_lines.begin();
+        i != screen_lines.end(); i++)
+      delete *i;
+    screen_lines.clear();
+
+    // @todo Save and restore scroll afterwards.
+    for (int i = 0, advice = 0; i < (int) lines.size(); i++)
+      advice = UpdateScreenLines(i, advice);
+  }
+
+  area->erase();
+
+  int realh = area->getmaxy();
+
+  if (scroll) {
+    view_top = view_top + scroll * realh / 2;
+    scroll = 0;
+    // fix the scroll if the text goes outside the visible area
+    if (view_top > (int) screen_lines.size() - realh) {
+      view_top = screen_lines.size() - realh;
+    }
+    if (view_top < 0)
+      view_top = 0;
+
+    autoscroll_suspended = (int) screen_lines.size() > view_top + realh;
+  }
+
+  if (autoscroll && !autoscroll_suspended) {
+    view_top = screen_lines.size() - realh;
+    if (view_top < 0)
+      view_top = 0;
+  }
+
+  int attrs = GetColorPair("textview", "text");
+  area->attron(attrs);
+
+  ScreenLines::iterator i;
+  int j;
+  for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end()
+      && j < realh; i++, j++) {
+    int attrs2 = 0;
+    if ((*i)->parent->color) {
+      char color[32];
+      int w = g_snprintf(color, sizeof(color), "color%d", (*i)->parent->color);
+      g_assert((int) sizeof(color) >= w); // just in case
+      attrs2 = GetColorPair("textview", color);
+      area->attroff(attrs);
+      area->attron(attrs2);
+    }
+
+    area->mvaddstring(0, j, (*i)->width, (*i)->text);
+
+    if ((*i)->parent->color) {
+      area->attroff(attrs2);
+      area->attron(attrs);
+    }
+  }
+
+  area->attroff(attrs);
+
+  char pos[128];
+  g_snprintf(pos, sizeof(pos), "%d/%d ", view_top, screen_lines.size());
+  area->mvaddstring(0, 0, pos);
 }
 
 void TextView::Append(const char *text, int color)
@@ -163,60 +257,13 @@ int TextView::GetLinesNumber() const
   return lines.size();
 }
 
-void TextView::Draw()
+void TextView::SetAutoScroll(bool enabled)
 {
-  int origw = area ? area->getmaxx() : 0;
-  RealUpdateArea();
-
-  if (!area || lines.empty())
+  if (autoscroll == enabled)
     return;
 
-  if (origw != area->getmaxx()) {
-    // delete all screen lines
-    for (ScreenLines::iterator i = screen_lines.begin();
-        i != screen_lines.end(); i++)
-      delete *i;
-    screen_lines.clear();
-
-    for (int i = 0, advice = 0; i < (int) lines.size(); i++)
-      advice = UpdateScreenLines(i, advice);
-  }
-
-  area->erase();
-
-  int realh = area->getmaxy();
-
-  if (autoscroll && screen_lines.size()) {
-    view_top = screen_lines.size() - area->getmaxy();
-    if (view_top < 0)
-      view_top = 0;
-  }
-
-  int attrs = GetColorPair("textview", "text");
-  area->attron(attrs);
-
-  ScreenLines::iterator i;
-  int j;
-  for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end()
-      && j < realh; i++, j++) {
-    int attrs2 = 0;
-    if ((*i)->parent->color) {
-      char *color = g_strdup_printf("color%d", (*i)->parent->color);
-      attrs2 = GetColorPair("textview", color);
-      g_free(color);
-      area->attroff(attrs);
-      area->attron(attrs2);
-    }
-
-    area->mvaddstring(0, j, (*i)->width, (*i)->text);
-
-    if (attrs2) {
-      area->attroff(attrs2);
-      area->attron(attrs);
-    }
-  }
-
-  area->attroff(attrs);
+  autoscroll = enabled;
+  Redraw();
 }
 
 const char *TextView::ProceedLine(const char *text, int area_width, int *res_width) const
@@ -346,6 +393,12 @@ int TextView::EraseScreenLines(int line_num, int start, int *deleted)
     *deleted = end - begin;
 
   return i;
+}
+
+void TextView::ActionScroll(int direction)
+{
+  scroll += direction;
+  Redraw();
 }
 
 TextView::Line::Line(const char *text_, int bytes, int color_)

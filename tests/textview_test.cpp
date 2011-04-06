@@ -1,3 +1,4 @@
+#include <cppconsui/ColorScheme.h>
 #include <cppconsui/CoreManager.h>
 #include <cppconsui/KeyConfig.h>
 #include <cppconsui/Keys.h>
@@ -34,6 +35,11 @@ TextViewWindow *TextViewWindow::Instance()
 TextViewWindow::TextViewWindow()
 : Window(0, 0, 0, 0)
 {
+  SetColorScheme("textviewwindow");
+
+  TextView *textview = new TextView(-1, -1);
+  AddWidget(*textview, 0, 0);
+
   const gchar *long_text = "Lorem ipsum dolor sit amet, consectetur"
     "adipiscing elit. Duis dui dui, interdum eget tempor auctor, viverra"
     "suscipit velit. Phasellus vel magna odio. Duis rutrum tortor at nisi"
@@ -48,17 +54,16 @@ TextViewWindow::TextViewWindow()
     "dictum facilisis eget ac lacus. Vivamus at gravida felis. Curabitur"
     "fermentum mattis eros, ut auctor urna tincidunt vitae. Praesent"
     "tincidunt laoreet lobortis.";
+  for (int i = 0; i < 128; i++)
+    textview->Append(long_text, i % 7 + 1);
 
-  TextView *textview = new TextView(-1, -1);
-  AddWidget(*textview, 0, 0);
-  textview->Append(long_text);
-
-  char wide[13];
-  int l;
-  l = g_unichar_to_utf8(0x1100, wide);
-  l += g_unichar_to_utf8(0x40, wide + l);
-  wide[l] = '\0';
-  textview->Append(wide);
+  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color1", Curses::Color::RED, Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color2", Curses::Color::GREEN, Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color3", Curses::Color::YELLOW, Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color4", Curses::Color::BLUE, Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color5", Curses::Color::MAGENTA, Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color6", Curses::Color::CYAN, Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color7", Curses::Color::WHITE, Curses::Color::BLACK);
 }
 
 void TextViewWindow::ScreenResized()

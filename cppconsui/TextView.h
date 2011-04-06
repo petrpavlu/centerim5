@@ -42,6 +42,9 @@ public:
   TextView(int w, int h, bool autoscroll_ = false);
   virtual ~TextView();
 
+  // Widget
+  virtual void Draw();
+
   /**
    * Appends text after the last line.
    */
@@ -75,8 +78,8 @@ public:
    */
   int GetLinesNumber() const;
 
-  // Widget
-  virtual void Draw();
+  void SetAutoScroll(bool enabled);
+  bool GetAutoScroll() const { return autoscroll; }
 
 protected:
   /**
@@ -128,6 +131,8 @@ protected:
 
   int view_top;
   bool autoscroll;
+  bool autoscroll_suspended;
+  int scroll;
 
   /**
    * Array of real lines.
@@ -153,6 +158,10 @@ protected:
 private:
   TextView(const TextView &);
   TextView& operator=(const TextView&);
+
+  void ActionScroll(int direction);
+
+  void DeclareBindables();
 };
 
 #endif // __TEXTVIEW_H__
