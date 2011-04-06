@@ -68,8 +68,6 @@ GeneralMenu::GeneralMenu()
 
 void GeneralMenu::ScreenResized()
 {
-  MenuWindow::ScreenResized();
-
   Rect chat = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
   MoveResize(chat.x, chat.y, win_w, win_h);
 }

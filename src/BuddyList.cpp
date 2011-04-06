@@ -117,8 +117,6 @@ void BuddyList::Close()
 
 void BuddyList::ScreenResized()
 {
-  Window::ScreenResized();
-
   MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::BUDDY_LIST_AREA));
 }
 

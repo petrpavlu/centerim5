@@ -78,8 +78,6 @@ void Header::Finalize()
 
 void Header::ScreenResized()
 {
-  FreeWindow::ScreenResized();
-
   MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::HEADER_AREA));
 }
 

@@ -59,8 +59,6 @@ AccountStatusMenu::AccountStatusMenu()
 
 void AccountStatusMenu::ScreenResized()
 {
-  MenuWindow::ScreenResized();
-
   Rect chat = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
   Move(chat.x, chat.y);
 }
@@ -140,8 +138,6 @@ AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h,
 
 void AccountStatusMenu::StatusPopup::ScreenResized()
 {
-  MenuWindow::ScreenResized();
-
   Rect chat = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
   Move(chat.x, chat.y);
 }

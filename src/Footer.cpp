@@ -56,8 +56,6 @@ void Footer::Finalize()
 
 void Footer::ScreenResized()
 {
-  FreeWindow::ScreenResized();
-
   MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::FOOTER_AREA));
 }
 

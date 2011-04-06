@@ -39,6 +39,8 @@ FreeWindow::FreeWindow(int x, int y, int w, int h, Type t)
   UpdateArea();
 
   COREMANAGER->signal_resize.connect(sigc::mem_fun(this,
+        &FreeWindow::UpdateArea));
+  COREMANAGER->signal_resize.connect(sigc::mem_fun(this,
         &FreeWindow::ScreenResized));
 
   DeclareBindables();
@@ -152,11 +154,6 @@ void FreeWindow::Close()
 {
   signal_close(*this);
   delete this;
-}
-
-void FreeWindow::ScreenResized()
-{
-  UpdateArea();
 }
 
 void FreeWindow::RealUpdateArea()

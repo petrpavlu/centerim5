@@ -68,8 +68,10 @@ public:
   virtual void SetType(Type t) { type = t; }
   virtual Type GetType() { return type; }
 
-  /** this function is called when the screen is resized */
-  virtual void ScreenResized();
+  /**
+   * This function is called when the screen is resized.
+   */
+  virtual void ScreenResized() {}
 
   sigc::signal<void, FreeWindow&> signal_close;
   sigc::signal<void, FreeWindow&> signal_show;
