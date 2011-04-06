@@ -70,9 +70,6 @@ void MyScrollPane::Draw()
 }
 
 // ScrollPaneWindow class
-
-#define CONTEXT_SCROLLPANEWINDOW "scrollpanewindow"
-
 class ScrollPaneWindow
 : public Window
 {
@@ -114,22 +111,22 @@ ScrollPaneWindow::ScrollPaneWindow()
   pane = new MyScrollPane(20, 10, 111, 23);
   AddWidget(*pane, 1, 4);
 
-  DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-up", sigc::mem_fun(this,
+  DeclareBindable("scrollpanewindow", "scroll-up", sigc::mem_fun(this,
         &ScrollPaneWindow::ScrollUp), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-down", sigc::mem_fun(this,
+  DeclareBindable("scrollpanewindow", "scroll-down", sigc::mem_fun(this,
         &ScrollPaneWindow::ScrollDown), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-left", sigc::mem_fun(this,
+  DeclareBindable("scrollpanewindow", "scroll-left", sigc::mem_fun(this,
         &ScrollPaneWindow::ScrollLeft), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable(CONTEXT_SCROLLPANEWINDOW, "scroll-right",
+  DeclareBindable("scrollpanewindow", "scroll-right",
       sigc::mem_fun(this, &ScrollPaneWindow::ScrollRight),
       InputProcessor::BINDABLE_NORMAL);
-  KEYCONFIG->RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-up",
+  KEYCONFIG->RegisterKeyDef("scrollpanewindow", "scroll-up",
       Keys::UnicodeTermKey("w"));
-  KEYCONFIG->RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-down",
+  KEYCONFIG->RegisterKeyDef("scrollpanewindow", "scroll-down",
       Keys::UnicodeTermKey("s"));
-  KEYCONFIG->RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-left",
+  KEYCONFIG->RegisterKeyDef("scrollpanewindow", "scroll-left",
       Keys::UnicodeTermKey("a"));
-  KEYCONFIG->RegisterKeyDef(CONTEXT_SCROLLPANEWINDOW, "scroll-right",
+  KEYCONFIG->RegisterKeyDef("scrollpanewindow", "scroll-right",
       Keys::UnicodeTermKey("d"));
 }
 
@@ -164,9 +161,6 @@ void ScrollPaneWindow::ScreenResized()
 }
 
 // TestApp class
-
-#define CONTEXT_TESTAPP "testapp"
-
 class TestApp
 : public InputProcessor
 {
@@ -204,10 +198,9 @@ TestApp::TestApp()
 
   g_log_set_default_handler(g_log_func_, this);
 
-  DeclareBindable(CONTEXT_TESTAPP, "quit", sigc::mem_fun(mngr,
+  DeclareBindable("testapp", "quit", sigc::mem_fun(mngr,
         &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
-  KEYCONFIG->RegisterKeyDef(CONTEXT_TESTAPP, "quit",
-      Keys::FunctionTermKey(10));
+  KEYCONFIG->RegisterKeyDef("testapp", "quit", Keys::FunctionTermKey(10));
 }
 
 void TestApp::Run()

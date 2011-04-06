@@ -39,9 +39,6 @@ TestWindow::TestWindow(int number, int x, int y, int w, int h)
 }
 
 // TestApp class
-
-#define CONTEXT_TESTAPP "testapp"
-
 class TestApp
 : public InputProcessor
 {
@@ -79,10 +76,9 @@ TestApp::TestApp()
 
   g_log_set_default_handler(g_log_func_, this);
 
-  DeclareBindable(CONTEXT_TESTAPP, "quit", sigc::mem_fun(mngr,
+  DeclareBindable("testapp", "quit", sigc::mem_fun(mngr,
         &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
-  KEYCONFIG->RegisterKeyDef(CONTEXT_TESTAPP, "quit",
-      Keys::FunctionTermKey(10));
+  KEYCONFIG->RegisterKeyDef("testapp", "quit", Keys::FunctionTermKey(10));
 }
 
 void TestApp::Run()
