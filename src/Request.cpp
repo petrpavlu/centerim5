@@ -365,19 +365,28 @@ Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,
   tree = new TreeView(AUTOSIZE, AUTOSIZE);
   lbox->AppendWidget(*tree);
 
-  for (GList *groups = purple_request_fields_get_groups(fields); groups;
-      groups = groups->next) {
+  bool grouping = true;
+  GList *groups = purple_request_fields_get_groups(fields);
+  if (!groups)
+    return;
+  if (!purple_request_field_group_get_title(
+        reinterpret_cast<PurpleRequestFieldGroup*>(groups->data))
+      && !groups->next)
+    grouping = false;
+  for (; groups; groups = groups->next) {
     PurpleRequestFieldGroup *group
       = reinterpret_cast<PurpleRequestFieldGroup*>(groups->data);
 
-    const char *title = purple_request_field_group_get_title(group);
-    if (!title)
-      title = _("Settings group");
+    TreeView::NodeReference parent = tree->GetRootNode();
+    if (grouping) {
+      const char *title = purple_request_field_group_get_title(group);
+      if (!title)
+        title = _("Settings group");
 
-    TreeView::ToggleCollapseButton *button
-      = new TreeView::ToggleCollapseButton(title);
-    TreeView::NodeReference parent = tree->AppendNode(tree->GetRootNode(),
-        *button);
+      TreeView::ToggleCollapseButton *button
+        = new TreeView::ToggleCollapseButton(title);
+      parent = tree->AppendNode(tree->GetRootNode(), *button);
+    }
 
     for (GList *gfields = purple_request_field_group_get_fields(group);
         gfields; gfields = gfields->next) {
