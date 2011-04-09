@@ -133,26 +133,8 @@ Window *Window::subpad(int begin_x, int begin_y, int ncols, int nlines)
 const char *Window::PrintChar(const char *ch, int *printed, const char *end)
 {
   /**
-   * @todo `\\v' switch is not implemented yet.
-   * @todo Optimizations (don't translate to cchar if utf8 terminal is
-   * presented, etc.)
    * @todo Error checking (setcchar).
    */
-
-  /*
-  if (*u == COLOR_SELECT_CHAR) {
-    u++;
-    if (*u & COLOR_SPECIAL) {
-      attrset(selection_color_special(selected, *u & COLOR_MASK));
-    } else if (*u & COLOR_BOLD) {
-      attrset(selection_color(selected, *u & COLOR_MASK));
-      attron(A_BOLD);
-    } else {
-      attrset(selection_color(selected, *u & COLOR_MASK));
-    }
-    continue;
-  }
-  */
 
   g_assert(ch);
   g_assert(*ch);
@@ -209,7 +191,6 @@ int Window::mvaddstring(int x, int y, const char *str)
   g_assert(str);
 
   wmove(p->win, y, x);
-  //attrset(selection_color(selected, COLOR_STANDARD));
 
   int printed = 0;
   int p;
@@ -229,7 +210,6 @@ int Window::mvaddstring(int x, int y, int w, const char *str, const char *end)
     return 0;
 
   wmove(p->win, y, x);
-  //attrset(selection_color(selected, COLOR_STANDARD));
 
   int printed = 0;
   int p;
@@ -249,7 +229,6 @@ int Window::mvaddstring(int x, int y, const char *str, const char *end)
     return 0;
 
   wmove(p->win, y, x);
-  //attrset(selection_color(selected, COLOR_STANDARD));
 
   int printed = 0;
   int p;
@@ -258,16 +237,6 @@ int Window::mvaddstring(int x, int y, const char *str, const char *end)
     printed += p;
   }
   return printed;
-}
-
-int Window::mvaddstr(int x, int y, const char *str)
-{
-  return mvwaddstr(p->win, y, x, str);
-}
-
-int Window::mvaddnstr(int x, int y, const char *str, int n)
-{
-  return mvwaddnstr(p->win, y, x, str, n);
 }
 
 int Window::attron(int attrs)
@@ -280,30 +249,10 @@ int Window::attroff(int attrs)
   return wattroff(p->win, attrs);
 }
 
-int Window::mvchgat(int x, int y, int n, /* attr_t */ int attr, short color, const void *opts)
+int Window::mvchgat(int x, int y, int n, /* attr_t */ int attr, short color,
+    const void *opts)
 {
   return mvwchgat(p->win, y, x, n, attr, color, opts);
-}
-
-int getcolorpair(int fg, int bg)
-{
-  typedef std::map<std::pair<int, int>, int> Colors;
-  static Colors c;
-
-  Colors::const_iterator i;
-  if ((i = c.find(std::make_pair(fg, bg))) != c.end())
-    return i->second;
-
-  if ((int) c.size() >= COLOR_PAIRS) {
-    g_warning(_("Color pairs limit exceeded.\n"));
-    return 0;
-  }
-
-  if (init_pair(c.size() + 1, fg, bg) == ERR)
-    return 0;
-  int res = COLOR_PAIR(c.size() + 1);
-  c[std::make_pair(fg, bg)] = res;
-  return res;
 }
 
 int Window::fill(int attrs)
@@ -315,13 +264,11 @@ int Window::fill(int attrs)
   int h = getmaxy();
 
   for (int i = 0; i < w; i++)
-    for (int j = 0; j < h; j++)
+    for (int j = 0; j < h; j++) {
+      /* Note: mvwaddch() returns ERR here when i = w - 1 and j = h - 1
+       * because the cursor can't be wrapped to the next line. */
       mvwaddch(p->win, j, i, ' ');
-  /// @todo Function mvwaddch() returns ERR here, why?
-#if 0
-      if (mvwaddch(p->win, j, i, ' ') == ERR)
-        return ERR;
-#endif
+    }
 
   if (attroff(attrs) == ERR)
     return ERR;
@@ -332,16 +279,6 @@ int Window::fill(int attrs)
 int Window::erase()
 {
   return werase(p->win);
-}
-
-int Window::clrtoeol()
-{
-  return wclrtoeol(p->win);
-}
-
-int Window::clrtobot()
-{
-  return wclrtobot(p->win);
 }
 
 int Window::noutrefresh()
@@ -372,6 +309,49 @@ int Window::getmaxy()
   return ::getmaxy(p->win);
 }
 
+int screen_init()
+{
+  if (!::initscr())
+    return ERR;
+
+  if (::has_colors())
+    if (::start_color() == ERR)
+      return ERR;
+  if (::curs_set(0) == ERR)
+    return ERR;
+  if (::nonl() == ERR)
+    return ERR;
+  if (::raw() == ERR)
+    return ERR;
+  return OK;
+}
+
+int screen_finalize()
+{
+  return ::endwin();
+}
+
+int getcolorpair(int fg, int bg)
+{
+  typedef std::map<std::pair<int, int>, int> Colors;
+  static Colors c;
+
+  Colors::const_iterator i;
+  if ((i = c.find(std::make_pair(fg, bg))) != c.end())
+    return i->second;
+
+  if ((int) c.size() >= COLOR_PAIRS) {
+    g_warning(_("Color pairs limit exceeded.\n"));
+    return 0;
+  }
+
+  if (init_pair(c.size() + 1, fg, bg) == ERR)
+    return 0;
+  int res = COLOR_PAIR(c.size() + 1);
+  c[std::make_pair(fg, bg)] = res;
+  return res;
+}
+
 int erase()
 {
   return ::erase();
@@ -390,43 +370,6 @@ int doupdate()
 int beep()
 {
   return ::beep();
-}
-
-int initscr()
-{
-  if (::initscr())
-    return OK;
-  return ERR;
-}
-
-int endwin()
-{
-  return ::endwin();
-}
-
-bool has_colors()
-{
-  return ::has_colors();
-}
-
-int start_color()
-{
-  return ::start_color();
-}
-
-int curs_set(int visibility)
-{
-  return ::curs_set(visibility);
-}
-
-int nonl()
-{
-  return ::nonl();
-}
-
-int raw()
-{
-  return ::raw();
 }
 
 int noutrefresh()

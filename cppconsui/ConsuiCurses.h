@@ -57,30 +57,18 @@ public:
 
   virtual ~Window();
 
-  /**
-   * This functions take a formatted string and draws it on the screen. The
-   * formatting of the string happens when a '\\v' is encountered. After the
-   * '\\v' is a char, a switch in the code figures out what to do based on
-   * this. Based on giFTcurs drawing function.
-   */
   int mvaddstring(int x, int y, int w, const char *str);
   int mvaddstring(int x, int y, const char *str);
   int mvaddstring(int x, int y, int w, const char *str, const char *end);
   int mvaddstring(int x, int y, const char *str, const char *end);
 
-  // @todo remove
-  int mvaddstr(int x, int y, const char *str);
-  int mvaddnstr(int x, int y, const char *str, int n);
-
   int attron(int attrs);
   int attroff(int attrs);
-  int mvchgat(int x, int y, int n, /* attr_t */ int attr, short color, const
-      void *opts);
+  int mvchgat(int x, int y, int n, /* attr_t */ int attr, short color,
+      const void *opts);
 
   int fill(int attrs);
   int erase();
-  int clrtoeol();
-  int clrtobot();
 
   int noutrefresh();
 
@@ -128,6 +116,9 @@ struct Attr
 extern const int C_OK;
 extern const int C_ERR;
 
+int screen_init();
+int screen_finalize();
+
 int getcolorpair(int fg, int bg);
 
 int erase();
@@ -135,15 +126,6 @@ int clear();
 int doupdate();
 
 int beep();
-
-/// @todo Add noraw to raw, nl to nonl etc.
-int initscr();
-int endwin();
-bool has_colors();
-int start_color();
-int curs_set(int visibility);
-int nonl();
-int raw();
 
 // stdscr
 int noutrefresh();

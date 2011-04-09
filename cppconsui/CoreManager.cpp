@@ -124,16 +124,9 @@ CoreManager::CoreManager()
   InputInit();
 
   /**
-   * @todo Check all return values here. Throw an exception if we can't init
-   * curses.
+   * @todo Check the return value. Throw an exception if we can't init curses.
    */
-  Curses::initscr();
-
-  if (Curses::has_colors())
-    Curses::start_color();
-  Curses::curs_set(0);
-  Curses::nonl();
-  Curses::raw();
+  Curses::screen_init();
 
   screen_width = Curses::getmaxx();
   screen_height = Curses::getmaxy();
@@ -165,7 +158,7 @@ CoreManager::~CoreManager()
   Curses::clear();
   Curses::noutrefresh();
   Curses::doupdate();
-  Curses::endwin();
+  Curses::screen_finalize();
 }
 
 void CoreManager::DeclareBindables()
