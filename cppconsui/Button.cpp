@@ -94,8 +94,8 @@ void Button::Draw()
 
   int attrs;
   if (has_focus) {
-    attrs = GetColorPair("button", "focus");
-    area->attron(attrs | Curses::Attr::REVERSE);
+    attrs = GetColorPair("button", "focus") | Curses::Attr::REVERSE;
+    area->attron(attrs);
   }
   else {
     attrs = GetColorPair("button", "normal");
@@ -116,10 +116,7 @@ void Button::Draw()
       area->mvaddstring(l, 0, max - l, value);
   }
 
-  if (has_focus)
-    area->attroff(attrs | Curses::Attr::REVERSE);
-  else
-    area->attroff(attrs);
+  area->attroff(attrs);
 }
 
 void Button::SetType(Type new_type)

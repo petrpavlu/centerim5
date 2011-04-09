@@ -47,12 +47,11 @@ void Panel::Draw()
 {
   RealUpdateArea();
 
-  int realw, realh;
-
-  if (!area || (realw = area->getmaxx()) == 0
-      || (realh = area->getmaxy()) == 0)
+  if (!area)
     return;
 
+  int realw = area->getmaxx();
+  int realh = area->getmaxy();
   int attrs, i;
 
   // calc title width
