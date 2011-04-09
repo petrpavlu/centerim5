@@ -46,7 +46,7 @@ Conversation::Conversation(PurpleConversation *conv_)
 
   SetColorScheme("conversation");
 
-  view = new TextView(width - 2, height, true);
+  view = new TextView(width - 2, height, true, true);
   input = new TextEdit(width - 2, height);
   line = new HorizontalLine(width);
   AddWidget(*view, 1, 0);
