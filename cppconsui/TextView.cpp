@@ -29,9 +29,10 @@
 
 #include "CppConsUI.h"
 
-TextView::TextView(int w, int h, bool autoscroll_)
+TextView::TextView(int w, int h, bool autoscroll_, bool scrollbar_)
 : Widget(w, h), view_top(0), autoscroll(autoscroll_)
-, autoscroll_suspended(false), scroll(0)
+, autoscroll_suspended(false), scroll(0), scrollbar(scrollbar_)
+, dirty_lines(false), recalculate_screen_lines(false)
 {
   can_focus = true;
   DeclareBindables();
@@ -61,45 +62,64 @@ void TextView::Draw()
   if (!area)
     return;
 
-  if (lines.empty()) {
-    area->erase();
-    return;
-  }
+  if (origw != area->getmaxx())
+    recalculate_screen_lines = true;
 
-  if (origw != area->getmaxx()) {
+  if (recalculate_screen_lines) {
     // delete all screen lines
     for (ScreenLines::iterator i = screen_lines.begin();
         i != screen_lines.end(); i++)
       delete *i;
     screen_lines.clear();
 
-    // @todo Save and restore scroll afterwards.
-    for (int i = 0, advice = 0; i < (int) lines.size(); i++)
+    /// @todo Save and restore scroll afterwards.
+    for (size_t i = 0, advice = 0; i < lines.size(); i++)
       advice = UpdateScreenLines(i, advice);
+    recalculate_screen_lines = false;
   }
+  else if (dirty_lines) {
+    for (size_t i = 0, advice = 0; i < lines.size(); i++)
+      if (lines[i]->dirty)
+        advice = UpdateScreenLines(i, advice);
+  }
+  dirty_lines = false;
 
   area->erase();
 
   int realh = area->getmaxy();
 
-  if (scroll) {
-    view_top = view_top + scroll * realh / 2;
-    scroll = 0;
-    // fix the scroll if the text goes outside the visible area
-    if (view_top > (int) screen_lines.size() - realh) {
-      view_top = screen_lines.size() - realh;
-    }
-    if (view_top < 0)
-      view_top = 0;
-
-    autoscroll_suspended = (int) screen_lines.size() > view_top + realh;
+  if (screen_lines.size() <= static_cast<unsigned>(realh)) {
+    view_top = 0;
+    autoscroll_suspended = false;
   }
-
-  if (autoscroll && !autoscroll_suspended) {
+  else if (view_top > screen_lines.size() - realh) {
     view_top = screen_lines.size() - realh;
-    if (view_top < 0)
-      view_top = 0;
+    autoscroll_suspended = false;
   }
+
+  if (screen_lines.size() > static_cast<unsigned>(realh)) {
+    if (scroll) {
+      unsigned s = abs(scroll) * ((realh + 1) / 2);
+      if (scroll < 0) {
+        if (view_top < s)
+          view_top = 0;
+        else
+          view_top -= s;
+      }
+      else {
+        if (view_top + s > screen_lines.size() - realh)
+          view_top = screen_lines.size() - realh;
+        else
+          view_top += s;
+      }
+
+      autoscroll_suspended = screen_lines.size() > view_top + realh;
+    }
+
+    if (autoscroll && !autoscroll_suspended)
+      view_top = screen_lines.size() - realh;
+  }
+  scroll = 0;
 
   int attrs = GetColorPair("textview", "text");
   area->attron(attrs);
@@ -111,8 +131,9 @@ void TextView::Draw()
     int attrs2 = 0;
     if ((*i)->parent->color) {
       char color[32];
-      int w = g_snprintf(color, sizeof(color), "color%d", (*i)->parent->color);
-      g_assert((int) sizeof(color) >= w); // just in case
+      int w = g_snprintf(color, sizeof(color), "color%d",
+          (*i)->parent->color);
+      g_assert(static_cast<int>(sizeof(color)) >= w); // just in case
       attrs2 = GetColorPair("textview", color);
       area->attroff(attrs);
       area->attron(attrs2);
@@ -128,6 +149,25 @@ void TextView::Draw()
 
   area->attroff(attrs);
 
+  // draw scrollbar
+  if (scrollbar) {
+    int x1, x2;
+    if (screen_lines.size() <= static_cast<unsigned>(realh)) {
+      x1 = 0;
+      x2 = realh - 1;
+    }
+    else {
+      x1 = static_cast<float>(view_top) / screen_lines.size() * realh;
+      x2 = static_cast<float>(view_top + realh) / screen_lines.size() * realh;
+    }
+
+    int attrs = GetColorPair("textview", "scrollbar") | Curses::Attr::REVERSE;
+    area->attron(attrs);
+    for (int i = x1; i <= x2; i++)
+      area->mvaddstring(area->getmaxx() - 1, i, " ");
+    area->attroff(attrs);
+  }
+
   /*
   char pos[128];
   g_snprintf(pos, sizeof(pos), "%d/%d ", view_top, screen_lines.size());
@@ -140,22 +180,19 @@ void TextView::Append(const char *text, int color)
   Insert(lines.size(), text, color);
 }
 
-void TextView::Insert(int line_num, const char *text, int color)
+void TextView::Insert(size_t line_num, const char *text, int color)
 {
   g_assert(text);
-  g_assert(line_num >= 0);
-  g_assert(line_num <= (int) lines.size());
+  g_assert(line_num <= lines.size());
 
   const char *p = text;
   const char *s = text;
 
   // parse lines
-  int advice = 0;
   while (*p) {
     if (*p == '\n') {
       Line *l = new Line(s, p - s, color);
       lines.insert(lines.begin() + line_num, l);
-      advice = UpdateScreenLines(line_num, advice);
       line_num++;
       s = p = g_utf8_next_char(p);
       continue;
@@ -167,66 +204,36 @@ void TextView::Insert(int line_num, const char *text, int color)
   if (s < p) {
     Line *l = new Line(s, p - s, color);
     lines.insert(lines.begin() + line_num, l);
-    advice = UpdateScreenLines(line_num, advice);
     line_num++;
   }
 
+  dirty_lines = true;
   Redraw();
 }
 
-void TextView::Erase(int line_num)
+void TextView::Erase(size_t line_num)
 {
-  g_assert(line_num >= 0);
-  g_assert(line_num < (int) lines.size());
+  g_assert(line_num < lines.size());
 
-  /// @todo Untested...
-  int deleted, pos;
-  pos = EraseScreenLines(line_num, 0, &deleted);
+  EraseScreenLines(line_num, 0);
   delete lines[line_num];
   lines.erase(lines.begin() + line_num);
 
-  // adjust view_top
-  if (view_top >= pos + deleted)
-    view_top -= deleted;
-  else if (view_top >= (int) screen_lines.size()) {
-    if (screen_lines.size())
-      view_top = screen_lines.size() - 1;
-    else
-      view_top = 0;
-  }
-
   Redraw();
 }
 
-void TextView::Erase(int start_line, int end_line)
+void TextView::Erase(size_t start_line, size_t end_line)
 {
-  g_assert(start_line >= 0);
-  g_assert(start_line < (int) lines.size());
-  g_assert(end_line >= 0);
-  g_assert(end_line < (int) lines.size());
+  g_assert(start_line < lines.size());
+  g_assert(end_line <= lines.size());
   g_assert(start_line <= end_line);
 
-  /// @todo Untested...
-  int deleted = 0;
-  int advice = 0;
-  for (int i = start_line; i < end_line; i++) {
-    int d;
-    advice = EraseScreenLines(i, advice, &d);
-    deleted += d;
-  }
-  for (int i = start_line; i < end_line; i++)
+  size_t advice = 0;
+  for (size_t i = start_line; i < end_line; i++)
+    advice = EraseScreenLines(i, advice);
+  for (size_t i = start_line; i < end_line; i++)
     delete lines[i];
   lines.erase(lines.begin() + start_line, lines.begin() + end_line);
-
-  // adjust view_top
-  if (view_top >= advice + deleted)
-    view_top -= deleted;
-  else if (view_top >= (int) screen_lines.size()) {
-    if (screen_lines.size())
-      view_top = screen_lines.size() - 1;
-    else
-      view_top = 0;
-  }
 
   Redraw();
 }
@@ -242,19 +249,17 @@ void TextView::Clear()
     delete *i;
   screen_lines.clear();
 
-  view_top = 0;
   Redraw();
 }
 
-const char *TextView::GetLine(int line_num) const
+const char *TextView::GetLine(size_t line_num) const
 {
-  g_assert(line_num >= 0);
-  g_assert(line_num < (int) lines.size());
+  g_assert(line_num < lines.size());
 
   return lines[line_num]->text;
 }
 
-int TextView::GetLinesNumber() const
+size_t TextView::GetLinesNumber() const
 {
   return lines.size();
 }
@@ -268,7 +273,18 @@ void TextView::SetAutoScroll(bool enabled)
   Redraw();
 }
 
-const char *TextView::ProceedLine(const char *text, int area_width, int *res_width) const
+void TextView::SetScrollBar(bool enabled)
+{
+  if (scrollbar == enabled)
+    return;
+
+  scrollbar = enabled;
+  recalculate_screen_lines = true;
+  Redraw();
+}
+
+const char *TextView::ProceedLine(const char *text, int area_width,
+    int *res_width) const
 {
   g_assert(text);
   g_assert(area_width > 0);
@@ -325,17 +341,17 @@ const char *TextView::ProceedLine(const char *text, int area_width, int *res_wid
   return res;
 }
 
-int TextView::UpdateScreenLines(int line_num, int start)
+size_t TextView::UpdateScreenLines(size_t line_num, size_t start)
 {
-  g_assert(line_num >= 0);
-  g_assert(line_num < (int) lines.size());
-  g_assert(start >= 0);
-  g_assert(start <= (int) screen_lines.size());
+  g_assert(line_num < lines.size());
+  g_assert(start <= screen_lines.size());
 
   /* Find where new screen lines should be placed and remove previous screen
    * lines created for this line. */
   ScreenLines::iterator i = screen_lines.begin() + EraseScreenLines(line_num,
       start);
+
+  lines[line_num]->dirty = false;
 
   if (!area)
     return 0;
@@ -344,10 +360,13 @@ int TextView::UpdateScreenLines(int line_num, int start)
   ScreenLines new_lines;
   const char *p = lines[line_num]->text;
   const char *s;
+  int realw = area->getmaxx();
+  if (scrollbar && realw > 2)
+    realw -= 2;
   int width;
   while (*p) {
     s = p;
-    p = ProceedLine(p, area->getmaxx(), &width);
+    p = ProceedLine(p, realw, &width);
     new_lines.push_back(new ScreenLine(*lines[line_num], s, width));
   }
 
@@ -355,44 +374,47 @@ int TextView::UpdateScreenLines(int line_num, int start)
   if (new_lines.empty())
     new_lines.push_back(new ScreenLine(*lines[line_num], p, 0));
 
-  int res = i - screen_lines.begin() + new_lines.size();
+  size_t res = i - screen_lines.begin() + new_lines.size();
   screen_lines.insert(i, new_lines.begin(), new_lines.end());
 
   return res;
 }
 
-int TextView::EraseScreenLines(int line_num, int start, int *deleted)
+size_t TextView::EraseScreenLines(size_t line_num, size_t start,
+    size_t *deleted)
 {
-  g_assert(line_num >= 0);
-  g_assert(line_num < (int) lines.size());
-  g_assert(start >= 0);
-  g_assert(start <= (int) screen_lines.size());
+  g_assert(line_num < lines.size());
+  g_assert(start <= screen_lines.size());
 
-  int i = start;
-  int begin = -1;
-  int end = -1;
-  while (i < (int) screen_lines.size()) {
+  size_t i = start;
+  bool begin_set = false, end_set = false;
+  size_t begin, end;
+  while (i < screen_lines.size()) {
     if (screen_lines[i]->parent == lines[line_num]) {
-      if (begin == -1)
+      if (!begin_set) {
         begin = i;
+        begin_set = true;
+      }
       delete screen_lines[i];
     }
-    else if (begin != -1) {
+    else if (begin_set) {
       end = i;
+      end_set = true;
       break;
     }
     i++;
   }
-  if (begin != -1) {
-    if (end == -1)
+  if (begin_set) {
+    if (!end_set)
       end = screen_lines.size();
     screen_lines.erase(screen_lines.begin() + begin, screen_lines.begin()
         + end);
     i -= (end - begin);
+    if (deleted)
+      *deleted = end - begin;
   }
-
-  if (deleted)
-    *deleted = end - begin;
+  else if (deleted)
+    deleted = 0;
 
   return i;
 }
@@ -403,8 +425,8 @@ void TextView::ActionScroll(int direction)
   Redraw();
 }
 
-TextView::Line::Line(const char *text_, int bytes, int color_)
-: color(color_)
+TextView::Line::Line(const char *text_, size_t bytes, int color_, bool dirty_)
+: color(color_), dirty(dirty_)
 {
   g_assert(text_);
   g_assert(bytes >= 0);

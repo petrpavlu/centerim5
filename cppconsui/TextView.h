@@ -39,7 +39,7 @@ class TextView
 : public Widget
 {
 public:
-  TextView(int w, int h, bool autoscroll_ = false);
+  TextView(int w, int h, bool autoscroll_ = false, bool scrollbar_ = false);
   virtual ~TextView();
 
   // Widget
@@ -54,17 +54,17 @@ public:
    * lines and should end with `\\n' character just in front of `\\0'
    * character.
    */
-  void Insert(int line_num, const char *text, int color = 0);
+  void Insert(size_t line_num, const char *text, int color = 0);
   /**
    * Removes a specified line.
    */
-  void Erase(int line_num);
+  void Erase(size_t line_num);
   /**
    * Removes specified range of lines. Parameter end_line represents the
    * line after the last removed line, thus range of <start_line, end_line)
    * lines is removed.
    */
-  void Erase(int start_line, int end_line);
+  void Erase(size_t start_line, size_t end_line);
   /**
    * Removes all lines.
    */
@@ -72,14 +72,17 @@ public:
   /**
    * Returns string for a specified line number.
    */
-  const char *GetLine(int line_num) const;
+  const char *GetLine(size_t line_num) const;
   /**
    * Returns count of all lines.
    */
-  int GetLinesNumber() const;
+  size_t GetLinesNumber() const;
 
   void SetAutoScroll(bool enabled);
   bool GetAutoScroll() const { return autoscroll; }
+
+  void SetScrollBar(bool enabled);
+  bool GetScrollBar() const { return scrollbar; }
 
 protected:
   /**
@@ -95,13 +98,15 @@ protected:
     /**
      * Text length in characters.
      */
-    int length;
+    size_t length;
     /**
      * Color number.
      */
     int color;
 
-    Line(const char *text_, int bytes, int color_);
+    bool dirty;
+
+    Line(const char *text_, size_t bytes, int color_, bool dirty_ = true);
     virtual ~Line();
   };
 
@@ -129,10 +134,13 @@ protected:
   typedef std::deque<Line *> Lines;
   typedef std::deque<ScreenLine *> ScreenLines;
 
-  int view_top;
+  size_t view_top;
   bool autoscroll;
   bool autoscroll_suspended;
   int scroll;
+  bool scrollbar;
+  bool dirty_lines;
+  bool recalculate_screen_lines;
 
   /**
    * Array of real lines.
@@ -151,9 +159,10 @@ protected:
   /**
    * Recalculates on-screen lines for a specified line number.
    */
-  int UpdateScreenLines(int line_num, int start = 0);
+  size_t UpdateScreenLines(size_t line_num, size_t start = 0);
 
-  int EraseScreenLines(int line_num, int start = 0, int *deleted = NULL);
+  size_t EraseScreenLines(size_t line_num, size_t start = 0,
+      size_t *deleted = NULL);
 
 private:
   TextView(const TextView &);
