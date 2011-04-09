@@ -79,12 +79,6 @@ Button::~Button()
     g_free(value);
 }
 
-void Button::DeclareBindables()
-{
-  DeclareBindable("button", "activate", sigc::mem_fun(this,
-        &Button::ActionActivate), InputProcessor::BINDABLE_NORMAL);
-}
-
 void Button::Draw()
 {
   RealUpdateArea();
@@ -165,4 +159,10 @@ void Button::SetValue(int new_value)
 void Button::ActionActivate()
 {
   signal_activate(*this);
+}
+
+void Button::DeclareBindables()
+{
+  DeclareBindable("button", "activate", sigc::mem_fun(this,
+        &Button::ActionActivate), InputProcessor::BINDABLE_NORMAL);
 }

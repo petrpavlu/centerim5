@@ -92,6 +92,7 @@ public:
   int GetY() const { return y; }
 
   int x, y;
+
 protected:
 
 private:

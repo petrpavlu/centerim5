@@ -64,14 +64,6 @@ TreeView::~TreeView()
   DeleteNode(thetree.begin(), false);
 }
 
-void TreeView::DeclareBindables()
-{
-  DeclareBindable("treeview", "fold-subtree", sigc::mem_fun(this,
-        &TreeView::ActionCollapse), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable("treeview", "unfold-subtree", sigc::mem_fun(this,
-        &TreeView::ActionExpand), InputProcessor::BINDABLE_NORMAL);
-}
-
 void TreeView::Draw()
 {
   RealUpdateArea();
@@ -525,4 +517,12 @@ void TreeView::ActionCollapse()
 void TreeView::ActionExpand()
 {
   ExpandNode(focus_node);
+}
+
+void TreeView::DeclareBindables()
+{
+  DeclareBindable("treeview", "fold-subtree", sigc::mem_fun(this,
+        &TreeView::ActionCollapse), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable("treeview", "unfold-subtree", sigc::mem_fun(this,
+        &TreeView::ActionExpand), InputProcessor::BINDABLE_NORMAL);
 }

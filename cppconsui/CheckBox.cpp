@@ -62,12 +62,6 @@ CheckBox::~CheckBox()
     g_free(text);
 }
 
-void CheckBox::DeclareBindables()
-{
-  DeclareBindable("checkbox", "toggle", sigc::mem_fun(this,
-        &CheckBox::ActionToggle), InputProcessor::BINDABLE_NORMAL);
-}
-
 void CheckBox::Draw()
 {
   RealUpdateArea();
@@ -145,4 +139,10 @@ void CheckBox::ActionToggle()
   state = !state;
   signal_toggle(*this, state);
   Redraw();
+}
+
+void CheckBox::DeclareBindables()
+{
+  DeclareBindable("checkbox", "toggle", sigc::mem_fun(this,
+        &CheckBox::ActionToggle), InputProcessor::BINDABLE_NORMAL);
 }

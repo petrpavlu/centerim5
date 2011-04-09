@@ -50,8 +50,8 @@ public:
   //LineStyle &operator=(LineStyle &other);
   virtual ~LineStyle() {}
 
-  void SetStyle(Type t);
-  Type GetStyle() const;
+  void SetStyle(Type t) { type = t; }
+  Type GetStyle() const { return type; };
 
   const char *H() const;
   const char *HBegin() const;

@@ -99,66 +99,6 @@ TextEntry::~TextEntry()
     g_free(text);
 }
 
-void TextEntry::DeclareBindables()
-{
-  // cursor movement
-  DeclareBindable("textentry", "cursor-right",
-      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor),
-        MOVE_LOGICAL_POSITIONS, 1), InputProcessor::BINDABLE_NORMAL);
-
-  DeclareBindable("textentry", "cursor-left",
-      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor),
-        MOVE_LOGICAL_POSITIONS, -1), InputProcessor::BINDABLE_NORMAL);
-
-  DeclareBindable("textentry", "cursor-right-word",
-      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor),
-        MOVE_WORDS, 1), InputProcessor::BINDABLE_NORMAL);
-
-  DeclareBindable("textentry", "cursor-left-word",
-      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor),
-        MOVE_WORDS, -1), InputProcessor::BINDABLE_NORMAL);
-
-  DeclareBindable("textentry", "cursor-end",
-      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor),
-        MOVE_DISPLAY_LINE_ENDS, 1), InputProcessor::BINDABLE_NORMAL);
-
-  DeclareBindable("textentry", "cursor-begin",
-      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor),
-        MOVE_DISPLAY_LINE_ENDS, -1), InputProcessor::BINDABLE_NORMAL);
-
-  // deleting text
-  DeclareBindable("textentry", "delete-char",
-      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete),
-        DELETE_CHARS, 1), InputProcessor::BINDABLE_NORMAL);
-
-  DeclareBindable("textentry", "backspace",
-      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete),
-        DELETE_CHARS, -1), InputProcessor::BINDABLE_NORMAL);
-
-  // tabifying
-  DeclareBindable("textentry", "tab",
-      sigc::bind(sigc::mem_fun(this, &TextEntry::InsertTextAtCursor),
-        "    ", 4), InputProcessor::BINDABLE_NORMAL);
-
-  /*
-  DeclareBindable("textentry", "delete-word-end",
-      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete),
-        DELETE_WORD_ENDS, 1), InputProcessor::BINDABLE_NORMAL);
-
-  DeclareBindable("textentry", "delete-word-begin",
-      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete),
-        DELETE_WORD_ENDS, -1), InputProcessor::BINDABLE_NORMAL);
-
-  // overwrite
-  DeclareBindable("textentry", "toggle-overwrite", sigc::mem_fun(this,
-        &TextEntry::ActionToggleOverwrite), InputProcessor::BINDABLE_NORMAL);
-  */
-
-  // non text editing bindables
-  DeclareBindable("textentry", "activate", sigc::mem_fun(this,
-        &TextEntry::ActionActivate), InputProcessor::BINDABLE_NORMAL);
-}
-
 void TextEntry::Draw()
 {
   RealUpdateArea();
@@ -233,24 +173,14 @@ void TextEntry::SetFlags(int flags_)
   /// @todo validate text using new flags?
 }
 
-void TextEntry::MoveCursor(CursorMovement step, int direction)
+void TextEntry::SetPosition(int position)
 {
-  switch (step) {
-    case MOVE_LOGICAL_POSITIONS:
-      current_pos = MoveLogically(current_pos, direction);
-      break;
-    case MOVE_WORDS:
-      if (direction > 0)
-        current_pos = MoveForwardWord(current_pos);
-      else if (direction < 0)
-        current_pos = MoveBackwardWord(current_pos);
-      break;
-    case MOVE_DISPLAY_LINE_ENDS:
-      current_pos = direction < 0 ? 0 : text_length;
-      break;
-    default:
-      g_assert_not_reached();
-  }
+  if (position < 0)
+    position = 0;
+  else if (position > text_length)
+    position = text_length;
+
+  current_pos = position;
 }
 
 void TextEntry::InsertTextAtCursor(const char *new_text, int new_text_bytes)
@@ -351,23 +281,6 @@ void TextEntry::DeleteText(int start_pos, int end_pos)
   }
 }
 
-void TextEntry::RecalculateLengths()
-{
-  text_size = strlen(text);
-  text_bytes = text_size;
-  text_length = g_utf8_strlen(text, text_size);
-}
-
-void TextEntry::SetPosition(int position)
-{
-  if (position < 0)
-    position = 0;
-  else if (position > text_length)
-    position = text_length;
-
-  current_pos = position;
-}
-
 void TextEntry::DeleteFromCursor(DeleteType type, int direction)
 {
   int start_pos = current_pos;
@@ -391,6 +304,38 @@ void TextEntry::DeleteFromCursor(DeleteType type, int direction)
     default:
       g_assert_not_reached();
   }
+}
+
+void TextEntry::MoveCursor(CursorMovement step, int direction)
+{
+  switch (step) {
+    case MOVE_LOGICAL_POSITIONS:
+      current_pos = MoveLogically(current_pos, direction);
+      break;
+    case MOVE_WORDS:
+      if (direction > 0)
+        current_pos = MoveForwardWord(current_pos);
+      else if (direction < 0)
+        current_pos = MoveBackwardWord(current_pos);
+      break;
+    case MOVE_DISPLAY_LINE_ENDS:
+      current_pos = direction < 0 ? 0 : text_length;
+      break;
+    default:
+      g_assert_not_reached();
+  }
+}
+
+void TextEntry::ToggleOverwrite()
+{
+  overwrite_mode = !overwrite_mode;
+}
+
+void TextEntry::RecalculateLengths()
+{
+  text_size = strlen(text);
+  text_bytes = text_size;
+  text_length = g_utf8_strlen(text, text_size);
 }
 
 int TextEntry::MoveLogically(int start, int direction)
@@ -449,11 +394,6 @@ int TextEntry::MoveBackwardWord(int start)
   return ++new_pos;
 }
 
-void TextEntry::ToggleOverwrite()
-{
-  overwrite_mode = !overwrite_mode;
-}
-
 void TextEntry::ActionMoveCursor(CursorMovement step, int direction)
 {
   MoveCursor(step, direction);
@@ -476,4 +416,64 @@ void TextEntry::ActionActivate()
 {
   if (parent)
     parent->MoveFocus(Container::FOCUS_NEXT);
+}
+
+void TextEntry::DeclareBindables()
+{
+  // cursor movement
+  DeclareBindable("textentry", "cursor-right",
+      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor),
+        MOVE_LOGICAL_POSITIONS, 1), InputProcessor::BINDABLE_NORMAL);
+
+  DeclareBindable("textentry", "cursor-left",
+      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor),
+        MOVE_LOGICAL_POSITIONS, -1), InputProcessor::BINDABLE_NORMAL);
+
+  DeclareBindable("textentry", "cursor-right-word",
+      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor),
+        MOVE_WORDS, 1), InputProcessor::BINDABLE_NORMAL);
+
+  DeclareBindable("textentry", "cursor-left-word",
+      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor),
+        MOVE_WORDS, -1), InputProcessor::BINDABLE_NORMAL);
+
+  DeclareBindable("textentry", "cursor-end",
+      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor),
+        MOVE_DISPLAY_LINE_ENDS, 1), InputProcessor::BINDABLE_NORMAL);
+
+  DeclareBindable("textentry", "cursor-begin",
+      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionMoveCursor),
+        MOVE_DISPLAY_LINE_ENDS, -1), InputProcessor::BINDABLE_NORMAL);
+
+  // deleting text
+  DeclareBindable("textentry", "delete-char",
+      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete),
+        DELETE_CHARS, 1), InputProcessor::BINDABLE_NORMAL);
+
+  DeclareBindable("textentry", "backspace",
+      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete),
+        DELETE_CHARS, -1), InputProcessor::BINDABLE_NORMAL);
+
+  // tabifying
+  DeclareBindable("textentry", "tab",
+      sigc::bind(sigc::mem_fun(this, &TextEntry::InsertTextAtCursor),
+        "    ", 4), InputProcessor::BINDABLE_NORMAL);
+
+  /*
+  DeclareBindable("textentry", "delete-word-end",
+      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete),
+        DELETE_WORD_ENDS, 1), InputProcessor::BINDABLE_NORMAL);
+
+  DeclareBindable("textentry", "delete-word-begin",
+      sigc::bind(sigc::mem_fun(this, &TextEntry::ActionDelete),
+        DELETE_WORD_ENDS, -1), InputProcessor::BINDABLE_NORMAL);
+
+  // overwrite
+  DeclareBindable("textentry", "toggle-overwrite", sigc::mem_fun(this,
+        &TextEntry::ActionToggleOverwrite), InputProcessor::BINDABLE_NORMAL);
+  */
+
+  // non text editing bindables
+  DeclareBindable("textentry", "activate", sigc::mem_fun(this,
+        &TextEntry::ActionActivate), InputProcessor::BINDABLE_NORMAL);
 }

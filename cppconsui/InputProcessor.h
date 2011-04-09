@@ -103,8 +103,9 @@ protected:
   class Bindable
   {
   public:
-    Bindable();
-    Bindable(const sigc::slot<void>& function_, BindableType type_);
+    Bindable() : type(BINDABLE_NORMAL) {}
+    Bindable(const sigc::slot<void>& function_, BindableType type_)
+      : function(function_), type(type_) {}
     //Bindable(const Bindable &other);
     //Bindable &operator=(const Bindable &other);
     virtual ~Bindable() {}

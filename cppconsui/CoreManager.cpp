@@ -115,59 +115,6 @@ CoreManager *CoreManager::Instance()
   return &instance;
 }
 
-CoreManager::CoreManager()
-: top_input_processor(NULL), io_input_channel(NULL), io_input_channel_id(0)
-, resize_channel(NULL), resize_channel_id(0), pipe_valid(false), tk(NULL)
-, utf8(false), gmainloop(NULL), screen_width(0), screen_height(0)
-, redraw_pending(false), resize_pending(false)
-{
-  InputInit();
-
-  /**
-   * @todo Check the return value. Throw an exception if we can't init curses.
-   */
-  Curses::screen_init();
-
-  screen_width = Curses::getmaxx();
-  screen_height = Curses::getmaxy();
-
-  // create a new loop
-  gmainloop = g_main_loop_new(NULL, FALSE);
-
-  /* Register all InputProcessor key configuration (it needs to be called
-   * before the first DeclareBindable). */
-  KEYCONFIG->Register();
-  DeclareBindables();
-}
-
-CoreManager::~CoreManager()
-{
-  InputUnInit();
-
-  // close all windows
-  int i = 0;
-  while (i < (int) windows.size()) {
-    FreeWindow *win = windows[i];
-    /* There are two possibilities, either window is in Close() method removed
-     * from the core manager or not, in the first case we don't increase i. */
-    win->Close();
-    if (i < (int) windows.size() && windows[i] == win)
-      i++;
-  }
-
-  Curses::clear();
-  Curses::noutrefresh();
-  Curses::doupdate();
-  Curses::screen_finalize();
-}
-
-void CoreManager::DeclareBindables()
-{
-  DeclareBindable("coremanager", "redraw-screen",
-      sigc::mem_fun(this, &CoreManager::Redraw),
-      InputProcessor::BINDABLE_OVERRIDE);
-}
-
 void CoreManager::StartMainLoop()
 {
   g_main_loop_run(gmainloop);
@@ -290,6 +237,52 @@ sigc::connection CoreManager::TimeoutOnceConnect(const sigc::slot<void>& slot,
     unsigned interval, int priority)
 {
   return TimeoutConnect(sigc::bind_return(slot, FALSE), interval, priority);
+}
+
+CoreManager::CoreManager()
+: top_input_processor(NULL), io_input_channel(NULL), io_input_channel_id(0)
+, resize_channel(NULL), resize_channel_id(0), pipe_valid(false), tk(NULL)
+, utf8(false), gmainloop(NULL), screen_width(0), screen_height(0)
+, redraw_pending(false), resize_pending(false)
+{
+  InputInit();
+
+  /**
+   * @todo Check the return value. Throw an exception if we can't init curses.
+   */
+  Curses::screen_init();
+
+  screen_width = Curses::getmaxx();
+  screen_height = Curses::getmaxy();
+
+  // create a new loop
+  gmainloop = g_main_loop_new(NULL, FALSE);
+
+  /* Register all InputProcessor key configuration (it needs to be called
+   * before the first DeclareBindable). */
+  KEYCONFIG->Register();
+  DeclareBindables();
+}
+
+CoreManager::~CoreManager()
+{
+  InputUnInit();
+
+  // close all windows
+  int i = 0;
+  while (i < (int) windows.size()) {
+    FreeWindow *win = windows[i];
+    /* There are two possibilities, either window is in Close() method removed
+     * from the core manager or not, in the first case we don't increase i. */
+    win->Close();
+    if (i < (int) windows.size() && windows[i] == win)
+      i++;
+  }
+
+  Curses::clear();
+  Curses::noutrefresh();
+  Curses::doupdate();
+  Curses::screen_finalize();
 }
 
 bool CoreManager::ProcessInput(const TermKeyKey& key)
@@ -521,4 +514,11 @@ void CoreManager::FocusWindow()
     SetInputChild(*win);
     win->RestoreFocus();
   }
+}
+
+void CoreManager::DeclareBindables()
+{
+  DeclareBindable("coremanager", "redraw-screen",
+      sigc::mem_fun(this, &CoreManager::Redraw),
+      InputProcessor::BINDABLE_OVERRIDE);
 }

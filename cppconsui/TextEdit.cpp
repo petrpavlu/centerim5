@@ -71,70 +71,6 @@ TextEdit::~TextEdit()
     g_free(buffer);
 }
 
-void TextEdit::DeclareBindables()
-{
-  // cursor movement
-  DeclareBindable("textentry", "cursor-right",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
-        MOVE_LOGICAL_POSITIONS, 1), InputProcessor::BINDABLE_NORMAL);
-
-  DeclareBindable("textentry", "cursor-left",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
-        MOVE_LOGICAL_POSITIONS, -1), InputProcessor::BINDABLE_NORMAL);
-
-  DeclareBindable("textentry", "cursor-down",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
-        MOVE_DISPLAY_LINES, 1), InputProcessor::BINDABLE_NORMAL);
-
-  DeclareBindable("textentry", "cursor-up",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
-        MOVE_DISPLAY_LINES, -1), InputProcessor::BINDABLE_NORMAL);
-
-  DeclareBindable("textentry", "cursor-right-word",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
-        MOVE_WORDS, 1), InputProcessor::BINDABLE_NORMAL);
-
-  DeclareBindable("textentry", "cursor-left-word",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
-        MOVE_WORDS, -1), InputProcessor::BINDABLE_NORMAL);
-
-  DeclareBindable("textentry", "cursor-end",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
-        MOVE_DISPLAY_LINE_ENDS, 1), InputProcessor::BINDABLE_NORMAL);
-
-  DeclareBindable("textentry", "cursor-begin",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
-        MOVE_DISPLAY_LINE_ENDS, -1), InputProcessor::BINDABLE_NORMAL);
-
-  // deleting text
-  DeclareBindable("textentry", "delete-char",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete),
-        DELETE_CHARS, 1), InputProcessor::BINDABLE_NORMAL);
-
-  DeclareBindable("textentry", "backspace",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete),
-        DELETE_CHARS, -1), InputProcessor::BINDABLE_NORMAL);
-
-  // tabifying
-  DeclareBindable("textentry", "tab",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::InsertTextAtCursor),
-        "    ", 4), InputProcessor::BINDABLE_NORMAL);
-
-  /*
-  DeclareBindable("textentry", "delete-word-end",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete),
-        DELETE_WORD_ENDS, 1), InputProcessor::BINDALBE_NORMAL);
-
-  DeclareBindable("textentry", "delete-word-begin",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete),
-        DELETE_WORD_ENDS, -1), InputProcessor::BINDABLE_NORMAL);
-
-  // overwrite
-  DeclareBindable("textentry", "toggle-overwrite", sigc::mem_fun(this,
-        &TextEdit::ActionToggleOverwrite), InputProcessor::BINDABLE_NORMAL);
-  */
-}
-
 void TextEdit::Draw()
 {
   int origw = area ? area->getmaxx() : 0;
@@ -741,8 +677,66 @@ void TextEdit::ActionToggleOverwrite()
   ToggleOverwrite();
 }
 
-TextEdit::ScreenLine::ScreenLine(const char *start, const char *end,
-    int length, int width)
-: start(start), end(end), length(length), width(width)
+void TextEdit::DeclareBindables()
 {
+  // cursor movement
+  DeclareBindable("textentry", "cursor-right",
+      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
+        MOVE_LOGICAL_POSITIONS, 1), InputProcessor::BINDABLE_NORMAL);
+
+  DeclareBindable("textentry", "cursor-left",
+      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
+        MOVE_LOGICAL_POSITIONS, -1), InputProcessor::BINDABLE_NORMAL);
+
+  DeclareBindable("textentry", "cursor-down",
+      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
+        MOVE_DISPLAY_LINES, 1), InputProcessor::BINDABLE_NORMAL);
+
+  DeclareBindable("textentry", "cursor-up",
+      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
+        MOVE_DISPLAY_LINES, -1), InputProcessor::BINDABLE_NORMAL);
+
+  DeclareBindable("textentry", "cursor-right-word",
+      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
+        MOVE_WORDS, 1), InputProcessor::BINDABLE_NORMAL);
+
+  DeclareBindable("textentry", "cursor-left-word",
+      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
+        MOVE_WORDS, -1), InputProcessor::BINDABLE_NORMAL);
+
+  DeclareBindable("textentry", "cursor-end",
+      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
+        MOVE_DISPLAY_LINE_ENDS, 1), InputProcessor::BINDABLE_NORMAL);
+
+  DeclareBindable("textentry", "cursor-begin",
+      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionMoveCursor),
+        MOVE_DISPLAY_LINE_ENDS, -1), InputProcessor::BINDABLE_NORMAL);
+
+  // deleting text
+  DeclareBindable("textentry", "delete-char",
+      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete),
+        DELETE_CHARS, 1), InputProcessor::BINDABLE_NORMAL);
+
+  DeclareBindable("textentry", "backspace",
+      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete),
+        DELETE_CHARS, -1), InputProcessor::BINDABLE_NORMAL);
+
+  // tabifying
+  DeclareBindable("textentry", "tab",
+      sigc::bind(sigc::mem_fun(this, &TextEdit::InsertTextAtCursor),
+        "    ", 4), InputProcessor::BINDABLE_NORMAL);
+
+  /*
+  DeclareBindable("textentry", "delete-word-end",
+      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete),
+        DELETE_WORD_ENDS, 1), InputProcessor::BINDALBE_NORMAL);
+
+  DeclareBindable("textentry", "delete-word-begin",
+      sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete),
+        DELETE_WORD_ENDS, -1), InputProcessor::BINDABLE_NORMAL);
+
+  // overwrite
+  DeclareBindable("textentry", "toggle-overwrite", sigc::mem_fun(this,
+        &TextEdit::ActionToggleOverwrite), InputProcessor::BINDABLE_NORMAL);
+  */
 }

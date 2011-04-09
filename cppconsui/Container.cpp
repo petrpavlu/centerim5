@@ -46,28 +46,6 @@ Container::~Container()
   Clear();
 }
 
-void Container::DeclareBindables()
-{
-  DeclareBindable("container", "focus-previous",
-      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
-        Container::FOCUS_PREVIOUS), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable("container", "focus-next",
-      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
-        Container::FOCUS_NEXT), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable("container", "focus-left",
-      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
-        Container::FOCUS_LEFT), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable("container", "focus-right",
-      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
-        Container::FOCUS_RIGHT), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable("container", "focus-up",
-      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
-        Container::FOCUS_UP), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable("container", "focus-down",
-      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
-        Container::FOCUS_DOWN), InputProcessor::BINDABLE_NORMAL);
-}
-
 void Container::UpdateArea()
 {
   if (!update_area)
@@ -416,9 +394,7 @@ void Container::InsertWidget(size_t pos, Widget& widget, int x, int y)
 {
   g_assert(pos <= children.size());
 
-  Child child;
-  child.widget = &widget;
-
+  Child child(widget);
   widget.Move(x, y);
 
   /* Insert a widget early into children vector so the widget can grab the
@@ -440,4 +416,26 @@ void Container::OnChildMoveResize(Widget& activator, const Rect& oldsize,
 
 void Container::OnChildVisible(Widget& activator, bool visible)
 {
+}
+
+void Container::DeclareBindables()
+{
+  DeclareBindable("container", "focus-previous",
+      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
+        Container::FOCUS_PREVIOUS), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable("container", "focus-next",
+      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
+        Container::FOCUS_NEXT), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable("container", "focus-left",
+      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
+        Container::FOCUS_LEFT), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable("container", "focus-right",
+      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
+        Container::FOCUS_RIGHT), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable("container", "focus-up",
+      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
+        Container::FOCUS_UP), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable("container", "focus-down",
+      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
+        Container::FOCUS_DOWN), InputProcessor::BINDABLE_NORMAL);
 }

@@ -28,7 +28,7 @@
 #include "ConsuiCurses.h"
 
 /* In order to get wide characters support we must define
- * _XOPEN_SOURCE_EXTENDED when using ncurses.h. */
+ * _XOPEN_SOURCE_EXTENDED when using cursesw.h. */
 #ifndef _XOPEN_SOURCE_EXTENDED
 #define _XOPEN_SOURCE_EXTENDED
 #endif
@@ -42,30 +42,7 @@
 namespace Curses
 {
 
-const int Color::BLACK = COLOR_BLACK;
-const int Color::RED = COLOR_RED;
-const int Color::GREEN = COLOR_GREEN;
-const int Color::YELLOW = COLOR_YELLOW;
-const int Color::BLUE = COLOR_BLUE;
-const int Color::MAGENTA = COLOR_MAGENTA;
-const int Color::CYAN = COLOR_CYAN;
-const int Color::WHITE = COLOR_WHITE;
-
-const int Attr::NORMAL = A_NORMAL;
-const int Attr::REVERSE = A_REVERSE;
-const int Attr::DIM = A_DIM;
-const int Attr::BOLD = A_BOLD;
-
-const int C_OK = OK;
-const int C_ERR = ERR;
-
 static Stats stats = {0};
-
-struct Window::WindowInternals
-{
-  WINDOW *win;
-  WindowInternals(WINDOW *w = NULL) : win(w) {}
-};
 
 const Stats *GetStats()
 {
@@ -77,16 +54,11 @@ void ResetStats()
   memset(&stats, 0, sizeof(stats));
 }
 
-Window::Window()
-: p(new WindowInternals)
+struct Window::WindowInternals
 {
-}
-
-Window::~Window()
-{
-  delwin(p->win);
-  delete p;
-}
+  WINDOW *win;
+  WindowInternals(WINDOW *w = NULL) : win(w) {}
+};
 
 Window *Window::newpad(int ncols, int nlines)
 {
@@ -130,44 +102,10 @@ Window *Window::subpad(int begin_x, int begin_y, int ncols, int nlines)
   return a;
 }
 
-const char *Window::PrintChar(const char *ch, int *printed, const char *end)
+Window::~Window()
 {
-  /**
-   * @todo Error checking (setcchar).
-   */
-
-  g_assert(ch);
-  g_assert(*ch);
-  g_assert(printed);
-
-  *printed = 0;
-
-  if (((unsigned char) *ch >= 0x7f && (unsigned char) *ch < 0xa0)) {
-    // filter out C1 (8-bit) control characters
-    waddch(p->win, '?');
-    *printed = 1;
-    return ch + 1;
-  }
-
-  // get a unicode character from the next few bytes
-  wchar_t wch[2];
-  cchar_t cc;
-
-  wch[0] = g_utf8_get_char(ch);
-  wch[1] = L'\0';
-
-  // invalid utf-8 sequence
-  if (wch[0] < 0)
-    return ch + 1;
-
-  // control char symbols
-  if (wch[0] < 32)
-    wch[0] = 0x2400 + wch[0];
-
-  setcchar(&cc, wch, A_NORMAL, 0, NULL);
-  wadd_wch(p->win, &cc);
-  *printed = onscreen_width(wch[0]);
-  return g_utf8_find_next_char(ch, end);
+  delwin(p->win);
+  delete p;
 }
 
 int Window::mvaddstring(int x, int y, int w, const char *str)
@@ -308,6 +246,68 @@ int Window::getmaxy()
 {
   return ::getmaxy(p->win);
 }
+
+const char *Window::PrintChar(const char *ch, int *printed, const char *end)
+{
+  /**
+   * @todo Error checking (setcchar).
+   */
+
+  g_assert(ch);
+  g_assert(*ch);
+  g_assert(printed);
+
+  *printed = 0;
+
+  if (((unsigned char) *ch >= 0x7f && (unsigned char) *ch < 0xa0)) {
+    // filter out C1 (8-bit) control characters
+    waddch(p->win, '?');
+    *printed = 1;
+    return ch + 1;
+  }
+
+  // get a unicode character from the next few bytes
+  wchar_t wch[2];
+  cchar_t cc;
+
+  wch[0] = g_utf8_get_char(ch);
+  wch[1] = L'\0';
+
+  // invalid utf-8 sequence
+  if (wch[0] < 0)
+    return ch + 1;
+
+  // control char symbols
+  if (wch[0] < 32)
+    wch[0] = 0x2400 + wch[0];
+
+  setcchar(&cc, wch, A_NORMAL, 0, NULL);
+  wadd_wch(p->win, &cc);
+  *printed = onscreen_width(wch[0]);
+  return g_utf8_find_next_char(ch, end);
+}
+
+Window::Window()
+: p(new WindowInternals)
+{
+}
+
+const int Color::BLACK = COLOR_BLACK;
+const int Color::RED = COLOR_RED;
+const int Color::GREEN = COLOR_GREEN;
+const int Color::YELLOW = COLOR_YELLOW;
+const int Color::BLUE = COLOR_BLUE;
+const int Color::MAGENTA = COLOR_MAGENTA;
+const int Color::CYAN = COLOR_CYAN;
+const int Color::WHITE = COLOR_WHITE;
+
+const int Attr::NORMAL = A_NORMAL;
+const int Attr::REVERSE = A_REVERSE;
+const int Attr::DIM = A_DIM;
+const int Attr::BOLD = A_BOLD;
+
+const int C_OK = OK;
+const int C_ERR = ERR;
 
 int screen_init()
 {

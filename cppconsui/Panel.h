@@ -78,7 +78,6 @@ protected:
   int title_width;
 
 private:
-  Panel();
   Panel(const Panel&);
   Panel& operator=(const Panel&);
 };

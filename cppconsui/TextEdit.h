@@ -101,19 +101,19 @@ protected:
     int length; ///< Precalculated length.
     int width; ///< Precalculated on screen width.
 
-    ScreenLine(const char *start, const char *end, int length, int width);
+    ScreenLine(const char *start, const char *end, int length, int width)
+      : start(start), end(end), length(length), width(width) {}
   };
 
   std::vector<ScreenLine *> screen_lines;
 
 private:
-  TextEdit();
   TextEdit(const TextEdit&);
   TextEdit& operator=(const TextEdit&);
 
   int MoveLogically(int start, int direction);
-  int MoveBackwardWordFromCursor();
   int MoveForwardWordFromCursor();
+  int MoveBackwardWordFromCursor();
 
   void ActionMoveCursor(CursorMovement step, int direction);
   void ActionDelete(DeleteType type, int direction);

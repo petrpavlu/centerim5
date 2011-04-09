@@ -64,14 +64,10 @@
  *       X::OnAction2Do));
  * }
  * \endcode
- *
- * @todo add exception handling
  */
 class KeyConfig
 {
 public:
-  // Helper classes
-
   /**
    * External part of bindable (see InputProcessor::Bindable for an internal
    * part). Holds description and a default key for every bindable.

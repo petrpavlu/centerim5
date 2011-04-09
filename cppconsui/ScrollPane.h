@@ -50,19 +50,6 @@ public:
   virtual Point GetAbsolutePosition(const Widget& child) const;
 
   /**
-   * Returns a size of the scrollable area.
-   */
-  Rect GetScrollSize() { return Rect(0, 0, scroll_width, scroll_height); }
-  /**
-   * Returns a width of the scrollable area.
-   */
-  int GetScrollWidth() { return scroll_width; }
-  /**
-   * Returns a height of the scrollable area.
-   */
-  int GetScrollHeight() { return scroll_height; }
-
-  /**
    * Sets a size of the scrollable area.
    */
   void SetScrollSize(int swidth, int sheight);
@@ -76,6 +63,19 @@ public:
    */
   void SetScrollHeight(int sheight)
     { SetScrollSize(scroll_width, sheight); }
+
+  /**
+   * Returns a size of the scrollable area.
+   */
+  Rect GetScrollSize() { return Rect(0, 0, scroll_width, scroll_height); }
+  /**
+   * Returns a width of the scrollable area.
+   */
+  int GetScrollWidth() { return scroll_width; }
+  /**
+   * Returns a height of the scrollable area.
+   */
+  int GetScrollHeight() { return scroll_height; }
 
   /**
    * Adjusts a visible area to a given position.

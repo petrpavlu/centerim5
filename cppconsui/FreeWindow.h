@@ -50,7 +50,6 @@ public:
   virtual void Draw();
   virtual void SetVisibility(bool visible);
   virtual bool IsVisibleRecursive() const { return IsVisible(); }
-  virtual void SetParent(Container& parent);
   virtual int GetLeft() const { return win_x; }
   virtual int GetTop() const { return win_y; }
   virtual int GetWidth() const { return win_w; }
@@ -65,7 +64,7 @@ public:
   virtual void Hide();
   virtual void Close();
 
-  virtual void SetType(Type t) { type = t; }
+  //virtual void SetType(Type t) { type = t; }
   virtual Type GetType() { return type; }
 
   /**
@@ -94,6 +93,7 @@ protected:
   Type type;
 
   // Widget
+  virtual void SetParent(Container& parent);
   virtual void RealUpdateArea();
   virtual void Redraw();
 

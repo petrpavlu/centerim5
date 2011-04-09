@@ -154,6 +154,8 @@ protected:
     // signal connection to the widget
     sigc::connection sig_moveresize;
     sigc::connection sig_visible;
+
+    Child(Widget& w) : widget(&w) {}
   };
   typedef std::vector<Child> Children;
 

@@ -37,7 +37,8 @@
 
 namespace Curses
 {
-struct Stats {
+struct Stats
+{
   unsigned newpad_calls;
   unsigned newwin_calls;
   unsigned subpad_calls;

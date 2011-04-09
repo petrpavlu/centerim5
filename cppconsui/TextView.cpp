@@ -43,17 +43,6 @@ TextView::~TextView()
   Clear();
 }
 
-void TextView::DeclareBindables()
-{
-  DeclareBindable("textview", "scroll-up",
-      sigc::bind(sigc::mem_fun(this, &TextView::ActionScroll), -1),
-      InputProcessor::BINDABLE_NORMAL);
-
-  DeclareBindable("textview", "scroll-down",
-      sigc::bind(sigc::mem_fun(this, &TextView::ActionScroll), 1),
-      InputProcessor::BINDABLE_NORMAL);
-}
-
 void TextView::Draw()
 {
   int origw = area ? area->getmaxx() : 0;
@@ -283,6 +272,26 @@ void TextView::SetScrollBar(bool enabled)
   Redraw();
 }
 
+TextView::Line::Line(const char *text_, size_t bytes, int color_, bool dirty_)
+: color(color_), dirty(dirty_)
+{
+  g_assert(text_);
+  g_assert(bytes >= 0);
+
+  text = g_strndup(text_, bytes);
+  length = g_utf8_strlen(text, -1);
+}
+
+TextView::Line::~Line()
+{
+  g_free(text);
+}
+
+TextView::ScreenLine::ScreenLine(Line &parent_, const char *text_, int width_)
+: parent(&parent_), text(text_), width(width_)
+{
+}
+
 const char *TextView::ProceedLine(const char *text, int area_width,
     int *res_width) const
 {
@@ -425,22 +434,13 @@ void TextView::ActionScroll(int direction)
   Redraw();
 }
 
-TextView::Line::Line(const char *text_, size_t bytes, int color_, bool dirty_)
-: color(color_), dirty(dirty_)
+void TextView::DeclareBindables()
 {
-  g_assert(text_);
-  g_assert(bytes >= 0);
+  DeclareBindable("textview", "scroll-up",
+      sigc::bind(sigc::mem_fun(this, &TextView::ActionScroll), -1),
+      InputProcessor::BINDABLE_NORMAL);
 
-  text = g_strndup(text_, bytes);
-  length = g_utf8_strlen(text, -1);
-}
-
-TextView::Line::~Line()
-{
-  g_free(text);
-}
-
-TextView::ScreenLine::ScreenLine(Line &parent_, const char *text_, int width_)
-: parent(&parent_), text(text_), width(width_)
-{
+  DeclareBindable("textview", "scroll-down",
+      sigc::bind(sigc::mem_fun(this, &TextView::ActionScroll), 1),
+      InputProcessor::BINDABLE_NORMAL);
 }

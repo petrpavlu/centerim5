@@ -88,16 +88,6 @@ LineStyle::LineStyle(Type t)
   default_type_is_ascii = !g_get_charset(NULL) || wcwidth(0x2500) != 1;
 }
 
-void LineStyle::SetStyle(Type t)
-{
-  type = t;
-}
-
-LineStyle::Type LineStyle::GetStyle() const
-{
-  return type;
-}
-
 const char *LineStyle::H() const
 {
   return GetCurrentElems()->h;

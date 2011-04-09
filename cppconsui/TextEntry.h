@@ -96,8 +96,9 @@ public:
    */
   virtual const char *GetText() const { return text; }
 
-  int GetFlags() const { return flags; }
   void SetFlags(int flags);
+  int GetFlags() const { return flags; }
+
   void SetPosition(int position);
 
   sigc::signal<void, TextEntry&> signal_text_changed;
@@ -128,8 +129,8 @@ protected:
   void RecalculateLengths();
 
   int MoveLogically(int start, int count);
-  int MoveBackwardWord(int start);
   int MoveForwardWord(int start);
+  int MoveBackwardWord(int start);
 
 private:
   TextEntry(const TextEntry&);

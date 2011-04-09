@@ -54,13 +54,6 @@ FreeWindow::~FreeWindow()
     delete realwindow;
 }
 
-void FreeWindow::DeclareBindables()
-{
-  DeclareBindable("window", "close-window",
-      sigc::mem_fun(this, &FreeWindow::ActionClose),
-      InputProcessor::BINDABLE_NORMAL);
-}
-
 void FreeWindow::MoveResize(int newx, int newy, int neww, int newh)
 {
   if (newx == win_x && newy == win_y && neww == win_w && newh == win_h)
@@ -103,12 +96,6 @@ void FreeWindow::Draw()
 void FreeWindow::SetVisibility(bool visible)
 {
   visible ? Show() : Hide();
-}
-
-void FreeWindow::SetParent(Container& parent)
-{
-  // Window can not have a parent
-  g_assert_not_reached();
 }
 
 Point FreeWindow::GetAbsolutePosition()
@@ -156,6 +143,12 @@ void FreeWindow::Close()
   delete this;
 }
 
+void FreeWindow::SetParent(Container& parent)
+{
+  // Window can not have a parent
+  g_assert_not_reached();
+}
+
 void FreeWindow::RealUpdateArea()
 {
   if (update_area) {
@@ -196,4 +189,11 @@ void FreeWindow::Redraw()
 void FreeWindow::ActionClose()
 {
   Close();
+}
+
+void FreeWindow::DeclareBindables()
+{
+  DeclareBindable("window", "close-window",
+      sigc::mem_fun(this, &FreeWindow::ActionClose),
+      InputProcessor::BINDABLE_NORMAL);
 }

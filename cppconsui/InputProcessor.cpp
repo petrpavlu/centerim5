@@ -29,17 +29,6 @@
 #include "KeyConfig.h"
 #include "Keys.h"
 
-InputProcessor::Bindable::Bindable()
-: type(BINDABLE_NORMAL)
-{
-}
-
-InputProcessor::Bindable::Bindable(const sigc::slot<void>& function_,
-    BindableType type_)
-: function(function_), type(type_)
-{
-}
-
 InputProcessor::InputProcessor()
 : input_child(NULL)
 {
@@ -77,6 +66,12 @@ void InputProcessor::ClearInputChild()
   input_child = NULL;
 }
 
+void InputProcessor::DeclareBindable(const char *context, const char *action,
+    const sigc::slot<void>& function, BindableType type)
+{
+  keybindings[context][action] = Bindable(function, type);
+}
+
 bool InputProcessor::Process(BindableType type, const TermKeyKey& key)
 {
   for (Bindables::iterator i = keybindings.begin(); i != keybindings.end();
@@ -106,10 +101,4 @@ bool InputProcessor::Process(BindableType type, const TermKeyKey& key)
 bool InputProcessor::ProcessInputText(const TermKeyKey& key)
 {
   return false;
-}
-
-void InputProcessor::DeclareBindable(const char *context, const char *action,
-    const sigc::slot<void>& function, BindableType type)
-{
-  keybindings[context][action] = Bindable(function, type);
 }
