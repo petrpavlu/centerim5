@@ -230,7 +230,7 @@ void Log::ScreenResized()
 void Log::ShortenWindowText()
 {
   int max_lines = purple_prefs_get_int(CONF_PREFIX "/log/log_max_lines");
-  max_lines = CLAMP(max_lines, 10, 1000);
+  max_lines = CLAMP(max_lines, 50, 1000);
   int lines_num = textview->GetLinesNumber();
 
   if (lines_num > max_lines) {
