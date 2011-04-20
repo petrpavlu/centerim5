@@ -29,7 +29,7 @@
 #include "gettext.h"
 
 GeneralMenu::GeneralMenu()
-: MenuWindow(0, 0, 40, 9)
+: MenuWindow(0, 0, 40, 10)
 {
   SetColorScheme("generalmenu");
 
@@ -42,6 +42,8 @@ GeneralMenu::GeneralMenu()
         &GeneralMenu::OpenAccountWindow));
   AppendItem(_("Add buddy..."), sigc::mem_fun(this,
         &GeneralMenu::OpenAddBuddyRequest));
+  AppendItem(_("Add chat..."), sigc::mem_fun(this,
+        &GeneralMenu::OpenAddChatRequest));
   AppendItem(_("Config options..."), sigc::mem_fun(this,
         &GeneralMenu::OpenOptionWindow));
   /*
@@ -82,6 +84,12 @@ void GeneralMenu::OpenAccountWindow(Button& activator)
 void GeneralMenu::OpenAddBuddyRequest(Button& activator)
 {
   purple_blist_request_add_buddy(NULL, NULL, NULL, NULL);
+  Close();
+}
+
+void GeneralMenu::OpenAddChatRequest(Button& activator)
+{
+  purple_blist_request_add_chat(NULL, NULL, NULL, NULL);
   Close();
 }
 

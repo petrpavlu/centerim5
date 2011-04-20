@@ -19,6 +19,9 @@
  *
  * */
 
+/* Note: Parts of "add buddy/chat/group" code are based on Finch and Pidgin
+ * code. */
+
 #include "BuddyList.h"
 
 #include "CenterIM.h"
@@ -121,6 +124,21 @@ void BuddyList::Load()
   purple_blist_load();
 }
 
+bool BuddyList::CheckAnyAccountConnected()
+{
+  bool connected = false;
+  for (GList *list = purple_accounts_get_all(); list; list = list->next) {
+    PurpleAccount *account = reinterpret_cast<PurpleAccount*>(list->data);
+    if (purple_account_is_connected(account)) {
+      connected = true;
+      break;
+    }
+  }
+  if (!connected)
+    LOG->Message(_("No connected accounts\n"));
+  return connected;
+}
+
 void BuddyList::new_list(PurpleBuddyList *list)
 {
   if (buddylist != list)
@@ -180,18 +198,8 @@ void BuddyList::destroy(PurpleBuddyList *list)
 void BuddyList::request_add_buddy(PurpleAccount *account,
     const char *username, const char *group, const char *alias)
 {
-  bool connected = false;
-  for (GList *list = purple_accounts_get_all(); list; list = list->next) {
-    PurpleAccount *account = reinterpret_cast<PurpleAccount*>(list->data);
-    if (purple_account_is_connected(account)) {
-      connected = true;
-      break;
-    }
-  }
-  if (!connected) {
-    LOG->Message(_("No connected accounts"));
+  if (!CheckAnyAccountConnected())
     return;
-  }
 
   PurpleRequestFields *fields = purple_request_fields_new();
   PurpleRequestFieldGroup *g = purple_request_field_group_new(NULL);
@@ -199,19 +207,30 @@ void BuddyList::request_add_buddy(PurpleAccount *account,
   purple_request_fields_add_group(fields, g);
 
   PurpleRequestField *f;
-  f = purple_request_field_account_new("account", _("Account"), NULL);
+  f = purple_request_field_account_new("account", _("Account"), account);
   purple_request_field_group_add_field(g, f);
-  f = purple_request_field_string_new("name", _("Buddy name"), NULL, FALSE);
+  f = purple_request_field_string_new("name", _("Buddy name"), username,
+      FALSE);
   purple_request_field_group_add_field(g, f);
-  f = purple_request_field_string_new("alias", _("Alias"), NULL, FALSE);
+  f = purple_request_field_string_new("alias", _("Alias"), alias, FALSE);
   purple_request_field_group_add_field(g, f);
 
   f = purple_request_field_choice_new("group", _("Group"), 0);
   bool add_default_group = true;
+  int dval = 0;
+  bool dval_set = false;
   for (PurpleBlistNode *i = purple_blist_get_root(); i; i = i->next)
     if (PURPLE_BLIST_NODE_IS_GROUP(i)) {
-      purple_request_field_choice_add(f,
-          purple_group_get_name(reinterpret_cast<PurpleGroup*>(i)));
+      const char *cur_name = purple_group_get_name(
+          reinterpret_cast<PurpleGroup*>(i));
+      purple_request_field_choice_add(f, cur_name);
+      if (!dval_set) {
+        if (group && !strcmp(group, cur_name)) {
+          purple_request_field_choice_set_default_value(f, dval);
+          dval_set = true;
+        }
+        dval++;
+      }
       add_default_group = false;
     }
   if (add_default_group)
@@ -226,23 +245,189 @@ void BuddyList::request_add_buddy(PurpleAccount *account,
 void BuddyList::add_buddy_ok_cb(PurpleRequestFields *fields)
 {
   PurpleAccount *account = purple_request_fields_get_account(fields, "account");
-  const char *who = purple_request_fields_get_string(fields, "name");
-  const char *whoalias = purple_request_fields_get_string(fields, "alias");
+  const char *name = purple_request_fields_get_string(fields, "name");
+  const char *alias = purple_request_fields_get_string(fields, "alias");
   int selected = purple_request_fields_get_choice(fields, "group");
   GList *list = purple_request_field_choice_get_labels(
       purple_request_fields_get_field(fields, "group"));
-  const char *grp
+  const char *group
     = reinterpret_cast<const char *>(g_list_nth_data(list, selected));
 
-  if (!who || !who[0])
+  bool err = false;
+  if (!account) {
+    LOG->Message(_("No account specified\n"));
+    err = true;
+  }
+  else if (!purple_account_is_connected(account)) {
+    LOG->Message(_("Selected account is not connected\n"));
+    err = true;
+  }
+  if (!name || !name[0]) {
+    LOG->Message(_("No buddy name specified\n"));
+    err = true;
+  }
+  if (!group || !group[0]) {
+    LOG->Message(_("No group name specified\n"));
+    err = true;
+  }
+  if (err) {
+    request_add_buddy(account, name, group, alias);
     return;
+  }
 
-  PurpleGroup *g = purple_find_group(grp);
-  PurpleBuddy *b = purple_find_buddy_in_group(account, who, g);
-  if (b)
+  PurpleGroup *g = purple_find_group(group);
+  if (!g) {
+    g = purple_group_new(group);
+    purple_blist_add_group(g, NULL);
+  }
+  PurpleBuddy *b = purple_find_buddy_in_group(account, name, g);
+  if (b) {
+    LOG->Message(_("Specified buddy is already in the list\n"));
     return;
+  }
 
-  b = purple_buddy_new(account, who, whoalias);
+  b = purple_buddy_new(account, name, alias);
   purple_blist_add_buddy(b, NULL, g, NULL);
   purple_account_add_buddy(account, b);
+}
+
+void BuddyList::request_add_chat(PurpleAccount *account, PurpleGroup *group,
+    const char *alias, const char *name)
+{
+  if (!CheckAnyAccountConnected())
+    return;
+
+  if (account) {
+    PurpleConnection *gc = purple_account_get_connection(account);
+
+    if (!PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->join_chat) {
+      LOG->Message(_("This protocol does not support chat rooms\n"));
+      return;
+    }
+  }
+  else {
+    // find an account with chat capabilities
+    for (GList *l = purple_connections_get_all(); l; l = l->next) {
+      PurpleConnection *gc = reinterpret_cast<PurpleConnection*>(l->data);
+
+      if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->join_chat) {
+        account = purple_connection_get_account(gc);
+        break;
+      }
+    }
+
+    if (!account) {
+      LOG->Message(_("You are not currently signed on with any "
+            "protocols that have the ability to chat\n"));
+      return;
+    }
+  }
+
+  PurpleRequestFields *fields = purple_request_fields_new();
+  PurpleRequestFieldGroup *g = purple_request_field_group_new(NULL);
+
+  purple_request_fields_add_group(fields, g);
+
+  PurpleRequestField *f;
+  f = purple_request_field_account_new("account", _("Account"), account);
+  purple_request_field_group_add_field(g, f);
+  f = purple_request_field_string_new("name", _("Chat name"), NULL, FALSE);
+  purple_request_field_group_add_field(g, f);
+  f = purple_request_field_string_new("alias", _("Alias"), NULL, FALSE);
+  purple_request_field_group_add_field(g, f);
+
+  f = purple_request_field_choice_new("group", _("Group"), 0);
+  bool add_default_group = true;
+  int dval = 0;
+  bool dval_set = false;
+  for (PurpleBlistNode *i = purple_blist_get_root(); i; i = i->next)
+    if (PURPLE_BLIST_NODE_IS_GROUP(i)) {
+      PurpleGroup *cur_group = reinterpret_cast<PurpleGroup*>(i);
+      const char *cur_name = purple_group_get_name(cur_group);
+      purple_request_field_choice_add(f, cur_name);
+      if (!dval_set) {
+        if (group == cur_group) {
+          purple_request_field_choice_set_default_value(f, dval);
+          dval_set = true;
+        }
+        dval++;
+      }
+      add_default_group = false;
+    }
+  if (add_default_group)
+      purple_request_field_choice_add(f, _("Chats"));
+  purple_request_field_group_add_field(g, f);
+
+  f = purple_request_field_bool_new("autojoin", _("Auto-join"), FALSE);
+  purple_request_field_group_add_field(g, f);
+
+  purple_request_fields(NULL, _("Add chat"), NULL, NULL, fields, _("Add"),
+      G_CALLBACK(add_chat_ok_cb_), _("Cancel"), NULL, NULL, NULL, NULL,
+      this);
+}
+
+void BuddyList::add_chat_ok_cb(PurpleRequestFields *fields)
+{
+  PurpleAccount *account = purple_request_fields_get_account(fields, "account");
+  const char *name = purple_request_fields_get_string(fields, "name");
+  const char *alias = purple_request_fields_get_string(fields, "alias");
+  int selected = purple_request_fields_get_choice(fields, "group");
+  GList *list = purple_request_field_choice_get_labels(
+      purple_request_fields_get_field(fields, "group"));
+  const char *group
+    = reinterpret_cast<const char *>(g_list_nth_data(list, selected));
+  bool autojoin = purple_request_fields_get_bool(fields, "autojoin");
+
+  bool err = false;
+  if (!account) {
+    LOG->Message(_("No account specified\n"));
+    err = true;
+  }
+  else if (!purple_account_is_connected(account)) {
+    LOG->Message(_("Selected account is not connected\n"));
+    err = true;
+  }
+  else {
+    PurpleConnection *gc = purple_account_get_connection(account);
+    PurplePluginProtocolInfo *info = PURPLE_PLUGIN_PROTOCOL_INFO(
+        purple_connection_get_prpl(gc));
+    if (!info->join_chat) {
+      LOG->Message(_("This protocol does not support chat rooms\n"));
+      account = NULL;
+      err = true;
+    }
+  }
+  if (!name || !name[0]) {
+    LOG->Message(_("No buddy name specified\n"));
+    err = true;
+  }
+  if (!group || !group[0]) {
+    LOG->Message(_("No group name specified\n"));
+    err = true;
+  }
+  if (err) {
+    request_add_chat(account, purple_find_group(group), alias, name);
+    return;
+  }
+
+  PurpleConnection *gc = purple_account_get_connection(account);
+  PurplePluginProtocolInfo *info = PURPLE_PLUGIN_PROTOCOL_INFO(
+      purple_connection_get_prpl(gc));
+  GHashTable *hash = NULL;
+  if (info->chat_info_defaults)
+    hash = info->chat_info_defaults(gc, name);
+
+  PurpleChat *chat = purple_chat_new(account, name, hash);
+
+  if (chat) {
+    PurpleGroup* g = purple_find_group(group);
+    if (!g) {
+      g = purple_group_new(group);
+      purple_blist_add_group(g, NULL);
+    }
+    purple_blist_add_chat(chat, g, NULL);
+    purple_blist_alias_chat(chat, alias);
+    purple_blist_node_set_bool(reinterpret_cast<PurpleBlistNode*>(chat),
+        "cim-autojoin", autojoin);
+  }
 }

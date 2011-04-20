@@ -43,6 +43,7 @@ private:
 
   void OpenAccountWindow(Button& activator);
   void OpenAddBuddyRequest(Button& activator);
+  void OpenAddChatRequest(Button& activator);
   void OpenOptionWindow(Button& activator);
   void RequestTest(Button& activator);
 

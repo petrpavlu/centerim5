@@ -62,6 +62,8 @@ private:
 
   void Load();
 
+  bool CheckAnyAccountConnected();
+
   static void new_list_(PurpleBuddyList *list)
     { BUDDYLIST->new_list(list); }
   static void new_node_(PurpleBlistNode *node)
@@ -77,7 +79,7 @@ private:
     { BUDDYLIST->request_add_buddy(account, username, group, alias); }
   static void request_add_chat_(PurpleAccount *account,
       PurpleGroup *group, const char *alias, const char *name)
-    { /* TODO */ ; }
+    { BUDDYLIST->request_add_chat(account, group, alias, name); }
   static void request_add_group_()
     { /* TODO */ ; }
 
@@ -88,10 +90,15 @@ private:
   void destroy(PurpleBuddyList *list);
   void request_add_buddy(PurpleAccount *account, const char *username,
       const char *group, const char *alias);
+  void request_add_chat(PurpleAccount *account, PurpleGroup *group,
+      const char *alias, const char *name);
 
   static void add_buddy_ok_cb_(void *data, PurpleRequestFields *fields)
-    { reinterpret_cast<BuddyList *>(data)->add_buddy_ok_cb(fields); }
+    { reinterpret_cast<BuddyList*>(data)->add_buddy_ok_cb(fields); }
   void add_buddy_ok_cb(PurpleRequestFields *fields);
+  static void add_chat_ok_cb_(void *data, PurpleRequestFields *fields)
+    { reinterpret_cast<BuddyList*>(data)->add_chat_ok_cb(fields); }
+  void add_chat_ok_cb(PurpleRequestFields *fields);
 };
 
 #endif // __BUDDYLIST_H__
