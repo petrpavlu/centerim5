@@ -41,10 +41,6 @@ public:
   virtual void Close();
   virtual void ScreenResized();
 
-  // force show the conversation, used by buddy list
-  void ShowConversation(PurpleConversationType type, PurpleAccount *account,
-      const char *name);
-
   void FocusActiveConversation();
   void FocusPrevConversation();
   void FocusNextConversation();
@@ -101,12 +97,15 @@ private:
       time_t mtime)
     { CONVERSATIONS->write_conv(conv, name, alias, message, flags,
         mtime); }
+  static void present_(PurpleConversation *conv)
+    { CONVERSATIONS->present(conv); }
 
   void create_conversation(PurpleConversation *conv);
   void destroy_conversation(PurpleConversation *conv);
   void write_conv(PurpleConversation *conv, const char *name,
     const char *alias, const char *message, PurpleMessageFlags flags,
     time_t mtime);
+  void present(PurpleConversation *conv);
 };
 
 #endif // __CONVERSATIONS_H__

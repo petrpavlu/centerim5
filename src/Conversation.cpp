@@ -57,6 +57,8 @@ Conversation::Conversation(PurpleConversation *conv_)
   // open logfile
   BuildLogFilename();
 
+  LoadHistory();
+
   GError *err = NULL;
   if ((logfile = g_io_channel_new_file(filename, "a", &err)) == NULL) {
     if (err) {
@@ -71,6 +73,7 @@ Conversation::Conversation(PurpleConversation *conv_)
   }
 
   DeclareBindables();
+  LOG->Debug("%p constructor()\n", this);
 }
 
 Conversation::~Conversation()
@@ -78,6 +81,7 @@ Conversation::~Conversation()
   g_free(filename);
   if (logfile)
     g_io_channel_unref(logfile);
+  LOG->Debug("%p destructor()\n", this);
 }
 
 bool Conversation::ProcessInput(const TermKeyKey& key)
@@ -140,25 +144,31 @@ void Conversation::Show()
 void Conversation::Receive(const char *name, const char *alias, const char *message,
   PurpleMessageFlags flags, time_t mtime)
 {
+  PurpleConversationType type = purple_conversation_get_type(conv);
+
   // we currently don't support displaying HTML in any way
   char *nohtml = purple_markup_strip_html(message);
 
   int color = 0;
-  char type = 'O'; // other
+  char mtype = 'O'; // other
   if (flags & PURPLE_MESSAGE_SEND) {
     color = 1;
-    type = 'S'; // sent
+    mtype = 'S'; // sent
   }
   else if (flags & PURPLE_MESSAGE_RECV) {
     color = 2;
-    type = 'R'; // recv
+    mtype = 'R'; // recv
   }
 
   // write text into logfile
   // encode all newline characters as <br>
   char *html = purple_strdup_withhtml(nohtml);
-  char *msg = g_strdup_printf("%c %d %s\n", type, static_cast<int>(mtime),
-      html);
+  long t = static_cast<long>(mtime);
+  char *msg;
+  if (type == PURPLE_CONV_TYPE_CHAT)
+    msg = g_strdup_printf("%c %ld %s: %s\n", mtype, t, name, html);
+  else
+    msg = g_strdup_printf("%c %ld %s\n", mtype, t, html);
   g_free(html);
   if (logfile) {
     GError *err = NULL;
@@ -187,11 +197,29 @@ void Conversation::Receive(const char *name, const char *alias, const char *mess
   g_free(msg);
 
   // write text to the window
-  msg = g_strdup_printf("%s %s", purple_utf8_strftime(TIME_FORMAT, localtime(&mtime)), nohtml);
+  const char *timestr = purple_utf8_strftime(TIME_FORMAT, localtime(&mtime));
+  if (type == PURPLE_CONV_TYPE_CHAT)
+    msg = g_strdup_printf("%s %s: %s", timestr, name, nohtml);
+  else
+    msg = g_strdup_printf("%s %s", timestr, nohtml);
   view->Append(msg, color);
   g_free(msg);
 
   g_free(nohtml);
+}
+
+void Conversation::ActionSend()
+{
+  PurpleConversationType type = purple_conversation_get_type(conv);
+  char *str = input->AsString("<br/>");
+  if (str) {
+    if (type == PURPLE_CONV_TYPE_CHAT)
+      purple_conv_chat_send(PURPLE_CONV_CHAT(conv), str);
+    else if (type == PURPLE_CONV_TYPE_IM)
+      purple_conv_im_send(PURPLE_CONV_IM(conv), str);
+    g_free(str);
+    input->Clear();
+  }
 }
 
 void Conversation::DestroyPurpleConversation(PurpleConversation *conv)
@@ -231,75 +259,7 @@ void Conversation::BuildLogFilename()
   g_free(acct_name);
 }
 
-void Conversation::DeclareBindables()
-{
-  DeclareBindable("conversation", "send",
-      sigc::mem_fun(this, &Conversation::ActionSend),
-      InputProcessor::BINDABLE_OVERRIDE);
-}
-
-ConversationChat::ConversationChat(PurpleConversation *conv)
-: Conversation(conv)
-{
-  convchat = PURPLE_CONV_CHAT(conv);
-  LoadHistory();
-}
-
-void ConversationChat::LoadHistory()
-{
-  //g_return_if_fail(CONF->GetLogChats());
-
-  PurpleAccount *account = purple_conversation_get_account(conv);
-  const char *name = purple_conversation_get_name(conv);
-  GList *logs = NULL;
-  const char *alias = name;
-  PurpleLogReadFlags flags;
-  char *history;
-  char *header;
-  PurpleMessageFlags mflag;
-
-  logs = purple_log_get_logs(PURPLE_LOG_CHAT, name, account);
-
-  if (logs == NULL)
-    return;
-
-  mflag = (PurpleMessageFlags)(PURPLE_MESSAGE_NO_LOG | PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_DELAYED);
-  history = purple_log_read((PurpleLog*)logs->data, &flags);
-
-  header = g_strdup_printf("<b>Conversation with %s on %s:</b><br>", alias,
-               purple_date_format_full(localtime(&((PurpleLog *)logs->data)->time)));
-  view->Append(header);
-  g_free(header);
-
-  if (flags & PURPLE_LOG_READ_NO_NEWLINE)
-    purple_str_strip_char(history, '\n');
-  char *nohtml = purple_markup_strip_html(history);
-  g_free(history);
-  view->Append(nohtml);
-  g_free(nohtml);
-
-  g_list_foreach(logs, (GFunc)purple_log_free, NULL);
-  g_list_free(logs);
-}
-
-void ConversationChat::ActionSend()
-{
-}
-
-ConversationIm::ConversationIm(PurpleConversation *conv)
-: Conversation(conv)
-{
-  convim = PURPLE_CONV_IM(conv);
-  LoadHistory();
-  LOG->Debug("%p constructor()\n", this);
-}
-
-ConversationIm::~ConversationIm()
-{
-  LOG->Debug("%p destructor()\n", this);
-}
-
-void ConversationIm::LoadHistory()
+void Conversation::LoadHistory()
 {
   // open logfile
   GError *err = NULL;
@@ -379,12 +339,9 @@ void ConversationIm::LoadHistory()
   g_io_channel_unref(chan);
 }
 
-void ConversationIm::ActionSend()
+void Conversation::DeclareBindables()
 {
-  char *str = input->AsString("<br/>");
-  if (str) {
-    purple_conv_im_send(convim, str);
-    g_free(str);
-    input->Clear();
-  }
+  DeclareBindable("conversation", "send",
+      sigc::mem_fun(this, &Conversation::ActionSend),
+      InputProcessor::BINDABLE_OVERRIDE);
 }

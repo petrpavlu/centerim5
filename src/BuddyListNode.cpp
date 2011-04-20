@@ -189,8 +189,14 @@ void BuddyListBuddy::Update()
 
 void BuddyListBuddy::OnActivate(Button& activator)
 {
-  CONVERSATIONS->ShowConversation(PURPLE_CONV_TYPE_IM,
-      purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
+  PurpleAccount *account = purple_buddy_get_account(buddy);
+  const char *name = purple_buddy_get_name(buddy);
+  PurpleConversation *conv = purple_find_conversation_with_account(
+      PURPLE_CONV_TYPE_IM, name, account);
+
+  if (!conv)
+    conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
+  purple_conversation_present(conv);
 }
 
 const char *BuddyListBuddy::ToString() const
@@ -229,8 +235,29 @@ void BuddyListChat::Update()
 
 void BuddyListChat::OnActivate(Button& activator)
 {
-  CONVERSATIONS->ShowConversation(PURPLE_CONV_TYPE_CHAT,
-      purple_chat_get_account(chat), purple_chat_get_name(chat));
+  PurpleAccount *account = purple_chat_get_account(chat);
+  PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(
+      purple_find_prpl(purple_account_get_protocol_id(account)));
+  GHashTable *components = purple_chat_get_components(chat);
+
+  char *chat_name = NULL;
+  if (prpl_info && prpl_info->get_chat_name)
+    chat_name = prpl_info->get_chat_name(components);
+
+  const char *name;
+  if (chat_name)
+    name = chat_name;
+  else
+    name = purple_chat_get_name(chat);
+
+  PurpleConversation *conv = purple_find_conversation_with_account(
+      PURPLE_CONV_TYPE_CHAT, name, account);
+  if (conv)
+    purple_conversation_present(conv);
+
+  serv_join_chat(purple_account_get_connection(account), components);
+
+  g_free(chat_name);
 }
 
 const char *BuddyListChat::ToString() const
@@ -287,8 +314,11 @@ void BuddyListContact::Update()
 void BuddyListContact::OnActivate(Button& activator)
 {
   PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
-  CONVERSATIONS->ShowConversation(PURPLE_CONV_TYPE_IM,
-      purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
+  void *ui_data = buddy->node.ui_data;
+  if (ui_data) {
+    BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(ui_data);
+    bnode->OnActivate(activator);
+  }
 }
 
 const char *BuddyListContact::ToString() const

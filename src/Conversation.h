@@ -62,8 +62,6 @@ public:
   PurpleConversation *GetPurpleConversation() const { return conv; };
 
 protected:
-  virtual void LoadHistory() = 0;
-
   TextView *view;
   TextEdit *input;
   HorizontalLine *line;
@@ -82,55 +80,12 @@ private:
   Conversation(const Conversation&);
   Conversation& operator=(const Conversation&);
 
-  virtual void ActionSend() = 0;
+  virtual void ActionSend();
 
   void DestroyPurpleConversation(PurpleConversation *conv);
   void BuildLogFilename();
+  void LoadHistory();
   void DeclareBindables();
-};
-
-class ConversationChat
-: public Conversation
-{
-  public:
-    ConversationChat(PurpleConversation *conv);
-    virtual ~ConversationChat() {}
-
-  protected:
-    // Conversation
-    virtual void LoadHistory();
-
-  private:
-    ConversationChat();
-    ConversationChat(const ConversationChat&);
-    ConversationChat& operator=(const ConversationChat&);
-
-    // Conversation
-    virtual void ActionSend();
-
-    PurpleConvChat* convchat;
-};
-
-class ConversationIm
-: public Conversation
-{
-  public:
-    ConversationIm(PurpleConversation *conv);
-    virtual ~ConversationIm();
-
-  protected:
-    // Conversation
-    virtual void LoadHistory();
-
-  private:
-    ConversationIm();
-    ConversationIm(const ConversationIm&);
-    ConversationIm& operator=(const ConversationIm&);
-
-    // Conversation
-    virtual void ActionSend();
-
-    PurpleConvIm* convim;
 };
 
 #endif // __CONVERSATION_H__

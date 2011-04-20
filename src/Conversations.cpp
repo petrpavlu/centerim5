@@ -46,40 +46,6 @@ void Conversations::ScreenResized()
   MoveResizeRect(r);
 }
 
-void Conversations::ShowConversation(PurpleConversationType type,
-    PurpleAccount *account, const char *name)
-{
-  // this is called by cim directly, so assert instead of return_if_fail
-  g_assert(account);
-  g_assert(name);
-
-  PurpleConversation *conv = purple_find_conversation_with_account(type,
-      name, account);
-  if (conv) {
-    int i = FindConversation(conv);
-
-    // unhandled conversation type
-    if (i == -1)
-      return;
-
-    if (i != active)
-      ActivateConversation(i);
-
-    return;
-  }
-
-  conv = purple_conversation_new(type, account, name);
-
-  // this conversation was opened from the buddy list so force the show
-  int i = FindConversation(conv);
-
-  // unhandled conversation type
-  if (i == -1)
-    return;
-
-  ActivateConversation(i);
-}
-
 void Conversations::FocusActiveConversation()
 {
   ActivateConversation(active);
@@ -126,7 +92,7 @@ Conversations::Conversations()
   //centerim_conv_ui_ops.chat_rename_user = ;
   //centerim_conv_ui_ops.chat_remove_users = ;
   //centerim_conv_ui_ops.chat_update_user = ;
-  //centerim_conv_ui_ops.present = ;
+  centerim_conv_ui_ops.present = present_;
   //centerim_conv_ui_ops.has_focus = ;
   //centerim_conv_ui_ops.custom_smiley_add = ;
   //centerim_conv_ui_ops.custom_smiley_write = ;
@@ -258,17 +224,14 @@ void Conversations::create_conversation(PurpleConversation *conv)
   g_return_if_fail(conv);
   g_return_if_fail(FindConversation(conv) == -1);
 
-  Conversation *conversation;
-
   PurpleConversationType type = purple_conversation_get_type(conv);
-  if (type == PURPLE_CONV_TYPE_IM)
-    conversation = new ConversationIm(conv);
-  else if (type == PURPLE_CONV_TYPE_CHAT)
-    conversation = new ConversationChat(conv);
-  else {
+  if (type != PURPLE_CONV_TYPE_IM && type != PURPLE_CONV_TYPE_CHAT) {
+    purple_conversation_destroy(conv);
     LOG->Error(_("Unhandled conversation type: %i.\n"), type);
     return;
   }
+
+  Conversation *conversation = new Conversation(conv);
 
   ConvChild c;
   c.purple_conv = conv;
@@ -326,4 +289,18 @@ void Conversations::write_conv(PurpleConversation *conv, const char *name,
 
   // delegate it to Conversation object
   conversations[i].conv->Receive(name, alias, message, flags, mtime);
+}
+
+void Conversations::present(PurpleConversation *conv)
+{
+  g_return_if_fail(conv);
+
+  int i = FindConversation(conv);
+
+  // unhandled conversation type
+  if (i == -1)
+    return;
+
+  if (i != active)
+    ActivateConversation(i);
 }
