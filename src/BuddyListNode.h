@@ -23,6 +23,7 @@
 #define _BUDDYLISTNODE_H__
 
 #include <cppconsui/Button.h>
+#include <cppconsui/MessageDialog.h>
 #include <cppconsui/TreeView.h>
 #include <libpurple/purple.h>
 
@@ -46,6 +47,8 @@ public:
   void SetRefNode(TreeView::NodeReference n) { ref = n; }
   TreeView::NodeReference GetRefNode() const { return ref; }
 
+  sigc::signal<void> signal_remove;
+
 protected:
   TreeView::NodeReference ref;
 
@@ -66,6 +69,9 @@ protected:
 private:
   BuddyListNode(BuddyListNode&);
   BuddyListNode& operator=(BuddyListNode&);
+
+  void ActionRemove();
+  void DeclareBindables();
 };
 
 class BuddyListBuddy
@@ -81,6 +87,10 @@ public:
 
 protected:
   PurpleBuddy *buddy;
+
+  void RemoveBuddyResponseHandler(MessageDialog& activator,
+      AbstractDialog::ResponseType response);
+  void OnBuddyRemove();
 
 private:
   BuddyListBuddy(PurpleBlistNode *node);
@@ -103,6 +113,10 @@ public:
 protected:
   PurpleChat *chat;
 
+  void RemoveChatResponseHandler(MessageDialog& activator,
+      AbstractDialog::ResponseType response);
+  void OnChatRemove();
+
 private:
   BuddyListChat(PurpleBlistNode *node);
   BuddyListChat(const BuddyListChat&);
@@ -123,6 +137,10 @@ public:
 
 protected:
   PurpleContact *contact;
+
+  void RemoveContactResponseHandler(MessageDialog& activator,
+      AbstractDialog::ResponseType response);
+  void OnContactRemove();
 
 private:
   BuddyListContact(PurpleBlistNode *node);
@@ -145,6 +163,10 @@ public:
 
 protected:
   PurpleGroup *group;
+
+  void RemoveGroupResponseHandler(MessageDialog& activator,
+      AbstractDialog::ResponseType response);
+  void OnGroupRemove();
 
 private:
   BuddyListGroup(PurpleBlistNode *node);

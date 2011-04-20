@@ -89,7 +89,7 @@ BuddyListNode *BuddyListNode::GetParentNode() const
   if (!parent || !parent->ui_data)
     return NULL;
 
-  return reinterpret_cast<BuddyListNode *>(parent->ui_data);
+  return reinterpret_cast<BuddyListNode*>(parent->ui_data);
 }
 
 BuddyListNode::BuddyListNode(PurpleBlistNode *node)
@@ -97,6 +97,7 @@ BuddyListNode::BuddyListNode(PurpleBlistNode *node)
 {
   node->ui_data = this;
   signal_activate.connect(sigc::mem_fun(this, &BuddyListNode::OnActivate));
+  DeclareBindables();
 }
 
 BuddyListNode::~BuddyListNode()
@@ -152,6 +153,18 @@ int BuddyListNode::GetBuddyStatusWeight(PurpleBuddy *buddy) const
   }
 }
 
+void BuddyListNode::ActionRemove()
+{
+  signal_remove();
+}
+
+void BuddyListNode::DeclareBindables()
+{
+  DeclareBindable("buddylist", "remove",
+      sigc::mem_fun(this, &BuddyListNode::ActionRemove),
+      InputProcessor::BINDABLE_NORMAL);
+}
+
 bool BuddyListBuddy::LessThan(const BuddyListNode& other) const
 {
   const BuddyListBuddy *o = dynamic_cast<const BuddyListBuddy *>(&other);
@@ -204,12 +217,41 @@ const char *BuddyListBuddy::ToString() const
   return purple_buddy_get_alias(buddy);
 }
 
+void BuddyListBuddy::RemoveBuddyResponseHandler(MessageDialog& activator,
+    AbstractDialog::ResponseType response)
+{
+  switch (response) {
+    case AbstractDialog::RESPONSE_OK:
+      break;
+    default:
+      return;
+  }
+
+  PurpleGroup *group = purple_buddy_get_group(buddy);
+  purple_account_remove_buddy(purple_buddy_get_account(buddy), buddy,
+      group);
+  purple_blist_remove_buddy(buddy);
+}
+
+void BuddyListBuddy::OnBuddyRemove()
+{
+  char *msg = g_strdup_printf(
+      _("Are you sure you want to delete %s from your buddy list?"),
+      purple_buddy_get_alias(buddy));
+  MessageDialog *dialog = new MessageDialog(_("Buddy deletion"), msg);
+  g_free(msg);
+  dialog->signal_response.connect(sigc::mem_fun(this,
+        &BuddyListBuddy::RemoveBuddyResponseHandler));
+  dialog->Show();
+}
+
 BuddyListBuddy::BuddyListBuddy(PurpleBlistNode *node)
 : BuddyListNode(node)
 {
   SetColorScheme("buddylistbuddy");
 
-  buddy = reinterpret_cast<PurpleBuddy *>(node);
+  buddy = reinterpret_cast<PurpleBuddy*>(node);
+  signal_remove.connect(sigc::mem_fun(this, &BuddyListBuddy::OnBuddyRemove));
 }
 
 bool BuddyListChat::LessThan(const BuddyListNode& other) const
@@ -265,12 +307,38 @@ const char *BuddyListChat::ToString() const
   return purple_chat_get_name(chat);
 }
 
+void BuddyListChat::RemoveChatResponseHandler(MessageDialog& activator,
+    AbstractDialog::ResponseType response)
+{
+  switch (response) {
+    case AbstractDialog::RESPONSE_OK:
+      break;
+    default:
+      return;
+  }
+
+  purple_blist_remove_chat(chat);
+}
+
+void BuddyListChat::OnChatRemove()
+{
+  char *msg = g_strdup_printf(
+      _("Are you sure you want to delete %s from your buddy list?"),
+      purple_chat_get_name(chat));
+  MessageDialog *dialog = new MessageDialog(_("Chat deletion"), msg);
+  g_free(msg);
+  dialog->signal_response.connect(sigc::mem_fun(this,
+        &BuddyListChat::RemoveChatResponseHandler));
+  dialog->Show();
+}
+
 BuddyListChat::BuddyListChat(PurpleBlistNode *node)
 : BuddyListNode(node)
 {
   SetColorScheme("buddylistchat");
 
-  chat = reinterpret_cast<PurpleChat *>(node);
+  chat = reinterpret_cast<PurpleChat*>(node);
+  signal_remove.connect(sigc::mem_fun(this, &BuddyListChat::OnChatRemove));
 }
 
 bool BuddyListContact::LessThan(const BuddyListNode& other) const
@@ -326,12 +394,51 @@ const char *BuddyListContact::ToString() const
   return purple_contact_get_alias(contact);
 }
 
+void BuddyListContact::RemoveContactResponseHandler(MessageDialog& activator,
+    AbstractDialog::ResponseType response)
+{
+  switch (response) {
+    case AbstractDialog::RESPONSE_OK:
+      break;
+    default:
+      return;
+  }
+
+  // based on gtkdialogs.c:pidgin_dialogs_remove_contact_cb()
+  PurpleBlistNode *cnode = reinterpret_cast<PurpleBlistNode*>(contact);
+  PurpleGroup *group = reinterpret_cast<PurpleGroup*>(
+      purple_blist_node_get_parent(cnode));
+
+  for (PurpleBlistNode *bnode = purple_blist_node_get_first_child(cnode);
+      bnode; bnode = purple_blist_node_get_sibling_next(bnode)) {
+    PurpleBuddy *buddy = reinterpret_cast<PurpleBuddy*>(bnode);
+    PurpleAccount *account = purple_buddy_get_account(buddy);
+    if (purple_account_is_connected(account))
+      purple_account_remove_buddy(account, buddy, group);
+  }
+  purple_blist_remove_contact(contact);
+}
+
+void BuddyListContact::OnContactRemove()
+{
+  char *msg = g_strdup_printf(
+      _("Are you sure you want to delete %s from your buddy list?"),
+      purple_buddy_get_alias(purple_contact_get_priority_buddy(contact)));
+  MessageDialog *dialog = new MessageDialog(_("Contact deletion"), msg);
+  g_free(msg);
+  dialog->signal_response.connect(sigc::mem_fun(this,
+        &BuddyListContact::RemoveContactResponseHandler));
+  dialog->Show();
+}
+
 BuddyListContact::BuddyListContact(PurpleBlistNode *node)
 : BuddyListNode(node)
 {
   SetColorScheme("buddylistcontact");
 
-  contact = reinterpret_cast<PurpleContact *>(node);
+  contact = reinterpret_cast<PurpleContact*>(node);
+  signal_remove.connect(sigc::mem_fun(this,
+        &BuddyListContact::OnContactRemove));
 }
 
 bool BuddyListGroup::LessThan(const BuddyListNode& other) const
@@ -358,7 +465,7 @@ void BuddyListGroup::Update()
   bool vis = false;
   while (p) {
     if (purple_account_is_connected(
-          reinterpret_cast<PurpleAccount *>(p->data))) {
+          reinterpret_cast<PurpleAccount*>(p->data))) {
       vis = true;
       break;
     }
@@ -407,10 +514,66 @@ void BuddyListGroup::SortIn()
     t->MoveNodeAfter(ref, --i);
 }
 
+void BuddyListGroup::RemoveGroupResponseHandler(MessageDialog& activator,
+    AbstractDialog::ResponseType response)
+{
+  switch (response) {
+    case AbstractDialog::RESPONSE_OK:
+      break;
+    default:
+      return;
+  }
+
+  // based on gtkdialogs.c:pidgin_dialogs_remove_group_cb()
+  PurpleBlistNode *cnode = reinterpret_cast<PurpleBlistNode*>(group)->child;
+  while (cnode) {
+    if (PURPLE_BLIST_NODE_IS_CONTACT(cnode)) {
+      PurpleBlistNode *bnode = cnode->child;
+      cnode = cnode->next;
+      while (bnode) {
+        PurpleBuddy *buddy;
+        if (PURPLE_BLIST_NODE_IS_BUDDY(bnode)) {
+          buddy = reinterpret_cast<PurpleBuddy*>(bnode);
+          bnode = bnode->next;
+          if (purple_account_is_connected(buddy->account)) {
+            purple_account_remove_buddy(buddy->account, buddy, group);
+            purple_blist_remove_buddy(buddy);
+          }
+        }
+        else
+          bnode = bnode->next;
+      }
+    }
+    else if (PURPLE_BLIST_NODE_IS_CHAT(cnode)) {
+      PurpleChat *chat = reinterpret_cast<PurpleChat*>(cnode);
+      cnode = cnode->next;
+      if (purple_account_is_connected(chat->account))
+        purple_blist_remove_chat(chat);
+    }
+    else
+      cnode = cnode->next;
+  }
+
+  purple_blist_remove_group(group);
+}
+
+void BuddyListGroup::OnGroupRemove()
+{
+  char *msg = g_strdup_printf(
+      _("Are you sure you want to delete %s from your buddy list?"),
+      purple_group_get_name(group));
+  MessageDialog *dialog = new MessageDialog(_("Contact deletion"), msg);
+  g_free(msg);
+  dialog->signal_response.connect(sigc::mem_fun(this,
+        &BuddyListGroup::RemoveGroupResponseHandler));
+  dialog->Show();
+}
+
 BuddyListGroup::BuddyListGroup(PurpleBlistNode *node)
 : BuddyListNode(node)
 {
   SetColorScheme("buddylistgroup");
 
-  group = reinterpret_cast<PurpleGroup *>(node);
+  group = reinterpret_cast<PurpleGroup*>(node);
+  signal_remove.connect(sigc::mem_fun(this, &BuddyListGroup::OnGroupRemove));
 }

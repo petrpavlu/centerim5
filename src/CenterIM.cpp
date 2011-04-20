@@ -521,6 +521,8 @@ void CenterIM::RegisterDefaultKeys()
   KEYCONFIG->RegisterKeyDef("centerim", "conversation-next",
       Keys::UnicodeTermKey("n", TERMKEY_KEYMOD_ALT));
 
+  KEYCONFIG->RegisterKeyDef("buddylist", "remove", Keys::UnicodeTermKey("d"));
+
   KEYCONFIG->RegisterKeyDef("conversation", "send",
       Keys::UnicodeTermKey("x", TERMKEY_KEYMOD_CTRL));
 }
