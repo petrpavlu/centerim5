@@ -182,7 +182,7 @@ private:
   void Populate();
   void PopulateAccount(PurpleAccount *account);
 
-  void Add(Button& activator);
+  void AddAccount(Button& activator);
   void DropAccount(Button& activator, PurpleAccount *account);
   void DropAccountResponseHandler(MessageDialog& activator,
       AbstractDialog::ResponseType response, PurpleAccount *account);

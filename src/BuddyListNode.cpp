@@ -42,18 +42,6 @@ BuddyListNode *BuddyListNode::CreateNode(PurpleBlistNode *node)
   return NULL;
 }
 
-BuddyListNode::BuddyListNode(PurpleBlistNode *node)
-: node(node)
-{
-  node->ui_data = this;
-  signal_activate.connect(sigc::mem_fun(this, &BuddyListNode::OnActivate));
-}
-
-BuddyListNode::~BuddyListNode()
-{
-  node->ui_data = NULL;
-}
-
 void BuddyListNode::Update()
 {
   TreeView *t = dynamic_cast<TreeView *>(parent);
@@ -104,6 +92,18 @@ BuddyListNode *BuddyListNode::GetParentNode() const
   return reinterpret_cast<BuddyListNode *>(parent->ui_data);
 }
 
+BuddyListNode::BuddyListNode(PurpleBlistNode *node)
+: node(node)
+{
+  node->ui_data = this;
+  signal_activate.connect(sigc::mem_fun(this, &BuddyListNode::OnActivate));
+}
+
+BuddyListNode::~BuddyListNode()
+{
+  node->ui_data = NULL;
+}
+
 const char *BuddyListNode::GetBuddyStatus(PurpleBuddy *buddy) const
 {
   if (!purple_account_is_connected(purple_buddy_get_account(buddy)))
@@ -152,14 +152,6 @@ int BuddyListNode::GetBuddyStatusWeight(PurpleBuddy *buddy) const
   }
 }
 
-BuddyListBuddy::BuddyListBuddy(PurpleBlistNode *node)
-: BuddyListNode(node)
-{
-  SetColorScheme("buddylistbuddy");
-
-  buddy = reinterpret_cast<PurpleBuddy *>(node);
-}
-
 bool BuddyListBuddy::LessThan(const BuddyListNode& other) const
 {
   const BuddyListBuddy *o = dynamic_cast<const BuddyListBuddy *>(&other);
@@ -206,12 +198,12 @@ const char *BuddyListBuddy::ToString() const
   return purple_buddy_get_alias(buddy);
 }
 
-BuddyListChat::BuddyListChat(PurpleBlistNode *node)
+BuddyListBuddy::BuddyListBuddy(PurpleBlistNode *node)
 : BuddyListNode(node)
 {
-  SetColorScheme("buddylistchat");
+  SetColorScheme("buddylistbuddy");
 
-  chat = reinterpret_cast<PurpleChat *>(node);
+  buddy = reinterpret_cast<PurpleBuddy *>(node);
 }
 
 bool BuddyListChat::LessThan(const BuddyListNode& other) const
@@ -246,12 +238,12 @@ const char *BuddyListChat::ToString() const
   return purple_chat_get_name(chat);
 }
 
-BuddyListContact::BuddyListContact(PurpleBlistNode *node)
+BuddyListChat::BuddyListChat(PurpleBlistNode *node)
 : BuddyListNode(node)
 {
-  SetColorScheme("buddylistcontact");
+  SetColorScheme("buddylistchat");
 
-  contact = reinterpret_cast<PurpleContact *>(node);
+  chat = reinterpret_cast<PurpleChat *>(node);
 }
 
 bool BuddyListContact::LessThan(const BuddyListNode& other) const
@@ -304,12 +296,12 @@ const char *BuddyListContact::ToString() const
   return purple_contact_get_alias(contact);
 }
 
-BuddyListGroup::BuddyListGroup(PurpleBlistNode *node)
+BuddyListContact::BuddyListContact(PurpleBlistNode *node)
 : BuddyListNode(node)
 {
-  SetColorScheme("buddylistgroup");
+  SetColorScheme("buddylistcontact");
 
-  group = reinterpret_cast<PurpleGroup *>(node);
+  contact = reinterpret_cast<PurpleContact *>(node);
 }
 
 bool BuddyListGroup::LessThan(const BuddyListNode& other) const
@@ -383,4 +375,12 @@ void BuddyListGroup::SortIn()
   // the ref is last in a list
   if (i == parent_ref.end())
     t->MoveNodeAfter(ref, --i);
+}
+
+BuddyListGroup::BuddyListGroup(PurpleBlistNode *node)
+: BuddyListNode(node)
+{
+  SetColorScheme("buddylistgroup");
+
+  group = reinterpret_cast<PurpleGroup *>(node);
 }

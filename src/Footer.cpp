@@ -29,6 +29,21 @@ Footer *Footer::Instance()
   return instance;
 }
 
+void Footer::ScreenResized()
+{
+  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::FOOTER_AREA));
+}
+
+void Footer::SetText(const char *text)
+{
+  label->SetText(text);
+}
+
+const char *Footer::GetText() const
+{
+  return label->GetText();
+}
+
 Footer::Footer()
 : FreeWindow(0, 24, 80, 1, TYPE_NON_FOCUSABLE)
 {
@@ -52,19 +67,4 @@ void Footer::Finalize()
 
   delete instance;
   instance = NULL;
-}
-
-void Footer::ScreenResized()
-{
-  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::FOOTER_AREA));
-}
-
-void Footer::SetText(const char *text)
-{
-  label->SetText(text);
-}
-
-const char *Footer::GetText() const
-{
-  return label->GetText();
 }

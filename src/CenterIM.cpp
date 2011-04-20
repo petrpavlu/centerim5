@@ -51,72 +51,6 @@ CenterIM *CenterIM::Instance()
   return &instance;
 }
 
-CenterIM::CenterIM()
-{
-  mngr = CoreManager::Instance();
-  resize = mngr->signal_resize.connect(sigc::mem_fun(this,
-        &CenterIM::ScreenResized));
-
-  memset(&centerim_core_ui_ops, 0, sizeof(centerim_core_ui_ops));
-  memset(&logbuf_debug_ui_ops, 0, sizeof(logbuf_debug_ui_ops));
-  memset(&centerim_glib_eventloops, 0, sizeof(centerim_glib_eventloops));
-
-  DeclareBindables();
-}
-
-void CenterIM::DeclareBindables()
-{
-  DeclareBindable("centerim", "quit",
-      sigc::mem_fun(this, &CenterIM::Quit),
-      InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable("centerim", "buddylist",
-      sigc::mem_fun(this, &CenterIM::ActionFocusBuddyList),
-      InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable("centerim", "conversation-active",
-      sigc::mem_fun(this, &CenterIM::ActionFocusActiveConversation),
-      InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable("centerim", "accountstatusmenu",
-      sigc::mem_fun(this, &CenterIM::ActionOpenAccountStatusMenu),
-      InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable("centerim", "generalmenu",
-      sigc::mem_fun(this, &CenterIM::ActionOpenGeneralMenu),
-      InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable("centerim", "conversation-prev",
-      sigc::mem_fun(this, &CenterIM::ActionFocusPrevConversation),
-      InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable("centerim", "conversation-next",
-      sigc::mem_fun(this, &CenterIM::ActionFocusNextConversation),
-      InputProcessor::BINDABLE_OVERRIDE);
-}
-
-void CenterIM::RegisterDefaultKeys()
-{
-  KEYCONFIG->RegisterKeyDef("centerim", "quit",
-      Keys::UnicodeTermKey("q", TERMKEY_KEYMOD_CTRL));
-  KEYCONFIG->RegisterKeyDef("centerim", "buddylist",
-      Keys::FunctionTermKey(1));
-  KEYCONFIG->RegisterKeyDef("centerim", "conversation-active",
-      Keys::FunctionTermKey(2));
-  KEYCONFIG->RegisterKeyDef("centerim", "accountstatusmenu",
-      Keys::FunctionTermKey(3));
-  KEYCONFIG->RegisterKeyDef("centerim", "generalmenu",
-      Keys::FunctionTermKey(4));
-
-  // XXX move to default key bindings config
-  KEYCONFIG->RegisterKeyDef("centerim", "generalmenu",
-      Keys::UnicodeTermKey("g", TERMKEY_KEYMOD_CTRL));
-  KEYCONFIG->RegisterKeyDef("centerim", "generalmenu",
-      Keys::UnicodeTermKey("4", TERMKEY_KEYMOD_ALT));
-
-  KEYCONFIG->RegisterKeyDef("centerim", "conversation-prev",
-      Keys::UnicodeTermKey("p", TERMKEY_KEYMOD_ALT));
-  KEYCONFIG->RegisterKeyDef("centerim", "conversation-next",
-      Keys::UnicodeTermKey("n", TERMKEY_KEYMOD_ALT));
-
-  KEYCONFIG->RegisterKeyDef("conversation", "send",
-      Keys::UnicodeTermKey("x", TERMKEY_KEYMOD_CTRL));
-}
-
 int CenterIM::Run(const char *config_path)
 {
   if (PurpleInit(config_path))
@@ -189,6 +123,19 @@ void CenterIM::Quit()
 Rect CenterIM::GetScreenAreaSize(ScreenArea area)
 {
   return areaSizes[area];
+}
+
+CenterIM::CenterIM()
+{
+  mngr = CoreManager::Instance();
+  resize = mngr->signal_resize.connect(sigc::mem_fun(this,
+        &CenterIM::ScreenResized));
+
+  memset(&centerim_core_ui_ops, 0, sizeof(centerim_core_ui_ops));
+  memset(&logbuf_debug_ui_ops, 0, sizeof(logbuf_debug_ui_ops));
+  memset(&centerim_glib_eventloops, 0, sizeof(centerim_glib_eventloops));
+
+  DeclareBindables();
 }
 
 int CenterIM::PurpleInit(const char *config_path)
@@ -517,4 +464,57 @@ void CenterIM::ActionFocusPrevConversation()
 void CenterIM::ActionFocusNextConversation()
 {
   CONVERSATIONS->FocusNextConversation();
+}
+
+void CenterIM::DeclareBindables()
+{
+  DeclareBindable("centerim", "quit",
+      sigc::mem_fun(this, &CenterIM::Quit),
+      InputProcessor::BINDABLE_OVERRIDE);
+  DeclareBindable("centerim", "buddylist",
+      sigc::mem_fun(this, &CenterIM::ActionFocusBuddyList),
+      InputProcessor::BINDABLE_OVERRIDE);
+  DeclareBindable("centerim", "conversation-active",
+      sigc::mem_fun(this, &CenterIM::ActionFocusActiveConversation),
+      InputProcessor::BINDABLE_OVERRIDE);
+  DeclareBindable("centerim", "accountstatusmenu",
+      sigc::mem_fun(this, &CenterIM::ActionOpenAccountStatusMenu),
+      InputProcessor::BINDABLE_OVERRIDE);
+  DeclareBindable("centerim", "generalmenu",
+      sigc::mem_fun(this, &CenterIM::ActionOpenGeneralMenu),
+      InputProcessor::BINDABLE_OVERRIDE);
+  DeclareBindable("centerim", "conversation-prev",
+      sigc::mem_fun(this, &CenterIM::ActionFocusPrevConversation),
+      InputProcessor::BINDABLE_OVERRIDE);
+  DeclareBindable("centerim", "conversation-next",
+      sigc::mem_fun(this, &CenterIM::ActionFocusNextConversation),
+      InputProcessor::BINDABLE_OVERRIDE);
+}
+
+void CenterIM::RegisterDefaultKeys()
+{
+  KEYCONFIG->RegisterKeyDef("centerim", "quit",
+      Keys::UnicodeTermKey("q", TERMKEY_KEYMOD_CTRL));
+  KEYCONFIG->RegisterKeyDef("centerim", "buddylist",
+      Keys::FunctionTermKey(1));
+  KEYCONFIG->RegisterKeyDef("centerim", "conversation-active",
+      Keys::FunctionTermKey(2));
+  KEYCONFIG->RegisterKeyDef("centerim", "accountstatusmenu",
+      Keys::FunctionTermKey(3));
+  KEYCONFIG->RegisterKeyDef("centerim", "generalmenu",
+      Keys::FunctionTermKey(4));
+
+  // XXX move to default key bindings config
+  KEYCONFIG->RegisterKeyDef("centerim", "generalmenu",
+      Keys::UnicodeTermKey("g", TERMKEY_KEYMOD_CTRL));
+  KEYCONFIG->RegisterKeyDef("centerim", "generalmenu",
+      Keys::UnicodeTermKey("4", TERMKEY_KEYMOD_ALT));
+
+  KEYCONFIG->RegisterKeyDef("centerim", "conversation-prev",
+      Keys::UnicodeTermKey("p", TERMKEY_KEYMOD_ALT));
+  KEYCONFIG->RegisterKeyDef("centerim", "conversation-next",
+      Keys::UnicodeTermKey("n", TERMKEY_KEYMOD_ALT));
+
+  KEYCONFIG->RegisterKeyDef("conversation", "send",
+      Keys::UnicodeTermKey("x", TERMKEY_KEYMOD_CTRL));
 }

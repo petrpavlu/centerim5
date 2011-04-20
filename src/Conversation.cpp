@@ -80,50 +80,6 @@ Conversation::~Conversation()
     g_io_channel_unref(logfile);
 }
 
-void Conversation::DeclareBindables()
-{
-  DeclareBindable("conversation", "send",
-      sigc::mem_fun(this, &Conversation::ActionSend),
-      InputProcessor::BINDABLE_OVERRIDE);
-}
-
-void Conversation::DestroyPurpleConversation(PurpleConversation *conv)
-{
-  purple_conversation_destroy(conv);
-}
-
-void Conversation::BuildLogFilename()
-{
-  PurpleAccount *account;
-  PurplePlugin *prpl;
-  const char *proto_name;
-  char *acct_name;
-  char *dir;
-  const char *name;
-
-  account = purple_conversation_get_account(conv);
-  prpl = purple_find_prpl(purple_account_get_protocol_id(account));
-  g_assert(prpl);
-
-  proto_name = purple_account_get_protocol_name(account);
-
-  acct_name = g_strdup(purple_escape_filename(purple_normalize(account,
-          purple_account_get_username(account))));
-
-  name = purple_conversation_get_name(conv);
-
-  filename = g_build_filename(purple_user_dir(), LOGS_DIR, proto_name,
-      acct_name, purple_escape_filename(
-        purple_normalize(account, name)), NULL);
-
-  dir = g_path_get_dirname(filename);
-  if (g_mkdir_with_parents(dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
-    LOG->Error(_("Error creating directory `%s'.\n"), dir);
-  g_free(dir);
-
-  g_free(acct_name);
-}
-
 bool Conversation::ProcessInput(const TermKeyKey& key)
 {
   if (Window::ProcessInput(key))
@@ -236,6 +192,50 @@ void Conversation::Receive(const char *name, const char *alias, const char *mess
   g_free(msg);
 
   g_free(nohtml);
+}
+
+void Conversation::DestroyPurpleConversation(PurpleConversation *conv)
+{
+  purple_conversation_destroy(conv);
+}
+
+void Conversation::BuildLogFilename()
+{
+  PurpleAccount *account;
+  PurplePlugin *prpl;
+  const char *proto_name;
+  char *acct_name;
+  char *dir;
+  const char *name;
+
+  account = purple_conversation_get_account(conv);
+  prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+  g_assert(prpl);
+
+  proto_name = purple_account_get_protocol_name(account);
+
+  acct_name = g_strdup(purple_escape_filename(purple_normalize(account,
+          purple_account_get_username(account))));
+
+  name = purple_conversation_get_name(conv);
+
+  filename = g_build_filename(purple_user_dir(), LOGS_DIR, proto_name,
+      acct_name, purple_escape_filename(
+        purple_normalize(account, name)), NULL);
+
+  dir = g_path_get_dirname(filename);
+  if (g_mkdir_with_parents(dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
+    LOG->Error(_("Error creating directory `%s'.\n"), dir);
+  g_free(dir);
+
+  g_free(acct_name);
+}
+
+void Conversation::DeclareBindables()
+{
+  DeclareBindable("conversation", "send",
+      sigc::mem_fun(this, &Conversation::ActionSend),
+      InputProcessor::BINDABLE_OVERRIDE);
 }
 
 ConversationChat::ConversationChat(PurpleConversation *conv)

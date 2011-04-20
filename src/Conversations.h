@@ -92,21 +92,21 @@ private:
 
   void OnConversationClose(Conversation& conv);
 
+  static void create_conversation_(PurpleConversation *conv)
+    { CONVERSATIONS->create_conversation(conv); }
+  static void destroy_conversation_(PurpleConversation *conv)
+    { CONVERSATIONS->destroy_conversation(conv); }
   static void write_conv_(PurpleConversation *conv, const char *name,
       const char *alias, const char *message, PurpleMessageFlags flags,
       time_t mtime)
     { CONVERSATIONS->write_conv(conv, name, alias, message, flags,
         mtime); }
-  static void create_conversation_(PurpleConversation *conv)
-    { CONVERSATIONS->create_conversation(conv); }
-  static void destroy_conversation_(PurpleConversation *conv)
-    { CONVERSATIONS->destroy_conversation(conv); }
 
+  void create_conversation(PurpleConversation *conv);
+  void destroy_conversation(PurpleConversation *conv);
   void write_conv(PurpleConversation *conv, const char *name,
     const char *alias, const char *message, PurpleMessageFlags flags,
     time_t mtime);
-  void create_conversation(PurpleConversation *conv);
-  void destroy_conversation(PurpleConversation *conv);
 };
 
 #endif // __CONVERSATIONS_H__

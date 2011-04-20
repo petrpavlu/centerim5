@@ -36,7 +36,8 @@ AccountWindow::AccountWindow()
 {
   SetColorScheme("generalwindow");
 
-  buttons->AppendItem(_("Add"), sigc::mem_fun(this, &AccountWindow::Add));
+  buttons->AppendItem(_("Add"), sigc::mem_fun(this,
+        &AccountWindow::AddAccount));
   buttons->AppendSeparator();
   buttons->AppendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
           &AccountWindow::Close)));
@@ -54,214 +55,6 @@ AccountWindow::AccountWindow()
 void AccountWindow::ScreenResized()
 {
   MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA));
-}
-
-void AccountWindow::Add(Button& activator)
-{
-  GList *i = purple_plugins_get_protocols();
-  PurpleAccount *account = purple_account_new(_("Username"),
-      purple_plugin_get_id(reinterpret_cast<PurplePlugin*>(i->data)));
-
-  /* Stop here if libpurple returned an already created account. This happens
-   * when user pressed Add button twice in a row. In that case there is
-   * already one "empty" account that user can edit. */
-  if (account_entries.find(account) == account_entries.end()) {
-    purple_accounts_add(account);
-
-    PopulateAccount(account);
-  }
-  account_entries[account].parent->GrabFocus();
-}
-
-void AccountWindow::DropAccount(Button& activator, PurpleAccount *account)
-{
-  MessageDialog *dialog = new MessageDialog(_("Account deletion"),
-      _("Are you sure you want to delete this account?"));
-  dialog->signal_response.connect(sigc::bind(sigc::mem_fun(this,
-          &AccountWindow::DropAccountResponseHandler), account));
-  dialog->Show();
-}
-
-void AccountWindow::DropAccountResponseHandler(MessageDialog& activator,
-    AbstractDialog::ResponseType response, PurpleAccount *account)
-{
-  switch (response) {
-    case AbstractDialog::RESPONSE_OK:
-      purple_accounts_remove(account);
-      ClearAccount(account, true);
-      break;
-    default:
-      break;
-  }
-}
-
-bool AccountWindow::ClearAccount(PurpleAccount *account, bool full)
-{
-  AccountEntry *account_entry = &account_entries[account];
-
-  // move focus
-  account_entry->parent->GrabFocus();
-
-  // remove the nodes from the tree
-  accounts->DeleteNodeChildren(account_entry->parent_reference, false);
-  if (full) {
-    accounts->DeleteNode(account_entry->parent_reference, false);
-    account_entries.erase(account);
-  }
-
-  if (account_entries.empty())
-    buttons->GrabFocus();
-
-  return false;
-}
-
-void AccountWindow::Populate()
-{
-  for (GList *i = purple_accounts_get_all(); i; i = i->next) {
-    PurpleAccount *account = reinterpret_cast<PurpleAccount*>(i->data);
-    PopulateAccount(account);
-  }
-}
-
-void AccountWindow::PopulateAccount(PurpleAccount *account)
-{
-  if (account_entries.find(account) == account_entries.end()) {
-    // no entry for this account, so add one
-    AccountEntry entry;
-    entry.parent = NULL;
-    account_entries[account] = entry;
-  }
-  else {
-    // the account exists, so clear all data
-    ClearAccount(account, false);
-  }
-
-  AccountEntry *account_entry = &account_entries[account];
-
-  if (!account_entry->parent) {
-    TreeView::ToggleCollapseButton *button
-      = new TreeView::ToggleCollapseButton;
-    TreeView::NodeReference parent_reference
-      = accounts->AppendNode(accounts->GetRootNode(), *button);
-    accounts->CollapseNode(parent_reference);
-    account_entry->parent = button;
-    account_entry->parent_reference = parent_reference;
-  }
-
-  char *label = g_strdup_printf("[%s] %s",
-      purple_account_get_protocol_name(account),
-      purple_account_get_username(account));
-  account_entry->parent->SetText(label);
-  g_free(label);
-
-  const char *protocol_id = purple_account_get_protocol_id(account);
-  PurplePlugin *prpl = purple_find_prpl(protocol_id);
-
-  if (!prpl) {
-    Label *label;
-
-    // we cannot change the settings of an unknown account
-    label = new Label(_("Invalid account or protocol plugin not loaded"));
-    accounts->AppendNode(account_entry->parent_reference, *label);
-  }
-  else {
-    PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-    // protocols combobox
-    ComboBox *combobox = new ProtocolOption(account, *this);
-    accounts->AppendNode(account_entry->parent_reference, *combobox);
-    combobox->GrabFocus();
-
-    /* The username must be treated in a special way because it can contain
-     * multiple values (e.g. user@server:port/resource). */
-    char *username = g_strdup(purple_account_get_username(account));
-
-    for (GList *iter = g_list_last(prplinfo->user_splits); iter;
-        iter = iter->prev) {
-      PurpleAccountUserSplit *split
-        = reinterpret_cast<PurpleAccountUserSplit*>(iter->data);
-
-      char *s;
-      if (purple_account_user_split_get_reverse(split))
-        s = strrchr(username, purple_account_user_split_get_separator(split));
-      else
-        s = strchr(username, purple_account_user_split_get_separator(split));
-
-      const char *value;
-      if (s) {
-        *s = '\0';
-        s++;
-        value = s;
-      }
-      else
-        value = purple_account_user_split_get_default_value(split);
-
-      // create widget for the username split and remember
-      SplitOption *widget_split = new SplitOption(account, split,
-          account_entry);
-      widget_split->SetValue(value);
-      account_entry->split_widgets.push_front(widget_split);
-
-      accounts->AppendNode(account_entry->parent_reference, *widget_split);
-    }
-
-    /* TODO Add this widget as the first widget in this subtree. Treeview
-     * needs to support this. */
-    SplitOption *widget_split = new SplitOption(account, NULL, account_entry);
-    widget_split->SetValue(username);
-    account_entry->split_widgets.push_front(widget_split);
-    accounts->AppendNode(account_entry->parent_reference, *widget_split);
-    g_free(username);
-
-    // password
-    Widget *widget = new StringOption(account, StringOption::TYPE_PASSWORD);
-    accounts->AppendNode(account_entry->parent_reference, *widget);
-
-    // remember password
-    widget = new BoolOption(account, BoolOption::TYPE_REMEMBER_PASSWORD);
-    accounts->AppendNode(account_entry->parent_reference, *widget);
-
-    // alias
-    widget = new StringOption(account, StringOption::TYPE_ALIAS);
-    accounts->AppendNode(account_entry->parent_reference, *widget);
-
-    for (GList *pref = prplinfo->protocol_options; pref; pref = pref->next) {
-      PurpleAccountOption *option
-        = reinterpret_cast<PurpleAccountOption*>(pref->data);
-      PurplePrefType type = purple_account_option_get_type(option);
-
-      switch (type) {
-      case PURPLE_PREF_STRING:
-        widget = new StringOption(account, option);
-        accounts->AppendNode(account_entry->parent_reference, *widget);
-        break;
-      case PURPLE_PREF_INT:
-        widget = new IntOption(account, option);
-        accounts->AppendNode(account_entry->parent_reference, *widget);
-        break;
-      case PURPLE_PREF_BOOLEAN:
-        widget = new BoolOption(account, option);
-        accounts->AppendNode(account_entry->parent_reference, *widget);
-        break;
-      case PURPLE_PREF_STRING_LIST:
-        // TODO implement, but for now, an error!
-        break;
-      default:
-        // TODO error!
-        break;
-      }
-    }
-
-    // enable/disable account
-    widget = new BoolOption(account, BoolOption::TYPE_ENABLE_ACCOUNT);
-    accounts->AppendNode(account_entry->parent_reference, *widget);
-  }
-
-  // drop account
-  Button *drop_button = new Button(_("Drop account"));
-  drop_button->signal_activate.connect(sigc::bind(sigc::mem_fun(this,
-          &AccountWindow::DropAccount), account));
-  accounts->AppendNode(account_entry->parent_reference, *drop_button);
 }
 
 AccountWindow::BoolOption::BoolOption(PurpleAccount *account,
@@ -525,4 +318,212 @@ void AccountWindow::ProtocolOption::OnProtocolChanged(ComboBox& activator,
 
   // this deletes us so don't touch any instance variable after
   account_window->PopulateAccount(account);
+}
+
+bool AccountWindow::ClearAccount(PurpleAccount *account, bool full)
+{
+  AccountEntry *account_entry = &account_entries[account];
+
+  // move focus
+  account_entry->parent->GrabFocus();
+
+  // remove the nodes from the tree
+  accounts->DeleteNodeChildren(account_entry->parent_reference, false);
+  if (full) {
+    accounts->DeleteNode(account_entry->parent_reference, false);
+    account_entries.erase(account);
+  }
+
+  if (account_entries.empty())
+    buttons->GrabFocus();
+
+  return false;
+}
+
+void AccountWindow::Populate()
+{
+  for (GList *i = purple_accounts_get_all(); i; i = i->next) {
+    PurpleAccount *account = reinterpret_cast<PurpleAccount*>(i->data);
+    PopulateAccount(account);
+  }
+}
+
+void AccountWindow::PopulateAccount(PurpleAccount *account)
+{
+  if (account_entries.find(account) == account_entries.end()) {
+    // no entry for this account, so add one
+    AccountEntry entry;
+    entry.parent = NULL;
+    account_entries[account] = entry;
+  }
+  else {
+    // the account exists, so clear all data
+    ClearAccount(account, false);
+  }
+
+  AccountEntry *account_entry = &account_entries[account];
+
+  if (!account_entry->parent) {
+    TreeView::ToggleCollapseButton *button
+      = new TreeView::ToggleCollapseButton;
+    TreeView::NodeReference parent_reference
+      = accounts->AppendNode(accounts->GetRootNode(), *button);
+    accounts->CollapseNode(parent_reference);
+    account_entry->parent = button;
+    account_entry->parent_reference = parent_reference;
+  }
+
+  char *label = g_strdup_printf("[%s] %s",
+      purple_account_get_protocol_name(account),
+      purple_account_get_username(account));
+  account_entry->parent->SetText(label);
+  g_free(label);
+
+  const char *protocol_id = purple_account_get_protocol_id(account);
+  PurplePlugin *prpl = purple_find_prpl(protocol_id);
+
+  if (!prpl) {
+    Label *label;
+
+    // we cannot change the settings of an unknown account
+    label = new Label(_("Invalid account or protocol plugin not loaded"));
+    accounts->AppendNode(account_entry->parent_reference, *label);
+  }
+  else {
+    PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+    // protocols combobox
+    ComboBox *combobox = new ProtocolOption(account, *this);
+    accounts->AppendNode(account_entry->parent_reference, *combobox);
+    combobox->GrabFocus();
+
+    /* The username must be treated in a special way because it can contain
+     * multiple values (e.g. user@server:port/resource). */
+    char *username = g_strdup(purple_account_get_username(account));
+
+    for (GList *iter = g_list_last(prplinfo->user_splits); iter;
+        iter = iter->prev) {
+      PurpleAccountUserSplit *split
+        = reinterpret_cast<PurpleAccountUserSplit*>(iter->data);
+
+      char *s;
+      if (purple_account_user_split_get_reverse(split))
+        s = strrchr(username, purple_account_user_split_get_separator(split));
+      else
+        s = strchr(username, purple_account_user_split_get_separator(split));
+
+      const char *value;
+      if (s) {
+        *s = '\0';
+        s++;
+        value = s;
+      }
+      else
+        value = purple_account_user_split_get_default_value(split);
+
+      // create widget for the username split and remember
+      SplitOption *widget_split = new SplitOption(account, split,
+          account_entry);
+      widget_split->SetValue(value);
+      account_entry->split_widgets.push_front(widget_split);
+
+      accounts->AppendNode(account_entry->parent_reference, *widget_split);
+    }
+
+    /* TODO Add this widget as the first widget in this subtree. Treeview
+     * needs to support this. */
+    SplitOption *widget_split = new SplitOption(account, NULL, account_entry);
+    widget_split->SetValue(username);
+    account_entry->split_widgets.push_front(widget_split);
+    accounts->AppendNode(account_entry->parent_reference, *widget_split);
+    g_free(username);
+
+    // password
+    Widget *widget = new StringOption(account, StringOption::TYPE_PASSWORD);
+    accounts->AppendNode(account_entry->parent_reference, *widget);
+
+    // remember password
+    widget = new BoolOption(account, BoolOption::TYPE_REMEMBER_PASSWORD);
+    accounts->AppendNode(account_entry->parent_reference, *widget);
+
+    // alias
+    widget = new StringOption(account, StringOption::TYPE_ALIAS);
+    accounts->AppendNode(account_entry->parent_reference, *widget);
+
+    for (GList *pref = prplinfo->protocol_options; pref; pref = pref->next) {
+      PurpleAccountOption *option
+        = reinterpret_cast<PurpleAccountOption*>(pref->data);
+      PurplePrefType type = purple_account_option_get_type(option);
+
+      switch (type) {
+      case PURPLE_PREF_STRING:
+        widget = new StringOption(account, option);
+        accounts->AppendNode(account_entry->parent_reference, *widget);
+        break;
+      case PURPLE_PREF_INT:
+        widget = new IntOption(account, option);
+        accounts->AppendNode(account_entry->parent_reference, *widget);
+        break;
+      case PURPLE_PREF_BOOLEAN:
+        widget = new BoolOption(account, option);
+        accounts->AppendNode(account_entry->parent_reference, *widget);
+        break;
+      case PURPLE_PREF_STRING_LIST:
+        // TODO implement, but for now, an error!
+        break;
+      default:
+        // TODO error!
+        break;
+      }
+    }
+
+    // enable/disable account
+    widget = new BoolOption(account, BoolOption::TYPE_ENABLE_ACCOUNT);
+    accounts->AppendNode(account_entry->parent_reference, *widget);
+  }
+
+  // drop account
+  Button *drop_button = new Button(_("Drop account"));
+  drop_button->signal_activate.connect(sigc::bind(sigc::mem_fun(this,
+          &AccountWindow::DropAccount), account));
+  accounts->AppendNode(account_entry->parent_reference, *drop_button);
+}
+
+void AccountWindow::AddAccount(Button& activator)
+{
+  GList *i = purple_plugins_get_protocols();
+  PurpleAccount *account = purple_account_new(_("Username"),
+      purple_plugin_get_id(reinterpret_cast<PurplePlugin*>(i->data)));
+
+  /* Stop here if libpurple returned an already created account. This happens
+   * when user pressed Add button twice in a row. In that case there is
+   * already one "empty" account that user can edit. */
+  if (account_entries.find(account) == account_entries.end()) {
+    purple_accounts_add(account);
+
+    PopulateAccount(account);
+  }
+  account_entries[account].parent->GrabFocus();
+}
+
+void AccountWindow::DropAccount(Button& activator, PurpleAccount *account)
+{
+  MessageDialog *dialog = new MessageDialog(_("Account deletion"),
+      _("Are you sure you want to delete this account?"));
+  dialog->signal_response.connect(sigc::bind(sigc::mem_fun(this,
+          &AccountWindow::DropAccountResponseHandler), account));
+  dialog->Show();
+}
+
+void AccountWindow::DropAccountResponseHandler(MessageDialog& activator,
+    AbstractDialog::ResponseType response, PurpleAccount *account)
+{
+  switch (response) {
+    case AbstractDialog::RESPONSE_OK:
+      purple_accounts_remove(account);
+      ClearAccount(account, true);
+      break;
+    default:
+      break;
+  }
 }

@@ -36,169 +36,6 @@ Request *Request::Instance()
   return instance;
 }
 
-Request::Request()
-{
-  memset(&centerim_request_ui_ops, 0, sizeof(centerim_request_ui_ops));
-
-  // set the purple request callbacks
-  centerim_request_ui_ops.request_input = request_input_;
-  centerim_request_ui_ops.request_choice = request_choice_;
-  centerim_request_ui_ops.request_action = request_action_;
-  centerim_request_ui_ops.request_fields = request_fields_;
-  centerim_request_ui_ops.request_file = request_file_;
-  centerim_request_ui_ops.close_request = close_request_;
-  centerim_request_ui_ops.request_folder = request_folder_;
-  centerim_request_ui_ops.request_action_with_icon
-    = request_action_with_icon_;
-  purple_request_set_ui_ops(&centerim_request_ui_ops);
-}
-
-Request::~Request()
-{
-  // close all opened requests
-  while (requests.size()) {
-    RequestDialog *rdialog = *(requests.begin());
-    purple_request_close(rdialog->GetRequestType(), rdialog);
-  }
-
-  purple_request_set_ui_ops(NULL);
-}
-
-void Request::Init()
-{
-  g_assert(!instance);
-
-  instance = new Request;
-}
-
-void Request::Finalize()
-{
-  g_assert(instance);
-
-  delete instance;
-  instance = NULL;
-}
-
-void Request::OnDialogResponse(SplitDialog& dialog,
-    AbstractDialog::ResponseType response)
-{
-  RequestDialog *rdialog = dynamic_cast<RequestDialog*>(&dialog);
-  g_assert(rdialog);
-
-  requests.erase(rdialog);
-  purple_request_close(rdialog->GetRequestType(), rdialog);
-}
-
-void *Request::request_input(const char *title, const char *primary,
-    const char *secondary, const char *default_value, gboolean multiline,
-    gboolean masked, char *hint, const char *ok_text, GCallback ok_cb,
-    const char *cancel_text, GCallback cancel_cb, PurpleAccount *account,
-    const char *who, PurpleConversation *conv, void *user_data)
-{
-  LOG->Debug("request_input\n");
-
-  InputTextDialog *dialog = new InputTextDialog(title, primary, secondary,
-      default_value, masked, ok_text, ok_cb, cancel_text, cancel_cb,
-      user_data);
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &Request::OnDialogResponse));
-  dialog->Show();
-
-  requests.insert(dialog);
-  return dialog;
-}
-
-void *Request::request_choice(const char *title, const char *primary,
-    const char *secondary, int default_value, const char *ok_text,
-    GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
-    PurpleAccount *account, const char *who, PurpleConversation *conv,
-    void *user_data, va_list choices)
-{
-  LOG->Debug("request_choice\n");
-
-  ChoiceDialog *dialog = new ChoiceDialog(title, primary, secondary,
-      default_value, ok_text, ok_cb, cancel_text, cancel_cb, user_data,
-      choices);
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &Request::OnDialogResponse));
-  dialog->Show();
-
-  requests.insert(dialog);
-  return dialog;
-}
-
-void *Request::request_action(const char *title, const char *primary,
-    const char *secondary, int default_action, PurpleAccount *account,
-    const char *who, PurpleConversation *conv, void *user_data,
-    size_t action_count, va_list actions)
-{
-  LOG->Debug("request_action\n");
-
-  ActionDialog *dialog = new ActionDialog(title, primary, secondary,
-      default_action, user_data, action_count, actions);
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &Request::OnDialogResponse));
-  dialog->Show();
-
-  requests.insert(dialog);
-  return dialog;
-}
-
-void *Request::request_fields(const char *title, const char *primary,
-    const char *secondary, PurpleRequestFields *fields,
-    const char *ok_text, GCallback ok_cb, const char *cancel_text,
-    GCallback cancel_cb, PurpleAccount *account, const char *who,
-    PurpleConversation *conv, void *user_data)
-{
-  LOG->Debug("request_fields\n");
-
-  FieldsDialog *dialog = new FieldsDialog(title, primary, secondary,
-      fields, ok_text, ok_cb, cancel_text, cancel_cb, user_data);
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &Request::OnDialogResponse));
-  dialog->Show();
-
-  requests.insert(dialog);
-  return dialog;
-}
-
-void *Request::request_file(const char *title, const char *filename,
-    gboolean savedialog, GCallback ok_cb, GCallback cancel_cb,
-    PurpleAccount *account, const char *who, PurpleConversation *conv,
-    void *user_data)
-{
-  return NULL;
-}
-
-void Request::close_request(PurpleRequestType type, void *ui_handle)
-{
-  LOG->Debug("close_request\n");
-
-  g_assert(ui_handle);
-
-  RequestDialog *dialog = reinterpret_cast<RequestDialog *>(ui_handle);
-  if (requests.find(dialog) != requests.end()) {
-    requests.erase(dialog);
-    dialog->Close();
-  }
-}
-
-void *Request::request_folder(const char *title, const char *dirname,
-    GCallback ok_cb, GCallback cancel_cb, PurpleAccount *account,
-    const char *who, PurpleConversation *conv, void *user_data)
-{
-  return NULL;
-}
-
-void *Request::request_action_with_icon(const char *title,
-    const char *primary, const char *secondary, int default_action,
-    PurpleAccount *account, const char *who, PurpleConversation *conv,
-    gconstpointer icon_data, gsize icon_size, void *user_data,
-    size_t action_count, va_list actions)
-{
-  return NULL;
-}
-
 Request::RequestDialog::RequestDialog(const char *title,
     const char *primary, const char *secondary, const char *ok_text,
     GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
@@ -742,4 +579,167 @@ void Request::FieldsDialog::ResponseHandler(SplitDialog& activator,
   }
 
   purple_request_fields_destroy(fields);
+}
+
+Request::Request()
+{
+  memset(&centerim_request_ui_ops, 0, sizeof(centerim_request_ui_ops));
+
+  // set the purple request callbacks
+  centerim_request_ui_ops.request_input = request_input_;
+  centerim_request_ui_ops.request_choice = request_choice_;
+  centerim_request_ui_ops.request_action = request_action_;
+  centerim_request_ui_ops.request_fields = request_fields_;
+  centerim_request_ui_ops.request_file = request_file_;
+  centerim_request_ui_ops.close_request = close_request_;
+  centerim_request_ui_ops.request_folder = request_folder_;
+  centerim_request_ui_ops.request_action_with_icon
+    = request_action_with_icon_;
+  purple_request_set_ui_ops(&centerim_request_ui_ops);
+}
+
+Request::~Request()
+{
+  // close all opened requests
+  while (requests.size()) {
+    RequestDialog *rdialog = *(requests.begin());
+    purple_request_close(rdialog->GetRequestType(), rdialog);
+  }
+
+  purple_request_set_ui_ops(NULL);
+}
+
+void Request::Init()
+{
+  g_assert(!instance);
+
+  instance = new Request;
+}
+
+void Request::Finalize()
+{
+  g_assert(instance);
+
+  delete instance;
+  instance = NULL;
+}
+
+void Request::OnDialogResponse(SplitDialog& dialog,
+    AbstractDialog::ResponseType response)
+{
+  RequestDialog *rdialog = dynamic_cast<RequestDialog*>(&dialog);
+  g_assert(rdialog);
+
+  requests.erase(rdialog);
+  purple_request_close(rdialog->GetRequestType(), rdialog);
+}
+
+void *Request::request_input(const char *title, const char *primary,
+    const char *secondary, const char *default_value, gboolean multiline,
+    gboolean masked, char *hint, const char *ok_text, GCallback ok_cb,
+    const char *cancel_text, GCallback cancel_cb, PurpleAccount *account,
+    const char *who, PurpleConversation *conv, void *user_data)
+{
+  LOG->Debug("request_input\n");
+
+  InputTextDialog *dialog = new InputTextDialog(title, primary, secondary,
+      default_value, masked, ok_text, ok_cb, cancel_text, cancel_cb,
+      user_data);
+  dialog->signal_response.connect(sigc::mem_fun(this,
+        &Request::OnDialogResponse));
+  dialog->Show();
+
+  requests.insert(dialog);
+  return dialog;
+}
+
+void *Request::request_choice(const char *title, const char *primary,
+    const char *secondary, int default_value, const char *ok_text,
+    GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
+    PurpleAccount *account, const char *who, PurpleConversation *conv,
+    void *user_data, va_list choices)
+{
+  LOG->Debug("request_choice\n");
+
+  ChoiceDialog *dialog = new ChoiceDialog(title, primary, secondary,
+      default_value, ok_text, ok_cb, cancel_text, cancel_cb, user_data,
+      choices);
+  dialog->signal_response.connect(sigc::mem_fun(this,
+        &Request::OnDialogResponse));
+  dialog->Show();
+
+  requests.insert(dialog);
+  return dialog;
+}
+
+void *Request::request_action(const char *title, const char *primary,
+    const char *secondary, int default_action, PurpleAccount *account,
+    const char *who, PurpleConversation *conv, void *user_data,
+    size_t action_count, va_list actions)
+{
+  LOG->Debug("request_action\n");
+
+  ActionDialog *dialog = new ActionDialog(title, primary, secondary,
+      default_action, user_data, action_count, actions);
+  dialog->signal_response.connect(sigc::mem_fun(this,
+        &Request::OnDialogResponse));
+  dialog->Show();
+
+  requests.insert(dialog);
+  return dialog;
+}
+
+void *Request::request_fields(const char *title, const char *primary,
+    const char *secondary, PurpleRequestFields *fields,
+    const char *ok_text, GCallback ok_cb, const char *cancel_text,
+    GCallback cancel_cb, PurpleAccount *account, const char *who,
+    PurpleConversation *conv, void *user_data)
+{
+  LOG->Debug("request_fields\n");
+
+  FieldsDialog *dialog = new FieldsDialog(title, primary, secondary,
+      fields, ok_text, ok_cb, cancel_text, cancel_cb, user_data);
+  dialog->signal_response.connect(sigc::mem_fun(this,
+        &Request::OnDialogResponse));
+  dialog->Show();
+
+  requests.insert(dialog);
+  return dialog;
+}
+
+void *Request::request_file(const char *title, const char *filename,
+    gboolean savedialog, GCallback ok_cb, GCallback cancel_cb,
+    PurpleAccount *account, const char *who, PurpleConversation *conv,
+    void *user_data)
+{
+  return NULL;
+}
+
+void Request::close_request(PurpleRequestType type, void *ui_handle)
+{
+  LOG->Debug("close_request\n");
+
+  g_assert(ui_handle);
+
+  RequestDialog *dialog = reinterpret_cast<RequestDialog *>(ui_handle);
+  if (requests.find(dialog) != requests.end()) {
+    requests.erase(dialog);
+    dialog->Close();
+  }
+}
+
+void *Request::request_folder(const char *title, const char *dirname,
+    GCallback ok_cb, GCallback cancel_cb, PurpleAccount *account,
+    const char *who, PurpleConversation *conv, void *user_data)
+{
+  return NULL;
+}
+
+void *Request::request_action_with_icon(const char *title,
+    const char *primary, const char *secondary, int default_action,
+    PurpleAccount *account, const char *who, PurpleConversation *conv,
+    gconstpointer icon_data, gsize icon_size, void *user_data,
+    size_t action_count, va_list actions)
+{
+  return NULL;
 }

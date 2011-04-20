@@ -35,6 +35,16 @@ BuddyList *BuddyList::Instance()
   return instance;
 }
 
+void BuddyList::Close()
+{
+  // BuddyList can't be closed
+}
+
+void BuddyList::ScreenResized()
+{
+  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::BUDDY_LIST_AREA));
+}
+
 BuddyList::BuddyList()
 : Window(0, 0, 80, 24)
 {
@@ -109,15 +119,6 @@ void BuddyList::Load()
 {
   // loads the buddy list from ~/.centerim5/blist.xml
   purple_blist_load();
-}
-
-void BuddyList::Close()
-{
-}
-
-void BuddyList::ScreenResized()
-{
-  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::BUDDY_LIST_AREA));
 }
 
 void BuddyList::new_list(PurpleBuddyList *list)

@@ -91,8 +91,8 @@ private:
 
   int PurpleInit(const char *config_path);
   void PurpleFinalize();
-  void ColorSchemeInit();
   void PrefsInit();
+  void ColorSchemeInit();
 
   // recalculates area sizes to fit into current screen size
   void ScreenResized();
@@ -142,8 +142,8 @@ private:
   void ActionFocusPrevConversation();
   void ActionFocusNextConversation();
 
-  void RegisterDefaultKeys();
   void DeclareBindables();
+  void RegisterDefaultKeys();
 };
 
 #endif // __CENTERIM_H__

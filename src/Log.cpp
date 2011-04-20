@@ -33,7 +33,44 @@ Log *Log::Instance()
   return instance;
 }
 
-// TODO sensible defaults
+void Log::MoveResize(int newx, int newy, int neww, int newh)
+{
+  Window::MoveResize(newx, newy, neww, newh);
+
+  textview->MoveResize(1, 0, width - 2, height);
+}
+
+void Log::ScreenResized()
+{
+  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::LOG_AREA));
+}
+
+#define WRITE_METHOD(name, level)                       \
+void Log::name(const char *fmt, ...)                   \
+{                                                       \
+  va_list args;                                         \
+  char *text;                                          \
+                                                        \
+  if (GetLogLevel("cim") < level)                       \
+    return; /* we don't want to see this log message */ \
+                                                        \
+  va_start(args, fmt);                                  \
+  text = g_strdup_vprintf(fmt, args);                   \
+  va_end(args);                                         \
+                                                        \
+  Write(text);                                          \
+  g_free(text);                                         \
+}
+
+WRITE_METHOD(Error, LEVEL_ERROR)
+WRITE_METHOD(Critical, LEVEL_CRITICAL)
+WRITE_METHOD(Warning, LEVEL_WARNING)
+WRITE_METHOD(Message, LEVEL_MESSAGE)
+WRITE_METHOD(Info, LEVEL_INFO)
+WRITE_METHOD(Debug, LEVEL_DEBUG)
+
+#undef WRITE_METHOD
+
 Log::Log()
 : Window(0, 0, 80, 24, NULL, TYPE_NON_FOCUSABLE)
 , logfile(NULL)
@@ -111,39 +148,6 @@ void Log::Finalize()
   instance = NULL;
 }
 
-void Log::MoveResize(int newx, int newy, int neww, int newh)
-{
-  Window::MoveResize(newx, newy, neww, newh);
-
-  textview->MoveResize(1, 0, width - 2, height);
-}
-
-#define WRITE_METHOD(name, level)                       \
-void Log::name(const char *fmt, ...)                   \
-{                                                       \
-  va_list args;                                         \
-  char *text;                                          \
-                                                        \
-  if (GetLogLevel("cim") < level)                       \
-    return; /* we don't want to see this log message */ \
-                                                        \
-  va_start(args, fmt);                                  \
-  text = g_strdup_vprintf(fmt, args);                   \
-  va_end(args);                                         \
-                                                        \
-  Write(text);                                          \
-  g_free(text);                                         \
-}
-
-WRITE_METHOD(Error, LEVEL_ERROR)
-WRITE_METHOD(Critical, LEVEL_CRITICAL)
-WRITE_METHOD(Warning, LEVEL_WARNING)
-WRITE_METHOD(Message, LEVEL_MESSAGE)
-WRITE_METHOD(Info, LEVEL_INFO)
-WRITE_METHOD(Debug, LEVEL_DEBUG)
-
-#undef WRITE_METHOD
-
 void Log::purple_print(PurpleDebugLevel purplelevel, const char *category,
     const char *arg_s)
 {
@@ -220,11 +224,6 @@ void Log::debug_change(const char *name, PurplePrefType type,
     g_io_channel_unref(logfile);
     logfile = NULL;
   }
-}
-
-void Log::ScreenResized()
-{
-  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::LOG_AREA));
 }
 
 void Log::ShortenWindowText()

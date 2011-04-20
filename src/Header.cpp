@@ -31,6 +31,11 @@ Header *Header::Instance()
   return instance;
 }
 
+void Header::ScreenResized()
+{
+  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::HEADER_AREA));
+}
+
 Header::Header()
 : FreeWindow(0, 0, 80, 1, TYPE_NON_FOCUSABLE)
 {
@@ -74,11 +79,6 @@ void Header::Finalize()
 
   delete instance;
   instance = NULL;
-}
-
-void Header::ScreenResized()
-{
-  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::HEADER_AREA));
 }
 
 void Header::account_signed_on(PurpleAccount *account)

@@ -33,65 +33,6 @@ Conversations *Conversations::Instance()
   return instance;
 }
 
-Conversations::Conversations()
-: FreeWindow(0, 0, 80, 1, TYPE_NON_FOCUSABLE)
-, active(-1)
-{
-  SetColorScheme("conversation");
-
-  list = new HorizontalListBox(AUTOSIZE, 1);
-  AddWidget(*list, 0, 0);
-
-  // init prefs
-  purple_prefs_add_none(CONF_PREFIX "/chat");
-  purple_prefs_add_int(CONF_PREFIX "/chat/partitioning", 80);
-
-  memset(&centerim_conv_ui_ops, 0, sizeof(centerim_conv_ui_ops));
-  centerim_conv_ui_ops.create_conversation = create_conversation_;
-  centerim_conv_ui_ops.destroy_conversation = destroy_conversation_;
-  //centerim_conv_ui_ops.write_chat = ;
-  //centerim_conv_ui_ops.write_im = ;
-  centerim_conv_ui_ops.write_conv = write_conv_;
-  //centerim_conv_ui_ops.chat_add_users = ;
-  //centerim_conv_ui_ops.chat_rename_user = ;
-  //centerim_conv_ui_ops.chat_remove_users = ;
-  //centerim_conv_ui_ops.chat_update_user = ;
-  //centerim_conv_ui_ops.present = ;
-  //centerim_conv_ui_ops.has_focus = ;
-  //centerim_conv_ui_ops.custom_smiley_add = ;
-  //centerim_conv_ui_ops.custom_smiley_write = ;
-  //centerim_conv_ui_ops.custom_smiley_close = ;
-  //centerim_conv_ui_ops.send_confirm = ;
-
-  // setup the callbacks for conversations
-  purple_conversations_set_ui_ops(&centerim_conv_ui_ops);
-}
-
-Conversations::~Conversations()
-{
-  // close all opened conversations
-  while (conversations.size())
-    purple_conversation_destroy(conversations.front().purple_conv);
-
-  purple_conversations_set_ui_ops(NULL);
-}
-
-void Conversations::Init()
-{
-  g_assert(!instance);
-
-  instance = new Conversations;
-  instance->Show();
-}
-
-void Conversations::Finalize()
-{
-  g_assert(instance);
-
-  delete instance;
-  instance = NULL;
-}
-
 void Conversations::Close()
 {
 }
@@ -160,6 +101,65 @@ void Conversations::FocusNextConversation()
     ActivateConversation(active);
   else
     ActivateConversation(i);
+}
+
+Conversations::Conversations()
+: FreeWindow(0, 0, 80, 1, TYPE_NON_FOCUSABLE)
+, active(-1)
+{
+  SetColorScheme("conversation");
+
+  list = new HorizontalListBox(AUTOSIZE, 1);
+  AddWidget(*list, 0, 0);
+
+  // init prefs
+  purple_prefs_add_none(CONF_PREFIX "/chat");
+  purple_prefs_add_int(CONF_PREFIX "/chat/partitioning", 80);
+
+  memset(&centerim_conv_ui_ops, 0, sizeof(centerim_conv_ui_ops));
+  centerim_conv_ui_ops.create_conversation = create_conversation_;
+  centerim_conv_ui_ops.destroy_conversation = destroy_conversation_;
+  //centerim_conv_ui_ops.write_chat = ;
+  //centerim_conv_ui_ops.write_im = ;
+  centerim_conv_ui_ops.write_conv = write_conv_;
+  //centerim_conv_ui_ops.chat_add_users = ;
+  //centerim_conv_ui_ops.chat_rename_user = ;
+  //centerim_conv_ui_ops.chat_remove_users = ;
+  //centerim_conv_ui_ops.chat_update_user = ;
+  //centerim_conv_ui_ops.present = ;
+  //centerim_conv_ui_ops.has_focus = ;
+  //centerim_conv_ui_ops.custom_smiley_add = ;
+  //centerim_conv_ui_ops.custom_smiley_write = ;
+  //centerim_conv_ui_ops.custom_smiley_close = ;
+  //centerim_conv_ui_ops.send_confirm = ;
+
+  // setup the callbacks for conversations
+  purple_conversations_set_ui_ops(&centerim_conv_ui_ops);
+}
+
+Conversations::~Conversations()
+{
+  // close all opened conversations
+  while (conversations.size())
+    purple_conversation_destroy(conversations.front().purple_conv);
+
+  purple_conversations_set_ui_ops(NULL);
+}
+
+void Conversations::Init()
+{
+  g_assert(!instance);
+
+  instance = new Conversations;
+  instance->Show();
+}
+
+void Conversations::Finalize()
+{
+  g_assert(instance);
+
+  delete instance;
+  instance = NULL;
 }
 
 int Conversations::FindConversation(PurpleConversation *conv)

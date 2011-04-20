@@ -1,0 +1,75 @@
+diff --git a/src/BuddyList.cpp b/src/BuddyList.cpp
+index 34944aa..3930773 100644
+--- a/src/BuddyList.cpp
++++ b/src/BuddyList.cpp
+@@ -149,11 +149,13 @@ void BuddyList::update(PurpleBuddyList *list, PurpleBlistNode *node)
+ 
+   BuddyListNode *bnode = reinterpret_cast<BuddyListNode *>(node->ui_data);
+ 
++  if (bnode) {
+   // update the node data
+   bnode->Update();
+ 
+   if (node->parent)
+     update(list, node->parent);
++  }
+ }
+ 
+ void BuddyList::remove(PurpleBuddyList *list, PurpleBlistNode *node)
+diff --git a/src/BuddyListNode.cpp b/src/BuddyListNode.cpp
+index 28a0317..010f7ba 100644
+--- a/src/BuddyListNode.cpp
++++ b/src/BuddyListNode.cpp
+@@ -36,7 +36,7 @@ BuddyListNode *BuddyListNode::CreateNode(PurpleBlistNode *node)
+   else if (PURPLE_BLIST_NODE_IS_CONTACT(node))
+     return new BuddyListContact(node);
+   else if (PURPLE_BLIST_NODE_IS_GROUP(node))
+-    return new BuddyListGroup(node);
++    return NULL; //new BuddyListGroup(node);
+ 
+   LOG->Warning(_("Unrecognized BuddyList node.\n"));
+   return NULL;
+@@ -294,6 +294,31 @@ const gchar *BuddyListContact::ToString() const
+   return purple_contact_get_alias(contact);
+ }
+ 
++void BuddyListContact::SortIn()
++{
++  TreeView *t = dynamic_cast<TreeView *>(parent);
++  g_assert(t);
++  TreeView::NodeReference parent_ref = t->Root();
++
++  TreeView::SiblingIterator i;
++  for (i = parent_ref.begin(); i != parent_ref.end(); i++) {
++    // skip this node
++    if (i == ref)
++      continue;
++
++    BuddyListNode *n = dynamic_cast<BuddyListNode *>(i->GetWidget());
++    g_assert(n);
++
++    if (LessThan(*n)) {
++      t->MoveBefore(ref, i);
++      break;
++    }
++  }
++  // the ref is last in a list
++  if (i == parent_ref.end())
++    t->MoveAfter(ref, --i);
++}
++
+ BuddyListGroup::BuddyListGroup(PurpleBlistNode *node)
+ : BuddyListNode(node)
+ {
+diff --git a/src/BuddyListNode.h b/src/BuddyListNode.h
+index 73cfb4d..4d81d2f 100644
+--- a/src/BuddyListNode.h
++++ b/src/BuddyListNode.h
+@@ -120,6 +120,7 @@ public:
+   virtual void Update();
+   virtual void OnActivate(Button& activator);
+   virtual const gchar *ToString() const;
++  virtual void SortIn();
+ 
+ protected:
+   PurpleContact *contact;
