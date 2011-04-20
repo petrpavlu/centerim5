@@ -18,12 +18,15 @@ class TextViewWindow
     virtual void ScreenResized();
 
   protected:
+    TextView *textview;
 
   private:
     TextViewWindow();
     virtual ~TextViewWindow() {}
     TextViewWindow(const TextViewWindow&);
     TextViewWindow& operator=(const TextViewWindow&);
+
+    void ActionToggleScrollbar();
 };
 
 TextViewWindow *TextViewWindow::Instance()
@@ -37,7 +40,7 @@ TextViewWindow::TextViewWindow()
 {
   SetColorScheme("textviewwindow");
 
-  TextView *textview = new TextView(-1, -1);
+  textview = new TextView(-1, -1);
   AddWidget(*textview, 0, 0);
 
   const gchar *long_text = "Lorem ipsum dolor sit amet, consectetur"
@@ -64,12 +67,23 @@ TextViewWindow::TextViewWindow()
   COLORSCHEME->SetColorPair("textviewwindow", "textview", "color5", Curses::Color::MAGENTA, Curses::Color::BLACK);
   COLORSCHEME->SetColorPair("textviewwindow", "textview", "color6", Curses::Color::CYAN, Curses::Color::BLACK);
   COLORSCHEME->SetColorPair("textviewwindow", "textview", "color7", Curses::Color::WHITE, Curses::Color::BLACK);
+
+  DeclareBindable("textviewwindow", "toggle-scrollbar", sigc::mem_fun(this,
+        &TextViewWindow::ActionToggleScrollbar),
+      InputProcessor::BINDABLE_NORMAL);
+  KEYCONFIG->RegisterKeyDef("textviewwindow", "toggle-scrollbar",
+      Keys::FunctionTermKey(1));
 }
 
 void TextViewWindow::ScreenResized()
 {
   MoveResize(0, 0, COREMANAGER->GetScreenWidth(),
       COREMANAGER->GetScreenHeight());
+}
+
+void TextViewWindow::ActionToggleScrollbar()
+{
+  textview->SetScrollBar(!textview->GetScrollBar());
 }
 
 // TestApp class
