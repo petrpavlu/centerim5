@@ -239,7 +239,7 @@ void Conversations::create_conversation(PurpleConversation *conv)
   c.sig_close = conversation->signal_close.connect(sigc::group(
         sigc::mem_fun(this, &Conversations::OnConversationClose),
         sigc::ref(*conversation)));
-  char *name = g_strdup_printf(" |%s", purple_conversation_get_name(conv));
+  char *name = g_strdup_printf(" |%s", purple_conversation_get_title(conv));
   c.label = new Label(AUTOSIZE, 1, name);
   g_free(name);
   list->AppendWidget(*c.label);
@@ -301,6 +301,5 @@ void Conversations::present(PurpleConversation *conv)
   if (i == -1)
     return;
 
-  if (i != active)
-    ActivateConversation(i);
+  ActivateConversation(i);
 }

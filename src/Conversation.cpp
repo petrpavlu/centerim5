@@ -57,10 +57,8 @@ Conversation::Conversation(PurpleConversation *conv_)
   // open logfile
   BuildLogFilename();
 
-  LoadHistory();
-
   GError *err = NULL;
-  if ((logfile = g_io_channel_new_file(filename, "a", &err)) == NULL) {
+  if (!(logfile = g_io_channel_new_file(filename, "a", &err))) {
     if (err) {
       LOG->Error(_("Error opening conversation logfile `%s' (%s).\n"),
           filename, err->message);
@@ -71,6 +69,8 @@ Conversation::Conversation(PurpleConversation *conv_)
     else
       LOG->Error(_("Error opening conversation logfile `%s'.\n"), filename);
   }
+
+  LoadHistory();
 
   DeclareBindables();
   LOG->Debug("%p constructor()\n", this);
