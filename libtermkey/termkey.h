@@ -9,7 +9,7 @@ extern "C" {
 #include <stdlib.h>
 
 #define TERMKEY_VERSION_MAJOR 0
-#define TERMKEY_VERSION_MINOR 6
+#define TERMKEY_VERSION_MINOR 7
 
 #define TERMKEY_CHECK_VERSION \
         termkey_check_version(TERMKEY_VERSION_MAJOR, TERMKEY_VERSION_MINOR)
@@ -85,9 +85,10 @@ typedef enum {
   TERMKEY_SYM_KPDIV,
   TERMKEY_SYM_KPCOMMA,
   TERMKEY_SYM_KPPERIOD,
-  TERMKEY_SYM_KPEQUALS
+  TERMKEY_SYM_KPEQUALS,
 
   // et cetera ad nauseum
+  TERMKEY_N_SYMS
 } TermKeySym;
 
 typedef enum {
@@ -149,31 +150,32 @@ enum {
 void termkey_check_version(int major, int minor);
 
 TermKey *termkey_new(int fd, int flags);
-void       termkey_free(TermKey *tk);
-void       termkey_destroy(TermKey *tk);
+void     termkey_free(TermKey *tk);
+void     termkey_destroy(TermKey *tk);
 
-int        termkey_get_fd(TermKey *tk);
+int termkey_get_fd(TermKey *tk);
 
-int        termkey_get_flags(TermKey *tk);
-void       termkey_set_flags(TermKey *tk, int newflags);
+int  termkey_get_flags(TermKey *tk);
+void termkey_set_flags(TermKey *tk, int newflags);
 
-void       termkey_set_waittime(TermKey *tk, int msec);
-int        termkey_get_waittime(TermKey *tk);
+int  termkey_get_waittime(TermKey *tk);
+void termkey_set_waittime(TermKey *tk, int msec);
 
 TermKeyResult termkey_getkey(TermKey *tk, TermKeyKey *key);
 TermKeyResult termkey_getkey_force(TermKey *tk, TermKeyKey *key);
 TermKeyResult termkey_waitkey(TermKey *tk, TermKeyKey *key);
 
-void       termkey_pushinput(TermKey *tk, unsigned char *input, size_t inputlen);
+void termkey_pushinput(TermKey *tk, const unsigned char *input, size_t inputlen);
 
 TermKeyResult termkey_advisereadable(TermKey *tk);
 
 TermKeySym termkey_register_keyname(TermKey *tk, TermKeySym sym, const char *name);
 const char *termkey_get_keyname(TermKey *tk, TermKeySym sym);
-
-TermKeyResult termkey_interpret_mouse(TermKey *tk, TermKeyKey *key, TermKeyMouseEvent *event, int *button, int *line, int *col);
+char       *termkey_lookup_keyname(TermKey *tk, const char *str, TermKeySym *sym);
 
 TermKeySym termkey_keyname2sym(TermKey *tk, const char *keyname); 
+
+TermKeyResult termkey_interpret_mouse(TermKey *tk, const TermKeyKey *key, TermKeyMouseEvent *event, int *button, int *line, int *col);
 
 typedef enum {
   TERMKEY_FORMAT_LONGMOD     = 1 << 0, // Shift-... instead of S-...
@@ -188,6 +190,12 @@ typedef enum {
 
 #define TERMKEY_FORMAT_VIM (TERMKEY_FORMAT_ALTISMETA|TERMKEY_FORMAT_WRAPBRACKET)
 
+size_t  termkey_strfkey(TermKey *tk, char *buffer, size_t len, TermKeyKey *key, TermKeyFormat format);
+char   *termkey_strpkey(TermKey *tk, const char *str, TermKeyKey *key, TermKeyFormat format);
+
+int termkey_keycmp(TermKey *tk, const TermKeyKey *key1, const TermKeyKey *key2);
+
+// Old name for termkey_strfkey()
 size_t termkey_snprint_key(TermKey *tk, char *buffer, size_t len, TermKeyKey *key, TermKeyFormat format);
 
 // Legacy name typedefs

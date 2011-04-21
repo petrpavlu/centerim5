@@ -422,6 +422,82 @@ static void fill_utf8(TermKeyKey *key)
   }
 }
 
+#define UTF8_INVALID 0xFFFD
+static TermKeyResult parse_utf8(const unsigned char *bytes, size_t len, long *cp, size_t *nbytep)
+{
+  unsigned int nbytes;
+
+  unsigned char b0 = bytes[0];
+
+  if(b0 < 0x80) {
+    // Single byte ASCII
+    *cp = b0;
+    *nbytep = 1;
+    return TERMKEY_RES_KEY;
+  }
+  else if(b0 < 0xc0) {
+    // Starts with a continuation byte - that's not right
+    *cp = UTF8_INVALID;
+    *nbytep = 1;
+    return TERMKEY_RES_KEY;
+  }
+  else if(b0 < 0xe0) {
+    nbytes = 2;
+    *cp = b0 & 0x1f;
+  }
+  else if(b0 < 0xf0) {
+    nbytes = 3;
+    *cp = b0 & 0x0f;
+  }
+  else if(b0 < 0xf8) {
+    nbytes = 4;
+    *cp = b0 & 0x07;
+  }
+  else if(b0 < 0xfc) {
+    nbytes = 5;
+    *cp = b0 & 0x03;
+  }
+  else if(b0 < 0xfe) {
+    nbytes = 6;
+    *cp = b0 & 0x01;
+  }
+  else {
+    *cp = UTF8_INVALID;
+    *nbytep = 1;
+    return TERMKEY_RES_KEY;
+  }
+
+  for(unsigned int b = 1; b < nbytes; b++) {
+    unsigned char cb;
+
+    if(b >= len)
+      return TERMKEY_RES_AGAIN;
+
+    cb = bytes[b];
+    if(cb < 0x80 || cb >= 0xc0) {
+      *cp = UTF8_INVALID;
+      *nbytep = b;
+      return TERMKEY_RES_KEY;
+    }
+
+    *cp <<= 6;
+    *cp |= cb & 0x3f;
+  }
+
+  // Check for overlong sequences
+  if(nbytes > utf8_seqlen(*cp))
+    *cp = UTF8_INVALID;
+
+  // Check for UTF-16 surrogates or invalid *cps
+  if((*cp >= 0xD800 && *cp <= 0xDFFF) ||
+     *cp == 0xFFFE ||
+     *cp == 0xFFFF)
+    *cp = UTF8_INVALID;
+
+  *nbytep = nbytes;
+  return TERMKEY_RES_KEY;
+}
+
 static void emit_codepoint(TermKey *tk, long codepoint, TermKeyKey *key)
 {
   if(codepoint < 0x20) {
@@ -486,8 +562,6 @@ static void emit_codepoint(TermKey *tk, long codepoint, TermKeyKey *key)
   if(key->type == TERMKEY_TYPE_UNICODE)
     fill_utf8(key);
 }
-
-#define UTF8_INVALID 0xFFFD
 
 static TermKeyResult peekkey(TermKey *tk, TermKeyKey *key, int force, size_t *nbytep)
 {
@@ -604,83 +678,24 @@ static TermKeyResult peekkey_simple(TermKey *tk, TermKeyKey *key, int force, siz
   }
   else if(tk->flags & TERMKEY_FLAG_UTF8) {
     // Some UTF-8
-    unsigned int nbytes;
     long codepoint;
+    TermKeyResult res = parse_utf8(tk->buffer + tk->buffstart, tk->buffcount, &codepoint, nbytep);
 
-    key->type = TERMKEY_TYPE_UNICODE;
-    key->modifiers = 0;
-
-    if(b0 < 0xc0) {
-      // Starts with a continuation byte - that's not right
-      (*tk->method.emit_codepoint)(tk, UTF8_INVALID, key);
-      *nbytep = 1;
-      return TERMKEY_RES_KEY;
-    }
-    else if(b0 < 0xe0) {
-      nbytes = 2;
-      codepoint = b0 & 0x1f;
-    }
-    else if(b0 < 0xf0) {
-      nbytes = 3;
-      codepoint = b0 & 0x0f;
-    }
-    else if(b0 < 0xf8) {
-      nbytes = 4;
-      codepoint = b0 & 0x07;
-    }
-    else if(b0 < 0xfc) {
-      nbytes = 5;
-      codepoint = b0 & 0x03;
-    }
-    else if(b0 < 0xfe) {
-      nbytes = 6;
-      codepoint = b0 & 0x01;
-    }
-    else {
-      (*tk->method.emit_codepoint)(tk, UTF8_INVALID, key);
-      *nbytep = 1;
-      return TERMKEY_RES_KEY;
-    }
-
-    if(tk->buffcount < nbytes) {
-      if(!force)
-        return TERMKEY_RES_AGAIN;
-
+    if(res == TERMKEY_RES_AGAIN && force) {
       /* There weren't enough bytes for a complete UTF-8 sequence but caller
        * demands an answer. About the best thing we can do here is eat as many
        * bytes as we have, and emit a UTF8_INVALID. If the remaining bytes
        * arrive later, they'll be invalid too.
        */
-      (*tk->method.emit_codepoint)(tk, UTF8_INVALID, key);
+      codepoint = UTF8_INVALID;
       *nbytep = tk->buffcount;
-      return TERMKEY_RES_KEY;
+      res = TERMKEY_RES_KEY;
     }
 
-    for(unsigned int b = 1; b < nbytes; b++) {
-      unsigned char cb = CHARAT(b);
-      if(cb < 0x80 || cb >= 0xc0) {
-        (*tk->method.emit_codepoint)(tk, UTF8_INVALID, key);
-        *nbytep = b - 1;
-        return TERMKEY_RES_KEY;
-      }
-
-      codepoint <<= 6;
-      codepoint |= cb & 0x3f;
-    }
-
-    // Check for overlong sequences
-    if(nbytes > utf8_seqlen(codepoint))
-      codepoint = UTF8_INVALID;
-
-    // Check for UTF-16 surrogates or invalid codepoints
-    if((codepoint >= 0xD800 && codepoint <= 0xDFFF) ||
-       codepoint == 0xFFFE ||
-       codepoint == 0xFFFF)
-      codepoint = UTF8_INVALID;
-
+    key->type = TERMKEY_TYPE_UNICODE;
+    key->modifiers = 0;
     (*tk->method.emit_codepoint)(tk, codepoint, key);
-    *nbytep = nbytes;
-    return TERMKEY_RES_KEY;
+    return res;
   }
   else {
     // Non UTF-8 case - just report the raw byte
@@ -711,7 +726,7 @@ static TermKeyResult peekkey_mouse(TermKey *tk, TermKeyKey *key, size_t *nbytep)
   return TERMKEY_RES_KEY;
 }
 
-TermKeyResult termkey_interpret_mouse(TermKey *tk, TermKeyKey *key, TermKeyMouseEvent *event, int *button, int *line, int *col)
+TermKeyResult termkey_interpret_mouse(TermKey *tk, const TermKeyKey *key, TermKeyMouseEvent *event, int *button, int *line, int *col)
 {
   if(key->type != TERMKEY_TYPE_MOUSE)
     return TERMKEY_RES_NONE;
@@ -833,7 +848,7 @@ TermKeyResult termkey_waitkey(TermKey *tk, TermKeyKey *key)
   /* UNREACHABLE */
 }
 
-void termkey_pushinput(TermKey *tk, unsigned char *input, size_t inputlen)
+void termkey_pushinput(TermKey *tk, const unsigned char *input, size_t inputlen)
 {
   if(tk->buffstart + tk->buffcount + inputlen > tk->buffsize) {
     while(tk->buffstart + tk->buffcount + inputlen > tk->buffsize)
@@ -899,18 +914,30 @@ const char *termkey_get_keyname(TermKey *tk, TermKeySym sym)
   return "UNKNOWN";
 }
 
-TermKeySym termkey_keyname2sym(TermKey *tk, const char *keyname)
+char *termkey_lookup_keyname(TermKey *tk, const char *str, TermKeySym *sym)
 {
   /* We store an array, so we can't do better than a linear search. Doesn't
    * matter because user won't be calling this too often */
 
+  for(*sym = 0; *sym < tk->nkeynames; (*sym)++) {
+    const char *thiskey = tk->keynames[*sym];
+    if(!thiskey)
+      continue;
+    size_t len = strlen(thiskey);
+    if(strncmp(str, thiskey, len) == 0)
+      return (char *)str + len;
+  }
+
+  return NULL;
+}
+
+TermKeySym termkey_keyname2sym(TermKey *tk, const char *keyname)
+{
   TermKeySym sym;
-
-  for(sym = 0; sym < tk->nkeynames; sym++)
-    if(tk->keynames[sym] && strcmp(keyname, tk->keynames[sym]) == 0)
-      return sym;
-
-  return TERMKEY_SYM_UNKNOWN;
+  char *endp = termkey_lookup_keyname(tk, keyname, &sym);
+  if(!endp || endp[0])
+    return TERMKEY_SYM_UNKNOWN;
+  return sym;
 }
 
 static TermKeySym register_c0(TermKey *tk, TermKeySym sym, unsigned char ctrl, const char *name)
@@ -935,12 +962,29 @@ static TermKeySym register_c0_full(TermKey *tk, TermKeySym sym, int modifier_set
   return sym;
 }
 
+/* Previous name for this function */
 size_t termkey_snprint_key(TermKey *tk, char *buffer, size_t len, TermKeyKey *key, TermKeyFormat format)
+{
+  return termkey_strfkey(tk, buffer, len, key, format);
+}
+
+struct modnames {
+  const char *shift, *alt, *ctrl;
+}
+modnames[] = {
+  { "S",     "A",    "C" },    // 0
+  { "Shift", "Alt",  "Ctrl" }, // LONGMOD
+  { "S",     "M",    "C" },    // ALTISMETA
+  { "Shift", "Meta", "Ctrl" }, // ALTISMETA+LONGMOD
+};
+
+size_t termkey_strfkey(TermKey *tk, char *buffer, size_t len, TermKeyKey *key, TermKeyFormat format)
 {
   size_t pos = 0;
   size_t l = 0;
 
-  int longmod = format & TERMKEY_FORMAT_LONGMOD;
+  struct modnames *mods = &modnames[!!(format & TERMKEY_FORMAT_LONGMOD) +
+                                    !!(format & TERMKEY_FORMAT_ALTISMETA) * 2];
 
   int wrapbracket = (format & TERMKEY_FORMAT_WRAPBRACKET) &&
                     (key->type != TERMKEY_TYPE_UNICODE || key->modifiers != 0);
@@ -973,28 +1017,27 @@ size_t termkey_snprint_key(TermKey *tk, char *buffer, size_t len, TermKeyKey *ke
   }
 
   if(key->modifiers & TERMKEY_KEYMOD_ALT) {
-    int altismeta = format & TERMKEY_FORMAT_ALTISMETA;
-
-    l = snprintf(buffer + pos, len - pos, longmod ? ( altismeta ? "Meta-" : "Alt-" )
-                                                  : ( altismeta ? "M-"    : "A-" ));
+    l = snprintf(buffer + pos, len - pos, "%s-", mods->alt);
     if(l <= 0) return pos;
     pos += l;
   }
 
   if(key->modifiers & TERMKEY_KEYMOD_CTRL) {
-    l = snprintf(buffer + pos, len - pos, longmod ? "Ctrl-" : "C-");
+    l = snprintf(buffer + pos, len - pos, "%s-", mods->ctrl);
     if(l <= 0) return pos;
     pos += l;
   }
 
   if(key->modifiers & TERMKEY_KEYMOD_SHIFT) {
-    l = snprintf(buffer + pos, len - pos, longmod ? "Shift-" : "S-");
+    l = snprintf(buffer + pos, len - pos, "%s-", mods->shift);
     if(l <= 0) return pos;
     pos += l;
   }
 
   switch(key->type) {
   case TERMKEY_TYPE_UNICODE:
+    if(!key->utf8[0]) // In case of user-supplied key structures
+      fill_utf8(key);
     l = snprintf(buffer + pos, len - pos, "%s", key->utf8);
     break;
   case TERMKEY_TYPE_KEYSYM:
@@ -1035,4 +1078,95 @@ size_t termkey_snprint_key(TermKey *tk, char *buffer, size_t len, TermKeyKey *ke
   }
 
   return pos;
+}
+
+char *termkey_strpkey(TermKey *tk, const char *str, TermKeyKey *key, TermKeyFormat format)
+{
+  struct modnames *mods = &modnames[!!(format & TERMKEY_FORMAT_LONGMOD) +
+                                    !!(format & TERMKEY_FORMAT_ALTISMETA) * 2];
+
+  key->modifiers = 0;
+
+  if((format & TERMKEY_FORMAT_CARETCTRL) && str[0] == '^' && str[1]) {
+    str = termkey_strpkey(tk, str+1, key, format & ~TERMKEY_FORMAT_CARETCTRL);
+
+    if(!str ||
+       key->type != TERMKEY_TYPE_UNICODE ||
+       key->code.codepoint < '@' || key->code.codepoint > '_' ||
+       key->modifiers != 0)
+      return NULL;
+
+    if(key->code.codepoint >= 'A' && key->code.codepoint <= 'Z')
+      key->code.codepoint += 0x20;
+    key->modifiers = TERMKEY_KEYMOD_CTRL;
+    fill_utf8(key);
+    return (char *)str;
+  }
+
+  const char *hyphen;
+
+  while((hyphen = strchr(str, '-'))) {
+    size_t n = hyphen - str;
+
+    if(n == strlen(mods->alt) && strncmp(mods->alt, str, n) == 0)
+      key->modifiers |= TERMKEY_KEYMOD_ALT;
+    else if(n == strlen(mods->ctrl) && strncmp(mods->ctrl, str, n) == 0)
+      key->modifiers |= TERMKEY_KEYMOD_CTRL;
+    else if(n == strlen(mods->shift) && strncmp(mods->shift, str, n) == 0)
+      key->modifiers |= TERMKEY_KEYMOD_SHIFT;
+
+    else
+      break;
+
+    str = hyphen + 1;
+  }
+
+  size_t nbytes;
+  char *endstr;
+
+  if((endstr = termkey_lookup_keyname(tk, str, &key->code.sym))) {
+    key->type = TERMKEY_TYPE_KEYSYM;
+    str = endstr;
+  }
+  else if(sscanf(str, "F%d%n", &key->code.number, &nbytes) == 1) {
+    key->type = TERMKEY_TYPE_FUNCTION;
+    str += nbytes;
+  }
+  // Unicode must be last
+  else if(parse_utf8((unsigned char *)str, strlen(str), &key->code.codepoint, &nbytes) == TERMKEY_RES_KEY) {
+    key->type = TERMKEY_TYPE_UNICODE;
+    fill_utf8(key);
+    str += nbytes;
+  }
+  // TODO: Consider mouse events?
+  else
+    return NULL;
+
+  return (char *)str;
+}
+
+int termkey_keycmp(TermKey *tk, const TermKeyKey *key1, const TermKeyKey *key2)
+{
+  if(key1->type != key2->type)
+    return key1->type - key2->type;
+
+  switch(key1->type) {
+    case TERMKEY_TYPE_UNICODE:
+      if(key1->code.codepoint != key2->code.codepoint)
+        return key1->code.codepoint - key2->code.codepoint;
+    case TERMKEY_TYPE_KEYSYM:
+      if(key1->code.sym != key2->code.sym)
+        return key1->code.sym - key2->code.sym;
+    case TERMKEY_TYPE_FUNCTION:
+      if(key1->code.number != key2->code.number)
+        return key1->code.number - key2->code.number;
+    case TERMKEY_TYPE_MOUSE:
+      {
+        int cmp = strncmp(key1->code.mouse, key2->code.mouse, 4);
+        if(cmp != 0)
+          return cmp;
+      }
+  }
+
+  return key1->modifiers - key2->modifiers;
 }
