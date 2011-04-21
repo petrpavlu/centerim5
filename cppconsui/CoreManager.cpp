@@ -304,14 +304,14 @@ gboolean CoreManager::io_input_error(GIOChannel *source, GIOCondition cond)
 
 gboolean CoreManager::io_input(GIOChannel *source, GIOCondition cond)
 {
+  if (io_input_timeout_conn.connected())
+    io_input_timeout_conn.disconnect();
+
   termkey_advisereadable(tk);
 
   TermKeyKey key;
-  /**
-   * @todo Actually we should call termkey_getkey() instead of
-   * termkey_getkey_force(). See libtermkey async demo.
-   */
-  while (termkey_getkey_force(tk, &key) == TERMKEY_RES_KEY) {
+  TermKeyResult ret;
+  while ((ret = termkey_getkey(tk, &key)) == TERMKEY_RES_KEY) {
     if (key.type == TERMKEY_TYPE_UNICODE && !utf8) {
       gsize bwritten;
       GError *err = NULL;
@@ -338,8 +338,23 @@ gboolean CoreManager::io_input(GIOChannel *source, GIOCondition cond)
 
     ProcessInput(key);
   }
+  if (ret == TERMKEY_RES_AGAIN) {
+    int wait = termkey_get_waittime(tk);
+    io_input_timeout_conn = TimeoutOnceConnect(sigc::mem_fun(this,
+          &CoreManager::io_input_timeout), wait);
+  }
 
   return TRUE;
+}
+
+void CoreManager::io_input_timeout()
+{
+  TermKeyKey key;
+  if (termkey_getkey_force(tk, &key) == TERMKEY_RES_KEY) {
+    /* This should happen only for Esc key, so no need to do locale->utf8
+     * conversion. */
+    ProcessInput(key);
+  }
 }
 
 gboolean CoreManager::resize_input(GIOChannel *source, GIOCondition cond)

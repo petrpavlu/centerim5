@@ -94,6 +94,7 @@ private:
 
   GIOChannel *io_input_channel;
   guint io_input_channel_id;
+  sigc::connection io_input_timeout_conn;
   GIOChannel *resize_channel;
   guint resize_channel_id;
   int pipefd[2];
@@ -137,6 +138,7 @@ private:
       gpointer data)
     { return reinterpret_cast<CoreManager *>(data)->io_input(source, cond); }
   gboolean io_input(GIOChannel *source, GIOCondition cond);
+  void io_input_timeout();
 
   static gboolean resize_input_(GIOChannel *source, GIOCondition cond,
       gpointer data)
