@@ -85,7 +85,7 @@ void Header::account_signed_on(PurpleAccount *account)
 {
   g_return_if_fail(account);
 
-  if (statuses.find(account) == statuses.end())
+  if (statuses.find(account) != statuses.end())
     return;
 
   Label *label = new Label(0, 1, "");
@@ -100,7 +100,7 @@ void Header::account_signed_off(PurpleAccount *account)
 {
   g_return_if_fail(account);
 
-  if (statuses.find(account) != statuses.end())
+  if (statuses.find(account) == statuses.end())
     return;
 
   container->RemoveWidget(*statuses[account]);
@@ -113,7 +113,7 @@ void Header::account_status_changed(PurpleAccount *account, PurpleStatus *old,
   g_return_if_fail(account);
   g_return_if_fail(cur);
 
-  if (statuses.find(account) != statuses.end())
+  if (statuses.find(account) == statuses.end())
     return;
 
   // update label
