@@ -81,6 +81,8 @@ public:
   sigc::connection TimeoutOnceConnect(const sigc::slot<void>& slot,
       unsigned interval, int priority = G_PRIORITY_DEFAULT);
 
+  static TermKey *GetTermKeyHandle() { return tk; };
+
   sigc::signal<void> signal_resize;
 
 protected:
@@ -100,7 +102,7 @@ private:
   int pipefd[2];
   bool pipe_valid;
 
-  TermKey *tk;
+  static TermKey *tk;
   bool utf8;
 
   GMainLoop *gmainloop;

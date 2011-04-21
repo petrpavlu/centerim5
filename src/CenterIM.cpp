@@ -499,30 +499,19 @@ void CenterIM::DeclareBindables()
 
 void CenterIM::RegisterDefaultKeys()
 {
-  KEYCONFIG->RegisterKeyDef("centerim", "quit",
-      Keys::UnicodeTermKey("q", TERMKEY_KEYMOD_CTRL));
-  KEYCONFIG->RegisterKeyDef("centerim", "buddylist",
-      Keys::FunctionTermKey(1));
-  KEYCONFIG->RegisterKeyDef("centerim", "conversation-active",
-      Keys::FunctionTermKey(2));
-  KEYCONFIG->RegisterKeyDef("centerim", "accountstatusmenu",
-      Keys::FunctionTermKey(3));
-  KEYCONFIG->RegisterKeyDef("centerim", "generalmenu",
-      Keys::FunctionTermKey(4));
+  KEYCONFIG->RegisterKeyDef("centerim", "quit", "Ctrl-q");
+  KEYCONFIG->RegisterKeyDef("centerim", "buddylist", "F1");
+  KEYCONFIG->RegisterKeyDef("centerim", "conversation-active", "F2");
+  KEYCONFIG->RegisterKeyDef("centerim", "accountstatusmenu", "F3");
+  KEYCONFIG->RegisterKeyDef("centerim", "generalmenu", "F4");
 
   // XXX move to default key bindings config
-  KEYCONFIG->RegisterKeyDef("centerim", "generalmenu",
-      Keys::UnicodeTermKey("g", TERMKEY_KEYMOD_CTRL));
-  KEYCONFIG->RegisterKeyDef("centerim", "generalmenu",
-      Keys::UnicodeTermKey("4", TERMKEY_KEYMOD_ALT));
+  KEYCONFIG->RegisterKeyDef("centerim", "generalmenu", "Ctrl-g");
 
-  KEYCONFIG->RegisterKeyDef("centerim", "conversation-prev",
-      Keys::UnicodeTermKey("p", TERMKEY_KEYMOD_ALT));
-  KEYCONFIG->RegisterKeyDef("centerim", "conversation-next",
-      Keys::UnicodeTermKey("n", TERMKEY_KEYMOD_ALT));
+  KEYCONFIG->RegisterKeyDef("centerim", "conversation-prev", "Alt-p");
+  KEYCONFIG->RegisterKeyDef("centerim", "conversation-next", "Alt-n");
 
-  KEYCONFIG->RegisterKeyDef("buddylist", "remove", Keys::UnicodeTermKey("d"));
+  KEYCONFIG->RegisterKeyDef("buddylist", "remove", "Ctrl-d");
 
-  KEYCONFIG->RegisterKeyDef("conversation", "send",
-      Keys::UnicodeTermKey("x", TERMKEY_KEYMOD_CTRL));
+  KEYCONFIG->RegisterKeyDef("conversation", "send", "Ctrl-x");
 }

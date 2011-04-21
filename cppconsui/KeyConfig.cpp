@@ -26,6 +26,7 @@
  */
 
 #include "KeyConfig.h"
+#include "CoreManager.h"
 
 KeyConfig *KeyConfig::Instance()
 {
@@ -34,10 +35,15 @@ KeyConfig *KeyConfig::Instance()
 }
 
 void KeyConfig::RegisterKeyDef(const char *context, const char *action,
-    const TermKeyKey &key)
+    const char *key)
 {
-  bindables.push_back(Bindable(context, action, key));
-  binds[context][key] = action;
+  TermKeyKey tkey;
+  const char *res = termkey_strpkey(CoreManager::GetTermKeyHandle(), key,
+      &tkey, TERMKEY_FORMAT_LONGMOD);
+  g_assert(res && !res[0]);
+
+  bindables.push_back(Bindable(context, action, tkey));
+  binds[context][tkey] = action;
 }
 
 const KeyConfig::KeyBindContext *KeyConfig::GetKeyBinds(
@@ -58,117 +64,75 @@ void KeyConfig::Reconfig()
 
 void KeyConfig::Register()
 {
-  RegisterKeyDef("button", "activate",
-      Keys::SymbolTermKey(TERMKEY_SYM_ENTER));
+  RegisterKeyDef("button", "activate", "Enter");
 
-  RegisterKeyDef("checkbox", "toggle",
-      Keys::SymbolTermKey(TERMKEY_SYM_ENTER));
+  RegisterKeyDef("checkbox", "toggle", "Enter");
 
-  RegisterKeyDef("container", "focus-previous",
-      Keys::SymbolTermKey(TERMKEY_SYM_TAB, TERMKEY_KEYMOD_SHIFT));
-  RegisterKeyDef("container", "focus-next",
-      Keys::SymbolTermKey(TERMKEY_SYM_TAB));
-  RegisterKeyDef("container", "focus-left",
-      Keys::SymbolTermKey(TERMKEY_SYM_LEFT));
-  RegisterKeyDef("container", "focus-right",
-      Keys::SymbolTermKey(TERMKEY_SYM_RIGHT));
-  RegisterKeyDef("container", "focus-up",
-      Keys::SymbolTermKey(TERMKEY_SYM_UP));
-  RegisterKeyDef("container", "focus-down",
-      Keys::SymbolTermKey(TERMKEY_SYM_DOWN));
+  RegisterKeyDef("container", "focus-previous", "Shift-Tab");
+  RegisterKeyDef("container", "focus-next", "Tab");
+  RegisterKeyDef("container", "focus-left", "Left");
+  RegisterKeyDef("container", "focus-right", "Right");
+  RegisterKeyDef("container", "focus-up", "Up");
+  RegisterKeyDef("container", "focus-down", "Down");
 
-  RegisterKeyDef("coremanager", "redraw-screen",
-      Keys::UnicodeTermKey("l", TERMKEY_KEYMOD_CTRL));
+  RegisterKeyDef("coremanager", "redraw-screen", "Ctrl-l");
 
-  RegisterKeyDef("window", "close-window",
-      Keys::SymbolTermKey(TERMKEY_SYM_ESCAPE));
+  RegisterKeyDef("window", "close-window", "Escape");
 
-  RegisterKeyDef("textentry", "cursor-right",
-      Keys::SymbolTermKey(TERMKEY_SYM_RIGHT));
-  RegisterKeyDef("textentry", "cursor-left",
-      Keys::SymbolTermKey(TERMKEY_SYM_LEFT));
-  RegisterKeyDef("textentry", "cursor-down",
-      Keys::SymbolTermKey(TERMKEY_SYM_DOWN));
-  RegisterKeyDef("textentry", "cursor-up",
-      Keys::SymbolTermKey(TERMKEY_SYM_UP));
-  RegisterKeyDef("textentry", "cursor-right-word",
-      Keys::SymbolTermKey(TERMKEY_SYM_RIGHT, TERMKEY_KEYMOD_CTRL));
-  RegisterKeyDef("textentry", "cursor-left-word",
-      Keys::SymbolTermKey(TERMKEY_SYM_LEFT, TERMKEY_KEYMOD_CTRL));
-  RegisterKeyDef("textentry", "cursor-end",
-      Keys::SymbolTermKey(TERMKEY_SYM_END));
-  RegisterKeyDef("textentry", "cursor-begin",
-      Keys::SymbolTermKey(TERMKEY_SYM_HOME));
-  RegisterKeyDef("textentry", "delete-char",
-      Keys::SymbolTermKey(TERMKEY_SYM_DELETE));
-  RegisterKeyDef("textentry", "backspace",
-      Keys::SymbolTermKey(TERMKEY_SYM_BACKSPACE));
+  RegisterKeyDef("textentry", "cursor-right", "Right");
+  RegisterKeyDef("textentry", "cursor-left", "Left");
+  RegisterKeyDef("textentry", "cursor-down", "Down");
+  RegisterKeyDef("textentry", "cursor-up", "Right");
+  RegisterKeyDef("textentry", "cursor-right-word", "Ctrl-Right");
+  RegisterKeyDef("textentry", "cursor-left-word", "Ctrl-Left");
+  RegisterKeyDef("textentry", "cursor-end", "End");
+  RegisterKeyDef("textentry", "cursor-begin", "Home");
+  RegisterKeyDef("textentry", "delete-char", "Delete");
+  RegisterKeyDef("textentry", "backspace", "Backspace");
 
   // XXX move to default key bindings config
-  RegisterKeyDef("textentry", "backspace",
-      Keys::SymbolTermKey(TERMKEY_SYM_DEL));
+  RegisterKeyDef("textentry", "backspace", "Delete");
 
   /// @todo enable
   /*
-  RegisterKeyDef("textentry", "delete-word-end",
-      Keys::SymbolTermKey(TERMKEY_SYM_DELETE, TERMKEY_KEYMOD_CTRL));
-  RegisterKeyDef("textentry", "delete-word-begin",
-      Keys::SymbolTermKey(TERMKEY_SYM_BACKSPACE, TERMKEY_KEYMOD_CTRL));
+  RegisterKeyDef("textentry", "delete-word-end", "Ctrl-Delete");
+  RegisterKeyDef("textentry", "delete-word-begin", "Ctrl-Backspace");
 
   // XXX move to default key bindings config
-  RegisterKeyDef("textentry", "delete-word-begin",
-      Keys::SymbolTermKey(TERMKEY_SYM_DEL, TERMKEY_KEYMOD_CTRL));
+  RegisterKeyDef("textentry", "delete-word-begin", "Ctrl-Delete");
 
-  RegisterKeyDef("textentry", "toggle-overwrite",
-      Keys::SymbolTermKey(TERMKEY_SYM_INSERT));
+  RegisterKeyDef("textentry", "toggle-overwrite", "Insert");
   */
 
-  RegisterKeyDef("textentry", "cursor-right",
-      Keys::SymbolTermKey(TERMKEY_SYM_RIGHT));
-  RegisterKeyDef("textentry", "cursor-left",
-      Keys::SymbolTermKey(TERMKEY_SYM_LEFT));
-  RegisterKeyDef("textentry", "cursor-right-word",
-      Keys::SymbolTermKey(TERMKEY_SYM_RIGHT, TERMKEY_KEYMOD_CTRL));
-  RegisterKeyDef("textentry", "cursor-left-word",
-      Keys::SymbolTermKey(TERMKEY_SYM_LEFT, TERMKEY_KEYMOD_CTRL));
-  RegisterKeyDef("textentry", "cursor-end",
-      Keys::SymbolTermKey(TERMKEY_SYM_END));
-  RegisterKeyDef("textentry", "cursor-begin",
-      Keys::SymbolTermKey(TERMKEY_SYM_HOME));
-  RegisterKeyDef("textentry", "delete-char",
-      Keys::SymbolTermKey(TERMKEY_SYM_DELETE));
-  RegisterKeyDef("textentry", "backspace",
-      Keys::SymbolTermKey(TERMKEY_SYM_BACKSPACE));
+  RegisterKeyDef("textentry", "cursor-right", "Right");
+  RegisterKeyDef("textentry", "cursor-left", "Left");
+  RegisterKeyDef("textentry", "cursor-right-word", "Ctrl-Right");
+  RegisterKeyDef("textentry", "cursor-left-word", "Ctrl-Left");
+  RegisterKeyDef("textentry", "cursor-end", "End");
+  RegisterKeyDef("textentry", "cursor-begin", "Home");
+  RegisterKeyDef("textentry", "delete-char", "Delete");
+  RegisterKeyDef("textentry", "backspace", "Backspace");
 
   // XXX move to default key bindings config
-  RegisterKeyDef("textentry", "backspace",
-      Keys::SymbolTermKey(TERMKEY_SYM_DEL));
-  RegisterKeyDef("textentry", "tab",
-      Keys::SymbolTermKey(TERMKEY_SYM_TAB));
+  RegisterKeyDef("textentry", "backspace", "Delete");
+  RegisterKeyDef("textentry", "tab", "Tab");
 
   /// @todo enable
   /*
-  RegisterKeyDef("textentry", "delete-word-end",
-      Keys::SymbolTermKey(TERMKEY_SYM_DELETE, TERMKEY_KEYMOD_CTRL));
-  RegisterKeyDef("textentry", "delete-word-begin",
-      Keys::SymbolTermKey(TERMKEY_SYM_BACKSPACE, TERMKEY_KEYMOD_CTRL));
+  RegisterKeyDef("textentry", "delete-word-end", "Ctrl-Delete");
+  RegisterKeyDef("textentry", "delete-word-begin", "Ctrl-Backspace");
 
   // XXX move to default key bindings config
-  RegisterKeyDef("textentry", "delete-word-begin",
-      Keys::SymbolTermKey(TERMKEY_SYM_DEL, TERMKEY_KEYMOD_CTRL));
+  RegisterKeyDef("textentry", "delete-word-begin", "Ctrl-Delete");
 
-  RegisterKeyDef("textentry", "toggle-overwrite",
-      Keys::SymbolTermKey(TERMKEY_SYM_INSERT));
+  RegisterKeyDef("textentry", "toggle-overwrite", "Insert");
   */
 
-  RegisterKeyDef("textentry", "activate",
-      Keys::SymbolTermKey(TERMKEY_SYM_ENTER));
+  RegisterKeyDef("textentry", "activate", "Enter");
 
-  RegisterKeyDef("textview", "scroll-up",
-      Keys::SymbolTermKey(TERMKEY_SYM_PAGEUP));
-  RegisterKeyDef("textview", "scroll-down",
-      Keys::SymbolTermKey(TERMKEY_SYM_PAGEDOWN));
+  RegisterKeyDef("textview", "scroll-up", "PageUp");
+  RegisterKeyDef("textview", "scroll-down", "PageDown");
 
-  RegisterKeyDef("treeview", "fold-subtree", Keys::UnicodeTermKey("-"));
-  RegisterKeyDef("treeview", "unfold-subtree", Keys::UnicodeTermKey("+"));
+  RegisterKeyDef("treeview", "fold-subtree", "-");
+  RegisterKeyDef("treeview", "unfold-subtree", "+");
 }

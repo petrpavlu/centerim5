@@ -20,6 +20,7 @@
  * */
 
 #include "Keys.h"
+#include "CoreManager.h"
 
 #include <string.h>
 
@@ -28,50 +29,12 @@ namespace Keys
 
 bool TermKeyCmp::operator()(const TermKeyKey &a, const TermKeyKey &b) const
 {
-  if (a.type != b.type)
-    return a.type > b.type;
-
-  if (a.modifiers != b.modifiers)
-    return a.modifiers > b.modifiers;
-
-  switch (a.type) {
-    case TERMKEY_TYPE_UNICODE:
-      return a.code.codepoint > b.code.codepoint;
-    case TERMKEY_TYPE_FUNCTION:
-      return a.code.number > b.code.number;
-    case TERMKEY_TYPE_KEYSYM:
-      return a.code.sym > b.code.sym;
-    default:
-      g_assert_not_reached();
-  }
-  return false;
+  return termkey_keycmp(CoreManager::GetTermKeyHandle(), &a, &b) > 0;
 }
 
 bool Compare(const TermKeyKey &a, const TermKeyKey &b)
 {
-  if (a.type != b.type)
-    return false;
-
-  if (a.modifiers != b.modifiers)
-    return false;
-
-  switch (a.type) {
-    case TERMKEY_TYPE_UNICODE:
-      if (a.code.codepoint == b.code.codepoint)
-        return true;
-      break;
-    case TERMKEY_TYPE_FUNCTION:
-      if (a.code.number == b.code.number)
-        return true;
-      break;
-    case TERMKEY_TYPE_KEYSYM:
-      if (a.code.sym == b.code.sym)
-        return true;
-      break;
-    default:
-      break;
-  }
-  return false;
+  return !termkey_keycmp(CoreManager::GetTermKeyHandle(), &a, &b);
 }
 
 TermKeyKey RefineKey(const TermKeyKey &k)
@@ -95,33 +58,6 @@ TermKeyKey RefineKey(const TermKeyKey &k)
     strcpy(res.utf8, " ");
     res.code.codepoint = g_utf8_get_char(res.utf8);
   }
-  return res;
-}
-
-TermKeyKey UnicodeTermKey(const char *symbol, int modifiers)
-{
-  g_assert(symbol);
-  int len = strlen(symbol);
-  g_assert(len <= 6);
-
-  TermKeyKey res = {TERMKEY_TYPE_UNICODE, {0}, modifiers, ""};
-  res.code.codepoint = g_utf8_get_char(symbol);
-  memcpy(res.utf8, symbol, len + 1);
-
-  return res;
-}
-
-TermKeyKey FunctionTermKey(int number, int modifiers)
-{
-  TermKeyKey res = {TERMKEY_TYPE_FUNCTION, {0}, modifiers, ""};
-  res.code.number = number;
-  return res;
-}
-
-TermKeyKey SymbolTermKey(TermKeySym sym, int modifiers)
-{
-  TermKeyKey res = {TERMKEY_TYPE_KEYSYM, {0}, modifiers, ""};
-  res.code.sym = sym;
   return res;
 }
 

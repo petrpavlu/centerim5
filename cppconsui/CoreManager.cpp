@@ -30,6 +30,8 @@
 #include <stdio.h>
 #include "gettext.h"
 
+TermKey *CoreManager::tk = NULL;
+
 // based on glibmm code
 class SourceConnectionNode
 {
@@ -241,7 +243,7 @@ sigc::connection CoreManager::TimeoutOnceConnect(const sigc::slot<void>& slot,
 
 CoreManager::CoreManager()
 : top_input_processor(NULL), io_input_channel(NULL), io_input_channel_id(0)
-, resize_channel(NULL), resize_channel_id(0), pipe_valid(false), tk(NULL)
+, resize_channel(NULL), resize_channel_id(0), pipe_valid(false)
 , utf8(false), gmainloop(NULL), screen_width(0), screen_height(0)
 , redraw_pending(false), resize_pending(false)
 {
@@ -411,6 +413,7 @@ void CoreManager::InputInit()
 void CoreManager::InputUnInit()
 {
   termkey_destroy(tk);
+  tk = NULL;
 
   g_source_remove(io_input_channel_id);
   io_input_channel_id = 0;

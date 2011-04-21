@@ -122,7 +122,7 @@ public:
    * action.
    */
   void RegisterKeyDef(const char *context, const char *action,
-      const TermKeyKey &key);
+      const char *key);
 
   /**
    * Returns all key binds.

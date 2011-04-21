@@ -22,7 +22,6 @@
 #ifndef __KEYS_H__
 #define __KEYS_H__
 
-#include <glib.h>
 #include <libtermkey/termkey.h>
 
 namespace Keys
@@ -41,10 +40,6 @@ bool Compare(const TermKeyKey &a, const TermKeyKey &b);
  * TERMKEY_SYM_SPACE to unicode termkeys.
  */
 TermKeyKey RefineKey(const TermKeyKey &k);
-
-TermKeyKey UnicodeTermKey(const char *symbol, int modifiers = 0);
-TermKeyKey FunctionTermKey(int number, int modifiers = 0);
-TermKeyKey SymbolTermKey(TermKeySym sym, int modifiers = 0);
 
 } // namespace Keys
 
