@@ -1,8 +1,8 @@
-bin_PROGRAMS = centerim
+bin_PROGRAMS = centerim5
 DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\"
 
-# When you add files here, also add them in po/POTFILES.in
-centerim_SOURCES = \
+# when you add files here, also add them in po/POTFILES.in
+centerim5_SOURCES = \
 	AccountStatusMenu.cpp \
 	AccountStatusMenu.h \
 	AccountWindow.cpp \
@@ -43,13 +43,13 @@ centerim_SOURCES = \
 	git-version.cpp \
 	git-version.h.in
 
-centerim_CPPFLAGS =\
+centerim5_CPPFLAGS =\
 	$(PURPLE_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(SIGC_CFLAGS) \
 	-I$(top_srcdir)
 
-centerim_LDADD =\
+centerim5_LDADD =\
 	$(PURPLE_LIBS) \
 	$(GLIB_LIBS) \
 	$(SIGC_LIBS) \
