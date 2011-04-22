@@ -120,14 +120,10 @@ ScrollPaneWindow::ScrollPaneWindow()
   DeclareBindable("scrollpanewindow", "scroll-right",
       sigc::mem_fun(this, &ScrollPaneWindow::ScrollRight),
       InputProcessor::BINDABLE_NORMAL);
-  KEYCONFIG->RegisterKeyDef("scrollpanewindow", "scroll-up",
-      Keys::UnicodeTermKey("w"));
-  KEYCONFIG->RegisterKeyDef("scrollpanewindow", "scroll-down",
-      Keys::UnicodeTermKey("s"));
-  KEYCONFIG->RegisterKeyDef("scrollpanewindow", "scroll-left",
-      Keys::UnicodeTermKey("a"));
-  KEYCONFIG->RegisterKeyDef("scrollpanewindow", "scroll-right",
-      Keys::UnicodeTermKey("d"));
+  KEYCONFIG->BindKey("scrollpanewindow", "scroll-up", "w");
+  KEYCONFIG->BindKey("scrollpanewindow", "scroll-down", "s");
+  KEYCONFIG->BindKey("scrollpanewindow", "scroll-left", "a");
+  KEYCONFIG->BindKey("scrollpanewindow", "scroll-right", "d");
 }
 
 void ScrollPaneWindow::ScrollUp()
@@ -195,12 +191,13 @@ TestApp::TestApp()
 : InputProcessor()
 {
   mngr = CoreManager::Instance();
+  KEYCONFIG->RegisterDefaultKeys();
 
   g_log_set_default_handler(g_log_func_, this);
 
   DeclareBindable("testapp", "quit", sigc::mem_fun(mngr,
         &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
-  KEYCONFIG->RegisterKeyDef("testapp", "quit", Keys::FunctionTermKey(10));
+  KEYCONFIG->BindKey("testapp", "quit", "F10");
 }
 
 void TestApp::Run()

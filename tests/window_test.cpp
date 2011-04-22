@@ -73,12 +73,13 @@ TestApp::TestApp()
 : InputProcessor()
 {
   mngr = CoreManager::Instance();
+  KEYCONFIG->RegisterDefaultKeys();
 
   g_log_set_default_handler(g_log_func_, this);
 
   DeclareBindable("testapp", "quit", sigc::mem_fun(mngr,
         &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
-  KEYCONFIG->RegisterKeyDef("testapp", "quit", Keys::FunctionTermKey(10));
+  KEYCONFIG->BindKey("testapp", "quit", "F10");
 }
 
 void TestApp::Run()

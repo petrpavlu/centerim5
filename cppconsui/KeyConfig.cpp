@@ -34,15 +34,14 @@ KeyConfig *KeyConfig::Instance()
   return &instance;
 }
 
-void KeyConfig::RegisterKeyDef(const char *context, const char *action,
+void KeyConfig::BindKey(const char *context, const char *action,
     const char *key)
 {
   TermKeyKey tkey;
-  const char *res = termkey_strpkey(CoreManager::GetTermKeyHandle(), key,
+  const char *res = termkey_strpkey(COREMANAGER->GetTermKeyHandle(), key,
       &tkey, TERMKEY_FORMAT_LONGMOD);
   g_assert(res && !res[0]);
 
-  bindables.push_back(Bindable(context, action, tkey));
   binds[context][tkey] = action;
 }
 
@@ -55,84 +54,128 @@ const KeyConfig::KeyBindContext *KeyConfig::GetKeyBinds(
   return &i->second;
 }
 
+char *KeyConfig::GetKeyBind(const char *context, const char *action) const
+{
+  KeyBinds::const_iterator i = binds.find(context);
+  if (i == binds.end())
+    return NULL;
+
+  for (KeyBindContext::const_iterator j = i->second.begin();
+      j != i->second.end(); j++)
+    if (!j->second.compare(action)) {
+      TermKeyKey key = j->first;
+      char out[256];
+      termkey_strfkey(COREMANAGER->GetTermKeyHandle(), out, sizeof(out), &key,
+          TERMKEY_FORMAT_CARETCTRL);
+      return g_strdup(out);
+    }
+
+  return NULL;
+}
+
+void KeyConfig::SetConfigFile(const char *filename)
+{
+  if (config)
+    g_free(config);
+
+  if (filename)
+    config = g_strdup(filename);
+  else
+    config = NULL;
+}
+
 void KeyConfig::Reconfig()
 {
+  if (!config)
+    return;
+
   /**
    * @todo Read the config and assign it to keys.
    */
 }
 
-void KeyConfig::Register()
+void KeyConfig::RegisterDefaultKeys()
 {
-  RegisterKeyDef("button", "activate", "Enter");
+  BindKey("button", "activate", "Enter");
 
-  RegisterKeyDef("checkbox", "toggle", "Enter");
+  BindKey("checkbox", "toggle", "Enter");
 
-  RegisterKeyDef("container", "focus-previous", "Shift-Tab");
-  RegisterKeyDef("container", "focus-next", "Tab");
-  RegisterKeyDef("container", "focus-left", "Left");
-  RegisterKeyDef("container", "focus-right", "Right");
-  RegisterKeyDef("container", "focus-up", "Up");
-  RegisterKeyDef("container", "focus-down", "Down");
+  BindKey("container", "focus-previous", "Shift-Tab");
+  BindKey("container", "focus-next", "Tab");
+  BindKey("container", "focus-left", "Left");
+  BindKey("container", "focus-right", "Right");
+  BindKey("container", "focus-up", "Up");
+  BindKey("container", "focus-down", "Down");
 
-  RegisterKeyDef("coremanager", "redraw-screen", "Ctrl-l");
+  BindKey("coremanager", "redraw-screen", "Ctrl-l");
 
-  RegisterKeyDef("window", "close-window", "Escape");
+  BindKey("window", "close-window", "Escape");
 
-  RegisterKeyDef("textentry", "cursor-right", "Right");
-  RegisterKeyDef("textentry", "cursor-left", "Left");
-  RegisterKeyDef("textentry", "cursor-down", "Down");
-  RegisterKeyDef("textentry", "cursor-up", "Right");
-  RegisterKeyDef("textentry", "cursor-right-word", "Ctrl-Right");
-  RegisterKeyDef("textentry", "cursor-left-word", "Ctrl-Left");
-  RegisterKeyDef("textentry", "cursor-end", "End");
-  RegisterKeyDef("textentry", "cursor-begin", "Home");
-  RegisterKeyDef("textentry", "delete-char", "Delete");
-  RegisterKeyDef("textentry", "backspace", "Backspace");
+  BindKey("textentry", "cursor-right", "Right");
+  BindKey("textentry", "cursor-left", "Left");
+  BindKey("textentry", "cursor-down", "Down");
+  BindKey("textentry", "cursor-up", "Right");
+  BindKey("textentry", "cursor-right-word", "Ctrl-Right");
+  BindKey("textentry", "cursor-left-word", "Ctrl-Left");
+  BindKey("textentry", "cursor-end", "End");
+  BindKey("textentry", "cursor-begin", "Home");
+  BindKey("textentry", "delete-char", "Delete");
+  BindKey("textentry", "backspace", "Backspace");
 
   // XXX move to default key bindings config
-  RegisterKeyDef("textentry", "backspace", "Delete");
+  BindKey("textentry", "backspace", "Delete");
 
   /// @todo enable
   /*
-  RegisterKeyDef("textentry", "delete-word-end", "Ctrl-Delete");
-  RegisterKeyDef("textentry", "delete-word-begin", "Ctrl-Backspace");
+  BindKey("textentry", "delete-word-end", "Ctrl-Delete");
+  BindKey("textentry", "delete-word-begin", "Ctrl-Backspace");
 
   // XXX move to default key bindings config
-  RegisterKeyDef("textentry", "delete-word-begin", "Ctrl-Delete");
+  BindKey("textentry", "delete-word-begin", "Ctrl-Delete");
 
-  RegisterKeyDef("textentry", "toggle-overwrite", "Insert");
+  BindKey("textentry", "toggle-overwrite", "Insert");
   */
 
-  RegisterKeyDef("textentry", "cursor-right", "Right");
-  RegisterKeyDef("textentry", "cursor-left", "Left");
-  RegisterKeyDef("textentry", "cursor-right-word", "Ctrl-Right");
-  RegisterKeyDef("textentry", "cursor-left-word", "Ctrl-Left");
-  RegisterKeyDef("textentry", "cursor-end", "End");
-  RegisterKeyDef("textentry", "cursor-begin", "Home");
-  RegisterKeyDef("textentry", "delete-char", "Delete");
-  RegisterKeyDef("textentry", "backspace", "Backspace");
+  BindKey("textentry", "cursor-right", "Right");
+  BindKey("textentry", "cursor-left", "Left");
+  BindKey("textentry", "cursor-right-word", "Ctrl-Right");
+  BindKey("textentry", "cursor-left-word", "Ctrl-Left");
+  BindKey("textentry", "cursor-end", "End");
+  BindKey("textentry", "cursor-begin", "Home");
+  BindKey("textentry", "delete-char", "Delete");
+  BindKey("textentry", "backspace", "Backspace");
 
   // XXX move to default key bindings config
-  RegisterKeyDef("textentry", "backspace", "Delete");
-  RegisterKeyDef("textentry", "tab", "Tab");
+  BindKey("textentry", "backspace", "Delete");
+  BindKey("textentry", "tab", "Tab");
 
   /// @todo enable
   /*
-  RegisterKeyDef("textentry", "delete-word-end", "Ctrl-Delete");
-  RegisterKeyDef("textentry", "delete-word-begin", "Ctrl-Backspace");
+  BindKey("textentry", "delete-word-end", "Ctrl-Delete");
+  BindKey("textentry", "delete-word-begin", "Ctrl-Backspace");
 
   // XXX move to default key bindings config
-  RegisterKeyDef("textentry", "delete-word-begin", "Ctrl-Delete");
+  BindKey("textentry", "delete-word-begin", "Ctrl-Delete");
 
-  RegisterKeyDef("textentry", "toggle-overwrite", "Insert");
+  BindKey("textentry", "toggle-overwrite", "Insert");
   */
 
-  RegisterKeyDef("textentry", "activate", "Enter");
+  BindKey("textentry", "activate", "Enter");
 
-  RegisterKeyDef("textview", "scroll-up", "PageUp");
-  RegisterKeyDef("textview", "scroll-down", "PageDown");
+  BindKey("textview", "scroll-up", "PageUp");
+  BindKey("textview", "scroll-down", "PageDown");
 
-  RegisterKeyDef("treeview", "fold-subtree", "-");
-  RegisterKeyDef("treeview", "unfold-subtree", "+");
+  BindKey("treeview", "fold-subtree", "-");
+  BindKey("treeview", "unfold-subtree", "+");
+}
+
+KeyConfig::KeyConfig()
+: config(NULL)
+{
+}
+
+KeyConfig::~KeyConfig()
+{
+  if (config)
+    g_free(config);
 }

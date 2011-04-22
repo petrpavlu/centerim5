@@ -30,8 +30,6 @@
 #include <stdio.h>
 #include "gettext.h"
 
-TermKey *CoreManager::tk = NULL;
-
 // based on glibmm code
 class SourceConnectionNode
 {
@@ -243,7 +241,7 @@ sigc::connection CoreManager::TimeoutOnceConnect(const sigc::slot<void>& slot,
 
 CoreManager::CoreManager()
 : top_input_processor(NULL), io_input_channel(NULL), io_input_channel_id(0)
-, resize_channel(NULL), resize_channel_id(0), pipe_valid(false)
+, resize_channel(NULL), resize_channel_id(0), pipe_valid(false), tk(NULL)
 , utf8(false), gmainloop(NULL), screen_width(0), screen_height(0)
 , redraw_pending(false), resize_pending(false)
 {
@@ -260,9 +258,6 @@ CoreManager::CoreManager()
   // create a new loop
   gmainloop = g_main_loop_new(NULL, FALSE);
 
-  /* Register all InputProcessor key configuration (it needs to be called
-   * before the first DeclareBindable). */
-  KEYCONFIG->Register();
   DeclareBindables();
 }
 

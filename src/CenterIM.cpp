@@ -62,6 +62,7 @@ int CenterIM::Run(const char *config_path)
   if (PurpleInit(config_path))
     return 1;
 
+  KEYCONFIG->RegisterDefaultKeys();
   RegisterDefaultKeys();
 
   PrefsInit();
@@ -499,19 +500,19 @@ void CenterIM::DeclareBindables()
 
 void CenterIM::RegisterDefaultKeys()
 {
-  KEYCONFIG->RegisterKeyDef("centerim", "quit", "Ctrl-q");
-  KEYCONFIG->RegisterKeyDef("centerim", "buddylist", "F1");
-  KEYCONFIG->RegisterKeyDef("centerim", "conversation-active", "F2");
-  KEYCONFIG->RegisterKeyDef("centerim", "accountstatusmenu", "F3");
-  KEYCONFIG->RegisterKeyDef("centerim", "generalmenu", "F4");
+  KEYCONFIG->BindKey("centerim", "quit", "Ctrl-q");
+  KEYCONFIG->BindKey("centerim", "buddylist", "F1");
+  KEYCONFIG->BindKey("centerim", "conversation-active", "F2");
+  KEYCONFIG->BindKey("centerim", "accountstatusmenu", "F3");
+  KEYCONFIG->BindKey("centerim", "generalmenu", "F4");
 
   // XXX move to default key bindings config
-  KEYCONFIG->RegisterKeyDef("centerim", "generalmenu", "Ctrl-g");
+  KEYCONFIG->BindKey("centerim", "generalmenu", "Ctrl-g");
 
-  KEYCONFIG->RegisterKeyDef("centerim", "conversation-prev", "Alt-p");
-  KEYCONFIG->RegisterKeyDef("centerim", "conversation-next", "Alt-n");
+  KEYCONFIG->BindKey("centerim", "conversation-prev", "Alt-p");
+  KEYCONFIG->BindKey("centerim", "conversation-next", "Alt-n");
 
-  KEYCONFIG->RegisterKeyDef("buddylist", "remove", "Ctrl-d");
+  KEYCONFIG->BindKey("buddylist", "remove", "Ctrl-d");
 
-  KEYCONFIG->RegisterKeyDef("conversation", "send", "Ctrl-x");
+  KEYCONFIG->BindKey("conversation", "send", "Ctrl-x");
 }

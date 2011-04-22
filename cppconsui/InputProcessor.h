@@ -97,8 +97,8 @@ public:
 
 protected:
   /**
-   * Internal part of bindable (see KeyConfig::Bindable for an external
-   * part). Holds a function and type for every bindable.
+   * Bindable struct holds a function and a bindable type that is associated
+   * to some {context:action} pair.
    */
   class Bindable
   {

@@ -69,48 +69,13 @@ class KeyConfig
 {
 public:
   /**
-   * External part of bindable (see InputProcessor::Bindable for an internal
-   * part). Holds description and a default key for every bindable.
-   */
-  class Bindable
-  {
-  public:
-    Bindable(const char *context_,
-        const char *action_,
-        const TermKeyKey &defkey_)
-      /* Passed values should be always statically allocated so just save
-       * pointers to them. */
-      : context(context_)
-      , action(action_)
-      , defkey(defkey_) {}
-
-    /**
-     * The context of the key definition.
-     */
-    const char *context;
-    /**
-     * The name of the action.
-     */
-    const char *action;
-    /**
-     * The default value, i.e. the key(s) that trigger the action.
-     */
-    TermKeyKey defkey;
-  };
-
-  /**
    * Maps keys to actions for one context, {key: action}.
    */
   typedef std::map<TermKeyKey, std::string, Keys::TermKeyCmp> KeyBindContext;
   /**
-   * Maps context to key binds in such a context, {context: KeyContext}.
+   * Maps context to key binds in that context, {context: KeyContext}.
    */
   typedef std::map<std::string, KeyBindContext> KeyBinds;
-
-  /**
-   * Holds all bindables declared in a program.
-   */
-  typedef std::vector<Bindable> Bindables;
 
   /**
    * Returns the singleton class instance.
@@ -118,11 +83,9 @@ public:
   static KeyConfig *Instance();
 
   /**
-   * Adds an action declaration and registers a default key to trigger this
-   * action.
+   * Binds a key to an action (in a given context).
    */
-  void RegisterKeyDef(const char *context, const char *action,
-      const char *key);
+  void BindKey(const char *context, const char *action, const char *key);
 
   /**
    * Returns all key binds.
@@ -132,10 +95,13 @@ public:
    * Returns all key binds for a given context.
    */
   const KeyBindContext *GetKeyBinds(const char *context) const;
+
   /**
-   * Returns all bindables.
    */
-  const Bindables *GetBindables() const { return &bindables; }
+  char *GetKeyBind(const char *context, const char *action) const;
+
+  void SetConfigFile(const char *filename);
+  const char *GetConfigFile() const { return config; }
 
   /**
    * It is called when needed to read the config and reread the defined
@@ -144,8 +110,9 @@ public:
   void Reconfig();
 
   /**
+   * Registers default key bindings.
    */
-  void Register();
+  void RegisterDefaultKeys();
 
 protected:
 
@@ -154,15 +121,16 @@ private:
    * Current key binds.
    */
   KeyBinds binds;
-  /**
-   * Bindables defined in all InputProcessor subclasses.
-   */
-  Bindables bindables;
 
-  KeyConfig() {}
+  /*
+   * Key bindings config filename.
+   */
+  char *config;
+
+  KeyConfig();
   KeyConfig(const KeyConfig&);
   KeyConfig& operator=(const KeyConfig&);
-  ~KeyConfig() {}
+  ~KeyConfig();
 };
 
 #endif // __KEYCONFIG_H__
