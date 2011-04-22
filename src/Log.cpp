@@ -177,7 +177,7 @@ gboolean Log::is_enabled(PurpleDebugLevel purplelevel, const char *category)
 void Log::default_log_handler(const char *domain, GLogLevelFlags flags,
   const char *msg)
 {
-  if (GetLogLevel("cim") < ConvertGlibDebugLevel(flags))
+  if (GetLogLevel("glib") < ConvertGlibDebugLevel(flags))
     return; // we don't want to see this log message
 
   if (!msg)
@@ -374,7 +374,7 @@ Log::Level Log::ConvertGlibDebugLevel(GLogLevelFlags gliblevel)
 
 Log::Level Log::GetLogLevel(const char *type)
 {
-  char *pref = g_strconcat(CONF_PREFIX, "/log/log_level_", type, NULL);
+  char *pref = g_strconcat(CONF_PREFIX "/log/log_level_", type, NULL);
   const char *slevel = "none";
   if (purple_prefs_exists(pref))
     slevel = purple_prefs_get_string(pref);
