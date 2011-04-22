@@ -109,7 +109,6 @@ AC_SUBST(CXXFLAGS)
 # Create output files. #
 ########################
 AC_CONFIG_FILES([Makefile
-		 libtermkey/Makefile
 		 cppconsui/Makefile
 		 doc/Makefile
 		 doc/doxygen-cppconsui.conf

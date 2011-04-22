@@ -1,0 +1,479 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR CenterIM developers
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: centerim5 5.0.0alpha2.40-9b0b-dirty\n"
+"Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
+"projects/centerim\n"
+"POT-Creation-Date: 2011-04-22 21:23+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/AccountWindow.cpp:35
+msgid "Accounts"
+msgstr ""
+
+#: src/AccountWindow.cpp:39 src/BuddyList.cpp:255 src/BuddyList.cpp:379
+msgid "Add"
+msgstr ""
+
+#: src/AccountWindow.cpp:42 src/OptionWindow.cpp:87
+msgid "Done"
+msgstr ""
+
+#: src/AccountWindow.cpp:82
+msgid "Remember password"
+msgstr ""
+
+#: src/AccountWindow.cpp:86
+msgid "Account enabled"
+msgstr ""
+
+#: src/AccountWindow.cpp:126
+msgid "Password"
+msgstr ""
+
+#: src/AccountWindow.cpp:128 src/BuddyList.cpp:230 src/BuddyList.cpp:351
+msgid "Alias"
+msgstr ""
+
+#: src/AccountWindow.cpp:216 src/OptionWindow.cpp:195 src/Request.cpp:358
+msgid "Value out of range.\n"
+msgstr ""
+
+#: src/AccountWindow.cpp:271 src/AccountWindow.cpp:530
+msgid "Username"
+msgstr ""
+
+#: src/AccountWindow.cpp:333
+msgid "Protocol"
+msgstr ""
+
+#: src/AccountWindow.cpp:423
+msgid "Invalid account or protocol plugin not loaded"
+msgstr ""
+
+#: src/AccountWindow.cpp:510
+#, c-format
+msgid "Invalid Account Option pref type (%d)\n"
+msgstr ""
+
+#: src/AccountWindow.cpp:521
+msgid "Drop account"
+msgstr ""
+
+#: src/AccountWindow.cpp:546
+msgid "Account deletion"
+msgstr ""
+
+#: src/AccountWindow.cpp:547
+msgid "Are you sure you want to delete this account?"
+msgstr ""
+
+#: src/Accounts.cpp:77
+#, c-format
+msgid "+ [%s] %s: Status changed to: %s\n"
+msgstr ""
+
+#: src/BuddyList.cpp:45
+msgid "<buddylist|remove> remove focused"
+msgstr ""
+
+#: src/BuddyList.cpp:153
+msgid "No connected accounts\n"
+msgstr ""
+
+#: src/BuddyList.cpp:160
+msgid "Different Buddylist detected!\n"
+msgstr ""
+
+#: src/BuddyList.cpp:225 src/BuddyList.cpp:347
+msgid "Account"
+msgstr ""
+
+#: src/BuddyList.cpp:227
+msgid "Buddy name"
+msgstr ""
+
+#: src/BuddyList.cpp:233 src/BuddyList.cpp:354
+msgid "Group"
+msgstr ""
+
+#: src/BuddyList.cpp:252
+msgid "Buddies"
+msgstr ""
+
+#: src/BuddyList.cpp:255
+msgid "Add buddy"
+msgstr ""
+
+#: src/BuddyList.cpp:256 src/BuddyList.cpp:380
+msgid "Cancel"
+msgstr ""
+
+#: src/BuddyList.cpp:273 src/BuddyList.cpp:398
+msgid "No account specified\n"
+msgstr ""
+
+#: src/BuddyList.cpp:277 src/BuddyList.cpp:402
+msgid "Selected account is not connected\n"
+msgstr ""
+
+#: src/BuddyList.cpp:281 src/BuddyList.cpp:416
+msgid "No buddy name specified\n"
+msgstr ""
+
+#: src/BuddyList.cpp:285 src/BuddyList.cpp:420
+msgid "No group name specified\n"
+msgstr ""
+
+#: src/BuddyList.cpp:300
+msgid "Specified buddy is already in the list\n"
+msgstr ""
+
+#: src/BuddyList.cpp:319 src/BuddyList.cpp:410
+msgid "This protocol does not support chat rooms\n"
+msgstr ""
+
+#: src/BuddyList.cpp:335
+msgid ""
+"You are not currently signed on with any protocols that have the ability to "
+"chat\n"
+msgstr ""
+
+#: src/BuddyList.cpp:349
+msgid "Chat name"
+msgstr ""
+
+#: src/BuddyList.cpp:373
+msgid "Chats"
+msgstr ""
+
+#: src/BuddyList.cpp:376
+msgid "Auto-join"
+msgstr ""
+
+#: src/BuddyList.cpp:379
+msgid "Add chat"
+msgstr ""
+
+#: src/BuddyListNode.cpp:41
+msgid "Unrecognized BuddyList node.\n"
+msgstr ""
+
+#: src/BuddyListNode.cpp:239 src/BuddyListNode.cpp:326
+#: src/BuddyListNode.cpp:425 src/BuddyListNode.cpp:563
+#, c-format
+msgid "Are you sure you want to delete %s from your buddy list?"
+msgstr ""
+
+#: src/BuddyListNode.cpp:241
+msgid "Buddy deletion"
+msgstr ""
+
+#: src/BuddyListNode.cpp:328
+msgid "Chat deletion"
+msgstr ""
+
+#: src/BuddyListNode.cpp:427 src/BuddyListNode.cpp:565
+msgid "Contact deletion"
+msgstr ""
+
+#: src/CenterIM.cpp:97
+msgid "Welcome to CenterIM 5. Press F4 to display main menu.\n"
+msgstr ""
+
+#: src/CenterIM.cpp:191
+#, c-format
+msgid "Could not initialize libpurple core.\n"
+msgstr ""
+
+#: src/CenterMain.cpp:30
+#, c-format
+msgid "Usage: %s [-c config_path]\n"
+msgstr ""
+
+#: src/CenterMain.cpp:62
+#, c-format
+msgid "%s: unexpected argument after options\n"
+msgstr ""
+
+#: src/Connections.cpp:92 src/Connections.cpp:116 src/Connections.cpp:165
+#, c-format
+msgid "+ [%s] %s: %s\n"
+msgstr ""
+
+#: src/Connections.cpp:100
+#, c-format
+msgid "+ [%s] %s: Connected\n"
+msgstr ""
+
+#: src/Connections.cpp:108
+#, c-format
+msgid "+ [%s] %s: Disconnected\n"
+msgstr ""
+
+#: src/Connections.cpp:123
+msgid "+ Network connected\n"
+msgstr ""
+
+#: src/Connections.cpp:139
+msgid "+ Network disconnected\n"
+msgstr ""
+
+#: src/Connections.cpp:172
+#, c-format
+msgid "+ [%s] %s: Auto-reconnection in %d seconds\n"
+msgstr ""
+
+#: src/Connections.cpp:177
+#, c-format
+msgid "+ [%s] %s: Account disabled\n"
+msgstr ""
+
+#: src/Conversation.cpp:33
+msgid "%d.%m.%y %H:%M"
+msgstr ""
+
+#: src/Conversation.cpp:64 src/Conversation.cpp:287
+#, c-format
+msgid "Error opening conversation logfile `%s' (%s).\n"
+msgstr ""
+
+#: src/Conversation.cpp:71 src/Conversation.cpp:293
+#, c-format
+msgid "Error opening conversation logfile `%s'.\n"
+msgstr ""
+
+#: src/Conversation.cpp:118
+msgid ""
+"<centerim|conversation-next>/<centerim|conversation-prev> next/prev conv, "
+"<conversation|send> send"
+msgstr ""
+
+#: src/Conversation.cpp:195
+#, c-format
+msgid "Error writing to conversation logfile (%s).\n"
+msgstr ""
+
+#: src/Conversation.cpp:201
+msgid "Error writing to conversation logfile.\n"
+msgstr ""
+
+#: src/Conversation.cpp:205
+#, c-format
+msgid "Error flushing conversation logfile (%s).\n"
+msgstr ""
+
+#: src/Conversation.cpp:211
+msgid "Error flushing conversation logfile.\n"
+msgstr ""
+
+#: src/Conversation.cpp:273
+#, c-format
+msgid "Error creating directory `%s'.\n"
+msgstr ""
+
+#: src/Conversation.cpp:347
+#, c-format
+msgid "Error reading from conversation logfile `%s' (%s).\n"
+msgstr ""
+
+#: src/Conversation.cpp:353
+#, c-format
+msgid "Error reading from conversation logfile `%s'.\n"
+msgstr ""
+
+#: src/Conversations.cpp:230
+#, c-format
+msgid "Unhandled conversation type: %i.\n"
+msgstr ""
+
+#: src/Footer.cpp:123
+msgid "<unbind>"
+msgstr ""
+
+#: src/Footer.cpp:144
+msgid "Malformed help message"
+msgstr ""
+
+#: src/GeneralMenu.cpp:41
+msgid "Accounts..."
+msgstr ""
+
+#: src/GeneralMenu.cpp:43
+msgid "Add buddy..."
+msgstr ""
+
+#: src/GeneralMenu.cpp:45
+msgid "Add chat..."
+msgstr ""
+
+#: src/GeneralMenu.cpp:47
+msgid "Config options..."
+msgstr ""
+
+#: src/GeneralMenu.cpp:67
+msgid "Quit"
+msgstr ""
+
+#: src/Log.cpp:159
+msgid "centerim/log: purple_print() parameter category was not defined.\n"
+msgstr ""
+
+#: src/Log.cpp:281
+#, c-format
+msgid "centerim/log: Error opening logfile `%s' (%s).\n"
+msgstr ""
+
+#: src/Log.cpp:287
+#, c-format
+msgid "centerim/log: Error opening logfile `%s'.\n"
+msgstr ""
+
+#: src/Log.cpp:299
+#, c-format
+msgid "centerim/log: Error writing to logfile (%s).\n"
+msgstr ""
+
+#: src/Log.cpp:305
+msgid "centerim/log: Error writing to logfile.\n"
+msgstr ""
+
+#: src/Log.cpp:319
+#, c-format
+msgid "centerim/log: Error flushing logfile (%s).\n"
+msgstr ""
+
+#: src/Log.cpp:325
+msgid "centerim/log: Error flushing logfile.\n"
+msgstr ""
+
+#: src/Log.cpp:348
+#, c-format
+msgid "centerim/log: Unknown libpurple logging level: %d.\n"
+msgstr ""
+
+#: src/Log.cpp:368
+#, c-format
+msgid "centerim/log: Unknown glib logging level in %d.\n"
+msgstr ""
+
+#: src/OptionWindow.cpp:32
+msgid "Config options"
+msgstr ""
+
+#: src/OptionWindow.cpp:41
+msgid "Buddy list"
+msgstr ""
+
+#: src/OptionWindow.cpp:42
+msgid "Show offline buddies"
+msgstr ""
+
+#: src/OptionWindow.cpp:44
+msgid "Show empty groups"
+msgstr ""
+
+#: src/OptionWindow.cpp:48
+msgid "Dimensions (percentage)"
+msgstr ""
+
+#: src/OptionWindow.cpp:49
+msgid "Buddy list width"
+msgstr ""
+
+#: src/OptionWindow.cpp:51
+msgid "Log height"
+msgstr ""
+
+#: src/OptionWindow.cpp:55
+msgid "Logging"
+msgstr ""
+
+#: src/OptionWindow.cpp:58
+msgid "None"
+msgstr ""
+
+#: src/OptionWindow.cpp:59
+msgid "Error"
+msgstr ""
+
+#: src/OptionWindow.cpp:60
+msgid "Critical"
+msgstr ""
+
+#: src/OptionWindow.cpp:61
+msgid "Warning"
+msgstr ""
+
+#: src/OptionWindow.cpp:62
+msgid "Message"
+msgstr ""
+
+#: src/OptionWindow.cpp:63
+msgid "Info"
+msgstr ""
+
+#: src/OptionWindow.cpp:64
+msgid "Debug"
+msgstr ""
+
+#: src/OptionWindow.cpp:66
+msgid "CIM log level"
+msgstr ""
+
+#: src/OptionWindow.cpp:71
+msgid "CppConsUI log level"
+msgstr ""
+
+#: src/OptionWindow.cpp:76
+msgid "Purple log level"
+msgstr ""
+
+#: src/OptionWindow.cpp:81
+msgid "GLib log level"
+msgstr ""
+
+#: src/Request.cpp:117
+msgid "Selected value"
+msgstr ""
+
+#: src/Request.cpp:221
+msgid "Settings group"
+msgstr ""
+
+#: src/Request.cpp:267
+msgid "Unimplemented Request field type.\n"
+msgstr ""
+
+#: cppconsui/ConsuiCurses.cpp:344
+msgid "Color pairs limit exceeded.\n"
+msgstr ""
+
+#: cppconsui/CoreManager.cpp:320
+#, c-format
+msgid "Error converting input to UTF-8 (%s).\n"
+msgstr ""
+
+#: cppconsui/CoreManager.cpp:326
+msgid "Error converting input to UTF-8.\n"
+msgstr ""
+
+#: cppconsui/CoreManager.cpp:377
+msgid "Libtermkey initialization failed.\n"
+msgstr ""
+
+#: cppconsui/KeyConfig.cpp:46
+#, c-format
+msgid "Unrecognized key (%s).)\n"
+msgstr ""

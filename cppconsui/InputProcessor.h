@@ -31,8 +31,8 @@
 #include <sigc++/sigc++.h>
 #include <sigc++/signal.h>
 
+#include "libtermkey/termkey.h"
 #include <glib.h>
-#include <libtermkey/termkey.h>
 
 #include <vector>
 #include <map>

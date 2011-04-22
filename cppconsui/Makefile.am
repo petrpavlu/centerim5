@@ -72,7 +72,12 @@ libcppconsui_la_SOURCES =\
 	Widget.h \
 	Window.cpp \
 	Window.h \
-	tree.hh
+	tree.hh \
+	libtermkey/driver-csi.c \
+	libtermkey/driver-ti.c \
+	libtermkey/termkey-internal.h \
+	libtermkey/termkey.c \
+	libtermkey/termkey.h
 
 libcppconsui_la_CPPFLAGS =\
 	$(GLIB_CFLAGS) \
@@ -83,5 +88,4 @@ libcppconsui_la_CPPFLAGS =\
 libcppconsui_la_LIBADD =\
 	$(GLIB_LIBS) \
 	$(SIGC_LIBS) \
-	$(NCURSESW_LIBS) \
-	$(top_builddir)/libtermkey/libtermkey.la
+	$(NCURSESW_LIBS)

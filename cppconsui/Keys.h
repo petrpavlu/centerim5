@@ -22,7 +22,7 @@
 #ifndef __KEYS_H__
 #define __KEYS_H__
 
-#include <libtermkey/termkey.h>
+#include "libtermkey/termkey.h"
 
 namespace Keys
 {

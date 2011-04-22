@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = libtermkey cppconsui doc misc po src tests
+SUBDIRS = cppconsui doc misc po src tests
 
 EXTRA_DIST =\
 	bootstrap \

@@ -1,6 +1,4 @@
-# @TODO make sure ConsuiLog.h and ConsuiCurses.h (*Internal.h) are not distributed
-
-# When you add files here, also add them in po/POTFILES.in
+# when you add files here, also add them in po/POTFILES.in
 set( cppconsui_SOURCES
 	AbstractDialog.cpp
 	AbstractLine.cpp
@@ -37,6 +35,9 @@ set( cppconsui_SOURCES
 	VerticalLine.cpp
 	Widget.cpp
 	Window.cpp
+	libtermkey/driver-csi.c
+	libtermkey/driver-ti.c
+	libtermkey/termkey.c
 )
 
 set( cppconsui_HEADERS
@@ -76,6 +77,8 @@ set( cppconsui_HEADERS
 	Widget.h
 	Window.h
 	tree.hh
+	libtermkey/termkey-internal.h
+	libtermkey/termkey.h
 )
 
 add_library(	cppconsui STATIC

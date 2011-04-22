@@ -32,8 +32,8 @@
 #include "InputProcessor.h"
 #include "FreeWindow.h"
 
+#include "libtermkey/termkey.h"
 #include <glib.h>
-#include <libtermkey/termkey.h>
 #include <vector>
 
 /**

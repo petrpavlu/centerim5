@@ -30,10 +30,10 @@
 
 #include "Keys.h"
 
+#include "libtermkey/termkey.h"
+
 #include <sigc++/sigc++.h>
 #include <sigc++/signal.h>
-
-#include <libtermkey/termkey.h>
 
 #include <string>
 #include <vector>
