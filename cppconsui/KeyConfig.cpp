@@ -123,7 +123,7 @@ void KeyConfig::RegisterDefaultKeys()
   BindKey("textentry", "backspace", "Backspace");
 
   // XXX move to default key bindings config
-  BindKey("textentry", "backspace", "Delete");
+  BindKey("textentry", "backspace", "DEL");
 
   /// @todo enable
   /*
@@ -131,7 +131,7 @@ void KeyConfig::RegisterDefaultKeys()
   BindKey("textentry", "delete-word-begin", "Ctrl-Backspace");
 
   // XXX move to default key bindings config
-  BindKey("textentry", "delete-word-begin", "Ctrl-Delete");
+  BindKey("textentry", "delete-word-begin", "Ctrl-DEL");
 
   BindKey("textentry", "toggle-overwrite", "Insert");
   */
@@ -146,7 +146,7 @@ void KeyConfig::RegisterDefaultKeys()
   BindKey("textentry", "backspace", "Backspace");
 
   // XXX move to default key bindings config
-  BindKey("textentry", "backspace", "Delete");
+  BindKey("textentry", "backspace", "DEL");
   BindKey("textentry", "tab", "Tab");
 
   /// @todo enable
@@ -155,7 +155,7 @@ void KeyConfig::RegisterDefaultKeys()
   BindKey("textentry", "delete-word-begin", "Ctrl-Backspace");
 
   // XXX move to default key bindings config
-  BindKey("textentry", "delete-word-begin", "Ctrl-Delete");
+  BindKey("textentry", "delete-word-begin", "Ctrl-DEL");
 
   BindKey("textentry", "toggle-overwrite", "Insert");
   */
