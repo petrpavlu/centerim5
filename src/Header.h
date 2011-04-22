@@ -42,8 +42,12 @@ public:
 protected:
 
 private:
+  typedef std::multiset<std::string> ProtocolCount;
+  typedef std::map<PurpleAccount*, Label*> Statuses;
+
   HorizontalListBox *container;
-  std::map<PurpleAccount *, Label *> statuses;
+  ProtocolCount protocol_count;
+  Statuses statuses;
 
   static Header *instance;
 
@@ -57,22 +61,28 @@ private:
   friend class CenterIM;
 
   static void account_signed_on_(PurpleAccount *account, gpointer data)
-    { reinterpret_cast<Header *>(data)->account_signed_on(account); }
+    { reinterpret_cast<Header*>(data)->account_signed_on(account); }
   static void account_signed_off_(PurpleAccount *account, gpointer data)
-    { reinterpret_cast<Header *>(data)->account_signed_off(account); }
+    { reinterpret_cast<Header*>(data)->account_signed_off(account); }
   static void account_status_changed_(PurpleAccount *account,
       PurpleStatus *old, PurpleStatus *cur, gpointer data)
-    { reinterpret_cast<Header *>(data)->account_status_changed(account, old,
+    { reinterpret_cast<Header*>(data)->account_status_changed(account, old,
         cur); }
   static void account_alias_changed_(PurpleAccount *account, const char *old,
       gpointer data)
-    { reinterpret_cast<Header *>(data)->account_alias_changed(account, old); }
+    { reinterpret_cast<Header*>(data)->account_alias_changed(account, old); }
+  static void account_enabled_(PurpleAccount *account, gpointer data)
+    { reinterpret_cast<Header*>(data)->account_enabled(account); }
+  static void account_disabled_(PurpleAccount *account, gpointer data)
+    { reinterpret_cast<Header*>(data)->account_disabled(account); }
 
   void account_signed_on(PurpleAccount *account);
   void account_signed_off(PurpleAccount *account);
   void account_status_changed(PurpleAccount *account, PurpleStatus *old,
       PurpleStatus *cur);
   void account_alias_changed(PurpleAccount *account, const char *old);
+  void account_enabled(PurpleAccount *account);
+  void account_disabled(PurpleAccount *account);
 };
 
 #endif // __HEADER_H__

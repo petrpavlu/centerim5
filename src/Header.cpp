@@ -49,6 +49,12 @@ Header::Header()
   container->AppendWidget(*(new Label(cimname)));
   g_free(cimname);
 
+  for (GList *i = purple_accounts_get_all(); i; i = i->next) {
+    PurpleAccount *account = reinterpret_cast<PurpleAccount*>(i->data);
+    if (purple_account_get_enabled(account, PACKAGE_NAME))
+      protocol_count.insert(purple_account_get_protocol_id(account));
+  }
+
   void *handle = purple_accounts_get_handle();
   purple_signal_connect(handle, "account-signed-on", this,
       PURPLE_CALLBACK(account_signed_on_), this);
@@ -58,6 +64,10 @@ Header::Header()
       PURPLE_CALLBACK(account_status_changed_), this);
   purple_signal_connect(handle, "account-alias-changed", this,
       PURPLE_CALLBACK(account_alias_changed_), this);
+  purple_signal_connect(handle, "account-enabled", this,
+      PURPLE_CALLBACK(account_enabled_), this);
+  purple_signal_connect(handle, "account-disabled", this,
+      PURPLE_CALLBACK(account_disabled_), this);
 }
 
 Header::~Header()
@@ -116,11 +126,19 @@ void Header::account_status_changed(PurpleAccount *account, PurpleStatus *old,
   if (statuses.find(account) == statuses.end())
     return;
 
+  const char *prid = purple_account_get_protocol_id(account);
+  bool short_text = protocol_count.count(prid) == 1;
+
   // update label
   Label *label = statuses[account];
-  char *text = g_strdup_printf(" %s [%s] %s", Utils::GetStatusIndicator(cur),
-      purple_account_get_protocol_name(account),
-      purple_account_get_username(account));
+  char *text;
+  if (short_text)
+    text = g_strdup_printf(" %s [%s]", Utils::GetStatusIndicator(cur),
+        purple_account_get_protocol_name(account));
+  else
+    text = g_strdup_printf(" %s [%s|%s]", Utils::GetStatusIndicator(cur),
+        purple_account_get_protocol_name(account),
+        purple_account_get_username(account));
   label->SetText(text);
   label->SetWidth(Curses::onscreen_width(text));
   g_free(text);
@@ -132,4 +150,37 @@ void Header::account_alias_changed(PurpleAccount *account, const char *old)
 
   account_status_changed(account, NULL,
       purple_account_get_active_status(account));
+}
+
+void Header::account_enabled(PurpleAccount *account)
+{
+  g_return_if_fail(account);
+
+  const char *prid = purple_account_get_protocol_id(account);
+  protocol_count.insert(prid);
+
+  if (protocol_count.count(prid) == 2)
+    for (Statuses::iterator i = statuses.begin(); i != statuses.end(); i++) {
+      PurpleAccount *acc = i->first;
+      if (!strcmp(purple_account_get_protocol_id(acc), prid))
+        account_status_changed(acc, NULL,
+            purple_account_get_active_status(acc));
+    }
+}
+
+void Header::account_disabled(PurpleAccount *account)
+{
+  g_return_if_fail(account);
+
+  const char *prid = purple_account_get_protocol_id(account);
+  ProtocolCount::iterator i = protocol_count.find(prid);
+  protocol_count.erase(i);
+
+  if (protocol_count.count(prid) == 1)
+    for (Statuses::iterator i = statuses.begin(); i != statuses.end(); i++) {
+      PurpleAccount *acc = i->first;
+      if (!strcmp(purple_account_get_protocol_id(acc), prid))
+        account_status_changed(acc, NULL,
+            purple_account_get_active_status(acc));
+    }
 }
