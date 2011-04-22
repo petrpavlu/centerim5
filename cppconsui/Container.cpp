@@ -104,6 +104,12 @@ bool Container::GrabFocus()
   return false;
 }
 
+void Container::UngrabFocus()
+{
+  if (focus_child)
+    focus_child->UngrabFocus();
+}
+
 void Container::SetParent(Container& parent)
 {
   /* The parent will take care about focus changing and focus chain caching

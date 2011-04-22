@@ -22,6 +22,7 @@
 #include "Conversation.h"
 
 #include "CenterIM.h"
+#include <Footer.h>
 
 #include <cppconsui/Keys.h>
 
@@ -109,6 +110,22 @@ void Conversation::MoveResize(int newx, int newy, int neww, int newh)
   view->MoveResize(1, 0, width - 2, view_height);
   input->MoveResize(1, view_height + 1, width - 2, input_height);
   line->MoveResize(0, view_height, width, 1);
+}
+
+bool Conversation::RestoreFocus()
+{
+  FOOTER->SetText(_(
+        "<centerim|conversation-next>/"
+        "<centerim|conversation-prev> next/prev conv, "
+        "<conversation|send> send"));
+
+  return Window::RestoreFocus();
+}
+
+void Conversation::UngrabFocus()
+{
+  FOOTER->SetText(NULL);
+  Window::UngrabFocus();
 }
 
 void Conversation::Close()

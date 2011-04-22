@@ -25,6 +25,7 @@
 #include "BuddyList.h"
 
 #include "CenterIM.h"
+#include "Footer.h"
 #include "Log.h"
 
 #include <cppconsui/Keys.h>
@@ -36,6 +37,20 @@ BuddyList *BuddyList::instance = NULL;
 BuddyList *BuddyList::Instance()
 {
   return instance;
+}
+
+bool BuddyList::RestoreFocus()
+{
+  FOOTER->SetText(_(
+        "<buddylist|remove> remove focused"));
+
+  return Window::RestoreFocus();
+}
+
+void BuddyList::UngrabFocus()
+{
+  FOOTER->SetText(NULL);
+  Window::UngrabFocus();
 }
 
 void BuddyList::Close()

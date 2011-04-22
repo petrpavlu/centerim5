@@ -48,6 +48,8 @@ public:
 
   // Widget
   virtual void MoveResize(int newx, int newy, int neww, int newh);
+  virtual bool RestoreFocus();
+  virtual void UngrabFocus();
 
   // FreeWindow
   virtual void Close();

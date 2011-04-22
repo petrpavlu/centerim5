@@ -38,6 +38,10 @@ class BuddyList
 public:
   static BuddyList *Instance();
 
+  // Widget
+  virtual bool RestoreFocus();
+  virtual void UngrabFocus();
+
   // FreeWindow
   virtual void Close();
   virtual void ScreenResized();

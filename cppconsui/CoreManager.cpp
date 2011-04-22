@@ -493,16 +493,6 @@ CoreManager::Windows::iterator CoreManager::FindWindow(FreeWindow& window)
 
 void CoreManager::FocusWindow()
 {
-  FreeWindow *focus = dynamic_cast<FreeWindow *>(GetInputChild());
-
-  // take the focus from the old window with the focus
-  if (focus) {
-    Widget *widget = focus->GetFocusWidget();
-    if (widget)
-      widget->UngrabFocus();
-    ClearInputChild();
-  }
-
   // check if there are any windows left
   FreeWindow *win = NULL;
   Windows::reverse_iterator i;
@@ -522,10 +512,19 @@ void CoreManager::FocusWindow()
         break;
       }
 
-  // give the focus to the window
-  if (win) {
-    SetInputChild(*win);
-    win->RestoreFocus();
+  FreeWindow *focus = dynamic_cast<FreeWindow *>(GetInputChild());
+  if (!win || win != focus) {
+    // take the focus from the old window with the focus
+    if (focus) {
+      focus->UngrabFocus();
+      ClearInputChild();
+    }
+
+    // give the focus to the window
+    if (win) {
+      SetInputChild(*win);
+      win->RestoreFocus();
+    }
   }
 }
 

@@ -36,24 +36,28 @@ public:
   // FreeWindow
   virtual void ScreenResized();
 
-  void SetText(const char *text);
-  const char *GetText() const;
+  void SetText(const char *text_);
+  const char *GetText() const { return text; }
 
 protected:
 
 private:
   Label *label;
+  char *text;
 
   static Footer *instance;
 
   Footer();
   Footer(const Footer&);
   Footer &operator=(const Footer&);
-  virtual ~Footer() {}
+  virtual ~Footer();
 
   static void Init();
   static void Finalize();
   friend class CenterIM;
+
+  void UpdateText();
+  char *ParseName(const char **text);
 };
 
 #endif // __FOOTER_H__

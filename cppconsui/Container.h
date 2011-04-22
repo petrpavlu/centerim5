@@ -84,6 +84,7 @@ public:
   virtual void CleanFocus();
   virtual bool RestoreFocus();
   virtual bool GrabFocus();
+  virtual void UngrabFocus();
   virtual void SetParent(Container& parent);
 
   /**
