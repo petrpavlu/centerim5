@@ -91,7 +91,7 @@ void KeyConfig::Register()
   RegisterKeyDef("textentry", "backspace", "Backspace");
 
   // XXX move to default key bindings config
-  RegisterKeyDef("textentry", "backspace", "Delete");
+  RegisterKeyDef("textentry", "backspace", "DEL");
 
   /// @todo enable
   /*
@@ -114,7 +114,7 @@ void KeyConfig::Register()
   RegisterKeyDef("textentry", "backspace", "Backspace");
 
   // XXX move to default key bindings config
-  RegisterKeyDef("textentry", "backspace", "Delete");
+  RegisterKeyDef("textentry", "backspace", "DEL");
   RegisterKeyDef("textentry", "tab", "Tab");
 
   /// @todo enable
