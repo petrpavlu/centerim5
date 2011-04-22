@@ -28,6 +28,8 @@
 #include "KeyConfig.h"
 #include "CoreManager.h"
 
+#include "gettext.h"
+
 KeyConfig *KeyConfig::Instance()
 {
   static KeyConfig instance;
@@ -40,7 +42,10 @@ void KeyConfig::BindKey(const char *context, const char *action,
   TermKeyKey tkey;
   const char *res = termkey_strpkey(COREMANAGER->GetTermKeyHandle(), key,
       &tkey, TERMKEY_FORMAT_LONGMOD);
-  g_assert(res && !res[0]);
+  if (!res || res[0]) {
+    g_warning(_("Unrecognized key (%s).)\n"), key);
+    return;
+  }
 
   binds[context][tkey] = action;
 }
