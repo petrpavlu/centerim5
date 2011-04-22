@@ -224,6 +224,40 @@ void AccountWindow::IntOption::ResponseHandler(InputDialog& activator,
   }
 }
 
+AccountWindow::StringListOption::StringListOption(PurpleAccount *account,
+    PurpleAccountOption *option)
+: account(account), option(option)
+{
+  g_assert(account);
+  g_assert(option);
+
+  SetText(purple_account_option_get_text(option));
+
+  const char *def = purple_account_get_string(account,
+      purple_account_option_get_setting(option),
+      purple_account_option_get_default_list_value(option));
+  for (GList *l = purple_account_option_get_list(option); l; l = l->next)
+    if (l->data) {
+      PurpleKeyValuePair *kvp = reinterpret_cast<PurpleKeyValuePair*>(
+          l->data);
+      AddOptionPtr(kvp->key, kvp->value);
+      if (kvp->value && def
+          && !strcmp(def, reinterpret_cast<const char*>(kvp->value)))
+        SetSelectedByDataPtr(kvp->value);
+    }
+
+  signal_selection_changed.connect(sigc::mem_fun(this,
+        &StringListOption::OnSelectionChanged));
+}
+
+void AccountWindow::StringListOption::OnSelectionChanged(ComboBox& activator,
+    int new_entry, const char *title, intptr_t data)
+{
+  purple_account_set_string(account,
+      purple_account_option_get_setting(option),
+      reinterpret_cast<const char*>(data));
+}
+
 AccountWindow::SplitOption::SplitOption(PurpleAccount *account,
     PurpleAccountUserSplit *split, AccountEntry *account_entry)
 : Button(TYPE_DOUBLE), account(account), split(split)
@@ -456,24 +490,25 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
       PurplePrefType type = purple_account_option_get_type(option);
 
       switch (type) {
-      case PURPLE_PREF_STRING:
-        widget = new StringOption(account, option);
-        accounts->AppendNode(account_entry->parent_reference, *widget);
-        break;
-      case PURPLE_PREF_INT:
-        widget = new IntOption(account, option);
-        accounts->AppendNode(account_entry->parent_reference, *widget);
-        break;
-      case PURPLE_PREF_BOOLEAN:
-        widget = new BoolOption(account, option);
-        accounts->AppendNode(account_entry->parent_reference, *widget);
-        break;
-      case PURPLE_PREF_STRING_LIST:
-        // TODO implement, but for now, an error!
-        break;
-      default:
-        // TODO error!
-        break;
+        case PURPLE_PREF_STRING:
+          widget = new StringOption(account, option);
+          accounts->AppendNode(account_entry->parent_reference, *widget);
+          break;
+        case PURPLE_PREF_INT:
+          widget = new IntOption(account, option);
+          accounts->AppendNode(account_entry->parent_reference, *widget);
+          break;
+        case PURPLE_PREF_BOOLEAN:
+          widget = new BoolOption(account, option);
+          accounts->AppendNode(account_entry->parent_reference, *widget);
+          break;
+        case PURPLE_PREF_STRING_LIST:
+          widget = new StringListOption(account, option);
+          accounts->AppendNode(account_entry->parent_reference, *widget);
+          break;
+        default:
+          LOG->Error(_("Invalid Account Option pref type (%d)\n"), type);
+          break;
       }
     }
 

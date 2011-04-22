@@ -132,6 +132,25 @@ private:
     IntOption& operator=(const IntOption&);
   };
 
+  class StringListOption
+  : public ComboBox
+  {
+  public:
+    StringListOption(PurpleAccount *account, PurpleAccountOption *option);
+    virtual ~StringListOption() {}
+
+  protected:
+    PurpleAccount *account;
+    PurpleAccountOption *option;
+
+    void OnSelectionChanged(ComboBox& activator, int new_entry,
+        const char *title, intptr_t data);
+
+  private:
+    StringListOption(const StringListOption&);
+    StringListOption& operator=(const StringListOption&);
+  };
+
   class SplitOption
   : public Button
   {
