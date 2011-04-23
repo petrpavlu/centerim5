@@ -366,7 +366,10 @@ int TreeView::DrawNode(SiblingIterator node, int top)
   if (node->widget) {
     if (!node->widget->IsVisible())
       return 0;
-    node->widget->Move(depthoffset + 3, top);
+    if (node->style == STYLE_NORMAL && IsNodeOpenable(node))
+      node->widget->Move(depthoffset + 3, top);
+    else
+      node->widget->Move(depthoffset + 1, top);
     node->widget->Draw();
     height += node->widget->GetHeight();
   }
@@ -399,9 +402,7 @@ int TreeView::DrawNode(SiblingIterator node, int top)
         area->mvaddstring(depthoffset + 4, top + height, "]");
       }
       else {
-        area->mvaddstring(depthoffset + 2, top + height, linestyle.H());
-        area->mvaddstring(depthoffset + 3, top + height, linestyle.H());
-        area->mvaddstring(depthoffset + 4, top + height, linestyle.HEnd());
+        area->mvaddstring(depthoffset + 2, top + height, linestyle.HEnd());
       }
 
       area->attroff(attrs);
