@@ -46,9 +46,9 @@ OptionWindow::OptionWindow()
 
   parent = tree->AppendNode(tree->GetRootNode(),
       *(new TreeView::ToggleCollapseButton(_("Dimensions (percentage)"))));
-  tree->AppendNode(parent, *(new IntegerOption(_("Buddy list width"),
+  tree->AppendNode(parent, *(new IntegerOption(_("Buddy list window width"),
           CONF_PREFIX "/dimensions/buddylist_width")));
-  tree->AppendNode(parent, *(new IntegerOption(_("Log height"),
+  tree->AppendNode(parent, *(new IntegerOption(_("Log window height"),
           CONF_PREFIX "/dimensions/log_height")));
 
   parent = tree->AppendNode(tree->GetRootNode(),
@@ -192,7 +192,7 @@ void OptionWindow::IntegerOption::ResponseHandler(InputDialog& activator,
       errno = 0;
       i = strtol(text, NULL, 10);
       if (errno == ERANGE)
-        LOG->Warning(_("Value out of range.\n"));
+        LOG->Warning(_("Value is out of range."));
 
       purple_prefs_set_int(pref, i);
       SetValue(purple_prefs_get_int(pref));

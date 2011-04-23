@@ -43,7 +43,7 @@ void KeyConfig::BindKey(const char *context, const char *action,
   const char *res = termkey_strpkey(COREMANAGER->GetTermKeyHandle(), key,
       &tkey, TERMKEY_FORMAT_LONGMOD);
   if (!res || res[0]) {
-    g_warning(_("Unrecognized key (%s).)\n"), key);
+    g_warning(_("Unrecognized key (%s)."), key);
     return;
   }
 

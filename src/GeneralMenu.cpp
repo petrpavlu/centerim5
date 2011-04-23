@@ -187,17 +187,17 @@ void GeneralMenu::RequestTest(Button& activator)
 
 void GeneralMenu::input_ok_cb(const char *text)
 {
-  LOG->Debug("input_ok_cb: %s\n", text);
+  LOG->Debug("input_ok_cb: %s", text);
 }
 
 void GeneralMenu::choice_ok_cb(int selected)
 {
-  LOG->Debug("choice_ok_cb: %d\n", selected);
+  LOG->Debug("choice_ok_cb: %d", selected);
 }
 
 void GeneralMenu::action_cb(int action)
 {
-  LOG->Debug("action_cb: %d\n", action);
+  LOG->Debug("action_cb: %d", action);
 }
 
 void GeneralMenu::fields_ok_cb(PurpleRequestFields *fields)
@@ -213,18 +213,18 @@ void GeneralMenu::fields_ok_cb(PurpleRequestFields *fields)
   for (GList *list = purple_request_field_list_get_selected(
         purple_request_fields_get_field(fields, "list0")); list;
       list = list->next)
-    LOG->Debug("fields_ok_cb: list0=%s\n",
+    LOG->Debug("fields_ok_cb: list0=%s",
         reinterpret_cast<const char*>(list->data));
 
   for (GList *list = purple_request_field_list_get_selected(
         purple_request_fields_get_field(fields, "list1")); list;
       list = list->next)
-    LOG->Debug("fields_ok_cb: list1=%s\n",
+    LOG->Debug("fields_ok_cb: list1=%s",
         reinterpret_cast<const char*>(list->data));
 
   PurpleAccount *account = purple_request_fields_get_account(fields,
       "account0");
-  LOG->Debug("fields_ok_cb: account0=[%s] %s\n",
+  LOG->Debug("fields_ok_cb: account0=[%s] %s",
       purple_account_get_protocol_name(account),
       purple_account_get_username(account));
 }

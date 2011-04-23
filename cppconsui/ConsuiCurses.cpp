@@ -341,7 +341,7 @@ int getcolorpair(int fg, int bg)
     return i->second;
 
   if ((int) c.size() >= COLOR_PAIRS) {
-    g_warning(_("Color pairs limit exceeded.\n"));
+    g_warning(_("Color pairs limit exceeded."));
     return 0;
   }
 

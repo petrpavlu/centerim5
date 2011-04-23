@@ -94,7 +94,7 @@ int CenterIM::Run(const char *config_path)
   // init BuddyList last so it takes the focus
   BuddyList::Init();
 
-  LOG->Info(_("Welcome to CenterIM 5. Press F4 to display main menu.\n"));
+  LOG->Info(_("Welcome to CenterIM 5. Press F4 to display main menu."));
 
   mngr->SetTopInputProcessor(*this);
   mngr->EnableResizing();
@@ -188,7 +188,7 @@ int CenterIM::PurpleInit(const char *config_path)
 
   if (!purple_core_init(PACKAGE_NAME)) {
     // can't do much without libpurple
-    fprintf(stderr, _("Could not initialize libpurple core.\n"));
+    fprintf(stderr, _("Libpurple initialization failed."));
     return 1;
   }
 

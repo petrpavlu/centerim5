@@ -89,7 +89,7 @@ void Connections::connect_progress(PurpleConnection *gc, const char *text,
     size_t step, size_t step_count)
 {
   PurpleAccount *account = purple_connection_get_account(gc);
-  LOG->Message(_("+ [%s] %s: %s\n"),
+  LOG->Message(_("+ [%s] %s: %s"),
       purple_account_get_protocol_name(account),
       purple_account_get_username(account), text);
 }
@@ -97,7 +97,7 @@ void Connections::connect_progress(PurpleConnection *gc, const char *text,
 void Connections::connected(PurpleConnection *gc)
 {
   PurpleAccount *account = purple_connection_get_account(gc);
-  LOG->Message(_("+ [%s] %s: Connected\n"),
+  LOG->Message(_("+ [%s] %s: Connected"),
       purple_account_get_protocol_name(account),
       purple_account_get_username(account));
 }
@@ -105,7 +105,7 @@ void Connections::connected(PurpleConnection *gc)
 void Connections::disconnected(PurpleConnection *gc)
 {
   PurpleAccount *account = purple_connection_get_account(gc);
-  LOG->Message(_("+ [%s] %s: Disconnected\n"),
+  LOG->Message(_("+ [%s] %s: Disconnected"),
       purple_account_get_protocol_name(account),
       purple_account_get_username(account));
 }
@@ -113,14 +113,14 @@ void Connections::disconnected(PurpleConnection *gc)
 void Connections::notice(PurpleConnection *gc, const char *text)
 {
   PurpleAccount *account = purple_connection_get_account(gc);
-  LOG->Message(_("+ [%s] %s: %s\n"),
+  LOG->Message(_("+ [%s] %s: %s"),
       purple_account_get_protocol_name(account),
       purple_account_get_username(account), text);
 }
 
 void Connections::network_connected()
 {
-  LOG->Message(_("+ Network connected\n"));
+  LOG->Message(_("+ Network connected"));
 
   GList *list, *l;
   l = list = purple_accounts_get_all_active();
@@ -136,7 +136,7 @@ void Connections::network_connected()
 
 void Connections::network_disconnected()
 {
-  LOG->Message(_("+ Network disconnected\n"));
+  LOG->Message(_("+ Network disconnected"));
 
   GList *list, *l;
   l = list = purple_accounts_get_all_active();
@@ -162,18 +162,18 @@ void Connections::report_disconnect_reason(PurpleConnection *gc,
   const char *protocol = purple_account_get_protocol_name(account);
   const char *username = purple_account_get_username(account);
 
-  LOG->Message(_("+ [%s] %s: %s\n"), protocol, username, text);
+  LOG->Message(_("+ [%s] %s: %s"), protocol, username, text);
 
   if (!purple_connection_error_is_fatal(reason)) {
     unsigned delay = g_random_int_range(RECONNECTION_DELAY_MIN,
         RECONNECTION_DELAY_MAX);
     COREMANAGER->TimeoutOnceConnect(sigc::bind(sigc::mem_fun(this,
             &Connections::AccountReconnect), account), delay);
-    LOG->Message(_("+ [%s] %s: Auto-reconnection in %d seconds\n"), protocol,
+    LOG->Message(_("+ [%s] %s: Auto-reconnection in %d seconds"), protocol,
         username, delay / 1000);
   }
   else {
     purple_account_set_enabled(account, PACKAGE_NAME, FALSE);
-    LOG->Message(_("+ [%s] %s: Account disabled\n"), protocol, username);
+    LOG->Message(_("+ [%s] %s: Account disabled"), protocol, username);
   }
 }

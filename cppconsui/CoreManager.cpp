@@ -293,7 +293,7 @@ bool CoreManager::ProcessInput(const TermKeyKey& key)
 gboolean CoreManager::io_input_error(GIOChannel *source, GIOCondition cond)
 {
   // log a critical warning and bail out if we lost stdin
-  g_critical("Stdin lost!\n");
+  g_critical("Stdin lost!");
   exit(1);
 
   return TRUE;
@@ -317,13 +317,13 @@ gboolean CoreManager::io_input(GIOChannel *source, GIOCondition cond)
       // convert data from user charset to UTF-8
       if (!(utf8 = g_locale_to_utf8(key.utf8, -1, NULL, &bwritten, &err))) {
         if (err) {
-          g_warning(_("Error converting input to UTF-8 (%s).\n"),
+          g_warning(_("Error converting input to UTF-8 (%s)."),
               err->message);
           g_error_free(err);
           err = NULL;
         }
         else
-          g_warning(_("Error converting input to UTF-8.\n"));
+          g_warning(_("Error converting input to UTF-8."));
         continue;
       }
 
@@ -374,7 +374,7 @@ void CoreManager::InputInit()
   // init libtermkey
   TERMKEY_CHECK_VERSION;
   if (!(tk = termkey_new(STDIN_FILENO, TERMKEY_FLAG_NOTERMIOS))) {
-    g_critical(_("Libtermkey initialization failed.\n"));
+    g_critical(_("Libtermkey initialization failed."));
     exit(1);
   }
   utf8 = g_get_charset(NULL);
@@ -475,7 +475,7 @@ void CoreManager::Draw()
     Curses::doupdate();
 
     const Curses::Stats *stats = Curses::GetStats();
-    g_debug("newpad calls: %u, newwin calls: %u, subpad calls: %u\n",
+    g_debug("newpad calls: %u, newwin calls: %u, subpad calls: %u",
         stats->newpad_calls, stats->newwin_calls, stats->subpad_calls);
     Curses::ResetStats();
 

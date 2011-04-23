@@ -38,7 +38,7 @@ BuddyListNode *BuddyListNode::CreateNode(PurpleBlistNode *node)
   else if (PURPLE_BLIST_NODE_IS_GROUP(node))
     return new BuddyListGroup(node);
 
-  LOG->Warning(_("Unrecognized BuddyList node.\n"));
+  LOG->Warning(_("Unrecognized BuddyList node."));
   return NULL;
 }
 
@@ -236,7 +236,7 @@ void BuddyListBuddy::RemoveBuddyResponseHandler(MessageDialog& activator,
 void BuddyListBuddy::OnBuddyRemove()
 {
   char *msg = g_strdup_printf(
-      _("Are you sure you want to delete %s from your buddy list?"),
+      _("Are you sure you want to delete buddy %s from the list?"),
       purple_buddy_get_alias(buddy));
   MessageDialog *dialog = new MessageDialog(_("Buddy deletion"), msg);
   g_free(msg);
@@ -323,7 +323,7 @@ void BuddyListChat::RemoveChatResponseHandler(MessageDialog& activator,
 void BuddyListChat::OnChatRemove()
 {
   char *msg = g_strdup_printf(
-      _("Are you sure you want to delete %s from your buddy list?"),
+      _("Are you sure you want to delete chat %s from the list?"),
       purple_chat_get_name(chat));
   MessageDialog *dialog = new MessageDialog(_("Chat deletion"), msg);
   g_free(msg);
@@ -422,7 +422,7 @@ void BuddyListContact::RemoveContactResponseHandler(MessageDialog& activator,
 void BuddyListContact::OnContactRemove()
 {
   char *msg = g_strdup_printf(
-      _("Are you sure you want to delete %s from your buddy list?"),
+      _("Are you sure you want to delete contact %s from the list?"),
       purple_buddy_get_alias(purple_contact_get_priority_buddy(contact)));
   MessageDialog *dialog = new MessageDialog(_("Contact deletion"), msg);
   g_free(msg);
@@ -560,9 +560,9 @@ void BuddyListGroup::RemoveGroupResponseHandler(MessageDialog& activator,
 void BuddyListGroup::OnGroupRemove()
 {
   char *msg = g_strdup_printf(
-      _("Are you sure you want to delete %s from your buddy list?"),
+      _("Are you sure you want to delete group %s from the list?"),
       purple_group_get_name(group));
-  MessageDialog *dialog = new MessageDialog(_("Contact deletion"), msg);
+  MessageDialog *dialog = new MessageDialog(_("Group deletion"), msg);
   g_free(msg);
   dialog->signal_response.connect(sigc::mem_fun(this,
         &BuddyListGroup::RemoveGroupResponseHandler));

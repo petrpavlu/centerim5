@@ -135,7 +135,7 @@ void BuddyList::Finalize()
 
 void BuddyList::Load()
 {
-  // loads the buddy list from ~/.centerim5/blist.xml
+  // load the buddy list from ~/.centerim5/blist.xml
   purple_blist_load();
 }
 
@@ -150,14 +150,14 @@ bool BuddyList::CheckAnyAccountConnected()
     }
   }
   if (!connected)
-    LOG->Message(_("No connected accounts\n"));
+    LOG->Message(_("There are no connected accounts."));
   return connected;
 }
 
 void BuddyList::new_list(PurpleBuddyList *list)
 {
   if (buddylist != list)
-    LOG->Error(_("Different Buddylist detected!\n"));
+    LOG->Error(_("Different Buddylist detected!"));
 }
 
 void BuddyList::new_node(PurpleBlistNode *node)
@@ -199,7 +199,6 @@ void BuddyList::remove(PurpleBuddyList *list, PurpleBlistNode *node)
   BuddyListNode *bnode = reinterpret_cast<BuddyListNode *>(node->ui_data);
   g_return_if_fail(bnode);
 
-  // TODO check for subnodes (if this is a group for instance)
   treeview->DeleteNode(bnode->GetRefNode(), false);
 
   if (node->parent)
@@ -270,19 +269,19 @@ void BuddyList::add_buddy_ok_cb(PurpleRequestFields *fields)
 
   bool err = false;
   if (!account) {
-    LOG->Message(_("No account specified\n"));
+    LOG->Message(_("No account specified."));
     err = true;
   }
   else if (!purple_account_is_connected(account)) {
-    LOG->Message(_("Selected account is not connected\n"));
+    LOG->Message(_("Selected account is not connected."));
     err = true;
   }
   if (!name || !name[0]) {
-    LOG->Message(_("No buddy name specified\n"));
+    LOG->Message(_("No buddy name specified."));
     err = true;
   }
   if (!group || !group[0]) {
-    LOG->Message(_("No group name specified\n"));
+    LOG->Message(_("No group name specified."));
     err = true;
   }
   if (err) {
@@ -297,7 +296,7 @@ void BuddyList::add_buddy_ok_cb(PurpleRequestFields *fields)
   }
   PurpleBuddy *b = purple_find_buddy_in_group(account, name, g);
   if (b) {
-    LOG->Message(_("Specified buddy is already in the list\n"));
+    LOG->Message(_("Specified buddy is already in the list."));
     return;
   }
 
@@ -316,7 +315,7 @@ void BuddyList::request_add_chat(PurpleAccount *account, PurpleGroup *group,
     PurpleConnection *gc = purple_account_get_connection(account);
 
     if (!PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->join_chat) {
-      LOG->Message(_("This protocol does not support chat rooms\n"));
+      LOG->Message(_("This protocol does not support chat rooms."));
       return;
     }
   }
@@ -333,7 +332,7 @@ void BuddyList::request_add_chat(PurpleAccount *account, PurpleGroup *group,
 
     if (!account) {
       LOG->Message(_("You are not currently signed on with any "
-            "protocols that have the ability to chat\n"));
+            "protocols that have the ability to chat."));
       return;
     }
   }
@@ -395,11 +394,11 @@ void BuddyList::add_chat_ok_cb(PurpleRequestFields *fields)
 
   bool err = false;
   if (!account) {
-    LOG->Message(_("No account specified\n"));
+    LOG->Message(_("No account specified."));
     err = true;
   }
   else if (!purple_account_is_connected(account)) {
-    LOG->Message(_("Selected account is not connected\n"));
+    LOG->Message(_("Selected account is not connected."));
     err = true;
   }
   else {
@@ -407,17 +406,17 @@ void BuddyList::add_chat_ok_cb(PurpleRequestFields *fields)
     PurplePluginProtocolInfo *info = PURPLE_PLUGIN_PROTOCOL_INFO(
         purple_connection_get_prpl(gc));
     if (!info->join_chat) {
-      LOG->Message(_("This protocol does not support chat rooms\n"));
+      LOG->Message(_("This protocol does not support chat rooms."));
       account = NULL;
       err = true;
     }
   }
   if (!name || !name[0]) {
-    LOG->Message(_("No buddy name specified\n"));
+    LOG->Message(_("No buddy name specified."));
     err = true;
   }
   if (!group || !group[0]) {
-    LOG->Message(_("No group name specified\n"));
+    LOG->Message(_("No group name specified."));
     err = true;
   }
   if (err) {
@@ -443,6 +442,6 @@ void BuddyList::add_chat_ok_cb(PurpleRequestFields *fields)
     purple_blist_add_chat(chat, g, NULL);
     purple_blist_alias_chat(chat, alias);
     purple_blist_node_set_bool(reinterpret_cast<PurpleBlistNode*>(chat),
-        "cim-autojoin", autojoin);
+        PACKAGE_NAME "-autojoin", autojoin);
   }
 }

@@ -74,7 +74,7 @@ void Accounts::Finalize()
 
 void Accounts::status_changed(PurpleAccount *account, PurpleStatus *status)
 {
-  LOG->Message(_("+ [%s] %s: Status changed to: %s\n"),
+  LOG->Message(_("+ [%s] %s: Status changed to: %s"),
       purple_account_get_protocol_name(account),
       purple_account_get_username(account),
       purple_status_get_name(status));

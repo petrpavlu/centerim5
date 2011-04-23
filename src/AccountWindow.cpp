@@ -213,7 +213,7 @@ void AccountWindow::IntOption::ResponseHandler(InputDialog& activator,
       errno = 0;
       i = strtol(text, NULL, 10);
       if (errno == ERANGE)
-        LOG->Warning(_("Value out of range.\n"));
+        LOG->Warning(_("Value is out of range."));
       purple_account_set_int(account,
           purple_account_option_get_setting(option), i);
 
@@ -507,7 +507,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
           accounts->AppendNode(account_entry->parent_reference, *widget);
           break;
         default:
-          LOG->Error(_("Invalid Account Option pref type (%d)\n"), type);
+          LOG->Error(_("Invalid Account Option pref type (%d)."), type);
           break;
       }
     }

@@ -37,10 +37,7 @@
 #define CONVERSATION_DESTROY_TIMEOUT 6000
 
 Conversation::Conversation(PurpleConversation *conv_)
-: Window(0, 0, 80, 24)
-, conv(conv_)
-, filename(NULL)
-, logfile(NULL)
+: Window(0, 0, 80, 24), conv(conv_), filename(NULL), logfile(NULL)
 , status(STATUS_ACTIVE)
 {
   g_assert(conv);
@@ -61,20 +58,21 @@ Conversation::Conversation(PurpleConversation *conv_)
   GError *err = NULL;
   if (!(logfile = g_io_channel_new_file(filename, "a", &err))) {
     if (err) {
-      LOG->Error(_("Error opening conversation logfile `%s' (%s).\n"),
+      LOG->Error(_("Error opening conversation logfile `%s' (%s)."),
           filename, err->message);
 
       g_error_free(err);
       err = NULL;
     }
     else
-      LOG->Error(_("Error opening conversation logfile `%s'.\n"), filename);
+      LOG->Error(_("Error opening conversation logfile `%s'."), filename);
   }
 
   LoadHistory();
 
   DeclareBindables();
-  LOG->Debug("%p constructor()\n", this);
+  LOG->Debug("Conversation::Conversation(): this=%p, title=%s",
+      purple_conversation_get_title(conv));
 }
 
 Conversation::~Conversation()
@@ -82,7 +80,8 @@ Conversation::~Conversation()
   g_free(filename);
   if (logfile)
     g_io_channel_unref(logfile);
-  LOG->Debug("%p destructor()\n", this);
+  LOG->Debug("Conversation::~Conversation(): this=%p, title=%s",
+      purple_conversation_get_title(conv));
 }
 
 bool Conversation::ProcessInput(const TermKeyKey& key)
@@ -192,23 +191,23 @@ void Conversation::Receive(const char *name, const char *alias, const char *mess
     if (g_io_channel_write_chars(logfile, msg, -1, NULL, &err)
         != G_IO_STATUS_NORMAL) {
       if (err) {
-        LOG->Error(_("Error writing to conversation logfile (%s).\n"),
+        LOG->Error(_("Error writing to conversation logfile (%s)."),
             err->message);
         g_error_free(err);
         err = NULL;
       }
       else
-        LOG->Error(_("Error writing to conversation logfile.\n"));
+        LOG->Error(_("Error writing to conversation logfile."));
     }
     if (g_io_channel_flush(logfile, &err) != G_IO_STATUS_NORMAL) {
       if (err) {
-        LOG->Error(_("Error flushing conversation logfile (%s).\n"),
+        LOG->Error(_("Error flushing conversation logfile (%s)."),
             err->message);
         g_error_free(err);
         err = NULL;
       }
       else
-        LOG->Error(_("Error flushing conversation logfile.\n"));
+        LOG->Error(_("Error flushing conversation logfile."));
     }
   }
   g_free(msg);
@@ -270,7 +269,7 @@ void Conversation::BuildLogFilename()
 
   dir = g_path_get_dirname(filename);
   if (g_mkdir_with_parents(dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
-    LOG->Error(_("Error creating directory `%s'.\n"), dir);
+    LOG->Error(_("Error creating directory `%s'."), dir);
   g_free(dir);
 
   g_free(acct_name);
@@ -284,13 +283,13 @@ void Conversation::LoadHistory()
 
   if ((chan = g_io_channel_new_file(filename, "r", &err)) == NULL) {
     if (err) {
-      LOG->Error(_("Error opening conversation logfile `%s' (%s).\n"),
+      LOG->Error(_("Error opening conversation logfile `%s' (%s)."),
           filename, err->message);
       g_error_free(err);
       err = NULL;
     }
     else
-      LOG->Error(_("Error opening conversation logfile `%s'.\n"), filename);
+      LOG->Error(_("Error opening conversation logfile `%s'."), filename);
     return;
   }
 
@@ -344,13 +343,13 @@ void Conversation::LoadHistory()
   }
   if (st != G_IO_STATUS_EOF) {
     if (err) {
-      LOG->Error(_("Error reading from conversation logfile `%s' (%s).\n"),
+      LOG->Error(_("Error reading from conversation logfile `%s' (%s)."),
           filename, err->message);
       g_error_free(err);
       err = NULL;
     }
     else
-      LOG->Error(_("Error reading from conversation logfile `%s'.\n"),
+      LOG->Error(_("Error reading from conversation logfile `%s'."),
           filename);
   }
   g_io_channel_unref(chan);

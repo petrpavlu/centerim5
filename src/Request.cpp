@@ -264,7 +264,7 @@ Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,
           tree->AppendNode(parent, *(new AccountField(field)));
           break;
         default:
-          LOG->Error(_("Unimplemented Request field type.\n"));
+          LOG->Error(_("Unimplemented Request field type."));
           break;
       }
     }
@@ -355,7 +355,7 @@ void Request::FieldsDialog::IntegerField::ResponseHandler(
       errno = 0;
       i = strtol(text, NULL, 10);
       if (errno == ERANGE)
-        LOG->Warning(_("Value out of range.\n"));
+        LOG->Warning(_("Value is out of range."));
       purple_request_field_int_set_value(field, i);
       SetValue(purple_request_field_int_get_value(field));
       break;
@@ -640,7 +640,7 @@ void *Request::request_input(const char *title, const char *primary,
     const char *cancel_text, GCallback cancel_cb, PurpleAccount *account,
     const char *who, PurpleConversation *conv, void *user_data)
 {
-  LOG->Debug("request_input\n");
+  LOG->Debug("request_input");
 
   InputTextDialog *dialog = new InputTextDialog(title, primary, secondary,
       default_value, masked, ok_text, ok_cb, cancel_text, cancel_cb,
@@ -659,7 +659,7 @@ void *Request::request_choice(const char *title, const char *primary,
     PurpleAccount *account, const char *who, PurpleConversation *conv,
     void *user_data, va_list choices)
 {
-  LOG->Debug("request_choice\n");
+  LOG->Debug("request_choice");
 
   ChoiceDialog *dialog = new ChoiceDialog(title, primary, secondary,
       default_value, ok_text, ok_cb, cancel_text, cancel_cb, user_data,
@@ -677,7 +677,7 @@ void *Request::request_action(const char *title, const char *primary,
     const char *who, PurpleConversation *conv, void *user_data,
     size_t action_count, va_list actions)
 {
-  LOG->Debug("request_action\n");
+  LOG->Debug("request_action");
 
   ActionDialog *dialog = new ActionDialog(title, primary, secondary,
       default_action, user_data, action_count, actions);
@@ -695,7 +695,7 @@ void *Request::request_fields(const char *title, const char *primary,
     GCallback cancel_cb, PurpleAccount *account, const char *who,
     PurpleConversation *conv, void *user_data)
 {
-  LOG->Debug("request_fields\n");
+  LOG->Debug("request_fields");
 
   FieldsDialog *dialog = new FieldsDialog(title, primary, secondary,
       fields, ok_text, ok_cb, cancel_text, cancel_cb, user_data);
@@ -717,7 +717,7 @@ void *Request::request_file(const char *title, const char *filename,
 
 void Request::close_request(PurpleRequestType type, void *ui_handle)
 {
-  LOG->Debug("close_request\n");
+  LOG->Debug("close_request");
 
   g_assert(ui_handle);
 

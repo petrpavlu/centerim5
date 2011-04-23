@@ -156,7 +156,7 @@ void Log::purple_print(PurpleDebugLevel purplelevel, const char *category,
 
   if (!category) {
     category = "misc";
-    Warning(_("centerim/log: purple_print() parameter category was not defined.\n"));
+    Warning(_("centerim/log: purple_print() parameter category was not defined."));
   }
 
   char *text = g_strdup_printf("libpurple/%s: %s", category, arg_s);
@@ -278,13 +278,13 @@ void Log::WriteToFile(const char *text)
           == NULL) {
         if (err) {
           WriteErrorToWindow(
-              _("centerim/log: Error opening logfile `%s' (%s).\n"), filename,
+              _("centerim/log: Error opening logfile `%s' (%s)."), filename,
               err->message);
           g_error_free(err);
           err = NULL;
         }
         else
-          WriteErrorToWindow(_("centerim/log: Error opening logfile `%s'.\n"),
+          WriteErrorToWindow(_("centerim/log: Error opening logfile `%s'."),
               filename);
       }
       g_free(filename);
@@ -296,13 +296,13 @@ void Log::WriteToFile(const char *text)
           != G_IO_STATUS_NORMAL) {
         if (err) {
           WriteErrorToWindow(
-              _("centerim/log: Error writing to logfile (%s).\n"),
+              _("centerim/log: Error writing to logfile (%s)."),
               err->message);
           g_error_free(err);
           err = NULL;
         }
         else
-          WriteErrorToWindow(_("centerim/log: Error writing to logfile.\n"));
+          WriteErrorToWindow(_("centerim/log: Error writing to logfile."));
       }
       else {
         // if necessary write missing EOL character
@@ -316,13 +316,13 @@ void Log::WriteToFile(const char *text)
       if (g_io_channel_flush(logfile, &err) != G_IO_STATUS_NORMAL) {
         if (err) {
           WriteErrorToWindow(
-              _("centerim/log: Error flushing logfile (%s).\n"),
+              _("centerim/log: Error flushing logfile (%s)."),
               err->message);
           g_error_free(err);
           err = NULL;
         }
         else
-          WriteErrorToWindow(_("centerim/log: Error flushing logfile.\n"));
+          WriteErrorToWindow(_("centerim/log: Error flushing logfile."));
       }
     }
   }
@@ -345,7 +345,7 @@ Log::Level Log::ConvertPurpleDebugLevel(PurpleDebugLevel purplelevel)
       return LEVEL_ERROR; // use error level so this message is always printed
   }
 
-  Warning(_("centerim/log: Unknown libpurple logging level: %d.\n"),
+  Warning(_("centerim/log: Unknown libpurple logging level: %d."),
       purplelevel);
   return LEVEL_DEBUG;
 }
@@ -365,7 +365,7 @@ Log::Level Log::ConvertGlibDebugLevel(GLogLevelFlags gliblevel)
   if (gliblevel & G_LOG_LEVEL_ERROR)
     return LEVEL_ERROR;
 
-  Warning(_("centerim/log: Unknown glib logging level in %d.\n"), gliblevel);
+  Warning(_("centerim/log: Unknown GLib logging level: %d."), gliblevel);
   /* This will never happen. Actually should not, because some day, it will
    * happen. :) So lets initialize level, so that we don't have uninitialized
    * values. :) */
