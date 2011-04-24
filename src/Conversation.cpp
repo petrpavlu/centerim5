@@ -72,7 +72,7 @@ Conversation::Conversation(PurpleConversation *conv_)
 
   DeclareBindables();
   LOG->Debug("Conversation::Conversation(): this=%p, title=%s",
-      purple_conversation_get_title(conv));
+      static_cast<void*>(this), purple_conversation_get_title(conv));
 }
 
 Conversation::~Conversation()
@@ -80,8 +80,8 @@ Conversation::~Conversation()
   g_free(filename);
   if (logfile)
     g_io_channel_unref(logfile);
-  LOG->Debug("Conversation::~Conversation(): this=%p, title=%s",
-      purple_conversation_get_title(conv));
+  LOG->Debug("Conversation::~Conversation(): this=%p",
+      static_cast<void*>(this));
 }
 
 bool Conversation::ProcessInput(const TermKeyKey& key)

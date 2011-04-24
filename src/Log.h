@@ -22,6 +22,12 @@
 #ifndef __LOG_H__
 #define __LOG_H__
 
+#ifdef __GNUC__
+#define _attribute(x) __attribute__(x)
+#else
+#define _attribute(x)
+#endif
+
 #include <cppconsui/TextView.h>
 #include <cppconsui/Window.h>
 #include <libpurple/purple.h>
@@ -50,12 +56,12 @@ public:
   virtual void MoveResize(int newx, int newy, int neww, int newh);
   virtual void ScreenResized();
 
-  void Error(const char *fmt, ...);
-  void Critical(const char *fmt, ...);
-  void Warning(const char *fmt, ...);
-  void Message(const char *fmt, ...);
-  void Info(const char *fmt, ...);
-  void Debug(const char *fmt, ...);
+  void Error(const char *fmt, ...) _attribute((format(printf, 2, 3)));
+  void Critical(const char *fmt, ...) _attribute((format(printf, 2, 3)));
+  void Warning(const char *fmt, ...) _attribute((format(printf, 2, 3)));
+  void Message(const char *fmt, ...) _attribute((format(printf, 2, 3)));
+  void Info(const char *fmt, ...) _attribute((format(printf, 2, 3)));
+  void Debug(const char *fmt, ...) _attribute((format(printf, 2, 3)));
 
 protected:
 
