@@ -119,7 +119,7 @@ void KeyConfig::RegisterDefaultKeys()
   BindKey("textentry", "cursor-right", "Right");
   BindKey("textentry", "cursor-left", "Left");
   BindKey("textentry", "cursor-down", "Down");
-  BindKey("textentry", "cursor-up", "Right");
+  BindKey("textentry", "cursor-up", "Up");
   BindKey("textentry", "cursor-right-word", "Ctrl-Right");
   BindKey("textentry", "cursor-left-word", "Ctrl-Left");
   BindKey("textentry", "cursor-end", "End");
