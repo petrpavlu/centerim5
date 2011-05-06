@@ -42,7 +42,8 @@ BuddyList *BuddyList::Instance()
 bool BuddyList::RestoreFocus()
 {
   FOOTER->SetText(_(
-        "<buddylist|remove> remove focused"));
+        "<buddylist|remove> remove focused, "
+        "<centerim|accountstatusmenu> status menu"));
 
   return Window::RestoreFocus();
 }

@@ -115,7 +115,8 @@ bool Conversation::RestoreFocus()
 {
   FOOTER->SetText(_(
         "<centerim|conversation-next>/"
-        "<centerim|conversation-prev> next/prev conv, "
+        "<centerim|conversation-prev>/<centerim|conversation-active> next/prev/act conv, "
+        "<centerim|buddylist> buddy list, "
         "<conversation|send> send"));
 
   return Window::RestoreFocus();
