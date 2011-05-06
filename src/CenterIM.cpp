@@ -238,6 +238,7 @@ void CenterIM::ColorSchemeInit()
   COLORSCHEME->SetColorPair("conversation",        "textview",       "color2",     Curses::Color::YELLOW,  Curses::Color::BLACK, Curses::Attr::BOLD);
   COLORSCHEME->SetColorPair("conversation",        "panel",          "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
   COLORSCHEME->SetColorPair("conversation",        "horizontalline", "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation",        "textedit",       "text",       Curses::Color::CYAN,    Curses::Color::BLACK);
 
   COLORSCHEME->SetColorPair("conversation",        "label",          "text",       Curses::Color::CYAN,    Curses::Color::BLACK);
   COLORSCHEME->SetColorPair("conversation-active", "label",          "text",       Curses::Color::YELLOW,  Curses::Color::BLACK, Curses::Attr::BOLD);

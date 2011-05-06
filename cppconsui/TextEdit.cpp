@@ -79,6 +79,9 @@ void TextEdit::Draw()
   if (!area)
     return;
 
+  int attrs = GetColorPair("textedit", "text");
+  area->attron(attrs);
+
   if (origw != area->getmaxx()) {
     UpdateScreenLines();
     UpdateScreenCursor();
