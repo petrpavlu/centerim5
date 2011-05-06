@@ -43,6 +43,7 @@ bool BuddyList::RestoreFocus()
 {
   FOOTER->SetText(_(
         "<buddylist|remove> remove focused, "
+        "<centerim|conversation-active> act conv, "
         "<centerim|accountstatusmenu> status menu"));
 
   return Window::RestoreFocus();

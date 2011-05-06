@@ -508,6 +508,10 @@ void CenterIM::RegisterDefaultKeys()
   KEYCONFIG->BindKey("centerim", "generalmenu", "F4");
 
   // XXX move to default key bindings config
+  KEYCONFIG->BindKey("centerim", "buddylist", "Alt-1");
+  KEYCONFIG->BindKey("centerim", "conversation-active", "Alt-2");
+  KEYCONFIG->BindKey("centerim", "accountstatusmenu", "Alt-3");
+  KEYCONFIG->BindKey("centerim", "generalmenu", "Alt-4");
   KEYCONFIG->BindKey("centerim", "generalmenu", "Ctrl-g");
 
   KEYCONFIG->BindKey("centerim", "conversation-prev", "Alt-p");
