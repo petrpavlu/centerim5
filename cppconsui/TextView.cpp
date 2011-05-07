@@ -143,17 +143,50 @@ void TextView::Draw()
     int x1, x2;
     if (screen_lines.size() <= static_cast<unsigned>(realh)) {
       x1 = 0;
-      x2 = realh - 1;
+      x2 = realh;
     }
     else {
-      x1 = static_cast<float>(view_top) / screen_lines.size() * realh;
-      x2 = static_cast<float>(view_top + realh) / screen_lines.size() * realh;
+      x2 = static_cast<float>(view_top + realh) * realh / screen_lines.size();
+      // we calculate x1 based on x2 (not based on view_top)
+      // to avoid jittering during rounding
+      x1 = x2 - realh * realh / screen_lines.size();
     }
 
     int attrs = GetColorPair("textview", "scrollbar") | Curses::Attr::REVERSE;
     area->attron(attrs);
-    for (int i = x1; i <= x2; i++)
+    for (int i = x1+1; i < x2-1; i++)
       area->mvaddstring(area->getmaxx() - 1, i, " ");
+    if (x2-x1 < 2) {
+      // this is a special case when x1 is too close to x2,
+      // but we need to draw at least two arrows
+      if (realh - x1 < 2) {
+        // we are close to bottom position
+        area->mvaddstring(area->getmaxx() - 1, realh-2, "↑");
+        area->mvaddstring(area->getmaxx() - 1, realh-1, "↓");
+      }
+      else if (x2 < 2) {
+        // we are close to top position
+        area->mvaddstring(area->getmaxx() - 1, 0, "↑");
+        area->mvaddstring(area->getmaxx() - 1, 1, "↓");
+      }
+      else {
+        // in between
+        area->mvaddstring(area->getmaxx() - 1, x2-2, "↑");
+        area->mvaddstring(area->getmaxx() - 1, x2-1, "↓");
+      }
+    }
+    else {
+      // scrollbar length is enough to fit two arrows
+      area->mvaddstring(area->getmaxx() - 1, x1, "↑");
+      area->mvaddstring(area->getmaxx() - 1, x2-1, "↓");
+    }
+    // draw a dot to indicate "end of scrolling" for user
+    if (realh == x2) {
+      area->mvaddstring(area->getmaxx() - 1, x2-1, "·");
+    }
+    else if (x1 == 0) {
+      area->mvaddstring(area->getmaxx() - 1, x1, "·");
+    }
     area->attroff(attrs);
   }
 
