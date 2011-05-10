@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: centerim 5.0-alpha1\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2011-04-23 20:53+0200\n"
+"POT-Creation-Date: 2011-05-10 22:16+0400\n"
 "PO-Revision-Date: 2010-03-15 18:57+0100\n"
 "Last-Translator: Petr Pavlu <setup@dagobah.cz>\n"
 "Language-Team: Czech\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
 #: src/AccountWindow.cpp:35
@@ -23,7 +23,7 @@ msgstr ""
 msgid "Accounts"
 msgstr "Accounts..."
 
-#: src/AccountWindow.cpp:39 src/BuddyList.cpp:254 src/BuddyList.cpp:378
+#: src/AccountWindow.cpp:39 src/BuddyList.cpp:256 src/BuddyList.cpp:380
 msgid "Add"
 msgstr "Hinzufügen"
 
@@ -43,7 +43,7 @@ msgstr "Account aktiviert"
 msgid "Password"
 msgstr "Paßwort"
 
-#: src/AccountWindow.cpp:128 src/BuddyList.cpp:229 src/BuddyList.cpp:350
+#: src/AccountWindow.cpp:128 src/BuddyList.cpp:231 src/BuddyList.cpp:352
 msgid "Alias"
 msgstr "Alias"
 
@@ -88,85 +88,87 @@ msgid "+ [%s] %s: Status changed to: %s"
 msgstr "+ [%s] Status geändert: %s\n"
 
 #: src/BuddyList.cpp:45
-msgid "<buddylist|remove> remove focused"
+msgid ""
+"<buddylist|remove> remove focused, <centerim|conversation-active> act conv, "
+"<centerim|accountstatusmenu> status menu"
 msgstr ""
 
-#: src/BuddyList.cpp:153
+#: src/BuddyList.cpp:155
 msgid "There are no connected accounts."
 msgstr ""
 
-#: src/BuddyList.cpp:160
+#: src/BuddyList.cpp:162
 msgid "Different Buddylist detected!"
 msgstr ""
 
-#: src/BuddyList.cpp:224 src/BuddyList.cpp:346
+#: src/BuddyList.cpp:226 src/BuddyList.cpp:348
 #, fuzzy
 msgid "Account"
 msgstr "Accounts..."
 
-#: src/BuddyList.cpp:226
+#: src/BuddyList.cpp:228
 msgid "Buddy name"
 msgstr ""
 
-#: src/BuddyList.cpp:232 src/BuddyList.cpp:353
+#: src/BuddyList.cpp:234 src/BuddyList.cpp:355
 msgid "Group"
 msgstr ""
 
-#: src/BuddyList.cpp:251
+#: src/BuddyList.cpp:253
 msgid "Buddies"
 msgstr ""
 
-#: src/BuddyList.cpp:254
+#: src/BuddyList.cpp:256
 msgid "Add buddy"
 msgstr ""
 
-#: src/BuddyList.cpp:255 src/BuddyList.cpp:379
+#: src/BuddyList.cpp:257 src/BuddyList.cpp:381
 msgid "Cancel"
 msgstr ""
 
-#: src/BuddyList.cpp:272 src/BuddyList.cpp:397
+#: src/BuddyList.cpp:274 src/BuddyList.cpp:399
 msgid "No account specified."
 msgstr ""
 
-#: src/BuddyList.cpp:276 src/BuddyList.cpp:401
+#: src/BuddyList.cpp:278 src/BuddyList.cpp:403
 msgid "Selected account is not connected."
 msgstr ""
 
-#: src/BuddyList.cpp:280 src/BuddyList.cpp:415
+#: src/BuddyList.cpp:282 src/BuddyList.cpp:417
 msgid "No buddy name specified."
 msgstr ""
 
-#: src/BuddyList.cpp:284 src/BuddyList.cpp:419
+#: src/BuddyList.cpp:286 src/BuddyList.cpp:421
 msgid "No group name specified."
 msgstr ""
 
-#: src/BuddyList.cpp:299
+#: src/BuddyList.cpp:301
 msgid "Specified buddy is already in the list."
 msgstr ""
 
-#: src/BuddyList.cpp:318 src/BuddyList.cpp:409
+#: src/BuddyList.cpp:320 src/BuddyList.cpp:411
 msgid "This protocol does not support chat rooms."
 msgstr ""
 
-#: src/BuddyList.cpp:334
+#: src/BuddyList.cpp:336
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
 msgstr ""
 
-#: src/BuddyList.cpp:348
+#: src/BuddyList.cpp:350
 msgid "Chat name"
 msgstr ""
 
-#: src/BuddyList.cpp:372
+#: src/BuddyList.cpp:374
 msgid "Chats"
 msgstr ""
 
-#: src/BuddyList.cpp:375
+#: src/BuddyList.cpp:377
 msgid "Auto-join"
 msgstr ""
 
-#: src/BuddyList.cpp:378
+#: src/BuddyList.cpp:380
 msgid "Add chat"
 msgstr ""
 
@@ -225,7 +227,7 @@ msgstr "Initialisierung von libtermkey fehlgeschlagen.\n"
 msgid "Usage: %s [-c config_path]\n"
 msgstr ""
 
-#: src/CenterMain.cpp:62
+#: src/CenterMain.cpp:63
 #, c-format
 msgid "%s: unexpected argument after options\n"
 msgstr ""
@@ -255,10 +257,13 @@ msgstr ""
 
 #: src/Connections.cpp:172
 #, fuzzy, c-format
-msgid "+ [%s] %s: Auto-reconnection in %d seconds"
-msgstr "Account aktiviert"
+msgid "+ [%s] %s: Auto-reconnection in %d second"
+msgid_plural "+ [%s] %s: Auto-reconnection in %d seconds"
+msgstr[0] "Account aktiviert"
+msgstr[1] "Account aktiviert"
+msgstr[2] "Account aktiviert"
 
-#: src/Connections.cpp:177
+#: src/Connections.cpp:176
 #, fuzzy, c-format
 msgid "+ [%s] %s: Account disabled"
 msgstr "Account aktiviert"
@@ -267,53 +272,54 @@ msgstr "Account aktiviert"
 msgid "%d.%m.%y %H:%M"
 msgstr ""
 
-#: src/Conversation.cpp:61 src/Conversation.cpp:286
+#: src/Conversation.cpp:61 src/Conversation.cpp:288
 #, fuzzy, c-format
 msgid "Error opening conversation logfile `%s' (%s)."
 msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s' (%s).\n"
 
-#: src/Conversation.cpp:68 src/Conversation.cpp:292
+#: src/Conversation.cpp:68 src/Conversation.cpp:294
 #, fuzzy, c-format
 msgid "Error opening conversation logfile `%s'."
 msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s'.\n"
 
 #: src/Conversation.cpp:117
 msgid ""
-"<centerim|conversation-next>/<centerim|conversation-prev> next/prev conv, "
-"<conversation|send> send"
+"<centerim|buddylist> buddy list, <centerim|conversation-next>/<centerim|"
+"conversation-prev>/<centerim|conversation-active> next/prev/act conv, "
+"<centerim|accountstatusmenu> status menu, <conversation|send> send"
 msgstr ""
 
-#: src/Conversation.cpp:194
+#: src/Conversation.cpp:196
 #, fuzzy, c-format
 msgid "Error writing to conversation logfile (%s)."
 msgstr "centerim/log: Fehler beim Schreiben in Logdatei (%s).\n"
 
-#: src/Conversation.cpp:200
+#: src/Conversation.cpp:202
 #, fuzzy
 msgid "Error writing to conversation logfile."
 msgstr "centerim/log: Fehler beim Schreiben in Logdatei.\n"
 
-#: src/Conversation.cpp:204
+#: src/Conversation.cpp:206
 #, fuzzy, c-format
 msgid "Error flushing conversation logfile (%s)."
 msgstr "centerim/log: Fehler beim Ausschreiben der Logdatei (%s).\n"
 
-#: src/Conversation.cpp:210
+#: src/Conversation.cpp:212
 #, fuzzy
 msgid "Error flushing conversation logfile."
 msgstr "centerim/log: Fehler beim Ausschreiben der Logdatei.\n"
 
-#: src/Conversation.cpp:272
+#: src/Conversation.cpp:274
 #, fuzzy, c-format
 msgid "Error creating directory `%s'."
 msgstr "Fehler beim Konvertieren der Eingabe nach UTF-8 (%s).\n"
 
-#: src/Conversation.cpp:346
+#: src/Conversation.cpp:348
 #, fuzzy, c-format
 msgid "Error reading from conversation logfile `%s' (%s)."
 msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s' (%s).\n"
 
-#: src/Conversation.cpp:352
+#: src/Conversation.cpp:354
 #, fuzzy, c-format
 msgid "Error reading from conversation logfile `%s'."
 msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s' (%s).\n"

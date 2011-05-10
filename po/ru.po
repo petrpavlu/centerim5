@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: centerim5 5.0.0alpha2.41-c52a-dirty\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/projects/centerim\n"
-"POT-Creation-Date: 2011-04-23 20:53+0200\n"
-"PO-Revision-Date: 2011-05-10 19:40+0300\n"
+"POT-Creation-Date: 2011-05-10 22:16+0400\n"
+"PO-Revision-Date: 2011-05-10 22:18+0300\n"
 "Last-Translator: kyak <bas@bmail.ru>\n"
 "Language-Team: \n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "X-Poedit-Language: Russian\n"
 "X-Poedit-Country: RUSSIAN FEDERATION\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
@@ -24,8 +24,8 @@ msgid "Accounts"
 msgstr "Аккаунты"
 
 #: src/AccountWindow.cpp:39
-#: src/BuddyList.cpp:254
-#: src/BuddyList.cpp:378
+#: src/BuddyList.cpp:256
+#: src/BuddyList.cpp:380
 msgid "Add"
 msgstr "Добавить"
 
@@ -47,8 +47,8 @@ msgid "Password"
 msgstr "Пароль"
 
 #: src/AccountWindow.cpp:128
-#: src/BuddyList.cpp:229
-#: src/BuddyList.cpp:350
+#: src/BuddyList.cpp:231
+#: src/BuddyList.cpp:352
 msgid "Alias"
 msgstr "Псевдоним"
 
@@ -94,90 +94,90 @@ msgid "+ [%s] %s: Status changed to: %s"
 msgstr "+ [%s] %s: Статус изменен на: %s"
 
 #: src/BuddyList.cpp:45
-msgid "<buddylist|remove> remove focused"
-msgstr "<buddylist|remove> удалить выбранное"
+msgid "<buddylist|remove> remove focused, <centerim|conversation-active> act conv, <centerim|accountstatusmenu> status menu"
+msgstr "<buddylist|remove> удалить выбранное, <centerim|conversation-active> актив. разговор, <centerim|accountstatusmenu> меню статуса"
 
-#: src/BuddyList.cpp:153
+#: src/BuddyList.cpp:155
 msgid "There are no connected accounts."
 msgstr "Нет подключенных аккаунтов"
 
-#: src/BuddyList.cpp:160
+#: src/BuddyList.cpp:162
 msgid "Different Buddylist detected!"
 msgstr "Обнаружен другой список друзей!"
 
-#: src/BuddyList.cpp:224
-#: src/BuddyList.cpp:346
+#: src/BuddyList.cpp:226
+#: src/BuddyList.cpp:348
 msgid "Account"
 msgstr "Аккаунт"
 
-#: src/BuddyList.cpp:226
+#: src/BuddyList.cpp:228
 msgid "Buddy name"
 msgstr "Имя друга"
 
-#: src/BuddyList.cpp:232
-#: src/BuddyList.cpp:353
+#: src/BuddyList.cpp:234
+#: src/BuddyList.cpp:355
 msgid "Group"
 msgstr "Группа"
 
-#: src/BuddyList.cpp:251
+#: src/BuddyList.cpp:253
 msgid "Buddies"
 msgstr "Друзья"
 
-#: src/BuddyList.cpp:254
+#: src/BuddyList.cpp:256
 msgid "Add buddy"
 msgstr "Добавить друга"
 
-#: src/BuddyList.cpp:255
-#: src/BuddyList.cpp:379
+#: src/BuddyList.cpp:257
+#: src/BuddyList.cpp:381
 msgid "Cancel"
 msgstr "Отмена"
 
-#: src/BuddyList.cpp:272
-#: src/BuddyList.cpp:397
+#: src/BuddyList.cpp:274
+#: src/BuddyList.cpp:399
 msgid "No account specified."
 msgstr "Не указан аккаунт."
 
-#: src/BuddyList.cpp:276
-#: src/BuddyList.cpp:401
+#: src/BuddyList.cpp:278
+#: src/BuddyList.cpp:403
 msgid "Selected account is not connected."
 msgstr "Выбранный аккаунт не подключен."
 
-#: src/BuddyList.cpp:280
-#: src/BuddyList.cpp:415
+#: src/BuddyList.cpp:282
+#: src/BuddyList.cpp:417
 msgid "No buddy name specified."
 msgstr "Не указано имя друга."
 
-#: src/BuddyList.cpp:284
-#: src/BuddyList.cpp:419
+#: src/BuddyList.cpp:286
+#: src/BuddyList.cpp:421
 msgid "No group name specified."
 msgstr "Не указано имя группы."
 
-#: src/BuddyList.cpp:299
+#: src/BuddyList.cpp:301
 msgid "Specified buddy is already in the list."
 msgstr "Указанный друг уже находится в списке."
 
-#: src/BuddyList.cpp:318
-#: src/BuddyList.cpp:409
+#: src/BuddyList.cpp:320
+#: src/BuddyList.cpp:411
 msgid "This protocol does not support chat rooms."
 msgstr "Этот протокол не поддерживает чат-комнаты."
 
-#: src/BuddyList.cpp:334
+#: src/BuddyList.cpp:336
 msgid "You are not currently signed on with any protocols that have the ability to chat."
 msgstr "Сейчас вы не подключены ни по одному из протоколов, поддерживающих чат."
 
-#: src/BuddyList.cpp:348
+#: src/BuddyList.cpp:350
 msgid "Chat name"
 msgstr "Имя чата"
 
-#: src/BuddyList.cpp:372
+#: src/BuddyList.cpp:374
 msgid "Chats"
 msgstr "Чаты"
 
-#: src/BuddyList.cpp:375
+#: src/BuddyList.cpp:377
 msgid "Auto-join"
 msgstr "Автоматически заходить"
 
-#: src/BuddyList.cpp:378
+#: src/BuddyList.cpp:380
 msgid "Add chat"
 msgstr "Добавить чат"
 
@@ -235,7 +235,7 @@ msgstr "Ошибка инициализации Libpurple"
 msgid "Usage: %s [-c config_path]\n"
 msgstr "Использование: %s [-c путь_к_конфигу]\n"
 
-#: src/CenterMain.cpp:62
+#: src/CenterMain.cpp:63
 #, c-format
 msgid "%s: unexpected argument after options\n"
 msgstr "%s: непредвиденный аргумент после опций\n"
@@ -267,13 +267,13 @@ msgstr "+ Отключен от сети"
 
 #: src/Connections.cpp:172
 #, c-format
-msgid "+ [%s] %s: Auto-reconnection in %d seconds"
+msgid "+ [%s] %s: Auto-reconnection in %d second"
 msgid_plural "+ [%s] %s: Auto-reconnection in %d seconds"
 msgstr[0] "+ [%s] %s: Переподключение автоматически через %d секунду"
 msgstr[1] "+ [%s] %s: Переподключение автоматически через %d секунды"
 msgstr[2] "+ [%s] %s: Переподключение автоматически через %d секунд"
 
-#: src/Connections.cpp:177
+#: src/Connections.cpp:176
 #, c-format
 msgid "+ [%s] %s: Account disabled"
 msgstr "+ [%s] %s: Аккаунт неактивен"
@@ -283,50 +283,50 @@ msgid "%d.%m.%y %H:%M"
 msgstr "%d.%m.%y %H:%M"
 
 #: src/Conversation.cpp:61
-#: src/Conversation.cpp:286
+#: src/Conversation.cpp:288
 #, c-format
 msgid "Error opening conversation logfile `%s' (%s)."
 msgstr "Ошибка открытия лога разговора `%s' (%s)."
 
 #: src/Conversation.cpp:68
-#: src/Conversation.cpp:292
+#: src/Conversation.cpp:294
 #, c-format
 msgid "Error opening conversation logfile `%s'."
 msgstr "Ошибка открытия лога разговора `%s'."
 
 #: src/Conversation.cpp:117
-msgid "<centerim|conversation-next>/<centerim|conversation-prev> next/prev conv, <conversation|send> send"
-msgstr "<centerim|conversation-next>/<centerim|conversation-prev> след/пред разговор, <conversation|send> отправить"
+msgid "<centerim|buddylist> buddy list, <centerim|conversation-next>/<centerim|conversation-prev>/<centerim|conversation-active> next/prev/act conv, <centerim|accountstatusmenu> status menu, <conversation|send> send"
+msgstr "<centerim|buddylist> список друзей, <centerim|conversation-next>/<centerim|conversation-prev>/<centerim|conversation-active> след/пред/акт разговор, <centerim|accountstatusmenu> статус, <conversation|send> отправить"
 
-#: src/Conversation.cpp:194
+#: src/Conversation.cpp:196
 #, c-format
 msgid "Error writing to conversation logfile (%s)."
 msgstr "Ошибка записи в лог разговора (%s)."
 
-#: src/Conversation.cpp:200
+#: src/Conversation.cpp:202
 msgid "Error writing to conversation logfile."
 msgstr "Ошибка записи в лог разговора."
 
-#: src/Conversation.cpp:204
+#: src/Conversation.cpp:206
 #, c-format
 msgid "Error flushing conversation logfile (%s)."
 msgstr "Ошибка записи лога разговора на диск (%s)."
 
-#: src/Conversation.cpp:210
+#: src/Conversation.cpp:212
 msgid "Error flushing conversation logfile."
 msgstr "Ошибка записи лога разговора на диск."
 
-#: src/Conversation.cpp:272
+#: src/Conversation.cpp:274
 #, c-format
 msgid "Error creating directory `%s'."
 msgstr "Ошибка при создании директории `%s'."
 
-#: src/Conversation.cpp:346
+#: src/Conversation.cpp:348
 #, c-format
 msgid "Error reading from conversation logfile `%s' (%s)."
 msgstr "Ошибка чтения лога разговора `%s' (%s)."
 
-#: src/Conversation.cpp:352
+#: src/Conversation.cpp:354
 #, c-format
 msgid "Error reading from conversation logfile `%s'."
 msgstr "Ошибка чтения лога разговора `%s'."
@@ -516,3 +516,5 @@ msgstr "Ошибка инициализации Libtermkey."
 msgid "Unrecognized key (%s)."
 msgstr "Неизвестная клавиша (%s)."
 
+#~ msgid "<buddylist|remove> remove focused"
+#~ msgstr "<buddylist|remove> удалить выбранное"
