@@ -467,7 +467,8 @@ static TermKeyResult parse_utf8(const unsigned char *bytes, size_t len, long *cp
     return TERMKEY_RES_KEY;
   }
 
-  for(unsigned int b = 1; b < nbytes; b++) {
+  unsigned int b;
+  for(b = 1; b < nbytes; b++) {
     unsigned char cb;
 
     if(b >= len)
@@ -892,7 +893,8 @@ TermKeySym termkey_register_keyname(TermKey *tk, TermKeySym sym, const char *nam
     tk->keynames = new_keynames;
 
     // Fill in the hole
-    for(int i = tk->nkeynames; i < sym; i++)
+    int i;
+    for(i = tk->nkeynames; i < sym; i++)
       tk->keynames[i] = NULL;
 
     tk->nkeynames = sym + 1;

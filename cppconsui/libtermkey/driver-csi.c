@@ -422,7 +422,8 @@ static TermKeySym register_csifunc_full(TermKeyCsi *csi, TermKeyType type, TermK
     csi->csifuncs = new_csifuncs;
 
     // Fill in the hole
-    for(int i = csi->ncsifuncs; i < number; i++)
+    int i;
+    for(i = csi->ncsifuncs; i < number; i++)
       csi->csifuncs[i].sym = TERMKEY_SYM_UNKNOWN;
 
     csi->ncsifuncs = number + 1;
