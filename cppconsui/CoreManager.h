@@ -75,6 +75,7 @@ public:
     { return top_input_processor; }
 
   void Redraw();
+  void RedrawScreen();
 
   sigc::connection TimeoutConnect(const sigc::slot<bool>& slot,
       unsigned interval, int priority = G_PRIORITY_DEFAULT);

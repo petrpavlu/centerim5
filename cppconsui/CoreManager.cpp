@@ -212,6 +212,17 @@ void CoreManager::Redraw()
   }
 }
 
+void CoreManager::RedrawScreen()
+{
+  if (!redraw_pending) {
+    redraw_pending = true;
+    Curses::clear();
+    Curses::noutrefresh();
+    Curses::doupdate();
+    TimeoutOnceConnect(sigc::mem_fun(this, &CoreManager::Draw), 0);
+  }
+}
+
 sigc::connection CoreManager::TimeoutConnect(const sigc::slot<bool>& slot,
     unsigned interval, int priority)
 {
@@ -531,6 +542,6 @@ void CoreManager::FocusWindow()
 void CoreManager::DeclareBindables()
 {
   DeclareBindable("coremanager", "redraw-screen",
-      sigc::mem_fun(this, &CoreManager::Redraw),
+      sigc::mem_fun(this, &CoreManager::RedrawScreen),
       InputProcessor::BINDABLE_OVERRIDE);
 }
