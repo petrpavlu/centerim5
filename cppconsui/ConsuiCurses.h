@@ -58,6 +58,11 @@ public:
 
   virtual ~Window();
 
+  /**
+   * Adds string to the window.
+   *
+   * First two variants require NUL-terminated strings.
+   */
   int mvaddstring(int x, int y, int w, const char *str);
   int mvaddstring(int x, int y, const char *str);
   int mvaddstring(int x, int y, int w, const char *str, const char *end);

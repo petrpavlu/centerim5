@@ -97,14 +97,13 @@ void TextEdit::Draw()
   int j;
   for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end()
       && j < realh; i++, j++) {
-    /// @todo
     if (gapstart >= (*i)->start && gapstart < (*i)->end) {
       int p;
       p = area->mvaddstring(0, j, (*i)->width, (*i)->start, gapstart);
-      area->mvaddstring(p, j, (*i)->width - p, gapend);
+      area->mvaddstring(p, j, (*i)->width - p, gapend, bufend);
     }
     else
-      area->mvaddstring(0, j, (*i)->width, (*i)->start);
+      area->mvaddstring(0, j, (*i)->width, (*i)->start, bufend);
   }
 
   area->attroff(attrs);
