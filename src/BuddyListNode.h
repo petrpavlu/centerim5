@@ -33,6 +33,9 @@ class BuddyListNode
 public:
   static BuddyListNode *CreateNode(PurpleBlistNode *node);
 
+  // Widget
+  virtual void SetParent(Container& parent);
+
   virtual bool LessThan(const BuddyListNode& other) const = 0;
   virtual void Update();
   virtual void OnActivate(Button& activator) = 0;
@@ -44,12 +47,13 @@ public:
 
   BuddyListNode *GetParentNode() const;
 
-  void SetRefNode(TreeView::NodeReference n) { ref = n; }
-  TreeView::NodeReference GetRefNode() const { return ref; }
+  virtual void SetRefNode(TreeView::NodeReference n) { ref = n; }
+  virtual TreeView::NodeReference GetRefNode() const { return ref; }
 
   sigc::signal<void> signal_remove;
 
 protected:
+  TreeView *treeview;
   TreeView::NodeReference ref;
 
   PurpleBlistNode *node;
@@ -135,6 +139,8 @@ public:
   virtual void OnActivate(Button& activator);
   virtual const char *ToString() const;
 
+  virtual void SetRefNode(TreeView::NodeReference n);
+
 protected:
   PurpleContact *contact;
 
@@ -163,6 +169,8 @@ public:
 
 protected:
   PurpleGroup *group;
+
+  void DelayedInit();
 
   void RemoveGroupResponseHandler(MessageDialog& activator,
       AbstractDialog::ResponseType response);

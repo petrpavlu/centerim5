@@ -24,6 +24,7 @@
 #include "Conversations.h"
 #include "Utils.h"
 
+#include <cppconsui/CoreManager.h>
 #include <cppconsui/Keys.h>
 #include "gettext.h"
 
@@ -33,24 +34,29 @@ BuddyListNode *BuddyListNode::CreateNode(PurpleBlistNode *node)
     return new BuddyListBuddy(node);
   if (PURPLE_BLIST_NODE_IS_CHAT(node))
     return new BuddyListChat(node);
-  else if (PURPLE_BLIST_NODE_IS_CONTACT(node))
+  if (PURPLE_BLIST_NODE_IS_CONTACT(node))
     return new BuddyListContact(node);
-  else if (PURPLE_BLIST_NODE_IS_GROUP(node))
+  if (PURPLE_BLIST_NODE_IS_GROUP(node))
     return new BuddyListGroup(node);
 
   LOG->Warning(_("Unrecognized BuddyList node."));
   return NULL;
 }
 
+void BuddyListNode::SetParent(Container& parent)
+{
+  Button::SetParent(parent);
+
+  treeview = dynamic_cast<TreeView*>(&parent);
+  g_assert(treeview);
+}
+
 void BuddyListNode::Update()
 {
-  TreeView *t = dynamic_cast<TreeView *>(parent);
-  g_assert(t);
-
   BuddyListNode *parent_node = GetParentNode();
   // the parent could have changed, so re-parent the node
   if (parent_node)
-    t->SetNodeParent(ref, parent_node->GetRefNode());
+    treeview->SetNodeParent(ref, parent_node->GetRefNode());
 }
 
 void BuddyListNode::SortIn()
@@ -59,26 +65,23 @@ void BuddyListNode::SortIn()
   if (parent_node) {
     TreeView::NodeReference parent_ref = parent_node->GetRefNode();
 
-    TreeView *t = dynamic_cast<TreeView *>(parent);
-    g_assert(t);
-
     TreeView::SiblingIterator i;
     for (i = parent_ref.begin(); i != parent_ref.end(); i++) {
       // skip this node
       if (i == ref)
         continue;
 
-      BuddyListNode *n = dynamic_cast<BuddyListNode *>(i->GetWidget());
+      BuddyListNode *n = dynamic_cast<BuddyListNode*>(i->GetWidget());
       g_assert(n);
 
       if (LessThan(*n)) {
-        t->MoveNodeBefore(ref, i);
+        treeview->MoveNodeBefore(ref, i);
         break;
       }
     }
     // the ref is last in a list
     if (i == parent_ref.end())
-      t->MoveNodeAfter(ref, --i);
+      treeview->MoveNodeAfter(ref, --i);
   }
 }
 
@@ -93,7 +96,7 @@ BuddyListNode *BuddyListNode::GetParentNode() const
 }
 
 BuddyListNode::BuddyListNode(PurpleBlistNode *node)
-: node(node)
+: treeview(NULL), node(node)
 {
   node->ui_data = this;
   signal_activate.connect(sigc::mem_fun(this, &BuddyListNode::OnActivate));
@@ -167,7 +170,7 @@ void BuddyListNode::DeclareBindables()
 
 bool BuddyListBuddy::LessThan(const BuddyListNode& other) const
 {
-  const BuddyListBuddy *o = dynamic_cast<const BuddyListBuddy *>(&other);
+  const BuddyListBuddy *o = dynamic_cast<const BuddyListBuddy*>(&other);
   if (o) {
     int a = GetBuddyStatusWeight(buddy);
     int b = GetBuddyStatusWeight(o->buddy);
@@ -256,7 +259,7 @@ BuddyListBuddy::BuddyListBuddy(PurpleBlistNode *node)
 
 bool BuddyListChat::LessThan(const BuddyListNode& other) const
 {
-  const BuddyListChat *o = dynamic_cast<const BuddyListChat *>(&other);
+  const BuddyListChat *o = dynamic_cast<const BuddyListChat*>(&other);
   if (o)
     return g_utf8_collate(purple_chat_get_name(chat),
         purple_chat_get_name(o->chat)) < 0;
@@ -343,7 +346,7 @@ BuddyListChat::BuddyListChat(PurpleBlistNode *node)
 
 bool BuddyListContact::LessThan(const BuddyListNode& other) const
 {
-  const BuddyListContact *o = dynamic_cast<const BuddyListContact *>(&other);
+  const BuddyListContact *o = dynamic_cast<const BuddyListContact*>(&other);
   if (o) {
     PurpleBuddy *buddy_a = purple_contact_get_priority_buddy(contact);
     PurpleBuddy *buddy_b = purple_contact_get_priority_buddy(o->contact);
@@ -392,6 +395,12 @@ void BuddyListContact::OnActivate(Button& activator)
 const char *BuddyListContact::ToString() const
 {
   return purple_contact_get_alias(contact);
+}
+
+void BuddyListContact::SetRefNode(TreeView::NodeReference n)
+{
+  BuddyListNode::SetRefNode(n);
+  treeview->SetNodeStyle(n, TreeView::STYLE_VOID);
 }
 
 void BuddyListContact::RemoveContactResponseHandler(MessageDialog& activator,
@@ -443,7 +452,7 @@ BuddyListContact::BuddyListContact(PurpleBlistNode *node)
 
 bool BuddyListGroup::LessThan(const BuddyListNode& other) const
 {
-  const BuddyListGroup *o = dynamic_cast<const BuddyListGroup *>(&other);
+  const BuddyListGroup *o = dynamic_cast<const BuddyListGroup*>(&other);
   if (o) {
     return g_utf8_collate(purple_group_get_name(group),
         purple_group_get_name(o->group)) < 0;
@@ -478,10 +487,8 @@ void BuddyListGroup::Update()
 
 void BuddyListGroup::OnActivate(Button& activator)
 {
-  // XXX use TreeView::ToggleCollapseButton
-  TreeView *t = dynamic_cast<TreeView *>(parent);
-  g_assert(t);
-  t->ToggleCollapsed(ref);
+  treeview->ToggleCollapsed(ref);
+  purple_blist_node_set_bool(node, "collapsed", !ref->GetOpen());
 }
 
 const char *BuddyListGroup::ToString() const
@@ -491,9 +498,7 @@ const char *BuddyListGroup::ToString() const
 
 void BuddyListGroup::SortIn()
 {
-  TreeView *t = dynamic_cast<TreeView *>(parent);
-  g_assert(t);
-  TreeView::NodeReference parent_ref = t->GetRootNode();
+  TreeView::NodeReference parent_ref = treeview->GetRootNode();
 
   TreeView::SiblingIterator i;
   for (i = parent_ref.begin(); i != parent_ref.end(); i++) {
@@ -501,17 +506,25 @@ void BuddyListGroup::SortIn()
     if (i == ref)
       continue;
 
-    BuddyListNode *n = dynamic_cast<BuddyListNode *>(i->GetWidget());
+    BuddyListNode *n = dynamic_cast<BuddyListNode*>(i->GetWidget());
     g_assert(n);
 
     if (LessThan(*n)) {
-      t->MoveNodeBefore(ref, i);
+      treeview->MoveNodeBefore(ref, i);
       break;
     }
   }
   // the ref is last in a list
   if (i == parent_ref.end())
-    t->MoveNodeAfter(ref, --i);
+    treeview->MoveNodeAfter(ref, --i);
+}
+
+void BuddyListGroup::DelayedInit()
+{
+  /* This can't be done when the node is created because node settings are
+   * unavailable at that time. */
+  if (!purple_blist_node_get_bool(node, "collapsed"))
+    treeview->ExpandNode(ref);
 }
 
 void BuddyListGroup::RemoveGroupResponseHandler(MessageDialog& activator,
@@ -576,4 +589,7 @@ BuddyListGroup::BuddyListGroup(PurpleBlistNode *node)
 
   group = reinterpret_cast<PurpleGroup*>(node);
   signal_remove.connect(sigc::mem_fun(this, &BuddyListGroup::OnGroupRemove));
+
+  COREMANAGER->TimeoutOnceConnect(sigc::mem_fun(this,
+        &BuddyListGroup::DelayedInit), 0);
 }

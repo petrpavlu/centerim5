@@ -164,7 +164,7 @@ void BuddyList::new_list(PurpleBuddyList *list)
 
 void BuddyList::new_node(PurpleBlistNode *node)
 {
-  g_assert(!node->ui_data);
+  g_return_if_fail(!node->ui_data);
 
   BuddyListNode *bnode = BuddyListNode::CreateNode(node);
 
@@ -187,7 +187,8 @@ void BuddyList::update(PurpleBuddyList *list, PurpleBlistNode *node)
   if (!node->ui_data)
     new_node(node);
 
-  BuddyListNode *bnode = reinterpret_cast<BuddyListNode *>(node->ui_data);
+  BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(node->ui_data);
+  g_return_if_fail(bnode);
 
   // update the node data
   bnode->Update();
@@ -198,7 +199,7 @@ void BuddyList::update(PurpleBuddyList *list, PurpleBlistNode *node)
 
 void BuddyList::remove(PurpleBuddyList *list, PurpleBlistNode *node)
 {
-  BuddyListNode *bnode = reinterpret_cast<BuddyListNode *>(node->ui_data);
+  BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(node->ui_data);
   g_return_if_fail(bnode);
 
   treeview->DeleteNode(bnode->GetRefNode(), false);
@@ -267,7 +268,7 @@ void BuddyList::add_buddy_ok_cb(PurpleRequestFields *fields)
   GList *list = purple_request_field_choice_get_labels(
       purple_request_fields_get_field(fields, "group"));
   const char *group
-    = reinterpret_cast<const char *>(g_list_nth_data(list, selected));
+    = reinterpret_cast<const char*>(g_list_nth_data(list, selected));
 
   bool err = false;
   if (!account) {
@@ -391,7 +392,7 @@ void BuddyList::add_chat_ok_cb(PurpleRequestFields *fields)
   GList *list = purple_request_field_choice_get_labels(
       purple_request_fields_get_field(fields, "group"));
   const char *group
-    = reinterpret_cast<const char *>(g_list_nth_data(list, selected));
+    = reinterpret_cast<const char*>(g_list_nth_data(list, selected));
   bool autojoin = purple_request_fields_get_bool(fields, "autojoin");
 
   bool err = false;
