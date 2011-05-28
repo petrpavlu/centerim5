@@ -113,7 +113,6 @@ int Window::mvaddstring(int x, int y, int w, const char *str)
   g_assert(str);
 
   wmove(p->win, y, x);
-  //attrset(selection_color(selected, COLOR_STANDARD));
 
   int printed = 0;
   int p;

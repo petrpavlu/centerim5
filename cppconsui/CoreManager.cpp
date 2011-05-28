@@ -212,17 +212,6 @@ void CoreManager::Redraw()
   }
 }
 
-void CoreManager::RedrawScreen()
-{
-  if (!redraw_pending) {
-    redraw_pending = true;
-    Curses::clear();
-    Curses::noutrefresh();
-    Curses::doupdate();
-    TimeoutOnceConnect(sigc::mem_fun(this, &CoreManager::Draw), 0);
-  }
-}
-
 sigc::connection CoreManager::TimeoutConnect(const sigc::slot<bool>& slot,
     unsigned interval, int priority)
 {
@@ -254,9 +243,13 @@ CoreManager::CoreManager()
 : top_input_processor(NULL), io_input_channel(NULL), io_input_channel_id(0)
 , resize_channel(NULL), resize_channel_id(0), pipe_valid(false), tk(NULL)
 , utf8(false), gmainloop(NULL), screen_width(0), screen_height(0)
-, redraw_pending(false), resize_pending(false)
+, redraw_pending(false), resize_pending(false), fallback_draw_mode(false)
 {
   InputInit();
+
+  // if charset isn't utf8 or wcwidth() implementation is broken
+  if (!utf8 || wcwidth(0x2500) != 1)
+    fallback_draw_mode = true;
 
   /**
    * @todo Check the return value. Throw an exception if we can't init curses.
@@ -537,6 +530,14 @@ void CoreManager::FocusWindow()
       win->RestoreFocus();
     }
   }
+}
+
+void CoreManager::RedrawScreen()
+{
+  // make sure everything is redrawn from the scratch
+  Curses::clear();
+
+  Redraw();
 }
 
 void CoreManager::DeclareBindables()

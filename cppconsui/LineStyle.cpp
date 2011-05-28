@@ -28,79 +28,46 @@
 
 #include "LineStyle.h"
 
-#include <wchar.h>
+#include "CoreManager.h"
 
-struct LineElements {
-  const char *h;         // Horizontal line
-  const char *h_begin;   // "        " line begin
-  const char *h_end;     // "        " line end
-  const char *h_up;      // "             " and line up
-  const char *h_down;    // "             " and line down
-  const char *v;         // Vertical line
-  const char *v_begin;   // "      " line begin
-  const char *v_end;     // "      " line end
-  const char *v_left;    // "           " and line left
-  const char *v_right;   // "           " and line right
-  const char *cross;     // Horizontal and Vertical line crossed
-  const char *corner_tl; // Top-left corner
-  const char *corner_tr; // Top-right corner
-  const char *corner_bl; // Bottom-left corner
-  const char *corner_br; // Bottom-right corner
-};
-
-/// @todo Add styles for double lines, block elements.
-static LineElements line_elements_ascii = {
-  "-", "-", "-", "+", "+",
-  "|", "|", "|", "+", "+",
+const LineStyle::LineElements LineStyle::line_elements_ascii = {
+  "-", "+", "+",
+  "|", "+", "+",
   "+", "+", "+", "+", "+",
 };
 
-static LineElements line_elements_ascii_rounded = {
-  "-", "-", "-", "-", "-",
-  "|", "|", "|", "|", "|",
+const LineStyle::LineElements LineStyle::line_elements_ascii_rounded = {
+  "-", "-", "-",
+  "|", "|", "|",
   "+", "/", "\\", "\\", "/",
 };
 
-static LineElements line_elements_light = {
-  "\342\224\200", "\342\224\200", "\342\224\200", "\342\224\264", "\342\224\254",
-  "\342\224\202", "\342\224\202", "\342\224\202", "\342\224\244", "\342\224\234",
+const LineStyle::LineElements LineStyle::line_elements_light = {
+  "\342\224\200", "\342\224\264", "\342\224\254",
+  "\342\224\202", "\342\224\244", "\342\224\234",
   "\342\224\274", "\342\224\214", "\342\224\220", "\342\224\224", "\342\224\230",
 };
 
-static LineElements line_elements_light_rounded = {
-  "\342\224\200", "\342\224\200", "\342\224\200", "\342\224\264", "\342\224\254",
-  "\342\224\202", "\342\224\202", "\342\224\202", "\342\224\244", "\342\224\234",
+const LineStyle::LineElements LineStyle::line_elements_light_rounded = {
+  "\342\224\200", "\342\224\264", "\342\224\254",
+  "\342\224\202", "\342\224\244", "\342\224\234",
   "\342\224\274", "\342\225\255", "\342\225\256", "\342\225\257", "\342\225\260",
 };
 
-static LineElements line_elements_heavy = {
-  "\342\224\201", "\342\224\201", "\342\224\201", "\342\224\273", "\342\224\263",
-  "\342\224\203", "\342\224\203", "\342\224\203", "\342\224\253", "\342\224\243",
+const LineStyle::LineElements LineStyle::line_elements_heavy = {
+  "\342\224\201", "\342\224\273", "\342\224\263",
+  "\342\224\203", "\342\224\253", "\342\224\243",
   "\342\225\213", "\342\224\217", "\342\224\223", "\342\224\227", "\342\224\233",
 };
-
-bool LineStyle::default_type_is_ascii = false;
 
 LineStyle::LineStyle(Type t)
 : type(t)
 {
-  // if charset isn't utf8 or wcwidth() implementation is broken
-  default_type_is_ascii = !g_get_charset(NULL) || wcwidth(0x2500) != 1;
 }
 
 const char *LineStyle::H() const
 {
   return GetCurrentElems()->h;
-}
-
-const char *LineStyle::HBegin() const
-{
-  return GetCurrentElems()->h_begin;
-}
-
-const char *LineStyle::HEnd() const
-{
-  return GetCurrentElems()->h_end;
 }
 
 const char *LineStyle::HUp() const
@@ -116,16 +83,6 @@ const char *LineStyle::HDown() const
 const char *LineStyle::V() const
 {
   return GetCurrentElems()->v;
-}
-
-const char *LineStyle::VBegin() const
-{
-  return GetCurrentElems()->v_begin;
-}
-
-const char *LineStyle::VEnd() const
-{
-  return GetCurrentElems()->v_end;
 }
 
 const char *LineStyle::VLeft() const
@@ -163,7 +120,7 @@ const char *LineStyle::CornerBR() const
   return GetCurrentElems()->corner_br;
 }
 
-LineElements *LineStyle::GetCurrentElems() const
+const LineStyle::LineElements *LineStyle::GetCurrentElems() const
 {
   switch (type) {
     case ASCII:
@@ -177,7 +134,7 @@ LineElements *LineStyle::GetCurrentElems() const
     case HEAVY:
       return &line_elements_heavy;
     case DEFAULT:
-      if (default_type_is_ascii)
+      if (COREMANAGER->IsFallbackDrawMode())
         return &line_elements_ascii;
       return &line_elements_light;
   }

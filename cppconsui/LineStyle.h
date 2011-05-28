@@ -54,15 +54,13 @@ public:
   Type GetStyle() const { return type; };
 
   const char *H() const;
-  const char *HBegin() const;
-  const char *HEnd() const;
   const char *HUp() const;
   const char *HDown() const;
+
   const char *V() const;
-  const char *VBegin() const;
-  const char *VEnd() const;
   const char *VLeft() const;
   const char *VRight() const;
+
   const char *Cross() const;
   const char *CornerTL() const;
   const char *CornerTR() const;
@@ -70,12 +68,31 @@ public:
   const char *CornerBR() const;
 
 protected:
+  struct LineElements {
+    const char *h;         // horizontal line
+    const char *h_up;      //   and line up
+    const char *h_down;    //   and line down
+    const char *v;         // vertical line
+    const char *v_left;    //   and line left
+    const char *v_right;   //   and line right
+    const char *cross;     // horizontal and vertical line crossed
+    const char *corner_tl; // top-left corner
+    const char *corner_tr; // top-right corner
+    const char *corner_bl; // bottom-left corner
+    const char *corner_br; // bottom-right corner
+  };
+
+  const static LineElements line_elements_ascii;
+  const static LineElements line_elements_ascii_rounded;
+  const static LineElements line_elements_light;
+  const static LineElements line_elements_light_rounded;
+  const static LineElements line_elements_heavy;
+
   Type type;
 
-private:
-  static bool default_type_is_ascii;
+  const LineElements *GetCurrentElems() const;
 
-  LineElements *GetCurrentElems() const;
+private:
 };
 
 #endif // __LINESTYLE_H__

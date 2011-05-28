@@ -44,14 +44,7 @@ void VerticalLine::Draw()
 
   int attrs = GetColorPair("verticalline", "line");
   area->attron(attrs);
-  if (realh <= 1)
-    area->mvaddstring(0, 0, linestyle.V());
-  else {
-    area->mvaddstring(0, 0, linestyle.VBegin());
-    for (int i = 1; i < realh - 1; i++) {
-      area->mvaddstring(i, 0, linestyle.V());
-    }
-    area->mvaddstring(realh - 1, 0, linestyle.VEnd());
-  }
+  for (int i = 0; i < realh; i++)
+    area->mvaddstring(i, 0, linestyle.V());
   area->attroff(attrs);
 }

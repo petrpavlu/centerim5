@@ -169,7 +169,9 @@ void Connections::report_disconnect_reason(PurpleConnection *gc,
         RECONNECTION_DELAY_MAX);
     COREMANAGER->TimeoutOnceConnect(sigc::bind(sigc::mem_fun(this,
             &Connections::AccountReconnect), account), delay);
-    LOG->Message(ngettext("+ [%s] %s: Auto-reconnection in %d second","+ [%s] %s: Auto-reconnection in %d seconds", delay / 1000), protocol, username, delay / 1000);
+    LOG->Message(ngettext("+ [%s] %s: Auto-reconnection in %d second",
+          "+ [%s] %s: Auto-reconnection in %d seconds", delay / 1000),
+        protocol, username, delay / 1000);
   }
   else {
     purple_account_set_enabled(account, PACKAGE_NAME, FALSE);

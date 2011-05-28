@@ -44,13 +44,7 @@ void HorizontalLine::Draw()
 
   int attrs = GetColorPair("horizontalline", "line");
   area->attron(attrs);
-  if (realw <= 1)
-    area->mvaddstring(0, 0, linestyle.H());
-  else {
-    area->mvaddstring(0, 0, linestyle.HBegin());
-    for (int i = 1; i < realw - 1; i++)
-      area->mvaddstring(i, 0, linestyle.H());
-    area->mvaddstring(realw - 1, 0, linestyle.HEnd());
-  }
+  for (int i = 0; i < realw; i++)
+    area->mvaddstring(i, 0, linestyle.H());
   area->attroff(attrs);
 }

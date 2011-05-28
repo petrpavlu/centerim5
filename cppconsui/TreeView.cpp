@@ -401,9 +401,8 @@ int TreeView::DrawNode(SiblingIterator node, int top)
         area->mvaddstring(depthoffset + 3, top + height, i->open ? "-" : "+");
         area->mvaddstring(depthoffset + 4, top + height, "]");
       }
-      else {
-        area->mvaddstring(depthoffset + 2, top + height, linestyle.HEnd());
-      }
+      else
+        area->mvaddstring(depthoffset + 2, top + height, linestyle.H());
 
       area->attroff(attrs);
       oldh = height;

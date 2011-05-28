@@ -75,7 +75,6 @@ public:
     { return top_input_processor; }
 
   void Redraw();
-  void RedrawScreen();
 
   sigc::connection TimeoutConnect(const sigc::slot<bool>& slot,
       unsigned interval, int priority = G_PRIORITY_DEFAULT);
@@ -83,6 +82,8 @@ public:
       unsigned interval, int priority = G_PRIORITY_DEFAULT);
 
   TermKey *GetTermKeyHandle() { return tk; };
+
+  bool IsFallbackDrawMode() { return fallback_draw_mode; }
 
   sigc::signal<void> signal_resize;
 
@@ -112,6 +113,8 @@ private:
 
   bool redraw_pending;
   bool resize_pending;
+
+  bool fallback_draw_mode;
 
   CoreManager();
   CoreManager(const CoreManager&);
@@ -159,6 +162,8 @@ private:
 
   Windows::iterator FindWindow(FreeWindow& window);
   void FocusWindow();
+
+  void RedrawScreen();
 
   void DeclareBindables();
 };

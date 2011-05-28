@@ -79,9 +79,6 @@ void TextEdit::Draw()
   if (!area)
     return;
 
-  int attrs = GetColorPair("textedit", "text");
-  area->attron(attrs);
-
   if (origw != area->getmaxx()) {
     UpdateScreenLines();
     UpdateScreenCursor();
@@ -92,8 +89,10 @@ void TextEdit::Draw()
   if (screen_lines.empty())
     return;
 
-  int realh = area->getmaxy();
+  int attrs = GetColorPair("textedit", "text");
+  area->attron(attrs);
 
+  int realh = area->getmaxy();
   std::vector<ScreenLine *>::iterator i;
   int j;
   for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end()
@@ -107,6 +106,8 @@ void TextEdit::Draw()
     else
       area->mvaddstring(0, j, (*i)->width, (*i)->start);
   }
+
+  area->attroff(attrs);
 
   if (has_focus) {
     const char *line = screen_lines[current_sc_line]->start;

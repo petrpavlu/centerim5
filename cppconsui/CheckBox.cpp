@@ -88,6 +88,7 @@ void CheckBox::Draw()
   int max = area->getmaxx() * area->getmaxy();
   int x = area->mvaddstring(0, 0, max, text);
   if (style == STYLE_BOX) {
+    // @todo Add fallback (ascii) mode for STYLE_BOX.
     if (state)
       x += area->mvaddstring(x, 0, max - x, " \xe2\x9c\x93");
     else
