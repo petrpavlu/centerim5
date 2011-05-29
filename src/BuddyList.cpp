@@ -255,8 +255,8 @@ void BuddyList::request_add_buddy(PurpleAccount *account,
   purple_request_field_group_add_field(g, f);
 
   purple_request_fields(NULL, _("Add buddy"), NULL, NULL, fields, _("Add"),
-      G_CALLBACK(add_buddy_ok_cb_), _("Cancel"), NULL, NULL, NULL, NULL,
-      this);
+      G_CALLBACK(add_buddy_ok_cb_), CANCEL_BUTTON_TEXT, NULL, NULL, NULL,
+      NULL, this);
 }
 
 void BuddyList::add_buddy_ok_cb(PurpleRequestFields *fields)
@@ -379,7 +379,7 @@ void BuddyList::request_add_chat(PurpleAccount *account, PurpleGroup *group,
   purple_request_field_group_add_field(g, f);
 
   purple_request_fields(NULL, _("Add chat"), NULL, NULL, fields, _("Add"),
-      G_CALLBACK(add_chat_ok_cb_), _("Cancel"), NULL, NULL, NULL, NULL,
+      G_CALLBACK(add_chat_ok_cb_), CANCEL_BUTTON_TEXT, NULL, NULL, NULL, NULL,
       this);
 }
 

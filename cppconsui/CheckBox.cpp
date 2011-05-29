@@ -97,7 +97,7 @@ void CheckBox::Draw()
   else {
     x += area->mvaddstring(x, 0, max - x, ": ");
     area->mvaddstring(x, 0, max - x,
-        state ? _(YES_BUTTON_TEXT) : _(NO_BUTTON_TEXT));
+        state ? YES_BUTTON_TEXT : NO_BUTTON_TEXT);
   }
 
   if (has_focus)

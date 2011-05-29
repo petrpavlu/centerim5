@@ -33,7 +33,7 @@
 MessageDialog::MessageDialog(const char *title, const char *text)
 : AbstractDialog(title)
 {
-  AddButton(_(OK_BUTTON_TEXT), RESPONSE_OK);
+  AddButton(OK_BUTTON_TEXT, RESPONSE_OK);
 
   label = new Label(AUTOSIZE, AUTOSIZE, text);
   layout->InsertWidget(0, *label);

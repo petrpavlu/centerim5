@@ -28,10 +28,10 @@
 #ifndef __ABSTRACTDIALOG_H__
 #define __ABSTRACTDIALOG_H__
 
-#define OK_BUTTON_TEXT "Ok"
-#define CANCEL_BUTTON_TEXT "Cancel"
-#define YES_BUTTON_TEXT "Yes"
-#define NO_BUTTON_TEXT "No"
+#define OK_BUTTON_TEXT _("Ok")
+#define CANCEL_BUTTON_TEXT _("Cancel")
+#define YES_BUTTON_TEXT _("Yes")
+#define NO_BUTTON_TEXT _("No")
 
 #include "HorizontalLine.h"
 #include "HorizontalListBox.h"

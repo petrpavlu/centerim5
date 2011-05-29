@@ -33,7 +33,7 @@
 InputDialog::InputDialog(const char *title, const char *defaultvalue)
 : AbstractDialog(title)
 {
-  AddButton(_(OK_BUTTON_TEXT), InputDialog::RESPONSE_OK);
+  AddButton(OK_BUTTON_TEXT, InputDialog::RESPONSE_OK);
 
   entry = new TextEntry(AUTOSIZE, AUTOSIZE, defaultvalue);
   layout->InsertWidget(0, *entry);

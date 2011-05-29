@@ -23,6 +23,8 @@ src/Utils.cpp
 
 # CppConsUI source files
 cppconsui/AbstractDialog.cpp
+# header file containing yes, no.. button text
+cppconsui/AbstractDialog.h
 cppconsui/AbstractLine.cpp
 cppconsui/AbstractListBox.cpp
 cppconsui/Button.cpp
