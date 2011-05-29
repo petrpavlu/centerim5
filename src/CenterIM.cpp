@@ -212,6 +212,10 @@ void CenterIM::PurpleFinalize()
 
 void CenterIM::PrefsInit()
 {
+  // remove someday...
+  if (purple_prefs_exists("/centerim"))
+    purple_prefs_rename("/centerim", CONF_PREFIX);
+
   // init prefs
   purple_prefs_add_none(CONF_PREFIX "/dimensions");
   purple_prefs_add_int(CONF_PREFIX "/dimensions/buddylist_width", 20);

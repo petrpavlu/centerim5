@@ -26,7 +26,7 @@
 #include <cppconsui/CoreManager.h>
 #include <vector>
 
-#define CONF_PREFIX "/centerim"
+#define CONF_PREFIX "/centerim5"
 
 #define CENTERIM (CenterIM::Instance())
 
