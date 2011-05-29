@@ -46,12 +46,20 @@ public:
   virtual void Close();
   virtual void ScreenResized();
 
+  /* These functions are faster version of getting blist/show_empty_groups and
+   * blist/show_offline_buddies prefs. */
+  bool GetShowEmptyGroupsPref() const { return show_empty_groups; }
+  bool GetShowOfflineBuddiesPref() const { return show_offline_buddies; }
+
 protected:
 
 private:
   PurpleBlistUiOps centerim_blist_ui_ops;
   PurpleBuddyList *buddylist;
   CppConsUI::TreeView *treeview;
+
+  bool show_empty_groups;
+  bool show_offline_buddies;
 
   static BuddyList *instance;
 
@@ -103,6 +111,14 @@ private:
   static void add_chat_ok_cb_(void *data, PurpleRequestFields *fields)
     { reinterpret_cast<BuddyList*>(data)->add_chat_ok_cb(fields); }
   void add_chat_ok_cb(PurpleRequestFields *fields);
+
+  // called when any blist/* pref is changed
+  static void blist_pref_change_(const char *name, PurplePrefType type,
+      gconstpointer val, gpointer data)
+    { reinterpret_cast<BuddyList*>(data)->blist_pref_change(name, type,
+        val); }
+  void blist_pref_change(const char *name, PurplePrefType type,
+      gconstpointer val);
 };
 
 #endif // __BUDDYLIST_H__

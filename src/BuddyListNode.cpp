@@ -21,6 +21,7 @@
 
 #include "BuddyListNode.h"
 
+#include "BuddyList.h"
 #include "Conversations.h"
 #include "Utils.h"
 
@@ -199,8 +200,12 @@ void BuddyListBuddy::Update()
 
   SortIn();
 
-  // hide if account is offline
-  SetVisibility(purple_account_is_connected(purple_buddy_get_account(buddy)));
+  if (!purple_account_is_connected(purple_buddy_get_account(buddy))) {
+    // hide if account is offline
+    SetVisibility(false);
+  }
+  else
+    SetVisibility(BUDDYLIST->GetShowOfflineBuddiesPref() || status[0]);
 }
 
 void BuddyListBuddy::OnActivate(Button& activator)
@@ -371,7 +376,7 @@ void BuddyListContact::Update()
 
   PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
   const char *status = GetBuddyStatus(buddy);
-  const char *alias = purple_buddy_get_alias(buddy);
+  const char *alias = purple_contact_get_alias(contact);
   if (*status) {
     char *text = g_strdup_printf("%s %s", status, alias);
     SetText(text);
@@ -382,8 +387,12 @@ void BuddyListContact::Update()
 
   SortIn();
 
-  // hide if account is offline
-  SetVisibility(purple_account_is_connected(purple_buddy_get_account(buddy)));
+  if (!purple_account_is_connected(purple_buddy_get_account(buddy))) {
+    // hide if account is offline
+    SetVisibility(false);
+  }
+  else
+    SetVisibility(BUDDYLIST->GetShowOfflineBuddiesPref() || status[0]);
 }
 
 void BuddyListContact::OnActivate(Button& activator)
@@ -474,19 +483,24 @@ void BuddyListGroup::Update()
 
   SortIn();
 
-  // hide if account is offline
-  GSList *accounts, *p;
-  accounts = p = purple_group_get_accounts(group);
-  bool vis = false;
-  while (p) {
-    if (purple_account_is_connected(
-          reinterpret_cast<PurpleAccount*>(p->data))) {
-      vis = true;
-      break;
+  bool vis = BUDDYLIST->GetShowEmptyGroupsPref()
+    || purple_blist_get_group_size(group, FALSE);
+
+  if (vis) {
+    // hide if this group belongs to an offline account
+    GSList *accounts, *p;
+    accounts = p = purple_group_get_accounts(group);
+    vis = false;
+    while (p) {
+      if (purple_account_is_connected(
+            reinterpret_cast<PurpleAccount*>(p->data))) {
+        vis = true;
+        break;
+      }
+      p = g_slist_next(p);
     }
-    p = g_slist_next(p);
+    g_slist_free(accounts);
   }
-  g_slist_free(accounts);
 
   SetVisibility(vis);
 }

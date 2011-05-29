@@ -91,8 +91,17 @@ BuddyList::BuddyList()
 
   // init prefs
   purple_prefs_add_none(CONF_PREFIX "/blist");
-  purple_prefs_add_bool(CONF_PREFIX "/blist/show_offline_buddies", true);
   purple_prefs_add_bool(CONF_PREFIX "/blist/show_empty_groups", true);
+  purple_prefs_add_bool(CONF_PREFIX "/blist/show_offline_buddies", true);
+
+  show_empty_groups = purple_prefs_get_bool(CONF_PREFIX
+      "/blist/show_empty_groups");
+  show_offline_buddies = purple_prefs_get_bool(CONF_PREFIX
+      "/blist/show_offline_buddies");
+
+  // connect callbacks
+  purple_prefs_connect_callback(this, CONF_PREFIX "/blist",
+      blist_pref_change_, this);
 
   // setup the callbacks for the buddylist
   memset(&centerim_blist_ui_ops, 0, sizeof(centerim_blist_ui_ops));
@@ -118,6 +127,7 @@ BuddyList::BuddyList()
 BuddyList::~BuddyList()
 {
   purple_blist_set_ui_ops(NULL);
+  purple_prefs_disconnect_by_handle(this);
 }
 
 void BuddyList::Init()
@@ -447,5 +457,30 @@ void BuddyList::add_chat_ok_cb(PurpleRequestFields *fields)
     purple_blist_alias_chat(chat, alias);
     purple_blist_node_set_bool(reinterpret_cast<PurpleBlistNode*>(chat),
         PACKAGE_NAME "-autojoin", autojoin);
+  }
+}
+
+void BuddyList::blist_pref_change(const char *name, PurplePrefType type,
+    gconstpointer val)
+{
+  // blist/show_empty_groups or blist/show_offline_buddies changed
+  show_empty_groups = purple_prefs_get_bool(CONF_PREFIX
+      "/blist/show_empty_groups");
+  show_offline_buddies = purple_prefs_get_bool(CONF_PREFIX
+      "/blist/show_offline_buddies");
+
+  bool groups_only = false;
+  if (!strcmp(name, CONF_PREFIX "blist/show_empty_groups"))
+    groups_only = true;
+
+  PurpleBlistNode *node = purple_blist_get_root();
+  while (node) {
+    if (!groups_only || PURPLE_BLIST_NODE_IS_GROUP(node)) {
+      BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(node->ui_data);
+      if (bnode)
+        bnode->Update();
+    }
+
+    node = purple_blist_node_next(node, TRUE);
   }
 }

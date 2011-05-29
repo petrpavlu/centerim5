@@ -39,10 +39,10 @@ OptionWindow::OptionWindow()
   CppConsUI::TreeView::NodeReference parent;
   parent = tree->AppendNode(tree->GetRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(_("Buddy list"))));
-  tree->AppendNode(parent, *(new BooleanOption(_("Show offline buddies"),
-          CONF_PREFIX "/blist/show_offline_buddies")));
   tree->AppendNode(parent, *(new BooleanOption(_("Show empty groups"),
           CONF_PREFIX "/blist/show_empty_groups")));
+  tree->AppendNode(parent, *(new BooleanOption(_("Show offline buddies"),
+          CONF_PREFIX "/blist/show_offline_buddies")));
 
   parent = tree->AppendNode(tree->GetRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(
