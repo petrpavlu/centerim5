@@ -41,15 +41,16 @@ public:
   virtual void OnActivate(CppConsUI::Button& activator) = 0;
   // debugging method
   virtual const char *ToString() const = 0;
-  /* Sorts in this node. It supposes that all siblings are in correct order.
-   * */
-  virtual void SortIn();
-
-  BuddyListNode *GetParentNode() const;
 
   virtual void SetRefNode(CppConsUI::TreeView::NodeReference n) { ref = n; }
   virtual CppConsUI::TreeView::NodeReference GetRefNode() const
     { return ref; }
+
+  /* Sorts in this node. It supposes that all siblings are in the correct
+   * order. */
+  void SortIn();
+
+  BuddyListNode *GetParentNode() const;
 
   sigc::signal<void> signal_remove;
 
@@ -166,7 +167,6 @@ public:
   virtual void Update();
   virtual void OnActivate(Button& activator);
   virtual const char *ToString() const;
-  virtual void SortIn();
 
 protected:
   PurpleGroup *group;

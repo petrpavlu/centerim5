@@ -62,28 +62,30 @@ void BuddyListNode::Update()
 
 void BuddyListNode::SortIn()
 {
+  CppConsUI::TreeView::NodeReference parent_ref;
   BuddyListNode *parent_node = GetParentNode();
-  if (parent_node) {
-    CppConsUI::TreeView::NodeReference parent_ref = parent_node->GetRefNode();
+  if (parent_node)
+    parent_ref = parent_node->GetRefNode();
+  else
+    parent_ref = treeview->GetRootNode();
 
-    CppConsUI::TreeView::SiblingIterator i;
-    for (i = parent_ref.begin(); i != parent_ref.end(); i++) {
-      // skip this node
-      if (i == ref)
-        continue;
+  CppConsUI::TreeView::SiblingIterator i;
+  for (i = parent_ref.begin(); i != parent_ref.end(); i++) {
+    // skip this node
+    if (i == ref)
+      continue;
 
-      BuddyListNode *n = dynamic_cast<BuddyListNode*>(i->GetWidget());
-      g_assert(n);
+    BuddyListNode *n = dynamic_cast<BuddyListNode*>(i->GetWidget());
+    g_assert(n);
 
-      if (LessThan(*n)) {
-        treeview->MoveNodeBefore(ref, i);
-        break;
-      }
+    if (LessThan(*n)) {
+      treeview->MoveNodeBefore(ref, i);
+      break;
     }
-    // the ref is last in a list
-    if (i == parent_ref.end())
-      treeview->MoveNodeAfter(ref, --i);
   }
+  // the ref is last in a list
+  if (i == parent_ref.end())
+    treeview->MoveNodeAfter(ref, --i);
 }
 
 BuddyListNode *BuddyListNode::GetParentNode() const
@@ -483,14 +485,11 @@ void BuddyListGroup::Update()
 
   SortIn();
 
-  bool vis = BUDDYLIST->GetShowEmptyGroupsPref()
-    || purple_blist_get_group_size(group, FALSE);
-
-  if (vis) {
-    // hide if this group belongs to an offline account
+  bool vis = false;
+  if (BUDDYLIST->GetShowEmptyGroupsPref()) {
+    // don't display this group if it belongs only to an offline account
     GSList *accounts, *p;
     accounts = p = purple_group_get_accounts(group);
-    vis = false;
     while (p) {
       if (purple_account_is_connected(
             reinterpret_cast<PurpleAccount*>(p->data))) {
@@ -501,6 +500,8 @@ void BuddyListGroup::Update()
     }
     g_slist_free(accounts);
   }
+  else
+    vis = purple_blist_get_group_size(group, FALSE);
 
   SetVisibility(vis);
 }
@@ -514,29 +515,6 @@ void BuddyListGroup::OnActivate(Button& activator)
 const char *BuddyListGroup::ToString() const
 {
   return purple_group_get_name(group);
-}
-
-void BuddyListGroup::SortIn()
-{
-  CppConsUI::TreeView::NodeReference parent_ref = treeview->GetRootNode();
-
-  CppConsUI::TreeView::SiblingIterator i;
-  for (i = parent_ref.begin(); i != parent_ref.end(); i++) {
-    // skip this node
-    if (i == ref)
-      continue;
-
-    BuddyListNode *n = dynamic_cast<BuddyListNode*>(i->GetWidget());
-    g_assert(n);
-
-    if (LessThan(*n)) {
-      treeview->MoveNodeBefore(ref, i);
-      break;
-    }
-  }
-  // the ref is last in a list
-  if (i == parent_ref.end())
-    treeview->MoveNodeAfter(ref, --i);
 }
 
 void BuddyListGroup::DelayedInit()
