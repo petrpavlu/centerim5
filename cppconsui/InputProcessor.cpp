@@ -29,6 +29,9 @@
 #include "KeyConfig.h"
 #include "Keys.h"
 
+namespace CppConsUI
+{
+
 InputProcessor::InputProcessor()
 : input_child(NULL)
 {
@@ -102,3 +105,5 @@ bool InputProcessor::ProcessInputText(const TermKeyKey& key)
 {
   return false;
 }
+
+} // namespace CppConsUI

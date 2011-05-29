@@ -51,6 +51,9 @@
 #include <string.h>
 #include "gettext.h"
 
+namespace CppConsUI
+{
+
 TextEdit::TextEdit(int w, int h)
 : Widget(w, h)
 , editable(true)
@@ -743,3 +746,5 @@ void TextEdit::DeclareBindables()
         &TextEdit::ActionToggleOverwrite), InputProcessor::BINDABLE_NORMAL);
   */
 }
+
+} // namespace CppConsUI

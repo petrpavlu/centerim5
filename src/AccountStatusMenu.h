@@ -26,7 +26,7 @@
 #include <libpurple/purple.h>
 
 class AccountStatusMenu
-: public MenuWindow
+: public CppConsUI::MenuWindow
 {
 public:
   AccountStatusMenu();
@@ -51,7 +51,7 @@ private:
   protected:
     PurpleAccount *account;
 
-    void SetStatus(Button& activator, PurpleAccount *account,
+    void SetStatus(CppConsUI::Button& activator, PurpleAccount *account,
         PurpleStatusType *status_type, bool active);
 
   private:
@@ -60,7 +60,7 @@ private:
   AccountStatusMenu(const AccountStatusMenu&);
   AccountStatusMenu& operator=(const AccountStatusMenu&);
 
-  void OpenStatusPopup(Button& activator, PurpleAccount *account);
+  void OpenStatusPopup(CppConsUI::Button& activator, PurpleAccount *account);
 };
 
 #endif // __ACOUNTSTATUSMENU_H__

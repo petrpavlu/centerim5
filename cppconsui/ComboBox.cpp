@@ -32,6 +32,9 @@
 
 #include "gettext.h"
 
+namespace CppConsUI
+{
+
 ComboBox::ComboBox(int w, int h, const char *text)
 : Button(TYPE_DOUBLE, w, h, text)
 , dropdown(NULL)
@@ -209,3 +212,5 @@ void ComboBox::DropDownClose(FreeWindow& window)
 {
   dropdown = NULL;
 }
+
+} // namespace CppConsUI

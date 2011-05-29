@@ -39,6 +39,9 @@
 #include <map>
 #include "gettext.h"
 
+namespace CppConsUI
+{
+
 namespace Curses
 {
 
@@ -415,3 +418,5 @@ int onscreen_width(gunichar uc)
 }
 
 } // namespace Curses
+
+} // namespace CppConsUI

@@ -8,7 +8,7 @@
 
 // TreeViewWindow class
 class TreeViewWindow
-: public Window
+: public CppConsUI::Window
 {
   public:
     /* This is a main window, make sure it can not be closed with ESC key by
@@ -36,36 +36,36 @@ TreeViewWindow *TreeViewWindow::Instance()
 TreeViewWindow::TreeViewWindow()
 : Window(0, 0, 0, 0)
 {
-  TreeView *tree;
-  TreeView::NodeReference node;
-  TreeView::NodeReference node2;
+  CppConsUI::TreeView *tree;
+  CppConsUI::TreeView::NodeReference node;
+  CppConsUI::TreeView::NodeReference node2;
 
-  AddWidget(*(new Label(20, 1, "Press F10 to quit.")), 1, 1);
+  AddWidget(*(new CppConsUI::Label(20, 1, "Press F10 to quit.")), 1, 1);
 
-  tree = new TreeView(30, 12);
+  tree = new CppConsUI::TreeView(30, 12);
   AddWidget(*tree, 1, 3);
   SetInputChild(*tree);
 
   node = tree->AppendNode(tree->GetRootNode(),
-      *(new Button("Button node A")));
-  node2 = tree->AppendNode(node, *(new Button("Button node A-1")));
-  tree->AppendNode(node2, *(new Button("Button node A-1-a")));
-  tree->AppendNode(node2, *(new Button("Button node A-1-b")));
-  tree->AppendNode(node2, *(new Button("Button node A-1-c")));
-  tree->AppendNode(node, *(new Button("Button node A-2")));
-  tree->AppendNode(node, *(new Button("Button node A-3")));
+      *(new CppConsUI::Button("Button node A")));
+  node2 = tree->AppendNode(node, *(new CppConsUI::Button("Button node A-1")));
+  tree->AppendNode(node2, *(new CppConsUI::Button("Button node A-1-a")));
+  tree->AppendNode(node2, *(new CppConsUI::Button("Button node A-1-b")));
+  tree->AppendNode(node2, *(new CppConsUI::Button("Button node A-1-c")));
+  tree->AppendNode(node, *(new CppConsUI::Button("Button node A-2")));
+  tree->AppendNode(node, *(new CppConsUI::Button("Button node A-3")));
 
   node = tree->AppendNode(tree->GetRootNode(),
-      *(new Label("Label node B")));
-  tree->AppendNode(node, *(new Label("Label node B-1")));
-  tree->AppendNode(node, *(new Label("Label node B-2")));
-  tree->AppendNode(node, *(new Label("Label node B-3")));
+      *(new CppConsUI::Label("Label node B")));
+  tree->AppendNode(node, *(new CppConsUI::Label("Label node B-1")));
+  tree->AppendNode(node, *(new CppConsUI::Label("Label node B-2")));
+  tree->AppendNode(node, *(new CppConsUI::Label("Label node B-3")));
 
   node = tree->AppendNode(tree->GetRootNode(),
-      *(new Button("Button node C")));
-  tree->AppendNode(node, *(new Button("Button node C-1")));
-  tree->AppendNode(node, *(new Button("Button node C-2")));
-  tree->AppendNode(node, *(new Button("Button node C-3")));
+      *(new CppConsUI::Button("Button node C")));
+  tree->AppendNode(node, *(new CppConsUI::Button("Button node C-1")));
+  tree->AppendNode(node, *(new CppConsUI::Button("Button node C-2")));
+  tree->AppendNode(node, *(new CppConsUI::Button("Button node C-3")));
 }
 
 void TreeViewWindow::ScreenResized()
@@ -76,7 +76,7 @@ void TreeViewWindow::ScreenResized()
 
 // TestApp class
 class TestApp
-: public InputProcessor
+: public CppConsUI::InputProcessor
 {
   public:
     static TestApp *Instance();
@@ -91,7 +91,7 @@ class TestApp
   protected:
 
   private:
-    CoreManager *mngr;
+    CppConsUI::CoreManager *mngr;
 
     TestApp();
     TestApp(const TestApp&);
@@ -106,15 +106,15 @@ TestApp *TestApp::Instance()
 }
 
 TestApp::TestApp()
-: InputProcessor()
 {
-  mngr = CoreManager::Instance();
+  mngr = CppConsUI::CoreManager::Instance();
   KEYCONFIG->RegisterDefaultKeys();
 
   g_log_set_default_handler(g_log_func_, this);
 
   DeclareBindable("testapp", "quit", sigc::mem_fun(mngr,
-        &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
+        &CppConsUI::CoreManager::QuitMainLoop),
+      InputProcessor::BINDABLE_OVERRIDE);
   KEYCONFIG->BindKey("testapp", "quit", "F10");
 }
 

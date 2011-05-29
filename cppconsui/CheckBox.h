@@ -30,6 +30,9 @@
 
 #include "Widget.h"
 
+namespace CppConsUI
+{
+
 /**
  * CheckBox.
  */
@@ -84,5 +87,7 @@ private:
 
   void DeclareBindables();
 };
+
+} // namespace CppConsUI
 
 #endif // __CHECKBOX_H__

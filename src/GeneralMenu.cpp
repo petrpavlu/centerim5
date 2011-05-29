@@ -70,37 +70,37 @@ GeneralMenu::GeneralMenu()
 
 void GeneralMenu::ScreenResized()
 {
-  Rect chat = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
+  CppConsUI::Rect chat = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
   MoveResize(chat.x, chat.y, win_w, win_h);
 }
 
-void GeneralMenu::OpenAccountWindow(Button& activator)
+void GeneralMenu::OpenAccountWindow(CppConsUI::Button& activator)
 {
   AccountWindow *win = new AccountWindow;
   win->Show();
   Close();
 }
 
-void GeneralMenu::OpenAddBuddyRequest(Button& activator)
+void GeneralMenu::OpenAddBuddyRequest(CppConsUI::Button& activator)
 {
   purple_blist_request_add_buddy(NULL, NULL, NULL, NULL);
   Close();
 }
 
-void GeneralMenu::OpenAddChatRequest(Button& activator)
+void GeneralMenu::OpenAddChatRequest(CppConsUI::Button& activator)
 {
   purple_blist_request_add_chat(NULL, NULL, NULL, NULL);
   Close();
 }
 
-void GeneralMenu::OpenOptionWindow(Button& activator)
+void GeneralMenu::OpenOptionWindow(CppConsUI::Button& activator)
 {
   OptionWindow *win = new OptionWindow;
   win->Show();
   Close();
 }
 
-void GeneralMenu::RequestTest(Button& activator)
+void GeneralMenu::RequestTest(CppConsUI::Button& activator)
 {
 #if 0
   purple_request_input(NULL, "Title", "Primary", "Secondary",

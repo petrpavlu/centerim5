@@ -34,6 +34,9 @@
 
 #include <vector>
 
+namespace CppConsUI
+{
+
 /**
  * This class should be used when the user must choose one value from several
  * options.
@@ -132,5 +135,7 @@ private:
   ComboBox(const ComboBox&);
   ComboBox& operator=(const ComboBox&);
 };
+
+} // namespace CppConsUI
 
 #endif // __COMBOBOX_H__

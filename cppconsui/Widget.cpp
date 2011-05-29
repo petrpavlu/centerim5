@@ -32,7 +32,8 @@
 #include "CoreManager.h"
 #include "Container.h"
 
-#include <string>
+namespace CppConsUI
+{
 
 Widget::Widget(int w, int h)
 : xpos(UNSET), ypos(UNSET), width(w), height(h), can_focus(false)
@@ -282,3 +283,5 @@ Container *Widget::GetTopContainer()
     return parent->GetTopContainer();
   return dynamic_cast<Container*>(this);
 }
+
+} // namespace CppConsUI

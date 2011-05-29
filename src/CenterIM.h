@@ -31,7 +31,7 @@
 #define CENTERIM (CenterIM::Instance())
 
 class CenterIM
-: public InputProcessor
+: public CppConsUI::InputProcessor
 {
 public:
   enum ScreenArea {
@@ -53,14 +53,14 @@ public:
   void Quit();
 
   // returns size of selected area
-  Rect GetScreenAreaSize(ScreenArea area);
+  CppConsUI::Rect GetScreenAreaSize(ScreenArea area);
 
   static const char * const version;
 
 protected:
 
 private:
-  CoreManager *mngr;
+  CppConsUI::CoreManager *mngr;
   sigc::connection resize;
 
   PurpleCoreUiOps centerim_core_ui_ops;
@@ -85,7 +85,7 @@ private:
   typedef std::vector<LogBufferItem> LogBufferItems;
   static LogBufferItems *logbuf;
 
-  Rect areaSizes[AREAS_NUM];
+  CppConsUI::Rect areaSizes[AREAS_NUM];
 
   CenterIM();
   CenterIM(const CenterIM&);

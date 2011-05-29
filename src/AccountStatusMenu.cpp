@@ -59,7 +59,7 @@ AccountStatusMenu::AccountStatusMenu()
 
 void AccountStatusMenu::ScreenResized()
 {
-  Rect chat = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
+  CppConsUI::Rect chat = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
   Move(chat.x, chat.y);
 }
 
@@ -92,7 +92,7 @@ AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h,
           purple_status_type_get_name(status_type));
     else
       label = g_strdup(purple_status_type_get_name(status_type));
-    Button *b = AppendItem(label, sigc::bind(
+    CppConsUI::Button *b = AppendItem(label, sigc::bind(
           sigc::mem_fun(this, &AccountStatusMenu::StatusPopup::SetStatus),
           account, status_type, true));
     if (active)
@@ -123,7 +123,7 @@ AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h,
             purple_status_type_get_name(status_type));
       else
         label = g_strdup(purple_status_type_get_name(status_type));
-      Button *b = AppendItem(label, sigc::bind(
+      CppConsUI::Button *b = AppendItem(label, sigc::bind(
             sigc::mem_fun(this, &AccountStatusMenu::StatusPopup::SetStatus),
             account, status_type, !active));
       if (active)
@@ -138,11 +138,11 @@ AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h,
 
 void AccountStatusMenu::StatusPopup::ScreenResized()
 {
-  Rect chat = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
+  CppConsUI::Rect chat = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
   Move(chat.x, chat.y);
 }
 
-void AccountStatusMenu::StatusPopup::SetStatus(Button& activator,
+void AccountStatusMenu::StatusPopup::SetStatus(CppConsUI::Button& activator,
     PurpleAccount *account, PurpleStatusType *status_type, bool active)
 {
   purple_account_set_status(account, purple_status_type_get_id(status_type),
@@ -150,7 +150,7 @@ void AccountStatusMenu::StatusPopup::SetStatus(Button& activator,
   Close();
 }
 
-void AccountStatusMenu::OpenStatusPopup(Button& activator,
+void AccountStatusMenu::OpenStatusPopup(CppConsUI::Button& activator,
     PurpleAccount *account)
 {
   AccountStatusMenu::StatusPopup *status_popup = new StatusPopup(win_x, win_y,

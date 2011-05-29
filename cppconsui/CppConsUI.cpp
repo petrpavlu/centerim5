@@ -28,6 +28,9 @@
 
 #include "CppConsUI.h"
 
+namespace CppConsUI
+{
+
 Point::Point()
 : x(0)
 , y(0)
@@ -53,3 +56,5 @@ Rect::Rect(int x, int y, int w, int h)
 , height(h)
 {
 }
+
+} // namespace CppConsUI

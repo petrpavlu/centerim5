@@ -32,7 +32,7 @@
 #include <libpurple/purple.h>
 
 class Conversation
-: public Window
+: public CppConsUI::Window
 {
 public:
   enum Status {
@@ -64,9 +64,9 @@ public:
   PurpleConversation *GetPurpleConversation() const { return conv; };
 
 protected:
-  TextView *view;
-  TextEdit *input;
-  HorizontalLine *line;
+  CppConsUI::TextView *view;
+  CppConsUI::TextEdit *input;
+  CppConsUI::HorizontalLine *line;
 
   PurpleConversation *conv;
 

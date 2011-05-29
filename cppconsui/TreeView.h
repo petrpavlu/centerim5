@@ -28,6 +28,9 @@
 
 #include "tree.hh"
 
+namespace CppConsUI
+{
+
 class TreeView
 : public ScrollPane
 {
@@ -235,5 +238,7 @@ private:
 
   void DeclareBindables();
 };
+
+} // namespace CppConsUI
 
 #endif // __TREEVIEW_H__

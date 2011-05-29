@@ -35,6 +35,9 @@
 
 #include <glib.h>
 
+namespace CppConsUI
+{
+
 namespace Curses
 {
 struct Stats
@@ -144,5 +147,7 @@ int onscreen_width(const char *start, const char *end = NULL);
 int onscreen_width(gunichar uc);
 
 } // namespace Curses
+
+} // namespace CppConsUI
 
 #endif // __CONSUICURSES_H__

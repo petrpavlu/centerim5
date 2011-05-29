@@ -67,6 +67,9 @@
 /** Maximum size of text buffer, in bytes. */
 #define MAX_SIZE G_MAXUSHORT
 
+namespace CppConsUI
+{
+
 class TextEntry
 : public Widget
 {
@@ -143,5 +146,7 @@ private:
 
   void DeclareBindables();
 };
+
+} // namespace CppConsUI
 
 #endif // __TEXT_ENTRY_H__

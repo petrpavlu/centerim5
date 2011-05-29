@@ -28,6 +28,9 @@
 
 #include "ListBox.h"
 
+namespace CppConsUI
+{
+
 ListBox::ListBox(int w, int h)
 : AbstractListBox(w, h), children_height(0), autosize_children(0)
 , autosize_height(0), reposition_widgets(false)
@@ -181,3 +184,5 @@ void ListBox::UpdateScrollHeight()
 
   SetScrollHeight(MAX(realh, children_height));
 }
+
+} // namespace CppConsUI

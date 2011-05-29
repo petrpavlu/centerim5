@@ -6,7 +6,7 @@
 
 // TestWindow class
 class TestWindow
-: public Window
+: public CppConsUI::Window
 {
   public:
     TestWindow(int number, int x, int y, int w, int h);
@@ -20,27 +20,27 @@ class TestWindow
 };
 
 TestWindow::TestWindow(int number, int x, int y, int w, int h)
-: Window(x, y, w, h)
+: CppConsUI::Window(x, y, w, h)
 {
-  Label *label;
+  CppConsUI::Label *label;
 
   gchar *t = g_strdup_printf("Win %d", number);
-  label = new Label(w - 4, 1, t);
+  label = new CppConsUI::Label(w - 4, 1, t);
   g_free(t);
   AddWidget(*label, 2, 1);
 
   if (number == 1) {
-    label = new Label("Press F10 to quit.");
+    label = new CppConsUI::Label("Press F10 to quit.");
     AddWidget(*label, 2, 2);
 
-    label = new Label("Press ESC to close a focused window.");
+    label = new CppConsUI::Label("Press ESC to close a focused window.");
     AddWidget(*label, 2, 3);
   }
 }
 
 // TestApp class
 class TestApp
-: public InputProcessor
+: public CppConsUI::InputProcessor
 {
   public:
     static TestApp *Instance();
@@ -55,7 +55,7 @@ class TestApp
   protected:
 
   private:
-    CoreManager *mngr;
+    CppConsUI::CoreManager *mngr;
 
     TestApp();
     TestApp(const TestApp&);
@@ -70,22 +70,23 @@ TestApp *TestApp::Instance()
 }
 
 TestApp::TestApp()
-: InputProcessor()
 {
-  mngr = CoreManager::Instance();
+  mngr = CppConsUI::CoreManager::Instance();
   KEYCONFIG->RegisterDefaultKeys();
 
   g_log_set_default_handler(g_log_func_, this);
 
   DeclareBindable("testapp", "quit", sigc::mem_fun(mngr,
-        &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
+        &CppConsUI::CoreManager::QuitMainLoop),
+      InputProcessor::BINDABLE_OVERRIDE);
   KEYCONFIG->BindKey("testapp", "quit", "F10");
 }
 
 void TestApp::Run()
 {
   for (int i = 1; i <= 4; i++) {
-    Window *w = new TestWindow(i, (i - 1) % 2 * 40, (i - 1) / 2 * 10, 40, 10);
+    TestWindow *w = new TestWindow(i, (i - 1) % 2 * 40, (i - 1) / 2 * 10, 40,
+        10);
     mngr->AddWindow(*w);
   }
 

@@ -6,7 +6,7 @@
 
 // LabelWindow class
 class LabelWindow
-: public Window
+: public CppConsUI::Window
 {
   public:
     /* This is a main window, make sure it can not be closed with ESC key by
@@ -32,11 +32,11 @@ LabelWindow *LabelWindow::Instance()
 }
 
 LabelWindow::LabelWindow()
-: Window(0, 0, 0, 0)
+: CppConsUI::Window(0, 0, 0, 0)
 {
-  Label *label;
+  CppConsUI::Label *label;
 
-  label = new Label(
+  label = new CppConsUI::Label(
     20, // width
     1, // height
     "Press F10 to quit."); // text
@@ -45,14 +45,16 @@ LabelWindow::LabelWindow()
    */
   AddWidget(*label, 1, 1);
 
-  label = new Label(20, 1, "Too wide string, too wide string, too wide string");
+  label = new CppConsUI::Label(20, 1,
+      "Too wide string, too wide string, too wide string");
   AddWidget(*label, 1, 3);
 
-  label = new Label(20, 3, "Multiline label, multiline label, multiline label");
+  label = new CppConsUI::Label(20, 3,
+      "Multiline label, multiline label, multiline label");
   AddWidget(*label, 1, 5);
 
   // unicode test
-  label = new Label(30, 3,
+  label = new CppConsUI::Label(30, 3,
       "\x56\xc5\x99\x65\xc5\xa1\x74\xc3\xad\x63\xc3\xad\x20\x70\xc5\x99"
       "\xc3\xad\xc5\xa1\x65\x72\x79\x20\x73\x65\x20\x64\x6f\xc5\xbe\x61"
       "\x64\x6f\x76\x61\x6c\x79\x20\xc3\xba\x70\x6c\x6e\xc4\x9b\x20\xc4"
@@ -60,7 +62,7 @@ LabelWindow::LabelWindow()
       "\x65\xc4\x8d\x6b\xc5\xaf\x2e\x0a");
   AddWidget(*label, 1, 9);
 
-  label = new Label("Autosize");
+  label = new CppConsUI::Label("Autosize");
   AddWidget(*label, 1, 13);
 
   const gchar *long_text = "Lorem ipsum dolor sit amet, consectetur"
@@ -78,13 +80,13 @@ LabelWindow::LabelWindow()
     "fermentum mattis eros, ut auctor urna tincidunt vitae. Praesent"
     "tincidunt laoreet lobortis.";
 
-  label = new Label(-1, 10, long_text);
+  label = new CppConsUI::Label(-1, 10, long_text);
   AddWidget(*label, 42, 13);
 
-  label = new Label(40, -1, long_text);
+  label = new CppConsUI::Label(40, -1, long_text);
   AddWidget(*label, 1, 24);
 
-  label = new Label(-1, -1, long_text);
+  label = new CppConsUI::Label(-1, -1, long_text);
   AddWidget(*label, 42, 24);
 }
 
@@ -96,7 +98,7 @@ void LabelWindow::ScreenResized()
 
 // TestApp class
 class TestApp
-: public InputProcessor
+: public CppConsUI::InputProcessor
 {
   public:
     static TestApp *Instance();
@@ -111,7 +113,7 @@ class TestApp
   protected:
 
   private:
-    CoreManager *mngr;
+    CppConsUI::CoreManager *mngr;
 
     TestApp();
     TestApp(const TestApp&);
@@ -126,15 +128,15 @@ TestApp *TestApp::Instance()
 }
 
 TestApp::TestApp()
-: InputProcessor()
 {
-  mngr = CoreManager::Instance();
+  mngr = CppConsUI::CoreManager::Instance();
   KEYCONFIG->RegisterDefaultKeys();
 
   g_log_set_default_handler(g_log_func_, this);
 
   DeclareBindable("testapp", "quit", sigc::mem_fun(mngr,
-        &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
+        &CppConsUI::CoreManager::QuitMainLoop),
+      InputProcessor::BINDABLE_OVERRIDE);
   KEYCONFIG->BindKey("testapp", "quit", "F10");
 }
 

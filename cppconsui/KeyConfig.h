@@ -36,10 +36,12 @@
 #include <sigc++/signal.h>
 
 #include <string>
-#include <vector>
 #include <map>
 
-#define KEYCONFIG (KeyConfig::Instance())
+#define KEYCONFIG (CppConsUI::KeyConfig::Instance())
+
+namespace CppConsUI
+{
 
 /**
  * This singleton class is used to keep the key definitions. It holds the
@@ -132,5 +134,7 @@ private:
   KeyConfig& operator=(const KeyConfig&);
   ~KeyConfig();
 };
+
+} // namespace CppConsUI
 
 #endif // __KEYCONFIG_H__

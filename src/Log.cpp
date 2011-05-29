@@ -79,7 +79,7 @@ Log::Log()
 
   memset(&centerim_debug_ui_ops, 0, sizeof(centerim_debug_ui_ops));
 
-  textview = new TextView(width - 2, height, true);
+  textview = new CppConsUI::TextView(width - 2, height, true);
   AddWidget(*textview, 1, 0);
 
 #define REGISTER_G_LOG_HANDLER(name, handler) \

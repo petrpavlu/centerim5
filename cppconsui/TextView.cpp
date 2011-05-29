@@ -30,6 +30,9 @@
 #include "CoreManager.h"
 #include "CppConsUI.h"
 
+namespace CppConsUI
+{
+
 const TextView::ScrollBarElements TextView::scrollbar_elements_ascii = {
   "-", " ", " "
 };
@@ -506,3 +509,5 @@ void TextView::DeclareBindables()
       sigc::bind(sigc::mem_fun(this, &TextView::ActionScroll), 1),
       InputProcessor::BINDABLE_NORMAL);
 }
+
+} // namespace CppConsUI

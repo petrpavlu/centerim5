@@ -7,7 +7,7 @@
 
 // TextViewWindow class
 class TextViewWindow
-: public Window
+: public CppConsUI::Window
 {
   public:
     /* This is a main window, make sure it can not be closed with ESC key by
@@ -18,7 +18,7 @@ class TextViewWindow
     virtual void ScreenResized();
 
   protected:
-    TextView *textview;
+    CppConsUI::TextView *textview;
 
   private:
     TextViewWindow();
@@ -36,11 +36,11 @@ TextViewWindow *TextViewWindow::Instance()
 }
 
 TextViewWindow::TextViewWindow()
-: Window(0, 0, 0, 0)
+: CppConsUI::Window(0, 0, 0, 0)
 {
   SetColorScheme("textviewwindow");
 
-  textview = new TextView(-1, -1);
+  textview = new CppConsUI::TextView(-1, -1);
   AddWidget(*textview, 0, 0);
 
   const gchar *long_text = "Lorem ipsum dolor sit amet, consectetur"
@@ -60,13 +60,20 @@ TextViewWindow::TextViewWindow()
   for (int i = 0; i < 128; i++)
     textview->Append(long_text, i % 7 + 1);
 
-  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color1", Curses::Color::RED, Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color2", Curses::Color::GREEN, Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color3", Curses::Color::YELLOW, Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color4", Curses::Color::BLUE, Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color5", Curses::Color::MAGENTA, Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color6", Curses::Color::CYAN, Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color7", Curses::Color::WHITE, Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color1",
+      CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color2",
+      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color3",
+      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color4",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color5",
+      CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color6",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color7",
+      CppConsUI::Curses::Color::WHITE, CppConsUI::Curses::Color::BLACK);
 
   DeclareBindable("textviewwindow", "toggle-scrollbar", sigc::mem_fun(this,
         &TextViewWindow::ActionToggleScrollbar),
@@ -87,7 +94,7 @@ void TextViewWindow::ActionToggleScrollbar()
 
 // TestApp class
 class TestApp
-: public InputProcessor
+: public CppConsUI::InputProcessor
 {
   public:
     static TestApp *Instance();
@@ -102,7 +109,7 @@ class TestApp
   protected:
 
   private:
-    CoreManager *mngr;
+    CppConsUI::CoreManager *mngr;
 
     TestApp();
     TestApp(const TestApp&);
@@ -117,15 +124,15 @@ TestApp *TestApp::Instance()
 }
 
 TestApp::TestApp()
-: InputProcessor()
 {
-  mngr = CoreManager::Instance();
+  mngr = CppConsUI::CoreManager::Instance();
   KEYCONFIG->RegisterDefaultKeys();
 
   g_log_set_default_handler(g_log_func_, this);
 
   DeclareBindable("testapp", "quit", sigc::mem_fun(mngr,
-        &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
+        &CppConsUI::CoreManager::QuitMainLoop),
+      InputProcessor::BINDABLE_OVERRIDE);
   KEYCONFIG->BindKey("testapp", "quit", "F10");
 }
 

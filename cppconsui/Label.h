@@ -31,6 +31,9 @@
 
 #include "Widget.h"
 
+namespace CppConsUI
+{
+
 /**
  * A widget that displays a small to medium amount of text.
  */
@@ -61,5 +64,7 @@ private:
   Label(const Label&);
   Label& operator=(const Label&);
 };
+
+} // namespace CppConsUI
 
 #endif // __LABEL_H__

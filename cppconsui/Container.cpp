@@ -32,6 +32,9 @@
 
 #include "gettext.h"
 
+namespace CppConsUI
+{
+
 Container::Container(int w, int h)
 : Widget(w, h), focus_cycle_scope(FOCUS_CYCLE_GLOBAL)
 , update_focus_chain(false), focus_child(NULL)
@@ -445,3 +448,5 @@ void Container::DeclareBindables()
       sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
         Container::FOCUS_DOWN), InputProcessor::BINDABLE_NORMAL);
 }
+
+} // namespace CppConsUI

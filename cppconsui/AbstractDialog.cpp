@@ -27,6 +27,9 @@
 
 #include "AbstractDialog.h"
 
+namespace CppConsUI
+{
+
 AbstractDialog::AbstractDialog(int x, int y, int w, int h, const char *title,
     LineStyle::Type ltype)
 : Window(x, y, w, h, title, TYPE_TOP, ltype)
@@ -81,3 +84,5 @@ void AbstractDialog::OnButtonResponse(Button& activator,
 {
   Response(response);
 }
+
+} // namespace CppConsUI

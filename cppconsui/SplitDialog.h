@@ -28,8 +28,11 @@
 #ifndef __SPLITDIALOG_H__
 #define __SPLITDIALOG_H__
 
-#include "Container.h"
 #include "AbstractDialog.h"
+#include "Container.h"
+
+namespace CppConsUI
+{
 
 class SplitDialog
 : public AbstractDialog
@@ -72,5 +75,7 @@ private:
   SplitDialog(const SplitDialog&);
   SplitDialog& operator=(const SplitDialog&);
 };
+
+} // namespace CppConsUI
 
 #endif // __SPLITDIALOG_H__

@@ -27,6 +27,9 @@
 
 #include "AbstractLine.h"
 
+namespace CppConsUI
+{
+
 AbstractLine::AbstractLine(int w, int h, LineStyle::Type ltype)
 : Widget(w, h)
 , linestyle(ltype)
@@ -43,3 +46,5 @@ LineStyle::Type AbstractLine::GetLineStyle()
 {
   return linestyle.GetStyle();
 }
+
+} // namespace CppConsUI

@@ -32,11 +32,12 @@
 #include <sigc++/signal.h>
 
 #include "libtermkey/termkey.h"
-#include <glib.h>
 
-#include <vector>
 #include <map>
 #include <string>
+
+namespace CppConsUI
+{
 
 /**
  * Base class that takes care of input processing.
@@ -161,5 +162,7 @@ private:
   InputProcessor(const InputProcessor&);
   InputProcessor& operator=(const InputProcessor&);
 };
+
+} // namespace CppConsUI
 
 #endif // __INPUTPROCESSOR_H__

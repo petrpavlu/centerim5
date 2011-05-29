@@ -38,6 +38,9 @@
 #include "ListBox.h"
 #include "Window.h"
 
+namespace CppConsUI
+{
+
 class AbstractDialog
 : public Window
 {
@@ -75,5 +78,7 @@ private:
   AbstractDialog(const AbstractDialog&);
   AbstractDialog& operator=(const AbstractDialog&);
 };
+
+} // namespace CppConsUI
 
 #endif // __ABSTRACTDIALOG_H__

@@ -28,6 +28,9 @@
 
 #include "HorizontalLine.h"
 
+namespace CppConsUI
+{
+
 HorizontalLine::HorizontalLine(int w, LineStyle::Type ltype)
 : AbstractLine(w, 1, ltype)
 {
@@ -48,3 +51,5 @@ void HorizontalLine::Draw()
     area->mvaddstring(i, 0, linestyle.H());
   area->attroff(attrs);
 }
+
+} // namespace CppConsUI

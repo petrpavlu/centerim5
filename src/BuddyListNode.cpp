@@ -43,11 +43,11 @@ BuddyListNode *BuddyListNode::CreateNode(PurpleBlistNode *node)
   return NULL;
 }
 
-void BuddyListNode::SetParent(Container& parent)
+void BuddyListNode::SetParent(CppConsUI::Container& parent)
 {
   Button::SetParent(parent);
 
-  treeview = dynamic_cast<TreeView*>(&parent);
+  treeview = dynamic_cast<CppConsUI::TreeView*>(&parent);
   g_assert(treeview);
 }
 
@@ -63,9 +63,9 @@ void BuddyListNode::SortIn()
 {
   BuddyListNode *parent_node = GetParentNode();
   if (parent_node) {
-    TreeView::NodeReference parent_ref = parent_node->GetRefNode();
+    CppConsUI::TreeView::NodeReference parent_ref = parent_node->GetRefNode();
 
-    TreeView::SiblingIterator i;
+    CppConsUI::TreeView::SiblingIterator i;
     for (i = parent_ref.begin(); i != parent_ref.end(); i++) {
       // skip this node
       if (i == ref)
@@ -220,11 +220,12 @@ const char *BuddyListBuddy::ToString() const
   return purple_buddy_get_alias(buddy);
 }
 
-void BuddyListBuddy::RemoveBuddyResponseHandler(MessageDialog& activator,
-    AbstractDialog::ResponseType response)
+void BuddyListBuddy::RemoveBuddyResponseHandler(
+    CppConsUI::MessageDialog& activator,
+    CppConsUI::AbstractDialog::ResponseType response)
 {
   switch (response) {
-    case AbstractDialog::RESPONSE_OK:
+    case CppConsUI::AbstractDialog::RESPONSE_OK:
       break;
     default:
       return;
@@ -241,7 +242,8 @@ void BuddyListBuddy::OnBuddyRemove()
   char *msg = g_strdup_printf(
       _("Are you sure you want to delete buddy %s from the list?"),
       purple_buddy_get_alias(buddy));
-  MessageDialog *dialog = new MessageDialog(_("Buddy deletion"), msg);
+  CppConsUI::MessageDialog *dialog
+    = new CppConsUI::MessageDialog(_("Buddy deletion"), msg);
   g_free(msg);
   dialog->signal_response.connect(sigc::mem_fun(this,
         &BuddyListBuddy::RemoveBuddyResponseHandler));
@@ -310,11 +312,12 @@ const char *BuddyListChat::ToString() const
   return purple_chat_get_name(chat);
 }
 
-void BuddyListChat::RemoveChatResponseHandler(MessageDialog& activator,
-    AbstractDialog::ResponseType response)
+void BuddyListChat::RemoveChatResponseHandler(
+    CppConsUI::MessageDialog& activator,
+    CppConsUI::AbstractDialog::ResponseType response)
 {
   switch (response) {
-    case AbstractDialog::RESPONSE_OK:
+    case CppConsUI::AbstractDialog::RESPONSE_OK:
       break;
     default:
       return;
@@ -328,7 +331,8 @@ void BuddyListChat::OnChatRemove()
   char *msg = g_strdup_printf(
       _("Are you sure you want to delete chat %s from the list?"),
       purple_chat_get_name(chat));
-  MessageDialog *dialog = new MessageDialog(_("Chat deletion"), msg);
+  CppConsUI::MessageDialog *dialog
+    = new CppConsUI::MessageDialog(_("Chat deletion"), msg);
   g_free(msg);
   dialog->signal_response.connect(sigc::mem_fun(this,
         &BuddyListChat::RemoveChatResponseHandler));
@@ -397,17 +401,18 @@ const char *BuddyListContact::ToString() const
   return purple_contact_get_alias(contact);
 }
 
-void BuddyListContact::SetRefNode(TreeView::NodeReference n)
+void BuddyListContact::SetRefNode(CppConsUI::TreeView::NodeReference n)
 {
   BuddyListNode::SetRefNode(n);
-  treeview->SetNodeStyle(n, TreeView::STYLE_VOID);
+  treeview->SetNodeStyle(n, CppConsUI::TreeView::STYLE_VOID);
 }
 
-void BuddyListContact::RemoveContactResponseHandler(MessageDialog& activator,
-    AbstractDialog::ResponseType response)
+void BuddyListContact::RemoveContactResponseHandler(
+    CppConsUI::MessageDialog& activator,
+    CppConsUI::AbstractDialog::ResponseType response)
 {
   switch (response) {
-    case AbstractDialog::RESPONSE_OK:
+    case CppConsUI::AbstractDialog::RESPONSE_OK:
       break;
     default:
       return;
@@ -433,7 +438,8 @@ void BuddyListContact::OnContactRemove()
   char *msg = g_strdup_printf(
       _("Are you sure you want to delete contact %s from the list?"),
       purple_buddy_get_alias(purple_contact_get_priority_buddy(contact)));
-  MessageDialog *dialog = new MessageDialog(_("Contact deletion"), msg);
+  CppConsUI::MessageDialog *dialog
+    = new CppConsUI::MessageDialog(_("Contact deletion"), msg);
   g_free(msg);
   dialog->signal_response.connect(sigc::mem_fun(this,
         &BuddyListContact::RemoveContactResponseHandler));
@@ -498,9 +504,9 @@ const char *BuddyListGroup::ToString() const
 
 void BuddyListGroup::SortIn()
 {
-  TreeView::NodeReference parent_ref = treeview->GetRootNode();
+  CppConsUI::TreeView::NodeReference parent_ref = treeview->GetRootNode();
 
-  TreeView::SiblingIterator i;
+  CppConsUI::TreeView::SiblingIterator i;
   for (i = parent_ref.begin(); i != parent_ref.end(); i++) {
     // skip this node
     if (i == ref)
@@ -527,11 +533,12 @@ void BuddyListGroup::DelayedInit()
     treeview->ExpandNode(ref);
 }
 
-void BuddyListGroup::RemoveGroupResponseHandler(MessageDialog& activator,
-    AbstractDialog::ResponseType response)
+void BuddyListGroup::RemoveGroupResponseHandler(
+    CppConsUI::MessageDialog& activator,
+    CppConsUI::AbstractDialog::ResponseType response)
 {
   switch (response) {
-    case AbstractDialog::RESPONSE_OK:
+    case CppConsUI::AbstractDialog::RESPONSE_OK:
       break;
     default:
       return;
@@ -575,7 +582,8 @@ void BuddyListGroup::OnGroupRemove()
   char *msg = g_strdup_printf(
       _("Are you sure you want to delete group %s from the list?"),
       purple_group_get_name(group));
-  MessageDialog *dialog = new MessageDialog(_("Group deletion"), msg);
+  CppConsUI::MessageDialog *dialog
+    = new CppConsUI::MessageDialog(_("Group deletion"), msg);
   g_free(msg);
   dialog->signal_response.connect(sigc::mem_fun(this,
         &BuddyListGroup::RemoveGroupResponseHandler));

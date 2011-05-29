@@ -28,6 +28,9 @@
 
 #include "ColorScheme.h"
 
+namespace CppConsUI
+{
+
 ColorScheme *ColorScheme::Instance()
 {
   static ColorScheme instance;
@@ -71,3 +74,5 @@ bool ColorScheme::SetColorPair(const char *scheme, const char *widget,
   schemes[scheme][widget][property] = Color(foreground, background, attrs);
   return true;
 }
+
+} // namespace CppConsUI

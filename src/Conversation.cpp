@@ -44,9 +44,9 @@ Conversation::Conversation(PurpleConversation *conv_)
 
   SetColorScheme("conversation");
 
-  view = new TextView(width - 2, height, true, true);
-  input = new TextEdit(width - 2, height);
-  line = new HorizontalLine(width);
+  view = new CppConsUI::TextView(width - 2, height, true, true);
+  input = new CppConsUI::TextEdit(width - 2, height);
+  line = new CppConsUI::HorizontalLine(width);
   AddWidget(*view, 1, 0);
   AddWidget(*input, 1, 1);
   AddWidget(*line, 0, height);
@@ -143,7 +143,7 @@ void Conversation::Close()
 
 void Conversation::ScreenResized()
 {
-  Rect r = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
+  CppConsUI::Rect r = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
   // make room for conversations list
   r.height--;
 

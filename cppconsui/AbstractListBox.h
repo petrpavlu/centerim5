@@ -33,6 +33,9 @@
 #include "Button.h"
 #include "ScrollPane.h"
 
+namespace CppConsUI
+{
+
 /**
  * Abstract class that defines common interface for ListBox and
  * HorizontalListBox.
@@ -81,5 +84,7 @@ private:
   AbstractListBox(const AbstractListBox&);
   AbstractListBox& operator=(const AbstractListBox&);
 };
+
+} // namespace CppConsUI
 
 #endif // __ABSTRACTLISTBOX_H__

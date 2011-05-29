@@ -26,7 +26,7 @@
 #include <libpurple/purple.h>
 
 class GeneralMenu
-: public MenuWindow
+: public CppConsUI::MenuWindow
 {
 public:
   GeneralMenu();
@@ -41,11 +41,11 @@ private:
   GeneralMenu(const GeneralMenu&);
   GeneralMenu& operator=(const GeneralMenu&);
 
-  void OpenAccountWindow(Button& activator);
-  void OpenAddBuddyRequest(Button& activator);
-  void OpenAddChatRequest(Button& activator);
-  void OpenOptionWindow(Button& activator);
-  void RequestTest(Button& activator);
+  void OpenAccountWindow(CppConsUI::Button& activator);
+  void OpenAddBuddyRequest(CppConsUI::Button& activator);
+  void OpenAddChatRequest(CppConsUI::Button& activator);
+  void OpenOptionWindow(CppConsUI::Button& activator);
+  void RequestTest(CppConsUI::Button& activator);
 
   static void input_ok_cb_(void *data, const char *text)
     { reinterpret_cast<GeneralMenu *>(data)->input_ok_cb(text); }

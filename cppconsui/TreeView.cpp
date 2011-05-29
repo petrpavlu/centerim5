@@ -25,6 +25,9 @@
 
 #include "gettext.h"
 
+namespace CppConsUI
+{
+
 TreeView::ToggleCollapseButton::ToggleCollapseButton(int w, int h,
     const char *text_)
 : Button(w, h, text_)
@@ -526,3 +529,5 @@ void TreeView::DeclareBindables()
   DeclareBindable("treeview", "unfold-subtree", sigc::mem_fun(this,
         &TreeView::ActionExpand), InputProcessor::BINDABLE_NORMAL);
 }
+
+} // namespace CppConsUI

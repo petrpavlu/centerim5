@@ -54,7 +54,7 @@ Footer::Footer()
 {
   SetColorScheme("footer");
 
-  label = new Label;
+  label = new CppConsUI::Label;
   AddWidget(*label, 0, 0);
 }
 

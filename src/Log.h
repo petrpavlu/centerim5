@@ -36,7 +36,7 @@
 #define LOG (Log::Instance())
 
 class Log
-: public Window
+: public CppConsUI::Window
 {
 public:
   // levels are 1:1 mapped to glib levels
@@ -76,7 +76,7 @@ private:
 
   GIOChannel *logfile;
 
-  TextView *textview;
+  CppConsUI::TextView *textview;
 
   guint default_handler;
   guint glib_handler;

@@ -28,6 +28,9 @@
 
 #include "HorizontalListBox.h"
 
+namespace CppConsUI
+{
+
 HorizontalListBox::HorizontalListBox(int w, int h)
 : AbstractListBox(w, h), children_width(0), autosize_children(0)
 , autosize_width(0), reposition_widgets(false)
@@ -181,3 +184,5 @@ void HorizontalListBox::UpdateScrollWidth()
 
   SetScrollWidth(MAX(realw, children_width));
 }
+
+} // namespace CppConsUI

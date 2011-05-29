@@ -32,6 +32,9 @@
 
 #include <vector>
 
+namespace CppConsUI
+{
+
 class TextEdit
 : public Widget
 {
@@ -121,5 +124,7 @@ private:
 
   void DeclareBindables();
 };
+
+} // namespace CppConsUI
 
 #endif // __TEXTEDIT_H__

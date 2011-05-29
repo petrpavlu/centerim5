@@ -32,6 +32,9 @@
 
 #include "gettext.h"
 
+namespace CppConsUI
+{
+
 CheckBox::CheckBox(int w, int h, const char *text_, bool default_state)
 : Widget(w, h)
 , text(NULL)
@@ -147,3 +150,5 @@ void CheckBox::DeclareBindables()
   DeclareBindable("checkbox", "toggle", sigc::mem_fun(this,
         &CheckBox::ActionToggle), InputProcessor::BINDABLE_NORMAL);
 }
+
+} // namespace CppConsUI

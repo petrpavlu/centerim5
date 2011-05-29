@@ -29,9 +29,8 @@
 #ifndef __LINESTYLE_H__
 #define __LINESTYLE_H__
 
-#include <glib.h>
-
-struct LineElements;
+namespace CppConsUI
+{
 
 class LineStyle
 {
@@ -94,5 +93,7 @@ protected:
 
 private:
 };
+
+} // namespace CppConsUI
 
 #endif // __LINESTYLE_H__

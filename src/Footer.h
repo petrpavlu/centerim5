@@ -28,7 +28,7 @@
 
 // the bottom area of the screen containing context sensitive help
 class Footer
-: public FreeWindow
+: public CppConsUI::FreeWindow
 {
 public:
   static Footer *Instance();
@@ -42,7 +42,7 @@ public:
 protected:
 
 private:
-  Label *label;
+  CppConsUI::Label *label;
   char *text;
 
   static Footer *instance;

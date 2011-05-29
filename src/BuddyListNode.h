@@ -28,17 +28,17 @@
 #include <libpurple/purple.h>
 
 class BuddyListNode
-: public Button
+: public CppConsUI::Button
 {
 public:
   static BuddyListNode *CreateNode(PurpleBlistNode *node);
 
   // Widget
-  virtual void SetParent(Container& parent);
+  virtual void SetParent(CppConsUI::Container& parent);
 
   virtual bool LessThan(const BuddyListNode& other) const = 0;
   virtual void Update();
-  virtual void OnActivate(Button& activator) = 0;
+  virtual void OnActivate(CppConsUI::Button& activator) = 0;
   // debugging method
   virtual const char *ToString() const = 0;
   /* Sorts in this node. It supposes that all siblings are in correct order.
@@ -47,14 +47,15 @@ public:
 
   BuddyListNode *GetParentNode() const;
 
-  virtual void SetRefNode(TreeView::NodeReference n) { ref = n; }
-  virtual TreeView::NodeReference GetRefNode() const { return ref; }
+  virtual void SetRefNode(CppConsUI::TreeView::NodeReference n) { ref = n; }
+  virtual CppConsUI::TreeView::NodeReference GetRefNode() const
+    { return ref; }
 
   sigc::signal<void> signal_remove;
 
 protected:
-  TreeView *treeview;
-  TreeView::NodeReference ref;
+  CppConsUI::TreeView *treeview;
+  CppConsUI::TreeView::NodeReference ref;
 
   PurpleBlistNode *node;
 
@@ -92,8 +93,8 @@ public:
 protected:
   PurpleBuddy *buddy;
 
-  void RemoveBuddyResponseHandler(MessageDialog& activator,
-      AbstractDialog::ResponseType response);
+  void RemoveBuddyResponseHandler(CppConsUI::MessageDialog& activator,
+      CppConsUI::AbstractDialog::ResponseType response);
   void OnBuddyRemove();
 
 private:
@@ -117,8 +118,8 @@ public:
 protected:
   PurpleChat *chat;
 
-  void RemoveChatResponseHandler(MessageDialog& activator,
-      AbstractDialog::ResponseType response);
+  void RemoveChatResponseHandler(CppConsUI::MessageDialog& activator,
+      CppConsUI::AbstractDialog::ResponseType response);
   void OnChatRemove();
 
 private:
@@ -139,13 +140,13 @@ public:
   virtual void OnActivate(Button& activator);
   virtual const char *ToString() const;
 
-  virtual void SetRefNode(TreeView::NodeReference n);
+  virtual void SetRefNode(CppConsUI::TreeView::NodeReference n);
 
 protected:
   PurpleContact *contact;
 
-  void RemoveContactResponseHandler(MessageDialog& activator,
-      AbstractDialog::ResponseType response);
+  void RemoveContactResponseHandler(CppConsUI::MessageDialog& activator,
+      CppConsUI::AbstractDialog::ResponseType response);
   void OnContactRemove();
 
 private:
@@ -172,8 +173,8 @@ protected:
 
   void DelayedInit();
 
-  void RemoveGroupResponseHandler(MessageDialog& activator,
-      AbstractDialog::ResponseType response);
+  void RemoveGroupResponseHandler(CppConsUI::MessageDialog& activator,
+      CppConsUI::AbstractDialog::ResponseType response);
   void OnGroupRemove();
 
 private:

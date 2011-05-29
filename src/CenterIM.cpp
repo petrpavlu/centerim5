@@ -127,14 +127,14 @@ void CenterIM::Quit()
   mngr->QuitMainLoop();
 }
 
-Rect CenterIM::GetScreenAreaSize(ScreenArea area)
+CppConsUI::Rect CenterIM::GetScreenAreaSize(ScreenArea area)
 {
   return areaSizes[area];
 }
 
 CenterIM::CenterIM()
 {
-  mngr = CoreManager::Instance();
+  mngr = CppConsUI::CoreManager::Instance();
   resize = mngr->signal_resize.connect(sigc::mem_fun(this,
         &CenterIM::ScreenResized));
 
@@ -224,47 +224,83 @@ void CenterIM::ColorSchemeInit()
 {
   // default colors init
   /// @todo move this to a default cfg
-  COLORSCHEME->SetColorPair("accountstatusmenu",   "panel",          "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("accountstatusmenu",   "horizontalline", "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("accountstatusmenu",   "button",         "normal",     Curses::Color::CYAN,    Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("accountstatusmenu", "panel", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("accountstatusmenu", "horizontalline", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("accountstatusmenu", "button", "normal",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
 
-  COLORSCHEME->SetColorPair("buddylist",           "treeview",       "line",       Curses::Color::GREEN,   Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylist",           "panel",          "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("buddylist",           "button",         "normal",     Curses::Color::GREEN,   Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylistgroup",      "button",         "normal",     Curses::Color::YELLOW,  Curses::Color::BLACK, Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("buddylist", "treeview", "line",
+      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylist", "panel", "line",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("buddylist", "button", "normal",
+      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistgroup", "button", "normal",
+      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
 
-  COLORSCHEME->SetColorPair("conversation",        "textview",       "text",       Curses::Color::MAGENTA, Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("conversation",        "textview",       "color1",     Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("conversation",        "textview",       "color2",     Curses::Color::YELLOW,  Curses::Color::BLACK, Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation",        "panel",          "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation",        "horizontalline", "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation",        "textedit",       "text",       Curses::Color::CYAN,    Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("conversation", "textview", "text",
+      CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("conversation", "textview", "color1",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("conversation", "textview", "color2",
+      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation", "panel", "line",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation", "horizontalline", "line",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation", "textedit", "text",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
 
-  COLORSCHEME->SetColorPair("conversation",        "label",          "text",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("conversation-active", "label",          "text",       Curses::Color::YELLOW,  Curses::Color::BLACK, Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation-new",    "label",          "text",       Curses::Color::CYAN,    Curses::Color::BLACK, Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation", "label", "text",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("conversation-active", "label", "text",
+      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation-new", "label", "text",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
 
-  COLORSCHEME->SetColorPair("footer",              "label",          "text",       Curses::Color::BLACK,   Curses::Color::WHITE);
-  COLORSCHEME->SetColorPair("footer",              "container",      "background", Curses::Color::BLACK,   Curses::Color::WHITE);
+  COLORSCHEME->SetColorPair("footer", "label", "text",
+      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
+  COLORSCHEME->SetColorPair("footer", "container", "background",
+      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
 
-  COLORSCHEME->SetColorPair("generalmenu",         "panel",          "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("generalmenu",         "horizontalline", "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("generalmenu",         "button",         "normal",     Curses::Color::CYAN,    Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("generalmenu", "panel", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("generalmenu", "horizontalline", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("generalmenu", "button", "normal",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
 
-  COLORSCHEME->SetColorPair("generalwindow",       "panel",          "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("generalwindow",       "horizontalline", "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("generalwindow",       "verticalline",   "line",       Curses::Color::CYAN,    Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("generalwindow", "panel", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("generalwindow", "horizontalline", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("generalwindow", "verticalline", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
 
-  COLORSCHEME->SetColorPair("log",                 "panel",          "line",       Curses::Color::BLUE,    Curses::Color::BLACK, Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("log",                 "textview",       "text",       Curses::Color::CYAN,    Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("log", "panel", "line",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("log", "textview", "text",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
 
-  COLORSCHEME->SetColorPair("header",              "label",          "text",       Curses::Color::BLACK,   Curses::Color::WHITE);
-  COLORSCHEME->SetColorPair("header",              "container",      "background", Curses::Color::BLACK,   Curses::Color::WHITE);
+  COLORSCHEME->SetColorPair("header", "label", "text",
+      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
+  COLORSCHEME->SetColorPair("header", "container", "background",
+      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
 }
 
 void CenterIM::ScreenResized()
 {
-  Rect size;
+  CppConsUI::Rect size;
 
   // minimal supported screen size is 80x24
   int screen_width = mngr->GetScreenWidth();
@@ -436,11 +472,11 @@ void CenterIM::ActionOpenAccountStatusMenu()
 {
   /* Don't allow to open the account status menu if there is any `top' window
    * (except general menu, we can close that). */
-  FreeWindow *top = mngr->GetTopWindow();
+  CppConsUI::FreeWindow *top = mngr->GetTopWindow();
   if (top) {
     if (dynamic_cast<GeneralMenu*>(top))
       top->Close();
-    else if (top->GetType() == FreeWindow::TYPE_TOP)
+    else if (top->GetType() == CppConsUI::FreeWindow::TYPE_TOP)
       return;
   }
 
@@ -452,11 +488,11 @@ void CenterIM::ActionOpenGeneralMenu()
 {
   /* Don't allow to open the general menu if there is any `top' window (except
    * account status menu, we can close that). */
-  FreeWindow *top = mngr->GetTopWindow();
+  CppConsUI::FreeWindow *top = mngr->GetTopWindow();
   if (top) {
     if (dynamic_cast<AccountStatusMenu*>(top))
       top->Close();
-    else if (top->GetType() == FreeWindow::TYPE_TOP)
+    else if (top->GetType() == CppConsUI::FreeWindow::TYPE_TOP)
       return;
   }
 

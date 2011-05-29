@@ -32,6 +32,9 @@
 
 #include "gettext.h"
 
+namespace CppConsUI
+{
+
 FreeWindow::FreeWindow(int x, int y, int w, int h, Type t)
 : Container(w, h), win_x(x), win_y(y), win_w(w), win_h(h), copy_x(0)
 , copy_y(0), copy_w(0), copy_h(0), realwindow(NULL), type(t)
@@ -197,3 +200,5 @@ void FreeWindow::DeclareBindables()
       sigc::mem_fun(this, &FreeWindow::ActionClose),
       InputProcessor::BINDABLE_NORMAL);
 }
+
+} // namespace CppConsUI

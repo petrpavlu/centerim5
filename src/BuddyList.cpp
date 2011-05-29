@@ -46,13 +46,13 @@ bool BuddyList::RestoreFocus()
         "<centerim|conversation-active> act conv, "
         "<centerim|accountstatusmenu> status menu"));
 
-  return Window::RestoreFocus();
+  return CppConsUI::Window::RestoreFocus();
 }
 
 void BuddyList::UngrabFocus()
 {
   FOOTER->SetText(NULL);
-  Window::UngrabFocus();
+  CppConsUI::Window::UngrabFocus();
 }
 
 void BuddyList::Close()
@@ -70,11 +70,12 @@ BuddyList::BuddyList()
 {
   SetColorScheme("buddylist");
 
-  HorizontalListBox *lbox = new HorizontalListBox(AUTOSIZE, AUTOSIZE);
-  lbox->AppendWidget(*(new Spacer(1, AUTOSIZE)));
-  treeview = new TreeView(AUTOSIZE, AUTOSIZE);
+  CppConsUI::HorizontalListBox *lbox
+    = new CppConsUI::HorizontalListBox(AUTOSIZE, AUTOSIZE);
+  lbox->AppendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
+  treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
   lbox->AppendWidget(*treeview);
-  lbox->AppendWidget(*(new Spacer(1, AUTOSIZE)));
+  lbox->AppendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
   AddWidget(*lbox, 0, 0);
 
   /* TODO Check if this has been moved to purple_blist_init(). Remove these
@@ -170,14 +171,14 @@ void BuddyList::new_node(PurpleBlistNode *node)
 
   if (bnode) {
     BuddyListNode *parent = bnode->GetParentNode();
-    TreeView::NodeReference nref = treeview->AppendNode(
+    CppConsUI::TreeView::NodeReference nref = treeview->AppendNode(
         parent ? parent->GetRefNode() : treeview->GetRootNode(), *bnode);
     treeview->CollapseNode(nref);
     bnode->SetRefNode(nref);
     bnode->Update();
 
     if (PURPLE_BLIST_NODE_IS_CONTACT(node))
-      treeview->SetNodeStyle(nref, TreeView::STYLE_VOID);
+      treeview->SetNodeStyle(nref, CppConsUI::TreeView::STYLE_VOID);
   }
 }
 

@@ -28,6 +28,9 @@
 
 #include "MenuWindow.h"
 
+namespace CppConsUI
+{
+
 MenuWindow::MenuWindow(int x, int y, int w, int h, const char *title,
     LineStyle::Type ltype)
 : Window(x, y, w, h, title, TYPE_TOP, ltype)
@@ -40,3 +43,5 @@ void MenuWindow::AddWidget(Widget& widget, int x, int y)
 {
   Window::AddWidget(widget, x, y);
 }
+
+} // namespace CppConsUI

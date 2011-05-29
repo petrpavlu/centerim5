@@ -30,6 +30,9 @@
 
 #include "gettext.h"
 
+namespace CppConsUI
+{
+
 KeyConfig *KeyConfig::Instance()
 {
   static KeyConfig instance;
@@ -184,3 +187,5 @@ KeyConfig::~KeyConfig()
   if (config)
     g_free(config);
 }
+
+} // namespace CppConsUI

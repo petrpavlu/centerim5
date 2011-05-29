@@ -28,6 +28,9 @@
 
 #include "ScrollPane.h"
 
+namespace CppConsUI
+{
+
 ScrollPane::ScrollPane(int w, int h, int scrollw, int scrollh)
 : Container(w, h), scroll_xpos(0), scroll_ypos(0), scroll_width(scrollw)
 , scroll_height(scrollh), update_screen_area(false), screen_area(NULL)
@@ -213,3 +216,5 @@ void ScrollPane::DrawEx(bool container_draw)
 
   area->copyto(screen_area, scroll_xpos, scroll_ypos, 0, 0, copyw, copyh, 0);
 }
+
+} // namespace CppConsUI

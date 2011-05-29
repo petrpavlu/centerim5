@@ -32,6 +32,9 @@
 
 #include <deque>
 
+namespace CppConsUI
+{
+
 /**
  * Line oriented text view widget.
  */
@@ -190,5 +193,7 @@ private:
 
   void DeclareBindables();
 };
+
+} // namespace CppConsUI
 
 #endif // __TEXTVIEW_H__

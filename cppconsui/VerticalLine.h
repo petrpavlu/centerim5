@@ -31,6 +31,9 @@
 
 #include "AbstractLine.h"
 
+namespace CppConsUI
+{
+
 /**
  * A widget representing a vertical line.
  */
@@ -51,5 +54,7 @@ private:
   VerticalLine(const VerticalLine&);
   VerticalLine& operator=(const VerticalLine&);
 };
+
+} // namespace CppConsUI
 
 #endif // __VERTICALLINE_H__

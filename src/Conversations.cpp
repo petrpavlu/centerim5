@@ -39,7 +39,7 @@ void Conversations::Close()
 
 void Conversations::ScreenResized()
 {
-  Rect r = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
+  CppConsUI::Rect r = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
   r.y = r.GetBottom();
   r.height = 1;
 
@@ -75,7 +75,7 @@ Conversations::Conversations()
 {
   SetColorScheme("conversation");
 
-  list = new HorizontalListBox(AUTOSIZE, 1);
+  list = new CppConsUI::HorizontalListBox(AUTOSIZE, 1);
   AddWidget(*list, 0, 0);
 
   // init prefs
@@ -240,7 +240,7 @@ void Conversations::create_conversation(PurpleConversation *conv)
         sigc::mem_fun(this, &Conversations::OnConversationClose),
         sigc::ref(*conversation)));
   char *name = g_strdup_printf(" |%s", purple_conversation_get_title(conv));
-  c.label = new Label(AUTOSIZE, 1, name);
+  c.label = new CppConsUI::Label(AUTOSIZE, 1, name);
   g_free(name);
   list->AppendWidget(*c.label);
   conversations.push_back(c);

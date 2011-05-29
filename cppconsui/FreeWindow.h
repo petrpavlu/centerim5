@@ -30,6 +30,9 @@
 
 #include "Container.h"
 
+namespace CppConsUI
+{
+
 class FreeWindow
 : public Container
 {
@@ -105,5 +108,7 @@ private:
 
   void DeclareBindables();
 };
+
+} // namespace CppConsUI
 
 #endif // __FREEWINDOW_H__

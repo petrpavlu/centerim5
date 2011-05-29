@@ -33,7 +33,7 @@
 #define BUDDYLIST (BuddyList::Instance())
 
 class BuddyList
-: public Window
+: public CppConsUI::Window
 {
 public:
   static BuddyList *Instance();
@@ -51,7 +51,7 @@ protected:
 private:
   PurpleBlistUiOps centerim_blist_ui_ops;
   PurpleBuddyList *buddylist;
-  TreeView *treeview;
+  CppConsUI::TreeView *treeview;
 
   static BuddyList *instance;
 

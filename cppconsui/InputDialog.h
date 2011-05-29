@@ -30,8 +30,10 @@
 #define __INPUTDIALOG_H__
 
 #include "AbstractDialog.h"
-
 #include "TextEntry.h"
+
+namespace CppConsUI
+{
 
 class InputDialog
 : public AbstractDialog
@@ -60,5 +62,7 @@ private:
   InputDialog(const InputDialog&);
   InputDialog& operator=(const InputDialog&);
 };
+
+} // namespace CppConsUI
 
 #endif // __INPUTDIALOG_H__

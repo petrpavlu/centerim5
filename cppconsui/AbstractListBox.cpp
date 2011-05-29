@@ -30,6 +30,9 @@
 
 #include "Button.h"
 
+namespace CppConsUI
+{
+
 AbstractListBox::AbstractListBox(int w, int h)
 : ScrollPane(w, h, 0, 0)
 {
@@ -57,3 +60,5 @@ void AbstractListBox::AddWidget(Widget& widget, int x, int y)
 {
   ScrollPane::AddWidget(widget, x, y);
 }
+
+} // namespace CppConsUI

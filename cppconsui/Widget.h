@@ -32,11 +32,14 @@
 #define AUTOSIZE -1
 #define UNSET -2
 
+#include "ConsuiCurses.h"
 #include "CppConsUI.h"
 #include "InputProcessor.h"
-#include "ConsuiCurses.h"
 
 #include <sigc++/sigc++.h>
+
+namespace CppConsUI
+{
 
 class Container;
 class Window;
@@ -211,5 +214,7 @@ private:
   Widget(const Widget&);
   Widget& operator=(const Widget&);
 };
+
+} // namespace CppConsUI
 
 #endif // __WIDGET_H__

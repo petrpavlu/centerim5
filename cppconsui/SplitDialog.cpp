@@ -29,6 +29,9 @@
 
 #include "gettext.h"
 
+namespace CppConsUI
+{
+
 SplitDialog::SplitDialog(int x, int y, int w, int h, const char *title,
     LineStyle::Type ltype)
 : AbstractDialog(x, y, w, h, title, ltype), container(NULL)
@@ -186,3 +189,5 @@ void SplitDialog::OnOldFocusDelete(Widget& activator)
   else
     g_assert_not_reached();
 }
+
+} // namespace CppConsUI

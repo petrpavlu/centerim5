@@ -30,6 +30,9 @@
 
 #include "CoreManager.h"
 
+namespace CppConsUI
+{
+
 const LineStyle::LineElements LineStyle::line_elements_ascii = {
   "-", "+", "+",
   "|", "+", "+",
@@ -142,3 +145,5 @@ const LineStyle::LineElements *LineStyle::GetCurrentElems() const
   g_assert_not_reached();
   return NULL;
 }
+
+} // namespace CppConsUI

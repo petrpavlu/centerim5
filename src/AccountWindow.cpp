@@ -42,7 +42,7 @@ AccountWindow::AccountWindow()
   buttons->AppendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
           &AccountWindow::Close)));
 
-  accounts = new TreeView(AUTOSIZE, AUTOSIZE);
+  accounts = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
   SetContainer(*accounts);
 
   Populate();
@@ -147,13 +147,15 @@ void AccountWindow::StringOption::UpdateValue()
 
 void AccountWindow::StringOption::OnActivate(Button& activator)
 {
-  InputDialog *dialog = new InputDialog(GetText(), GetValue());
+  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(GetText(),
+      GetValue());
   dialog->signal_response.connect(sigc::mem_fun(this,
         &StringOption::ResponseHandler));
   dialog->Show();
 }
 
-void AccountWindow::StringOption::ResponseHandler(InputDialog& activator,
+void AccountWindow::StringOption::ResponseHandler(
+    CppConsUI::InputDialog& activator,
     AbstractDialog::ResponseType response)
 {
   switch (response) {
@@ -194,15 +196,17 @@ void AccountWindow::IntOption::UpdateValue()
 
 void AccountWindow::IntOption::OnActivate(Button& activator)
 {
-  InputDialog *dialog = new InputDialog(GetText(), GetValue());
-  dialog->SetFlags(TextEntry::FLAG_NUMERIC);
+  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(GetText(),
+      GetValue());
+  dialog->SetFlags(CppConsUI::TextEntry::FLAG_NUMERIC);
   dialog->signal_response.connect(sigc::mem_fun(this,
         &IntOption::ResponseHandler));
   dialog->Show();
 }
 
-void AccountWindow::IntOption::ResponseHandler(InputDialog& activator,
-    AbstractDialog::ResponseType response)
+void AccountWindow::IntOption::ResponseHandler(
+    CppConsUI::InputDialog& activator,
+    CppConsUI::AbstractDialog::ResponseType response)
 {
   const char *text;
   long int i;
@@ -305,14 +309,15 @@ void AccountWindow::SplitOption::UpdateSplits()
 
 void AccountWindow::SplitOption::OnActivate(Button& activator)
 {
-  InputDialog *dialog = new InputDialog(text, value);
+  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(text, value);
   dialog->signal_response.connect(sigc::mem_fun(this,
         &SplitOption::ResponseHandler));
   dialog->Show();
 }
 
-void AccountWindow::SplitOption::ResponseHandler(InputDialog& activator,
-    AbstractDialog::ResponseType response)
+void AccountWindow::SplitOption::ResponseHandler(
+    CppConsUI::InputDialog& activator,
+    CppConsUI::AbstractDialog::ResponseType response)
 {
   switch (response) {
     case AbstractDialog::RESPONSE_OK:
@@ -398,9 +403,9 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
   AccountEntry *account_entry = &account_entries[account];
 
   if (!account_entry->parent) {
-    TreeView::ToggleCollapseButton *button
-      = new TreeView::ToggleCollapseButton;
-    TreeView::NodeReference parent_reference
+    CppConsUI::TreeView::ToggleCollapseButton *button
+      = new CppConsUI::TreeView::ToggleCollapseButton;
+    CppConsUI::TreeView::NodeReference parent_reference
       = accounts->AppendNode(accounts->GetRootNode(), *button);
     accounts->CollapseNode(parent_reference);
     account_entry->parent = button;
@@ -417,17 +422,16 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
   PurplePlugin *prpl = purple_find_prpl(protocol_id);
 
   if (!prpl) {
-    Label *label;
-
     // we cannot change the settings of an unknown account
-    label = new Label(_("Invalid account or protocol plugin not loaded"));
+    CppConsUI::Label *label = new CppConsUI::Label(
+        _("Invalid account or protocol plugin not loaded"));
     accounts->AppendNode(account_entry->parent_reference, *label);
   }
   else {
     PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
     // protocols combobox
-    ComboBox *combobox = new ProtocolOption(account, *this);
+    ProtocolOption *combobox = new ProtocolOption(account, *this);
     accounts->AppendNode(account_entry->parent_reference, *combobox);
     combobox->GrabFocus();
 
@@ -518,13 +522,13 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
   }
 
   // drop account
-  Button *drop_button = new Button(_("Drop account"));
+  CppConsUI::Button *drop_button = new CppConsUI::Button(_("Drop account"));
   drop_button->signal_activate.connect(sigc::bind(sigc::mem_fun(this,
           &AccountWindow::DropAccount), account));
   accounts->AppendNode(account_entry->parent_reference, *drop_button);
 }
 
-void AccountWindow::AddAccount(Button& activator)
+void AccountWindow::AddAccount(CppConsUI::Button& activator)
 {
   GList *i = purple_plugins_get_protocols();
   PurpleAccount *account = purple_account_new(_("Username"),
@@ -541,17 +545,20 @@ void AccountWindow::AddAccount(Button& activator)
   account_entries[account].parent->GrabFocus();
 }
 
-void AccountWindow::DropAccount(Button& activator, PurpleAccount *account)
+void AccountWindow::DropAccount(CppConsUI::Button& activator,
+    PurpleAccount *account)
 {
-  MessageDialog *dialog = new MessageDialog(_("Account deletion"),
+  CppConsUI::MessageDialog *dialog = new CppConsUI::MessageDialog(
+      _("Account deletion"),
       _("Are you sure you want to delete this account?"));
   dialog->signal_response.connect(sigc::bind(sigc::mem_fun(this,
           &AccountWindow::DropAccountResponseHandler), account));
   dialog->Show();
 }
 
-void AccountWindow::DropAccountResponseHandler(MessageDialog& activator,
-    AbstractDialog::ResponseType response, PurpleAccount *account)
+void AccountWindow::DropAccountResponseHandler(
+    CppConsUI::MessageDialog& activator,
+    CppConsUI::AbstractDialog::ResponseType response, PurpleAccount *account)
 {
   switch (response) {
     case AbstractDialog::RESPONSE_OK:

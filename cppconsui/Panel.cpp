@@ -28,6 +28,9 @@
 
 #include "Panel.h"
 
+namespace CppConsUI
+{
+
 Panel::Panel(int w, int h, const char *text, LineStyle::Type ltype)
 : Widget(w, h)
 , linestyle(ltype)
@@ -135,3 +138,5 @@ LineStyle::Type Panel::GetBorderStyle() const
 {
   return linestyle.GetStyle();
 }
+
+} // namespace CppConsUI

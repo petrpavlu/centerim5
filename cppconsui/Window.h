@@ -32,6 +32,9 @@
 #include "FreeWindow.h"
 #include "Panel.h"
 
+namespace CppConsUI
+{
+
 /**
  * Window class is the class implementing the root node of the Widget chain
  * defined by Widget::parent.
@@ -70,5 +73,7 @@ private:
   Window(const Window&);
   Window& operator=(const Window&);
 };
+
+} // namespace CppConsUI
 
 #endif // __WINDOW_H__

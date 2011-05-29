@@ -29,8 +29,11 @@
 #ifndef __MENUWINDOW_H__
 #define __MENUWINDOW_H__
 
-#include "Window.h"
 #include "ListBox.h"
+#include "Window.h"
+
+namespace CppConsUI
+{
 
 class MenuWindow
 : public Window
@@ -61,5 +64,7 @@ private:
   MenuWindow(const MenuWindow&);
   MenuWindow& operator=(const MenuWindow&);
 };
+
+} // namespace CppConsUI
 
 #endif // __MENUWINDOW_H__

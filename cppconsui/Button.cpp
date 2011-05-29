@@ -32,6 +32,9 @@
 
 #include "gettext.h"
 
+namespace CppConsUI
+{
+
 Button::Button(int w, int h, const char *text_)
 : Widget(w, h), type(TYPE_SIMPLE), text(NULL), value(NULL)
 {
@@ -166,3 +169,5 @@ void Button::DeclareBindables()
   DeclareBindable("button", "activate", sigc::mem_fun(this,
         &Button::ActionActivate), InputProcessor::BINDABLE_NORMAL);
 }
+
+} // namespace CppConsUI

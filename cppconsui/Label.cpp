@@ -28,6 +28,9 @@
 
 #include "Label.h"
 
+namespace CppConsUI
+{
+
 Label::Label(int w, int h, const char *text_)
 : Widget(w, h)
 , text(NULL)
@@ -82,3 +85,5 @@ void Label::SetText(const char *new_text)
 
   Redraw();
 }
+
+} // namespace CppConsUI

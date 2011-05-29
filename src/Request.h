@@ -40,7 +40,7 @@ protected:
 
 private:
   class RequestDialog
-  : public SplitDialog
+  : public CppConsUI::SplitDialog
   {
   public:
     RequestDialog(const char *title, const char *primary,
@@ -59,9 +59,9 @@ private:
     void *user_data;
 
     // convenient var, same as dynamic_cast<ListBox *>(container)
-    ListBox *lbox;
+    CppConsUI::ListBox *lbox;
 
-    virtual void ResponseHandler(SplitDialog& activator,
+    virtual void ResponseHandler(CppConsUI::SplitDialog& activator,
         ResponseType response) = 0;
 
   private:
@@ -82,7 +82,7 @@ private:
     virtual PurpleRequestType GetRequestType();
 
   protected:
-    TextEntry *entry;
+    CppConsUI::TextEntry *entry;
 
     virtual void ResponseHandler(SplitDialog& activator,
         ResponseType response);
@@ -105,7 +105,7 @@ private:
     virtual PurpleRequestType GetRequestType();
 
   protected:
-    ComboBox *combo;
+    CppConsUI::ComboBox *combo;
 
     virtual void ResponseHandler(SplitDialog& activator,
         ResponseType response);
@@ -134,7 +134,7 @@ private:
     ActionDialog(const ActionDialog&);
     ActionDialog& operator=(const ActionDialog&);
 
-    void OnActionChoice(Button& activator, size_t i, GCallback cb);
+    void OnActionChoice(CppConsUI::Button& activator, size_t i, GCallback cb);
   };
 
   class FieldsDialog
@@ -151,10 +151,10 @@ private:
 
   protected:
     PurpleRequestFields *fields;
-    TreeView *tree;
+    CppConsUI::TreeView *tree;
 
     class StringField
-    : public Button
+    : public CppConsUI::Button
     {
     public:
       StringField(PurpleRequestField *field);
@@ -163,9 +163,9 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void OnActivate(Button& activator);
-      void ResponseHandler(InputDialog& activator,
-          AbstractDialog::ResponseType response);
+      void OnActivate(CppConsUI::Button& activator);
+      void ResponseHandler(CppConsUI::InputDialog& activator,
+          CppConsUI::AbstractDialog::ResponseType response);
 
     private:
       StringField(const StringField&);
@@ -173,7 +173,7 @@ private:
     };
 
     class IntegerField
-    : public Button
+    : public CppConsUI::Button
     {
     public:
       IntegerField(PurpleRequestField *field);
@@ -182,9 +182,9 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void OnActivate(Button& activator);
-      void ResponseHandler(InputDialog& activator,
-          AbstractDialog::ResponseType response);
+      void OnActivate(CppConsUI::Button& activator);
+      void ResponseHandler(CppConsUI::InputDialog& activator,
+          CppConsUI::AbstractDialog::ResponseType response);
 
     private:
       IntegerField(const IntegerField&);
@@ -192,7 +192,7 @@ private:
     };
 
     class BooleanField
-    : public CheckBox
+    : public CppConsUI::CheckBox
     {
     public:
       BooleanField(PurpleRequestField *field);
@@ -201,7 +201,7 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void OnToggle(CheckBox& activator, bool new_state);
+      void OnToggle(CppConsUI::CheckBox& activator, bool new_state);
 
     private:
       BooleanField(const BooleanField&);
@@ -209,7 +209,7 @@ private:
     };
 
     class ChoiceField
-    : public ComboBox
+    : public CppConsUI::ComboBox
     {
     public:
       ChoiceField(PurpleRequestField *field);
@@ -218,7 +218,7 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void OnSelectionChanged(ComboBox& activator, int new_entry,
+      void OnSelectionChanged(CppConsUI::ComboBox& activator, int new_entry,
           const char *title, intptr_t data);
 
     private:
@@ -227,7 +227,7 @@ private:
     };
 
     class ListFieldMultiple
-    : public ListBox
+    : public CppConsUI::ListBox
     {
     public:
       ListFieldMultiple(PurpleRequestField *field);
@@ -237,7 +237,7 @@ private:
       PurpleRequestField *field;
 
       class ListFieldItem
-      : public CheckBox
+      : public CppConsUI::CheckBox
       {
       public:
         ListFieldItem(PurpleRequestField *field, const char *text);
@@ -246,7 +246,7 @@ private:
       protected:
         PurpleRequestField *field;
 
-        void OnToggle(CheckBox& activator, bool new_state);
+        void OnToggle(CppConsUI::CheckBox& activator, bool new_state);
 
       private:
         ListFieldItem(const ListFieldItem&);
@@ -259,7 +259,7 @@ private:
     };
 
     class ListFieldSingle
-    : public ComboBox
+    : public CppConsUI::ComboBox
     {
     public:
       ListFieldSingle(PurpleRequestField *field);
@@ -268,7 +268,7 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void OnSelectionChanged(ComboBox& activator, int new_entry,
+      void OnSelectionChanged(CppConsUI::ComboBox& activator, int new_entry,
           const char *title, intptr_t data);
 
     private:
@@ -277,7 +277,7 @@ private:
     };
 
     class LabelField
-    : public Label
+    : public CppConsUI::Label
     {
     public:
       LabelField(PurpleRequestField *field);
@@ -292,7 +292,7 @@ private:
     };
 
     class ImageField
-    : public Button
+    : public CppConsUI::Button
     {
     public:
       ImageField(PurpleRequestField *field);
@@ -301,7 +301,7 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void OnActivate(Button& activator);
+      void OnActivate(CppConsUI::Button& activator);
 
     private:
       ImageField(const ImageField&);
@@ -309,7 +309,7 @@ private:
     };
 
     class AccountField
-    : public ComboBox
+    : public CppConsUI::ComboBox
     {
     public:
       AccountField(PurpleRequestField *field);
@@ -318,7 +318,7 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void OnAccountChanged(Button& activator, size_t new_entry,
+      void OnAccountChanged(CppConsUI::Button& activator, size_t new_entry,
           const char *title, intptr_t data);
 
     private:
@@ -326,7 +326,7 @@ private:
       AccountField& operator=(const AccountField&);
     };
 
-    virtual void ResponseHandler(SplitDialog& activator,
+    virtual void ResponseHandler(CppConsUI::SplitDialog& activator,
         ResponseType response);
 
   private:
@@ -334,7 +334,7 @@ private:
     FieldsDialog& operator=(const FieldsDialog&);
   };
 
-  typedef std::set<RequestDialog *> Requests;
+  typedef std::set<RequestDialog*> Requests;
 
   Requests requests;
 
@@ -351,8 +351,8 @@ private:
   static void Finalize();
   friend class CenterIM;
 
-  void OnDialogResponse(SplitDialog& dialog,
-      AbstractDialog::ResponseType response);
+  void OnDialogResponse(CppConsUI::SplitDialog& dialog,
+      CppConsUI::AbstractDialog::ResponseType response);
 
   static void *request_input_(const char *title, const char *primary,
       const char *secondary, const char *default_value, gboolean multiline,

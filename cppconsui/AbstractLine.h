@@ -31,6 +31,9 @@
 #include "Widget.h"
 #include "LineStyle.h"
 
+namespace CppConsUI
+{
+
 /**
  * Abstract class that defines common interface for VerticalLine and
  * HorizontalLine.
@@ -59,5 +62,7 @@ private:
   AbstractLine(const AbstractLine&);
   AbstractLine& operator=(const AbstractLine&);
 };
+
+} // namespace CppConsUI
 
 #endif // __ABSTRACTLINE_H__

@@ -33,26 +33,27 @@ OptionWindow::OptionWindow()
 {
   SetColorScheme("generalwindow");
 
-  TreeView *tree = new TreeView(AUTOSIZE, AUTOSIZE);
+  CppConsUI::TreeView *tree = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
   SetContainer(*tree);
 
-  TreeView::NodeReference parent;
+  CppConsUI::TreeView::NodeReference parent;
   parent = tree->AppendNode(tree->GetRootNode(),
-      *(new TreeView::ToggleCollapseButton(_("Buddy list"))));
+      *(new CppConsUI::TreeView::ToggleCollapseButton(_("Buddy list"))));
   tree->AppendNode(parent, *(new BooleanOption(_("Show offline buddies"),
           CONF_PREFIX "/blist/show_offline_buddies")));
   tree->AppendNode(parent, *(new BooleanOption(_("Show empty groups"),
           CONF_PREFIX "/blist/show_empty_groups")));
 
   parent = tree->AppendNode(tree->GetRootNode(),
-      *(new TreeView::ToggleCollapseButton(_("Dimensions (percentage)"))));
+      *(new CppConsUI::TreeView::ToggleCollapseButton(
+          _("Dimensions (percentage)"))));
   tree->AppendNode(parent, *(new IntegerOption(_("Buddy list window width"),
           CONF_PREFIX "/dimensions/buddylist_width")));
   tree->AppendNode(parent, *(new IntegerOption(_("Log window height"),
           CONF_PREFIX "/dimensions/log_height")));
 
   parent = tree->AppendNode(tree->GetRootNode(),
-      *(new TreeView::ToggleCollapseButton(_("Logging"))));
+      *(new CppConsUI::TreeView::ToggleCollapseButton(_("Logging"))));
 #define ADD_DEBUG_OPTIONS()                \
 do {                                       \
   c->AddOption(_("None"), "none");         \
@@ -135,17 +136,19 @@ OptionWindow::StringOption::~StringOption()
 
 void OptionWindow::StringOption::OnActivate(Button& activator)
 {
-  InputDialog *dialog = new InputDialog(GetText(), GetValue());
+  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(GetText(),
+      GetValue());
   dialog->signal_response.connect(sigc::mem_fun(this,
         &StringOption::ResponseHandler));
   dialog->Show();
 }
 
-void OptionWindow::StringOption::ResponseHandler(InputDialog& activator,
-    AbstractDialog::ResponseType response)
+void OptionWindow::StringOption::ResponseHandler(
+    CppConsUI::InputDialog& activator,
+    CppConsUI::AbstractDialog::ResponseType response)
 {
   switch (response) {
-    case AbstractDialog::RESPONSE_OK:
+    case CppConsUI::AbstractDialog::RESPONSE_OK:
       purple_prefs_set_string(pref, activator.GetText());
       SetValue(purple_prefs_get_string(pref));
       break;
@@ -173,21 +176,23 @@ OptionWindow::IntegerOption::~IntegerOption()
 
 void OptionWindow::IntegerOption::OnActivate(Button& activator)
 {
-  InputDialog *dialog = new InputDialog(GetText(), GetValue());
-  dialog->SetFlags(TextEntry::FLAG_NUMERIC);
+  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(GetText(),
+      GetValue());
+  dialog->SetFlags(CppConsUI::TextEntry::FLAG_NUMERIC);
   dialog->signal_response.connect(sigc::mem_fun(this,
         &IntegerOption::ResponseHandler));
   dialog->Show();
 }
 
-void OptionWindow::IntegerOption::ResponseHandler(InputDialog& activator,
-    AbstractDialog::ResponseType response)
+void OptionWindow::IntegerOption::ResponseHandler(
+    CppConsUI::InputDialog& activator,
+    CppConsUI::AbstractDialog::ResponseType response)
 {
   const char *text;
   long int i;
 
   switch (response) {
-    case AbstractDialog::RESPONSE_OK:
+    case CppConsUI::AbstractDialog::RESPONSE_OK:
       text = activator.GetText();
       errno = 0;
       i = strtol(text, NULL, 10);

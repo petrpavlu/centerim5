@@ -28,6 +28,9 @@
 
 #include "VerticalLine.h"
 
+namespace CppConsUI
+{
+
 VerticalLine::VerticalLine(int h, LineStyle::Type ltype)
 : AbstractLine(1, h, ltype)
 {
@@ -48,3 +51,5 @@ void VerticalLine::Draw()
     area->mvaddstring(i, 0, linestyle.V());
   area->attroff(attrs);
 }
+
+} // namespace CppConsUI

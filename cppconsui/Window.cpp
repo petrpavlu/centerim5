@@ -28,6 +28,9 @@
 
 #include "Window.h"
 
+namespace CppConsUI
+{
+
 Window::Window(int x, int y, int w, int h, const char *title, Type t,
     LineStyle::Type ltype)
 : FreeWindow(x, y, w, h, t)
@@ -115,3 +118,5 @@ LineStyle::Type Window::GetBorderStyle() const
 {
   return panel->GetBorderStyle();
 }
+
+} // namespace CppConsUI

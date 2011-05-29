@@ -24,6 +24,9 @@
 
 #include <string.h>
 
+namespace CppConsUI
+{
+
 namespace Keys
 {
 
@@ -62,3 +65,5 @@ TermKeyKey RefineKey(const TermKeyKey &k)
 }
 
 } // namespace Keys
+
+} // namespace CppConsUI

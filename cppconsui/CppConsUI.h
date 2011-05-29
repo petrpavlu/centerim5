@@ -31,6 +31,9 @@
 #ifndef __CPPCONSUI_H__
 #define __CPPCONSUI_H__
 
+namespace CppConsUI
+{
+
 /// @todo move into editable abstract class?
 enum CursorMovement {
   MOVE_LOGICAL_POSITIONS,
@@ -117,5 +120,7 @@ protected:
 
 private:
 };
+
+} // namespace CppConsUI
 
 #endif // __CPPCONSUI_H__

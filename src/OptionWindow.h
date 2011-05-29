@@ -28,7 +28,7 @@
 #include <cppconsui/SplitDialog.h>
 
 class OptionWindow
-: public SplitDialog
+: public CppConsUI::SplitDialog
 {
 public:
   OptionWindow();
@@ -39,7 +39,7 @@ public:
 
 protected:
   class BooleanOption
-  : public CheckBox
+  : public CppConsUI::CheckBox
   {
   public:
     BooleanOption(const char *text, const char *config);
@@ -48,7 +48,7 @@ protected:
   protected:
     char *pref;
 
-    void OnToggle(CheckBox& activator, bool new_state);
+    void OnToggle(CppConsUI::CheckBox& activator, bool new_state);
 
   private:
     BooleanOption(const BooleanOption&);
@@ -56,7 +56,7 @@ protected:
   };
 
   class StringOption
-  : public Button
+  : public CppConsUI::Button
   {
   public:
     StringOption(const char *text, const char *config);
@@ -65,9 +65,9 @@ protected:
   protected:
     char *pref;
 
-    void OnActivate(Button& activator);
-    void ResponseHandler(InputDialog& activator,
-        AbstractDialog::ResponseType response);
+    void OnActivate(CppConsUI::Button& activator);
+    void ResponseHandler(CppConsUI::InputDialog& activator,
+        CppConsUI::AbstractDialog::ResponseType response);
 
   private:
     StringOption(const StringOption&);
@@ -75,7 +75,7 @@ protected:
   };
 
   class IntegerOption
-  : public Button
+  : public CppConsUI::Button
   {
   public:
     IntegerOption(const char *text, const char *config);
@@ -84,9 +84,9 @@ protected:
   protected:
     char *pref;
 
-    void OnActivate(Button& activator);
-    void ResponseHandler(InputDialog& activator,
-        AbstractDialog::ResponseType response);
+    void OnActivate(CppConsUI::Button& activator);
+    void ResponseHandler(CppConsUI::InputDialog& activator,
+        CppConsUI::AbstractDialog::ResponseType response);
 
   private:
     IntegerOption(const IntegerOption&);
@@ -94,7 +94,7 @@ protected:
   };
 
   class ChoiceOption
-  : public ComboBox
+  : public CppConsUI::ComboBox
   {
   public:
     ChoiceOption(const char *text, const char *config);
@@ -105,7 +105,7 @@ protected:
   protected:
     char *pref;
 
-    void OnSelectionChanged(ComboBox& activator, int new_entry,
+    void OnSelectionChanged(CppConsUI::ComboBox& activator, int new_entry,
         const char *title, intptr_t data);
 
   private:

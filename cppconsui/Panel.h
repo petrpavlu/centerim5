@@ -29,9 +29,12 @@
 #ifndef __PANEL_H__
 #define __PANEL_H__
 
-#include "LineStyle.h"
 #include "Label.h"
+#include "LineStyle.h"
 #include "Widget.h"
+
+namespace CppConsUI
+{
 
 /**
  * A widget representing a rectangular border with an optional caption on the
@@ -81,5 +84,7 @@ private:
   Panel(const Panel&);
   Panel& operator=(const Panel&);
 };
+
+} // namespace CppConsUI
 
 #endif // __PANEL_H__

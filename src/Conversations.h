@@ -32,7 +32,7 @@
 #define CONVERSATIONS (Conversations::Instance())
 
 class Conversations
-: public FreeWindow
+: public CppConsUI::FreeWindow
 {
 public:
   static Conversations *Instance();
@@ -52,7 +52,7 @@ private:
   {
     PurpleConversation *purple_conv;
     Conversation *conv;
-    Label *label;
+    CppConsUI::Label *label;
     sigc::connection sig_close;
   };
 
@@ -63,7 +63,7 @@ private:
   // active conversation, -1 if none
   int active;
 
-  HorizontalListBox *list;
+  CppConsUI::HorizontalListBox *list;
 
   PurpleConversationUiOps centerim_conv_ui_ops;
 

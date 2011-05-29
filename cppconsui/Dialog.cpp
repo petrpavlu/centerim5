@@ -28,6 +28,9 @@
 
 #include "Dialog.h"
 
+namespace CppConsUI
+{
+
 Dialog::Dialog(int x, int y, int w, int h, const char *title,
     LineStyle::Type ltype)
 : AbstractDialog(x, y, w, h, title, ltype)
@@ -43,3 +46,5 @@ void Dialog::EmitResponse(ResponseType response)
 {
   signal_response(*this, response);
 }
+
+} // namespace CppConsUI

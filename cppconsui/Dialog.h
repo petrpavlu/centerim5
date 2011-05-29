@@ -31,6 +31,9 @@
 
 #include "AbstractDialog.h"
 
+namespace CppConsUI
+{
+
 class Dialog
 : public AbstractDialog
 {
@@ -54,5 +57,7 @@ private:
   Dialog(const Dialog&);
   Dialog& operator=(const Dialog&);
 };
+
+} // namespace CppConsUI
 
 #endif // __DIALOG_H__

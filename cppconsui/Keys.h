@@ -24,6 +24,9 @@
 
 #include "libtermkey/termkey.h"
 
+namespace CppConsUI
+{
+
 namespace Keys
 {
 
@@ -42,5 +45,7 @@ bool Compare(const TermKeyKey &a, const TermKeyKey &b);
 TermKeyKey RefineKey(const TermKeyKey &k);
 
 } // namespace Keys
+
+} // namespace CppConsUI
 
 #endif // __KEYS_H__

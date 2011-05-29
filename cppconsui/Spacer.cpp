@@ -27,6 +27,9 @@
 
 #include "Spacer.h"
 
+namespace CppConsUI
+{
+
 Spacer::Spacer(int w, int h)
 : Widget(w, h)
 {
@@ -35,3 +38,5 @@ Spacer::Spacer(int w, int h)
 void Spacer::Draw()
 {
 }
+
+} // namespace CppConsUI

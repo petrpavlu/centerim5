@@ -43,12 +43,12 @@ Header::Header()
 {
   SetColorScheme("header");
 
-  container = new HorizontalListBox(AUTOSIZE, AUTOSIZE);
+  container = new CppConsUI::HorizontalListBox(AUTOSIZE, AUTOSIZE);
   AddWidget(*container, 0, 0);
 
   // CenterIM name will always be top-left so we can "forget about" it
   char *cimname = g_strdup_printf("CENTERIM %s", PACKAGE_VERSION);
-  container->AppendWidget(*(new Label(cimname)));
+  container->AppendWidget(*(new CppConsUI::Label(cimname)));
   g_free(cimname);
 
   for (GList *i = purple_accounts_get_all(); i; i = i->next) {
@@ -100,7 +100,7 @@ void Header::account_signed_on(PurpleAccount *account)
   if (statuses.find(account) != statuses.end())
     return;
 
-  Label *label = new Label(0, 1, "");
+  CppConsUI::Label *label = new CppConsUI::Label(0, 1, "");
   statuses[account] = label;
   container->AppendWidget(*label);
 
@@ -132,7 +132,7 @@ void Header::account_status_changed(PurpleAccount *account, PurpleStatus *old,
   bool short_text = protocol_count.count(prid) == 1;
 
   // update label
-  Label *label = statuses[account];
+  CppConsUI::Label *label = statuses[account];
   char *text;
   if (short_text)
     text = g_strdup_printf(" %s [%s]", Utils::GetStatusIndicator(cur),
@@ -142,7 +142,7 @@ void Header::account_status_changed(PurpleAccount *account, PurpleStatus *old,
         purple_account_get_protocol_name(account),
         purple_account_get_username(account));
   label->SetText(text);
-  label->SetWidth(Curses::onscreen_width(text));
+  label->SetWidth(CppConsUI::Curses::onscreen_width(text));
   g_free(text);
 }
 

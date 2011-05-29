@@ -30,6 +30,9 @@
 
 #include "Widget.h"
 
+namespace CppConsUI
+{
+
 class Spacer
 : public Widget
 {
@@ -46,5 +49,7 @@ private:
   Spacer(const Spacer&);
   Spacer& operator=(const Spacer&);
 };
+
+} // namespace CppConsUI
 
 #endif // __SPACER_H__

@@ -31,7 +31,7 @@
 
 // the top most "head"-area of the screen
 class Header
-: public FreeWindow
+: public CppConsUI::FreeWindow
 {
 public:
   static Header *Instance();
@@ -43,9 +43,9 @@ protected:
 
 private:
   typedef std::multiset<std::string> ProtocolCount;
-  typedef std::map<PurpleAccount*, Label*> Statuses;
+  typedef std::map<PurpleAccount*, CppConsUI::Label*> Statuses;
 
-  HorizontalListBox *container;
+  CppConsUI::HorizontalListBox *container;
   ProtocolCount protocol_count;
   Statuses statuses;
 

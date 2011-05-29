@@ -30,6 +30,9 @@
 #include <stdio.h>
 #include "gettext.h"
 
+namespace CppConsUI
+{
+
 // based on glibmm code
 class SourceConnectionNode
 {
@@ -546,3 +549,5 @@ void CoreManager::DeclareBindables()
       sigc::mem_fun(this, &CoreManager::RedrawScreen),
       InputProcessor::BINDABLE_OVERRIDE);
 }
+
+} // namespace CppConsUI

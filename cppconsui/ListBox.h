@@ -32,6 +32,9 @@
 #include "AbstractListBox.h"
 #include "HorizontalLine.h"
 
+namespace CppConsUI
+{
+
 /**
  * Implementation of AbstractListBox class where widgets are placed
  * vertically.
@@ -74,5 +77,7 @@ private:
   ListBox(const ListBox&);
   ListBox& operator=(const ListBox&);
 };
+
+} // namespace CppConsUI
 
 #endif // __LISTBOX_H__

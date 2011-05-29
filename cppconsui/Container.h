@@ -34,6 +34,9 @@
 #include "Widget.h"
 #include "tree.hh"
 
+namespace CppConsUI
+{
+
 /**
  * The generic widget container class.
  *
@@ -199,5 +202,7 @@ private:
 
   void DeclareBindables();
 };
+
+} // namespace CppConsUI
 
 #endif // __CONTAINER_H__

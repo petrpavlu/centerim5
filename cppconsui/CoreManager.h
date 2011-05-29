@@ -36,12 +36,14 @@
 #include <glib.h>
 #include <vector>
 
+namespace CppConsUI
+{
+
+#define COREMANAGER (CppConsUI::CoreManager::Instance())
+
 /**
  * This class implements a core part of CppConsUI.
  */
-
-#define COREMANAGER (CoreManager::Instance())
-
 class CoreManager
 : public InputProcessor
 {
@@ -167,5 +169,7 @@ private:
 
   void DeclareBindables();
 };
+
+} // namespace CppConsUI
 
 #endif // __APPLICATION_H__

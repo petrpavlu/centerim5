@@ -34,7 +34,10 @@
 #include <map>
 #include <string>
 
-#define COLORSCHEME (ColorScheme::Instance())
+#define COLORSCHEME (CppConsUI::ColorScheme::Instance())
+
+namespace CppConsUI
+{
 
 class ColorScheme
 {
@@ -80,5 +83,7 @@ private:
   ColorScheme &operator=(ColorScheme &);
   ~ColorScheme() {}
 };
+
+} // namespace CppConsUI
 
 #endif // __COLORSCHEME_H__

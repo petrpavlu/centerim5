@@ -5,7 +5,6 @@ TODO:
 - better error catching in main
 - grep for todo's and fix them
 - add const in a lot of places
-- put everything (in cppconsui) in a CppConsUI namespace?
 - put something in: README AUTHORS ChangeLog NEWS
 - Add an init function to cppconsui which calls
   bindtextdomain (PACKAGE, LOCALEDIR); (as explained by

@@ -31,6 +31,9 @@
 
 #include "Widget.h"
 
+namespace CppConsUI
+{
+
 /**
  * This class implements a simple button behaviour.
  *
@@ -92,5 +95,7 @@ private:
 
   void DeclareBindables();
 };
+
+} // namespace CppConsUI
 
 #endif // __BUTTON_H__

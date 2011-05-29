@@ -44,15 +44,15 @@ Request::RequestDialog::RequestDialog(const char *title,
 {
   SetColorScheme("generalwindow");
 
-  lbox = new ListBox(AUTOSIZE, AUTOSIZE);
+  lbox = new CppConsUI::ListBox(AUTOSIZE, AUTOSIZE);
   if (primary)
-    lbox->AppendWidget(*(new Label(primary)));
+    lbox->AppendWidget(*(new CppConsUI::Label(primary)));
   if (primary && secondary)
-    lbox->AppendWidget(*(new Spacer(AUTOSIZE, 1)));
+    lbox->AppendWidget(*(new CppConsUI::Spacer(AUTOSIZE, 1)));
   if (secondary)
-    lbox->AppendWidget(*(new Label(secondary)));
+    lbox->AppendWidget(*(new CppConsUI::Label(secondary)));
   if (primary || secondary)
-    lbox->AppendWidget(*(new HorizontalLine(AUTOSIZE)));
+    lbox->AppendWidget(*(new CppConsUI::HorizontalLine(AUTOSIZE)));
   SetContainer(*lbox);
 
   if (ok_text)
@@ -77,7 +77,7 @@ Request::InputTextDialog::InputTextDialog(const char *title,
 : RequestDialog(title, primary, secondary, ok_text, ok_cb, cancel_text,
     cancel_cb, user_data)
 {
-  entry = new TextEntry(AUTOSIZE, AUTOSIZE, default_value);
+  entry = new CppConsUI::TextEntry(AUTOSIZE, AUTOSIZE, default_value);
   lbox->AppendWidget(*entry);
   entry->GrabFocus();
 }
@@ -114,7 +114,7 @@ Request::ChoiceDialog::ChoiceDialog(const char *title, const char *primary,
 : RequestDialog(title, primary, secondary, ok_text, ok_cb, cancel_text,
     cancel_cb, user_data)
 {
-  combo = new ComboBox(_("Selected value"));
+  combo = new CppConsUI::ComboBox(_("Selected value"));
   lbox->AppendWidget(*combo);
   combo->GrabFocus();
 
@@ -163,9 +163,10 @@ Request::ActionDialog::ActionDialog(const char *title, const char *primary,
     char *title = va_arg(actions, char*);
     GCallback cb = va_arg(actions, GCallback);
 
-    Button *b = buttons->AppendItem(title, sigc::bind(sigc::mem_fun(this,
+    CppConsUI::Button *b = buttons->AppendItem(title,
+        sigc::bind(sigc::mem_fun(this,
             &Request::ActionDialog::OnActionChoice), i, cb));
-    if ((int) i == default_value)
+    if (static_cast<int>(i) == default_value)
       b->GrabFocus();
 
     if (i != action_count - 1)
@@ -183,8 +184,8 @@ void Request::ActionDialog::ResponseHandler(SplitDialog& activator,
 {
 }
 
-void Request::ActionDialog::OnActionChoice(Button& activator, size_t i,
-    GCallback cb)
+void Request::ActionDialog::OnActionChoice(CppConsUI::Button& activator,
+    size_t i, GCallback cb)
 {
   if (cb)
     reinterpret_cast<PurpleRequestActionCb>(cb)(user_data, i);
@@ -199,7 +200,7 @@ Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,
 : RequestDialog(title, primary, secondary, ok_text, ok_cb, cancel_text,
     cancel_cb, user_data), fields(request_fields)
 {
-  tree = new TreeView(AUTOSIZE, AUTOSIZE);
+  tree = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
   lbox->AppendWidget(*tree);
 
   bool grouping = true;
@@ -214,14 +215,14 @@ Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,
     PurpleRequestFieldGroup *group
       = reinterpret_cast<PurpleRequestFieldGroup*>(groups->data);
 
-    TreeView::NodeReference parent = tree->GetRootNode();
+    CppConsUI::TreeView::NodeReference parent = tree->GetRootNode();
     if (grouping) {
       const char *title = purple_request_field_group_get_title(group);
       if (!title)
         title = _("Settings group");
 
-      TreeView::ToggleCollapseButton *button
-        = new TreeView::ToggleCollapseButton(title);
+      CppConsUI::TreeView::ToggleCollapseButton *button
+        = new CppConsUI::TreeView::ToggleCollapseButton(title);
       parent = tree->AppendNode(tree->GetRootNode(), *button);
     }
 
@@ -294,9 +295,10 @@ Request::FieldsDialog::StringField::StringField(PurpleRequestField *field)
   signal_activate.connect(sigc::mem_fun(this, &StringField::OnActivate));
 }
 
-void Request::FieldsDialog::StringField::OnActivate(Button& activator)
+void Request::FieldsDialog::StringField::OnActivate(CppConsUI::Button& activator)
 {
-  InputDialog *dialog = new InputDialog(purple_request_field_get_label(field),
+  CppConsUI::InputDialog *dialog
+    = new CppConsUI::InputDialog(purple_request_field_get_label(field),
       purple_request_field_string_get_value(field));
   dialog->signal_response.connect(sigc::mem_fun(this,
         &StringField::ResponseHandler));
@@ -304,10 +306,11 @@ void Request::FieldsDialog::StringField::OnActivate(Button& activator)
 }
 
 void Request::FieldsDialog::StringField::ResponseHandler(
-    InputDialog& activator, AbstractDialog::ResponseType response)
+    CppConsUI::InputDialog& activator,
+    CppConsUI::AbstractDialog::ResponseType response)
 {
   switch (response) {
-    case AbstractDialog::RESPONSE_OK:
+    case CppConsUI::AbstractDialog::RESPONSE_OK:
       purple_request_field_string_set_value(field, activator.GetText());
       SetValue(purple_request_field_string_get_value(field));
       break;
@@ -331,26 +334,28 @@ Request::FieldsDialog::IntegerField::IntegerField(PurpleRequestField *field)
   signal_activate.connect(sigc::mem_fun(this, &IntegerField::OnActivate));
 }
 
-void Request::FieldsDialog::IntegerField::OnActivate(Button& activator)
+void Request::FieldsDialog::IntegerField::OnActivate(CppConsUI::Button& activator)
 {
   char *value = g_strdup_printf("%d", purple_request_field_int_get_value(field));
-  InputDialog *dialog = new InputDialog(purple_request_field_get_label(field),
-      value);
+  CppConsUI::InputDialog *dialog
+    = new CppConsUI::InputDialog(purple_request_field_get_label(field),
+        value);
   g_free(value);
-  dialog->SetFlags(TextEntry::FLAG_NUMERIC);
+  dialog->SetFlags(CppConsUI::TextEntry::FLAG_NUMERIC);
   dialog->signal_response.connect(sigc::mem_fun(this,
         &IntegerField::ResponseHandler));
   dialog->Show();
 }
 
 void Request::FieldsDialog::IntegerField::ResponseHandler(
-    InputDialog& activator, AbstractDialog::ResponseType response)
+    CppConsUI::InputDialog& activator,
+    CppConsUI::AbstractDialog::ResponseType response)
 {
   const char *text;
   long int i;
 
   switch (response) {
-    case AbstractDialog::RESPONSE_OK:
+    case CppConsUI::AbstractDialog::RESPONSE_OK:
       text = activator.GetText();
       errno = 0;
       i = strtol(text, NULL, 10);
@@ -624,8 +629,8 @@ void Request::Finalize()
   instance = NULL;
 }
 
-void Request::OnDialogResponse(SplitDialog& dialog,
-    AbstractDialog::ResponseType response)
+void Request::OnDialogResponse(CppConsUI::SplitDialog& dialog,
+    CppConsUI::AbstractDialog::ResponseType response)
 {
   RequestDialog *rdialog = dynamic_cast<RequestDialog*>(&dialog);
   g_assert(rdialog);

@@ -30,6 +30,9 @@
 
 #include "gettext.h"
 
+namespace CppConsUI
+{
+
 InputDialog::InputDialog(const char *title, const char *defaultvalue)
 : AbstractDialog(title)
 {
@@ -50,3 +53,5 @@ void InputDialog::EmitResponse(ResponseType response)
 {
   signal_response(*this, response);
 }
+
+} // namespace CppConsUI

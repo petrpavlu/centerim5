@@ -27,7 +27,7 @@ static const char *pic[] =
 
 // MyScrollPane class
 class MyScrollPane
-: public ScrollPane
+: public CppConsUI::ScrollPane
 {
   public:
     MyScrollPane(int w, int h, int scrollw, int scrollh);
@@ -44,7 +44,7 @@ class MyScrollPane
 };
 
 MyScrollPane::MyScrollPane(int w, int h, int scrollw, int scrollh)
-: ScrollPane(w, h, scrollw, scrollh)
+: CppConsUI::ScrollPane(w, h, scrollw, scrollh)
 {
 }
 
@@ -71,7 +71,7 @@ void MyScrollPane::Draw()
 
 // ScrollPaneWindow class
 class ScrollPaneWindow
-: public Window
+: public CppConsUI::Window
 {
   public:
     /* This is a main window, make sure it can not be closed with ESC key by
@@ -103,10 +103,11 @@ ScrollPaneWindow *ScrollPaneWindow::Instance()
 }
 
 ScrollPaneWindow::ScrollPaneWindow()
-: Window(0, 0, 0, 0)
+: CppConsUI::Window(0, 0, 0, 0)
 {
-  AddWidget(*(new Label(25, 1, "Press F10 to quit.")), 1, 1);
-  AddWidget(*(new Label(25, 1, "WASD to move the picture.")), 1, 2);
+  AddWidget(*(new CppConsUI::Label(25, 1, "Press F10 to quit.")), 1, 1);
+  AddWidget(*(new CppConsUI::Label(25, 1, "WASD to move the picture.")), 1,
+      2);
 
   pane = new MyScrollPane(20, 10, 111, 23);
   AddWidget(*pane, 1, 4);
@@ -158,7 +159,7 @@ void ScrollPaneWindow::ScreenResized()
 
 // TestApp class
 class TestApp
-: public InputProcessor
+: public CppConsUI::InputProcessor
 {
   public:
     static TestApp *Instance();
@@ -173,7 +174,7 @@ class TestApp
   protected:
 
   private:
-    CoreManager *mngr;
+    CppConsUI::CoreManager *mngr;
 
     TestApp();
     TestApp(const TestApp&);
@@ -188,15 +189,15 @@ TestApp *TestApp::Instance()
 }
 
 TestApp::TestApp()
-: InputProcessor()
 {
-  mngr = CoreManager::Instance();
+  mngr = CppConsUI::CoreManager::Instance();
   KEYCONFIG->RegisterDefaultKeys();
 
   g_log_set_default_handler(g_log_func_, this);
 
   DeclareBindable("testapp", "quit", sigc::mem_fun(mngr,
-        &CoreManager::QuitMainLoop), InputProcessor::BINDABLE_OVERRIDE);
+        &CppConsUI::CoreManager::QuitMainLoop),
+      InputProcessor::BINDABLE_OVERRIDE);
   KEYCONFIG->BindKey("testapp", "quit", "F10");
 }
 

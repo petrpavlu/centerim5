@@ -65,6 +65,9 @@
 #include <string.h>
 #include "gettext.h"
 
+namespace CppConsUI
+{
+
 TextEntry::TextEntry(int w, int h, const char *text_)
 : Widget(w, h)
 , text(NULL)
@@ -477,3 +480,5 @@ void TextEntry::DeclareBindables()
   DeclareBindable("textentry", "activate", sigc::mem_fun(this,
         &TextEntry::ActionActivate), InputProcessor::BINDABLE_NORMAL);
 }
+
+} // namespace CppConsUI

@@ -31,6 +31,9 @@
 
 #include "Container.h"
 
+namespace CppConsUI
+{
+
 /**
  * TODO
  */
@@ -118,5 +121,7 @@ private:
   ScrollPane(const ScrollPane&);
   ScrollPane& operator=(const ScrollPane&);
 };
+
+} // namespace CppConsUI
 
 #endif // __SCROLLPANE_H__
