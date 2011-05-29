@@ -1,34 +1,28 @@
 TODO:
-- All classes should have a copy constructor and an
-  operator=().
-- purple_pounces_load
-- better error catching in main
+- All classes should have a copy constructor and an operator=().
+- purple_pounces_load()
 - grep for todo's and fix them
-- add const in a lot of places
 - put something in: README AUTHORS ChangeLog NEWS
 - Add an init function to cppconsui which calls
   bindtextdomain (PACKAGE, LOCALEDIR); (as explained by
   <http://www.gnu.org/software/gettext/manual/gettext.html#Libraries>
   also make the translations proper)
 - add function descriptions in the header files
-- (bottom) helpbar as known from cim4
 - TextEntry -- hide passwords with asterisks, fix cursor movement that goes
   outside the area
 - pending auth and auth request windows
 - notice UI ops implementation
 - fix and put back cmake build
-- chat history
 - buddy list customization
 - buddy info window
 - TreeView: add PgUp/PgDn binds, add quick search
 - handle PURPLE_DEFAULT_ACTION_NONE correctly
 - don't create ChoiceDialog (Request UI) if there are no options
 - GeneralMenu autosize -> MenuWindow autosize
-- non UTF-8 fix
 - fix Conversation history overflow
 - purple_blist_get_group_size(), purple_blist_get_group_online_count()
 - gtkblist.c: buddy_is_displayable(), redo_buddy_list()
-- add profiling (gprof, sprof, oprofile), debuging info into HACKING
+- add profiling (gprof, sprof, oprofile), debugging info into HACKING
 - TextEdit: horizontal tab characters..
 
 Less important todo's which sometimes are just ideas:
