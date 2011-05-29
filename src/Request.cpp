@@ -726,7 +726,7 @@ void Request::close_request(PurpleRequestType type, void *ui_handle)
 
   g_assert(ui_handle);
 
-  RequestDialog *dialog = reinterpret_cast<RequestDialog *>(ui_handle);
+  RequestDialog *dialog = reinterpret_cast<RequestDialog*>(ui_handle);
   if (requests.find(dialog) != requests.end()) {
     requests.erase(dialog);
     dialog->Close();

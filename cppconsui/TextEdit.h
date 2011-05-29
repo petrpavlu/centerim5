@@ -108,7 +108,7 @@ protected:
       : start(start), end(end), length(length), width(width) {}
   };
 
-  std::vector<ScreenLine *> screen_lines;
+  std::vector<ScreenLine*> screen_lines;
 
 private:
   TextEdit(const TextEdit&);

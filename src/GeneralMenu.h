@@ -48,19 +48,19 @@ private:
   void RequestTest(CppConsUI::Button& activator);
 
   static void input_ok_cb_(void *data, const char *text)
-    { reinterpret_cast<GeneralMenu *>(data)->input_ok_cb(text); }
+    { reinterpret_cast<GeneralMenu*>(data)->input_ok_cb(text); }
   void input_ok_cb(const char *text);
 
   static void choice_ok_cb_(void *data, int selected)
-    { reinterpret_cast<GeneralMenu *>(data)->choice_ok_cb(selected); }
+    { reinterpret_cast<GeneralMenu*>(data)->choice_ok_cb(selected); }
   void choice_ok_cb(int selected);
 
   static void action_cb_(void *data, int action)
-    { reinterpret_cast<GeneralMenu *>(data)->action_cb(action); }
+    { reinterpret_cast<GeneralMenu*>(data)->action_cb(action); }
   void action_cb(int action);
 
   static void fields_ok_cb_(void *data, PurpleRequestFields *fields)
-    { reinterpret_cast<GeneralMenu *>(data)->fields_ok_cb(fields); }
+    { reinterpret_cast<GeneralMenu*>(data)->fields_ok_cb(fields); }
   void fields_ok_cb(PurpleRequestFields *fields);
 };
 

@@ -134,7 +134,7 @@ private:
   // called when log/debug pref is changed
   static void debug_change_(const char *name, PurplePrefType type,
       gconstpointer val, gpointer data)
-    { reinterpret_cast<Log *>(data)->debug_change(name, type, val); }
+    { reinterpret_cast<Log*>(data)->debug_change(name, type, val); }
   void debug_change(const char *name, PurplePrefType type,
       gconstpointer val);
 

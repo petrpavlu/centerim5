@@ -150,7 +150,7 @@ void TreeView::GetFocusChain(FocusChain& focus_chain,
   for (TheTree::pre_order_iterator i = ++thetree.begin();
       i != thetree.end(); i++) {
     Widget *widget = i->widget;
-    Container *container = dynamic_cast<Container *>(widget);
+    Container *container = dynamic_cast<Container*>(widget);
 
     if (container && container->IsVisible()) {
       // the widget is a container so add its widgets as well

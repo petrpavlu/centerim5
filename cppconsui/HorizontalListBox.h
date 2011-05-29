@@ -63,7 +63,7 @@ protected:
   int children_width;
   int autosize_children;
   int autosize_width;
-  std::set<const Widget *> autosize_extra;
+  std::set<const Widget*> autosize_extra;
   bool reposition_widgets;
 
   // Container

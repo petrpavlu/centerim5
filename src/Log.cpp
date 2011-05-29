@@ -219,8 +219,10 @@ void Log::cppconsui_log_handler(const char *domain, GLogLevelFlags flags,
 void Log::debug_change(const char *name, PurplePrefType type,
     gconstpointer val)
 {
+  g_assert(type == PURPLE_PREF_BOOLEAN);
+
   // debug was disabled so close logfile if it's opened
-  if (!purple_prefs_get_bool(CONF_PREFIX "/log/debug") && logfile) {
+  if (!*static_cast<const gboolean*>(val) && logfile) {
     g_io_channel_unref(logfile);
     logfile = NULL;
   }

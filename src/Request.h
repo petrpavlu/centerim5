@@ -58,7 +58,7 @@ private:
     GCallback cancel_cb;
     void *user_data;
 
-    // convenient var, same as dynamic_cast<ListBox *>(container)
+    // convenient var, same as dynamic_cast<ListBox*>(container)
     CppConsUI::ListBox *lbox;
 
     virtual void ResponseHandler(CppConsUI::SplitDialog& activator,

@@ -173,7 +173,7 @@ void Container::GetFocusChain(FocusChain& focus_chain,
 {
   for (Children::iterator i = children.begin(); i != children.end(); i++) {
     Widget *widget = i->widget;
-    Container *container = dynamic_cast<Container *>(widget);
+    Container *container = dynamic_cast<Container*>(widget);
 
     if (container && container->IsVisible()) {
       // the widget is a container so add its widgets as well

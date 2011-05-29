@@ -96,7 +96,7 @@ void TextEdit::Draw()
   area->attron(attrs);
 
   int realh = area->getmaxy();
-  std::vector<ScreenLine *>::iterator i;
+  std::vector<ScreenLine*>::iterator i;
   int j;
   for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end()
       && j < realh; i++, j++) {
@@ -416,7 +416,7 @@ void TextEdit::UpdateScreenLines()
 
 void TextEdit::ClearScreenLines()
 {
-  for (std::vector<ScreenLine *>::iterator i = screen_lines.begin();
+  for (std::vector<ScreenLine*>::iterator i = screen_lines.begin();
       i != screen_lines.end(); i++)
     delete *i;
   screen_lines.clear();
@@ -432,7 +432,7 @@ void TextEdit::UpdateScreenCursor()
   if (!area)
     return;
 
-  for (std::vector<ScreenLine *>::iterator i = screen_lines.begin();
+  for (std::vector<ScreenLine*>::iterator i = screen_lines.begin();
       i != screen_lines.end(); i++) {
     length = (*i)->length;
     // last line is treated specially

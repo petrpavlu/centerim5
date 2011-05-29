@@ -92,7 +92,7 @@ public:
 protected:
 
 private:
-  typedef std::vector<FreeWindow *> Windows;
+  typedef std::vector<FreeWindow*> Windows;
 
   Windows windows;
 
@@ -134,7 +134,7 @@ private:
    */
   static gboolean io_input_error_(GIOChannel *source, GIOCondition cond,
       gpointer data)
-    { return reinterpret_cast<CoreManager *>(data)->io_input_error(source,
+    { return reinterpret_cast<CoreManager*>(data)->io_input_error(source,
         cond); }
   gboolean io_input_error(GIOChannel *source, GIOCondition cond);
   /**
@@ -144,13 +144,13 @@ private:
    */
   static gboolean io_input_(GIOChannel *source, GIOCondition cond,
       gpointer data)
-    { return reinterpret_cast<CoreManager *>(data)->io_input(source, cond); }
+    { return reinterpret_cast<CoreManager*>(data)->io_input(source, cond); }
   gboolean io_input(GIOChannel *source, GIOCondition cond);
   void io_input_timeout();
 
   static gboolean resize_input_(GIOChannel *source, GIOCondition cond,
       gpointer data)
-    { return reinterpret_cast<CoreManager *>(data)->resize_input(source,
+    { return reinterpret_cast<CoreManager*>(data)->resize_input(source,
         cond); }
   gboolean resize_input(GIOChannel *source, GIOCondition cond);
 

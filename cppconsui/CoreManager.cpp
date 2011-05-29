@@ -64,7 +64,7 @@ inline SourceConnectionNode::SourceConnectionNode(
 void *SourceConnectionNode::notify(void *data)
 {
   SourceConnectionNode *self
-    = reinterpret_cast<SourceConnectionNode *>(data);
+    = reinterpret_cast<SourceConnectionNode*>(data);
 
   /* If there is no object, this call was triggered from
    * destroy_notify_handler(), because we set self->source to 0 there. */
@@ -82,7 +82,7 @@ void *SourceConnectionNode::notify(void *data)
 
 void SourceConnectionNode::destroy_notify_callback(void *data)
 {
-  SourceConnectionNode *self = reinterpret_cast<SourceConnectionNode *>(data);
+  SourceConnectionNode *self = reinterpret_cast<SourceConnectionNode*>(data);
 
   if (self) {
     /* The GLib side is disconnected now, thus the GSource* is no longer
@@ -96,10 +96,10 @@ void SourceConnectionNode::destroy_notify_callback(void *data)
 gboolean SourceConnectionNode::source_callback(void *data)
 {
   SourceConnectionNode *conn_data
-    = reinterpret_cast<SourceConnectionNode *>(data);
+    = reinterpret_cast<SourceConnectionNode*>(data);
 
   // recreate the specific slot from the generic slot node
-  return (*static_cast<sigc::slot<bool> *>(conn_data->get_slot()))();
+  return (*static_cast<sigc::slot<bool>*>(conn_data->get_slot()))();
 }
 
 inline void SourceConnectionNode::install(GSource *nsource)
@@ -519,7 +519,7 @@ void CoreManager::FocusWindow()
         break;
       }
 
-  FreeWindow *focus = dynamic_cast<FreeWindow *>(GetInputChild());
+  FreeWindow *focus = dynamic_cast<FreeWindow*>(GetInputChild());
   if (!win || win != focus) {
     // take the focus from the old window with the focus
     if (focus) {
