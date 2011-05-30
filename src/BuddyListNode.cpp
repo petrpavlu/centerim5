@@ -671,22 +671,8 @@ void BuddyListGroup::Update()
 
   SortIn();
 
-  bool vis = false;
-  if (BUDDYLIST->GetShowEmptyGroupsPref()) {
-    // don't display this group if it belongs only to an offline account
-    GSList *accounts, *p;
-    accounts = p = purple_group_get_accounts(group);
-    while (p) {
-      if (purple_account_is_connected(
-            reinterpret_cast<PurpleAccount*>(p->data))) {
-        vis = true;
-        break;
-      }
-      p = g_slist_next(p);
-    }
-    g_slist_free(accounts);
-  }
-  else
+  bool vis = true;
+  if (!BUDDYLIST->GetShowEmptyGroupsPref())
     vis = purple_blist_get_group_size(group, FALSE);
 
   SetVisibility(vis);

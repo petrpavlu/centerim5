@@ -91,7 +91,7 @@ BuddyList::BuddyList()
 
   // init prefs
   purple_prefs_add_none(CONF_PREFIX "/blist");
-  purple_prefs_add_bool(CONF_PREFIX "/blist/show_empty_groups", true);
+  purple_prefs_add_bool(CONF_PREFIX "/blist/show_empty_groups", false);
   purple_prefs_add_bool(CONF_PREFIX "/blist/show_offline_buddies", true);
 
   show_empty_groups = purple_prefs_get_bool(CONF_PREFIX
