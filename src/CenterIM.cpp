@@ -557,7 +557,7 @@ void CenterIM::RegisterDefaultKeys()
   KEYCONFIG->BindKey("centerim", "conversation-prev", "Alt-p");
   KEYCONFIG->BindKey("centerim", "conversation-next", "Alt-n");
 
-  KEYCONFIG->BindKey("buddylist", "remove", "Ctrl-d");
+  KEYCONFIG->BindKey("buddylist", "contextmenu", "Ctrl-d");
 
   KEYCONFIG->BindKey("conversation", "send", "Ctrl-x");
 }

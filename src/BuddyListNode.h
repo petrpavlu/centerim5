@@ -23,6 +23,7 @@
 #define _BUDDYLISTNODE_H__
 
 #include <cppconsui/Button.h>
+#include <cppconsui/MenuWindow.h>
 #include <cppconsui/MessageDialog.h>
 #include <cppconsui/TreeView.h>
 #include <libpurple/purple.h>
@@ -46,15 +47,32 @@ public:
   virtual CppConsUI::TreeView::NodeReference GetRefNode() const
     { return ref; }
 
+  PurpleBlistNode *GetPurpleBlistNode() const { return node; }
+
   /* Sorts in this node. It supposes that all siblings are in the correct
    * order. */
   void SortIn();
 
   BuddyListNode *GetParentNode() const;
 
-  sigc::signal<void> signal_remove;
-
 protected:
+  class ContextMenu
+  : public CppConsUI::MenuWindow
+  {
+  public:
+    ContextMenu(BuddyListNode& parent_);
+    virtual ~ContextMenu() {}
+
+  protected:
+    BuddyListNode *parent;
+
+    void Reposition(int h);
+
+  private:
+    ContextMenu(const ContextMenu&);
+    ContextMenu& operator=(const ContextMenu&);
+  };
+
   CppConsUI::TreeView *treeview;
   CppConsUI::TreeView::NodeReference ref;
 
@@ -62,6 +80,8 @@ protected:
 
   BuddyListNode(PurpleBlistNode *node);
   virtual ~BuddyListNode();
+
+  virtual void OpenContextMenu() = 0;
 
   /* Called by BuddyListBuddy and BuddyListContact to get presence status
    * char. Returned value should be used as a prefix of buddy/contact name.
@@ -76,7 +96,7 @@ private:
   BuddyListNode(BuddyListNode&);
   BuddyListNode& operator=(BuddyListNode&);
 
-  void ActionRemove();
+  void ActionOpenContextMenu();
   void DeclareBindables();
 };
 
@@ -91,12 +111,32 @@ public:
   virtual void OnActivate(Button& activator);
   virtual const char *ToString() const;
 
+  PurpleBuddy *GetPurpleBuddy() const { return buddy; }
+
 protected:
+  class ContextMenu
+  : public BuddyListNode::ContextMenu
+  {
+  public:
+    ContextMenu(BuddyListBuddy& parent_);
+    virtual ~ContextMenu() {}
+
+  protected:
+    BuddyListBuddy *parent;
+
+    void RemoveBuddyResponseHandler(CppConsUI::MessageDialog& activator,
+        CppConsUI::AbstractDialog::ResponseType response);
+    void OnBuddyRemove(Button& activator);
+
+  private:
+    ContextMenu(const ContextMenu&);
+    ContextMenu& operator=(const ContextMenu&);
+  };
+
   PurpleBuddy *buddy;
 
-  void RemoveBuddyResponseHandler(CppConsUI::MessageDialog& activator,
-      CppConsUI::AbstractDialog::ResponseType response);
-  void OnBuddyRemove();
+  // BuddyListNode
+  virtual void OpenContextMenu();
 
 private:
   BuddyListBuddy(PurpleBlistNode *node);
@@ -116,12 +156,32 @@ public:
   virtual void OnActivate(Button& activator);
   virtual const char *ToString() const;
 
+  PurpleChat *GetPurpleChat() const { return chat; }
+
 protected:
+  class ContextMenu
+  : public BuddyListNode::ContextMenu
+  {
+  public:
+    ContextMenu(BuddyListChat& parent_);
+    virtual ~ContextMenu() {}
+
+  protected:
+    BuddyListChat *parent;
+
+    void RemoveChatResponseHandler(CppConsUI::MessageDialog& activator,
+        CppConsUI::AbstractDialog::ResponseType response);
+    void OnChatRemove(Button& activator);
+
+  private:
+    ContextMenu(const ContextMenu&);
+    ContextMenu& operator=(const ContextMenu&);
+  };
+
   PurpleChat *chat;
 
-  void RemoveChatResponseHandler(CppConsUI::MessageDialog& activator,
-      CppConsUI::AbstractDialog::ResponseType response);
-  void OnChatRemove();
+  // BuddyListNode
+  virtual void OpenContextMenu();
 
 private:
   BuddyListChat(PurpleBlistNode *node);
@@ -143,12 +203,32 @@ public:
 
   virtual void SetRefNode(CppConsUI::TreeView::NodeReference n);
 
+  PurpleContact *GetPurpleContact() const { return contact; }
+
 protected:
+  class ContextMenu
+  : public BuddyListNode::ContextMenu
+  {
+  public:
+    ContextMenu(BuddyListContact& parent_);
+    virtual ~ContextMenu() {}
+
+  protected:
+    BuddyListContact *parent;
+
+    void RemoveContactResponseHandler(CppConsUI::MessageDialog& activator,
+        CppConsUI::AbstractDialog::ResponseType response);
+    void OnContactRemove(Button& activator);
+
+  private:
+    ContextMenu(const ContextMenu&);
+    ContextMenu& operator=(const ContextMenu&);
+  };
+
   PurpleContact *contact;
 
-  void RemoveContactResponseHandler(CppConsUI::MessageDialog& activator,
-      CppConsUI::AbstractDialog::ResponseType response);
-  void OnContactRemove();
+  // BuddyListNode
+  virtual void OpenContextMenu();
 
 private:
   BuddyListContact(PurpleBlistNode *node);
@@ -168,14 +248,34 @@ public:
   virtual void OnActivate(Button& activator);
   virtual const char *ToString() const;
 
-protected:
-  PurpleGroup *group;
+  PurpleGroup *GetPurpleGroup() const { return group; }
 
-  void DelayedInit();
+protected:
+  class ContextMenu
+  : public BuddyListNode::ContextMenu
+  {
+  public:
+    ContextMenu(BuddyListGroup& parent_);
+    virtual ~ContextMenu() {}
+
+  protected:
+    BuddyListGroup *parent;
 
   void RemoveGroupResponseHandler(CppConsUI::MessageDialog& activator,
       CppConsUI::AbstractDialog::ResponseType response);
-  void OnGroupRemove();
+  void OnGroupRemove(Button& activator);
+
+  private:
+    ContextMenu(const ContextMenu&);
+    ContextMenu& operator=(const ContextMenu&);
+  };
+
+  PurpleGroup *group;
+
+  // BuddyListNode
+  virtual void OpenContextMenu();
+
+  void DelayedInit();
 
 private:
   BuddyListGroup(PurpleBlistNode *node);

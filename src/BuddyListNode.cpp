@@ -98,6 +98,31 @@ BuddyListNode *BuddyListNode::GetParentNode() const
   return reinterpret_cast<BuddyListNode*>(parent->ui_data);
 }
 
+BuddyListNode::ContextMenu::ContextMenu(BuddyListNode& parent_)
+: MenuWindow(0, 0, 30, 20), parent(&parent_)
+{
+}
+
+void BuddyListNode::ContextMenu::Reposition(int h)
+{
+  CppConsUI::Point p = parent->GetAbsolutePosition();
+  int above = p.GetY();
+  int below = CppConsUI::Curses::getmaxy() - p.GetY() - 1;
+
+  if (below > h) {
+    // draw the window under the button
+    MoveResize(p.GetX(), p.GetY() + 1, win_w, h);
+  }
+  else if (above > h) {
+    // draw the window above the button
+    MoveResize(p.GetX(), p.GetY() - h, win_w, h);
+  }
+  else if (below >= above)
+    MoveResize(p.GetX(), p.GetY() + 1, win_w, below);
+  else
+    MoveResize(p.GetX(), p.GetY() - above, win_w, above);
+}
+
 BuddyListNode::BuddyListNode(PurpleBlistNode *node)
 : treeview(NULL), node(node)
 {
@@ -159,15 +184,15 @@ int BuddyListNode::GetBuddyStatusWeight(PurpleBuddy *buddy) const
   }
 }
 
-void BuddyListNode::ActionRemove()
+void BuddyListNode::ActionOpenContextMenu()
 {
-  signal_remove();
+  OpenContextMenu();
 }
 
 void BuddyListNode::DeclareBindables()
 {
-  DeclareBindable("buddylist", "remove",
-      sigc::mem_fun(this, &BuddyListNode::ActionRemove),
+  DeclareBindable("buddylist", "contextmenu", sigc::mem_fun(this,
+        &BuddyListNode::ActionOpenContextMenu),
       InputProcessor::BINDABLE_NORMAL);
 }
 
@@ -227,7 +252,18 @@ const char *BuddyListBuddy::ToString() const
   return purple_buddy_get_alias(buddy);
 }
 
-void BuddyListBuddy::RemoveBuddyResponseHandler(
+BuddyListBuddy::ContextMenu::ContextMenu(BuddyListBuddy& parent_)
+: BuddyListNode::ContextMenu(parent_), parent(&parent_)
+{
+  int i = 2;
+  AppendItem(_("Delete"), sigc::mem_fun(this,
+        &BuddyListBuddy::ContextMenu::OnBuddyRemove));
+  i++;
+
+  Reposition(i);
+}
+
+void BuddyListBuddy::ContextMenu::RemoveBuddyResponseHandler(
     CppConsUI::MessageDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
@@ -238,14 +274,18 @@ void BuddyListBuddy::RemoveBuddyResponseHandler(
       return;
   }
 
-  PurpleGroup *group = purple_buddy_get_group(buddy);
+  PurpleBuddy *buddy = parent->GetPurpleBuddy();
   purple_account_remove_buddy(purple_buddy_get_account(buddy), buddy,
-      group);
+      purple_buddy_get_group(buddy));
   purple_blist_remove_buddy(buddy);
+
+  // close context menu
+  Close();
 }
 
-void BuddyListBuddy::OnBuddyRemove()
+void BuddyListBuddy::ContextMenu::OnBuddyRemove(Button& activator)
 {
+  PurpleBuddy *buddy = parent->GetPurpleBuddy();
   char *msg = g_strdup_printf(
       _("Are you sure you want to delete buddy %s from the list?"),
       purple_buddy_get_alias(buddy));
@@ -253,8 +293,14 @@ void BuddyListBuddy::OnBuddyRemove()
     = new CppConsUI::MessageDialog(_("Buddy deletion"), msg);
   g_free(msg);
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &BuddyListBuddy::RemoveBuddyResponseHandler));
+        &BuddyListBuddy::ContextMenu::RemoveBuddyResponseHandler));
   dialog->Show();
+}
+
+void BuddyListBuddy::OpenContextMenu()
+{
+  ContextMenu *w = new ContextMenu(*this);
+  w->Show();
 }
 
 BuddyListBuddy::BuddyListBuddy(PurpleBlistNode *node)
@@ -263,7 +309,6 @@ BuddyListBuddy::BuddyListBuddy(PurpleBlistNode *node)
   SetColorScheme("buddylistbuddy");
 
   buddy = reinterpret_cast<PurpleBuddy*>(node);
-  signal_remove.connect(sigc::mem_fun(this, &BuddyListBuddy::OnBuddyRemove));
 }
 
 bool BuddyListChat::LessThan(const BuddyListNode& other) const
@@ -319,7 +364,18 @@ const char *BuddyListChat::ToString() const
   return purple_chat_get_name(chat);
 }
 
-void BuddyListChat::RemoveChatResponseHandler(
+BuddyListChat::ContextMenu::ContextMenu(BuddyListChat& parent_)
+: BuddyListNode::ContextMenu(parent_), parent(&parent_)
+{
+  int i = 2;
+  AppendItem(_("Delete"), sigc::mem_fun(this,
+        &BuddyListChat::ContextMenu::OnChatRemove));
+  i++;
+
+  Reposition(i);
+}
+
+void BuddyListChat::ContextMenu::RemoveChatResponseHandler(
     CppConsUI::MessageDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
@@ -330,11 +386,16 @@ void BuddyListChat::RemoveChatResponseHandler(
       return;
   }
 
+  PurpleChat *chat = parent->GetPurpleChat();
   purple_blist_remove_chat(chat);
+
+  // close context menu
+  Close();
 }
 
-void BuddyListChat::OnChatRemove()
+void BuddyListChat::ContextMenu::OnChatRemove(Button& activator)
 {
+  PurpleChat *chat = parent->GetPurpleChat();
   char *msg = g_strdup_printf(
       _("Are you sure you want to delete chat %s from the list?"),
       purple_chat_get_name(chat));
@@ -342,8 +403,14 @@ void BuddyListChat::OnChatRemove()
     = new CppConsUI::MessageDialog(_("Chat deletion"), msg);
   g_free(msg);
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &BuddyListChat::RemoveChatResponseHandler));
+        &BuddyListChat::ContextMenu::RemoveChatResponseHandler));
   dialog->Show();
+}
+
+void BuddyListChat::OpenContextMenu()
+{
+  ContextMenu *w = new ContextMenu(*this);
+  w->Show();
 }
 
 BuddyListChat::BuddyListChat(PurpleBlistNode *node)
@@ -352,7 +419,6 @@ BuddyListChat::BuddyListChat(PurpleBlistNode *node)
   SetColorScheme("buddylistchat");
 
   chat = reinterpret_cast<PurpleChat*>(node);
-  signal_remove.connect(sigc::mem_fun(this, &BuddyListChat::OnChatRemove));
 }
 
 bool BuddyListContact::LessThan(const BuddyListNode& other) const
@@ -418,7 +484,18 @@ void BuddyListContact::SetRefNode(CppConsUI::TreeView::NodeReference n)
   treeview->SetNodeStyle(n, CppConsUI::TreeView::STYLE_VOID);
 }
 
-void BuddyListContact::RemoveContactResponseHandler(
+BuddyListContact::ContextMenu::ContextMenu(BuddyListContact& parent_)
+: BuddyListNode::ContextMenu(parent_), parent(&parent_)
+{
+  int i = 2;
+  AppendItem(_("Delete"), sigc::mem_fun(this,
+        &BuddyListContact::ContextMenu::OnContactRemove));
+  i++;
+
+  Reposition(i);
+}
+
+void BuddyListContact::ContextMenu::RemoveContactResponseHandler(
     CppConsUI::MessageDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
@@ -430,6 +507,7 @@ void BuddyListContact::RemoveContactResponseHandler(
   }
 
   // based on gtkdialogs.c:pidgin_dialogs_remove_contact_cb()
+  PurpleContact *contact = parent->GetPurpleContact();
   PurpleBlistNode *cnode = reinterpret_cast<PurpleBlistNode*>(contact);
   PurpleGroup *group = reinterpret_cast<PurpleGroup*>(
       purple_blist_node_get_parent(cnode));
@@ -442,10 +520,14 @@ void BuddyListContact::RemoveContactResponseHandler(
       purple_account_remove_buddy(account, buddy, group);
   }
   purple_blist_remove_contact(contact);
+
+  // close context menu
+  Close();
 }
 
-void BuddyListContact::OnContactRemove()
+void BuddyListContact::ContextMenu::OnContactRemove(Button& activator)
 {
+  PurpleContact *contact = parent->GetPurpleContact();
   char *msg = g_strdup_printf(
       _("Are you sure you want to delete contact %s from the list?"),
       purple_buddy_get_alias(purple_contact_get_priority_buddy(contact)));
@@ -453,8 +535,14 @@ void BuddyListContact::OnContactRemove()
     = new CppConsUI::MessageDialog(_("Contact deletion"), msg);
   g_free(msg);
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &BuddyListContact::RemoveContactResponseHandler));
+        &BuddyListContact::ContextMenu::RemoveContactResponseHandler));
   dialog->Show();
+}
+
+void BuddyListContact::OpenContextMenu()
+{
+  ContextMenu *w = new ContextMenu(*this);
+  w->Show();
 }
 
 BuddyListContact::BuddyListContact(PurpleBlistNode *node)
@@ -463,8 +551,6 @@ BuddyListContact::BuddyListContact(PurpleBlistNode *node)
   SetColorScheme("buddylistcontact");
 
   contact = reinterpret_cast<PurpleContact*>(node);
-  signal_remove.connect(sigc::mem_fun(this,
-        &BuddyListContact::OnContactRemove));
 }
 
 bool BuddyListGroup::LessThan(const BuddyListNode& other) const
@@ -517,15 +603,18 @@ const char *BuddyListGroup::ToString() const
   return purple_group_get_name(group);
 }
 
-void BuddyListGroup::DelayedInit()
+BuddyListGroup::ContextMenu::ContextMenu(BuddyListGroup& parent_)
+: BuddyListNode::ContextMenu(parent_), parent(&parent_)
 {
-  /* This can't be done when the node is created because node settings are
-   * unavailable at that time. */
-  if (!purple_blist_node_get_bool(node, "collapsed"))
-    treeview->ExpandNode(ref);
+  int i = 2;
+  AppendItem(_("Delete"), sigc::mem_fun(this,
+        &BuddyListGroup::ContextMenu::OnGroupRemove));
+  i++;
+
+  Reposition(i);
 }
 
-void BuddyListGroup::RemoveGroupResponseHandler(
+void BuddyListGroup::ContextMenu::RemoveGroupResponseHandler(
     CppConsUI::MessageDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
@@ -537,6 +626,7 @@ void BuddyListGroup::RemoveGroupResponseHandler(
   }
 
   // based on gtkdialogs.c:pidgin_dialogs_remove_group_cb()
+  PurpleGroup *group = parent->GetPurpleGroup();
   PurpleBlistNode *cnode = reinterpret_cast<PurpleBlistNode*>(group)->child;
   while (cnode) {
     if (PURPLE_BLIST_NODE_IS_CONTACT(cnode)) {
@@ -567,10 +657,14 @@ void BuddyListGroup::RemoveGroupResponseHandler(
   }
 
   purple_blist_remove_group(group);
+
+  // close context menu
+  Close();
 }
 
-void BuddyListGroup::OnGroupRemove()
+void BuddyListGroup::ContextMenu::OnGroupRemove(Button& activator)
 {
+  PurpleGroup *group = parent->GetPurpleGroup();
   char *msg = g_strdup_printf(
       _("Are you sure you want to delete group %s from the list?"),
       purple_group_get_name(group));
@@ -578,8 +672,22 @@ void BuddyListGroup::OnGroupRemove()
     = new CppConsUI::MessageDialog(_("Group deletion"), msg);
   g_free(msg);
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &BuddyListGroup::RemoveGroupResponseHandler));
+        &BuddyListGroup::ContextMenu::RemoveGroupResponseHandler));
   dialog->Show();
+}
+
+void BuddyListGroup::OpenContextMenu()
+{
+  ContextMenu *w = new ContextMenu(*this);
+  w->Show();
+}
+
+void BuddyListGroup::DelayedInit()
+{
+  /* This can't be done when the node is created because node settings are
+   * unavailable at that time. */
+  if (!purple_blist_node_get_bool(node, "collapsed"))
+    treeview->ExpandNode(ref);
 }
 
 BuddyListGroup::BuddyListGroup(PurpleBlistNode *node)
@@ -588,7 +696,6 @@ BuddyListGroup::BuddyListGroup(PurpleBlistNode *node)
   SetColorScheme("buddylistgroup");
 
   group = reinterpret_cast<PurpleGroup*>(node);
-  signal_remove.connect(sigc::mem_fun(this, &BuddyListGroup::OnGroupRemove));
 
   COREMANAGER->TimeoutOnceConnect(sigc::mem_fun(this,
         &BuddyListGroup::DelayedInit), 0);
