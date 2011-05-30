@@ -44,6 +44,7 @@ private:
   void OpenAccountWindow(CppConsUI::Button& activator);
   void OpenAddBuddyRequest(CppConsUI::Button& activator);
   void OpenAddChatRequest(CppConsUI::Button& activator);
+  void OpenAddGroupRequest(CppConsUI::Button& activator);
   void OpenOptionWindow(CppConsUI::Button& activator);
   void RequestTest(CppConsUI::Button& activator);
 

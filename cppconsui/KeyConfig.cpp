@@ -155,7 +155,6 @@ void KeyConfig::RegisterDefaultKeys()
 
   // XXX move to default key bindings config
   BindKey("textentry", "backspace", "DEL");
-  BindKey("textentry", "tab", "Tab");
 
   /// @todo enable
   /*

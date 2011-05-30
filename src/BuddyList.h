@@ -93,7 +93,7 @@ private:
       PurpleGroup *group, const char *alias, const char *name)
     { BUDDYLIST->request_add_chat(account, group, alias, name); }
   static void request_add_group_()
-    { /* TODO */ ; }
+    { BUDDYLIST->request_add_group(); }
 
   void new_list(PurpleBuddyList *list);
   void new_node(PurpleBlistNode *node);
@@ -104,6 +104,7 @@ private:
       const char *group, const char *alias);
   void request_add_chat(PurpleAccount *account, PurpleGroup *group,
       const char *alias, const char *name);
+  void request_add_group();
 
   static void add_buddy_ok_cb_(void *data, PurpleRequestFields *fields)
     { reinterpret_cast<BuddyList*>(data)->add_buddy_ok_cb(fields); }
@@ -111,6 +112,9 @@ private:
   static void add_chat_ok_cb_(void *data, PurpleRequestFields *fields)
     { reinterpret_cast<BuddyList*>(data)->add_chat_ok_cb(fields); }
   void add_chat_ok_cb(PurpleRequestFields *fields);
+  static void add_group_ok_cb_(void *data, const char *name)
+    { reinterpret_cast<BuddyList*>(data)->add_group_ok_cb(name); }
+  void add_group_ok_cb(const char *name);
 
   // called when any blist/* pref is changed
   static void blist_pref_change_(const char *name, PurplePrefType type,
