@@ -39,14 +39,14 @@ HorizontalListBox::HorizontalListBox(int w, int h)
 
 void HorizontalListBox::Draw()
 {
-  RealUpdateArea();
+  ProceedUpdateArea();
   // set virtual scroll area width
   if (screen_area)
     SetScrollHeight(screen_area->getmaxy());
   UpdateScrollWidth();
   if (update_area)
     reposition_widgets = true;
-  RealUpdateVirtualArea();
+  ProceedUpdateVirtualArea();
 
   if (!area) {
     // scrollpane will clear the screen (real) area

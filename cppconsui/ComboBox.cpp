@@ -174,8 +174,6 @@ void ComboBox::OnDropDown(Button& activator)
   if (options.empty())
     return;
 
-  /// @todo Make sure that requested MenuWindow size can fit into the screen.
-  Point p = GetAbsolutePosition();
   dropdown = new ExtMenuWindow(*this, max_option_width + 2,
       options.size() + 2);
   dropdown->signal_close.connect(sigc::mem_fun(this,

@@ -38,7 +38,7 @@ VerticalLine::VerticalLine(int h, LineStyle::Type ltype)
 
 void VerticalLine::Draw()
 {
-  RealUpdateArea();
+  ProceedUpdateArea();
 
   int realh;
 

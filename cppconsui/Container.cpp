@@ -60,7 +60,7 @@ void Container::UpdateArea()
 
 void Container::Draw()
 {
-  RealUpdateArea();
+  ProceedUpdateArea();
 
   if (!area)
     return;

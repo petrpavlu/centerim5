@@ -253,7 +253,7 @@ const char *Widget::GetColorScheme() const
   return NULL;
 }
 
-void Widget::RealUpdateArea()
+void Widget::ProceedUpdateArea()
 {
   g_assert(parent);
 

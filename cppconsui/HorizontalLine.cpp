@@ -38,7 +38,7 @@ HorizontalLine::HorizontalLine(int w, LineStyle::Type ltype)
 
 void HorizontalLine::Draw()
 {
-  RealUpdateArea();
+  ProceedUpdateArea();
 
   int realw;
 

@@ -97,7 +97,7 @@ protected:
 
   // Widget
   virtual void SetParent(Container& parent);
-  virtual void RealUpdateArea();
+  virtual void ProceedUpdateArea();
   virtual void Redraw();
 
 private:

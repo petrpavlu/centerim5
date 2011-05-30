@@ -77,7 +77,7 @@ TextEdit::~TextEdit()
 void TextEdit::Draw()
 {
   int origw = area ? area->getmaxx() : 0;
-  RealUpdateArea();
+  ProceedUpdateArea();
 
   if (!area)
     return;

@@ -84,7 +84,7 @@ Button::~Button()
 
 void Button::Draw()
 {
-  RealUpdateArea();
+  ProceedUpdateArea();
 
   if (!area || !text)
     return;

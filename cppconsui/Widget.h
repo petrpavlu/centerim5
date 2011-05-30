@@ -191,7 +191,7 @@ protected:
    */
   char *color_scheme;
 
-  virtual void RealUpdateArea();
+  virtual void ProceedUpdateArea();
 
   /**
    * Redraw() method is used by a widget to tell the CoreManager object that

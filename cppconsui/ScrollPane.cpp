@@ -159,7 +159,7 @@ void ScrollPane::UpdateArea()
   Redraw();
 }
 
-void ScrollPane::RealUpdateArea()
+void ScrollPane::ProceedUpdateArea()
 {
   g_assert(parent);
 
@@ -184,7 +184,7 @@ void ScrollPane::UpdateVirtualArea()
   update_area = true;
 }
 
-void ScrollPane::RealUpdateVirtualArea()
+void ScrollPane::ProceedUpdateVirtualArea()
 {
   if (update_area) {
     if (area)
@@ -197,8 +197,8 @@ void ScrollPane::RealUpdateVirtualArea()
 
 void ScrollPane::DrawEx(bool container_draw)
 {
-  RealUpdateArea();
-  RealUpdateVirtualArea();
+  ProceedUpdateArea();
+  ProceedUpdateVirtualArea();
 
   if (!area || !screen_area) {
     if (screen_area)

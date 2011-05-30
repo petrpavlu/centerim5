@@ -67,7 +67,7 @@ CheckBox::~CheckBox()
 
 void CheckBox::Draw()
 {
-  RealUpdateArea();
+  ProceedUpdateArea();
 
   if (!area || !text)
     return;

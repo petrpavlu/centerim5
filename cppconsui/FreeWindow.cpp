@@ -73,7 +73,7 @@ void FreeWindow::MoveResize(int newx, int newy, int neww, int newh)
 
 void FreeWindow::Draw()
 {
-  RealUpdateArea();
+  ProceedUpdateArea();
 
   if (!area || !realwindow)
     return;
@@ -152,7 +152,7 @@ void FreeWindow::SetParent(Container& parent)
   g_assert_not_reached();
 }
 
-void FreeWindow::RealUpdateArea()
+void FreeWindow::ProceedUpdateArea()
 {
   if (update_area) {
     // update virtual area

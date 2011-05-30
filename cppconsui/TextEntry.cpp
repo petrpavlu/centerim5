@@ -104,7 +104,7 @@ TextEntry::~TextEntry()
 
 void TextEntry::Draw()
 {
-  RealUpdateArea();
+  ProceedUpdateArea();
 
   if (!area)
     return;

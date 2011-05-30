@@ -53,7 +53,7 @@ Label::~Label()
 
 void Label::Draw()
 {
-  RealUpdateArea();
+  ProceedUpdateArea();
 
   if (!area || !text)
     return;

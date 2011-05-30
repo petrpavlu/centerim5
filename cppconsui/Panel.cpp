@@ -48,7 +48,7 @@ Panel::~Panel()
 
 void Panel::Draw()
 {
-  RealUpdateArea();
+  ProceedUpdateArea();
 
   if (!area)
     return;

@@ -110,10 +110,10 @@ protected:
 
   // Widget
   virtual void UpdateArea();
-  virtual void RealUpdateArea();
+  virtual void ProceedUpdateArea();
 
   virtual void UpdateVirtualArea();
-  virtual void RealUpdateVirtualArea();
+  virtual void ProceedUpdateVirtualArea();
 
   virtual void DrawEx(bool container_draw);
 
