@@ -774,10 +774,9 @@ void BuddyListGroup::ContextMenu::RemoveResponseHandler(
         if (PURPLE_BLIST_NODE_IS_BUDDY(bnode)) {
           PurpleBuddy *buddy = reinterpret_cast<PurpleBuddy*>(bnode);
           bnode = bnode->next;
-          if (purple_account_is_connected(buddy->account)) {
+          if (purple_account_is_connected(buddy->account))
             purple_account_remove_buddy(buddy->account, buddy, group);
-            purple_blist_remove_buddy(buddy);
-          }
+          purple_blist_remove_buddy(buddy);
         }
         else
           bnode = bnode->next;
@@ -785,8 +784,7 @@ void BuddyListGroup::ContextMenu::RemoveResponseHandler(
     else if (PURPLE_BLIST_NODE_IS_CHAT(cnode)) {
       PurpleChat *chat = reinterpret_cast<PurpleChat*>(cnode);
       cnode = cnode->next;
-      if (purple_account_is_connected(chat->account))
-        purple_blist_remove_chat(chat);
+      purple_blist_remove_chat(chat);
     }
     else
       cnode = cnode->next;
