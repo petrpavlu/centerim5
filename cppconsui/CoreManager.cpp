@@ -245,8 +245,8 @@ sigc::connection CoreManager::TimeoutOnceConnect(const sigc::slot<void>& slot,
 CoreManager::CoreManager()
 : top_input_processor(NULL), io_input_channel(NULL), io_input_channel_id(0)
 , resize_channel(NULL), resize_channel_id(0), pipe_valid(false), tk(NULL)
-, utf8(false), gmainloop(NULL), screen_width(0), screen_height(0)
-, redraw_pending(false), resize_pending(false), fallback_draw_mode(false)
+, utf8(false), gmainloop(NULL), redraw_pending(false), resize_pending(false)
+, fallback_draw_mode(false)
 {
   InputInit();
 
@@ -258,9 +258,6 @@ CoreManager::CoreManager()
    * @todo Check the return value. Throw an exception if we can't init curses.
    */
   Curses::screen_init();
-
-  screen_width = Curses::getmaxx();
-  screen_height = Curses::getmaxy();
 
   // create a new loop
   gmainloop = g_main_loop_new(NULL, FALSE);
@@ -450,10 +447,6 @@ void CoreManager::Resize()
     // make sure everything is redrawn from the scratch
     Curses::clear();
   }
-
-  // save new screen size
-  screen_width = size.ws_col;
-  screen_height = size.ws_row;
 
   signal_resize();
   Redraw();

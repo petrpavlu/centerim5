@@ -92,8 +92,8 @@ LabelWindow::LabelWindow()
 
 void LabelWindow::ScreenResized()
 {
-  MoveResize(0, 0, COREMANAGER->GetScreenWidth(),
-      COREMANAGER->GetScreenHeight());
+  MoveResize(0, 0, CppConsUI::Curses::getmaxx(),
+      CppConsUI::Curses::getmaxy());
 }
 
 // TestApp class

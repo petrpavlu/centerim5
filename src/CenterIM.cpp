@@ -307,10 +307,10 @@ void CenterIM::ScreenResized()
   CppConsUI::Rect size;
 
   // minimal supported screen size is 80x24
-  int screen_width = mngr->GetScreenWidth();
+  int screen_width = CppConsUI::Curses::getmaxx();
   if (screen_width < 80)
     screen_width = 80;
-  int screen_height = mngr->GetScreenHeight();
+  int screen_height = CppConsUI::Curses::getmaxy();
   if (screen_height < 24)
     screen_height = 24;
 

@@ -64,9 +64,6 @@ public:
   bool HasWindow(const FreeWindow& window) const;
   FreeWindow *GetTopWindow();
 
-  int GetScreenWidth() const { return screen_width; }
-  int GetScreenHeight() const { return screen_height; }
-
   void EnableResizing();
   void DisableResizing();
   void ScreenResized();
@@ -110,8 +107,6 @@ private:
   bool utf8;
 
   GMainLoop *gmainloop;
-
-  int screen_width, screen_height;
 
   bool redraw_pending;
   bool resize_pending;

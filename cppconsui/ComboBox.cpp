@@ -150,9 +150,8 @@ ComboBox::ExtMenuWindow::ExtMenuWindow(ComboBox& ref_, int w, int h)
 void ComboBox::ExtMenuWindow::Draw()
 {
   Point p = ref->GetAbsolutePosition();
-  int h = Curses::getmaxy();
   int above = p.GetY();
-  int below = h - p.GetY() - 1;
+  int below = Curses::getmaxy() - p.GetY() - 1;
 
   if (below > wish_height) {
     // draw the window under the combobox

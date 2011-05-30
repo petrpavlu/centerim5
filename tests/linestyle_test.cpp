@@ -129,8 +129,8 @@ LineStyleWindow::LineStyleWindow()
 
 void LineStyleWindow::ScreenResized()
 {
-  MoveResize(0, 0, COREMANAGER->GetScreenWidth(),
-      COREMANAGER->GetScreenHeight());
+  MoveResize(0, 0, CppConsUI::Curses::getmaxx(),
+      CppConsUI::Curses::getmaxy());
 }
 
 // TestApp class
