@@ -25,6 +25,7 @@
 #include <cppconsui/Button.h>
 #include <cppconsui/MenuWindow.h>
 #include <cppconsui/MessageDialog.h>
+#include <cppconsui/InputDialog.h>
 #include <cppconsui/TreeView.h>
 #include <libpurple/purple.h>
 
@@ -124,9 +125,13 @@ protected:
   protected:
     BuddyListBuddy *parent;
 
-    void RemoveBuddyResponseHandler(CppConsUI::MessageDialog& activator,
+    void ChangeAliasResponseHandler(CppConsUI::InputDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
-    void OnBuddyRemove(Button& activator);
+    void OnChangeAlias(Button& activator);
+
+    void RemoveResponseHandler(CppConsUI::MessageDialog& activator,
+        CppConsUI::AbstractDialog::ResponseType response);
+    void OnRemove(Button& activator);
 
   private:
     ContextMenu(const ContextMenu&);
@@ -169,9 +174,13 @@ protected:
   protected:
     BuddyListChat *parent;
 
-    void RemoveChatResponseHandler(CppConsUI::MessageDialog& activator,
+    void ChangeAliasResponseHandler(CppConsUI::InputDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
-    void OnChatRemove(Button& activator);
+    void OnChangeAlias(Button& activator);
+
+    void RemoveResponseHandler(CppConsUI::MessageDialog& activator,
+        CppConsUI::AbstractDialog::ResponseType response);
+    void OnRemove(Button& activator);
 
   private:
     ContextMenu(const ContextMenu&);
@@ -216,9 +225,13 @@ protected:
   protected:
     BuddyListContact *parent;
 
-    void RemoveContactResponseHandler(CppConsUI::MessageDialog& activator,
+    void ChangeAliasResponseHandler(CppConsUI::InputDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
-    void OnContactRemove(Button& activator);
+    void OnChangeAlias(Button& activator);
+
+    void RemoveResponseHandler(CppConsUI::MessageDialog& activator,
+        CppConsUI::AbstractDialog::ResponseType response);
+    void OnRemove(Button& activator);
 
   private:
     ContextMenu(const ContextMenu&);
@@ -261,9 +274,13 @@ protected:
   protected:
     BuddyListGroup *parent;
 
-  void RemoveGroupResponseHandler(CppConsUI::MessageDialog& activator,
-      CppConsUI::AbstractDialog::ResponseType response);
-  void OnGroupRemove(Button& activator);
+    void RenameResponseHandler(CppConsUI::InputDialog& activator,
+        CppConsUI::AbstractDialog::ResponseType response);
+    void OnRename(Button& activator);
+
+    void RemoveResponseHandler(CppConsUI::MessageDialog& activator,
+        CppConsUI::AbstractDialog::ResponseType response);
+    void OnRemove(Button& activator);
 
   private:
     ContextMenu(const ContextMenu&);
