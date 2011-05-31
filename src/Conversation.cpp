@@ -229,12 +229,16 @@ void Conversation::Receive(const char *name, const char *alias, const char *mess
 void Conversation::ActionSend()
 {
   PurpleConversationType type = purple_conversation_get_type(conv);
-  char *str = input->AsString("<br/>");
+  char *str = input->AsString();
   if (str) {
+    char *escaped = purple_markup_escape_text(str, strlen(str));
+    char *html = purple_strdup_withhtml(escaped);
     if (type == PURPLE_CONV_TYPE_CHAT)
-      purple_conv_chat_send(PURPLE_CONV_CHAT(conv), str);
+      purple_conv_chat_send(PURPLE_CONV_CHAT(conv), html);
     else if (type == PURPLE_CONV_TYPE_IM)
-      purple_conv_im_send(PURPLE_CONV_IM(conv), str);
+      purple_conv_im_send(PURPLE_CONV_IM(conv), html);
+    g_free(html);
+    g_free(escaped);
     g_free(str);
     input->Clear();
   }
