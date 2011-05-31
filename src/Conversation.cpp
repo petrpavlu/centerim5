@@ -159,13 +159,10 @@ void Conversation::Show()
   Window::Show();
 }
 
-void Conversation::Receive(const char *name, const char *alias, const char *message,
-  PurpleMessageFlags flags, time_t mtime)
+void Conversation::Receive(const char *name, const char *alias,
+    const char *message, PurpleMessageFlags flags, time_t mtime)
 {
   PurpleConversationType type = purple_conversation_get_type(conv);
-
-  // we currently don't support displaying HTML in any way
-  char *nohtml = purple_markup_strip_html(message);
 
   int color = 0;
   char mtype = 'O'; // other
@@ -179,15 +176,12 @@ void Conversation::Receive(const char *name, const char *alias, const char *mess
   }
 
   // write text into logfile
-  // encode all newline characters as <br>
-  char *html = purple_strdup_withhtml(nohtml);
   long t = static_cast<long>(mtime);
   char *msg;
   if (type == PURPLE_CONV_TYPE_CHAT)
-    msg = g_strdup_printf("%c %ld %s: %s\n", mtype, t, name, html);
+    msg = g_strdup_printf("%c %ld %s: %s\n", mtype, t, name, message);
   else
-    msg = g_strdup_printf("%c %ld %s\n", mtype, t, html);
-  g_free(html);
+    msg = g_strdup_printf("%c %ld %s\n", mtype, t, message);
   if (logfile) {
     GError *err = NULL;
     if (g_io_channel_write_chars(logfile, msg, -1, NULL, &err)
@@ -213,6 +207,9 @@ void Conversation::Receive(const char *name, const char *alias, const char *mess
     }
   }
   g_free(msg);
+
+  // we currently don't support displaying HTML in any way
+  char *nohtml = purple_markup_strip_html(message);
 
   // write text to the window
   const char *timestr = purple_utf8_strftime(TIME_FORMAT, localtime(&mtime));
@@ -340,7 +337,8 @@ void Conversation::LoadHistory()
 
     // write text to the window
     char *nohtml = purple_markup_strip_html(cur);
-    char *msg = g_strdup_printf("%s %s", purple_utf8_strftime(TIME_FORMAT, localtime(&time)), nohtml);
+    char *msg = g_strdup_printf("%s %s", purple_utf8_strftime(TIME_FORMAT,
+          localtime(&time)), nohtml);
     view->Append(msg, color);
     g_free(nohtml);
     g_free(msg);
