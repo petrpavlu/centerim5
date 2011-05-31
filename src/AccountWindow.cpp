@@ -432,7 +432,8 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 
     // protocols combobox
     ProtocolOption *combobox = new ProtocolOption(account, *this);
-    accounts->AppendNode(account_entry->parent_reference, *combobox);
+    CppConsUI::TreeView::NodeReference protocol_node
+      = accounts->AppendNode(account_entry->parent_reference, *combobox);
     combobox->GrabFocus();
 
     /* The username must be treated in a special way because it can contain
@@ -453,8 +454,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
       const char *value;
       if (s) {
         *s = '\0';
-        s++;
-        value = s;
+        value = s + 1;
       }
       else
         value = purple_account_user_split_get_default_value(split);
@@ -468,12 +468,10 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
       accounts->AppendNode(account_entry->parent_reference, *widget_split);
     }
 
-    /* TODO Add this widget as the first widget in this subtree. Treeview
-     * needs to support this. */
     SplitOption *widget_split = new SplitOption(account, NULL, account_entry);
     widget_split->SetValue(username);
     account_entry->split_widgets.push_front(widget_split);
-    accounts->AppendNode(account_entry->parent_reference, *widget_split);
+    accounts->InsertNodeAfter(protocol_node, *widget_split);
     g_free(username);
 
     // password
