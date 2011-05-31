@@ -146,7 +146,7 @@ private:
   void ActionFocusNextConversation();
 
   void DeclareBindables();
-  void RegisterDefaultKeys();
+  void InitDefaultKeys();
 };
 
 #endif // __CENTERIM_H__

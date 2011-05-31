@@ -84,7 +84,8 @@ protected:
   /**
    * Keeps a pair of {display text, value}.
    */
-  struct ComboBoxEntry {
+  struct ComboBoxEntry
+  {
     char *title;
     intptr_t data;
   };

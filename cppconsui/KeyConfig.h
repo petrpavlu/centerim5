@@ -31,12 +31,11 @@
 #include "Keys.h"
 
 #include "libtermkey/termkey.h"
-
-#include <sigc++/sigc++.h>
-#include <sigc++/signal.h>
-
-#include <string>
+#include <glib.h>
 #include <map>
+#include <string>
+#include <vector>
+#include <sigc++/sigc++.h>
 
 #define KEYCONFIG (CppConsUI::KeyConfig::Instance())
 
@@ -87,7 +86,7 @@ public:
   /**
    * Binds a key to an action (in a given context).
    */
-  void BindKey(const char *context, const char *action, const char *key);
+  bool BindKey(const char *context, const char *action, const char *key);
 
   /**
    * Returns all key binds.
@@ -106,19 +105,40 @@ public:
   const char *GetConfigFile() const { return config; }
 
   /**
+   * Removes all key binds.
+   */
+  void Clear();
+
+  /**
    * It is called when needed to read the config and reread the defined
    * keys.
    */
-  void Reconfig();
+  bool Reconfig();
+
+  void AddDefaultKeyBind(const char *context, const char *action,
+      const char *key);
 
   /**
    * Registers default key bindings.
    */
-  void RegisterDefaultKeys();
+  void RegisterDefaultKeyBinds();
 
 protected:
 
 private:
+  struct DefaultKeyBind
+  {
+    std::string context;
+    std::string action;
+    std::string key;
+
+    DefaultKeyBind(const char *context_, const char *action_,
+        const char *key_) : context(context_), action(action_), key(key_) {}
+  };
+  typedef std::vector<DefaultKeyBind> DefaultKeyBinds;
+
+  DefaultKeyBinds default_key_binds;
+
   /**
    * Current key binds.
    */
@@ -128,6 +148,18 @@ private:
    * Key bindings config filename.
    */
   char *config;
+
+  bool ReconfigInternal();
+
+  static void start_element_(GMarkupParseContext *context,
+      const char *element_name, const char **attribute_names,
+      const char **attribute_values, gpointer user_data,
+      GError **error)
+    { reinterpret_cast<KeyConfig*>(user_data)->start_element(context,
+        element_name, attribute_names, attribute_values, error); }
+  void start_element(GMarkupParseContext *context,
+      const char *element_name, const char **attribute_names,
+      const char **attribute_values, GError **error);
 
   KeyConfig();
   KeyConfig(const KeyConfig&);

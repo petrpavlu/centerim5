@@ -59,11 +59,23 @@ bool CenterIM::ProcessInput(const TermKeyKey& key)
 
 int CenterIM::Run(const char *config_path)
 {
-  if (PurpleInit(config_path))
+  char *path;
+  if (config_path[0] == '/') {
+    // absolute path
+    path = g_strdup(config_path);
+  }
+  else
+    path = g_build_filename(purple_home_dir(), config_path, NULL);
+
+  if (PurpleInit(path))
     return 1;
 
-  KEYCONFIG->RegisterDefaultKeys();
-  RegisterDefaultKeys();
+  InitDefaultKeys();
+  char *binds = g_build_filename(path, "binds.xml", NULL);
+  KEYCONFIG->SetConfigFile(binds);
+  g_free(binds);
+
+  g_free(path);
 
   PrefsInit();
   ColorSchemeInit();
@@ -80,6 +92,10 @@ int CenterIM::Run(const char *config_path)
     delete logbuf;
     logbuf = NULL;
   }
+
+  /* Init key binds after the Log is initialized so the user can see if there
+   * is an error in the config. */
+  KEYCONFIG->Reconfig();
 
   Footer::Init();
 
@@ -148,18 +164,9 @@ CenterIM::CenterIM()
 int CenterIM::PurpleInit(const char *config_path)
 {
   g_assert(config_path);
+  g_assert(config_path[0] == '/');
 
-  // set the configuration file location
-  if (config_path[0] == '/') {
-    // absolute path
-    purple_util_set_user_dir(config_path);
-  }
-  else {
-    char *path;
-    path = g_build_filename(purple_home_dir(), config_path, NULL);
-    purple_util_set_user_dir(path);
-    g_free(path);
-  }
+  purple_util_set_user_dir(config_path);
 
   /* This does not disable debugging, but rather it disables printing to
    * stdout. Don't change this to TRUE or things will get messy. */
@@ -474,7 +481,7 @@ void CenterIM::ActionFocusActiveConversation()
 
 void CenterIM::ActionOpenAccountStatusMenu()
 {
-  /* Don't allow to open the account status menu if there is any `top' window
+  /* Don't allow to open the account status menu if there is any 'top' window
    * (except general menu, we can close that). */
   CppConsUI::FreeWindow *top = mngr->GetTopWindow();
   if (top) {
@@ -490,7 +497,7 @@ void CenterIM::ActionOpenAccountStatusMenu()
 
 void CenterIM::ActionOpenGeneralMenu()
 {
-  /* Don't allow to open the general menu if there is any `top' window (except
+  /* Don't allow to open the general menu if there is any 'top' window (except
    * account status menu, we can close that). */
   CppConsUI::FreeWindow *top = mngr->GetTopWindow();
   if (top) {
@@ -539,25 +546,24 @@ void CenterIM::DeclareBindables()
       InputProcessor::BINDABLE_OVERRIDE);
 }
 
-void CenterIM::RegisterDefaultKeys()
+void CenterIM::InitDefaultKeys()
 {
-  KEYCONFIG->BindKey("centerim", "quit", "Ctrl-q");
-  KEYCONFIG->BindKey("centerim", "buddylist", "F1");
-  KEYCONFIG->BindKey("centerim", "conversation-active", "F2");
-  KEYCONFIG->BindKey("centerim", "accountstatusmenu", "F3");
-  KEYCONFIG->BindKey("centerim", "generalmenu", "F4");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "quit", "Ctrl-q");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "buddylist", "F1");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-active", "F2");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "accountstatusmenu", "F3");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "generalmenu", "F4");
 
-  // XXX move to default key bindings config
-  KEYCONFIG->BindKey("centerim", "buddylist", "Alt-1");
-  KEYCONFIG->BindKey("centerim", "conversation-active", "Alt-2");
-  KEYCONFIG->BindKey("centerim", "accountstatusmenu", "Alt-3");
-  KEYCONFIG->BindKey("centerim", "generalmenu", "Alt-4");
-  KEYCONFIG->BindKey("centerim", "generalmenu", "Ctrl-g");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "buddylist", "Alt-1");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-active", "Alt-2");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "accountstatusmenu", "Alt-3");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "generalmenu", "Alt-4");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "generalmenu", "Ctrl-g");
 
-  KEYCONFIG->BindKey("centerim", "conversation-prev", "Alt-p");
-  KEYCONFIG->BindKey("centerim", "conversation-next", "Alt-n");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-prev", "Ctrl-p");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-next", "Ctrl-n");
 
-  KEYCONFIG->BindKey("buddylist", "contextmenu", "Ctrl-d");
+  KEYCONFIG->AddDefaultKeyBind("buddylist", "contextmenu", "Ctrl-d");
 
-  KEYCONFIG->BindKey("conversation", "send", "Ctrl-x");
+  KEYCONFIG->AddDefaultKeyBind("conversation", "send", "Ctrl-x");
 }

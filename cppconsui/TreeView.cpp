@@ -180,7 +180,7 @@ void TreeView::GetFocusChain(FocusChain& focus_chain,
 Curses::Window *TreeView::GetSubPad(const Widget& child, int begin_x,
     int begin_y, int ncols, int nlines)
 {
-  // if height is set to autosize then return height `1'
+  // if height is set to autosize then return height '1'
   if (nlines == AUTOSIZE)
     nlines = 1;
 

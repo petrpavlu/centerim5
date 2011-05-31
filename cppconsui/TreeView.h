@@ -200,7 +200,7 @@ protected:
 
     /**
      * Widget to show. Not const because width is changed to fit. E.g. labels
-     * can show `...' when the text does not fit in the given space.
+     * can show '...' when the text does not fit in the given space.
      */
     Widget *widget;
   };

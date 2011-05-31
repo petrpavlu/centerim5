@@ -48,7 +48,8 @@ private:
   typedef std::list<SplitOption*> SplitWidgets;
   typedef std::vector<CppConsUI::Widget*> Widgets;
 
-  struct AccountEntry {
+  struct AccountEntry
+  {
     CppConsUI::Button *parent;
     CppConsUI::TreeView::NodeReference parent_reference;
     SplitWidgets split_widgets;

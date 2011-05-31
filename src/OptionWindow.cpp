@@ -24,6 +24,7 @@
 #include "CenterIM.h"
 #include "Log.h"
 
+#include <cppconsui/KeyConfig.h>
 #include <cppconsui/TreeView.h>
 #include <errno.h>
 #include "gettext.h"
@@ -84,6 +85,12 @@ do {                                       \
   ADD_DEBUG_OPTIONS();
   tree->AppendNode(parent, *c);
 #undef ADD_DEBUG_OPTIONS
+
+  CppConsUI::Button *b = new CppConsUI::Button(AUTOSIZE, 1,
+      _("Reload keybinding file"));
+  b->signal_activate.connect(sigc::hide_return(sigc::hide(sigc::mem_fun(KEYCONFIG,
+            &CppConsUI::KeyConfig::Reconfig))));
+  tree->AppendNode(tree->GetRootNode(), *b);
 
   buttons->AppendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
           &OptionWindow::Close)));

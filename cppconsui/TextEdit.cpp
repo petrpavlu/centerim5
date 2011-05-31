@@ -154,7 +154,7 @@ char *TextEdit::AsString(const char *separator)
       lines++;
     p = NextChar(p);
   }
-  /* Allocate memory for all chars (without internal line separator `\n' but
+  /* Allocate memory for all chars (without internal line separator '\n' but
    * with enough room for a given separator). */
   char *res = g_new(char, BufferSize() + lines * (sep_len - 1) + 1);
 

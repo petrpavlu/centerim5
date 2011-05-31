@@ -89,7 +89,7 @@ protected:
    */
   int copy_x, copy_y, copy_w, copy_h;
   /**
-   * The `real' window for this window.
+   * The 'real' window for this window.
    */
   Curses::Window *realwindow;
 

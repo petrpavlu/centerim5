@@ -39,18 +39,17 @@ KeyConfig *KeyConfig::Instance()
   return &instance;
 }
 
-void KeyConfig::BindKey(const char *context, const char *action,
+bool KeyConfig::BindKey(const char *context, const char *action,
     const char *key)
 {
   TermKeyKey tkey;
   const char *res = termkey_strpkey(COREMANAGER->GetTermKeyHandle(), key,
       &tkey, TERMKEY_FORMAT_LONGMOD);
-  if (!res || res[0]) {
-    g_warning(_("Unrecognized key (%s)."), key);
-    return;
-  }
+  if (!res || res[0])
+    return false;
 
   binds[context][tkey] = action;
+  return true;
 }
 
 const KeyConfig::KeyBindContext *KeyConfig::GetKeyBinds(
@@ -92,93 +91,248 @@ void KeyConfig::SetConfigFile(const char *filename)
     config = NULL;
 }
 
-void KeyConfig::Reconfig()
+void KeyConfig::Clear()
 {
-  if (!config)
-    return;
-
-  /**
-   * @todo Read the config and assign it to keys.
-   */
+  binds.clear();
 }
 
-void KeyConfig::RegisterDefaultKeys()
+bool KeyConfig::Reconfig()
 {
-  BindKey("button", "activate", "Enter");
+  g_assert(config);
 
-  BindKey("checkbox", "toggle", "Enter");
+  Clear();
 
-  BindKey("container", "focus-previous", "Shift-Tab");
-  BindKey("container", "focus-next", "Tab");
-  BindKey("container", "focus-left", "Left");
-  BindKey("container", "focus-right", "Right");
-  BindKey("container", "focus-up", "Up");
-  BindKey("container", "focus-down", "Down");
+  if (!ReconfigInternal()) {
+    // fallback to default key binds
+    Clear();
+    RegisterDefaultKeyBinds();
+    return false;
+  }
 
-  BindKey("coremanager", "redraw-screen", "Ctrl-l");
+  return true;
+}
 
-  BindKey("window", "close-window", "Escape");
+void KeyConfig::AddDefaultKeyBind(const char *context, const char *action,
+      const char *key)
+{
+  default_key_binds.push_back(DefaultKeyBind(context, action, key));
+}
 
-  BindKey("textentry", "cursor-right", "Right");
-  BindKey("textentry", "cursor-left", "Left");
-  BindKey("textentry", "cursor-down", "Down");
-  BindKey("textentry", "cursor-up", "Up");
-  BindKey("textentry", "cursor-right-word", "Ctrl-Right");
-  BindKey("textentry", "cursor-left-word", "Ctrl-Left");
-  BindKey("textentry", "cursor-end", "End");
-  BindKey("textentry", "cursor-begin", "Home");
-  BindKey("textentry", "delete-char", "Delete");
-  BindKey("textentry", "backspace", "Backspace");
+void KeyConfig::RegisterDefaultKeyBinds()
+{
+  Clear();
 
-  // XXX move to default key bindings config
-  BindKey("textentry", "backspace", "DEL");
+  for (DefaultKeyBinds::iterator i = default_key_binds.begin();
+      i != default_key_binds.end(); i++)
+    if (!BindKey(i->context.c_str(), i->action.c_str(), i->key.c_str()))
+      g_warning(_("Unrecognized key '%s' in default keybinds."),
+          i->key.c_str());
+}
 
-  /// @todo enable
-  /*
-  BindKey("textentry", "delete-word-end", "Ctrl-Delete");
-  BindKey("textentry", "delete-word-begin", "Ctrl-Backspace");
+bool KeyConfig::ReconfigInternal()
+{
+  g_assert(config);
 
-  // XXX move to default key bindings config
-  BindKey("textentry", "delete-word-begin", "Ctrl-DEL");
+  // read the file contents
+  char *contents;
+  gsize length;
+  GError *err = NULL;
+  if (!g_file_get_contents(config, &contents, &length, &err)) {
+    // generate default keybinding file
+    err = NULL;
+    GIOChannel *chan;
+    if (!(chan = g_io_channel_new_file(config, "w", &err))) {
+      if (err) {
+        g_warning(_("Error opening keybinding file '%s' (%s)."),
+            config, err->message);
+        g_error_free(err);
+        err = NULL;
+      }
+      else
+        g_warning(_("Error opening keybinding file '%s'."), config);
+      return false;
+    }
 
-  BindKey("textentry", "toggle-overwrite", "Insert");
-  */
+#define ERROR()                                                   \
+do {                                                              \
+if (err) {                                                        \
+  g_warning(_("Error writing to keybinding file '%s' (%s)."),     \
+      config, err->message);                                      \
+  g_error_free(err);                                              \
+  err = NULL;                                                     \
+}                                                                 \
+else                                                              \
+  g_warning(_("Error writing to keybinding file '%s'."), config); \
+g_io_channel_unref(chan);                                         \
+return false;                                                     \
+} while (0)
 
-  BindKey("textentry", "cursor-right", "Right");
-  BindKey("textentry", "cursor-left", "Left");
-  BindKey("textentry", "cursor-right-word", "Ctrl-Right");
-  BindKey("textentry", "cursor-left-word", "Ctrl-Left");
-  BindKey("textentry", "cursor-end", "End");
-  BindKey("textentry", "cursor-begin", "Home");
-  BindKey("textentry", "delete-char", "Delete");
-  BindKey("textentry", "backspace", "Backspace");
+    const char *buf = "<?xml version='1.0' encoding='UTF-8' ?>\n\n"
+                      "<keyconfig version='1.0'>\n";
+    if (g_io_channel_write_chars(chan, buf, -1, NULL, &err)
+        != G_IO_STATUS_NORMAL)
+      ERROR();
 
-  // XXX move to default key bindings config
-  BindKey("textentry", "backspace", "DEL");
+    for (DefaultKeyBinds::iterator i = default_key_binds.begin();
+        i != default_key_binds.end(); i++) {
+      char *buf2 = g_strdup_printf(
+          "\t<bind context='%s' action='%s' key='%s'/>\n",
+          i->context.c_str(), i->action.c_str(), i->key.c_str());
+      GIOStatus s = g_io_channel_write_chars(chan, buf2, -1, NULL, &err);
+      g_free(buf2);
 
-  /// @todo enable
-  /*
-  BindKey("textentry", "delete-word-end", "Ctrl-Delete");
-  BindKey("textentry", "delete-word-begin", "Ctrl-Backspace");
+      if (s != G_IO_STATUS_NORMAL)
+        ERROR();
+    }
 
-  // XXX move to default key bindings config
-  BindKey("textentry", "delete-word-begin", "Ctrl-DEL");
+    buf = "</keyconfig>\n";
+    if (g_io_channel_write_chars(chan, buf, -1, NULL, &err)
+        != G_IO_STATUS_NORMAL)
+      ERROR();
 
-  BindKey("textentry", "toggle-overwrite", "Insert");
-  */
+#undef ERROR
 
-  BindKey("textentry", "activate", "Enter");
+    g_io_channel_unref(chan);
+  }
 
-  BindKey("textview", "scroll-up", "PageUp");
-  BindKey("textview", "scroll-down", "PageDown");
+  if (!g_file_get_contents(config, &contents, &length, &err)) {
+    if (err) {
+      g_warning(_("Error reading keybinding file '%s' (%s)."), config,
+          err->message);
+      g_error_free(err);
+      err = NULL;
+    }
+    else
+      g_warning(_("Error reading keybinding file '%s'."), config);
+    return false;
+  }
 
-  BindKey("treeview", "fold-subtree", "-");
-  BindKey("treeview", "unfold-subtree", "+");
+  // parse the file
+  bool res = true;
+  GMarkupParser parser = {};
+  parser.start_element = start_element_;
+  GMarkupParseContext *context = g_markup_parse_context_new(&parser,
+      G_MARKUP_PREFIX_ERROR_POSITION, this, NULL);
+  if (!g_markup_parse_context_parse(context, contents, length, &err)
+      || !g_markup_parse_context_end_parse(context, &err)) {
+    if (err) {
+      g_warning(_("Error parsing keybinding file '%s' (%s)."), config,
+          err->message);
+      g_error_free(err);
+      err = NULL;
+    }
+    else
+      g_warning(_("Error parsing keybinding file '%s'."), config);
+    res = false;
+  }
+  g_markup_parse_context_free(context);
+
+  return res;
+}
+
+void KeyConfig::start_element(GMarkupParseContext *context,
+    const char *element_name, const char **attribute_names,
+    const char **attribute_values, GError **error)
+{
+  const GSList *stack = g_markup_parse_context_get_element_stack(context);
+  guint size = g_slist_length(const_cast<GSList*>(stack));
+  if (size == 1) {
+    if (strcmp(element_name, "keyconfig")) {
+      *error = g_error_new(g_markup_error_quark(), G_MARKUP_ERROR_PARSE,
+          _("Expected 'keyconfig' element, found '%s'"), element_name);
+    }
+  }
+  else if (size == 2) {
+    if (strcmp(element_name, "bind")) {
+      *error = g_error_new(g_markup_error_quark(), G_MARKUP_ERROR_PARSE,
+          _("Expected 'bind' element, found '%s'"), element_name);
+      return;
+    }
+
+    const char *context;
+    const char *action;
+    const char *key;
+    if (!g_markup_collect_attributes (element_name, attribute_names,
+          attribute_values, error,
+          G_MARKUP_COLLECT_STRING, "context", &context,
+          G_MARKUP_COLLECT_STRING, "action", &action,
+          G_MARKUP_COLLECT_STRING, "key", &key,
+          G_MARKUP_COLLECT_INVALID))
+      return;
+
+    if (!BindKey(context, action, key)) {
+      *error = g_error_new(g_markup_error_quark(), G_MARKUP_ERROR_INVALID_CONTENT,
+          _("Unrecognized key '%s'"), key);
+      return;
+    }
+  }
+  else
+    *error = g_error_new(g_markup_error_quark(), G_MARKUP_ERROR_PARSE,
+        _("Unexpected element '%s'"), element_name);
 }
 
 KeyConfig::KeyConfig()
 : config(NULL)
 {
+  AddDefaultKeyBind("button", "activate", "Enter");
+
+  AddDefaultKeyBind("checkbox", "toggle", "Enter");
+
+  AddDefaultKeyBind("container", "focus-previous", "Shift-Tab");
+  AddDefaultKeyBind("container", "focus-next", "Tab");
+  AddDefaultKeyBind("container", "focus-left", "Left");
+  AddDefaultKeyBind("container", "focus-right", "Right");
+  AddDefaultKeyBind("container", "focus-up", "Up");
+  AddDefaultKeyBind("container", "focus-down", "Down");
+
+  AddDefaultKeyBind("coremanager", "redraw-screen", "Ctrl-l");
+
+  AddDefaultKeyBind("textentry", "cursor-right", "Right");
+  AddDefaultKeyBind("textentry", "cursor-left", "Left");
+  AddDefaultKeyBind("textentry", "cursor-down", "Down");
+  AddDefaultKeyBind("textentry", "cursor-up", "Up");
+  AddDefaultKeyBind("textentry", "cursor-right-word", "Ctrl-Right");
+  AddDefaultKeyBind("textentry", "cursor-left-word", "Ctrl-Left");
+  AddDefaultKeyBind("textentry", "cursor-end", "End");
+  AddDefaultKeyBind("textentry", "cursor-begin", "Home");
+  AddDefaultKeyBind("textentry", "delete-char", "Delete");
+  AddDefaultKeyBind("textentry", "backspace", "Backspace");
+  AddDefaultKeyBind("textentry", "backspace", "DEL");
+
+  /// @todo enable
+  /*
+  AddDefaultKeyBind("textentry", "delete-word-end", "Ctrl-Delete");
+  AddDefaultKeyBind("textentry", "delete-word-begin", "Ctrl-Backspace");
+  AddDefaultKeyBind("textentry", "delete-word-begin", "Ctrl-DEL");
+  AddDefaultKeyBind("textentry", "toggle-overwrite", "Insert");
+  */
+
+  AddDefaultKeyBind("textentry", "cursor-right", "Right");
+  AddDefaultKeyBind("textentry", "cursor-left", "Left");
+  AddDefaultKeyBind("textentry", "cursor-right-word", "Ctrl-Right");
+  AddDefaultKeyBind("textentry", "cursor-left-word", "Ctrl-Left");
+  AddDefaultKeyBind("textentry", "cursor-end", "End");
+  AddDefaultKeyBind("textentry", "cursor-begin", "Home");
+  AddDefaultKeyBind("textentry", "delete-char", "Delete");
+  AddDefaultKeyBind("textentry", "backspace", "Backspace");
+  AddDefaultKeyBind("textentry", "backspace", "DEL");
+
+  /*
+  AddDefaultKeyBind("textentry", "delete-word-end", "Ctrl-Delete");
+  AddDefaultKeyBind("textentry", "delete-word-begin", "Ctrl-Backspace");
+  AddDefaultKeyBind("textentry", "delete-word-begin", "Ctrl-DEL")
+  AddDefaultKeyBind("textentry", "toggle-overwrite", "Insert");
+  */
+
+  AddDefaultKeyBind("textentry", "activate", "Enter");
+
+  AddDefaultKeyBind("textview", "scroll-up", "PageUp");
+  AddDefaultKeyBind("textview", "scroll-down", "PageDown");
+
+  AddDefaultKeyBind("treeview", "fold-subtree", "-");
+  AddDefaultKeyBind("treeview", "unfold-subtree", "+");
+
+  AddDefaultKeyBind("window", "close-window", "Escape");
 }
 
 KeyConfig::~KeyConfig()

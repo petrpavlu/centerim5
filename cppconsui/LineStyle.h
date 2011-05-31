@@ -67,7 +67,8 @@ public:
   const char *CornerBR() const;
 
 protected:
-  struct LineElements {
+  struct LineElements
+  {
     const char *h;         // horizontal line
     const char *h_up;      //   and line up
     const char *h_down;    //   and line down

@@ -101,9 +101,9 @@ Log::Log()
   purple_prefs_add_bool(CONF_PREFIX "/log/debug", false);
   purple_prefs_add_string(CONF_PREFIX "/log/filename", "debug.log");
   purple_prefs_add_string(CONF_PREFIX "/log/log_level_cim", "info");
-  purple_prefs_add_string(CONF_PREFIX "/log/log_level_cppconsui", "error");
-  purple_prefs_add_string(CONF_PREFIX "/log/log_level_purple", "error");
-  purple_prefs_add_string(CONF_PREFIX "/log/log_level_glib", "error");
+  purple_prefs_add_string(CONF_PREFIX "/log/log_level_cppconsui", "warning");
+  purple_prefs_add_string(CONF_PREFIX "/log/log_level_purple", "none");
+  purple_prefs_add_string(CONF_PREFIX "/log/log_level_glib", "none");
 
   // connect callbacks
   purple_prefs_connect_callback(this, CONF_PREFIX "/log/debug", debug_change_,
@@ -280,13 +280,13 @@ void Log::WriteToFile(const char *text)
           == NULL) {
         if (err) {
           WriteErrorToWindow(
-              _("centerim/log: Error opening logfile `%s' (%s)."), filename,
+              _("centerim/log: Error opening logfile '%s' (%s)."), filename,
               err->message);
           g_error_free(err);
           err = NULL;
         }
         else
-          WriteErrorToWindow(_("centerim/log: Error opening logfile `%s'."),
+          WriteErrorToWindow(_("centerim/log: Error opening logfile '%s'."),
               filename);
       }
       g_free(filename);

@@ -58,14 +58,14 @@ Conversation::Conversation(PurpleConversation *conv_)
   GError *err = NULL;
   if (!(logfile = g_io_channel_new_file(filename, "a", &err))) {
     if (err) {
-      LOG->Error(_("Error opening conversation logfile `%s' (%s)."),
+      LOG->Error(_("Error opening conversation logfile '%s' (%s)."),
           filename, err->message);
 
       g_error_free(err);
       err = NULL;
     }
     else
-      LOG->Error(_("Error opening conversation logfile `%s'."), filename);
+      LOG->Error(_("Error opening conversation logfile '%s'."), filename);
   }
 
   LoadHistory();
@@ -271,7 +271,7 @@ void Conversation::BuildLogFilename()
 
   dir = g_path_get_dirname(filename);
   if (g_mkdir_with_parents(dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
-    LOG->Error(_("Error creating directory `%s'."), dir);
+    LOG->Error(_("Error creating directory '%s'."), dir);
   g_free(dir);
 
   g_free(acct_name);
@@ -285,13 +285,13 @@ void Conversation::LoadHistory()
 
   if ((chan = g_io_channel_new_file(filename, "r", &err)) == NULL) {
     if (err) {
-      LOG->Error(_("Error opening conversation logfile `%s' (%s)."),
+      LOG->Error(_("Error opening conversation logfile '%s' (%s)."),
           filename, err->message);
       g_error_free(err);
       err = NULL;
     }
     else
-      LOG->Error(_("Error opening conversation logfile `%s'."), filename);
+      LOG->Error(_("Error opening conversation logfile '%s'."), filename);
     return;
   }
 
@@ -345,13 +345,13 @@ void Conversation::LoadHistory()
   }
   if (st != G_IO_STATUS_EOF) {
     if (err) {
-      LOG->Error(_("Error reading from conversation logfile `%s' (%s)."),
+      LOG->Error(_("Error reading from conversation logfile '%s' (%s)."),
           filename, err->message);
       g_error_free(err);
       err = NULL;
     }
     else
-      LOG->Error(_("Error reading from conversation logfile `%s'."),
+      LOG->Error(_("Error reading from conversation logfile '%s'."),
           filename);
   }
   g_io_channel_unref(chan);

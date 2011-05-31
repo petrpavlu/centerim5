@@ -62,7 +62,7 @@ public:
   void Append(const char *text, int color = 0);
   /**
    * Inserts text before specified line number. Text can contain multiple
-   * lines and should end with `\\n' character just in front of `\\0'
+   * lines and should end with '\\n' character just in front of '\\0'
    * character.
    */
   void Insert(size_t line_num, const char *text, int color = 0);
@@ -99,7 +99,8 @@ public:
   ScrollBarStyle GetScrollBarStyle() const { return scrollbar_style; }
 
 protected:
-  struct ScrollBarElements {
+  struct ScrollBarElements
+  {
     const char *mchar; // middle dot
     const char *upa;   // upwards arrow
     const char *downa; // downwards arrow
@@ -107,7 +108,7 @@ protected:
 
   /**
    * Struct Line saves a real line. All text added into TextView is split on
-   * `\n' character and stored into Line objects.
+   * '\\n' character and stored into Line objects.
    */
   struct Line
   {

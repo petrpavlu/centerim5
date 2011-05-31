@@ -152,7 +152,8 @@ protected:
   /**
    * Structure to keep a child widget.
    */
-  struct Child {
+  struct Child
+  {
     Widget *widget;
 
     // signal connection to the widget
