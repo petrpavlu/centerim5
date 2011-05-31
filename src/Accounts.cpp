@@ -74,6 +74,9 @@ void Accounts::Finalize()
 
 void Accounts::status_changed(PurpleAccount *account, PurpleStatus *status)
 {
+  if (!purple_account_get_enabled(account, PACKAGE_NAME))
+    return;
+
   LOG->Message(_("+ [%s] %s: Status changed to: %s"),
       purple_account_get_protocol_name(account),
       purple_account_get_username(account),
