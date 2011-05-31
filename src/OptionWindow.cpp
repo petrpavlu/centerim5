@@ -37,6 +37,7 @@ OptionWindow::OptionWindow()
   CppConsUI::TreeView *tree = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
   SetContainer(*tree);
 
+  ChoiceOption *c;
   CppConsUI::TreeView::NodeReference parent;
   parent = tree->AppendNode(tree->GetRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(_("Buddy list"))));
@@ -54,6 +55,22 @@ OptionWindow::OptionWindow()
           CONF_PREFIX "/dimensions/log_height")));
 
   parent = tree->AppendNode(tree->GetRootNode(),
+      *(new CppConsUI::TreeView::ToggleCollapseButton(
+          _("Idle settings"))));
+  tree->AppendNode(parent, *(new BooleanOption(
+          _("Change to away status when idle"),
+          "/purple/away/away_when_idle")));
+  tree->AppendNode(parent, *(new IntegerOption(
+          _("Minutes before becoming idle"),
+          "/purple/away/mins_before_away")));
+  c = new ChoiceOption(_("Report idle time"),
+      "/purple/away/idle_reporting");
+  c->AddOption(_("Never"), "none");
+  c->AddOption(_("From last sent message"), "purple");
+  c->AddOption(_("Based on keyboard"), "system");
+  tree->AppendNode(parent, *c);
+
+  parent = tree->AppendNode(tree->GetRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(_("Logging"))));
 #define ADD_DEBUG_OPTIONS()                \
 do {                                       \
@@ -65,8 +82,8 @@ do {                                       \
   c->AddOption(_("Info"), "info");         \
   c->AddOption(_("Debug"), "debug");       \
 } while (0)
-  ChoiceOption *c = new ChoiceOption(_("CIM log level"),
-      CONF_PREFIX "/log/log_level_cim");
+  c = new ChoiceOption(_("CIM log level"),
+    CONF_PREFIX "/log/log_level_cim");
   ADD_DEBUG_OPTIONS();
   tree->AppendNode(parent, *c);
 
