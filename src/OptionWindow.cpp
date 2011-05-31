@@ -105,8 +105,8 @@ do {                                       \
 
   CppConsUI::Button *b = new CppConsUI::Button(AUTOSIZE, 1,
       _("Reload keybinding file"));
-  b->signal_activate.connect(sigc::hide_return(sigc::hide(sigc::mem_fun(KEYCONFIG,
-            &CppConsUI::KeyConfig::Reconfig))));
+  b->signal_activate.connect(sigc::mem_fun(this,
+        &OptionWindow::ReloadKeybindingFile));
   tree->AppendNode(tree->GetRootNode(), *b);
 
   buttons->AppendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
@@ -266,4 +266,10 @@ void OptionWindow::ChoiceOption::OnSelectionChanged(ComboBox& activator,
     int new_entry, const char *title, intptr_t data)
 {
   purple_prefs_set_string(pref, reinterpret_cast<const char*>(data));
+}
+
+void OptionWindow::ReloadKeybindingFile(CppConsUI::Button& activator)
+{
+  if (KEYCONFIG->Reconfig())
+    LOG->Message(_("Keybinding file was successfully reloaded."));
 }

@@ -113,6 +113,8 @@ protected:
     ChoiceOption& operator=(const ChoiceOption&);
   };
 
+  void ReloadKeybindingFile(CppConsUI::Button& activator);
+
 private:
   OptionWindow(const OptionWindow&);
   OptionWindow& operator=(const OptionWindow&);
