@@ -130,14 +130,14 @@ TestApp *TestApp::Instance()
 TestApp::TestApp()
 {
   mngr = CppConsUI::CoreManager::Instance();
-  KEYCONFIG->RegisterDefaultKeys();
+  KEYCONFIG->AddDefaultKeyBind("testapp", "quit", "F10");
+  KEYCONFIG->RegisterDefaultKeyBinds();
 
   g_log_set_default_handler(g_log_func_, this);
 
   DeclareBindable("testapp", "quit", sigc::mem_fun(mngr,
         &CppConsUI::CoreManager::QuitMainLoop),
       InputProcessor::BINDABLE_OVERRIDE);
-  KEYCONFIG->BindKey("testapp", "quit", "F10");
 }
 
 void TestApp::Run()

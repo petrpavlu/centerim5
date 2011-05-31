@@ -78,7 +78,6 @@ TextViewWindow::TextViewWindow()
   DeclareBindable("textviewwindow", "toggle-scrollbar", sigc::mem_fun(this,
         &TextViewWindow::ActionToggleScrollbar),
       InputProcessor::BINDABLE_NORMAL);
-  KEYCONFIG->BindKey("textviewwindow", "toggle-scrollbar", "F1");
 }
 
 void TextViewWindow::ScreenResized()
@@ -126,14 +125,15 @@ TestApp *TestApp::Instance()
 TestApp::TestApp()
 {
   mngr = CppConsUI::CoreManager::Instance();
-  KEYCONFIG->RegisterDefaultKeys();
+  KEYCONFIG->AddDefaultKeyBind("testapp", "quit", "F10");
+  KEYCONFIG->AddDefaultKeyBind("textviewwindow", "toggle-scrollbar", "F1");
+  KEYCONFIG->RegisterDefaultKeyBinds();
 
   g_log_set_default_handler(g_log_func_, this);
 
   DeclareBindable("testapp", "quit", sigc::mem_fun(mngr,
         &CppConsUI::CoreManager::QuitMainLoop),
       InputProcessor::BINDABLE_OVERRIDE);
-  KEYCONFIG->BindKey("testapp", "quit", "F10");
 }
 
 void TestApp::Run()
