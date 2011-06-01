@@ -193,18 +193,18 @@ return false;                                                     \
 #undef ERROR
 
     g_io_channel_unref(chan);
-  }
 
-  if (!g_file_get_contents(config, &contents, &length, &err)) {
-    if (err) {
-      g_warning(_("Error reading keybinding file '%s' (%s)."), config,
-          err->message);
-      g_error_free(err);
-      err = NULL;
+    if (!g_file_get_contents(config, &contents, &length, &err)) {
+      if (err) {
+        g_warning(_("Error reading keybinding file '%s' (%s)."), config,
+            err->message);
+        g_error_free(err);
+        err = NULL;
+      }
+      else
+        g_warning(_("Error reading keybinding file '%s'."), config);
+      return false;
     }
-    else
-      g_warning(_("Error reading keybinding file '%s'."), config);
-    return false;
   }
 
   // parse the file
@@ -226,6 +226,7 @@ return false;                                                     \
     res = false;
   }
   g_markup_parse_context_free(context);
+  g_free(contents);
 
   return res;
 }
