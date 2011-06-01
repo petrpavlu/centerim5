@@ -65,31 +65,17 @@ protected:
 
     ScreenLine(const char *start, const char *end, int length, int width)
       : start(start), end(end), length(length), width(width) {}
+    bool operator==(const ScreenLine& other) const;
+  };
+
+  struct CmpScreenLineEnd
+  {
+    bool operator()(ScreenLine& sline, const char *tag);
   };
 
   typedef std::deque<ScreenLine> ScreenLines;
 
-  void InitBuffer(int size);
-  int SizeOfGap();
-  void ExpandGap(int size);
-  void MoveGapToCursor();
-  int TextSize();
-
-  char *PrevChar(const char *p) const;
-  char *NextChar(const char *p) const;
-  int Width(const char *start, int chars) const;
-
-  char *GetScreenLine(char *text, int max_width, int *res_width,
-      int *res_length) const;
-  void UpdateScreenLines();
-
-  void UpdateScreenCursor();
-
-  void InsertTextAtCursor(const char *new_text, int new_text_bytes = -1);
-  void DeleteFromCursor(DeleteType type, int direction);
-  void MoveCursor(CursorMovement step, int direction);
-
-  void ToggleOverwrite();
+  ScreenLines screen_lines;
 
   bool editable;
   bool overwrite_mode;
@@ -109,7 +95,34 @@ protected:
 
   int gap_size; ///< Expand gap by this value.
 
-  ScreenLines screen_lines;
+  void InitBuffer(int size);
+  int GetGapSize();
+  void ExpandGap(int size);
+  void MoveGapToCursor();
+  int GetTextSize();
+
+  char *PrevChar(const char *p) const;
+  char *NextChar(const char *p) const;
+  int Width(const char *start, int chars) const;
+
+  char *GetScreenLine(const char *text, int max_width, int *res_width,
+      int *res_length) const;
+  /**
+   * Recalculates all screen lines.
+   */
+  void UpdateScreenLines();
+  /**
+   * Recalculates necessary amout of screen lines.
+   */
+  void UpdateScreenLines(const char *begin, const char *end);
+
+  void UpdateScreenCursor();
+
+  void InsertTextAtCursor(const char *new_text, int new_text_bytes = -1);
+  void DeleteFromCursor(DeleteType type, int direction);
+  void MoveCursor(CursorMovement step, int direction);
+
+  void ToggleOverwrite();
 
 private:
   TextEdit(const TextEdit&);
