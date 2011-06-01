@@ -732,6 +732,10 @@ void TextEdit::DeclareBindables()
       sigc::bind(sigc::mem_fun(this, &TextEdit::InsertTextAtCursor),
         "    ", 4), InputProcessor::BINDABLE_NORMAL);
 
+  DeclareBindable("textentry", "newline",
+      sigc::bind(sigc::mem_fun(this, &TextEdit::InsertTextAtCursor),
+        "\n", 1), InputProcessor::BINDABLE_NORMAL);
+
   /*
   DeclareBindable("textentry", "delete-word-end",
       sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete),
