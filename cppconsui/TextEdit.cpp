@@ -54,8 +54,9 @@
 namespace CppConsUI
 {
 
-TextEdit::TextEdit(int w, int h)
-: Widget(w, h), editable(true), buffer(NULL), gap_size(20) /// @todo
+TextEdit::TextEdit(int w, int h, int flags_)
+: Widget(w, h), flags(flags_), editable(true), buffer(NULL)
+, gap_size(20) /// @todo
 {
   InitBuffer(gap_size);
 
@@ -419,6 +420,9 @@ void TextEdit::UpdateScreenLines()
 
 void TextEdit::UpdateScreenLines(const char *begin, const char *end)
 {
+  g_assert(begin);
+  g_assert(end);
+
   int realw;
   if (!area || (realw = area->getmaxx()) <= 1)
     return;
@@ -499,10 +503,7 @@ void TextEdit::UpdateScreenCursor()
   for (ScreenLines::iterator i = screen_lines.begin();
       i != screen_lines.end(); i++) {
     int length = i->length;
-    // last line is treated specially
-    if (acu_length <= current_pos &&
-        (i == --screen_lines.end() ? current_pos <= acu_length + length
-        : current_pos < acu_length + length)) {
+    if (acu_length <= current_pos && current_pos < acu_length + length) {
       current_sc_linepos = current_pos - acu_length;
       break;
     }
@@ -629,21 +630,48 @@ void TextEdit::MoveCursor(CursorMovement step, int direction)
       break;
     case MOVE_DISPLAY_LINES:
       if (direction > 0) {
-        /* First move to end of current line then move to
-         * current_sc_linepos on next line (and make sure there is
-         * such position). */
-        if (current_sc_line + 1 < (int) screen_lines.size())
-          current_pos += (screen_lines[current_sc_line].length
-              - current_sc_linepos) + MIN(current_sc_linepos,
-                screen_lines[current_sc_line + 1].length - 1);
+        if (static_cast<unsigned>(current_sc_line + 1)
+            < screen_lines.size()) {
+          int w = Width(screen_lines[current_sc_line].start,
+              current_sc_linepos);
+          // first move to end of current line
+          current_pos += screen_lines[current_sc_line].length
+              - current_sc_linepos;
+          // find a character close to the original position
+          const char *ch = screen_lines[current_sc_line + 1].start;
+          int i = 0;
+          int min = Curses::onscreen_width('\t') / 2 - current_sc_line % 2;
+          while (w > min
+              && i < screen_lines[current_sc_line + 1].length - 1) {
+            gunichar uc = g_utf8_get_char(ch);
+            w -= Curses::onscreen_width(uc);
+            ch = NextChar(ch);
+            i++;
+          }
+          current_pos += i;
+        }
       }
       else if (direction < 0) {
-        /* First move to start of current line then move to
-         * current_sc_linepos on previous line (and make sure there is
-         * such position). */
-        if (current_sc_line > 0)
-          current_pos -= current_sc_linepos + MAX(1,
-              screen_lines[current_sc_line - 1].length - current_sc_linepos);
+        if (current_sc_line > 0) {
+          int w = Width(screen_lines[current_sc_line].start,
+              current_sc_linepos);
+          // first move to start of current line
+          current_pos -= current_sc_linepos;
+          // move to the start of the previous line
+          current_pos -= screen_lines[current_sc_line - 1].length;
+          // find a character close to the original position
+          const char *ch = screen_lines[current_sc_line - 1].start;
+          int i = 0;
+          int min = Curses::onscreen_width('\t') / 2 - current_sc_line % 2;
+          while (w > min
+              && i < screen_lines[current_sc_line - 1].length - 1) {
+            gunichar uc = g_utf8_get_char(ch);
+            w -= Curses::onscreen_width(uc);
+            ch = NextChar(ch);
+            i++;
+          }
+          current_pos += i;
+        }
       }
       break;
     case MOVE_DISPLAY_LINE_ENDS:
@@ -668,6 +696,7 @@ void TextEdit::MoveCursor(CursorMovement step, int direction)
   }
 
   UpdateScreenCursor();
+  Redraw();
 }
 
 void TextEdit::ToggleOverwrite()
@@ -736,13 +765,11 @@ int TextEdit::MoveBackwardWordFromCursor()
 void TextEdit::ActionMoveCursor(CursorMovement step, int direction)
 {
   MoveCursor(step, direction);
-  Redraw();
 }
 
 void TextEdit::ActionDelete(DeleteType type, int direction)
 {
   DeleteFromCursor(type, direction);
-  Redraw();
 }
 
 void TextEdit::ActionToggleOverwrite()
@@ -793,11 +820,6 @@ void TextEdit::DeclareBindables()
   DeclareBindable("textentry", "backspace",
       sigc::bind(sigc::mem_fun(this, &TextEdit::ActionDelete),
         DELETE_CHARS, -1), InputProcessor::BINDABLE_NORMAL);
-
-  // tabifying
-  DeclareBindable("textentry", "tab",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::InsertTextAtCursor),
-        "    ", 4), InputProcessor::BINDABLE_NORMAL);
 
   DeclareBindable("textentry", "newline",
       sigc::bind(sigc::mem_fun(this, &TextEdit::InsertTextAtCursor),

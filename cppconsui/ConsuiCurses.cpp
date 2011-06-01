@@ -279,6 +279,15 @@ const char *Window::PrintChar(const char *ch, int *printed, const char *end)
   if (wch[0] < 0)
     return ch + 1;
 
+  // tab character
+  if (wch[0] == '\t') {
+    int w = onscreen_width(wch[0]);
+    for (int i = 0; i < w; i++)
+      waddch(p->win, ' ');
+    *printed = w;
+    return g_utf8_find_next_char(ch, end);
+  }
+
   // control char symbols
   if (wch[0] < 32)
     wch[0] = 0x2400 + wch[0];
@@ -399,14 +408,14 @@ int onscreen_width(const char *start, const char *end)
 {
   int width = 0;
 
-  if (start == NULL)
+  if (!start)
     return 0;
 
-  if (end == NULL)
+  if (!end)
     end = start + strlen(start);
 
   while (start < end) {
-    width += g_unichar_iswide(g_utf8_get_char(start)) ? 2 : 1;
+    width += onscreen_width(g_utf8_get_char(start));
     start = g_utf8_next_char(start);
   }
   return width;
@@ -414,6 +423,8 @@ int onscreen_width(const char *start, const char *end)
 
 int onscreen_width(gunichar uc)
 {
+  if (uc == '\t')
+    return 4;
   return g_unichar_iswide(uc) ? 2 : 1;
 }
 

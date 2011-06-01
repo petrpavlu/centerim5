@@ -39,29 +39,54 @@ class TextEdit
 : public Widget
 {
 public:
-  TextEdit(int w, int h);
+  enum Flag {
+    FLAG_ALPHABETIC = 1 << 0,
+    FLAG_NUMERIC = 1 << 1,
+    FLAG_NOSPACE = 1 << 2,
+    FLAG_NOPUNCTUATION = 1 << 3,
+    FLAG_HIDDEN = 1 << 4
+  };
+
+  TextEdit(int w, int h, int flags_ = 0);
   virtual ~TextEdit();
 
   // Widget
   virtual void Draw();
   virtual bool ProcessInputText(const TermKeyKey &key);
 
-  void Clear();
+  /**
+   * Sets new text.
+   */
+  //virtual void SetText(const char *new_text) {}
+
+  virtual void Clear();
   /**
    * Returns inserted text. Lines are separated by a given separator. Caller
    * is responsible for freeing returned data.
    */
-  char *AsString(const char *separator = "\n");
+  virtual char *AsString(const char *separator = "\n");
 
   sigc::signal<void, TextEdit&> signal_text_changed;
 
 protected:
   struct ScreenLine
   {
-    const char *start; ///< Pointer to start of line (points into buffer).
-    const char *end; ///< Pointer to first byte that is not part of line.
-    int length; ///< Precalculated length.
-    int width; ///< Precalculated on screen width.
+    /**
+     * Pointer to the start of line (points into buffer).
+     */
+    const char *start;
+    /**
+     * Pointer to the first byte that is not part of this line.
+     */
+    const char *end;
+    /**
+     * Precalculated length.
+     */
+    int length;
+    /**
+     * Precalculated on screen width.
+     */
+    int width;
 
     ScreenLine(const char *start, const char *end, int length, int width)
       : start(start), end(end), length(length), width(width) {}
@@ -77,60 +102,106 @@ protected:
 
   ScreenLines screen_lines;
 
+  /**
+   * Bitmask indicating which input is accepted.
+   */
+  int flags;
   bool editable;
   bool overwrite_mode;
 
-  int current_pos; ///< Character position from the start of buffer.
-  char *point; ///< Cursor location in the buffer.
+  /**
+   * Character position from the start of buffer.
+   */
+  int current_pos;
+  /**
+   * Cursor location in the buffer.
+   */
+  char *point;
 
-  int current_sc_line; ///< Current cursor line (derived from current_pos and screen_lines).
-  int current_sc_linepos; ///< Current cursor character number (in the current line).
+  /**
+   * Current cursor line (derived from current_pos and screen_lines).
+   */
+  int current_sc_line;
+  /**
+   * Current cursor character number (in the current line).
+   */
+  int current_sc_linepos;
+  /**
+   * Holds index into screen_lines that marks the first screen line.
+   */
   int view_top;
 
-  char *buffer; ///< Start of text buffer.
-  char *bufend; ///< First location outside buffer.
-  char *gapstart; ///< Start of gap.
-  char *gapend; ///< First location after end of gap.
-  int text_length; ///< Length in use, in chars.
+  /**
+   * Start of text buffer.
+   */
+  char *buffer;
+  /**
+   * First location outside buffer.
+   */
+  char *bufend;
+  /**
+   * Start of gap.
+   */
+  char *gapstart;
+  /**
+   * First location after the gap end.
+   */
+  char *gapend;
+  /**
+   * Length in use, in chars.
+   */
+  int text_length;
 
-  int gap_size; ///< Expand gap by this value.
+  /**
+   * Gap expand size when the gap becomes filled.
+   */
+  int gap_size;
 
-  void InitBuffer(int size);
-  int GetGapSize();
-  void ExpandGap(int size);
-  void MoveGapToCursor();
-  int GetTextSize();
+  virtual void InitBuffer(int size);
+  virtual int GetGapSize();
+  virtual void ExpandGap(int size);
+  virtual void MoveGapToCursor();
+  virtual int GetTextSize();
 
-  char *PrevChar(const char *p) const;
-  char *NextChar(const char *p) const;
-  int Width(const char *start, int chars) const;
+  virtual char *PrevChar(const char *p) const;
+  virtual char *NextChar(const char *p) const;
+  virtual int Width(const char *start, int chars) const;
 
-  char *GetScreenLine(const char *text, int max_width, int *res_width,
+  virtual char *GetScreenLine(const char *text, int max_width, int *res_width,
       int *res_length) const;
   /**
    * Recalculates all screen lines.
    */
-  void UpdateScreenLines();
+  virtual void UpdateScreenLines();
   /**
    * Recalculates necessary amout of screen lines.
    */
-  void UpdateScreenLines(const char *begin, const char *end);
+  virtual void UpdateScreenLines(const char *begin, const char *end);
 
-  void UpdateScreenCursor();
+  /**
+   * Recalculates screen cursor position based on current_pos and
+   * screen_lines, sets current_sc_line and current_sc_linepos and handles
+   * scrolling if necessary.
+   */
+  virtual void UpdateScreenCursor();
 
-  void InsertTextAtCursor(const char *new_text, int new_text_bytes = -1);
-  void DeleteFromCursor(DeleteType type, int direction);
-  void MoveCursor(CursorMovement step, int direction);
+  /**
+   * Inserts given text at the current cursor position.
+   */
+  virtual void InsertTextAtCursor(const char *new_text,
+      int new_text_bytes = -1);
+  virtual void DeleteFromCursor(DeleteType type, int direction);
+  virtual void MoveCursor(CursorMovement step, int direction);
 
-  void ToggleOverwrite();
+  virtual void ToggleOverwrite();
+
+  virtual int MoveLogically(int start, int direction);
+  virtual int MoveForwardWordFromCursor();
+  virtual int MoveBackwardWordFromCursor();
 
 private:
   TextEdit(const TextEdit&);
   TextEdit& operator=(const TextEdit&);
-
-  int MoveLogically(int start, int direction);
-  int MoveForwardWordFromCursor();
-  int MoveBackwardWordFromCursor();
 
   void ActionMoveCursor(CursorMovement step, int direction);
   void ActionDelete(DeleteType type, int direction);
