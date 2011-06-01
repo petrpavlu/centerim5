@@ -72,9 +72,6 @@ void TextView::Draw()
 
   if (recalculate_screen_lines) {
     // delete all screen lines
-    for (ScreenLines::iterator i = screen_lines.begin();
-        i != screen_lines.end(); i++)
-      delete *i;
     screen_lines.clear();
 
     /// @todo Save and restore scroll afterwards.
@@ -132,19 +129,18 @@ void TextView::Draw()
   for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end()
       && j < realh; i++, j++) {
     int attrs2 = 0;
-    if ((*i)->parent->color) {
+    if (i->parent->color) {
       char color[32];
-      int w = g_snprintf(color, sizeof(color), "color%d",
-          (*i)->parent->color);
+      int w = g_snprintf(color, sizeof(color), "color%d", i->parent->color);
       g_assert(static_cast<int>(sizeof(color)) >= w); // just in case
       attrs2 = GetColorPair("textview", color);
       area->attroff(attrs);
       area->attron(attrs2);
     }
 
-    area->mvaddstring(0, j, (*i)->width, (*i)->text);
+    area->mvaddstring(0, j, i->width, i->text);
 
-    if ((*i)->parent->color) {
+    if (i->parent->color) {
       area->attroff(attrs2);
       area->attron(attrs);
     }
@@ -288,9 +284,6 @@ void TextView::Clear()
     delete *i;
   lines.clear();
 
-  for (ScreenLines::iterator i = screen_lines.begin();
-      i != screen_lines.end(); i++)
-    delete *i;
   screen_lines.clear();
 
   Redraw();
@@ -441,12 +434,12 @@ size_t TextView::UpdateScreenLines(size_t line_num, size_t start)
   while (*p) {
     s = p;
     p = ProceedLine(p, realw, &width);
-    new_lines.push_back(new ScreenLine(*lines[line_num], s, width));
+    new_lines.push_back(ScreenLine(*lines[line_num], s, width));
   }
 
   // empty line
   if (new_lines.empty())
-    new_lines.push_back(new ScreenLine(*lines[line_num], p, 0));
+    new_lines.push_back(ScreenLine(*lines[line_num], p, 0));
 
   size_t res = i - screen_lines.begin() + new_lines.size();
   screen_lines.insert(i, new_lines.begin(), new_lines.end());
@@ -464,12 +457,11 @@ size_t TextView::EraseScreenLines(size_t line_num, size_t start,
   bool begin_set = false, end_set = false;
   size_t begin, end;
   while (i < screen_lines.size()) {
-    if (screen_lines[i]->parent == lines[line_num]) {
+    if (screen_lines[i].parent == lines[line_num]) {
       if (!begin_set) {
         begin = i;
         begin_set = true;
       }
-      delete screen_lines[i];
     }
     else if (begin_set) {
       end = i;

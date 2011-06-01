@@ -47,7 +47,6 @@
 
 #include "Keys.h"
 
-#include <glib.h>
 #include <string.h>
 #include "gettext.h"
 
@@ -55,10 +54,7 @@ namespace CppConsUI
 {
 
 TextEdit::TextEdit(int w, int h)
-: Widget(w, h)
-, editable(true)
-, buffer(NULL)
-, gap_size(20) /// @todo
+: Widget(w, h), editable(true), buffer(NULL), gap_size(20) /// @todo
 {
   InitBuffer(gap_size);
 
@@ -68,8 +64,6 @@ TextEdit::TextEdit(int w, int h)
 
 TextEdit::~TextEdit()
 {
-  ClearScreenLines();
-
   if (buffer)
     g_free(buffer);
 }
@@ -96,23 +90,23 @@ void TextEdit::Draw()
   area->attron(attrs);
 
   int realh = area->getmaxy();
-  std::vector<ScreenLine*>::iterator i;
+  ScreenLines::iterator i;
   int j;
   for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end()
       && j < realh; i++, j++) {
-    if (gapstart >= (*i)->start && gapstart < (*i)->end) {
+    if (gapstart >= i->start && gapstart < i->end) {
       int p;
-      p = area->mvaddstring(0, j, (*i)->width, (*i)->start, gapstart);
-      area->mvaddstring(p, j, (*i)->width - p, gapend, bufend);
+      p = area->mvaddstring(0, j, i->width, i->start, gapstart);
+      area->mvaddstring(p, j, i->width - p, gapend, bufend);
     }
     else
-      area->mvaddstring(0, j, (*i)->width, (*i)->start, bufend);
+      area->mvaddstring(0, j, i->width, i->start, bufend);
   }
 
   area->attroff(attrs);
 
   if (has_focus) {
-    const char *line = screen_lines[current_sc_line]->start;
+    const char *line = screen_lines[current_sc_line].start;
     int sc_x = Width(line, current_sc_linepos);
     int sc_y = current_sc_line - view_top;
     area->mvchgat(sc_x, sc_y, 1, Curses::Attr::REVERSE, 0, NULL);
@@ -139,7 +133,7 @@ char *TextEdit::AsString(const char *separator)
 {
   g_assert(separator);
 
-  if (!BufferSize())
+  if (!TextSize())
     return NULL;
 
   int sep_len = strlen(separator);
@@ -156,7 +150,7 @@ char *TextEdit::AsString(const char *separator)
   }
   /* Allocate memory for all chars (without internal line separator '\n' but
    * with enough room for a given separator). */
-  char *res = g_new(char, BufferSize() + lines * (sep_len - 1) + 1);
+  char *res = g_new(char, TextSize() + lines * (sep_len - 1) + 1);
 
   p = buffer;
   const char *q;
@@ -211,11 +205,6 @@ int TextEdit::SizeOfGap()
   return gapend - gapstart;
 }
 
-int TextEdit::BufferSize()
-{
-  return (bufend - buffer) - (gapend - gapstart);
-}
-
 void TextEdit::ExpandGap(int size)
 {
   if (size > SizeOfGap()) {
@@ -264,19 +253,24 @@ void TextEdit::MoveGapToCursor()
   }
 }
 
+int TextEdit::TextSize()
+{
+  return (bufend - buffer) - (gapend - gapstart);
+}
+
 char *TextEdit::PrevChar(const char *p) const
 {
   if (p >= gapend) {
     if ((p = g_utf8_find_prev_char(gapend, p)))
-      return (char *) p;
+      return const_cast<char*>(p);
     else
       p = gapstart;
   }
 
   if ((p = g_utf8_find_prev_char(buffer, p)))
-    return (char *) p;
+    return const_cast<char*>(p);
   else
-    return (char *) buffer;
+    return const_cast<char*>(buffer);
 }
 
 char *TextEdit::NextChar(const char *p) const
@@ -287,15 +281,15 @@ char *TextEdit::NextChar(const char *p) const
 
   if (p < gapstart) {
     if ((p = g_utf8_find_next_char(p, gapstart)))
-      return (char *) p;
+      return const_cast<char*>(p);
     else
-      return (char *) gapend;
+      return const_cast<char*>(gapend);
   }
 
   if ((p = g_utf8_find_next_char(p, bufend)))
-    return (char *) p;
+    return const_cast<char*>(p);
   else
-    return (char *) bufend;
+    return const_cast<char*>(bufend);
 }
 
 int TextEdit::Width(const char *start, int chars) const
@@ -325,7 +319,6 @@ char *TextEdit::GetScreenLine(char *text, int max_width, int *res_width,
   int prev_width = 0;
   int cur_width = 0;
   int cur_length = 0;
-  gunichar uni;
   bool space = false;
   *res_width = 0;
   *res_length = 0;
@@ -335,7 +328,7 @@ char *TextEdit::GetScreenLine(char *text, int max_width, int *res_width,
 
   while (cur < bufend) {
     prev_width = cur_width;
-    uni = g_utf8_get_char(cur);
+    gunichar uni = g_utf8_get_char(cur);
     cur_width += Curses::onscreen_width(uni);
     cur_length++;
 
@@ -391,53 +384,43 @@ char *TextEdit::GetScreenLine(char *text, int max_width, int *res_width,
 
 void TextEdit::UpdateScreenLines()
 {
-  ClearScreenLines();
+  screen_lines.clear();
 
   int realw;
   if (!area || (realw = area->getmaxx()) <= 1)
     return;
 
   char *p = buffer;
-  char *s;
-  int width;
-  int length;
 
   while (p < bufend) {
-    s = p;
+    char *s = p;
+    int width;
+    int length;
     // lower max width by one to make a room for the cursor
     p = GetScreenLine(p, realw - 1, &width, &length);
-    screen_lines.push_back(new ScreenLine(s, p, length, width));
+    screen_lines.push_back(ScreenLine(s, p, length, width));
   }
   /* An empty line has to be manually inserted if there is a '\n' character
    * just in front of bufend. */
-  if (BufferSize() && *PrevChar(p) == '\n')
-    screen_lines.push_back(new ScreenLine(p, p, 0, 0));
-}
-
-void TextEdit::ClearScreenLines()
-{
-  for (std::vector<ScreenLine*>::iterator i = screen_lines.begin();
-      i != screen_lines.end(); i++)
-    delete *i;
-  screen_lines.clear();
+  if (TextSize() && *PrevChar(p) == '\n')
+    screen_lines.push_back(ScreenLine(p, p, 0, 0));
 }
 
 void TextEdit::UpdateScreenCursor()
 {
   int acu_length = 0;
-  int length;
   current_sc_line = 0;
   current_sc_linepos = 0;
 
   if (!area)
     return;
 
-  for (std::vector<ScreenLine*>::iterator i = screen_lines.begin();
+  for (ScreenLines::iterator i = screen_lines.begin();
       i != screen_lines.end(); i++) {
-    length = (*i)->length;
+    int length = i->length;
     // last line is treated specially
     if (acu_length <= current_pos &&
-        (*i == screen_lines.back() ? current_pos <= acu_length + length
+        (i == --screen_lines.end() ? current_pos <= acu_length + length
         : current_pos < acu_length + length)) {
       current_sc_linepos = current_pos - acu_length;
       break;
@@ -559,9 +542,9 @@ void TextEdit::MoveCursor(CursorMovement step, int direction)
          * current_sc_linepos on next line (and make sure there is
          * such position). */
         if (current_sc_line + 1 < (int) screen_lines.size())
-          current_pos += (screen_lines[current_sc_line]->length
+          current_pos += (screen_lines[current_sc_line].length
               - current_sc_linepos) + MIN(current_sc_linepos,
-                screen_lines[current_sc_line + 1]->length);
+                screen_lines[current_sc_line + 1].length);
       }
       else if (direction < 0) {
         /* First move to start of current line then move to
@@ -569,7 +552,7 @@ void TextEdit::MoveCursor(CursorMovement step, int direction)
          * such position). */
         if (current_sc_line > 0)
           current_pos -= current_sc_linepos + MAX(1,
-              screen_lines[current_sc_line - 1]->length - current_sc_linepos);
+              screen_lines[current_sc_line - 1].length - current_sc_linepos);
       }
       break;
     case MOVE_DISPLAY_LINE_ENDS:
@@ -577,10 +560,10 @@ void TextEdit::MoveCursor(CursorMovement step, int direction)
         /* Last line needs to be handled specially when moving to end
          * of line. */
         if (current_sc_line + 1 == (int) screen_lines.size())
-          current_pos += screen_lines[current_sc_line]->length
+          current_pos += screen_lines[current_sc_line].length
             - current_sc_linepos;
         else
-          current_pos += screen_lines[current_sc_line]->length
+          current_pos += screen_lines[current_sc_line].length
             - current_sc_linepos - 1;
       }
       else if (direction < 0)

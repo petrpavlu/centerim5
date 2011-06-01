@@ -30,7 +30,7 @@
 
 #include "Widget.h"
 
-#include <vector>
+#include <deque>
 
 namespace CppConsUI
 {
@@ -56,11 +56,24 @@ public:
   sigc::signal<void, TextEdit&> signal_text_changed;
 
 protected:
+  struct ScreenLine
+  {
+    const char *start; ///< Pointer to start of line (points into buffer).
+    const char *end; ///< Pointer to first byte that is not part of line.
+    int length; ///< Precalculated length.
+    int width; ///< Precalculated on screen width.
+
+    ScreenLine(const char *start, const char *end, int length, int width)
+      : start(start), end(end), length(length), width(width) {}
+  };
+
+  typedef std::deque<ScreenLine> ScreenLines;
+
   void InitBuffer(int size);
   int SizeOfGap();
-  int BufferSize();
   void ExpandGap(int size);
   void MoveGapToCursor();
+  int TextSize();
 
   char *PrevChar(const char *p) const;
   char *NextChar(const char *p) const;
@@ -69,7 +82,6 @@ protected:
   char *GetScreenLine(char *text, int max_width, int *res_width,
       int *res_length) const;
   void UpdateScreenLines();
-  void ClearScreenLines();
 
   void UpdateScreenCursor();
 
@@ -97,18 +109,7 @@ protected:
 
   int gap_size; ///< Expand gap by this value.
 
-  struct ScreenLine
-  {
-    const char *start; ///< Pointer to start of line (points into buffer).
-    const char *end; ///< Pointer to first byte that is not part of line.
-    int length; ///< Precalculated length.
-    int width; ///< Precalculated on screen width.
-
-    ScreenLine(const char *start, const char *end, int length, int width)
-      : start(start), end(end), length(length), width(width) {}
-  };
-
-  std::vector<ScreenLine*> screen_lines;
+  ScreenLines screen_lines;
 
 private:
   TextEdit(const TextEdit&);

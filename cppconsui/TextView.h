@@ -153,7 +153,7 @@ protected:
   };
 
   typedef std::deque<Line*> Lines;
-  typedef std::deque<ScreenLine*> ScreenLines;
+  typedef std::deque<ScreenLine> ScreenLines;
 
   const static ScrollBarElements scrollbar_elements_ascii;
   const static ScrollBarElements scrollbar_elements_extended;
