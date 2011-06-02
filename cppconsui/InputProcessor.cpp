@@ -84,17 +84,14 @@ bool InputProcessor::Process(BindableType type, const TermKeyKey& key)
       = KEYCONFIG->GetKeyBinds(i->first.c_str());
     if (!keys)
       continue;
+    KeyConfig::KeyBindContext::const_iterator j = keys->find(key);
+    if (j == keys->end())
+      continue;
 
-    /// @todo make this quicker
-    for (KeyConfig::KeyBindContext::const_iterator j = keys->begin();
-        j != keys->end(); j++) {
-      if (Keys::Compare(key, j->first)) {
-        BindableContext::iterator k = i->second.find(j->second);
-        if (k != i->second.end() && k->second.type == type) {
-          k->second.function();
-          return true;
-        }
-      }
+    BindableContext::iterator k = i->second.find(j->second);
+    if (k != i->second.end() && k->second.type == type) {
+      k->second.function();
+      return true;
     }
   }
 
