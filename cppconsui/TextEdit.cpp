@@ -641,10 +641,12 @@ void TextEdit::MoveCursor(CursorMovement step, int direction)
           // find a character close to the original position
           const char *ch = screen_lines[current_sc_line + 1].start;
           int i = 0;
-          int min = Curses::onscreen_width('\t') / 2 - current_sc_line % 2;
-          while (w > min
+          int tab = Curses::onscreen_width('\t') / 2 - current_sc_line % 2;
+          while (w > 0
               && i < screen_lines[current_sc_line + 1].length - 1) {
             gunichar uc = g_utf8_get_char(ch);
+            if (uc == '\t' && w <= tab)
+              break;
             w -= Curses::onscreen_width(uc);
             ch = NextChar(ch);
             i++;
@@ -663,10 +665,12 @@ void TextEdit::MoveCursor(CursorMovement step, int direction)
           // find a character close to the original position
           const char *ch = screen_lines[current_sc_line - 1].start;
           int i = 0;
-          int min = Curses::onscreen_width('\t') / 2 - current_sc_line % 2;
-          while (w > min
+          int tab = Curses::onscreen_width('\t') / 2 - current_sc_line % 2;
+          while (w > 0
               && i < screen_lines[current_sc_line - 1].length - 1) {
             gunichar uc = g_utf8_get_char(ch);
+            if (uc == '\t' && w <= tab)
+              break;
             w -= Curses::onscreen_width(uc);
             ch = NextChar(ch);
             i++;
