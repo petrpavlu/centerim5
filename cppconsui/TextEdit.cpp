@@ -321,6 +321,9 @@ int TextEdit::Width(const char *start, int chars) const
 {
   g_assert(start);
 
+  if (start == gapstart)
+    start = gapend;
+
   int width = 0;
 
   while (chars--) {
