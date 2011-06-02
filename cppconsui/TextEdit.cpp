@@ -145,7 +145,7 @@ char *TextEdit::AsString(const char *separator)
    * inserting/removing. */
   int lines = 0;
   const char *p = buffer;
-  while (p < bufend) {
+  while (p < bufend - 1) {
     if (*p == '\n')
       lines++;
     p = NextChar(p);
@@ -157,7 +157,7 @@ char *TextEdit::AsString(const char *separator)
   p = buffer;
   const char *q;
   char *r = res;
-  while (p < bufend) {
+  while (p < bufend - 1) {
     q = p;
     p = NextChar(p);
 
@@ -271,7 +271,8 @@ void TextEdit::MoveGapToCursor()
 
 int TextEdit::GetTextSize()
 {
-  return (bufend - buffer) - (gapend - gapstart);
+  // '-1' to don't count the last '\n' character that is manually inserted
+  return (bufend - buffer) - (gapend - gapstart) - 1;
 }
 
 char *TextEdit::PrevChar(const char *p) const
