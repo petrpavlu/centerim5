@@ -212,7 +212,7 @@ void Conversation::Receive(const char *name, const char *alias,
   g_free(msg);
 
   // we currently don't support displaying HTML in any way
-  char *nohtml = purple_markup_strip_html(message);
+  char *nohtml = StripHTML(message);
 
   // write text to the window
   const char *timestr = purple_utf8_strftime(TIME_FORMAT, localtime(&mtime));
@@ -226,22 +226,164 @@ void Conversation::Receive(const char *name, const char *alias,
   g_free(nohtml);
 }
 
-void Conversation::ActionSend()
+char *Conversation::StripHTML(const char *str)
 {
-  PurpleConversationType type = purple_conversation_get_type(conv);
-  char *str = input->AsString();
-  if (str) {
-    char *escaped = purple_markup_escape_text(str, strlen(str));
-    char *html = purple_strdup_withhtml(escaped);
-    if (type == PURPLE_CONV_TYPE_CHAT)
-      purple_conv_chat_send(PURPLE_CONV_CHAT(conv), html);
-    else if (type == PURPLE_CONV_TYPE_IM)
-      purple_conv_im_send(PURPLE_CONV_IM(conv), html);
-    g_free(html);
-    g_free(escaped);
-    g_free(str);
-    input->Clear();
+  /* Almost copy&paste from libpurple/util.c:purple_markup_strip_html(), but
+   * this version doesn't convert tab character to a space. */
+
+  int i, j, k, entlen;
+  bool visible = true;
+  bool closing_td_p = false;
+  gchar *str2;
+  const gchar *cdata_close_tag = NULL, *ent;
+  gchar *href = NULL;
+  int href_st = 0;
+
+  if (!str)
+    return NULL;
+
+  str2 = g_strdup(str);
+
+  for (i = 0, j = 0; str2[i]; i++) {
+    if (str2[i] == '<') {
+      if (cdata_close_tag) {
+        // note: don't even assume any other tag is a tag in CDATA
+        if (g_ascii_strncasecmp(str2 + i, cdata_close_tag,
+              !strlen(cdata_close_tag))) {
+          i += strlen(cdata_close_tag) - 1;
+          cdata_close_tag = NULL;
+        }
+        continue;
+      }
+      else if (!g_ascii_strncasecmp(str2 + i, "<td", 3) && closing_td_p) {
+        str2[j++] = '\t';
+        visible = true;
+      }
+      else if (!g_ascii_strncasecmp(str2 + i, "</td>", 5)) {
+        closing_td_p = true;
+        visible = false;
+      }
+      else {
+        closing_td_p = false;
+        visible = true;
+      }
+
+      k = i + 1;
+
+      if (g_ascii_isspace(str2[k]))
+        visible = true;
+      else if (str2[k]) {
+        /* Scan until we end the tag either implicitly (closed start tag) or
+         * explicitly, using a sloppy method (i.e., < or > inside quoted
+         * attributes will screw us up). */
+        while (str2[k] && str2[k] != '<' && str2[k] != '>')
+          k++;
+
+        /* If we've got an <a> tag with an href, save the address to print
+         * later. */
+        if (!g_ascii_strncasecmp(str2 + i, "<a", 2)
+            && g_ascii_isspace(str2[i + 2])) {
+          int st; // start of href, inclusive [
+          int end; // end of href, exclusive )
+          char delim = ' ';
+          // find start of href
+          for (st = i + 3; st < k; st++) {
+            if (!g_ascii_strncasecmp(str2 + st, "href=", 5)) {
+              st += 5;
+              if (str2[st] == '"' || str2[st] == '\'') {
+                delim = str2[st];
+                st++;
+              }
+              break;
+            }
+          }
+          // find end of address
+          for (end = st; end < k && str2[end] != delim; end++) {
+            // all the work is done in the loop construct above
+          }
+
+          /* If there's an address, save it. If there was already one saved,
+           * kill it. */
+          if (st < k) {
+            char *tmp;
+            g_free(href);
+            tmp = g_strndup(str2 + st, end - st);
+            href = purple_unescape_html(tmp);
+            g_free(tmp);
+            href_st = j;
+          }
+        }
+
+        /* Replace </a> with an ascii representation of the address the link
+         * was pointing to. */
+        else if (href && !g_ascii_strncasecmp(str2 + i, "</a>", 4)) {
+          size_t hrlen = strlen(href);
+
+          /* Only insert the href if it's different from the CDATA. */
+          if ((hrlen != (unsigned)(j - href_st) ||
+                strncmp(str2 + href_st, href, hrlen)) &&
+              (hrlen != (unsigned)(j - href_st + 7) || /* 7 == strlen("http://") */
+               strncmp(str2 + href_st, href + 7, hrlen - 7)))
+          {
+            str2[j++] = ' ';
+            str2[j++] = '(';
+            g_memmove(str2 + j, href, hrlen);
+            j += hrlen;
+            str2[j++] = ')';
+            g_free(href);
+            href = NULL;
+          }
+        }
+
+        /* Check for tags which should be mapped to newline (but ignore some of
+         * the tags at the beginning of the text) */
+        else if ((j && (!g_ascii_strncasecmp(str2 + i, "<p>", 3)
+                || !g_ascii_strncasecmp(str2 + i, "<tr", 3)
+                || !g_ascii_strncasecmp(str2 + i, "<hr", 3)
+                || !g_ascii_strncasecmp(str2 + i, "<li", 3)
+                || !g_ascii_strncasecmp(str2 + i, "<div", 4)))
+            || !g_ascii_strncasecmp(str2 + i, "<br", 3)
+            || !g_ascii_strncasecmp(str2 + i, "</table>", 8))
+          str2[j++] = '\n';
+        // check for tags which begin CDATA and need to be closed
+#if 0 // FIXME.. option is end tag optional, we can't handle this right now
+        else if (!g_ascii_strncasecmp(str2 + i, "<option", 7))
+        {
+          // FIXME we should not do this if the OPTION is SELECT'd
+          cdata_close_tag = "</option>";
+        }
+#endif
+        else if (!g_ascii_strncasecmp(str2 + i, "<script", 7))
+          cdata_close_tag = "</script>";
+        else if (!g_ascii_strncasecmp(str2 + i, "<style", 6))
+          cdata_close_tag = "</style>";
+        // update the index and continue checking after the tag
+        i = (str2[k] == '<' || str2[k] == '\0') ? k - 1: k;
+        continue;
+      }
+    }
+    else if (cdata_close_tag)
+      continue;
+    else if (!g_ascii_isspace(str2[i]))
+      visible = true;
+
+    if (str2[i] == '&' && (ent = purple_markup_unescape_entity(str2 + i,
+            &entlen))) {
+      while (*ent)
+        str2[j++] = *ent++;
+      i += entlen - 1;
+      continue;
+    }
+
+    if (visible)
+      str2[j++] = g_ascii_isspace(str2[i]) && str[i] != '\t' ? ' ': str2[i];
   }
+
+  g_free(href);
+
+  str2[j] = '\0';
+
+  return str2;
 }
 
 void Conversation::DestroyPurpleConversation(PurpleConversation *conv)
@@ -339,7 +481,7 @@ void Conversation::LoadHistory()
     cur++;
 
     // write text to the window
-    char *nohtml = purple_markup_strip_html(cur);
+    char *nohtml = StripHTML(cur);
     char *msg = g_strdup_printf("%s %s", purple_utf8_strftime(TIME_FORMAT,
           localtime(&time)), nohtml);
     view->Append(msg, color);
@@ -360,6 +502,24 @@ void Conversation::LoadHistory()
           filename);
   }
   g_io_channel_unref(chan);
+}
+
+void Conversation::ActionSend()
+{
+  PurpleConversationType type = purple_conversation_get_type(conv);
+  char *str = input->AsString();
+  if (str) {
+    char *escaped = purple_markup_escape_text(str, strlen(str));
+    char *html = purple_strdup_withhtml(escaped);
+    if (type == PURPLE_CONV_TYPE_CHAT)
+      purple_conv_chat_send(PURPLE_CONV_CHAT(conv), html);
+    else if (type == PURPLE_CONV_TYPE_IM)
+      purple_conv_im_send(PURPLE_CONV_IM(conv), html);
+    g_free(html);
+    g_free(escaped);
+    g_free(str);
+    input->Clear();
+  }
 }
 
 void Conversation::DeclareBindables()

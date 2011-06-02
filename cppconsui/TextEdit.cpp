@@ -371,7 +371,7 @@ char *TextEdit::GetScreenLine(const char *text, int max_width,
       return NextChar(cur);
     }
 
-    if (g_unichar_type(uc) == G_UNICODE_SPACE_SEPARATOR)
+    if (g_unichar_isspace(uc))
       space = true;
     else if (space) {
       /* Found start of a word and everything before that can fit into
@@ -382,12 +382,6 @@ char *TextEdit::GetScreenLine(const char *text, int max_width,
     }
 
     cur = NextChar(cur);
-  }
-
-  // end of buffer reached
-  if (cur == bufend && cur_width <= max_width) {
-    *res_length = cur_length;
-    return const_cast<char*>(cur);
   }
 
   /* Fix for very small max_width and characters wider that 1 cell. For

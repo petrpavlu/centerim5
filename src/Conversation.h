@@ -77,16 +77,18 @@ protected:
 
   sigc::connection destroy_conn;
 
+  char *StripHTML(const char *str);
+  void DestroyPurpleConversation(PurpleConversation *conv);
+  void BuildLogFilename();
+  void LoadHistory();
+
+  void ActionSend();
+
 private:
   Conversation();
   Conversation(const Conversation&);
   Conversation& operator=(const Conversation&);
 
-  virtual void ActionSend();
-
-  void DestroyPurpleConversation(PurpleConversation *conv);
-  void BuildLogFilename();
-  void LoadHistory();
   void DeclareBindables();
 };
 

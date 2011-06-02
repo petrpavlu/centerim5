@@ -394,7 +394,7 @@ const char *TextView::ProceedLine(const char *text, int area_width,
       res = cur;
     }
 
-    if (g_unichar_type(uc) == G_UNICODE_SPACE_SEPARATOR)
+    if (g_unichar_isspace(uc))
       space = true;
     else if (space) {
       /* Found start of a word and everything before that can fit into
