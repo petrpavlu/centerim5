@@ -119,7 +119,7 @@ private:
   ~CoreManager();
 
   // InputProcessor
-  virtual bool ProcessInput(const TermKeyKey& key);
+  virtual bool ProcessInput(const TermKeyKey& key, bool more);
 
   // glib IO callbacks
   /**

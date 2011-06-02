@@ -47,7 +47,7 @@ public:
   static CenterIM *Instance();
 
   // InputProcessor
-  virtual bool ProcessInput(const TermKeyKey& key);
+  virtual bool ProcessInput(const TermKeyKey& key, bool more);
 
   int Run(const char *config_path);
   void Quit();

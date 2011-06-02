@@ -23,11 +23,12 @@
 
 #include "KeyConfig.h"
 
-#include <termios.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
+#include <poll.h>
+#include <sys/ioctl.h>
+#include <termios.h>
+#include <unistd.h>
 #include "gettext.h"
 
 namespace CppConsUI
@@ -286,12 +287,12 @@ CoreManager::~CoreManager()
   Curses::screen_finalize();
 }
 
-bool CoreManager::ProcessInput(const TermKeyKey& key)
+bool CoreManager::ProcessInput(const TermKeyKey& key, bool more)
 {
-  if (top_input_processor && top_input_processor->ProcessInput(key))
+  if (top_input_processor && top_input_processor->ProcessInput(key, more))
     return true;
 
-  return InputProcessor::ProcessInput(key);
+  return InputProcessor::ProcessInput(key, more);
 }
 
 gboolean CoreManager::io_input_error(GIOChannel *source, GIOCondition cond)
@@ -310,16 +311,34 @@ gboolean CoreManager::io_input(GIOChannel *source, GIOCondition cond)
 
   termkey_advisereadable(tk);
 
-  TermKeyKey key;
-  TermKeyResult ret;
-  while ((ret = termkey_getkey(tk, &key)) == TERMKEY_RES_KEY) {
-    if (key.type == TERMKEY_TYPE_UNICODE && !utf8) {
+  TermKeyKey cur, la; // current and look-ahead keys
+  bool la_valid = false;
+  TermKeyResult cur_ret, la_ret;
+  struct pollfd fd;
+  fd.fd = 0;
+  fd.events = POLLIN;
+  while (1) {
+    if (!la_valid) {
+      if ((cur_ret = termkey_getkey(tk, &cur)) != TERMKEY_RES_KEY)
+        break;
+    }
+    else {
+      cur = la;
+      cur_ret = la_ret;
+      if (cur_ret != TERMKEY_RES_KEY)
+        break;
+    }
+
+    la_ret = termkey_getkey(tk, &la);
+    la_valid = la_ret == TERMKEY_RES_KEY;
+
+    if (cur.type == TERMKEY_TYPE_UNICODE && !utf8) {
       gsize bwritten;
       GError *err = NULL;
       char *utf8;
 
       // convert data from user charset to UTF-8
-      if (!(utf8 = g_locale_to_utf8(key.utf8, -1, NULL, &bwritten, &err))) {
+      if (!(utf8 = g_locale_to_utf8(cur.utf8, -1, NULL, &bwritten, &err))) {
         if (err) {
           g_warning(_("Error converting input to UTF-8 (%s)."),
               err->message);
@@ -331,15 +350,18 @@ gboolean CoreManager::io_input(GIOChannel *source, GIOCondition cond)
         continue;
       }
 
-      memcpy(key.utf8, utf8, bwritten + 1);
+      memcpy(cur.utf8, utf8, bwritten + 1);
       g_free(utf8);
 
-      key.code.codepoint = g_utf8_get_char(key.utf8);
+      cur.code.codepoint = g_utf8_get_char(cur.utf8);
     }
 
-    ProcessInput(key);
+    if (poll(&fd, 1, 0) > 0)
+      termkey_advisereadable(tk);
+
+    ProcessInput(cur, la_valid);
   }
-  if (ret == TERMKEY_RES_AGAIN) {
+  if (cur_ret == TERMKEY_RES_AGAIN) {
     int wait = termkey_get_waittime(tk);
     io_input_timeout_conn = TimeoutOnceConnect(sigc::mem_fun(this,
           &CoreManager::io_input_timeout), wait);
@@ -354,7 +376,7 @@ void CoreManager::io_input_timeout()
   if (termkey_getkey_force(tk, &key) == TERMKEY_RES_KEY) {
     /* This should happen only for Esc key, so no need to do locale->utf8
      * conversion. */
-    ProcessInput(key);
+    ProcessInput(key, false);
   }
 }
 
