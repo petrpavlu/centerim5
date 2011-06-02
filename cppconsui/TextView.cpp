@@ -138,7 +138,20 @@ void TextView::Draw()
       area->attron(attrs2);
     }
 
-    area->mvaddstring(0, j, i->width, i->text);
+    const char *p = i->text;
+    int w = 0;
+    for (int k = 0; k < i->length; k++) {
+      gunichar uc = g_utf8_get_char(p);
+      if (uc == '\t') {
+        int t = Curses::onscreen_width(uc, w);
+        for (int l = 0; l < t; l++)
+          area->mvaddchar(w + l, j, ' ');
+        w += t;
+      }
+      else
+        w += area->mvaddchar(w, j, uc);
+      p = g_utf8_next_char(p);
+    }
 
     if (i->parent->color) {
       area->attroff(attrs2);
@@ -345,46 +358,48 @@ TextView::Line::~Line()
   g_free(text);
 }
 
-TextView::ScreenLine::ScreenLine(Line &parent_, const char *text_, int width_)
-: parent(&parent_), text(text_), width(width_)
+TextView::ScreenLine::ScreenLine(Line &parent_, const char *text_,
+    int length_)
+: parent(&parent_), text(text_), length(length_)
 {
 }
 
 const char *TextView::ProceedLine(const char *text, int area_width,
-    int *res_width) const
+    int *res_length) const
 {
   g_assert(text);
   g_assert(area_width > 0);
-  g_assert(res_width);
+  g_assert(res_length);
 
   const char *cur = text;
   const char *res = text;
   int prev_width = 0;
   int cur_width = 0;
-  gunichar uni;
+  int cur_length = 0;
   bool space = false;
-  *res_width = 0;
+  *res_length = 0;
 
   while (*cur) {
     prev_width = cur_width;
-    uni = g_utf8_get_char(cur);
-    cur_width += Curses::onscreen_width(uni);
+    gunichar uc = g_utf8_get_char(cur);
+    cur_width += Curses::onscreen_width(uc, cur_width);
+    cur_length++;
 
     if (prev_width > area_width)
       break;
 
     // possibly too long word
-    if (cur_width > area_width && !*res_width) {
-      *res_width = prev_width;
+    if (cur_width > area_width && !*res_length) {
+      *res_length = cur_length - 1;
       res = cur;
     }
 
-    if (g_unichar_type(uni) == G_UNICODE_SPACE_SEPARATOR)
+    if (g_unichar_type(uc) == G_UNICODE_SPACE_SEPARATOR)
       space = true;
     else if (space) {
       /* Found start of a word and everything before that can fit into
        * a screen line. */
-      *res_width = prev_width;
+      *res_length = cur_length - 1;
       res = cur;
       space = false;
     }
@@ -394,14 +409,14 @@ const char *TextView::ProceedLine(const char *text, int area_width,
 
   // end of text
   if (!*cur && cur_width <= area_width) {
-    *res_width = cur_width;
+    *res_length = cur_length;
     res = cur;
   }
 
   /* Fix for very small area_width and characters wider that 1 cell. For
-   * example area_width = 1 and text = "W" where W is a wide character
-   * (2 cells width). In that case we can not draw anything but we want to
-   * skip to another character. */
+   * example, area_width = 1 and text = "W" where W is a wide character (2
+   * cells width) (or simply for tabs). In that case we can not draw anything
+   * but we want to skip to another character. */
   if (res == text)
     res = g_utf8_next_char(res);
 
@@ -430,11 +445,11 @@ size_t TextView::UpdateScreenLines(size_t line_num, size_t start)
   int realw = area->getmaxx();
   if (scrollbar && realw > 2)
     realw -= 2;
-  int width;
+  int len;
   while (*p) {
     s = p;
-    p = ProceedLine(p, realw, &width);
-    new_lines.push_back(ScreenLine(*lines[line_num], s, width));
+    p = ProceedLine(p, realw, &len);
+    new_lines.push_back(ScreenLine(*lines[line_num], s, len));
   }
 
   // empty line

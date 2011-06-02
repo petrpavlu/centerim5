@@ -85,9 +85,6 @@ void TextEdit::Draw()
 
   area->erase();
 
-  if (screen_lines.empty())
-    return;
-
   int attrs = GetColorPair("textedit", "text");
   area->attron(attrs);
 
@@ -96,13 +93,25 @@ void TextEdit::Draw()
   int j;
   for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end()
       && j < realh; i++, j++) {
-    if (gapstart >= i->start && gapstart < i->end) {
-      int p;
-      p = area->mvaddstring(0, j, i->width, i->start, gapstart);
-      area->mvaddstring(p, j, i->width - p, gapend, bufend);
+    const char *p = i->start;
+    /* Variable p can point to the gapstart while the first real character can
+     * be at the gapend address.. */
+    if (p == gapstart)
+      p = gapend;
+
+    int w = 0;
+    for (int k = 0; k < i->length && *p != '\n'; k++) {
+      gunichar uc = g_utf8_get_char(p);
+      if (uc == '\t') {
+        int t = Curses::onscreen_width(uc, w);
+        for (int l = 0; l < t; l++)
+          area->mvaddchar(w + l, j, ' ');
+        w += t;
+      }
+      else
+        w += area->mvaddchar(w, j, uc);
+      p = NextChar(p);
     }
-    else
-      area->mvaddstring(0, j, i->width, i->start, bufend);
   }
 
   area->attroff(attrs);
@@ -181,8 +190,7 @@ char *TextEdit::AsString(const char *separator)
 
 bool TextEdit::ScreenLine::operator==(const ScreenLine& other) const
 {
-  return start == other.start && end == other.end && length == other.length
-    && width == other.width;
+  return start == other.start && end == other.end && length == other.length;
 }
 
 bool TextEdit::CmpScreenLineEnd::operator()(ScreenLine& sline,
@@ -316,19 +324,19 @@ int TextEdit::Width(const char *start, int chars) const
   int width = 0;
 
   while (chars--) {
-    width += Curses::onscreen_width(g_utf8_get_char(start));
+    gunichar uc = g_utf8_get_char(start);
+    width += Curses::onscreen_width(uc, width);
     start = NextChar(start);
   }
   return width;
 }
 
-char *TextEdit::GetScreenLine(const char *text, int max_width, int *res_width,
+char *TextEdit::GetScreenLine(const char *text, int max_width,
     int *res_length) const
 {
   g_assert(text);
   g_assert(text < bufend);
   g_assert(max_width > 0);
-  g_assert(res_width);
   g_assert(res_length);
 
   const char *cur = text;
@@ -337,7 +345,6 @@ char *TextEdit::GetScreenLine(const char *text, int max_width, int *res_width,
   int cur_width = 0;
   int cur_length = 0;
   bool space = false;
-  *res_width = 0;
   *res_length = 0;
 
   if (cur == gapstart)
@@ -345,33 +352,30 @@ char *TextEdit::GetScreenLine(const char *text, int max_width, int *res_width,
 
   while (cur < bufend) {
     prev_width = cur_width;
-    gunichar uni = g_utf8_get_char(cur);
-    cur_width += Curses::onscreen_width(uni);
+    gunichar uc = g_utf8_get_char(cur);
+    cur_width += Curses::onscreen_width(uc, cur_width);
     cur_length++;
 
     if (prev_width > max_width)
       break;
 
     // possibly too long word
-    if (cur_width > max_width && !*res_width) {
-      *res_width = prev_width;
+    if (cur_width > max_width && !*res_length) {
       *res_length = cur_length - 1;
       res = cur;
     }
 
     // end of line (paragraph on screen) found
     if (*cur == '\n') {
-      *res_width = prev_width;
       *res_length = cur_length;
       return NextChar(cur);
     }
 
-    if (g_unichar_type(uni) == G_UNICODE_SPACE_SEPARATOR)
+    if (g_unichar_type(uc) == G_UNICODE_SPACE_SEPARATOR)
       space = true;
     else if (space) {
       /* Found start of a word and everything before that can fit into
        * a screen line. */
-      *res_width = prev_width;
       *res_length = cur_length - 1;
       res = cur;
       space = false;
@@ -382,15 +386,14 @@ char *TextEdit::GetScreenLine(const char *text, int max_width, int *res_width,
 
   // end of buffer reached
   if (cur == bufend && cur_width <= max_width) {
-    *res_width = cur_width;
     *res_length = cur_length;
     return const_cast<char*>(cur);
   }
 
   /* Fix for very small max_width and characters wider that 1 cell. For
-   * example max_width = 1 and text = "W" where W is a wide character
-   * (2 cells width). In that case we can not draw anything but we want to
-   * skip to another character. */
+   * example, max_width = 1 and text = "W" where W is a wide character (2
+   * cells width) (or simply for tabs). In that case we can not draw anything
+   * but we want to skip to another character. */
   if (res == text) {
     *res_length = 1;
     res = NextChar(res);
@@ -411,11 +414,10 @@ void TextEdit::UpdateScreenLines()
 
   while (p < bufend) {
     const char *s = p;
-    int width;
     int length;
     // lower max width by one to make a room for the cursor
-    p = GetScreenLine(p, realw - 1, &width, &length);
-    screen_lines.push_back(ScreenLine(s, p, length, width));
+    p = GetScreenLine(p, realw - 1, &length);
+    screen_lines.push_back(ScreenLine(s, p, length));
   }
 }
 
@@ -453,11 +455,10 @@ void TextEdit::UpdateScreenLines(const char *begin, const char *end)
 
   while (p < bufend) {
     const char *s = p;
-    int width;
     int length;
     // lower max width by one to make a room for the cursor
-    p = GetScreenLine(p, realw - 1, &width, &length);
-    ScreenLine sline(s, p, length, width);
+    p = GetScreenLine(p, realw - 1, &length);
+    ScreenLine sline(s, p, length);
     new_screen_lines.push_back(sline);
     while (i != screen_lines.end() && (i->end <= end || i->start < s
           || i->end < p))
@@ -615,9 +616,6 @@ void TextEdit::DeleteFromCursor(DeleteType type, int direction)
 
 void TextEdit::MoveCursor(CursorMovement step, int direction)
 {
-  if (screen_lines.empty())
-    return;
-
   int old_pos = current_pos;
   switch (step) {
     case MOVE_LOGICAL_POSITIONS:
@@ -633,7 +631,7 @@ void TextEdit::MoveCursor(CursorMovement step, int direction)
       if (direction > 0) {
         if (static_cast<unsigned>(current_sc_line + 1)
             < screen_lines.size()) {
-          int w = Width(screen_lines[current_sc_line].start,
+          int oldw = Width(screen_lines[current_sc_line].start,
               current_sc_linepos);
           // first move to end of current line
           current_pos += screen_lines[current_sc_line].length
@@ -641,13 +639,11 @@ void TextEdit::MoveCursor(CursorMovement step, int direction)
           // find a character close to the original position
           const char *ch = screen_lines[current_sc_line + 1].start;
           int i = 0;
-          int tab = Curses::onscreen_width('\t') / 2 - current_sc_line % 2;
-          while (w > 0
+          int w = 0;
+          while (w < oldw
               && i < screen_lines[current_sc_line + 1].length - 1) {
             gunichar uc = g_utf8_get_char(ch);
-            if (uc == '\t' && w <= tab)
-              break;
-            w -= Curses::onscreen_width(uc);
+            w += Curses::onscreen_width(uc, w);
             ch = NextChar(ch);
             i++;
           }
@@ -656,7 +652,7 @@ void TextEdit::MoveCursor(CursorMovement step, int direction)
       }
       else if (direction < 0) {
         if (current_sc_line > 0) {
-          int w = Width(screen_lines[current_sc_line].start,
+          int oldw = Width(screen_lines[current_sc_line].start,
               current_sc_linepos);
           // first move to start of current line
           current_pos -= current_sc_linepos;
@@ -665,13 +661,11 @@ void TextEdit::MoveCursor(CursorMovement step, int direction)
           // find a character close to the original position
           const char *ch = screen_lines[current_sc_line - 1].start;
           int i = 0;
-          int tab = Curses::onscreen_width('\t') / 2 - current_sc_line % 2;
-          while (w > 0
+          int w = 0;
+          while (w < oldw
               && i < screen_lines[current_sc_line - 1].length - 1) {
             gunichar uc = g_utf8_get_char(ch);
-            if (uc == '\t' && w <= tab)
-              break;
-            w -= Curses::onscreen_width(uc);
+            w += Curses::onscreen_width(uc, w);
             ch = NextChar(ch);
             i++;
           }

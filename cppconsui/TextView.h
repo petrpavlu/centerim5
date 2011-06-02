@@ -145,11 +145,11 @@ protected:
      */
     const char *text;
     /**
-     * On-screen width.
+     * Length in characters (Unicode).
      */
-    int width;
+    int length;
 
-    ScreenLine(Line &parent_, const char *text_, int width_);
+    ScreenLine(Line &parent_, const char *text_, int length_);
   };
 
   typedef std::deque<Line*> Lines;
@@ -177,7 +177,7 @@ protected:
   ScreenLines screen_lines;
 
   const char *ProceedLine(const char *text, int area_width,
-      int *res_width) const;
+      int *res_length) const;
   /**
    * Recalculates on-screen lines for a specified line number.
    */

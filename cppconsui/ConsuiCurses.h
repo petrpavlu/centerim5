@@ -71,6 +71,8 @@ public:
   int mvaddstring(int x, int y, int w, const char *str, const char *end);
   int mvaddstring(int x, int y, const char *str, const char *end);
 
+  int mvaddchar(int x, int y, gunichar uc);
+
   int attron(int attrs);
   int attroff(int attrs);
   int mvchgat(int x, int y, int n, /* attr_t */ int attr, short color,
@@ -90,8 +92,7 @@ public:
   int getmaxy();
 
 protected:
-  const char *PrintChar(const char *ch, int *printed,
-      const char *end = NULL);
+  int PrintChar(gunichar uc);
 
 private:
   struct WindowInternals;
@@ -144,7 +145,7 @@ int getmaxy();
 int resizeterm(int lines, int columns);
 
 int onscreen_width(const char *start, const char *end = NULL);
-int onscreen_width(gunichar uc);
+int onscreen_width(gunichar uc, int w = 0);
 
 } // namespace Curses
 

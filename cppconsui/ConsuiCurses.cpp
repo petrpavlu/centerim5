@@ -118,10 +118,9 @@ int Window::mvaddstring(int x, int y, int w, const char *str)
   wmove(p->win, y, x);
 
   int printed = 0;
-  int p;
   while (printed < w && str && *str) {
-    str = PrintChar(str, &p);
-    printed += p;
+    printed += PrintChar(g_utf8_get_char(str));
+    str = g_utf8_find_next_char(str, NULL);
   }
   return printed;
 }
@@ -133,10 +132,9 @@ int Window::mvaddstring(int x, int y, const char *str)
   wmove(p->win, y, x);
 
   int printed = 0;
-  int p;
   while (str && *str) {
-    str = PrintChar(str, &p);
-    printed += p;
+    printed += PrintChar(g_utf8_get_char(str));
+    str = g_utf8_find_next_char(str, NULL);
   }
   return printed;
 }
@@ -152,10 +150,9 @@ int Window::mvaddstring(int x, int y, int w, const char *str, const char *end)
   wmove(p->win, y, x);
 
   int printed = 0;
-  int p;
   while (printed < w && str < end && str && *str) {
-    str = PrintChar(str, &p, end);
-    printed += p;
+    printed += PrintChar(g_utf8_get_char(str));
+    str = g_utf8_find_next_char(str, end);
   }
   return printed;
 }
@@ -171,12 +168,17 @@ int Window::mvaddstring(int x, int y, const char *str, const char *end)
   wmove(p->win, y, x);
 
   int printed = 0;
-  int p;
   while (str < end && str && *str) {
-    str = PrintChar(str, &p, end);
-    printed += p;
+    printed += PrintChar(g_utf8_get_char(str));
+    str = g_utf8_find_next_char(str, end);
   }
   return printed;
+}
+
+int Window::mvaddchar(int x, int y, gunichar uc)
+{
+  wmove(p->win, y, x);
+  return PrintChar(uc);
 }
 
 int Window::attron(int attrs)
@@ -249,43 +251,35 @@ int Window::getmaxy()
   return ::getmaxy(p->win);
 }
 
-const char *Window::PrintChar(const char *ch, int *printed, const char *end)
+int Window::PrintChar(gunichar uc)
 {
   /**
    * @todo Error checking (setcchar).
    */
 
-  g_assert(ch);
-  g_assert(*ch);
-  g_assert(printed);
-
-  *printed = 0;
-
-  if (((unsigned char) *ch >= 0x7f && (unsigned char) *ch < 0xa0)) {
+  if (uc >= 0x7f && uc < 0xa0) {
     // filter out C1 (8-bit) control characters
     waddch(p->win, '?');
-    *printed = 1;
-    return ch + 1;
+    return 1;
   }
 
   // get a unicode character from the next few bytes
   wchar_t wch[2];
   cchar_t cc;
 
-  wch[0] = g_utf8_get_char(ch);
+  wch[0] = uc;
   wch[1] = L'\0';
 
   // invalid utf-8 sequence
   if (wch[0] < 0)
-    return ch + 1;
+    return 0;
 
   // tab character
   if (wch[0] == '\t') {
     int w = onscreen_width(wch[0]);
     for (int i = 0; i < w; i++)
       waddch(p->win, ' ');
-    *printed = w;
-    return g_utf8_find_next_char(ch, end);
+    return w;
   }
 
   // control char symbols
@@ -294,8 +288,7 @@ const char *Window::PrintChar(const char *ch, int *printed, const char *end)
 
   setcchar(&cc, wch, A_NORMAL, 0, NULL);
   wadd_wch(p->win, &cc);
-  *printed = onscreen_width(wch[0]);
-  return g_utf8_find_next_char(ch, end);
+  return onscreen_width(wch[0]);
 }
 
 Window::Window()
@@ -421,10 +414,10 @@ int onscreen_width(const char *start, const char *end)
   return width;
 }
 
-int onscreen_width(gunichar uc)
+int onscreen_width(gunichar uc, int w)
 {
   if (uc == '\t')
-    return 4;
+    return 8 - w % 8;
   return g_unichar_iswide(uc) ? 2 : 1;
 }
 

@@ -83,13 +83,9 @@ protected:
      * Precalculated length.
      */
     int length;
-    /**
-     * Precalculated on screen width.
-     */
-    int width;
 
-    ScreenLine(const char *start, const char *end, int length, int width)
-      : start(start), end(end), length(length), width(width) {}
+    ScreenLine(const char *start_, const char *end_, int length_)
+      : start(start_), end(end_), length(length_) {}
     bool operator==(const ScreenLine& other) const;
   };
 
@@ -167,7 +163,7 @@ protected:
   virtual char *NextChar(const char *p) const;
   virtual int Width(const char *start, int chars) const;
 
-  virtual char *GetScreenLine(const char *text, int max_width, int *res_width,
+  virtual char *GetScreenLine(const char *text, int max_width,
       int *res_length) const;
   /**
    * Recalculates all screen lines.
