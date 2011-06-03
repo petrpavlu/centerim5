@@ -213,10 +213,10 @@ void TextView::Draw()
     }
 
     // draw a dot to indicate "end of scrolling" for user
-    if (realh == x2)
-      area->mvaddstring(realw - 1, x2 - 1, elems->mchar);
-    else if (x1 == 0)
-      area->mvaddstring(realw - 1, x1, elems->mchar);
+    if (view_top + realh >= screen_lines.size())
+      area->mvaddstring(realw - 1, realh - 1, elems->mchar);
+    if (view_top == 0)
+      area->mvaddstring(realw - 1, 0, elems->mchar);
 
     area->attroff(attrs);
   }
