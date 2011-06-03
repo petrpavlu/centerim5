@@ -543,8 +543,8 @@ void Conversation::LoadHistory()
     }
     else {
       // cim4, read multiple raw lines
-      GString *msg = g_string_new(NULL);;
       gsize length;
+      bool first = true;
       while ((st = g_io_channel_read_line(chan, &line, &length, NULL, &err))
           == G_IO_STATUS_NORMAL && line != NULL) {
         if (!strcmp(line, "\f\n")) {
@@ -556,16 +556,18 @@ void Conversation::LoadHistory()
           line[length - 2] = '\n';
           line[length - 1] = '\0';
         }
-        msg = g_string_append(msg, line);
+        if (first) {
+          char *time = ExtractTime(sent_time, show_time);
+          char *msg = g_strdup_printf("%s %s", time, line);
+          view->Append(msg, color);
+          g_free(time);
+          g_free(msg);
+          first = false;
+        }
+        else
+          view->Append(line, color);
         g_free(line);
       }
-      // write text to the window
-      char *time = ExtractTime(sent_time, show_time);
-      char *msg2 = g_strdup_printf("%s %s", time, msg->str);
-      view->Append(msg2, color);
-      g_free(time);
-      g_free(msg2);
-      g_string_free(msg, TRUE);
 
       if (new_msg)
         continue;
