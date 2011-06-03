@@ -94,11 +94,6 @@ void TextEdit::Draw()
   for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end()
       && j < realh; i++, j++) {
     const char *p = i->start;
-    /* Variable p can point to the gapstart while the first real character can
-     * be at the gapend address.. */
-    if (p == gapstart)
-      p = gapend;
-
     int w = 0;
     for (int k = 0; k < i->length && *p != '\n'; k++) {
       gunichar uc = g_utf8_get_char(p);
@@ -136,7 +131,6 @@ bool TextEdit::ProcessInputText(const TermKeyKey &key)
 void TextEdit::Clear()
 {
   InitBuffer(gap_size);
-  UpdateScreenLines();
   Redraw();
 }
 
@@ -153,7 +147,7 @@ char *TextEdit::AsString(const char *separator)
   /** @todo Calculate lines number continuously during text
    * inserting/removing. */
   int lines = 0;
-  const char *p = buffer;
+  const char *p = GetTextStart();
   while (p < bufend - 1) {
     if (*p == '\n')
       lines++;
@@ -163,7 +157,7 @@ char *TextEdit::AsString(const char *separator)
    * with enough room for a given separator). */
   char *res = g_new(char, GetTextSize() + lines * (sep_len - 1) + 1);
 
-  p = buffer;
+  p = GetTextStart();
   const char *q;
   char *r = res;
   while (p < bufend - 1) {
@@ -222,6 +216,8 @@ void TextEdit::InitBuffer(int size)
   current_sc_linepos = 0;
 
   view_top = 0;
+
+  UpdateScreenLines();
 }
 
 int TextEdit::GetGapSize()
@@ -283,6 +279,13 @@ int TextEdit::GetTextSize()
   return (bufend - buffer) - (gapend - gapstart) - 1;
 }
 
+char *TextEdit::GetTextStart() const
+{
+  if (buffer == gapstart)
+    return const_cast<char*>(gapend);
+  return const_cast<char*>(buffer);
+}
+
 char *TextEdit::PrevChar(const char *p) const
 {
   if (p >= gapend) {
@@ -300,10 +303,6 @@ char *TextEdit::PrevChar(const char *p) const
 
 char *TextEdit::NextChar(const char *p) const
 {
-  // this should happen only if (gapstart == buffer)
-  if (p == gapstart)
-    p = gapend;
-
   if (p < gapstart) {
     if ((p = g_utf8_find_next_char(p, gapstart)))
       return const_cast<char*>(p);
@@ -320,9 +319,6 @@ char *TextEdit::NextChar(const char *p) const
 int TextEdit::Width(const char *start, int chars) const
 {
   g_assert(start);
-
-  if (start == gapstart)
-    start = gapend;
 
   int width = 0;
 
@@ -349,9 +345,6 @@ char *TextEdit::GetScreenLine(const char *text, int max_width,
   int cur_length = 0;
   bool space = false;
   *res_length = 0;
-
-  if (cur == gapstart)
-    cur = gapend;
 
   while (cur < bufend) {
     prev_width = cur_width;
@@ -407,7 +400,7 @@ void TextEdit::UpdateScreenLines()
   if (!area || (realw = area->getmaxx()) <= 1)
     return;
 
-  const char *p = buffer;
+  const char *p = GetTextStart();
 
   while (p < bufend) {
     const char *s = p;
@@ -449,6 +442,10 @@ void TextEdit::UpdateScreenLines(const char *begin, const char *end)
   ScreenLines new_screen_lines;
 
   const char *p = b->start;
+  if (i == screen_lines.begin())
+    p = buffer;
+  if (p == gapstart)
+    p = gapend;
 
   while (p < bufend) {
     const char *s = p;
@@ -470,7 +467,7 @@ void TextEdit::UpdateScreenLines(const char *begin, const char *end)
     i++;
 
   /*
-  g_debug("UpdateScreenLines(), new_lines=%d, old_lines=%d\n",
+  g_debug("UpdateScreenLines(), new_lines=%d, old_lines=%d",
       new_screen_lines.size(), i - b);
   */
 
