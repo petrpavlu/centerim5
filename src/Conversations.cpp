@@ -288,7 +288,7 @@ void Conversations::write_conv(PurpleConversation *conv, const char *name,
     conversations[i].label->SetColorScheme("conversation-new");
 
   // delegate it to Conversation object
-  conversations[i].conv->Receive(name, alias, message, flags, mtime);
+  conversations[i].conv->Write(name, alias, message, flags, mtime);
 }
 
 void Conversations::present(PurpleConversation *conv)

@@ -162,29 +162,39 @@ void Conversation::Show()
   Window::Show();
 }
 
-void Conversation::Receive(const char *name, const char *alias,
+void Conversation::Write(const char *name, const char *alias,
     const char *message, PurpleMessageFlags flags, time_t mtime)
 {
   PurpleConversationType type = purple_conversation_get_type(conv);
 
-  int color = 0;
-  char mtype = 'O'; // other
+  int color;
+  const char *dir;
+  const char *mtype;
   if (flags & PURPLE_MESSAGE_SEND) {
+    dir = "OUT";
+    mtype = "MSG2"; // cim5 message
     color = 1;
-    mtype = 'S'; // sent
   }
   else if (flags & PURPLE_MESSAGE_RECV) {
+    dir = "IN";
+    mtype = "MSG2"; // cim5 message
     color = 2;
-    mtype = 'R'; // recv
+  }
+  else {
+    dir = "IN";
+    mtype = "OTHER";
+    color = 0;
   }
 
   // write text into logfile
-  long t = static_cast<long>(mtime);
   char *msg;
+  time_t cur_time = time(NULL);
   if (type == PURPLE_CONV_TYPE_CHAT)
-    msg = g_strdup_printf("%c %ld %s: %s\n", mtype, t, name, message);
+    msg = g_strdup_printf("\f\n%s\n%s\n%lu\n%lu\n%s: %s\n", dir, mtype, mtime,
+        cur_time, name, message);
   else
-    msg = g_strdup_printf("%c %ld %s\n", mtype, t, message);
+    msg = g_strdup_printf("\f\n%s\n%s\n%lu\n%lu\n%s\n", dir, mtype, mtime,
+        cur_time, message);
   if (logfile) {
     GError *err = NULL;
     if (g_io_channel_write_chars(logfile, msg, -1, NULL, &err)
@@ -215,18 +225,18 @@ void Conversation::Receive(const char *name, const char *alias,
   char *nohtml = StripHTML(message);
 
   // write text to the window
-  const char *timestr = purple_utf8_strftime(TIME_FORMAT, localtime(&mtime));
+  char *time = ExtractTime(mtime, cur_time);
   if (type == PURPLE_CONV_TYPE_CHAT)
-    msg = g_strdup_printf("%s %s: %s", timestr, name, nohtml);
+    msg = g_strdup_printf("%s %s: %s", time, name, nohtml);
   else
-    msg = g_strdup_printf("%s %s", timestr, nohtml);
+    msg = g_strdup_printf("%s %s", time, nohtml);
   view->Append(msg, color);
-  g_free(msg);
-
   g_free(nohtml);
+  g_free(time);
+  g_free(msg);
 }
 
-char *Conversation::StripHTML(const char *str)
+char *Conversation::StripHTML(const char *str) const
 {
   /* Almost copy&paste from libpurple/util.c:purple_markup_strip_html(), but
    * this version doesn't convert tab character to a space. */
@@ -423,6 +433,27 @@ void Conversation::BuildLogFilename()
   g_free(acct_name);
 }
 
+char *Conversation::ExtractTime(time_t sent_time, time_t show_time) const
+{
+  // based on extracttime() function from cim4
+  char *t1 = g_strdup(purple_utf8_strftime(TIME_FORMAT,
+        localtime(&show_time)));
+  char *t2 = g_strdup(purple_utf8_strftime(TIME_FORMAT,
+      localtime(&sent_time)));
+
+  int tdiff = abs(sent_time - show_time);
+
+  if (tdiff > 5 && strcmp(t1, t2)) {
+    char *res = g_strdup_printf("%s [%s]", t1, t2);
+    g_free(t1);
+    g_free(t2);
+    return res;
+  }
+
+  g_free(t2);
+  return t1;
+}
+
 void Conversation::LoadHistory()
 {
   // open logfile
@@ -443,53 +474,107 @@ void Conversation::LoadHistory()
 
   GIOStatus st;
   char *line;
+  bool new_msg = false;
   // read conversation logfile line by line
-  while ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err))
-      == G_IO_STATUS_NORMAL && line != NULL) {
-    // parse type
-    const char *cur = line;
-    int color = 0;
-    switch (*cur) {
-      case 'O': // other
-        break;
-      case 'S': // sent
-        color = 1;
-        break;
-      case 'R': // recv
-        color = 2;
-        break;
-      default: // wrong format
-        continue;
-    }
+  while (new_msg || (st = g_io_channel_read_line(chan, &line, NULL, NULL,
+          &err)) == G_IO_STATUS_NORMAL) {
+    new_msg = false;
 
-    // skip to time mark
-    cur++;
-    if (*cur != ' ')
+    // start flag
+    if (strcmp(line, "\f\n")) {
+      g_free(line);
       continue;
-    cur++;
-
-    // parse time
-    time_t time = 0;
-    while (*cur >= '0' && *cur <= '9') {
-      time = 10 * time + *cur - '0';
-      cur++;
     }
-
-    // sanity check
-    if (*cur != ' ')
-      continue;
-    cur++;
-
-    // write text to the window
-    char *nohtml = StripHTML(cur);
-    char *msg = g_strdup_printf("%s %s", purple_utf8_strftime(TIME_FORMAT,
-          localtime(&time)), nohtml);
-    view->Append(msg, color);
-    g_free(nohtml);
-    g_free(msg);
-
     g_free(line);
+
+    // parse direction (in/out)
+    if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err))
+        != G_IO_STATUS_NORMAL)
+      continue;
+    int color = 0;
+    if (!strcmp(line, "OUT\n"))
+      color = 1;
+    else if (!strcmp(line, "IN\n"))
+      color = 2;
+    g_free(line);
+
+    // type
+    if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err))
+        != G_IO_STATUS_NORMAL)
+      continue;
+    bool cim4 = true;
+    if (!strcmp(line, "MSG2\n"))
+      cim4 = false;
+    else if (!strcmp(line, "OTHER\n")) {
+      cim4 = false;
+      color = 0;
+    }
+    g_free(line);
+
+    // sent time
+    if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err))
+        != G_IO_STATUS_NORMAL)
+      continue;
+    time_t sent_time = atol(line);
+    g_free(line);
+
+    // show time
+    if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err))
+        != G_IO_STATUS_NORMAL)
+      continue;
+    time_t show_time = atol(line);
+    g_free(line);
+
+    if (!cim4) {
+      // cim5, read only one line and strip it off HTML
+      if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err))
+          != G_IO_STATUS_NORMAL)
+        continue;
+
+      // write text to the window
+      char *nohtml = StripHTML(line);
+      char *time = ExtractTime(sent_time, show_time);
+      char *msg = g_strdup_printf("%s %s", time, nohtml);
+      view->Append(msg, color);
+      g_free(nohtml);
+      g_free(time);
+      g_free(msg);
+      g_free(line);
+    }
+    else {
+      // cim4, read multiple raw lines
+      GString *msg = g_string_new(NULL);;
+      gsize length;
+      while ((st = g_io_channel_read_line(chan, &line, &length, NULL, &err))
+          == G_IO_STATUS_NORMAL && line != NULL) {
+        if (!strcmp(line, "\f\n")) {
+          new_msg = true;
+          break;
+        }
+        // strip '\r' if necessary
+        if (length > 1 && line[length - 2] == '\r') {
+          line[length - 2] = '\n';
+          line[length - 1] = '\0';
+        }
+        msg = g_string_append(msg, line);
+        g_free(line);
+      }
+      // write text to the window
+      char *time = ExtractTime(sent_time, show_time);
+      char *msg2 = g_strdup_printf("%s %s", time, msg->str);
+      view->Append(msg2, color);
+      g_free(time);
+      g_free(msg2);
+      g_string_free(msg, TRUE);
+
+      if (new_msg)
+        continue;
+
+      // EOL or I/O error
+      break;
+    }
   }
+
   if (st != G_IO_STATUS_EOF) {
     if (err) {
       LOG->Error(_("Error reading from conversation logfile '%s' (%s)."),

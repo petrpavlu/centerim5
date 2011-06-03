@@ -56,7 +56,7 @@ public:
   virtual void ScreenResized();
   virtual void Show();
 
-  void Receive(const char *name, const char *alias, const char *message,
+  void Write(const char *name, const char *alias, const char *message,
     PurpleMessageFlags flags, time_t mtime);
 
   Status GetStatus() const { return status; }
@@ -77,9 +77,10 @@ protected:
 
   sigc::connection destroy_conn;
 
-  char *StripHTML(const char *str);
+  char *StripHTML(const char *str) const;
   void DestroyPurpleConversation(PurpleConversation *conv);
   void BuildLogFilename();
+  char *ExtractTime(time_t sent_time, time_t show_time) const;
   void LoadHistory();
 
   void ActionSend();
