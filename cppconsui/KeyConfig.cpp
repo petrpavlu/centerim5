@@ -308,23 +308,6 @@ KeyConfig::KeyConfig()
   AddDefaultKeyBind("textentry", "toggle-overwrite", "Insert");
   */
 
-  AddDefaultKeyBind("textentry", "cursor-right", "Right");
-  AddDefaultKeyBind("textentry", "cursor-left", "Left");
-  AddDefaultKeyBind("textentry", "cursor-right-word", "Ctrl-Right");
-  AddDefaultKeyBind("textentry", "cursor-left-word", "Ctrl-Left");
-  AddDefaultKeyBind("textentry", "cursor-end", "End");
-  AddDefaultKeyBind("textentry", "cursor-begin", "Home");
-  AddDefaultKeyBind("textentry", "delete-char", "Delete");
-  AddDefaultKeyBind("textentry", "backspace", "Backspace");
-  AddDefaultKeyBind("textentry", "backspace", "DEL");
-
-  /*
-  AddDefaultKeyBind("textentry", "delete-word-end", "Ctrl-Delete");
-  AddDefaultKeyBind("textentry", "delete-word-begin", "Ctrl-Backspace");
-  AddDefaultKeyBind("textentry", "delete-word-begin", "Ctrl-DEL")
-  AddDefaultKeyBind("textentry", "toggle-overwrite", "Insert");
-  */
-
   AddDefaultKeyBind("textentry", "activate", "Enter");
 
   AddDefaultKeyBind("textview", "scroll-up", "PageUp");
