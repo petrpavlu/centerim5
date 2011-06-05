@@ -95,7 +95,7 @@ void TextEdit::Draw()
       && j < realh; i++, j++) {
     const char *p = i->start;
     int w = 0;
-    for (int k = 0; k < i->length && *p != '\n'; k++) {
+    for (size_t k = 0; k < i->length && *p != '\n'; k++) {
       gunichar uc = g_utf8_get_char(p);
       if (uc == '\t') {
         int t = Curses::onscreen_width(uc, w);
@@ -121,12 +121,34 @@ void TextEdit::Draw()
 
 bool TextEdit::ProcessInputText(const TermKeyKey &key)
 {
-  if (editable) {
-    InsertTextAtCursor(key.utf8);
-    return true;
+  if (!editable)
+    return false;
+
+  // filter out unwanted input
+  if (flags) {
+    if (!(flags & FLAG_ALPHABETIC) && g_unichar_isalpha(key.code.codepoint))
+      return false;
+    if (!(flags & FLAG_NUMERIC) && g_unichar_isdigit(key.code.codepoint))
+      return false;
+    if (!(flags & FLAG_NOSPACE) && g_unichar_isspace(key.code.codepoint))
+      return false;
+    if (!(flags & FLAG_NOPUNCTUATION)
+        && g_unichar_ispunct(key.code.codepoint))
+      return false;
   }
-  return false;
+
+  InsertTextAtCursor(key.utf8);
+  return true;
 }
+
+/*
+void TextEdit::SetText(const char *new_text)
+{
+  size_t size = strlen(new_text);
+  InitBuffer(size + gap_size);
+  // XXX
+}
+*/
 
 void TextEdit::Clear()
 {
@@ -141,12 +163,12 @@ char *TextEdit::AsString(const char *separator)
   if (!GetTextSize())
     return NULL;
 
-  int sep_len = strlen(separator);
+  size_t sep_len = strlen(separator);
 
   // count lines
   /** @todo Calculate lines number continuously during text
    * inserting/removing. */
-  int lines = 0;
+  size_t lines = 0;
   const char *p = GetTextStart();
   while (p < bufend - 1) {
     if (*p == '\n')
@@ -182,6 +204,38 @@ char *TextEdit::AsString(const char *separator)
   return res;
 }
 
+void TextEdit::SetFlags(int flags_, bool revalidate)
+{
+  flags = flags_;
+
+  if (flags && revalidate) {
+    bool valid = true;
+    const char *p = GetTextStart();
+    while (p < bufend) {
+      gunichar uc = g_utf8_get_char(p);
+      if (!(flags & FLAG_ALPHABETIC) && g_unichar_isalpha(uc)) {
+        valid = false;
+        break;
+      }
+      if (!(flags & FLAG_NUMERIC) && g_unichar_isdigit(uc)) {
+        valid = false;
+        break;
+      }
+      if (!(flags & FLAG_NOSPACE) && g_unichar_isspace(uc)) {
+        valid = false;
+        break;
+      }
+      if (!(flags & FLAG_NOPUNCTUATION) && g_unichar_ispunct(uc)) {
+        valid = false;
+        break;
+      }
+      p = NextChar(p);
+    }
+    if (!valid)
+      Clear();
+  }
+}
+
 bool TextEdit::ScreenLine::operator==(const ScreenLine& other) const
 {
   return start == other.start && end == other.end && length == other.length;
@@ -193,7 +247,7 @@ bool TextEdit::CmpScreenLineEnd::operator()(ScreenLine& sline,
   return sline.end < tag;
 }
 
-void TextEdit::InitBuffer(int size)
+void TextEdit::InitBuffer(size_t size)
 {
   g_assert(size > 0);
 
@@ -220,30 +274,37 @@ void TextEdit::InitBuffer(int size)
   UpdateScreenLines();
 }
 
-int TextEdit::GetGapSize()
+size_t TextEdit::GetGapSize()
 {
   return gapend - gapstart;
 }
 
-void TextEdit::ExpandGap(int size)
+void TextEdit::ExpandGap(size_t size)
 {
-  if (size > GetGapSize()) {
-    size += gap_size;
+  if (size <= GetGapSize())
+    return;
 
-    char *origbuffer = buffer;
+  size += gap_size;
 
-    buffer = g_renew(char, buffer, (bufend - buffer) + size);
+  const char *origbuffer = buffer;
+  bool point_after_gap = point >= gapend;
 
-    point += buffer - origbuffer;
-    bufend += buffer - origbuffer;
-    gapstart += buffer - origbuffer;
-    gapend += buffer - origbuffer;
+  buffer = g_renew(char, buffer, (bufend - buffer) + size);
 
-    g_memmove(gapend + size, gapend, bufend - gapend);
+  point += buffer - origbuffer;
+  bufend += buffer - origbuffer;
+  gapstart += buffer - origbuffer;
+  gapend += buffer - origbuffer;
 
-    gapend += size;
-    bufend += size;
+  g_memmove(gapend + size, gapend, bufend - gapend);
+
+  if (point_after_gap) {
+    /* This should never happen because MoveGapToCursor() is always called
+     * before ExpandGap(). */
+    point += size;
   }
+  gapend += size;
+  bufend += size;
 }
 
 void TextEdit::MoveGapToCursor()
@@ -273,7 +334,7 @@ void TextEdit::MoveGapToCursor()
   }
 }
 
-int TextEdit::GetTextSize()
+size_t TextEdit::GetTextSize()
 {
   // '-1' to don't count the last '\n' character that is manually inserted
   return (bufend - buffer) - (gapend - gapstart) - 1;
@@ -303,6 +364,10 @@ char *TextEdit::PrevChar(const char *p) const
 
 char *TextEdit::NextChar(const char *p) const
 {
+  // this happens when point == gapstart
+  if (p == gapstart)
+    p = gapend;
+
   if (p < gapstart) {
     if ((p = g_utf8_find_next_char(p, gapstart)))
       return const_cast<char*>(p);
@@ -316,7 +381,7 @@ char *TextEdit::NextChar(const char *p) const
     return const_cast<char*>(bufend);
 }
 
-int TextEdit::Width(const char *start, int chars) const
+int TextEdit::Width(const char *start, size_t chars) const
 {
   g_assert(start);
 
@@ -331,7 +396,7 @@ int TextEdit::Width(const char *start, int chars) const
 }
 
 char *TextEdit::GetScreenLine(const char *text, int max_width,
-    int *res_length) const
+    size_t *res_length) const
 {
   g_assert(text);
   g_assert(text < bufend);
@@ -342,7 +407,7 @@ char *TextEdit::GetScreenLine(const char *text, int max_width,
   const char *res = text;
   int prev_width = 0;
   int cur_width = 0;
-  int cur_length = 0;
+  size_t cur_length = 0;
   bool space = false;
   *res_length = 0;
 
@@ -404,7 +469,7 @@ void TextEdit::UpdateScreenLines()
 
   while (p < bufend) {
     const char *s = p;
-    int length;
+    size_t length;
     // lower max width by one to make a room for the cursor
     p = GetScreenLine(p, realw - 1, &length);
     screen_lines.push_back(ScreenLine(s, p, length));
@@ -443,13 +508,11 @@ void TextEdit::UpdateScreenLines(const char *begin, const char *end)
 
   const char *p = b->start;
   if (i == screen_lines.begin())
-    p = buffer;
-  if (p == gapstart)
-    p = gapend;
+    p = GetTextStart();
 
   while (p < bufend) {
     const char *s = p;
-    int length;
+    size_t length;
     // lower max width by one to make a room for the cursor
     p = GetScreenLine(p, realw - 1, &length);
     ScreenLine sline(s, p, length);
@@ -489,7 +552,7 @@ void TextEdit::UpdateScreenLines(const char *begin, const char *end)
 
 void TextEdit::UpdateScreenCursor()
 {
-  int acu_length = 0;
+  size_t acu_length = 0;
   current_sc_line = 0;
   current_sc_linepos = 0;
 
@@ -498,7 +561,7 @@ void TextEdit::UpdateScreenCursor()
 
   for (ScreenLines::iterator i = screen_lines.begin();
       i != screen_lines.end(); i++) {
-    int length = i->length;
+    size_t length = i->length;
     if (acu_length <= current_pos && current_pos < acu_length + length) {
       current_sc_linepos = current_pos - acu_length;
       break;
@@ -517,12 +580,9 @@ void TextEdit::UpdateScreenCursor()
     view_top++;
 }
 
-void TextEdit::InsertTextAtCursor(const char *new_text, int new_text_bytes)
+void TextEdit::InsertTextAtCursor(const char *new_text, size_t new_text_bytes)
 {
   g_assert(new_text);
-
-  if (new_text_bytes == -1)
-    new_text_bytes = strlen(new_text);
 
   // move the gap if the point isn't already at the start of the gap
   const char *min = gapstart;
@@ -537,7 +597,7 @@ void TextEdit::InsertTextAtCursor(const char *new_text, int new_text_bytes)
     full_screen_lines_update = true;
   }
 
-  int n_chars = g_utf8_strlen(new_text, new_text_bytes);
+  size_t n_chars = g_utf8_strlen(new_text, new_text_bytes);
   text_length += n_chars;
   current_pos += n_chars;
 
@@ -555,6 +615,13 @@ void TextEdit::InsertTextAtCursor(const char *new_text, int new_text_bytes)
   Redraw();
 
   signal_text_changed(*this);
+}
+
+void TextEdit::InsertTextAtCursor(const char *new_text)
+{
+  g_assert(new_text);
+
+  InsertTextAtCursor(new_text, strlen(new_text));
 }
 
 void TextEdit::DeleteFromCursor(DeleteType type, int direction)
@@ -610,7 +677,7 @@ void TextEdit::DeleteFromCursor(DeleteType type, int direction)
 
 void TextEdit::MoveCursor(CursorMovement step, int direction)
 {
-  int old_pos = current_pos;
+  size_t old_pos = current_pos;
   switch (step) {
     case MOVE_LOGICAL_POSITIONS:
       current_pos = MoveLogically(current_pos, direction);
@@ -632,7 +699,7 @@ void TextEdit::MoveCursor(CursorMovement step, int direction)
               - current_sc_linepos;
           // find a character close to the original position
           const char *ch = screen_lines[current_sc_line + 1].start;
-          int i = 0;
+          size_t i = 0;
           int w = 0;
           while (w < oldw
               && i < screen_lines[current_sc_line + 1].length - 1) {
@@ -654,7 +721,7 @@ void TextEdit::MoveCursor(CursorMovement step, int direction)
           current_pos -= screen_lines[current_sc_line - 1].length;
           // find a character close to the original position
           const char *ch = screen_lines[current_sc_line - 1].start;
-          int i = 0;
+          size_t i = 0;
           int w = 0;
           while (w < oldw
               && i < screen_lines[current_sc_line - 1].length - 1) {
@@ -697,7 +764,7 @@ void TextEdit::ToggleOverwrite()
   overwrite_mode = !overwrite_mode;
 }
 
-int TextEdit::MoveLogically(int start, int direction)
+size_t TextEdit::MoveLogically(size_t start, int direction)
 {
   if (direction > 0 && start < text_length)
     return start + 1;
@@ -706,9 +773,9 @@ int TextEdit::MoveLogically(int start, int direction)
   return start;
 }
 
-int TextEdit::MoveForwardWordFromCursor()
+size_t TextEdit::MoveForwardWordFromCursor()
 {
-  int new_pos = current_pos;
+  size_t new_pos = current_pos;
   const char *cur = point;
   bool white = false;
 
@@ -726,9 +793,9 @@ int TextEdit::MoveForwardWordFromCursor()
   return new_pos;
 }
 
-int TextEdit::MoveBackwardWordFromCursor()
+size_t TextEdit::MoveBackwardWordFromCursor()
 {
-  int new_pos = current_pos;
+  size_t new_pos = current_pos;
   const char *cur = point;
   bool nonwhite = false;
 
@@ -815,8 +882,9 @@ void TextEdit::DeclareBindables()
         DELETE_CHARS, -1), InputProcessor::BINDABLE_NORMAL);
 
   DeclareBindable("textentry", "newline",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::InsertTextAtCursor),
-        "\n", 1), InputProcessor::BINDABLE_NORMAL);
+      sigc::bind(sigc::mem_fun(this, static_cast<void (TextEdit::*)
+          (const char*)>(&TextEdit::InsertTextAtCursor)), "\n"),
+      InputProcessor::BINDABLE_NORMAL);
 
   /*
   DeclareBindable("textentry", "delete-word-end",
