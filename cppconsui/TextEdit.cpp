@@ -127,14 +127,13 @@ bool TextEdit::ProcessInputText(const TermKeyKey &key)
 
   // filter out unwanted input
   if (flags) {
-    if (!(flags & FLAG_ALPHABETIC) && g_unichar_isalpha(key.code.codepoint))
+    if ((flags & FLAG_ALPHABETIC) && !g_unichar_isalpha(key.code.codepoint))
       return false;
-    if (!(flags & FLAG_NUMERIC) && g_unichar_isdigit(key.code.codepoint))
+    if ((flags & FLAG_NUMERIC) && !g_unichar_isdigit(key.code.codepoint))
       return false;
-    if (!(flags & FLAG_NOSPACE) && g_unichar_isspace(key.code.codepoint))
+    if ((flags & FLAG_NOSPACE) && g_unichar_isspace(key.code.codepoint))
       return false;
-    if (!(flags & FLAG_NOPUNCTUATION)
-        && g_unichar_ispunct(key.code.codepoint))
+    if ((flags & FLAG_NOPUNCTUATION) && g_unichar_ispunct(key.code.codepoint))
       return false;
   }
 
@@ -163,9 +162,6 @@ void TextEdit::Clear()
 
 const char *TextEdit::GetText() const
 {
-  if (!GetTextSize())
-    return NULL;
-
   g_assert(gapend > gapstart);
 
   screen_lines_dirty = true;
@@ -195,21 +191,21 @@ void TextEdit::SetFlags(int flags_, bool revalidate)
   if (flags && revalidate) {
     bool valid = true;
     const char *p = GetTextStart();
-    while (p < bufend) {
+    while (p < bufend - 1) {
       gunichar uc = g_utf8_get_char(p);
-      if (!(flags & FLAG_ALPHABETIC) && g_unichar_isalpha(uc)) {
+      if ((flags & FLAG_ALPHABETIC) && !g_unichar_isalpha(uc)) {
         valid = false;
         break;
       }
-      if (!(flags & FLAG_NUMERIC) && g_unichar_isdigit(uc)) {
+      if ((flags & FLAG_NUMERIC) && !g_unichar_isdigit(uc)) {
         valid = false;
         break;
       }
-      if (!(flags & FLAG_NOSPACE) && g_unichar_isspace(uc)) {
+      if ((flags & FLAG_NOSPACE) && g_unichar_isspace(uc)) {
         valid = false;
         break;
       }
-      if (!(flags & FLAG_NOPUNCTUATION) && g_unichar_ispunct(uc)) {
+      if ((flags & FLAG_NOPUNCTUATION) && g_unichar_ispunct(uc)) {
         valid = false;
         break;
       }

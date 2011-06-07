@@ -595,7 +595,7 @@ void Conversation::ActionSend()
 {
   PurpleConversationType type = purple_conversation_get_type(conv);
   const char *str = input->GetText();
-  if (str) {
+  if (str && *str) {
     char *escaped = purple_markup_escape_text(str, strlen(str));
     char *html = purple_strdup_withhtml(escaped);
     if (type == PURPLE_CONV_TYPE_CHAT)
