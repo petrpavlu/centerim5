@@ -85,6 +85,7 @@ public:
   bool IsFallbackDrawMode() { return fallback_draw_mode; }
 
   sigc::signal<void> signal_resize;
+  sigc::signal<void> signal_top_window_changed;
 
 protected:
 

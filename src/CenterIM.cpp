@@ -38,6 +38,7 @@
 #include <cppconsui/ColorScheme.h>
 #include <cppconsui/KeyConfig.h>
 #include <cppconsui/Keys.h>
+#include <typeinfo>
 #include <string.h>
 #include "gettext.h"
 
@@ -118,7 +119,8 @@ int CenterIM::Run(const char *config_path)
 
   purple_prefs_disconnect_by_handle(this);
 
-  resize.disconnect();
+  resize_conn.disconnect();
+  top_window_changed_conn.disconnect();
 
   Conversations::Finalize();
   Header::Finalize();
@@ -149,10 +151,13 @@ CppConsUI::Rect CenterIM::GetScreenAreaSize(ScreenArea area)
 }
 
 CenterIM::CenterIM()
+: convs_expanded(false)
 {
   mngr = CppConsUI::CoreManager::Instance();
-  resize = mngr->signal_resize.connect(sigc::mem_fun(this,
+  resize_conn = mngr->signal_resize.connect(sigc::mem_fun(this,
         &CenterIM::ScreenResized));
+  top_window_changed_conn = mngr->signal_top_window_changed.connect(
+      sigc::mem_fun(this, &CenterIM::OnTopWindowChanged));
 
   memset(&centerim_core_ui_ops, 0, sizeof(centerim_core_ui_ops));
   memset(&logbuf_debug_ui_ops, 0, sizeof(logbuf_debug_ui_ops));
@@ -313,19 +318,22 @@ void CenterIM::ScreenResized()
 {
   CppConsUI::Rect size;
 
-  // minimal supported screen size is 80x24
   int screen_width = CppConsUI::Curses::getmaxx();
-  if (screen_width < 80)
-    screen_width = 80;
   int screen_height = CppConsUI::Curses::getmaxy();
-  if (screen_height < 24)
-    screen_height = 24;
 
-  int buddylist_width = purple_prefs_get_int(CONF_PREFIX
-      "/dimensions/buddylist_width");
-  buddylist_width = CLAMP(buddylist_width, 0, 50);
-  int log_height = purple_prefs_get_int(CONF_PREFIX "/dimensions/log_height");
-  log_height = CLAMP(log_height, 0, 50);
+  int buddylist_width;
+  int log_height;
+  if (convs_expanded) {
+    buddylist_width = 0;
+    log_height = 0;
+  }
+  else {
+    buddylist_width = purple_prefs_get_int(CONF_PREFIX
+        "/dimensions/buddylist_width");
+    buddylist_width = CLAMP(buddylist_width, 0, 50);
+    log_height = purple_prefs_get_int(CONF_PREFIX "/dimensions/log_height");
+    log_height = CLAMP(log_height, 0, 50);
+  }
 
   size.x = 0;
   size.y = 1;
@@ -362,6 +370,18 @@ void CenterIM::ScreenResized()
   size.width = screen_width;
   size.height = screen_height;
   areaSizes[WHOLE_AREA] = size;
+}
+
+void CenterIM::OnTopWindowChanged()
+{
+  if (!convs_expanded)
+    return;
+
+  CppConsUI::FreeWindow *top = mngr->GetTopWindow();
+  if (top && typeid(Conversation) != typeid(*top)) {
+    convs_expanded = false;
+    mngr->ScreenResized();
+  }
 }
 
 GHashTable *CenterIM::get_ui_info()
@@ -521,6 +541,23 @@ void CenterIM::ActionFocusNextConversation()
   CONVERSATIONS->FocusNextConversation();
 }
 
+void CenterIM::ActionExpandConversation()
+{
+  CppConsUI::FreeWindow *top = mngr->GetTopWindow();
+  if (top && top->GetType() == CppConsUI::FreeWindow::TYPE_TOP)
+    return;
+
+  if (!convs_expanded) {
+    CONVERSATIONS->FocusActiveConversation();
+    top = mngr->GetTopWindow();
+    if (!top || typeid(Conversation) != typeid(*top))
+      return;
+  }
+
+  convs_expanded = !convs_expanded;
+  mngr->ScreenResized();
+}
+
 void CenterIM::DeclareBindables()
 {
   DeclareBindable("centerim", "quit",
@@ -544,6 +581,9 @@ void CenterIM::DeclareBindables()
   DeclareBindable("centerim", "conversation-next",
       sigc::mem_fun(this, &CenterIM::ActionFocusNextConversation),
       InputProcessor::BINDABLE_OVERRIDE);
+  DeclareBindable("centerim", "conversation-expand",
+      sigc::mem_fun(this, &CenterIM::ActionExpandConversation),
+      InputProcessor::BINDABLE_OVERRIDE);
 }
 
 void CenterIM::InitDefaultKeys()
@@ -553,12 +593,14 @@ void CenterIM::InitDefaultKeys()
   KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-active", "F2");
   KEYCONFIG->AddDefaultKeyBind("centerim", "accountstatusmenu", "F3");
   KEYCONFIG->AddDefaultKeyBind("centerim", "generalmenu", "F4");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-expand", "F6");
 
   KEYCONFIG->AddDefaultKeyBind("centerim", "buddylist", "Alt-1");
   KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-active", "Alt-2");
   KEYCONFIG->AddDefaultKeyBind("centerim", "accountstatusmenu", "Alt-3");
   KEYCONFIG->AddDefaultKeyBind("centerim", "generalmenu", "Alt-4");
   KEYCONFIG->AddDefaultKeyBind("centerim", "generalmenu", "Ctrl-g");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-expand", "Alt-6");
 
   KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-prev", "Ctrl-p");
   KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-next", "Ctrl-n");

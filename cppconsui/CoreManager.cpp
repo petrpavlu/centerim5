@@ -547,6 +547,7 @@ void CoreManager::FocusWindow()
       SetInputChild(*win);
       win->RestoreFocus();
     }
+    signal_top_window_changed();
   }
 }
 

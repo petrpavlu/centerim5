@@ -60,13 +60,6 @@ public:
 protected:
 
 private:
-  CppConsUI::CoreManager *mngr;
-  sigc::connection resize;
-
-  PurpleCoreUiOps centerim_core_ui_ops;
-  PurpleDebugUiOps logbuf_debug_ui_ops;
-  PurpleEventLoopUiOps centerim_glib_eventloops;
-
   struct IOClosure
   {
     PurpleInputFunction function;
@@ -82,8 +75,19 @@ private:
     char *category;
     char *arg_s;
   };
+
   typedef std::vector<LogBufferItem> LogBufferItems;
+
   static LogBufferItems *logbuf;
+
+  CppConsUI::CoreManager *mngr;
+  sigc::connection resize_conn;
+  sigc::connection top_window_changed_conn;
+  bool convs_expanded;
+
+  PurpleCoreUiOps centerim_core_ui_ops;
+  PurpleDebugUiOps logbuf_debug_ui_ops;
+  PurpleEventLoopUiOps centerim_glib_eventloops;
 
   CppConsUI::Rect areaSizes[AREAS_NUM];
 
@@ -99,6 +103,8 @@ private:
 
   // recalculates area sizes to fit into current screen size
   void ScreenResized();
+
+  void OnTopWindowChanged();
 
   // PurpleCoreUiOps callbacks
   // returns information about CenterIM such as name, website etc.
@@ -144,6 +150,7 @@ private:
   void ActionOpenGeneralMenu();
   void ActionFocusPrevConversation();
   void ActionFocusNextConversation();
+  void ActionExpandConversation();
 
   void DeclareBindables();
   void InitDefaultKeys();

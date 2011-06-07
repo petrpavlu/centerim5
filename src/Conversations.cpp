@@ -188,21 +188,19 @@ void Conversations::ActivateConversation(int i)
     return;
   }
 
+  if (i != -1) {
+    // show a new active conversation
+    conversations[i].label->SetVisibility(true);
+    conversations[i].label->SetColorScheme("conversation-active");
+    conversations[i].conv->Show();
+  }
+
   // hide old active conversation if there is any
   if (active != -1) {
     conversations[active].label->SetColorScheme(NULL);
     conversations[active].conv->Hide();
   }
 
-  if (i == -1) {
-    active = -1;
-    return;
-  }
-
-  // show a new active conversation
-  conversations[i].label->SetVisibility(true);
-  conversations[i].label->SetColorScheme("conversation-active");
-  conversations[i].conv->Show();
   active = i;
 }
 
