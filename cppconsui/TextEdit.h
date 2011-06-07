@@ -46,7 +46,8 @@ public:
     FLAG_NOPUNCTUATION = 1 << 3
   };
 
-  TextEdit(int w, int h, int flags_ = 0);
+  TextEdit(int w, int h, const char *text_ = NULL, int flags_ = 0,
+      bool single_line = false, bool accept_tabs_ = true);
   virtual ~TextEdit();
 
   // Widget
@@ -56,21 +57,49 @@ public:
   /**
    * Sets new text.
    */
-  //virtual void SetText(const char *new_text);
+  virtual void SetText(const char *new_text);
 
   virtual void Clear();
   /**
-   * Returns inserted text. Lines are separated by a given separator. Caller
-   * is responsible for freeing returned data.
+   * Returns inserted text. Caller is responsible for freeing returned data.
    */
-  virtual char *AsString(const char *separator = "\n");
+  virtual const char *GetText() const;
 
   virtual void SetFlags(int flags_, bool revalidate = true);
   virtual int GetFlags() const { return flags; }
 
+  virtual void SetSingleLineMode(bool allowed);
+  virtual bool IsSingleLineMode() const { return single_line_mode; }
+
+  virtual void SetAcceptTabs(bool accept);
+  virtual bool GetAcceptTabs() const { return accept_tabs; }
+
   sigc::signal<void, TextEdit&> signal_text_changed;
 
 protected:
+  enum Direction {
+    DIR_BACK,
+    DIR_FORWARD
+  };
+
+  enum CursorMovement {
+    MOVE_LOGICAL_POSITIONS,
+    MOVE_VISUAL_POSITIONS,
+    MOVE_WORDS,
+    MOVE_DISPLAY_LINES,
+    MOVE_DISPLAY_LINE_ENDS,
+    MOVE_PARAGRAPHS,
+    MOVE_PARAGRAPH_ENDS,
+    MOVE_PAGES,
+    MOVE_BUFFER_ENDS,
+    MOVE_HORIZONTAL_PAGES
+  };
+
+  enum DeleteType {
+    DELETE_CHARS,
+    DELETE_WORD_ENDS
+  };
+
   struct ScreenLine
   {
     /**
@@ -106,6 +135,8 @@ protected:
   int flags;
   bool editable;
   bool overwrite_mode;
+  bool single_line_mode;
+  bool accept_tabs;
 
   /**
    * Character position from the start of buffer.
@@ -114,7 +145,7 @@ protected:
   /**
    * Cursor location in the buffer.
    */
-  char *point;
+  mutable char *point;
 
   /**
    * Current cursor line (derived from current_pos and screen_lines).
@@ -140,27 +171,24 @@ protected:
   /**
    * Start of gap.
    */
-  char *gapstart;
+  mutable char *gapstart;
   /**
    * First location after the gap end.
    */
-  char *gapend;
+  mutable char *gapend;
   /**
    * Length in use, in chars.
    */
   size_t text_length;
 
-  /**
-   * Gap expand size when the gap becomes filled.
-   */
-  size_t gap_size;
+  mutable bool screen_lines_dirty;
 
   virtual void InitBuffer(size_t size);
-  virtual size_t GetGapSize();
+  virtual size_t GetGapSize() const;
   virtual void ExpandGap(size_t size);
   virtual void MoveGapToCursor();
-  virtual size_t GetTextSize();
 
+  size_t GetTextSize() const;
   virtual char *GetTextStart() const;
   virtual char *PrevChar(const char *p) const;
   virtual char *NextChar(const char *p) const;
@@ -176,6 +204,7 @@ protected:
    * Recalculates necessary amout of screen lines.
    */
   virtual void UpdateScreenLines(const char *begin, const char *end);
+  virtual void AssertUpdatedScreenLines();
 
   /**
    * Recalculates screen cursor position based on current_pos and
@@ -190,21 +219,20 @@ protected:
   virtual void InsertTextAtCursor(const char *new_text,
       size_t new_text_bytes);
   virtual void InsertTextAtCursor(const char *new_text);
-  virtual void DeleteFromCursor(DeleteType type, int direction);
-  virtual void MoveCursor(CursorMovement step, int direction);
+  virtual void DeleteFromCursor(DeleteType type, Direction dir);
+  virtual void MoveCursor(CursorMovement step, Direction dir);
 
   virtual void ToggleOverwrite();
 
-  virtual size_t MoveLogically(size_t start, int direction);
-  virtual size_t MoveForwardWordFromCursor();
-  virtual size_t MoveBackwardWordFromCursor();
+  virtual size_t MoveLogicallyFromCursor(Direction dir) const;
+  virtual size_t MoveWordFromCursor(Direction dir, bool word_end) const;
 
 private:
   TextEdit(const TextEdit&);
   TextEdit& operator=(const TextEdit&);
 
-  void ActionMoveCursor(CursorMovement step, int direction);
-  void ActionDelete(DeleteType type, int direction);
+  void ActionMoveCursor(CursorMovement step, Direction dir);
+  void ActionDelete(DeleteType type, Direction dir);
   void ActionToggleOverwrite();
 
   void DeclareBindables();

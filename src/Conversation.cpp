@@ -594,7 +594,7 @@ void Conversation::LoadHistory()
 void Conversation::ActionSend()
 {
   PurpleConversationType type = purple_conversation_get_type(conv);
-  char *str = input->AsString();
+  const char *str = input->GetText();
   if (str) {
     char *escaped = purple_markup_escape_text(str, strlen(str));
     char *html = purple_strdup_withhtml(escaped);
@@ -604,7 +604,6 @@ void Conversation::ActionSend()
       purple_conv_im_send(PURPLE_CONV_IM(conv), html);
     g_free(html);
     g_free(escaped);
-    g_free(str);
     input->Clear();
   }
 }
