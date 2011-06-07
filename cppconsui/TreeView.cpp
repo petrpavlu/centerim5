@@ -54,8 +54,10 @@ TreeView::TreeView(int w, int h, LineStyle::Type ltype)
 {
   /* initialise the tree */
   TreeNode root;
+  root.treeview = this;
+  root.collapsed = false;
+  root.style = STYLE_NORMAL;
   root.widget = NULL;
-  root.open = true;
   thetree.set_head(root);
   focus_node = thetree.begin();
 
@@ -172,7 +174,7 @@ void TreeView::GetFocusChain(FocusChain& focus_chain,
       focus_chain.append_child(parent, focus_child);
     }
 
-    if (!i->open || !widget->IsVisible())
+    if (i->collapsed || !widget->IsVisible())
       i.skip_children();
   }
 }
@@ -187,27 +189,23 @@ Curses::Window *TreeView::GetSubPad(const Widget& child, int begin_x,
   return ScrollPane::GetSubPad(child, begin_x, begin_y, ncols, nlines);
 }
 
-void TreeView::CollapseNode(NodeReference node)
+void TreeView::SetCollapsed(NodeReference node, bool collapsed)
 {
-  if (node->open) {
-    node->open = false;
-    FixFocus();
-    Redraw();
-  }
-}
+  g_assert(node->treeview == this);
 
-void TreeView::ExpandNode(NodeReference node)
-{
-  if (!node->open) {
-    node->open = true;
-    FixFocus();
-    Redraw();
-  }
+  if (node->collapsed == collapsed)
+    return;
+
+  node->collapsed = collapsed;
+  FixFocus();
+  Redraw();
 }
 
 void TreeView::ToggleCollapsed(NodeReference node)
 {
-  node->open = !node->open;
+  g_assert(node->treeview == this);
+
+  node->collapsed = !node->collapsed;
   FixFocus();
   Redraw();
 }
@@ -220,6 +218,8 @@ void TreeView::ActionToggleCollapsed()
 TreeView::NodeReference TreeView::InsertNode(NodeReference position,
     Widget& widget)
 {
+  g_assert(position->treeview == this);
+
   TreeNode node = AddNode(widget);
   NodeReference iter = thetree.insert(position, node);
   AddWidget(widget, 0, 0);
@@ -229,6 +229,8 @@ TreeView::NodeReference TreeView::InsertNode(NodeReference position,
 TreeView::NodeReference TreeView::InsertNodeAfter(NodeReference position,
     Widget& widget)
 {
+  g_assert(position->treeview == this);
+
   TreeNode node = AddNode(widget);
   NodeReference iter = thetree.insert_after(position, node);
   AddWidget(widget, 0, 0);
@@ -238,6 +240,8 @@ TreeView::NodeReference TreeView::InsertNodeAfter(NodeReference position,
 TreeView::NodeReference TreeView::PrependNode(NodeReference parent,
     Widget& widget)
 {
+  g_assert(parent->treeview == this);
+
   TreeNode node = AddNode(widget);
   NodeReference iter = thetree.prepend_child(parent, node);
   AddWidget(widget, 0, 0);
@@ -247,6 +251,8 @@ TreeView::NodeReference TreeView::PrependNode(NodeReference parent,
 TreeView::NodeReference TreeView::AppendNode(NodeReference parent,
     Widget& widget)
 {
+  g_assert(parent->treeview == this);
+
   TreeNode node = AddNode(widget);
   NodeReference iter = thetree.append_child(parent, node);
   AddWidget(widget, 0, 0);
@@ -255,6 +261,8 @@ TreeView::NodeReference TreeView::AppendNode(NodeReference parent,
 
 void TreeView::DeleteNode(NodeReference node, bool keepchildren)
 {
+  g_assert(node->treeview == this);
+
   /// @todo This needs more testing.
 
   // if we want to keep child nodes we should flatten the tree
@@ -288,6 +296,8 @@ void TreeView::DeleteNode(NodeReference node, bool keepchildren)
 
 void TreeView::DeleteNodeChildren(NodeReference node, bool keepchildren)
 {
+  g_assert(node->treeview == this);
+
   SiblingIterator i;
   while ((i = node.begin()) != node.end())
     DeleteNode(i, keepchildren);
@@ -300,11 +310,16 @@ TreeView::NodeReference TreeView::GetSelectedNode() const
 
 int TreeView::GetNodeDepth(NodeReference node) const
 {
+  g_assert(node->treeview == this);
+
   return thetree.depth(node);
 }
 
 void TreeView::MoveNodeBefore(NodeReference node, NodeReference position)
 {
+  g_assert(node->treeview == this);
+  g_assert(position->treeview == this);
+
   if (thetree.previous_sibling(position) != node) {
     thetree.move_before(position, node);
     FixFocus();
@@ -314,6 +329,9 @@ void TreeView::MoveNodeBefore(NodeReference node, NodeReference position)
 
 void TreeView::MoveNodeAfter(NodeReference node, NodeReference position)
 {
+  g_assert(node->treeview == this);
+  g_assert(position->treeview == this);
+
   if (thetree.next_sibling(position) != node) {
     thetree.move_after(position, node);
     FixFocus();
@@ -323,6 +341,9 @@ void TreeView::MoveNodeAfter(NodeReference node, NodeReference position)
 
 void TreeView::SetNodeParent(NodeReference node, NodeReference newparent)
 {
+  g_assert(node->treeview == this);
+  g_assert(newparent->treeview == this);
+
   if (thetree.parent(node) != newparent) {
     thetree.move_ontop(thetree.append_child(newparent), node);
     FixFocus();
@@ -332,6 +353,8 @@ void TreeView::SetNodeParent(NodeReference node, NodeReference newparent)
 
 void TreeView::SetNodeStyle(NodeReference node, Style s)
 {
+  g_assert(node->treeview == this);
+
   if (node->style != s) {
     node->style = s;
     Redraw();
@@ -340,6 +363,8 @@ void TreeView::SetNodeStyle(NodeReference node, Style s)
 
 TreeView::Style TreeView::GetNodeStyle(NodeReference node) const
 {
+  g_assert(node->treeview == this);
+
   return node->style;
 }
 
@@ -377,7 +402,7 @@ int TreeView::DrawNode(SiblingIterator node, int top)
     height += node->widget->GetHeight();
   }
 
-  if (node->open && IsNodeOpenable(node)) {
+  if (!node->collapsed && IsNodeOpenable(node)) {
     int attrs = GetColorPair("treeview", "line");
     area->attron(attrs);
     for (j = top + 1; j < top + height; j++)
@@ -401,7 +426,7 @@ int TreeView::DrawNode(SiblingIterator node, int top)
 
       if (i->style == STYLE_NORMAL && IsNodeOpenable(i)) {
         area->mvaddstring(depthoffset + 2, top + height, "[");
-        area->mvaddstring(depthoffset + 3, top + height, i->open ? "-" : "+");
+        area->mvaddstring(depthoffset + 3, top + height, i->collapsed ? "+" : "-");
         area->mvaddstring(depthoffset + 4, top + height, "]");
       }
       else
@@ -435,7 +460,7 @@ TreeView::TreeNode TreeView::AddNode(Widget& widget)
   // construct the new node
   TreeNode node;
   node.treeview = this;
-  node.open = true;
+  node.collapsed = false;
   node.style = STYLE_NORMAL;
   node.widget = &widget;
 
@@ -489,7 +514,7 @@ bool TreeView::IsNodeVisible(NodeReference& node) const
   NodeReference act = node;
   bool first = true;
   while (act != thetree.begin()) {
-    if (!act->widget->IsVisible() || (!first && !act->open))
+    if (!act->widget->IsVisible() || (!first && act->collapsed))
       return false;
     first = false;
     act = thetree.parent(act);
@@ -514,12 +539,12 @@ void TreeView::OnChildMoveResize(Widget& activator, const Rect &oldsize,
 
 void TreeView::ActionCollapse()
 {
-  CollapseNode(focus_node);
+  SetCollapsed(focus_node, true);
 }
 
 void TreeView::ActionExpand()
 {
-  ExpandNode(focus_node);
+  SetCollapsed(focus_node, false);
 }
 
 void TreeView::DeclareBindables()

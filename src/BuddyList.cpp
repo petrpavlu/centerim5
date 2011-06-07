@@ -183,7 +183,7 @@ void BuddyList::new_node(PurpleBlistNode *node)
     BuddyListNode *parent = bnode->GetParentNode();
     CppConsUI::TreeView::NodeReference nref = treeview->AppendNode(
         parent ? parent->GetRefNode() : treeview->GetRootNode(), *bnode);
-    treeview->CollapseNode(nref);
+    treeview->SetCollapsed(nref, true);
     bnode->SetRefNode(nref);
     bnode->Update();
 

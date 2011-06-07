@@ -681,7 +681,7 @@ void BuddyListGroup::Update()
 void BuddyListGroup::OnActivate(Button& activator)
 {
   treeview->ToggleCollapsed(ref);
-  purple_blist_node_set_bool(node, "collapsed", !ref->GetOpen());
+  purple_blist_node_set_bool(node, "collapsed", ref->GetCollapsed());
 }
 
 const char *BuddyListGroup::ToString() const
@@ -807,7 +807,7 @@ void BuddyListGroup::DelayedInit()
   /* This can't be done when the node is created because node settings are
    * unavailable at that time. */
   if (!purple_blist_node_get_bool(node, "collapsed"))
-    treeview->ExpandNode(ref);
+    treeview->SetCollapsed(ref, false);
 }
 
 BuddyListGroup::BuddyListGroup(PurpleBlistNode *node)

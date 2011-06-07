@@ -407,7 +407,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
       = new CppConsUI::TreeView::ToggleCollapseButton;
     CppConsUI::TreeView::NodeReference parent_reference
       = accounts->AppendNode(accounts->GetRootNode(), *button);
-    accounts->CollapseNode(parent_reference);
+    accounts->SetCollapsed(parent_reference, true);
     account_entry->parent = button;
     account_entry->parent_reference = parent_reference;
   }

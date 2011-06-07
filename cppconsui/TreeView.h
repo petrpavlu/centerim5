@@ -85,13 +85,9 @@ public:
       int begin_y, int ncols, int nlines);
 
   /**
-   * Folds given node.
+   * Folds/unfolds given node.
    */
-  virtual void CollapseNode(NodeReference node);
-  /**
-   * Unfolds given node.
-   */
-  virtual void ExpandNode(NodeReference node);
+  virtual void SetCollapsed(NodeReference node, bool collapsed);
   /**
    * Toggles folding for given node.
    */
@@ -176,7 +172,7 @@ protected:
 
   public:
     TreeView *GetTreeView() const { return treeview; }
-    bool GetOpen() const { return open; }
+    bool GetCollapsed() const { return collapsed; }
     Style GetStyle() const { return style; }
     Widget *GetWidget() const { return widget; }
 
@@ -189,9 +185,9 @@ protected:
     TreeView *treeview;
 
     /**
-     * Flag whether the subtree is unfolded.
+     * Flag whether the subtree is folded or not.
      */
-    bool open;
+    bool collapsed;
 
     /**
      * Selected node drawing style.
