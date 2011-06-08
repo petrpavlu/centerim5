@@ -79,10 +79,14 @@ protected:
   {
   public:
     IntegerOption(const char *text, const char *config);
+    IntegerOption(const char *text, const char *config,
+        sigc::slot<const char*, int> unit_fun_);
     virtual ~IntegerOption();
 
   protected:
     char *pref;
+    bool unit;
+    sigc::slot<const char*, int> unit_fun;
 
     void OnActivate(CppConsUI::Button& activator);
     void ResponseHandler(CppConsUI::InputDialog& activator,
@@ -113,7 +117,10 @@ protected:
     ChoiceOption& operator=(const ChoiceOption&);
   };
 
-  void ReloadKeybindingFile(CppConsUI::Button& activator);
+  const char *GetColsUnit(int i) const;
+  const char *GetRowsUnit(int i) const;
+  const char *GetMinsUnit(int i) const;
+  void ReloadKeybindingFile(CppConsUI::Button& activator) const;
 
 private:
   OptionWindow(const OptionWindow&);

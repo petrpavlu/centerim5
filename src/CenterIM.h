@@ -22,6 +22,12 @@
 #ifndef __CENTERIM_H__
 #define __CENTERIM_H__
 
+#ifdef __GNUC__
+#define _attribute(x) __attribute__(x)
+#else
+#define _attribute(x)
+#endif
+
 #include <libpurple/purple.h>
 #include <cppconsui/CoreManager.h>
 #include <vector>

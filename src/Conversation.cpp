@@ -116,12 +116,11 @@ void Conversation::MoveResize(int newx, int newy, int neww, int newh)
 
 bool Conversation::RestoreFocus()
 {
-  FOOTER->SetText(_(
-        "<centerim|buddylist> buddy list, "
-        "<centerim|conversation-next>/"
-        "<centerim|conversation-prev>/<centerim|conversation-active> next/prev/act conv, "
-        "<centerim|accountstatusmenu> status menu, "
-        "<conversation|send> send"));
+  FOOTER->SetText(_("%s buddy list, %s/%s/%s next/prev/act conv, "
+        "%s status menu, %s send"), "centerim|buddylist",
+      "centerim|conversation-next", "centerim|conversation-prev",
+      "centerim|conversation-active", "centerim|accountstatusmenu",
+      "conversation|send");
 
   return Window::RestoreFocus();
 }

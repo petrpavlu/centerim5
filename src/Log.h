@@ -22,11 +22,7 @@
 #ifndef __LOG_H__
 #define __LOG_H__
 
-#ifdef __GNUC__
-#define _attribute(x) __attribute__(x)
-#else
-#define _attribute(x)
-#endif
+#include "CenterIM.h"
 
 #include <cppconsui/TextView.h>
 #include <cppconsui/Window.h>

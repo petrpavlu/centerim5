@@ -47,12 +47,13 @@ OptionWindow::OptionWindow()
           CONF_PREFIX "/blist/show_offline_buddies")));
 
   parent = tree->AppendNode(tree->GetRootNode(),
-      *(new CppConsUI::TreeView::ToggleCollapseButton(
-          _("Dimensions (percentage)"))));
+      *(new CppConsUI::TreeView::ToggleCollapseButton( _("Dimensions"))));
   tree->AppendNode(parent, *(new IntegerOption(_("Buddy list window width"),
-          CONF_PREFIX "/dimensions/buddylist_width")));
+          CONF_PREFIX "/dimensions/buddylist_width", sigc::mem_fun(this,
+            &OptionWindow::GetColsUnit))));
   tree->AppendNode(parent, *(new IntegerOption(_("Log window height"),
-          CONF_PREFIX "/dimensions/log_height")));
+          CONF_PREFIX "/dimensions/log_height", sigc::mem_fun(this,
+            &OptionWindow::GetRowsUnit))));
 
   parent = tree->AppendNode(tree->GetRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(
@@ -61,8 +62,8 @@ OptionWindow::OptionWindow()
           _("Change to away status when idle"),
           "/purple/away/away_when_idle")));
   tree->AppendNode(parent, *(new IntegerOption(
-          _("Minutes before becoming idle"),
-          "/purple/away/mins_before_away")));
+          _("Time before becoming idle"), "/purple/away/mins_before_away",
+          sigc::mem_fun(this, &OptionWindow::GetMinsUnit))));
   c = new ChoiceOption(_("Report idle time"),
       "/purple/away/idle_reporting");
   c->AddOption(_("Never"), "none");
@@ -143,7 +144,7 @@ void OptionWindow::BooleanOption::OnToggle(CheckBox& activator,
 
 OptionWindow::StringOption::StringOption(const char *text,
     const char *config)
-: Button(TYPE_DOUBLE, text)
+: Button(FLAG_VALUE, text)
 {
   g_assert(text);
   g_assert(config);
@@ -183,13 +184,27 @@ void OptionWindow::StringOption::ResponseHandler(
 
 OptionWindow::IntegerOption::IntegerOption(const char *text,
     const char *config)
-: Button(TYPE_DOUBLE, text)
+: Button(FLAG_VALUE, text), unit(false)
 {
   g_assert(text);
   g_assert(config);
 
   pref = g_strdup(config);
   SetValue(purple_prefs_get_int(config));
+  signal_activate.connect(sigc::mem_fun(this, &IntegerOption::OnActivate));
+}
+
+OptionWindow::IntegerOption::IntegerOption(const char *text,
+    const char *config, sigc::slot<const char*, int> unit_fun_)
+: Button(FLAG_VALUE | FLAG_UNIT, text), unit(true), unit_fun(unit_fun_)
+{
+  g_assert(text);
+  g_assert(config);
+
+  pref = g_strdup(config);
+  int val = purple_prefs_get_int(config);
+  SetValue(val);
+  SetUnit(unit_fun(val));
   signal_activate.connect(sigc::mem_fun(this, &IntegerOption::OnActivate));
 }
 
@@ -214,17 +229,21 @@ void OptionWindow::IntegerOption::ResponseHandler(
 {
   const char *text;
   long int i;
+  int val;
 
   switch (response) {
     case CppConsUI::AbstractDialog::RESPONSE_OK:
       text = activator.GetText();
       errno = 0;
       i = strtol(text, NULL, 10);
-      if (errno == ERANGE)
+      if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
         LOG->Warning(_("Value is out of range."));
 
       purple_prefs_set_int(pref, i);
+      val = purple_prefs_get_int(pref);
       SetValue(purple_prefs_get_int(pref));
+      if (unit)
+        SetUnit(unit_fun(val));
       break;
     default:
       break;
@@ -268,7 +287,22 @@ void OptionWindow::ChoiceOption::OnSelectionChanged(ComboBox& activator,
   purple_prefs_set_string(pref, reinterpret_cast<const char*>(data));
 }
 
-void OptionWindow::ReloadKeybindingFile(CppConsUI::Button& activator)
+const char *OptionWindow::GetColsUnit(int i) const
+{
+  return ngettext("column", "columns", i);
+}
+
+const char *OptionWindow::GetRowsUnit(int i) const
+{
+  return ngettext("row", "rows", i);
+}
+
+const char *OptionWindow::GetMinsUnit(int i) const
+{
+  return ngettext("minute", "minutes", i);
+}
+
+void OptionWindow::ReloadKeybindingFile(CppConsUI::Button& activator) const
 {
   if (KEYCONFIG->Reconfig())
     LOG->Message(_("Keybinding file was successfully reloaded."));

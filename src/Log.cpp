@@ -46,10 +46,10 @@ void Log::ScreenResized()
 }
 
 #define WRITE_METHOD(name, level)                       \
-void Log::name(const char *fmt, ...)                   \
+void Log::name(const char *fmt, ...)                    \
 {                                                       \
   va_list args;                                         \
-  char *text;                                          \
+  char *text;                                           \
                                                         \
   if (GetLogLevel("cim") < level)                       \
     return; /* we don't want to see this log message */ \

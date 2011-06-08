@@ -99,7 +99,7 @@ public:
 
   /**
    */
-  char *GetKeyBind(const char *context, const char *action) const;
+  const char *GetKeyBind(const char *context, const char *action) const;
 
   void SetConfigFile(const char *filename);
   const char *GetConfigFile() const { return config; }

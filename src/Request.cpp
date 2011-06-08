@@ -278,7 +278,7 @@ PurpleRequestType Request::FieldsDialog::GetRequestType()
 }
 
 Request::FieldsDialog::StringField::StringField(PurpleRequestField *field)
-: Button(TYPE_DOUBLE), field(field)
+: Button(FLAG_VALUE), field(field)
 {
   g_assert(field);
 
@@ -320,7 +320,7 @@ void Request::FieldsDialog::StringField::ResponseHandler(
 }
 
 Request::FieldsDialog::IntegerField::IntegerField(PurpleRequestField *field)
-: Button(TYPE_DOUBLE), field(field)
+: Button(FLAG_VALUE), field(field)
 {
   g_assert(field);
 
@@ -359,7 +359,7 @@ void Request::FieldsDialog::IntegerField::ResponseHandler(
       text = activator.GetText();
       errno = 0;
       i = strtol(text, NULL, 10);
-      if (errno == ERANGE)
+      if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
         LOG->Warning(_("Value is out of range."));
       purple_request_field_int_set_value(field, i);
       SetValue(purple_request_field_int_get_value(field));

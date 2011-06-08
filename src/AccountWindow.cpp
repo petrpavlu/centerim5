@@ -104,7 +104,7 @@ void AccountWindow::BoolOption::OnToggle(CheckBox& activator,
 
 AccountWindow::StringOption::StringOption(PurpleAccount *account,
     PurpleAccountOption *option)
-: Button(TYPE_DOUBLE), account(account), option(option), type(TYPE_PURPLE)
+: Button(FLAG_VALUE), account(account), option(option), type(TYPE_PURPLE)
 {
   g_assert(account);
   g_assert(option);
@@ -113,7 +113,7 @@ AccountWindow::StringOption::StringOption(PurpleAccount *account,
 }
 
 AccountWindow::StringOption::StringOption(PurpleAccount *account, Type type)
-: Button(TYPE_DOUBLE), account(account), option(NULL), type(type)
+: Button(FLAG_VALUE), account(account), option(NULL), type(type)
 {
   g_assert(account);
 
@@ -177,7 +177,7 @@ void AccountWindow::StringOption::ResponseHandler(
 
 AccountWindow::IntOption::IntOption(PurpleAccount *account,
     PurpleAccountOption *option)
-: Button(TYPE_DOUBLE), account(account), option(option)
+: Button(FLAG_VALUE), account(account), option(option)
 {
   g_assert(account);
   g_assert(option);
@@ -216,7 +216,7 @@ void AccountWindow::IntOption::ResponseHandler(
       text = activator.GetText();
       errno = 0;
       i = strtol(text, NULL, 10);
-      if (errno == ERANGE)
+      if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
         LOG->Warning(_("Value is out of range."));
       purple_account_set_int(account,
           purple_account_option_get_setting(option), i);
@@ -264,7 +264,7 @@ void AccountWindow::StringListOption::OnSelectionChanged(ComboBox& activator,
 
 AccountWindow::SplitOption::SplitOption(PurpleAccount *account,
     PurpleAccountUserSplit *split, AccountEntry *account_entry)
-: Button(TYPE_DOUBLE), account(account), split(split)
+: Button(FLAG_VALUE), account(account), split(split)
 , account_entry(account_entry)
 {
   g_assert(account);

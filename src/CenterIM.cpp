@@ -44,7 +44,7 @@
 
 #define CONF_PLUGIN_SAVE_PREF CONF_PREFIX "/plugins/loaded"
 
-std::vector<CenterIM::LogBufferItem> *CenterIM::logbuf = NULL;
+CenterIM::LogBufferItems *CenterIM::logbuf = NULL;
 
 CenterIM *CenterIM::Instance()
 {
@@ -111,7 +111,8 @@ int CenterIM::Run(const char *config_path)
   // init BuddyList last so it takes the focus
   BuddyList::Init();
 
-  LOG->Info(_("Welcome to CenterIM 5. Press F4 to display main menu."));
+  const char *key = KEYCONFIG->GetKeyBind("centerim", "generalmenu");
+  LOG->Info(_("Welcome to CenterIM 5. Press %s to display main menu."), key);
 
   mngr->SetTopInputProcessor(*this);
   mngr->EnableResizing();
@@ -230,8 +231,8 @@ void CenterIM::PrefsInit()
 
   // init prefs
   purple_prefs_add_none(CONF_PREFIX "/dimensions");
-  purple_prefs_add_int(CONF_PREFIX "/dimensions/buddylist_width", 20);
-  purple_prefs_add_int(CONF_PREFIX "/dimensions/log_height", 25);
+  purple_prefs_add_int(CONF_PREFIX "/dimensions/buddylist_width", 25);
+  purple_prefs_add_int(CONF_PREFIX "/dimensions/log_height", 7);
   purple_prefs_connect_callback(this, CONF_PREFIX "/dimensions",
       dimensions_change_, this);
 }
@@ -330,20 +331,20 @@ void CenterIM::ScreenResized()
   else {
     buddylist_width = purple_prefs_get_int(CONF_PREFIX
         "/dimensions/buddylist_width");
-    buddylist_width = CLAMP(buddylist_width, 0, 50);
+    buddylist_width = CLAMP(buddylist_width, 0, screen_width);
     log_height = purple_prefs_get_int(CONF_PREFIX "/dimensions/log_height");
-    log_height = CLAMP(log_height, 0, 50);
+    log_height = CLAMP(log_height, 0, screen_height - 2);
   }
 
   size.x = 0;
   size.y = 1;
-  size.width = screen_width / 100.0 * buddylist_width;
+  size.width = buddylist_width;
   size.height = screen_height - 2;
   areaSizes[BUDDY_LIST_AREA] = size;
 
   size.x = areaSizes[BUDDY_LIST_AREA].width;
   size.width = screen_width - size.x;
-  size.height = screen_height / 100.0 * log_height;
+  size.height = log_height;
   size.y = screen_height - size.height - 1;
   areaSizes[LOG_AREA] = size;
 

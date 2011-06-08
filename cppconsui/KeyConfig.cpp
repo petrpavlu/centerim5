@@ -61,7 +61,8 @@ const KeyConfig::KeyBindContext *KeyConfig::GetKeyBinds(
   return &i->second;
 }
 
-char *KeyConfig::GetKeyBind(const char *context, const char *action) const
+const char *KeyConfig::GetKeyBind(const char *context,
+    const char *action) const
 {
   KeyBinds::const_iterator i = binds.find(context);
   if (i == binds.end())
@@ -71,13 +72,13 @@ char *KeyConfig::GetKeyBind(const char *context, const char *action) const
       j != i->second.end(); j++)
     if (!j->second.compare(action)) {
       TermKeyKey key = j->first;
-      char out[256];
+      static char out[256];
       termkey_strfkey(COREMANAGER->GetTermKeyHandle(), out, sizeof(out), &key,
           TERMKEY_FORMAT_CARETCTRL);
-      return g_strdup(out);
+      return out;
     }
 
-  return NULL;
+  return _("<unbound>");
 }
 
 void KeyConfig::SetConfigFile(const char *filename)

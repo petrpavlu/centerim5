@@ -21,6 +21,8 @@
 #ifndef __FOOTER_H__
 #define __FOOTER_H__
 
+#include "CenterIM.h"
+
 #include <cppconsui/FreeWindow.h>
 #include <cppconsui/Label.h>
 
@@ -36,28 +38,28 @@ public:
   // FreeWindow
   virtual void ScreenResized();
 
-  void SetText(const char *text_);
-  const char *GetText() const { return text; }
+  void SetText(const char *fmt, ...) _attribute((format(printf, 2, 3)));
 
 protected:
 
 private:
+  typedef std::vector<std::string> Values;
+
   CppConsUI::Label *label;
-  char *text;
+  Values values;
 
   static Footer *instance;
 
   Footer();
   Footer(const Footer&);
   Footer &operator=(const Footer&);
-  virtual ~Footer();
+  virtual ~Footer() {}
 
   static void Init();
   static void Finalize();
   friend class CenterIM;
 
   void UpdateText();
-  char *ParseName(const char **text);
 };
 
 #endif // __FOOTER_H__

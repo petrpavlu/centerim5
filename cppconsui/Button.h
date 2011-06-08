@@ -44,25 +44,26 @@ class Button
 : public Widget
 {
 public:
-  enum Type {
-    TYPE_SIMPLE, // text
-    TYPE_DOUBLE // text: value
-    //TYPE_TRIPLE  // text: value [unit]
+  enum Flag {
+    FLAG_VALUE = 1 << 0,
+    FLAG_UNIT = 1 << 1,
+    FLAG_RIGHT = 1 << 2
   };
 
-  Button(int w, int h, const char *text_ = NULL);
-  explicit Button(const char *text_ = NULL);
-  Button(Type type_, int w, int h, const char *text_ = NULL,
-      const char *value_ = NULL);
-  Button(Type type_, const char *text_ = NULL,
-      const char *value_ = NULL);
+  Button(int w, int h, const char *text_ = NULL, int flags_ = 0);
+  explicit Button(const char *text_ = NULL, int flags_ = 0);
+  Button(int w, int h, int flags_ = 0, const char *text_ = NULL,
+      const char *value_ = NULL, const char *unit_ = NULL,
+      const char *right_ = NULL);
+  Button(int flags_, const char *text_ = NULL, const char *value_ = NULL,
+      const char *unit_ = NULL, const char *right_ = NULL);
   virtual ~Button();
 
   // Widget
   virtual void Draw();
 
-  virtual void SetType(Type new_type);
-  virtual Type GetType() const { return type; }
+  virtual void SetFlags(int new_flags);
+  virtual int GetFlags() const { return flags; }
 
   /**
    * Sets a new text and redraws itself.
@@ -77,15 +78,24 @@ public:
   virtual void SetValue(int new_value);
   virtual const char *GetValue() const { return value; }
 
+  virtual void SetUnit(const char *new_unit);
+  virtual const char *GetUnit() const { return unit; }
+
+  virtual void SetRight(const char *new_right);
+  virtual const char *GetRight() const { return right; }
+
   /**
    * Emited signal when the button is pressed/activated.
    */
   sigc::signal<void, Button&> signal_activate;
 
 protected:
-  Type type;
+  int flags;
   char *text;
   char *value;
+  char *unit;
+  char *right;
+  int right_width;
 
 private:
   Button(const Button&);

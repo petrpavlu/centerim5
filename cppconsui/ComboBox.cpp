@@ -36,18 +36,14 @@ namespace CppConsUI
 {
 
 ComboBox::ComboBox(int w, int h, const char *text)
-: Button(TYPE_DOUBLE, w, h, text)
-, dropdown(NULL)
-, selected_entry(0)
+: Button(w, h, text, FLAG_VALUE), dropdown(NULL), selected_entry(0)
 , max_option_width(0)
 {
   signal_activate.connect(sigc::mem_fun(this, &ComboBox::OnDropDown));
 }
 
 ComboBox::ComboBox(const char *text)
-: Button(TYPE_DOUBLE, text)
-, dropdown(NULL)
-, selected_entry(0)
+: Button(text, FLAG_VALUE), dropdown(NULL), selected_entry(0)
 , max_option_width(0)
 {
   signal_activate.connect(sigc::mem_fun(this, &ComboBox::OnDropDown));

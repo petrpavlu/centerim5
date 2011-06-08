@@ -37,31 +37,44 @@ void Footer::ScreenResized()
   MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::FOOTER_AREA));
 }
 
-void Footer::SetText(const char *text_)
+void Footer::SetText(const char *fmt, ...)
 {
-  if (text)
-    g_free(text);
-  if (text_)
-    text = g_strdup(text_);
-  else
-    text = NULL;
+  values.clear();
+
+  if (!fmt) {
+    UpdateText();
+    return;
+  }
+
+  values.push_back(std::string(fmt));
+
+  va_list args;
+
+  va_start(args, fmt);
+  while (*fmt) {
+    if (*fmt == '%') {
+      if (*(fmt + 1) == '%')
+        fmt++;
+      else if (*(fmt + 1) == 's') {
+        const char *v = va_arg(args, const char*);
+        values.push_back(std::string(v));
+        fmt++;
+      }
+    }
+    fmt++;
+  }
+  va_end(args);
 
   UpdateText();
 }
 
 Footer::Footer()
-: FreeWindow(0, 24, 80, 1, TYPE_NON_FOCUSABLE), text(NULL)
+: FreeWindow(0, 24, 80, 1, TYPE_NON_FOCUSABLE)
 {
   SetColorScheme("footer");
 
   label = new CppConsUI::Label;
   AddWidget(*label, 0, 0);
-}
-
-Footer::~Footer()
-{
-  if (text)
-    g_free(text);
 }
 
 void Footer::Init()
@@ -82,73 +95,41 @@ void Footer::Finalize()
 
 void Footer::UpdateText()
 {
-  if (!text) {
+  if (values.empty()) {
     label->SetText(NULL);
     return;
   }
 
+  Values::iterator i = values.begin();
+  const char *fmt = i->c_str();
+  i++;
+
   char out[1024];
   char *cur_out = out;
 
-  const char *cur_text = text;
-  char *context = NULL;
-  char *action = NULL;
+  while (*fmt && cur_out < out + sizeof(out) - 1) {
+    if (*fmt == '%') {
+      if (*(fmt + 1) == '%')
+        fmt++;
+      else if (*(fmt + 1) == 's') {
+        char *con = g_strdup(i->c_str());
+        i++;
+        char *act = strstr(con, "|");
+        g_assert(act);
+        *act++ = '\0';
+        const char *key = KEYCONFIG->GetKeyBind(con, act);
+        g_free(con);
 
-#define ACCEPT(ch)       \
-do {                     \
-  if (*cur_text != (ch)) \
-    goto error;          \
-  cur_text++;            \
-} while(0)
+        strncpy(cur_out, key, out + sizeof(out) - 1 - cur_out);
+        cur_out += strlen(key);
 
-  while (*cur_text && cur_out < out + sizeof(out) - 1) {
-    if (*cur_text != '<') {
-      *cur_out++ = *cur_text++;
-      continue;
+        fmt += 2;
+        continue;
+      }
     }
-
-    cur_text++;
-    context = ParseName(&cur_text);
-    ACCEPT('|');
-    action = ParseName(&cur_text);
-    ACCEPT('>');
-
-    char *key = KEYCONFIG->GetKeyBind(context, action);
-    if (key) {
-      strncpy(cur_out, key, out + sizeof(out) - 1 - cur_out);
-      cur_out += strlen(key);
-      g_free(key);
-    }
-    else {
-      const char *unbind = _("<unbind>");
-      strncpy(cur_out, unbind, out + sizeof(out) - 1 - cur_out);
-      cur_out += strlen(unbind);
-    }
-
-    g_free(context);
-    context = NULL;
-    g_free(action);
-    action = NULL;
-
+    *cur_out++ = *fmt++;
   }
   *cur_out = '\0';
 
   label->SetText(out);
-  return;
-
-error:
-  if (context)
-    g_free(context);
-  if (action)
-    g_free(action);
-  label->SetText(_("Malformed help message"));
-}
-
-char *Footer::ParseName(const char **text)
-{
-  const char *start = *text;
-
-  while (isalpha((unsigned char) **text) || **text == '-')
-    (*text)++;
-  return g_strndup(start, *text - start);
 }

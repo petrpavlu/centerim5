@@ -41,10 +41,9 @@ BuddyList *BuddyList::Instance()
 
 bool BuddyList::RestoreFocus()
 {
-  FOOTER->SetText(_(
-        "<buddylist|contextmenu> context menu, "
-        "<centerim|conversation-active> act conv, "
-        "<centerim|accountstatusmenu> status menu"));
+  FOOTER->SetText(_("%s act conv, %s status menu, %s context menu"),
+      "centerim|conversation-active", "centerim|accountstatusmenu",
+      "buddylist|contextmenu");
 
   return CppConsUI::Window::RestoreFocus();
 }
