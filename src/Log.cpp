@@ -98,7 +98,6 @@ Log::Log()
 
   // init prefs
   purple_prefs_add_none(CONF_PREFIX "/log");
-  purple_prefs_add_int(CONF_PREFIX "/log/log_max_lines", 500);
   purple_prefs_add_bool(CONF_PREFIX "/log/debug", false);
   purple_prefs_add_string(CONF_PREFIX "/log/filename", "debug.log");
   purple_prefs_add_string(CONF_PREFIX "/log/log_level_cim", "info");
@@ -231,13 +230,11 @@ void Log::debug_change(const char *name, PurplePrefType type,
 
 void Log::ShortenWindowText()
 {
-  int max_lines = purple_prefs_get_int(CONF_PREFIX "/log/log_max_lines");
-  max_lines = CLAMP(max_lines, 50, 1000);
-  int lines_num = textview->GetLinesNumber();
+  size_t lines_num = textview->GetLinesNumber();
 
-  if (lines_num > max_lines) {
-    // remove 20 extra lines
-    textview->Erase(0, lines_num - max_lines + 20);
+  if (lines_num > 200) {
+    // remove 40 extra lines
+    textview->Erase(0, lines_num - 200 + 40);
   }
 }
 
