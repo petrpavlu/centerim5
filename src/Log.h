@@ -49,7 +49,6 @@ public:
   static Log *Instance();
 
   // FreeWindow
-  virtual void MoveResize(int newx, int newy, int neww, int newh);
   virtual void ScreenResized();
 
   void Error(const char *fmt, ...) _attribute((format(printf, 2, 3)));

@@ -23,6 +23,8 @@
 
 #include "CenterIM.h"
 
+#include <cppconsui/HorizontalListBox.h>
+#include <cppconsui/Spacer.h>
 #include <string.h>
 #include "gettext.h"
 
@@ -31,13 +33,6 @@ Log *Log::instance = NULL;
 Log *Log::Instance()
 {
   return instance;
-}
-
-void Log::MoveResize(int newx, int newy, int neww, int newh)
-{
-  Window::MoveResize(newx, newy, neww, newh);
-
-  textview->MoveResize(1, 0, width - 2, height);
 }
 
 void Log::ScreenResized()
@@ -79,8 +74,14 @@ Log::Log()
 
   memset(&centerim_debug_ui_ops, 0, sizeof(centerim_debug_ui_ops));
 
-  textview = new CppConsUI::TextView(width - 2, height, true);
-  AddWidget(*textview, 1, 0);
+  CppConsUI::HorizontalListBox *lbox = new CppConsUI::HorizontalListBox(
+      AUTOSIZE, AUTOSIZE);
+  AddWidget(*lbox, 0, 0);
+
+  lbox->AppendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
+  textview = new CppConsUI::TextView(AUTOSIZE, AUTOSIZE, true);
+  lbox->AppendWidget(*textview);
+  lbox->AppendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
 
 #define REGISTER_G_LOG_HANDLER(name, handler) \
   g_log_set_handler((name), (GLogLevelFlags)G_LOG_LEVEL_MASK, (handler), this)
