@@ -6,10 +6,10 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: centerim5 5.0.0alpha2.73-0dca-dirty\n"
+"Project-Id-Version: centerim5 5.0.0alpha2.112-cf75-dirty\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2011-06-08 14:51+0200\n"
+"POT-Creation-Date: 2011-07-22 20:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,7 +50,7 @@ msgstr ""
 msgid "Alias"
 msgstr ""
 
-#: src/AccountWindow.cpp:220 src/OptionWindow.cpp:240 src/Request.cpp:363
+#: src/AccountWindow.cpp:220 src/OptionWindow.cpp:240 src/Request.cpp:364
 msgid "Value is out of range."
 msgstr ""
 
@@ -381,40 +381,40 @@ msgstr ""
 msgid "centerim/log: purple_print() parameter category was not defined."
 msgstr ""
 
-#: src/Log.cpp:283
+#: src/Log.cpp:281
 #, c-format
 msgid "centerim/log: Error opening logfile '%s' (%s)."
 msgstr ""
 
-#: src/Log.cpp:289
+#: src/Log.cpp:287
 #, c-format
 msgid "centerim/log: Error opening logfile '%s'."
 msgstr ""
 
-#: src/Log.cpp:301
+#: src/Log.cpp:299
 #, c-format
 msgid "centerim/log: Error writing to logfile (%s)."
 msgstr ""
 
-#: src/Log.cpp:307
+#: src/Log.cpp:305
 msgid "centerim/log: Error writing to logfile."
 msgstr ""
 
-#: src/Log.cpp:321
+#: src/Log.cpp:319
 #, c-format
 msgid "centerim/log: Error flushing logfile (%s)."
 msgstr ""
 
-#: src/Log.cpp:327
+#: src/Log.cpp:325
 msgid "centerim/log: Error flushing logfile."
 msgstr ""
 
-#: src/Log.cpp:350
+#: src/Log.cpp:348
 #, c-format
 msgid "centerim/log: Unknown libpurple logging level: %d."
 msgstr ""
 
-#: src/Log.cpp:370
+#: src/Log.cpp:368
 #, c-format
 msgid "centerim/log: Unknown GLib logging level: %d."
 msgstr ""
@@ -527,25 +527,13 @@ msgstr ""
 msgid "Reload keybinding file"
 msgstr ""
 
-#: src/OptionWindow.cpp:292
-msgid "column"
-msgid_plural "columns"
-msgstr[0] ""
-msgstr[1] ""
-
 #: src/OptionWindow.cpp:297
-msgid "row"
-msgid_plural "rows"
-msgstr[0] ""
-msgstr[1] ""
-
-#: src/OptionWindow.cpp:302
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/OptionWindow.cpp:308
+#: src/OptionWindow.cpp:303
 msgid "Keybinding file was successfully reloaded."
 msgstr ""
 

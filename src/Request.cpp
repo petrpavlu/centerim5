@@ -282,8 +282,9 @@ Request::FieldsDialog::StringField::StringField(PurpleRequestField *field)
 {
   g_assert(field);
 
-  if (purple_request_field_string_is_masked(field))
-    ; // TODO
+  if (purple_request_field_string_is_masked(field)) {
+    // TODO
+  }
 
   char *text = g_strdup_printf("%s%s",
       purple_request_field_is_required(field) ? "*" : "",

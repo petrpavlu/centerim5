@@ -79,8 +79,8 @@ AC_PATH_LIB(ncursesw, , ncurses.h, ncursesw5-config, , , [
 ###############################
 
 if test "$GCC" = yes; then
-	CFLAGS="-Wall -pedantic $CFLAGS"
-	CXXFLAGS="-Wall -pedantic -Wno-long-long $CXXFLAGS"
+	CFLAGS="-Wall -Wextra -Wno-missing-field-initializers -Wno-unused-parameter -pedantic $CFLAGS"
+	CXXFLAGS="-Wall -Wextra -Wno-missing-field-initializers -Wno-unused-parameter -pedantic -Wno-long-long $CXXFLAGS"
 fi
 
 ###########

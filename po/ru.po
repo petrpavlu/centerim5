@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: centerim5\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2011-06-08 14:51+0200\n"
+"POT-Creation-Date: 2011-07-22 20:41+0200\n"
 "PO-Revision-Date: 2011-06-08 14:41+0200\n"
 "Last-Translator: kyak <bas@bmail.ru>\n"
 "Language-Team: \n"
@@ -52,7 +52,7 @@ msgstr "Пароль"
 msgid "Alias"
 msgstr "Псевдоним"
 
-#: src/AccountWindow.cpp:220 src/OptionWindow.cpp:240 src/Request.cpp:363
+#: src/AccountWindow.cpp:220 src/OptionWindow.cpp:240 src/Request.cpp:364
 msgid "Value is out of range."
 msgstr "Значение вне диапазона"
 
@@ -391,40 +391,40 @@ msgstr "Выйти"
 msgid "centerim/log: purple_print() parameter category was not defined."
 msgstr "centerim/log: категория параметра purple_print() не была определена."
 
-#: src/Log.cpp:283
+#: src/Log.cpp:281
 #, fuzzy, c-format
 msgid "centerim/log: Error opening logfile '%s' (%s)."
 msgstr "centerim/log: Ошибка открытия лог файла `%s' (%s)."
 
-#: src/Log.cpp:289
+#: src/Log.cpp:287
 #, fuzzy, c-format
 msgid "centerim/log: Error opening logfile '%s'."
 msgstr "centerim/log: Ошибка открытия лог файла `%s'."
 
-#: src/Log.cpp:301
+#: src/Log.cpp:299
 #, c-format
 msgid "centerim/log: Error writing to logfile (%s)."
 msgstr "centerim/log: Ошибка записи в лог файл (%s)."
 
-#: src/Log.cpp:307
+#: src/Log.cpp:305
 msgid "centerim/log: Error writing to logfile."
 msgstr "centerim/log: Ошибка записи в лог файл."
 
-#: src/Log.cpp:321
+#: src/Log.cpp:319
 #, c-format
 msgid "centerim/log: Error flushing logfile (%s)."
 msgstr "centerim/log: Ошибка записи лог файла на диск (%s)."
 
-#: src/Log.cpp:327
+#: src/Log.cpp:325
 msgid "centerim/log: Error flushing logfile."
 msgstr "centerim/log: Ошибка записи лог файла на диск."
 
-#: src/Log.cpp:350
+#: src/Log.cpp:348
 #, c-format
 msgid "centerim/log: Unknown libpurple logging level: %d."
 msgstr "centerim/log: Неизвестный уровень ведения логов libpurple: %d."
 
-#: src/Log.cpp:370
+#: src/Log.cpp:368
 #, c-format
 msgid "centerim/log: Unknown GLib logging level: %d."
 msgstr "centerim/log: Неизвестный уровень ведения логов GLib: %d."
@@ -538,28 +538,14 @@ msgstr "Уровень ведения логов GLib"
 msgid "Reload keybinding file"
 msgstr ""
 
-#: src/OptionWindow.cpp:292
-msgid "column"
-msgid_plural "columns"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-
 #: src/OptionWindow.cpp:297
-msgid "row"
-msgid_plural "rows"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-
-#: src/OptionWindow.cpp:302
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: src/OptionWindow.cpp:308
+#: src/OptionWindow.cpp:303
 msgid "Keybinding file was successfully reloaded."
 msgstr ""
 

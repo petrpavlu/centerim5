@@ -1,21 +1,78 @@
-Centerim 5 Alpha 2
+CenterIM 5 hacking documentation
 
-How to get this version to work after compiling?
+Contents
+--------
 
-Press ^Q at any time to shutdown cim5. Pressing escape once will close almost
-any window. Use tab, shift-tab or the arrow keys to move the focus from widget
-to widget. Press F4 for a menu. In this menu there is an "Accounts..." option,
-this can be used to add, edit and delete accounts. You can also copy the
-pidgin xml files to configure cim5.
+1. Code style
+2. General debugging
+3. Valgrind notes
 
-Once you have added (and enabled) an account the buddylist on the left of the
-screen will fill. Select a lead in this tree and press enter to open
-a conversation window. Type your message and press ^x to send it to
-a recipient.
 
-Incoming messages open automatically a new conversation window.
+1. Code style
+-------------
 
-Please keep in mind that this is an alpha release.
+- No tabs, two spaces indenting.
+- Line length limited to 78 characters.
+- Comments:
+    // one line comment
+    /* Multiline
+     * comment. */
+- Names of classes and methods use CamelNotation, variables use
+  common_c_naming. THIS_IS_A_CONST. There is an exception, libpurple/glib
+  callbacks use common C naming too.
+- Example of class declaration:
+class MyClass
+: public OtherClass
+{
+public:
+  // enums and typedefs first,
+  // then variables,
+  // methods last
 
-Happy Hacking!
+  /**
+   * Doxygen comment.
+   */
+  virtual size_t GetLinesCount() const { return lines_count; }
+
+protected:
+  size_t lines_count;
+
+private:
+};
+- Order methods in an implementation file according to a header file.
+- Methods that can be bound to a key are prefixed with 'Action', for example,
+  ActionActivate().
+- Methods connected to signals should use 'On' prefix, for example,
+  OnSelectionChanged().
+- Singletons have got all variables private, other classes should have all
+  variables protected.
+
+
+2. General debugging
+--------------------
+
+Use '--enable-debug' configure option to disable optimizations and enable
+producing of binary with debugging information.
+
+
+3. Valgrind notes
+-----------------
+
+% export GLIBCXX_FORCE_NEW=1
+% export G_DEBUG=gc-friendly
+% export G_SLICE=always-malloc
+% valgrind --leak-check=full --log-file=cim5.log centerim5
+
+Make sure you don't run this command on libtool's binary wrapper.
+
+GLIBCXX_FORCE_NEW forces libstdc++ allocator to use new() and delete() calls
+instead of using memory pools
+(http://gcc.gnu.org/onlinedocs/libstdc++/manual/ext_allocators.html).
+
+G_SLICE and G_DEBUG env vars make sure to turn off glib's memory
+optimizations, so that they do not confuse valgrind
+(https://live.gnome.org/Valgrind).
+
+There is currently no suppresion list, though you can use at least the list
+from the Pidgin project.
 

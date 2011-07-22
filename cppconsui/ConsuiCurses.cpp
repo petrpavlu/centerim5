@@ -45,7 +45,7 @@ namespace CppConsUI
 namespace Curses
 {
 
-static Stats stats = {0};
+static Stats stats = {};
 
 const Stats *GetStats()
 {

@@ -231,8 +231,8 @@ void CenterIM::PrefsInit()
 
   // init prefs
   purple_prefs_add_none(CONF_PREFIX "/dimensions");
-  purple_prefs_add_int(CONF_PREFIX "/dimensions/buddylist_width", 25);
-  purple_prefs_add_int(CONF_PREFIX "/dimensions/log_height", 7);
+  purple_prefs_add_int(CONF_PREFIX "/dimensions/buddylist_width", 20);
+  purple_prefs_add_int(CONF_PREFIX "/dimensions/log_height", 25);
   purple_prefs_connect_callback(this, CONF_PREFIX "/dimensions",
       dimensions_change_, this);
 }
@@ -331,20 +331,20 @@ void CenterIM::ScreenResized()
   else {
     buddylist_width = purple_prefs_get_int(CONF_PREFIX
         "/dimensions/buddylist_width");
-    buddylist_width = CLAMP(buddylist_width, 0, screen_width);
+    buddylist_width = CLAMP(buddylist_width, 0, 50);
     log_height = purple_prefs_get_int(CONF_PREFIX "/dimensions/log_height");
-    log_height = CLAMP(log_height, 0, screen_height - 2);
+    log_height = CLAMP(log_height, 0, 50);
   }
 
   size.x = 0;
   size.y = 1;
-  size.width = buddylist_width;
+  size.width = screen_width / 100.0 * buddylist_width;
   size.height = screen_height - 2;
   areaSizes[BUDDY_LIST_AREA] = size;
 
   size.x = areaSizes[BUDDY_LIST_AREA].width;
   size.width = screen_width - size.x;
-  size.height = log_height;
+  size.height = screen_height / 100.0 * log_height;
   size.y = screen_height - size.height - 1;
   areaSizes[LOG_AREA] = size;
 

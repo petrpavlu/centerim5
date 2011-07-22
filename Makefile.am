@@ -7,6 +7,8 @@ EXTRA_DIST =\
 	HACKING \
 	gettext.h
 
+man_MANS = centerim5.1
+
 BUILT_SOURCES = $(top_srcdir)/.version
 # we want to execute this target everytime make is run
 .PHONY: $(top_srcdir)/.version

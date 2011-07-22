@@ -8,7 +8,8 @@ Mark Pustjens <pustjens@dds.nl>
 	MSN: pustjens@dds.nl
 
 Additional Code:
-* Iulian Ciorascu <iulica@box.co.uk> -- Doxygen support, documentation, build
-fixes,
-* Roger <roger@jikos.cz> -- initial support for screen resizing,
-* and others, see `git log`.
+- Iulian Ciorascu <iulica@box.co.uk> -- Doxygen support, documentation, build
+  fixes,
+- kyak <bas@bmail.ru> -- various improvements,
+- Roger <roger@jikos.cz> -- initial support for screen resizing,
+- and others, see `git log`.

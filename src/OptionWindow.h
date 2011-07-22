@@ -117,9 +117,8 @@ protected:
     ChoiceOption& operator=(const ChoiceOption&);
   };
 
-  const char *GetColsUnit(int i) const;
-  const char *GetRowsUnit(int i) const;
-  const char *GetMinsUnit(int i) const;
+  const char *GetPercentUnit(int i) const;
+  const char *GetMinUnit(int i) const;
   void ReloadKeybindingFile(CppConsUI::Button& activator) const;
 
 private:

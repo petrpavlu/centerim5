@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: centerim5\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2011-06-08 14:51+0200\n"
+"POT-Creation-Date: 2011-07-22 20:41+0200\n"
 "PO-Revision-Date: 2011-06-08 14:43+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -48,7 +48,7 @@ msgstr "Paßwort"
 msgid "Alias"
 msgstr "Alias"
 
-#: src/AccountWindow.cpp:220 src/OptionWindow.cpp:240 src/Request.cpp:363
+#: src/AccountWindow.cpp:220 src/OptionWindow.cpp:240 src/Request.cpp:364
 #, fuzzy
 msgid "Value is out of range."
 msgstr "Wert außerhalb des Wertebereiches.\n"
@@ -390,42 +390,42 @@ msgstr "Beenden"
 msgid "centerim/log: purple_print() parameter category was not defined."
 msgstr ""
 
-#: src/Log.cpp:283
+#: src/Log.cpp:281
 #, fuzzy, c-format
 msgid "centerim/log: Error opening logfile '%s' (%s)."
 msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s' (%s).\n"
 
-#: src/Log.cpp:289
+#: src/Log.cpp:287
 #, fuzzy, c-format
 msgid "centerim/log: Error opening logfile '%s'."
 msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s'.\n"
 
-#: src/Log.cpp:301
+#: src/Log.cpp:299
 #, fuzzy, c-format
 msgid "centerim/log: Error writing to logfile (%s)."
 msgstr "centerim/log: Fehler beim Schreiben in Logdatei (%s).\n"
 
-#: src/Log.cpp:307
+#: src/Log.cpp:305
 #, fuzzy
 msgid "centerim/log: Error writing to logfile."
 msgstr "centerim/log: Fehler beim Schreiben in Logdatei.\n"
 
-#: src/Log.cpp:321
+#: src/Log.cpp:319
 #, fuzzy, c-format
 msgid "centerim/log: Error flushing logfile (%s)."
 msgstr "centerim/log: Fehler beim Ausschreiben der Logdatei (%s).\n"
 
-#: src/Log.cpp:327
+#: src/Log.cpp:325
 #, fuzzy
 msgid "centerim/log: Error flushing logfile."
 msgstr "centerim/log: Fehler beim Ausschreiben der Logdatei.\n"
 
-#: src/Log.cpp:350
+#: src/Log.cpp:348
 #, fuzzy, c-format
 msgid "centerim/log: Unknown libpurple logging level: %d."
 msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s'.\n"
 
-#: src/Log.cpp:370
+#: src/Log.cpp:368
 #, fuzzy, c-format
 msgid "centerim/log: Unknown GLib logging level: %d."
 msgstr "centerim/log: Fehler beim Ausschreiben der Logdatei (%s).\n"
@@ -541,28 +541,14 @@ msgstr ""
 msgid "Reload keybinding file"
 msgstr ""
 
-#: src/OptionWindow.cpp:292
-msgid "column"
-msgid_plural "columns"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-
 #: src/OptionWindow.cpp:297
-msgid "row"
-msgid_plural "rows"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-
-#: src/OptionWindow.cpp:302
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: src/OptionWindow.cpp:308
+#: src/OptionWindow.cpp:303
 msgid "Keybinding file was successfully reloaded."
 msgstr ""
 

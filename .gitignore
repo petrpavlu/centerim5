@@ -101,6 +101,7 @@ _$*
 autom4te.cache
 config.h.in
 core
+cscope.*
 doc/cppconsui*
 doc/html
 doc/latex

@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: centerim5\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2011-06-08 14:51+0200\n"
-"PO-Revision-Date: 2011-06-08 14:52+0200\n"
+"POT-Creation-Date: 2011-07-22 20:41+0200\n"
+"PO-Revision-Date: 2011-07-22 20:53+0200\n"
 "Last-Translator: Petr Pavlu <setup@dagobah.cz>\n"
 "Language-Team: Czech\n"
 "Language: \n"
@@ -48,7 +48,7 @@ msgstr "Heslo"
 msgid "Alias"
 msgstr "Alias"
 
-#: src/AccountWindow.cpp:220 src/OptionWindow.cpp:240 src/Request.cpp:363
+#: src/AccountWindow.cpp:220 src/OptionWindow.cpp:240 src/Request.cpp:364
 msgid "Value is out of range."
 msgstr "Hodnota je mimo rozsah."
 
@@ -220,7 +220,7 @@ msgstr "Smazat kontakt"
 
 #: src/BuddyListNode.cpp:696
 msgid "Rename..."
-msgstr "Přejmenovat"
+msgstr "Přejmenovat…"
 
 #: src/BuddyListNode.cpp:721
 msgid "Specified group is already in the list."
@@ -380,40 +380,40 @@ msgstr "Ukončit"
 msgid "centerim/log: purple_print() parameter category was not defined."
 msgstr "centerim/log: nebyla zadána kategorie při volání purple_print()."
 
-#: src/Log.cpp:283
+#: src/Log.cpp:281
 #, c-format
 msgid "centerim/log: Error opening logfile '%s' (%s)."
 msgstr "centerim/log: Chyba při otevírání log souboru \"%s\" (%s)."
 
-#: src/Log.cpp:289
+#: src/Log.cpp:287
 #, c-format
 msgid "centerim/log: Error opening logfile '%s'."
 msgstr "centerim/log: Chyba při otevírání log souboru \"%s\"."
 
-#: src/Log.cpp:301
+#: src/Log.cpp:299
 #, c-format
 msgid "centerim/log: Error writing to logfile (%s)."
 msgstr "centerim/log: Chyba při zápisu do log souboru (%s)."
 
-#: src/Log.cpp:307
+#: src/Log.cpp:305
 msgid "centerim/log: Error writing to logfile."
 msgstr "centerim/log: Chyba při zápisu do log souboru."
 
-#: src/Log.cpp:321
+#: src/Log.cpp:319
 #, c-format
 msgid "centerim/log: Error flushing logfile (%s)."
 msgstr "centerim/log: Chyba při zápisu (flush) do log souboru (%s)."
 
-#: src/Log.cpp:327
+#: src/Log.cpp:325
 msgid "centerim/log: Error flushing logfile."
 msgstr "centerim/log: Chyba při zápisu (flush) do log souboru."
 
-#: src/Log.cpp:350
+#: src/Log.cpp:348
 #, c-format
 msgid "centerim/log: Unknown libpurple logging level: %d."
 msgstr "centerim/log: Neznámá log úroveň knihovny purple: %d."
 
-#: src/Log.cpp:370
+#: src/Log.cpp:368
 #, c-format
 msgid "centerim/log: Unknown GLib logging level: %d."
 msgstr "centerim/log: Neznámá log úroveň knihovny GLib: %d."
@@ -526,28 +526,14 @@ msgstr "Zprávy knihovny GLib"
 msgid "Reload keybinding file"
 msgstr "Znovu načíst soubor s nastavením kláves"
 
-#: src/OptionWindow.cpp:292
-msgid "column"
-msgid_plural "columns"
-msgstr[0] "sloupec"
-msgstr[1] "sloupce"
-msgstr[2] "sloupců"
-
 #: src/OptionWindow.cpp:297
-msgid "row"
-msgid_plural "rows"
-msgstr[0] "řádek"
-msgstr[1] "řádky"
-msgstr[2] "řádků"
-
-#: src/OptionWindow.cpp:302
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] "minuta"
 msgstr[1] "minuty"
 msgstr[2] "minut"
 
-#: src/OptionWindow.cpp:308
+#: src/OptionWindow.cpp:303
 msgid "Keybinding file was successfully reloaded."
 msgstr "Soubor s nastavením kláves byl úspěšně načten."
 

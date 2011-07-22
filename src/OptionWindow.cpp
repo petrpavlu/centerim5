@@ -47,13 +47,13 @@ OptionWindow::OptionWindow()
           CONF_PREFIX "/blist/show_offline_buddies")));
 
   parent = tree->AppendNode(tree->GetRootNode(),
-      *(new CppConsUI::TreeView::ToggleCollapseButton( _("Dimensions"))));
+      *(new CppConsUI::TreeView::ToggleCollapseButton(_("Dimensions"))));
   tree->AppendNode(parent, *(new IntegerOption(_("Buddy list window width"),
           CONF_PREFIX "/dimensions/buddylist_width", sigc::mem_fun(this,
-            &OptionWindow::GetColsUnit))));
+            &OptionWindow::GetPercentUnit))));
   tree->AppendNode(parent, *(new IntegerOption(_("Log window height"),
           CONF_PREFIX "/dimensions/log_height", sigc::mem_fun(this,
-            &OptionWindow::GetRowsUnit))));
+            &OptionWindow::GetPercentUnit))));
 
   parent = tree->AppendNode(tree->GetRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(
@@ -63,7 +63,7 @@ OptionWindow::OptionWindow()
           "/purple/away/away_when_idle")));
   tree->AppendNode(parent, *(new IntegerOption(
           _("Time before becoming idle"), "/purple/away/mins_before_away",
-          sigc::mem_fun(this, &OptionWindow::GetMinsUnit))));
+          sigc::mem_fun(this, &OptionWindow::GetMinUnit))));
   c = new ChoiceOption(_("Report idle time"),
       "/purple/away/idle_reporting");
   c->AddOption(_("Never"), "none");
@@ -287,17 +287,12 @@ void OptionWindow::ChoiceOption::OnSelectionChanged(ComboBox& activator,
   purple_prefs_set_string(pref, reinterpret_cast<const char*>(data));
 }
 
-const char *OptionWindow::GetColsUnit(int i) const
+const char *OptionWindow::GetPercentUnit(int i) const
 {
-  return ngettext("column", "columns", i);
+  return "%";
 }
 
-const char *OptionWindow::GetRowsUnit(int i) const
-{
-  return ngettext("row", "rows", i);
-}
-
-const char *OptionWindow::GetMinsUnit(int i) const
+const char *OptionWindow::GetMinUnit(int i) const
 {
   return ngettext("minute", "minutes", i);
 }

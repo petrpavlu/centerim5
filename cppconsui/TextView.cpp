@@ -347,7 +347,6 @@ TextView::Line::Line(const char *text_, size_t bytes, int color_, bool dirty_)
 : color(color_), dirty(dirty_)
 {
   g_assert(text_);
-  g_assert(bytes >= 0);
 
   text = g_strndup(text_, bytes);
   length = g_utf8_strlen(text, -1);
