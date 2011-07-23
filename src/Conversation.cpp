@@ -89,9 +89,10 @@ bool Conversation::ProcessInput(const TermKeyKey& key, bool more)
   if (more && input->ProcessInput(key, more))
     return true;
 
-  if (Window::ProcessInput(key, more))
+  if (view->ProcessInput(key, more))
     return true;
-  return view->ProcessInput(key, more);
+
+  return Window::ProcessInput(key, more);
 }
 
 void Conversation::MoveResize(int newx, int newy, int neww, int newh)

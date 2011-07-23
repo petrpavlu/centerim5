@@ -210,7 +210,7 @@ void Container::MoveFocus(FocusDirection direction)
 
   if (update_focus_chain) {
     focus_chain.clear();
-    focus_chain.set_head(NULL);
+    focus_chain.set_head(this);
     GetFocusChain(focus_chain, focus_chain.begin());
     update_focus_chain = false;
   }
@@ -284,17 +284,16 @@ void Container::MoveFocus(FocusDirection direction)
   FocusCycleScope scope = FOCUS_CYCLE_GLOBAL;
   FocusChain::pre_order_iterator cycle_begin, cycle_end, parent_iter;
   parent_iter = focus_chain.parent(iter);
-  Container *container;
-  do {
-    container = dynamic_cast<Container*>(*parent_iter);
-    g_assert(container);
-    scope = container->GetFocusCycle();
+  while (parent_iter != focus_chain.begin()) {
+    Container *c = dynamic_cast<Container*>(*parent_iter);
+    g_assert(c);
+    scope = c->GetFocusCycle();
     if (scope == FOCUS_CYCLE_LOCAL || scope == FOCUS_CYCLE_NONE)
       break;
     parent_iter = focus_chain.parent(parent_iter);
-  } while (parent_iter != focus_chain.begin());
-
-  // container is non-NULL at this point
+  }
+  Container *container = dynamic_cast<Container*>(*parent_iter);
+  g_assert(container);
 
   if (direction == FOCUS_PAGE_DOWN || direction == FOCUS_PAGE_UP) {
     /* Get rid off "dummy" containers in the chain, i.e. container that has
