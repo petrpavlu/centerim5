@@ -133,12 +133,27 @@ public:
   virtual void SetHeight(int newh);
 
   /**
-   * Returns absolute position of the widget. Note: special care has to be
+   * Returns an absolute position of the widget. Note: special care has to be
    * taken when calling this method because CppConsUI uses deferred drawing.
    * The returned value is correct only if the drawing of all parent widgets
    * already occured.
    */
   virtual Point GetAbsolutePosition() const;
+  /**
+   * Returns a relative position of the widget to a given predecessor. See
+   * note in GetAbsolutePosition() method.
+   */
+  virtual Point GetRelativePosition(const Container& ref) const;
+  /**
+   * Returns a real (on-screen) width. See note in GetAbsolutePosition()
+   * method.
+   */
+  virtual int GetRealWidth();
+  /**
+   * Returns a real (on-screen) height. See note in GetAbsolutePosition()
+   * method.
+   */
+  virtual int GetRealHeight();
 
   virtual void SetColorScheme(const char *scheme);
   virtual const char *GetColorScheme() const;

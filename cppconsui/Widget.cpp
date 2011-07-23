@@ -230,6 +230,28 @@ Point Widget::GetAbsolutePosition() const
   return parent->GetAbsolutePosition(*this);
 }
 
+Point Widget::GetRelativePosition(const Container& ref) const
+{
+  if (!parent)
+    return Point(0, 0);
+
+  return parent->GetRelativePosition(ref, *this);
+}
+
+int Widget::GetRealWidth()
+{
+  if (!area)
+    return 0;
+  return area->getmaxx();
+}
+
+int Widget::GetRealHeight()
+{
+  if (!area)
+    return 0;
+  return area->getmaxy();
+}
+
 void Widget::SetColorScheme(const char *scheme)
 {
   if (color_scheme)

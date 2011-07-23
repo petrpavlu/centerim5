@@ -46,9 +46,11 @@ public:
 
   // Widget
   virtual void Draw();
+  virtual int GetRealWidth();
+  virtual int GetRealHeight();
 
   // Container
-  virtual Point GetAbsolutePosition(const Container& ref,
+  virtual Point GetRelativePosition(const Container& ref,
       const Widget& child) const;
   virtual Point GetAbsolutePosition(const Widget& child) const;
 

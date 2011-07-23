@@ -69,12 +69,14 @@ public:
   };
 
   enum FocusDirection {
-    FOCUS_NEXT,
     FOCUS_PREVIOUS,
-    FOCUS_DOWN,
+    FOCUS_NEXT,
     FOCUS_UP,
+    FOCUS_DOWN,
+    FOCUS_LEFT,
     FOCUS_RIGHT,
-    FOCUS_LEFT
+    FOCUS_PAGE_UP,
+    FOCUS_PAGE_DOWN
   };
 
   Container(int w, int h);
@@ -138,7 +140,10 @@ public:
     { focus_cycle_scope = scope; }
   virtual FocusCycleScope GetFocusCycle() const { return focus_cycle_scope; }
 
-  virtual Point GetAbsolutePosition(const Container& ref,
+  virtual void SetPageFocus(bool enabled) { page_focus = enabled; }
+  virtual bool CanPageFocus() const { return page_focus; };
+
+  virtual Point GetRelativePosition(const Container& ref,
       const Widget& child) const;
   virtual Point GetAbsolutePosition(const Widget& child) const;
 
@@ -175,6 +180,12 @@ protected:
    *
    */
   bool update_focus_chain;
+
+  /*
+   * Flag indicating if fast focus changing (paging) using PageUp/PageDown
+   * keys is allowed or not.
+   */
+  bool page_focus;
 
   /**
    * This defines a chain of focus. Same as

@@ -52,6 +52,9 @@ void TreeView::ToggleCollapseButton::SetParent(Container& parent)
 TreeView::TreeView(int w, int h, LineStyle::Type ltype)
 : ScrollPane(w, h, 0, 0), linestyle(ltype)
 {
+  // allow fast focus changing (paging) using PageUp/PageDown keys
+  page_focus = true;
+
   /* initialise the tree */
   TreeNode root;
   root.treeview = this;
@@ -156,8 +159,8 @@ void TreeView::GetFocusChain(FocusChain& focus_chain,
 
     if (container && container->IsVisible()) {
       // the widget is a container so add its widgets as well
-      FocusChain::pre_order_iterator iter
-        = focus_chain.append_child(parent, NULL);
+      FocusChain::pre_order_iterator iter = focus_chain.append_child(parent,
+          container);
       container->GetFocusChain(focus_chain, iter);
 
       /* If this is not a focusable widget and it has no focusable

@@ -37,7 +37,7 @@ namespace CppConsUI
 
 Container::Container(int w, int h)
 : Widget(w, h), focus_cycle_scope(FOCUS_CYCLE_GLOBAL)
-, update_focus_chain(false), focus_child(NULL)
+, update_focus_chain(false), page_focus(false), focus_child(NULL)
 {
   DeclareBindables();
 }
@@ -178,7 +178,7 @@ void Container::GetFocusChain(FocusChain& focus_chain,
     if (container && container->IsVisible()) {
       // the widget is a container so add its widgets as well
       FocusChain::pre_order_iterator iter = focus_chain.append_child(parent,
-          NULL);
+          container);
       container->GetFocusChain(focus_chain, iter);
 
       /* If this is not a focusable widget and it has no focusable
@@ -215,7 +215,7 @@ void Container::MoveFocus(FocusDirection direction)
     update_focus_chain = false;
   }
 
-  FocusChain::pre_order_iterator iter = focus_chain.begin();
+  FocusChain::pre_order_iterator iter = ++focus_chain.begin();
   Widget *focus_widget = GetFocusWidget();
 
   if (focus_widget) {
@@ -226,25 +226,23 @@ void Container::MoveFocus(FocusDirection direction)
 
     Widget *widget = *iter;
     if (!widget->IsVisibleRecursive()) {
-      /* Currently focused widget is no longer visible, MoveFocus was
-       * called to fix it. */
+      /* Currently focused widget is no longer visible, MoveFocus() was called
+       * to fix it. */
 
       // try to change focus locally first
       FocusChain::pre_order_iterator parent_iter = focus_chain.parent(iter);
       iter = focus_chain.erase(iter);
       FocusChain::pre_order_iterator i = iter;
       while (i != parent_iter.end()) {
-        if (*i)
+        if ((*i)->CanFocus())
           break;
         i++;
       }
-      if (i == parent_iter.end()) {
-        for (i = parent_iter.begin(); i != iter; i++) {
-          if (*i)
+      if (i == parent_iter.end())
+        for (i = parent_iter.begin(); i != iter; i++)
+          if ((*i)->CanFocus())
             break;
-        }
-      }
-      if (i != parent_iter.end() && *i) {
+      if (i != iter && (*i)->CanFocus()) {
         // local focus change was successful
         (*i)->GrabFocus();
         return;
@@ -262,41 +260,62 @@ void Container::MoveFocus(FocusDirection direction)
      * first widget. */
     FocusChain::pre_order_iterator i = iter;
     while (i != focus_chain.end()) {
-      if (*i)
+      if ((*i)->CanFocus())
         break;
       i++;
     }
-    if (i == focus_chain.end()) {
-      for (i = focus_chain.begin(); i != iter; i++) {
-        if (*i)
+    if (i == focus_chain.end())
+      for (i = ++focus_chain.begin(); i != iter; i++)
+        if ((*i)->CanFocus())
           break;
-      }
-    }
 
-    if (i != focus_chain.end() && *i)
+    if (i != iter && (*i)->CanFocus())
       (*i)->GrabFocus();
 
     return;
   }
 
-  FocusChain::pre_order_iterator cycle_begin, cycle_end, parent_iter;
-  parent_iter = focus_chain.parent(iter);
+  /* At this point, focus_widget is non-NULL and iter represents focus_widget
+   * in the focus_chain. Also currently focused widget is visible, so if there
+   * isn't any other widget that can take the focus then the focused widget
+   * can remain the same. */
 
   // search for a parent that has set local or none focus cycling
   FocusCycleScope scope = FOCUS_CYCLE_GLOBAL;
-  Container *container = focus_widget->GetParent();
-  while (container) {
+  FocusChain::pre_order_iterator cycle_begin, cycle_end, parent_iter;
+  parent_iter = focus_chain.parent(iter);
+  Container *container;
+  do {
+    container = dynamic_cast<Container*>(*parent_iter);
+    g_assert(container);
     scope = container->GetFocusCycle();
     if (scope == FOCUS_CYCLE_LOCAL || scope == FOCUS_CYCLE_NONE)
       break;
-    container = container->GetParent();
     parent_iter = focus_chain.parent(parent_iter);
+  } while (parent_iter != focus_chain.begin());
+
+  // container is non-NULL at this point
+
+  if (direction == FOCUS_PAGE_DOWN || direction == FOCUS_PAGE_UP) {
+    /* Get rid off "dummy" containers in the chain, i.e. container that has
+     * only one child. */
+    while (parent_iter.number_of_children() == 1
+        && !(*parent_iter.begin())->CanFocus())
+      parent_iter = parent_iter.begin();
+    container = dynamic_cast<Container*>(*parent_iter);
+    g_assert(container);
+
+    if (!container->CanPageFocus())
+      return;
+
+    // paging is requested, force no cycling
+    scope = FOCUS_CYCLE_NONE;
   }
 
   if (scope == FOCUS_CYCLE_GLOBAL) {
     /* Global focus cycling is allowed (cycling amongst all widgets in the
      * window). */
-    cycle_begin = focus_chain.begin();
+    cycle_begin = ++focus_chain.begin();
     cycle_end = focus_chain.end();
   }
   else if (scope == FOCUS_CYCLE_LOCAL) {
@@ -306,57 +325,65 @@ void Container::MoveFocus(FocusDirection direction)
     cycle_end = parent_iter.end();
   }
   else {
-    // none focus cycling is allowed, see below
+    // none focus cycling is allowed
   }
 
   // find the correct widget to focus
+  int max, init, cur;
+  if (direction == FOCUS_PAGE_UP || direction == FOCUS_PAGE_DOWN) {
+    max = container->GetRealHeight() / 2;
+    init = focus_widget->GetRelativePosition(*container).GetY();
+  }
+  else
+    max = init = cur = 0;
+
   switch (direction) {
     case FOCUS_PREVIOUS:
     case FOCUS_UP:
     case FOCUS_LEFT:
-      if (scope == FOCUS_CYCLE_NONE) {
-        /* If no focus cycling is allowed, stop if the widget with
-         * focus is a first/last child. */
-        if (iter == parent_iter.begin())
-          return;
-      }
-
-      // finally, find the next widget which will get the focus
+    case FOCUS_PAGE_UP:
+      // finally, find the previous widget which will get the focus
       do {
-        if (iter == cycle_begin) {
+        /* If no focus cycling is allowed, stop if the widget with focus is the
+         * first/last child. */
+        if (scope == FOCUS_CYCLE_NONE && iter == parent_iter.begin())
+          goto end;
+
+        if (iter == cycle_begin)
           iter = cycle_end;
-          iter--;
-        }
-        else {
-          iter--;
-        }
-      } while (!*iter);
+        iter--;
+
+        if (direction == FOCUS_PAGE_UP)
+          cur = (*iter)->GetRelativePosition(*container).GetY();
+      } while (!(*iter)->CanFocus() || init - cur < max);
 
       break;
     case FOCUS_NEXT:
     case FOCUS_DOWN:
     case FOCUS_RIGHT:
-    default:
-      if (scope == FOCUS_CYCLE_NONE)
-        if (iter == --parent_iter.end())
-          return;
-
+    case FOCUS_PAGE_DOWN:
       // finally, find the next widget which will get the focus
       do {
+        if (scope == FOCUS_CYCLE_NONE && iter == --parent_iter.end())
+          goto end;
+
         iter++;
         if (iter == cycle_end)
           iter = cycle_begin;
-      } while (!*iter);
+
+        if (direction == FOCUS_PAGE_DOWN)
+          cur = (*iter)->GetRelativePosition(*container).GetY();
+      } while (!(*iter)->CanFocus() || cur - init < max);
 
       break;
   }
 
-  // make sure the widget is valid and then let it grab the focus
-  if (*iter)
-    (*iter)->GrabFocus();
+end:
+  // grab the focus
+  (*iter)->GrabFocus();
 }
 
-Point Container::GetAbsolutePosition(const Container& ref,
+Point Container::GetRelativePosition(const Container& ref,
     const Widget& child) const
 {
   g_assert(child.GetParent() == this);
@@ -364,7 +391,7 @@ Point Container::GetAbsolutePosition(const Container& ref,
   if (!parent || this == &ref)
     return Point(child.GetLeft(), child.GetTop());
 
-  Point p = parent->GetAbsolutePosition(ref, *this);
+  Point p = parent->GetRelativePosition(ref, *this);
   return Point(p.GetX() + child.GetLeft(), p.GetY() + child.GetTop());
 }
 
@@ -435,18 +462,24 @@ void Container::DeclareBindables()
   DeclareBindable("container", "focus-next",
       sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
         Container::FOCUS_NEXT), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable("container", "focus-left",
-      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
-        Container::FOCUS_LEFT), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable("container", "focus-right",
-      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
-        Container::FOCUS_RIGHT), InputProcessor::BINDABLE_NORMAL);
   DeclareBindable("container", "focus-up",
       sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
         Container::FOCUS_UP), InputProcessor::BINDABLE_NORMAL);
   DeclareBindable("container", "focus-down",
       sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
         Container::FOCUS_DOWN), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable("container", "focus-left",
+      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
+        Container::FOCUS_LEFT), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable("container", "focus-right",
+      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
+        Container::FOCUS_RIGHT), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable("container", "focus-page-up",
+      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
+        Container::FOCUS_PAGE_UP), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable("container", "focus-page-down",
+      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
+        Container::FOCUS_PAGE_DOWN), InputProcessor::BINDABLE_NORMAL);
 }
 
 } // namespace CppConsUI

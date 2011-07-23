@@ -282,10 +282,12 @@ KeyConfig::KeyConfig()
 
   AddDefaultKeyBind("container", "focus-previous", "Shift-Tab");
   AddDefaultKeyBind("container", "focus-next", "Tab");
-  AddDefaultKeyBind("container", "focus-left", "Left");
-  AddDefaultKeyBind("container", "focus-right", "Right");
   AddDefaultKeyBind("container", "focus-up", "Up");
   AddDefaultKeyBind("container", "focus-down", "Down");
+  AddDefaultKeyBind("container", "focus-left", "Left");
+  AddDefaultKeyBind("container", "focus-right", "Right");
+  AddDefaultKeyBind("container", "focus-page-up", "PageUp");
+  AddDefaultKeyBind("container", "focus-page-down", "PageDown");
 
   AddDefaultKeyBind("coremanager", "redraw-screen", "Ctrl-l");
 
