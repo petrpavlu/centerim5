@@ -388,10 +388,10 @@ void TreeView::Clear()
 
 int TreeView::DrawNode(SiblingIterator node, int top)
 {
-  int height = 0, j = top, oldh, depthoffset;
+  int height = 0, j;
   SiblingIterator i;
-
-  depthoffset = thetree.depth(node) * 3;
+  int depthoffset = thetree.depth(node) * 3;
+  int realw = area->getmaxx();
 
   // draw the node Widget first
   if (node->widget) {
@@ -408,8 +408,9 @@ int TreeView::DrawNode(SiblingIterator node, int top)
   if (!node->collapsed && IsNodeOpenable(node)) {
     int attrs = GetColorPair("treeview", "line");
     area->attron(attrs);
-    for (j = top + 1; j < top + height; j++)
-      area->mvaddstring(depthoffset, j, linestyle.V());
+    if (depthoffset < realw)
+      for (j = top + 1; j < top + height; j++)
+        area->mvaddstring(depthoffset, j, linestyle.V());
 
     /* Note: it would be better to start from end towards begin but for some
      * reason it doesn't seem to work. */
@@ -420,27 +421,33 @@ int TreeView::DrawNode(SiblingIterator node, int top)
     SiblingIterator end = last;
     end++;
     for (i = node.begin(); i != end; i++) {
-      if (i != last)
-        area->mvaddstring(depthoffset, top + height, linestyle.VRight());
-      else
-        area->mvaddstring(depthoffset, top + height, linestyle.CornerBL());
+      if (depthoffset < realw) {
+        if (i != last)
+          area->mvaddstring(depthoffset, top + height, linestyle.VRight());
+        else
+          area->mvaddstring(depthoffset, top + height, linestyle.CornerBL());
+      }
 
-      area->mvaddstring(depthoffset + 1, top + height, linestyle.H());
+      if (depthoffset + 1 < realw)
+        area->mvaddstring(depthoffset + 1, top + height, linestyle.H());
 
       if (i->style == STYLE_NORMAL && IsNodeOpenable(i)) {
-        area->mvaddstring(depthoffset + 2, top + height, "[");
-        area->mvaddstring(depthoffset + 3, top + height, i->collapsed ? "+" : "-");
-        area->mvaddstring(depthoffset + 4, top + height, "]");
+        if (depthoffset + 2 < realw)
+          area->mvaddstring(depthoffset + 2, top + height, "[");
+        if (depthoffset + 3 < realw)
+          area->mvaddstring(depthoffset + 3, top + height, i->collapsed ? "+" : "-");
+        if (depthoffset + 4 < realw)
+          area->mvaddstring(depthoffset + 4, top + height, "]");
       }
-      else
+      else if (depthoffset + 2 < realw)
         area->mvaddstring(depthoffset + 2, top + height, linestyle.H());
 
       area->attroff(attrs);
-      oldh = height;
+      int oldh = height;
       height += DrawNode(i, top + height);
       area->attron(attrs);
 
-      if (i != last)
+      if (i != last && depthoffset < realw)
         for (j = top + oldh + 1; j < top + height ; j++)
           area->mvaddstring(depthoffset, j, linestyle.V());
     }

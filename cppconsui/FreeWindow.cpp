@@ -42,7 +42,7 @@ FreeWindow::FreeWindow(int x, int y, int w, int h, Type t)
   UpdateArea();
 
   COREMANAGER->signal_resize.connect(sigc::mem_fun(this,
-        &FreeWindow::UpdateArea));
+        &FreeWindow::ResizeAndUpdateArea));
   COREMANAGER->signal_resize.connect(sigc::mem_fun(this,
         &FreeWindow::ScreenResized));
 
@@ -67,7 +67,9 @@ void FreeWindow::MoveResize(int newx, int newy, int neww, int newh)
   win_w = neww;
   win_h = newh;
 
-  Container::MoveResize(0, 0, win_w, win_h);
+  int realw = win_w != AUTOSIZE ? win_w : Curses::getmaxx() - win_x;
+  int realh = win_w != AUTOSIZE ? win_h : Curses::getmaxy() - win_y;
+  Container::MoveResize(0, 0, realw > 0 ? realw : 0, realh > 0 ? realh : 0);
   UpdateArea();
 }
 
@@ -155,19 +157,21 @@ void FreeWindow::SetParent(Container& parent)
 void FreeWindow::ProceedUpdateArea()
 {
   if (update_area) {
-    // update virtual area
-    if (area)
-      delete area;
-    area = Curses::Window::newpad(win_w, win_h);
-
-    // update real area
     int maxx = Curses::getmaxx();
     int maxy = Curses::getmaxy();
 
+    // update virtual area
+    if (area)
+      delete area;
+    int realw = win_w != AUTOSIZE ? win_w : Curses::getmaxx() - win_x;
+    int realh = win_h != AUTOSIZE ? win_h : Curses::getmaxy() - win_y;
+    area = Curses::Window::newpad(realw, realh);
+
+    // update real area
     int left = MAX(0, win_x);
     int top = MAX(0, win_y);
-    int right = MIN(win_x + win_w, maxx);
-    int bottom = MIN(win_y + win_h, maxy);
+    int right = MIN(win_x + realw, maxx);
+    int bottom = MIN(win_y + realh, maxy);
 
     copy_x = left - win_x;
     copy_y = top - win_y;
@@ -187,6 +191,11 @@ void FreeWindow::ProceedUpdateArea()
 void FreeWindow::Redraw()
 {
   COREMANAGER->Redraw();
+}
+
+void FreeWindow::ResizeAndUpdateArea()
+{
+  UpdateArea();
 }
 
 void FreeWindow::ActionClose()

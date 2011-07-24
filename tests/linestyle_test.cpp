@@ -15,8 +15,6 @@ class LineStyleWindow
     static LineStyleWindow *Instance();
     virtual void Close() {}
 
-    virtual void ScreenResized();
-
   protected:
 
   private:
@@ -33,7 +31,7 @@ LineStyleWindow *LineStyleWindow::Instance()
 }
 
 LineStyleWindow::LineStyleWindow()
-: CppConsUI::Window(0, 0, 0, 0)
+: CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
   char *text;
 
@@ -125,12 +123,6 @@ LineStyleWindow::LineStyleWindow()
       heavy_style.CornerBR());
   AddWidget(*(new CppConsUI::Label(text)), 1, 16);
   g_free(text);
-}
-
-void LineStyleWindow::ScreenResized()
-{
-  MoveResize(0, 0, CppConsUI::Curses::getmaxx(),
-      CppConsUI::Curses::getmaxy());
 }
 
 // TestApp class

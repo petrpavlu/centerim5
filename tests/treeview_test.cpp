@@ -16,8 +16,6 @@ class TreeViewWindow
     static TreeViewWindow *Instance();
     virtual void Close() {}
 
-    virtual void ScreenResized();
-
   protected:
 
   private:
@@ -34,7 +32,7 @@ TreeViewWindow *TreeViewWindow::Instance()
 }
 
 TreeViewWindow::TreeViewWindow()
-: Window(0, 0, 0, 0)
+: Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
   CppConsUI::TreeView *tree;
   CppConsUI::TreeView::NodeReference node;
@@ -66,12 +64,6 @@ TreeViewWindow::TreeViewWindow()
   tree->AppendNode(node, *(new CppConsUI::Button("Button node C-1")));
   tree->AppendNode(node, *(new CppConsUI::Button("Button node C-2")));
   tree->AppendNode(node, *(new CppConsUI::Button("Button node C-3")));
-}
-
-void TreeViewWindow::ScreenResized()
-{
-  MoveResize(0, 0, CppConsUI::Curses::getmaxx(),
-      CppConsUI::Curses::getmaxy());
 }
 
 // TestApp class

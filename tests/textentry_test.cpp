@@ -16,8 +16,6 @@ class TextEntryWindow
     static TextEntryWindow *Instance();
     virtual void Close() {}
 
-    virtual void ScreenResized();
-
   protected:
 
   private:
@@ -34,7 +32,7 @@ TextEntryWindow *TextEntryWindow::Instance()
 }
 
 TextEntryWindow::TextEntryWindow()
-: CppConsUI::Window(0, 0, 0, 0)
+: CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
   AddWidget(*(new CppConsUI::Label("Press F10 to quit.")), 1, 1);
   AddWidget(*(new CppConsUI::Label(
@@ -63,12 +61,6 @@ TextEntryWindow::TextEntryWindow()
       "\x65\xc4\x8d\x6b\xc5\xaf\x2e\x0a")), 2, 20);
 
   AddWidget(*(new CppConsUI::TextEntry("Autosize")), 2, 25);
-}
-
-void TextEntryWindow::ScreenResized()
-{
-  MoveResize(0, 0, CppConsUI::Curses::getmaxx(),
-      CppConsUI::Curses::getmaxy());
 }
 
 // TestApp class

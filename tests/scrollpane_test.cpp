@@ -79,8 +79,6 @@ class ScrollPaneWindow
     static ScrollPaneWindow *Instance();
     virtual void Close() {}
 
-    virtual void ScreenResized();
-
   protected:
     MyScrollPane *pane;
 
@@ -103,7 +101,7 @@ ScrollPaneWindow *ScrollPaneWindow::Instance()
 }
 
 ScrollPaneWindow::ScrollPaneWindow()
-: CppConsUI::Window(0, 0, 0, 0)
+: CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
   AddWidget(*(new CppConsUI::Label(25, 1, "Press F10 to quit.")), 1, 1);
   AddWidget(*(new CppConsUI::Label(25, 1, "WASD to move the picture.")), 1,
@@ -145,12 +143,6 @@ void ScrollPaneWindow::ScrollRight()
 {
   pane->AdjustScroll(pane->GetScrollPositionX() + 1,
       pane->GetScrollPositionY());
-}
-
-void ScrollPaneWindow::ScreenResized()
-{
-  MoveResize(0, 0, CppConsUI::Curses::getmaxx(),
-      CppConsUI::Curses::getmaxy());
 }
 
 // TestApp class

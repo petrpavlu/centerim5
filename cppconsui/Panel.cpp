@@ -81,27 +81,36 @@ void Panel::Draw()
   attrs = GetColorPair("panel", "line");
   area->attron(attrs);
 
+  int wa = (realw >= width || width == AUTOSIZE) && realw > 1 ? 1 : 0;
+  int ha = (realh >= height || height == AUTOSIZE) && realh > 1 ? 1 : 0;
+
   // draw top horizontal line
   for (i = 1; i < 1 + hline_len; i++)
     area->mvaddstring(i, 0, linestyle.H());
-  for (i = 1 + hline_len + extra - 2 + draw_title_width; i < realw - 1; i++)
+  for (i = 1 + hline_len + extra - 2 + draw_title_width; i < realw - 1 * wa;
+      i++)
     area->mvaddstring(i, 0, linestyle.H());
 
   // draw bottom horizontal line
-  for (i = 1; i < realw - 1; i++)
-    area->mvaddstring(i, realh - 1, linestyle.H());
+  if (ha)
+    for (i = 1; i < realw - 1 * wa; i++)
+      area->mvaddstring(i, realh - 1, linestyle.H());
 
   // draw left and right vertical line
-  for (i = 1; i < realh - 1; i++) {
+  for (i = 1; i < realh - 1 * ha; i++)
     area->mvaddstring(0, i, linestyle.V());
-    area->mvaddstring(realw - 1, i, linestyle.V());
-  }
+  if (wa)
+    for (i = 1; i < realh - 1 * ha; i++)
+      area->mvaddstring(realw - 1, i, linestyle.V());
 
   // draw corners
   area->mvaddstring(0, 0, linestyle.CornerTL());
-  area->mvaddstring(0, realh - 1, linestyle.CornerBL());
-  area->mvaddstring(realw - 1, 0, linestyle.CornerTR());
-  area->mvaddstring(realw - 1, realh - 1, linestyle.CornerBR());
+  if (wa)
+    area->mvaddstring(realw - 1, 0, linestyle.CornerTR());
+  if (ha)
+    area->mvaddstring(0, realh - 1, linestyle.CornerBL());
+  if (wa && ha)
+    area->mvaddstring(realw - 1, realh - 1, linestyle.CornerBR());
 
   area->attroff(attrs);
 }

@@ -69,6 +69,9 @@ public:
 protected:
   Panel *panel;
 
+  // FreeWindow
+  virtual void ResizeAndUpdateArea();
+
 private:
   Window(const Window&);
   Window& operator=(const Window&);

@@ -14,8 +14,6 @@ class LabelWindow
     static LabelWindow *Instance();
     virtual void Close() {}
 
-    virtual void ScreenResized();
-
   protected:
 
   private:
@@ -32,7 +30,7 @@ LabelWindow *LabelWindow::Instance()
 }
 
 LabelWindow::LabelWindow()
-: CppConsUI::Window(0, 0, 0, 0)
+: CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
   CppConsUI::Label *label;
 
@@ -80,20 +78,14 @@ LabelWindow::LabelWindow()
     "fermentum mattis eros, ut auctor urna tincidunt vitae. Praesent"
     "tincidunt laoreet lobortis.";
 
-  label = new CppConsUI::Label(-1, 10, long_text);
+  label = new CppConsUI::Label(AUTOSIZE, 10, long_text);
   AddWidget(*label, 42, 13);
 
-  label = new CppConsUI::Label(40, -1, long_text);
+  label = new CppConsUI::Label(40, AUTOSIZE, long_text);
   AddWidget(*label, 1, 24);
 
-  label = new CppConsUI::Label(-1, -1, long_text);
+  label = new CppConsUI::Label(AUTOSIZE, AUTOSIZE, long_text);
   AddWidget(*label, 42, 24);
-}
-
-void LabelWindow::ScreenResized()
-{
-  MoveResize(0, 0, CppConsUI::Curses::getmaxx(),
-      CppConsUI::Curses::getmaxy());
 }
 
 // TestApp class

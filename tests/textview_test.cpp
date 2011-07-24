@@ -40,7 +40,7 @@ TextViewWindow::TextViewWindow()
 {
   SetColorScheme("textviewwindow");
 
-  textview = new CppConsUI::TextView(-1, -1);
+  textview = new CppConsUI::TextView(AUTOSIZE, AUTOSIZE);
   AddWidget(*textview, 0, 0);
 
   const gchar *long_text = "Lorem ipsum dolor sit amet, consectetur"

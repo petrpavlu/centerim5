@@ -100,6 +100,8 @@ protected:
   virtual void ProceedUpdateArea();
   virtual void Redraw();
 
+  virtual void ResizeAndUpdateArea();
+
 private:
   FreeWindow(const FreeWindow&);
   FreeWindow& operator=(const FreeWindow&);

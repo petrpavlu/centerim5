@@ -49,10 +49,13 @@ void Window::MoveResize(int newx, int newy, int neww, int newh)
   win_w = neww;
   win_h = newh;
 
-  panel->MoveResize(0, 0, win_w, win_h);
+  int realw = win_w != AUTOSIZE ? win_w : Curses::getmaxx() - win_x;
+  int realh = win_w != AUTOSIZE ? win_h : Curses::getmaxy() - win_y;
 
-  Container::MoveResize(1, 1, win_w < 2 ? 0 : win_w - 2,
-      win_h < 2 ? 0 : win_h - 2);
+  panel->MoveResize(0, 0, realw, realh);
+
+  Container::MoveResize(1, 1, realw > 2 ? realw - 2 : 0,
+      realh > 2 ? realh - 2 : 0);
   UpdateArea();
 }
 
@@ -120,6 +123,17 @@ void Window::SetBorderStyle(LineStyle::Type ltype)
 LineStyle::Type Window::GetBorderStyle() const
 {
   return panel->GetBorderStyle();
+}
+
+void Window::ResizeAndUpdateArea()
+{
+  int w = win_w != AUTOSIZE ? win_w : Curses::getmaxx() - win_x;
+  int h = win_w != AUTOSIZE ? win_h : Curses::getmaxy() - win_y;
+
+  panel->MoveResize(0, 0, w, h);
+
+  Container::MoveResize(1, 1, w > 2 ? w - 2 : 0, h > 2 ? h - 2 : 0);
+  UpdateArea();
 }
 
 } // namespace CppConsUI
