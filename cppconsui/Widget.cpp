@@ -257,11 +257,7 @@ void Widget::SetColorScheme(const char *scheme)
   if (color_scheme)
     g_free(color_scheme);
 
-  if (scheme)
-    color_scheme = g_strdup(scheme);
-  else
-    color_scheme = NULL;
-
+  color_scheme = g_strdup(scheme);
   Redraw();
 }
 

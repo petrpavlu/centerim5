@@ -78,11 +78,7 @@ void Label::SetText(const char *new_text)
   if (text)
     g_free(text);
 
-  if (new_text)
-    text = g_strdup(new_text);
-  else
-    text = NULL;
-
+  text = g_strdup(new_text);
   Redraw();
 }
 

@@ -70,14 +70,10 @@ void ComboBox::ClearOptions()
 int ComboBox::AddOption(const char *text, intptr_t data)
 {
   ComboBoxEntry e;
-  int w = 0;
+  int w;
 
-  if (text) {
-    e.title = g_strdup(text);
-    w = Curses::onscreen_width(text);
-  }
-  else
-    e.title = NULL;
+  w = text ? Curses::onscreen_width(text) : 0;
+  e.title = g_strdup(text);
   e.data = data;
 
   if (w > max_option_width)

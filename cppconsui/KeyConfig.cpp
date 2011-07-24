@@ -86,10 +86,7 @@ void KeyConfig::SetConfigFile(const char *filename)
   if (config)
     g_free(config);
 
-  if (filename)
-    config = g_strdup(filename);
-  else
-    config = NULL;
+  config = g_strdup(filename);
 }
 
 void KeyConfig::Clear()

@@ -156,11 +156,7 @@ void Button::SetText(const char *new_text)
   if (text)
     g_free(text);
 
-  if (new_text)
-    text = g_strdup(new_text);
-  else
-    text = NULL;
-
+  text = g_strdup(new_text);
   Redraw();
 }
 
@@ -169,11 +165,7 @@ void Button::SetValue(const char *new_value)
   if (value)
     g_free(value);
 
-  if (new_value)
-    value = g_strdup(new_value);
-  else
-    value = NULL;
-
+  value = g_strdup(new_value);
   Redraw();
 }
 
@@ -191,11 +183,7 @@ void Button::SetUnit(const char *new_unit)
   if (unit)
     g_free(unit);
 
-  if (new_unit)
-    unit = g_strdup(new_unit);
-  else
-    unit = NULL;
-
+  unit = g_strdup(new_unit);
   Redraw();
 }
 
@@ -204,15 +192,8 @@ void Button::SetRight(const char *new_right)
   if (right)
     g_free(right);
 
-  if (new_right) {
-    right = g_strdup(new_right);
-    right_width = Curses::onscreen_width(new_right);
-  }
-  else {
-    right = NULL;
-    right_width = 0;
-  }
-
+  right = g_strdup(new_right);
+  right_width = right ? Curses::onscreen_width(right) : 0;
   Redraw();
 }
 
