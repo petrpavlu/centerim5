@@ -422,6 +422,9 @@ Curses::Window *Container::GetSubPad(const Widget& child, int begin_x,
   if (ncols == AUTOSIZE || ncols > realw - begin_x)
     ncols = realw - begin_x;
 
+  if (nlines <= 0 || ncols <= 0)
+    return NULL;
+
   return area->subpad(begin_x, begin_y, ncols, nlines);
 }
 

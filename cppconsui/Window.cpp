@@ -105,6 +105,9 @@ Curses::Window *Window::GetSubPad(const Widget &child, int begin_x,
   if (ncols == AUTOSIZE || ncols > realw - begin_x)
     ncols = realw - begin_x;
 
+  if (nlines <= 0 || ncols <= 0)
+    return NULL;
+
   // add '+1' offset to normal childs so they can not overwrite the panel
   return area->subpad(begin_x + 1, begin_y + 1, ncols, nlines);
 }

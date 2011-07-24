@@ -29,8 +29,8 @@
 #ifndef __WIDGET_H__
 #define __WIDGET_H__
 
-#define AUTOSIZE -1
-#define UNSET -2
+#define AUTOSIZE -1024
+#define UNSET -2048
 
 #include "ConsuiCurses.h"
 #include "CppConsUI.h"
