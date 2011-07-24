@@ -74,7 +74,7 @@ public:
   virtual void SetAcceptTabs(bool accept);
   virtual bool GetAcceptTabs() const { return accept_tabs; }
 
-  sigc::signal<void, TextEdit&> signal_text_changed;
+  sigc::signal<void, TextEdit&> signal_text_change;
 
 protected:
   enum Direction {

@@ -121,7 +121,7 @@ int CenterIM::Run(const char *config_path)
   purple_prefs_disconnect_by_handle(this);
 
   resize_conn.disconnect();
-  top_window_changed_conn.disconnect();
+  top_window_change_conn.disconnect();
 
   Conversations::Finalize();
   Header::Finalize();
@@ -157,7 +157,7 @@ CenterIM::CenterIM()
   mngr = CppConsUI::CoreManager::Instance();
   resize_conn = mngr->signal_resize.connect(sigc::mem_fun(this,
         &CenterIM::ScreenResized));
-  top_window_changed_conn = mngr->signal_top_window_changed.connect(
+  top_window_change_conn = mngr->signal_top_window_change.connect(
       sigc::mem_fun(this, &CenterIM::OnTopWindowChanged));
 
   memset(&centerim_core_ui_ops, 0, sizeof(centerim_core_ui_ops));

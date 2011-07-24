@@ -88,7 +88,7 @@ private:
 
   CppConsUI::CoreManager *mngr;
   sigc::connection resize_conn;
-  sigc::connection top_window_changed_conn;
+  sigc::connection top_window_change_conn;
   bool convs_expanded;
 
   PurpleCoreUiOps centerim_core_ui_ops;
