@@ -219,7 +219,8 @@ void AccountWindow::IntOption::ResponseHandler(
       if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
         LOG->Warning(_("Value is out of range."));
       purple_account_set_int(account,
-          purple_account_option_get_setting(option), i);
+          purple_account_option_get_setting(option),
+          CLAMP(i, INT_MIN, INT_MAX));
 
       UpdateValue();
       break;

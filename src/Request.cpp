@@ -362,7 +362,7 @@ void Request::FieldsDialog::IntegerField::ResponseHandler(
       i = strtol(text, NULL, 10);
       if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
         LOG->Warning(_("Value is out of range."));
-      purple_request_field_int_set_value(field, i);
+      purple_request_field_int_set_value(field, CLAMP(i, INT_MIN, INT_MAX));
       SetValue(purple_request_field_int_get_value(field));
       break;
     default:

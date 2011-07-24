@@ -239,7 +239,7 @@ void OptionWindow::IntegerOption::ResponseHandler(
       if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
         LOG->Warning(_("Value is out of range."));
 
-      purple_prefs_set_int(pref, i);
+      purple_prefs_set_int(pref, CLAMP(i, INT_MIN, INT_MAX));
       val = purple_prefs_get_int(pref);
       SetValue(purple_prefs_get_int(pref));
       if (unit)
