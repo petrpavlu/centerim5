@@ -43,16 +43,20 @@ public:
       LineStyle::Type ltype = LineStyle::DEFAULT);
   virtual ~MenuWindow() {}
 
-  virtual Button *AppendItem(const char *text,
+  virtual Button *InsertItem(size_t pos, const char *title,
       const sigc::slot<void, Button&>& callback)
-    { return listbox->AppendItem(text, callback); }
-  virtual HorizontalLine *AppendSeparator()
+    { return listbox->InsertItem(pos, title, callback); }
+  virtual Button *AppendItem(const char *title,
+      const sigc::slot<void, Button&>& callback)
+    { return listbox->AppendItem(title, callback); }
+  virtual AbstractLine *InsertSeparator(size_t pos)
+    { return listbox->InsertSeparator(pos); }
+  virtual AbstractLine *AppendSeparator()
     { return listbox->AppendSeparator(); }
-
+  virtual void InsertWidget(size_t pos, Widget& widget)
+    { listbox->InsertWidget(pos, widget); }
   virtual void AppendWidget(Widget& widget)
     { listbox->AppendWidget(widget); }
-  virtual void RemoveWidget(Widget& widget)
-    { listbox->RemoveWidget(widget); }
 
 protected:
   ListBox *listbox;

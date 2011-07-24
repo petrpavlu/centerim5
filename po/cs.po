@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: centerim5\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2011-07-22 20:41+0200\n"
-"PO-Revision-Date: 2011-07-22 20:53+0200\n"
+"POT-Creation-Date: 2011-07-22 20:53+0200\n"
+"PO-Revision-Date: 2011-07-24 15:59+0200\n"
 "Last-Translator: Petr Pavlu <setup@dagobah.cz>\n"
 "Language-Team: Czech\n"
 "Language: \n"
@@ -432,7 +432,7 @@ msgstr "Zobrazit prázdné skupiny"
 
 #: src/OptionWindow.cpp:46
 msgid "Show offline buddies"
-msgstr "Skrýt odpojené kamarády"
+msgstr "Zobrazit odpojené kamarády"
 
 #: src/OptionWindow.cpp:50
 msgid "Dimensions"

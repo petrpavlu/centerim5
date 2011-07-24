@@ -50,13 +50,13 @@ public:
   /**
    * Inserts a new button into ListBox before a given position.
    */
-  Button *InsertItem(size_t pos, const char *title,
-      const sigc::slot<void, Button&>& function);
+  virtual Button *InsertItem(size_t pos, const char *title,
+      const sigc::slot<void, Button&>& callback);
   /**
    * Adds a new button in the end of ListBox.
    */
-  Button *AppendItem(const char *title,
-      const sigc::slot<void, Button&>& function);
+  virtual Button *AppendItem(const char *title,
+      const sigc::slot<void, Button&>& callback);
   /**
    * Inserts a separator (usually a horizontal or vertical line) into the
    * ListBox before a given position.
