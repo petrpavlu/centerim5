@@ -10,7 +10,6 @@ set( cppconsui_SOURCES
 	ColorScheme.cpp
 	ComboBox.cpp
 	CoreManager.cpp
-	CppConsUI.cpp
 	Dialog.cpp
 	FreeWindow.cpp
 	HorizontalLine.cpp

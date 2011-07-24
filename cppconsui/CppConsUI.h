@@ -43,8 +43,8 @@ enum WrapMode {
 class Point
 {
 public:
-  Point();
-  Point(int x, int y);
+  Point() : x(0), y(0) {}
+  Point(int x_, int y_) : x(x_), y(y_) {}
 
   int GetX() const { return x; }
   int GetY() const { return y; }
@@ -56,11 +56,27 @@ protected:
 private:
 };
 
+class Size
+{
+public:
+  Size() : width(0), height(0) {}
+  Size(int w, int h) : width(w), height(h) {}
+
+  int GetWidth() const { return width; }
+  int GetHeight() const { return height; }
+
+  int width, height;
+
+protected:
+
+private:
+};
+
 class Rect: public Point
 {
 public:
-  Rect();
-  Rect(int x, int y, int w, int h);
+  Rect() : width(0), height(0) {}
+  Rect(int x, int y, int w, int h) : Point(x, y), width(w), height(h) {}
 
   int GetWidth() const { return width; }
   int GetHeight() const { return height; }

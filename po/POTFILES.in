@@ -34,7 +34,6 @@ cppconsui/ComboBox.cpp
 cppconsui/ConsuiCurses.cpp
 cppconsui/Container.cpp
 cppconsui/CoreManager.cpp
-cppconsui/CppConsUI.cpp
 cppconsui/Dialog.cpp
 cppconsui/FreeWindow.cpp
 cppconsui/HorizontalLine.cpp

@@ -22,7 +22,6 @@ libcppconsui_la_SOURCES =\
 	ComboBox.h \
 	CoreManager.cpp \
 	CoreManager.h \
-	CppConsUI.cpp \
 	CppConsUI.h \
 	Dialog.cpp \
 	Dialog.h \
