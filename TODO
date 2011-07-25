@@ -1,23 +1,21 @@
-- All classes should have a copy constructor and an operator=().
 - purple_pounces_load()
 - grep for todo's and fix them
-- put something in: README AUTHORS ChangeLog NEWS
+- put something in: ChangeLog NEWS
 - Add an init function to cppconsui which calls
   bindtextdomain (PACKAGE, LOCALEDIR); (as explained by
   <http://www.gnu.org/software/gettext/manual/gettext.html#Libraries>
   also make the translations proper)
 - add function descriptions in the header files
-- TextEntry -- hide passwords with asterisks, fix cursor movement that goes
-  outside the area
+- TextEntry -- hide passwords with asterisks
 - pending auth and auth request windows
-- notice UI ops implementation
+- notify UI ops implementation
 - buddy list customization
 - buddy info window
-- TreeView: add PgUp/PgDn binds, add quick search
+- TreeView: quick search
 - handle PURPLE_DEFAULT_ACTION_NONE correctly
 - don't create ChoiceDialog (Request UI) if there are no options
-- GeneralMenu autosize -> MenuWindow autosize
 - fix Conversation history overflow
 - purple_blist_get_group_size(), purple_blist_get_group_online_count()
 - gtkblist.c: buddy_is_displayable(), redo_buddy_list()
 - implement options mentioned in the man page
+- etc.
