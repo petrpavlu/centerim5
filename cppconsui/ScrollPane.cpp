@@ -96,10 +96,16 @@ void ScrollPane::SetScrollSize(int swidth, int sheight)
   scroll_width = swidth;
   scroll_height = sheight;
   UpdateVirtualArea();
+
+  signal_scrollarea_resize(*this, Size(scroll_width, scroll_height));
 }
 
 void ScrollPane::AdjustScroll(int newx, int newy)
 {
+  bool scrolled = false;
+  if (scroll_xpos != newx || scroll_ypos != newy)
+    scrolled = true;
+
   if (screen_area) {
     scroll_xpos = newx;
     scroll_ypos = newy;
@@ -107,21 +113,35 @@ void ScrollPane::AdjustScroll(int newx, int newy)
     int real_width = screen_area->getmaxx();
     int real_height = screen_area->getmaxy();
 
-    if (scroll_xpos + real_width > scroll_width)
+    if (scroll_xpos + real_width > scroll_width) {
       scroll_xpos = scroll_width - real_width;
-    if (scroll_xpos < 0)
+      scrolled = true;
+    }
+    if (scroll_xpos < 0) {
       scroll_xpos = 0;
+      scrolled = true;
+    }
 
-    if (scroll_ypos + real_height > scroll_height)
+    if (scroll_ypos + real_height > scroll_height) {
       scroll_ypos = scroll_height - real_height;
-    if (scroll_ypos < 0)
+      scrolled = true;
+    }
+    if (scroll_ypos < 0) {
       scroll_ypos = 0;
+      scrolled = true;
+    }
   }
   else {
+    if (!scroll_xpos && !scroll_ypos)
+      scrolled = true;
     scroll_xpos = 0;
     scroll_ypos = 0;
   }
-  Redraw();
+
+  if (scrolled) {
+    Redraw();
+    signal_scrollarea_scroll(*this, Point(scroll_xpos, scroll_ypos));
+  }
 }
 
 void ScrollPane::MakeVisible(int x, int y)
@@ -144,27 +164,29 @@ void ScrollPane::MakeVisible(int x, int y)
   int real_width = screen_area->getmaxx();
   int real_height = screen_area->getmaxy();
 
-  bool redraw = false;
+  bool scrolled = false;
   if (x > scroll_xpos + real_width - 1) {
     scroll_xpos = x - real_width + 1;
-    redraw = true;
+    scrolled = true;
   }
   else if (x < scroll_xpos) {
     scroll_xpos = x;
-    redraw = true;
+    scrolled = true;
   }
 
   if (y > scroll_ypos + real_height - 1) {
     scroll_ypos = y - real_height + 1;
-    redraw = true;
+    scrolled = true;
   }
   else if (y < scroll_ypos) {
     scroll_ypos = y;
-    redraw = true;
+    scrolled = true;
   }
 
-  if (redraw)
+  if (scrolled) {
     Redraw();
+    signal_scrollarea_scroll(*this, Point(scroll_xpos, scroll_ypos));
+  }
 }
 
 void ScrollPane::UpdateArea()

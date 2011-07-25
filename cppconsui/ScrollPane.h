@@ -72,7 +72,7 @@ public:
   /**
    * Returns a size of the scrollable area.
    */
-  Rect GetScrollSize() { return Rect(0, 0, scroll_width, scroll_height); }
+  Size GetScrollSize() { return Size(scroll_width, scroll_height); }
   /**
    * Returns a width of the scrollable area.
    */
@@ -103,6 +103,9 @@ public:
    * Adjusts a scroll area to make a given position visible.
    */
   void MakeVisible(int x, int y);
+
+  sigc::signal<void, ScrollPane&, const Point&> signal_scrollarea_scroll;
+  sigc::signal<void, ScrollPane&, const Size&> signal_scrollarea_resize;
 
 protected:
   int scroll_xpos, scroll_ypos, scroll_width, scroll_height;
