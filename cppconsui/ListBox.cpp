@@ -35,6 +35,8 @@ ListBox::ListBox(int w, int h)
 : AbstractListBox(w, h), children_height(0), autosize_children(0)
 , autosize_height(0), reposition_widgets(false)
 {
+  // allow fast focus changing (paging) using PageUp/PageDown keys
+  page_focus = true;
 }
 
 void ListBox::Draw()
