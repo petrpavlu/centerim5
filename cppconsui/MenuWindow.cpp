@@ -33,15 +33,39 @@ namespace CppConsUI
 
 MenuWindow::MenuWindow(int x, int y, int w, int h, const char *title,
     LineStyle::Type ltype)
-: Window(x, y, w, h, title, TYPE_TOP, ltype)
+: Window(x, y, w, h, title, TYPE_TOP, ltype), wish_height(3)
 {
+  wish_width = MENU_WINDOW_WISH_WIDTH;
+
   listbox = new ListBox(AUTOSIZE, AUTOSIZE);
+  listbox->signal_children_height_change.connect(sigc::mem_fun(this,
+        &MenuWindow::OnChildrenHeightChange));
   Window::AddWidget(*listbox, 0, 0);
 }
 
 void MenuWindow::AddWidget(Widget& widget, int x, int y)
 {
   Window::AddWidget(widget, x, y);
+}
+
+void MenuWindow::ResizeAndUpdateArea()
+{
+  int h = listbox->GetChildrenHeight() + 2;
+  int max = Curses::getmaxy() - win_y;
+  if (h > max)
+    SetWishHeight(MAX(3, max));
+  else
+    SetWishHeight(h);
+
+  Window::ResizeAndUpdateArea();
+}
+
+void MenuWindow::OnChildrenHeightChange(ListBox& activator, int new_height)
+{
+  if (win_h != AUTOSIZE)
+    return;
+
+  ResizeAndUpdateArea();
 }
 
 } // namespace CppConsUI

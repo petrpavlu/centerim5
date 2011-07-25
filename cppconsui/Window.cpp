@@ -140,8 +140,7 @@ void Window::ResizeAndUpdateArea()
 
   panel->MoveResize(0, 0, realw, realh);
 
-  Container::MoveResize(1, 1, realw > 2 ? realw - 2 : 0,
-      realh > 2 ? realh - 2 : 0);
+  Container::MoveResize(1, 1, MAX(0, realw - 2), MAX(0, realh - 2));
   UpdateArea();
 }
 

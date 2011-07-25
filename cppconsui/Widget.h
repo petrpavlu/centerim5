@@ -172,6 +172,7 @@ public:
   virtual const char *GetColorScheme() const;
 
   sigc::signal<void, Widget&, const Rect&, const Rect&> signal_moveresize;
+  sigc::signal<void, Widget&, const Size&> signal_wish_size_change;
   /**
    * Signal emitted whenever a widget grabs or looses the focus.
    */
@@ -191,6 +192,10 @@ protected:
    * if parent window is big enough, real width/height can differ.
    */
   int xpos, ypos, width, height;
+  /**
+   *
+   */
+  int wish_width, wish_height;
   /**
    * Flag if the widget can grab the focus.
    */
@@ -226,6 +231,10 @@ protected:
    * the widget has been updated and that the screen should be redrawn.
    */
   virtual void Redraw();
+
+  virtual void SetWishSize(int neww, int newh);
+  virtual void SetWishWidth(int neww) { SetWishSize(neww, wish_height); }
+  virtual void SetWishHeight(int newh) { SetWishSize(wish_width, newh); }
 
   /**
    * Convenient method that calls COLORSCHEME->GetColorPair(GetColorScheme(),

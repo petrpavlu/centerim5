@@ -29,7 +29,7 @@
 #include "gettext.h"
 
 GeneralMenu::GeneralMenu()
-: MenuWindow(0, 0, 40, 11)
+: MenuWindow(0, 0, AUTOSIZE, AUTOSIZE)
 {
   SetColorScheme("generalmenu");
 
@@ -73,7 +73,7 @@ GeneralMenu::GeneralMenu()
 void GeneralMenu::ScreenResized()
 {
   CppConsUI::Rect chat = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
-  MoveResize(chat.x, chat.y, win_w, win_h);
+  Move(chat.x, chat.y);
 }
 
 void GeneralMenu::OpenAccountWindow(CppConsUI::Button& activator)

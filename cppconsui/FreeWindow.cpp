@@ -79,7 +79,7 @@ void FreeWindow::MoveResize(int newx, int newy, int neww, int newh)
     if (realh == AUTOSIZE)
       realh = Curses::getmaxy() - win_y;
   }
-  Container::MoveResize(0, 0, realw > 0 ? realw : 0, realh > 0 ? realh : 0);
+  Container::MoveResize(0, 0, MAX(0, realw), MAX(0, realh));
   UpdateArea();
 }
 

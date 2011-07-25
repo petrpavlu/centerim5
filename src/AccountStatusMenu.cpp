@@ -27,7 +27,7 @@
 #include "gettext.h"
 
 AccountStatusMenu::AccountStatusMenu()
-: MenuWindow(0, 0, 40, 20)
+: MenuWindow(0, 0, AUTOSIZE, AUTOSIZE)
 {
   SetColorScheme("accountstatusmenu");
 
@@ -63,13 +63,10 @@ void AccountStatusMenu::ScreenResized()
   Move(chat.x, chat.y);
 }
 
-AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h,
-    PurpleAccount *account)
-: MenuWindow(x, y, w, h), account(account)
+AccountStatusMenu::StatusPopup::StatusPopup(PurpleAccount *account)
+: MenuWindow(0, 0, AUTOSIZE, AUTOSIZE), account(account)
 {
   SetColorScheme("accountstatusmenu");
-
-  int height = 2;
 
   bool has_independents = false;
   for (GList *iter = purple_account_get_status_types(account); iter;
@@ -98,12 +95,10 @@ AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h,
     if (active)
       b->GrabFocus();
     g_free(label);
-    height++;
   }
 
   if (has_independents) {
     AppendSeparator();
-    height++;
 
     for (GList *iter = purple_account_get_status_types(account); iter;
         iter = iter->next) {
@@ -129,11 +124,8 @@ AccountStatusMenu::StatusPopup::StatusPopup(int x, int y, int w, int h,
       if (active)
         b->GrabFocus();
       g_free(label);
-      height++;
     }
   }
-
-  SetHeight(height);
 }
 
 void AccountStatusMenu::StatusPopup::ScreenResized()
@@ -153,7 +145,6 @@ void AccountStatusMenu::StatusPopup::SetStatus(CppConsUI::Button& activator,
 void AccountStatusMenu::OpenStatusPopup(CppConsUI::Button& activator,
     PurpleAccount *account)
 {
-  AccountStatusMenu::StatusPopup *status_popup = new StatusPopup(win_x, win_y,
-      win_w, win_h, account);
+  AccountStatusMenu::StatusPopup *status_popup = new StatusPopup(account);
   status_popup->Show();
 }

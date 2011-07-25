@@ -59,6 +59,10 @@ public:
   virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
       int begin_y, int ncols, int nlines);
 
+  virtual int GetChildrenHeight() const { return children_height; };
+
+  sigc::signal<void, ListBox&, int> signal_children_height_change;
+
 protected:
   int children_height;
   int autosize_children;

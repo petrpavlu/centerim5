@@ -42,7 +42,7 @@ private:
   : public MenuWindow
   {
   public:
-    StatusPopup(int x, int y, int w, int h, PurpleAccount *account);
+    StatusPopup(PurpleAccount *account);
     virtual ~StatusPopup() {}
 
     // FreeWindow

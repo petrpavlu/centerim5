@@ -32,6 +32,8 @@
 #include "ListBox.h"
 #include "Window.h"
 
+#define MENU_WINDOW_WISH_WIDTH 40
+
 namespace CppConsUI
 {
 
@@ -60,9 +62,15 @@ public:
 
 protected:
   ListBox *listbox;
+  int wish_height;
 
   // Container
   virtual void AddWidget(Widget& widget, int x, int y);
+
+  // FreeWindow
+  virtual void ResizeAndUpdateArea();
+
+  virtual void OnChildrenHeightChange(ListBox& activator, int new_height);
 
 private:
   MenuWindow(const MenuWindow&);

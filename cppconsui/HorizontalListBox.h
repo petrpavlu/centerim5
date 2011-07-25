@@ -59,6 +59,10 @@ public:
   virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
       int begin_y, int ncols, int nlines);
 
+  virtual int GetChildrenWidth() const { return children_width; };
+
+  sigc::signal<void, HorizontalListBox&, int> signal_children_width_change;
+
 protected:
   int children_width;
   int autosize_children;

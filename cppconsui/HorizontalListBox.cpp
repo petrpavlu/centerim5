@@ -122,6 +122,9 @@ void HorizontalListBox::InsertWidget(size_t pos, Widget& widget)
   // note: widget is moved to a correct position in Draw() method
   ScrollPane::InsertWidget(pos, widget, 0, 0);
   reposition_widgets = true;
+
+  if (widget.IsVisible())
+    signal_children_width_change(*this, children_width);
 }
 
 void HorizontalListBox::AppendWidget(Widget& widget)
@@ -159,6 +162,8 @@ void HorizontalListBox::OnChildMoveResize(Widget& activator,
     children_width += new_width - old_width;
     reposition_widgets = true;
     UpdateScrollWidth();
+
+    signal_children_width_change(*this, children_width);
   }
 }
 
@@ -174,6 +179,8 @@ void HorizontalListBox::OnChildVisible(Widget& activator, bool visible)
   children_width += sign * width;
   reposition_widgets = true;
   UpdateScrollWidth();
+
+  signal_children_width_change(*this, children_width);
 }
 
 void HorizontalListBox::UpdateScrollWidth()

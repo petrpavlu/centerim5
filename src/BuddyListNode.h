@@ -67,7 +67,7 @@ protected:
   protected:
     BuddyListNode *parent;
 
-    void Reposition(int h);
+    void Reposition();
 
   private:
     ContextMenu(const ContextMenu&);

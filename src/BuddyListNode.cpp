@@ -99,13 +99,14 @@ BuddyListNode *BuddyListNode::GetParentNode() const
 }
 
 BuddyListNode::ContextMenu::ContextMenu(BuddyListNode& parent_)
-: MenuWindow(0, 0, 30, 20), parent(&parent_)
+: MenuWindow(0, 0, AUTOSIZE, AUTOSIZE), parent(&parent_)
 {
 }
 
-void BuddyListNode::ContextMenu::Reposition(int h)
+void BuddyListNode::ContextMenu::Reposition()
 {
   CppConsUI::Point p = parent->GetAbsolutePosition();
+  int h = GetWishHeight();
   int above = p.GetY();
   int below = CppConsUI::Curses::getmaxy() - p.GetY() - 1;
 
@@ -255,15 +256,12 @@ const char *BuddyListBuddy::ToString() const
 BuddyListBuddy::ContextMenu::ContextMenu(BuddyListBuddy& parent_)
 : BuddyListNode::ContextMenu(parent_), parent(&parent_)
 {
-  int i = 2;
   AppendItem(_("Alias..."), sigc::mem_fun(this,
         &BuddyListBuddy::ContextMenu::OnChangeAlias));
-  i++;
   AppendItem(_("Delete..."), sigc::mem_fun(this,
         &BuddyListBuddy::ContextMenu::OnRemove));
-  i++;
 
-  Reposition(i);
+  Reposition();
 }
 
 void BuddyListBuddy::ContextMenu::ChangeAliasResponseHandler(
@@ -399,15 +397,12 @@ const char *BuddyListChat::ToString() const
 BuddyListChat::ContextMenu::ContextMenu(BuddyListChat& parent_)
 : BuddyListNode::ContextMenu(parent_), parent(&parent_)
 {
-  int i = 2;
   AppendItem(_("Alias..."), sigc::mem_fun(this,
         &BuddyListChat::ContextMenu::OnChangeAlias));
-  i++;
   AppendItem(_("Delete..."), sigc::mem_fun(this,
         &BuddyListChat::ContextMenu::OnRemove));
-  i++;
 
-  Reposition(i);
+  Reposition();
 }
 
 void BuddyListChat::ContextMenu::ChangeAliasResponseHandler(
@@ -550,15 +545,12 @@ void BuddyListContact::SetRefNode(CppConsUI::TreeView::NodeReference n)
 BuddyListContact::ContextMenu::ContextMenu(BuddyListContact& parent_)
 : BuddyListNode::ContextMenu(parent_), parent(&parent_)
 {
-  int i = 2;
   AppendItem(_("Alias..."), sigc::mem_fun(this,
         &BuddyListContact::ContextMenu::OnChangeAlias));
-  i++;
   AppendItem(_("Delete..."), sigc::mem_fun(this,
         &BuddyListContact::ContextMenu::OnRemove));
-  i++;
 
-  Reposition(i);
+  Reposition();
 }
 
 void BuddyListContact::ContextMenu::ChangeAliasResponseHandler(
@@ -692,15 +684,12 @@ const char *BuddyListGroup::ToString() const
 BuddyListGroup::ContextMenu::ContextMenu(BuddyListGroup& parent_)
 : BuddyListNode::ContextMenu(parent_), parent(&parent_)
 {
-  int i = 2;
   AppendItem(_("Rename..."), sigc::mem_fun(this,
         &BuddyListGroup::ContextMenu::OnRename));
-  i++;
   AppendItem(_("Delete..."), sigc::mem_fun(this,
         &BuddyListGroup::ContextMenu::OnRemove));
-  i++;
 
-  Reposition(i);
+  Reposition();
 }
 
 void BuddyListGroup::ContextMenu::RenameResponseHandler(

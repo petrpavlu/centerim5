@@ -122,6 +122,9 @@ void ListBox::InsertWidget(size_t pos, Widget& widget)
   // note: widget is moved to a correct position in Draw() method
   ScrollPane::InsertWidget(pos, widget, 0, 0);
   reposition_widgets = true;
+
+  if (widget.IsVisible())
+    signal_children_height_change(*this, children_height);
 }
 
 void ListBox::AppendWidget(Widget& widget)
@@ -159,6 +162,8 @@ void ListBox::OnChildMoveResize(Widget& activator, const Rect& oldsize,
     children_height += new_height - old_height;
     reposition_widgets = true;
     UpdateScrollHeight();
+
+    signal_children_height_change(*this, children_height);
   }
 }
 
@@ -174,6 +179,8 @@ void ListBox::OnChildVisible(Widget& activator, bool visible)
   children_height += sign * height;
   reposition_widgets = true;
   UpdateScrollHeight();
+
+  signal_children_height_change(*this, children_height);
 }
 
 void ListBox::UpdateScrollHeight()

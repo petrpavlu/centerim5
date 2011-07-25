@@ -36,9 +36,9 @@ namespace CppConsUI
 {
 
 Widget::Widget(int w, int h)
-: xpos(UNSET), ypos(UNSET), width(w), height(h), can_focus(false)
-, has_focus(false), visible(true), area(NULL), update_area(false)
-, parent(NULL) , color_scheme(NULL)
+: xpos(UNSET), ypos(UNSET), width(w), height(h), wish_width(AUTOSIZE)
+, wish_height(AUTOSIZE), can_focus(false), has_focus(false), visible(true)
+, area(NULL), update_area(false), parent(NULL), color_scheme(NULL)
 {
 }
 
@@ -254,12 +254,12 @@ int Widget::GetRealHeight() const
 
 int Widget::GetWishWidth() const
 {
-  return AUTOSIZE;
+  return wish_width;
 }
 
 int Widget::GetWishHeight() const
 {
-  return AUTOSIZE;
+  return wish_height;
 }
 
 void Widget::SetColorScheme(const char *scheme)
@@ -298,6 +298,16 @@ void Widget::Redraw()
   FreeWindow *win = dynamic_cast<FreeWindow*>(GetTopContainer());
   if (win && COREMANAGER->HasWindow(*win))
     COREMANAGER->Redraw();
+}
+
+void Widget::SetWishSize(int neww, int newh)
+{
+  if (neww == wish_width && newh == wish_height)
+    return;
+
+  wish_width = neww;
+  wish_height = newh;
+  signal_wish_size_change(*this, Size(neww, newh));
 }
 
 int Widget::GetColorPair(const char *widget, const char *property) const
