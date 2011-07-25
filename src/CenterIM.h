@@ -154,6 +154,7 @@ private:
   void ActionFocusActiveConversation();
   void ActionOpenAccountStatusMenu();
   void ActionOpenGeneralMenu();
+  void ActionBuddyListToggleOffline();
   void ActionFocusPrevConversation();
   void ActionFocusNextConversation();
   void ActionExpandConversation();

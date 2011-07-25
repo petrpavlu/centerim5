@@ -532,6 +532,12 @@ void CenterIM::ActionOpenGeneralMenu()
   menu->Show();
 }
 
+void CenterIM::ActionBuddyListToggleOffline()
+{
+  gboolean cur = purple_prefs_get_bool(CONF_PREFIX "/blist/show_offline_buddies");
+  purple_prefs_set_bool(CONF_PREFIX "/blist/show_offline_buddies", !cur);
+}
+
 void CenterIM::ActionFocusPrevConversation()
 {
   CONVERSATIONS->FocusPrevConversation();
@@ -576,6 +582,9 @@ void CenterIM::DeclareBindables()
   DeclareBindable("centerim", "generalmenu",
       sigc::mem_fun(this, &CenterIM::ActionOpenGeneralMenu),
       InputProcessor::BINDABLE_OVERRIDE);
+  DeclareBindable("centerim", "buddylist-toggle-offline",
+      sigc::mem_fun(this, &CenterIM::ActionBuddyListToggleOffline),
+      InputProcessor::BINDABLE_OVERRIDE);
   DeclareBindable("centerim", "conversation-prev",
       sigc::mem_fun(this, &CenterIM::ActionFocusPrevConversation),
       InputProcessor::BINDABLE_OVERRIDE);
@@ -594,6 +603,7 @@ void CenterIM::InitDefaultKeys()
   KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-active", "F2");
   KEYCONFIG->AddDefaultKeyBind("centerim", "accountstatusmenu", "F3");
   KEYCONFIG->AddDefaultKeyBind("centerim", "generalmenu", "F4");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "buddylist-toggle-offline", "F5");
   KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-expand", "F6");
 
   KEYCONFIG->AddDefaultKeyBind("centerim", "buddylist", "Alt-1");
