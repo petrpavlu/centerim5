@@ -148,12 +148,25 @@ public:
    * Returns a real (on-screen) width. See note in GetAbsolutePosition()
    * method.
    */
-  virtual int GetRealWidth();
+  virtual int GetRealWidth() const;
   /**
    * Returns a real (on-screen) height. See note in GetAbsolutePosition()
    * method.
    */
-  virtual int GetRealHeight();
+  virtual int GetRealHeight() const;
+
+  /**
+   * Returns an area width that is requested by the widget. This method can
+   * be used by a parent widget in GetSubPad() if width is set to AUTOSIZE.
+   * The AUTOSIZE returned value means "as much as possible".
+   */
+  virtual int GetWishWidth() const;
+  /**
+   * Returns an area height that is requested by the widget. This method can
+   * be used by a parent widget in GetSubPad() if height is set to AUTOSIZE.
+   * The AUTOSIZE returned value means "as much as possible".
+   */
+  virtual int GetWishHeight() const;
 
   virtual void SetColorScheme(const char *scheme);
   virtual const char *GetColorScheme() const;

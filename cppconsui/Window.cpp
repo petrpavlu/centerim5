@@ -49,14 +49,7 @@ void Window::MoveResize(int newx, int newy, int neww, int newh)
   win_w = neww;
   win_h = newh;
 
-  int realw = win_w != AUTOSIZE ? win_w : Curses::getmaxx() - win_x;
-  int realh = win_w != AUTOSIZE ? win_h : Curses::getmaxy() - win_y;
-
-  panel->MoveResize(0, 0, realw, realh);
-
-  Container::MoveResize(1, 1, realw > 2 ? realw - 2 : 0,
-      realh > 2 ? realh - 2 : 0);
-  UpdateArea();
+  ResizeAndUpdateArea();
 }
 
 Point Window::GetAbsolutePosition(const Container& ref,
@@ -100,6 +93,11 @@ Curses::Window *Window::GetSubPad(const Widget &child, int begin_x,
   int realw = area->getmaxx() - 2;
   int realh = area->getmaxy() - 2;
 
+  if (nlines == AUTOSIZE)
+    nlines = child.GetWishHeight();
+  if (ncols == AUTOSIZE)
+    ncols = child.GetWishWidth();
+
   /* Extend requested subpad to whole panel area or shrink requested area if
    * necessary. */
   if (nlines == AUTOSIZE || nlines > realh - begin_y)
@@ -127,12 +125,23 @@ LineStyle::Type Window::GetBorderStyle() const
 
 void Window::ResizeAndUpdateArea()
 {
-  int w = win_w != AUTOSIZE ? win_w : Curses::getmaxx() - win_x;
-  int h = win_w != AUTOSIZE ? win_h : Curses::getmaxy() - win_y;
+  int realw = win_w;
+  if (realw == AUTOSIZE) {
+    realw = GetWishWidth();
+    if (realw == AUTOSIZE)
+      realw = Curses::getmaxx() - win_x;
+  }
+  int realh = win_h;
+  if (realh == AUTOSIZE) {
+    realh = GetWishHeight();
+    if (realh == AUTOSIZE)
+      realh = Curses::getmaxy() - win_y;
+  }
 
-  panel->MoveResize(0, 0, w, h);
+  panel->MoveResize(0, 0, realw, realh);
 
-  Container::MoveResize(1, 1, w > 2 ? w - 2 : 0, h > 2 ? h - 2 : 0);
+  Container::MoveResize(1, 1, realw > 2 ? realw - 2 : 0,
+      realh > 2 ? realh - 2 : 0);
   UpdateArea();
 }
 

@@ -414,6 +414,11 @@ Curses::Window *Container::GetSubPad(const Widget& child, int begin_x,
   int realw = area->getmaxx();
   int realh = area->getmaxy();
 
+  if (nlines == AUTOSIZE)
+    nlines = child.GetWishHeight();
+  if (ncols == AUTOSIZE)
+    ncols = child.GetWishWidth();
+
   /* Extend requested subpad to whole parent area or shrink requested area
    * if necessary. */
   if (nlines == AUTOSIZE || nlines > realh - begin_y)

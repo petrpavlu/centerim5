@@ -67,8 +67,18 @@ void FreeWindow::MoveResize(int newx, int newy, int neww, int newh)
   win_w = neww;
   win_h = newh;
 
-  int realw = win_w != AUTOSIZE ? win_w : Curses::getmaxx() - win_x;
-  int realh = win_w != AUTOSIZE ? win_h : Curses::getmaxy() - win_y;
+  int realw = win_w;
+  if (realw == AUTOSIZE) {
+    realw = GetWishWidth();
+    if (realw == AUTOSIZE)
+      realw = Curses::getmaxx() - win_x;
+  }
+  int realh = win_h;
+  if (realh == AUTOSIZE) {
+    realh = GetWishHeight();
+    if (realh == AUTOSIZE)
+      realh = Curses::getmaxy() - win_y;
+  }
   Container::MoveResize(0, 0, realw > 0 ? realw : 0, realh > 0 ? realh : 0);
   UpdateArea();
 }
@@ -163,8 +173,18 @@ void FreeWindow::ProceedUpdateArea()
     // update virtual area
     if (area)
       delete area;
-    int realw = win_w != AUTOSIZE ? win_w : Curses::getmaxx() - win_x;
-    int realh = win_h != AUTOSIZE ? win_h : Curses::getmaxy() - win_y;
+    int realw = win_w;
+    if (realw == AUTOSIZE) {
+      realw = GetWishWidth();
+      if (realw == AUTOSIZE)
+        realw = Curses::getmaxx() - win_x;
+    }
+    int realh = win_h;
+    if (realh == AUTOSIZE) {
+      realh = GetWishHeight();
+      if (realh == AUTOSIZE)
+        realh = Curses::getmaxy() - win_y;
+    }
     area = Curses::Window::newpad(realw, realh);
 
     // update real area

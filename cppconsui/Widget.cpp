@@ -238,18 +238,28 @@ Point Widget::GetRelativePosition(const Container& ref) const
   return parent->GetRelativePosition(ref, *this);
 }
 
-int Widget::GetRealWidth()
+int Widget::GetRealWidth() const
 {
   if (!area)
     return 0;
   return area->getmaxx();
 }
 
-int Widget::GetRealHeight()
+int Widget::GetRealHeight() const
 {
   if (!area)
     return 0;
   return area->getmaxy();
+}
+
+int Widget::GetWishWidth() const
+{
+  return AUTOSIZE;
+}
+
+int Widget::GetWishHeight() const
+{
+  return AUTOSIZE;
 }
 
 void Widget::SetColorScheme(const char *scheme)
