@@ -49,14 +49,14 @@ void ScrollPane::Draw()
   DrawEx(true);
 }
 
-int ScrollPane::GetRealWidth()
+int ScrollPane::GetRealWidth() const
 {
   if (!screen_area)
     return 0;
   return screen_area->getmaxx();
 }
 
-int ScrollPane::GetRealHeight()
+int ScrollPane::GetRealHeight() const
 {
   if (!screen_area)
     return 0;
