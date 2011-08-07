@@ -119,7 +119,7 @@ private:
   static void authorize_and_add_cb_(AuthAndAdd *aa)
     { ACCOUNTS->authorize_and_add_cb(aa); }
   static void deny_no_add_cb_(AuthAndAdd *aa)
-    { ACCOUNTS->deny_no_add_cb_(aa); }
+    { ACCOUNTS->deny_no_add_cb(aa); }
 
   void authorize_and_add_cb(AuthAndAdd *aa);
   void deny_no_add_cb(AuthAndAdd *aa);
