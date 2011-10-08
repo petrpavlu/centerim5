@@ -22,7 +22,7 @@
 #include "Conversation.h"
 
 #include "CenterIM.h"
-#include <Footer.h>
+#include "Footer.h"
 
 #include <cppconsui/Keys.h>
 

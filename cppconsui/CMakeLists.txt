@@ -91,3 +91,5 @@ target_link_libraries( cppconsui
 		${GLIB2_LIBRARIES}
 		${SIGC_LIBRARIES}
 	)
+
+add_subdirectory( libtermkey/)

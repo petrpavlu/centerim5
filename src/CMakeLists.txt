@@ -61,7 +61,6 @@ add_dependencies( centerim git-version.h )
 add_dependencies( centerim translations )
 
 target_link_libraries( centerim
-		termkey
 		cppconsui
 		${PURPLE_LIBRARIES}
 	)
