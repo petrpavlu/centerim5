@@ -131,7 +131,7 @@ void Accounts::notify_added(PurpleAccount *account, const char *remote_user,
     const char *id, const char *alias, const char *message)
 {
   char *buf = MakeInfo(account, remote_user, id, alias, message);
-  LOG->Message(buf);
+  LOG->Message("%s", buf);
   g_free(buf);
 }
 
