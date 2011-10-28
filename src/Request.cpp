@@ -118,8 +118,8 @@ Request::ChoiceDialog::ChoiceDialog(const char *title, const char *primary,
   lbox->AppendWidget(*combo);
   combo->GrabFocus();
 
-  char *text;
-  while ((text = va_arg(choices, char*))) {
+  const char *text;
+  while ((text = va_arg(choices, const char*))) {
     int resp = va_arg(choices, int);
     combo->AddOption(text, resp);
   }
@@ -160,7 +160,7 @@ Request::ActionDialog::ActionDialog(const char *title, const char *primary,
 : RequestDialog(title, primary, secondary, NULL, NULL, NULL, NULL, user_data)
 {
   for (size_t i = 0; i < action_count; i++) {
-    char *title = va_arg(actions, char*);
+    const char *title = va_arg(actions, const char*);
     GCallback cb = va_arg(actions, GCallback);
 
     CppConsUI::Button *b = buttons->AppendItem(title,
@@ -169,7 +169,7 @@ Request::ActionDialog::ActionDialog(const char *title, const char *primary,
     if (static_cast<int>(i) == default_value)
       b->GrabFocus();
 
-    if (i != action_count - 1)
+    if (i < action_count - 1)
       buttons->AppendSeparator();
   }
 }
@@ -190,7 +190,12 @@ void Request::ActionDialog::OnActionChoice(CppConsUI::Button& activator,
   if (cb)
     reinterpret_cast<PurpleRequestActionCb>(cb)(user_data, i);
 
-  Close();
+  /* It's possible that the callback action already called
+   * purple_request_destroy() in which case 'this' object is already deleted
+   * and calling Close() in such a case leads to an error. */
+  Requests *requests = &REQUEST->requests;
+  if (requests->find(this) != requests->end())
+    Close();
 }
 
 Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,

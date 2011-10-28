@@ -51,8 +51,10 @@ private:
 2. General debugging
 --------------------
 
-Use '--enable-debug' configure option to disable optimizations and enable
-producing of binary with debugging information.
+Use the '--enable-debug' configure option to disable optimizations and to
+enable producing of binary with debugging information.
+
+Use the '--enable-strict' configure option to enable extra compiler warnings.
 
 
 3. Valgrind notes
@@ -61,7 +63,8 @@ producing of binary with debugging information.
 % export GLIBCXX_FORCE_NEW=1
 % export G_DEBUG=gc-friendly
 % export G_SLICE=always-malloc
-% valgrind --leak-check=full --log-file=cim5.log centerim5
+% valgrind --leak-check=full --child-silent-after-fork=yes \
+    --log-file=cim5.log --track-fds=yes centerim5
 
 Make sure you don't run this command on libtool's binary wrapper.
 

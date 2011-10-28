@@ -399,6 +399,8 @@ void BuddyList::add_buddy_ok_cb(PurpleRequestFields *fields)
     return;
   }
 
+  if (alias && !alias[0])
+    alias = NULL;
   b = purple_buddy_new(account, name, alias);
   purple_blist_add_buddy(b, NULL, g, NULL);
   purple_account_add_buddy(account, b);
@@ -464,7 +466,8 @@ void BuddyList::add_chat_ok_cb(PurpleRequestFields *fields)
       purple_blist_add_group(g, NULL);
     }
     purple_blist_add_chat(chat, g, NULL);
-    purple_blist_alias_chat(chat, alias);
+    if (alias && alias[0])
+      purple_blist_alias_chat(chat, alias);
     purple_blist_node_set_bool(reinterpret_cast<PurpleBlistNode*>(chat),
         PACKAGE_NAME "-autojoin", autojoin);
   }

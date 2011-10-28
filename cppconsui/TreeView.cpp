@@ -390,7 +390,7 @@ int TreeView::DrawNode(SiblingIterator node, int top)
 {
   int height = 0, j;
   SiblingIterator i;
-  int depthoffset = thetree.depth(node) * 3;
+  int depthoffset = thetree.depth(node) * 2;
   int realw = area->getmaxx();
 
   // draw the node Widget first
@@ -428,19 +428,21 @@ int TreeView::DrawNode(SiblingIterator node, int top)
           area->mvaddstring(depthoffset, top + height, linestyle.CornerBL());
       }
 
+      /*
       if (depthoffset + 1 < realw)
         area->mvaddstring(depthoffset + 1, top + height, linestyle.H());
+        */
 
       if (i->style == STYLE_NORMAL && IsNodeOpenable(i)) {
+        if (depthoffset + 1 < realw)
+          area->mvaddstring(depthoffset + 1, top + height, "[");
         if (depthoffset + 2 < realw)
-          area->mvaddstring(depthoffset + 2, top + height, "[");
+          area->mvaddstring(depthoffset + 2, top + height, i->collapsed ? "+" : "-");
         if (depthoffset + 3 < realw)
-          area->mvaddstring(depthoffset + 3, top + height, i->collapsed ? "+" : "-");
-        if (depthoffset + 4 < realw)
-          area->mvaddstring(depthoffset + 4, top + height, "]");
+          area->mvaddstring(depthoffset + 3, top + height, "]");
       }
-      else if (depthoffset + 2 < realw)
-        area->mvaddstring(depthoffset + 2, top + height, linestyle.H());
+      else if (depthoffset + 1 < realw)
+        area->mvaddstring(depthoffset + 1, top + height, linestyle.H());
 
       area->attroff(attrs);
       int oldh = height;

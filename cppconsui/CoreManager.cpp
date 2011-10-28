@@ -27,6 +27,7 @@
 #include <string.h>
 #include <poll.h>
 #include <sys/ioctl.h>
+#include <signal.h>
 #include <termios.h>
 #include <unistd.h>
 #include "gettext.h"
@@ -271,13 +272,14 @@ CoreManager::~CoreManager()
   InputUnInit();
 
   // close all windows
-  int i = 0;
-  while (i < (int) windows.size()) {
+  size_t i = 0;
+  while (i < windows.size()) {
     FreeWindow *win = windows[i];
-    /* There are two possibilities, either window is in Close() method removed
-     * from the core manager or not, in the first case we don't increase i. */
+    /* There are two possibilities, either a window is in the Close() method
+     * removed from the core manager or not. We don't increase i in the first
+     * case. */
     win->Close();
-    if (i < (int) windows.size() && windows[i] == win)
+    if (i < windows.size() && windows[i] == win)
       i++;
   }
 

@@ -100,7 +100,7 @@ private:
   CenterIM();
   CenterIM(const CenterIM&);
   CenterIM& operator=(const CenterIM&);
-  ~CenterIM() {}
+  virtual ~CenterIM() {}
 
   int PurpleInit(const char *config_path);
   void PurpleFinalize();
