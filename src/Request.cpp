@@ -46,11 +46,11 @@ Request::RequestDialog::RequestDialog(const char *title,
 
   lbox = new CppConsUI::ListBox(AUTOSIZE, AUTOSIZE);
   if (primary)
-    lbox->AppendWidget(*(new CppConsUI::Label(primary)));
+    lbox->AppendWidget(*(new CppConsUI::Label(AUTOSIZE, 1, primary)));
   if (primary && secondary)
     lbox->AppendWidget(*(new CppConsUI::Spacer(AUTOSIZE, 1)));
   if (secondary)
-    lbox->AppendWidget(*(new CppConsUI::Label(secondary)));
+    lbox->AppendWidget(*(new CppConsUI::Label(AUTOSIZE, 1, secondary)));
   if (primary || secondary)
     lbox->AppendWidget(*(new CppConsUI::HorizontalLine(AUTOSIZE)));
   SetContainer(*lbox);
