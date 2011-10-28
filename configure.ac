@@ -78,26 +78,30 @@ AC_PATH_LIB(ncursesw, , ncurses.h, ncursesw5-config, , , [
 # Set default compiler flags. #
 ###############################
 
+AC_ARG_ENABLE([strict], [AC_HELP_STRING([--enable-strict],
+	[enable extra compiler warnings during build])])
+
 if test "$GCC" = yes; then
-	CFLAGS="-Wall -Wextra -Wno-missing-field-initializers -Wno-unused-parameter -pedantic $CFLAGS"
-	CXXFLAGS="-Wall -Wextra -Wno-missing-field-initializers -Wno-unused-parameter -pedantic -Wno-long-long $CXXFLAGS"
+	AS_IF([test "$enable_strict" = yes],
+		[CFLAGS="-Wall -Wextra -Wno-missing-field-initializers -Wno-unused-parameter -pedantic $CFLAGS"
+		CXXFLAGS="-Wall -Wextra -Wno-missing-field-initializers -Wno-unused-parameter -pedantic -Wno-long-long $CXXFLAGS"])
 fi
 
 ###########
 # Options #
 ###########
 
-# TODO provide correct switches for Sun C++ compiler too
-if test "$GCC" = yes; then
-	AC_ARG_ENABLE([debug], [AC_HELP_STRING([--enable-debug],
-		[compile with debugging support])])
+AC_ARG_ENABLE([debug], [AC_HELP_STRING([--enable-debug],
+	[compile with debugging support])])
 
+# TODO provide correct switches for other compilers too
+if test "$GCC" = yes; then
 	AS_IF([test "$enable_debug" = yes],
 		[CFLAGS="-ggdb -O0 $CFLAGS"
-	 	CXXFLAGS="-ggdb -O0 $CXXFLAGS"
-	 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])],
+		CXXFLAGS="-ggdb -O0 $CXXFLAGS"
+		AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])],
 		[CFLAGS="-O2 $CFLAGS"
-	 	CXXFLAGS="-O2 $CXXFLAGS"])
+		CXXFLAGS="-O2 $CXXFLAGS"])
 fi
 if test "$SUNCC" = yes; then
 	CXXFLAGS="-library=stdcxx4 $CXXFLAGS"
