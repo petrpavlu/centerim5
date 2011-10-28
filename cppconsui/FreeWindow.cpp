@@ -28,9 +28,6 @@
 #include "FreeWindow.h"
 
 #include "CoreManager.h"
-#include "Keys.h"
-
-#include "gettext.h"
 
 namespace CppConsUI
 {

@@ -28,7 +28,6 @@
 #include "CheckBox.h"
 
 #include "Dialog.h"
-#include "Keys.h"
 
 #include "gettext.h"
 

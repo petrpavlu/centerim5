@@ -21,10 +21,6 @@
 
 #include "TreeView.h"
 
-#include "Keys.h"
-
-#include "gettext.h"
-
 namespace CppConsUI
 {
 

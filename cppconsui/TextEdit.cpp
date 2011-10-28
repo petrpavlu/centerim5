@@ -32,11 +32,8 @@
 
 #include "TextEdit.h"
 
-#include "Keys.h"
-
 #include <algorithm>
 #include <string.h>
-#include "gettext.h"
 
 // gap expand size when the gap becomes filled
 /// @todo Increase GAP_SIZE_EXPAND later.

@@ -28,10 +28,8 @@
 #include "TextEntry.h"
 
 #include "Container.h"
-#include "Keys.h"
 
 #include <string.h>
-#include "gettext.h"
 
 namespace CppConsUI
 {

@@ -28,10 +28,6 @@
 
 #include "Button.h"
 
-#include "Keys.h"
-
-#include "gettext.h"
-
 namespace CppConsUI
 {
 
