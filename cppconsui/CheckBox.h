@@ -40,12 +40,6 @@ class CheckBox
 : public Widget
 {
 public:
-  enum Style {
-    STYLE_DEFAULT,
-    STYLE_YES_NO = STYLE_DEFAULT,
-    STYLE_BOX
-  };
-
   CheckBox(int w, int h, const char *text_ = NULL,
       bool default_state = false);
   explicit CheckBox(const char *text_ = NULL, bool default_state = false);
@@ -66,9 +60,6 @@ public:
   virtual void SetState(bool new_state);
   virtual bool GetState() const { return state; }
 
-  virtual void SetStyle(Style new_style);
-  virtual Style GetStyle() const { return style; }
-
   /**
    * Emited signal when a checkbox is pressed/activated.
    */
@@ -76,8 +67,9 @@ public:
 
 protected:
   char *text;
+  int text_width;
+  int text_height;
   bool state;
-  Style style;
 
 private:
   CheckBox(const CheckBox&);

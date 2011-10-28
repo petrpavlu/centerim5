@@ -35,10 +35,8 @@ namespace CppConsUI
 {
 
 CheckBox::CheckBox(int w, int h, const char *text_, bool default_state)
-: Widget(w, h)
-, text(NULL)
+: Widget(w, h), text(NULL), text_width(0), text_height(0)
 , state(default_state)
-, style(STYLE_DEFAULT)
 {
   SetText(text_);
 
@@ -47,10 +45,8 @@ CheckBox::CheckBox(int w, int h, const char *text_, bool default_state)
 }
 
 CheckBox::CheckBox(const char *text_, bool default_state)
-: Widget(AUTOSIZE, 1)
-, text(NULL)
+: Widget(AUTOSIZE, AUTOSIZE), text(NULL), text_width(0), text_height(0)
 , state(default_state)
-, style(STYLE_DEFAULT)
 {
   SetText(text_);
 
@@ -72,40 +68,47 @@ void CheckBox::Draw()
     return;
 
   int attrs;
-  if (has_focus) {
-    attrs = GetColorPair("checkbox", "focus");
-    area->attron(attrs | Curses::Attr::REVERSE);
-  }
-  else {
-    attrs = GetColorPair("checkbox", "normal");
-    area->attron(attrs);
-  }
-
-  /**
-   * @todo Though this is not a widget for long text there are some cases in
-   * cim where we use it for a short but multiline text, so we should threat
-   * LF specially here.
-   */
-
-  int max = area->getmaxx() * area->getmaxy();
-  int x = area->mvaddstring(0, 0, max, text);
-  if (style == STYLE_BOX) {
-    // @todo Add fallback (ascii) mode for STYLE_BOX.
-    if (state)
-      x += area->mvaddstring(x, 0, max - x, " \xe2\x9c\x93");
-    else
-      x += area->mvaddstring(x, 0, max - x, " \xe2\x9c\x97");
-  }
-  else {
-    x += area->mvaddstring(x, 0, max - x, ": ");
-    area->mvaddstring(x, 0, max - x,
-        state ? YES_BUTTON_TEXT : NO_BUTTON_TEXT);
-  }
-
   if (has_focus)
-    area->attroff(attrs | Curses::Attr::REVERSE);
+    attrs = GetColorPair("checkbox", "focus") | Curses::Attr::REVERSE;
   else
-    area->attroff(attrs);
+    attrs = GetColorPair("checkbox", "normal");
+  area->attron(attrs);
+
+  int realw = area->getmaxx();
+  int realh = area->getmaxy();
+
+  // print text
+  area->fill(attrs, 0, 0, text_width, realh);
+  int y = 0;
+  const char *start, *end;
+  start = end = text;
+  while (*end) {
+    if (*end == '\n') {
+      if (y >= realh)
+        break;
+
+      area->mvaddstring(0, y, realw, start, end);
+      y++;
+      start = end + 1;
+    }
+    end++;
+  }
+  if (y < realh)
+    area->mvaddstring(0, y, realw, start, end);
+
+  int l = text_width;
+  int h = (text_height - 1) / 2;
+
+  // print value
+  const char *value = state ? YES_BUTTON_TEXT : NO_BUTTON_TEXT;
+  int value_width = Curses::onscreen_width(value);
+  area->fill(attrs, l, 0, value_width + 2, realh);
+  if (h < realh) {
+    l += area->mvaddstring(l, h, realw - l, ": ");
+    l += area->mvaddstring(l, h, realw - l, value);
+  }
+
+  area->attroff(attrs);
 }
 
 void CheckBox::SetText(const char *new_text)
@@ -114,6 +117,30 @@ void CheckBox::SetText(const char *new_text)
     g_free(text);
 
   text = g_strdup(new_text);
+
+  // update text_width, text_height and wish height
+  text_width = 0;
+  text_height = 1;
+  if (text) {
+    const char *start, *end;
+    start = end = text;
+    int w;
+    while (*end) {
+      if (*end == '\n') {
+        w = Curses::onscreen_width(start, end);
+        if (w > text_width)
+          text_width = w;
+        text_height++;
+        start = end + 1;
+      }
+      end++;
+    }
+    w = Curses::onscreen_width(start, end);
+    if (w > text_width)
+      text_width = w;
+  }
+  SetWishHeight(text_height);
+
   Redraw();
 }
 
@@ -124,12 +151,6 @@ void CheckBox::SetState(bool new_state)
 
   if (state != old_state)
     signal_toggle(*this, state);
-  Redraw();
-}
-
-void CheckBox::SetStyle(Style new_style)
-{
-  style = new_style;
   Redraw();
 }
 

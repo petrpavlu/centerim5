@@ -39,7 +39,7 @@ Label::Label(int w, int h, const char *text_)
 }
 
 Label::Label(const char *text_)
-: Widget(AUTOSIZE, 1)
+: Widget(AUTOSIZE, AUTOSIZE)
 , text(NULL)
 {
   SetText(text_);
@@ -58,17 +58,30 @@ void Label::Draw()
   if (!area || !text)
     return;
 
-  /**
-   * @todo Though this is not a widget for long text there are some cases in
-   * cim where we use it for a short but multiline text, so we should threat
-   * LF specially here.
-   */
-
   int attrs = GetColorPair("label", "text");
   area->attron(attrs);
 
-  int max = area->getmaxx() * area->getmaxy();
-  area->mvaddstring(0, 0, max, text);
+  int realw = area->getmaxx();
+  int realh = area->getmaxy();
+
+  // print text
+  int y = 0;
+  const char *start, *end;
+  start = end = text;
+  int p;
+  while (*end) {
+    if (*end == '\n') {
+      if (y >= realh)
+        break;
+
+      p = area->mvaddstring(0, y, realw * (realh - y), start, end);
+      y += (p / realw) + 1;
+      start = end + 1;
+    }
+    end++;
+  }
+  if (y < realh)
+    area->mvaddstring(0, y, realw * (realh - y), start, end);
 
   area->attroff(attrs);
 }
@@ -79,6 +92,24 @@ void Label::SetText(const char *new_text)
     g_free(text);
 
   text = g_strdup(new_text);
+
+  // update wish height
+  int h = 1;
+  if (text) {
+    const char *start, *end;
+    start = end = text;
+    while (*end) {
+      if (*end == '\n') {
+        Curses::onscreen_width(start, end);
+        h++;
+        start = end + 1;
+      }
+      end++;
+    }
+    Curses::onscreen_width(start, end);
+  }
+  SetWishHeight(h);
+
   Redraw();
 }
 

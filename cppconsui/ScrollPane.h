@@ -57,52 +57,57 @@ public:
   /**
    * Sets a size of the scrollable area.
    */
-  void SetScrollSize(int swidth, int sheight);
+  virtual void SetScrollSize(int swidth, int sheight);
   /**
    * Sets a width of the scrollable area.
    */
-  void SetScrollWidth(int swidth)
+  virtual void SetScrollWidth(int swidth)
     { SetScrollSize(swidth, scroll_height); }
   /**
    * Sets a height of the scrollable area.
    */
-  void SetScrollHeight(int sheight)
+  virtual void SetScrollHeight(int sheight)
     { SetScrollSize(scroll_width, sheight); }
 
   /**
    * Returns a size of the scrollable area.
    */
-  Size GetScrollSize() { return Size(scroll_width, scroll_height); }
+  virtual Size GetScrollSize() { return Size(scroll_width, scroll_height); }
   /**
    * Returns a width of the scrollable area.
    */
-  int GetScrollWidth() { return scroll_width; }
+  virtual int GetScrollWidth() { return scroll_width; }
   /**
    * Returns a height of the scrollable area.
    */
-  int GetScrollHeight() { return scroll_height; }
+  virtual int GetScrollHeight() { return scroll_height; }
 
   /**
    * Adjusts a visible area to a given position.
    */
-  void AdjustScroll(int newx, int newy);
+  virtual void AdjustScroll(int newx, int newy);
   /**
    * Returns a visible scroll area coordinates.
    */
-  Point GetScrollPosition() { return Point(scroll_xpos, scroll_ypos); }
+  virtual Point GetScrollPosition()
+    { return Point(scroll_xpos, scroll_ypos); }
   /**
    * Returns a visible scroll area x position.
    */
-  int GetScrollPositionX() { return scroll_xpos; }
+  virtual int GetScrollPositionX() { return scroll_xpos; }
   /**
    * Returns a visible scroll area y position.
    */
-  int GetScrollPositionY() { return scroll_ypos; }
+  virtual int GetScrollPositionY() { return scroll_ypos; }
 
   /**
    * Adjusts a scroll area to make a given position visible.
    */
-  void MakeVisible(int x, int y);
+  virtual void MakeVisible(int x, int y);
+  /**
+   * Adjusts a scroll area to make a given area visible.
+   */
+  virtual void MakeVisible(int x, int y, int w, int h);
 
   sigc::signal<void, ScrollPane&, const Point&> signal_scrollarea_scroll;
   sigc::signal<void, ScrollPane&, const Size&> signal_scrollarea_resize;
@@ -121,6 +126,7 @@ protected:
   virtual void ProceedUpdateVirtualArea();
 
   virtual void DrawEx(bool container_draw);
+  virtual bool MakePointVisible(int x, int y);
 
 private:
   ScrollPane(const ScrollPane&);

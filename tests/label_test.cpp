@@ -39,8 +39,7 @@ LabelWindow::LabelWindow()
     1, // height
     "Press F10 to quit."); // text
   /* Add label to container, container takes widget ownership and deletes it
-   * when necessary.
-   */
+   * when necessary. */
   AddWidget(*label, 1, 1);
 
   label = new CppConsUI::Label(20, 1,
@@ -51,6 +50,10 @@ LabelWindow::LabelWindow()
       "Multiline label, multiline label, multiline label");
   AddWidget(*label, 1, 5);
 
+  label = new CppConsUI::Label(
+      "Auto multiline label,\nauto multiline label,\nauto multiline label");
+  AddWidget(*label, 1, 9);
+
   // unicode test
   label = new CppConsUI::Label(30, 3,
       "\x56\xc5\x99\x65\xc5\xa1\x74\xc3\xad\x63\xc3\xad\x20\x70\xc5\x99"
@@ -58,10 +61,10 @@ LabelWindow::LabelWindow()
       "\x64\x6f\x76\x61\x6c\x79\x20\xc3\xba\x70\x6c\x6e\xc4\x9b\x20\xc4"
       "\x8d\x65\x72\x73\x74\x76\xc3\xbd\x63\x68\x20\xc5\x99\xc3\xad\x7a"
       "\x65\xc4\x8d\x6b\xc5\xaf\x2e\x0a");
-  AddWidget(*label, 1, 9);
+  AddWidget(*label, 1, 13);
 
   label = new CppConsUI::Label("Autosize");
-  AddWidget(*label, 1, 13);
+  AddWidget(*label, 1, 17);
 
   const gchar *long_text = "Lorem ipsum dolor sit amet, consectetur"
     "adipiscing elit. Duis dui dui, interdum eget tempor auctor, viverra"
@@ -79,13 +82,13 @@ LabelWindow::LabelWindow()
     "tincidunt laoreet lobortis.";
 
   label = new CppConsUI::Label(AUTOSIZE, 10, long_text);
-  AddWidget(*label, 42, 13);
+  AddWidget(*label, 42, 17);
 
   label = new CppConsUI::Label(40, AUTOSIZE, long_text);
-  AddWidget(*label, 1, 24);
+  AddWidget(*label, 1, 28);
 
   label = new CppConsUI::Label(AUTOSIZE, AUTOSIZE, long_text);
-  AddWidget(*label, 42, 24);
+  AddWidget(*label, 42, 28);
 }
 
 // TestApp class

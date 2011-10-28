@@ -87,8 +87,28 @@ void TreeView::Draw()
   DrawNode(thetree.begin(), 0);
 
   // make sure that currently focused widget is visible
-  if (focus_child)
-    MakeVisible(focus_child->GetLeft(), focus_child->GetTop());
+  if (focus_child) {
+    Point p = focus_child->GetRelativePosition(*this);
+
+    /* X and Y have to be readjusted because they are relative to the
+     * ScrollPane screen area, meaning they aren't relative to the virtual
+     * area. */
+    int x = p.GetX() + GetScrollPositionX();
+    int y = p.GetY() + GetScrollPositionY();
+
+    int w = focus_child->GetWidth();
+    if (w == AUTOSIZE)
+      w = focus_child->GetWishWidth();
+    if (w == AUTOSIZE)
+      w = 1;
+    int h = focus_child->GetHeight();
+    if (h == AUTOSIZE)
+      h = focus_child->GetWishHeight();
+    if (h == AUTOSIZE)
+      h = 1;
+
+    MakeVisible(x, y, w, h);
+  }
 
   ScrollPane::DrawEx(false);
 }
@@ -181,7 +201,9 @@ void TreeView::GetFocusChain(FocusChain& focus_chain,
 Curses::Window *TreeView::GetSubPad(const Widget& child, int begin_x,
     int begin_y, int ncols, int nlines)
 {
-  // if height is set to autosize then return height '1'
+  // if height is set to autosize then use widget's wish height
+  if (nlines == AUTOSIZE)
+    nlines = child.GetWishHeight();
   if (nlines == AUTOSIZE)
     nlines = 1;
 
@@ -272,6 +294,8 @@ void TreeView::DeleteNode(NodeReference node, bool keepchildren)
   if (node->widget) {
     int h = node->widget->GetHeight();
     if (h == AUTOSIZE)
+      h = node->widget->GetWishHeight();
+    if (h == AUTOSIZE)
       h = 1;
     shrink += h;
   }
@@ -279,6 +303,8 @@ void TreeView::DeleteNode(NodeReference node, bool keepchildren)
   for (TheTree::pre_order_iterator i = thetree.begin(node);
       i != thetree.end(node); i++) {
     int h = i->widget->GetHeight();
+    if (h == AUTOSIZE)
+      h = i->widget->GetWishHeight();
     if (h == AUTOSIZE)
       h = 1;
     shrink += h;
@@ -398,7 +424,12 @@ int TreeView::DrawNode(SiblingIterator node, int top)
     else
       node->widget->Move(depthoffset + 1, top);
     node->widget->Draw();
-    height += node->widget->GetHeight();
+    int h = node->widget->GetHeight();
+    if (h == AUTOSIZE)
+      h = node->widget->GetWishHeight();
+    if (h == AUTOSIZE)
+      h = 1;
+    height += h;
   }
 
   if (!node->collapsed && IsNodeOpenable(node)) {
@@ -411,9 +442,17 @@ int TreeView::DrawNode(SiblingIterator node, int top)
     /* Note: it would be better to start from end towards begin but for some
      * reason it doesn't seem to work. */
     SiblingIterator last = node.begin();
-    for (i = node.begin(); i != node.end(); i++)
-      if (i->widget && i->widget->GetHeight() && i->widget->IsVisible())
+    for (i = node.begin(); i != node.end(); i++) {
+      if (!i->widget)
+        continue;
+      int h = i->widget->GetHeight();
+      if (h == AUTOSIZE)
+        h = i->widget->GetWishHeight();
+      if (h == AUTOSIZE)
+        h = 1;
+      if (h && i->widget->IsVisible())
         last = i;
+    }
     SiblingIterator end = last;
     end++;
     for (i = node.begin(); i != end; i++) {
@@ -459,10 +498,12 @@ TreeView::TreeNode TreeView::AddNode(Widget& widget)
 {
   // make room for this widget
   int new_height = GetScrollHeight();
-  if (widget.GetHeight() == AUTOSIZE)
-    new_height += 1;
-  else
-    new_height += widget.GetHeight();
+  int h = widget.GetHeight();
+  if (h == AUTOSIZE)
+    h = widget.GetWishHeight();
+  if (h == AUTOSIZE)
+    h = 1;
+  new_height += h;
   SetScrollHeight(new_height);
 
   // construct the new node
@@ -510,9 +551,17 @@ TreeView::NodeReference TreeView::FindNode(const Widget& child) const
 
 bool TreeView::IsNodeOpenable(SiblingIterator& node) const
 {
-  for (SiblingIterator i = node.begin(); i != node.end(); i++)
-    if (i->widget && i->widget->GetHeight() && i->widget->IsVisible())
+  for (SiblingIterator i = node.begin(); i != node.end(); i++) {
+    if (!i->widget)
+      continue;
+    int h = i->widget->GetHeight();
+    if (h == AUTOSIZE)
+      h = i->widget->GetWishHeight();
+    if (h == AUTOSIZE)
+      h = 1;
+    if (h && i->widget->IsVisible())
       return true;
+  }
   return false;
 }
 
@@ -537,12 +586,29 @@ void TreeView::OnChildMoveResize(Widget& activator, const Rect &oldsize,
   int new_height = newsize.GetHeight();
   if (old_height != new_height) {
     if (old_height == AUTOSIZE)
+      old_height = activator.GetWishHeight();
+    if (old_height == AUTOSIZE)
       old_height = 1;
+    if (new_height == AUTOSIZE)
+      new_height = activator.GetWishHeight();
     if (new_height == AUTOSIZE)
       new_height = 1;
 
     SetScrollHeight(GetScrollHeight() - old_height + new_height);
   }
+}
+
+void TreeView::OnChildWishSizeChange(Widget& activator, const Size& oldsize,
+    const Size& newsize)
+{
+  if (activator.GetHeight() != AUTOSIZE)
+    return;
+
+  int old_height = oldsize.GetHeight();
+  int new_height = newsize.GetHeight();
+
+  if (old_height != new_height)
+    SetScrollHeight(GetScrollHeight() - old_height + new_height);
 }
 
 void TreeView::ActionCollapse()

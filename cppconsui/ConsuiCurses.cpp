@@ -199,20 +199,51 @@ int Window::mvchgat(int x, int y, int n, /* attr_t */ int attr, short color,
 
 int Window::fill(int attrs)
 {
+  attr_t battrs;
+  short pair;
+
+  if (attr_get(&battrs, &pair, NULL) == ERR)
+    return ERR;
+
   if (attron(attrs) == ERR)
     return ERR;
 
-  int w = getmaxx();
-  int h = getmaxy();
+  int realw = getmaxx();
+  int realh = getmaxy();
 
-  for (int i = 0; i < w; i++)
-    for (int j = 0; j < h; j++) {
-      /* Note: mvwaddch() returns ERR here when i = w - 1 and j = h - 1
-       * because the cursor can't be wrapped to the next line. */
+  for (int i = 0; i < realw; i++)
+    for (int j = 0; j < realh; j++) {
+      /* Note: mvwaddch() returns ERR here when i = realw - 1 and
+       * j = realh - 1 because the cursor can't be wrapped to the next line.
+       * */
       mvwaddch(p->win, j, i, ' ');
     }
 
-  if (attroff(attrs) == ERR)
+  if (attr_set(battrs, pair, NULL) == ERR)
+    return ERR;
+
+  return OK;
+}
+
+int Window::fill(int attrs, int x, int y, int w, int h)
+{
+  attr_t battrs;
+  short pair;
+
+  if (attr_get(&battrs, &pair, NULL) == ERR)
+    return ERR;
+
+  if (attron(attrs) == ERR)
+    return ERR;
+
+  int realw = getmaxx();
+  int realh = getmaxy();
+
+  for (int i = x; i < realw && i < x + w; i++)
+    for (int j = y; j < realh && j < y + h; j++)
+      mvwaddch(p->win, j, i, ' ');
+
+  if (attr_set(battrs, pair, NULL) == ERR)
     return ERR;
 
   return OK;

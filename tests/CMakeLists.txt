@@ -1,3 +1,12 @@
+add_executable( button_test EXCLUDE_FROM_ALL button_test.cpp )
+
+target_link_libraries( button_test
+				${GLIB2_LIBRARIES}
+				${SIGC_LIBRARIES}
+				cppconsui
+		)
+
+######################################################################
 add_executable( label_test EXCLUDE_FROM_ALL label_test.cpp )
 
 target_link_libraries( label_test

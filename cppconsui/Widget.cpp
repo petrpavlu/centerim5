@@ -305,9 +305,13 @@ void Widget::SetWishSize(int neww, int newh)
   if (neww == wish_width && newh == wish_height)
     return;
 
+  Size oldsize(wish_width, wish_height);
+  Size newsize(neww, newh);
+
   wish_width = neww;
   wish_height = newh;
-  signal_wish_size_change(*this, Size(neww, newh));
+
+  signal_wish_size_change(*this, oldsize, newsize);
 }
 
 int Widget::GetColorPair(const char *widget, const char *property) const

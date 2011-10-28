@@ -1,4 +1,5 @@
 check_PROGRAMS = \
+	button_test \
 	label_test \
 	linestyle_test \
 	textentry_test \
@@ -16,6 +17,9 @@ LDADD = \
 	$(GLIB_LIBS) \
 	$(SIGC_LIBS) \
 	$(top_builddir)/cppconsui/libcppconsui.la
+
+button_test_SOURCES = \
+	button_test.cpp
 
 label_test_SOURCES = \
 	label_test.cpp

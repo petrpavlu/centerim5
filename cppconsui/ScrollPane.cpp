@@ -146,47 +146,36 @@ void ScrollPane::AdjustScroll(int newx, int newy)
 
 void ScrollPane::MakeVisible(int x, int y)
 {
-  // fix parameters
-  if (x < 0)
-    x = 0;
-  else if (x >= scroll_width)
-    x = scroll_width - 1;
-  if (y < 0)
-    y = 0;
-  else if (y >= scroll_height)
-    y = scroll_height - 1;
-
   if (!screen_area) {
-    AdjustScroll(x, y);
+    AdjustScroll(0, 0);
     return;
   }
 
-  int real_width = screen_area->getmaxx();
-  int real_height = screen_area->getmaxy();
+  if (!MakePointVisible(x, y))
+    return;
+
+  Redraw();
+  signal_scrollarea_scroll(*this, Point(scroll_xpos, scroll_ypos));
+}
+
+void ScrollPane::MakeVisible(int x, int y, int w, int h)
+{
+  if (!screen_area) {
+    AdjustScroll(0, 0);
+    return;
+  }
 
   bool scrolled = false;
-  if (x > scroll_xpos + real_width - 1) {
-    scroll_xpos = x - real_width + 1;
+  if (MakePointVisible(x + w - 1, y + h - 1))
     scrolled = true;
-  }
-  else if (x < scroll_xpos) {
-    scroll_xpos = x;
+  if (MakePointVisible(x, y))
     scrolled = true;
-  }
 
-  if (y > scroll_ypos + real_height - 1) {
-    scroll_ypos = y - real_height + 1;
-    scrolled = true;
-  }
-  else if (y < scroll_ypos) {
-    scroll_ypos = y;
-    scrolled = true;
-  }
+  if (!scrolled)
+    return;
 
-  if (scrolled) {
-    Redraw();
-    signal_scrollarea_scroll(*this, Point(scroll_xpos, scroll_ypos));
-  }
+  Redraw();
+  signal_scrollarea_scroll(*this, Point(scroll_xpos, scroll_ypos));
 }
 
 void ScrollPane::UpdateArea()
@@ -251,6 +240,43 @@ void ScrollPane::DrawEx(bool container_draw)
   int copyh = MIN(scroll_height, screen_area->getmaxy()) - 1;
 
   area->copyto(screen_area, scroll_xpos, scroll_ypos, 0, 0, copyw, copyh, 0);
+}
+
+bool ScrollPane::MakePointVisible(int x, int y)
+{
+  // fix parameters
+  if (x < 0)
+    x = 0;
+  else if (x >= scroll_width)
+    x = scroll_width - 1;
+  if (y < 0)
+    y = 0;
+  else if (y >= scroll_height)
+    y = scroll_height - 1;
+
+  int real_width = screen_area->getmaxx();
+  int real_height = screen_area->getmaxy();
+
+  bool scrolled = false;
+  if (x > scroll_xpos + real_width - 1) {
+    scroll_xpos = x - real_width + 1;
+    scrolled = true;
+  }
+  else if (x < scroll_xpos) {
+    scroll_xpos = x;
+    scrolled = true;
+  }
+
+  if (y > scroll_ypos + real_height - 1) {
+    scroll_ypos = y - real_height + 1;
+    scrolled = true;
+  }
+  else if (y < scroll_ypos) {
+    scroll_ypos = y;
+    scrolled = true;
+  }
+
+  return scrolled;
 }
 
 } // namespace CppConsUI

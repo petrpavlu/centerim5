@@ -79,6 +79,7 @@ public:
       const void *opts);
 
   int fill(int attrs);
+  int fill(int attrs, int x, int y, int w, int h);
   int erase();
 
   int noutrefresh();

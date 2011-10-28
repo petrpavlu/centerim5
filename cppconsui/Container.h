@@ -206,6 +206,8 @@ protected:
 
   virtual void OnChildMoveResize(Widget& activator, const Rect& oldsize,
       const Rect& newsize);
+  virtual void OnChildWishSizeChange(Widget& activator, const Size& oldsize,
+      const Size& newsize);
   virtual void OnChildVisible(Widget& activator, bool visible);
 
 private:

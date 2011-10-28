@@ -92,8 +92,12 @@ public:
 protected:
   int flags;
   char *text;
+  int text_width;
+  int text_height;
   char *value;
+  int value_width;
   char *unit;
+  int unit_width;
   char *right;
   int right_width;
 

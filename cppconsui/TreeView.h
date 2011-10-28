@@ -221,9 +221,11 @@ protected:
   virtual bool IsNodeOpenable(SiblingIterator& node) const;
   virtual bool IsNodeVisible(NodeReference& node) const;
 
-  // handlers of signals
+  // signal handlers
   virtual void OnChildMoveResize(Widget& activator, const Rect& oldsize,
       const Rect& newsize);
+  virtual void OnChildWishSizeChange(Widget& activator, const Size& oldsize,
+      const Size& newsize);
 
 private:
   TreeView(const TreeView&);
