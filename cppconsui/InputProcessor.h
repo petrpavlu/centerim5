@@ -94,7 +94,7 @@ public:
    *
    * @return True if the input was successfully processed, false otherwise.
    */
-  virtual bool ProcessInput(const TermKeyKey& key, bool more);
+  virtual bool ProcessInput(const TermKeyKey& key);
 
 protected:
   /**

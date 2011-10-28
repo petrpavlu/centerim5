@@ -84,15 +84,12 @@ Conversation::~Conversation()
       static_cast<void*>(this));
 }
 
-bool Conversation::ProcessInput(const TermKeyKey& key, bool more)
+bool Conversation::ProcessInput(const TermKeyKey& key)
 {
-  if (more && input->ProcessInput(key, more))
+  if (view->ProcessInput(key))
     return true;
 
-  if (view->ProcessInput(key, more))
-    return true;
-
-  return Window::ProcessInput(key, more);
+  return Window::ProcessInput(key);
 }
 
 void Conversation::MoveResize(int newx, int newy, int neww, int newh)

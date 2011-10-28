@@ -52,10 +52,10 @@ CenterIM *CenterIM::Instance()
   return &instance;
 }
 
-bool CenterIM::ProcessInput(const TermKeyKey& key, bool more)
+bool CenterIM::ProcessInput(const TermKeyKey& key)
 {
   purple_idle_touch();
-  return InputProcessor::ProcessInput(key, more);
+  return InputProcessor::ProcessInput(key);
 }
 
 int CenterIM::Run(const char *config_path)

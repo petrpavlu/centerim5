@@ -120,7 +120,7 @@ private:
   ~CoreManager();
 
   // InputProcessor
-  virtual bool ProcessInput(const TermKeyKey& key, bool more);
+  virtual bool ProcessInput(const TermKeyKey& key);
 
   // glib IO callbacks
   /**

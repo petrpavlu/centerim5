@@ -36,14 +36,14 @@ InputProcessor::InputProcessor()
 {
 }
 
-bool InputProcessor::ProcessInput(const TermKeyKey& key, bool more)
+bool InputProcessor::ProcessInput(const TermKeyKey& key)
 {
   // process overriding key combinations first
   if (Process(BINDABLE_OVERRIDE, key))
     return true;
 
   // hand of input to a child
-  if (input_child && input_child->ProcessInput(key, more))
+  if (input_child && input_child->ProcessInput(key))
     return true;
 
   // process other key combinations

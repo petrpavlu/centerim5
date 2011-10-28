@@ -44,7 +44,7 @@ public:
   virtual ~Conversation();
 
   // InputProcessor
-  virtual bool ProcessInput(const TermKeyKey& key, bool more);
+  virtual bool ProcessInput(const TermKeyKey& key);
 
   // Widget
   virtual void MoveResize(int newx, int newy, int neww, int newh);
