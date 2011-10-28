@@ -309,6 +309,7 @@ void Widget::SetWishSize(int neww, int newh)
   wish_width = neww;
   wish_height = newh;
 
+  UpdateArea();
   signal_wish_size_change(*this, oldsize, newsize);
 }
 

@@ -45,52 +45,52 @@ ButtonWindow::ButtonWindow()
   button = new CppConsUI::Button(20, 1, "Normal button");
   button->signal_activate.connect(sigc::mem_fun(this,
         &ButtonWindow::OnButtonActivate));
-  AddWidget(*button, 1, 4);
+  AddWidget(*button, 1, 8);
 
   button = new CppConsUI::Button("Simple autosize");
   button->signal_activate.connect(sigc::mem_fun(this,
         &ButtonWindow::OnButtonActivate));
-  AddWidget(*button, 1, 6);
+  AddWidget(*button, 1, 10);
 
   button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE,
       "Text+value button", "value");
   button->signal_activate.connect(sigc::mem_fun(this,
         &ButtonWindow::OnButtonActivate));
-  AddWidget(*button, 1, 8);
+  AddWidget(*button, 1, 12);
 
   button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE
       | CppConsUI::Button::FLAG_UNIT, "Text+value+unit button", "value",
       "unit");
   button->signal_activate.connect(sigc::mem_fun(this,
         &ButtonWindow::OnButtonActivate));
-  AddWidget(*button, 1, 10);
+  AddWidget(*button, 1, 14);
 
   button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE
       | CppConsUI::Button::FLAG_UNIT, "Text+value+unit\n2-line button",
       "value", "unit");
   button->signal_activate.connect(sigc::mem_fun(this,
         &ButtonWindow::OnButtonActivate));
-  AddWidget(*button, 1, 12);
+  AddWidget(*button, 1, 16);
 
   button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE
       | CppConsUI::Button::FLAG_UNIT, "Text+value+unit\n3-line\nbutton",
       "value", "unit");
   button->signal_activate.connect(sigc::mem_fun(this,
         &ButtonWindow::OnButtonActivate));
-  AddWidget(*button, 1, 15);
+  AddWidget(*button, 1, 19);
 
   button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE
       | CppConsUI::Button::FLAG_UNIT,
       "Text+value+unit\n4-line\n\nbutton", "value", "unit");
   button->signal_activate.connect(sigc::mem_fun(this,
         &ButtonWindow::OnButtonActivate));
-  AddWidget(*button, 1, 19);
+  AddWidget(*button, 1, 23);
 
   button = new CppConsUI::Button(30, 1, CppConsUI::Button::FLAG_RIGHT,
       "Text+right button", NULL, NULL, "right");
   button->signal_activate.connect(sigc::mem_fun(this,
         &ButtonWindow::OnButtonActivate));
-  AddWidget(*button, 1, 24);
+  AddWidget(*button, 1, 28);
 }
 
 void ButtonWindow::OnButtonActivate(CppConsUI::Button& activator)
