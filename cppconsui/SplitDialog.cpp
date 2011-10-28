@@ -65,15 +65,15 @@ void SplitDialog::CleanFocus()
       cont_old_focus_conn.disconnect();
       cont_old_focus = container->GetFocusWidget();
       if (cont_old_focus)
-        cont_old_focus_conn = cont_old_focus->signal_delete.connect(
-            sigc::mem_fun(this, &SplitDialog::OnOldFocusDelete));
+        cont_old_focus_conn = cont_old_focus->signal_visible.connect(
+            sigc::mem_fun(this, &SplitDialog::OnOldFocusVisible));
     }
     else if (f == buttons) {
       buttons_old_focus_conn.disconnect();
       buttons_old_focus = buttons->GetFocusWidget();
       if (buttons_old_focus)
-        buttons_old_focus_conn = buttons_old_focus->signal_delete.connect(
-            sigc::mem_fun(this, &SplitDialog::OnOldFocusDelete));
+        buttons_old_focus_conn = buttons_old_focus->signal_visible.connect(
+            sigc::mem_fun(this, &SplitDialog::OnOldFocusVisible));
     }
   }
 
@@ -176,8 +176,11 @@ void SplitDialog::EmitResponse(SplitDialog::ResponseType response)
   signal_response(*this, response);
 }
 
-void SplitDialog::OnOldFocusDelete(Widget& activator)
+void SplitDialog::OnOldFocusVisible(Widget& activator, bool visible)
 {
+  if (visible)
+    return;
+
   if (&activator == cont_old_focus) {
     cont_old_focus_conn.disconnect();
     cont_old_focus = NULL;

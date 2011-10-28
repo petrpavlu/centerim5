@@ -69,7 +69,7 @@ protected:
   // AbstractDialog
   virtual void EmitResponse(ResponseType response);
 
-  virtual void OnOldFocusDelete(Widget& activator);
+  virtual void OnOldFocusVisible(Widget& activator, bool visible);
 
 private:
   SplitDialog(const SplitDialog&);
