@@ -153,6 +153,7 @@ void Conversation::ScreenResized()
 void Conversation::Show()
 {
   if (destroy_conn.connected()) {
+    // restore conversation
     destroy_conn.disconnect();
     status = STATUS_ACTIVE;
   }
@@ -162,6 +163,12 @@ void Conversation::Show()
 void Conversation::Write(const char *name, const char *alias,
     const char *message, PurpleMessageFlags flags, time_t mtime)
 {
+  if (destroy_conn.connected()) {
+    // restore conversation
+    destroy_conn.disconnect();
+    status = STATUS_ACTIVE;
+  }
+
   PurpleConversationType type = purple_conversation_get_type(conv);
 
   int color;

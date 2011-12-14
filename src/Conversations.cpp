@@ -287,6 +287,12 @@ void Conversations::write_conv(PurpleConversation *conv, const char *name,
 
   // delegate it to Conversation object
   conversations[i].conv->Write(name, alias, message, flags, mtime);
+  /* If conversation was in a destroy timeout (STATUS_TRASH) then label is at
+   * this point invisible and its visibility needs to be restored. */
+  conversations[i].label->SetVisibility(true);
+  // show this conversation if there isn't any other
+  if (active == -1)
+    ActivateConversation(i);
 }
 
 void Conversations::present(PurpleConversation *conv)
