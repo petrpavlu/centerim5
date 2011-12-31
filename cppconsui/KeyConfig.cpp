@@ -285,6 +285,8 @@ KeyConfig::KeyConfig()
   AddDefaultKeyBind("container", "focus-right", "Right");
   AddDefaultKeyBind("container", "focus-page-up", "PageUp");
   AddDefaultKeyBind("container", "focus-page-down", "PageDown");
+  AddDefaultKeyBind("container", "focus-begin", "Home");
+  AddDefaultKeyBind("container", "focus-end", "End");
 
   AddDefaultKeyBind("coremanager", "redraw-screen", "Ctrl-l");
 

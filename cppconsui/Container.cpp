@@ -291,15 +291,18 @@ void Container::MoveFocus(FocusDirection direction)
   Container *container = dynamic_cast<Container*>(*parent_iter);
   g_assert(container);
 
-  if (direction == FOCUS_PAGE_DOWN || direction == FOCUS_PAGE_UP) {
+  if (direction == FOCUS_PAGE_UP || direction == FOCUS_PAGE_DOWN) {
     /* Get rid off "dummy" containers in the chain, i.e. container that has
-     * only one child. */
+     * only one child. This is needed to get a correct container for paging.
+     */
     while (parent_iter.number_of_children() == 1
         && !(*parent_iter.begin())->CanFocus())
       parent_iter = parent_iter.begin();
     container = dynamic_cast<Container*>(*parent_iter);
     g_assert(container);
 
+    /* Stop here if focus change via paging is requested but container doesn't
+     * support it. */
     if (!container->CanPageFocus())
       return;
 
@@ -359,8 +362,14 @@ void Container::MoveFocus(FocusDirection direction)
     case FOCUS_PAGE_DOWN:
       // finally, find the next widget which will get the focus
       do {
-        if (scope == FOCUS_CYCLE_NONE && iter == --parent_iter.end())
-          goto end;
+        if (scope == FOCUS_CYCLE_NONE) {
+          /* parent_iter.end() returns a sibling_iterator, it has to be
+           * converted to pre_order_iterator first... */
+          FocusChain::pre_order_iterator tmp = parent_iter.end();
+          tmp--;
+          if (iter == tmp)
+            goto end;
+        }
 
         iter++;
         if (iter == cycle_end)
@@ -370,6 +379,21 @@ void Container::MoveFocus(FocusDirection direction)
           cur = (*iter)->GetRelativePosition(*container).GetY();
       } while (!(*iter)->CanFocus() || cur - init < max);
 
+      break;
+    case FOCUS_BEGIN:
+      iter = parent_iter.begin();
+      while (iter != parent_iter.end()) {
+        if ((*iter)->CanFocus())
+          goto end;
+        iter++;
+      }
+      /* There is always one widget that can get the focus so this code is
+       * unreachable. */
+      g_assert_not_reached();
+      break;
+    case FOCUS_END:
+      iter = parent_iter.end();
+      iter--;
       break;
   }
 
@@ -490,6 +514,12 @@ void Container::DeclareBindables()
   DeclareBindable("container", "focus-page-down",
       sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
         Container::FOCUS_PAGE_DOWN), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable("container", "focus-begin",
+      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
+        Container::FOCUS_BEGIN), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable("container", "focus-end",
+      sigc::bind(sigc::mem_fun(this, &Container::MoveFocus),
+        Container::FOCUS_END), InputProcessor::BINDABLE_NORMAL);
 }
 
 } // namespace CppConsUI

@@ -76,7 +76,9 @@ public:
     FOCUS_LEFT,
     FOCUS_RIGHT,
     FOCUS_PAGE_UP,
-    FOCUS_PAGE_DOWN
+    FOCUS_PAGE_DOWN,
+    FOCUS_BEGIN,
+    FOCUS_END
   };
 
   Container(int w, int h);
