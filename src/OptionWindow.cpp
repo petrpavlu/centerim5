@@ -45,6 +45,11 @@ OptionWindow::OptionWindow()
           CONF_PREFIX "/blist/show_empty_groups")));
   tree->AppendNode(parent, *(new BooleanOption(_("Show offline buddies"),
           CONF_PREFIX "/blist/show_offline_buddies")));
+  c = new ChoiceOption(_("Colorization mode"),
+      CONF_PREFIX "/blist/colorization_mode");
+  c->AddOption(_("None"), "none");
+  c->AddOption(_("By status"), "status");
+  tree->AppendNode(parent, *c);
 
   parent = tree->AppendNode(tree->GetRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(_("Dimensions"))));

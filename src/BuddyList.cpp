@@ -92,11 +92,11 @@ BuddyList::BuddyList()
   purple_prefs_add_none(CONF_PREFIX "/blist");
   purple_prefs_add_bool(CONF_PREFIX "/blist/show_empty_groups", false);
   purple_prefs_add_bool(CONF_PREFIX "/blist/show_offline_buddies", true);
+  purple_prefs_add_string(CONF_PREFIX "/blist/colorization_mode", "none");
 
-  show_empty_groups = purple_prefs_get_bool(CONF_PREFIX
-      "/blist/show_empty_groups");
-  show_offline_buddies = purple_prefs_get_bool(CONF_PREFIX
-      "/blist/show_offline_buddies");
+  UpdateCachedPreference(CONF_PREFIX "/blist/show_empty_groups");
+  UpdateCachedPreference(CONF_PREFIX "/blist/show_offline_buddies");
+  UpdateCachedPreference(CONF_PREFIX "/blist/colorization_mode");
 
   // connect callbacks
   purple_prefs_connect_callback(this, CONF_PREFIX "/blist",
@@ -149,6 +149,21 @@ void BuddyList::Load()
 {
   // load the buddy list from ~/.centerim5/blist.xml
   purple_blist_load();
+}
+
+void BuddyList::UpdateCachedPreference(const char *name)
+{
+  if (!strcmp(name, CONF_PREFIX "/blist/show_empty_groups"))
+    show_empty_groups = purple_prefs_get_bool(name);
+  else if (!strcmp(name, CONF_PREFIX "/blist/show_offline_buddies"))
+    show_offline_buddies = purple_prefs_get_bool(name);
+  else if (!strcmp(name, CONF_PREFIX "/blist/colorization_mode")) {
+    const char *value = purple_prefs_get_string(name);
+    if (!strcmp(value, "status"))
+      colorization_mode = COLOR_BY_STATUS;
+    else
+      colorization_mode = COLOR_NONE;
+  }
 }
 
 bool BuddyList::CheckAnyAccountConnected()
@@ -488,11 +503,8 @@ void BuddyList::add_group_ok_cb(const char *name)
 void BuddyList::blist_pref_change(const char *name, PurplePrefType type,
     gconstpointer val)
 {
-  // blist/show_empty_groups or blist/show_offline_buddies changed
-  show_empty_groups = purple_prefs_get_bool(CONF_PREFIX
-      "/blist/show_empty_groups");
-  show_offline_buddies = purple_prefs_get_bool(CONF_PREFIX
-      "/blist/show_offline_buddies");
+  // blist/* preference changed
+  UpdateCachedPreference(name);
 
   bool groups_only = false;
   if (!strcmp(name, CONF_PREFIX "blist/show_empty_groups"))

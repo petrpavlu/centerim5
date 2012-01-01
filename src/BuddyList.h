@@ -36,6 +36,11 @@ class BuddyList
 : public CppConsUI::Window
 {
 public:
+  enum ColorizationMode {
+    COLOR_NONE,
+    COLOR_BY_STATUS
+  };
+
   static BuddyList *Instance();
 
   // Widget
@@ -46,10 +51,10 @@ public:
   virtual void Close();
   virtual void ScreenResized();
 
-  /* These functions are faster version of getting blist/show_empty_groups and
-   * blist/show_offline_buddies prefs. */
+  // these functions are faster version of getting blist/* prefs
   bool GetShowEmptyGroupsPref() const { return show_empty_groups; }
   bool GetShowOfflineBuddiesPref() const { return show_offline_buddies; }
+  ColorizationMode GetColorizationMode() const { return colorization_mode; }
 
 protected:
 
@@ -60,6 +65,7 @@ private:
 
   bool show_empty_groups;
   bool show_offline_buddies;
+  ColorizationMode colorization_mode;
 
   static BuddyList *instance;
 
@@ -73,7 +79,7 @@ private:
   friend class CenterIM;
 
   void Load();
-
+  void UpdateCachedPreference(const char *name);
   bool CheckAnyAccountConnected();
 
   static void new_list_(PurpleBuddyList *list)

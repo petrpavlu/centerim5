@@ -218,7 +218,7 @@ void BuddyListBuddy::Update()
 
   const char *status = GetBuddyStatus(buddy);
   const char *alias = purple_buddy_get_alias(buddy);
-  if (*status) {
+  if (status[0]) {
     char *text = g_strdup_printf("%s %s", status, alias);
     SetText(text);
     g_free(text);
@@ -227,6 +227,8 @@ void BuddyListBuddy::Update()
     SetText(alias);
 
   SortIn();
+
+  UpdateColorScheme();
 
   if (!purple_account_is_connected(purple_buddy_get_account(buddy))) {
     // hide if account is offline
@@ -339,6 +341,17 @@ BuddyListBuddy::BuddyListBuddy(PurpleBlistNode *node)
   SetColorScheme("buddylistbuddy");
 
   buddy = reinterpret_cast<PurpleBuddy*>(node);
+}
+
+void BuddyListBuddy::UpdateColorScheme()
+{
+  if (BUDDYLIST->GetColorizationMode() == BuddyList::COLOR_BY_STATUS) {
+    char *new_scheme = Utils::GetColorSchemeString("buddylistbuddy", buddy);
+    SetColorScheme(new_scheme);
+    g_free(new_scheme);
+  }
+  else
+    SetColorScheme("buddylistbuddy");
 }
 
 bool BuddyListChat::LessThan(const BuddyListNode& other) const
@@ -503,7 +516,7 @@ void BuddyListContact::Update()
   PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
   const char *status = GetBuddyStatus(buddy);
   const char *alias = purple_contact_get_alias(contact);
-  if (*status) {
+  if (status[0]) {
     char *text = g_strdup_printf("%s %s", status, alias);
     SetText(text);
     g_free(text);
@@ -512,6 +525,8 @@ void BuddyListContact::Update()
     SetText(alias);
 
   SortIn();
+
+  UpdateColorScheme();
 
   if (!purple_account_is_connected(purple_buddy_get_account(buddy))) {
     // hide if account is offline
@@ -643,6 +658,18 @@ BuddyListContact::BuddyListContact(PurpleBlistNode *node)
   SetColorScheme("buddylistcontact");
 
   contact = reinterpret_cast<PurpleContact*>(node);
+}
+
+void BuddyListContact::UpdateColorScheme()
+{
+  if (BUDDYLIST->GetColorizationMode() == BuddyList::COLOR_BY_STATUS) {
+    PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
+    char *new_scheme = Utils::GetColorSchemeString("buddylistcontact", buddy);
+    SetColorScheme(new_scheme);
+    g_free(new_scheme);
+  }
+  else
+    SetColorScheme("buddylistcontact");
 }
 
 bool BuddyListGroup::LessThan(const BuddyListNode& other) const

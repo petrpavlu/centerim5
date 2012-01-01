@@ -143,6 +143,8 @@ protected:
   // BuddyListNode
   virtual void OpenContextMenu();
 
+  void UpdateColorScheme();
+
 private:
   BuddyListBuddy(PurpleBlistNode *node);
   BuddyListBuddy(const BuddyListBuddy&);
@@ -242,6 +244,8 @@ protected:
 
   // BuddyListNode
   virtual void OpenContextMenu();
+
+  void UpdateColorScheme();
 
 private:
   BuddyListContact(PurpleBlistNode *node);

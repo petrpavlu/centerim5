@@ -259,6 +259,24 @@ void CenterIM::ColorSchemeInit()
       CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK,
       CppConsUI::Curses::Attr::BOLD);
 
+  COLORSCHEME->SetColorPair("buddylistbuddy_offline", "button", "normal",
+      CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistbuddy_online", "button", "normal",
+      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistbuddy_na", "button", "normal",
+      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistbuddy_away", "button", "normal",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("buddylistcontact_offline", "button", "normal",
+      CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistcontact_online", "button", "normal",
+      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistcontact_na", "button", "normal",
+      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistcontact_away", "button", "normal",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK);
+
   COLORSCHEME->SetColorPair("conversation", "textview", "text",
       CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::BLACK);
   COLORSCHEME->SetColorPair("conversation", "textview", "color1",
