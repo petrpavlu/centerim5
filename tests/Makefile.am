@@ -6,6 +6,7 @@ check_PROGRAMS = \
 	textview_test \
 	treeview_test \
 	scrollpane_test \
+	submenu_test \
 	window_test
 
 AM_CPPFLAGS = \
@@ -38,6 +39,9 @@ treeview_test_SOURCES = \
 
 scrollpane_test_SOURCES = \
 	scrollpane_test.cpp
+
+submenu_test_SOURCES = \
+	submenu_test.cpp
 
 window_test_SOURCES = \
 	window_test.cpp

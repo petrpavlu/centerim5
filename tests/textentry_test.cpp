@@ -1,6 +1,5 @@
 #include <cppconsui/CoreManager.h>
 #include <cppconsui/KeyConfig.h>
-#include <cppconsui/Keys.h>
 #include <cppconsui/Label.h>
 #include <cppconsui/Panel.h>
 #include <cppconsui/TextEntry.h>

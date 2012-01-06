@@ -33,10 +33,6 @@ Conversations *Conversations::Instance()
   return instance;
 }
 
-void Conversations::Close()
-{
-}
-
 void Conversations::ScreenResized()
 {
   CppConsUI::Rect r = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);

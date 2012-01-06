@@ -5,9 +5,9 @@ set( cppconsui_SOURCES
 	AbstractListBox.cpp
 	Button.cpp
 	CheckBox.cpp
+	ColorScheme.cpp
 	ConsuiCurses.cpp
 	Container.cpp
-	ColorScheme.cpp
 	ComboBox.cpp
 	CoreManager.cpp
 	Dialog.cpp
@@ -24,13 +24,14 @@ set( cppconsui_SOURCES
 	MenuWindow.cpp
 	MessageDialog.cpp
 	Panel.cpp
+	ScrollPane.cpp
+	Spacer.cpp
+	SplitDialog.cpp
+	SubMenu.cpp
 	TextEdit.cpp
 	TextEntry.cpp
 	TextView.cpp
 	TreeView.cpp
-	ScrollPane.cpp
-	Spacer.cpp
-	SplitDialog.cpp
 	VerticalLine.cpp
 	Widget.cpp
 	Window.cpp
@@ -45,9 +46,9 @@ set( cppconsui_HEADERS
 	AbstractListBox.h
 	Button.h
 	CheckBox.h
+	ColorScheme.h
 	ConsuiCurses.h
 	Container.h
-	ColorScheme.h
 	ComboBox.h
 	CoreManager.h
 	CppConsUI.h
@@ -65,13 +66,13 @@ set( cppconsui_HEADERS
 	MenuWindow.h
 	MessageDialog.h
 	Panel.h
+	ScrollPane.h
 	Spacer.h
 	SplitDialog.h
 	TextEdit.h
 	TextEntry.h
 	TextView.h
 	TreeView.h
-	ScrollPane.h
 	VerticalLine.h
 	Widget.h
 	Window.h

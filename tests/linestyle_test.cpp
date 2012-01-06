@@ -1,7 +1,6 @@
 #include <cppconsui/CoreManager.h>
 #include <cppconsui/ConsuiCurses.h>
 #include <cppconsui/KeyConfig.h>
-#include <cppconsui/Keys.h>
 #include <cppconsui/Label.h>
 #include <cppconsui/Window.h>
 

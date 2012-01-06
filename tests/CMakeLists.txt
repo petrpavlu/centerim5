@@ -61,6 +61,15 @@ target_link_libraries( scrollpane_test
 		)
 
 ######################################################################
+add_executable( submenu_test EXCLUDE_FROM_ALL submenu_test.cpp )
+
+target_link_libraries( submenu_test
+				${GLIB2_LIBRARIES}
+				${SIGC_LIBRARIES}
+				cppconsui
+		)
+
+######################################################################
 add_executable ( window_test EXCLUDE_FROM_ALL window_test.cpp)
 
 target_link_libraries( window_test

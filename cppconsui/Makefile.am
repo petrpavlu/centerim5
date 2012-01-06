@@ -12,12 +12,12 @@ libcppconsui_la_SOURCES =\
 	Button.h \
 	CheckBox.cpp \
 	CheckBox.h \
+	ColorScheme.h \
+	ColorScheme.cpp \
 	ConsuiCurses.cpp \
 	ConsuiCurses.h \
 	Container.cpp \
 	Container.h \
-	ColorScheme.h \
-	ColorScheme.cpp \
 	ComboBox.cpp \
 	ComboBox.h \
 	CoreManager.cpp \
@@ -51,6 +51,14 @@ libcppconsui_la_SOURCES =\
 	MessageDialog.h \
 	Panel.cpp \
 	Panel.h \
+	ScrollPane.cpp \
+	ScrollPane.h \
+	Spacer.cpp \
+	Spacer.h \
+	SplitDialog.cpp \
+	SplitDialog.h \
+	SubMenu.cpp \
+	SubMenu.h \
 	TextEdit.cpp \
 	TextEdit.h \
 	TextEntry.cpp \
@@ -59,12 +67,6 @@ libcppconsui_la_SOURCES =\
 	TextView.h \
 	TreeView.cpp \
 	TreeView.h \
-	ScrollPane.cpp \
-	ScrollPane.h \
-	Spacer.cpp \
-	Spacer.h \
-	SplitDialog.cpp \
-	SplitDialog.h \
 	VerticalLine.cpp \
 	VerticalLine.h \
 	Widget.cpp \

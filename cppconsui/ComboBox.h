@@ -95,7 +95,7 @@ protected:
   : public MenuWindow
   {
   public:
-    ExtMenuWindow(ComboBox& ref_, int w, int h);
+    ExtMenuWindow(ComboBox& ref_, int w);
     virtual ~ExtMenuWindow() {}
 
     // Widget
@@ -103,20 +103,13 @@ protected:
 
   protected:
     ComboBox *ref;
-    int wish_height;
 
   private:
     ExtMenuWindow(const ExtMenuWindow&);
     ExtMenuWindow& operator=(const ExtMenuWindow&);
   };
 
-  MenuWindow *dropdown;
-  /**
-   * Prepares and displays the dropdown MenuWindow.
-   */
-  void OnDropDown(Button& activator);
-  void DropDownOk(Button& activator, int new_entry);
-  void DropDownClose(FreeWindow& window);
+  ExtMenuWindow *dropdown;
 
   /**
    * Number of currently selected entry.
@@ -131,6 +124,13 @@ protected:
    * Maximal option width. Used for dropdown menu width.
    */
   int max_option_width;
+
+  /**
+   * Prepares and displays the dropdown MenuWindow.
+   */
+  void OnDropDown(Button& activator);
+  void DropDownOk(Button& activator, int new_entry);
+  void DropDownClose(FreeWindow& window);
 
 private:
   ComboBox(const ComboBox&);
