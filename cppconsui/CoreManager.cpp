@@ -379,6 +379,7 @@ void CoreManager::InputInit()
     g_critical(_("Libtermkey initialization failed."));
     exit(1);
   }
+  termkey_set_canonflags(tk, TERMKEY_CANON_DELBS);
   utf8 = g_get_charset(NULL);
 
   io_input_channel = g_io_channel_unix_new(STDIN_FILENO);

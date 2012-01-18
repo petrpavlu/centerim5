@@ -9,7 +9,7 @@ extern "C" {
 #include <stdlib.h>
 
 #define TERMKEY_VERSION_MAJOR 0
-#define TERMKEY_VERSION_MINOR 7
+#define TERMKEY_VERSION_MINOR 11
 
 #define TERMKEY_CHECK_VERSION \
         termkey_check_version(TERMKEY_VERSION_MAJOR, TERMKEY_VERSION_MINOR)
@@ -102,7 +102,8 @@ typedef enum {
   TERMKEY_RES_NONE,
   TERMKEY_RES_KEY,
   TERMKEY_RES_EOF,
-  TERMKEY_RES_AGAIN
+  TERMKEY_RES_AGAIN,
+  TERMKEY_RES_ERROR
 } TermKeyResult;
 
 typedef enum {
@@ -143,8 +144,14 @@ enum {
   TERMKEY_FLAG_RAW         = 1 << 2, // Input is raw bytes, not UTF-8
   TERMKEY_FLAG_UTF8        = 1 << 3, // Input is definitely UTF-8
   TERMKEY_FLAG_NOTERMIOS   = 1 << 4, // Do not make initial termios calls on construction
-  TERMKEY_FLAG_SPACESYMBOL = 1 << 5, // Space is symbolic rather than Unicode
-  TERMKEY_FLAG_CTRLC       = 1 << 6  // Allow Ctrl-C to be read as normal, disabling SIGINT
+  TERMKEY_FLAG_SPACESYMBOL = 1 << 5, // Sets TERMKEY_CANON_SPACESYMBOL
+  TERMKEY_FLAG_CTRLC       = 1 << 6, // Allow Ctrl-C to be read as normal, disabling SIGINT
+  TERMKEY_FLAG_EINTR       = 1 << 7  // Return ERROR on signal (EINTR) rather than retry
+};
+
+enum {
+  TERMKEY_CANON_SPACESYMBOL = 1 << 0, // Space is symbolic rather than Unicode
+  TERMKEY_CANON_DELBS       = 1 << 1  // Del is converted to Backspace
 };
 
 void termkey_check_version(int major, int minor);
@@ -160,6 +167,11 @@ void termkey_set_flags(TermKey *tk, int newflags);
 
 int  termkey_get_waittime(TermKey *tk);
 void termkey_set_waittime(TermKey *tk, int msec);
+
+int  termkey_get_canonflags(TermKey *tk);
+void termkey_set_canonflags(TermKey *tk, int);
+
+void termkey_canonicalise(TermKey *tk, TermKeyKey *key);
 
 TermKeyResult termkey_getkey(TermKey *tk, TermKeyKey *key);
 TermKeyResult termkey_getkey_force(TermKey *tk, TermKeyKey *key);
@@ -194,18 +206,6 @@ size_t  termkey_strfkey(TermKey *tk, char *buffer, size_t len, TermKeyKey *key, 
 char   *termkey_strpkey(TermKey *tk, const char *str, TermKeyKey *key, TermKeyFormat format);
 
 int termkey_keycmp(TermKey *tk, const TermKeyKey *key1, const TermKeyKey *key2);
-
-// Old name for termkey_strfkey()
-size_t termkey_snprint_key(TermKey *tk, char *buffer, size_t len, TermKeyKey *key, TermKeyFormat format);
-
-// Legacy name typedefs
-
-typedef TermKeySym    termkey_keysym;
-typedef TermKeyType   termkey_type;
-typedef TermKeyResult termkey_result;
-typedef TermKeyKey    termkey_key;
-
-typedef TermKey termkey_t;
 
 #endif
 

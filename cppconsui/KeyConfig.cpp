@@ -300,12 +300,10 @@ KeyConfig::KeyConfig()
   AddDefaultKeyBind("textentry", "cursor-begin", "Home");
   AddDefaultKeyBind("textentry", "delete-char", "Delete");
   AddDefaultKeyBind("textentry", "backspace", "Backspace");
-  AddDefaultKeyBind("textentry", "backspace", "DEL");
 
   AddDefaultKeyBind("textentry", "delete-word-end", "Ctrl-Delete");
-  // XXX Is Ctrl-Backspace (Ctrl-DEL) a valid combination?
+  // XXX Is Ctrl-Backspace a valid combination?
   AddDefaultKeyBind("textentry", "delete-word-begin", "Ctrl-Backspace");
-  AddDefaultKeyBind("textentry", "delete-word-begin", "Ctrl-DEL");
   /// @todo enable
   /*
   AddDefaultKeyBind("textentry", "toggle-overwrite", "Insert");

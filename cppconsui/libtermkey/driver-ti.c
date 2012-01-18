@@ -1,15 +1,18 @@
 // we want strdup()
-#define _XPG6
-#define _XOPEN_SOURCE 500
+#define _XOPEN_SOURCE 600
 
 #include "termkey.h"
 #include "termkey-internal.h"
 
-#include <curses.h>
-#include <term.h>
+#ifdef HAVE_UNIBILIUM
+# include <unibilium.h>
+#else
+# include <curses.h>
+# include <term.h>
 
 /* curses.h has just poluted our namespace. We want this back */
-#undef buttons
+# undef buttons
+#endif
 
 #include <ctype.h>
 #include <stdio.h>
@@ -158,42 +161,52 @@ static struct trie_node *compress_trie(struct trie_node *n)
   return n;
 }
 
-static void *new_driver(TermKey *tk, const char *term)
+static int load_terminfo(TermKeyTI *ti, const char *term)
 {
+  int i;
+
+#ifdef HAVE_UNIBILIUM
+  unibi_term *unibi = unibi_from_term(term);
+  if(!unibi)
+    return 0;
+#else
   int err;
 
   /* Have to cast away the const. But it's OK - we know terminfo won't really
    * modify term */
   if(setupterm((char*)term, 1, &err) != OK)
-    return NULL;
+    return 0;
+#endif
 
-  TermKeyTI *ti = malloc(sizeof *ti);
-  if(!ti)
-    return NULL;
-
-  ti->tk = tk;
-
-  ti->root = new_node_arr(0, 0xff);
-  if(!ti->root)
-    goto abort_free_ti;
-
-  int i;
-  for(i = 0; strfnames[i]; i++) {
+#ifdef HAVE_UNIBILIUM
+  for(i = unibi_string_begin_+1; i < unibi_string_end_; i++)
+#else
+  for(i = 0; strfnames[i]; i++)
+#endif
+  {
     // Only care about the key_* constants
+#ifdef HAVE_UNIBILIUM
+    const char *name = unibi_name_str(i);
+#else
     const char *name = strfnames[i];
+#endif
     if(strncmp(name, "key_", 4) != 0)
       continue;
 
+#ifdef HAVE_UNIBILIUM
+    const char *value = unibi_get_str(unibi, i);
+#else
     const char *value = tigetstr(strnames[i]);
+#endif
     if(!value || value == (char*)-1)
       continue;
 
     struct trie_node *node = NULL;
 
-    if(strcmp(strfnames[i] + 4, "mouse") == 0) {
+    if(strcmp(name + 4, "mouse") == 0) {
       node = malloc(sizeof(*node));
       if(!node)
-        goto abort_free_trie;
+        return 0;
 
       node->type = TYPE_MOUSE;
     }
@@ -203,7 +216,7 @@ static void *new_driver(TermKey *tk, const char *term)
       int mask = 0;
       int set  = 0;
 
-      if(!funcname2keysym(strfnames[i] + 4, &type, &sym, &mask, &set))
+      if(!funcname2keysym(name + 4, &type, &sym, &mask, &set))
         continue;
 
       if(sym == TERMKEY_SYM_NONE)
@@ -215,25 +228,55 @@ static void *new_driver(TermKey *tk, const char *term)
     if(node)
       if(!insert_seq(ti, value, node)) {
         free(node);
-        goto abort_free_trie;
+        return 0;
       }
   }
-
-  ti->root = compress_trie(ti->root);
 
   /* Take copies of these terminfo strings, in case we build multiple termkey
    * instances for multiple different termtypes, and it's different by the
    * time we want to use it
    */
+#ifdef HAVE_UNIBILIUM
+  const char *keypad_xmit = unibi_get_str(unibi, unibi_pkey_xmit);
+#endif
+
   if(keypad_xmit)
     ti->start_string = strdup(keypad_xmit);
   else
     ti->start_string = NULL;
 
+#ifdef HAVE_UNIBILIUM
+  const char *keypad_local = unibi_get_str(unibi, unibi_pkey_local);
+#endif
+
   if(keypad_local)
     ti->stop_string = strdup(keypad_local);
   else
     ti->stop_string = NULL;
+
+#ifdef HAVE_UNIBILIUM
+  unibi_destroy(unibi);
+#endif
+
+  return 1;
+}
+
+static void *new_driver(TermKey *tk, const char *term)
+{
+  TermKeyTI *ti = malloc(sizeof *ti);
+  if(!ti)
+    return NULL;
+
+  ti->tk = tk;
+
+  ti->root = new_node_arr(0, 0xff);
+  if(!ti->root)
+    goto abort_free_ti;
+
+  if(!load_terminfo(ti, term))
+    goto abort_free_trie;
+
+  ti->root = compress_trie(ti->root);
 
   return ti;
 
@@ -385,7 +428,7 @@ static struct {
   { "suspend",   TERMKEY_TYPE_KEYSYM, TERMKEY_SYM_SUSPEND,   0 },
   { "undo",      TERMKEY_TYPE_KEYSYM, TERMKEY_SYM_UNDO,      0 },
   { "up",        TERMKEY_TYPE_KEYSYM, TERMKEY_SYM_UP,        0 },
-  { NULL, 0, 0, 0 },
+  { NULL },
 };
 
 static int funcname2keysym(const char *funcname, TermKeyType *typep, TermKeySym *symp, int *modmaskp, int *modsetp)
