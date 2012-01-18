@@ -39,7 +39,7 @@ public:
   virtual ~AccountWindow() {}
 
   // FreeWindow
-  virtual void ScreenResized();
+  virtual void OnScreenResized();
 
 protected:
 

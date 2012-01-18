@@ -119,7 +119,7 @@ do {                                       \
           &OptionWindow::Close)));
 }
 
-void OptionWindow::ScreenResized()
+void OptionWindow::OnScreenResized()
 {
   MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA));
 }

@@ -50,34 +50,10 @@ SubMenu::~SubMenu()
   delete submenu;
 }
 
-SubMenu::ExtMenuWindow::ExtMenuWindow(SubMenu& ref_)
-: MenuWindow(0, 0, AUTOSIZE, 2), ref(&ref_)
+SubMenu::ExtMenuWindow::ExtMenuWindow(SubMenu& ref)
+: FlowMenuWindow(ref, AUTOSIZE, AUTOSIZE)
 {
-}
-
-void SubMenu::ExtMenuWindow::Draw()
-{
-  Point p = ref->GetAbsolutePosition();
-  int x = p.GetX() + 3;
-  int y = p.GetY();
-  int above = y;
-  int below = Curses::getmaxy() - y - 1;
-  int req_h = listbox->GetChildrenHeight() + 2;
-
-  if (below > req_h) {
-    // draw the window under the combobox
-    MoveResize(x, y + 1, win_w, req_h);
-  }
-  else if (above > req_h) {
-    // draw the window above the combobox
-    MoveResize(x, y - req_h, win_w, req_h);
-  }
-  else if (below >= above)
-    MoveResize(x, y + 1, win_w, below);
-  else
-    MoveResize(x, 0, win_w, above);
-
-  MenuWindow::Draw();
+  SetLeftShift(3);
 }
 
 void SubMenu::ExtMenuWindow::Close()

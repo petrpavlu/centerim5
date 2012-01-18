@@ -98,32 +98,6 @@ BuddyListNode *BuddyListNode::GetParentNode() const
   return reinterpret_cast<BuddyListNode*>(parent->ui_data);
 }
 
-BuddyListNode::ContextMenu::ContextMenu(BuddyListNode& parent_)
-: MenuWindow(0, 0, AUTOSIZE, AUTOSIZE), parent(&parent_)
-{
-}
-
-void BuddyListNode::ContextMenu::Reposition()
-{
-  CppConsUI::Point p = parent->GetAbsolutePosition();
-  int h = GetWishHeight();
-  int above = p.GetY();
-  int below = CppConsUI::Curses::getmaxy() - p.GetY() - 1;
-
-  if (below > h) {
-    // draw the window under the button
-    MoveResize(p.GetX(), p.GetY() + 1, win_w, h);
-  }
-  else if (above > h) {
-    // draw the window above the button
-    MoveResize(p.GetX(), p.GetY() - h, win_w, h);
-  }
-  else if (below >= above)
-    MoveResize(p.GetX(), p.GetY() + 1, win_w, below);
-  else
-    MoveResize(p.GetX(), p.GetY() - above, win_w, above);
-}
-
 BuddyListNode::BuddyListNode(PurpleBlistNode *node)
 : treeview(NULL), node(node)
 {
@@ -255,15 +229,13 @@ const char *BuddyListBuddy::ToString() const
   return purple_buddy_get_alias(buddy);
 }
 
-BuddyListBuddy::ContextMenu::ContextMenu(BuddyListBuddy& parent_)
-: BuddyListNode::ContextMenu(parent_), parent(&parent_)
+BuddyListBuddy::ContextMenu::ContextMenu(BuddyListBuddy& parent)
+: FlowMenuWindow(parent, AUTOSIZE, AUTOSIZE)
 {
   AppendItem(_("Alias..."), sigc::mem_fun(this,
         &BuddyListBuddy::ContextMenu::OnChangeAlias));
   AppendItem(_("Delete..."), sigc::mem_fun(this,
         &BuddyListBuddy::ContextMenu::OnRemove));
-
-  Reposition();
 }
 
 void BuddyListBuddy::ContextMenu::ChangeAliasResponseHandler(
@@ -407,15 +379,13 @@ const char *BuddyListChat::ToString() const
   return purple_chat_get_name(chat);
 }
 
-BuddyListChat::ContextMenu::ContextMenu(BuddyListChat& parent_)
-: BuddyListNode::ContextMenu(parent_), parent(&parent_)
+BuddyListChat::ContextMenu::ContextMenu(BuddyListChat& parent)
+: FlowMenuWindow(parent, AUTOSIZE, AUTOSIZE)
 {
   AppendItem(_("Alias..."), sigc::mem_fun(this,
         &BuddyListChat::ContextMenu::OnChangeAlias));
   AppendItem(_("Delete..."), sigc::mem_fun(this,
         &BuddyListChat::ContextMenu::OnRemove));
-
-  Reposition();
 }
 
 void BuddyListChat::ContextMenu::ChangeAliasResponseHandler(
@@ -557,15 +527,13 @@ void BuddyListContact::SetRefNode(CppConsUI::TreeView::NodeReference n)
   treeview->SetNodeStyle(n, CppConsUI::TreeView::STYLE_VOID);
 }
 
-BuddyListContact::ContextMenu::ContextMenu(BuddyListContact& parent_)
-: BuddyListNode::ContextMenu(parent_), parent(&parent_)
+BuddyListContact::ContextMenu::ContextMenu(BuddyListContact& parent)
+: FlowMenuWindow(parent, AUTOSIZE, AUTOSIZE)
 {
   AppendItem(_("Alias..."), sigc::mem_fun(this,
         &BuddyListContact::ContextMenu::OnChangeAlias));
   AppendItem(_("Delete..."), sigc::mem_fun(this,
         &BuddyListContact::ContextMenu::OnRemove));
-
-  Reposition();
 }
 
 void BuddyListContact::ContextMenu::ChangeAliasResponseHandler(
@@ -708,15 +676,13 @@ const char *BuddyListGroup::ToString() const
   return purple_group_get_name(group);
 }
 
-BuddyListGroup::ContextMenu::ContextMenu(BuddyListGroup& parent_)
-: BuddyListNode::ContextMenu(parent_), parent(&parent_)
+BuddyListGroup::ContextMenu::ContextMenu(BuddyListGroup& parent)
+: FlowMenuWindow(parent, AUTOSIZE, AUTOSIZE)
 {
   AppendItem(_("Rename..."), sigc::mem_fun(this,
         &BuddyListGroup::ContextMenu::OnRename));
   AppendItem(_("Delete..."), sigc::mem_fun(this,
         &BuddyListGroup::ContextMenu::OnRemove));
-
-  Reposition();
 }
 
 void BuddyListGroup::ContextMenu::RenameResponseHandler(

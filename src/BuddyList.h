@@ -49,7 +49,7 @@ public:
 
   // FreeWindow
   virtual void Close();
-  virtual void ScreenResized();
+  virtual void OnScreenResized();
 
   // these functions are faster version of getting blist/* prefs
   bool GetShowEmptyGroupsPref() const { return show_empty_groups; }

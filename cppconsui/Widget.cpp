@@ -283,12 +283,13 @@ void Widget::ProceedUpdateArea()
 {
   g_assert(parent);
 
-  if (update_area) {
-    if (area)
-      delete area;
-    area = parent->GetSubPad(*this, xpos, ypos, width, height);
-    update_area = false;
-  }
+  if (!update_area)
+    return;
+
+  if (area)
+    delete area;
+  area = parent->GetSubPad(*this, xpos, ypos, width, height);
+  update_area = false;
 }
 
 void Widget::Redraw()

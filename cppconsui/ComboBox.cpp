@@ -129,42 +129,12 @@ void ComboBox::SetSelectedByData(intptr_t data)
       SetSelected(i);
 }
 
-ComboBox::ExtMenuWindow::ExtMenuWindow(ComboBox& ref_, int w)
-: MenuWindow(0, 0, w, 2), ref(&ref_)
-{
-}
-
-void ComboBox::ExtMenuWindow::Draw()
-{
-  Point p = ref->GetAbsolutePosition();
-  int x = p.GetX();
-  int y = p.GetY();
-  int above = y;
-  int below = Curses::getmaxy() - y - 1;
-  int req_h = listbox->GetChildrenHeight() + 2;
-
-  if (below > req_h) {
-    // draw the window under the combobox
-    MoveResize(x, y + 1, win_w, req_h);
-  }
-  else if (above > req_h) {
-    // draw the window above the combobox
-    MoveResize(x, y - req_h, win_w, req_h);
-  }
-  else if (below >= above)
-    MoveResize(x, y + 1, win_w, below);
-  else
-    MoveResize(x, 0, win_w, above);
-
-  MenuWindow::Draw();
-}
-
 void ComboBox::OnDropDown(Button& activator)
 {
   if (options.empty())
     return;
 
-  dropdown = new ExtMenuWindow(*this, max_option_width + 2);
+  dropdown = new FlowMenuWindow(*this, max_option_width + 2, AUTOSIZE);
   dropdown->signal_close.connect(sigc::mem_fun(this,
         &ComboBox::DropDownClose));
 

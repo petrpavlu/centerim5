@@ -66,7 +66,7 @@ public:
 
   void EnableResizing();
   void DisableResizing();
-  void ScreenResized();
+  void OnScreenResized();
 
   void SetTopInputProcessor(InputProcessor& top)
     { top_input_processor = &top; }

@@ -33,7 +33,7 @@ public:
   virtual ~AccountStatusMenu() {}
 
   // FreeWindow
-  virtual void ScreenResized();
+  virtual void OnScreenResized();
 
 protected:
 
@@ -46,7 +46,7 @@ private:
     virtual ~StatusPopup() {}
 
     // FreeWindow
-    virtual void ScreenResized();
+    virtual void OnScreenResized();
 
   protected:
     PurpleAccount *account;

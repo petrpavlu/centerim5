@@ -156,7 +156,7 @@ CenterIM::CenterIM()
 {
   mngr = CppConsUI::CoreManager::Instance();
   resize_conn = mngr->signal_resize.connect(sigc::mem_fun(this,
-        &CenterIM::ScreenResized));
+        &CenterIM::OnScreenResized));
   top_window_change_conn = mngr->signal_top_window_change.connect(
       sigc::mem_fun(this, &CenterIM::OnTopWindowChanged));
 
@@ -333,7 +333,7 @@ void CenterIM::ColorSchemeInit()
       CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
 }
 
-void CenterIM::ScreenResized()
+void CenterIM::OnScreenResized()
 {
   CppConsUI::Rect size;
 
@@ -399,7 +399,7 @@ void CenterIM::OnTopWindowChanged()
   CppConsUI::FreeWindow *top = mngr->GetTopWindow();
   if (top && typeid(Conversation) != typeid(*top)) {
     convs_expanded = false;
-    mngr->ScreenResized();
+    mngr->OnScreenResized();
   }
 }
 
@@ -505,7 +505,7 @@ void CenterIM::tmp_purple_print(PurpleDebugLevel level, const char *category,
 void CenterIM::dimensions_change(const char *name, PurplePrefType type,
     gconstpointer val)
 {
-  mngr->ScreenResized();
+  mngr->OnScreenResized();
 }
 
 void CenterIM::ActionFocusBuddyList()
@@ -580,7 +580,7 @@ void CenterIM::ActionExpandConversation()
   }
 
   convs_expanded = !convs_expanded;
-  mngr->ScreenResized();
+  mngr->OnScreenResized();
 }
 
 void CenterIM::DeclareBindables()

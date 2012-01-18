@@ -65,7 +65,7 @@ Request::RequestDialog::RequestDialog(const char *title,
         &RequestDialog::ResponseHandler));
 }
 
-void Request::RequestDialog::ScreenResized()
+void Request::RequestDialog::OnScreenResized()
 {
   MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA));
 }

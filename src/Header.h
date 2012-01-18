@@ -37,7 +37,7 @@ public:
   static Header *Instance();
 
   // FreeWindow
-  virtual void ScreenResized();
+  virtual void OnScreenResized();
 
 protected:
 

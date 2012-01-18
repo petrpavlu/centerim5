@@ -36,7 +36,7 @@ public:
   static Footer *Instance();
 
   // FreeWindow
-  virtual void ScreenResized();
+  virtual void OnScreenResized();
 
   void SetText(const char *fmt, ...) _attribute((format(printf, 2, 3)));
 

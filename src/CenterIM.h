@@ -108,7 +108,7 @@ private:
   void ColorSchemeInit();
 
   // recalculates area sizes to fit into current screen size
-  void ScreenResized();
+  void OnScreenResized();
 
   void OnTopWindowChanged();
 

@@ -11,6 +11,7 @@ set( cppconsui_SOURCES
 	ComboBox.cpp
 	CoreManager.cpp
 	Dialog.cpp
+	FlowMenuWindow.cpp
 	FreeWindow.cpp
 	HorizontalLine.cpp
 	HorizontalListBox.cpp
@@ -53,6 +54,7 @@ set( cppconsui_HEADERS
 	CoreManager.h
 	CppConsUI.h
 	Dialog.h
+	FlowMenuWindow.h
 	FreeWindow.h
 	HorizontalLine.h
 	HorizontalListBox.h

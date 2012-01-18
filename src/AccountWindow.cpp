@@ -52,7 +52,7 @@ AccountWindow::AccountWindow()
     accounts->GrabFocus();
 }
 
-void AccountWindow::ScreenResized()
+void AccountWindow::OnScreenResized()
 {
   MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA));
 }

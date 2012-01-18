@@ -38,7 +38,7 @@ public:
   static Conversations *Instance();
 
   // FreeWindow
-  virtual void ScreenResized();
+  virtual void OnScreenResized();
 
   void FocusActiveConversation();
   void FocusPrevConversation();

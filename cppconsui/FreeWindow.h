@@ -58,6 +58,7 @@ public:
   virtual int GetWidth() const { return win_w; }
   virtual int GetHeight() const { return win_h; }
   virtual Point GetAbsolutePosition();
+  virtual void SetWishSize(int neww, int newh);
 
   // Container
   virtual bool IsWidgetVisible(const Widget& widget) const;
@@ -73,7 +74,7 @@ public:
   /**
    * This function is called when the screen is resized.
    */
-  virtual void ScreenResized() {}
+  virtual void OnScreenResized() {}
 
   sigc::signal<void, FreeWindow&> signal_close;
   sigc::signal<void, FreeWindow&> signal_show;
@@ -100,6 +101,17 @@ protected:
   virtual void ProceedUpdateArea();
   virtual void Redraw();
 
+  /**
+   * Internal callback triggered when the screen is resized. It should be used
+   * (overwritten) only by CppConsUI widgets, users should use
+   * OnScreenResized() instead.
+   */
+  virtual void OnScreenResizedInternal();
+
+  /**
+   * Updates window's width and height and calls UpdateArea(). Autosize hints
+   * are taken into account during size calculations.
+   */
   virtual void ResizeAndUpdateArea();
 
 private:

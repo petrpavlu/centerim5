@@ -30,7 +30,7 @@
 #define __COMBOBOX_H__
 
 #include "Button.h"
-#include "MenuWindow.h"
+#include "FlowMenuWindow.h"
 
 #include <vector>
 
@@ -52,29 +52,29 @@ public:
   /**
    * Removes all options.
    */
-  void ClearOptions();
+  virtual void ClearOptions();
 
   /**
    * Appends a new option.
    */
-  int AddOption(const char *text = NULL, intptr_t data = 0);
-  int AddOptionPtr(const char *text = NULL, void *data = NULL)
+  virtual int AddOption(const char *text = NULL, intptr_t data = 0);
+  virtual int AddOptionPtr(const char *text = NULL, void *data = NULL)
     { return AddOption(text, reinterpret_cast<intptr_t>(data)); }
 
   /**
    * Returns last selected option.
    */
-  int GetSelected() const { return selected_entry; };
-  const char *GetSelectedTitle() const;
+  virtual int GetSelected() const { return selected_entry; };
+  virtual const char *GetSelectedTitle() const;
 
-  int GetOptionsCount() const { return options.size(); }
+  virtual int GetOptionsCount() const { return options.size(); }
 
-  const char *GetTitle(int entry) const;
-  intptr_t GetData(int entry) const;
+  virtual const char *GetTitle(int entry) const;
+  virtual intptr_t GetData(int entry) const;
 
-  void SetSelected(int new_entry);
-  void SetSelectedByData(intptr_t data);
-  void SetSelectedByDataPtr(void *data)
+  virtual void SetSelected(int new_entry);
+  virtual void SetSelectedByData(intptr_t data);
+  virtual void SetSelectedByDataPtr(void *data)
     { SetSelectedByData(reinterpret_cast<intptr_t>(data)); }
 
   sigc::signal<void, ComboBox&, int, const char *, intptr_t>
@@ -91,25 +91,7 @@ protected:
   };
   typedef std::vector<ComboBoxEntry> ComboBoxEntries;
 
-  class ExtMenuWindow
-  : public MenuWindow
-  {
-  public:
-    ExtMenuWindow(ComboBox& ref_, int w);
-    virtual ~ExtMenuWindow() {}
-
-    // Widget
-    virtual void Draw();
-
-  protected:
-    ComboBox *ref;
-
-  private:
-    ExtMenuWindow(const ExtMenuWindow&);
-    ExtMenuWindow& operator=(const ExtMenuWindow&);
-  };
-
-  ExtMenuWindow *dropdown;
+  FlowMenuWindow *dropdown;
 
   /**
    * Number of currently selected entry.
@@ -128,9 +110,9 @@ protected:
   /**
    * Prepares and displays the dropdown MenuWindow.
    */
-  void OnDropDown(Button& activator);
-  void DropDownOk(Button& activator, int new_entry);
-  void DropDownClose(FreeWindow& window);
+  virtual void OnDropDown(Button& activator);
+  virtual void DropDownOk(Button& activator, int new_entry);
+  virtual void DropDownClose(FreeWindow& window);
 
 private:
   ComboBox(const ComboBox&);

@@ -49,7 +49,7 @@ public:
   static Log *Instance();
 
   // FreeWindow
-  virtual void ScreenResized();
+  virtual void OnScreenResized();
 
   void Error(const char *fmt, ...) _attribute((format(printf, 2, 3)));
   void Critical(const char *fmt, ...) _attribute((format(printf, 2, 3)));

@@ -35,7 +35,7 @@ public:
   virtual ~OptionWindow() {}
 
   // FreeWindow
-  virtual void ScreenResized();
+  virtual void OnScreenResized();
 
 protected:
   class BooleanOption

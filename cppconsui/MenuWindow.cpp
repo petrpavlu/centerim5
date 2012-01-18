@@ -48,16 +48,20 @@ void MenuWindow::AddWidget(Widget& widget, int x, int y)
   Window::AddWidget(widget, x, y);
 }
 
-void MenuWindow::ResizeAndUpdateArea()
+void MenuWindow::OnScreenResizedInternal()
+{
+  UpdateSmartPositionAndSize();
+  Window::OnScreenResizedInternal();
+}
+
+void MenuWindow::UpdateSmartPositionAndSize()
 {
   int h = listbox->GetChildrenHeight() + 2;
   int max = Curses::getmaxy() - win_y;
   if (h > max)
-    SetWishHeight(MAX(3, max));
+    SetWishHeight(MAX(max, 3));
   else
     SetWishHeight(h);
-
-  Window::ResizeAndUpdateArea();
 }
 
 void MenuWindow::OnChildrenHeightChange(ListBox& activator, int new_height)
@@ -65,7 +69,7 @@ void MenuWindow::OnChildrenHeightChange(ListBox& activator, int new_height)
   if (win_h != AUTOSIZE)
     return;
 
-  ResizeAndUpdateArea();
+  UpdateSmartPositionAndSize();
 }
 
 } // namespace CppConsUI

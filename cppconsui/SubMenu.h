@@ -29,9 +29,7 @@
 #define __SUBMENU_H__
 
 #include "Button.h"
-#include "MenuWindow.h"
-
-#include <vector>
+#include "FlowMenuWindow.h"
 
 namespace CppConsUI
 {
@@ -69,20 +67,16 @@ public:
 
 protected:
   class ExtMenuWindow
-  : public MenuWindow
+  : public FlowMenuWindow
   {
   public:
-    ExtMenuWindow(SubMenu& ref_);
+    ExtMenuWindow(SubMenu& ref);
     virtual ~ExtMenuWindow() {}
-
-    // Widget
-    virtual void Draw();
 
     // FreeWindow
     virtual void Close();
 
   protected:
-    SubMenu *ref;
 
   private:
     ExtMenuWindow(const ExtMenuWindow&);
@@ -93,8 +87,8 @@ protected:
 
   sigc::connection parent_window_close_conn;
 
-  void OnActivate(Button& activator);
-  void OnParentWindowClose(FreeWindow& activator);
+  virtual void OnActivate(Button& activator);
+  virtual void OnParentWindowClose(FreeWindow& activator);
 
 private:
   SubMenu(const SubMenu&);

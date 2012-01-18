@@ -57,7 +57,7 @@ AccountStatusMenu::AccountStatusMenu()
   g_list_free(list);
 }
 
-void AccountStatusMenu::ScreenResized()
+void AccountStatusMenu::OnScreenResized()
 {
   CppConsUI::Rect chat = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
   Move(chat.x, chat.y);
@@ -128,7 +128,7 @@ AccountStatusMenu::StatusPopup::StatusPopup(PurpleAccount *account)
   }
 }
 
-void AccountStatusMenu::StatusPopup::ScreenResized()
+void AccountStatusMenu::StatusPopup::OnScreenResized()
 {
   CppConsUI::Rect chat = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
   Move(chat.x, chat.y);

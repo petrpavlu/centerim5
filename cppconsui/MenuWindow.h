@@ -68,7 +68,13 @@ protected:
   virtual void AddWidget(Widget& widget, int x, int y);
 
   // FreeWindow
-  virtual void ResizeAndUpdateArea();
+  virtual void OnScreenResizedInternal();
+
+  /**
+   * Recalculates desired on-screen position and size of this window. This
+   * mainly handles autosize magic.
+   */
+  virtual void UpdateSmartPositionAndSize();
 
   virtual void OnChildrenHeightChange(ListBox& activator, int new_height);
 

@@ -142,7 +142,7 @@ void CoreManager::AddWindow(FreeWindow& window)
   }
   else {
     windows.push_back(&window);
-    window.ScreenResized();
+    window.OnScreenResized();
   }
 
   FocusWindow();
@@ -181,7 +181,7 @@ FreeWindow *CoreManager::GetTopWindow()
 
 void CoreManager::EnableResizing()
 {
-  ScreenResized();
+  OnScreenResized();
 
   // register resize handler
   struct sigaction sig;
@@ -201,7 +201,7 @@ void CoreManager::DisableResizing()
   sigaction(SIGWINCH, &sig, NULL);
 }
 
-void CoreManager::ScreenResized()
+void CoreManager::OnScreenResized()
 {
   if (pipe_valid && !resize_pending) {
     write(pipefd[1], "@", 1);
@@ -435,7 +435,7 @@ void CoreManager::InputUnInit()
 void CoreManager::SignalHandler(int signum)
 {
   if (signum == SIGWINCH)
-    COREMANAGER->ScreenResized();
+    COREMANAGER->OnScreenResized();
 }
 
 void CoreManager::Resize()

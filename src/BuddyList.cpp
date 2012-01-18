@@ -59,7 +59,7 @@ void BuddyList::Close()
   // BuddyList can't be closed
 }
 
-void BuddyList::ScreenResized()
+void BuddyList::OnScreenResized()
 {
   MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::BUDDY_LIST_AREA));
 }

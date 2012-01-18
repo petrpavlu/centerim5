@@ -33,7 +33,7 @@ public:
   virtual ~GeneralMenu() {}
 
   // FreeWindow
-  virtual void ScreenResized();
+  virtual void OnScreenResized();
 
 protected:
 

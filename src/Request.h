@@ -49,7 +49,7 @@ private:
     virtual ~RequestDialog() {}
 
     // FreeWindow
-    virtual void ScreenResized();
+    virtual void OnScreenResized();
 
     virtual PurpleRequestType GetRequestType() = 0;
 

@@ -32,7 +32,7 @@ Footer *Footer::Instance()
   return instance;
 }
 
-void Footer::ScreenResized()
+void Footer::OnScreenResized()
 {
   MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::FOOTER_AREA));
 }

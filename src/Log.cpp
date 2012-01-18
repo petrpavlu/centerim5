@@ -35,7 +35,7 @@ Log *Log::Instance()
   return instance;
 }
 
-void Log::ScreenResized()
+void Log::OnScreenResized()
 {
   MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::LOG_AREA));
 }

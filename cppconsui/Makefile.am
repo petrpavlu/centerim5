@@ -25,6 +25,8 @@ libcppconsui_la_SOURCES =\
 	CppConsUI.h \
 	Dialog.cpp \
 	Dialog.h \
+	FlowMenuWindow.cpp \
+	FlowMenuWindow.h \
 	FreeWindow.cpp \
 	FreeWindow.h \
 	HorizontalLine.cpp \

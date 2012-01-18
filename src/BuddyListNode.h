@@ -23,7 +23,7 @@
 #define _BUDDYLISTNODE_H__
 
 #include <cppconsui/Button.h>
-#include <cppconsui/MenuWindow.h>
+#include <cppconsui/FlowMenuWindow.h>
 #include <cppconsui/MessageDialog.h>
 #include <cppconsui/InputDialog.h>
 #include <cppconsui/TreeView.h>
@@ -57,23 +57,6 @@ public:
   BuddyListNode *GetParentNode() const;
 
 protected:
-  class ContextMenu
-  : public CppConsUI::MenuWindow
-  {
-  public:
-    ContextMenu(BuddyListNode& parent_);
-    virtual ~ContextMenu() {}
-
-  protected:
-    BuddyListNode *parent;
-
-    void Reposition();
-
-  private:
-    ContextMenu(const ContextMenu&);
-    ContextMenu& operator=(const ContextMenu&);
-  };
-
   CppConsUI::TreeView *treeview;
   CppConsUI::TreeView::NodeReference ref;
 
@@ -116,10 +99,10 @@ public:
 
 protected:
   class ContextMenu
-  : public BuddyListNode::ContextMenu
+  : public CppConsUI::FlowMenuWindow
   {
   public:
-    ContextMenu(BuddyListBuddy& parent_);
+    ContextMenu(BuddyListBuddy& parent);
     virtual ~ContextMenu() {}
 
   protected:
@@ -167,10 +150,10 @@ public:
 
 protected:
   class ContextMenu
-  : public BuddyListNode::ContextMenu
+  : public CppConsUI::FlowMenuWindow
   {
   public:
-    ContextMenu(BuddyListChat& parent_);
+    ContextMenu(BuddyListChat& parent);
     virtual ~ContextMenu() {}
 
   protected:
@@ -218,10 +201,10 @@ public:
 
 protected:
   class ContextMenu
-  : public BuddyListNode::ContextMenu
+  : public CppConsUI::FlowMenuWindow
   {
   public:
-    ContextMenu(BuddyListContact& parent_);
+    ContextMenu(BuddyListContact& parent);
     virtual ~ContextMenu() {}
 
   protected:
@@ -269,10 +252,10 @@ public:
 
 protected:
   class ContextMenu
-  : public BuddyListNode::ContextMenu
+  : public CppConsUI::FlowMenuWindow
   {
   public:
-    ContextMenu(BuddyListGroup& parent_);
+    ContextMenu(BuddyListGroup& parent);
     virtual ~ContextMenu() {}
 
   protected:

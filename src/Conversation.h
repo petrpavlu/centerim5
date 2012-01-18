@@ -53,7 +53,7 @@ public:
 
   // FreeWindow
   virtual void Close();
-  virtual void ScreenResized();
+  virtual void OnScreenResized();
   virtual void Show();
 
   void Write(const char *name, const char *alias, const char *message,

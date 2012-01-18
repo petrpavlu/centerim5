@@ -39,9 +39,9 @@ FreeWindow::FreeWindow(int x, int y, int w, int h, Type t)
   UpdateArea();
 
   COREMANAGER->signal_resize.connect(sigc::mem_fun(this,
-        &FreeWindow::ResizeAndUpdateArea));
+        &FreeWindow::OnScreenResizedInternal));
   COREMANAGER->signal_resize.connect(sigc::mem_fun(this,
-        &FreeWindow::ScreenResized));
+        &FreeWindow::OnScreenResized));
 
   DeclareBindables();
 }
@@ -64,20 +64,7 @@ void FreeWindow::MoveResize(int newx, int newy, int neww, int newh)
   win_w = neww;
   win_h = newh;
 
-  int realw = win_w;
-  if (realw == AUTOSIZE) {
-    realw = GetWishWidth();
-    if (realw == AUTOSIZE)
-      realw = Curses::getmaxx() - win_x;
-  }
-  int realh = win_h;
-  if (realh == AUTOSIZE) {
-    realh = GetWishHeight();
-    if (realh == AUTOSIZE)
-      realh = Curses::getmaxy() - win_y;
-  }
-  Container::MoveResize(0, 0, MAX(0, realw), MAX(0, realh));
-  UpdateArea();
+  ResizeAndUpdateArea();
 }
 
 void FreeWindow::Draw()
@@ -113,6 +100,18 @@ void FreeWindow::SetVisibility(bool visible)
 Point FreeWindow::GetAbsolutePosition()
 {
   return Point(win_x, win_y);
+}
+
+void FreeWindow::SetWishSize(int neww, int newh)
+{
+  if (neww == wish_width && newh == wish_height)
+    return;
+
+  Container::SetWishSize(neww, newh);
+  /* If either width or height is set to AUTOSIZE then this window has to be
+   * resized accordingly. */
+  if (win_w == AUTOSIZE || win_h == AUTOSIZE)
+    ResizeAndUpdateArea();
 }
 
 bool FreeWindow::IsWidgetVisible(const Widget& child) const
@@ -163,46 +162,46 @@ void FreeWindow::SetParent(Container& parent)
 
 void FreeWindow::ProceedUpdateArea()
 {
-  if (update_area) {
-    int maxx = Curses::getmaxx();
-    int maxy = Curses::getmaxy();
+  if (!update_area)
+    return;
 
-    // update virtual area
-    if (area)
-      delete area;
-    int realw = win_w;
-    if (realw == AUTOSIZE) {
-      realw = GetWishWidth();
-      if (realw == AUTOSIZE)
-        realw = Curses::getmaxx() - win_x;
-    }
-    int realh = win_h;
-    if (realh == AUTOSIZE) {
-      realh = GetWishHeight();
-      if (realh == AUTOSIZE)
-        realh = Curses::getmaxy() - win_y;
-    }
-    area = Curses::Window::newpad(realw, realh);
+  int maxx = Curses::getmaxx();
+  int maxy = Curses::getmaxy();
 
-    // update real area
-    int left = MAX(0, win_x);
-    int top = MAX(0, win_y);
-    int right = MIN(win_x + realw, maxx);
-    int bottom = MIN(win_y + realh, maxy);
-
-    copy_x = left - win_x;
-    copy_y = top - win_y;
-    copy_w = right - left - 1;
-    copy_h = bottom - top - 1;
-
-    if (realwindow)
-      delete realwindow;
-    // this could fail if the window falls outside the visible area
-    realwindow = Curses::Window::newwin(left, top, right - left,
-        bottom - top);
-
-    update_area = false;
+  // update virtual area
+  if (area)
+    delete area;
+  int realw = win_w;
+  if (realw == AUTOSIZE) {
+    realw = GetWishWidth();
+    if (realw == AUTOSIZE)
+      realw = Curses::getmaxx() - win_x;
   }
+  int realh = win_h;
+  if (realh == AUTOSIZE) {
+    realh = GetWishHeight();
+    if (realh == AUTOSIZE)
+      realh = Curses::getmaxy() - win_y;
+  }
+  area = Curses::Window::newpad(realw, realh);
+
+  // update real area
+  int left = MAX(0, win_x);
+  int top = MAX(0, win_y);
+  int right = MIN(win_x + realw, maxx);
+  int bottom = MIN(win_y + realh, maxy);
+
+  copy_x = left - win_x;
+  copy_y = top - win_y;
+  copy_w = right - left - 1;
+  copy_h = bottom - top - 1;
+
+  if (realwindow)
+    delete realwindow;
+  // this could fail if the window falls outside the visible area
+  realwindow = Curses::Window::newwin(left, top, right - left, bottom - top);
+
+  update_area = false;
 }
 
 void FreeWindow::Redraw()
@@ -210,8 +209,26 @@ void FreeWindow::Redraw()
   COREMANAGER->Redraw();
 }
 
+void FreeWindow::OnScreenResizedInternal()
+{
+  ResizeAndUpdateArea();
+}
+
 void FreeWindow::ResizeAndUpdateArea()
 {
+  int realw = win_w;
+  if (realw == AUTOSIZE) {
+    realw = GetWishWidth();
+    if (realw == AUTOSIZE)
+      realw = Curses::getmaxx() - win_x;
+  }
+  int realh = win_h;
+  if (realh == AUTOSIZE) {
+    realh = GetWishHeight();
+    if (realh == AUTOSIZE)
+      realh = Curses::getmaxy() - win_y;
+  }
+  Container::MoveResize(0, 0, MAX(0, realw), MAX(0, realh));
   UpdateArea();
 }
 
