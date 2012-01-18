@@ -40,8 +40,7 @@ class FlowMenuWindow
 : public MenuWindow
 {
 public:
-  FlowMenuWindow(Widget& ref_, int w, int h, const char *title = NULL,
-      LineStyle::Type ltype = LineStyle::DEFAULT);
+  FlowMenuWindow(Widget& ref_, int w, int h, const char *title = NULL);
   virtual ~FlowMenuWindow() {}
 
   // Widget

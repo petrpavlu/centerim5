@@ -52,10 +52,8 @@ public:
     RESPONSE_NO
   };
 
-  AbstractDialog(int x, int y, int w, int h, const char *title = NULL,
-      LineStyle::Type ltype = LineStyle::DEFAULT);
-  explicit AbstractDialog(const char *title = NULL,
-      LineStyle::Type ltype = LineStyle::DEFAULT);
+  AbstractDialog(int x, int y, int w, int h, const char *title = NULL);
+  explicit AbstractDialog(const char *title = NULL);
   virtual ~AbstractDialog() {}
 
   // FreeWindow

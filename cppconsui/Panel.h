@@ -30,7 +30,6 @@
 #define __PANEL_H__
 
 #include "Label.h"
-#include "LineStyle.h"
 #include "Widget.h"
 
 namespace CppConsUI
@@ -44,8 +43,7 @@ class Panel
 : public Widget
 {
 public:
-  Panel(int w, int h, const char *text = NULL,
-      LineStyle::Type ltype = LineStyle::DEFAULT);
+  Panel(int w, int h, const char *text = NULL);
   virtual ~Panel();
 
   // Widget
@@ -60,17 +58,7 @@ public:
    */
   const char *GetTitle() const;
 
-  /**
-   * Sets a new border style.
-   */
-  void SetBorderStyle(LineStyle::Type ltype);
-  /**
-   * Returns a current border style.
-   */
-  LineStyle::Type GetBorderStyle() const;
-
 protected:
-  LineStyle linestyle;
   /**
    * Caption text.
    */

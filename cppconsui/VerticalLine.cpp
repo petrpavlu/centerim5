@@ -31,8 +31,8 @@
 namespace CppConsUI
 {
 
-VerticalLine::VerticalLine(int h, LineStyle::Type ltype)
-: AbstractLine(1, h, ltype)
+VerticalLine::VerticalLine(int h)
+: AbstractLine(1, h)
 {
 }
 
@@ -48,7 +48,7 @@ void VerticalLine::Draw()
   int attrs = GetColorPair("verticalline", "line");
   area->attron(attrs);
   for (int i = 0; i < realh; i++)
-    area->mvaddstring(i, 0, linestyle.V());
+    area->mvaddlinechar(i, 0, Curses::LINE_VLINE);
   area->attroff(attrs);
 }
 

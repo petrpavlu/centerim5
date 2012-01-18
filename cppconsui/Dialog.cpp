@@ -31,14 +31,13 @@
 namespace CppConsUI
 {
 
-Dialog::Dialog(int x, int y, int w, int h, const char *title,
-    LineStyle::Type ltype)
-: AbstractDialog(x, y, w, h, title, ltype)
+Dialog::Dialog(int x, int y, int w, int h, const char *title)
+: AbstractDialog(x, y, w, h, title)
 {
 }
 
-Dialog::Dialog(const char *title, LineStyle::Type ltype)
-: AbstractDialog(title, ltype)
+Dialog::Dialog(const char *title)
+: AbstractDialog(title)
 {
 }
 

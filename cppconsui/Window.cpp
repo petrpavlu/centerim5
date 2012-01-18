@@ -31,11 +31,10 @@
 namespace CppConsUI
 {
 
-Window::Window(int x, int y, int w, int h, const char *title, Type t,
-    LineStyle::Type ltype)
+Window::Window(int x, int y, int w, int h, const char *title, Type t)
 : FreeWindow(x, y, w, h, t)
 {
-  panel = new Panel(win_w, win_h, title, ltype);
+  panel = new Panel(win_w, win_h, title);
   AddWidget(*panel, 0, 0);
 }
 
@@ -111,16 +110,6 @@ Curses::Window *Window::GetSubPad(const Widget &child, int begin_x,
 
   // add '+1' offset to normal childs so they can not overwrite the panel
   return area->subpad(begin_x + 1, begin_y + 1, ncols, nlines);
-}
-
-void Window::SetBorderStyle(LineStyle::Type ltype)
-{
-  panel->SetBorderStyle(ltype);
-}
-
-LineStyle::Type Window::GetBorderStyle() const
-{
-  return panel->GetBorderStyle();
 }
 
 void Window::ResizeAndUpdateArea()

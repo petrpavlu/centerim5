@@ -47,7 +47,7 @@ class Window
 {
 public:
   Window(int x, int y, int w, int h, const char *title = NULL,
-      Type t = TYPE_NORMAL, LineStyle::Type ltype = LineStyle::DEFAULT);
+      Type t = TYPE_NORMAL);
   virtual ~Window() {}
 
   // Widget
@@ -59,9 +59,6 @@ public:
   virtual Point GetAbsolutePosition(const Widget& child) const;
   virtual Curses::Window *GetSubPad(const Widget &child, int begin_x,
       int begin_y, int ncols, int nlines);
-
-  void SetBorderStyle(LineStyle::Type ltype);
-  LineStyle::Type GetBorderStyle() const;
 
   void SetTitle(const char *text) { panel->SetTitle(text); }
   const char *GetTitle() const { return panel->GetTitle(); }

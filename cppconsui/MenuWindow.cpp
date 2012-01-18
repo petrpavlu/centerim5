@@ -31,9 +31,8 @@
 namespace CppConsUI
 {
 
-MenuWindow::MenuWindow(int x, int y, int w, int h, const char *title,
-    LineStyle::Type ltype)
-: Window(x, y, w, h, title, TYPE_TOP, ltype), wish_height(3)
+MenuWindow::MenuWindow(int x, int y, int w, int h, const char *title)
+: Window(x, y, w, h, title, TYPE_TOP), wish_height(3)
 {
   wish_width = MENU_WINDOW_WISH_WIDTH;
 

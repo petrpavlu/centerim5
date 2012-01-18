@@ -31,8 +31,8 @@
 namespace CppConsUI
 {
 
-HorizontalLine::HorizontalLine(int w, LineStyle::Type ltype)
-: AbstractLine(w, 1, ltype)
+HorizontalLine::HorizontalLine(int w)
+: AbstractLine(w, 1)
 {
 }
 
@@ -48,7 +48,7 @@ void HorizontalLine::Draw()
   int attrs = GetColorPair("horizontalline", "line");
   area->attron(attrs);
   for (int i = 0; i < realw; i++)
-    area->mvaddstring(i, 0, linestyle.H());
+    area->mvaddlinechar(i, 0, Curses::LINE_HLINE);
   area->attroff(attrs);
 }
 

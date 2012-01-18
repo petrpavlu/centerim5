@@ -39,8 +39,6 @@ libcppconsui_la_SOURCES =\
 	InputProcessor.h \
 	Label.cpp \
 	Label.h \
-	LineStyle.cpp \
-	LineStyle.h \
 	ListBox.cpp \
 	ListBox.h \
 	KeyConfig.cpp \

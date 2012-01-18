@@ -30,15 +30,14 @@
 namespace CppConsUI
 {
 
-AbstractDialog::AbstractDialog(int x, int y, int w, int h, const char *title,
-    LineStyle::Type ltype)
-: Window(x, y, w, h, title, TYPE_TOP, ltype)
+AbstractDialog::AbstractDialog(int x, int y, int w, int h, const char *title)
+: Window(x, y, w, h, title, TYPE_TOP)
 {
   InitLayout();
 }
 
-AbstractDialog::AbstractDialog(const char *title, LineStyle::Type ltype)
-: Window(10, 10, 60, 12, title, TYPE_TOP, ltype)
+AbstractDialog::AbstractDialog(const char *title)
+: Window(10, 10, 60, 12, title, TYPE_TOP)
 {
   /// @todo Set correct position.
 

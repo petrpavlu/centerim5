@@ -33,19 +33,10 @@
 namespace CppConsUI
 {
 
-const TextView::ScrollBarElements TextView::scrollbar_elements_ascii = {
-  "-", " ", " "
-};
-
-const TextView::ScrollBarElements TextView::scrollbar_elements_extended = {
-  "\302\267", "\342\206\221", "\342\206\223"
-};
-
-TextView::TextView(int w, int h, bool autoscroll_, bool scrollbar_,
-    ScrollBarStyle style)
+TextView::TextView(int w, int h, bool autoscroll_, bool scrollbar_)
 : Widget(w, h), view_top(0), autoscroll(autoscroll_)
 , autoscroll_suspended(false), scroll(0), scrollbar(scrollbar_)
-, scrollbar_style(style) , dirty_lines(false), recalculate_screen_lines(false)
+, dirty_lines(false), recalculate_screen_lines(false)
 {
   can_focus = true;
   DeclareBindables();
@@ -163,12 +154,6 @@ void TextView::Draw()
 
   // draw scrollbar
   if (scrollbar) {
-    const ScrollBarElements *elems;
-    if (scrollbar_style == ASCII || COREMANAGER->IsFallbackDrawMode())
-      elems = &scrollbar_elements_ascii;
-    else
-      elems = &scrollbar_elements_extended;
-
     int x1, x2;
     if (screen_lines.size() <= static_cast<unsigned>(realh)) {
       x1 = 0;
@@ -192,31 +177,31 @@ void TextView::Draw()
        * draw at least two arrows. */
       if (realh - x1 < 2) {
         // we are close to bottom position
-        area->mvaddstring(realw - 1, realh - 2, elems->upa);
-        area->mvaddstring(realw - 1, realh - 1, elems->downa);
+        area->mvaddlinechar(realw - 1, realh - 2, Curses::LINE_UARROW);
+        area->mvaddlinechar(realw - 1, realh - 1, Curses::LINE_DARROW);
       }
       else if (x2 < 2) {
         // we are close to top position
-        area->mvaddstring(realw - 1, 0, elems->upa);
-        area->mvaddstring(realw - 1, 1, elems->downa);
+        area->mvaddlinechar(realw - 1, 0, Curses::LINE_UARROW);
+        area->mvaddlinechar(realw - 1, 1, Curses::LINE_DARROW);
       }
       else {
         // in between
-        area->mvaddstring(realw - 1, x2 - 2, elems->upa);
-        area->mvaddstring(realw - 1, x2 - 1, elems->downa);
+        area->mvaddlinechar(realw - 1, x2 - 2, Curses::LINE_UARROW);
+        area->mvaddlinechar(realw - 1, x2 - 1, Curses::LINE_DARROW);
       }
     }
     else {
       // scrollbar length is big enough to fit two arrows
-      area->mvaddstring(realw - 1, x1, elems->upa);
-      area->mvaddstring(realw - 1, x2 - 1, elems->downa);
+      area->mvaddlinechar(realw - 1, x1, Curses::LINE_UARROW);
+      area->mvaddlinechar(realw - 1, x2 - 1, Curses::LINE_DARROW);
     }
 
     // draw a dot to indicate "end of scrolling" for user
     if (view_top + realh >= screen_lines.size())
-      area->mvaddstring(realw - 1, realh - 1, elems->mchar);
+      area->mvaddlinechar(realw - 1, realh - 1, Curses::LINE_BULLET);
     if (view_top == 0)
-      area->mvaddstring(realw - 1, 0, elems->mchar);
+      area->mvaddlinechar(realw - 1, 0, Curses::LINE_BULLET);
 
     area->attroff(attrs);
   }
@@ -331,16 +316,6 @@ void TextView::SetScrollBar(bool enabled)
   scrollbar = enabled;
   recalculate_screen_lines = true;
   Redraw();
-}
-
-void TextView::SetScrollBarStyle(ScrollBarStyle style)
-{
-  if (scrollbar_style == style)
-    return;
-
-  scrollbar_style = style;
-  if (scrollbar)
-    Redraw();
 }
 
 TextView::Line::Line(const char *text_, size_t bytes, int color_, bool dirty_)

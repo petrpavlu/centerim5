@@ -181,6 +181,44 @@ int Window::mvaddchar(int x, int y, gunichar uc)
   return PrintChar(uc);
 }
 
+int Window::mvaddlinechar(int x, int y, LineChar c)
+{
+  switch (c) {
+    case LINE_HLINE:
+      return mvwaddch(p->win, y, x, ACS_HLINE);
+    case LINE_VLINE:
+      return mvwaddch(p->win, y, x, ACS_VLINE);
+    case LINE_LLCORNER:
+      return mvwaddch(p->win, y, x, ACS_LLCORNER);
+    case LINE_LRCORNER:
+      return mvwaddch(p->win, y, x, ACS_LRCORNER);
+    case LINE_ULCORNER:
+      return mvwaddch(p->win, y, x, ACS_ULCORNER);
+    case LINE_URCORNER:
+      return mvwaddch(p->win, y, x, ACS_URCORNER);
+    case LINE_BTEE:
+      return mvwaddch(p->win, y, x, ACS_BTEE);
+    case LINE_LTEE:
+      return mvwaddch(p->win, y, x, ACS_LTEE);
+    case LINE_RTEE:
+      return mvwaddch(p->win, y, x, ACS_RTEE);
+    case LINE_TTEE:
+      return mvwaddch(p->win, y, x, ACS_TTEE);
+
+    case LINE_DARROW:
+      return mvwaddch(p->win, y, x, ACS_DARROW);
+    case LINE_LARROW:
+      return mvwaddch(p->win, y, x, ACS_LARROW);
+    case LINE_RARROW:
+      return mvwaddch(p->win, y, x, ACS_RARROW);
+    case LINE_UARROW:
+      return mvwaddch(p->win, y, x, ACS_UARROW);
+    case LINE_BULLET:
+      return mvwaddch(p->win, y, x, ACS_BULLET);
+  }
+  return ERR;
+}
+
 int Window::attron(int attrs)
 {
   return wattron(p->win, attrs);

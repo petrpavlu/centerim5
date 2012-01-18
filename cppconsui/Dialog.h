@@ -38,10 +38,8 @@ class Dialog
 : public AbstractDialog
 {
 public:
-  Dialog(int x, int y, int w, int h, const char *title = NULL,
-      LineStyle::Type ltype = LineStyle::DEFAULT);
-  explicit Dialog(const char *title = NULL,
-      LineStyle::Type ltype = LineStyle::DEFAULT);
+  Dialog(int x, int y, int w, int h, const char *title = NULL);
+  explicit Dialog(const char *title = NULL);
   virtual ~Dialog() {}
 
   /**

@@ -18,7 +18,6 @@ set( cppconsui_SOURCES
 	InputDialog.cpp
 	InputProcessor.cpp
 	Label.cpp
-	LineStyle.cpp
 	ListBox.cpp
 	KeyConfig.cpp
 	Keys.cpp
@@ -61,7 +60,6 @@ set( cppconsui_HEADERS
 	InputDialog.h
 	InputProcessor.h
 	Label.h
-	LineStyle.h
 	ListBox.h
 	KeyConfig.h
 	Keys.h

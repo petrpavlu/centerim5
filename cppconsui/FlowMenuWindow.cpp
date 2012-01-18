@@ -30,9 +30,8 @@
 namespace CppConsUI
 {
 
-FlowMenuWindow::FlowMenuWindow(Widget& ref_, int w, int h, const char *title,
-    LineStyle::Type ltype)
-: MenuWindow(0, 0, w, h, title, ltype), ref(&ref_), xshift(0), yshift(0)
+FlowMenuWindow::FlowMenuWindow(Widget& ref_, int w, int h, const char *title)
+: MenuWindow(0, 0, w, h, title), ref(&ref_), xshift(0), yshift(0)
 {
   ref_visible_conn = ref->signal_visible.connect(sigc::mem_fun(this,
         &FlowMenuWindow::OnRefVisible));

@@ -24,7 +24,6 @@
 
 #include "Button.h"
 #include "ScrollPane.h"
-#include "LineStyle.h"
 
 #include "tree.hh"
 
@@ -68,7 +67,7 @@ public:
   typedef TheTree::pre_order_iterator NodeReference;
   typedef TheTree::sibling_iterator SiblingIterator;
 
-  TreeView(int w, int h, LineStyle::Type ltype = LineStyle::DEFAULT);
+  TreeView(int w, int h);
   virtual ~TreeView();
 
   // Widget
@@ -203,7 +202,6 @@ protected:
 
   TheTree thetree;
   NodeReference focus_node;
-  LineStyle linestyle;
 
   // Container
   virtual void AddWidget(Widget& widget, int x, int y);

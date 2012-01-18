@@ -1,7 +1,6 @@
 check_PROGRAMS = \
 	button_test \
 	label_test \
-	linestyle_test \
 	textentry_test \
 	textview_test \
 	treeview_test \
@@ -24,9 +23,6 @@ button_test_SOURCES = \
 
 label_test_SOURCES = \
 	label_test.cpp
-
-linestyle_test_SOURCES = \
-	linestyle_test.cpp
 
 textentry_test_SOURCES = \
 	textentry_test.cpp

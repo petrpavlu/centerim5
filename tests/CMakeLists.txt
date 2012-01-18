@@ -16,15 +16,6 @@ target_link_libraries( label_test
 		)
 
 ######################################################################
-add_executable( linestyle_test EXCLUDE_FROM_ALL linestyle_test.cpp)
-
-target_link_libraries( linestyle_test
-				${GLIB2_LIBRARIES}
-				${SIGC_LIBRARIES}
-				cppconsui
-		)
-
-######################################################################
 add_executable ( textentry_test EXCLUDE_FROM_ALL textentry_test.cpp)
 
 target_link_libraries( textentry_test

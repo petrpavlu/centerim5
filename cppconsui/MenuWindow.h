@@ -41,8 +41,7 @@ class MenuWindow
 : public Window
 {
 public:
-  MenuWindow(int x, int y, int w, int h, const char *title = NULL,
-      LineStyle::Type ltype = LineStyle::DEFAULT);
+  MenuWindow(int x, int y, int w, int h, const char *title = NULL);
   virtual ~MenuWindow() {}
 
   virtual Button *InsertItem(size_t pos, const char *title,

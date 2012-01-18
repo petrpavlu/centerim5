@@ -248,13 +248,8 @@ CoreManager::CoreManager()
 : top_input_processor(NULL), io_input_channel(NULL), io_input_channel_id(0)
 , resize_channel(NULL), resize_channel_id(0), pipe_valid(false), tk(NULL)
 , utf8(false), gmainloop(NULL), redraw_pending(false), resize_pending(false)
-, fallback_draw_mode(false)
 {
   InputInit();
-
-  // if charset isn't utf8 or wcwidth() implementation is broken
-  if (!utf8 || wcwidth(0x2500) != 1)
-    fallback_draw_mode = true;
 
   /**
    * @todo Check the return value. Throw an exception if we can't init curses.

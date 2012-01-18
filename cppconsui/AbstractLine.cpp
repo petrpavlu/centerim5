@@ -30,21 +30,9 @@
 namespace CppConsUI
 {
 
-AbstractLine::AbstractLine(int w, int h, LineStyle::Type ltype)
+AbstractLine::AbstractLine(int w, int h)
 : Widget(w, h)
-, linestyle(ltype)
 {
-}
-
-void AbstractLine::SetLineStyle(LineStyle::Type ltype)
-{
-  linestyle.SetStyle(ltype);
-  Redraw();
-}
-
-LineStyle::Type AbstractLine::GetLineStyle()
-{
-  return linestyle.GetStyle();
 }
 
 } // namespace CppConsUI

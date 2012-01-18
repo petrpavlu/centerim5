@@ -82,8 +82,6 @@ public:
 
   TermKey *GetTermKeyHandle() { return tk; };
 
-  bool IsFallbackDrawMode() { return fallback_draw_mode; }
-
   sigc::signal<void> signal_resize;
   sigc::signal<void> signal_top_window_change;
 
@@ -111,8 +109,6 @@ private:
 
   bool redraw_pending;
   bool resize_pending;
-
-  bool fallback_draw_mode;
 
   CoreManager();
   CoreManager(const CoreManager&);

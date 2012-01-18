@@ -45,8 +45,8 @@ void TreeView::ToggleCollapseButton::SetParent(Container& parent)
           &TreeView::ActionToggleCollapsed)));
 }
 
-TreeView::TreeView(int w, int h, LineStyle::Type ltype)
-: ScrollPane(w, h, 0, 0), linestyle(ltype)
+TreeView::TreeView(int w, int h)
+: ScrollPane(w, h, 0, 0)
 {
   // allow fast focus changing (paging) using PageUp/PageDown keys
   page_focus = true;
@@ -437,7 +437,7 @@ int TreeView::DrawNode(SiblingIterator node, int top)
     area->attron(attrs);
     if (depthoffset < realw)
       for (j = top + 1; j < top + height; j++)
-        area->mvaddstring(depthoffset, j, linestyle.V());
+        area->mvaddlinechar(depthoffset, j, Curses::LINE_VLINE);
 
     /* Note: it would be better to start from end towards begin but for some
      * reason it doesn't seem to work. */
@@ -458,14 +458,14 @@ int TreeView::DrawNode(SiblingIterator node, int top)
     for (i = node.begin(); i != end; i++) {
       if (depthoffset < realw) {
         if (i != last)
-          area->mvaddstring(depthoffset, top + height, linestyle.VRight());
+          area->mvaddlinechar(depthoffset, top + height, Curses::LINE_LTEE);
         else
-          area->mvaddstring(depthoffset, top + height, linestyle.CornerBL());
+          area->mvaddlinechar(depthoffset, top + height, Curses::LINE_LLCORNER);
       }
 
       /*
       if (depthoffset + 1 < realw)
-        area->mvaddstring(depthoffset + 1, top + height, linestyle.H());
+        area->mvaddlinechar(depthoffset + 1, top + height, Curses::LINE_HLINE);
         */
 
       if (i->style == STYLE_NORMAL && IsNodeOpenable(i)) {
@@ -477,7 +477,7 @@ int TreeView::DrawNode(SiblingIterator node, int top)
           area->mvaddstring(depthoffset + 3, top + height, "]");
       }
       else if (depthoffset + 1 < realw)
-        area->mvaddstring(depthoffset + 1, top + height, linestyle.H());
+        area->mvaddlinechar(depthoffset + 1, top + height, Curses::LINE_HLINE);
 
       area->attroff(attrs);
       int oldh = height;
@@ -486,7 +486,7 @@ int TreeView::DrawNode(SiblingIterator node, int top)
 
       if (i != last && depthoffset < realw)
         for (j = top + oldh + 1; j < top + height ; j++)
-          area->mvaddstring(depthoffset, j, linestyle.V());
+          area->mvaddlinechar(depthoffset, j, Curses::LINE_VLINE);
     }
     area->attroff(attrs);
   }

@@ -29,7 +29,6 @@
 #define __ABSTRACTLINE_H__
 
 #include "Widget.h"
-#include "LineStyle.h"
 
 namespace CppConsUI
 {
@@ -42,23 +41,12 @@ class AbstractLine
 : public Widget
 {
 public:
-  AbstractLine(int w, int h, LineStyle::Type ltype = LineStyle::DEFAULT);
+  AbstractLine(int w, int h);
   virtual ~AbstractLine() {}
 
-  /**
-   * Sets a new line style.
-   */
-  void SetLineStyle(LineStyle::Type ltype);
-  /**
-   * Returns a current line style.
-   */
-  LineStyle::Type GetLineStyle();
-
 protected:
-  LineStyle linestyle;
 
 private:
-  AbstractLine();
   AbstractLine(const AbstractLine&);
   AbstractLine& operator=(const AbstractLine&);
 };

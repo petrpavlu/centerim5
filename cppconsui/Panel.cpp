@@ -31,11 +31,8 @@
 namespace CppConsUI
 {
 
-Panel::Panel(int w, int h, const char *text, LineStyle::Type ltype)
-: Widget(w, h)
-, linestyle(ltype)
-, title(NULL)
-, title_width(0)
+Panel::Panel(int w, int h, const char *text)
+: Widget(w, h), title(NULL), title_width(0)
 {
   SetTitle(text);
 }
@@ -86,31 +83,31 @@ void Panel::Draw()
 
   // draw top horizontal line
   for (i = 1; i < 1 + hline_len; i++)
-    area->mvaddstring(i, 0, linestyle.H());
+    area->mvaddlinechar(i, 0, Curses::LINE_HLINE);
   for (i = 1 + hline_len + extra - 2 + draw_title_width; i < realw - 1 * wa;
       i++)
-    area->mvaddstring(i, 0, linestyle.H());
+    area->mvaddlinechar(i, 0, Curses::LINE_HLINE);
 
   // draw bottom horizontal line
   if (ha)
     for (i = 1; i < realw - 1 * wa; i++)
-      area->mvaddstring(i, realh - 1, linestyle.H());
+      area->mvaddlinechar(i, realh - 1, Curses::LINE_HLINE);
 
   // draw left and right vertical line
   for (i = 1; i < realh - 1 * ha; i++)
-    area->mvaddstring(0, i, linestyle.V());
+    area->mvaddlinechar(0, i, Curses::LINE_VLINE);
   if (wa)
     for (i = 1; i < realh - 1 * ha; i++)
-      area->mvaddstring(realw - 1, i, linestyle.V());
+      area->mvaddlinechar(realw - 1, i, Curses::LINE_VLINE);
 
   // draw corners
-  area->mvaddstring(0, 0, linestyle.CornerTL());
+  area->mvaddlinechar(0, 0, Curses::LINE_ULCORNER);
   if (wa)
-    area->mvaddstring(realw - 1, 0, linestyle.CornerTR());
+    area->mvaddlinechar(realw - 1, 0, Curses::LINE_URCORNER);
   if (ha)
-    area->mvaddstring(0, realh - 1, linestyle.CornerBL());
+    area->mvaddlinechar(0, realh - 1, Curses::LINE_LLCORNER);
   if (wa && ha)
-    area->mvaddstring(realw - 1, realh - 1, linestyle.CornerBR());
+    area->mvaddlinechar(realw - 1, realh - 1, Curses::LINE_LRCORNER);
 
   area->attroff(attrs);
 }
@@ -128,17 +125,6 @@ void Panel::SetTitle(const char *text)
 const char *Panel::GetTitle() const
 {
   return title;
-}
-
-void Panel::SetBorderStyle(LineStyle::Type ltype)
-{
-  linestyle.SetStyle(ltype);
-  Redraw();
-}
-
-LineStyle::Type Panel::GetBorderStyle() const
-{
-  return linestyle.GetStyle();
 }
 
 } // namespace CppConsUI

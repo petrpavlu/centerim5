@@ -42,15 +42,7 @@ class TextView
 : public Widget
 {
 public:
-public:
-  enum ScrollBarStyle {
-    DEFAULT,
-    ASCII,
-    EXTENDED
-  };
-
-  TextView(int w, int h, bool autoscroll_ = false, bool scrollbar_ = false,
-      ScrollBarStyle style = DEFAULT);
+  TextView(int w, int h, bool autoscroll_ = false, bool scrollbar_ = false);
   virtual ~TextView();
 
   // Widget
@@ -95,17 +87,7 @@ public:
   void SetScrollBar(bool enabled);
   bool GetScrollBar() const { return scrollbar; }
 
-  void SetScrollBarStyle(ScrollBarStyle style);
-  ScrollBarStyle GetScrollBarStyle() const { return scrollbar_style; }
-
 protected:
-  struct ScrollBarElements
-  {
-    const char *mchar; // middle dot
-    const char *upa;   // upwards arrow
-    const char *downa; // downwards arrow
-  };
-
   /**
    * Struct Line saves a real line. All text added into TextView is split on
    * '\\n' character and stored into Line objects.
@@ -155,15 +137,11 @@ protected:
   typedef std::deque<Line*> Lines;
   typedef std::deque<ScreenLine> ScreenLines;
 
-  const static ScrollBarElements scrollbar_elements_ascii;
-  const static ScrollBarElements scrollbar_elements_extended;
-
   size_t view_top;
   bool autoscroll;
   bool autoscroll_suspended;
   int scroll;
   bool scrollbar;
-  ScrollBarStyle scrollbar_style;
   bool dirty_lines;
   bool recalculate_screen_lines;
 

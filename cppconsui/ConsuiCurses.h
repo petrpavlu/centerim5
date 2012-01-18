@@ -50,6 +50,24 @@ struct Stats
 const Stats *GetStats();
 void ResetStats();
 
+enum LineChar {
+  LINE_HLINE,
+  LINE_VLINE,
+  LINE_LLCORNER,
+  LINE_LRCORNER,
+  LINE_ULCORNER,
+  LINE_URCORNER,
+  LINE_BTEE,
+  LINE_LTEE,
+  LINE_RTEE,
+  LINE_TTEE,
+  LINE_DARROW,
+  LINE_LARROW,
+  LINE_RARROW,
+  LINE_UARROW,
+  LINE_BULLET
+};
+
 class Window
 {
 public:
@@ -72,6 +90,8 @@ public:
   int mvaddstring(int x, int y, const char *str, const char *end);
 
   int mvaddchar(int x, int y, gunichar uc);
+
+  int mvaddlinechar(int x, int y, LineChar c);
 
   int attron(int attrs);
   int attroff(int attrs);

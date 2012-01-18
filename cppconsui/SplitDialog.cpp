@@ -32,16 +32,15 @@
 namespace CppConsUI
 {
 
-SplitDialog::SplitDialog(int x, int y, int w, int h, const char *title,
-    LineStyle::Type ltype)
-: AbstractDialog(x, y, w, h, title, ltype), container(NULL)
+SplitDialog::SplitDialog(int x, int y, int w, int h, const char *title)
+: AbstractDialog(x, y, w, h, title), container(NULL)
 , cont_old_focus(NULL) , buttons_old_focus(NULL)
 {
   buttons->SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
 }
 
-SplitDialog::SplitDialog(const char *title, LineStyle::Type ltype)
-: AbstractDialog(title, ltype), container(NULL), cont_old_focus(NULL)
+SplitDialog::SplitDialog(const char *title)
+: AbstractDialog(title), container(NULL), cont_old_focus(NULL)
 , buttons_old_focus(NULL)
 {
   buttons->SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
