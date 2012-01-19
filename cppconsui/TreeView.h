@@ -206,6 +206,8 @@ protected:
   // Container
   virtual void AddWidget(Widget& widget, int x, int y);
   virtual void RemoveWidget(Widget& widget);
+  virtual void MoveWidgetBefore(Widget& widget, Widget& position);
+  virtual void MoveWidgetAfter(Widget& widget, Widget& position);
   virtual void Clear(); ///< @todo Implemement.
 
   virtual int DrawNode(SiblingIterator node, int top);

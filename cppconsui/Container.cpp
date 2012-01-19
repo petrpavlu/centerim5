@@ -125,16 +125,22 @@ void Container::AddWidget(Widget& widget, int x, int y)
 
 void Container::RemoveWidget(Widget& widget)
 {
-  Children::iterator i;
-
-  for (i = children.begin(); i != children.end(); i++)
-    if (i->widget == &widget)
-      break;
-
+  g_assert(widget.GetParent() == this);
+  Children::iterator i = FindWidget(widget);
   g_assert(i != children.end());
 
   delete i->widget;
   children.erase(i);
+}
+
+void Container::MoveWidgetBefore(Widget& widget, Widget& position)
+{
+  MoveWidgetInternal(widget, position, false);
+}
+
+void Container::MoveWidgetAfter(Widget& widget, Widget& position)
+{
+  MoveWidgetInternal(widget, position, true);
 }
 
 void Container::Clear()
@@ -192,6 +198,10 @@ void Container::GetFocusChain(FocusChain& focus_chain,
 
 void Container::UpdateFocusChain()
 {
+  if (parent) {
+    parent->UpdateFocusChain();
+    return;
+  }
   update_focus_chain = true;
 }
 
@@ -453,6 +463,15 @@ Curses::Window *Container::GetSubPad(const Widget& child, int begin_x,
   return area->subpad(begin_x, begin_y, ncols, nlines);
 }
 
+Container::Children::iterator Container::FindWidget(const Widget& widget)
+{
+  Children::iterator i;
+  for (i = children.begin(); i != children.end(); i++)
+    if (i->widget == &widget)
+      break;
+  return i;
+}
+
 void Container::InsertWidget(size_t pos, Widget& widget, int x, int y)
 {
   g_assert(pos <= children.size());
@@ -472,6 +491,31 @@ void Container::InsertWidget(size_t pos, Widget& widget, int x, int y)
       sigc::mem_fun(this, &Container::OnChildWishSizeChange));
   children[pos].sig_visible = widget.signal_visible.connect(
       sigc::mem_fun(this, &Container::OnChildVisible));
+}
+
+void Container::MoveWidgetInternal(Widget& widget, Widget& position,
+    bool after)
+{
+  g_assert(widget.GetParent() == this);
+  g_assert(position.GetParent() == this);
+
+  // remove widget from the children..
+  Children::iterator widget_iter = FindWidget(widget);
+  g_assert(widget_iter != children.end());
+  Child child = *widget_iter;
+  children.erase(widget_iter);
+
+  // ..put it back into a correct position
+  Children::iterator position_iter = FindWidget(position);
+  g_assert(position_iter != children.end());
+  if (after)
+    position_iter++;
+  children.insert(position_iter, child);
+
+  UpdateFocusChain();
+
+  // need redraw if the widgets overlap
+  Redraw();
 }
 
 void Container::OnChildMoveResize(Widget& activator, const Rect& oldsize,

@@ -129,10 +129,10 @@ void Widget::SetVisibility(bool visible)
   if (this->visible != visible) {
     this->visible = visible;
 
-    Container *t = GetTopContainer();
-    if (t) {
-      t->UpdateFocusChain();
+    if (parent) {
+      parent->UpdateFocusChain();
 
+      Container *t = GetTopContainer();
       if (visible) {
         if (!t->GetFocusWidget()) {
           /* There is no focused widget, try if this or a widget
@@ -169,8 +169,9 @@ void Widget::SetParent(Container& parent)
 
   this->parent = &parent;
 
+  this->parent->UpdateFocusChain();
+
   Container *t = GetTopContainer();
-  t->UpdateFocusChain();
   if (!t->GetFocusWidget()) {
     /* There is no focused widget, try if this or a child widget (in case
      * of Container) can grab it. */

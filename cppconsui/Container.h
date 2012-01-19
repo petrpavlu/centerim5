@@ -100,10 +100,29 @@ public:
    */
   virtual void AddWidget(Widget& widget, int x, int y);
   /**
-   * Removes the widget from the children list but it doesn't delete the
-   * widget. The caller must ensure proper deletion of the widget.
+   * Removes the widget from the children list and destroys it.
    */
   virtual void RemoveWidget(Widget& widget);
+
+  /**
+   * Changes logical position of the given widget to be before the position
+   * widget. This affects focus cycling. Both passed widgets have to be
+   * children of this Container.
+   */
+  virtual void MoveWidgetBefore(Widget& widget, Widget& position);
+  /**
+   * Changes logical position of the given widget to be after the position
+   * widget. This affects focus cycling. Both passed widgets have to be
+   * children of this Container.
+   */
+  virtual void MoveWidgetAfter(Widget& widget, Widget& position);
+
+  /**
+   * @todo Maybe inserting and moving of widgets should be extended. There
+   * should be a way how to insert a widget at a specified position. Generally
+   * InsertWidget() should be made public, and MoveWidget(widget, size_t
+   * position) should be added.
+   */
 
   /**
    * Removes (and deletes) all children widgets.
@@ -129,7 +148,9 @@ public:
   virtual void GetFocusChain(FocusChain& focus_chain,
       FocusChain::iterator parent);
   /**
-   *
+   * Gives this Container information that the cached focus chain has to be
+   * updated. If this container has a parent then this information is
+   * propageted to it.
    */
   virtual void UpdateFocusChain();
   /**
@@ -198,6 +219,11 @@ protected:
   Children children;
 
   /**
+   * Searches children for a given widget.
+   */
+  virtual Children::iterator FindWidget(const Widget& widget);
+
+  /**
    * Inserts a widget in the children list at a given position. The Container
    * takes ownership of the widget. It means that the widget will be deleted
    * by the Container. This function is intended to be used by derived classes
@@ -205,6 +231,8 @@ protected:
    * HorizontalListBox).
    */
   virtual void InsertWidget(size_t pos, Widget& widget, int x, int y);
+
+  virtual void MoveWidgetInternal(Widget& widget, Widget& position, bool after);
 
   virtual void OnChildMoveResize(Widget& activator, const Rect& oldsize,
       const Rect& newsize);

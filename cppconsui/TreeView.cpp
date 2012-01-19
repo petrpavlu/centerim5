@@ -395,6 +395,16 @@ void TreeView::RemoveWidget(Widget& widget)
   ScrollPane::RemoveWidget(widget);
 }
 
+void TreeView::MoveWidgetBefore(Widget& widget, Widget& position)
+{
+  ScrollPane::MoveWidgetBefore(widget, position);
+}
+
+void TreeView::MoveWidgetAfter(Widget& widget, Widget& position)
+{
+  ScrollPane::MoveWidgetAfter(widget, position);
+}
+
 void TreeView::Clear()
 {
   ScrollPane::Clear();
@@ -517,8 +527,9 @@ void TreeView::FixFocus()
    * was hidden by this reorganization (then the focus has to be handled to
    * another widget). */
 
+  UpdateFocusChain();
+
   Container *t = GetTopContainer();
-  t->UpdateFocusChain();
   Widget *focus = t->GetFocusWidget();
   if (!focus) {
     // try to grab the focus
