@@ -47,6 +47,28 @@ void Conversations::FocusActiveConversation()
   ActivateConversation(active);
 }
 
+void Conversations::FocusConversation(int i)
+{
+  int prev, cur;
+  prev = -1;
+  cur = NextActiveConversation(prev);
+
+  while (cur > prev) {
+    if (i == 1) {
+      ActivateConversation(cur);
+      return;
+    }
+
+    i--;
+    prev = cur;
+    cur = NextActiveConversation(cur);
+  }
+
+  // if there is less than i active conversations then active the last one
+  if (prev != -1)
+    ActivateConversation(prev);
+}
+
 void Conversations::FocusPrevConversation()
 {
   int i = PrevActiveConversation(active);
@@ -126,7 +148,7 @@ void Conversations::Finalize()
 
 int Conversations::FindConversation(PurpleConversation *conv)
 {
-  for (int i = 0; i < (int) conversations.size(); i++)
+  for (int i = 0; i < static_cast<int>(conversations.size()); i++)
     if (conversations[i].purple_conv == conv)
       return i;
 
@@ -135,7 +157,7 @@ int Conversations::FindConversation(PurpleConversation *conv)
 
 int Conversations::PrevActiveConversation(int current)
 {
-  g_assert(current < (int) conversations.size());
+  g_assert(current < static_cast<int>(conversations.size()));
 
   int i = current - 1;
   while (i >= 0) {
@@ -155,10 +177,10 @@ int Conversations::PrevActiveConversation(int current)
 
 int Conversations::NextActiveConversation(int current)
 {
-  g_assert(current < (int) conversations.size());
+  g_assert(current < static_cast<int>(conversations.size()));
 
   int i = current + 1;
-  while (i < (int) conversations.size()) {
+  while (i < static_cast<int>(conversations.size())) {
     if (conversations[i].conv->GetStatus() == Conversation::STATUS_ACTIVE)
       return i;
     i++;
@@ -176,7 +198,7 @@ int Conversations::NextActiveConversation(int current)
 void Conversations::ActivateConversation(int i)
 {
   g_assert(i >= -1);
-  g_assert(i < (int) conversations.size());
+  g_assert(i < static_cast<int>(conversations.size()));
 
   if (active == i) {
     if (active != -1)
@@ -200,6 +222,47 @@ void Conversations::ActivateConversation(int i)
   active = i;
 }
 
+void Conversations::MoveConversationToEnd(int i)
+{
+  g_assert(i >= 0);
+  g_assert(i < static_cast<int>(conversations.size()));
+
+  if (conversations.size() <= 1) {
+    // conversation is already at the end
+    return;
+  }
+
+  ConvChild c = conversations[i];
+  conversations.erase(conversations.begin() + i);
+  list->MoveWidgetAfter(*c.label, *conversations.back().label);
+  conversations.push_back(c);
+
+  // fix active conversation
+  if (active == i)
+    active = conversations.size() - 1;
+  else if (active > i)
+    active--;
+
+  // fix labels
+  UpdateLabels();
+}
+
+void Conversations::UpdateLabels()
+{
+  /* Note: This can be a little slow if there are too many opened
+   * conversations. */
+  int i = 1;
+  for (ConversationsVector::iterator j = conversations.begin();
+      j != conversations.end(); j++)
+    if (j->conv->GetStatus() == Conversation::STATUS_ACTIVE) {
+      char *name = g_strdup_printf(" %d|%s", i,
+          purple_conversation_get_title(j->purple_conv));
+      j->label->SetText(name);
+      g_free(name);
+      i++;
+    }
+}
+
 void Conversations::OnConversationClose(Conversation& conv)
 {
   int i = FindConversation(conv.GetPurpleConversation());
@@ -211,6 +274,8 @@ void Conversations::OnConversationClose(Conversation& conv)
     i = PrevActiveConversation(i);
     ActivateConversation(i);
   }
+
+  UpdateLabels();
 }
 
 void Conversations::create_conversation(PurpleConversation *conv)
@@ -230,14 +295,13 @@ void Conversations::create_conversation(PurpleConversation *conv)
   ConvChild c;
   c.purple_conv = conv;
   c.conv = conversation;
-  c.sig_close = conversation->signal_close.connect(sigc::group(
+  c.sig_close_conn = conversation->signal_close.connect(sigc::group(
         sigc::mem_fun(this, &Conversations::OnConversationClose),
         sigc::ref(*conversation)));
-  char *name = g_strdup_printf(" |%s", purple_conversation_get_title(conv));
-  c.label = new CppConsUI::Label(AUTOSIZE, 1, name);
-  g_free(name);
+  c.label = new CppConsUI::Label(AUTOSIZE, 1);
   list->AppendWidget(*c.label);
   conversations.push_back(c);
+  UpdateLabels();
 
   // show the first conversation if there isn't any already
   if (active == -1)
@@ -278,17 +342,27 @@ void Conversations::write_conv(PurpleConversation *conv, const char *name,
   if (i == -1)
     return;
 
+  // get conversation status before it's touched
+  Conversation::Status old_status = conversations[i].conv->GetStatus();
+
   if (i != active)
     conversations[i].label->SetColorScheme("conversation-new");
 
   // delegate it to Conversation object
   conversations[i].conv->Write(name, alias, message, flags, mtime);
-  /* If conversation was in a destroy timeout (STATUS_TRASH) then label is at
-   * this point invisible and its visibility needs to be restored. */
-  conversations[i].label->SetVisibility(true);
+  if (old_status == Conversation::STATUS_TRASH) {
+    /* If conversation was in a destroy timeout (STATUS_TRASH) then label is
+     * at this point invisible and its visibility needs to be restored. */
+    conversations[i].label->SetVisibility(true);
+  }
   // show this conversation if there isn't any other
   if (active == -1)
     ActivateConversation(i);
+
+  if (old_status == Conversation::STATUS_TRASH) {
+    // the conversation was restored, move it to the end of the list
+    MoveConversationToEnd(i);
+  }
 }
 
 void Conversations::present(PurpleConversation *conv)
@@ -301,5 +375,13 @@ void Conversations::present(PurpleConversation *conv)
   if (i == -1)
     return;
 
+  // get conversation status before it's touched
+  Conversation::Status old_status = conversations[i].conv->GetStatus();
+
   ActivateConversation(i);
+
+  if (old_status == Conversation::STATUS_TRASH) {
+    // the conversation was restored, move it to the end of the list
+    MoveConversationToEnd(i);
+  }
 }

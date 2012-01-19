@@ -157,6 +157,7 @@ private:
   void ActionBuddyListToggleOffline();
   void ActionFocusPrevConversation();
   void ActionFocusNextConversation();
+  void ActionFocusConversation(int i);
   void ActionExpandConversation();
 
   void DeclareBindables();

@@ -566,6 +566,11 @@ void CenterIM::ActionFocusNextConversation()
   CONVERSATIONS->FocusNextConversation();
 }
 
+void CenterIM::ActionFocusConversation(int i)
+{
+  CONVERSATIONS->FocusConversation(i);
+}
+
 void CenterIM::ActionExpandConversation()
 {
   CppConsUI::FreeWindow *top = mngr->GetTopWindow();
@@ -609,6 +614,13 @@ void CenterIM::DeclareBindables()
   DeclareBindable("centerim", "conversation-next",
       sigc::mem_fun(this, &CenterIM::ActionFocusNextConversation),
       InputProcessor::BINDABLE_OVERRIDE);
+  for (int i = 1; i < 20; i++) {
+    char *action = g_strdup_printf("conversation-number%d", i);
+    DeclareBindable("centerim", action, sigc::bind(sigc::mem_fun(this,
+            &CenterIM::ActionFocusConversation), i),
+        InputProcessor::BINDABLE_OVERRIDE);
+    g_free(action);
+  }
   DeclareBindable("centerim", "conversation-expand",
       sigc::mem_fun(this, &CenterIM::ActionExpandConversation),
       InputProcessor::BINDABLE_OVERRIDE);
@@ -621,18 +633,31 @@ void CenterIM::InitDefaultKeys()
   KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-active", "F2");
   KEYCONFIG->AddDefaultKeyBind("centerim", "accountstatusmenu", "F3");
   KEYCONFIG->AddDefaultKeyBind("centerim", "generalmenu", "F4");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "generalmenu", "Ctrl-g");
   KEYCONFIG->AddDefaultKeyBind("centerim", "buddylist-toggle-offline", "F5");
   KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-expand", "F6");
 
-  KEYCONFIG->AddDefaultKeyBind("centerim", "buddylist", "Alt-1");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-active", "Alt-2");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "accountstatusmenu", "Alt-3");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "generalmenu", "Alt-4");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "generalmenu", "Ctrl-g");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-expand", "Alt-6");
-
   KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-prev", "Ctrl-p");
   KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-next", "Ctrl-n");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number1", "Alt-1");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number2", "Alt-2");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number3", "Alt-3");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number4", "Alt-4");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number5", "Alt-5");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number6", "Alt-6");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number7", "Alt-7");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number8", "Alt-8");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number9", "Alt-9");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number10", "Alt-0");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number11", "Alt-q");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number12", "Alt-w");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number13", "Alt-e");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number14", "Alt-r");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number15", "Alt-t");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number16", "Alt-y");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number17", "Alt-u");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number18", "Alt-i");
+  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number19", "Alt-o");
 
   KEYCONFIG->AddDefaultKeyBind("buddylist", "contextmenu", "Ctrl-d");
 

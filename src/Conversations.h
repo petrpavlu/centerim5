@@ -41,6 +41,7 @@ public:
   virtual void OnScreenResized();
 
   void FocusActiveConversation();
+  void FocusConversation(int i);
   void FocusPrevConversation();
   void FocusNextConversation();
 
@@ -52,7 +53,7 @@ private:
     PurpleConversation *purple_conv;
     Conversation *conv;
     CppConsUI::Label *label;
-    sigc::connection sig_close;
+    sigc::connection sig_close_conn;
   };
 
   typedef std::vector<ConvChild> ConversationsVector;
@@ -84,6 +85,9 @@ private:
   int NextActiveConversation(int current);
 
   void ActivateConversation(int i);
+
+  void MoveConversationToEnd(int i);
+  void UpdateLabels();
 
   void OnConversationClose(Conversation& conv);
 
