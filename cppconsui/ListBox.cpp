@@ -89,8 +89,16 @@ void ListBox::Draw()
   }
 
   // make sure that currently focused widget is visible
-  if (focus_child)
-    MakeVisible(focus_child->GetLeft(), focus_child->GetTop());
+  if (focus_child) {
+    int h = focus_child->GetHeight();
+    if (h == AUTOSIZE) {
+      h = autosize_height;
+      if (autosize_extra.find(focus_child) != autosize_extra.end())
+        h++;
+    }
+
+    MakeVisible(focus_child->GetLeft(), focus_child->GetTop(), 1, h);
+  }
 
   AbstractListBox::Draw();
 }

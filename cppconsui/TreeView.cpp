@@ -88,14 +88,6 @@ void TreeView::Draw()
 
   // make sure that currently focused widget is visible
   if (focus_child) {
-    Point p = focus_child->GetRelativePosition(*this);
-
-    /* X and Y have to be readjusted because they are relative to the
-     * ScrollPane screen area, meaning they aren't relative to the virtual
-     * area. */
-    int x = p.GetX() + GetScrollPositionX();
-    int y = p.GetY() + GetScrollPositionY();
-
     int w = focus_child->GetWidth();
     if (w == AUTOSIZE)
       w = focus_child->GetWishWidth();
@@ -107,7 +99,7 @@ void TreeView::Draw()
     if (h == AUTOSIZE)
       h = 1;
 
-    MakeVisible(x, y, w, h);
+    MakeVisible(focus_child->GetLeft(), focus_child->GetTop(), w, h);
   }
 
   ScrollPane::DrawEx(false);
