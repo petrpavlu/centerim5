@@ -231,6 +231,7 @@ const char *BuddyListBuddy::ToString() const
 
 BuddyListBuddy::ContextMenu::ContextMenu(BuddyListBuddy& parent)
 : FlowMenuWindow(parent, AUTOSIZE, AUTOSIZE)
+, parent(&parent)
 {
   AppendItem(_("Alias..."), sigc::mem_fun(this,
         &BuddyListBuddy::ContextMenu::OnChangeAlias));
@@ -381,6 +382,7 @@ const char *BuddyListChat::ToString() const
 
 BuddyListChat::ContextMenu::ContextMenu(BuddyListChat& parent)
 : FlowMenuWindow(parent, AUTOSIZE, AUTOSIZE)
+, parent(&parent)
 {
   AppendItem(_("Alias..."), sigc::mem_fun(this,
         &BuddyListChat::ContextMenu::OnChangeAlias));
@@ -529,6 +531,7 @@ void BuddyListContact::SetRefNode(CppConsUI::TreeView::NodeReference n)
 
 BuddyListContact::ContextMenu::ContextMenu(BuddyListContact& parent)
 : FlowMenuWindow(parent, AUTOSIZE, AUTOSIZE)
+, parent(&parent)
 {
   AppendItem(_("Alias..."), sigc::mem_fun(this,
         &BuddyListContact::ContextMenu::OnChangeAlias));
@@ -678,6 +681,7 @@ const char *BuddyListGroup::ToString() const
 
 BuddyListGroup::ContextMenu::ContextMenu(BuddyListGroup& parent)
 : FlowMenuWindow(parent, AUTOSIZE, AUTOSIZE)
+, parent(&parent)
 {
   AppendItem(_("Rename..."), sigc::mem_fun(this,
         &BuddyListGroup::ContextMenu::OnRename));
