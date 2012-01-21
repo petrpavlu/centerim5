@@ -113,3 +113,5 @@ private:
 } // namespace CppConsUI
 
 #endif // __BUTTON_H__
+
+/* vim: set tabstop=2 shiftwidth=2 expandtab */

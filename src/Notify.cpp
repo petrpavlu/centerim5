@@ -71,3 +71,5 @@ void *Notify::notify_message(PurpleNotifyMsgType type, const char *title,
 {
   return NULL;
 }
+
+/* vim: set tabstop=2 shiftwidth=2 expandtab */

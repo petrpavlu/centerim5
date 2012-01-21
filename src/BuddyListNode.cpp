@@ -831,3 +831,5 @@ BuddyListGroup::BuddyListGroup(PurpleBlistNode *node)
   COREMANAGER->TimeoutOnceConnect(sigc::mem_fun(this,
         &BuddyListGroup::DelayedInit), 0);
 }
+
+/* vim: set tabstop=2 shiftwidth=2 expandtab */

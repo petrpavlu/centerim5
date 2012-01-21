@@ -493,3 +493,5 @@ int onscreen_width(gunichar uc, int w)
 } // namespace Curses
 
 } // namespace CppConsUI
+
+/* vim: set tabstop=2 shiftwidth=2 expandtab */

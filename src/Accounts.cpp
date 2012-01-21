@@ -243,3 +243,5 @@ void Accounts::deny_no_add_cb(AuthAndAdd *aa)
   aa->deny_cb(aa->data);
   delete aa;
 }
+
+/* vim: set tabstop=2 shiftwidth=2 expandtab */

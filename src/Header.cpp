@@ -186,3 +186,5 @@ void Header::account_disabled(PurpleAccount *account)
             purple_account_get_active_status(acc));
     }
 }
+
+/* vim: set tabstop=2 shiftwidth=2 expandtab */

@@ -178,3 +178,5 @@ void Connections::report_disconnect_reason(PurpleConnection *gc,
     LOG->Message(_("+ [%s] %s: Account disabled"), protocol, username);
   }
 }
+
+/* vim: set tabstop=2 shiftwidth=2 expandtab */

@@ -236,3 +236,5 @@ void GeneralMenu::fields_ok_cb(PurpleRequestFields *fields)
       purple_account_get_protocol_name(account),
       purple_account_get_username(account));
 }
+
+/* vim: set tabstop=2 shiftwidth=2 expandtab */

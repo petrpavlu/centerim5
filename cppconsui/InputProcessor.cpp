@@ -103,3 +103,5 @@ bool InputProcessor::ProcessInputText(const TermKeyKey& key)
 }
 
 } // namespace CppConsUI
+
+/* vim: set tabstop=2 shiftwidth=2 expandtab */

@@ -67,3 +67,5 @@ TermKeyKey RefineKey(const TermKeyKey& k)
 } // namespace Keys
 
 } // namespace CppConsUI
+
+/* vim: set tabstop=2 shiftwidth=2 expandtab */

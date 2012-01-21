@@ -68,3 +68,5 @@ int main(int argc, char *argv[])
   CenterIM *cim = CenterIM::Instance();
   return cim->Run(config_path);
 }
+
+/* vim: set tabstop=2 shiftwidth=2 expandtab */

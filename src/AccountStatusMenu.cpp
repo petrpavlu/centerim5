@@ -148,3 +148,5 @@ void AccountStatusMenu::OpenStatusPopup(CppConsUI::Button& activator,
   AccountStatusMenu::StatusPopup *status_popup = new StatusPopup(account);
   status_popup->Show();
 }
+
+/* vim: set tabstop=2 shiftwidth=2 expandtab */

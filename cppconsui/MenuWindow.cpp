@@ -72,3 +72,5 @@ void MenuWindow::OnChildrenHeightChange(ListBox& activator, int new_height)
 }
 
 } // namespace CppConsUI
+
+/* vim: set tabstop=2 shiftwidth=2 expandtab */

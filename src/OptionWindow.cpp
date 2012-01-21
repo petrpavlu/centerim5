@@ -307,3 +307,5 @@ void OptionWindow::ReloadKeybindingFile(CppConsUI::Button& activator) const
   if (KEYCONFIG->Reconfig())
     LOG->Message(_("Keybinding file was successfully reloaded."));
 }
+
+/* vim: set tabstop=2 shiftwidth=2 expandtab */

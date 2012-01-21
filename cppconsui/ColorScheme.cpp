@@ -76,3 +76,5 @@ bool ColorScheme::SetColorPair(const char *scheme, const char *widget,
 }
 
 } // namespace CppConsUI
+
+/* vim: set tabstop=2 shiftwidth=2 expandtab */

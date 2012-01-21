@@ -521,3 +521,5 @@ void BuddyList::blist_pref_change(const char *name, PurplePrefType type,
     node = purple_blist_node_next(node, TRUE);
   }
 }
+
+/* vim: set tabstop=2 shiftwidth=2 expandtab */

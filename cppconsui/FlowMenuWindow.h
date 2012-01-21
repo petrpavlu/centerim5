@@ -71,3 +71,5 @@ private:
 } // namespace CppConsUI
 
 #endif // __FLOWMENUWINDOW_H__
+
+/* vim: set tabstop=2 shiftwidth=2 expandtab */

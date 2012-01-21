@@ -123,3 +123,5 @@ void FlowMenuWindow::OnRefVisible(Widget& activator, bool visible)
 }
 
 } // namespace CppConsUI
+
+/* vim: set tabstop=2 shiftwidth=2 expandtab */

@@ -618,3 +618,5 @@ void Conversation::DeclareBindables()
       sigc::mem_fun(this, &Conversation::ActionSend),
       InputProcessor::BINDABLE_OVERRIDE);
 }
+
+/* vim: set tabstop=2 shiftwidth=2 expandtab */
