@@ -55,8 +55,6 @@ libcppconsui_la_SOURCES =\
 	Spacer.h \
 	SplitDialog.cpp \
 	SplitDialog.h \
-	SubMenu.cpp \
-	SubMenu.h \
 	TextEdit.cpp \
 	TextEdit.h \
 	TextEntry.cpp \

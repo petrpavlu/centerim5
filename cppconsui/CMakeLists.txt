@@ -26,7 +26,6 @@ set( cppconsui_SOURCES
 	ScrollPane.cpp
 	Spacer.cpp
 	SplitDialog.cpp
-	SubMenu.cpp
 	TextEdit.cpp
 	TextEntry.cpp
 	TextView.cpp
