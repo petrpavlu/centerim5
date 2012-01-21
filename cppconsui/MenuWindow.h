@@ -41,6 +41,10 @@ class MenuWindow
 : public Window
 {
 public:
+  enum Flag {
+    FLAG_HIDE_ON_CLOSE = 1 << 0, /* MenuWindow will hide instead of close. */
+  };
+
   MenuWindow(int x, int y, int w, int h, const char *title = NULL);
   MenuWindow(Widget& ref_, int w, int h, const char *title = NULL);
   virtual ~MenuWindow() {}
@@ -64,6 +68,11 @@ public:
 
   virtual void Draw();
 
+  virtual void Close();
+
+  virtual void SetFlags(int new_flags);
+  virtual int GetFlags() const { return flags; }
+
   virtual void SetRef(Widget *ref_);
 
   virtual int GetLeftShift() const { return xshift; }
@@ -80,6 +89,8 @@ protected:
   Widget *ref;
   int xshift, yshift;
   sigc::connection ref_visible_conn;
+
+  int flags;
 
   // Container
   virtual void AddWidget(Widget& widget, int x, int y);

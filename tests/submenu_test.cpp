@@ -48,6 +48,8 @@ SubMenuWindow::SubMenuWindow()
 
   CppConsUI::MenuWindow *submenu = new CppConsUI::MenuWindow(*button, AUTOSIZE, AUTOSIZE);
 
+  submenu->SetFlags (CppConsUI::MenuWindow::FLAG_HIDE_ON_CLOSE);
+
   button->signal_activate.connect(
       sigc::hide(sigc::mem_fun(submenu, &CppConsUI::MenuWindow::Show)));
 

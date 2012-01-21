@@ -33,7 +33,7 @@ namespace CppConsUI
 
 MenuWindow::MenuWindow(int x, int y, int w, int h, const char *title)
 : Window(x, y, w, h, title, TYPE_TOP)
-, wish_height(3), ref(NULL), xshift(0), yshift(0)
+, wish_height(3), ref(NULL), xshift(0), yshift(0), flags(0)
 {
   wish_width = MENU_WINDOW_WISH_WIDTH;
 
@@ -45,7 +45,7 @@ MenuWindow::MenuWindow(int x, int y, int w, int h, const char *title)
 
 MenuWindow::MenuWindow(Widget& ref_, int w, int h, const char *title)
 : Window(0, 0, w, h, title, TYPE_TOP)
-, wish_height(3), ref(&ref_), xshift(0), yshift(0)
+, wish_height(3), ref(&ref_), xshift(0), yshift(0), flags(0)
 {
   wish_width = MENU_WINDOW_WISH_WIDTH;
 
@@ -62,6 +62,24 @@ void MenuWindow::Draw()
   UpdateSmartPositionAndSize();
 
   Window::Draw();
+}
+
+void MenuWindow::Close()
+{
+  if (flags & FLAG_HIDE_ON_CLOSE) {
+    Hide();
+  } else {
+    Window::Close();
+  }
+}
+
+void MenuWindow::SetFlags(int new_flags)
+{
+  if (flags == new_flags)
+    return;
+
+  flags = new_flags;
+  Redraw();
 }
 
 void MenuWindow::SetRef(Widget *ref_)
@@ -110,6 +128,7 @@ Button* MenuWindow::AppendSubMenu(const char *title,
         &MenuWindow::Hide)));
 
   submenu.SetRef (button);
+  submenu.SetFlags (FLAG_HIDE_ON_CLOSE);
 
   listbox->AppendWidget (*button);
 
