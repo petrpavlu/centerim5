@@ -164,43 +164,48 @@ void MenuWindow::UpdateSmartPositionAndSize()
    * Note that none of the below called methods (Move(), SetWishHeight())
    * doesn't trigger update-area procedure if it isn't really necessary.
    */
-  int x, y;
-
-  if (ref) {
+  if (!ref) /* Absolute screen position */
+  {
+    int h = listbox->GetChildrenHeight() + 2;
+    int max = Curses::getmaxy() - win_y;
+    if (h > max)
+      SetWishHeight(MAX(max, 3));
+    else
+      SetWishHeight(h);
+  }
+  else /* Relative screen position */
+  {
     Point p = ref->GetAbsolutePosition();
-    x = p.GetX() + xshift;
-    y = p.GetY() + yshift;
-  } else {
-    x = win_x;
-    y = win_y;
-  }
+    int x = p.GetX() + xshift;
+    int y = p.GetY() + yshift;
 
-  int above = y;
-  int below = Curses::getmaxy() - y - 1;
-  int req_h;
-  if (win_h == AUTOSIZE)
-    req_h = listbox->GetChildrenHeight() + 2;
-  else
-    req_h = win_h;
+    int above = y;
+    int below = Curses::getmaxy() - y - 1;
+    int req_h;
+    if (win_h == AUTOSIZE)
+      req_h = listbox->GetChildrenHeight() + 2;
+    else
+      req_h = win_h;
 
-  if (below > req_h) {
-    // draw the window under the combobox
-    Move(x, y + 1);
-    SetWishHeight(req_h);
-  }
-  else if (above > req_h) {
-    // draw the window above the combobox
-    Move(x, y - req_h);
-    SetWishHeight(req_h);
-  }
-  else if (win_h == AUTOSIZE) {
-    if (below >= above) {
+    if (below > req_h) {
+      // draw the window under the combobox
       Move(x, y + 1);
-      SetWishHeight(below);
+      SetWishHeight(req_h);
     }
-    else {
-      Move(x, 0);
-      SetWishHeight(above);
+    else if (above > req_h) {
+      // draw the window above the combobox
+      Move(x, y - req_h);
+      SetWishHeight(req_h);
+    }
+    else if (win_h == AUTOSIZE) {
+      if (below >= above) {
+        Move(x, y + 1);
+        SetWishHeight(below);
+      }
+      else {
+        Move(x, 0);
+        SetWishHeight(above);
+      }
     }
   }
 }
