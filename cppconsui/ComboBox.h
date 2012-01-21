@@ -30,7 +30,7 @@
 #define __COMBOBOX_H__
 
 #include "Button.h"
-#include "FlowMenuWindow.h"
+#include "MenuWindow.h"
 
 #include <vector>
 
@@ -91,7 +91,7 @@ protected:
   };
   typedef std::vector<ComboBoxEntry> ComboBoxEntries;
 
-  FlowMenuWindow *dropdown;
+  MenuWindow *dropdown;
 
   /**
    * Number of currently selected entry.

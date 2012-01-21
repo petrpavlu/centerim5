@@ -134,7 +134,7 @@ void ComboBox::OnDropDown(Button& activator)
   if (options.empty())
     return;
 
-  dropdown = new FlowMenuWindow(*this, max_option_width + 2, AUTOSIZE);
+  dropdown = new MenuWindow(*this, max_option_width + 2, AUTOSIZE);
   dropdown->signal_close.connect(sigc::mem_fun(this,
         &ComboBox::DropDownClose));
 

@@ -23,7 +23,7 @@
 #define _BUDDYLISTNODE_H__
 
 #include <cppconsui/Button.h>
-#include <cppconsui/FlowMenuWindow.h>
+#include <cppconsui/MenuWindow.h>
 #include <cppconsui/MessageDialog.h>
 #include <cppconsui/InputDialog.h>
 #include <cppconsui/TreeView.h>
@@ -99,7 +99,7 @@ public:
 
 protected:
   class ContextMenu
-  : public CppConsUI::FlowMenuWindow
+  : public CppConsUI::MenuWindow
   {
   public:
     ContextMenu(BuddyListBuddy& parent);
@@ -150,7 +150,7 @@ public:
 
 protected:
   class ContextMenu
-  : public CppConsUI::FlowMenuWindow
+  : public CppConsUI::MenuWindow
   {
   public:
     ContextMenu(BuddyListChat& parent);
@@ -201,7 +201,7 @@ public:
 
 protected:
   class ContextMenu
-  : public CppConsUI::FlowMenuWindow
+  : public CppConsUI::MenuWindow
   {
   public:
     ContextMenu(BuddyListContact& parent);
@@ -254,7 +254,7 @@ public:
 
 protected:
   class ContextMenu
-  : public CppConsUI::FlowMenuWindow
+  : public CppConsUI::MenuWindow
   {
   public:
     ContextMenu(BuddyListGroup& parent);

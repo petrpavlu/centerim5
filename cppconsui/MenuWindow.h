@@ -42,6 +42,7 @@ class MenuWindow
 {
 public:
   MenuWindow(int x, int y, int w, int h, const char *title = NULL);
+  MenuWindow(Widget& ref_, int w, int h, const char *title = NULL);
   virtual ~MenuWindow() {}
 
   virtual Button *InsertItem(size_t pos, const char *title,
@@ -54,14 +55,31 @@ public:
     { return listbox->InsertSeparator(pos); }
   virtual AbstractLine *AppendSeparator()
     { return listbox->AppendSeparator(); }
+  virtual Button *AppendSubMenu(const char *title,
+      MenuWindow& submenu);
   virtual void InsertWidget(size_t pos, Widget& widget)
     { listbox->InsertWidget(pos, widget); }
   virtual void AppendWidget(Widget& widget)
     { listbox->AppendWidget(widget); }
 
+  virtual void Draw();
+
+  virtual void SetRef(Widget *ref_);
+
+  virtual int GetLeftShift() const { return xshift; }
+  virtual int GetTopShift() const { return yshift; }
+
+  virtual void SetLeftShift(int x);
+  virtual void SetTopShift(int y);
+
+
 protected:
   ListBox *listbox;
   int wish_height;
+
+  Widget *ref;
+  int xshift, yshift;
+  sigc::connection ref_visible_conn;
 
   // Container
   virtual void AddWidget(Widget& widget, int x, int y);
@@ -76,6 +94,8 @@ protected:
   virtual void UpdateSmartPositionAndSize();
 
   virtual void OnChildrenHeightChange(ListBox& activator, int new_height);
+
+  virtual void OnRefVisible(Widget& activator, bool visible);
 
 private:
   MenuWindow(const MenuWindow&);

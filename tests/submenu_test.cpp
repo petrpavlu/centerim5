@@ -1,7 +1,7 @@
 #include <cppconsui/Button.h>
 #include <cppconsui/CoreManager.h>
 #include <cppconsui/KeyConfig.h>
-#include <cppconsui/SubMenu.h>
+#include <cppconsui/MenuWindow.h>
 #include <cppconsui/Window.h>
 
 // SubMenuWindow class
@@ -10,9 +10,9 @@ class SubMenuWindow
 {
   public:
     /* This is a main window, make sure it can not be closed with ESC key by
-     * overriding Close() method. */
+     * overriding Hide() method. */
     static SubMenuWindow *Instance();
-    virtual void Close() {}
+    virtual void Hide() {}
 
   protected:
 
@@ -38,39 +38,53 @@ SubMenuWindow::SubMenuWindow()
 {
   AddWidget(*(new CppConsUI::Label("Press F10 to quit.")), 1, 1);
   label = new CppConsUI::Label;
-  AddWidget(*label, 1, 2);
+  AddWidget(*label, 1, 3);
+  label->SetText("label!");
 
-  CppConsUI::SubMenu *submenu = new CppConsUI::SubMenu("SubMenu opener");
-  AddWidget(*submenu, 1, 3);
+  CppConsUI::Button *button = new CppConsUI::Button ("Open Menu...");
+  CppConsUI::Button *button2;
+
+  AddWidget(*button, 1, 5);
+
+  CppConsUI::MenuWindow *submenu = new CppConsUI::MenuWindow(*button, AUTOSIZE, AUTOSIZE);
+
+  button->signal_activate.connect(
+      sigc::hide(sigc::mem_fun(submenu, &CppConsUI::MenuWindow::Show)));
+
   submenu->AppendItem("Item 1", sigc::hide(sigc::mem_fun(submenu,
-          &CppConsUI::SubMenu::Close)));
+          &CppConsUI::MenuWindow::Hide)));
   submenu->AppendItem("Item 2", sigc::hide(sigc::mem_fun(submenu,
-          &CppConsUI::SubMenu::Close)));
+          &CppConsUI::MenuWindow::Hide)));
   submenu->AppendItem("Item 3", sigc::hide(sigc::mem_fun(submenu,
-          &CppConsUI::SubMenu::Close)));
+          &CppConsUI::MenuWindow::Hide)));
   submenu->AppendItem("Item 4", sigc::hide(sigc::mem_fun(submenu,
-          &CppConsUI::SubMenu::Close)));
+          &CppConsUI::MenuWindow::Hide)));
   submenu->AppendSeparator();
-  CppConsUI::SubMenu *subsubmenu = new CppConsUI::SubMenu("SubSubMenu opener");
-  submenu->AppendWidget(*subsubmenu);
+
+  CppConsUI::MenuWindow *subsubmenu = new CppConsUI::MenuWindow(*button, AUTOSIZE, AUTOSIZE);
+
   subsubmenu->AppendItem("Item 1", sigc::hide(sigc::mem_fun(subsubmenu,
-          &CppConsUI::SubMenu::Close)));
+          &CppConsUI::MenuWindow::Hide)));
   subsubmenu->AppendItem("Item 2", sigc::hide(sigc::mem_fun(subsubmenu,
-          &CppConsUI::SubMenu::Close)));
+          &CppConsUI::MenuWindow::Hide)));
   subsubmenu->AppendItem("Item 3", sigc::hide(sigc::mem_fun(subsubmenu,
-          &CppConsUI::SubMenu::Close)));
-  subsubmenu->AppendItem("Item 4", sigc::hide(sigc::mem_fun(subsubmenu,
-          &CppConsUI::SubMenu::Close)));
-  subsubmenu = new CppConsUI::SubMenu("SubSubMenu opener 2");
-  submenu->AppendWidget(*subsubmenu);
+          &CppConsUI::MenuWindow::Hide)));
+  subsubmenu->AppendItem("Item 3", sigc::hide(sigc::mem_fun(subsubmenu,
+          &CppConsUI::MenuWindow::Hide)));
+
+  button2 = submenu->AppendSubMenu ("First submenu", *subsubmenu);
+
+  subsubmenu = new CppConsUI::MenuWindow(*button, AUTOSIZE, AUTOSIZE);
   subsubmenu->AppendItem("Item 1", sigc::hide(sigc::mem_fun(submenu,
-          &CppConsUI::SubMenu::Close)));
+          &CppConsUI::MenuWindow::Hide)));
   subsubmenu->AppendItem("Item 2", sigc::hide(sigc::mem_fun(submenu,
-          &CppConsUI::SubMenu::Close)));
+          &CppConsUI::MenuWindow::Hide)));
   subsubmenu->AppendItem("Item 3", sigc::hide(sigc::mem_fun(submenu,
-          &CppConsUI::SubMenu::Close)));
+          &CppConsUI::MenuWindow::Hide)));
   subsubmenu->AppendItem("Item 4", sigc::hide(sigc::mem_fun(submenu,
-          &CppConsUI::SubMenu::Close)));
+          &CppConsUI::MenuWindow::Hide)));
+
+  button2 = submenu->AppendSubMenu ("Second submenu", *subsubmenu);
 }
 
 void SubMenuWindow::OnButtonActivate(CppConsUI::Button& activator)

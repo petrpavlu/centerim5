@@ -51,7 +51,7 @@ SubMenu::~SubMenu()
 }
 
 SubMenu::ExtMenuWindow::ExtMenuWindow(SubMenu& ref)
-: FlowMenuWindow(ref, AUTOSIZE, AUTOSIZE)
+: MenuWindow(ref, AUTOSIZE, AUTOSIZE)
 {
   SetLeftShift(3);
 }

@@ -29,7 +29,7 @@
 #define __SUBMENU_H__
 
 #include "Button.h"
-#include "FlowMenuWindow.h"
+#include "MenuWindow.h"
 
 namespace CppConsUI
 {
@@ -67,7 +67,7 @@ public:
 
 protected:
   class ExtMenuWindow
-  : public FlowMenuWindow
+  : public MenuWindow
   {
   public:
     ExtMenuWindow(SubMenu& ref);
