@@ -217,6 +217,8 @@ protected:
     void RemoveResponseHandler(CppConsUI::MessageDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
     void OnRemove(Button& activator);
+    void OnMoveTo(Button& activator,
+        size_t new_entry, const char *title, intptr_t data);
 
   private:
     ContextMenu(const ContextMenu&);
