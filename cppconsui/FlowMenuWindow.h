@@ -46,6 +46,8 @@ public:
   // Widget
   virtual void Draw();
 
+  virtual void SetRef(Widget& ref_);
+
   virtual int GetLeftShift() const { return xshift; }
   virtual int GetTopShift() const { return yshift; }
 

@@ -33,8 +33,7 @@ namespace CppConsUI
 FlowMenuWindow::FlowMenuWindow(Widget& ref_, int w, int h, const char *title)
 : MenuWindow(0, 0, w, h, title), ref(&ref_), xshift(0), yshift(0)
 {
-  ref_visible_conn = ref->signal_visible.connect(sigc::mem_fun(this,
-        &FlowMenuWindow::OnRefVisible));
+  SetRef(ref_);
 }
 
 void FlowMenuWindow::Draw()
@@ -42,6 +41,22 @@ void FlowMenuWindow::Draw()
   UpdateSmartPositionAndSize();
 
   MenuWindow::Draw();
+}
+
+void FlowMenuWindow::SetRef(Widget& ref_)
+{
+  /* Disconnect old ref_visible_conn signal. */
+  if (ref) {
+    ref_visible_conn.disconnect();
+  }
+
+  ref = &ref_;
+
+  /* Connect new ref_visible_conn, if any. */
+  if (ref) {
+    ref_visible_conn = ref->signal_visible.connect(sigc::mem_fun(this,
+        &FlowMenuWindow::OnRefVisible));
+  }
 }
 
 void FlowMenuWindow::SetLeftShift(int x)
