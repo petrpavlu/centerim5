@@ -97,4 +97,4 @@ char *GetColorSchemeString(const char *base_color_scheme, PurpleBuddy *buddy)
 
 } // namespace utils
 
-/* vim: set tabstop=2 shiftwidth=2 expandtab */
+/* vim: set tabstop=2 shiftwidth=2 expandtab : */

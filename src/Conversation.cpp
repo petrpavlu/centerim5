@@ -619,4 +619,4 @@ void Conversation::DeclareBindables()
       InputProcessor::BINDABLE_OVERRIDE);
 }
 
-/* vim: set tabstop=2 shiftwidth=2 expandtab */
+/* vim: set tabstop=2 shiftwidth=2 expandtab : */

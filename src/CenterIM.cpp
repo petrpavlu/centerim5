@@ -664,4 +664,4 @@ void CenterIM::InitDefaultKeys()
   KEYCONFIG->AddDefaultKeyBind("conversation", "send", "Ctrl-x");
 }
 
-/* vim: set tabstop=2 shiftwidth=2 expandtab */
+/* vim: set tabstop=2 shiftwidth=2 expandtab : */

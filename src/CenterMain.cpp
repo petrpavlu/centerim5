@@ -69,4 +69,4 @@ int main(int argc, char *argv[])
   return cim->Run(config_path);
 }
 
-/* vim: set tabstop=2 shiftwidth=2 expandtab */
+/* vim: set tabstop=2 shiftwidth=2 expandtab : */
