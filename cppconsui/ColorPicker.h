@@ -78,6 +78,10 @@ class ColorPicker
   private:
     void AddButton(int x, int y, int color, int defaultcolor);
 
+    void AddAnsi(int defaultcolor);
+    void AddGrayscale(int defaultcolor);
+    void AddColorCube(int defaultcolor);
+
     ColorPicker(const ColorPicker&);
     ColorPicker& operator=(const ColorPicker&);
 };

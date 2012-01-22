@@ -34,49 +34,16 @@ namespace CppConsUI
 {
 
 ColorPicker::ColorPicker(int defaultcolor)
-: Container(52, 4)
+: Container(0, 0)
 {
-  int x;
-
-  ColorPickerButton *btn;
-  
   /* Default 16 colors */
-  for (x = 0; x < 16; x++)
-  {
-    if (x >= 8)
-      AddButton((x-8)*2, 1, x, defaultcolor);
-    else
-      AddButton(x*2, 0, x, defaultcolor);
-  }
+  AddAnsi(defaultcolor);
 
   /* Grayscale ladder */
-  AddButton(0, 3, 0, defaultcolor);
-
-  for (x = 232; x < 256; x++)
-    AddButton((x-231)*2, 3, x, defaultcolor);
-
-  AddButton(25*2, 3, 15, defaultcolor);
+  AddGrayscale(defaultcolor);
 
   /* 6x6x6 Color cube*/
-  int y = 5;
-  x = 0;
-
-  for (int g = 0; g < 6; g++)
-  {
-    for (int r = 0; r < 6; r++)
-    {
-      for (int b = 0; b < 6; b++)
-      {
-        AddButton(x*2, y, 16 + (r * 36) + (g * 6) + b, defaultcolor);
-        x++;
-      }
-
-      x++;
-    }
-
-    y++;
-    x -= (6*7);
-  }
+  AddColorCube(defaultcolor);
 }
 
 void ColorPicker::OnSelectColor(Button& activator)
@@ -99,6 +66,81 @@ void ColorPicker::AddButton(int x, int y, int color, int defaultcolor)
     btn->GrabFocus();
 }
 
+void ColorPicker::AddAnsi(int defaultcolor)
+{
+  int w, h, x, y;
+
+  // Resize the ColorPicker
+  w = GetWidth();
+  h = y = GetHeight();
+
+  w = MAX(w, 16);
+  h = h + 2;
+
+  Resize (w, h);
+
+  // Add the color picker buttons
+  for (x = 0; x < 16; x++)
+  {
+    if (x >= 8)
+      AddButton((x-8)*2, y+1, x, defaultcolor);
+    else
+      AddButton(x*2, y, x, defaultcolor);
+  }
+}
+
+void ColorPicker::AddGrayscale(int defaultcolor)
+{
+  int w, h, x, y, color;
+
+  // Resize the ColorPicker
+  w = GetWidth();
+  h = y = GetHeight();
+
+  w = MAX(w, (256-232)*2);
+  h = h + 1;
+
+  Resize (w, h);
+
+  // Add the color picker buttons
+  for (color = 232, x = 0; color < 256; color++, x += 2)
+    AddButton(x, y, color, defaultcolor);
+
+  AddButton(x, y, Curses::Color::WHITE, defaultcolor);
+}
+
+void ColorPicker::AddColorCube(int defaultcolor)
+{
+  int w, h, x, y;
+  // Resize the ColorPicker
+  w = GetWidth();
+  h = y = GetHeight();
+
+  w = MAX(w, (6*6*2)+5);
+  h = h + 6;
+
+  Resize (w, h);
+
+  // Add the color picker buttons
+  x = 0;
+  for (int g = 0; g < 6; g++)
+  {
+    for (int r = 0; r < 6; r++)
+    {
+      for (int b = 0; b < 6; b++)
+      {
+        AddButton(x, y, 16 + (r * 36) + (g * 6) + b, defaultcolor);
+        x += 2;
+      }
+
+      x++;
+    }
+
+    y++;
+    x = 0;
+  }
+}
+
 ColorPicker::ColorPickerButton::ColorPickerButton (const int color)
 : Button(2, 1, NULL, 0), color(color)
 {
@@ -116,7 +158,9 @@ void ColorPicker::ColorPickerButton::Draw()
 
   //@todo get proper color for cursor in more cases
   int cursor = Curses::Color::BLACK;
-  if (color >= 232 && color < 244)
+  if ((color == 0) || (color == 1) || (color == 8) || (color == 9)
+      || (color >= 232 && color < 244)
+      || (color == 16))
     cursor = Curses::Color::WHITE;
 
   int colorpair = Curses::getcolorpair(cursor, color);
