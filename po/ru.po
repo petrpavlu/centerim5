@@ -6,10 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: centerim5\n"
-"Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
-"projects/centerim\n"
+"Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/projects/centerim\n"
 "POT-Creation-Date: 2012-01-22 14:33+0100\n"
-"PO-Revision-Date: 2012-01-22 17:17+0300\n"
+"PO-Revision-Date: 2012-01-22 17:47+0300\n"
 "Last-Translator: kyak <bas@bmail.ru>\n"
 "Language-Team: \n"
 "Language: \n"
@@ -18,19 +17,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: Russian\n"
 "X-Poedit-Country: RUSSIAN FEDERATION\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: src/AccountWindow.cpp:35
 msgid "Accounts"
 msgstr "Аккаунты"
 
-#: src/AccountWindow.cpp:39 src/Accounts.cpp:156 src/BuddyList.cpp:282
-#: src/BuddyList.cpp:357 src/BuddyList.cpp:369
+#: src/AccountWindow.cpp:39
+#: src/Accounts.cpp:156
+#: src/BuddyList.cpp:282
+#: src/BuddyList.cpp:357
+#: src/BuddyList.cpp:369
 msgid "Add"
 msgstr "Добавить"
 
-#: src/AccountWindow.cpp:42 src/OptionWindow.cpp:118
+#: src/AccountWindow.cpp:42
+#: src/OptionWindow.cpp:118
 msgid "Done"
 msgstr "Готово"
 
@@ -46,17 +48,23 @@ msgstr "Аккаунт активен"
 msgid "Password"
 msgstr "Пароль"
 
-#: src/AccountWindow.cpp:128 src/BuddyList.cpp:257 src/BuddyList.cpp:329
-#: src/BuddyListNode.cpp:265 src/BuddyListNode.cpp:415
+#: src/AccountWindow.cpp:128
+#: src/BuddyList.cpp:257
+#: src/BuddyList.cpp:329
+#: src/BuddyListNode.cpp:265
+#: src/BuddyListNode.cpp:415
 #: src/BuddyListNode.cpp:588
 msgid "Alias"
 msgstr "Псевдоним"
 
-#: src/AccountWindow.cpp:220 src/OptionWindow.cpp:245 src/Request.cpp:369
+#: src/AccountWindow.cpp:220
+#: src/OptionWindow.cpp:245
+#: src/Request.cpp:369
 msgid "Value is out of range."
 msgstr "Значение вне диапазона"
 
-#: src/AccountWindow.cpp:276 src/AccountWindow.cpp:533
+#: src/AccountWindow.cpp:276
+#: src/AccountWindow.cpp:533
 msgid "Username"
 msgstr "Имя пользователя"
 
@@ -88,7 +96,7 @@ msgstr "Вы уверены, что хотите удалить этот акк�
 #: src/Accounts.cpp:122
 #, c-format
 msgid "%s%s has made %s his or her buddy%s%s"
-msgstr ""
+msgstr "%s%s добавил %s в свой список контактов%s%s"
 
 #: src/Accounts.cpp:143
 #, c-format
@@ -97,28 +105,33 @@ msgstr "+ [%s] %s: Статус изменен на: %s"
 
 #: src/Accounts.cpp:154
 msgid "Add buddy to your list?"
-msgstr ""
+msgstr "Добавить контакт в список?"
 
-#: src/Accounts.cpp:156 src/BuddyList.cpp:369 cppconsui/AbstractDialog.h:32
+#: src/Accounts.cpp:156
+#: src/BuddyList.cpp:369
+#: cppconsui/AbstractDialog.h:32
 msgid "Cancel"
 msgstr "Отмена"
 
 #: src/Accounts.cpp:180
 #, c-format
 msgid "%s%s wants to add you (%s) to his or her buddy list%s%s"
-msgstr ""
+msgstr "%s%s хочет добавить вас (%s) в свой список контактов%s%s"
 
-#: src/Accounts.cpp:191 src/Accounts.cpp:198
+#: src/Accounts.cpp:191
+#: src/Accounts.cpp:198
 msgid "Authorize buddy?"
-msgstr ""
+msgstr "Авторизовать контакт?"
 
-#: src/Accounts.cpp:193 src/Accounts.cpp:200
+#: src/Accounts.cpp:193
+#: src/Accounts.cpp:200
 msgid "Authorize"
-msgstr ""
+msgstr "Авторизовать"
 
-#: src/Accounts.cpp:193 src/Accounts.cpp:200
+#: src/Accounts.cpp:193
+#: src/Accounts.cpp:200
 msgid "Deny"
-msgstr ""
+msgstr "Отказать"
 
 #: src/BuddyList.cpp:44
 #, c-format
@@ -133,7 +146,8 @@ msgstr "Нет подключенных аккаунтов"
 msgid "Different Buddylist detected!"
 msgstr "Обнаружен другой список друзей!"
 
-#: src/BuddyList.cpp:252 src/BuddyList.cpp:325
+#: src/BuddyList.cpp:252
+#: src/BuddyList.cpp:325
 msgid "Account"
 msgstr "Аккаунт"
 
@@ -141,7 +155,8 @@ msgstr "Аккаунт"
 msgid "Buddy name"
 msgstr "Имя друга"
 
-#: src/BuddyList.cpp:260 src/BuddyList.cpp:332
+#: src/BuddyList.cpp:260
+#: src/BuddyList.cpp:332
 msgid "Group"
 msgstr "Группа"
 
@@ -153,16 +168,14 @@ msgstr "Друзья"
 msgid "Add buddy"
 msgstr "Добавить друга"
 
-#: src/BuddyList.cpp:297 src/BuddyList.cpp:450
+#: src/BuddyList.cpp:297
+#: src/BuddyList.cpp:450
 msgid "This protocol does not support chat rooms."
 msgstr "Этот протокол не поддерживает чат-комнаты."
 
 #: src/BuddyList.cpp:313
-msgid ""
-"You are not currently signed on with any protocols that have the ability to "
-"chat."
-msgstr ""
-"Сейчас вы не подключены ни по одному из протоколов, поддерживающих чат."
+msgid "You are not currently signed on with any protocols that have the ability to chat."
+msgstr "Сейчас вы не подключены ни по одному из протоколов, поддерживающих чат."
 
 #: src/BuddyList.cpp:327
 msgid "Chat name"
@@ -188,19 +201,24 @@ msgstr "Добавить группу"
 msgid "Please enter the name of the group to be added."
 msgstr "Введите название группы для добавления."
 
-#: src/BuddyList.cpp:386 src/BuddyList.cpp:438
+#: src/BuddyList.cpp:386
+#: src/BuddyList.cpp:438
 msgid "No account specified."
 msgstr "Не указан аккаунт."
 
-#: src/BuddyList.cpp:390 src/BuddyList.cpp:442
+#: src/BuddyList.cpp:390
+#: src/BuddyList.cpp:442
 msgid "Selected account is not connected."
 msgstr "Выбранный аккаунт не подключен."
 
-#: src/BuddyList.cpp:394 src/BuddyList.cpp:456
+#: src/BuddyList.cpp:394
+#: src/BuddyList.cpp:456
 msgid "No buddy name specified."
 msgstr "Не указано имя друга."
 
-#: src/BuddyList.cpp:398 src/BuddyList.cpp:460 src/BuddyList.cpp:494
+#: src/BuddyList.cpp:398
+#: src/BuddyList.cpp:460
+#: src/BuddyList.cpp:494
 msgid "No group name specified."
 msgstr "Не указано имя группы."
 
@@ -212,13 +230,16 @@ msgstr "Указанный друг уже находится в списке."
 msgid "Unrecognized BuddyList node."
 msgstr "Неизвестный узел BuddyList."
 
-#: src/BuddyListNode.cpp:236 src/BuddyListNode.cpp:387
+#: src/BuddyListNode.cpp:236
+#: src/BuddyListNode.cpp:387
 #: src/BuddyListNode.cpp:536
 msgid "Alias..."
 msgstr "Псевдоним..."
 
-#: src/BuddyListNode.cpp:238 src/BuddyListNode.cpp:389
-#: src/BuddyListNode.cpp:538 src/BuddyListNode.cpp:713
+#: src/BuddyListNode.cpp:238
+#: src/BuddyListNode.cpp:389
+#: src/BuddyListNode.cpp:538
+#: src/BuddyListNode.cpp:713
 msgid "Delete..."
 msgstr "Удалить..."
 
@@ -242,7 +263,7 @@ msgstr "Удаление чата"
 
 #: src/BuddyListNode.cpp:541
 msgid "Move to..."
-msgstr ""
+msgstr "Переместить в..."
 
 #: src/BuddyListNode.cpp:628
 #, c-format
@@ -277,8 +298,7 @@ msgstr "Удаление группы"
 #: src/CenterIM.cpp:115
 #, c-format
 msgid "Welcome to CenterIM 5. Press %s to display main menu."
-msgstr ""
-"Добро пожаловать в CenterIM 5. Нажмите %s для отображения главного меню."
+msgstr "Добро пожаловать в CenterIM 5. Нажмите %s для отображения главного меню."
 
 #: src/CenterIM.cpp:204
 #, c-format
@@ -295,7 +315,9 @@ msgstr "Использование: %s [-c путь_к_конфигу]\n"
 msgid "%s: unexpected argument after options\n"
 msgstr "%s: непредвиденный аргумент после опций\n"
 
-#: src/Connections.cpp:92 src/Connections.cpp:116 src/Connections.cpp:165
+#: src/Connections.cpp:92
+#: src/Connections.cpp:116
+#: src/Connections.cpp:165
 #, c-format
 msgid "+ [%s] %s: %s"
 msgstr "+ [%s] %s: %s"
@@ -335,12 +357,14 @@ msgstr "+ [%s] %s: Аккаунт неактивен"
 msgid "%d.%m.%y %H:%M"
 msgstr "%d.%m.%y %H:%M"
 
-#: src/Conversation.cpp:61 src/Conversation.cpp:469
+#: src/Conversation.cpp:61
+#: src/Conversation.cpp:469
 #, c-format
 msgid "Error opening conversation logfile '%s' (%s)."
 msgstr "Ошибка открытия лога разговора '%s' (%s)."
 
-#: src/Conversation.cpp:68 src/Conversation.cpp:475
+#: src/Conversation.cpp:68
+#: src/Conversation.cpp:475
 #, c-format
 msgid "Error opening conversation logfile '%s'."
 msgstr "Ошибка открытия лога разговора '%s'."
@@ -472,15 +496,16 @@ msgstr "Показывать друзей не в сети"
 
 #: src/OptionWindow.cpp:48
 msgid "Colorization mode"
-msgstr ""
+msgstr "Режим раскраски"
 
-#: src/OptionWindow.cpp:50 src/OptionWindow.cpp:83
+#: src/OptionWindow.cpp:50
+#: src/OptionWindow.cpp:83
 msgid "None"
 msgstr "Нет"
 
 #: src/OptionWindow.cpp:51
 msgid "By status"
-msgstr ""
+msgstr "По статусу"
 
 #: src/OptionWindow.cpp:55
 msgid "Dimensions"
