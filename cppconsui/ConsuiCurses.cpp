@@ -370,6 +370,7 @@ int Color::Colors()
   return COLORS;
 }
 
+const int Color::DEFAULT = -1;
 const int Color::BLACK = COLOR_BLACK;
 const int Color::RED = COLOR_RED;
 const int Color::GREEN = COLOR_GREEN;
