@@ -107,6 +107,8 @@ void MenuWindow::RemoveWidget(Widget& widget)
       submenus.erase(i);
     }
   }
+
+  Window::RemoveWidget(widget);
 }
 
 Button *MenuWindow::AppendSubMenu(const char *title, MenuWindow& submenu)
