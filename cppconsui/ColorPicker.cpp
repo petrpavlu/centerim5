@@ -104,8 +104,13 @@ void ColorPicker::AddGrayscale(int defaultcolor)
 
   // Resize the ColorPicker
   w = GetWidth();
-  h = y = GetHeight();
+  h = GetHeight();
 
+  // Add space between this and previous section
+  if (h)
+    h++;
+
+  y = h;
   w = MAX(w, (256-232)*2);
   h = h + 1;
 
@@ -123,7 +128,13 @@ void ColorPicker::AddColorCube(int defaultcolor)
   int w, h, x, y;
   // Resize the ColorPicker
   w = GetWidth();
-  h = y = GetHeight();
+  h = GetHeight();
+
+  // Add space between this and previous section
+  if (h)
+    h++;
+
+  y = h;
 
   w = MAX(w, (6*6*2)+5);
   h = h + 6;
