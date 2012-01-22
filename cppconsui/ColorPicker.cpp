@@ -43,41 +43,40 @@ ColorPicker::ColorPicker(int defaultcolor)
   /* Default 16 colors */
   for (x = 0; x < 16; x++)
   {
-    btn = new ColorPickerButton (x);
-    btn->signal_activate.connect(sigc::mem_fun(this,
-          &ColorPicker::OnSelectColor));
-
-    if (x == defaultcolor)
-      btn->GrabFocus();
-
     if (x >= 8)
-      AddWidget (*btn, (x-8)*2, 1);
+      AddButton((x-8)*2, 1, x, defaultcolor);
     else
-      AddWidget (*btn, x*2, 0);
+      AddButton(x*2, 0, x, defaultcolor);
   }
 
   /* Grayscale ladder */
-  btn = new ColorPickerButton (0);
-  btn->signal_activate.connect(sigc::mem_fun(this,
-        &ColorPicker::OnSelectColor));
-  AddWidget (*btn, 0, 3);
+  AddButton(0, 3, 0, defaultcolor);
 
   for (x = 232; x < 256; x++)
+    AddButton((x-231)*2, 3, x, defaultcolor);
+
+  AddButton(25*2, 3, 15, defaultcolor);
+
+  /* 6x6x6 Color cube*/
+  int y = 5;
+  x = 0;
+
+  for (int g = 0; g < 6; g++)
   {
-    btn = new ColorPickerButton (x);
-    btn->signal_activate.connect(sigc::mem_fun(this,
-          &ColorPicker::OnSelectColor));
+    for (int r = 0; r < 6; r++)
+    {
+      for (int b = 0; b < 6; b++)
+      {
+        AddButton(x*2, y, 16 + (r * 36) + (g * 6) + b, defaultcolor);
+        x++;
+      }
 
-    if (x == defaultcolor)
-      btn->GrabFocus();
+      x++;
+    }
 
-    AddWidget (*btn, (x-231)*2, 3);
+    y++;
+    x -= (6*7);
   }
-
-  btn = new ColorPickerButton (15);
-  btn->signal_activate.connect(sigc::mem_fun(this,
-        &ColorPicker::OnSelectColor));
-  AddWidget (*btn, 25*2, 3);
 }
 
 void ColorPicker::OnSelectColor(Button& activator)
