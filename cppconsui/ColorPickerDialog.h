@@ -52,7 +52,7 @@ class ColorPickerDialog
     /**
      * Signal emitted when the user closes the dialog.
      */
-    sigc::signal<void, ColorPickerDialog&, ResponseType> signal_response;
+    sigc::signal<void, ColorPickerDialog&, ResponseType, int> signal_response;
 
   protected:
 
@@ -61,6 +61,7 @@ class ColorPickerDialog
 
   private:
     ColorPicker *pick;
+    int color;
 
     ColorPickerDialog(const ColorPickerDialog&);
     ColorPickerDialog& operator=(const ColorPickerDialog&);

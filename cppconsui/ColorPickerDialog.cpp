@@ -48,14 +48,15 @@ ColorPickerDialog::ColorPickerDialog(const char *title, const int defaultvalue,
   Resize (pick->GetWidth() + 2, pick->GetHeight() + 4);
 }
 
-void ColorPickerDialog::OnColorSelected (ColorPicker& activator, int color)
+void ColorPickerDialog::OnColorSelected (ColorPicker& activator, int color_)
 {
+  color = color_;
   Response(RESPONSE_OK);
 }
 
 void ColorPickerDialog::EmitResponse(ResponseType response)
 {
-  signal_response(*this, response);
+  signal_response(*this, response, color);
 }
 
 
