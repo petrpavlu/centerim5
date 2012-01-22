@@ -42,7 +42,7 @@ class MenuWindow
 {
 public:
   enum Flag {
-    FLAG_HIDE_ON_CLOSE = 1 << 0, /* MenuWindow will hide instead of close. */
+    FLAG_HIDE_ON_CLOSE = 1 << 0 /**< MenuWindow will hide instead of close. */
   };
 
   MenuWindow(int x, int y, int w, int h, const char *title = NULL);
@@ -100,7 +100,7 @@ protected:
 
   /**
    * Recalculates desired on-screen position and size of this window. This
-   * mainly handles autosize magic.
+   * handles mainly autosize magic.
    */
   virtual void UpdateSmartPositionAndSize();
 

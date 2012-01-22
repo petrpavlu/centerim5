@@ -539,22 +539,22 @@ BuddyListContact::ContextMenu::ContextMenu(BuddyListContact& parent)
         &BuddyListContact::ContextMenu::OnRemove));
 
   CppConsUI::ComboBox *groups = new CppConsUI::ComboBox(_("Move to..."));
+  groups->SetFlags(0);
 
   for (PurpleBlistNode *group = purple_blist_get_root();
-    group; group = purple_blist_node_get_sibling_next(group)) {
+      group; group = purple_blist_node_get_sibling_next(group)) {
     if (!PURPLE_BLIST_NODE_IS_GROUP(group))
       continue;
-    groups->AddOptionPtr(purple_group_get_name((PurpleGroup *)group),
-	group);
+    groups->AddOptionPtr(purple_group_get_name(
+          reinterpret_cast<PurpleGroup*>(group)), group);
   }
 
   groups->SetSelectedByDataPtr(
       purple_contact_get_group(parent.GetPurpleContact()));
   groups->signal_selection_changed.connect(sigc::mem_fun(this,
-      &BuddyListContact::ContextMenu::OnMoveTo));
-  groups->SetFlags(0);
+        &BuddyListContact::ContextMenu::OnMoveTo));
 
-  AppendWidget (*groups);
+  AppendWidget(*groups);
 }
 
 void BuddyListContact::ContextMenu::ChangeAliasResponseHandler(

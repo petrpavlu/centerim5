@@ -66,11 +66,10 @@ void MenuWindow::Draw()
 
 void MenuWindow::Close()
 {
-  if (flags & FLAG_HIDE_ON_CLOSE) {
+  if (flags & FLAG_HIDE_ON_CLOSE)
     Hide();
-  } else {
+  else
     Window::Close();
-  }
 }
 
 void MenuWindow::SetFlags(int new_flags)
@@ -84,18 +83,16 @@ void MenuWindow::SetFlags(int new_flags)
 
 void MenuWindow::SetRef(Widget *ref_)
 {
-  /* Disconnect old ref_visible_conn signal. */
-  if (ref) {
+  // disconnect old ref_visible_conn signal
+  if (ref)
     ref_visible_conn.disconnect();
-  }
 
   ref = ref_;
 
-  /* Connect new ref_visible_conn, if any. */
-  if (ref) {
+  // connect new ref_visible_conn, if any
+  if (ref)
     ref_visible_conn = ref->signal_visible.connect(sigc::mem_fun(this,
-        &MenuWindow::OnRefVisible));
-  }
+          &MenuWindow::OnRefVisible));
 }
 
 void MenuWindow::SetLeftShift(int x)
@@ -116,21 +113,16 @@ void MenuWindow::SetTopShift(int y)
   Redraw();
 }
 
-Button* MenuWindow::AppendSubMenu(const char *title,
-    MenuWindow& submenu)
+Button *MenuWindow::AppendSubMenu(const char *title, MenuWindow& submenu)
 {
-  Button *button = new Button (title);
-
+  Button *button = new Button(title);
   button->signal_activate.connect(sigc::hide(sigc::mem_fun(submenu,
-        &MenuWindow::Show)));
+          &MenuWindow::Show)));
+  listbox->AppendWidget(*button);
 
-  signal_hide.connect(sigc::hide(sigc::mem_fun(submenu,
-        &MenuWindow::Hide)));
-
-  submenu.SetRef (button);
-  submenu.SetFlags (FLAG_HIDE_ON_CLOSE);
-
-  listbox->AppendWidget (*button);
+  signal_hide.connect(sigc::hide(sigc::mem_fun(submenu, &MenuWindow::Hide)));
+  submenu.SetRef(button);
+  submenu.SetFlags(FLAG_HIDE_ON_CLOSE);
 
   return button;
 }
@@ -164,8 +156,9 @@ void MenuWindow::UpdateSmartPositionAndSize()
    * Note that none of the below called methods (Move(), SetWishHeight())
    * doesn't trigger update-area procedure if it isn't really necessary.
    */
-  if (!ref) /* Absolute screen position */
-  {
+
+  if (!ref) {
+    // absolute screen position
     int h = listbox->GetChildrenHeight() + 2;
     int max = Curses::getmaxy() - win_y;
     if (h > max)
@@ -173,8 +166,8 @@ void MenuWindow::UpdateSmartPositionAndSize()
     else
       SetWishHeight(h);
   }
-  else /* Relative screen position */
-  {
+  else {
+    // relative screen position
     Point p = ref->GetAbsolutePosition();
     int x = p.GetX() + xshift;
     int y = p.GetY() + yshift;
@@ -209,6 +202,7 @@ void MenuWindow::UpdateSmartPositionAndSize()
     }
   }
 }
+
 void MenuWindow::OnChildrenHeightChange(ListBox& activator, int new_height)
 {
   if (win_h != AUTOSIZE)
