@@ -370,6 +370,11 @@ int Color::Colors()
   return COLORS;
 }
 
+int Color::ColorPairs()
+{
+  return COLOR_PAIRS;
+}
+
 const int Color::DEFAULT = -1;
 const int Color::BLACK = COLOR_BLACK;
 const int Color::RED = COLOR_RED;

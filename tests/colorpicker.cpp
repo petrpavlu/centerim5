@@ -80,7 +80,7 @@ TestWindow::TestWindow()
 	      | CppConsUI::ColorPicker::FLAG_HIDE_GRAYSCALE));
 
   label1 = new CppConsUI::Label; AddWidget(*label1, 1, 8);
-  label2 = new CppConsUI::Label; AddWidget(*label2, 1, 9);
+  label2 = new CppConsUI::Label; AddWidget(*label2, 1, 10);
 
   char *text = g_strdup_printf("Supported nr of colors: %d",  
 		  CppConsUI::Curses::Color::Colors());
@@ -88,12 +88,19 @@ TestWindow::TestWindow()
   g_free(text);
 
   CppConsUI::Label *l = new CppConsUI::Label("ColorPickerComboBox:");
-  AddWidget(*l, 1, 11);
+  AddWidget(*l, 1, 12);
+
+  l = new CppConsUI::Label();
+  text = g_strdup_printf("Supported nr of color pairs: %d",  
+		  CppConsUI::Curses::Color::ColorPairs());
+  l->SetText(text);
+  g_free(text);
+  AddWidget(*l, 1, 9);
 
   combo = new CppConsUI::ColorPickerComboBox (10, defaultcolor);
   combo->signal_color_changed.connect(
       sigc::mem_fun(this, &TestWindow::OnComboColorChange));
-  AddWidget(*combo, 1, 12);
+  AddWidget(*combo, 1, 13);
 }
 
 void TestWindow::OnButtonActivate(CppConsUI::Button& activator, int flags)
