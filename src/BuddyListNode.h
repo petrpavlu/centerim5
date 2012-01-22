@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2011 by CenterIM developers
+ * Copyright (C) 2010-2012 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * */
+ */
 
 #ifndef _BUDDYLISTNODE_H__
 #define _BUDDYLISTNODE_H__
@@ -217,8 +217,8 @@ protected:
     void RemoveResponseHandler(CppConsUI::MessageDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
     void OnRemove(Button& activator);
-    void OnMoveTo(Button& activator,
-        size_t new_entry, const char *title, intptr_t data);
+    void OnMoveTo(Button& activator, size_t new_entry, const char *title,
+        intptr_t data);
 
   private:
     ContextMenu(const ContextMenu&);

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2011 by CenterIM developers
+ * Copyright (C) 2010-2012 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * */
+ */
 
 /**
  * @file
@@ -42,12 +42,23 @@ class MenuWindow
 {
 public:
   enum Flag {
-    FLAG_HIDE_ON_CLOSE = 1 << 0, /* MenuWindow will hide instead of close. */
+    FLAG_HIDE_ON_CLOSE = 1 << 0 /**< MenuWindow will hide instead of close. */
   };
 
   MenuWindow(int x, int y, int w, int h, const char *title = NULL);
   MenuWindow(Widget& ref_, int w, int h, const char *title = NULL);
   virtual ~MenuWindow() {}
+
+  // Widget
+  virtual void Draw();
+
+  // Container
+  virtual void RemoveWidget(Widget& widget);
+
+  // FreeWindow
+  virtual void Show();
+  virtual void Hide();
+  virtual void Close();
 
   virtual Button *InsertItem(size_t pos, const char *title,
       const sigc::slot<void, Button&>& callback)
@@ -66,14 +77,10 @@ public:
   virtual void AppendWidget(Widget& widget)
     { listbox->AppendWidget(widget); }
 
-  virtual void Draw();
-
-  virtual void Close();
-
   virtual void SetFlags(int new_flags);
   virtual int GetFlags() const { return flags; }
 
-  virtual void SetRef(Widget *ref_);
+  virtual void SetRef(Widget *new_ref);
 
   virtual int GetLeftShift() const { return xshift; }
   virtual int GetTopShift() const { return yshift; }
@@ -83,12 +90,16 @@ public:
 
 
 protected:
+  typedef std::map<Button*, MenuWindow*> SubMenus;
+
   ListBox *listbox;
   int wish_height;
 
   Widget *ref;
   int xshift, yshift;
   sigc::connection ref_visible_conn;
+
+  SubMenus submenus;
 
   int flags;
 
@@ -100,7 +111,7 @@ protected:
 
   /**
    * Recalculates desired on-screen position and size of this window. This
-   * mainly handles autosize magic.
+   * handles mainly autosize magic.
    */
   virtual void UpdateSmartPositionAndSize();
 

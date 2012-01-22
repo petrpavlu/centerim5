@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2011 by CenterIM developers
+ * Copyright (C) 2010-2012 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * */
+ */
 
 #include "BuddyListNode.h"
 
@@ -243,9 +243,6 @@ void BuddyListBuddy::ContextMenu::ChangeAliasResponseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  // close context menu
-  Close();
-
   switch (response) {
     case CppConsUI::AbstractDialog::RESPONSE_OK:
       break;
@@ -256,6 +253,9 @@ void BuddyListBuddy::ContextMenu::ChangeAliasResponseHandler(
   PurpleBuddy *buddy = parent->GetPurpleBuddy();
   purple_blist_alias_buddy(buddy, activator.GetText());
   serv_alias_buddy(buddy);
+
+  // close context menu
+  Close();
 }
 
 void BuddyListBuddy::ContextMenu::OnChangeAlias(Button& activator)
@@ -272,9 +272,6 @@ void BuddyListBuddy::ContextMenu::RemoveResponseHandler(
     CppConsUI::MessageDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  // close context menu
-  Close();
-
   switch (response) {
     case CppConsUI::AbstractDialog::RESPONSE_OK:
       break;
@@ -286,6 +283,9 @@ void BuddyListBuddy::ContextMenu::RemoveResponseHandler(
   purple_account_remove_buddy(purple_buddy_get_account(buddy), buddy,
       purple_buddy_get_group(buddy));
   purple_blist_remove_buddy(buddy);
+
+  // close context menu
+  Close();
 }
 
 void BuddyListBuddy::ContextMenu::OnRemove(Button& activator)
@@ -394,9 +394,6 @@ void BuddyListChat::ContextMenu::ChangeAliasResponseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  // close context menu
-  Close();
-
   switch (response) {
     case CppConsUI::AbstractDialog::RESPONSE_OK:
       break;
@@ -406,6 +403,9 @@ void BuddyListChat::ContextMenu::ChangeAliasResponseHandler(
 
   PurpleChat *chat = parent->GetPurpleChat();
   purple_blist_alias_chat(chat, activator.GetText());
+
+  // close context menu
+  Close();
 }
 
 void BuddyListChat::ContextMenu::OnChangeAlias(Button& activator)
@@ -422,9 +422,6 @@ void BuddyListChat::ContextMenu::RemoveResponseHandler(
     CppConsUI::MessageDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  // close context menu
-  Close();
-
   switch (response) {
     case CppConsUI::AbstractDialog::RESPONSE_OK:
       break;
@@ -434,6 +431,9 @@ void BuddyListChat::ContextMenu::RemoveResponseHandler(
 
   PurpleChat *chat = parent->GetPurpleChat();
   purple_blist_remove_chat(chat);
+
+  // close context menu
+  Close();
 }
 
 void BuddyListChat::ContextMenu::OnRemove(Button& activator)
@@ -539,31 +539,28 @@ BuddyListContact::ContextMenu::ContextMenu(BuddyListContact& parent)
         &BuddyListContact::ContextMenu::OnRemove));
 
   CppConsUI::ComboBox *groups = new CppConsUI::ComboBox(_("Move to..."));
+  groups->SetFlags(0);
 
   for (PurpleBlistNode *group = purple_blist_get_root();
-    group; group = purple_blist_node_get_sibling_next(group)) {
+      group; group = purple_blist_node_get_sibling_next(group)) {
     if (!PURPLE_BLIST_NODE_IS_GROUP(group))
       continue;
-    groups->AddOptionPtr(purple_group_get_name((PurpleGroup *)group),
-	group);
+    groups->AddOptionPtr(purple_group_get_name(
+          reinterpret_cast<PurpleGroup*>(group)), group);
   }
 
   groups->SetSelectedByDataPtr(
       purple_contact_get_group(parent.GetPurpleContact()));
   groups->signal_selection_changed.connect(sigc::mem_fun(this,
-      &BuddyListContact::ContextMenu::OnMoveTo));
-  groups->SetFlags(0);
+        &BuddyListContact::ContextMenu::OnMoveTo));
 
-  AppendWidget (*groups);
+  AppendWidget(*groups);
 }
 
 void BuddyListContact::ContextMenu::ChangeAliasResponseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  // close context menu
-  Close();
-
   switch (response) {
     case CppConsUI::AbstractDialog::RESPONSE_OK:
       break;
@@ -579,6 +576,9 @@ void BuddyListContact::ContextMenu::ChangeAliasResponseHandler(
     purple_blist_alias_buddy(buddy, activator.GetText());
     serv_alias_buddy(buddy);
   }
+
+  // close context menu
+  Close();
 }
 
 void BuddyListContact::ContextMenu::OnChangeAlias(Button& activator)
@@ -595,9 +595,6 @@ void BuddyListContact::ContextMenu::RemoveResponseHandler(
     CppConsUI::MessageDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  // close context menu
-  Close();
-
   switch (response) {
     case CppConsUI::AbstractDialog::RESPONSE_OK:
       break;
@@ -619,6 +616,9 @@ void BuddyListContact::ContextMenu::RemoveResponseHandler(
       purple_account_remove_buddy(account, buddy, group);
   }
   purple_blist_remove_contact(contact);
+
+  // close context menu
+  Close();
 }
 
 void BuddyListContact::ContextMenu::OnRemove(Button& activator)
@@ -718,9 +718,6 @@ void BuddyListGroup::ContextMenu::RenameResponseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  // close context menu
-  Close();
-
   switch (response) {
     case CppConsUI::AbstractDialog::RESPONSE_OK:
       break;
@@ -737,6 +734,9 @@ void BuddyListGroup::ContextMenu::RenameResponseHandler(
   }
   else
     purple_blist_rename_group(group, name);
+
+  // close context menu
+  Close();
 }
 
 void BuddyListGroup::ContextMenu::OnRename(Button& activator)
@@ -753,9 +753,6 @@ void BuddyListGroup::ContextMenu::RemoveResponseHandler(
     CppConsUI::MessageDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  // close context menu
-  Close();
-
   switch (response) {
     case CppConsUI::AbstractDialog::RESPONSE_OK:
       break;
@@ -791,6 +788,9 @@ void BuddyListGroup::ContextMenu::RemoveResponseHandler(
   }
 
   purple_blist_remove_group(group);
+
+  // close context menu
+  Close();
 }
 
 void BuddyListGroup::ContextMenu::OnRemove(Button& activator)

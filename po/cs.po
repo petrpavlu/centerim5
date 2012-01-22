@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: centerim5\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2011-07-22 20:53+0200\n"
+"POT-Creation-Date: 2012-01-22 14:33+0100\n"
 "PO-Revision-Date: 2011-07-24 15:59+0200\n"
 "Last-Translator: Petr Pavlu <setup@dagobah.cz>\n"
 "Language-Team: Czech\n"
@@ -21,12 +21,12 @@ msgstr ""
 msgid "Accounts"
 msgstr "Účty"
 
-#: src/AccountWindow.cpp:39 src/BuddyList.cpp:267 src/BuddyList.cpp:342
-#: src/BuddyList.cpp:354
+#: src/AccountWindow.cpp:39 src/Accounts.cpp:156 src/BuddyList.cpp:282
+#: src/BuddyList.cpp:357 src/BuddyList.cpp:369
 msgid "Add"
 msgstr "Přidat"
 
-#: src/AccountWindow.cpp:42 src/OptionWindow.cpp:113
+#: src/AccountWindow.cpp:42 src/OptionWindow.cpp:118
 msgid "Done"
 msgstr "Hotovo"
 
@@ -42,138 +42,164 @@ msgstr "Účet povolen"
 msgid "Password"
 msgstr "Heslo"
 
-#: src/AccountWindow.cpp:128 src/BuddyList.cpp:242 src/BuddyList.cpp:314
-#: src/BuddyListNode.cpp:292 src/BuddyListNode.cpp:435
-#: src/BuddyListNode.cpp:592
+#: src/AccountWindow.cpp:128 src/BuddyList.cpp:257 src/BuddyList.cpp:329
+#: src/BuddyListNode.cpp:265 src/BuddyListNode.cpp:415
+#: src/BuddyListNode.cpp:588
 msgid "Alias"
 msgstr "Alias"
 
-#: src/AccountWindow.cpp:220 src/OptionWindow.cpp:240 src/Request.cpp:364
+#: src/AccountWindow.cpp:220 src/OptionWindow.cpp:245 src/Request.cpp:369
 msgid "Value is out of range."
 msgstr "Hodnota je mimo rozsah."
 
-#: src/AccountWindow.cpp:275 src/AccountWindow.cpp:532
+#: src/AccountWindow.cpp:276 src/AccountWindow.cpp:533
 msgid "Username"
 msgstr "Uživatelské jméno"
 
-#: src/AccountWindow.cpp:338
+#: src/AccountWindow.cpp:339
 msgid "Protocol"
 msgstr "Protokol"
 
-#: src/AccountWindow.cpp:427
+#: src/AccountWindow.cpp:428
 msgid "Invalid account or protocol plugin not loaded"
 msgstr "Neplatný účet nebo není načten zásuvný modul pro daný protokol"
 
-#: src/AccountWindow.cpp:512
+#: src/AccountWindow.cpp:513
 #, c-format
 msgid "Invalid Account Option pref type (%d)."
 msgstr "Neplatný druh volby nastavení účtu (%d)."
 
-#: src/AccountWindow.cpp:523
+#: src/AccountWindow.cpp:524
 msgid "Drop account"
 msgstr "Smazat tento účet"
 
-#: src/AccountWindow.cpp:550
+#: src/AccountWindow.cpp:551
 msgid "Account deletion"
 msgstr "Smazat účet"
 
-#: src/AccountWindow.cpp:551
+#: src/AccountWindow.cpp:552
 msgid "Are you sure you want to delete this account?"
 msgstr "Opravdu smazat tento účet?"
 
-#: src/Accounts.cpp:80
+#: src/Accounts.cpp:122
+#, c-format
+msgid "%s%s has made %s his or her buddy%s%s"
+msgstr ""
+
+#: src/Accounts.cpp:143
 #, c-format
 msgid "+ [%s] %s: Status changed to: %s"
 msgstr "+ [%s] %s: Stav změněn na: %s"
+
+#: src/Accounts.cpp:154
+msgid "Add buddy to your list?"
+msgstr ""
+
+#: src/Accounts.cpp:156 src/BuddyList.cpp:369 cppconsui/AbstractDialog.h:32
+msgid "Cancel"
+msgstr "Zrušit"
+
+#: src/Accounts.cpp:180
+#, c-format
+msgid "%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr ""
+
+#: src/Accounts.cpp:191 src/Accounts.cpp:198
+msgid "Authorize buddy?"
+msgstr ""
+
+#: src/Accounts.cpp:193 src/Accounts.cpp:200
+msgid "Authorize"
+msgstr ""
+
+#: src/Accounts.cpp:193 src/Accounts.cpp:200
+msgid "Deny"
+msgstr ""
 
 #: src/BuddyList.cpp:44
 #, c-format
 msgid "%s act conv, %s status menu, %s context menu"
 msgstr "%s akt konv, %s stav nabídka, %s kontext nabídka"
 
-#: src/BuddyList.cpp:165
+#: src/BuddyList.cpp:180
 msgid "There are no connected accounts."
 msgstr "Žádný účet není připojen."
 
-#: src/BuddyList.cpp:172
+#: src/BuddyList.cpp:187
 msgid "Different Buddylist detected!"
 msgstr "Rozpoznán duplicitní seznam kamarádů!"
 
-#: src/BuddyList.cpp:237 src/BuddyList.cpp:310
+#: src/BuddyList.cpp:252 src/BuddyList.cpp:325
 msgid "Account"
 msgstr "Účet"
 
-#: src/BuddyList.cpp:239
+#: src/BuddyList.cpp:254
 msgid "Buddy name"
 msgstr "Jméno kamaráda"
 
-#: src/BuddyList.cpp:245 src/BuddyList.cpp:317
+#: src/BuddyList.cpp:260 src/BuddyList.cpp:332
 msgid "Group"
 msgstr "Skupina"
 
-#: src/BuddyList.cpp:264
+#: src/BuddyList.cpp:279
 msgid "Buddies"
 msgstr "Kamarádi"
 
-#: src/BuddyList.cpp:267
+#: src/BuddyList.cpp:282
 msgid "Add buddy"
 msgstr "Přidat kamaráda"
 
-#: src/BuddyList.cpp:282 src/BuddyList.cpp:433
+#: src/BuddyList.cpp:297 src/BuddyList.cpp:450
 msgid "This protocol does not support chat rooms."
 msgstr "Tento protokol nepodporuje chat místnosti."
 
-#: src/BuddyList.cpp:298
+#: src/BuddyList.cpp:313
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
 msgstr "Žádný z právě připojených protokolů nepodporuje chat."
 
-#: src/BuddyList.cpp:312
+#: src/BuddyList.cpp:327
 msgid "Chat name"
 msgstr "Jméno chatu"
 
-#: src/BuddyList.cpp:336
+#: src/BuddyList.cpp:351
 msgid "Chats"
 msgstr "Chaty"
 
-#: src/BuddyList.cpp:339
+#: src/BuddyList.cpp:354
 msgid "Auto-join"
 msgstr "Automaticky připojit"
 
-#: src/BuddyList.cpp:342
+#: src/BuddyList.cpp:357
 msgid "Add chat"
 msgstr "Přidat chat"
 
-#: src/BuddyList.cpp:352
+#: src/BuddyList.cpp:367
 msgid "Add Group"
 msgstr "Přidat skupinu"
 
-#: src/BuddyList.cpp:353
+#: src/BuddyList.cpp:368
 msgid "Please enter the name of the group to be added."
 msgstr "Zadejte prosím jméno skupiny, kterou přidat."
 
-#: src/BuddyList.cpp:354 cppconsui/AbstractDialog.h:32
-msgid "Cancel"
-msgstr "Zrušit"
-
-#: src/BuddyList.cpp:371 src/BuddyList.cpp:421
+#: src/BuddyList.cpp:386 src/BuddyList.cpp:438
 msgid "No account specified."
 msgstr "Nezadán žádný účet."
 
-#: src/BuddyList.cpp:375 src/BuddyList.cpp:425
+#: src/BuddyList.cpp:390 src/BuddyList.cpp:442
 msgid "Selected account is not connected."
 msgstr "Vybraný účet není připojen."
 
-#: src/BuddyList.cpp:379 src/BuddyList.cpp:439
+#: src/BuddyList.cpp:394 src/BuddyList.cpp:456
 msgid "No buddy name specified."
 msgstr "Nezadáno jméno kamaráda."
 
-#: src/BuddyList.cpp:383 src/BuddyList.cpp:443 src/BuddyList.cpp:476
+#: src/BuddyList.cpp:398 src/BuddyList.cpp:460 src/BuddyList.cpp:494
 msgid "No group name specified."
 msgstr "Nezadáno jméno skupiny."
 
-#: src/BuddyList.cpp:398
+#: src/BuddyList.cpp:413
 msgid "Specified buddy is already in the list."
 msgstr "Zadaný kamarád se již v seznamu nachází."
 
@@ -181,61 +207,65 @@ msgstr "Zadaný kamarád se již v seznamu nachází."
 msgid "Unrecognized BuddyList node."
 msgstr "Neznámý prvek seznamu kamarádů"
 
-#: src/BuddyListNode.cpp:259 src/BuddyListNode.cpp:403
-#: src/BuddyListNode.cpp:554
+#: src/BuddyListNode.cpp:236 src/BuddyListNode.cpp:387
+#: src/BuddyListNode.cpp:536
 msgid "Alias..."
 msgstr "Alias…"
 
-#: src/BuddyListNode.cpp:262 src/BuddyListNode.cpp:406
-#: src/BuddyListNode.cpp:557 src/BuddyListNode.cpp:699
+#: src/BuddyListNode.cpp:238 src/BuddyListNode.cpp:389
+#: src/BuddyListNode.cpp:538 src/BuddyListNode.cpp:713
 msgid "Delete..."
 msgstr "Smazat…"
 
-#: src/BuddyListNode.cpp:322
+#: src/BuddyListNode.cpp:295
 #, c-format
 msgid "Are you sure you want to delete buddy %s from the list?"
 msgstr "Opravdu smazat kamaráda %s ze seznamu?"
 
-#: src/BuddyListNode.cpp:325
+#: src/BuddyListNode.cpp:298
 msgid "Buddy deletion"
 msgstr "Smazat kamaráda"
 
-#: src/BuddyListNode.cpp:463
+#: src/BuddyListNode.cpp:443
 #, c-format
 msgid "Are you sure you want to delete chat %s from the list?"
 msgstr "Opravdu smazat chat %s ze seznamu?"
 
-#: src/BuddyListNode.cpp:466
+#: src/BuddyListNode.cpp:446
 msgid "Chat deletion"
 msgstr "Smazat chat"
 
-#: src/BuddyListNode.cpp:632
+#: src/BuddyListNode.cpp:541
+msgid "Move to..."
+msgstr ""
+
+#: src/BuddyListNode.cpp:628
 #, c-format
 msgid "Are you sure you want to delete contact %s from the list?"
 msgstr "Opravdu smazat kontakt %s ze seznamu?"
 
-#: src/BuddyListNode.cpp:635
+#: src/BuddyListNode.cpp:631
 msgid "Contact deletion"
 msgstr "Smazat kontakt"
 
-#: src/BuddyListNode.cpp:696
+#: src/BuddyListNode.cpp:711
 msgid "Rename..."
 msgstr "Přejmenovat…"
 
-#: src/BuddyListNode.cpp:721
+#: src/BuddyListNode.cpp:732
 msgid "Specified group is already in the list."
 msgstr "Zadaná skupina se již v seznamu nachází."
 
-#: src/BuddyListNode.cpp:735
+#: src/BuddyListNode.cpp:746
 msgid "Rename"
 msgstr "Přejmenovat"
 
-#: src/BuddyListNode.cpp:789
+#: src/BuddyListNode.cpp:800
 #, c-format
 msgid "Are you sure you want to delete group %s from the list?"
 msgstr "Opravdu smazat skupinu %s ze seznamu?"
 
-#: src/BuddyListNode.cpp:792
+#: src/BuddyListNode.cpp:803
 msgid "Group deletion"
 msgstr "Smazat skupinu"
 
@@ -299,55 +329,55 @@ msgstr "+ [%s] %s: Účet zakázán"
 msgid "%d.%m.%y %H:%M"
 msgstr "%d.%m.%y %H:%M"
 
-#: src/Conversation.cpp:61 src/Conversation.cpp:464
+#: src/Conversation.cpp:61 src/Conversation.cpp:469
 #, c-format
 msgid "Error opening conversation logfile '%s' (%s)."
 msgstr "Chyba při otevírání log souboru konverzace \"%s\" (%s)."
 
-#: src/Conversation.cpp:68 src/Conversation.cpp:470
+#: src/Conversation.cpp:68 src/Conversation.cpp:475
 #, c-format
 msgid "Error opening conversation logfile '%s'."
 msgstr "Chyba při otevírání log souboru konverzace \"%s\"."
 
-#: src/Conversation.cpp:119
+#: src/Conversation.cpp:117
 #, c-format
 msgid "%s buddy list, %s/%s/%s next/prev/act conv, %s status menu, %s send"
 msgstr "%s kamarádi, %s/%s/%s násl/před/akt konv, %s stav nabídka, %s odeslat"
 
-#: src/Conversation.cpp:202
+#: src/Conversation.cpp:207
 #, c-format
 msgid "Error writing to conversation logfile (%s)."
 msgstr "Chyba při zápisu do log souboru konverzace (%s)."
 
-#: src/Conversation.cpp:208
+#: src/Conversation.cpp:213
 msgid "Error writing to conversation logfile."
 msgstr "Chyba při zápisu do log souboru konverzace."
 
-#: src/Conversation.cpp:212
+#: src/Conversation.cpp:217
 #, c-format
 msgid "Error flushing conversation logfile (%s)."
 msgstr "Chyba při zápisu (flush) do log souboru konverzace (%s)."
 
-#: src/Conversation.cpp:218
+#: src/Conversation.cpp:223
 msgid "Error flushing conversation logfile."
 msgstr "Chyba při zápisu (flush) do log souboru."
 
-#: src/Conversation.cpp:429
+#: src/Conversation.cpp:434
 #, c-format
 msgid "Error creating directory '%s'."
 msgstr "Chyba při vytváření adresáře \"%s\"."
 
-#: src/Conversation.cpp:581
+#: src/Conversation.cpp:586
 #, c-format
 msgid "Error reading from conversation logfile '%s' (%s)."
 msgstr "Chyba při čtení z log souboru konverzace \"%s\" (%s)."
 
-#: src/Conversation.cpp:587
+#: src/Conversation.cpp:592
 #, c-format
 msgid "Error reading from conversation logfile '%s'."
 msgstr "Chyba při čtení z log souboru konverzace \"%s\"."
 
-#: src/Conversations.cpp:228
+#: src/Conversations.cpp:289
 #, c-format
 msgid "Unhandled conversation type: %i.\n"
 msgstr "Nepodporovaný druh konverzace: %i.\n"
@@ -434,106 +464,114 @@ msgstr "Zobrazit prázdné skupiny"
 msgid "Show offline buddies"
 msgstr "Zobrazit odpojené kamarády"
 
-#: src/OptionWindow.cpp:50
-msgid "Dimensions"
-msgstr "Rozměry"
+#: src/OptionWindow.cpp:48
+msgid "Colorization mode"
+msgstr ""
 
-#: src/OptionWindow.cpp:51
-msgid "Buddy list window width"
-msgstr "Šířka okna se seznamem kamarádů"
-
-#: src/OptionWindow.cpp:54
-msgid "Log window height"
-msgstr "Výška okna logu"
-
-#: src/OptionWindow.cpp:60
-msgid "Idle settings"
-msgstr "Nastavení nečinnosti"
-
-#: src/OptionWindow.cpp:62
-msgid "Change to away status when idle"
-msgstr "Při nečinnosti změnit stav na \"pryč\""
-
-#: src/OptionWindow.cpp:65
-msgid "Time before becoming idle"
-msgstr "Čas před změnou stavu"
-
-#: src/OptionWindow.cpp:67
-msgid "Report idle time"
-msgstr "Hlásit čas nečinnosti"
-
-#: src/OptionWindow.cpp:69
-msgid "Never"
-msgstr "Nikdy"
-
-#: src/OptionWindow.cpp:70
-msgid "From last sent message"
-msgstr "Od naposledy odeslané zprávy"
-
-#: src/OptionWindow.cpp:71
-msgid "Based on keyboard"
-msgstr "Podle používání klávesnice"
-
-#: src/OptionWindow.cpp:75
-msgid "Logging"
-msgstr "Zaznamenávání"
-
-#: src/OptionWindow.cpp:78
+#: src/OptionWindow.cpp:50 src/OptionWindow.cpp:83
 msgid "None"
 msgstr "Žádné"
 
-#: src/OptionWindow.cpp:79
+#: src/OptionWindow.cpp:51
+msgid "By status"
+msgstr ""
+
+#: src/OptionWindow.cpp:55
+msgid "Dimensions"
+msgstr "Rozměry"
+
+#: src/OptionWindow.cpp:56
+msgid "Buddy list window width"
+msgstr "Šířka okna se seznamem kamarádů"
+
+#: src/OptionWindow.cpp:59
+msgid "Log window height"
+msgstr "Výška okna logu"
+
+#: src/OptionWindow.cpp:65
+msgid "Idle settings"
+msgstr "Nastavení nečinnosti"
+
+#: src/OptionWindow.cpp:67
+msgid "Change to away status when idle"
+msgstr "Při nečinnosti změnit stav na \"pryč\""
+
+#: src/OptionWindow.cpp:70
+msgid "Time before becoming idle"
+msgstr "Čas před změnou stavu"
+
+#: src/OptionWindow.cpp:72
+msgid "Report idle time"
+msgstr "Hlásit čas nečinnosti"
+
+#: src/OptionWindow.cpp:74
+msgid "Never"
+msgstr "Nikdy"
+
+#: src/OptionWindow.cpp:75
+msgid "From last sent message"
+msgstr "Od naposledy odeslané zprávy"
+
+#: src/OptionWindow.cpp:76
+msgid "Based on keyboard"
+msgstr "Podle používání klávesnice"
+
+#: src/OptionWindow.cpp:80
+msgid "Logging"
+msgstr "Zaznamenávání"
+
+#: src/OptionWindow.cpp:84
 msgid "Error"
 msgstr "Chyby"
 
-#: src/OptionWindow.cpp:80
+#: src/OptionWindow.cpp:85
 msgid "Critical"
 msgstr "Kritické chyby"
 
-#: src/OptionWindow.cpp:81
+#: src/OptionWindow.cpp:86
 msgid "Warning"
 msgstr "Varování"
 
-#: src/OptionWindow.cpp:82
+#: src/OptionWindow.cpp:87
 msgid "Message"
 msgstr "Běžné zprávy"
 
-#: src/OptionWindow.cpp:83
+#: src/OptionWindow.cpp:88
 msgid "Info"
 msgstr "Informační zprávy"
 
-#: src/OptionWindow.cpp:84
+#: src/OptionWindow.cpp:89
 msgid "Debug"
 msgstr "Ladicí informace"
 
-#: src/OptionWindow.cpp:86
+#: src/OptionWindow.cpp:91
 msgid "CIM log level"
 msgstr "Zprávy programu"
 
-#: src/OptionWindow.cpp:91
+#: src/OptionWindow.cpp:96
 msgid "CppConsUI log level"
 msgstr "Zprávy knihovny CppConsUI"
 
-#: src/OptionWindow.cpp:96
+#: src/OptionWindow.cpp:101
 msgid "Purple log level"
 msgstr "Zprávy knihovny purple"
 
-#: src/OptionWindow.cpp:101
+#: src/OptionWindow.cpp:106
 msgid "GLib log level"
 msgstr "Zprávy knihovny GLib"
 
-#: src/OptionWindow.cpp:108
+#: src/OptionWindow.cpp:113
 msgid "Reload keybinding file"
 msgstr "Znovu načíst soubor s nastavením kláves"
 
-#: src/OptionWindow.cpp:297
+#: src/OptionWindow.cpp:302
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] "minuta"
 msgstr[1] "minuty"
 msgstr[2] "minut"
 
-#: src/OptionWindow.cpp:303
+#: src/OptionWindow.cpp:308
 msgid "Keybinding file was successfully reloaded."
 msgstr "Soubor s nastavením kláves byl úspěšně načten."
 
@@ -541,11 +579,11 @@ msgstr "Soubor s nastavením kláves byl úspěšně načten."
 msgid "Selected value"
 msgstr "Vybraná hodnota"
 
-#: src/Request.cpp:222
+#: src/Request.cpp:227
 msgid "Settings group"
 msgstr "Skupina nastavení"
 
-#: src/Request.cpp:268
+#: src/Request.cpp:273
 msgid "Unimplemented Request field type."
 msgstr "Neimplementovaný typ pole požadavků"
 
@@ -561,20 +599,20 @@ msgstr "Ano"
 msgid "No"
 msgstr "Ne"
 
-#: cppconsui/ConsuiCurses.cpp:348
+#: cppconsui/ConsuiCurses.cpp:417
 msgid "Color pairs limit exceeded."
 msgstr "Překročen maximální počet barevných párů."
 
-#: cppconsui/CoreManager.cpp:343
+#: cppconsui/CoreManager.cpp:322
 #, c-format
 msgid "Error converting input to UTF-8 (%s)."
 msgstr "Chyba při konverzi vstupu do UTF-8 (%s)."
 
-#: cppconsui/CoreManager.cpp:349
+#: cppconsui/CoreManager.cpp:328
 msgid "Error converting input to UTF-8."
 msgstr "Chyba při konverzi vstupu do UTF-8."
 
-#: cppconsui/CoreManager.cpp:403
+#: cppconsui/CoreManager.cpp:379
 msgid "Libtermkey initialization failed."
 msgstr "Nezdařila se inicializace knihovny libtermkey."
 
@@ -582,67 +620,67 @@ msgstr "Nezdařila se inicializace knihovny libtermkey."
 msgid "<unbound>"
 msgstr "<nesvázáno>"
 
-#: cppconsui/KeyConfig.cpp:129
+#: cppconsui/KeyConfig.cpp:126
 #, c-format
 msgid "Unrecognized key '%s' in default keybinds."
 msgstr "Neznámá klávesa \"%s\" ve výchozím nastavení kláves."
 
-#: cppconsui/KeyConfig.cpp:147
+#: cppconsui/KeyConfig.cpp:144
 #, c-format
 msgid "Error opening keybinding file '%s' (%s)."
 msgstr "Chyba při otevírání souboru s nastavením kláves \"%s\" (%s)."
 
-#: cppconsui/KeyConfig.cpp:153
+#: cppconsui/KeyConfig.cpp:150
 #, c-format
 msgid "Error opening keybinding file '%s'."
 msgstr "Chyba při otevírání souboru s nastavením kláves \"%s\"."
 
-#: cppconsui/KeyConfig.cpp:160
+#: cppconsui/KeyConfig.cpp:157
 #, c-format
 msgid "Error writing to keybinding file '%s' (%s)."
 msgstr "Chyba při zápisu do souboru s nastavením kláves \"%s\" (%s)."
 
-#: cppconsui/KeyConfig.cpp:166
+#: cppconsui/KeyConfig.cpp:163
 #, c-format
 msgid "Error writing to keybinding file '%s'."
 msgstr "Chyba při zápisu do souboru s nastavením kláves \"%s\"."
 
-#: cppconsui/KeyConfig.cpp:200
+#: cppconsui/KeyConfig.cpp:197
 #, c-format
 msgid "Error reading keybinding file '%s' (%s)."
 msgstr "Chyba při čtení ze souboru s nastavením kláves \"%s\" (%s)."
 
-#: cppconsui/KeyConfig.cpp:206
+#: cppconsui/KeyConfig.cpp:203
 #, c-format
 msgid "Error reading keybinding file '%s'."
 msgstr "Chyba při čtení ze souboru s nastavením kláves \"%s\"."
 
-#: cppconsui/KeyConfig.cpp:220
+#: cppconsui/KeyConfig.cpp:217
 #, c-format
 msgid "Error parsing keybinding file '%s' (%s)."
 msgstr "Chyba při zpracování souboru s nastavením kláves \"%s\" (%s)."
 
-#: cppconsui/KeyConfig.cpp:226
+#: cppconsui/KeyConfig.cpp:223
 #, c-format
 msgid "Error parsing keybinding file '%s'."
 msgstr "Chyba při zpracování souboru s nastavením kláves \"%s\"."
 
-#: cppconsui/KeyConfig.cpp:244
+#: cppconsui/KeyConfig.cpp:241
 #, c-format
 msgid "Expected 'keyconfig' element, found '%s'"
 msgstr "Očekáván element \"keyconfig\", nalezen \"%s\""
 
-#: cppconsui/KeyConfig.cpp:250
+#: cppconsui/KeyConfig.cpp:247
 #, c-format
 msgid "Expected 'bind' element, found '%s'"
 msgstr "Očekáván element \"bind\", nalezen \"%s\""
 
-#: cppconsui/KeyConfig.cpp:267
+#: cppconsui/KeyConfig.cpp:264
 #, c-format
 msgid "Unrecognized key '%s'"
 msgstr "Neznámá klávesa \"%s\"."
 
-#: cppconsui/KeyConfig.cpp:273
+#: cppconsui/KeyConfig.cpp:270
 #, c-format
 msgid "Unexpected element '%s'"
 msgstr "Neočekávaný element \"%s\""

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2011 by CenterIM developers
+ * Copyright (C) 2010-2012 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * */
+ */
 
 #include "Keys.h"
 #include "CoreManager.h"

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2011 by CenterIM developers
+ * Copyright (C) 2010-2012 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * */
+ */
 
 /**
  * @file
@@ -64,13 +64,71 @@ void MenuWindow::Draw()
   Window::Draw();
 }
 
+void MenuWindow::Show()
+{
+  if (ref) {
+    g_assert(!ref_visible_conn.connected());
+
+    ref_visible_conn = ref->signal_visible.connect(sigc::mem_fun(this,
+          &MenuWindow::OnRefVisible));
+
+    // make sure the first widget is focused
+    CleanFocus();
+    MoveFocus(FOCUS_DOWN);
+  }
+
+  Window::Show();
+}
+
+void MenuWindow::Hide()
+{
+  if (ref)
+    ref_visible_conn.disconnect();
+
+  Window::Hide();
+}
+
 void MenuWindow::Close()
 {
-  if (flags & FLAG_HIDE_ON_CLOSE) {
+  if (flags & FLAG_HIDE_ON_CLOSE)
     Hide();
-  } else {
+  else
     Window::Close();
+}
+
+void MenuWindow::RemoveWidget(Widget& widget)
+{
+  // if the widget is a reference to a submenu then delete the submenu too
+  Button *button = dynamic_cast<Button*>(&widget);
+  if (button) {
+    SubMenus::iterator i = submenus.find(button);
+    if (i != submenus.end()) {
+      delete i->second;
+      submenus.erase(i);
+    }
   }
+
+  Window::RemoveWidget(widget);
+}
+
+Button *MenuWindow::AppendSubMenu(const char *title, MenuWindow& submenu)
+{
+  // setup submenu correctly
+  submenu.Hide();
+  submenu.SetFlags(FLAG_HIDE_ON_CLOSE);
+  signal_hide.connect(sigc::hide(sigc::mem_fun(submenu, &MenuWindow::Hide)));
+
+  // create an opening button
+  Button *button = new Button(title);
+  button->signal_activate.connect(sigc::hide(sigc::mem_fun(submenu,
+          &MenuWindow::Show)));
+  listbox->AppendWidget(*button);
+
+  submenu.SetRef(button);
+
+  submenus[button] = &submenu;
+
+  return button;
 }
 
 void MenuWindow::SetFlags(int new_flags)
@@ -82,20 +140,13 @@ void MenuWindow::SetFlags(int new_flags)
   Redraw();
 }
 
-void MenuWindow::SetRef(Widget *ref_)
+void MenuWindow::SetRef(Widget *new_ref)
 {
-  /* Disconnect old ref_visible_conn signal. */
-  if (ref) {
-    ref_visible_conn.disconnect();
-  }
+  if (new_ref == ref)
+    return;
 
-  ref = ref_;
-
-  /* Connect new ref_visible_conn, if any. */
-  if (ref) {
-    ref_visible_conn = ref->signal_visible.connect(sigc::mem_fun(this,
-        &MenuWindow::OnRefVisible));
-  }
+  ref = new_ref;
+  Redraw();
 }
 
 void MenuWindow::SetLeftShift(int x)
@@ -114,25 +165,6 @@ void MenuWindow::SetTopShift(int y)
 
   yshift = y;
   Redraw();
-}
-
-Button* MenuWindow::AppendSubMenu(const char *title,
-    MenuWindow& submenu)
-{
-  Button *button = new Button (title);
-
-  button->signal_activate.connect(sigc::hide(sigc::mem_fun(submenu,
-        &MenuWindow::Show)));
-
-  signal_hide.connect(sigc::hide(sigc::mem_fun(submenu,
-        &MenuWindow::Hide)));
-
-  submenu.SetRef (button);
-  submenu.SetFlags (FLAG_HIDE_ON_CLOSE);
-
-  listbox->AppendWidget (*button);
-
-  return button;
 }
 
 void MenuWindow::AddWidget(Widget& widget, int x, int y)
@@ -164,8 +196,9 @@ void MenuWindow::UpdateSmartPositionAndSize()
    * Note that none of the below called methods (Move(), SetWishHeight())
    * doesn't trigger update-area procedure if it isn't really necessary.
    */
-  if (!ref) /* Absolute screen position */
-  {
+
+  if (!ref) {
+    // absolute screen position
     int h = listbox->GetChildrenHeight() + 2;
     int max = Curses::getmaxy() - win_y;
     if (h > max)
@@ -173,8 +206,8 @@ void MenuWindow::UpdateSmartPositionAndSize()
     else
       SetWishHeight(h);
   }
-  else /* Relative screen position */
-  {
+  else {
+    // relative screen position
     Point p = ref->GetAbsolutePosition();
     int x = p.GetX() + xshift;
     int y = p.GetY() + yshift;
@@ -209,6 +242,7 @@ void MenuWindow::UpdateSmartPositionAndSize()
     }
   }
 }
+
 void MenuWindow::OnChildrenHeightChange(ListBox& activator, int new_height)
 {
   if (win_h != AUTOSIZE)
@@ -217,14 +251,13 @@ void MenuWindow::OnChildrenHeightChange(ListBox& activator, int new_height)
   UpdateSmartPositionAndSize();
 }
 
-//TODO actualy hide, not close(), also monitor show, etc
 void MenuWindow::OnRefVisible(Widget& activator, bool visible)
 {
   if (visible)
     return;
 
   // hide window if the reference widget is hidden
-  Close();
+  Hide();
 }
 
 } // namespace CppConsUI
