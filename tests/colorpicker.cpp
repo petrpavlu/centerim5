@@ -2,6 +2,7 @@
 #include <cppconsui/CoreManager.h>
 #include <cppconsui/KeyConfig.h>
 #include <cppconsui/ColorPickerDialog.h>
+#include <cppconsui/ColorPickerComboBox.h>
 #include <cppconsui/ConsuiCurses.h>
 #include <cppconsui/Window.h>
 
@@ -20,6 +21,8 @@ class TestWindow
   private:
     CppConsUI::Label *label1;
     CppConsUI::Label *label2;
+    int defaultcolor;
+    CppConsUI::ColorPickerComboBox *combo;
 
     TestWindow();
     virtual ~TestWindow() {}
@@ -30,6 +33,9 @@ class TestWindow
     void OnChangeColorResponseHandler(
         CppConsUI::ColorPickerDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response,
+        int color);
+    void OnComboColorChange(
+        CppConsUI::ColorPickerComboBox& activator,
         int color);
 
 };
@@ -42,6 +48,7 @@ TestWindow *TestWindow::Instance()
 
 TestWindow::TestWindow()
 : CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
+, defaultcolor(0)
 {
   CppConsUI::Button *button;
 
@@ -79,6 +86,14 @@ TestWindow::TestWindow()
 		  CppConsUI::Curses::Color::Colors());
   label1->SetText(text);
   g_free(text);
+
+  CppConsUI::Label *l = new CppConsUI::Label("ColorPickerComboBox:");
+  AddWidget(*l, 1, 11);
+
+  combo = new CppConsUI::ColorPickerComboBox (10, defaultcolor);
+  combo->signal_color_changed.connect(
+      sigc::mem_fun(this, &TestWindow::OnComboColorChange));
+  AddWidget(*combo, 1, 12);
 }
 
 void TestWindow::OnButtonActivate(CppConsUI::Button& activator, int flags)
@@ -100,6 +115,17 @@ void TestWindow::OnChangeColorResponseHandler(
   if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
       return;
 
+  char *text = g_strdup_printf("Chosen color nr: %d", color);
+  label2->SetText(text);
+  g_free(text);
+
+  combo->SetSelectedColor(color);
+}
+
+void TestWindow::OnComboColorChange(
+    CppConsUI::ColorPickerComboBox& activator,
+    int color)
+{
   char *text = g_strdup_printf("Chosen color nr: %d", color);
   label2->SetText(text);
   g_free(text);

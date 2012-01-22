@@ -6,6 +6,7 @@ set( cppconsui_SOURCES
 	Button.cpp
 	CheckBox.cpp
 	ColorPicker.cpp
+	ColorPickerComboBox.cpp
 	ColorPickerDialog.cpp
 	ColorScheme.cpp
 	ConsuiCurses.cpp
