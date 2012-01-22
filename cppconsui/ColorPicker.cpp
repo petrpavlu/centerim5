@@ -33,17 +33,20 @@
 namespace CppConsUI
 {
 
-ColorPicker::ColorPicker(int defaultcolor)
+ColorPicker::ColorPicker(int defaultcolor, int flags)
 : Container(0, 0)
 {
-  /* Default 16 colors */
-  AddAnsi(defaultcolor);
+  if (!(flags & FLAG_HIDE_ANSI))
+    /* Default 16 colors */
+    AddAnsi(defaultcolor);
 
-  /* Grayscale ladder */
-  AddGrayscale(defaultcolor);
+  if (!(flags & FLAG_HIDE_GRAYSCALE))
+    /* Grayscale ladder */
+    AddGrayscale(defaultcolor);
 
-  /* 6x6x6 Color cube*/
-  AddColorCube(defaultcolor);
+  if (!(flags & FLAG_HIDE_COLORCUBE))
+    /* 6x6x6 Color cube*/
+    AddColorCube(defaultcolor);
 }
 
 void ColorPicker::OnSelectColor(Button& activator)
