@@ -76,6 +76,8 @@ class ColorPicker
     void OnSelectColor(Button& activator);
 
   private:
+    void AddButton(int x, int y, int color, int defaultcolor);
+
     ColorPicker(const ColorPicker&);
     ColorPicker& operator=(const ColorPicker&);
 };

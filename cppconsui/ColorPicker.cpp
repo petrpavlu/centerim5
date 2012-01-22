@@ -88,6 +88,18 @@ void ColorPicker::OnSelectColor(Button& activator)
   signal_color_selected (*this, btn->color);
 }
 
+void ColorPicker::AddButton(int x, int y, int color, int defaultcolor)
+{
+  ColorPickerButton *btn = new ColorPickerButton(color);
+
+  btn->signal_activate.connect(sigc::mem_fun(this,
+      &ColorPicker::OnSelectColor));
+  AddWidget (*btn, x, y);
+
+  if (color == defaultcolor)
+    btn->GrabFocus();
+}
+
 ColorPicker::ColorPickerButton::ColorPickerButton (const int color)
 : Button(2, 1, NULL, 0), color(color)
 {
