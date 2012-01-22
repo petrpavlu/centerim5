@@ -126,6 +126,8 @@ private:
 
 struct Color
 {
+  static int Colors();
+
   const static int BLACK;
   const static int RED;
   const static int GREEN;
