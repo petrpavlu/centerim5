@@ -2,6 +2,7 @@
 #include <cppconsui/CoreManager.h>
 #include <cppconsui/KeyConfig.h>
 #include <cppconsui/ColorPickerDialog.h>
+#include <cppconsui/ConsuiCurses.h>
 #include <cppconsui/Window.h>
 
 // TestWindow class
@@ -17,14 +18,15 @@ class TestWindow
   protected:
 
   private:
-    CppConsUI::Label *label;
+    CppConsUI::Label *label1;
+    CppConsUI::Label *label2;
 
     TestWindow();
     virtual ~TestWindow() {}
     TestWindow(const TestWindow&);
     TestWindow& operator=(const TestWindow&);
 
-    void OnButtonActivate(CppConsUI::Button& activator);
+    void OnButtonActivate(CppConsUI::Button& activator, int flags);
 };
 
 TestWindow *TestWindow::Instance()
@@ -36,20 +38,48 @@ TestWindow *TestWindow::Instance()
 TestWindow::TestWindow()
 : CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
+  CppConsUI::Button *button;
+
   AddWidget(*(new CppConsUI::Label("Press F10 to quit.")), 1, 1);
 
-  CppConsUI::Button *button = new CppConsUI::Button ("Open Colorpicker...");
-
-  AddWidget(*button, 0, 2);
-
+  button = new CppConsUI::Button ("Open Colorpicker...");
+  AddWidget(*button, 1, 3);
   button->signal_activate.connect(
-      sigc::mem_fun(this, &TestWindow::OnButtonActivate));
+      sigc::bind(sigc::mem_fun(this, &TestWindow::OnButtonActivate), 0));
+
+  button = new CppConsUI::Button ("Open Colorpicker: ansi only...");
+  AddWidget(*button, 1, 4);
+  button->signal_activate.connect(
+      sigc::bind(sigc::mem_fun(this, &TestWindow::OnButtonActivate),
+	      CppConsUI::ColorPicker::FLAG_HIDE_GRAYSCALE
+	      | CppConsUI::ColorPicker::FLAG_HIDE_COLORCUBE));
+
+  button = new CppConsUI::Button ("Open Colorpicker: ansi + Grayscale...");
+  AddWidget(*button, 1, 5);
+  button->signal_activate.connect(
+      sigc::bind(sigc::mem_fun(this, &TestWindow::OnButtonActivate),
+	      CppConsUI::ColorPicker::FLAG_HIDE_COLORCUBE));
+
+  button = new CppConsUI::Button ("Open Colorpicker: color cube only...");
+  AddWidget(*button, 1, 6);
+  button->signal_activate.connect(
+      sigc::bind(sigc::mem_fun(this, &TestWindow::OnButtonActivate),
+	      CppConsUI::ColorPicker::FLAG_HIDE_ANSI
+	      | CppConsUI::ColorPicker::FLAG_HIDE_GRAYSCALE));
+
+  label1 = new CppConsUI::Label; AddWidget(*label1, 1, 8);
+  label2 = new CppConsUI::Label; AddWidget(*label2, 1, 9);
+
+  char *text = g_strdup_printf("Supported nr of colors: %d",  
+		  CppConsUI::Curses::Color::Colors());
+  label1->SetText(text);
+  g_free(text);
 }
 
-void TestWindow::OnButtonActivate(CppConsUI::Button& activator)
+void TestWindow::OnButtonActivate(CppConsUI::Button& activator, int flags)
 {
   CppConsUI::ColorPickerDialog *dlg =
-      new CppConsUI::ColorPickerDialog("Test Colorpicker", 0);
+      new CppConsUI::ColorPickerDialog("Test Colorpicker", 0, flags);
 
   dlg->Show();
 }
