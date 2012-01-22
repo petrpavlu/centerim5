@@ -43,7 +43,6 @@ cppconsui/InputProcessor.cpp
 cppconsui/KeyConfig.cpp
 cppconsui/Keys.cpp
 cppconsui/Label.cpp
-cppconsui/LineStyle.cpp
 cppconsui/ListBox.cpp
 cppconsui/MenuWindow.cpp
 cppconsui/MessageDialog.cpp
