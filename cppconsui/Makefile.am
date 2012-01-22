@@ -12,6 +12,10 @@ libcppconsui_la_SOURCES =\
 	Button.h \
 	CheckBox.cpp \
 	CheckBox.h \
+	ColorPicker.cpp \
+	ColorPicker.h \
+	ColorPickerDialog.cpp \
+	ColorPickerDialog.h \
 	ColorScheme.h \
 	ColorScheme.cpp \
 	ConsuiCurses.cpp \

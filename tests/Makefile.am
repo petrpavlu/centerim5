@@ -1,5 +1,6 @@
 check_PROGRAMS = \
 	button_test \
+	colorpicker \
 	label_test \
 	textentry_test \
 	textview_test \
@@ -20,6 +21,9 @@ LDADD = \
 
 button_test_SOURCES = \
 	button_test.cpp
+
+colorpicker_SOURCES = \
+	colorpicker.cpp
 
 label_test_SOURCES = \
 	label_test.cpp
