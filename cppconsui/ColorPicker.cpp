@@ -36,6 +36,12 @@ namespace CppConsUI
 ColorPicker::ColorPicker(int defaultcolor, int flags)
 : Container(0, 0)
 {
+  if (flags == (FLAG_HIDE_ANSI | FLAG_HIDE_GRAYSCALE | FLAG_HIDE_COLORCUBE))
+    flags = (FLAG_HIDE_GRAYSCALE | FLAG_HIDE_COLORCUBE);
+
+  if (Curses::Color::Colors() < 256)
+    flags |= (FLAG_HIDE_GRAYSCALE | FLAG_HIDE_COLORCUBE);
+
   if (!(flags & FLAG_HIDE_ANSI))
     /* Default 16 colors */
     AddAnsi(defaultcolor);
