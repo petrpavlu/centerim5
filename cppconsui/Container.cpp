@@ -145,9 +145,8 @@ void Container::MoveWidgetAfter(Widget& widget, Widget& position)
 
 void Container::Clear()
 {
-  for (Children::iterator i = children.begin(); i != children.end(); i++)
-    delete i->widget;
-  children.clear();
+  while (children.size())
+    RemoveWidget(*children.front().widget);
 }
 
 bool Container::IsWidgetVisible(const Widget& widget) const

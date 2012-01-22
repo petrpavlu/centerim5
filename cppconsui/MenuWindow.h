@@ -49,6 +49,17 @@ public:
   MenuWindow(Widget& ref_, int w, int h, const char *title = NULL);
   virtual ~MenuWindow() {}
 
+  // Widget
+  virtual void Draw();
+
+  // Container
+  virtual void RemoveWidget(Widget& widget);
+
+  // FreeWindow
+  virtual void Show();
+  virtual void Hide();
+  virtual void Close();
+
   virtual Button *InsertItem(size_t pos, const char *title,
       const sigc::slot<void, Button&>& callback)
     { return listbox->InsertItem(pos, title, callback); }
@@ -66,14 +77,10 @@ public:
   virtual void AppendWidget(Widget& widget)
     { listbox->AppendWidget(widget); }
 
-  virtual void Draw();
-
-  virtual void Close();
-
   virtual void SetFlags(int new_flags);
   virtual int GetFlags() const { return flags; }
 
-  virtual void SetRef(Widget *ref_);
+  virtual void SetRef(Widget *new_ref);
 
   virtual int GetLeftShift() const { return xshift; }
   virtual int GetTopShift() const { return yshift; }
@@ -83,12 +90,16 @@ public:
 
 
 protected:
+  typedef std::map<Button*, MenuWindow*> SubMenus;
+
   ListBox *listbox;
   int wish_height;
 
   Widget *ref;
   int xshift, yshift;
   sigc::connection ref_visible_conn;
+
+  SubMenus submenus;
 
   int flags;
 
