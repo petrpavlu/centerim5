@@ -27,6 +27,11 @@ class TestWindow
     TestWindow& operator=(const TestWindow&);
 
     void OnButtonActivate(CppConsUI::Button& activator, int flags);
+    void OnChangeColorResponseHandler(
+        CppConsUI::ColorPickerDialog& activator,
+        CppConsUI::AbstractDialog::ResponseType response,
+        int color);
+
 };
 
 TestWindow *TestWindow::Instance()
@@ -81,7 +86,23 @@ void TestWindow::OnButtonActivate(CppConsUI::Button& activator, int flags)
   CppConsUI::ColorPickerDialog *dlg =
       new CppConsUI::ColorPickerDialog("Test Colorpicker", 0, flags);
 
+  dlg->signal_response.connect(sigc::mem_fun(this,
+      &TestWindow::OnChangeColorResponseHandler));
+
   dlg->Show();
+}
+
+void TestWindow::OnChangeColorResponseHandler(
+    CppConsUI::ColorPickerDialog& activator,
+    CppConsUI::AbstractDialog::ResponseType response,
+    int color)
+{
+  if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
+      return;
+
+  char *text = g_strdup_printf("Chosen color nr: %d", color);
+  label2->SetText(text);
+  g_free(text);
 }
 
 // TestApp class
