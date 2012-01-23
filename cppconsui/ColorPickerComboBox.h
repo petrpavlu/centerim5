@@ -11,7 +11,7 @@
  *
  * CenterIM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  Softwareee the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -29,52 +29,73 @@
 #ifndef __COLORPICKERCOMBOBOX_H__
 #define __COLORPICKERCOMBOBOX_H__
 
+#include "AbstractDialog.h"
 #include "Button.h"
 #include "ColorPickerDialog.h"
+#include "ComboBox.h"
+#include "MenuWindow.h"
 
 #include <vector>
 
 namespace CppConsUI
 {
 
-/**
- * This class should be used when the user must choose one value from several
- * options.
- */
 class ColorPickerComboBox
-: public Button
+: public ComboBox
 {
-public:
-  ColorPickerComboBox(int w, int color = -1);
-  virtual ~ColorPickerComboBox();
+  public:
+    ColorPickerComboBox(int w, int color);
+    virtual ~ColorPickerComboBox() {}
 
-  // Button
-  void Draw();
+    // Button
+    void Draw();
 
-  void SetSelectedColor(int new_color);
+    void SetColor(int new_color);
+    int GetColor() { return selected_color; }
 
-  sigc::signal<void, ColorPickerComboBox&, int>
-    signal_color_changed;
+  protected:
+    class ColorButton
+    : public Button
+    {
+      public:
+        ColorButton(int w, int color = -1);
+        virtual ~ColorButton() {}
 
-protected:
-  ColorPickerDialog *dropdown;
+       // Button
+       void Draw();
 
-  /**
-   * Currently selected color.
-   */
-  int selected_color;
+      protected:
+       int color;
+    };
 
-  /**
-   * Prepares and displays the dropdown MenuWindow.
-   */
-  virtual void OnDropDown(Button& activator);
-  virtual void DropDownOk( ColorPickerDialog& activator,
-      AbstractDialog::ResponseType response, int new_color);
-  virtual void DropDownClose(FreeWindow& window);
+    /**
+     * Hide all ComboBox functionality which doen not apply.
+     */
+    ComboBox::ClearOptions;
+    ComboBox::AddOption;
+    ComboBox::AddOptionPtr;
+    ComboBox::GetSelectedTitle;
+    ComboBox::GetTitle;
+    ComboBox::SetSelected;
+    ComboBox::SetSelectedByData;
+    ComboBox::SetSelectedByDataPtr;
 
-private:
-  ColorPickerComboBox(const ColorPickerComboBox&);
-  ColorPickerComboBox& operator=(const ColorPickerComboBox&);
+    // ComboBox
+    virtual void OnDropDown(Button& activator);
+    virtual void DropDownOk(Button& activator, int new_entry);
+    virtual void DropDownClose(FreeWindow& window)
+      { ComboBox::DropDownClose(window); }
+    void ColorPickerOk(ColorPickerDialog& activator,
+        AbstractDialog::ResponseType response, int new_color);
+    void ColorPickerClose(FreeWindow& window);
+
+    int selected_color;
+
+    ColorPickerDialog *colorpicker;
+
+  private:
+    ColorPickerComboBox(const ColorPickerComboBox&);
+    ColorPickerComboBox& operator=(const ColorPickerComboBox&);
 };
 
 } // namespace CppConsUI

@@ -35,8 +35,8 @@ class TestWindow
         CppConsUI::AbstractDialog::ResponseType response,
         int color);
     void OnComboColorChange(
-        CppConsUI::ColorPickerComboBox& activator,
-        int color);
+        CppConsUI::ComboBox& activator,
+        intptr_t color);
 
 };
 
@@ -98,8 +98,8 @@ TestWindow::TestWindow()
   AddWidget(*l, 1, 9);
 
   combo = new CppConsUI::ColorPickerComboBox (10, defaultcolor);
-  combo->signal_color_changed.connect(
-      sigc::mem_fun(this, &TestWindow::OnComboColorChange));
+  //combo->signal_selection_changed.connect(
+  //    sigc::mem_fun(this, &TestWindow::OnComboColorChange));
   AddWidget(*combo, 1, 13);
 }
 
@@ -126,14 +126,14 @@ void TestWindow::OnChangeColorResponseHandler(
   label2->SetText(text);
   g_free(text);
 
-  combo->SetSelectedColor(color);
+  combo->SetColor(color);
 }
 
 void TestWindow::OnComboColorChange(
-    CppConsUI::ColorPickerComboBox& activator,
-    int color)
+    CppConsUI::ComboBox& activator,
+    intptr_t color)
 {
-  char *text = g_strdup_printf("Chosen color nr: %d", color);
+  char *text = g_strdup_printf("Chosen color nr: %d", (int)color);
   label2->SetText(text);
   g_free(text);
 }
