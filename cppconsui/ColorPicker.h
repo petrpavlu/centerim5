@@ -47,7 +47,7 @@ class ColorPicker
     enum Flag {
       FLAG_HIDE_ANSI = 1 << 0,
       FLAG_HIDE_GRAYSCALE = 1 << 1,
-      FLAG_HIDE_COLORCUBE = 1 << 2,
+      FLAG_HIDE_COLORCUBE = 1 << 2
     };
 
     ColorPicker(int defaultcolor, int flags = 0);

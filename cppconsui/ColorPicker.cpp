@@ -173,9 +173,6 @@ void ColorPicker::ColorPickerButton::Draw()
   if (!area)
     return;
 
-  int realw = area->getmaxx();
-  int realh = area->getmaxy();
-
   //@todo get proper color for cursor in more cases
   int cursor = Curses::Color::BLACK;
   if ((color == 0) || (color == 1) || (color == 8) || (color == 9)
@@ -188,8 +185,6 @@ void ColorPicker::ColorPickerButton::Draw()
   area->fill(colorpair, 0, 0, 2, 1);
 
   // print cursor
-  int y = 0;
-  const char *start, *end;
   if (has_focus)
     area->mvaddstring(0, 0, "<>");
 }
