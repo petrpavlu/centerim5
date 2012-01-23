@@ -33,7 +33,7 @@ namespace CppConsUI
 {
 
 ColorPickerComboBox::ColorPickerComboBox(int w, int color)
-: Button(w, 1, NULL, 0), dropdown(NULL), selected_color(color)
+: Button(w, 1, "", 0), dropdown(NULL), selected_color(color)
 {
   signal_activate.connect(sigc::mem_fun(this, &ColorPickerComboBox::OnDropDown));
 
