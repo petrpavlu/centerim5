@@ -114,6 +114,10 @@ void ComboBox::SetSelected(int new_entry)
   g_assert(new_entry >= 0);
   g_assert(new_entry < (int) options.size());
 
+  // selected option didn't change
+  if (selected_entry == new_entry)
+    return;
+
   selected_entry = new_entry;
   ComboBoxEntry e = options[new_entry];
   SetValue(e.title);
@@ -154,14 +158,7 @@ void ComboBox::DropDownOk(Button& activator, int new_entry)
 {
   dropdown->Close();
 
-  // selected option didn't change
-  if (selected_entry == new_entry)
-    return;
-
-  selected_entry = new_entry;
-  ComboBoxEntry e = options[new_entry];
-  SetValue(e.title);
-  signal_selection_changed(*this, new_entry, e.title, e.data);
+  SetSelected(new_entry);
 }
 
 void ComboBox::DropDownClose(FreeWindow& window)
