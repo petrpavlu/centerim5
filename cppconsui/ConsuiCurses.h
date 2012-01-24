@@ -126,9 +126,6 @@ private:
 
 struct Color
 {
-  static int Colors();
-  static int ColorPairs();
-
   const static int DEFAULT;
   const static int BLACK;
   const static int RED;
@@ -155,6 +152,8 @@ int screen_init();
 int screen_finalize();
 
 int getcolorpair(int fg, int bg);
+int nrcolors();
+int nrcolorpairs();
 
 int erase();
 int clear();

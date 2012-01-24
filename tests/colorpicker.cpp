@@ -83,7 +83,7 @@ TestWindow::TestWindow()
   label2 = new CppConsUI::Label; AddWidget(*label2, 1, 10);
 
   char *text = g_strdup_printf("Supported nr of colors: %d",  
-		  CppConsUI::Curses::Color::Colors());
+		  CppConsUI::Curses::nrcolors());
   label1->SetText(text);
   g_free(text);
 
@@ -92,7 +92,7 @@ TestWindow::TestWindow()
 
   l = new CppConsUI::Label();
   text = g_strdup_printf("Supported nr of color pairs: %d",  
-		  CppConsUI::Curses::Color::ColorPairs());
+		  CppConsUI::Curses::nrcolorpairs());
   l->SetText(text);
   g_free(text);
   AddWidget(*l, 1, 9);

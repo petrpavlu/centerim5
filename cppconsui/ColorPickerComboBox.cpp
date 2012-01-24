@@ -50,7 +50,7 @@ ColorPickerComboBox::ColorPickerComboBox(int w, int color)
 
 void ColorPickerComboBox::SetColor(int new_color)
 {
-  g_assert(new_color >= -1 && new_color < Curses::Color::Colors());
+  g_assert(new_color >= -1 && new_color < Curses::nrcolors());
 
   if (new_color == selected_color)
     return;

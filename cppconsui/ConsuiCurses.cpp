@@ -365,16 +365,6 @@ Window::Window()
 {
 }
 
-int Color::Colors()
-{
-  return COLORS;
-}
-
-int Color::ColorPairs()
-{
-  return COLOR_PAIRS;
-}
-
 const int Color::DEFAULT = -1;
 const int Color::BLACK = COLOR_BLACK;
 const int Color::RED = COLOR_RED;
@@ -434,6 +424,16 @@ int getcolorpair(int fg, int bg)
   int res = COLOR_PAIR(c.size() + 1);
   c[std::make_pair(fg, bg)] = res;
   return res;
+}
+
+int nrcolors()
+{
+  return COLORS;
+}
+
+int nrcolorpairs()
+{
+  return COLOR_PAIRS;
 }
 
 int erase()

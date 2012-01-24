@@ -39,7 +39,7 @@ ColorPicker::ColorPicker(int defaultcolor, int flags)
   if (flags == (FLAG_HIDE_ANSI | FLAG_HIDE_GRAYSCALE | FLAG_HIDE_COLORCUBE))
     flags = (FLAG_HIDE_GRAYSCALE | FLAG_HIDE_COLORCUBE);
 
-  if (Curses::Color::Colors() < 256)
+  if (Curses::nrcolors() < 256)
     flags |= (FLAG_HIDE_GRAYSCALE | FLAG_HIDE_COLORCUBE);
 
   if (!(flags & FLAG_HIDE_ANSI))
