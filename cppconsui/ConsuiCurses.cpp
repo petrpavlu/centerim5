@@ -414,7 +414,7 @@ int getcolorpair(int fg, int bg)
   if ((i = c.find(std::make_pair(fg, bg))) != c.end())
     return i->second;
 
-  if ((int) c.size() >= COLOR_PAIRS) {
+  if ((int) c.size() >= nrcolorpairs()) {
     g_warning(_("Color pairs limit exceeded."));
     return 0;
   }
@@ -433,7 +433,14 @@ int nrcolors()
 
 int nrcolorpairs()
 {
+#ifndef NCURSES_EXT_COLORS
+  /* ncurses reports more than 256 color pairs, even
+   * when compiled without ext-color.
+   */
+  return MIN(COLOR_PAIRS, 256);
+#else
   return COLOR_PAIRS;
+#endif
 }
 
 int erase()
