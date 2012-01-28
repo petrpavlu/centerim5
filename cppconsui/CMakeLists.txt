@@ -5,6 +5,7 @@ set( cppconsui_SOURCES
 	AbstractListBox.cpp
 	Button.cpp
 	CheckBox.cpp
+	ColorPicker.cpp
 	ColorPickerPalette.cpp
 	ColorPickerComboBox.cpp
 	ColorPickerDialog.cpp
@@ -47,6 +48,7 @@ set( cppconsui_HEADERS
 	AbstractListBox.h
 	Button.h
 	CheckBox.h
+	ColorPicker.h
 	ColorPickerPalette.h
 	ColorPickerDialog.h
 	ColorScheme.h
