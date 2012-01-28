@@ -69,6 +69,12 @@ void ColorPickerComboBox::SetColor(int new_color)
 #endif // COLORPICKER_256COLOR
 }
 
+void ColorPickerComboBox::SetSelected(int new_entry)
+{
+  ComboBox::SetSelected(new_entry);
+  signal_color_changed(*this, selected_color);
+}
+
 void ColorPickerComboBox::Draw()
 {
   ProceedUpdateArea();

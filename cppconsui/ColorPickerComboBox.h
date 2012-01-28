@@ -57,6 +57,9 @@ class ColorPickerComboBox
     void SetColor(int new_color);
     int GetColor() { return selected_color; }
 
+    sigc::signal<void, ColorPickerComboBox&, int>
+      signal_color_changed;
+
   protected:
     class ColorButton
     : public Button
@@ -80,7 +83,6 @@ class ColorPickerComboBox
     ComboBox::AddOptionPtr;
     ComboBox::GetSelectedTitle;
     ComboBox::GetTitle;
-    ComboBox::SetSelected;
     ComboBox::SetSelectedByData;
     ComboBox::SetSelectedByDataPtr;
 
@@ -94,6 +96,7 @@ class ColorPickerComboBox
         AbstractDialog::ResponseType response, int new_color);
     void ColorPickerClose(FreeWindow& window);
 #endif // COLORPICKER_256COLOR
+    void SetSelected(int new_entry);
 
     int selected_color;
 
