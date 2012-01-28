@@ -15,7 +15,7 @@ class TestWindow
     /* This is a main window, make sure it can not be closed with ESC key by
      * overriding Hide() method. */
     static TestWindow *Instance();
-    virtual void Hide() {}
+    virtual void Close() {}
 
   protected:
 
@@ -110,7 +110,7 @@ TestWindow::TestWindow()
   CppConsUI::ColorPicker *picker;
 
   AddWidget(*(new CppConsUI::Label("ColorPicker: ")), 1, 15);
-  AddWidget(*(picker = new CppConsUI::ColorPicker(15, 8, false)), 1, 16);
+  AddWidget(*(picker = new CppConsUI::ColorPicker(15, 8, true)), 1, 16);
   picker->signal_colorpair_selected.connect(sigc::mem_fun(this,
       &TestWindow::OnColerPickerChanged));
 
