@@ -129,8 +129,10 @@ void ComboBox::SetSelectedByData(intptr_t data)
   int i;
   ComboBoxEntries::iterator j;
   for (i = 0, j = options.begin(); j != options.end(); i++, j++)
-    if (j->data == data)
+    if (j->data == data) {
       SetSelected(i);
+      break;
+    }
 }
 
 void ComboBox::OnDropDown(Button& activator)
