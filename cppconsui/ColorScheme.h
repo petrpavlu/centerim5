@@ -58,6 +58,7 @@ public:
   bool SetColorPair(const char *scheme, const char *widget,
       const char *property, int foreground, int background,
       int attrs = Curses::Attr::NORMAL, bool overwrite = false);
+  void FreeScheme(const char *scheme);
 
 protected:
 

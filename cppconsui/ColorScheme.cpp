@@ -75,6 +75,20 @@ bool ColorScheme::SetColorPair(const char *scheme, const char *widget,
   return true;
 }
 
+void ColorScheme::FreeScheme(const char *scheme)
+{
+  Schemes::const_iterator i;
+
+  g_assert(scheme);
+
+  i = schemes.find(scheme);
+
+  if (i == schemes.end())
+    return;
+
+  schemes.erase(scheme);
+}
+
 } // namespace CppConsUI
 
 /* vim: set tabstop=2 shiftwidth=2 expandtab : */
