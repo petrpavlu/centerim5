@@ -48,6 +48,9 @@ ColorPickerComboBox::ColorPickerComboBox(int w, int color)
 #ifdef COLORPICKER_256COLOR
   AddOption(_("More..."), -2);
 #endif
+
+  // Set initial selection
+  SetSelectedByData(color);
 }
 
 void ColorPickerComboBox::SetColor(int new_color)
@@ -72,6 +75,8 @@ void ColorPickerComboBox::SetColor(int new_color)
 void ColorPickerComboBox::SetSelected(int new_entry)
 {
   ComboBox::SetSelected(new_entry);
+
+  selected_color = options[new_entry].data;
   signal_color_changed(*this, selected_color);
 }
 
