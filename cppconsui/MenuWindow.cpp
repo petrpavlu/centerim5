@@ -71,10 +71,6 @@ void MenuWindow::Show()
 
     ref_visible_conn = ref->signal_visible.connect(sigc::mem_fun(this,
           &MenuWindow::OnRefVisible));
-
-    // make sure the first widget is focused
-    CleanFocus();
-    MoveFocus(FOCUS_DOWN);
   }
 
   Window::Show();
