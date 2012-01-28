@@ -76,7 +76,7 @@ void ColorPickerComboBox::Draw()
   else
     button_colorpair = GetColorPair("button", "normal");
 
-  int color = options[selected_entry].data;
+  int color = selected_color;
 
   area->attron(button_colorpair);
   area->fill(button_colorpair, 0, 0, area->getmaxx(), 1);
