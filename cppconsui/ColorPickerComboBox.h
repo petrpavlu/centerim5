@@ -37,6 +37,10 @@
 
 #include <vector>
 
+#ifdef DEBUG
+#define COLORPICKER_256COLOR
+#endif
+
 namespace CppConsUI
 {
 
@@ -85,13 +89,17 @@ class ColorPickerComboBox
     virtual void DropDownOk(Button& activator, int new_entry);
     virtual void DropDownClose(FreeWindow& window)
       { ComboBox::DropDownClose(window); }
+#ifdef COLORPICKER_256COLOR
     void ColorPickerOk(ColorPickerDialog& activator,
         AbstractDialog::ResponseType response, int new_color);
     void ColorPickerClose(FreeWindow& window);
+#endif // COLORPICKER_256COLOR
 
     int selected_color;
 
+#ifdef COLORPICKER_256COLOR
     ColorPickerDialog *colorpicker;
+#endif
 
   private:
     ColorPickerComboBox(const ColorPickerComboBox&);

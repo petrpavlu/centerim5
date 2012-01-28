@@ -45,7 +45,9 @@ ColorPickerComboBox::ColorPickerComboBox(int w, int color)
 
   // Add options for default color and to open the 256 color dialog
   AddOption(NULL, -1);
+#ifdef COLORPICKER_256COLOR
   AddOption(_("More..."), -2);
+#endif
 }
 
 void ColorPickerComboBox::SetColor(int new_color)
@@ -57,10 +59,14 @@ void ColorPickerComboBox::SetColor(int new_color)
 
   selected_color = new_color;
 
+#ifdef COLORPICKER_256COLOR
   if (selected_color >= -1 && selected_color < 16)
     SetSelectedByData(selected_color);
   else
     SetSelectedByData(-2);
+#else
+  SetSelectedByData(selected_color);
+#endif // COLORPICKER_256COLOR
 }
 
 void ColorPickerComboBox::Draw()
@@ -128,6 +134,7 @@ void ColorPickerComboBox::DropDownOk(Button& activator, int new_entry)
 {
   dropdown->Close();
 
+#ifdef COLORPICKER_256COLOR
   if (options[new_entry].data != -2) {
     SetColor(options[new_entry].data);
     return;
@@ -143,8 +150,12 @@ void ColorPickerComboBox::DropDownOk(Button& activator, int new_entry)
       &ColorPickerComboBox::ColorPickerClose));
 
   colorpicker->Show();
+#else
+  SetColor(options[new_entry].data);
+#endif // COLORPICKER_256COLOR
 }
 
+#ifdef COLORPICKER_256COLOR
 void ColorPickerComboBox::ColorPickerOk(
     ColorPickerDialog& activator,
     AbstractDialog::ResponseType response,
@@ -164,7 +175,7 @@ void ColorPickerComboBox::ColorPickerClose(FreeWindow& window)
 {
   colorpicker = NULL;
 }
-
+#endif // COLORPICKER_256COLOR
 
 ColorPickerComboBox::ColorButton::ColorButton(int w, int color)
 : Button(w, 1, "", 0), color(color)
