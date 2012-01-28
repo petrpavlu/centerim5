@@ -43,7 +43,7 @@ class ColorPicker
 {
   public:
     ColorPicker(int fg, int bg, bool sample = false);
-    virtual ~ColorPicker() {};
+    virtual ~ColorPicker();
 
     void SetColorPair(int fg, int bg);
 
@@ -60,9 +60,10 @@ class ColorPicker
     Label *sample;
 
   private:
-
     ColorPicker(const ColorPicker&);
     ColorPicker& operator=(const ColorPicker&);
+
+    char *colorscheme;
 };
 
 } // namespace CppConsUI

@@ -50,12 +50,20 @@ ColorPicker::ColorPicker(int fg, int bg, bool sample_)
 
   if (sample_) {
     sample = new Label(10, 1, _("  SAMPLE  "));
-    sample->SetColorScheme("colorpicker");
+
+    colorscheme = g_strdup_printf("colorpicker %p", (void*)this);
+    sample->SetColorScheme(colorscheme);
+
     AppendWidget(*(new Label(1, 1, "")));
     AppendWidget(*sample);
   }
 
   SetColorPair(fg, bg);
+}
+
+ColorPicker::~ColorPicker()
+{
+  g_free(colorscheme);
 }
 
 void ColorPicker::SetColorPair(int fg, int bg)
@@ -64,7 +72,7 @@ void ColorPicker::SetColorPair(int fg, int bg)
   bg_combo->SetColor(bg);
 
   if (sample) {
-    COLORSCHEME->SetColorPair("colorpicker", "label", "text", fg, bg, 0, true);
+    COLORSCHEME->SetColorPair(colorscheme, "label", "text", fg, bg, 0, true);
     sample->Draw();
   }
 
