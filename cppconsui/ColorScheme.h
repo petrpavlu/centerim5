@@ -68,7 +68,7 @@ private:
     int background;
     int attrs;
 
-    Color(int f = Curses::Color::WHITE, int b = Curses::Color::BLACK,
+    Color(int f = Curses::Color::DEFAULT, int b = Curses::Color::DEFAULT,
         int a = Curses::Attr::NORMAL) : foreground(f), background(b)
                         , attrs(a) {}
   };
