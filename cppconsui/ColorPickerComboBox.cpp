@@ -107,7 +107,7 @@ void ColorPickerComboBox::Draw()
     area->fill(colorpair, 1, 0, area->getmaxx()-2, 1);
     area->attroff(colorpair);
   } else {
-    area->mvaddstring(1, 0, "DEFAULT");
+    area->mvaddstring(1, 0, _("DEFAULT "));
   }
 }
 
@@ -220,7 +220,7 @@ void ColorPickerComboBox::ColorButton::Draw()
     area->fill(colorpair, 1, 0, area->getmaxx()-2, 1);
     area->attroff(colorpair);
   } else {
-    area->mvaddstring(1, 0, "DEFAULT");
+    area->mvaddstring(1, 0, _("DEFAULT "));
   }
 
 }
