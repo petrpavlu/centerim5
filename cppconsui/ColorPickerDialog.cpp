@@ -38,7 +38,7 @@ ColorPickerDialog::ColorPickerDialog(const char *title, const int defaultvalue,
 {
   AddButton(OK_BUTTON_TEXT, RESPONSE_OK);
 
-  pick = new ColorPicker(0, flags);
+  pick = new ColorPickerPalette(0, flags);
 
   pick->signal_color_selected.connect(sigc::mem_fun(this,
         &ColorPickerDialog::OnColorSelected));
@@ -48,7 +48,7 @@ ColorPickerDialog::ColorPickerDialog(const char *title, const int defaultvalue,
   Resize (pick->GetWidth() + 2, pick->GetHeight() + 4);
 }
 
-void ColorPickerDialog::OnColorSelected (ColorPicker& activator, int color_)
+void ColorPickerDialog::OnColorSelected (ColorPickerPalette& activator, int color_)
 {
   color = color_;
   Response(RESPONSE_OK);

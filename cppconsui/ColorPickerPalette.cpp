@@ -21,19 +21,19 @@
 
 /**
  * @file
- * ColorPicker class implementation.
+ * ColorPickerPalette class implementation.
  *
  * @ingroup cppconsui
  */
 
-#include "ColorPicker.h"
+#include "ColorPickerPalette.h"
 
 #include "ConsuiCurses.h"
 
 namespace CppConsUI
 {
 
-ColorPicker::ColorPicker(int defaultcolor, int flags)
+ColorPickerPalette::ColorPickerPalette(int defaultcolor, int flags)
 : Container(0, 0)
 {
   if (flags == (FLAG_HIDE_ANSI | FLAG_HIDE_GRAYSCALE | FLAG_HIDE_COLORCUBE))
@@ -55,31 +55,31 @@ ColorPicker::ColorPicker(int defaultcolor, int flags)
     AddColorCube(defaultcolor);
 }
 
-void ColorPicker::OnSelectColor(Button& activator)
+void ColorPickerPalette::OnSelectColor(Button& activator)
 {
-  ColorPickerButton *btn = dynamic_cast<ColorPickerButton*>(&activator);
+  ColorPickerPaletteButton *btn = dynamic_cast<ColorPickerPaletteButton*>(&activator);
   g_assert(btn);
 
   signal_color_selected (*this, btn->color);
 }
 
-void ColorPicker::AddButton(int x, int y, int color, int defaultcolor)
+void ColorPickerPalette::AddButton(int x, int y, int color, int defaultcolor)
 {
-  ColorPickerButton *btn = new ColorPickerButton(color);
+  ColorPickerPaletteButton *btn = new ColorPickerPaletteButton(color);
 
   btn->signal_activate.connect(sigc::mem_fun(this,
-      &ColorPicker::OnSelectColor));
+      &ColorPickerPalette::OnSelectColor));
   AddWidget (*btn, x, y);
 
   if (color == defaultcolor)
     btn->GrabFocus();
 }
 
-void ColorPicker::AddAnsi(int defaultcolor)
+void ColorPickerPalette::AddAnsi(int defaultcolor)
 {
   int w, h, x, y;
 
-  // Resize the ColorPicker
+  // Resize the ColorPickerPalette
   w = GetWidth();
   h = y = GetHeight();
 
@@ -98,11 +98,11 @@ void ColorPicker::AddAnsi(int defaultcolor)
   }
 }
 
-void ColorPicker::AddGrayscale(int defaultcolor)
+void ColorPickerPalette::AddGrayscale(int defaultcolor)
 {
   int w, h, x, y, color;
 
-  // Resize the ColorPicker
+  // Resize the ColorPickerPalette
   w = GetWidth();
   h = GetHeight();
 
@@ -123,10 +123,10 @@ void ColorPicker::AddGrayscale(int defaultcolor)
   AddButton(x, y, Curses::Color::WHITE, defaultcolor);
 }
 
-void ColorPicker::AddColorCube(int defaultcolor)
+void ColorPickerPalette::AddColorCube(int defaultcolor)
 {
   int w, h, x, y;
-  // Resize the ColorPicker
+  // Resize the ColorPickerPalette
   w = GetWidth();
   h = GetHeight();
 
@@ -161,12 +161,12 @@ void ColorPicker::AddColorCube(int defaultcolor)
   }
 }
 
-ColorPicker::ColorPickerButton::ColorPickerButton (const int color)
+ColorPickerPalette::ColorPickerPaletteButton::ColorPickerPaletteButton (const int color)
 : Button(2, 1, ""), color(color)
 {
 }
 
-void ColorPicker::ColorPickerButton::Draw()
+void ColorPickerPalette::ColorPickerPaletteButton::Draw()
 {
   ProceedUpdateArea();
 

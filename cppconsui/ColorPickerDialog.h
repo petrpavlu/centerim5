@@ -32,7 +32,7 @@
 #include "AbstractDialog.h"
 #include "Button.h"
 #include "ColorScheme.h"
-#include "ColorPicker.h"
+#include "ColorPickerPalette.h"
 
 #include <vector>
 
@@ -47,7 +47,7 @@ class ColorPickerDialog
         int flags);
     virtual ~ColorPickerDialog() {}
 
-    void OnColorSelected (ColorPicker& activator, int color);
+    void OnColorSelected (ColorPickerPalette& activator, int color);
 
     /**
      * Signal emitted when the user closes the dialog.
@@ -60,7 +60,7 @@ class ColorPickerDialog
     virtual void EmitResponse(ResponseType response);
 
   private:
-    ColorPicker *pick;
+    ColorPickerPalette *pick;
     int color;
 
     ColorPickerDialog(const ColorPickerDialog&);

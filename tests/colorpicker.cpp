@@ -25,7 +25,7 @@ class TestWindow
     CppConsUI::ColorPickerComboBox *combo;
 
     TestWindow();
-    virtual ~TestWindow() {}
+    virtual ~TestWindow();
     TestWindow(const TestWindow&);
     TestWindow& operator=(const TestWindow&);
 
@@ -63,21 +63,21 @@ TestWindow::TestWindow()
   AddWidget(*button, 1, 4);
   button->signal_activate.connect(
       sigc::bind(sigc::mem_fun(this, &TestWindow::OnButtonActivate),
-	      CppConsUI::ColorPicker::FLAG_HIDE_GRAYSCALE
-	      | CppConsUI::ColorPicker::FLAG_HIDE_COLORCUBE));
+	      CppConsUI::ColorPickerPalette::FLAG_HIDE_GRAYSCALE
+	      | CppConsUI::ColorPickerPalette::FLAG_HIDE_COLORCUBE));
 
   button = new CppConsUI::Button ("Open Colorpicker: ansi + Grayscale...");
   AddWidget(*button, 1, 5);
   button->signal_activate.connect(
       sigc::bind(sigc::mem_fun(this, &TestWindow::OnButtonActivate),
-	      CppConsUI::ColorPicker::FLAG_HIDE_COLORCUBE));
+	      CppConsUI::ColorPickerPalette::FLAG_HIDE_COLORCUBE));
 
   button = new CppConsUI::Button ("Open Colorpicker: color cube only...");
   AddWidget(*button, 1, 6);
   button->signal_activate.connect(
       sigc::bind(sigc::mem_fun(this, &TestWindow::OnButtonActivate),
-	      CppConsUI::ColorPicker::FLAG_HIDE_ANSI
-	      | CppConsUI::ColorPicker::FLAG_HIDE_GRAYSCALE));
+	      CppConsUI::ColorPickerPalette::FLAG_HIDE_ANSI
+	      | CppConsUI::ColorPickerPalette::FLAG_HIDE_GRAYSCALE));
 
   label1 = new CppConsUI::Label; AddWidget(*label1, 1, 8);
   label2 = new CppConsUI::Label; AddWidget(*label2, 1, 10);
@@ -101,6 +101,10 @@ TestWindow::TestWindow()
   //combo->signal_selection_changed.connect(
   //    sigc::mem_fun(this, &TestWindow::OnComboColorChange));
   AddWidget(*combo, 1, 13);
+}
+
+TestWindow::~TestWindow()
+{
 }
 
 void TestWindow::OnButtonActivate(CppConsUI::Button& activator, int flags)

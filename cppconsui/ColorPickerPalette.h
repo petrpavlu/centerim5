@@ -21,13 +21,13 @@
 
 /**
  * @file
- * ColorPicker class.
+ * ColorPickerPalette class.
  *
  * @ingroup cppconsui
  */
 
-#ifndef __COLORPICKER_H__
-#define __COLORPICKER_H__
+#ifndef __COLORPICKERPALETTE_H__
+#define __COLORPICKERPALETTE_H__
 
 #include "Container.h"
 #include "Button.h"
@@ -40,7 +40,7 @@ namespace CppConsUI
 /**
  * A color picker
  */
-class ColorPicker
+class ColorPickerPalette
 : public Container
 {
   public:
@@ -50,23 +50,23 @@ class ColorPicker
       FLAG_HIDE_COLORCUBE = 1 << 2
     };
 
-    ColorPicker(int defaultcolor, int flags = 0);
-    virtual ~ColorPicker() {};
+    ColorPickerPalette(int defaultcolor, int flags = 0);
+    virtual ~ColorPickerPalette() {};
 
     /**
      * Emited signal when a color is selected
      */
-    sigc::signal<void, ColorPicker&, int> signal_color_selected;
+    sigc::signal<void, ColorPickerPalette&, int> signal_color_selected;
 
   protected:
-    class ColorPickerButton
+    class ColorPickerPaletteButton
     : public Button
     {
-      friend class ColorPicker;
+      friend class ColorPickerPalette;
 
       public:
-        ColorPickerButton (const int color);
-        virtual ~ColorPickerButton() {};
+        ColorPickerPaletteButton (const int color);
+        virtual ~ColorPickerPaletteButton() {};
 
         void Draw();
 
@@ -75,8 +75,8 @@ class ColorPicker
       private:
         const int color;
 
-        ColorPickerButton(const ColorPickerButton&);
-        ColorPickerButton& operator=(const ColorPickerButton&);
+        ColorPickerPaletteButton(const ColorPickerPaletteButton&);
+        ColorPickerPaletteButton& operator=(const ColorPickerPaletteButton&);
     };
 
     void OnSelectColor(Button& activator);
@@ -88,12 +88,12 @@ class ColorPicker
     void AddGrayscale(int defaultcolor);
     void AddColorCube(int defaultcolor);
 
-    ColorPicker(const ColorPicker&);
-    ColorPicker& operator=(const ColorPicker&);
+    ColorPickerPalette(const ColorPickerPalette&);
+    ColorPickerPalette& operator=(const ColorPickerPalette&);
 };
 
 } // namespace CppConsUI
 
-#endif // __COLORPICKER_H__
+#endif // __COLORPICKERPALETTE_H__
 
 /* vim: set tabstop=2 shiftwidth=2 expandtab : */

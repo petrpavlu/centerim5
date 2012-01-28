@@ -12,8 +12,8 @@ libcppconsui_la_SOURCES =\
 	Button.h \
 	CheckBox.cpp \
 	CheckBox.h \
-	ColorPicker.cpp \
-	ColorPicker.h \
+	ColorPickerPalette.cpp \
+	ColorPickerPalette.h \
 	ColorPickerComboBox.cpp \
 	ColorPickerComboBox.h \
 	ColorPickerDialog.cpp \
