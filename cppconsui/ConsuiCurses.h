@@ -154,6 +154,7 @@ int screen_finalize();
 int getcolorpair(int fg, int bg);
 int nrcolors();
 int nrcolorpairs();
+bool colorpair_content(int colorpair, int *fg, int *bg);
 
 int erase();
 int clear();

@@ -443,6 +443,21 @@ int nrcolorpairs()
 #endif
 }
 
+#ifdef DEBUG
+bool colorpair_content(int colorpair, int *fg, int *bg)
+{
+  short sfg, sbg;
+  int ret;
+
+  ret = pair_content(PAIR_NUMBER(colorpair), &sfg, &sbg);
+
+  *fg = sfg;
+  *bg = sbg;
+
+  return ret;
+}
+#endif
+
 int erase()
 {
   return ::erase();
