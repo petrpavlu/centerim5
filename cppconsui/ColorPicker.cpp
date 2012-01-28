@@ -64,6 +64,7 @@ ColorPicker::ColorPicker(int fg, int bg, bool sample_)
 ColorPicker::~ColorPicker()
 {
   g_free(colorscheme);
+  COLORSCHEME->FreeScheme(colorscheme);
 }
 
 void ColorPicker::SetColorPair(int fg, int bg)
