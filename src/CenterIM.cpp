@@ -97,6 +97,7 @@ int CenterIM::Run(const char *config_path)
   /* Init key binds after the Log is initialized so the user can see if there
    * is an error in the config. */
   KEYCONFIG->Reconfig();
+  SaveColorSchemeConfig();
 
   Footer::Init();
 
@@ -662,6 +663,88 @@ void CenterIM::InitDefaultKeys()
   KEYCONFIG->AddDefaultKeyBind("buddylist", "contextmenu", "Ctrl-d");
 
   KEYCONFIG->AddDefaultKeyBind("conversation", "send", "Ctrl-x");
+}
+
+void CenterIM::SaveColorSchemeConfig()
+{
+  CppConsUI::ColorScheme::SchemesIterator si;
+  CppConsUI::ColorScheme::WidgetsIterator wi;
+  CppConsUI::ColorScheme::PropertiesIterator pi;
+
+  xmlnode *root;
+  xmlnode *scheme, *color;
+  char *str;
+
+  root = xmlnode_new("colorscheme");
+
+  for (si = COLORSCHEME->GetSchemes().begin();
+      si != COLORSCHEME->GetSchemes().end(); si++)
+  {
+    scheme = xmlnode_new("scheme");
+    xmlnode_set_attrib(scheme, "name", si->first.c_str());
+    xmlnode_insert_child(root, scheme);
+
+    for (wi = si->second.begin();
+        wi != si->second.end(); wi++)
+    {
+      for (pi = wi->second.begin();
+          pi != wi->second.end(); pi++)
+      {
+        color = xmlnode_new("color");
+        xmlnode_set_attrib(color, "widget", wi->first.c_str());
+        xmlnode_set_attrib(color, "property", pi->first.c_str());
+        xmlnode_insert_child(scheme, color);
+
+        str = g_strdup_printf("%d", pi->second.foreground);
+        xmlnode_set_attrib(color, "foreground", str);
+        g_free(str);
+
+        str = g_strdup_printf("%d", pi->second.background);
+        xmlnode_set_attrib(color, "background", str);
+        g_free(str);
+
+        str = ColorAttributesToString(pi->second.attrs);
+        xmlnode_set_attrib(color, "attributes", str);
+        g_free(str);
+      }
+    }
+  }
+
+  char *data = xmlnode_to_formatted_str(root, NULL);
+  if (!purple_util_write_data_to_file("colorschemes.xml", data, -1))
+    g_warning(_("Error saving 'colorschemes.xml'."));
+
+  g_free(data);
+  xmlnode_free(root);
+}
+
+char* CenterIM::ColorAttributesToString(int attrs)
+{
+#define APPEND(str) do { \
+    if (s.size()) \
+      s.append("|"); \
+    s.append(str); \
+  } while (0);
+
+  std::string s = "";
+
+  if (attrs == CppConsUI::Curses::Attr::NORMAL)
+    return NULL;
+
+  if (attrs & CppConsUI::Curses::Attr::STANDOUT)
+    APPEND("standout");
+  if (attrs & CppConsUI::Curses::Attr::REVERSE)
+    APPEND("reverse");
+  if (attrs & CppConsUI::Curses::Attr::BLINK)
+    APPEND("blink");
+  if (attrs & CppConsUI::Curses::Attr::DIM)
+    APPEND("dim");
+  if (attrs & CppConsUI::Curses::Attr::BOLD)
+    APPEND("bold");
+
+  return g_strdup(s.c_str());
+
+#undef APPEND
 }
 
 /* vim: set tabstop=2 shiftwidth=2 expandtab : */

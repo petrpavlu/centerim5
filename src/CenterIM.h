@@ -162,6 +162,9 @@ private:
 
   void DeclareBindables();
   void InitDefaultKeys();
+
+  void SaveColorSchemeConfig();
+  char* ColorAttributesToString(int attrs);
 };
 
 #endif // __CENTERIM_H__
