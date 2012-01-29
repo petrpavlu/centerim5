@@ -676,6 +676,7 @@ void CenterIM::SaveColorSchemeConfig()
   char *str;
 
   root = xmlnode_new("colorscheme");
+  xmlnode_set_attrib(root, "version", "1.0");
 
   for (si = COLORSCHEME->GetSchemes().begin();
       si != COLORSCHEME->GetSchemes().end(); si++)
