@@ -1,5 +1,4 @@
 bin_PROGRAMS = centerim5
-DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\"
 
 # when you add files here, also add them in po/POTFILES.in
 centerim5_SOURCES = \
