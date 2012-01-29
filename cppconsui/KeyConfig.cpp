@@ -237,13 +237,13 @@ void KeyConfig::start_element(GMarkupParseContext *context,
   guint size = g_slist_length(const_cast<GSList*>(stack));
   if (size == 1) {
     if (strcmp(element_name, "keyconfig")) {
-      *error = g_error_new(g_markup_error_quark(), G_MARKUP_ERROR_PARSE,
+      *error = g_error_new(G_MARKUP_ERROR, G_MARKUP_ERROR_PARSE,
           _("Expected 'keyconfig' element, found '%s'"), element_name);
     }
   }
   else if (size == 2) {
     if (strcmp(element_name, "bind")) {
-      *error = g_error_new(g_markup_error_quark(), G_MARKUP_ERROR_PARSE,
+      *error = g_error_new(G_MARKUP_ERROR, G_MARKUP_ERROR_PARSE,
           _("Expected 'bind' element, found '%s'"), element_name);
       return;
     }
@@ -260,13 +260,13 @@ void KeyConfig::start_element(GMarkupParseContext *context,
       return;
 
     if (!BindKey(context, action, key)) {
-      *error = g_error_new(g_markup_error_quark(), G_MARKUP_ERROR_INVALID_CONTENT,
+      *error = g_error_new(G_MARKUP_ERROR, G_MARKUP_ERROR_INVALID_CONTENT,
           _("Unrecognized key '%s'"), key);
       return;
     }
   }
   else
-    *error = g_error_new(g_markup_error_quark(), G_MARKUP_ERROR_PARSE,
+    *error = g_error_new(G_MARKUP_ERROR, G_MARKUP_ERROR_PARSE,
         _("Unexpected element '%s'"), element_name);
 }
 
