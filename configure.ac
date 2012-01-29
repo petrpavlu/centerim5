@@ -3,7 +3,7 @@
 
 # Hurray for <http://www-src.lip6.fr/homepages/Alexandre.Duret-Lutz/autotools.html>
 
-AC_PREREQ(2.59)
+AC_PREREQ([2.59])
 AC_INIT([centerim5],
 	m4_esyscmd([misc/git-version-gen .tarball-version]),
 	[http://sourceforge.net/projects/centerim])
@@ -42,24 +42,24 @@ AM_GNU_GETTEXT_VERSION([0.17])
 
 # libpurple
 PKG_CHECK_MODULES([PURPLE], [purple >= 2.4.0])
-AC_SUBST(PURPLE_CFLAGS)
-AC_SUBST(PURPLE_LIBS)
+AC_SUBST([PURPLE_CFLAGS])
+AC_SUBST([PURPLE_LIBS])
 
 # glib
 PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.0.0])
-AC_SUBST(GLIB_CFLAGS)
-AC_SUBST(GLIB_LIBS)
+AC_SUBST([GLIB_CFLAGS])
+AC_SUBST([GLIB_LIBS])
 
 # libsigc++
 PKG_CHECK_MODULES([SIGC], [sigc++-2.0 >= 2.0.0])
-AC_SUBST(SIGC_CFLAGS)
-AC_SUBST(SIGC_LIBS)
+AC_SUBST([SIGC_CFLAGS])
+AC_SUBST([SIGC_LIBS])
 
 # ncursesw
 AC_PATH_LIB_LIBCONFIG
-AC_PATH_LIB(ncursesw, , ncurses.h, ncursesw5-config, , , [
-	AC_MSG_RESULT(no)
-	AC_ERROR(You must have the ncursesw library and developement headers installed to build.)
+AC_PATH_LIB([ncursesw], , [ncurses.h], [ncursesw5-config], , , [
+	AC_MSG_RESULT([no])
+	AC_ERROR([You must have the ncursesw library and developement headers installed to build.])
 	])
 
 ############################
@@ -99,15 +99,15 @@ if test "$GCC" = yes; then
 	AS_IF([test "$enable_debug" = yes],
 		[CFLAGS="-ggdb -O0 $CFLAGS"
 		CXXFLAGS="-ggdb -O0 $CXXFLAGS"
-		AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])],
+		AC_DEFINE([DEBUG], [1], [Define if debugging is enabled.])],
 		[CFLAGS="-O2 $CFLAGS"
 		CXXFLAGS="-O2 $CXXFLAGS"])
 fi
 if test "$SUNCC" = yes; then
 	CXXFLAGS="-library=stdcxx4 $CXXFLAGS"
 fi
-AC_SUBST(CFLAGS)
-AC_SUBST(CXXFLAGS)
+AC_SUBST([CFLAGS])
+AC_SUBST([CXXFLAGS])
 
 ########################
 # Create output files. #
