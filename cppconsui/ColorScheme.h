@@ -52,8 +52,15 @@ public:
         int a = Curses::Attr::NORMAL) : foreground(f), background(b)
                         , attrs(a) {}
   };
-
   static ColorScheme *Instance();
+
+  typedef std::map<std::string, Color> Properties;
+  typedef std::map<std::string, Properties> Widgets;
+  typedef std::map<std::string, Widgets> Schemes;
+
+  typedef Properties::const_iterator PropertiesIterator;
+  typedef Widgets::const_iterator WidgetsIterator;
+  typedef Schemes::const_iterator SchemesIterator;
 
   /**
    * Returns color pair and Curses attributes (that can be passed to
@@ -72,12 +79,11 @@ public:
       int attrs = Curses::Attr::NORMAL, bool overwrite = false);
   void FreeScheme(const char *scheme);
 
+  const Schemes& GetSchemes() { return schemes; }
+
 protected:
 
 private:
-  typedef std::map<std::string, Color> Properties;
-  typedef std::map<std::string, Properties> Widgets;
-  typedef std::map<std::string, Widgets> Schemes;
   typedef std::map<std::pair<int, int>, int> ColorPairs;
 
   Schemes schemes;
