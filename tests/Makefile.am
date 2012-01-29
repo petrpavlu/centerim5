@@ -1,13 +1,13 @@
 check_PROGRAMS = \
-	button_test \
+	button \
 	colorpicker \
-	label_test \
-	textentry_test \
-	textview_test \
-	treeview_test \
-	scrollpane_test \
-	submenu_test \
-	window_test
+	label \
+	textentry \
+	textview \
+	treeview \
+	scrollpane \
+	submenu \
+	window
 
 AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
@@ -19,29 +19,29 @@ LDADD = \
 	$(SIGC_LIBS) \
 	$(top_builddir)/cppconsui/libcppconsui.la
 
-button_test_SOURCES = \
-	button_test.cpp
+button_SOURCES = \
+	button.cpp
 
 colorpicker_SOURCES = \
 	colorpicker.cpp
 
-label_test_SOURCES = \
-	label_test.cpp
+label_SOURCES = \
+	label.cpp
 
-textentry_test_SOURCES = \
-	textentry_test.cpp
+textentry_SOURCES = \
+	textentry.cpp
 
-textview_test_SOURCES = \
-	textview_test.cpp
+textview_SOURCES = \
+	textview.cpp
 
-treeview_test_SOURCES = \
-	treeview_test.cpp
+treeview_SOURCES = \
+	treeview.cpp
 
-scrollpane_test_SOURCES = \
-	scrollpane_test.cpp
+scrollpane_SOURCES = \
+	scrollpane.cpp
 
-submenu_test_SOURCES = \
-	submenu_test.cpp
+submenu_SOURCES = \
+	submenu.cpp
 
-window_test_SOURCES = \
-	window_test.cpp
+window_SOURCES = \
+	window.cpp

@@ -1,6 +1,6 @@
-add_executable( button_test EXCLUDE_FROM_ALL button_test.cpp )
+add_executable( button EXCLUDE_FROM_ALL button.cpp )
 
-target_link_libraries( button_test
+target_link_libraries( button
 				${GLIB2_LIBRARIES}
 				${SIGC_LIBRARIES}
 				cppconsui
@@ -16,63 +16,63 @@ target_link_libraries( colorpicker
 		)
 
 ######################################################################
-add_executable( label_test EXCLUDE_FROM_ALL label_test.cpp )
+add_executable( label EXCLUDE_FROM_ALL label.cpp )
 
-target_link_libraries( label_test
+target_link_libraries( label
 				${GLIB2_LIBRARIES}
 				${SIGC_LIBRARIES}
 				cppconsui
 		)
 
 ######################################################################
-add_executable ( textentry_test EXCLUDE_FROM_ALL textentry_test.cpp)
+add_executable ( textentry EXCLUDE_FROM_ALL textentry.cpp)
 
-target_link_libraries( textentry_test
+target_link_libraries( textentry
 				${GLIB2_LIBRARIES}
 				${SIGC_LIBRARIES}
 				cppconsui
 		)
 
 ######################################################################
-add_executable ( textview_test EXCLUDE_FROM_ALL textview_test.cpp)
+add_executable ( textview EXCLUDE_FROM_ALL textview.cpp)
 
-target_link_libraries( textview_test
+target_link_libraries( textview
 				${GLIB2_LIBRARIES}
 				${SIGC_LIBRARIES}
 				cppconsui
 		)
 
 ######################################################################
-add_executable ( treeview_test EXCLUDE_FROM_ALL treeview_test.cpp)
+add_executable ( treeview EXCLUDE_FROM_ALL treeview.cpp)
 
-target_link_libraries( treeview_test
+target_link_libraries( treeview
 				${GLIB2_LIBRARIES}
 				${SIGC_LIBRARIES}
 				cppconsui
 		)
 
 ######################################################################
-add_executable ( scrollpane_test EXCLUDE_FROM_ALL scrollpane_test.cpp)
+add_executable ( scrollpane EXCLUDE_FROM_ALL scrollpane.cpp)
 
-target_link_libraries( scrollpane_test
+target_link_libraries( scrollpane
 				${GLIB2_LIBRARIES}
 				${SIGC_LIBRARIES}
 				cppconsui
 		)
 
 ######################################################################
-add_executable( submenu_test EXCLUDE_FROM_ALL submenu_test.cpp )
+add_executable( submenu EXCLUDE_FROM_ALL submenu.cpp )
 
-target_link_libraries( submenu_test
+target_link_libraries( submenu
 				${GLIB2_LIBRARIES}
 				${SIGC_LIBRARIES}
 				cppconsui
 		)
 
 ######################################################################
-add_executable ( window_test EXCLUDE_FROM_ALL window_test.cpp)
+add_executable ( window EXCLUDE_FROM_ALL window.cpp)
 
-target_link_libraries( window_test
+target_link_libraries( window
 				${GLIB2_LIBRARIES}
 				${SIGC_LIBRARIES}
 				cppconsui
