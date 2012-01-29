@@ -174,21 +174,16 @@ void ColorPickerPalette::ColorPickerPaletteButton::Draw()
   if (!area)
     return;
 
-  //@todo get proper color for cursor in more cases
-  int cursor = Curses::Color::BLACK;
-  if ((color == 0) || (color == 1) || (color == 8) || (color == 9)
-      || (color >= 232 && color < 244)
-      || (color == 16))
-    cursor = Curses::Color::WHITE;
-
-  ColorScheme::Color c(cursor, color);
+  ColorScheme::Color c(Curses::Color::BLACK, color);
   int colorpair = COLORSCHEME->GetColorPair(c);
 
-  area->fill(colorpair, 0, 0, 2, 1);
-
-  // print cursor
-  if (has_focus)
-    area->mvaddstring(0, 0, "<>");
+  if (has_focus) {
+    area->attron(Curses::Attr::REVERSE);
+    area->mvaddstring(0, 0, "@@");
+    area->attroff(Curses::Attr::REVERSE);
+  } else {
+    area->fill(colorpair, 0, 0, 2, 1);
+  }
 }
 
 } // namespace CppConsUI
