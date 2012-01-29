@@ -73,7 +73,7 @@ instead of using memory pools
 (http://gcc.gnu.org/onlinedocs/libstdc++/manual/ext_allocators.html).
 
 G_SLICE and G_DEBUG env vars make sure to turn off glib's memory
-optimizations, so that they do not confuse valgrind
+optimizations, so that they do not confuse Valgrind
 (https://live.gnome.org/Valgrind).
 
 There is currently no suppresion list, though you can use at least the list

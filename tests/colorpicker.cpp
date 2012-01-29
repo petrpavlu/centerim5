@@ -13,7 +13,7 @@ class TestWindow
 {
   public:
     /* This is a main window, make sure it can not be closed with ESC key by
-     * overriding Hide() method. */
+     * overriding Close() method. */
     static TestWindow *Instance();
     virtual void Close() {}
 
