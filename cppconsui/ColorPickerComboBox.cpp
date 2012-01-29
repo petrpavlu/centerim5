@@ -44,7 +44,7 @@ ColorPickerComboBox::ColorPickerComboBox(int w, int color)
   }
 
   // Add options for default color and to open the 256 color dialog
-  AddOption(NULL, -1);
+  AddOption(NULL, Curses::Color::DEFAULT);
 #ifdef COLORPICKER_256COLOR
   AddOption(_("More..."), -2);
 #endif
@@ -55,7 +55,7 @@ ColorPickerComboBox::ColorPickerComboBox(int w, int color)
 
 void ColorPickerComboBox::SetColor(int new_color)
 {
-  g_assert(new_color >= -1 && new_color < Curses::nrcolors());
+  g_assert(new_color >= Curses::Color::DEFAULT && new_color < Curses::nrcolors());
 
   if (new_color == selected_color)
     return;
@@ -63,7 +63,7 @@ void ColorPickerComboBox::SetColor(int new_color)
   selected_color = new_color;
 
 #ifdef COLORPICKER_256COLOR
-  if (selected_color >= -1 && selected_color < 16)
+  if (selected_color >= Curses::Color::DEFAULT && selected_color < 16)
     SetSelectedByData(selected_color);
   else
     SetSelectedByData(-2);
@@ -98,11 +98,11 @@ void ColorPickerComboBox::Draw()
   area->attron(button_colorpair);
   area->fill(button_colorpair, 0, 0, area->getmaxx(), 1);
   area->mvaddchar(0, 0, '[');
-  area->mvaddchar(area->getmaxx()-1, 0, ']');
+  area->mvaddchar(area->getmaxx() - 1, 0, ']');
   area->attroff(button_colorpair);
 
-  if (selected_color > -1) {
-    ColorScheme::Color c(color, color);
+  if (selected_color > Curses::Color::DEFAULT) {
+    ColorScheme::Color c(Curses::Color::DEFAULT, color);
     int colorpair = COLORSCHEME->GetColorPair(c);
     area->attron(colorpair);
     area->fill(colorpair, 1, 0, area->getmaxx()-2, 1);
@@ -124,10 +124,10 @@ void ColorPickerComboBox::OnDropDown(Button& activator)
   int i;
   ComboBoxEntries::iterator j;
   for (i = 0, j = options.begin(); j != options.end(); i++, j++) {
-    if (options[i].data < -1) {
+    if (options[i].data < Curses::Color::DEFAULT) {
       Button *b = dropdown->AppendItem(j->title, sigc::bind(sigc::mem_fun(this,
           &ColorPickerComboBox::DropDownOk), i));
-      if (selected_color < -1)
+      if (selected_color < Curses::Color::DEFAULT)
         b->GrabFocus();
     } else {
       ColorButton *b = new ColorButton(10, options[i].data);
@@ -212,11 +212,11 @@ void ColorPickerComboBox::ColorButton::Draw()
   area->attron(button_colorpair);
   area->fill(button_colorpair, 0, 0, area->getmaxx(), 1);
   area->mvaddchar(0, 0, '[');
-  area->mvaddchar(area->getmaxx()-1, 0, ']');
+  area->mvaddchar(area->getmaxx() - 1, 0, ']');
   area->attroff(button_colorpair);
 
-  if (color > -1) {
-    ColorScheme::Color c(color, color);
+  if (color > Curses::Color::DEFAULT) {
+    ColorScheme::Color c(Curses::Color::DEFAULT, color);
     int colorpair = COLORSCHEME->GetColorPair(c);
     area->attron(colorpair);
     area->fill(colorpair, 1, 0, area->getmaxx()-2, 1);
