@@ -90,6 +90,7 @@ private:
   sigc::connection resize_conn;
   sigc::connection top_window_change_conn;
   bool convs_expanded;
+  bool idle_reporting_on_keyboard;
 
   PurpleCoreUiOps centerim_core_ui_ops;
   PurpleDebugUiOps logbuf_debug_ui_ops;
@@ -143,11 +144,18 @@ private:
   static gboolean tmp_is_enabled(PurpleDebugLevel level, const char *category)
     { return TRUE; }
 
-  // called when dimensions pref is changed
+  // called when CONF_PREFIX/dimensions prefs are changed
   static void dimensions_change_(const char *name, PurplePrefType type,
       gconstpointer val, gpointer data)
     { reinterpret_cast<CenterIM*>(data)->dimensions_change(name, type, val); }
   void dimensions_change(const char *name, PurplePrefType type,
+      gconstpointer val);
+
+  // called when /libpurple/away/idle_reporting pref is changed
+  static void idle_reporting_change_(const char *name, PurplePrefType type,
+      gconstpointer val, gpointer data)
+    { reinterpret_cast<CenterIM*>(data)->idle_reporting_change(name, type, val); }
+  void idle_reporting_change(const char *name, PurplePrefType type,
       gconstpointer val);
 
   void ActionFocusBuddyList();

@@ -3,7 +3,7 @@
 
 # Hurray for <http://www-src.lip6.fr/homepages/Alexandre.Duret-Lutz/autotools.html>
 
-AC_PREREQ(2.59)
+AC_PREREQ([2.59])
 AC_INIT([centerim5],
 	m4_esyscmd([misc/git-version-gen .tarball-version]),
 	[http://sourceforge.net/projects/centerim])
@@ -29,10 +29,6 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_PROG_LIBTOOL
 
-AC_LANG_PUSH([C++])
-AC_CHECK_DECL([__SUNPRO_CC], [SUNCC="yes"], [SUNCC="no"])
-AC_LANG_POP([C++])
-
 #########################
 # Checks for libraries. #
 #########################
@@ -41,25 +37,33 @@ AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.17])
 
 # libpurple
-PKG_CHECK_MODULES([PURPLE], [purple >= 2.4.0])
-AC_SUBST(PURPLE_CFLAGS)
-AC_SUBST(PURPLE_LIBS)
+# v2.7.0 is needed because of purple_account_get_name_for_display(), this
+# version was released on 2010-05-13 and is available in both Debian Stable
+# (squeeze) and CentOS 6
+# find . \( -name \*.cpp -o -name \*.h \) -print0 | xargs -0 sed -n 's/.*\(purple_[^( ]*\)(.*/\1/p' | sort | uniq | less
+PKG_CHECK_MODULES([PURPLE], [purple >= 2.7.0])
+AC_SUBST([PURPLE_CFLAGS])
+AC_SUBST([PURPLE_LIBS])
 
 # glib
+# v2.16.0 is needed because of g_markup_parse_context_get_element_stack(),
+# this version was released on 2009-03-13
+# find . \( -name \*.cpp -o -name \*.h \) -print0 | xargs -0 sed -n 's/.*\(g_[^ (]*\)(.*/\1/p' | sort | uniq | less
 PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.0.0])
-AC_SUBST(GLIB_CFLAGS)
-AC_SUBST(GLIB_LIBS)
+AC_SUBST([GLIB_CFLAGS])
+AC_SUBST([GLIB_LIBS])
 
 # libsigc++
-PKG_CHECK_MODULES([SIGC], [sigc++-2.0 >= 2.0.0])
-AC_SUBST(SIGC_CFLAGS)
-AC_SUBST(SIGC_LIBS)
+# v2.2.0 was released on 2008-02-22
+PKG_CHECK_MODULES([SIGC], [sigc++-2.0 >= 2.2.0])
+AC_SUBST([SIGC_CFLAGS])
+AC_SUBST([SIGC_LIBS])
 
 # ncursesw
 AC_PATH_LIB_LIBCONFIG
-AC_PATH_LIB(ncursesw, , ncurses.h, ncursesw5-config, , , [
-	AC_MSG_RESULT(no)
-	AC_ERROR(You must have the ncursesw library and developement headers installed to build.)
+AC_PATH_LIB([ncursesw], , [ncurses.h], [ncursesw5-config], , , [
+	AC_MSG_RESULT([no])
+	AC_ERROR([You must have the ncursesw library and developement headers installed to build.])
 	])
 
 ############################
@@ -99,15 +103,32 @@ if test "$GCC" = yes; then
 	AS_IF([test "$enable_debug" = yes],
 		[CFLAGS="-ggdb -O0 $CFLAGS"
 		CXXFLAGS="-ggdb -O0 $CXXFLAGS"
-		AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])],
+		AC_DEFINE([DEBUG], [1], [Define if debugging is enabled.])],
 		[CFLAGS="-O2 $CFLAGS"
 		CXXFLAGS="-O2 $CXXFLAGS"])
 fi
-if test "$SUNCC" = yes; then
-	CXXFLAGS="-library=stdcxx4 $CXXFLAGS"
-fi
-AC_SUBST(CFLAGS)
-AC_SUBST(CXXFLAGS)
+AC_SUBST([CFLAGS])
+AC_SUBST([CXXFLAGS])
+
+dnl adl_RECURSIVE_EVAL(VALUE, RESULT)
+dnl =================================
+dnl Interpolate the VALUE in loop until it doesn't change,
+dnl and set the result to $RESULT.
+dnl WARNING: It's easy to get an infinite loop with some unsane input.
+AC_DEFUN([adl_RECURSIVE_EVAL],
+[_lcl_receval="$1"
+$2=`(test "$prefix" = NONE && prefix="$ac_default_prefix"
+	test "$exec_prefix" = NONE && exec_prefix="$prefix"
+	_lcl_receval_old=''
+	while test "[$]_lcl_receval_old" != "[$]_lcl_receval"; do
+		_lcl_receval_old="[$]_lcl_receval"
+		eval _lcl_receval="\"[$]_lcl_receval\""
+	done
+	echo "[$]_lcl_receval")`])
+
+adl_RECURSIVE_EVAL([$localedir], [localedir_eval])
+AC_DEFINE_UNQUOTED([LOCALEDIR], ["$localedir_eval"],
+	[Define to the locale directory.])
 
 ########################
 # Create output files. #
