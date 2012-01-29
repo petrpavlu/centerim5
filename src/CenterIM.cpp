@@ -54,7 +54,8 @@ CenterIM *CenterIM::Instance()
 
 bool CenterIM::ProcessInput(const TermKeyKey& key)
 {
-  purple_idle_touch();
+  if (idle_reporting_on_keyboard)
+    purple_idle_touch();
   return InputProcessor::ProcessInput(key);
 }
 
@@ -152,7 +153,7 @@ CppConsUI::Rect CenterIM::GetScreenAreaSize(ScreenArea area)
 }
 
 CenterIM::CenterIM()
-: convs_expanded(false)
+: convs_expanded(false), idle_reporting_on_keyboard(false)
 {
   mngr = CppConsUI::CoreManager::Instance();
   resize_conn = mngr->signal_resize.connect(sigc::mem_fun(this,
@@ -235,6 +236,12 @@ void CenterIM::PrefsInit()
   purple_prefs_add_int(CONF_PREFIX "/dimensions/log_height", 25);
   purple_prefs_connect_callback(this, CONF_PREFIX "/dimensions",
       dimensions_change_, this);
+
+  purple_prefs_connect_callback(this, "/purple/away/idle_reporting",
+      idle_reporting_change_, this);
+  /* Proceed the callback. Note: This potentially triggers other callbacks
+   * inside libpurple. */
+  purple_prefs_trigger_callback("/purple/away/idle_reporting");
 }
 
 void CenterIM::ColorSchemeInit()
@@ -506,6 +513,18 @@ void CenterIM::dimensions_change(const char *name, PurplePrefType type,
     gconstpointer val)
 {
   mngr->OnScreenResized();
+}
+
+void CenterIM::idle_reporting_change(const char *name, PurplePrefType type,
+    gconstpointer val)
+{
+  g_return_if_fail(type == PURPLE_PREF_STRING);
+
+  const char *value = static_cast<const char*>(val);
+  if (!strcmp(value, "system"))
+    idle_reporting_on_keyboard = true;
+  else
+    idle_reporting_on_keyboard = false;
 }
 
 void CenterIM::ActionFocusBuddyList()
