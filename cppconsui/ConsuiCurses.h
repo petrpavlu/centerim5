@@ -140,7 +140,9 @@ struct Color
 struct Attr
 {
   const static int NORMAL;
+  const static int STANDOUT;
   const static int REVERSE;
+  const static int BLINK;
   const static int DIM;
   const static int BOLD;
 };

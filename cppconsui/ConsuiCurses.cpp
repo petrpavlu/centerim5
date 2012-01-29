@@ -376,7 +376,9 @@ const int Color::CYAN = COLOR_CYAN;
 const int Color::WHITE = COLOR_WHITE;
 
 const int Attr::NORMAL = A_NORMAL;
+const int Attr::STANDOUT = A_STANDOUT;
 const int Attr::REVERSE = A_REVERSE;
+const int Attr::BLINK = A_BLINK;
 const int Attr::DIM = A_DIM;
 const int Attr::BOLD = A_BOLD;
 
