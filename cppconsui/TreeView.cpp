@@ -51,7 +51,7 @@ TreeView::TreeView(int w, int h)
   // allow fast focus changing (paging) using PageUp/PageDown keys
   page_focus = true;
 
-  /* initialise the tree */
+  // initialise the tree
   TreeNode root;
   root.treeview = this;
   root.collapsed = false;
@@ -533,11 +533,11 @@ void TreeView::FixFocus()
   Widget *focus = t->GetFocusWidget();
   if (!focus) {
     // try to grab the focus
-    t->MoveFocus(Container::FOCUS_DOWN);
+    t->MoveFocus(FOCUS_DOWN);
   }
   else if (!focus->IsVisibleRecursive()) {
     // move focus
-    t->MoveFocus(Container::FOCUS_DOWN);
+    t->MoveFocus(FOCUS_DOWN);
   }
 }
 
