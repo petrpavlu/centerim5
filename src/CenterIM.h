@@ -106,7 +106,6 @@ private:
   int PurpleInit(const char *config_path);
   void PurpleFinalize();
   void PrefsInit();
-  void ColorSchemeInit();
 
   // recalculates area sizes to fit into current screen size
   void OnScreenResized();
@@ -173,6 +172,7 @@ private:
 
   void SaveColorSchemeConfig();
   bool LoadColorSchemeConfig();
+  void LoadDefaultColorSchemeConfig();
 
   char* ColorAttributesToString(int attrs);
   int StringToColorAttributes(const char *str);

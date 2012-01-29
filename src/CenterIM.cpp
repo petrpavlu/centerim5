@@ -80,7 +80,12 @@ int CenterIM::Run(const char *config_path)
   g_free(path);
 
   PrefsInit();
-  ColorSchemeInit();
+
+  if (!LoadColorSchemeConfig())
+  {
+    LoadDefaultColorSchemeConfig();
+    SaveColorSchemeConfig();
+  }
 
   // initialize Log component
   Log::Init();
@@ -98,8 +103,6 @@ int CenterIM::Run(const char *config_path)
   /* Init key binds after the Log is initialized so the user can see if there
    * is an error in the config. */
   KEYCONFIG->Reconfig();
-  SaveColorSchemeConfig();
-  LoadColorSchemeConfig();
 
   Footer::Init();
 
@@ -244,102 +247,6 @@ void CenterIM::PrefsInit()
   /* Proceed the callback. Note: This potentially triggers other callbacks
    * inside libpurple. */
   purple_prefs_trigger_callback("/purple/away/idle_reporting");
-}
-
-void CenterIM::ColorSchemeInit()
-{
-  // default colors init
-  /// @todo move this to a default cfg
-  COLORSCHEME->SetColorPair("accountstatusmenu", "panel", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("accountstatusmenu", "horizontalline", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("accountstatusmenu", "button", "normal",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("buddylist", "treeview", "line",
-      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylist", "panel", "line",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
-      CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("buddylist", "button", "normal",
-      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylistgroup", "button", "normal",
-      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK,
-      CppConsUI::Curses::Attr::BOLD);
-
-  COLORSCHEME->SetColorPair("buddylistbuddy_offline", "button", "normal",
-      CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylistbuddy_online", "button", "normal",
-      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylistbuddy_na", "button", "normal",
-      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylistbuddy_away", "button", "normal",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("buddylistcontact_offline", "button", "normal",
-      CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylistcontact_online", "button", "normal",
-      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylistcontact_na", "button", "normal",
-      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylistcontact_away", "button", "normal",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("conversation", "textview", "text",
-      CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("conversation", "textview", "color1",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("conversation", "textview", "color2",
-      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK,
-      CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation", "panel", "line",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
-      CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation", "horizontalline", "line",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
-      CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation", "textedit", "text",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("conversation", "label", "text",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("conversation-active", "label", "text",
-      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK,
-      CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation-new", "label", "text",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK,
-      CppConsUI::Curses::Attr::BOLD);
-
-  COLORSCHEME->SetColorPair("footer", "label", "text",
-      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
-  COLORSCHEME->SetColorPair("footer", "container", "background",
-      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
-
-  COLORSCHEME->SetColorPair("generalmenu", "panel", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("generalmenu", "horizontalline", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("generalmenu", "button", "normal",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("generalwindow", "panel", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("generalwindow", "horizontalline", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("generalwindow", "verticalline", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("log", "panel", "line",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
-      CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("log", "textview", "text",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("header", "label", "text",
-      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
-  COLORSCHEME->SetColorPair("header", "container", "background",
-      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
 }
 
 void CenterIM::OnScreenResized()
@@ -804,6 +711,102 @@ LoadColorSchemeConfig_done:
   xmlnode_free(root);
 
   return res;
+}
+
+void CenterIM::LoadDefaultColorSchemeConfig()
+{
+  // default colors init
+  /// @todo move this to a default cfg
+  COLORSCHEME->SetColorPair("accountstatusmenu", "panel", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("accountstatusmenu", "horizontalline", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("accountstatusmenu", "button", "normal",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("buddylist", "treeview", "line",
+      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylist", "panel", "line",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("buddylist", "button", "normal",
+      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistgroup", "button", "normal",
+      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+
+  COLORSCHEME->SetColorPair("buddylistbuddy_offline", "button", "normal",
+      CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistbuddy_online", "button", "normal",
+      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistbuddy_na", "button", "normal",
+      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistbuddy_away", "button", "normal",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("buddylistcontact_offline", "button", "normal",
+      CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistcontact_online", "button", "normal",
+      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistcontact_na", "button", "normal",
+      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistcontact_away", "button", "normal",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("conversation", "textview", "text",
+      CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("conversation", "textview", "color1",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("conversation", "textview", "color2",
+      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation", "panel", "line",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation", "horizontalline", "line",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation", "textedit", "text",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("conversation", "label", "text",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("conversation-active", "label", "text",
+      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation-new", "label", "text",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+
+  COLORSCHEME->SetColorPair("footer", "label", "text",
+      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
+  COLORSCHEME->SetColorPair("footer", "container", "background",
+      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
+
+  COLORSCHEME->SetColorPair("generalmenu", "panel", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("generalmenu", "horizontalline", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("generalmenu", "button", "normal",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("generalwindow", "panel", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("generalwindow", "horizontalline", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("generalwindow", "verticalline", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("log", "panel", "line",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("log", "textview", "text",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("header", "label", "text",
+      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
+  COLORSCHEME->SetColorPair("header", "container", "background",
+      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
 }
 
 char* CenterIM::ColorAttributesToString(int attrs)
