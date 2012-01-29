@@ -29,10 +29,6 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_PROG_LIBTOOL
 
-AC_LANG_PUSH([C++])
-AC_CHECK_DECL([__SUNPRO_CC], [SUNCC="yes"], [SUNCC="no"])
-AC_LANG_POP([C++])
-
 #########################
 # Checks for libraries. #
 #########################
@@ -102,9 +98,6 @@ if test "$GCC" = yes; then
 		AC_DEFINE([DEBUG], [1], [Define if debugging is enabled.])],
 		[CFLAGS="-O2 $CFLAGS"
 		CXXFLAGS="-O2 $CXXFLAGS"])
-fi
-if test "$SUNCC" = yes; then
-	CXXFLAGS="-library=stdcxx4 $CXXFLAGS"
 fi
 AC_SUBST([CFLAGS])
 AC_SUBST([CXXFLAGS])
