@@ -99,6 +99,7 @@ int CenterIM::Run(const char *config_path)
    * is an error in the config. */
   KEYCONFIG->Reconfig();
   SaveColorSchemeConfig();
+  LoadColorSchemeConfig();
 
   Footer::Init();
 
@@ -730,6 +731,7 @@ void CenterIM::SaveColorSchemeConfig()
     }
   }
 
+  //@todo change colorschemes.xml into a define
   char *data = xmlnode_to_formatted_str(root, NULL);
   if (!purple_util_write_data_to_file("colorschemes.xml", data, -1))
     g_warning(_("Error saving 'colorschemes.xml'."));
@@ -738,13 +740,79 @@ void CenterIM::SaveColorSchemeConfig()
   xmlnode_free(root);
 }
 
+bool CenterIM::LoadColorSchemeConfig()
+{
+  bool res = true;
+  xmlnode *root, *scheme, *color;
+  int fg, bg, attr;
+  const char *fgs, *bgs, *attrs;
+
+  root = purple_util_read_xml_from_file("colorschemes.xml", _("color schemes"));
+
+  if (!root) {
+    g_warning(_("Could not read 'colorschemes.xml'."));
+    return false;
+  }
+
+  for (scheme = xmlnode_get_child(root, "scheme"); scheme != NULL;
+      scheme = xmlnode_get_next_twin(scheme))
+  {
+    for (color = xmlnode_get_child(scheme, "color"); color != NULL;
+        color = xmlnode_get_next_twin(color))
+    {
+      fgs = xmlnode_get_attrib(color, "foreground");
+      bgs = xmlnode_get_attrib(color, "background");
+      attrs = xmlnode_get_attrib(color, "attributes");
+
+      if (fgs) {
+        if (sscanf(xmlnode_get_attrib(color, "foreground"), "%d", &fg) == EOF) {
+          res = false;
+          goto LoadColorSchemeConfig_done;
+        }
+      } else {
+        fg = CppConsUI::Curses::Color::DEFAULT;
+      }
+
+      if (bgs) {
+        if (sscanf(xmlnode_get_attrib(color, "background"), "%d", &bg) == EOF) {
+          res = false;
+          goto LoadColorSchemeConfig_done;
+        }
+      } else {
+        bg = CppConsUI::Curses::Color::DEFAULT;
+      }
+
+      if (attrs) {
+        attr = StringToColorAttributes(attrs);
+      } else {
+        attr = 0;
+      }
+
+      COLORSCHEME->SetColorPair(
+          xmlnode_get_attrib(scheme, "name"),
+          xmlnode_get_attrib(color, "widget"),
+          xmlnode_get_attrib(color, "property"),
+          fg, bg, attr);
+    }
+  }
+
+LoadColorSchemeConfig_done:
+
+  if (!res)
+    g_warning(_("Could not parse 'colorschemes.xml'."));
+
+  xmlnode_free(root);
+
+  return res;
+}
+
 char* CenterIM::ColorAttributesToString(int attrs)
 {
 #define APPEND(str) do { \
     if (s.size()) \
       s.append("|"); \
     s.append(str); \
-  } while (0);
+  } while (0)
 
   std::string s = "";
 
@@ -765,6 +833,34 @@ char* CenterIM::ColorAttributesToString(int attrs)
   return g_strdup(s.c_str());
 
 #undef APPEND
+}
+
+int CenterIM::StringToColorAttributes(const char *str)
+{
+#define COMPARE(str, attr) do { \
+    if (std::string(str).compare(tokens[i]) == 0) { \
+      attrs |= CppConsUI::Curses::Attr::attr; \
+      continue; \
+    } \
+  } while (0)
+
+  gchar **tokens;
+  int attrs = 0;
+
+  tokens = g_strsplit(str, "|", 0);
+
+  for (int i = 0; tokens[i] != NULL; i++) {
+    COMPARE("normal", NORMAL);
+    COMPARE("standout", STANDOUT);
+    COMPARE("reverse", REVERSE);
+    COMPARE("blink", BLINK);
+    COMPARE("dim", DIM);
+    COMPARE("bold", BOLD);
+  }
+
+  return attrs;
+
+#undef COMPARE
 }
 
 /* vim: set tabstop=2 shiftwidth=2 expandtab : */

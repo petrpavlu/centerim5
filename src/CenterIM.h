@@ -172,7 +172,10 @@ private:
   void InitDefaultKeys();
 
   void SaveColorSchemeConfig();
+  bool LoadColorSchemeConfig();
+
   char* ColorAttributesToString(int attrs);
+  int StringToColorAttributes(const char *str);
 };
 
 #endif // __CENTERIM_H__
