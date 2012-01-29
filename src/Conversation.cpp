@@ -476,12 +476,43 @@ void Conversation::LoadHistory()
     return;
   }
 
-  GIOStatus st;
+  GIOStatus st = G_IO_STATUS_NORMAL;
   char *line;
   bool new_msg = false;
   // read conversation logfile line by line
-  while (new_msg || (st = g_io_channel_read_line(chan, &line, NULL, NULL,
-          &err)) == G_IO_STATUS_NORMAL) {
+  while (true) {
+    if (st == G_IO_STATUS_EOF)
+      break;
+
+    if (st != G_IO_STATUS_NORMAL) {
+      // an error occured during the reading
+
+      // if it's a conversion error then try to continue
+      bool cont = false;
+      if (err && err->domain == G_CONVERT_ERROR)
+        cont = true;
+
+      // log the error
+      if (err) {
+        LOG->Error(_("Error reading from conversation logfile '%s' (%s)."),
+            filename, err->message);
+        g_error_free(err);
+        err = NULL;
+      }
+      else
+        LOG->Error(_("Error reading from conversation logfile '%s'."),
+            filename);
+
+      if (!cont)
+        break;
+    }
+
+    // read line
+    if (!new_msg)
+      if ((st = g_io_channel_read_line(chan, &line, NULL, NULL,
+              &err)) != G_IO_STATUS_NORMAL)
+        continue;
+
     new_msg = false;
 
     // start flag
@@ -550,7 +581,7 @@ void Conversation::LoadHistory()
       gsize length;
       bool first = true;
       while ((st = g_io_channel_read_line(chan, &line, &length, NULL, &err))
-          == G_IO_STATUS_NORMAL && line != NULL) {
+          == G_IO_STATUS_NORMAL) {
         if (!strcmp(line, "\f\n")) {
           new_msg = true;
           break;
@@ -581,17 +612,6 @@ void Conversation::LoadHistory()
     }
   }
 
-  if (st != G_IO_STATUS_EOF) {
-    if (err) {
-      LOG->Error(_("Error reading from conversation logfile '%s' (%s)."),
-          filename, err->message);
-      g_error_free(err);
-      err = NULL;
-    }
-    else
-      LOG->Error(_("Error reading from conversation logfile '%s'."),
-          filename);
-  }
   g_io_channel_unref(chan);
 }
 
