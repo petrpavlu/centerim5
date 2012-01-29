@@ -151,7 +151,7 @@ extern const int C_ERR;
 int screen_init();
 int screen_finalize();
 
-int getcolorpair(int fg, int bg);
+bool init_colorpair(int idx, int fg, int bg, int *res);
 int nrcolors();
 int nrcolorpairs();
 bool colorpair_content(int colorpair, int *fg, int *bg);

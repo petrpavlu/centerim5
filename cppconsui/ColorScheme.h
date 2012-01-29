@@ -42,6 +42,17 @@ namespace CppConsUI
 class ColorScheme
 {
 public:
+  struct Color
+  {
+    int foreground;
+    int background;
+    int attrs;
+
+    Color(int f = Curses::Color::DEFAULT, int b = Curses::Color::DEFAULT,
+        int a = Curses::Attr::NORMAL) : foreground(f), background(b)
+                        , attrs(a) {}
+  };
+
   static ColorScheme *Instance();
 
   /**
@@ -50,7 +61,8 @@ public:
    * combination.
    */
   int GetColorPair(const char *scheme, const char *widget,
-      const char *property) const;
+      const char *property);
+  int GetColorPair(Color& c);
   /**
    * Sets color pair and Curses attributes for a given scheme, widget,
    * property combination.
@@ -63,21 +75,13 @@ public:
 protected:
 
 private:
-  struct Color
-  {
-    int foreground;
-    int background;
-    int attrs;
-
-    Color(int f = Curses::Color::DEFAULT, int b = Curses::Color::DEFAULT,
-        int a = Curses::Attr::NORMAL) : foreground(f), background(b)
-                        , attrs(a) {}
-  };
   typedef std::map<std::string, Color> Properties;
   typedef std::map<std::string, Properties> Widgets;
   typedef std::map<std::string, Widgets> Schemes;
+  typedef std::map<std::pair<int, int>, int> ColorPairs;
 
   Schemes schemes;
+  ColorPairs pairs;
 
   ColorScheme() {}
   ColorScheme(const ColorScheme &);

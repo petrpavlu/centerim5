@@ -29,6 +29,7 @@
 #include "ColorPickerPalette.h"
 
 #include "ConsuiCurses.h"
+#include "ColorScheme.h"
 
 namespace CppConsUI
 {
@@ -180,7 +181,8 @@ void ColorPickerPalette::ColorPickerPaletteButton::Draw()
       || (color == 16))
     cursor = Curses::Color::WHITE;
 
-  int colorpair = Curses::getcolorpair(cursor, color);
+  ColorScheme::Color c(cursor, color);
+  int colorpair = COLORSCHEME->GetColorPair(c);
 
   area->fill(colorpair, 0, 0, 2, 1);
 

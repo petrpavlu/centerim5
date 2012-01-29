@@ -28,6 +28,8 @@
 
 #include "ColorScheme.h"
 
+#include "gettext.h"
+
 namespace CppConsUI
 {
 
@@ -38,7 +40,7 @@ ColorScheme *ColorScheme::Instance()
 }
 
 int ColorScheme::GetColorPair(const char *scheme, const char *widget,
-    const char *property) const
+    const char *property)
 {
   g_assert(widget);
   g_assert(property);
@@ -50,10 +52,46 @@ int ColorScheme::GetColorPair(const char *scheme, const char *widget,
       && (j = i->second.find(widget)) != i->second.end()
       && (k = j->second.find(property)) != j->second.end()) {
     Color c = k->second;
-    return Curses::getcolorpair(c.foreground, c.background) | c.attrs;
+    int ret = GetColorPair(c) | c.attrs;
+    schemes[scheme][widget][property] = c;
+    return ret;
   }
 
   return 0;
+}
+
+int ColorScheme::GetColorPair(Color& c)
+{
+  ColorPairs::const_iterator i;
+  int fg, bg, res;
+
+  fg = c.foreground;
+  bg = c.background;
+
+  // Check if the pair already exists
+  if ((i = pairs.find(std::make_pair(fg, bg))) != pairs.end())
+    return i->second;
+
+  // Check if the inverse pairs exists
+  if ((i = pairs.find(std::make_pair(bg, fg))) != pairs.end()) {
+    // If the inverse pair exists, use that one and flip the REVERSE bit.
+    c.attrs ^= Curses::Attr::REVERSE;
+    return i->second;
+  }
+
+  // No existing pair we can use. Check if we can add a new one to the palette.
+  if ((int) pairs.size() >= Curses::nrcolorpairs()) {
+    g_warning(_("Color pairs limit exceeded."));
+    return 0;
+  }
+
+  // Add a new colorpair to the palette
+  if (!Curses::init_colorpair(pairs.size() + 1, fg, bg, &res)) {
+    g_warning(_("Adding colorpair failed."));
+    return 0;
+  }
+  pairs[std::make_pair(fg, bg)] = res;
+  return res;
 }
 
 bool ColorScheme::SetColorPair(const char *scheme, const char *widget,

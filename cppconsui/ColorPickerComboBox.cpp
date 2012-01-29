@@ -102,7 +102,8 @@ void ColorPickerComboBox::Draw()
   area->attroff(button_colorpair);
 
   if (selected_color > -1) {
-    int colorpair = Curses::getcolorpair(color, color);
+    ColorScheme::Color c(color, color);
+    int colorpair = COLORSCHEME->GetColorPair(c);
     area->attron(colorpair);
     area->fill(colorpair, 1, 0, area->getmaxx()-2, 1);
     area->attroff(colorpair);
@@ -215,7 +216,8 @@ void ColorPickerComboBox::ColorButton::Draw()
   area->attroff(button_colorpair);
 
   if (color > -1) {
-    int colorpair = Curses::getcolorpair(color, color);
+    ColorScheme::Color c(color, color);
+    int colorpair = COLORSCHEME->GetColorPair(c);
     area->attron(colorpair);
     area->fill(colorpair, 1, 0, area->getmaxx()-2, 1);
     area->attroff(colorpair);

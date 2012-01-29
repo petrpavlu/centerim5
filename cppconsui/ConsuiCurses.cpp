@@ -402,30 +402,21 @@ int screen_init()
   return OK;
 }
 
+bool init_colorpair(int idx, int fg, int bg, int *res)
+{
+  bool success;
+
+  success = (init_pair(idx, fg, bg) != ERR);
+
+  if (success)
+    *res = COLOR_PAIR(idx);
+
+  return success;
+}
+
 int screen_finalize()
 {
   return ::endwin();
-}
-
-int getcolorpair(int fg, int bg)
-{
-  typedef std::map<std::pair<int, int>, int> Colors;
-  static Colors c;
-
-  Colors::const_iterator i;
-  if ((i = c.find(std::make_pair(fg, bg))) != c.end())
-    return i->second;
-
-  if ((int) c.size() >= nrcolorpairs()) {
-    g_warning(_("Color pairs limit exceeded."));
-    return 0;
-  }
-
-  if (init_pair(c.size() + 1, fg, bg) == ERR)
-    return 0;
-  int res = COLOR_PAIR(c.size() + 1);
-  c[std::make_pair(fg, bg)] = res;
-  return res;
 }
 
 int nrcolors()
