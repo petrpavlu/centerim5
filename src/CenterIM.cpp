@@ -631,9 +631,10 @@ void CenterIM::SaveColorSchemeConfig()
         xmlnode_set_attrib(color, "background", str);
         g_free(str);
 
-        str = ColorAttributesToString(pi->second.attrs);
-        xmlnode_set_attrib(color, "attributes", str);
-        g_free(str);
+        if ((str = ColorAttributesToString(pi->second.attrs)))
+          xmlnode_set_attrib(color, "attributes", str);
+          g_free(str);
+        }
       }
     }
   }
