@@ -81,12 +81,6 @@ int CenterIM::Run(const char *config_path)
 
   PrefsInit();
 
-  if (!LoadColorSchemeConfig())
-  {
-    LoadDefaultColorSchemeConfig();
-    SaveColorSchemeConfig();
-  }
-
   // initialize Log component
   Log::Init();
   if (logbuf) {
@@ -98,6 +92,12 @@ int CenterIM::Run(const char *config_path)
 
     delete logbuf;
     logbuf = NULL;
+  }
+
+  if (!LoadColorSchemeConfig())
+  {
+    LoadDefaultColorSchemeConfig();
+    SaveColorSchemeConfig();
   }
 
   /* Init key binds after the Log is initialized so the user can see if there
