@@ -73,10 +73,12 @@ public:
    * Maps keys to actions for one context, {key: action}.
    */
   typedef std::map<TermKeyKey, std::string, Keys::TermKeyCmp> KeyBindContext;
+  typedef KeyBindContext::const_iterator KeyBindContextIterator;
   /**
    * Maps context to key binds in that context, {context: KeyContext}.
    */
   typedef std::map<std::string, KeyBindContext> KeyBinds;
+  typedef KeyBinds::const_iterator KeyBindsIterator;
 
   /**
    * Returns the singleton class instance.
@@ -100,6 +102,16 @@ public:
   /**
    */
   const char *GetKeyBind(const char *context, const char *action) const;
+
+  /**
+   * Convert a TermKeyKey to a string
+   */
+  char* TermKeyToString(TermKeyKey key);
+
+  /**
+   * Parse a string ito a TermKeyKey
+   */
+  bool StringToTermKey(const char *key, TermKeyKey *termkey);
 
   void SetConfigFile(const char *filename);
   const char *GetConfigFile() const { return config; }

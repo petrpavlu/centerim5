@@ -81,6 +81,23 @@ const char *KeyConfig::GetKeyBind(const char *context,
   return _("<unbound>");
 }
 
+char* KeyConfig::TermKeyToString(TermKeyKey key)
+{
+  static char out[256];
+
+  termkey_strfkey(COREMANAGER->GetTermKeyHandle(), out, sizeof(out), &key,
+      TERMKEY_FORMAT_LONGMOD);
+
+  return g_strdup(out);
+}
+
+bool KeyConfig::StringToTermKey(const char *key, TermKeyKey *termkey)
+{
+  const char *res = termkey_strpkey(COREMANAGER->GetTermKeyHandle(), key,
+      termkey, TERMKEY_FORMAT_LONGMOD);
+  return res && !res[0];
+}
+
 void KeyConfig::SetConfigFile(const char *filename)
 {
   if (config)
