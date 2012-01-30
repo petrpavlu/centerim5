@@ -49,7 +49,7 @@ AC_SUBST([PURPLE_LIBS])
 # v2.16.0 is needed because of g_markup_parse_context_get_element_stack(),
 # this version was released on 2009-03-13
 # find . \( -name \*.cpp -o -name \*.h \) -print0 | xargs -0 sed -n 's/.*\(g_[^ (]*\)(.*/\1/p' | sort | uniq | less
-PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.0.0])
+PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.16.0])
 AC_SUBST([GLIB_CFLAGS])
 AC_SUBST([GLIB_LIBS])
 
