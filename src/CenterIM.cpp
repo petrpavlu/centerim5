@@ -623,15 +623,19 @@ void CenterIM::SaveColorSchemeConfig()
         xmlnode_set_attrib(color, "property", pi->first.c_str());
         xmlnode_insert_child(scheme, color);
 
-        str = g_strdup_printf("%d", pi->second.foreground);
-        xmlnode_set_attrib(color, "foreground", str);
-        g_free(str);
+        if (pi->second.foreground != CppConsUI::Curses::Color::DEFAULT) {
+          str = g_strdup_printf("%d", pi->second.foreground);
+          xmlnode_set_attrib(color, "foreground", str);
+          g_free(str);
+        }
 
-        str = g_strdup_printf("%d", pi->second.background);
-        xmlnode_set_attrib(color, "background", str);
-        g_free(str);
+        if (pi->second.background != CppConsUI::Curses::Color::DEFAULT) {
+          str = g_strdup_printf("%d", pi->second.background);
+          xmlnode_set_attrib(color, "background", str);
+          g_free(str);
+        }
 
-        if ((str = ColorAttributesToString(pi->second.attrs)))
+        if ((str = ColorAttributesToString(pi->second.attrs))) {
           xmlnode_set_attrib(color, "attributes", str);
           g_free(str);
         }
