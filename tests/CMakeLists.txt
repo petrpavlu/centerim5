@@ -16,6 +16,15 @@ target_link_libraries( colorpicker
 		)
 
 ######################################################################
+add_executable( keybinding_config EXCLUDE_FROM_ALL keybinding_config.cpp )
+
+target_link_libraries( keybinding_config
+				${GLIB2_LIBRARIES}
+				${SIGC_LIBRARIES}
+				cppconsui
+		)
+
+######################################################################
 add_executable( label EXCLUDE_FROM_ALL label.cpp )
 
 target_link_libraries( label
