@@ -113,27 +113,18 @@ public:
    */
   bool StringToTermKey(const char *key, TermKeyKey *termkey);
 
-  void SetConfigFile(const char *filename);
-  const char *GetConfigFile() const { return config; }
-
   /**
    * Removes all key binds.
    */
   void Clear();
 
   /**
-   * It is called when needed to read the config and reread the defined
-   * keys.
+   * Load default key configuration
    */
-  bool Reconfig();
+  void LoadDefaultKeyConfig();
 
   void AddDefaultKeyBind(const char *context, const char *action,
       const char *key);
-
-  /**
-   * Registers default key bindings.
-   */
-  void RegisterDefaultKeyBinds();
 
 protected:
 
@@ -155,23 +146,6 @@ private:
    * Current key binds.
    */
   KeyBinds binds;
-
-  /*
-   * Key bindings config filename.
-   */
-  char *config;
-
-  bool ReconfigInternal();
-
-  static void start_element_(GMarkupParseContext *context,
-      const char *element_name, const char **attribute_names,
-      const char **attribute_values, gpointer user_data,
-      GError **error)
-    { reinterpret_cast<KeyConfig*>(user_data)->start_element(context,
-        element_name, attribute_names, attribute_values, error); }
-  void start_element(GMarkupParseContext *context,
-      const char *element_name, const char **attribute_names,
-      const char **attribute_values, GError **error);
 
   KeyConfig();
   KeyConfig(const KeyConfig&);

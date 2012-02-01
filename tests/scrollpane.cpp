@@ -178,12 +178,12 @@ TestApp *TestApp::Instance()
 TestApp::TestApp()
 {
   mngr = CppConsUI::CoreManager::Instance();
-  KEYCONFIG->AddDefaultKeyBind("testapp", "quit", "F10");
-  KEYCONFIG->AddDefaultKeyBind("scrollpanewindow", "scroll-up", "w");
-  KEYCONFIG->AddDefaultKeyBind("scrollpanewindow", "scroll-down", "s");
-  KEYCONFIG->AddDefaultKeyBind("scrollpanewindow", "scroll-left", "a");
-  KEYCONFIG->AddDefaultKeyBind("scrollpanewindow", "scroll-right", "d");
-  KEYCONFIG->RegisterDefaultKeyBinds();
+  KEYCONFIG->BindKey("testapp", "quit", "F10");
+  KEYCONFIG->BindKey("scrollpanewindow", "scroll-up", "w");
+  KEYCONFIG->BindKey("scrollpanewindow", "scroll-down", "s");
+  KEYCONFIG->BindKey("scrollpanewindow", "scroll-left", "a");
+  KEYCONFIG->BindKey("scrollpanewindow", "scroll-right", "d");
+  KEYCONFIG->LoadDefaultKeyConfig();
 
   g_log_set_default_handler(g_log_func_, this);
 

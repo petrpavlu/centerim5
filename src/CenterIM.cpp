@@ -72,11 +72,6 @@ int CenterIM::Run(const char *config_path)
   if (PurpleInit(path))
     return 1;
 
-  InitDefaultKeys();
-  char *binds = g_build_filename(path, "binds.xml", NULL);
-  KEYCONFIG->SetConfigFile(binds);
-  g_free(binds);
-
   g_free(path);
 
   PrefsInit();
@@ -102,7 +97,10 @@ int CenterIM::Run(const char *config_path)
 
   /* Init key binds after the Log is initialized so the user can see if there
    * is an error in the config. */
-  KEYCONFIG->Reconfig();
+  if (!LoadKeyConfig()) {
+    LoadDefaultKeyConfig();
+    SaveKeyConfig();
+  }
 
   Footer::Init();
 
@@ -155,6 +153,288 @@ void CenterIM::Quit()
 CppConsUI::Rect CenterIM::GetScreenAreaSize(ScreenArea area)
 {
   return areaSizes[area];
+}
+
+bool CenterIM::LoadColorSchemeConfig()
+{
+  bool res = true;
+  xmlnode *root, *scheme, *color;
+  int fg, bg, attr;
+  const char *fgs, *bgs, *attrs;
+
+  root = purple_util_read_xml_from_file("colorschemes.xml", _("color schemes"));
+
+  if (!root) {
+    g_warning(_("Could not read 'colorschemes.xml'."));
+    return false;
+  }
+
+  for (scheme = xmlnode_get_child(root, "scheme"); scheme != NULL;
+      scheme = xmlnode_get_next_twin(scheme))
+  {
+    for (color = xmlnode_get_child(scheme, "color"); color != NULL;
+        color = xmlnode_get_next_twin(color))
+    {
+      fgs = xmlnode_get_attrib(color, "foreground");
+      bgs = xmlnode_get_attrib(color, "background");
+      attrs = xmlnode_get_attrib(color, "attributes");
+
+      if (fgs) {
+        if (sscanf(xmlnode_get_attrib(color, "foreground"), "%d", &fg) == EOF) {
+          res = false;
+          goto LoadColorSchemeConfig_done;
+        }
+      } else {
+        fg = CppConsUI::Curses::Color::DEFAULT;
+      }
+
+      if (bgs) {
+        if (sscanf(xmlnode_get_attrib(color, "background"), "%d", &bg) == EOF) {
+          res = false;
+          goto LoadColorSchemeConfig_done;
+        }
+      } else {
+        bg = CppConsUI::Curses::Color::DEFAULT;
+      }
+
+      if (attrs) {
+        attr = StringToColorAttributes(attrs);
+      } else {
+        attr = 0;
+      }
+
+      COLORSCHEME->SetColorPair(
+          xmlnode_get_attrib(scheme, "name"),
+          xmlnode_get_attrib(color, "widget"),
+          xmlnode_get_attrib(color, "property"),
+          fg, bg, attr);
+    }
+  }
+
+LoadColorSchemeConfig_done:
+
+  if (!res)
+    g_warning(_("Could not parse 'colorschemes.xml'."));
+
+  xmlnode_free(root);
+
+  return res;
+}
+
+void CenterIM::LoadDefaultColorSchemeConfig()
+{
+  // default colors init
+  /// @todo move this to a default cfg
+  COLORSCHEME->SetColorPair("accountstatusmenu", "panel", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("accountstatusmenu", "horizontalline", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("accountstatusmenu", "button", "normal",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("buddylist", "treeview", "line",
+      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylist", "panel", "line",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("buddylist", "button", "normal",
+      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistgroup", "button", "normal",
+      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+
+  COLORSCHEME->SetColorPair("buddylistbuddy_offline", "button", "normal",
+      CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistbuddy_online", "button", "normal",
+      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistbuddy_na", "button", "normal",
+      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistbuddy_away", "button", "normal",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("buddylistcontact_offline", "button", "normal",
+      CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistcontact_online", "button", "normal",
+      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistcontact_na", "button", "normal",
+      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("buddylistcontact_away", "button", "normal",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("conversation", "textview", "text",
+      CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("conversation", "textview", "color1",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("conversation", "textview", "color2",
+      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation", "panel", "line",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation", "horizontalline", "line",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation", "textedit", "text",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("conversation", "label", "text",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("conversation-active", "label", "text",
+      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("conversation-new", "label", "text",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+
+  COLORSCHEME->SetColorPair("footer", "label", "text",
+      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
+  COLORSCHEME->SetColorPair("footer", "container", "background",
+      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
+
+  COLORSCHEME->SetColorPair("generalmenu", "panel", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("generalmenu", "horizontalline", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("generalmenu", "button", "normal",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("generalwindow", "panel", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("generalwindow", "horizontalline", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+  COLORSCHEME->SetColorPair("generalwindow", "verticalline", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("log", "panel", "line",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
+      CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->SetColorPair("log", "textview", "text",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+
+  COLORSCHEME->SetColorPair("header", "label", "text",
+      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
+  COLORSCHEME->SetColorPair("header", "container", "background",
+      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
+}
+
+void CenterIM::SaveKeyConfig()
+{
+  CppConsUI::KeyConfig::KeyBindsIterator bi;
+  CppConsUI::KeyConfig::KeyBindContextIterator ci;
+
+  xmlnode *root, *bind;
+
+  char *key;
+
+  root = xmlnode_new("keyconfig");
+  xmlnode_set_attrib(root, "version", "1.0");
+
+  for (bi = KEYCONFIG->GetKeyBinds()->begin();
+      bi != KEYCONFIG->GetKeyBinds()->end(); bi++)
+  {
+    for (ci = bi->second.begin();
+        ci != bi->second.end(); ci++)
+    {
+      bind = xmlnode_new("bind");
+      if (bi->first.size())
+        xmlnode_set_attrib(bind, "context", bi->first.c_str());
+      xmlnode_set_attrib(bind, "action", ci->second.c_str());
+      if ((key = KEYCONFIG->TermKeyToString(ci->first))) {
+        xmlnode_set_attrib(bind, "key", key);
+        g_free(key);
+      }
+
+      xmlnode_insert_child(root, bind);
+    }
+  }
+
+  //@todo change colorschemes.xml into a define
+  char *data = xmlnode_to_formatted_str(root, NULL);
+  if (!purple_util_write_data_to_file("binds.xml", data, -1))
+    g_warning(_("Error saving 'binds.xml'."));
+
+  g_free(data);
+  xmlnode_free(root);
+}
+
+bool CenterIM::LoadKeyConfig()
+{
+  bool res = true;
+  xmlnode *root, *bind;
+  const char *context, *action, *key;
+
+  root = purple_util_read_xml_from_file("binds.xml", _("key bindings"));
+
+  if (!root) {
+    g_warning(_("Could not read 'binds.xml'."));
+    return false;
+  }
+
+  for (bind = xmlnode_get_child(root, "bind"); bind != NULL;
+      bind = xmlnode_get_next_twin(bind))
+  {
+    context = xmlnode_get_attrib(bind, "context");
+    action = xmlnode_get_attrib(bind, "action");
+    key = xmlnode_get_attrib(bind, "key");
+
+    if (!context || !action || !key) {
+      g_warning(_("Incomplete key binding: context=%s, action=%s, key=%s"),
+          context, action, key);
+      res = false;
+      break;
+    }
+
+    if (!KEYCONFIG->BindKey(context, action, key))
+      g_warning(_("Unrecognized key '%s'."), key);
+
+  }
+
+  if (!res)
+    g_warning(_("Could not parse 'binds.xml'."));
+
+  xmlnode_free(root);
+
+  return res;
+}
+
+void CenterIM::LoadDefaultKeyConfig()
+{
+  KEYCONFIG->LoadDefaultKeyConfig();
+
+  KEYCONFIG->BindKey("centerim", "quit", "Ctrl-q");
+  KEYCONFIG->BindKey("centerim", "buddylist", "F1");
+  KEYCONFIG->BindKey("centerim", "conversation-active", "F2");
+  KEYCONFIG->BindKey("centerim", "accountstatusmenu", "F3");
+  KEYCONFIG->BindKey("centerim", "generalmenu", "F4");
+  KEYCONFIG->BindKey("centerim", "generalmenu", "Ctrl-g");
+  KEYCONFIG->BindKey("centerim", "buddylist-toggle-offline", "F5");
+  KEYCONFIG->BindKey("centerim", "conversation-expand", "F6");
+
+  KEYCONFIG->BindKey("centerim", "conversation-prev", "Ctrl-p");
+  KEYCONFIG->BindKey("centerim", "conversation-next", "Ctrl-n");
+  KEYCONFIG->BindKey("centerim", "conversation-number1", "Alt-1");
+  KEYCONFIG->BindKey("centerim", "conversation-number2", "Alt-2");
+  KEYCONFIG->BindKey("centerim", "conversation-number3", "Alt-3");
+  KEYCONFIG->BindKey("centerim", "conversation-number4", "Alt-4");
+  KEYCONFIG->BindKey("centerim", "conversation-number5", "Alt-5");
+  KEYCONFIG->BindKey("centerim", "conversation-number6", "Alt-6");
+  KEYCONFIG->BindKey("centerim", "conversation-number7", "Alt-7");
+  KEYCONFIG->BindKey("centerim", "conversation-number8", "Alt-8");
+  KEYCONFIG->BindKey("centerim", "conversation-number9", "Alt-9");
+  KEYCONFIG->BindKey("centerim", "conversation-number10", "Alt-0");
+  KEYCONFIG->BindKey("centerim", "conversation-number11", "Alt-q");
+  KEYCONFIG->BindKey("centerim", "conversation-number12", "Alt-w");
+  KEYCONFIG->BindKey("centerim", "conversation-number13", "Alt-e");
+  KEYCONFIG->BindKey("centerim", "conversation-number14", "Alt-r");
+  KEYCONFIG->BindKey("centerim", "conversation-number15", "Alt-t");
+  KEYCONFIG->BindKey("centerim", "conversation-number16", "Alt-y");
+  KEYCONFIG->BindKey("centerim", "conversation-number17", "Alt-u");
+  KEYCONFIG->BindKey("centerim", "conversation-number18", "Alt-i");
+  KEYCONFIG->BindKey("centerim", "conversation-number19", "Alt-o");
+
+  KEYCONFIG->BindKey("buddylist", "contextmenu", "Ctrl-d");
+
+  KEYCONFIG->BindKey("conversation", "send", "Ctrl-x");
 }
 
 CenterIM::CenterIM()
@@ -554,44 +834,6 @@ void CenterIM::DeclareBindables()
       InputProcessor::BINDABLE_OVERRIDE);
 }
 
-void CenterIM::InitDefaultKeys()
-{
-  KEYCONFIG->AddDefaultKeyBind("centerim", "quit", "Ctrl-q");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "buddylist", "F1");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-active", "F2");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "accountstatusmenu", "F3");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "generalmenu", "F4");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "generalmenu", "Ctrl-g");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "buddylist-toggle-offline", "F5");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-expand", "F6");
-
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-prev", "Ctrl-p");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-next", "Ctrl-n");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number1", "Alt-1");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number2", "Alt-2");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number3", "Alt-3");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number4", "Alt-4");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number5", "Alt-5");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number6", "Alt-6");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number7", "Alt-7");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number8", "Alt-8");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number9", "Alt-9");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number10", "Alt-0");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number11", "Alt-q");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number12", "Alt-w");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number13", "Alt-e");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number14", "Alt-r");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number15", "Alt-t");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number16", "Alt-y");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number17", "Alt-u");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number18", "Alt-i");
-  KEYCONFIG->AddDefaultKeyBind("centerim", "conversation-number19", "Alt-o");
-
-  KEYCONFIG->AddDefaultKeyBind("buddylist", "contextmenu", "Ctrl-d");
-
-  KEYCONFIG->AddDefaultKeyBind("conversation", "send", "Ctrl-x");
-}
-
 void CenterIM::SaveColorSchemeConfig()
 {
   CppConsUI::ColorScheme::SchemesIterator si;
@@ -650,168 +892,6 @@ void CenterIM::SaveColorSchemeConfig()
 
   g_free(data);
   xmlnode_free(root);
-}
-
-bool CenterIM::LoadColorSchemeConfig()
-{
-  bool res = true;
-  xmlnode *root, *scheme, *color;
-  int fg, bg, attr;
-  const char *fgs, *bgs, *attrs;
-
-  root = purple_util_read_xml_from_file("colorschemes.xml", _("color schemes"));
-
-  if (!root) {
-    g_warning(_("Could not read 'colorschemes.xml'."));
-    return false;
-  }
-
-  for (scheme = xmlnode_get_child(root, "scheme"); scheme != NULL;
-      scheme = xmlnode_get_next_twin(scheme))
-  {
-    for (color = xmlnode_get_child(scheme, "color"); color != NULL;
-        color = xmlnode_get_next_twin(color))
-    {
-      fgs = xmlnode_get_attrib(color, "foreground");
-      bgs = xmlnode_get_attrib(color, "background");
-      attrs = xmlnode_get_attrib(color, "attributes");
-
-      if (fgs) {
-        if (sscanf(xmlnode_get_attrib(color, "foreground"), "%d", &fg) == EOF) {
-          res = false;
-          goto LoadColorSchemeConfig_done;
-        }
-      } else {
-        fg = CppConsUI::Curses::Color::DEFAULT;
-      }
-
-      if (bgs) {
-        if (sscanf(xmlnode_get_attrib(color, "background"), "%d", &bg) == EOF) {
-          res = false;
-          goto LoadColorSchemeConfig_done;
-        }
-      } else {
-        bg = CppConsUI::Curses::Color::DEFAULT;
-      }
-
-      if (attrs) {
-        attr = StringToColorAttributes(attrs);
-      } else {
-        attr = 0;
-      }
-
-      COLORSCHEME->SetColorPair(
-          xmlnode_get_attrib(scheme, "name"),
-          xmlnode_get_attrib(color, "widget"),
-          xmlnode_get_attrib(color, "property"),
-          fg, bg, attr);
-    }
-  }
-
-LoadColorSchemeConfig_done:
-
-  if (!res)
-    g_warning(_("Could not parse 'colorschemes.xml'."));
-
-  xmlnode_free(root);
-
-  return res;
-}
-
-void CenterIM::LoadDefaultColorSchemeConfig()
-{
-  // default colors init
-  /// @todo move this to a default cfg
-  COLORSCHEME->SetColorPair("accountstatusmenu", "panel", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("accountstatusmenu", "horizontalline", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("accountstatusmenu", "button", "normal",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("buddylist", "treeview", "line",
-      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylist", "panel", "line",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
-      CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("buddylist", "button", "normal",
-      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylistgroup", "button", "normal",
-      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK,
-      CppConsUI::Curses::Attr::BOLD);
-
-  COLORSCHEME->SetColorPair("buddylistbuddy_offline", "button", "normal",
-      CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylistbuddy_online", "button", "normal",
-      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylistbuddy_na", "button", "normal",
-      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylistbuddy_away", "button", "normal",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("buddylistcontact_offline", "button", "normal",
-      CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylistcontact_online", "button", "normal",
-      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylistcontact_na", "button", "normal",
-      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("buddylistcontact_away", "button", "normal",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("conversation", "textview", "text",
-      CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("conversation", "textview", "color1",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("conversation", "textview", "color2",
-      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK,
-      CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation", "panel", "line",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
-      CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation", "horizontalline", "line",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
-      CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation", "textedit", "text",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("conversation", "label", "text",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("conversation-active", "label", "text",
-      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK,
-      CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation-new", "label", "text",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK,
-      CppConsUI::Curses::Attr::BOLD);
-
-  COLORSCHEME->SetColorPair("footer", "label", "text",
-      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
-  COLORSCHEME->SetColorPair("footer", "container", "background",
-      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
-
-  COLORSCHEME->SetColorPair("generalmenu", "panel", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("generalmenu", "horizontalline", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("generalmenu", "button", "normal",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("generalwindow", "panel", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("generalwindow", "horizontalline", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("generalwindow", "verticalline", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("log", "panel", "line",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK,
-      CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("log", "textview", "text",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-
-  COLORSCHEME->SetColorPair("header", "label", "text",
-      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
-  COLORSCHEME->SetColorPair("header", "container", "background",
-      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
 }
 
 char* CenterIM::ColorAttributesToString(int attrs)

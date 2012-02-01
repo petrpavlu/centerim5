@@ -304,7 +304,7 @@ const char *OptionWindow::GetMinUnit(int i) const
 
 void OptionWindow::ReloadKeybindingFile(CppConsUI::Button& activator) const
 {
-  if (KEYCONFIG->Reconfig())
+  if (CENTERIM->LoadKeyConfig())
     LOG->Message(_("Keybinding file was successfully reloaded."));
 }
 

@@ -128,8 +128,8 @@ TestApp *TestApp::Instance()
 TestApp::TestApp()
 {
   mngr = CppConsUI::CoreManager::Instance();
-  KEYCONFIG->AddDefaultKeyBind("testapp", "quit", "F10");
-  KEYCONFIG->RegisterDefaultKeyBinds();
+  KEYCONFIG->BindKey("testapp", "quit", "F10");
+  KEYCONFIG->LoadDefaultKeyConfig();
 
   g_log_set_default_handler(g_log_func_, this);
 

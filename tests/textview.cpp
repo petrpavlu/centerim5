@@ -124,9 +124,9 @@ TestApp *TestApp::Instance()
 TestApp::TestApp()
 {
   mngr = CppConsUI::CoreManager::Instance();
-  KEYCONFIG->AddDefaultKeyBind("testapp", "quit", "F10");
-  KEYCONFIG->AddDefaultKeyBind("textviewwindow", "toggle-scrollbar", "F1");
-  KEYCONFIG->RegisterDefaultKeyBinds();
+  KEYCONFIG->BindKey("testapp", "quit", "F10");
+  KEYCONFIG->BindKey("textviewwindow", "toggle-scrollbar", "F1");
+  KEYCONFIG->LoadDefaultKeyConfig();
 
   g_log_set_default_handler(g_log_func_, this);
 

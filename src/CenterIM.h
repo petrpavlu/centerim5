@@ -63,6 +63,14 @@ public:
 
   static const char * const version;
 
+  void SaveColorSchemeConfig();
+  bool LoadColorSchemeConfig();
+  void LoadDefaultColorSchemeConfig();
+
+  void SaveKeyConfig();
+  bool LoadKeyConfig();
+  void LoadDefaultKeyConfig();
+
 protected:
 
 private:
@@ -168,11 +176,6 @@ private:
   void ActionExpandConversation();
 
   void DeclareBindables();
-  void InitDefaultKeys();
-
-  void SaveColorSchemeConfig();
-  bool LoadColorSchemeConfig();
-  void LoadDefaultColorSchemeConfig();
 
   char* ColorAttributesToString(int attrs);
   int StringToColorAttributes(const char *str);
