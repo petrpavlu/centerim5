@@ -123,24 +123,9 @@ public:
    */
   void LoadDefaultKeyConfig();
 
-  void AddDefaultKeyBind(const char *context, const char *action,
-      const char *key);
-
 protected:
 
 private:
-  struct DefaultKeyBind
-  {
-    std::string context;
-    std::string action;
-    std::string key;
-
-    DefaultKeyBind(const char *context_, const char *action_,
-        const char *key_) : context(context_), action(action_), key(key_) {}
-  };
-  typedef std::vector<DefaultKeyBind> DefaultKeyBinds;
-
-  DefaultKeyBinds default_key_binds;
 
   /**
    * Current key binds.

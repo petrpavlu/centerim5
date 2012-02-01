@@ -151,12 +151,6 @@ void KeyConfig::LoadDefaultKeyConfig()
   BindKey("window", "close-window", "Escape");
 }
 
-void KeyConfig::AddDefaultKeyBind(const char *context, const char *action,
-      const char *key)
-{
-  default_key_binds.push_back(DefaultKeyBind(context, action, key));
-}
-
 KeyConfig::KeyConfig()
 {
 }
