@@ -533,28 +533,35 @@ BuddyListContact::ContextMenu::ContextMenu(BuddyListContact& parent)
 : MenuWindow(parent, AUTOSIZE, AUTOSIZE)
 , parent(&parent)
 {
+  CppConsUI::Button *button;
+  PurpleGroup *group;
+  PurpleBlistNode *node;
+
   AppendItem(_("Alias..."), sigc::mem_fun(this,
         &BuddyListContact::ContextMenu::OnChangeAlias));
   AppendItem(_("Delete..."), sigc::mem_fun(this,
         &BuddyListContact::ContextMenu::OnRemove));
 
-  CppConsUI::ComboBox *groups = new CppConsUI::ComboBox(_("Move to..."));
-  groups->SetFlags(0);
+  CppConsUI::MenuWindow *groups = new CppConsUI::MenuWindow(*this,
+      AUTOSIZE, AUTOSIZE);
 
-  for (PurpleBlistNode *group = purple_blist_get_root();
-      group; group = purple_blist_node_get_sibling_next(group)) {
-    if (!PURPLE_BLIST_NODE_IS_GROUP(group))
+  for (node = purple_blist_get_root(); node;
+      node = purple_blist_node_get_sibling_next(node))
+  {
+    if (!PURPLE_BLIST_NODE_IS_GROUP(node))
       continue;
-    groups->AddOptionPtr(purple_group_get_name(
-          reinterpret_cast<PurpleGroup*>(group)), group);
+
+    group = reinterpret_cast<PurpleGroup*>(node);
+
+    button = groups->AppendItem(purple_group_get_name(
+        group), sigc::bind(sigc::mem_fun(this,
+            &BuddyListContact::ContextMenu::OnMoveTo), group));
+    if (purple_contact_get_group(parent.GetPurpleContact())
+        == group)
+      button->GrabFocus();
   }
 
-  groups->SetSelectedByDataPtr(
-      purple_contact_get_group(parent.GetPurpleContact()));
-  groups->signal_selection_changed.connect(sigc::mem_fun(this,
-        &BuddyListContact::ContextMenu::OnMoveTo));
-
-  AppendWidget(*groups);
+  AppendSubMenu(_("Move to..."), *groups);
 }
 
 void BuddyListContact::ContextMenu::ChangeAliasResponseHandler(
@@ -636,10 +643,9 @@ void BuddyListContact::ContextMenu::OnRemove(Button& activator)
 }
 
 void BuddyListContact::ContextMenu::OnMoveTo(Button& activator,
-    size_t new_entry, const char *title, intptr_t data)
+    PurpleGroup *group)
 {
-  purple_blist_add_contact(parent->GetPurpleContact(),
-      reinterpret_cast<PurpleGroup*>(data), NULL);
+  purple_blist_add_contact(parent->GetPurpleContact(), group, NULL);
 }
 
 void BuddyListContact::OpenContextMenu()
