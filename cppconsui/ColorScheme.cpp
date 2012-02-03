@@ -75,6 +75,8 @@ int ColorScheme::GetColorPair(Color& c)
   // Check if the inverse pairs exists
   if ((i = pairs.find(std::make_pair(bg, fg))) != pairs.end()) {
     // If the inverse pair exists, use that one and flip the REVERSE bit.
+    c.foreground = bg;
+    c.background = fg;
     c.attrs ^= Curses::Attr::REVERSE;
     return i->second;
   }
