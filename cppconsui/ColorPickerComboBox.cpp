@@ -39,7 +39,7 @@ ColorPickerComboBox::ColorPickerComboBox(int w, int color)
 : ComboBox(w, 1, ""), selected_color(color)
 {
   // Add ANSI colors
-  for (int i = 0; i < 16; i++) {
+  for (int i = 0; i < MIN(16, Curses::nrcolors()); i++) {
     AddOption(NULL, i);
   }
 
