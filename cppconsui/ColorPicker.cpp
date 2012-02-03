@@ -74,7 +74,6 @@ void ColorPicker::SetColorPair(int fg, int bg)
 
   if (sample) {
     COLORSCHEME->SetColorPair(colorscheme, "label", "text", fg, bg, 0, true);
-    sample->Draw();
   }
 
   signal_colorpair_selected(*this, fg, bg);
