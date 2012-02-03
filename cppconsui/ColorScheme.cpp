@@ -26,6 +26,10 @@
  * @ingroup cppconsui
  */
 
+/* Uncomment to enable an experimental feature to lower the number of used
+ * colorpairs */
+//#define SAVE_COLOR_PAIRS
+
 #include "ColorScheme.h"
 
 #include "gettext.h"
@@ -72,6 +76,7 @@ int ColorScheme::GetColorPair(Color& c)
   if ((i = pairs.find(std::make_pair(fg, bg))) != pairs.end())
     return i->second;
 
+#ifdef SAVE_COLOR_PAIRS
   // Check if the inverse pairs exists
   if ((i = pairs.find(std::make_pair(bg, fg))) != pairs.end()) {
     // If the inverse pair exists, use that one and flip the REVERSE bit.
@@ -80,6 +85,7 @@ int ColorScheme::GetColorPair(Color& c)
     c.attrs ^= Curses::Attr::REVERSE;
     return i->second;
   }
+#endif // SAVE_COLOR_PAIRS
 
   // No existing pair we can use. Check if we can add a new one to the palette.
   if ((int) pairs.size() >= Curses::nrcolorpairs()) {
