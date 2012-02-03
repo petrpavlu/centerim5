@@ -110,7 +110,7 @@ TestWindow::TestWindow()
   CppConsUI::ColorPicker *picker;
 
   AddWidget(*(new CppConsUI::Label("ColorPicker: ")), 1, 15);
-  AddWidget(*(picker = new CppConsUI::ColorPicker(15, 8, true)), 1, 16);
+  AddWidget(*(picker = new CppConsUI::ColorPicker(7, 1, true)), 1, 16);
   picker->signal_colorpair_selected.connect(sigc::mem_fun(this,
       &TestWindow::OnColerPickerChanged));
 
