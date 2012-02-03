@@ -31,6 +31,9 @@
 #include "ConsuiCurses.h"
 #include "ColorScheme.h"
 
+#define GRAYSCALE_START 232
+#define GRAYSCALE_END 255
+
 namespace CppConsUI
 {
 
@@ -84,12 +87,14 @@ void ColorPickerPalette::AddAnsi(int defaultcolor)
   w = GetWidth();
   h = y = GetHeight();
 
-  w = MAX(w, 16);
+  // There are 8 ANSI colors. 16 when bright colors are supported
+  w = MAX(w, 8*2);
   h = h + 2;
 
   Resize (w, h);
 
   // Add the color picker buttons
+  //@todo support terms with only 8 colors here
   for (x = 0; x < 16; x++)
   {
     if (x >= 8)
@@ -112,13 +117,13 @@ void ColorPickerPalette::AddGrayscale(int defaultcolor)
     h++;
 
   y = h;
-  w = MAX(w, (256-232)*2);
+  w = MAX(w, (24)*2); // There are 24 colors in the gray scale.
   h = h + 1;
 
   Resize (w, h);
 
   // Add the color picker buttons
-  for (color = 232, x = 0; color < 256; color++, x += 2)
+  for (color = GRAYSCALE_START, x = 0; color <= GRAYSCALE_END; color++, x += 2)
     AddButton(x, y, color, defaultcolor);
 
   AddButton(x, y, Curses::Color::WHITE, defaultcolor);
