@@ -946,6 +946,8 @@ int CenterIM::StringToColorAttributes(const char *str)
     COMPARE("bold", BOLD);
   }
 
+  g_strfreev(tokens);
+
   return attrs;
 
 #undef COMPARE
