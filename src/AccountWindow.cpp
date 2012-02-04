@@ -569,4 +569,4 @@ void AccountWindow::DropAccountResponseHandler(
   }
 }
 
-/* vim: set tabstop=2 shiftwidth=2 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 tw=78 expandtab : */
