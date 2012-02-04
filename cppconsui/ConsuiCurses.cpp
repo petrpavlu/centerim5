@@ -442,9 +442,8 @@ int nrcolorpairs()
 bool colorpair_content(int colorpair, int *fg, int *bg)
 {
   short sfg, sbg;
-  int ret;
 
-  ret = pair_content(PAIR_NUMBER(colorpair), &sfg, &sbg);
+  int ret = pair_content(PAIR_NUMBER(colorpair), &sfg, &sbg);
 
   *fg = sfg;
   *bg = sbg;

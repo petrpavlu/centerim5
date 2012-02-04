@@ -84,10 +84,8 @@ void ColorPicker::SetColorPair(int fg, int bg)
 
 void ColorPicker::OnColorChanged(ComboBox& activator, int new_color)
 {
-  int new_fg, new_bg;
-
-  new_fg = fg_combo->GetColor();
-  new_bg = bg_combo->GetColor();
+  int new_fg = fg_combo->GetColor();
+  int new_bg = bg_combo->GetColor();
 
   if (&activator == fg_combo)
     new_fg = new_color;
