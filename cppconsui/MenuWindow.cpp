@@ -73,6 +73,12 @@ void MenuWindow::Show()
           &MenuWindow::OnRefVisible));
   }
 
+  if (hide_on_close) {
+    // make sure that the first widget in the focus chain is always focused
+    listbox->CleanFocus();
+    listbox->MoveFocus(Container::FOCUS_DOWN);
+  }
+
   Window::Show();
 }
 
