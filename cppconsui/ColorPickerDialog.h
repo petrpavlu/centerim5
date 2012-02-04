@@ -47,7 +47,7 @@ class ColorPickerDialog
         int flags);
     virtual ~ColorPickerDialog() {}
 
-    void OnColorSelected (ColorPickerPalette& activator, int color);
+    virtual void OnColorSelected (ColorPickerPalette& activator, int color);
 
     /**
      * Signal emitted when the user closes the dialog.
@@ -59,10 +59,10 @@ class ColorPickerDialog
     // AbstractDialog
     virtual void EmitResponse(ResponseType response);
 
-  private:
     ColorPickerPalette *pick;
     int color;
 
+  private:
     ColorPickerDialog(const ColorPickerDialog&);
     ColorPickerDialog& operator=(const ColorPickerDialog&);
 };

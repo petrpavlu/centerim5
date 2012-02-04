@@ -58,12 +58,11 @@ class ColorPicker
     ColorPickerComboBox *fg_combo;
     ColorPickerComboBox *bg_combo;
     Label *sample;
+    char *colorscheme;
 
   private:
     ColorPicker(const ColorPicker&);
     ColorPicker& operator=(const ColorPicker&);
-
-    char *colorscheme;
 };
 
 } // namespace CppConsUI

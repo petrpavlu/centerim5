@@ -66,7 +66,7 @@ class ColorPickerPalette
         ColorPickerPaletteButton (int color);
         virtual ~ColorPickerPaletteButton() {};
 
-        void Draw();
+        virtual void Draw();
 
       protected:
 
@@ -77,15 +77,15 @@ class ColorPickerPalette
         ColorPickerPaletteButton& operator=(const ColorPickerPaletteButton&);
     };
 
-    void OnSelectColor(Button& activator);
+    virtual void OnSelectColor(Button& activator);
+
+    virtual void AddButton(int x, int y, int color, int defaultcolor);
+
+    virtual void AddAnsi(int defaultcolor);
+    virtual void AddGrayscale(int defaultcolor);
+    virtual void AddColorCube(int defaultcolor);
 
   private:
-    void AddButton(int x, int y, int color, int defaultcolor);
-
-    void AddAnsi(int defaultcolor);
-    void AddGrayscale(int defaultcolor);
-    void AddColorCube(int defaultcolor);
-
     ColorPickerPalette(const ColorPickerPalette&);
     ColorPickerPalette& operator=(const ColorPickerPalette&);
 };
