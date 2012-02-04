@@ -63,7 +63,7 @@ protected:
   friend class ColorPickerPalette;
 
   public:
-    ColorPickerPaletteButton (int color);
+    ColorPickerPaletteButton(int color);
     virtual ~ColorPickerPaletteButton() {};
 
     virtual void Draw();

@@ -57,25 +57,25 @@ TestWindow::TestWindow()
 
   AddWidget(*(new CppConsUI::Label("Press F10 to quit.")), 1, 1);
 
-  button = new CppConsUI::Button ("Open Colorpicker...");
+  button = new CppConsUI::Button("Open Colorpicker...");
   AddWidget(*button, 1, 3);
   button->signal_activate.connect(
       sigc::bind(sigc::mem_fun(this, &TestWindow::OnButtonActivate), 0));
 
-  button = new CppConsUI::Button ("Open Colorpicker: ansi only...");
+  button = new CppConsUI::Button("Open Colorpicker: ansi only...");
   AddWidget(*button, 1, 4);
   button->signal_activate.connect(
       sigc::bind(sigc::mem_fun(this, &TestWindow::OnButtonActivate),
 	      CppConsUI::ColorPickerPalette::FLAG_HIDE_GRAYSCALE
 	      | CppConsUI::ColorPickerPalette::FLAG_HIDE_COLORCUBE));
 
-  button = new CppConsUI::Button ("Open Colorpicker: ansi + Grayscale...");
+  button = new CppConsUI::Button("Open Colorpicker: ansi + Grayscale...");
   AddWidget(*button, 1, 5);
   button->signal_activate.connect(
       sigc::bind(sigc::mem_fun(this, &TestWindow::OnButtonActivate),
 	      CppConsUI::ColorPickerPalette::FLAG_HIDE_COLORCUBE));
 
-  button = new CppConsUI::Button ("Open Colorpicker: color cube only...");
+  button = new CppConsUI::Button("Open Colorpicker: color cube only...");
   AddWidget(*button, 1, 6);
   button->signal_activate.connect(
       sigc::bind(sigc::mem_fun(this, &TestWindow::OnButtonActivate),

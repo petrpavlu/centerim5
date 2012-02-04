@@ -65,7 +65,7 @@ void ColorPickerPalette::OnSelectColor(Button& activator)
     dynamic_cast<ColorPickerPaletteButton*>(&activator);
   g_assert(btn);
 
-  signal_color_selected (*this, btn->color);
+  signal_color_selected(*this, btn->color);
 }
 
 void ColorPickerPalette::AddButton(int x, int y, int color, int defaultcolor)
@@ -74,7 +74,7 @@ void ColorPickerPalette::AddButton(int x, int y, int color, int defaultcolor)
 
   btn->signal_activate.connect(sigc::mem_fun(this,
       &ColorPickerPalette::OnSelectColor));
-  AddWidget (*btn, x, y);
+  AddWidget(*btn, x, y);
 
   if (color == defaultcolor)
     btn->GrabFocus();
@@ -92,7 +92,7 @@ void ColorPickerPalette::AddAnsi(int defaultcolor)
   w = MAX(w, 8*2);
   h = h + 2;
 
-  Resize (w, h);
+  Resize(w, h);
 
   // Add the color picker buttons
   //@todo support terms with only 8 colors here
@@ -119,7 +119,7 @@ void ColorPickerPalette::AddGrayscale(int defaultcolor)
   w = MAX(w, (24)*2); // There are 24 colors in the gray scale.
   h = h + 1;
 
-  Resize (w, h);
+  Resize(w, h);
 
   // Add the color picker buttons
   for (color = GRAYSCALE_START, x = 0;
@@ -145,7 +145,7 @@ void ColorPickerPalette::AddColorCube(int defaultcolor)
   w = MAX(w, (6*6*2)+5);
   h = h + 6;
 
-  Resize (w, h);
+  Resize(w, h);
 
   // Add the color picker buttons
   x = 0;

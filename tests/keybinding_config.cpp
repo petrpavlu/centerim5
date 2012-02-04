@@ -234,7 +234,7 @@ void TestWindow::start_element(GMarkupParseContext *context,
     const char *context;
     const char *action;
     const char *key;
-    if (!g_markup_collect_attributes (element_name, attribute_names,
+    if (!g_markup_collect_attributes(element_name, attribute_names,
           attribute_values, error,
           G_MARKUP_COLLECT_STRING, "context", &context,
           G_MARKUP_COLLECT_STRING, "action", &action,
