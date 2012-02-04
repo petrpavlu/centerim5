@@ -180,7 +180,7 @@ bool CenterIM::LoadColorSchemeConfig()
       attrs = xmlnode_get_attrib(color, "attributes");
 
       if (fgs) {
-        if (sscanf(xmlnode_get_attrib(color, "foreground"), "%d", &fg) == EOF) {
+        if (sscanf(fgs, "%d", &fg) == EOF) {
           res = false;
           goto LoadColorSchemeConfig_done;
         }
@@ -189,7 +189,7 @@ bool CenterIM::LoadColorSchemeConfig()
       }
 
       if (bgs) {
-        if (sscanf(xmlnode_get_attrib(color, "background"), "%d", &bg) == EOF) {
+        if (sscanf(bgs, "%d", &bg) == EOF) {
           res = false;
           goto LoadColorSchemeConfig_done;
         }
