@@ -41,10 +41,6 @@ class MenuWindow
 : public Window
 {
 public:
-  enum Flag {
-    FLAG_HIDE_ON_CLOSE = 1 << 0 /**< MenuWindow will hide instead of close. */
-  };
-
   MenuWindow(int x, int y, int w, int h, const char *title = NULL);
   MenuWindow(Widget& ref_, int w, int h, const char *title = NULL);
   virtual ~MenuWindow() {}
@@ -77,8 +73,8 @@ public:
   virtual void AppendWidget(Widget& widget)
     { listbox->AppendWidget(widget); }
 
-  virtual void SetFlags(int new_flags);
-  virtual int GetFlags() const { return flags; }
+  virtual void SetHideOnClose(bool new_hide_on_close);
+  virtual int GetHideOnClose() const { return hide_on_close; }
 
   virtual void SetRef(Widget *new_ref);
 
@@ -101,7 +97,7 @@ protected:
 
   SubMenus submenus;
 
-  int flags;
+  bool hide_on_close;
 
   // Container
   virtual void AddWidget(Widget& widget, int x, int y);

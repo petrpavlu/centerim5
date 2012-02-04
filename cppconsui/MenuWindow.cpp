@@ -33,7 +33,7 @@ namespace CppConsUI
 
 MenuWindow::MenuWindow(int x, int y, int w, int h, const char *title)
 : Window(x, y, w, h, title, TYPE_TOP)
-, wish_height(3), ref(NULL), xshift(0), yshift(0), flags(0)
+, wish_height(3), ref(NULL), xshift(0), yshift(0), hide_on_close(false)
 {
   wish_width = MENU_WINDOW_WISH_WIDTH;
 
@@ -45,7 +45,7 @@ MenuWindow::MenuWindow(int x, int y, int w, int h, const char *title)
 
 MenuWindow::MenuWindow(Widget& ref_, int w, int h, const char *title)
 : Window(0, 0, w, h, title, TYPE_TOP)
-, wish_height(3), ref(&ref_), xshift(0), yshift(0), flags(0)
+, wish_height(3), ref(&ref_), xshift(0), yshift(0), hide_on_close(false)
 {
   wish_width = MENU_WINDOW_WISH_WIDTH;
 
@@ -86,7 +86,7 @@ void MenuWindow::Hide()
 
 void MenuWindow::Close()
 {
-  if (flags & FLAG_HIDE_ON_CLOSE)
+  if (hide_on_close)
     Hide();
   else
     Window::Close();
@@ -111,7 +111,7 @@ Button *MenuWindow::AppendSubMenu(const char *title, MenuWindow& submenu)
 {
   // setup submenu correctly
   submenu.Hide();
-  submenu.SetFlags(FLAG_HIDE_ON_CLOSE);
+  submenu.SetHideOnClose(true);
   signal_hide.connect(sigc::hide(sigc::mem_fun(submenu, &MenuWindow::Hide)));
 
   // create an opening button
@@ -127,12 +127,12 @@ Button *MenuWindow::AppendSubMenu(const char *title, MenuWindow& submenu)
   return button;
 }
 
-void MenuWindow::SetFlags(int new_flags)
+void MenuWindow::SetHideOnClose(bool new_hide_on_close)
 {
-  if (flags == new_flags)
+  if (hide_on_close == new_hide_on_close)
     return;
 
-  flags = new_flags;
+  hide_on_close = new_hide_on_close;
   Redraw();
 }
 

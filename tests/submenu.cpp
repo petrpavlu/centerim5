@@ -43,7 +43,7 @@ SubMenuWindow::SubMenuWindow()
   AddWidget(*button, 1, 3);
 
   menu = new CppConsUI::MenuWindow(*button, AUTOSIZE, AUTOSIZE);
-  menu->SetFlags(CppConsUI::MenuWindow::FLAG_HIDE_ON_CLOSE);
+  menu->SetHideOnClose(true);
 
   button->signal_activate.connect(sigc::hide(sigc::mem_fun(menu,
           &CppConsUI::MenuWindow::Show)));
