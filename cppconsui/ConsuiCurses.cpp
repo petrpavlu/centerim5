@@ -390,11 +390,12 @@ int screen_init()
   if (!::initscr())
     return ERR;
 
-  if (::has_colors())
+  if (::has_colors()) {
     if (::start_color() == ERR)
       return ERR;
     if (::use_default_colors() == ERR)
       return ERR;
+  }
   if (::curs_set(0) == ERR)
     return ERR;
   if (::nonl() == ERR)
