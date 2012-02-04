@@ -32,8 +32,6 @@
 #include "Container.h"
 #include "Button.h"
 
-#include <set>
-
 namespace CppConsUI
 {
 
