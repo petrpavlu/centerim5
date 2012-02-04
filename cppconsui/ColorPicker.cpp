@@ -52,10 +52,7 @@ ColorPicker::ColorPicker(int fg, int bg, bool sample_)
   AppendWidget(*bg_combo);
 
   if (sample_) {
-    sample = new Label(10, 1, _("  SAMPLE  "));
-
-    colorscheme = g_strdup_printf("colorpicker %p", (void*)this);
-    sample->SetColorScheme(colorscheme);
+    sample = new Sample(10, fg, bg);
 
     AppendWidget(*(new Label(1, 1, "")));
     AppendWidget(*sample);
@@ -64,19 +61,13 @@ ColorPicker::ColorPicker(int fg, int bg, bool sample_)
   SetColorPair(fg, bg);
 }
 
-ColorPicker::~ColorPicker()
-{
-  COLORSCHEME->FreeScheme(colorscheme);
-  g_free(colorscheme);
-}
-
 void ColorPicker::SetColorPair(int fg, int bg)
 {
   fg_combo->SetColor(fg);
   bg_combo->SetColor(bg);
 
   if (sample)
-    COLORSCHEME->SetColorPair(colorscheme, "label", "text", fg, bg, 0, true);
+    sample->SetColors(fg, bg);
 
   signal_colorpair_selected(*this, fg, bg);
 }
@@ -92,6 +83,31 @@ void ColorPicker::OnColorChanged(ComboBox& activator, int new_color)
     new_bg = new_color;
 
   SetColorPair(new_fg, new_bg);
+}
+
+ColorPicker::Sample::Sample(int w, int fg, int bg)
+: Widget(w, 1), c(fg, bg)
+{
+}
+
+void ColorPicker::Sample::SetColors(int fg, int bg)
+{
+  c.foreground = fg;
+  c.background = bg;
+}
+
+void ColorPicker::Sample::Draw()
+{
+  ProceedUpdateArea();
+
+  if (!area)
+    return;
+
+  int colorpair = COLORSCHEME->GetColorPair(c);
+
+  area->attron(colorpair);
+  area->mvaddstring(1, 0, _(" SAMPLE "));
+  area->attroff(colorpair);
 }
 
 } // namespace CppConsUI

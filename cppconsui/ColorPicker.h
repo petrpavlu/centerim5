@@ -43,7 +43,7 @@ class ColorPicker
 {
 public:
   ColorPicker(int fg, int bg, bool sample = false);
-  virtual ~ColorPicker();
+  virtual ~ColorPicker() {}
 
   virtual void SetColorPair(int fg, int bg);
 
@@ -53,12 +53,27 @@ public:
   sigc::signal<void, ColorPicker&, int, int> signal_colorpair_selected;
 
 protected:
+  class Sample
+  : public Widget
+  {
+  public:
+    Sample(int w, int fg = -1, int bg = -1);
+    virtual ~Sample() {}
+
+    virtual void SetColors(int fg, int bg);
+
+    // Widget
+    virtual void Draw();
+
+  protected:
+    ColorScheme::Color c;
+  };
+
   virtual void OnColorChanged(ComboBox& activator, int new_color);
 
   ColorPickerComboBox *fg_combo;
   ColorPickerComboBox *bg_combo;
-  Label *sample;
-  char *colorscheme;
+  Sample *sample;
 
 private:
   ColorPicker(const ColorPicker&);
