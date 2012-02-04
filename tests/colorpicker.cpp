@@ -140,7 +140,6 @@ void TestWindow::OnColerPickerChanged(CppConsUI::ColorPicker& activator,
 {
   char *text = g_strdup_printf("Chosen color (%d,%d)", new_fg, new_bg);
   label2->SetText(text);
-  label2->Draw();
   g_free(text);
 
   combo->SetColor(new_fg);
@@ -158,7 +157,6 @@ void TestWindow::OnChangeColorResponseHandler(
 
   char *text = g_strdup_printf("Chosen color nr: %d", color);
   label2->SetText(text);
-  label2->Draw();
   g_free(text);
 
 }
