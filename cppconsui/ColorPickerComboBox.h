@@ -52,10 +52,10 @@ public:
   virtual ~ColorPickerComboBox() {}
 
   // Button
-  void Draw();
+  virtual void Draw();
 
   void SetColor(int new_color);
-  int GetColor() { return selected_color; }
+  virtual int GetColor() { return selected_color; }
 
   sigc::signal<void, ColorPickerComboBox&, int>
     signal_color_changed;
@@ -92,11 +92,11 @@ protected:
   virtual void DropDownClose(FreeWindow& window)
     { ComboBox::DropDownClose(window); }
 #ifdef COLORPICKER_256COLOR
-  void ColorPickerOk(ColorPickerDialog& activator,
+  virtual void ColorPickerOk(ColorPickerDialog& activator,
       AbstractDialog::ResponseType response, int new_color);
-  void ColorPickerClose(FreeWindow& window);
+  virtual void ColorPickerClose(FreeWindow& window);
 #endif // COLORPICKER_256COLOR
-  void SetSelected(int new_entry);
+  virtual void SetSelected(int new_entry);
 
   int selected_color;
 

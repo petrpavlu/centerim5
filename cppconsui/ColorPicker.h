@@ -45,7 +45,7 @@ public:
   ColorPicker(int fg, int bg, bool sample = false);
   virtual ~ColorPicker();
 
-  void SetColorPair(int fg, int bg);
+  virtual void SetColorPair(int fg, int bg);
 
   /**
    * Emited signal when the colorpair has been selected
@@ -53,7 +53,7 @@ public:
   sigc::signal<void, ColorPicker&, int, int> signal_colorpair_selected;
 
 protected:
-  void OnColorChanged(ComboBox& activator, int new_color);
+  virtual void OnColorChanged(ComboBox& activator, int new_color);
 
   ColorPickerComboBox *fg_combo;
   ColorPickerComboBox *bg_combo;

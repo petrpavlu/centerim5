@@ -69,10 +69,9 @@ protected:
     virtual void Draw();
 
   protected:
-
-  private:
     int color;
 
+  private:
     ColorPickerPaletteButton(const ColorPickerPaletteButton&);
     ColorPickerPaletteButton& operator=(const ColorPickerPaletteButton&);
   };
