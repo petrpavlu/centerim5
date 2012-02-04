@@ -73,14 +73,6 @@ void ColorPickerComboBox::SetColor(int new_color)
 #endif // COLORPICKER_256COLOR
 }
 
-void ColorPickerComboBox::SetSelected(int new_entry)
-{
-  ComboBox::SetSelected(new_entry);
-
-  selected_color = options[new_entry].data;
-  signal_color_changed(*this, selected_color);
-}
-
 void ColorPickerComboBox::Draw()
 {
   ProceedUpdateArea();
@@ -189,6 +181,14 @@ void ColorPickerComboBox::ColorPickerClose(FreeWindow& window)
   colorpicker = NULL;
 }
 #endif // COLORPICKER_256COLOR
+
+void ColorPickerComboBox::SetSelected(int new_entry)
+{
+  ComboBox::SetSelected(new_entry);
+
+  selected_color = options[new_entry].data;
+  signal_color_changed(*this, selected_color);
+}
 
 ColorPickerComboBox::ColorButton::ColorButton(int w, int color)
 : Button(w, 1, "", 0), color(color)

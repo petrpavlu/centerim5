@@ -404,6 +404,11 @@ int screen_init()
   return OK;
 }
 
+int screen_finalize()
+{
+  return ::endwin();
+}
+
 bool init_colorpair(int idx, int fg, int bg, int *res)
 {
   bool success;
@@ -414,11 +419,6 @@ bool init_colorpair(int idx, int fg, int bg, int *res)
     *res = COLOR_PAIR(idx);
 
   return success;
-}
-
-int screen_finalize()
-{
-  return ::endwin();
 }
 
 int nrcolors()
