@@ -66,21 +66,21 @@ TestWindow::TestWindow()
   AddWidget(*button, 1, 4);
   button->signal_activate.connect(
       sigc::bind(sigc::mem_fun(this, &TestWindow::OnButtonActivate),
-	      CppConsUI::ColorPickerPalette::FLAG_HIDE_GRAYSCALE
-	      | CppConsUI::ColorPickerPalette::FLAG_HIDE_COLORCUBE));
+          CppConsUI::ColorPickerPalette::FLAG_HIDE_GRAYSCALE
+          | CppConsUI::ColorPickerPalette::FLAG_HIDE_COLORCUBE));
 
   button = new CppConsUI::Button("Open Colorpicker: ansi + Grayscale...");
   AddWidget(*button, 1, 5);
   button->signal_activate.connect(
       sigc::bind(sigc::mem_fun(this, &TestWindow::OnButtonActivate),
-	      CppConsUI::ColorPickerPalette::FLAG_HIDE_COLORCUBE));
+          CppConsUI::ColorPickerPalette::FLAG_HIDE_COLORCUBE));
 
   button = new CppConsUI::Button("Open Colorpicker: color cube only...");
   AddWidget(*button, 1, 6);
   button->signal_activate.connect(
       sigc::bind(sigc::mem_fun(this, &TestWindow::OnButtonActivate),
-	      CppConsUI::ColorPickerPalette::FLAG_HIDE_ANSI
-	      | CppConsUI::ColorPickerPalette::FLAG_HIDE_GRAYSCALE));
+          CppConsUI::ColorPickerPalette::FLAG_HIDE_ANSI
+          | CppConsUI::ColorPickerPalette::FLAG_HIDE_GRAYSCALE));
 
   label1 = new CppConsUI::Label; AddWidget(*label1, 1, 8);
   label2 = new CppConsUI::Label; AddWidget(*label2, 1, 10);
@@ -88,7 +88,7 @@ TestWindow::TestWindow()
   label2->SetText("...");
 
   char *text = g_strdup_printf("Supported nr of colors: %d",  
-		  CppConsUI::Curses::nrcolors());
+      CppConsUI::Curses::nrcolors());
   label1->SetText(text);
   g_free(text);
 
@@ -97,7 +97,7 @@ TestWindow::TestWindow()
 
   l = new CppConsUI::Label();
   text = g_strdup_printf("Supported nr of color pairs: %d",  
-		  CppConsUI::Curses::nrcolorpairs());
+      CppConsUI::Curses::nrcolorpairs());
   l->SetText(text);
   g_free(text);
   AddWidget(*l, 1, 9);

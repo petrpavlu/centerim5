@@ -85,14 +85,14 @@ private:
   static void request_add_(PurpleAccount *account, const char *remote_user,
       const char *id, const char *alias, const char *message)
     { ACCOUNTS->request_add(account, remote_user, id, alias, message); }
-	static void *request_authorize_(PurpleAccount *account,
+  static void *request_authorize_(PurpleAccount *account,
       const char *remote_user, const char *id, const char *alias,
       const char *message, gboolean on_list,
       PurpleAccountRequestAuthorizationCb authorize_cb,
       PurpleAccountRequestAuthorizationCb deny_cb, void *user_data)
     { return ACCOUNTS->request_authorize(account, remote_user, id, alias,
         message, on_list, authorize_cb, deny_cb, user_data); }
-	static void close_account_request_(void *ui_handle)
+  static void close_account_request_(void *ui_handle)
     { ACCOUNTS->close_account_request(ui_handle); }
 
   void notify_added(PurpleAccount *account, const char *remote_user,
@@ -104,7 +104,7 @@ private:
       const char *id, const char *alias, const char *message,
       gboolean on_list, PurpleAccountRequestAuthorizationCb authorize_cb,
       PurpleAccountRequestAuthorizationCb deny_cb, void *user_data);
-	void close_account_request(void *ui_handle);
+  void close_account_request(void *ui_handle);
 
   static void add_user_cb_(AddUserData *data)
     { ACCOUNTS->add_user_cb(data); }
