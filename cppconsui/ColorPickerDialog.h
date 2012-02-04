@@ -43,7 +43,7 @@ class ColorPickerDialog
 : public AbstractDialog
 {
   public:
-    ColorPickerDialog(const char *title, const int defaultvalue,
+    ColorPickerDialog(const char *title, int defaultvalue,
         int flags);
     virtual ~ColorPickerDialog() {}
 

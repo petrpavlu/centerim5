@@ -65,7 +65,7 @@ class ColorPickerPalette
       friend class ColorPickerPalette;
 
       public:
-        ColorPickerPaletteButton (const int color);
+        ColorPickerPaletteButton (int color);
         virtual ~ColorPickerPaletteButton() {};
 
         void Draw();
@@ -73,7 +73,7 @@ class ColorPickerPalette
       protected:
 
       private:
-        const int color;
+        int color;
 
         ColorPickerPaletteButton(const ColorPickerPaletteButton&);
         ColorPickerPaletteButton& operator=(const ColorPickerPaletteButton&);

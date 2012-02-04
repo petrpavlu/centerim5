@@ -32,7 +32,7 @@
 namespace CppConsUI
 {
 
-ColorPickerDialog::ColorPickerDialog(const char *title, const int defaultvalue,
+ColorPickerDialog::ColorPickerDialog(const char *title, int defaultvalue,
     int flags)
 : AbstractDialog(title)
 {

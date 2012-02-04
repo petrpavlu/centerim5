@@ -167,7 +167,7 @@ void ColorPickerPalette::AddColorCube(int defaultcolor)
   }
 }
 
-ColorPickerPalette::ColorPickerPaletteButton::ColorPickerPaletteButton (const int color)
+ColorPickerPalette::ColorPickerPaletteButton::ColorPickerPaletteButton (int color)
 : Button(2, 1, ""), color(color)
 {
 }
