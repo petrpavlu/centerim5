@@ -42,29 +42,29 @@ namespace CppConsUI
 class ColorPickerDialog
 : public AbstractDialog
 {
-  public:
-    ColorPickerDialog(const char *title, int defaultvalue,
-        int flags);
-    virtual ~ColorPickerDialog() {}
+public:
+  ColorPickerDialog(const char *title, int defaultvalue,
+      int flags);
+  virtual ~ColorPickerDialog() {}
 
-    virtual void OnColorSelected (ColorPickerPalette& activator, int color);
+  virtual void OnColorSelected (ColorPickerPalette& activator, int color);
 
-    /**
-     * Signal emitted when the user closes the dialog.
-     */
-    sigc::signal<void, ColorPickerDialog&, ResponseType, int> signal_response;
+  /**
+   * Signal emitted when the user closes the dialog.
+   */
+  sigc::signal<void, ColorPickerDialog&, ResponseType, int> signal_response;
 
-  protected:
+protected:
 
-    // AbstractDialog
-    virtual void EmitResponse(ResponseType response);
+  // AbstractDialog
+  virtual void EmitResponse(ResponseType response);
 
-    ColorPickerPalette *pick;
-    int color;
+  ColorPickerPalette *pick;
+  int color;
 
-  private:
-    ColorPickerDialog(const ColorPickerDialog&);
-    ColorPickerDialog& operator=(const ColorPickerDialog&);
+private:
+  ColorPickerDialog(const ColorPickerDialog&);
+  ColorPickerDialog& operator=(const ColorPickerDialog&);
 };
 
 } // namespace CppConsUI

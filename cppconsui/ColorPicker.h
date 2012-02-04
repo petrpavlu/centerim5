@@ -41,28 +41,28 @@ namespace CppConsUI
 class ColorPicker
 : public HorizontalListBox
 {
-  public:
-    ColorPicker(int fg, int bg, bool sample = false);
-    virtual ~ColorPicker();
+public:
+  ColorPicker(int fg, int bg, bool sample = false);
+  virtual ~ColorPicker();
 
-    void SetColorPair(int fg, int bg);
+  void SetColorPair(int fg, int bg);
 
-    /**
-     * Emited signal when the colorpair has been selected
-     */
-    sigc::signal<void, ColorPicker&, int, int> signal_colorpair_selected;
+  /**
+   * Emited signal when the colorpair has been selected
+   */
+  sigc::signal<void, ColorPicker&, int, int> signal_colorpair_selected;
 
-  protected:
-    void OnColorChanged(ComboBox& activator, int new_color);
+protected:
+  void OnColorChanged(ComboBox& activator, int new_color);
 
-    ColorPickerComboBox *fg_combo;
-    ColorPickerComboBox *bg_combo;
-    Label *sample;
-    char *colorscheme;
+  ColorPickerComboBox *fg_combo;
+  ColorPickerComboBox *bg_combo;
+  Label *sample;
+  char *colorscheme;
 
-  private:
-    ColorPicker(const ColorPicker&);
-    ColorPicker& operator=(const ColorPicker&);
+private:
+  ColorPicker(const ColorPicker&);
+  ColorPicker& operator=(const ColorPicker&);
 };
 
 } // namespace CppConsUI

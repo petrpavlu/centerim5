@@ -41,53 +41,53 @@ namespace CppConsUI
 class ColorPickerPalette
 : public Container
 {
+public:
+  enum Flag {
+    FLAG_HIDE_ANSI = 1 << 0,
+    FLAG_HIDE_GRAYSCALE = 1 << 1,
+    FLAG_HIDE_COLORCUBE = 1 << 2
+  };
+
+  ColorPickerPalette(int defaultcolor, int flags = 0);
+  virtual ~ColorPickerPalette() {};
+
+  /**
+   * Emited signal when a color is selected
+   */
+  sigc::signal<void, ColorPickerPalette&, int> signal_color_selected;
+
+protected:
+  class ColorPickerPaletteButton
+  : public Button
+  {
+  friend class ColorPickerPalette;
+
   public:
-    enum Flag {
-      FLAG_HIDE_ANSI = 1 << 0,
-      FLAG_HIDE_GRAYSCALE = 1 << 1,
-      FLAG_HIDE_COLORCUBE = 1 << 2
-    };
+    ColorPickerPaletteButton (int color);
+    virtual ~ColorPickerPaletteButton() {};
 
-    ColorPickerPalette(int defaultcolor, int flags = 0);
-    virtual ~ColorPickerPalette() {};
-
-    /**
-     * Emited signal when a color is selected
-     */
-    sigc::signal<void, ColorPickerPalette&, int> signal_color_selected;
+    virtual void Draw();
 
   protected:
-    class ColorPickerPaletteButton
-    : public Button
-    {
-      friend class ColorPickerPalette;
-
-      public:
-        ColorPickerPaletteButton (int color);
-        virtual ~ColorPickerPaletteButton() {};
-
-        virtual void Draw();
-
-      protected:
-
-      private:
-        int color;
-
-        ColorPickerPaletteButton(const ColorPickerPaletteButton&);
-        ColorPickerPaletteButton& operator=(const ColorPickerPaletteButton&);
-    };
-
-    virtual void OnSelectColor(Button& activator);
-
-    virtual void AddButton(int x, int y, int color, int defaultcolor);
-
-    virtual void AddAnsi(int defaultcolor);
-    virtual void AddGrayscale(int defaultcolor);
-    virtual void AddColorCube(int defaultcolor);
 
   private:
-    ColorPickerPalette(const ColorPickerPalette&);
-    ColorPickerPalette& operator=(const ColorPickerPalette&);
+    int color;
+
+    ColorPickerPaletteButton(const ColorPickerPaletteButton&);
+    ColorPickerPaletteButton& operator=(const ColorPickerPaletteButton&);
+  };
+
+  virtual void OnSelectColor(Button& activator);
+
+  virtual void AddButton(int x, int y, int color, int defaultcolor);
+
+  virtual void AddAnsi(int defaultcolor);
+  virtual void AddGrayscale(int defaultcolor);
+  virtual void AddColorCube(int defaultcolor);
+
+private:
+  ColorPickerPalette(const ColorPickerPalette&);
+  ColorPickerPalette& operator=(const ColorPickerPalette&);
 };
 
 } // namespace CppConsUI
