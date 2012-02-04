@@ -333,10 +333,11 @@ char *Conversation::StripHTML(const char *str) const
         else if (href && !g_ascii_strncasecmp(str2 + i, "</a>", 4)) {
           size_t hrlen = strlen(href);
 
-          /* Only insert the href if it's different from the CDATA. */
+          /* Only insert the href if it's different from the CDATA.
+           *  7 == strlen("http://") */
           if ((hrlen != (unsigned)(j - href_st) ||
                 strncmp(str2 + href_st, href, hrlen)) &&
-              (hrlen != (unsigned)(j - href_st + 7) || /* 7 == strlen("http://") */
+              (hrlen != (unsigned)(j - href_st + 7) ||
                strncmp(str2 + href_st, href + 7, hrlen - 7)))
           {
             str2[j++] = ' ';
@@ -349,8 +350,8 @@ char *Conversation::StripHTML(const char *str) const
           }
         }
 
-        /* Check for tags which should be mapped to newline (but ignore some of
-         * the tags at the beginning of the text) */
+        /* Check for tags which should be mapped to newline (but ignore some
+         * of the tags at the beginning of the text) */
         else if ((j && (!g_ascii_strncasecmp(str2 + i, "<p>", 3)
                 || !g_ascii_strncasecmp(str2 + i, "<tr", 3)
                 || !g_ascii_strncasecmp(str2 + i, "<hr", 3)

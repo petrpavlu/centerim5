@@ -36,13 +36,16 @@ namespace CppConsUI
 {
 
 ColorPicker::ColorPicker(int fg, int bg, bool sample_)
-: HorizontalListBox(AUTOSIZE, 1), fg_combo(NULL), bg_combo(NULL), sample(NULL)
+: HorizontalListBox(AUTOSIZE, 1)
+, fg_combo(NULL), bg_combo(NULL), sample(NULL)
 {
   fg_combo = new ColorPickerComboBox(10, fg);
   bg_combo = new ColorPickerComboBox(10, bg);
 
-  fg_combo->signal_color_changed.connect(sigc::mem_fun(this, &ColorPicker::OnColorChanged));
-  bg_combo->signal_color_changed.connect(sigc::mem_fun(this, &ColorPicker::OnColorChanged));
+  fg_combo->signal_color_changed.connect(
+      sigc::mem_fun(this, &ColorPicker::OnColorChanged));
+  bg_combo->signal_color_changed.connect(
+      sigc::mem_fun(this, &ColorPicker::OnColorChanged));
 
   AppendWidget(*fg_combo);
   AppendWidget(*(new Label(1, 1, "")));

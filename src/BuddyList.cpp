@@ -372,7 +372,8 @@ void BuddyList::request_add_group()
 
 void BuddyList::add_buddy_ok_cb(PurpleRequestFields *fields)
 {
-  PurpleAccount *account = purple_request_fields_get_account(fields, "account");
+  PurpleAccount *account =
+    purple_request_fields_get_account(fields, "account");
   const char *name = purple_request_fields_get_string(fields, "name");
   const char *alias = purple_request_fields_get_string(fields, "alias");
   int selected = purple_request_fields_get_choice(fields, "group");
@@ -423,7 +424,8 @@ void BuddyList::add_buddy_ok_cb(PurpleRequestFields *fields)
 
 void BuddyList::add_chat_ok_cb(PurpleRequestFields *fields)
 {
-  PurpleAccount *account = purple_request_fields_get_account(fields, "account");
+  PurpleAccount *account =
+    purple_request_fields_get_account(fields, "account");
   const char *name = purple_request_fields_get_string(fields, "name");
   const char *alias = purple_request_fields_get_string(fields, "alias");
   int selected = purple_request_fields_get_choice(fields, "group");
@@ -461,7 +463,8 @@ void BuddyList::add_chat_ok_cb(PurpleRequestFields *fields)
     err = true;
   }
   if (err) {
-    purple_blist_request_add_chat(account, purple_find_group(group), alias, name);
+    purple_blist_request_add_chat(account, purple_find_group(group),
+        alias, name);
     return;
   }
 

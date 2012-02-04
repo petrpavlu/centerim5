@@ -61,7 +61,8 @@ ColorPickerPalette::ColorPickerPalette(int defaultcolor, int flags)
 
 void ColorPickerPalette::OnSelectColor(Button& activator)
 {
-  ColorPickerPaletteButton *btn = dynamic_cast<ColorPickerPaletteButton*>(&activator);
+  ColorPickerPaletteButton *btn =
+    dynamic_cast<ColorPickerPaletteButton*>(&activator);
   g_assert(btn);
 
   signal_color_selected (*this, btn->color);
@@ -123,7 +124,8 @@ void ColorPickerPalette::AddGrayscale(int defaultcolor)
   Resize (w, h);
 
   // Add the color picker buttons
-  for (color = GRAYSCALE_START, x = 0; color <= GRAYSCALE_END; color++, x += 2)
+  for (color = GRAYSCALE_START, x = 0;
+      color <= GRAYSCALE_END; color++, x += 2)
     AddButton(x, y, color, defaultcolor);
 
   AddButton(x, y, Curses::Color::WHITE, defaultcolor);
@@ -167,7 +169,8 @@ void ColorPickerPalette::AddColorCube(int defaultcolor)
   }
 }
 
-ColorPickerPalette::ColorPickerPaletteButton::ColorPickerPaletteButton (int color)
+ColorPickerPalette::ColorPickerPaletteButton::ColorPickerPaletteButton(
+    int color)
 : Button(2, 1, ""), color(color)
 {
 }

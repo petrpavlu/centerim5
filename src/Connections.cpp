@@ -50,7 +50,8 @@ Connections::Connections()
   //centerim_connection_ui_ops.report_disconnect = report_disconnect_;
   centerim_connection_ui_ops.network_connected = network_connected_;
   centerim_connection_ui_ops.network_disconnected = network_disconnected_;
-  centerim_connection_ui_ops.report_disconnect_reason = report_disconnect_reason_;
+  centerim_connection_ui_ops.report_disconnect_reason =
+    report_disconnect_reason_;
   purple_connections_set_ui_ops(&centerim_connection_ui_ops);
 }
 

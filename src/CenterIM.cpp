@@ -79,7 +79,8 @@ int CenterIM::Run(const char *config_path)
   // initialize Log component
   Log::Init();
   if (logbuf) {
-    for (LogBufferItems::iterator i = logbuf->begin(); i != logbuf->end(); i++) {
+    for (LogBufferItems::iterator i = logbuf->begin();
+        i != logbuf->end(); i++) {
       purple_debug(i->level, i->category, "%s", i->arg_s);
       g_free(i->category);
       g_free(i->arg_s);

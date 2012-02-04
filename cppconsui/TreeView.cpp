@@ -462,24 +462,28 @@ int TreeView::DrawNode(SiblingIterator node, int top)
         if (i != last)
           area->mvaddlinechar(depthoffset, top + height, Curses::LINE_LTEE);
         else
-          area->mvaddlinechar(depthoffset, top + height, Curses::LINE_LLCORNER);
+          area->mvaddlinechar(depthoffset, top + height,
+              Curses::LINE_LLCORNER);
       }
 
       /*
       if (depthoffset + 1 < realw)
-        area->mvaddlinechar(depthoffset + 1, top + height, Curses::LINE_HLINE);
+        area->mvaddlinechar(depthoffset + 1, top + height,
+            Curses::LINE_HLINE);
         */
 
       if (i->style == STYLE_NORMAL && IsNodeOpenable(i)) {
         if (depthoffset + 1 < realw)
           area->mvaddstring(depthoffset + 1, top + height, "[");
         if (depthoffset + 2 < realw)
-          area->mvaddstring(depthoffset + 2, top + height, i->collapsed ? "+" : "-");
+          area->mvaddstring(depthoffset + 2, top + height,
+              i->collapsed ? "+" : "-");
         if (depthoffset + 3 < realw)
           area->mvaddstring(depthoffset + 3, top + height, "]");
       }
       else if (depthoffset + 1 < realw)
-        area->mvaddlinechar(depthoffset + 1, top + height, Curses::LINE_HLINE);
+        area->mvaddlinechar(depthoffset + 1, top + height,
+            Curses::LINE_HLINE);
 
       area->attroff(attrs);
       int oldh = height;

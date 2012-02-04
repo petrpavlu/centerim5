@@ -156,7 +156,8 @@ void Log::purple_print(PurpleDebugLevel purplelevel, const char *category,
 
   if (!category) {
     category = "misc";
-    Warning(_("centerim/log: purple_print() parameter category was not defined."));
+    Warning(_("centerim/log: purple_print() parameter category was "
+         "not defined."));
   }
 
   char *text = g_strdup_printf("libpurple/%s: %s", category, arg_s);

@@ -351,8 +351,8 @@ void Container::MoveFocus(FocusDirection direction)
     case FOCUS_PAGE_UP:
       // finally, find the previous widget which will get the focus
       do {
-        /* If no focus cycling is allowed, stop if the widget with focus is the
-         * first/last child. */
+        /* If no focus cycling is allowed, stop if the widget with focus is
+         * the first/last child. */
         if (scope == FOCUS_CYCLE_NONE && iter == parent_iter.begin())
           goto end;
 

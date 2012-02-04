@@ -51,16 +51,23 @@ GeneralMenu::GeneralMenu()
   /*
   AppendSeparator();
   AppendItem(_("Find/add users"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-  AppendItem(_("Join channel/conference"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+  AppendItem(_("Join channel/conference"), sigc::mem_fun(this,
+      &GeneralMenu::Dummy));
   AppendItem(_("Link an RSS feed"), sigc::mem_fun(this, &GeneralMenu::Dummy));
   AppendSeparator();
-  AppendItem(_("View/edit ignore list"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-  AppendItem(_("View/edit invisible list"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-  AppendItem(_("View/edit visible list"), sigc::mem_fun(this, &GeneralMenu::Dummy));
+  AppendItem(_("View/edit ignore list"), sigc::mem_fun(this,
+      &GeneralMenu::Dummy));
+  AppendItem(_("View/edit invisible list"), sigc::mem_fun(this,
+      &GeneralMenu::Dummy));
+  AppendItem(_("View/edit visible list"), sigc::mem_fun(this,
+      &GeneralMenu::Dummy));
   AppendSeparator();
-  AppendItem(_("Show offline users"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-  AppendItem(_("Organize contact groups"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-  AppendItem(_("Mass group move..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
+  AppendItem(_("Show offline users"), sigc::mem_fun(this,
+      &GeneralMenu::Dummy));
+  AppendItem(_("Organize contact groups"), sigc::mem_fun(this,
+      &GeneralMenu::Dummy));
+  AppendItem(_("Mass group move..."), sigc::mem_fun(this,
+      &GeneralMenu::Dummy));
   */
   AppendSeparator();
   AppendItem("Request test...", sigc::mem_fun(this,

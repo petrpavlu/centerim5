@@ -87,7 +87,7 @@ int ColorScheme::GetColorPair(Color& c)
   }
 #endif // SAVE_COLOR_PAIRS
 
-  // No existing pair we can use. Check if we can add a new one to the palette.
+  // No existing pair we can use. Check if we can add a new one to the palette
   if ((int) pairs.size() >= Curses::nrcolorpairs()) {
     g_warning(_("Color pairs limit exceeded."));
     return 0;

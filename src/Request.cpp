@@ -301,7 +301,8 @@ Request::FieldsDialog::StringField::StringField(PurpleRequestField *field)
   signal_activate.connect(sigc::mem_fun(this, &StringField::OnActivate));
 }
 
-void Request::FieldsDialog::StringField::OnActivate(CppConsUI::Button& activator)
+void Request::FieldsDialog::StringField::OnActivate(
+    CppConsUI::Button& activator)
 {
   CppConsUI::InputDialog *dialog
     = new CppConsUI::InputDialog(purple_request_field_get_label(field),
@@ -340,9 +341,11 @@ Request::FieldsDialog::IntegerField::IntegerField(PurpleRequestField *field)
   signal_activate.connect(sigc::mem_fun(this, &IntegerField::OnActivate));
 }
 
-void Request::FieldsDialog::IntegerField::OnActivate(CppConsUI::Button& activator)
+void Request::FieldsDialog::IntegerField::OnActivate(
+    CppConsUI::Button& activator)
 {
-  char *value = g_strdup_printf("%d", purple_request_field_int_get_value(field));
+  char *value = g_strdup_printf("%d",
+      purple_request_field_int_get_value(field));
   CppConsUI::InputDialog *dialog
     = new CppConsUI::InputDialog(purple_request_field_get_label(field),
         value);

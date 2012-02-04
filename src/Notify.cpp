@@ -39,7 +39,8 @@ Notify::Notify()
   //centerim_notify_ui_ops.notify_emails = notify_emails_;
   //centerim_notify_ui_ops.notify_formatted = notify_formatted_;
   //centerim_notify_ui_ops.notify_searchresults = notify_searchresults_;
-  //centerim_notify_ui_ops.notify_searchresults_new_rows = notify_searchresults_new_rows_;
+  //centerim_notify_ui_ops.notify_searchresults_new_rows =
+  //  notify_searchresults_new_rows_;
   //centerim_notify_ui_ops.notify_userinfo = notify_userinfo_;
   //centerim_notify_ui_ops.notify_uri = notify_uri_;
   //centerim_notify_ui_ops.close_notify = close_notify_;

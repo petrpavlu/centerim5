@@ -48,7 +48,8 @@ ColorPickerDialog::ColorPickerDialog(const char *title, int defaultvalue,
   Resize (pick->GetWidth() + 2, pick->GetHeight() + 4);
 }
 
-void ColorPickerDialog::OnColorSelected (ColorPickerPalette& activator, int color_)
+void ColorPickerDialog::OnColorSelected (ColorPickerPalette& activator,
+    int color_)
 {
   color = color_;
   Response(RESPONSE_OK);
