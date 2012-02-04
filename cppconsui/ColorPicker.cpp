@@ -75,9 +75,8 @@ void ColorPicker::SetColorPair(int fg, int bg)
   fg_combo->SetColor(fg);
   bg_combo->SetColor(bg);
 
-  if (sample) {
+  if (sample)
     COLORSCHEME->SetColorPair(colorscheme, "label", "text", fg, bg, 0, true);
-  }
 
   signal_colorpair_selected(*this, fg, bg);
 }

@@ -97,12 +97,10 @@ void ColorPickerPalette::AddAnsi(int defaultcolor)
   // Add the color picker buttons
   //@todo support terms with only 8 colors here
   for (x = 0; x < 16; x++)
-  {
     if (x >= 8)
       AddButton((x-8)*2, y+1, x, defaultcolor);
     else
       AddButton(x*2, y, x, defaultcolor);
-  }
 }
 
 void ColorPickerPalette::AddGrayscale(int defaultcolor)
@@ -189,9 +187,8 @@ void ColorPickerPalette::ColorPickerPaletteButton::Draw()
     area->attron(Curses::Attr::REVERSE);
     area->mvaddstring(0, 0, "@@");
     area->attroff(Curses::Attr::REVERSE);
-  } else {
+  } else
     area->fill(colorpair, 0, 0, 2, 1);
-  }
 }
 
 } // namespace CppConsUI
