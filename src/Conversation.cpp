@@ -476,6 +476,8 @@ void Conversation::LoadHistory()
       LOG->Error(_("Error opening conversation logfile '%s'."), filename);
     return;
   }
+  // this should never fail
+  g_io_channel_set_encoding(chan, NULL, NULL);
 
   GIOStatus st;
   char *line;
@@ -495,7 +497,7 @@ void Conversation::LoadHistory()
     // parse direction (in/out)
     if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err))
         != G_IO_STATUS_NORMAL)
-      continue;
+      break;
     int color = 0;
     if (!strcmp(line, "OUT\n"))
       color = 1;
@@ -506,7 +508,7 @@ void Conversation::LoadHistory()
     // type
     if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err))
         != G_IO_STATUS_NORMAL)
-      continue;
+      break;
     bool cim4 = true;
     if (!strcmp(line, "MSG2\n"))
       cim4 = false;
@@ -519,14 +521,14 @@ void Conversation::LoadHistory()
     // sent time
     if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err))
         != G_IO_STATUS_NORMAL)
-      continue;
+      break;
     time_t sent_time = atol(line);
     g_free(line);
 
     // show time
     if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err))
         != G_IO_STATUS_NORMAL)
-      continue;
+      break;
     time_t show_time = atol(line);
     g_free(line);
 
@@ -534,7 +536,15 @@ void Conversation::LoadHistory()
       // cim5, read only one line and strip it off HTML
       if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err))
           != G_IO_STATUS_NORMAL)
+        break;
+
+      // validate UTF-8
+      if (!g_utf8_validate(line, -1, NULL)) {
+        g_free(line);
+        LOG->Error(_("Invalid message detected in conversation logfile"
+              " '%s'. The message was skipped."), filename);
         continue;
+      }
 
       // write text to the window
       char *nohtml = StripHTML(line);
@@ -556,6 +566,15 @@ void Conversation::LoadHistory()
           new_msg = true;
           break;
         }
+
+        // validate UTF-8
+        if (!g_utf8_validate(line, -1, NULL)) {
+          g_free(line);
+          LOG->Error(_("Invalid message line detected in conversation logfile"
+                " '%s'. The line was skipped."), filename);
+          continue;
+        }
+
         // strip '\r' if necessary
         if (length > 1 && line[length - 2] == '\r') {
           line[length - 2] = '\n';
