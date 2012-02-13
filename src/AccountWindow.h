@@ -25,11 +25,15 @@
 #include <cppconsui/Button.h>
 #include <cppconsui/CheckBox.h>
 #include <cppconsui/ComboBox.h>
+#include <cppconsui/ColorPicker.h>
 #include <cppconsui/InputDialog.h>
 #include <cppconsui/MessageDialog.h>
 #include <cppconsui/SplitDialog.h>
 #include <cppconsui/TreeView.h>
 #include <libpurple/purple.h>
+
+#define BUDDYLIST_FOREGROUND "buddylist-foreground-color"
+#define BUDDYLIST_BACKGROUND "buddylist-background-color"
 
 class AccountWindow
 : public CppConsUI::SplitDialog
@@ -131,6 +135,27 @@ private:
   private:
     IntOption(const IntOption&);
     IntOption& operator=(const IntOption&);
+  };
+
+  class ColorOption
+  : public CppConsUI::ColorPicker
+  {
+  public:
+    ColorOption(PurpleAccount *account);
+    virtual ~ColorOption() {}
+
+  protected:
+    PurpleAccount *account;
+
+    void Initialize();
+    void UpdateValue();
+    void OnColorChanged(CppConsUI::ColorPicker& activator,
+        int new_fg, int new_bg);
+
+
+  private:
+    ColorOption(const IntOption&);
+    ColorOption& operator=(const IntOption&);
   };
 
   class StringListOption

@@ -175,6 +175,41 @@ void AccountWindow::StringOption::ResponseHandler(
   }
 }
 
+AccountWindow::ColorOption::ColorOption(PurpleAccount *account)
+: ColorPicker(CppConsUI::Curses::Color::DEFAULT,
+    CppConsUI::Curses::Color::DEFAULT, _("Buddylist Color:"), true), account(account)
+{
+  g_assert(account);
+
+  Initialize();
+}
+
+void AccountWindow::ColorOption::Initialize()
+{
+  //SetText(_("Buddylist color"));
+
+  UpdateValue();
+  signal_colorpair_selected.connect(sigc::mem_fun(this,
+    &ColorOption::OnColorChanged));
+}
+
+void AccountWindow::ColorOption::UpdateValue()
+{
+  int fg = purple_account_get_ui_int(account, "centerim5", BUDDYLIST_FOREGROUND,
+      CppConsUI::Curses::Color::DEFAULT);
+  int bg = purple_account_get_ui_int(account, "centerim5", BUDDYLIST_BACKGROUND,
+      CppConsUI::Curses::Color::DEFAULT);
+
+  SetColorPair(fg, bg);
+}
+
+void AccountWindow::ColorOption::OnColorChanged(CppConsUI::ColorPicker& activator,
+    int new_fg, int new_bg)
+{
+  purple_account_set_ui_int(account, "centerim5", BUDDYLIST_FOREGROUND, new_fg);
+  purple_account_set_ui_int(account, "centerim5", BUDDYLIST_BACKGROUND, new_bg);
+}
+
 AccountWindow::IntOption::IntOption(PurpleAccount *account,
     PurpleAccountOption *option)
 : Button(FLAG_VALUE), account(account), option(option)
@@ -485,6 +520,10 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 
     // alias
     widget = new StringOption(account, StringOption::TYPE_ALIAS);
+    accounts->AppendNode(account_entry->parent_reference, *widget);
+
+    // coloring
+    widget = new ColorOption(account);
     accounts->AppendNode(account_entry->parent_reference, *widget);
 
     for (GList *pref = prplinfo->protocol_options; pref; pref = pref->next) {
