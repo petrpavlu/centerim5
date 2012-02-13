@@ -524,10 +524,6 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
     widget = new StringOption(account, StringOption::TYPE_ALIAS);
     accounts->AppendNode(account_entry->parent_reference, *widget);
 
-    // coloring
-    widget = new ColorOption(account);
-    accounts->AppendNode(account_entry->parent_reference, *widget);
-
     for (GList *pref = prplinfo->protocol_options; pref; pref = pref->next) {
       PurpleAccountOption *option
         = reinterpret_cast<PurpleAccountOption*>(pref->data);
@@ -558,6 +554,10 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 
     // enable/disable account
     widget = new BoolOption(account, BoolOption::TYPE_ENABLE_ACCOUNT);
+    accounts->AppendNode(account_entry->parent_reference, *widget);
+
+    // coloring
+    widget = new ColorOption(account);
     accounts->AppendNode(account_entry->parent_reference, *widget);
   }
 
