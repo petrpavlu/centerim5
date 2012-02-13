@@ -109,13 +109,13 @@ TestWindow::TestWindow()
 
   CppConsUI::ColorPicker *picker;
 
-  AddWidget(*(new CppConsUI::Label("ColorPicker: ")), 1, 15);
-  AddWidget(*(picker = new CppConsUI::ColorPicker(7, 1, true)), 1, 16);
+  AddWidget(*(new CppConsUI::Label("ColorPicker:")), 1, 15);
+  AddWidget(*(picker = new CppConsUI::ColorPicker(7, 1, "Label:", false)), 1, 16);
   picker->signal_colorpair_selected.connect(sigc::mem_fun(this,
       &TestWindow::OnColerPickerChanged));
 
-  AddWidget(*(new CppConsUI::Label("ColorPicker (with sample): ")), 1, 18);
-  AddWidget(*(picker = new CppConsUI::ColorPicker(15, 8, true)), 1, 19);
+  AddWidget(*(new CppConsUI::Label("ColorPicker:")), 1, 18);
+  AddWidget(*(picker = new CppConsUI::ColorPicker(15, 8, "(with sample)", true)), 1, 19);
   picker->signal_colorpair_selected.connect(sigc::mem_fun(this,
       &TestWindow::OnColerPickerChanged));
 }

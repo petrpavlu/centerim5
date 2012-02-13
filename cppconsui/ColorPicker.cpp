@@ -35,26 +35,28 @@
 namespace CppConsUI
 {
 
-ColorPicker::ColorPicker(int fg, int bg, bool sample_)
+ColorPicker::ColorPicker(int fg, int bg, const char *text, bool sample_)
 : HorizontalListBox(AUTOSIZE, 1)
-, fg_combo(NULL), bg_combo(NULL), sample(NULL)
+, fg_combo(NULL), bg_combo(NULL), label(NULL), sample(NULL)
 {
   fg_combo = new ColorPickerComboBox(10, fg);
   bg_combo = new ColorPickerComboBox(10, bg);
+
+  label = new Label(1, 1, "");
+  SetText(text);
 
   fg_combo->signal_color_changed.connect(
       sigc::mem_fun(this, &ColorPicker::OnColorChanged));
   bg_combo->signal_color_changed.connect(
       sigc::mem_fun(this, &ColorPicker::OnColorChanged));
 
+  AppendWidget(*label);
   AppendWidget(*fg_combo);
   AppendWidget(*(new Label(1, 1, "")));
   AppendWidget(*bg_combo);
 
   if (sample_) {
     sample = new Sample(10, fg, bg);
-
-    AppendWidget(*(new Label(1, 1, "")));
     AppendWidget(*sample);
   }
 
@@ -70,6 +72,15 @@ void ColorPicker::SetColorPair(int fg, int bg)
     sample->SetColors(fg, bg);
 
   signal_colorpair_selected(*this, fg, bg);
+}
+
+void ColorPicker::SetText(const char *new_text)
+{
+  label->SetText(new_text);
+  if (new_text)
+    label->SetWidth(Curses::onscreen_width(new_text, NULL) + 1);
+  else
+    label->SetWidth(0);
 }
 
 void ColorPicker::OnColorChanged(ComboBox& activator, int new_color)

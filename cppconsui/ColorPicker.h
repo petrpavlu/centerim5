@@ -42,10 +42,11 @@ class ColorPicker
 : public HorizontalListBox
 {
 public:
-  ColorPicker(int fg, int bg, bool sample = false);
+  ColorPicker(int fg, int bg, const char *text, bool sample = false);
   virtual ~ColorPicker() {}
 
   virtual void SetColorPair(int fg, int bg);
+  virtual void SetText(const char *new_text);
 
   /**
    * Emited signal when the colorpair has been selected
@@ -73,6 +74,7 @@ protected:
 
   ColorPickerComboBox *fg_combo;
   ColorPickerComboBox *bg_combo;
+  Label *label;
   Sample *sample;
 
 private:
