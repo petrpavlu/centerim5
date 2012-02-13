@@ -32,9 +32,6 @@
 #include <cppconsui/TreeView.h>
 #include <libpurple/purple.h>
 
-#define BUDDYLIST_FOREGROUND "buddylist-foreground-color"
-#define BUDDYLIST_BACKGROUND "buddylist-background-color"
-
 class AccountWindow
 : public CppConsUI::SplitDialog
 {

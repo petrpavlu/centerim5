@@ -195,10 +195,10 @@ void AccountWindow::ColorOption::Initialize()
 
 void AccountWindow::ColorOption::UpdateValue()
 {
-  int fg = purple_account_get_ui_int(account, "centerim5", BUDDYLIST_FOREGROUND,
-      CppConsUI::Curses::Color::DEFAULT);
-  int bg = purple_account_get_ui_int(account, "centerim5", BUDDYLIST_BACKGROUND,
-      CppConsUI::Curses::Color::DEFAULT);
+  int fg = purple_account_get_ui_int(account, "centerim5",
+      "buddylist-foreground-color", CppConsUI::Curses::Color::DEFAULT);
+  int bg = purple_account_get_ui_int(account, "centerim5",
+      "buddylist-background-color", CppConsUI::Curses::Color::DEFAULT);
 
   SetColorPair(fg, bg);
 }
@@ -206,8 +206,10 @@ void AccountWindow::ColorOption::UpdateValue()
 void AccountWindow::ColorOption::OnColorChanged(CppConsUI::ColorPicker& activator,
     int new_fg, int new_bg)
 {
-  purple_account_set_ui_int(account, "centerim5", BUDDYLIST_FOREGROUND, new_fg);
-  purple_account_set_ui_int(account, "centerim5", BUDDYLIST_BACKGROUND, new_bg);
+  purple_account_set_ui_int(account, "centerim5",
+      "buddylist-foreground-color", new_fg);
+  purple_account_set_ui_int(account, "centerim5",
+      "buddylist-background-color", new_bg);
 }
 
 AccountWindow::IntOption::IntOption(PurpleAccount *account,
