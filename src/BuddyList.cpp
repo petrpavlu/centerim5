@@ -161,6 +161,8 @@ void BuddyList::UpdateCachedPreference(const char *name)
     const char *value = purple_prefs_get_string(name);
     if (!strcmp(value, "status"))
       colorization_mode = COLOR_BY_STATUS;
+    else if (!strcmp(value, "account"))
+      colorization_mode = COLOR_BY_ACCOUNT;
     else
       colorization_mode = COLOR_NONE;
   }

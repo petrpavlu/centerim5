@@ -89,6 +89,9 @@ class BuddyListBuddy
 {
 friend class BuddyListNode;
 public:
+  // Button
+  virtual void Draw();
+
   // BuddyListNode
   virtual bool LessThan(const BuddyListNode& other) const;
   virtual void Update();
@@ -189,6 +192,9 @@ class BuddyListContact
 {
 friend class BuddyListNode;
 public:
+  // Button
+  virtual void Draw();
+
   // BuddyListNode
   virtual bool LessThan(const BuddyListNode& other) const;
   virtual void Update();

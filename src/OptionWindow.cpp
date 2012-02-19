@@ -49,6 +49,7 @@ OptionWindow::OptionWindow()
       CONF_PREFIX "/blist/colorization_mode");
   c->AddOption(_("None"), "none");
   c->AddOption(_("By status"), "status");
+  c->AddOption(_("By account"), "account");
   tree->AppendNode(parent, *c);
 
   parent = tree->AppendNode(tree->GetRootNode(),

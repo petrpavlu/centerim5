@@ -38,7 +38,8 @@ class BuddyList
 public:
   enum ColorizationMode {
     COLOR_NONE,
-    COLOR_BY_STATUS
+    COLOR_BY_STATUS,
+    COLOR_BY_ACCOUNT
   };
 
   static BuddyList *Instance();
