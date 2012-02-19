@@ -315,7 +315,7 @@ void Widget::SetWishSize(int neww, int newh)
   signal_wish_size_change(*this, oldsize, newsize);
 }
 
-int Widget::GetColorPair(const char *widget, const char *property) const
+int Widget::GetColorPair(const char *widget, const char *property)
 {
   return COLORSCHEME->GetColorPair(GetColorScheme(), widget, property);
 }
