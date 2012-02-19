@@ -173,91 +173,6 @@ void BuddyListNode::DeclareBindables()
       InputProcessor::BINDABLE_NORMAL);
 }
 
-void BuddyListBuddy::Draw()
-{
-  if (BUDDYLIST->GetColorizationMode() != BuddyList::COLOR_BY_ACCOUNT)
-  {
-    Button::Draw();
-    return;
-  }
-
-  ProceedUpdateArea();
-
-  if (!area || !text)
-    return;
-
-  PurpleAccount *account = purple_buddy_get_account(buddy);
-  int fg = purple_account_get_ui_int(account, "centerim5",
-      "buddylist-foreground-color", CppConsUI::Curses::Color::DEFAULT);
-  int bg = purple_account_get_ui_int(account, "centerim5",
-      "buddylist-background-color", CppConsUI::Curses::Color::DEFAULT);
-
-  CppConsUI::ColorScheme::Color c(fg, bg);
-  int attrs = COLORSCHEME->GetColorPair(c);
-
-  if (has_focus)
-    attrs |= CppConsUI::Curses::Attr::REVERSE;
-
-  area->attron(attrs);
-
-  int realw = area->getmaxx();
-  int realh = area->getmaxy();
-
-  // print text
-  area->fill(attrs, 0, 0, text_width, realh);
-  int y = 0;
-  const char *start, *end;
-  start = end = text;
-  while (*end) {
-    if (*end == '\n') {
-      if (y >= realh)
-        break;
-
-      area->mvaddstring(0, y, realw, start, end);
-      y++;
-      start = end + 1;
-    }
-    end++;
-  }
-  if (y < realh)
-    area->mvaddstring(0, y, realw, start, end);
-
-  int l = text_width;
-  int h = (text_height - 1) / 2;
-
-  // print value
-  if (flags & FLAG_VALUE) {
-    area->fill(attrs, l, 0, value_width + 2, realh);
-    if (h < realh) {
-      l += area->mvaddstring(l, h, realw - l, ": ");
-      if (value)
-        l += area->mvaddstring(l, h, realw - l, value);
-    }
-  }
-
-  // print unit text
-  if (flags & FLAG_UNIT && unit) {
-    area->fill(attrs, l, 0, unit_width + 1, realh);
-    if (h < realh) {
-      l += area->mvaddstring(l, h, realw - l, " ");
-      l += area->mvaddstring(l, h, realw - l, unit);
-    }
-  }
-
-  area->attroff(attrs);
-
-  // print right area text
-  if (flags & FLAG_RIGHT && right && h < realh) {
-    const char *cur = right;
-    int width = right_width;
-    while (width > realw - l - 1) {
-      width -= CppConsUI::Curses::onscreen_width(g_utf8_get_char(cur));
-      cur = g_utf8_next_char(cur);
-    }
-    area->mvaddstring(realw - width, h, cur);
-  }
-}
-
 bool BuddyListBuddy::LessThan(const BuddyListNode& other) const
 {
   const BuddyListBuddy *o = dynamic_cast<const BuddyListBuddy*>(&other);
@@ -387,6 +302,21 @@ void BuddyListBuddy::ContextMenu::OnRemove(Button& activator)
   dialog->signal_response.connect(sigc::mem_fun(this,
         &BuddyListBuddy::ContextMenu::RemoveResponseHandler));
   dialog->Show();
+}
+
+int BuddyListBuddy::GetColorPair(const char *widget, const char *property)
+{
+  if (BUDDYLIST->GetColorizationMode() != BuddyList::COLOR_BY_ACCOUNT)
+    return Button::GetColorPair(widget, property);
+
+  PurpleAccount *account = purple_buddy_get_account(buddy);
+  int fg = purple_account_get_ui_int(account, "centerim5",
+      "buddylist-foreground-color", CppConsUI::Curses::Color::DEFAULT);
+  int bg = purple_account_get_ui_int(account, "centerim5",
+      "buddylist-background-color", CppConsUI::Curses::Color::DEFAULT);
+
+  CppConsUI::ColorScheme::Color c(fg, bg);
+  return COLORSCHEME->GetColorPair(c);
 }
 
 void BuddyListBuddy::OpenContextMenu()
@@ -556,91 +486,6 @@ BuddyListChat::BuddyListChat(PurpleBlistNode *node)
   SetColorScheme("buddylistchat");
 
   chat = reinterpret_cast<PurpleChat*>(node);
-}
-
-void BuddyListContact::Draw()
-{
-  if (BUDDYLIST->GetColorizationMode() != BuddyList::COLOR_BY_ACCOUNT)
-  {
-    Button::Draw();
-    return;
-  }
-
-  ProceedUpdateArea();
-
-  if (!area || !text)
-    return;
-
-  PurpleAccount *account = purple_buddy_get_account(purple_contact_get_priority_buddy(contact));
-  int fg = purple_account_get_ui_int(account, "centerim5",
-      "buddylist-foreground-color", CppConsUI::Curses::Color::DEFAULT);
-  int bg = purple_account_get_ui_int(account, "centerim5",
-      "buddylist-background-color", CppConsUI::Curses::Color::DEFAULT);
-
-  CppConsUI::ColorScheme::Color c(fg, bg);
-  int attrs = COLORSCHEME->GetColorPair(c);
-
-  if (has_focus)
-    attrs |= CppConsUI::Curses::Attr::REVERSE;
-
-  area->attron(attrs);
-
-  int realw = area->getmaxx();
-  int realh = area->getmaxy();
-
-  // print text
-  area->fill(attrs, 0, 0, text_width, realh);
-  int y = 0;
-  const char *start, *end;
-  start = end = text;
-  while (*end) {
-    if (*end == '\n') {
-      if (y >= realh)
-        break;
-
-      area->mvaddstring(0, y, realw, start, end);
-      y++;
-      start = end + 1;
-    }
-    end++;
-  }
-  if (y < realh)
-    area->mvaddstring(0, y, realw, start, end);
-
-  int l = text_width;
-  int h = (text_height - 1) / 2;
-
-  // print value
-  if (flags & FLAG_VALUE) {
-    area->fill(attrs, l, 0, value_width + 2, realh);
-    if (h < realh) {
-      l += area->mvaddstring(l, h, realw - l, ": ");
-      if (value)
-        l += area->mvaddstring(l, h, realw - l, value);
-    }
-  }
-
-  // print unit text
-  if (flags & FLAG_UNIT && unit) {
-    area->fill(attrs, l, 0, unit_width + 1, realh);
-    if (h < realh) {
-      l += area->mvaddstring(l, h, realw - l, " ");
-      l += area->mvaddstring(l, h, realw - l, unit);
-    }
-  }
-
-  area->attroff(attrs);
-
-  // print right area text
-  if (flags & FLAG_RIGHT && right && h < realh) {
-    const char *cur = right;
-    int width = right_width;
-    while (width > realw - l - 1) {
-      width -= CppConsUI::Curses::onscreen_width(g_utf8_get_char(cur));
-      cur = g_utf8_next_char(cur);
-    }
-    area->mvaddstring(realw - width, h, cur);
-  }
 }
 
 bool BuddyListContact::LessThan(const BuddyListNode& other) const
@@ -825,6 +670,22 @@ void BuddyListContact::ContextMenu::OnMoveTo(Button& activator,
     PurpleGroup *group)
 {
   purple_blist_add_contact(parent->GetPurpleContact(), group, NULL);
+}
+
+int BuddyListContact::GetColorPair(const char *widget, const char *property)
+{
+  if (BUDDYLIST->GetColorizationMode() != BuddyList::COLOR_BY_ACCOUNT)
+    return Button::GetColorPair(widget, property);
+
+  PurpleAccount *account =
+    purple_buddy_get_account(purple_contact_get_priority_buddy(contact));
+  int fg = purple_account_get_ui_int(account, "centerim5",
+      "buddylist-foreground-color", CppConsUI::Curses::Color::DEFAULT);
+  int bg = purple_account_get_ui_int(account, "centerim5",
+      "buddylist-background-color", CppConsUI::Curses::Color::DEFAULT);
+
+  CppConsUI::ColorScheme::Color c(fg,bg);
+  return COLORSCHEME->GetColorPair(c);
 }
 
 void BuddyListContact::OpenContextMenu()

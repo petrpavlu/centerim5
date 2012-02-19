@@ -89,9 +89,6 @@ class BuddyListBuddy
 {
 friend class BuddyListNode;
 public:
-  // Button
-  virtual void Draw();
-
   // BuddyListNode
   virtual bool LessThan(const BuddyListNode& other) const;
   virtual void Update();
@@ -125,6 +122,9 @@ protected:
   };
 
   PurpleBuddy *buddy;
+
+  // Button
+  virtual int GetColorPair(const char *widget, const char *property);
 
   // BuddyListNode
   virtual void OpenContextMenu();
@@ -192,9 +192,6 @@ class BuddyListContact
 {
 friend class BuddyListNode;
 public:
-  // Button
-  virtual void Draw();
-
   // BuddyListNode
   virtual bool LessThan(const BuddyListNode& other) const;
   virtual void Update();
@@ -225,12 +222,16 @@ protected:
     void OnRemove(Button& activator);
     void OnMoveTo(Button& activator, PurpleGroup *group);
 
+
   private:
     ContextMenu(const ContextMenu&);
     ContextMenu& operator=(const ContextMenu&);
   };
 
   PurpleContact *contact;
+
+  // Button
+  virtual int GetColorPair(const char *widget, const char *property);
 
   // BuddyListNode
   virtual void OpenContextMenu();
