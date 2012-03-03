@@ -32,13 +32,8 @@
 #define LOGS_DIR "clogs"
 #define TIME_FORMAT _("%d.%m.%y %H:%M")
 
-/// @todo Increase to higher value later.
-//#define CONVERSATION_DESTROY_TIMEOUT 1800000
-#define CONVERSATION_DESTROY_TIMEOUT 6000
-
 Conversation::Conversation(PurpleConversation *conv_)
 : Window(0, 0, 80, 24), conv(conv_), filename(NULL), logfile(NULL)
-, status(STATUS_ACTIVE)
 {
   g_assert(conv);
 
@@ -131,14 +126,11 @@ void Conversation::UngrabFocus()
 
 void Conversation::Close()
 {
-  /* Let libpurple and Conversations know that this conversation should be
-   * destroyed after some time. */
-  destroy_conn = COREMANAGER->TimeoutOnceConnect(sigc::bind(sigc::mem_fun(
-          this, &Conversation::DestroyPurpleConversation), conv),
-      CONVERSATION_DESTROY_TIMEOUT);
-  status = STATUS_TRASH;
-
   signal_close(*this);
+
+  /* Next line deletes this object. Don't touch any member variable after this
+   * line. */
+  purple_conversation_destroy(conv);
 }
 
 void Conversation::OnScreenResized()
@@ -150,25 +142,9 @@ void Conversation::OnScreenResized()
   MoveResizeRect(r);
 }
 
-void Conversation::Show()
-{
-  if (destroy_conn.connected()) {
-    // restore conversation
-    destroy_conn.disconnect();
-    status = STATUS_ACTIVE;
-  }
-  Window::Show();
-}
-
 void Conversation::Write(const char *name, const char *alias,
     const char *message, PurpleMessageFlags flags, time_t mtime)
 {
-  if (destroy_conn.connected()) {
-    // restore conversation
-    destroy_conn.disconnect();
-    status = STATUS_ACTIVE;
-  }
-
   PurpleConversationType type = purple_conversation_get_type(conv);
 
   int color;
@@ -399,11 +375,6 @@ char *Conversation::StripHTML(const char *str) const
   str2[j] = '\0';
 
   return str2;
-}
-
-void Conversation::DestroyPurpleConversation(PurpleConversation *conv)
-{
-  purple_conversation_destroy(conv);
 }
 
 void Conversation::BuildLogFilename()

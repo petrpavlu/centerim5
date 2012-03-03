@@ -34,11 +34,6 @@ class Conversation
 : public CppConsUI::Window
 {
 public:
-  enum Status {
-    STATUS_ACTIVE,
-    STATUS_TRASH
-  };
-
   Conversation(PurpleConversation *conv_);
   virtual ~Conversation();
 
@@ -53,12 +48,9 @@ public:
   // FreeWindow
   virtual void Close();
   virtual void OnScreenResized();
-  virtual void Show();
 
   void Write(const char *name, const char *alias, const char *message,
     PurpleMessageFlags flags, time_t mtime);
-
-  Status GetStatus() const { return status; }
 
   PurpleConversation *GetPurpleConversation() const { return conv; };
 
@@ -71,10 +63,6 @@ protected:
 
   char *filename;
   GIOChannel *logfile;
-
-  Status status;
-
-  sigc::connection destroy_conn;
 
   char *StripHTML(const char *str) const;
   void DestroyPurpleConversation(PurpleConversation *conv);

@@ -159,40 +159,34 @@ int Conversations::PrevActiveConversation(int current)
 {
   g_assert(current < static_cast<int>(conversations.size()));
 
-  int i = current - 1;
-  while (i >= 0) {
-    if (conversations[i].conv->GetStatus() == Conversation::STATUS_ACTIVE)
-      return i;
-    i--;
-  }
-  i = conversations.size() - 1;
-  while (i > current) {
-    if (conversations[i].conv->GetStatus() == Conversation::STATUS_ACTIVE)
-      return i;
-    i--;
+  if (conversations.empty()) {
+    // there is no conversation
+    return -1;
   }
 
-  return -1;
+  if (current == 0) {
+    // return the last conversation
+    return conversations.size() - 1;
+  }
+
+  return current - 1;
 }
 
 int Conversations::NextActiveConversation(int current)
 {
   g_assert(current < static_cast<int>(conversations.size()));
 
-  int i = current + 1;
-  while (i < static_cast<int>(conversations.size())) {
-    if (conversations[i].conv->GetStatus() == Conversation::STATUS_ACTIVE)
-      return i;
-    i++;
-  }
-  i = 0;
-  while (i < current) {
-    if (conversations[i].conv->GetStatus() == Conversation::STATUS_ACTIVE)
-      return i;
-    i++;
+  if (conversations.empty()) {
+    // there is no conversation
+    return -1;
   }
 
-  return -1;
+  if (current == static_cast<int>(conversations.size() - 1)) {
+    // return the first conversation
+    return 0;
+  }
+
+  return current + 1;
 }
 
 void Conversations::ActivateConversation(int i)
@@ -222,60 +216,19 @@ void Conversations::ActivateConversation(int i)
   active = i;
 }
 
-void Conversations::MoveConversationToEnd(int i)
-{
-  g_assert(i >= 0);
-  g_assert(i < static_cast<int>(conversations.size()));
-
-  if (conversations.size() <= 1) {
-    // conversation is already at the end
-    return;
-  }
-
-  ConvChild c = conversations[i];
-  conversations.erase(conversations.begin() + i);
-  list->MoveWidgetAfter(*c.label, *conversations.back().label);
-  conversations.push_back(c);
-
-  // fix active conversation
-  if (active == i)
-    active = conversations.size() - 1;
-  else if (active > i)
-    active--;
-
-  // fix labels
-  UpdateLabels();
-}
-
 void Conversations::UpdateLabels()
 {
   /* Note: This can be a little slow if there are too many opened
    * conversations. */
   int i = 1;
   for (ConversationsVector::iterator j = conversations.begin();
-      j != conversations.end(); j++)
-    if (j->conv->GetStatus() == Conversation::STATUS_ACTIVE) {
-      char *name = g_strdup_printf(" %d|%s", i,
-          purple_conversation_get_title(j->purple_conv));
-      j->label->SetText(name);
-      g_free(name);
-      i++;
-    }
-}
-
-void Conversations::OnConversationClose(Conversation& conv)
-{
-  int i = FindConversation(conv.GetPurpleConversation());
-  g_assert(i != -1);
-
-  conversations[i].label->SetVisibility(false);
-
-  if (i == active) {
-    i = PrevActiveConversation(i);
-    ActivateConversation(i);
+      j != conversations.end(); j++) {
+    char *name = g_strdup_printf(" %d|%s", i,
+        purple_conversation_get_title(j->purple_conv));
+    j->label->SetText(name);
+    g_free(name);
+    i++;
   }
-
-  UpdateLabels();
 }
 
 void Conversations::create_conversation(PurpleConversation *conv)
@@ -295,9 +248,6 @@ void Conversations::create_conversation(PurpleConversation *conv)
   ConvChild c;
   c.purple_conv = conv;
   c.conv = conversation;
-  c.sig_close_conn = conversation->signal_close.connect(sigc::group(
-        sigc::mem_fun(this, &Conversations::OnConversationClose),
-        sigc::ref(*conversation)));
   c.label = new CppConsUI::Label(AUTOSIZE, 1);
   list->AppendWidget(*c.label);
   conversations.push_back(c);
@@ -319,15 +269,28 @@ void Conversations::destroy_conversation(PurpleConversation *conv)
     return;
 
   if (i == active) {
-    int j = PrevActiveConversation(i);
-    ActivateConversation(j);
+    if (conversations.size() == 1) {
+      // the last conversation is closed
+      active = -1;
+    }
+    else {
+      if (active == static_cast<int>(conversations.size() - 1))
+        FocusPrevConversation();
+      else
+        FocusNextConversation();
+    }
   }
 
   delete conversations[i].conv;
   list->RemoveWidget(*conversations[i].label);
   conversations.erase(conversations.begin() + i);
-  if (active > i)
+
+  if (active > i) {
+    // fix up the number of the active conversation
     active--;
+  }
+
+  UpdateLabels();
 }
 
 void Conversations::write_conv(PurpleConversation *conv, const char *name,
@@ -342,27 +305,11 @@ void Conversations::write_conv(PurpleConversation *conv, const char *name,
   if (i == -1)
     return;
 
-  // get conversation status before it's touched
-  Conversation::Status old_status = conversations[i].conv->GetStatus();
-
   if (i != active)
     conversations[i].label->SetColorScheme("conversation-new");
 
   // delegate it to Conversation object
   conversations[i].conv->Write(name, alias, message, flags, mtime);
-  if (old_status == Conversation::STATUS_TRASH) {
-    /* If conversation was in a destroy timeout (STATUS_TRASH) then label is
-     * at this point invisible and its visibility needs to be restored. */
-    conversations[i].label->SetVisibility(true);
-  }
-  // show this conversation if there isn't any other
-  if (active == -1)
-    ActivateConversation(i);
-
-  if (old_status == Conversation::STATUS_TRASH) {
-    // the conversation was restored, move it to the end of the list
-    MoveConversationToEnd(i);
-  }
 }
 
 void Conversations::present(PurpleConversation *conv)
@@ -375,15 +322,7 @@ void Conversations::present(PurpleConversation *conv)
   if (i == -1)
     return;
 
-  // get conversation status before it's touched
-  Conversation::Status old_status = conversations[i].conv->GetStatus();
-
   ActivateConversation(i);
-
-  if (old_status == Conversation::STATUS_TRASH) {
-    // the conversation was restored, move it to the end of the list
-    MoveConversationToEnd(i);
-  }
 }
 
 /* vim: set tabstop=2 shiftwidth=2 tw=78 expandtab : */

@@ -53,7 +53,6 @@ private:
     PurpleConversation *purple_conv;
     Conversation *conv;
     CppConsUI::Label *label;
-    sigc::connection sig_close_conn;
   };
 
   typedef std::vector<ConvChild> ConversationsVector;
@@ -86,10 +85,7 @@ private:
 
   void ActivateConversation(int i);
 
-  void MoveConversationToEnd(int i);
   void UpdateLabels();
-
-  void OnConversationClose(Conversation& conv);
 
   static void create_conversation_(PurpleConversation *conv)
     { CONVERSATIONS->create_conversation(conv); }
