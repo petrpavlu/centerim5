@@ -81,17 +81,16 @@ const char *KeyConfig::GetKeyBind(const char *context,
   return _("<unbound>");
 }
 
-char* KeyConfig::TermKeyToString(TermKeyKey key)
+char *KeyConfig::TermKeyToString(TermKeyKey key) const
 {
-  static char out[256];
-
+  char out[256];
   termkey_strfkey(COREMANAGER->GetTermKeyHandle(), out, sizeof(out), &key,
       TERMKEY_FORMAT_LONGMOD);
 
   return g_strdup(out);
 }
 
-bool KeyConfig::StringToTermKey(const char *key, TermKeyKey *termkey)
+bool KeyConfig::StringToTermKey(const char *key, TermKeyKey *termkey) const
 {
   const char *res = termkey_strpkey(COREMANAGER->GetTermKeyHandle(), key,
       termkey, TERMKEY_FORMAT_LONGMOD);
@@ -149,14 +148,6 @@ void KeyConfig::LoadDefaultKeyConfig()
   BindKey("treeview", "unfold-subtree", "+");
 
   BindKey("window", "close-window", "Escape");
-}
-
-KeyConfig::KeyConfig()
-{
-}
-
-KeyConfig::~KeyConfig()
-{
 }
 
 } // namespace CppConsUI

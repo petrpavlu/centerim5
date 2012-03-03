@@ -58,10 +58,6 @@ public:
   typedef std::map<std::string, Properties> Widgets;
   typedef std::map<std::string, Widgets> Schemes;
 
-  typedef Properties::const_iterator PropertiesIterator;
-  typedef Widgets::const_iterator WidgetsIterator;
-  typedef Schemes::const_iterator SchemesIterator;
-
   /**
    * Returns color pair and Curses attributes (that can be passed to
    * Curses::Window::attron()) for a given scheme, widget and property
@@ -79,7 +75,9 @@ public:
       int attrs = Curses::Attr::NORMAL, bool overwrite = false);
   void FreeScheme(const char *scheme);
 
-  const Schemes& GetSchemes() { return schemes; }
+  const Schemes& GetSchemes() const { return schemes; }
+
+  void Clear();
 
 protected:
 

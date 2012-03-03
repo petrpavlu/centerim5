@@ -67,19 +67,17 @@ int ColorScheme::GetColorPair(const char *scheme, const char *widget,
 int ColorScheme::GetColorPair(Color& c)
 {
   ColorPairs::const_iterator i;
-  int fg, bg, res;
+  int fg = c.foreground;
+  int bg = c.background;
 
-  fg = c.foreground;
-  bg = c.background;
-
-  // Check if the pair already exists
+  // check if the pair already exists
   if ((i = pairs.find(std::make_pair(fg, bg))) != pairs.end())
     return i->second;
 
 #ifdef SAVE_COLOR_PAIRS
-  // Check if the inverse pairs exists
+  // check if the inverse pairs exists
   if ((i = pairs.find(std::make_pair(bg, fg))) != pairs.end()) {
-    // If the inverse pair exists, use that one and flip the REVERSE bit.
+    // if the inverse pair exists, use that one and flip the REVERSE bit
     c.foreground = bg;
     c.background = fg;
     c.attrs ^= Curses::Attr::REVERSE;
@@ -87,15 +85,17 @@ int ColorScheme::GetColorPair(Color& c)
   }
 #endif // SAVE_COLOR_PAIRS
 
-  // No existing pair we can use. Check if we can add a new one to the palette
-  if ((int) pairs.size() >= Curses::nrcolorpairs()) {
+  /* No existing pair we can use. Check if we can add a new one to the
+   * palette. */
+  if (static_cast<int>(pairs.size()) >= Curses::nrcolorpairs()) {
     g_warning(_("Color pairs limit exceeded."));
     return 0;
   }
 
-  // Add a new colorpair to the palette
+  // add a new colorpair to the palette
+  int res;
   if (!Curses::init_colorpair(pairs.size() + 1, fg, bg, &res)) {
-    g_warning(_("Adding colorpair failed."));
+    g_warning(_("Adding color pair failed."));
     return 0;
   }
   pairs[std::make_pair(fg, bg)] = res;
@@ -123,16 +123,20 @@ bool ColorScheme::SetColorPair(const char *scheme, const char *widget,
 
 void ColorScheme::FreeScheme(const char *scheme)
 {
-  Schemes::const_iterator i;
-
   g_assert(scheme);
 
-  i = schemes.find(scheme);
+  Schemes::const_iterator i = schemes.find(scheme);
 
   if (i == schemes.end())
     return;
 
   schemes.erase(scheme);
+}
+
+void ColorScheme::Clear()
+{
+  schemes.clear();
+  pairs.clear();
 }
 
 } // namespace CppConsUI

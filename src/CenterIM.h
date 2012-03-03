@@ -63,13 +63,8 @@ public:
 
   static const char * const version;
 
-  void SaveColorSchemeConfig();
   bool LoadColorSchemeConfig();
-  void LoadDefaultColorSchemeConfig();
-
-  void SaveKeyConfig();
   bool LoadKeyConfig();
-  void LoadDefaultKeyConfig();
 
 protected:
 
@@ -161,9 +156,18 @@ private:
   // called when /libpurple/away/idle_reporting pref is changed
   static void idle_reporting_change_(const char *name, PurplePrefType type,
       gconstpointer val, gpointer data)
-    { reinterpret_cast<CenterIM*>(data)->idle_reporting_change(name, type, val); }
+    { reinterpret_cast<CenterIM*>(data)->idle_reporting_change(name, type,
+        val); }
   void idle_reporting_change(const char *name, PurplePrefType type,
       gconstpointer val);
+
+  // config handling
+  void LoadDefaultColorSchemeConfig();
+  bool SaveColorSchemeConfig();
+  char *ColorAttributesToString(int attrs);
+  int StringToColorAttributes(const char *str);
+  void LoadDefaultKeyConfig();
+  bool SaveKeyConfig();
 
   void ActionFocusBuddyList();
   void ActionFocusActiveConversation();
@@ -176,9 +180,6 @@ private:
   void ActionExpandConversation();
 
   void DeclareBindables();
-
-  char* ColorAttributesToString(int attrs);
-  int StringToColorAttributes(const char *str);
 };
 
 #endif // __CENTERIM_H__

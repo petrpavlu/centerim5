@@ -73,12 +73,10 @@ public:
    * Maps keys to actions for one context, {key: action}.
    */
   typedef std::map<TermKeyKey, std::string, Keys::TermKeyCmp> KeyBindContext;
-  typedef KeyBindContext::const_iterator KeyBindContextIterator;
   /**
    * Maps context to key binds in that context, {context: KeyContext}.
    */
   typedef std::map<std::string, KeyBindContext> KeyBinds;
-  typedef KeyBinds::const_iterator KeyBindsIterator;
 
   /**
    * Returns the singleton class instance.
@@ -106,12 +104,12 @@ public:
   /**
    * Convert a TermKeyKey to a string
    */
-  char* TermKeyToString(TermKeyKey key);
+  char *TermKeyToString(TermKeyKey key) const;
 
   /**
    * Parse a string ito a TermKeyKey
    */
-  bool StringToTermKey(const char *key, TermKeyKey *termkey);
+  bool StringToTermKey(const char *key, TermKeyKey *termkey) const;
 
   /**
    * Removes all key binds.
@@ -132,10 +130,10 @@ private:
    */
   KeyBinds binds;
 
-  KeyConfig();
+  KeyConfig() {}
   KeyConfig(const KeyConfig&);
   KeyConfig& operator=(const KeyConfig&);
-  ~KeyConfig();
+  ~KeyConfig() {}
 };
 
 } // namespace CppConsUI
