@@ -305,6 +305,7 @@ void BuddyListBuddy::ContextMenu::OnRemove(Button& activator)
 }
 
 int BuddyListBuddy::GetColorPair(const char *widget, const char *property)
+  const
 {
   if (BUDDYLIST->GetColorizationMode() != BuddyList::COLOR_BY_ACCOUNT)
     return Button::GetColorPair(widget, property);
@@ -344,7 +345,7 @@ void BuddyListBuddy::UpdateColorScheme()
       g_free(new_scheme);
       break;
     case BuddyList::COLOR_BY_ACCOUNT:
-      // Case handled by BuddyListBuddy::Draw()
+      // case handled by BuddyListBuddy::Draw()
       break;
     default:
       SetColorScheme("buddylistbuddy");
@@ -673,6 +674,7 @@ void BuddyListContact::ContextMenu::OnMoveTo(Button& activator,
 }
 
 int BuddyListContact::GetColorPair(const char *widget, const char *property)
+  const
 {
   if (BUDDYLIST->GetColorizationMode() != BuddyList::COLOR_BY_ACCOUNT)
     return Button::GetColorPair(widget, property);
@@ -709,13 +711,13 @@ void BuddyListContact::UpdateColorScheme()
 
   switch (BUDDYLIST->GetColorizationMode()) {
     case BuddyList::COLOR_BY_STATUS:
-        buddy = purple_contact_get_priority_buddy(contact);
-        new_scheme = Utils::GetColorSchemeString("buddylistcontact", buddy);
-        SetColorScheme(new_scheme);
-        g_free(new_scheme);
-        break;
+      buddy = purple_contact_get_priority_buddy(contact);
+      new_scheme = Utils::GetColorSchemeString("buddylistcontact", buddy);
+      SetColorScheme(new_scheme);
+      g_free(new_scheme);
+      break;
     case BuddyList::COLOR_BY_ACCOUNT:
-      // Case handled by BuddyListContact::Draw()
+      // case handled by BuddyListContact::Draw()
       break;
     default:
       SetColorScheme("buddylistcontact");

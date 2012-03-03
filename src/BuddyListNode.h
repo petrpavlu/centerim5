@@ -123,8 +123,8 @@ protected:
 
   PurpleBuddy *buddy;
 
-  // Button
-  virtual int GetColorPair(const char *widget, const char *property);
+  // Widget
+  virtual int GetColorPair(const char *widget, const char *property) const;
 
   // BuddyListNode
   virtual void OpenContextMenu();
@@ -230,8 +230,8 @@ protected:
 
   PurpleContact *contact;
 
-  // Button
-  virtual int GetColorPair(const char *widget, const char *property);
+  // Widget
+  virtual int GetColorPair(const char *widget, const char *property) const;
 
   // BuddyListNode
   virtual void OpenContextMenu();

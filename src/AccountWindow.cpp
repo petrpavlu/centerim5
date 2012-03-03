@@ -175,43 +175,6 @@ void AccountWindow::StringOption::ResponseHandler(
   }
 }
 
-AccountWindow::ColorOption::ColorOption(PurpleAccount *account)
-: ColorPicker(CppConsUI::Curses::Color::DEFAULT,
-    CppConsUI::Curses::Color::DEFAULT, _("Buddylist Color:"), true), account(account)
-{
-  g_assert(account);
-
-  Initialize();
-}
-
-void AccountWindow::ColorOption::Initialize()
-{
-  //SetText(_("Buddylist color"));
-
-  UpdateValue();
-  signal_colorpair_selected.connect(sigc::mem_fun(this,
-    &ColorOption::OnColorChanged));
-}
-
-void AccountWindow::ColorOption::UpdateValue()
-{
-  int fg = purple_account_get_ui_int(account, "centerim5",
-      "buddylist-foreground-color", CppConsUI::Curses::Color::DEFAULT);
-  int bg = purple_account_get_ui_int(account, "centerim5",
-      "buddylist-background-color", CppConsUI::Curses::Color::DEFAULT);
-
-  SetColorPair(fg, bg);
-}
-
-void AccountWindow::ColorOption::OnColorChanged(CppConsUI::ColorPicker& activator,
-    int new_fg, int new_bg)
-{
-  purple_account_set_ui_int(account, "centerim5",
-      "buddylist-foreground-color", new_fg);
-  purple_account_set_ui_int(account, "centerim5",
-      "buddylist-background-color", new_bg);
-}
-
 AccountWindow::IntOption::IntOption(PurpleAccount *account,
     PurpleAccountOption *option)
 : Button(FLAG_VALUE), account(account), option(option)
@@ -395,6 +358,31 @@ void AccountWindow::ProtocolOption::OnProtocolChanged(ComboBox& activator,
 
   // this deletes us so don't touch any instance variable after
   account_window->PopulateAccount(account);
+}
+
+AccountWindow::ColorOption::ColorOption(PurpleAccount *account)
+: ColorPicker(CppConsUI::Curses::Color::DEFAULT,
+    CppConsUI::Curses::Color::DEFAULT, _("Buddylist Color:"), true)
+, account(account)
+{
+  g_assert(account);
+
+  int fg = purple_account_get_ui_int(account, "centerim5",
+      "buddylist-foreground-color", CppConsUI::Curses::Color::DEFAULT);
+  int bg = purple_account_get_ui_int(account, "centerim5",
+      "buddylist-background-color", CppConsUI::Curses::Color::DEFAULT);
+  SetColorPair(fg, bg);
+  signal_colorpair_selected.connect(sigc::mem_fun(this,
+        &ColorOption::OnColorChanged));
+}
+
+void AccountWindow::ColorOption::OnColorChanged(
+    CppConsUI::ColorPicker& activator, int new_fg, int new_bg)
+{
+  purple_account_set_ui_int(account, "centerim5",
+      "buddylist-foreground-color", new_fg);
+  purple_account_set_ui_int(account, "centerim5",
+      "buddylist-background-color", new_bg);
 }
 
 bool AccountWindow::ClearAccount(PurpleAccount *account, bool full)

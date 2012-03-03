@@ -134,27 +134,6 @@ private:
     IntOption& operator=(const IntOption&);
   };
 
-  class ColorOption
-  : public CppConsUI::ColorPicker
-  {
-  public:
-    ColorOption(PurpleAccount *account);
-    virtual ~ColorOption() {}
-
-  protected:
-    PurpleAccount *account;
-
-    void Initialize();
-    void UpdateValue();
-    void OnColorChanged(CppConsUI::ColorPicker& activator,
-        int new_fg, int new_bg);
-
-
-  private:
-    ColorOption(const IntOption&);
-    ColorOption& operator=(const IntOption&);
-  };
-
   class StringListOption
   : public CppConsUI::ComboBox
   {
@@ -214,6 +193,24 @@ private:
   private:
     ProtocolOption(const ProtocolOption&);
     ProtocolOption& operator=(const ProtocolOption&);
+  };
+
+  class ColorOption
+  : public CppConsUI::ColorPicker
+  {
+  public:
+    ColorOption(PurpleAccount *account);
+    virtual ~ColorOption() {}
+
+  protected:
+    PurpleAccount *account;
+
+    void OnColorChanged(CppConsUI::ColorPicker& activator, int new_fg,
+        int new_bg);
+
+  private:
+    ColorOption(const IntOption&);
+    ColorOption& operator=(const IntOption&);
   };
 
   AccountWindow(const AccountWindow&);

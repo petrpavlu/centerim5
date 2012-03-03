@@ -78,7 +78,7 @@ void ColorPicker::SetText(const char *new_text)
 {
   label->SetText(new_text);
   if (new_text)
-    label->SetWidth(Curses::onscreen_width(new_text, NULL) + 1);
+    label->SetWidth(Curses::onscreen_width(new_text) + 1);
   else
     label->SetWidth(0);
 }
