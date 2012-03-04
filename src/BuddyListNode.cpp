@@ -307,7 +307,8 @@ void BuddyListBuddy::ContextMenu::OnRemove(Button& activator)
 int BuddyListBuddy::GetColorPair(const char *widget, const char *property)
   const
 {
-  if (BUDDYLIST->GetColorizationMode() != BuddyList::COLOR_BY_ACCOUNT)
+  if (BUDDYLIST->GetColorizationMode() != BuddyList::COLOR_BY_ACCOUNT
+      || strcmp(property, "normal"))
     return Button::GetColorPair(widget, property);
 
   PurpleAccount *account = purple_buddy_get_account(buddy);
@@ -676,7 +677,8 @@ void BuddyListContact::ContextMenu::OnMoveTo(Button& activator,
 int BuddyListContact::GetColorPair(const char *widget, const char *property)
   const
 {
-  if (BUDDYLIST->GetColorizationMode() != BuddyList::COLOR_BY_ACCOUNT)
+  if (BUDDYLIST->GetColorizationMode() != BuddyList::COLOR_BY_ACCOUNT
+      || strcmp(property, "normal"))
     return Button::GetColorPair(widget, property);
 
   PurpleAccount *account =
