@@ -345,11 +345,10 @@ void BuddyListBuddy::UpdateColorScheme()
       SetColorScheme(new_scheme);
       g_free(new_scheme);
       break;
-    case BuddyList::COLOR_BY_ACCOUNT:
-      // case handled by BuddyListBuddy::Draw()
-      break;
     default:
+      // note: COLOR_BY_ACCOUNT case is handled by BuddyListBuddy::Draw()
       SetColorScheme("buddylistbuddy");
+      break;
   }
 }
 
@@ -718,11 +717,10 @@ void BuddyListContact::UpdateColorScheme()
       SetColorScheme(new_scheme);
       g_free(new_scheme);
       break;
-    case BuddyList::COLOR_BY_ACCOUNT:
-      // case handled by BuddyListContact::Draw()
-      break;
     default:
+      // note: COLOR_BY_ACCOUNT case is handled by BuddyListContact::Draw()
       SetColorScheme("buddylistcontact");
+      break;
   }
 }
 
