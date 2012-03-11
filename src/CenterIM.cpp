@@ -48,7 +48,15 @@
 CenterIM::LogBufferItems *CenterIM::logbuf = NULL;
 
 const char *CenterIM::named_colors[] = {
-  "default", "red", "green", "yellow", "blue", "magenta", "cyan", "white"
+  "default", /* -1 */
+  "black",   /*  0 */
+  "red",     /*  1 */
+  "green",   /*  2 */
+  "yellow",  /*  3 */
+  "blue",    /*  4 */
+  "magenta", /*  5 */
+  "cyan",    /*  6 */
+  "white"    /*  7 */
 };
 
 CenterIM *CenterIM::Instance()
@@ -723,8 +731,8 @@ bool CenterIM::SaveColorSchemeConfig()
 
 char *CenterIM::ColorToString(int color)
 {
-  if (color >= 0 && color < (int)G_N_ELEMENTS(named_colors))
-    return g_strdup(named_colors[color]);
+  if (color >= -1 && color < (int)G_N_ELEMENTS(named_colors) - 1)
+    return g_strdup(named_colors[color + 1]);
   return g_strdup_printf("%d", color);
 }
 
@@ -745,8 +753,8 @@ bool CenterIM::StringToColor(const char *str, int *color)
   }
 
   // symbolic colors
-  for (size_t i = 0; i < G_N_ELEMENTS(named_colors); i++)
-    if (!strcmp(str, named_colors[i])) {
+  for (int i = -1; i < (int)G_N_ELEMENTS(named_colors) - 1; i++)
+    if (!strcmp(str, named_colors[i + 1])) {
       *color = i;
       return true;
     }
