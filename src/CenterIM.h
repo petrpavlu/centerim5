@@ -101,6 +101,8 @@ private:
 
   CppConsUI::Rect areaSizes[AREAS_NUM];
 
+  static const char *named_colors[];
+
   CenterIM();
   CenterIM(const CenterIM&);
   CenterIM& operator=(const CenterIM&);
@@ -164,6 +166,8 @@ private:
   // config handling
   void LoadDefaultColorSchemeConfig();
   bool SaveColorSchemeConfig();
+  char *ColorToString(int color);
+  bool StringToColor(const char *str, int *color);
   char *ColorAttributesToString(int attrs);
   bool StringToColorAttributes(const char *str, int *attrs);
   void LoadDefaultKeyConfig();

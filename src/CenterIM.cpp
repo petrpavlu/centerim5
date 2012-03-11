@@ -38,13 +38,18 @@
 #include <cppconsui/ColorScheme.h>
 #include <cppconsui/KeyConfig.h>
 #include <cppconsui/Keys.h>
-#include <typeinfo>
+#include <errno.h>
 #include <string.h>
+#include <typeinfo>
 #include "gettext.h"
 
 #define CONF_PLUGIN_SAVE_PREF CONF_PREFIX "/plugins/loaded"
 
 CenterIM::LogBufferItems *CenterIM::logbuf = NULL;
+
+const char *CenterIM::named_colors[] = {
+  "default", "red", "green", "yellow", "blue", "magenta", "cyan", "white"
+};
 
 CenterIM *CenterIM::Instance()
 {
@@ -196,11 +201,15 @@ bool CenterIM::LoadColorSchemeConfig()
       int bg = CppConsUI::Curses::Color::DEFAULT;
       int attr = 0;
 
-      if (fgs && sscanf(fgs, "%d", &fg) != 1)
+      if (fgs && !StringToColor(fgs, &fg)) {
+        LOG->Error(_("Unrecognized color '%s'.\n"), fgs);
         goto out;
+      }
 
-      if (bgs && sscanf(bgs, "%d", &bg) != 1)
+      if (bgs && !StringToColor(bgs, &bg)) {
+        LOG->Error(_("Unrecognized color '%s'.\n"), bgs);
         goto out;
+      }
 
       if (attrs && !StringToColorAttributes(attrs, &attr)) {
         LOG->Error(_("Unrecognized attributes '%s'.\n"), attrs);
@@ -682,13 +691,13 @@ bool CenterIM::SaveColorSchemeConfig()
         char *str;
 
         if (pi->second.foreground != CppConsUI::Curses::Color::DEFAULT) {
-          str = g_strdup_printf("%d", pi->second.foreground);
+          str = ColorToString(pi->second.foreground);
           xmlnode_set_attrib(color, "foreground", str);
           g_free(str);
         }
 
         if (pi->second.background != CppConsUI::Curses::Color::DEFAULT) {
-          str = g_strdup_printf("%d", pi->second.background);
+          str = ColorToString(pi->second.background);
           xmlnode_set_attrib(color, "background", str);
           g_free(str);
         }
@@ -710,6 +719,39 @@ bool CenterIM::SaveColorSchemeConfig()
   g_free(data);
   xmlnode_free(root);
   return res;
+}
+
+char *CenterIM::ColorToString(int color)
+{
+  if (color >= 0 && color < (int)G_N_ELEMENTS(named_colors))
+    return g_strdup(named_colors[color]);
+  return g_strdup_printf("%d", color);
+}
+
+bool CenterIM::StringToColor(const char *str, int *color)
+{
+  g_assert(str);
+  g_assert(color);
+
+  *color = 0;
+
+  // numeric colors
+  if (g_ascii_isdigit(str[0])) {
+    long int i = strtol(str, NULL, 10);
+    if (errno == ERANGE || i > INT_MAX || i < 0)
+      return false;
+    *color = i;
+    return true;
+  }
+
+  // symbolic colors
+  for (size_t i = 0; i < G_N_ELEMENTS(named_colors); i++)
+    if (!strcmp(str, named_colors[i])) {
+      *color = i;
+      return true;
+    }
+
+  return false;
 }
 
 char *CenterIM::ColorAttributesToString(int attrs)
