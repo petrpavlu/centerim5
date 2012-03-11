@@ -45,7 +45,7 @@ MenuWindow::MenuWindow(int x, int y, int w, int h, const char *title)
 
 MenuWindow::MenuWindow(Widget& ref_, int w, int h, const char *title)
 : Window(0, 0, w, h, title, TYPE_TOP)
-, wish_height(3), ref(&ref_), xshift(0), yshift(0), hide_on_close(false)
+, wish_height(3), ref(NULL), xshift(0), yshift(0), hide_on_close(false)
 {
   wish_width = MENU_WINDOW_WISH_WIDTH;
 
@@ -54,7 +54,13 @@ MenuWindow::MenuWindow(Widget& ref_, int w, int h, const char *title)
         &MenuWindow::OnChildrenHeightChange));
   Window::AddWidget(*listbox, 0, 0);
 
-  SetRef(ref);
+  SetRefWidget(ref_);
+}
+
+MenuWindow::~MenuWindow()
+{
+  if (ref)
+    ref->remove_destroy_notify_callback(this);
 }
 
 void MenuWindow::Draw()
@@ -70,7 +76,7 @@ void MenuWindow::Show()
     g_assert(!ref_visible_conn.connected());
 
     ref_visible_conn = ref->signal_visible.connect(sigc::mem_fun(this,
-          &MenuWindow::OnRefVisible));
+          &MenuWindow::OnRefWidgetVisible));
   }
 
   if (hide_on_close) {
@@ -98,21 +104,6 @@ void MenuWindow::Close()
     Window::Close();
 }
 
-void MenuWindow::RemoveWidget(Widget& widget)
-{
-  // if the widget is a reference to a submenu then delete the submenu too
-  Button *button = dynamic_cast<Button*>(&widget);
-  if (button) {
-    SubMenus::iterator i = submenus.find(button);
-    if (i != submenus.end()) {
-      delete i->second;
-      submenus.erase(i);
-    }
-  }
-
-  Window::RemoveWidget(widget);
-}
-
 Button *MenuWindow::AppendSubMenu(const char *title, MenuWindow& submenu)
 {
   // setup submenu correctly
@@ -126,9 +117,7 @@ Button *MenuWindow::AppendSubMenu(const char *title, MenuWindow& submenu)
           &MenuWindow::Show)));
   listbox->AppendWidget(*button);
 
-  submenu.SetRef(button);
-
-  submenus[button] = &submenu;
+  submenu.SetRefWidget(*button);
 
   return button;
 }
@@ -142,12 +131,26 @@ void MenuWindow::SetHideOnClose(bool new_hide_on_close)
   Redraw();
 }
 
-void MenuWindow::SetRef(Widget *new_ref)
+void MenuWindow::SetRefWidget(Widget& new_ref)
 {
-  if (new_ref == ref)
+  if (ref == &new_ref)
     return;
 
-  ref = new_ref;
+  if (ref)
+    ref->remove_destroy_notify_callback(this);
+
+  ref = &new_ref;
+  ref->add_destroy_notify_callback(this, OnRefWidgetDestroy_);
+  Redraw();
+}
+
+void MenuWindow::CleanRefWidget()
+{
+  if (!ref)
+    return;
+
+  ref->remove_destroy_notify_callback(this);
+  ref = NULL;
   Redraw();
 }
 
@@ -253,13 +256,21 @@ void MenuWindow::OnChildrenHeightChange(ListBox& activator, int new_height)
   UpdateSmartPositionAndSize();
 }
 
-void MenuWindow::OnRefVisible(Widget& activator, bool visible)
+void MenuWindow::OnRefWidgetVisible(Widget& activator, bool visible)
 {
   if (visible)
     return;
 
-  // hide window if the reference widget is hidden
-  Hide();
+  // close this window if the reference widget is no longer visible
+  Close();
+}
+
+void MenuWindow::OnRefWidgetDestroy()
+{
+  // ref widget is about to die right now, this window should be destroyed too
+  g_assert(ref);
+  ref = NULL;
+  delete this;
 }
 
 } // namespace CppConsUI

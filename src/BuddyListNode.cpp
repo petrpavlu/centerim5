@@ -284,10 +284,12 @@ void BuddyListBuddy::ContextMenu::RemoveResponseHandler(
   PurpleBuddy *buddy = parent->GetPurpleBuddy();
   purple_account_remove_buddy(purple_buddy_get_account(buddy), buddy,
       purple_buddy_get_group(buddy));
-  purple_blist_remove_buddy(buddy);
 
-  // close context menu
+  /* Close the context menu before the buddy is deleted because its deletion
+   * can lead to destruction of this object. */
   Close();
+
+  purple_blist_remove_buddy(buddy);
 }
 
 void BuddyListBuddy::ContextMenu::OnRemove(Button& activator)
@@ -455,10 +457,12 @@ void BuddyListChat::ContextMenu::RemoveResponseHandler(
   }
 
   PurpleChat *chat = parent->GetPurpleChat();
-  purple_blist_remove_chat(chat);
 
-  // close context menu
+  /* Close the context menu before the chat is deleted because its deletion
+   * can lead to destruction of this object. */
   Close();
+
+  purple_blist_remove_chat(chat);
 }
 
 void BuddyListChat::ContextMenu::OnRemove(Button& activator)
@@ -647,10 +651,12 @@ void BuddyListContact::ContextMenu::RemoveResponseHandler(
     if (purple_account_is_connected(account))
       purple_account_remove_buddy(account, buddy, group);
   }
-  purple_blist_remove_contact(contact);
 
-  // close context menu
+  /* Close the context menu before the contact is deleted because its deletion
+   * can lead to destruction of this object. */
   Close();
+
+  purple_blist_remove_contact(contact);
 }
 
 void BuddyListContact::ContextMenu::OnRemove(Button& activator)
@@ -843,10 +849,11 @@ void BuddyListGroup::ContextMenu::RemoveResponseHandler(
       cnode = cnode->next;
   }
 
-  purple_blist_remove_group(group);
-
-  // close context menu
+  /* Close the context menu before the group is deleted because its deletion
+   * can lead to destruction of this object. */
   Close();
+
+  purple_blist_remove_group(group);
 }
 
 void BuddyListGroup::ContextMenu::OnRemove(Button& activator)

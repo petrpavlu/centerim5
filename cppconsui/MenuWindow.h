@@ -43,13 +43,10 @@ class MenuWindow
 public:
   MenuWindow(int x, int y, int w, int h, const char *title = NULL);
   MenuWindow(Widget& ref_, int w, int h, const char *title = NULL);
-  virtual ~MenuWindow() {}
+  virtual ~MenuWindow();
 
   // Widget
   virtual void Draw();
-
-  // Container
-  virtual void RemoveWidget(Widget& widget);
 
   // FreeWindow
   virtual void Show();
@@ -76,7 +73,20 @@ public:
   virtual void SetHideOnClose(bool new_hide_on_close);
   virtual int GetHideOnClose() const { return hide_on_close; }
 
-  virtual void SetRef(Widget *new_ref);
+  /**
+   * Assigns a reference widget which is used to calculate on-screen position
+   * of this MenuWindow. Note that if the reference widget is destroyed then
+   * the MenuWindow dies too.
+   */
+  virtual void SetRefWidget(Widget& new_ref);
+  /**
+   * Removes any reference widget assignment.
+   */
+  virtual void CleanRefWidget();
+  /**
+   * Returns the currently set reference widget.
+   */
+  virtual Widget *GetRefWidget() const { return ref; }
 
   virtual int GetLeftShift() const { return xshift; }
   virtual int GetTopShift() const { return yshift; }
@@ -86,16 +96,12 @@ public:
 
 
 protected:
-  typedef std::map<Button*, MenuWindow*> SubMenus;
-
   ListBox *listbox;
   int wish_height;
 
   Widget *ref;
   int xshift, yshift;
   sigc::connection ref_visible_conn;
-
-  SubMenus submenus;
 
   bool hide_on_close;
 
@@ -113,7 +119,11 @@ protected:
 
   virtual void OnChildrenHeightChange(ListBox& activator, int new_height);
 
-  virtual void OnRefVisible(Widget& activator, bool visible);
+  virtual void OnRefWidgetVisible(Widget& activator, bool visible);
+
+  static void *OnRefWidgetDestroy_(void *win)
+    { reinterpret_cast<MenuWindow*>(win)->OnRefWidgetDestroy(); return NULL; }
+  virtual void OnRefWidgetDestroy();
 
 private:
   MenuWindow(const MenuWindow&);
