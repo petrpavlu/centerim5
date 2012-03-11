@@ -39,6 +39,7 @@
 #include <cppconsui/KeyConfig.h>
 #include <cppconsui/Keys.h>
 #include <errno.h>
+#include <glib/gprintf.h>
 #include <string.h>
 #include <typeinfo>
 #include "gettext.h"
@@ -1010,12 +1011,12 @@ void CenterIM::DeclareBindables()
   DeclareBindable("centerim", "conversation-next",
       sigc::mem_fun(this, &CenterIM::ActionFocusNextConversation),
       InputProcessor::BINDABLE_OVERRIDE);
+  char action[] = "conversation-numberXX";
   for (int i = 1; i < 20; i++) {
-    char *action = g_strdup_printf("conversation-number%d", i);
+    g_sprintf(action + sizeof(action) - 3, "%d", i);
     DeclareBindable("centerim", action, sigc::bind(sigc::mem_fun(this,
             &CenterIM::ActionFocusConversation), i),
         InputProcessor::BINDABLE_OVERRIDE);
-    g_free(action);
   }
   DeclareBindable("centerim", "conversation-expand",
       sigc::mem_fun(this, &CenterIM::ActionExpandConversation),
