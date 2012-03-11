@@ -43,6 +43,8 @@ int main(int argc, char *argv[])
 
   setlocale(LC_ALL, "");
 
+  signal(SIGPIPE, SIG_IGN);
+
   // parse args
   const char *config_path = CIM_CONFIG_PATH;
   int opt;
