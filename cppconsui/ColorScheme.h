@@ -48,9 +48,9 @@ public:
     int background;
     int attrs;
 
-    Color(int f = Curses::Color::WHITE, int b = Curses::Color::BLACK,
-        int a = Curses::Attr::NORMAL) : foreground(f), background(b)
-                        , attrs(a) {}
+    Color(int f = Curses::Color::DEFAULT, int b = Curses::Color::DEFAULT,
+        int a = Curses::Attr::NORMAL)
+      : foreground(f), background(b), attrs(a) {}
   };
   static ColorScheme *Instance();
 
