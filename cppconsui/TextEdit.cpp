@@ -43,10 +43,10 @@ namespace CppConsUI
 {
 
 TextEdit::TextEdit(int w, int h, const char *text_, int flags_,
-    bool single_line, bool accept_tabs_)
+    bool single_line, bool accept_tabs_, bool masked_)
 : Widget(w, h), flags(flags_), editable(true), overwrite_mode(false)
 , single_line_mode(single_line), accept_tabs(accept_tabs_), buffer(NULL)
-, screen_lines_dirty(false)
+, screen_lines_dirty(false), masked(masked_)
 {
   SetText(text_);
 
@@ -96,7 +96,10 @@ void TextEdit::Draw()
         w += t;
       }
       else
-        w += area->mvaddchar(w, j, uc);
+        if (masked)
+          w += area->mvaddchar(w, j, '*');
+        else
+          w += area->mvaddchar(w, j, uc);
       p = NextChar(p);
     }
   }
@@ -227,6 +230,14 @@ void TextEdit::SetAcceptTabs(bool accept)
     return;
 
   accept_tabs = accept;
+}
+
+void TextEdit::SetMasked(bool masked_)
+{
+  if (masked == masked_)
+    return;
+
+  masked = masked_;
 }
 
 bool TextEdit::ScreenLine::operator==(const ScreenLine& other) const

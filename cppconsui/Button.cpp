@@ -31,10 +31,10 @@
 namespace CppConsUI
 {
 
-Button::Button(int w, int h, const char *text_, int flags_)
+Button::Button(int w, int h, const char *text_, int flags_, bool masked_)
 : Widget(w, h), flags(flags_), text(NULL), text_width(0), text_height(0)
 , value(NULL), value_width(0), unit(NULL) , unit_width(0), right(NULL)
-, right_width(0)
+, right_width(0), masked(masked_)
 {
   SetText(text_);
 
@@ -42,10 +42,10 @@ Button::Button(int w, int h, const char *text_, int flags_)
   DeclareBindables();
 }
 
-Button::Button(const char *text_, int flags_)
+Button::Button(const char *text_, int flags_, bool masked_)
 : Widget(AUTOSIZE, AUTOSIZE), flags(flags_), text(NULL), text_width(0)
 , text_height(0), value(NULL), value_width(0), unit(NULL), unit_width(0)
-, right(NULL), right_width(0)
+, right(NULL), right_width(0), masked(masked_)
 {
   SetText(text_);
 
@@ -54,10 +54,10 @@ Button::Button(const char *text_, int flags_)
 }
 
 Button::Button(int w, int h, int flags_, const char *text_,
-    const char *value_, const char *unit_, const char *right_)
+    const char *value_, const char *unit_, const char *right_, bool masked_)
 : Widget(w, h), flags(flags_), text(NULL), text_width(0), text_height(0)
 , value(NULL), value_width(0), unit(NULL), unit_width(0), right(NULL)
-, right_width(0)
+, right_width(0), masked(masked_)
 {
   SetText(text_);
   SetValue(value_);
@@ -69,10 +69,10 @@ Button::Button(int w, int h, int flags_, const char *text_,
 }
 
 Button::Button(int flags_, const char *text_, const char *value_,
-    const char *unit_, const char *right_)
+    const char *unit_, const char *right_, bool masked_)
 : Widget(AUTOSIZE, AUTOSIZE), flags(flags_), text(NULL), text_width(0)
 , text_height(0), value(NULL), value_width(0), unit(NULL), unit_width(0)
-, right(NULL), right_width(0)
+, right(NULL), right_width(0), masked(masked_)
 {
   SetText(text_);
   SetValue(value_);
@@ -140,7 +140,10 @@ void Button::Draw()
     if (h < realh) {
       l += area->mvaddstring(l, h, realw - l, ": ");
       if (value)
-        l += area->mvaddstring(l, h, realw - l, value);
+        if (masked)
+          l += area->mvaddstring(l, h, realw - l, "*");
+        else
+          l += area->mvaddstring(l, h, realw - l, value);
     }
   }
 
@@ -173,6 +176,15 @@ void Button::SetFlags(int new_flags)
     return;
 
   flags = new_flags;
+  Redraw();
+}
+
+void Button::SetMasked(bool masked_)
+{
+  if (masked == masked_)
+    return;
+
+  masked = masked_;
   Redraw();
 }
 

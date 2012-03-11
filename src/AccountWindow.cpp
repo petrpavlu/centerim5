@@ -135,8 +135,10 @@ void AccountWindow::StringOption::Initialize()
 
 void AccountWindow::StringOption::UpdateValue()
 {
-  if (type == TYPE_PASSWORD)
+  if (type == TYPE_PASSWORD) {
+    SetMasked(true);
     SetValue(purple_account_get_password(account));
+  }
   else if (type == TYPE_ALIAS)
     SetValue(purple_account_get_alias(account));
   else
@@ -149,6 +151,7 @@ void AccountWindow::StringOption::OnActivate(Button& activator)
 {
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(GetText(),
       GetValue());
+  dialog->SetMasked(GetMasked());
   dialog->signal_response.connect(sigc::mem_fun(this,
         &StringOption::ResponseHandler));
   dialog->Show();

@@ -47,6 +47,8 @@ public:
   int GetFlags() { return entry->GetFlags(); }
   void SetFlags(int flags) { entry->SetFlags(flags); }
 
+  bool GetMasked() { return entry->GetMasked(); }
+  void SetMasked(bool masked) { entry->SetMasked(masked); }
   /**
    * Signal emitted when the user closes the dialog.
    */

@@ -47,7 +47,8 @@ public:
   };
 
   TextEdit(int w, int h, const char *text_ = NULL, int flags_ = 0,
-      bool single_line = false, bool accept_tabs_ = true);
+      bool single_line = false, bool accept_tabs_ = true, 
+      bool masked_ = false);
   virtual ~TextEdit();
 
   // Widget
@@ -73,6 +74,9 @@ public:
 
   virtual void SetAcceptTabs(bool accept);
   virtual bool GetAcceptTabs() const { return accept_tabs; }
+
+  virtual void SetMasked(bool masked_);
+  virtual bool GetMasked() const { return masked; }
 
   sigc::signal<void, TextEdit&> signal_text_change;
 
@@ -137,6 +141,7 @@ protected:
   bool overwrite_mode;
   bool single_line_mode;
   bool accept_tabs;
+  bool masked;
 
   /**
    * Character position from the start of buffer.

@@ -6,7 +6,6 @@
   <http://www.gnu.org/software/gettext/manual/gettext.html#Libraries>
   also make the translations proper)
 - add function descriptions in the header files
-- TextEntry -- hide passwords with asterisks
 - pending auth and auth request windows
 - notify UI ops implementation
 - buddy list customization

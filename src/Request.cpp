@@ -307,6 +307,7 @@ void Request::FieldsDialog::StringField::OnActivate(
   CppConsUI::InputDialog *dialog
     = new CppConsUI::InputDialog(purple_request_field_get_label(field),
       purple_request_field_string_get_value(field));
+  dialog->SetMasked(purple_request_field_string_is_masked(field));
   dialog->signal_response.connect(sigc::mem_fun(this,
         &StringField::ResponseHandler));
   dialog->Show();

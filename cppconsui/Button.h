@@ -50,13 +50,16 @@ public:
     FLAG_RIGHT = 1 << 2
   };
 
-  Button(int w, int h, const char *text_ = NULL, int flags_ = 0);
-  explicit Button(const char *text_ = NULL, int flags_ = 0);
+  Button(int w, int h, const char *text_ = NULL, int flags_ = 0, 
+      bool masked_ = false);
+  explicit Button(const char *text_ = NULL, int flags_ = 0, 
+      bool masked_ = false);
   Button(int w, int h, int flags_ = 0, const char *text_ = NULL,
       const char *value_ = NULL, const char *unit_ = NULL,
-      const char *right_ = NULL);
+      const char *right_ = NULL, bool masked_ = false);
   Button(int flags_, const char *text_ = NULL, const char *value_ = NULL,
-      const char *unit_ = NULL, const char *right_ = NULL);
+      const char *unit_ = NULL, const char *right_ = NULL,
+      bool masked_ = false);
   virtual ~Button();
 
   // Widget
@@ -84,6 +87,9 @@ public:
   virtual void SetRight(const char *new_right);
   virtual const char *GetRight() const { return right; }
 
+  virtual void SetMasked(bool masked_);
+  virtual bool GetMasked() const { return masked; }
+
   /**
    * Emited signal when the button is pressed/activated.
    */
@@ -100,6 +106,7 @@ protected:
   int unit_width;
   char *right;
   int right_width;
+  bool masked;
 
 private:
   Button(const Button&);
