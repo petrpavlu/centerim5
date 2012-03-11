@@ -88,18 +88,19 @@ void TextEdit::Draw()
     const char *p = i->start;
     int w = 0;
     for (size_t k = 0; k < i->length && *p != '\n'; k++) {
-      gunichar uc = g_utf8_get_char(p);
-      if (uc == '\t') {
-        int t = Curses::onscreen_width(uc, w);
-        for (int l = 0; l < t; l++)
-          area->mvaddchar(w + l, j, ' ');
-        w += t;
-      }
-      else
-        if (masked)
-          w += area->mvaddchar(w, j, '*');
+      if (masked)
+        w += area->mvaddchar(w, j, '*');
+      else {
+        gunichar uc = g_utf8_get_char(p);
+        if (uc == '\t') {
+          int t = OnScreenWidth(uc, w);
+          for (int l = 0; l < t; l++)
+            area->mvaddchar(w + l, j, ' ');
+          w += t;
+        }
         else
           w += area->mvaddchar(w, j, uc);
+      }
       p = NextChar(p);
     }
   }
@@ -238,6 +239,11 @@ void TextEdit::SetMasked(bool masked_)
     return;
 
   masked = masked_;
+  /* In the masked mode, the tab character and wide characters lose their
+   * width property, thus screen lines and cursor have to be updated. */
+  UpdateScreenLines();
+  UpdateScreenCursor();
+  Redraw();
 }
 
 bool TextEdit::ScreenLine::operator==(const ScreenLine& other) const
@@ -395,10 +401,17 @@ int TextEdit::Width(const char *start, size_t chars) const
 
   while (chars--) {
     gunichar uc = g_utf8_get_char(start);
-    width += Curses::onscreen_width(uc, width);
+    width += OnScreenWidth(uc, width);
     start = NextChar(start);
   }
   return width;
+}
+
+int TextEdit::OnScreenWidth(gunichar uc, int w) const
+{
+  if (masked)
+    return 1;
+  return Curses::onscreen_width(uc, w);
 }
 
 char *TextEdit::GetScreenLine(const char *text, int max_width,
@@ -420,7 +433,7 @@ char *TextEdit::GetScreenLine(const char *text, int max_width,
   while (cur < bufend) {
     prev_width = cur_width;
     gunichar uc = g_utf8_get_char(cur);
-    cur_width += Curses::onscreen_width(uc, cur_width);
+    cur_width += OnScreenWidth(uc, cur_width);
     cur_length++;
 
     if (prev_width > max_width)
@@ -717,7 +730,7 @@ void TextEdit::MoveCursor(CursorMovement step, Direction dir)
           while (w < oldw
               && i < screen_lines[current_sc_line + 1].length - 1) {
             gunichar uc = g_utf8_get_char(ch);
-            w += Curses::onscreen_width(uc, w);
+            w += OnScreenWidth(uc, w);
             ch = NextChar(ch);
             i++;
           }
@@ -739,7 +752,7 @@ void TextEdit::MoveCursor(CursorMovement step, Direction dir)
           while (w < oldw
               && i < screen_lines[current_sc_line - 1].length - 1) {
             gunichar uc = g_utf8_get_char(ch);
-            w += Curses::onscreen_width(uc, w);
+            w += OnScreenWidth(uc, w);
             ch = NextChar(ch);
             i++;
           }

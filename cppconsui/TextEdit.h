@@ -198,6 +198,12 @@ protected:
   virtual char *PrevChar(const char *p) const;
   virtual char *NextChar(const char *p) const;
   virtual int Width(const char *start, size_t chars) const;
+  /**
+   * Returns on-screen width of a given character in the same fashion as
+   * Curses::onscreen_width() does but handles the tab character and wide
+   * characters properly if the masked mode is active.
+   */
+  virtual int OnScreenWidth(gunichar uc, int w = 0) const;
 
   virtual char *GetScreenLine(const char *text, int max_width,
       size_t *res_length) const;
