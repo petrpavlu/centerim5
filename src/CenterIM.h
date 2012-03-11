@@ -165,7 +165,7 @@ private:
   void LoadDefaultColorSchemeConfig();
   bool SaveColorSchemeConfig();
   char *ColorAttributesToString(int attrs);
-  int StringToColorAttributes(const char *str);
+  bool StringToColorAttributes(const char *str, int *attrs);
   void LoadDefaultKeyConfig();
   bool SaveKeyConfig();
 

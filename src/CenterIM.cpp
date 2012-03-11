@@ -202,8 +202,10 @@ bool CenterIM::LoadColorSchemeConfig()
       if (bgs && sscanf(bgs, "%d", &bg) != 1)
         goto out;
 
-      if (attrs)
-        attr = StringToColorAttributes(attrs);
+      if (attrs && !StringToColorAttributes(attrs, &attr)) {
+        LOG->Error(_("Unrecognized attributes '%s'.\n"), attrs);
+        goto out;
+      }
 
       COLORSCHEME->SetColorPair(name, widget, property, fg, bg, attr);
     }
@@ -739,41 +741,48 @@ char *CenterIM::ColorAttributesToString(int attrs)
 #undef APPEND
 }
 
-int CenterIM::StringToColorAttributes(const char *str)
+bool CenterIM::StringToColorAttributes(const char *str, int *attrs)
 {
-  gchar **tokens = g_strsplit(str, "|", 0);
-  int attrs = 0;
+  g_assert(str);
+  g_assert(attrs);
 
+  gchar **tokens = g_strsplit(str, "|", 0);
+  *attrs = 0;
+
+  bool valid = true;
   for (size_t i = 0; tokens[i]; i++) {
     if (!strcmp("normal", tokens[i])) {
-      attrs |= CppConsUI::Curses::Attr::NORMAL;
+      *attrs |= CppConsUI::Curses::Attr::NORMAL;
       continue;
     }
     if (!strcmp("standout", tokens[i])) {
-      attrs |= CppConsUI::Curses::Attr::STANDOUT;
+      *attrs |= CppConsUI::Curses::Attr::STANDOUT;
       continue;
     }
     if (!strcmp("reverse", tokens[i])) {
-      attrs |= CppConsUI::Curses::Attr::REVERSE;
+      *attrs |= CppConsUI::Curses::Attr::REVERSE;
       continue;
     }
     if (!strcmp("blink", tokens[i])) {
-      attrs |= CppConsUI::Curses::Attr::BLINK;
+      *attrs |= CppConsUI::Curses::Attr::BLINK;
       continue;
     }
     if (!strcmp("dim", tokens[i])) {
-      attrs |= CppConsUI::Curses::Attr::DIM;
+      *attrs |= CppConsUI::Curses::Attr::DIM;
       continue;
     }
     if (!strcmp("bold", tokens[i])) {
-      attrs |= CppConsUI::Curses::Attr::BOLD;
+      *attrs |= CppConsUI::Curses::Attr::BOLD;
       continue;
     }
+    // unrecognized attribute
+    valid = false;
+    break;
   }
 
   g_strfreev(tokens);
 
-  return attrs;
+  return valid;
 }
 
 void CenterIM::LoadDefaultKeyConfig()
