@@ -45,8 +45,8 @@ namespace CppConsUI
 TextEdit::TextEdit(int w, int h, const char *text_, int flags_,
     bool single_line, bool accept_tabs_, bool masked_)
 : Widget(w, h), flags(flags_), editable(true), overwrite_mode(false)
-, single_line_mode(single_line), accept_tabs(accept_tabs_), buffer(NULL)
-, screen_lines_dirty(false), masked(masked_)
+, single_line_mode(single_line), accept_tabs(accept_tabs_), masked(masked_)
+, buffer(NULL), screen_lines_dirty(false)
 {
   SetText(text_);
 

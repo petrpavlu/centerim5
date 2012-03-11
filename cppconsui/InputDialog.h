@@ -42,13 +42,14 @@ public:
   InputDialog(const char *title, const char *defaultvalue);
   virtual ~InputDialog() {}
 
-  const char *GetText() const;
+  virtual const char *GetText() const;
 
-  int GetFlags() { return entry->GetFlags(); }
-  void SetFlags(int flags) { entry->SetFlags(flags); }
+  virtual int GetFlags() const { return entry->GetFlags(); }
+  virtual void SetFlags(int flags) { entry->SetFlags(flags); }
 
-  bool GetMasked() { return entry->GetMasked(); }
-  void SetMasked(bool masked) { entry->SetMasked(masked); }
+  virtual bool GetMasked() const { return entry->GetMasked(); }
+  virtual void SetMasked(bool masked) { entry->SetMasked(masked); }
+
   /**
    * Signal emitted when the user closes the dialog.
    */

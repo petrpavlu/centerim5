@@ -139,11 +139,15 @@ void Button::Draw()
     area->fill(attrs, l, 0, value_width + 2, realh);
     if (h < realh) {
       l += area->mvaddstring(l, h, realw - l, ": ");
-      if (value)
-        if (masked)
-          l += area->mvaddstring(l, h, realw - l, "*");
+      if (value) {
+        if (masked) {
+          int count = value_width;
+          while (count--)
+            l += area->mvaddstring(l, h, realw - l, "*");
+        }
         else
           l += area->mvaddstring(l, h, realw - l, value);
+      }
     }
   }
 
