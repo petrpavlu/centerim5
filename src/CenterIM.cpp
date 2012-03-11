@@ -740,15 +740,6 @@ bool CenterIM::StringToColor(const char *str, int *color)
 
   *color = 0;
 
-  // numeric colors
-  if (g_ascii_isdigit(str[0])) {
-    long int i = strtol(str, NULL, 10);
-    if (errno == ERANGE || i > INT_MAX || i < 0)
-      return false;
-    *color = i;
-    return true;
-  }
-
   // symbolic colors
   for (int i = -1; i < (int)G_N_ELEMENTS(named_colors) - 1; i++)
     if (!strcmp(str, named_colors[i + 1])) {
@@ -756,7 +747,12 @@ bool CenterIM::StringToColor(const char *str, int *color)
       return true;
     }
 
-  return false;
+  // numeric colors
+  long int i = strtol(str, NULL, 10);
+  if (errno == ERANGE || i > INT_MAX || i < -1)
+    return false;
+  *color = i;
+  return true;
 }
 
 char *CenterIM::ColorAttributesToString(int attrs)
