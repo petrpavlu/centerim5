@@ -258,6 +258,8 @@ public:
 
   PurpleGroup *GetPurpleGroup() const { return group; }
 
+  void DelayedInit();
+
 protected:
   class ContextMenu
   : public CppConsUI::MenuWindow
@@ -286,8 +288,6 @@ protected:
 
   // BuddyListNode
   virtual void OpenContextMenu();
-
-  void DelayedInit();
 
 private:
   BuddyListGroup(PurpleBlistNode *node);
