@@ -27,7 +27,6 @@
 
 #include <cppconsui/ConsuiCurses.h>
 #include <cppconsui/ColorScheme.h>
-#include <cppconsui/CoreManager.h>
 #include <cppconsui/Keys.h>
 #include "gettext.h"
 
@@ -766,6 +765,14 @@ const char *BuddyListGroup::ToString() const
   return purple_group_get_name(group);
 }
 
+void BuddyListGroup::DelayedInit()
+{
+  /* This can't be done when the node is created because node settings are
+   * unavailable at that time. */
+  if (!purple_blist_node_get_bool(node, "collapsed"))
+    treeview->SetCollapsed(ref, false);
+}
+
 BuddyListGroup::ContextMenu::ContextMenu(BuddyListGroup& parent)
 : MenuWindow(parent, AUTOSIZE, AUTOSIZE)
 , parent(&parent)
@@ -876,23 +883,12 @@ void BuddyListGroup::OpenContextMenu()
   w->Show();
 }
 
-void BuddyListGroup::DelayedInit()
-{
-  /* This can't be done when the node is created because node settings are
-   * unavailable at that time. */
-  if (!purple_blist_node_get_bool(node, "collapsed"))
-    treeview->SetCollapsed(ref, false);
-}
-
 BuddyListGroup::BuddyListGroup(PurpleBlistNode *node)
 : BuddyListNode(node)
 {
   SetColorScheme("buddylistgroup");
 
   group = reinterpret_cast<PurpleGroup*>(node);
-
-  COREMANAGER->TimeoutOnceConnect(sigc::mem_fun(this,
-        &BuddyListGroup::DelayedInit), 0);
 }
 
 /* vim: set tabstop=2 shiftwidth=2 tw=78 expandtab : */

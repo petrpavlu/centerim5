@@ -149,6 +149,18 @@ void BuddyList::Load()
 {
   // load the buddy list from ~/.centerim5/blist.xml
   purple_blist_load();
+
+  // delayed group nodes init
+  PurpleBlistNode *node = purple_blist_get_root();
+  while (node) {
+    if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
+      BuddyListGroup *gnode = reinterpret_cast<BuddyListGroup*>(node->ui_data);
+      if (gnode)
+        gnode->DelayedInit();
+    }
+
+    node = purple_blist_node_next(node, TRUE);
+  }
 }
 
 void BuddyList::UpdateCachedPreference(const char *name)

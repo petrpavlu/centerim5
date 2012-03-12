@@ -26,10 +26,6 @@
  * @ingroup cppconsui
  */
 
-/* Uncomment to enable an experimental feature to lower the number of used
- * colorpairs */
-//#define SAVE_COLOR_PAIRS
-
 #include "ColorScheme.h"
 
 #include "gettext.h"
@@ -64,7 +60,11 @@ int ColorScheme::GetColorPair(const char *scheme, const char *widget,
   return 0;
 }
 
+#ifdef SAVE_COLOR_PAIRS
 int ColorScheme::GetColorPair(Color& c)
+#else
+int ColorScheme::GetColorPair(const Color& c)
+#endif
 {
   ColorPairs::const_iterator i;
   int fg = c.foreground;

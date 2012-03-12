@@ -49,41 +49,34 @@ void Conversations::FocusActiveConversation()
 
 void Conversations::FocusConversation(int i)
 {
-  int prev, cur;
-  prev = -1;
-  cur = NextActiveConversation(prev);
+  g_assert(i >= 1);
 
-  while (cur > prev) {
-    if (i == 1) {
-      ActivateConversation(cur);
-      return;
-    }
+  if (conversations.empty())
+    return;
 
-    i--;
-    prev = cur;
-    cur = NextActiveConversation(cur);
+  // the external conversation #1 is the internal conversation #0
+  i -= 1;
+
+  int s = static_cast<int>(conversations.size());
+  if (i < s)
+    ActivateConversation(i);
+  else {
+    // if there is less than i active conversations then active the last one
+    ActivateConversation(s - 1);
   }
-
-  // if there is less than i active conversations then active the last one
-  if (prev != -1)
-    ActivateConversation(prev);
 }
 
 void Conversations::FocusPrevConversation()
 {
   int i = PrevActiveConversation(active);
-  if (i == -1)
-    ActivateConversation(active);
-  else
+  if (i != -1)
     ActivateConversation(i);
 }
 
 void Conversations::FocusNextConversation()
 {
   int i = NextActiveConversation(active);
-  if (i == -1)
-    ActivateConversation(active);
-  else
+  if (i != -1)
     ActivateConversation(i);
 }
 
