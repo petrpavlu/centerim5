@@ -78,6 +78,9 @@ private:
   Conversation& operator=(const Conversation&);
 
   void DeclareBindables();
+  void Beep();
+
+  bool beep_on_msg;
 };
 
 #endif // __CONVERSATION_H__

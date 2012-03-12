@@ -26,6 +26,7 @@
 
 #include <cppconsui/Keys.h>
 
+#include <iostream>
 #include <sys/stat.h>
 #include "gettext.h"
 
@@ -66,6 +67,8 @@ Conversation::Conversation(PurpleConversation *conv_)
   LoadHistory();
 
   DeclareBindables();
+  beep_on_msg = purple_prefs_get_int(CONF_PREFIX "/conversations/beep_on_msg");
+  Beep();
   LOG->Debug("Conversation::Conversation(): this=%p, title=%s",
       static_cast<void*>(this), purple_conversation_get_title(conv));
 }
@@ -159,6 +162,7 @@ void Conversation::Write(const char *name, const char *alias,
     dir = "IN";
     mtype = "MSG2"; // cim5 message
     color = 2;
+    Beep();
   }
   else {
     dir = "IN";
@@ -611,6 +615,12 @@ void Conversation::DeclareBindables()
   DeclareBindable("conversation", "send",
       sigc::mem_fun(this, &Conversation::ActionSend),
       InputProcessor::BINDABLE_OVERRIDE);
+}
+
+void Conversation::Beep()
+{
+  if (HasFocus() && beep_on_msg)
+    std::cout << '\a';
 }
 
 /* vim: set tabstop=2 shiftwidth=2 tw=78 expandtab : */
