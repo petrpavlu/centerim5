@@ -619,8 +619,7 @@ void Conversation::DeclareBindables()
 
 void Conversation::Beep()
 {
-  if (HasFocus() && beep_on_msg)
-    std::cout << '\a';
+  std::cout << '\a';
 }
 
 /* vim: set tabstop=2 shiftwidth=2 tw=78 expandtab : */
