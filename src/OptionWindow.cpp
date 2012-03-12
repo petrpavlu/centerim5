@@ -110,11 +110,18 @@ do {                                       \
   tree->AppendNode(parent, *c);
 #undef ADD_DEBUG_OPTIONS
 
-  CppConsUI::Button *b = new CppConsUI::Button(AUTOSIZE, 1,
-      _("Reload keybinding file"));
+  CppConsUI::Button *b;
+  parent = tree->AppendNode(tree->GetRootNode(),
+      *(new CppConsUI::TreeView::ToggleCollapseButton(
+          _("Config files"))));
+  b = new CppConsUI::Button(AUTOSIZE, 1, _("Reload key bindings"));
   b->signal_activate.connect(sigc::mem_fun(this,
-        &OptionWindow::ReloadKeybindingFile));
-  tree->AppendNode(tree->GetRootNode(), *b);
+        &OptionWindow::ReloadKeyBindings));
+  tree->AppendNode(parent, *b);
+  b = new CppConsUI::Button(AUTOSIZE, 1, _("Reload color schemes"));
+  b->signal_activate.connect(sigc::mem_fun(this,
+        &OptionWindow::ReloadColorSchemes));
+  tree->AppendNode(parent, *b);
 
   buttons->AppendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
           &OptionWindow::Close)));
@@ -303,10 +310,16 @@ const char *OptionWindow::GetMinUnit(int i) const
   return ngettext("minute", "minutes", i);
 }
 
-void OptionWindow::ReloadKeybindingFile(CppConsUI::Button& activator) const
+void OptionWindow::ReloadKeyBindings(CppConsUI::Button& activator) const
 {
   if (CENTERIM->LoadKeyConfig())
     LOG->Message(_("Keybinding file was successfully reloaded."));
+}
+
+void OptionWindow::ReloadColorSchemes(CppConsUI::Button& activator) const
+{
+  if (CENTERIM->LoadColorSchemeConfig())
+    LOG->Message(_("Colorscheme file was successfully reloaded."));
 }
 
 /* vim: set tabstop=2 shiftwidth=2 tw=78 expandtab : */

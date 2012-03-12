@@ -119,7 +119,8 @@ protected:
 
   const char *GetPercentUnit(int i) const;
   const char *GetMinUnit(int i) const;
-  void ReloadKeybindingFile(CppConsUI::Button& activator) const;
+  void ReloadKeyBindings(CppConsUI::Button& activator) const;
+  void ReloadColorSchemes(CppConsUI::Button& activator) const;
 
 private:
   OptionWindow(const OptionWindow&);
