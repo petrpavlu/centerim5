@@ -34,6 +34,10 @@
 #include <map>
 #include <string>
 
+/* Uncomment to enable an experimental feature to lower the number of used
+ * colorpairs. */
+//#define SAVE_COLOR_PAIRS
+
 #define COLORSCHEME (CppConsUI::ColorScheme::Instance())
 
 namespace CppConsUI
@@ -65,7 +69,11 @@ public:
    */
   int GetColorPair(const char *scheme, const char *widget,
       const char *property);
+#ifdef SAVE_COLOR_PAIRS
   int GetColorPair(Color& c);
+#else
+  int GetColorPair(const Color& c);
+#endif
   /**
    * Sets color pair and Curses attributes for a given scheme, widget,
    * property combination.

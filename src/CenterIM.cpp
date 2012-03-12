@@ -729,7 +729,7 @@ bool CenterIM::SaveColorSchemeConfig()
 
 char *CenterIM::ColorToString(int color)
 {
-  if (color >= -1 && color < (int)G_N_ELEMENTS(named_colors) - 1)
+  if (color >= -1 && color < static_cast<int>(G_N_ELEMENTS(named_colors) - 1))
     return g_strdup(named_colors[color + 1]);
   return g_strdup_printf("%d", color);
 }
@@ -742,7 +742,7 @@ bool CenterIM::StringToColor(const char *str, int *color)
   *color = 0;
 
   // symbolic colors
-  for (int i = -1; i < (int)G_N_ELEMENTS(named_colors) - 1; i++)
+  for (int i = -1; i < static_cast<int>(G_N_ELEMENTS(named_colors) - 1); i++)
     if (!strcmp(str, named_colors[i + 1])) {
       *color = i;
       return true;
@@ -864,6 +864,7 @@ void CenterIM::LoadDefaultKeyConfig()
   KEYCONFIG->BindKey("centerim", "conversation-number17", "Alt-u");
   KEYCONFIG->BindKey("centerim", "conversation-number18", "Alt-i");
   KEYCONFIG->BindKey("centerim", "conversation-number19", "Alt-o");
+  KEYCONFIG->BindKey("centerim", "conversation-number20", "Alt-p");
 
   KEYCONFIG->BindKey("buddylist", "contextmenu", "Ctrl-d");
 
@@ -1012,7 +1013,7 @@ void CenterIM::DeclareBindables()
       sigc::mem_fun(this, &CenterIM::ActionFocusNextConversation),
       InputProcessor::BINDABLE_OVERRIDE);
   char action[] = "conversation-numberXX";
-  for (int i = 1; i < 20; i++) {
+  for (int i = 1; i <= 20; i++) {
     g_sprintf(action + sizeof(action) - 3, "%d", i);
     DeclareBindable("centerim", action, sigc::bind(sigc::mem_fun(this,
             &CenterIM::ActionFocusConversation), i),
