@@ -128,7 +128,6 @@ void MenuWindow::SetHideOnClose(bool new_hide_on_close)
     return;
 
   hide_on_close = new_hide_on_close;
-  Redraw();
 }
 
 void MenuWindow::SetRefWidget(Widget& new_ref)
@@ -141,7 +140,8 @@ void MenuWindow::SetRefWidget(Widget& new_ref)
 
   ref = &new_ref;
   ref->add_destroy_notify_callback(this, OnRefWidgetDestroy_);
-  Redraw();
+  if (visible)
+    Redraw();
 }
 
 void MenuWindow::CleanRefWidget()
@@ -151,7 +151,8 @@ void MenuWindow::CleanRefWidget()
 
   ref->remove_destroy_notify_callback(this);
   ref = NULL;
-  Redraw();
+  if (visible)
+    Redraw();
 }
 
 void MenuWindow::SetLeftShift(int x)
@@ -160,7 +161,8 @@ void MenuWindow::SetLeftShift(int x)
     return;
 
   xshift = x;
-  Redraw();
+  if (visible)
+    Redraw();
 }
 
 void MenuWindow::SetTopShift(int y)
@@ -169,7 +171,8 @@ void MenuWindow::SetTopShift(int y)
     return;
 
   yshift = y;
-  Redraw();
+  if (visible)
+    Redraw();
 }
 
 void MenuWindow::AddWidget(Widget& widget, int x, int y)
