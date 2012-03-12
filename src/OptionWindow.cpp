@@ -78,7 +78,7 @@ OptionWindow::OptionWindow()
   tree->AppendNode(parent, *c);
 
   parent = tree->AppendNode(tree->GetRootNode(),
-      *(new CppConsUI::TreeView::ToggleCollapseButton(_("Logging"))));
+      *(new CppConsUI::TreeView::ToggleCollapseButton(_("System logging"))));
 #define ADD_DEBUG_OPTIONS()                \
 do {                                       \
   c->AddOption(_("None"), "none");         \
@@ -109,6 +109,28 @@ do {                                       \
   ADD_DEBUG_OPTIONS();
   tree->AppendNode(parent, *c);
 #undef ADD_DEBUG_OPTIONS
+
+  parent = tree->AppendNode(tree->GetRootNode(),
+      *(new CppConsUI::TreeView::ToggleCollapseButton(
+          _("Libpurple logging"))));
+  c = new ChoiceOption(_("Log format"), "/purple/logging/format");
+  GList *opts = purple_log_logger_get_options();
+  for (GList *o = opts; o; o = o->next) {
+    const char *human = reinterpret_cast<const char*>(o->data);
+    o = o->next;
+    g_assert(o);
+    const char *value = reinterpret_cast<const char*>(o->data);
+    c->AddOption(human, value);
+  }
+  g_list_free(opts);
+  tree->AppendNode(parent, *c);
+  tree->AppendNode(parent, *(new BooleanOption(_("Log all instant messages"),
+          "/purple/logging/log_ims")));
+  tree->AppendNode(parent, *(new BooleanOption(_("Log all chats"),
+          "/purple/logging/log_chats")));
+  tree->AppendNode(parent, *(new BooleanOption(
+          _("Log all status changes to system log"),
+          "/purple/logging/log_system")));
 
   CppConsUI::Button *b;
   parent = tree->AppendNode(tree->GetRootNode(),
