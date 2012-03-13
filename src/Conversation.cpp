@@ -67,7 +67,7 @@ Conversation::Conversation(PurpleConversation *conv_)
   LoadHistory();
 
   DeclareBindables();
-  beep_on_msg = purple_prefs_get_int(CONF_PREFIX "/conversations/beep_on_msg");
+  beep_on_msg = purple_prefs_get_bool(CONF_PREFIX "/conversations/beep_on_msg");
   Beep();
   LOG->Debug("Conversation::Conversation(): this=%p, title=%s",
       static_cast<void*>(this), purple_conversation_get_title(conv));
@@ -168,6 +168,7 @@ void Conversation::Write(const char *name, const char *alias,
     dir = "IN";
     mtype = "OTHER";
     color = 0;
+    Beep();
   }
 
   // write text into logfile

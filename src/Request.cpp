@@ -288,7 +288,7 @@ Request::FieldsDialog::StringField::StringField(PurpleRequestField *field)
   g_assert(field);
 
   if (purple_request_field_string_is_masked(field)) {
-    // TODO
+    SetMasked(true);
   }
 
   char *text = g_strdup_printf("%s%s",
