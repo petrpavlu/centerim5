@@ -57,6 +57,21 @@ public:
   BuddyListNode *GetParentNode() const;
 
 protected:
+  class ContextMenu
+  : public CppConsUI::MenuWindow
+  {
+  public:
+    ContextMenu(BuddyListNode& parent_node_);
+    virtual ~ContextMenu() {}
+
+  protected:
+    BuddyListNode *parent_node;
+
+  private:
+    ContextMenu(const ContextMenu&);
+    ContextMenu& operator=(const ContextMenu&);
+  };
+
   CppConsUI::TreeView *treeview;
   CppConsUI::TreeView::NodeReference ref;
 
@@ -100,15 +115,15 @@ public:
   PurpleBuddy *GetPurpleBuddy() const { return buddy; }
 
 protected:
-  class ContextMenu
-  : public CppConsUI::MenuWindow
+  class BuddyContextMenu
+  : public ContextMenu
   {
   public:
-    ContextMenu(BuddyListBuddy& parent);
-    virtual ~ContextMenu() {}
+    BuddyContextMenu(BuddyListBuddy& parent_buddy_);
+    virtual ~BuddyContextMenu() {}
 
   protected:
-    BuddyListBuddy *parent;
+    BuddyListBuddy *parent_buddy;
 
     void ChangeAliasResponseHandler(CppConsUI::InputDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
@@ -119,8 +134,8 @@ protected:
     void OnRemove(Button& activator);
 
   private:
-    ContextMenu(const ContextMenu&);
-    ContextMenu& operator=(const ContextMenu&);
+    BuddyContextMenu(const BuddyContextMenu&);
+    BuddyContextMenu& operator=(const BuddyContextMenu&);
   };
 
   PurpleBuddy *buddy;
@@ -154,15 +169,15 @@ public:
   PurpleChat *GetPurpleChat() const { return chat; }
 
 protected:
-  class ContextMenu
-  : public CppConsUI::MenuWindow
+  class ChatContextMenu
+  : public ContextMenu
   {
   public:
-    ContextMenu(BuddyListChat& parent);
-    virtual ~ContextMenu() {}
+    ChatContextMenu(BuddyListChat& parent_chat_);
+    virtual ~ChatContextMenu() {}
 
   protected:
-    BuddyListChat *parent;
+    BuddyListChat *parent_chat;
 
     void ChangeAliasResponseHandler(CppConsUI::InputDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
@@ -173,8 +188,8 @@ protected:
     void OnRemove(Button& activator);
 
   private:
-    ContextMenu(const ContextMenu&);
-    ContextMenu& operator=(const ContextMenu&);
+    ChatContextMenu(const ChatContextMenu&);
+    ChatContextMenu& operator=(const ChatContextMenu&);
   };
 
   PurpleChat *chat;
@@ -205,15 +220,15 @@ public:
   PurpleContact *GetPurpleContact() const { return contact; }
 
 protected:
-  class ContextMenu
-  : public CppConsUI::MenuWindow
+  class ContactContextMenu
+  : public ContextMenu
   {
   public:
-    ContextMenu(BuddyListContact& parent);
-    virtual ~ContextMenu() {}
+    ContactContextMenu(BuddyListContact& parent_contact_);
+    virtual ~ContactContextMenu() {}
 
   protected:
-    BuddyListContact *parent;
+    BuddyListContact *parent_contact;
 
     void ChangeAliasResponseHandler(CppConsUI::InputDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
@@ -222,12 +237,12 @@ protected:
     void RemoveResponseHandler(CppConsUI::MessageDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
     void OnRemove(Button& activator);
+
     void OnMoveTo(Button& activator, PurpleGroup *group);
 
-
   private:
-    ContextMenu(const ContextMenu&);
-    ContextMenu& operator=(const ContextMenu&);
+    ContactContextMenu(const ContactContextMenu&);
+    ContactContextMenu& operator=(const ContactContextMenu&);
   };
 
   PurpleContact *contact;
@@ -263,15 +278,15 @@ public:
   void DelayedInit();
 
 protected:
-  class ContextMenu
-  : public CppConsUI::MenuWindow
+  class GroupContextMenu
+  : public ContextMenu
   {
   public:
-    ContextMenu(BuddyListGroup& parent);
-    virtual ~ContextMenu() {}
+    GroupContextMenu(BuddyListGroup& parent_group_);
+    virtual ~GroupContextMenu() {}
 
   protected:
-    BuddyListGroup *parent;
+    BuddyListGroup *parent_group;
 
     void RenameResponseHandler(CppConsUI::InputDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
@@ -282,8 +297,8 @@ protected:
     void OnRemove(Button& activator);
 
   private:
-    ContextMenu(const ContextMenu&);
-    ContextMenu& operator=(const ContextMenu&);
+    GroupContextMenu(const GroupContextMenu&);
+    GroupContextMenu& operator=(const GroupContextMenu&);
   };
 
   PurpleGroup *group;

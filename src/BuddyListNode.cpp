@@ -99,6 +99,11 @@ BuddyListNode *BuddyListNode::GetParentNode() const
   return reinterpret_cast<BuddyListNode*>(parent->ui_data);
 }
 
+BuddyListNode::ContextMenu::ContextMenu(BuddyListNode& parent_node_)
+: MenuWindow(parent_node_, AUTOSIZE, AUTOSIZE), parent_node(&parent_node_)
+{
+}
+
 BuddyListNode::BuddyListNode(PurpleBlistNode *node)
 : treeview(NULL), node(node)
 {
@@ -238,17 +243,17 @@ const char *BuddyListBuddy::ToString() const
   return purple_buddy_get_alias(buddy);
 }
 
-BuddyListBuddy::ContextMenu::ContextMenu(BuddyListBuddy& parent)
-: MenuWindow(parent, AUTOSIZE, AUTOSIZE)
-, parent(&parent)
+BuddyListBuddy::BuddyContextMenu::BuddyContextMenu(
+    BuddyListBuddy& parent_buddy_)
+: ContextMenu(parent_buddy_), parent_buddy(&parent_buddy_)
 {
   AppendItem(_("Alias..."), sigc::mem_fun(this,
-        &BuddyListBuddy::ContextMenu::OnChangeAlias));
+        &BuddyListBuddy::BuddyContextMenu::OnChangeAlias));
   AppendItem(_("Delete..."), sigc::mem_fun(this,
-        &BuddyListBuddy::ContextMenu::OnRemove));
+        &BuddyListBuddy::BuddyContextMenu::OnRemove));
 }
 
-void BuddyListBuddy::ContextMenu::ChangeAliasResponseHandler(
+void BuddyListBuddy::BuddyContextMenu::ChangeAliasResponseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
@@ -259,7 +264,7 @@ void BuddyListBuddy::ContextMenu::ChangeAliasResponseHandler(
       return;
   }
 
-  PurpleBuddy *buddy = parent->GetPurpleBuddy();
+  PurpleBuddy *buddy = parent_buddy->GetPurpleBuddy();
   purple_blist_alias_buddy(buddy, activator.GetText());
   serv_alias_buddy(buddy);
 
@@ -267,17 +272,17 @@ void BuddyListBuddy::ContextMenu::ChangeAliasResponseHandler(
   Close();
 }
 
-void BuddyListBuddy::ContextMenu::OnChangeAlias(Button& activator)
+void BuddyListBuddy::BuddyContextMenu::OnChangeAlias(Button& activator)
 {
-  PurpleBuddy *buddy = parent->GetPurpleBuddy();
+  PurpleBuddy *buddy = parent_buddy->GetPurpleBuddy();
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(
       _("Alias"), purple_buddy_get_alias(buddy));
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &BuddyListBuddy::ContextMenu::ChangeAliasResponseHandler));
+        &BuddyListBuddy::BuddyContextMenu::ChangeAliasResponseHandler));
   dialog->Show();
 }
 
-void BuddyListBuddy::ContextMenu::RemoveResponseHandler(
+void BuddyListBuddy::BuddyContextMenu::RemoveResponseHandler(
     CppConsUI::MessageDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
@@ -288,7 +293,7 @@ void BuddyListBuddy::ContextMenu::RemoveResponseHandler(
       return;
   }
 
-  PurpleBuddy *buddy = parent->GetPurpleBuddy();
+  PurpleBuddy *buddy = parent_buddy->GetPurpleBuddy();
   purple_account_remove_buddy(purple_buddy_get_account(buddy), buddy,
       purple_buddy_get_group(buddy));
 
@@ -299,9 +304,9 @@ void BuddyListBuddy::ContextMenu::RemoveResponseHandler(
   purple_blist_remove_buddy(buddy);
 }
 
-void BuddyListBuddy::ContextMenu::OnRemove(Button& activator)
+void BuddyListBuddy::BuddyContextMenu::OnRemove(Button& activator)
 {
-  PurpleBuddy *buddy = parent->GetPurpleBuddy();
+  PurpleBuddy *buddy = parent_buddy->GetPurpleBuddy();
   char *msg = g_strdup_printf(
       _("Are you sure you want to delete buddy %s from the list?"),
       purple_buddy_get_alias(buddy));
@@ -309,7 +314,7 @@ void BuddyListBuddy::ContextMenu::OnRemove(Button& activator)
       _("Buddy deletion"), msg);
   g_free(msg);
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &BuddyListBuddy::ContextMenu::RemoveResponseHandler));
+        &BuddyListBuddy::BuddyContextMenu::RemoveResponseHandler));
   dialog->Show();
 }
 
@@ -332,7 +337,7 @@ int BuddyListBuddy::GetColorPair(const char *widget, const char *property)
 
 void BuddyListBuddy::OpenContextMenu()
 {
-  ContextMenu *w = new ContextMenu(*this);
+  ContextMenu *w = new BuddyContextMenu(*this);
   w->Show();
 }
 
@@ -414,17 +419,16 @@ const char *BuddyListChat::ToString() const
   return purple_chat_get_name(chat);
 }
 
-BuddyListChat::ContextMenu::ContextMenu(BuddyListChat& parent)
-: MenuWindow(parent, AUTOSIZE, AUTOSIZE)
-, parent(&parent)
+BuddyListChat::ChatContextMenu::ChatContextMenu(BuddyListChat& parent_chat_)
+: ContextMenu(parent_chat_), parent_chat(&parent_chat_)
 {
   AppendItem(_("Alias..."), sigc::mem_fun(this,
-        &BuddyListChat::ContextMenu::OnChangeAlias));
+        &BuddyListChat::ChatContextMenu::OnChangeAlias));
   AppendItem(_("Delete..."), sigc::mem_fun(this,
-        &BuddyListChat::ContextMenu::OnRemove));
+        &BuddyListChat::ChatContextMenu::OnRemove));
 }
 
-void BuddyListChat::ContextMenu::ChangeAliasResponseHandler(
+void BuddyListChat::ChatContextMenu::ChangeAliasResponseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
@@ -435,24 +439,24 @@ void BuddyListChat::ContextMenu::ChangeAliasResponseHandler(
       return;
   }
 
-  PurpleChat *chat = parent->GetPurpleChat();
+  PurpleChat *chat = parent_chat->GetPurpleChat();
   purple_blist_alias_chat(chat, activator.GetText());
 
   // close context menu
   Close();
 }
 
-void BuddyListChat::ContextMenu::OnChangeAlias(Button& activator)
+void BuddyListChat::ChatContextMenu::OnChangeAlias(Button& activator)
 {
-  PurpleChat *chat = parent->GetPurpleChat();
+  PurpleChat *chat = parent_chat->GetPurpleChat();
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(
       _("Alias"), purple_chat_get_name(chat));
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &BuddyListChat::ContextMenu::ChangeAliasResponseHandler));
+        &BuddyListChat::ChatContextMenu::ChangeAliasResponseHandler));
   dialog->Show();
 }
 
-void BuddyListChat::ContextMenu::RemoveResponseHandler(
+void BuddyListChat::ChatContextMenu::RemoveResponseHandler(
     CppConsUI::MessageDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
@@ -463,7 +467,7 @@ void BuddyListChat::ContextMenu::RemoveResponseHandler(
       return;
   }
 
-  PurpleChat *chat = parent->GetPurpleChat();
+  PurpleChat *chat = parent_chat->GetPurpleChat();
 
   /* Close the context menu before the chat is deleted because its deletion
    * can lead to destruction of this object. */
@@ -472,9 +476,9 @@ void BuddyListChat::ContextMenu::RemoveResponseHandler(
   purple_blist_remove_chat(chat);
 }
 
-void BuddyListChat::ContextMenu::OnRemove(Button& activator)
+void BuddyListChat::ChatContextMenu::OnRemove(Button& activator)
 {
-  PurpleChat *chat = parent->GetPurpleChat();
+  PurpleChat *chat = parent_chat->GetPurpleChat();
   char *msg = g_strdup_printf(
       _("Are you sure you want to delete chat %s from the list?"),
       purple_chat_get_name(chat));
@@ -482,13 +486,13 @@ void BuddyListChat::ContextMenu::OnRemove(Button& activator)
       _("Chat deletion"), msg);
   g_free(msg);
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &BuddyListChat::ContextMenu::RemoveResponseHandler));
+        &BuddyListChat::ChatContextMenu::RemoveResponseHandler));
   dialog->Show();
 }
 
 void BuddyListChat::OpenContextMenu()
 {
-  ContextMenu *w = new ContextMenu(*this);
+  ContextMenu *w = new ChatContextMenu(*this);
   w->Show();
 }
 
@@ -565,34 +569,29 @@ void BuddyListContact::SetRefNode(CppConsUI::TreeView::NodeReference n)
   treeview->SetNodeStyle(n, CppConsUI::TreeView::STYLE_VOID);
 }
 
-BuddyListContact::ContextMenu::ContextMenu(BuddyListContact& parent)
-: MenuWindow(parent, AUTOSIZE, AUTOSIZE)
-, parent(&parent)
+BuddyListContact::ContactContextMenu::ContactContextMenu(
+    BuddyListContact& parent_contact_)
+: ContextMenu(parent_contact_), parent_contact(&parent_contact_)
 {
-  CppConsUI::Button *button;
-  PurpleGroup *group;
-  PurpleBlistNode *node;
-
   AppendItem(_("Alias..."), sigc::mem_fun(this,
-        &BuddyListContact::ContextMenu::OnChangeAlias));
+        &BuddyListContact::ContactContextMenu::OnChangeAlias));
   AppendItem(_("Delete..."), sigc::mem_fun(this,
-        &BuddyListContact::ContextMenu::OnRemove));
+        &BuddyListContact::ContactContextMenu::OnRemove));
 
-  CppConsUI::MenuWindow *groups = new CppConsUI::MenuWindow(*this,
-      AUTOSIZE, AUTOSIZE);
+  CppConsUI::MenuWindow *groups = new CppConsUI::MenuWindow(*this, AUTOSIZE,
+      AUTOSIZE);
 
-  for (node = purple_blist_get_root(); node;
-      node = purple_blist_node_get_sibling_next(node))
-  {
+  for (PurpleBlistNode *node = purple_blist_get_root(); node;
+      node = purple_blist_node_get_sibling_next(node)) {
     if (!PURPLE_BLIST_NODE_IS_GROUP(node))
       continue;
 
-    group = reinterpret_cast<PurpleGroup*>(node);
+    PurpleGroup *group = reinterpret_cast<PurpleGroup*>(node);
 
-    button = groups->AppendItem(purple_group_get_name(
-        group), sigc::bind(sigc::mem_fun(this,
-            &BuddyListContact::ContextMenu::OnMoveTo), group));
-    if (purple_contact_get_group(parent.GetPurpleContact())
+    CppConsUI::Button *button = groups->AppendItem(
+        purple_group_get_name(group), sigc::bind(sigc::mem_fun(this,
+            &BuddyListContact::ContactContextMenu::OnMoveTo), group));
+    if (purple_contact_get_group(parent_contact->GetPurpleContact())
         == group)
       button->GrabFocus();
   }
@@ -600,7 +599,7 @@ BuddyListContact::ContextMenu::ContextMenu(BuddyListContact& parent)
   AppendSubMenu(_("Move to..."), *groups);
 }
 
-void BuddyListContact::ContextMenu::ChangeAliasResponseHandler(
+void BuddyListContact::ContactContextMenu::ChangeAliasResponseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
@@ -611,7 +610,7 @@ void BuddyListContact::ContextMenu::ChangeAliasResponseHandler(
       return;
   }
 
-  PurpleContact *contact = parent->GetPurpleContact();
+  PurpleContact *contact = parent_contact->GetPurpleContact();
   if (contact->alias)
     purple_blist_alias_contact(contact, activator.GetText());
   else {
@@ -624,17 +623,17 @@ void BuddyListContact::ContextMenu::ChangeAliasResponseHandler(
   Close();
 }
 
-void BuddyListContact::ContextMenu::OnChangeAlias(Button& activator)
+void BuddyListContact::ContactContextMenu::OnChangeAlias(Button& activator)
 {
-  PurpleContact *contact = parent->GetPurpleContact();
+  PurpleContact *contact = parent_contact->GetPurpleContact();
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(
       _("Alias"), purple_contact_get_alias(contact));
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &BuddyListContact::ContextMenu::ChangeAliasResponseHandler));
+        &BuddyListContact::ContactContextMenu::ChangeAliasResponseHandler));
   dialog->Show();
 }
 
-void BuddyListContact::ContextMenu::RemoveResponseHandler(
+void BuddyListContact::ContactContextMenu::RemoveResponseHandler(
     CppConsUI::MessageDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
@@ -646,7 +645,7 @@ void BuddyListContact::ContextMenu::RemoveResponseHandler(
   }
 
   // based on gtkdialogs.c:pidgin_dialogs_remove_contact_cb()
-  PurpleContact *contact = parent->GetPurpleContact();
+  PurpleContact *contact = parent_contact->GetPurpleContact();
   PurpleBlistNode *cnode = reinterpret_cast<PurpleBlistNode*>(contact);
   PurpleGroup *group = reinterpret_cast<PurpleGroup*>(
       purple_blist_node_get_parent(cnode));
@@ -666,9 +665,9 @@ void BuddyListContact::ContextMenu::RemoveResponseHandler(
   purple_blist_remove_contact(contact);
 }
 
-void BuddyListContact::ContextMenu::OnRemove(Button& activator)
+void BuddyListContact::ContactContextMenu::OnRemove(Button& activator)
 {
-  PurpleContact *contact = parent->GetPurpleContact();
+  PurpleContact *contact = parent_contact->GetPurpleContact();
   char *msg = g_strdup_printf(
       _("Are you sure you want to delete contact %s from the list?"),
       purple_buddy_get_alias(purple_contact_get_priority_buddy(contact)));
@@ -676,14 +675,14 @@ void BuddyListContact::ContextMenu::OnRemove(Button& activator)
       _("Contact deletion"), msg);
   g_free(msg);
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &BuddyListContact::ContextMenu::RemoveResponseHandler));
+        &BuddyListContact::ContactContextMenu::RemoveResponseHandler));
   dialog->Show();
 }
 
-void BuddyListContact::ContextMenu::OnMoveTo(Button& activator,
+void BuddyListContact::ContactContextMenu::OnMoveTo(Button& activator,
     PurpleGroup *group)
 {
-  purple_blist_add_contact(parent->GetPurpleContact(), group, NULL);
+  purple_blist_add_contact(parent_contact->GetPurpleContact(), group, NULL);
 }
 
 int BuddyListContact::GetColorPair(const char *widget, const char *property)
@@ -706,7 +705,7 @@ int BuddyListContact::GetColorPair(const char *widget, const char *property)
 
 void BuddyListContact::OpenContextMenu()
 {
-  ContextMenu *w = new ContextMenu(*this);
+  ContextMenu *w = new ContactContextMenu(*this);
   w->Show();
 }
 
@@ -780,17 +779,17 @@ void BuddyListGroup::DelayedInit()
     treeview->SetCollapsed(ref, false);
 }
 
-BuddyListGroup::ContextMenu::ContextMenu(BuddyListGroup& parent)
-: MenuWindow(parent, AUTOSIZE, AUTOSIZE)
-, parent(&parent)
+BuddyListGroup::GroupContextMenu::GroupContextMenu(
+    BuddyListGroup& parent_group_)
+: ContextMenu(parent_group_), parent_group(&parent_group_)
 {
   AppendItem(_("Rename..."), sigc::mem_fun(this,
-        &BuddyListGroup::ContextMenu::OnRename));
+        &BuddyListGroup::GroupContextMenu::OnRename));
   AppendItem(_("Delete..."), sigc::mem_fun(this,
-        &BuddyListGroup::ContextMenu::OnRemove));
+        &BuddyListGroup::GroupContextMenu::OnRemove));
 }
 
-void BuddyListGroup::ContextMenu::RenameResponseHandler(
+void BuddyListGroup::GroupContextMenu::RenameResponseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
@@ -802,7 +801,7 @@ void BuddyListGroup::ContextMenu::RenameResponseHandler(
   }
 
   const char *name = activator.GetText();
-  PurpleGroup *group = parent->GetPurpleGroup();
+  PurpleGroup *group = parent_group->GetPurpleGroup();
   PurpleGroup *other = purple_find_group(name);
   if (other && g_strcasecmp(name, purple_group_get_name(group))) {
     LOG->Message(_("Specified group is already in the list."));
@@ -815,17 +814,17 @@ void BuddyListGroup::ContextMenu::RenameResponseHandler(
   Close();
 }
 
-void BuddyListGroup::ContextMenu::OnRename(Button& activator)
+void BuddyListGroup::GroupContextMenu::OnRename(Button& activator)
 {
-  PurpleGroup *group = parent->GetPurpleGroup();
+  PurpleGroup *group = parent_group->GetPurpleGroup();
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(
       _("Rename"), purple_group_get_name(group));
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &BuddyListGroup::ContextMenu::RenameResponseHandler));
+        &BuddyListGroup::GroupContextMenu::RenameResponseHandler));
   dialog->Show();
 }
 
-void BuddyListGroup::ContextMenu::RemoveResponseHandler(
+void BuddyListGroup::GroupContextMenu::RemoveResponseHandler(
     CppConsUI::MessageDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
@@ -837,7 +836,7 @@ void BuddyListGroup::ContextMenu::RemoveResponseHandler(
   }
 
   // based on gtkdialogs.c:pidgin_dialogs_remove_group_cb()
-  PurpleGroup *group = parent->GetPurpleGroup();
+  PurpleGroup *group = parent_group->GetPurpleGroup();
   PurpleBlistNode *cnode = reinterpret_cast<PurpleBlistNode*>(group)->child;
   while (cnode) {
     if (PURPLE_BLIST_NODE_IS_CONTACT(cnode)) {
@@ -870,9 +869,9 @@ void BuddyListGroup::ContextMenu::RemoveResponseHandler(
   purple_blist_remove_group(group);
 }
 
-void BuddyListGroup::ContextMenu::OnRemove(Button& activator)
+void BuddyListGroup::GroupContextMenu::OnRemove(Button& activator)
 {
-  PurpleGroup *group = parent->GetPurpleGroup();
+  PurpleGroup *group = parent_group->GetPurpleGroup();
   char *msg = g_strdup_printf(
       _("Are you sure you want to delete group %s from the list?"),
       purple_group_get_name(group));
@@ -880,13 +879,13 @@ void BuddyListGroup::ContextMenu::OnRemove(Button& activator)
     = new CppConsUI::MessageDialog(_("Group deletion"), msg);
   g_free(msg);
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &BuddyListGroup::ContextMenu::RemoveResponseHandler));
+        &BuddyListGroup::GroupContextMenu::RemoveResponseHandler));
   dialog->Show();
 }
 
 void BuddyListGroup::OpenContextMenu()
 {
-  ContextMenu *w = new ContextMenu(*this);
+  ContextMenu *w = new GroupContextMenu(*this);
   w->Show();
 }
 
