@@ -112,6 +112,14 @@ BuddyListNode::~BuddyListNode()
   node->ui_data = NULL;
 }
 
+bool BuddyListNode::LessThanByType(const BuddyListNode& other) const
+{
+  // group < contact < buddy < chat < other
+  PurpleBlistNodeType t1 = purple_blist_node_get_type(node);
+  PurpleBlistNodeType t2 = purple_blist_node_get_type(other.node);
+  return t1 < t2;
+}
+
 const char *BuddyListNode::GetBuddyStatus(PurpleBuddy *buddy) const
 {
   if (!purple_account_is_connected(purple_buddy_get_account(buddy)))
@@ -184,7 +192,7 @@ bool BuddyListBuddy::LessThan(const BuddyListNode& other) const
     return g_utf8_collate(purple_buddy_get_alias(buddy),
         purple_buddy_get_alias(o->buddy)) < 0;
   }
-  return false;
+  return LessThanByType(other);
 }
 
 void BuddyListBuddy::Update()
@@ -359,7 +367,7 @@ bool BuddyListChat::LessThan(const BuddyListNode& other) const
   if (o)
     return g_utf8_collate(purple_chat_get_name(chat),
         purple_chat_get_name(o->chat)) < 0;
-  return false;
+  return LessThanByType(other);
 }
 
 void BuddyListChat::Update()
@@ -506,7 +514,7 @@ bool BuddyListContact::LessThan(const BuddyListNode& other) const
     return g_utf8_collate(purple_contact_get_alias(contact),
         purple_contact_get_alias(o->contact)) < 0;
   }
-  return false;
+  return LessThanByType(other);
 }
 
 void BuddyListContact::Update()
@@ -735,7 +743,7 @@ bool BuddyListGroup::LessThan(const BuddyListNode& other) const
   if (o)
     return g_utf8_collate(purple_group_get_name(group),
         purple_group_get_name(o->group)) < 0;
-  return false;
+  return LessThanByType(other);
 }
 
 void BuddyListGroup::Update()
