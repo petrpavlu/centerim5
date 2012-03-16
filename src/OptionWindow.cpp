@@ -80,9 +80,8 @@ OptionWindow::OptionWindow()
   parent = tree->AppendNode(tree->GetRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(
           _("Conversations"))));
-  tree->AppendNode(parent, *(new BooleanOption(
-          _("Beep on new message"),
-          CONF_PREFIX "/conversations/beep_on_msg")));
+  tree->AppendNode(parent, *(new BooleanOption( _("Beep on new message"),
+          CONF_PREFIX "/chat/beep_on_msg")));
 
   parent = tree->AppendNode(tree->GetRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(_("System logging"))));

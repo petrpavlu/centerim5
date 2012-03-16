@@ -92,8 +92,7 @@ Conversations::Conversations()
   // init prefs
   purple_prefs_add_none(CONF_PREFIX "/chat");
   purple_prefs_add_int(CONF_PREFIX "/chat/partitioning", 80);
-  purple_prefs_add_none(CONF_PREFIX "/conversations");
-  purple_prefs_add_bool(CONF_PREFIX "/conversations/beep_on_msg", false);
+  purple_prefs_add_bool(CONF_PREFIX "/chat/beep_on_msg", false);
 
   memset(&centerim_conv_ui_ops, 0, sizeof(centerim_conv_ui_ops));
   centerim_conv_ui_ops.create_conversation = create_conversation_;
