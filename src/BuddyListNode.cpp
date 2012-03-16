@@ -732,10 +732,9 @@ void BuddyListContact::UpdateColorScheme()
 bool BuddyListGroup::LessThan(const BuddyListNode& other) const
 {
   const BuddyListGroup *o = dynamic_cast<const BuddyListGroup*>(&other);
-  if (o) {
+  if (o)
     return g_utf8_collate(purple_group_get_name(group),
         purple_group_get_name(o->group)) < 0;
-  }
   return false;
 }
 
