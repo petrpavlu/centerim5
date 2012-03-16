@@ -104,6 +104,87 @@ BuddyListNode::ContextMenu::ContextMenu(BuddyListNode& parent_node_)
 {
 }
 
+void BuddyListNode::ContextMenu::OnMenuAction(Button& activator,
+    PurpleCallback callback, void *data)
+{
+  if (callback) {
+    typedef void (*TypedCallback)(void *, void *);
+    TypedCallback real_callback = reinterpret_cast<TypedCallback>(callback);
+    real_callback(parent_node->GetPurpleBlistNode(), data);
+  }
+  Close();
+}
+
+void BuddyListNode::ContextMenu::AppendMenuAction(MenuWindow& menu,
+    PurpleMenuAction *act)
+{
+  if (!act) {
+    menu.AppendSeparator();
+    return;
+  }
+
+  if (!act->children) {
+    if (act->callback)
+      menu.AppendItem(act->label, sigc::bind(sigc::mem_fun(this,
+            &BuddyListNode::ContextMenu::OnMenuAction), act->callback,
+            act->data));
+  }
+  else {
+    MenuWindow *submenu = new MenuWindow(0, 0, AUTOSIZE, AUTOSIZE);
+    menu.AppendSubMenu(act->label, *submenu);
+
+    for (GList *l = act->children; l; l = l->next) {
+      PurpleMenuAction *act = reinterpret_cast<PurpleMenuAction*>(l->data);
+      AppendMenuAction(*submenu, act);
+    }
+
+    // free memory associated with the children
+    g_list_free(act->children);
+    act->children = NULL;
+  }
+
+  // free the menu action
+  purple_menu_action_free(act);
+}
+
+void BuddyListNode::ContextMenu::AppendProtocolMenu(PurpleConnection *gc)
+{
+  PurplePluginProtocolInfo *prpl_info
+    = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+
+  if (!prpl_info || !prpl_info->blist_node_menu)
+    return;
+
+  GList *ll = prpl_info->blist_node_menu(parent_node->GetPurpleBlistNode());
+  for (GList *l = ll; l; l = l->next) {
+    PurpleMenuAction *act = reinterpret_cast<PurpleMenuAction*>(l->data);
+    AppendMenuAction(*this, act);
+  }
+  g_list_free(ll);
+
+  if (ll) {
+    // append a separator because there has been some items
+    AppendSeparator();
+  }
+}
+
+void BuddyListNode::ContextMenu::AppendExtendedMenu()
+{
+  GList *ll = purple_blist_node_get_extended_menu(
+      parent_node->GetPurpleBlistNode());
+
+  for (GList *l = ll; l; l = l->next) {
+    PurpleMenuAction *act = reinterpret_cast<PurpleMenuAction*>(l->data);
+    AppendMenuAction(*this, act);
+  }
+  g_list_free(ll);
+
+  if (ll) {
+    // append a separator because there has been some items
+    AppendSeparator();
+  }
+}
+
 BuddyListNode::BuddyListNode(PurpleBlistNode *node)
 : treeview(NULL), node(node)
 {
@@ -247,6 +328,10 @@ BuddyListBuddy::BuddyContextMenu::BuddyContextMenu(
     BuddyListBuddy& parent_buddy_)
 : ContextMenu(parent_buddy_), parent_buddy(&parent_buddy_)
 {
+  AppendProtocolMenu(purple_account_get_connection(
+          purple_buddy_get_account(parent_buddy->GetPurpleBuddy())));
+  AppendExtendedMenu();
+
   AppendItem(_("Alias..."), sigc::mem_fun(this,
         &BuddyListBuddy::BuddyContextMenu::OnChangeAlias));
   AppendItem(_("Delete..."), sigc::mem_fun(this,
@@ -422,6 +507,10 @@ const char *BuddyListChat::ToString() const
 BuddyListChat::ChatContextMenu::ChatContextMenu(BuddyListChat& parent_chat_)
 : ContextMenu(parent_chat_), parent_chat(&parent_chat_)
 {
+  AppendProtocolMenu(purple_account_get_connection(
+          purple_chat_get_account(parent_chat->GetPurpleChat())));
+  AppendExtendedMenu();
+
   AppendItem(_("Alias..."), sigc::mem_fun(this,
         &BuddyListChat::ChatContextMenu::OnChangeAlias));
   AppendItem(_("Delete..."), sigc::mem_fun(this,
@@ -573,6 +662,8 @@ BuddyListContact::ContactContextMenu::ContactContextMenu(
     BuddyListContact& parent_contact_)
 : ContextMenu(parent_contact_), parent_contact(&parent_contact_)
 {
+  AppendExtendedMenu();
+
   AppendItem(_("Alias..."), sigc::mem_fun(this,
         &BuddyListContact::ContactContextMenu::OnChangeAlias));
   AppendItem(_("Delete..."), sigc::mem_fun(this,
@@ -783,6 +874,8 @@ BuddyListGroup::GroupContextMenu::GroupContextMenu(
     BuddyListGroup& parent_group_)
 : ContextMenu(parent_group_), parent_group(&parent_group_)
 {
+  AppendExtendedMenu();
+
   AppendItem(_("Rename..."), sigc::mem_fun(this,
         &BuddyListGroup::GroupContextMenu::OnRename));
   AppendItem(_("Delete..."), sigc::mem_fun(this,

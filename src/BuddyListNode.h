@@ -67,6 +67,11 @@ protected:
   protected:
     BuddyListNode *parent_node;
 
+    void OnMenuAction(Button& activator, PurpleCallback callback, void *data);
+    void AppendMenuAction(MenuWindow& menu, PurpleMenuAction *act);
+    void AppendProtocolMenu(PurpleConnection *gc);
+    void AppendExtendedMenu();
+
   private:
     ContextMenu(const ContextMenu&);
     ContextMenu& operator=(const ContextMenu&);
