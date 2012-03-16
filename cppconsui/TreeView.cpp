@@ -181,8 +181,19 @@ void TreeView::GetFocusChain(FocusChain& focus_chain,
       focus_chain.append_child(parent, widget);
     }
     else if (i == top) {
-      // focused node is in subtree of this node
-      focus_chain.append_child(parent, focus_child);
+      /* This node is the focused node or the focused node is in a subtree of
+       * this node. */
+
+      Container *focus_cont = dynamic_cast<Container*>(focus_child);
+      if (focus_cont) {
+        /* The focused node is actually a Container. First add the Container,
+         * then the focused widget. */
+        FocusChain::pre_order_iterator iter = focus_chain.append_child(parent,
+            focus_cont);
+        focus_chain.append_child(iter, focus_cont->GetFocusWidget());
+      }
+      else
+        focus_chain.append_child(parent, focus_child);
     }
 
     if (i->collapsed || !widget->IsVisible())

@@ -247,8 +247,12 @@ void Container::MoveFocus(FocusDirection direction)
         for (i = parent_iter.begin(); i != iter; i++)
           if ((*i)->CanFocus())
             break;
-      if (i != iter && (*i)->CanFocus()) {
+      if (i != parent_iter.end() && (*i)->CanFocus()) {
         // local focus change was successful
+
+        // stay sane
+        g_assert((*i)->IsVisibleRecursive());
+
         (*i)->GrabFocus();
         return;
       }
@@ -274,8 +278,12 @@ void Container::MoveFocus(FocusDirection direction)
         if ((*i)->CanFocus())
           break;
 
-    if (i != iter && (*i)->CanFocus())
+    if (i != focus_chain.end() && (*i)->CanFocus()) {
+      // stay sane
+      g_assert((*i)->IsVisibleRecursive());
+
       (*i)->GrabFocus();
+    }
 
     return;
   }

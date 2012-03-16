@@ -126,32 +126,33 @@ bool Widget::GrabFocus()
 
 void Widget::SetVisibility(bool visible)
 {
-  if (this->visible != visible) {
-    this->visible = visible;
+  if (this->visible == visible)
+    return;
 
-    if (parent) {
-      parent->UpdateFocusChain();
+  this->visible = visible;
 
-      Container *t = GetTopContainer();
-      if (visible) {
-        if (!t->GetFocusWidget()) {
-          /* There is no focused widget, try if this or a widget
-           * that was revealed can grab it. */
-          t->MoveFocus(Container::FOCUS_DOWN);
-        }
-      }
-      else {
-        Widget *focus = t->GetFocusWidget();
-        if (focus && !focus->IsVisibleRecursive()) {
-          // focused widget was hidden, move the focus
-          t->MoveFocus(Container::FOCUS_DOWN);
-        }
+  if (parent) {
+    parent->UpdateFocusChain();
+
+    Container *t = GetTopContainer();
+    if (visible) {
+      if (!t->GetFocusWidget()) {
+        /* There is no focused widget, try if this or a widget
+         * that was revealed can grab it. */
+        t->MoveFocus(Container::FOCUS_DOWN);
       }
     }
-
-    signal_visible(*this, visible);
-    Redraw();
+    else {
+      Widget *focus = t->GetFocusWidget();
+      if (focus && !focus->IsVisibleRecursive()) {
+        // focused widget was hidden, move the focus
+        t->MoveFocus(Container::FOCUS_DOWN);
+      }
+    }
   }
+
+  signal_visible(*this, visible);
+  Redraw();
 }
 
 bool Widget::IsVisibleRecursive() const
