@@ -7,15 +7,15 @@
 class TestWindow
 : public CppConsUI::Window
 {
-  public:
-    TestWindow(int number, int x, int y, int w, int h);
-    virtual ~TestWindow() {}
+public:
+  TestWindow(int number, int x, int y, int w, int h);
+  virtual ~TestWindow() {}
 
-  protected:
+protected:
 
-  private:
-    TestWindow(const TestWindow&);
-    TestWindow& operator=(const TestWindow&);
+private:
+  TestWindow(const TestWindow&);
+  TestWindow& operator=(const TestWindow&);
 };
 
 TestWindow::TestWindow(int number, int x, int y, int w, int h)
@@ -41,25 +41,25 @@ TestWindow::TestWindow(int number, int x, int y, int w, int h)
 class TestApp
 : public CppConsUI::InputProcessor
 {
-  public:
-    static TestApp *Instance();
+public:
+  static TestApp *Instance();
 
-    void Run();
+  void Run();
 
-    // ignore every message
-    static void g_log_func_(const gchar *log_domain, GLogLevelFlags log_level,
-        const gchar *message, gpointer user_data)
-      {}
+  // ignore every message
+  static void g_log_func_(const gchar *log_domain, GLogLevelFlags log_level,
+      const gchar *message, gpointer user_data)
+    {}
 
-  protected:
+protected:
 
-  private:
-    CppConsUI::CoreManager *mngr;
+private:
+  CppConsUI::CoreManager *mngr;
 
-    TestApp();
-    TestApp(const TestApp&);
-    TestApp& operator=(const TestApp&);
-    virtual ~TestApp() {}
+  TestApp();
+  TestApp(const TestApp&);
+  TestApp& operator=(const TestApp&);
+  virtual ~TestApp() {}
 };
 
 TestApp *TestApp::Instance()

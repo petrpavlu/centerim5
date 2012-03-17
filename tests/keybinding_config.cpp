@@ -9,65 +9,52 @@
 class TestWindow
 : public CppConsUI::Window
 {
-  public:
-    /* This is a main window, make sure it can not be closed with ESC key by
-     * overriding Close() method. */
-    static TestWindow *Instance();
-    virtual void Close() {}
+public:
+  /* This is a main window, make sure it can not be closed with ESC key by
+   * overriding Close() method. */
+  static TestWindow *Instance();
+  virtual void Close() {}
 
-    //
+  void SetConfigFile(const char *filename);
+  bool Reconfig();
+  void AddDefaultKeyBind(const char *context, const char *action,
+      const char *key);
+  void RegisterDefaultKeyBinds();
+  bool ReconfigInternal();
+  static void start_element_(GMarkupParseContext *context,
+      const char *element_name, const char **attribute_names,
+      const char **attribute_values, gpointer user_data,
+      GError **error)
+    { reinterpret_cast<TestWindow*>(user_data)->start_element(context,
+        element_name, attribute_names, attribute_values, error); }
+  void start_element(GMarkupParseContext *context,
+      const char *element_name, const char **attribute_names,
+      const char **attribute_values, GError **error);
 
-    void SetConfigFile(const char *filename);
-    bool Reconfig();
-    void AddDefaultKeyBind(const char *context, const char *action,
-        const char *key);
-    void RegisterDefaultKeyBinds();
-    bool ReconfigInternal();
-    static void start_element_(GMarkupParseContext *context,
-        const char *element_name, const char **attribute_names,
-        const char **attribute_values, gpointer user_data,
-        GError **error)
-      { reinterpret_cast<TestWindow*>(user_data)->start_element(context,
-          element_name, attribute_names, attribute_values, error); }
-    void start_element(GMarkupParseContext *context,
-        const char *element_name, const char **attribute_names,
-        const char **attribute_values, GError **error);
+protected:
 
+private:
+  struct DefaultKeyBind
+  {
+    std::string context;
+    std::string action;
+    std::string key;
 
+    DefaultKeyBind(const char *context_, const char *action_,
+        const char *key_) : context(context_), action(action_), key(key_) {}
+  };
+  typedef std::vector<DefaultKeyBind> DefaultKeyBinds;
 
-  protected:
+  DefaultKeyBinds default_key_binds;
 
-  private:
-    // 
+  // keybindings filename
+  char *config;
 
-    struct DefaultKeyBind
-    {
-      std::string context;
-      std::string action;
-      std::string key;
-
-      DefaultKeyBind(const char *context_, const char *action_,
-          const char *key_) : context(context_), action(action_), key(key_) {}
-    };
-    typedef std::vector<DefaultKeyBind> DefaultKeyBinds;
-
-    DefaultKeyBinds default_key_binds;
-
-    // Keybindings filename
-    char *config;
-
-    //
-
-    TestWindow();
-    virtual ~TestWindow();
-    TestWindow(const TestWindow&);
-    TestWindow& operator=(const TestWindow&);
-
+  TestWindow();
+  virtual ~TestWindow() {}
+  TestWindow(const TestWindow&);
+  TestWindow& operator=(const TestWindow&);
 };
-
-//
-//
-//
 
 void TestWindow::SetConfigFile(const char *filename)
 {
@@ -253,11 +240,6 @@ void TestWindow::start_element(GMarkupParseContext *context,
         _("Unexpected element '%s'"), element_name);
 }
 
-
-//
-//
-//
-
 TestWindow *TestWindow::Instance()
 {
   static TestWindow instance;
@@ -324,33 +306,29 @@ TestWindow::TestWindow()
   Reconfig();
 }
 
-TestWindow::~TestWindow()
-{
-}
-
 // TestApp class
 class TestApp
 : public CppConsUI::InputProcessor
 {
-  public:
-    static TestApp *Instance();
+public:
+  static TestApp *Instance();
 
-    void Run();
+  void Run();
 
-    // ignore every message
-    static void g_log_func_(const gchar *log_domain, GLogLevelFlags log_level,
-        const gchar *message, gpointer user_data)
-      {}
+  // ignore every message
+  static void g_log_func_(const gchar *log_domain, GLogLevelFlags log_level,
+      const gchar *message, gpointer user_data)
+    {}
 
-  protected:
+protected:
 
-  private:
-    CppConsUI::CoreManager *mngr;
+private:
+  CppConsUI::CoreManager *mngr;
 
-    TestApp();
-    TestApp(const TestApp&);
-    TestApp& operator=(const TestApp&);
-    virtual ~TestApp() {}
+  TestApp();
+  TestApp(const TestApp&);
+  TestApp& operator=(const TestApp&);
+  virtual ~TestApp() {}
 };
 
 TestApp *TestApp::Instance()

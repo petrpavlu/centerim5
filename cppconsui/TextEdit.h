@@ -47,7 +47,7 @@ public:
   };
 
   TextEdit(int w, int h, const char *text_ = NULL, int flags_ = 0,
-      bool single_line = false, bool accept_tabs_ = true, 
+      bool single_line = false, bool accept_tabs_ = true,
       bool masked_ = false);
   virtual ~TextEdit();
 
@@ -253,4 +253,4 @@ private:
 
 #endif // __TEXTEDIT_H__
 
-/* vim: set tabstop=2 shiftwidth=2 tw=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

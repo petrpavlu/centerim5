@@ -350,4 +350,4 @@ void OptionWindow::ReloadColorSchemes(CppConsUI::Button& activator) const
     LOG->Message(_("Colorscheme file was successfully reloaded."));
 }
 
-/* vim: set tabstop=2 shiftwidth=2 tw=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

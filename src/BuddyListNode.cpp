@@ -107,11 +107,12 @@ BuddyListNode::ContextMenu::ContextMenu(BuddyListNode& parent_node_)
 void BuddyListNode::ContextMenu::OnMenuAction(Button& activator,
     PurpleCallback callback, void *data)
 {
-  if (callback) {
-    typedef void (*TypedCallback)(void *, void *);
-    TypedCallback real_callback = reinterpret_cast<TypedCallback>(callback);
-    real_callback(parent_node->GetPurpleBlistNode(), data);
-  }
+  g_assert(callback);
+
+  typedef void (*TypedCallback)(void *, void *);
+  TypedCallback real_callback = reinterpret_cast<TypedCallback>(callback);
+  real_callback(parent_node->GetPurpleBlistNode(), data);
+
   Close();
 }
 
@@ -128,6 +129,9 @@ void BuddyListNode::ContextMenu::AppendMenuAction(MenuWindow& menu,
       menu.AppendItem(act->label, sigc::bind(sigc::mem_fun(this,
             &BuddyListNode::ContextMenu::OnMenuAction), act->callback,
             act->data));
+    else {
+      // TODO display non-focusable widget?
+    }
   }
   else {
     MenuWindow *submenu = new MenuWindow(0, 0, AUTOSIZE, AUTOSIZE);
@@ -151,7 +155,6 @@ void BuddyListNode::ContextMenu::AppendProtocolMenu(PurpleConnection *gc)
 {
   PurplePluginProtocolInfo *prpl_info
     = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
-
   if (!prpl_info || !prpl_info->blist_node_menu)
     return;
 
@@ -172,7 +175,6 @@ void BuddyListNode::ContextMenu::AppendExtendedMenu()
 {
   GList *ll = purple_blist_node_get_extended_menu(
       parent_node->GetPurpleBlistNode());
-
   for (GList *l = ll; l; l = l->next) {
     PurpleMenuAction *act = reinterpret_cast<PurpleMenuAction*>(l->data);
     AppendMenuAction(*this, act);
@@ -930,29 +932,32 @@ void BuddyListGroup::GroupContextMenu::RemoveResponseHandler(
 
   // based on gtkdialogs.c:pidgin_dialogs_remove_group_cb()
   PurpleGroup *group = parent_group->GetPurpleGroup();
-  PurpleBlistNode *cnode = reinterpret_cast<PurpleBlistNode*>(group)->child;
+  PurpleBlistNode *cnode = purple_blist_node_get_first_child(
+      reinterpret_cast<PurpleBlistNode*>(group));
   while (cnode) {
     if (PURPLE_BLIST_NODE_IS_CONTACT(cnode)) {
-      PurpleBlistNode *bnode = cnode->child;
-      cnode = cnode->next;
+      PurpleBlistNode *bnode = purple_blist_node_get_first_child(cnode);
+      cnode = purple_blist_node_get_sibling_next(cnode);
       while (bnode)
         if (PURPLE_BLIST_NODE_IS_BUDDY(bnode)) {
           PurpleBuddy *buddy = reinterpret_cast<PurpleBuddy*>(bnode);
-          bnode = bnode->next;
-          if (purple_account_is_connected(buddy->account))
-            purple_account_remove_buddy(buddy->account, buddy, group);
-          purple_blist_remove_buddy(buddy);
+          PurpleAccount *account = purple_buddy_get_account(buddy);
+          bnode = purple_blist_node_get_sibling_next(bnode);
+          if (purple_account_is_connected(account)) {
+            purple_account_remove_buddy(account, buddy, group);
+            purple_blist_remove_buddy(buddy);
+          }
         }
         else
-          bnode = bnode->next;
+          bnode = purple_blist_node_get_sibling_next(bnode);
     }
     else if (PURPLE_BLIST_NODE_IS_CHAT(cnode)) {
       PurpleChat *chat = reinterpret_cast<PurpleChat*>(cnode);
-      cnode = cnode->next;
+      cnode = purple_blist_node_get_sibling_next(cnode);
       purple_blist_remove_chat(chat);
     }
     else
-      cnode = cnode->next;
+      cnode = purple_blist_node_get_sibling_next(cnode);
   }
 
   /* Close the context menu before the group is deleted because its deletion
@@ -990,4 +995,4 @@ BuddyListGroup::BuddyListGroup(PurpleBlistNode *node)
   group = reinterpret_cast<PurpleGroup*>(node);
 }
 
-/* vim: set tabstop=2 shiftwidth=2 tw=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

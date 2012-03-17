@@ -33,11 +33,6 @@ GeneralMenu::GeneralMenu()
 {
   SetColorScheme("generalmenu");
 
-  /*
-  AppendItem(_("Testing"), sigc::mem_fun(this, &GeneralMenu::OpenTestWindow));
-  AppendItem(_("Change status"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-  AppendItem(_("Go to contact..."), sigc::mem_fun(this, &GeneralMenu::Dummy));
-  */
   AppendItem(_("Accounts..."), sigc::mem_fun(this,
         &GeneralMenu::OpenAccountWindow));
   AppendItem(_("Add buddy..."), sigc::mem_fun(this,
@@ -48,31 +43,12 @@ GeneralMenu::GeneralMenu()
         &GeneralMenu::OpenAddGroupRequest));
   AppendItem(_("Config options..."), sigc::mem_fun(this,
         &GeneralMenu::OpenOptionWindow));
-  /*
   AppendSeparator();
-  AppendItem(_("Find/add users"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-  AppendItem(_("Join channel/conference"), sigc::mem_fun(this,
-      &GeneralMenu::Dummy));
-  AppendItem(_("Link an RSS feed"), sigc::mem_fun(this, &GeneralMenu::Dummy));
-  AppendSeparator();
-  AppendItem(_("View/edit ignore list"), sigc::mem_fun(this,
-      &GeneralMenu::Dummy));
-  AppendItem(_("View/edit invisible list"), sigc::mem_fun(this,
-      &GeneralMenu::Dummy));
-  AppendItem(_("View/edit visible list"), sigc::mem_fun(this,
-      &GeneralMenu::Dummy));
-  AppendSeparator();
-  AppendItem(_("Show offline users"), sigc::mem_fun(this,
-      &GeneralMenu::Dummy));
-  AppendItem(_("Organize contact groups"), sigc::mem_fun(this,
-      &GeneralMenu::Dummy));
-  AppendItem(_("Mass group move..."), sigc::mem_fun(this,
-      &GeneralMenu::Dummy));
-  */
-  AppendSeparator();
+#ifdef DEBUG
   AppendItem("Request test...", sigc::mem_fun(this,
         &GeneralMenu::RequestTest));
   AppendSeparator();
+#endif // DEBUG
   AppendItem(_("Quit"), sigc::hide(sigc::mem_fun(CENTERIM,
           &CenterIM::Quit)));
 }
@@ -115,6 +91,7 @@ void GeneralMenu::OpenOptionWindow(CppConsUI::Button& activator)
   Close();
 }
 
+#ifdef DEBUG
 void GeneralMenu::RequestTest(CppConsUI::Button& activator)
 {
 #if 0
@@ -243,5 +220,6 @@ void GeneralMenu::fields_ok_cb(PurpleRequestFields *fields)
       purple_account_get_protocol_name(account),
       purple_account_get_username(account));
 }
+#endif // DEBUG
 
-/* vim: set tabstop=2 shiftwidth=2 tw=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

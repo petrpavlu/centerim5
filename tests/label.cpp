@@ -7,19 +7,19 @@
 class LabelWindow
 : public CppConsUI::Window
 {
-  public:
-    /* This is a main window, make sure it can not be closed with ESC key by
-     * overriding Close() method. */
-    static LabelWindow *Instance();
-    virtual void Close() {}
+public:
+  /* This is a main window, make sure it can not be closed with ESC key by
+   * overriding Close() method. */
+  static LabelWindow *Instance();
+  virtual void Close() {}
 
-  protected:
+protected:
 
-  private:
-    LabelWindow();
-    virtual ~LabelWindow() {}
-    LabelWindow(const LabelWindow&);
-    LabelWindow& operator=(const LabelWindow&);
+private:
+  LabelWindow();
+  virtual ~LabelWindow() {}
+  LabelWindow(const LabelWindow&);
+  LabelWindow& operator=(const LabelWindow&);
 };
 
 LabelWindow *LabelWindow::Instance()
@@ -94,25 +94,25 @@ LabelWindow::LabelWindow()
 class TestApp
 : public CppConsUI::InputProcessor
 {
-  public:
-    static TestApp *Instance();
+public:
+  static TestApp *Instance();
 
-    void Run();
+  void Run();
 
-    // ignore every message
-    static void g_log_func_(const gchar *log_domain, GLogLevelFlags log_level,
-        const gchar *message, gpointer user_data)
-      {}
+  // ignore every message
+  static void g_log_func_(const gchar *log_domain, GLogLevelFlags log_level,
+      const gchar *message, gpointer user_data)
+    {}
 
-  protected:
+protected:
 
-  private:
-    CppConsUI::CoreManager *mngr;
+private:
+  CppConsUI::CoreManager *mngr;
 
-    TestApp();
-    TestApp(const TestApp&);
-    TestApp& operator=(const TestApp&);
-    virtual ~TestApp() {}
+  TestApp();
+  TestApp(const TestApp&);
+  TestApp& operator=(const TestApp&);
+  virtual ~TestApp() {}
 };
 
 TestApp *TestApp::Instance()

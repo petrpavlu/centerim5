@@ -35,4 +35,4 @@ private:
 
 #endif // __TRANSFERS_H__
 
-/* vim: set tabstop=2 shiftwidth=2 tw=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

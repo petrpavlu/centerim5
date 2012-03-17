@@ -22,6 +22,8 @@
 #ifndef __GENERALMENU_H__
 #define __GENERALMENU_H__
 
+#include "config.h"
+
 #include <cppconsui/MenuWindow.h>
 #include <libpurple/purple.h>
 
@@ -46,6 +48,8 @@ private:
   void OpenAddChatRequest(CppConsUI::Button& activator);
   void OpenAddGroupRequest(CppConsUI::Button& activator);
   void OpenOptionWindow(CppConsUI::Button& activator);
+
+#ifdef DEBUG
   void RequestTest(CppConsUI::Button& activator);
 
   static void input_ok_cb_(void *data, const char *text)
@@ -63,8 +67,9 @@ private:
   static void fields_ok_cb_(void *data, PurpleRequestFields *fields)
     { reinterpret_cast<GeneralMenu*>(data)->fields_ok_cb(fields); }
   void fields_ok_cb(PurpleRequestFields *fields);
+#endif // DEBUG
 };
 
 #endif // __GENERALMENU_H__
 
-/* vim: set tabstop=2 shiftwidth=2 tw=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

@@ -11,36 +11,31 @@
 class TestWindow
 : public CppConsUI::Window
 {
-  public:
-    /* This is a main window, make sure it can not be closed with ESC key by
-     * overriding Close() method. */
-    static TestWindow *Instance();
-    virtual void Close() {}
+public:
+  /* This is a main window, make sure it can not be closed with ESC key by
+   * overriding Close() method. */
+  static TestWindow *Instance();
+  virtual void Close() {}
 
-  protected:
+protected:
 
-  private:
-    CppConsUI::Label *label1;
-    CppConsUI::Label *label2;
-    int defaultcolor;
-    CppConsUI::ColorPickerComboBox *combo;
+private:
+  CppConsUI::Label *label1;
+  CppConsUI::Label *label2;
+  int defaultcolor;
+  CppConsUI::ColorPickerComboBox *combo;
 
-    TestWindow();
-    virtual ~TestWindow();
-    TestWindow(const TestWindow&);
-    TestWindow& operator=(const TestWindow&);
+  TestWindow();
+  virtual ~TestWindow();
+  TestWindow(const TestWindow&);
+  TestWindow& operator=(const TestWindow&);
 
-    void OnButtonActivate(CppConsUI::Button& activator, int flags);
-    void OnChangeColorResponseHandler(
-        CppConsUI::ColorPickerDialog& activator,
-        CppConsUI::AbstractDialog::ResponseType response,
-        int color);
-    void OnColerPickerChanged(CppConsUI::ColorPicker& activator,
-        int new_fg, int new_bg);
-    void OnComboColorChange(
-        CppConsUI::ComboBox& activator,
-        intptr_t color);
-
+  void OnButtonActivate(CppConsUI::Button& activator, int flags);
+  void OnChangeColorResponseHandler(CppConsUI::ColorPickerDialog& activator,
+      CppConsUI::AbstractDialog::ResponseType response, int color);
+  void OnColerPickerChanged(CppConsUI::ColorPicker& activator, int new_fg,
+      int new_bg);
+  void OnComboColorChange(CppConsUI::ComboBox& activator, intptr_t color);
 };
 
 TestWindow *TestWindow::Instance()
@@ -87,7 +82,7 @@ TestWindow::TestWindow()
 
   label2->SetText("...");
 
-  char *text = g_strdup_printf("Supported nr of colors: %d",  
+  char *text = g_strdup_printf("Supported nr of colors: %d",
       CppConsUI::Curses::nrcolors());
   label1->SetText(text);
   g_free(text);
@@ -96,7 +91,7 @@ TestWindow::TestWindow()
   AddWidget(*l, 1, 12);
 
   l = new CppConsUI::Label();
-  text = g_strdup_printf("Supported nr of color pairs: %d",  
+  text = g_strdup_printf("Supported nr of color pairs: %d",
       CppConsUI::Curses::nrcolorpairs());
   l->SetText(text);
   g_free(text);
@@ -174,25 +169,25 @@ void TestWindow::OnComboColorChange(
 class TestApp
 : public CppConsUI::InputProcessor
 {
-  public:
-    static TestApp *Instance();
+public:
+  static TestApp *Instance();
 
-    void Run();
+  void Run();
 
-    // ignore every message
-    static void g_log_func_(const gchar *log_domain, GLogLevelFlags log_level,
-        const gchar *message, gpointer user_data)
-      {}
+  // ignore every message
+  static void g_log_func_(const gchar *log_domain, GLogLevelFlags log_level,
+      const gchar *message, gpointer user_data)
+    {}
 
-  protected:
+protected:
 
-  private:
-    CppConsUI::CoreManager *mngr;
+private:
+  CppConsUI::CoreManager *mngr;
 
-    TestApp();
-    TestApp(const TestApp&);
-    TestApp& operator=(const TestApp&);
-    virtual ~TestApp() {}
+  TestApp();
+  TestApp(const TestApp&);
+  TestApp& operator=(const TestApp&);
+  virtual ~TestApp() {}
 };
 
 TestApp *TestApp::Instance()

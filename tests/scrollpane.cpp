@@ -28,18 +28,18 @@ static const char *pic[] =
 class MyScrollPane
 : public CppConsUI::ScrollPane
 {
-  public:
-    MyScrollPane(int w, int h, int scrollw, int scrollh);
-    virtual ~MyScrollPane() {}
+public:
+  MyScrollPane(int w, int h, int scrollw, int scrollh);
+  virtual ~MyScrollPane() {}
 
-    // Widget
-    virtual void Draw();
+  // Widget
+  virtual void Draw();
 
-  protected:
+protected:
 
-  private:
-    MyScrollPane(const MyScrollPane&);
-    MyScrollPane& operator=(const MyScrollPane&);
+private:
+  MyScrollPane(const MyScrollPane&);
+  MyScrollPane& operator=(const MyScrollPane&);
 };
 
 MyScrollPane::MyScrollPane(int w, int h, int scrollw, int scrollh)
@@ -72,25 +72,25 @@ void MyScrollPane::Draw()
 class ScrollPaneWindow
 : public CppConsUI::Window
 {
-  public:
-    /* This is a main window, make sure it can not be closed with ESC key by
-     * overriding Close() method. */
-    static ScrollPaneWindow *Instance();
-    virtual void Close() {}
+public:
+  /* This is a main window, make sure it can not be closed with ESC key by
+   * overriding Close() method. */
+  static ScrollPaneWindow *Instance();
+  virtual void Close() {}
 
-  protected:
-    MyScrollPane *pane;
+protected:
+  MyScrollPane *pane;
 
-  private:
-    ScrollPaneWindow();
-    virtual ~ScrollPaneWindow() {}
-    ScrollPaneWindow(const ScrollPaneWindow&);
-    ScrollPaneWindow& operator=(const ScrollPaneWindow&);
+private:
+  ScrollPaneWindow();
+  virtual ~ScrollPaneWindow() {}
+  ScrollPaneWindow(const ScrollPaneWindow&);
+  ScrollPaneWindow& operator=(const ScrollPaneWindow&);
 
-    void ScrollUp();
-    void ScrollDown();
-    void ScrollLeft();
-    void ScrollRight();
+  void ScrollUp();
+  void ScrollDown();
+  void ScrollLeft();
+  void ScrollRight();
 };
 
 ScrollPaneWindow *ScrollPaneWindow::Instance()
@@ -148,25 +148,25 @@ void ScrollPaneWindow::ScrollRight()
 class TestApp
 : public CppConsUI::InputProcessor
 {
-  public:
-    static TestApp *Instance();
+public:
+  static TestApp *Instance();
 
-    void Run();
+  void Run();
 
-    // ignore every message
-    static void g_log_func_(const gchar *log_domain, GLogLevelFlags log_level,
-        const gchar *message, gpointer user_data)
-      {}
+  // ignore every message
+  static void g_log_func_(const gchar *log_domain, GLogLevelFlags log_level,
+      const gchar *message, gpointer user_data)
+    {}
 
-  protected:
+protected:
 
-  private:
-    CppConsUI::CoreManager *mngr;
+private:
+  CppConsUI::CoreManager *mngr;
 
-    TestApp();
-    TestApp(const TestApp&);
-    TestApp& operator=(const TestApp&);
-    virtual ~TestApp() {}
+  TestApp();
+  TestApp(const TestApp&);
+  TestApp& operator=(const TestApp&);
+  virtual ~TestApp() {}
 };
 
 TestApp *TestApp::Instance()

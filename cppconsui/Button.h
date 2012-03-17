@@ -50,9 +50,9 @@ public:
     FLAG_RIGHT = 1 << 2
   };
 
-  Button(int w, int h, const char *text_ = NULL, int flags_ = 0, 
+  Button(int w, int h, const char *text_ = NULL, int flags_ = 0,
       bool masked_ = false);
-  explicit Button(const char *text_ = NULL, int flags_ = 0, 
+  explicit Button(const char *text_ = NULL, int flags_ = 0,
       bool masked_ = false);
   Button(int w, int h, int flags_ = 0, const char *text_ = NULL,
       const char *value_ = NULL, const char *unit_ = NULL,
@@ -121,4 +121,4 @@ private:
 
 #endif // __BUTTON_H__
 
-/* vim: set tabstop=2 shiftwidth=2 tw=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

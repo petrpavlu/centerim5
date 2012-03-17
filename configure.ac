@@ -102,13 +102,15 @@ AC_ARG_ENABLE([debug], [AC_HELP_STRING([--enable-debug],
 if test "$GCC" = yes; then
 	AS_IF([test "$enable_debug" = yes],
 		[CFLAGS="-ggdb -O0 $CFLAGS"
-		CXXFLAGS="-ggdb -O0 $CXXFLAGS"
-		AC_DEFINE([DEBUG], [1], [Define if debugging is enabled.])],
+		CXXFLAGS="-ggdb -O0 $CXXFLAGS"],
 		[CFLAGS="-O2 $CFLAGS"
 		CXXFLAGS="-O2 $CXXFLAGS"])
 fi
 AC_SUBST([CFLAGS])
 AC_SUBST([CXXFLAGS])
+
+AS_IF([test "$enable_debug" = yes],
+	[AC_DEFINE([DEBUG], [1], [Define if debugging is enabled.])])
 
 dnl adl_RECURSIVE_EVAL(VALUE, RESULT)
 dnl =================================
