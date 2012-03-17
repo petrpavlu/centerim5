@@ -275,6 +275,7 @@ Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,
       }
     }
   }
+  tree->GrabFocus();
 }
 
 PurpleRequestType Request::FieldsDialog::GetRequestType()
