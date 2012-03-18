@@ -95,7 +95,7 @@ void BuddyListNode::SortIn()
       BuddyListNode *n = dynamic_cast<BuddyListNode*>(j->GetWidget());
       g_assert(n);
 
-      if (swidget->LessThan(*n)) {
+      if (swidget->LessOrEqual(*n)) {
         treeview->MoveNodeBefore(sref, j);
         break;
       }
@@ -221,12 +221,12 @@ BuddyListNode::~BuddyListNode()
   node->ui_data = NULL;
 }
 
-bool BuddyListNode::LessThanByType(const BuddyListNode& other) const
+bool BuddyListNode::LessOrEqualByType(const BuddyListNode& other) const
 {
   // group < contact < buddy < chat < other
   PurpleBlistNodeType t1 = purple_blist_node_get_type(node);
   PurpleBlistNodeType t2 = purple_blist_node_get_type(other.node);
-  return t1 < t2;
+  return t1 <= t2;
 }
 
 const char *BuddyListNode::GetBuddyStatus(PurpleBuddy *buddy) const
@@ -289,7 +289,7 @@ void BuddyListNode::DeclareBindables()
       InputProcessor::BINDABLE_NORMAL);
 }
 
-bool BuddyListBuddy::LessThan(const BuddyListNode& other) const
+bool BuddyListBuddy::LessOrEqual(const BuddyListNode& other) const
 {
   const BuddyListBuddy *o = dynamic_cast<const BuddyListBuddy*>(&other);
   if (o) {
@@ -299,9 +299,9 @@ bool BuddyListBuddy::LessThan(const BuddyListNode& other) const
       return a > b;
 
     return g_utf8_collate(purple_buddy_get_alias(buddy),
-        purple_buddy_get_alias(o->buddy)) < 0;
+        purple_buddy_get_alias(o->buddy)) <= 0;
   }
-  return LessThanByType(other);
+  return LessOrEqualByType(other);
 }
 
 void BuddyListBuddy::Update()
@@ -474,13 +474,13 @@ void BuddyListBuddy::UpdateColorScheme()
   }
 }
 
-bool BuddyListChat::LessThan(const BuddyListNode& other) const
+bool BuddyListChat::LessOrEqual(const BuddyListNode& other) const
 {
   const BuddyListChat *o = dynamic_cast<const BuddyListChat*>(&other);
   if (o)
     return g_utf8_collate(purple_chat_get_name(chat),
-        purple_chat_get_name(o->chat)) < 0;
-  return LessThanByType(other);
+        purple_chat_get_name(o->chat)) <= 0;
+  return LessOrEqualByType(other);
 }
 
 void BuddyListChat::Update()
@@ -616,7 +616,7 @@ BuddyListChat::BuddyListChat(PurpleBlistNode *node)
   chat = reinterpret_cast<PurpleChat*>(node);
 }
 
-bool BuddyListContact::LessThan(const BuddyListNode& other) const
+bool BuddyListContact::LessOrEqual(const BuddyListNode& other) const
 {
   const BuddyListContact *o = dynamic_cast<const BuddyListContact*>(&other);
   if (o) {
@@ -628,9 +628,9 @@ bool BuddyListContact::LessThan(const BuddyListNode& other) const
       return a > b;
 
     return g_utf8_collate(purple_contact_get_alias(contact),
-        purple_contact_get_alias(o->contact)) < 0;
+        purple_contact_get_alias(o->contact)) <= 0;
   }
-  return LessThanByType(other);
+  return LessOrEqualByType(other);
 }
 
 void BuddyListContact::Update()
@@ -850,13 +850,13 @@ void BuddyListContact::UpdateColorScheme()
   }
 }
 
-bool BuddyListGroup::LessThan(const BuddyListNode& other) const
+bool BuddyListGroup::LessOrEqual(const BuddyListNode& other) const
 {
   const BuddyListGroup *o = dynamic_cast<const BuddyListGroup*>(&other);
   if (o)
     return g_utf8_collate(purple_group_get_name(group),
-        purple_group_get_name(o->group)) < 0;
-  return LessThanByType(other);
+        purple_group_get_name(o->group)) <= 0;
+  return LessOrEqualByType(other);
 }
 
 void BuddyListGroup::Update()

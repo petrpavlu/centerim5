@@ -38,7 +38,7 @@ public:
   // Widget
   virtual void SetParent(CppConsUI::Container& parent);
 
-  virtual bool LessThan(const BuddyListNode& other) const = 0;
+  virtual bool LessOrEqual(const BuddyListNode& other) const = 0;
   virtual void Update();
   virtual void OnActivate(CppConsUI::Button& activator) = 0;
   // debugging method
@@ -86,7 +86,7 @@ protected:
 
   virtual void OpenContextMenu() = 0;
 
-  bool LessThanByType(const BuddyListNode& other) const;
+  bool LessOrEqualByType(const BuddyListNode& other) const;
 
   /* Called by BuddyListBuddy and BuddyListContact to get presence status
    * char. Returned value should be used as a prefix of buddy/contact name.
@@ -111,7 +111,7 @@ class BuddyListBuddy
 friend class BuddyListNode;
 public:
   // BuddyListNode
-  virtual bool LessThan(const BuddyListNode& other) const;
+  virtual bool LessOrEqual(const BuddyListNode& other) const;
   virtual void Update();
   virtual void OnActivate(Button& activator);
   virtual const char *ToString() const;
@@ -165,7 +165,7 @@ class BuddyListChat
 friend class BuddyListNode;
 public:
   // BuddyListNode
-  virtual bool LessThan(const BuddyListNode& other) const;
+  virtual bool LessOrEqual(const BuddyListNode& other) const;
   virtual void Update();
   virtual void OnActivate(Button& activator);
   virtual const char *ToString() const;
@@ -214,7 +214,7 @@ class BuddyListContact
 friend class BuddyListNode;
 public:
   // BuddyListNode
-  virtual bool LessThan(const BuddyListNode& other) const;
+  virtual bool LessOrEqual(const BuddyListNode& other) const;
   virtual void Update();
   virtual void OnActivate(Button& activator);
   virtual const char *ToString() const;
@@ -272,7 +272,7 @@ class BuddyListGroup
 friend class BuddyListNode;
 public:
   // BuddyListNode
-  virtual bool LessThan(const BuddyListNode& other) const;
+  virtual bool LessOrEqual(const BuddyListNode& other) const;
   virtual void Update();
   virtual void OnActivate(Button& activator);
   virtual const char *ToString() const;
