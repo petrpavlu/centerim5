@@ -70,23 +70,44 @@ void BuddyListNode::SortIn()
   else
     parent_ref = treeview->GetRootNode();
 
-  CppConsUI::TreeView::SiblingIterator i;
-  for (i = parent_ref.begin(); i != parent_ref.end(); i++) {
-    // skip this node
-    if (i == ref)
-      continue;
+  /* Do the insertion sort. It should be fast enough here because nodes are
+   * usually already sorted and only one node is in a wrong position, so it
+   * kind of runs in O(n). */
+  CppConsUI::TreeView::SiblingIterator i = --parent_ref.end();
+  while (true) {
+    // sref is a node that we want to sort in
+    CppConsUI::TreeView::SiblingIterator sref = i;
 
-    BuddyListNode *n = dynamic_cast<BuddyListNode*>(i->GetWidget());
-    g_assert(n);
-
-    if (LessThan(*n)) {
-      treeview->MoveNodeBefore(ref, i);
-      break;
+    // calculate a stop condition
+    bool stop_flag;
+    if (i != parent_ref.begin()) {
+      stop_flag = false;
+      i--;
     }
+    else
+      stop_flag = true;
+
+    BuddyListNode *swidget = dynamic_cast<BuddyListNode*>(sref->GetWidget());
+    g_assert(swidget);
+    CppConsUI::TreeView::SiblingIterator j = sref;
+    j++;
+    while (j != parent_ref.end()) {
+      BuddyListNode *n = dynamic_cast<BuddyListNode*>(j->GetWidget());
+      g_assert(n);
+
+      if (swidget->LessThan(*n)) {
+        treeview->MoveNodeBefore(sref, j);
+        break;
+      }
+      j++;
+    }
+    // the node is last in the list
+    if (j == parent_ref.end())
+      treeview->MoveNodeAfter(sref, --j);
+
+    if (stop_flag)
+      break;
   }
-  // the ref is last in a list
-  if (i == parent_ref.end())
-    treeview->MoveNodeAfter(ref, --i);
 }
 
 BuddyListNode *BuddyListNode::GetParentNode() const

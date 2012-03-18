@@ -50,8 +50,7 @@ public:
 
   PurpleBlistNode *GetPurpleBlistNode() const { return node; }
 
-  /* Sorts in this node. It supposes that all siblings are in the correct
-   * order. */
+  /* Sorts in this node. */
   void SortIn();
 
   BuddyListNode *GetParentNode() const;
