@@ -22,6 +22,7 @@
 #include "CenterIM.h"
 #include "gettext.h"
 #include <locale.h>
+#include <unistd.h>
 
 #define CIM_CONFIG_PATH ".centerim5"
 
