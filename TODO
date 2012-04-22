@@ -18,3 +18,5 @@
 - gtkblist.c: buddy_is_displayable(), redo_buddy_list()
 - implement options mentioned in the man page
 - etc.
+
+test
