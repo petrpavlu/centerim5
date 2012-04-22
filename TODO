@@ -19,4 +19,24 @@
 - implement options mentioned in the man page
 - etc.
 
-test
+-keybinding changer
+-clear UTF8 support (gtalk renames the kontakts... RÃ¤der) 
+-log window: show who gets online and offline
+-notifikation on the desktop wirh quickanswer like icq
+-Facebook load history and load new messages on log in
+-globalconnect Button Online/offline shortcut
+-Sound is noworking
+-tipping notifikation
+-individual kontext menues for specified for that protocoll
+-online Offline indikator rot/green in the header
+-search in closed and open groups
+-search shortcut
+-history shortcut
+-different color for own text in group chat
+-different color for timestamp and nick
+
+
+Very unsure if realiesing...
+-skype
+-Whatsapp integration
+
