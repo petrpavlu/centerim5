@@ -19,6 +19,7 @@
 - implement options mentioned in the man page
 - etc.
 
+-passwort crypted in accounts.xml (hash?)
 -keybinding changer
 -clear UTF8 support (gtalk renames the kontakts... RÃ¤der) 
 -log window: show who gets online and offline
