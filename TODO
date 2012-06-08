@@ -10,34 +10,17 @@
 - notify UI ops implementation
 - buddy list customization
 - buddy info window
-- TreeView: quick search
+- BuddyList/TreeView: quick search
 - handle PURPLE_DEFAULT_ACTION_NONE correctly
 - don't create ChoiceDialog (Request UI) if there are no options
 - fix Conversation history overflow
 - purple_blist_get_group_size(), purple_blist_get_group_online_count()
-- gtkblist.c: buddy_is_displayable(), redo_buddy_list()
 - implement options mentioned in the man page
-- etc.
-
--passwort crypted in accounts.xml (hash?)
--keybinding changer
--clear UTF8 support (gtalk renames the kontakts... RÃ¤der) 
--log window: show who gets online and offline
--notifikation on the desktop wirh quickanswer like icq
--Facebook load history and load new messages on log in
--globalconnect Button Online/offline shortcut
--Sound is noworking
--tipping notifikation
--individual kontext menues for specified for that protocoll
--online Offline indikator rot/green in the header
--search in closed and open groups
--search shortcut
--history shortcut
--different color for own text in group chat
--different color for timestamp and nick
-
+- keybinding changer
+- option to show in the log window who gets online and offline
+- external actions
+- button to globally switch online/offline status
+- typing notifications
+- searching through conversation history
+- different color for own text in group chat
  
-Very unsure if realiesing...
--skype
--Whatsapp integration
-
