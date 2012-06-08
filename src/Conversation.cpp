@@ -41,7 +41,11 @@ Conversation::Conversation(PurpleConversation *conv_)
 
   view = new CppConsUI::TextView(width - 2, height, true, true);
   input = new CppConsUI::TextEdit(width - 2, height);
-  line = new CppConsUI::HorizontalLine(width);
+  char *name = g_strdup_printf("[%s] %s",
+      purple_account_get_protocol_name(purple_conversation_get_account(conv)),
+      purple_conversation_get_name(conv));
+  line = new ConversationLine(name);
+  g_free(name);
   AddWidget(*view, 1, 0);
   AddWidget(*input, 1, 1);
   AddWidget(*line, 0, height);
@@ -230,6 +234,49 @@ void Conversation::Write(const char *name, const char *alias,
   g_free(nohtml);
   g_free(time);
   g_free(msg);
+}
+
+Conversation::ConversationLine::ConversationLine(const char *text_)
+: AbstractLine(AUTOSIZE, 1)
+{
+  g_assert(text_);
+
+  text = g_strdup(text_);
+  text_width = CppConsUI::Curses::onscreen_width(text);
+}
+
+Conversation::ConversationLine::~ConversationLine()
+{
+  g_free(text);
+}
+
+void Conversation::ConversationLine::Draw()
+{
+  ProceedUpdateArea();
+
+  int realw;
+
+  if (!area || (realw = area->getmaxx()) == 0 || area->getmaxy() != 1)
+    return;
+
+  int l;
+  if (text_width + 5 >= static_cast<unsigned>(realw))
+    l = 0;
+  else
+    l = realw - text_width - 5;
+
+  // use HorizontalLine colors
+  int attrs = GetColorPair("horizontalline", "line");
+  area->attron(attrs);
+
+  int i;
+  for (i = 0; i < l; i++)
+    area->mvaddlinechar(i, 0, CppConsUI::Curses::LINE_HLINE);
+  i += area->mvaddstring(i, 0, text);
+  for (; i < realw; i++)
+    area->mvaddlinechar(i, 0, CppConsUI::Curses::LINE_HLINE);
+
+  area->attroff(attrs);
 }
 
 char *Conversation::StripHTML(const char *str) const

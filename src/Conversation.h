@@ -56,9 +56,28 @@ public:
   PurpleConversation *GetPurpleConversation() const { return conv; };
 
 protected:
+  class ConversationLine
+  : public CppConsUI::AbstractLine
+  {
+  public:
+    ConversationLine(const char *text_);
+    virtual ~ConversationLine();
+
+    // Widget
+    virtual void Draw();
+
+  protected:
+    char *text;
+    size_t text_width;
+
+  private:
+    ConversationLine(const ConversationLine&);
+    ConversationLine& operator=(const ConversationLine&);
+  };
+
   CppConsUI::TextView *view;
   CppConsUI::TextEdit *input;
-  CppConsUI::HorizontalLine *line;
+  ConversationLine *line;
 
   PurpleConversation *conv;
 
