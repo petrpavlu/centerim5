@@ -65,7 +65,7 @@ TreeView::TreeView(int w, int h)
 
 TreeView::~TreeView()
 {
-  DeleteNode(thetree.begin(), false);
+  Clear();
 }
 
 void TreeView::Draw()
@@ -118,6 +118,17 @@ bool TreeView::GrabFocus()
     if (i->widget->GrabFocus())
       return true;
   return false;
+}
+
+void TreeView::Clear()
+{
+  TheTree::pre_order_iterator root = thetree.begin();
+  while (root.number_of_children())
+    DeleteNode(++thetree.begin(), false);
+
+  // stay sane
+  g_assert(children.empty());
+  g_assert(!GetScrollHeight());
 }
 
 bool TreeView::IsWidgetVisible(const Widget& child) const
@@ -287,8 +298,6 @@ void TreeView::DeleteNode(NodeReference node, bool keepchildren)
 {
   g_assert(node->treeview == this);
 
-  /// @todo This needs more testing.
-
   // if we want to keep child nodes we should flatten the tree
   if (keepchildren)
     thetree.flatten(node);
@@ -303,15 +312,18 @@ void TreeView::DeleteNode(NodeReference node, bool keepchildren)
     shrink += h;
   }
 
-  for (TheTree::pre_order_iterator i = thetree.begin(node);
-      i != thetree.end(node); i++) {
+  while (thetree.number_of_children(node)) {
+    TheTree::pre_order_iterator i = thetree.begin_leaf(node);
     int h = i->widget->GetHeight();
     if (h == AUTOSIZE)
       h = i->widget->GetWishHeight();
     if (h == AUTOSIZE)
       h = 1;
     shrink += h;
+
+    // remove the widget and instantly remove it from the tree
     RemoveWidget(*i->widget);
+    thetree.erase(i);
   }
 
   if (node->widget)
@@ -414,11 +426,6 @@ void TreeView::MoveWidgetBefore(Widget& widget, Widget& position)
 void TreeView::MoveWidgetAfter(Widget& widget, Widget& position)
 {
   ScrollPane::MoveWidgetAfter(widget, position);
-}
-
-void TreeView::Clear()
-{
-  ScrollPane::Clear();
 }
 
 int TreeView::DrawNode(SiblingIterator node, int top)

@@ -76,6 +76,7 @@ public:
   virtual bool GrabFocus();
 
   // Container
+  virtual void Clear();
   virtual bool IsWidgetVisible(const Widget& widget) const;
   virtual bool SetFocusChild(Widget& child);
   virtual void GetFocusChain(FocusChain& focus_chain,
@@ -208,7 +209,6 @@ protected:
   virtual void RemoveWidget(Widget& widget);
   virtual void MoveWidgetBefore(Widget& widget, Widget& position);
   virtual void MoveWidgetAfter(Widget& widget, Widget& position);
-  virtual void Clear(); ///< @todo Implemement.
 
   virtual int DrawNode(SiblingIterator node, int top);
 
