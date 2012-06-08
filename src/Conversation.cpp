@@ -593,7 +593,7 @@ void Conversation::LoadHistory()
     else {
       // cim4, read multiple raw lines
       gsize length;
-      bool first = true;
+      std::string msg;
       while ((st = g_io_channel_read_line(chan, &line, &length, NULL, &err))
           == G_IO_STATUS_NORMAL && line != NULL) {
         if (!strcmp(line, "\f\n")) {
@@ -601,37 +601,33 @@ void Conversation::LoadHistory()
           break;
         }
 
-        // validate UTF-8
-        if (!g_utf8_validate(line, -1, NULL)) {
-          g_free(line);
-          LOG->Error(_("Invalid message line detected in conversation logfile"
-                " '%s'. The line was skipped."), filename);
-          continue;
-        }
-
         // strip '\r' if necessary
         if (length > 1 && line[length - 2] == '\r') {
           line[length - 2] = '\n';
           line[length - 1] = '\0';
         }
-        if (first) {
-          char *time = ExtractTime(sent_time, show_time);
-          char *msg = g_strdup_printf("%s %s", time, line);
-          view->Append(msg, color);
-          g_free(time);
-          g_free(msg);
-          first = false;
-        }
-        else
-          view->Append(line, color);
+        msg.append(line);
         g_free(line);
       }
 
-      if (new_msg)
-        continue;
+      if (!new_msg) {
+        // EOL or I/O error
+        break;
+      }
 
-      // EOL or I/O error
-      break;
+      // validate UTF-8
+      if (!g_utf8_validate(msg.c_str(), -1, NULL)) {
+        LOG->Error(_("Invalid message detected in conversation logfile"
+              " '%s'. The message was skipped."), filename);
+        continue;
+      }
+
+      // add the message to the window
+      char *time = ExtractTime(sent_time, show_time);
+      char *final_msg = g_strdup_printf("%s %s", time, msg.c_str());
+      view->Append(final_msg, color);
+      g_free(time);
+      g_free(final_msg);
     }
   }
 
