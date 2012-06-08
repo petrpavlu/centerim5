@@ -26,6 +26,7 @@
 
 #include <cppconsui/FreeWindow.h>
 #include <cppconsui/HorizontalListBox.h>
+#include <cppconsui/Spacer.h>
 #include <libpurple/purple.h>
 #include <vector>
 
@@ -45,6 +46,8 @@ public:
   void FocusPrevConversation();
   void FocusNextConversation();
 
+  void SetExpandedConversations(bool expanded);
+
 protected:
 
 private:
@@ -62,7 +65,10 @@ private:
   // active conversation, -1 if none
   int active;
 
-  CppConsUI::HorizontalListBox *list;
+  CppConsUI::HorizontalListBox *outer_list;
+  CppConsUI::Spacer *left_spacer;
+  CppConsUI::Spacer *right_spacer;
+  CppConsUI::HorizontalListBox *conv_list;
 
   PurpleConversationUiOps centerim_conv_ui_ops;
 

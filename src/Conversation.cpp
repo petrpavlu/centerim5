@@ -124,6 +124,17 @@ void Conversation::UngrabFocus()
   Window::UngrabFocus();
 }
 
+void Conversation::Show()
+{
+  /* Update the scrollbar setting. It is delayed until the conversation window
+   * is actually displayed, so screen lines recalculations in TextView (caused
+   * by changing the scrollbar setting) aren't triggered if it isn't really
+   * necessary. */
+  view->SetScrollBar(!CENTERIM->GetExpandedConversations());
+
+  Window::Show();
+}
+
 void Conversation::Close()
 {
   signal_close(*this);

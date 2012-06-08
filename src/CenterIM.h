@@ -66,6 +66,8 @@ public:
   bool LoadColorSchemeConfig();
   bool LoadKeyConfig();
 
+  bool GetExpandedConversations() const { return convs_expanded; }
+
 protected:
 
 private:
@@ -92,7 +94,9 @@ private:
   CppConsUI::CoreManager *mngr;
   sigc::connection resize_conn;
   sigc::connection top_window_change_conn;
+  // flag to indicate if the conversation full-screen mode is activated
   bool convs_expanded;
+  // flag to indicate if idle reporting is based on keyboard presses
   bool idle_reporting_on_keyboard;
 
   PurpleCoreUiOps centerim_core_ui_ops;

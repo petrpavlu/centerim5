@@ -80,14 +80,39 @@ void Conversations::FocusNextConversation()
     ActivateConversation(i);
 }
 
+void Conversations::SetExpandedConversations(bool expanded)
+{
+  if (expanded) {
+    // make small room on the left and right
+    left_spacer->SetWidth(1);
+    right_spacer->SetWidth(1);
+  }
+  else {
+    left_spacer->SetWidth(0);
+    right_spacer->SetWidth(0);
+  }
+
+  /* Trigger the Conversation::Show() method to change the scrollbar setting
+   * of the active conversation. */
+  ActivateConversation(active);
+}
+
 Conversations::Conversations()
 : FreeWindow(0, 0, 80, 1, TYPE_NON_FOCUSABLE)
 , active(-1)
 {
   SetColorScheme("conversation");
 
-  list = new CppConsUI::HorizontalListBox(AUTOSIZE, 1);
-  AddWidget(*list, 0, 0);
+  outer_list = new CppConsUI::HorizontalListBox(AUTOSIZE, 1);
+  AddWidget(*outer_list, 0, 0);
+
+  left_spacer = new CppConsUI::Spacer(0, 1);
+  right_spacer = new CppConsUI::Spacer(0, 1);
+  conv_list = new CppConsUI::HorizontalListBox(AUTOSIZE, 1);
+
+  outer_list->AppendWidget(*left_spacer);
+  outer_list->AppendWidget(*conv_list);
+  outer_list->AppendWidget(*right_spacer);
 
   // init prefs
   purple_prefs_add_none(CONF_PREFIX "/chat");
@@ -243,7 +268,7 @@ void Conversations::create_conversation(PurpleConversation *conv)
   c.purple_conv = conv;
   c.conv = conversation;
   c.label = new CppConsUI::Label(AUTOSIZE, 1);
-  list->AppendWidget(*c.label);
+  conv_list->AppendWidget(*c.label);
   conversations.push_back(c);
   UpdateLabels();
 
@@ -276,7 +301,7 @@ void Conversations::destroy_conversation(PurpleConversation *conv)
   }
 
   delete conversations[i].conv;
-  list->RemoveWidget(*conversations[i].label);
+  conv_list->RemoveWidget(*conversations[i].label);
   conversations.erase(conversations.begin() + i);
 
   if (active > i) {

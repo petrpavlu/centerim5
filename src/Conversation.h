@@ -46,6 +46,7 @@ public:
   virtual void UngrabFocus();
 
   // FreeWindow
+  virtual void Show();
   virtual void Close();
   virtual void OnScreenResized();
 

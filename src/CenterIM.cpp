@@ -428,6 +428,10 @@ void CenterIM::OnScreenResized()
   size.y = 1;
   size.width = screen_width - size.x;
   size.height = screen_height - size.y - areaSizes[LOG_AREA].height - 1;
+  if (convs_expanded) {
+    size.x -= 2;
+    size.width += 4;
+  }
   areaSizes[CHAT_AREA] = size;
 
   size.x = 0;
@@ -457,6 +461,7 @@ void CenterIM::OnTopWindowChanged()
   CppConsUI::FreeWindow *top = mngr->GetTopWindow();
   if (top && typeid(Conversation) != typeid(*top)) {
     convs_expanded = false;
+    CONVERSATIONS->SetExpandedConversations(convs_expanded);
     mngr->OnScreenResized();
   }
 }
@@ -987,6 +992,7 @@ void CenterIM::ActionExpandConversation()
   }
 
   convs_expanded = !convs_expanded;
+  CONVERSATIONS->SetExpandedConversations(convs_expanded);
   mngr->OnScreenResized();
 }
 
