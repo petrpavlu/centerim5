@@ -42,6 +42,11 @@ public:
     COLOR_BY_ACCOUNT
   };
 
+  enum ListMode {
+    LIST_NORMAL,
+    LIST_FLAT
+  };
+
   static BuddyList *Instance();
 
   // Widget
@@ -67,6 +72,7 @@ private:
   bool show_empty_groups;
   bool show_offline_buddies;
   ColorizationMode colorization_mode;
+  ListMode list_mode;
 
   static BuddyList *instance;
 
@@ -80,6 +86,8 @@ private:
   friend class CenterIM;
 
   void Load();
+  void RebuildList();
+  void DelayedGroupNodesInit();
   void UpdateCachedPreference(const char *name);
   bool CheckAnyAccountConnected();
 

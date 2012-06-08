@@ -93,10 +93,12 @@ BuddyList::BuddyList()
   purple_prefs_add_bool(CONF_PREFIX "/blist/show_empty_groups", false);
   purple_prefs_add_bool(CONF_PREFIX "/blist/show_offline_buddies", true);
   purple_prefs_add_string(CONF_PREFIX "/blist/colorization_mode", "none");
+  purple_prefs_add_string(CONF_PREFIX "/blist/list_mode", "normal");
 
   UpdateCachedPreference(CONF_PREFIX "/blist/show_empty_groups");
   UpdateCachedPreference(CONF_PREFIX "/blist/show_offline_buddies");
   UpdateCachedPreference(CONF_PREFIX "/blist/colorization_mode");
+  UpdateCachedPreference(CONF_PREFIX "/blist/list_mode");
 
   // connect callbacks
   purple_prefs_connect_callback(this, CONF_PREFIX "/blist",
@@ -150,6 +152,24 @@ void BuddyList::Load()
   // load the buddy list from ~/.centerim5/blist.xml
   purple_blist_load();
 
+  DelayedGroupNodesInit();
+}
+
+void BuddyList::RebuildList()
+{
+  treeview->Clear();
+
+  PurpleBlistNode *node = purple_blist_get_root();
+  while (node) {
+    new_node(node);
+    node = purple_blist_node_next(node, TRUE);
+  }
+
+  DelayedGroupNodesInit();
+}
+
+void BuddyList::DelayedGroupNodesInit()
+{
   // delayed group nodes init
   PurpleBlistNode *node = purple_blist_get_root();
   while (node) {
@@ -159,7 +179,7 @@ void BuddyList::Load()
         gnode->DelayedInit();
     }
 
-    node = purple_blist_node_next(node, TRUE);
+    node = purple_blist_node_get_sibling_next(node);
   }
 }
 
@@ -177,6 +197,13 @@ void BuddyList::UpdateCachedPreference(const char *name)
       colorization_mode = COLOR_BY_ACCOUNT;
     else
       colorization_mode = COLOR_NONE;
+  }
+  else if (!strcmp(name, CONF_PREFIX "/blist/list_mode")) {
+    const char *value = purple_prefs_get_string(name);
+    if (!strcmp(value, "flat"))
+      list_mode = LIST_FLAT;
+    else
+      list_mode = LIST_NORMAL;
   }
 }
 
@@ -204,6 +231,11 @@ void BuddyList::new_list(PurpleBuddyList *list)
 void BuddyList::new_node(PurpleBlistNode *node)
 {
   g_return_if_fail(!node->ui_data);
+
+  if (PURPLE_BLIST_NODE_IS_GROUP(node) && list_mode == BuddyList::LIST_FLAT) {
+    // flat mode = no groups
+    return;
+  }
 
   BuddyListNode *bnode = BuddyListNode::CreateNode(node);
 
@@ -523,8 +555,13 @@ void BuddyList::blist_pref_change(const char *name, PurplePrefType type,
   // blist/* preference changed
   UpdateCachedPreference(name);
 
+  if (!strcmp(name, CONF_PREFIX "/blist/list_mode")) {
+    RebuildList();
+    return;
+  }
+
   bool groups_only = false;
-  if (!strcmp(name, CONF_PREFIX "blist/show_empty_groups"))
+  if (!strcmp(name, CONF_PREFIX "/blist/show_empty_groups"))
     groups_only = true;
 
   PurpleBlistNode *node = purple_blist_get_root();

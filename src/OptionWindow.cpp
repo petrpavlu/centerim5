@@ -45,6 +45,10 @@ OptionWindow::OptionWindow()
           CONF_PREFIX "/blist/show_empty_groups")));
   tree->AppendNode(parent, *(new BooleanOption(_("Show offline buddies"),
           CONF_PREFIX "/blist/show_offline_buddies")));
+  c = new ChoiceOption(_("List mode"), CONF_PREFIX "/blist/list_mode");
+  c->AddOption(_("Normal"), "normal");
+  c->AddOption(_("Flat"), "flat");
+  tree->AppendNode(parent, *c);
   c = new ChoiceOption(_("Colorization mode"),
       CONF_PREFIX "/blist/colorization_mode");
   c->AddOption(_("None"), "none");
