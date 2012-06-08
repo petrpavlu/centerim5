@@ -35,8 +35,7 @@ namespace CppConsUI
 
 TextView::TextView(int w, int h, bool autoscroll_, bool scrollbar_)
 : Widget(w, h), view_top(0), autoscroll(autoscroll_)
-, autoscroll_suspended(false), scroll(0), scrollbar(scrollbar_)
-, dirty_lines(false), recalculate_screen_lines(false)
+, autoscroll_suspended(false), scrollbar(scrollbar_)
 {
   can_focus = true;
   DeclareBindables();
@@ -59,23 +58,7 @@ void TextView::Draw()
   int realh = area->getmaxy();
 
   if (origw != realw)
-    recalculate_screen_lines = true;
-
-  if (recalculate_screen_lines) {
-    // delete all screen lines
-    screen_lines.clear();
-
-    /// @todo Save and restore scroll afterwards.
-    for (size_t i = 0, advice = 0; i < lines.size(); i++)
-      advice = UpdateScreenLines(i, advice);
-    recalculate_screen_lines = false;
-  }
-  else if (dirty_lines) {
-    for (size_t i = 0, advice = 0; i < lines.size(); i++)
-      if (lines[i]->dirty)
-        advice = UpdateScreenLines(i, advice);
-  }
-  dirty_lines = false;
+    UpdateAllScreenLines();
 
   area->erase();
 
@@ -87,30 +70,8 @@ void TextView::Draw()
     view_top = screen_lines.size() - realh;
     autoscroll_suspended = false;
   }
-
-  if (screen_lines.size() > static_cast<unsigned>(realh)) {
-    if (scroll) {
-      unsigned s = abs(scroll) * ((realh + 1) / 2);
-      if (scroll < 0) {
-        if (view_top < s)
-          view_top = 0;
-        else
-          view_top -= s;
-      }
-      else {
-        if (view_top + s > screen_lines.size() - realh)
-          view_top = screen_lines.size() - realh;
-        else
-          view_top += s;
-      }
-
-      autoscroll_suspended = screen_lines.size() > view_top + realh;
-    }
-
-    if (autoscroll && !autoscroll_suspended)
-      view_top = screen_lines.size() - realh;
-  }
-  scroll = 0;
+  else if (autoscroll && !autoscroll_suspended)
+    view_top = screen_lines.size() - realh;
 
   int attrs = GetColorPair("textview", "text");
   area->attron(attrs);
@@ -225,13 +186,14 @@ void TextView::Insert(size_t line_num, const char *text, int color)
 
   const char *p = text;
   const char *s = text;
+  size_t cur_line_num = line_num;
 
   // parse lines
   while (*p) {
     if (*p == '\n') {
       Line *l = new Line(s, p - s, color);
-      lines.insert(lines.begin() + line_num, l);
-      line_num++;
+      lines.insert(lines.begin() + cur_line_num, l);
+      cur_line_num++;
       s = p = g_utf8_next_char(p);
       continue;
     }
@@ -241,11 +203,14 @@ void TextView::Insert(size_t line_num, const char *text, int color)
 
   if (s < p) {
     Line *l = new Line(s, p - s, color);
-    lines.insert(lines.begin() + line_num, l);
-    line_num++;
+    lines.insert(lines.begin() + cur_line_num, l);
+    cur_line_num++;
   }
 
-  dirty_lines = true;
+  // update screen lines
+  for (size_t i = line_num, advice = 0; i < cur_line_num; i++)
+    advice = UpdateScreenLines(i, advice);
+
   Redraw();
 }
 
@@ -314,12 +279,12 @@ void TextView::SetScrollBar(bool enabled)
     return;
 
   scrollbar = enabled;
-  recalculate_screen_lines = true;
+  UpdateAllScreenLines();
   Redraw();
 }
 
-TextView::Line::Line(const char *text_, size_t bytes, int color_, bool dirty_)
-: color(color_), dirty(dirty_)
+TextView::Line::Line(const char *text_, size_t bytes, int color_)
+: color(color_)
 {
   g_assert(text_);
 
@@ -407,8 +372,6 @@ size_t TextView::UpdateScreenLines(size_t line_num, size_t start)
   ScreenLines::iterator i = screen_lines.begin() + EraseScreenLines(line_num,
       start);
 
-  lines[line_num]->dirty = false;
-
   if (!area)
     return 0;
 
@@ -416,9 +379,13 @@ size_t TextView::UpdateScreenLines(size_t line_num, size_t start)
   ScreenLines new_lines;
   const char *p = lines[line_num]->text;
   const char *s;
+
   int realw = area->getmaxx();
-  if (scrollbar && realw > 2)
+  if (scrollbar && realw > 2) {
+    // scrollbar shrinks the width of the view area
     realw -= 2;
+  }
+
   int len;
   while (*p) {
     s = p;
@@ -434,6 +401,16 @@ size_t TextView::UpdateScreenLines(size_t line_num, size_t start)
   screen_lines.insert(i, new_lines.begin(), new_lines.end());
 
   return res;
+}
+
+void TextView::UpdateAllScreenLines()
+{
+  // delete all screen lines
+  screen_lines.clear();
+
+  /// @todo Save and restore scroll afterwards.
+  for (size_t i = 0, advice = 0; i < lines.size(); i++)
+    advice = UpdateScreenLines(i, advice);
 }
 
 size_t TextView::EraseScreenLines(size_t line_num, size_t start,
@@ -476,7 +453,29 @@ size_t TextView::EraseScreenLines(size_t line_num, size_t start,
 
 void TextView::ActionScroll(int direction)
 {
-  scroll += direction;
+  if (!area)
+    return;
+
+  int realh = area->getmaxy();
+
+  if (screen_lines.size() <= static_cast<unsigned>(realh))
+    return;
+
+  unsigned s = abs(direction) * ((realh + 1) / 2);
+  if (direction < 0) {
+    if (view_top < s)
+      view_top = 0;
+    else
+      view_top -= s;
+  }
+  else {
+    if (view_top + s > screen_lines.size() - realh)
+      view_top = screen_lines.size() - realh;
+    else
+      view_top += s;
+  }
+
+  autoscroll_suspended = screen_lines.size() > view_top + realh;
   Redraw();
 }
 

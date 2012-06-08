@@ -107,9 +107,7 @@ protected:
      */
     int color;
 
-    bool dirty;
-
-    Line(const char *text_, size_t bytes, int color_, bool dirty_ = true);
+    Line(const char *text_, size_t bytes, int color_);
     virtual ~Line();
   };
 
@@ -140,10 +138,7 @@ protected:
   size_t view_top;
   bool autoscroll;
   bool autoscroll_suspended;
-  int scroll;
   bool scrollbar;
-  bool dirty_lines;
-  bool recalculate_screen_lines;
 
   /**
    * Array of real lines.
@@ -160,6 +155,10 @@ protected:
    * Recalculates on-screen lines for a specified line number.
    */
   size_t UpdateScreenLines(size_t line_num, size_t start = 0);
+  /**
+   * Recalculates all screen lines.
+   */
+  void UpdateAllScreenLines();
 
   size_t EraseScreenLines(size_t line_num, size_t start = 0,
       size_t *deleted = NULL);
