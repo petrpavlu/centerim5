@@ -50,7 +50,6 @@ public:
 protected:
 
 private:
-  HorizontalLine();
   HorizontalLine(const HorizontalLine&);
   HorizontalLine& operator=(const HorizontalLine&);
 };

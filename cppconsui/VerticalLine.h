@@ -50,7 +50,6 @@ public:
 protected:
 
 private:
-  VerticalLine();
   VerticalLine(const VerticalLine&);
   VerticalLine& operator=(const VerticalLine&);
 };
