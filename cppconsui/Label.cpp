@@ -95,19 +95,10 @@ void Label::SetText(const char *new_text)
 
   // update wish height
   int h = 1;
-  if (text) {
-    const char *start, *end;
-    start = end = text;
-    while (*end) {
-      if (*end == '\n') {
-        Curses::onscreen_width(start, end);
+  if (text)
+    for (const char *cur = text; *cur; cur++)
+      if (*cur == '\n')
         h++;
-        start = end + 1;
-      }
-      end++;
-    }
-    Curses::onscreen_width(start, end);
-  }
   SetWishHeight(h);
 
   Redraw();

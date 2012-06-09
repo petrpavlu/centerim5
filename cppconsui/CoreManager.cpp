@@ -23,6 +23,7 @@
 
 #include "KeyConfig.h"
 
+#include <algorithm>
 #include <stdio.h>
 #include <string.h>
 #include <poll.h>
@@ -484,10 +485,7 @@ void CoreManager::Draw()
 
 CoreManager::Windows::iterator CoreManager::FindWindow(FreeWindow& window)
 {
-  for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
-    if (*i == &window)
-      return i;
-  return windows.end();
+  return std::find(windows.begin(), windows.end(), &window);
 }
 
 void CoreManager::FocusWindow()
