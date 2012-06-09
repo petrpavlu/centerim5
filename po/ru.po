@@ -6,8 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: centerim5\n"
-"Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/projects/centerim\n"
-"POT-Creation-Date: 2012-01-22 14:33+0100\n"
+"Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
+"projects/centerim\n"
+"POT-Creation-Date: 2012-06-09 16:13+0200\n"
 "PO-Revision-Date: 2012-01-22 17:47+0300\n"
 "Last-Translator: kyak <bas@bmail.ru>\n"
 "Language-Team: \n"
@@ -17,330 +18,427 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: Russian\n"
 "X-Poedit-Country: RUSSIAN FEDERATION\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: src/AccountWindow.cpp:35
 msgid "Accounts"
 msgstr "Аккаунты"
 
-#: src/AccountWindow.cpp:39
-#: src/Accounts.cpp:156
-#: src/BuddyList.cpp:282
-#: src/BuddyList.cpp:357
-#: src/BuddyList.cpp:369
+#: src/AccountWindow.cpp:44 src/Accounts.cpp:144 src/BuddyList.cpp:328
+#: src/BuddyList.cpp:403 src/BuddyList.cpp:415
 msgid "Add"
 msgstr "Добавить"
 
-#: src/AccountWindow.cpp:42
-#: src/OptionWindow.cpp:118
+#: src/AccountWindow.cpp:47 src/Accounts.cpp:102 src/OptionWindow.cpp:158
 msgid "Done"
 msgstr "Готово"
 
-#: src/AccountWindow.cpp:82
+#: src/AccountWindow.cpp:78
 msgid "Remember password"
 msgstr "Запомнить пароль"
 
-#: src/AccountWindow.cpp:86
+#: src/AccountWindow.cpp:82
 msgid "Account enabled"
 msgstr "Аккаунт активен"
 
-#: src/AccountWindow.cpp:126
+#: src/AccountWindow.cpp:122
 msgid "Password"
 msgstr "Пароль"
 
-#: src/AccountWindow.cpp:128
-#: src/BuddyList.cpp:257
-#: src/BuddyList.cpp:329
-#: src/BuddyListNode.cpp:265
-#: src/BuddyListNode.cpp:415
-#: src/BuddyListNode.cpp:588
+#: src/AccountWindow.cpp:124 src/BuddyList.cpp:303 src/BuddyList.cpp:375
+#: src/BuddyListNode.cpp:387 src/BuddyListNode.cpp:565
+#: src/BuddyListNode.cpp:744
 msgid "Alias"
 msgstr "Псевдоним"
 
-#: src/AccountWindow.cpp:220
-#: src/OptionWindow.cpp:245
-#: src/Request.cpp:369
+#: src/AccountWindow.cpp:219 src/OptionWindow.cpp:285 src/Request.cpp:373
 msgid "Value is out of range."
 msgstr "Значение вне диапазона"
 
-#: src/AccountWindow.cpp:276
-#: src/AccountWindow.cpp:533
+#: src/AccountWindow.cpp:275 src/AccountWindow.cpp:561
 msgid "Username"
 msgstr "Имя пользователя"
 
-#: src/AccountWindow.cpp:339
+#: src/AccountWindow.cpp:338
 msgid "Protocol"
 msgstr "Протокол"
 
-#: src/AccountWindow.cpp:428
+#: src/AccountWindow.cpp:364
+#, fuzzy
+msgid "Buddylist Color:"
+msgstr "Список друзей"
+
+#: src/AccountWindow.cpp:452
 msgid "Invalid account or protocol plugin not loaded"
 msgstr "Ошибка аккаунта или не подгружен плагин для протокола"
 
-#: src/AccountWindow.cpp:513
+#: src/AccountWindow.cpp:537
 #, c-format
 msgid "Invalid Account Option pref type (%d)."
 msgstr "Неправильный тип настроек аккаунта (%d)."
 
-#: src/AccountWindow.cpp:524
+#: src/AccountWindow.cpp:552
 msgid "Drop account"
 msgstr "Удалить аккаунт"
 
-#: src/AccountWindow.cpp:551
+#: src/AccountWindow.cpp:579
 msgid "Account deletion"
 msgstr "Удаление аккаунта"
 
-#: src/AccountWindow.cpp:552
+#: src/AccountWindow.cpp:580
 msgid "Are you sure you want to delete this account?"
 msgstr "Вы уверены, что хотите удалить этот аккаунт?"
 
-#: src/Accounts.cpp:122
-#, c-format
-msgid "%s%s has made %s his or her buddy%s%s"
+#: src/Accounts.cpp:87
+msgid "Pending requests"
+msgstr ""
+
+#: src/Accounts.cpp:146
+msgid "Authorize"
+msgstr "Авторизовать"
+
+#: src/Accounts.cpp:197
+#, fuzzy, c-format
+msgid "Add %s (%s) to your buddy list?"
+msgstr "Добавить контакт в список?"
+
+#: src/Accounts.cpp:200
+#, fuzzy, c-format
+msgid "Add %s to your buddy list?"
+msgstr "Добавить контакт в список?"
+
+#: src/Accounts.cpp:202 src/BuddyList.cpp:328
+msgid "Add buddy"
+msgstr "Добавить друга"
+
+#: src/Accounts.cpp:218
+#, fuzzy, c-format
+msgid ""
+"Allow %s (%s) to add you to his or her buddy list?\n"
+"Message: %s"
+msgstr "%s%s хочет добавить вас (%s) в свой список контактов%s%s"
+
+#: src/Accounts.cpp:223
+#, fuzzy, c-format
+msgid ""
+"Allow %s to add you to his or her buddy list?\n"
+"Message: %s"
+msgstr "%s%s хочет добавить вас (%s) в свой список контактов%s%s"
+
+#: src/Accounts.cpp:225
+#, fuzzy
+msgid "Authorize buddy"
+msgstr "Авторизовать контакт?"
+
+#: src/Accounts.cpp:337
+#, fuzzy, c-format
+msgid "+ [%s] %s: %s (%s) has made you his or her buddy: %s"
 msgstr "%s%s добавил %s в свой список контактов%s%s"
 
-#: src/Accounts.cpp:143
+#: src/Accounts.cpp:340
+#, fuzzy, c-format
+msgid "+ [%s] %s: %s has made you his or her buddy: %s"
+msgstr "%s%s добавил %s в свой список контактов%s%s"
+
+#: src/Accounts.cpp:345
+#, fuzzy, c-format
+msgid "+ [%s] %s: %s (%s) has made you his or her buddy"
+msgstr "%s%s добавил %s в свой список контактов%s%s"
+
+#: src/Accounts.cpp:348
+#, fuzzy, c-format
+msgid "+ [%s] %s: %s has made you his or her buddy"
+msgstr "%s%s добавил %s в свой список контактов%s%s"
+
+#: src/Accounts.cpp:358
 #, c-format
 msgid "+ [%s] %s: Status changed to: %s"
 msgstr "+ [%s] %s: Статус изменен на: %s"
 
-#: src/Accounts.cpp:154
-msgid "Add buddy to your list?"
-msgstr "Добавить контакт в список?"
-
-#: src/Accounts.cpp:156
-#: src/BuddyList.cpp:369
-#: cppconsui/AbstractDialog.h:32
-msgid "Cancel"
-msgstr "Отмена"
-
-#: src/Accounts.cpp:180
+#: src/Accounts.cpp:375
 #, c-format
-msgid "%s%s wants to add you (%s) to his or her buddy list%s%s"
-msgstr "%s%s хочет добавить вас (%s) в свой список контактов%s%s"
+msgid "+ [%s] %s: New add request from %s (%s)"
+msgstr ""
 
-#: src/Accounts.cpp:191
-#: src/Accounts.cpp:198
-msgid "Authorize buddy?"
-msgstr "Авторизовать контакт?"
+#: src/Accounts.cpp:378
+#, fuzzy, c-format
+msgid "+ [%s] %s: New add request from %s"
+msgstr "+ [%s] %s: Статус изменен на: %s"
 
-#: src/Accounts.cpp:193
-#: src/Accounts.cpp:200
-msgid "Authorize"
-msgstr "Авторизовать"
+#: src/Accounts.cpp:398
+#, c-format
+msgid "+ [%s] %s: New authorization request from %s (%s)"
+msgstr ""
 
-#: src/Accounts.cpp:193
-#: src/Accounts.cpp:200
-msgid "Deny"
-msgstr "Отказать"
+#: src/Accounts.cpp:401
+#, c-format
+msgid "+ [%s] %s: New authorization request from %s"
+msgstr ""
 
 #: src/BuddyList.cpp:44
 #, c-format
 msgid "%s act conv, %s status menu, %s context menu"
 msgstr "%s акт. чат, %s статус, %s контекст. меню"
 
-#: src/BuddyList.cpp:180
+#: src/BuddyList.cpp:221
 msgid "There are no connected accounts."
 msgstr "Нет подключенных аккаунтов"
 
-#: src/BuddyList.cpp:187
+#: src/BuddyList.cpp:228
 msgid "Different Buddylist detected!"
 msgstr "Обнаружен другой список друзей!"
 
-#: src/BuddyList.cpp:252
-#: src/BuddyList.cpp:325
+#: src/BuddyList.cpp:298 src/BuddyList.cpp:371
 msgid "Account"
 msgstr "Аккаунт"
 
-#: src/BuddyList.cpp:254
+#: src/BuddyList.cpp:300
 msgid "Buddy name"
 msgstr "Имя друга"
 
-#: src/BuddyList.cpp:260
-#: src/BuddyList.cpp:332
+#: src/BuddyList.cpp:306 src/BuddyList.cpp:378
 msgid "Group"
 msgstr "Группа"
 
-#: src/BuddyList.cpp:279
+#: src/BuddyList.cpp:325
 msgid "Buddies"
 msgstr "Друзья"
 
-#: src/BuddyList.cpp:282
-msgid "Add buddy"
-msgstr "Добавить друга"
-
-#: src/BuddyList.cpp:297
-#: src/BuddyList.cpp:450
+#: src/BuddyList.cpp:343 src/BuddyList.cpp:498
 msgid "This protocol does not support chat rooms."
 msgstr "Этот протокол не поддерживает чат-комнаты."
 
-#: src/BuddyList.cpp:313
-msgid "You are not currently signed on with any protocols that have the ability to chat."
-msgstr "Сейчас вы не подключены ни по одному из протоколов, поддерживающих чат."
+#: src/BuddyList.cpp:359
+msgid ""
+"You are not currently signed on with any protocols that have the ability to "
+"chat."
+msgstr ""
+"Сейчас вы не подключены ни по одному из протоколов, поддерживающих чат."
 
-#: src/BuddyList.cpp:327
+#: src/BuddyList.cpp:373
 msgid "Chat name"
 msgstr "Имя чата"
 
-#: src/BuddyList.cpp:351
+#: src/BuddyList.cpp:397
 msgid "Chats"
 msgstr "Чаты"
 
-#: src/BuddyList.cpp:354
+#: src/BuddyList.cpp:400
 msgid "Auto-join"
 msgstr "Автоматически заходить"
 
-#: src/BuddyList.cpp:357
+#: src/BuddyList.cpp:403
 msgid "Add chat"
 msgstr "Добавить чат"
 
-#: src/BuddyList.cpp:367
+#: src/BuddyList.cpp:413
 msgid "Add Group"
 msgstr "Добавить группу"
 
-#: src/BuddyList.cpp:368
+#: src/BuddyList.cpp:414
 msgid "Please enter the name of the group to be added."
 msgstr "Введите название группы для добавления."
 
-#: src/BuddyList.cpp:386
-#: src/BuddyList.cpp:438
+#: src/BuddyList.cpp:415 cppconsui/AbstractDialog.h:32
+msgid "Cancel"
+msgstr "Отмена"
+
+#: src/BuddyList.cpp:433 src/BuddyList.cpp:486
 msgid "No account specified."
 msgstr "Не указан аккаунт."
 
-#: src/BuddyList.cpp:390
-#: src/BuddyList.cpp:442
+#: src/BuddyList.cpp:437 src/BuddyList.cpp:490
 msgid "Selected account is not connected."
 msgstr "Выбранный аккаунт не подключен."
 
-#: src/BuddyList.cpp:394
-#: src/BuddyList.cpp:456
+#: src/BuddyList.cpp:441 src/BuddyList.cpp:504
 msgid "No buddy name specified."
 msgstr "Не указано имя друга."
 
-#: src/BuddyList.cpp:398
-#: src/BuddyList.cpp:460
-#: src/BuddyList.cpp:494
+#: src/BuddyList.cpp:445 src/BuddyList.cpp:508 src/BuddyList.cpp:543
 msgid "No group name specified."
 msgstr "Не указано имя группы."
 
-#: src/BuddyList.cpp:413
+#: src/BuddyList.cpp:460
 msgid "Specified buddy is already in the list."
 msgstr "Указанный друг уже находится в списке."
 
-#: src/BuddyListNode.cpp:43
+#: src/BuddyListNode.cpp:44
 msgid "Unrecognized BuddyList node."
 msgstr "Неизвестный узел BuddyList."
 
-#: src/BuddyListNode.cpp:236
-#: src/BuddyListNode.cpp:387
-#: src/BuddyListNode.cpp:536
+#: src/BuddyListNode.cpp:358 src/BuddyListNode.cpp:537
+#: src/BuddyListNode.cpp:690
 msgid "Alias..."
 msgstr "Псевдоним..."
 
-#: src/BuddyListNode.cpp:238
-#: src/BuddyListNode.cpp:389
-#: src/BuddyListNode.cpp:538
-#: src/BuddyListNode.cpp:713
+#: src/BuddyListNode.cpp:360 src/BuddyListNode.cpp:539
+#: src/BuddyListNode.cpp:692 src/BuddyListNode.cpp:904
 msgid "Delete..."
 msgstr "Удалить..."
 
-#: src/BuddyListNode.cpp:295
+#: src/BuddyListNode.cpp:419
 #, c-format
 msgid "Are you sure you want to delete buddy %s from the list?"
 msgstr "Вы уверены, что хотите удалить друга %s из списка?"
 
-#: src/BuddyListNode.cpp:298
+#: src/BuddyListNode.cpp:422
 msgid "Buddy deletion"
 msgstr "Удаление друга"
 
-#: src/BuddyListNode.cpp:443
+#: src/BuddyListNode.cpp:595
 #, c-format
 msgid "Are you sure you want to delete chat %s from the list?"
 msgstr "Вы уверены, что хотите удалить чат %s из списка?"
 
-#: src/BuddyListNode.cpp:446
+#: src/BuddyListNode.cpp:598
 msgid "Chat deletion"
 msgstr "Удаление чата"
 
-#: src/BuddyListNode.cpp:541
+#: src/BuddyListNode.cpp:713
 msgid "Move to..."
 msgstr "Переместить в..."
 
-#: src/BuddyListNode.cpp:628
+#: src/BuddyListNode.cpp:786
 #, c-format
 msgid "Are you sure you want to delete contact %s from the list?"
 msgstr "Вы уверены, что хотите удалить контакт %s из списка?"
 
-#: src/BuddyListNode.cpp:631
+#: src/BuddyListNode.cpp:789
 msgid "Contact deletion"
 msgstr "Удаление контакта"
 
-#: src/BuddyListNode.cpp:711
+#: src/BuddyListNode.cpp:902
 msgid "Rename..."
 msgstr "Переименовать..."
 
-#: src/BuddyListNode.cpp:732
+#: src/BuddyListNode.cpp:923
 msgid "Specified group is already in the list."
 msgstr "Указанная группа уже находится в списке."
 
-#: src/BuddyListNode.cpp:746
+#: src/BuddyListNode.cpp:937
 msgid "Rename"
 msgstr "Переименовать"
 
-#: src/BuddyListNode.cpp:800
+#: src/BuddyListNode.cpp:995
 #, c-format
 msgid "Are you sure you want to delete group %s from the list?"
 msgstr "Вы уверены, что хотите удалить группу %s из списка?"
 
-#: src/BuddyListNode.cpp:803
+#: src/BuddyListNode.cpp:998
 msgid "Group deletion"
 msgstr "Удаление группы"
 
-#: src/CenterIM.cpp:115
+#: src/CenterIM.cpp:126
 #, c-format
 msgid "Welcome to CenterIM 5. Press %s to display main menu."
-msgstr "Добро пожаловать в CenterIM 5. Нажмите %s для отображения главного меню."
+msgstr ""
+"Добро пожаловать в CenterIM 5. Нажмите %s для отображения главного меню."
 
-#: src/CenterIM.cpp:204
+#: src/CenterIM.cpp:168
+msgid "color schemes"
+msgstr ""
+
+#: src/CenterIM.cpp:185
+msgid "Missing 'name' attribute in the scheme definition.\n"
+msgstr ""
+
+#: src/CenterIM.cpp:194
+msgid "Missing 'widget' attribute in the color definition.\n"
+msgstr ""
+
+#: src/CenterIM.cpp:201
+msgid "Missing 'property' attribute in the color definition.\n"
+msgstr ""
+
+#: src/CenterIM.cpp:214 src/CenterIM.cpp:219
+#, fuzzy, c-format
+msgid "Unrecognized color '%s'.\n"
+msgstr "Нераспознанная клавиша '%s'"
+
+#: src/CenterIM.cpp:224
+#, fuzzy, c-format
+msgid "Unrecognized attributes '%s'.\n"
+msgstr "Нераспознанная клавиша '%s'"
+
+#: src/CenterIM.cpp:236
+msgid "Error parsing 'colorschemes.xml', loading default color scheme.\n"
+msgstr ""
+
+#: src/CenterIM.cpp:249
+msgid "key bindings"
+msgstr ""
+
+#: src/CenterIM.cpp:267
+msgid "Missing 'context' attribute in the bind definition.\n"
+msgstr ""
+
+#: src/CenterIM.cpp:273
+msgid "Missing 'action' attribute in the bind definition.\n"
+msgstr ""
+
+#: src/CenterIM.cpp:279
+msgid "Missing 'key' attribute in the bind definition.\n"
+msgstr ""
+
+#: src/CenterIM.cpp:284
+#, fuzzy, c-format
+msgid "Unrecognized key '%s'.\n"
+msgstr "Нераспознанная клавиша '%s'"
+
+#: src/CenterIM.cpp:293
+#, fuzzy
+msgid "Error parsing 'binds.xml', loading default keys.\n"
+msgstr "Ошибка разбора файла с настройками клавиш '%s'."
+
+#: src/CenterIM.cpp:352
 #, c-format
 msgid "Libpurple initialization failed."
 msgstr "Ошибка инициализации Libpurple"
 
-#: src/CenterMain.cpp:30
+#: src/CenterIM.cpp:729
+msgid "Error saving 'colorschemes.xml'.\n"
+msgstr ""
+
+#: src/CenterIM.cpp:912
+msgid "Error saving 'binds.xml'.\n"
+msgstr ""
+
+#: src/CenterMain.cpp:31
 #, c-format
 msgid "Usage: %s [-c config_path]\n"
 msgstr "Использование: %s [-c путь_к_конфигу]\n"
 
-#: src/CenterMain.cpp:63
+#: src/CenterMain.cpp:66
 #, c-format
 msgid "%s: unexpected argument after options\n"
 msgstr "%s: непредвиденный аргумент после опций\n"
 
-#: src/Connections.cpp:92
-#: src/Connections.cpp:116
-#: src/Connections.cpp:165
+#: src/Connections.cpp:93 src/Connections.cpp:117 src/Connections.cpp:166
 #, c-format
 msgid "+ [%s] %s: %s"
 msgstr "+ [%s] %s: %s"
 
-#: src/Connections.cpp:100
+#: src/Connections.cpp:101
 #, c-format
 msgid "+ [%s] %s: Connected"
 msgstr "+ [%s] %s: Подключен"
 
-#: src/Connections.cpp:108
+#: src/Connections.cpp:109
 #, c-format
 msgid "+ [%s] %s: Disconnected"
 msgstr "+ [%s] %s: Отключен"
 
-#: src/Connections.cpp:123
+#: src/Connections.cpp:124
 msgid "+ Network connected"
 msgstr "+ Подключен к сети"
 
-#: src/Connections.cpp:139
+#: src/Connections.cpp:140
 msgid "+ Network disconnected"
 msgstr "+ Отключен от сети"
 
-#: src/Connections.cpp:172
+#: src/Connections.cpp:173
 #, c-format
 msgid "+ [%s] %s: Auto-reconnection in %d second"
 msgid_plural "+ [%s] %s: Auto-reconnection in %d seconds"
@@ -348,7 +446,7 @@ msgstr[0] "+ [%s] %s: Переподключение автоматически 
 msgstr[1] "+ [%s] %s: Переподключение автоматически через %d секунды"
 msgstr[2] "+ [%s] %s: Переподключение автоматически через %d секунд"
 
-#: src/Connections.cpp:178
+#: src/Connections.cpp:179
 #, c-format
 msgid "+ [%s] %s: Account disabled"
 msgstr "+ [%s] %s: Аккаунт неактивен"
@@ -357,82 +455,92 @@ msgstr "+ [%s] %s: Аккаунт неактивен"
 msgid "%d.%m.%y %H:%M"
 msgstr "%d.%m.%y %H:%M"
 
-#: src/Conversation.cpp:61
-#: src/Conversation.cpp:469
+#: src/Conversation.cpp:60 src/Conversation.cpp:504
 #, c-format
 msgid "Error opening conversation logfile '%s' (%s)."
 msgstr "Ошибка открытия лога разговора '%s' (%s)."
 
-#: src/Conversation.cpp:68
-#: src/Conversation.cpp:475
+#: src/Conversation.cpp:67 src/Conversation.cpp:510
 #, c-format
 msgid "Error opening conversation logfile '%s'."
 msgstr "Ошибка открытия лога разговора '%s'."
 
-#: src/Conversation.cpp:117
-#, c-format
-msgid "%s buddy list, %s/%s/%s next/prev/act conv, %s status menu, %s send"
+#: src/Conversation.cpp:116
+#, fuzzy, c-format
+msgid ""
+"%s buddy list, %s/%s/%s next/prev/act conv, %s status, %s send, %s expand"
 msgstr "%s контакты, %s/%s/%s след./пред./акт. чат, %s статус, %s отправить"
 
-#: src/Conversation.cpp:207
+#: src/Conversation.cpp:203
 #, c-format
 msgid "Error writing to conversation logfile (%s)."
 msgstr "Ошибка записи в лог разговора (%s)."
 
-#: src/Conversation.cpp:213
+#: src/Conversation.cpp:209
 msgid "Error writing to conversation logfile."
 msgstr "Ошибка записи в лог разговора."
 
-#: src/Conversation.cpp:217
+#: src/Conversation.cpp:213
 #, c-format
 msgid "Error flushing conversation logfile (%s)."
 msgstr "Ошибка записи лога разговора на диск (%s)."
 
-#: src/Conversation.cpp:223
+#: src/Conversation.cpp:219
 msgid "Error flushing conversation logfile."
 msgstr "Ошибка записи лога разговора на диск."
 
-#: src/Conversation.cpp:434
+#: src/Conversation.cpp:469
 #, c-format
 msgid "Error creating directory '%s'."
 msgstr "Ошибка создания директории '%s'."
 
-#: src/Conversation.cpp:586
+#: src/Conversation.cpp:578 src/Conversation.cpp:620
+#, c-format
+msgid ""
+"Invalid message detected in conversation logfile '%s'. The message was "
+"skipped."
+msgstr ""
+
+#: src/Conversation.cpp:636
 #, c-format
 msgid "Error reading from conversation logfile '%s' (%s)."
 msgstr "Ошибка чтения лога разговора '%s' (%s)."
 
-#: src/Conversation.cpp:592
+#: src/Conversation.cpp:642
 #, c-format
 msgid "Error reading from conversation logfile '%s'."
 msgstr "Ошибка чтения лога разговора '%s'."
 
-#: src/Conversations.cpp:289
+#: src/Conversations.cpp:261
 #, c-format
 msgid "Unhandled conversation type: %i.\n"
 msgstr "Неизвестный тип разговора: %i.\n"
 
-#: src/GeneralMenu.cpp:41
+#: src/GeneralMenu.cpp:37
 msgid "Accounts..."
 msgstr "Аккаунты..."
 
-#: src/GeneralMenu.cpp:43
+#: src/GeneralMenu.cpp:39
 msgid "Add buddy..."
 msgstr "Добавить друга..."
 
-#: src/GeneralMenu.cpp:45
+#: src/GeneralMenu.cpp:41
 msgid "Add chat..."
 msgstr "Добавить чат..."
 
-#: src/GeneralMenu.cpp:47
+#: src/GeneralMenu.cpp:43
 msgid "Add group..."
 msgstr "Добавить группу..."
 
-#: src/GeneralMenu.cpp:49
+#: src/GeneralMenu.cpp:45
+msgid "Pending requests..."
+msgstr ""
+
+#: src/GeneralMenu.cpp:47
 msgid "Config options..."
 msgstr "Настройки..."
 
-#: src/GeneralMenu.cpp:69
+#: src/GeneralMenu.cpp:55
 msgid "Quit"
 msgstr "Выйти"
 
@@ -440,40 +548,40 @@ msgstr "Выйти"
 msgid "centerim/log: purple_print() parameter category was not defined."
 msgstr "centerim/log: категория параметра purple_print() не была определена."
 
-#: src/Log.cpp:281
+#: src/Log.cpp:282
 #, c-format
 msgid "centerim/log: Error opening logfile '%s' (%s)."
 msgstr "centerim/log: Ошибка открытия лог файла '%s' (%s)."
 
-#: src/Log.cpp:287
+#: src/Log.cpp:288
 #, c-format
 msgid "centerim/log: Error opening logfile '%s'."
 msgstr "centerim/log: Ошибка открытия лог файла '%s'."
 
-#: src/Log.cpp:299
+#: src/Log.cpp:300
 #, c-format
 msgid "centerim/log: Error writing to logfile (%s)."
 msgstr "centerim/log: Ошибка записи в лог файл (%s)."
 
-#: src/Log.cpp:305
+#: src/Log.cpp:306
 msgid "centerim/log: Error writing to logfile."
 msgstr "centerim/log: Ошибка записи в лог файл."
 
-#: src/Log.cpp:319
+#: src/Log.cpp:320
 #, c-format
 msgid "centerim/log: Error flushing logfile (%s)."
 msgstr "centerim/log: Ошибка записи лог файла на диск (%s)."
 
-#: src/Log.cpp:325
+#: src/Log.cpp:326
 msgid "centerim/log: Error flushing logfile."
 msgstr "centerim/log: Ошибка записи лог файла на диск."
 
-#: src/Log.cpp:348
+#: src/Log.cpp:349
 #, c-format
 msgid "centerim/log: Unknown libpurple logging level: %d."
 msgstr "centerim/log: Неизвестный уровень ведения логов libpurple: %d."
 
-#: src/Log.cpp:368
+#: src/Log.cpp:369
 #, c-format
 msgid "centerim/log: Unknown GLib logging level: %d."
 msgstr "centerim/log: Неизвестный уровень ведения логов GLib: %d."
@@ -495,115 +603,175 @@ msgid "Show offline buddies"
 msgstr "Показывать друзей не в сети"
 
 #: src/OptionWindow.cpp:48
+msgid "List mode"
+msgstr ""
+
+#: src/OptionWindow.cpp:49
+msgid "Normal"
+msgstr ""
+
+#: src/OptionWindow.cpp:50
+msgid "Flat"
+msgstr ""
+
+#: src/OptionWindow.cpp:52
 msgid "Colorization mode"
 msgstr "Режим раскраски"
 
-#: src/OptionWindow.cpp:50
-#: src/OptionWindow.cpp:83
+#: src/OptionWindow.cpp:54 src/OptionWindow.cpp:94
 msgid "None"
 msgstr "Нет"
 
-#: src/OptionWindow.cpp:51
+#: src/OptionWindow.cpp:55
 msgid "By status"
 msgstr "По статусу"
 
-#: src/OptionWindow.cpp:55
+#: src/OptionWindow.cpp:56
+#, fuzzy
+msgid "By account"
+msgstr "Удалить аккаунт"
+
+#: src/OptionWindow.cpp:60
 msgid "Dimensions"
 msgstr "Размеры"
 
-#: src/OptionWindow.cpp:56
+#: src/OptionWindow.cpp:61
 msgid "Buddy list window width"
 msgstr "Ширина окна со списком друзей"
 
-#: src/OptionWindow.cpp:59
+#: src/OptionWindow.cpp:64
 msgid "Log window height"
 msgstr "Ширина окна логов"
 
-#: src/OptionWindow.cpp:65
+#: src/OptionWindow.cpp:70
 msgid "Idle settings"
 msgstr "Настройки простоя"
 
-#: src/OptionWindow.cpp:67
+#: src/OptionWindow.cpp:72
 msgid "Change to away status when idle"
 msgstr "Переключать статус в 'Отошел' при простое"
 
-#: src/OptionWindow.cpp:70
+#: src/OptionWindow.cpp:75
 msgid "Time before becoming idle"
 msgstr "Время до перехода в простой"
 
-#: src/OptionWindow.cpp:72
+#: src/OptionWindow.cpp:77
 msgid "Report idle time"
 msgstr "Сообщать время простоя"
 
-#: src/OptionWindow.cpp:74
+#: src/OptionWindow.cpp:79
 msgid "Never"
 msgstr "Никогда"
 
-#: src/OptionWindow.cpp:75
+#: src/OptionWindow.cpp:80
 msgid "From last sent message"
 msgstr "По последнему отправленному сообщению"
 
-#: src/OptionWindow.cpp:76
+#: src/OptionWindow.cpp:81
 msgid "Based on keyboard"
 msgstr "По нажатию клавиш"
 
-#: src/OptionWindow.cpp:80
-msgid "Logging"
-msgstr "Ведение логов"
+#: src/OptionWindow.cpp:86
+msgid "Conversations"
+msgstr ""
 
-#: src/OptionWindow.cpp:84
+#: src/OptionWindow.cpp:87
+msgid "Beep on new message"
+msgstr ""
+
+#: src/OptionWindow.cpp:91
+msgid "System logging"
+msgstr ""
+
+#: src/OptionWindow.cpp:95
 msgid "Error"
 msgstr "Ошибка"
 
-#: src/OptionWindow.cpp:85
+#: src/OptionWindow.cpp:96
 msgid "Critical"
 msgstr "Критичное"
 
-#: src/OptionWindow.cpp:86
+#: src/OptionWindow.cpp:97
 msgid "Warning"
 msgstr "Предупреждение"
 
-#: src/OptionWindow.cpp:87
+#: src/OptionWindow.cpp:98
 msgid "Message"
 msgstr "Сообщение"
 
-#: src/OptionWindow.cpp:88
+#: src/OptionWindow.cpp:99
 msgid "Info"
 msgstr "Инфо"
 
-#: src/OptionWindow.cpp:89
+#: src/OptionWindow.cpp:100
 msgid "Debug"
 msgstr "Отладка"
 
-#: src/OptionWindow.cpp:91
+#: src/OptionWindow.cpp:102
 msgid "CIM log level"
 msgstr "Уровень ведения логов CIM"
 
-#: src/OptionWindow.cpp:96
+#: src/OptionWindow.cpp:107
 msgid "CppConsUI log level"
 msgstr "Уровень ведения логов CppConsUI"
 
-#: src/OptionWindow.cpp:101
+#: src/OptionWindow.cpp:112
 msgid "Purple log level"
 msgstr "Уровень ведения логов Purple"
 
-#: src/OptionWindow.cpp:106
+#: src/OptionWindow.cpp:117
 msgid "GLib log level"
 msgstr "Уровень ведения логов GLib"
 
-#: src/OptionWindow.cpp:113
-msgid "Reload keybinding file"
+#: src/OptionWindow.cpp:125
+msgid "Libpurple logging"
+msgstr ""
+
+#: src/OptionWindow.cpp:126
+msgid "Log format"
+msgstr ""
+
+#: src/OptionWindow.cpp:137
+#, fuzzy
+msgid "Log all instant messages"
+msgstr "По последнему отправленному сообщению"
+
+#: src/OptionWindow.cpp:139
+msgid "Log all chats"
+msgstr ""
+
+#: src/OptionWindow.cpp:142
+msgid "Log all status changes to system log"
+msgstr ""
+
+#: src/OptionWindow.cpp:148
+#, fuzzy
+msgid "Config files"
+msgstr "Настройки"
+
+#: src/OptionWindow.cpp:149
+#, fuzzy
+msgid "Reload key bindings"
 msgstr "Перезагрузить файл с настройками клавиш"
 
-#: src/OptionWindow.cpp:302
+#: src/OptionWindow.cpp:153
+msgid "Reload color schemes"
+msgstr ""
+
+#: src/OptionWindow.cpp:342
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] "минуту"
 msgstr[1] "минуты"
 msgstr[2] "минут"
 
-#: src/OptionWindow.cpp:308
+#: src/OptionWindow.cpp:348
 msgid "Keybinding file was successfully reloaded."
+msgstr "Файл с настройками клавиш перезагружен успешно."
+
+#: src/OptionWindow.cpp:354
+#, fuzzy
+msgid "Colorscheme file was successfully reloaded."
 msgstr "Файл с настройками клавиш перезагружен успешно."
 
 #: src/Request.cpp:117
@@ -630,20 +798,24 @@ msgstr "Да"
 msgid "No"
 msgstr "Нет"
 
-#: cppconsui/ConsuiCurses.cpp:417
+#: cppconsui/ColorScheme.cpp:91
 msgid "Color pairs limit exceeded."
 msgstr "Превышено ограничение числа пар цветов"
 
-#: cppconsui/CoreManager.cpp:322
+#: cppconsui/ColorScheme.cpp:98
+msgid "Adding color pair failed."
+msgstr ""
+
+#: cppconsui/CoreManager.cpp:323
 #, c-format
 msgid "Error converting input to UTF-8 (%s)."
 msgstr "Ошибка преобразования ввода в UTF-8 (%s)."
 
-#: cppconsui/CoreManager.cpp:328
+#: cppconsui/CoreManager.cpp:329
 msgid "Error converting input to UTF-8."
 msgstr "Ошибка преобразования ввода в UTF-8."
 
-#: cppconsui/CoreManager.cpp:379
+#: cppconsui/CoreManager.cpp:380
 msgid "Libtermkey initialization failed."
 msgstr "Ошибка инициализации Libtermkey."
 
@@ -651,70 +823,44 @@ msgstr "Ошибка инициализации Libtermkey."
 msgid "<unbound>"
 msgstr "<unbound>"
 
-#: cppconsui/KeyConfig.cpp:126
-#, c-format
-msgid "Unrecognized key '%s' in default keybinds."
-msgstr "Нераспознанная клавиша (%s) в настройках по умолчанию."
+#~ msgid "Deny"
+#~ msgstr "Отказать"
 
-#: cppconsui/KeyConfig.cpp:144
-#, c-format
-msgid "Error opening keybinding file '%s' (%s)."
-msgstr "Ошибка открытия файла с настройками клавиш '%s' (%s)."
+#~ msgid "Logging"
+#~ msgstr "Ведение логов"
 
-#: cppconsui/KeyConfig.cpp:150
-#, c-format
-msgid "Error opening keybinding file '%s'."
-msgstr "Ошибка открытия файла с настройками клавиш '%s'."
+#~ msgid "Unrecognized key '%s' in default keybinds."
+#~ msgstr "Нераспознанная клавиша (%s) в настройках по умолчанию."
 
-#: cppconsui/KeyConfig.cpp:157
-#, c-format
-msgid "Error writing to keybinding file '%s' (%s)."
-msgstr "Ошибка записи файла с настройками клавиш '%s' (%s)."
+#~ msgid "Error opening keybinding file '%s' (%s)."
+#~ msgstr "Ошибка открытия файла с настройками клавиш '%s' (%s)."
 
-#: cppconsui/KeyConfig.cpp:163
-#, c-format
-msgid "Error writing to keybinding file '%s'."
-msgstr "Ошибка записи файла с настройками клавиш '%s'."
+#~ msgid "Error opening keybinding file '%s'."
+#~ msgstr "Ошибка открытия файла с настройками клавиш '%s'."
 
-#: cppconsui/KeyConfig.cpp:197
-#, c-format
-msgid "Error reading keybinding file '%s' (%s)."
-msgstr "Ошибка чтения файла с настройками клавиш '%s' (%s)."
+#~ msgid "Error writing to keybinding file '%s' (%s)."
+#~ msgstr "Ошибка записи файла с настройками клавиш '%s' (%s)."
 
-#: cppconsui/KeyConfig.cpp:203
-#, c-format
-msgid "Error reading keybinding file '%s'."
-msgstr "Ошибка чтения файла с настройками клавиш '%s'."
+#~ msgid "Error writing to keybinding file '%s'."
+#~ msgstr "Ошибка записи файла с настройками клавиш '%s'."
 
-#: cppconsui/KeyConfig.cpp:217
-#, c-format
-msgid "Error parsing keybinding file '%s' (%s)."
-msgstr "Ошибка разбора файла с настройками клавиш '%s' (%s)."
+#~ msgid "Error reading keybinding file '%s' (%s)."
+#~ msgstr "Ошибка чтения файла с настройками клавиш '%s' (%s)."
 
-#: cppconsui/KeyConfig.cpp:223
-#, c-format
-msgid "Error parsing keybinding file '%s'."
-msgstr "Ошибка разбора файла с настройками клавиш '%s'."
+#~ msgid "Error reading keybinding file '%s'."
+#~ msgstr "Ошибка чтения файла с настройками клавиш '%s'."
 
-#: cppconsui/KeyConfig.cpp:241
-#, c-format
-msgid "Expected 'keyconfig' element, found '%s'"
-msgstr "Ожидали элемент 'keyconfig', но найден '%s'"
+#~ msgid "Error parsing keybinding file '%s' (%s)."
+#~ msgstr "Ошибка разбора файла с настройками клавиш '%s' (%s)."
 
-#: cppconsui/KeyConfig.cpp:247
-#, c-format
-msgid "Expected 'bind' element, found '%s'"
-msgstr "Ожидали элемент 'bind', но найден '%s'"
+#~ msgid "Expected 'keyconfig' element, found '%s'"
+#~ msgstr "Ожидали элемент 'keyconfig', но найден '%s'"
 
-#: cppconsui/KeyConfig.cpp:264
-#, c-format
-msgid "Unrecognized key '%s'"
-msgstr "Нераспознанная клавиша '%s'"
+#~ msgid "Expected 'bind' element, found '%s'"
+#~ msgstr "Ожидали элемент 'bind', но найден '%s'"
 
-#: cppconsui/KeyConfig.cpp:270
-#, c-format
-msgid "Unexpected element '%s'"
-msgstr "Неожиданный элемент '%s'"
+#~ msgid "Unexpected element '%s'"
+#~ msgstr "Неожиданный элемент '%s'"
 
 #, fuzzy
 #~ msgid ""
