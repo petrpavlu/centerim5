@@ -64,6 +64,8 @@ OptionWindow::OptionWindow()
   tree->AppendNode(parent, *(new IntegerOption(_("Log window height"),
           CONF_PREFIX "/dimensions/log_height", sigc::mem_fun(this,
             &OptionWindow::GetPercentUnit))));
+  tree->AppendNode(parent, *(new BooleanOption(_("Show header"),
+          CONF_PREFIX "/dimensions/show_header")));
 
   parent = tree->AppendNode(tree->GetRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(
