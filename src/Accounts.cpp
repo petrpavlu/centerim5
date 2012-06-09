@@ -23,7 +23,9 @@
 
 #include "Log.h"
 
+#include <algorithm>
 #include <string.h>
+#include <typeinfo>
 #include "gettext.h"
 
 Accounts *Accounts::instance = NULL;
@@ -33,37 +35,240 @@ Accounts *Accounts::Instance()
   return instance;
 }
 
-Accounts::AddUserData::AddUserData(PurpleAccount *account_,
-    const char *username_, const char *alias_)
+void Accounts::OpenPendingRequests()
+{
+  PendingRequestWindow *win = new PendingRequestWindow(*this);
+  win->Show();
+}
+
+Accounts::Request::Request(PurpleAccount *account_, const char *remote_user_,
+    const char *id_, const char *alias_)
 : account(account_)
 {
-  username = g_strdup(username_);
+  remote_user = g_strdup(remote_user_);
+  id = g_strdup(id_);
   alias = g_strdup(alias_);
 }
 
-Accounts::AddUserData::~AddUserData()
+Accounts::Request::~Request()
 {
-  if (username)
-    g_free(username);
+  if (remote_user)
+    g_free(remote_user);
+  if (id)
+    g_free(id);
   if (alias)
     g_free(alias);
 }
 
-Accounts::AuthAndAdd::AuthAndAdd(PurpleAccountRequestAuthorizationCb auth_cb_,
-    PurpleAccountRequestAuthorizationCb deny_cb_, void *data_,
-    const char *username_, const char *alias_, PurpleAccount *account_)
-: auth_cb(auth_cb_), deny_cb(deny_cb_), data(data_), account(account_)
+Accounts::AddRequest::AddRequest(PurpleAccount *account_,
+    const char *remote_user_, const char *id_, const char *alias_)
+: Request(account_, remote_user_, id_, alias_)
 {
-  username = g_strdup(username_);
-  alias = g_strdup(alias_);
 }
 
-Accounts::AuthAndAdd::~AuthAndAdd()
+Accounts::AuthRequest::AuthRequest(PurpleAccount *account_,
+    const char *remote_user_, const char *id_, const char *alias_,
+    const char *message_, bool on_list_,
+    PurpleAccountRequestAuthorizationCb auth_cb_,
+    PurpleAccountRequestAuthorizationCb deny_cb_, void *data_)
+: Request(account_, remote_user_, id_, alias_), auth_cb(auth_cb_)
+, deny_cb(deny_cb_), data(data_)
 {
-  if (username)
-    g_free(username);
-  if (alias)
-    g_free(alias);
+  message = g_strdup(message_);
+}
+
+Accounts::AuthRequest::~AuthRequest()
+{
+  if (message)
+    g_free(message);
+}
+
+Accounts::PendingRequestWindow::PendingRequestWindow(Accounts& accounts_)
+: SplitDialog(0, 0, 80, 24, _("Pending requests"))
+, accounts(&accounts_)
+{
+  SetColorScheme("generalwindow");
+
+  requests = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
+  SetContainer(*requests);
+
+  Populate();
+
+  accounts->signal_request_add.connect(sigc::mem_fun(this,
+        &Accounts::PendingRequestWindow::OnRequestAdd));
+  accounts->signal_request_remove.connect(sigc::mem_fun(this,
+        &Accounts::PendingRequestWindow::OnRequestRemove));
+
+  buttons->AppendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
+          &PendingRequestWindow::Close)));
+}
+
+void Accounts::PendingRequestWindow::OnScreenResized()
+{
+  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA));
+}
+
+Accounts::PendingRequestWindow::RequestDialog::RequestDialog(
+    const char *title, const char *text)
+: AbstractDialog(title)
+{
+  AddButton(YES_BUTTON_TEXT, RESPONSE_YES);
+  AddSeparator();
+  AddButton(NO_BUTTON_TEXT, RESPONSE_NO);
+  // never give focus to the textview
+  buttons->SetFocusCycle(FOCUS_CYCLE_LOCAL);
+
+  CppConsUI::TextView *textview = new CppConsUI::TextView(AUTOSIZE, AUTOSIZE);
+  textview->Append(text);
+  layout->InsertWidget(0, *textview);
+}
+
+void Accounts::PendingRequestWindow::RequestDialog::EmitResponse(
+    ResponseType response)
+{
+  signal_response(*this, response);
+}
+
+void Accounts::PendingRequestWindow::Populate()
+{
+  const Requests *requests = accounts->GetRequests();
+  for (Requests::const_iterator i = requests->begin(); i != requests->end();
+      i++)
+    AppendRequest(**i);
+}
+
+void Accounts::PendingRequestWindow::AppendRequest(const Request& request)
+{
+  const char *req;
+  if (typeid(request) == typeid(AddRequest))
+    req = _("Add");
+  else if (typeid(request) == typeid(AuthRequest))
+    req = _("Authorize");
+  else
+    g_assert_not_reached();
+
+  char *text;
+  if (request.alias)
+    text = g_strdup_printf("[%s] %s: %s %s (%s)",
+        purple_account_get_protocol_name(request.account),
+        purple_account_get_username(request.account), req,
+        request.remote_user, request.alias);
+  else
+    text = g_strdup_printf("[%s] %s: %s %s",
+        purple_account_get_protocol_name(request.account),
+        purple_account_get_username(request.account), req,
+        request.remote_user);
+
+  CppConsUI::Button *b = new CppConsUI::Button(text);
+  b->signal_activate.connect(sigc::bind(sigc::mem_fun(this,
+          &Accounts::PendingRequestWindow::OnActivate), sigc::ref(request)));
+
+  g_free(text);
+
+  CppConsUI::TreeView::NodeReference node = requests->AppendNode(
+      requests->GetRootNode(), *b);
+  request_map[&request] = node;
+}
+
+void Accounts::PendingRequestWindow::OnRequestAdd(Accounts& accounts,
+    const Request& request)
+{
+  AppendRequest(request);
+}
+
+void Accounts::PendingRequestWindow::OnRequestRemove(Accounts& accounts,
+    const Request& request)
+{
+  RequestMap::iterator i = request_map.find(&request);
+  g_assert(i != request_map.end());
+  requests->DeleteNode(i->second, false);
+  request_map.erase(i);
+}
+
+void Accounts::PendingRequestWindow::OnActivate(CppConsUI::Button& activator,
+    const Request& request)
+{
+  if (typeid(request) == typeid(AddRequest)) {
+    const AddRequest *add_request = dynamic_cast<const AddRequest*>(&request);
+    g_assert(add_request);
+
+    char *text;
+    if (request.alias)
+      text = g_strdup_printf(_("Add %s (%s) to your buddy list?"),
+          request.remote_user, request.alias);
+    else
+      text = g_strdup_printf(_("Add %s to your buddy list?"),
+          request.remote_user);
+    RequestDialog *win = new RequestDialog(_("Add buddy"), text);
+    g_free(text);
+
+    win->signal_response.connect(sigc::bind(sigc::mem_fun(this,
+          &Accounts::PendingRequestWindow::OnAddResponse),
+          sigc::ref(*add_request)));
+    win->Show();
+  }
+  else if (typeid(request) == typeid(AuthRequest)) {
+    const AuthRequest *auth_request
+      = dynamic_cast<const AuthRequest*>(&request);
+    g_assert(auth_request);
+
+    char *text;
+    if (request.alias)
+      text = g_strdup_printf(
+          _("Allow %s (%s) to add you to his or her buddy list?\n"
+            "Message: %s"), request.remote_user, request.alias,
+          auth_request->message);
+    else
+      text = g_strdup_printf(
+          _("Allow %s to add you to his or her buddy list?\n"
+            "Message: %s"), request.remote_user, auth_request->message);
+    RequestDialog *win = new RequestDialog(_("Authorize buddy"), text);
+    g_free(text);
+
+    win->signal_response.connect(sigc::bind(sigc::mem_fun(this,
+          &Accounts::PendingRequestWindow::OnAuthResponse),
+          sigc::ref(*auth_request)));
+    win->Show();
+  }
+  else
+    g_assert_not_reached();
+}
+
+void Accounts::PendingRequestWindow::OnAddResponse(RequestDialog& activator,
+    ResponseType response, const AddRequest& request)
+{
+  switch (response) {
+    case CppConsUI::AbstractDialog::RESPONSE_YES:
+      purple_blist_request_add_buddy(request.account, request.remote_user,
+          NULL, request.alias);
+      accounts->RemoveRequest(request);
+      break;
+    case CppConsUI::AbstractDialog::RESPONSE_NO:
+      accounts->RemoveRequest(request);
+      break;
+    default:
+      break;
+  }
+}
+
+void Accounts::PendingRequestWindow::OnAuthResponse(RequestDialog& activator,
+    ResponseType response, const AuthRequest& request)
+{
+  switch (response) {
+    case CppConsUI::AbstractDialog::RESPONSE_YES:
+      request.auth_cb(request.data);
+      if (!purple_find_buddy(request.account, request.remote_user))
+        purple_blist_request_add_buddy(request.account, request.remote_user,
+            NULL, request.alias);
+      accounts->RemoveRequest(request);
+      break;
+    case CppConsUI::AbstractDialog::RESPONSE_NO:
+      request.deny_cb(request.data);
+      accounts->RemoveRequest(request);
+      break;
+    default:
+      break;
+  }
 }
 
 Accounts::Accounts()
@@ -105,34 +310,44 @@ void Accounts::Finalize()
   instance = NULL;
 }
 
-char *Accounts::MakeInfo(PurpleAccount *account, const char *remote_user,
-    const char *id, const char *alias, const char *msg)
+void Accounts::RemoveRequest(const Request& request)
 {
-  if (msg && !*msg)
-    msg = NULL;
+  Requests::iterator i = std::find(requests.begin(), requests.end(),
+      &request);
+  g_assert(i != requests.end());
 
-  char *ins = NULL;
-  if (alias)
-    ins = g_strdup_printf(" (%s)", alias);
-
-  const char *name = id;
-  if (!name)
-    name = purple_account_get_name_for_display(account);
-
-  char *res = g_strdup_printf(_("%s%s has made %s his or her buddy%s%s"),
-      remote_user, ins ? ins : "",  name , msg ? ":\n" : ".",
-      msg ? msg  : "");
-  if (ins)
-    g_free(ins);
-  return res;
+  signal_request_remove(*this, **i);
+  delete *i;
+  requests.erase(i);
+  signal_request_count_change(*this, requests.size());
 }
 
 void Accounts::notify_added(PurpleAccount *account, const char *remote_user,
     const char *id, const char *alias, const char *message)
 {
-  char *buf = MakeInfo(account, remote_user, id, alias, message);
-  LOG->Message("%s", buf);
-  g_free(buf);
+  const char *proto = purple_account_get_protocol_name(account);
+  const char *uname = purple_account_get_username(account);
+
+  /* The code below creates four translation strings in the pot file. It's
+   * possible to reduce it only to one string but then the string contains
+   * many quirks and it's impossible to translate it without looking into the
+   * code. */
+  if (message) {
+    if (alias)
+      LOG->Message(_("+ [%s] %s: %s (%s) has made you his or her buddy: %s"),
+          proto, uname, remote_user, alias, message);
+    else
+      LOG->Message(_("+ [%s] %s: %s has made you his or her buddy: %s"),
+          proto, uname, remote_user, message);
+  }
+  else {
+    if (alias)
+      LOG->Message(_("+ [%s] %s: %s (%s) has made you his or her buddy"),
+          proto, uname, remote_user, alias);
+    else
+      LOG->Message(_("+ [%s] %s: %s has made you his or her buddy"),
+          proto, uname, remote_user);
+  }
 }
 
 void Accounts::status_changed(PurpleAccount *account, PurpleStatus *status)
@@ -149,13 +364,19 @@ void Accounts::status_changed(PurpleAccount *account, PurpleStatus *status)
 void Accounts::request_add(PurpleAccount *account, const char *remote_user,
     const char *id, const char *alias, const char *message)
 {
-  AddUserData *data = new AddUserData(account, remote_user, alias);
-  char *buf = MakeInfo(account, remote_user, id, alias, message);
-  purple_request_action(NULL, NULL, _("Add buddy to your list?"), buf,
-      PURPLE_DEFAULT_ACTION_NONE, account, remote_user, NULL, data, 2,
-      _("Add"), G_CALLBACK(add_user_cb_), _("Cancel"),
-      G_CALLBACK(add_user_cancel_cb_));
-  g_free(buf);
+  AddRequest *request = new AddRequest(account, remote_user, id, alias);
+  requests.push_back(request);
+  signal_request_add(*this, *request);
+  signal_request_count_change(*this, requests.size());
+
+  const char *proto = purple_account_get_protocol_name(account);
+  const char *uname = purple_account_get_username(account);
+  if (alias)
+    LOG->Message(_("+ [%s] %s: New add request from %s (%s)"), proto, uname,
+        remote_user, alias);
+  else
+    LOG->Message(_("+ [%s] %s: New add request from %s"), proto, uname,
+        remote_user);
 }
 
 void *Accounts::request_authorize(PurpleAccount *account,
@@ -165,83 +386,35 @@ void *Accounts::request_authorize(PurpleAccount *account,
     PurpleAccountRequestAuthorizationCb deny_cb,
     void *user_data)
 {
-  if (message && !*message)
-    message = NULL;
+  AuthRequest *request = new AuthRequest(account, remote_user, id, alias,
+      message, on_list, authorize_cb, deny_cb, user_data);
+  requests.push_back(request);
+  signal_request_add(*this, *request);
+  signal_request_count_change(*this, requests.size());
 
-  char *ins = NULL;
+  const char *proto = purple_account_get_protocol_name(account);
+  const char *uname = purple_account_get_username(account);
   if (alias)
-    ins = g_strdup_printf(" (%s)", alias);
+    LOG->Message(_("+ [%s] %s: New authorization request from %s (%s)"),
+        proto, uname, remote_user, alias);
+  else
+    LOG->Message(_("+ [%s] %s: New authorization request from %s"), proto,
+        uname, remote_user);
 
-  const char *name = id;
-  if (!name)
-    name = purple_account_get_name_for_display(account);
-
-  char *buf = g_strdup_printf(
-      _("%s%s wants to add you (%s) to his or her buddy list%s%s"),
-      remote_user, ins ? ins : "" , name, message ? ":\n" : ".",
-      message ? message  : "");
-
-  if (ins)
-    g_free(ins);
-
-  void *ui_handle;
-  /* TODO Provide more information about the user that requested the
-   * authorization. */
-  if (on_list)
-    ui_handle = purple_request_action(NULL, _("Authorize buddy?"), buf, NULL,
-        PURPLE_DEFAULT_ACTION_NONE, account, remote_user, NULL, user_data, 2,
-        _("Authorize"), authorize_cb, _("Deny"), deny_cb);
-  else {
-    AuthAndAdd *aa = new AuthAndAdd(authorize_cb, deny_cb, user_data,
-        remote_user, alias, account);
-
-    ui_handle = purple_request_action(NULL, _("Authorize buddy?"), buf, NULL,
-        PURPLE_DEFAULT_ACTION_NONE, account, remote_user, NULL, aa, 2,
-        _("Authorize"), authorize_and_add_cb_, _("Deny"), deny_no_add_cb_);
-  }
-  g_free(buf);
-
-  // this is ugly
-  CppConsUI::FreeWindow *win
-    = reinterpret_cast<CppConsUI::FreeWindow*>(ui_handle);
-  win->signal_close.connect(sigc::mem_fun(this,
-        &Accounts::OnRequestAuthorizeClose));
-
-  return ui_handle;
+  return request;
 }
 
 void Accounts::close_account_request(void *ui_handle)
 {
-}
+  Requests::iterator i = std::find(requests.begin(), requests.end(),
+      ui_handle);
+  if (i == requests.end())
+    return;
 
-void Accounts::add_user_cb(AddUserData *data)
-{
-  purple_blist_request_add_buddy(data->account, data->username, NULL,
-      data->alias);
-  delete data;
-}
-
-void Accounts::add_user_cancel_cb(AddUserData *data)
-{
-  delete data;
-}
-
-void Accounts::OnRequestAuthorizeClose(CppConsUI::FreeWindow& win)
-{
-  purple_account_request_close(&win);
-}
-
-void Accounts::authorize_and_add_cb(AuthAndAdd *aa)
-{
-  aa->auth_cb(aa->data);
-  purple_blist_request_add_buddy(aa->account, aa->username, NULL, aa->alias);
-  delete aa;
-}
-
-void Accounts::deny_no_add_cb(AuthAndAdd *aa)
-{
-  aa->deny_cb(aa->data);
-  delete aa;
+  signal_request_remove(*this, **i);
+  delete *i;
+  requests.erase(i);
+  signal_request_count_change(*this, requests.size());
 }
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

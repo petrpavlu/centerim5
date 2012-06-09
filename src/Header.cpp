@@ -51,11 +51,21 @@ Header::Header()
   container->AppendWidget(*(new CppConsUI::Label(cimname)));
   g_free(cimname);
 
+  // pending request indicator
+  request_indicator = new CppConsUI::Label(0, 1, "");
+  request_indicator->SetColorScheme("header-request");
+  container->AppendWidget(*request_indicator);
+
   for (GList *i = purple_accounts_get_all(); i; i = i->next) {
     PurpleAccount *account = reinterpret_cast<PurpleAccount*>(i->data);
     if (purple_account_get_enabled(account, PACKAGE_NAME))
       protocol_count.insert(purple_account_get_protocol_id(account));
   }
+
+  // connect to the Accounts singleton
+  g_assert(ACCOUNTS);
+  ACCOUNTS->signal_request_count_change.connect(sigc::mem_fun(this,
+        &Header::OnRequestCountChange));
 
   void *handle = purple_accounts_get_handle();
   purple_signal_connect(handle, "account-signed-on", this,
@@ -91,6 +101,18 @@ void Header::Finalize()
 
   delete instance;
   instance = NULL;
+}
+
+void Header::OnRequestCountChange(Accounts& accounts, size_t request_count)
+{
+  if (request_count) {
+    request_indicator->SetText("* ");
+    request_indicator->SetWidth(2);
+  }
+  else {
+    request_indicator->SetText("");
+    request_indicator->SetWidth(0);
+  }
 }
 
 void Header::account_signed_on(PurpleAccount *account)

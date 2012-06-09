@@ -675,6 +675,8 @@ void CenterIM::LoadDefaultColorSchemeConfig()
       CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
   COLORSCHEME->SetColorPair("header", "container", "background",
       CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
+  COLORSCHEME->SetColorPair("header-request", "label", "text",
+      CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::WHITE);
 }
 
 bool CenterIM::SaveColorSchemeConfig()

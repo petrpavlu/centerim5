@@ -36,20 +36,16 @@ AccountWindow::AccountWindow()
 {
   SetColorScheme("generalwindow");
 
-  buttons->AppendItem(_("Add"), sigc::mem_fun(this,
-        &AccountWindow::AddAccount));
-  buttons->AppendSeparator();
-  buttons->AppendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
-          &AccountWindow::Close)));
-
   accounts = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
   SetContainer(*accounts);
 
   Populate();
 
-  // move focus to accounts if there is any
-  if (account_entries.size())
-    accounts->GrabFocus();
+  buttons->AppendItem(_("Add"), sigc::mem_fun(this,
+        &AccountWindow::AddAccount));
+  buttons->AppendSeparator();
+  buttons->AppendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
+          &AccountWindow::Close)));
 }
 
 void AccountWindow::OnScreenResized()

@@ -22,6 +22,7 @@
 #include "GeneralMenu.h"
 
 #include "AccountWindow.h"
+#include "Accounts.h"
 #include "CenterIM.h"
 #include "Log.h"
 #include "OptionWindow.h"
@@ -41,6 +42,8 @@ GeneralMenu::GeneralMenu()
         &GeneralMenu::OpenAddChatRequest));
   AppendItem(_("Add group..."), sigc::mem_fun(this,
         &GeneralMenu::OpenAddGroupRequest));
+  AppendItem(_("Pending requests..."), sigc::mem_fun(this,
+        &GeneralMenu::OpenPendingRequests));
   AppendItem(_("Config options..."), sigc::mem_fun(this,
         &GeneralMenu::OpenOptionWindow));
   AppendSeparator();
@@ -81,6 +84,12 @@ void GeneralMenu::OpenAddChatRequest(CppConsUI::Button& activator)
 void GeneralMenu::OpenAddGroupRequest(CppConsUI::Button& activator)
 {
   purple_blist_request_add_group();
+  Close();
+}
+
+void GeneralMenu::OpenPendingRequests(CppConsUI::Button& activator)
+{
+  ACCOUNTS->OpenPendingRequests();
   Close();
 }
 

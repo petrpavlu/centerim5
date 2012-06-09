@@ -47,6 +47,7 @@ private:
   void OpenAddBuddyRequest(CppConsUI::Button& activator);
   void OpenAddChatRequest(CppConsUI::Button& activator);
   void OpenAddGroupRequest(CppConsUI::Button& activator);
+  void OpenPendingRequests(CppConsUI::Button& activator);
   void OpenOptionWindow(CppConsUI::Button& activator);
 
 #ifdef DEBUG

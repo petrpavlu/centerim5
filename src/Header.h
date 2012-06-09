@@ -21,6 +21,8 @@
 #ifndef __HEADER_H__
 #define __HEADER_H__
 
+#include "Accounts.h"
+
 #include <cppconsui/FreeWindow.h>
 #include <cppconsui/Label.h>
 #include <cppconsui/HorizontalListBox.h>
@@ -46,6 +48,7 @@ private:
   typedef std::map<PurpleAccount*, CppConsUI::Label*> Statuses;
 
   CppConsUI::HorizontalListBox *container;
+  CppConsUI::Label *request_indicator;
   ProtocolCount protocol_count;
   Statuses statuses;
 
@@ -59,6 +62,9 @@ private:
   static void Init();
   static void Finalize();
   friend class CenterIM;
+
+  // signal from the Accounts singleton
+  void OnRequestCountChange(Accounts& accounts, size_t request_count);
 
   static void account_signed_on_(PurpleAccount *account, gpointer data)
     { reinterpret_cast<Header*>(data)->account_signed_on(account); }
