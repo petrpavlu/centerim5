@@ -138,6 +138,12 @@ Conversations::Conversations()
 
   // setup the callbacks for conversations
   purple_conversations_set_ui_ops(&centerim_conv_ui_ops);
+
+  purple_signal_connect(purple_conversations_get_handle(), "buddy-typing",
+          this, PURPLE_CALLBACK(buddy_typing_), NULL);
+  purple_signal_connect(purple_conversations_get_handle(),
+          "buddy-typing-stopped", this, PURPLE_CALLBACK(buddy_typing_),
+          NULL);
 }
 
 Conversations::~Conversations()
@@ -242,8 +248,8 @@ void Conversations::UpdateLabels()
   int i = 1;
   for (ConversationsVector::iterator j = conversations.begin();
       j != conversations.end(); j++) {
-    char *name = g_strdup_printf(" %d|%s", i,
-        purple_conversation_get_title(j->purple_conv));
+    char *name = g_strdup_printf(" %d|%s%s", i,
+        purple_conversation_get_title(j->purple_conv), j->typing_status);
     j->label->SetText(name);
     g_free(name);
     i++;
@@ -268,6 +274,7 @@ void Conversations::create_conversation(PurpleConversation *conv)
   c.purple_conv = conv;
   c.conv = conversation;
   c.label = new CppConsUI::Label(AUTOSIZE, 1);
+  c.typing_status = _(" ");
   conv_list->AppendWidget(*c.label);
   conversations.push_back(c);
   UpdateLabels();
@@ -342,6 +349,38 @@ void Conversations::present(PurpleConversation *conv)
     return;
 
   ActivateConversation(i);
+}
+
+
+void Conversations::buddy_typing(PurpleAccount* account, const char *who)
+{
+  PurpleConversation *conv;
+
+  conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, who,
+                account);
+  if (!conv)
+    return;
+
+  int i = 1;
+  for (ConversationsVector::iterator j = conversations.begin();
+      j != conversations.end(); j++) {
+
+    if ( j->purple_conv == conv) {
+      PurpleConvIm *im = PURPLE_CONV_IM(conv);
+
+      if (purple_conv_im_get_typing_state(im) == PURPLE_TYPING)
+        j->typing_status = _("*");
+      else
+        j->typing_status = _(" ");
+
+      char *name = g_strdup_printf(" %d|%s%s", i,
+          purple_conversation_get_title(j->purple_conv), j->typing_status);
+      j->label->SetText(name);
+      g_free(name);
+    }
+
+    i++;
+  }
 }
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

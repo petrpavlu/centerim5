@@ -89,6 +89,7 @@ protected:
   void BuildLogFilename();
   char *ExtractTime(time_t sent_time, time_t show_time) const;
   void LoadHistory();
+  void Typed(bool first);
 
   void ActionSend();
 

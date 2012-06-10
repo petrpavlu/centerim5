@@ -88,6 +88,8 @@ OptionWindow::OptionWindow()
           _("Conversations"))));
   tree->AppendNode(parent, *(new BooleanOption( _("Beep on new message"),
           CONF_PREFIX "/chat/beep_on_msg")));
+  tree->AppendNode(parent, *(new BooleanOption( _("Send typing notification"),
+          "/purple/conversations/im/send_typing")));
 
   parent = tree->AppendNode(tree->GetRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(_("System logging"))));

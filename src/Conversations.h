@@ -56,6 +56,7 @@ private:
     PurpleConversation *purple_conv;
     Conversation *conv;
     CppConsUI::Label *label;
+    char* typing_status;
   };
 
   typedef std::vector<ConvChild> ConversationsVector;
@@ -104,6 +105,8 @@ private:
         mtime); }
   static void present_(PurpleConversation *conv)
     { CONVERSATIONS->present(conv); }
+  static void buddy_typing_ (PurpleAccount* account, const char *who)
+    { CONVERSATIONS->buddy_typing(account, who); }
 
   void create_conversation(PurpleConversation *conv);
   void destroy_conversation(PurpleConversation *conv);
@@ -111,6 +114,7 @@ private:
     const char *alias, const char *message, PurpleMessageFlags flags,
     time_t mtime);
   void present(PurpleConversation *conv);
+  void buddy_typing(PurpleAccount* account, const char *who);
 };
 
 #endif // __CONVERSATIONS_H__

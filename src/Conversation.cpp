@@ -88,6 +88,7 @@ bool Conversation::ProcessInput(const TermKeyKey& key)
   if (view->ProcessInput(key))
     return true;
 
+  Typed(strlen(input->GetText()) == 0);
   return Window::ProcessInput(key);
 }
 
@@ -643,6 +644,32 @@ void Conversation::LoadHistory()
           filename);
   }
   g_io_channel_unref(chan);
+}
+
+void Conversation::Typed(bool first) {
+  bool send_typing = purple_prefs_get_bool(
+                      "/purple/conversations/im/send_typing");
+  if (!send_typing)
+    return;
+
+  PurpleConvIm *im = PURPLE_CONV_IM(conv);
+
+  if (!im)
+    return;
+
+  purple_conv_im_stop_send_typed_timeout(im);
+  purple_conv_im_start_send_typed_timeout(im);
+
+  if (first || (purple_conv_im_get_type_again(im) != 0 &&                       
+          time(NULL) > purple_conv_im_get_type_again(im)))                      
+  {                                                                             
+    unsigned int timeout;                                                       
+    timeout = serv_send_typing(purple_conversation_get_gc(conv),                
+                   purple_conversation_get_name(conv),                          
+                   PURPLE_TYPING);                                              
+    purple_conv_im_set_type_again(im, timeout);                                 
+  }
+
 }
 
 void Conversation::ActionSend()
