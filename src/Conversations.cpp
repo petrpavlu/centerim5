@@ -119,6 +119,11 @@ Conversations::Conversations()
   purple_prefs_add_int(CONF_PREFIX "/chat/partitioning", 80);
   purple_prefs_add_bool(CONF_PREFIX "/chat/beep_on_msg", false);
 
+  // send_typing caching
+  send_typing = purple_prefs_get_bool("/purple/conversations/im/send_typing");
+  purple_prefs_connect_callback(this, "/purple/conversations/im/send_typing",
+      send_typing_pref_change_, this);
+
   memset(&centerim_conv_ui_ops, 0, sizeof(centerim_conv_ui_ops));
   centerim_conv_ui_ops.create_conversation = create_conversation_;
   centerim_conv_ui_ops.destroy_conversation = destroy_conversation_;
@@ -139,11 +144,11 @@ Conversations::Conversations()
   // setup the callbacks for conversations
   purple_conversations_set_ui_ops(&centerim_conv_ui_ops);
 
-  purple_signal_connect(purple_conversations_get_handle(), "buddy-typing",
-          this, PURPLE_CALLBACK(buddy_typing_), NULL);
-  purple_signal_connect(purple_conversations_get_handle(),
-          "buddy-typing-stopped", this, PURPLE_CALLBACK(buddy_typing_),
-          NULL);
+  void *handle = purple_conversations_get_handle();
+  purple_signal_connect(handle, "buddy-typing", this,
+      PURPLE_CALLBACK(buddy_typing_), this);
+  purple_signal_connect(handle, "buddy-typing-stopped", this,
+      PURPLE_CALLBACK(buddy_typing_), this);
 }
 
 Conversations::~Conversations()
@@ -153,6 +158,8 @@ Conversations::~Conversations()
     purple_conversation_destroy(conversations.front().purple_conv);
 
   purple_conversations_set_ui_ops(NULL);
+  purple_prefs_disconnect_by_handle(this);
+  purple_signals_disconnect_by_handle(this);
 }
 
 void Conversations::Init()
@@ -241,19 +248,24 @@ void Conversations::ActivateConversation(int i)
   active = i;
 }
 
+void Conversations::UpdateLabel(int i)
+{
+  g_assert(i >= 0);
+  g_assert(i < static_cast<int>(conversations.size()));
+
+  char *name = g_strdup_printf(" %d|%s%c", i + 1,
+      purple_conversation_get_title(conversations[i].purple_conv),
+      conversations[i].typing_status);
+  conversations[i].label->SetText(name);
+  g_free(name);
+}
+
 void Conversations::UpdateLabels()
 {
   /* Note: This can be a little slow if there are too many opened
    * conversations. */
-  int i = 1;
-  for (ConversationsVector::iterator j = conversations.begin();
-      j != conversations.end(); j++) {
-    char *name = g_strdup_printf(" %d|%s%s", i,
-        purple_conversation_get_title(j->purple_conv), j->typing_status);
-    j->label->SetText(name);
-    g_free(name);
-    i++;
-  }
+  for (int i = 0; i < static_cast<int>(conversations.size()); i++)
+    UpdateLabel(i);
 }
 
 void Conversations::create_conversation(PurpleConversation *conv)
@@ -274,7 +286,7 @@ void Conversations::create_conversation(PurpleConversation *conv)
   c.purple_conv = conv;
   c.conv = conversation;
   c.label = new CppConsUI::Label(AUTOSIZE, 1);
-  c.typing_status = _(" ");
+  c.typing_status = ' ';
   conv_list->AppendWidget(*c.label);
   conversations.push_back(c);
   UpdateLabels();
@@ -351,36 +363,34 @@ void Conversations::present(PurpleConversation *conv)
   ActivateConversation(i);
 }
 
-
-void Conversations::buddy_typing(PurpleAccount* account, const char *who)
+void Conversations::buddy_typing(PurpleAccount *account, const char *who)
 {
-  PurpleConversation *conv;
-
-  conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, who,
-                account);
+  PurpleConversation *conv = purple_find_conversation_with_account(
+      PURPLE_CONV_TYPE_IM, who, account);
   if (!conv)
     return;
 
-  int i = 1;
-  for (ConversationsVector::iterator j = conversations.begin();
-      j != conversations.end(); j++) {
-
-    if ( j->purple_conv == conv) {
-      PurpleConvIm *im = PURPLE_CONV_IM(conv);
-
-      if (purple_conv_im_get_typing_state(im) == PURPLE_TYPING)
-        j->typing_status = _("*");
-      else
-        j->typing_status = _(" ");
-
-      char *name = g_strdup_printf(" %d|%s%s", i,
-          purple_conversation_get_title(j->purple_conv), j->typing_status);
-      j->label->SetText(name);
-      g_free(name);
-    }
-
-    i++;
+  int i = FindConversation(conv);
+  if (i == -1) {
+    // this should probably never happen
+    return;
   }
+
+  PurpleConvIm *im = PURPLE_CONV_IM(conv);
+  g_assert(im);
+  if (purple_conv_im_get_typing_state(im) == PURPLE_TYPING)
+    conversations[i].typing_status = '*';
+  else
+    conversations[i].typing_status = ' ';
+
+  UpdateLabel(i);
+}
+
+void Conversations::send_typing_pref_change(const char *name,
+    PurplePrefType type, gconstpointer val)
+{
+  g_assert(!strcmp(name, "/purple/conversations/im/send_typing"));
+  send_typing = purple_prefs_get_bool(name);
 }
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

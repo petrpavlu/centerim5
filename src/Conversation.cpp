@@ -22,6 +22,7 @@
 #include "Conversation.h"
 
 #include "CenterIM.h"
+#include "Conversations.h"
 #include "Footer.h"
 
 #include <cppconsui/Keys.h>
@@ -34,6 +35,7 @@
 
 Conversation::Conversation(PurpleConversation *conv_)
 : Window(0, 0, 80, 24), conv(conv_), filename(NULL), logfile(NULL)
+, input_text_length(0)
 {
   g_assert(conv);
 
@@ -41,6 +43,8 @@ Conversation::Conversation(PurpleConversation *conv_)
 
   view = new CppConsUI::TextView(width - 2, height, true, true);
   input = new CppConsUI::TextEdit(width - 2, height);
+  input->signal_text_change.connect(sigc::mem_fun(this,
+        &Conversation::OnInputTextChange));
   char *name = g_strdup_printf("[%s] %s",
       purple_account_get_protocol_name(purple_conversation_get_account(conv)),
       purple_conversation_get_name(conv));
@@ -88,7 +92,6 @@ bool Conversation::ProcessInput(const TermKeyKey& key)
   if (view->ProcessInput(key))
     return true;
 
-  Typed(strlen(input->GetText()) == 0);
   return Window::ProcessInput(key);
 }
 
@@ -646,30 +649,41 @@ void Conversation::LoadHistory()
   g_io_channel_unref(chan);
 }
 
-void Conversation::Typed(bool first) {
-  bool send_typing = purple_prefs_get_bool(
-                      "/purple/conversations/im/send_typing");
-  if (!send_typing)
-    return;
-
+void Conversation::OnInputTextChange(CppConsUI::TextEdit& activator)
+{
   PurpleConvIm *im = PURPLE_CONV_IM(conv);
-
   if (!im)
     return;
+
+  if (!CONVERSATIONS->GetSendTypingPref()) {
+    input_text_length = 0;
+    return;
+  }
+
+  size_t old_text_length = input_text_length;
+  size_t new_text_length = activator.GetTextLength();
+  input_text_length = new_text_length;
+
+  if (!new_text_length) {
+    // all text is deleted, turn off typing
+    purple_conv_im_stop_send_typed_timeout(im);
+
+    serv_send_typing(purple_conversation_get_gc(conv),
+        purple_conversation_get_name(conv), PURPLE_NOT_TYPING);
+    return;
+  }
 
   purple_conv_im_stop_send_typed_timeout(im);
   purple_conv_im_start_send_typed_timeout(im);
 
-  if (first || (purple_conv_im_get_type_again(im) != 0 &&                       
-          time(NULL) > purple_conv_im_get_type_again(im)))                      
-  {                                                                             
-    unsigned int timeout;                                                       
-    timeout = serv_send_typing(purple_conversation_get_gc(conv),                
-                   purple_conversation_get_name(conv),                          
-                   PURPLE_TYPING);                                              
-    purple_conv_im_set_type_again(im, timeout);                                 
+  time_t again = purple_conv_im_get_type_again(im);
+  if ((!old_text_length && new_text_length)
+      || (again && time(NULL) > again)) {
+    // the first letter is inserted or update is required for typing status
+    unsigned int timeout = serv_send_typing(purple_conversation_get_gc(conv),
+        purple_conversation_get_name(conv), PURPLE_TYPING);
+    purple_conv_im_set_type_again(im, timeout);
   }
-
 }
 
 void Conversation::ActionSend()

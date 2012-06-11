@@ -48,6 +48,8 @@ public:
 
   void SetExpandedConversations(bool expanded);
 
+  bool GetSendTypingPref() const { return send_typing; }
+
 protected:
 
 private:
@@ -56,7 +58,7 @@ private:
     PurpleConversation *purple_conv;
     Conversation *conv;
     CppConsUI::Label *label;
-    char* typing_status;
+    char typing_status;
   };
 
   typedef std::vector<ConvChild> ConversationsVector;
@@ -70,6 +72,9 @@ private:
   CppConsUI::Spacer *left_spacer;
   CppConsUI::Spacer *right_spacer;
   CppConsUI::HorizontalListBox *conv_list;
+
+  // cached value of the "/purple/conversations/im/send_typing" pref
+  bool send_typing;
 
   PurpleConversationUiOps centerim_conv_ui_ops;
 
@@ -92,6 +97,9 @@ private:
 
   void ActivateConversation(int i);
 
+  // update a single conversation label
+  void UpdateLabel(int i);
+  // update all conversation labels
   void UpdateLabels();
 
   static void create_conversation_(PurpleConversation *conv)
@@ -105,8 +113,6 @@ private:
         mtime); }
   static void present_(PurpleConversation *conv)
     { CONVERSATIONS->present(conv); }
-  static void buddy_typing_ (PurpleAccount* account, const char *who)
-    { CONVERSATIONS->buddy_typing(account, who); }
 
   void create_conversation(PurpleConversation *conv);
   void destroy_conversation(PurpleConversation *conv);
@@ -114,7 +120,19 @@ private:
     const char *alias, const char *message, PurpleMessageFlags flags,
     time_t mtime);
   void present(PurpleConversation *conv);
-  void buddy_typing(PurpleAccount* account, const char *who);
+
+  static void buddy_typing_(PurpleAccount *account, const char *who,
+      gpointer data)
+    { reinterpret_cast<Conversations*>(data)->buddy_typing(account, who); }
+  void buddy_typing(PurpleAccount *account, const char *who);
+
+  // called when "/purple/conversations/im/send_typing" pref is changed
+  static void send_typing_pref_change_(const char *name, PurplePrefType type,
+      gconstpointer val, gpointer data)
+    { reinterpret_cast<Conversations*>(data)->send_typing_pref_change(name,
+        type, val); }
+  void send_typing_pref_change(const char *name, PurplePrefType type,
+      gconstpointer val);
 };
 
 #endif // __CONVERSATIONS_H__

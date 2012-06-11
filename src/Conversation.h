@@ -84,12 +84,14 @@ protected:
   char *filename;
   GIOChannel *logfile;
 
+  size_t input_text_length;
+
   char *StripHTML(const char *str) const;
   void DestroyPurpleConversation(PurpleConversation *conv);
   void BuildLogFilename();
   char *ExtractTime(time_t sent_time, time_t show_time) const;
   void LoadHistory();
-  void Typed(bool first);
+  void OnInputTextChange(CppConsUI::TextEdit& activator);
 
   void ActionSend();
 
