@@ -59,12 +59,16 @@ public:
    * Sets new text.
    */
   virtual void SetText(const char *new_text);
-
+  /**
+   * Removes all text.
+   */
   virtual void Clear();
   /**
-   * Returns inserted text. Caller is responsible for freeing returned data.
+   * Returns inserted text.
    */
   virtual const char *GetText() const;
+
+  virtual size_t GetTextLength() const { return text_length; }
 
   virtual void SetFlags(int flags_, bool revalidate = true);
   virtual int GetFlags() const { return flags; }
