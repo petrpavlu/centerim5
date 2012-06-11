@@ -66,6 +66,8 @@ OptionWindow::OptionWindow()
             &OptionWindow::GetPercentUnit))));
   tree->AppendNode(parent, *(new BooleanOption(_("Show header"),
           CONF_PREFIX "/dimensions/show_header")));
+  tree->AppendNode(parent, *(new BooleanOption(_("Show footer"),
+          CONF_PREFIX "/dimensions/show_footer")));
 
   parent = tree->AppendNode(tree->GetRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(

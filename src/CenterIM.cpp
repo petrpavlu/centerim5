@@ -382,6 +382,7 @@ void CenterIM::PrefsInit()
   purple_prefs_add_int(CONF_PREFIX "/dimensions/buddylist_width", 20);
   purple_prefs_add_int(CONF_PREFIX "/dimensions/log_height", 25);
   purple_prefs_add_bool(CONF_PREFIX "/dimensions/show_header", true);
+  purple_prefs_add_bool(CONF_PREFIX "/dimensions/show_footer", true);
   purple_prefs_connect_callback(this, CONF_PREFIX "/dimensions",
       dimensions_change_, this);
 
@@ -414,33 +415,36 @@ void CenterIM::OnScreenResized()
   }
 
   bool show_header = purple_prefs_get_bool(CONF_PREFIX
-                                            "/dimensions/show_header");
-  int screen_start;
+      "/dimensions/show_header");
   int header_height;
-  if (show_header) {
-    screen_start = 1;
+  if (show_header)
     header_height = 1;
-  } else {
-    screen_start = 0;
+  else
     header_height = 0;
-  }
+  bool show_footer = purple_prefs_get_bool(CONF_PREFIX
+      "/dimensions/show_footer");
+  int footer_height;
+  if (show_footer)
+    footer_height = 1;
+  else
+    footer_height = 0;
 
   size.x = 0;
-  size.y = screen_start;
+  size.y = header_height;
   size.width = screen_width / 100.0 * buddylist_width;
-  size.height = screen_height - header_height - 1;
+  size.height = screen_height - header_height - footer_height;
   areaSizes[BUDDY_LIST_AREA] = size;
 
   size.x = areaSizes[BUDDY_LIST_AREA].width;
   size.width = screen_width - size.x;
   size.height = screen_height / 100.0 * log_height;
-  size.y = screen_height - size.height - 1;
+  size.y = screen_height - size.height - footer_height;
   areaSizes[LOG_AREA] = size;
 
   size.x = areaSizes[BUDDY_LIST_AREA].width;
-  size.y = screen_start;
+  size.y = header_height;
   size.width = screen_width - size.x;
-  size.height = screen_height - size.y - areaSizes[LOG_AREA].height - 1;
+  size.height = screen_height - size.y - areaSizes[LOG_AREA].height - footer_height;
   if (convs_expanded) {
     size.x -= 2;
     size.width += 4;
@@ -456,7 +460,7 @@ void CenterIM::OnScreenResized()
   size.x = 0;
   size.y = screen_height - 1;
   size.width = screen_width;
-  size.height = 1;
+  size.height = footer_height;
   areaSizes[FOOTER_AREA] = size;
 
   size.x = 0;
