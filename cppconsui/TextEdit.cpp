@@ -346,12 +346,6 @@ void TextEdit::MoveGapToCursor()
   }
 }
 
-size_t TextEdit::GetTextSize() const
-{
-  // '-1' to don't count the last '\n' character that is manually inserted
-  return (bufend - buffer) - (gapend - gapstart) - 1;
-}
-
 char *TextEdit::GetTextStart() const
 {
   if (buffer == gapstart)

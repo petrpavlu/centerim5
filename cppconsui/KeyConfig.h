@@ -98,16 +98,18 @@ public:
   const KeyBindContext *GetKeyBinds(const char *context) const;
 
   /**
+   * Returns a key bind for a given context and action. Note that this method
+   * returns a pointer to a static buffer.
    */
   const char *GetKeyBind(const char *context, const char *action) const;
 
   /**
-   * Convert a TermKeyKey to a string
+   * Converts a TermKeyKey to its string representation.
    */
-  char *TermKeyToString(TermKeyKey key) const;
+  char *TermKeyToString(const TermKeyKey& key) const;
 
   /**
-   * Parse a string ito a TermKeyKey
+   * Parses a string into a TermKeyKey.
    */
   bool StringToTermKey(const char *key, TermKeyKey *termkey) const;
 

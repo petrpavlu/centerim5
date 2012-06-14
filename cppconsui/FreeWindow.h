@@ -118,7 +118,7 @@ private:
   FreeWindow(const FreeWindow&);
   FreeWindow& operator=(const FreeWindow&);
 
-  virtual void ActionClose();
+  void ActionClose();
 
   void DeclareBindables();
 };

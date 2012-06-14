@@ -52,11 +52,11 @@ public:
   /**
    * Sets the caption text.
    */
-  void SetTitle(const char *text);
+  virtual void SetTitle(const char *text);
   /**
    * Returns caption text.
    */
-  const char *GetTitle() const;
+  virtual const char *GetTitle() const;
 
 protected:
   /**

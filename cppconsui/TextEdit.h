@@ -197,7 +197,6 @@ protected:
   virtual void ExpandGap(size_t size);
   virtual void MoveGapToCursor();
 
-  size_t GetTextSize() const;
   virtual char *GetTextStart() const;
   virtual char *PrevChar(const char *p) const;
   virtual char *NextChar(const char *p) const;

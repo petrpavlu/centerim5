@@ -51,41 +51,41 @@ public:
   /**
    * Appends text after the last line.
    */
-  void Append(const char *text, int color = 0);
+  virtual void Append(const char *text, int color = 0);
   /**
    * Inserts text before specified line number. Text can contain multiple
    * lines and should end with '\\n' character just in front of '\\0'
    * character.
    */
-  void Insert(size_t line_num, const char *text, int color = 0);
+  virtual void Insert(size_t line_num, const char *text, int color = 0);
   /**
    * Removes a specified line.
    */
-  void Erase(size_t line_num);
+  virtual void Erase(size_t line_num);
   /**
    * Removes specified range of lines. Parameter end_line represents the
    * line after the last removed line, thus range of <start_line, end_line)
    * lines is removed.
    */
-  void Erase(size_t start_line, size_t end_line);
+  virtual void Erase(size_t start_line, size_t end_line);
   /**
    * Removes all lines.
    */
-  void Clear();
+  virtual void Clear();
   /**
    * Returns string for a specified line number.
    */
-  const char *GetLine(size_t line_num) const;
+  virtual const char *GetLine(size_t line_num) const;
   /**
    * Returns count of all lines.
    */
-  size_t GetLinesNumber() const;
+  virtual size_t GetLinesNumber() const;
 
-  void SetAutoScroll(bool enabled);
-  bool GetAutoScroll() const { return autoscroll; }
+  virtual void SetAutoScroll(bool enabled);
+  virtual bool GetAutoScroll() const { return autoscroll; }
 
-  void SetScrollBar(bool enabled);
-  bool GetScrollBar() const { return scrollbar; }
+  virtual void SetScrollBar(bool enabled);
+  virtual bool GetScrollBar() const { return scrollbar; }
 
 protected:
   /**
@@ -149,18 +149,18 @@ protected:
    */
   ScreenLines screen_lines;
 
-  const char *ProceedLine(const char *text, int area_width,
+  virtual const char *ProceedLine(const char *text, int area_width,
       int *res_length) const;
   /**
    * Recalculates on-screen lines for a specified line number.
    */
-  size_t UpdateScreenLines(size_t line_num, size_t start = 0);
+  virtual size_t UpdateScreenLines(size_t line_num, size_t start = 0);
   /**
    * Recalculates all screen lines.
    */
-  void UpdateAllScreenLines();
+  virtual void UpdateAllScreenLines();
 
-  size_t EraseScreenLines(size_t line_num, size_t start = 0,
+  virtual size_t EraseScreenLines(size_t line_num, size_t start = 0,
       size_t *deleted = NULL);
 
 private:

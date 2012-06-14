@@ -60,8 +60,8 @@ public:
   virtual Curses::Window *GetSubPad(const Widget &child, int begin_x,
       int begin_y, int ncols, int nlines);
 
-  void SetTitle(const char *text) { panel->SetTitle(text); }
-  const char *GetTitle() const { return panel->GetTitle(); }
+  virtual void SetTitle(const char *text) { panel->SetTitle(text); }
+  virtual const char *GetTitle() const { return panel->GetTitle(); }
 
 protected:
   Panel *panel;

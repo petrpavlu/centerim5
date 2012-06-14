@@ -81,11 +81,12 @@ const char *KeyConfig::GetKeyBind(const char *context,
   return _("<unbound>");
 }
 
-char *KeyConfig::TermKeyToString(TermKeyKey key) const
+char *KeyConfig::TermKeyToString(const TermKeyKey& key) const
 {
+  TermKeyKey key_copy = key;
   char out[256];
-  termkey_strfkey(COREMANAGER->GetTermKeyHandle(), out, sizeof(out), &key,
-      TERMKEY_FORMAT_LONGMOD);
+  termkey_strfkey(COREMANAGER->GetTermKeyHandle(), out, sizeof(out),
+      &key_copy, TERMKEY_FORMAT_LONGMOD);
 
   return g_strdup(out);
 }
@@ -133,7 +134,6 @@ void KeyConfig::LoadDefaultKeyConfig()
   BindKey("textentry", "backspace", "Backspace");
 
   BindKey("textentry", "delete-word-end", "Ctrl-Delete");
-  BindKey("textentry", "delete-word-begin", "Ctrl-Backspace");
   /// @todo enable
   /*
   BindKey("textentry", "toggle-overwrite", "Insert");
