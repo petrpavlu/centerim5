@@ -904,17 +904,25 @@ bool CenterIM::SaveKeyConfig()
   xmlnode *root = xmlnode_new("keyconfig");
   xmlnode_set_attrib(root, "version", "1.0");
 
-  for (CppConsUI::KeyConfig::KeyBinds::const_iterator
-      bi = KEYCONFIG->GetKeyBinds()->begin();
-      bi != KEYCONFIG->GetKeyBinds()->end(); bi++) {
+  const CppConsUI::KeyConfig::KeyBinds *binds = KEYCONFIG->GetKeyBinds();
+  for (CppConsUI::KeyConfig::KeyBinds::const_iterator bi = binds->begin();
+      bi != binds->end(); bi++) {
+    /* Invert the map because the output should be sorted by context+action,
+     * not by context+key. */
+    typedef std::multimap<std::string, TermKeyKey> InvertedMap;
+    InvertedMap inverted;
     for (CppConsUI::KeyConfig::KeyBindContext::const_iterator
         ci = bi->second.begin();
-        ci != bi->second.end(); ci++) {
+        ci != bi->second.end(); ci++)
+      inverted.insert(std::make_pair(ci->second, ci->first));
+
+    for (InvertedMap::iterator ci = inverted.begin(); ci != inverted.end();
+        ci++) {
       xmlnode *bind = xmlnode_new("bind");
       xmlnode_set_attrib(bind, "context", bi->first.c_str());
-      xmlnode_set_attrib(bind, "action", ci->second.c_str());
+      xmlnode_set_attrib(bind, "action", ci->first.c_str());
       char *key;
-      if ((key = KEYCONFIG->TermKeyToString(ci->first))) {
+      if ((key = KEYCONFIG->TermKeyToString(ci->second))) {
         xmlnode_set_attrib(bind, "key", key);
         g_free(key);
       }
