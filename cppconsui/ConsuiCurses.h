@@ -47,9 +47,6 @@ struct Stats
   unsigned subpad_calls;
 };
 
-const Stats *GetStats();
-void ResetStats();
-
 enum LineChar {
   LINE_HLINE,
   LINE_VLINE,
@@ -173,6 +170,9 @@ int resizeterm(int lines, int columns);
 
 int onscreen_width(const char *start, const char *end = NULL);
 int onscreen_width(gunichar uc, int w = 0);
+
+const Stats *get_stats();
+void reset_stats();
 
 } // namespace Curses
 

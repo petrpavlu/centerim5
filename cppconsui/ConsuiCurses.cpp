@@ -47,16 +47,6 @@ namespace Curses
 
 static Stats stats = {0,0,0};
 
-const Stats *GetStats()
-{
-  return &stats;
-}
-
-void ResetStats()
-{
-  memset(&stats, 0, sizeof(stats));
-}
-
 struct Window::WindowInternals
 {
   WINDOW *win;
@@ -430,9 +420,8 @@ int nrcolors()
 int nrcolorpairs()
 {
 #ifndef NCURSES_EXT_COLORS
-  /* ncurses reports more than 256 color pairs, even
-   * when compiled without ext-color.
-   */
+  /* Ncurses reports more than 256 color pairs, even when compiled without
+   * ext-color. */
   return MIN(COLOR_PAIRS, 256);
 #else
   return COLOR_PAIRS;
@@ -451,7 +440,7 @@ bool colorpair_content(int colorpair, int *fg, int *bg)
 
   return ret;
 }
-#endif
+#endif // DEBUG
 
 int erase()
 {
@@ -516,6 +505,16 @@ int onscreen_width(gunichar uc, int w)
   if (uc == '\t')
     return 8 - w % 8;
   return g_unichar_iswide(uc) ? 2 : 1;
+}
+
+const Stats *get_stats()
+{
+  return &stats;
+}
+
+void reset_stats()
+{
+  memset(&stats, 0, sizeof(stats));
 }
 
 } // namespace Curses

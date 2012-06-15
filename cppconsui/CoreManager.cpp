@@ -454,33 +454,36 @@ void CoreManager::Resize()
 
 void CoreManager::Draw()
 {
-  if (redraw_pending) {
-    Curses::erase();
-    Curses::noutrefresh();
+  if (!redraw_pending)
+    return;
 
-    // non-focusable -> normal -> top
-    for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
-      if ((*i)->GetType() == FreeWindow::TYPE_NON_FOCUSABLE)
-        (*i)->Draw();
+  Curses::erase();
+  Curses::noutrefresh();
 
-    for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
-      if ((*i)->GetType() == FreeWindow::TYPE_NORMAL)
-        (*i)->Draw();
+  // non-focusable -> normal -> top
+  for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
+    if ((*i)->GetType() == FreeWindow::TYPE_NON_FOCUSABLE)
+      (*i)->Draw();
 
-    for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
-      if ((*i)->GetType() == FreeWindow::TYPE_TOP)
-        (*i)->Draw();
+  for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
+    if ((*i)->GetType() == FreeWindow::TYPE_NORMAL)
+      (*i)->Draw();
 
-    // copy virtual ncurses screen to the physical screen
-    Curses::doupdate();
+  for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
+    if ((*i)->GetType() == FreeWindow::TYPE_TOP)
+      (*i)->Draw();
 
-    const Curses::Stats *stats = Curses::GetStats();
-    g_debug("newpad calls: %u, newwin calls: %u, subpad calls: %u",
-        stats->newpad_calls, stats->newwin_calls, stats->subpad_calls);
-    Curses::ResetStats();
+  // copy virtual ncurses screen to the physical screen
+  Curses::doupdate();
 
-    redraw_pending = false;
-  }
+#ifdef DEBUG
+  const Curses::Stats *stats = Curses::get_stats();
+  g_debug("newpad calls: %u, newwin calls: %u, subpad calls: %u",
+      stats->newpad_calls, stats->newwin_calls, stats->subpad_calls);
+  Curses::reset_stats();
+#endif // DEBUG
+
+  redraw_pending = false;
 }
 
 CoreManager::Windows::iterator CoreManager::FindWindow(FreeWindow& window)
