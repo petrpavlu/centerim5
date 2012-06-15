@@ -21,14 +21,27 @@
 
 #include "CenterIM.h"
 #include "gettext.h"
+#include <getopt.h>
 #include <locale.h>
-#include <unistd.h>
 
 #define CIM_CONFIG_PATH ".centerim5"
 
-void print_usage(FILE *out, const char *prg_name)
+static void print_usage(FILE *out, const char *prg_name)
 {
-  fprintf(out, _("Usage: %s [-c config_path]\n"), prg_name);
+  fprintf(out, _(
+"Usage: %s [option]...\n\n"
+"Options:\n"
+"  -a, --ascii                use ASCII characters to draw lines and boxes\n"
+"  -h, --help                 display command line usage\n"
+"  -v, --version              show the program version info\n"
+"  -b, --basedir <directory>  specify another base directory\n"
+"  -o, --offline              start with all protocols set offline\n"),
+      prg_name);
+}
+
+static void print_version(FILE *out)
+{
+  fprintf(out, "CenterIM %s\n", PACKAGE_VERSION);
 }
 
 int main(int argc, char *argv[])
@@ -47,21 +60,43 @@ int main(int argc, char *argv[])
   signal(SIGPIPE, SIG_IGN);
 
   // parse args
+  bool ascii = false;
+  bool offline = false;
   const char *config_path = CIM_CONFIG_PATH;
   int opt;
-  while ((opt = getopt(argc, argv, "hc:")) != -1) {
+  struct option long_options[] = {
+    {"ascii",   no_argument,       NULL, 'a'},
+    {"help",    no_argument,       NULL, 'h'},
+    {"version", no_argument,       NULL, 'v'},
+    {"basedir", required_argument, NULL, 'b'},
+    {"offline", no_argument,       NULL, 'o'},
+    {NULL,      0,                 NULL,  0 }
+  };
+  while ((opt = getopt_long(argc, argv, "ahvb:o", long_options, NULL))
+      != -1) {
     switch (opt) {
-      case 'c':
-        config_path = optarg;
+      case 'a':
+        ascii = true;
         break;
       case 'h':
         print_usage(stdout, argv[0]);
         return 0;
+      case 'v':
+        print_version(stdout);
+        return 0;
+      case 'b':
+        config_path = optarg;
+        break;
+      case 'o':
+        offline = true;
+        break;
       default:
         print_usage(stderr, argv[0]);
         return 1;
     }
+
   }
+
   if (optind < argc) {
     fprintf(stderr, _("%s: unexpected argument after options\n"), argv[0]);
     print_usage(stderr, argv[0]);
@@ -69,7 +104,7 @@ int main(int argc, char *argv[])
   }
 
   CenterIM *cim = CenterIM::Instance();
-  return cim->Run(config_path);
+  return cim->Run(config_path, ascii, offline);
 }
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

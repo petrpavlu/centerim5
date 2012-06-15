@@ -149,6 +149,8 @@ extern const int C_ERR;
 
 int screen_init();
 int screen_finalize();
+void set_ascii_mode(bool enabled);
+bool get_ascii_mode();
 
 bool init_colorpair(int idx, int fg, int bg, int *res);
 int nrcolors();

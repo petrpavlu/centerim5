@@ -73,8 +73,13 @@ bool CenterIM::ProcessInput(const TermKeyKey& key)
   return InputProcessor::ProcessInput(key);
 }
 
-int CenterIM::Run(const char *config_path)
+int CenterIM::Run(const char *config_path, bool ascii, bool offline)
 {
+  // ASCII mode
+  if (ascii)
+    CppConsUI::Curses::set_ascii_mode(ascii);
+
+  // config path
   char *path;
   if (config_path[0] == '/') {
     // absolute path
@@ -124,6 +129,9 @@ int CenterIM::Run(const char *config_path)
 
   const char *key = KEYCONFIG->GetKeyBind("centerim", "generalmenu");
   LOG->Info(_("Welcome to CenterIM 5. Press %s to display main menu."), key);
+
+  // restore last know status on all accounts
+  ACCOUNTS->RestoreStatuses(offline);
 
   mngr->SetTopInputProcessor(*this);
   mngr->EnableResizing();

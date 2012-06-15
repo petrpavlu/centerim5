@@ -35,6 +35,35 @@ Accounts *Accounts::Instance()
   return instance;
 }
 
+void Accounts::RestoreStatuses(bool offline)
+{
+  if (!offline) {
+    // simply restore statuses
+    purple_accounts_restore_current_statuses();
+    return;
+  }
+
+  // note: the next lines are taken from Pidgin's main() function
+
+  // set all accounts to "offline"
+  PurpleSavedStatus *saved_status;
+
+  // if we've used this type+message before, lookup the transient status
+  saved_status = purple_savedstatus_find_transient_by_type_and_message(
+      PURPLE_STATUS_OFFLINE, NULL);
+
+  // if this type+message is unique then create a new transient saved status
+  if (!saved_status)
+    saved_status = purple_savedstatus_new(NULL, PURPLE_STATUS_OFFLINE);
+
+  // Set the status for each account
+  purple_savedstatus_activate(saved_status);
+
+  /* XXX We currently don't support saved statuses correctly so make sure this
+   * status deleted. */
+  purple_savedstatus_delete_by_status(saved_status);
+}
+
 void Accounts::OpenPendingRequests()
 {
   PendingRequestWindow *win = new PendingRequestWindow(*this);
@@ -276,9 +305,6 @@ Accounts::Accounts()
   // if the statuses are not known, set them all to the default
   if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
     purple_savedstatus_activate(purple_savedstatus_get_startup());
-
-  // restore last know status on all accounts
-  purple_accounts_restore_current_statuses();
 
   // set the purple account callbacks
   memset(&centerim_account_ui_ops, 0, sizeof(centerim_account_ui_ops));

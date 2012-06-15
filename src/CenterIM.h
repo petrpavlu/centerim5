@@ -55,7 +55,7 @@ public:
   // InputProcessor
   virtual bool ProcessInput(const TermKeyKey& key);
 
-  int Run(const char *config_path);
+  int Run(const char *config_path, bool ascii, bool offline);
   void Quit();
 
   // returns size of selected area

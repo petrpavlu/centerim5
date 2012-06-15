@@ -33,6 +33,8 @@ class Accounts
 public:
   static Accounts *Instance();
 
+  void RestoreStatuses(bool offline);
+
   void OpenPendingRequests();
 
   // interface for Header

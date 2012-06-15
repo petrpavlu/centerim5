@@ -45,7 +45,8 @@ namespace CppConsUI
 namespace Curses
 {
 
-static Stats stats = {0,0,0};
+static Stats stats = {0, 0, 0};
+bool ascii_mode = false;
 
 struct Window::WindowInternals
 {
@@ -175,36 +176,36 @@ int Window::mvaddlinechar(int x, int y, LineChar c)
 {
   switch (c) {
     case LINE_HLINE:
-      return mvwaddch(p->win, y, x, ACS_HLINE);
+      return mvwaddch(p->win, y, x, ascii_mode ? '-' : ACS_HLINE);
     case LINE_VLINE:
-      return mvwaddch(p->win, y, x, ACS_VLINE);
+      return mvwaddch(p->win, y, x, ascii_mode ? '|' : ACS_VLINE);
     case LINE_LLCORNER:
-      return mvwaddch(p->win, y, x, ACS_LLCORNER);
+      return mvwaddch(p->win, y, x, ascii_mode ? '+' : ACS_LLCORNER);
     case LINE_LRCORNER:
-      return mvwaddch(p->win, y, x, ACS_LRCORNER);
+      return mvwaddch(p->win, y, x, ascii_mode ? '+' : ACS_LRCORNER);
     case LINE_ULCORNER:
-      return mvwaddch(p->win, y, x, ACS_ULCORNER);
+      return mvwaddch(p->win, y, x, ascii_mode ? '+' : ACS_ULCORNER);
     case LINE_URCORNER:
-      return mvwaddch(p->win, y, x, ACS_URCORNER);
+      return mvwaddch(p->win, y, x, ascii_mode ? '+' : ACS_URCORNER);
     case LINE_BTEE:
-      return mvwaddch(p->win, y, x, ACS_BTEE);
+      return mvwaddch(p->win, y, x, ascii_mode ? '+' : ACS_BTEE);
     case LINE_LTEE:
-      return mvwaddch(p->win, y, x, ACS_LTEE);
+      return mvwaddch(p->win, y, x, ascii_mode ? '+' : ACS_LTEE);
     case LINE_RTEE:
-      return mvwaddch(p->win, y, x, ACS_RTEE);
+      return mvwaddch(p->win, y, x, ascii_mode ? '+' : ACS_RTEE);
     case LINE_TTEE:
-      return mvwaddch(p->win, y, x, ACS_TTEE);
+      return mvwaddch(p->win, y, x, ascii_mode ? '+' : ACS_TTEE);
 
     case LINE_DARROW:
-      return mvwaddch(p->win, y, x, ACS_DARROW);
+      return mvwaddch(p->win, y, x, ascii_mode ? 'v' : ACS_DARROW);
     case LINE_LARROW:
-      return mvwaddch(p->win, y, x, ACS_LARROW);
+      return mvwaddch(p->win, y, x, ascii_mode ? '<' : ACS_LARROW);
     case LINE_RARROW:
-      return mvwaddch(p->win, y, x, ACS_RARROW);
+      return mvwaddch(p->win, y, x, ascii_mode ? '>' : ACS_RARROW);
     case LINE_UARROW:
-      return mvwaddch(p->win, y, x, ACS_UARROW);
+      return mvwaddch(p->win, y, x, ascii_mode ? '^' : ACS_UARROW);
     case LINE_BULLET:
-      return mvwaddch(p->win, y, x, ACS_BULLET);
+      return mvwaddch(p->win, y, x, ascii_mode ? 'o' : ACS_BULLET);
   }
   return ERR;
 }
@@ -398,6 +399,16 @@ int screen_init()
 int screen_finalize()
 {
   return ::endwin();
+}
+
+void set_ascii_mode(bool enabled)
+{
+  ascii_mode = enabled;
+}
+
+bool get_ascii_mode()
+{
+  return ascii_mode;
 }
 
 bool init_colorpair(int idx, int fg, int bg, int *res)
