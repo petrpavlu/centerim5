@@ -1,15 +1,19 @@
 Current Developers:
-Petr Pavlu <setup@dagobah.cz>
-	IRC: setupji @ freenode
+- Petr Pavlů <setup@dagobah.cz>.
 
-Original Developers:
-Mark Pustjens <pustjens@dds.nl>
-	ICQ: 40696119
-	MSN: pustjens@dds.nl
+Former Developers:
+- Mark Pustjens <pustjens@dds.nl> -- initial CenterIM5 code.
 
 Additional Code:
 - Iulian Ciorascu <iulica@box.co.uk> -- Doxygen support, documentation, build
   fixes,
 - kyak <bas@bmail.ru> -- various improvements,
 - Roger <roger@jikos.cz> -- initial support for screen resizing,
+- Alexander Adam <alexander.adam@informatik.tu-chemnitz.de> -- cmake build,
+- Manuel Argüelles <manuel.arguelles@gmail.com> -- beep-on-new-messages code,
+- paco -- password protection in UI with asterisks,
+- Per-Henrik Lundblom <ph@whatever.nu> -- coloring contacts according to
+  their status,
+- Alexander Matz -- typing notifications,
 - and others, see `git log`.
+

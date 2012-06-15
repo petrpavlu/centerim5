@@ -1,14 +1,14 @@
-CenterIM 5 hacking documentation
+CenterIM 5 Hacking Documentation
 
 Contents
 --------
 
-1. Code style
-2. General debugging
-3. Valgrind notes
+1. Code Style
+2. General Debugging
+3. Valgrind Notes
 
 
-1. Code style
+1. Code Style
 -------------
 
 - No tabs, two spaces indenting.
@@ -48,7 +48,7 @@ private:
   variables protected.
 
 
-2. General debugging
+2. General Debugging
 --------------------
 
 Use the '--enable-debug' configure option to disable optimizations and to
@@ -57,7 +57,7 @@ enable producing of binary with debugging information.
 Use the '--enable-strict' configure option to enable extra compiler warnings.
 
 
-3. Valgrind notes
+3. Valgrind Notes
 -----------------
 
 % export GLIBCXX_FORCE_NEW=1
