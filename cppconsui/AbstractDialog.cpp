@@ -78,7 +78,7 @@ void AbstractDialog::InitLayout()
   layout->AppendWidget(*buttons);
 }
 
-void AbstractDialog::OnButtonResponse(Button& activator,
+void AbstractDialog::OnButtonResponse(Button& /*activator*/,
     ResponseType response)
 {
   Response(response);

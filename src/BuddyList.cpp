@@ -279,7 +279,7 @@ void BuddyList::remove(PurpleBuddyList *list, PurpleBlistNode *node)
     update(list, node->parent);
 }
 
-void BuddyList::destroy(PurpleBuddyList *list)
+void BuddyList::destroy(PurpleBuddyList */*list*/)
 {
 }
 
@@ -331,7 +331,7 @@ void BuddyList::request_add_buddy(PurpleAccount *account,
 }
 
 void BuddyList::request_add_chat(PurpleAccount *account, PurpleGroup *group,
-    const char *alias, const char *name)
+    const char */*alias*/, const char */*name*/)
 {
   if (!CheckAnyAccountConnected())
     return;
@@ -549,8 +549,8 @@ void BuddyList::add_group_ok_cb(const char *name)
   purple_blist_add_group(group, NULL);
 }
 
-void BuddyList::blist_pref_change(const char *name, PurplePrefType type,
-    gconstpointer val)
+void BuddyList::blist_pref_change(const char *name, PurplePrefType /*type*/,
+    gconstpointer /*val*/)
 {
   // blist/* preference changed
   UpdateCachedPreference(name);

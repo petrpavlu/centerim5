@@ -97,7 +97,7 @@ bool InputProcessor::Process(BindableType type, const TermKeyKey& key)
   return false;
 }
 
-bool InputProcessor::ProcessInputText(const TermKeyKey& key)
+bool InputProcessor::ProcessInputText(const TermKeyKey& /*key*/)
 {
   return false;
 }

@@ -155,7 +155,7 @@ Curses::Window *ListBox::GetSubPad(const Widget& child, int begin_x,
   return AbstractListBox::GetSubPad(child, begin_x, begin_y, ncols, nlines);
 }
 
-void ListBox::OnChildMoveResize(Widget& activator, const Rect& oldsize,
+void ListBox::OnChildMoveResize(Widget& /*activator*/, const Rect& oldsize,
     const Rect& newsize)
 {
   int old_height = oldsize.GetHeight();

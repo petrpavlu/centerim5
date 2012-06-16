@@ -67,8 +67,8 @@ void Notify::Finalize()
   instance = NULL;
 }
 
-void *Notify::notify_message(PurpleNotifyMsgType type, const char *title,
-    const char *primary, const char *secondary)
+void *Notify::notify_message(PurpleNotifyMsgType /*type*/, const char */*title*/,
+    const char */*primary*/, const char */*secondary*/)
 {
   return NULL;
 }

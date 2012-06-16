@@ -293,7 +293,7 @@ bool CoreManager::ProcessInput(const TermKeyKey& key)
   return InputProcessor::ProcessInput(key);
 }
 
-gboolean CoreManager::io_input_error(GIOChannel *source, GIOCondition cond)
+gboolean CoreManager::io_input_error(GIOChannel */*source*/, GIOCondition /*cond*/)
 {
   // log a critical warning and bail out if we lost stdin
   g_critical("Stdin lost!");
@@ -302,7 +302,7 @@ gboolean CoreManager::io_input_error(GIOChannel *source, GIOCondition cond)
   return TRUE;
 }
 
-gboolean CoreManager::io_input(GIOChannel *source, GIOCondition cond)
+gboolean CoreManager::io_input(GIOChannel */*source*/, GIOCondition /*cond*/)
 {
   if (io_input_timeout_conn.connected())
     io_input_timeout_conn.disconnect();
@@ -357,7 +357,7 @@ void CoreManager::io_input_timeout()
   }
 }
 
-gboolean CoreManager::resize_input(GIOChannel *source, GIOCondition cond)
+gboolean CoreManager::resize_input(GIOChannel *source, GIOCondition /*cond*/)
 {
   char buf[1024];
   gsize bytes_read;

@@ -135,7 +135,7 @@ void ComboBox::SetSelectedByData(intptr_t data)
     }
 }
 
-void ComboBox::OnDropDown(Button& activator)
+void ComboBox::OnDropDown(Button& /*activator*/)
 {
   if (options.empty())
     return;
@@ -156,14 +156,14 @@ void ComboBox::OnDropDown(Button& activator)
   dropdown->Show();
 }
 
-void ComboBox::DropDownOk(Button& activator, int new_entry)
+void ComboBox::DropDownOk(Button& /*activator*/, int new_entry)
 {
   dropdown->Close();
 
   SetSelected(new_entry);
 }
 
-void ComboBox::DropDownClose(FreeWindow& window)
+void ComboBox::DropDownClose(FreeWindow& /*window*/)
 {
   dropdown = NULL;
 }

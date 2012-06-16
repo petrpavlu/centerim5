@@ -187,7 +187,7 @@ OptionWindow::BooleanOption::~BooleanOption()
   g_free(pref);
 }
 
-void OptionWindow::BooleanOption::OnToggle(CheckBox& activator,
+void OptionWindow::BooleanOption::OnToggle(CheckBox& /*activator*/,
     bool new_state)
 {
   purple_prefs_set_bool(pref, new_state);
@@ -210,7 +210,7 @@ OptionWindow::StringOption::~StringOption()
   g_free(pref);
 }
 
-void OptionWindow::StringOption::OnActivate(Button& activator)
+void OptionWindow::StringOption::OnActivate(Button& /*activator*/)
 {
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(GetText(),
       GetValue());
@@ -264,7 +264,7 @@ OptionWindow::IntegerOption::~IntegerOption()
   g_free(pref);
 }
 
-void OptionWindow::IntegerOption::OnActivate(Button& activator)
+void OptionWindow::IntegerOption::OnActivate(Button& /*activator*/)
 {
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(GetText(),
       GetValue());
@@ -332,13 +332,13 @@ void OptionWindow::ChoiceOption::AddOption(const char *title,
     SetSelected(item);
 }
 
-void OptionWindow::ChoiceOption::OnSelectionChanged(ComboBox& activator,
-    int new_entry, const char *title, intptr_t data)
+void OptionWindow::ChoiceOption::OnSelectionChanged(ComboBox& /*activator*/,
+    int /*new_entry*/, const char */*title*/, intptr_t data)
 {
   purple_prefs_set_string(pref, reinterpret_cast<const char*>(data));
 }
 
-const char *OptionWindow::GetPercentUnit(int i) const
+const char *OptionWindow::GetPercentUnit(int /*i*/) const
 {
   return "%";
 }
@@ -348,13 +348,13 @@ const char *OptionWindow::GetMinUnit(int i) const
   return ngettext("minute", "minutes", i);
 }
 
-void OptionWindow::ReloadKeyBindings(CppConsUI::Button& activator) const
+void OptionWindow::ReloadKeyBindings(CppConsUI::Button& /*activator*/) const
 {
   if (CENTERIM->LoadKeyConfig())
     LOG->Message(_("Keybinding file was successfully reloaded."));
 }
 
-void OptionWindow::ReloadColorSchemes(CppConsUI::Button& activator) const
+void OptionWindow::ReloadColorSchemes(CppConsUI::Button& /*activator*/) const
 {
   if (CENTERIM->LoadColorSchemeConfig())
     LOG->Message(_("Colorscheme file was successfully reloaded."));

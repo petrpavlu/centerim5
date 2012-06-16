@@ -387,7 +387,7 @@ void Conversations::buddy_typing(PurpleAccount *account, const char *who)
 }
 
 void Conversations::send_typing_pref_change(const char *name,
-    PurplePrefType type, gconstpointer val)
+    PurplePrefType /*type*/, gconstpointer /*val*/)
 {
   g_assert(!strcmp(name, "/purple/conversations/im/send_typing"));
   send_typing = purple_prefs_get_bool(name);

@@ -801,6 +801,8 @@ static TermKeyResult peekkey_mouse(TermKey *tk, TermKeyKey *key, size_t *nbytep)
 
 TermKeyResult termkey_interpret_mouse(TermKey *tk, const TermKeyKey *key, TermKeyMouseEvent *event, int *button, int *line, int *col)
 {
+  (void)tk; /* remove unused warning */
+
   if(key->type != TERMKEY_TYPE_MOUSE)
     return TERMKEY_RES_NONE;
 

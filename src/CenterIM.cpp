@@ -582,13 +582,13 @@ void CenterIM::tmp_purple_print(PurpleDebugLevel level, const char *category,
   logbuf->push_back(item);
 }
 
-void CenterIM::dimensions_change(const char *name, PurplePrefType type,
-    gconstpointer val)
+void CenterIM::dimensions_change(const char */*name*/, PurplePrefType /*type*/,
+    gconstpointer /*val*/)
 {
   mngr->OnScreenResized();
 }
 
-void CenterIM::idle_reporting_change(const char *name, PurplePrefType type,
+void CenterIM::idle_reporting_change(const char */*name*/, PurplePrefType type,
     gconstpointer val)
 {
   g_return_if_fail(type == PURPLE_PREF_STRING);

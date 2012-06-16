@@ -62,38 +62,38 @@ void GeneralMenu::OnScreenResized()
   Move(chat.x, chat.y);
 }
 
-void GeneralMenu::OpenAccountWindow(CppConsUI::Button& activator)
+void GeneralMenu::OpenAccountWindow(CppConsUI::Button& /*activator*/)
 {
   AccountWindow *win = new AccountWindow;
   win->Show();
   Close();
 }
 
-void GeneralMenu::OpenAddBuddyRequest(CppConsUI::Button& activator)
+void GeneralMenu::OpenAddBuddyRequest(CppConsUI::Button& /*activator*/)
 {
   purple_blist_request_add_buddy(NULL, NULL, NULL, NULL);
   Close();
 }
 
-void GeneralMenu::OpenAddChatRequest(CppConsUI::Button& activator)
+void GeneralMenu::OpenAddChatRequest(CppConsUI::Button& /*activator*/)
 {
   purple_blist_request_add_chat(NULL, NULL, NULL, NULL);
   Close();
 }
 
-void GeneralMenu::OpenAddGroupRequest(CppConsUI::Button& activator)
+void GeneralMenu::OpenAddGroupRequest(CppConsUI::Button& /*activator*/)
 {
   purple_blist_request_add_group();
   Close();
 }
 
-void GeneralMenu::OpenPendingRequests(CppConsUI::Button& activator)
+void GeneralMenu::OpenPendingRequests(CppConsUI::Button& /*activator*/)
 {
   ACCOUNTS->OpenPendingRequests();
   Close();
 }
 
-void GeneralMenu::OpenOptionWindow(CppConsUI::Button& activator)
+void GeneralMenu::OpenOptionWindow(CppConsUI::Button& /*activator*/)
 {
   OptionWindow *win = new OptionWindow;
   win->Show();

@@ -165,7 +165,7 @@ void Log::purple_print(PurpleDebugLevel purplelevel, const char *category,
   g_free(text);
 }
 
-gboolean Log::is_enabled(PurpleDebugLevel purplelevel, const char *category)
+gboolean Log::is_enabled(PurpleDebugLevel purplelevel, const char */*category*/)
 {
   Level level = ConvertPurpleDebugLevel(purplelevel);
 
@@ -217,7 +217,7 @@ void Log::cppconsui_log_handler(const char *domain, GLogLevelFlags flags,
   g_free(text);
 }
 
-void Log::debug_change(const char *name, PurplePrefType type,
+void Log::debug_change(const char */*name*/, PurplePrefType type,
     gconstpointer val)
 {
   g_assert(type == PURPLE_PREF_BOOLEAN);

@@ -149,7 +149,7 @@ void Container::Clear()
     RemoveWidget(*children.front().widget);
 }
 
-bool Container::IsWidgetVisible(const Widget& widget) const
+bool Container::IsWidgetVisible(const Widget& /*widget*/) const
 {
   if (!parent || !visible)
     return false;
@@ -525,17 +525,17 @@ void Container::MoveWidgetInternal(Widget& widget, Widget& position,
   Redraw();
 }
 
-void Container::OnChildMoveResize(Widget& activator, const Rect& oldsize,
-    const Rect& newsize)
+void Container::OnChildMoveResize(Widget& /*activator*/, const Rect& /*oldsize*/,
+    const Rect& /*newsize*/)
 {
 }
 
-void Container::OnChildWishSizeChange(Widget& activator, const Size& oldsize,
-    const Size& newsize)
+void Container::OnChildWishSizeChange(Widget& /*activator*/, const Size& /*oldsize*/,
+    const Size& /*newsize*/)
 {
 }
 
-void Container::OnChildVisible(Widget& activator, bool visible)
+void Container::OnChildVisible(Widget& /*activator*/, bool /*visible*/)
 {
 }
 

@@ -149,7 +149,7 @@ private:
    * instantiated. */
   static void tmp_purple_print(PurpleDebugLevel level, const char *category,
       const char *arg_s);
-  static gboolean tmp_is_enabled(PurpleDebugLevel level, const char *category)
+  static gboolean tmp_is_enabled(PurpleDebugLevel /*level*/, const char* /*category*/)
     { return TRUE; }
 
   // called when CONF_PREFIX/dimensions prefs are changed

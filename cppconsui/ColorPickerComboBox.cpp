@@ -105,7 +105,7 @@ void ColorPickerComboBox::Draw()
   }
 }
 
-void ColorPickerComboBox::OnDropDown(Button& activator)
+void ColorPickerComboBox::OnDropDown(Button& /*activator*/)
 {
   if (options.empty())
     return;
@@ -135,7 +135,7 @@ void ColorPickerComboBox::OnDropDown(Button& activator)
   dropdown->Show();
 }
 
-void ColorPickerComboBox::DropDownOk(Button& activator, int new_entry)
+void ColorPickerComboBox::DropDownOk(Button& /*activator*/, int new_entry)
 {
   dropdown->Close();
 

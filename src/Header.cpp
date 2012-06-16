@@ -103,7 +103,7 @@ void Header::Finalize()
   instance = NULL;
 }
 
-void Header::OnRequestCountChange(Accounts& accounts, size_t request_count)
+void Header::OnRequestCountChange(Accounts& /*accounts*/, size_t request_count)
 {
   if (request_count) {
     request_indicator->SetText("* ");
@@ -141,7 +141,7 @@ void Header::account_signed_off(PurpleAccount *account)
   statuses.erase(account);
 }
 
-void Header::account_status_changed(PurpleAccount *account, PurpleStatus *old,
+void Header::account_status_changed(PurpleAccount *account, PurpleStatus */*old*/,
     PurpleStatus *cur)
 {
   g_return_if_fail(account);
@@ -168,7 +168,7 @@ void Header::account_status_changed(PurpleAccount *account, PurpleStatus *old,
   g_free(text);
 }
 
-void Header::account_alias_changed(PurpleAccount *account, const char *old)
+void Header::account_alias_changed(PurpleAccount *account, const char */*old*/)
 {
   g_return_if_fail(account);
 

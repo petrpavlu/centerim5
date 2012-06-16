@@ -125,7 +125,7 @@ BuddyListNode::ContextMenu::ContextMenu(BuddyListNode& parent_node_)
 {
 }
 
-void BuddyListNode::ContextMenu::OnMenuAction(Button& activator,
+void BuddyListNode::ContextMenu::OnMenuAction(Button& /*activator*/,
     PurpleCallback callback, void *data)
 {
   g_assert(callback);
@@ -330,7 +330,7 @@ void BuddyListBuddy::Update()
     SetVisibility(BUDDYLIST->GetShowOfflineBuddiesPref() || status[0]);
 }
 
-void BuddyListBuddy::OnActivate(Button& activator)
+void BuddyListBuddy::OnActivate(Button& /*activator*/)
 {
   PurpleAccount *account = purple_buddy_get_account(buddy);
   const char *name = purple_buddy_get_name(buddy);
@@ -380,7 +380,7 @@ void BuddyListBuddy::BuddyContextMenu::ChangeAliasResponseHandler(
   Close();
 }
 
-void BuddyListBuddy::BuddyContextMenu::OnChangeAlias(Button& activator)
+void BuddyListBuddy::BuddyContextMenu::OnChangeAlias(Button& /*activator*/)
 {
   PurpleBuddy *buddy = parent_buddy->GetPurpleBuddy();
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(
@@ -391,7 +391,7 @@ void BuddyListBuddy::BuddyContextMenu::OnChangeAlias(Button& activator)
 }
 
 void BuddyListBuddy::BuddyContextMenu::RemoveResponseHandler(
-    CppConsUI::MessageDialog& activator,
+    CppConsUI::MessageDialog& /*activator*/,
     CppConsUI::AbstractDialog::ResponseType response)
 {
   switch (response) {
@@ -412,7 +412,7 @@ void BuddyListBuddy::BuddyContextMenu::RemoveResponseHandler(
   purple_blist_remove_buddy(buddy);
 }
 
-void BuddyListBuddy::BuddyContextMenu::OnRemove(Button& activator)
+void BuddyListBuddy::BuddyContextMenu::OnRemove(Button& /*activator*/)
 {
   PurpleBuddy *buddy = parent_buddy->GetPurpleBuddy();
   char *msg = g_strdup_printf(
@@ -495,7 +495,7 @@ void BuddyListChat::Update()
   SetVisibility(purple_account_is_connected(purple_chat_get_account(chat)));
 }
 
-void BuddyListChat::OnActivate(Button& activator)
+void BuddyListChat::OnActivate(Button& /*activator*/)
 {
   PurpleAccount *account = purple_chat_get_account(chat);
   PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(
@@ -558,7 +558,7 @@ void BuddyListChat::ChatContextMenu::ChangeAliasResponseHandler(
   Close();
 }
 
-void BuddyListChat::ChatContextMenu::OnChangeAlias(Button& activator)
+void BuddyListChat::ChatContextMenu::OnChangeAlias(Button& /*activator*/)
 {
   PurpleChat *chat = parent_chat->GetPurpleChat();
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(
@@ -569,7 +569,7 @@ void BuddyListChat::ChatContextMenu::OnChangeAlias(Button& activator)
 }
 
 void BuddyListChat::ChatContextMenu::RemoveResponseHandler(
-    CppConsUI::MessageDialog& activator,
+    CppConsUI::MessageDialog& /*activator*/,
     CppConsUI::AbstractDialog::ResponseType response)
 {
   switch (response) {
@@ -588,7 +588,7 @@ void BuddyListChat::ChatContextMenu::RemoveResponseHandler(
   purple_blist_remove_chat(chat);
 }
 
-void BuddyListChat::ChatContextMenu::OnRemove(Button& activator)
+void BuddyListChat::ChatContextMenu::OnRemove(Button& /*activator*/)
 {
   PurpleChat *chat = parent_chat->GetPurpleChat();
   char *msg = g_strdup_printf(
@@ -737,7 +737,7 @@ void BuddyListContact::ContactContextMenu::ChangeAliasResponseHandler(
   Close();
 }
 
-void BuddyListContact::ContactContextMenu::OnChangeAlias(Button& activator)
+void BuddyListContact::ContactContextMenu::OnChangeAlias(Button& /*activator*/)
 {
   PurpleContact *contact = parent_contact->GetPurpleContact();
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(
@@ -748,7 +748,7 @@ void BuddyListContact::ContactContextMenu::OnChangeAlias(Button& activator)
 }
 
 void BuddyListContact::ContactContextMenu::RemoveResponseHandler(
-    CppConsUI::MessageDialog& activator,
+    CppConsUI::MessageDialog& /*activator*/,
     CppConsUI::AbstractDialog::ResponseType response)
 {
   switch (response) {
@@ -779,7 +779,7 @@ void BuddyListContact::ContactContextMenu::RemoveResponseHandler(
   purple_blist_remove_contact(contact);
 }
 
-void BuddyListContact::ContactContextMenu::OnRemove(Button& activator)
+void BuddyListContact::ContactContextMenu::OnRemove(Button& /*activator*/)
 {
   PurpleContact *contact = parent_contact->GetPurpleContact();
   char *msg = g_strdup_printf(
@@ -793,7 +793,7 @@ void BuddyListContact::ContactContextMenu::OnRemove(Button& activator)
   dialog->Show();
 }
 
-void BuddyListContact::ContactContextMenu::OnMoveTo(Button& activator,
+void BuddyListContact::ContactContextMenu::OnMoveTo(Button& /*activator*/,
     PurpleGroup *group)
 {
   purple_blist_add_contact(parent_contact->GetPurpleContact(), group, NULL);
@@ -874,7 +874,7 @@ void BuddyListGroup::Update()
   SetVisibility(vis);
 }
 
-void BuddyListGroup::OnActivate(Button& activator)
+void BuddyListGroup::OnActivate(Button& /*activator*/)
 {
   treeview->ToggleCollapsed(ref);
   purple_blist_node_set_bool(node, "collapsed", ref->GetCollapsed());
@@ -930,7 +930,7 @@ void BuddyListGroup::GroupContextMenu::RenameResponseHandler(
   Close();
 }
 
-void BuddyListGroup::GroupContextMenu::OnRename(Button& activator)
+void BuddyListGroup::GroupContextMenu::OnRename(Button& /*activator*/)
 {
   PurpleGroup *group = parent_group->GetPurpleGroup();
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(
@@ -941,7 +941,7 @@ void BuddyListGroup::GroupContextMenu::OnRename(Button& activator)
 }
 
 void BuddyListGroup::GroupContextMenu::RemoveResponseHandler(
-    CppConsUI::MessageDialog& activator,
+    CppConsUI::MessageDialog& /*activator*/,
     CppConsUI::AbstractDialog::ResponseType response)
 {
   switch (response) {
@@ -988,7 +988,7 @@ void BuddyListGroup::GroupContextMenu::RemoveResponseHandler(
   purple_blist_remove_group(group);
 }
 
-void BuddyListGroup::GroupContextMenu::OnRemove(Button& activator)
+void BuddyListGroup::GroupContextMenu::OnRemove(Button& /*activator*/)
 {
   PurpleGroup *group = parent_group->GetPurpleGroup();
   char *msg = g_strdup_printf(

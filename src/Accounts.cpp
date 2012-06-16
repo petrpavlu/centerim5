@@ -68,7 +68,7 @@ Accounts::AddRequest::AddRequest(PurpleAccount *account_,
 
 Accounts::AuthRequest::AuthRequest(PurpleAccount *account_,
     const char *remote_user_, const char *id_, const char *alias_,
-    const char *message_, bool on_list_,
+    const char *message_, bool /*on_list_*/,
     PurpleAccountRequestAuthorizationCb auth_cb_,
     PurpleAccountRequestAuthorizationCb deny_cb_, void *data_)
 : Request(account_, remote_user_, id_, alias_), auth_cb(auth_cb_)
@@ -170,13 +170,13 @@ void Accounts::PendingRequestWindow::AppendRequest(const Request& request)
   request_map[&request] = node;
 }
 
-void Accounts::PendingRequestWindow::OnRequestAdd(Accounts& accounts,
+void Accounts::PendingRequestWindow::OnRequestAdd(Accounts& /*accounts*/,
     const Request& request)
 {
   AppendRequest(request);
 }
 
-void Accounts::PendingRequestWindow::OnRequestRemove(Accounts& accounts,
+void Accounts::PendingRequestWindow::OnRequestRemove(Accounts& /*accounts*/,
     const Request& request)
 {
   RequestMap::iterator i = request_map.find(&request);
@@ -185,7 +185,7 @@ void Accounts::PendingRequestWindow::OnRequestRemove(Accounts& accounts,
   request_map.erase(i);
 }
 
-void Accounts::PendingRequestWindow::OnActivate(CppConsUI::Button& activator,
+void Accounts::PendingRequestWindow::OnActivate(CppConsUI::Button& /*activator*/,
     const Request& request)
 {
   if (typeid(request) == typeid(AddRequest)) {
@@ -234,7 +234,7 @@ void Accounts::PendingRequestWindow::OnActivate(CppConsUI::Button& activator,
     g_assert_not_reached();
 }
 
-void Accounts::PendingRequestWindow::OnAddResponse(RequestDialog& activator,
+void Accounts::PendingRequestWindow::OnAddResponse(RequestDialog& /*activator*/,
     ResponseType response, const AddRequest& request)
 {
   switch (response) {
@@ -251,7 +251,7 @@ void Accounts::PendingRequestWindow::OnAddResponse(RequestDialog& activator,
   }
 }
 
-void Accounts::PendingRequestWindow::OnAuthResponse(RequestDialog& activator,
+void Accounts::PendingRequestWindow::OnAuthResponse(RequestDialog& /*activator*/,
     ResponseType response, const AuthRequest& request)
 {
   switch (response) {
@@ -323,7 +323,7 @@ void Accounts::RemoveRequest(const Request& request)
 }
 
 void Accounts::notify_added(PurpleAccount *account, const char *remote_user,
-    const char *id, const char *alias, const char *message)
+    const char */*id*/, const char *alias, const char *message)
 {
   const char *proto = purple_account_get_protocol_name(account);
   const char *uname = purple_account_get_username(account);
@@ -362,7 +362,7 @@ void Accounts::status_changed(PurpleAccount *account, PurpleStatus *status)
 }
 
 void Accounts::request_add(PurpleAccount *account, const char *remote_user,
-    const char *id, const char *alias, const char *message)
+    const char *id, const char *alias, const char */*message*/)
 {
   AddRequest *request = new AddRequest(account, remote_user, id, alias);
   requests.push_back(request);

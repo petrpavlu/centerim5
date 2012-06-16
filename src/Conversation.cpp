@@ -161,7 +161,7 @@ void Conversation::OnScreenResized()
   MoveResizeRect(r);
 }
 
-void Conversation::Write(const char *name, const char *alias,
+void Conversation::Write(const char *name, const char */*alias*/,
     const char *message, PurpleMessageFlags flags, time_t mtime)
 {
   PurpleConversationType type = purple_conversation_get_type(conv);

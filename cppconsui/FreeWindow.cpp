@@ -114,7 +114,7 @@ void FreeWindow::SetWishSize(int neww, int newh)
     ResizeAndUpdateArea();
 }
 
-bool FreeWindow::IsWidgetVisible(const Widget& child) const
+bool FreeWindow::IsWidgetVisible(const Widget& /*child*/) const
 {
   return true;
 }
@@ -154,7 +154,7 @@ void FreeWindow::Close()
   delete this;
 }
 
-void FreeWindow::SetParent(Container& parent)
+void FreeWindow::SetParent(Container& /*parent*/)
 {
   // Window can not have a parent
   g_assert_not_reached();
