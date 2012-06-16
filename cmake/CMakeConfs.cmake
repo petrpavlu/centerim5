@@ -12,7 +12,7 @@ pkg_check_modules(SIGC sigc++-2.0)
 #####################################################################
 
 set( CURSES_NEED_WIDE TRUE)
-include( cmake/FindCursesw.cmake)
+find_package( Cursesw)
 
 # as the curses script delivers not the real wide character include
 # directory, we now have to extract the right information
