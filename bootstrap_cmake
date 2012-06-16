@@ -7,7 +7,7 @@ sh() {
 
 # TODO autopoint from gettext 0.18 contains support for multiple po
 # directories, split cppconsui/cim po directory when it comes out...
-mkdir build
+mkdir -p build
 cd build
 CFLAGS="-std=c99" cmake ../
 cd ..
