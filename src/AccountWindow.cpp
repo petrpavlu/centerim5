@@ -254,8 +254,9 @@ AccountWindow::StringListOption::StringListOption(PurpleAccount *account,
         &StringListOption::OnSelectionChanged));
 }
 
-void AccountWindow::StringListOption::OnSelectionChanged(ComboBox& /*activator*/,
-    int /*new_entry*/, const char* /*title*/, intptr_t data)
+void AccountWindow::StringListOption::OnSelectionChanged(
+    ComboBox& /*activator*/, int /*new_entry*/, const char* /*title*/,
+    intptr_t data)
 {
   purple_account_set_string(account,
       purple_account_option_get_setting(option),

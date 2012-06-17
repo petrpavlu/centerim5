@@ -89,8 +89,7 @@ protected:
   bool LessOrEqualByType(const BuddyListNode& other) const;
 
   /* Called by BuddyListBuddy and BuddyListContact to get presence status
-   * char. Returned value should be used as a prefix of buddy/contact name.
-   * */
+   * char. Returned value should be used as a prefix of buddy/contact name. */
   const char *GetBuddyStatus(PurpleBuddy *buddy) const;
 
   /* Returns weight of buddy status (available > away > offline...). Used

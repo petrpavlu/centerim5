@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2011 by CenterIM developers
+ * Copyright (C) 2012 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -35,9 +34,6 @@
 namespace CppConsUI
 {
 
-/**
- * A color picker
- */
 class ColorPicker
 : public HorizontalListBox
 {
@@ -61,13 +57,17 @@ protected:
     Sample(int w, int fg = -1, int bg = -1);
     virtual ~Sample() {}
 
-    virtual void SetColors(int fg, int bg);
-
     // Widget
     virtual void Draw();
 
+    virtual void SetColors(int fg, int bg);
+
   protected:
     ColorScheme::Color c;
+
+  private:
+    Sample(const Sample&);
+    Sample& operator=(const Sample&);
   };
 
   virtual void OnColorChanged(ComboBox& activator, int new_color);

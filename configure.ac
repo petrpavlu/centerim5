@@ -87,8 +87,8 @@ AC_ARG_ENABLE([strict], [AC_HELP_STRING([--enable-strict],
 
 if test "$GCC" = yes; then
 	AS_IF([test "$enable_strict" = yes],
-		[CFLAGS="-Wall -Wextra -Wno-missing-field-initializers -Wno-unused-parameter -pedantic $CFLAGS"
-		CXXFLAGS="-Wall -Wextra -Wno-missing-field-initializers -Wno-unused-parameter -pedantic -Wno-long-long $CXXFLAGS"])
+		[CFLAGS="-Wall -Wextra -pedantic $CFLAGS"
+		CXXFLAGS="-Wall -Wextra -pedantic -Wno-long-long $CXXFLAGS"])
 fi
 
 ###########

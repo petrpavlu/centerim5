@@ -333,7 +333,7 @@ void OptionWindow::ChoiceOption::AddOption(const char *title,
 }
 
 void OptionWindow::ChoiceOption::OnSelectionChanged(ComboBox& /*activator*/,
-    int /*new_entry*/, const char */*title*/, intptr_t data)
+    int /*new_entry*/, const char * /*title*/, intptr_t data)
 {
   purple_prefs_set_string(pref, reinterpret_cast<const char*>(data));
 }

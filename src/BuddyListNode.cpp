@@ -919,9 +919,10 @@ void BuddyListGroup::GroupContextMenu::RenameResponseHandler(
   const char *name = activator.GetText();
   PurpleGroup *group = parent_group->GetPurpleGroup();
   PurpleGroup *other = purple_find_group(name);
-  if (other && g_strcasecmp(name, purple_group_get_name(group))) {
+  if (other && !purple_utf8_strcasecmp(name, purple_group_get_name(group))) {
     LOG->Message(_("Specified group is already in the list."));
-    // TODO add group merging
+    /* TODO Add group merging. Note that purple_blist_rename_group() can do
+     * the merging. */
   }
   else
     purple_blist_rename_group(group, name);

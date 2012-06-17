@@ -251,7 +251,8 @@ void MenuWindow::UpdateSmartPositionAndSize()
   }
 }
 
-void MenuWindow::OnChildrenHeightChange(ListBox& /*activator*/, int /*new_height*/)
+void MenuWindow::OnChildrenHeightChange(ListBox& /*activator*/,
+    int /*new_height*/)
 {
   if (win_h != AUTOSIZE)
     return;

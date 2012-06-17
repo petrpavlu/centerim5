@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2011 by CenterIM developers
+ * Copyright (C) 2012 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -29,6 +28,7 @@
 #include "ColorPicker.h"
 
 #include "ColorScheme.h"
+#include "Spacer.h"
 
 #include "gettext.h"
 
@@ -36,8 +36,8 @@ namespace CppConsUI
 {
 
 ColorPicker::ColorPicker(int fg, int bg, const char *text, bool sample_)
-: HorizontalListBox(AUTOSIZE, 1)
-, fg_combo(NULL), bg_combo(NULL), label(NULL), sample(NULL)
+: HorizontalListBox(AUTOSIZE, 1), fg_combo(NULL), bg_combo(NULL), label(NULL)
+, sample(NULL)
 {
   fg_combo = new ColorPickerComboBox(10, fg);
   bg_combo = new ColorPickerComboBox(10, bg);
@@ -52,7 +52,7 @@ ColorPicker::ColorPicker(int fg, int bg, const char *text, bool sample_)
 
   AppendWidget(*label);
   AppendWidget(*fg_combo);
-  AppendWidget(*(new Label(1, 1, "")));
+  AppendWidget(*(new Spacer(1, 1)));
   AppendWidget(*bg_combo);
 
   if (sample_) {
@@ -101,12 +101,6 @@ ColorPicker::Sample::Sample(int w, int fg, int bg)
 {
 }
 
-void ColorPicker::Sample::SetColors(int fg, int bg)
-{
-  c.foreground = fg;
-  c.background = bg;
-}
-
 void ColorPicker::Sample::Draw()
 {
   ProceedUpdateArea();
@@ -119,6 +113,12 @@ void ColorPicker::Sample::Draw()
   area->attron(colorpair);
   area->mvaddstring(1, 0, _(" SAMPLE "));
   area->attroff(colorpair);
+}
+
+void ColorPicker::Sample::SetColors(int fg, int bg)
+{
+  c.foreground = fg;
+  c.background = bg;
 }
 
 } // namespace CppConsUI

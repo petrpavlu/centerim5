@@ -147,6 +147,8 @@ struct Attr
 extern const int C_OK;
 extern const int C_ERR;
 
+const int NUM_DEFAULT_COLORS = 16;
+
 int screen_init();
 int screen_finalize();
 void set_ascii_mode(bool enabled);

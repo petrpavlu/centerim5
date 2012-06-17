@@ -154,8 +154,9 @@ public:
   void Run();
 
   // ignore every message
-  static void g_log_func_(const gchar *log_domain, GLogLevelFlags log_level,
-      const gchar *message, gpointer user_data)
+  static void g_log_func_(const gchar * /*log_domain*/,
+      GLogLevelFlags /*log_level*/, const gchar * /*message*/,
+      gpointer /*user_data*/)
     {}
 
 protected:

@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2012 by CenterIM developers
+ * Copyright (C) 2012 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -29,13 +28,9 @@
 #ifndef __COLORPICKERCOMBOBOX_H__
 #define __COLORPICKERCOMBOBOX_H__
 
-#include "AbstractDialog.h"
 #include "Button.h"
 #include "ColorPickerDialog.h"
 #include "ComboBox.h"
-#include "MenuWindow.h"
-
-#include <vector>
 
 #ifdef DEBUG
 #define COLORPICKER_256COLOR
@@ -49,35 +44,36 @@ class ColorPickerComboBox
 {
 public:
   ColorPickerComboBox(int w, int color);
-  virtual ~ColorPickerComboBox() {}
+  virtual ~ColorPickerComboBox();
 
   // Button
   virtual void Draw();
 
-  void SetColor(int new_color);
+  virtual void SetColor(int new_color);
   virtual int GetColor() { return selected_color; }
 
-  sigc::signal<void, ColorPickerComboBox&, int>
-    signal_color_changed;
+  sigc::signal<void, ColorPickerComboBox&, int> signal_color_changed;
 
 protected:
   class ColorButton
   : public Button
   {
   public:
-    ColorButton(int w, int color = -1);
+    ColorButton(int color_ = -1);
     virtual ~ColorButton() {}
 
    // Button
-   void Draw();
+   virtual void Draw();
 
   protected:
-   int color;
+    int color;
+
+  private:
+    ColorButton(const ColorButton&);
+    ColorButton& operator=(const ColorButton&);
   };
 
-  /**
-   * Hide all ComboBox functionality which doen not apply.
-   */
+  // hide all ComboBox functionality which doesn't apply
   ComboBox::ClearOptions;
   ComboBox::AddOption;
   ComboBox::AddOptionPtr;
@@ -102,7 +98,7 @@ protected:
 
 #ifdef COLORPICKER_256COLOR
   ColorPickerDialog *colorpicker;
-#endif
+#endif // COLORPICKER_256COLOR
 
 private:
   ColorPickerComboBox(const ColorPickerComboBox&);

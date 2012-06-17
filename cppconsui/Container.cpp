@@ -525,13 +525,13 @@ void Container::MoveWidgetInternal(Widget& widget, Widget& position,
   Redraw();
 }
 
-void Container::OnChildMoveResize(Widget& /*activator*/, const Rect& /*oldsize*/,
-    const Rect& /*newsize*/)
+void Container::OnChildMoveResize(Widget& /*activator*/,
+    const Rect& /*oldsize*/, const Rect& /*newsize*/)
 {
 }
 
-void Container::OnChildWishSizeChange(Widget& /*activator*/, const Size& /*oldsize*/,
-    const Size& /*newsize*/)
+void Container::OnChildWishSizeChange(Widget& /*activator*/,
+    const Size& /*oldsize*/, const Size& /*newsize*/)
 {
 }
 

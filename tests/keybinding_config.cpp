@@ -177,8 +177,8 @@ return false;                                                     \
 
   // parse the file
   bool res = true;
-  GMarkupParser parser = {};
-  parser.start_element = start_element_;
+  GMarkupParser parser = {start_element_, NULL /*end_element*/, NULL /*text*/,
+    NULL /*passthrough*/, NULL /*error*/};
   GMarkupParseContext *context = g_markup_parse_context_new(&parser,
       G_MARKUP_PREFIX_ERROR_POSITION, this, NULL);
   if (!g_markup_parse_context_parse(context, contents, length, &err)
@@ -316,8 +316,9 @@ public:
   void Run();
 
   // ignore every message
-  static void g_log_func_(const gchar *log_domain, GLogLevelFlags log_level,
-      const gchar *message, gpointer user_data)
+  static void g_log_func_(const gchar * /*log_domain*/,
+      GLogLevelFlags /*log_level*/, const gchar * /*message*/,
+      gpointer /*user_data*/)
     {}
 
 protected:

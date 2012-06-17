@@ -421,7 +421,8 @@ Request::FieldsDialog::ChoiceField::ChoiceField(PurpleRequestField *field)
 }
 
 void Request::FieldsDialog::ChoiceField::OnSelectionChanged(
-    ComboBox& /*activator*/, int new_entry, const char */*title*/, intptr_t /*data*/)
+    ComboBox& /*activator*/, int new_entry, const char * /*title*/,
+    intptr_t /*data*/)
 {
   purple_request_field_choice_set_value(field, new_entry);
 }
@@ -503,7 +504,8 @@ Request::FieldsDialog::ListFieldSingle::ListFieldSingle(
 }
 
 void Request::FieldsDialog::ListFieldSingle::OnSelectionChanged(
-    ComboBox& /*activator*/, int /*new_entry*/, const char *title, intptr_t /*data*/)
+    ComboBox& /*activator*/, int /*new_entry*/, const char *title,
+    intptr_t /*data*/)
 {
   purple_request_field_list_clear_selected(field);
   purple_request_field_list_add_selected(field, title);
@@ -569,8 +571,9 @@ Request::FieldsDialog::AccountField::AccountField(PurpleRequestField *field)
         &AccountField::OnAccountChanged));
 }
 
-void Request::FieldsDialog::AccountField::OnAccountChanged(Button& /*activator*/,
-    size_t /*new_entry*/, const char */*title*/, intptr_t data)
+void Request::FieldsDialog::AccountField::OnAccountChanged(
+    Button& /*activator*/, size_t /*new_entry*/, const char * /*title*/,
+    intptr_t data)
 {
   purple_request_field_account_set_value(field,
       reinterpret_cast<PurpleAccount*>(data));
@@ -651,9 +654,9 @@ void Request::OnDialogResponse(CppConsUI::SplitDialog& dialog,
 
 void *Request::request_input(const char *title, const char *primary,
     const char *secondary, const char *default_value, gboolean /*multiline*/,
-    gboolean masked, char */*hint*/, const char *ok_text, GCallback ok_cb,
-    const char *cancel_text, GCallback cancel_cb, PurpleAccount */*account*/,
-    const char */*who*/, PurpleConversation */*conv*/, void *user_data)
+    gboolean masked, char * /*hint*/, const char *ok_text, GCallback ok_cb,
+    const char *cancel_text, GCallback cancel_cb, PurpleAccount * /*account*/,
+    const char * /*who*/, PurpleConversation * /*conv*/, void *user_data)
 {
   LOG->Debug("request_input");
 
@@ -671,8 +674,8 @@ void *Request::request_input(const char *title, const char *primary,
 void *Request::request_choice(const char *title, const char *primary,
     const char *secondary, int default_value, const char *ok_text,
     GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
-    PurpleAccount */*account*/, const char */*who*/, PurpleConversation */*conv*/,
-    void *user_data, va_list choices)
+    PurpleAccount * /*account*/, const char * /*who*/,
+    PurpleConversation * /*conv*/, void *user_data, va_list choices)
 {
   LOG->Debug("request_choice");
 
@@ -688,8 +691,8 @@ void *Request::request_choice(const char *title, const char *primary,
 }
 
 void *Request::request_action(const char *title, const char *primary,
-    const char *secondary, int default_action, PurpleAccount */*account*/,
-    const char */*who*/, PurpleConversation */*conv*/, void *user_data,
+    const char *secondary, int default_action, PurpleAccount * /*account*/,
+    const char * /*who*/, PurpleConversation * /*conv*/, void *user_data,
     size_t action_count, va_list actions)
 {
   LOG->Debug("request_action");
@@ -707,8 +710,8 @@ void *Request::request_action(const char *title, const char *primary,
 void *Request::request_fields(const char *title, const char *primary,
     const char *secondary, PurpleRequestFields *fields,
     const char *ok_text, GCallback ok_cb, const char *cancel_text,
-    GCallback cancel_cb, PurpleAccount */*account*/, const char */*who*/,
-    PurpleConversation */*conv*/, void *user_data)
+    GCallback cancel_cb, PurpleAccount * /*account*/, const char * /*who*/,
+    PurpleConversation * /*conv*/, void *user_data)
 {
   LOG->Debug("request_fields");
 
@@ -722,10 +725,10 @@ void *Request::request_fields(const char *title, const char *primary,
   return dialog;
 }
 
-void *Request::request_file(const char */*title*/, const char */*filename*/,
+void *Request::request_file(const char * /*title*/, const char * /*filename*/,
     gboolean /*savedialog*/, GCallback /*ok_cb*/, GCallback /*cancel_cb*/,
-    PurpleAccount */*account*/, const char */*who*/, PurpleConversation */*conv*/,
-    void */*user_data*/)
+    PurpleAccount * /*account*/, const char * /*who*/,
+    PurpleConversation * /*conv*/, void * /*user_data*/)
 {
   return NULL;
 }
@@ -743,18 +746,20 @@ void Request::close_request(PurpleRequestType /*type*/, void *ui_handle)
   }
 }
 
-void *Request::request_folder(const char */*title*/, const char */*dirname*/,
-    GCallback /*ok_cb*/, GCallback /*cancel_cb*/, PurpleAccount */*account*/,
-    const char */*who*/, PurpleConversation */*conv*/, void */*user_data*/)
+void *Request::request_folder(const char * /*title*/,
+    const char * /*dirname*/, GCallback /*ok_cb*/, GCallback /*cancel_cb*/,
+    PurpleAccount * /*account*/, const char * /*who*/,
+    PurpleConversation * /*conv*/, void * /*user_data*/)
 {
   return NULL;
 }
 
-void *Request::request_action_with_icon(const char */*title*/,
-    const char */*primary*/, const char */*secondary*/, int /*default_action*/,
-    PurpleAccount */*account*/, const char */*who*/, PurpleConversation */*conv*/,
-    gconstpointer /*icon_data*/, gsize /*icon_size*/, void */*user_data*/,
-    size_t /*action_count*/, va_list /*actions*/)
+void *Request::request_action_with_icon(const char * /*title*/,
+    const char * /*primary*/, const char * /*secondary*/,
+    int /*default_action*/, PurpleAccount * /*account*/, const char * /*who*/,
+    PurpleConversation * /*conv*/, gconstpointer /*icon_data*/,
+    gsize /*icon_size*/, void * /*user_data*/, size_t /*action_count*/,
+    va_list /*actions*/)
 {
   return NULL;
 }

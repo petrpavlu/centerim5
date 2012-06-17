@@ -452,7 +452,8 @@ void CenterIM::OnScreenResized()
   size.x = areaSizes[BUDDY_LIST_AREA].width;
   size.y = header_height;
   size.width = screen_width - size.x;
-  size.height = screen_height - size.y - areaSizes[LOG_AREA].height - footer_height;
+  size.height = screen_height - size.y - areaSizes[LOG_AREA].height
+    - footer_height;
   if (convs_expanded) {
     size.x -= 2;
     size.width += 4;
@@ -513,7 +514,8 @@ GHashTable *CenterIM::get_ui_info()
   return ui_info;
 }
 
-guint CenterIM::timeout_add(guint interval, GSourceFunc function, gpointer data)
+guint CenterIM::timeout_add(guint interval, GSourceFunc function,
+    gpointer data)
 {
   return g_timeout_add(interval, function, data);
 }
@@ -590,14 +592,14 @@ void CenterIM::tmp_purple_print(PurpleDebugLevel level, const char *category,
   logbuf->push_back(item);
 }
 
-void CenterIM::dimensions_change(const char */*name*/, PurplePrefType /*type*/,
-    gconstpointer /*val*/)
+void CenterIM::dimensions_change(const char * /*name*/,
+    PurplePrefType /*type*/, gconstpointer /*val*/)
 {
   mngr->OnScreenResized();
 }
 
-void CenterIM::idle_reporting_change(const char */*name*/, PurplePrefType type,
-    gconstpointer val)
+void CenterIM::idle_reporting_change(const char * /*name*/,
+    PurplePrefType type, gconstpointer val)
 {
   g_return_if_fail(type == PURPLE_PREF_STRING);
 
@@ -994,7 +996,8 @@ void CenterIM::ActionOpenGeneralMenu()
 
 void CenterIM::ActionBuddyListToggleOffline()
 {
-  gboolean cur = purple_prefs_get_bool(CONF_PREFIX "/blist/show_offline_buddies");
+  gboolean cur = purple_prefs_get_bool(CONF_PREFIX
+      "/blist/show_offline_buddies");
   purple_prefs_set_bool(CONF_PREFIX "/blist/show_offline_buddies", !cur);
 }
 

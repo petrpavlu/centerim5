@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008 by Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2011 by CenterIM developers
+ * Copyright (C) 2012 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -34,8 +33,6 @@
 #include "ColorScheme.h"
 #include "ColorPickerPalette.h"
 
-#include <vector>
-
 namespace CppConsUI
 {
 
@@ -55,7 +52,6 @@ public:
   sigc::signal<void, ColorPickerDialog&, ResponseType, int> signal_response;
 
 protected:
-
   // AbstractDialog
   virtual void EmitResponse(ResponseType response);
 

@@ -101,7 +101,7 @@ void GeneralMenu::OpenOptionWindow(CppConsUI::Button& /*activator*/)
 }
 
 #ifdef DEBUG
-void GeneralMenu::RequestTest(CppConsUI::Button& activator)
+void GeneralMenu::RequestTest(CppConsUI::Button& /*activator*/)
 {
 #if 0
   purple_request_input(NULL, "Title", "Primary", "Secondary",

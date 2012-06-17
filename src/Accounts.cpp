@@ -214,8 +214,8 @@ void Accounts::PendingRequestWindow::OnRequestRemove(Accounts& /*accounts*/,
   request_map.erase(i);
 }
 
-void Accounts::PendingRequestWindow::OnActivate(CppConsUI::Button& /*activator*/,
-    const Request& request)
+void Accounts::PendingRequestWindow::OnActivate(
+    CppConsUI::Button& /*activator*/, const Request& request)
 {
   if (typeid(request) == typeid(AddRequest)) {
     const AddRequest *add_request = dynamic_cast<const AddRequest*>(&request);
@@ -263,8 +263,9 @@ void Accounts::PendingRequestWindow::OnActivate(CppConsUI::Button& /*activator*/
     g_assert_not_reached();
 }
 
-void Accounts::PendingRequestWindow::OnAddResponse(RequestDialog& /*activator*/,
-    ResponseType response, const AddRequest& request)
+void Accounts::PendingRequestWindow::OnAddResponse(
+    RequestDialog& /*activator*/, ResponseType response,
+    const AddRequest& request)
 {
   switch (response) {
     case CppConsUI::AbstractDialog::RESPONSE_YES:
@@ -280,8 +281,9 @@ void Accounts::PendingRequestWindow::OnAddResponse(RequestDialog& /*activator*/,
   }
 }
 
-void Accounts::PendingRequestWindow::OnAuthResponse(RequestDialog& /*activator*/,
-    ResponseType response, const AuthRequest& request)
+void Accounts::PendingRequestWindow::OnAuthResponse(
+    RequestDialog& /*activator*/, ResponseType response,
+    const AuthRequest& request)
 {
   switch (response) {
     case CppConsUI::AbstractDialog::RESPONSE_YES:
@@ -349,7 +351,7 @@ void Accounts::RemoveRequest(const Request& request)
 }
 
 void Accounts::notify_added(PurpleAccount *account, const char *remote_user,
-    const char */*id*/, const char *alias, const char *message)
+    const char * /*id*/, const char *alias, const char *message)
 {
   const char *proto = purple_account_get_protocol_name(account);
   const char *uname = purple_account_get_username(account);
@@ -388,7 +390,7 @@ void Accounts::status_changed(PurpleAccount *account, PurpleStatus *status)
 }
 
 void Accounts::request_add(PurpleAccount *account, const char *remote_user,
-    const char *id, const char *alias, const char */*message*/)
+    const char *id, const char *alias, const char * /*message*/)
 {
   AddRequest *request = new AddRequest(account, remote_user, id, alias);
   requests.push_back(request);

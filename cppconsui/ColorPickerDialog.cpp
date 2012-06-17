@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2011 by CenterIM developers
+ * Copyright (C) 2012 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -39,10 +39,8 @@ ColorPickerDialog::ColorPickerDialog(const char *title, int /*defaultvalue*/,
   AddButton(OK_BUTTON_TEXT, RESPONSE_OK);
 
   pick = new ColorPickerPalette(0, flags);
-
   pick->signal_color_selected.connect(sigc::mem_fun(this,
         &ColorPickerDialog::OnColorSelected));
-
   layout->InsertWidget(0, *pick);
 
   Resize(pick->GetWidth() + 2, pick->GetHeight() + 4);
@@ -59,7 +57,6 @@ void ColorPickerDialog::EmitResponse(ResponseType response)
 {
   signal_response(*this, response, color);
 }
-
 
 } // namespace CppConsUI
 

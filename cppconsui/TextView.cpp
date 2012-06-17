@@ -421,7 +421,10 @@ size_t TextView::EraseScreenLines(size_t line_num, size_t start,
 
   size_t i = start;
   bool begin_set = false, end_set = false;
-  size_t begin=start, end;
+  /* Note, the assigment to the begin variable is only to silence a compiler
+   * warning. The use of the variable is protected by the begin_set variable.
+   * */
+  size_t begin = 0, end;
   while (i < screen_lines.size()) {
     if (screen_lines[i].parent == lines[line_num]) {
       if (!begin_set) {
