@@ -63,6 +63,8 @@ public:
     { return listbox->InsertSeparator(pos); }
   virtual AbstractLine *AppendSeparator()
     { return listbox->AppendSeparator(); }
+  virtual Button *InsertSubMenu(size_t pos, const char *title,
+      MenuWindow& submenu);
   virtual Button *AppendSubMenu(const char *title,
       MenuWindow& submenu);
   virtual void InsertWidget(size_t pos, Widget& widget)
@@ -110,6 +112,8 @@ protected:
 
   // FreeWindow
   virtual void OnScreenResizedInternal();
+
+  virtual Button *PrepareSubMenu(const char *title, MenuWindow& submenu);
 
   /**
    * Recalculates desired on-screen position and size of this window. This

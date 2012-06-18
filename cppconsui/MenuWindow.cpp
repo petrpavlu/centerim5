@@ -104,21 +104,18 @@ void MenuWindow::Close()
     Window::Close();
 }
 
+Button *MenuWindow::InsertSubMenu(size_t pos, const char *title,
+    MenuWindow& submenu)
+{
+  Button *button = PrepareSubMenu(title, submenu);
+  listbox->InsertWidget(pos, *button);
+  return button;
+}
+
 Button *MenuWindow::AppendSubMenu(const char *title, MenuWindow& submenu)
 {
-  // setup submenu correctly
-  submenu.Hide();
-  submenu.SetHideOnClose(true);
-  signal_hide.connect(sigc::hide(sigc::mem_fun(submenu, &MenuWindow::Hide)));
-
-  // create an opening button
-  Button *button = new Button(title);
-  button->signal_activate.connect(sigc::hide(sigc::mem_fun(submenu,
-          &MenuWindow::Show)));
+  Button *button = PrepareSubMenu(title, submenu);
   listbox->AppendWidget(*button);
-
-  submenu.SetRefWidget(*button);
-
   return button;
 }
 
@@ -184,6 +181,23 @@ void MenuWindow::OnScreenResizedInternal()
 {
   UpdateSmartPositionAndSize();
   Window::OnScreenResizedInternal();
+}
+
+Button *MenuWindow::PrepareSubMenu(const char *title, MenuWindow& submenu)
+{
+  // setup submenu correctly
+  submenu.Hide();
+  submenu.SetHideOnClose(true);
+  signal_hide.connect(sigc::hide(sigc::mem_fun(submenu, &MenuWindow::Hide)));
+
+  // create an opening button
+  Button *button = new Button(title);
+  button->signal_activate.connect(sigc::hide(sigc::mem_fun(submenu,
+          &MenuWindow::Show)));
+
+  submenu.SetRefWidget(*button);
+
+  return button;
 }
 
 void MenuWindow::UpdateSmartPositionAndSize()
