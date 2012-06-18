@@ -63,8 +63,16 @@ void AccountStatusMenu::OnScreenResized()
   Move(chat.x, chat.y);
 }
 
+void AccountStatusMenu::OpenStatusPopup(CppConsUI::Button& activator,
+    PurpleAccount *account)
+{
+  StatusPopup *status_popup = new StatusPopup(account);
+  status_popup->SetRefWidget(activator);
+  status_popup->Show();
+}
+
 AccountStatusMenu::StatusPopup::StatusPopup(PurpleAccount *account)
-: MenuWindow(0, 0, AUTOSIZE, AUTOSIZE), account(account)
+: MenuWindow(0, 0, AUTOSIZE, AUTOSIZE)
 {
   SetColorScheme("accountstatusmenu");
 
@@ -128,12 +136,6 @@ AccountStatusMenu::StatusPopup::StatusPopup(PurpleAccount *account)
   }
 }
 
-void AccountStatusMenu::StatusPopup::OnScreenResized()
-{
-  CppConsUI::Rect chat = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
-  Move(chat.x, chat.y);
-}
-
 void AccountStatusMenu::StatusPopup::SetStatus(
     CppConsUI::Button& /*activator*/, PurpleAccount *account,
     PurpleStatusType *status_type, bool active)
@@ -141,13 +143,6 @@ void AccountStatusMenu::StatusPopup::SetStatus(
   purple_account_set_status(account, purple_status_type_get_id(status_type),
       active, NULL);
   Close();
-}
-
-void AccountStatusMenu::OpenStatusPopup(CppConsUI::Button& /*activator*/,
-    PurpleAccount *account)
-{
-  AccountStatusMenu::StatusPopup *status_popup = new StatusPopup(account);
-  status_popup->Show();
 }
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
