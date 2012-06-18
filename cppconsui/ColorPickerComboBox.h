@@ -73,7 +73,7 @@ protected:
     ColorButton& operator=(const ColorButton&);
   };
 
-  // hide all ComboBox functionality which doesn't apply
+  // ComboBox
   ComboBox::ClearOptions;
   ComboBox::AddOption;
   ComboBox::AddOptionPtr;

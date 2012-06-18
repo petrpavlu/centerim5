@@ -32,15 +32,13 @@ namespace CppConsUI
 {
 
 Label::Label(int w, int h, const char *text_)
-: Widget(w, h)
-, text(NULL)
+: Widget(w, h), text(NULL)
 {
   SetText(text_);
 }
 
 Label::Label(const char *text_)
-: Widget(AUTOSIZE, AUTOSIZE)
-, text(NULL)
+: Widget(AUTOSIZE, AUTOSIZE), text(NULL)
 {
   SetText(text_);
 }

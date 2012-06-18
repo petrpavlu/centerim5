@@ -408,26 +408,6 @@ TreeView::Style TreeView::GetNodeStyle(NodeReference node) const
   return node->style;
 }
 
-void TreeView::AddWidget(Widget& widget, int x, int y)
-{
-  ScrollPane::AddWidget(widget, x, y);
-}
-
-void TreeView::RemoveWidget(Widget& widget)
-{
-  ScrollPane::RemoveWidget(widget);
-}
-
-void TreeView::MoveWidgetBefore(Widget& widget, Widget& position)
-{
-  ScrollPane::MoveWidgetBefore(widget, position);
-}
-
-void TreeView::MoveWidgetAfter(Widget& widget, Widget& position)
-{
-  ScrollPane::MoveWidgetAfter(widget, position);
-}
-
 int TreeView::DrawNode(SiblingIterator node, int top)
 {
   int height = 0, j;

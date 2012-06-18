@@ -205,10 +205,10 @@ protected:
   NodeReference focus_node;
 
   // Container
-  virtual void AddWidget(Widget& widget, int x, int y);
-  virtual void RemoveWidget(Widget& widget);
-  virtual void MoveWidgetBefore(Widget& widget, Widget& position);
-  virtual void MoveWidgetAfter(Widget& widget, Widget& position);
+  ScrollPane::AddWidget;
+  ScrollPane::RemoveWidget;
+  ScrollPane::MoveWidgetBefore;
+  ScrollPane::MoveWidgetAfter;
 
   virtual int DrawNode(SiblingIterator node, int top);
 
