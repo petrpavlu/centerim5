@@ -35,7 +35,7 @@ static void print_usage(FILE *out, const char *prg_name)
 "  -h, --help                 display command line usage\n"
 "  -v, --version              show the program version info\n"
 "  -b, --basedir <directory>  specify another base directory\n"
-"  -o, --offline              start with all protocols set offline\n"),
+"  -o, --offline              start with all accounts set offline\n"),
       prg_name);
 }
 
