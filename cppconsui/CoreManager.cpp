@@ -188,7 +188,7 @@ void CoreManager::EnableResizing()
   struct sigaction sig;
   sig.sa_handler = SignalHandler;
   sigemptyset(&sig.sa_mask);
-  sig.sa_flags = 0;
+  sig.sa_flags = SA_RESTART;
   sigaction(SIGWINCH, &sig, NULL);
 }
 
