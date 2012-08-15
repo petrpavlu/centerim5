@@ -81,7 +81,7 @@ protected:
 
   PurpleBlistNode *node;
 
-  BuddyListNode(PurpleBlistNode *node);
+  BuddyListNode(PurpleBlistNode *node_);
   virtual ~BuddyListNode();
 
   virtual void OpenContextMenu() = 0;

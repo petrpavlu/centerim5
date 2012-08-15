@@ -174,7 +174,8 @@ void BuddyList::DelayedGroupNodesInit()
   PurpleBlistNode *node = purple_blist_get_root();
   while (node) {
     if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
-      BuddyListGroup *gnode = reinterpret_cast<BuddyListGroup*>(node->ui_data);
+      BuddyListGroup *gnode = reinterpret_cast<BuddyListGroup*>(
+          purple_blist_node_get_ui_data(node));
       if (gnode)
         gnode->DelayedInit();
     }
@@ -230,7 +231,7 @@ void BuddyList::new_list(PurpleBuddyList *list)
 
 void BuddyList::new_node(PurpleBlistNode *node)
 {
-  g_return_if_fail(!node->ui_data);
+  g_return_if_fail(!purple_blist_node_get_ui_data(node));
 
   if (PURPLE_BLIST_NODE_IS_GROUP(node) && list_mode == BuddyList::LIST_FLAT) {
     // flat mode = no groups
@@ -254,11 +255,13 @@ void BuddyList::new_node(PurpleBlistNode *node)
 
 void BuddyList::update(PurpleBuddyList *list, PurpleBlistNode *node)
 {
-  // not cool, but necessary because libpurple doesn't always behave nice
-  if (!node->ui_data)
+  /* Not cool, but necessary because libpurple doesn't always behave nice.
+   * Note that calling new_node() can modify node's ui_data. */
+  if (!purple_blist_node_get_ui_data(node))
     new_node(node);
 
-  BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(node->ui_data);
+  BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(
+      purple_blist_node_get_ui_data(node));
   g_return_if_fail(bnode);
 
   // update the node data
@@ -270,7 +273,8 @@ void BuddyList::update(PurpleBuddyList *list, PurpleBlistNode *node)
 
 void BuddyList::remove(PurpleBuddyList *list, PurpleBlistNode *node)
 {
-  BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(node->ui_data);
+  BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(
+      purple_blist_node_get_ui_data(node));
   g_return_if_fail(bnode);
 
   treeview->DeleteNode(bnode->GetRefNode(), false);
@@ -567,7 +571,8 @@ void BuddyList::blist_pref_change(const char *name, PurplePrefType /*type*/,
   PurpleBlistNode *node = purple_blist_get_root();
   while (node) {
     if (!groups_only || PURPLE_BLIST_NODE_IS_GROUP(node)) {
-      BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(node->ui_data);
+      BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(
+          purple_blist_node_get_ui_data(node));
       if (bnode)
         bnode->Update();
     }

@@ -114,10 +114,11 @@ BuddyListNode *BuddyListNode::GetParentNode() const
 {
   PurpleBlistNode *parent = node->parent;
 
-  if (!parent || !parent->ui_data)
+  if (!parent)
     return NULL;
 
-  return reinterpret_cast<BuddyListNode*>(parent->ui_data);
+  return reinterpret_cast<BuddyListNode*>(
+      purple_blist_node_get_ui_data(parent));
 }
 
 BuddyListNode::ContextMenu::ContextMenu(BuddyListNode& parent_node_)
@@ -208,17 +209,17 @@ void BuddyListNode::ContextMenu::AppendExtendedMenu()
   }
 }
 
-BuddyListNode::BuddyListNode(PurpleBlistNode *node)
-: treeview(NULL), node(node)
+BuddyListNode::BuddyListNode(PurpleBlistNode *node_)
+: treeview(NULL), node(node_)
 {
-  node->ui_data = this;
+  purple_blist_node_set_ui_data(node, this);
   signal_activate.connect(sigc::mem_fun(this, &BuddyListNode::OnActivate));
   DeclareBindables();
 }
 
 BuddyListNode::~BuddyListNode()
 {
-  node->ui_data = NULL;
+  purple_blist_node_set_ui_data(node, NULL);
 }
 
 bool BuddyListNode::LessOrEqualByType(const BuddyListNode& other) const
@@ -663,7 +664,7 @@ void BuddyListContact::Update()
 void BuddyListContact::OnActivate(Button& activator)
 {
   PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
-  void *ui_data = buddy->node.ui_data;
+  gpointer ui_data = purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(buddy));
   if (ui_data) {
     BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(ui_data);
     bnode->OnActivate(activator);
