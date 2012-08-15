@@ -49,6 +49,12 @@ OptionWindow::OptionWindow()
   c->AddOption(_("Normal"), "normal");
   c->AddOption(_("Flat"), "flat");
   tree->AppendNode(parent, *c);
+  c = new ChoiceOption(_("Buddy sort mode"),
+      CONF_PREFIX "/blist/buddy_sort_mode");
+  c->AddOption(_("By name"), "name");
+  c->AddOption(_("By status"), "status");
+  c->AddOption(_("By activity"), "activity");
+  tree->AppendNode(parent, *c);
   c = new ChoiceOption(_("Colorization mode"),
       CONF_PREFIX "/blist/colorization_mode");
   c->AddOption(_("None"), "none");

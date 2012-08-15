@@ -87,6 +87,7 @@ protected:
   virtual void OpenContextMenu() = 0;
 
   bool LessOrEqualByType(const BuddyListNode& other) const;
+  bool LessOrEqualByBuddySort(PurpleBuddy *left, PurpleBuddy *right) const;
 
   /* Called by BuddyListBuddy and BuddyListContact to get presence status
    * char. Returned value should be used as a prefix of buddy/contact name. */

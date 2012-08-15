@@ -36,15 +36,21 @@ class BuddyList
 : public CppConsUI::Window
 {
 public:
+  enum ListMode {
+    LIST_NORMAL,
+    LIST_FLAT
+  };
+
+  enum BuddySortMode {
+    BUDDY_SORT_BY_NAME,
+    BUDDY_SORT_BY_STATUS,
+    BUDDY_SORT_BY_ACTIVITY
+  };
+
   enum ColorizationMode {
     COLOR_NONE,
     COLOR_BY_STATUS,
     COLOR_BY_ACCOUNT
-  };
-
-  enum ListMode {
-    LIST_NORMAL,
-    LIST_FLAT
   };
 
   static BuddyList *Instance();
@@ -60,7 +66,10 @@ public:
   // these functions are faster version of getting blist/* prefs
   bool GetShowEmptyGroupsPref() const { return show_empty_groups; }
   bool GetShowOfflineBuddiesPref() const { return show_offline_buddies; }
+  BuddySortMode GetBuddySortMode() const { return buddy_sort_mode; }
   ColorizationMode GetColorizationMode() const { return colorization_mode; }
+
+  void UpdateNode(PurpleBlistNode *node);
 
 protected:
 
@@ -71,8 +80,9 @@ private:
 
   bool show_empty_groups;
   bool show_offline_buddies;
-  ColorizationMode colorization_mode;
   ListMode list_mode;
+  BuddySortMode buddy_sort_mode;
+  ColorizationMode colorization_mode;
 
   static BuddyList *instance;
 

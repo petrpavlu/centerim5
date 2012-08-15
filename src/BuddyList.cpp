@@ -64,6 +64,11 @@ void BuddyList::OnScreenResized()
   MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::BUDDY_LIST_AREA));
 }
 
+void BuddyList::UpdateNode(PurpleBlistNode *node)
+{
+  update(buddylist, node);
+}
+
 BuddyList::BuddyList()
 : Window(0, 0, 80, 24)
 {
@@ -92,13 +97,15 @@ BuddyList::BuddyList()
   purple_prefs_add_none(CONF_PREFIX "/blist");
   purple_prefs_add_bool(CONF_PREFIX "/blist/show_empty_groups", false);
   purple_prefs_add_bool(CONF_PREFIX "/blist/show_offline_buddies", true);
-  purple_prefs_add_string(CONF_PREFIX "/blist/colorization_mode", "none");
   purple_prefs_add_string(CONF_PREFIX "/blist/list_mode", "normal");
+  purple_prefs_add_string(CONF_PREFIX "/blist/buddy_sort_mode", "status");
+  purple_prefs_add_string(CONF_PREFIX "/blist/colorization_mode", "none");
 
   UpdateCachedPreference(CONF_PREFIX "/blist/show_empty_groups");
   UpdateCachedPreference(CONF_PREFIX "/blist/show_offline_buddies");
-  UpdateCachedPreference(CONF_PREFIX "/blist/colorization_mode");
   UpdateCachedPreference(CONF_PREFIX "/blist/list_mode");
+  UpdateCachedPreference(CONF_PREFIX "/blist/buddy_sort_mode");
+  UpdateCachedPreference(CONF_PREFIX "/blist/colorization_mode");
 
   // connect callbacks
   purple_prefs_connect_callback(this, CONF_PREFIX "/blist",
@@ -190,6 +197,22 @@ void BuddyList::UpdateCachedPreference(const char *name)
     show_empty_groups = purple_prefs_get_bool(name);
   else if (!strcmp(name, CONF_PREFIX "/blist/show_offline_buddies"))
     show_offline_buddies = purple_prefs_get_bool(name);
+  else if (!strcmp(name, CONF_PREFIX "/blist/list_mode")) {
+    const char *value = purple_prefs_get_string(name);
+    if (!strcmp(value, "flat"))
+      list_mode = LIST_FLAT;
+    else
+      list_mode = LIST_NORMAL;
+  }
+  else if (!strcmp(name, CONF_PREFIX "/blist/buddy_sort_mode")) {
+    const char *value = purple_prefs_get_string(name);
+    if (!strcmp(value, "status"))
+      buddy_sort_mode = BUDDY_SORT_BY_STATUS;
+    else if (!strcmp(value, "activity"))
+      buddy_sort_mode = BUDDY_SORT_BY_ACTIVITY;
+    else
+      buddy_sort_mode = BUDDY_SORT_BY_NAME;
+  }
   else if (!strcmp(name, CONF_PREFIX "/blist/colorization_mode")) {
     const char *value = purple_prefs_get_string(name);
     if (!strcmp(value, "status"))
@@ -198,13 +221,6 @@ void BuddyList::UpdateCachedPreference(const char *name)
       colorization_mode = COLOR_BY_ACCOUNT;
     else
       colorization_mode = COLOR_NONE;
-  }
-  else if (!strcmp(name, CONF_PREFIX "/blist/list_mode")) {
-    const char *value = purple_prefs_get_string(name);
-    if (!strcmp(value, "flat"))
-      list_mode = LIST_FLAT;
-    else
-      list_mode = LIST_NORMAL;
   }
 }
 

@@ -230,6 +230,32 @@ bool BuddyListNode::LessOrEqualByType(const BuddyListNode& other) const
   return t1 <= t2;
 }
 
+bool BuddyListNode::LessOrEqualByBuddySort(PurpleBuddy *left,
+    PurpleBuddy *right) const
+{
+  BuddyList::BuddySortMode mode = BUDDYLIST->GetBuddySortMode();
+  int a, b;
+
+  switch (mode) {
+    case BuddyList::BUDDY_SORT_BY_NAME:
+      break;
+    case BuddyList::BUDDY_SORT_BY_STATUS:
+      a = GetBuddyStatusWeight(left);
+      b = GetBuddyStatusWeight(right);
+      if (a != b)
+        return a > b;
+      break;
+    case BuddyList::BUDDY_SORT_BY_ACTIVITY:
+      a = purple_blist_node_get_int(PURPLE_BLIST_NODE(left), "last_activity");
+      b = purple_blist_node_get_int(PURPLE_BLIST_NODE(right), "last_activity");
+      if (a != b)
+        return a > b;
+      break;
+  }
+  return g_utf8_collate(purple_buddy_get_alias(left),
+      purple_buddy_get_alias(right)) <= 0;
+}
+
 const char *BuddyListNode::GetBuddyStatus(PurpleBuddy *buddy) const
 {
   if (!purple_account_is_connected(purple_buddy_get_account(buddy)))
@@ -293,15 +319,8 @@ void BuddyListNode::DeclareBindables()
 bool BuddyListBuddy::LessOrEqual(const BuddyListNode& other) const
 {
   const BuddyListBuddy *o = dynamic_cast<const BuddyListBuddy*>(&other);
-  if (o) {
-    int a = GetBuddyStatusWeight(buddy);
-    int b = GetBuddyStatusWeight(o->buddy);
-    if (a != b)
-      return a > b;
-
-    return g_utf8_collate(purple_buddy_get_alias(buddy),
-        purple_buddy_get_alias(o->buddy)) <= 0;
-  }
+  if (o)
+    return LessOrEqualByBuddySort(buddy, o->buddy);
   return LessOrEqualByType(other);
 }
 
@@ -621,15 +640,9 @@ bool BuddyListContact::LessOrEqual(const BuddyListNode& other) const
 {
   const BuddyListContact *o = dynamic_cast<const BuddyListContact*>(&other);
   if (o) {
-    PurpleBuddy *buddy_a = purple_contact_get_priority_buddy(contact);
-    PurpleBuddy *buddy_b = purple_contact_get_priority_buddy(o->contact);
-    int a = GetBuddyStatusWeight(buddy_a);
-    int b = GetBuddyStatusWeight(buddy_b);
-    if (a != b)
-      return a > b;
-
-    return g_utf8_collate(purple_contact_get_alias(contact),
-        purple_contact_get_alias(o->contact)) <= 0;
+    PurpleBuddy *left = purple_contact_get_priority_buddy(contact);
+    PurpleBuddy *right = purple_contact_get_priority_buddy(o->contact);
+    return LessOrEqualByBuddySort(left, right);
   }
   return LessOrEqualByType(other);
 }

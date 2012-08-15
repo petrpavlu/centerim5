@@ -21,6 +21,7 @@
 
 #include "Conversation.h"
 
+#include "BuddyList.h"
 #include "CenterIM.h"
 #include "Conversations.h"
 #include "Footer.h"
@@ -164,8 +165,28 @@ void Conversation::OnScreenResized()
 void Conversation::Write(const char *name, const char * /*alias*/,
     const char *message, PurpleMessageFlags flags, time_t mtime)
 {
-  PurpleConversationType type = purple_conversation_get_type(conv);
+  // beep on message
+  if (!(flags & PURPLE_MESSAGE_SEND)
+      && purple_prefs_get_bool(CONF_PREFIX "/chat/beep_on_msg"))
+    CppConsUI::Curses::beep();
 
+  // update the last_activity property
+  PurpleConversationType type = purple_conversation_get_type(conv);
+  time_t cur_time = time(NULL);
+
+  if (type == PURPLE_CONV_TYPE_IM) {
+    PurpleBlistNode *bnode = PURPLE_BLIST_NODE(purple_find_buddy(
+          purple_conversation_get_account(conv),
+          purple_conversation_get_name(conv)));
+    if (bnode) {
+      purple_blist_node_set_int(bnode, "last_activity", cur_time);
+
+      // inform the buddy list node that it should update its state
+      BUDDYLIST->UpdateNode(bnode);
+    }
+  }
+
+  // write the message
   int color;
   const char *dir;
   const char *mtype;
@@ -186,13 +207,8 @@ void Conversation::Write(const char *name, const char * /*alias*/,
 
   }
 
-  if (!(flags & PURPLE_MESSAGE_SEND)
-      && purple_prefs_get_bool(CONF_PREFIX "/chat/beep_on_msg"))
-    CppConsUI::Curses::beep();
-
   // write text into logfile
   char *msg;
-  time_t cur_time = time(NULL);
   if (type == PURPLE_CONV_TYPE_CHAT)
     msg = g_strdup_printf("\f\n%s\n%s\n%lu\n%lu\n%s: %s\n", dir, mtype, mtime,
         cur_time, name, message);
