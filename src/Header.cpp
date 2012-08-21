@@ -47,7 +47,7 @@ Header::Header()
   AddWidget(*container, 0, 0);
 
   // CenterIM name will always be top-left so we can "forget about" it
-  char *cimname = g_strdup_printf("CENTERIM %s", PACKAGE_VERSION);
+  char *cimname = g_strdup_printf("CENTERIM %s", CenterIM::version);
   container->AppendWidget(*(new CppConsUI::Label(cimname)));
   g_free(cimname);
 

@@ -41,7 +41,7 @@ static void print_usage(FILE *out, const char *prg_name)
 
 static void print_version(FILE *out)
 {
-  fprintf(out, "CenterIM %s\n", PACKAGE_VERSION);
+  fprintf(out, "CenterIM %s\n", CenterIM::version);
 }
 
 int main(int argc, char *argv[])

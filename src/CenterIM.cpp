@@ -500,8 +500,7 @@ GHashTable *CenterIM::get_ui_info()
     ui_info = g_hash_table_new(g_str_hash, g_str_equal);
 
     g_hash_table_insert(ui_info, (void *) "name", (void *) PACKAGE_NAME);
-    g_hash_table_insert(ui_info, (void *) "version",
-        (void *) PACKAGE_VERSION);
+    g_hash_table_insert(ui_info, (void *) "version", (void *) version);
     g_hash_table_insert(ui_info, (void *) "website",
         (void *) "http://www.centerim.org/");
 
