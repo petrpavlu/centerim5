@@ -74,13 +74,13 @@ protected:
   };
 
   // ComboBox
-  ComboBox::ClearOptions;
-  ComboBox::AddOption;
-  ComboBox::AddOptionPtr;
-  ComboBox::GetSelectedTitle;
-  ComboBox::GetTitle;
-  ComboBox::SetSelectedByData;
-  ComboBox::SetSelectedByDataPtr;
+  using ComboBox::ClearOptions;
+  using ComboBox::AddOption;
+  using ComboBox::AddOptionPtr;
+  using ComboBox::GetSelectedTitle;
+  using ComboBox::GetTitle;
+  using ComboBox::SetSelectedByData;
+  using ComboBox::SetSelectedByDataPtr;
 
   // ComboBox
   virtual void OnDropDown(Button& activator);

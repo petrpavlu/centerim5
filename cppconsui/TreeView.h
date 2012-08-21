@@ -205,10 +205,10 @@ protected:
   NodeReference focus_node;
 
   // Container
-  ScrollPane::AddWidget;
-  ScrollPane::RemoveWidget;
-  ScrollPane::MoveWidgetBefore;
-  ScrollPane::MoveWidgetAfter;
+  using ScrollPane::AddWidget;
+  using ScrollPane::RemoveWidget;
+  using ScrollPane::MoveWidgetBefore;
+  using ScrollPane::MoveWidgetAfter;
 
   virtual int DrawNode(SiblingIterator node, int top);
 
