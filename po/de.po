@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: centerim5\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2012-08-15 13:23+0200\n"
+"POT-Creation-Date: 2012-09-10 22:38+0200\n"
 "PO-Revision-Date: 2011-06-08 14:43+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -21,8 +21,8 @@ msgstr ""
 msgid "Accounts"
 msgstr "Accounts..."
 
-#: src/AccountWindow.cpp:44 src/Accounts.cpp:173 src/BuddyList.cpp:348
-#: src/BuddyList.cpp:423 src/BuddyList.cpp:435
+#: src/AccountWindow.cpp:44 src/Accounts.cpp:173 src/BuddyList.cpp:486
+#: src/BuddyList.cpp:561 src/BuddyList.cpp:573
 msgid "Add"
 msgstr "Hinzufügen"
 
@@ -42,9 +42,9 @@ msgstr "Account aktiviert"
 msgid "Password"
 msgstr "Paßwort"
 
-#: src/AccountWindow.cpp:124 src/BuddyList.cpp:323 src/BuddyList.cpp:395
-#: src/BuddyListNode.cpp:407 src/BuddyListNode.cpp:585
-#: src/BuddyListNode.cpp:758
+#: src/AccountWindow.cpp:124 src/BuddyList.cpp:461 src/BuddyList.cpp:533
+#: src/BuddyListNode.cpp:422 src/BuddyListNode.cpp:603
+#: src/BuddyListNode.cpp:778
 msgid "Alias"
 msgstr "Alias"
 
@@ -105,7 +105,7 @@ msgstr ""
 msgid "Add %s to your buddy list?"
 msgstr ""
 
-#: src/Accounts.cpp:231 src/BuddyList.cpp:348
+#: src/Accounts.cpp:231 src/BuddyList.cpp:486
 msgid "Add buddy"
 msgstr ""
 
@@ -172,91 +172,95 @@ msgstr ""
 msgid "+ [%s] %s: New authorization request from %s"
 msgstr ""
 
-#: src/BuddyList.cpp:44
+#: src/BuddyList.cpp:65
 #, c-format
-msgid "%s act conv, %s status menu, %s context menu"
+msgid "%s act conv, %s status menu, %s context menu, %s filter"
 msgstr ""
 
-#: src/BuddyList.cpp:238
+#: src/BuddyList.cpp:113
+msgid "Filter: "
+msgstr ""
+
+#: src/BuddyList.cpp:327
 msgid "There are no connected accounts."
 msgstr ""
 
-#: src/BuddyList.cpp:245
+#: src/BuddyList.cpp:383
 msgid "Different Buddylist detected!"
 msgstr ""
 
-#: src/BuddyList.cpp:318 src/BuddyList.cpp:391
+#: src/BuddyList.cpp:456 src/BuddyList.cpp:529
 #, fuzzy
 msgid "Account"
 msgstr "Accounts..."
 
-#: src/BuddyList.cpp:320
+#: src/BuddyList.cpp:458
 msgid "Buddy name"
 msgstr ""
 
-#: src/BuddyList.cpp:326 src/BuddyList.cpp:398
+#: src/BuddyList.cpp:464 src/BuddyList.cpp:536
 msgid "Group"
 msgstr ""
 
-#: src/BuddyList.cpp:345
+#: src/BuddyList.cpp:483
 msgid "Buddies"
 msgstr ""
 
-#: src/BuddyList.cpp:363 src/BuddyList.cpp:518
+#: src/BuddyList.cpp:501 src/BuddyList.cpp:656
 msgid "This protocol does not support chat rooms."
 msgstr ""
 
-#: src/BuddyList.cpp:379
+#: src/BuddyList.cpp:517
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
 msgstr ""
 
-#: src/BuddyList.cpp:393
+#: src/BuddyList.cpp:531
 msgid "Chat name"
 msgstr ""
 
-#: src/BuddyList.cpp:417
+#: src/BuddyList.cpp:555
 msgid "Chats"
 msgstr ""
 
-#: src/BuddyList.cpp:420
+#: src/BuddyList.cpp:558
 msgid "Auto-join"
 msgstr ""
 
-#: src/BuddyList.cpp:423
+#: src/BuddyList.cpp:561
 msgid "Add chat"
 msgstr ""
 
-#: src/BuddyList.cpp:433
+#: src/BuddyList.cpp:571
 msgid "Add Group"
 msgstr ""
 
-#: src/BuddyList.cpp:434
+#: src/BuddyList.cpp:572
 msgid "Please enter the name of the group to be added."
 msgstr ""
 
-#: src/BuddyList.cpp:435 cppconsui/AbstractDialog.h:32
+#: src/BuddyList.cpp:573 cppconsui/AbstractDialog.h:32
 msgid "Cancel"
 msgstr ""
 
-#: src/BuddyList.cpp:453 src/BuddyList.cpp:506
+#: src/BuddyList.cpp:591 src/BuddyList.cpp:644
 msgid "No account specified."
 msgstr ""
 
-#: src/BuddyList.cpp:457 src/BuddyList.cpp:510
+#: src/BuddyList.cpp:595 src/BuddyList.cpp:648
 msgid "Selected account is not connected."
 msgstr ""
 
-#: src/BuddyList.cpp:461 src/BuddyList.cpp:524
+#: src/BuddyList.cpp:599 src/BuddyList.cpp:662
 msgid "No buddy name specified."
 msgstr ""
 
-#: src/BuddyList.cpp:465 src/BuddyList.cpp:528 src/BuddyList.cpp:563
+#: src/BuddyList.cpp:603 src/BuddyList.cpp:666 src/BuddyList.cpp:701
 msgid "No group name specified."
 msgstr ""
 
-#: src/BuddyList.cpp:480
+#: src/BuddyList.cpp:618
 msgid "Specified buddy is already in the list."
 msgstr ""
 
@@ -264,67 +268,67 @@ msgstr ""
 msgid "Unrecognized BuddyList node."
 msgstr ""
 
-#: src/BuddyListNode.cpp:378 src/BuddyListNode.cpp:557
-#: src/BuddyListNode.cpp:704
+#: src/BuddyListNode.cpp:393 src/BuddyListNode.cpp:575
+#: src/BuddyListNode.cpp:724
 #, fuzzy
 msgid "Alias..."
 msgstr "Alias"
 
-#: src/BuddyListNode.cpp:380 src/BuddyListNode.cpp:559
-#: src/BuddyListNode.cpp:706 src/BuddyListNode.cpp:918
+#: src/BuddyListNode.cpp:395 src/BuddyListNode.cpp:577
+#: src/BuddyListNode.cpp:726 src/BuddyListNode.cpp:938
 msgid "Delete..."
 msgstr ""
 
-#: src/BuddyListNode.cpp:439
+#: src/BuddyListNode.cpp:454
 #, fuzzy, c-format
 msgid "Are you sure you want to delete buddy %s from the list?"
 msgstr "Diesen Account wirklich löschen?"
 
-#: src/BuddyListNode.cpp:442
+#: src/BuddyListNode.cpp:457
 msgid "Buddy deletion"
 msgstr ""
 
-#: src/BuddyListNode.cpp:615
+#: src/BuddyListNode.cpp:633
 #, fuzzy, c-format
 msgid "Are you sure you want to delete chat %s from the list?"
 msgstr "Diesen Account wirklich löschen?"
 
-#: src/BuddyListNode.cpp:618
+#: src/BuddyListNode.cpp:636
 msgid "Chat deletion"
 msgstr ""
 
-#: src/BuddyListNode.cpp:727
+#: src/BuddyListNode.cpp:747
 msgid "Move to..."
 msgstr ""
 
-#: src/BuddyListNode.cpp:800
+#: src/BuddyListNode.cpp:820
 #, fuzzy, c-format
 msgid "Are you sure you want to delete contact %s from the list?"
 msgstr "Diesen Account wirklich löschen?"
 
-#: src/BuddyListNode.cpp:803
+#: src/BuddyListNode.cpp:823
 msgid "Contact deletion"
 msgstr ""
 
-#: src/BuddyListNode.cpp:916
+#: src/BuddyListNode.cpp:936
 msgid "Rename..."
 msgstr ""
 
-#: src/BuddyListNode.cpp:937
+#: src/BuddyListNode.cpp:957
 msgid "Specified group is already in the list."
 msgstr ""
 
-#: src/BuddyListNode.cpp:952
+#: src/BuddyListNode.cpp:972
 #, fuzzy
 msgid "Rename"
 msgstr "Nutzername"
 
-#: src/BuddyListNode.cpp:1010
+#: src/BuddyListNode.cpp:1030
 #, fuzzy, c-format
 msgid "Are you sure you want to delete group %s from the list?"
 msgstr "Diesen Account wirklich löschen?"
 
-#: src/BuddyListNode.cpp:1013
+#: src/BuddyListNode.cpp:1033
 #, fuzzy
 msgid "Group deletion"
 msgstr "Account aktiviert"
@@ -395,7 +399,7 @@ msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s'.\n"
 msgid "Libpurple initialization failed."
 msgstr "Initialisierung von libtermkey fehlgeschlagen.\n"
 
-#: src/CenterIM.cpp:756
+#: src/CenterIM.cpp:755
 msgid "Error saving 'colorschemes.xml'.\n"
 msgstr ""
 
@@ -864,6 +868,37 @@ msgstr "Initialisierung von libtermkey fehlgeschlagen.\n"
 msgid "<unbound>"
 msgstr ""
 
+#~ msgid "Accept input and move focus."
+#~ msgstr "Eingabe akzeptieren und Fokus bewegen"
+
+#~ msgid "Activate the button"
+#~ msgstr "Knopf aktivieren"
+
+#~ msgid "All accounts"
+#~ msgstr "Alle Accounts"
+
+#~ msgid "Already logged in only"
+#~ msgstr "Bereits nur eingeloggt"
+
+#~ msgid "Close the window"
+#~ msgstr "Fenster schließen"
+
+#~ msgid "Close the window."
+#~ msgstr "Fenster schließen"
+
+#~ msgid "Collapse the selected subtree"
+#~ msgstr "Gewählten Unterbaum einklappen"
+
+#, fuzzy
+#~ msgid "Could not initialize libpurple core.\n"
+#~ msgstr "konnte libpurple-Kern nicht initialisieren\n"
+
+#~ msgid "Delete character before cursor."
+#~ msgstr "Buchstabe vor Cursor löschen"
+
+#~ msgid "Delete character under cursor."
+#~ msgstr "Buchstabe unter Cursor löschen"
+
 #, fuzzy
 #~ msgid "Error opening keybinding file '%s' (%s)."
 #~ msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s' (%s).\n"
@@ -873,12 +908,8 @@ msgstr ""
 #~ msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s'.\n"
 
 #, fuzzy
-#~ msgid "Error writing to keybinding file '%s' (%s)."
-#~ msgstr "centerim/log: Fehler beim Schreiben in Logdatei (%s).\n"
-
-#, fuzzy
-#~ msgid "Error writing to keybinding file '%s'."
-#~ msgstr "centerim/log: Fehler beim Schreiben in Logdatei (%s).\n"
+#~ msgid "Error parsing keybinding file '%s' (%s)."
+#~ msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s' (%s).\n"
 
 #, fuzzy
 #~ msgid "Error reading keybinding file '%s' (%s)."
@@ -889,34 +920,73 @@ msgstr ""
 #~ msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s' (%s).\n"
 
 #, fuzzy
-#~ msgid "Error parsing keybinding file '%s' (%s)."
-#~ msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s' (%s).\n"
+#~ msgid "Error writing to keybinding file '%s' (%s)."
+#~ msgstr "centerim/log: Fehler beim Schreiben in Logdatei (%s).\n"
+
+#, fuzzy
+#~ msgid "Error writing to keybinding file '%s'."
+#~ msgstr "centerim/log: Fehler beim Schreiben in Logdatei (%s).\n"
+
+#~ msgid "Expand the selected subtree"
+#~ msgstr "Gewählten Unterbaum ausklappen"
+
+#~ msgid "Find/add users"
+#~ msgstr "Nutzer finden/hinzufügen"
+
+#~ msgid "Focus the next widget above."
+#~ msgstr "Fokusiert nächstes Widget oberhalb."
+
+#~ msgid "Focus the next widget below."
+#~ msgstr "Fokusiert nächstes Widget unterhalb."
+
+#~ msgid "Focus the next widget to the left."
+#~ msgstr "Fokusiert nächstes Element links."
+
+#~ msgid "Focus the next widget to the right."
+#~ msgstr "Fokusiert nächstes Element rechts."
+
+#~ msgid "Focusses the next widget"
+#~ msgstr "Fokusiert nächstes Element"
+
+#~ msgid "Focusses the previous widget"
+#~ msgstr "Fokusiert vorheriges Element"
+
+#~ msgid "Go to contact..."
+#~ msgstr "Gehe zu Kontakten..."
+
+#~ msgid "Join channel/conference"
+#~ msgstr "Channel/Konferenz beitreten"
+
+#~ msgid "Link an RSS feed"
+#~ msgstr "RSS-Feed einbinden"
 
 #, fuzzy
 #~ msgid "Malformed help message"
 #~ msgstr "Nachricht senden."
 
-#~ msgid "Value out of range.\n"
-#~ msgstr "Wert außerhalb des Wertebereiches.\n"
+#~ msgid "Move the cursor one line down."
+#~ msgstr "Cursor eine Zeile nach unten bewegen"
 
-#, fuzzy
-#~ msgid "Could not initialize libpurple core.\n"
-#~ msgstr "konnte libpurple-Kern nicht initialisieren\n"
+#~ msgid "Move the cursor to the beginning of the text."
+#~ msgstr "Cursor an Textanfang bewegen"
 
-#~ msgid "All accounts"
-#~ msgstr "Alle Accounts"
+#~ msgid "Move the cursor to the end of the text."
+#~ msgstr "Cursor ans Textende bewegen"
 
-#~ msgid "Already logged in only"
-#~ msgstr "Bereits nur eingeloggt"
+#~ msgid "Move the cursor to the left by one word."
+#~ msgstr "Cursor ein Wort nach links"
 
-#~ msgid "no"
-#~ msgstr "nein"
+#~ msgid "Move the cursor to the left."
+#~ msgstr "Cursor nach links bewegen."
+
+#~ msgid "Move the cursor to the right by one word."
+#~ msgstr "Cursor ein Wort nach rechts"
+
+#~ msgid "Move the cursor to the right."
+#~ msgstr "Cursor nach rechts bewegen."
 
 #~ msgid "New Contact"
 #~ msgstr "Neuer Kontakt"
-
-#~ msgid "Quit CenterIM."
-#~ msgstr "CenterIM verlassen."
 
 #~ msgid "Open the account status menu."
 #~ msgstr "Accountstatusmenü öffnen."
@@ -924,23 +994,20 @@ msgstr ""
 #~ msgid "Open the general menu."
 #~ msgstr "Allgemeines Menü öffnen."
 
-#~ msgid "could not initialize iconv\n"
-#~ msgstr "konnte iconv nicht initialisieren\n"
+#~ msgid "Organize contact groups"
+#~ msgstr "Kontaktgruppen organisieren"
 
-#~ msgid "unknown error `%d'\n"
-#~ msgstr "unbekannter Fehler `%d'\n"
+#~ msgid "Quit CenterIM."
+#~ msgstr "CenterIM verlassen."
 
-#~ msgid "Go to contact..."
-#~ msgstr "Gehe zu Kontakten..."
+#~ msgid "Redraw the complete screen immediately"
+#~ msgstr "Kompletten Bildschirm neuzeichnen"
 
-#~ msgid "Find/add users"
-#~ msgstr "Nutzer finden/hinzufügen"
+#~ msgid "Show the dropdown menu."
+#~ msgstr "Aufklappmenü anzeigen."
 
-#~ msgid "Join channel/conference"
-#~ msgstr "Channel/Konferenz beitreten"
-
-#~ msgid "Link an RSS feed"
-#~ msgstr "RSS-Feed einbinden"
+#~ msgid "Value out of range.\n"
+#~ msgstr "Wert außerhalb des Wertebereiches.\n"
 
 #~ msgid "View/edit ignore list"
 #~ msgstr "Ignore-Liste anzeigen/bearbeiten"
@@ -951,74 +1018,11 @@ msgstr ""
 #~ msgid "View/edit visible list"
 #~ msgstr "Sichtbar-Liste anzeigen/bearbeiten"
 
-#~ msgid "Organize contact groups"
-#~ msgstr "Kontaktgruppen organisieren"
+#~ msgid "could not initialize iconv\n"
+#~ msgstr "konnte iconv nicht initialisieren\n"
 
-#~ msgid "Activate the button"
-#~ msgstr "Knopf aktivieren"
+#~ msgid "no"
+#~ msgstr "nein"
 
-#~ msgid "Show the dropdown menu."
-#~ msgstr "Aufklappmenü anzeigen."
-
-#~ msgid "Focusses the previous widget"
-#~ msgstr "Fokusiert vorheriges Element"
-
-#~ msgid "Focusses the next widget"
-#~ msgstr "Fokusiert nächstes Element"
-
-#~ msgid "Focus the next widget to the left."
-#~ msgstr "Fokusiert nächstes Element links."
-
-#~ msgid "Focus the next widget to the right."
-#~ msgstr "Fokusiert nächstes Element rechts."
-
-#~ msgid "Focus the next widget above."
-#~ msgstr "Fokusiert nächstes Widget oberhalb."
-
-#~ msgid "Focus the next widget below."
-#~ msgstr "Fokusiert nächstes Widget unterhalb."
-
-#~ msgid "Close the window"
-#~ msgstr "Fenster schließen"
-
-#~ msgid "Move the cursor to the right."
-#~ msgstr "Cursor nach rechts bewegen."
-
-#~ msgid "Move the cursor to the left."
-#~ msgstr "Cursor nach links bewegen."
-
-#~ msgid "Move the cursor one line down."
-#~ msgstr "Cursor eine Zeile nach unten bewegen"
-
-#~ msgid "Move the cursor to the right by one word."
-#~ msgstr "Cursor ein Wort nach rechts"
-
-#~ msgid "Move the cursor to the left by one word."
-#~ msgstr "Cursor ein Wort nach links"
-
-#~ msgid "Move the cursor to the end of the text."
-#~ msgstr "Cursor ans Textende bewegen"
-
-#~ msgid "Move the cursor to the beginning of the text."
-#~ msgstr "Cursor an Textanfang bewegen"
-
-#~ msgid "Delete character under cursor."
-#~ msgstr "Buchstabe unter Cursor löschen"
-
-#~ msgid "Delete character before cursor."
-#~ msgstr "Buchstabe vor Cursor löschen"
-
-#~ msgid "Accept input and move focus."
-#~ msgstr "Eingabe akzeptieren und Fokus bewegen"
-
-#~ msgid "Collapse the selected subtree"
-#~ msgstr "Gewählten Unterbaum einklappen"
-
-#~ msgid "Expand the selected subtree"
-#~ msgstr "Gewählten Unterbaum ausklappen"
-
-#~ msgid "Close the window."
-#~ msgstr "Fenster schließen"
-
-#~ msgid "Redraw the complete screen immediately"
-#~ msgstr "Kompletten Bildschirm neuzeichnen"
+#~ msgid "unknown error `%d'\n"
+#~ msgstr "unbekannter Fehler `%d'\n"

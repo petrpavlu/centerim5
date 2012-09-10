@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: centerim5\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2012-08-15 13:23+0200\n"
+"POT-Creation-Date: 2012-09-10 22:38+0200\n"
 "PO-Revision-Date: 2012-07-27 16:07+0200\n"
 "Last-Translator: Petr Pavlu <setup@dagobah.cz>\n"
 "Language-Team: Czech\n"
@@ -21,8 +21,8 @@ msgstr ""
 msgid "Accounts"
 msgstr "Účty"
 
-#: src/AccountWindow.cpp:44 src/Accounts.cpp:173 src/BuddyList.cpp:348
-#: src/BuddyList.cpp:423 src/BuddyList.cpp:435
+#: src/AccountWindow.cpp:44 src/Accounts.cpp:173 src/BuddyList.cpp:486
+#: src/BuddyList.cpp:561 src/BuddyList.cpp:573
 msgid "Add"
 msgstr "Přidat"
 
@@ -42,9 +42,9 @@ msgstr "Účet povolen"
 msgid "Password"
 msgstr "Heslo"
 
-#: src/AccountWindow.cpp:124 src/BuddyList.cpp:323 src/BuddyList.cpp:395
-#: src/BuddyListNode.cpp:407 src/BuddyListNode.cpp:585
-#: src/BuddyListNode.cpp:758
+#: src/AccountWindow.cpp:124 src/BuddyList.cpp:461 src/BuddyList.cpp:533
+#: src/BuddyListNode.cpp:422 src/BuddyListNode.cpp:603
+#: src/BuddyListNode.cpp:778
 msgid "Alias"
 msgstr "Alias"
 
@@ -103,7 +103,7 @@ msgstr "Přidat %s (%s) do seznamu kamarádů?"
 msgid "Add %s to your buddy list?"
 msgstr "Přidat %s do seznamu kamarádů?"
 
-#: src/Accounts.cpp:231 src/BuddyList.cpp:348
+#: src/Accounts.cpp:231 src/BuddyList.cpp:486
 msgid "Add buddy"
 msgstr "Přidat kamaráda"
 
@@ -174,90 +174,94 @@ msgstr "+ [%s] %s: Nový autorizační požadavek od %s (%s)"
 msgid "+ [%s] %s: New authorization request from %s"
 msgstr "+ [%s] %s: Nový autorizační požadavek od %s"
 
-#: src/BuddyList.cpp:44
-#, c-format
-msgid "%s act conv, %s status menu, %s context menu"
+#: src/BuddyList.cpp:65
+#, fuzzy, c-format
+msgid "%s act conv, %s status menu, %s context menu, %s filter"
 msgstr "%s akt konv, %s stav nabídka, %s kontext nabídka"
 
-#: src/BuddyList.cpp:238
+#: src/BuddyList.cpp:113
+msgid "Filter: "
+msgstr ""
+
+#: src/BuddyList.cpp:327
 msgid "There are no connected accounts."
 msgstr "Žádný účet není připojen."
 
-#: src/BuddyList.cpp:245
+#: src/BuddyList.cpp:383
 msgid "Different Buddylist detected!"
 msgstr "Rozpoznán duplicitní seznam kamarádů!"
 
-#: src/BuddyList.cpp:318 src/BuddyList.cpp:391
+#: src/BuddyList.cpp:456 src/BuddyList.cpp:529
 msgid "Account"
 msgstr "Účet"
 
-#: src/BuddyList.cpp:320
+#: src/BuddyList.cpp:458
 msgid "Buddy name"
 msgstr "Jméno kamaráda"
 
-#: src/BuddyList.cpp:326 src/BuddyList.cpp:398
+#: src/BuddyList.cpp:464 src/BuddyList.cpp:536
 msgid "Group"
 msgstr "Skupina"
 
-#: src/BuddyList.cpp:345
+#: src/BuddyList.cpp:483
 msgid "Buddies"
 msgstr "Kamarádi"
 
-#: src/BuddyList.cpp:363 src/BuddyList.cpp:518
+#: src/BuddyList.cpp:501 src/BuddyList.cpp:656
 msgid "This protocol does not support chat rooms."
 msgstr "Tento protokol nepodporuje chat místnosti."
 
-#: src/BuddyList.cpp:379
+#: src/BuddyList.cpp:517
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
 msgstr "Žádný z právě připojených protokolů nepodporuje chat."
 
-#: src/BuddyList.cpp:393
+#: src/BuddyList.cpp:531
 msgid "Chat name"
 msgstr "Jméno chatu"
 
-#: src/BuddyList.cpp:417
+#: src/BuddyList.cpp:555
 msgid "Chats"
 msgstr "Chaty"
 
-#: src/BuddyList.cpp:420
+#: src/BuddyList.cpp:558
 msgid "Auto-join"
 msgstr "Automaticky připojit"
 
-#: src/BuddyList.cpp:423
+#: src/BuddyList.cpp:561
 msgid "Add chat"
 msgstr "Přidat chat"
 
-#: src/BuddyList.cpp:433
+#: src/BuddyList.cpp:571
 msgid "Add Group"
 msgstr "Přidat skupinu"
 
-#: src/BuddyList.cpp:434
+#: src/BuddyList.cpp:572
 msgid "Please enter the name of the group to be added."
 msgstr "Zadejte prosím jméno nové skupiny."
 
-#: src/BuddyList.cpp:435 cppconsui/AbstractDialog.h:32
+#: src/BuddyList.cpp:573 cppconsui/AbstractDialog.h:32
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: src/BuddyList.cpp:453 src/BuddyList.cpp:506
+#: src/BuddyList.cpp:591 src/BuddyList.cpp:644
 msgid "No account specified."
 msgstr "Nezadán žádný účet."
 
-#: src/BuddyList.cpp:457 src/BuddyList.cpp:510
+#: src/BuddyList.cpp:595 src/BuddyList.cpp:648
 msgid "Selected account is not connected."
 msgstr "Vybraný účet není připojen."
 
-#: src/BuddyList.cpp:461 src/BuddyList.cpp:524
+#: src/BuddyList.cpp:599 src/BuddyList.cpp:662
 msgid "No buddy name specified."
 msgstr "Nezadáno jméno kamaráda."
 
-#: src/BuddyList.cpp:465 src/BuddyList.cpp:528 src/BuddyList.cpp:563
+#: src/BuddyList.cpp:603 src/BuddyList.cpp:666 src/BuddyList.cpp:701
 msgid "No group name specified."
 msgstr "Nezadáno jméno skupiny."
 
-#: src/BuddyList.cpp:480
+#: src/BuddyList.cpp:618
 msgid "Specified buddy is already in the list."
 msgstr "Zadaný kamarád se již v seznamu nachází."
 
@@ -265,65 +269,65 @@ msgstr "Zadaný kamarád se již v seznamu nachází."
 msgid "Unrecognized BuddyList node."
 msgstr "Neznámý prvek seznamu kamarádů"
 
-#: src/BuddyListNode.cpp:378 src/BuddyListNode.cpp:557
-#: src/BuddyListNode.cpp:704
+#: src/BuddyListNode.cpp:393 src/BuddyListNode.cpp:575
+#: src/BuddyListNode.cpp:724
 msgid "Alias..."
 msgstr "Alias…"
 
-#: src/BuddyListNode.cpp:380 src/BuddyListNode.cpp:559
-#: src/BuddyListNode.cpp:706 src/BuddyListNode.cpp:918
+#: src/BuddyListNode.cpp:395 src/BuddyListNode.cpp:577
+#: src/BuddyListNode.cpp:726 src/BuddyListNode.cpp:938
 msgid "Delete..."
 msgstr "Smazat…"
 
-#: src/BuddyListNode.cpp:439
+#: src/BuddyListNode.cpp:454
 #, c-format
 msgid "Are you sure you want to delete buddy %s from the list?"
 msgstr "Opravdu smazat kamaráda %s ze seznamu?"
 
-#: src/BuddyListNode.cpp:442
+#: src/BuddyListNode.cpp:457
 msgid "Buddy deletion"
 msgstr "Smazat kamaráda"
 
-#: src/BuddyListNode.cpp:615
+#: src/BuddyListNode.cpp:633
 #, c-format
 msgid "Are you sure you want to delete chat %s from the list?"
 msgstr "Opravdu smazat chat %s ze seznamu?"
 
-#: src/BuddyListNode.cpp:618
+#: src/BuddyListNode.cpp:636
 msgid "Chat deletion"
 msgstr "Smazat chat"
 
-#: src/BuddyListNode.cpp:727
+#: src/BuddyListNode.cpp:747
 msgid "Move to..."
 msgstr "Přesunout do…"
 
-#: src/BuddyListNode.cpp:800
+#: src/BuddyListNode.cpp:820
 #, c-format
 msgid "Are you sure you want to delete contact %s from the list?"
 msgstr "Opravdu smazat kontakt %s ze seznamu?"
 
-#: src/BuddyListNode.cpp:803
+#: src/BuddyListNode.cpp:823
 msgid "Contact deletion"
 msgstr "Smazat kontakt"
 
-#: src/BuddyListNode.cpp:916
+#: src/BuddyListNode.cpp:936
 msgid "Rename..."
 msgstr "Přejmenovat…"
 
-#: src/BuddyListNode.cpp:937
+#: src/BuddyListNode.cpp:957
 msgid "Specified group is already in the list."
 msgstr "Zadaná skupina se již v seznamu nachází."
 
-#: src/BuddyListNode.cpp:952
+#: src/BuddyListNode.cpp:972
 msgid "Rename"
 msgstr "Přejmenovat"
 
-#: src/BuddyListNode.cpp:1010
+#: src/BuddyListNode.cpp:1030
 #, c-format
 msgid "Are you sure you want to delete group %s from the list?"
 msgstr "Opravdu smazat skupinu %s ze seznamu?"
 
-#: src/BuddyListNode.cpp:1013
+#: src/BuddyListNode.cpp:1033
 msgid "Group deletion"
 msgstr "Smazat skupinu"
 
@@ -396,7 +400,7 @@ msgstr ""
 msgid "Libpurple initialization failed."
 msgstr "Nezdařila se inicializace knihovny libpurple."
 
-#: src/CenterIM.cpp:756
+#: src/CenterIM.cpp:755
 msgid "Error saving 'colorschemes.xml'.\n"
 msgstr "Chyba při ukládání souboru \"colorschemes.xml\".\n"
 
