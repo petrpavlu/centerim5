@@ -111,7 +111,7 @@ void BuddyList::Filter::Draw()
 
   int x = 0;
   x += area->mvaddstring(x, 0, realw - x, _("Filter: "));
-  if (parent->filter_buffer_onscreen_width <= realw - x) {
+  if (static_cast<int>(parent->filter_buffer_onscreen_width) <= realw - x) {
     // optimized simple case
     area->mvaddstring(x, 0, parent->filter_buffer);
   }
