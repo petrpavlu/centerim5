@@ -68,20 +68,24 @@ void HorizontalListBox::Draw()
     int x = 0;
     for (Children::iterator i = children.begin(); i != children.end(); i++) {
       Widget *widget = i->widget;
-      if (widget->IsVisible()) {
-        int w = widget->GetWidth();
-        if (w == AUTOSIZE) {
-          w = autosize_width;
-          if (autosize_width_extra) {
-            autosize_extra.insert(widget);
-            autosize_width_extra--;
-            w++;
-          }
+      if (!widget->IsVisible())
+        continue;
+
+      int w = widget->GetWidth();
+      if (w == AUTOSIZE) {
+        w = autosize_width;
+        if (autosize_width_extra) {
+          autosize_extra.insert(widget);
+          autosize_width_extra--;
+          w++;
         }
 
-        widget->Move(x, 0);
-        x += w;
+        // make sure the area is updated
+        widget->UpdateArea();
       }
+
+      widget->Move(x, 0);
+      x += w;
     }
     reposition_widgets = false;
   }

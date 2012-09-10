@@ -70,20 +70,24 @@ void ListBox::Draw()
     int y = 0;
     for (Children::iterator i = children.begin(); i != children.end(); i++) {
       Widget *widget = i->widget;
-      if (widget->IsVisible()) {
-        int h = widget->GetHeight();
-        if (h == AUTOSIZE) {
-          h = autosize_height;
-          if (autosize_height_extra) {
-            autosize_extra.insert(widget);
-            autosize_height_extra--;
-            h++;
-          }
+      if (!widget->IsVisible())
+        continue;
+
+      int h = widget->GetHeight();
+      if (h == AUTOSIZE) {
+        h = autosize_height;
+        if (autosize_height_extra) {
+          autosize_extra.insert(widget);
+          autosize_height_extra--;
+          h++;
         }
 
-        widget->Move(0, y);
-        y += h;
+        // make sure the area is updated
+        widget->UpdateArea();
       }
+
+      widget->Move(0, y);
+      y += h;
     }
     reposition_widgets = false;
   }
