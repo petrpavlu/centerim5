@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 {
   g_set_prgname(PACKAGE_NAME);
 
-#ifdef ENABLE_NLS
+#if ENABLE_NLS
   bindtextdomain(PACKAGE_NAME, LOCALEDIR);
   bind_textdomain_codeset(PACKAGE_NAME, "UTF-8");
   bind_textdomain_codeset("pidgin", "UTF-8");
