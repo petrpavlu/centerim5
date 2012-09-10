@@ -1,1 +1,1 @@
-GETTEXT_CREATE_TRANSLATIONS( centerim5.pot cs.po de.po sv.po ru.po )
+gettext_create_translations(centerim5.pot ALL cs.po de.po sv.po ru.po)

@@ -2,7 +2,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = cppconsui doc misc po src tests
 
-EXTRA_DIST =\
+EXTRA_DIST = \
 	bootstrap \
 	HACKING \
 	gettext.h
@@ -23,3 +23,15 @@ dist-hook:
 .PHONY: doc
 doc:
 	cd doc; $(MAKE) doc
+
+# package in all cmake files
+EXTRA_DIST += \
+	CMakeLists.txt \
+	config.h.cmake \
+	cmake/CMakeConfs.cmake \
+	cmake/FindCursesw.cmake \
+	cppconsui/CMakeLists.txt \
+	src/CMakeLists.txt \
+	tests/CMakeLists.txt \
+	po/CMakeLists.txt \
+	doc/CMakeLists.txt

@@ -1,76 +1,65 @@
 # When you add files here, also add them in po/POTFILES.in
-set( centerim_SOURCES
-	AccountStatusMenu.cpp
-	AccountWindow.cpp
-	Accounts.cpp
-	BuddyList.cpp
-	BuddyListNode.cpp
-	CenterIM.cpp
-	CenterMain.cpp
-	Conversation.cpp
-	Conversations.cpp
-	Connections.cpp
-	Footer.cpp
-	GeneralMenu.cpp
-	Header.cpp
-	Log.cpp
-	Notify.cpp
-	OptionWindow.cpp
-	Request.cpp
-	Transfers.cpp
-	Utils.cpp
-	git-version.cpp
-)
+set(centerim5_SOURCES
+  AccountStatusMenu.cpp
+  AccountWindow.cpp
+  Accounts.cpp
+  BuddyList.cpp
+  BuddyListNode.cpp
+  CenterIM.cpp
+  CenterMain.cpp
+  Conversation.cpp
+  Conversations.cpp
+  Connections.cpp
+  Footer.cpp
+  GeneralMenu.cpp
+  Header.cpp
+  Log.cpp
+  Notify.cpp
+  OptionWindow.cpp
+  Request.cpp
+  Transfers.cpp
+  Utils.cpp
+  git-version.cpp)
 
-set( centerim_HEADERS
-	AccountStatusMenu.h
-	AccountWindow.h
-	Accounts.h
-	BuddyList.h
-	BuddyListNode.h
-	CenterIM.h
-	Conversation.h
-	Conversations.h
-	Connections.h
-	Footer.h
-	GeneralMenu.h
-	Header.h
-	Log.h
-	Notify.h
-	OptionWindow.h
-	Request.h
-	Transfers.h
-	Utils.h
-	git-version.h.in
-)
+set(centerim5_HEADERS
+  AccountStatusMenu.h
+  AccountWindow.h
+  Accounts.h
+  BuddyList.h
+  BuddyListNode.h
+  CenterIM.h
+  Conversation.h
+  Conversations.h
+  Connections.h
+  Footer.h
+  GeneralMenu.h
+  Header.h
+  Log.h
+  Notify.h
+  OptionWindow.h
+  Request.h
+  Transfers.h
+  Utils.h
+  git-version.h.in)
 
-include_directories( ${centerim_BINARY_DIR}/src/)
+include_directories(${centerim5_BINARY_DIR}/src)
 
-add_custom_target( git-version.h ALL
-			COMMAND		${centerim_SOURCE_DIR}/misc/git-version-gen ${centerim_SOURCE_DIR}/.version git-version || echo "GIT version updated successfully"
-			COMMAND		sed -e s/"@GIT_VERSION@"/`cat git-version`/g < ${CMAKE_CURRENT_SOURCE_DIR}/git-version.h.in > git-version.h
-			COMMAND		${CMAKE_COMMAND} -E remove git-version
-		)
+add_custom_target(git-version.h ALL VERBATIM
+  COMMAND sh -c "cd ${centerim5_SOURCE_DIR}; version=`misc/git-version-gen .tarball-version`; cd ${CMAKE_CURRENT_BINARY_DIR}; if test \"$version\" != \"`cat .version 2> /dev/null`\"; then printf '%s' \"$version\" > .version; sed -e \"s/@GIT_VERSION@/`cat .version`/\" < ${CMAKE_CURRENT_SOURCE_DIR}/git-version.h.in > git-version.h; fi")
 
-add_executable( centerim
-		${centerim_SOURCES}
-		${centerim_HEADERS}
-	)
+add_executable(centerim5
+  ${centerim5_SOURCES}
+  ${centerim5_HEADERS})
 
-add_dependencies( centerim git-version.h )
-add_dependencies( centerim translations )
+add_dependencies(centerim5 git-version.h)
 
-target_link_libraries( centerim
-		cppconsui
-		${PURPLE_LIBRARIES}
-	)
+set_target_properties(centerim5
+  PROPERTIES INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
 
-install( TARGETS	centerim
-	 DESTINATION	bin/
-	 PERMISSIONS	OWNER_READ
-	 		OWNER_EXECUTE
-			GROUP_READ
-			GROUP_EXECUTE
-			WORLD_READ
-			WORLD_EXECUTE
-)
+target_link_libraries(centerim5
+  cppconsui
+  ${PURPLE_LIBRARIES}
+  ${GLIB2_LIBRARIES}
+  ${SIGC_LIBRARIES})
+
+install(TARGETS centerim5 DESTINATION bin)
