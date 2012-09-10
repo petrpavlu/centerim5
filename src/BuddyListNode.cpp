@@ -304,6 +304,19 @@ int BuddyListNode::GetBuddyStatusWeight(PurpleBuddy *buddy) const
   }
 }
 
+void BuddyListNode::UpdateFilterVisibility(const char *name)
+{
+  if (!IsVisible())
+    return;
+
+  const char *filter = BUDDYLIST->GetFilterString();
+  if (!filter[0])
+    return;
+
+  // filtering is active
+  SetVisibility(purple_strcasestr(name, filter));
+}
+
 void BuddyListNode::ActionOpenContextMenu()
 {
   OpenContextMenu();
@@ -348,6 +361,8 @@ void BuddyListBuddy::Update()
   }
   else
     SetVisibility(BUDDYLIST->GetShowOfflineBuddiesPref() || status[0]);
+
+  UpdateFilterVisibility(alias);
 }
 
 void BuddyListBuddy::OnActivate(Button& /*activator*/)
@@ -507,12 +522,15 @@ void BuddyListChat::Update()
 {
   BuddyListNode::Update();
 
-  SetText(purple_chat_get_name(chat));
+  const char *name = purple_chat_get_name(chat);
+  SetText(name);
 
   SortIn();
 
   // hide if account is offline
   SetVisibility(purple_account_is_connected(purple_chat_get_account(chat)));
+
+  UpdateFilterVisibility(name);
 }
 
 void BuddyListChat::OnActivate(Button& /*activator*/)
@@ -672,6 +690,8 @@ void BuddyListContact::Update()
   }
   else
     SetVisibility(BUDDYLIST->GetShowOfflineBuddiesPref() || status[0]);
+
+  UpdateFilterVisibility(alias);
 }
 
 void BuddyListContact::OnActivate(Button& activator)

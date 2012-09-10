@@ -97,6 +97,8 @@ protected:
    * for sorting. */
   int GetBuddyStatusWeight(PurpleBuddy *buddy) const;
 
+  void UpdateFilterVisibility(const char *name);
+
 private:
   BuddyListNode(BuddyListNode&);
   BuddyListNode& operator=(BuddyListNode&);

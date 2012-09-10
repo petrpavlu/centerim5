@@ -55,6 +55,9 @@ public:
 
   static BuddyList *Instance();
 
+  // InputProcessor
+  virtual bool ProcessInputText(const TermKeyKey &key);
+
   // Widget
   virtual bool RestoreFocus();
   virtual void UngrabFocus();
@@ -69,11 +72,36 @@ public:
   BuddySortMode GetBuddySortMode() const { return buddy_sort_mode; }
   ColorizationMode GetColorizationMode() const { return colorization_mode; }
 
+  const char *GetFilterString() const { return filter_buffer; }
+
   void UpdateNode(PurpleBlistNode *node);
 
 protected:
 
 private:
+  enum UpdateFlags {
+    UPDATE_GROUPS = 1 << 0,
+    UPDATE_OTHERS = 1 << 1
+  };
+
+  class Filter
+  : public CppConsUI::Widget
+  {
+  public:
+    Filter(BuddyList *parent_);
+    virtual ~Filter() {}
+
+    // Widget
+    virtual void Draw();
+
+  protected:
+    BuddyList *parent;
+
+  private:
+    Filter(const Filter&);
+    Filter& operator=(const Filter&);
+  };
+
   PurpleBlistUiOps centerim_blist_ui_ops;
   PurpleBuddyList *buddylist;
   CppConsUI::TreeView *treeview;
@@ -83,6 +111,13 @@ private:
   ListMode list_mode;
   BuddySortMode buddy_sort_mode;
   ColorizationMode colorization_mode;
+
+  Filter *filter;
+  char filter_buffer[256];
+  // length in bytes
+  size_t filter_buffer_length;
+  // onscreen width
+  size_t filter_buffer_onscreen_width;
 
   static BuddyList *instance;
 
@@ -97,9 +132,14 @@ private:
 
   void Load();
   void RebuildList();
+  void UpdateList(int flags);
   void DelayedGroupNodesInit();
   void UpdateCachedPreference(const char *name);
   bool CheckAnyAccountConnected();
+  void FilterHide();
+  void ActionOpenFilter();
+  void ActionDeleteChar();
+  void DeclareBindables();
 
   static void new_list_(PurpleBuddyList *list)
     { BUDDYLIST->new_list(list); }

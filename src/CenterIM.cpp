@@ -904,6 +904,7 @@ void CenterIM::LoadDefaultKeyConfig()
   KEYCONFIG->BindKey("centerim", "conversation-number20", "Alt-p");
 
   KEYCONFIG->BindKey("buddylist", "contextmenu", "Ctrl-d");
+  KEYCONFIG->BindKey("buddylist", "filter", "/");
 
   KEYCONFIG->BindKey("conversation", "send", "Ctrl-x");
 }

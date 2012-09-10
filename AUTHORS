@@ -15,5 +15,6 @@ Additional Code:
 - Per-Henrik Lundblom <ph@whatever.nu> -- coloring contacts according to
   their status,
 - Alexander Matz -- typing notifications,
+- Patrik Tokarcik <patotok@gmail.com> -- searching in buddy list,
 - and others, see `git log`.
 

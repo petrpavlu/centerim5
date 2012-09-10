@@ -39,11 +39,32 @@ BuddyList *BuddyList::Instance()
   return instance;
 }
 
+bool BuddyList::ProcessInputText(const TermKeyKey &key)
+{
+  if (!filter->IsVisible())
+    return false;
+
+  size_t input_len = strlen(key.utf8);
+  if (filter_buffer_length + input_len + 1 > sizeof(filter_buffer))
+    return false;
+
+  char *pos = filter_buffer + filter_buffer_length;
+  strcpy(pos, key.utf8);
+  filter_buffer_onscreen_width += CppConsUI::Curses::onscreen_width(pos);
+  filter_buffer_length += input_len;
+
+  UpdateList(UPDATE_OTHERS);
+  Redraw();
+
+  return true;
+}
+
 bool BuddyList::RestoreFocus()
 {
-  FOOTER->SetText(_("%s act conv, %s status menu, %s context menu"),
+  FOOTER->SetText(
+      _("%s act conv, %s status menu, %s context menu, %s filter"),
       "centerim|conversation-active", "centerim|accountstatusmenu",
-      "buddylist|contextmenu");
+      "buddylist|contextmenu", "buddylist|filter");
 
   return CppConsUI::Window::RestoreFocus();
 }
@@ -56,7 +77,12 @@ void BuddyList::UngrabFocus()
 
 void BuddyList::Close()
 {
-  // BuddyList can't be closed
+  // BuddyList can't be closed, instead close the filter input if it's active
+  if (!filter->IsVisible())
+    return;
+
+  FilterHide();
+  UpdateList(UPDATE_OTHERS);
 }
 
 void BuddyList::OnScreenResized()
@@ -69,18 +95,63 @@ void BuddyList::UpdateNode(PurpleBlistNode *node)
   update(buddylist, node);
 }
 
+BuddyList::Filter::Filter(BuddyList *parent_)
+: Widget(AUTOSIZE, 1), parent(parent_)
+{
+}
+
+void BuddyList::Filter::Draw()
+{
+  ProceedUpdateArea();
+
+  if (!area)
+    return;
+
+  int realw = area->getmaxx();
+
+  int x = 0;
+  x += area->mvaddstring(x, 0, realw - x, _("Filter: "));
+  if (parent->filter_buffer_onscreen_width <= realw - x) {
+    // optimized simple case
+    area->mvaddstring(x, 0, parent->filter_buffer);
+  }
+  else {
+    int w = 0;
+    const char *cur = parent->filter_buffer + parent->filter_buffer_length;
+    while (true) {
+      const char *prev = g_utf8_find_prev_char(parent->filter_buffer, cur);
+      if (!prev)
+        break;
+      gunichar uc = g_utf8_get_char(prev);
+      int wc = CppConsUI::Curses::onscreen_width(uc);
+      if (w + wc > realw - x)
+        break;
+      w += wc;
+      cur = prev;
+    }
+    area->mvaddstring(realw - w, 0, cur);
+  }
+}
+
 BuddyList::BuddyList()
 : Window(0, 0, 80, 24)
 {
   SetColorScheme("buddylist");
 
-  CppConsUI::HorizontalListBox *lbox
-    = new CppConsUI::HorizontalListBox(AUTOSIZE, AUTOSIZE);
-  lbox->AppendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
-  treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
-  lbox->AppendWidget(*treeview);
-  lbox->AppendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
+  CppConsUI::ListBox *lbox = new CppConsUI::ListBox(AUTOSIZE, AUTOSIZE);
   AddWidget(*lbox, 0, 0);
+
+  CppConsUI::HorizontalListBox *hbox
+    = new CppConsUI::HorizontalListBox(AUTOSIZE, AUTOSIZE);
+  lbox->AppendWidget(*hbox);
+  hbox->AppendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
+  treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
+  hbox->AppendWidget(*treeview);
+  hbox->AppendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
+
+  filter = new Filter(this);
+  FilterHide();
+  lbox->AppendWidget(*filter);
 
   /* TODO Check if this has been moved to purple_blist_init(). Remove these
    * lines if it was as this will probably move to purple_init(), the
@@ -130,6 +201,8 @@ BuddyList::BuddyList()
   purple_blist_set_ui_ops(&centerim_blist_ui_ops);
 
   COREMANAGER->TimeoutOnceConnect(sigc::mem_fun(this, &BuddyList::Load), 0);
+
+  DeclareBindables();
 }
 
 BuddyList::~BuddyList()
@@ -173,6 +246,22 @@ void BuddyList::RebuildList()
   }
 
   DelayedGroupNodesInit();
+}
+
+void BuddyList::UpdateList(int flags)
+{
+  PurpleBlistNode *node = purple_blist_get_root();
+  while (node) {
+    if (PURPLE_BLIST_NODE_IS_GROUP(node) ? (flags & UPDATE_GROUPS)
+        : (flags & UPDATE_OTHERS)) {
+      BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(
+          purple_blist_node_get_ui_data(node));
+      if (bnode)
+        bnode->Update();
+    }
+
+    node = purple_blist_node_next(node, TRUE);
+  }
 }
 
 void BuddyList::DelayedGroupNodesInit()
@@ -237,6 +326,55 @@ bool BuddyList::CheckAnyAccountConnected()
   if (!connected)
     LOG->Message(_("There are no connected accounts."));
   return connected;
+}
+
+void BuddyList::FilterHide()
+{
+  filter->SetVisibility(false);
+  filter_buffer[0] = '\0';
+  filter_buffer_length = 0;
+  filter_buffer_onscreen_width = 0;
+}
+
+void BuddyList::ActionOpenFilter()
+{
+  if (filter->IsVisible())
+    return;
+
+  filter->SetVisibility(true);
+
+  // stay sane
+  g_assert(!filter_buffer[0]);
+  g_assert(!filter_buffer_length);
+  g_assert(!filter_buffer_onscreen_width);
+}
+
+void BuddyList::ActionDeleteChar()
+{
+  if (!filter->IsVisible())
+    return;
+
+  const char *end = filter_buffer + filter_buffer_length;
+  g_assert(*end == '\0');
+  char *prev = g_utf8_find_prev_char(filter_buffer, end);
+  if (prev) {
+    filter_buffer_length -= end - prev;
+    filter_buffer_onscreen_width -= CppConsUI::Curses::onscreen_width(prev);
+    *prev = '\0';
+  }
+  else
+    FilterHide();
+
+  UpdateList(UPDATE_OTHERS);
+  Redraw();
+}
+
+void BuddyList::DeclareBindables()
+{
+  DeclareBindable("buddylist", "filter", sigc::mem_fun(this,
+        &BuddyList::ActionOpenFilter), InputProcessor::BINDABLE_NORMAL);
+  DeclareBindable("textentry", "backspace", sigc::mem_fun(this,
+        &BuddyList::ActionDeleteChar), InputProcessor::BINDABLE_NORMAL);
 }
 
 void BuddyList::new_list(PurpleBuddyList *list)
@@ -584,17 +722,7 @@ void BuddyList::blist_pref_change(const char *name, PurplePrefType /*type*/,
   if (!strcmp(name, CONF_PREFIX "/blist/show_empty_groups"))
     groups_only = true;
 
-  PurpleBlistNode *node = purple_blist_get_root();
-  while (node) {
-    if (!groups_only || PURPLE_BLIST_NODE_IS_GROUP(node)) {
-      BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(
-          purple_blist_node_get_ui_data(node));
-      if (bnode)
-        bnode->Update();
-    }
-
-    node = purple_blist_node_next(node, TRUE);
-  }
+  UpdateList(UPDATE_GROUPS | (!groups_only ? UPDATE_OTHERS : 0));
 }
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
