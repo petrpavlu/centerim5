@@ -90,7 +90,7 @@
 /po/quot.sed
 /po/remove-potcdate.sed
 /po/remove-potcdate.sin
-/src/centerim
+/src/centerim5
 /src/git-version
 /src/git-version.h
 Makefile
