@@ -51,9 +51,11 @@ public:
       bool masked_ = false);
   virtual ~TextEdit();
 
+  // InputProcessor
+  virtual bool ProcessInputText(const TermKeyKey &key);
+
   // Widget
   virtual void Draw();
-  virtual bool ProcessInputText(const TermKeyKey &key);
 
   /**
    * Sets new text.

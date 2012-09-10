@@ -60,6 +60,33 @@ TextEdit::~TextEdit()
     g_free(buffer);
 }
 
+bool TextEdit::ProcessInputText(const TermKeyKey &key)
+{
+  if (!editable)
+    return false;
+
+  if (single_line_mode && key.code.codepoint == '\n')
+    return false;
+
+  if (!accept_tabs && key.code.codepoint == '\t')
+    return false;
+
+  // filter out unwanted input
+  if (flags) {
+    if ((flags & FLAG_ALPHABETIC) && !g_unichar_isalpha(key.code.codepoint))
+      return false;
+    if ((flags & FLAG_NUMERIC) && !g_unichar_isdigit(key.code.codepoint))
+      return false;
+    if ((flags & FLAG_NOSPACE) && g_unichar_isspace(key.code.codepoint))
+      return false;
+    if ((flags & FLAG_NOPUNCTUATION) && g_unichar_ispunct(key.code.codepoint))
+      return false;
+  }
+
+  InsertTextAtCursor(key.utf8);
+  return true;
+}
+
 void TextEdit::Draw()
 {
   int origw = area ? area->getmaxx() : 0;
@@ -113,33 +140,6 @@ void TextEdit::Draw()
     int sc_y = current_sc_line - view_top;
     area->mvchgat(sc_x, sc_y, 1, Curses::Attr::REVERSE, 0, NULL);
   }
-}
-
-bool TextEdit::ProcessInputText(const TermKeyKey &key)
-{
-  if (!editable)
-    return false;
-
-  if (single_line_mode && key.code.codepoint == '\n')
-    return false;
-
-  if (!accept_tabs && key.code.codepoint == '\t')
-    return false;
-
-  // filter out unwanted input
-  if (flags) {
-    if ((flags & FLAG_ALPHABETIC) && !g_unichar_isalpha(key.code.codepoint))
-      return false;
-    if ((flags & FLAG_NUMERIC) && !g_unichar_isdigit(key.code.codepoint))
-      return false;
-    if ((flags & FLAG_NOSPACE) && g_unichar_isspace(key.code.codepoint))
-      return false;
-    if ((flags & FLAG_NOPUNCTUATION) && g_unichar_ispunct(key.code.codepoint))
-      return false;
-  }
-
-  InsertTextAtCursor(key.utf8);
-  return true;
 }
 
 void TextEdit::SetText(const char *new_text)
