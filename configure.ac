@@ -154,6 +154,7 @@ AC_DEFINE_UNQUOTED([PKGLIBDIR], ["$pkglibdir_eval"],
 # Create output files. #
 ########################
 AC_CONFIG_FILES([Makefile
+		 contrib/Makefile
 		 cppconsui/Makefile
 		 doc/Makefile
 		 doc/doxygen-cppconsui.conf

@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = cppconsui doc misc plugins po src tests
+SUBDIRS = contrib cppconsui doc misc plugins po src tests
 
 EXTRA_DIST = \
 	bootstrap \
