@@ -48,14 +48,14 @@ int main(int argc, char *argv[])
 {
   g_set_prgname(PACKAGE_NAME);
 
+  setlocale(LC_ALL, "");
+
 #if ENABLE_NLS
   bindtextdomain(PACKAGE_NAME, LOCALEDIR);
   bind_textdomain_codeset(PACKAGE_NAME, "UTF-8");
   bind_textdomain_codeset("pidgin", "UTF-8");
   textdomain(PACKAGE_NAME);
 #endif
-
-  setlocale(LC_ALL, "");
 
   signal(SIGPIPE, SIG_IGN);
 
