@@ -30,6 +30,7 @@
 #define __MESSAGEDIALOG_H__
 
 #include "AbstractDialog.h"
+#include "TextView.h"
 
 namespace CppConsUI
 {
@@ -47,7 +48,7 @@ public:
   sigc::signal<void, MessageDialog&, ResponseType> signal_response;
 
 protected:
-  Label *label;
+  TextView *textview;
 
   // AbstractDialog
   virtual void EmitResponse(ResponseType response);

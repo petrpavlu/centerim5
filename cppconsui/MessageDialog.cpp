@@ -38,8 +38,12 @@ MessageDialog::MessageDialog(const char *title, const char *text)
 {
   AddButton(OK_BUTTON_TEXT, RESPONSE_OK);
 
-  label = new Label(AUTOSIZE, AUTOSIZE, text);
-  layout->InsertWidget(0, *label);
+  // never give focus to the textview
+  buttons->SetFocusCycle(FOCUS_CYCLE_LOCAL);
+
+  textview = new TextView(AUTOSIZE, AUTOSIZE);
+  textview->Append(text);
+  layout->InsertWidget(0, *textview);
 }
 
 void MessageDialog::EmitResponse(ResponseType response)
