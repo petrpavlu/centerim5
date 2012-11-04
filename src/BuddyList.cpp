@@ -416,7 +416,8 @@ void BuddyList::update(PurpleBuddyList *list, PurpleBlistNode *node)
 
   BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(
       purple_blist_node_get_ui_data(node));
-  g_return_if_fail(bnode);
+  if (!bnode)
+    return;
 
   // update the node data
   bnode->Update();
@@ -429,7 +430,8 @@ void BuddyList::remove(PurpleBuddyList *list, PurpleBlistNode *node)
 {
   BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(
       purple_blist_node_get_ui_data(node));
-  g_return_if_fail(bnode);
+  if (!bnode)
+    return;
 
   treeview->DeleteNode(bnode->GetRefNode(), false);
 
