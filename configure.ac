@@ -54,6 +54,12 @@ PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.16.0])
 AC_SUBST([GLIB_CFLAGS])
 AC_SUBST([GLIB_LIBS])
 
+# extaction plugin requires a newer version of glib, check if it's available
+PKG_CHECK_EXISTS([glib-2.0 >= 2.32.0], [build_extaction=yes],
+	[build_extaction=no
+	AC_MSG_WARN([cannot find glib version >= 2.32, extaction plugin disabled])])
+AM_CONDITIONAL(BUILD_EXTACTION, test "x$build_extaction" = xyes)
+
 # libsigc++
 # v2.2.0 was released on 2008-02-22
 PKG_CHECK_MODULES([SIGC], [sigc++-2.0 >= 2.2.0])
@@ -128,9 +134,21 @@ $2=`(test "$prefix" = NONE && prefix="$ac_default_prefix"
 	done
 	echo "[$]_lcl_receval")`])
 
+# Define locale and pkgdir directories. It would be nicer to do this in
+# Makefile.ams by adding appropriate '-D' compiler options to respective
+# CPPFLAGS, which is a common solution that can be seen in other projects. In
+# that case, it isn't needed to resolve the paths at the configure time using
+# the adl_RECURSIVE_EVAL function. However this solution unfortunately doesn't
+# work correctly when values of the defines are changed, the source files that
+# use these defines don't get correctly recompiled. To fix this, the defines
+# have to be put into the config.h file.
 adl_RECURSIVE_EVAL([$localedir], [localedir_eval])
 AC_DEFINE_UNQUOTED([LOCALEDIR], ["$localedir_eval"],
 	[Define to the locale directory.])
+
+adl_RECURSIVE_EVAL([$pkglibdir], [pkglibdir_eval])
+AC_DEFINE_UNQUOTED([PKGLIBDIR], ["$pkglibdir_eval"],
+	[Define to the pkglib directory.])
 
 ########################
 # Create output files. #
@@ -140,6 +158,7 @@ AC_CONFIG_FILES([Makefile
 		 doc/Makefile
 		 doc/doxygen-cppconsui.conf
 		 misc/Makefile
+		 plugins/Makefile
 		 po/Makefile.in
 		 src/Makefile
 		 tests/Makefile])

@@ -57,3 +57,6 @@ cppconsui/TreeView.cpp
 cppconsui/VerticalLine.cpp
 cppconsui/Widget.cpp
 cppconsui/Window.cpp
+
+# plugins source files
+plugins/extaction.c

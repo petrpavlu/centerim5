@@ -7,8 +7,11 @@
 /* Define to the home page for this package. */
 #define PACKAGE_URL "http://www.centerim.org/"
 
-/* Directory containing translations. */
-#define LOCALEDIR "${centerim5_LOCALE_DIR}"
+/* Define to the pkglib directory. */
+#define PKGLIBDIR "${centerim5_PKGLIBDIR}"
+
+/* Define to the locale directory. */
+#define LOCALEDIR "${centerim5_LOCALEDIR}"
 
 /* See if to use NLS features. */
 #cmakedefine01 ENABLE_NLS

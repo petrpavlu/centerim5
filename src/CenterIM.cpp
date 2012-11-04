@@ -350,10 +350,13 @@ int CenterIM::PurpleInit(const char *config_path)
   centerim_glib_eventloops.input_remove = input_remove;
   purple_eventloop_set_ui_ops(&centerim_glib_eventloops);
 
-  // in case we ever write centerim specific plugins
+  // search user-specific plugins
   char *path = g_build_filename(purple_user_dir(), "plugins", NULL);
   purple_plugins_add_search_path(path);
   g_free(path);
+
+  // search centerim-specific plugins
+  purple_plugins_add_search_path(PKGLIBDIR);
 
   if (!purple_core_init(PACKAGE_NAME)) {
     // can't do much without libpurple

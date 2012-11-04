@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = cppconsui doc misc po src tests
+SUBDIRS = cppconsui doc misc plugins po src tests
 
 EXTRA_DIST = \
 	bootstrap \
@@ -33,5 +33,6 @@ EXTRA_DIST += \
 	cppconsui/CMakeLists.txt \
 	src/CMakeLists.txt \
 	tests/CMakeLists.txt \
+	plugins/CMakeLists.txt \
 	po/CMakeLists.txt \
 	doc/CMakeLists.txt
