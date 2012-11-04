@@ -42,13 +42,13 @@ centerim5_SOURCES = \
 	git-version.cpp \
 	git-version.h.in
 
-centerim5_CPPFLAGS =\
+centerim5_CPPFLAGS = \
 	$(PURPLE_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(SIGC_CFLAGS) \
 	-I$(top_srcdir)
 
-centerim5_LDADD =\
+centerim5_LDADD = \
 	$(PURPLE_LIBS) \
 	$(GLIB_LIBS) \
 	$(SIGC_LIBS) \

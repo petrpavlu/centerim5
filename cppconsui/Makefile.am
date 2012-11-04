@@ -1,7 +1,7 @@
 lib_LTLIBRARIES = libcppconsui.la
 
 # When you add files here, also add them in po/POTFILES.in
-libcppconsui_la_SOURCES =\
+libcppconsui_la_SOURCES = \
 	AbstractDialog.cpp \
 	AbstractDialog.h \
 	AbstractLine.cpp \
@@ -84,13 +84,14 @@ libcppconsui_la_SOURCES =\
 	libtermkey/termkey.c \
 	libtermkey/termkey.h
 
-libcppconsui_la_CPPFLAGS =\
+libcppconsui_la_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(SIGC_CFLAGS) \
 	$(NCURSESW_CFLAGS) \
 	-I$(top_srcdir) \
 	-DG_LOG_DOMAIN=\"cppconsui\"
-libcppconsui_la_LIBADD =\
+
+libcppconsui_la_LIBADD = \
 	$(GLIB_LIBS) \
 	$(SIGC_LIBS) \
 	$(NCURSESW_LIBS)
