@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: centerim5\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2012-09-10 22:38+0200\n"
-"PO-Revision-Date: 2012-07-27 16:07+0200\n"
+"POT-Creation-Date: 2012-11-04 15:54+0100\n"
+"PO-Revision-Date: 2012-11-03 22:29+0100\n"
 "Last-Translator: Petr Pavlu <setup@dagobah.cz>\n"
 "Language-Team: Czech\n"
 "Language: \n"
@@ -21,8 +21,8 @@ msgstr ""
 msgid "Accounts"
 msgstr "Účty"
 
-#: src/AccountWindow.cpp:44 src/Accounts.cpp:173 src/BuddyList.cpp:486
-#: src/BuddyList.cpp:561 src/BuddyList.cpp:573
+#: src/AccountWindow.cpp:44 src/Accounts.cpp:173 src/BuddyList.cpp:488
+#: src/BuddyList.cpp:563 src/BuddyList.cpp:575
 msgid "Add"
 msgstr "Přidat"
 
@@ -42,7 +42,7 @@ msgstr "Účet povolen"
 msgid "Password"
 msgstr "Heslo"
 
-#: src/AccountWindow.cpp:124 src/BuddyList.cpp:461 src/BuddyList.cpp:533
+#: src/AccountWindow.cpp:124 src/BuddyList.cpp:463 src/BuddyList.cpp:535
 #: src/BuddyListNode.cpp:422 src/BuddyListNode.cpp:603
 #: src/BuddyListNode.cpp:778
 msgid "Alias"
@@ -103,7 +103,7 @@ msgstr "Přidat %s (%s) do seznamu kamarádů?"
 msgid "Add %s to your buddy list?"
 msgstr "Přidat %s do seznamu kamarádů?"
 
-#: src/Accounts.cpp:231 src/BuddyList.cpp:486
+#: src/Accounts.cpp:231 src/BuddyList.cpp:488
 msgid "Add buddy"
 msgstr "Přidat kamaráda"
 
@@ -191,77 +191,77 @@ msgstr "Žádný účet není připojen."
 msgid "Different Buddylist detected!"
 msgstr "Rozpoznán duplicitní seznam kamarádů!"
 
-#: src/BuddyList.cpp:456 src/BuddyList.cpp:529
+#: src/BuddyList.cpp:458 src/BuddyList.cpp:531
 msgid "Account"
 msgstr "Účet"
 
-#: src/BuddyList.cpp:458
+#: src/BuddyList.cpp:460
 msgid "Buddy name"
 msgstr "Jméno kamaráda"
 
-#: src/BuddyList.cpp:464 src/BuddyList.cpp:536
+#: src/BuddyList.cpp:466 src/BuddyList.cpp:538
 msgid "Group"
 msgstr "Skupina"
 
-#: src/BuddyList.cpp:483
+#: src/BuddyList.cpp:485
 msgid "Buddies"
 msgstr "Kamarádi"
 
-#: src/BuddyList.cpp:501 src/BuddyList.cpp:656
+#: src/BuddyList.cpp:503 src/BuddyList.cpp:658
 msgid "This protocol does not support chat rooms."
 msgstr "Tento protokol nepodporuje chat místnosti."
 
-#: src/BuddyList.cpp:517
+#: src/BuddyList.cpp:519
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
 msgstr "Žádný z právě připojených protokolů nepodporuje chat."
 
-#: src/BuddyList.cpp:531
+#: src/BuddyList.cpp:533
 msgid "Chat name"
 msgstr "Jméno chatu"
 
-#: src/BuddyList.cpp:555
+#: src/BuddyList.cpp:557
 msgid "Chats"
 msgstr "Chaty"
 
-#: src/BuddyList.cpp:558
+#: src/BuddyList.cpp:560
 msgid "Auto-join"
 msgstr "Automaticky připojit"
 
-#: src/BuddyList.cpp:561
+#: src/BuddyList.cpp:563
 msgid "Add chat"
 msgstr "Přidat chat"
 
-#: src/BuddyList.cpp:571
+#: src/BuddyList.cpp:573
 msgid "Add Group"
 msgstr "Přidat skupinu"
 
-#: src/BuddyList.cpp:572
+#: src/BuddyList.cpp:574
 msgid "Please enter the name of the group to be added."
 msgstr "Zadejte prosím jméno nové skupiny."
 
-#: src/BuddyList.cpp:573 cppconsui/AbstractDialog.h:32
+#: src/BuddyList.cpp:575 cppconsui/AbstractDialog.h:32
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: src/BuddyList.cpp:591 src/BuddyList.cpp:644
+#: src/BuddyList.cpp:593 src/BuddyList.cpp:646
 msgid "No account specified."
 msgstr "Nezadán žádný účet."
 
-#: src/BuddyList.cpp:595 src/BuddyList.cpp:648
+#: src/BuddyList.cpp:597 src/BuddyList.cpp:650
 msgid "Selected account is not connected."
 msgstr "Vybraný účet není připojen."
 
-#: src/BuddyList.cpp:599 src/BuddyList.cpp:662
+#: src/BuddyList.cpp:601 src/BuddyList.cpp:664
 msgid "No buddy name specified."
 msgstr "Nezadáno jméno kamaráda."
 
-#: src/BuddyList.cpp:603 src/BuddyList.cpp:666 src/BuddyList.cpp:701
+#: src/BuddyList.cpp:605 src/BuddyList.cpp:668 src/BuddyList.cpp:703
 msgid "No group name specified."
 msgstr "Nezadáno jméno skupiny."
 
-#: src/BuddyList.cpp:618
+#: src/BuddyList.cpp:620
 msgid "Specified buddy is already in the list."
 msgstr "Zadaný kamarád se již v seznamu nachází."
 
@@ -395,16 +395,16 @@ msgstr ""
 "Chyba při zpracování souboru \"binds.xml\", bude použito výchozí nastavení "
 "kláves.\n"
 
-#: src/CenterIM.cpp:360
+#: src/CenterIM.cpp:363
 #, c-format
 msgid "Libpurple initialization failed."
 msgstr "Nezdařila se inicializace knihovny libpurple."
 
-#: src/CenterIM.cpp:755
+#: src/CenterIM.cpp:759
 msgid "Error saving 'colorschemes.xml'.\n"
 msgstr "Chyba při ukládání souboru \"colorschemes.xml\".\n"
 
-#: src/CenterIM.cpp:947
+#: src/CenterIM.cpp:951
 msgid "Error saving 'binds.xml'.\n"
 msgstr "Chyba při ukládání souboru \"binds.xml\".\n"
 
@@ -474,17 +474,12 @@ msgstr "+ [%s] %s: Účet zakázán"
 msgid "%d.%m.%y %H:%M"
 msgstr "%d.%m.%y %H:%M"
 
-#: src/Conversation.cpp:65 src/Conversation.cpp:524
+#: src/Conversation.cpp:64 src/Conversation.cpp:507
 #, c-format
 msgid "Error opening conversation logfile '%s' (%s)."
 msgstr "Chyba při otevírání log souboru konverzace \"%s\" (%s)."
 
-#: src/Conversation.cpp:72 src/Conversation.cpp:530
-#, c-format
-msgid "Error opening conversation logfile '%s'."
-msgstr "Chyba při otevírání log souboru konverzace \"%s\"."
-
-#: src/Conversation.cpp:121
+#: src/Conversation.cpp:115
 #, c-format
 msgid ""
 "%s buddy list, %s/%s/%s next/prev/act conv, %s status, %s send, %s expand"
@@ -492,30 +487,22 @@ msgstr ""
 "%s kamarádi, %s/%s/%s násl/před/akt konv, %s stav nabídka, %s odeslat, %s "
 "rozšířit"
 
-#: src/Conversation.cpp:223
+#: src/Conversation.cpp:216
 #, c-format
 msgid "Error writing to conversation logfile (%s)."
 msgstr "Chyba při zápisu do log souboru konverzace (%s)."
 
-#: src/Conversation.cpp:229
-msgid "Error writing to conversation logfile."
-msgstr "Chyba při zápisu do log souboru konverzace."
-
-#: src/Conversation.cpp:233
+#: src/Conversation.cpp:221
 #, c-format
 msgid "Error flushing conversation logfile (%s)."
 msgstr "Chyba při zápisu (flush) do log souboru konverzace (%s)."
 
-#: src/Conversation.cpp:239
-msgid "Error flushing conversation logfile."
-msgstr "Chyba při zápisu (flush) do log souboru konverzace."
-
-#: src/Conversation.cpp:489
+#: src/Conversation.cpp:473
 #, c-format
 msgid "Error creating directory '%s'."
 msgstr "Chyba při vytváření adresáře \"%s\"."
 
-#: src/Conversation.cpp:598 src/Conversation.cpp:640
+#: src/Conversation.cpp:577 src/Conversation.cpp:619
 #, c-format
 msgid ""
 "Invalid message detected in conversation logfile '%s'. The message was "
@@ -524,15 +511,10 @@ msgstr ""
 "Detekována neplatná zpráva v log souboru konverzace \"%s\". Zpráva byla "
 "přeskočena."
 
-#: src/Conversation.cpp:656
+#: src/Conversation.cpp:634
 #, c-format
 msgid "Error reading from conversation logfile '%s' (%s)."
 msgstr "Chyba při čtení z log souboru konverzace \"%s\" (%s)."
-
-#: src/Conversation.cpp:662
-#, c-format
-msgid "Error reading from conversation logfile '%s'."
-msgstr "Chyba při čtení z log souboru konverzace \"%s\"."
 
 #: src/Conversations.cpp:279
 #, c-format
@@ -571,40 +553,27 @@ msgstr "Ukončit"
 msgid "centerim/log: purple_print() parameter category was not defined."
 msgstr "centerim/log: nebyla zadána kategorie při volání purple_print()."
 
-#: src/Log.cpp:283
+#: src/Log.cpp:281
 #, c-format
 msgid "centerim/log: Error opening logfile '%s' (%s)."
 msgstr "centerim/log: Chyba při otevírání log souboru \"%s\" (%s)."
 
-#: src/Log.cpp:289
-#, c-format
-msgid "centerim/log: Error opening logfile '%s'."
-msgstr "centerim/log: Chyba při otevírání log souboru \"%s\"."
-
-#: src/Log.cpp:301
+#: src/Log.cpp:292
 #, c-format
 msgid "centerim/log: Error writing to logfile (%s)."
 msgstr "centerim/log: Chyba při zápisu do log souboru (%s)."
 
-#: src/Log.cpp:307
-msgid "centerim/log: Error writing to logfile."
-msgstr "centerim/log: Chyba při zápisu do log souboru."
-
-#: src/Log.cpp:321
+#: src/Log.cpp:306
 #, c-format
 msgid "centerim/log: Error flushing logfile (%s)."
 msgstr "centerim/log: Chyba při zápisu (flush) do log souboru (%s)."
 
-#: src/Log.cpp:327
-msgid "centerim/log: Error flushing logfile."
-msgstr "centerim/log: Chyba při zápisu (flush) do log souboru."
-
-#: src/Log.cpp:350
+#: src/Log.cpp:331
 #, c-format
 msgid "centerim/log: Unknown libpurple logging level: %d."
 msgstr "centerim/log: Neznámá log úroveň knihovny purple: %d."
 
-#: src/Log.cpp:370
+#: src/Log.cpp:351
 #, c-format
 msgid "centerim/log: Unknown GLib logging level: %d."
 msgstr "centerim/log: Neznámá log úroveň knihovny GLib: %d."
@@ -737,7 +706,7 @@ msgstr "Chyby"
 
 #: src/OptionWindow.cpp:108
 msgid "Critical"
-msgstr "Kritické chyby"
+msgstr "Kritické zprávy"
 
 #: src/OptionWindow.cpp:109
 msgid "Warning"
@@ -850,19 +819,53 @@ msgstr "Překročen maximální počet barevných párů."
 msgid "Adding color pair failed."
 msgstr "Přidání barevného páru selhalo."
 
-#: cppconsui/CoreManager.cpp:324
+#: cppconsui/CoreManager.cpp:323
 #, c-format
 msgid "Error converting input to UTF-8 (%s)."
 msgstr "Chyba při konverzi vstupu do UTF-8 (%s)."
 
-#: cppconsui/CoreManager.cpp:330
-msgid "Error converting input to UTF-8."
-msgstr "Chyba při konverzi vstupu do UTF-8."
-
-#: cppconsui/CoreManager.cpp:381
+#: cppconsui/CoreManager.cpp:375
 msgid "Libtermkey initialization failed."
 msgstr "Nezdařila se inicializace knihovny libtermkey."
 
 #: cppconsui/KeyConfig.cpp:81
 msgid "<unbound>"
 msgstr "<nesvázáno>"
+
+#: plugins/extaction.c:194
+msgid "External actions"
+msgstr ""
+
+#: plugins/extaction.c:196
+msgid "Executes an external program when a specific event occurs."
+msgstr ""
+
+#: plugins/extaction.c:197
+msgid ""
+"When an event such as received-im-msg, or buddy-signed-on occurs this plugin "
+"executes a user-defined external program."
+msgstr ""
+
+#~ msgid "Error converting input to UTF-8."
+#~ msgstr "Chyba při konverzi vstupu do UTF-8."
+
+#~ msgid "Error flushing conversation logfile."
+#~ msgstr "Chyba při zápisu (flush) do log souboru konverzace."
+
+#~ msgid "Error opening conversation logfile '%s'."
+#~ msgstr "Chyba při otevírání log souboru konverzace \"%s\"."
+
+#~ msgid "Error reading from conversation logfile '%s'."
+#~ msgstr "Chyba při čtení z log souboru konverzace \"%s\"."
+
+#~ msgid "Error writing to conversation logfile."
+#~ msgstr "Chyba při zápisu do log souboru konverzace."
+
+#~ msgid "centerim/log: Error flushing logfile."
+#~ msgstr "centerim/log: Chyba při zápisu (flush) do log souboru."
+
+#~ msgid "centerim/log: Error opening logfile '%s'."
+#~ msgstr "centerim/log: Chyba při otevírání log souboru \"%s\"."
+
+#~ msgid "centerim/log: Error writing to logfile."
+#~ msgstr "centerim/log: Chyba při zápisu do log souboru."
