@@ -1,6 +1,6 @@
 /*
- * Slightly edited for centerim. Added _() macro, added config.h include,
- * _LIBGETTEXT_HAVE_VARIABLE_SIZE_ARRAYS is always 0.
+ * Slightly edited for centerim. Added _() and N_() macros, added config.h
+ * include, _LIBGETTEXT_HAVE_VARIABLE_SIZE_ARRAYS is always 0.
  */
 /* Convenience header for conditional use of GNU <libintl.h>.
    Copyright (C) 1995-1998, 2000-2002, 2004-2006, 2009 Free Software Foundation, Inc.
@@ -286,7 +286,8 @@ dcnpgettext_expr (const char *domain,
   return (n == 1 ? msgid : msgid_plural);
 }
 
-/* Custom macro to make life easier */
-#define _(str) gettext(str)
+/* Custom macros to make life easier */
+#define _(Msgid1) gettext(Msgid1)
+#define N_(Msgid1) (Msgid1)
 
 #endif /* _LIBGETTEXT_H */
