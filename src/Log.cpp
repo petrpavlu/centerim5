@@ -102,8 +102,8 @@ Log::Log()
   purple_prefs_add_string(CONF_PREFIX "/log/filename", "debug.log");
   purple_prefs_add_string(CONF_PREFIX "/log/log_level_cim", "info");
   purple_prefs_add_string(CONF_PREFIX "/log/log_level_cppconsui", "warning");
-  purple_prefs_add_string(CONF_PREFIX "/log/log_level_purple", "none");
-  purple_prefs_add_string(CONF_PREFIX "/log/log_level_glib", "none");
+  purple_prefs_add_string(CONF_PREFIX "/log/log_level_purple", "critical");
+  purple_prefs_add_string(CONF_PREFIX "/log/log_level_glib", "warning");
 
   // connect callbacks
   purple_prefs_connect_callback(this, CONF_PREFIX "/log/debug", debug_change_,
