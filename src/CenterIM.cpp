@@ -499,15 +499,16 @@ GHashTable *CenterIM::get_ui_info()
   if (!ui_info) {
     ui_info = g_hash_table_new(g_str_hash, g_str_equal);
 
-    g_hash_table_insert(ui_info, (void *) "name", (void *) PACKAGE_NAME);
-    g_hash_table_insert(ui_info, (void *) "version", (void *) version);
-    g_hash_table_insert(ui_info, (void *) "website",
-        (void *) "http://www.centerim.org/");
+    /* Note: the C-style casts are used below because otherwise we would need
+     * to use the const_cast and reinterpret_cast together (which is too much
+     * typing). */
+    g_hash_table_insert(ui_info, (void*)"name", (void*)PACKAGE_NAME);
+    g_hash_table_insert(ui_info, (void*)"version", (void*)version);
+    g_hash_table_insert(ui_info, (void*)"website", (void*)PACKAGE_URL);
 
-    // TODO
-    g_hash_table_insert(ui_info, (void *) "dev_website",
-        (void *) "http://www.centerim.org/");
-    g_hash_table_insert(ui_info, (void *) "client_type", (void *) "pc");
+    g_hash_table_insert(ui_info, (void*)"dev_website",
+        (void*)PACKAGE_BUGREPORT);
+    g_hash_table_insert(ui_info, (void*)"client_type", (void*)"pc");
   }
 
   return ui_info;
