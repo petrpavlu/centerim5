@@ -61,15 +61,9 @@ Conversation::Conversation(PurpleConversation *conv_)
 
   GError *err = NULL;
   if (!(logfile = g_io_channel_new_file(filename, "a", &err))) {
-    if (err) {
-      LOG->Error(_("Error opening conversation logfile '%s' (%s)."),
-          filename, err->message);
-
-      g_error_free(err);
-      err = NULL;
-    }
-    else
-      LOG->Error(_("Error opening conversation logfile '%s'."), filename);
+    LOG->Error(_("Error opening conversation logfile '%s' (%s)."), filename,
+        err->message);
+    g_clear_error(&err);
   }
 
   LoadHistory();
@@ -219,24 +213,14 @@ void Conversation::Write(const char *name, const char * /*alias*/,
     GError *err = NULL;
     if (g_io_channel_write_chars(logfile, msg, -1, NULL, &err)
         != G_IO_STATUS_NORMAL) {
-      if (err) {
-        LOG->Error(_("Error writing to conversation logfile (%s)."),
-            err->message);
-        g_error_free(err);
-        err = NULL;
-      }
-      else
-        LOG->Error(_("Error writing to conversation logfile."));
+      LOG->Error(_("Error writing to conversation logfile (%s)."),
+          err->message);
+      g_clear_error(&err);
     }
     if (g_io_channel_flush(logfile, &err) != G_IO_STATUS_NORMAL) {
-      if (err) {
-        LOG->Error(_("Error flushing conversation logfile (%s)."),
-            err->message);
-        g_error_free(err);
-        err = NULL;
-      }
-      else
-        LOG->Error(_("Error flushing conversation logfile."));
+      LOG->Error(_("Error flushing conversation logfile (%s)."),
+          err->message);
+      g_clear_error(&err);
     }
   }
   g_free(msg);
@@ -520,14 +504,9 @@ void Conversation::LoadHistory()
   GIOChannel *chan;
 
   if ((chan = g_io_channel_new_file(filename, "r", &err)) == NULL) {
-    if (err) {
-      LOG->Error(_("Error opening conversation logfile '%s' (%s)."),
-          filename, err->message);
-      g_error_free(err);
-      err = NULL;
-    }
-    else
-      LOG->Error(_("Error opening conversation logfile '%s'."), filename);
+    LOG->Error(_("Error opening conversation logfile '%s' (%s)."), filename,
+        err->message);
+    g_clear_error(&err);
     return;
   }
   // this should never fail
@@ -652,15 +631,9 @@ void Conversation::LoadHistory()
   }
 
   if (st != G_IO_STATUS_EOF) {
-    if (err) {
-      LOG->Error(_("Error reading from conversation logfile '%s' (%s)."),
-          filename, err->message);
-      g_error_free(err);
-      err = NULL;
-    }
-    else
-      LOG->Error(_("Error reading from conversation logfile '%s'."),
-          filename);
+    LOG->Error(_("Error reading from conversation logfile '%s' (%s)."),
+        filename, err->message);
+    g_clear_error(&err);
   }
   g_io_channel_unref(chan);
 }

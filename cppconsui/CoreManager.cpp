@@ -320,14 +320,8 @@ gboolean CoreManager::io_input(GIOChannel * /*source*/, GIOCondition /*cond*/)
 
       // convert data from user charset to UTF-8
       if (!(utf8 = g_locale_to_utf8(key.utf8, -1, NULL, &bwritten, &err))) {
-        if (err) {
-          g_warning(_("Error converting input to UTF-8 (%s)."),
-              err->message);
-          g_error_free(err);
-          err = NULL;
-        }
-        else
-          g_warning(_("Error converting input to UTF-8."));
+        g_warning(_("Error converting input to UTF-8 (%s)."), err->message);
+        g_clear_error(&err);
         continue;
       }
 
@@ -362,10 +356,10 @@ gboolean CoreManager::resize_input(GIOChannel *source, GIOCondition /*cond*/)
 {
   char buf[1024];
   gsize bytes_read;
-  GError *error = NULL;
-  g_io_channel_read_chars(source, buf, sizeof(buf), &bytes_read, &error);
-  if (error)
-    g_error_free(error);
+  GError *err = NULL;
+  g_io_channel_read_chars(source, buf, sizeof(buf), &bytes_read, &err);
+  if (err)
+    g_clear_error(&err);
 
   if (resize_pending)
     Resize();

@@ -276,18 +276,11 @@ void Log::WriteToFile(const char *text)
     if (!logfile) {
       char *filename = g_build_filename(purple_user_dir(),
           purple_prefs_get_string(CONF_PREFIX "/log/filename"), NULL);
-      if ((logfile = g_io_channel_new_file(filename, "a", &err))
-          == NULL) {
-        if (err) {
-          WriteErrorToWindow(
-              _("centerim/log: Error opening logfile '%s' (%s)."), filename,
-              err->message);
-          g_error_free(err);
-          err = NULL;
-        }
-        else
-          WriteErrorToWindow(_("centerim/log: Error opening logfile '%s'."),
-              filename);
+      if (!(logfile = g_io_channel_new_file(filename, "a", &err))) {
+        WriteErrorToWindow(
+            _("centerim/log: Error opening logfile '%s' (%s)."), filename,
+            err->message);
+        g_clear_error(&err);
       }
       g_free(filename);
     }
@@ -296,15 +289,9 @@ void Log::WriteToFile(const char *text)
     if (logfile) {
       if (g_io_channel_write_chars(logfile, text, -1, NULL, &err)
           != G_IO_STATUS_NORMAL) {
-        if (err) {
-          WriteErrorToWindow(
-              _("centerim/log: Error writing to logfile (%s)."),
-              err->message);
-          g_error_free(err);
-          err = NULL;
-        }
-        else
-          WriteErrorToWindow(_("centerim/log: Error writing to logfile."));
+        WriteErrorToWindow(_("centerim/log: Error writing to logfile (%s)."),
+            err->message);
+        g_clear_error(&err);
       }
       else {
         // if necessary write missing EOL character
@@ -316,15 +303,9 @@ void Log::WriteToFile(const char *text)
       }
 
       if (g_io_channel_flush(logfile, &err) != G_IO_STATUS_NORMAL) {
-        if (err) {
-          WriteErrorToWindow(
-              _("centerim/log: Error flushing logfile (%s)."),
-              err->message);
-          g_error_free(err);
-          err = NULL;
-        }
-        else
-          WriteErrorToWindow(_("centerim/log: Error flushing logfile."));
+        WriteErrorToWindow(_("centerim/log: Error flushing logfile (%s)."),
+            err->message);
+        g_clear_error(&err);
       }
     }
   }
