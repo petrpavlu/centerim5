@@ -49,9 +49,12 @@ private:
   static void *notify_message_(PurpleNotifyMsgType type, const char *title,
       const char *primary, const char *secondary)
     { return NOTIFY->notify_message(type, title, primary, secondary); }
+  static void close_notify_(PurpleNotifyType type, void *ui_handle)
+    { return NOTIFY->close_notify(type, ui_handle); }
 
   void *notify_message(PurpleNotifyMsgType type, const char *title,
       const char *primary, const char *secondary);
+  void close_notify(PurpleNotifyType type, void *ui_handle);
 };
 
 #endif // __NOTIFY_H__

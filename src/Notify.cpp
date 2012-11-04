@@ -20,6 +20,7 @@
 
 #include "Notify.h"
 
+#include <cppconsui/MessageDialog.h>
 #include <string.h>
 
 Notify *Notify::instance = NULL;
@@ -34,7 +35,7 @@ Notify::Notify()
   memset(&centerim_notify_ui_ops, 0, sizeof(centerim_notify_ui_ops));
 
   // set the purple notify callbacks
-  //centerim_notify_ui_ops.notify_message = notify_message_;
+  centerim_notify_ui_ops.notify_message = notify_message_;
   //centerim_notify_ui_ops.notify_email = notify_email_;
   //centerim_notify_ui_ops.notify_emails = notify_emails_;
   //centerim_notify_ui_ops.notify_formatted = notify_formatted_;
@@ -43,7 +44,7 @@ Notify::Notify()
   //  notify_searchresults_new_rows_;
   //centerim_notify_ui_ops.notify_userinfo = notify_userinfo_;
   //centerim_notify_ui_ops.notify_uri = notify_uri_;
-  //centerim_notify_ui_ops.close_notify = close_notify_;
+  centerim_notify_ui_ops.close_notify = close_notify_;
   purple_notify_set_ui_ops(&centerim_notify_ui_ops);
 }
 
@@ -67,11 +68,25 @@ void Notify::Finalize()
   instance = NULL;
 }
 
-void *Notify::notify_message(PurpleNotifyMsgType /*type*/,
-    const char * /*title*/, const char * /*primary*/,
-    const char * /*secondary*/)
+void *Notify::notify_message(PurpleNotifyMsgType /*type*/, const char *title,
+    const char *primary, const char *secondary)
 {
-  return NULL;
+  char *text = g_strdup_printf("%s\n\n%s", primary, secondary);
+  CppConsUI::MessageDialog *dialog = new CppConsUI::MessageDialog(title,
+      text);
+  g_free(text);
+  dialog->Show();
+  return dialog;
+}
+
+void Notify::close_notify(PurpleNotifyType type, void *ui_handle)
+{
+  // only message notifications are currently supported
+  g_assert(type == PURPLE_NOTIFY_MESSAGE);
+
+  CppConsUI::MessageDialog *dialog
+    = reinterpret_cast<CppConsUI::MessageDialog*>(ui_handle);
+  dialog->Close();
 }
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
