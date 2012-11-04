@@ -1,5 +1,7 @@
 * Not yet released -- CenterIM 5.0.0 Beta2
   - Add ability to sort buddies by name, status or last activity.
+  - Add support for searching in the buddy list.
+  - Add a plugin to execute an external program when a specific event occurs.
 
 * 27 July 2012 -- CenterIM 5.0.0 Beta1
   Countless smaller and bigger features added. The code was almost completely
