@@ -1,12 +1,12 @@
 # *- Autoconf -*-
-# Process this file with autoconf to produce a configure script.
 
-# Hurray for <http://www-src.lip6.fr/homepages/Alexandre.Duret-Lutz/autotools.html>
+# hurray for <http://www.lrde.epita.fr/~adl/autotools.html>
 
 AC_PREREQ([2.59])
 AC_INIT([centerim5],
 	m4_esyscmd([misc/git-version-gen .tarball-version]),
-	[http://sourceforge.net/projects/centerim])
+	[http://bugzilla.centerim.org/], [centerim5],
+	[http://www.centerim.org/])
 # prevent AC_PROG_CC, AC_PROG_CXX from initializing CFLAGS and CXXFLAGS
 : ${CFLAGS=""}
 : ${CXXFLAGS=""}
@@ -27,7 +27,8 @@ AC_PROG_CC_C99
 AC_PROG_CPP
 AC_PROG_CXX
 AC_PROG_CXXCPP
-AC_PROG_LIBTOOL
+
+LT_INIT([disable-static])
 
 #########################
 # Checks for libraries. #
@@ -63,8 +64,7 @@ AC_SUBST([SIGC_LIBS])
 AC_PATH_LIB_LIBCONFIG
 AC_PATH_LIB([ncursesw], , [ncurses.h], [ncursesw5-config], , , [
 	AC_MSG_RESULT([no])
-	AC_ERROR([You must have the ncursesw library and developement headers installed to build.])
-	])
+	AC_ERROR([You must have the ncursesw library and developement headers installed to build.])])
 
 ############################
 # Checks for header files. #
@@ -112,11 +112,11 @@ AC_SUBST([CXXFLAGS])
 AS_IF([test "$enable_debug" = yes],
 	[AC_DEFINE([DEBUG], [1], [Define if debugging is enabled.])])
 
-dnl adl_RECURSIVE_EVAL(VALUE, RESULT)
-dnl =================================
-dnl Interpolate the VALUE in loop until it doesn't change,
-dnl and set the result to $RESULT.
-dnl WARNING: It's easy to get an infinite loop with some unsane input.
+# adl_RECURSIVE_EVAL(VALUE, RESULT)
+# =================================
+# Interpolate the VALUE in loop until it doesn't change,
+# and set the result to $RESULT.
+# WARNING: It's easy to get an infinite loop with some unsane input.
 AC_DEFUN([adl_RECURSIVE_EVAL],
 [_lcl_receval="$1"
 $2=`(test "$prefix" = NONE && prefix="$ac_default_prefix"
