@@ -30,7 +30,7 @@ def main():
   title = 'Message from %s:' % event_remote_user
   body = event_message[0:256]
   n = pynotify.Notification(title, body)
-  if (os.environ.has_key('EVENT_REMOTE_USER_ICON')):
+  if os.environ.has_key('EVENT_REMOTE_USER_ICON'):
     # the icon is encoded in base64, decode it first
     icon_encoded = os.environ['EVENT_REMOTE_USER_ICON']
     icon_decoded = base64.b64decode(icon_encoded)

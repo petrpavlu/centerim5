@@ -15,12 +15,12 @@ centerim5_SOURCES = \
 	CenterIM.cpp \
 	CenterIM.h \
 	CenterMain.cpp \
+	Connections.cpp \
+	Connections.h \
 	Conversation.cpp \
 	Conversation.h \
 	Conversations.cpp \
 	Conversations.h \
-	Connections.cpp \
-	Connections.h \
 	Footer.cpp \
 	Footer.h \
 	GeneralMenu.cpp \

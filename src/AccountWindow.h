@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __ACCOUNTSWINDOW_H__
-#define __ACCOUNTSWINDOW_H__
+#ifndef __ACCOUNTWINDOW_H__
+#define __ACCOUNTWINDOW_H__
 
 #include <cppconsui/Button.h>
 #include <cppconsui/CheckBox.h>
@@ -232,6 +232,6 @@ private:
   AccountEntries account_entries;
 };
 
-#endif // __ACCOUNTSWINDOW_H__
+#endif // __ACCOUNTWINDOW_H__
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

@@ -7,9 +7,9 @@ set(centerim5_SOURCES
   BuddyListNode.cpp
   CenterIM.cpp
   CenterMain.cpp
+  Connections.cpp
   Conversation.cpp
   Conversations.cpp
-  Connections.cpp
   Footer.cpp
   GeneralMenu.cpp
   Header.cpp
@@ -28,9 +28,9 @@ set(centerim5_HEADERS
   BuddyList.h
   BuddyListNode.h
   CenterIM.h
+  Connections.h
   Conversation.h
   Conversations.h
-  Connections.h
   Footer.h
   GeneralMenu.h
   Header.h
