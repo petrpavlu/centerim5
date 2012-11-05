@@ -29,7 +29,6 @@
 #ifndef __PANEL_H__
 #define __PANEL_H__
 
-#include "Label.h"
 #include "Widget.h"
 
 namespace CppConsUI

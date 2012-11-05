@@ -21,11 +21,8 @@
 
 #include "Log.h"
 
-#include "CenterIM.h"
-
 #include <cppconsui/HorizontalListBox.h>
 #include <cppconsui/Spacer.h>
-#include <string.h>
 #include "gettext.h"
 
 Log *Log::instance = NULL;

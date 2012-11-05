@@ -1,10 +1,10 @@
 #include <cppconsui/Button.h>
+#include <cppconsui/ConsuiCurses.h>
 #include <cppconsui/CoreManager.h>
-#include <cppconsui/KeyConfig.h>
-#include <cppconsui/ColorPickerDialog.h>
 #include <cppconsui/ColorPicker.h>
 #include <cppconsui/ColorPickerComboBox.h>
-#include <cppconsui/ConsuiCurses.h>
+#include <cppconsui/ColorPickerDialog.h>
+#include <cppconsui/KeyConfig.h>
 #include <cppconsui/Window.h>
 
 // TestWindow class

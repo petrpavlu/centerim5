@@ -29,10 +29,10 @@
 #ifndef __CONTAINER_H__
 #define __CONTAINER_H__
 
-#include <vector>
-
 #include "Widget.h"
+
 #include "tree.hh"
+#include <vector>
 
 namespace CppConsUI
 {

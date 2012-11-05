@@ -20,12 +20,10 @@
 
 #include "Request.h"
 
-#include "CenterIM.h"
 #include "Log.h"
 
 #include <cppconsui/InputDialog.h>
 #include <cppconsui/Spacer.h>
-#include <string.h>
 #include <errno.h>
 #include "gettext.h"
 

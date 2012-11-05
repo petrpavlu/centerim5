@@ -23,9 +23,6 @@
 
 #include "Log.h"
 
-#include <cppconsui/CoreManager.h>
-
-#include <string.h>
 #include "gettext.h"
 
 #define RECONNECTION_DELAY_MIN 60000

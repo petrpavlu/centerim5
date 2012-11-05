@@ -22,11 +22,8 @@
 #include "Conversation.h"
 
 #include "BuddyList.h"
-#include "CenterIM.h"
 #include "Conversations.h"
 #include "Footer.h"
-
-#include <cppconsui/Keys.h>
 
 #include <sys/stat.h>
 #include "gettext.h"

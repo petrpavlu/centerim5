@@ -24,8 +24,8 @@
 
 #include <cppconsui/Button.h>
 #include <cppconsui/CheckBox.h>
-#include <cppconsui/ComboBox.h>
 #include <cppconsui/ColorPicker.h>
+#include <cppconsui/ComboBox.h>
 #include <cppconsui/InputDialog.h>
 #include <cppconsui/MessageDialog.h>
 #include <cppconsui/SplitDialog.h>

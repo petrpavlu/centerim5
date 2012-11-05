@@ -24,8 +24,8 @@
 #include "Accounts.h"
 
 #include <cppconsui/FreeWindow.h>
-#include <cppconsui/Label.h>
 #include <cppconsui/HorizontalListBox.h>
+#include <cppconsui/Label.h>
 #include <libpurple/purple.h>
 #include <map>
 

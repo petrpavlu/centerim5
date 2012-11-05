@@ -23,8 +23,6 @@
 
 #include "Log.h"
 
-#include <algorithm>
-#include <string.h>
 #include <typeinfo>
 #include "gettext.h"
 

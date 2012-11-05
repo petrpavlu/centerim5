@@ -28,7 +28,6 @@
 #ifndef __COLORPICKERCOMBOBOX_H__
 #define __COLORPICKERCOMBOBOX_H__
 
-#include "Button.h"
 #include "ColorPickerDialog.h"
 #include "ComboBox.h"
 

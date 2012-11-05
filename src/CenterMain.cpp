@@ -20,9 +20,10 @@
  */
 
 #include "CenterIM.h"
-#include "gettext.h"
-#include <getopt.h>
+
 #include <locale.h>
+#include <getopt.h>
+#include "gettext.h"
 
 #define CIM_CONFIG_PATH ".centerim5"
 

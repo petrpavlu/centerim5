@@ -28,8 +28,8 @@
 #ifndef __COLORPICKERPALETTE_H__
 #define __COLORPICKERPALETTE_H__
 
-#include "Container.h"
 #include "Button.h"
+#include "Container.h"
 
 namespace CppConsUI
 {

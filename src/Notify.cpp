@@ -21,7 +21,6 @@
 #include "Notify.h"
 
 #include <cppconsui/MessageDialog.h>
-#include <string.h>
 
 Notify *Notify::instance = NULL;
 

@@ -29,7 +29,6 @@
 #define __COLORPICKERDIALOG_H__
 
 #include "AbstractDialog.h"
-#include "Button.h"
 #include "ColorScheme.h"
 #include "ColorPickerPalette.h"
 

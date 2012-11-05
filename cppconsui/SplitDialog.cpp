@@ -27,8 +27,6 @@
 
 #include "SplitDialog.h"
 
-#include "gettext.h"
-
 namespace CppConsUI
 {
 

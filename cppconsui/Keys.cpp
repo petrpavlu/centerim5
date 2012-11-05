@@ -20,6 +20,7 @@
  */
 
 #include "Keys.h"
+
 #include "CoreManager.h"
 
 #include <string.h>

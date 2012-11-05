@@ -27,7 +27,6 @@
 
 #include "ColorPickerPalette.h"
 
-#include "ConsuiCurses.h"
 #include "ColorScheme.h"
 
 #define GRAYSCALE_START 232

@@ -24,11 +24,9 @@
 
 #include "BuddyList.h"
 
-#include "CenterIM.h"
 #include "Footer.h"
 #include "Log.h"
 
-#include <cppconsui/Keys.h>
 #include <cppconsui/Spacer.h>
 #include "gettext.h"
 

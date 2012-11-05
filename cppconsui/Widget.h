@@ -36,8 +36,6 @@
 #include "CppConsUI.h"
 #include "InputProcessor.h"
 
-#include <sigc++/sigc++.h>
-
 namespace CppConsUI
 {
 

@@ -29,7 +29,6 @@
 #ifndef __COREMANAGER_H__
 #define __COREMANAGER_H__
 
-#include "InputProcessor.h"
 #include "FreeWindow.h"
 
 #include "libtermkey/termkey.h"

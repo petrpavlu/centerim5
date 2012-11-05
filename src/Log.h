@@ -27,7 +27,6 @@
 #include <cppconsui/TextView.h>
 #include <cppconsui/Window.h>
 #include <libpurple/purple.h>
-#include <vector>
 
 #define LOG (Log::Instance())
 

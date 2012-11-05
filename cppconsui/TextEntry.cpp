@@ -29,8 +29,6 @@
 
 #include "Container.h"
 
-#include <string.h>
-
 namespace CppConsUI
 {
 

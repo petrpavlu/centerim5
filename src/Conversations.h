@@ -26,6 +26,7 @@
 
 #include <cppconsui/FreeWindow.h>
 #include <cppconsui/HorizontalListBox.h>
+#include <cppconsui/Label.h>
 #include <cppconsui/Spacer.h>
 #include <libpurple/purple.h>
 #include <vector>

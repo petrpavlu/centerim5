@@ -20,10 +20,7 @@
 
 #include "Footer.h"
 
-#include "CenterIM.h"
-
 #include <cppconsui/KeyConfig.h>
-#include "gettext.h"
 
 Footer *Footer::instance = NULL;
 

@@ -37,10 +37,8 @@
 
 #include <cppconsui/ColorScheme.h>
 #include <cppconsui/KeyConfig.h>
-#include <cppconsui/Keys.h>
 #include <errno.h>
 #include <glib/gprintf.h>
-#include <string.h>
 #include <typeinfo>
 #include "gettext.h"
 

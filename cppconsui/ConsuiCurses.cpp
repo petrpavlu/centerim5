@@ -36,8 +36,7 @@
 #define NCURSES_NOMACROS
 #include <cursesw.h>
 
-#include <map>
-#include "gettext.h"
+#include <string.h>
 
 namespace CppConsUI
 {

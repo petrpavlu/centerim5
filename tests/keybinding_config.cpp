@@ -1,9 +1,10 @@
 #include <cppconsui/CoreManager.h>
 #include <cppconsui/KeyConfig.h>
+#include <cppconsui/Label.h>
 #include <cppconsui/Window.h>
 
-#include <gettext.h>
 #include <glib.h>
+#include "gettext.h"
 
 // TestWindow class
 class TestWindow

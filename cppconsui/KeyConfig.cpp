@@ -26,6 +26,7 @@
  */
 
 #include "KeyConfig.h"
+
 #include "CoreManager.h"
 
 #include "gettext.h"

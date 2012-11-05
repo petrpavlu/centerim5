@@ -21,10 +21,7 @@
 
 #include "AccountStatusMenu.h"
 
-#include "Accounts.h"
 #include "CenterIM.h"
-
-#include "gettext.h"
 
 AccountStatusMenu::AccountStatusMenu()
 : MenuWindow(0, 0, AUTOSIZE, AUTOSIZE)

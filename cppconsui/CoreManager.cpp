@@ -21,12 +21,7 @@
 
 #include "CoreManager.h"
 
-#include "KeyConfig.h"
-
-#include <algorithm>
 #include <stdio.h>
-#include <string.h>
-#include <poll.h>
 #include <sys/ioctl.h>
 #include <signal.h>
 #include <termios.h>

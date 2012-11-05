@@ -28,8 +28,8 @@
 #define _attribute(x)
 #endif
 
-#include <libpurple/purple.h>
 #include <cppconsui/CoreManager.h>
+#include <libpurple/purple.h>
 #include <vector>
 
 #define CONF_PREFIX "/centerim5"

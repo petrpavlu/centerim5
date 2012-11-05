@@ -21,14 +21,9 @@
 
 #include "AccountWindow.h"
 
-#include "CenterIM.h"
 #include "Log.h"
 
-#include <cppconsui/Keys.h>
-
-#include <string.h>
 #include <errno.h>
-
 #include "gettext.h"
 
 AccountWindow::AccountWindow()

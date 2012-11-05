@@ -24,7 +24,7 @@
 
 #include "Log.h"
 
-#include <cppconsui/HorizontalLine.h>
+#include <cppconsui/AbstractLine.h>
 #include <cppconsui/TextEdit.h>
 #include <cppconsui/TextView.h>
 #include <cppconsui/Window.h>

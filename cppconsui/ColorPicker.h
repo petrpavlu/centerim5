@@ -28,8 +28,9 @@
 #ifndef __COLORPICKER_H__
 #define __COLORPICKER_H__
 
-#include "HorizontalListBox.h"
 #include "ColorPickerComboBox.h"
+#include "HorizontalListBox.h"
+#include "Label.h"
 
 namespace CppConsUI
 {

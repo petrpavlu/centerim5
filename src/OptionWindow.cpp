@@ -20,11 +20,8 @@
 
 #include "OptionWindow.h"
 
-#include "BuddyList.h"
-#include "CenterIM.h"
 #include "Log.h"
 
-#include <cppconsui/KeyConfig.h>
 #include <cppconsui/TreeView.h>
 #include <errno.h>
 #include "gettext.h"

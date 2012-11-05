@@ -27,9 +27,6 @@
 
 #include "TextView.h"
 
-#include "CoreManager.h"
-#include "CppConsUI.h"
-
 namespace CppConsUI
 {
 

@@ -22,12 +22,10 @@
 #include "BuddyListNode.h"
 
 #include "BuddyList.h"
-#include "Conversations.h"
+#include "Log.h"
 #include "Utils.h"
 
-#include <cppconsui/ConsuiCurses.h>
 #include <cppconsui/ColorScheme.h>
-#include <cppconsui/Keys.h>
 #include "gettext.h"
 
 BuddyListNode *BuddyListNode::CreateNode(PurpleBlistNode *node)

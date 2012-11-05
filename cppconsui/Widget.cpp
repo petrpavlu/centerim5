@@ -30,7 +30,6 @@
 
 #include "ColorScheme.h"
 #include "CoreManager.h"
-#include "Container.h"
 
 namespace CppConsUI
 {

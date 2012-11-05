@@ -21,9 +21,6 @@
 
 #include "Conversations.h"
 
-#include "CenterIM.h"
-
-#include <string.h>
 #include "gettext.h"
 
 Conversations *Conversations::instance = NULL;

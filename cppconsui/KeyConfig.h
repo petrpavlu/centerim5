@@ -31,11 +31,8 @@
 #include "Keys.h"
 
 #include "libtermkey/termkey.h"
-#include <glib.h>
 #include <map>
 #include <string>
-#include <vector>
-#include <sigc++/sigc++.h>
 
 #define KEYCONFIG (CppConsUI::KeyConfig::Instance())
 

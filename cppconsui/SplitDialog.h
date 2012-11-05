@@ -29,7 +29,6 @@
 #define __SPLITDIALOG_H__
 
 #include "AbstractDialog.h"
-#include "Container.h"
 
 namespace CppConsUI
 {

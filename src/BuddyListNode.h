@@ -23,9 +23,9 @@
 #define _BUDDYLISTNODE_H__
 
 #include <cppconsui/Button.h>
+#include <cppconsui/InputDialog.h>
 #include <cppconsui/MenuWindow.h>
 #include <cppconsui/MessageDialog.h>
-#include <cppconsui/InputDialog.h>
 #include <cppconsui/TreeView.h>
 #include <libpurple/purple.h>
 

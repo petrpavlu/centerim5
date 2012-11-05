@@ -1,6 +1,7 @@
 #include <cppconsui/Button.h>
 #include <cppconsui/CoreManager.h>
 #include <cppconsui/KeyConfig.h>
+#include <cppconsui/Label.h>
 #include <cppconsui/MenuWindow.h>
 #include <cppconsui/Window.h>
 

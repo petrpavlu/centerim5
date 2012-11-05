@@ -24,11 +24,8 @@
 
 #include "BuddyListNode.h"
 
-#include <cppconsui/ComboBox.h>
-#include <cppconsui/InputDialog.h>
 #include <cppconsui/TreeView.h>
 #include <cppconsui/Window.h>
-#include <libpurple/purple.h>
 
 #define BUDDYLIST (BuddyList::Instance())
 

@@ -23,7 +23,6 @@
 
 #include "AccountWindow.h"
 #include "Accounts.h"
-#include "CenterIM.h"
 #include "Log.h"
 #include "OptionWindow.h"
 
