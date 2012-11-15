@@ -25,6 +25,7 @@
 #include "Accounts.h"
 #include "Log.h"
 #include "OptionWindow.h"
+#include "PluginWindow.h"
 
 #include "gettext.h"
 
@@ -45,6 +46,8 @@ GeneralMenu::GeneralMenu()
         &GeneralMenu::OpenPendingRequests));
   AppendItem(_("Config options..."), sigc::mem_fun(this,
         &GeneralMenu::OpenOptionWindow));
+  AppendItem(_("Plugins..."), sigc::mem_fun(this,
+        &GeneralMenu::OpenPluginWindow));
   AppendSeparator();
 #ifdef DEBUG
   AppendItem("Request test...", sigc::mem_fun(this,
@@ -95,6 +98,13 @@ void GeneralMenu::OpenPendingRequests(CppConsUI::Button& /*activator*/)
 void GeneralMenu::OpenOptionWindow(CppConsUI::Button& /*activator*/)
 {
   OptionWindow *win = new OptionWindow;
+  win->Show();
+  Close();
+}
+
+void GeneralMenu::OpenPluginWindow(CppConsUI::Button& /*activator*/)
+{
+  PluginWindow *win = new PluginWindow;
   win->Show();
   Close();
 }

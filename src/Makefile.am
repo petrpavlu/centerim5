@@ -33,6 +33,8 @@ centerim5_SOURCES = \
 	Notify.h \
 	OptionWindow.cpp \
 	OptionWindow.h \
+	PluginWindow.cpp \
+	PluginWindow.h \
 	Request.cpp \
 	Request.h \
 	Transfers.cpp \

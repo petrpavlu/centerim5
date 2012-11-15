@@ -49,6 +49,7 @@ private:
   void OpenAddGroupRequest(CppConsUI::Button& activator);
   void OpenPendingRequests(CppConsUI::Button& activator);
   void OpenOptionWindow(CppConsUI::Button& activator);
+  void OpenPluginWindow(CppConsUI::Button& activator);
 
 #ifdef DEBUG
   void RequestTest(CppConsUI::Button& activator);

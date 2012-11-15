@@ -17,6 +17,7 @@ src/Header.cpp
 src/Log.cpp
 src/Notify.cpp
 src/OptionWindow.cpp
+src/PluginWindow.cpp
 src/Request.cpp
 src/Transfers.cpp
 src/Utils.cpp

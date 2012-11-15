@@ -16,6 +16,7 @@ set(centerim5_SOURCES
   Log.cpp
   Notify.cpp
   OptionWindow.cpp
+  PluginWindow.cpp
   Request.cpp
   Transfers.cpp
   Utils.cpp
@@ -37,6 +38,7 @@ set(centerim5_HEADERS
   Log.h
   Notify.h
   OptionWindow.h
+  PluginWindow.h
   Request.h
   Transfers.h
   Utils.h

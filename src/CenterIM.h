@@ -33,6 +33,8 @@
 #include <vector>
 
 #define CONF_PREFIX "/centerim5"
+#define CONF_PLUGINS_PREF CONF_PREFIX "/plugins"
+#define CONF_PLUGINS_SAVE_PREF CONF_PLUGINS_PREF "/loaded"
 
 #define CENTERIM (CenterIM::Instance())
 

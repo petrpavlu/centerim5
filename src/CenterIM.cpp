@@ -42,8 +42,6 @@
 #include <typeinfo>
 #include "gettext.h"
 
-#define CONF_PLUGIN_SAVE_PREF CONF_PREFIX "/plugins/loaded"
-
 CenterIM::LogBufferItems *CenterIM::logbuf = NULL;
 
 const char *CenterIM::named_colors[] = {
@@ -370,17 +368,18 @@ int CenterIM::PurpleInit(const char *config_path)
   }
 
   purple_prefs_add_none(CONF_PREFIX);
+  purple_prefs_add_none(CONF_PLUGINS_PREF);
 
   // load the desired plugins
-  if (purple_prefs_exists(CONF_PLUGIN_SAVE_PREF))
-      purple_plugins_load_saved(CONF_PLUGIN_SAVE_PREF);
+  if (purple_prefs_exists(CONF_PLUGINS_SAVE_PREF))
+    purple_plugins_load_saved(CONF_PLUGINS_SAVE_PREF);
 
   return 0;
 }
 
 void CenterIM::PurpleFinalize()
 {
-  purple_plugins_save_loaded(CONF_PLUGIN_SAVE_PREF);
+  purple_plugins_save_loaded(CONF_PLUGINS_SAVE_PREF);
 
   purple_core_set_ui_ops(NULL);
   //purple_eventloop_set_ui_ops(NULL);
