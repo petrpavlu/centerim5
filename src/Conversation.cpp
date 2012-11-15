@@ -146,7 +146,7 @@ void Conversation::Close()
 
 void Conversation::OnScreenResized()
 {
-  CppConsUI::Rect r = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
+  CppConsUI::Rect r = CENTERIM->GetScreenArea(CenterIM::CHAT_AREA);
   // make room for conversations list
   r.height--;
 

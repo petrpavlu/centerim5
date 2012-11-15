@@ -45,12 +45,12 @@ AccountWindow::AccountWindow()
 
 void AccountWindow::OnScreenResized()
 {
-  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA));
+  MoveResizeRect(CENTERIM->GetScreenArea(CenterIM::CHAT_AREA));
 }
 
-AccountWindow::BoolOption::BoolOption(PurpleAccount *account,
-    PurpleAccountOption *option)
-: account(account), option(option), type(TYPE_PURPLE)
+AccountWindow::BoolOption::BoolOption(PurpleAccount *account_,
+    PurpleAccountOption *option_)
+: account(account_), option(option_), type(TYPE_PURPLE)
 {
   g_assert(account);
   g_assert(option);
@@ -63,9 +63,9 @@ AccountWindow::BoolOption::BoolOption(PurpleAccount *account,
   signal_toggle.connect(sigc::mem_fun(this, &BoolOption::OnToggle));
 }
 
-AccountWindow::BoolOption::BoolOption(PurpleAccount *account,
-    Type type)
-: account(account), option(NULL), type(type)
+AccountWindow::BoolOption::BoolOption(PurpleAccount *account_,
+    Type type_)
+: account(account_), option(NULL), type(type_)
 {
   g_assert(account);
 
@@ -93,9 +93,9 @@ void AccountWindow::BoolOption::OnToggle(CheckBox& /*activator*/,
         purple_account_option_get_setting(option), new_state);
 }
 
-AccountWindow::StringOption::StringOption(PurpleAccount *account,
-    PurpleAccountOption *option)
-: Button(FLAG_VALUE), account(account), option(option), type(TYPE_PURPLE)
+AccountWindow::StringOption::StringOption(PurpleAccount *account_,
+    PurpleAccountOption *option_)
+: Button(FLAG_VALUE), account(account_), option(option_), type(TYPE_PURPLE)
 {
   g_assert(account);
   g_assert(option);
@@ -103,8 +103,8 @@ AccountWindow::StringOption::StringOption(PurpleAccount *account,
   Initialize();
 }
 
-AccountWindow::StringOption::StringOption(PurpleAccount *account, Type type)
-: Button(FLAG_VALUE), account(account), option(NULL), type(type)
+AccountWindow::StringOption::StringOption(PurpleAccount *account_, Type type_)
+: Button(FLAG_VALUE), account(account_), option(NULL), type(type_)
 {
   g_assert(account);
 
@@ -169,9 +169,9 @@ void AccountWindow::StringOption::ResponseHandler(
   }
 }
 
-AccountWindow::IntOption::IntOption(PurpleAccount *account,
-    PurpleAccountOption *option)
-: Button(FLAG_VALUE), account(account), option(option)
+AccountWindow::IntOption::IntOption(PurpleAccount *account_,
+    PurpleAccountOption *option_)
+: Button(FLAG_VALUE), account(account_), option(option_)
 {
   g_assert(account);
   g_assert(option);
@@ -223,9 +223,9 @@ void AccountWindow::IntOption::ResponseHandler(
   }
 }
 
-AccountWindow::StringListOption::StringListOption(PurpleAccount *account,
-    PurpleAccountOption *option)
-: account(account), option(option)
+AccountWindow::StringListOption::StringListOption(PurpleAccount *account_,
+    PurpleAccountOption *option_)
+: account(account_), option(option_)
 {
   g_assert(account);
   g_assert(option);
@@ -258,10 +258,10 @@ void AccountWindow::StringListOption::OnSelectionChanged(
       reinterpret_cast<const char*>(data));
 }
 
-AccountWindow::SplitOption::SplitOption(PurpleAccount *account,
-    PurpleAccountUserSplit *split, AccountEntry *account_entry)
-: Button(FLAG_VALUE), account(account), split(split)
-, account_entry(account_entry)
+AccountWindow::SplitOption::SplitOption(PurpleAccount *account_,
+    PurpleAccountUserSplit *split_, AccountEntry *account_entry_)
+: Button(FLAG_VALUE), account(account_), split(split_)
+, account_entry(account_entry_)
 {
   g_assert(account);
 
@@ -325,9 +325,9 @@ void AccountWindow::SplitOption::ResponseHandler(
   }
 }
 
-AccountWindow::ProtocolOption::ProtocolOption(PurpleAccount *account,
-    AccountWindow &account_window)
-: account_window(&account_window), account(account)
+AccountWindow::ProtocolOption::ProtocolOption(PurpleAccount *account_,
+    AccountWindow &account_window_)
+: account_window(&account_window_), account(account_)
 {
   g_assert(account);
 
@@ -355,10 +355,10 @@ void AccountWindow::ProtocolOption::OnProtocolChanged(ComboBox& /*activator*/,
   account_window->PopulateAccount(account);
 }
 
-AccountWindow::ColorOption::ColorOption(PurpleAccount *account)
+AccountWindow::ColorOption::ColorOption(PurpleAccount *account_)
 : ColorPicker(CppConsUI::Curses::Color::DEFAULT,
     CppConsUI::Curses::Color::DEFAULT, _("Buddylist Color:"), true)
-, account(account)
+, account(account_)
 {
   g_assert(account);
 
@@ -380,7 +380,7 @@ void AccountWindow::ColorOption::OnColorChanged(
       "buddylist-background-color", new_bg);
 }
 
-bool AccountWindow::ClearAccount(PurpleAccount *account, bool full)
+void AccountWindow::ClearAccount(PurpleAccount *account, bool full)
 {
   AccountEntry *account_entry = &account_entries[account];
 
@@ -396,16 +396,12 @@ bool AccountWindow::ClearAccount(PurpleAccount *account, bool full)
 
   if (account_entries.empty())
     buttons->GrabFocus();
-
-  return false;
 }
 
 void AccountWindow::Populate()
 {
-  for (GList *i = purple_accounts_get_all(); i; i = i->next) {
-    PurpleAccount *account = reinterpret_cast<PurpleAccount*>(i->data);
-    PopulateAccount(account);
-  }
+  for (GList *i = purple_accounts_get_all(); i; i = i->next)
+    PopulateAccount(reinterpret_cast<PurpleAccount*>(i->data));
 }
 
 void AccountWindow::PopulateAccount(PurpleAccount *account)
@@ -530,7 +526,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
           accounts->AppendNode(account_entry->parent_reference, *widget);
           break;
         default:
-          LOG->Error(_("Invalid Account Option pref type (%d)."), type);
+          LOG->Error(_("Unhandled account option type '%d'."), type);
           break;
       }
     }

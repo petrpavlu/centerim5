@@ -32,7 +32,7 @@ Conversations *Conversations::Instance()
 
 void Conversations::OnScreenResized()
 {
-  CppConsUI::Rect r = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
+  CppConsUI::Rect r = CENTERIM->GetScreenArea(CenterIM::CHAT_AREA);
   r.y = r.GetBottom();
   r.height = 1;
 
@@ -273,7 +273,7 @@ void Conversations::create_conversation(PurpleConversation *conv)
   PurpleConversationType type = purple_conversation_get_type(conv);
   if (type != PURPLE_CONV_TYPE_IM && type != PURPLE_CONV_TYPE_CHAT) {
     purple_conversation_destroy(conv);
-    LOG->Error(_("Unhandled conversation type: %i.\n"), type);
+    LOG->Error(_("Unhandled conversation type '%d'."), type);
     return;
   }
 

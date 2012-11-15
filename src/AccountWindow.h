@@ -67,8 +67,8 @@ private:
       TYPE_ENABLE_ACCOUNT
     };
 
-    BoolOption(PurpleAccount *account, PurpleAccountOption *option);
-    BoolOption(PurpleAccount *account, Type type);
+    BoolOption(PurpleAccount *account_, PurpleAccountOption *option_);
+    BoolOption(PurpleAccount *account_, Type type_);
     virtual ~BoolOption() {}
 
   protected:
@@ -93,8 +93,8 @@ private:
       TYPE_ALIAS
     };
 
-    StringOption(PurpleAccount *account, PurpleAccountOption *option);
-    StringOption(PurpleAccount *account, Type type);
+    StringOption(PurpleAccount *account_, PurpleAccountOption *option_);
+    StringOption(PurpleAccount *account_, Type type_);
     virtual ~StringOption() {}
 
   protected:
@@ -117,7 +117,7 @@ private:
   : public CppConsUI::Button
   {
   public:
-    IntOption(PurpleAccount *account, PurpleAccountOption *option);
+    IntOption(PurpleAccount *account_, PurpleAccountOption *option_);
     virtual ~IntOption() {}
 
   protected:
@@ -138,7 +138,7 @@ private:
   : public CppConsUI::ComboBox
   {
   public:
-    StringListOption(PurpleAccount *account, PurpleAccountOption *option);
+    StringListOption(PurpleAccount *account_, PurpleAccountOption *option_);
     virtual ~StringListOption() {}
 
   protected:
@@ -157,8 +157,8 @@ private:
   : public CppConsUI::Button
   {
   public:
-    SplitOption(PurpleAccount *account, PurpleAccountUserSplit *split,
-        AccountEntry *account_entry);
+    SplitOption(PurpleAccount *account_, PurpleAccountUserSplit *split_,
+        AccountEntry *account_entry_);
     virtual ~SplitOption() {}
 
   protected:
@@ -180,7 +180,7 @@ private:
   : public CppConsUI::ComboBox
   {
   public:
-    ProtocolOption(PurpleAccount *account, AccountWindow& account_window);
+    ProtocolOption(PurpleAccount *account_, AccountWindow& account_window_);
     virtual ~ProtocolOption() {}
 
   protected:
@@ -199,7 +199,7 @@ private:
   : public CppConsUI::ColorPicker
   {
   public:
-    ColorOption(PurpleAccount *account);
+    ColorOption(PurpleAccount *account_);
     virtual ~ColorOption() {}
 
   protected:
@@ -213,10 +213,13 @@ private:
     ColorOption& operator=(const IntOption&);
   };
 
+  CppConsUI::TreeView *accounts;
+  AccountEntries account_entries;
+
   AccountWindow(const AccountWindow&);
   AccountWindow& operator=(const AccountWindow&);
 
-  bool ClearAccount(PurpleAccount *account, bool full);
+  void ClearAccount(PurpleAccount *account, bool full);
 
   void Populate();
   void PopulateAccount(PurpleAccount *account);
@@ -226,10 +229,6 @@ private:
   void DropAccountResponseHandler(CppConsUI::MessageDialog& activator,
       CppConsUI::AbstractDialog::ResponseType response,
       PurpleAccount *account);
-
-  CppConsUI::TreeView *accounts;
-
-  AccountEntries account_entries;
 };
 
 #endif // __ACCOUNTWINDOW_H__

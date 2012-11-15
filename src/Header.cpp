@@ -34,7 +34,7 @@ Header *Header::Instance()
 
 void Header::OnScreenResized()
 {
-  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::HEADER_AREA));
+  MoveResizeRect(CENTERIM->GetScreenArea(CenterIM::HEADER_AREA));
 }
 
 Header::Header()

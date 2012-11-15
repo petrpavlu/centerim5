@@ -165,7 +165,7 @@ static PurplePluginPrefFrame *plugin_get_pref_frame(PurplePlugin *plugin)
   PurplePluginPrefFrame *frame = purple_plugin_pref_frame_new();
 
   PurplePluginPref *pref = purple_plugin_pref_new_with_name_and_label(
-      PLUGIN_PREF_COMMAND, "Command");
+      PLUGIN_PREF_COMMAND, _("Command"));
   purple_plugin_pref_frame_add(frame, pref);
 
   return frame;

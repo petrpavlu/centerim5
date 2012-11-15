@@ -79,12 +79,13 @@ int CenterIM::Run(const char *config_path, bool ascii, bool offline)
 
   // config path
   char *path;
-  if (config_path[0] == '/') {
+  if (g_path_is_absolute(config_path)) {
     // absolute path
     path = g_strdup(config_path);
   }
   else
-    path = g_build_filename(purple_home_dir(), config_path, NULL);
+    path = g_build_path(G_DIR_SEPARATOR_S, purple_home_dir(), config_path,
+        NULL);
 
   if (PurpleInit(path))
     return 1;
@@ -163,9 +164,18 @@ void CenterIM::Quit()
   mngr->QuitMainLoop();
 }
 
-CppConsUI::Rect CenterIM::GetScreenAreaSize(ScreenArea area)
+CppConsUI::Rect CenterIM::GetScreenArea(ScreenArea area)
 {
-  return areaSizes[area];
+  return areas[area];
+}
+
+CppConsUI::Rect CenterIM::GetScreenAreaCentered(ScreenArea area)
+{
+  CppConsUI::Rect s = areas[WHOLE_AREA];
+  CppConsUI::Rect r = areas[area];
+  int x = (s.width - r.width) / 2;
+  int y = (s.height - r.height) / 2;
+  return CppConsUI::Rect(x, y, r.width, r.height);
 }
 
 bool CenterIM::LoadColorSchemeConfig()
@@ -188,7 +198,7 @@ bool CenterIM::LoadColorSchemeConfig()
       scheme = xmlnode_get_next_twin(scheme)) {
     const char *name = xmlnode_get_attrib(scheme, "name");
     if (!name) {
-      LOG->Error(_("Missing 'name' attribute in the scheme definition.\n"));
+      LOG->Error(_("Missing 'name' attribute in the scheme definition."));
       goto out;
     }
 
@@ -197,14 +207,14 @@ bool CenterIM::LoadColorSchemeConfig()
       const char *widget = xmlnode_get_attrib(color, "widget");
       if (!widget) {
         LOG->Error(
-            _("Missing 'widget' attribute in the color definition.\n"));
+            _("Missing 'widget' attribute in the color definition."));
         goto out;
       }
 
       const char *property = xmlnode_get_attrib(color, "property");
       if (!property) {
         LOG->Error(
-            _("Missing 'property' attribute in the color definition.\n"));
+            _("Missing 'property' attribute in the color definition."));
         goto out;
       }
 
@@ -217,17 +227,17 @@ bool CenterIM::LoadColorSchemeConfig()
       int attr = 0;
 
       if (fgs && !StringToColor(fgs, &fg)) {
-        LOG->Error(_("Unrecognized color '%s'.\n"), fgs);
+        LOG->Error(_("Unrecognized color '%s'."), fgs);
         goto out;
       }
 
       if (bgs && !StringToColor(bgs, &bg)) {
-        LOG->Error(_("Unrecognized color '%s'.\n"), bgs);
+        LOG->Error(_("Unrecognized color '%s'."), bgs);
         goto out;
       }
 
       if (attrs && !StringToColorAttributes(attrs, &attr)) {
-        LOG->Error(_("Unrecognized attributes '%s'.\n"), attrs);
+        LOG->Error(_("Unrecognized attributes '%s'."), attrs);
         goto out;
       }
 
@@ -240,7 +250,7 @@ bool CenterIM::LoadColorSchemeConfig()
 out:
   if (!res) {
     LOG->Error(_("Error parsing 'colorschemes.xml', "
-          "loading default color scheme.\n"));
+          "loading default color scheme."));
     LoadDefaultColorSchemeConfig();
   }
 
@@ -269,25 +279,22 @@ bool CenterIM::LoadKeyConfig()
       bind = xmlnode_get_next_twin(bind)) {
     const char *context = xmlnode_get_attrib(bind, "context");
     if (!context) {
-        LOG->Error(
-            _("Missing 'context' attribute in the bind definition.\n"));
+        LOG->Error(_("Missing 'context' attribute in the bind definition."));
         goto out;
     }
     const char *action = xmlnode_get_attrib(bind, "action");
     if (!action) {
-        LOG->Error(
-            _("Missing 'action' attribute in the bind definition.\n"));
+        LOG->Error(_("Missing 'action' attribute in the bind definition."));
         goto out;
     }
     const char *key = xmlnode_get_attrib(bind, "key");
     if (!key) {
-        LOG->Error(
-            _("Missing 'key' attribute in the bind definition.\n"));
+        LOG->Error(_("Missing 'key' attribute in the bind definition."));
         goto out;
     }
 
     if (!KEYCONFIG->BindKey(context, action, key)) {
-      LOG->Error(_("Unrecognized key '%s'.\n"), key);
+      LOG->Error(_("Unrecognized key '%s'."), key);
       goto out;
     }
   }
@@ -296,7 +303,7 @@ bool CenterIM::LoadKeyConfig()
 
 out:
   if (!res) {
-    LOG->Error(_("Error parsing 'binds.xml', loading default keys.\n"));
+    LOG->Error(_("Error parsing 'binds.xml', loading default keys."));
     LoadDefaultKeyConfig();
   }
 
@@ -324,7 +331,7 @@ CenterIM::CenterIM()
 int CenterIM::PurpleInit(const char *config_path)
 {
   g_assert(config_path);
-  g_assert(config_path[0] == '/');
+  g_assert(g_path_is_absolute(config_path));
 
   purple_util_set_user_dir(config_path);
 
@@ -442,42 +449,42 @@ void CenterIM::OnScreenResized()
   size.y = header_height;
   size.width = screen_width / 100.0 * buddylist_width;
   size.height = screen_height - header_height - footer_height;
-  areaSizes[BUDDY_LIST_AREA] = size;
+  areas[BUDDY_LIST_AREA] = size;
 
-  size.x = areaSizes[BUDDY_LIST_AREA].width;
+  size.x = areas[BUDDY_LIST_AREA].width;
   size.width = screen_width - size.x;
   size.height = screen_height / 100.0 * log_height;
   size.y = screen_height - size.height - footer_height;
-  areaSizes[LOG_AREA] = size;
+  areas[LOG_AREA] = size;
 
-  size.x = areaSizes[BUDDY_LIST_AREA].width;
+  size.x = areas[BUDDY_LIST_AREA].width;
   size.y = header_height;
   size.width = screen_width - size.x;
-  size.height = screen_height - size.y - areaSizes[LOG_AREA].height
+  size.height = screen_height - size.y - areas[LOG_AREA].height
     - footer_height;
   if (convs_expanded) {
     size.x -= 2;
     size.width += 4;
   }
-  areaSizes[CHAT_AREA] = size;
+  areas[CHAT_AREA] = size;
 
   size.x = 0;
   size.y = 0;
   size.width = screen_width;
   size.height = header_height;
-  areaSizes[HEADER_AREA] = size;
+  areas[HEADER_AREA] = size;
 
   size.x = 0;
   size.y = screen_height - 1;
   size.width = screen_width;
   size.height = footer_height;
-  areaSizes[FOOTER_AREA] = size;
+  areas[FOOTER_AREA] = size;
 
   size.x = 0;
   size.y = 0;
   size.width = screen_width;
   size.height = screen_height;
-  areaSizes[WHOLE_AREA] = size;
+  areas[WHOLE_AREA] = size;
 }
 
 void CenterIM::OnTopWindowChanged()
@@ -754,7 +761,7 @@ bool CenterIM::SaveColorSchemeConfig()
   char *data = xmlnode_to_formatted_str(root, NULL);
   bool res = true;
   if (!purple_util_write_data_to_file("colorschemes.xml", data, -1)) {
-    LOG->Error(_("Error saving 'colorschemes.xml'.\n"));
+    LOG->Error(_("Error saving 'colorschemes.xml'."));
     res = false;
   }
   g_free(data);
@@ -946,7 +953,7 @@ bool CenterIM::SaveKeyConfig()
   char *data = xmlnode_to_formatted_str(root, NULL);
   bool res = true;
   if (!purple_util_write_data_to_file("binds.xml", data, -1)) {
-    LOG->Error(_("Error saving 'binds.xml'.\n"));
+    LOG->Error(_("Error saving 'binds.xml'."));
     res = false;
   }
   g_free(data);

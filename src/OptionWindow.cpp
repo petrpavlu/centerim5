@@ -170,7 +170,7 @@ do {                                       \
 
 void OptionWindow::OnScreenResized()
 {
-  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA));
+  MoveResizeRect(CENTERIM->GetScreenArea(CenterIM::CHAT_AREA));
 }
 
 OptionWindow::BooleanOption::BooleanOption(const char *text,

@@ -141,11 +141,12 @@ void FreeWindow::Show()
 
 void FreeWindow::Hide()
 {
-  if (COREMANAGER->HasWindow(*this)) {
-    COREMANAGER->RemoveWindow(*this);
-    visible = false;
-    signal_hide(*this);
-  }
+  if (!COREMANAGER->HasWindow(*this))
+    return;
+
+  COREMANAGER->RemoveWindow(*this);
+  visible = false;
+  signal_hide(*this);
 }
 
 void FreeWindow::Close()

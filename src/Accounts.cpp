@@ -132,7 +132,7 @@ Accounts::PendingRequestWindow::PendingRequestWindow(Accounts& accounts_)
 
 void Accounts::PendingRequestWindow::OnScreenResized()
 {
-  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA));
+  MoveResizeRect(CENTERIM->GetScreenArea(CenterIM::CHAT_AREA));
 }
 
 Accounts::PendingRequestWindow::RequestDialog::RequestDialog(

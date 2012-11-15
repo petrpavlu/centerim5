@@ -65,7 +65,7 @@ Request::RequestDialog::RequestDialog(const char *title,
 
 void Request::RequestDialog::OnScreenResized()
 {
-  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA));
+  MoveResizeRect(CENTERIM->GetScreenArea(CenterIM::CHAT_AREA));
 }
 
 Request::InputTextDialog::InputTextDialog(const char *title,
@@ -268,7 +268,7 @@ Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,
           tree->AppendNode(parent, *(new AccountField(field)));
           break;
         default:
-          LOG->Error(_("Unimplemented Request field type."));
+          LOG->Error(_("Unhandled request field type '%d'."), type);
           break;
       }
     }

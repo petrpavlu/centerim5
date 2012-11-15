@@ -34,7 +34,7 @@ Log *Log::Instance()
 
 void Log::OnScreenResized()
 {
-  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::LOG_AREA));
+  MoveResizeRect(CENTERIM->GetScreenArea(CenterIM::LOG_AREA));
 }
 
 #define WRITE_METHOD(name, level)                       \

@@ -31,7 +31,7 @@ Footer *Footer::Instance()
 
 void Footer::OnScreenResized()
 {
-  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::FOOTER_AREA));
+  MoveResizeRect(CENTERIM->GetScreenArea(CenterIM::FOOTER_AREA));
 }
 
 void Footer::SetText(const char *fmt, ...)

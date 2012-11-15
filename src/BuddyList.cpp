@@ -85,7 +85,7 @@ void BuddyList::Close()
 
 void BuddyList::OnScreenResized()
 {
-  MoveResizeRect(CENTERIM->GetScreenAreaSize(CenterIM::BUDDY_LIST_AREA));
+  MoveResizeRect(CENTERIM->GetScreenArea(CenterIM::BUDDY_LIST_AREA));
 }
 
 void BuddyList::UpdateNode(PurpleBlistNode *node)

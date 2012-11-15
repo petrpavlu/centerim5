@@ -57,7 +57,7 @@ GeneralMenu::GeneralMenu()
 
 void GeneralMenu::OnScreenResized()
 {
-  CppConsUI::Rect chat = CENTERIM->GetScreenAreaSize(CenterIM::CHAT_AREA);
+  CppConsUI::Rect chat = CENTERIM->GetScreenArea(CenterIM::CHAT_AREA);
   Move(chat.x, chat.y);
 }
 

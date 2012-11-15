@@ -58,8 +58,9 @@ public:
   int Run(const char *config_path, bool ascii, bool offline);
   void Quit();
 
-  // returns size of selected area
-  CppConsUI::Rect GetScreenAreaSize(ScreenArea area);
+  // returns a position and size of a selected area
+  CppConsUI::Rect GetScreenArea(ScreenArea area);
+  CppConsUI::Rect GetScreenAreaCentered(ScreenArea area);
 
   static const char * const version;
 
@@ -103,7 +104,7 @@ private:
   PurpleDebugUiOps logbuf_debug_ui_ops;
   PurpleEventLoopUiOps centerim_glib_eventloops;
 
-  CppConsUI::Rect areaSizes[AREAS_NUM];
+  CppConsUI::Rect areas[AREAS_NUM];
 
   static const char *named_colors[];
 
