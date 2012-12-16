@@ -1,0 +1,907 @@
+# Dutch translations for centerim5 package.
+# Copyright (C) 2012 CenterIM developers
+# This file is distributed under the same license as the centerim5 package.
+# root <cb@linux.be>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: centerim5 5.0.0beta1.28-6b68-dirty\n"
+"Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
+"projects/centerim\n"
+"POT-Creation-Date: 2012-12-16 23:30+0100\n"
+"PO-Revision-Date: 2012-12-16 23:30+0100\n"
+"Last-Translator: CBke <cb@linux.be>\n"
+"Language-Team: Dutch\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ASCII\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/AccountWindow.cpp:30
+msgid "Accounts"
+msgstr "Accounts"
+
+#: src/AccountWindow.cpp:39 src/Accounts.cpp:171 src/BuddyList.cpp:486
+#: src/BuddyList.cpp:561 src/BuddyList.cpp:573 src/PluginWindow.cpp:52
+msgid "Add"
+msgstr "Toevoegen"
+
+#: src/AccountWindow.cpp:42 src/Accounts.cpp:129 src/OptionWindow.cpp:167
+#: src/PluginWindow.cpp:55
+msgid "Done"
+msgstr "Ok"
+
+#: src/AccountWindow.cpp:73
+msgid "Remember password"
+msgstr "Wachtwoord onthouden"
+
+#: src/AccountWindow.cpp:77
+msgid "Account enabled"
+msgstr "Account activeren"
+
+#: src/AccountWindow.cpp:117
+msgid "Password"
+msgstr "Wachtwoord"
+
+#: src/AccountWindow.cpp:119 src/BuddyList.cpp:461 src/BuddyList.cpp:533
+#: src/BuddyListNode.cpp:420 src/BuddyListNode.cpp:601
+#: src/BuddyListNode.cpp:776
+msgid "Alias"
+msgstr "Alias"
+
+#: src/AccountWindow.cpp:214 src/OptionWindow.cpp:294 src/PluginWindow.cpp:221
+#: src/Request.cpp:371
+msgid "Value is out of range."
+msgstr "Waarde valt niet binnen bereik"
+
+#: src/AccountWindow.cpp:271 src/AccountWindow.cpp:553
+msgid "Username"
+msgstr "Gebruikersnaam"
+
+#: src/AccountWindow.cpp:334
+msgid "Protocol"
+msgstr "Protocol"
+
+#: src/AccountWindow.cpp:360
+msgid "Buddylist Color:"
+msgstr "Kleur Vriendenlijst:"
+
+#: src/AccountWindow.cpp:444
+msgid "Invalid account or protocol plugin not loaded"
+msgstr "Ongeldig account of protocol niet geladen"
+
+#: src/AccountWindow.cpp:529
+#, fuzzy, c-format
+msgid "Unhandled account option type '%d'."
+msgstr "Niet ondersteunde account optie type: '%d'."
+
+#: src/AccountWindow.cpp:544
+msgid "Drop account"
+msgstr "Verwijder account"
+
+#: src/AccountWindow.cpp:571
+msgid "Account deletion"
+msgstr "Account verwijderen"
+
+#: src/AccountWindow.cpp:572
+msgid "Are you sure you want to delete this account?"
+msgstr "Bent u zeker dat u dit account wenst te verwijderen?"
+
+#: src/Accounts.cpp:114
+msgid "Pending requests"
+msgstr "Wachtende verzoeken"
+
+#: src/Accounts.cpp:173
+msgid "Authorize"
+msgstr "Machtigen"
+
+#: src/Accounts.cpp:224
+#, c-format
+msgid "Add %s (%s) to your buddy list?"
+msgstr "%s (%s) Toevoegen aan vriendenlijst?"
+
+#: src/Accounts.cpp:227
+#, c-format
+msgid "Add %s to your buddy list?"
+msgstr "%s Toevoegen aan vriendenlijst?"
+
+#: src/Accounts.cpp:229 src/BuddyList.cpp:486
+msgid "Add buddy"
+msgstr "Vriend toevoegen"
+
+#: src/Accounts.cpp:245
+#, c-format
+msgid ""
+"Allow %s (%s) to add you to his or her buddy list?\n"
+"Message: %s"
+msgstr ""
+"Mag %s (%s) jou toevoegen aan zijn of haar vriendenlijst?\n"
+"Bericht: %s"
+
+#: src/Accounts.cpp:250
+#, c-format
+msgid ""
+"Allow %s to add you to his or her buddy list?\n"
+"Message: %s"
+msgstr ""
+"Mag %s jou toevoegen aan zijn of haar vriendenlijst?\n"
+"Message: %s"
+
+#: src/Accounts.cpp:252
+msgid "Authorize buddy"
+msgstr "Vriend machtigen"
+
+#: src/Accounts.cpp:363
+#, c-format
+msgid "+ [%s] %s: %s (%s) has made you his or her buddy: %s"
+msgstr "+ [%s] %s: %s (%s) heeft jou toegevoegd als vriend: %s"
+
+#: src/Accounts.cpp:366
+#, c-format
+msgid "+ [%s] %s: %s has made you his or her buddy: %s"
+msgstr "+ [%s] %s: %s heeft jou toegevoegd als vriend: %s"
+
+#: src/Accounts.cpp:371
+#, c-format
+msgid "+ [%s] %s: %s (%s) has made you his or her buddy"
+msgstr "+ [%s] %s: %s (%s) heeft jou toegevoegd als vriend"
+
+#: src/Accounts.cpp:374
+#, c-format
+msgid "+ [%s] %s: %s has made you his or her buddy"
+msgstr "+ [%s] %s: %s heeft jou toegevoegd als vriend"
+
+#: src/Accounts.cpp:384
+#, c-format
+msgid "+ [%s] %s: Status changed to: %s"
+msgstr "+ [%s] %s: Status gewijzigd in: %s"
+
+#: src/Accounts.cpp:401
+#, c-format
+msgid "+ [%s] %s: New add request from %s (%s)"
+msgstr "+ [%s] %s: Nieuw vriendschapsverzoek van %s (%s)"
+
+#: src/Accounts.cpp:404
+#, c-format
+msgid "+ [%s] %s: New add request from %s"
+msgstr "+ [%s] %s: Nieuw vriendschapsverzoek van %s"
+
+#: src/Accounts.cpp:424
+#, c-format
+msgid "+ [%s] %s: New authorization request from %s (%s)"
+msgstr "+ [%s] %s: Nieuw vriendschapsverzoek van %s (%s)"
+
+#: src/Accounts.cpp:427
+#, c-format
+msgid "+ [%s] %s: New authorization request from %s"
+msgstr "+ [%s] %s: Nieuw vriendschapsverzoek van %s"
+
+#: src/BuddyList.cpp:63
+#, c-format
+msgid "%s act conv, %s status menu, %s context menu, %s filter"
+msgstr "%s open conv, %s status menu, %s context menu, %s filter"
+
+#: src/BuddyList.cpp:111
+msgid "Filter: "
+msgstr "Filter: "
+
+#: src/BuddyList.cpp:325
+msgid "There are no connected accounts."
+msgstr "Er zijn geen accounts verbonden"
+
+#: src/BuddyList.cpp:381
+msgid "Different Buddylist detected!"
+msgstr "Conflicterende Vrienschapslijst aangetroffen!"
+
+#: src/BuddyList.cpp:456 src/BuddyList.cpp:529
+msgid "Account"
+msgstr "Account"
+
+#: src/BuddyList.cpp:458
+msgid "Buddy name"
+msgstr "Naam van vriend"
+
+#: src/BuddyList.cpp:464 src/BuddyList.cpp:536
+msgid "Group"
+msgstr "Groep"
+
+#: src/BuddyList.cpp:483
+msgid "Buddies"
+msgstr "Vrienden"
+
+#: src/BuddyList.cpp:501 src/BuddyList.cpp:656
+msgid "This protocol does not support chat rooms."
+msgstr "Dit protocol ondersteund geen chat rooms."
+
+#: src/BuddyList.cpp:517
+msgid ""
+"You are not currently signed on with any protocols that have the ability to "
+"chat."
+msgstr ""
+"Momenteel ben je met geen enkel protocol ingelogd dat de mogelijkheid biedt "
+"om te chatten."
+
+#: src/BuddyList.cpp:531
+msgid "Chat name"
+msgstr "Chat naam"
+
+#: src/BuddyList.cpp:555
+msgid "Chats"
+msgstr "Conversaties"
+
+#: src/BuddyList.cpp:558
+msgid "Auto-join"
+msgstr "Automatisch deelnemen"
+
+#: src/BuddyList.cpp:561
+msgid "Add chat"
+msgstr "Chat toevoegen"
+
+#: src/BuddyList.cpp:571
+msgid "Add Group"
+msgstr "Groep Toevoegen"
+
+#: src/BuddyList.cpp:572
+msgid "Please enter the name of the group to be added."
+msgstr "Gelieve de naam in te vullen van de groep die je wilt toevoegen."
+
+#: src/BuddyList.cpp:573 cppconsui/AbstractDialog.h:32
+msgid "Cancel"
+msgstr "Annuleren"
+
+#: src/BuddyList.cpp:591 src/BuddyList.cpp:644
+msgid "No account specified."
+msgstr "Geen account gespecificeerd"
+
+#: src/BuddyList.cpp:595 src/BuddyList.cpp:648
+msgid "Selected account is not connected."
+msgstr "Het geselecteerde account is niet geconnecteerd"
+
+#: src/BuddyList.cpp:599 src/BuddyList.cpp:662
+msgid "No buddy name specified."
+msgstr "Naam van vriend niet gespecifieerd"
+
+#: src/BuddyList.cpp:603 src/BuddyList.cpp:666 src/BuddyList.cpp:701
+msgid "No group name specified."
+msgstr "Naam van groep niet gespecifieerd"
+
+#: src/BuddyList.cpp:618
+msgid "Specified buddy is already in the list."
+msgstr "Gespecifieerde vriend staat reeds in de lijst"
+
+#: src/BuddyListNode.cpp:42
+msgid "Unrecognized BuddyList node."
+msgstr "Onherkenbare Vriendenlijst node."
+
+#: src/BuddyListNode.cpp:391 src/BuddyListNode.cpp:573
+#: src/BuddyListNode.cpp:722
+msgid "Alias..."
+msgstr "ALias..."
+
+#: src/BuddyListNode.cpp:393 src/BuddyListNode.cpp:575
+#: src/BuddyListNode.cpp:724 src/BuddyListNode.cpp:936
+msgid "Delete..."
+msgstr "Verwijderen..."
+
+#: src/BuddyListNode.cpp:452
+#, c-format
+msgid "Are you sure you want to delete buddy %s from the list?"
+msgstr "Bent u zeker dat je vriend %s wilt verwijderen van de lijst?"
+
+#: src/BuddyListNode.cpp:455
+msgid "Buddy deletion"
+msgstr "Vriend verwijderen"
+
+#: src/BuddyListNode.cpp:631
+#, c-format
+msgid "Are you sure you want to delete chat %s from the list?"
+msgstr "Bent u zeker dat je chat %s wilt verwijderen van de lijst?"
+
+#: src/BuddyListNode.cpp:634
+msgid "Chat deletion"
+msgstr "Chat verwijderen"
+
+#: src/BuddyListNode.cpp:745
+msgid "Move to..."
+msgstr "Verplaatsen naar..."
+
+#: src/BuddyListNode.cpp:818
+#, c-format
+msgid "Are you sure you want to delete contact %s from the list?"
+msgstr "Bent u zeker dat je contact %s wilt verwijderen van de lijst?"
+
+#: src/BuddyListNode.cpp:821
+msgid "Contact deletion"
+msgstr "Contact Verwijderen"
+
+#: src/BuddyListNode.cpp:934
+msgid "Rename..."
+msgstr "Hernoemen.."
+
+#: src/BuddyListNode.cpp:955
+msgid "Specified group is already in the list."
+msgstr "De gespecifieerde groep bestaat reeds in de lijst."
+
+#: src/BuddyListNode.cpp:970
+msgid "Rename"
+msgstr "Hernoem"
+
+#: src/BuddyListNode.cpp:1028
+#, c-format
+msgid "Are you sure you want to delete group %s from the list?"
+msgstr "Bent u zeker dat je de groep %s wilt verwijderen van de lijst?"
+
+#: src/BuddyListNode.cpp:1031
+msgid "Group deletion"
+msgstr "Groep verwijderen"
+
+#: src/CenterIM.cpp:128
+#, c-format
+msgid "Welcome to CenterIM 5. Press %s to display main menu."
+msgstr "Welkom bij CenterIM 5. Druk %s om het hoofdmenu weer te geven."
+
+#: src/CenterIM.cpp:182
+msgid "color schemes"
+msgstr "kleurschema's"
+
+#: src/CenterIM.cpp:199
+#, fuzzy
+msgid "Missing 'name' attribute in the scheme definition."
+msgstr "Het attribute 'naam' ontbreekt voor het schema."
+
+#: src/CenterIM.cpp:208
+#, fuzzy
+msgid "Missing 'widget' attribute in the color definition."
+msgstr "Het attribute 'widget' ontbreekt voor het kleurenschema."
+
+#: src/CenterIM.cpp:215
+#, fuzzy
+msgid "Missing 'property' attribute in the color definition."
+msgstr "Het attribute 'property' ontbreekt voor het kleurenschema."
+
+#: src/CenterIM.cpp:228 src/CenterIM.cpp:233
+#, fuzzy, c-format
+msgid "Unrecognized color '%s'."
+msgstr "Onherkenbare kleur '%s'."
+
+#: src/CenterIM.cpp:238
+#, fuzzy, c-format
+msgid "Unrecognized attributes '%s'."
+msgstr "Onherkenbaar attribute '%s'."
+
+#: src/CenterIM.cpp:250
+#, fuzzy
+msgid "Error parsing 'colorschemes.xml', loading default color scheme."
+msgstr "Fout bij het inlezen van 'colorschemes.xml', default kleuren worden "
+"geladen."
+
+#: src/CenterIM.cpp:263
+msgid "key bindings"
+msgstr "Sneltoetsen"
+
+#: src/CenterIM.cpp:280
+#, fuzzy
+msgid "Missing 'context' attribute in the bind definition."
+msgstr "Het attribute 'context' ontbreekt voor de Sneltoets."
+
+#: src/CenterIM.cpp:285
+#, fuzzy
+msgid "Missing 'action' attribute in the bind definition."
+msgstr "Het attribute 'actie' ontbreekt voor de Sneltoets."
+
+#: src/CenterIM.cpp:290
+#, fuzzy
+msgid "Missing 'key' attribute in the bind definition."
+msgstr "Het attribute 'toets' ontbreekt voor de Sneltoets."
+
+#: src/CenterIM.cpp:295
+#, fuzzy, c-format
+msgid "Unrecognized key '%s'."
+msgstr "Onherkenbare toets '%s'."
+
+#: src/CenterIM.cpp:304
+#, fuzzy
+msgid "Error parsing 'binds.xml', loading default keys."
+msgstr "Fout bij het inlezen van 'binds.xml', default sneltoetsen worden geladen."
+
+#: src/CenterIM.cpp:366
+#, c-format
+msgid "Libpurple initialization failed."
+msgstr "Initialisatie van Libpurple is niet gelukt."
+
+#: src/CenterIM.cpp:763
+#, fuzzy
+msgid "Error saving 'colorschemes.xml'."
+msgstr "Fout bij opslaan van 'colorschemes.xml'."
+
+#: src/CenterIM.cpp:955
+#, fuzzy
+msgid "Error saving 'binds.xml'."
+msgstr "Fout bij opslaan van 'binds.xml'."
+
+#: src/CenterMain.cpp:33
+#, c-format
+msgid ""
+"Usage: %s [option]...\n"
+"\n"
+"Options:\n"
+"  -a, --ascii                use ASCII characters to draw lines and boxes\n"
+"  -h, --help                 display command line usage\n"
+"  -v, --version              show the program version info\n"
+"  -b, --basedir <directory>  specify another base directory\n"
+"  -o, --offline              start with all accounts set offline\n"
+msgstr ""
+"Gebruik: %s [optie]...\n"
+"\n"
+"Opties:\n"
+"  -a, --ascii                gebruik ASCII karakters voor het tekenen van "
+"lijnen en kaders\n"
+"  -h, --help                 toon command line parameters\n"
+"  -v, --version              toon de programma versie informatie\n"
+"  -b, --basedir <directory>  specifieer een andere basis directory\n"
+"  -o, --offline              opstarten met alle accounts offline\n"
+
+#: src/CenterMain.cpp:102
+#, c-format
+msgid "%s: unexpected argument after options\n"
+msgstr "%s: onverwachte parameter na optie\n"
+
+#: src/Connections.cpp:90 src/Connections.cpp:114 src/Connections.cpp:163
+#, c-format
+msgid "+ [%s] %s: %s"
+msgstr "+ [%s] %s: %s"
+
+#: src/Connections.cpp:98
+#, c-format
+msgid "+ [%s] %s: Connected"
+msgstr "+ [%s] %s: Verbonden"
+
+#: src/Connections.cpp:106
+#, c-format
+msgid "+ [%s] %s: Disconnected"
+msgstr "+ [%s] %s: Verbroken"
+
+#: src/Connections.cpp:121
+msgid "+ Network connected"
+msgstr " Netwerk verbonden"
+
+#: src/Connections.cpp:137
+msgid "+ Network disconnected"
+msgstr "+ Netwerk verbroken"
+
+#: src/Connections.cpp:170
+#, c-format
+msgid "+ [%s] %s: Auto-reconnection in %d second"
+msgid_plural "+ [%s] %s: Auto-reconnection in %d seconds"
+msgstr[0] "+ [%s] %s: Automatisch verbinden in %d seconde"
+msgstr[1] "+ [%s] %s: Automatisch verbinden in %d seconden"
+
+#: src/Connections.cpp:176
+#, c-format
+msgid "+ [%s] %s: Account disabled"
+msgstr "+ [%s] %s: Account gedeactiveerd"
+
+#: src/Conversation.cpp:32
+msgid "%d.%m.%y %H:%M"
+msgstr "%d.%m.%y %H:%M"
+
+#: src/Conversation.cpp:61 src/Conversation.cpp:504
+#, c-format
+msgid "Error opening conversation logfile '%s' (%s)."
+msgstr "Fout bij openen conversatie logbestand '%s' (%s)."
+
+#: src/Conversation.cpp:112
+#, c-format
+msgid ""
+"%s buddy list, %s/%s/%s next/prev/act conv, %s status, %s send, %s expand"
+msgstr "%s Vriendenlijst, %s/%s/%s volgende/vorige/open conv, %s status, %s "
+"verzenden, %s uitklappen"
+
+#: src/Conversation.cpp:213
+#, c-format
+msgid "Error writing to conversation logfile (%s)."
+msgstr "Fout bij het schrijven van conversatie logbestand (%s)."
+
+#: src/Conversation.cpp:218
+#, c-format
+msgid "Error flushing conversation logfile (%s)."
+msgstr "Fout bij leegmaken conversatie logbestand (%s)."
+
+#: src/Conversation.cpp:470
+#, c-format
+msgid "Error creating directory '%s'."
+msgstr "Fout bij het aanmaken van directory '%s'."
+
+#: src/Conversation.cpp:574 src/Conversation.cpp:616
+#, c-format
+msgid ""
+"Invalid message detected in conversation logfile '%s'. The message was "
+"skipped."
+msgstr ""
+"Ongeldig bericht gevonden in conversatie logbestand '%s'. Het bericht werd "
+"overgeslagen."
+
+#: src/Conversation.cpp:631
+#, c-format
+msgid "Error reading from conversation logfile '%s' (%s)."
+msgstr "Fout bij lezen van conversatie logbestand '%s' (%s)."
+
+#: src/Conversations.cpp:276
+#, fuzzy, c-format
+msgid "Unhandled conversation type '%d'."
+msgstr "Niet ondersteund conversatie type: %d."
+
+#: src/GeneralMenu.cpp:37
+msgid "Accounts..."
+msgstr "Accounts..."
+
+#: src/GeneralMenu.cpp:39
+msgid "Add buddy..."
+msgstr "Vriend toevoegen..."
+
+#: src/GeneralMenu.cpp:41
+msgid "Add chat..."
+msgstr "Chat Toevoegen..."
+
+#: src/GeneralMenu.cpp:43
+msgid "Add group..."
+msgstr "Groep Toevoegen..."
+
+#: src/GeneralMenu.cpp:45
+msgid "Pending requests..."
+msgstr "Wachtende aanvragen..."
+
+#: src/GeneralMenu.cpp:47
+msgid "Config options..."
+msgstr "Configuratie opties..."
+
+#: src/GeneralMenu.cpp:49
+msgid "Plugins..."
+msgstr "Plugins..."
+
+#: src/GeneralMenu.cpp:57
+msgid "Quit"
+msgstr "Afsluiten"
+
+#: src/Log.cpp:156
+msgid "centerim/log: purple_print() parameter category was not defined."
+msgstr "centerim/log: purple_print() parameter categorie was niet gedefigneerd"
+
+#: src/Log.cpp:278
+#, c-format
+msgid "centerim/log: Error opening logfile '%s' (%s)."
+msgstr "centerim/log: Fout bij openen logbestand '%s' (%s)."
+
+#: src/Log.cpp:289
+#, c-format
+msgid "centerim/log: Error writing to logfile (%s)."
+msgstr "centerim/log: Fout bij wegschrijven naar logbestand (%s)."
+
+#: src/Log.cpp:303
+#, c-format
+msgid "centerim/log: Error flushing logfile (%s)."
+msgstr "centerim/log: Fout bij leegmaken logfile (%s)."
+
+#: src/Log.cpp:328
+#, c-format
+msgid "centerim/log: Unknown libpurple logging level: %d."
+msgstr "centerim/log: Onbekend libpurple logging level: %d."
+
+#: src/Log.cpp:348
+#, c-format
+msgid "centerim/log: Unknown GLib logging level: %d."
+msgstr "centerim/log: Onbekend GLib logging level: %d."
+
+#: src/OptionWindow.cpp:30
+msgid "Config options"
+msgstr "Configuratie opties"
+
+#: src/OptionWindow.cpp:40
+msgid "Buddy list"
+msgstr "Vriendenlijst"
+
+#: src/OptionWindow.cpp:41
+msgid "Show empty groups"
+msgstr "Toon lege groepen"
+
+#: src/OptionWindow.cpp:43
+msgid "Show offline buddies"
+msgstr "Toon offline vrienden"
+
+#: src/OptionWindow.cpp:45
+msgid "List mode"
+msgstr "Lijst modus"
+
+#: src/OptionWindow.cpp:46
+msgid "Normal"
+msgstr "Normaal"
+
+#: src/OptionWindow.cpp:47
+msgid "Flat"
+msgstr "Zonden structuur"
+
+#: src/OptionWindow.cpp:49
+msgid "Buddy sort mode"
+msgstr "Vrienden sorteren"
+
+#: src/OptionWindow.cpp:51
+msgid "By name"
+msgstr "Op naam"
+
+#: src/OptionWindow.cpp:52 src/OptionWindow.cpp:58
+msgid "By status"
+msgstr "Op status"
+
+#: src/OptionWindow.cpp:53
+msgid "By activity"
+msgstr "Op activiteit"
+
+#: src/OptionWindow.cpp:55
+msgid "Colorization mode"
+msgstr "Kleur mode"
+
+#: src/OptionWindow.cpp:57 src/OptionWindow.cpp:103
+msgid "None"
+msgstr "Geen"
+
+#: src/OptionWindow.cpp:59
+msgid "By account"
+msgstr "Op Account"
+
+#: src/OptionWindow.cpp:63
+msgid "Dimensions"
+msgstr "Afmetingen"
+
+#: src/OptionWindow.cpp:64
+msgid "Buddy list window width"
+msgstr "Breedte Vriendenlijst"
+
+#: src/OptionWindow.cpp:67
+msgid "Log window height"
+msgstr "Hoogte Logscherm"
+
+#: src/OptionWindow.cpp:70
+msgid "Show header"
+msgstr "Toon Header"
+
+#: src/OptionWindow.cpp:72
+msgid "Show footer"
+msgstr "Toon footer"
+
+#: src/OptionWindow.cpp:77
+msgid "Idle settings"
+msgstr "inactiviteits instellingen"
+
+#: src/OptionWindow.cpp:79
+msgid "Change to away status when idle"
+msgstr "Verander status naar away wanneer inactief"
+
+#: src/OptionWindow.cpp:82
+msgid "Time before becoming idle"
+msgstr "Verstreken tijd om inactief te worden"
+
+#: src/OptionWindow.cpp:84
+msgid "Report idle time"
+msgstr "Vermeld inactieve tijd"
+
+#: src/OptionWindow.cpp:86
+msgid "Never"
+msgstr "Nooit"
+
+#: src/OptionWindow.cpp:87
+msgid "From last sent message"
+msgstr "Vanaf laatst verstuurd bericht"
+
+#: src/OptionWindow.cpp:88
+msgid "Based on keyboard"
+msgstr "Gebaseerd op toetsenbord"
+
+#: src/OptionWindow.cpp:93
+msgid "Conversations"
+msgstr "Gesprekken"
+
+#: src/OptionWindow.cpp:94
+msgid "Beep on new message"
+msgstr "Beep bij nieuw ontvangen bericht"
+
+#: src/OptionWindow.cpp:96
+msgid "Send typing notification"
+msgstr "Verstuur notificatie toetsenbord activiteit"
+
+#: src/OptionWindow.cpp:100
+msgid "System logging"
+msgstr "Systeem logging"
+
+#: src/OptionWindow.cpp:104
+msgid "Error"
+msgstr "Error"
+
+#: src/OptionWindow.cpp:105
+msgid "Critical"
+msgstr "Kritiek"
+
+#: src/OptionWindow.cpp:106
+msgid "Warning"
+msgstr "Waarschuwing"
+
+#: src/OptionWindow.cpp:107
+msgid "Message"
+msgstr "Bericht"
+
+#: src/OptionWindow.cpp:108
+msgid "Info"
+msgstr "Informatief"
+
+#: src/OptionWindow.cpp:109
+msgid "Debug"
+msgstr "Debug"
+
+#: src/OptionWindow.cpp:111
+msgid "CIM log level"
+msgstr "CIM log niveau"
+
+#: src/OptionWindow.cpp:116
+msgid "CppConsUI log level"
+msgstr "CppConsUI log niveau"
+
+#: src/OptionWindow.cpp:121
+msgid "Purple log level"
+msgstr "Purple log niveau"
+
+#: src/OptionWindow.cpp:126
+msgid "GLib log level"
+msgstr "GLib log niveau"
+
+#: src/OptionWindow.cpp:134
+msgid "Libpurple logging"
+msgstr "Libpurple logging"
+
+#: src/OptionWindow.cpp:135
+msgid "Log format"
+msgstr "Log formaat"
+
+#: src/OptionWindow.cpp:146
+msgid "Log all instant messages"
+msgstr "Log alle berichten"
+
+#: src/OptionWindow.cpp:148
+msgid "Log all chats"
+msgstr "log alle chats"
+
+#: src/OptionWindow.cpp:151
+msgid "Log all status changes to system log"
+msgstr "Log alle satuswijzigingen naar systeem log"
+
+#: src/OptionWindow.cpp:157
+msgid "Config files"
+msgstr "Configuratie bestanden"
+
+#: src/OptionWindow.cpp:158
+msgid "Reload key bindings"
+msgstr "Herlaad sneltoetsen"
+
+#: src/OptionWindow.cpp:162
+msgid "Reload color schemes"
+msgstr "Herlaad kleurenschema's"
+
+#: src/OptionWindow.cpp:351
+msgid "minute"
+msgid_plural "minutes"
+msgstr[0] "minuut"
+msgstr[1] "minuten"
+
+#: src/OptionWindow.cpp:357
+msgid "Keybinding file was successfully reloaded."
+msgstr "Sneltoetsen bestand succesvol gerladen."
+
+#: src/OptionWindow.cpp:363
+msgid "Colorscheme file was successfully reloaded."
+msgstr "Kleurenschema's bestand succesvol gerladen."
+
+#: src/PluginWindow.cpp:43
+msgid "Plugins"
+msgstr "Plugins"
+
+#: src/PluginWindow.cpp:74
+msgid "Add plugin"
+msgstr "Plugin Toevoegen"
+
+#: src/PluginWindow.cpp:322 src/PluginWindow.cpp:335
+#, fuzzy, c-format
+msgid "Unhandled plugin preference type '%d'."
+msgstr "Niet ondersteund conversatie type: '%d'."
+
+#: src/PluginWindow.cpp:344
+msgid "Preferences"
+msgstr "Voorkeuren"
+
+#: src/PluginWindow.cpp:352 src/PluginWindow.cpp:393
+msgid "Disable plugin"
+msgstr "Plugin Afzetten"
+
+#: src/PluginWindow.cpp:372
+#, fuzzy, c-format
+msgid "Error loading plugin '%s'."
+msgstr "Fout bij het aanmaken van directory '%s'."
+
+#: src/PluginWindow.cpp:394
+#, fuzzy
+msgid "Are you sure you want to disable this plugin?"
+msgstr "Bent u zeker dat u dit account wenst te verwijderen?"
+
+#: src/PluginWindow.cpp:407
+#, c-format
+msgid ""
+"Error unloading plugin '%s'. The plugin could not be unloaded now, but will "
+"be disabled at the next startup."
+msgstr ""
+"Fout bij ontladen plugin '%s'. De plugin kan momenteel niet ontladen worden, "
+"maar zal afgezet worden bij de volgende opstart"
+
+#: src/Request.cpp:115
+msgid "Selected value"
+msgstr "Geselcteerde waarde"
+
+#: src/Request.cpp:225
+msgid "Settings group"
+msgstr "Instellingen groep"
+
+#: src/Request.cpp:271
+#, fuzzy, c-format
+msgid "Unhandled request field type '%d'."
+msgstr "Niet opgevangen Aanvraag veld type'%d'."
+
+#: cppconsui/AbstractDialog.h:31
+msgid "Ok"
+msgstr "Ok"
+
+#: cppconsui/AbstractDialog.h:33
+msgid "Yes"
+msgstr "Ja"
+
+#: cppconsui/AbstractDialog.h:34
+msgid "No"
+msgstr "Neen"
+
+#: cppconsui/ColorScheme.cpp:91
+msgid "Color pairs limit exceeded."
+msgstr "Kleurenparen limiet overschreden."
+
+#: cppconsui/ColorScheme.cpp:98
+msgid "Adding color pair failed."
+msgstr "Toevoegen van Kleurenpaar mislukt."
+
+#: cppconsui/CoreManager.cpp:318
+#, c-format
+msgid "Error converting input to UTF-8 (%s)."
+msgstr "Fout bij converteren van input to UTF-8 (%s)."
+
+#: cppconsui/CoreManager.cpp:370
+msgid "Libtermkey initialization failed."
+msgstr "Libtermkey initialisatie mislukt."
+
+#: cppconsui/KeyConfig.cpp:82
+msgid "<unbound>"
+msgstr "<niet gebonden>"
+
+#: plugins/extaction.c:168
+msgid "Command"
+msgstr "Opdracht"
+
+#: plugins/extaction.c:194
+msgid "External actions"
+msgstr "Externe actie"
+
+#: plugins/extaction.c:196
+msgid "Executes an external program when a specific event occurs."
+msgstr "Voer een extern programma uit wanneer er een specifieke gebeurtenis gebeurd."
+
+#: plugins/extaction.c:197
+msgid ""
+"When an event such as received-im-msg, or buddy-signed-on occurs this plugin "
+"executes a user-defined external program."
+msgstr ""
+"Wanneer een gebeurtenis zoals received-im-msg, of buddy-signed-on gebeurd "
+"voer een gebruiker-defined extern programma uit."
+
