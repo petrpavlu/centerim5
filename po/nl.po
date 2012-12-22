@@ -65,14 +65,13 @@ msgstr "Protocol"
 
 #: src/AccountWindow.cpp:360
 msgid "Buddylist Color:"
-msgstr "Kleur Vriendenlijst:"
+msgstr "Kleur vriendenlijst:"
 
 #: src/AccountWindow.cpp:444
 msgid "Invalid account or protocol plugin not loaded"
 msgstr "Ongeldig account of protocol niet geladen"
 
 #: src/AccountWindow.cpp:529
-#, fuzzy, c-format
 msgid "Unhandled account option type '%d'."
 msgstr "Niet ondersteunde account optie type: '%d'."
 
@@ -86,7 +85,7 @@ msgstr "Account verwijderen"
 
 #: src/AccountWindow.cpp:572
 msgid "Are you sure you want to delete this account?"
-msgstr "Bent u zeker dat u dit account wenst te verwijderen?"
+msgstr "Bent u zeker dat u dit account wilt verwijderen?"
 
 #: src/Accounts.cpp:114
 msgid "Pending requests"
@@ -192,7 +191,7 @@ msgstr "Er zijn geen accounts verbonden"
 
 #: src/BuddyList.cpp:381
 msgid "Different Buddylist detected!"
-msgstr "Conflicterende Vrienschapslijst aangetroffen!"
+msgstr "Conflicterende vrienschapslijst aangetroffen!"
 
 #: src/BuddyList.cpp:456 src/BuddyList.cpp:529
 msgid "Account"
@@ -240,7 +239,7 @@ msgstr "Chat toevoegen"
 
 #: src/BuddyList.cpp:571
 msgid "Add Group"
-msgstr "Groep Toevoegen"
+msgstr "Groep toevoegen"
 
 #: src/BuddyList.cpp:572
 msgid "Please enter the name of the group to be added."
@@ -252,23 +251,23 @@ msgstr "Annuleren"
 
 #: src/BuddyList.cpp:591 src/BuddyList.cpp:644
 msgid "No account specified."
-msgstr "Geen account gespecificeerd"
+msgstr "Geen account gespecificeerd."
 
 #: src/BuddyList.cpp:595 src/BuddyList.cpp:648
 msgid "Selected account is not connected."
-msgstr "Het geselecteerde account is niet geconnecteerd"
+msgstr "Het geselecteerde account is niet verbonden."
 
 #: src/BuddyList.cpp:599 src/BuddyList.cpp:662
 msgid "No buddy name specified."
-msgstr "Naam van vriend niet gespecifieerd"
+msgstr "Naam van vriend niet gespecifieerd."
 
 #: src/BuddyList.cpp:603 src/BuddyList.cpp:666 src/BuddyList.cpp:701
 msgid "No group name specified."
-msgstr "Naam van groep niet gespecifieerd"
+msgstr "Naam van groep niet gespecifieerd."
 
 #: src/BuddyList.cpp:618
 msgid "Specified buddy is already in the list."
-msgstr "Gespecifieerde vriend staat reeds in de lijst"
+msgstr "Gespecifieerde vriend staat reeds in de lijst."
 
 #: src/BuddyListNode.cpp:42
 msgid "Unrecognized BuddyList node."
@@ -309,7 +308,7 @@ msgstr "Verplaatsen naar..."
 #: src/BuddyListNode.cpp:818
 #, c-format
 msgid "Are you sure you want to delete contact %s from the list?"
-msgstr "Bent u zeker dat je contact %s wilt verwijderen van de lijst?"
+msgstr "Bent u zeker dat je contact %s wilt verwijderen uit de lijst?"
 
 #: src/BuddyListNode.cpp:821
 msgid "Contact deletion"
@@ -343,37 +342,31 @@ msgstr "Welkom bij CenterIM 5. Druk %s om het hoofdmenu weer te geven."
 
 #: src/CenterIM.cpp:182
 msgid "color schemes"
-msgstr "kleurschema's"
+msgstr "kleurenschema's"
 
 #: src/CenterIM.cpp:199
-#, fuzzy
 msgid "Missing 'name' attribute in the scheme definition."
-msgstr "Het attribute 'naam' ontbreekt voor het schema."
+msgstr "Het attribute 'name' ontbreekt voor het schema."
 
 #: src/CenterIM.cpp:208
-#, fuzzy
 msgid "Missing 'widget' attribute in the color definition."
 msgstr "Het attribute 'widget' ontbreekt voor het kleurenschema."
 
 #: src/CenterIM.cpp:215
-#, fuzzy
 msgid "Missing 'property' attribute in the color definition."
 msgstr "Het attribute 'property' ontbreekt voor het kleurenschema."
 
 #: src/CenterIM.cpp:228 src/CenterIM.cpp:233
-#, fuzzy, c-format
 msgid "Unrecognized color '%s'."
 msgstr "Onherkenbare kleur '%s'."
 
 #: src/CenterIM.cpp:238
-#, fuzzy, c-format
 msgid "Unrecognized attributes '%s'."
-msgstr "Onherkenbaar attribute '%s'."
+msgstr "Onherkenbare attributen '%s'."
 
 #: src/CenterIM.cpp:250
-#, fuzzy
 msgid "Error parsing 'colorschemes.xml', loading default color scheme."
-msgstr "Fout bij het inlezen van 'colorschemes.xml', default kleuren worden "
+msgstr "Fout bij het inlezen van 'colorschemes.xml', standaard kleuren worden "
 "geladen."
 
 #: src/CenterIM.cpp:263
@@ -381,42 +374,35 @@ msgid "key bindings"
 msgstr "Sneltoetsen"
 
 #: src/CenterIM.cpp:280
-#, fuzzy
 msgid "Missing 'context' attribute in the bind definition."
-msgstr "Het attribute 'context' ontbreekt voor de Sneltoets."
+msgstr "Het attribute 'context' ontbreekt voor de sneltoets."
 
 #: src/CenterIM.cpp:285
-#, fuzzy
 msgid "Missing 'action' attribute in the bind definition."
-msgstr "Het attribute 'actie' ontbreekt voor de Sneltoets."
+msgstr "Het attribute 'action' ontbreekt voor de sneltoets."
 
 #: src/CenterIM.cpp:290
-#, fuzzy
 msgid "Missing 'key' attribute in the bind definition."
-msgstr "Het attribute 'toets' ontbreekt voor de Sneltoets."
+msgstr "Het attribute 'key' ontbreekt voor de Sneltoets."
 
 #: src/CenterIM.cpp:295
-#, fuzzy, c-format
 msgid "Unrecognized key '%s'."
 msgstr "Onherkenbare toets '%s'."
 
 #: src/CenterIM.cpp:304
-#, fuzzy
 msgid "Error parsing 'binds.xml', loading default keys."
-msgstr "Fout bij het inlezen van 'binds.xml', default sneltoetsen worden geladen."
+msgstr "Fout bij het inlezen van 'binds.xml', standaard sneltoetsen worden geladen."
 
 #: src/CenterIM.cpp:366
 #, c-format
 msgid "Libpurple initialization failed."
-msgstr "Initialisatie van Libpurple is niet gelukt."
+msgstr "Initialisatie van libpurple is niet gelukt."
 
 #: src/CenterIM.cpp:763
-#, fuzzy
 msgid "Error saving 'colorschemes.xml'."
 msgstr "Fout bij opslaan van 'colorschemes.xml'."
 
 #: src/CenterIM.cpp:955
-#, fuzzy
 msgid "Error saving 'binds.xml'."
 msgstr "Fout bij opslaan van 'binds.xml'."
 
@@ -438,7 +424,7 @@ msgstr ""
 "  -a, --ascii                gebruik ASCII karakters voor het tekenen van "
 "lijnen en kaders\n"
 "  -h, --help                 toon command line parameters\n"
-"  -v, --version              toon de programma versie informatie\n"
+"  -v, --version              toon programma versie informatie\n"
 "  -b, --basedir <directory>  specifieer een andere basis directory\n"
 "  -o, --offline              opstarten met alle accounts offline\n"
 
@@ -464,7 +450,7 @@ msgstr "+ [%s] %s: Verbroken"
 
 #: src/Connections.cpp:121
 msgid "+ Network connected"
-msgstr " Netwerk verbonden"
+msgstr "+ Netwerk verbonden"
 
 #: src/Connections.cpp:137
 msgid "+ Network disconnected"
@@ -474,8 +460,8 @@ msgstr "+ Netwerk verbroken"
 #, c-format
 msgid "+ [%s] %s: Auto-reconnection in %d second"
 msgid_plural "+ [%s] %s: Auto-reconnection in %d seconds"
-msgstr[0] "+ [%s] %s: Automatisch verbinden in %d seconde"
-msgstr[1] "+ [%s] %s: Automatisch verbinden in %d seconden"
+msgstr[0] "+ [%s] %s: Automatisch herverbinden in %d seconde"
+msgstr[1] "+ [%s] %s: Automatisch herverbinden in %d seconden"
 
 #: src/Connections.cpp:176
 #, c-format
@@ -495,18 +481,18 @@ msgstr "Fout bij openen conversatie logbestand '%s' (%s)."
 #, c-format
 msgid ""
 "%s buddy list, %s/%s/%s next/prev/act conv, %s status, %s send, %s expand"
-msgstr "%s Vriendenlijst, %s/%s/%s volgende/vorige/open conv, %s status, %s "
+msgstr "%s vriendenlijst, %s/%s/%s volgende/vorige/open conv, %s status, %s "
 "verzenden, %s uitklappen"
 
 #: src/Conversation.cpp:213
 #, c-format
 msgid "Error writing to conversation logfile (%s)."
-msgstr "Fout bij het schrijven van conversatie logbestand (%s)."
+msgstr "Fout bij het schrijven van conversatie naar logbestand (%s)."
 
 #: src/Conversation.cpp:218
 #, c-format
 msgid "Error flushing conversation logfile (%s)."
-msgstr "Fout bij leegmaken conversatie logbestand (%s)."
+msgstr "Fout bij het wegschrijven van de buffers naar conversatie logbestand (%s)."
 
 #: src/Conversation.cpp:470
 #, c-format
@@ -528,7 +514,6 @@ msgid "Error reading from conversation logfile '%s' (%s)."
 msgstr "Fout bij lezen van conversatie logbestand '%s' (%s)."
 
 #: src/Conversations.cpp:276
-#, fuzzy, c-format
 msgid "Unhandled conversation type '%d'."
 msgstr "Niet ondersteund conversatie type: %d."
 
@@ -566,7 +551,7 @@ msgstr "Afsluiten"
 
 #: src/Log.cpp:156
 msgid "centerim/log: purple_print() parameter category was not defined."
-msgstr "centerim/log: purple_print() parameter categorie was niet gedefigneerd"
+msgstr "centerim/log: purple_print() parameter category was niet gedefigneerd"
 
 #: src/Log.cpp:278
 #, c-format
@@ -581,7 +566,7 @@ msgstr "centerim/log: Fout bij wegschrijven naar logbestand (%s)."
 #: src/Log.cpp:303
 #, c-format
 msgid "centerim/log: Error flushing logfile (%s)."
-msgstr "centerim/log: Fout bij leegmaken logfile (%s)."
+msgstr "centerim/log: Fout bij wegschrijven van buffers naar logbestand (%s)."
 
 #: src/Log.cpp:328
 #, c-format
@@ -655,15 +640,15 @@ msgstr "Afmetingen"
 
 #: src/OptionWindow.cpp:64
 msgid "Buddy list window width"
-msgstr "Breedte Vriendenlijst"
+msgstr "Breedte vriendenlijst"
 
 #: src/OptionWindow.cpp:67
 msgid "Log window height"
-msgstr "Hoogte Logscherm"
+msgstr "Hoogte logscherm"
 
 #: src/OptionWindow.cpp:70
 msgid "Show header"
-msgstr "Toon Header"
+msgstr "Toon header"
 
 #: src/OptionWindow.cpp:72
 msgid "Show footer"
@@ -671,7 +656,7 @@ msgstr "Toon footer"
 
 #: src/OptionWindow.cpp:77
 msgid "Idle settings"
-msgstr "inactiviteits instellingen"
+msgstr "Inactiviteits instellingen"
 
 #: src/OptionWindow.cpp:79
 msgid "Change to away status when idle"
@@ -695,7 +680,7 @@ msgstr "Vanaf laatst verstuurd bericht"
 
 #: src/OptionWindow.cpp:88
 msgid "Based on keyboard"
-msgstr "Gebaseerd op toetsenbord"
+msgstr "Gebaseerd op toetsenbord activiteit"
 
 #: src/OptionWindow.cpp:93
 msgid "Conversations"
@@ -767,7 +752,7 @@ msgstr "Log alle berichten"
 
 #: src/OptionWindow.cpp:148
 msgid "Log all chats"
-msgstr "log alle chats"
+msgstr "Log alle chats"
 
 #: src/OptionWindow.cpp:151
 msgid "Log all status changes to system log"
@@ -805,12 +790,11 @@ msgstr "Plugins"
 
 #: src/PluginWindow.cpp:74
 msgid "Add plugin"
-msgstr "Plugin Toevoegen"
+msgstr "Plugin toevoegen"
 
 #: src/PluginWindow.cpp:322 src/PluginWindow.cpp:335
-#, fuzzy, c-format
 msgid "Unhandled plugin preference type '%d'."
-msgstr "Niet ondersteund conversatie type: '%d'."
+msgstr "Niet ondersteund conversatie type '%d'."
 
 #: src/PluginWindow.cpp:344
 msgid "Preferences"
@@ -818,17 +802,15 @@ msgstr "Voorkeuren"
 
 #: src/PluginWindow.cpp:352 src/PluginWindow.cpp:393
 msgid "Disable plugin"
-msgstr "Plugin Afzetten"
+msgstr "Plugin afzetten"
 
 #: src/PluginWindow.cpp:372
-#, fuzzy, c-format
 msgid "Error loading plugin '%s'."
-msgstr "Fout bij het aanmaken van directory '%s'."
+msgstr "Fout bij het laden van plugin '%s'."
 
 #: src/PluginWindow.cpp:394
-#, fuzzy
 msgid "Are you sure you want to disable this plugin?"
-msgstr "Bent u zeker dat u dit account wenst te verwijderen?"
+msgstr "Bent u zeker dat u deze plugin wilt afzetten?"
 
 #: src/PluginWindow.cpp:407
 #, c-format
@@ -837,7 +819,7 @@ msgid ""
 "be disabled at the next startup."
 msgstr ""
 "Fout bij ontladen plugin '%s'. De plugin kan momenteel niet ontladen worden, "
-"maar zal afgezet worden bij de volgende opstart"
+"maar zal bij volgende opstart afgezet worden."
 
 #: src/Request.cpp:115
 msgid "Selected value"
@@ -848,9 +830,8 @@ msgid "Settings group"
 msgstr "Instellingen groep"
 
 #: src/Request.cpp:271
-#, fuzzy, c-format
 msgid "Unhandled request field type '%d'."
-msgstr "Niet opgevangen Aanvraag veld type'%d'."
+msgstr "Niet opgevangen aanvraag veld type '%d'."
 
 #: cppconsui/AbstractDialog.h:31
 msgid "Ok"
@@ -866,7 +847,7 @@ msgstr "Neen"
 
 #: cppconsui/ColorScheme.cpp:91
 msgid "Color pairs limit exceeded."
-msgstr "Kleurenparen limiet overschreden."
+msgstr "Limiet aantal kleurenparen overschreden."
 
 #: cppconsui/ColorScheme.cpp:98
 msgid "Adding color pair failed."
