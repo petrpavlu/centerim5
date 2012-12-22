@@ -357,10 +357,12 @@ msgid "Missing 'property' attribute in the color definition."
 msgstr "Het attribute 'property' ontbreekt voor het kleurenschema."
 
 #: src/CenterIM.cpp:228 src/CenterIM.cpp:233
+#, c-format
 msgid "Unrecognized color '%s'."
 msgstr "Onherkenbare kleur '%s'."
 
 #: src/CenterIM.cpp:238
+#, c-format
 msgid "Unrecognized attributes '%s'."
 msgstr "Onherkenbare attributen '%s'."
 
@@ -386,6 +388,7 @@ msgid "Missing 'key' attribute in the bind definition."
 msgstr "Het attribute 'key' ontbreekt voor de Sneltoets."
 
 #: src/CenterIM.cpp:295
+#, c-format
 msgid "Unrecognized key '%s'."
 msgstr "Onherkenbare toets '%s'."
 
@@ -514,6 +517,7 @@ msgid "Error reading from conversation logfile '%s' (%s)."
 msgstr "Fout bij lezen van conversatie logbestand '%s' (%s)."
 
 #: src/Conversations.cpp:276
+#, c-format
 msgid "Unhandled conversation type '%d'."
 msgstr "Niet ondersteund conversatie type: %d."
 
@@ -793,6 +797,7 @@ msgid "Add plugin"
 msgstr "Plugin toevoegen"
 
 #: src/PluginWindow.cpp:322 src/PluginWindow.cpp:335
+#, c-format
 msgid "Unhandled plugin preference type '%d'."
 msgstr "Niet ondersteund conversatie type '%d'."
 
@@ -805,6 +810,7 @@ msgid "Disable plugin"
 msgstr "Plugin afzetten"
 
 #: src/PluginWindow.cpp:372
+#, c-format
 msgid "Error loading plugin '%s'."
 msgstr "Fout bij het laden van plugin '%s'."
 
@@ -830,6 +836,7 @@ msgid "Settings group"
 msgstr "Instellingen groep"
 
 #: src/Request.cpp:271
+#, c-format
 msgid "Unhandled request field type '%d'."
 msgstr "Niet opgevangen aanvraag veld type '%d'."
 
