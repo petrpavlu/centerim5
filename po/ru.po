@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: centerim5\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2012-11-15 21:16+0100\n"
-"PO-Revision-Date: 2012-08-15 16:12+0400\n"
+"POT-Creation-Date: 2012-12-30 14:01+0400\n"
+"PO-Revision-Date: 2012-12-30 13:59+0300\n"
 "Last-Translator: kyak <bas@bmail.ru>\n"
 "Language-Team: \n"
 "Language: ru_RU\n"
@@ -73,9 +73,9 @@ msgid "Invalid account or protocol plugin not loaded"
 msgstr "Ошибка аккаунта или не подгружен плагин для протокола"
 
 #: src/AccountWindow.cpp:529
-#, fuzzy, c-format
+#, c-format
 msgid "Unhandled account option type '%d'."
-msgstr "Неизвестный тип разговора: %i.\n"
+msgstr "Неизвестный тип аккаунта '%d'."
 
 #: src/AccountWindow.cpp:544
 msgid "Drop account"
@@ -179,13 +179,13 @@ msgid "+ [%s] %s: New authorization request from %s"
 msgstr "+ [%s] %s: Новый запрос на авторизацию от %s"
 
 #: src/BuddyList.cpp:63
-#, fuzzy, c-format
+#, c-format
 msgid "%s act conv, %s status menu, %s context menu, %s filter"
-msgstr "%s акт. чат, %s статус, %s контекст. меню"
+msgstr "%s акт. чат, %s статус, %s контекст. меню, %s фильтр"
 
 #: src/BuddyList.cpp:111
 msgid "Filter: "
-msgstr ""
+msgstr "Фильтр:"
 
 #: src/BuddyList.cpp:325
 msgid "There are no connected accounts."
@@ -347,64 +347,56 @@ msgid "color schemes"
 msgstr "цветовые схемы"
 
 #: src/CenterIM.cpp:199
-#, fuzzy
 msgid "Missing 'name' attribute in the scheme definition."
-msgstr "Отсутствует атрибут 'name' в определении цвета.\n"
+msgstr "Отсутствует атрибут 'name' в определении схемы."
 
 #: src/CenterIM.cpp:208
-#, fuzzy
 msgid "Missing 'widget' attribute in the color definition."
-msgstr "Отсутствует атрибут 'widget' в определении цвета.\n"
+msgstr "Отсутствует атрибут 'widget' в определении цвета."
 
 #: src/CenterIM.cpp:215
-#, fuzzy
 msgid "Missing 'property' attribute in the color definition."
-msgstr "Отсутствует атрибут 'property' в определении цвета.\n"
+msgstr "Отсутствует атрибут 'property' в определении цвета."
 
 #: src/CenterIM.cpp:228 src/CenterIM.cpp:233
-#, fuzzy, c-format
+#, c-format
 msgid "Unrecognized color '%s'."
-msgstr "Нераспознанный цвет '%s'.\n"
+msgstr "Нераспознанный цвет '%s'."
 
 #: src/CenterIM.cpp:238
-#, fuzzy, c-format
+#, c-format
 msgid "Unrecognized attributes '%s'."
-msgstr "Нераспознанные атрибуты '%s'.\n"
+msgstr "Нераспознанные атрибуты '%s'."
 
 #: src/CenterIM.cpp:250
-#, fuzzy
 msgid "Error parsing 'colorschemes.xml', loading default color scheme."
 msgstr ""
-"Ошибка разбора 'colorschemes.xml', загружаем цветовую схему по умолчанию.\n"
+"Ошибка разбора 'colorschemes.xml', загружаем цветовую схему по умолчанию."
 
 #: src/CenterIM.cpp:263
 msgid "key bindings"
 msgstr "настройки клавиш"
 
 #: src/CenterIM.cpp:280
-#, fuzzy
 msgid "Missing 'context' attribute in the bind definition."
-msgstr "Отсутствует атрибут 'context' в определении настройки клавиш.\n"
+msgstr "Отсутствует атрибут 'context' в настройках клавиш."
 
 #: src/CenterIM.cpp:285
-#, fuzzy
 msgid "Missing 'action' attribute in the bind definition."
-msgstr "Отсутствует атрибут 'action' в определении настройки клавиш.\n"
+msgstr "Отсутствует атрибут 'action' в настройках клавиш."
 
 #: src/CenterIM.cpp:290
-#, fuzzy
 msgid "Missing 'key' attribute in the bind definition."
-msgstr "Отсутствует атрибут 'key' в определении настройки клавиш.\n"
+msgstr "Отсутствует атрибут 'key' в настройках клавиш."
 
 #: src/CenterIM.cpp:295
-#, fuzzy, c-format
+#, c-format
 msgid "Unrecognized key '%s'."
-msgstr "Нераспознанная клавиша '%s'.\n"
+msgstr "Нераспознанная клавиша '%s'."
 
 #: src/CenterIM.cpp:304
-#, fuzzy
 msgid "Error parsing 'binds.xml', loading default keys."
-msgstr "Ошибка разбора 'binds.xml', загружаем клавиши по умолчанию.\n"
+msgstr "Ошибка разбора 'binds.xml', загружаем клавиши по умолчанию."
 
 #: src/CenterIM.cpp:366
 #, c-format
@@ -412,14 +404,12 @@ msgid "Libpurple initialization failed."
 msgstr "Ошибка инициализации Libpurple"
 
 #: src/CenterIM.cpp:763
-#, fuzzy
 msgid "Error saving 'colorschemes.xml'."
-msgstr "Ошибка сохранения 'colorschemes.xml'.\n"
+msgstr "Ошибка сохранения 'colorschemes.xml'."
 
 #: src/CenterIM.cpp:955
-#, fuzzy
 msgid "Error saving 'binds.xml'."
-msgstr "Ошибка сохранения 'binds.xml'.\n"
+msgstr "Ошибка сохранения 'binds.xml'."
 
 #: src/CenterMain.cpp:33
 #, c-format
@@ -530,9 +520,9 @@ msgid "Error reading from conversation logfile '%s' (%s)."
 msgstr "Ошибка чтения лога разговора '%s' (%s)."
 
 #: src/Conversations.cpp:276
-#, fuzzy, c-format
+#, c-format
 msgid "Unhandled conversation type '%d'."
-msgstr "Неизвестный тип разговора: %i.\n"
+msgstr "Неизвестный тип разговора '%d'."
 
 #: src/GeneralMenu.cpp:37
 msgid "Accounts..."
@@ -559,9 +549,8 @@ msgid "Config options..."
 msgstr "Настройки..."
 
 #: src/GeneralMenu.cpp:49
-#, fuzzy
 msgid "Plugins..."
-msgstr "Псевдоним..."
+msgstr "Плагины..."
 
 #: src/GeneralMenu.cpp:57
 msgid "Quit"
@@ -805,34 +794,33 @@ msgstr "Настройки цветовой схемы перезагружен�
 
 #: src/PluginWindow.cpp:43
 msgid "Plugins"
-msgstr ""
+msgstr "Плагины:"
 
 #: src/PluginWindow.cpp:74
 msgid "Add plugin"
-msgstr ""
+msgstr "Добавить плагин"
 
 #: src/PluginWindow.cpp:322 src/PluginWindow.cpp:335
-#, fuzzy, c-format
+#, c-format
 msgid "Unhandled plugin preference type '%d'."
-msgstr "Неизвестный тип разговора: %i.\n"
+msgstr "Неизвестный тип плагина '%d'."
 
 #: src/PluginWindow.cpp:344
 msgid "Preferences"
-msgstr ""
+msgstr "Настройки"
 
 #: src/PluginWindow.cpp:352 src/PluginWindow.cpp:393
 msgid "Disable plugin"
-msgstr ""
+msgstr "Отключить плагин"
 
 #: src/PluginWindow.cpp:372
-#, fuzzy, c-format
+#, c-format
 msgid "Error loading plugin '%s'."
-msgstr "Ошибка чтения файла с настройками клавиш '%s'."
+msgstr "Ошибка загрузки плагина '%s'."
 
 #: src/PluginWindow.cpp:394
-#, fuzzy
 msgid "Are you sure you want to disable this plugin?"
-msgstr "Вы уверены, что хотите удалить этот аккаунт?"
+msgstr "Вы уверены, что хотите отключить этот плагин?"
 
 #: src/PluginWindow.cpp:407
 #, c-format
@@ -840,6 +828,8 @@ msgid ""
 "Error unloading plugin '%s'. The plugin could not be unloaded now, but will "
 "be disabled at the next startup."
 msgstr ""
+"Ошибка при загрузке плагина '%s'. Сейчас нельзя отключить этот плагин, но он "
+"будет отключен при следующем запуске."
 
 #: src/Request.cpp:115
 msgid "Selected value"
@@ -850,9 +840,9 @@ msgid "Settings group"
 msgstr "Группа настроек"
 
 #: src/Request.cpp:271
-#, fuzzy, c-format
+#, c-format
 msgid "Unhandled request field type '%d'."
-msgstr "Тип поля запроса не реализован"
+msgstr "Неизвестный тип поля запроса '%d'."
 
 #: cppconsui/AbstractDialog.h:31
 msgid "Ok"
@@ -889,21 +879,23 @@ msgstr "<unbound>"
 
 #: plugins/extaction.c:168
 msgid "Command"
-msgstr ""
+msgstr "Команда"
 
 #: plugins/extaction.c:194
 msgid "External actions"
-msgstr ""
+msgstr "Внешнее действие"
 
 #: plugins/extaction.c:196
 msgid "Executes an external program when a specific event occurs."
-msgstr ""
+msgstr "Выполняет внешнюю программу по определенному событию"
 
 #: plugins/extaction.c:197
 msgid ""
 "When an event such as received-im-msg, or buddy-signed-on occurs this plugin "
 "executes a user-defined external program."
 msgstr ""
+"При наступлении события - такого, как получение сообщения или появление в "
+"сети контакта, этот плагин выполняет заданную внешнюю программу."
 
 #~ msgid "Invalid Account Option pref type (%d)."
 #~ msgstr "Неправильный тип настроек аккаунта (%d)."
