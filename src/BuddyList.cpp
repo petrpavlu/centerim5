@@ -60,9 +60,9 @@ bool BuddyList::ProcessInputText(const TermKeyKey &key)
 bool BuddyList::RestoreFocus()
 {
   FOOTER->SetText(
-      _("%s act conv, %s status menu, %s context menu, %s filter"),
+      _("%s act conv, %s status menu, %s context menu, %s filter, %s general menu"),
       "centerim|conversation-active", "centerim|accountstatusmenu",
-      "buddylist|contextmenu", "buddylist|filter");
+      "buddylist|contextmenu", "buddylist|filter", "centerim|generalmenu");
 
   return CppConsUI::Window::RestoreFocus();
 }
