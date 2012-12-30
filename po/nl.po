@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: centerim5 5.0.0beta1.28-6b68-dirty\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2012-12-16 23:30+0100\n"
+"POT-Creation-Date: 2012-12-30 14:16+0400\n"
 "PO-Revision-Date: 2012-12-16 23:30+0100\n"
 "Last-Translator: CBke <cb@linux.be>\n"
 "Language-Team: Dutch\n"
@@ -72,6 +72,7 @@ msgid "Invalid account or protocol plugin not loaded"
 msgstr "Ongeldig account of protocol niet geladen"
 
 #: src/AccountWindow.cpp:529
+#, c-format
 msgid "Unhandled account option type '%d'."
 msgstr "Niet ondersteunde account optie type: '%d'."
 
@@ -177,8 +178,9 @@ msgid "+ [%s] %s: New authorization request from %s"
 msgstr "+ [%s] %s: Nieuw vriendschapsverzoek van %s"
 
 #: src/BuddyList.cpp:63
-#, c-format
-msgid "%s act conv, %s status menu, %s context menu, %s filter"
+#, fuzzy, c-format
+msgid ""
+"%s act conv, %s status menu, %s context menu, %s filter, %s general menu"
 msgstr "%s open conv, %s status menu, %s context menu, %s filter"
 
 #: src/BuddyList.cpp:111
@@ -368,7 +370,8 @@ msgstr "Onherkenbare attributen '%s'."
 
 #: src/CenterIM.cpp:250
 msgid "Error parsing 'colorschemes.xml', loading default color scheme."
-msgstr "Fout bij het inlezen van 'colorschemes.xml', standaard kleuren worden "
+msgstr ""
+"Fout bij het inlezen van 'colorschemes.xml', standaard kleuren worden "
 "geladen."
 
 #: src/CenterIM.cpp:263
@@ -394,7 +397,8 @@ msgstr "Onherkenbare toets '%s'."
 
 #: src/CenterIM.cpp:304
 msgid "Error parsing 'binds.xml', loading default keys."
-msgstr "Fout bij het inlezen van 'binds.xml', standaard sneltoetsen worden geladen."
+msgstr ""
+"Fout bij het inlezen van 'binds.xml', standaard sneltoetsen worden geladen."
 
 #: src/CenterIM.cpp:366
 #, c-format
@@ -484,7 +488,8 @@ msgstr "Fout bij openen conversatie logbestand '%s' (%s)."
 #, c-format
 msgid ""
 "%s buddy list, %s/%s/%s next/prev/act conv, %s status, %s send, %s expand"
-msgstr "%s vriendenlijst, %s/%s/%s volgende/vorige/open conv, %s status, %s "
+msgstr ""
+"%s vriendenlijst, %s/%s/%s volgende/vorige/open conv, %s status, %s "
 "verzenden, %s uitklappen"
 
 #: src/Conversation.cpp:213
@@ -495,7 +500,8 @@ msgstr "Fout bij het schrijven van conversatie naar logbestand (%s)."
 #: src/Conversation.cpp:218
 #, c-format
 msgid "Error flushing conversation logfile (%s)."
-msgstr "Fout bij het wegschrijven van de buffers naar conversatie logbestand (%s)."
+msgstr ""
+"Fout bij het wegschrijven van de buffers naar conversatie logbestand (%s)."
 
 #: src/Conversation.cpp:470
 #, c-format
@@ -883,7 +889,8 @@ msgstr "Externe actie"
 
 #: plugins/extaction.c:196
 msgid "Executes an external program when a specific event occurs."
-msgstr "Voer een extern programma uit wanneer er een specifieke gebeurtenis gebeurd."
+msgstr ""
+"Voer een extern programma uit wanneer er een specifieke gebeurtenis gebeurd."
 
 #: plugins/extaction.c:197
 msgid ""
@@ -892,4 +899,3 @@ msgid ""
 msgstr ""
 "Wanneer een gebeurtenis zoals received-im-msg, of buddy-signed-on gebeurd "
 "voer een gebruiker-defined extern programma uit."
-

@@ -6,10 +6,10 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: centerim5 5.0.0beta1.32-d06e-dirty\n"
+"Project-Id-Version: centerim5 5.0.0beta1.38-cfc6-dirty\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2012-11-15 21:16+0100\n"
+"POT-Creation-Date: 2012-12-30 14:16+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -176,7 +176,8 @@ msgstr ""
 
 #: src/BuddyList.cpp:63
 #, c-format
-msgid "%s act conv, %s status menu, %s context menu, %s filter"
+msgid ""
+"%s act conv, %s status menu, %s context menu, %s filter, %s general menu"
 msgstr ""
 
 #: src/BuddyList.cpp:111
