@@ -85,7 +85,7 @@ OptionWindow::OptionWindow()
       "/purple/away/idle_reporting");
   c->AddOption(_("Never"), "none");
   c->AddOption(_("From last sent message"), "purple");
-  c->AddOption(_("Based on keyboard"), "system");
+  c->AddOption(_("Based on keyboard activity"), "system");
   tree->AppendNode(parent, *c);
 
   parent = tree->AppendNode(tree->GetRootNode(),

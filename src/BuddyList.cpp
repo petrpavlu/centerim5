@@ -59,10 +59,10 @@ bool BuddyList::ProcessInputText(const TermKeyKey &key)
 
 bool BuddyList::RestoreFocus()
 {
-  FOOTER->SetText(
-      _("%s act conv, %s status menu, %s context menu, %s filter, %s general menu"),
-      "centerim|conversation-active", "centerim|accountstatusmenu",
-      "buddylist|contextmenu", "buddylist|filter", "centerim|generalmenu");
+  FOOTER->SetText(_("%s act conv, %s status, %s main menu, %s context menu, "
+        "%s filter"), "centerim|conversation-active",
+      "centerim|accountstatusmenu", "centerim|generalmenu",
+      "buddylist|contextmenu", "buddylist|filter");
 
   return CppConsUI::Window::RestoreFocus();
 }
@@ -378,7 +378,7 @@ void BuddyList::DeclareBindables()
 void BuddyList::new_list(PurpleBuddyList *list)
 {
   if (buddylist != list)
-    LOG->Error(_("Different Buddylist detected!"));
+    LOG->Error(_("Different buddylist detected!"));
 }
 
 void BuddyList::new_node(PurpleBlistNode *node)
@@ -568,7 +568,7 @@ void BuddyList::request_add_group()
   if (!CheckAnyAccountConnected())
     return;
 
-  purple_request_input(NULL, _("Add Group"),
+  purple_request_input(NULL, _("Add group"),
       _("Please enter the name of the group to be added."), NULL, NULL, FALSE,
       FALSE, NULL, _("Add"), G_CALLBACK(add_group_ok_cb_), _("Cancel"), NULL,
       NULL, NULL, NULL, this);

@@ -357,7 +357,7 @@ void AccountWindow::ProtocolOption::OnProtocolChanged(ComboBox& /*activator*/,
 
 AccountWindow::ColorOption::ColorOption(PurpleAccount *account_)
 : ColorPicker(CppConsUI::Curses::Color::DEFAULT,
-    CppConsUI::Curses::Color::DEFAULT, _("Buddylist Color:"), true)
+    CppConsUI::Curses::Color::DEFAULT, _("Buddylist color:"), true)
 , account(account_)
 {
   g_assert(account);

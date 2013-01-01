@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: centerim5\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2012-12-30 14:16+0400\n"
+"POT-Creation-Date: 2013-01-01 18:24+0100\n"
 "PO-Revision-Date: 2012-12-30 14:19+0300\n"
 "Last-Translator: kyak <bas@bmail.ru>\n"
 "Language-Team: \n"
@@ -65,7 +65,8 @@ msgid "Protocol"
 msgstr "Протокол"
 
 #: src/AccountWindow.cpp:360
-msgid "Buddylist Color:"
+#, fuzzy
+msgid "Buddylist color:"
 msgstr "Цвет списка друзей:"
 
 #: src/AccountWindow.cpp:444
@@ -178,10 +179,9 @@ msgstr "+ [%s] %s: Новый запрос на авторизацию от %s (
 msgid "+ [%s] %s: New authorization request from %s"
 msgstr "+ [%s] %s: Новый запрос на авторизацию от %s"
 
-#: src/BuddyList.cpp:63
-#, c-format
-msgid ""
-"%s act conv, %s status menu, %s context menu, %s filter, %s general menu"
+#: src/BuddyList.cpp:62
+#, fuzzy, c-format
+msgid "%s act conv, %s status, %s main menu, %s context menu, %s filter"
 msgstr "%s акт. чат, %s статус, %s контекст. меню, %s фильтр, %s глав. меню"
 
 #: src/BuddyList.cpp:111
@@ -193,7 +193,8 @@ msgid "There are no connected accounts."
 msgstr "Нет подключенных аккаунтов"
 
 #: src/BuddyList.cpp:381
-msgid "Different Buddylist detected!"
+#, fuzzy
+msgid "Different buddylist detected!"
 msgstr "Обнаружен другой список друзей!"
 
 #: src/BuddyList.cpp:456 src/BuddyList.cpp:529
@@ -240,7 +241,8 @@ msgid "Add chat"
 msgstr "Добавить чат"
 
 #: src/BuddyList.cpp:571
-msgid "Add Group"
+#, fuzzy
+msgid "Add group"
 msgstr "Добавить группу"
 
 #: src/BuddyList.cpp:572
@@ -478,35 +480,36 @@ msgstr "+ [%s] %s: Аккаунт неактивен"
 msgid "%d.%m.%y %H:%M"
 msgstr "%d.%m.%y %H:%M"
 
-#: src/Conversation.cpp:61 src/Conversation.cpp:504
+#: src/Conversation.cpp:61 src/Conversation.cpp:505
 #, c-format
 msgid "Error opening conversation logfile '%s' (%s)."
 msgstr "Ошибка открытия лога разговора '%s' (%s)."
 
 #: src/Conversation.cpp:112
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"%s buddy list, %s/%s/%s next/prev/act conv, %s status, %s send, %s expand"
+"%s buddy list, %s status, %s main menu, %s/%s/%s next/prev/act conv, %s "
+"send, %s expand"
 msgstr ""
 "%s контакты, %s/%s/%s след./пред./акт. чат, %s статус, %s отправ., %s "
 "разверн."
 
-#: src/Conversation.cpp:213
+#: src/Conversation.cpp:214
 #, c-format
 msgid "Error writing to conversation logfile (%s)."
 msgstr "Ошибка записи в лог разговора (%s)."
 
-#: src/Conversation.cpp:218
+#: src/Conversation.cpp:219
 #, c-format
 msgid "Error flushing conversation logfile (%s)."
 msgstr "Ошибка записи лога разговора на диск (%s)."
 
-#: src/Conversation.cpp:470
+#: src/Conversation.cpp:471
 #, c-format
 msgid "Error creating directory '%s'."
 msgstr "Ошибка создания директории '%s'."
 
-#: src/Conversation.cpp:574 src/Conversation.cpp:616
+#: src/Conversation.cpp:575 src/Conversation.cpp:617
 #, c-format
 msgid ""
 "Invalid message detected in conversation logfile '%s'. The message was "
@@ -515,7 +518,7 @@ msgstr ""
 "Неправильное сообщение обнаружено в журнале беседы '%s'. Это сообщение было "
 "пропущено."
 
-#: src/Conversation.cpp:631
+#: src/Conversation.cpp:632
 #, c-format
 msgid "Error reading from conversation logfile '%s' (%s)."
 msgstr "Ошибка чтения лога разговора '%s' (%s)."
@@ -687,7 +690,8 @@ msgid "From last sent message"
 msgstr "По последнему отправленному сообщению"
 
 #: src/OptionWindow.cpp:88
-msgid "Based on keyboard"
+#, fuzzy
+msgid "Based on keyboard activity"
 msgstr "По нажатию клавиш"
 
 #: src/OptionWindow.cpp:93

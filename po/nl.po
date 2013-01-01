@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: centerim5 5.0.0beta1.28-6b68-dirty\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2012-12-30 14:16+0400\n"
+"POT-Creation-Date: 2013-01-01 18:24+0100\n"
 "PO-Revision-Date: 2012-12-16 23:30+0100\n"
 "Last-Translator: CBke <cb@linux.be>\n"
 "Language-Team: Dutch\n"
@@ -64,7 +64,8 @@ msgid "Protocol"
 msgstr "Protocol"
 
 #: src/AccountWindow.cpp:360
-msgid "Buddylist Color:"
+#, fuzzy
+msgid "Buddylist color:"
 msgstr "Kleur vriendenlijst:"
 
 #: src/AccountWindow.cpp:444
@@ -177,10 +178,9 @@ msgstr "+ [%s] %s: Nieuw vriendschapsverzoek van %s (%s)"
 msgid "+ [%s] %s: New authorization request from %s"
 msgstr "+ [%s] %s: Nieuw vriendschapsverzoek van %s"
 
-#: src/BuddyList.cpp:63
+#: src/BuddyList.cpp:62
 #, fuzzy, c-format
-msgid ""
-"%s act conv, %s status menu, %s context menu, %s filter, %s general menu"
+msgid "%s act conv, %s status, %s main menu, %s context menu, %s filter"
 msgstr "%s open conv, %s status menu, %s context menu, %s filter"
 
 #: src/BuddyList.cpp:111
@@ -192,7 +192,8 @@ msgid "There are no connected accounts."
 msgstr "Er zijn geen accounts verbonden"
 
 #: src/BuddyList.cpp:381
-msgid "Different Buddylist detected!"
+#, fuzzy
+msgid "Different buddylist detected!"
 msgstr "Conflicterende vrienschapslijst aangetroffen!"
 
 #: src/BuddyList.cpp:456 src/BuddyList.cpp:529
@@ -240,7 +241,8 @@ msgid "Add chat"
 msgstr "Chat toevoegen"
 
 #: src/BuddyList.cpp:571
-msgid "Add Group"
+#, fuzzy
+msgid "Add group"
 msgstr "Groep toevoegen"
 
 #: src/BuddyList.cpp:572
@@ -479,36 +481,37 @@ msgstr "+ [%s] %s: Account gedeactiveerd"
 msgid "%d.%m.%y %H:%M"
 msgstr "%d.%m.%y %H:%M"
 
-#: src/Conversation.cpp:61 src/Conversation.cpp:504
+#: src/Conversation.cpp:61 src/Conversation.cpp:505
 #, c-format
 msgid "Error opening conversation logfile '%s' (%s)."
 msgstr "Fout bij openen conversatie logbestand '%s' (%s)."
 
 #: src/Conversation.cpp:112
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"%s buddy list, %s/%s/%s next/prev/act conv, %s status, %s send, %s expand"
+"%s buddy list, %s status, %s main menu, %s/%s/%s next/prev/act conv, %s "
+"send, %s expand"
 msgstr ""
 "%s vriendenlijst, %s/%s/%s volgende/vorige/open conv, %s status, %s "
 "verzenden, %s uitklappen"
 
-#: src/Conversation.cpp:213
+#: src/Conversation.cpp:214
 #, c-format
 msgid "Error writing to conversation logfile (%s)."
 msgstr "Fout bij het schrijven van conversatie naar logbestand (%s)."
 
-#: src/Conversation.cpp:218
+#: src/Conversation.cpp:219
 #, c-format
 msgid "Error flushing conversation logfile (%s)."
 msgstr ""
 "Fout bij het wegschrijven van de buffers naar conversatie logbestand (%s)."
 
-#: src/Conversation.cpp:470
+#: src/Conversation.cpp:471
 #, c-format
 msgid "Error creating directory '%s'."
 msgstr "Fout bij het aanmaken van directory '%s'."
 
-#: src/Conversation.cpp:574 src/Conversation.cpp:616
+#: src/Conversation.cpp:575 src/Conversation.cpp:617
 #, c-format
 msgid ""
 "Invalid message detected in conversation logfile '%s'. The message was "
@@ -517,7 +520,7 @@ msgstr ""
 "Ongeldig bericht gevonden in conversatie logbestand '%s'. Het bericht werd "
 "overgeslagen."
 
-#: src/Conversation.cpp:631
+#: src/Conversation.cpp:632
 #, c-format
 msgid "Error reading from conversation logfile '%s' (%s)."
 msgstr "Fout bij lezen van conversatie logbestand '%s' (%s)."
@@ -689,7 +692,8 @@ msgid "From last sent message"
 msgstr "Vanaf laatst verstuurd bericht"
 
 #: src/OptionWindow.cpp:88
-msgid "Based on keyboard"
+#, fuzzy
+msgid "Based on keyboard activity"
 msgstr "Gebaseerd op toetsenbord activiteit"
 
 #: src/OptionWindow.cpp:93

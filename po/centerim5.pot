@@ -6,10 +6,10 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: centerim5 5.0.0beta1.38-cfc6-dirty\n"
+"Project-Id-Version: centerim5 5.0.0beta1.35-e29b-dirty\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2012-12-30 14:16+0400\n"
+"POT-Creation-Date: 2013-01-01 18:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -65,7 +65,7 @@ msgid "Protocol"
 msgstr ""
 
 #: src/AccountWindow.cpp:360
-msgid "Buddylist Color:"
+msgid "Buddylist color:"
 msgstr ""
 
 #: src/AccountWindow.cpp:444
@@ -174,10 +174,9 @@ msgstr ""
 msgid "+ [%s] %s: New authorization request from %s"
 msgstr ""
 
-#: src/BuddyList.cpp:63
+#: src/BuddyList.cpp:62
 #, c-format
-msgid ""
-"%s act conv, %s status menu, %s context menu, %s filter, %s general menu"
+msgid "%s act conv, %s status, %s main menu, %s context menu, %s filter"
 msgstr ""
 
 #: src/BuddyList.cpp:111
@@ -189,7 +188,7 @@ msgid "There are no connected accounts."
 msgstr ""
 
 #: src/BuddyList.cpp:381
-msgid "Different Buddylist detected!"
+msgid "Different buddylist detected!"
 msgstr ""
 
 #: src/BuddyList.cpp:456 src/BuddyList.cpp:529
@@ -235,7 +234,7 @@ msgid "Add chat"
 msgstr ""
 
 #: src/BuddyList.cpp:571
-msgid "Add Group"
+msgid "Add group"
 msgstr ""
 
 #: src/BuddyList.cpp:572
@@ -462,7 +461,7 @@ msgstr ""
 msgid "%d.%m.%y %H:%M"
 msgstr ""
 
-#: src/Conversation.cpp:61 src/Conversation.cpp:504
+#: src/Conversation.cpp:61 src/Conversation.cpp:505
 #, c-format
 msgid "Error opening conversation logfile '%s' (%s)."
 msgstr ""
@@ -470,32 +469,33 @@ msgstr ""
 #: src/Conversation.cpp:112
 #, c-format
 msgid ""
-"%s buddy list, %s/%s/%s next/prev/act conv, %s status, %s send, %s expand"
+"%s buddy list, %s status, %s main menu, %s/%s/%s next/prev/act conv, %s "
+"send, %s expand"
 msgstr ""
 
-#: src/Conversation.cpp:213
+#: src/Conversation.cpp:214
 #, c-format
 msgid "Error writing to conversation logfile (%s)."
 msgstr ""
 
-#: src/Conversation.cpp:218
+#: src/Conversation.cpp:219
 #, c-format
 msgid "Error flushing conversation logfile (%s)."
 msgstr ""
 
-#: src/Conversation.cpp:470
+#: src/Conversation.cpp:471
 #, c-format
 msgid "Error creating directory '%s'."
 msgstr ""
 
-#: src/Conversation.cpp:574 src/Conversation.cpp:616
+#: src/Conversation.cpp:575 src/Conversation.cpp:617
 #, c-format
 msgid ""
 "Invalid message detected in conversation logfile '%s'. The message was "
 "skipped."
 msgstr ""
 
-#: src/Conversation.cpp:631
+#: src/Conversation.cpp:632
 #, c-format
 msgid "Error reading from conversation logfile '%s' (%s)."
 msgstr ""
@@ -667,7 +667,7 @@ msgid "From last sent message"
 msgstr ""
 
 #: src/OptionWindow.cpp:88
-msgid "Based on keyboard"
+msgid "Based on keyboard activity"
 msgstr ""
 
 #: src/OptionWindow.cpp:93
