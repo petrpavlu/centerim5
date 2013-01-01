@@ -378,7 +378,7 @@ msgstr ""
 
 #: src/CenterIM.cpp:263
 msgid "key bindings"
-msgstr "Sneltoetsen"
+msgstr "sneltoetsen"
 
 #: src/CenterIM.cpp:280
 msgid "Missing 'context' attribute in the bind definition."
