@@ -43,6 +43,7 @@ private:
   GeneralMenu(const GeneralMenu&);
   GeneralMenu& operator=(const GeneralMenu&);
 
+  void OpenStatusWindow(CppConsUI::Button& activator);
   void OpenAccountWindow(CppConsUI::Button& activator);
   void OpenAddBuddyRequest(CppConsUI::Button& activator);
   void OpenAddChatRequest(CppConsUI::Button& activator);

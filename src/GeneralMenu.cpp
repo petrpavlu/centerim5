@@ -21,6 +21,7 @@
 
 #include "GeneralMenu.h"
 
+#include "AccountStatusMenu.h"
 #include "AccountWindow.h"
 #include "Accounts.h"
 #include "Log.h"
@@ -34,6 +35,8 @@ GeneralMenu::GeneralMenu()
 {
   SetColorScheme("generalmenu");
 
+  AppendItem(_("Change status"), sigc::mem_fun(this,
+        &GeneralMenu::OpenStatusWindow));
   AppendItem(_("Accounts..."), sigc::mem_fun(this,
         &GeneralMenu::OpenAccountWindow));
   AppendItem(_("Add buddy..."), sigc::mem_fun(this,
@@ -62,6 +65,13 @@ void GeneralMenu::OnScreenResized()
 {
   CppConsUI::Rect chat = CENTERIM->GetScreenArea(CenterIM::CHAT_AREA);
   Move(chat.x, chat.y);
+}
+
+void GeneralMenu::OpenStatusWindow(CppConsUI::Button& /*activator*/)
+{
+  AccountStatusMenu *win = new AccountStatusMenu;
+  win->Show();
+  Close();
 }
 
 void GeneralMenu::OpenAccountWindow(CppConsUI::Button& /*activator*/)

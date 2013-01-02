@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: centerim5 5.0.0beta1.28-6b68-dirty\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2013-01-01 18:24+0100\n"
-"PO-Revision-Date: 2012-02-01 01:09+0100\n"
+"POT-Creation-Date: 2013-01-02 20:00+0100\n"
+"PO-Revision-Date: 2012-12-16 23:30+0100\n"
 "Last-Translator: CBke <cb@linux.be>\n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
@@ -22,8 +22,8 @@ msgstr ""
 msgid "Accounts"
 msgstr "Accounts"
 
-#: src/AccountWindow.cpp:39 src/Accounts.cpp:171 src/BuddyList.cpp:486
-#: src/BuddyList.cpp:561 src/BuddyList.cpp:573 src/PluginWindow.cpp:52
+#: src/AccountWindow.cpp:39 src/Accounts.cpp:171 src/BuddyList.cpp:485
+#: src/BuddyList.cpp:560 src/BuddyList.cpp:572 src/PluginWindow.cpp:52
 msgid "Add"
 msgstr "Toevoegen"
 
@@ -44,7 +44,7 @@ msgstr "Account activeren"
 msgid "Password"
 msgstr "Wachtwoord"
 
-#: src/AccountWindow.cpp:119 src/BuddyList.cpp:461 src/BuddyList.cpp:533
+#: src/AccountWindow.cpp:119 src/BuddyList.cpp:460 src/BuddyList.cpp:532
 #: src/BuddyListNode.cpp:420 src/BuddyListNode.cpp:601
 #: src/BuddyListNode.cpp:776
 msgid "Alias"
@@ -64,6 +64,7 @@ msgid "Protocol"
 msgstr "Protocol"
 
 #: src/AccountWindow.cpp:360
+#, fuzzy
 msgid "Buddylist color:"
 msgstr "Kleur vriendenlijst:"
 
@@ -106,7 +107,7 @@ msgstr "%s (%s) Toevoegen aan vriendenlijst?"
 msgid "Add %s to your buddy list?"
 msgstr "%s Toevoegen aan vriendenlijst?"
 
-#: src/Accounts.cpp:229 src/BuddyList.cpp:486
+#: src/Accounts.cpp:229 src/BuddyList.cpp:485
 msgid "Add buddy"
 msgstr "Vriend toevoegen"
 
@@ -178,43 +179,44 @@ msgid "+ [%s] %s: New authorization request from %s"
 msgstr "+ [%s] %s: Nieuw vriendschapsverzoek van %s"
 
 #: src/BuddyList.cpp:62
-#, c-format
-msgid "%s act conv, %s status, %s main menu, %s context menu, %s filter"
-msgstr "%s open conv, %s status menu, %s hoofdmenu, %s context menu, %s filter"
+#, fuzzy, c-format
+msgid "%s act conv, %s main menu, %s context menu, %s filter"
+msgstr "%s open conv, %s status menu, %s context menu, %s filter"
 
-#: src/BuddyList.cpp:111
+#: src/BuddyList.cpp:110
 msgid "Filter: "
 msgstr "Filter: "
 
-#: src/BuddyList.cpp:325
+#: src/BuddyList.cpp:324
 msgid "There are no connected accounts."
 msgstr "Er zijn geen accounts verbonden"
 
-#: src/BuddyList.cpp:381
+#: src/BuddyList.cpp:380
+#, fuzzy
 msgid "Different buddylist detected!"
 msgstr "Conflicterende vrienschapslijst aangetroffen!"
 
-#: src/BuddyList.cpp:456 src/BuddyList.cpp:529
+#: src/BuddyList.cpp:455 src/BuddyList.cpp:528
 msgid "Account"
 msgstr "Account"
 
-#: src/BuddyList.cpp:458
+#: src/BuddyList.cpp:457
 msgid "Buddy name"
 msgstr "Naam van vriend"
 
-#: src/BuddyList.cpp:464 src/BuddyList.cpp:536
+#: src/BuddyList.cpp:463 src/BuddyList.cpp:535
 msgid "Group"
 msgstr "Groep"
 
-#: src/BuddyList.cpp:483
+#: src/BuddyList.cpp:482
 msgid "Buddies"
 msgstr "Vrienden"
 
-#: src/BuddyList.cpp:501 src/BuddyList.cpp:656
+#: src/BuddyList.cpp:500 src/BuddyList.cpp:655
 msgid "This protocol does not support chat rooms."
 msgstr "Dit protocol ondersteund geen chat rooms."
 
-#: src/BuddyList.cpp:517
+#: src/BuddyList.cpp:516
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
@@ -222,51 +224,52 @@ msgstr ""
 "Momenteel ben je met geen enkel protocol ingelogd dat de mogelijkheid biedt "
 "om te chatten."
 
-#: src/BuddyList.cpp:531
+#: src/BuddyList.cpp:530
 msgid "Chat name"
 msgstr "Chat naam"
 
-#: src/BuddyList.cpp:555
+#: src/BuddyList.cpp:554
 msgid "Chats"
 msgstr "Conversaties"
 
-#: src/BuddyList.cpp:558
+#: src/BuddyList.cpp:557
 msgid "Auto-join"
 msgstr "Automatisch deelnemen"
 
-#: src/BuddyList.cpp:561
+#: src/BuddyList.cpp:560
 msgid "Add chat"
 msgstr "Chat toevoegen"
 
-#: src/BuddyList.cpp:571
+#: src/BuddyList.cpp:570
+#, fuzzy
 msgid "Add group"
 msgstr "Groep toevoegen"
 
-#: src/BuddyList.cpp:572
+#: src/BuddyList.cpp:571
 msgid "Please enter the name of the group to be added."
 msgstr "Gelieve de naam in te vullen van de groep die je wilt toevoegen."
 
-#: src/BuddyList.cpp:573 cppconsui/AbstractDialog.h:32
+#: src/BuddyList.cpp:572 cppconsui/AbstractDialog.h:32
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: src/BuddyList.cpp:591 src/BuddyList.cpp:644
+#: src/BuddyList.cpp:590 src/BuddyList.cpp:643
 msgid "No account specified."
 msgstr "Geen account gespecificeerd."
 
-#: src/BuddyList.cpp:595 src/BuddyList.cpp:648
+#: src/BuddyList.cpp:594 src/BuddyList.cpp:647
 msgid "Selected account is not connected."
 msgstr "Het geselecteerde account is niet verbonden."
 
-#: src/BuddyList.cpp:599 src/BuddyList.cpp:662
+#: src/BuddyList.cpp:598 src/BuddyList.cpp:661
 msgid "No buddy name specified."
 msgstr "Naam van vriend niet gespecifieerd."
 
-#: src/BuddyList.cpp:603 src/BuddyList.cpp:666 src/BuddyList.cpp:701
+#: src/BuddyList.cpp:602 src/BuddyList.cpp:665 src/BuddyList.cpp:700
 msgid "No group name specified."
 msgstr "Naam van groep niet gespecifieerd."
 
-#: src/BuddyList.cpp:618
+#: src/BuddyList.cpp:617
 msgid "Specified buddy is already in the list."
 msgstr "Gespecifieerde vriend staat reeds in de lijst."
 
@@ -375,7 +378,7 @@ msgstr ""
 
 #: src/CenterIM.cpp:263
 msgid "key bindings"
-msgstr "sneltoetsen"
+msgstr "Sneltoetsen"
 
 #: src/CenterIM.cpp:280
 msgid "Missing 'context' attribute in the bind definition."
@@ -484,12 +487,11 @@ msgid "Error opening conversation logfile '%s' (%s)."
 msgstr "Fout bij openen conversatie logbestand '%s' (%s)."
 
 #: src/Conversation.cpp:112
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"%s buddy list, %s status, %s main menu, %s/%s/%s next/prev/act conv, %s "
-"send, %s expand"
+"%s buddy list, %s main menu, %s/%s/%s next/prev/act conv, %s send, %s expand"
 msgstr ""
-"%s vriendenlijst, %s status, %s hoofdmenu, %s/%s/%s volgende/vorige/open conv, %s "
+"%s vriendenlijst, %s/%s/%s volgende/vorige/open conv, %s status, %s "
 "verzenden, %s uitklappen"
 
 #: src/Conversation.cpp:214
@@ -527,35 +529,40 @@ msgstr "Fout bij lezen van conversatie logbestand '%s' (%s)."
 msgid "Unhandled conversation type '%d'."
 msgstr "Niet ondersteund conversatie type: %d."
 
-#: src/GeneralMenu.cpp:37
+#: src/GeneralMenu.cpp:38
+#, fuzzy
+msgid "Change status"
+msgstr "Op status"
+
+#: src/GeneralMenu.cpp:40
 msgid "Accounts..."
 msgstr "Accounts..."
 
-#: src/GeneralMenu.cpp:39
+#: src/GeneralMenu.cpp:42
 msgid "Add buddy..."
 msgstr "Vriend toevoegen..."
 
-#: src/GeneralMenu.cpp:41
+#: src/GeneralMenu.cpp:44
 msgid "Add chat..."
 msgstr "Chat Toevoegen..."
 
-#: src/GeneralMenu.cpp:43
+#: src/GeneralMenu.cpp:46
 msgid "Add group..."
 msgstr "Groep Toevoegen..."
 
-#: src/GeneralMenu.cpp:45
+#: src/GeneralMenu.cpp:48
 msgid "Pending requests..."
 msgstr "Wachtende aanvragen..."
 
-#: src/GeneralMenu.cpp:47
+#: src/GeneralMenu.cpp:50
 msgid "Config options..."
 msgstr "Configuratie opties..."
 
-#: src/GeneralMenu.cpp:49
+#: src/GeneralMenu.cpp:52
 msgid "Plugins..."
 msgstr "Plugins..."
 
-#: src/GeneralMenu.cpp:57
+#: src/GeneralMenu.cpp:60
 msgid "Quit"
 msgstr "Afsluiten"
 
@@ -689,6 +696,7 @@ msgid "From last sent message"
 msgstr "Vanaf laatst verstuurd bericht"
 
 #: src/OptionWindow.cpp:88
+#, fuzzy
 msgid "Based on keyboard activity"
 msgstr "Gebaseerd op toetsenbord activiteit"
 

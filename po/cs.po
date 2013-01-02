@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: centerim5\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2013-01-01 18:24+0100\n"
-"PO-Revision-Date: 2013-01-01 18:29+0100\n"
+"POT-Creation-Date: 2013-01-02 20:00+0100\n"
+"PO-Revision-Date: 2013-01-02 20:03+0100\n"
 "Last-Translator: Petr Pavlu <setup@dagobah.cz>\n"
 "Language-Team: Czech\n"
 "Language: \n"
@@ -21,8 +21,8 @@ msgstr ""
 msgid "Accounts"
 msgstr "Účty"
 
-#: src/AccountWindow.cpp:39 src/Accounts.cpp:171 src/BuddyList.cpp:486
-#: src/BuddyList.cpp:561 src/BuddyList.cpp:573 src/PluginWindow.cpp:52
+#: src/AccountWindow.cpp:39 src/Accounts.cpp:171 src/BuddyList.cpp:485
+#: src/BuddyList.cpp:560 src/BuddyList.cpp:572 src/PluginWindow.cpp:52
 msgid "Add"
 msgstr "Přidat"
 
@@ -43,7 +43,7 @@ msgstr "Účet povolen"
 msgid "Password"
 msgstr "Heslo"
 
-#: src/AccountWindow.cpp:119 src/BuddyList.cpp:461 src/BuddyList.cpp:533
+#: src/AccountWindow.cpp:119 src/BuddyList.cpp:460 src/BuddyList.cpp:532
 #: src/BuddyListNode.cpp:420 src/BuddyListNode.cpp:601
 #: src/BuddyListNode.cpp:776
 msgid "Alias"
@@ -105,7 +105,7 @@ msgstr "Přidat %s (%s) do seznamu kamarádů?"
 msgid "Add %s to your buddy list?"
 msgstr "Přidat %s do seznamu kamarádů?"
 
-#: src/Accounts.cpp:229 src/BuddyList.cpp:486
+#: src/Accounts.cpp:229 src/BuddyList.cpp:485
 msgid "Add buddy"
 msgstr "Přidat kamaráda"
 
@@ -178,93 +178,92 @@ msgstr "+ [%s] %s: Nový autorizační požadavek od %s"
 
 #: src/BuddyList.cpp:62
 #, c-format
-msgid "%s act conv, %s status, %s main menu, %s context menu, %s filter"
-msgstr ""
-"%s akt konv, %s status, %s hlavní nabídka, %s kontext nabídka, %s filter"
+msgid "%s act conv, %s main menu, %s context menu, %s filter"
+msgstr "%s akt konv, %s hlavní nabídka, %s kontext nabídka, %s filter"
 
-#: src/BuddyList.cpp:111
+#: src/BuddyList.cpp:110
 msgid "Filter: "
 msgstr "Filter: "
 
-#: src/BuddyList.cpp:325
+#: src/BuddyList.cpp:324
 msgid "There are no connected accounts."
 msgstr "Žádný účet není připojen."
 
-#: src/BuddyList.cpp:381
+#: src/BuddyList.cpp:380
 msgid "Different buddylist detected!"
 msgstr "Rozpoznán duplicitní seznam kamarádů!"
 
-#: src/BuddyList.cpp:456 src/BuddyList.cpp:529
+#: src/BuddyList.cpp:455 src/BuddyList.cpp:528
 msgid "Account"
 msgstr "Účet"
 
-#: src/BuddyList.cpp:458
+#: src/BuddyList.cpp:457
 msgid "Buddy name"
 msgstr "Jméno kamaráda"
 
-#: src/BuddyList.cpp:464 src/BuddyList.cpp:536
+#: src/BuddyList.cpp:463 src/BuddyList.cpp:535
 msgid "Group"
 msgstr "Skupina"
 
-#: src/BuddyList.cpp:483
+#: src/BuddyList.cpp:482
 msgid "Buddies"
 msgstr "Kamarádi"
 
-#: src/BuddyList.cpp:501 src/BuddyList.cpp:656
+#: src/BuddyList.cpp:500 src/BuddyList.cpp:655
 msgid "This protocol does not support chat rooms."
 msgstr "Tento protokol nepodporuje chat místnosti."
 
-#: src/BuddyList.cpp:517
+#: src/BuddyList.cpp:516
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
 msgstr "Žádný z právě připojených protokolů nepodporuje chat."
 
-#: src/BuddyList.cpp:531
+#: src/BuddyList.cpp:530
 msgid "Chat name"
 msgstr "Jméno chatu"
 
-#: src/BuddyList.cpp:555
+#: src/BuddyList.cpp:554
 msgid "Chats"
 msgstr "Chaty"
 
-#: src/BuddyList.cpp:558
+#: src/BuddyList.cpp:557
 msgid "Auto-join"
 msgstr "Automaticky připojit"
 
-#: src/BuddyList.cpp:561
+#: src/BuddyList.cpp:560
 msgid "Add chat"
 msgstr "Přidat chat"
 
-#: src/BuddyList.cpp:571
+#: src/BuddyList.cpp:570
 msgid "Add group"
 msgstr "Přidat skupinu"
 
-#: src/BuddyList.cpp:572
+#: src/BuddyList.cpp:571
 msgid "Please enter the name of the group to be added."
 msgstr "Zadejte prosím jméno nové skupiny."
 
-#: src/BuddyList.cpp:573 cppconsui/AbstractDialog.h:32
+#: src/BuddyList.cpp:572 cppconsui/AbstractDialog.h:32
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: src/BuddyList.cpp:591 src/BuddyList.cpp:644
+#: src/BuddyList.cpp:590 src/BuddyList.cpp:643
 msgid "No account specified."
 msgstr "Nezadán žádný účet."
 
-#: src/BuddyList.cpp:595 src/BuddyList.cpp:648
+#: src/BuddyList.cpp:594 src/BuddyList.cpp:647
 msgid "Selected account is not connected."
 msgstr "Vybraný účet není připojen."
 
-#: src/BuddyList.cpp:599 src/BuddyList.cpp:662
+#: src/BuddyList.cpp:598 src/BuddyList.cpp:661
 msgid "No buddy name specified."
 msgstr "Nezadáno jméno kamaráda."
 
-#: src/BuddyList.cpp:603 src/BuddyList.cpp:666 src/BuddyList.cpp:701
+#: src/BuddyList.cpp:602 src/BuddyList.cpp:665 src/BuddyList.cpp:700
 msgid "No group name specified."
 msgstr "Nezadáno jméno skupiny."
 
-#: src/BuddyList.cpp:618
+#: src/BuddyList.cpp:617
 msgid "Specified buddy is already in the list."
 msgstr "Zadaný kamarád se již v seznamu nachází."
 
@@ -485,11 +484,10 @@ msgstr "Chyba při otevírání log souboru konverzace \"%s\" (%s)."
 #: src/Conversation.cpp:112
 #, c-format
 msgid ""
-"%s buddy list, %s status, %s main menu, %s/%s/%s next/prev/act conv, %s "
-"send, %s expand"
+"%s buddy list, %s main menu, %s/%s/%s next/prev/act conv, %s send, %s expand"
 msgstr ""
-"%s kamarádi, %s status, %s hlavní nabídka, %s/%s/%s násl/před/akt konv, %s "
-"odeslat, %s rozšířit"
+"%s kamarádi, %s hlavní nabídka, %s/%s/%s násl/před/akt konv, %s odeslat, %s "
+"rozšířit"
 
 #: src/Conversation.cpp:214
 #, c-format
@@ -525,35 +523,39 @@ msgstr "Chyba při čtení z log souboru konverzace \"%s\" (%s)."
 msgid "Unhandled conversation type '%d'."
 msgstr "Nepodporovaný druh konverzace '%d'."
 
-#: src/GeneralMenu.cpp:37
+#: src/GeneralMenu.cpp:38
+msgid "Change status"
+msgstr "Změnit status"
+
+#: src/GeneralMenu.cpp:40
 msgid "Accounts..."
 msgstr "Účty…"
 
-#: src/GeneralMenu.cpp:39
+#: src/GeneralMenu.cpp:42
 msgid "Add buddy..."
 msgstr "Přidat kamaráda…"
 
-#: src/GeneralMenu.cpp:41
+#: src/GeneralMenu.cpp:44
 msgid "Add chat..."
 msgstr "Přidat chat…"
 
-#: src/GeneralMenu.cpp:43
+#: src/GeneralMenu.cpp:46
 msgid "Add group..."
 msgstr "Přidat skupinu…"
 
-#: src/GeneralMenu.cpp:45
+#: src/GeneralMenu.cpp:48
 msgid "Pending requests..."
 msgstr "Požadavky…"
 
-#: src/GeneralMenu.cpp:47
+#: src/GeneralMenu.cpp:50
 msgid "Config options..."
 msgstr "Nastavení…"
 
-#: src/GeneralMenu.cpp:49
+#: src/GeneralMenu.cpp:52
 msgid "Plugins..."
 msgstr "Zásuvné moduly…"
 
-#: src/GeneralMenu.cpp:57
+#: src/GeneralMenu.cpp:60
 msgid "Quit"
 msgstr "Ukončit"
 

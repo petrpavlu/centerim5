@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: centerim5\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2013-01-01 18:24+0100\n"
+"POT-Creation-Date: 2013-01-02 20:00+0100\n"
 "PO-Revision-Date: 2011-06-08 14:43+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -21,8 +21,8 @@ msgstr ""
 msgid "Accounts"
 msgstr "Accounts..."
 
-#: src/AccountWindow.cpp:39 src/Accounts.cpp:171 src/BuddyList.cpp:486
-#: src/BuddyList.cpp:561 src/BuddyList.cpp:573 src/PluginWindow.cpp:52
+#: src/AccountWindow.cpp:39 src/Accounts.cpp:171 src/BuddyList.cpp:485
+#: src/BuddyList.cpp:560 src/BuddyList.cpp:572 src/PluginWindow.cpp:52
 msgid "Add"
 msgstr "Hinzufügen"
 
@@ -43,7 +43,7 @@ msgstr "Account aktiviert"
 msgid "Password"
 msgstr "Paßwort"
 
-#: src/AccountWindow.cpp:119 src/BuddyList.cpp:461 src/BuddyList.cpp:533
+#: src/AccountWindow.cpp:119 src/BuddyList.cpp:460 src/BuddyList.cpp:532
 #: src/BuddyListNode.cpp:420 src/BuddyListNode.cpp:601
 #: src/BuddyListNode.cpp:776
 msgid "Alias"
@@ -107,7 +107,7 @@ msgstr ""
 msgid "Add %s to your buddy list?"
 msgstr ""
 
-#: src/Accounts.cpp:229 src/BuddyList.cpp:486
+#: src/Accounts.cpp:229 src/BuddyList.cpp:485
 msgid "Add buddy"
 msgstr ""
 
@@ -176,94 +176,94 @@ msgstr ""
 
 #: src/BuddyList.cpp:62
 #, c-format
-msgid "%s act conv, %s status, %s main menu, %s context menu, %s filter"
+msgid "%s act conv, %s main menu, %s context menu, %s filter"
 msgstr ""
 
-#: src/BuddyList.cpp:111
+#: src/BuddyList.cpp:110
 msgid "Filter: "
 msgstr ""
 
-#: src/BuddyList.cpp:325
+#: src/BuddyList.cpp:324
 msgid "There are no connected accounts."
 msgstr ""
 
-#: src/BuddyList.cpp:381
+#: src/BuddyList.cpp:380
 msgid "Different buddylist detected!"
 msgstr ""
 
-#: src/BuddyList.cpp:456 src/BuddyList.cpp:529
+#: src/BuddyList.cpp:455 src/BuddyList.cpp:528
 #, fuzzy
 msgid "Account"
 msgstr "Accounts..."
 
-#: src/BuddyList.cpp:458
+#: src/BuddyList.cpp:457
 msgid "Buddy name"
 msgstr ""
 
-#: src/BuddyList.cpp:464 src/BuddyList.cpp:536
+#: src/BuddyList.cpp:463 src/BuddyList.cpp:535
 msgid "Group"
 msgstr ""
 
-#: src/BuddyList.cpp:483
+#: src/BuddyList.cpp:482
 msgid "Buddies"
 msgstr ""
 
-#: src/BuddyList.cpp:501 src/BuddyList.cpp:656
+#: src/BuddyList.cpp:500 src/BuddyList.cpp:655
 msgid "This protocol does not support chat rooms."
 msgstr ""
 
-#: src/BuddyList.cpp:517
+#: src/BuddyList.cpp:516
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
 msgstr ""
 
-#: src/BuddyList.cpp:531
+#: src/BuddyList.cpp:530
 msgid "Chat name"
 msgstr ""
 
-#: src/BuddyList.cpp:555
+#: src/BuddyList.cpp:554
 msgid "Chats"
 msgstr ""
 
-#: src/BuddyList.cpp:558
+#: src/BuddyList.cpp:557
 msgid "Auto-join"
 msgstr ""
 
-#: src/BuddyList.cpp:561
+#: src/BuddyList.cpp:560
 msgid "Add chat"
 msgstr ""
 
-#: src/BuddyList.cpp:571
+#: src/BuddyList.cpp:570
 #, fuzzy
 msgid "Add group"
 msgstr "Massengruppen-Verschiebung"
 
-#: src/BuddyList.cpp:572
+#: src/BuddyList.cpp:571
 msgid "Please enter the name of the group to be added."
 msgstr ""
 
-#: src/BuddyList.cpp:573 cppconsui/AbstractDialog.h:32
+#: src/BuddyList.cpp:572 cppconsui/AbstractDialog.h:32
 msgid "Cancel"
 msgstr ""
 
-#: src/BuddyList.cpp:591 src/BuddyList.cpp:644
+#: src/BuddyList.cpp:590 src/BuddyList.cpp:643
 msgid "No account specified."
 msgstr ""
 
-#: src/BuddyList.cpp:595 src/BuddyList.cpp:648
+#: src/BuddyList.cpp:594 src/BuddyList.cpp:647
 msgid "Selected account is not connected."
 msgstr ""
 
-#: src/BuddyList.cpp:599 src/BuddyList.cpp:662
+#: src/BuddyList.cpp:598 src/BuddyList.cpp:661
 msgid "No buddy name specified."
 msgstr ""
 
-#: src/BuddyList.cpp:603 src/BuddyList.cpp:666 src/BuddyList.cpp:701
+#: src/BuddyList.cpp:602 src/BuddyList.cpp:665 src/BuddyList.cpp:700
 msgid "No group name specified."
 msgstr ""
 
-#: src/BuddyList.cpp:618
+#: src/BuddyList.cpp:617
 msgid "Specified buddy is already in the list."
 msgstr ""
 
@@ -478,8 +478,7 @@ msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s' (%s).\n"
 #: src/Conversation.cpp:112
 #, c-format
 msgid ""
-"%s buddy list, %s status, %s main menu, %s/%s/%s next/prev/act conv, %s "
-"send, %s expand"
+"%s buddy list, %s main menu, %s/%s/%s next/prev/act conv, %s send, %s expand"
 msgstr ""
 
 #: src/Conversation.cpp:214
@@ -514,38 +513,43 @@ msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s' (%s).\n"
 msgid "Unhandled conversation type '%d'."
 msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s'.\n"
 
-#: src/GeneralMenu.cpp:37
+#: src/GeneralMenu.cpp:38
+#, fuzzy
+msgid "Change status"
+msgstr "Status ändern"
+
+#: src/GeneralMenu.cpp:40
 msgid "Accounts..."
 msgstr "Accounts..."
 
-#: src/GeneralMenu.cpp:39
+#: src/GeneralMenu.cpp:42
 msgid "Add buddy..."
 msgstr ""
 
-#: src/GeneralMenu.cpp:41
+#: src/GeneralMenu.cpp:44
 msgid "Add chat..."
 msgstr ""
 
-#: src/GeneralMenu.cpp:43
+#: src/GeneralMenu.cpp:46
 #, fuzzy
 msgid "Add group..."
 msgstr "Massengruppen-Verschiebung"
 
-#: src/GeneralMenu.cpp:45
+#: src/GeneralMenu.cpp:48
 msgid "Pending requests..."
 msgstr ""
 
-#: src/GeneralMenu.cpp:47
+#: src/GeneralMenu.cpp:50
 #, fuzzy
 msgid "Config options..."
 msgstr "CenterIM Konfigurationsoptionen"
 
-#: src/GeneralMenu.cpp:49
+#: src/GeneralMenu.cpp:52
 #, fuzzy
 msgid "Plugins..."
 msgstr "Alias"
 
-#: src/GeneralMenu.cpp:57
+#: src/GeneralMenu.cpp:60
 msgid "Quit"
 msgstr "Beenden"
 
