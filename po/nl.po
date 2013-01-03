@@ -64,7 +64,6 @@ msgid "Protocol"
 msgstr "Protocol"
 
 #: src/AccountWindow.cpp:360
-#, fuzzy
 msgid "Buddylist color:"
 msgstr "Kleur vriendenlijst:"
 
@@ -179,9 +178,9 @@ msgid "+ [%s] %s: New authorization request from %s"
 msgstr "+ [%s] %s: Nieuw vriendschapsverzoek van %s"
 
 #: src/BuddyList.cpp:62
-#, fuzzy, c-format
+#, c-format
 msgid "%s act conv, %s main menu, %s context menu, %s filter"
-msgstr "%s open conv, %s status menu, %s context menu, %s filter"
+msgstr "%s open conv, %s hoofd menu, %s context menu, %s filter"
 
 #: src/BuddyList.cpp:110
 msgid "Filter: "
@@ -192,7 +191,6 @@ msgid "There are no connected accounts."
 msgstr "Er zijn geen accounts verbonden"
 
 #: src/BuddyList.cpp:380
-#, fuzzy
 msgid "Different buddylist detected!"
 msgstr "Conflicterende vrienschapslijst aangetroffen!"
 
@@ -241,7 +239,6 @@ msgid "Add chat"
 msgstr "Chat toevoegen"
 
 #: src/BuddyList.cpp:570
-#, fuzzy
 msgid "Add group"
 msgstr "Groep toevoegen"
 
@@ -487,12 +484,11 @@ msgid "Error opening conversation logfile '%s' (%s)."
 msgstr "Fout bij openen conversatie logbestand '%s' (%s)."
 
 #: src/Conversation.cpp:112
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s buddy list, %s main menu, %s/%s/%s next/prev/act conv, %s send, %s expand"
 msgstr ""
-"%s vriendenlijst, %s/%s/%s volgende/vorige/open conv, %s status, %s "
-"verzenden, %s uitklappen"
+"%s vriendenlijst, %s menu, %s/%s/%s wisselen conv, %s verzenden, %s uitklappen"
 
 #: src/Conversation.cpp:214
 #, c-format
@@ -530,9 +526,8 @@ msgid "Unhandled conversation type '%d'."
 msgstr "Niet ondersteund conversatie type: %d."
 
 #: src/GeneralMenu.cpp:38
-#, fuzzy
 msgid "Change status"
-msgstr "Op status"
+msgstr "Wijzig status"
 
 #: src/GeneralMenu.cpp:40
 msgid "Accounts..."
@@ -696,7 +691,6 @@ msgid "From last sent message"
 msgstr "Vanaf laatst verstuurd bericht"
 
 #: src/OptionWindow.cpp:88
-#, fuzzy
 msgid "Based on keyboard activity"
 msgstr "Gebaseerd op toetsenbord activiteit"
 
