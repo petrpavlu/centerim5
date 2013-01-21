@@ -130,14 +130,13 @@ private:
   };
   typedef std::map<PurplePlugin*, PluginEntry> PluginEntries;
 
-  CppConsUI::TreeView *plugins;
+  CppConsUI::TreeView *treeview;
   PluginEntries plugin_entries;
 
   PluginWindow(const PluginWindow&);
   PluginWindow& operator=(const PluginWindow&);
 
   void ClearPlugin(PurplePlugin *plugin);
-  void Populate();
   void PopulatePlugin(PurplePlugin *plugin);
 
   void AddPlugin(CppConsUI::Button& activator);

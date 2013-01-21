@@ -44,10 +44,16 @@ PluginWindow::PluginWindow()
 {
   SetColorScheme("generalwindow");
 
-  plugins = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
-  SetContainer(*plugins);
+  treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
+  SetContainer(*treeview);
 
-  Populate();
+  // show settings for all loaded plugins
+  for (GList *iter = purple_plugins_get_loaded(); iter; iter = iter->next) {
+    PurplePlugin *plugin = reinterpret_cast<PurplePlugin*>(iter->data);
+    if (plugin->info->type == PURPLE_PLUGIN_STANDARD
+        && !(plugin->info->flags & PURPLE_PLUGIN_FLAG_INVISIBLE))
+      PopulatePlugin(plugin);
+  }
 
   buttons->AppendItem(_("Add"), sigc::mem_fun(this,
         &PluginWindow::AddPlugin));
@@ -230,21 +236,10 @@ void PluginWindow::IntOption::ResponseHandler(
 void PluginWindow::ClearPlugin(PurplePlugin *plugin)
 {
   PluginEntry *plugin_entry = &plugin_entries[plugin];
-  plugins->DeleteNode(plugin_entry->parent_reference, false);
+  treeview->DeleteNode(plugin_entry->parent_reference, false);
   if (plugin_entry->frame)
     purple_plugin_pref_frame_destroy(plugin_entry->frame);
   plugin_entries.erase(plugin);
-}
-
-void PluginWindow::Populate()
-{
-  // show settings for all loaded plugins
-  for (GList *iter = purple_plugins_get_loaded(); iter; iter = iter->next) {
-    PurplePlugin *plugin = reinterpret_cast<PurplePlugin*>(iter->data);
-    if (plugin->info->type == PURPLE_PLUGIN_STANDARD
-        && !(plugin->info->flags & PURPLE_PLUGIN_FLAG_INVISIBLE))
-      PopulatePlugin(plugin);
-  }
 }
 
 void PluginWindow::PopulatePlugin(PurplePlugin *plugin)
@@ -253,8 +248,8 @@ void PluginWindow::PopulatePlugin(PurplePlugin *plugin)
   CppConsUI::Button *button = new CppConsUI::TreeView::ToggleCollapseButton(
       purple_plugin_get_name(plugin));
   CppConsUI::TreeView::NodeReference parent_reference
-    = plugins->AppendNode(plugins->GetRootNode(), *button);
-  plugins->SetCollapsed(parent_reference, true);
+    = treeview->AppendNode(treeview->GetRootNode(), *button);
+  treeview->SetCollapsed(parent_reference, true);
 
   // record this plugin in plugin_entries
   PluginEntry entry;
@@ -271,7 +266,7 @@ void PluginWindow::PopulatePlugin(PurplePlugin *plugin)
     plugin_entries[plugin].frame = frame;
 
     // group node (set to an "invalid" value)
-    CppConsUI::TreeView::NodeReference group = plugins->GetRootNode();
+    CppConsUI::TreeView::NodeReference group = treeview->GetRootNode();
 
     for (GList *iter = purple_plugin_pref_frame_get_prefs(frame); iter;
         iter = iter->next) {
@@ -286,12 +281,12 @@ void PluginWindow::PopulatePlugin(PurplePlugin *plugin)
 
         if (type == PURPLE_PLUGIN_PREF_INFO) {
           // no value label
-          plugins->AppendNode(parent_reference,
+          treeview->AppendNode(parent_reference,
               *(new CppConsUI::Label(label)));
         }
         else {
           // a new group
-          group = plugins->AppendNode(parent_reference,
+          group = treeview->AppendNode(parent_reference,
               *(new CppConsUI::TreeView::ToggleCollapseButton(label)));
         }
         continue;
@@ -337,13 +332,13 @@ void PluginWindow::PopulatePlugin(PurplePlugin *plugin)
         }
       }
 
-      if (group == plugins->GetRootNode()) {
+      if (group == treeview->GetRootNode()) {
         // no group has been created, so create one
-        group = plugins->AppendNode(parent_reference,
+        group = treeview->AppendNode(parent_reference,
             *(new CppConsUI::TreeView::ToggleCollapseButton(
                 _("Preferences"))));
       }
-      plugins->AppendNode(group, *pref_widget);
+      treeview->AppendNode(group, *pref_widget);
     }
   }
 
@@ -352,7 +347,7 @@ void PluginWindow::PopulatePlugin(PurplePlugin *plugin)
     = new CppConsUI::Button(_("Disable plugin"));
   disable_button->signal_activate.connect(sigc::bind(sigc::mem_fun(this,
           &PluginWindow::DisablePlugin), plugin));
-  plugins->AppendNode(parent_reference, *disable_button);
+  treeview->AppendNode(parent_reference, *disable_button);
 }
 
 void PluginWindow::AddPlugin(CppConsUI::Button& /*activator*/)

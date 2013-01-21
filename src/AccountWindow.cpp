@@ -31,10 +31,12 @@ AccountWindow::AccountWindow()
 {
   SetColorScheme("generalwindow");
 
-  accounts = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
-  SetContainer(*accounts);
+  treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
+  SetContainer(*treeview);
 
-  Populate();
+  // populate all defined accounts
+  for (GList *i = purple_accounts_get_all(); i; i = i->next)
+    PopulateAccount(reinterpret_cast<PurpleAccount*>(i->data));
 
   buttons->AppendItem(_("Add"), sigc::mem_fun(this,
         &AccountWindow::AddAccount));
@@ -388,20 +390,14 @@ void AccountWindow::ClearAccount(PurpleAccount *account, bool full)
   account_entry->parent->GrabFocus();
 
   // remove the nodes from the tree
-  accounts->DeleteNodeChildren(account_entry->parent_reference, false);
+  treeview->DeleteNodeChildren(account_entry->parent_reference, false);
   if (full) {
-    accounts->DeleteNode(account_entry->parent_reference, false);
+    treeview->DeleteNode(account_entry->parent_reference, false);
     account_entries.erase(account);
   }
 
   if (account_entries.empty())
     buttons->GrabFocus();
-}
-
-void AccountWindow::Populate()
-{
-  for (GList *i = purple_accounts_get_all(); i; i = i->next)
-    PopulateAccount(reinterpret_cast<PurpleAccount*>(i->data));
 }
 
 void AccountWindow::PopulateAccount(PurpleAccount *account)
@@ -423,8 +419,8 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
     CppConsUI::TreeView::ToggleCollapseButton *button
       = new CppConsUI::TreeView::ToggleCollapseButton;
     CppConsUI::TreeView::NodeReference parent_reference
-      = accounts->AppendNode(accounts->GetRootNode(), *button);
-    accounts->SetCollapsed(parent_reference, true);
+      = treeview->AppendNode(treeview->GetRootNode(), *button);
+    treeview->SetCollapsed(parent_reference, true);
     account_entry->parent = button;
     account_entry->parent_reference = parent_reference;
   }
@@ -442,7 +438,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
     // we cannot change the settings of an unknown account
     CppConsUI::Label *label = new CppConsUI::Label(
         _("Invalid account or protocol plugin not loaded"));
-    accounts->AppendNode(account_entry->parent_reference, *label);
+    treeview->AppendNode(account_entry->parent_reference, *label);
   }
   else {
     PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
@@ -450,7 +446,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
     // protocols combobox
     ProtocolOption *combobox = new ProtocolOption(account, *this);
     CppConsUI::TreeView::NodeReference protocol_node
-      = accounts->AppendNode(account_entry->parent_reference, *combobox);
+      = treeview->AppendNode(account_entry->parent_reference, *combobox);
     combobox->GrabFocus();
 
     /* The username must be treated in a special way because it can contain
@@ -482,26 +478,26 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
       widget_split->SetValue(value);
       account_entry->split_widgets.push_front(widget_split);
 
-      accounts->AppendNode(account_entry->parent_reference, *widget_split);
+      treeview->AppendNode(account_entry->parent_reference, *widget_split);
     }
 
     SplitOption *widget_split = new SplitOption(account, NULL, account_entry);
     widget_split->SetValue(username);
     account_entry->split_widgets.push_front(widget_split);
-    accounts->InsertNodeAfter(protocol_node, *widget_split);
+    treeview->InsertNodeAfter(protocol_node, *widget_split);
     g_free(username);
 
     // password
     Widget *widget = new StringOption(account, StringOption::TYPE_PASSWORD);
-    accounts->AppendNode(account_entry->parent_reference, *widget);
+    treeview->AppendNode(account_entry->parent_reference, *widget);
 
     // remember password
     widget = new BoolOption(account, BoolOption::TYPE_REMEMBER_PASSWORD);
-    accounts->AppendNode(account_entry->parent_reference, *widget);
+    treeview->AppendNode(account_entry->parent_reference, *widget);
 
     // alias
     widget = new StringOption(account, StringOption::TYPE_ALIAS);
-    accounts->AppendNode(account_entry->parent_reference, *widget);
+    treeview->AppendNode(account_entry->parent_reference, *widget);
 
     for (GList *pref = prplinfo->protocol_options; pref; pref = pref->next) {
       PurpleAccountOption *option
@@ -511,19 +507,19 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
       switch (type) {
         case PURPLE_PREF_STRING:
           widget = new StringOption(account, option);
-          accounts->AppendNode(account_entry->parent_reference, *widget);
+          treeview->AppendNode(account_entry->parent_reference, *widget);
           break;
         case PURPLE_PREF_INT:
           widget = new IntOption(account, option);
-          accounts->AppendNode(account_entry->parent_reference, *widget);
+          treeview->AppendNode(account_entry->parent_reference, *widget);
           break;
         case PURPLE_PREF_BOOLEAN:
           widget = new BoolOption(account, option);
-          accounts->AppendNode(account_entry->parent_reference, *widget);
+          treeview->AppendNode(account_entry->parent_reference, *widget);
           break;
         case PURPLE_PREF_STRING_LIST:
           widget = new StringListOption(account, option);
-          accounts->AppendNode(account_entry->parent_reference, *widget);
+          treeview->AppendNode(account_entry->parent_reference, *widget);
           break;
         default:
           LOG->Error(_("Unhandled account option type '%d'."), type);
@@ -533,18 +529,18 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
 
     // enable/disable account
     widget = new BoolOption(account, BoolOption::TYPE_ENABLE_ACCOUNT);
-    accounts->AppendNode(account_entry->parent_reference, *widget);
+    treeview->AppendNode(account_entry->parent_reference, *widget);
 
     // coloring
     widget = new ColorOption(account);
-    accounts->AppendNode(account_entry->parent_reference, *widget);
+    treeview->AppendNode(account_entry->parent_reference, *widget);
   }
 
   // drop account
   CppConsUI::Button *drop_button = new CppConsUI::Button(_("Drop account"));
   drop_button->signal_activate.connect(sigc::bind(sigc::mem_fun(this,
           &AccountWindow::DropAccount), account));
-  accounts->AppendNode(account_entry->parent_reference, *drop_button);
+  treeview->AppendNode(account_entry->parent_reference, *drop_button);
 }
 
 void AccountWindow::AddAccount(CppConsUI::Button& /*activator*/)

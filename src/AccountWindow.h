@@ -213,15 +213,13 @@ private:
     ColorOption& operator=(const IntOption&);
   };
 
-  CppConsUI::TreeView *accounts;
+  CppConsUI::TreeView *treeview;
   AccountEntries account_entries;
 
   AccountWindow(const AccountWindow&);
   AccountWindow& operator=(const AccountWindow&);
 
   void ClearAccount(PurpleAccount *account, bool full);
-
-  void Populate();
   void PopulateAccount(PurpleAccount *account);
 
   void AddAccount(CppConsUI::Button& activator);
