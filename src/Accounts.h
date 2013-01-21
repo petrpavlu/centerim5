@@ -88,23 +88,34 @@ private:
   : public CppConsUI::SplitDialog
   {
   public:
-    explicit PendingRequestWindow(Accounts& accounts);
+    PendingRequestWindow(Accounts& accounts_, const Requests& requests);
     virtual ~PendingRequestWindow() {}
 
     // FreeWindow
     virtual void OnScreenResized();
+
+    /* Provide a way for the Accounts singleton to add or delete requests
+     * dynamically when these events occur. */
+    void AppendRequest(const Request& request);
+    void RemoveRequest(const Request& request);
 
   protected:
     class RequestDialog
     : public CppConsUI::AbstractDialog
     {
     public:
-      RequestDialog(const char *title, const char *text);
+      RequestDialog(const Request& request_, const char *title,
+          const char *text);
       virtual ~RequestDialog() {}
+
+      const Request *GetRequest() const { return request; }
 
       sigc::signal<void, RequestDialog&, ResponseType> signal_response;
 
     protected:
+      // the request represented by the dialog
+      const Request *request;
+
       // AbstractDialog
       virtual void EmitResponse(ResponseType response);
 
@@ -116,20 +127,14 @@ private:
     typedef std::map<const Request*, CppConsUI::TreeView::NodeReference>
       RequestMap;
 
-    CppConsUI::TreeView *requests;
+    CppConsUI::TreeView *treeview;
     RequestMap request_map;
     Accounts *accounts;
-
-    void Populate();
-    void AppendRequest(const Request& request);
-    void OnRequestAdd(Accounts& accounts, const Request& request);
-    void OnRequestRemove(Accounts& accounts, const Request& request);
+    RequestDialog *dialog;
 
     void OnActivate(CppConsUI::Button& activator, const Request& request);
-    void OnAddResponse(RequestDialog& activator, ResponseType response,
-        const AddRequest& request);
-    void OnAuthResponse(RequestDialog& activator, ResponseType response,
-        const AuthRequest& request);
+    void OnAddResponse(RequestDialog& activator, ResponseType response);
+    void OnAuthResponse(RequestDialog& activator, ResponseType response);
 
   private:
     PendingRequestWindow(const PendingRequestWindow&);
@@ -137,8 +142,8 @@ private:
   };
 
   PurpleAccountUiOps centerim_account_ui_ops;
-
   Requests requests;
+  PendingRequestWindow *request_window;
 
   static Accounts *instance;
 
@@ -151,11 +156,10 @@ private:
   static void Finalize();
   friend class CenterIM;
 
-  // interface for PendingRequestWindow
-  const Requests *GetRequests() const { return &requests; };
-  void RemoveRequest(const Request& request);
-  sigc::signal<void, Accounts&, const Request&> signal_request_add;
-  sigc::signal<void, Accounts&, const Request&> signal_request_remove;
+  /* This method is called by PendingRequestWindow when an add or auth request
+   * should be closed. */
+  void CloseRequest(const Request& request);
+  void OnPendingRequestWindowClose(CppConsUI::FreeWindow& activator);
 
   static void notify_added_(PurpleAccount *account, const char *remote_user,
       const char *id, const char *alias, const char *message)
