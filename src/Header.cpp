@@ -23,6 +23,7 @@
 #include "CenterIM.h"
 #include "Utils.h"
 
+#include <string.h> // strcmp
 #include "config.h"
 
 Header *Header::instance = NULL;

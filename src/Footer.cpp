@@ -21,6 +21,7 @@
 #include "Footer.h"
 
 #include <cppconsui/KeyConfig.h>
+#include <string.h> // strstr, strncpy, strlen
 
 Footer *Footer::instance = NULL;
 

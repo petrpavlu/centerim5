@@ -22,10 +22,9 @@
 #ifndef __GENERALMENU_H__
 #define __GENERALMENU_H__
 
-#include "config.h"
-
 #include <cppconsui/MenuWindow.h>
 #include <libpurple/purple.h>
+#include "config.h"
 
 class GeneralMenu
 : public CppConsUI::MenuWindow
