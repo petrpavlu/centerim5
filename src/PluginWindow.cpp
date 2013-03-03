@@ -28,15 +28,12 @@
 
 /*
  * TODO
- *
- * Handle more preference types, especially PURPLE_PREF_PATH (because it's
- * used by the extaction plugin.
- *
- * Use these functions and use their results correctly:
- *   purple_plugin_pref_get_max_length(),
- *   purple_plugin_pref_get_masked(),
- *   purple_plugin_pref_get_format_type(),
- *   purple_plugin_pref_get_bounds().
+ * - Improve handling of PURPLE_PREF_PATH.
+ * - Use these functions and use their results correctly:
+ *     purple_plugin_pref_get_max_length(),
+ *     purple_plugin_pref_get_masked(),
+ *     purple_plugin_pref_get_format_type(),
+ *     purple_plugin_pref_get_bounds().
  */
 
 PluginWindow::PluginWindow()
@@ -160,7 +157,6 @@ void PluginWindow::StringOption::OnActivate(Button& /*activator*/)
 {
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(GetText(),
       GetValue());
-  dialog->SetMasked(GetMasked());
   dialog->signal_response.connect(sigc::mem_fun(this,
         &StringOption::ResponseHandler));
   dialog->Show();
@@ -226,6 +222,50 @@ void PluginWindow::IntOption::ResponseHandler(
       if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
         LOG->Warning(_("Value is out of range."));
       purple_prefs_set_int(pref, CLAMP(i, INT_MIN, INT_MAX));
+      UpdateValue();
+      break;
+    default:
+      break;
+  }
+}
+
+PluginWindow::PathOption::PathOption(const char *name, const char *pref_)
+: Button(FLAG_VALUE, name)
+{
+  g_assert(name);
+  g_assert(pref_);
+
+  pref = g_strdup(pref_);
+  UpdateValue();
+  signal_activate.connect(sigc::mem_fun(this, &PathOption::OnActivate));
+}
+
+PluginWindow::PathOption::~PathOption()
+{
+  g_free(pref);
+}
+
+void PluginWindow::PathOption::UpdateValue()
+{
+  SetValue(purple_prefs_get_path(pref));
+}
+
+void PluginWindow::PathOption::OnActivate(Button& /*activator*/)
+{
+  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(GetText(),
+      GetValue());
+  dialog->signal_response.connect(sigc::mem_fun(this,
+        &PathOption::ResponseHandler));
+  dialog->Show();
+}
+
+void PluginWindow::PathOption::ResponseHandler(
+    CppConsUI::InputDialog& activator,
+    AbstractDialog::ResponseType response)
+{
+  switch (response) {
+    case AbstractDialog::RESPONSE_OK:
+      purple_prefs_set_path(pref, activator.GetText());
       UpdateValue();
       break;
     default:
@@ -313,6 +353,9 @@ void PluginWindow::PopulatePlugin(PurplePlugin *plugin)
         else if (value_type == PURPLE_PREF_STRING)
           current_value = reinterpret_cast<intptr_t>(
               purple_prefs_get_string(name));
+        else if (value_type == PURPLE_PREF_PATH)
+          current_value = reinterpret_cast<intptr_t>(
+              purple_prefs_get_path(name));
         else {
           LOG->Error(_("Unhandled plugin preference type '%d'."), value_type);
           continue;
@@ -326,6 +369,8 @@ void PluginWindow::PopulatePlugin(PurplePlugin *plugin)
           pref_widget = new IntOption(label, name);
         else if (value_type == PURPLE_PREF_STRING)
           pref_widget = new StringOption(label, name);
+        else if (value_type == PURPLE_PREF_PATH)
+          pref_widget = new PathOption(label, name);
         else {
           LOG->Error(_("Unhandled plugin preference type '%d'."), value_type);
           continue;

@@ -122,6 +122,26 @@ private:
     IntOption& operator=(const IntOption&);
   };
 
+  class PathOption
+  : public CppConsUI::Button
+  {
+  public:
+    PathOption(const char *name, const char *pref_);
+    virtual ~PathOption();
+
+  protected:
+    char *pref;
+
+    void UpdateValue();
+    void OnActivate(CppConsUI::Button& activator);
+    void ResponseHandler(CppConsUI::InputDialog& activator,
+        CppConsUI::AbstractDialog::ResponseType response);
+
+  private:
+    PathOption(const PathOption&);
+    PathOption& operator=(const PathOption&);
+  };
+
   struct PluginEntry
   {
     CppConsUI::Button *parent;
