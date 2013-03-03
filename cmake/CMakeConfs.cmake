@@ -1,6 +1,6 @@
-#####################################################################
-##              handling of package config libraries               ##
-#####################################################################
+##############################################################################
+##              handling of package config libraries                        ##
+##############################################################################
 
 find_package(PkgConfig)
 pkg_check_modules(PURPLE REQUIRED "purple >= 2.7.0")
@@ -13,16 +13,17 @@ if (NOT GLIB232_FOUND)
 endif (NOT GLIB232_FOUND)
 pkg_check_modules(SIGC REQUIRED "sigc++-2.0 >= 2.2.0")
 
-#####################################################################
-##              handling of (n)curses wide character               ##
-#####################################################################
+##############################################################################
+##              handling of (n)curses wide character                        ##
+##############################################################################
 
-set(Curses_FIND_REQUIRED TRUE)
+# tell find_package_handle_standard_args() that the curses library is required
+set(Curses_FIND_REQUIRED true)
 find_package(Cursesw)
 
-#####################################################################
-##                  populating include directories                 ##
-#####################################################################
+##############################################################################
+##                  populating include directories                          ##
+##############################################################################
 
 include_directories(
   ${CURSES_INCLUDE_DIRS}
@@ -32,29 +33,30 @@ include_directories(
   ${centerim5_BINARY_DIR}
   ${centerim5_SOURCE_DIR})
 
-#####################################################################
-##                    coping with translations                     ##
-#####################################################################
+##############################################################################
+##                    coping with translations                              ##
+##############################################################################
 
 find_package(Gettext)
 
 if (GETTEXT_FOUND)
-  set(centerim5_LOCALEDIR ${CMAKE_INSTALL_PREFIX}/share/locale)
-  set(ENABLE_NLS TRUE)
+  set(centerim5_LOCALEDIR "${CMAKE_INSTALL_PREFIX}/share/locale")
+  set(ENABLE_NLS true)
 else (GETTEXT_FOUND)
   message(SEND_ERROR "Gettext not found, translation not possible")
-  set(ENABLE_NLS FALSE)
+  set(ENABLE_NLS false)
 endif (GETTEXT_FOUND)
 
-#####################################################################
-##                   coping with documentation                     ##
-#####################################################################
+##############################################################################
+##                   coping with documentation                              ##
+##############################################################################
 
 find_package(Doxygen)
 
-#####################################################################
-##                   generation of config file                     ##
-#####################################################################
+##############################################################################
+##                   generation of config file                              ##
+##############################################################################
 
-set(centerim5_PKGLIBDIR ${CMAKE_INSTALL_PREFIX}/lib/centerim5)
-configure_file(config.h.cmake config.h)
+set(centerim5_PKGLIBDIR "${CMAKE_INSTALL_PREFIX}/lib/centerim5")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/config.h")

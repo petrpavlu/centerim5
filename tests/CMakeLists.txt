@@ -5,7 +5,7 @@ target_link_libraries(button
   ${GLIB2_LIBRARIES}
   ${SIGC_LIBRARIES})
 
-######################################################################
+##############################################################################
 add_executable(colorpicker EXCLUDE_FROM_ALL colorpicker.cpp) 
 
 target_link_libraries(colorpicker
@@ -13,7 +13,7 @@ target_link_libraries(colorpicker
   ${GLIB2_LIBRARIES}
   ${SIGC_LIBRARIES})
 
-######################################################################
+##############################################################################
 add_executable(keybinding_config EXCLUDE_FROM_ALL keybinding_config.cpp)
 
 target_link_libraries(keybinding_config
@@ -21,7 +21,7 @@ target_link_libraries(keybinding_config
   ${GLIB2_LIBRARIES}
   ${SIGC_LIBRARIES})
 
-######################################################################
+##############################################################################
 add_executable(label EXCLUDE_FROM_ALL label.cpp)
 
 target_link_libraries(label
@@ -29,7 +29,7 @@ target_link_libraries(label
   ${GLIB2_LIBRARIES}
   ${SIGC_LIBRARIES})
 
-######################################################################
+##############################################################################
 add_executable(textentry EXCLUDE_FROM_ALL textentry.cpp)
 
 target_link_libraries(textentry
@@ -37,7 +37,7 @@ target_link_libraries(textentry
   ${GLIB2_LIBRARIES}
   ${SIGC_LIBRARIES})
 
-######################################################################
+##############################################################################
 add_executable(textview EXCLUDE_FROM_ALL textview.cpp)
 
 target_link_libraries(textview
@@ -45,7 +45,7 @@ target_link_libraries(textview
   ${GLIB2_LIBRARIES}
   ${SIGC_LIBRARIES})
 
-######################################################################
+##############################################################################
 add_executable(treeview EXCLUDE_FROM_ALL treeview.cpp)
 
 target_link_libraries(treeview
@@ -53,7 +53,7 @@ target_link_libraries(treeview
   ${GLIB2_LIBRARIES}
   ${SIGC_LIBRARIES})
 
-######################################################################
+##############################################################################
 add_executable(scrollpane EXCLUDE_FROM_ALL scrollpane.cpp)
 
 target_link_libraries(scrollpane
@@ -61,7 +61,7 @@ target_link_libraries(scrollpane
   ${GLIB2_LIBRARIES}
   ${SIGC_LIBRARIES})
 
-######################################################################
+##############################################################################
 add_executable(submenu EXCLUDE_FROM_ALL submenu.cpp)
 
 target_link_libraries(submenu
@@ -69,7 +69,7 @@ target_link_libraries(submenu
   ${GLIB2_LIBRARIES}
   ${SIGC_LIBRARIES})
 
-######################################################################
+##############################################################################
 add_executable(window EXCLUDE_FROM_ALL window.cpp)
 
 target_link_libraries(window

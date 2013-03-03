@@ -10,10 +10,10 @@ find_library(CURSES_LIBRARIES ncursesw)
 
 if (CURSES_LIBRARIES)
   # ncurses found
-  set(CURSES_USE_NCURSES TRUE)
+  set(CURSES_USE_NCURSES true)
 
 else (CURSES_LIBRARIES)
-  set(CURSES_USE_NCURSES FALSE)
+  set(CURSES_USE_NCURSES false)
 
   find_library(CURSES_LIBRARIES cursesw)
   # message(STATUS "CURSES! " ${CURSES_LIBRARIES})
@@ -22,8 +22,8 @@ endif (CURSES_LIBRARIES)
 # make sure there is the cursesw.h file available in some include directory
 find_path(CURSES_INCLUDE_DIRS cursesw.h)
 
-# handle the QUIETLY and REQUIRED arguments and set CURSES_FOUND to TRUE if
-# all listed variables are TRUE
+# handle the QUIETLY and REQUIRED arguments and set CURSES_FOUND to true if
+# all listed variables are true
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Curses DEFAULT_MSG CURSES_LIBRARIES
   CURSES_INCLUDE_DIRS)

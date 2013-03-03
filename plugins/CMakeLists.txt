@@ -7,6 +7,9 @@ if (GLIB232_FOUND)
   add_library(extaction SHARED
     ${extaction_SOURCES})
 
+  set_target_properties(extaction
+    PROPERTIES PREFIX "")
+
   target_link_libraries(extaction
     ${PURPLE_LIBRARIES}
     ${GLIB232_LIBRARIES})
