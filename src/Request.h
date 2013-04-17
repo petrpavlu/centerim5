@@ -152,7 +152,7 @@ private:
 
   protected:
     PurpleRequestFields *fields;
-    CppConsUI::TreeView *tree;
+    CppConsUI::TreeView *treeview;
 
     class StringField
     : public CppConsUI::Button

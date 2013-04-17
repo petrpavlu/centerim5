@@ -203,8 +203,8 @@ Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,
 : RequestDialog(title, primary, secondary, ok_text, ok_cb, cancel_text,
     cancel_cb, user_data), fields(request_fields)
 {
-  tree = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
-  lbox->AppendWidget(*tree);
+  treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
+  lbox->AppendWidget(*treeview);
 
   bool grouping = true;
   GList *groups = purple_request_fields_get_groups(fields);
@@ -218,7 +218,7 @@ Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,
     PurpleRequestFieldGroup *group
       = reinterpret_cast<PurpleRequestFieldGroup*>(groups->data);
 
-    CppConsUI::TreeView::NodeReference parent = tree->GetRootNode();
+    CppConsUI::TreeView::NodeReference parent = treeview->GetRootNode();
     if (grouping) {
       const char *title = purple_request_field_group_get_title(group);
       if (!title)
@@ -226,7 +226,7 @@ Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,
 
       CppConsUI::TreeView::ToggleCollapseButton *button
         = new CppConsUI::TreeView::ToggleCollapseButton(title);
-      parent = tree->AppendNode(tree->GetRootNode(), *button);
+      parent = treeview->AppendNode(treeview->GetRootNode(), *button);
     }
 
     for (GList *gfields = purple_request_field_group_get_fields(group);
@@ -241,31 +241,31 @@ Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,
 
       switch (type) {
         case PURPLE_REQUEST_FIELD_STRING:
-          tree->AppendNode(parent, *(new StringField(field)));
+          treeview->AppendNode(parent, *(new StringField(field)));
           break;
         case PURPLE_REQUEST_FIELD_INTEGER:
-          tree->AppendNode(parent, *(new IntegerField(field)));
+          treeview->AppendNode(parent, *(new IntegerField(field)));
           break;
         case PURPLE_REQUEST_FIELD_BOOLEAN:
-          tree->AppendNode(parent, *(new BooleanField(field)));
+          treeview->AppendNode(parent, *(new BooleanField(field)));
           break;
         case PURPLE_REQUEST_FIELD_CHOICE:
-          tree->AppendNode(parent, *(new ChoiceField(field)));
+          treeview->AppendNode(parent, *(new ChoiceField(field)));
           break;
         case PURPLE_REQUEST_FIELD_LIST:
           if (purple_request_field_list_get_multi_select(field))
-            tree->AppendNode(parent, *(new ListFieldMultiple(field)));
+            treeview->AppendNode(parent, *(new ListFieldMultiple(field)));
           else
-            tree->AppendNode(parent, *(new ListFieldSingle(field)));
+            treeview->AppendNode(parent, *(new ListFieldSingle(field)));
           break;
         case PURPLE_REQUEST_FIELD_LABEL:
-          tree->AppendNode(parent, *(new LabelField(field)));
+          treeview->AppendNode(parent, *(new LabelField(field)));
           break;
         case PURPLE_REQUEST_FIELD_IMAGE:
-          tree->AppendNode(parent, *(new ImageField(field)));
+          treeview->AppendNode(parent, *(new ImageField(field)));
           break;
         case PURPLE_REQUEST_FIELD_ACCOUNT:
-          tree->AppendNode(parent, *(new AccountField(field)));
+          treeview->AppendNode(parent, *(new AccountField(field)));
           break;
         default:
           LOG->Error(_("Unhandled request field type '%d'."), type);
@@ -273,7 +273,8 @@ Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,
       }
     }
   }
-  tree->GrabFocus();
+
+  treeview->GrabFocus();
 }
 
 PurpleRequestType Request::FieldsDialog::GetRequestType()

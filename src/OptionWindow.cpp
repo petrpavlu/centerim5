@@ -31,54 +31,55 @@ OptionWindow::OptionWindow()
 {
   SetColorScheme("generalwindow");
 
-  CppConsUI::TreeView *tree = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
-  SetContainer(*tree);
+  CppConsUI::TreeView *treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
+  SetContainer(*treeview);
 
   ChoiceOption *c;
   CppConsUI::TreeView::NodeReference parent;
-  parent = tree->AppendNode(tree->GetRootNode(),
+  parent = treeview->AppendNode(treeview->GetRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(_("Buddy list"))));
-  tree->AppendNode(parent, *(new BooleanOption(_("Show empty groups"),
+  treeview->AppendNode(parent, *(new BooleanOption(_("Show empty groups"),
           CONF_PREFIX "/blist/show_empty_groups")));
-  tree->AppendNode(parent, *(new BooleanOption(_("Show offline buddies"),
+  treeview->AppendNode(parent, *(new BooleanOption(_("Show offline buddies"),
           CONF_PREFIX "/blist/show_offline_buddies")));
   c = new ChoiceOption(_("List mode"), CONF_PREFIX "/blist/list_mode");
   c->AddOption(_("Normal"), "normal");
   c->AddOption(_("Flat"), "flat");
-  tree->AppendNode(parent, *c);
+  treeview->AppendNode(parent, *c);
   c = new ChoiceOption(_("Buddy sort mode"),
       CONF_PREFIX "/blist/buddy_sort_mode");
   c->AddOption(_("By name"), "name");
   c->AddOption(_("By status"), "status");
   c->AddOption(_("By activity"), "activity");
-  tree->AppendNode(parent, *c);
+  treeview->AppendNode(parent, *c);
   c = new ChoiceOption(_("Colorization mode"),
       CONF_PREFIX "/blist/colorization_mode");
   c->AddOption(_("None"), "none");
   c->AddOption(_("By status"), "status");
   c->AddOption(_("By account"), "account");
-  tree->AppendNode(parent, *c);
+  treeview->AppendNode(parent, *c);
 
-  parent = tree->AppendNode(tree->GetRootNode(),
+  parent = treeview->AppendNode(treeview->GetRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(_("Dimensions"))));
-  tree->AppendNode(parent, *(new IntegerOption(_("Buddy list window width"),
-          CONF_PREFIX "/dimensions/buddylist_width", sigc::mem_fun(this,
+  treeview->AppendNode(parent, *(new IntegerOption(
+          _("Buddy list window width"), CONF_PREFIX
+          "/dimensions/buddylist_width", sigc::mem_fun(this,
             &OptionWindow::GetPercentUnit))));
-  tree->AppendNode(parent, *(new IntegerOption(_("Log window height"),
+  treeview->AppendNode(parent, *(new IntegerOption(_("Log window height"),
           CONF_PREFIX "/dimensions/log_height", sigc::mem_fun(this,
             &OptionWindow::GetPercentUnit))));
-  tree->AppendNode(parent, *(new BooleanOption(_("Show header"),
+  treeview->AppendNode(parent, *(new BooleanOption(_("Show header"),
           CONF_PREFIX "/dimensions/show_header")));
-  tree->AppendNode(parent, *(new BooleanOption(_("Show footer"),
+  treeview->AppendNode(parent, *(new BooleanOption(_("Show footer"),
           CONF_PREFIX "/dimensions/show_footer")));
 
-  parent = tree->AppendNode(tree->GetRootNode(),
+  parent = treeview->AppendNode(treeview->GetRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(
           _("Idle settings"))));
-  tree->AppendNode(parent, *(new BooleanOption(
+  treeview->AppendNode(parent, *(new BooleanOption(
           _("Change to away status when idle"),
           "/purple/away/away_when_idle")));
-  tree->AppendNode(parent, *(new IntegerOption(
+  treeview->AppendNode(parent, *(new IntegerOption(
           _("Time before becoming idle"), "/purple/away/mins_before_away",
           sigc::mem_fun(this, &OptionWindow::GetMinUnit))));
   c = new ChoiceOption(_("Report idle time"),
@@ -86,17 +87,18 @@ OptionWindow::OptionWindow()
   c->AddOption(_("Never"), "none");
   c->AddOption(_("From last sent message"), "purple");
   c->AddOption(_("Based on keyboard activity"), "system");
-  tree->AppendNode(parent, *c);
+  treeview->AppendNode(parent, *c);
 
-  parent = tree->AppendNode(tree->GetRootNode(),
+  parent = treeview->AppendNode(treeview->GetRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(
           _("Conversations"))));
-  tree->AppendNode(parent, *(new BooleanOption( _("Beep on new message"),
+  treeview->AppendNode(parent, *(new BooleanOption(_("Beep on new message"),
           CONF_PREFIX "/chat/beep_on_msg")));
-  tree->AppendNode(parent, *(new BooleanOption( _("Send typing notification"),
+  treeview->AppendNode(parent, *(new BooleanOption(
+          _("Send typing notification"),
           "/purple/conversations/im/send_typing")));
 
-  parent = tree->AppendNode(tree->GetRootNode(),
+  parent = treeview->AppendNode(treeview->GetRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(_("System logging"))));
 #define ADD_DEBUG_OPTIONS()                \
 do {                                       \
@@ -111,25 +113,25 @@ do {                                       \
   c = new ChoiceOption(_("CIM log level"),
     CONF_PREFIX "/log/log_level_cim");
   ADD_DEBUG_OPTIONS();
-  tree->AppendNode(parent, *c);
+  treeview->AppendNode(parent, *c);
 
   c = new ChoiceOption(_("CppConsUI log level"),
       CONF_PREFIX "/log/log_level_cppconsui");
   ADD_DEBUG_OPTIONS();
-  tree->AppendNode(parent, *c);
+  treeview->AppendNode(parent, *c);
 
   c = new ChoiceOption(_("Purple log level"),
       CONF_PREFIX "/log/log_level_purple");
   ADD_DEBUG_OPTIONS();
-  tree->AppendNode(parent, *c);
+  treeview->AppendNode(parent, *c);
 
   c = new ChoiceOption(_("GLib log level"),
       CONF_PREFIX "/log/log_level_glib");
   ADD_DEBUG_OPTIONS();
-  tree->AppendNode(parent, *c);
+  treeview->AppendNode(parent, *c);
 #undef ADD_DEBUG_OPTIONS
 
-  parent = tree->AppendNode(tree->GetRootNode(),
+  parent = treeview->AppendNode(treeview->GetRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(
           _("Libpurple logging"))));
   c = new ChoiceOption(_("Log format"), "/purple/logging/format");
@@ -142,27 +144,27 @@ do {                                       \
     c->AddOption(human, value);
   }
   g_list_free(opts);
-  tree->AppendNode(parent, *c);
-  tree->AppendNode(parent, *(new BooleanOption(_("Log all instant messages"),
-          "/purple/logging/log_ims")));
-  tree->AppendNode(parent, *(new BooleanOption(_("Log all chats"),
+  treeview->AppendNode(parent, *c);
+  treeview->AppendNode(parent, *(new BooleanOption(
+          _("Log all instant messages"), "/purple/logging/log_ims")));
+  treeview->AppendNode(parent, *(new BooleanOption(_("Log all chats"),
           "/purple/logging/log_chats")));
-  tree->AppendNode(parent, *(new BooleanOption(
+  treeview->AppendNode(parent, *(new BooleanOption(
           _("Log all status changes to system log"),
           "/purple/logging/log_system")));
 
   CppConsUI::Button *b;
-  parent = tree->AppendNode(tree->GetRootNode(),
+  parent = treeview->AppendNode(treeview->GetRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(
           _("Config files"))));
   b = new CppConsUI::Button(AUTOSIZE, 1, _("Reload key bindings"));
   b->signal_activate.connect(sigc::mem_fun(this,
         &OptionWindow::ReloadKeyBindings));
-  tree->AppendNode(parent, *b);
+  treeview->AppendNode(parent, *b);
   b = new CppConsUI::Button(AUTOSIZE, 1, _("Reload color schemes"));
   b->signal_activate.connect(sigc::mem_fun(this,
         &OptionWindow::ReloadColorSchemes));
-  tree->AppendNode(parent, *b);
+  treeview->AppendNode(parent, *b);
 
   buttons->AppendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
           &OptionWindow::Close)));
