@@ -162,8 +162,8 @@ Request::ActionDialog::ActionDialog(const char *title, const char *primary,
     GCallback cb = va_arg(actions, GCallback);
 
     CppConsUI::Button *b = buttons->AppendItem(title,
-        sigc::bind(sigc::mem_fun(this,
-            &Request::ActionDialog::OnActionChoice), i, cb));
+        sigc::bind(sigc::mem_fun(this, &ActionDialog::OnActionChoice),
+          i, cb));
     if (static_cast<int>(i) == default_value)
       b->GrabFocus();
 
@@ -305,7 +305,7 @@ void Request::FieldsDialog::StringField::OnActivate(
   CppConsUI::InputDialog *dialog
     = new CppConsUI::InputDialog(purple_request_field_get_label(field),
       purple_request_field_string_get_value(field));
-  dialog->SetMasked(purple_request_field_string_is_masked(field));
+  dialog->SetMasked(GetMasked());
   dialog->signal_response.connect(sigc::mem_fun(this,
         &StringField::ResponseHandler));
   dialog->Show();
@@ -618,8 +618,8 @@ Request::~Request()
 {
   // close all opened requests
   while (requests.size()) {
-    RequestDialog *rdialog = *(requests.begin());
-    purple_request_close(rdialog->GetRequestType(), rdialog);
+    RequestDialog *dialog = *(requests.begin());
+    purple_request_close(dialog->GetRequestType(), dialog);
   }
 
   purple_request_set_ui_ops(NULL);
@@ -646,8 +646,10 @@ void Request::OnDialogResponse(CppConsUI::SplitDialog& dialog,
   RequestDialog *rdialog = dynamic_cast<RequestDialog*>(&dialog);
   g_assert(rdialog);
 
-  requests.erase(rdialog);
-  purple_request_close(rdialog->GetRequestType(), rdialog);
+  if (requests.find(rdialog) != requests.end()) {
+    requests.erase(rdialog);
+    purple_request_close(rdialog->GetRequestType(), rdialog);
+  }
 }
 
 void *Request::request_input(const char *title, const char *primary,

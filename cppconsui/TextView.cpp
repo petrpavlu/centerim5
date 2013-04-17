@@ -178,7 +178,9 @@ void TextView::Append(const char *text, int color)
 
 void TextView::Insert(size_t line_num, const char *text, int color)
 {
-  g_assert(text);
+  if (!text)
+    return;
+
   g_assert(line_num <= lines.size());
 
   const char *p = text;

@@ -168,7 +168,7 @@ void Accounts::PendingRequestWindow::AppendRequest(const Request& request)
 
   CppConsUI::Button *b = new CppConsUI::Button(text);
   b->signal_activate.connect(sigc::bind(sigc::mem_fun(this,
-          &Accounts::PendingRequestWindow::OnActivate), sigc::ref(request)));
+          &PendingRequestWindow::OnActivate), sigc::ref(request)));
 
   g_free(text);
 
@@ -242,7 +242,7 @@ void Accounts::PendingRequestWindow::OnActivate(
     g_free(text);
 
     dialog->signal_response.connect(sigc::mem_fun(this,
-          &Accounts::PendingRequestWindow::OnAddResponse));
+          &PendingRequestWindow::OnAddResponse));
     dialog->Show();
   }
   else if (typeid(request) == typeid(AuthRequest)) {
@@ -264,7 +264,7 @@ void Accounts::PendingRequestWindow::OnActivate(
     g_free(text);
 
     dialog->signal_response.connect(sigc::mem_fun(this,
-          &Accounts::PendingRequestWindow::OnAuthResponse));
+          &PendingRequestWindow::OnAuthResponse));
     dialog->Show();
   }
   else

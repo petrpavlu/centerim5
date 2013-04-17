@@ -42,7 +42,8 @@ public:
   InputDialog(const char *title, const char *defaultvalue);
   virtual ~InputDialog() {}
 
-  virtual const char *GetText() const;
+  virtual void SetText(const char *text) { entry->SetText(text); }
+  virtual const char *GetText() const { return entry->GetText(); }
 
   virtual int GetFlags() const { return entry->GetFlags(); }
   virtual void SetFlags(int flags) { entry->SetFlags(flags); }

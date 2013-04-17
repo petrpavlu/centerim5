@@ -44,11 +44,6 @@ InputDialog::InputDialog(const char *title, const char *defaultvalue)
   entry->GrabFocus();
 }
 
-const char *InputDialog::GetText() const
-{
-  return entry->GetText();
-}
-
 void InputDialog::EmitResponse(ResponseType response)
 {
   signal_response(*this, response);

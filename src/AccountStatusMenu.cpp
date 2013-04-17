@@ -94,9 +94,8 @@ AccountStatusMenu::StatusPopup::StatusPopup(PurpleAccount *account)
           purple_status_type_get_name(status_type));
     else
       label = g_strdup(purple_status_type_get_name(status_type));
-    CppConsUI::Button *b = AppendItem(label, sigc::bind(
-          sigc::mem_fun(this, &AccountStatusMenu::StatusPopup::SetStatus),
-          account, status_type, true));
+    CppConsUI::Button *b = AppendItem(label, sigc::bind(sigc::mem_fun(this,
+            &StatusPopup::SetStatus), account, status_type, true));
     if (active)
       b->GrabFocus();
     g_free(label);
@@ -123,9 +122,8 @@ AccountStatusMenu::StatusPopup::StatusPopup(PurpleAccount *account)
             purple_status_type_get_name(status_type));
       else
         label = g_strdup(purple_status_type_get_name(status_type));
-      CppConsUI::Button *b = AppendItem(label, sigc::bind(
-            sigc::mem_fun(this, &AccountStatusMenu::StatusPopup::SetStatus),
-            account, status_type, !active));
+      CppConsUI::Button *b = AppendItem(label, sigc::bind(sigc::mem_fun(this,
+              &StatusPopup::SetStatus), account, status_type, !active));
       if (active)
         b->GrabFocus();
       g_free(label);
