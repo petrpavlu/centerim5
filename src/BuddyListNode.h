@@ -99,6 +99,8 @@ protected:
 
   void UpdateFilterVisibility(const char *name);
 
+  void RetrieveUserInfoForName(PurpleConnection *gc, const char *name) const;
+
 private:
   BuddyListNode(BuddyListNode&);
   BuddyListNode& operator=(BuddyListNode&);
@@ -119,6 +121,7 @@ public:
   virtual const char *ToString() const;
 
   PurpleBuddy *GetPurpleBuddy() const { return buddy; }
+  void RetrieveUserInfo();
 
 protected:
   class BuddyContextMenu
@@ -130,6 +133,8 @@ protected:
 
   protected:
     BuddyListBuddy *parent_buddy;
+
+    void OnInformation(Button& activator);
 
     void ChangeAliasResponseHandler(CppConsUI::InputDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
@@ -224,6 +229,7 @@ public:
   virtual void SetRefNode(CppConsUI::TreeView::NodeReference n);
 
   PurpleContact *GetPurpleContact() const { return contact; }
+  void RetrieveUserInfo();
 
 protected:
   class ContactContextMenu
@@ -235,6 +241,8 @@ protected:
 
   protected:
     BuddyListContact *parent_contact;
+
+    void OnInformation(Button& activator);
 
     void ChangeAliasResponseHandler(CppConsUI::InputDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);

@@ -315,6 +315,16 @@ void BuddyListNode::UpdateFilterVisibility(const char *name)
   SetVisibility(purple_strcasestr(name, filter));
 }
 
+void BuddyListNode::RetrieveUserInfoForName(PurpleConnection *gc,
+    const char *name) const
+{
+  PurpleNotifyUserInfo *info = purple_notify_user_info_new();
+  purple_notify_user_info_add_pair_plaintext(info, _("Information"), _("Retrieving..."));
+  purple_notify_userinfo(gc, name, info, NULL, NULL);
+  purple_notify_user_info_destroy(info);
+  serv_get_info(gc, name);
+}
+
 void BuddyListNode::ActionOpenContextMenu()
 {
   OpenContextMenu();
@@ -380,6 +390,13 @@ const char *BuddyListBuddy::ToString() const
   return purple_buddy_get_alias(buddy);
 }
 
+void BuddyListBuddy::RetrieveUserInfo()
+{
+  PurpleConnection *gc = purple_account_get_connection(
+      purple_buddy_get_account(buddy));
+  RetrieveUserInfoForName(gc, purple_buddy_get_name(buddy));
+}
+
 BuddyListBuddy::BuddyContextMenu::BuddyContextMenu(
     BuddyListBuddy& parent_buddy_)
 : ContextMenu(parent_buddy_), parent_buddy(&parent_buddy_)
@@ -388,10 +405,18 @@ BuddyListBuddy::BuddyContextMenu::BuddyContextMenu(
           purple_buddy_get_account(parent_buddy->GetPurpleBuddy())));
   AppendExtendedMenu();
 
+  AppendItem(_("Information..."), sigc::mem_fun(this,
+        &BuddyContextMenu::OnInformation));
   AppendItem(_("Alias..."), sigc::mem_fun(this,
-        &BuddyListBuddy::BuddyContextMenu::OnChangeAlias));
+        &BuddyContextMenu::OnChangeAlias));
   AppendItem(_("Delete..."), sigc::mem_fun(this,
-        &BuddyListBuddy::BuddyContextMenu::OnRemove));
+        &BuddyContextMenu::OnRemove));
+}
+
+void BuddyListBuddy::BuddyContextMenu::OnInformation(Button& /*activator*/)
+{
+  parent_buddy->RetrieveUserInfo();
+  Close();
 }
 
 void BuddyListBuddy::BuddyContextMenu::ChangeAliasResponseHandler(
@@ -571,9 +596,9 @@ BuddyListChat::ChatContextMenu::ChatContextMenu(BuddyListChat& parent_chat_)
   AppendExtendedMenu();
 
   AppendItem(_("Alias..."), sigc::mem_fun(this,
-        &BuddyListChat::ChatContextMenu::OnChangeAlias));
+        &ChatContextMenu::OnChangeAlias));
   AppendItem(_("Delete..."), sigc::mem_fun(this,
-        &BuddyListChat::ChatContextMenu::OnRemove));
+        &ChatContextMenu::OnRemove));
 }
 
 void BuddyListChat::ChatContextMenu::ChangeAliasResponseHandler(
@@ -707,6 +732,14 @@ const char *BuddyListContact::ToString() const
   return purple_contact_get_alias(contact);
 }
 
+void BuddyListContact::RetrieveUserInfo()
+{
+  PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
+  PurpleConnection *gc = purple_account_get_connection(
+      purple_buddy_get_account(buddy));
+  RetrieveUserInfoForName(gc, purple_buddy_get_name(buddy));
+}
+
 void BuddyListContact::SetRefNode(CppConsUI::TreeView::NodeReference n)
 {
   BuddyListNode::SetRefNode(n);
@@ -719,10 +752,12 @@ BuddyListContact::ContactContextMenu::ContactContextMenu(
 {
   AppendExtendedMenu();
 
+  AppendItem(_("Information..."), sigc::mem_fun(this,
+        &ContactContextMenu::OnInformation));
   AppendItem(_("Alias..."), sigc::mem_fun(this,
-        &BuddyListContact::ContactContextMenu::OnChangeAlias));
+        &ContactContextMenu::OnChangeAlias));
   AppendItem(_("Delete..."), sigc::mem_fun(this,
-        &BuddyListContact::ContactContextMenu::OnRemove));
+        &ContactContextMenu::OnRemove));
 
   CppConsUI::MenuWindow *groups = new CppConsUI::MenuWindow(*this, AUTOSIZE,
       AUTOSIZE);
@@ -743,6 +778,13 @@ BuddyListContact::ContactContextMenu::ContactContextMenu(
   }
 
   AppendSubMenu(_("Move to..."), *groups);
+}
+
+void BuddyListContact::ContactContextMenu::OnInformation(
+    Button& /*activator*/)
+{
+  parent_contact->RetrieveUserInfo();
+  Close();
 }
 
 void BuddyListContact::ContactContextMenu::ChangeAliasResponseHandler(

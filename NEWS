@@ -3,6 +3,7 @@
   - Add support for searching in the buddy list.
   - Add a plugin to execute an external program when a specific event occurs.
   - Add a dialog for enabling plugins and setting their preferences.
+  - Add a dialog for displaying information about buddies.
   - Add Dutch translation, update Czech and Russian translations.
 
 * 27 July 2012 -- CenterIM 5.0.0 Beta1

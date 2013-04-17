@@ -21,6 +21,9 @@
 #ifndef __NOTIFY_H__
 #define __NOTIFY_H__
 
+#include <cppconsui/MessageDialog.h>
+#include <cppconsui/SplitDialog.h>
+#include <cppconsui/TreeView.h>
 #include <libpurple/purple.h>
 
 #define NOTIFY (Notify::Instance())
@@ -33,6 +36,38 @@ public:
 protected:
 
 private:
+  class UserInfoDialog
+  : public CppConsUI::SplitDialog
+  {
+  public:
+    UserInfoDialog(const char *title);
+    virtual ~UserInfoDialog() {}
+
+    // FreeWindow
+    virtual void OnScreenResized();
+
+    void Update(PurpleNotifyUserInfo *user_info);
+
+  protected:
+    CppConsUI::TreeView *treeview;
+
+  private:
+    UserInfoDialog(const UserInfoDialog&);
+    UserInfoDialog& operator=(const UserInfoDialog&);
+  };
+
+  typedef std::set<CppConsUI::AbstractDialog*> Notifications;
+  typedef std::pair<PurpleAccount*, std::string> User;
+  typedef std::map<User, UserInfoDialog*> UserInfo;
+
+  /* Track all opened notifications so it is possible to break the
+   * purple_notify_close() -> AbstractDialog::Close() -> purple_notify_close()
+   * -> etc. loop. */
+  Notifications notifications;
+  /* Keep track of all opened user info dialogs so they can be updated when
+   * notify_userinfo() is called for them several times. */
+  UserInfo userinfos;
+
   PurpleNotifyUiOps centerim_notify_ui_ops;
 
   static Notify *instance;
@@ -46,14 +81,22 @@ private:
   static void Finalize();
   friend class CenterIM;
 
+  void OnDialogClose(CppConsUI::FreeWindow& activator, PurpleNotifyType type);
+  void OnUserInfoDialogClose(CppConsUI::FreeWindow& activator, User user);
+
   static void *notify_message_(PurpleNotifyMsgType type, const char *title,
       const char *primary, const char *secondary)
     { return NOTIFY->notify_message(type, title, primary, secondary); }
+  static void *notify_userinfo_(PurpleConnection *gc, const char *who,
+      PurpleNotifyUserInfo *user_info)
+    { return NOTIFY->notify_userinfo(gc, who, user_info); }
   static void close_notify_(PurpleNotifyType type, void *ui_handle)
-    { return NOTIFY->close_notify(type, ui_handle); }
+    { NOTIFY->close_notify(type, ui_handle); }
 
   void *notify_message(PurpleNotifyMsgType type, const char *title,
       const char *primary, const char *secondary);
+  void *notify_userinfo(PurpleConnection *gc, const char *who,
+      PurpleNotifyUserInfo *user_info);
   void close_notify(PurpleNotifyType type, void *ui_handle);
 };
 
