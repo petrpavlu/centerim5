@@ -54,6 +54,9 @@ void BuddyListNode::SetParent(CppConsUI::Container& parent)
 
 void BuddyListNode::Update()
 {
+  // cache the last_activity time
+  last_activity = purple_blist_node_get_int(node, "last_activity");
+
   BuddyListNode *parent_node = GetParentNode();
   // the parent could have changed, so re-parent the node
   if (parent_node)
@@ -208,7 +211,7 @@ void BuddyListNode::ContextMenu::AppendExtendedMenu()
 }
 
 BuddyListNode::BuddyListNode(PurpleBlistNode *node_)
-: treeview(NULL), node(node_)
+: treeview(NULL), node(node_), last_activity(0)
 {
   purple_blist_node_set_ui_data(node, this);
   signal_activate.connect(sigc::mem_fun(this, &BuddyListNode::OnActivate));
@@ -244,8 +247,12 @@ bool BuddyListNode::LessOrEqualByBuddySort(PurpleBuddy *left,
         return a > b;
       break;
     case BuddyList::BUDDY_SORT_BY_ACTIVITY:
-      a = purple_blist_node_get_int(PURPLE_BLIST_NODE(left), "last_activity");
-      b = purple_blist_node_get_int(PURPLE_BLIST_NODE(right), "last_activity");
+      BuddyListNode *bnode_left = reinterpret_cast<BuddyListNode*>(
+          purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(left)));
+      BuddyListNode *bnode_right = reinterpret_cast<BuddyListNode*>(
+          purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(right)));
+      a = bnode_left->last_activity;
+      b = bnode_right->last_activity;
       if (a != b)
         return a > b;
       break;

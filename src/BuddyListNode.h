@@ -81,6 +81,9 @@ protected:
 
   PurpleBlistNode *node;
 
+  // cached value of purple_blist_node_get_int(node, "last_activity")
+  int last_activity;
+
   BuddyListNode(PurpleBlistNode *node_);
   virtual ~BuddyListNode();
 
