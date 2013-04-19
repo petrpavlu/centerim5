@@ -1,6 +1,5 @@
 - purple_pounces_load()
 - grep for todo's and fix them
-- put something in: ChangeLog NEWS
 - Add an init function to cppconsui which calls
   bindtextdomain (PACKAGE, LOCALEDIR); (as explained by
   <http://www.gnu.org/software/gettext/manual/gettext.html#Libraries>
@@ -8,14 +7,12 @@
 - add function descriptions in the header files
 - notify UI ops implementation
 - improve buddy list customization
-- buddy info window
 - handle PURPLE_DEFAULT_ACTION_NONE correctly
 - don't create ChoiceDialog (Request UI) if there are no options
 - fix Conversation history overflow
 - purple_blist_get_group_size(), purple_blist_get_group_online_count()
 - keybinding changer
 - option to show in the log window who gets online and offline
-- external actions
 - button to globally switch online/offline status
 - searching through conversation history
 - different color for own text in group chat
