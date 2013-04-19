@@ -49,11 +49,59 @@ void Notify::UserInfoDialog::OnScreenResized()
   MoveResizeRect(CENTERIM->GetScreenArea(CenterIM::CHAT_AREA));
 }
 
-void Notify::UserInfoDialog::Update(PurpleNotifyUserInfo *user_info)
+void Notify::UserInfoDialog::Update(PurpleConnection *gc, const char *who,
+    PurpleNotifyUserInfo *user_info)
 {
   treeview->Clear();
+  CppConsUI::TreeView::NodeReference parent;
+  CppConsUI::Button *button;
 
-  CppConsUI::TreeView::NodeReference parent = treeview->GetRootNode();
+  // local information
+  PurpleAccount *account = purple_connection_get_account(gc);
+  PurpleBuddy *buddy = purple_find_buddy(account, who);
+  if (buddy) {
+    /* Note that we should always be able to find the specified buddy, unless
+     * something goes very wrong. */
+    button = new CppConsUI::TreeView::ToggleCollapseButton(
+        _("Local information"));
+    parent = treeview->AppendNode(treeview->GetRootNode(), *button);
+
+    time_t saved_time;
+    struct tm local_time;
+    const char *formatted_time;
+
+    // last_seen
+    if (PURPLE_BUDDY_IS_ONLINE(buddy))
+      formatted_time = _("Now");
+    else {
+      saved_time = static_cast<time_t>(purple_blist_node_get_int(
+            PURPLE_BLIST_NODE(buddy), "last_seen"));
+      if (saved_time && localtime_r(&saved_time, &local_time))
+        formatted_time = purple_date_format_long(&local_time);
+      else
+        formatted_time = _("Unknown");
+    }
+    button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE,
+        _("Last seen"), formatted_time);
+    treeview->AppendNode(parent, *button);
+
+    // last_activity
+    saved_time = static_cast<time_t>(purple_blist_node_get_int(
+          PURPLE_BLIST_NODE(buddy), "last_activity"));
+    if (saved_time && localtime_r(&saved_time, &local_time))
+      formatted_time = purple_date_format_long(&local_time);
+    else
+      formatted_time = _("Unknown");
+    button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE,
+        _("Last activity"), formatted_time);
+    treeview->AppendNode(parent, *button);
+  }
+
+  // remote information
+  button = new CppConsUI::TreeView::ToggleCollapseButton(
+      _("Remote information"));
+  parent = treeview->AppendNode(treeview->GetRootNode(), *button);
+  CppConsUI::TreeView::NodeReference subparent = parent;
   for (GList *i = purple_notify_user_info_get_entries(user_info); i;
       i = i->next) {
     PurpleNotifyUserInfoEntry *entry
@@ -66,19 +114,18 @@ void Notify::UserInfoDialog::Update(PurpleNotifyUserInfo *user_info)
       continue;
     const char *value = purple_notify_user_info_entry_get_value(entry);
     char *nohtml = purple_markup_strip_html(value);
-    CppConsUI::Button *button;
     switch (type) {
       case PURPLE_NOTIFY_USER_INFO_ENTRY_PAIR:
         button = new CppConsUI::Button(
             nohtml ? CppConsUI::Button::FLAG_VALUE : 0, label, nohtml);
-        treeview->AppendNode(parent, *button);
+        treeview->AppendNode(subparent, *button);
         break;
       case PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK:
         // ignore section breaks
         break;
       case PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER:
         button = new CppConsUI::TreeView::ToggleCollapseButton(label);
-        parent = treeview->AppendNode(treeview->GetRootNode(), *button);
+        subparent = treeview->AppendNode(parent, *button);
         break;
       default:
         LOG->Error(_("Unhandled userinfo entry type '%d'."), type);
@@ -188,7 +235,7 @@ void *Notify::notify_userinfo(PurpleConnection *gc, const char *who,
     dialog = i->second;
   }
 
-  dialog->Update(user_info);
+  dialog->Update(gc, who, user_info);
   return dialog;
 }
 

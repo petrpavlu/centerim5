@@ -46,7 +46,8 @@ private:
     // FreeWindow
     virtual void OnScreenResized();
 
-    void Update(PurpleNotifyUserInfo *user_info);
+    void Update(PurpleConnection *gc, const char *who,
+        PurpleNotifyUserInfo *user_info);
 
   protected:
     CppConsUI::TreeView *treeview;
