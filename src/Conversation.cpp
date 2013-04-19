@@ -28,9 +28,6 @@
 #include <sys/stat.h>
 #include "gettext.h"
 
-#define LOGS_DIR "clogs"
-#define TIME_FORMAT _("%d.%m.%y %H:%M")
-
 Conversation::Conversation(PurpleConversation *conv_)
 : Window(0, 0, 80, 24), conv(conv_), filename(NULL), logfile(NULL)
 , input_text_length(0)
@@ -462,9 +459,9 @@ void Conversation::BuildLogFilename()
 
   name = purple_conversation_get_name(conv);
 
-  filename = g_build_filename(purple_user_dir(), LOGS_DIR, proto_name,
-      acct_name, purple_escape_filename(
-        purple_normalize(account, name)), NULL);
+  filename = g_build_filename(purple_user_dir(), "clogs", proto_name,
+      acct_name, purple_escape_filename(purple_normalize(account, name)),
+      NULL);
 
   dir = g_path_get_dirname(filename);
   if (g_mkdir_with_parents(dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
@@ -476,11 +473,19 @@ void Conversation::BuildLogFilename()
 
 char *Conversation::ExtractTime(time_t sent_time, time_t show_time) const
 {
-  // based on extracttime() function from cim4
-  char *t1 = g_strdup(purple_utf8_strftime(TIME_FORMAT,
-        localtime(&show_time)));
-  char *t2 = g_strdup(purple_utf8_strftime(TIME_FORMAT,
-      localtime(&sent_time)));
+  // based on the extracttime() function from cim4
+
+  // convert to local time, note that localtime_r() shouldn't really fail
+  struct tm show_time_local;
+  struct tm sent_time_local;
+  if (!localtime_r(&show_time, &show_time_local))
+    memset(&show_time_local, 0, sizeof(show_time_local));
+  if (!localtime_r(&sent_time, &sent_time_local))
+    memset(&sent_time_local, 0, sizeof(sent_time_local));
+
+  // format the times
+  char *t1 = g_strdup(purple_date_format_long(&show_time_local));
+  char *t2 = g_strdup(purple_date_format_long(&sent_time_local));
 
   int tdiff = abs(sent_time - show_time);
 

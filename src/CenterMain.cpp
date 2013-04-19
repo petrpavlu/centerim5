@@ -22,6 +22,7 @@
 #include "CenterIM.h"
 
 #include <locale.h>
+#include <time.h>
 #include <getopt.h>
 #include "gettext.h"
 
@@ -50,6 +51,7 @@ int main(int argc, char *argv[])
   g_set_prgname(PACKAGE_NAME);
 
   setlocale(LC_ALL, "");
+  tzset();
 
 #if ENABLE_NLS
   bindtextdomain(PACKAGE_NAME, LOCALEDIR);
