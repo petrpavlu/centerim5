@@ -296,10 +296,8 @@ int BuddyListNode::GetBuddyStatusWeight(PurpleBuddy *buddy) const
       return 5;
     case PURPLE_STATUS_MOBILE:
       return 6;
-#if PURPLE_VERSION_CHECK(2, 7, 0)
     case PURPLE_STATUS_MOOD:
       return 7;
-#endif
     case PURPLE_STATUS_TUNE:
       return 8;
     case PURPLE_STATUS_INVISIBLE:

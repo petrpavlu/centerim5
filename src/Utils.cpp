@@ -47,10 +47,8 @@ const char *GetStatusIndicator(PurpleStatus *status)
       return "[m]";
     case PURPLE_STATUS_TUNE:
       return "[t]";
-#if PURPLE_VERSION_CHECK(2, 7, 0)
     case PURPLE_STATUS_MOOD:
       return "[d]";
-#endif
     default:
       return "[X]";
   }
@@ -86,10 +84,8 @@ char *GetColorSchemeString(const char *base_color_scheme, PurpleBuddy *buddy)
       return g_strdup_printf("%s_online", base_color_scheme);
     case PURPLE_STATUS_TUNE:
       return g_strdup_printf("%s_online", base_color_scheme);
-#if PURPLE_VERSION_CHECK(2, 7, 0)
     case PURPLE_STATUS_MOOD:
       return g_strdup_printf("%s_online", base_color_scheme);
-#endif
     default:
       return g_strdup_printf("%s_offline", base_color_scheme);
   }
