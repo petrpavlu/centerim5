@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2012 by CenterIM developers
+ * Copyright (C) 2011-2013 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
