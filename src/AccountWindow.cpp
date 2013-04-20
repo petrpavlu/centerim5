@@ -395,9 +395,6 @@ void AccountWindow::ClearAccount(PurpleAccount *account, bool full)
     treeview->DeleteNode(account_entry->parent_reference, false);
     account_entries.erase(account);
   }
-
-  if (account_entries.empty())
-    buttons->GrabFocus();
 }
 
 void AccountWindow::PopulateAccount(PurpleAccount *account)

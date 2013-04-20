@@ -247,8 +247,8 @@ void BuddyList::RebuildList()
 
 void BuddyList::UpdateList(int flags)
 {
-  PurpleBlistNode *node = purple_blist_get_root();
-  while (node) {
+  for (PurpleBlistNode *node = purple_blist_get_root(); node;
+      node = purple_blist_node_next(node, TRUE)) {
     if (PURPLE_BLIST_NODE_IS_GROUP(node) ? (flags & UPDATE_GROUPS)
         : (flags & UPDATE_OTHERS)) {
       BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(
@@ -256,24 +256,20 @@ void BuddyList::UpdateList(int flags)
       if (bnode)
         bnode->Update();
     }
-
-    node = purple_blist_node_next(node, TRUE);
   }
 }
 
 void BuddyList::DelayedGroupNodesInit()
 {
   // delayed group nodes init
-  PurpleBlistNode *node = purple_blist_get_root();
-  while (node) {
+  for (PurpleBlistNode *node = purple_blist_get_root(); node;
+      node = purple_blist_node_get_sibling_next(node)) {
     if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
       BuddyListGroup *gnode = reinterpret_cast<BuddyListGroup*>(
           purple_blist_node_get_ui_data(node));
       if (gnode)
         gnode->DelayedInit();
     }
-
-    node = purple_blist_node_get_sibling_next(node);
   }
 }
 
@@ -466,8 +462,7 @@ void BuddyList::request_add_buddy(PurpleAccount *account,
   bool dval_set = false;
   for (PurpleBlistNode *i = purple_blist_get_root(); i; i = i->next)
     if (PURPLE_BLIST_NODE_IS_GROUP(i)) {
-      const char *cur_name = purple_group_get_name(
-          reinterpret_cast<PurpleGroup*>(i));
+      const char *cur_name = purple_group_get_name(PURPLE_GROUP(i));
       purple_request_field_choice_add(f, cur_name);
       if (!dval_set) {
         if (group && !strcmp(group, cur_name)) {
@@ -538,7 +533,7 @@ void BuddyList::request_add_chat(PurpleAccount *account, PurpleGroup *group,
   bool dval_set = false;
   for (PurpleBlistNode *i = purple_blist_get_root(); i; i = i->next)
     if (PURPLE_BLIST_NODE_IS_GROUP(i)) {
-      PurpleGroup *cur_group = reinterpret_cast<PurpleGroup*>(i);
+      PurpleGroup *cur_group = PURPLE_GROUP(i);
       const char *cur_name = purple_group_get_name(cur_group);
       purple_request_field_choice_add(f, cur_name);
       if (!dval_set) {
@@ -689,7 +684,7 @@ void BuddyList::add_chat_ok_cb(PurpleRequestFields *fields)
     purple_blist_add_chat(chat, g, NULL);
     if (alias && alias[0])
       purple_blist_alias_chat(chat, alias);
-    purple_blist_node_set_bool(reinterpret_cast<PurpleBlistNode*>(chat),
+    purple_blist_node_set_bool(PURPLE_BLIST_NODE(chat),
         PACKAGE_NAME "-autojoin", autojoin);
   }
 }

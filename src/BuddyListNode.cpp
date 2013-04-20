@@ -518,7 +518,7 @@ BuddyListBuddy::BuddyListBuddy(PurpleBlistNode *node)
 {
   SetColorScheme("buddylistbuddy");
 
-  buddy = reinterpret_cast<PurpleBuddy*>(node);
+  buddy = PURPLE_BUDDY(node);
 }
 
 void BuddyListBuddy::UpdateColorScheme()
@@ -680,7 +680,7 @@ BuddyListChat::BuddyListChat(PurpleBlistNode *node)
 {
   SetColorScheme("buddylistchat");
 
-  chat = reinterpret_cast<PurpleChat*>(node);
+  chat = PURPLE_CHAT(node);
 }
 
 bool BuddyListContact::LessOrEqual(const BuddyListNode& other) const
@@ -773,7 +773,7 @@ BuddyListContact::ContactContextMenu::ContactContextMenu(
     if (!PURPLE_BLIST_NODE_IS_GROUP(node))
       continue;
 
-    PurpleGroup *group = reinterpret_cast<PurpleGroup*>(node);
+    PurpleGroup *group = PURPLE_GROUP(node);
 
     CppConsUI::Button *button = groups->AppendItem(
         purple_group_get_name(group), sigc::bind(sigc::mem_fun(this,
@@ -840,13 +840,12 @@ void BuddyListContact::ContactContextMenu::RemoveResponseHandler(
 
   // based on gtkdialogs.c:pidgin_dialogs_remove_contact_cb()
   PurpleContact *contact = parent_contact->GetPurpleContact();
-  PurpleBlistNode *cnode = reinterpret_cast<PurpleBlistNode*>(contact);
-  PurpleGroup *group = reinterpret_cast<PurpleGroup*>(
-      purple_blist_node_get_parent(cnode));
+  PurpleBlistNode *cnode = PURPLE_BLIST_NODE(contact);
+  PurpleGroup *group = purple_contact_get_group(contact);
 
   for (PurpleBlistNode *bnode = purple_blist_node_get_first_child(cnode);
       bnode; bnode = purple_blist_node_get_sibling_next(bnode)) {
-    PurpleBuddy *buddy = reinterpret_cast<PurpleBuddy*>(bnode);
+    PurpleBuddy *buddy = PURPLE_BUDDY(bnode);
     PurpleAccount *account = purple_buddy_get_account(buddy);
     if (purple_account_is_connected(account))
       purple_account_remove_buddy(account, buddy, group);
@@ -908,7 +907,7 @@ BuddyListContact::BuddyListContact(PurpleBlistNode *node)
 {
   SetColorScheme("buddylistcontact");
 
-  contact = reinterpret_cast<PurpleContact*>(node);
+  contact = PURPLE_CONTACT(node);
 }
 
 void BuddyListContact::UpdateColorScheme()
@@ -1035,14 +1034,14 @@ void BuddyListGroup::GroupContextMenu::RemoveResponseHandler(
   // based on gtkdialogs.c:pidgin_dialogs_remove_group_cb()
   PurpleGroup *group = parent_group->GetPurpleGroup();
   PurpleBlistNode *cnode = purple_blist_node_get_first_child(
-      reinterpret_cast<PurpleBlistNode*>(group));
+      PURPLE_BLIST_NODE(group));
   while (cnode) {
     if (PURPLE_BLIST_NODE_IS_CONTACT(cnode)) {
       PurpleBlistNode *bnode = purple_blist_node_get_first_child(cnode);
       cnode = purple_blist_node_get_sibling_next(cnode);
       while (bnode)
         if (PURPLE_BLIST_NODE_IS_BUDDY(bnode)) {
-          PurpleBuddy *buddy = reinterpret_cast<PurpleBuddy*>(bnode);
+          PurpleBuddy *buddy = PURPLE_BUDDY(bnode);
           PurpleAccount *account = purple_buddy_get_account(buddy);
           bnode = purple_blist_node_get_sibling_next(bnode);
           if (purple_account_is_connected(account)) {
@@ -1054,7 +1053,7 @@ void BuddyListGroup::GroupContextMenu::RemoveResponseHandler(
           bnode = purple_blist_node_get_sibling_next(bnode);
     }
     else if (PURPLE_BLIST_NODE_IS_CHAT(cnode)) {
-      PurpleChat *chat = reinterpret_cast<PurpleChat*>(cnode);
+      PurpleChat *chat = PURPLE_CHAT(cnode);
       cnode = purple_blist_node_get_sibling_next(cnode);
       purple_blist_remove_chat(chat);
     }
@@ -1094,7 +1093,7 @@ BuddyListGroup::BuddyListGroup(PurpleBlistNode *node)
 {
   SetColorScheme("buddylistgroup");
 
-  group = reinterpret_cast<PurpleGroup*>(node);
+  group = PURPLE_GROUP(node);
 }
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
