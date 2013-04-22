@@ -71,6 +71,7 @@ public:
   // these functions are faster version of getting blist/* prefs
   bool GetShowEmptyGroupsPref() const { return show_empty_groups; }
   bool GetShowOfflineBuddiesPref() const { return show_offline_buddies; }
+  ListMode GetListMode() const { return list_mode; }
   GroupSortMode GetGroupSortMode() const { return group_sort_mode; }
   BuddySortMode GetBuddySortMode() const { return buddy_sort_mode; }
   ColorizationMode GetColorizationMode() const { return colorization_mode; }

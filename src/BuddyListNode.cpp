@@ -72,15 +72,30 @@ void BuddyListNode::Update()
 void BuddyListNode::SortIn()
 {
   CppConsUI::TreeView::NodeReference parent_ref;
-  BuddyListNode *parent_node = GetParentNode();
-  if (parent_node)
-    parent_ref = parent_node->GetRefNode();
-  else if (PURPLE_BLIST_NODE_IS_GROUP(blist_node))
-    parent_ref = treeview->GetRootNode();
+  if (purple_blist_node_get_parent(blist_node)) {
+    /* This blist node has got a logical (libpurple) parent, check if it is
+     * possible to find also a cim node. */
+    BuddyListNode *parent_node = GetParentNode();
+    if (parent_node)
+      parent_ref = parent_node->GetRefNode();
+    else {
+      // there shouldn't be a cim node only if the flat mode is active
+      g_assert(BUDDYLIST->GetListMode() == BuddyList::LIST_FLAT);
+
+      parent_ref = treeview->GetRootNode();
+    }
+  }
   else {
-    /* It's possible that this method is called for e.g. contacts which don't
-     * have yet any parent set. In such a case, simply return. */
-    return;
+    if (PURPLE_BLIST_NODE_IS_GROUP(blist_node)) {
+      // groups don't have parent nodes
+      parent_ref = treeview->GetRootNode();
+    }
+    else {
+      /* When the new_node() callback is called for a contact/chat/buddy (and
+       * this method is called as a part of that callback) then the node
+       * doesn't have any parent set yet. In such a case, simply return. */
+      return;
+    }
   }
 
   /* Do the insertion sort. It should be fast enough here because nodes are
@@ -974,6 +989,12 @@ void BuddyListGroup::Update()
   switch (mode) {
     case BuddyList::GROUP_SORT_BY_USER:
       {
+        /* Note that the sorting below works even if there was
+         * a contact/chat/buddy node that is attached at the root level of the
+         * blist treeview. This happens when such a node was just created (the
+         * new_node() callback was called) but the node doesn't have any
+         * parent yet. */
+
         PurpleBlistNode *prev = purple_blist_node_get_sibling_prev(
             blist_node);
 
@@ -1004,7 +1025,6 @@ void BuddyListGroup::Update()
   bool vis = true;
   if (!BUDDYLIST->GetShowEmptyGroupsPref())
     vis = purple_blist_get_group_size(group, FALSE);
-
   SetVisibility(vis);
 }
 
