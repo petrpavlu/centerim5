@@ -953,6 +953,9 @@ void BuddyListContact::UpdateColorScheme()
 
 bool BuddyListGroup::LessOrEqual(const BuddyListNode& other) const
 {
+  /* If the groups aren't sorted but ordered manually then this method isn't
+   * used. */
+
   const BuddyListGroup *o = dynamic_cast<const BuddyListGroup*>(&other);
   if (o)
     return g_utf8_collate(purple_group_get_name(group),
@@ -966,7 +969,37 @@ void BuddyListGroup::Update()
 
   SetText(purple_group_get_name(group));
 
-  SortIn();
+  // sort in the group
+  BuddyList::GroupSortMode mode = BUDDYLIST->GetGroupSortMode();
+  switch (mode) {
+    case BuddyList::GROUP_SORT_BY_USER:
+      {
+        PurpleBlistNode *prev = purple_blist_node_get_sibling_prev(
+            blist_node);
+
+        if (prev) {
+          // it better be a group node
+          g_assert(PURPLE_BLIST_NODE_IS_GROUP(prev));
+
+          BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(
+              purple_blist_node_get_ui_data(prev));
+          // there has to be ui_data set for all group nodes!
+          g_assert(bnode);
+
+          treeview->MoveNodeAfter(ref, bnode->GetRefNode());
+        }
+        else {
+          // the group is the first one in the list
+          CppConsUI::TreeView::NodeReference parent_ref
+            = treeview->GetRootNode();
+          treeview->MoveNodeBefore(ref, parent_ref.begin());
+        }
+      }
+      break;
+    case BuddyList::GROUP_SORT_BY_NAME:
+      SortIn();
+      break;
+  }
 
   bool vis = true;
   if (!BUDDYLIST->GetShowEmptyGroupsPref())
@@ -1010,6 +1043,28 @@ BuddyListGroup::GroupContextMenu::GroupContextMenu(
         &GroupContextMenu::OnRename));
   AppendItem(_("Delete..."), sigc::mem_fun(this,
         &GroupContextMenu::OnRemove));
+
+  if (BUDDYLIST->GetGroupSortMode() == BuddyList::GROUP_SORT_BY_USER) {
+    /* If the manual sorting is enabled then show a menu item and a submenu
+     * for group moving. */
+    CppConsUI::MenuWindow *groups = new CppConsUI::MenuWindow(*this, AUTOSIZE,
+        AUTOSIZE);
+
+    groups->AppendItem(_("-Top-"), sigc::bind(
+          sigc::mem_fun(this, &GroupContextMenu::OnMoveAfter),
+          static_cast<PurpleGroup*>(NULL)));
+    for (PurpleBlistNode *node = purple_blist_get_root(); node;
+        node = purple_blist_node_get_sibling_next(node)) {
+      if (!PURPLE_BLIST_NODE_IS_GROUP(node))
+        continue;
+
+      PurpleGroup *group = PURPLE_GROUP(node);
+      groups->AppendItem(purple_group_get_name(group), sigc::bind(
+            sigc::mem_fun(this, &GroupContextMenu::OnMoveAfter), group));
+    }
+
+    AppendSubMenu(_("Move after..."), *groups);
+  }
 }
 
 void BuddyListGroup::GroupContextMenu::RenameResponseHandler(
@@ -1108,6 +1163,15 @@ void BuddyListGroup::GroupContextMenu::OnRemove(Button& /*activator*/)
   dialog->signal_response.connect(sigc::mem_fun(this,
         &GroupContextMenu::RemoveResponseHandler));
   dialog->Show();
+}
+
+void BuddyListGroup::GroupContextMenu::OnMoveAfter(Button& /*activator*/,
+    PurpleGroup *group)
+{
+  PurpleGroup *moved_group = parent_group->GetPurpleGroup();
+  Close();
+
+  purple_blist_add_group(moved_group, PURPLE_BLIST_NODE(group));
 }
 
 void BuddyListGroup::OpenContextMenu()

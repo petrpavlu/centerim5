@@ -166,12 +166,14 @@ BuddyList::BuddyList()
   purple_prefs_add_bool(CONF_PREFIX "/blist/show_empty_groups", false);
   purple_prefs_add_bool(CONF_PREFIX "/blist/show_offline_buddies", true);
   purple_prefs_add_string(CONF_PREFIX "/blist/list_mode", "normal");
+  purple_prefs_add_string(CONF_PREFIX "/blist/group_sort_mode", "name");
   purple_prefs_add_string(CONF_PREFIX "/blist/buddy_sort_mode", "status");
   purple_prefs_add_string(CONF_PREFIX "/blist/colorization_mode", "none");
 
   UpdateCachedPreference(CONF_PREFIX "/blist/show_empty_groups");
   UpdateCachedPreference(CONF_PREFIX "/blist/show_offline_buddies");
   UpdateCachedPreference(CONF_PREFIX "/blist/list_mode");
+  UpdateCachedPreference(CONF_PREFIX "/blist/group_sort_mode");
   UpdateCachedPreference(CONF_PREFIX "/blist/buddy_sort_mode");
   UpdateCachedPreference(CONF_PREFIX "/blist/colorization_mode");
 
@@ -283,6 +285,13 @@ void BuddyList::UpdateCachedPreference(const char *name)
       list_mode = LIST_FLAT;
     else
       list_mode = LIST_NORMAL;
+  }
+  else if (!strcmp(name, CONF_PREFIX "/blist/group_sort_mode")) {
+    const char *value = purple_prefs_get_string(name);
+    if (!strcmp(value, "user"))
+      group_sort_mode = GROUP_SORT_BY_USER;
+    else
+      group_sort_mode = GROUP_SORT_BY_NAME;
   }
   else if (!strcmp(name, CONF_PREFIX "/blist/buddy_sort_mode")) {
     const char *value = purple_prefs_get_string(name);
@@ -707,7 +716,8 @@ void BuddyList::blist_pref_change(const char *name, PurplePrefType /*type*/,
   }
 
   bool groups_only = false;
-  if (!strcmp(name, CONF_PREFIX "/blist/show_empty_groups"))
+  if (!strcmp(name, CONF_PREFIX "/blist/show_empty_groups")
+      || !strcmp(name, CONF_PREFIX "/blist/group_sort_mode"))
     groups_only = true;
 
   UpdateList(UPDATE_GROUPS | (!groups_only ? UPDATE_OTHERS : 0));

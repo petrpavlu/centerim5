@@ -228,7 +228,6 @@ public:
   virtual void Update();
   virtual void OnActivate(Button& activator);
   virtual const char *ToString() const;
-
   virtual void SetRefNode(CppConsUI::TreeView::NodeReference n);
 
   PurpleContact *GetPurpleContact() const { return contact; }
@@ -313,6 +312,8 @@ protected:
     void RemoveResponseHandler(CppConsUI::MessageDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
     void OnRemove(Button& activator);
+
+    void OnMoveAfter(Button& activator, PurpleGroup *group);
 
   private:
     GroupContextMenu(const GroupContextMenu&);

@@ -38,6 +38,11 @@ public:
     LIST_FLAT
   };
 
+  enum GroupSortMode {
+    GROUP_SORT_BY_USER,
+    GROUP_SORT_BY_NAME
+  };
+
   enum BuddySortMode {
     BUDDY_SORT_BY_NAME,
     BUDDY_SORT_BY_STATUS,
@@ -66,6 +71,7 @@ public:
   // these functions are faster version of getting blist/* prefs
   bool GetShowEmptyGroupsPref() const { return show_empty_groups; }
   bool GetShowOfflineBuddiesPref() const { return show_offline_buddies; }
+  GroupSortMode GetGroupSortMode() const { return group_sort_mode; }
   BuddySortMode GetBuddySortMode() const { return buddy_sort_mode; }
   ColorizationMode GetColorizationMode() const { return colorization_mode; }
 
@@ -107,6 +113,7 @@ private:
   bool show_offline_buddies;
   ListMode list_mode;
   BuddySortMode buddy_sort_mode;
+  GroupSortMode group_sort_mode;
   ColorizationMode colorization_mode;
 
   Filter *filter;
