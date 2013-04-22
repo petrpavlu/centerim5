@@ -69,13 +69,19 @@ void BuddyListNode::SortIn()
   BuddyListNode *parent_node = GetParentNode();
   if (parent_node)
     parent_ref = parent_node->GetRefNode();
-  else
+  else if (PURPLE_BLIST_NODE_IS_GROUP(blist_node))
     parent_ref = treeview->GetRootNode();
+  else {
+    /* It's possible that this method is called for e.g. contacts which don't
+     * have yet any parent set. In such a case, simply return. */
+    return;
+  }
 
   /* Do the insertion sort. It should be fast enough here because nodes are
    * usually already sorted and only one node is in a wrong position, so it
    * kind of runs in O(n). */
-  CppConsUI::TreeView::SiblingIterator i = --parent_ref.end();
+  CppConsUI::TreeView::SiblingIterator i = parent_ref.end();
+  i--;
   while (true) {
     // sref is a node that we want to sort in
     CppConsUI::TreeView::SiblingIterator sref = i;
