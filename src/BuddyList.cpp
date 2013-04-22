@@ -241,8 +241,6 @@ void BuddyList::RebuildList()
     new_node(node);
     node = purple_blist_node_next(node, TRUE);
   }
-
-  DelayedGroupNodesInit();
 }
 
 void BuddyList::UpdateList(int flags)
@@ -268,7 +266,7 @@ void BuddyList::DelayedGroupNodesInit()
       BuddyListGroup *gnode = reinterpret_cast<BuddyListGroup*>(
           purple_blist_node_get_ui_data(node));
       if (gnode)
-        gnode->DelayedInit();
+        gnode->InitCollapsedState();
     }
   }
 }
@@ -386,18 +384,14 @@ void BuddyList::new_node(PurpleBlistNode *node)
   }
 
   BuddyListNode *bnode = BuddyListNode::CreateNode(node);
+  if (!bnode)
+    return;
 
-  if (bnode) {
-    BuddyListNode *parent = bnode->GetParentNode();
-    CppConsUI::TreeView::NodeReference nref = treeview->AppendNode(
-        parent ? parent->GetRefNode() : treeview->GetRootNode(), *bnode);
-    treeview->SetCollapsed(nref, true);
-    bnode->SetRefNode(nref);
-    bnode->Update();
-
-    if (PURPLE_BLIST_NODE_IS_CONTACT(node))
-      treeview->SetNodeStyle(nref, CppConsUI::TreeView::STYLE_VOID);
-  }
+  BuddyListNode *parent = bnode->GetParentNode();
+  CppConsUI::TreeView::NodeReference nref = treeview->AppendNode(
+      parent ? parent->GetRefNode() : treeview->GetRootNode(), *bnode);
+  bnode->SetRefNode(nref);
+  bnode->Update();
 }
 
 void BuddyList::update(PurpleBuddyList *list, PurpleBlistNode *node)

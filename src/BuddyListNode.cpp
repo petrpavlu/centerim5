@@ -52,10 +52,16 @@ void BuddyListNode::SetParent(CppConsUI::Container& parent)
   g_assert(treeview);
 }
 
+void BuddyListNode::SetRefNode(CppConsUI::TreeView::NodeReference n)
+{
+  ref = n;
+  treeview->SetCollapsed(ref, true);
+}
+
 void BuddyListNode::Update()
 {
   // cache the last_activity time
-  last_activity = purple_blist_node_get_int(node, "last_activity");
+  last_activity = purple_blist_node_get_int(blist_node, "last_activity");
 
   BuddyListNode *parent_node = GetParentNode();
   // the parent could have changed, so re-parent the node
@@ -120,8 +126,7 @@ void BuddyListNode::SortIn()
 
 BuddyListNode *BuddyListNode::GetParentNode() const
 {
-  PurpleBlistNode *parent = node->parent;
-
+  PurpleBlistNode *parent = purple_blist_node_get_parent(blist_node);
   if (!parent)
     return NULL;
 
@@ -217,23 +222,23 @@ void BuddyListNode::ContextMenu::AppendExtendedMenu()
 }
 
 BuddyListNode::BuddyListNode(PurpleBlistNode *node_)
-: treeview(NULL), node(node_), last_activity(0)
+: treeview(NULL), blist_node(node_), last_activity(0)
 {
-  purple_blist_node_set_ui_data(node, this);
+  purple_blist_node_set_ui_data(blist_node, this);
   signal_activate.connect(sigc::mem_fun(this, &BuddyListNode::OnActivate));
   DeclareBindables();
 }
 
 BuddyListNode::~BuddyListNode()
 {
-  purple_blist_node_set_ui_data(node, NULL);
+  purple_blist_node_set_ui_data(blist_node, NULL);
 }
 
 bool BuddyListNode::LessOrEqualByType(const BuddyListNode& other) const
 {
   // group < contact < buddy < chat < other
-  PurpleBlistNodeType t1 = purple_blist_node_get_type(node);
-  PurpleBlistNodeType t2 = purple_blist_node_get_type(other.node);
+  PurpleBlistNodeType t1 = purple_blist_node_get_type(blist_node);
+  PurpleBlistNodeType t2 = purple_blist_node_get_type(other.blist_node);
   return t1 <= t2;
 }
 
@@ -253,14 +258,16 @@ bool BuddyListNode::LessOrEqualByBuddySort(PurpleBuddy *left,
         return a > b;
       break;
     case BuddyList::BUDDY_SORT_BY_ACTIVITY:
-      BuddyListNode *bnode_left = reinterpret_cast<BuddyListNode*>(
-          purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(left)));
-      BuddyListNode *bnode_right = reinterpret_cast<BuddyListNode*>(
-          purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(right)));
-      a = bnode_left->last_activity;
-      b = bnode_right->last_activity;
-      if (a != b)
-        return a > b;
+      {
+        BuddyListNode *bnode_left = reinterpret_cast<BuddyListNode*>(
+            purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(left)));
+        BuddyListNode *bnode_right = reinterpret_cast<BuddyListNode*>(
+            purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(right)));
+        a = bnode_left->last_activity;
+        b = bnode_right->last_activity;
+        if (a != b)
+          return a > b;
+      }
       break;
   }
   return g_utf8_collate(purple_buddy_get_alias(left),
@@ -519,12 +526,12 @@ void BuddyListBuddy::OpenContextMenu()
   w->Show();
 }
 
-BuddyListBuddy::BuddyListBuddy(PurpleBlistNode *node)
-: BuddyListNode(node)
+BuddyListBuddy::BuddyListBuddy(PurpleBlistNode *node_)
+: BuddyListNode(node_)
 {
   SetColorScheme("buddylistbuddy");
 
-  buddy = PURPLE_BUDDY(node);
+  buddy = PURPLE_BUDDY(blist_node);
 }
 
 void BuddyListBuddy::UpdateColorScheme()
@@ -681,12 +688,12 @@ void BuddyListChat::OpenContextMenu()
   w->Show();
 }
 
-BuddyListChat::BuddyListChat(PurpleBlistNode *node)
-: BuddyListNode(node)
+BuddyListChat::BuddyListChat(PurpleBlistNode *node_)
+: BuddyListNode(node_)
 {
   SetColorScheme("buddylistchat");
 
-  chat = PURPLE_CHAT(node);
+  chat = PURPLE_CHAT(blist_node);
 }
 
 bool BuddyListContact::LessOrEqual(const BuddyListNode& other) const
@@ -705,6 +712,14 @@ void BuddyListContact::Update()
   BuddyListNode::Update();
 
   PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
+  if (!buddy) {
+    /* The contact does not have any associated buddy, ignore it until it gets
+     * a buddy assigned. */
+    SetText("*Contact*");
+    SetVisibility(false);
+    return;
+  }
+
   const char *status = GetBuddyStatus(buddy);
   const char *alias = purple_contact_get_alias(contact);
   if (status[0]) {
@@ -732,16 +747,21 @@ void BuddyListContact::Update()
 void BuddyListContact::OnActivate(Button& activator)
 {
   PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
-  gpointer ui_data = purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(buddy));
-  if (ui_data) {
-    BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(ui_data);
+  BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(
+      purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(buddy)));
+  if (bnode)
     bnode->OnActivate(activator);
-  }
 }
 
 const char *BuddyListContact::ToString() const
 {
   return purple_contact_get_alias(contact);
+}
+
+void BuddyListContact::SetRefNode(CppConsUI::TreeView::NodeReference n)
+{
+  BuddyListNode::SetRefNode(n);
+  treeview->SetNodeStyle(n, CppConsUI::TreeView::STYLE_VOID);
 }
 
 void BuddyListContact::RetrieveUserInfo()
@@ -750,12 +770,6 @@ void BuddyListContact::RetrieveUserInfo()
   PurpleConnection *gc = purple_account_get_connection(
       purple_buddy_get_account(buddy));
   RetrieveUserInfoForName(gc, purple_buddy_get_name(buddy));
-}
-
-void BuddyListContact::SetRefNode(CppConsUI::TreeView::NodeReference n)
-{
-  BuddyListNode::SetRefNode(n);
-  treeview->SetNodeStyle(n, CppConsUI::TreeView::STYLE_VOID);
 }
 
 BuddyListContact::ContactContextMenu::ContactContextMenu(
@@ -780,7 +794,6 @@ BuddyListContact::ContactContextMenu::ContactContextMenu(
       continue;
 
     PurpleGroup *group = PURPLE_GROUP(node);
-
     CppConsUI::Button *button = groups->AppendItem(
         purple_group_get_name(group), sigc::bind(sigc::mem_fun(this,
             &ContactContextMenu::OnMoveTo), group));
@@ -869,7 +882,7 @@ void BuddyListContact::ContactContextMenu::OnRemove(Button& /*activator*/)
   PurpleContact *contact = parent_contact->GetPurpleContact();
   char *msg = g_strdup_printf(
       _("Are you sure you want to delete contact %s from the list?"),
-      purple_buddy_get_alias(purple_contact_get_priority_buddy(contact)));
+      purple_contact_get_alias(contact));
   CppConsUI::MessageDialog *dialog = new CppConsUI::MessageDialog(
       _("Contact deletion"), msg);
   g_free(msg);
@@ -881,7 +894,10 @@ void BuddyListContact::ContactContextMenu::OnRemove(Button& /*activator*/)
 void BuddyListContact::ContactContextMenu::OnMoveTo(Button& /*activator*/,
     PurpleGroup *group)
 {
-  purple_blist_add_contact(parent_contact->GetPurpleContact(), group, NULL);
+  PurpleContact *contact = parent_contact->GetPurpleContact();
+  Close();
+
+  purple_blist_add_contact(contact, group, NULL);
 }
 
 int BuddyListContact::GetColorPair(const char *widget, const char *property)
@@ -908,12 +924,12 @@ void BuddyListContact::OpenContextMenu()
   w->Show();
 }
 
-BuddyListContact::BuddyListContact(PurpleBlistNode *node)
-: BuddyListNode(node)
+BuddyListContact::BuddyListContact(PurpleBlistNode *node_)
+: BuddyListNode(node_)
 {
   SetColorScheme("buddylistcontact");
 
-  contact = PURPLE_CONTACT(node);
+  contact = PURPLE_CONTACT(blist_node);
 }
 
 void BuddyListContact::UpdateColorScheme()
@@ -962,7 +978,7 @@ void BuddyListGroup::Update()
 void BuddyListGroup::OnActivate(Button& /*activator*/)
 {
   treeview->ToggleCollapsed(ref);
-  purple_blist_node_set_bool(node, "collapsed", ref->GetCollapsed());
+  purple_blist_node_set_bool(blist_node, "collapsed", ref->GetCollapsed());
 }
 
 const char *BuddyListGroup::ToString() const
@@ -970,12 +986,18 @@ const char *BuddyListGroup::ToString() const
   return purple_group_get_name(group);
 }
 
-void BuddyListGroup::DelayedInit()
+void BuddyListGroup::SetRefNode(CppConsUI::TreeView::NodeReference n)
 {
-  /* This can't be done when the node is created because node settings are
-   * unavailable at that time. */
-  if (!purple_blist_node_get_bool(node, "collapsed"))
-    treeview->SetCollapsed(ref, false);
+  BuddyListNode::SetRefNode(n);
+  InitCollapsedState();
+}
+
+void BuddyListGroup::InitCollapsedState()
+{
+  /* This can't be done when the purple_blist_load() function was called
+   * because node settings are unavailable at that time. */
+  treeview->SetCollapsed(ref, purple_blist_node_get_bool(blist_node,
+        "collapsed"));
 }
 
 BuddyListGroup::GroupContextMenu::GroupContextMenu(
@@ -1094,12 +1116,12 @@ void BuddyListGroup::OpenContextMenu()
   w->Show();
 }
 
-BuddyListGroup::BuddyListGroup(PurpleBlistNode *node)
-: BuddyListNode(node)
+BuddyListGroup::BuddyListGroup(PurpleBlistNode *node_)
+: BuddyListNode(node_)
 {
   SetColorScheme("buddylistgroup");
 
-  group = PURPLE_GROUP(node);
+  group = PURPLE_GROUP(blist_node);
 }
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

@@ -44,11 +44,11 @@ public:
   // debugging method
   virtual const char *ToString() const = 0;
 
-  virtual void SetRefNode(CppConsUI::TreeView::NodeReference n) { ref = n; }
+  virtual void SetRefNode(CppConsUI::TreeView::NodeReference n);
   virtual CppConsUI::TreeView::NodeReference GetRefNode() const
     { return ref; }
 
-  PurpleBlistNode *GetPurpleBlistNode() const { return node; }
+  PurpleBlistNode *GetPurpleBlistNode() const { return blist_node; }
 
   /* Sorts in this node. */
   void SortIn();
@@ -79,9 +79,9 @@ protected:
   CppConsUI::TreeView *treeview;
   CppConsUI::TreeView::NodeReference ref;
 
-  PurpleBlistNode *node;
+  PurpleBlistNode *blist_node;
 
-  // cached value of purple_blist_node_get_int(node, "last_activity")
+  // cached value of purple_blist_node_get_int(blist_node, "last_activity")
   int last_activity;
 
   BuddyListNode(PurpleBlistNode *node_);
@@ -163,7 +163,7 @@ protected:
   void UpdateColorScheme();
 
 private:
-  BuddyListBuddy(PurpleBlistNode *node);
+  BuddyListBuddy(PurpleBlistNode *node_);
   BuddyListBuddy(const BuddyListBuddy&);
   BuddyListBuddy& operator=(const BuddyListBuddy&);
   virtual ~BuddyListBuddy() {}
@@ -212,7 +212,7 @@ protected:
   virtual void OpenContextMenu();
 
 private:
-  BuddyListChat(PurpleBlistNode *node);
+  BuddyListChat(PurpleBlistNode *node_);
   BuddyListChat(const BuddyListChat&);
   BuddyListChat& operator=(const BuddyListChat&);
   virtual ~BuddyListChat() {}
@@ -273,7 +273,7 @@ protected:
   void UpdateColorScheme();
 
 private:
-  BuddyListContact(PurpleBlistNode *node);
+  BuddyListContact(PurpleBlistNode *node_);
   BuddyListContact(const BuddyListContact&);
   BuddyListContact& operator=(const BuddyListContact&);
   virtual ~BuddyListContact() {}
@@ -289,10 +289,11 @@ public:
   virtual void Update();
   virtual void OnActivate(Button& activator);
   virtual const char *ToString() const;
+  virtual void SetRefNode(CppConsUI::TreeView::NodeReference n);
 
   PurpleGroup *GetPurpleGroup() const { return group; }
 
-  void DelayedInit();
+  void InitCollapsedState();
 
 protected:
   class GroupContextMenu
@@ -324,7 +325,7 @@ protected:
   virtual void OpenContextMenu();
 
 private:
-  BuddyListGroup(PurpleBlistNode *node);
+  BuddyListGroup(PurpleBlistNode *node_);
   BuddyListGroup(const BuddyListGroup&);
   BuddyListGroup& operator=(const BuddyListGroup&);
   virtual ~BuddyListGroup() {}
