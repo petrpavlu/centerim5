@@ -66,6 +66,10 @@ void Notify::UserInfoDialog::Update(PurpleConnection *gc, const char *who,
         _("Local information"));
     parent = treeview->AppendNode(treeview->GetRootNode(), *button);
 
+    button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE,
+        _("Alias"), purple_buddy_get_alias(buddy));
+    treeview->AppendNode(parent, *button);
+
     time_t saved_time;
     struct tm local_time;
     const char *formatted_time;
