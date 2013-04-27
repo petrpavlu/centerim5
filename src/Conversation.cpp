@@ -197,28 +197,30 @@ void Conversation::Write(const char *name, const char * /*alias*/,
   }
 
   // write text into logfile
-  char *msg;
-  if (type == PURPLE_CONV_TYPE_CHAT)
-    msg = g_strdup_printf("\f\n%s\n%s\n%lu\n%lu\n%s: %s\n", dir, mtype, mtime,
-        cur_time, name, message);
-  else
-    msg = g_strdup_printf("\f\n%s\n%s\n%lu\n%lu\n%s\n", dir, mtype, mtime,
-        cur_time, message);
-  if (logfile) {
-    GError *err = NULL;
-    if (g_io_channel_write_chars(logfile, msg, -1, NULL, &err)
-        != G_IO_STATUS_NORMAL) {
-      LOG->Error(_("Error writing to conversation logfile (%s)."),
-          err->message);
-      g_clear_error(&err);
+  if (!(flags & PURPLE_MESSAGE_NO_LOG)) {
+    char *log_msg;
+    if (type == PURPLE_CONV_TYPE_CHAT)
+      log_msg = g_strdup_printf("\f\n%s\n%s\n%lu\n%lu\n%s: %s\n", dir, mtype,
+          mtime, cur_time, name, message);
+    else
+      log_msg = g_strdup_printf("\f\n%s\n%s\n%lu\n%lu\n%s\n", dir, mtype,
+          mtime, cur_time, message);
+    if (logfile) {
+      GError *err = NULL;
+      if (g_io_channel_write_chars(logfile, log_msg, -1, NULL, &err)
+          != G_IO_STATUS_NORMAL) {
+        LOG->Error(_("Error writing to conversation logfile (%s)."),
+            err->message);
+        g_clear_error(&err);
+      }
+      if (g_io_channel_flush(logfile, &err) != G_IO_STATUS_NORMAL) {
+        LOG->Error(_("Error flushing conversation logfile (%s)."),
+            err->message);
+        g_clear_error(&err);
+      }
     }
-    if (g_io_channel_flush(logfile, &err) != G_IO_STATUS_NORMAL) {
-      LOG->Error(_("Error flushing conversation logfile (%s)."),
-          err->message);
-      g_clear_error(&err);
-    }
+    g_free(log_msg);
   }
-  g_free(msg);
 
   // we currently don't support displaying HTML in any way
   char *nohtml = StripHTML(message);
