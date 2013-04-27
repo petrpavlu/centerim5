@@ -225,6 +225,7 @@ void Conversation::Write(const char *name, const char * /*alias*/,
 
   // write text to the window
   char *time = ExtractTime(mtime, cur_time);
+  char *msg;
   if (type == PURPLE_CONV_TYPE_CHAT)
     msg = g_strdup_printf("%s %s: %s", time, name, nohtml);
   else
@@ -641,6 +642,60 @@ void Conversation::LoadHistory()
   g_io_channel_unref(chan);
 }
 
+bool Conversation::ProcessCommand(const char *raw, const char *html)
+{
+  // check that it is a command
+  if (strncmp(raw, "/", 1))
+    return false;
+
+  purple_conversation_write(conv, "", html, PURPLE_MESSAGE_NO_LOG,
+      time(NULL));
+
+  char *error = NULL;
+  // strip the prefix and execute the command
+  PurpleCmdStatus status = purple_cmd_do_command(conv, raw + 1, html + 1,
+      &error);
+
+  bool result = true;
+  switch (status) {
+    case PURPLE_CMD_STATUS_OK:
+      break;
+    case PURPLE_CMD_STATUS_NOT_FOUND:
+      // it isn't a valid command, send it as a message
+      result = false;
+      break;
+    case PURPLE_CMD_STATUS_WRONG_ARGS:
+      purple_conversation_write(conv, "",
+          _("Wrong number of arguments passed to the command."),
+          PURPLE_MESSAGE_NO_LOG, time(NULL));
+      break;
+    case PURPLE_CMD_STATUS_FAILED:
+      purple_conversation_write(conv, "",
+          error ? error : _("The command failed for an unknown reason."),
+          PURPLE_MESSAGE_NO_LOG, time(NULL));
+      break;
+    case PURPLE_CMD_STATUS_WRONG_TYPE:
+      if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
+        purple_conversation_write(conv, "",
+            _("The command only works in chats, not IMs."),
+            PURPLE_MESSAGE_NO_LOG, time(NULL));
+      else
+        purple_conversation_write(conv, "",
+            _("The command only works in IMs, not chats."),
+            PURPLE_MESSAGE_NO_LOG, time(NULL));
+      break;
+    case PURPLE_CMD_STATUS_WRONG_PRPL:
+      purple_conversation_write(conv, "",
+          _("The command does not work on this protocol."),
+          PURPLE_MESSAGE_NO_LOG, time(NULL));
+      break;
+  }
+
+  g_free(error);
+
+  return result;
+}
+
 void Conversation::OnInputTextChange(CppConsUI::TextEdit& activator)
 {
   PurpleConvIm *im = PURPLE_CONV_IM(conv);
@@ -688,11 +743,16 @@ void Conversation::ActionSend()
 
   char *escaped = purple_markup_escape_text(str, strlen(str));
   char *html = purple_strdup_withhtml(escaped);
-  PurpleConversationType type = purple_conversation_get_type(conv);
-  if (type == PURPLE_CONV_TYPE_CHAT)
-    purple_conv_chat_send(PURPLE_CONV_CHAT(conv), html);
-  else if (type == PURPLE_CONV_TYPE_IM)
-    purple_conv_im_send(PURPLE_CONV_IM(conv), html);
+  if (ProcessCommand(str, html)) {
+    // the command was processed
+  }
+  else {
+    PurpleConversationType type = purple_conversation_get_type(conv);
+    if (type == PURPLE_CONV_TYPE_CHAT)
+      purple_conv_chat_send(PURPLE_CONV_CHAT(conv), html);
+    else if (type == PURPLE_CONV_TYPE_IM)
+      purple_conv_im_send(PURPLE_CONV_IM(conv), html);
+  }
   g_free(html);
   g_free(escaped);
   input->Clear();

@@ -91,6 +91,7 @@ protected:
   void BuildLogFilename();
   char *ExtractTime(time_t sent_time, time_t show_time) const;
   void LoadHistory();
+  bool ProcessCommand(const char *raw, const char *html);
   void OnInputTextChange(CppConsUI::TextEdit& activator);
 
   void ActionSend();
