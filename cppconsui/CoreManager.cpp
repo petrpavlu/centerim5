@@ -447,6 +447,11 @@ void CoreManager::draw()
   if (!redraw_pending)
     return;
 
+#if defined(DEBUG) && GLIB_MAJOR_VERSION >= 2 && GLIB_MINOR_VERSION >= 28
+  gint64 t1 = g_get_monotonic_time();
+  Curses::reset_stats();
+#endif // defined(DEBUG) && GLIB_VERSION >= 2.28
+
   Curses::erase();
   Curses::noutrefresh();
 
@@ -466,12 +471,13 @@ void CoreManager::draw()
   // copy virtual ncurses screen to the physical screen
   Curses::doupdate();
 
-#ifdef DEBUG
+#if defined(DEBUG) && GLIB_MAJOR_VERSION >= 2 && GLIB_MINOR_VERSION >= 28
   const Curses::Stats *stats = Curses::get_stats();
-  g_debug("newpad calls: %u, newwin calls: %u, subpad calls: %u",
-      stats->newpad_calls, stats->newwin_calls, stats->subpad_calls);
-  Curses::reset_stats();
-#endif // DEBUG
+  gint64 tdiff = g_get_monotonic_time() - t1;
+  g_debug("redraw: time=%"G_GINT64_FORMAT"us, newpad/newwin/subpad "
+      "calls=%u/%u/%u", tdiff, stats->newpad_calls, stats->newwin_calls,
+      stats->subpad_calls);
+#endif // defined(DEBUG) && GLIB_VERSION >= 2.28
 
   redraw_pending = false;
 }
