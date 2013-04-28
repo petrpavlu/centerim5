@@ -11,10 +11,10 @@ class TextViewWindow
 public:
   /* This is a main window, make sure it can not be closed with ESC key by
    * overriding Close() method. */
-  static TextViewWindow *Instance();
-  virtual void Close() {}
+  static TextViewWindow *instance();
+  virtual void close() {}
 
-  virtual void ScreenResized();
+  virtual void screenResized();
 
 protected:
   CppConsUI::TextView *textview;
@@ -25,10 +25,10 @@ private:
   TextViewWindow(const TextViewWindow&);
   TextViewWindow& operator=(const TextViewWindow&);
 
-  void ActionToggleScrollbar();
+  void actionToggleScrollbar();
 };
 
-TextViewWindow *TextViewWindow::Instance()
+TextViewWindow *TextViewWindow::instance()
 {
   static TextViewWindow instance;
   return &instance;
@@ -37,10 +37,10 @@ TextViewWindow *TextViewWindow::Instance()
 TextViewWindow::TextViewWindow()
 : CppConsUI::Window(0, 0, 0, 0)
 {
-  SetColorScheme("textviewwindow");
+  setColorScheme("textviewwindow");
 
   textview = new CppConsUI::TextView(AUTOSIZE, AUTOSIZE);
-  AddWidget(*textview, 0, 0);
+  addWidget(*textview, 0, 0);
 
   const gchar *long_text = "Lorem ipsum dolor sit amet, consectetur"
     "adipiscing elit. Duis dui dui, interdum eget tempor auctor, viverra"
@@ -57,37 +57,37 @@ TextViewWindow::TextViewWindow()
     "fermentum mattis eros, ut auctor urna tincidunt vitae. Praesent"
     "tincidunt laoreet lobortis.";
   for (int i = 0; i < 128; i++)
-    textview->Append(long_text, i % 7 + 1);
+    textview->append(long_text, i % 7 + 1);
 
-  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color1",
+  COLORSCHEME->setColorPair("textviewwindow", "textview", "color1",
       CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color2",
+  COLORSCHEME->setColorPair("textviewwindow", "textview", "color2",
       CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color3",
+  COLORSCHEME->setColorPair("textviewwindow", "textview", "color3",
       CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color4",
+  COLORSCHEME->setColorPair("textviewwindow", "textview", "color4",
       CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color5",
+  COLORSCHEME->setColorPair("textviewwindow", "textview", "color5",
       CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color6",
+  COLORSCHEME->setColorPair("textviewwindow", "textview", "color6",
       CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->SetColorPair("textviewwindow", "textview", "color7",
+  COLORSCHEME->setColorPair("textviewwindow", "textview", "color7",
       CppConsUI::Curses::Color::WHITE, CppConsUI::Curses::Color::BLACK);
 
-  DeclareBindable("textviewwindow", "toggle-scrollbar", sigc::mem_fun(this,
-        &TextViewWindow::ActionToggleScrollbar),
+  declareBindable("textviewwindow", "toggle-scrollbar", sigc::mem_fun(this,
+        &TextViewWindow::actionToggleScrollbar),
       InputProcessor::BINDABLE_NORMAL);
 }
 
-void TextViewWindow::ScreenResized()
+void TextViewWindow::screenResized()
 {
-  MoveResize(0, 0, CppConsUI::Curses::getmaxx(),
+  moveResize(0, 0, CppConsUI::Curses::getmaxx(),
       CppConsUI::Curses::getmaxy());
 }
 
-void TextViewWindow::ActionToggleScrollbar()
+void TextViewWindow::actionToggleScrollbar()
 {
-  textview->SetScrollBar(!textview->GetScrollBar());
+  textview->setScrollBar(!textview->getScrollBar());
 }
 
 // TestApp class
@@ -95,9 +95,9 @@ class TestApp
 : public CppConsUI::InputProcessor
 {
 public:
-  static TestApp *Instance();
+  static TestApp *instance();
 
-  void Run();
+  void run();
 
   // ignore every message
   static void g_log_func_(const gchar * /*log_domain*/,
@@ -116,7 +116,7 @@ private:
   virtual ~TestApp() {}
 };
 
-TestApp *TestApp::Instance()
+TestApp *TestApp::instance()
 {
   static TestApp instance;
   return &instance;
@@ -124,24 +124,24 @@ TestApp *TestApp::Instance()
 
 TestApp::TestApp()
 {
-  mngr = CppConsUI::CoreManager::Instance();
-  KEYCONFIG->BindKey("testapp", "quit", "F10");
-  KEYCONFIG->BindKey("textviewwindow", "toggle-scrollbar", "F1");
-  KEYCONFIG->LoadDefaultKeyConfig();
+  mngr = CppConsUI::CoreManager::instance();
+  KEYCONFIG->loadDefaultKeyConfig();
+  KEYCONFIG->bindKey("testapp", "quit", "F10");
+  KEYCONFIG->bindKey("textviewwindow", "toggle-scrollbar", "F1");
 
   g_log_set_default_handler(g_log_func_, this);
 
-  DeclareBindable("testapp", "quit", sigc::mem_fun(mngr,
-        &CppConsUI::CoreManager::QuitMainLoop),
+  declareBindable("testapp", "quit", sigc::mem_fun(mngr,
+        &CppConsUI::CoreManager::quitMainLoop),
       InputProcessor::BINDABLE_OVERRIDE);
 }
 
-void TestApp::Run()
+void TestApp::run()
 {
-  mngr->AddWindow(*TextViewWindow::Instance());
-  mngr->SetTopInputProcessor(*this);
-  mngr->EnableResizing();
-  mngr->StartMainLoop();
+  mngr->addWindow(*TextViewWindow::instance());
+  mngr->setTopInputProcessor(*this);
+  mngr->enableResizing();
+  mngr->startMainLoop();
 }
 
 // main function
@@ -149,8 +149,8 @@ int main()
 {
   setlocale(LC_ALL, "");
 
-  TestApp *app = TestApp::Instance();
-  app->Run();
+  TestApp *app = TestApp::instance();
+  app->run();
 
   return 0;
 }

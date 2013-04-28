@@ -40,7 +40,7 @@ public:
   virtual ~AccountWindow() {}
 
   // FreeWindow
-  virtual void OnScreenResized();
+  virtual void onScreenResized();
 
 protected:
 
@@ -76,7 +76,7 @@ private:
     PurpleAccountOption *option;
     Type type;
 
-    void OnToggle(CppConsUI::CheckBox& activator, bool new_state);
+    void onToggle(CppConsUI::CheckBox& activator, bool new_state);
 
   private:
     BoolOption(const BoolOption&);
@@ -102,10 +102,10 @@ private:
     PurpleAccountOption *option;
     Type type;
 
-    void Initialize();
-    void UpdateValue();
-    void OnActivate(CppConsUI::Button& activator);
-    void ResponseHandler(CppConsUI::InputDialog& activator,
+    void initialize();
+    void updateValue();
+    void onActivate(CppConsUI::Button& activator);
+    void responseHandler(CppConsUI::InputDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
@@ -124,9 +124,9 @@ private:
     PurpleAccount *account;
     PurpleAccountOption *option;
 
-    void UpdateValue();
-    void OnActivate(CppConsUI::Button& activator);
-    void ResponseHandler(CppConsUI::InputDialog& activator,
+    void updateValue();
+    void onActivate(CppConsUI::Button& activator);
+    void responseHandler(CppConsUI::InputDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
@@ -145,7 +145,7 @@ private:
     PurpleAccount *account;
     PurpleAccountOption *option;
 
-    void OnSelectionChanged(CppConsUI::ComboBox& activator, int new_entry,
+    void onSelectionChanged(CppConsUI::ComboBox& activator, int new_entry,
         const char *title, intptr_t data);
 
   private:
@@ -166,9 +166,9 @@ private:
     PurpleAccountUserSplit *split;
     AccountEntry *account_entry;
 
-    void UpdateSplits();
-    void OnActivate(CppConsUI::Button& activator);
-    void ResponseHandler(CppConsUI::InputDialog& activator,
+    void updateSplits();
+    void onActivate(CppConsUI::Button& activator);
+    void responseHandler(CppConsUI::InputDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
@@ -187,7 +187,7 @@ private:
     AccountWindow *account_window;
     PurpleAccount *account;
 
-    void OnProtocolChanged(CppConsUI::ComboBox& activator, size_t new_entry,
+    void onProtocolChanged(CppConsUI::ComboBox& activator, size_t new_entry,
         const char *title, intptr_t data);
 
   private:
@@ -205,7 +205,7 @@ private:
   protected:
     PurpleAccount *account;
 
-    void OnColorChanged(CppConsUI::ColorPicker& activator, int new_fg,
+    void onColorChanged(CppConsUI::ColorPicker& activator, int new_fg,
         int new_bg);
 
   private:
@@ -219,12 +219,12 @@ private:
   AccountWindow(const AccountWindow&);
   AccountWindow& operator=(const AccountWindow&);
 
-  void ClearAccount(PurpleAccount *account, bool full);
-  void PopulateAccount(PurpleAccount *account);
+  void clearAccount(PurpleAccount *account, bool full);
+  void populateAccount(PurpleAccount *account);
 
-  void AddAccount(CppConsUI::Button& activator);
-  void DropAccount(CppConsUI::Button& activator, PurpleAccount *account);
-  void DropAccountResponseHandler(CppConsUI::MessageDialog& activator,
+  void addAccount(CppConsUI::Button& activator);
+  void dropAccount(CppConsUI::Button& activator, PurpleAccount *account);
+  void dropAccountResponseHandler(CppConsUI::MessageDialog& activator,
       CppConsUI::AbstractDialog::ResponseType response,
       PurpleAccount *account);
 };

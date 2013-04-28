@@ -26,14 +26,14 @@
 #include <typeinfo>
 #include "gettext.h"
 
-Accounts *Accounts::instance = NULL;
+Accounts *Accounts::my_instance = NULL;
 
-Accounts *Accounts::Instance()
+Accounts *Accounts::instance()
 {
-  return instance;
+  return my_instance;
 }
 
-void Accounts::RestoreStatuses(bool offline)
+void Accounts::restoreStatuses(bool offline)
 {
   if (!offline) {
     // simply restore statuses
@@ -62,21 +62,21 @@ void Accounts::RestoreStatuses(bool offline)
   purple_savedstatus_delete_by_status(saved_status);
 }
 
-void Accounts::OpenPendingRequests()
+void Accounts::openPendingRequests()
 {
   /* Make sure there si no more than one PendingRequestWindow opened. Note
    * that this should actually never happen because this window is opened only
    * from the general menu and this window is a top window. */
   if (request_window) {
     // bring the current window to the top of the window stack
-    request_window->Show();
+    request_window->show();
     return;
   }
 
   request_window = new PendingRequestWindow(*this, requests);
   request_window->signal_close.connect(sigc::mem_fun(this,
-        &Accounts::OnPendingRequestWindowClose));
-  request_window->Show();
+        &Accounts::onPendingRequestWindowClose));
+  request_window->show();
 }
 
 Accounts::Request::Request(PurpleAccount *account_, const char *remote_user_,
@@ -90,12 +90,9 @@ Accounts::Request::Request(PurpleAccount *account_, const char *remote_user_,
 
 Accounts::Request::~Request()
 {
-  if (remote_user)
-    g_free(remote_user);
-  if (id)
-    g_free(id);
-  if (alias)
-    g_free(alias);
+  g_free(remote_user);
+  g_free(id);
+  g_free(alias);
 }
 
 Accounts::AddRequest::AddRequest(PurpleAccount *account_,
@@ -117,8 +114,7 @@ Accounts::AuthRequest::AuthRequest(PurpleAccount *account_,
 
 Accounts::AuthRequest::~AuthRequest()
 {
-  if (message)
-    g_free(message);
+  g_free(message);
 }
 
 Accounts::PendingRequestWindow::PendingRequestWindow(Accounts& accounts_,
@@ -126,25 +122,25 @@ Accounts::PendingRequestWindow::PendingRequestWindow(Accounts& accounts_,
 : SplitDialog(0, 0, 80, 24, _("Pending requests")), accounts(&accounts_)
 , dialog(NULL)
 {
-  SetColorScheme("generalwindow");
+  setColorScheme("generalwindow");
 
   treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
-  SetContainer(*treeview);
+  setContainer(*treeview);
 
   for (Requests::const_iterator i = requests.begin(); i != requests.end();
       i++)
-    AppendRequest(**i);
+    appendRequest(**i);
 
-  buttons->AppendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
-          &PendingRequestWindow::Close)));
+  buttons->appendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
+          &PendingRequestWindow::close)));
 }
 
-void Accounts::PendingRequestWindow::OnScreenResized()
+void Accounts::PendingRequestWindow::onScreenResized()
 {
-  MoveResizeRect(CENTERIM->GetScreenArea(CenterIM::CHAT_AREA));
+  moveResizeRect(CENTERIM->getScreenArea(CenterIM::CHAT_AREA));
 }
 
-void Accounts::PendingRequestWindow::AppendRequest(const Request& request)
+void Accounts::PendingRequestWindow::appendRequest(const Request& request)
 {
   const char *req;
   if (typeid(request) == typeid(AddRequest))
@@ -168,16 +164,16 @@ void Accounts::PendingRequestWindow::AppendRequest(const Request& request)
 
   CppConsUI::Button *b = new CppConsUI::Button(text);
   b->signal_activate.connect(sigc::bind(sigc::mem_fun(this,
-          &PendingRequestWindow::OnActivate), sigc::ref(request)));
+          &PendingRequestWindow::onActivate), sigc::ref(request)));
 
   g_free(text);
 
-  CppConsUI::TreeView::NodeReference node = treeview->AppendNode(
-      treeview->GetRootNode(), *b);
+  CppConsUI::TreeView::NodeReference node = treeview->appendNode(
+      treeview->getRootNode(), *b);
   request_map[&request] = node;
 }
 
-void Accounts::PendingRequestWindow::RemoveRequest(const Request& request)
+void Accounts::PendingRequestWindow::removeRequest(const Request& request)
 {
   RequestMap::iterator i = request_map.find(&request);
   g_assert(i != request_map.end());
@@ -185,18 +181,18 @@ void Accounts::PendingRequestWindow::RemoveRequest(const Request& request)
   /* If a dialog is opened for this request then close it. This happens only
    * when the request is closed by some external event. This should never
    * happen when the dialog/request is closed by the user. */
-  if (dialog && dialog->GetRequest() == &request) {
+  if (dialog && dialog->getRequest() == &request) {
     // it has to be an auth request
     g_assert(typeid(request) == typeid(AuthRequest));
 
-    dialog->Close();
+    dialog->close();
 
-    /* The dialog should become NULL because the Close() method triggers
+    /* The dialog should become NULL because the close() method triggers
      * the OnAuthResponse() handler. */
     g_assert(!dialog);
   }
 
-  treeview->DeleteNode(i->second, false);
+  treeview->deleteNode(i->second, false);
   request_map.erase(i);
 }
 
@@ -204,24 +200,24 @@ Accounts::PendingRequestWindow::RequestDialog::RequestDialog(
     const Request& request_, const char *title, const char *text)
 : AbstractDialog(title), request(&request_)
 {
-  AddButton(YES_BUTTON_TEXT, RESPONSE_YES);
-  AddSeparator();
-  AddButton(NO_BUTTON_TEXT, RESPONSE_NO);
+  addButton(YES_BUTTON_TEXT, RESPONSE_YES);
+  addSeparator();
+  addButton(NO_BUTTON_TEXT, RESPONSE_NO);
   // never give focus to the textview
-  buttons->SetFocusCycle(FOCUS_CYCLE_LOCAL);
+  buttons->setFocusCycle(FOCUS_CYCLE_LOCAL);
 
   CppConsUI::TextView *textview = new CppConsUI::TextView(AUTOSIZE, AUTOSIZE);
-  textview->Append(text);
-  layout->InsertWidget(0, *textview);
+  textview->append(text);
+  layout->insertWidget(0, *textview);
 }
 
-void Accounts::PendingRequestWindow::RequestDialog::EmitResponse(
+void Accounts::PendingRequestWindow::RequestDialog::emitResponse(
     ResponseType response)
 {
   signal_response(*this, response);
 }
 
-void Accounts::PendingRequestWindow::OnActivate(
+void Accounts::PendingRequestWindow::onActivate(
     CppConsUI::Button& /*activator*/, const Request& request)
 {
   // we can't have more than one request dialog opened
@@ -242,8 +238,8 @@ void Accounts::PendingRequestWindow::OnActivate(
     g_free(text);
 
     dialog->signal_response.connect(sigc::mem_fun(this,
-          &PendingRequestWindow::OnAddResponse));
-    dialog->Show();
+          &PendingRequestWindow::onAddResponse));
+    dialog->show();
   }
   else if (typeid(request) == typeid(AuthRequest)) {
     const AuthRequest *auth_request
@@ -264,27 +260,27 @@ void Accounts::PendingRequestWindow::OnActivate(
     g_free(text);
 
     dialog->signal_response.connect(sigc::mem_fun(this,
-          &PendingRequestWindow::OnAuthResponse));
-    dialog->Show();
+          &PendingRequestWindow::onAuthResponse));
+    dialog->show();
   }
   else
     g_assert_not_reached();
 }
 
-void Accounts::PendingRequestWindow::OnAddResponse(RequestDialog& activator,
+void Accounts::PendingRequestWindow::onAddResponse(RequestDialog& activator,
     ResponseType response)
 {
   // stay sane
   g_assert(dialog == &activator);
 
   const AddRequest *request
-    = dynamic_cast<const AddRequest*>(activator.GetRequest());
+    = dynamic_cast<const AddRequest*>(activator.getRequest());
   g_assert(request);
 
   /* Set early that there is no active dialog anymore. This is important
    * because otherwise the dialog is deleted twice. Once on the
-   * Accounts::CloseRequest() ->
-   * Accounts::PendingRequestWindow::RemoveRequest() path and once after
+   * Accounts::closeRequest() ->
+   * Accounts::PendingRequestWindow::removeRequest() path and once after
    * returning from this response handling method (because dialogs are closed
    * and deleted after a response is made by the user). */
   dialog = NULL;
@@ -293,30 +289,30 @@ void Accounts::PendingRequestWindow::OnAddResponse(RequestDialog& activator,
     case CppConsUI::AbstractDialog::RESPONSE_YES:
       purple_blist_request_add_buddy(request->account, request->remote_user,
           NULL, request->alias);
-      accounts->CloseRequest(*request);
+      accounts->closeRequest(*request);
       break;
     case CppConsUI::AbstractDialog::RESPONSE_NO:
-      accounts->CloseRequest(*request);
+      accounts->closeRequest(*request);
       break;
     default:
       break;
   }
 }
 
-void Accounts::PendingRequestWindow::OnAuthResponse(RequestDialog& activator,
+void Accounts::PendingRequestWindow::onAuthResponse(RequestDialog& activator,
     ResponseType response)
 {
   // stay sane
   g_assert(dialog == &activator);
 
   const AuthRequest *request
-    = dynamic_cast<const AuthRequest*>(activator.GetRequest());
+    = dynamic_cast<const AuthRequest*>(activator.getRequest());
   g_assert(request);
 
   /* Set early that there is no active dialog anymore. This is important
    * because otherwise the dialog is deleted twice. Once on the
-   * Accounts::CloseRequest() ->
-   * Accounts::PendingRequestWindow::RemoveRequest() path and once after
+   * Accounts::closeRequest() ->
+   * Accounts::PendingRequestWindow::removeRequest() path and once after
    * returning from this response handling method (because dialogs are closed
    * and deleted after a response is made by the user). */
   dialog = NULL;
@@ -327,11 +323,11 @@ void Accounts::PendingRequestWindow::OnAuthResponse(RequestDialog& activator,
       if (!purple_find_buddy(request->account, request->remote_user))
         purple_blist_request_add_buddy(request->account, request->remote_user,
             NULL, request->alias);
-      accounts->CloseRequest(*request);
+      accounts->closeRequest(*request);
       break;
     case CppConsUI::AbstractDialog::RESPONSE_NO:
       request->deny_cb(request->data);
-      accounts->CloseRequest(*request);
+      accounts->closeRequest(*request);
       break;
     default:
       break;
@@ -360,22 +356,22 @@ Accounts::~Accounts()
   purple_accounts_set_ui_ops(NULL);
 }
 
-void Accounts::Init()
+void Accounts::init()
 {
-  g_assert(!instance);
+  g_assert(!my_instance);
 
-  instance = new Accounts;
+  my_instance = new Accounts;
 }
 
-void Accounts::Finalize()
+void Accounts::finalize()
 {
-  g_assert(instance);
+  g_assert(my_instance);
 
-  delete instance;
-  instance = NULL;
+  delete my_instance;
+  my_instance = NULL;
 }
 
-void Accounts::CloseRequest(const Request& request)
+void Accounts::closeRequest(const Request& request)
 {
   /* It isn't really nice to delete an object referenced by a const parameter,
    * but well.. */
@@ -389,13 +385,13 @@ void Accounts::CloseRequest(const Request& request)
     return;
 
   if (request_window)
-    request_window->RemoveRequest(**i);
+    request_window->removeRequest(**i);
   delete *i;
   requests.erase(i);
   signal_request_count_change(*this, requests.size());
 }
 
-void Accounts::OnPendingRequestWindowClose(CppConsUI::FreeWindow& activator)
+void Accounts::onPendingRequestWindowClose(CppConsUI::FreeWindow& activator)
 {
   // the request window is dying
   g_assert(request_window == &activator);
@@ -414,18 +410,18 @@ void Accounts::notify_added(PurpleAccount *account, const char *remote_user,
    * code. */
   if (message) {
     if (alias)
-      LOG->Message(_("+ [%s] %s: %s (%s) has made you his or her buddy: %s"),
+      LOG->message(_("+ [%s] %s: %s (%s) has made you his or her buddy: %s"),
           proto, uname, remote_user, alias, message);
     else
-      LOG->Message(_("+ [%s] %s: %s has made you his or her buddy: %s"),
+      LOG->message(_("+ [%s] %s: %s has made you his or her buddy: %s"),
           proto, uname, remote_user, message);
   }
   else {
     if (alias)
-      LOG->Message(_("+ [%s] %s: %s (%s) has made you his or her buddy"),
+      LOG->message(_("+ [%s] %s: %s (%s) has made you his or her buddy"),
           proto, uname, remote_user, alias);
     else
-      LOG->Message(_("+ [%s] %s: %s has made you his or her buddy"),
+      LOG->message(_("+ [%s] %s: %s has made you his or her buddy"),
           proto, uname, remote_user);
   }
 }
@@ -435,7 +431,7 @@ void Accounts::status_changed(PurpleAccount *account, PurpleStatus *status)
   if (!purple_account_get_enabled(account, PACKAGE_NAME))
     return;
 
-  LOG->Message(_("+ [%s] %s: Status changed to: %s"),
+  LOG->message(_("+ [%s] %s: Status changed to: %s"),
       purple_account_get_protocol_name(account),
       purple_account_get_username(account),
       purple_status_get_name(status));
@@ -447,15 +443,15 @@ void Accounts::request_add(PurpleAccount *account, const char *remote_user,
   AddRequest *request = new AddRequest(account, remote_user, id, alias);
   requests.push_back(request);
   if (request_window)
-    request_window->AppendRequest(*request);
+    request_window->appendRequest(*request);
 
   const char *proto = purple_account_get_protocol_name(account);
   const char *uname = purple_account_get_username(account);
   if (alias)
-    LOG->Message(_("+ [%s] %s: New add request from %s (%s)"), proto, uname,
+    LOG->message(_("+ [%s] %s: New add request from %s (%s)"), proto, uname,
         remote_user, alias);
   else
-    LOG->Message(_("+ [%s] %s: New add request from %s"), proto, uname,
+    LOG->message(_("+ [%s] %s: New add request from %s"), proto, uname,
         remote_user);
 }
 
@@ -471,15 +467,15 @@ void *Accounts::request_authorize(PurpleAccount *account,
   requests.push_back(request);
   signal_request_count_change(*this, requests.size());
   if (request_window)
-    request_window->AppendRequest(*request);
+    request_window->appendRequest(*request);
 
   const char *proto = purple_account_get_protocol_name(account);
   const char *uname = purple_account_get_username(account);
   if (alias)
-    LOG->Message(_("+ [%s] %s: New authorization request from %s (%s)"),
+    LOG->message(_("+ [%s] %s: New authorization request from %s (%s)"),
         proto, uname, remote_user, alias);
   else
-    LOG->Message(_("+ [%s] %s: New authorization request from %s"), proto,
+    LOG->message(_("+ [%s] %s: New authorization request from %s"), proto,
         uname, remote_user);
 
   return request;
@@ -495,7 +491,7 @@ void Accounts::close_account_request(void *ui_handle)
   g_assert(typeid(*i) == typeid(AuthRequest*));
 
   if (request_window)
-    request_window->RemoveRequest(**i);
+    request_window->removeRequest(**i);
   delete *i;
   requests.erase(i);
   signal_request_count_change(*this, requests.size());

@@ -23,7 +23,7 @@
 namespace Utils
 {
 
-const char *GetStatusIndicator(PurpleStatus *status)
+const char *getStatusIndicator(PurpleStatus *status)
 {
   PurpleStatusType *status_type = purple_status_get_type(status);
   PurpleStatusPrimitive prim = purple_status_type_get_primitive(status_type);
@@ -54,7 +54,7 @@ const char *GetStatusIndicator(PurpleStatus *status)
   }
 }
 
-char *GetColorSchemeString(const char *base_color_scheme, PurpleBuddy *buddy)
+char *getColorSchemeString(const char *base_color_scheme, PurpleBuddy *buddy)
 {
   if (!purple_account_is_connected(purple_buddy_get_account(buddy))) {
     return g_strdup_printf("%s_offline", base_color_scheme);

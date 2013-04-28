@@ -34,44 +34,43 @@
 namespace CppConsUI
 {
 
-CheckBox::CheckBox(int w, int h, const char *text_, bool default_state)
+CheckBox::CheckBox(int w, int h, const char *text_, bool checked_)
 : Widget(w, h), text(NULL), text_width(0), text_height(0)
-, state(default_state)
+, checked(checked_)
 {
-  SetText(text_);
+  setText(text_);
 
   can_focus = true;
-  DeclareBindables();
+  declareBindables();
 }
 
-CheckBox::CheckBox(const char *text_, bool default_state)
+CheckBox::CheckBox(const char *text_, bool checked_)
 : Widget(AUTOSIZE, AUTOSIZE), text(NULL), text_width(0), text_height(0)
-, state(default_state)
+, checked(checked_)
 {
-  SetText(text_);
+  setText(text_);
 
   can_focus = true;
-  DeclareBindables();
+  declareBindables();
 }
 
 CheckBox::~CheckBox()
 {
-  if (text)
-    g_free(text);
+  g_free(text);
 }
 
-void CheckBox::Draw()
+void CheckBox::draw()
 {
-  ProceedUpdateArea();
+  proceedUpdateArea();
 
   if (!area || !text)
     return;
 
   int attrs;
   if (has_focus)
-    attrs = GetColorPair("checkbox", "focus") | Curses::Attr::REVERSE;
+    attrs = getColorPair("checkbox", "focus") | Curses::Attr::REVERSE;
   else
-    attrs = GetColorPair("checkbox", "normal");
+    attrs = getColorPair("checkbox", "normal");
   area->attron(attrs);
 
   int realw = area->getmaxx();
@@ -100,7 +99,7 @@ void CheckBox::Draw()
   int h = (text_height - 1) / 2;
 
   // print value
-  const char *value = state ? YES_BUTTON_TEXT : NO_BUTTON_TEXT;
+  const char *value = checked ? YES_BUTTON_TEXT : NO_BUTTON_TEXT;
   int value_width = Curses::onscreen_width(value);
   area->fill(attrs, l, 0, value_width + 2, realh);
   if (h < realh) {
@@ -111,10 +110,9 @@ void CheckBox::Draw()
   area->attroff(attrs);
 }
 
-void CheckBox::SetText(const char *new_text)
+void CheckBox::setText(const char *new_text)
 {
-  if (text)
-    g_free(text);
+  g_free(text);
 
   text = g_strdup(new_text);
 
@@ -139,32 +137,30 @@ void CheckBox::SetText(const char *new_text)
     if (w > text_width)
       text_width = w;
   }
-  SetWishHeight(text_height);
+  setWishHeight(text_height);
 
-  Redraw();
+  redraw();
 }
 
-void CheckBox::SetState(bool new_state)
+void CheckBox::setChecked(bool new_checked)
 {
-  bool old_state = state;
-  state = new_state;
+  if (new_checked == checked)
+    return;
 
-  if (state != old_state)
-    signal_toggle(*this, state);
-  Redraw();
+  checked = new_checked;
+  signal_toggle(*this, checked);
+  redraw();
 }
 
-void CheckBox::ActionToggle()
+void CheckBox::actionToggle()
 {
-  state = !state;
-  signal_toggle(*this, state);
-  Redraw();
+  setChecked(!checked);
 }
 
-void CheckBox::DeclareBindables()
+void CheckBox::declareBindables()
 {
-  DeclareBindable("checkbox", "toggle", sigc::mem_fun(this,
-        &CheckBox::ActionToggle), InputProcessor::BINDABLE_NORMAL);
+  declareBindable("checkbox", "toggle", sigc::mem_fun(this,
+        &CheckBox::actionToggle), InputProcessor::BINDABLE_NORMAL);
 }
 
 } // namespace CppConsUI

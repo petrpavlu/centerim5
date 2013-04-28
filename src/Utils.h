@@ -26,8 +26,8 @@
 namespace Utils
 {
 
-const char *GetStatusIndicator(PurpleStatus *status);
-char *GetColorSchemeString(const char *base_color_scheme, PurpleBuddy *buddy);
+const char *getStatusIndicator(PurpleStatus *status);
+char *getColorSchemeString(const char *base_color_scheme, PurpleBuddy *buddy);
 
 } // namespace Utils
 

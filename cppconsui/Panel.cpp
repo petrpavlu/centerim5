@@ -34,18 +34,17 @@ namespace CppConsUI
 Panel::Panel(int w, int h, const char *text)
 : Widget(w, h), title(NULL), title_width(0)
 {
-  SetTitle(text);
+  setTitle(text);
 }
 
 Panel::~Panel()
 {
-  if (title)
-    g_free(title);
+  g_free(title);
 }
 
-void Panel::Draw()
+void Panel::draw()
 {
-  ProceedUpdateArea();
+  proceedUpdateArea();
 
   if (!area)
     return;
@@ -68,14 +67,14 @@ void Panel::Draw()
 
   if (draw_title_width) {
     // draw title
-    attrs = GetColorPair("panel", "title");
+    attrs = getColorPair("panel", "title");
     area->attron(attrs);
     area->mvaddstring(2 + hline_len, 0, draw_title_width, title);
     area->attroff(attrs);
   }
 
   // draw lines
-  attrs = GetColorPair("panel", "line");
+  attrs = getColorPair("panel", "line");
   area->attron(attrs);
 
   int wa = (realw >= width || width == AUTOSIZE) && realw > 1 ? 1 : 0;
@@ -112,19 +111,13 @@ void Panel::Draw()
   area->attroff(attrs);
 }
 
-void Panel::SetTitle(const char *text)
+void Panel::setTitle(const char *new_title)
 {
-  if (title)
-    g_free(title);
+  g_free(title);
 
-  title = g_strdup(text);
+  title = g_strdup(new_title);
   title_width = title ? Curses::onscreen_width(title) : 0;
-  Redraw();
-}
-
-const char *Panel::GetTitle() const
-{
-  return title;
+  redraw();
 }
 
 } // namespace CppConsUI

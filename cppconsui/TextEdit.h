@@ -52,37 +52,37 @@ public:
   virtual ~TextEdit();
 
   // InputProcessor
-  virtual bool ProcessInputText(const TermKeyKey &key);
+  virtual bool processInputText(const TermKeyKey &key);
 
   // Widget
-  virtual void Draw();
+  virtual void draw();
 
   /**
    * Sets new text.
    */
-  virtual void SetText(const char *new_text);
+  virtual void setText(const char *new_text);
   /**
    * Removes all text.
    */
-  virtual void Clear();
+  virtual void clear();
   /**
    * Returns inserted text.
    */
-  virtual const char *GetText() const;
+  virtual const char *getText() const;
 
-  virtual size_t GetTextLength() const { return text_length; }
+  virtual size_t getTextLength() const { return text_length; }
 
-  virtual void SetFlags(int flags_, bool revalidate = true);
-  virtual int GetFlags() const { return flags; }
+  virtual void setFlags(int new_flags, bool revalidate = true);
+  virtual int getFlags() const { return flags; }
 
-  virtual void SetSingleLineMode(bool allowed);
-  virtual bool IsSingleLineMode() const { return single_line_mode; }
+  virtual void setSingleLineMode(bool new_single_line_mode);
+  virtual bool isSingleLineMode() const { return single_line_mode; }
 
-  virtual void SetAcceptTabs(bool accept);
-  virtual bool GetAcceptTabs() const { return accept_tabs; }
+  virtual void setAcceptTabs(bool new_accept_tabs);
+  virtual bool doesAcceptTabs() const { return accept_tabs; }
 
-  virtual void SetMasked(bool masked_);
-  virtual bool GetMasked() const { return masked; }
+  virtual void setMasked(bool new_masked);
+  virtual bool isMasked() const { return masked; }
 
   sigc::signal<void, TextEdit&> signal_text_change;
 
@@ -194,64 +194,64 @@ protected:
 
   mutable bool screen_lines_dirty;
 
-  virtual void InitBuffer(size_t size);
-  virtual size_t GetGapSize() const;
-  virtual void ExpandGap(size_t size);
-  virtual void MoveGapToCursor();
+  virtual void initBuffer(size_t size);
+  virtual size_t getGapSize() const;
+  virtual void expandGap(size_t size);
+  virtual void moveGapToCursor();
 
-  virtual char *GetTextStart() const;
-  virtual char *PrevChar(const char *p) const;
-  virtual char *NextChar(const char *p) const;
-  virtual int Width(const char *start, size_t chars) const;
+  virtual char *getTextStart() const;
+  virtual char *prevChar(const char *p) const;
+  virtual char *nextChar(const char *p) const;
+  virtual int width(const char *start, size_t chars) const;
   /**
    * Returns on-screen width of a given character in the same fashion as
    * Curses::onscreen_width() does but handles the tab character and wide
    * characters properly if the masked mode is active.
    */
-  virtual int OnScreenWidth(gunichar uc, int w = 0) const;
+  virtual int onScreenWidth(gunichar uc, int w = 0) const;
 
-  virtual char *GetScreenLine(const char *text, int max_width,
+  virtual char *getScreenLine(const char *text, int max_width,
       size_t *res_length) const;
   /**
    * Recalculates all screen lines.
    */
-  virtual void UpdateScreenLines();
+  virtual void updateScreenLines();
   /**
    * Recalculates necessary amout of screen lines.
    */
-  virtual void UpdateScreenLines(const char *begin, const char *end);
-  virtual void AssertUpdatedScreenLines();
+  virtual void updateScreenLines(const char *begin, const char *end);
+  virtual void assertUpdatedScreenLines();
 
   /**
    * Recalculates screen cursor position based on current_pos and
    * screen_lines, sets current_sc_line and current_sc_linepos and handles
    * scrolling if necessary.
    */
-  virtual void UpdateScreenCursor();
+  virtual void updateScreenCursor();
 
   /**
    * Inserts given text at the current cursor position.
    */
-  virtual void InsertTextAtCursor(const char *new_text,
+  virtual void insertTextAtCursor(const char *new_text,
       size_t new_text_bytes);
-  virtual void InsertTextAtCursor(const char *new_text);
-  virtual void DeleteFromCursor(DeleteType type, Direction dir);
-  virtual void MoveCursor(CursorMovement step, Direction dir);
+  virtual void insertTextAtCursor(const char *new_text);
+  virtual void deleteFromCursor(DeleteType type, Direction dir);
+  virtual void moveCursor(CursorMovement step, Direction dir);
 
-  virtual void ToggleOverwrite();
+  virtual void toggleOverwrite();
 
-  virtual size_t MoveLogicallyFromCursor(Direction dir) const;
-  virtual size_t MoveWordFromCursor(Direction dir, bool word_end) const;
+  virtual size_t moveLogicallyFromCursor(Direction dir) const;
+  virtual size_t moveWordFromCursor(Direction dir, bool word_end) const;
 
 private:
   TextEdit(const TextEdit&);
   TextEdit& operator=(const TextEdit&);
 
-  void ActionMoveCursor(CursorMovement step, Direction dir);
-  void ActionDelete(DeleteType type, Direction dir);
-  void ActionToggleOverwrite();
+  void actionMoveCursor(CursorMovement step, Direction dir);
+  void actionDelete(DeleteType type, Direction dir);
+  void actionToggleOverwrite();
 
-  void DeclareBindables();
+  void declareBindables();
 };
 
 } // namespace CppConsUI

@@ -57,20 +57,21 @@ public:
   virtual ~AbstractDialog() {}
 
   // FreeWindow
-  virtual void Close();
+  virtual void close();
 
-  virtual void AddButton(const char *label, ResponseType response);
-  virtual void AddSeparator();
-  virtual void Response(ResponseType response);
+  virtual void addButton(const char *label, ResponseType response);
+  virtual void addSeparator();
+  virtual void response(ResponseType response_type);
 
 protected:
   ListBox *layout;
   HorizontalLine *separator;
   HorizontalListBox *buttons;
 
-  virtual void InitLayout();
-  virtual void EmitResponse(ResponseType response) = 0;
-  virtual void OnButtonResponse(Button& activator, ResponseType response);
+  virtual void initLayout();
+  virtual void emitResponse(ResponseType response) = 0;
+  virtual void onButtonResponse(Button& activator,
+      ResponseType response_type);
 
 private:
   AbstractDialog(const AbstractDialog&);

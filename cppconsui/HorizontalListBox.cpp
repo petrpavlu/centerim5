@@ -37,20 +37,20 @@ HorizontalListBox::HorizontalListBox(int w, int h)
 {
 }
 
-void HorizontalListBox::Draw()
+void HorizontalListBox::draw()
 {
-  ProceedUpdateArea();
+  proceedUpdateArea();
   // set virtual scroll area width
   if (screen_area)
-    SetScrollHeight(screen_area->getmaxy());
-  UpdateScrollWidth();
+    setScrollHeight(screen_area->getmaxy());
+  updateScrollWidth();
   if (update_area)
     reposition_widgets = true;
-  ProceedUpdateVirtualArea();
+  proceedUpdateVirtualArea();
 
   if (!area) {
     // scrollpane will clear the screen (real) area
-    AbstractListBox::Draw();
+    AbstractListBox::draw();
     return;
   }
 
@@ -68,10 +68,10 @@ void HorizontalListBox::Draw()
     int x = 0;
     for (Children::iterator i = children.begin(); i != children.end(); i++) {
       Widget *widget = i->widget;
-      if (!widget->IsVisible())
+      if (!widget->isVisible())
         continue;
 
-      int w = widget->GetWidth();
+      int w = widget->getWidth();
       if (w == AUTOSIZE) {
         w = autosize_width;
         if (autosize_width_extra) {
@@ -81,10 +81,10 @@ void HorizontalListBox::Draw()
         }
 
         // make sure the area is updated
-        widget->UpdateArea();
+        widget->updateArea();
       }
 
-      widget->Move(x, 0);
+      widget->move(x, 0);
       x += w;
     }
     reposition_widgets = false;
@@ -92,59 +92,59 @@ void HorizontalListBox::Draw()
 
   // make sure that currently focused widget is visible
   if (focus_child) {
-    int w = focus_child->GetWidth();
+    int w = focus_child->getWidth();
     if (w == AUTOSIZE) {
       w = autosize_width;
       if (autosize_extra.find(focus_child) != autosize_extra.end())
         w++;
     }
 
-    MakeVisible(focus_child->GetLeft(), focus_child->GetTop(), w, 1);
+    makeVisible(focus_child->getLeft(), focus_child->getTop(), w, 1);
   }
 
-  AbstractListBox::Draw();
+  AbstractListBox::draw();
 }
 
-VerticalLine *HorizontalListBox::InsertSeparator(size_t pos)
+VerticalLine *HorizontalListBox::insertSeparator(size_t pos)
 {
   VerticalLine *l = new VerticalLine(AUTOSIZE);
-  InsertWidget(pos, *l);
+  insertWidget(pos, *l);
   return l;
 }
 
-VerticalLine *HorizontalListBox::AppendSeparator()
+VerticalLine *HorizontalListBox::appendSeparator()
 {
   VerticalLine *l = new VerticalLine(AUTOSIZE);
-  AppendWidget(*l);
+  appendWidget(*l);
   return l;
 }
 
-void HorizontalListBox::InsertWidget(size_t pos, Widget& widget)
+void HorizontalListBox::insertWidget(size_t pos, Widget& widget)
 {
-  if (widget.IsVisible()) {
-    int w = widget.GetWidth();
+  if (widget.isVisible()) {
+    int w = widget.getWidth();
     if (w == AUTOSIZE) {
       w = 1;
       autosize_children++;
     }
     children_width += w;
-    UpdateScrollWidth();
+    updateScrollWidth();
   }
 
-  // note: widget is moved to a correct position in Draw() method
-  ScrollPane::InsertWidget(pos, widget, 0, 0);
+  // note: widget is moved to a correct position in draw() method
+  ScrollPane::insertWidget(pos, widget, 0, 0);
   reposition_widgets = true;
 
-  if (widget.IsVisible())
+  if (widget.isVisible())
     signal_children_width_change(*this, children_width);
 }
 
-void HorizontalListBox::AppendWidget(Widget& widget)
+void HorizontalListBox::appendWidget(Widget& widget)
 {
-  InsertWidget(children.size(), widget);
+  insertWidget(children.size(), widget);
 }
 
-Curses::Window *HorizontalListBox::GetSubPad(const Widget& child, int begin_x,
+Curses::Window *HorizontalListBox::getSubPad(const Widget& child, int begin_x,
     int begin_y, int ncols, int nlines)
 {
   // autosize
@@ -154,14 +154,14 @@ Curses::Window *HorizontalListBox::GetSubPad(const Widget& child, int begin_x,
       ncols++;
   }
 
-  return AbstractListBox::GetSubPad(child, begin_x, begin_y, ncols, nlines);
+  return AbstractListBox::getSubPad(child, begin_x, begin_y, ncols, nlines);
 }
 
-void HorizontalListBox::OnChildMoveResize(Widget& /*activator*/,
+void HorizontalListBox::onChildMoveResize(Widget& /*activator*/,
     const Rect& oldsize, const Rect& newsize)
 {
-  int old_width = oldsize.GetWidth();
-  int new_width = newsize.GetWidth();
+  int old_width = oldsize.getWidth();
+  int new_width = newsize.getWidth();
   if (old_width != new_width) {
     if (old_width == AUTOSIZE) {
       old_width = 1;
@@ -173,16 +173,16 @@ void HorizontalListBox::OnChildMoveResize(Widget& /*activator*/,
     }
     children_width += new_width - old_width;
     reposition_widgets = true;
-    UpdateScrollWidth();
+    updateScrollWidth();
 
     signal_children_width_change(*this, children_width);
   }
 }
 
-void HorizontalListBox::OnChildVisible(Widget& activator, bool visible)
+void HorizontalListBox::onChildVisible(Widget& activator, bool visible)
 {
   // the widget is being hidden or deleted
-  int width = activator.GetWidth();
+  int width = activator.getWidth();
   int sign = visible ? 1 : - 1;
   if (width == AUTOSIZE) {
     autosize_children += sign;
@@ -190,18 +190,18 @@ void HorizontalListBox::OnChildVisible(Widget& activator, bool visible)
   }
   children_width += sign * width;
   reposition_widgets = true;
-  UpdateScrollWidth();
+  updateScrollWidth();
 
   signal_children_width_change(*this, children_width);
 }
 
-void HorizontalListBox::UpdateScrollWidth()
+void HorizontalListBox::updateScrollWidth()
 {
   int realw = 0;
   if (screen_area)
     realw = screen_area->getmaxx();
 
-  SetScrollWidth(MAX(realw, children_width));
+  setScrollWidth(MAX(realw, children_width));
 }
 
 } // namespace CppConsUI

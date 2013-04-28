@@ -33,13 +33,13 @@
 namespace CppConsUI
 {
 
-ColorScheme *ColorScheme::Instance()
+ColorScheme *ColorScheme::instance()
 {
-  static ColorScheme instance;
-  return &instance;
+  static ColorScheme my_instance;
+  return &my_instance;
 }
 
-int ColorScheme::GetColorPair(const char *scheme, const char *widget,
+int ColorScheme::getColorPair(const char *scheme, const char *widget,
     const char *property)
 {
   g_assert(widget);
@@ -52,7 +52,7 @@ int ColorScheme::GetColorPair(const char *scheme, const char *widget,
       && (j = i->second.find(widget)) != i->second.end()
       && (k = j->second.find(property)) != j->second.end()) {
     Color c = k->second;
-    int ret = GetColorPair(c) | c.attrs;
+    int ret = getColorPair(c) | c.attrs;
     schemes[scheme][widget][property] = c;
     return ret;
   }
@@ -61,9 +61,9 @@ int ColorScheme::GetColorPair(const char *scheme, const char *widget,
 }
 
 #ifdef SAVE_COLOR_PAIRS
-int ColorScheme::GetColorPair(Color& c)
+int ColorScheme::getColorPair(Color& c)
 #else
-int ColorScheme::GetColorPair(const Color& c)
+int ColorScheme::getColorPair(const Color& c)
 #endif
 {
   ColorPairs::const_iterator i;
@@ -102,7 +102,7 @@ int ColorScheme::GetColorPair(const Color& c)
   return res;
 }
 
-bool ColorScheme::SetColorPair(const char *scheme, const char *widget,
+bool ColorScheme::setColorPair(const char *scheme, const char *widget,
     const char *property, int foreground, int background, int attrs,
     bool overwrite)
 {
@@ -121,7 +121,7 @@ bool ColorScheme::SetColorPair(const char *scheme, const char *widget,
   return true;
 }
 
-void ColorScheme::FreeScheme(const char *scheme)
+void ColorScheme::freeScheme(const char *scheme)
 {
   g_assert(scheme);
 
@@ -133,7 +133,7 @@ void ColorScheme::FreeScheme(const char *scheme)
   schemes.erase(scheme);
 }
 
-void ColorScheme::Clear()
+void ColorScheme::clear()
 {
   schemes.clear();
   pairs.clear();

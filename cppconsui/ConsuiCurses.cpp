@@ -109,7 +109,7 @@ int Window::mvaddstring(int x, int y, int w, const char *str)
 
   int printed = 0;
   while (printed < w && str && *str) {
-    printed += PrintChar(g_utf8_get_char(str));
+    printed += printChar(g_utf8_get_char(str));
     str = g_utf8_find_next_char(str, NULL);
   }
   return printed;
@@ -123,7 +123,7 @@ int Window::mvaddstring(int x, int y, const char *str)
 
   int printed = 0;
   while (str && *str) {
-    printed += PrintChar(g_utf8_get_char(str));
+    printed += printChar(g_utf8_get_char(str));
     str = g_utf8_find_next_char(str, NULL);
   }
   return printed;
@@ -141,7 +141,7 @@ int Window::mvaddstring(int x, int y, int w, const char *str, const char *end)
 
   int printed = 0;
   while (printed < w && str < end && str && *str) {
-    printed += PrintChar(g_utf8_get_char(str));
+    printed += printChar(g_utf8_get_char(str));
     str = g_utf8_find_next_char(str, end);
   }
   return printed;
@@ -159,7 +159,7 @@ int Window::mvaddstring(int x, int y, const char *str, const char *end)
 
   int printed = 0;
   while (str < end && str && *str) {
-    printed += PrintChar(g_utf8_get_char(str));
+    printed += printChar(g_utf8_get_char(str));
     str = g_utf8_find_next_char(str, end);
   }
   return printed;
@@ -168,7 +168,7 @@ int Window::mvaddstring(int x, int y, const char *str, const char *end)
 int Window::mvaddchar(int x, int y, gunichar uc)
 {
   wmove(p->win, y, x);
-  return PrintChar(uc);
+  return printChar(uc);
 }
 
 int Window::mvaddlinechar(int x, int y, LineChar c)
@@ -310,7 +310,7 @@ int Window::getmaxy()
   return ::getmaxy(p->win);
 }
 
-int Window::PrintChar(gunichar uc)
+int Window::printChar(gunichar uc)
 {
   /**
    * @todo Error checking (setcchar).

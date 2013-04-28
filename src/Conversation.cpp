@@ -34,37 +34,35 @@ Conversation::Conversation(PurpleConversation *conv_)
 {
   g_assert(conv);
 
-  SetColorScheme("conversation");
+  setColorScheme("conversation");
 
   view = new CppConsUI::TextView(width - 2, height, true, true);
   input = new CppConsUI::TextEdit(width - 2, height);
   input->signal_text_change.connect(sigc::mem_fun(this,
-        &Conversation::OnInputTextChange));
+        &Conversation::onInputTextChange));
   char *name = g_strdup_printf("[%s] %s",
       purple_account_get_protocol_name(purple_conversation_get_account(conv)),
       purple_conversation_get_name(conv));
   line = new ConversationLine(name);
   g_free(name);
-  AddWidget(*view, 1, 0);
-  AddWidget(*input, 1, 1);
-  AddWidget(*line, 0, height);
-  input->GrabFocus();
+  addWidget(*view, 1, 0);
+  addWidget(*input, 1, 1);
+  addWidget(*line, 0, height);
+  input->grabFocus();
 
   // open logfile
-  BuildLogFilename();
+  buildLogFilename();
 
   GError *err = NULL;
   if (!(logfile = g_io_channel_new_file(filename, "a", &err))) {
-    LOG->Error(_("Error opening conversation logfile '%s' (%s)."), filename,
+    LOG->error(_("Error opening conversation logfile '%s' (%s)."), filename,
         err->message);
     g_clear_error(&err);
   }
 
-  LoadHistory();
+  loadHistory();
 
-  DeclareBindables();
-  LOG->Debug("Conversation::Conversation(): this=%p, title=%s",
-      static_cast<void*>(this), purple_conversation_get_title(conv));
+  declareBindables();
 }
 
 Conversation::~Conversation()
@@ -72,21 +70,19 @@ Conversation::~Conversation()
   g_free(filename);
   if (logfile)
     g_io_channel_unref(logfile);
-  LOG->Debug("Conversation::~Conversation(): this=%p",
-      static_cast<void*>(this));
 }
 
-bool Conversation::ProcessInput(const TermKeyKey& key)
+bool Conversation::processInput(const TermKeyKey& key)
 {
-  if (view->ProcessInput(key))
+  if (view->processInput(key))
     return true;
 
-  return Window::ProcessInput(key);
+  return Window::processInput(key);
 }
 
-void Conversation::MoveResize(int newx, int newy, int neww, int newh)
+void Conversation::moveResize(int newx, int newy, int neww, int newh)
 {
-  Window::MoveResize(newx, newy, neww, newh);
+  Window::moveResize(newx, newy, neww, newh);
 
   int percentage = purple_prefs_get_int(CONF_PREFIX "/chat/partitioning");
   percentage = CLAMP(percentage, 0, 100);
@@ -99,41 +95,41 @@ void Conversation::MoveResize(int newx, int newy, int neww, int newh)
   if (input_height < 1)
     input_height = 1;
 
-  view->MoveResize(1, 0, width - 2, view_height);
-  input->MoveResize(1, view_height + 1, width - 2, input_height);
-  line->MoveResize(0, view_height, width, 1);
+  view->moveResize(1, 0, width - 2, view_height);
+  input->moveResize(1, view_height + 1, width - 2, input_height);
+  line->moveResize(0, view_height, width, 1);
 }
 
-bool Conversation::RestoreFocus()
+bool Conversation::restoreFocus()
 {
-  FOOTER->SetText(_("%s buddy list, %s main menu, "
+  FOOTER->setText(_("%s buddy list, %s main menu, "
         "%s/%s/%s next/prev/act conv, %s send, %s expand"),
       "centerim|buddylist", "centerim|generalmenu",
       "centerim|conversation-next", "centerim|conversation-prev",
       "centerim|conversation-active", "conversation|send",
       "centerim|conversation-expand");
 
-  return Window::RestoreFocus();
+  return Window::restoreFocus();
 }
 
-void Conversation::UngrabFocus()
+void Conversation::ungrabFocus()
 {
-  FOOTER->SetText(NULL);
-  Window::UngrabFocus();
+  FOOTER->setText(NULL);
+  Window::ungrabFocus();
 }
 
-void Conversation::Show()
+void Conversation::show()
 {
   /* Update the scrollbar setting. It is delayed until the conversation window
    * is actually displayed, so screen lines recalculations in TextView (caused
    * by changing the scrollbar setting) aren't triggered if it isn't really
    * necessary. */
-  view->SetScrollBar(!CENTERIM->GetExpandedConversations());
+  view->setScrollBar(!CENTERIM->getExpandedConversations());
 
-  Window::Show();
+  Window::show();
 }
 
-void Conversation::Close()
+void Conversation::close()
 {
   signal_close(*this);
 
@@ -142,16 +138,16 @@ void Conversation::Close()
   purple_conversation_destroy(conv);
 }
 
-void Conversation::OnScreenResized()
+void Conversation::onScreenResized()
 {
-  CppConsUI::Rect r = CENTERIM->GetScreenArea(CenterIM::CHAT_AREA);
+  CppConsUI::Rect r = CENTERIM->getScreenArea(CenterIM::CHAT_AREA);
   // make room for conversations list
   r.height--;
 
-  MoveResizeRect(r);
+  moveResizeRect(r);
 }
 
-void Conversation::Write(const char *name, const char * /*alias*/,
+void Conversation::write(const char *name, const char * /*alias*/,
     const char *message, PurpleMessageFlags flags, time_t mtime)
 {
   // beep on message
@@ -171,7 +167,7 @@ void Conversation::Write(const char *name, const char * /*alias*/,
       purple_blist_node_set_int(bnode, "last_activity", cur_time);
 
       // inform the buddy list node that it should update its state
-      BUDDYLIST->UpdateNode(bnode);
+      BUDDYLIST->updateNode(bnode);
     }
   }
 
@@ -209,12 +205,12 @@ void Conversation::Write(const char *name, const char * /*alias*/,
       GError *err = NULL;
       if (g_io_channel_write_chars(logfile, log_msg, -1, NULL, &err)
           != G_IO_STATUS_NORMAL) {
-        LOG->Error(_("Error writing to conversation logfile (%s)."),
+        LOG->error(_("Error writing to conversation logfile (%s)."),
             err->message);
         g_clear_error(&err);
       }
       if (g_io_channel_flush(logfile, &err) != G_IO_STATUS_NORMAL) {
-        LOG->Error(_("Error flushing conversation logfile (%s)."),
+        LOG->error(_("Error flushing conversation logfile (%s)."),
             err->message);
         g_clear_error(&err);
       }
@@ -223,16 +219,16 @@ void Conversation::Write(const char *name, const char * /*alias*/,
   }
 
   // we currently don't support displaying HTML in any way
-  char *nohtml = StripHTML(message);
+  char *nohtml = stripHTML(message);
 
   // write text to the window
-  char *time = ExtractTime(mtime, cur_time);
+  char *time = extractTime(mtime, cur_time);
   char *msg;
   if (type == PURPLE_CONV_TYPE_CHAT)
     msg = g_strdup_printf("%s %s: %s", time, name, nohtml);
   else
     msg = g_strdup_printf("%s %s", time, nohtml);
-  view->Append(msg, color);
+  view->append(msg, color);
   g_free(nohtml);
   g_free(time);
   g_free(msg);
@@ -252,9 +248,9 @@ Conversation::ConversationLine::~ConversationLine()
   g_free(text);
 }
 
-void Conversation::ConversationLine::Draw()
+void Conversation::ConversationLine::draw()
 {
-  ProceedUpdateArea();
+  proceedUpdateArea();
 
   int realw;
 
@@ -268,7 +264,7 @@ void Conversation::ConversationLine::Draw()
     l = realw - text_width - 5;
 
   // use HorizontalLine colors
-  int attrs = GetColorPair("horizontalline", "line");
+  int attrs = getColorPair("horizontalline", "line");
   area->attron(attrs);
 
   int i;
@@ -281,7 +277,7 @@ void Conversation::ConversationLine::Draw()
   area->attroff(attrs);
 }
 
-char *Conversation::StripHTML(const char *str) const
+char *Conversation::stripHTML(const char *str) const
 {
   /* Almost copy&paste from libpurple/util.c:purple_markup_strip_html(), but
    * this version doesn't convert tab character to a space. */
@@ -442,7 +438,7 @@ char *Conversation::StripHTML(const char *str) const
   return str2;
 }
 
-void Conversation::BuildLogFilename()
+void Conversation::buildLogFilename()
 {
   PurpleAccount *account;
   PurplePlugin *prpl;
@@ -468,13 +464,13 @@ void Conversation::BuildLogFilename()
 
   dir = g_path_get_dirname(filename);
   if (g_mkdir_with_parents(dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
-    LOG->Error(_("Error creating directory '%s'."), dir);
+    LOG->error(_("Error creating directory '%s'."), dir);
   g_free(dir);
 
   g_free(acct_name);
 }
 
-char *Conversation::ExtractTime(time_t sent_time, time_t show_time) const
+char *Conversation::extractTime(time_t sent_time, time_t show_time) const
 {
   // based on the extracttime() function from cim4
 
@@ -503,14 +499,14 @@ char *Conversation::ExtractTime(time_t sent_time, time_t show_time) const
   return t1;
 }
 
-void Conversation::LoadHistory()
+void Conversation::loadHistory()
 {
   // open logfile
   GError *err = NULL;
   GIOChannel *chan;
 
   if ((chan = g_io_channel_new_file(filename, "r", &err)) == NULL) {
-    LOG->Error(_("Error opening conversation logfile '%s' (%s)."), filename,
+    LOG->error(_("Error opening conversation logfile '%s' (%s)."), filename,
         err->message);
     g_clear_error(&err);
     return;
@@ -580,16 +576,16 @@ void Conversation::LoadHistory()
       // validate UTF-8
       if (!g_utf8_validate(line, -1, NULL)) {
         g_free(line);
-        LOG->Error(_("Invalid message detected in conversation logfile"
+        LOG->error(_("Invalid message detected in conversation logfile"
               " '%s'. The message was skipped."), filename);
         continue;
       }
 
       // write text to the window
-      char *nohtml = StripHTML(line);
-      char *time = ExtractTime(sent_time, show_time);
+      char *nohtml = stripHTML(line);
+      char *time = extractTime(sent_time, show_time);
       char *msg = g_strdup_printf("%s %s", time, nohtml);
-      view->Append(msg, color);
+      view->append(msg, color);
       g_free(nohtml);
       g_free(time);
       g_free(msg);
@@ -622,29 +618,29 @@ void Conversation::LoadHistory()
 
       // validate UTF-8
       if (!g_utf8_validate(msg.c_str(), -1, NULL)) {
-        LOG->Error(_("Invalid message detected in conversation logfile"
+        LOG->error(_("Invalid message detected in conversation logfile"
               " '%s'. The message was skipped."), filename);
         continue;
       }
 
       // add the message to the window
-      char *time = ExtractTime(sent_time, show_time);
+      char *time = extractTime(sent_time, show_time);
       char *final_msg = g_strdup_printf("%s %s", time, msg.c_str());
-      view->Append(final_msg, color);
+      view->append(final_msg, color);
       g_free(time);
       g_free(final_msg);
     }
   }
 
   if (st != G_IO_STATUS_EOF) {
-    LOG->Error(_("Error reading from conversation logfile '%s' (%s)."),
+    LOG->error(_("Error reading from conversation logfile '%s' (%s)."),
         filename, err->message);
     g_clear_error(&err);
   }
   g_io_channel_unref(chan);
 }
 
-bool Conversation::ProcessCommand(const char *raw, const char *html)
+bool Conversation::processCommand(const char *raw, const char *html)
 {
   // check that it is a command
   if (strncmp(raw, "/", 1))
@@ -698,19 +694,19 @@ bool Conversation::ProcessCommand(const char *raw, const char *html)
   return result;
 }
 
-void Conversation::OnInputTextChange(CppConsUI::TextEdit& activator)
+void Conversation::onInputTextChange(CppConsUI::TextEdit& activator)
 {
   PurpleConvIm *im = PURPLE_CONV_IM(conv);
   if (!im)
     return;
 
-  if (!CONVERSATIONS->GetSendTypingPref()) {
+  if (!CONVERSATIONS->getSendTypingPref()) {
     input_text_length = 0;
     return;
   }
 
   size_t old_text_length = input_text_length;
-  size_t new_text_length = activator.GetTextLength();
+  size_t new_text_length = activator.getTextLength();
   input_text_length = new_text_length;
 
   if (!new_text_length) {
@@ -735,9 +731,9 @@ void Conversation::OnInputTextChange(CppConsUI::TextEdit& activator)
   }
 }
 
-void Conversation::ActionSend()
+void Conversation::actionSend()
 {
-  const char *str = input->GetText();
+  const char *str = input->getText();
   if (!str || !str[0])
     return;
 
@@ -745,7 +741,7 @@ void Conversation::ActionSend()
 
   char *escaped = purple_markup_escape_text(str, strlen(str));
   char *html = purple_strdup_withhtml(escaped);
-  if (ProcessCommand(str, html)) {
+  if (processCommand(str, html)) {
     // the command was processed
   }
   else {
@@ -757,13 +753,13 @@ void Conversation::ActionSend()
   }
   g_free(html);
   g_free(escaped);
-  input->Clear();
+  input->clear();
 }
 
-void Conversation::DeclareBindables()
+void Conversation::declareBindables()
 {
-  DeclareBindable("conversation", "send",
-      sigc::mem_fun(this, &Conversation::ActionSend),
+  declareBindable("conversation", "send",
+      sigc::mem_fun(this, &Conversation::actionSend),
       InputProcessor::BINDABLE_OVERRIDE);
 }
 

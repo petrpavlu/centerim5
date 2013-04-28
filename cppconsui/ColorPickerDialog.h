@@ -43,7 +43,7 @@ public:
       int flags);
   virtual ~ColorPickerDialog() {}
 
-  virtual void OnColorSelected(ColorPickerPalette& activator, int color);
+  virtual void onColorSelected(ColorPickerPalette& activator, int color);
 
   /**
    * Signal emitted when the user closes the dialog.
@@ -52,7 +52,7 @@ public:
 
 protected:
   // AbstractDialog
-  virtual void EmitResponse(ResponseType response);
+  virtual void emitResponse(ResponseType response);
 
   ColorPickerPalette *pick;
   int color;

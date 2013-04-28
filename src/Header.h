@@ -29,17 +29,17 @@
 #include <libpurple/purple.h>
 #include <map>
 
-#define HEADER (Header::Instance())
+#define HEADER (Header::instance())
 
 // the top most "head"-area of the screen
 class Header
 : public CppConsUI::FreeWindow
 {
 public:
-  static Header *Instance();
+  static Header *instance();
 
   // FreeWindow
-  virtual void OnScreenResized();
+  virtual void onScreenResized();
 
 protected:
 
@@ -52,19 +52,19 @@ private:
   ProtocolCount protocol_count;
   Statuses statuses;
 
-  static Header *instance;
+  static Header *my_instance;
 
   Header();
   Header(const Header&);
   Header &operator=(const Header&);
   virtual ~Header();
 
-  static void Init();
-  static void Finalize();
+  static void init();
+  static void finalize();
   friend class CenterIM;
 
   // signal from the Accounts singleton
-  void OnRequestCountChange(Accounts& accounts, size_t request_count);
+  void onRequestCountChange(Accounts& accounts, size_t request_count);
 
   static void account_signed_on_(PurpleAccount *account, gpointer data)
     { reinterpret_cast<Header*>(data)->account_signed_on(account); }

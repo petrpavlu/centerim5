@@ -51,23 +51,23 @@ public:
   virtual ~Window() {}
 
   // Widget
-  virtual void MoveResize(int newx, int newy, int neww, int newh);
+  virtual void moveResize(int newx, int newy, int neww, int newh);
 
   // Container
-  virtual Point GetAbsolutePosition(const Container& ref,
+  virtual Point getAbsolutePosition(const Container& ref,
       const Widget& child) const;
-  virtual Point GetAbsolutePosition(const Widget& child) const;
-  virtual Curses::Window *GetSubPad(const Widget &child, int begin_x,
+  virtual Point getAbsolutePosition(const Widget& child) const;
+  virtual Curses::Window *getSubPad(const Widget &child, int begin_x,
       int begin_y, int ncols, int nlines);
 
-  virtual void SetTitle(const char *text) { panel->SetTitle(text); }
-  virtual const char *GetTitle() const { return panel->GetTitle(); }
+  virtual void setTitle(const char *text) { panel->setTitle(text); }
+  virtual const char *getTitle() const { return panel->getTitle(); }
 
 protected:
   Panel *panel;
 
   // FreeWindow
-  virtual void ResizeAndUpdateArea();
+  virtual void resizeAndUpdateArea();
 
 private:
   Window(const Window&);

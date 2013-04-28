@@ -46,8 +46,8 @@ public:
   Point() : x(0), y(0) {}
   Point(int x_, int y_) : x(x_), y(y_) {}
 
-  int GetX() const { return x; }
-  int GetY() const { return y; }
+  int getX() const { return x; }
+  int getY() const { return y; }
 
   int x, y;
 
@@ -62,8 +62,8 @@ public:
   Size() : width(0), height(0) {}
   Size(int w, int h) : width(w), height(h) {}
 
-  int GetWidth() const { return width; }
-  int GetHeight() const { return height; }
+  int getWidth() const { return width; }
+  int getHeight() const { return height; }
 
   int width, height;
 
@@ -78,12 +78,12 @@ public:
   Rect() : width(0), height(0) {}
   Rect(int x, int y, int w, int h) : Point(x, y), width(w), height(h) {}
 
-  int GetWidth() const { return width; }
-  int GetHeight() const { return height; }
-  int GetLeft() const { return x; }
-  int GetTop() const { return y; }
-  int GetRight() const { return x + width - 1; }
-  int GetBottom() const { return y + height - 1; }
+  int getWidth() const { return width; }
+  int getHeight() const { return height; }
+  int getLeft() const { return x; }
+  int getTop() const { return y; }
+  int getRight() const { return x + width - 1; }
+  int getBottom() const { return y + height - 1; }
 
   int width, height;
 

@@ -33,15 +33,10 @@ namespace Keys
 
 bool TermKeyCmp::operator()(const TermKeyKey& a, const TermKeyKey& b) const
 {
-  return termkey_keycmp(COREMANAGER->GetTermKeyHandle(), &a, &b) > 0;
+  return termkey_keycmp(COREMANAGER->getTermKeyHandle(), &a, &b) > 0;
 }
 
-bool Compare(const TermKeyKey& a, const TermKeyKey& b)
-{
-  return !termkey_keycmp(COREMANAGER->GetTermKeyHandle(), &a, &b);
-}
-
-TermKeyKey RefineKey(const TermKeyKey& k)
+TermKeyKey refineKey(const TermKeyKey& k)
 {
   if (k.type != TERMKEY_TYPE_KEYSYM)
     return k;

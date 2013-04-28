@@ -36,16 +36,16 @@ VerticalLine::VerticalLine(int h)
 {
 }
 
-void VerticalLine::Draw()
+void VerticalLine::draw()
 {
-  ProceedUpdateArea();
+  proceedUpdateArea();
 
   int realh;
 
   if (!area || (realh = area->getmaxy()) == 0 || area->getmaxx() != 1)
     return;
 
-  int attrs = GetColorPair("verticalline", "line");
+  int attrs = getColorPair("verticalline", "line");
   area->attron(attrs);
   for (int i = 0; i < realh; i++)
     area->mvaddlinechar(i, 0, Curses::LINE_VLINE);

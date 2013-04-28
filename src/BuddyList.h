@@ -27,7 +27,7 @@
 #include <cppconsui/TreeView.h>
 #include <cppconsui/Window.h>
 
-#define BUDDYLIST (BuddyList::Instance())
+#define BUDDYLIST (BuddyList::instance())
 
 class BuddyList
 : public CppConsUI::Window
@@ -55,30 +55,30 @@ public:
     COLOR_BY_ACCOUNT
   };
 
-  static BuddyList *Instance();
+  static BuddyList *instance();
 
   // InputProcessor
-  virtual bool ProcessInputText(const TermKeyKey &key);
+  virtual bool processInputText(const TermKeyKey &key);
 
   // Widget
-  virtual bool RestoreFocus();
-  virtual void UngrabFocus();
+  virtual bool restoreFocus();
+  virtual void ungrabFocus();
 
   // FreeWindow
-  virtual void Close();
-  virtual void OnScreenResized();
+  virtual void close();
+  virtual void onScreenResized();
 
   // these functions are faster version of getting blist/* prefs
-  bool GetShowEmptyGroupsPref() const { return show_empty_groups; }
-  bool GetShowOfflineBuddiesPref() const { return show_offline_buddies; }
-  ListMode GetListMode() const { return list_mode; }
-  GroupSortMode GetGroupSortMode() const { return group_sort_mode; }
-  BuddySortMode GetBuddySortMode() const { return buddy_sort_mode; }
-  ColorizationMode GetColorizationMode() const { return colorization_mode; }
+  bool getShowEmptyGroupsPref() const { return show_empty_groups; }
+  bool getShowOfflineBuddiesPref() const { return show_offline_buddies; }
+  ListMode getListMode() const { return list_mode; }
+  GroupSortMode getGroupSortMode() const { return group_sort_mode; }
+  BuddySortMode getBuddySortMode() const { return buddy_sort_mode; }
+  ColorizationMode getColorizationMode() const { return colorization_mode; }
 
-  const char *GetFilterString() const { return filter_buffer; }
+  const char *getFilterString() const { return filter_buffer; }
 
-  void UpdateNode(PurpleBlistNode *node);
+  void updateNode(PurpleBlistNode *node);
 
 protected:
 
@@ -96,7 +96,7 @@ private:
     virtual ~Filter() {}
 
     // Widget
-    virtual void Draw();
+    virtual void draw();
 
   protected:
     BuddyList *parent;
@@ -124,27 +124,27 @@ private:
   // onscreen width
   size_t filter_buffer_onscreen_width;
 
-  static BuddyList *instance;
+  static BuddyList *my_instance;
 
   BuddyList();
   BuddyList(const BuddyList&);
   BuddyList& operator=(const BuddyList&);
   virtual ~BuddyList();
 
-  static void Init();
-  static void Finalize();
+  static void init();
+  static void finalize();
   friend class CenterIM;
 
-  void Load();
-  void RebuildList();
-  void UpdateList(int flags);
-  void DelayedGroupNodesInit();
-  void UpdateCachedPreference(const char *name);
-  bool CheckAnyAccountConnected();
-  void FilterHide();
-  void ActionOpenFilter();
-  void ActionDeleteChar();
-  void DeclareBindables();
+  void load();
+  void rebuildList();
+  void updateList(int flags);
+  void delayedGroupNodesInit();
+  void updateCachedPreference(const char *name);
+  bool checkAnyAccountConnected();
+  void filterHide();
+  void actionOpenFilter();
+  void actionDeleteChar();
+  void declareBindables();
 
   static void new_list_(PurpleBuddyList *list)
     { BUDDYLIST->new_list(list); }

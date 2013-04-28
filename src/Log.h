@@ -28,7 +28,7 @@
 #include <cppconsui/Window.h>
 #include <libpurple/purple.h>
 
-#define LOG (Log::Instance())
+#define LOG (Log::instance())
 
 class Log
 : public CppConsUI::Window
@@ -45,17 +45,17 @@ public:
     LEVEL_DEBUG // = misc in libpurple
   };
 
-  static Log *Instance();
+  static Log *instance();
 
   // FreeWindow
-  virtual void OnScreenResized();
+  virtual void onScreenResized();
 
-  void Error(const char *fmt, ...) _attribute((format(printf, 2, 3)));
-  void Critical(const char *fmt, ...) _attribute((format(printf, 2, 3)));
-  void Warning(const char *fmt, ...) _attribute((format(printf, 2, 3)));
-  void Message(const char *fmt, ...) _attribute((format(printf, 2, 3)));
-  void Info(const char *fmt, ...) _attribute((format(printf, 2, 3)));
-  void Debug(const char *fmt, ...) _attribute((format(printf, 2, 3)));
+  void error(const char *fmt, ...) _attribute((format(printf, 2, 3)));
+  void critical(const char *fmt, ...) _attribute((format(printf, 2, 3)));
+  void warning(const char *fmt, ...) _attribute((format(printf, 2, 3)));
+  void message(const char *fmt, ...) _attribute((format(printf, 2, 3)));
+  void info(const char *fmt, ...) _attribute((format(printf, 2, 3)));
+  void debug(const char *fmt, ...) _attribute((format(printf, 2, 3)));
 
 protected:
 
@@ -79,15 +79,15 @@ private:
   guint gthread_handler;
   guint cppconsui_handler;
 
-  static Log *instance;
+  static Log *my_instance;
 
   Log();
   Log(const Log&);
   Log& operator=(const Log&);
   virtual ~Log();
 
-  static void Init();
-  static void Finalize();
+  static void init();
+  static void finalize();
   friend class CenterIM;
 
   // to catch libpurple's debug messages
@@ -132,13 +132,13 @@ private:
   void debug_change(const char *name, PurplePrefType type,
       gconstpointer val);
 
-  void ShortenWindowText();
-  void Write(const char *text);
-  void WriteErrorToWindow(const char *fmt, ...);
-  void WriteToFile(const char *text);
-  Level ConvertPurpleDebugLevel(PurpleDebugLevel purplelevel);
-  Level ConvertGlibDebugLevel(GLogLevelFlags gliblevel);
-  Level GetLogLevel(const char *type);
+  void shortenWindowText();
+  void write(const char *text);
+  void writeErrorToWindow(const char *fmt, ...);
+  void writeToFile(const char *text);
+  Level convertPurpleDebugLevel(PurpleDebugLevel purplelevel);
+  Level convertGlibDebugLevel(GLogLevelFlags gliblevel);
+  Level getLogLevel(const char *type);
 };
 
 #endif // __LOG_H__

@@ -53,82 +53,82 @@ public:
   /**
    * Moves and resizes this widget. Emits signal_moveresize.
    */
-  virtual void MoveResize(int newx, int newy, int neww, int newh);
+  virtual void moveResize(int newx, int newy, int neww, int newh);
   /**
    * The @ref area is recreated, redraw signal is emitted. It is called
    * whenever the coordinates of the widget change.
    */
-  virtual void UpdateArea();
+  virtual void updateArea();
   /**
-   * The Draw() method does the actual drawing on a (virtual) area of the
-   * screen. The @ref CoreManager singleton calls Draw() on all on-screen
-   * Windows. This causes all Draw() implementations needed to draw the screen
+   * The draw() method does the actual drawing on a (virtual) area of the
+   * screen. The @ref CoreManager singleton calls draw() on all on-screen
+   * Windows. This causes all draw() implementations needed to draw the screen
    * to be called.
    */
-  virtual void Draw() = 0;
+  virtual void draw() = 0;
   /**
    * Finds the widget that could be the focus widget from the focus chain
    * starting with this widget:
    */
-  virtual Widget *GetFocusWidget();
+  virtual Widget *getFocusWidget();
   /**
    * Deletes the focus (and input) chain starting from this widget.
    */
-  virtual void CleanFocus();
+  virtual void cleanFocus();
   /**
    * @todo
    */
-  virtual bool RestoreFocus();
+  virtual bool restoreFocus();
   /**
    * Takes focus from the widget. Used when this window is no longer a top
    * window.
    */
-  virtual void UngrabFocus();
+  virtual void ungrabFocus();
   /**
    * Makes this widget the widget that has the focus. This operation is
    * successful if the widget is visible and all predecessors are visible too.
    */
-  virtual bool GrabFocus();
+  virtual bool grabFocus();
 
-  virtual bool CanFocus() const { return can_focus; }
-  virtual bool HasFocus() const { return has_focus; }
+  virtual bool canFocus() const { return can_focus; }
+  virtual bool hasFocus() const { return has_focus; }
 
-  virtual void SetVisibility(bool visible);
-  virtual bool IsVisible() const { return visible; }
-  virtual bool IsVisibleRecursive() const;
+  virtual void setVisibility(bool new_visible);
+  virtual bool isVisible() const { return visible; }
+  virtual bool isVisibleRecursive() const;
 
-  virtual void SetParent(Container& parent);
-  virtual Container *GetParent() const { return parent; }
+  virtual void setParent(Container& parent);
+  virtual Container *getParent() const { return parent; }
 
-  virtual int GetLeft() const { return xpos; }
-  virtual int GetTop() const { return ypos; }
-  virtual int GetWidth() const { return width; }
-  virtual int GetHeight() const { return height; }
+  virtual int getLeft() const { return xpos; }
+  virtual int getTop() const { return ypos; }
+  virtual int getWidth() const { return width; }
+  virtual int getHeight() const { return height; }
 
   /**
-   * Convenient MoveResize() wrapper.
+   * Convenient moveResize() wrapper.
    */
-  virtual void Move(int newx, int newy);
+  virtual void move(int newx, int newy);
   /**
-   * Convenient MoveResize() wrapper.
+   * Convenient moveResize() wrapper.
    */
-  virtual void Resize(int neww, int newh);
+  virtual void resize(int neww, int newh);
   /**
-   * Convenient MoveResize() wrapper.
+   * Convenient moveResize() wrapper.
    */
-  virtual void SetLeft(int newx);
+  virtual void setLeft(int newx);
   /**
-   * Convenient MoveResize() wrapper.
+   * Convenient moveResize() wrapper.
    */
-  virtual void SetTop(int newy);
+  virtual void setTop(int newy);
   /**
-   * Convenient MoveResize() wrapper.
+   * Convenient moveResize() wrapper.
    */
-  virtual void SetWidth(int neww);
+  virtual void setWidth(int neww);
   /**
-   * Convenient MoveResize() wrapper.
+   * Convenient moveResize() wrapper.
    */
-  virtual void SetHeight(int newh);
+  virtual void setHeight(int newh);
 
   /**
    * Returns an absolute position of the widget. Note: special care has to be
@@ -136,38 +136,38 @@ public:
    * The returned value is correct only if the drawing of all parent widgets
    * already occured.
    */
-  virtual Point GetAbsolutePosition() const;
+  virtual Point getAbsolutePosition() const;
   /**
    * Returns a relative position of the widget to a given predecessor. See
-   * note in GetAbsolutePosition() method.
+   * note in getAbsolutePosition() method.
    */
-  virtual Point GetRelativePosition(const Container& ref) const;
+  virtual Point getRelativePosition(const Container& ref) const;
   /**
-   * Returns a real (on-screen) width. See note in GetAbsolutePosition()
+   * Returns a real (on-screen) width. See note in getAbsolutePosition()
    * method.
    */
-  virtual int GetRealWidth() const;
+  virtual int getRealWidth() const;
   /**
-   * Returns a real (on-screen) height. See note in GetAbsolutePosition()
+   * Returns a real (on-screen) height. See note in getAbsolutePosition()
    * method.
    */
-  virtual int GetRealHeight() const;
+  virtual int getRealHeight() const;
 
   /**
    * Returns an area width that is requested by the widget. This method can
-   * be used by a parent widget in GetSubPad() if width is set to AUTOSIZE.
+   * be used by a parent widget in getSubPad() if width is set to AUTOSIZE.
    * The AUTOSIZE returned value means "as much as possible".
    */
-  virtual int GetWishWidth() const;
+  virtual int getWishWidth() const;
   /**
    * Returns an area height that is requested by the widget. This method can
-   * be used by a parent widget in GetSubPad() if height is set to AUTOSIZE.
+   * be used by a parent widget in getSubPad() if height is set to AUTOSIZE.
    * The AUTOSIZE returned value means "as much as possible".
    */
-  virtual int GetWishHeight() const;
+  virtual int getWishHeight() const;
 
-  virtual void SetColorScheme(const char *scheme);
-  virtual const char *GetColorScheme() const;
+  virtual void setColorScheme(const char *new_color_scheme);
+  virtual const char *getColorScheme() const;
 
   sigc::signal<void, Widget&, const Rect&, const Rect&> signal_moveresize;
   sigc::signal<void, Widget&, const Size&, const Size&>
@@ -219,28 +219,28 @@ protected:
    */
   char *color_scheme;
 
-  virtual void ProceedUpdateArea();
+  virtual void proceedUpdateArea();
 
   /**
-   * Redraw() method is used by a widget to tell the CoreManager object that
-   * the widget has been updated and that the screen should be redrawn.
+   * The redraw() method is used by a widget to tell the CoreManager object
+   * that the widget has been updated and that the screen should be redrawn.
    */
-  virtual void Redraw();
+  virtual void redraw();
 
-  virtual void SetWishSize(int neww, int newh);
-  virtual void SetWishWidth(int neww) { SetWishSize(neww, wish_height); }
-  virtual void SetWishHeight(int newh) { SetWishSize(wish_width, newh); }
+  virtual void setWishSize(int neww, int newh);
+  virtual void setWishWidth(int neww) { setWishSize(neww, wish_height); }
+  virtual void setWishHeight(int newh) { setWishSize(wish_width, newh); }
 
   /**
-   * Convenient method that calls COLORSCHEME->GetColorPair(GetColorScheme(),
+   * Convenient method that calls COLORSCHEME->getColorPair(getColorScheme(),
    * widget, property).
    */
-  virtual int GetColorPair(const char *widget, const char *property) const;
+  virtual int getColorPair(const char *widget, const char *property) const;
 
   /**
    * @todo
    */
-  virtual Container *GetTopContainer();
+  virtual Container *getTopContainer();
 
 private:
   Widget(const Widget&);

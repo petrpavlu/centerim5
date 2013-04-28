@@ -23,28 +23,28 @@
 
 #include "gettext.h"
 
-Conversations *Conversations::instance = NULL;
+Conversations *Conversations::my_instance = NULL;
 
-Conversations *Conversations::Instance()
+Conversations *Conversations::instance()
 {
-  return instance;
+  return my_instance;
 }
 
-void Conversations::OnScreenResized()
+void Conversations::onScreenResized()
 {
-  CppConsUI::Rect r = CENTERIM->GetScreenArea(CenterIM::CHAT_AREA);
-  r.y = r.GetBottom();
+  CppConsUI::Rect r = CENTERIM->getScreenArea(CenterIM::CHAT_AREA);
+  r.y = r.getBottom();
   r.height = 1;
 
-  MoveResizeRect(r);
+  moveResizeRect(r);
 }
 
-void Conversations::FocusActiveConversation()
+void Conversations::focusActiveConversation()
 {
-  ActivateConversation(active);
+  activateConversation(active);
 }
 
-void Conversations::FocusConversation(int i)
+void Conversations::focusConversation(int i)
 {
   g_assert(i >= 1);
 
@@ -56,60 +56,60 @@ void Conversations::FocusConversation(int i)
 
   int s = static_cast<int>(conversations.size());
   if (i < s)
-    ActivateConversation(i);
+    activateConversation(i);
   else {
     // if there is less than i active conversations then active the last one
-    ActivateConversation(s - 1);
+    activateConversation(s - 1);
   }
 }
 
-void Conversations::FocusPrevConversation()
+void Conversations::focusPrevConversation()
 {
-  int i = PrevActiveConversation(active);
+  int i = prevActiveConversation(active);
   if (i != -1)
-    ActivateConversation(i);
+    activateConversation(i);
 }
 
-void Conversations::FocusNextConversation()
+void Conversations::focusNextConversation()
 {
-  int i = NextActiveConversation(active);
+  int i = nextActiveConversation(active);
   if (i != -1)
-    ActivateConversation(i);
+    activateConversation(i);
 }
 
-void Conversations::SetExpandedConversations(bool expanded)
+void Conversations::setExpandedConversations(bool expanded)
 {
   if (expanded) {
     // make small room on the left and right
-    left_spacer->SetWidth(1);
-    right_spacer->SetWidth(1);
+    left_spacer->setWidth(1);
+    right_spacer->setWidth(1);
   }
   else {
-    left_spacer->SetWidth(0);
-    right_spacer->SetWidth(0);
+    left_spacer->setWidth(0);
+    right_spacer->setWidth(0);
   }
 
-  /* Trigger the Conversation::Show() method to change the scrollbar setting
+  /* Trigger the Conversation::show() method to change the scrollbar setting
    * of the active conversation. */
-  ActivateConversation(active);
+  activateConversation(active);
 }
 
 Conversations::Conversations()
 : FreeWindow(0, 0, 80, 1, TYPE_NON_FOCUSABLE)
 , active(-1)
 {
-  SetColorScheme("conversation");
+  setColorScheme("conversation");
 
   outer_list = new CppConsUI::HorizontalListBox(AUTOSIZE, 1);
-  AddWidget(*outer_list, 0, 0);
+  addWidget(*outer_list, 0, 0);
 
   left_spacer = new CppConsUI::Spacer(0, 1);
   right_spacer = new CppConsUI::Spacer(0, 1);
   conv_list = new CppConsUI::HorizontalListBox(AUTOSIZE, 1);
 
-  outer_list->AppendWidget(*left_spacer);
-  outer_list->AppendWidget(*conv_list);
-  outer_list->AppendWidget(*right_spacer);
+  outer_list->appendWidget(*left_spacer);
+  outer_list->appendWidget(*conv_list);
+  outer_list->appendWidget(*right_spacer);
 
   // init prefs
   purple_prefs_add_none(CONF_PREFIX "/chat");
@@ -159,23 +159,23 @@ Conversations::~Conversations()
   purple_signals_disconnect_by_handle(this);
 }
 
-void Conversations::Init()
+void Conversations::init()
 {
-  g_assert(!instance);
+  g_assert(!my_instance);
 
-  instance = new Conversations;
-  instance->Show();
+  my_instance = new Conversations;
+  my_instance->show();
 }
 
-void Conversations::Finalize()
+void Conversations::finalize()
 {
-  g_assert(instance);
+  g_assert(my_instance);
 
-  delete instance;
-  instance = NULL;
+  delete my_instance;
+  my_instance = NULL;
 }
 
-int Conversations::FindConversation(PurpleConversation *conv)
+int Conversations::findConversation(PurpleConversation *conv)
 {
   for (int i = 0; i < static_cast<int>(conversations.size()); i++)
     if (conversations[i].purple_conv == conv)
@@ -184,7 +184,7 @@ int Conversations::FindConversation(PurpleConversation *conv)
   return -1;
 }
 
-int Conversations::PrevActiveConversation(int current)
+int Conversations::prevActiveConversation(int current)
 {
   g_assert(current < static_cast<int>(conversations.size()));
 
@@ -201,7 +201,7 @@ int Conversations::PrevActiveConversation(int current)
   return current - 1;
 }
 
-int Conversations::NextActiveConversation(int current)
+int Conversations::nextActiveConversation(int current)
 {
   g_assert(current < static_cast<int>(conversations.size()));
 
@@ -218,34 +218,34 @@ int Conversations::NextActiveConversation(int current)
   return current + 1;
 }
 
-void Conversations::ActivateConversation(int i)
+void Conversations::activateConversation(int i)
 {
   g_assert(i >= -1);
   g_assert(i < static_cast<int>(conversations.size()));
 
   if (active == i) {
     if (active != -1)
-      conversations[active].conv->Show();
+      conversations[active].conv->show();
     return;
   }
 
   if (i != -1) {
     // show a new active conversation
-    conversations[i].label->SetVisibility(true);
-    conversations[i].label->SetColorScheme("conversation-active");
-    conversations[i].conv->Show();
+    conversations[i].label->setVisibility(true);
+    conversations[i].label->setColorScheme("conversation-active");
+    conversations[i].conv->show();
   }
 
   // hide old active conversation if there is any
   if (active != -1) {
-    conversations[active].label->SetColorScheme(NULL);
-    conversations[active].conv->Hide();
+    conversations[active].label->setColorScheme(NULL);
+    conversations[active].conv->hide();
   }
 
   active = i;
 }
 
-void Conversations::UpdateLabel(int i)
+void Conversations::updateLabel(int i)
 {
   g_assert(i >= 0);
   g_assert(i < static_cast<int>(conversations.size()));
@@ -253,27 +253,27 @@ void Conversations::UpdateLabel(int i)
   char *name = g_strdup_printf(" %d|%s%c", i + 1,
       purple_conversation_get_title(conversations[i].purple_conv),
       conversations[i].typing_status);
-  conversations[i].label->SetText(name);
+  conversations[i].label->setText(name);
   g_free(name);
 }
 
-void Conversations::UpdateLabels()
+void Conversations::updateLabels()
 {
   /* Note: This can be a little slow if there are too many opened
    * conversations. */
   for (int i = 0; i < static_cast<int>(conversations.size()); i++)
-    UpdateLabel(i);
+    updateLabel(i);
 }
 
 void Conversations::create_conversation(PurpleConversation *conv)
 {
   g_return_if_fail(conv);
-  g_return_if_fail(FindConversation(conv) == -1);
+  g_return_if_fail(findConversation(conv) == -1);
 
   PurpleConversationType type = purple_conversation_get_type(conv);
   if (type != PURPLE_CONV_TYPE_IM && type != PURPLE_CONV_TYPE_CHAT) {
     purple_conversation_destroy(conv);
-    LOG->Error(_("Unhandled conversation type '%d'."), type);
+    LOG->error(_("Unhandled conversation type '%d'."), type);
     return;
   }
 
@@ -284,20 +284,20 @@ void Conversations::create_conversation(PurpleConversation *conv)
   c.conv = conversation;
   c.label = new CppConsUI::Label(AUTOSIZE, 1);
   c.typing_status = ' ';
-  conv_list->AppendWidget(*c.label);
+  conv_list->appendWidget(*c.label);
   conversations.push_back(c);
-  UpdateLabels();
+  updateLabels();
 
   // show the first conversation if there isn't any already
   if (active == -1)
-    ActivateConversation(conversations.size() - 1);
+    activateConversation(conversations.size() - 1);
 }
 
 void Conversations::destroy_conversation(PurpleConversation *conv)
 {
   g_return_if_fail(conv);
 
-  int i = FindConversation(conv);
+  int i = findConversation(conv);
 
   // destroying unhandled conversation type
   if (i == -1)
@@ -310,14 +310,14 @@ void Conversations::destroy_conversation(PurpleConversation *conv)
     }
     else {
       if (active == static_cast<int>(conversations.size() - 1))
-        FocusPrevConversation();
+        focusPrevConversation();
       else
-        FocusNextConversation();
+        focusNextConversation();
     }
   }
 
   delete conversations[i].conv;
-  conv_list->RemoveWidget(*conversations[i].label);
+  conv_list->removeWidget(*conversations[i].label);
   conversations.erase(conversations.begin() + i);
 
   if (active > i) {
@@ -325,7 +325,7 @@ void Conversations::destroy_conversation(PurpleConversation *conv)
     active--;
   }
 
-  UpdateLabels();
+  updateLabels();
 }
 
 void Conversations::write_conv(PurpleConversation *conv, const char *name,
@@ -334,30 +334,30 @@ void Conversations::write_conv(PurpleConversation *conv, const char *name,
 {
   g_return_if_fail(conv);
 
-  int i = FindConversation(conv);
+  int i = findConversation(conv);
 
   // message to unhandled conversation type
   if (i == -1)
     return;
 
   if (i != active)
-    conversations[i].label->SetColorScheme("conversation-new");
+    conversations[i].label->setColorScheme("conversation-new");
 
   // delegate it to Conversation object
-  conversations[i].conv->Write(name, alias, message, flags, mtime);
+  conversations[i].conv->write(name, alias, message, flags, mtime);
 }
 
 void Conversations::present(PurpleConversation *conv)
 {
   g_return_if_fail(conv);
 
-  int i = FindConversation(conv);
+  int i = findConversation(conv);
 
   // unhandled conversation type
   if (i == -1)
     return;
 
-  ActivateConversation(i);
+  activateConversation(i);
 }
 
 void Conversations::buddy_typing(PurpleAccount *account, const char *who)
@@ -367,7 +367,7 @@ void Conversations::buddy_typing(PurpleAccount *account, const char *who)
   if (!conv)
     return;
 
-  int i = FindConversation(conv);
+  int i = findConversation(conv);
   if (i == -1) {
     // this should probably never happen
     return;
@@ -380,7 +380,7 @@ void Conversations::buddy_typing(PurpleAccount *account, const char *who)
   else
     conversations[i].typing_status = ' ';
 
-  UpdateLabel(i);
+  updateLabel(i);
 }
 
 void Conversations::send_typing_pref_change(const char *name,

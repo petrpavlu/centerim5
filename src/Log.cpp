@@ -25,16 +25,16 @@
 #include <cppconsui/Spacer.h>
 #include "gettext.h"
 
-Log *Log::instance = NULL;
+Log *Log::my_instance = NULL;
 
-Log *Log::Instance()
+Log *Log::instance()
 {
-  return instance;
+  return my_instance;
 }
 
-void Log::OnScreenResized()
+void Log::onScreenResized()
 {
-  MoveResizeRect(CENTERIM->GetScreenArea(CenterIM::LOG_AREA));
+  moveResizeRect(CENTERIM->getScreenArea(CenterIM::LOG_AREA));
 }
 
 #define WRITE_METHOD(name, level)                       \
@@ -43,23 +43,23 @@ void Log::name(const char *fmt, ...)                    \
   va_list args;                                         \
   char *text;                                           \
                                                         \
-  if (GetLogLevel("cim") < level)                       \
+  if (getLogLevel("cim") < level)                       \
     return; /* we don't want to see this log message */ \
                                                         \
   va_start(args, fmt);                                  \
   text = g_strdup_vprintf(fmt, args);                   \
   va_end(args);                                         \
                                                         \
-  Write(text);                                          \
+  write(text);                                          \
   g_free(text);                                         \
 }
 
-WRITE_METHOD(Error, LEVEL_ERROR)
-WRITE_METHOD(Critical, LEVEL_CRITICAL)
-WRITE_METHOD(Warning, LEVEL_WARNING)
-WRITE_METHOD(Message, LEVEL_MESSAGE)
-WRITE_METHOD(Info, LEVEL_INFO)
-WRITE_METHOD(Debug, LEVEL_DEBUG)
+WRITE_METHOD(error, LEVEL_ERROR)
+WRITE_METHOD(critical, LEVEL_CRITICAL)
+WRITE_METHOD(warning, LEVEL_WARNING)
+WRITE_METHOD(message, LEVEL_MESSAGE)
+WRITE_METHOD(info, LEVEL_INFO)
+WRITE_METHOD(debug, LEVEL_DEBUG)
 
 #undef WRITE_METHOD
 
@@ -67,18 +67,18 @@ Log::Log()
 : Window(0, 0, 80, 24, NULL, TYPE_NON_FOCUSABLE)
 , logfile(NULL)
 {
-  SetColorScheme("log");
+  setColorScheme("log");
 
   memset(&centerim_debug_ui_ops, 0, sizeof(centerim_debug_ui_ops));
 
   CppConsUI::HorizontalListBox *lbox = new CppConsUI::HorizontalListBox(
       AUTOSIZE, AUTOSIZE);
-  AddWidget(*lbox, 0, 0);
+  addWidget(*lbox, 0, 0);
 
-  lbox->AppendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
+  lbox->appendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
   textview = new CppConsUI::TextView(AUTOSIZE, AUTOSIZE, true);
-  lbox->AppendWidget(*textview);
-  lbox->AppendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
+  lbox->appendWidget(*textview);
+  lbox->appendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
 
 #define REGISTER_G_LOG_HANDLER(name, handler) \
   g_log_set_handler((name), (GLogLevelFlags)G_LOG_LEVEL_MASK, (handler), this)
@@ -129,45 +129,45 @@ Log::~Log()
     g_io_channel_unref(logfile);
 }
 
-void Log::Init()
+void Log::init()
 {
-  g_assert(!instance);
+  g_assert(!my_instance);
 
-  instance = new Log;
-  instance->Show();
+  my_instance = new Log;
+  my_instance->show();
 }
 
-void Log::Finalize()
+void Log::finalize()
 {
-  g_assert(instance);
+  g_assert(my_instance);
 
-  delete instance;
-  instance = NULL;
+  delete my_instance;
+  my_instance = NULL;
 }
 
 void Log::purple_print(PurpleDebugLevel purplelevel, const char *category,
     const char *arg_s)
 {
-  if (GetLogLevel("purple") < ConvertPurpleDebugLevel(purplelevel))
+  if (getLogLevel("purple") < convertPurpleDebugLevel(purplelevel))
     return; // we don't want to see this log message
 
   if (!category) {
     category = "misc";
-    Warning(_("centerim/log: purple_print() parameter category was "
+    warning(_("centerim/log: purple_print() parameter category was "
          "not defined."));
   }
 
   char *text = g_strdup_printf("libpurple/%s: %s", category, arg_s);
-  Write(text);
+  write(text);
   g_free(text);
 }
 
 gboolean Log::is_enabled(PurpleDebugLevel purplelevel,
     const char * /*category*/)
 {
-  Level level = ConvertPurpleDebugLevel(purplelevel);
+  Level level = convertPurpleDebugLevel(purplelevel);
 
-  if (GetLogLevel("purple") < level)
+  if (getLogLevel("purple") < level)
     return FALSE;
 
   return TRUE;
@@ -176,42 +176,42 @@ gboolean Log::is_enabled(PurpleDebugLevel purplelevel,
 void Log::default_log_handler(const char *domain, GLogLevelFlags flags,
   const char *msg)
 {
-  if (GetLogLevel("glib") < ConvertGlibDebugLevel(flags))
+  if (getLogLevel("glib") < convertGlibDebugLevel(flags))
     return; // we don't want to see this log message
 
   if (!msg)
     return;
 
   char *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
-  Write(text);
+  write(text);
   g_free(text);
 }
 
 void Log::glib_log_handler(const char *domain, GLogLevelFlags flags,
   const char *msg)
 {
-  if (GetLogLevel("glib") < ConvertGlibDebugLevel(flags))
+  if (getLogLevel("glib") < convertGlibDebugLevel(flags))
     return; // we don't want to see this log message
 
   if (!msg)
     return;
 
   char *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
-  Write(text);
+  write(text);
   g_free(text);
 }
 
 void Log::cppconsui_log_handler(const char *domain, GLogLevelFlags flags,
   const char *msg)
 {
-  if (GetLogLevel("cppconsui") < ConvertGlibDebugLevel(flags))
+  if (getLogLevel("cppconsui") < convertGlibDebugLevel(flags))
     return; // we don't want to see this log message
 
   if (!msg)
     return;
 
   char *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
-  Write(text);
+  write(text);
   g_free(text);
 }
 
@@ -227,42 +227,42 @@ void Log::debug_change(const char * /*name*/, PurplePrefType type,
   }
 }
 
-void Log::ShortenWindowText()
+void Log::shortenWindowText()
 {
-  size_t lines_num = textview->GetLinesNumber();
+  size_t lines_num = textview->getLinesNumber();
 
   if (lines_num > 200) {
     // remove 40 extra lines
-    textview->Erase(0, lines_num - 200 + 40);
+    textview->erase(0, lines_num - 200 + 40);
   }
 }
 
-void Log::Write(const char *text)
+void Log::write(const char *text)
 {
-  WriteToFile(text);
-  textview->Append(text);
-  ShortenWindowText();
+  writeToFile(text);
+  textview->append(text);
+  shortenWindowText();
 }
 
-void Log::WriteErrorToWindow(const char *fmt, ...)
+void Log::writeErrorToWindow(const char *fmt, ...)
 {
   va_list args;
   char *text;
 
-  if (GetLogLevel("cim") < LEVEL_ERROR)
+  if (getLogLevel("cim") < LEVEL_ERROR)
     return; // we don't want to see this log message
 
   va_start(args, fmt);
   text = g_strdup_vprintf(fmt, args);
   va_end(args);
 
-  textview->Append(text);
-  ShortenWindowText();
+  textview->append(text);
+  shortenWindowText();
 
   g_free(text);
 }
 
-void Log::WriteToFile(const char *text)
+void Log::writeToFile(const char *text)
 {
   g_return_if_fail(text);
 
@@ -274,7 +274,7 @@ void Log::WriteToFile(const char *text)
       char *filename = g_build_filename(purple_user_dir(),
           purple_prefs_get_string(CONF_PREFIX "/log/filename"), NULL);
       if (!(logfile = g_io_channel_new_file(filename, "a", &err))) {
-        WriteErrorToWindow(
+        writeErrorToWindow(
             _("centerim/log: Error opening logfile '%s' (%s)."), filename,
             err->message);
         g_clear_error(&err);
@@ -286,7 +286,7 @@ void Log::WriteToFile(const char *text)
     if (logfile) {
       if (g_io_channel_write_chars(logfile, text, -1, NULL, &err)
           != G_IO_STATUS_NORMAL) {
-        WriteErrorToWindow(_("centerim/log: Error writing to logfile (%s)."),
+        writeErrorToWindow(_("centerim/log: Error writing to logfile (%s)."),
             err->message);
         g_clear_error(&err);
       }
@@ -300,7 +300,7 @@ void Log::WriteToFile(const char *text)
       }
 
       if (g_io_channel_flush(logfile, &err) != G_IO_STATUS_NORMAL) {
-        WriteErrorToWindow(_("centerim/log: Error flushing logfile (%s)."),
+        writeErrorToWindow(_("centerim/log: Error flushing logfile (%s)."),
             err->message);
         g_clear_error(&err);
       }
@@ -308,7 +308,7 @@ void Log::WriteToFile(const char *text)
   }
 }
 
-Log::Level Log::ConvertPurpleDebugLevel(PurpleDebugLevel purplelevel)
+Log::Level Log::convertPurpleDebugLevel(PurpleDebugLevel purplelevel)
 {
   switch (purplelevel) {
     case PURPLE_DEBUG_MISC:
@@ -325,12 +325,12 @@ Log::Level Log::ConvertPurpleDebugLevel(PurpleDebugLevel purplelevel)
       return LEVEL_ERROR; // use error level so this message is always printed
   }
 
-  Warning(_("centerim/log: Unknown libpurple logging level: %d."),
+  warning(_("centerim/log: Unknown libpurple logging level: %d."),
       purplelevel);
   return LEVEL_DEBUG;
 }
 
-Log::Level Log::ConvertGlibDebugLevel(GLogLevelFlags gliblevel)
+Log::Level Log::convertGlibDebugLevel(GLogLevelFlags gliblevel)
 {
   if (gliblevel & G_LOG_LEVEL_DEBUG)
     return LEVEL_DEBUG;
@@ -345,14 +345,14 @@ Log::Level Log::ConvertGlibDebugLevel(GLogLevelFlags gliblevel)
   if (gliblevel & G_LOG_LEVEL_ERROR)
     return LEVEL_ERROR;
 
-  Warning(_("centerim/log: Unknown GLib logging level: %d."), gliblevel);
+  warning(_("centerim/log: Unknown GLib logging level: %d."), gliblevel);
   /* This will never happen. Actually should not, because some day, it will
    * happen. :) So lets initialize level, so that we don't have uninitialized
    * values. :) */
   return LEVEL_DEBUG;
 }
 
-Log::Level Log::GetLogLevel(const char *type)
+Log::Level Log::getLogLevel(const char *type)
 {
   char *pref = g_strconcat(CONF_PREFIX "/log/log_level_", type, NULL);
   const char *slevel = "none";

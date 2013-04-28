@@ -31,25 +31,25 @@
 #include <libpurple/purple.h>
 #include <vector>
 
-#define CONVERSATIONS (Conversations::Instance())
+#define CONVERSATIONS (Conversations::instance())
 
 class Conversations
 : public CppConsUI::FreeWindow
 {
 public:
-  static Conversations *Instance();
+  static Conversations *instance();
 
   // FreeWindow
-  virtual void OnScreenResized();
+  virtual void onScreenResized();
 
-  void FocusActiveConversation();
-  void FocusConversation(int i);
-  void FocusPrevConversation();
-  void FocusNextConversation();
+  void focusActiveConversation();
+  void focusConversation(int i);
+  void focusPrevConversation();
+  void focusNextConversation();
 
-  void SetExpandedConversations(bool expanded);
+  void setExpandedConversations(bool expanded);
 
-  bool GetSendTypingPref() const { return send_typing; }
+  bool getSendTypingPref() const { return send_typing; }
 
 protected:
 
@@ -79,29 +79,29 @@ private:
 
   PurpleConversationUiOps centerim_conv_ui_ops;
 
-  static Conversations *instance;
+  static Conversations *my_instance;
 
   Conversations();
   Conversations(const Conversations&);
   Conversations& operator=(const Conversations&);
   virtual ~Conversations();
 
-  static void Init();
-  static void Finalize();
+  static void init();
+  static void finalize();
   friend class CenterIM;
 
   // find PurpleConversation in conversations
-  int FindConversation(PurpleConversation *conv);
+  int findConversation(PurpleConversation *conv);
 
-  int PrevActiveConversation(int current);
-  int NextActiveConversation(int current);
+  int prevActiveConversation(int current);
+  int nextActiveConversation(int current);
 
-  void ActivateConversation(int i);
+  void activateConversation(int i);
 
   // update a single conversation label
-  void UpdateLabel(int i);
+  void updateLabel(int i);
   // update all conversation labels
-  void UpdateLabels();
+  void updateLabels();
 
   static void create_conversation_(PurpleConversation *conv)
     { CONVERSATIONS->create_conversation(conv); }

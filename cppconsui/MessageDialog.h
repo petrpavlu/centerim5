@@ -51,7 +51,7 @@ protected:
   TextView *textview;
 
   // AbstractDialog
-  virtual void EmitResponse(ResponseType response);
+  virtual void emitResponse(ResponseType response);
 
 private:
   MessageDialog(const MessageDialog&);

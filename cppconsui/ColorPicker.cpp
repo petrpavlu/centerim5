@@ -43,57 +43,57 @@ ColorPicker::ColorPicker(int fg, int bg, const char *text, bool sample_)
   bg_combo = new ColorPickerComboBox(10, bg);
 
   label = new Label(1, 1, "");
-  SetText(text);
+  setText(text);
 
   fg_combo->signal_color_changed.connect(
-      sigc::mem_fun(this, &ColorPicker::OnColorChanged));
+      sigc::mem_fun(this, &ColorPicker::onColorChanged));
   bg_combo->signal_color_changed.connect(
-      sigc::mem_fun(this, &ColorPicker::OnColorChanged));
+      sigc::mem_fun(this, &ColorPicker::onColorChanged));
 
-  AppendWidget(*label);
-  AppendWidget(*fg_combo);
-  AppendWidget(*(new Spacer(1, 1)));
-  AppendWidget(*bg_combo);
+  appendWidget(*label);
+  appendWidget(*fg_combo);
+  appendWidget(*(new Spacer(1, 1)));
+  appendWidget(*bg_combo);
 
   if (sample_) {
     sample = new Sample(10, fg, bg);
-    AppendWidget(*sample);
+    appendWidget(*sample);
   }
 
-  SetColorPair(fg, bg);
+  setColorPair(fg, bg);
 }
 
-void ColorPicker::SetColorPair(int fg, int bg)
+void ColorPicker::setColorPair(int fg, int bg)
 {
-  fg_combo->SetColor(fg);
-  bg_combo->SetColor(bg);
+  fg_combo->setColor(fg);
+  bg_combo->setColor(bg);
 
   if (sample)
-    sample->SetColors(fg, bg);
+    sample->setColors(fg, bg);
 
   signal_colorpair_selected(*this, fg, bg);
 }
 
-void ColorPicker::SetText(const char *new_text)
+void ColorPicker::setText(const char *new_text)
 {
-  label->SetText(new_text);
+  label->setText(new_text);
   if (new_text)
-    label->SetWidth(Curses::onscreen_width(new_text) + 1);
+    label->setWidth(Curses::onscreen_width(new_text) + 1);
   else
-    label->SetWidth(0);
+    label->setWidth(0);
 }
 
-void ColorPicker::OnColorChanged(ComboBox& activator, int new_color)
+void ColorPicker::onColorChanged(ComboBox& activator, int new_color)
 {
-  int new_fg = fg_combo->GetColor();
-  int new_bg = bg_combo->GetColor();
+  int new_fg = fg_combo->getColor();
+  int new_bg = bg_combo->getColor();
 
   if (&activator == fg_combo)
     new_fg = new_color;
   else
     new_bg = new_color;
 
-  SetColorPair(new_fg, new_bg);
+  setColorPair(new_fg, new_bg);
 }
 
 ColorPicker::Sample::Sample(int w, int fg, int bg)
@@ -101,21 +101,21 @@ ColorPicker::Sample::Sample(int w, int fg, int bg)
 {
 }
 
-void ColorPicker::Sample::Draw()
+void ColorPicker::Sample::draw()
 {
-  ProceedUpdateArea();
+  proceedUpdateArea();
 
   if (!area)
     return;
 
-  int colorpair = COLORSCHEME->GetColorPair(c);
+  int colorpair = COLORSCHEME->getColorPair(c);
 
   area->attron(colorpair);
   area->mvaddstring(1, 0, _(" SAMPLE "));
   area->attroff(colorpair);
 }
 
-void ColorPicker::Sample::SetColors(int fg, int bg)
+void ColorPicker::Sample::setColors(int fg, int bg)
 {
   c.foreground = fg;
   c.background = bg;

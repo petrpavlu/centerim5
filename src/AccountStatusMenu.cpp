@@ -26,7 +26,7 @@
 AccountStatusMenu::AccountStatusMenu()
 : MenuWindow(0, 0, AUTOSIZE, AUTOSIZE)
 {
-  SetColorScheme("accountstatusmenu");
+  setColorScheme("accountstatusmenu");
 
   /*
   TODO
@@ -45,8 +45,8 @@ AccountStatusMenu::AccountStatusMenu()
     char *text = g_strdup_printf("[%s] %s",
         purple_account_get_protocol_name(account),
         purple_account_get_username(account));
-    AppendItem(text, sigc::bind(sigc::mem_fun(this,
-            &AccountStatusMenu::OpenStatusPopup), account));
+    appendItem(text, sigc::bind(sigc::mem_fun(this,
+            &AccountStatusMenu::openStatusPopup), account));
     g_free(text);
 
     l = l->next;
@@ -54,24 +54,24 @@ AccountStatusMenu::AccountStatusMenu()
   g_list_free(list);
 }
 
-void AccountStatusMenu::OnScreenResized()
+void AccountStatusMenu::onScreenResized()
 {
-  CppConsUI::Rect chat = CENTERIM->GetScreenArea(CenterIM::CHAT_AREA);
-  Move(chat.x, chat.y);
+  CppConsUI::Rect chat = CENTERIM->getScreenArea(CenterIM::CHAT_AREA);
+  move(chat.x, chat.y);
 }
 
-void AccountStatusMenu::OpenStatusPopup(CppConsUI::Button& activator,
+void AccountStatusMenu::openStatusPopup(CppConsUI::Button& activator,
     PurpleAccount *account)
 {
   StatusPopup *status_popup = new StatusPopup(account);
-  status_popup->SetRefWidget(activator);
-  status_popup->Show();
+  status_popup->setRefWidget(activator);
+  status_popup->show();
 }
 
 AccountStatusMenu::StatusPopup::StatusPopup(PurpleAccount *account)
 : MenuWindow(0, 0, AUTOSIZE, AUTOSIZE)
 {
-  SetColorScheme("accountstatusmenu");
+  setColorScheme("accountstatusmenu");
 
   bool has_independents = false;
   for (GList *iter = purple_account_get_status_types(account); iter;
@@ -94,15 +94,15 @@ AccountStatusMenu::StatusPopup::StatusPopup(PurpleAccount *account)
           purple_status_type_get_name(status_type));
     else
       label = g_strdup(purple_status_type_get_name(status_type));
-    CppConsUI::Button *b = AppendItem(label, sigc::bind(sigc::mem_fun(this,
-            &StatusPopup::SetStatus), account, status_type, true));
+    CppConsUI::Button *b = appendItem(label, sigc::bind(sigc::mem_fun(this,
+            &StatusPopup::setStatus), account, status_type, true));
     if (active)
-      b->GrabFocus();
+      b->grabFocus();
     g_free(label);
   }
 
   if (has_independents) {
-    AppendSeparator();
+    appendSeparator();
 
     for (GList *iter = purple_account_get_status_types(account); iter;
         iter = iter->next) {
@@ -122,22 +122,22 @@ AccountStatusMenu::StatusPopup::StatusPopup(PurpleAccount *account)
             purple_status_type_get_name(status_type));
       else
         label = g_strdup(purple_status_type_get_name(status_type));
-      CppConsUI::Button *b = AppendItem(label, sigc::bind(sigc::mem_fun(this,
-              &StatusPopup::SetStatus), account, status_type, !active));
+      CppConsUI::Button *b = appendItem(label, sigc::bind(sigc::mem_fun(this,
+              &StatusPopup::setStatus), account, status_type, !active));
       if (active)
-        b->GrabFocus();
+        b->grabFocus();
       g_free(label);
     }
   }
 }
 
-void AccountStatusMenu::StatusPopup::SetStatus(
+void AccountStatusMenu::StatusPopup::setStatus(
     CppConsUI::Button& /*activator*/, PurpleAccount *account,
     PurpleStatusType *status_type, bool active)
 {
   purple_account_set_status(account, purple_status_type_get_id(status_type),
       active, NULL);
-  Close();
+  close();
 }
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

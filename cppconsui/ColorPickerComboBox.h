@@ -45,11 +45,11 @@ public:
   ColorPickerComboBox(int w, int color);
   virtual ~ColorPickerComboBox();
 
-  // Button
-  virtual void Draw();
+  // Widget
+  virtual void draw();
 
-  virtual void SetColor(int new_color);
-  virtual int GetColor() { return selected_color; }
+  virtual void setColor(int new_color);
+  virtual int getColor() { return selected_color; }
 
   sigc::signal<void, ColorPickerComboBox&, int> signal_color_changed;
 
@@ -61,8 +61,8 @@ protected:
     ColorButton(int color_ = -1);
     virtual ~ColorButton() {}
 
-   // Button
-   virtual void Draw();
+   // Widget
+   virtual void draw();
 
   protected:
     int color;
@@ -73,25 +73,25 @@ protected:
   };
 
   // ComboBox
-  using ComboBox::ClearOptions;
-  using ComboBox::AddOption;
-  using ComboBox::AddOptionPtr;
-  using ComboBox::GetSelectedTitle;
-  using ComboBox::GetTitle;
-  using ComboBox::SetSelectedByData;
-  using ComboBox::SetSelectedByDataPtr;
+  using ComboBox::clearOptions;
+  using ComboBox::addOption;
+  using ComboBox::addOptionPtr;
+  using ComboBox::getSelectedTitle;
+  using ComboBox::getTitle;
+  using ComboBox::setSelectedByData;
+  using ComboBox::setSelectedByDataPtr;
 
   // ComboBox
-  virtual void OnDropDown(Button& activator);
-  virtual void DropDownOk(Button& activator, int new_entry);
-  virtual void DropDownClose(FreeWindow& window)
-    { ComboBox::DropDownClose(window); }
+  virtual void onDropDown(Button& activator);
+  virtual void dropDownOk(Button& activator, int new_entry);
+  virtual void dropDownClose(FreeWindow& window)
+    { ComboBox::dropDownClose(window); }
 #ifdef COLORPICKER_256COLOR
-  virtual void ColorPickerOk(ColorPickerDialog& activator,
+  virtual void colorPickerOk(ColorPickerDialog& activator,
       AbstractDialog::ResponseType response, int new_color);
-  virtual void ColorPickerClose(FreeWindow& window);
+  virtual void colorPickerClose(FreeWindow& window);
 #endif // COLORPICKER_256COLOR
-  virtual void SetSelected(int new_entry);
+  virtual void setSelected(int new_entry);
 
   int selected_color;
 

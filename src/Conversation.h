@@ -38,22 +38,22 @@ public:
   virtual ~Conversation();
 
   // InputProcessor
-  virtual bool ProcessInput(const TermKeyKey& key);
+  virtual bool processInput(const TermKeyKey& key);
 
   // Widget
-  virtual void MoveResize(int newx, int newy, int neww, int newh);
-  virtual bool RestoreFocus();
-  virtual void UngrabFocus();
+  virtual void moveResize(int newx, int newy, int neww, int newh);
+  virtual bool restoreFocus();
+  virtual void ungrabFocus();
 
   // FreeWindow
-  virtual void Show();
-  virtual void Close();
-  virtual void OnScreenResized();
+  virtual void show();
+  virtual void close();
+  virtual void onScreenResized();
 
-  void Write(const char *name, const char *alias, const char *message,
+  void write(const char *name, const char *alias, const char *message,
     PurpleMessageFlags flags, time_t mtime);
 
-  PurpleConversation *GetPurpleConversation() const { return conv; };
+  PurpleConversation *getPurpleConversation() const { return conv; };
 
 protected:
   class ConversationLine
@@ -64,7 +64,7 @@ protected:
     virtual ~ConversationLine();
 
     // Widget
-    virtual void Draw();
+    virtual void draw();
 
   protected:
     char *text;
@@ -86,22 +86,22 @@ protected:
 
   size_t input_text_length;
 
-  char *StripHTML(const char *str) const;
-  void DestroyPurpleConversation(PurpleConversation *conv);
-  void BuildLogFilename();
-  char *ExtractTime(time_t sent_time, time_t show_time) const;
-  void LoadHistory();
-  bool ProcessCommand(const char *raw, const char *html);
-  void OnInputTextChange(CppConsUI::TextEdit& activator);
+  char *stripHTML(const char *str) const;
+  void destroyPurpleConversation(PurpleConversation *conv);
+  void buildLogFilename();
+  char *extractTime(time_t sent_time, time_t show_time) const;
+  void loadHistory();
+  bool processCommand(const char *raw, const char *html);
+  void onInputTextChange(CppConsUI::TextEdit& activator);
 
-  void ActionSend();
+  void actionSend();
 
 private:
   Conversation();
   Conversation(const Conversation&);
   Conversation& operator=(const Conversation&);
 
-  void DeclareBindables();
+  void declareBindables();
 };
 
 #endif // __CONVERSATION_H__

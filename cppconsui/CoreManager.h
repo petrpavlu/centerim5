@@ -38,7 +38,7 @@
 namespace CppConsUI
 {
 
-#define COREMANAGER (CppConsUI::CoreManager::Instance())
+#define COREMANAGER (CppConsUI::CoreManager::instance())
 
 /**
  * This class implements a core part of CppConsUI.
@@ -47,39 +47,39 @@ class CoreManager
 : public InputProcessor
 {
 public:
-  static CoreManager *Instance();
+  static CoreManager *instance();
 
   /**
    * Sets itself as a standard input watcher and runs glib main loop.
    */
-  void StartMainLoop();
+  void startMainLoop();
   /**
    * Quits glib main loop and stops watching the standard input.
    */
-  void QuitMainLoop();
+  void quitMainLoop();
 
-  void AddWindow(FreeWindow& window);
-  void RemoveWindow(FreeWindow& window);
-  bool HasWindow(const FreeWindow& window) const;
-  FreeWindow *GetTopWindow();
+  void addWindow(FreeWindow& window);
+  void removeWindow(FreeWindow& window);
+  bool hasWindow(const FreeWindow& window) const;
+  FreeWindow *getTopWindow();
 
-  void EnableResizing();
-  void DisableResizing();
-  void OnScreenResized();
+  void enableResizing();
+  void disableResizing();
+  void onScreenResized();
 
-  void SetTopInputProcessor(InputProcessor& top)
+  void setTopInputProcessor(InputProcessor& top)
     { top_input_processor = &top; }
-  InputProcessor *GetTopInputProcessor()
+  InputProcessor *getTopInputProcessor()
     { return top_input_processor; }
 
-  void Redraw();
+  void redraw();
 
-  sigc::connection TimeoutConnect(const sigc::slot<bool>& slot,
+  sigc::connection timeoutConnect(const sigc::slot<bool>& slot,
       unsigned interval, int priority = G_PRIORITY_DEFAULT);
-  sigc::connection TimeoutOnceConnect(const sigc::slot<void>& slot,
+  sigc::connection timeoutOnceConnect(const sigc::slot<void>& slot,
       unsigned interval, int priority = G_PRIORITY_DEFAULT);
 
-  TermKey *GetTermKeyHandle() { return tk; };
+  TermKey *getTermKeyHandle() { return tk; };
 
   sigc::signal<void> signal_resize;
   sigc::signal<void> signal_top_window_change;
@@ -115,7 +115,7 @@ private:
   ~CoreManager();
 
   // InputProcessor
-  virtual bool ProcessInput(const TermKeyKey& key);
+  virtual bool processInput(const TermKeyKey& key);
 
   // glib IO callbacks
   /**
@@ -145,24 +145,24 @@ private:
         cond); }
   gboolean resize_input(GIOChannel *source, GIOCondition cond);
 
-  void InputInit();
-  void InputUnInit();
+  void inputInit();
+  void inputUnInit();
 
-  static void SignalHandler(int signum);
-  void Resize();
+  static void signalHandler(int signum);
+  void resize();
 
-  void Draw();
+  void draw();
 
-  Windows::iterator FindWindow(FreeWindow& window);
-  void FocusWindow();
+  Windows::iterator findWindow(FreeWindow& window);
+  void focusWindow();
 
-  void RedrawScreen();
+  void redrawScreen();
 
-  void DeclareBindables();
+  void declareBindables();
 };
 
 } // namespace CppConsUI
 
-#endif // __APPLICATION_H__
+#endif // __COREMANGER_H__
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

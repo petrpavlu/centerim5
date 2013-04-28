@@ -34,14 +34,14 @@ SplitDialog::SplitDialog(int x, int y, int w, int h, const char *title)
 : AbstractDialog(x, y, w, h, title), container(NULL)
 , cont_old_focus(NULL) , buttons_old_focus(NULL)
 {
-  buttons->SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
+  buttons->setFocusCycle(Container::FOCUS_CYCLE_LOCAL);
 }
 
 SplitDialog::SplitDialog(const char *title)
 : AbstractDialog(title), container(NULL), cont_old_focus(NULL)
 , buttons_old_focus(NULL)
 {
-  buttons->SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
+  buttons->setFocusCycle(Container::FOCUS_CYCLE_LOCAL);
 }
 
 SplitDialog::~SplitDialog()
@@ -54,33 +54,33 @@ SplitDialog::~SplitDialog()
   buttons_old_focus = NULL;
 }
 
-void SplitDialog::CleanFocus()
+void SplitDialog::cleanFocus()
 {
-  Widget *f = layout->GetFocusChild();
+  Widget *f = layout->getFocusChild();
   if (f) {
     if (f == container) {
       cont_old_focus_conn.disconnect();
-      cont_old_focus = container->GetFocusWidget();
+      cont_old_focus = container->getFocusWidget();
       if (cont_old_focus)
         cont_old_focus_conn = cont_old_focus->signal_visible.connect(
-            sigc::mem_fun(this, &SplitDialog::OnOldFocusVisible));
+            sigc::mem_fun(this, &SplitDialog::onOldFocusVisible));
     }
     else if (f == buttons) {
       buttons_old_focus_conn.disconnect();
-      buttons_old_focus = buttons->GetFocusWidget();
+      buttons_old_focus = buttons->getFocusWidget();
       if (buttons_old_focus)
         buttons_old_focus_conn = buttons_old_focus->signal_visible.connect(
-            sigc::mem_fun(this, &SplitDialog::OnOldFocusVisible));
+            sigc::mem_fun(this, &SplitDialog::onOldFocusVisible));
     }
   }
 
-  AbstractDialog::CleanFocus();
+  AbstractDialog::cleanFocus();
 }
 
-void SplitDialog::MoveFocus(FocusDirection direction)
+void SplitDialog::moveFocus(FocusDirection direction)
 {
   if (!container) {
-    AbstractDialog::MoveFocus(direction);
+    AbstractDialog::moveFocus(direction);
     return;
   }
 
@@ -90,90 +90,90 @@ void SplitDialog::MoveFocus(FocusDirection direction)
 
   switch (direction) {
     case FOCUS_PREVIOUS:
-      if (layout->GetFocusChild() == container) {
+      if (layout->getFocusChild() == container) {
         // focus is held by the container, give it to the last button
         FocusChain focus_chain(NULL);
-        buttons->GetFocusChain(focus_chain, focus_chain.begin());
+        buttons->getFocusChain(focus_chain, focus_chain.begin());
 
         FocusChain::pre_order_iterator iter = --focus_chain.end();
-        if (*iter && (*iter)->GrabFocus())
+        if (*iter && (*iter)->grabFocus())
           return;
       }
-      else if (layout->GetFocusChild() == buttons) {
+      else if (layout->getFocusChild() == buttons) {
         FocusChain focus_chain(NULL);
-        buttons->GetFocusChain(focus_chain, focus_chain.begin());
+        buttons->getFocusChain(focus_chain, focus_chain.begin());
 
         FocusChain::leaf_iterator iter = focus_chain.begin_leaf();
-        if (GetFocusWidget() == *iter) {
+        if (getFocusWidget() == *iter) {
           // focus is held by the first button, give it to the container
-          if ((cont_old_focus && cont_old_focus->GrabFocus())
-              || container->GrabFocus())
+          if ((cont_old_focus && cont_old_focus->grabFocus())
+              || container->grabFocus())
             return;
         }
       }
       break;
     case FOCUS_NEXT:
-      if (layout->GetFocusChild() == container) {
+      if (layout->getFocusChild() == container) {
         // focus is held by the container, give it to the first button
-        if (buttons->GrabFocus())
+        if (buttons->grabFocus())
           return;
       }
-      else if (layout->GetFocusChild() == buttons) {
+      else if (layout->getFocusChild() == buttons) {
         FocusChain focus_chain(NULL);
-        buttons->GetFocusChain(focus_chain, focus_chain.begin());
+        buttons->getFocusChain(focus_chain, focus_chain.begin());
 
         FocusChain::pre_order_iterator iter = --focus_chain.end();
-        if (GetFocusWidget() == *iter) {
+        if (getFocusWidget() == *iter) {
           // focus is held by the last button, give it to the container
-          if ((cont_old_focus && cont_old_focus->GrabFocus())
-              || container->GrabFocus())
+          if ((cont_old_focus && cont_old_focus->grabFocus())
+              || container->grabFocus())
             return;
         }
       }
       break;
     case FOCUS_LEFT:
     case FOCUS_RIGHT:
-      if (layout->GetFocusChild() != buttons) {
+      if (layout->getFocusChild() != buttons) {
         /* First try to focus the previously focused widget, if it fails then
          * try any widget. */
-        if ((buttons_old_focus && buttons_old_focus->GrabFocus())
-            || buttons->GrabFocus())
+        if ((buttons_old_focus && buttons_old_focus->grabFocus())
+            || buttons->grabFocus())
           return;
       }
       break;
     case FOCUS_UP:
     case FOCUS_DOWN:
-      if (layout->GetFocusChild() != container) {
+      if (layout->getFocusChild() != container) {
         /* First try to focus the previously focused widget, if it fails then
          * try any widget. */
-        if ((cont_old_focus && cont_old_focus->GrabFocus())
-            || container->GrabFocus())
+        if ((cont_old_focus && cont_old_focus->grabFocus())
+            || container->grabFocus())
           return;
       }
       break;
     default:
       break;
   }
-  AbstractDialog::MoveFocus(direction);
+  AbstractDialog::moveFocus(direction);
 }
 
-void SplitDialog::SetContainer(Container& cont)
+void SplitDialog::setContainer(Container& cont)
 {
   g_assert(!container);
-  g_warn_if_fail(cont.GetWidth() == AUTOSIZE);
-  g_warn_if_fail(cont.GetHeight() == AUTOSIZE);
+  g_warn_if_fail(cont.getWidth() == AUTOSIZE);
+  g_warn_if_fail(cont.getHeight() == AUTOSIZE);
 
   container = &cont;
-  cont.SetFocusCycle(Container::FOCUS_CYCLE_LOCAL);
-  layout->InsertWidget(0, cont);
+  cont.setFocusCycle(Container::FOCUS_CYCLE_LOCAL);
+  layout->insertWidget(0, cont);
 }
 
-void SplitDialog::EmitResponse(SplitDialog::ResponseType response)
+void SplitDialog::emitResponse(SplitDialog::ResponseType response)
 {
   signal_response(*this, response);
 }
 
-void SplitDialog::OnOldFocusVisible(Widget& activator, bool visible)
+void SplitDialog::onOldFocusVisible(Widget& activator, bool visible)
 {
   if (visible)
     return;

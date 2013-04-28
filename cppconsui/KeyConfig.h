@@ -34,7 +34,7 @@
 #include <map>
 #include <string>
 
-#define KEYCONFIG (CppConsUI::KeyConfig::Instance())
+#define KEYCONFIG (CppConsUI::KeyConfig::instance())
 
 namespace CppConsUI
 {
@@ -48,18 +48,18 @@ namespace CppConsUI
  * \code
  * class X : public Y {
  * private:
- *   void DeclareBindables();
+ *   void declareBindables();
  * };
  *
- * void X::DeclareBindable()
+ * void X::declareBindable()
  * {
  *   // register a bindable
- *   DeclareBindable("context", "action", sigc::mem_fun(this, X::OnActionDo));
+ *   declareBindable("context", "action", sigc::mem_fun(this, X::onActionDo));
  *
  *   // register a bindable conditionally
  *   if (some condition)
- *     DeclareBindable("context", "action2", sigc::mem_fun(this,
- *       X::OnAction2Do));
+ *     declareBindable("context", "action2", sigc::mem_fun(this,
+ *       X::onAction2Do));
  * }
  * \endcode
  */
@@ -78,47 +78,47 @@ public:
   /**
    * Returns the singleton class instance.
    */
-  static KeyConfig *Instance();
+  static KeyConfig *instance();
 
   /**
    * Binds a key to an action (in a given context).
    */
-  bool BindKey(const char *context, const char *action, const char *key);
+  bool bindKey(const char *context, const char *action, const char *key);
 
   /**
    * Returns all key binds.
    */
-  const KeyBinds *GetKeyBinds() const { return &binds; }
+  const KeyBinds *getKeyBinds() const { return &binds; }
   /**
    * Returns all key binds for a given context.
    */
-  const KeyBindContext *GetKeyBinds(const char *context) const;
+  const KeyBindContext *getKeyBinds(const char *context) const;
 
   /**
    * Returns a key bind for a given context and action. Note that this method
    * returns a pointer to a static buffer.
    */
-  const char *GetKeyBind(const char *context, const char *action) const;
+  const char *getKeyBind(const char *context, const char *action) const;
 
   /**
    * Converts a TermKeyKey to its string representation.
    */
-  char *TermKeyToString(const TermKeyKey& key) const;
+  char *termKeyToString(const TermKeyKey& key) const;
 
   /**
    * Parses a string into a TermKeyKey.
    */
-  bool StringToTermKey(const char *key, TermKeyKey *termkey) const;
+  bool stringToTermKey(const char *key, TermKeyKey *termkey) const;
 
   /**
    * Removes all key binds.
    */
-  void Clear();
+  void clear();
 
   /**
    * Load default key configuration
    */
-  void LoadDefaultKeyConfig();
+  void loadDefaultKeyConfig();
 
 protected:
 

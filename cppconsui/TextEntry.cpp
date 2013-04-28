@@ -35,26 +35,26 @@ namespace CppConsUI
 TextEntry::TextEntry(int w, int h, const char *text_, int flags_)
 : TextEdit(w, h, text_, flags_, true, false)
 {
-  DeclareBindables();
+  declareBindables();
 }
 
 TextEntry::TextEntry(const char *text_, int flags_)
 : TextEdit(AUTOSIZE, 1, text_, flags_, true, false)
 {
-  DeclareBindables();
+  declareBindables();
 }
 
-void TextEntry::ActionActivate()
+void TextEntry::actionActivate()
 {
   if (parent)
-    parent->MoveFocus(Container::FOCUS_NEXT);
+    parent->moveFocus(Container::FOCUS_NEXT);
 }
 
-void TextEntry::DeclareBindables()
+void TextEntry::declareBindables()
 {
   // non text editing bindables
-  DeclareBindable("textentry", "activate", sigc::mem_fun(this,
-        &TextEntry::ActionActivate), InputProcessor::BINDABLE_NORMAL);
+  declareBindable("textentry", "activate", sigc::mem_fun(this,
+        &TextEntry::actionActivate), InputProcessor::BINDABLE_NORMAL);
 }
 
 } // namespace CppConsUI

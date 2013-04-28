@@ -12,8 +12,8 @@ class TreeViewWindow
 public:
   /* This is a main window, make sure it can not be closed with ESC key by
    * overriding Close() method. */
-  static TreeViewWindow *Instance();
-  virtual void Close() {}
+  static TreeViewWindow *instance();
+  virtual void close() {}
 
 protected:
 
@@ -24,7 +24,7 @@ private:
   TreeViewWindow& operator=(const TreeViewWindow&);
 };
 
-TreeViewWindow *TreeViewWindow::Instance()
+TreeViewWindow *TreeViewWindow::instance()
 {
   static TreeViewWindow instance;
   return &instance;
@@ -37,32 +37,32 @@ TreeViewWindow::TreeViewWindow()
   CppConsUI::TreeView::NodeReference node;
   CppConsUI::TreeView::NodeReference node2;
 
-  AddWidget(*(new CppConsUI::Label(20, 1, "Press F10 to quit.")), 1, 1);
+  addWidget(*(new CppConsUI::Label(20, 1, "Press F10 to quit.")), 1, 1);
 
   tree = new CppConsUI::TreeView(30, 12);
-  AddWidget(*tree, 1, 3);
-  SetInputChild(*tree);
+  addWidget(*tree, 1, 3);
+  setInputChild(*tree);
 
-  node = tree->AppendNode(tree->GetRootNode(),
+  node = tree->appendNode(tree->getRootNode(),
       *(new CppConsUI::Button("Button node A")));
-  node2 = tree->AppendNode(node, *(new CppConsUI::Button("Button node A-1")));
-  tree->AppendNode(node2, *(new CppConsUI::Button("Button node A-1-a")));
-  tree->AppendNode(node2, *(new CppConsUI::Button("Button node A-1-b")));
-  tree->AppendNode(node2, *(new CppConsUI::Button("Button node A-1-c")));
-  tree->AppendNode(node, *(new CppConsUI::Button("Button node A-2")));
-  tree->AppendNode(node, *(new CppConsUI::Button("Button node A-3")));
+  node2 = tree->appendNode(node, *(new CppConsUI::Button("Button node A-1")));
+  tree->appendNode(node2, *(new CppConsUI::Button("Button node A-1-a")));
+  tree->appendNode(node2, *(new CppConsUI::Button("Button node A-1-b")));
+  tree->appendNode(node2, *(new CppConsUI::Button("Button node A-1-c")));
+  tree->appendNode(node, *(new CppConsUI::Button("Button node A-2")));
+  tree->appendNode(node, *(new CppConsUI::Button("Button node A-3")));
 
-  node = tree->AppendNode(tree->GetRootNode(),
+  node = tree->appendNode(tree->getRootNode(),
       *(new CppConsUI::Label("Label node B")));
-  tree->AppendNode(node, *(new CppConsUI::Label("Label node B-1")));
-  tree->AppendNode(node, *(new CppConsUI::Label("Label node B-2")));
-  tree->AppendNode(node, *(new CppConsUI::Label("Label node B-3")));
+  tree->appendNode(node, *(new CppConsUI::Label("Label node B-1")));
+  tree->appendNode(node, *(new CppConsUI::Label("Label node B-2")));
+  tree->appendNode(node, *(new CppConsUI::Label("Label node B-3")));
 
-  node = tree->AppendNode(tree->GetRootNode(),
+  node = tree->appendNode(tree->getRootNode(),
       *(new CppConsUI::Button("Button node C")));
-  tree->AppendNode(node, *(new CppConsUI::Button("Button node C-1")));
-  tree->AppendNode(node, *(new CppConsUI::Button("Button node C-2")));
-  tree->AppendNode(node, *(new CppConsUI::Button("Button node C-3")));
+  tree->appendNode(node, *(new CppConsUI::Button("Button node C-1")));
+  tree->appendNode(node, *(new CppConsUI::Button("Button node C-2")));
+  tree->appendNode(node, *(new CppConsUI::Button("Button node C-3")));
 }
 
 // TestApp class
@@ -70,9 +70,9 @@ class TestApp
 : public CppConsUI::InputProcessor
 {
 public:
-  static TestApp *Instance();
+  static TestApp *instance();
 
-  void Run();
+  void run();
 
   // ignore every message
   static void g_log_func_(const gchar * /*log_domain*/,
@@ -91,7 +91,7 @@ private:
   virtual ~TestApp() {}
 };
 
-TestApp *TestApp::Instance()
+TestApp *TestApp::instance()
 {
   static TestApp instance;
   return &instance;
@@ -99,23 +99,23 @@ TestApp *TestApp::Instance()
 
 TestApp::TestApp()
 {
-  mngr = CppConsUI::CoreManager::Instance();
-  KEYCONFIG->BindKey("testapp", "quit", "F10");
-  KEYCONFIG->LoadDefaultKeyConfig();
+  mngr = CppConsUI::CoreManager::instance();
+  KEYCONFIG->loadDefaultKeyConfig();
+  KEYCONFIG->bindKey("testapp", "quit", "F10");
 
   g_log_set_default_handler(g_log_func_, this);
 
-  DeclareBindable("testapp", "quit", sigc::mem_fun(mngr,
-        &CppConsUI::CoreManager::QuitMainLoop),
+  declareBindable("testapp", "quit", sigc::mem_fun(mngr,
+        &CppConsUI::CoreManager::quitMainLoop),
       InputProcessor::BINDABLE_OVERRIDE);
 }
 
-void TestApp::Run()
+void TestApp::run()
 {
-  mngr->AddWindow(*TreeViewWindow::Instance());
-  mngr->SetTopInputProcessor(*this);
-  mngr->EnableResizing();
-  mngr->StartMainLoop();
+  mngr->addWindow(*TreeViewWindow::instance());
+  mngr->setTopInputProcessor(*this);
+  mngr->enableResizing();
+  mngr->startMainLoop();
 }
 
 // main function
@@ -123,8 +123,8 @@ int main()
 {
   setlocale(LC_ALL, "");
 
-  TestApp *app = TestApp::Instance();
-  app->Run();
+  TestApp *app = TestApp::instance();
+  app->run();
 
   return 0;
 }

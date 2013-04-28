@@ -62,7 +62,8 @@ protected:
     ColorPickerPaletteButton(int color);
     virtual ~ColorPickerPaletteButton() {};
 
-    virtual void Draw();
+    // Widget
+    virtual void draw();
 
   protected:
     int color;
@@ -72,13 +73,13 @@ protected:
     ColorPickerPaletteButton& operator=(const ColorPickerPaletteButton&);
   };
 
-  virtual void OnSelectColor(Button& activator);
+  virtual void onSelectColor(Button& activator);
 
-  virtual void AddButton(int x, int y, int color, int defaultcolor);
+  virtual void addButton(int x, int y, int color, int defaultcolor);
 
-  virtual void AddAnsi(int defaultcolor);
-  virtual void AddGrayscale(int defaultcolor);
-  virtual void AddColorCube(int defaultcolor);
+  virtual void addAnsi(int defaultcolor);
+  virtual void addGrayscale(int defaultcolor);
+  virtual void addColorCube(int defaultcolor);
 
 private:
   ColorPickerPalette(const ColorPickerPalette&);

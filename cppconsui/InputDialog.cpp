@@ -36,15 +36,15 @@ namespace CppConsUI
 InputDialog::InputDialog(const char *title, const char *defaultvalue)
 : AbstractDialog(title)
 {
-  AddButton(OK_BUTTON_TEXT, RESPONSE_OK);
+  addButton(OK_BUTTON_TEXT, RESPONSE_OK);
 
   entry = new TextEntry(AUTOSIZE, AUTOSIZE, defaultvalue);
-  layout->InsertWidget(0, *entry);
+  layout->insertWidget(0, *entry);
 
-  entry->GrabFocus();
+  entry->grabFocus();
 }
 
-void InputDialog::EmitResponse(ResponseType response)
+void InputDialog::emitResponse(ResponseType response)
 {
   signal_response(*this, response);
 }

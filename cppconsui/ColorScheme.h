@@ -38,7 +38,7 @@
  * colorpairs. */
 //#define SAVE_COLOR_PAIRS
 
-#define COLORSCHEME (CppConsUI::ColorScheme::Instance())
+#define COLORSCHEME (CppConsUI::ColorScheme::instance())
 
 namespace CppConsUI
 {
@@ -56,7 +56,7 @@ public:
         int a = Curses::Attr::NORMAL)
       : foreground(f), background(b), attrs(a) {}
   };
-  static ColorScheme *Instance();
+  static ColorScheme *instance();
 
   typedef std::map<std::string, Color> Properties;
   typedef std::map<std::string, Properties> Widgets;
@@ -67,25 +67,25 @@ public:
    * Curses::Window::attron()) for a given scheme, widget and property
    * combination.
    */
-  int GetColorPair(const char *scheme, const char *widget,
+  int getColorPair(const char *scheme, const char *widget,
       const char *property);
 #ifdef SAVE_COLOR_PAIRS
-  int GetColorPair(Color& c);
+  int getColorPair(Color& c);
 #else
-  int GetColorPair(const Color& c);
+  int getColorPair(const Color& c);
 #endif
   /**
    * Sets color pair and Curses attributes for a given scheme, widget,
    * property combination.
    */
-  bool SetColorPair(const char *scheme, const char *widget,
+  bool setColorPair(const char *scheme, const char *widget,
       const char *property, int foreground, int background,
       int attrs = Curses::Attr::NORMAL, bool overwrite = false);
-  void FreeScheme(const char *scheme);
+  void freeScheme(const char *scheme);
 
-  const Schemes& GetSchemes() const { return schemes; }
+  const Schemes& getSchemes() const { return schemes; }
 
-  void Clear();
+  void clear();
 
 protected:
 

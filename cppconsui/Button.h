@@ -63,32 +63,32 @@ public:
   virtual ~Button();
 
   // Widget
-  virtual void Draw();
+  virtual void draw();
 
-  virtual void SetFlags(int new_flags);
-  virtual int GetFlags() const { return flags; }
+  virtual void setFlags(int new_flags);
+  virtual int getFlags() const { return flags; }
 
   /**
    * Sets a new text and redraws itself.
    */
-  virtual void SetText(const char *new_text);
+  virtual void setText(const char *new_text);
   /**
    * Returns previously set text.
    */
-  virtual const char *GetText() const { return text; }
+  virtual const char *getText() const { return text; }
 
-  virtual void SetValue(const char *new_value);
-  virtual void SetValue(int new_value);
-  virtual const char *GetValue() const { return value; }
+  virtual void setValue(const char *new_value);
+  virtual void setValue(int new_value);
+  virtual const char *getValue() const { return value; }
 
-  virtual void SetUnit(const char *new_unit);
-  virtual const char *GetUnit() const { return unit; }
+  virtual void setUnit(const char *new_unit);
+  virtual const char *getUnit() const { return unit; }
 
-  virtual void SetRight(const char *new_right);
-  virtual const char *GetRight() const { return right; }
+  virtual void setRight(const char *new_right);
+  virtual const char *getRight() const { return right; }
 
-  virtual void SetMasked(bool masked_);
-  virtual bool GetMasked() const { return masked; }
+  virtual void setMasked(bool new_masked);
+  virtual bool isMasked() const { return masked; }
 
   /**
    * Emited signal when the button is pressed/activated.
@@ -112,9 +112,9 @@ private:
   Button(const Button&);
   Button& operator=(const Button&);
 
-  void ActionActivate();
+  void actionActivate();
 
-  void DeclareBindables();
+  void declareBindables();
 };
 
 } // namespace CppConsUI

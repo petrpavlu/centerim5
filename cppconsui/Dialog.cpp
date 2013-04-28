@@ -41,7 +41,7 @@ Dialog::Dialog(const char *title)
 {
 }
 
-void Dialog::EmitResponse(ResponseType response)
+void Dialog::emitResponse(ResponseType response)
 {
   signal_response(*this, response);
 }

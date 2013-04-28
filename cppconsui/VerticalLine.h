@@ -45,7 +45,7 @@ public:
   virtual ~VerticalLine() {}
 
   // Widget
-  virtual void Draw();
+  virtual void draw();
 
 protected:
 

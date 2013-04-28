@@ -110,42 +110,42 @@ inline sigc::slot_base *SourceConnectionNode::get_slot()
   return &slot;
 }
 
-CoreManager *CoreManager::Instance()
+CoreManager *CoreManager::instance()
 {
-  static CoreManager instance;
-  return &instance;
+  static CoreManager my_instance;
+  return &my_instance;
 }
 
-void CoreManager::StartMainLoop()
+void CoreManager::startMainLoop()
 {
   g_main_loop_run(gmainloop);
 }
 
-void CoreManager::QuitMainLoop()
+void CoreManager::quitMainLoop()
 {
   g_main_loop_quit(gmainloop);
 }
 
-void CoreManager::AddWindow(FreeWindow& window)
+void CoreManager::addWindow(FreeWindow& window)
 {
-  Windows::iterator i = FindWindow(window);
+  Windows::iterator i = findWindow(window);
 
   if (i != windows.end()) {
-    /* Window is already added, AddWindow() was called to bring the window to
+    /* Window is already added, addWindow() was called to bring the window to
      * the top. */
     windows.erase(i);
     windows.push_back(&window);
   }
   else {
     windows.push_back(&window);
-    window.OnScreenResized();
+    window.onScreenResized();
   }
 
-  FocusWindow();
-  Redraw();
+  focusWindow();
+  redraw();
 }
 
-void CoreManager::RemoveWindow(FreeWindow& window)
+void CoreManager::removeWindow(FreeWindow& window)
 {
   Windows::iterator i;
 
@@ -157,11 +157,11 @@ void CoreManager::RemoveWindow(FreeWindow& window)
 
   windows.erase(i);
 
-  FocusWindow();
-  Redraw();
+  focusWindow();
+  redraw();
 }
 
-bool CoreManager::HasWindow(const FreeWindow& window) const
+bool CoreManager::hasWindow(const FreeWindow& window) const
 {
   for (Windows::const_iterator i = windows.begin(); i != windows.end(); i++)
     if (*i == &window)
@@ -170,24 +170,24 @@ bool CoreManager::HasWindow(const FreeWindow& window) const
   return false;
 }
 
-FreeWindow *CoreManager::GetTopWindow()
+FreeWindow *CoreManager::getTopWindow()
 {
   return dynamic_cast<FreeWindow*>(input_child);
 }
 
-void CoreManager::EnableResizing()
+void CoreManager::enableResizing()
 {
-  OnScreenResized();
+  onScreenResized();
 
   // register resize handler
   struct sigaction sig;
-  sig.sa_handler = SignalHandler;
+  sig.sa_handler = signalHandler;
   sigemptyset(&sig.sa_mask);
   sig.sa_flags = SA_RESTART;
   sigaction(SIGWINCH, &sig, NULL);
 }
 
-void CoreManager::DisableResizing()
+void CoreManager::disableResizing()
 {
   // unregister resize handler
   struct sigaction sig;
@@ -197,7 +197,7 @@ void CoreManager::DisableResizing()
   sigaction(SIGWINCH, &sig, NULL);
 }
 
-void CoreManager::OnScreenResized()
+void CoreManager::onScreenResized()
 {
   if (pipe_valid && !resize_pending) {
     write(pipefd[1], "@", 1);
@@ -205,15 +205,15 @@ void CoreManager::OnScreenResized()
   }
 }
 
-void CoreManager::Redraw()
+void CoreManager::redraw()
 {
   if (!redraw_pending) {
     redraw_pending = true;
-    TimeoutOnceConnect(sigc::mem_fun(this, &CoreManager::Draw), 0);
+    timeoutOnceConnect(sigc::mem_fun(this, &CoreManager::draw), 0);
   }
 }
 
-sigc::connection CoreManager::TimeoutConnect(const sigc::slot<bool>& slot,
+sigc::connection CoreManager::timeoutConnect(const sigc::slot<bool>& slot,
     unsigned interval, int priority)
 {
   SourceConnectionNode *conn_node = new SourceConnectionNode(slot);
@@ -234,10 +234,10 @@ sigc::connection CoreManager::TimeoutConnect(const sigc::slot<bool>& slot,
   return connection;
 }
 
-sigc::connection CoreManager::TimeoutOnceConnect(const sigc::slot<void>& slot,
+sigc::connection CoreManager::timeoutOnceConnect(const sigc::slot<void>& slot,
     unsigned interval, int priority)
 {
-  return TimeoutConnect(sigc::bind_return(slot, FALSE), interval, priority);
+  return timeoutConnect(sigc::bind_return(slot, FALSE), interval, priority);
 }
 
 CoreManager::CoreManager()
@@ -245,7 +245,7 @@ CoreManager::CoreManager()
 , resize_channel(NULL), resize_channel_id(0), pipe_valid(false), tk(NULL)
 , utf8(false), gmainloop(NULL), redraw_pending(false), resize_pending(false)
 {
-  InputInit();
+  inputInit();
 
   /**
    * @todo Check the return value. Throw an exception if we can't init curses.
@@ -255,12 +255,12 @@ CoreManager::CoreManager()
   // create a new loop
   gmainloop = g_main_loop_new(NULL, FALSE);
 
-  DeclareBindables();
+  declareBindables();
 }
 
 CoreManager::~CoreManager()
 {
-  InputUnInit();
+  inputUnInit();
 
   // close all windows
   size_t i = 0;
@@ -269,7 +269,7 @@ CoreManager::~CoreManager()
     /* There are two possibilities, either a window is in the Close() method
      * removed from the core manager or not. We don't increase i in the first
      * case. */
-    win->Close();
+    win->close();
     if (i < windows.size() && windows[i] == win)
       i++;
   }
@@ -280,12 +280,12 @@ CoreManager::~CoreManager()
   Curses::screen_finalize();
 }
 
-bool CoreManager::ProcessInput(const TermKeyKey& key)
+bool CoreManager::processInput(const TermKeyKey& key)
 {
-  if (top_input_processor && top_input_processor->ProcessInput(key))
+  if (top_input_processor && top_input_processor->processInput(key))
     return true;
 
-  return InputProcessor::ProcessInput(key);
+  return InputProcessor::processInput(key);
 }
 
 gboolean CoreManager::io_input_error(GIOChannel * /*source*/,
@@ -326,11 +326,11 @@ gboolean CoreManager::io_input(GIOChannel * /*source*/, GIOCondition /*cond*/)
       key.code.codepoint = g_utf8_get_char(key.utf8);
     }
 
-    ProcessInput(key);
+    processInput(key);
   }
   if (ret == TERMKEY_RES_AGAIN) {
     int wait = termkey_get_waittime(tk);
-    io_input_timeout_conn = TimeoutOnceConnect(sigc::mem_fun(this,
+    io_input_timeout_conn = timeoutOnceConnect(sigc::mem_fun(this,
           &CoreManager::io_input_timeout), wait);
   }
 
@@ -343,7 +343,7 @@ void CoreManager::io_input_timeout()
   if (termkey_getkey_force(tk, &key) == TERMKEY_RES_KEY) {
     /* This should happen only for Esc key, so no need to do locale->utf8
      * conversion. */
-    ProcessInput(key);
+    processInput(key);
   }
 }
 
@@ -357,12 +357,12 @@ gboolean CoreManager::resize_input(GIOChannel *source, GIOCondition /*cond*/)
     g_clear_error(&err);
 
   if (resize_pending)
-    Resize();
+    resize();
 
   return TRUE;
 }
 
-void CoreManager::InputInit()
+void CoreManager::inputInit()
 {
   // init libtermkey
   TERMKEY_CHECK_VERSION;
@@ -399,7 +399,7 @@ void CoreManager::InputInit()
   }
 }
 
-void CoreManager::InputUnInit()
+void CoreManager::inputUnInit()
 {
   termkey_destroy(tk);
   tk = NULL;
@@ -419,13 +419,13 @@ void CoreManager::InputUnInit()
   }
 }
 
-void CoreManager::SignalHandler(int signum)
+void CoreManager::signalHandler(int signum)
 {
   if (signum == SIGWINCH)
-    COREMANAGER->OnScreenResized();
+    COREMANAGER->onScreenResized();
 }
 
-void CoreManager::Resize()
+void CoreManager::resize()
 {
   struct winsize size;
 
@@ -439,10 +439,10 @@ void CoreManager::Resize()
   }
 
   signal_resize();
-  Redraw();
+  redraw();
 }
 
-void CoreManager::Draw()
+void CoreManager::draw()
 {
   if (!redraw_pending)
     return;
@@ -452,16 +452,16 @@ void CoreManager::Draw()
 
   // non-focusable -> normal -> top
   for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
-    if ((*i)->GetType() == FreeWindow::TYPE_NON_FOCUSABLE)
-      (*i)->Draw();
+    if ((*i)->getType() == FreeWindow::TYPE_NON_FOCUSABLE)
+      (*i)->draw();
 
   for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
-    if ((*i)->GetType() == FreeWindow::TYPE_NORMAL)
-      (*i)->Draw();
+    if ((*i)->getType() == FreeWindow::TYPE_NORMAL)
+      (*i)->draw();
 
   for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
-    if ((*i)->GetType() == FreeWindow::TYPE_TOP)
-      (*i)->Draw();
+    if ((*i)->getType() == FreeWindow::TYPE_TOP)
+      (*i)->draw();
 
   // copy virtual ncurses screen to the physical screen
   Curses::doupdate();
@@ -476,12 +476,12 @@ void CoreManager::Draw()
   redraw_pending = false;
 }
 
-CoreManager::Windows::iterator CoreManager::FindWindow(FreeWindow& window)
+CoreManager::Windows::iterator CoreManager::findWindow(FreeWindow& window)
 {
   return std::find(windows.begin(), windows.end(), &window);
 }
 
-void CoreManager::FocusWindow()
+void CoreManager::focusWindow()
 {
   // check if there are any windows left
   FreeWindow *win = NULL;
@@ -489,7 +489,7 @@ void CoreManager::FocusWindow()
 
   // try to find a top window first
   for (i = windows.rbegin(); i != windows.rend(); i++)
-    if ((*i)->GetType() == FreeWindow::TYPE_TOP) {
+    if ((*i)->getType() == FreeWindow::TYPE_TOP) {
       win = *i;
       break;
     }
@@ -497,40 +497,40 @@ void CoreManager::FocusWindow()
   // normal windows
   if (!win)
     for (i = windows.rbegin(); i != windows.rend(); i++)
-      if ((*i)->GetType() == FreeWindow::TYPE_NORMAL) {
+      if ((*i)->getType() == FreeWindow::TYPE_NORMAL) {
         win = *i;
         break;
       }
 
-  FreeWindow *focus = dynamic_cast<FreeWindow*>(GetInputChild());
+  FreeWindow *focus = dynamic_cast<FreeWindow*>(getInputChild());
   if (!win || win != focus) {
     // take the focus from the old window with the focus
     if (focus) {
-      focus->UngrabFocus();
-      ClearInputChild();
+      focus->ungrabFocus();
+      clearInputChild();
     }
 
     // give the focus to the window
     if (win) {
-      SetInputChild(*win);
-      win->RestoreFocus();
+      setInputChild(*win);
+      win->restoreFocus();
     }
     signal_top_window_change();
   }
 }
 
-void CoreManager::RedrawScreen()
+void CoreManager::redrawScreen()
 {
   // make sure everything is redrawn from the scratch
   Curses::clear();
 
-  Redraw();
+  redraw();
 }
 
-void CoreManager::DeclareBindables()
+void CoreManager::declareBindables()
 {
-  DeclareBindable("coremanager", "redraw-screen",
-      sigc::mem_fun(this, &CoreManager::RedrawScreen),
+  declareBindable("coremanager", "redraw-screen",
+      sigc::mem_fun(this, &CoreManager::redrawScreen),
       InputProcessor::BINDABLE_OVERRIDE);
 }
 

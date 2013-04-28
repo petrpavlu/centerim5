@@ -24,30 +24,30 @@
 
 #include <libpurple/purple.h>
 
-#define CONNECTIONS (Connections::Instance())
+#define CONNECTIONS (Connections::instance())
 
 class Connections
 {
 public:
-  static Connections *Instance();
+  static Connections *instance();
 
 protected:
 
 private:
   PurpleConnectionUiOps centerim_connection_ui_ops;
 
-  static Connections *instance;
+  static Connections *my_instance;
 
   Connections();
   Connections(const Connections&);
   Connections& operator=(const Connections&);
   ~Connections();
 
-  static void Init();
-  static void Finalize();
+  static void init();
+  static void finalize();
   friend class CenterIM;
 
-  void AccountReconnect(PurpleAccount *account);
+  void reconnectAccount(PurpleAccount *account);
 
   static void connect_progress_(PurpleConnection *gc, const char *text,
       size_t step, size_t step_count)

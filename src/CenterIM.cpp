@@ -56,20 +56,20 @@ const char *CenterIM::named_colors[] = {
   "white"    /*  7 */
 };
 
-CenterIM *CenterIM::Instance()
+CenterIM *CenterIM::instance()
 {
-  static CenterIM instance;
-  return &instance;
+  static CenterIM my_instance;
+  return &my_instance;
 }
 
-bool CenterIM::ProcessInput(const TermKeyKey& key)
+bool CenterIM::processInput(const TermKeyKey& key)
 {
   if (idle_reporting_on_keyboard)
     purple_idle_touch();
-  return InputProcessor::ProcessInput(key);
+  return InputProcessor::processInput(key);
 }
 
-int CenterIM::Run(const char *config_path, bool ascii, bool offline)
+int CenterIM::run(const char *config_path, bool ascii, bool offline)
 {
   // ASCII mode
   if (ascii)
@@ -85,15 +85,15 @@ int CenterIM::Run(const char *config_path, bool ascii, bool offline)
     path = g_build_path(G_DIR_SEPARATOR_S, purple_home_dir(), config_path,
         NULL);
 
-  if (PurpleInit(path))
+  if (purpleInit(path))
     return 1;
 
   g_free(path);
 
-  PrefsInit();
+  prefsInit();
 
   // initialize Log component
-  Log::Init();
+  Log::init();
   if (logbuf) {
     for (LogBufferItems::iterator i = logbuf->begin();
         i != logbuf->end(); i++) {
@@ -108,66 +108,66 @@ int CenterIM::Run(const char *config_path, bool ascii, bool offline)
 
   /* Init colorschemes and keybinds after the Log is initialized so the user
    * can see if there is any error in the configs. */
-  LoadColorSchemeConfig();
-  LoadKeyConfig();
+  loadColorSchemeConfig();
+  loadKeyConfig();
 
-  Footer::Init();
+  Footer::init();
 
-  Accounts::Init();
-  Connections::Init();
-  Notify::Init();
-  Request::Init();
+  Accounts::init();
+  Connections::init();
+  Notify::init();
+  Request::init();
 
   // initialize UI
-  Conversations::Init();
-  Header::Init();
+  Conversations::init();
+  Header::init();
   // init BuddyList last so it takes the focus
-  BuddyList::Init();
+  BuddyList::init();
 
-  const char *key = KEYCONFIG->GetKeyBind("centerim", "generalmenu");
-  LOG->Info(_("Welcome to CenterIM 5. Press %s to display main menu."), key);
+  const char *key = KEYCONFIG->getKeyBind("centerim", "generalmenu");
+  LOG->info(_("Welcome to CenterIM 5. Press %s to display main menu."), key);
 
   // restore last know status on all accounts
-  ACCOUNTS->RestoreStatuses(offline);
+  ACCOUNTS->restoreStatuses(offline);
 
-  mngr->SetTopInputProcessor(*this);
-  mngr->EnableResizing();
-  mngr->StartMainLoop();
+  mngr->setTopInputProcessor(*this);
+  mngr->enableResizing();
+  mngr->startMainLoop();
 
   purple_prefs_disconnect_by_handle(this);
 
   resize_conn.disconnect();
   top_window_change_conn.disconnect();
 
-  Conversations::Finalize();
-  Header::Finalize();
-  BuddyList::Finalize();
+  Conversations::finalize();
+  Header::finalize();
+  BuddyList::finalize();
 
-  Accounts::Finalize();
-  Connections::Finalize();
-  Notify::Finalize();
-  Request::Finalize();
+  Accounts::finalize();
+  Connections::finalize();
+  Notify::finalize();
+  Request::finalize();
 
-  Footer::Finalize();
+  Footer::finalize();
 
-  Log::Finalize();
+  Log::finalize();
 
-  PurpleFinalize();
+  purpleFinalize();
 
   return 0;
 }
 
-void CenterIM::Quit()
+void CenterIM::quit()
 {
-  mngr->QuitMainLoop();
+  mngr->quitMainLoop();
 }
 
-CppConsUI::Rect CenterIM::GetScreenArea(ScreenArea area)
+CppConsUI::Rect CenterIM::getScreenArea(ScreenArea area)
 {
   return areas[area];
 }
 
-CppConsUI::Rect CenterIM::GetScreenAreaCentered(ScreenArea area)
+CppConsUI::Rect CenterIM::getScreenAreaCentered(ScreenArea area)
 {
   CppConsUI::Rect s = areas[WHOLE_AREA];
   CppConsUI::Rect r = areas[area];
@@ -176,27 +176,27 @@ CppConsUI::Rect CenterIM::GetScreenAreaCentered(ScreenArea area)
   return CppConsUI::Rect(x, y, r.width, r.height);
 }
 
-bool CenterIM::LoadColorSchemeConfig()
+bool CenterIM::loadColorSchemeConfig()
 {
   xmlnode *root = purple_util_read_xml_from_file("colorschemes.xml",
       _("color schemes"));
 
   if (!root) {
     // read error, first time run?
-    LoadDefaultColorSchemeConfig();
-    if (SaveColorSchemeConfig())
+    loadDefaultColorSchemeConfig();
+    if (saveColorSchemeConfig())
       return true;
     return false;
   }
 
-  COLORSCHEME->Clear();
+  COLORSCHEME->clear();
   bool res = false;
 
   for (xmlnode *scheme = xmlnode_get_child(root, "scheme"); scheme;
       scheme = xmlnode_get_next_twin(scheme)) {
     const char *name = xmlnode_get_attrib(scheme, "name");
     if (!name) {
-      LOG->Error(_("Missing 'name' attribute in the scheme definition."));
+      LOG->error(_("Missing 'name' attribute in the scheme definition."));
       goto out;
     }
 
@@ -204,14 +204,14 @@ bool CenterIM::LoadColorSchemeConfig()
         color = xmlnode_get_next_twin(color)) {
       const char *widget = xmlnode_get_attrib(color, "widget");
       if (!widget) {
-        LOG->Error(
+        LOG->error(
             _("Missing 'widget' attribute in the color definition."));
         goto out;
       }
 
       const char *property = xmlnode_get_attrib(color, "property");
       if (!property) {
-        LOG->Error(
+        LOG->error(
             _("Missing 'property' attribute in the color definition."));
         goto out;
       }
@@ -224,22 +224,22 @@ bool CenterIM::LoadColorSchemeConfig()
       int bg = CppConsUI::Curses::Color::DEFAULT;
       int attr = 0;
 
-      if (fgs && !StringToColor(fgs, &fg)) {
-        LOG->Error(_("Unrecognized color '%s'."), fgs);
+      if (fgs && !stringToColor(fgs, &fg)) {
+        LOG->error(_("Unrecognized color '%s'."), fgs);
         goto out;
       }
 
-      if (bgs && !StringToColor(bgs, &bg)) {
-        LOG->Error(_("Unrecognized color '%s'."), bgs);
+      if (bgs && !stringToColor(bgs, &bg)) {
+        LOG->error(_("Unrecognized color '%s'."), bgs);
         goto out;
       }
 
-      if (attrs && !StringToColorAttributes(attrs, &attr)) {
-        LOG->Error(_("Unrecognized attributes '%s'."), attrs);
+      if (attrs && !stringToColorAttributes(attrs, &attr)) {
+        LOG->error(_("Unrecognized attributes '%s'."), attrs);
         goto out;
       }
 
-      COLORSCHEME->SetColorPair(name, widget, property, fg, bg, attr);
+      COLORSCHEME->setColorPair(name, widget, property, fg, bg, attr);
     }
   }
 
@@ -247,9 +247,9 @@ bool CenterIM::LoadColorSchemeConfig()
 
 out:
   if (!res) {
-    LOG->Error(_("Error parsing 'colorschemes.xml', "
+    LOG->error(_("Error parsing 'colorschemes.xml', "
           "loading default color scheme."));
-    LoadDefaultColorSchemeConfig();
+    loadDefaultColorSchemeConfig();
   }
 
   xmlnode_free(root);
@@ -257,42 +257,42 @@ out:
   return res;
 }
 
-bool CenterIM::LoadKeyConfig()
+bool CenterIM::loadKeyConfig()
 {
   xmlnode *root = purple_util_read_xml_from_file("binds.xml",
       _("key bindings"));
 
   if (!root) {
     // read error, first time run?
-    LoadDefaultKeyConfig();
-    if (SaveKeyConfig())
+    loadDefaultKeyConfig();
+    if (saveKeyConfig())
       return true;
     return false;
   }
 
-  KEYCONFIG->Clear();
+  KEYCONFIG->clear();
   bool res = false;
 
   for (xmlnode *bind = xmlnode_get_child(root, "bind"); bind;
       bind = xmlnode_get_next_twin(bind)) {
     const char *context = xmlnode_get_attrib(bind, "context");
     if (!context) {
-        LOG->Error(_("Missing 'context' attribute in the bind definition."));
+        LOG->error(_("Missing 'context' attribute in the bind definition."));
         goto out;
     }
     const char *action = xmlnode_get_attrib(bind, "action");
     if (!action) {
-        LOG->Error(_("Missing 'action' attribute in the bind definition."));
+        LOG->error(_("Missing 'action' attribute in the bind definition."));
         goto out;
     }
     const char *key = xmlnode_get_attrib(bind, "key");
     if (!key) {
-        LOG->Error(_("Missing 'key' attribute in the bind definition."));
+        LOG->error(_("Missing 'key' attribute in the bind definition."));
         goto out;
     }
 
-    if (!KEYCONFIG->BindKey(context, action, key)) {
-      LOG->Error(_("Unrecognized key '%s'."), key);
+    if (!KEYCONFIG->bindKey(context, action, key)) {
+      LOG->error(_("Unrecognized key '%s'."), key);
       goto out;
     }
   }
@@ -301,8 +301,8 @@ bool CenterIM::LoadKeyConfig()
 
 out:
   if (!res) {
-    LOG->Error(_("Error parsing 'binds.xml', loading default keys."));
-    LoadDefaultKeyConfig();
+    LOG->error(_("Error parsing 'binds.xml', loading default keys."));
+    loadDefaultKeyConfig();
   }
 
   xmlnode_free(root);
@@ -313,20 +313,20 @@ out:
 CenterIM::CenterIM()
 : convs_expanded(false), idle_reporting_on_keyboard(false)
 {
-  mngr = CppConsUI::CoreManager::Instance();
+  mngr = CppConsUI::CoreManager::instance();
   resize_conn = mngr->signal_resize.connect(sigc::mem_fun(this,
-        &CenterIM::OnScreenResized));
+        &CenterIM::onScreenResized));
   top_window_change_conn = mngr->signal_top_window_change.connect(
-      sigc::mem_fun(this, &CenterIM::OnTopWindowChanged));
+      sigc::mem_fun(this, &CenterIM::onTopWindowChanged));
 
   memset(&centerim_core_ui_ops, 0, sizeof(centerim_core_ui_ops));
   memset(&logbuf_debug_ui_ops, 0, sizeof(logbuf_debug_ui_ops));
   memset(&centerim_glib_eventloops, 0, sizeof(centerim_glib_eventloops));
 
-  DeclareBindables();
+  declareBindables();
 }
 
-int CenterIM::PurpleInit(const char *config_path)
+int CenterIM::purpleInit(const char *config_path)
 {
   g_assert(config_path);
   g_assert(g_path_is_absolute(config_path));
@@ -377,7 +377,7 @@ int CenterIM::PurpleInit(const char *config_path)
   return 0;
 }
 
-void CenterIM::PurpleFinalize()
+void CenterIM::purpleFinalize()
 {
   purple_plugins_save_loaded(CONF_PLUGINS_SAVE_PREF);
 
@@ -386,7 +386,7 @@ void CenterIM::PurpleFinalize()
   purple_core_quit();
 }
 
-void CenterIM::PrefsInit()
+void CenterIM::prefsInit()
 {
   // remove someday...
   if (purple_prefs_exists("/centerim"))
@@ -408,7 +408,7 @@ void CenterIM::PrefsInit()
   purple_prefs_trigger_callback("/purple/away/idle_reporting");
 }
 
-void CenterIM::OnScreenResized()
+void CenterIM::onScreenResized()
 {
   CppConsUI::Rect size;
 
@@ -486,16 +486,16 @@ void CenterIM::OnScreenResized()
   areas[WHOLE_AREA] = size;
 }
 
-void CenterIM::OnTopWindowChanged()
+void CenterIM::onTopWindowChanged()
 {
   if (!convs_expanded)
     return;
 
-  CppConsUI::FreeWindow *top = mngr->GetTopWindow();
+  CppConsUI::FreeWindow *top = mngr->getTopWindow();
   if (top && typeid(Conversation) != typeid(*top)) {
     convs_expanded = false;
-    CONVERSATIONS->SetExpandedConversations(convs_expanded);
-    mngr->OnScreenResized();
+    CONVERSATIONS->setExpandedConversations(convs_expanded);
+    mngr->onScreenResized();
   }
 }
 
@@ -567,7 +567,7 @@ gboolean CenterIM::input_remove(guint handle)
 gboolean CenterIM::purple_glib_io_input(GIOChannel *source,
     GIOCondition condition, gpointer data)
 {
-  IOClosure *closure = (IOClosure *) data;
+  IOClosure *closure = static_cast<IOClosure*>(data);
   int purple_cond = 0;
 
   if (condition & PURPLE_GLIB_READ_COND)
@@ -583,7 +583,7 @@ gboolean CenterIM::purple_glib_io_input(GIOChannel *source,
 
 void CenterIM::purple_glib_io_destroy(gpointer data)
 {
-  delete (IOClosure *) data;
+  delete static_cast<IOClosure*>(data);
 }
 
 void CenterIM::tmp_purple_print(PurpleDebugLevel level, const char *category,
@@ -602,7 +602,7 @@ void CenterIM::tmp_purple_print(PurpleDebugLevel level, const char *category,
 void CenterIM::dimensions_change(const char * /*name*/,
     PurplePrefType /*type*/, gconstpointer /*val*/)
 {
-  mngr->OnScreenResized();
+  mngr->onScreenResized();
 }
 
 void CenterIM::idle_reporting_change(const char * /*name*/,
@@ -617,110 +617,110 @@ void CenterIM::idle_reporting_change(const char * /*name*/,
     idle_reporting_on_keyboard = false;
 }
 
-void CenterIM::LoadDefaultColorSchemeConfig()
+void CenterIM::loadDefaultColorSchemeConfig()
 {
-  COLORSCHEME->Clear();
+  COLORSCHEME->clear();
 
   // default colors init
-  COLORSCHEME->SetColorPair("accountstatusmenu", "panel", "line",
+  COLORSCHEME->setColorPair("accountstatusmenu", "panel", "line",
       CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->SetColorPair("accountstatusmenu", "horizontalline", "line",
+  COLORSCHEME->setColorPair("accountstatusmenu", "horizontalline", "line",
       CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->SetColorPair("accountstatusmenu", "button", "normal",
+  COLORSCHEME->setColorPair("accountstatusmenu", "button", "normal",
       CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
 
-  COLORSCHEME->SetColorPair("buddylist", "treeview", "line",
+  COLORSCHEME->setColorPair("buddylist", "treeview", "line",
       CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->SetColorPair("buddylist", "panel", "line",
+  COLORSCHEME->setColorPair("buddylist", "panel", "line",
       CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
       CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("buddylist", "button", "normal",
+  COLORSCHEME->setColorPair("buddylist", "button", "normal",
       CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->SetColorPair("buddylistgroup", "button", "normal",
+  COLORSCHEME->setColorPair("buddylistgroup", "button", "normal",
       CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
 
-  COLORSCHEME->SetColorPair("buddylistbuddy_offline", "button", "normal",
+  COLORSCHEME->setColorPair("buddylistbuddy_offline", "button", "normal",
       CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->SetColorPair("buddylistbuddy_online", "button", "normal",
+  COLORSCHEME->setColorPair("buddylistbuddy_online", "button", "normal",
       CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->SetColorPair("buddylistbuddy_na", "button", "normal",
+  COLORSCHEME->setColorPair("buddylistbuddy_na", "button", "normal",
       CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->SetColorPair("buddylistbuddy_away", "button", "normal",
+  COLORSCHEME->setColorPair("buddylistbuddy_away", "button", "normal",
       CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT);
 
-  COLORSCHEME->SetColorPair("buddylistcontact_offline", "button", "normal",
+  COLORSCHEME->setColorPair("buddylistcontact_offline", "button", "normal",
       CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->SetColorPair("buddylistcontact_online", "button", "normal",
+  COLORSCHEME->setColorPair("buddylistcontact_online", "button", "normal",
       CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->SetColorPair("buddylistcontact_na", "button", "normal",
+  COLORSCHEME->setColorPair("buddylistcontact_na", "button", "normal",
       CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->SetColorPair("buddylistcontact_away", "button", "normal",
+  COLORSCHEME->setColorPair("buddylistcontact_away", "button", "normal",
       CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT);
 
-  COLORSCHEME->SetColorPair("conversation", "textview", "text",
+  COLORSCHEME->setColorPair("conversation", "textview", "text",
       CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->SetColorPair("conversation", "textview", "color1",
+  COLORSCHEME->setColorPair("conversation", "textview", "color1",
       CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->SetColorPair("conversation", "textview", "color2",
+  COLORSCHEME->setColorPair("conversation", "textview", "color2",
       CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->SetColorPair("conversation", "panel", "line",
+  COLORSCHEME->setColorPair("conversation", "panel", "line",
       CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
       CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation", "horizontalline", "line",
+  COLORSCHEME->setColorPair("conversation", "horizontalline", "line",
       CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
       CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("conversation", "textedit", "text",
+  COLORSCHEME->setColorPair("conversation", "textedit", "text",
       CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
 
-  COLORSCHEME->SetColorPair("conversation", "label", "text",
+  COLORSCHEME->setColorPair("conversation", "label", "text",
       CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->SetColorPair("conversation-active", "label", "text",
+  COLORSCHEME->setColorPair("conversation-active", "label", "text",
       CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->SetColorPair("conversation-new", "label", "text",
+  COLORSCHEME->setColorPair("conversation-new", "label", "text",
       CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT,
       CppConsUI::Curses::Attr::BOLD);
 
-  COLORSCHEME->SetColorPair("footer", "label", "text",
+  COLORSCHEME->setColorPair("footer", "label", "text",
       CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
-  COLORSCHEME->SetColorPair("footer", "container", "background",
+  COLORSCHEME->setColorPair("footer", "container", "background",
       CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
 
-  COLORSCHEME->SetColorPair("generalmenu", "panel", "line",
+  COLORSCHEME->setColorPair("generalmenu", "panel", "line",
       CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->SetColorPair("generalmenu", "horizontalline", "line",
+  COLORSCHEME->setColorPair("generalmenu", "horizontalline", "line",
       CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->SetColorPair("generalmenu", "button", "normal",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
-
-  COLORSCHEME->SetColorPair("generalwindow", "panel", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->SetColorPair("generalwindow", "horizontalline", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->SetColorPair("generalwindow", "verticalline", "line",
+  COLORSCHEME->setColorPair("generalmenu", "button", "normal",
       CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
 
-  COLORSCHEME->SetColorPair("log", "panel", "line",
+  COLORSCHEME->setColorPair("generalwindow", "panel", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setColorPair("generalwindow", "horizontalline", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setColorPair("generalwindow", "verticalline", "line",
+      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+
+  COLORSCHEME->setColorPair("log", "panel", "line",
       CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
       CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->SetColorPair("log", "textview", "text",
+  COLORSCHEME->setColorPair("log", "textview", "text",
       CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
 
-  COLORSCHEME->SetColorPair("header", "label", "text",
+  COLORSCHEME->setColorPair("header", "label", "text",
       CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
-  COLORSCHEME->SetColorPair("header", "container", "background",
+  COLORSCHEME->setColorPair("header", "container", "background",
       CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
-  COLORSCHEME->SetColorPair("header-request", "label", "text",
+  COLORSCHEME->setColorPair("header-request", "label", "text",
       CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::WHITE);
 }
 
-bool CenterIM::SaveColorSchemeConfig()
+bool CenterIM::saveColorSchemeConfig()
 {
   xmlnode *root = xmlnode_new("colorscheme");
   xmlnode_set_attrib(root, "version", "1.0");
 
   for (CppConsUI::ColorScheme::Schemes::const_iterator
-      si = COLORSCHEME->GetSchemes().begin();
-      si != COLORSCHEME->GetSchemes().end(); si++) {
+      si = COLORSCHEME->getSchemes().begin();
+      si != COLORSCHEME->getSchemes().end(); si++) {
     xmlnode *scheme = xmlnode_new("scheme");
     xmlnode_set_attrib(scheme, "name", si->first.c_str());
     xmlnode_insert_child(root, scheme);
@@ -738,18 +738,18 @@ bool CenterIM::SaveColorSchemeConfig()
         char *str;
 
         if (pi->second.foreground != CppConsUI::Curses::Color::DEFAULT) {
-          str = ColorToString(pi->second.foreground);
+          str = colorToString(pi->second.foreground);
           xmlnode_set_attrib(color, "foreground", str);
           g_free(str);
         }
 
         if (pi->second.background != CppConsUI::Curses::Color::DEFAULT) {
-          str = ColorToString(pi->second.background);
+          str = colorToString(pi->second.background);
           xmlnode_set_attrib(color, "background", str);
           g_free(str);
         }
 
-        if ((str = ColorAttributesToString(pi->second.attrs))) {
+        if ((str = colorAttributesToString(pi->second.attrs))) {
           xmlnode_set_attrib(color, "attributes", str);
           g_free(str);
         }
@@ -760,7 +760,7 @@ bool CenterIM::SaveColorSchemeConfig()
   char *data = xmlnode_to_formatted_str(root, NULL);
   bool res = true;
   if (!purple_util_write_data_to_file("colorschemes.xml", data, -1)) {
-    LOG->Error(_("Error saving 'colorschemes.xml'."));
+    LOG->error(_("Error saving 'colorschemes.xml'."));
     res = false;
   }
   g_free(data);
@@ -768,14 +768,14 @@ bool CenterIM::SaveColorSchemeConfig()
   return res;
 }
 
-char *CenterIM::ColorToString(int color)
+char *CenterIM::colorToString(int color)
 {
   if (color >= -1 && color < static_cast<int>(G_N_ELEMENTS(named_colors) - 1))
     return g_strdup(named_colors[color + 1]);
   return g_strdup_printf("%d", color);
 }
 
-bool CenterIM::StringToColor(const char *str, int *color)
+bool CenterIM::stringToColor(const char *str, int *color)
 {
   g_assert(str);
   g_assert(color);
@@ -801,7 +801,7 @@ bool CenterIM::StringToColor(const char *str, int *color)
   return false;
 }
 
-char *CenterIM::ColorAttributesToString(int attrs)
+char *CenterIM::colorAttributesToString(int attrs)
 {
 #define APPEND(str) do { \
     if (s.size()) \
@@ -830,7 +830,7 @@ char *CenterIM::ColorAttributesToString(int attrs)
 #undef APPEND
 }
 
-bool CenterIM::StringToColorAttributes(const char *str, int *attrs)
+bool CenterIM::stringToColorAttributes(const char *str, int *attrs)
 {
   g_assert(str);
   g_assert(attrs);
@@ -874,55 +874,55 @@ bool CenterIM::StringToColorAttributes(const char *str, int *attrs)
   return valid;
 }
 
-void CenterIM::LoadDefaultKeyConfig()
+void CenterIM::loadDefaultKeyConfig()
 {
-  KEYCONFIG->Clear();
-  KEYCONFIG->LoadDefaultKeyConfig();
+  KEYCONFIG->clear();
+  KEYCONFIG->loadDefaultKeyConfig();
 
-  KEYCONFIG->BindKey("centerim", "quit", "Ctrl-q");
-  KEYCONFIG->BindKey("centerim", "buddylist", "F1");
-  KEYCONFIG->BindKey("centerim", "conversation-active", "F2");
-  KEYCONFIG->BindKey("centerim", "accountstatusmenu", "F3");
-  KEYCONFIG->BindKey("centerim", "generalmenu", "F4");
-  KEYCONFIG->BindKey("centerim", "generalmenu", "Ctrl-g");
-  KEYCONFIG->BindKey("centerim", "buddylist-toggle-offline", "F5");
-  KEYCONFIG->BindKey("centerim", "conversation-expand", "F6");
+  KEYCONFIG->bindKey("centerim", "quit", "Ctrl-q");
+  KEYCONFIG->bindKey("centerim", "buddylist", "F1");
+  KEYCONFIG->bindKey("centerim", "conversation-active", "F2");
+  KEYCONFIG->bindKey("centerim", "accountstatusmenu", "F3");
+  KEYCONFIG->bindKey("centerim", "generalmenu", "F4");
+  KEYCONFIG->bindKey("centerim", "generalmenu", "Ctrl-g");
+  KEYCONFIG->bindKey("centerim", "buddylist-toggle-offline", "F5");
+  KEYCONFIG->bindKey("centerim", "conversation-expand", "F6");
 
-  KEYCONFIG->BindKey("centerim", "conversation-prev", "Ctrl-p");
-  KEYCONFIG->BindKey("centerim", "conversation-next", "Ctrl-n");
-  KEYCONFIG->BindKey("centerim", "conversation-number1", "Alt-1");
-  KEYCONFIG->BindKey("centerim", "conversation-number2", "Alt-2");
-  KEYCONFIG->BindKey("centerim", "conversation-number3", "Alt-3");
-  KEYCONFIG->BindKey("centerim", "conversation-number4", "Alt-4");
-  KEYCONFIG->BindKey("centerim", "conversation-number5", "Alt-5");
-  KEYCONFIG->BindKey("centerim", "conversation-number6", "Alt-6");
-  KEYCONFIG->BindKey("centerim", "conversation-number7", "Alt-7");
-  KEYCONFIG->BindKey("centerim", "conversation-number8", "Alt-8");
-  KEYCONFIG->BindKey("centerim", "conversation-number9", "Alt-9");
-  KEYCONFIG->BindKey("centerim", "conversation-number10", "Alt-0");
-  KEYCONFIG->BindKey("centerim", "conversation-number11", "Alt-q");
-  KEYCONFIG->BindKey("centerim", "conversation-number12", "Alt-w");
-  KEYCONFIG->BindKey("centerim", "conversation-number13", "Alt-e");
-  KEYCONFIG->BindKey("centerim", "conversation-number14", "Alt-r");
-  KEYCONFIG->BindKey("centerim", "conversation-number15", "Alt-t");
-  KEYCONFIG->BindKey("centerim", "conversation-number16", "Alt-y");
-  KEYCONFIG->BindKey("centerim", "conversation-number17", "Alt-u");
-  KEYCONFIG->BindKey("centerim", "conversation-number18", "Alt-i");
-  KEYCONFIG->BindKey("centerim", "conversation-number19", "Alt-o");
-  KEYCONFIG->BindKey("centerim", "conversation-number20", "Alt-p");
+  KEYCONFIG->bindKey("centerim", "conversation-prev", "Ctrl-p");
+  KEYCONFIG->bindKey("centerim", "conversation-next", "Ctrl-n");
+  KEYCONFIG->bindKey("centerim", "conversation-number1", "Alt-1");
+  KEYCONFIG->bindKey("centerim", "conversation-number2", "Alt-2");
+  KEYCONFIG->bindKey("centerim", "conversation-number3", "Alt-3");
+  KEYCONFIG->bindKey("centerim", "conversation-number4", "Alt-4");
+  KEYCONFIG->bindKey("centerim", "conversation-number5", "Alt-5");
+  KEYCONFIG->bindKey("centerim", "conversation-number6", "Alt-6");
+  KEYCONFIG->bindKey("centerim", "conversation-number7", "Alt-7");
+  KEYCONFIG->bindKey("centerim", "conversation-number8", "Alt-8");
+  KEYCONFIG->bindKey("centerim", "conversation-number9", "Alt-9");
+  KEYCONFIG->bindKey("centerim", "conversation-number10", "Alt-0");
+  KEYCONFIG->bindKey("centerim", "conversation-number11", "Alt-q");
+  KEYCONFIG->bindKey("centerim", "conversation-number12", "Alt-w");
+  KEYCONFIG->bindKey("centerim", "conversation-number13", "Alt-e");
+  KEYCONFIG->bindKey("centerim", "conversation-number14", "Alt-r");
+  KEYCONFIG->bindKey("centerim", "conversation-number15", "Alt-t");
+  KEYCONFIG->bindKey("centerim", "conversation-number16", "Alt-y");
+  KEYCONFIG->bindKey("centerim", "conversation-number17", "Alt-u");
+  KEYCONFIG->bindKey("centerim", "conversation-number18", "Alt-i");
+  KEYCONFIG->bindKey("centerim", "conversation-number19", "Alt-o");
+  KEYCONFIG->bindKey("centerim", "conversation-number20", "Alt-p");
 
-  KEYCONFIG->BindKey("buddylist", "contextmenu", "Ctrl-d");
-  KEYCONFIG->BindKey("buddylist", "filter", "/");
+  KEYCONFIG->bindKey("buddylist", "contextmenu", "Ctrl-d");
+  KEYCONFIG->bindKey("buddylist", "filter", "/");
 
-  KEYCONFIG->BindKey("conversation", "send", "Ctrl-x");
+  KEYCONFIG->bindKey("conversation", "send", "Ctrl-x");
 }
 
-bool CenterIM::SaveKeyConfig()
+bool CenterIM::saveKeyConfig()
 {
   xmlnode *root = xmlnode_new("keyconfig");
   xmlnode_set_attrib(root, "version", "1.0");
 
-  const CppConsUI::KeyConfig::KeyBinds *binds = KEYCONFIG->GetKeyBinds();
+  const CppConsUI::KeyConfig::KeyBinds *binds = KEYCONFIG->getKeyBinds();
   for (CppConsUI::KeyConfig::KeyBinds::const_iterator bi = binds->begin();
       bi != binds->end(); bi++) {
     /* Invert the map because the output should be sorted by context+action,
@@ -940,7 +940,7 @@ bool CenterIM::SaveKeyConfig()
       xmlnode_set_attrib(bind, "context", bi->first.c_str());
       xmlnode_set_attrib(bind, "action", ci->first.c_str());
       char *key;
-      if ((key = KEYCONFIG->TermKeyToString(ci->second))) {
+      if ((key = KEYCONFIG->termKeyToString(ci->second))) {
         xmlnode_set_attrib(bind, "key", key);
         g_free(key);
       }
@@ -952,7 +952,7 @@ bool CenterIM::SaveKeyConfig()
   char *data = xmlnode_to_formatted_str(root, NULL);
   bool res = true;
   if (!purple_util_write_data_to_file("binds.xml", data, -1)) {
-    LOG->Error(_("Error saving 'binds.xml'."));
+    LOG->error(_("Error saving 'binds.xml'."));
     res = false;
   }
   g_free(data);
@@ -960,123 +960,123 @@ bool CenterIM::SaveKeyConfig()
   return res;
 }
 
-void CenterIM::ActionFocusBuddyList()
+void CenterIM::actionFocusBuddyList()
 {
-  BUDDYLIST->Show();
+  BUDDYLIST->show();
 }
 
-void CenterIM::ActionFocusActiveConversation()
+void CenterIM::actionFocusActiveConversation()
 {
-  CONVERSATIONS->FocusActiveConversation();
+  CONVERSATIONS->focusActiveConversation();
 }
 
-void CenterIM::ActionOpenAccountStatusMenu()
+void CenterIM::actionOpenAccountStatusMenu()
 {
   /* Don't allow to open the account status menu if there is any 'top' window
    * (except general menu, we can close that). */
-  CppConsUI::FreeWindow *top = mngr->GetTopWindow();
+  CppConsUI::FreeWindow *top = mngr->getTopWindow();
   if (top) {
     if (dynamic_cast<GeneralMenu*>(top))
-      top->Close();
-    else if (top->GetType() == CppConsUI::FreeWindow::TYPE_TOP)
+      top->close();
+    else if (top->getType() == CppConsUI::FreeWindow::TYPE_TOP)
       return;
   }
 
   AccountStatusMenu *menu = new AccountStatusMenu;
-  menu->Show();
+  menu->show();
 }
 
-void CenterIM::ActionOpenGeneralMenu()
+void CenterIM::actionOpenGeneralMenu()
 {
   /* Don't allow to open the general menu if there is any 'top' window (except
    * account status menu, we can close that). */
-  CppConsUI::FreeWindow *top = mngr->GetTopWindow();
+  CppConsUI::FreeWindow *top = mngr->getTopWindow();
   if (top) {
     if (dynamic_cast<AccountStatusMenu*>(top))
-      top->Close();
-    else if (top->GetType() == CppConsUI::FreeWindow::TYPE_TOP)
+      top->close();
+    else if (top->getType() == CppConsUI::FreeWindow::TYPE_TOP)
       return;
   }
 
   GeneralMenu *menu = new GeneralMenu;
-  menu->Show();
+  menu->show();
 }
 
-void CenterIM::ActionBuddyListToggleOffline()
+void CenterIM::actionBuddyListToggleOffline()
 {
   gboolean cur = purple_prefs_get_bool(CONF_PREFIX
       "/blist/show_offline_buddies");
   purple_prefs_set_bool(CONF_PREFIX "/blist/show_offline_buddies", !cur);
 }
 
-void CenterIM::ActionFocusPrevConversation()
+void CenterIM::actionFocusPrevConversation()
 {
-  CONVERSATIONS->FocusPrevConversation();
+  CONVERSATIONS->focusPrevConversation();
 }
 
-void CenterIM::ActionFocusNextConversation()
+void CenterIM::actionFocusNextConversation()
 {
-  CONVERSATIONS->FocusNextConversation();
+  CONVERSATIONS->focusNextConversation();
 }
 
-void CenterIM::ActionFocusConversation(int i)
+void CenterIM::actionFocusConversation(int i)
 {
-  CONVERSATIONS->FocusConversation(i);
+  CONVERSATIONS->focusConversation(i);
 }
 
-void CenterIM::ActionExpandConversation()
+void CenterIM::actionExpandConversation()
 {
-  CppConsUI::FreeWindow *top = mngr->GetTopWindow();
-  if (top && top->GetType() == CppConsUI::FreeWindow::TYPE_TOP)
+  CppConsUI::FreeWindow *top = mngr->getTopWindow();
+  if (top && top->getType() == CppConsUI::FreeWindow::TYPE_TOP)
     return;
 
   if (!convs_expanded) {
-    CONVERSATIONS->FocusActiveConversation();
-    top = mngr->GetTopWindow();
+    CONVERSATIONS->focusActiveConversation();
+    top = mngr->getTopWindow();
     if (!top || typeid(Conversation) != typeid(*top))
       return;
   }
 
   convs_expanded = !convs_expanded;
-  CONVERSATIONS->SetExpandedConversations(convs_expanded);
-  mngr->OnScreenResized();
+  CONVERSATIONS->setExpandedConversations(convs_expanded);
+  mngr->onScreenResized();
 }
 
-void CenterIM::DeclareBindables()
+void CenterIM::declareBindables()
 {
-  DeclareBindable("centerim", "quit",
-      sigc::mem_fun(this, &CenterIM::Quit),
+  declareBindable("centerim", "quit",
+      sigc::mem_fun(this, &CenterIM::quit),
       InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable("centerim", "buddylist",
-      sigc::mem_fun(this, &CenterIM::ActionFocusBuddyList),
+  declareBindable("centerim", "buddylist",
+      sigc::mem_fun(this, &CenterIM::actionFocusBuddyList),
       InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable("centerim", "conversation-active",
-      sigc::mem_fun(this, &CenterIM::ActionFocusActiveConversation),
+  declareBindable("centerim", "conversation-active",
+      sigc::mem_fun(this, &CenterIM::actionFocusActiveConversation),
       InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable("centerim", "accountstatusmenu",
-      sigc::mem_fun(this, &CenterIM::ActionOpenAccountStatusMenu),
+  declareBindable("centerim", "accountstatusmenu",
+      sigc::mem_fun(this, &CenterIM::actionOpenAccountStatusMenu),
       InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable("centerim", "generalmenu",
-      sigc::mem_fun(this, &CenterIM::ActionOpenGeneralMenu),
+  declareBindable("centerim", "generalmenu",
+      sigc::mem_fun(this, &CenterIM::actionOpenGeneralMenu),
       InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable("centerim", "buddylist-toggle-offline",
-      sigc::mem_fun(this, &CenterIM::ActionBuddyListToggleOffline),
+  declareBindable("centerim", "buddylist-toggle-offline",
+      sigc::mem_fun(this, &CenterIM::actionBuddyListToggleOffline),
       InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable("centerim", "conversation-prev",
-      sigc::mem_fun(this, &CenterIM::ActionFocusPrevConversation),
+  declareBindable("centerim", "conversation-prev",
+      sigc::mem_fun(this, &CenterIM::actionFocusPrevConversation),
       InputProcessor::BINDABLE_OVERRIDE);
-  DeclareBindable("centerim", "conversation-next",
-      sigc::mem_fun(this, &CenterIM::ActionFocusNextConversation),
+  declareBindable("centerim", "conversation-next",
+      sigc::mem_fun(this, &CenterIM::actionFocusNextConversation),
       InputProcessor::BINDABLE_OVERRIDE);
   char action[] = "conversation-numberXX";
   for (int i = 1; i <= 20; i++) {
     g_sprintf(action + sizeof(action) - 3, "%d", i);
-    DeclareBindable("centerim", action, sigc::bind(sigc::mem_fun(this,
-            &CenterIM::ActionFocusConversation), i),
+    declareBindable("centerim", action, sigc::bind(sigc::mem_fun(this,
+            &CenterIM::actionFocusConversation), i),
         InputProcessor::BINDABLE_OVERRIDE);
   }
-  DeclareBindable("centerim", "conversation-expand",
-      sigc::mem_fun(this, &CenterIM::ActionExpandConversation),
+  declareBindable("centerim", "conversation-expand",
+      sigc::mem_fun(this, &CenterIM::actionExpandConversation),
       InputProcessor::BINDABLE_OVERRIDE);
 }
 

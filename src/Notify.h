@@ -26,12 +26,12 @@
 #include <cppconsui/TreeView.h>
 #include <libpurple/purple.h>
 
-#define NOTIFY (Notify::Instance())
+#define NOTIFY (Notify::instance())
 
 class Notify
 {
 public:
-  static Notify *Instance();
+  static Notify *instance();
 
 protected:
 
@@ -44,9 +44,9 @@ private:
     virtual ~UserInfoDialog() {}
 
     // FreeWindow
-    virtual void OnScreenResized();
+    virtual void onScreenResized();
 
-    void Update(PurpleConnection *gc, const char *who,
+    void update(PurpleConnection *gc, const char *who,
         PurpleNotifyUserInfo *user_info);
 
   protected:
@@ -71,19 +71,19 @@ private:
 
   PurpleNotifyUiOps centerim_notify_ui_ops;
 
-  static Notify *instance;
+  static Notify *my_instance;
 
   Notify();
   Notify(const Notify&);
   Notify& operator=(const Notify&);
   ~Notify();
 
-  static void Init();
-  static void Finalize();
+  static void init();
+  static void finalize();
   friend class CenterIM;
 
-  void OnDialogClose(CppConsUI::FreeWindow& activator, PurpleNotifyType type);
-  void OnUserInfoDialogClose(CppConsUI::FreeWindow& activator, User user);
+  void onDialogClose(CppConsUI::FreeWindow& activator, PurpleNotifyType type);
+  void onUserInfoDialogClose(CppConsUI::FreeWindow& activator, User user);
 
   static void *notify_message_(PurpleNotifyMsgType type, const char *title,
       const char *primary, const char *secondary)

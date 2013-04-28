@@ -108,8 +108,7 @@ static void on_new_message(PurpleAccount *account, const char *remote,
 
   g_free(local);
   g_free(nohtml);
-  if (icon_encoded)
-    g_free(icon_encoded);
+  g_free(icon_encoded);
 }
 
 static void on_new_im_message(PurpleAccount *account, const char *name,

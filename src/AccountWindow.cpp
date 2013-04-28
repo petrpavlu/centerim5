@@ -29,25 +29,25 @@
 AccountWindow::AccountWindow()
 : SplitDialog(0, 0, 80, 24, _("Accounts"))
 {
-  SetColorScheme("generalwindow");
+  setColorScheme("generalwindow");
 
   treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
-  SetContainer(*treeview);
+  setContainer(*treeview);
 
   // populate all defined accounts
   for (GList *i = purple_accounts_get_all(); i; i = i->next)
-    PopulateAccount(reinterpret_cast<PurpleAccount*>(i->data));
+    populateAccount(reinterpret_cast<PurpleAccount*>(i->data));
 
-  buttons->AppendItem(_("Add"), sigc::mem_fun(this,
-        &AccountWindow::AddAccount));
-  buttons->AppendSeparator();
-  buttons->AppendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
-          &AccountWindow::Close)));
+  buttons->appendItem(_("Add"), sigc::mem_fun(this,
+        &AccountWindow::addAccount));
+  buttons->appendSeparator();
+  buttons->appendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
+          &AccountWindow::close)));
 }
 
-void AccountWindow::OnScreenResized()
+void AccountWindow::onScreenResized()
 {
-  MoveResizeRect(CENTERIM->GetScreenArea(CenterIM::CHAT_AREA));
+  moveResizeRect(CENTERIM->getScreenArea(CenterIM::CHAT_AREA));
 }
 
 AccountWindow::BoolOption::BoolOption(PurpleAccount *account_,
@@ -57,12 +57,12 @@ AccountWindow::BoolOption::BoolOption(PurpleAccount *account_,
   g_assert(account);
   g_assert(option);
 
-  SetText(purple_account_option_get_text(option));
-  SetState(purple_account_get_bool(account,
+  setText(purple_account_option_get_text(option));
+  setChecked(purple_account_get_bool(account,
         purple_account_option_get_setting(option),
         purple_account_option_get_default_bool(option)));
 
-  signal_toggle.connect(sigc::mem_fun(this, &BoolOption::OnToggle));
+  signal_toggle.connect(sigc::mem_fun(this, &BoolOption::onToggle));
 }
 
 AccountWindow::BoolOption::BoolOption(PurpleAccount *account_,
@@ -72,18 +72,18 @@ AccountWindow::BoolOption::BoolOption(PurpleAccount *account_,
   g_assert(account);
 
   if (type == TYPE_REMEMBER_PASSWORD) {
-    SetText(_("Remember password"));
-    SetState(purple_account_get_remember_password(account));
+    setText(_("Remember password"));
+    setChecked(purple_account_get_remember_password(account));
   }
   else if (type == TYPE_ENABLE_ACCOUNT) {
-    SetText(_("Account enabled"));
-    SetState(purple_account_get_enabled(account, PACKAGE_NAME));
+    setText(_("Account enabled"));
+    setChecked(purple_account_get_enabled(account, PACKAGE_NAME));
   }
 
-  signal_toggle.connect(sigc::mem_fun(this, &BoolOption::OnToggle));
+  signal_toggle.connect(sigc::mem_fun(this, &BoolOption::onToggle));
 }
 
-void AccountWindow::BoolOption::OnToggle(CheckBox& /*activator*/,
+void AccountWindow::BoolOption::onToggle(CheckBox& /*activator*/,
     bool new_state)
 {
   if (type == TYPE_REMEMBER_PASSWORD)
@@ -102,7 +102,7 @@ AccountWindow::StringOption::StringOption(PurpleAccount *account_,
   g_assert(account);
   g_assert(option);
 
-  Initialize();
+  initialize();
 }
 
 AccountWindow::StringOption::StringOption(PurpleAccount *account_, Type type_)
@@ -110,61 +110,61 @@ AccountWindow::StringOption::StringOption(PurpleAccount *account_, Type type_)
 {
   g_assert(account);
 
-  Initialize();
+  initialize();
 }
 
-void AccountWindow::StringOption::Initialize()
+void AccountWindow::StringOption::initialize()
 {
   if (type == TYPE_PASSWORD)
-    SetText(_("Password"));
+    setText(_("Password"));
   else if (type == TYPE_ALIAS)
-    SetText(_("Alias"));
+    setText(_("Alias"));
   else
-    SetText(purple_account_option_get_text(option));
+    setText(purple_account_option_get_text(option));
 
-  UpdateValue();
-  signal_activate.connect(sigc::mem_fun(this, &StringOption::OnActivate));
+  updateValue();
+  signal_activate.connect(sigc::mem_fun(this, &StringOption::onActivate));
 }
 
-void AccountWindow::StringOption::UpdateValue()
+void AccountWindow::StringOption::updateValue()
 {
   if (type == TYPE_PASSWORD) {
-    SetMasked(true);
-    SetValue(purple_account_get_password(account));
+    setMasked(true);
+    setValue(purple_account_get_password(account));
   }
   else if (type == TYPE_ALIAS)
-    SetValue(purple_account_get_alias(account));
+    setValue(purple_account_get_alias(account));
   else
-    SetValue(purple_account_get_string(account,
+    setValue(purple_account_get_string(account,
           purple_account_option_get_setting(option),
           purple_account_option_get_default_string(option)));
 }
 
-void AccountWindow::StringOption::OnActivate(Button& /*activator*/)
+void AccountWindow::StringOption::onActivate(Button& /*activator*/)
 {
-  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(GetText(),
-      GetValue());
-  dialog->SetMasked(GetMasked());
+  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(getText(),
+      getValue());
+  dialog->setMasked(isMasked());
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &StringOption::ResponseHandler));
-  dialog->Show();
+        &StringOption::responseHandler));
+  dialog->show();
 }
 
-void AccountWindow::StringOption::ResponseHandler(
+void AccountWindow::StringOption::responseHandler(
     CppConsUI::InputDialog& activator,
     AbstractDialog::ResponseType response)
 {
   switch (response) {
     case AbstractDialog::RESPONSE_OK:
       if (type == TYPE_PASSWORD)
-        purple_account_set_password(account, activator.GetText());
+        purple_account_set_password(account, activator.getText());
       else if (type == TYPE_ALIAS)
-        purple_account_set_alias(account, activator.GetText());
+        purple_account_set_alias(account, activator.getText());
       else
         purple_account_set_string(account,
-            purple_account_option_get_setting(option), activator.GetText());
+            purple_account_option_get_setting(option), activator.getText());
 
-      UpdateValue();
+      updateValue();
       break;
     default:
       break;
@@ -178,29 +178,29 @@ AccountWindow::IntOption::IntOption(PurpleAccount *account_,
   g_assert(account);
   g_assert(option);
 
-  SetText(purple_account_option_get_text(option));
-  UpdateValue();
-  signal_activate.connect(sigc::mem_fun(this, &IntOption::OnActivate));
+  setText(purple_account_option_get_text(option));
+  updateValue();
+  signal_activate.connect(sigc::mem_fun(this, &IntOption::onActivate));
 }
 
-void AccountWindow::IntOption::UpdateValue()
+void AccountWindow::IntOption::updateValue()
 {
-  SetValue(purple_account_get_int(account,
+  setValue(purple_account_get_int(account,
         purple_account_option_get_setting(option),
         purple_account_option_get_default_int(option)));
 }
 
-void AccountWindow::IntOption::OnActivate(Button& /*activator*/)
+void AccountWindow::IntOption::onActivate(Button& /*activator*/)
 {
-  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(GetText(),
-      GetValue());
-  dialog->SetFlags(CppConsUI::TextEntry::FLAG_NUMERIC);
+  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(getText(),
+      getValue());
+  dialog->setFlags(CppConsUI::TextEntry::FLAG_NUMERIC);
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &IntOption::ResponseHandler));
-  dialog->Show();
+        &IntOption::responseHandler));
+  dialog->show();
 }
 
-void AccountWindow::IntOption::ResponseHandler(
+void AccountWindow::IntOption::responseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
@@ -209,16 +209,16 @@ void AccountWindow::IntOption::ResponseHandler(
 
   switch (response) {
     case AbstractDialog::RESPONSE_OK:
-      text = activator.GetText();
+      text = activator.getText();
       errno = 0;
       i = strtol(text, NULL, 10);
       if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
-        LOG->Warning(_("Value is out of range."));
+        LOG->warning(_("Value is out of range."));
       purple_account_set_int(account,
           purple_account_option_get_setting(option),
           CLAMP(i, INT_MIN, INT_MAX));
 
-      UpdateValue();
+      updateValue();
       break;
     default:
       break;
@@ -232,7 +232,7 @@ AccountWindow::StringListOption::StringListOption(PurpleAccount *account_,
   g_assert(account);
   g_assert(option);
 
-  SetText(purple_account_option_get_text(option));
+  setText(purple_account_option_get_text(option));
 
   const char *def = purple_account_get_string(account,
       purple_account_option_get_setting(option),
@@ -241,17 +241,17 @@ AccountWindow::StringListOption::StringListOption(PurpleAccount *account_,
     if (l->data) {
       PurpleKeyValuePair *kvp = reinterpret_cast<PurpleKeyValuePair*>(
           l->data);
-      AddOptionPtr(kvp->key, kvp->value);
+      addOptionPtr(kvp->key, kvp->value);
       if (kvp->value && def
           && !strcmp(def, reinterpret_cast<const char*>(kvp->value)))
-        SetSelectedByDataPtr(kvp->value);
+        setSelectedByDataPtr(kvp->value);
     }
 
   signal_selection_changed.connect(sigc::mem_fun(this,
-        &StringListOption::OnSelectionChanged));
+        &StringListOption::onSelectionChanged));
 }
 
-void AccountWindow::StringListOption::OnSelectionChanged(
+void AccountWindow::StringListOption::onSelectionChanged(
     ComboBox& /*activator*/, int /*new_entry*/, const char* /*title*/,
     intptr_t data)
 {
@@ -268,19 +268,19 @@ AccountWindow::SplitOption::SplitOption(PurpleAccount *account_,
   g_assert(account);
 
   if (split)
-    SetText(purple_account_user_split_get_text(split));
+    setText(purple_account_user_split_get_text(split));
   else
-    SetText(_("Username"));
+    setText(_("Username"));
 
-  signal_activate.connect(sigc::mem_fun(this, &SplitOption::OnActivate));
+  signal_activate.connect(sigc::mem_fun(this, &SplitOption::onActivate));
 }
 
-void AccountWindow::SplitOption::UpdateSplits()
+void AccountWindow::SplitOption::updateSplits()
 {
   SplitWidgets *split_widgets = &account_entry->split_widgets;
   SplitWidgets::iterator split_widget = split_widgets->begin();
   SplitOption *widget = *split_widget;
-  const char *val = widget->GetValue();
+  const char *val = widget->getValue();
   split_widget++;
 
   GString *username = g_string_new(val);
@@ -294,7 +294,7 @@ void AccountWindow::SplitOption::UpdateSplits()
       = reinterpret_cast<PurpleAccountUserSplit*>(iter->data);
     widget = *split_widget;
 
-    val = widget->GetValue();
+    val = widget->getValue();
     if (!val || !*val)
       val = purple_account_user_split_get_default_value(user_split);
     g_string_append_printf(username, "%c%s",
@@ -305,22 +305,22 @@ void AccountWindow::SplitOption::UpdateSplits()
   g_string_free(username, TRUE);
 }
 
-void AccountWindow::SplitOption::OnActivate(Button& /*activator*/)
+void AccountWindow::SplitOption::onActivate(Button& /*activator*/)
 {
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(text, value);
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &SplitOption::ResponseHandler));
-  dialog->Show();
+        &SplitOption::responseHandler));
+  dialog->show();
 }
 
-void AccountWindow::SplitOption::ResponseHandler(
+void AccountWindow::SplitOption::responseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
   switch (response) {
     case AbstractDialog::RESPONSE_OK:
-      SetValue(activator.GetText());
-      UpdateSplits();
+      setValue(activator.getText());
+      updateSplits();
       break;
     default:
       break;
@@ -333,28 +333,28 @@ AccountWindow::ProtocolOption::ProtocolOption(PurpleAccount *account_,
 {
   g_assert(account);
 
-  SetText(_("Protocol"));
+  setText(_("Protocol"));
 
   for (GList *i = purple_plugins_get_protocols(); i; i = i->next)
-    AddOptionPtr(purple_plugin_get_name(
+    addOptionPtr(purple_plugin_get_name(
           reinterpret_cast<PurplePlugin*>(i->data)), i->data);
 
   const char *proto_id = purple_account_get_protocol_id(account);
   PurplePlugin *plugin = purple_plugins_find_with_id(proto_id);
-  SetSelectedByDataPtr(plugin);
+  setSelectedByDataPtr(plugin);
 
   signal_selection_changed.connect(sigc::mem_fun(this,
-        &ProtocolOption::OnProtocolChanged));
+        &ProtocolOption::onProtocolChanged));
 }
 
-void AccountWindow::ProtocolOption::OnProtocolChanged(ComboBox& /*activator*/,
+void AccountWindow::ProtocolOption::onProtocolChanged(ComboBox& /*activator*/,
     size_t /*new_entry*/, const char* /*title*/, intptr_t data)
 {
   purple_account_set_protocol_id(account, purple_plugin_get_id(
         reinterpret_cast<PurplePlugin*>(data)));
 
   // this deletes us so don't touch any instance variable after
-  account_window->PopulateAccount(account);
+  account_window->populateAccount(account);
 }
 
 AccountWindow::ColorOption::ColorOption(PurpleAccount *account_)
@@ -368,12 +368,12 @@ AccountWindow::ColorOption::ColorOption(PurpleAccount *account_)
       "buddylist-foreground-color", CppConsUI::Curses::Color::DEFAULT);
   int bg = purple_account_get_ui_int(account, "centerim5",
       "buddylist-background-color", CppConsUI::Curses::Color::DEFAULT);
-  SetColorPair(fg, bg);
+  setColorPair(fg, bg);
   signal_colorpair_selected.connect(sigc::mem_fun(this,
-        &ColorOption::OnColorChanged));
+        &ColorOption::onColorChanged));
 }
 
-void AccountWindow::ColorOption::OnColorChanged(
+void AccountWindow::ColorOption::onColorChanged(
     CppConsUI::ColorPicker& /*activator*/, int new_fg, int new_bg)
 {
   purple_account_set_ui_int(account, "centerim5",
@@ -382,22 +382,22 @@ void AccountWindow::ColorOption::OnColorChanged(
       "buddylist-background-color", new_bg);
 }
 
-void AccountWindow::ClearAccount(PurpleAccount *account, bool full)
+void AccountWindow::clearAccount(PurpleAccount *account, bool full)
 {
   AccountEntry *account_entry = &account_entries[account];
 
   // move focus
-  account_entry->parent->GrabFocus();
+  account_entry->parent->grabFocus();
 
   // remove the nodes from the tree
-  treeview->DeleteNodeChildren(account_entry->parent_reference, false);
+  treeview->deleteNodeChildren(account_entry->parent_reference, false);
   if (full) {
-    treeview->DeleteNode(account_entry->parent_reference, false);
+    treeview->deleteNode(account_entry->parent_reference, false);
     account_entries.erase(account);
   }
 }
 
-void AccountWindow::PopulateAccount(PurpleAccount *account)
+void AccountWindow::populateAccount(PurpleAccount *account)
 {
   if (account_entries.find(account) == account_entries.end()) {
     // no entry for this account, so add one
@@ -407,7 +407,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
   }
   else {
     // the account exists, so clear all data
-    ClearAccount(account, false);
+    clearAccount(account, false);
   }
 
   AccountEntry *account_entry = &account_entries[account];
@@ -416,8 +416,8 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
     CppConsUI::TreeView::ToggleCollapseButton *button
       = new CppConsUI::TreeView::ToggleCollapseButton;
     CppConsUI::TreeView::NodeReference parent_reference
-      = treeview->AppendNode(treeview->GetRootNode(), *button);
-    treeview->SetCollapsed(parent_reference, true);
+      = treeview->appendNode(treeview->getRootNode(), *button);
+    treeview->setCollapsed(parent_reference, true);
     account_entry->parent = button;
     account_entry->parent_reference = parent_reference;
   }
@@ -425,7 +425,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
   char *label = g_strdup_printf("[%s] %s",
       purple_account_get_protocol_name(account),
       purple_account_get_username(account));
-  account_entry->parent->SetText(label);
+  account_entry->parent->setText(label);
   g_free(label);
 
   const char *protocol_id = purple_account_get_protocol_id(account);
@@ -435,7 +435,7 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
     // we cannot change the settings of an unknown account
     CppConsUI::Label *label = new CppConsUI::Label(
         _("Invalid account or protocol plugin not loaded"));
-    treeview->AppendNode(account_entry->parent_reference, *label);
+    treeview->appendNode(account_entry->parent_reference, *label);
   }
   else {
     PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
@@ -443,8 +443,8 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
     // protocols combobox
     ProtocolOption *combobox = new ProtocolOption(account, *this);
     CppConsUI::TreeView::NodeReference protocol_node
-      = treeview->AppendNode(account_entry->parent_reference, *combobox);
-    combobox->GrabFocus();
+      = treeview->appendNode(account_entry->parent_reference, *combobox);
+    combobox->grabFocus();
 
     /* The username must be treated in a special way because it can contain
      * multiple values (e.g. user@server:port/resource). */
@@ -472,29 +472,29 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
       // create widget for the username split and remember
       SplitOption *widget_split = new SplitOption(account, split,
           account_entry);
-      widget_split->SetValue(value);
+      widget_split->setValue(value);
       account_entry->split_widgets.push_front(widget_split);
 
-      treeview->AppendNode(account_entry->parent_reference, *widget_split);
+      treeview->appendNode(account_entry->parent_reference, *widget_split);
     }
 
     SplitOption *widget_split = new SplitOption(account, NULL, account_entry);
-    widget_split->SetValue(username);
+    widget_split->setValue(username);
     account_entry->split_widgets.push_front(widget_split);
-    treeview->InsertNodeAfter(protocol_node, *widget_split);
+    treeview->insertNodeAfter(protocol_node, *widget_split);
     g_free(username);
 
     // password
     Widget *widget = new StringOption(account, StringOption::TYPE_PASSWORD);
-    treeview->AppendNode(account_entry->parent_reference, *widget);
+    treeview->appendNode(account_entry->parent_reference, *widget);
 
     // remember password
     widget = new BoolOption(account, BoolOption::TYPE_REMEMBER_PASSWORD);
-    treeview->AppendNode(account_entry->parent_reference, *widget);
+    treeview->appendNode(account_entry->parent_reference, *widget);
 
     // alias
     widget = new StringOption(account, StringOption::TYPE_ALIAS);
-    treeview->AppendNode(account_entry->parent_reference, *widget);
+    treeview->appendNode(account_entry->parent_reference, *widget);
 
     for (GList *pref = prplinfo->protocol_options; pref; pref = pref->next) {
       PurpleAccountOption *option
@@ -504,43 +504,43 @@ void AccountWindow::PopulateAccount(PurpleAccount *account)
       switch (type) {
         case PURPLE_PREF_STRING:
           widget = new StringOption(account, option);
-          treeview->AppendNode(account_entry->parent_reference, *widget);
+          treeview->appendNode(account_entry->parent_reference, *widget);
           break;
         case PURPLE_PREF_INT:
           widget = new IntOption(account, option);
-          treeview->AppendNode(account_entry->parent_reference, *widget);
+          treeview->appendNode(account_entry->parent_reference, *widget);
           break;
         case PURPLE_PREF_BOOLEAN:
           widget = new BoolOption(account, option);
-          treeview->AppendNode(account_entry->parent_reference, *widget);
+          treeview->appendNode(account_entry->parent_reference, *widget);
           break;
         case PURPLE_PREF_STRING_LIST:
           widget = new StringListOption(account, option);
-          treeview->AppendNode(account_entry->parent_reference, *widget);
+          treeview->appendNode(account_entry->parent_reference, *widget);
           break;
         default:
-          LOG->Error(_("Unhandled account option type '%d'."), type);
+          LOG->error(_("Unhandled account option type '%d'."), type);
           break;
       }
     }
 
     // enable/disable account
     widget = new BoolOption(account, BoolOption::TYPE_ENABLE_ACCOUNT);
-    treeview->AppendNode(account_entry->parent_reference, *widget);
+    treeview->appendNode(account_entry->parent_reference, *widget);
 
     // coloring
     widget = new ColorOption(account);
-    treeview->AppendNode(account_entry->parent_reference, *widget);
+    treeview->appendNode(account_entry->parent_reference, *widget);
   }
 
   // drop account
   CppConsUI::Button *drop_button = new CppConsUI::Button(_("Drop account"));
   drop_button->signal_activate.connect(sigc::bind(sigc::mem_fun(this,
-          &AccountWindow::DropAccount), account));
-  treeview->AppendNode(account_entry->parent_reference, *drop_button);
+          &AccountWindow::dropAccount), account));
+  treeview->appendNode(account_entry->parent_reference, *drop_button);
 }
 
-void AccountWindow::AddAccount(CppConsUI::Button& /*activator*/)
+void AccountWindow::addAccount(CppConsUI::Button& /*activator*/)
 {
   GList *i = purple_plugins_get_protocols();
   PurpleAccount *account = purple_account_new(_("Username"),
@@ -552,30 +552,30 @@ void AccountWindow::AddAccount(CppConsUI::Button& /*activator*/)
   if (account_entries.find(account) == account_entries.end()) {
     purple_accounts_add(account);
 
-    PopulateAccount(account);
+    populateAccount(account);
   }
-  account_entries[account].parent->GrabFocus();
+  account_entries[account].parent->grabFocus();
 }
 
-void AccountWindow::DropAccount(CppConsUI::Button& /*activator*/,
+void AccountWindow::dropAccount(CppConsUI::Button& /*activator*/,
     PurpleAccount *account)
 {
   CppConsUI::MessageDialog *dialog = new CppConsUI::MessageDialog(
       _("Account deletion"),
       _("Are you sure you want to delete this account?"));
   dialog->signal_response.connect(sigc::bind(sigc::mem_fun(this,
-          &AccountWindow::DropAccountResponseHandler), account));
-  dialog->Show();
+          &AccountWindow::dropAccountResponseHandler), account));
+  dialog->show();
 }
 
-void AccountWindow::DropAccountResponseHandler(
+void AccountWindow::dropAccountResponseHandler(
     CppConsUI::MessageDialog& /*activator*/,
     CppConsUI::AbstractDialog::ResponseType response, PurpleAccount *account)
 {
   switch (response) {
     case AbstractDialog::RESPONSE_OK:
       purple_accounts_remove(account);
-      ClearAccount(account, true);
+      clearAccount(account, true);
       break;
     default:
       break;

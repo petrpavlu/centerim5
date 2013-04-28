@@ -33,7 +33,7 @@ namespace CppConsUI
 AbstractDialog::AbstractDialog(int x, int y, int w, int h, const char *title)
 : Window(x, y, w, h, title, TYPE_TOP)
 {
-  InitLayout();
+  initLayout();
 }
 
 AbstractDialog::AbstractDialog(const char *title)
@@ -41,47 +41,47 @@ AbstractDialog::AbstractDialog(const char *title)
 {
   /// @todo Set correct position.
 
-  InitLayout();
+  initLayout();
 }
 
-void AbstractDialog::Close()
+void AbstractDialog::close()
 {
-  Response(RESPONSE_CANCEL);
+  response(RESPONSE_CANCEL);
 }
 
-void AbstractDialog::AddButton(const char *text,
+void AbstractDialog::addButton(const char *text,
     AbstractDialog::ResponseType response)
 {
-  buttons->AppendItem(text, sigc::bind(sigc::mem_fun(this,
-          &AbstractDialog::OnButtonResponse), response));
+  buttons->appendItem(text, sigc::bind(sigc::mem_fun(this,
+          &AbstractDialog::onButtonResponse), response));
 }
 
-void AbstractDialog::AddSeparator()
+void AbstractDialog::addSeparator()
 {
-  buttons->AppendSeparator();
+  buttons->appendSeparator();
 }
 
-void AbstractDialog::Response(ResponseType response)
+void AbstractDialog::response(ResponseType response_type)
 {
-  EmitResponse(response);
-  Window::Close();
+  emitResponse(response_type);
+  Window::close();
 }
 
-void AbstractDialog::InitLayout()
+void AbstractDialog::initLayout()
 {
   layout = new ListBox(AUTOSIZE, AUTOSIZE);
-  AddWidget(*layout, 0, 0);
+  addWidget(*layout, 0, 0);
 
   separator = new HorizontalLine(AUTOSIZE);
-  layout->AppendWidget(*separator);
+  layout->appendWidget(*separator);
   buttons = new HorizontalListBox(AUTOSIZE, 1);
-  layout->AppendWidget(*buttons);
+  layout->appendWidget(*buttons);
 }
 
-void AbstractDialog::OnButtonResponse(Button& /*activator*/,
-    ResponseType response)
+void AbstractDialog::onButtonResponse(Button& /*activator*/,
+    ResponseType response_type)
 {
-  Response(response);
+  response(response_type);
 }
 
 } // namespace CppConsUI

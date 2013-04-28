@@ -36,7 +36,7 @@
 #define CONF_PLUGINS_PREF CONF_PREFIX "/plugins"
 #define CONF_PLUGINS_SAVE_PREF CONF_PLUGINS_PREF "/loaded"
 
-#define CENTERIM (CenterIM::Instance())
+#define CENTERIM (CenterIM::instance())
 
 class CenterIM
 : public CppConsUI::InputProcessor
@@ -52,24 +52,24 @@ public:
     AREAS_NUM
   };
 
-  static CenterIM *Instance();
+  static CenterIM *instance();
 
   // InputProcessor
-  virtual bool ProcessInput(const TermKeyKey& key);
+  virtual bool processInput(const TermKeyKey& key);
 
-  int Run(const char *config_path, bool ascii, bool offline);
-  void Quit();
+  int run(const char *config_path, bool ascii, bool offline);
+  void quit();
 
   // returns a position and size of a selected area
-  CppConsUI::Rect GetScreenArea(ScreenArea area);
-  CppConsUI::Rect GetScreenAreaCentered(ScreenArea area);
+  CppConsUI::Rect getScreenArea(ScreenArea area);
+  CppConsUI::Rect getScreenAreaCentered(ScreenArea area);
 
   static const char * const version;
 
-  bool LoadColorSchemeConfig();
-  bool LoadKeyConfig();
+  bool loadColorSchemeConfig();
+  bool loadKeyConfig();
 
-  bool GetExpandedConversations() const { return convs_expanded; }
+  bool getExpandedConversations() const { return convs_expanded; }
 
 protected:
 
@@ -115,14 +115,14 @@ private:
   CenterIM& operator=(const CenterIM&);
   virtual ~CenterIM() {}
 
-  int PurpleInit(const char *config_path);
-  void PurpleFinalize();
-  void PrefsInit();
+  int purpleInit(const char *config_path);
+  void purpleFinalize();
+  void prefsInit();
 
   // recalculates area sizes to fit into current screen size
-  void OnScreenResized();
+  void onScreenResized();
 
-  void OnTopWindowChanged();
+  void onTopWindowChanged();
 
   // PurpleCoreUiOps callbacks
   // returns information about CenterIM such as name, website etc.
@@ -171,26 +171,26 @@ private:
       gconstpointer val);
 
   // config handling
-  void LoadDefaultColorSchemeConfig();
-  bool SaveColorSchemeConfig();
-  char *ColorToString(int color);
-  bool StringToColor(const char *str, int *color);
-  char *ColorAttributesToString(int attrs);
-  bool StringToColorAttributes(const char *str, int *attrs);
-  void LoadDefaultKeyConfig();
-  bool SaveKeyConfig();
+  void loadDefaultColorSchemeConfig();
+  bool saveColorSchemeConfig();
+  char *colorToString(int color);
+  bool stringToColor(const char *str, int *color);
+  char *colorAttributesToString(int attrs);
+  bool stringToColorAttributes(const char *str, int *attrs);
+  void loadDefaultKeyConfig();
+  bool saveKeyConfig();
 
-  void ActionFocusBuddyList();
-  void ActionFocusActiveConversation();
-  void ActionOpenAccountStatusMenu();
-  void ActionOpenGeneralMenu();
-  void ActionBuddyListToggleOffline();
-  void ActionFocusPrevConversation();
-  void ActionFocusNextConversation();
-  void ActionFocusConversation(int i);
-  void ActionExpandConversation();
+  void actionFocusBuddyList();
+  void actionFocusActiveConversation();
+  void actionOpenAccountStatusMenu();
+  void actionOpenGeneralMenu();
+  void actionBuddyListToggleOffline();
+  void actionFocusPrevConversation();
+  void actionFocusNextConversation();
+  void actionFocusConversation(int i);
+  void actionExpandConversation();
 
-  void DeclareBindables();
+  void declareBindables();
 };
 
 #endif // __CENTERIM_H__

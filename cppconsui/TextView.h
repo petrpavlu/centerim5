@@ -46,46 +46,46 @@ public:
   virtual ~TextView();
 
   // Widget
-  virtual void Draw();
+  virtual void draw();
 
   /**
    * Appends text after the last line.
    */
-  virtual void Append(const char *text, int color = 0);
+  virtual void append(const char *text, int color = 0);
   /**
    * Inserts text before specified line number. Text can contain multiple
    * lines and should end with '\\n' character just in front of '\\0'
    * character.
    */
-  virtual void Insert(size_t line_num, const char *text, int color = 0);
+  virtual void insert(size_t line_num, const char *text, int color = 0);
   /**
    * Removes a specified line.
    */
-  virtual void Erase(size_t line_num);
+  virtual void erase(size_t line_num);
   /**
    * Removes specified range of lines. Parameter end_line represents the
    * line after the last removed line, thus range of <start_line, end_line)
    * lines is removed.
    */
-  virtual void Erase(size_t start_line, size_t end_line);
+  virtual void erase(size_t start_line, size_t end_line);
   /**
    * Removes all lines.
    */
-  virtual void Clear();
+  virtual void clear();
   /**
    * Returns string for a specified line number.
    */
-  virtual const char *GetLine(size_t line_num) const;
+  virtual const char *getLine(size_t line_num) const;
   /**
    * Returns count of all lines.
    */
-  virtual size_t GetLinesNumber() const;
+  virtual size_t getLinesNumber() const;
 
-  virtual void SetAutoScroll(bool enabled);
-  virtual bool GetAutoScroll() const { return autoscroll; }
+  virtual void setAutoScroll(bool new_autoscroll);
+  virtual bool hasAutoScroll() const { return autoscroll; }
 
-  virtual void SetScrollBar(bool enabled);
-  virtual bool GetScrollBar() const { return scrollbar; }
+  virtual void setScrollBar(bool new_scrollbar);
+  virtual bool hasScrollBar() const { return scrollbar; }
 
 protected:
   /**
@@ -149,27 +149,27 @@ protected:
    */
   ScreenLines screen_lines;
 
-  virtual const char *ProceedLine(const char *text, int area_width,
+  virtual const char *proceedLine(const char *text, int area_width,
       int *res_length) const;
   /**
    * Recalculates on-screen lines for a specified line number.
    */
-  virtual size_t UpdateScreenLines(size_t line_num, size_t start = 0);
+  virtual size_t updateScreenLines(size_t line_num, size_t start = 0);
   /**
    * Recalculates all screen lines.
    */
-  virtual void UpdateAllScreenLines();
+  virtual void updateAllScreenLines();
 
-  virtual size_t EraseScreenLines(size_t line_num, size_t start = 0,
+  virtual size_t eraseScreenLines(size_t line_num, size_t start = 0,
       size_t *deleted = NULL);
 
 private:
   TextView(const TextView &);
   TextView& operator=(const TextView&);
 
-  void ActionScroll(int direction);
+  void actionScroll(int direction);
 
-  void DeclareBindables();
+  void declareBindables();
 };
 
 } // namespace CppConsUI

@@ -40,7 +40,7 @@ namespace CppConsUI
 /**
  * The generic widget container class.
  *
- * It implements @ref MoveFocus "moving focus" in different @ref
+ * It implements @ref moveFocus "moving focus" in different @ref
  * FocusDirection "directions".
  */
 class Container
@@ -85,95 +85,95 @@ public:
   virtual ~Container();
 
   // Widget
-  virtual void UpdateArea();
-  virtual void Draw();
-  virtual Widget *GetFocusWidget();
-  virtual void CleanFocus();
-  virtual bool RestoreFocus();
-  virtual bool GrabFocus();
-  virtual void UngrabFocus();
-  virtual void SetParent(Container& parent);
+  virtual void updateArea();
+  virtual void draw();
+  virtual Widget *getFocusWidget();
+  virtual void cleanFocus();
+  virtual bool restoreFocus();
+  virtual bool grabFocus();
+  virtual void ungrabFocus();
+  virtual void setParent(Container& parent);
 
   /**
    * Adds a widget to the children list. The Container takes ownership of the
    * widget. It means that the widget will be deleted by the Container.
    */
-  virtual void AddWidget(Widget& widget, int x, int y);
+  virtual void addWidget(Widget& widget, int x, int y);
   /**
    * Removes the widget from the children list and destroys it.
    */
-  virtual void RemoveWidget(Widget& widget);
+  virtual void removeWidget(Widget& widget);
 
   /**
    * Changes logical position of the given widget to be before the position
    * widget. This affects focus cycling. Both passed widgets have to be
    * children of this Container.
    */
-  virtual void MoveWidgetBefore(Widget& widget, Widget& position);
+  virtual void moveWidgetBefore(Widget& widget, Widget& position);
   /**
    * Changes logical position of the given widget to be after the position
    * widget. This affects focus cycling. Both passed widgets have to be
    * children of this Container.
    */
-  virtual void MoveWidgetAfter(Widget& widget, Widget& position);
+  virtual void moveWidgetAfter(Widget& widget, Widget& position);
 
   /**
    * @todo Maybe inserting and moving of widgets should be extended. There
    * should be a way how to insert a widget at a specified position. Generally
-   * InsertWidget() should be made public, and MoveWidget(widget, size_t
+   * insertWidget() should be made public, and MoveWidget(widget, size_t
    * position) should be added.
    */
 
   /**
    * Removes (and deletes) all children widgets.
    */
-  virtual void Clear();
+  virtual void clear();
 
   /**
    * Returns true if a widget is visible in current context.
    */
-  virtual bool IsWidgetVisible(const Widget& widget) const;
+  virtual bool isWidgetVisible(const Widget& widget) const;
 
   /**
-   * Resets the focus child by @ref CleanFocus "stealing" the focus from the
+   * Resets the focus child by @ref cleanFocus "stealing" the focus from the
    * current chain and also ensures the focus goes also UP the chain to the
    * root widget (normally a Window).
    */
-  virtual bool SetFocusChild(Widget& child);
-  virtual Widget *GetFocusChild() const { return focus_child; }
+  virtual bool setFocusChild(Widget& child);
+  virtual Widget *getFocusChild() const { return focus_child; }
   /**
    * Guilds a tree of the focus chain starting from this container and puts it
    * into the focus_chain tree as a subtree of @ref parent.
    */
-  virtual void GetFocusChain(FocusChain& focus_chain,
+  virtual void getFocusChain(FocusChain& focus_chain,
       FocusChain::iterator parent);
   /**
    * Gives this Container information that the cached focus chain has to be
    * updated. If this container has a parent then this information is
    * propageted to it.
    */
-  virtual void UpdateFocusChain();
+  virtual void updateFocusChain();
   /**
    * @todo Have a return value (to see if focus was moved successfully or
    * not)?
    */
-  virtual void MoveFocus(FocusDirection direction);
+  virtual void moveFocus(FocusDirection direction);
 
-  virtual void SetFocusCycle(FocusCycleScope scope)
+  virtual void setFocusCycle(FocusCycleScope scope)
     { focus_cycle_scope = scope; }
-  virtual FocusCycleScope GetFocusCycle() const { return focus_cycle_scope; }
+  virtual FocusCycleScope getFocusCycle() const { return focus_cycle_scope; }
 
-  virtual void SetPageFocus(bool enabled) { page_focus = enabled; }
-  virtual bool CanPageFocus() const { return page_focus; };
+  virtual void setPageFocus(bool enabled) { page_focus = enabled; }
+  virtual bool canPageFocus() const { return page_focus; };
 
-  virtual Point GetRelativePosition(const Container& ref,
+  virtual Point getRelativePosition(const Container& ref,
       const Widget& child) const;
-  virtual Point GetAbsolutePosition(const Widget& child) const;
+  virtual Point getAbsolutePosition(const Widget& child) const;
 
   /**
    * Returns a subpad of current widget with given coordinates.
    */
-  virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
+  virtual Curses::Window *getSubPad(const Widget& child, int begin_x,
       int begin_y, int ncols, int nlines);
 
 protected:
@@ -221,7 +221,7 @@ protected:
   /**
    * Searches children for a given widget.
    */
-  virtual Children::iterator FindWidget(const Widget& widget);
+  virtual Children::iterator findWidget(const Widget& widget);
 
   /**
    * Inserts a widget in the children list at a given position. The Container
@@ -230,21 +230,21 @@ protected:
    * that needs to keep child widgets in order (see ListBox and
    * HorizontalListBox).
    */
-  virtual void InsertWidget(size_t pos, Widget& widget, int x, int y);
+  virtual void insertWidget(size_t pos, Widget& widget, int x, int y);
 
-  virtual void MoveWidgetInternal(Widget& widget, Widget& position, bool after);
+  virtual void moveWidgetInternal(Widget& widget, Widget& position, bool after);
 
-  virtual void OnChildMoveResize(Widget& activator, const Rect& oldsize,
+  virtual void onChildMoveResize(Widget& activator, const Rect& oldsize,
       const Rect& newsize);
-  virtual void OnChildWishSizeChange(Widget& activator, const Size& oldsize,
+  virtual void onChildWishSizeChange(Widget& activator, const Size& oldsize,
       const Size& newsize);
-  virtual void OnChildVisible(Widget& activator, bool visible);
+  virtual void onChildVisible(Widget& activator, bool visible);
 
 private:
   Container(const Container&);
   Container& operator=(const Container&);
 
-  void DeclareBindables();
+  void declareBindables();
 };
 
 } // namespace CppConsUI

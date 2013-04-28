@@ -47,9 +47,9 @@ private:
   TextEntry(const TextEntry&);
   TextEntry& operator=(const TextEntry&);
 
-  void ActionActivate();
+  void actionActivate();
 
-  void DeclareBindables();
+  void declareBindables();
 };
 
 } // namespace CppConsUI

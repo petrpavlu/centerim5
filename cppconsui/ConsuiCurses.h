@@ -110,7 +110,7 @@ public:
   int getmaxy();
 
 protected:
-  int PrintChar(gunichar uc);
+  int printChar(gunichar uc);
 
 private:
   struct WindowInternals;

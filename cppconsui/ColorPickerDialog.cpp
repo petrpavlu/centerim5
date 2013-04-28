@@ -36,24 +36,24 @@ ColorPickerDialog::ColorPickerDialog(const char *title, int /*defaultvalue*/,
     int flags)
 : AbstractDialog(title)
 {
-  AddButton(OK_BUTTON_TEXT, RESPONSE_OK);
+  addButton(OK_BUTTON_TEXT, RESPONSE_OK);
 
   pick = new ColorPickerPalette(0, flags);
   pick->signal_color_selected.connect(sigc::mem_fun(this,
-        &ColorPickerDialog::OnColorSelected));
-  layout->InsertWidget(0, *pick);
+        &ColorPickerDialog::onColorSelected));
+  layout->insertWidget(0, *pick);
 
-  Resize(pick->GetWidth() + 2, pick->GetHeight() + 4);
+  resize(pick->getWidth() + 2, pick->getHeight() + 4);
 }
 
-void ColorPickerDialog::OnColorSelected(ColorPickerPalette& /*activator*/,
+void ColorPickerDialog::onColorSelected(ColorPickerPalette& /*activator*/,
     int color_)
 {
   color = color_;
-  Response(RESPONSE_OK);
+  response(RESPONSE_OK);
 }
 
-void ColorPickerDialog::EmitResponse(ResponseType response)
+void ColorPickerDialog::emitResponse(ResponseType response)
 {
   signal_response(*this, response, color);
 }

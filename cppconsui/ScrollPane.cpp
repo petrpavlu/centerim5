@@ -40,67 +40,66 @@ ScrollPane::ScrollPane(int w, int h, int scrollw, int scrollh)
 
 ScrollPane::~ScrollPane()
 {
-  if (screen_area)
-    delete screen_area;
+  delete screen_area;
 }
 
-void ScrollPane::Draw()
+void ScrollPane::draw()
 {
-  DrawEx(true);
+  drawEx(true);
 }
 
-int ScrollPane::GetRealWidth() const
+int ScrollPane::getRealWidth() const
 {
   if (!screen_area)
     return 0;
   return screen_area->getmaxx();
 }
 
-int ScrollPane::GetRealHeight() const
+int ScrollPane::getRealHeight() const
 {
   if (!screen_area)
     return 0;
   return screen_area->getmaxy();
 }
 
-Point ScrollPane::GetRelativePosition(const Container& ref,
+Point ScrollPane::getRelativePosition(const Container& ref,
     const Widget& child) const
 {
-  g_assert(child.GetParent() == this);
+  g_assert(child.getParent() == this);
 
   if (!parent || this == &ref)
-    return Point(child.GetLeft() - scroll_xpos, child.GetTop() - scroll_ypos);
+    return Point(child.getLeft() - scroll_xpos, child.getTop() - scroll_ypos);
 
-  Point p = parent->GetRelativePosition(ref, *this);
-  return Point(p.GetX() + child.GetLeft() - scroll_xpos,
-      p.GetY() + child.GetTop() - scroll_ypos);
+  Point p = parent->getRelativePosition(ref, *this);
+  return Point(p.getX() + child.getLeft() - scroll_xpos,
+      p.getY() + child.getTop() - scroll_ypos);
 }
 
-Point ScrollPane::GetAbsolutePosition(const Widget& child) const
+Point ScrollPane::getAbsolutePosition(const Widget& child) const
 {
-  g_assert(child.GetParent() == this);
+  g_assert(child.getParent() == this);
 
   if (!parent)
-    return Point(child.GetLeft() - scroll_xpos, child.GetTop() - scroll_ypos);
+    return Point(child.getLeft() - scroll_xpos, child.getTop() - scroll_ypos);
 
-  Point p = parent->GetAbsolutePosition(*this);
-  return Point(p.GetX() + child.GetLeft() - scroll_xpos,
-      p.GetY() + child.GetTop() - scroll_ypos);
+  Point p = parent->getAbsolutePosition(*this);
+  return Point(p.getX() + child.getLeft() - scroll_xpos,
+      p.getY() + child.getTop() - scroll_ypos);
 }
 
-void ScrollPane::SetScrollSize(int swidth, int sheight)
+void ScrollPane::setScrollSize(int swidth, int sheight)
 {
   if (swidth == scroll_width && sheight == scroll_height)
     return;
 
   scroll_width = swidth;
   scroll_height = sheight;
-  UpdateVirtualArea();
+  updateVirtualArea();
 
   signal_scrollarea_resize(*this, Size(scroll_width, scroll_height));
 }
 
-void ScrollPane::AdjustScroll(int newx, int newy)
+void ScrollPane::adjustScroll(int newx, int newy)
 {
   bool scrolled = false;
   if (scroll_xpos != newx || scroll_ypos != newy)
@@ -139,100 +138,98 @@ void ScrollPane::AdjustScroll(int newx, int newy)
   }
 
   if (scrolled) {
-    Redraw();
+    redraw();
     signal_scrollarea_scroll(*this, Point(scroll_xpos, scroll_ypos));
   }
 }
 
-void ScrollPane::MakeVisible(int x, int y)
+void ScrollPane::makeVisible(int x, int y)
 {
   if (!screen_area) {
-    AdjustScroll(0, 0);
+    adjustScroll(0, 0);
     return;
   }
 
-  if (!MakePointVisible(x, y))
+  if (!makePointVisible(x, y))
     return;
 
-  Redraw();
+  redraw();
   signal_scrollarea_scroll(*this, Point(scroll_xpos, scroll_ypos));
 }
 
-void ScrollPane::MakeVisible(int x, int y, int w, int h)
+void ScrollPane::makeVisible(int x, int y, int w, int h)
 {
   if (!screen_area) {
-    AdjustScroll(0, 0);
+    adjustScroll(0, 0);
     return;
   }
 
   bool scrolled = false;
-  if (MakePointVisible(x + w - 1, y + h - 1))
+  if (makePointVisible(x + w - 1, y + h - 1))
     scrolled = true;
-  if (MakePointVisible(x, y))
+  if (makePointVisible(x, y))
     scrolled = true;
 
   if (!scrolled)
     return;
 
-  Redraw();
+  redraw();
   signal_scrollarea_scroll(*this, Point(scroll_xpos, scroll_ypos));
 }
 
-void ScrollPane::UpdateArea()
+void ScrollPane::updateArea()
 {
   update_screen_area = true;
-  Redraw();
+  redraw();
 }
 
-void ScrollPane::ProceedUpdateArea()
+void ScrollPane::proceedUpdateArea()
 {
   g_assert(parent);
 
   if (update_screen_area) {
-    if (screen_area)
-      delete screen_area;
-    screen_area = parent->GetSubPad(*this, xpos, ypos, width, height);
+    delete screen_area;
+    screen_area = parent->getSubPad(*this, xpos, ypos, width, height);
 
     // fix scroll position if necessary
-    AdjustScroll(scroll_xpos, scroll_ypos);
+    adjustScroll(scroll_xpos, scroll_ypos);
 
     update_screen_area = false;
   }
 }
 
-void ScrollPane::UpdateVirtualArea()
+void ScrollPane::updateVirtualArea()
 {
   if (!update_area)
     for (Children::iterator i = children.begin(); i != children.end(); i++)
-      i->widget->UpdateArea();
+      i->widget->updateArea();
 
   update_area = true;
 }
 
-void ScrollPane::ProceedUpdateVirtualArea()
+void ScrollPane::proceedUpdateVirtualArea()
 {
-  if (update_area) {
-    if (area)
-      delete area;
-    area = Curses::Window::newpad(scroll_width, scroll_height);
+  if (!update_area)
+    return;
 
-    update_area = false;
-  }
+  delete area;
+  area = Curses::Window::newpad(scroll_width, scroll_height);
+  update_area = false;
 }
 
-void ScrollPane::DrawEx(bool container_draw)
+void ScrollPane::drawEx(bool container_draw)
 {
-  ProceedUpdateArea();
-  ProceedUpdateVirtualArea();
+  proceedUpdateArea();
+  proceedUpdateVirtualArea();
 
   if (!area || !screen_area) {
     if (screen_area)
-      screen_area->fill(GetColorPair("container", "background"));
+      screen_area->fill(getColorPair("container", "background"));
     return;
   }
 
   if (container_draw)
-    Container::Draw();
+    Container::draw();
 
   /* If the defined scrollable area is smaller than the widget, make sure
    * the copy works. */
@@ -242,7 +239,7 @@ void ScrollPane::DrawEx(bool container_draw)
   area->copyto(screen_area, scroll_xpos, scroll_ypos, 0, 0, copyw, copyh, 0);
 }
 
-bool ScrollPane::MakePointVisible(int x, int y)
+bool ScrollPane::makePointVisible(int x, int y)
 {
   // fix parameters
   if (x < 0)

@@ -36,25 +36,24 @@ FreeWindow::FreeWindow(int x, int y, int w, int h, Type t)
 : Container(w, h), win_x(x), win_y(y), win_w(w), win_h(h), copy_x(0)
 , copy_y(0), copy_w(0), copy_h(0), realwindow(NULL), type(t)
 {
-  UpdateArea();
+  updateArea();
 
   COREMANAGER->signal_resize.connect(sigc::mem_fun(this,
-        &FreeWindow::OnScreenResizedInternal));
+        &FreeWindow::onScreenResizedInternal));
   COREMANAGER->signal_resize.connect(sigc::mem_fun(this,
-        &FreeWindow::OnScreenResized));
+        &FreeWindow::onScreenResized));
 
-  DeclareBindables();
+  declareBindables();
 }
 
 FreeWindow::~FreeWindow()
 {
-  Hide();
+  hide();
 
-  if (realwindow)
-    delete realwindow;
+  delete realwindow;
 }
 
-void FreeWindow::MoveResize(int newx, int newy, int neww, int newh)
+void FreeWindow::moveResize(int newx, int newy, int neww, int newh)
 {
   if (newx == win_x && newy == win_y && neww == win_w && newh == win_h)
     return;
@@ -64,24 +63,24 @@ void FreeWindow::MoveResize(int newx, int newy, int neww, int newh)
   win_w = neww;
   win_h = newh;
 
-  ResizeAndUpdateArea();
+  resizeAndUpdateArea();
 }
 
-void FreeWindow::Draw()
+void FreeWindow::draw()
 {
-  ProceedUpdateArea();
+  proceedUpdateArea();
 
   if (!area || !realwindow)
     return;
 
   area->erase();
 
-  Container::Draw();
+  Container::draw();
 
   /* Reverse the top right corner of the window if there isn't any focused
    * widget and the window is the top window. This way the user knows which
    * window is on the top and can be closed using the Esc key. */
-  if (!input_child && COREMANAGER->GetTopWindow() == this)
+  if (!input_child && COREMANAGER->getTopWindow() == this)
     area->mvchgat(win_w - 1, 0, 1, Curses::Attr::REVERSE, 0, NULL);
 
   // copy the virtual window to a window, then display it on screen
@@ -92,76 +91,70 @@ void FreeWindow::Draw()
   realwindow->noutrefresh();
 }
 
-void FreeWindow::SetVisibility(bool visible)
+void FreeWindow::setVisibility(bool visible)
 {
-  visible ? Show() : Hide();
+  visible ? show() : hide();
 }
 
-Point FreeWindow::GetAbsolutePosition()
+Point FreeWindow::getAbsolutePosition()
 {
   return Point(win_x, win_y);
 }
 
-void FreeWindow::SetWishSize(int neww, int newh)
+void FreeWindow::setWishSize(int neww, int newh)
 {
   if (neww == wish_width && newh == wish_height)
     return;
 
-  Container::SetWishSize(neww, newh);
+  Container::setWishSize(neww, newh);
   /* If either width or height is set to AUTOSIZE then this window has to be
    * resized accordingly. */
   if (win_w == AUTOSIZE || win_h == AUTOSIZE)
-    ResizeAndUpdateArea();
+    resizeAndUpdateArea();
 }
 
-bool FreeWindow::IsWidgetVisible(const Widget& /*child*/) const
+bool FreeWindow::isWidgetVisible(const Widget& /*child*/) const
 {
   return true;
 }
 
-bool FreeWindow::SetFocusChild(Widget& child)
+bool FreeWindow::setFocusChild(Widget& child)
 {
-  CleanFocus();
+  cleanFocus();
 
   focus_child = &child;
-  SetInputChild(child);
+  setInputChild(child);
 
-  if (COREMANAGER->GetTopWindow() != this)
+  if (COREMANAGER->getTopWindow() != this)
     return false;
 
   return true;
 }
 
-void FreeWindow::Show()
+void FreeWindow::show()
 {
-  COREMANAGER->AddWindow(*this);
+  COREMANAGER->addWindow(*this);
   visible = true;
   signal_show(*this);
 }
 
-void FreeWindow::Hide()
+void FreeWindow::hide()
 {
-  if (!COREMANAGER->HasWindow(*this))
+  if (!COREMANAGER->hasWindow(*this))
     return;
 
-  COREMANAGER->RemoveWindow(*this);
+  COREMANAGER->removeWindow(*this);
   visible = false;
   signal_hide(*this);
 }
 
-void FreeWindow::Close()
+void FreeWindow::close()
 {
   signal_close(*this);
   delete this;
 }
 
-void FreeWindow::SetParent(Container& /*parent*/)
-{
-  // Window can not have a parent
-  g_assert_not_reached();
-}
-
-void FreeWindow::ProceedUpdateArea()
+void FreeWindow::proceedUpdateArea()
 {
   if (!update_area)
     return;
@@ -170,17 +163,16 @@ void FreeWindow::ProceedUpdateArea()
   int maxy = Curses::getmaxy();
 
   // update virtual area
-  if (area)
-    delete area;
+  delete area;
   int realw = win_w;
   if (realw == AUTOSIZE) {
-    realw = GetWishWidth();
+    realw = getWishWidth();
     if (realw == AUTOSIZE)
       realw = Curses::getmaxx() - win_x;
   }
   int realh = win_h;
   if (realh == AUTOSIZE) {
-    realh = GetWishHeight();
+    realh = getWishHeight();
     if (realh == AUTOSIZE)
       realh = Curses::getmaxy() - win_y;
   }
@@ -197,51 +189,50 @@ void FreeWindow::ProceedUpdateArea()
   copy_w = right - left - 1;
   copy_h = bottom - top - 1;
 
-  if (realwindow)
-    delete realwindow;
+  delete realwindow;
   // this could fail if the window falls outside the visible area
   realwindow = Curses::Window::newwin(left, top, right - left, bottom - top);
 
   update_area = false;
 }
 
-void FreeWindow::Redraw()
+void FreeWindow::redraw()
 {
-  COREMANAGER->Redraw();
+  COREMANAGER->redraw();
 }
 
-void FreeWindow::OnScreenResizedInternal()
+void FreeWindow::onScreenResizedInternal()
 {
-  ResizeAndUpdateArea();
+  resizeAndUpdateArea();
 }
 
-void FreeWindow::ResizeAndUpdateArea()
+void FreeWindow::resizeAndUpdateArea()
 {
   int realw = win_w;
   if (realw == AUTOSIZE) {
-    realw = GetWishWidth();
+    realw = getWishWidth();
     if (realw == AUTOSIZE)
       realw = Curses::getmaxx() - win_x;
   }
   int realh = win_h;
   if (realh == AUTOSIZE) {
-    realh = GetWishHeight();
+    realh = getWishHeight();
     if (realh == AUTOSIZE)
       realh = Curses::getmaxy() - win_y;
   }
-  Container::MoveResize(0, 0, MAX(0, realw), MAX(0, realh));
-  UpdateArea();
+  Container::moveResize(0, 0, MAX(0, realw), MAX(0, realh));
+  updateArea();
 }
 
-void FreeWindow::ActionClose()
+void FreeWindow::actionClose()
 {
-  Close();
+  close();
 }
 
-void FreeWindow::DeclareBindables()
+void FreeWindow::declareBindables()
 {
-  DeclareBindable("window", "close-window",
-      sigc::mem_fun(this, &FreeWindow::ActionClose),
+  declareBindable("window", "close-window",
+      sigc::mem_fun(this, &FreeWindow::actionClose),
       InputProcessor::BINDABLE_NORMAL);
 }
 

@@ -10,8 +10,8 @@ class LabelWindow
 public:
   /* This is a main window, make sure it can not be closed with ESC key by
    * overriding Close() method. */
-  static LabelWindow *Instance();
-  virtual void Close() {}
+  static LabelWindow *instance();
+  virtual void close() {}
 
 protected:
 
@@ -22,7 +22,7 @@ private:
   LabelWindow& operator=(const LabelWindow&);
 };
 
-LabelWindow *LabelWindow::Instance()
+LabelWindow *LabelWindow::instance()
 {
   static LabelWindow instance;
   return &instance;
@@ -39,19 +39,19 @@ LabelWindow::LabelWindow()
     "Press F10 to quit."); // text
   /* Add label to container, container takes widget ownership and deletes it
    * when necessary. */
-  AddWidget(*label, 1, 1);
+  addWidget(*label, 1, 1);
 
   label = new CppConsUI::Label(20, 1,
       "Too wide string, too wide string, too wide string");
-  AddWidget(*label, 1, 3);
+  addWidget(*label, 1, 3);
 
   label = new CppConsUI::Label(20, 3,
       "Multiline label, multiline label, multiline label");
-  AddWidget(*label, 1, 5);
+  addWidget(*label, 1, 5);
 
   label = new CppConsUI::Label(
       "Auto multiline label,\nauto multiline label,\nauto multiline label");
-  AddWidget(*label, 1, 9);
+  addWidget(*label, 1, 9);
 
   // unicode test
   label = new CppConsUI::Label(30, 3,
@@ -60,10 +60,10 @@ LabelWindow::LabelWindow()
       "\x64\x6f\x76\x61\x6c\x79\x20\xc3\xba\x70\x6c\x6e\xc4\x9b\x20\xc4"
       "\x8d\x65\x72\x73\x74\x76\xc3\xbd\x63\x68\x20\xc5\x99\xc3\xad\x7a"
       "\x65\xc4\x8d\x6b\xc5\xaf\x2e\x0a");
-  AddWidget(*label, 1, 13);
+  addWidget(*label, 1, 13);
 
   label = new CppConsUI::Label("Autosize");
-  AddWidget(*label, 1, 17);
+  addWidget(*label, 1, 17);
 
   const gchar *long_text = "Lorem ipsum dolor sit amet, consectetur"
     "adipiscing elit. Duis dui dui, interdum eget tempor auctor, viverra"
@@ -81,13 +81,13 @@ LabelWindow::LabelWindow()
     "tincidunt laoreet lobortis.";
 
   label = new CppConsUI::Label(AUTOSIZE, 10, long_text);
-  AddWidget(*label, 42, 17);
+  addWidget(*label, 42, 17);
 
   label = new CppConsUI::Label(40, AUTOSIZE, long_text);
-  AddWidget(*label, 1, 28);
+  addWidget(*label, 1, 28);
 
   label = new CppConsUI::Label(AUTOSIZE, AUTOSIZE, long_text);
-  AddWidget(*label, 42, 28);
+  addWidget(*label, 42, 28);
 }
 
 // TestApp class
@@ -95,9 +95,9 @@ class TestApp
 : public CppConsUI::InputProcessor
 {
 public:
-  static TestApp *Instance();
+  static TestApp *instance();
 
-  void Run();
+  void run();
 
   // ignore every message
   static void g_log_func_(const gchar * /*log_domain*/,
@@ -116,7 +116,7 @@ private:
   virtual ~TestApp() {}
 };
 
-TestApp *TestApp::Instance()
+TestApp *TestApp::instance()
 {
   static TestApp instance;
   return &instance;
@@ -124,23 +124,23 @@ TestApp *TestApp::Instance()
 
 TestApp::TestApp()
 {
-  mngr = CppConsUI::CoreManager::Instance();
-  KEYCONFIG->BindKey("testapp", "quit", "F10");
-  KEYCONFIG->LoadDefaultKeyConfig();
+  mngr = CppConsUI::CoreManager::instance();
+  KEYCONFIG->loadDefaultKeyConfig();
+  KEYCONFIG->bindKey("testapp", "quit", "F10");
 
   g_log_set_default_handler(g_log_func_, this);
 
-  DeclareBindable("testapp", "quit", sigc::mem_fun(mngr,
-        &CppConsUI::CoreManager::QuitMainLoop),
+  declareBindable("testapp", "quit", sigc::mem_fun(mngr,
+        &CppConsUI::CoreManager::quitMainLoop),
       InputProcessor::BINDABLE_OVERRIDE);
 }
 
-void TestApp::Run()
+void TestApp::run()
 {
-  mngr->AddWindow(*LabelWindow::Instance());
-  mngr->SetTopInputProcessor(*this);
-  mngr->EnableResizing();
-  mngr->StartMainLoop();
+  mngr->addWindow(*LabelWindow::instance());
+  mngr->setTopInputProcessor(*this);
+  mngr->enableResizing();
+  mngr->startMainLoop();
 }
 
 // main function
@@ -148,8 +148,8 @@ int main()
 {
   setlocale(LC_ALL, "");
 
-  TestApp *app = TestApp::Instance();
-  app->Run();
+  TestApp *app = TestApp::instance();
+  app->run();
 
   return 0;
 }

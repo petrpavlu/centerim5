@@ -12,8 +12,8 @@ class SubMenuWindow
 public:
   /* This is a main window, make sure it can not be closed with ESC key by
    * overriding Close() method. */
-  static SubMenuWindow *Instance();
-  virtual void Close() {}
+  static SubMenuWindow *instance();
+  virtual void close() {}
 
 protected:
 
@@ -26,10 +26,10 @@ private:
   SubMenuWindow(const SubMenuWindow&);
   SubMenuWindow& operator=(const SubMenuWindow&);
 
-  void OnButtonActivate(CppConsUI::Button& activator);
+  void onButtonActivate(CppConsUI::Button& activator);
 };
 
-SubMenuWindow *SubMenuWindow::Instance()
+SubMenuWindow *SubMenuWindow::instance()
 {
   static SubMenuWindow instance;
   return &instance;
@@ -38,49 +38,49 @@ SubMenuWindow *SubMenuWindow::Instance()
 SubMenuWindow::SubMenuWindow()
 : CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
-  AddWidget(*(new CppConsUI::Label("Press F10 to quit.")), 1, 1);
+  addWidget(*(new CppConsUI::Label("Press F10 to quit.")), 1, 1);
 
   CppConsUI::Button *button = new CppConsUI::Button("Open Menu...");
-  AddWidget(*button, 1, 3);
+  addWidget(*button, 1, 3);
 
   menu = new CppConsUI::MenuWindow(*button, AUTOSIZE, AUTOSIZE);
-  menu->SetHideOnClose(true);
+  menu->setHideOnClose(true);
 
   button->signal_activate.connect(sigc::hide(sigc::mem_fun(menu,
-          &CppConsUI::MenuWindow::Show)));
+          &CppConsUI::MenuWindow::show)));
 
-  menu->AppendItem("Item 1", sigc::hide(sigc::mem_fun(menu,
-          &CppConsUI::MenuWindow::Hide)));
-  menu->AppendItem("Item 2", sigc::hide(sigc::mem_fun(menu,
-          &CppConsUI::MenuWindow::Hide)));
-  menu->AppendItem("Item 3", sigc::hide(sigc::mem_fun(menu,
-          &CppConsUI::MenuWindow::Hide)));
-  menu->AppendItem("Item 4", sigc::hide(sigc::mem_fun(menu,
-          &CppConsUI::MenuWindow::Hide)));
-  menu->AppendSeparator();
+  menu->appendItem("Item 1", sigc::hide(sigc::mem_fun(menu,
+          &CppConsUI::MenuWindow::hide)));
+  menu->appendItem("Item 2", sigc::hide(sigc::mem_fun(menu,
+          &CppConsUI::MenuWindow::hide)));
+  menu->appendItem("Item 3", sigc::hide(sigc::mem_fun(menu,
+          &CppConsUI::MenuWindow::hide)));
+  menu->appendItem("Item 4", sigc::hide(sigc::mem_fun(menu,
+          &CppConsUI::MenuWindow::hide)));
+  menu->appendSeparator();
 
   CppConsUI::MenuWindow *submenu = new CppConsUI::MenuWindow(*button,
       AUTOSIZE, AUTOSIZE);
-  submenu->AppendItem("Item 1", sigc::hide(sigc::mem_fun(submenu,
-          &CppConsUI::MenuWindow::Hide)));
-  submenu->AppendItem("Item 2", sigc::hide(sigc::mem_fun(submenu,
-          &CppConsUI::MenuWindow::Hide)));
-  submenu->AppendItem("Item 3", sigc::hide(sigc::mem_fun(submenu,
-          &CppConsUI::MenuWindow::Hide)));
-  submenu->AppendItem("Item 3", sigc::hide(sigc::mem_fun(submenu,
-          &CppConsUI::MenuWindow::Hide)));
-  menu->AppendSubMenu("First submenu", *submenu);
+  submenu->appendItem("Item 1", sigc::hide(sigc::mem_fun(submenu,
+          &CppConsUI::MenuWindow::hide)));
+  submenu->appendItem("Item 2", sigc::hide(sigc::mem_fun(submenu,
+          &CppConsUI::MenuWindow::hide)));
+  submenu->appendItem("Item 3", sigc::hide(sigc::mem_fun(submenu,
+          &CppConsUI::MenuWindow::hide)));
+  submenu->appendItem("Item 3", sigc::hide(sigc::mem_fun(submenu,
+          &CppConsUI::MenuWindow::hide)));
+  menu->appendSubMenu("First submenu", *submenu);
 
   submenu = new CppConsUI::MenuWindow(*button, AUTOSIZE, AUTOSIZE);
-  submenu->AppendItem("Item 1", sigc::hide(sigc::mem_fun(menu,
-          &CppConsUI::MenuWindow::Hide)));
-  submenu->AppendItem("Item 2", sigc::hide(sigc::mem_fun(menu,
-          &CppConsUI::MenuWindow::Hide)));
-  submenu->AppendItem("Item 3", sigc::hide(sigc::mem_fun(menu,
-          &CppConsUI::MenuWindow::Hide)));
-  submenu->AppendItem("Item 4", sigc::hide(sigc::mem_fun(menu,
-          &CppConsUI::MenuWindow::Hide)));
-  menu->AppendSubMenu("Second submenu", *submenu);
+  submenu->appendItem("Item 1", sigc::hide(sigc::mem_fun(menu,
+          &CppConsUI::MenuWindow::hide)));
+  submenu->appendItem("Item 2", sigc::hide(sigc::mem_fun(menu,
+          &CppConsUI::MenuWindow::hide)));
+  submenu->appendItem("Item 3", sigc::hide(sigc::mem_fun(menu,
+          &CppConsUI::MenuWindow::hide)));
+  submenu->appendItem("Item 4", sigc::hide(sigc::mem_fun(menu,
+          &CppConsUI::MenuWindow::hide)));
+  menu->appendSubMenu("Second submenu", *submenu);
 }
 
 SubMenuWindow::~SubMenuWindow()
@@ -88,10 +88,10 @@ SubMenuWindow::~SubMenuWindow()
   delete menu;
 }
 
-void SubMenuWindow::OnButtonActivate(CppConsUI::Button& activator)
+void SubMenuWindow::onButtonActivate(CppConsUI::Button& activator)
 {
-  char *text = g_strdup_printf("%s activated.", activator.GetText());;
-  label->SetText(text);
+  char *text = g_strdup_printf("%s activated.", activator.getText());;
+  label->setText(text);
   g_free(text);
 }
 
@@ -100,9 +100,9 @@ class TestApp
 : public CppConsUI::InputProcessor
 {
 public:
-  static TestApp *Instance();
+  static TestApp *instance();
 
-  void Run();
+  void run();
 
   // ignore every message
   static void g_log_func_(const gchar * /*log_domain*/,
@@ -121,7 +121,7 @@ private:
   virtual ~TestApp() {}
 };
 
-TestApp *TestApp::Instance()
+TestApp *TestApp::instance()
 {
   static TestApp instance;
   return &instance;
@@ -129,23 +129,23 @@ TestApp *TestApp::Instance()
 
 TestApp::TestApp()
 {
-  mngr = CppConsUI::CoreManager::Instance();
-  KEYCONFIG->BindKey("testapp", "quit", "F10");
-  KEYCONFIG->LoadDefaultKeyConfig();
+  mngr = CppConsUI::CoreManager::instance();
+  KEYCONFIG->loadDefaultKeyConfig();
+  KEYCONFIG->bindKey("testapp", "quit", "F10");
 
   g_log_set_default_handler(g_log_func_, this);
 
-  DeclareBindable("testapp", "quit", sigc::mem_fun(mngr,
-        &CppConsUI::CoreManager::QuitMainLoop),
+  declareBindable("testapp", "quit", sigc::mem_fun(mngr,
+        &CppConsUI::CoreManager::quitMainLoop),
       InputProcessor::BINDABLE_OVERRIDE);
 }
 
-void TestApp::Run()
+void TestApp::run()
 {
-  mngr->AddWindow(*SubMenuWindow::Instance());
-  mngr->SetTopInputProcessor(*this);
-  mngr->EnableResizing();
-  mngr->StartMainLoop();
+  mngr->addWindow(*SubMenuWindow::instance());
+  mngr->setTopInputProcessor(*this);
+  mngr->enableResizing();
+  mngr->startMainLoop();
 }
 
 // main function
@@ -153,8 +153,8 @@ int main()
 {
   setlocale(LC_ALL, "");
 
-  TestApp *app = TestApp::Instance();
-  app->Run();
+  TestApp *app = TestApp::instance();
+  app->run();
 
   return 0;
 }

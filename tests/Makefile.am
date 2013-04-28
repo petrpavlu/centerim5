@@ -1,7 +1,6 @@
 check_PROGRAMS = \
 	button \
 	colorpicker \
-	keybinding_config \
 	label \
 	textentry \
 	textview \
@@ -25,9 +24,6 @@ button_SOURCES = \
 
 colorpicker_SOURCES = \
 	colorpicker.cpp
-
-keybinding_config_SOURCES = \
-	keybinding_config.cpp
 
 label_SOURCES = \
 	label.cpp

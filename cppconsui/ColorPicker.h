@@ -42,8 +42,8 @@ public:
   ColorPicker(int fg, int bg, const char *text, bool sample = false);
   virtual ~ColorPicker() {}
 
-  virtual void SetColorPair(int fg, int bg);
-  virtual void SetText(const char *new_text);
+  virtual void setColorPair(int fg, int bg);
+  virtual void setText(const char *new_text);
 
   /**
    * Emited signal when the colorpair has been selected
@@ -59,9 +59,9 @@ protected:
     virtual ~Sample() {}
 
     // Widget
-    virtual void Draw();
+    virtual void draw();
 
-    virtual void SetColors(int fg, int bg);
+    virtual void setColors(int fg, int bg);
 
   protected:
     ColorScheme::Color c;
@@ -71,7 +71,7 @@ protected:
     Sample& operator=(const Sample&);
   };
 
-  virtual void OnColorChanged(ComboBox& activator, int new_color);
+  virtual void onColorChanged(ComboBox& activator, int new_color);
 
   ColorPickerComboBox *fg_combo;
   ColorPickerComboBox *bg_combo;

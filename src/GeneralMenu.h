@@ -34,7 +34,7 @@ public:
   virtual ~GeneralMenu() {}
 
   // FreeWindow
-  virtual void OnScreenResized();
+  virtual void onScreenResized();
 
 protected:
 
@@ -42,17 +42,17 @@ private:
   GeneralMenu(const GeneralMenu&);
   GeneralMenu& operator=(const GeneralMenu&);
 
-  void OpenStatusWindow(CppConsUI::Button& activator);
-  void OpenAccountWindow(CppConsUI::Button& activator);
-  void OpenAddBuddyRequest(CppConsUI::Button& activator);
-  void OpenAddChatRequest(CppConsUI::Button& activator);
-  void OpenAddGroupRequest(CppConsUI::Button& activator);
-  void OpenPendingRequests(CppConsUI::Button& activator);
-  void OpenOptionWindow(CppConsUI::Button& activator);
-  void OpenPluginWindow(CppConsUI::Button& activator);
+  void openStatusWindow(CppConsUI::Button& activator);
+  void openAccountWindow(CppConsUI::Button& activator);
+  void openAddBuddyRequest(CppConsUI::Button& activator);
+  void openAddChatRequest(CppConsUI::Button& activator);
+  void openAddGroupRequest(CppConsUI::Button& activator);
+  void openPendingRequests(CppConsUI::Button& activator);
+  void openOptionWindow(CppConsUI::Button& activator);
+  void openPluginWindow(CppConsUI::Button& activator);
 
 #ifdef DEBUG
-  void RequestTest(CppConsUI::Button& activator);
+  void requestTest(CppConsUI::Button& activator);
 
   static void input_ok_cb_(void *data, const char *text)
     { reinterpret_cast<GeneralMenu*>(data)->input_ok_cb(text); }

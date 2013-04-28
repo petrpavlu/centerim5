@@ -30,12 +30,12 @@
 #include <cppconsui/SplitDialog.h>
 #include <libpurple/purple.h>
 
-#define REQUEST (Request::Instance())
+#define REQUEST (Request::instance())
 
 class Request
 {
 public:
-  static Request *Instance();
+  static Request *instance();
 
 protected:
 
@@ -50,9 +50,9 @@ private:
     virtual ~RequestDialog() {}
 
     // FreeWindow
-    virtual void OnScreenResized();
+    virtual void onScreenResized();
 
-    virtual PurpleRequestType GetRequestType() = 0;
+    virtual PurpleRequestType getRequestType() = 0;
 
   protected:
     GCallback ok_cb;
@@ -62,7 +62,7 @@ private:
     // convenient var, same as dynamic_cast<ListBox*>(container)
     CppConsUI::ListBox *lbox;
 
-    virtual void ResponseHandler(CppConsUI::SplitDialog& activator,
+    virtual void responseHandler(CppConsUI::SplitDialog& activator,
         ResponseType response) = 0;
 
   private:
@@ -80,12 +80,12 @@ private:
         GCallback cancel_cb, void *user_data);
     virtual ~InputTextDialog() {}
 
-    virtual PurpleRequestType GetRequestType();
+    virtual PurpleRequestType getRequestType();
 
   protected:
     CppConsUI::TextEntry *entry;
 
-    virtual void ResponseHandler(SplitDialog& activator,
+    virtual void responseHandler(SplitDialog& activator,
         ResponseType response);
 
   private:
@@ -103,12 +103,12 @@ private:
         void *user_data, va_list choices);
     virtual ~ChoiceDialog() {}
 
-    virtual PurpleRequestType GetRequestType();
+    virtual PurpleRequestType getRequestType();
 
   protected:
     CppConsUI::ComboBox *combo;
 
-    virtual void ResponseHandler(SplitDialog& activator,
+    virtual void responseHandler(SplitDialog& activator,
         ResponseType response);
 
   private:
@@ -125,17 +125,17 @@ private:
         size_t action_count, va_list actions);
     virtual ~ActionDialog() {}
 
-    virtual PurpleRequestType GetRequestType();
+    virtual PurpleRequestType getRequestType();
 
   protected:
-    virtual void ResponseHandler(SplitDialog& activator,
+    virtual void responseHandler(SplitDialog& activator,
         ResponseType response);
 
   private:
     ActionDialog(const ActionDialog&);
     ActionDialog& operator=(const ActionDialog&);
 
-    void OnActionChoice(CppConsUI::Button& activator, size_t i, GCallback cb);
+    void onActionChoice(CppConsUI::Button& activator, size_t i, GCallback cb);
   };
 
   class FieldsDialog
@@ -148,7 +148,7 @@ private:
         GCallback cancel_cb, void *user_data);
     virtual ~FieldsDialog() {}
 
-    virtual PurpleRequestType GetRequestType();
+    virtual PurpleRequestType getRequestType();
 
   protected:
     PurpleRequestFields *fields;
@@ -164,8 +164,8 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void OnActivate(CppConsUI::Button& activator);
-      void ResponseHandler(CppConsUI::InputDialog& activator,
+      void onActivate(CppConsUI::Button& activator);
+      void responseHandler(CppConsUI::InputDialog& activator,
           CppConsUI::AbstractDialog::ResponseType response);
 
     private:
@@ -183,8 +183,8 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void OnActivate(CppConsUI::Button& activator);
-      void ResponseHandler(CppConsUI::InputDialog& activator,
+      void onActivate(CppConsUI::Button& activator);
+      void responseHandler(CppConsUI::InputDialog& activator,
           CppConsUI::AbstractDialog::ResponseType response);
 
     private:
@@ -202,7 +202,7 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void OnToggle(CppConsUI::CheckBox& activator, bool new_state);
+      void onToggle(CppConsUI::CheckBox& activator, bool new_state);
 
     private:
       BooleanField(const BooleanField&);
@@ -219,7 +219,7 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void OnSelectionChanged(CppConsUI::ComboBox& activator, int new_entry,
+      void onSelectionChanged(CppConsUI::ComboBox& activator, int new_entry,
           const char *title, intptr_t data);
 
     private:
@@ -247,7 +247,7 @@ private:
       protected:
         PurpleRequestField *field;
 
-        void OnToggle(CppConsUI::CheckBox& activator, bool new_state);
+        void onToggle(CppConsUI::CheckBox& activator, bool new_state);
 
       private:
         ListFieldItem(const ListFieldItem&);
@@ -269,7 +269,7 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void OnSelectionChanged(CppConsUI::ComboBox& activator, int new_entry,
+      void onSelectionChanged(CppConsUI::ComboBox& activator, int new_entry,
           const char *title, intptr_t data);
 
     private:
@@ -302,7 +302,7 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void OnActivate(CppConsUI::Button& activator);
+      void onActivate(CppConsUI::Button& activator);
 
     private:
       ImageField(const ImageField&);
@@ -319,7 +319,7 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void OnAccountChanged(CppConsUI::Button& activator, size_t new_entry,
+      void onAccountChanged(CppConsUI::Button& activator, size_t new_entry,
           const char *title, intptr_t data);
 
     private:
@@ -327,7 +327,7 @@ private:
       AccountField& operator=(const AccountField&);
     };
 
-    virtual void ResponseHandler(CppConsUI::SplitDialog& activator,
+    virtual void responseHandler(CppConsUI::SplitDialog& activator,
         ResponseType response);
 
   private:
@@ -341,18 +341,18 @@ private:
 
   PurpleRequestUiOps centerim_request_ui_ops;
 
-  static Request *instance;
+  static Request *my_instance;
 
   Request();
   Request(const Request&);
   Request& operator=(const Request&);
   ~Request();
 
-  static void Init();
-  static void Finalize();
+  static void init();
+  static void finalize();
   friend class CenterIM;
 
-  void OnDialogResponse(CppConsUI::SplitDialog& dialog,
+  void onDialogResponse(CppConsUI::SplitDialog& dialog,
       CppConsUI::AbstractDialog::ResponseType response);
 
   static void *request_input_(const char *title, const char *primary,

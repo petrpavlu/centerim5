@@ -46,7 +46,7 @@ public:
     virtual ~ToggleCollapseButton() {}
 
     // Widget
-    virtual void SetParent(Container& parent);
+    virtual void setParent(Container& parent);
 
   protected:
 
@@ -71,96 +71,96 @@ public:
   virtual ~TreeView();
 
   // Widget
-  virtual void Draw();
-  virtual void CleanFocus();
-  virtual bool GrabFocus();
+  virtual void draw();
+  virtual void cleanFocus();
+  virtual bool grabFocus();
 
   // Container
-  virtual void Clear();
-  virtual bool IsWidgetVisible(const Widget& widget) const;
-  virtual bool SetFocusChild(Widget& child);
-  virtual void GetFocusChain(FocusChain& focus_chain,
+  virtual void clear();
+  virtual bool isWidgetVisible(const Widget& widget) const;
+  virtual bool setFocusChild(Widget& child);
+  virtual void getFocusChain(FocusChain& focus_chain,
       FocusChain::iterator parent);
-  virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
+  virtual Curses::Window *getSubPad(const Widget& child, int begin_x,
       int begin_y, int ncols, int nlines);
 
   /**
    * Folds/unfolds given node.
    */
-  virtual void SetCollapsed(NodeReference node, bool collapsed);
+  virtual void setCollapsed(NodeReference node, bool collapsed);
   /**
    * Toggles folding for given node.
    */
-  virtual void ToggleCollapsed(NodeReference node);
+  virtual void toggleCollapsed(NodeReference node);
   /**
    * Convenient method to toggle folding of the current active node.
    */
-  virtual void ActionToggleCollapsed();
+  virtual void actionToggleCollapsed();
 
   /**
    * Returns root node reference.
    */
-  virtual NodeReference GetRootNode() const { return thetree.begin(); }
+  virtual NodeReference getRootNode() const { return thetree.begin(); }
 
   /**
    * Inserts a widget before a specified position. TreeView takes ownership of
    * the widget.
    */
-  virtual NodeReference InsertNode(NodeReference position,
+  virtual NodeReference insertNode(NodeReference position,
       Widget& widget);
   /**
    * Inserts a widget after a specified position. TreeView takes ownership of
    * the widget.
    */
-  virtual NodeReference InsertNodeAfter(NodeReference position,
+  virtual NodeReference insertNodeAfter(NodeReference position,
       Widget& widget);
   /**
    * Prepends a widget to a specified parent. TreeView takes ownership of the
    * widget.
    */
-  virtual NodeReference PrependNode(NodeReference parent, Widget& widget);
+  virtual NodeReference prependNode(NodeReference parent, Widget& widget);
   /**
    * Appends a widget to a specified parent. TreeView takes ownership of the
    * widget.
    */
-  virtual NodeReference AppendNode(NodeReference parent, Widget& widget);
+  virtual NodeReference appendNode(NodeReference parent, Widget& widget);
 
   /**
    * Deletes given node.
    */
-  virtual void DeleteNode(NodeReference node, bool keepchildren);
+  virtual void deleteNode(NodeReference node, bool keepchildren);
   /**
    * Deletes all children of given node.
    */
-  virtual void DeleteNodeChildren(NodeReference node, bool keepchildren);
+  virtual void deleteNodeChildren(NodeReference node, bool keepchildren);
 
   /**
    * Returns reference to currently focused node/widget.
    */
-  virtual NodeReference GetSelectedNode() const;
+  virtual NodeReference getSelectedNode() const;
 
   /**
    * Returns node depth.
    */
-  virtual int GetNodeDepth(NodeReference node) const;
+  virtual int getNodeDepth(NodeReference node) const;
 
   /**
    * Detaches a given node from its current location and moves it before
    * a given position.
    */
-  virtual void MoveNodeBefore(NodeReference node, NodeReference position);
+  virtual void moveNodeBefore(NodeReference node, NodeReference position);
   /**
    * Detaches a given node from its current location and moves it after
    * a given position.
    */
-  virtual void MoveNodeAfter(NodeReference node, NodeReference position);
+  virtual void moveNodeAfter(NodeReference node, NodeReference position);
   /**
    * Detaches a given node from its current location and appents it to a new
    * parent.
    */
-  virtual void SetNodeParent(NodeReference node, NodeReference newparent);
-  virtual void SetNodeStyle(NodeReference node, Style s);
-  virtual Style GetNodeStyle(NodeReference node) const;
+  virtual void setNodeParent(NodeReference node, NodeReference newparent);
+  virtual void setNodeStyle(NodeReference node, Style s);
+  virtual Style getNodeStyle(NodeReference node) const;
 
 protected:
   class TreeNode
@@ -171,10 +171,10 @@ protected:
   friend class TreeView;
 
   public:
-    TreeView *GetTreeView() const { return treeview; }
-    bool GetCollapsed() const { return collapsed; }
-    Style GetStyle() const { return style; }
-    Widget *GetWidget() const { return widget; }
+    TreeView *getTreeView() const { return treeview; }
+    bool getCollapsed() const { return collapsed; }
+    Style getStyle() const { return style; }
+    Widget *getWidget() const { return widget; }
 
   protected:
 
@@ -205,36 +205,36 @@ protected:
   NodeReference focus_node;
 
   // Container
-  using ScrollPane::AddWidget;
-  using ScrollPane::RemoveWidget;
-  using ScrollPane::MoveWidgetBefore;
-  using ScrollPane::MoveWidgetAfter;
+  using ScrollPane::addWidget;
+  using ScrollPane::removeWidget;
+  using ScrollPane::moveWidgetBefore;
+  using ScrollPane::moveWidgetAfter;
 
-  virtual int DrawNode(SiblingIterator node, int top);
+  virtual int drawNode(SiblingIterator node, int top);
 
-  virtual TreeNode AddNode(Widget& widget);
+  virtual TreeNode addNode(Widget& widget);
 
-  virtual void FixFocus();
+  virtual void fixFocus();
 
-  virtual NodeReference FindNode(const Widget& child) const;
+  virtual NodeReference findNode(const Widget& child) const;
 
-  virtual bool IsNodeOpenable(SiblingIterator& node) const;
-  virtual bool IsNodeVisible(NodeReference& node) const;
+  virtual bool isNodeOpenable(SiblingIterator& node) const;
+  virtual bool isNodeVisible(NodeReference& node) const;
 
   // signal handlers
-  virtual void OnChildMoveResize(Widget& activator, const Rect& oldsize,
+  virtual void onChildMoveResize(Widget& activator, const Rect& oldsize,
       const Rect& newsize);
-  virtual void OnChildWishSizeChange(Widget& activator, const Size& oldsize,
+  virtual void onChildWishSizeChange(Widget& activator, const Size& oldsize,
       const Size& newsize);
 
 private:
   TreeView(const TreeView&);
   TreeView& operator=(const TreeView&);
 
-  void ActionCollapse();
-  void ActionExpand();
+  void actionCollapse();
+  void actionExpand();
 
-  void DeclareBindables();
+  void declareBindables();
 };
 
 } // namespace CppConsUI

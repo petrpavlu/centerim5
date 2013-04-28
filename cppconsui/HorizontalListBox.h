@@ -47,19 +47,19 @@ public:
   virtual ~HorizontalListBox() {}
 
   // Widget
-  virtual void Draw();
+  virtual void draw();
 
   // AbstractListBox
-  virtual VerticalLine *InsertSeparator(size_t pos);
-  virtual VerticalLine *AppendSeparator();
-  virtual void InsertWidget(size_t pos, Widget& widget);
-  virtual void AppendWidget(Widget& widget);
+  virtual VerticalLine *insertSeparator(size_t pos);
+  virtual VerticalLine *appendSeparator();
+  virtual void insertWidget(size_t pos, Widget& widget);
+  virtual void appendWidget(Widget& widget);
 
   // Container
-  virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
+  virtual Curses::Window *getSubPad(const Widget& child, int begin_x,
       int begin_y, int ncols, int nlines);
 
-  virtual int GetChildrenWidth() const { return children_width; };
+  virtual int getChildrenWidth() const { return children_width; };
 
   sigc::signal<void, HorizontalListBox&, int> signal_children_width_change;
 
@@ -71,11 +71,11 @@ protected:
   bool reposition_widgets;
 
   // Container
-  virtual void OnChildMoveResize(Widget& activator, const Rect& oldsize,
+  virtual void onChildMoveResize(Widget& activator, const Rect& oldsize,
       const Rect& newsize);
-  virtual void OnChildVisible(Widget& widget, bool visible);
+  virtual void onChildVisible(Widget& widget, bool visible);
 
-  virtual void UpdateScrollWidth();
+  virtual void updateScrollWidth();
 
 private:
   HorizontalListBox(const HorizontalListBox&);

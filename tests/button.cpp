@@ -11,8 +11,8 @@ class ButtonWindow
 public:
   /* This is a main window, make sure it can not be closed with ESC key by
    * overriding Close() method. */
-  static ButtonWindow *Instance();
-  virtual void Close() {}
+  static ButtonWindow *instance();
+  virtual void close() {}
 
 protected:
 
@@ -24,10 +24,10 @@ private:
   ButtonWindow(const ButtonWindow&);
   ButtonWindow& operator=(const ButtonWindow&);
 
-  void OnButtonActivate(CppConsUI::Button& activator);
+  void onButtonActivate(CppConsUI::Button& activator);
 };
 
-ButtonWindow *ButtonWindow::Instance()
+ButtonWindow *ButtonWindow::instance()
 {
   static ButtonWindow instance;
   return &instance;
@@ -36,67 +36,67 @@ ButtonWindow *ButtonWindow::Instance()
 ButtonWindow::ButtonWindow()
 : CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
-  AddWidget(*(new CppConsUI::Label("Press F10 to quit.")), 1, 1);
+  addWidget(*(new CppConsUI::Label("Press F10 to quit.")), 1, 1);
   label = new CppConsUI::Label;
-  AddWidget(*label, 1, 2);
+  addWidget(*label, 1, 2);
 
   CppConsUI::Button *button;
 
   button = new CppConsUI::Button(20, 1, "Normal button");
   button->signal_activate.connect(sigc::mem_fun(this,
-        &ButtonWindow::OnButtonActivate));
-  AddWidget(*button, 1, 8);
+        &ButtonWindow::onButtonActivate));
+  addWidget(*button, 1, 8);
 
   button = new CppConsUI::Button("Simple autosize");
   button->signal_activate.connect(sigc::mem_fun(this,
-        &ButtonWindow::OnButtonActivate));
-  AddWidget(*button, 1, 10);
+        &ButtonWindow::onButtonActivate));
+  addWidget(*button, 1, 10);
 
   button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE,
       "Text+value button", "value");
   button->signal_activate.connect(sigc::mem_fun(this,
-        &ButtonWindow::OnButtonActivate));
-  AddWidget(*button, 1, 12);
+        &ButtonWindow::onButtonActivate));
+  addWidget(*button, 1, 12);
 
   button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE
       | CppConsUI::Button::FLAG_UNIT, "Text+value+unit button", "value",
       "unit");
   button->signal_activate.connect(sigc::mem_fun(this,
-        &ButtonWindow::OnButtonActivate));
-  AddWidget(*button, 1, 14);
+        &ButtonWindow::onButtonActivate));
+  addWidget(*button, 1, 14);
 
   button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE
       | CppConsUI::Button::FLAG_UNIT, "Text+value+unit\n2-line button",
       "value", "unit");
   button->signal_activate.connect(sigc::mem_fun(this,
-        &ButtonWindow::OnButtonActivate));
-  AddWidget(*button, 1, 16);
+        &ButtonWindow::onButtonActivate));
+  addWidget(*button, 1, 16);
 
   button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE
       | CppConsUI::Button::FLAG_UNIT, "Text+value+unit\n3-line\nbutton",
       "value", "unit");
   button->signal_activate.connect(sigc::mem_fun(this,
-        &ButtonWindow::OnButtonActivate));
-  AddWidget(*button, 1, 19);
+        &ButtonWindow::onButtonActivate));
+  addWidget(*button, 1, 19);
 
   button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE
       | CppConsUI::Button::FLAG_UNIT,
       "Text+value+unit\n4-line\n\nbutton", "value", "unit");
   button->signal_activate.connect(sigc::mem_fun(this,
-        &ButtonWindow::OnButtonActivate));
-  AddWidget(*button, 1, 23);
+        &ButtonWindow::onButtonActivate));
+  addWidget(*button, 1, 23);
 
   button = new CppConsUI::Button(30, 1, CppConsUI::Button::FLAG_RIGHT,
       "Text+right button", NULL, NULL, "right");
   button->signal_activate.connect(sigc::mem_fun(this,
-        &ButtonWindow::OnButtonActivate));
-  AddWidget(*button, 1, 28);
+        &ButtonWindow::onButtonActivate));
+  addWidget(*button, 1, 28);
 }
 
-void ButtonWindow::OnButtonActivate(CppConsUI::Button& activator)
+void ButtonWindow::onButtonActivate(CppConsUI::Button& activator)
 {
-  char *text = g_strdup_printf("%s activated.", activator.GetText());;
-  label->SetText(text);
+  char *text = g_strdup_printf("%s activated.", activator.getText());;
+  label->setText(text);
   g_free(text);
 }
 
@@ -105,9 +105,9 @@ class TestApp
 : public CppConsUI::InputProcessor
 {
 public:
-  static TestApp *Instance();
+  static TestApp *instance();
 
-  void Run();
+  void run();
 
   // ignore every message
   static void g_log_func_(const gchar * /*log_domain*/,
@@ -126,7 +126,7 @@ private:
   virtual ~TestApp() {}
 };
 
-TestApp *TestApp::Instance()
+TestApp *TestApp::instance()
 {
   static TestApp instance;
   return &instance;
@@ -134,23 +134,23 @@ TestApp *TestApp::Instance()
 
 TestApp::TestApp()
 {
-  mngr = CppConsUI::CoreManager::Instance();
-  KEYCONFIG->BindKey("testapp", "quit", "F10");
-  KEYCONFIG->LoadDefaultKeyConfig();
+  mngr = CppConsUI::CoreManager::instance();
+  KEYCONFIG->loadDefaultKeyConfig();
+  KEYCONFIG->bindKey("testapp", "quit", "F10");
 
   g_log_set_default_handler(g_log_func_, this);
 
-  DeclareBindable("testapp", "quit", sigc::mem_fun(mngr,
-        &CppConsUI::CoreManager::QuitMainLoop),
+  declareBindable("testapp", "quit", sigc::mem_fun(mngr,
+        &CppConsUI::CoreManager::quitMainLoop),
       InputProcessor::BINDABLE_OVERRIDE);
 }
 
-void TestApp::Run()
+void TestApp::run()
 {
-  mngr->AddWindow(*ButtonWindow::Instance());
-  mngr->SetTopInputProcessor(*this);
-  mngr->EnableResizing();
-  mngr->StartMainLoop();
+  mngr->addWindow(*ButtonWindow::instance());
+  mngr->setTopInputProcessor(*this);
+  mngr->enableResizing();
+  mngr->startMainLoop();
 }
 
 // main function
@@ -158,8 +158,8 @@ int main()
 {
   setlocale(LC_ALL, "");
 
-  TestApp *app = TestApp::Instance();
-  app->Run();
+  TestApp *app = TestApp::instance();
+  app->run();
 
   return 0;
 }

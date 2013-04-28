@@ -94,7 +94,7 @@ public:
    *
    * @return True if the input was successfully processed, false otherwise.
    */
-  virtual bool ProcessInput(const TermKeyKey& key);
+  virtual bool processInput(const TermKeyKey& key);
 
 protected:
   /**
@@ -137,9 +137,9 @@ protected:
   /**
    * Set the child object that must process input before this object.
    */
-  virtual void SetInputChild(InputProcessor& child);
-  virtual void ClearInputChild();
-  virtual InputProcessor *GetInputChild() { return input_child; }
+  virtual void setInputChild(InputProcessor& child);
+  virtual void clearInputChild();
+  virtual InputProcessor *getInputChild() { return input_child; }
 
   /**
    * Binds a (context, action) pair with a function.
@@ -147,16 +147,16 @@ protected:
    * The bind can be normal or override, depending on whether it needs to be
    * called after or before the @ref input_child.
    */
-  virtual void DeclareBindable(const char *context, const char *action,
+  virtual void declareBindable(const char *context, const char *action,
       const sigc::slot<void>& function, BindableType type);
 
   /**
    * Tries to match an appropriate bound action to the input and process it.
    * @return True if a match was found and processed.
    */
-  virtual bool Process(BindableType type, const TermKeyKey& key);
+  virtual bool process(BindableType type, const TermKeyKey& key);
 
-  virtual bool ProcessInputText(const TermKeyKey& key);
+  virtual bool processInputText(const TermKeyKey& key);
 
 private:
   InputProcessor(const InputProcessor&);

@@ -46,16 +46,16 @@ public:
   virtual ~Panel();
 
   // Widget
-  virtual void Draw();
+  virtual void draw();
 
   /**
-   * Sets the caption text.
+   * Sets a caption text.
    */
-  virtual void SetTitle(const char *text);
+  virtual void setTitle(const char *new_title);
   /**
-   * Returns caption text.
+   * Returns a caption text.
    */
-  virtual const char *GetTitle() const;
+  virtual const char *getTitle() const { return title; };
 
 protected:
   /**

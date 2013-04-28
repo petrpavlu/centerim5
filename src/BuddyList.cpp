@@ -30,16 +30,16 @@
 #include <cppconsui/Spacer.h>
 #include "gettext.h"
 
-BuddyList *BuddyList::instance = NULL;
+BuddyList *BuddyList::my_instance = NULL;
 
-BuddyList *BuddyList::Instance()
+BuddyList *BuddyList::instance()
 {
-  return instance;
+  return my_instance;
 }
 
-bool BuddyList::ProcessInputText(const TermKeyKey &key)
+bool BuddyList::processInputText(const TermKeyKey &key)
 {
-  if (!filter->IsVisible())
+  if (!filter->isVisible())
     return false;
 
   size_t input_len = strlen(key.utf8);
@@ -51,43 +51,43 @@ bool BuddyList::ProcessInputText(const TermKeyKey &key)
   filter_buffer_onscreen_width += CppConsUI::Curses::onscreen_width(pos);
   filter_buffer_length += input_len;
 
-  UpdateList(UPDATE_OTHERS);
-  Redraw();
+  updateList(UPDATE_OTHERS);
+  redraw();
 
   return true;
 }
 
-bool BuddyList::RestoreFocus()
+bool BuddyList::restoreFocus()
 {
-  FOOTER->SetText(_("%s act conv, %s main menu, %s context menu, "
+  FOOTER->setText(_("%s act conv, %s main menu, %s context menu, "
         "%s filter"), "centerim|conversation-active", "centerim|generalmenu",
       "buddylist|contextmenu", "buddylist|filter");
 
-  return CppConsUI::Window::RestoreFocus();
+  return CppConsUI::Window::restoreFocus();
 }
 
-void BuddyList::UngrabFocus()
+void BuddyList::ungrabFocus()
 {
-  FOOTER->SetText(NULL);
-  CppConsUI::Window::UngrabFocus();
+  FOOTER->setText(NULL);
+  CppConsUI::Window::ungrabFocus();
 }
 
-void BuddyList::Close()
+void BuddyList::close()
 {
   // BuddyList can't be closed, instead close the filter input if it's active
-  if (!filter->IsVisible())
+  if (!filter->isVisible())
     return;
 
-  FilterHide();
-  UpdateList(UPDATE_OTHERS);
+  filterHide();
+  updateList(UPDATE_OTHERS);
 }
 
-void BuddyList::OnScreenResized()
+void BuddyList::onScreenResized()
 {
-  MoveResizeRect(CENTERIM->GetScreenArea(CenterIM::BUDDY_LIST_AREA));
+  moveResizeRect(CENTERIM->getScreenArea(CenterIM::BUDDY_LIST_AREA));
 }
 
-void BuddyList::UpdateNode(PurpleBlistNode *node)
+void BuddyList::updateNode(PurpleBlistNode *node)
 {
   update(buddylist, node);
 }
@@ -97,9 +97,9 @@ BuddyList::Filter::Filter(BuddyList *parent_)
 {
 }
 
-void BuddyList::Filter::Draw()
+void BuddyList::Filter::draw()
 {
-  ProceedUpdateArea();
+  proceedUpdateArea();
 
   if (!area)
     return;
@@ -133,22 +133,22 @@ void BuddyList::Filter::Draw()
 BuddyList::BuddyList()
 : Window(0, 0, 80, 24)
 {
-  SetColorScheme("buddylist");
+  setColorScheme("buddylist");
 
   CppConsUI::ListBox *lbox = new CppConsUI::ListBox(AUTOSIZE, AUTOSIZE);
-  AddWidget(*lbox, 0, 0);
+  addWidget(*lbox, 0, 0);
 
   CppConsUI::HorizontalListBox *hbox
     = new CppConsUI::HorizontalListBox(AUTOSIZE, AUTOSIZE);
-  lbox->AppendWidget(*hbox);
-  hbox->AppendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
+  lbox->appendWidget(*hbox);
+  hbox->appendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
   treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
-  hbox->AppendWidget(*treeview);
-  hbox->AppendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
+  hbox->appendWidget(*treeview);
+  hbox->appendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
 
   filter = new Filter(this);
-  FilterHide();
-  lbox->AppendWidget(*filter);
+  filterHide();
+  lbox->appendWidget(*filter);
 
   /* TODO Check if this has been moved to purple_blist_init(). Remove these
    * lines if it was as this will probably move to purple_init(), the
@@ -170,12 +170,12 @@ BuddyList::BuddyList()
   purple_prefs_add_string(CONF_PREFIX "/blist/buddy_sort_mode", "status");
   purple_prefs_add_string(CONF_PREFIX "/blist/colorization_mode", "none");
 
-  UpdateCachedPreference(CONF_PREFIX "/blist/show_empty_groups");
-  UpdateCachedPreference(CONF_PREFIX "/blist/show_offline_buddies");
-  UpdateCachedPreference(CONF_PREFIX "/blist/list_mode");
-  UpdateCachedPreference(CONF_PREFIX "/blist/group_sort_mode");
-  UpdateCachedPreference(CONF_PREFIX "/blist/buddy_sort_mode");
-  UpdateCachedPreference(CONF_PREFIX "/blist/colorization_mode");
+  updateCachedPreference(CONF_PREFIX "/blist/show_empty_groups");
+  updateCachedPreference(CONF_PREFIX "/blist/show_offline_buddies");
+  updateCachedPreference(CONF_PREFIX "/blist/list_mode");
+  updateCachedPreference(CONF_PREFIX "/blist/group_sort_mode");
+  updateCachedPreference(CONF_PREFIX "/blist/buddy_sort_mode");
+  updateCachedPreference(CONF_PREFIX "/blist/colorization_mode");
 
   // connect callbacks
   purple_prefs_connect_callback(this, CONF_PREFIX "/blist",
@@ -199,9 +199,9 @@ BuddyList::BuddyList()
   //centerim_blist_ui_ops.save_account = save_account_;
   purple_blist_set_ui_ops(&centerim_blist_ui_ops);
 
-  COREMANAGER->TimeoutOnceConnect(sigc::mem_fun(this, &BuddyList::Load), 0);
+  COREMANAGER->timeoutOnceConnect(sigc::mem_fun(this, &BuddyList::load), 0);
 
-  DeclareBindables();
+  declareBindables();
 }
 
 BuddyList::~BuddyList()
@@ -210,33 +210,33 @@ BuddyList::~BuddyList()
   purple_prefs_disconnect_by_handle(this);
 }
 
-void BuddyList::Init()
+void BuddyList::init()
 {
-  g_assert(!instance);
+  g_assert(!my_instance);
 
-  instance = new BuddyList;
-  instance->Show();
+  my_instance = new BuddyList;
+  my_instance->show();
 }
 
-void BuddyList::Finalize()
+void BuddyList::finalize()
 {
-  g_assert(instance);
+  g_assert(my_instance);
 
-  delete instance;
-  instance = NULL;
+  delete my_instance;
+  my_instance = NULL;
 }
 
-void BuddyList::Load()
+void BuddyList::load()
 {
   // load the buddy list from ~/.centerim5/blist.xml
   purple_blist_load();
 
-  DelayedGroupNodesInit();
+  delayedGroupNodesInit();
 }
 
-void BuddyList::RebuildList()
+void BuddyList::rebuildList()
 {
-  treeview->Clear();
+  treeview->clear();
 
   PurpleBlistNode *node = purple_blist_get_root();
   while (node) {
@@ -245,7 +245,7 @@ void BuddyList::RebuildList()
   }
 }
 
-void BuddyList::UpdateList(int flags)
+void BuddyList::updateList(int flags)
 {
   for (PurpleBlistNode *node = purple_blist_get_root(); node;
       node = purple_blist_node_next(node, TRUE)) {
@@ -254,12 +254,12 @@ void BuddyList::UpdateList(int flags)
       BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(
           purple_blist_node_get_ui_data(node));
       if (bnode)
-        bnode->Update();
+        bnode->update();
     }
   }
 }
 
-void BuddyList::DelayedGroupNodesInit()
+void BuddyList::delayedGroupNodesInit()
 {
   // delayed group nodes init
   for (PurpleBlistNode *node = purple_blist_get_root(); node;
@@ -268,12 +268,12 @@ void BuddyList::DelayedGroupNodesInit()
       BuddyListGroup *gnode = reinterpret_cast<BuddyListGroup*>(
           purple_blist_node_get_ui_data(node));
       if (gnode)
-        gnode->InitCollapsedState();
+        gnode->initCollapsedState();
     }
   }
 }
 
-void BuddyList::UpdateCachedPreference(const char *name)
+void BuddyList::updateCachedPreference(const char *name)
 {
   if (!strcmp(name, CONF_PREFIX "/blist/show_empty_groups"))
     show_empty_groups = purple_prefs_get_bool(name);
@@ -313,7 +313,7 @@ void BuddyList::UpdateCachedPreference(const char *name)
   }
 }
 
-bool BuddyList::CheckAnyAccountConnected()
+bool BuddyList::checkAnyAccountConnected()
 {
   bool connected = false;
   for (GList *list = purple_accounts_get_all(); list; list = list->next) {
@@ -324,24 +324,24 @@ bool BuddyList::CheckAnyAccountConnected()
     }
   }
   if (!connected)
-    LOG->Message(_("There are no connected accounts."));
+    LOG->message(_("There are no connected accounts."));
   return connected;
 }
 
-void BuddyList::FilterHide()
+void BuddyList::filterHide()
 {
-  filter->SetVisibility(false);
+  filter->setVisibility(false);
   filter_buffer[0] = '\0';
   filter_buffer_length = 0;
   filter_buffer_onscreen_width = 0;
 }
 
-void BuddyList::ActionOpenFilter()
+void BuddyList::actionOpenFilter()
 {
-  if (filter->IsVisible())
+  if (filter->isVisible())
     return;
 
-  filter->SetVisibility(true);
+  filter->setVisibility(true);
 
   // stay sane
   g_assert(!filter_buffer[0]);
@@ -349,9 +349,9 @@ void BuddyList::ActionOpenFilter()
   g_assert(!filter_buffer_onscreen_width);
 }
 
-void BuddyList::ActionDeleteChar()
+void BuddyList::actionDeleteChar()
 {
-  if (!filter->IsVisible())
+  if (!filter->isVisible())
     return;
 
   const char *end = filter_buffer + filter_buffer_length;
@@ -363,24 +363,24 @@ void BuddyList::ActionDeleteChar()
     *prev = '\0';
   }
   else
-    FilterHide();
+    filterHide();
 
-  UpdateList(UPDATE_OTHERS);
-  Redraw();
+  updateList(UPDATE_OTHERS);
+  redraw();
 }
 
-void BuddyList::DeclareBindables()
+void BuddyList::declareBindables()
 {
-  DeclareBindable("buddylist", "filter", sigc::mem_fun(this,
-        &BuddyList::ActionOpenFilter), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable("textentry", "backspace", sigc::mem_fun(this,
-        &BuddyList::ActionDeleteChar), InputProcessor::BINDABLE_NORMAL);
+  declareBindable("buddylist", "filter", sigc::mem_fun(this,
+        &BuddyList::actionOpenFilter), InputProcessor::BINDABLE_NORMAL);
+  declareBindable("textentry", "backspace", sigc::mem_fun(this,
+        &BuddyList::actionDeleteChar), InputProcessor::BINDABLE_NORMAL);
 }
 
 void BuddyList::new_list(PurpleBuddyList *list)
 {
   if (buddylist != list)
-    LOG->Error(_("Different buddylist detected!"));
+    LOG->error(_("Different buddylist detected!"));
 }
 
 void BuddyList::new_node(PurpleBlistNode *node)
@@ -392,15 +392,15 @@ void BuddyList::new_node(PurpleBlistNode *node)
     return;
   }
 
-  BuddyListNode *bnode = BuddyListNode::CreateNode(node);
+  BuddyListNode *bnode = BuddyListNode::createNode(node);
   if (!bnode)
     return;
 
-  BuddyListNode *parent = bnode->GetParentNode();
-  CppConsUI::TreeView::NodeReference nref = treeview->AppendNode(
-      parent ? parent->GetRefNode() : treeview->GetRootNode(), *bnode);
-  bnode->SetRefNode(nref);
-  bnode->Update();
+  BuddyListNode *parent = bnode->getParentNode();
+  CppConsUI::TreeView::NodeReference nref = treeview->appendNode(
+      parent ? parent->getRefNode() : treeview->getRootNode(), *bnode);
+  bnode->setRefNode(nref);
+  bnode->update();
 }
 
 void BuddyList::update(PurpleBuddyList *list, PurpleBlistNode *node)
@@ -416,7 +416,7 @@ void BuddyList::update(PurpleBuddyList *list, PurpleBlistNode *node)
     return;
 
   // update the node data
-  bnode->Update();
+  bnode->update();
 
   if (node->parent)
     update(list, node->parent);
@@ -429,7 +429,7 @@ void BuddyList::remove(PurpleBuddyList *list, PurpleBlistNode *node)
   if (!bnode)
     return;
 
-  treeview->DeleteNode(bnode->GetRefNode(), false);
+  treeview->deleteNode(bnode->getRefNode(), false);
 
   if (node->parent)
     update(list, node->parent);
@@ -442,7 +442,7 @@ void BuddyList::destroy(PurpleBuddyList * /*list*/)
 void BuddyList::request_add_buddy(PurpleAccount *account,
     const char *username, const char *group, const char *alias)
 {
-  if (!CheckAnyAccountConnected())
+  if (!checkAnyAccountConnected())
     return;
 
   PurpleRequestFields *fields = purple_request_fields_new();
@@ -488,14 +488,14 @@ void BuddyList::request_add_buddy(PurpleAccount *account,
 void BuddyList::request_add_chat(PurpleAccount *account, PurpleGroup *group,
     const char * /*alias*/, const char * /*name*/)
 {
-  if (!CheckAnyAccountConnected())
+  if (!checkAnyAccountConnected())
     return;
 
   if (account) {
     PurpleConnection *gc = purple_account_get_connection(account);
 
     if (!PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->join_chat) {
-      LOG->Message(_("This protocol does not support chat rooms."));
+      LOG->message(_("This protocol does not support chat rooms."));
       return;
     }
   }
@@ -511,7 +511,7 @@ void BuddyList::request_add_chat(PurpleAccount *account, PurpleGroup *group,
     }
 
     if (!account) {
-      LOG->Message(_("You are not currently signed on with any "
+      LOG->message(_("You are not currently signed on with any "
             "protocols that have the ability to chat."));
       return;
     }
@@ -562,7 +562,7 @@ void BuddyList::request_add_chat(PurpleAccount *account, PurpleGroup *group,
 
 void BuddyList::request_add_group()
 {
-  if (!CheckAnyAccountConnected())
+  if (!checkAnyAccountConnected())
     return;
 
   purple_request_input(NULL, _("Add group"),
@@ -585,19 +585,19 @@ void BuddyList::add_buddy_ok_cb(PurpleRequestFields *fields)
 
   bool err = false;
   if (!account) {
-    LOG->Message(_("No account specified."));
+    LOG->message(_("No account specified."));
     err = true;
   }
   else if (!purple_account_is_connected(account)) {
-    LOG->Message(_("Selected account is not connected."));
+    LOG->message(_("Selected account is not connected."));
     err = true;
   }
   if (!name || !name[0]) {
-    LOG->Message(_("No buddy name specified."));
+    LOG->message(_("No buddy name specified."));
     err = true;
   }
   if (!group || !group[0]) {
-    LOG->Message(_("No group name specified."));
+    LOG->message(_("No group name specified."));
     err = true;
   }
   if (err) {
@@ -612,7 +612,7 @@ void BuddyList::add_buddy_ok_cb(PurpleRequestFields *fields)
   }
   PurpleBuddy *b = purple_find_buddy_in_group(account, name, g);
   if (b) {
-    LOG->Message(_("Specified buddy is already in the list."));
+    LOG->message(_("Specified buddy is already in the list."));
     return;
   }
 
@@ -638,11 +638,11 @@ void BuddyList::add_chat_ok_cb(PurpleRequestFields *fields)
 
   bool err = false;
   if (!account) {
-    LOG->Message(_("No account specified."));
+    LOG->message(_("No account specified."));
     err = true;
   }
   else if (!purple_account_is_connected(account)) {
-    LOG->Message(_("Selected account is not connected."));
+    LOG->message(_("Selected account is not connected."));
     err = true;
   }
   else {
@@ -650,17 +650,17 @@ void BuddyList::add_chat_ok_cb(PurpleRequestFields *fields)
     PurplePluginProtocolInfo *info = PURPLE_PLUGIN_PROTOCOL_INFO(
         purple_connection_get_prpl(gc));
     if (!info->join_chat) {
-      LOG->Message(_("This protocol does not support chat rooms."));
+      LOG->message(_("This protocol does not support chat rooms."));
       account = NULL;
       err = true;
     }
   }
   if (!name || !name[0]) {
-    LOG->Message(_("No buddy name specified."));
+    LOG->message(_("No buddy name specified."));
     err = true;
   }
   if (!group || !group[0]) {
-    LOG->Message(_("No group name specified."));
+    LOG->message(_("No group name specified."));
     err = true;
   }
   if (err) {
@@ -695,7 +695,7 @@ void BuddyList::add_chat_ok_cb(PurpleRequestFields *fields)
 void BuddyList::add_group_ok_cb(const char *name)
 {
   if (!name || !name[0]) {
-    LOG->Message(_("No group name specified."));
+    LOG->message(_("No group name specified."));
     purple_blist_request_add_group();
     return;
   }
@@ -708,10 +708,10 @@ void BuddyList::blist_pref_change(const char *name, PurplePrefType /*type*/,
     gconstpointer /*val*/)
 {
   // blist/* preference changed
-  UpdateCachedPreference(name);
+  updateCachedPreference(name);
 
   if (!strcmp(name, CONF_PREFIX "/blist/list_mode")) {
-    RebuildList();
+    rebuildList();
     return;
   }
 
@@ -720,7 +720,7 @@ void BuddyList::blist_pref_change(const char *name, PurplePrefType /*type*/,
       || !strcmp(name, CONF_PREFIX "/blist/group_sort_mode"))
     groups_only = true;
 
-  UpdateList(UPDATE_GROUPS | (!groups_only ? UPDATE_OTHERS : 0));
+  updateList(UPDATE_GROUPS | (!groups_only ? UPDATE_OTHERS : 0));
 }
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

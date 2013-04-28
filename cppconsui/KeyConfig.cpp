@@ -34,17 +34,17 @@
 namespace CppConsUI
 {
 
-KeyConfig *KeyConfig::Instance()
+KeyConfig *KeyConfig::instance()
 {
-  static KeyConfig instance;
-  return &instance;
+  static KeyConfig my_instance;
+  return &my_instance;
 }
 
-bool KeyConfig::BindKey(const char *context, const char *action,
+bool KeyConfig::bindKey(const char *context, const char *action,
     const char *key)
 {
   TermKeyKey tkey;
-  const char *res = termkey_strpkey(COREMANAGER->GetTermKeyHandle(), key,
+  const char *res = termkey_strpkey(COREMANAGER->getTermKeyHandle(), key,
       &tkey, TERMKEY_FORMAT_LONGMOD);
   if (!res || res[0])
     return false;
@@ -53,7 +53,7 @@ bool KeyConfig::BindKey(const char *context, const char *action,
   return true;
 }
 
-const KeyConfig::KeyBindContext *KeyConfig::GetKeyBinds(
+const KeyConfig::KeyBindContext *KeyConfig::getKeyBinds(
     const char *context) const
 {
   KeyBinds::const_iterator i = binds.find(context);
@@ -62,7 +62,7 @@ const KeyConfig::KeyBindContext *KeyConfig::GetKeyBinds(
   return &i->second;
 }
 
-const char *KeyConfig::GetKeyBind(const char *context,
+const char *KeyConfig::getKeyBind(const char *context,
     const char *action) const
 {
   KeyBinds::const_iterator i = binds.find(context);
@@ -74,7 +74,7 @@ const char *KeyConfig::GetKeyBind(const char *context,
     if (!j->second.compare(action)) {
       TermKeyKey key = j->first;
       static char out[256];
-      termkey_strfkey(COREMANAGER->GetTermKeyHandle(), out, sizeof(out), &key,
+      termkey_strfkey(COREMANAGER->getTermKeyHandle(), out, sizeof(out), &key,
           TERMKEY_FORMAT_CARETCTRL);
       return out;
     }
@@ -82,73 +82,73 @@ const char *KeyConfig::GetKeyBind(const char *context,
   return _("<unbound>");
 }
 
-char *KeyConfig::TermKeyToString(const TermKeyKey& key) const
+char *KeyConfig::termKeyToString(const TermKeyKey& key) const
 {
   TermKeyKey key_copy = key;
   char out[256];
-  termkey_strfkey(COREMANAGER->GetTermKeyHandle(), out, sizeof(out),
+  termkey_strfkey(COREMANAGER->getTermKeyHandle(), out, sizeof(out),
       &key_copy, TERMKEY_FORMAT_LONGMOD);
 
   return g_strdup(out);
 }
 
-bool KeyConfig::StringToTermKey(const char *key, TermKeyKey *termkey) const
+bool KeyConfig::stringToTermKey(const char *key, TermKeyKey *termkey) const
 {
-  const char *res = termkey_strpkey(COREMANAGER->GetTermKeyHandle(), key,
+  const char *res = termkey_strpkey(COREMANAGER->getTermKeyHandle(), key,
       termkey, TERMKEY_FORMAT_LONGMOD);
   return res && !res[0];
 }
 
-void KeyConfig::Clear()
+void KeyConfig::clear()
 {
   binds.clear();
 }
 
-void KeyConfig::LoadDefaultKeyConfig()
+void KeyConfig::loadDefaultKeyConfig()
 {
-  BindKey("button", "activate", "Enter");
+  bindKey("button", "activate", "Enter");
 
-  BindKey("checkbox", "toggle", "Enter");
+  bindKey("checkbox", "toggle", "Enter");
 
-  BindKey("container", "focus-previous", "Shift-Tab");
-  BindKey("container", "focus-next", "Tab");
-  BindKey("container", "focus-up", "Up");
-  BindKey("container", "focus-down", "Down");
-  BindKey("container", "focus-left", "Left");
-  BindKey("container", "focus-right", "Right");
-  BindKey("container", "focus-page-up", "PageUp");
-  BindKey("container", "focus-page-down", "PageDown");
-  BindKey("container", "focus-begin", "Home");
-  BindKey("container", "focus-end", "End");
+  bindKey("container", "focus-previous", "Shift-Tab");
+  bindKey("container", "focus-next", "Tab");
+  bindKey("container", "focus-up", "Up");
+  bindKey("container", "focus-down", "Down");
+  bindKey("container", "focus-left", "Left");
+  bindKey("container", "focus-right", "Right");
+  bindKey("container", "focus-page-up", "PageUp");
+  bindKey("container", "focus-page-down", "PageDown");
+  bindKey("container", "focus-begin", "Home");
+  bindKey("container", "focus-end", "End");
 
-  BindKey("coremanager", "redraw-screen", "Ctrl-l");
+  bindKey("coremanager", "redraw-screen", "Ctrl-l");
 
-  BindKey("textentry", "cursor-right", "Right");
-  BindKey("textentry", "cursor-left", "Left");
-  BindKey("textentry", "cursor-down", "Down");
-  BindKey("textentry", "cursor-up", "Up");
-  BindKey("textentry", "cursor-right-word", "Ctrl-Right");
-  BindKey("textentry", "cursor-left-word", "Ctrl-Left");
-  BindKey("textentry", "cursor-end", "End");
-  BindKey("textentry", "cursor-begin", "Home");
-  BindKey("textentry", "delete-char", "Delete");
-  BindKey("textentry", "backspace", "Backspace");
+  bindKey("textentry", "cursor-right", "Right");
+  bindKey("textentry", "cursor-left", "Left");
+  bindKey("textentry", "cursor-down", "Down");
+  bindKey("textentry", "cursor-up", "Up");
+  bindKey("textentry", "cursor-right-word", "Ctrl-Right");
+  bindKey("textentry", "cursor-left-word", "Ctrl-Left");
+  bindKey("textentry", "cursor-end", "End");
+  bindKey("textentry", "cursor-begin", "Home");
+  bindKey("textentry", "delete-char", "Delete");
+  bindKey("textentry", "backspace", "Backspace");
 
-  BindKey("textentry", "delete-word-end", "Ctrl-Delete");
+  bindKey("textentry", "delete-word-end", "Ctrl-Delete");
   /// @todo enable
   /*
-  BindKey("textentry", "toggle-overwrite", "Insert");
+  bindKey("textentry", "toggle-overwrite", "Insert");
   */
 
-  BindKey("textentry", "activate", "Enter");
+  bindKey("textentry", "activate", "Enter");
 
-  BindKey("textview", "scroll-up", "PageUp");
-  BindKey("textview", "scroll-down", "PageDown");
+  bindKey("textview", "scroll-up", "PageUp");
+  bindKey("textview", "scroll-down", "PageDown");
 
-  BindKey("treeview", "fold-subtree", "-");
-  BindKey("treeview", "unfold-subtree", "+");
+  bindKey("treeview", "fold-subtree", "-");
+  bindKey("treeview", "unfold-subtree", "+");
 
-  BindKey("window", "close-window", "Escape");
+  bindKey("window", "close-window", "Escape");
 }
 
 } // namespace CppConsUI

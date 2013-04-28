@@ -35,35 +35,34 @@ ComboBox::ComboBox(int w, int h, const char *text)
 : Button(w, h, text, FLAG_VALUE), dropdown(NULL), selected_entry(0)
 , max_option_width(0)
 {
-  signal_activate.connect(sigc::mem_fun(this, &ComboBox::OnDropDown));
+  signal_activate.connect(sigc::mem_fun(this, &ComboBox::onDropDown));
 }
 
 ComboBox::ComboBox(const char *text)
 : Button(text, FLAG_VALUE), dropdown(NULL), selected_entry(0)
 , max_option_width(0)
 {
-  signal_activate.connect(sigc::mem_fun(this, &ComboBox::OnDropDown));
+  signal_activate.connect(sigc::mem_fun(this, &ComboBox::onDropDown));
 }
 
 ComboBox::~ComboBox()
 {
-  ClearOptions();
+  clearOptions();
   if (dropdown)
-    dropdown->Close();
+    dropdown->close();
 }
 
-void ComboBox::ClearOptions()
+void ComboBox::clearOptions()
 {
   for (ComboBoxEntries::iterator i = options.begin(); i != options.end(); i++)
-    if (i->title)
-      g_free(i->title);
+    g_free(i->title);
 
   options.clear();
   selected_entry = 0;
   max_option_width = 0;
 }
 
-int ComboBox::AddOption(const char *text, intptr_t data)
+int ComboBox::addOption(const char *text, intptr_t data)
 {
   ComboBoxEntry e;
   int w;
@@ -78,22 +77,22 @@ int ComboBox::AddOption(const char *text, intptr_t data)
   // set this option as selected if there isn't any other yet
   if (options.empty()) {
     selected_entry = 0;
-    SetValue(text);
+    setValue(text);
   }
 
   options.push_back(e);
   return options.size() - 1;
 }
 
-const char *ComboBox::GetSelectedTitle() const
+const char *ComboBox::getSelectedTitle() const
 {
   if (options.empty())
     return NULL;
 
-  return GetTitle(selected_entry);
+  return getTitle(selected_entry);
 }
 
-const char *ComboBox::GetTitle(int entry) const
+const char *ComboBox::getTitle(int entry) const
 {
   g_return_val_if_fail(entry >= 0, NULL);
   g_assert(static_cast<size_t>(entry) < options.size());
@@ -101,7 +100,7 @@ const char *ComboBox::GetTitle(int entry) const
   return options[entry].title;
 }
 
-intptr_t ComboBox::GetData(int entry) const
+intptr_t ComboBox::getData(int entry) const
 {
   g_return_val_if_fail(entry >= 0, 0);
   g_assert(static_cast<size_t>(entry) < options.size());
@@ -109,7 +108,7 @@ intptr_t ComboBox::GetData(int entry) const
   return options[entry].data;
 }
 
-void ComboBox::SetSelected(int new_entry)
+void ComboBox::setSelected(int new_entry)
 {
   g_assert(new_entry >= 0);
   g_assert(new_entry < (int) options.size());
@@ -120,50 +119,50 @@ void ComboBox::SetSelected(int new_entry)
 
   selected_entry = new_entry;
   ComboBoxEntry e = options[new_entry];
-  SetValue(e.title);
+  setValue(e.title);
   signal_selection_changed(*this, new_entry, e.title, e.data);
 }
 
-void ComboBox::SetSelectedByData(intptr_t data)
+void ComboBox::setSelectedByData(intptr_t data)
 {
   int i;
   ComboBoxEntries::iterator j;
   for (i = 0, j = options.begin(); j != options.end(); i++, j++)
     if (j->data == data) {
-      SetSelected(i);
+      setSelected(i);
       break;
     }
 }
 
-void ComboBox::OnDropDown(Button& /*activator*/)
+void ComboBox::onDropDown(Button& /*activator*/)
 {
   if (options.empty())
     return;
 
   dropdown = new MenuWindow(*this, max_option_width + 2, AUTOSIZE);
   dropdown->signal_close.connect(sigc::mem_fun(this,
-        &ComboBox::DropDownClose));
+        &ComboBox::dropDownClose));
 
   int i;
   ComboBoxEntries::iterator j;
   for (i = 0, j = options.begin(); j != options.end(); i++, j++) {
-    Button *b = dropdown->AppendItem(j->title, sigc::bind(sigc::mem_fun(this,
-            &ComboBox::DropDownOk), i));
+    Button *b = dropdown->appendItem(j->title, sigc::bind(sigc::mem_fun(this,
+            &ComboBox::dropDownOk), i));
     if (i == selected_entry)
-      b->GrabFocus();
+      b->grabFocus();
   }
 
-  dropdown->Show();
+  dropdown->show();
 }
 
-void ComboBox::DropDownOk(Button& /*activator*/, int new_entry)
+void ComboBox::dropDownOk(Button& /*activator*/, int new_entry)
 {
-  dropdown->Close();
+  dropdown->close();
 
-  SetSelected(new_entry);
+  setSelected(new_entry);
 }
 
-void ComboBox::DropDownClose(FreeWindow& /*window*/)
+void ComboBox::dropDownClose(FreeWindow& /*window*/)
 {
   dropdown = NULL;
 }

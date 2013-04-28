@@ -36,17 +36,17 @@ namespace CppConsUI
 MessageDialog::MessageDialog(const char *title, const char *text)
 : AbstractDialog(title)
 {
-  AddButton(OK_BUTTON_TEXT, RESPONSE_OK);
+  addButton(OK_BUTTON_TEXT, RESPONSE_OK);
 
   // never give focus to the textview
-  buttons->SetFocusCycle(FOCUS_CYCLE_LOCAL);
+  buttons->setFocusCycle(FOCUS_CYCLE_LOCAL);
 
   textview = new TextView(AUTOSIZE, AUTOSIZE);
-  textview->Append(text);
-  layout->InsertWidget(0, *textview);
+  textview->append(text);
+  layout->insertWidget(0, *textview);
 }
 
-void MessageDialog::EmitResponse(ResponseType response)
+void MessageDialog::emitResponse(ResponseType response)
 {
   signal_response(*this, response);
 }

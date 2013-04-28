@@ -46,56 +46,55 @@ public:
   virtual ~MenuWindow();
 
   // Widget
-  virtual void Draw();
+  virtual void draw();
 
   // FreeWindow
-  virtual void Show();
-  virtual void Hide();
-  virtual void Close();
+  virtual void show();
+  virtual void hide();
+  virtual void close();
 
-  virtual Button *InsertItem(size_t pos, const char *title,
+  virtual Button *insertItem(size_t pos, const char *title,
       const sigc::slot<void, Button&>& callback)
-    { return listbox->InsertItem(pos, title, callback); }
-  virtual Button *AppendItem(const char *title,
+    { return listbox->insertItem(pos, title, callback); }
+  virtual Button *appendItem(const char *title,
       const sigc::slot<void, Button&>& callback)
-    { return listbox->AppendItem(title, callback); }
-  virtual AbstractLine *InsertSeparator(size_t pos)
-    { return listbox->InsertSeparator(pos); }
-  virtual AbstractLine *AppendSeparator()
-    { return listbox->AppendSeparator(); }
-  virtual Button *InsertSubMenu(size_t pos, const char *title,
+    { return listbox->appendItem(title, callback); }
+  virtual AbstractLine *insertSeparator(size_t pos)
+    { return listbox->insertSeparator(pos); }
+  virtual AbstractLine *appendSeparator()
+    { return listbox->appendSeparator(); }
+  virtual Button *insertSubMenu(size_t pos, const char *title,
       MenuWindow& submenu);
-  virtual Button *AppendSubMenu(const char *title,
+  virtual Button *appendSubMenu(const char *title,
       MenuWindow& submenu);
-  virtual void InsertWidget(size_t pos, Widget& widget)
-    { listbox->InsertWidget(pos, widget); }
-  virtual void AppendWidget(Widget& widget)
-    { listbox->AppendWidget(widget); }
+  virtual void insertWidget(size_t pos, Widget& widget)
+    { listbox->insertWidget(pos, widget); }
+  virtual void appendWidget(Widget& widget)
+    { listbox->appendWidget(widget); }
 
-  virtual void SetHideOnClose(bool new_hide_on_close);
-  virtual int GetHideOnClose() const { return hide_on_close; }
+  virtual void setHideOnClose(bool new_hide_on_close);
+  virtual int getHideOnClose() const { return hide_on_close; }
 
   /**
    * Assigns a reference widget which is used to calculate on-screen position
    * of this MenuWindow. Note that if the reference widget is destroyed then
    * the MenuWindow dies too.
    */
-  virtual void SetRefWidget(Widget& new_ref);
+  virtual void setRefWidget(Widget& new_ref);
   /**
    * Removes any reference widget assignment.
    */
-  virtual void CleanRefWidget();
+  virtual void cleanRefWidget();
   /**
    * Returns the currently set reference widget.
    */
-  virtual Widget *GetRefWidget() const { return ref; }
+  virtual Widget *getRefWidget() const { return ref; }
 
-  virtual int GetLeftShift() const { return xshift; }
-  virtual int GetTopShift() const { return yshift; }
+  virtual int getLeftShift() const { return xshift; }
+  virtual int getTopShift() const { return yshift; }
 
-  virtual void SetLeftShift(int x);
-  virtual void SetTopShift(int y);
-
+  virtual void setLeftShift(int x);
+  virtual void setTopShift(int y);
 
 protected:
   ListBox *listbox;
@@ -108,26 +107,26 @@ protected:
   bool hide_on_close;
 
   // Container
-  virtual void AddWidget(Widget& widget, int x, int y);
+  virtual void addWidget(Widget& widget, int x, int y);
 
   // FreeWindow
-  virtual void OnScreenResizedInternal();
+  virtual void onScreenResizedInternal();
 
-  virtual Button *PrepareSubMenu(const char *title, MenuWindow& submenu);
+  virtual Button *prepareSubMenu(const char *title, MenuWindow& submenu);
 
   /**
    * Recalculates desired on-screen position and size of this window. This
    * handles mainly autosize magic.
    */
-  virtual void UpdateSmartPositionAndSize();
+  virtual void updateSmartPositionAndSize();
 
-  virtual void OnChildrenHeightChange(ListBox& activator, int new_height);
+  virtual void onChildrenHeightChange(ListBox& activator, int new_height);
 
-  virtual void OnRefWidgetVisible(Widget& activator, bool visible);
+  virtual void onRefWidgetVisible(Widget& activator, bool visible);
 
-  static void *OnRefWidgetDestroy_(void *win)
-    { reinterpret_cast<MenuWindow*>(win)->OnRefWidgetDestroy(); return NULL; }
-  virtual void OnRefWidgetDestroy();
+  static void *onRefWidgetDestroy_(void *win)
+    { reinterpret_cast<MenuWindow*>(win)->onRefWidgetDestroy(); return NULL; }
+  virtual void onRefWidgetDestroy();
 
 private:
   MenuWindow(const MenuWindow&);

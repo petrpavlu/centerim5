@@ -40,25 +40,24 @@ class CheckBox
 : public Widget
 {
 public:
-  CheckBox(int w, int h, const char *text_ = NULL,
-      bool default_state = false);
-  explicit CheckBox(const char *text_ = NULL, bool default_state = false);
+  CheckBox(int w, int h, const char *text_ = NULL, bool checked_ = false);
+  explicit CheckBox(const char *text_ = NULL, bool checked_ = false);
   virtual ~CheckBox();
 
   // Widget
-  virtual void Draw();
+  virtual void draw();
 
   /**
-   * Sets a new text and redraws itself.
+   * Sets a new label text and redraws the widget.
    */
-  virtual void SetText(const char *new_text);
+  virtual void setText(const char *new_text);
   /**
-   * Returns previously set text.
+   * Returns a current label text.
    */
-  virtual const char *GetText() const { return text; }
+  virtual const char *getText() const { return text; }
 
-  virtual void SetState(bool new_state);
-  virtual bool GetState() const { return state; }
+  virtual void setChecked(bool new_checked);
+  virtual bool isChecked() const { return checked; }
 
   /**
    * Emited signal when a checkbox is pressed/activated.
@@ -69,15 +68,15 @@ protected:
   char *text;
   int text_width;
   int text_height;
-  bool state;
+  bool checked;
 
 private:
   CheckBox(const CheckBox&);
   CheckBox& operator=(const CheckBox&);
 
-  void ActionToggle();
+  void actionToggle();
 
-  void DeclareBindables();
+  void declareBindables();
 };
 
 } // namespace CppConsUI

@@ -47,19 +47,19 @@ public:
   virtual ~ListBox() {}
 
   // Widget
-  virtual void Draw();
+  virtual void draw();
 
   // AbstractListBox
-  virtual HorizontalLine *InsertSeparator(size_t pos);
-  virtual HorizontalLine *AppendSeparator();
-  virtual void InsertWidget(size_t pos, Widget& widget);
-  virtual void AppendWidget(Widget& widget);
+  virtual HorizontalLine *insertSeparator(size_t pos);
+  virtual HorizontalLine *appendSeparator();
+  virtual void insertWidget(size_t pos, Widget& widget);
+  virtual void appendWidget(Widget& widget);
 
   // Container
-  virtual Curses::Window *GetSubPad(const Widget& child, int begin_x,
+  virtual Curses::Window *getSubPad(const Widget& child, int begin_x,
       int begin_y, int ncols, int nlines);
 
-  virtual int GetChildrenHeight() const { return children_height; };
+  virtual int getChildrenHeight() const { return children_height; };
 
   sigc::signal<void, ListBox&, int> signal_children_height_change;
 
@@ -71,11 +71,11 @@ protected:
   bool reposition_widgets;
 
   // Container
-  virtual void OnChildMoveResize(Widget& activator, const Rect& oldsize,
+  virtual void onChildMoveResize(Widget& activator, const Rect& oldsize,
       const Rect& newsize);
-  virtual void OnChildVisible(Widget& activator, bool visible);
+  virtual void onChildVisible(Widget& activator, bool visible);
 
-  virtual void UpdateScrollHeight();
+  virtual void updateScrollHeight();
 
 private:
   ListBox(const ListBox&);

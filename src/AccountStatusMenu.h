@@ -33,10 +33,10 @@ public:
   virtual ~AccountStatusMenu() {}
 
   // FreeWindow
-  virtual void OnScreenResized();
+  virtual void onScreenResized();
 
 protected:
-  void OpenStatusPopup(CppConsUI::Button& activator, PurpleAccount *account);
+  void openStatusPopup(CppConsUI::Button& activator, PurpleAccount *account);
 
 private:
   class StatusPopup
@@ -47,7 +47,7 @@ private:
     virtual ~StatusPopup() {}
 
   protected:
-    void SetStatus(CppConsUI::Button& activator, PurpleAccount *account,
+    void setStatus(CppConsUI::Button& activator, PurpleAccount *account,
         PurpleStatusType *status_type, bool active);
 
   private:

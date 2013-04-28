@@ -35,14 +35,14 @@ TreeView::ToggleCollapseButton::ToggleCollapseButton(const char *text_)
 {
 }
 
-void TreeView::ToggleCollapseButton::SetParent(Container& parent)
+void TreeView::ToggleCollapseButton::setParent(Container& parent)
 {
   TreeView *tree = dynamic_cast<TreeView*>(&parent);
   g_assert(tree);
 
-  Button::SetParent(parent);
+  Button::setParent(parent);
   signal_activate.connect(sigc::hide(sigc::mem_fun(tree,
-          &TreeView::ActionToggleCollapsed)));
+          &TreeView::actionToggleCollapsed)));
 }
 
 TreeView::TreeView(int w, int h)
@@ -60,112 +60,112 @@ TreeView::TreeView(int w, int h)
   thetree.set_head(root);
   focus_node = thetree.begin();
 
-  DeclareBindables();
+  declareBindables();
 }
 
 TreeView::~TreeView()
 {
-  Clear();
+  clear();
 }
 
-void TreeView::Draw()
+void TreeView::draw()
 {
-  ProceedUpdateArea();
+  proceedUpdateArea();
   // set virtual scroll area width
   if (screen_area)
-    SetScrollWidth(screen_area->getmaxx());
-  ProceedUpdateVirtualArea();
+    setScrollWidth(screen_area->getmaxx());
+  proceedUpdateVirtualArea();
 
   if (!area) {
     // scrollpane will clear the scroll (real) area
-    ScrollPane::Draw();
+    ScrollPane::draw();
     return;
   }
 
-  area->fill(GetColorPair("container", "background"));
+  area->fill(getColorPair("container", "background"));
 
-  DrawNode(thetree.begin(), 0);
+  drawNode(thetree.begin(), 0);
 
   // make sure that currently focused widget is visible
   if (focus_child) {
-    int w = focus_child->GetWidth();
+    int w = focus_child->getWidth();
     if (w == AUTOSIZE)
-      w = focus_child->GetWishWidth();
+      w = focus_child->getWishWidth();
     if (w == AUTOSIZE)
       w = 1;
-    int h = focus_child->GetHeight();
+    int h = focus_child->getHeight();
     if (h == AUTOSIZE)
-      h = focus_child->GetWishHeight();
+      h = focus_child->getWishHeight();
     if (h == AUTOSIZE)
       h = 1;
 
-    MakeVisible(focus_child->GetLeft(), focus_child->GetTop(), w, h);
+    makeVisible(focus_child->getLeft(), focus_child->getTop(), w, h);
   }
 
-  ScrollPane::DrawEx(false);
+  ScrollPane::drawEx(false);
 }
 
-void TreeView::CleanFocus()
+void TreeView::cleanFocus()
 {
-  ScrollPane::CleanFocus();
+  ScrollPane::cleanFocus();
   focus_node = thetree.begin();
 }
 
-bool TreeView::GrabFocus()
+bool TreeView::grabFocus()
 {
   for (TheTree::pre_order_iterator i = ++thetree.begin();
       i != thetree.end(); i++)
-    if (i->widget->GrabFocus())
+    if (i->widget->grabFocus())
       return true;
   return false;
 }
 
-void TreeView::Clear()
+void TreeView::clear()
 {
   TheTree::pre_order_iterator root = thetree.begin();
   while (root.number_of_children())
-    DeleteNode(++thetree.begin(), false);
+    deleteNode(++thetree.begin(), false);
 
   // stay sane
   g_assert(children.empty());
-  g_assert(!GetScrollHeight());
+  g_assert(!getScrollHeight());
 }
 
-bool TreeView::IsWidgetVisible(const Widget& child) const
+bool TreeView::isWidgetVisible(const Widget& child) const
 {
   if (!parent || !visible)
     return false;
 
-  NodeReference node = FindNode(child);
-  if (!IsNodeVisible(node))
+  NodeReference node = findNode(child);
+  if (!isNodeVisible(node))
     return false;
 
-  return parent->IsWidgetVisible(*this);
+  return parent->isWidgetVisible(*this);
 }
 
-bool TreeView::SetFocusChild(Widget& child)
+bool TreeView::setFocusChild(Widget& child)
 {
-  NodeReference node = FindNode(child);
-  if (!IsNodeVisible(node))
+  NodeReference node = findNode(child);
+  if (!isNodeVisible(node))
     return false;
 
-  bool res = ScrollPane::SetFocusChild(child);
+  bool res = ScrollPane::setFocusChild(child);
   focus_node = node;
   return res;
 }
 
-void TreeView::GetFocusChain(FocusChain& focus_chain,
+void TreeView::getFocusChain(FocusChain& focus_chain,
     FocusChain::iterator parent)
 {
   /* It's possible that the predecessor of focused node was just made
-   * invisible and MoveFocus() is called so other widget can take the focus.
+   * invisible and moveFocus() is called so other widget can take the focus.
    * In this case we find top invisible predecessor of focused node and
    * later the focused node is placed into the focus chain when this
    * predecessor is reached. */
   NodeReference act = focus_node;
   NodeReference top = thetree.begin();
   while (act != thetree.begin()) {
-    if (!act->widget->IsVisible())
+    if (!act->widget->isVisible())
       top = act;
     act = thetree.parent(act);
   }
@@ -176,18 +176,18 @@ void TreeView::GetFocusChain(FocusChain& focus_chain,
     Widget *widget = i->widget;
     Container *container = dynamic_cast<Container*>(widget);
 
-    if (container && container->IsVisible()) {
+    if (container && container->isVisible()) {
       // the widget is a container so add its widgets as well
       FocusChain::pre_order_iterator iter = focus_chain.append_child(parent,
           container);
-      container->GetFocusChain(focus_chain, iter);
+      container->getFocusChain(focus_chain, iter);
 
       /* If this is not a focusable widget and it has no focusable
        * children, remove it from the chain. */
       if (!focus_chain.number_of_children(iter))
         focus_chain.erase(iter);
     }
-    else if (widget->CanFocus() && widget->IsVisible()) {
+    else if (widget->canFocus() && widget->isVisible()) {
       // widget can be focused
       focus_chain.append_child(parent, widget);
     }
@@ -201,30 +201,30 @@ void TreeView::GetFocusChain(FocusChain& focus_chain,
          * then the focused widget. */
         FocusChain::pre_order_iterator iter = focus_chain.append_child(parent,
             focus_cont);
-        focus_chain.append_child(iter, focus_cont->GetFocusWidget());
+        focus_chain.append_child(iter, focus_cont->getFocusWidget());
       }
       else
         focus_chain.append_child(parent, focus_child);
     }
 
-    if (i->collapsed || !widget->IsVisible())
+    if (i->collapsed || !widget->isVisible())
       i.skip_children();
   }
 }
 
-Curses::Window *TreeView::GetSubPad(const Widget& child, int begin_x,
+Curses::Window *TreeView::getSubPad(const Widget& child, int begin_x,
     int begin_y, int ncols, int nlines)
 {
   // if height is set to autosize then use widget's wish height
   if (nlines == AUTOSIZE)
-    nlines = child.GetWishHeight();
+    nlines = child.getWishHeight();
   if (nlines == AUTOSIZE)
     nlines = 1;
 
-  return ScrollPane::GetSubPad(child, begin_x, begin_y, ncols, nlines);
+  return ScrollPane::getSubPad(child, begin_x, begin_y, ncols, nlines);
 }
 
-void TreeView::SetCollapsed(NodeReference node, bool collapsed)
+void TreeView::setCollapsed(NodeReference node, bool collapsed)
 {
   g_assert(node->treeview == this);
 
@@ -232,69 +232,69 @@ void TreeView::SetCollapsed(NodeReference node, bool collapsed)
     return;
 
   node->collapsed = collapsed;
-  FixFocus();
-  Redraw();
+  fixFocus();
+  redraw();
 }
 
-void TreeView::ToggleCollapsed(NodeReference node)
+void TreeView::toggleCollapsed(NodeReference node)
 {
   g_assert(node->treeview == this);
 
   node->collapsed = !node->collapsed;
-  FixFocus();
-  Redraw();
+  fixFocus();
+  redraw();
 }
 
-void TreeView::ActionToggleCollapsed()
+void TreeView::actionToggleCollapsed()
 {
-  ToggleCollapsed(focus_node);
+  toggleCollapsed(focus_node);
 }
 
-TreeView::NodeReference TreeView::InsertNode(NodeReference position,
+TreeView::NodeReference TreeView::insertNode(NodeReference position,
     Widget& widget)
 {
   g_assert(position->treeview == this);
 
-  TreeNode node = AddNode(widget);
+  TreeNode node = addNode(widget);
   NodeReference iter = thetree.insert(position, node);
-  AddWidget(widget, 0, 0);
+  addWidget(widget, 0, 0);
   return iter;
 }
 
-TreeView::NodeReference TreeView::InsertNodeAfter(NodeReference position,
+TreeView::NodeReference TreeView::insertNodeAfter(NodeReference position,
     Widget& widget)
 {
   g_assert(position->treeview == this);
 
-  TreeNode node = AddNode(widget);
+  TreeNode node = addNode(widget);
   NodeReference iter = thetree.insert_after(position, node);
-  AddWidget(widget, 0, 0);
+  addWidget(widget, 0, 0);
   return iter;
 }
 
-TreeView::NodeReference TreeView::PrependNode(NodeReference parent,
+TreeView::NodeReference TreeView::prependNode(NodeReference parent,
     Widget& widget)
 {
   g_assert(parent->treeview == this);
 
-  TreeNode node = AddNode(widget);
+  TreeNode node = addNode(widget);
   NodeReference iter = thetree.prepend_child(parent, node);
-  AddWidget(widget, 0, 0);
+  addWidget(widget, 0, 0);
   return iter;
 }
 
-TreeView::NodeReference TreeView::AppendNode(NodeReference parent,
+TreeView::NodeReference TreeView::appendNode(NodeReference parent,
     Widget& widget)
 {
   g_assert(parent->treeview == this);
 
-  TreeNode node = AddNode(widget);
+  TreeNode node = addNode(widget);
   NodeReference iter = thetree.append_child(parent, node);
-  AddWidget(widget, 0, 0);
+  addWidget(widget, 0, 0);
   return iter;
 }
 
-void TreeView::DeleteNode(NodeReference node, bool keepchildren)
+void TreeView::deleteNode(NodeReference node, bool keepchildren)
 {
   g_assert(node->treeview == this);
 
@@ -304,9 +304,9 @@ void TreeView::DeleteNode(NodeReference node, bool keepchildren)
 
   int shrink = 0;
   if (node->widget) {
-    int h = node->widget->GetHeight();
+    int h = node->widget->getHeight();
     if (h == AUTOSIZE)
-      h = node->widget->GetWishHeight();
+      h = node->widget->getWishHeight();
     if (h == AUTOSIZE)
       h = 1;
     shrink += h;
@@ -314,101 +314,101 @@ void TreeView::DeleteNode(NodeReference node, bool keepchildren)
 
   while (thetree.number_of_children(node)) {
     TheTree::pre_order_iterator i = thetree.begin_leaf(node);
-    int h = i->widget->GetHeight();
+    int h = i->widget->getHeight();
     if (h == AUTOSIZE)
-      h = i->widget->GetWishHeight();
+      h = i->widget->getWishHeight();
     if (h == AUTOSIZE)
       h = 1;
     shrink += h;
 
     // remove the widget and instantly remove it from the tree
-    RemoveWidget(*i->widget);
+    removeWidget(*i->widget);
     thetree.erase(i);
   }
 
   if (node->widget)
-    RemoveWidget(*node->widget);
+    removeWidget(*node->widget);
 
   thetree.erase(node);
-  SetScrollHeight(GetScrollHeight() - shrink);
-  Redraw();
+  setScrollHeight(getScrollHeight() - shrink);
+  redraw();
 }
 
-void TreeView::DeleteNodeChildren(NodeReference node, bool keepchildren)
+void TreeView::deleteNodeChildren(NodeReference node, bool keepchildren)
 {
   g_assert(node->treeview == this);
 
   SiblingIterator i;
   while ((i = node.begin()) != node.end())
-    DeleteNode(i, keepchildren);
+    deleteNode(i, keepchildren);
 }
 
-TreeView::NodeReference TreeView::GetSelectedNode() const
+TreeView::NodeReference TreeView::getSelectedNode() const
 {
   return focus_node;
 }
 
-int TreeView::GetNodeDepth(NodeReference node) const
+int TreeView::getNodeDepth(NodeReference node) const
 {
   g_assert(node->treeview == this);
 
   return thetree.depth(node);
 }
 
-void TreeView::MoveNodeBefore(NodeReference node, NodeReference position)
+void TreeView::moveNodeBefore(NodeReference node, NodeReference position)
 {
   g_assert(node->treeview == this);
   g_assert(position->treeview == this);
 
   if (thetree.previous_sibling(position) != node) {
     thetree.move_before(position, node);
-    FixFocus();
-    Redraw();
+    fixFocus();
+    redraw();
   }
 }
 
-void TreeView::MoveNodeAfter(NodeReference node, NodeReference position)
+void TreeView::moveNodeAfter(NodeReference node, NodeReference position)
 {
   g_assert(node->treeview == this);
   g_assert(position->treeview == this);
 
   if (thetree.next_sibling(position) != node) {
     thetree.move_after(position, node);
-    FixFocus();
-    Redraw();
+    fixFocus();
+    redraw();
   }
 }
 
-void TreeView::SetNodeParent(NodeReference node, NodeReference newparent)
+void TreeView::setNodeParent(NodeReference node, NodeReference newparent)
 {
   g_assert(node->treeview == this);
   g_assert(newparent->treeview == this);
 
   if (thetree.parent(node) != newparent) {
     thetree.move_ontop(thetree.append_child(newparent), node);
-    FixFocus();
-    Redraw();
+    fixFocus();
+    redraw();
   }
 }
 
-void TreeView::SetNodeStyle(NodeReference node, Style s)
+void TreeView::setNodeStyle(NodeReference node, Style s)
 {
   g_assert(node->treeview == this);
 
   if (node->style != s) {
     node->style = s;
-    Redraw();
+    redraw();
   }
 }
 
-TreeView::Style TreeView::GetNodeStyle(NodeReference node) const
+TreeView::Style TreeView::getNodeStyle(NodeReference node) const
 {
   g_assert(node->treeview == this);
 
   return node->style;
 }
 
-int TreeView::DrawNode(SiblingIterator node, int top)
+int TreeView::drawNode(SiblingIterator node, int top)
 {
   int height = 0, j;
   SiblingIterator i;
@@ -417,23 +417,23 @@ int TreeView::DrawNode(SiblingIterator node, int top)
 
   // draw the node Widget first
   if (node->widget) {
-    if (!node->widget->IsVisible())
+    if (!node->widget->isVisible())
       return 0;
-    if (node->style == STYLE_NORMAL && IsNodeOpenable(node))
-      node->widget->Move(depthoffset + 3, top);
+    if (node->style == STYLE_NORMAL && isNodeOpenable(node))
+      node->widget->move(depthoffset + 3, top);
     else
-      node->widget->Move(depthoffset + 1, top);
-    node->widget->Draw();
-    int h = node->widget->GetHeight();
+      node->widget->move(depthoffset + 1, top);
+    node->widget->draw();
+    int h = node->widget->getHeight();
     if (h == AUTOSIZE)
-      h = node->widget->GetWishHeight();
+      h = node->widget->getWishHeight();
     if (h == AUTOSIZE)
       h = 1;
     height += h;
   }
 
-  if (!node->collapsed && IsNodeOpenable(node)) {
-    int attrs = GetColorPair("treeview", "line");
+  if (!node->collapsed && isNodeOpenable(node)) {
+    int attrs = getColorPair("treeview", "line");
     area->attron(attrs);
     if (depthoffset < realw)
       for (j = top + 1; j < top + height; j++)
@@ -445,12 +445,12 @@ int TreeView::DrawNode(SiblingIterator node, int top)
     for (i = node.begin(); i != node.end(); i++) {
       if (!i->widget)
         continue;
-      int h = i->widget->GetHeight();
+      int h = i->widget->getHeight();
       if (h == AUTOSIZE)
-        h = i->widget->GetWishHeight();
+        h = i->widget->getWishHeight();
       if (h == AUTOSIZE)
         h = 1;
-      if (h && i->widget->IsVisible())
+      if (h && i->widget->isVisible())
         last = i;
     }
     SiblingIterator end = last;
@@ -464,13 +464,7 @@ int TreeView::DrawNode(SiblingIterator node, int top)
               Curses::LINE_LLCORNER);
       }
 
-      /*
-      if (depthoffset + 1 < realw)
-        area->mvaddlinechar(depthoffset + 1, top + height,
-            Curses::LINE_HLINE);
-        */
-
-      if (i->style == STYLE_NORMAL && IsNodeOpenable(i)) {
+      if (i->style == STYLE_NORMAL && isNodeOpenable(i)) {
         if (depthoffset + 1 < realw)
           area->mvaddstring(depthoffset + 1, top + height, "[");
         if (depthoffset + 2 < realw)
@@ -485,7 +479,7 @@ int TreeView::DrawNode(SiblingIterator node, int top)
 
       area->attroff(attrs);
       int oldh = height;
-      height += DrawNode(i, top + height);
+      height += drawNode(i, top + height);
       area->attron(attrs);
 
       if (i != last && depthoffset < realw)
@@ -498,17 +492,17 @@ int TreeView::DrawNode(SiblingIterator node, int top)
   return height;
 }
 
-TreeView::TreeNode TreeView::AddNode(Widget& widget)
+TreeView::TreeNode TreeView::addNode(Widget& widget)
 {
   // make room for this widget
-  int new_height = GetScrollHeight();
-  int h = widget.GetHeight();
+  int new_height = getScrollHeight();
+  int h = widget.getHeight();
   if (h == AUTOSIZE)
-    h = widget.GetWishHeight();
+    h = widget.getWishHeight();
   if (h == AUTOSIZE)
     h = 1;
   new_height += h;
-  SetScrollHeight(new_height);
+  setScrollHeight(new_height);
 
   // construct the new node
   TreeNode node;
@@ -520,7 +514,7 @@ TreeView::TreeNode TreeView::AddNode(Widget& widget)
   return node;
 }
 
-void TreeView::FixFocus()
+void TreeView::fixFocus()
 {
   /* This function is called when a widget tree is reorganized (a node was
    * moved in another position in the tree). In this case it's possible that
@@ -529,21 +523,21 @@ void TreeView::FixFocus()
    * was hidden by this reorganization (then the focus has to be handled to
    * another widget). */
 
-  UpdateFocusChain();
+  updateFocusChain();
 
-  Container *t = GetTopContainer();
-  Widget *focus = t->GetFocusWidget();
+  Container *t = getTopContainer();
+  Widget *focus = t->getFocusWidget();
   if (!focus) {
     // try to grab the focus
-    t->MoveFocus(FOCUS_DOWN);
+    t->moveFocus(FOCUS_DOWN);
   }
-  else if (!focus->IsVisibleRecursive()) {
+  else if (!focus->isVisibleRecursive()) {
     // move focus
-    t->MoveFocus(FOCUS_DOWN);
+    t->moveFocus(FOCUS_DOWN);
   }
 }
 
-TreeView::NodeReference TreeView::FindNode(const Widget& child) const
+TreeView::NodeReference TreeView::findNode(const Widget& child) const
 {
   /// @todo Speed up this algorithm.
   TheTree::pre_order_iterator i;
@@ -554,29 +548,29 @@ TreeView::NodeReference TreeView::FindNode(const Widget& child) const
   return i;
 }
 
-bool TreeView::IsNodeOpenable(SiblingIterator& node) const
+bool TreeView::isNodeOpenable(SiblingIterator& node) const
 {
   for (SiblingIterator i = node.begin(); i != node.end(); i++) {
     if (!i->widget)
       continue;
-    int h = i->widget->GetHeight();
+    int h = i->widget->getHeight();
     if (h == AUTOSIZE)
-      h = i->widget->GetWishHeight();
+      h = i->widget->getWishHeight();
     if (h == AUTOSIZE)
       h = 1;
-    if (h && i->widget->IsVisible())
+    if (h && i->widget->isVisible())
       return true;
   }
   return false;
 }
 
-bool TreeView::IsNodeVisible(NodeReference& node) const
+bool TreeView::isNodeVisible(NodeReference& node) const
 {
   // node is visible if all predecessors are visible and open
   NodeReference act = node;
   bool first = true;
   while (act != thetree.begin()) {
-    if (!act->widget->IsVisible() || (!first && act->collapsed))
+    if (!act->widget->isVisible() || (!first && act->collapsed))
       return false;
     first = false;
     act = thetree.parent(act);
@@ -584,54 +578,54 @@ bool TreeView::IsNodeVisible(NodeReference& node) const
   return true;
 }
 
-void TreeView::OnChildMoveResize(Widget& activator, const Rect &oldsize,
+void TreeView::onChildMoveResize(Widget& activator, const Rect &oldsize,
     const Rect &newsize)
 {
-  int old_height = oldsize.GetHeight();
-  int new_height = newsize.GetHeight();
+  int old_height = oldsize.getHeight();
+  int new_height = newsize.getHeight();
   if (old_height != new_height) {
     if (old_height == AUTOSIZE)
-      old_height = activator.GetWishHeight();
+      old_height = activator.getWishHeight();
     if (old_height == AUTOSIZE)
       old_height = 1;
     if (new_height == AUTOSIZE)
-      new_height = activator.GetWishHeight();
+      new_height = activator.getWishHeight();
     if (new_height == AUTOSIZE)
       new_height = 1;
 
-    SetScrollHeight(GetScrollHeight() - old_height + new_height);
+    setScrollHeight(getScrollHeight() - old_height + new_height);
   }
 }
 
-void TreeView::OnChildWishSizeChange(Widget& activator, const Size& oldsize,
+void TreeView::onChildWishSizeChange(Widget& activator, const Size& oldsize,
     const Size& newsize)
 {
-  if (activator.GetHeight() != AUTOSIZE)
+  if (activator.getHeight() != AUTOSIZE)
     return;
 
-  int old_height = oldsize.GetHeight();
-  int new_height = newsize.GetHeight();
+  int old_height = oldsize.getHeight();
+  int new_height = newsize.getHeight();
 
   if (old_height != new_height)
-    SetScrollHeight(GetScrollHeight() - old_height + new_height);
+    setScrollHeight(getScrollHeight() - old_height + new_height);
 }
 
-void TreeView::ActionCollapse()
+void TreeView::actionCollapse()
 {
-  SetCollapsed(focus_node, true);
+  setCollapsed(focus_node, true);
 }
 
-void TreeView::ActionExpand()
+void TreeView::actionExpand()
 {
-  SetCollapsed(focus_node, false);
+  setCollapsed(focus_node, false);
 }
 
-void TreeView::DeclareBindables()
+void TreeView::declareBindables()
 {
-  DeclareBindable("treeview", "fold-subtree", sigc::mem_fun(this,
-        &TreeView::ActionCollapse), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable("treeview", "unfold-subtree", sigc::mem_fun(this,
-        &TreeView::ActionExpand), InputProcessor::BINDABLE_NORMAL);
+  declareBindable("treeview", "fold-subtree", sigc::mem_fun(this,
+        &TreeView::actionCollapse), InputProcessor::BINDABLE_NORMAL);
+  declareBindable("treeview", "unfold-subtree", sigc::mem_fun(this,
+        &TreeView::actionExpand), InputProcessor::BINDABLE_NORMAL);
 }
 
 } // namespace CppConsUI

@@ -23,24 +23,24 @@
 #include <cppconsui/KeyConfig.h>
 #include <string.h> // strstr, strncpy, strlen
 
-Footer *Footer::instance = NULL;
+Footer *Footer::my_instance = NULL;
 
-Footer *Footer::Instance()
+Footer *Footer::instance()
 {
-  return instance;
+  return my_instance;
 }
 
-void Footer::OnScreenResized()
+void Footer::onScreenResized()
 {
-  MoveResizeRect(CENTERIM->GetScreenArea(CenterIM::FOOTER_AREA));
+  moveResizeRect(CENTERIM->getScreenArea(CenterIM::FOOTER_AREA));
 }
 
-void Footer::SetText(const char *fmt, ...)
+void Footer::setText(const char *fmt, ...)
 {
   values.clear();
 
   if (!fmt) {
-    UpdateText();
+    updateText();
     return;
   }
 
@@ -63,38 +63,38 @@ void Footer::SetText(const char *fmt, ...)
   }
   va_end(args);
 
-  UpdateText();
+  updateText();
 }
 
 Footer::Footer()
 : FreeWindow(0, 24, 80, 1, TYPE_NON_FOCUSABLE)
 {
-  SetColorScheme("footer");
+  setColorScheme("footer");
 
   label = new CppConsUI::Label;
-  AddWidget(*label, 0, 0);
+  addWidget(*label, 0, 0);
 }
 
-void Footer::Init()
+void Footer::init()
 {
-  g_assert(!instance);
+  g_assert(!my_instance);
 
-  instance = new Footer;
-  instance->Show();
+  my_instance = new Footer;
+  my_instance->show();
 }
 
-void Footer::Finalize()
+void Footer::finalize()
 {
-  g_assert(instance);
+  g_assert(my_instance);
 
-  delete instance;
-  instance = NULL;
+  delete my_instance;
+  my_instance = NULL;
 }
 
-void Footer::UpdateText()
+void Footer::updateText()
 {
   if (values.empty()) {
-    label->SetText(NULL);
+    label->setText(NULL);
     return;
   }
 
@@ -115,7 +115,7 @@ void Footer::UpdateText()
         char *act = strstr(con, "|");
         g_assert(act);
         *act++ = '\0';
-        const char *key = KEYCONFIG->GetKeyBind(con, act);
+        const char *key = KEYCONFIG->getKeyBind(con, act);
         g_free(con);
 
         strncpy(cur_out, key, out + sizeof(out) - 1 - cur_out);
@@ -129,7 +129,7 @@ void Footer::UpdateText()
   }
   *cur_out = '\0';
 
-  label->SetText(out);
+  label->setText(out);
 }
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

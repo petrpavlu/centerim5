@@ -25,34 +25,34 @@
 #include <string.h> // memset
 #include "gettext.h"
 
-Notify *Notify::instance = NULL;
+Notify *Notify::my_instance = NULL;
 
-Notify *Notify::Instance()
+Notify *Notify::instance()
 {
-  return instance;
+  return my_instance;
 }
 
 Notify::UserInfoDialog::UserInfoDialog(const char *title)
 : SplitDialog(title)
 {
-  SetColorScheme("generalwindow");
+  setColorScheme("generalwindow");
 
   treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
-  SetContainer(*treeview);
+  setContainer(*treeview);
 
-  buttons->AppendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
-          &UserInfoDialog::Close)));
+  buttons->appendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
+          &UserInfoDialog::close)));
 }
 
-void Notify::UserInfoDialog::OnScreenResized()
+void Notify::UserInfoDialog::onScreenResized()
 {
-  MoveResizeRect(CENTERIM->GetScreenArea(CenterIM::CHAT_AREA));
+  moveResizeRect(CENTERIM->getScreenArea(CenterIM::CHAT_AREA));
 }
 
-void Notify::UserInfoDialog::Update(PurpleConnection *gc, const char *who,
+void Notify::UserInfoDialog::update(PurpleConnection *gc, const char *who,
     PurpleNotifyUserInfo *user_info)
 {
-  treeview->Clear();
+  treeview->clear();
   CppConsUI::TreeView::NodeReference parent;
   CppConsUI::Button *button;
 
@@ -64,11 +64,11 @@ void Notify::UserInfoDialog::Update(PurpleConnection *gc, const char *who,
      * something goes very wrong. */
     button = new CppConsUI::TreeView::ToggleCollapseButton(
         _("Local information"));
-    parent = treeview->AppendNode(treeview->GetRootNode(), *button);
+    parent = treeview->appendNode(treeview->getRootNode(), *button);
 
     button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE,
         _("Alias"), purple_buddy_get_alias(buddy));
-    treeview->AppendNode(parent, *button);
+    treeview->appendNode(parent, *button);
 
     time_t saved_time;
     struct tm local_time;
@@ -87,7 +87,7 @@ void Notify::UserInfoDialog::Update(PurpleConnection *gc, const char *who,
     }
     button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE,
         _("Last seen"), formatted_time);
-    treeview->AppendNode(parent, *button);
+    treeview->appendNode(parent, *button);
 
     // last_activity
     saved_time = static_cast<time_t>(purple_blist_node_get_int(
@@ -98,13 +98,13 @@ void Notify::UserInfoDialog::Update(PurpleConnection *gc, const char *who,
       formatted_time = _("Unknown");
     button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE,
         _("Last activity"), formatted_time);
-    treeview->AppendNode(parent, *button);
+    treeview->appendNode(parent, *button);
   }
 
   // remote information
   button = new CppConsUI::TreeView::ToggleCollapseButton(
       _("Remote information"));
-  parent = treeview->AppendNode(treeview->GetRootNode(), *button);
+  parent = treeview->appendNode(treeview->getRootNode(), *button);
   CppConsUI::TreeView::NodeReference subparent = parent;
   for (GList *i = purple_notify_user_info_get_entries(user_info); i;
       i = i->next) {
@@ -122,23 +122,23 @@ void Notify::UserInfoDialog::Update(PurpleConnection *gc, const char *who,
       case PURPLE_NOTIFY_USER_INFO_ENTRY_PAIR:
         button = new CppConsUI::Button(
             nohtml ? CppConsUI::Button::FLAG_VALUE : 0, label, nohtml);
-        treeview->AppendNode(subparent, *button);
+        treeview->appendNode(subparent, *button);
         break;
       case PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK:
         // ignore section breaks
         break;
       case PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER:
         button = new CppConsUI::TreeView::ToggleCollapseButton(label);
-        subparent = treeview->AppendNode(parent, *button);
+        subparent = treeview->appendNode(parent, *button);
         break;
       default:
-        LOG->Error(_("Unhandled userinfo entry type '%d'."), type);
+        LOG->error(_("Unhandled userinfo entry type '%d'."), type);
         break;
     }
     g_free(nohtml);
   }
 
-  treeview->GrabFocus();
+  treeview->grabFocus();
 }
 
 Notify::Notify()
@@ -164,22 +164,22 @@ Notify::~Notify()
   purple_notify_set_ui_ops(NULL);
 }
 
-void Notify::Init()
+void Notify::init()
 {
-  g_assert(!instance);
+  g_assert(!my_instance);
 
-  instance = new Notify;
+  my_instance = new Notify;
 }
 
-void Notify::Finalize()
+void Notify::finalize()
 {
-  g_assert(instance);
+  g_assert(my_instance);
 
-  delete instance;
-  instance = NULL;
+  delete my_instance;
+  my_instance = NULL;
 }
 
-void Notify::OnDialogClose(CppConsUI::FreeWindow& activator,
+void Notify::onDialogClose(CppConsUI::FreeWindow& activator,
     PurpleNotifyType type)
 {
   UserInfoDialog *dialog = dynamic_cast<UserInfoDialog*>(&activator);
@@ -191,7 +191,7 @@ void Notify::OnDialogClose(CppConsUI::FreeWindow& activator,
   }
 }
 
-void Notify::OnUserInfoDialogClose(CppConsUI::FreeWindow& /*activator*/,
+void Notify::onUserInfoDialogClose(CppConsUI::FreeWindow& /*activator*/,
     User user)
 {
   // the userinfo dialog is gone
@@ -206,8 +206,8 @@ void *Notify::notify_message(PurpleNotifyMsgType /*type*/, const char *title,
       text);
   g_free(text);
   dialog->signal_close.connect(sigc::bind(sigc::mem_fun(this,
-          &Notify::OnDialogClose), PURPLE_NOTIFY_MESSAGE));
-  dialog->Show();
+          &Notify::onDialogClose), PURPLE_NOTIFY_MESSAGE));
+  dialog->show();
 
   notifications.insert(dialog);
   return dialog;
@@ -226,10 +226,10 @@ void *Notify::notify_userinfo(PurpleConnection *gc, const char *who,
     g_free(title);
 
     dialog->signal_close.connect(sigc::bind(sigc::mem_fun(this,
-          &Notify::OnUserInfoDialogClose), user));
+          &Notify::onUserInfoDialogClose), user));
     dialog->signal_close.connect(sigc::bind(sigc::mem_fun(this,
-            &Notify::OnDialogClose), PURPLE_NOTIFY_USERINFO));
-    dialog->Show();
+            &Notify::onDialogClose), PURPLE_NOTIFY_USERINFO));
+    dialog->show();
 
     notifications.insert(dialog);
     userinfos[user] = dialog;
@@ -239,7 +239,7 @@ void *Notify::notify_userinfo(PurpleConnection *gc, const char *who,
     dialog = i->second;
   }
 
-  dialog->Update(gc, who, user_info);
+  dialog->update(gc, who, user_info);
   return dialog;
 }
 
@@ -253,7 +253,7 @@ void Notify::close_notify(PurpleNotifyType type, void *ui_handle)
   if (notifications.find(dialog) != notifications.end()) {
     notifications.erase(dialog);
     // close the notification dialog if one is still opened
-    dialog->Close();
+    dialog->close();
   }
 }
 

@@ -26,14 +26,14 @@ TestWindow::TestWindow(int number, int x, int y, int w, int h)
   gchar *t = g_strdup_printf("Win %d", number);
   label = new CppConsUI::Label(w - 4, 1, t);
   g_free(t);
-  AddWidget(*label, 2, 1);
+  addWidget(*label, 2, 1);
 
   if (number == 1) {
     label = new CppConsUI::Label("Press F10 to quit.");
-    AddWidget(*label, 2, 2);
+    addWidget(*label, 2, 2);
 
     label = new CppConsUI::Label("Press ESC to close a focused window.");
-    AddWidget(*label, 2, 3);
+    addWidget(*label, 2, 3);
   }
 }
 
@@ -42,9 +42,9 @@ class TestApp
 : public CppConsUI::InputProcessor
 {
 public:
-  static TestApp *Instance();
+  static TestApp *instance();
 
-  void Run();
+  void run();
 
   // ignore every message
   static void g_log_func_(const gchar * /*log_domain*/,
@@ -63,7 +63,7 @@ private:
   virtual ~TestApp() {}
 };
 
-TestApp *TestApp::Instance()
+TestApp *TestApp::instance()
 {
   static TestApp instance;
   return &instance;
@@ -71,28 +71,28 @@ TestApp *TestApp::Instance()
 
 TestApp::TestApp()
 {
-  mngr = CppConsUI::CoreManager::Instance();
-  KEYCONFIG->BindKey("testapp", "quit", "F10");
-  KEYCONFIG->LoadDefaultKeyConfig();
+  mngr = CppConsUI::CoreManager::instance();
+  KEYCONFIG->loadDefaultKeyConfig();
+  KEYCONFIG->bindKey("testapp", "quit", "F10");
 
   g_log_set_default_handler(g_log_func_, this);
 
-  DeclareBindable("testapp", "quit", sigc::mem_fun(mngr,
-        &CppConsUI::CoreManager::QuitMainLoop),
+  declareBindable("testapp", "quit", sigc::mem_fun(mngr,
+        &CppConsUI::CoreManager::quitMainLoop),
       InputProcessor::BINDABLE_OVERRIDE);
 }
 
-void TestApp::Run()
+void TestApp::run()
 {
   for (int i = 1; i <= 4; i++) {
-    TestWindow *w = new TestWindow(i, (i - 1) % 2 * 40, (i - 1) / 2 * 10, 40,
-        10);
-    mngr->AddWindow(*w);
+    TestWindow *w = new TestWindow(i, (i - 1) % 2 * 40, (i - 1) / 2 * 10,
+        40, 10);
+    mngr->addWindow(*w);
   }
 
-  mngr->SetTopInputProcessor(*this);
-  mngr->EnableResizing();
-  mngr->StartMainLoop();
+  mngr->setTopInputProcessor(*this);
+  mngr->enableResizing();
+  mngr->startMainLoop();
 }
 
 // main function
@@ -100,8 +100,8 @@ int main()
 {
   setlocale(LC_ALL, "");
 
-  TestApp *app = TestApp::Instance();
-  app->Run();
+  TestApp *app = TestApp::instance();
+  app->run();
 
   return 0;
 }

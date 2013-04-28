@@ -35,7 +35,7 @@ public:
   virtual ~OptionWindow() {}
 
   // FreeWindow
-  virtual void OnScreenResized();
+  virtual void onScreenResized();
 
 protected:
   class BooleanOption
@@ -48,7 +48,7 @@ protected:
   protected:
     char *pref;
 
-    void OnToggle(CppConsUI::CheckBox& activator, bool new_state);
+    void onToggle(CppConsUI::CheckBox& activator, bool new_state);
 
   private:
     BooleanOption(const BooleanOption&);
@@ -65,8 +65,8 @@ protected:
   protected:
     char *pref;
 
-    void OnActivate(CppConsUI::Button& activator);
-    void ResponseHandler(CppConsUI::InputDialog& activator,
+    void onActivate(CppConsUI::Button& activator);
+    void responseHandler(CppConsUI::InputDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
@@ -88,8 +88,8 @@ protected:
     bool unit;
     sigc::slot<const char*, int> unit_fun;
 
-    void OnActivate(CppConsUI::Button& activator);
-    void ResponseHandler(CppConsUI::InputDialog& activator,
+    void onActivate(CppConsUI::Button& activator);
+    void responseHandler(CppConsUI::InputDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
@@ -104,12 +104,12 @@ protected:
     ChoiceOption(const char *text, const char *config);
     virtual ~ChoiceOption();
 
-    void AddOption(const char *title, const char *value);
+    void addOption(const char *title, const char *value);
 
   protected:
     char *pref;
 
-    void OnSelectionChanged(CppConsUI::ComboBox& activator, int new_entry,
+    void onSelectionChanged(CppConsUI::ComboBox& activator, int new_entry,
         const char *title, intptr_t data);
 
   private:
@@ -117,10 +117,10 @@ protected:
     ChoiceOption& operator=(const ChoiceOption&);
   };
 
-  const char *GetPercentUnit(int i) const;
-  const char *GetMinUnit(int i) const;
-  void ReloadKeyBindings(CppConsUI::Button& activator) const;
-  void ReloadColorSchemes(CppConsUI::Button& activator) const;
+  const char *getPercentUnit(int i) const;
+  const char *getMinUnit(int i) const;
+  void reloadKeyBindings(CppConsUI::Button& activator) const;
+  void reloadColorSchemes(CppConsUI::Button& activator) const;
 
 private:
   OptionWindow(const OptionWindow&);

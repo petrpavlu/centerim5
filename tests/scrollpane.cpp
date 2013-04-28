@@ -33,7 +33,7 @@ public:
   virtual ~MyScrollPane() {}
 
   // Widget
-  virtual void Draw();
+  virtual void draw();
 
 protected:
 
@@ -47,25 +47,25 @@ MyScrollPane::MyScrollPane(int w, int h, int scrollw, int scrollh)
 {
 }
 
-void MyScrollPane::Draw()
+void MyScrollPane::draw()
 {
-  ProceedUpdateArea();
-  ProceedUpdateVirtualArea();
+  proceedUpdateArea();
+  proceedUpdateVirtualArea();
 
   if (!area) {
     // scrollpane will clear the scroll (real) area
-    ScrollPane::Draw();
+    ScrollPane::draw();
     return;
   }
 
-  area->fill(GetColorPair("container", "background"));
+  area->fill(getColorPair("container", "background"));
 
   int real_height = area->getmaxy();
   for (int i = 0; i < real_height && i < (int) (sizeof(pic) / sizeof(pic[0]));
       i++)
     area->mvaddstring(0, i, pic[i]);
 
-  ScrollPane::DrawEx(false);
+  ScrollPane::drawEx(false);
 }
 
 // ScrollPaneWindow class
@@ -75,8 +75,8 @@ class ScrollPaneWindow
 public:
   /* This is a main window, make sure it can not be closed with ESC key by
    * overriding Close() method. */
-  static ScrollPaneWindow *Instance();
-  virtual void Close() {}
+  static ScrollPaneWindow *instance();
+  virtual void close() {}
 
 protected:
   MyScrollPane *pane;
@@ -87,13 +87,13 @@ private:
   ScrollPaneWindow(const ScrollPaneWindow&);
   ScrollPaneWindow& operator=(const ScrollPaneWindow&);
 
-  void ScrollUp();
-  void ScrollDown();
-  void ScrollLeft();
-  void ScrollRight();
+  void actionScrollUp();
+  void actionScrollDown();
+  void actionScrollLeft();
+  void actionScrollRight();
 };
 
-ScrollPaneWindow *ScrollPaneWindow::Instance()
+ScrollPaneWindow *ScrollPaneWindow::instance()
 {
   static ScrollPaneWindow instance;
   return &instance;
@@ -102,46 +102,49 @@ ScrollPaneWindow *ScrollPaneWindow::Instance()
 ScrollPaneWindow::ScrollPaneWindow()
 : CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
-  AddWidget(*(new CppConsUI::Label(25, 1, "Press F10 to quit.")), 1, 1);
-  AddWidget(*(new CppConsUI::Label(25, 1, "WASD to move the picture.")), 1,
-      2);
+  addWidget(*(new CppConsUI::Label(25, 1, "Press F10 to quit.")), 1, 1);
+  addWidget(*(new CppConsUI::Label(25, 1, "WASD to move the picture.")),
+      1, 2);
 
   pane = new MyScrollPane(20, 10, 111, 23);
-  AddWidget(*pane, 1, 4);
+  addWidget(*pane, 1, 4);
 
-  DeclareBindable("scrollpanewindow", "scroll-up", sigc::mem_fun(this,
-        &ScrollPaneWindow::ScrollUp), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable("scrollpanewindow", "scroll-down", sigc::mem_fun(this,
-        &ScrollPaneWindow::ScrollDown), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable("scrollpanewindow", "scroll-left", sigc::mem_fun(this,
-        &ScrollPaneWindow::ScrollLeft), InputProcessor::BINDABLE_NORMAL);
-  DeclareBindable("scrollpanewindow", "scroll-right",
-      sigc::mem_fun(this, &ScrollPaneWindow::ScrollRight),
+  declareBindable("scrollpanewindow", "scroll-up",
+      sigc::mem_fun(this, &ScrollPaneWindow::actionScrollUp),
+      InputProcessor::BINDABLE_NORMAL);
+  declareBindable("scrollpanewindow", "scroll-down",
+      sigc::mem_fun(this, &ScrollPaneWindow::actionScrollDown),
+      InputProcessor::BINDABLE_NORMAL);
+  declareBindable("scrollpanewindow", "scroll-left",
+      sigc::mem_fun(this, &ScrollPaneWindow::actionScrollLeft),
+      InputProcessor::BINDABLE_NORMAL);
+  declareBindable("scrollpanewindow", "scroll-right",
+      sigc::mem_fun(this, &ScrollPaneWindow::actionScrollRight),
       InputProcessor::BINDABLE_NORMAL);
 }
 
-void ScrollPaneWindow::ScrollUp()
+void ScrollPaneWindow::actionScrollUp()
 {
-  pane->AdjustScroll(pane->GetScrollPositionX(),
-      pane->GetScrollPositionY() - 1);
+  pane->adjustScroll(pane->getScrollPositionX(),
+      pane->getScrollPositionY() - 1);
 }
 
-void ScrollPaneWindow::ScrollDown()
+void ScrollPaneWindow::actionScrollDown()
 {
-  pane->AdjustScroll(pane->GetScrollPositionX(),
-      pane->GetScrollPositionY() + 1);
+  pane->adjustScroll(pane->getScrollPositionX(),
+      pane->getScrollPositionY() + 1);
 }
 
-void ScrollPaneWindow::ScrollLeft()
+void ScrollPaneWindow::actionScrollLeft()
 {
-  pane->AdjustScroll(pane->GetScrollPositionX() - 1,
-      pane->GetScrollPositionY());
+  pane->adjustScroll(pane->getScrollPositionX() - 1,
+      pane->getScrollPositionY());
 }
 
-void ScrollPaneWindow::ScrollRight()
+void ScrollPaneWindow::actionScrollRight()
 {
-  pane->AdjustScroll(pane->GetScrollPositionX() + 1,
-      pane->GetScrollPositionY());
+  pane->adjustScroll(pane->getScrollPositionX() + 1,
+      pane->getScrollPositionY());
 }
 
 // TestApp class
@@ -149,9 +152,9 @@ class TestApp
 : public CppConsUI::InputProcessor
 {
 public:
-  static TestApp *Instance();
+  static TestApp *instance();
 
-  void Run();
+  void run();
 
   // ignore every message
   static void g_log_func_(const gchar * /*log_domain*/,
@@ -170,7 +173,7 @@ private:
   virtual ~TestApp() {}
 };
 
-TestApp *TestApp::Instance()
+TestApp *TestApp::instance()
 {
   static TestApp instance;
   return &instance;
@@ -178,27 +181,27 @@ TestApp *TestApp::Instance()
 
 TestApp::TestApp()
 {
-  mngr = CppConsUI::CoreManager::Instance();
-  KEYCONFIG->BindKey("testapp", "quit", "F10");
-  KEYCONFIG->BindKey("scrollpanewindow", "scroll-up", "w");
-  KEYCONFIG->BindKey("scrollpanewindow", "scroll-down", "s");
-  KEYCONFIG->BindKey("scrollpanewindow", "scroll-left", "a");
-  KEYCONFIG->BindKey("scrollpanewindow", "scroll-right", "d");
-  KEYCONFIG->LoadDefaultKeyConfig();
+  mngr = CppConsUI::CoreManager::instance();
+  KEYCONFIG->loadDefaultKeyConfig();
+  KEYCONFIG->bindKey("testapp", "quit", "F10");
+  KEYCONFIG->bindKey("scrollpanewindow", "scroll-up", "w");
+  KEYCONFIG->bindKey("scrollpanewindow", "scroll-down", "s");
+  KEYCONFIG->bindKey("scrollpanewindow", "scroll-left", "a");
+  KEYCONFIG->bindKey("scrollpanewindow", "scroll-right", "d");
 
   g_log_set_default_handler(g_log_func_, this);
 
-  DeclareBindable("testapp", "quit", sigc::mem_fun(mngr,
-        &CppConsUI::CoreManager::QuitMainLoop),
+  declareBindable("testapp", "quit", sigc::mem_fun(mngr,
+        &CppConsUI::CoreManager::quitMainLoop),
       InputProcessor::BINDABLE_OVERRIDE);
 }
 
-void TestApp::Run()
+void TestApp::run()
 {
-  mngr->AddWindow(*ScrollPaneWindow::Instance());
-  mngr->SetTopInputProcessor(*this);
-  mngr->EnableResizing();
-  mngr->StartMainLoop();
+  mngr->addWindow(*ScrollPaneWindow::instance());
+  mngr->setTopInputProcessor(*this);
+  mngr->enableResizing();
+  mngr->startMainLoop();
 }
 
 // main function
@@ -206,8 +209,8 @@ int main()
 {
   setlocale(LC_ALL, "");
 
-  TestApp *app = TestApp::Instance();
-  app->Run();
+  TestApp *app = TestApp::instance();
+  app->run();
 
   return 0;
 }

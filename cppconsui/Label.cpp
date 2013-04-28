@@ -34,29 +34,28 @@ namespace CppConsUI
 Label::Label(int w, int h, const char *text_)
 : Widget(w, h), text(NULL)
 {
-  SetText(text_);
+  setText(text_);
 }
 
 Label::Label(const char *text_)
 : Widget(AUTOSIZE, AUTOSIZE), text(NULL)
 {
-  SetText(text_);
+  setText(text_);
 }
 
 Label::~Label()
 {
-  if (text)
-    g_free(text);
+  g_free(text);
 }
 
-void Label::Draw()
+void Label::draw()
 {
-  ProceedUpdateArea();
+  proceedUpdateArea();
 
   if (!area || !text)
     return;
 
-  int attrs = GetColorPair("label", "text");
+  int attrs = getColorPair("label", "text");
   area->attron(attrs);
 
   int realw = area->getmaxx();
@@ -84,10 +83,9 @@ void Label::Draw()
   area->attroff(attrs);
 }
 
-void Label::SetText(const char *new_text)
+void Label::setText(const char *new_text)
 {
-  if (text)
-    g_free(text);
+  g_free(text);
 
   text = g_strdup(new_text);
 
@@ -97,9 +95,9 @@ void Label::SetText(const char *new_text)
     for (const char *cur = text; *cur; cur++)
       if (*cur == '\n')
         h++;
-  SetWishHeight(h);
+  setWishHeight(h);
 
-  Redraw();
+  redraw();
 }
 
 } // namespace CppConsUI

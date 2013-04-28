@@ -106,8 +106,8 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  CenterIM *cim = CenterIM::Instance();
-  return cim->Run(config_path, ascii, offline);
+  CenterIM *cim = CenterIM::instance();
+  return cim->run(config_path, ascii, offline);
 }
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

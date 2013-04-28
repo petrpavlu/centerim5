@@ -36,51 +36,51 @@ InputProcessor::InputProcessor()
 {
 }
 
-bool InputProcessor::ProcessInput(const TermKeyKey& key)
+bool InputProcessor::processInput(const TermKeyKey& key)
 {
   // process overriding key combinations first
-  if (Process(BINDABLE_OVERRIDE, key))
+  if (process(BINDABLE_OVERRIDE, key))
     return true;
 
   // hand of input to a child
-  if (input_child && input_child->ProcessInput(key))
+  if (input_child && input_child->processInput(key))
     return true;
 
   // process other key combinations
-  if (Process(BINDABLE_NORMAL, key))
+  if (process(BINDABLE_NORMAL, key))
     return true;
 
   // do non-combo input processing
-  TermKeyKey keyn = Keys::RefineKey(key);
-  if (keyn.type == TERMKEY_TYPE_UNICODE && ProcessInputText(keyn))
+  TermKeyKey keyn = Keys::refineKey(key);
+  if (keyn.type == TERMKEY_TYPE_UNICODE && processInputText(keyn))
     return true;
 
   return false;
 }
 
-void InputProcessor::SetInputChild(InputProcessor& child)
+void InputProcessor::setInputChild(InputProcessor& child)
 {
   input_child = &child;
 }
 
-void InputProcessor::ClearInputChild()
+void InputProcessor::clearInputChild()
 {
   input_child = NULL;
 }
 
-void InputProcessor::DeclareBindable(const char *context, const char *action,
+void InputProcessor::declareBindable(const char *context, const char *action,
     const sigc::slot<void>& function, BindableType type)
 {
   keybindings[context][action] = Bindable(function, type);
 }
 
-bool InputProcessor::Process(BindableType type, const TermKeyKey& key)
+bool InputProcessor::process(BindableType type, const TermKeyKey& key)
 {
   for (Bindables::iterator i = keybindings.begin(); i != keybindings.end();
       i++) {
     // get keys for this context
     const KeyConfig::KeyBindContext *keys
-      = KEYCONFIG->GetKeyBinds(i->first.c_str());
+      = KEYCONFIG->getKeyBinds(i->first.c_str());
     if (!keys)
       continue;
     KeyConfig::KeyBindContext::const_iterator j = keys->find(key);
@@ -97,7 +97,7 @@ bool InputProcessor::Process(BindableType type, const TermKeyKey& key)
   return false;
 }
 
-bool InputProcessor::ProcessInputText(const TermKeyKey& /*key*/)
+bool InputProcessor::processInputText(const TermKeyKey& /*key*/)
 {
   return false;
 }

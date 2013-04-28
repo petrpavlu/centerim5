@@ -39,24 +39,24 @@
 PluginWindow::PluginWindow()
 : SplitDialog(0, 0, 80, 24, _("Plugins"))
 {
-  SetColorScheme("generalwindow");
+  setColorScheme("generalwindow");
 
   treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
-  SetContainer(*treeview);
+  setContainer(*treeview);
 
   // show settings for all loaded plugins
   for (GList *iter = purple_plugins_get_loaded(); iter; iter = iter->next) {
     PurplePlugin *plugin = reinterpret_cast<PurplePlugin*>(iter->data);
     if (plugin->info->type == PURPLE_PLUGIN_STANDARD
         && !(plugin->info->flags & PURPLE_PLUGIN_FLAG_INVISIBLE))
-      PopulatePlugin(plugin);
+      populatePlugin(plugin);
   }
 
-  buttons->AppendItem(_("Add"), sigc::mem_fun(this,
-        &PluginWindow::AddPlugin));
-  buttons->AppendSeparator();
-  buttons->AppendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
-          &PluginWindow::Close)));
+  buttons->appendItem(_("Add"), sigc::mem_fun(this,
+        &PluginWindow::addPlugin));
+  buttons->appendSeparator();
+  buttons->appendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
+          &PluginWindow::close)));
 }
 
 PluginWindow::~PluginWindow()
@@ -68,16 +68,16 @@ PluginWindow::~PluginWindow()
       purple_plugin_pref_frame_destroy(i->second.frame);
 }
 
-void PluginWindow::OnScreenResized()
+void PluginWindow::onScreenResized()
 {
-  MoveResizeRect(CENTERIM->GetScreenArea(CenterIM::CHAT_AREA));
+  moveResizeRect(CENTERIM->getScreenArea(CenterIM::CHAT_AREA));
 }
 
 PluginWindow::AddPluginWindow::AddPluginWindow()
 : Window(0, 0, 80, 24, _("Add plugin"), TYPE_TOP)
 {
   CppConsUI::TreeView *treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
-  AddWidget(*treeview, 0, 0);
+  addWidget(*treeview, 0, 0);
 
   // populate available plugins except the ones that are already enabled
   for (GList *iter = purple_plugins_get_all(); iter; iter = iter->next) {
@@ -93,21 +93,21 @@ PluginWindow::AddPluginWindow::AddPluginWindow()
     g_free(text);
 
     button->signal_activate.connect(sigc::bind(sigc::mem_fun(this,
-            &AddPluginWindow::OnPluginButtonActivate), plugin));
-    treeview->AppendNode(treeview->GetRootNode(), *button);
+            &AddPluginWindow::onPluginButtonActivate), plugin));
+    treeview->appendNode(treeview->getRootNode(), *button);
   }
 }
 
-void PluginWindow::AddPluginWindow::OnScreenResized()
+void PluginWindow::AddPluginWindow::onScreenResized()
 {
-  MoveResizeRect(CENTERIM->GetScreenAreaCentered(CenterIM::CHAT_AREA));
+  moveResizeRect(CENTERIM->getScreenAreaCentered(CenterIM::CHAT_AREA));
 }
 
-void PluginWindow::AddPluginWindow::OnPluginButtonActivate(
+void PluginWindow::AddPluginWindow::onPluginButtonActivate(
     CppConsUI::Button& /*activator*/, PurplePlugin *plugin)
 {
   signal_selection(*this, plugin);
-  Close();
+  close();
 }
 
 PluginWindow::BoolOption::BoolOption(const char *name, const char *pref_)
@@ -117,8 +117,8 @@ PluginWindow::BoolOption::BoolOption(const char *name, const char *pref_)
   g_assert(pref_);
 
   pref = g_strdup(pref_);
-  SetState(purple_prefs_get_bool(pref));
-  signal_toggle.connect(sigc::mem_fun(this, &BoolOption::OnToggle));
+  setChecked(purple_prefs_get_bool(pref));
+  signal_toggle.connect(sigc::mem_fun(this, &BoolOption::onToggle));
 }
 
 PluginWindow::BoolOption::~BoolOption()
@@ -126,7 +126,7 @@ PluginWindow::BoolOption::~BoolOption()
   g_free(pref);
 }
 
-void PluginWindow::BoolOption::OnToggle(CheckBox& /*activator*/,
+void PluginWindow::BoolOption::onToggle(CheckBox& /*activator*/,
     bool new_state)
 {
   purple_prefs_set_bool(pref, new_state);
@@ -139,8 +139,8 @@ PluginWindow::StringOption::StringOption(const char *name, const char *pref_)
   g_assert(pref_);
 
   pref = g_strdup(pref_);
-  UpdateValue();
-  signal_activate.connect(sigc::mem_fun(this, &StringOption::OnActivate));
+  updateValue();
+  signal_activate.connect(sigc::mem_fun(this, &StringOption::onActivate));
 }
 
 PluginWindow::StringOption::~StringOption()
@@ -148,28 +148,28 @@ PluginWindow::StringOption::~StringOption()
   g_free(pref);
 }
 
-void PluginWindow::StringOption::UpdateValue()
+void PluginWindow::StringOption::updateValue()
 {
-  SetValue(purple_prefs_get_string(pref));
+  setValue(purple_prefs_get_string(pref));
 }
 
-void PluginWindow::StringOption::OnActivate(Button& /*activator*/)
+void PluginWindow::StringOption::onActivate(Button& /*activator*/)
 {
-  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(GetText(),
-      GetValue());
+  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(getText(),
+      getValue());
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &StringOption::ResponseHandler));
-  dialog->Show();
+        &StringOption::responseHandler));
+  dialog->show();
 }
 
-void PluginWindow::StringOption::ResponseHandler(
+void PluginWindow::StringOption::responseHandler(
     CppConsUI::InputDialog& activator,
     AbstractDialog::ResponseType response)
 {
   switch (response) {
     case AbstractDialog::RESPONSE_OK:
-      purple_prefs_set_string(pref, activator.GetText());
-      UpdateValue();
+      purple_prefs_set_string(pref, activator.getText());
+      updateValue();
       break;
     default:
       break;
@@ -183,8 +183,8 @@ PluginWindow::IntOption::IntOption(const char *name, const char *pref_)
   g_assert(pref_);
 
   pref = g_strdup(pref_);
-  UpdateValue();
-  signal_activate.connect(sigc::mem_fun(this, &IntOption::OnActivate));
+  updateValue();
+  signal_activate.connect(sigc::mem_fun(this, &IntOption::onActivate));
 }
 
 PluginWindow::IntOption::~IntOption()
@@ -192,22 +192,22 @@ PluginWindow::IntOption::~IntOption()
   g_free(pref);
 }
 
-void PluginWindow::IntOption::UpdateValue()
+void PluginWindow::IntOption::updateValue()
 {
-  SetValue(purple_prefs_get_int(pref));
+  setValue(purple_prefs_get_int(pref));
 }
 
-void PluginWindow::IntOption::OnActivate(Button& /*activator*/)
+void PluginWindow::IntOption::onActivate(Button& /*activator*/)
 {
-  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(GetText(),
-      GetValue());
-  dialog->SetFlags(CppConsUI::TextEntry::FLAG_NUMERIC);
+  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(getText(),
+      getValue());
+  dialog->setFlags(CppConsUI::TextEntry::FLAG_NUMERIC);
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &IntOption::ResponseHandler));
-  dialog->Show();
+        &IntOption::responseHandler));
+  dialog->show();
 }
 
-void PluginWindow::IntOption::ResponseHandler(
+void PluginWindow::IntOption::responseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
@@ -216,13 +216,13 @@ void PluginWindow::IntOption::ResponseHandler(
 
   switch (response) {
     case AbstractDialog::RESPONSE_OK:
-      text = activator.GetText();
+      text = activator.getText();
       errno = 0;
       i = strtol(text, NULL, 10);
       if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
-        LOG->Warning(_("Value is out of range."));
+        LOG->warning(_("Value is out of range."));
       purple_prefs_set_int(pref, CLAMP(i, INT_MIN, INT_MAX));
-      UpdateValue();
+      updateValue();
       break;
     default:
       break;
@@ -236,8 +236,8 @@ PluginWindow::PathOption::PathOption(const char *name, const char *pref_)
   g_assert(pref_);
 
   pref = g_strdup(pref_);
-  UpdateValue();
-  signal_activate.connect(sigc::mem_fun(this, &PathOption::OnActivate));
+  updateValue();
+  signal_activate.connect(sigc::mem_fun(this, &PathOption::onActivate));
 }
 
 PluginWindow::PathOption::~PathOption()
@@ -245,51 +245,51 @@ PluginWindow::PathOption::~PathOption()
   g_free(pref);
 }
 
-void PluginWindow::PathOption::UpdateValue()
+void PluginWindow::PathOption::updateValue()
 {
-  SetValue(purple_prefs_get_path(pref));
+  setValue(purple_prefs_get_path(pref));
 }
 
-void PluginWindow::PathOption::OnActivate(Button& /*activator*/)
+void PluginWindow::PathOption::onActivate(Button& /*activator*/)
 {
-  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(GetText(),
-      GetValue());
+  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(getText(),
+      getValue());
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &PathOption::ResponseHandler));
-  dialog->Show();
+        &PathOption::responseHandler));
+  dialog->show();
 }
 
-void PluginWindow::PathOption::ResponseHandler(
+void PluginWindow::PathOption::responseHandler(
     CppConsUI::InputDialog& activator,
     AbstractDialog::ResponseType response)
 {
   switch (response) {
     case AbstractDialog::RESPONSE_OK:
-      purple_prefs_set_path(pref, activator.GetText());
-      UpdateValue();
+      purple_prefs_set_path(pref, activator.getText());
+      updateValue();
       break;
     default:
       break;
   }
 }
 
-void PluginWindow::ClearPlugin(PurplePlugin *plugin)
+void PluginWindow::clearPlugin(PurplePlugin *plugin)
 {
   PluginEntry *plugin_entry = &plugin_entries[plugin];
-  treeview->DeleteNode(plugin_entry->parent_reference, false);
+  treeview->deleteNode(plugin_entry->parent_reference, false);
   if (plugin_entry->frame)
     purple_plugin_pref_frame_destroy(plugin_entry->frame);
   plugin_entries.erase(plugin);
 }
 
-void PluginWindow::PopulatePlugin(PurplePlugin *plugin)
+void PluginWindow::populatePlugin(PurplePlugin *plugin)
 {
   // show settings for a single plugin
   CppConsUI::Button *button = new CppConsUI::TreeView::ToggleCollapseButton(
       purple_plugin_get_name(plugin));
   CppConsUI::TreeView::NodeReference parent_reference
-    = treeview->AppendNode(treeview->GetRootNode(), *button);
-  treeview->SetCollapsed(parent_reference, true);
+    = treeview->appendNode(treeview->getRootNode(), *button);
+  treeview->setCollapsed(parent_reference, true);
 
   // record this plugin in plugin_entries
   PluginEntry entry;
@@ -306,7 +306,7 @@ void PluginWindow::PopulatePlugin(PurplePlugin *plugin)
     plugin_entries[plugin].frame = frame;
 
     // group node (set to an "invalid" value)
-    CppConsUI::TreeView::NodeReference group = treeview->GetRootNode();
+    CppConsUI::TreeView::NodeReference group = treeview->getRootNode();
 
     for (GList *iter = purple_plugin_pref_frame_get_prefs(frame); iter;
         iter = iter->next) {
@@ -321,12 +321,12 @@ void PluginWindow::PopulatePlugin(PurplePlugin *plugin)
 
         if (type == PURPLE_PLUGIN_PREF_INFO) {
           // no value label
-          treeview->AppendNode(parent_reference,
+          treeview->appendNode(parent_reference,
               *(new CppConsUI::Label(label)));
         }
         else {
           // a new group
-          group = treeview->AppendNode(parent_reference,
+          group = treeview->appendNode(parent_reference,
               *(new CppConsUI::TreeView::ToggleCollapseButton(label)));
         }
         continue;
@@ -341,7 +341,7 @@ void PluginWindow::PopulatePlugin(PurplePlugin *plugin)
         // add possible options
         for (GList *pref_iter = purple_plugin_pref_get_choices(pref);
             pref_iter && pref_iter->next; pref_iter = pref_iter->next->next)
-          combo->AddOptionPtr(reinterpret_cast<const char*>(pref_iter->data),
+          combo->addOptionPtr(reinterpret_cast<const char*>(pref_iter->data),
               pref_iter->next->data);
 
         // set default value
@@ -357,10 +357,10 @@ void PluginWindow::PopulatePlugin(PurplePlugin *plugin)
           current_value = reinterpret_cast<intptr_t>(
               purple_prefs_get_path(name));
         else {
-          LOG->Error(_("Unhandled plugin preference type '%d'."), value_type);
+          LOG->error(_("Unhandled plugin preference type '%d'."), value_type);
           continue;
         }
-        combo->SetSelectedByData(current_value);
+        combo->setSelectedByData(current_value);
       }
       else {
         if (value_type == PURPLE_PREF_BOOLEAN)
@@ -372,18 +372,18 @@ void PluginWindow::PopulatePlugin(PurplePlugin *plugin)
         else if (value_type == PURPLE_PREF_PATH)
           pref_widget = new PathOption(label, name);
         else {
-          LOG->Error(_("Unhandled plugin preference type '%d'."), value_type);
+          LOG->error(_("Unhandled plugin preference type '%d'."), value_type);
           continue;
         }
       }
 
-      if (group == treeview->GetRootNode()) {
+      if (group == treeview->getRootNode()) {
         // no group has been created, so create one
-        group = treeview->AppendNode(parent_reference,
+        group = treeview->appendNode(parent_reference,
             *(new CppConsUI::TreeView::ToggleCollapseButton(
                 _("Preferences"))));
       }
-      treeview->AppendNode(group, *pref_widget);
+      treeview->appendNode(group, *pref_widget);
     }
   }
 
@@ -391,25 +391,25 @@ void PluginWindow::PopulatePlugin(PurplePlugin *plugin)
   CppConsUI::Button *disable_button
     = new CppConsUI::Button(_("Disable plugin"));
   disable_button->signal_activate.connect(sigc::bind(sigc::mem_fun(this,
-          &PluginWindow::DisablePlugin), plugin));
-  treeview->AppendNode(parent_reference, *disable_button);
+          &PluginWindow::disablePlugin), plugin));
+  treeview->appendNode(parent_reference, *disable_button);
 }
 
-void PluginWindow::AddPlugin(CppConsUI::Button& /*activator*/)
+void PluginWindow::addPlugin(CppConsUI::Button& /*activator*/)
 {
   // show a window for the user to select a plugin that he wants to add
   AddPluginWindow *win = new AddPluginWindow;
   win->signal_selection.connect(sigc::mem_fun(this,
-        &PluginWindow::OnAddPluginSelection));
-  win->Show();
+        &PluginWindow::onAddPluginSelection));
+  win->show();
 }
 
-void PluginWindow::OnAddPluginSelection(AddPluginWindow& /*activator*/,
+void PluginWindow::onAddPluginSelection(AddPluginWindow& /*activator*/,
     PurplePlugin *plugin)
 {
   // the user has selected a plugin that he wants to add, so do it
   if (!purple_plugin_load(plugin)) {
-    LOG->Error(_("Error loading plugin '%s'."),
+    LOG->error(_("Error loading plugin '%s'."),
         purple_plugin_get_name(plugin));
     return;
   }
@@ -417,41 +417,41 @@ void PluginWindow::OnAddPluginSelection(AddPluginWindow& /*activator*/,
   purple_plugins_save_loaded(CONF_PLUGINS_SAVE_PREF);
 
   // populate this plugin
-  PopulatePlugin(plugin);
+  populatePlugin(plugin);
 
   // focus the button for this plugin
   PluginEntries::iterator i = plugin_entries.find(plugin);
   g_assert(i != plugin_entries.end());
   g_assert(i->second.parent);
-  i->second.parent->GrabFocus();
+  i->second.parent->grabFocus();
 }
 
-void PluginWindow::DisablePlugin(CppConsUI::Button& /*activator*/,
+void PluginWindow::disablePlugin(CppConsUI::Button& /*activator*/,
     PurplePlugin *plugin)
 {
   CppConsUI::MessageDialog *dialog = new CppConsUI::MessageDialog(
       _("Disable plugin"),
       _("Are you sure you want to disable this plugin?"));
   dialog->signal_response.connect(sigc::bind(sigc::mem_fun(this,
-          &PluginWindow::DisablePluginResponseHandler), plugin));
-  dialog->Show();
+          &PluginWindow::disablePluginResponseHandler), plugin));
+  dialog->show();
 }
 
-void PluginWindow::DisablePluginResponseHandler(
+void PluginWindow::disablePluginResponseHandler(
     CppConsUI::MessageDialog& /*activator*/,
     CppConsUI::AbstractDialog::ResponseType response, PurplePlugin *plugin)
 {
   switch (response) {
     case AbstractDialog::RESPONSE_OK:
       if (!purple_plugin_unload(plugin)) {
-        LOG->Error(_("Error unloading plugin '%s'. The plugin could not be "
+        LOG->error(_("Error unloading plugin '%s'. The plugin could not be "
               "unloaded now, but will be disabled at the next startup."),
             purple_plugin_get_name(plugin));
 
         purple_plugin_disable(plugin);
       }
       else
-        ClearPlugin(plugin);
+        clearPlugin(plugin);
       purple_plugins_save_loaded(CONF_PLUGINS_SAVE_PREF);
       break;
     default:

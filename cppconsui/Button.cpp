@@ -36,10 +36,10 @@ Button::Button(int w, int h, const char *text_, int flags_, bool masked_)
 , value(NULL), value_width(0), unit(NULL) , unit_width(0), right(NULL)
 , right_width(0), masked(masked_)
 {
-  SetText(text_);
+  setText(text_);
 
   can_focus = true;
-  DeclareBindables();
+  declareBindables();
 }
 
 Button::Button(const char *text_, int flags_, bool masked_)
@@ -47,10 +47,10 @@ Button::Button(const char *text_, int flags_, bool masked_)
 , text_height(0), value(NULL), value_width(0), unit(NULL), unit_width(0)
 , right(NULL), right_width(0), masked(masked_)
 {
-  SetText(text_);
+  setText(text_);
 
   can_focus = true;
-  DeclareBindables();
+  declareBindables();
 }
 
 Button::Button(int w, int h, int flags_, const char *text_,
@@ -59,13 +59,13 @@ Button::Button(int w, int h, int flags_, const char *text_,
 , value(NULL), value_width(0), unit(NULL), unit_width(0), right(NULL)
 , right_width(0), masked(masked_)
 {
-  SetText(text_);
-  SetValue(value_);
-  SetUnit(unit_);
-  SetRight(right_);
+  setText(text_);
+  setValue(value_);
+  setUnit(unit_);
+  setRight(right_);
 
   can_focus = true;
-  DeclareBindables();
+  declareBindables();
 }
 
 Button::Button(int flags_, const char *text_, const char *value_,
@@ -74,39 +74,35 @@ Button::Button(int flags_, const char *text_, const char *value_,
 , text_height(0), value(NULL), value_width(0), unit(NULL), unit_width(0)
 , right(NULL), right_width(0), masked(masked_)
 {
-  SetText(text_);
-  SetValue(value_);
-  SetUnit(unit_);
-  SetRight(right_);
+  setText(text_);
+  setValue(value_);
+  setUnit(unit_);
+  setRight(right_);
 
   can_focus = true;
-  DeclareBindables();
+  declareBindables();
 }
 
 Button::~Button()
 {
-  if (text)
-    g_free(text);
-  if (value)
-    g_free(value);
-  if (unit)
-    g_free(unit);
-  if (right)
-    g_free(right);
+  g_free(text);
+  g_free(value);
+  g_free(unit);
+  g_free(right);
 }
 
-void Button::Draw()
+void Button::draw()
 {
-  ProceedUpdateArea();
+  proceedUpdateArea();
 
   if (!area || !text)
     return;
 
   int attrs;
   if (has_focus)
-    attrs = GetColorPair("button", "focus") | Curses::Attr::REVERSE;
+    attrs = getColorPair("button", "focus") | Curses::Attr::REVERSE;
   else
-    attrs = GetColorPair("button", "normal");
+    attrs = getColorPair("button", "normal");
   area->attron(attrs);
 
   int realw = area->getmaxx();
@@ -174,28 +170,27 @@ void Button::Draw()
   }
 }
 
-void Button::SetFlags(int new_flags)
+void Button::setFlags(int new_flags)
 {
-  if (flags == new_flags)
+  if (new_flags == flags)
     return;
 
   flags = new_flags;
-  Redraw();
+  redraw();
 }
 
-void Button::SetMasked(bool masked_)
+void Button::setMasked(bool new_masked)
 {
-  if (masked == masked_)
+  if (new_masked == masked)
     return;
 
-  masked = masked_;
-  Redraw();
+  masked = new_masked;
+  redraw();
 }
 
-void Button::SetText(const char *new_text)
+void Button::setText(const char *new_text)
 {
-  if (text)
-    g_free(text);
+  g_free(text);
 
   text = g_strdup(new_text);
 
@@ -220,60 +215,56 @@ void Button::SetText(const char *new_text)
     if (w > text_width)
       text_width = w;
   }
-  SetWishHeight(text_height);
+  setWishHeight(text_height);
 
-  Redraw();
+  redraw();
 }
 
-void Button::SetValue(const char *new_value)
+void Button::setValue(const char *new_value)
 {
-  if (value)
-    g_free(value);
+  g_free(value);
 
   value = g_strdup(new_value);
   value_width = Curses::onscreen_width(value);
-  Redraw();
+  redraw();
 }
 
-void Button::SetValue(int new_value)
+void Button::setValue(int new_value)
 {
-  if (value)
-    g_free(value);
+  g_free(value);
 
   value = g_strdup_printf("%d", new_value);
   value_width = Curses::onscreen_width(value);
-  Redraw();
+  redraw();
 }
 
-void Button::SetUnit(const char *new_unit)
+void Button::setUnit(const char *new_unit)
 {
-  if (unit)
-    g_free(unit);
+  g_free(unit);
 
   unit = g_strdup(new_unit);
   unit_width = Curses::onscreen_width(unit);
-  Redraw();
+  redraw();
 }
 
-void Button::SetRight(const char *new_right)
+void Button::setRight(const char *new_right)
 {
-  if (right)
-    g_free(right);
+  g_free(right);
 
   right = g_strdup(new_right);
   right_width = Curses::onscreen_width(right);
-  Redraw();
+  redraw();
 }
 
-void Button::ActionActivate()
+void Button::actionActivate()
 {
   signal_activate(*this);
 }
 
-void Button::DeclareBindables()
+void Button::declareBindables()
 {
-  DeclareBindable("button", "activate", sigc::mem_fun(this,
-        &Button::ActionActivate), InputProcessor::BINDABLE_NORMAL);
+  declareBindable("button", "activate", sigc::mem_fun(this,
+        &Button::actionActivate), InputProcessor::BINDABLE_NORMAL);
 }
 
 } // namespace CppConsUI

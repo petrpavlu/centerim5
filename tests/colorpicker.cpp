@@ -14,8 +14,8 @@ class TestWindow
 public:
   /* This is a main window, make sure it can not be closed with ESC key by
    * overriding Close() method. */
-  static TestWindow *Instance();
-  virtual void Close() {}
+  static TestWindow *instance();
+  virtual void close() {}
 
 protected:
 
@@ -30,15 +30,15 @@ private:
   TestWindow(const TestWindow&);
   TestWindow& operator=(const TestWindow&);
 
-  void OnButtonActivate(CppConsUI::Button& activator, int flags);
-  void OnChangeColorResponseHandler(CppConsUI::ColorPickerDialog& activator,
+  void onButtonActivate(CppConsUI::Button& activator, int flags);
+  void onChangeColorResponseHandler(CppConsUI::ColorPickerDialog& activator,
       CppConsUI::AbstractDialog::ResponseType response, int color);
-  void OnColerPickerChanged(CppConsUI::ColorPicker& activator, int new_fg,
+  void onColerPickerChanged(CppConsUI::ColorPicker& activator, int new_fg,
       int new_bg);
-  void OnComboColorChange(CppConsUI::ComboBox& activator, intptr_t color);
+  void onComboColorChange(CppConsUI::ComboBox& activator, intptr_t color);
 };
 
-TestWindow *TestWindow::Instance()
+TestWindow *TestWindow::instance()
 {
   static TestWindow instance;
   return &instance;
@@ -49,116 +49,111 @@ TestWindow::TestWindow()
 {
   CppConsUI::Button *button;
 
-  AddWidget(*(new CppConsUI::Label("Press F10 to quit.")), 1, 1);
+  addWidget(*(new CppConsUI::Label("Press F10 to quit.")), 1, 1);
 
   button = new CppConsUI::Button("Open Colorpicker...");
-  AddWidget(*button, 1, 3);
-  button->signal_activate.connect(
-      sigc::bind(sigc::mem_fun(this, &TestWindow::OnButtonActivate), 0));
+  addWidget(*button, 1, 3);
+  button->signal_activate.connect(sigc::bind(sigc::mem_fun(this,
+          &TestWindow::onButtonActivate), 0));
 
   button = new CppConsUI::Button("Open Colorpicker: ansi only...");
-  AddWidget(*button, 1, 4);
-  button->signal_activate.connect(
-      sigc::bind(sigc::mem_fun(this, &TestWindow::OnButtonActivate),
-          CppConsUI::ColorPickerPalette::FLAG_HIDE_GRAYSCALE
-          | CppConsUI::ColorPickerPalette::FLAG_HIDE_COLORCUBE));
+  addWidget(*button, 1, 4);
+  button->signal_activate.connect(sigc::bind(sigc::mem_fun(this,
+          &TestWindow::onButtonActivate),
+        CppConsUI::ColorPickerPalette::FLAG_HIDE_GRAYSCALE
+        | CppConsUI::ColorPickerPalette::FLAG_HIDE_COLORCUBE));
 
   button = new CppConsUI::Button("Open Colorpicker: ansi + Grayscale...");
-  AddWidget(*button, 1, 5);
-  button->signal_activate.connect(
-      sigc::bind(sigc::mem_fun(this, &TestWindow::OnButtonActivate),
-          CppConsUI::ColorPickerPalette::FLAG_HIDE_COLORCUBE));
+  addWidget(*button, 1, 5);
+  button->signal_activate.connect(sigc::bind(sigc::mem_fun(this,
+          &TestWindow::onButtonActivate),
+        CppConsUI::ColorPickerPalette::FLAG_HIDE_COLORCUBE));
 
   button = new CppConsUI::Button("Open Colorpicker: color cube only...");
-  AddWidget(*button, 1, 6);
-  button->signal_activate.connect(
-      sigc::bind(sigc::mem_fun(this, &TestWindow::OnButtonActivate),
-          CppConsUI::ColorPickerPalette::FLAG_HIDE_ANSI
-          | CppConsUI::ColorPickerPalette::FLAG_HIDE_GRAYSCALE));
-
-  label1 = new CppConsUI::Label; AddWidget(*label1, 1, 8);
-  label2 = new CppConsUI::Label; AddWidget(*label2, 1, 10);
-
-  label2->SetText("...");
+  addWidget(*button, 1, 6);
+  button->signal_activate.connect(sigc::bind(sigc::mem_fun(this,
+          &TestWindow::onButtonActivate),
+        CppConsUI::ColorPickerPalette::FLAG_HIDE_ANSI
+        | CppConsUI::ColorPickerPalette::FLAG_HIDE_GRAYSCALE));
 
   char *text = g_strdup_printf("Supported nr of colors: %d",
       CppConsUI::Curses::nrcolors());
-  label1->SetText(text);
+  label1 = new CppConsUI::Label(text);
   g_free(text);
+  addWidget(*label1, 1, 8);
+  label2 = new CppConsUI::Label("...");
+  addWidget(*label2, 1, 10);
 
   CppConsUI::Label *l = new CppConsUI::Label("ColorPickerComboBox:");
-  AddWidget(*l, 1, 12);
+  addWidget(*l, 1, 12);
 
-  l = new CppConsUI::Label();
+  l = new CppConsUI::Label;
   text = g_strdup_printf("Supported nr of color pairs: %d",
       CppConsUI::Curses::nrcolorpairs());
-  l->SetText(text);
+  l->setText(text);
   g_free(text);
-  AddWidget(*l, 1, 9);
+  addWidget(*l, 1, 9);
 
   combo = new CppConsUI::ColorPickerComboBox (10, defaultcolor);
-  combo->signal_color_changed.connect(
-      sigc::mem_fun(this, &TestWindow::OnComboColorChange));
-  AddWidget(*combo, 1, 13);
+  combo->signal_color_changed.connect(sigc::mem_fun(this,
+        &TestWindow::onComboColorChange));
+  addWidget(*combo, 1, 13);
 
   CppConsUI::ColorPicker *picker;
 
-  AddWidget(*(new CppConsUI::Label("ColorPicker:")), 1, 15);
-  AddWidget(*(picker = new CppConsUI::ColorPicker(7, 1, "Label:", false)),
-      1, 16);
+  addWidget(*(new CppConsUI::Label("ColorPicker:")), 1, 15);
+  picker = new CppConsUI::ColorPicker(7, 1, "Label:", false);
   picker->signal_colorpair_selected.connect(sigc::mem_fun(this,
-      &TestWindow::OnColerPickerChanged));
+        &TestWindow::onColerPickerChanged));
+  addWidget(*picker, 1, 16);
 
-  AddWidget(*(new CppConsUI::Label("ColorPicker:")), 1, 18);
-  AddWidget(*(picker = new CppConsUI::ColorPicker(15, 8, "(with sample)",
-          true)), 1, 19);
+  addWidget(*(new CppConsUI::Label("ColorPicker:")), 1, 18);
+  picker = new CppConsUI::ColorPicker(15, 8, "(with sample)", true);
   picker->signal_colorpair_selected.connect(sigc::mem_fun(this,
-      &TestWindow::OnColerPickerChanged));
+        &TestWindow::onColerPickerChanged));
+  addWidget(*picker, 1, 19);
 }
 
-void TestWindow::OnButtonActivate(CppConsUI::Button& /*activator*/, int flags)
+void TestWindow::onButtonActivate(CppConsUI::Button& /*activator*/, int flags)
 {
-  CppConsUI::ColorPickerDialog *dlg =
-      new CppConsUI::ColorPickerDialog("Test Colorpicker", 0, flags);
-
-  dlg->signal_response.connect(sigc::mem_fun(this,
-      &TestWindow::OnChangeColorResponseHandler));
-
-  dlg->Show();
+  CppConsUI::ColorPickerDialog *dialog = new CppConsUI::ColorPickerDialog(
+      "Test Colorpicker", 0, flags);
+  dialog->signal_response.connect(sigc::mem_fun(this,
+        &TestWindow::onChangeColorResponseHandler));
+  dialog->show();
 }
 
-void TestWindow::OnColerPickerChanged(CppConsUI::ColorPicker& /*activator*/,
+void TestWindow::onColerPickerChanged(CppConsUI::ColorPicker& /*activator*/,
     int new_fg, int new_bg)
 {
   char *text = g_strdup_printf("Chosen color (%d,%d)", new_fg, new_bg);
-  label2->SetText(text);
+  label2->setText(text);
   g_free(text);
 
-  combo->SetColor(new_fg);
+  combo->setColor(new_fg);
 }
 
-void TestWindow::OnChangeColorResponseHandler(
+void TestWindow::onChangeColorResponseHandler(
     CppConsUI::ColorPickerDialog& /*activator*/,
     CppConsUI::AbstractDialog::ResponseType response,
     int color)
 {
   if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
-      return;
+    return;
 
-  combo->SetColor(color);
+  combo->setColor(color);
 
   char *text = g_strdup_printf("Chosen color nr: %d", color);
-  label2->SetText(text);
+  label2->setText(text);
   g_free(text);
-
 }
 
-void TestWindow::OnComboColorChange(CppConsUI::ComboBox& /*activator*/,
+void TestWindow::onComboColorChange(CppConsUI::ComboBox& /*activator*/,
     intptr_t color)
 {
   char *text = g_strdup_printf("Chosen color nr: %d",
       static_cast<int>(color));
-  label2->SetText(text);
+  label2->setText(text);
   g_free(text);
 }
 
@@ -167,9 +162,9 @@ class TestApp
 : public CppConsUI::InputProcessor
 {
 public:
-  static TestApp *Instance();
+  static TestApp *instance();
 
-  void Run();
+  void run();
 
   // ignore every message
   static void g_log_func_(const gchar * /*log_domain*/,
@@ -188,7 +183,7 @@ private:
   virtual ~TestApp() {}
 };
 
-TestApp *TestApp::Instance()
+TestApp *TestApp::instance()
 {
   static TestApp instance;
   return &instance;
@@ -196,23 +191,23 @@ TestApp *TestApp::Instance()
 
 TestApp::TestApp()
 {
-  mngr = CppConsUI::CoreManager::Instance();
-  KEYCONFIG->BindKey("testapp", "quit", "F10");
-  KEYCONFIG->LoadDefaultKeyConfig();
+  mngr = CppConsUI::CoreManager::instance();
+  KEYCONFIG->loadDefaultKeyConfig();
+  KEYCONFIG->bindKey("testapp", "quit", "F10");
 
   g_log_set_default_handler(g_log_func_, this);
 
-  DeclareBindable("testapp", "quit", sigc::mem_fun(mngr,
-        &CppConsUI::CoreManager::QuitMainLoop),
+  declareBindable("testapp", "quit", sigc::mem_fun(mngr,
+        &CppConsUI::CoreManager::quitMainLoop),
       InputProcessor::BINDABLE_OVERRIDE);
 }
 
-void TestApp::Run()
+void TestApp::run()
 {
-  mngr->AddWindow(*TestWindow::Instance());
-  mngr->SetTopInputProcessor(*this);
-  mngr->EnableResizing();
-  mngr->StartMainLoop();
+  mngr->addWindow(*TestWindow::instance());
+  mngr->setTopInputProcessor(*this);
+  mngr->enableResizing();
+  mngr->startMainLoop();
 }
 
 // main function
@@ -220,8 +215,8 @@ int main()
 {
   setlocale(LC_ALL, "");
 
-  TestApp *app = TestApp::Instance();
-  app->Run();
+  TestApp *app = TestApp::instance();
+  app->run();
 
   return 0;
 }

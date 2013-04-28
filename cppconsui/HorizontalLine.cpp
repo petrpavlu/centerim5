@@ -36,16 +36,16 @@ HorizontalLine::HorizontalLine(int w)
 {
 }
 
-void HorizontalLine::Draw()
+void HorizontalLine::draw()
 {
-  ProceedUpdateArea();
+  proceedUpdateArea();
 
   int realw;
 
   if (!area || (realw = area->getmaxx()) == 0 || area->getmaxy() != 1)
     return;
 
-  int attrs = GetColorPair("horizontalline", "line");
+  int attrs = getColorPair("horizontalline", "line");
   area->attron(attrs);
   for (int i = 0; i < realw; i++)
     area->mvaddlinechar(i, 0, Curses::LINE_HLINE);

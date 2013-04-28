@@ -26,35 +26,35 @@
 #include <string.h> // strcmp
 #include "config.h"
 
-Header *Header::instance = NULL;
+Header *Header::my_instance = NULL;
 
-Header *Header::Instance()
+Header *Header::instance()
 {
-  return instance;
+  return my_instance;
 }
 
-void Header::OnScreenResized()
+void Header::onScreenResized()
 {
-  MoveResizeRect(CENTERIM->GetScreenArea(CenterIM::HEADER_AREA));
+  moveResizeRect(CENTERIM->getScreenArea(CenterIM::HEADER_AREA));
 }
 
 Header::Header()
 : FreeWindow(0, 0, 80, 1, TYPE_NON_FOCUSABLE)
 {
-  SetColorScheme("header");
+  setColorScheme("header");
 
   container = new CppConsUI::HorizontalListBox(AUTOSIZE, AUTOSIZE);
-  AddWidget(*container, 0, 0);
+  addWidget(*container, 0, 0);
 
   // CenterIM name will always be top-left so we can "forget about" it
   char *cimname = g_strdup_printf("CENTERIM %s", CenterIM::version);
-  container->AppendWidget(*(new CppConsUI::Label(cimname)));
+  container->appendWidget(*(new CppConsUI::Label(cimname)));
   g_free(cimname);
 
   // pending request indicator
   request_indicator = new CppConsUI::Label(0, 1, "");
-  request_indicator->SetColorScheme("header-request");
-  container->AppendWidget(*request_indicator);
+  request_indicator->setColorScheme("header-request");
+  container->appendWidget(*request_indicator);
 
   for (GList *i = purple_accounts_get_all(); i; i = i->next) {
     PurpleAccount *account = reinterpret_cast<PurpleAccount*>(i->data);
@@ -65,7 +65,7 @@ Header::Header()
   // connect to the Accounts singleton
   g_assert(ACCOUNTS);
   ACCOUNTS->signal_request_count_change.connect(sigc::mem_fun(this,
-        &Header::OnRequestCountChange));
+        &Header::onRequestCountChange));
 
   void *handle = purple_accounts_get_handle();
   purple_signal_connect(handle, "account-signed-on", this,
@@ -87,32 +87,32 @@ Header::~Header()
   purple_signals_disconnect_by_handle(this);
 }
 
-void Header::Init()
+void Header::init()
 {
-  g_assert(!instance);
+  g_assert(!my_instance);
 
-  instance = new Header;
-  instance->Show();
+  my_instance = new Header;
+  my_instance->show();
 }
 
-void Header::Finalize()
+void Header::finalize()
 {
-  g_assert(instance);
+  g_assert(my_instance);
 
-  delete instance;
-  instance = NULL;
+  delete my_instance;
+  my_instance = NULL;
 }
 
-void Header::OnRequestCountChange(Accounts& /*accounts*/,
+void Header::onRequestCountChange(Accounts& /*accounts*/,
     size_t request_count)
 {
   if (request_count) {
-    request_indicator->SetText("* ");
-    request_indicator->SetWidth(2);
+    request_indicator->setText("* ");
+    request_indicator->setWidth(2);
   }
   else {
-    request_indicator->SetText("");
-    request_indicator->SetWidth(0);
+    request_indicator->setText("");
+    request_indicator->setWidth(0);
   }
 }
 
@@ -125,7 +125,7 @@ void Header::account_signed_on(PurpleAccount *account)
 
   CppConsUI::Label *label = new CppConsUI::Label(0, 1, "");
   statuses[account] = label;
-  container->AppendWidget(*label);
+  container->appendWidget(*label);
 
   account_status_changed(account, NULL,
       purple_account_get_active_status(account));
@@ -138,7 +138,7 @@ void Header::account_signed_off(PurpleAccount *account)
   if (statuses.find(account) == statuses.end())
     return;
 
-  container->RemoveWidget(*statuses[account]);
+  container->removeWidget(*statuses[account]);
   statuses.erase(account);
 }
 
@@ -158,14 +158,14 @@ void Header::account_status_changed(PurpleAccount *account,
   CppConsUI::Label *label = statuses[account];
   char *text;
   if (short_text)
-    text = g_strdup_printf(" %s [%s]", Utils::GetStatusIndicator(cur),
+    text = g_strdup_printf(" %s [%s]", Utils::getStatusIndicator(cur),
         purple_account_get_protocol_name(account));
   else
-    text = g_strdup_printf(" %s [%s|%s]", Utils::GetStatusIndicator(cur),
+    text = g_strdup_printf(" %s [%s|%s]", Utils::getStatusIndicator(cur),
         purple_account_get_protocol_name(account),
         purple_account_get_username(account));
-  label->SetText(text);
-  label->SetWidth(CppConsUI::Curses::onscreen_width(text));
+  label->setText(text);
+  label->setWidth(CppConsUI::Curses::onscreen_width(text));
   g_free(text);
 }
 

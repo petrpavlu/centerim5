@@ -42,13 +42,13 @@ public:
   virtual ~SplitDialog();
 
   // Widget
-  virtual void CleanFocus();
+  virtual void cleanFocus();
 
   // Container
-  virtual void MoveFocus(FocusDirection direction);
+  virtual void moveFocus(FocusDirection direction);
 
-  virtual void SetContainer(Container& cont);
-  virtual Container *GetContainer() const { return container; }
+  virtual void setContainer(Container& cont);
+  virtual Container *getContainer() const { return container; }
 
   /**
    * Signal emitted when the user closes the dialog.
@@ -64,9 +64,9 @@ protected:
   sigc::connection buttons_old_focus_conn;
 
   // AbstractDialog
-  virtual void EmitResponse(ResponseType response);
+  virtual void emitResponse(ResponseType response);
 
-  virtual void OnOldFocusVisible(Widget& activator, bool visible);
+  virtual void onOldFocusVisible(Widget& activator, bool visible);
 
 private:
   SplitDialog(const SplitDialog&);

@@ -35,7 +35,7 @@ Spacer::Spacer(int w, int h)
 {
 }
 
-void Spacer::Draw()
+void Spacer::draw()
 {
 }
 

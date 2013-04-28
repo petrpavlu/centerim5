@@ -33,94 +33,94 @@
 GeneralMenu::GeneralMenu()
 : MenuWindow(0, 0, AUTOSIZE, AUTOSIZE)
 {
-  SetColorScheme("generalmenu");
+  setColorScheme("generalmenu");
 
-  AppendItem(_("Change status"), sigc::mem_fun(this,
-        &GeneralMenu::OpenStatusWindow));
-  AppendItem(_("Accounts..."), sigc::mem_fun(this,
-        &GeneralMenu::OpenAccountWindow));
-  AppendItem(_("Add buddy..."), sigc::mem_fun(this,
-        &GeneralMenu::OpenAddBuddyRequest));
-  AppendItem(_("Add chat..."), sigc::mem_fun(this,
-        &GeneralMenu::OpenAddChatRequest));
-  AppendItem(_("Add group..."), sigc::mem_fun(this,
-        &GeneralMenu::OpenAddGroupRequest));
-  AppendItem(_("Pending requests..."), sigc::mem_fun(this,
-        &GeneralMenu::OpenPendingRequests));
-  AppendItem(_("Config options..."), sigc::mem_fun(this,
-        &GeneralMenu::OpenOptionWindow));
-  AppendItem(_("Plugins..."), sigc::mem_fun(this,
-        &GeneralMenu::OpenPluginWindow));
-  AppendSeparator();
+  appendItem(_("Change status"), sigc::mem_fun(this,
+        &GeneralMenu::openStatusWindow));
+  appendItem(_("Accounts..."), sigc::mem_fun(this,
+        &GeneralMenu::openAccountWindow));
+  appendItem(_("Add buddy..."), sigc::mem_fun(this,
+        &GeneralMenu::openAddBuddyRequest));
+  appendItem(_("Add chat..."), sigc::mem_fun(this,
+        &GeneralMenu::openAddChatRequest));
+  appendItem(_("Add group..."), sigc::mem_fun(this,
+        &GeneralMenu::openAddGroupRequest));
+  appendItem(_("Pending requests..."), sigc::mem_fun(this,
+        &GeneralMenu::openPendingRequests));
+  appendItem(_("Config options..."), sigc::mem_fun(this,
+        &GeneralMenu::openOptionWindow));
+  appendItem(_("Plugins..."), sigc::mem_fun(this,
+        &GeneralMenu::openPluginWindow));
+  appendSeparator();
 #ifdef DEBUG
-  AppendItem("Request test...", sigc::mem_fun(this,
-        &GeneralMenu::RequestTest));
-  AppendSeparator();
+  appendItem("Request test...", sigc::mem_fun(this,
+        &GeneralMenu::requestTest));
+  appendSeparator();
 #endif // DEBUG
-  AppendItem(_("Quit"), sigc::hide(sigc::mem_fun(CENTERIM,
-          &CenterIM::Quit)));
+  appendItem(_("Quit"), sigc::hide(sigc::mem_fun(CENTERIM,
+          &CenterIM::quit)));
 }
 
-void GeneralMenu::OnScreenResized()
+void GeneralMenu::onScreenResized()
 {
-  CppConsUI::Rect chat = CENTERIM->GetScreenArea(CenterIM::CHAT_AREA);
-  Move(chat.x, chat.y);
+  CppConsUI::Rect chat = CENTERIM->getScreenArea(CenterIM::CHAT_AREA);
+  move(chat.x, chat.y);
 }
 
-void GeneralMenu::OpenStatusWindow(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openStatusWindow(CppConsUI::Button& /*activator*/)
 {
   AccountStatusMenu *win = new AccountStatusMenu;
-  win->Show();
-  Close();
+  win->show();
+  close();
 }
 
-void GeneralMenu::OpenAccountWindow(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openAccountWindow(CppConsUI::Button& /*activator*/)
 {
   AccountWindow *win = new AccountWindow;
-  win->Show();
-  Close();
+  win->show();
+  close();
 }
 
-void GeneralMenu::OpenAddBuddyRequest(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openAddBuddyRequest(CppConsUI::Button& /*activator*/)
 {
   purple_blist_request_add_buddy(NULL, NULL, NULL, NULL);
-  Close();
+  close();
 }
 
-void GeneralMenu::OpenAddChatRequest(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openAddChatRequest(CppConsUI::Button& /*activator*/)
 {
   purple_blist_request_add_chat(NULL, NULL, NULL, NULL);
-  Close();
+  close();
 }
 
-void GeneralMenu::OpenAddGroupRequest(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openAddGroupRequest(CppConsUI::Button& /*activator*/)
 {
   purple_blist_request_add_group();
-  Close();
+  close();
 }
 
-void GeneralMenu::OpenPendingRequests(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openPendingRequests(CppConsUI::Button& /*activator*/)
 {
-  ACCOUNTS->OpenPendingRequests();
-  Close();
+  ACCOUNTS->openPendingRequests();
+  close();
 }
 
-void GeneralMenu::OpenOptionWindow(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openOptionWindow(CppConsUI::Button& /*activator*/)
 {
   OptionWindow *win = new OptionWindow;
-  win->Show();
-  Close();
+  win->show();
+  close();
 }
 
-void GeneralMenu::OpenPluginWindow(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openPluginWindow(CppConsUI::Button& /*activator*/)
 {
   PluginWindow *win = new PluginWindow;
-  win->Show();
-  Close();
+  win->show();
+  close();
 }
 
 #ifdef DEBUG
-void GeneralMenu::RequestTest(CppConsUI::Button& /*activator*/)
+void GeneralMenu::requestTest(CppConsUI::Button& /*activator*/)
 {
 #if 0
   purple_request_input(NULL, "Title", "Primary", "Secondary",
@@ -202,27 +202,27 @@ void GeneralMenu::RequestTest(CppConsUI::Button& /*activator*/)
       "cancel_text", NULL,
       NULL, NULL, NULL, this);
 #endif
-  Close();
+  close();
 }
 
 void GeneralMenu::input_ok_cb(const char *text)
 {
-  LOG->Debug("input_ok_cb: %s", text);
+  LOG->debug("input_ok_cb: %s", text);
 }
 
 void GeneralMenu::choice_ok_cb(int selected)
 {
-  LOG->Debug("choice_ok_cb: %d", selected);
+  LOG->debug("choice_ok_cb: %d", selected);
 }
 
 void GeneralMenu::action_cb(int action)
 {
-  LOG->Debug("action_cb: %d", action);
+  LOG->debug("action_cb: %d", action);
 }
 
 void GeneralMenu::fields_ok_cb(PurpleRequestFields *fields)
 {
-  LOG->Debug(
+  LOG->debug(
       "fields_ok_cb: text0=%s, text1=%s, int0=%d, bool0=%d, choice0=%d\n",
       purple_request_fields_get_string(fields, "text0"),
       purple_request_fields_get_string(fields, "text1"),
@@ -233,18 +233,18 @@ void GeneralMenu::fields_ok_cb(PurpleRequestFields *fields)
   for (GList *list = purple_request_field_list_get_selected(
         purple_request_fields_get_field(fields, "list0")); list;
       list = list->next)
-    LOG->Debug("fields_ok_cb: list0=%s",
+    LOG->debug("fields_ok_cb: list0=%s",
         reinterpret_cast<const char*>(list->data));
 
   for (GList *list = purple_request_field_list_get_selected(
         purple_request_fields_get_field(fields, "list1")); list;
       list = list->next)
-    LOG->Debug("fields_ok_cb: list1=%s",
+    LOG->debug("fields_ok_cb: list1=%s",
         reinterpret_cast<const char*>(list->data));
 
   PurpleAccount *account = purple_request_fields_get_account(fields,
       "account0");
-  LOG->Debug("fields_ok_cb: account0=[%s] %s",
+  LOG->debug("fields_ok_cb: account0=[%s] %s",
       purple_account_get_protocol_name(account),
       purple_account_get_username(account));
 }

@@ -38,7 +38,7 @@ public:
   virtual ~PluginWindow();
 
   // FreeWindow
-  virtual void OnScreenResized();
+  virtual void onScreenResized();
 
 protected:
 
@@ -51,13 +51,13 @@ private:
     virtual ~AddPluginWindow() {}
 
     // FreeWindow
-    virtual void OnScreenResized();
+    virtual void onScreenResized();
 
     // signal that the user has selected a plugin that he wants to add
     sigc::signal<void, AddPluginWindow&, PurplePlugin*> signal_selection;
 
   protected:
-    void OnPluginButtonActivate(CppConsUI::Button& activator,
+    void onPluginButtonActivate(CppConsUI::Button& activator,
         PurplePlugin *plugin);
 
   private:
@@ -75,7 +75,7 @@ private:
   protected:
     char *pref;
 
-    void OnToggle(CppConsUI::CheckBox& activator, bool new_state);
+    void onToggle(CppConsUI::CheckBox& activator, bool new_state);
 
   private:
     BoolOption(const BoolOption&);
@@ -92,9 +92,9 @@ private:
   protected:
     char *pref;
 
-    void UpdateValue();
-    void OnActivate(CppConsUI::Button& activator);
-    void ResponseHandler(CppConsUI::InputDialog& activator,
+    void updateValue();
+    void onActivate(CppConsUI::Button& activator);
+    void responseHandler(CppConsUI::InputDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
@@ -112,9 +112,9 @@ private:
   protected:
     char *pref;
 
-    void UpdateValue();
-    void OnActivate(CppConsUI::Button& activator);
-    void ResponseHandler(CppConsUI::InputDialog& activator,
+    void updateValue();
+    void onActivate(CppConsUI::Button& activator);
+    void responseHandler(CppConsUI::InputDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
@@ -132,9 +132,9 @@ private:
   protected:
     char *pref;
 
-    void UpdateValue();
-    void OnActivate(CppConsUI::Button& activator);
-    void ResponseHandler(CppConsUI::InputDialog& activator,
+    void updateValue();
+    void onActivate(CppConsUI::Button& activator);
+    void responseHandler(CppConsUI::InputDialog& activator,
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
@@ -156,14 +156,14 @@ private:
   PluginWindow(const PluginWindow&);
   PluginWindow& operator=(const PluginWindow&);
 
-  void ClearPlugin(PurplePlugin *plugin);
-  void PopulatePlugin(PurplePlugin *plugin);
+  void clearPlugin(PurplePlugin *plugin);
+  void populatePlugin(PurplePlugin *plugin);
 
-  void AddPlugin(CppConsUI::Button& activator);
-  void OnAddPluginSelection(AddPluginWindow& activator, PurplePlugin *plugin);
+  void addPlugin(CppConsUI::Button& activator);
+  void onAddPluginSelection(AddPluginWindow& activator, PurplePlugin *plugin);
 
-  void DisablePlugin(CppConsUI::Button& activator, PurplePlugin *plugin);
-  void DisablePluginResponseHandler(CppConsUI::MessageDialog& activator,
+  void disablePlugin(CppConsUI::Button& activator, PurplePlugin *plugin);
+  void disablePluginResponseHandler(CppConsUI::MessageDialog& activator,
       CppConsUI::AbstractDialog::ResponseType response, PurplePlugin *plugin);
 };
 

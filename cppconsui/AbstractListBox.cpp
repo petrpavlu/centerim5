@@ -36,27 +36,27 @@ AbstractListBox::AbstractListBox(int w, int h)
 {
 }
 
-Button *AbstractListBox::InsertItem(size_t pos, const char *title,
+Button *AbstractListBox::insertItem(size_t pos, const char *title,
     const sigc::slot<void, Button&>& callback)
 {
   Button *b = new Button(Curses::onscreen_width(title), 1, title);
   b->signal_activate.connect(callback);
-  InsertWidget(pos, *b);
+  insertWidget(pos, *b);
   return b;
 }
 
-Button *AbstractListBox::AppendItem(const char *title,
+Button *AbstractListBox::appendItem(const char *title,
     const sigc::slot<void, Button&>& callback)
 {
   Button *b = new Button(Curses::onscreen_width(title), 1, title);
   b->signal_activate.connect(callback);
-  AppendWidget(*b);
+  appendWidget(*b);
   return b;
 }
 
-void AbstractListBox::AddWidget(Widget& widget, int x, int y)
+void AbstractListBox::addWidget(Widget& widget, int x, int y)
 {
-  ScrollPane::AddWidget(widget, x, y);
+  ScrollPane::addWidget(widget, x, y);
 }
 
 } // namespace CppConsUI

@@ -52,30 +52,30 @@ public:
   /**
    * Removes all options.
    */
-  virtual void ClearOptions();
+  virtual void clearOptions();
 
   /**
    * Appends a new option.
    */
-  virtual int AddOption(const char *text = NULL, intptr_t data = 0);
-  virtual int AddOptionPtr(const char *text = NULL, void *data = NULL)
-    { return AddOption(text, reinterpret_cast<intptr_t>(data)); }
+  virtual int addOption(const char *text = NULL, intptr_t data = 0);
+  virtual int addOptionPtr(const char *text = NULL, void *data = NULL)
+    { return addOption(text, reinterpret_cast<intptr_t>(data)); }
 
   /**
    * Returns last selected option.
    */
-  virtual int GetSelected() const { return selected_entry; };
-  virtual const char *GetSelectedTitle() const;
+  virtual int getSelected() const { return selected_entry; };
+  virtual const char *getSelectedTitle() const;
 
-  virtual int GetOptionsCount() const { return options.size(); }
+  virtual int getOptionsCount() const { return options.size(); }
 
-  virtual const char *GetTitle(int entry) const;
-  virtual intptr_t GetData(int entry) const;
+  virtual const char *getTitle(int entry) const;
+  virtual intptr_t getData(int entry) const;
 
-  virtual void SetSelected(int new_entry);
-  virtual void SetSelectedByData(intptr_t data);
-  virtual void SetSelectedByDataPtr(void *data)
-    { SetSelectedByData(reinterpret_cast<intptr_t>(data)); }
+  virtual void setSelected(int new_entry);
+  virtual void setSelectedByData(intptr_t data);
+  virtual void setSelectedByDataPtr(void *data)
+    { setSelectedByData(reinterpret_cast<intptr_t>(data)); }
 
   sigc::signal<void, ComboBox&, int, const char *, intptr_t>
     signal_selection_changed;
@@ -110,9 +110,9 @@ protected:
   /**
    * Prepares and displays the dropdown MenuWindow.
    */
-  virtual void OnDropDown(Button& activator);
-  virtual void DropDownOk(Button& activator, int new_entry);
-  virtual void DropDownClose(FreeWindow& window);
+  virtual void onDropDown(Button& activator);
+  virtual void dropDownOk(Button& activator, int new_entry);
+  virtual void dropDownClose(FreeWindow& window);
 
 private:
   ComboBox(const ComboBox&);

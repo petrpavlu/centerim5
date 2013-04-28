@@ -26,19 +26,19 @@
 #include <cppconsui/FreeWindow.h>
 #include <cppconsui/Label.h>
 
-#define FOOTER (Footer::Instance())
+#define FOOTER (Footer::instance())
 
 // the bottom area of the screen containing context sensitive help
 class Footer
 : public CppConsUI::FreeWindow
 {
 public:
-  static Footer *Instance();
+  static Footer *instance();
 
   // FreeWindow
-  virtual void OnScreenResized();
+  virtual void onScreenResized();
 
-  void SetText(const char *fmt, ...) _attribute((format(printf, 2, 3)));
+  void setText(const char *fmt, ...) _attribute((format(printf, 2, 3)));
 
 protected:
 
@@ -48,18 +48,18 @@ private:
   CppConsUI::Label *label;
   Values values;
 
-  static Footer *instance;
+  static Footer *my_instance;
 
   Footer();
   Footer(const Footer&);
   Footer &operator=(const Footer&);
   virtual ~Footer() {}
 
-  static void Init();
-  static void Finalize();
+  static void init();
+  static void finalize();
   friend class CenterIM;
 
-  void UpdateText();
+  void updateText();
 };
 
 #endif // __FOOTER_H__

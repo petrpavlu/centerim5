@@ -41,7 +41,7 @@ public:
   virtual ~Spacer() {}
 
   // Widget
-  virtual void Draw();
+  virtual void draw();
 
 protected:
 

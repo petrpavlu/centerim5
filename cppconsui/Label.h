@@ -46,16 +46,16 @@ public:
   virtual ~Label();
 
   // Widget
-  virtual void Draw();
+  virtual void draw();
 
   /**
-   * Sets a new text and redraws itself.
+   * Sets a new label text and redraws the widget.
    */
-  virtual void SetText(const char *new_text);
+  virtual void setText(const char *new_text);
   /**
-   * Returns previously set text.
+   * Returns a current label text.
    */
-  virtual const char *GetText() const { return text; }
+  virtual const char *getText() const { return text; }
 
 protected:
   char *text;

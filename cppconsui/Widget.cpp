@@ -43,15 +43,13 @@ Widget::Widget(int w, int h)
 
 Widget::~Widget()
 {
-  SetVisibility(false);
+  setVisibility(false);
 
-  if (area)
-    delete area;
-  if (color_scheme)
-    g_free(color_scheme);
+  delete area;
+  g_free(color_scheme);
 }
 
-void Widget::MoveResize(int newx, int newy, int neww, int newh)
+void Widget::moveResize(int newx, int newy, int neww, int newh)
 {
   if (newx == xpos && newy == ypos && neww == width && newh == height)
     return;
@@ -64,58 +62,58 @@ void Widget::MoveResize(int newx, int newy, int neww, int newh)
   width = neww;
   height = newh;
 
-  UpdateArea();
+  updateArea();
   signal_moveresize(*this, oldsize, newsize);
 }
 
-void Widget::UpdateArea()
+void Widget::updateArea()
 {
   update_area = true;
-  Redraw();
+  redraw();
 }
 
-Widget *Widget::GetFocusWidget()
+Widget *Widget::getFocusWidget()
 {
   if (can_focus)
     return this;
   return NULL;
 }
 
-void Widget::CleanFocus()
+void Widget::cleanFocus()
 {
   if (!has_focus)
     return;
 
   has_focus = false;
   signal_focus(*this, false);
-  Redraw();
+  redraw();
 }
 
-bool Widget::RestoreFocus()
+bool Widget::restoreFocus()
 {
-  return GrabFocus();
+  return grabFocus();
 }
 
-void Widget::UngrabFocus()
+void Widget::ungrabFocus()
 {
   if (!parent || !has_focus)
     return;
 
   has_focus = false;
   signal_focus(*this, false);
-  Redraw();
+  redraw();
 }
 
-bool Widget::GrabFocus()
+bool Widget::grabFocus()
 {
   if (!parent || has_focus)
     return false;
 
-  if (can_focus && IsVisibleRecursive()) {
-    if (parent->SetFocusChild(*this)) {
+  if (can_focus && isVisibleRecursive()) {
+    if (parent->setFocusChild(*this)) {
       has_focus = true;
       signal_focus(*this, true);
-      Redraw();
+      redraw();
     }
     return true;
   }
@@ -123,184 +121,182 @@ bool Widget::GrabFocus()
   return false;
 }
 
-void Widget::SetVisibility(bool visible)
+void Widget::setVisibility(bool new_visible)
 {
-  if (this->visible == visible)
+  if (new_visible == visible)
     return;
 
-  this->visible = visible;
+  visible = new_visible;
 
   if (parent) {
-    parent->UpdateFocusChain();
+    parent->updateFocusChain();
 
-    Container *t = GetTopContainer();
+    Container *t = getTopContainer();
     if (visible) {
-      if (!t->GetFocusWidget()) {
+      if (!t->getFocusWidget()) {
         /* There is no focused widget, try if this or a widget
          * that was revealed can grab it. */
-        t->MoveFocus(Container::FOCUS_DOWN);
+        t->moveFocus(Container::FOCUS_DOWN);
       }
     }
     else {
-      Widget *focus = t->GetFocusWidget();
-      if (focus && !focus->IsVisibleRecursive()) {
+      Widget *focus = t->getFocusWidget();
+      if (focus && !focus->isVisibleRecursive()) {
         // focused widget was hidden, move the focus
-        t->MoveFocus(Container::FOCUS_DOWN);
+        t->moveFocus(Container::FOCUS_DOWN);
       }
     }
   }
 
   signal_visible(*this, visible);
-  Redraw();
+  redraw();
 }
 
-bool Widget::IsVisibleRecursive() const
+bool Widget::isVisibleRecursive() const
 {
   if (!parent || !visible)
     return false;
 
-  return parent->IsWidgetVisible(*this);
+  return parent->isWidgetVisible(*this);
 }
 
-void Widget::SetParent(Container& parent)
+void Widget::setParent(Container& parent)
 {
   // we don't support parent change
   g_assert(!this->parent);
 
   this->parent = &parent;
 
-  this->parent->UpdateFocusChain();
+  this->parent->updateFocusChain();
 
-  Container *t = GetTopContainer();
-  if (!t->GetFocusWidget()) {
+  Container *t = getTopContainer();
+  if (!t->getFocusWidget()) {
     /* There is no focused widget, try if this or a child widget (in case
      * of Container) can grab it. */
-    Widget *w = GetFocusWidget();
+    Widget *w = getFocusWidget();
     if (w)
-      w->GrabFocus();
+      w->grabFocus();
   }
   else {
     /* Clean focus if this widget/container was added to a container that
      * already has a focused widget. */
-    CleanFocus();
+    cleanFocus();
   }
 
-  UpdateArea();
+  updateArea();
 }
 
-/* All following MoveResize() wrappers should always call member methods to
+/* All following moveResize() wrappers should always call member methods to
  * get xpos, ypos, width, height and never use member variables directly. See
- * FreeWindow GetLeft(), GetTop(), GetWidth(), GetHeight(). */
-void Widget::Move(int newx, int newy)
+ * FreeWindow getLeft(), getTop(), getWidth(), getHeight(). */
+void Widget::move(int newx, int newy)
 {
-  MoveResize(newx, newy, GetWidth(), GetHeight());
+  moveResize(newx, newy, getWidth(), getHeight());
 }
 
-void Widget::Resize(int neww, int newh)
+void Widget::resize(int neww, int newh)
 {
-  MoveResize(GetLeft(), GetTop(), neww, newh);
+  moveResize(getLeft(), getTop(), neww, newh);
 }
 
-void Widget::SetLeft(int newx)
+void Widget::setLeft(int newx)
 {
-  MoveResize(newx, GetTop(), GetWidth(), GetHeight());
+  moveResize(newx, getTop(), getWidth(), getHeight());
 }
 
-void Widget::SetTop(int newy)
+void Widget::setTop(int newy)
 {
-  MoveResize(GetLeft(), newy, GetWidth(), GetHeight());
+  moveResize(getLeft(), newy, getWidth(), getHeight());
 }
 
-void Widget::SetWidth(int neww)
+void Widget::setWidth(int neww)
 {
-  MoveResize(GetLeft(), GetTop(), neww, GetHeight());
+  moveResize(getLeft(), getTop(), neww, getHeight());
 }
 
-void Widget::SetHeight(int newh)
+void Widget::setHeight(int newh)
 {
-  MoveResize(GetLeft(), GetTop(), GetWidth(), newh);
+  moveResize(getLeft(), getTop(), getWidth(), newh);
 }
 
-Point Widget::GetAbsolutePosition() const
-{
-  if (!parent)
-    return Point(0, 0);
-
-  return parent->GetAbsolutePosition(*this);
-}
-
-Point Widget::GetRelativePosition(const Container& ref) const
+Point Widget::getAbsolutePosition() const
 {
   if (!parent)
     return Point(0, 0);
 
-  return parent->GetRelativePosition(ref, *this);
+  return parent->getAbsolutePosition(*this);
 }
 
-int Widget::GetRealWidth() const
+Point Widget::getRelativePosition(const Container& ref) const
+{
+  if (!parent)
+    return Point(0, 0);
+
+  return parent->getRelativePosition(ref, *this);
+}
+
+int Widget::getRealWidth() const
 {
   if (!area)
     return 0;
   return area->getmaxx();
 }
 
-int Widget::GetRealHeight() const
+int Widget::getRealHeight() const
 {
   if (!area)
     return 0;
   return area->getmaxy();
 }
 
-int Widget::GetWishWidth() const
+int Widget::getWishWidth() const
 {
   return wish_width;
 }
 
-int Widget::GetWishHeight() const
+int Widget::getWishHeight() const
 {
   return wish_height;
 }
 
-void Widget::SetColorScheme(const char *scheme)
+void Widget::setColorScheme(const char *new_color_scheme)
 {
-  if (color_scheme)
-    g_free(color_scheme);
+  g_free(color_scheme);
 
-  color_scheme = g_strdup(scheme);
-  Redraw();
+  color_scheme = g_strdup(new_color_scheme);
+  redraw();
 }
 
-const char *Widget::GetColorScheme() const
+const char *Widget::getColorScheme() const
 {
   if (color_scheme)
     return color_scheme;
   else if (parent)
-    return parent->GetColorScheme();
+    return parent->getColorScheme();
 
   return NULL;
 }
 
-void Widget::ProceedUpdateArea()
+void Widget::proceedUpdateArea()
 {
   g_assert(parent);
 
   if (!update_area)
     return;
 
-  if (area)
-    delete area;
-  area = parent->GetSubPad(*this, xpos, ypos, width, height);
+  delete area;
+  area = parent->getSubPad(*this, xpos, ypos, width, height);
   update_area = false;
 }
 
-void Widget::Redraw()
+void Widget::redraw()
 {
-  FreeWindow *win = dynamic_cast<FreeWindow*>(GetTopContainer());
-  if (win && COREMANAGER->HasWindow(*win))
-    COREMANAGER->Redraw();
+  FreeWindow *win = dynamic_cast<FreeWindow*>(getTopContainer());
+  if (win && COREMANAGER->hasWindow(*win))
+    COREMANAGER->redraw();
 }
 
-void Widget::SetWishSize(int neww, int newh)
+void Widget::setWishSize(int neww, int newh)
 {
   if (neww == wish_width && newh == wish_height)
     return;
@@ -311,19 +307,19 @@ void Widget::SetWishSize(int neww, int newh)
   wish_width = neww;
   wish_height = newh;
 
-  UpdateArea();
+  updateArea();
   signal_wish_size_change(*this, oldsize, newsize);
 }
 
-int Widget::GetColorPair(const char *widget, const char *property) const
+int Widget::getColorPair(const char *widget, const char *property) const
 {
-  return COLORSCHEME->GetColorPair(GetColorScheme(), widget, property);
+  return COLORSCHEME->getColorPair(getColorScheme(), widget, property);
 }
 
-Container *Widget::GetTopContainer()
+Container *Widget::getTopContainer()
 {
   if (parent)
-    return parent->GetTopContainer();
+    return parent->getTopContainer();
   return dynamic_cast<Container*>(this);
 }
 

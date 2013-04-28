@@ -47,34 +47,34 @@ public:
   virtual ~FreeWindow();
 
   // Widget
-  virtual void MoveResize(int newx, int newy, int neww, int newh);
-  virtual void MoveResizeRect(const Rect &rect)
-    { MoveResize(rect.x, rect.y, rect.width, rect.height); }
-  virtual void Draw();
-  virtual void SetVisibility(bool visible);
-  virtual bool IsVisibleRecursive() const { return IsVisible(); }
-  virtual int GetLeft() const { return win_x; }
-  virtual int GetTop() const { return win_y; }
-  virtual int GetWidth() const { return win_w; }
-  virtual int GetHeight() const { return win_h; }
-  virtual Point GetAbsolutePosition();
-  virtual void SetWishSize(int neww, int newh);
+  virtual void moveResize(int newx, int newy, int neww, int newh);
+  virtual void moveResizeRect(const Rect &rect)
+    { moveResize(rect.x, rect.y, rect.width, rect.height); }
+  virtual void draw();
+  virtual void setVisibility(bool visible);
+  virtual bool isVisibleRecursive() const { return isVisible(); }
+  virtual int getLeft() const { return win_x; }
+  virtual int getTop() const { return win_y; }
+  virtual int getWidth() const { return win_w; }
+  virtual int getHeight() const { return win_h; }
+  virtual Point getAbsolutePosition();
+  virtual void setWishSize(int neww, int newh);
 
   // Container
-  virtual bool IsWidgetVisible(const Widget& widget) const;
-  virtual bool SetFocusChild(Widget& child);
+  virtual bool isWidgetVisible(const Widget& widget) const;
+  virtual bool setFocusChild(Widget& child);
 
-  virtual void Show();
-  virtual void Hide();
-  virtual void Close();
+  virtual void show();
+  virtual void hide();
+  virtual void close();
 
   //virtual void SetType(Type t) { type = t; }
-  virtual Type GetType() { return type; }
+  virtual Type getType() { return type; }
 
   /**
    * This function is called when the screen is resized.
    */
-  virtual void OnScreenResized() {}
+  virtual void onScreenResized() {}
 
   sigc::signal<void, FreeWindow&> signal_close;
   sigc::signal<void, FreeWindow&> signal_show;
@@ -97,30 +97,33 @@ protected:
   Type type;
 
   // Widget
-  virtual void SetParent(Container& parent);
-  virtual void ProceedUpdateArea();
-  virtual void Redraw();
+  virtual void proceedUpdateArea();
+  virtual void redraw();
 
   /**
    * Internal callback triggered when the screen is resized. It should be used
    * (overwritten) only by CppConsUI widgets, users should use
-   * OnScreenResized() instead.
+   * onScreenResized() instead.
    */
-  virtual void OnScreenResizedInternal();
+  virtual void onScreenResizedInternal();
 
   /**
-   * Updates window's width and height and calls UpdateArea(). Autosize hints
+   * Updates window's width and height and calls updateArea(). Autosize hints
    * are taken into account during size calculations.
    */
-  virtual void ResizeAndUpdateArea();
+  virtual void resizeAndUpdateArea();
 
 private:
   FreeWindow(const FreeWindow&);
   FreeWindow& operator=(const FreeWindow&);
 
-  void ActionClose();
+  // Widget
+  // windows cannot have any parent
+  using Container::setParent;
 
-  void DeclareBindables();
+  void actionClose();
+
+  void declareBindables();
 };
 
 } // namespace CppConsUI

@@ -45,69 +45,69 @@ public:
   virtual ~ScrollPane();
 
   // Widget
-  virtual void Draw();
-  virtual int GetRealWidth() const;
-  virtual int GetRealHeight() const;
+  virtual void draw();
+  virtual int getRealWidth() const;
+  virtual int getRealHeight() const;
 
   // Container
-  virtual Point GetRelativePosition(const Container& ref,
+  virtual Point getRelativePosition(const Container& ref,
       const Widget& child) const;
-  virtual Point GetAbsolutePosition(const Widget& child) const;
+  virtual Point getAbsolutePosition(const Widget& child) const;
 
   /**
    * Sets a size of the scrollable area.
    */
-  virtual void SetScrollSize(int swidth, int sheight);
+  virtual void setScrollSize(int swidth, int sheight);
   /**
    * Sets a width of the scrollable area.
    */
-  virtual void SetScrollWidth(int swidth)
-    { SetScrollSize(swidth, scroll_height); }
+  virtual void setScrollWidth(int swidth)
+    { setScrollSize(swidth, scroll_height); }
   /**
    * Sets a height of the scrollable area.
    */
-  virtual void SetScrollHeight(int sheight)
-    { SetScrollSize(scroll_width, sheight); }
+  virtual void setScrollHeight(int sheight)
+    { setScrollSize(scroll_width, sheight); }
 
   /**
    * Returns a size of the scrollable area.
    */
-  virtual Size GetScrollSize() { return Size(scroll_width, scroll_height); }
+  virtual Size getScrollSize() { return Size(scroll_width, scroll_height); }
   /**
    * Returns a width of the scrollable area.
    */
-  virtual int GetScrollWidth() { return scroll_width; }
+  virtual int getScrollWidth() { return scroll_width; }
   /**
    * Returns a height of the scrollable area.
    */
-  virtual int GetScrollHeight() { return scroll_height; }
+  virtual int getScrollHeight() { return scroll_height; }
 
   /**
    * Adjusts a visible area to a given position.
    */
-  virtual void AdjustScroll(int newx, int newy);
+  virtual void adjustScroll(int newx, int newy);
   /**
    * Returns a visible scroll area coordinates.
    */
-  virtual Point GetScrollPosition()
+  virtual Point getScrollPosition()
     { return Point(scroll_xpos, scroll_ypos); }
   /**
    * Returns a visible scroll area x position.
    */
-  virtual int GetScrollPositionX() { return scroll_xpos; }
+  virtual int getScrollPositionX() { return scroll_xpos; }
   /**
    * Returns a visible scroll area y position.
    */
-  virtual int GetScrollPositionY() { return scroll_ypos; }
+  virtual int getScrollPositionY() { return scroll_ypos; }
 
   /**
    * Adjusts a scroll area to make a given position visible.
    */
-  virtual void MakeVisible(int x, int y);
+  virtual void makeVisible(int x, int y);
   /**
    * Adjusts a scroll area to make a given area visible.
    */
-  virtual void MakeVisible(int x, int y, int w, int h);
+  virtual void makeVisible(int x, int y, int w, int h);
 
   sigc::signal<void, ScrollPane&, const Point&> signal_scrollarea_scroll;
   sigc::signal<void, ScrollPane&, const Size&> signal_scrollarea_resize;
@@ -119,14 +119,14 @@ protected:
   Curses::Window *screen_area;
 
   // Widget
-  virtual void UpdateArea();
-  virtual void ProceedUpdateArea();
+  virtual void updateArea();
+  virtual void proceedUpdateArea();
 
-  virtual void UpdateVirtualArea();
-  virtual void ProceedUpdateVirtualArea();
+  virtual void updateVirtualArea();
+  virtual void proceedUpdateVirtualArea();
 
-  virtual void DrawEx(bool container_draw);
-  virtual bool MakePointVisible(int x, int y);
+  virtual void drawEx(bool container_draw);
+  virtual bool makePointVisible(int x, int y);
 
 private:
   ScrollPane(const ScrollPane&);

@@ -50,35 +50,35 @@ public:
   /**
    * Inserts a new button into ListBox before a given position.
    */
-  virtual Button *InsertItem(size_t pos, const char *title,
+  virtual Button *insertItem(size_t pos, const char *title,
       const sigc::slot<void, Button&>& callback);
   /**
    * Adds a new button in the end of ListBox.
    */
-  virtual Button *AppendItem(const char *title,
+  virtual Button *appendItem(const char *title,
       const sigc::slot<void, Button&>& callback);
   /**
    * Inserts a separator (usually a horizontal or vertical line) into the
    * ListBox before a given position.
    */
-  virtual AbstractLine *InsertSeparator(size_t pos) = 0;
+  virtual AbstractLine *insertSeparator(size_t pos) = 0;
   /**
    * Appends a separator (usually a horizontal or vertical line) into the
    * ListBox.
    */
-  virtual AbstractLine *AppendSeparator() = 0;
+  virtual AbstractLine *appendSeparator() = 0;
   /**
    * Inserts a widget into the ListBox before a given position.
    */
-  virtual void InsertWidget(size_t pos, Widget& widget) = 0;
+  virtual void insertWidget(size_t pos, Widget& widget) = 0;
   /**
    * Appends a widget into the ListBox.
    */
-  virtual void AppendWidget(Widget& widget) = 0;
+  virtual void appendWidget(Widget& widget) = 0;
 
 protected:
   // Container
-  virtual void AddWidget(Widget& widget, int x, int y);
+  virtual void addWidget(Widget& widget, int x, int y);
 
 private:
   AbstractListBox(const AbstractListBox&);
