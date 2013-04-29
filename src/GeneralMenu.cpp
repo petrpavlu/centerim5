@@ -53,8 +53,17 @@ GeneralMenu::GeneralMenu()
         &GeneralMenu::openPluginWindow));
   appendSeparator();
 #ifdef DEBUG
-  appendItem("Request test...", sigc::mem_fun(this,
-        &GeneralMenu::requestTest));
+  MenuWindow *submenu = new MenuWindow(0, 0, AUTOSIZE, AUTOSIZE);
+  submenu->setColorScheme("generalmenu");
+  submenu->appendItem("Request input", sigc::mem_fun(this,
+        &GeneralMenu::openRequestInputTest));
+  submenu->appendItem("Request choice", sigc::mem_fun(this,
+        &GeneralMenu::openRequestChoiceTest));
+  submenu->appendItem("Request action", sigc::mem_fun(this,
+        &GeneralMenu::openRequestActionTest));
+  submenu->appendItem("Request fields", sigc::mem_fun(this,
+        &GeneralMenu::openRequestFieldsTest));
+  appendSubMenu("Debug...", *submenu);
   appendSeparator();
 #endif // DEBUG
   appendItem(_("Quit"), sigc::hide(sigc::mem_fun(CENTERIM,
@@ -120,37 +129,45 @@ void GeneralMenu::openPluginWindow(CppConsUI::Button& /*activator*/)
 }
 
 #ifdef DEBUG
-void GeneralMenu::requestTest(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openRequestInputTest(CppConsUI::Button& /*activator*/)
 {
-#if 0
   purple_request_input(NULL, "Title", "Primary", "Secondary",
-      "default_value", FALSE, FALSE, NULL, "ok_text",
-      G_CALLBACK(input_ok_cb_), "cancel_text", NULL, NULL, NULL, NULL,
+      "default value", FALSE, FALSE, NULL, "Ok",
+      G_CALLBACK(input_ok_cb_), "Cancel", NULL, NULL, NULL, NULL,
       this);
-#endif
 
-#if 0
+  close();
+}
+
+void GeneralMenu::openRequestChoiceTest(CppConsUI::Button& /*activator*/)
+{
   purple_request_choice(NULL, "Title", "Primary",
       "Secondary", 1,
-      "ok_text", G_CALLBACK(choice_ok_cb_),
-      "cancel_text", NULL,
+      "Ok", G_CALLBACK(choice_ok_cb_),
+      "Cancel", NULL,
       NULL, NULL, NULL,
       this,
       "Option 0", 0,
       "Option 1", 1,
       "Option 2", 2,
       NULL);
-#endif
 
-#if 0
+  close();
+}
+
+void GeneralMenu::openRequestActionTest(CppConsUI::Button& /*activator*/)
+{
   purple_request_action(NULL, "Title", "Primary", "Secondary", 1, NULL,
       NULL, NULL, this, 3,
       "Action 0", G_CALLBACK(action_cb_),
       "Action 1", NULL,
       "Action 2", G_CALLBACK(action_cb_));
-#endif
 
-#if 1
+  close();
+}
+
+void GeneralMenu::openRequestFieldsTest(CppConsUI::Button& /*activator*/)
+{
   PurpleRequestFields *fields = purple_request_fields_new();
   PurpleRequestFieldGroup *g = purple_request_field_group_new("Group 0");
 
@@ -198,10 +215,10 @@ void GeneralMenu::requestTest(CppConsUI::Button& /*activator*/)
   purple_request_field_group_add_field(g, f);
 
   purple_request_fields(NULL, "Title", "Primary", "Secondary", fields,
-      "ok_text", G_CALLBACK(fields_ok_cb_),
-      "cancel_text", NULL,
+      "Ok", G_CALLBACK(fields_ok_cb_),
+      "Cancel", NULL,
       NULL, NULL, NULL, this);
-#endif
+
   close();
 }
 

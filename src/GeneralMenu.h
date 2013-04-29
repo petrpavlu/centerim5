@@ -52,7 +52,10 @@ private:
   void openPluginWindow(CppConsUI::Button& activator);
 
 #ifdef DEBUG
-  void requestTest(CppConsUI::Button& activator);
+  void openRequestInputTest(CppConsUI::Button& activator);
+  void openRequestChoiceTest(CppConsUI::Button& activator);
+  void openRequestActionTest(CppConsUI::Button& activator);
+  void openRequestFieldsTest(CppConsUI::Button& activator);
 
   static void input_ok_cb_(void *data, const char *text)
     { reinterpret_cast<GeneralMenu*>(data)->input_ok_cb(text); }
