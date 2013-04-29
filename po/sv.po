@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: centerim5\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2013-04-28 18:58+0200\n"
+"POT-Creation-Date: 2013-04-29 20:27+0200\n"
 "PO-Revision-Date: 2011-06-08 14:42+0200\n"
 "Last-Translator: Jonas Zetterberg <jozz@jozz.se>\n"
 "Language-Team: Svenska\n"
@@ -69,7 +69,8 @@ msgid "Buddylist color:"
 msgstr ""
 
 #: src/AccountWindow.cpp:437
-msgid "Invalid account or protocol plugin not loaded"
+#, fuzzy
+msgid "Invalid account or protocol plugin not loaded."
 msgstr ""
 "Ogiltigt konto eller s?? ??r insticksmodulen f??r detta protokol inte laddat"
 
@@ -585,7 +586,7 @@ msgstr "CenterIM konfigurations alternativ..."
 msgid "Plugins..."
 msgstr "Alias"
 
-#: src/GeneralMenu.cpp:60
+#: src/GeneralMenu.cpp:69
 msgid "Quit"
 msgstr "Avsluta"
 

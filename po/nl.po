@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: centerim5 5.0.0beta1.28-6b68-dirty\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2013-04-28 18:58+0200\n"
+"POT-Creation-Date: 2013-04-29 20:27+0200\n"
 "PO-Revision-Date: 2012-12-16 23:30+0100\n"
 "Last-Translator: CBke <cb@linux.be>\n"
 "Language-Team: Dutch\n"
@@ -68,7 +68,8 @@ msgid "Buddylist color:"
 msgstr "Kleur vriendenlijst:"
 
 #: src/AccountWindow.cpp:437
-msgid "Invalid account or protocol plugin not loaded"
+#, fuzzy
+msgid "Invalid account or protocol plugin not loaded."
 msgstr "Ongeldig account of protocol niet geladen"
 
 #: src/AccountWindow.cpp:522
@@ -597,7 +598,7 @@ msgstr "Configuratie opties..."
 msgid "Plugins..."
 msgstr "Plugins..."
 
-#: src/GeneralMenu.cpp:60
+#: src/GeneralMenu.cpp:69
 msgid "Quit"
 msgstr "Afsluiten"
 

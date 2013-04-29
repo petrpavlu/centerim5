@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: centerim5\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2013-04-28 18:58+0200\n"
+"POT-Creation-Date: 2013-04-29 20:27+0200\n"
 "PO-Revision-Date: 2013-01-03 00:13+0300\n"
 "Last-Translator: kyak <bas@bmail.ru>\n"
 "Language-Team: \n"
@@ -69,7 +69,8 @@ msgid "Buddylist color:"
 msgstr "Цвет списка друзей:"
 
 #: src/AccountWindow.cpp:437
-msgid "Invalid account or protocol plugin not loaded"
+#, fuzzy
+msgid "Invalid account or protocol plugin not loaded."
 msgstr "Ошибка аккаунта или не подгружен плагин для протокола"
 
 #: src/AccountWindow.cpp:522
@@ -594,7 +595,7 @@ msgstr "Настройки..."
 msgid "Plugins..."
 msgstr "Плагины..."
 
-#: src/GeneralMenu.cpp:60
+#: src/GeneralMenu.cpp:69
 msgid "Quit"
 msgstr "Выйти"
 
