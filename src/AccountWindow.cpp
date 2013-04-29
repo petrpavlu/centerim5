@@ -434,7 +434,7 @@ void AccountWindow::populateAccount(PurpleAccount *account)
   if (!prpl) {
     // we cannot change the settings of an unknown account
     CppConsUI::Label *label = new CppConsUI::Label(
-        _("Invalid account or protocol plugin not loaded"));
+        _("Invalid account or protocol plugin not loaded."));
     treeview->appendNode(account_entry->parent_reference, *label);
   }
   else {
