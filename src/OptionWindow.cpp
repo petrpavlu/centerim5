@@ -38,6 +38,7 @@ OptionWindow::OptionWindow()
   CppConsUI::TreeView::NodeReference parent;
   parent = treeview->appendNode(treeview->getRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(_("Buddy list"))));
+  treeview->setCollapsed(parent, true);
   treeview->appendNode(parent, *(new BooleanOption(_("Show empty groups"),
           CONF_PREFIX "/blist/show_empty_groups")));
   treeview->appendNode(parent, *(new BooleanOption(_("Show offline buddies"),
@@ -66,6 +67,7 @@ OptionWindow::OptionWindow()
 
   parent = treeview->appendNode(treeview->getRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(_("Dimensions"))));
+  treeview->setCollapsed(parent, true);
   treeview->appendNode(parent, *(new IntegerOption(
           _("Buddy list window width"), CONF_PREFIX
           "/dimensions/buddylist_width", sigc::mem_fun(this,
@@ -81,6 +83,7 @@ OptionWindow::OptionWindow()
   parent = treeview->appendNode(treeview->getRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(
           _("Idle settings"))));
+  treeview->setCollapsed(parent, true);
   treeview->appendNode(parent, *(new BooleanOption(
           _("Change to away status when idle"),
           "/purple/away/away_when_idle")));
@@ -97,6 +100,7 @@ OptionWindow::OptionWindow()
   parent = treeview->appendNode(treeview->getRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(
           _("Conversations"))));
+  treeview->setCollapsed(parent, true);
   treeview->appendNode(parent, *(new BooleanOption(_("Beep on new message"),
           CONF_PREFIX "/chat/beep_on_msg")));
   treeview->appendNode(parent, *(new BooleanOption(
@@ -105,6 +109,7 @@ OptionWindow::OptionWindow()
 
   parent = treeview->appendNode(treeview->getRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(_("System logging"))));
+  treeview->setCollapsed(parent, true);
 #define ADD_DEBUG_OPTIONS()                \
 do {                                       \
   c->addOption(_("None"), "none");         \
@@ -139,6 +144,7 @@ do {                                       \
   parent = treeview->appendNode(treeview->getRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(
           _("Libpurple logging"))));
+  treeview->setCollapsed(parent, true);
   c = new ChoiceOption(_("Log format"), "/purple/logging/format");
   GList *opts = purple_log_logger_get_options();
   for (GList *o = opts; o; o = o->next) {
@@ -162,6 +168,7 @@ do {                                       \
   parent = treeview->appendNode(treeview->getRootNode(),
       *(new CppConsUI::TreeView::ToggleCollapseButton(
           _("Config files"))));
+  treeview->setCollapsed(parent, true);
   b = new CppConsUI::Button(AUTOSIZE, 1, _("Reload key bindings"));
   b->signal_activate.connect(sigc::mem_fun(this,
         &OptionWindow::reloadKeyBindings));
