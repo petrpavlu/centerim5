@@ -112,7 +112,7 @@ Request::ChoiceDialog::ChoiceDialog(const char *title, const char *primary,
 : RequestDialog(title, primary, secondary, ok_text, ok_cb, cancel_text,
     cancel_cb, user_data)
 {
-  combo = new CppConsUI::ComboBox(_("Selected value"));
+  combo = new CppConsUI::ComboBox(AUTOSIZE, 1, _("Selected value"));
   lbox->appendWidget(*combo);
   combo->grabFocus();
 
