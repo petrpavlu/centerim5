@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: centerim5\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2013-04-28 18:58+0200\n"
-"PO-Revision-Date: 2013-01-02 20:03+0100\n"
+"POT-Creation-Date: 2013-04-29 20:27+0200\n"
+"PO-Revision-Date: 2013-04-29 20:27+0200\n"
 "Last-Translator: Petr Pavlu <setup@dagobah.cz>\n"
 "Language-Team: Czech\n"
 "Language: \n"
@@ -67,13 +67,13 @@ msgid "Buddylist color:"
 msgstr "Obarvení v seznamu kamarádů:"
 
 #: src/AccountWindow.cpp:437
-msgid "Invalid account or protocol plugin not loaded"
-msgstr "Neplatný účet nebo není načten zásuvný modul pro daný protokol"
+msgid "Invalid account or protocol plugin not loaded."
+msgstr "Neplatný účet nebo není načten zásuvný modul pro daný protokol."
 
 #: src/AccountWindow.cpp:522
 #, c-format
 msgid "Unhandled account option type '%d'."
-msgstr "Nepodporovaný typ nastavení účtu '%d'."
+msgstr "Nepodporovaný typ nastavení účtu \"%d\"."
 
 #: src/AccountWindow.cpp:537
 msgid "Drop account"
@@ -268,22 +268,21 @@ msgid "Specified buddy is already in the list."
 msgstr "Zadaný kamarád se již v seznamu nachází."
 
 #: src/BuddyListNode.cpp:43
-#, fuzzy, c-format
+#, c-format
 msgid "Unhandled buddy list node '%d'."
-msgstr "Neimplementovaný typ pole požadavků '%d'."
+msgstr "Nepodporovaný prvek v seznamu kamarádů \"%d\"."
 
 #: src/BuddyListNode.cpp:357
 msgid "Information"
-msgstr ""
+msgstr "Informace"
 
 #: src/BuddyListNode.cpp:358
 msgid "Retrieving..."
-msgstr ""
+msgstr "Získávání…"
 
 #: src/BuddyListNode.cpp:444 src/BuddyListNode.cpp:798
-#, fuzzy
 msgid "Information..."
-msgstr "Nastavení…"
+msgstr "Informace…"
 
 #: src/BuddyListNode.cpp:446 src/BuddyListNode.cpp:634
 #: src/BuddyListNode.cpp:800
@@ -332,12 +331,11 @@ msgstr "Přejmenovat…"
 
 #: src/BuddyListNode.cpp:1075
 msgid "-Top-"
-msgstr ""
+msgstr "-Top-"
 
 #: src/BuddyListNode.cpp:1088
-#, fuzzy
 msgid "Move after..."
-msgstr "Přesunout do…"
+msgstr "Přesunout za…"
 
 #: src/BuddyListNode.cpp:1107
 msgid "Specified group is already in the list."
@@ -539,28 +537,28 @@ msgstr "Chyba při čtení z log souboru konverzace \"%s\" (%s)."
 
 #: src/Conversation.cpp:667
 msgid "Wrong number of arguments passed to the command."
-msgstr ""
+msgstr "Příkazu byl předán špatný počet argumentů."
 
 #: src/Conversation.cpp:672
 msgid "The command failed for an unknown reason."
-msgstr ""
+msgstr "Příkaz selhal z neznámého důvodu."
 
 #: src/Conversation.cpp:678
 msgid "The command only works in chats, not IMs."
-msgstr ""
+msgstr "Příkaz je platný pouze pro chaty, ne IM."
 
 #: src/Conversation.cpp:682
 msgid "The command only works in IMs, not chats."
-msgstr ""
+msgstr "Příkaz je platný pouze pro IM, ne chaty."
 
 #: src/Conversation.cpp:687
 msgid "The command does not work on this protocol."
-msgstr ""
+msgstr "Příkaz není platný na tomto protokolu."
 
 #: src/Conversations.cpp:276
 #, c-format
 msgid "Unhandled conversation type '%d'."
-msgstr "Nepodporovaný druh konverzace '%d'."
+msgstr "Nepodporovaný druh konverzace \"%d\"."
 
 #: src/GeneralMenu.cpp:38
 msgid "Change status"
@@ -594,7 +592,7 @@ msgstr "Nastavení…"
 msgid "Plugins..."
 msgstr "Zásuvné moduly…"
 
-#: src/GeneralMenu.cpp:60
+#: src/GeneralMenu.cpp:69
 msgid "Quit"
 msgstr "Ukončit"
 
@@ -628,41 +626,38 @@ msgid "centerim/log: Unknown GLib logging level: %d."
 msgstr "centerim/log: Neznámá log úroveň knihovny GLib: %d."
 
 #: src/Notify.cpp:66
-#, fuzzy
 msgid "Local information"
-msgstr "Formát záznamu"
+msgstr "Lokální informace"
 
 #: src/Notify.cpp:79
-#, fuzzy
 msgid "Now"
-msgstr "Ne"
+msgstr "Nyní"
 
 #: src/Notify.cpp:86 src/Notify.cpp:98
 msgid "Unknown"
-msgstr ""
+msgstr "Neznámo"
 
 #: src/Notify.cpp:89
 msgid "Last seen"
-msgstr ""
+msgstr "Naposledy viděn"
 
 #: src/Notify.cpp:100
-#, fuzzy
 msgid "Last activity"
-msgstr "Podle aktivity"
+msgstr "Poslední aktivita"
 
 #: src/Notify.cpp:106
 msgid "Remote information"
-msgstr ""
+msgstr "Vzdálené informace"
 
 #: src/Notify.cpp:135
-#, fuzzy, c-format
+#, c-format
 msgid "Unhandled userinfo entry type '%d'."
-msgstr "Nepodporovaný druh konverzace '%d'."
+msgstr "Nepodporovaný typ uživatelské informace \"%d\"."
 
 #: src/Notify.cpp:224
 #, c-format
 msgid "User information for %s"
-msgstr ""
+msgstr "Uživatelské informace o %s"
 
 #: src/OptionWindow.cpp:30
 msgid "Config options"
@@ -682,7 +677,7 @@ msgstr "Zobrazit odpojené kamarády"
 
 #: src/OptionWindow.cpp:45
 msgid "List mode"
-msgstr "Mód zobrazení"
+msgstr "Způsob zobrazení"
 
 #: src/OptionWindow.cpp:46
 msgid "Normal"
@@ -693,13 +688,12 @@ msgid "Flat"
 msgstr "Plochý"
 
 #: src/OptionWindow.cpp:49
-#, fuzzy
 msgid "Group sort mode"
-msgstr "Mód třídění kamarádů"
+msgstr "Způsob řazení kamarádů"
 
 #: src/OptionWindow.cpp:51
 msgid "Manually"
-msgstr ""
+msgstr "Ručně"
 
 #: src/OptionWindow.cpp:52 src/OptionWindow.cpp:56
 msgid "By name"
@@ -707,7 +701,7 @@ msgstr "Podle jména"
 
 #: src/OptionWindow.cpp:54
 msgid "Buddy sort mode"
-msgstr "Mód třídění kamarádů"
+msgstr "Způsob řazení kamarádů"
 
 #: src/OptionWindow.cpp:57 src/OptionWindow.cpp:63
 msgid "By status"
@@ -719,7 +713,7 @@ msgstr "Podle aktivity"
 
 #: src/OptionWindow.cpp:60
 msgid "Colorization mode"
-msgstr "Mód obarvení"
+msgstr "Způsob obarvení"
 
 #: src/OptionWindow.cpp:62 src/OptionWindow.cpp:110
 msgid "None"
@@ -891,7 +885,7 @@ msgstr "Přidat zásuvný modul"
 #: src/PluginWindow.cpp:360 src/PluginWindow.cpp:375
 #, c-format
 msgid "Unhandled plugin preference type '%d'."
-msgstr "Nepodporovaný typ nastavení zásuvného modulu '%d'."
+msgstr "Nepodporovaný typ nastavení zásuvného modulu \"%d\"."
 
 #: src/PluginWindow.cpp:384
 msgid "Preferences"
@@ -916,8 +910,8 @@ msgid ""
 "Error unloading plugin '%s'. The plugin could not be unloaded now, but will "
 "be disabled at the next startup."
 msgstr ""
-"Chyba při uvolnění zásuvného modulu '%s'. Zásuvný modul nemohl být uvolněn, "
-"ale bude zakázán při příštím startu programu."
+"Chyba při uvolnění zásuvného modulu \"%s\". Zásuvný modul nemohl být "
+"uvolněn, ale bude zakázán při příštím startu programu."
 
 #: src/Request.cpp:115
 msgid "Selected value"
@@ -930,7 +924,7 @@ msgstr "Skupina nastavení"
 #: src/Request.cpp:271
 #, c-format
 msgid "Unhandled request field type '%d'."
-msgstr "Neimplementovaný typ pole požadavků '%d'."
+msgstr "Nepodporovaný typ pole požadavků \"%d\"."
 
 #: cppconsui/AbstractDialog.h:31
 msgid "Ok"
@@ -984,9 +978,3 @@ msgid ""
 msgstr ""
 "Když nastane událost jako např. obdržena-zpráva nebo kamarád-se-přihlásil, "
 "tento zásuvný modul spustí uživatelem definovaný externí program."
-
-#~ msgid "Unrecognized BuddyList node."
-#~ msgstr "Neznámý prvek seznamu kamarádů"
-
-#~ msgid "%d.%m.%y %H:%M"
-#~ msgstr "%d.%m.%y %H:%M"
