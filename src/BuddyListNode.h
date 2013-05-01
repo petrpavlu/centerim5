@@ -233,6 +233,10 @@ public:
   PurpleContact *getPurpleContact() const { return contact; }
   void retrieveUserInfo();
 
+  bool isCollapsed() const { return ref->isCollapsed(); }
+  void setCollapsed(bool collapsed)
+    { treeview->setCollapsed(ref, collapsed); }
+
 protected:
   class ContactContextMenu
   : public ContextMenu
@@ -244,6 +248,7 @@ protected:
   protected:
     BuddyListContact *parent_contact;
 
+    void onExpandRequest(Button& activator, bool expand);
     void onInformation(Button& activator);
 
     void changeAliasResponseHandler(CppConsUI::InputDialog& activator,

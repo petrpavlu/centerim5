@@ -721,15 +721,24 @@ void BuddyListContact::update()
     return;
   }
 
-  const char *status = getBuddyStatus(buddy);
-  const char *alias = purple_contact_get_alias(contact);
-  if (status[0]) {
-    char *text = g_strdup_printf("%s %s", status, alias);
-    setText(text);
-    g_free(text);
-  }
+  // format contact size
+  char *size;
+  if (contact->currentsize > 1)
+    size = g_strdup_printf(" (%d)", contact->currentsize);
   else
-    setText(alias);
+    size = NULL;
+
+  // format contact label
+  const char *alias = purple_contact_get_alias(contact);
+  const char *status = getBuddyStatus(buddy);
+  char *text;
+  if (status[0])
+    text = g_strdup_printf("%s %s%s", status, alias, size ? size : "");
+  else
+    text = g_strdup_printf("%s%s", alias, size ? size : "");
+  setText(text);
+  g_free(size);
+  g_free(text);
 
   sortIn();
 
@@ -779,6 +788,13 @@ BuddyListContact::ContactContextMenu::ContactContextMenu(
 {
   appendExtendedMenu();
 
+  if (parent_contact->isCollapsed())
+    appendItem(_("Expand..."), sigc::bind(sigc::mem_fun(this,
+            &ContactContextMenu::onExpandRequest), true));
+  else
+    appendItem(_("Collapse..."), sigc::bind(sigc::mem_fun(this,
+            &ContactContextMenu::onExpandRequest), false));
+
   appendItem(_("Information..."), sigc::mem_fun(this,
         &ContactContextMenu::onInformation));
   appendItem(_("Alias..."), sigc::mem_fun(this,
@@ -804,6 +820,13 @@ BuddyListContact::ContactContextMenu::ContactContextMenu(
   }
 
   appendSubMenu(_("Move to..."), *groups);
+}
+
+void BuddyListContact::ContactContextMenu::onExpandRequest(
+    Button& /*activator*/, bool expand)
+{
+  parent_contact->setCollapsed(!expand);
+  close();
 }
 
 void BuddyListContact::ContactContextMenu::onInformation(
@@ -1010,7 +1033,7 @@ void BuddyListGroup::update()
 void BuddyListGroup::onActivate(Button& /*activator*/)
 {
   treeview->toggleCollapsed(ref);
-  purple_blist_node_set_bool(blist_node, "collapsed", ref->getCollapsed());
+  purple_blist_node_set_bool(blist_node, "collapsed", ref->isCollapsed());
 }
 
 const char *BuddyListGroup::toString() const

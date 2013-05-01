@@ -172,7 +172,7 @@ protected:
 
   public:
     TreeView *getTreeView() const { return treeview; }
-    bool getCollapsed() const { return collapsed; }
+    bool isCollapsed() const { return collapsed; }
     Style getStyle() const { return style; }
     Widget *getWidget() const { return widget; }
 
