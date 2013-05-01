@@ -789,10 +789,10 @@ BuddyListContact::ContactContextMenu::ContactContextMenu(
   appendExtendedMenu();
 
   if (parent_contact->isCollapsed())
-    appendItem(_("Expand..."), sigc::bind(sigc::mem_fun(this,
+    appendItem(_("Expand"), sigc::bind(sigc::mem_fun(this,
             &ContactContextMenu::onExpandRequest), true));
   else
-    appendItem(_("Collapse..."), sigc::bind(sigc::mem_fun(this,
+    appendItem(_("Collapse"), sigc::bind(sigc::mem_fun(this,
             &ContactContextMenu::onExpandRequest), false));
 
   appendItem(_("Information..."), sigc::mem_fun(this,
