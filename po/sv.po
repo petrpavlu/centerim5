@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: centerim5\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2013-04-29 20:27+0200\n"
+"POT-Creation-Date: 2013-05-01 14:42+0200\n"
 "PO-Revision-Date: 2011-06-08 14:42+0200\n"
 "Last-Translator: Jonas Zetterberg <jozz@jozz.se>\n"
 "Language-Team: Svenska\n"
@@ -28,7 +28,7 @@ msgid "Add"
 msgstr "L??gg till"
 
 #: src/AccountWindow.cpp:44 src/Accounts.cpp:134 src/Notify.cpp:43
-#: src/OptionWindow.cpp:174 src/PluginWindow.cpp:58
+#: src/OptionWindow.cpp:181 src/PluginWindow.cpp:58
 msgid "Done"
 msgstr "Klar"
 
@@ -45,50 +45,50 @@ msgid "Password"
 msgstr "L??senord"
 
 #: src/AccountWindow.cpp:121 src/BuddyList.cpp:459 src/BuddyList.cpp:530
-#: src/BuddyListNode.cpp:481 src/BuddyListNode.cpp:662
-#: src/BuddyListNode.cpp:860 src/Notify.cpp:70
+#: src/BuddyListNode.cpp:477 src/BuddyListNode.cpp:650
+#: src/BuddyListNode.cpp:864 src/Notify.cpp:70
 msgid "Alias"
 msgstr "Alias"
 
-#: src/AccountWindow.cpp:216 src/OptionWindow.cpp:301 src/PluginWindow.cpp:223
-#: src/Request.cpp:371
+#: src/AccountWindow.cpp:211 src/OptionWindow.cpp:302 src/PluginWindow.cpp:218
+#: src/Request.cpp:366
 #, fuzzy
 msgid "Value is out of range."
 msgstr "Ej giltigt v??rde.\n"
 
-#: src/AccountWindow.cpp:273 src/AccountWindow.cpp:546
+#: src/AccountWindow.cpp:263 src/AccountWindow.cpp:533
 msgid "Username"
 msgstr "Anv??ndarnamn"
 
-#: src/AccountWindow.cpp:336
+#: src/AccountWindow.cpp:323
 msgid "Protocol"
 msgstr ""
 
-#: src/AccountWindow.cpp:362
+#: src/AccountWindow.cpp:349
 msgid "Buddylist color:"
 msgstr ""
 
-#: src/AccountWindow.cpp:437
+#: src/AccountWindow.cpp:424
 #, fuzzy
 msgid "Invalid account or protocol plugin not loaded."
 msgstr ""
 "Ogiltigt konto eller s?? ??r insticksmodulen f??r detta protokol inte laddat"
 
-#: src/AccountWindow.cpp:522
+#: src/AccountWindow.cpp:509
 #, c-format
 msgid "Unhandled account option type '%d'."
 msgstr ""
 
-#: src/AccountWindow.cpp:537
+#: src/AccountWindow.cpp:524
 msgid "Drop account"
 msgstr "Ta bort konto"
 
-#: src/AccountWindow.cpp:564
+#: src/AccountWindow.cpp:551
 #, fuzzy
 msgid "Account deletion"
 msgstr "Konto aktiverat"
 
-#: src/AccountWindow.cpp:565
+#: src/AccountWindow.cpp:552
 msgid "Are you sure you want to delete this account?"
 msgstr "??r du s??ker p?? att du vill ta bort detta konto?"
 
@@ -288,33 +288,41 @@ msgstr ""
 msgid "Information..."
 msgstr "CenterIM konfigurations alternativ..."
 
-#: src/BuddyListNode.cpp:446 src/BuddyListNode.cpp:634
+#: src/BuddyListNode.cpp:446 src/BuddyListNode.cpp:626
 #: src/BuddyListNode.cpp:800
 #, fuzzy
 msgid "Alias..."
 msgstr "Alias"
 
-#: src/BuddyListNode.cpp:448 src/BuddyListNode.cpp:636
+#: src/BuddyListNode.cpp:448 src/BuddyListNode.cpp:628
 #: src/BuddyListNode.cpp:802 src/BuddyListNode.cpp:1066
 msgid "Delete..."
 msgstr ""
 
-#: src/BuddyListNode.cpp:513
+#: src/BuddyListNode.cpp:505
 #, fuzzy, c-format
 msgid "Are you sure you want to delete buddy %s from the list?"
 msgstr "??r du s??ker p?? att du vill ta bort detta konto?"
 
-#: src/BuddyListNode.cpp:516
+#: src/BuddyListNode.cpp:508
 msgid "Buddy deletion"
 msgstr ""
 
-#: src/BuddyListNode.cpp:692
+#: src/BuddyListNode.cpp:676
 #, fuzzy, c-format
 msgid "Are you sure you want to delete chat %s from the list?"
 msgstr "??r du s??ker p?? att du vill ta bort detta konto?"
 
-#: src/BuddyListNode.cpp:695
+#: src/BuddyListNode.cpp:679
 msgid "Chat deletion"
+msgstr ""
+
+#: src/BuddyListNode.cpp:792
+msgid "Expand..."
+msgstr ""
+
+#: src/BuddyListNode.cpp:795
+msgid "Collapse..."
 msgstr ""
 
 #: src/BuddyListNode.cpp:822
@@ -342,21 +350,21 @@ msgstr ""
 msgid "Move after..."
 msgstr ""
 
-#: src/BuddyListNode.cpp:1107
+#: src/BuddyListNode.cpp:1103
 msgid "Specified group is already in the list."
 msgstr ""
 
-#: src/BuddyListNode.cpp:1122
+#: src/BuddyListNode.cpp:1118
 #, fuzzy
 msgid "Rename"
 msgstr "Anv??ndarnamn"
 
-#: src/BuddyListNode.cpp:1180
+#: src/BuddyListNode.cpp:1172
 #, fuzzy, c-format
 msgid "Are you sure you want to delete group %s from the list?"
 msgstr "??r du s??ker p?? att du vill ta bort detta konto?"
 
-#: src/BuddyListNode.cpp:1183
+#: src/BuddyListNode.cpp:1175
 #, fuzzy
 msgid "Group deletion"
 msgstr "Konto aktiverat"
@@ -662,215 +670,215 @@ msgstr "CenterIM konfigurations alternativ..."
 msgid "Buddy list"
 msgstr ""
 
-#: src/OptionWindow.cpp:41
+#: src/OptionWindow.cpp:42
 msgid "Show empty groups"
 msgstr ""
 
-#: src/OptionWindow.cpp:43
+#: src/OptionWindow.cpp:44
 #, fuzzy
 msgid "Show offline buddies"
 msgstr "Visa utloggade anv??ndare"
 
-#: src/OptionWindow.cpp:45
+#: src/OptionWindow.cpp:46
 msgid "List mode"
 msgstr ""
 
-#: src/OptionWindow.cpp:46
+#: src/OptionWindow.cpp:47
 msgid "Normal"
 msgstr ""
 
-#: src/OptionWindow.cpp:47
+#: src/OptionWindow.cpp:48
 msgid "Flat"
 msgstr ""
 
-#: src/OptionWindow.cpp:49
+#: src/OptionWindow.cpp:50
 msgid "Group sort mode"
 msgstr ""
 
-#: src/OptionWindow.cpp:51
+#: src/OptionWindow.cpp:52
 msgid "Manually"
 msgstr ""
 
-#: src/OptionWindow.cpp:52 src/OptionWindow.cpp:56
+#: src/OptionWindow.cpp:53 src/OptionWindow.cpp:57
 #, fuzzy
 msgid "By name"
 msgstr "Anv??ndarnamn"
 
-#: src/OptionWindow.cpp:54
+#: src/OptionWindow.cpp:55
 msgid "Buddy sort mode"
 msgstr ""
 
-#: src/OptionWindow.cpp:57 src/OptionWindow.cpp:63
+#: src/OptionWindow.cpp:58 src/OptionWindow.cpp:64
 #, fuzzy
 msgid "By status"
 msgstr "??ndra status"
 
-#: src/OptionWindow.cpp:58
+#: src/OptionWindow.cpp:59
 msgid "By activity"
 msgstr ""
 
-#: src/OptionWindow.cpp:60
+#: src/OptionWindow.cpp:61
 msgid "Colorization mode"
 msgstr ""
 
-#: src/OptionWindow.cpp:62 src/OptionWindow.cpp:110
+#: src/OptionWindow.cpp:63 src/OptionWindow.cpp:115
 msgid "None"
 msgstr ""
 
-#: src/OptionWindow.cpp:64
+#: src/OptionWindow.cpp:65
 #, fuzzy
 msgid "By account"
 msgstr "Ta bort konto"
 
-#: src/OptionWindow.cpp:68
+#: src/OptionWindow.cpp:69
 msgid "Dimensions"
 msgstr ""
 
-#: src/OptionWindow.cpp:70
+#: src/OptionWindow.cpp:72
 msgid "Buddy list window width"
 msgstr ""
 
-#: src/OptionWindow.cpp:73
+#: src/OptionWindow.cpp:75
 msgid "Log window height"
 msgstr ""
 
-#: src/OptionWindow.cpp:76
+#: src/OptionWindow.cpp:78
 msgid "Show header"
 msgstr ""
 
-#: src/OptionWindow.cpp:78
+#: src/OptionWindow.cpp:80
 msgid "Show footer"
 msgstr ""
 
-#: src/OptionWindow.cpp:83
+#: src/OptionWindow.cpp:85
 #, fuzzy
 msgid "Idle settings"
 msgstr "Testar"
 
-#: src/OptionWindow.cpp:85
+#: src/OptionWindow.cpp:88
 msgid "Change to away status when idle"
 msgstr ""
 
-#: src/OptionWindow.cpp:88
+#: src/OptionWindow.cpp:91
 msgid "Time before becoming idle"
 msgstr ""
 
-#: src/OptionWindow.cpp:90
+#: src/OptionWindow.cpp:93
 msgid "Report idle time"
 msgstr ""
 
-#: src/OptionWindow.cpp:92
+#: src/OptionWindow.cpp:95
 msgid "Never"
 msgstr ""
 
-#: src/OptionWindow.cpp:93
+#: src/OptionWindow.cpp:96
 msgid "From last sent message"
 msgstr ""
 
-#: src/OptionWindow.cpp:94
+#: src/OptionWindow.cpp:97
 msgid "Based on keyboard activity"
 msgstr ""
 
-#: src/OptionWindow.cpp:99
+#: src/OptionWindow.cpp:102
 msgid "Conversations"
 msgstr ""
 
-#: src/OptionWindow.cpp:100
+#: src/OptionWindow.cpp:104
 msgid "Beep on new message"
 msgstr ""
 
-#: src/OptionWindow.cpp:103
+#: src/OptionWindow.cpp:107
 msgid "Send typing notification"
 msgstr ""
 
-#: src/OptionWindow.cpp:107
+#: src/OptionWindow.cpp:111
 msgid "System logging"
 msgstr ""
 
-#: src/OptionWindow.cpp:111
+#: src/OptionWindow.cpp:116
 msgid "Error"
 msgstr ""
 
-#: src/OptionWindow.cpp:112
+#: src/OptionWindow.cpp:117
 msgid "Critical"
 msgstr ""
 
-#: src/OptionWindow.cpp:113
+#: src/OptionWindow.cpp:118
 msgid "Warning"
 msgstr ""
 
-#: src/OptionWindow.cpp:114
+#: src/OptionWindow.cpp:119
 msgid "Message"
 msgstr ""
 
-#: src/OptionWindow.cpp:115
+#: src/OptionWindow.cpp:120
 msgid "Info"
 msgstr ""
 
-#: src/OptionWindow.cpp:116
+#: src/OptionWindow.cpp:121
 msgid "Debug"
 msgstr ""
 
-#: src/OptionWindow.cpp:118
+#: src/OptionWindow.cpp:123
 msgid "CIM log level"
 msgstr ""
 
-#: src/OptionWindow.cpp:123
+#: src/OptionWindow.cpp:128
 msgid "CppConsUI log level"
 msgstr ""
 
-#: src/OptionWindow.cpp:128
+#: src/OptionWindow.cpp:133
 msgid "Purple log level"
 msgstr ""
 
-#: src/OptionWindow.cpp:133
+#: src/OptionWindow.cpp:138
 msgid "GLib log level"
 msgstr ""
 
-#: src/OptionWindow.cpp:141
+#: src/OptionWindow.cpp:146
 msgid "Libpurple logging"
 msgstr ""
 
-#: src/OptionWindow.cpp:142
+#: src/OptionWindow.cpp:148
 msgid "Log format"
 msgstr ""
 
-#: src/OptionWindow.cpp:154
+#: src/OptionWindow.cpp:160
 msgid "Log all instant messages"
 msgstr ""
 
-#: src/OptionWindow.cpp:155
+#: src/OptionWindow.cpp:161
 msgid "Log all chats"
 msgstr ""
 
-#: src/OptionWindow.cpp:158
+#: src/OptionWindow.cpp:164
 msgid "Log all status changes to system log"
 msgstr ""
 
-#: src/OptionWindow.cpp:164
+#: src/OptionWindow.cpp:170
 #, fuzzy
 msgid "Config files"
 msgstr "CenterIM konfigurations alternativ..."
 
-#: src/OptionWindow.cpp:165
+#: src/OptionWindow.cpp:172
 msgid "Reload key bindings"
 msgstr ""
 
-#: src/OptionWindow.cpp:169
+#: src/OptionWindow.cpp:176
 msgid "Reload color schemes"
 msgstr ""
 
-#: src/OptionWindow.cpp:358
+#: src/OptionWindow.cpp:355
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/OptionWindow.cpp:364
+#: src/OptionWindow.cpp:361
 msgid "Keybinding file was successfully reloaded."
 msgstr ""
 
-#: src/OptionWindow.cpp:370
+#: src/OptionWindow.cpp:367
 msgid "Colorscheme file was successfully reloaded."
 msgstr ""
 
@@ -882,30 +890,30 @@ msgstr ""
 msgid "Add plugin"
 msgstr ""
 
-#: src/PluginWindow.cpp:360 src/PluginWindow.cpp:375
+#: src/PluginWindow.cpp:348 src/PluginWindow.cpp:363
 #, c-format
 msgid "Unhandled plugin preference type '%d'."
 msgstr ""
 
-#: src/PluginWindow.cpp:384
+#: src/PluginWindow.cpp:372
 msgid "Preferences"
 msgstr ""
 
-#: src/PluginWindow.cpp:392 src/PluginWindow.cpp:433
+#: src/PluginWindow.cpp:380 src/PluginWindow.cpp:421
 msgid "Disable plugin"
 msgstr ""
 
-#: src/PluginWindow.cpp:412
+#: src/PluginWindow.cpp:400
 #, c-format
 msgid "Error loading plugin '%s'."
 msgstr ""
 
-#: src/PluginWindow.cpp:434
+#: src/PluginWindow.cpp:422
 #, fuzzy
 msgid "Are you sure you want to disable this plugin?"
 msgstr "??r du s??ker p?? att du vill ta bort detta konto?"
 
-#: src/PluginWindow.cpp:447
+#: src/PluginWindow.cpp:436
 #, c-format
 msgid ""
 "Error unloading plugin '%s'. The plugin could not be unloaded now, but will "
