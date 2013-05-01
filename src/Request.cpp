@@ -316,14 +316,11 @@ void Request::FieldsDialog::StringField::responseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  switch (response) {
-    case CppConsUI::AbstractDialog::RESPONSE_OK:
-      purple_request_field_string_set_value(field, activator.getText());
-      setValue(purple_request_field_string_get_value(field));
-      break;
-    default:
-      break;
-  }
+  if (response != AbstractDialog::RESPONSE_OK)
+    return;
+
+  purple_request_field_string_set_value(field, activator.getText());
+  setValue(purple_request_field_string_get_value(field));
 }
 
 Request::FieldsDialog::IntegerField::IntegerField(PurpleRequestField *field)
@@ -359,22 +356,16 @@ void Request::FieldsDialog::IntegerField::responseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  const char *text;
-  long int i;
+  if (response != AbstractDialog::RESPONSE_OK)
+    return;
 
-  switch (response) {
-    case CppConsUI::AbstractDialog::RESPONSE_OK:
-      text = activator.getText();
-      errno = 0;
-      i = strtol(text, NULL, 10);
-      if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
-        LOG->warning(_("Value is out of range."));
-      purple_request_field_int_set_value(field, CLAMP(i, INT_MIN, INT_MAX));
-      setValue(purple_request_field_int_get_value(field));
-      break;
-    default:
-      break;
-  }
+  const char *text = activator.getText();
+  errno = 0;
+  long i = strtol(text, NULL, 10);
+  if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
+    LOG->warning(_("Value is out of range."));
+  purple_request_field_int_set_value(field, CLAMP(i, INT_MIN, INT_MAX));
+  setValue(purple_request_field_int_get_value(field));
 }
 
 Request::FieldsDialog::BooleanField::BooleanField(PurpleRequestField *field)

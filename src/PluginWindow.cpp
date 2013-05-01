@@ -166,14 +166,11 @@ void PluginWindow::StringOption::responseHandler(
     CppConsUI::InputDialog& activator,
     AbstractDialog::ResponseType response)
 {
-  switch (response) {
-    case AbstractDialog::RESPONSE_OK:
-      purple_prefs_set_string(pref, activator.getText());
-      updateValue();
-      break;
-    default:
-      break;
-  }
+  if (response != AbstractDialog::RESPONSE_OK)
+    return;
+
+  purple_prefs_set_string(pref, activator.getText());
+  updateValue();
 }
 
 PluginWindow::IntOption::IntOption(const char *name, const char *pref_)
@@ -211,22 +208,16 @@ void PluginWindow::IntOption::responseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  const char *text;
-  long int i;
+  if (response != AbstractDialog::RESPONSE_OK)
+    return;
 
-  switch (response) {
-    case AbstractDialog::RESPONSE_OK:
-      text = activator.getText();
-      errno = 0;
-      i = strtol(text, NULL, 10);
-      if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
-        LOG->warning(_("Value is out of range."));
-      purple_prefs_set_int(pref, CLAMP(i, INT_MIN, INT_MAX));
-      updateValue();
-      break;
-    default:
-      break;
-  }
+  const char *text = activator.getText();
+  errno = 0;
+  long i = strtol(text, NULL, 10);
+  if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
+    LOG->warning(_("Value is out of range."));
+  purple_prefs_set_int(pref, CLAMP(i, INT_MIN, INT_MAX));
+  updateValue();
 }
 
 PluginWindow::PathOption::PathOption(const char *name, const char *pref_)
@@ -263,14 +254,11 @@ void PluginWindow::PathOption::responseHandler(
     CppConsUI::InputDialog& activator,
     AbstractDialog::ResponseType response)
 {
-  switch (response) {
-    case AbstractDialog::RESPONSE_OK:
-      purple_prefs_set_path(pref, activator.getText());
-      updateValue();
-      break;
-    default:
-      break;
-  }
+  if (response != AbstractDialog::RESPONSE_OK)
+    return;
+
+  purple_prefs_set_path(pref, activator.getText());
+  updateValue();
 }
 
 void PluginWindow::clearPlugin(PurplePlugin *plugin)
@@ -441,22 +429,19 @@ void PluginWindow::disablePluginResponseHandler(
     CppConsUI::MessageDialog& /*activator*/,
     CppConsUI::AbstractDialog::ResponseType response, PurplePlugin *plugin)
 {
-  switch (response) {
-    case AbstractDialog::RESPONSE_OK:
-      if (!purple_plugin_unload(plugin)) {
-        LOG->error(_("Error unloading plugin '%s'. The plugin could not be "
-              "unloaded now, but will be disabled at the next startup."),
-            purple_plugin_get_name(plugin));
+  if (response != AbstractDialog::RESPONSE_OK)
+    return;
 
-        purple_plugin_disable(plugin);
-      }
-      else
-        clearPlugin(plugin);
-      purple_plugins_save_loaded(CONF_PLUGINS_SAVE_PREF);
-      break;
-    default:
-      break;
+  if (!purple_plugin_unload(plugin)) {
+    LOG->error(_("Error unloading plugin '%s'. The plugin could not be "
+          "unloaded now, but will be disabled at the next startup."),
+        purple_plugin_get_name(plugin));
+
+    purple_plugin_disable(plugin);
   }
+  else
+    clearPlugin(plugin);
+  purple_plugins_save_loaded(CONF_PLUGINS_SAVE_PREF);
 }
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

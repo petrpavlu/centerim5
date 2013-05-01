@@ -784,7 +784,7 @@ bool CenterIM::stringToColor(const char *str, int *color)
 
   if (g_ascii_isdigit(str[0]) || str[0] == '-') {
     // numeric colors
-    long int i = strtol(str, NULL, 10);
+    long i = strtol(str, NULL, 10);
     if (errno == ERANGE || i > INT_MAX || i < -1)
       return false;
     *color = i;

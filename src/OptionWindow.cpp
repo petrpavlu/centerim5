@@ -240,14 +240,11 @@ void OptionWindow::StringOption::responseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  switch (response) {
-    case CppConsUI::AbstractDialog::RESPONSE_OK:
-      purple_prefs_set_string(pref, activator.getText());
-      setValue(purple_prefs_get_string(pref));
-      break;
-    default:
-      break;
-  }
+  if (response != AbstractDialog::RESPONSE_OK)
+    return;
+
+  purple_prefs_set_string(pref, activator.getText());
+  setValue(purple_prefs_get_string(pref));
 }
 
 OptionWindow::IntegerOption::IntegerOption(const char *text,
@@ -295,27 +292,20 @@ void OptionWindow::IntegerOption::responseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  const char *text;
-  long int i;
-  int val;
+  if (response != AbstractDialog::RESPONSE_OK)
+    return;
 
-  switch (response) {
-    case CppConsUI::AbstractDialog::RESPONSE_OK:
-      text = activator.getText();
-      errno = 0;
-      i = strtol(text, NULL, 10);
-      if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
-        LOG->warning(_("Value is out of range."));
+  const char *text = activator.getText();
+  errno = 0;
+  long i = strtol(text, NULL, 10);
+  if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
+    LOG->warning(_("Value is out of range."));
 
-      purple_prefs_set_int(pref, CLAMP(i, INT_MIN, INT_MAX));
-      val = purple_prefs_get_int(pref);
-      setValue(purple_prefs_get_int(pref));
-      if (unit)
-        setUnit(unit_fun(val));
-      break;
-    default:
-      break;
-  }
+  purple_prefs_set_int(pref, CLAMP(i, INT_MIN, INT_MAX));
+  int val = purple_prefs_get_int(pref);
+  setValue(purple_prefs_get_int(pref));
+  if (unit)
+    setUnit(unit_fun(val));
 }
 
 OptionWindow::ChoiceOption::ChoiceOption(const char *text,

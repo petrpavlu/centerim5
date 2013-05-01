@@ -459,12 +459,8 @@ void BuddyListBuddy::BuddyContextMenu::changeAliasResponseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  switch (response) {
-    case CppConsUI::AbstractDialog::RESPONSE_OK:
-      break;
-    default:
-      return;
-  }
+  if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
+    return;
 
   PurpleBuddy *buddy = parent_buddy->getPurpleBuddy();
   purple_blist_alias_buddy(buddy, activator.getText());
@@ -488,12 +484,8 @@ void BuddyListBuddy::BuddyContextMenu::removeResponseHandler(
     CppConsUI::MessageDialog& /*activator*/,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  switch (response) {
-    case CppConsUI::AbstractDialog::RESPONSE_OK:
-      break;
-    default:
-      return;
-  }
+  if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
+    return;
 
   PurpleBuddy *buddy = parent_buddy->getPurpleBuddy();
   purple_account_remove_buddy(purple_buddy_get_account(buddy), buddy,
@@ -641,12 +633,8 @@ void BuddyListChat::ChatContextMenu::changeAliasResponseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  switch (response) {
-    case CppConsUI::AbstractDialog::RESPONSE_OK:
-      break;
-    default:
-      return;
-  }
+  if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
+    return;
 
   PurpleChat *chat = parent_chat->getPurpleChat();
   purple_blist_alias_chat(chat, activator.getText());
@@ -669,12 +657,8 @@ void BuddyListChat::ChatContextMenu::removeResponseHandler(
     CppConsUI::MessageDialog& /*activator*/,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  switch (response) {
-    case CppConsUI::AbstractDialog::RESPONSE_OK:
-      break;
-    default:
-      return;
-  }
+  if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
+    return;
 
   PurpleChat *chat = parent_chat->getPurpleChat();
 
@@ -833,12 +817,8 @@ void BuddyListContact::ContactContextMenu::changeAliasResponseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  switch (response) {
-    case CppConsUI::AbstractDialog::RESPONSE_OK:
-      break;
-    default:
-      return;
-  }
+  if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
+    return;
 
   PurpleContact *contact = parent_contact->getPurpleContact();
   if (contact->alias)
@@ -853,7 +833,8 @@ void BuddyListContact::ContactContextMenu::changeAliasResponseHandler(
   close();
 }
 
-void BuddyListContact::ContactContextMenu::onChangeAlias(Button& /*activator*/)
+void BuddyListContact::ContactContextMenu::onChangeAlias(
+    Button& /*activator*/)
 {
   PurpleContact *contact = parent_contact->getPurpleContact();
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(
@@ -867,12 +848,8 @@ void BuddyListContact::ContactContextMenu::removeResponseHandler(
     CppConsUI::MessageDialog& /*activator*/,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  switch (response) {
-    case CppConsUI::AbstractDialog::RESPONSE_OK:
-      break;
-    default:
-      return;
-  }
+  if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
+    return;
 
   // based on gtkdialogs.c:pidgin_dialogs_remove_contact_cb()
   PurpleContact *contact = parent_contact->getPurpleContact();
@@ -1093,12 +1070,8 @@ void BuddyListGroup::GroupContextMenu::renameResponseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  switch (response) {
-    case CppConsUI::AbstractDialog::RESPONSE_OK:
-      break;
-    default:
-      return;
-  }
+  if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
+    return;
 
   const char *name = activator.getText();
   PurpleGroup *group = parent_group->getPurpleGroup();
@@ -1129,12 +1102,8 @@ void BuddyListGroup::GroupContextMenu::removeResponseHandler(
     CppConsUI::MessageDialog& /*activator*/,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  switch (response) {
-    case CppConsUI::AbstractDialog::RESPONSE_OK:
-      break;
-    default:
-      return;
-  }
+  if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
+    return;
 
   // based on gtkdialogs.c:pidgin_dialogs_remove_group_cb()
   PurpleGroup *group = parent_group->getPurpleGroup();

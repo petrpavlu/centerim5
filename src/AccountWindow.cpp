@@ -154,21 +154,18 @@ void AccountWindow::StringOption::responseHandler(
     CppConsUI::InputDialog& activator,
     AbstractDialog::ResponseType response)
 {
-  switch (response) {
-    case AbstractDialog::RESPONSE_OK:
-      if (type == TYPE_PASSWORD)
-        purple_account_set_password(account, activator.getText());
-      else if (type == TYPE_ALIAS)
-        purple_account_set_alias(account, activator.getText());
-      else
-        purple_account_set_string(account,
-            purple_account_option_get_setting(option), activator.getText());
+  if (response != AbstractDialog::RESPONSE_OK)
+    return;
 
-      updateValue();
-      break;
-    default:
-      break;
-  }
+  if (type == TYPE_PASSWORD)
+    purple_account_set_password(account, activator.getText());
+  else if (type == TYPE_ALIAS)
+    purple_account_set_alias(account, activator.getText());
+  else
+    purple_account_set_string(account,
+        purple_account_option_get_setting(option), activator.getText());
+
+  updateValue();
 }
 
 AccountWindow::IntOption::IntOption(PurpleAccount *account_,
@@ -204,25 +201,18 @@ void AccountWindow::IntOption::responseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  const char *text;
-  long int i;
+  if (response != AbstractDialog::RESPONSE_OK)
+    return;
 
-  switch (response) {
-    case AbstractDialog::RESPONSE_OK:
-      text = activator.getText();
-      errno = 0;
-      i = strtol(text, NULL, 10);
-      if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
-        LOG->warning(_("Value is out of range."));
-      purple_account_set_int(account,
-          purple_account_option_get_setting(option),
-          CLAMP(i, INT_MIN, INT_MAX));
+  const char *text = activator.getText();
+  errno = 0;
+  long i = strtol(text, NULL, 10);
+  if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
+    LOG->warning(_("Value is out of range."));
+  purple_account_set_int(account, purple_account_option_get_setting(option),
+      CLAMP(i, INT_MIN, INT_MAX));
 
-      updateValue();
-      break;
-    default:
-      break;
-  }
+  updateValue();
 }
 
 AccountWindow::StringListOption::StringListOption(PurpleAccount *account_,
@@ -317,14 +307,11 @@ void AccountWindow::SplitOption::responseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
-  switch (response) {
-    case AbstractDialog::RESPONSE_OK:
-      setValue(activator.getText());
-      updateSplits();
-      break;
-    default:
-      break;
-  }
+  if (response != AbstractDialog::RESPONSE_OK)
+    return;
+
+  setValue(activator.getText());
+  updateSplits();
 }
 
 AccountWindow::ProtocolOption::ProtocolOption(PurpleAccount *account_,
@@ -572,14 +559,11 @@ void AccountWindow::dropAccountResponseHandler(
     CppConsUI::MessageDialog& /*activator*/,
     CppConsUI::AbstractDialog::ResponseType response, PurpleAccount *account)
 {
-  switch (response) {
-    case AbstractDialog::RESPONSE_OK:
-      purple_accounts_remove(account);
-      clearAccount(account, true);
-      break;
-    default:
-      break;
-  }
+  if (response != AbstractDialog::RESPONSE_OK)
+    return;
+
+  purple_accounts_remove(account);
+  clearAccount(account, true);
 }
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
