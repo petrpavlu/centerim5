@@ -68,7 +68,6 @@ msgid "Buddylist color:"
 msgstr "Kleur vriendenlijst:"
 
 #: src/AccountWindow.cpp:424
-#, fuzzy
 msgid "Invalid account or protocol plugin not loaded."
 msgstr "Ongeldig account of protocol niet geladen"
 
@@ -272,22 +271,20 @@ msgid "Specified buddy is already in the list."
 msgstr "Gespecifieerde vriend staat reeds in de lijst."
 
 #: src/BuddyListNode.cpp:43
-#, fuzzy, c-format
 msgid "Unhandled buddy list node '%d'."
-msgstr "Niet opgevangen aanvraag veld type '%d'."
+msgstr "Niet ondersteunde vriendenlijst node '%d'."
 
 #: src/BuddyListNode.cpp:357
 msgid "Information"
-msgstr ""
+msgstr "Informatie"
 
 #: src/BuddyListNode.cpp:358
 msgid "Retrieving..."
-msgstr ""
+msgstr "Ontvangen..."
 
 #: src/BuddyListNode.cpp:444 src/BuddyListNode.cpp:798
-#, fuzzy
 msgid "Information..."
-msgstr "Configuratie opties..."
+msgstr "Informatie..."
 
 #: src/BuddyListNode.cpp:446 src/BuddyListNode.cpp:626
 #: src/BuddyListNode.cpp:800
@@ -319,11 +316,11 @@ msgstr "Chat verwijderen"
 
 #: src/BuddyListNode.cpp:792
 msgid "Expand"
-msgstr ""
+msgstr "Uitklappen"
 
 #: src/BuddyListNode.cpp:795
 msgid "Collapse"
-msgstr ""
+msgstr "Inklappen"
 
 #: src/BuddyListNode.cpp:822
 msgid "Move to..."
@@ -344,12 +341,11 @@ msgstr "Hernoemen.."
 
 #: src/BuddyListNode.cpp:1075
 msgid "-Top-"
-msgstr ""
+msgstr "-Top-"
 
 #: src/BuddyListNode.cpp:1088
-#, fuzzy
 msgid "Move after..."
-msgstr "Verplaatsen naar..."
+msgstr "Verplaatsen achter..."
 
 #: src/BuddyListNode.cpp:1103
 msgid "Specified group is already in the list."
@@ -551,28 +547,28 @@ msgstr "Fout bij lezen van conversatie logbestand '%s' (%s)."
 
 #: src/Conversation.cpp:667
 msgid "Wrong number of arguments passed to the command."
-msgstr ""
+msgstr "Incorrect aantal parameters meegegeven aan het commando."
 
 #: src/Conversation.cpp:672
 msgid "The command failed for an unknown reason."
-msgstr ""
+msgstr "Het commando is voor onbekende reden mislukt."
 
 #: src/Conversation.cpp:678
 msgid "The command only works in chats, not IMs."
-msgstr ""
+msgstr "Het commando werkt enkel in chats, niet bij IM's."
 
 #: src/Conversation.cpp:682
 msgid "The command only works in IMs, not chats."
-msgstr ""
+msgstr "Het commando werkt enkel bij IM's, niet bij chats."
 
 #: src/Conversation.cpp:687
 msgid "The command does not work on this protocol."
-msgstr ""
+msgstr "Het commando werkt niet bij dit protocol."
 
 #: src/Conversations.cpp:276
 #, c-format
 msgid "Unhandled conversation type '%d'."
-msgstr "Niet ondersteund conversatie type: %d."
+msgstr "Niet ondersteund conversatie type: '%d'."
 
 #: src/GeneralMenu.cpp:38
 msgid "Change status"
@@ -640,41 +636,37 @@ msgid "centerim/log: Unknown GLib logging level: %d."
 msgstr "centerim/log: Onbekend GLib logging level: %d."
 
 #: src/Notify.cpp:66
-#, fuzzy
 msgid "Local information"
-msgstr "Log formaat"
+msgstr "Lokale informatie"
 
 #: src/Notify.cpp:79
-#, fuzzy
 msgid "Now"
-msgstr "Neen"
+msgstr "Nu"
 
 #: src/Notify.cpp:86 src/Notify.cpp:98
 msgid "Unknown"
-msgstr ""
+msgstr "Onbekend"
 
 #: src/Notify.cpp:89
 msgid "Last seen"
-msgstr ""
+msgstr "Laatst gezien"
 
 #: src/Notify.cpp:100
-#, fuzzy
 msgid "Last activity"
-msgstr "Op activiteit"
+msgstr "Laatste activiteit"
 
 #: src/Notify.cpp:106
 msgid "Remote information"
-msgstr ""
+msgstr "Informatie van buitenaf"
 
 #: src/Notify.cpp:135
-#, fuzzy, c-format
 msgid "Unhandled userinfo entry type '%d'."
-msgstr "Niet ondersteund conversatie type: %d."
+msgstr "Niet ondersteund gebruikersgegevens type: '%d'."
 
 #: src/Notify.cpp:224
 #, c-format
 msgid "User information for %s"
-msgstr ""
+msgstr "Gebruikersgevens voor %s"
 
 #: src/OptionWindow.cpp:30
 msgid "Config options"
@@ -705,13 +697,12 @@ msgid "Flat"
 msgstr "Zonden structuur"
 
 #: src/OptionWindow.cpp:50
-#, fuzzy
 msgid "Group sort mode"
-msgstr "Vrienden sorteren"
+msgstr "Groep sorteer mode"
 
 #: src/OptionWindow.cpp:52
 msgid "Manually"
-msgstr ""
+msgstr "Manueel"
 
 #: src/OptionWindow.cpp:53 src/OptionWindow.cpp:57
 msgid "By name"
