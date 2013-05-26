@@ -168,7 +168,7 @@ void AccountWindow::StringOption::responseHandler(
   updateValue();
 }
 
-AccountWindow::IntOption::IntOption(PurpleAccount *account_,
+AccountWindow::IntegerOption::IntegerOption(PurpleAccount *account_,
     PurpleAccountOption *option_)
 : Button(FLAG_VALUE), account(account_), option(option_)
 {
@@ -177,27 +177,27 @@ AccountWindow::IntOption::IntOption(PurpleAccount *account_,
 
   setText(purple_account_option_get_text(option));
   updateValue();
-  signal_activate.connect(sigc::mem_fun(this, &IntOption::onActivate));
+  signal_activate.connect(sigc::mem_fun(this, &IntegerOption::onActivate));
 }
 
-void AccountWindow::IntOption::updateValue()
+void AccountWindow::IntegerOption::updateValue()
 {
   setValue(purple_account_get_int(account,
         purple_account_option_get_setting(option),
         purple_account_option_get_default_int(option)));
 }
 
-void AccountWindow::IntOption::onActivate(Button& /*activator*/)
+void AccountWindow::IntegerOption::onActivate(Button& /*activator*/)
 {
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(getText(),
       getValue());
   dialog->setFlags(CppConsUI::TextEntry::FLAG_NUMERIC);
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &IntOption::responseHandler));
+        &IntegerOption::responseHandler));
   dialog->show();
 }
 
-void AccountWindow::IntOption::responseHandler(
+void AccountWindow::IntegerOption::responseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
@@ -494,7 +494,7 @@ void AccountWindow::populateAccount(PurpleAccount *account)
           treeview->appendNode(account_entry->parent_reference, *widget);
           break;
         case PURPLE_PREF_INT:
-          widget = new IntOption(account, option);
+          widget = new IntegerOption(account, option);
           treeview->appendNode(account_entry->parent_reference, *widget);
           break;
         case PURPLE_PREF_BOOLEAN:

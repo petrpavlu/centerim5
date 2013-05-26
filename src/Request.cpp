@@ -211,12 +211,12 @@ Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,
   if (!groups)
     return;
   if (!purple_request_field_group_get_title(
-        reinterpret_cast<PurpleRequestFieldGroup*>(groups->data))
+        static_cast<PurpleRequestFieldGroup*>(groups->data))
       && !groups->next)
     grouping = false;
   for (; groups; groups = groups->next) {
     PurpleRequestFieldGroup *group
-      = reinterpret_cast<PurpleRequestFieldGroup*>(groups->data);
+      = static_cast<PurpleRequestFieldGroup*>(groups->data);
 
     CppConsUI::TreeView::NodeReference parent = treeview->getRootNode();
     if (grouping) {
@@ -232,7 +232,7 @@ Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,
     for (GList *gfields = purple_request_field_group_get_fields(group);
         gfields; gfields = gfields->next) {
       PurpleRequestField *field
-        = reinterpret_cast<PurpleRequestField*>(gfields->data);
+        = static_cast<PurpleRequestField*>(gfields->data);
 
       if (!purple_request_field_is_visible(field))
         continue;
@@ -402,7 +402,7 @@ Request::FieldsDialog::ChoiceField::ChoiceField(PurpleRequestField *field)
 
   for (GList *list = purple_request_field_choice_get_labels(field); list;
       list = list->next)
-    addOption(reinterpret_cast<const char*>(list->data));
+    addOption(static_cast<const char*>(list->data));
   setSelected(purple_request_field_choice_get_default_value(field));
 
   signal_selection_changed.connect(sigc::mem_fun(this,
@@ -428,7 +428,7 @@ Request::FieldsDialog::ListFieldMultiple::ListFieldMultiple(
   for (GList *list = purple_request_field_list_get_items(field); list;
       list = list->next, height++)
     appendWidget(*(new ListFieldItem(field,
-            reinterpret_cast<const char*>(list->data))));
+            static_cast<const char*>(list->data))));
   setHeight(height);
 }
 
@@ -454,7 +454,7 @@ void Request::FieldsDialog::ListFieldMultiple::ListFieldItem::onToggle(
     GList *new_selected = NULL;
     for (GList *selected = purple_request_field_list_get_selected(field);
         selected; selected = selected->next) {
-      const char *data = reinterpret_cast<const char*>(selected->data);
+      const char *data = static_cast<const char*>(selected->data);
       if (strcmp(getText(), data))
         new_selected = g_list_append(new_selected, g_strdup(data));
     }
@@ -483,7 +483,7 @@ Request::FieldsDialog::ListFieldSingle::ListFieldSingle(
 
   GList *list = purple_request_field_list_get_items(field);
   for (int i = 0; list; i++, list = list->next) {
-    const char *text = reinterpret_cast<const char*>(list->data);
+    const char *text = static_cast<const char*>(list->data);
     addOption(text);
     if (purple_request_field_list_is_selected(field, text))
       setSelected(i);
@@ -545,7 +545,7 @@ Request::FieldsDialog::AccountField::AccountField(PurpleRequestField *field)
 
   gboolean show_all = purple_request_field_account_get_show_all(field);
   for (GList *list = purple_accounts_get_all(); list; list = list->next) {
-    PurpleAccount *account = reinterpret_cast<PurpleAccount*>(list->data);
+    PurpleAccount *account = static_cast<PurpleAccount*>(list->data);
     if (!show_all && !purple_account_is_connected(account))
       continue;
 
@@ -731,7 +731,7 @@ void Request::close_request(PurpleRequestType /*type*/, void *ui_handle)
 
   g_assert(ui_handle);
 
-  RequestDialog *dialog = reinterpret_cast<RequestDialog*>(ui_handle);
+  RequestDialog *dialog = static_cast<RequestDialog*>(ui_handle);
   if (requests.find(dialog) != requests.end()) {
     requests.erase(dialog);
     dialog->close();

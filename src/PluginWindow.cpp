@@ -173,7 +173,8 @@ void PluginWindow::StringOption::responseHandler(
   updateValue();
 }
 
-PluginWindow::IntOption::IntOption(const char *name, const char *pref_)
+PluginWindow::IntegerOption::IntegerOption(const char *name,
+    const char *pref_)
 : Button(FLAG_VALUE, name)
 {
   g_assert(name);
@@ -181,30 +182,30 @@ PluginWindow::IntOption::IntOption(const char *name, const char *pref_)
 
   pref = g_strdup(pref_);
   updateValue();
-  signal_activate.connect(sigc::mem_fun(this, &IntOption::onActivate));
+  signal_activate.connect(sigc::mem_fun(this, &IntegerOption::onActivate));
 }
 
-PluginWindow::IntOption::~IntOption()
+PluginWindow::IntegerOption::~IntegerOption()
 {
   g_free(pref);
 }
 
-void PluginWindow::IntOption::updateValue()
+void PluginWindow::IntegerOption::updateValue()
 {
   setValue(purple_prefs_get_int(pref));
 }
 
-void PluginWindow::IntOption::onActivate(Button& /*activator*/)
+void PluginWindow::IntegerOption::onActivate(Button& /*activator*/)
 {
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(getText(),
       getValue());
   dialog->setFlags(CppConsUI::TextEntry::FLAG_NUMERIC);
   dialog->signal_response.connect(sigc::mem_fun(this,
-        &IntOption::responseHandler));
+        &IntegerOption::responseHandler));
   dialog->show();
 }
 
-void PluginWindow::IntOption::responseHandler(
+void PluginWindow::IntegerOption::responseHandler(
     CppConsUI::InputDialog& activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
@@ -354,7 +355,7 @@ void PluginWindow::populatePlugin(PurplePlugin *plugin)
         if (value_type == PURPLE_PREF_BOOLEAN)
           pref_widget = new BoolOption(label, name);
         else if (value_type == PURPLE_PREF_INT)
-          pref_widget = new IntOption(label, name);
+          pref_widget = new IntegerOption(label, name);
         else if (value_type == PURPLE_PREF_STRING)
           pref_widget = new StringOption(label, name);
         else if (value_type == PURPLE_PREF_PATH)

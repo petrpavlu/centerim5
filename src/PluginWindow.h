@@ -102,12 +102,12 @@ private:
     StringOption& operator=(const StringOption&);
   };
 
-  class IntOption
+  class IntegerOption
   : public CppConsUI::Button
   {
   public:
-    IntOption(const char *name, const char *pref_);
-    virtual ~IntOption();
+    IntegerOption(const char *name, const char *pref_);
+    virtual ~IntegerOption();
 
   protected:
     char *pref;
@@ -118,8 +118,8 @@ private:
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
-    IntOption(const IntOption&);
-    IntOption& operator=(const IntOption&);
+    IntegerOption(const IntegerOption&);
+    IntegerOption& operator=(const IntegerOption&);
   };
 
   class PathOption

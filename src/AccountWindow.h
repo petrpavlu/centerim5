@@ -113,12 +113,12 @@ private:
     StringOption& operator=(const StringOption&);
   };
 
-  class IntOption
+  class IntegerOption
   : public CppConsUI::Button
   {
   public:
-    IntOption(PurpleAccount *account_, PurpleAccountOption *option_);
-    virtual ~IntOption() {}
+    IntegerOption(PurpleAccount *account_, PurpleAccountOption *option_);
+    virtual ~IntegerOption() {}
 
   protected:
     PurpleAccount *account;
@@ -130,8 +130,8 @@ private:
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
-    IntOption(const IntOption&);
-    IntOption& operator=(const IntOption&);
+    IntegerOption(const IntegerOption&);
+    IntegerOption& operator=(const IntegerOption&);
   };
 
   class StringListOption
@@ -209,8 +209,8 @@ private:
         int new_bg);
 
   private:
-    ColorOption(const IntOption&);
-    ColorOption& operator=(const IntOption&);
+    ColorOption(const ColorOption&);
+    ColorOption& operator=(const ColorOption&);
   };
 
   CppConsUI::TreeView *treeview;
