@@ -91,6 +91,27 @@ char *getColorSchemeString(const char *base_color_scheme, PurpleBuddy *buddy)
   }
 }
 
+char *stripAccelerator(const char *label)
+{
+  g_assert(label);
+
+  // calculate the string length without accelerators
+  size_t len = 1;
+  for (const char *p = label; *p; p++)
+    if (*p != '_')
+      len++;
+
+  // allocate and populate the resulting string
+  char *res = g_new(char, len);
+  char *o = res;
+  for (const char *p = label; *p; p++)
+    if (*p != '_')
+      *o++ = *p;
+  *o = '\0';
+
+  return res;
+}
+
 } // namespace utils
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
