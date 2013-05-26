@@ -6,10 +6,10 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: centerim5 5.0.0beta1.75-89dd-dirty\n"
+"Project-Id-Version: centerim5 5.0.0beta1.88-8542-dirty\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2013-05-01 16:30+0200\n"
+"POT-Creation-Date: 2013-05-26 11:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,8 +23,8 @@ msgstr ""
 msgid "Accounts"
 msgstr ""
 
-#: src/AccountWindow.cpp:41 src/Accounts.cpp:147 src/BuddyList.cpp:483
-#: src/BuddyList.cpp:558 src/BuddyList.cpp:570 src/PluginWindow.cpp:55
+#: src/AccountWindow.cpp:41 src/Accounts.cpp:147 src/BuddyList.cpp:140
+#: src/PluginWindow.cpp:55
 msgid "Add"
 msgstr ""
 
@@ -45,14 +45,14 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: src/AccountWindow.cpp:121 src/BuddyList.cpp:459 src/BuddyList.cpp:530
+#: src/AccountWindow.cpp:121 src/BuddyList.cpp:281 src/BuddyList.cpp:337
 #: src/BuddyListNode.cpp:477 src/BuddyListNode.cpp:650
 #: src/BuddyListNode.cpp:864 src/Notify.cpp:70
 msgid "Alias"
 msgstr ""
 
-#: src/AccountWindow.cpp:211 src/OptionWindow.cpp:302 src/PluginWindow.cpp:218
-#: src/Request.cpp:366
+#: src/AccountWindow.cpp:211 src/BuddyList.cpp:257 src/OptionWindow.cpp:302
+#: src/PluginWindow.cpp:219 src/Request.cpp:365
 msgid "Value is out of range."
 msgstr ""
 
@@ -107,7 +107,7 @@ msgstr ""
 msgid "Add %s to your buddy list?"
 msgstr ""
 
-#: src/Accounts.cpp:237 src/BuddyList.cpp:483
+#: src/Accounts.cpp:237 src/BuddyList.cpp:270
 msgid "Add buddy"
 msgstr ""
 
@@ -174,95 +174,83 @@ msgstr ""
 msgid "+ [%s] %s: New authorization request from %s"
 msgstr ""
 
-#: src/BuddyList.cpp:62
+#: src/BuddyList.cpp:61
 #, c-format
 msgid "%s act conv, %s main menu, %s context menu, %s filter"
 msgstr ""
 
-#: src/BuddyList.cpp:110
+#: src/BuddyList.cpp:109
 msgid "Filter: "
 msgstr ""
 
-#: src/BuddyList.cpp:327
-msgid "There are no connected accounts."
-msgstr ""
-
-#: src/BuddyList.cpp:383
-msgid "Different buddylist detected!"
-msgstr ""
-
-#: src/BuddyList.cpp:454 src/BuddyList.cpp:526
-msgid "Account"
-msgstr ""
-
-#: src/BuddyList.cpp:456
-msgid "Buddy name"
-msgstr ""
-
-#: src/BuddyList.cpp:462 src/BuddyList.cpp:533
-msgid "Group"
-msgstr ""
-
-#: src/BuddyList.cpp:480
-msgid "Buddies"
-msgstr ""
-
-#: src/BuddyList.cpp:498 src/BuddyList.cpp:653
-msgid "This protocol does not support chat rooms."
-msgstr ""
-
-#: src/BuddyList.cpp:514
-msgid ""
-"You are not currently signed on with any protocols that have the ability to "
-"chat."
-msgstr ""
-
-#: src/BuddyList.cpp:528
-msgid "Chat name"
-msgstr ""
-
-#: src/BuddyList.cpp:552
-msgid "Chats"
-msgstr ""
-
-#: src/BuddyList.cpp:555
-msgid "Auto-join"
-msgstr ""
-
-#: src/BuddyList.cpp:558
-msgid "Add chat"
-msgstr ""
-
-#: src/BuddyList.cpp:568
-msgid "Add group"
-msgstr ""
-
-#: src/BuddyList.cpp:569
-msgid "Please enter the name of the group to be added."
-msgstr ""
-
-#: src/BuddyList.cpp:570 cppconsui/AbstractDialog.h:32
+#: src/BuddyList.cpp:143 cppconsui/AbstractDialog.h:32
 msgid "Cancel"
 msgstr ""
 
-#: src/BuddyList.cpp:588 src/BuddyList.cpp:641
-msgid "No account specified."
+#: src/BuddyList.cpp:154
+msgid "Account"
 msgstr ""
 
-#: src/BuddyList.cpp:592 src/BuddyList.cpp:645
+#: src/BuddyList.cpp:177
+msgid "Group"
+msgstr ""
+
+#: src/BuddyList.cpp:190
+msgid "Default"
+msgstr ""
+
+#: src/BuddyList.cpp:278
+msgid "Buddy name"
+msgstr ""
+
+#: src/BuddyList.cpp:297 src/BuddyList.cpp:360
 msgid "Selected account is not connected."
 msgstr ""
 
-#: src/BuddyList.cpp:596 src/BuddyList.cpp:659
+#: src/BuddyList.cpp:301
 msgid "No buddy name specified."
 msgstr ""
 
-#: src/BuddyList.cpp:600 src/BuddyList.cpp:663 src/BuddyList.cpp:698
+#: src/BuddyList.cpp:314
+msgid "Specified buddy is already in the list."
+msgstr ""
+
+#: src/BuddyList.cpp:327
+msgid "Add chat"
+msgstr ""
+
+#: src/BuddyList.cpp:343
+msgid "Auto-join"
+msgstr ""
+
+#: src/BuddyList.cpp:454
+msgid "Add group"
+msgstr ""
+
+#: src/BuddyList.cpp:456
+msgid "Name"
+msgstr ""
+
+#: src/BuddyList.cpp:456
+msgid "New group"
+msgstr ""
+
+#: src/BuddyList.cpp:465
 msgid "No group name specified."
 msgstr ""
 
-#: src/BuddyList.cpp:615
-msgid "Specified buddy is already in the list."
+#: src/BuddyList.cpp:664
+msgid "There are no connected accounts."
+msgstr ""
+
+#: src/BuddyList.cpp:720
+msgid "Different buddylist detected!"
+msgstr ""
+
+#: src/BuddyList.cpp:808
+msgid ""
+"You are not currently signed on with any protocols that have the ability to "
+"chat."
 msgstr ""
 
 #: src/BuddyListNode.cpp:43
@@ -870,29 +858,29 @@ msgstr ""
 msgid "Add plugin"
 msgstr ""
 
-#: src/PluginWindow.cpp:348 src/PluginWindow.cpp:363
+#: src/PluginWindow.cpp:349 src/PluginWindow.cpp:364
 #, c-format
 msgid "Unhandled plugin preference type '%d'."
 msgstr ""
 
-#: src/PluginWindow.cpp:372
+#: src/PluginWindow.cpp:373
 msgid "Preferences"
 msgstr ""
 
-#: src/PluginWindow.cpp:380 src/PluginWindow.cpp:421
+#: src/PluginWindow.cpp:381 src/PluginWindow.cpp:422
 msgid "Disable plugin"
 msgstr ""
 
-#: src/PluginWindow.cpp:400
+#: src/PluginWindow.cpp:401
 #, c-format
 msgid "Error loading plugin '%s'."
 msgstr ""
 
-#: src/PluginWindow.cpp:422
+#: src/PluginWindow.cpp:423
 msgid "Are you sure you want to disable this plugin?"
 msgstr ""
 
-#: src/PluginWindow.cpp:436
+#: src/PluginWindow.cpp:437
 #, c-format
 msgid ""
 "Error unloading plugin '%s'. The plugin could not be unloaded now, but will "
@@ -903,11 +891,11 @@ msgstr ""
 msgid "Selected value"
 msgstr ""
 
-#: src/Request.cpp:225
+#: src/Request.cpp:224
 msgid "Settings group"
 msgstr ""
 
-#: src/Request.cpp:271
+#: src/Request.cpp:270
 #, c-format
 msgid "Unhandled request field type '%d'."
 msgstr ""
