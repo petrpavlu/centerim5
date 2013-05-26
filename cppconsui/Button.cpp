@@ -95,7 +95,7 @@ void Button::draw()
 {
   proceedUpdateArea();
 
-  if (!area || !text)
+  if (!area)
     return;
 
   int attrs;
@@ -135,15 +135,14 @@ void Button::draw()
     area->fill(attrs, l, 0, value_width + 2, realh);
     if (h < realh) {
       l += area->mvaddstring(l, h, realw - l, ": ");
-      if (value) {
-        if (masked) {
-          int count = value_width;
-          while (count--)
-            l += area->mvaddstring(l, h, realw - l, "*");
-        }
-        else
-          l += area->mvaddstring(l, h, realw - l, value);
+
+      if (masked) {
+        int count = value_width;
+        while (count--)
+          l += area->mvaddstring(l, h, realw - l, "*");
       }
+      else
+        l += area->mvaddstring(l, h, realw - l, value);
     }
   }
 
@@ -192,29 +191,28 @@ void Button::setText(const char *new_text)
 {
   g_free(text);
 
-  text = g_strdup(new_text);
+  text = g_strdup(new_text ? new_text : "");
 
   // update text_width, text_height and wish height
   text_width = 0;
   text_height = 1;
-  if (text) {
-    const char *start, *end;
-    start = end = text;
-    int w;
-    while (*end) {
-      if (*end == '\n') {
-        w = Curses::onscreen_width(start, end);
-        if (w > text_width)
-          text_width = w;
-        text_height++;
-        start = end + 1;
-      }
-      end++;
+
+  const char *start, *end;
+  start = end = text;
+  int w;
+  while (*end) {
+    if (*end == '\n') {
+      w = Curses::onscreen_width(start, end);
+      if (w > text_width)
+        text_width = w;
+      text_height++;
+      start = end + 1;
     }
-    w = Curses::onscreen_width(start, end);
-    if (w > text_width)
-      text_width = w;
+    end++;
   }
+  w = Curses::onscreen_width(start, end);
+  if (w > text_width)
+    text_width = w;
   setWishHeight(text_height);
 
   redraw();
@@ -224,7 +222,7 @@ void Button::setValue(const char *new_value)
 {
   g_free(value);
 
-  value = g_strdup(new_value);
+  value = g_strdup(new_value ? new_value : "");
   value_width = Curses::onscreen_width(value);
   redraw();
 }
@@ -242,7 +240,7 @@ void Button::setUnit(const char *new_unit)
 {
   g_free(unit);
 
-  unit = g_strdup(new_unit);
+  unit = g_strdup(new_unit ? new_unit : "");
   unit_width = Curses::onscreen_width(unit);
   redraw();
 }
@@ -251,7 +249,7 @@ void Button::setRight(const char *new_right)
 {
   g_free(right);
 
-  right = g_strdup(new_right);
+  right = g_strdup(new_right ? new_right : "");
   right_width = Curses::onscreen_width(right);
   redraw();
 }

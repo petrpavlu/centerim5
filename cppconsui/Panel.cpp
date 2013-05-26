@@ -115,7 +115,7 @@ void Panel::setTitle(const char *new_title)
 {
   g_free(title);
 
-  title = g_strdup(new_title);
+  title = g_strdup(new_title ? new_title : "");
   title_width = title ? Curses::onscreen_width(title) : 0;
   redraw();
 }

@@ -52,7 +52,7 @@ void Label::draw()
 {
   proceedUpdateArea();
 
-  if (!area || !text)
+  if (!area)
     return;
 
   int attrs = getColorPair("label", "text");
@@ -87,14 +87,13 @@ void Label::setText(const char *new_text)
 {
   g_free(text);
 
-  text = g_strdup(new_text);
+  text = g_strdup(new_text ? new_text : "");
 
   // update wish height
   int h = 1;
-  if (text)
-    for (const char *cur = text; *cur; cur++)
-      if (*cur == '\n')
-        h++;
+  for (const char *cur = text; *cur; cur++)
+    if (*cur == '\n')
+      h++;
   setWishHeight(h);
 
   redraw();

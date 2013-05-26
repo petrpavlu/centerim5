@@ -63,7 +63,7 @@ void CheckBox::draw()
 {
   proceedUpdateArea();
 
-  if (!area || !text)
+  if (!area)
     return;
 
   int attrs;
@@ -114,29 +114,28 @@ void CheckBox::setText(const char *new_text)
 {
   g_free(text);
 
-  text = g_strdup(new_text);
+  text = g_strdup(new_text ? new_text : "");
 
   // update text_width, text_height and wish height
   text_width = 0;
   text_height = 1;
-  if (text) {
-    const char *start, *end;
-    start = end = text;
-    int w;
-    while (*end) {
-      if (*end == '\n') {
-        w = Curses::onscreen_width(start, end);
-        if (w > text_width)
-          text_width = w;
-        text_height++;
-        start = end + 1;
-      }
-      end++;
+
+  const char *start, *end;
+  start = end = text;
+  int w;
+  while (*end) {
+    if (*end == '\n') {
+      w = Curses::onscreen_width(start, end);
+      if (w > text_width)
+        text_width = w;
+      text_height++;
+      start = end + 1;
     }
-    w = Curses::onscreen_width(start, end);
-    if (w > text_width)
-      text_width = w;
+    end++;
   }
+  w = Curses::onscreen_width(start, end);
+  if (w > text_width)
+    text_width = w;
   setWishHeight(text_height);
 
   redraw();
