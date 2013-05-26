@@ -132,8 +132,7 @@ PurpleRequestType Request::ChoiceDialog::getRequestType()
 void Request::ChoiceDialog::responseHandler(SplitDialog& /*activator*/,
     ResponseType response)
 {
-  size_t selected = combo->getSelected();
-  int data = combo->getData(selected);
+  int data = combo->getSelectedData();
 
   switch (response) {
     case AbstractDialog::RESPONSE_OK:

@@ -92,9 +92,22 @@ const char *ComboBox::getSelectedTitle() const
   return getTitle(selected_entry);
 }
 
+intptr_t ComboBox::getSelectedData() const
+{
+  if (options.empty())
+    return 0;
+
+  return getData(selected_entry);
+}
+
+void *ComboBox::getSelectedDataPtr() const
+{
+  return reinterpret_cast<void*>(getSelectedData());
+}
+
 const char *ComboBox::getTitle(int entry) const
 {
-  g_return_val_if_fail(entry >= 0, NULL);
+  g_assert(entry >= 0);
   g_assert(static_cast<size_t>(entry) < options.size());
 
   return options[entry].title;
@@ -102,7 +115,7 @@ const char *ComboBox::getTitle(int entry) const
 
 intptr_t ComboBox::getData(int entry) const
 {
-  g_return_val_if_fail(entry >= 0, 0);
+  g_assert(entry >= 0);
   g_assert(static_cast<size_t>(entry) < options.size());
 
   return options[entry].data;
@@ -111,10 +124,10 @@ intptr_t ComboBox::getData(int entry) const
 void ComboBox::setSelected(int new_entry)
 {
   g_assert(new_entry >= 0);
-  g_assert(new_entry < (int) options.size());
+  g_assert(static_cast<size_t>(new_entry) < options.size());
 
   // selected option didn't change
-  if (selected_entry == new_entry)
+  if (new_entry == selected_entry)
     return;
 
   selected_entry = new_entry;

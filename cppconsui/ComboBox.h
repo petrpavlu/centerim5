@@ -66,6 +66,8 @@ public:
    */
   virtual int getSelected() const { return selected_entry; };
   virtual const char *getSelectedTitle() const;
+  virtual intptr_t getSelectedData() const;
+  virtual void *getSelectedDataPtr() const;
 
   virtual int getOptionsCount() const { return options.size(); }
 
