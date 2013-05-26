@@ -5,6 +5,8 @@
 #include <cppconsui/ScrollPane.h>
 #include <cppconsui/Window.h>
 
+#include <stdio.h>
+
 static const char *pic[] =
 {
 " ______                                __          __         __   __                       ",
@@ -68,24 +70,20 @@ void MyScrollPane::draw()
   ScrollPane::drawEx(false);
 }
 
-// ScrollPaneWindow class
-class ScrollPaneWindow
+// TestWindow class
+class TestWindow
 : public CppConsUI::Window
 {
 public:
-  /* This is a main window, make sure it can not be closed with ESC key by
-   * overriding Close() method. */
-  static ScrollPaneWindow *instance();
-  virtual void close() {}
+  TestWindow();
+  virtual ~TestWindow() {}
 
 protected:
   MyScrollPane *pane;
 
 private:
-  ScrollPaneWindow();
-  virtual ~ScrollPaneWindow() {}
-  ScrollPaneWindow(const ScrollPaneWindow&);
-  ScrollPaneWindow& operator=(const ScrollPaneWindow&);
+  TestWindow(const TestWindow&);
+  TestWindow& operator=(const TestWindow&);
 
   void actionScrollUp();
   void actionScrollDown();
@@ -93,13 +91,7 @@ private:
   void actionScrollRight();
 };
 
-ScrollPaneWindow *ScrollPaneWindow::instance()
-{
-  static ScrollPaneWindow instance;
-  return &instance;
-}
-
-ScrollPaneWindow::ScrollPaneWindow()
+TestWindow::TestWindow()
 : CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
   addWidget(*(new CppConsUI::Label(25, 1, "Press F10 to quit.")), 1, 1);
@@ -110,38 +102,38 @@ ScrollPaneWindow::ScrollPaneWindow()
   addWidget(*pane, 1, 4);
 
   declareBindable("scrollpanewindow", "scroll-up",
-      sigc::mem_fun(this, &ScrollPaneWindow::actionScrollUp),
+      sigc::mem_fun(this, &TestWindow::actionScrollUp),
       InputProcessor::BINDABLE_NORMAL);
   declareBindable("scrollpanewindow", "scroll-down",
-      sigc::mem_fun(this, &ScrollPaneWindow::actionScrollDown),
+      sigc::mem_fun(this, &TestWindow::actionScrollDown),
       InputProcessor::BINDABLE_NORMAL);
   declareBindable("scrollpanewindow", "scroll-left",
-      sigc::mem_fun(this, &ScrollPaneWindow::actionScrollLeft),
+      sigc::mem_fun(this, &TestWindow::actionScrollLeft),
       InputProcessor::BINDABLE_NORMAL);
   declareBindable("scrollpanewindow", "scroll-right",
-      sigc::mem_fun(this, &ScrollPaneWindow::actionScrollRight),
+      sigc::mem_fun(this, &TestWindow::actionScrollRight),
       InputProcessor::BINDABLE_NORMAL);
 }
 
-void ScrollPaneWindow::actionScrollUp()
+void TestWindow::actionScrollUp()
 {
   pane->adjustScroll(pane->getScrollPositionX(),
       pane->getScrollPositionY() - 1);
 }
 
-void ScrollPaneWindow::actionScrollDown()
+void TestWindow::actionScrollDown()
 {
   pane->adjustScroll(pane->getScrollPositionX(),
       pane->getScrollPositionY() + 1);
 }
 
-void ScrollPaneWindow::actionScrollLeft()
+void TestWindow::actionScrollLeft()
 {
   pane->adjustScroll(pane->getScrollPositionX() - 1,
       pane->getScrollPositionY());
 }
 
-void ScrollPaneWindow::actionScrollRight()
+void TestWindow::actionScrollRight()
 {
   pane->adjustScroll(pane->getScrollPositionX() + 1,
       pane->getScrollPositionY());
@@ -152,7 +144,8 @@ class TestApp
 : public CppConsUI::InputProcessor
 {
 public:
-  static TestApp *instance();
+  TestApp();
+  virtual ~TestApp() {}
 
   void run();
 
@@ -165,23 +158,12 @@ public:
 protected:
 
 private:
-  CppConsUI::CoreManager *mngr;
-
-  TestApp();
   TestApp(const TestApp&);
   TestApp& operator=(const TestApp&);
-  virtual ~TestApp() {}
 };
-
-TestApp *TestApp::instance()
-{
-  static TestApp instance;
-  return &instance;
-}
 
 TestApp::TestApp()
 {
-  mngr = CppConsUI::CoreManager::instance();
   KEYCONFIG->loadDefaultKeyConfig();
   KEYCONFIG->bindKey("testapp", "quit", "F10");
   KEYCONFIG->bindKey("scrollpanewindow", "scroll-up", "w");
@@ -191,17 +173,19 @@ TestApp::TestApp()
 
   g_log_set_default_handler(g_log_func_, this);
 
-  declareBindable("testapp", "quit", sigc::mem_fun(mngr,
+  declareBindable("testapp", "quit", sigc::mem_fun(COREMANAGER,
         &CppConsUI::CoreManager::quitMainLoop),
       InputProcessor::BINDABLE_OVERRIDE);
 }
 
 void TestApp::run()
 {
-  mngr->addWindow(*ScrollPaneWindow::instance());
-  mngr->setTopInputProcessor(*this);
-  mngr->enableResizing();
-  mngr->startMainLoop();
+  TestWindow *win = new TestWindow;
+  win->show();
+
+  COREMANAGER->setTopInputProcessor(*this);
+  COREMANAGER->enableResizing();
+  COREMANAGER->startMainLoop();
 }
 
 // main function
@@ -209,8 +193,23 @@ int main()
 {
   setlocale(LC_ALL, "");
 
-  TestApp *app = TestApp::instance();
+  // initialize CppConsUI
+  int consui_res = CppConsUI::initializeConsUI();
+  if (consui_res) {
+    fprintf(stderr, "CppConsUI initialization failed.\n");
+    return consui_res;
+  }
+
+  TestApp *app = new TestApp;
   app->run();
+  delete app;
+
+  // finalize CppConsUI
+  consui_res = CppConsUI::finalizeConsUI();
+  if (consui_res) {
+    fprintf(stderr, "CppConsUI deinitialization failed.\n");
+    return consui_res;
+  }
 
   return 0;
 }

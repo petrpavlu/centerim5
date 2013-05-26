@@ -4,38 +4,28 @@
 #include <cppconsui/TextView.h>
 #include <cppconsui/Window.h>
 
-// TextViewWindow class
-class TextViewWindow
+#include <stdio.h>
+
+// TestWindow class
+class TestWindow
 : public CppConsUI::Window
 {
 public:
-  /* This is a main window, make sure it can not be closed with ESC key by
-   * overriding Close() method. */
-  static TextViewWindow *instance();
-  virtual void close() {}
-
-  virtual void screenResized();
+  TestWindow();
+  virtual ~TestWindow() {}
 
 protected:
   CppConsUI::TextView *textview;
 
 private:
-  TextViewWindow();
-  virtual ~TextViewWindow() {}
-  TextViewWindow(const TextViewWindow&);
-  TextViewWindow& operator=(const TextViewWindow&);
+  TestWindow(const TestWindow&);
+  TestWindow& operator=(const TestWindow&);
 
   void actionToggleScrollbar();
 };
 
-TextViewWindow *TextViewWindow::instance()
-{
-  static TextViewWindow instance;
-  return &instance;
-}
-
-TextViewWindow::TextViewWindow()
-: CppConsUI::Window(0, 0, 0, 0)
+TestWindow::TestWindow()
+: CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
   setColorScheme("textviewwindow");
 
@@ -75,19 +65,13 @@ TextViewWindow::TextViewWindow()
       CppConsUI::Curses::Color::WHITE, CppConsUI::Curses::Color::BLACK);
 
   declareBindable("textviewwindow", "toggle-scrollbar", sigc::mem_fun(this,
-        &TextViewWindow::actionToggleScrollbar),
+        &TestWindow::actionToggleScrollbar),
       InputProcessor::BINDABLE_NORMAL);
 }
 
-void TextViewWindow::screenResized()
+void TestWindow::actionToggleScrollbar()
 {
-  moveResize(0, 0, CppConsUI::Curses::getmaxx(),
-      CppConsUI::Curses::getmaxy());
-}
-
-void TextViewWindow::actionToggleScrollbar()
-{
-  textview->setScrollBar(!textview->getScrollBar());
+  textview->setScrollBar(!textview->hasScrollBar());
 }
 
 // TestApp class
@@ -95,7 +79,8 @@ class TestApp
 : public CppConsUI::InputProcessor
 {
 public:
-  static TestApp *instance();
+  TestApp();
+  virtual ~TestApp() {}
 
   void run();
 
@@ -108,40 +93,31 @@ public:
 protected:
 
 private:
-  CppConsUI::CoreManager *mngr;
-
-  TestApp();
   TestApp(const TestApp&);
   TestApp& operator=(const TestApp&);
-  virtual ~TestApp() {}
 };
-
-TestApp *TestApp::instance()
-{
-  static TestApp instance;
-  return &instance;
-}
 
 TestApp::TestApp()
 {
-  mngr = CppConsUI::CoreManager::instance();
   KEYCONFIG->loadDefaultKeyConfig();
   KEYCONFIG->bindKey("testapp", "quit", "F10");
   KEYCONFIG->bindKey("textviewwindow", "toggle-scrollbar", "F1");
 
   g_log_set_default_handler(g_log_func_, this);
 
-  declareBindable("testapp", "quit", sigc::mem_fun(mngr,
+  declareBindable("testapp", "quit", sigc::mem_fun(COREMANAGER,
         &CppConsUI::CoreManager::quitMainLoop),
       InputProcessor::BINDABLE_OVERRIDE);
 }
 
 void TestApp::run()
 {
-  mngr->addWindow(*TextViewWindow::instance());
-  mngr->setTopInputProcessor(*this);
-  mngr->enableResizing();
-  mngr->startMainLoop();
+  TestWindow *win = new TestWindow;
+  win->show();
+
+  COREMANAGER->setTopInputProcessor(*this);
+  COREMANAGER->enableResizing();
+  COREMANAGER->startMainLoop();
 }
 
 // main function
@@ -149,8 +125,23 @@ int main()
 {
   setlocale(LC_ALL, "");
 
-  TestApp *app = TestApp::instance();
+  // initialize CppConsUI
+  int consui_res = CppConsUI::initializeConsUI();
+  if (consui_res) {
+    fprintf(stderr, "CppConsUI initialization failed.\n");
+    return consui_res;
+  }
+
+  TestApp *app = new TestApp;
   app->run();
+  delete app;
+
+  // finalize CppConsUI
+  consui_res = CppConsUI::finalizeConsUI();
+  if (consui_res) {
+    fprintf(stderr, "CppConsUI deinitialization failed.\n");
+    return consui_res;
+  }
 
   return 0;
 }

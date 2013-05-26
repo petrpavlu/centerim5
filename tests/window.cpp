@@ -3,6 +3,8 @@
 #include <cppconsui/Label.h>
 #include <cppconsui/Window.h>
 
+#include <stdio.h>
+
 // TestWindow class
 class TestWindow
 : public CppConsUI::Window
@@ -42,7 +44,8 @@ class TestApp
 : public CppConsUI::InputProcessor
 {
 public:
-  static TestApp *instance();
+  TestApp();
+  virtual ~TestApp() {}
 
   void run();
 
@@ -55,29 +58,18 @@ public:
 protected:
 
 private:
-  CppConsUI::CoreManager *mngr;
-
-  TestApp();
   TestApp(const TestApp&);
   TestApp& operator=(const TestApp&);
-  virtual ~TestApp() {}
 };
-
-TestApp *TestApp::instance()
-{
-  static TestApp instance;
-  return &instance;
-}
 
 TestApp::TestApp()
 {
-  mngr = CppConsUI::CoreManager::instance();
   KEYCONFIG->loadDefaultKeyConfig();
   KEYCONFIG->bindKey("testapp", "quit", "F10");
 
   g_log_set_default_handler(g_log_func_, this);
 
-  declareBindable("testapp", "quit", sigc::mem_fun(mngr,
+  declareBindable("testapp", "quit", sigc::mem_fun(COREMANAGER,
         &CppConsUI::CoreManager::quitMainLoop),
       InputProcessor::BINDABLE_OVERRIDE);
 }
@@ -85,14 +77,14 @@ TestApp::TestApp()
 void TestApp::run()
 {
   for (int i = 1; i <= 4; i++) {
-    TestWindow *w = new TestWindow(i, (i - 1) % 2 * 40, (i - 1) / 2 * 10,
+    TestWindow *win = new TestWindow(i, (i - 1) % 2 * 40, (i - 1) / 2 * 10,
         40, 10);
-    mngr->addWindow(*w);
+    win->show();
   }
 
-  mngr->setTopInputProcessor(*this);
-  mngr->enableResizing();
-  mngr->startMainLoop();
+  COREMANAGER->setTopInputProcessor(*this);
+  COREMANAGER->enableResizing();
+  COREMANAGER->startMainLoop();
 }
 
 // main function
@@ -100,8 +92,23 @@ int main()
 {
   setlocale(LC_ALL, "");
 
-  TestApp *app = TestApp::instance();
+  // initialize CppConsUI
+  int consui_res = CppConsUI::initializeConsUI();
+  if (consui_res) {
+    fprintf(stderr, "CppConsUI initialization failed.\n");
+    return consui_res;
+  }
+
+  TestApp *app = new TestApp;
   app->run();
+  delete app;
+
+  // finalize CppConsUI
+  consui_res = CppConsUI::finalizeConsUI();
+  if (consui_res) {
+    fprintf(stderr, "CppConsUI deinitialization failed.\n");
+    return consui_res;
+  }
 
   return 0;
 }

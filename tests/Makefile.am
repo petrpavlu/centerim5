@@ -2,11 +2,11 @@ check_PROGRAMS = \
 	button \
 	colorpicker \
 	label \
+	scrollpane \
+	submenu \
 	textentry \
 	textview \
 	treeview \
-	scrollpane \
-	submenu \
 	window
 
 AM_CPPFLAGS = \
@@ -28,6 +28,12 @@ colorpicker_SOURCES = \
 label_SOURCES = \
 	label.cpp
 
+scrollpane_SOURCES = \
+	scrollpane.cpp
+
+submenu_SOURCES = \
+	submenu.cpp
+
 textentry_SOURCES = \
 	textentry.cpp
 
@@ -36,12 +42,6 @@ textview_SOURCES = \
 
 treeview_SOURCES = \
 	treeview.cpp
-
-scrollpane_SOURCES = \
-	scrollpane.cpp
-
-submenu_SOURCES = \
-	submenu.cpp
 
 window_SOURCES = \
 	window.cpp

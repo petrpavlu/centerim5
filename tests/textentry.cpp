@@ -5,37 +5,28 @@
 #include <cppconsui/TextEntry.h>
 #include <cppconsui/Window.h>
 
-// TextEntryWindow class
-class TextEntryWindow
+#include <stdio.h>
+
+// TestWindow class
+class TestWindow
 : public CppConsUI::Window
 {
 public:
-  /* This is a main window, make sure it can not be closed with ESC key by
-   * overriding Close() method. */
-  static TextEntryWindow *instance();
-  virtual void close() {}
+  TestWindow();
+  virtual ~TestWindow() {}
 
 protected:
 
 private:
-  TextEntryWindow();
-  virtual ~TextEntryWindow() {}
-  TextEntryWindow(const TextEntryWindow&);
-  TextEntryWindow& operator=(const TextEntryWindow&);
+  TestWindow(const TestWindow&);
+  TestWindow& operator=(const TestWindow&);
 };
 
-TextEntryWindow *TextEntryWindow::instance()
-{
-  static TextEntryWindow instance;
-  return &instance;
-}
-
-TextEntryWindow::TextEntryWindow()
+TestWindow::TestWindow()
 : CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
   addWidget(*(new CppConsUI::Label("Press F10 to quit.")), 1, 1);
-  addWidget(*(new CppConsUI::Label(
-          "Press TAB or up/down arrow keys to move focus.")), 1, 2);
+  addWidget(*(new CppConsUI::Label("Press TAB to move focus.")), 1, 2);
   addWidget(*(new CppConsUI::Label("All TextEntry widgets are surrouned by "
           "Panel widget in this test (except the autosize example).")), 1, 3);
 
@@ -67,7 +58,8 @@ class TestApp
 : public CppConsUI::InputProcessor
 {
 public:
-  static TestApp *instance();
+  TestApp();
+  virtual ~TestApp() {}
 
   void run();
 
@@ -80,39 +72,30 @@ public:
 protected:
 
 private:
-  CppConsUI::CoreManager *mngr;
-
-  TestApp();
   TestApp(const TestApp&);
   TestApp& operator=(const TestApp&);
-  virtual ~TestApp() {}
 };
-
-TestApp *TestApp::instance()
-{
-  static TestApp instance;
-  return &instance;
-}
 
 TestApp::TestApp()
 {
-  mngr = CppConsUI::CoreManager::instance();
   KEYCONFIG->loadDefaultKeyConfig();
   KEYCONFIG->bindKey("testapp", "quit", "F10");
 
   g_log_set_default_handler(g_log_func_, this);
 
-  declareBindable("testapp", "quit", sigc::mem_fun(mngr,
+  declareBindable("testapp", "quit", sigc::mem_fun(COREMANAGER,
         &CppConsUI::CoreManager::quitMainLoop),
       InputProcessor::BINDABLE_OVERRIDE);
 }
 
 void TestApp::run()
 {
-  mngr->addWindow(*TextEntryWindow::instance());
-  mngr->setTopInputProcessor(*this);
-  mngr->enableResizing();
-  mngr->startMainLoop();
+  TestWindow *win = new TestWindow;
+  win->show();
+
+  COREMANAGER->setTopInputProcessor(*this);
+  COREMANAGER->enableResizing();
+  COREMANAGER->startMainLoop();
 }
 
 // main function
@@ -120,8 +103,23 @@ int main()
 {
   setlocale(LC_ALL, "");
 
-  TestApp *app = TestApp::instance();
+  // initialize CppConsUI
+  int consui_res = CppConsUI::initializeConsUI();
+  if (consui_res) {
+    fprintf(stderr, "CppConsUI initialization failed.\n");
+    return consui_res;
+  }
+
+  TestApp *app = new TestApp;
   app->run();
+  delete app;
+
+  // finalize CppConsUI
+  consui_res = CppConsUI::finalizeConsUI();
+  if (consui_res) {
+    fprintf(stderr, "CppConsUI deinitialization failed.\n");
+    return consui_res;
+  }
 
   return 0;
 }
