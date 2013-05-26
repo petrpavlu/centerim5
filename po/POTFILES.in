@@ -30,6 +30,10 @@ cppconsui/AbstractLine.cpp
 cppconsui/AbstractListBox.cpp
 cppconsui/Button.cpp
 cppconsui/CheckBox.cpp
+cppconsui/ColorPicker.cpp
+cppconsui/ColorPickerComboBox.cpp
+cppconsui/ColorPickerDialog.cpp
+cppconsui/ColorPickerPalette.cpp
 cppconsui/ColorScheme.cpp
 cppconsui/ComboBox.cpp
 cppconsui/ConsUICurses.cpp
