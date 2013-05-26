@@ -32,7 +32,7 @@
 #define AUTOSIZE -1024
 #define UNSET -2048
 
-#include "ConsuiCurses.h"
+#include "ConsUICurses.h"
 #include "CppConsUI.h"
 #include "InputProcessor.h"
 

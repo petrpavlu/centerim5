@@ -25,7 +25,7 @@
  * @ingroup cppconsui
  */
 
-#include "ConsuiCurses.h"
+#include "ConsUICurses.h"
 
 /* In order to get wide characters support we must define
  * _XOPEN_SOURCE_EXTENDED when using cursesw.h. */
@@ -375,7 +375,7 @@ const int Attr::BOLD = A_BOLD;
 const int C_OK = OK;
 const int C_ERR = ERR;
 
-int screen_init()
+int init_screen()
 {
   if (!::initscr())
     return ERR;
@@ -395,7 +395,7 @@ int screen_init()
   return OK;
 }
 
-int screen_finalize()
+int finalize_screen()
 {
   return ::endwin();
 }

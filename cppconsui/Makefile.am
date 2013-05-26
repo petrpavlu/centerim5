@@ -22,8 +22,8 @@ libcppconsui_la_SOURCES = \
 	ColorPickerDialog.h \
 	ColorScheme.h \
 	ColorScheme.cpp \
-	ConsuiCurses.cpp \
-	ConsuiCurses.h \
+	ConsUICurses.cpp \
+	ConsUICurses.h \
 	Container.cpp \
 	Container.h \
 	ComboBox.cpp \

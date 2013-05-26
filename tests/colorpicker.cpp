@@ -1,5 +1,5 @@
 #include <cppconsui/Button.h>
-#include <cppconsui/ConsuiCurses.h>
+#include <cppconsui/ConsUICurses.h>
 #include <cppconsui/CoreManager.h>
 #include <cppconsui/ColorPicker.h>
 #include <cppconsui/ColorPickerComboBox.h>

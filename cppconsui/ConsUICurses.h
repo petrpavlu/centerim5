@@ -149,8 +149,8 @@ extern const int C_ERR;
 
 const int NUM_DEFAULT_COLORS = 16;
 
-int screen_init();
-int screen_finalize();
+int init_screen();
+int finalize_screen();
 void set_ascii_mode(bool enabled);
 bool get_ascii_mode();
 

@@ -29,7 +29,7 @@
 #ifndef __COLORSCHEME_H__
 #define __COLORSCHEME_H__
 
-#include "ConsuiCurses.h"
+#include "ConsUICurses.h"
 
 #include <map>
 #include <string>

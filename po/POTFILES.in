@@ -32,7 +32,7 @@ cppconsui/Button.cpp
 cppconsui/CheckBox.cpp
 cppconsui/ColorScheme.cpp
 cppconsui/ComboBox.cpp
-cppconsui/ConsuiCurses.cpp
+cppconsui/ConsUICurses.cpp
 cppconsui/Container.cpp
 cppconsui/CoreManager.cpp
 cppconsui/Dialog.cpp

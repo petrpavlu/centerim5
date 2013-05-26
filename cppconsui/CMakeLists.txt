@@ -10,7 +10,7 @@ set(cppconsui_SOURCES
   ColorPickerComboBox.cpp
   ColorPickerDialog.cpp
   ColorScheme.cpp
-  ConsuiCurses.cpp
+  ConsUICurses.cpp
   Container.cpp
   ComboBox.cpp
   CoreManager.cpp
@@ -51,7 +51,7 @@ set(cppconsui_HEADERS
   ColorPickerPalette.h
   ColorPickerDialog.h
   ColorScheme.h
-  ConsuiCurses.h
+  ConsUICurses.h
   Container.h
   ComboBox.h
   CoreManager.h
