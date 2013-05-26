@@ -24,7 +24,11 @@
 
 #include "BuddyListNode.h"
 
+#include <cppconsui/Button.h>
+#include <cppconsui/CheckBox.h>
+#include <cppconsui/ComboBox.h>
 #include <cppconsui/TreeView.h>
+#include <cppconsui/SplitDialog.h>
 #include <cppconsui/Window.h>
 
 #define BUDDYLIST (BuddyList::instance())
@@ -106,6 +110,180 @@ private:
     Filter& operator=(const Filter&);
   };
 
+  class AddWindow
+  : public CppConsUI::SplitDialog
+  {
+  public:
+    AddWindow(const char *title);
+    virtual ~AddWindow() {}
+
+    // FreeWindow
+    virtual void onScreenResized();
+
+  protected:
+    class AccountOption
+    : public CppConsUI::ComboBox
+    {
+    public:
+      explicit AccountOption(PurpleAccount *default_account = NULL,
+          bool chat_only = false);
+      virtual ~AccountOption() {}
+
+    protected:
+
+    private:
+      AccountOption(const AccountOption&);
+      AccountOption& operator=(const AccountOption&);
+    };
+
+    class GroupOption
+    : public CppConsUI::ComboBox
+    {
+    public:
+      explicit GroupOption(const char *default_group);
+      explicit GroupOption(PurpleGroup *default_group);
+      virtual ~GroupOption() {}
+
+    protected:
+
+    private:
+      GroupOption(const GroupOption&);
+      GroupOption& operator=(const GroupOption&);
+    };
+
+    class StringOption
+    : public CppConsUI::Button
+    {
+    public:
+      explicit StringOption(const char *text, const char *value = NULL,
+          bool masked = false);
+      virtual ~StringOption() {}
+
+    protected:
+      void onActivate(CppConsUI::Button& activator);
+      void responseHandler(CppConsUI::InputDialog& activator,
+          CppConsUI::AbstractDialog::ResponseType response);
+
+    private:
+      StringOption(const StringOption&);
+      StringOption& operator=(const StringOption&);
+    };
+
+    class IntegerOption
+    : public CppConsUI::Button
+    {
+    public:
+      explicit IntegerOption(const char *text, const char *value = NULL,
+          bool masked = false, int min = INT_MIN, int max = INT_MAX);
+      virtual ~IntegerOption() {}
+
+    protected:
+      int min_value;
+      int max_value;
+
+      void onActivate(CppConsUI::Button& activator);
+      void responseHandler(CppConsUI::InputDialog& activator,
+          CppConsUI::AbstractDialog::ResponseType response);
+
+    private:
+      IntegerOption(const IntegerOption&);
+      IntegerOption& operator=(const IntegerOption&);
+    };
+
+    class BooleanOption
+    : public CppConsUI::CheckBox
+    {
+    public:
+      explicit BooleanOption(const char *text, bool checked = true);
+      virtual ~BooleanOption() {}
+
+    protected:
+
+    private:
+      BooleanOption(const BooleanOption&);
+      BooleanOption& operator=(const BooleanOption&);
+    };
+
+    CppConsUI::TreeView *treeview;
+
+    virtual void onAddRequest(CppConsUI::Button& activator) = 0;
+
+  private:
+    AddWindow(const AddWindow&);
+    AddWindow& operator=(const AddWindow&);
+  };
+
+  class AddBuddyWindow
+  : public AddWindow
+  {
+  public:
+    AddBuddyWindow(PurpleAccount *account, const char *username,
+        const char *group, const char *alias);
+    virtual ~AddBuddyWindow() {}
+
+  protected:
+    AccountOption *account_option;
+    StringOption *name_option;
+    StringOption *alias_option;
+    GroupOption *group_option;
+
+    // AddWindow
+    virtual void onAddRequest(CppConsUI::Button& activator);
+
+  private:
+    AddBuddyWindow(const AddBuddyWindow&);
+    AddBuddyWindow& operator=(const AddBuddyWindow&);
+  };
+
+  class AddChatWindow
+  : public AddWindow
+  {
+  public:
+    AddChatWindow(PurpleAccount *account, const char *name, const char *alias,
+        const char *group);
+    virtual ~AddChatWindow() {}
+
+  protected:
+    typedef std::map<std::string, CppConsUI::TreeView::NodeReference>
+      ChatInfoMap;
+
+    AccountOption *account_option;
+    CppConsUI::TreeView::NodeReference account_option_ref;
+    StringOption *alias_option;
+    GroupOption *group_option;
+    BooleanOption *autojoin_option;
+    ChatInfoMap chat_info_map;
+
+    // AddWindow
+    virtual void onAddRequest(CppConsUI::Button& activator);
+
+    void populateChatInfo(PurpleAccount *account);
+    void onAccountChanged(CppConsUI::Button& activator, size_t new_entry,
+        const char *title, intptr_t data);
+
+  private:
+    AddChatWindow(const AddChatWindow&);
+    AddChatWindow& operator=(const AddChatWindow&);
+  };
+
+  class AddGroupWindow
+  : public AddWindow
+  {
+  public:
+    AddGroupWindow();
+    virtual ~AddGroupWindow() {}
+
+  protected:
+    StringOption *name_option;
+
+    // AddWindow
+    virtual void onAddRequest(CppConsUI::Button& activator);
+
+  private:
+    AddGroupWindow(const AddGroupWindow&);
+    AddGroupWindow& operator=(const AddGroupWindow&);
+  };
+
   PurpleBlistUiOps centerim_blist_ui_ops;
   PurpleBuddyList *buddylist;
   CppConsUI::TreeView *treeview;
@@ -140,7 +318,7 @@ private:
   void updateList(int flags);
   void delayedGroupNodesInit();
   void updateCachedPreference(const char *name);
-  bool checkAnyAccountConnected();
+  bool isAnyAccountConnected();
   void filterHide();
   void actionOpenFilter();
   void actionDeleteChar();
@@ -175,16 +353,6 @@ private:
   void request_add_chat(PurpleAccount *account, PurpleGroup *group,
       const char *alias, const char *name);
   void request_add_group();
-
-  static void add_buddy_ok_cb_(void *data, PurpleRequestFields *fields)
-    { reinterpret_cast<BuddyList*>(data)->add_buddy_ok_cb(fields); }
-  void add_buddy_ok_cb(PurpleRequestFields *fields);
-  static void add_chat_ok_cb_(void *data, PurpleRequestFields *fields)
-    { reinterpret_cast<BuddyList*>(data)->add_chat_ok_cb(fields); }
-  void add_chat_ok_cb(PurpleRequestFields *fields);
-  static void add_group_ok_cb_(void *data, const char *name)
-    { reinterpret_cast<BuddyList*>(data)->add_group_ok_cb(name); }
-  void add_group_ok_cb(const char *name);
 
   // called when any blist/* pref is changed
   static void blist_pref_change_(const char *name, PurplePrefType type,
