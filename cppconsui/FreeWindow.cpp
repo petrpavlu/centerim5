@@ -34,7 +34,7 @@ namespace CppConsUI
 
 FreeWindow::FreeWindow(int x, int y, int w, int h, Type t)
 : Container(w, h), win_x(x), win_y(y), win_w(w), win_h(h), copy_x(0)
-, copy_y(0), copy_w(0), copy_h(0), realwindow(NULL), type(t)
+, copy_y(0), copy_w(0), copy_h(0), realwindow(NULL), type(t), closable(true)
 {
   updateArea();
 
@@ -154,6 +154,11 @@ void FreeWindow::close()
   delete this;
 }
 
+void FreeWindow::setClosable(bool new_closable)
+{
+  closable = new_closable;
+}
+
 void FreeWindow::proceedUpdateArea()
 {
   if (!update_area)
@@ -226,7 +231,8 @@ void FreeWindow::resizeAndUpdateArea()
 
 void FreeWindow::actionClose()
 {
-  close();
+  if (closable)
+    close();
 }
 
 void FreeWindow::declareBindables()

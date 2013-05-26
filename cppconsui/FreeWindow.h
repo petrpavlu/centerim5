@@ -71,6 +71,9 @@ public:
   //virtual void SetType(Type t) { type = t; }
   virtual Type getType() { return type; }
 
+  virtual void setClosable(bool new_closable);
+  virtual bool isClosable() const { return closable; }
+
   /**
    * This function is called when the screen is resized.
    */
@@ -95,6 +98,13 @@ protected:
   Curses::Window *realwindow;
 
   Type type;
+
+  /**
+   * Flag indicating if it is allowed to close the window by the close-window
+   * action, this usually means if it is possible to close the window by
+   * pressing the Esc key.
+   */
+  bool closable;
 
   // Widget
   virtual void proceedUpdateArea();
