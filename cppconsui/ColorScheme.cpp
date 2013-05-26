@@ -33,10 +33,11 @@
 namespace CppConsUI
 {
 
+ColorScheme *ColorScheme::my_instance = NULL;
+
 ColorScheme *ColorScheme::instance()
 {
-  static ColorScheme my_instance;
-  return &my_instance;
+  return my_instance;
 }
 
 int ColorScheme::getColorPair(const char *scheme, const char *widget,
@@ -137,6 +138,23 @@ void ColorScheme::clear()
 {
   schemes.clear();
   pairs.clear();
+}
+
+int ColorScheme::init()
+{
+  g_assert(!my_instance);
+
+  my_instance = new ColorScheme;
+  return 0;
+}
+
+int ColorScheme::finalize()
+{
+  g_assert(my_instance);
+
+  delete my_instance;
+  my_instance = NULL;
+  return 0;
 }
 
 } // namespace CppConsUI

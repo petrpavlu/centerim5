@@ -129,10 +129,17 @@ private:
    */
   KeyBinds binds;
 
+  static KeyConfig *my_instance;
+
   KeyConfig() {}
   KeyConfig(const KeyConfig&);
   KeyConfig& operator=(const KeyConfig&);
   ~KeyConfig() {}
+
+  static int init();
+  static int finalize();
+  friend int initializeConsUI();
+  friend int finalizeConsUI();
 };
 
 } // namespace CppConsUI

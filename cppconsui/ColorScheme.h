@@ -95,10 +95,17 @@ private:
   Schemes schemes;
   ColorPairs pairs;
 
+  static ColorScheme *my_instance;
+
   ColorScheme() {}
   ColorScheme(const ColorScheme &);
   ColorScheme &operator=(ColorScheme &);
   ~ColorScheme() {}
+
+  static int init();
+  static int finalize();
+  friend int initializeConsUI();
+  friend int finalizeConsUI();
 };
 
 } // namespace CppConsUI

@@ -38,6 +38,9 @@
 namespace CppConsUI
 {
 
+int initializeConsUI();
+int finalizeConsUI();
+
 #define COREMANAGER (CppConsUI::CoreManager::instance())
 
 /**
@@ -109,10 +112,17 @@ private:
   bool redraw_pending;
   bool resize_pending;
 
+  static CoreManager *my_instance;
+
   CoreManager();
   CoreManager(const CoreManager&);
   CoreManager& operator=(const CoreManager&);
   ~CoreManager();
+
+  static int init();
+  static int finalize();
+  friend int initializeConsUI();
+  friend int finalizeConsUI();
 
   // InputProcessor
   virtual bool processInput(const TermKeyKey& key);
@@ -145,8 +155,8 @@ private:
         cond); }
   gboolean resize_input(GIOChannel *source, GIOCondition cond);
 
-  void inputInit();
-  void inputUnInit();
+  void initInput();
+  void finalizeInput();
 
   static void signalHandler(int signum);
   void resize();

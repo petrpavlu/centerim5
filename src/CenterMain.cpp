@@ -106,8 +106,26 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  CenterIM *cim = CenterIM::instance();
-  return cim->run(config_path, ascii, offline);
+  // initialize CppConsUI
+  int consui_res = CppConsUI::initializeConsUI();
+  if (consui_res) {
+    fprintf(stderr, _("CppConsUI initialization failed.\n"));
+    return consui_res;
+  }
+
+  // initialize CenterIM and run it
+  CenterIM::init();
+  int cim_res = CenterIM::instance()->run(config_path, ascii, offline);
+  CenterIM::finalize();
+
+  // finalize CppConsUI
+  consui_res = CppConsUI::finalizeConsUI();
+  if (consui_res) {
+    fprintf(stderr, _("CppConsUI deinitialization failed.\n"));
+    return consui_res;
+  }
+
+  return cim_res;
 }
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

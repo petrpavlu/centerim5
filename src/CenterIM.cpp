@@ -56,10 +56,11 @@ const char *CenterIM::named_colors[] = {
   "white"    /*  7 */
 };
 
+CenterIM *CenterIM::my_instance = NULL;
+
 CenterIM *CenterIM::instance()
 {
-  static CenterIM my_instance;
-  return &my_instance;
+  return my_instance;
 }
 
 bool CenterIM::processInput(const TermKeyKey& key)
@@ -324,6 +325,21 @@ CenterIM::CenterIM()
   memset(&centerim_glib_eventloops, 0, sizeof(centerim_glib_eventloops));
 
   declareBindables();
+}
+
+void CenterIM::init()
+{
+  g_assert(!my_instance);
+
+  my_instance = new CenterIM;
+}
+
+void CenterIM::finalize()
+{
+  g_assert(my_instance);
+
+  delete my_instance;
+  my_instance = NULL;
 }
 
 int CenterIM::purpleInit(const char *config_path)

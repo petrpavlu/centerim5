@@ -21,6 +21,9 @@
 
 #include "CoreManager.h"
 
+#include "ColorScheme.h"
+#include "KeyConfig.h"
+
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <signal.h>
@@ -110,10 +113,55 @@ inline sigc::slot_base *SourceConnectionNode::get_slot()
   return &slot;
 }
 
+int initializeConsUI()
+{
+  int res;
+
+  res = ColorScheme::init();
+  if (res)
+    return res;
+
+  res = KeyConfig::init();
+  if (res) {
+    // not good, destroy already initialized ColorScheme
+    ColorScheme::finalize();
+    return res;
+  }
+
+  // CoreManager depends on KeyConfig so it has to be initialized after it
+  res = CoreManager::init();
+  if (res) {
+    // not good, destroy already initialized KeyConfig and ColorScheme
+    KeyConfig::finalize();
+    ColorScheme::finalize();
+    return res;
+  }
+
+  return 0;
+}
+
+int finalizeConsUI()
+{
+  int max = 0;
+  int res;
+
+  res = CoreManager::finalize();
+  max = MAX(max, res);
+
+  res = KeyConfig::finalize();
+  max = MAX(max, res);
+
+  res = ColorScheme::finalize();
+  max = MAX(max, res);
+
+  return max;
+}
+
+CoreManager *CoreManager::my_instance = NULL;
+
 CoreManager *CoreManager::instance()
 {
-  static CoreManager my_instance;
-  return &my_instance;
+  return my_instance;
 }
 
 void CoreManager::startMainLoop()
@@ -245,14 +293,14 @@ CoreManager::CoreManager()
 , resize_channel(NULL), resize_channel_id(0), pipe_valid(false), tk(NULL)
 , utf8(false), gmainloop(NULL), redraw_pending(false), resize_pending(false)
 {
-  inputInit();
+  initInput();
 
   /**
    * @todo Check the return value. Throw an exception if we can't init curses.
    */
-  Curses::screen_init();
+  Curses::init_screen();
 
-  // create a new loop
+  // create the main loop
   gmainloop = g_main_loop_new(NULL, FALSE);
 
   declareBindables();
@@ -260,24 +308,47 @@ CoreManager::CoreManager()
 
 CoreManager::~CoreManager()
 {
-  inputUnInit();
+  // destroy the main loop
+  g_main_loop_unref(gmainloop);
 
-  // close all windows
-  size_t i = 0;
-  while (i < windows.size()) {
-    FreeWindow *win = windows[i];
-    /* There are two possibilities, either a window is in the Close() method
-     * removed from the core manager or not. We don't increase i in the first
-     * case. */
-    win->close();
-    if (i < windows.size() && windows[i] == win)
-      i++;
-  }
+  finalizeInput();
+
+  /* Close all windows, work with a copy of the windows vector because the
+   * original vector can be changed by calling the close() methods. */
+  Windows windows_copy = windows;
+  for (Windows::iterator i = windows_copy.begin(); i != windows_copy.end();
+      i++)
+    (*i)->close();
+
+  /* Delete all remaining windows. This prevents memory leaks for windows that
+   * have the close() method overridden and calling it does not remove the
+   * object from memory. */
+  windows_copy = windows;
+  for (Windows::iterator i = windows_copy.begin(); i != windows_copy.end();
+      i++)
+    delete *i;
 
   Curses::clear();
   Curses::noutrefresh();
   Curses::doupdate();
-  Curses::screen_finalize();
+  Curses::finalize_screen();
+}
+
+int CoreManager::init()
+{
+  g_assert(!my_instance);
+
+  my_instance = new CoreManager;
+  return 0;
+}
+
+int CoreManager::finalize()
+{
+  g_assert(my_instance);
+
+  delete my_instance;
+  my_instance = NULL;
+  return 0;
 }
 
 bool CoreManager::processInput(const TermKeyKey& key)
@@ -362,7 +433,7 @@ gboolean CoreManager::resize_input(GIOChannel *source, GIOCondition /*cond*/)
   return TRUE;
 }
 
-void CoreManager::inputInit()
+void CoreManager::initInput()
 {
   // init libtermkey
   TERMKEY_CHECK_VERSION;
@@ -399,7 +470,7 @@ void CoreManager::inputInit()
   }
 }
 
-void CoreManager::inputUnInit()
+void CoreManager::finalizeInput()
 {
   termkey_destroy(tk);
   tk = NULL;

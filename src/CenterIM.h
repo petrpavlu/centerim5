@@ -110,10 +110,16 @@ private:
 
   static const char *named_colors[];
 
+  static CenterIM *my_instance;
+
   CenterIM();
   CenterIM(const CenterIM&);
   CenterIM& operator=(const CenterIM&);
   virtual ~CenterIM() {}
+
+  static void init();
+  static void finalize();
+  friend int main(int argc, char *argv[]);
 
   int purpleInit(const char *config_path);
   void purpleFinalize();

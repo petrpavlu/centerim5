@@ -34,10 +34,11 @@
 namespace CppConsUI
 {
 
+KeyConfig *KeyConfig::my_instance = NULL;
+
 KeyConfig *KeyConfig::instance()
 {
-  static KeyConfig my_instance;
-  return &my_instance;
+  return my_instance;
 }
 
 bool KeyConfig::bindKey(const char *context, const char *action,
@@ -149,6 +150,23 @@ void KeyConfig::loadDefaultKeyConfig()
   bindKey("treeview", "unfold-subtree", "+");
 
   bindKey("window", "close-window", "Escape");
+}
+
+int KeyConfig::init()
+{
+  g_assert(!my_instance);
+
+  my_instance = new KeyConfig;
+  return 0;
+}
+
+int KeyConfig::finalize()
+{
+  g_assert(my_instance);
+
+  delete my_instance;
+  my_instance = NULL;
+  return 0;
 }
 
 } // namespace CppConsUI
