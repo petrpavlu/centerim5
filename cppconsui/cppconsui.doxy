@@ -1,0 +1,96 @@
+/**
+\mainpage
+
+CppConsUI is a simple TUI toolkit. The goal of this library is to provide
+easy-to-use widgets for building user interfaces.
+
+\dot
+digraph G
+{
+  node [fontname="DejaVu Sans", fontsize=10, shape=record, height=0.2, width=0.4];
+
+  ColorScheme [label="ColorScheme", URL="\ref CppConsUI::ColorScheme"];
+  CursesWindow [label="Curses::Window", URL="\ref CppConsUI::Curses::Window"];
+
+  CoreManager [label="CoreManager", URL="\ref CppConsUI::CoreManager"];
+  InputProcessor -> CoreManager [dir="back"];
+  Widget [label="Widget", URL="\ref CppConsUI::Widget"];
+  InputProcessor -> Widget [dir="back"];
+  InputProcessor [label="InputProcessor", URL="\ref CppConsUI::InputProcessor"];
+  Widget -> AbstractLine [dir="back"];
+  AbstractLine [label="AbstractLine", URL="\ref CppConsUI::AbstractLine"];
+  AbstractLine -> HorizontalLine [dir="back"];
+  HorizontalLine [label="HorizontalLine", URL="\ref CppConsUI::HorizontalLine"];
+  AbstractLine -> VerticalLine [dir="back"];
+  VerticalLine [label="VerticalLine", URL="\ref CppConsUI::VerticalLine"];
+  Widget -> Button [dir="back"];
+  Button [label="Button", URL="\ref CppConsUI::Button"];
+  Button -> ComboBox [dir="back"];
+  ComboBox [label="ComboBox", URL="\ref CppConsUI::ComboBox"];
+  ComboBox -> ColorPickerComboBox [dir="back"];
+  ColorPickerComboBox [label="ColorPickerComboBox", URL="\ref CppConsUI::ColorPickerComboBox"];
+  Widget -> CheckBox [dir="back"];
+  CheckBox [label="CheckBox", URL="\ref CppConsUI::CheckBox"];
+  Widget -> Container [dir="back"];
+  Container [label="Container", URL="\ref CppConsUI::Container"];
+  Container -> ColorPickerPalette [dir="back"];
+  ColorPickerPalette [label="ColorPickerPalette", URL="\ref CppConsUI::ColorPickerPalette"];
+  Container -> FreeWindow [dir="back"];
+  FreeWindow [label="FreeWindow", URL="\ref CppConsUI::FreeWindow"];
+  FreeWindow -> Window [dir="back"];
+  Window [label="Window", URL="\ref CppConsUI::Window"];
+  Window -> AbstractDialog [dir="back"];
+  AbstractDialog [label="AbstractDialog", URL="\ref CppConsUI::AbstractDialog"];
+  AbstractDialog -> ColorPickerDialog [dir="back"];
+  ColorPickerDialog [label="ColorPickerDialog", URL="\ref CppConsUI::ColorPickerDialog"];
+  AbstractDialog -> Dialog [dir="back"];
+  Dialog [label="Dialog", URL="\ref CppConsUI::Dialog"];
+  AbstractDialog -> InputDialog [dir="back"];
+  InputDialog [label="InputDialog", URL="\ref CppConsUI::InputDialog"];
+  AbstractDialog -> MessageDialog [dir="back"];
+  MessageDialog [label="MessageDialog", URL="\ref CppConsUI::MessageDialog"];
+  AbstractDialog -> SplitDialog [dir="back"];
+  SplitDialog [label="SplitDialog", URL="\ref CppConsUI::SplitDialog"];
+  Window -> MenuWindow [dir="back"];
+  MenuWindow [label="MenuWindow", URL="\ref CppConsUI::MenuWindow"];
+  Container -> ScrollPane [dir="back"];
+  ScrollPane [label="ScrollPane", URL="\ref CppConsUI::ScrollPane"];
+  ScrollPane -> AbstractListBox [dir="back"];
+  AbstractListBox [label="AbstractListBox", URL="\ref CppConsUI::AbstractListBox"];
+  AbstractListBox -> HorizontalListBox [dir="back"];
+  HorizontalListBox [label="HorizontalListBox", URL="\ref CppConsUI::HorizontalListBox"];
+  HorizontalListBox -> ColorPicker [dir="back"];
+  ColorPicker [label="ColorPicker", URL="\ref CppConsUI::ColorPicker"];
+  AbstractListBox -> ListBox [dir="back"];
+  ListBox [label="ListBox", URL="\ref CppConsUI::ListBox"];
+  ScrollPane -> TreeView [dir="back"];
+  TreeView [label="TreeView", URL="\ref CppConsUI::TreeView"];
+  Widget -> Label [dir="back"];
+  Label [label="Label", URL="\ref CppConsUI::Label"];
+  Widget -> Panel [dir="back"];
+  Panel [label="Panel", URL="\ref CppConsUI::Panel"];
+  Widget -> Spacer [dir="back"];
+  Spacer [label="Spacer", URL="\ref CppConsUI::Spacer"];
+  Widget -> TextEdit [dir="back"];
+  TextEdit [label="TextEdit", URL="\ref CppConsUI::TextEdit"];
+  TextEdit -> TextEntry [dir="back"];
+  TextEntry [label="TextEntry", URL="\ref CppConsUI::TextEntry"];
+  Widget -> TextView [dir="back"];
+  TextView [label="TextView", URL="\ref CppConsUI::TextView"];
+
+  KeyConfig [label="KeyConfig", URL="\ref CppConsUI::KeyConfig"];
+}
+\enddot
+
+\namespace CppConsUI
+\brief Main namespace for the library.
+
+CppConsUI is a main namespace that encapsulates all library content.
+
+\namespace CppConsUI::Curses
+\brief Helpers for the curses library.
+
+\namespace CppConsUI::Keys
+\brief Helpers for the libtermkey library.
+
+*/
