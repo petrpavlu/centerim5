@@ -892,7 +892,7 @@ bool CenterIM::stringToColorAttributes(const char *str, int *attrs)
 
 void CenterIM::loadDefaultKeyConfig()
 {
-  KEYCONFIG->clear();
+  // clear current bindings and load default ones
   KEYCONFIG->loadDefaultKeyConfig();
 
   KEYCONFIG->bindKey("centerim", "quit", "Ctrl-q");

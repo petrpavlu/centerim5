@@ -107,6 +107,9 @@ void KeyConfig::clear()
 
 void KeyConfig::loadDefaultKeyConfig()
 {
+  // clear current bindings
+  clear();
+
   bindKey("button", "activate", "Enter");
 
   bindKey("checkbox", "toggle", "Enter");
