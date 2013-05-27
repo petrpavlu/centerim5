@@ -23,6 +23,8 @@ private:
 TestWindow::TestWindow()
 : CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
+  setClosable(false);
+
   CppConsUI::Label *label;
 
   label = new CppConsUI::Label(

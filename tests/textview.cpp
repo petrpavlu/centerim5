@@ -27,6 +27,7 @@ private:
 TestWindow::TestWindow()
 : CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
+  setClosable(false);
   setColorScheme("textviewwindow");
 
   textview = new CppConsUI::TextView(AUTOSIZE, AUTOSIZE);

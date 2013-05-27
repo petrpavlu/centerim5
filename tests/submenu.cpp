@@ -30,6 +30,8 @@ private:
 TestWindow::TestWindow()
 : CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
+  setClosable(false);
+
   addWidget(*(new CppConsUI::Label("Press F10 to quit.")), 1, 1);
 
   CppConsUI::Button *button = new CppConsUI::Button("Open Menu...");

@@ -94,6 +94,8 @@ private:
 TestWindow::TestWindow()
 : CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
+  setClosable(false);
+
   addWidget(*(new CppConsUI::Label(25, 1, "Press F10 to quit.")), 1, 1);
   addWidget(*(new CppConsUI::Label(25, 1, "WASD to move the picture.")),
       1, 2);

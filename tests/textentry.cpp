@@ -25,6 +25,8 @@ private:
 TestWindow::TestWindow()
 : CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
+  setClosable(false);
+
   addWidget(*(new CppConsUI::Label("Press F10 to quit.")), 1, 1);
   addWidget(*(new CppConsUI::Label("Press TAB to move focus.")), 1, 2);
   addWidget(*(new CppConsUI::Label("All TextEntry widgets are surrouned by "

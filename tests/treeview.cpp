@@ -25,6 +25,8 @@ private:
 TestWindow::TestWindow()
 : Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
+  setClosable(false);
+
   CppConsUI::TreeView *tree;
   CppConsUI::TreeView::NodeReference node;
   CppConsUI::TreeView::NodeReference node2;
