@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
 "POT-Creation-Date: 2013-05-26 11:44+0200\n"
-"PO-Revision-Date: 2013-01-03 00:13+0300\n"
+"PO-Revision-Date: 2013-05-29 22:56+0400\n"
 "Last-Translator: kyak <bas@bmail.ru>\n"
 "Language-Team: \n"
 "Language: ru_RU\n"
@@ -17,7 +17,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Poedit 1.5.5\n"
 
 #: src/AccountWindow.cpp:30
 msgid "Accounts"
@@ -69,9 +70,8 @@ msgid "Buddylist color:"
 msgstr "Цвет списка друзей:"
 
 #: src/AccountWindow.cpp:424
-#, fuzzy
 msgid "Invalid account or protocol plugin not loaded."
-msgstr "Ошибка аккаунта или не подгружен плагин для протокола"
+msgstr "Ошибка аккаунта или не подгружен плагин для протокола."
 
 #: src/AccountWindow.cpp:509
 #, c-format
@@ -202,7 +202,7 @@ msgstr "Группа"
 
 #: src/BuddyList.cpp:190
 msgid "Default"
-msgstr ""
+msgstr "По умолчанию"
 
 #: src/BuddyList.cpp:278
 msgid "Buddy name"
@@ -234,12 +234,11 @@ msgstr "Добавить группу"
 
 #: src/BuddyList.cpp:456
 msgid "Name"
-msgstr ""
+msgstr "Имя"
 
 #: src/BuddyList.cpp:456
-#, fuzzy
 msgid "New group"
-msgstr "Добавить группу"
+msgstr "Новая группа"
 
 #: src/BuddyList.cpp:465
 msgid "No group name specified."
@@ -261,22 +260,21 @@ msgstr ""
 "Сейчас вы не подключены ни по одному из протоколов, поддерживающих чат."
 
 #: src/BuddyListNode.cpp:43
-#, fuzzy, c-format
+#, c-format
 msgid "Unhandled buddy list node '%d'."
-msgstr "Неизвестный тип поля запроса '%d'."
+msgstr "Неизвестный тип узла '%d' в списке контактов."
 
 #: src/BuddyListNode.cpp:357
 msgid "Information"
-msgstr ""
+msgstr "Информация"
 
 #: src/BuddyListNode.cpp:358
 msgid "Retrieving..."
-msgstr ""
+msgstr "Получение..."
 
 #: src/BuddyListNode.cpp:444 src/BuddyListNode.cpp:798
-#, fuzzy
 msgid "Information..."
-msgstr "Настройки..."
+msgstr "Информация..."
 
 #: src/BuddyListNode.cpp:446 src/BuddyListNode.cpp:626
 #: src/BuddyListNode.cpp:800
@@ -308,11 +306,11 @@ msgstr "Удаление чата"
 
 #: src/BuddyListNode.cpp:792
 msgid "Expand"
-msgstr ""
+msgstr "Развернуть"
 
 #: src/BuddyListNode.cpp:795
 msgid "Collapse"
-msgstr ""
+msgstr "Свернуть"
 
 #: src/BuddyListNode.cpp:822
 msgid "Move to..."
@@ -333,12 +331,11 @@ msgstr "Переименовать..."
 
 #: src/BuddyListNode.cpp:1075
 msgid "-Top-"
-msgstr ""
+msgstr "-Верх-"
 
 #: src/BuddyListNode.cpp:1088
-#, fuzzy
 msgid "Move after..."
-msgstr "Переместить в..."
+msgstr "Переместить после..."
 
 #: src/BuddyListNode.cpp:1103
 msgid "Specified group is already in the list."
@@ -537,23 +534,23 @@ msgstr "Ошибка чтения лога разговора '%s' (%s)."
 
 #: src/Conversation.cpp:667
 msgid "Wrong number of arguments passed to the command."
-msgstr ""
+msgstr "В команду передано неправильное число аргументов"
 
 #: src/Conversation.cpp:672
 msgid "The command failed for an unknown reason."
-msgstr ""
+msgstr "Ошибка выполнения команды по неизвестной причине"
 
 #: src/Conversation.cpp:678
 msgid "The command only works in chats, not IMs."
-msgstr ""
+msgstr "Эта команда работает только в чатах, не в IM."
 
 #: src/Conversation.cpp:682
 msgid "The command only works in IMs, not chats."
-msgstr ""
+msgstr "Эта команда работаеть только в IM, не в чатах."
 
 #: src/Conversation.cpp:687
 msgid "The command does not work on this protocol."
-msgstr ""
+msgstr "Эта команда не работает для этого протокола."
 
 #: src/Conversations.cpp:276
 #, c-format
@@ -626,41 +623,38 @@ msgid "centerim/log: Unknown GLib logging level: %d."
 msgstr "centerim/log: Неизвестный уровень ведения логов GLib: %d."
 
 #: src/Notify.cpp:66
-#, fuzzy
 msgid "Local information"
-msgstr "Формат журнала"
+msgstr "Локальная информация"
 
 #: src/Notify.cpp:79
-#, fuzzy
 msgid "Now"
-msgstr "Нет"
+msgstr "Сейчас"
 
 #: src/Notify.cpp:86 src/Notify.cpp:98
 msgid "Unknown"
-msgstr ""
+msgstr "Неизвестно"
 
 #: src/Notify.cpp:89
 msgid "Last seen"
-msgstr ""
+msgstr "Видели в последний раз"
 
 #: src/Notify.cpp:100
-#, fuzzy
 msgid "Last activity"
-msgstr "По активности"
+msgstr "Последняя активность"
 
 #: src/Notify.cpp:106
 msgid "Remote information"
-msgstr ""
+msgstr "Информация с сервера"
 
 #: src/Notify.cpp:135
-#, fuzzy, c-format
+#, c-format
 msgid "Unhandled userinfo entry type '%d'."
-msgstr "Неизвестный тип разговора '%d'."
+msgstr "Неизвестный тип пользовательской информации '%d'."
 
 #: src/Notify.cpp:224
 #, c-format
 msgid "User information for %s"
-msgstr ""
+msgstr "Информация о пользователе %s"
 
 #: src/OptionWindow.cpp:30
 msgid "Config options"
@@ -691,13 +685,12 @@ msgid "Flat"
 msgstr "Не группировать"
 
 #: src/OptionWindow.cpp:50
-#, fuzzy
 msgid "Group sort mode"
-msgstr "Режим сортировки"
+msgstr "Режим сортировки групп"
 
 #: src/OptionWindow.cpp:52
 msgid "Manually"
-msgstr ""
+msgstr "Вручную"
 
 #: src/OptionWindow.cpp:53 src/OptionWindow.cpp:57
 msgid "By name"
