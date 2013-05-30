@@ -636,7 +636,7 @@ msgstr "Неизвестно"
 
 #: src/Notify.cpp:89
 msgid "Last seen"
-msgstr "Видели в последний раз"
+msgstr "Последнее появление"
 
 #: src/Notify.cpp:100
 msgid "Last activity"
@@ -698,7 +698,7 @@ msgstr "По имени"
 
 #: src/OptionWindow.cpp:55
 msgid "Buddy sort mode"
-msgstr "Режим сортировки"
+msgstr "Режим сортировки контактов"
 
 #: src/OptionWindow.cpp:58 src/OptionWindow.cpp:64
 msgid "By status"
@@ -842,7 +842,7 @@ msgstr "Записывать историю всех бесед"
 
 #: src/OptionWindow.cpp:164
 msgid "Log all status changes to system log"
-msgstr "Записывать все изменения статуса в системный журнал"
+msgstr "Записывать все изменения статуса в журнал"
 
 #: src/OptionWindow.cpp:170
 msgid "Config files"
