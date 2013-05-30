@@ -103,6 +103,7 @@ config.h.in
 core
 cscope.*
 doc/cppconsui*
+doc/doxygen-cppconsui.conf
 doc/html
 doc/latex
 stamp-*
