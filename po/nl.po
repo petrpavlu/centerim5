@@ -235,9 +235,8 @@ msgid "Name"
 msgstr ""
 
 #: src/BuddyList.cpp:456
-#, fuzzy
 msgid "New group"
-msgstr "Groep toevoegen"
+msgstr "Nieuwe Groep"
 
 #: src/BuddyList.cpp:465
 msgid "No group name specified."
@@ -458,14 +457,12 @@ msgid "%s: unexpected argument after options\n"
 msgstr "%s: onverwachte parameter na optie\n"
 
 #: src/CenterMain.cpp:112
-#, fuzzy, c-format
 msgid "CppConsUI initialization failed.\n"
-msgstr "Initialisatie van libpurple is niet gelukt."
+msgstr "Initialisatie van CppConsUI is niet gelukt."
 
 #: src/CenterMain.cpp:124
-#, fuzzy, c-format
 msgid "CppConsUI deinitialization failed.\n"
-msgstr "Initialisatie van libpurple is niet gelukt."
+msgstr "Deinitialisatie van CppConsUI is niet gelukt."
 
 #: src/Connections.cpp:90 src/Connections.cpp:114 src/Connections.cpp:163
 #, c-format
@@ -949,19 +946,19 @@ msgstr "Neen"
 
 #: cppconsui/ColorPicker.cpp:114
 msgid " SAMPLE "
-msgstr ""
+msgstr " VOORBEELD "
 
 #: cppconsui/ColorPickerComboBox.cpp:56
 msgid "More..."
-msgstr ""
+msgstr "Meer..."
 
 #: cppconsui/ColorPickerComboBox.cpp:118
 msgid "DEFAULT"
-msgstr ""
+msgstr "DEFAULT"
 
 #: cppconsui/ColorPickerComboBox.cpp:236
 msgid "DEFAULT "
-msgstr ""
+msgstr "DEFAULT "
 
 #: cppconsui/ColorScheme.cpp:92
 msgid "Color pairs limit exceeded."
