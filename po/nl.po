@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
 "POT-Creation-Date: 2013-09-17 20:29+0200\n"
-"PO-Revision-Date: 2013-05-01 18:50+0100\n"
+"PO-Revision-Date: 2013-09-24 19:46+0200\n"
 "Last-Translator: CBke <cb@linux.be>\n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
@@ -458,11 +458,11 @@ msgstr "%s: onverwachte parameter na optie\n"
 
 #: src/CenterMain.cpp:112
 msgid "CppConsUI initialization failed.\n"
-msgstr "Initialisatie van CppConsUI is niet gelukt."
+msgstr "Initialisatie van CppConsUI is niet gelukt.\n"
 
 #: src/CenterMain.cpp:124
 msgid "CppConsUI deinitialization failed.\n"
-msgstr "Deinitialisatie van CppConsUI is niet gelukt."
+msgstr "Deinitialisatie van CppConsUI is niet gelukt.\n"
 
 #: src/Connections.cpp:90 src/Connections.cpp:114 src/Connections.cpp:163
 #, c-format
