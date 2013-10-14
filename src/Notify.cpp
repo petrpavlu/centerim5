@@ -182,7 +182,8 @@ void Notify::finalize()
 void Notify::onDialogClose(CppConsUI::FreeWindow& activator,
     PurpleNotifyType type)
 {
-  UserInfoDialog *dialog = dynamic_cast<UserInfoDialog*>(&activator);
+  CppConsUI::AbstractDialog *dialog
+    = dynamic_cast<CppConsUI::AbstractDialog*>(&activator);
   g_assert(dialog);
 
   if (notifications.find(dialog) != notifications.end()) {
@@ -248,8 +249,8 @@ void Notify::close_notify(PurpleNotifyType type, void *ui_handle)
   // only some notifications are currently supported
   g_assert(type == PURPLE_NOTIFY_MESSAGE || type == PURPLE_NOTIFY_USERINFO);
 
-  CppConsUI::MessageDialog *dialog
-    = reinterpret_cast<CppConsUI::MessageDialog*>(ui_handle);
+  CppConsUI::AbstractDialog *dialog
+    = reinterpret_cast<CppConsUI::AbstractDialog*>(ui_handle);
   if (notifications.find(dialog) != notifications.end()) {
     notifications.erase(dialog);
     // close the notification dialog if one is still opened
