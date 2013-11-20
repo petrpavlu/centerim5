@@ -530,6 +530,12 @@ void AccountWindow::populateAccount(PurpleAccount *account)
 void AccountWindow::addAccount(CppConsUI::Button& /*activator*/)
 {
   GList *i = purple_plugins_get_protocols();
+  if (!i) {
+    // libpurple returns NULL if there are no protocols available
+    LOG->warning(_("No protocol plugins available."));
+    return;
+  }
+
   PurpleAccount *account = purple_account_new(_("Username"),
       purple_plugin_get_id(reinterpret_cast<PurplePlugin*>(i->data)));
 
