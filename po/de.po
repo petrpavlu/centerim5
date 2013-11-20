@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: centerim5\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2013-05-26 11:44+0200\n"
+"POT-Creation-Date: 2013-09-17 20:29+0200\n"
 "PO-Revision-Date: 2011-06-08 14:43+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -356,78 +356,78 @@ msgstr "Diesen Account wirklich löschen?"
 msgid "Group deletion"
 msgstr "Account aktiviert"
 
-#: src/CenterIM.cpp:128
+#: src/CenterIM.cpp:129
 #, c-format
 msgid "Welcome to CenterIM 5. Press %s to display main menu."
 msgstr ""
 
-#: src/CenterIM.cpp:182
+#: src/CenterIM.cpp:183
 msgid "color schemes"
 msgstr ""
 
-#: src/CenterIM.cpp:199
+#: src/CenterIM.cpp:200
 msgid "Missing 'name' attribute in the scheme definition."
 msgstr ""
 
-#: src/CenterIM.cpp:208
+#: src/CenterIM.cpp:209
 msgid "Missing 'widget' attribute in the color definition."
 msgstr ""
 
-#: src/CenterIM.cpp:215
+#: src/CenterIM.cpp:216
 msgid "Missing 'property' attribute in the color definition."
 msgstr ""
 
-#: src/CenterIM.cpp:228 src/CenterIM.cpp:233
+#: src/CenterIM.cpp:229 src/CenterIM.cpp:234
 #, c-format
 msgid "Unrecognized color '%s'."
 msgstr ""
 
-#: src/CenterIM.cpp:238
+#: src/CenterIM.cpp:239
 #, c-format
 msgid "Unrecognized attributes '%s'."
 msgstr ""
 
-#: src/CenterIM.cpp:250
+#: src/CenterIM.cpp:251
 #, fuzzy
 msgid "Error parsing 'colorschemes.xml', loading default color scheme."
 msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s'.\n"
 
-#: src/CenterIM.cpp:263
+#: src/CenterIM.cpp:264
 msgid "key bindings"
 msgstr ""
 
-#: src/CenterIM.cpp:280
+#: src/CenterIM.cpp:281
 msgid "Missing 'context' attribute in the bind definition."
 msgstr ""
 
-#: src/CenterIM.cpp:285
+#: src/CenterIM.cpp:286
 msgid "Missing 'action' attribute in the bind definition."
 msgstr ""
 
-#: src/CenterIM.cpp:290
+#: src/CenterIM.cpp:291
 msgid "Missing 'key' attribute in the bind definition."
 msgstr ""
 
-#: src/CenterIM.cpp:295
+#: src/CenterIM.cpp:296
 #, c-format
 msgid "Unrecognized key '%s'."
 msgstr ""
 
-#: src/CenterIM.cpp:304
+#: src/CenterIM.cpp:305
 #, fuzzy
 msgid "Error parsing 'binds.xml', loading default keys."
 msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s'.\n"
 
-#: src/CenterIM.cpp:366
+#: src/CenterIM.cpp:382
 #, fuzzy, c-format
 msgid "Libpurple initialization failed."
 msgstr "Initialisierung von libtermkey fehlgeschlagen.\n"
 
-#: src/CenterIM.cpp:763
+#: src/CenterIM.cpp:779
 msgid "Error saving 'colorschemes.xml'."
 msgstr ""
 
-#: src/CenterIM.cpp:955
+#: src/CenterIM.cpp:971
 #, fuzzy
 msgid "Error saving 'binds.xml'."
 msgstr "centerim/log: Fehler beim Öffnen der Logdatei `%s'.\n"
@@ -449,6 +449,16 @@ msgstr ""
 #, c-format
 msgid "%s: unexpected argument after options\n"
 msgstr ""
+
+#: src/CenterMain.cpp:112
+#, fuzzy, c-format
+msgid "CppConsUI initialization failed.\n"
+msgstr "Initialisierung von libtermkey fehlgeschlagen.\n"
+
+#: src/CenterMain.cpp:124
+#, fuzzy, c-format
+msgid "CppConsUI deinitialization failed.\n"
+msgstr "Initialisierung von libtermkey fehlgeschlagen.\n"
 
 #: src/Connections.cpp:90 src/Connections.cpp:114 src/Connections.cpp:163
 #, fuzzy, c-format
@@ -938,25 +948,41 @@ msgstr "ja"
 msgid "No"
 msgstr ""
 
-#: cppconsui/ColorScheme.cpp:91
+#: cppconsui/ColorPicker.cpp:114
+msgid " SAMPLE "
+msgstr ""
+
+#: cppconsui/ColorPickerComboBox.cpp:56
+msgid "More..."
+msgstr ""
+
+#: cppconsui/ColorPickerComboBox.cpp:118
+msgid "DEFAULT"
+msgstr ""
+
+#: cppconsui/ColorPickerComboBox.cpp:236
+msgid "DEFAULT "
+msgstr ""
+
+#: cppconsui/ColorScheme.cpp:92
 msgid "Color pairs limit exceeded."
 msgstr ""
 
-#: cppconsui/ColorScheme.cpp:98
+#: cppconsui/ColorScheme.cpp:99
 msgid "Adding color pair failed."
 msgstr ""
 
-#: cppconsui/CoreManager.cpp:318
+#: cppconsui/CoreManager.cpp:389
 #, fuzzy, c-format
 msgid "Error converting input to UTF-8 (%s)."
 msgstr "Fehler beim Konvertieren der Eingabe nach UTF-8 (%s).\n"
 
-#: cppconsui/CoreManager.cpp:370
+#: cppconsui/CoreManager.cpp:441
 #, fuzzy
 msgid "Libtermkey initialization failed."
 msgstr "Initialisierung von libtermkey fehlgeschlagen.\n"
 
-#: cppconsui/KeyConfig.cpp:82
+#: cppconsui/KeyConfig.cpp:83
 msgid "<unbound>"
 msgstr ""
 

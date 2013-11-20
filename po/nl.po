@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: centerim5 5.0.0beta1.28-6b68-dirty\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2013-05-26 11:44+0200\n"
-"PO-Revision-Date: 2013-05-01 18:50+0100\n"
+"POT-Creation-Date: 2013-09-17 20:29+0200\n"
+"PO-Revision-Date: 2013-09-24 19:46+0200\n"
 "Last-Translator: CBke <cb@linux.be>\n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
@@ -235,9 +235,8 @@ msgid "Name"
 msgstr ""
 
 #: src/BuddyList.cpp:456
-#, fuzzy
 msgid "New group"
-msgstr "Groep toevoegen"
+msgstr "Nieuwe Groep"
 
 #: src/BuddyList.cpp:465
 msgid "No group name specified."
@@ -354,79 +353,79 @@ msgstr "Bent u zeker dat je de groep %s wilt verwijderen van de lijst?"
 msgid "Group deletion"
 msgstr "Groep verwijderen"
 
-#: src/CenterIM.cpp:128
+#: src/CenterIM.cpp:129
 #, c-format
 msgid "Welcome to CenterIM 5. Press %s to display main menu."
 msgstr "Welkom bij CenterIM 5. Druk %s om het hoofdmenu weer te geven."
 
-#: src/CenterIM.cpp:182
+#: src/CenterIM.cpp:183
 msgid "color schemes"
 msgstr "kleurenschema's"
 
-#: src/CenterIM.cpp:199
+#: src/CenterIM.cpp:200
 msgid "Missing 'name' attribute in the scheme definition."
 msgstr "Het attribute 'name' ontbreekt voor het schema."
 
-#: src/CenterIM.cpp:208
+#: src/CenterIM.cpp:209
 msgid "Missing 'widget' attribute in the color definition."
 msgstr "Het attribute 'widget' ontbreekt voor het kleurenschema."
 
-#: src/CenterIM.cpp:215
+#: src/CenterIM.cpp:216
 msgid "Missing 'property' attribute in the color definition."
 msgstr "Het attribute 'property' ontbreekt voor het kleurenschema."
 
-#: src/CenterIM.cpp:228 src/CenterIM.cpp:233
+#: src/CenterIM.cpp:229 src/CenterIM.cpp:234
 #, c-format
 msgid "Unrecognized color '%s'."
 msgstr "Onherkenbare kleur '%s'."
 
-#: src/CenterIM.cpp:238
+#: src/CenterIM.cpp:239
 #, c-format
 msgid "Unrecognized attributes '%s'."
 msgstr "Onherkenbare attributen '%s'."
 
-#: src/CenterIM.cpp:250
+#: src/CenterIM.cpp:251
 msgid "Error parsing 'colorschemes.xml', loading default color scheme."
 msgstr ""
 "Fout bij het inlezen van 'colorschemes.xml', standaard kleuren worden "
 "geladen."
 
-#: src/CenterIM.cpp:263
+#: src/CenterIM.cpp:264
 msgid "key bindings"
 msgstr "Sneltoetsen"
 
-#: src/CenterIM.cpp:280
+#: src/CenterIM.cpp:281
 msgid "Missing 'context' attribute in the bind definition."
 msgstr "Het attribute 'context' ontbreekt voor de sneltoets."
 
-#: src/CenterIM.cpp:285
+#: src/CenterIM.cpp:286
 msgid "Missing 'action' attribute in the bind definition."
 msgstr "Het attribute 'action' ontbreekt voor de sneltoets."
 
-#: src/CenterIM.cpp:290
+#: src/CenterIM.cpp:291
 msgid "Missing 'key' attribute in the bind definition."
 msgstr "Het attribute 'key' ontbreekt voor de Sneltoets."
 
-#: src/CenterIM.cpp:295
+#: src/CenterIM.cpp:296
 #, c-format
 msgid "Unrecognized key '%s'."
 msgstr "Onherkenbare toets '%s'."
 
-#: src/CenterIM.cpp:304
+#: src/CenterIM.cpp:305
 msgid "Error parsing 'binds.xml', loading default keys."
 msgstr ""
 "Fout bij het inlezen van 'binds.xml', standaard sneltoetsen worden geladen."
 
-#: src/CenterIM.cpp:366
+#: src/CenterIM.cpp:382
 #, c-format
 msgid "Libpurple initialization failed."
 msgstr "Initialisatie van libpurple is niet gelukt."
 
-#: src/CenterIM.cpp:763
+#: src/CenterIM.cpp:779
 msgid "Error saving 'colorschemes.xml'."
 msgstr "Fout bij opslaan van 'colorschemes.xml'."
 
-#: src/CenterIM.cpp:955
+#: src/CenterIM.cpp:971
 msgid "Error saving 'binds.xml'."
 msgstr "Fout bij opslaan van 'binds.xml'."
 
@@ -456,6 +455,14 @@ msgstr ""
 #, c-format
 msgid "%s: unexpected argument after options\n"
 msgstr "%s: onverwachte parameter na optie\n"
+
+#: src/CenterMain.cpp:112
+msgid "CppConsUI initialization failed.\n"
+msgstr "Initialisatie van CppConsUI is niet gelukt.\n"
+
+#: src/CenterMain.cpp:124
+msgid "CppConsUI deinitialization failed.\n"
+msgstr "Deinitialisatie van CppConsUI is niet gelukt.\n"
 
 #: src/Connections.cpp:90 src/Connections.cpp:114 src/Connections.cpp:163
 #, c-format
@@ -937,24 +944,40 @@ msgstr "Ja"
 msgid "No"
 msgstr "Neen"
 
-#: cppconsui/ColorScheme.cpp:91
+#: cppconsui/ColorPicker.cpp:114
+msgid " SAMPLE "
+msgstr " VOORBEELD "
+
+#: cppconsui/ColorPickerComboBox.cpp:56
+msgid "More..."
+msgstr "Meer..."
+
+#: cppconsui/ColorPickerComboBox.cpp:118
+msgid "DEFAULT"
+msgstr "DEFAULT"
+
+#: cppconsui/ColorPickerComboBox.cpp:236
+msgid "DEFAULT "
+msgstr "DEFAULT "
+
+#: cppconsui/ColorScheme.cpp:92
 msgid "Color pairs limit exceeded."
 msgstr "Limiet aantal kleurenparen overschreden."
 
-#: cppconsui/ColorScheme.cpp:98
+#: cppconsui/ColorScheme.cpp:99
 msgid "Adding color pair failed."
 msgstr "Toevoegen van Kleurenpaar mislukt."
 
-#: cppconsui/CoreManager.cpp:318
+#: cppconsui/CoreManager.cpp:389
 #, c-format
 msgid "Error converting input to UTF-8 (%s)."
 msgstr "Fout bij converteren van input to UTF-8 (%s)."
 
-#: cppconsui/CoreManager.cpp:370
+#: cppconsui/CoreManager.cpp:441
 msgid "Libtermkey initialization failed."
 msgstr "Libtermkey initialisatie mislukt."
 
-#: cppconsui/KeyConfig.cpp:82
+#: cppconsui/KeyConfig.cpp:83
 msgid "<unbound>"
 msgstr "<niet gebonden>"
 

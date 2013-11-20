@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: centerim5\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2013-05-26 11:44+0200\n"
+"POT-Creation-Date: 2013-09-17 20:29+0200\n"
 "PO-Revision-Date: 2013-05-26 11:46+0200\n"
 "Last-Translator: Petr Pavlu <setup@dagobah.cz>\n"
 "Language-Team: Czech\n"
@@ -350,80 +350,80 @@ msgstr "Opravdu smazat skupinu %s ze seznamu?"
 msgid "Group deletion"
 msgstr "Smazat skupinu"
 
-#: src/CenterIM.cpp:128
+#: src/CenterIM.cpp:129
 #, c-format
 msgid "Welcome to CenterIM 5. Press %s to display main menu."
 msgstr "Vítejte v CenterIM 5. Hlavní nabídka se zobrazí stiskem klávesy %s."
 
-#: src/CenterIM.cpp:182
+#: src/CenterIM.cpp:183
 msgid "color schemes"
 msgstr "barevná schémata"
 
-#: src/CenterIM.cpp:199
+#: src/CenterIM.cpp:200
 msgid "Missing 'name' attribute in the scheme definition."
 msgstr "Chybějící atribut \"name\" v definici schématu."
 
-#: src/CenterIM.cpp:208
+#: src/CenterIM.cpp:209
 msgid "Missing 'widget' attribute in the color definition."
 msgstr "Chybějící atribut \"widget\" v definici barvy."
 
-#: src/CenterIM.cpp:215
+#: src/CenterIM.cpp:216
 msgid "Missing 'property' attribute in the color definition."
 msgstr "Chybějící atribut \"property\" v definici barvy."
 
-#: src/CenterIM.cpp:228 src/CenterIM.cpp:233
+#: src/CenterIM.cpp:229 src/CenterIM.cpp:234
 #, c-format
 msgid "Unrecognized color '%s'."
 msgstr "Neznámá barva \"%s\"."
 
-#: src/CenterIM.cpp:238
+#: src/CenterIM.cpp:239
 #, c-format
 msgid "Unrecognized attributes '%s'."
 msgstr "Neznámé atributy \"%s\"."
 
-#: src/CenterIM.cpp:250
+#: src/CenterIM.cpp:251
 msgid "Error parsing 'colorschemes.xml', loading default color scheme."
 msgstr ""
 "Chyba při zpracování souboru \"colorschemes.xml\", bude použito výchozí "
 "barevné schéma."
 
-#: src/CenterIM.cpp:263
+#: src/CenterIM.cpp:264
 msgid "key bindings"
 msgstr "nastavení kláves"
 
-#: src/CenterIM.cpp:280
+#: src/CenterIM.cpp:281
 msgid "Missing 'context' attribute in the bind definition."
 msgstr "Chybějící atribut \"context\" v definici klávesové akce."
 
-#: src/CenterIM.cpp:285
+#: src/CenterIM.cpp:286
 msgid "Missing 'action' attribute in the bind definition."
 msgstr "Chybějící atribut \"action\" v definici klávesové akce."
 
-#: src/CenterIM.cpp:290
+#: src/CenterIM.cpp:291
 msgid "Missing 'key' attribute in the bind definition."
 msgstr "Chybějící atribut \"key\" v definici klávesové akce."
 
-#: src/CenterIM.cpp:295
+#: src/CenterIM.cpp:296
 #, c-format
 msgid "Unrecognized key '%s'."
 msgstr "Neznámá klávesa \"%s\"."
 
-#: src/CenterIM.cpp:304
+#: src/CenterIM.cpp:305
 msgid "Error parsing 'binds.xml', loading default keys."
 msgstr ""
 "Chyba při zpracování souboru \"binds.xml\", bude použito výchozí nastavení "
 "kláves."
 
-#: src/CenterIM.cpp:366
+#: src/CenterIM.cpp:382
 #, c-format
 msgid "Libpurple initialization failed."
 msgstr "Nezdařila se inicializace knihovny libpurple."
 
-#: src/CenterIM.cpp:763
+#: src/CenterIM.cpp:779
 msgid "Error saving 'colorschemes.xml'."
 msgstr "Chyba při ukládání souboru \"colorschemes.xml\"."
 
-#: src/CenterIM.cpp:955
+#: src/CenterIM.cpp:971
 msgid "Error saving 'binds.xml'."
 msgstr "Chyba při ukládání souboru \"binds.xml\"."
 
@@ -452,6 +452,16 @@ msgstr ""
 #, c-format
 msgid "%s: unexpected argument after options\n"
 msgstr "%s: neočekávaný argument\n"
+
+#: src/CenterMain.cpp:112
+#, fuzzy, c-format
+msgid "CppConsUI initialization failed.\n"
+msgstr "Nezdařila se inicializace knihovny libpurple."
+
+#: src/CenterMain.cpp:124
+#, fuzzy, c-format
+msgid "CppConsUI deinitialization failed.\n"
+msgstr "Nezdařila se inicializace knihovny libpurple."
 
 #: src/Connections.cpp:90 src/Connections.cpp:114 src/Connections.cpp:163
 #, c-format
@@ -934,24 +944,40 @@ msgstr "Ano"
 msgid "No"
 msgstr "Ne"
 
-#: cppconsui/ColorScheme.cpp:91
+#: cppconsui/ColorPicker.cpp:114
+msgid " SAMPLE "
+msgstr ""
+
+#: cppconsui/ColorPickerComboBox.cpp:56
+msgid "More..."
+msgstr ""
+
+#: cppconsui/ColorPickerComboBox.cpp:118
+msgid "DEFAULT"
+msgstr ""
+
+#: cppconsui/ColorPickerComboBox.cpp:236
+msgid "DEFAULT "
+msgstr ""
+
+#: cppconsui/ColorScheme.cpp:92
 msgid "Color pairs limit exceeded."
 msgstr "Překročen maximální počet barevných párů."
 
-#: cppconsui/ColorScheme.cpp:98
+#: cppconsui/ColorScheme.cpp:99
 msgid "Adding color pair failed."
 msgstr "Přidání barevného páru selhalo."
 
-#: cppconsui/CoreManager.cpp:318
+#: cppconsui/CoreManager.cpp:389
 #, c-format
 msgid "Error converting input to UTF-8 (%s)."
 msgstr "Chyba při konverzi vstupu do UTF-8 (%s)."
 
-#: cppconsui/CoreManager.cpp:370
+#: cppconsui/CoreManager.cpp:441
 msgid "Libtermkey initialization failed."
 msgstr "Nezdařila se inicializace knihovny libtermkey."
 
-#: cppconsui/KeyConfig.cpp:82
+#: cppconsui/KeyConfig.cpp:83
 msgid "<unbound>"
 msgstr "<nesvázáno>"
 

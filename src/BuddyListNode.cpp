@@ -354,7 +354,7 @@ void BuddyListNode::retrieveUserInfoForName(PurpleConnection *gc,
     const char *name) const
 {
   PurpleNotifyUserInfo *info = purple_notify_user_info_new();
-  purple_notify_user_info_add_pair_plaintext(info, _("Information"),
+  purple_notify_user_info_add_pair(info, _("Information"),
       _("Retrieving..."));
   purple_notify_userinfo(gc, name, info, NULL, NULL);
   purple_notify_user_info_destroy(info);
