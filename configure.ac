@@ -146,7 +146,7 @@ adl_RECURSIVE_EVAL([$localedir], [localedir_eval])
 AC_DEFINE_UNQUOTED([LOCALEDIR], ["$localedir_eval"],
 	[Define to the locale directory.])
 
-adl_RECURSIVE_EVAL([$pkglibdir], [pkglibdir_eval])
+adl_RECURSIVE_EVAL([$libdir/AC_PACKAGE_NAME], [pkglibdir_eval])
 AC_DEFINE_UNQUOTED([PKGLIBDIR], ["$pkglibdir_eval"],
 	[Define to the pkglib directory.])
 
