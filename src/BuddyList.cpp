@@ -500,9 +500,6 @@ BuddyList::BuddyList()
   buddylist->ui_data = this;
   purple_set_blist(buddylist);
 
-  // load the pounces
-  purple_pounces_load();
-
   // init prefs
   purple_prefs_add_none(CONF_PREFIX "/blist");
   purple_prefs_add_bool(CONF_PREFIX "/blist/show_empty_groups", false);
