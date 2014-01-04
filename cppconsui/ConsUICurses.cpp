@@ -36,7 +36,9 @@
 #define NCURSES_NOMACROS
 #include <cursesw.h>
 
-#include <string.h>
+#include <algorithm>
+#include <cassert>
+#include <cstring>
 
 namespace CppConsUI
 {
@@ -103,36 +105,36 @@ Window::~Window()
 
 int Window::mvaddstring(int x, int y, int w, const char *str)
 {
-  g_assert(str);
+  assert(str);
 
   wmove(p->win, y, x);
 
   int printed = 0;
   while (printed < w && str && *str) {
-    printed += printChar(g_utf8_get_char(str));
-    str = g_utf8_find_next_char(str, NULL);
+    printed += printChar(UTF8::getUniChar(str));
+    str = UTF8::getNextChar(str);
   }
   return printed;
 }
 
 int Window::mvaddstring(int x, int y, const char *str)
 {
-  g_assert(str);
+  assert(str);
 
   wmove(p->win, y, x);
 
   int printed = 0;
   while (str && *str) {
-    printed += printChar(g_utf8_get_char(str));
-    str = g_utf8_find_next_char(str, NULL);
+    printed += printChar(UTF8::getUniChar(str));
+    str = UTF8::getNextChar(str);
   }
   return printed;
 }
 
 int Window::mvaddstring(int x, int y, int w, const char *str, const char *end)
 {
-  g_assert(str);
-  g_assert(end);
+  assert(str);
+  assert(end);
 
   if (str >= end)
     return 0;
@@ -141,16 +143,16 @@ int Window::mvaddstring(int x, int y, int w, const char *str, const char *end)
 
   int printed = 0;
   while (printed < w && str < end && str && *str) {
-    printed += printChar(g_utf8_get_char(str));
-    str = g_utf8_find_next_char(str, end);
+    printed += printChar(UTF8::getUniChar(str));
+    str = UTF8::findNextChar(str, end);
   }
   return printed;
 }
 
 int Window::mvaddstring(int x, int y, const char *str, const char *end)
 {
-  g_assert(str);
-  g_assert(end);
+  assert(str);
+  assert(end);
 
   if (str >= end)
     return 0;
@@ -159,13 +161,13 @@ int Window::mvaddstring(int x, int y, const char *str, const char *end)
 
   int printed = 0;
   while (str < end && str && *str) {
-    printed += printChar(g_utf8_get_char(str));
-    str = g_utf8_find_next_char(str, end);
+    printed += printChar(UTF8::getUniChar(str));
+    str = UTF8::findNextChar(str, end);
   }
   return printed;
 }
 
-int Window::mvaddchar(int x, int y, gunichar uc)
+int Window::mvaddchar(int x, int y, UTF8::UniChar uc)
 {
   wmove(p->win, y, x);
   return printChar(uc);
@@ -310,7 +312,7 @@ int Window::getmaxy()
   return ::getmaxy(p->win);
 }
 
-int Window::printChar(gunichar uc)
+int Window::printChar(UTF8::UniChar uc)
 {
   /**
    * @todo Error checking (setcchar).
@@ -432,7 +434,7 @@ int nrcolorpairs()
 #ifndef NCURSES_EXT_COLORS
   /* Ncurses reports more than 256 color pairs, even when compiled without
    * ext-color. */
-  return MIN(COLOR_PAIRS, 256);
+  return std::min(COLOR_PAIRS, 256);
 #else
   return COLOR_PAIRS;
 #endif
@@ -501,20 +503,20 @@ int onscreen_width(const char *start, const char *end)
     return 0;
 
   if (!end)
-    end = start + strlen(start);
+    end = start + std::strlen(start);
 
   while (start < end) {
-    width += onscreen_width(g_utf8_get_char(start));
-    start = g_utf8_next_char(start);
+    width += onscreen_width(UTF8::getUniChar(start));
+    start = UTF8::getNextChar(start);
   }
   return width;
 }
 
-int onscreen_width(gunichar uc, int w)
+int onscreen_width(UTF8::UniChar uc, int w)
 {
   if (uc == '\t')
     return 8 - w % 8;
-  return g_unichar_iswide(uc) ? 2 : 1;
+  return UTF8::isUniCharWide(uc) ? 2 : 1;
 }
 
 const Stats *get_stats()

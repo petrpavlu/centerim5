@@ -28,6 +28,9 @@
 
 #include "ScrollPane.h"
 
+#include <algorithm>
+#include <cassert>
+
 namespace CppConsUI
 {
 
@@ -65,7 +68,7 @@ int ScrollPane::getRealHeight() const
 Point ScrollPane::getRelativePosition(const Container& ref,
     const Widget& child) const
 {
-  g_assert(child.getParent() == this);
+  assert(child.getParent() == this);
 
   if (!parent || this == &ref)
     return Point(child.getLeft() - scroll_xpos, child.getTop() - scroll_ypos);
@@ -77,7 +80,7 @@ Point ScrollPane::getRelativePosition(const Container& ref,
 
 Point ScrollPane::getAbsolutePosition(const Widget& child) const
 {
-  g_assert(child.getParent() == this);
+  assert(child.getParent() == this);
 
   if (!parent)
     return Point(child.getLeft() - scroll_xpos, child.getTop() - scroll_ypos);
@@ -185,7 +188,7 @@ void ScrollPane::updateArea()
 
 void ScrollPane::proceedUpdateArea()
 {
-  g_assert(parent);
+  assert(parent);
 
   if (update_screen_area) {
     delete screen_area;
@@ -233,8 +236,8 @@ void ScrollPane::drawEx(bool container_draw)
 
   /* If the defined scrollable area is smaller than the widget, make sure
    * the copy works. */
-  int copyw = MIN(scroll_width, screen_area->getmaxx()) - 1;
-  int copyh = MIN(scroll_height, screen_area->getmaxy()) - 1;
+  int copyw = std::min(scroll_width, screen_area->getmaxx()) - 1;
+  int copyh = std::min(scroll_height, screen_area->getmaxy()) - 1;
 
   area->copyto(screen_area, scroll_xpos, scroll_ypos, 0, 0, copyw, copyh, 0);
 }

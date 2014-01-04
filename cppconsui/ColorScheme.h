@@ -30,6 +30,7 @@
 #define __COLORSCHEME_H__
 
 #include "ConsUICurses.h"
+#include "CppConsUI.h" // for COLORSCHEME macro
 
 #include <map>
 #include <string>
@@ -37,8 +38,6 @@
 /* Uncomment to enable an experimental feature to lower the number of used
  * colorpairs. */
 //#define SAVE_COLOR_PAIRS
-
-#define COLORSCHEME (CppConsUI::ColorScheme::instance())
 
 namespace CppConsUI
 {
@@ -56,7 +55,6 @@ public:
         int a = Curses::Attr::NORMAL)
       : foreground(f), background(b), attrs(a) {}
   };
-  static ColorScheme *instance();
 
   typedef std::map<std::string, Color> Properties;
   typedef std::map<std::string, Properties> Widgets;
@@ -95,16 +93,13 @@ private:
   Schemes schemes;
   ColorPairs pairs;
 
-  static ColorScheme *my_instance;
-
   ColorScheme() {}
-  ColorScheme(const ColorScheme &);
-  ColorScheme &operator=(ColorScheme &);
+  int init() { return 0; }
   ~ColorScheme() {}
+  int finalize() { return 0; }
+  CONSUI_DISABLE_COPY(ColorScheme);
 
-  static int init();
-  static int finalize();
-  friend int initializeConsUI();
+  friend int initializeConsUI(AppInterface& interface);
   friend int finalizeConsUI();
 };
 

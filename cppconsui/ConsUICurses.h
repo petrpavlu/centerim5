@@ -33,7 +33,7 @@
 #ifndef __CONSUICURSES_H__
 #define __CONSUICURSES_H__
 
-#include <glib.h>
+#include "CppConsUI.h"
 
 namespace CppConsUI
 {
@@ -86,7 +86,7 @@ public:
   int mvaddstring(int x, int y, int w, const char *str, const char *end);
   int mvaddstring(int x, int y, const char *str, const char *end);
 
-  int mvaddchar(int x, int y, gunichar uc);
+  int mvaddchar(int x, int y, UTF8::UniChar uc);
 
   int mvaddlinechar(int x, int y, LineChar c);
 
@@ -110,7 +110,7 @@ public:
   int getmaxy();
 
 protected:
-  int printChar(gunichar uc);
+  int printChar(UTF8::UniChar uc);
 
 private:
   struct WindowInternals;
@@ -173,7 +173,7 @@ int getmaxy();
 int resizeterm(int lines, int columns);
 
 int onscreen_width(const char *start, const char *end = NULL);
-int onscreen_width(gunichar uc, int w = 0);
+int onscreen_width(UTF8::UniChar uc, int w = 0);
 
 const Stats *get_stats();
 void reset_stats();

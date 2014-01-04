@@ -31,6 +31,17 @@
 #ifndef __CPPCONSUI_H__
 #define __CPPCONSUI_H__
 
+#include <stdint.h>
+#include <cstdlib>
+
+#define COLORSCHEME (CppConsUI::getColorSchemeInstance())
+#define COREMANAGER (CppConsUI::getCoreManagerInstance())
+#define KEYCONFIG (CppConsUI::getKeyConfigInstance())
+
+#define CONSUI_DISABLE_COPY(Class) \
+  Class(const Class&); \
+  Class &operator=(const Class&)
+
 namespace CppConsUI
 {
 
@@ -91,6 +102,49 @@ protected:
 
 private:
 };
+
+enum InputCondition {
+  INPUT_CONDITION_READ = 1 << 0,
+  INPUT_CONDITION_WRITE = 1 << 1
+};
+
+typedef bool (*SourceFunction)(void *data);
+typedef void (*InputFunction)(int fd, InputCondition cond, void *data);
+
+struct AppInterface {
+  unsigned (*timeoutAdd)(unsigned interval, SourceFunction func, void *data);
+  bool (*timeoutRemove)(unsigned handle);
+  unsigned (*inputAdd)(int fd, InputCondition cond, InputFunction func,
+      void *data);
+  bool (*inputRemove)(unsigned handle);
+  void (*logError)(const char *message);
+};
+
+int initializeConsUI(AppInterface& interface);
+int finalizeConsUI();
+
+class ColorScheme;
+class CoreManager;
+class KeyConfig;
+
+ColorScheme *getColorSchemeInstance();
+CoreManager *getCoreManagerInstance();
+KeyConfig *getKeyConfigInstance();
+
+namespace UTF8
+{
+
+typedef uint32_t UniChar;
+UniChar getUniChar(const char *p);
+bool isUniCharWide(UniChar uc);
+bool isUniCharDigit(UniChar uc);
+bool isUniCharSpace(UniChar uc);
+const char *getNextChar(const char *p);
+const char *getPrevChar(const char *p);
+const char *findNextChar(const char *p, const char *end);
+const char *findPrevChar(const char *start, const char *p);
+
+} // namespace UTF8
 
 } // namespace CppConsUI
 

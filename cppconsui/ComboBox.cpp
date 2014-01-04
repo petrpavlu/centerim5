@@ -28,6 +28,9 @@
 
 #include "ComboBox.h"
 
+#include <cassert>
+#include <cstring>
+
 namespace CppConsUI
 {
 
@@ -55,7 +58,7 @@ ComboBox::~ComboBox()
 void ComboBox::clearOptions()
 {
   for (ComboBoxEntries::iterator i = options.begin(); i != options.end(); i++)
-    g_free(i->title);
+    delete [] i->title;
 
   options.clear();
   selected_entry = 0;
@@ -64,13 +67,18 @@ void ComboBox::clearOptions()
 
 int ComboBox::addOption(const char *text, intptr_t data)
 {
+  size_t size = 1;
+  if (text)
+    size += std::strlen(text);
   ComboBoxEntry e;
-  int w;
-
-  w = text ? Curses::onscreen_width(text) : 0;
-  e.title = g_strdup(text);
+  e.title = new char[size];
+  if (text)
+    std::strcpy(e.title, text);
+  else
+    e.title[0] = '\0';
   e.data = data;
 
+  int w = Curses::onscreen_width(e.title);
   if (w > max_option_width)
     max_option_width = w;
 
@@ -107,24 +115,24 @@ void *ComboBox::getSelectedDataPtr() const
 
 const char *ComboBox::getTitle(int entry) const
 {
-  g_assert(entry >= 0);
-  g_assert(static_cast<size_t>(entry) < options.size());
+  assert(entry >= 0);
+  assert(static_cast<size_t>(entry) < options.size());
 
   return options[entry].title;
 }
 
 intptr_t ComboBox::getData(int entry) const
 {
-  g_assert(entry >= 0);
-  g_assert(static_cast<size_t>(entry) < options.size());
+  assert(entry >= 0);
+  assert(static_cast<size_t>(entry) < options.size());
 
   return options[entry].data;
 }
 
 void ComboBox::setSelected(int new_entry)
 {
-  g_assert(new_entry >= 0);
-  g_assert(static_cast<size_t>(new_entry) < options.size());
+  assert(new_entry >= 0);
+  assert(static_cast<size_t>(new_entry) < options.size());
 
   // selected option didn't change
   if (new_entry == selected_entry)

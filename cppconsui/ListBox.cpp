@@ -28,6 +28,8 @@
 
 #include "ListBox.h"
 
+#include <algorithm>
+
 namespace CppConsUI
 {
 
@@ -203,7 +205,7 @@ void ListBox::updateScrollHeight()
   if (screen_area)
     realh = screen_area->getmaxy();
 
-  setScrollHeight(MAX(realh, children_height));
+  setScrollHeight(std::max(realh, children_height));
 }
 
 } // namespace CppConsUI

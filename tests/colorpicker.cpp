@@ -1,3 +1,5 @@
+#include <MainLoop.h>
+
 #include <cppconsui/Button.h>
 #include <cppconsui/ConsUICurses.h>
 #include <cppconsui/CoreManager.h>
@@ -7,7 +9,9 @@
 #include <cppconsui/KeyConfig.h>
 #include <cppconsui/Window.h>
 
-#include <stdio.h>
+#include <iostream>
+#include <sstream>
+#include <string>
 
 // TestWindow class
 class TestWindow
@@ -70,10 +74,10 @@ TestWindow::TestWindow()
         CppConsUI::ColorPickerPalette::FLAG_HIDE_ANSI
         | CppConsUI::ColorPickerPalette::FLAG_HIDE_GRAYSCALE));
 
-  char *text = g_strdup_printf("Supported nr of colors: %d",
-      CppConsUI::Curses::nrcolors());
-  label1 = new CppConsUI::Label(text);
-  g_free(text);
+  std::string text = std::string("Supported nr of colors: ")
+    + dynamic_cast<std::ostringstream*>(
+        &(std::ostringstream() << CppConsUI::Curses::nrcolors()))->str();
+  label1 = new CppConsUI::Label(text.c_str());
   addWidget(*label1, 1, 8);
   label2 = new CppConsUI::Label("...");
   addWidget(*label2, 1, 10);
@@ -82,10 +86,10 @@ TestWindow::TestWindow()
   addWidget(*l, 1, 12);
 
   l = new CppConsUI::Label;
-  text = g_strdup_printf("Supported nr of color pairs: %d",
-      CppConsUI::Curses::nrcolorpairs());
-  l->setText(text);
-  g_free(text);
+  text = std::string("Supported nr of color pairs: ")
+    + dynamic_cast<std::ostringstream*>(
+        &(std::ostringstream() << CppConsUI::Curses::nrcolorpairs()))->str();
+  l->setText(text.c_str());
   addWidget(*l, 1, 9);
 
   combo = new CppConsUI::ColorPickerComboBox (10, defaultcolor);
@@ -120,9 +124,14 @@ void TestWindow::onButtonActivate(CppConsUI::Button& /*activator*/, int flags)
 void TestWindow::onColerPickerChanged(CppConsUI::ColorPicker& /*activator*/,
     int new_fg, int new_bg)
 {
-  char *text = g_strdup_printf("Chosen color (%d,%d)", new_fg, new_bg);
-  label2->setText(text);
-  g_free(text);
+  std::string text = std::string("Chosen color (")
+      + dynamic_cast<std::ostringstream*>(
+        &(std::ostringstream() << new_fg))->str()
+      + ","
+      + dynamic_cast<std::ostringstream*>(
+        &(std::ostringstream() << new_bg))->str()
+      + ")";
+  label2->setText(text.c_str());
 
   combo->setColor(new_fg);
 }
@@ -137,18 +146,19 @@ void TestWindow::onChangeColorResponseHandler(
 
   combo->setColor(color);
 
-  char *text = g_strdup_printf("Chosen color nr: %d", color);
-  label2->setText(text);
-  g_free(text);
+  std::string text = std::string("Chosen color nr: ")
+    + dynamic_cast<std::ostringstream*>(
+        &(std::ostringstream() << color))->str();
+  label2->setText(text.c_str());
 }
 
 void TestWindow::onComboColorChange(CppConsUI::ComboBox& /*activator*/,
     intptr_t color)
 {
-  char *text = g_strdup_printf("Chosen color nr: %d",
-      static_cast<int>(color));
-  label2->setText(text);
-  g_free(text);
+  std::string text = std::string("Chosen color nr: ")
+    + dynamic_cast<std::ostringstream*>(
+        &(std::ostringstream() << static_cast<int>(color)))->str();
+  label2->setText(text.c_str());
 }
 
 // TestApp class
@@ -156,70 +166,114 @@ class TestApp
 : public CppConsUI::InputProcessor
 {
 public:
-  TestApp();
-  virtual ~TestApp() {}
-
-  void run();
-
-  // ignore every message
-  static void g_log_func_(const gchar * /*log_domain*/,
-      GLogLevelFlags /*log_level*/, const gchar * /*message*/,
-      gpointer /*user_data*/)
-    {}
+  static int run();
 
 protected:
 
 private:
-  TestApp(const TestApp&);
-  TestApp& operator=(const TestApp&);
+  static TestApp *my_instance;
+
+  static void log_error_cppconsui(const char *message);
+
+  TestApp() {}
+  virtual ~TestApp() {}
+  int runAll();
+
+  CONSUI_DISABLE_COPY(TestApp);
 };
 
-TestApp::TestApp()
+TestApp *TestApp::my_instance = NULL;
+
+int TestApp::run()
 {
+  // init my instance
+  assert(!my_instance);
+  my_instance = new TestApp;
+
+  // run the program
+  int res = my_instance->runAll();
+
+  // finalize my instance
+  assert(my_instance);
+
+  delete my_instance;
+  my_instance = NULL;
+
+  return res;
+}
+
+void TestApp::log_error_cppconsui(const char * /*message*/)
+{
+  // ignore all messages
+}
+
+int TestApp::runAll()
+{
+  int res = 1;
+  bool mainloop_initialized = false;
+  bool cppconsui_initialized = false;
+  TestWindow *win;
+
+  // init locale support
+  setlocale(LC_ALL, "");
+
+  // init mainloop
+  MainLoop::init();
+  mainloop_initialized = true;
+
+  // initialize CppConsUI
+  CppConsUI::AppInterface interface = {
+    MainLoop::timeout_add_cppconsui,
+    MainLoop::timeout_remove_cppconsui,
+    MainLoop::input_add_cppconsui,
+    MainLoop::input_remove_cppconsui,
+    log_error_cppconsui
+  };
+  int consui_res = CppConsUI::initializeConsUI(interface);
+  if (consui_res) {
+    std::cerr << "CppConsUI initialization failed." << std::endl;
+    goto out;
+  }
+  cppconsui_initialized = true;
+
+  // declare local bindables
+  declareBindable("testapp", "quit", sigc::ptr_fun(MainLoop::quit),
+      InputProcessor::BINDABLE_OVERRIDE);
+
+  // create the main window
+  win = new TestWindow;
+  win->show();
+
+  // setup key binds
   KEYCONFIG->loadDefaultKeyConfig();
   KEYCONFIG->bindKey("testapp", "quit", "F10");
 
-  g_log_set_default_handler(g_log_func_, this);
-
-  declareBindable("testapp", "quit", sigc::mem_fun(COREMANAGER,
-        &CppConsUI::CoreManager::quitMainLoop),
-      InputProcessor::BINDABLE_OVERRIDE);
-}
-
-void TestApp::run()
-{
-  TestWindow *win = new TestWindow;
-  win->show();
-
+  // run the main loop
   COREMANAGER->setTopInputProcessor(*this);
   COREMANAGER->enableResizing();
-  COREMANAGER->startMainLoop();
+  MainLoop::run();
+
+  // everything went ok
+  res = 0;
+
+out:
+  // finalize CppConsUI
+  if (cppconsui_initialized) {
+    if (CppConsUI::finalizeConsUI())
+      std::cerr << "CppConsUI finalization failed." << std::endl;
+  }
+
+  // finalize mainloop
+  if (mainloop_initialized)
+    MainLoop::finalize();
+
+  return res;
 }
 
 // main function
 int main()
 {
-  setlocale(LC_ALL, "");
-
-  // initialize CppConsUI
-  int consui_res = CppConsUI::initializeConsUI();
-  if (consui_res) {
-    fprintf(stderr, "CppConsUI initialization failed.\n");
-    return consui_res;
-  }
-
-  TestApp *app = new TestApp;
-  app->run();
-  delete app;
-
-  // finalize CppConsUI
-  consui_res = CppConsUI::finalizeConsUI();
-  if (consui_res) {
-    fprintf(stderr, "CppConsUI deinitialization failed.\n");
-    return consui_res;
-  }
-
-  return 0;
+  return TestApp::run();
 }
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

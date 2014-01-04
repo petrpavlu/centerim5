@@ -6,7 +6,6 @@ set(centerim5_SOURCES
   BuddyList.cpp
   BuddyListNode.cpp
   CenterIM.cpp
-  CenterMain.cpp
   Connections.cpp
   Conversation.cpp
   Conversations.cpp

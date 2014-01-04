@@ -27,6 +27,8 @@
 
 #include "SplitDialog.h"
 
+#include <cassert>
+
 namespace CppConsUI
 {
 
@@ -159,9 +161,7 @@ void SplitDialog::moveFocus(FocusDirection direction)
 
 void SplitDialog::setContainer(Container& cont)
 {
-  g_assert(!container);
-  g_warn_if_fail(cont.getWidth() == AUTOSIZE);
-  g_warn_if_fail(cont.getHeight() == AUTOSIZE);
+  assert(!container);
 
   container = &cont;
   cont.setFocusCycle(Container::FOCUS_CYCLE_LOCAL);
@@ -187,7 +187,7 @@ void SplitDialog::onOldFocusVisible(Widget& activator, bool visible)
     buttons_old_focus = NULL;
   }
   else
-    g_assert_not_reached();
+    assert(0);
 }
 
 } // namespace CppConsUI

@@ -28,6 +28,9 @@
 
 #include "Panel.h"
 
+#include <algorithm>
+#include <cstring>
+
 namespace CppConsUI
 {
 
@@ -39,7 +42,7 @@ Panel::Panel(int w, int h, const char *text)
 
 Panel::~Panel()
 {
-  g_free(title);
+  delete [] title;
 }
 
 void Panel::draw()
@@ -57,7 +60,7 @@ void Panel::draw()
   int draw_title_width = 0;
   if (realw > 4)
     draw_title_width = realw - 4;
-  draw_title_width = MIN(draw_title_width, title_width);
+  draw_title_width = std::min(draw_title_width, title_width);
 
   // calc horizontal line length (one segment width)
   int hline_len = 0;
@@ -113,10 +116,18 @@ void Panel::draw()
 
 void Panel::setTitle(const char *new_title)
 {
-  g_free(title);
+  delete [] title;
 
-  title = g_strdup(new_title ? new_title : "");
-  title_width = title ? Curses::onscreen_width(title) : 0;
+  size_t size = 1;
+  if (new_title)
+    size += std::strlen(new_title);
+  title = new char[size];
+  if (new_title)
+    std::strcpy(title, new_title);
+  else
+    title[0] = '\0';
+  title_width = Curses::onscreen_width(title);
+
   redraw();
 }
 

@@ -29,17 +29,11 @@
 
 #include "CoreManager.h"
 
+#include <cstring>
 #include "gettext.h"
 
 namespace CppConsUI
 {
-
-KeyConfig *KeyConfig::my_instance = NULL;
-
-KeyConfig *KeyConfig::instance()
-{
-  return my_instance;
-}
 
 bool KeyConfig::bindKey(const char *context, const char *action,
     const char *key)
@@ -90,7 +84,10 @@ char *KeyConfig::termKeyToString(const TermKeyKey& key) const
   termkey_strfkey(COREMANAGER->getTermKeyHandle(), out, sizeof(out),
       &key_copy, TERMKEY_FORMAT_LONGMOD);
 
-  return g_strdup(out);
+  size_t size = std::strlen(out) + 1;
+  char *res = new char[size];
+  std::strcpy(res, out);
+  return res;
 }
 
 bool KeyConfig::stringToTermKey(const char *key, TermKeyKey *termkey) const
@@ -153,23 +150,6 @@ void KeyConfig::loadDefaultKeyConfig()
   bindKey("treeview", "unfold-subtree", "+");
 
   bindKey("window", "close-window", "Escape");
-}
-
-int KeyConfig::init()
-{
-  g_assert(!my_instance);
-
-  my_instance = new KeyConfig;
-  return 0;
-}
-
-int KeyConfig::finalize()
-{
-  g_assert(my_instance);
-
-  delete my_instance;
-  my_instance = NULL;
-  return 0;
 }
 
 } // namespace CppConsUI

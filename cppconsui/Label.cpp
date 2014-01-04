@@ -28,6 +28,8 @@
 
 #include "Label.h"
 
+#include <cstring>
+
 namespace CppConsUI
 {
 
@@ -45,7 +47,7 @@ Label::Label(const char *text_)
 
 Label::~Label()
 {
-  g_free(text);
+  delete [] text;
 }
 
 void Label::draw()
@@ -85,9 +87,16 @@ void Label::draw()
 
 void Label::setText(const char *new_text)
 {
-  g_free(text);
+  delete [] text;
 
-  text = g_strdup(new_text ? new_text : "");
+  size_t size = 1;
+  if (new_text)
+    size += std::strlen(new_text);
+  text = new char[size];
+  if (new_text)
+    std::strcpy(text, new_text);
+  else
+    text[0] = '\0';
 
   // update wish height
   int h = 1;

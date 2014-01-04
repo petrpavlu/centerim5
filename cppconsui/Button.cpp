@@ -28,6 +28,10 @@
 
 #include "Button.h"
 
+#include <cstdio>
+#include <cstring>
+#include <sstream>
+
 namespace CppConsUI
 {
 
@@ -85,10 +89,10 @@ Button::Button(int flags_, const char *text_, const char *value_,
 
 Button::~Button()
 {
-  g_free(text);
-  g_free(value);
-  g_free(unit);
-  g_free(right);
+  delete [] text;
+  delete [] value;
+  delete [] unit;
+  delete [] right;
 }
 
 void Button::draw()
@@ -162,8 +166,8 @@ void Button::draw()
     const char *cur = right;
     int width = right_width;
     while (width > realw - l - 1) {
-      width -= Curses::onscreen_width(g_utf8_get_char(cur));
-      cur = g_utf8_next_char(cur);
+      width -= Curses::onscreen_width(UTF8::getUniChar(cur));
+      cur = UTF8::getNextChar(cur);
     }
     area->mvaddstring(realw - width, h, cur);
   }
@@ -189,9 +193,16 @@ void Button::setMasked(bool new_masked)
 
 void Button::setText(const char *new_text)
 {
-  g_free(text);
+  delete [] text;
 
-  text = g_strdup(new_text ? new_text : "");
+  size_t size = 1;
+  if (new_text)
+    size += std::strlen(new_text);
+  text = new char[size];
+  if (new_text)
+    std::strcpy(text, new_text);
+  else
+    text[0] = '\0';
 
   // update text_width, text_height and wish height
   text_width = 0;
@@ -220,36 +231,58 @@ void Button::setText(const char *new_text)
 
 void Button::setValue(const char *new_value)
 {
-  g_free(value);
+  delete [] value;
 
-  value = g_strdup(new_value ? new_value : "");
+  size_t size = 1;
+  if (new_value)
+    size += std::strlen(new_value);
+  value = new char[size];
+
+  if (new_value)
+    std::strcpy(value, new_value);
+  else
+    value[0] = '\0';
   value_width = Curses::onscreen_width(value);
   redraw();
 }
 
 void Button::setValue(int new_value)
 {
-  g_free(value);
-
-  value = g_strdup_printf("%d", new_value);
-  value_width = Curses::onscreen_width(value);
-  redraw();
+  std::string tmp = dynamic_cast<std::ostringstream*>(
+      &(std::ostringstream() << new_value))->str();
+  setValue(tmp.c_str());
 }
 
 void Button::setUnit(const char *new_unit)
 {
-  g_free(unit);
+  delete [] unit;
 
-  unit = g_strdup(new_unit ? new_unit : "");
+  size_t size = 1;
+  if (new_unit)
+    size += std::strlen(new_unit);
+  unit = new char[size];
+
+  if (new_unit)
+    std::strcpy(unit, new_unit);
+  else
+    unit[0] = '\0';
   unit_width = Curses::onscreen_width(unit);
   redraw();
 }
 
 void Button::setRight(const char *new_right)
 {
-  g_free(right);
+  delete [] right;
 
-  right = g_strdup(new_right ? new_right : "");
+  size_t size = 1;
+  if (new_right)
+    size += std::strlen(new_right);
+  right = new char[size];
+
+  if (new_right)
+    std::strcpy(right, new_right);
+  else
+    right[0] = '\0';
   right_width = Curses::onscreen_width(right);
   redraw();
 }

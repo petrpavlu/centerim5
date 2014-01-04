@@ -14,7 +14,6 @@ centerim5_SOURCES = \
 	BuddyListNode.h \
 	CenterIM.cpp \
 	CenterIM.h \
-	CenterMain.cpp \
 	Connections.cpp \
 	Connections.h \
 	Conversation.cpp \

@@ -28,6 +28,8 @@
 
 #include "Container.h"
 
+#include <cassert>
+
 namespace CppConsUI
 {
 
@@ -125,9 +127,9 @@ void Container::addWidget(Widget& widget, int x, int y)
 
 void Container::removeWidget(Widget& widget)
 {
-  g_assert(widget.getParent() == this);
+  assert(widget.getParent() == this);
   Children::iterator i = findWidget(widget);
-  g_assert(i != children.end());
+  assert(i != children.end());
 
   delete i->widget;
   children.erase(i);
@@ -227,7 +229,7 @@ void Container::moveFocus(FocusDirection direction)
     iter = std::find(focus_chain.begin(), focus_chain.end(), focus_widget);
 
     // we have a focused widget but we couldn't find it
-    g_assert(iter != focus_chain.end());
+    assert(iter != focus_chain.end());
 
     Widget *widget = *iter;
     if (!widget->isVisibleRecursive()) {
@@ -251,7 +253,7 @@ void Container::moveFocus(FocusDirection direction)
         // local focus change was successful
 
         // stay sane
-        g_assert((*i)->isVisibleRecursive());
+        assert((*i)->isVisibleRecursive());
 
         (*i)->grabFocus();
         return;
@@ -280,7 +282,7 @@ void Container::moveFocus(FocusDirection direction)
 
     if (i != focus_chain.end() && (*i)->canFocus()) {
       // stay sane
-      g_assert((*i)->isVisibleRecursive());
+      assert((*i)->isVisibleRecursive());
 
       (*i)->grabFocus();
     }
@@ -299,14 +301,14 @@ void Container::moveFocus(FocusDirection direction)
   parent_iter = focus_chain.parent(iter);
   while (parent_iter != focus_chain.begin()) {
     Container *c = dynamic_cast<Container*>(*parent_iter);
-    g_assert(c);
+    assert(c);
     scope = c->getFocusCycle();
     if (scope == FOCUS_CYCLE_LOCAL || scope == FOCUS_CYCLE_NONE)
       break;
     parent_iter = focus_chain.parent(parent_iter);
   }
   Container *container = dynamic_cast<Container*>(*parent_iter);
-  g_assert(container);
+  assert(container);
 
   if (direction == FOCUS_PAGE_UP || direction == FOCUS_PAGE_DOWN) {
     /* Get rid off "dummy" containers in the chain, i.e. container that has
@@ -316,7 +318,7 @@ void Container::moveFocus(FocusDirection direction)
         && !(*parent_iter.begin())->canFocus())
       parent_iter = parent_iter.begin();
     container = dynamic_cast<Container*>(*parent_iter);
-    g_assert(container);
+    assert(container);
 
     /* Stop here if focus change via paging is requested but container doesn't
      * support it. */
@@ -406,7 +408,7 @@ void Container::moveFocus(FocusDirection direction)
       }
       /* There is always one widget that can get the focus so this code is
        * unreachable. */
-      g_assert_not_reached();
+      assert(0);
       break;
     case FOCUS_END:
       iter = parent_iter.end();
@@ -422,7 +424,7 @@ end:
 Point Container::getRelativePosition(const Container& ref,
     const Widget& child) const
 {
-  g_assert(child.getParent() == this);
+  assert(child.getParent() == this);
 
   if (!parent || this == &ref)
     return Point(child.getLeft(), child.getTop());
@@ -433,7 +435,7 @@ Point Container::getRelativePosition(const Container& ref,
 
 Point Container::getAbsolutePosition(const Widget& child) const
 {
-  g_assert(child.getParent() == this);
+  assert(child.getParent() == this);
 
   if (!parent)
     return Point(child.getLeft(), child.getTop());
@@ -481,7 +483,7 @@ Container::Children::iterator Container::findWidget(const Widget& widget)
 
 void Container::insertWidget(size_t pos, Widget& widget, int x, int y)
 {
-  g_assert(pos <= children.size());
+  assert(pos <= children.size());
 
   Child child(widget);
   widget.move(x, y);
@@ -503,18 +505,18 @@ void Container::insertWidget(size_t pos, Widget& widget, int x, int y)
 void Container::moveWidgetInternal(Widget& widget, Widget& position,
     bool after)
 {
-  g_assert(widget.getParent() == this);
-  g_assert(position.getParent() == this);
+  assert(widget.getParent() == this);
+  assert(position.getParent() == this);
 
   // remove widget from the children..
   Children::iterator widget_iter = findWidget(widget);
-  g_assert(widget_iter != children.end());
+  assert(widget_iter != children.end());
   Child child = *widget_iter;
   children.erase(widget_iter);
 
   // ..put it back into a correct position
   Children::iterator position_iter = findWidget(position);
-  g_assert(position_iter != children.end());
+  assert(position_iter != children.end());
   if (after)
     position_iter++;
   children.insert(position_iter, child);

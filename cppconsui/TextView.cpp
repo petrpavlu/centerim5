@@ -27,6 +27,11 @@
 
 #include "TextView.h"
 
+#include <cassert>
+#include <cstdio>
+#include <cstring>
+#include <sstream>
+
 namespace CppConsUI
 {
 
@@ -79,10 +84,10 @@ void TextView::draw()
       && j < realh; i++, j++) {
     int attrs2 = 0;
     if (i->parent->color) {
-      char color[32];
-      int w = g_snprintf(color, sizeof(color), "color%d", i->parent->color);
-      g_assert(static_cast<int>(sizeof(color)) >= w); // just in case
-      attrs2 = getColorPair("textview", color);
+      std::string color = std::string("color")
+        + dynamic_cast<std::ostringstream*>(
+            &(std::ostringstream() << i->parent->color))->str();
+      attrs2 = getColorPair("textview", color.c_str());
       area->attroff(attrs);
       area->attron(attrs2);
     }
@@ -90,7 +95,7 @@ void TextView::draw()
     const char *p = i->text;
     int w = 0;
     for (int k = 0; k < i->length; k++) {
-      gunichar uc = g_utf8_get_char(p);
+      UTF8::UniChar uc = UTF8::getUniChar(p);
       if (uc == '\t') {
         int t = Curses::onscreen_width(uc, w);
         for (int l = 0; l < t; l++)
@@ -99,7 +104,7 @@ void TextView::draw()
       }
       else
         w += area->mvaddchar(w, j, uc);
-      p = g_utf8_next_char(p);
+      p = UTF8::getNextChar(p);
     }
 
     if (i->parent->color) {
@@ -181,7 +186,7 @@ void TextView::insert(size_t line_num, const char *text, int color)
   if (!text)
     return;
 
-  g_assert(line_num <= lines.size());
+  assert(line_num <= lines.size());
 
   const char *p = text;
   const char *s = text;
@@ -193,11 +198,11 @@ void TextView::insert(size_t line_num, const char *text, int color)
       Line *l = new Line(s, p - s, color);
       lines.insert(lines.begin() + cur_line_num, l);
       cur_line_num++;
-      s = p = g_utf8_next_char(p);
+      s = p = UTF8::getNextChar(p);
       continue;
     }
 
-    p = g_utf8_next_char(p);
+    p = UTF8::getNextChar(p);
   }
 
   if (s < p) {
@@ -215,7 +220,7 @@ void TextView::insert(size_t line_num, const char *text, int color)
 
 void TextView::erase(size_t line_num)
 {
-  g_assert(line_num < lines.size());
+  assert(line_num < lines.size());
 
   eraseScreenLines(line_num, 0);
   delete lines[line_num];
@@ -226,9 +231,9 @@ void TextView::erase(size_t line_num)
 
 void TextView::erase(size_t start_line, size_t end_line)
 {
-  g_assert(start_line < lines.size());
-  g_assert(end_line <= lines.size());
-  g_assert(start_line <= end_line);
+  assert(start_line < lines.size());
+  assert(end_line <= lines.size());
+  assert(start_line <= end_line);
 
   size_t advice = 0;
   for (size_t i = start_line; i < end_line; i++)
@@ -253,7 +258,7 @@ void TextView::clear()
 
 const char *TextView::getLine(size_t line_num) const
 {
-  g_assert(line_num < lines.size());
+  assert(line_num < lines.size());
 
   return lines[line_num]->text;
 }
@@ -285,15 +290,23 @@ void TextView::setScrollBar(bool new_scrollbar)
 TextView::Line::Line(const char *text_, size_t bytes, int color_)
 : color(color_)
 {
-  g_assert(text_);
+  assert(text_);
 
-  text = g_strndup(text_, bytes);
-  length = g_utf8_strlen(text, -1);
+  text = new char[bytes + 1];
+  std::strncpy(text, text_, bytes);
+  text[bytes] = '\0';
+
+  length = 0;
+  const char *p = text;
+  while (p && *p) {
+    length++;
+    p = UTF8::getNextChar(p);
+  }
 }
 
 TextView::Line::~Line()
 {
-  g_free(text);
+  delete [] text;
 }
 
 TextView::ScreenLine::ScreenLine(Line &parent_, const char *text_,
@@ -305,9 +318,9 @@ TextView::ScreenLine::ScreenLine(Line &parent_, const char *text_,
 const char *TextView::proceedLine(const char *text, int area_width,
     int *res_length) const
 {
-  g_assert(text);
-  g_assert(area_width > 0);
-  g_assert(res_length);
+  assert(text);
+  assert(area_width > 0);
+  assert(res_length);
 
   const char *cur = text;
   const char *res = text;
@@ -319,7 +332,7 @@ const char *TextView::proceedLine(const char *text, int area_width,
 
   while (*cur) {
     prev_width = cur_width;
-    gunichar uc = g_utf8_get_char(cur);
+    UTF8::UniChar uc = UTF8::getUniChar(cur);
     cur_width += Curses::onscreen_width(uc, cur_width);
     cur_length++;
 
@@ -332,7 +345,7 @@ const char *TextView::proceedLine(const char *text, int area_width,
       res = cur;
     }
 
-    if (g_unichar_isspace(uc))
+    if (UTF8::isUniCharSpace(uc))
       space = true;
     else if (space) {
       /* Found start of a word and everything before that can fit into
@@ -342,7 +355,7 @@ const char *TextView::proceedLine(const char *text, int area_width,
       space = false;
     }
 
-    cur = g_utf8_next_char(cur);
+    cur = UTF8::getNextChar(cur);
   }
 
   // end of text
@@ -356,15 +369,15 @@ const char *TextView::proceedLine(const char *text, int area_width,
    * cells width) (or simply for tabs). In that case we can not draw anything
    * but we want to skip to another character. */
   if (res == text)
-    res = g_utf8_next_char(res);
+    res = UTF8::getNextChar(res);
 
   return res;
 }
 
 size_t TextView::updateScreenLines(size_t line_num, size_t start)
 {
-  g_assert(line_num < lines.size());
-  g_assert(start <= screen_lines.size());
+  assert(line_num < lines.size());
+  assert(start <= screen_lines.size());
 
   /* Find where new screen lines should be placed and remove previous screen
    * lines created for this line. */
@@ -415,8 +428,8 @@ void TextView::updateAllScreenLines()
 size_t TextView::eraseScreenLines(size_t line_num, size_t start,
     size_t *deleted)
 {
-  g_assert(line_num < lines.size());
-  g_assert(start <= screen_lines.size());
+  assert(line_num < lines.size());
+  assert(start <= screen_lines.size());
 
   size_t i = start;
   bool begin_set = false, end_set = false;

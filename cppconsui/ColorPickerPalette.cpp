@@ -29,6 +29,8 @@
 
 #include "ColorScheme.h"
 
+#include <algorithm>
+
 #define GRAYSCALE_START 232
 #define GRAYSCALE_END 255
 
@@ -63,7 +65,7 @@ void ColorPickerPalette::onSelectColor(Button& activator)
 {
   ColorPickerPaletteButton *button =
     dynamic_cast<ColorPickerPaletteButton*>(&activator);
-  g_assert(button);
+  assert(button);
 
   signal_color_selected(*this, button->color);
 }
@@ -88,7 +90,7 @@ void ColorPickerPalette::addAnsi(int defaultcolor)
   h = y = getHeight();
 
   // there are 8 ANSI colors, or 16 when bright colors are supported
-  w = MAX(w, Curses::NUM_DEFAULT_COLORS);
+  w = std::max(w, Curses::NUM_DEFAULT_COLORS);
   h += 2;
 
   resize(w, h);
@@ -120,7 +122,7 @@ void ColorPickerPalette::addGrayscale(int defaultcolor)
     h++;
 
   y = h;
-  w = MAX(w, (GRAYSCALE_END - GRAYSCALE_START + 1) * 2);
+  w = std::max(w, (GRAYSCALE_END - GRAYSCALE_START + 1) * 2);
   h = h + 1;
 
   resize(w, h);
@@ -147,7 +149,7 @@ void ColorPickerPalette::addColorCube(int defaultcolor)
 
   y = h;
 
-  w = MAX(w, (6 * 6 * 2) + 5);
+  w = std::max(w, (6 * 6 * 2) + 5);
   h = h + 6;
 
   resize(w, h);

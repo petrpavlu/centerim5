@@ -24,155 +24,21 @@
 #include "ColorScheme.h"
 #include "KeyConfig.h"
 
-#include <stdio.h>
+#include <cassert>
+#include <cerrno>
+#include <cstdio>
+#include <cstring>
+#include <langinfo.h>
 #include <sys/ioctl.h>
 #include <signal.h>
 #include <termios.h>
 #include <unistd.h>
 #include "gettext.h"
 
+#define ICONV_NONE reinterpret_cast<iconv_t>(-1)
+
 namespace CppConsUI
 {
-
-// based on glibmm code
-class SourceConnectionNode
-{
-  public:
-    explicit inline SourceConnectionNode(const sigc::slot_base& nslot);
-
-    static void *notify(void *data);
-    static void destroy_notify_callback(void *data);
-    static gboolean source_callback(void *data);
-
-    inline void install(GSource *nsource);
-    inline sigc::slot_base *get_slot();
-
-  protected:
-
-  private:
-    sigc::slot_base slot;
-    GSource *source;
-};
-
-inline SourceConnectionNode::SourceConnectionNode(
-    const sigc::slot_base& nslot)
-: slot(nslot)
-, source(0)
-{
-  slot.set_parent(this, &SourceConnectionNode::notify);
-}
-
-void *SourceConnectionNode::notify(void *data)
-{
-  SourceConnectionNode *self
-    = reinterpret_cast<SourceConnectionNode*>(data);
-
-  /* If there is no object, this call was triggered from
-   * destroy_notify_handler(), because we set self->source to 0 there. */
-  if (self->source) {
-    GSource *s = self->source;
-    self->source = 0;
-    g_source_destroy(s);
-
-    /* Destroying the object triggers execution of destroy_notify_handler(),
-     * eiter immediately or later, so we leave that to do the deletion. */
-  }
-
-  return 0;
-}
-
-void SourceConnectionNode::destroy_notify_callback(void *data)
-{
-  SourceConnectionNode *self = reinterpret_cast<SourceConnectionNode*>(data);
-
-  if (self) {
-    /* The GLib side is disconnected now, thus the GSource* is no longer
-     * valid. */
-    self->source = 0;
-
-    delete self;
-  }
-}
-
-gboolean SourceConnectionNode::source_callback(void *data)
-{
-  SourceConnectionNode *conn_data
-    = reinterpret_cast<SourceConnectionNode*>(data);
-
-  // recreate the specific slot from the generic slot node
-  return (*static_cast<sigc::slot<bool>*>(conn_data->get_slot()))();
-}
-
-inline void SourceConnectionNode::install(GSource *nsource)
-{
-  source = nsource;
-}
-
-inline sigc::slot_base *SourceConnectionNode::get_slot()
-{
-  return &slot;
-}
-
-int initializeConsUI()
-{
-  int res;
-
-  res = ColorScheme::init();
-  if (res)
-    return res;
-
-  res = KeyConfig::init();
-  if (res) {
-    // not good, destroy already initialized ColorScheme
-    ColorScheme::finalize();
-    return res;
-  }
-
-  // CoreManager depends on KeyConfig so it has to be initialized after it
-  res = CoreManager::init();
-  if (res) {
-    // not good, destroy already initialized KeyConfig and ColorScheme
-    KeyConfig::finalize();
-    ColorScheme::finalize();
-    return res;
-  }
-
-  return 0;
-}
-
-int finalizeConsUI()
-{
-  int max = 0;
-  int res;
-
-  res = CoreManager::finalize();
-  max = MAX(max, res);
-
-  res = KeyConfig::finalize();
-  max = MAX(max, res);
-
-  res = ColorScheme::finalize();
-  max = MAX(max, res);
-
-  return max;
-}
-
-CoreManager *CoreManager::my_instance = NULL;
-
-CoreManager *CoreManager::instance()
-{
-  return my_instance;
-}
-
-void CoreManager::startMainLoop()
-{
-  g_main_loop_run(gmainloop);
-}
-
-void CoreManager::quitMainLoop()
-{
-  g_main_loop_quit(gmainloop);
-}
 
 void CoreManager::addWindow(FreeWindow& window)
 {
@@ -201,7 +67,7 @@ void CoreManager::removeWindow(FreeWindow& window)
     if (*i == &window)
       break;
 
-  g_assert(i != windows.end());
+  assert(i != windows.end());
 
   windows.erase(i);
 
@@ -253,64 +119,54 @@ void CoreManager::onScreenResized()
   }
 }
 
+void CoreManager::logError(const char *message)
+{
+  interface.logError(message);
+}
+
 void CoreManager::redraw()
 {
-  if (!redraw_pending) {
-    redraw_pending = true;
-    timeoutOnceConnect(sigc::mem_fun(this, &CoreManager::draw), 0);
-  }
-}
+  if (redraw_pending)
+    return;
 
-sigc::connection CoreManager::timeoutConnect(const sigc::slot<bool>& slot,
-    unsigned interval, int priority)
-{
-  SourceConnectionNode *conn_node = new SourceConnectionNode(slot);
-  sigc::connection connection(*conn_node->get_slot());
-
-  GSource *source = g_timeout_source_new(interval);
-
-  if (priority != G_PRIORITY_DEFAULT)
-    g_source_set_priority(source, priority);
-
-  g_source_set_callback(source, &SourceConnectionNode::source_callback,
-      conn_node, &SourceConnectionNode::destroy_notify_callback);
-
-  g_source_attach(source, NULL);
-  g_source_unref(source); // GMainContext holds a reference
-
-  conn_node->install(source);
-  return connection;
-}
-
-sigc::connection CoreManager::timeoutOnceConnect(const sigc::slot<void>& slot,
-    unsigned interval, int priority)
-{
-  return timeoutConnect(sigc::bind_return(slot, FALSE), interval, priority);
+  redraw_pending = true;
+  interface.timeoutAdd(0, CoreManager::draw_, this);
 }
 
 CoreManager::CoreManager()
-: top_input_processor(NULL), io_input_channel(NULL), io_input_channel_id(0)
-, resize_channel(NULL), resize_channel_id(0), pipe_valid(false), tk(NULL)
-, utf8(false), gmainloop(NULL), redraw_pending(false), resize_pending(false)
+: top_input_processor(NULL), stdin_input_timeout_handle(0)
+, stdin_input_handle(0), resize_input_handle(0), pipe_valid(false)
+, tk(NULL), iconv_desc(ICONV_NONE), redraw_pending(false)
+, resize_pending(false)
 {
-  initInput();
-
-  /**
-   * @todo Check the return value. Throw an exception if we can't init curses.
-   */
-  Curses::init_screen();
-
-  // create the main loop
-  gmainloop = g_main_loop_new(NULL, FALSE);
-
   declareBindables();
 }
 
-CoreManager::~CoreManager()
+int CoreManager::init(AppInterface& set_interface)
 {
-  // destroy the main loop
-  g_main_loop_unref(gmainloop);
+  // validate the passed interface
+  assert(set_interface.timeoutAdd);
+  assert(set_interface.timeoutRemove);
+  assert(set_interface.inputAdd);
+  assert(set_interface.inputRemove);
+  assert(set_interface.logError);
 
+  interface = set_interface;
+
+  int res;
+  if ((res = initInput()))
+    return res;
+
+  if ((res = Curses::init_screen())) {
+    finalizeInput();
+    return res;
+  }
+
+  return 0;
+}
+
+int CoreManager::finalize()
+{
   finalizeInput();
 
   /* Close all windows, work with a copy of the windows vector because the
@@ -328,26 +184,15 @@ CoreManager::~CoreManager()
       i++)
     delete *i;
 
+  // clear the screen
   Curses::clear();
   Curses::noutrefresh();
   Curses::doupdate();
-  Curses::finalize_screen();
-}
 
-int CoreManager::init()
-{
-  g_assert(!my_instance);
+  int res;
+  if ((res = Curses::finalize_screen()))
+    return res;
 
-  my_instance = new CoreManager;
-  return 0;
-}
-
-int CoreManager::finalize()
-{
-  g_assert(my_instance);
-
-  delete my_instance;
-  my_instance = NULL;
   return 0;
 }
 
@@ -359,56 +204,67 @@ bool CoreManager::processInput(const TermKeyKey& key)
   return InputProcessor::processInput(key);
 }
 
-gboolean CoreManager::io_input_error(GIOChannel * /*source*/,
-    GIOCondition /*cond*/)
+void CoreManager::stdin_input(int /*fd*/, InputCondition /*cond*/)
 {
-  // log a critical warning and bail out if we lost stdin
-  g_critical("Stdin lost!");
-  exit(1);
-
-  return TRUE;
-}
-
-gboolean CoreManager::io_input(GIOChannel * /*source*/, GIOCondition /*cond*/)
-{
-  if (io_input_timeout_conn.connected())
-    io_input_timeout_conn.disconnect();
+  if (stdin_input_timeout_handle) {
+    interface.timeoutRemove(stdin_input_timeout_handle);
+    stdin_input_timeout_handle = 0;
+  }
 
   termkey_advisereadable(tk);
 
   TermKeyKey key;
   TermKeyResult ret;
   while ((ret = termkey_getkey(tk, &key)) == TERMKEY_RES_KEY) {
-    if (key.type == TERMKEY_TYPE_UNICODE && !utf8) {
-      gsize bwritten;
-      GError *err = NULL;
-      char *utf8;
+    if (key.type == TERMKEY_TYPE_UNICODE && iconv_desc != ICONV_NONE) {
+      size_t inbytesleft, outbytesleft;
+      char *inbuf, *outbuf;
+      size_t res;
+      char utf8[sizeof(key.utf8) - 1];
 
       // convert data from user charset to UTF-8
-      if (!(utf8 = g_locale_to_utf8(key.utf8, -1, NULL, &bwritten, &err))) {
-        g_warning(_("Error converting input to UTF-8 (%s)."), err->message);
-        g_clear_error(&err);
+      inbuf = key.utf8;
+      inbytesleft = strlen(key.utf8);
+      outbuf = utf8;
+      outbytesleft = sizeof(utf8);
+      res = iconv(iconv_desc, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+      if (res != static_cast<size_t>(-1) && inbytesleft != 0) {
+        // no error occured but not all bytes has been converted
+        errno = EINVAL;
+        res = static_cast<size_t>(-1);
+      }
+      if (res == static_cast<size_t>(-1)) {
+        char text[256];
+        snprintf(text, sizeof(text),
+            _("Error converting input to UTF-8 (%s)."), std::strerror(errno));
+        logError(text);
         continue;
       }
 
-      memcpy(key.utf8, utf8, bwritten + 1);
-      g_free(utf8);
+      size_t outbytes = sizeof(utf8) - outbytesleft;
+      std::memcpy(key.utf8, utf8, outbytes);
+      key.utf8[outbytes] = '\0';
 
-      key.code.codepoint = g_utf8_get_char(key.utf8);
+      key.code.codepoint = UTF8::getUniChar(key.utf8);
     }
 
     processInput(key);
   }
   if (ret == TERMKEY_RES_AGAIN) {
     int wait = termkey_get_waittime(tk);
-    io_input_timeout_conn = timeoutOnceConnect(sigc::mem_fun(this,
-          &CoreManager::io_input_timeout), wait);
+    stdin_input_timeout_handle = interface.timeoutAdd(wait,
+        CoreManager::stdin_input_timeout_, this);
   }
-
-  return TRUE;
 }
 
-void CoreManager::io_input_timeout()
+bool CoreManager::stdin_input_timeout_(void *data)
+{
+  CoreManager *instance = static_cast<CoreManager*>(data);
+  instance->stdin_input_timeout();
+  return false;
+}
+
+void CoreManager::stdin_input_timeout()
 {
   TermKeyKey key;
   if (termkey_getkey_force(tk, &key) == TERMKEY_RES_KEY) {
@@ -418,91 +274,90 @@ void CoreManager::io_input_timeout()
   }
 }
 
-gboolean CoreManager::resize_input(GIOChannel *source, GIOCondition /*cond*/)
+void CoreManager::resize_input(int fd, InputCondition /*cond*/)
 {
+  // stay sane
+  assert(fd == pipefd[0]);
+
   char buf[1024];
-  gsize bytes_read;
-  GError *err = NULL;
-  g_io_channel_read_chars(source, buf, sizeof(buf), &bytes_read, &err);
-  if (err)
-    g_clear_error(&err);
+  read(fd, buf, sizeof(buf));
 
   if (resize_pending)
     resize();
-
-  return TRUE;
 }
 
-void CoreManager::initInput()
+int CoreManager::initInput()
 {
   // init libtermkey
-  TERMKEY_CHECK_VERSION;
   if (!(tk = termkey_new(STDIN_FILENO, TERMKEY_FLAG_NOTERMIOS))) {
-    g_critical(_("Libtermkey initialization failed."));
-    exit(1);
+    logError("Libtermkey initialization failed.");
+    return 1;
   }
   termkey_set_canonflags(tk, TERMKEY_CANON_DELBS);
-  utf8 = g_get_charset(NULL);
 
-  io_input_channel = g_io_channel_unix_new(STDIN_FILENO);
-  // set channel encoding to NULL so it can be unbuffered
-  g_io_channel_set_encoding(io_input_channel, NULL, NULL);
-  g_io_channel_set_buffered(io_input_channel, FALSE);
-  g_io_channel_set_close_on_unref(io_input_channel, TRUE);
+  const char *codeset = nl_langinfo(CODESET);
+  if (std::strcmp(codeset, "UTF-8")) {
+    // if the codeset differs from UTF-8, setup iconv for conversion
+    iconv_desc = iconv_open("UTF-8", codeset);
+    if (iconv_desc == ICONV_NONE) {
+      logError("Libtermkey initialization failed.");
 
-  io_input_channel_id = g_io_add_watch_full(io_input_channel, G_PRIORITY_HIGH,
-      static_cast<GIOCondition>(G_IO_IN | G_IO_HUP | G_IO_ERR | G_IO_PRI),
-      io_input_, this, NULL);
-  g_io_add_watch_full(io_input_channel, G_PRIORITY_HIGH, G_IO_NVAL,
-      io_input_error_, this, NULL);
-  g_io_channel_unref(io_input_channel);
+      // destroy already initialized termkey
+      termkey_destroy(tk);
+      tk = NULL;
+
+      return 1;
+    }
+  }
+
+  stdin_input_handle = interface.inputAdd(STDIN_FILENO, INPUT_CONDITION_READ,
+      CoreManager::stdin_input_, this);
 
   // screen resizing
   if (!pipe(pipefd)) {
     pipe_valid = true;
-    resize_channel = g_io_channel_unix_new(pipefd[0]);
-    g_io_channel_set_encoding(resize_channel, NULL, NULL);
-    g_io_channel_set_buffered(resize_channel, FALSE);
-    g_io_channel_set_close_on_unref(resize_channel, TRUE);
-
-    resize_channel_id = g_io_add_watch_full(resize_channel, G_PRIORITY_HIGH,
-        G_IO_IN, resize_input_, this, NULL);
+    resize_input_handle = interface.inputAdd(pipefd[0], INPUT_CONDITION_READ,
+        CoreManager::resize_input_, this);
   }
+
+  return 0;
 }
 
 void CoreManager::finalizeInput()
 {
-  termkey_destroy(tk);
-  tk = NULL;
-
-  g_source_remove(io_input_channel_id);
-  io_input_channel_id = 0;
-  g_io_channel_unref(io_input_channel);
-  io_input_channel = NULL;
-
   if (pipe_valid) {
-    g_source_remove(resize_channel_id);
-    resize_channel_id = 0;
-    g_io_channel_unref(resize_channel);
-    resize_channel = NULL;
+    interface.inputRemove(resize_input_handle);
+    resize_input_handle = 0;
+
     close(pipefd[0]);
     close(pipefd[1]);
   }
+
+  interface.inputRemove(stdin_input_handle);
+  stdin_input_handle = 0;
+
+  if (iconv_desc != ICONV_NONE) {
+    iconv_close(iconv_desc);
+    iconv_desc = ICONV_NONE;
+  }
+
+  termkey_destroy(tk);
+  tk = NULL;
 }
 
 void CoreManager::signalHandler(int signum)
 {
-  if (signum == SIGWINCH)
-    COREMANAGER->onScreenResized();
+  assert(signum == SIGWINCH);
+
+  COREMANAGER->onScreenResized();
 }
 
 void CoreManager::resize()
 {
-  struct winsize size;
-
   resize_pending = false;
 
-  if (ioctl(fileno(stdout), TIOCGWINSZ, &size) >= 0) {
+  struct winsize size;
+  if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &size) >= 0) {
     Curses::resizeterm(size.ws_row, size.ws_col);
 
     // make sure everything is redrawn from the scratch
@@ -511,6 +366,13 @@ void CoreManager::resize()
 
   signal_resize();
   redraw();
+}
+
+bool CoreManager::draw_(void *data)
+{
+  CoreManager *instance = static_cast<CoreManager*>(data);
+  instance->draw();
+  return false;
 }
 
 void CoreManager::draw()

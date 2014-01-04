@@ -45,17 +45,17 @@ TermKeyKey refineKey(const TermKeyKey& k)
   if (res.code.sym == TERMKEY_SYM_TAB) {
     res.type = TERMKEY_TYPE_UNICODE;
     strcpy(res.utf8, "\t");
-    res.code.codepoint = g_utf8_get_char(res.utf8);
+    res.code.codepoint = UTF8::getUniChar(res.utf8);
   }
   else if (res.code.sym == TERMKEY_SYM_ENTER) {
     res.type = TERMKEY_TYPE_UNICODE;
     strcpy(res.utf8, "\n");
-    res.code.codepoint = g_utf8_get_char(res.utf8);
+    res.code.codepoint = UTF8::getUniChar(res.utf8);
   }
   else if (res.code.sym == TERMKEY_SYM_SPACE) {
     res.type = TERMKEY_TYPE_UNICODE;
     strcpy(res.utf8, " ");
-    res.code.codepoint = g_utf8_get_char(res.utf8);
+    res.code.codepoint = UTF8::getUniChar(res.utf8);
   }
   return res;
 }

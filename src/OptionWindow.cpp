@@ -125,11 +125,6 @@ do {                                       \
   ADD_DEBUG_OPTIONS();
   treeview->appendNode(parent, *c);
 
-  c = new ChoiceOption(_("CppConsUI log level"),
-      CONF_PREFIX "/log/log_level_cppconsui");
-  ADD_DEBUG_OPTIONS();
-  treeview->appendNode(parent, *c);
-
   c = new ChoiceOption(_("Purple log level"),
       CONF_PREFIX "/log/log_level_purple");
   ADD_DEBUG_OPTIONS();

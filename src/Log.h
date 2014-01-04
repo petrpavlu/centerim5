@@ -27,11 +27,11 @@
 #include <cppconsui/TextView.h>
 #include <cppconsui/Window.h>
 #include <libpurple/purple.h>
+#include <string>
 
 #define LOG (Log::instance())
 
 class Log
-: public CppConsUI::Window
 {
 public:
   // levels are 1:1 mapped to glib levels
@@ -46,9 +46,6 @@ public:
   };
 
   static Log *instance();
-
-  // FreeWindow
-  virtual void onScreenResized();
 
   void error(const char *fmt, ...) _attribute((format(printf, 2, 3)));
   void critical(const char *fmt, ...) _attribute((format(printf, 2, 3)));
@@ -66,11 +63,47 @@ private:
     TYPE_PURPLE
   };
 
-  PurpleDebugUiOps centerim_debug_ui_ops;
+  class LogWindow
+  : public CppConsUI::Window
+  {
+  public:
+    LogWindow();
 
-  GIOChannel *logfile;
+    // FreeWindow
+    virtual void onScreenResized();
 
-  CppConsUI::TextView *textview;
+    void append(const char *text);
+
+  protected:
+    CppConsUI::TextView *textview;
+
+  private:
+    LogWindow(const LogWindow&);
+    LogWindow& operator=(const LogWindow&);
+  };
+
+  class LogBufferItem
+  {
+  public:
+    LogBufferItem(Type type_, Level level_, const char *text_);
+    ~LogBufferItem();
+
+    Type getType() const { return type; }
+    Level getLevel() const { return level; }
+    const char *getText() const { return text; }
+
+  protected:
+    Type type;
+    Level level;
+    char *text;
+
+  private:
+    LogBufferItem(const LogBufferItem&);
+    LogBufferItem& operator=(const LogBufferItem&);
+  };
+
+  typedef std::vector<LogBufferItem*> LogBufferItems;
+  LogBufferItems log_items;
 
   guint default_handler;
   guint glib_handler;
@@ -81,6 +114,14 @@ private:
 
   static Log *my_instance;
 
+  LogWindow *log_window;
+  bool phase2_active;
+  GIOChannel *logfile;
+
+  Level log_level_cim;
+  Level log_level_glib;
+  Level log_level_purple;
+
   Log();
   Log(const Log&);
   Log& operator=(const Log&);
@@ -88,18 +129,14 @@ private:
 
   static void init();
   static void finalize();
+  void initPhase2();
+  void finalizePhase2();
   friend class CenterIM;
 
   // to catch libpurple's debug messages
-  static void purple_print_(PurpleDebugLevel level, const char *category,
-      const char *arg_s)
-    { LOG->purple_print(level, category, arg_s); }
-  static gboolean is_enabled_(PurpleDebugLevel level, const char *category)
-    { return LOG->is_enabled(level, category); }
-
   void purple_print(PurpleDebugLevel level, const char *category,
       const char *arg_s);
-  gboolean is_enabled(PurpleDebugLevel level, const char *category);
+  gboolean purple_is_enabled(PurpleDebugLevel level, const char *category);
 
   // to catch default messages
   static void default_log_handler_(const char *domain, GLogLevelFlags flags,
@@ -117,28 +154,22 @@ private:
   void glib_log_handler(const char *domain, GLogLevelFlags flags,
       const char *msg);
 
-  // to catch cppconsui messages
-  static void cppconsui_log_handler_(const char *domain,
-      GLogLevelFlags flags, const char *msg, gpointer user_data)
-    { reinterpret_cast<Log*>(user_data)->cppconsui_log_handler(domain, flags,
-        msg); }
-  void cppconsui_log_handler(const char *domain, GLogLevelFlags flags,
-      const char *msg);
-
-  // called when log/debug pref is changed
-  static void debug_change_(const char *name, PurplePrefType type,
+  // called when a log pref is changed
+  static void log_pref_change_(const char *name, PurplePrefType type,
       gconstpointer val, gpointer data)
-    { reinterpret_cast<Log*>(data)->debug_change(name, type, val); }
-  void debug_change(const char *name, PurplePrefType type,
+    { reinterpret_cast<Log*>(data)->log_pref_change(name, type, val); }
+  void log_pref_change(const char *name, PurplePrefType type,
       gconstpointer val);
 
-  void shortenWindowText();
-  void write(const char *text);
+  void updateCachedPreference(const char *name);
+  void write(Type type, Level level, const char *text);
   void writeErrorToWindow(const char *fmt, ...);
   void writeToFile(const char *text);
+  void outputBufferMessages();
   Level convertPurpleDebugLevel(PurpleDebugLevel purplelevel);
-  Level convertGlibDebugLevel(GLogLevelFlags gliblevel);
-  Level getLogLevel(const char *type);
+  Level convertGLibDebugLevel(GLogLevelFlags gliblevel);
+  Level stringToLevel(const char *slevel);
+  Level getLogLevel(Type type);
 };
 
 #endif // __LOG_H__

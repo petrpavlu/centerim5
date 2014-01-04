@@ -28,23 +28,19 @@
 
 #include "ColorScheme.h"
 
+#include "CoreManager.h"
+
+#include <cassert>
 #include "gettext.h"
 
 namespace CppConsUI
 {
 
-ColorScheme *ColorScheme::my_instance = NULL;
-
-ColorScheme *ColorScheme::instance()
-{
-  return my_instance;
-}
-
 int ColorScheme::getColorPair(const char *scheme, const char *widget,
     const char *property)
 {
-  g_assert(widget);
-  g_assert(property);
+  assert(widget);
+  assert(property);
 
   Schemes::const_iterator i;
   Widgets::const_iterator j;
@@ -89,14 +85,14 @@ int ColorScheme::getColorPair(const Color& c)
   /* No existing pair we can use. Check if we can add a new one to the
    * palette. */
   if (static_cast<int>(pairs.size()) >= Curses::nrcolorpairs()) {
-    g_warning(_("Color pairs limit exceeded."));
+    COREMANAGER->logError(_("Color pairs limit exceeded."));
     return 0;
   }
 
   // add a new colorpair to the palette
   int res;
   if (!Curses::init_colorpair(pairs.size() + 1, fg, bg, &res)) {
-    g_warning(_("Adding color pair failed."));
+    COREMANAGER->logError(_("Adding color pair failed."));
     return 0;
   }
   pairs[std::make_pair(fg, bg)] = res;
@@ -107,8 +103,8 @@ bool ColorScheme::setColorPair(const char *scheme, const char *widget,
     const char *property, int foreground, int background, int attrs,
     bool overwrite)
 {
-  g_assert(widget);
-  g_assert(property);
+  assert(widget);
+  assert(property);
 
   Schemes::const_iterator i;
   Widgets::const_iterator j;
@@ -124,7 +120,7 @@ bool ColorScheme::setColorPair(const char *scheme, const char *widget,
 
 void ColorScheme::freeScheme(const char *scheme)
 {
-  g_assert(scheme);
+  assert(scheme);
 
   Schemes::const_iterator i = schemes.find(scheme);
 
@@ -138,23 +134,6 @@ void ColorScheme::clear()
 {
   schemes.clear();
   pairs.clear();
-}
-
-int ColorScheme::init()
-{
-  g_assert(!my_instance);
-
-  my_instance = new ColorScheme;
-  return 0;
-}
-
-int ColorScheme::finalize()
-{
-  g_assert(my_instance);
-
-  delete my_instance;
-  my_instance = NULL;
-  return 0;
 }
 
 } // namespace CppConsUI

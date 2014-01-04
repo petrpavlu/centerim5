@@ -234,6 +234,7 @@ protected:
 
   virtual void moveWidgetInternal(Widget& widget, Widget& position, bool after);
 
+  friend class Widget;
   virtual void onChildMoveResize(Widget& activator, const Rect& oldsize,
       const Rect& newsize);
   virtual void onChildWishSizeChange(Widget& activator, const Size& oldsize,

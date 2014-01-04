@@ -14,6 +14,7 @@ set(cppconsui_SOURCES
   Container.cpp
   ComboBox.cpp
   CoreManager.cpp
+  CppConsUI.cpp
   Dialog.cpp
   FreeWindow.cpp
   HorizontalLine.cpp
@@ -92,7 +93,6 @@ set_target_properties(cppconsui
 
 target_link_libraries(cppconsui
   ${CURSES_LIBRARIES}
-  ${GLIB2_LIBRARIES}
   ${SIGC_LIBRARIES})
 
 install(TARGETS cppconsui DESTINATION lib)

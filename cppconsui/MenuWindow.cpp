@@ -28,6 +28,9 @@
 
 #include "MenuWindow.h"
 
+#include <algorithm>
+#include <cassert>
+
 namespace CppConsUI
 {
 
@@ -73,7 +76,7 @@ void MenuWindow::draw()
 void MenuWindow::show()
 {
   if (ref) {
-    g_assert(!ref_visible_conn.connected());
+    assert(!ref_visible_conn.connected());
 
     ref_visible_conn = ref->signal_visible.connect(sigc::mem_fun(this,
           &MenuWindow::onRefWidgetVisible));
@@ -224,7 +227,7 @@ void MenuWindow::updateSmartPositionAndSize()
     int h = listbox->getChildrenHeight() + 2;
     int max = Curses::getmaxy() - win_y;
     if (h > max)
-      setWishHeight(MAX(max, 3));
+      setWishHeight(std::max(max, 3));
     else
       setWishHeight(h);
   }
@@ -286,7 +289,7 @@ void MenuWindow::onRefWidgetVisible(Widget& /*activator*/, bool visible)
 void MenuWindow::onRefWidgetDestroy()
 {
   // ref widget is about to die right now, this window should be destroyed too
-  g_assert(ref);
+  assert(ref);
   ref = NULL;
   delete this;
 }

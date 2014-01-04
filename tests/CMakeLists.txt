@@ -1,4 +1,4 @@
-add_executable(button EXCLUDE_FROM_ALL button.cpp)
+add_executable(button EXCLUDE_FROM_ALL button.cpp MainLoop.cpp)
 
 target_link_libraries(button
   cppconsui
@@ -6,7 +6,7 @@ target_link_libraries(button
   ${SIGC_LIBRARIES})
 
 ##############################################################################
-add_executable(colorpicker EXCLUDE_FROM_ALL colorpicker.cpp) 
+add_executable(colorpicker EXCLUDE_FROM_ALL colorpicker.cpp MainLoop.cpp)
 
 target_link_libraries(colorpicker
   cppconsui
@@ -14,7 +14,7 @@ target_link_libraries(colorpicker
   ${SIGC_LIBRARIES})
 
 ##############################################################################
-add_executable(label EXCLUDE_FROM_ALL label.cpp)
+add_executable(label EXCLUDE_FROM_ALL label.cpp MainLoop.cpp)
 
 target_link_libraries(label
   cppconsui
@@ -22,7 +22,7 @@ target_link_libraries(label
   ${SIGC_LIBRARIES})
 
 ##############################################################################
-add_executable(scrollpane EXCLUDE_FROM_ALL scrollpane.cpp)
+add_executable(scrollpane EXCLUDE_FROM_ALL scrollpane.cpp MainLoop.cpp)
 
 target_link_libraries(scrollpane
   cppconsui
@@ -30,7 +30,7 @@ target_link_libraries(scrollpane
   ${SIGC_LIBRARIES})
 
 ##############################################################################
-add_executable(submenu EXCLUDE_FROM_ALL submenu.cpp)
+add_executable(submenu EXCLUDE_FROM_ALL submenu.cpp MainLoop.cpp)
 
 target_link_libraries(submenu
   cppconsui
@@ -38,7 +38,7 @@ target_link_libraries(submenu
   ${SIGC_LIBRARIES})
 
 ##############################################################################
-add_executable(textentry EXCLUDE_FROM_ALL textentry.cpp)
+add_executable(textentry EXCLUDE_FROM_ALL textentry.cpp MainLoop.cpp)
 
 target_link_libraries(textentry
   cppconsui
@@ -46,7 +46,7 @@ target_link_libraries(textentry
   ${SIGC_LIBRARIES})
 
 ##############################################################################
-add_executable(textview EXCLUDE_FROM_ALL textview.cpp)
+add_executable(textview EXCLUDE_FROM_ALL textview.cpp MainLoop.cpp)
 
 target_link_libraries(textview
   cppconsui
@@ -54,7 +54,7 @@ target_link_libraries(textview
   ${SIGC_LIBRARIES})
 
 ##############################################################################
-add_executable(treeview EXCLUDE_FROM_ALL treeview.cpp)
+add_executable(treeview EXCLUDE_FROM_ALL treeview.cpp MainLoop.cpp)
 
 target_link_libraries(treeview
   cppconsui
@@ -62,7 +62,7 @@ target_link_libraries(treeview
   ${SIGC_LIBRARIES})
 
 ##############################################################################
-add_executable(window EXCLUDE_FROM_ALL window.cpp)
+add_executable(window EXCLUDE_FROM_ALL window.cpp MainLoop.cpp)
 
 target_link_libraries(window
   cppconsui

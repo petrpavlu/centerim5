@@ -31,6 +31,9 @@
 #include "ColorScheme.h"
 #include "CoreManager.h"
 
+#include <cassert>
+#include <cstring>
+
 namespace CppConsUI
 {
 
@@ -46,7 +49,7 @@ Widget::~Widget()
   setVisibility(false);
 
   delete area;
-  g_free(color_scheme);
+  delete [] color_scheme;
 }
 
 void Widget::moveResize(int newx, int newy, int neww, int newh)
@@ -163,7 +166,7 @@ bool Widget::isVisibleRecursive() const
 void Widget::setParent(Container& parent)
 {
   // we don't support parent change
-  g_assert(!this->parent);
+  assert(!this->parent);
 
   this->parent = &parent;
 
@@ -261,9 +264,16 @@ int Widget::getWishHeight() const
 
 void Widget::setColorScheme(const char *new_color_scheme)
 {
-  g_free(color_scheme);
+  delete [] color_scheme;
 
-  color_scheme = g_strdup(new_color_scheme);
+  if (new_color_scheme) {
+    size_t size = std::strlen(new_color_scheme) + 1;
+    color_scheme = new char[size];
+    std::strcpy(color_scheme, new_color_scheme);
+  }
+  else
+    color_scheme = NULL;
+
   redraw();
 }
 
@@ -279,7 +289,7 @@ const char *Widget::getColorScheme() const
 
 void Widget::proceedUpdateArea()
 {
-  g_assert(parent);
+  assert(parent);
 
   if (!update_area)
     return;
@@ -304,11 +314,13 @@ void Widget::setWishSize(int neww, int newh)
   Size oldsize(wish_width, wish_height);
   Size newsize(neww, newh);
 
+  // the parent did not throw, the new wish size can be committed
   wish_width = neww;
   wish_height = newh;
 
   updateArea();
-  signal_wish_size_change(*this, oldsize, newsize);
+  if (parent)
+    parent->onChildWishSizeChange(*this, oldsize, newsize);
 }
 
 int Widget::getColorPair(const char *widget, const char *property) const

@@ -27,6 +27,7 @@
 
 #include "ColorPickerComboBox.h"
 
+#include <algorithm>
 #include "gettext.h"
 
 /* This is an invalid color number that is used for the "More..." button in
@@ -46,7 +47,7 @@ ColorPickerComboBox::ColorPickerComboBox(int w, int color)
 #endif // COLORPICKER_256COLOR
 {
   // add ANSI colors
-  int colors = MIN(Curses::NUM_DEFAULT_COLORS, Curses::nrcolors());
+  int colors = std::min(Curses::NUM_DEFAULT_COLORS, Curses::nrcolors());
   for (int i = 0; i < colors; i++)
     addOption(NULL, i);
 

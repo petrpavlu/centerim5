@@ -30,6 +30,7 @@ libcppconsui_la_SOURCES = \
 	ComboBox.h \
 	CoreManager.cpp \
 	CoreManager.h \
+	CppConsUI.cpp \
 	CppConsUI.h \
 	Dialog.cpp \
 	Dialog.h \
@@ -85,13 +86,11 @@ libcppconsui_la_SOURCES = \
 	libtermkey/termkey.h
 
 libcppconsui_la_CPPFLAGS = \
-	$(GLIB_CFLAGS) \
 	$(SIGC_CFLAGS) \
 	$(NCURSESW_CFLAGS) \
 	-I$(top_srcdir) \
 	-DG_LOG_DOMAIN=\"cppconsui\"
 
 libcppconsui_la_LIBADD = \
-	$(GLIB_LIBS) \
 	$(SIGC_LIBS) \
 	$(NCURSESW_LIBS)

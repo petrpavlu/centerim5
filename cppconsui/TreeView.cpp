@@ -21,6 +21,8 @@
 
 #include "TreeView.h"
 
+#include <cassert>
+
 namespace CppConsUI
 {
 
@@ -38,7 +40,7 @@ TreeView::ToggleCollapseButton::ToggleCollapseButton(const char *text_)
 void TreeView::ToggleCollapseButton::setParent(Container& parent)
 {
   TreeView *tree = dynamic_cast<TreeView*>(&parent);
-  g_assert(tree);
+  assert(tree);
 
   Button::setParent(parent);
   signal_activate.connect(sigc::hide(sigc::mem_fun(tree,
@@ -127,8 +129,8 @@ void TreeView::clear()
     deleteNode(++thetree.begin(), false);
 
   // stay sane
-  g_assert(children.empty());
-  g_assert(!getScrollHeight());
+  assert(children.empty());
+  assert(!getScrollHeight());
 }
 
 bool TreeView::isWidgetVisible(const Widget& child) const
@@ -226,7 +228,7 @@ Curses::Window *TreeView::getSubPad(const Widget& child, int begin_x,
 
 void TreeView::setCollapsed(NodeReference node, bool collapsed)
 {
-  g_assert(node->treeview == this);
+  assert(node->treeview == this);
 
   if (node->collapsed == collapsed)
     return;
@@ -238,7 +240,7 @@ void TreeView::setCollapsed(NodeReference node, bool collapsed)
 
 void TreeView::toggleCollapsed(NodeReference node)
 {
-  g_assert(node->treeview == this);
+  assert(node->treeview == this);
 
   node->collapsed = !node->collapsed;
   fixFocus();
@@ -253,7 +255,7 @@ void TreeView::actionToggleCollapsed()
 TreeView::NodeReference TreeView::insertNode(NodeReference position,
     Widget& widget)
 {
-  g_assert(position->treeview == this);
+  assert(position->treeview == this);
 
   TreeNode node = addNode(widget);
   NodeReference iter = thetree.insert(position, node);
@@ -264,7 +266,7 @@ TreeView::NodeReference TreeView::insertNode(NodeReference position,
 TreeView::NodeReference TreeView::insertNodeAfter(NodeReference position,
     Widget& widget)
 {
-  g_assert(position->treeview == this);
+  assert(position->treeview == this);
 
   TreeNode node = addNode(widget);
   NodeReference iter = thetree.insert_after(position, node);
@@ -275,7 +277,7 @@ TreeView::NodeReference TreeView::insertNodeAfter(NodeReference position,
 TreeView::NodeReference TreeView::prependNode(NodeReference parent,
     Widget& widget)
 {
-  g_assert(parent->treeview == this);
+  assert(parent->treeview == this);
 
   TreeNode node = addNode(widget);
   NodeReference iter = thetree.prepend_child(parent, node);
@@ -286,7 +288,7 @@ TreeView::NodeReference TreeView::prependNode(NodeReference parent,
 TreeView::NodeReference TreeView::appendNode(NodeReference parent,
     Widget& widget)
 {
-  g_assert(parent->treeview == this);
+  assert(parent->treeview == this);
 
   TreeNode node = addNode(widget);
   NodeReference iter = thetree.append_child(parent, node);
@@ -296,7 +298,7 @@ TreeView::NodeReference TreeView::appendNode(NodeReference parent,
 
 void TreeView::deleteNode(NodeReference node, bool keepchildren)
 {
-  g_assert(node->treeview == this);
+  assert(node->treeview == this);
 
   // if we want to keep child nodes we should flatten the tree
   if (keepchildren)
@@ -336,7 +338,7 @@ void TreeView::deleteNode(NodeReference node, bool keepchildren)
 
 void TreeView::deleteNodeChildren(NodeReference node, bool keepchildren)
 {
-  g_assert(node->treeview == this);
+  assert(node->treeview == this);
 
   SiblingIterator i;
   while ((i = node.begin()) != node.end())
@@ -350,15 +352,15 @@ TreeView::NodeReference TreeView::getSelectedNode() const
 
 int TreeView::getNodeDepth(NodeReference node) const
 {
-  g_assert(node->treeview == this);
+  assert(node->treeview == this);
 
   return thetree.depth(node);
 }
 
 void TreeView::moveNodeBefore(NodeReference node, NodeReference position)
 {
-  g_assert(node->treeview == this);
-  g_assert(position->treeview == this);
+  assert(node->treeview == this);
+  assert(position->treeview == this);
 
   if (thetree.previous_sibling(position) != node) {
     thetree.move_before(position, node);
@@ -369,8 +371,8 @@ void TreeView::moveNodeBefore(NodeReference node, NodeReference position)
 
 void TreeView::moveNodeAfter(NodeReference node, NodeReference position)
 {
-  g_assert(node->treeview == this);
-  g_assert(position->treeview == this);
+  assert(node->treeview == this);
+  assert(position->treeview == this);
 
   if (thetree.next_sibling(position) != node) {
     thetree.move_after(position, node);
@@ -381,8 +383,8 @@ void TreeView::moveNodeAfter(NodeReference node, NodeReference position)
 
 void TreeView::setNodeParent(NodeReference node, NodeReference newparent)
 {
-  g_assert(node->treeview == this);
-  g_assert(newparent->treeview == this);
+  assert(node->treeview == this);
+  assert(newparent->treeview == this);
 
   if (thetree.parent(node) != newparent) {
     thetree.move_ontop(thetree.append_child(newparent), node);
@@ -393,7 +395,7 @@ void TreeView::setNodeParent(NodeReference node, NodeReference newparent)
 
 void TreeView::setNodeStyle(NodeReference node, Style s)
 {
-  g_assert(node->treeview == this);
+  assert(node->treeview == this);
 
   if (node->style != s) {
     node->style = s;
@@ -403,7 +405,7 @@ void TreeView::setNodeStyle(NodeReference node, Style s)
 
 TreeView::Style TreeView::getNodeStyle(NodeReference node) const
 {
-  g_assert(node->treeview == this);
+  assert(node->treeview == this);
 
   return node->style;
 }
@@ -544,7 +546,7 @@ TreeView::NodeReference TreeView::findNode(const Widget& child) const
   for (i = thetree.begin(); i != thetree.end(); i++)
     if (i->widget == &child)
       break;
-  g_assert(i != thetree.end());
+  assert(i != thetree.end());
   return i;
 }
 

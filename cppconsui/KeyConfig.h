@@ -28,13 +28,12 @@
 #ifndef __KEYCONFIG_H__
 #define __KEYCONFIG_H__
 
+#include "CppConsUI.h" // for KEYCONFIG macro
 #include "Keys.h"
 
 #include "libtermkey/termkey.h"
 #include <map>
 #include <string>
-
-#define KEYCONFIG (CppConsUI::KeyConfig::instance())
 
 namespace CppConsUI
 {
@@ -74,11 +73,6 @@ public:
    * Maps context to key binds in that context, {context: KeyContext}.
    */
   typedef std::map<std::string, KeyBindContext> KeyBinds;
-
-  /**
-   * Returns the singleton class instance.
-   */
-  static KeyConfig *instance();
 
   /**
    * Binds a key to an action (in a given context).
@@ -129,16 +123,13 @@ private:
    */
   KeyBinds binds;
 
-  static KeyConfig *my_instance;
-
   KeyConfig() {}
-  KeyConfig(const KeyConfig&);
-  KeyConfig& operator=(const KeyConfig&);
+  int init() { return 0; }
   ~KeyConfig() {}
+  int finalize() { return 0; }
+  CONSUI_DISABLE_COPY(KeyConfig);
 
-  static int init();
-  static int finalize();
-  friend int initializeConsUI();
+  friend int initializeConsUI(AppInterface& interface);
   friend int finalizeConsUI();
 };
 

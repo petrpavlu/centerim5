@@ -40,10 +40,8 @@ class TextEdit
 {
 public:
   enum Flag {
-    FLAG_ALPHABETIC = 1 << 0,
-    FLAG_NUMERIC = 1 << 1,
-    FLAG_NOSPACE = 1 << 2,
-    FLAG_NOPUNCTUATION = 1 << 3
+    FLAG_NUMERIC = 1 << 0,
+    FLAG_NOSPACE = 1 << 1
   };
 
   TextEdit(int w, int h, const char *text_ = NULL, int flags_ = 0,
@@ -208,7 +206,7 @@ protected:
    * Curses::onscreen_width() does but handles the tab character and wide
    * characters properly if the masked mode is active.
    */
-  virtual int onScreenWidth(gunichar uc, int w = 0) const;
+  virtual int onScreenWidth(UTF8::UniChar uc, int w = 0) const;
 
   virtual char *getScreenLine(const char *text, int max_width,
       size_t *res_length) const;

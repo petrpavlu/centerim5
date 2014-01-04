@@ -28,6 +28,9 @@
 
 #include "Window.h"
 
+#include <algorithm>
+#include <cassert>
+
 namespace CppConsUI
 {
 
@@ -54,7 +57,7 @@ void Window::moveResize(int newx, int newy, int neww, int newh)
 Point Window::getAbsolutePosition(const Container& ref,
     const Widget& child) const
 {
-  g_assert(child.getParent() == this);
+  assert(child.getParent() == this);
 
   if (this == &ref) {
     if (&child == panel)
@@ -71,7 +74,7 @@ Point Window::getAbsolutePosition(const Container& ref,
 
 Point Window::getAbsolutePosition(const Widget& child) const
 {
-  g_assert(child.getParent() == this);
+  assert(child.getParent() == this);
 
   if (&child == panel)
     return Point(win_x, win_y);
@@ -129,7 +132,7 @@ void Window::resizeAndUpdateArea()
 
   panel->moveResize(0, 0, realw, realh);
 
-  Container::moveResize(1, 1, MAX(0, realw - 2), MAX(0, realh - 2));
+  Container::moveResize(1, 1, std::max(0, realw - 2), std::max(0, realh - 2));
   updateArea();
 }
 

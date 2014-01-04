@@ -29,6 +29,7 @@
 
 #include "Dialog.h"
 
+#include <cstring>
 #include "gettext.h"
 
 namespace CppConsUI
@@ -56,7 +57,7 @@ CheckBox::CheckBox(const char *text_, bool checked_)
 
 CheckBox::~CheckBox()
 {
-  g_free(text);
+  delete [] text;
 }
 
 void CheckBox::draw()
@@ -112,9 +113,16 @@ void CheckBox::draw()
 
 void CheckBox::setText(const char *new_text)
 {
-  g_free(text);
+  delete [] text;
 
-  text = g_strdup(new_text ? new_text : "");
+  size_t size = 1;
+  if (new_text)
+    size += std::strlen(new_text);
+  text = new char[size];
+  if (new_text)
+    std::strcpy(text, new_text);
+  else
+    text[0] = '\0';
 
   // update text_width, text_height and wish height
   text_width = 0;

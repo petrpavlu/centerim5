@@ -165,7 +165,7 @@ void Connections::report_disconnect_reason(PurpleConnection *gc,
   if (!purple_connection_error_is_fatal(reason)) {
     unsigned delay = g_random_int_range(RECONNECTION_DELAY_MIN,
         RECONNECTION_DELAY_MAX);
-    COREMANAGER->timeoutOnceConnect(sigc::bind(sigc::mem_fun(this,
+    CENTERIM->timeoutOnceConnect(sigc::bind(sigc::mem_fun(this,
             &Connections::reconnectAccount), account), delay);
     LOG->message(ngettext("+ [%s] %s: Auto-reconnection in %d second",
           "+ [%s] %s: Auto-reconnection in %d seconds", delay / 1000),

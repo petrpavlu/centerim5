@@ -20,28 +20,37 @@ LDADD = \
 	$(top_builddir)/cppconsui/libcppconsui.la
 
 button_SOURCES = \
-	button.cpp
+	button.cpp \
+	MainLoop.cpp
 
 colorpicker_SOURCES = \
-	colorpicker.cpp
+	colorpicker.cpp \
+	MainLoop.cpp
 
 label_SOURCES = \
-	label.cpp
+	label.cpp \
+	MainLoop.cpp
 
 scrollpane_SOURCES = \
-	scrollpane.cpp
+	scrollpane.cpp \
+	MainLoop.cpp
 
 submenu_SOURCES = \
-	submenu.cpp
+	submenu.cpp \
+	MainLoop.cpp
 
 textentry_SOURCES = \
-	textentry.cpp
+	textentry.cpp \
+	MainLoop.cpp
 
 textview_SOURCES = \
-	textview.cpp
+	textview.cpp \
+	MainLoop.cpp
 
 treeview_SOURCES = \
-	treeview.cpp
+	treeview.cpp \
+	MainLoop.cpp
 
 window_SOURCES = \
-	window.cpp
+	window.cpp \
+	MainLoop.cpp

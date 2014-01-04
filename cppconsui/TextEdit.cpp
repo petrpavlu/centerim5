@@ -33,7 +33,8 @@
 #include "TextEdit.h"
 
 #include <algorithm>
-#include <string.h>
+#include <cassert>
+#include <cstring>
 
 // gap expand size when the gap becomes filled
 #define GAP_SIZE_EXPAND 4096
@@ -55,7 +56,7 @@ TextEdit::TextEdit(int w, int h, const char *text_, int flags_,
 
 TextEdit::~TextEdit()
 {
-  g_free(buffer);
+  delete [] buffer;
 }
 
 bool TextEdit::processInputText(const TermKeyKey &key)
@@ -71,13 +72,9 @@ bool TextEdit::processInputText(const TermKeyKey &key)
 
   // filter out unwanted input
   if (flags) {
-    if ((flags & FLAG_ALPHABETIC) && !g_unichar_isalpha(key.code.codepoint))
+    if ((flags & FLAG_NUMERIC) && !UTF8::isUniCharDigit(key.code.codepoint))
       return false;
-    if ((flags & FLAG_NUMERIC) && !g_unichar_isdigit(key.code.codepoint))
-      return false;
-    if ((flags & FLAG_NOSPACE) && g_unichar_isspace(key.code.codepoint))
-      return false;
-    if ((flags & FLAG_NOPUNCTUATION) && g_unichar_ispunct(key.code.codepoint))
+    if ((flags & FLAG_NOSPACE) && UTF8::isUniCharSpace(key.code.codepoint))
       return false;
   }
 
@@ -116,7 +113,7 @@ void TextEdit::draw()
       if (masked)
         w += area->mvaddchar(w, j, '*');
       else {
-        gunichar uc = g_utf8_get_char(p);
+        UTF8::UniChar uc = UTF8::getUniChar(p);
         if (uc == '\t') {
           int t = onScreenWidth(uc, w);
           for (int l = 0; l < t; l++)
@@ -161,7 +158,7 @@ void TextEdit::clear()
 
 const char *TextEdit::getText() const
 {
-  g_assert(gapend > gapstart);
+  assert(gapend > gapstart);
 
   screen_lines_dirty = true;
 
@@ -169,7 +166,7 @@ const char *TextEdit::getText() const
   bool point_after_gap = point >= gapend;
 
   // '-1' so the last '\n' is still in the end of the buffer
-  g_memmove(gapstart, gapend, bufend - gapend - 1);
+  std::memmove(gapstart, gapend, bufend - gapend - 1);
   if (point_after_gap)
     point -= gapend - gapstart;
   gapstart += bufend - gapend - 1;
@@ -191,20 +188,12 @@ void TextEdit::setFlags(int new_flags, bool revalidate)
     bool valid = true;
     const char *p = getTextStart();
     while (p < bufend - 1) {
-      gunichar uc = g_utf8_get_char(p);
-      if ((flags & FLAG_ALPHABETIC) && !g_unichar_isalpha(uc)) {
+      UTF8::UniChar uc = UTF8::getUniChar(p);
+      if ((flags & FLAG_NUMERIC) && !UTF8::isUniCharDigit(uc)) {
         valid = false;
         break;
       }
-      if ((flags & FLAG_NUMERIC) && !g_unichar_isdigit(uc)) {
-        valid = false;
-        break;
-      }
-      if ((flags & FLAG_NOSPACE) && g_unichar_isspace(uc)) {
-        valid = false;
-        break;
-      }
-      if ((flags & FLAG_NOPUNCTUATION) && g_unichar_ispunct(uc)) {
+      if ((flags & FLAG_NOSPACE) && UTF8::isUniCharSpace(uc)) {
         valid = false;
         break;
       }
@@ -257,10 +246,10 @@ bool TextEdit::CmpScreenLineEnd::operator()(ScreenLine& sline,
 
 void TextEdit::initBuffer(size_t size)
 {
-  g_assert(size > 0);
+  assert(size > 0);
 
-  g_free(buffer);
-  buffer = g_new(char, size);
+  delete [] buffer;
+  buffer = new char[size];
 
   current_pos = 0;
   point = gapstart = buffer;
@@ -289,22 +278,27 @@ size_t TextEdit::getGapSize() const
 
 void TextEdit::expandGap(size_t size)
 {
-  if (size <= getGapSize())
+  size_t gap_size = getGapSize();
+  if (size <= gap_size)
     return;
 
-  size += GAP_SIZE_EXPAND;
+  size += GAP_SIZE_EXPAND - gap_size;
 
-  const char *origbuffer = buffer;
+  char *origbuffer = buffer;
   bool point_after_gap = point >= gapend;
 
-  buffer = g_renew(char, buffer, (bufend - buffer) + size);
+  size_t alloc_size = (bufend - buffer) + size;
+  buffer = new char[alloc_size];
+  std::memcpy(buffer, origbuffer, alloc_size);
 
-  point += buffer - origbuffer;
-  bufend += buffer - origbuffer;
-  gapstart += buffer - origbuffer;
-  gapend += buffer - origbuffer;
+  point = buffer + (point - origbuffer);
+  bufend = buffer + (bufend - origbuffer);
+  gapstart = buffer + (gapstart - origbuffer);
+  gapend = buffer + (gapend - origbuffer);
 
-  g_memmove(gapend + size, gapend, bufend - gapend);
+  delete [] origbuffer;
+
+  std::memmove(gapend + size, gapend, bufend - gapend);
 
   if (point_after_gap) {
     /* This should never happen because moveGapToCursor() is always called
@@ -328,14 +322,14 @@ void TextEdit::moveGapToCursor()
   // move gap towards the left
   if (point < gapstart) {
     // move the point over by gapsize
-    g_memmove(point + (gapend - gapstart), point, gapstart - point);
+    std::memmove(point + (gapend - gapstart), point, gapstart - point);
     gapend -= gapstart - point;
     gapstart = point;
   }
   else {
     /* Since point is after the gap, find distance between gapend and
      * point and that's how much we move from gapend to gapstart. */
-    g_memmove(gapstart, gapend, point - gapend);
+    std::memmove(gapstart, gapend, point - gapend);
     gapstart += point - gapend;
     gapend = point;
     point = gapstart;
@@ -352,13 +346,13 @@ char *TextEdit::getTextStart() const
 char *TextEdit::prevChar(const char *p) const
 {
   if (p >= gapend) {
-    if ((p = g_utf8_find_prev_char(gapend, p)))
+    if ((p = UTF8::findPrevChar(gapend, p)))
       return const_cast<char*>(p);
     else
       p = gapstart;
   }
 
-  if ((p = g_utf8_find_prev_char(buffer, p)))
+  if ((p = UTF8::findPrevChar(buffer, p)))
     return const_cast<char*>(p);
   else
     return const_cast<char*>(buffer);
@@ -371,13 +365,13 @@ char *TextEdit::nextChar(const char *p) const
     p = gapend;
 
   if (p < gapstart) {
-    if ((p = g_utf8_find_next_char(p, gapstart)))
+    if ((p = UTF8::findNextChar(p, gapstart)))
       return const_cast<char*>(p);
     else
       return const_cast<char*>(gapend);
   }
 
-  if ((p = g_utf8_find_next_char(p, bufend)))
+  if ((p = UTF8::findNextChar(p, bufend)))
     return const_cast<char*>(p);
   else
     return const_cast<char*>(bufend);
@@ -385,19 +379,19 @@ char *TextEdit::nextChar(const char *p) const
 
 int TextEdit::width(const char *start, size_t chars) const
 {
-  g_assert(start);
+  assert(start);
 
   int width = 0;
 
   while (chars--) {
-    gunichar uc = g_utf8_get_char(start);
+    UTF8::UniChar uc = UTF8::getUniChar(start);
     width += onScreenWidth(uc, width);
     start = nextChar(start);
   }
   return width;
 }
 
-int TextEdit::onScreenWidth(gunichar uc, int w) const
+int TextEdit::onScreenWidth(UTF8::UniChar uc, int w) const
 {
   if (masked)
     return 1;
@@ -407,10 +401,10 @@ int TextEdit::onScreenWidth(gunichar uc, int w) const
 char *TextEdit::getScreenLine(const char *text, int max_width,
     size_t *res_length) const
 {
-  g_assert(text);
-  g_assert(text < bufend);
-  g_assert(max_width > 0);
-  g_assert(res_length);
+  assert(text);
+  assert(text < bufend);
+  assert(max_width > 0);
+  assert(res_length);
 
   const char *cur = text;
   const char *res = text;
@@ -422,7 +416,7 @@ char *TextEdit::getScreenLine(const char *text, int max_width,
 
   while (cur < bufend) {
     prev_width = cur_width;
-    gunichar uc = g_utf8_get_char(cur);
+    UTF8::UniChar uc = UTF8::getUniChar(cur);
     cur_width += onScreenWidth(uc, cur_width);
     cur_length++;
 
@@ -441,7 +435,7 @@ char *TextEdit::getScreenLine(const char *text, int max_width,
       return nextChar(cur);
     }
 
-    if (g_unichar_isspace(uc))
+    if (UTF8::isUniCharSpace(uc))
       space = true;
     else if (space) {
       /* Found start of a word and everything before that can fit into
@@ -487,8 +481,8 @@ void TextEdit::updateScreenLines()
 
 void TextEdit::updateScreenLines(const char *begin, const char *end)
 {
-  g_assert(begin);
-  g_assert(end);
+  assert(begin);
+  assert(end);
 
   int realw;
   if (!area || (realw = area->getmaxx()) <= 1)
@@ -602,15 +596,15 @@ void TextEdit::updateScreenCursor()
 
 void TextEdit::insertTextAtCursor(const char *new_text, size_t new_text_bytes)
 {
-  g_assert(new_text);
+  assert(new_text);
 
   assertUpdatedScreenLines();
 
   // move the gap if the point isn't already at the start of the gap
-  const char *min = gapstart;
-  const char *max = gapend;
+  char *min = gapstart;
+  char *max = gapend;
   moveGapToCursor();
-  const char *min2 = gapstart;
+  char *min2 = gapstart;
 
   // check to make sure that the gap has room
   bool full_screen_lines_update = false;
@@ -619,7 +613,12 @@ void TextEdit::insertTextAtCursor(const char *new_text, size_t new_text_bytes)
     full_screen_lines_update = true;
   }
 
-  size_t n_chars = g_utf8_strlen(new_text, new_text_bytes);
+  size_t n_chars = 0;
+  const char *p = new_text;
+  while (p && *p) {
+    n_chars++;
+    p = UTF8::findNextChar(p, new_text + new_text_bytes);
+  }
   text_length += n_chars;
   current_pos += n_chars;
 
@@ -632,7 +631,7 @@ void TextEdit::insertTextAtCursor(const char *new_text, size_t new_text_bytes)
   if (full_screen_lines_update)
     updateScreenLines();
   else
-    updateScreenLines(MIN(min, min2), MAX(max, gapend));
+    updateScreenLines(std::min(min, min2), std::max(max, gapend));
   updateScreenCursor();
   redraw();
 
@@ -641,7 +640,7 @@ void TextEdit::insertTextAtCursor(const char *new_text, size_t new_text_bytes)
 
 void TextEdit::insertTextAtCursor(const char *new_text)
 {
-  g_assert(new_text);
+  assert(new_text);
 
   insertTextAtCursor(new_text, strlen(new_text));
 }
@@ -663,12 +662,12 @@ void TextEdit::deleteFromCursor(DeleteType type, Direction dir)
       count = moveWordFromCursor(dir, true) - current_pos;
       break;
     default:
-      g_assert_not_reached();
+      assert(0);
   }
 
   if (count) {
-    const char *min = gapstart;
-    const char *max = gapend;
+    char *min = gapstart;
+    char *max = gapend;
     moveGapToCursor();
 
     while (count > 0) {
@@ -685,7 +684,7 @@ void TextEdit::deleteFromCursor(DeleteType type, Direction dir)
     }
     point = gapstart;
 
-    updateScreenLines(MIN(min, gapstart), MAX(max, gapend));
+    updateScreenLines(std::min(min, gapstart), std::max(max, gapend));
     updateScreenCursor();
     redraw();
 
@@ -719,7 +718,7 @@ void TextEdit::moveCursor(CursorMovement step, Direction dir)
           int w = 0;
           while (w < oldw
               && i < screen_lines[current_sc_line + 1].length - 1) {
-            gunichar uc = g_utf8_get_char(ch);
+            UTF8::UniChar uc = UTF8::getUniChar(ch);
             w += onScreenWidth(uc, w);
             ch = nextChar(ch);
             i++;
@@ -741,7 +740,7 @@ void TextEdit::moveCursor(CursorMovement step, Direction dir)
           int w = 0;
           while (w < oldw
               && i < screen_lines[current_sc_line - 1].length - 1) {
-            gunichar uc = g_utf8_get_char(ch);
+            UTF8::UniChar uc = UTF8::getUniChar(ch);
             w += onScreenWidth(uc, w);
             ch = nextChar(ch);
             i++;
@@ -758,7 +757,7 @@ void TextEdit::moveCursor(CursorMovement step, Direction dir)
         current_pos -= current_sc_linepos;
       break;
     default:
-      g_assert_not_reached();
+      assert(0);
   }
 
   // update point
@@ -801,7 +800,7 @@ size_t TextEdit::moveWordFromCursor(Direction dir, bool word_end) const
       // search for the first white character after nonwhite characters
       bool nonwhite = false;
       while (new_pos < text_length) {
-        if (!g_unichar_isspace(g_utf8_get_char(cur)) && *cur != '\n')
+        if (!UTF8::isUniCharSpace(UTF8::getUniChar(cur)) && *cur != '\n')
           nonwhite = true;
         else if (nonwhite)
           break;
@@ -814,7 +813,7 @@ size_t TextEdit::moveWordFromCursor(Direction dir, bool word_end) const
       // search for the first nonwhite character after white characters
       bool white = false;
       while (new_pos < text_length) {
-        if (g_unichar_isspace(g_utf8_get_char(cur)) || *cur == '\n')
+        if (UTF8::isUniCharSpace(UTF8::getUniChar(cur)) || *cur == '\n')
           white = true;
         else if (white)
           break;
@@ -835,7 +834,7 @@ size_t TextEdit::moveWordFromCursor(Direction dir, bool word_end) const
     // search for the first white character before nonwhite characters
     bool nonwhite = false;
     while (new_pos != static_cast<size_t>(-1)) {
-      if (!g_unichar_isspace(g_utf8_get_char(cur)) && *cur != '\n')
+      if (!UTF8::isUniCharSpace(UTF8::getUniChar(cur)) && *cur != '\n')
         nonwhite = true;
       else if (nonwhite)
         break;

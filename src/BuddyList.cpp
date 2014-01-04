@@ -541,7 +541,7 @@ BuddyList::BuddyList()
   //centerim_blist_ui_ops.save_account = save_account_;
   purple_blist_set_ui_ops(&centerim_blist_ui_ops);
 
-  COREMANAGER->timeoutOnceConnect(sigc::mem_fun(this, &BuddyList::load), 0);
+  CENTERIM->timeoutOnceConnect(sigc::mem_fun(this, &BuddyList::load), 0);
 
   declareBindables();
 }

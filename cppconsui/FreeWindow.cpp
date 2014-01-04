@@ -29,6 +29,8 @@
 
 #include "CoreManager.h"
 
+#include <algorithm>
+
 namespace CppConsUI
 {
 
@@ -184,10 +186,10 @@ void FreeWindow::proceedUpdateArea()
   area = Curses::Window::newpad(realw, realh);
 
   // update real area
-  int left = MAX(0, win_x);
-  int top = MAX(0, win_y);
-  int right = MIN(win_x + realw, maxx);
-  int bottom = MIN(win_y + realh, maxy);
+  int left = std::max(0, win_x);
+  int top = std::max(0, win_y);
+  int right = std::min(win_x + realw, maxx);
+  int bottom = std::min(win_y + realh, maxy);
 
   copy_x = left - win_x;
   copy_y = top - win_y;
@@ -225,7 +227,7 @@ void FreeWindow::resizeAndUpdateArea()
     if (realh == AUTOSIZE)
       realh = Curses::getmaxy() - win_y;
   }
-  Container::moveResize(0, 0, MAX(0, realw), MAX(0, realh));
+  Container::moveResize(0, 0, std::max(0, realw), std::max(0, realh));
   updateArea();
 }
 

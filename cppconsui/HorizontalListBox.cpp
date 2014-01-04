@@ -28,6 +28,8 @@
 
 #include "HorizontalListBox.h"
 
+#include <algorithm>
+
 namespace CppConsUI
 {
 
@@ -201,7 +203,7 @@ void HorizontalListBox::updateScrollWidth()
   if (screen_area)
     realw = screen_area->getmaxx();
 
-  setScrollWidth(MAX(realw, children_width));
+  setScrollWidth(std::max(realw, children_width));
 }
 
 } // namespace CppConsUI

@@ -29,19 +29,15 @@
 #ifndef __COREMANAGER_H__
 #define __COREMANAGER_H__
 
+#include "CppConsUI.h" // for COREMANAGER macro
 #include "FreeWindow.h"
 
 #include "libtermkey/termkey.h"
-#include <glib.h>
+#include <iconv.h>
 #include <vector>
 
 namespace CppConsUI
 {
-
-int initializeConsUI();
-int finalizeConsUI();
-
-#define COREMANAGER (CppConsUI::CoreManager::instance())
 
 /**
  * This class implements a core part of CppConsUI.
@@ -50,17 +46,6 @@ class CoreManager
 : public InputProcessor
 {
 public:
-  static CoreManager *instance();
-
-  /**
-   * Sets itself as a standard input watcher and runs glib main loop.
-   */
-  void startMainLoop();
-  /**
-   * Quits glib main loop and stops watching the standard input.
-   */
-  void quitMainLoop();
-
   void addWindow(FreeWindow& window);
   void removeWindow(FreeWindow& window);
   bool hasWindow(const FreeWindow& window) const;
@@ -75,12 +60,8 @@ public:
   InputProcessor *getTopInputProcessor()
     { return top_input_processor; }
 
+  void logError(const char *message);
   void redraw();
-
-  sigc::connection timeoutConnect(const sigc::slot<bool>& slot,
-      unsigned interval, int priority = G_PRIORITY_DEFAULT);
-  sigc::connection timeoutOnceConnect(const sigc::slot<void>& slot,
-      unsigned interval, int priority = G_PRIORITY_DEFAULT);
 
   TermKey *getTermKeyHandle() { return tk; };
 
@@ -93,74 +74,55 @@ private:
   typedef std::vector<FreeWindow*> Windows;
 
   Windows windows;
-
+  AppInterface interface;
   InputProcessor *top_input_processor;
 
-  GIOChannel *io_input_channel;
-  guint io_input_channel_id;
-  sigc::connection io_input_timeout_conn;
-  GIOChannel *resize_channel;
-  guint resize_channel_id;
+  unsigned stdin_input_timeout_handle;
+  unsigned stdin_input_handle;
+  unsigned resize_input_handle;
   int pipefd[2];
   bool pipe_valid;
 
   TermKey *tk;
-  bool utf8;
-
-  GMainLoop *gmainloop;
+  iconv_t iconv_desc;
 
   bool redraw_pending;
   bool resize_pending;
 
-  static CoreManager *my_instance;
-
   CoreManager();
-  CoreManager(const CoreManager&);
-  CoreManager& operator=(const CoreManager&);
-  ~CoreManager();
+  int init(AppInterface& set_interface);
+  ~CoreManager() {}
+  int finalize();
+  CONSUI_DISABLE_COPY(CoreManager);
 
-  static int init();
-  static int finalize();
-  friend int initializeConsUI();
+  friend int initializeConsUI(AppInterface& interface);
   friend int finalizeConsUI();
 
   // InputProcessor
   virtual bool processInput(const TermKeyKey& key);
 
-  // glib IO callbacks
   /**
-   * Handles standard input IO errors (logs an error) and quits the
-   * application. This function is a glib main loop callback for the standard
-   * input watcher.
-   */
-  static gboolean io_input_error_(GIOChannel *source, GIOCondition cond,
-      gpointer data)
-    { return reinterpret_cast<CoreManager*>(data)->io_input_error(source,
-        cond); }
-  gboolean io_input_error(GIOChannel *source, GIOCondition cond);
-  /**
-   * Reads data from the standard input. The data are at first converted from
-   * user locales to an internal representation (UTF-8) and then processed by
+   * Reads data from the standard input. The data are first converted from
+   * user locales to the internal representation (UTF-8) and then processed by
    * InputProcessor.
    */
-  static gboolean io_input_(GIOChannel *source, GIOCondition cond,
-      gpointer data)
-    { return reinterpret_cast<CoreManager*>(data)->io_input(source, cond); }
-  gboolean io_input(GIOChannel *source, GIOCondition cond);
-  void io_input_timeout();
+  static void stdin_input_(int fd, InputCondition cond, void *data)
+    { static_cast<CoreManager*>(data)->stdin_input(fd, cond); }
+  void stdin_input(int fd, InputCondition cond);
+  static bool stdin_input_timeout_(void *data);
+  void stdin_input_timeout();
 
-  static gboolean resize_input_(GIOChannel *source, GIOCondition cond,
-      gpointer data)
-    { return reinterpret_cast<CoreManager*>(data)->resize_input(source,
-        cond); }
-  gboolean resize_input(GIOChannel *source, GIOCondition cond);
+  static void resize_input_(int fd, InputCondition cond, void *data)
+    { static_cast<CoreManager*>(data)->resize_input(fd, cond); }
+  void resize_input(int fd, InputCondition cond);
 
-  void initInput();
+  int initInput();
   void finalizeInput();
 
   static void signalHandler(int signum);
   void resize();
 
+  static bool draw_(void *data);
   void draw();
 
   Windows::iterator findWindow(FreeWindow& window);
