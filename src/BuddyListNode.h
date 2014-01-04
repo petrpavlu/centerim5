@@ -72,8 +72,7 @@ protected:
     void appendExtendedMenu();
 
   private:
-    ContextMenu(const ContextMenu&);
-    ContextMenu& operator=(const ContextMenu&);
+    CONSUI_DISABLE_COPY(ContextMenu);
   };
 
   CppConsUI::TreeView *treeview;
@@ -105,8 +104,7 @@ protected:
   void retrieveUserInfoForName(PurpleConnection *gc, const char *name) const;
 
 private:
-  BuddyListNode(BuddyListNode&);
-  BuddyListNode& operator=(BuddyListNode&);
+  CONSUI_DISABLE_COPY(BuddyListNode);
 
   void actionOpenContextMenu();
   void declareBindables();
@@ -148,8 +146,7 @@ protected:
     void onRemove(Button& activator);
 
   private:
-    BuddyContextMenu(const BuddyContextMenu&);
-    BuddyContextMenu& operator=(const BuddyContextMenu&);
+    CONSUI_DISABLE_COPY(BuddyContextMenu);
   };
 
   PurpleBuddy *buddy;
@@ -164,9 +161,8 @@ protected:
 
 private:
   BuddyListBuddy(PurpleBlistNode *node_);
-  BuddyListBuddy(const BuddyListBuddy&);
-  BuddyListBuddy& operator=(const BuddyListBuddy&);
   virtual ~BuddyListBuddy() {}
+  CONSUI_DISABLE_COPY(BuddyListBuddy);
 };
 
 class BuddyListChat
@@ -202,8 +198,7 @@ protected:
     void onRemove(Button& activator);
 
   private:
-    ChatContextMenu(const ChatContextMenu&);
-    ChatContextMenu& operator=(const ChatContextMenu&);
+    CONSUI_DISABLE_COPY(ChatContextMenu);
   };
 
   PurpleChat *chat;
@@ -213,9 +208,8 @@ protected:
 
 private:
   BuddyListChat(PurpleBlistNode *node_);
-  BuddyListChat(const BuddyListChat&);
-  BuddyListChat& operator=(const BuddyListChat&);
   virtual ~BuddyListChat() {}
+  CONSUI_DISABLE_COPY(BuddyListChat);
 };
 
 class BuddyListContact
@@ -262,8 +256,7 @@ protected:
     void onMoveTo(Button& activator, PurpleGroup *group);
 
   private:
-    ContactContextMenu(const ContactContextMenu&);
-    ContactContextMenu& operator=(const ContactContextMenu&);
+    CONSUI_DISABLE_COPY(ContactContextMenu);
   };
 
   PurpleContact *contact;
@@ -278,9 +271,8 @@ protected:
 
 private:
   BuddyListContact(PurpleBlistNode *node_);
-  BuddyListContact(const BuddyListContact&);
-  BuddyListContact& operator=(const BuddyListContact&);
   virtual ~BuddyListContact() {}
+  CONSUI_DISABLE_COPY(BuddyListContact);
 };
 
 class BuddyListGroup
@@ -321,8 +313,7 @@ protected:
     void onMoveAfter(Button& activator, PurpleGroup *group);
 
   private:
-    GroupContextMenu(const GroupContextMenu&);
-    GroupContextMenu& operator=(const GroupContextMenu&);
+    CONSUI_DISABLE_COPY(GroupContextMenu);
   };
 
   PurpleGroup *group;
@@ -332,9 +323,8 @@ protected:
 
 private:
   BuddyListGroup(PurpleBlistNode *node_);
-  BuddyListGroup(const BuddyListGroup&);
-  BuddyListGroup& operator=(const BuddyListGroup&);
   virtual ~BuddyListGroup() {}
+  CONSUI_DISABLE_COPY(BuddyListGroup);
 };
 
 #endif // _BUDDYLISTNODE_H__

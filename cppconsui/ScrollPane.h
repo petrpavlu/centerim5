@@ -72,15 +72,16 @@ public:
   /**
    * Returns a size of the scrollable area.
    */
-  virtual Size getScrollSize() { return Size(scroll_width, scroll_height); }
+  virtual Size getScrollSize() const
+    { return Size(scroll_width, scroll_height); }
   /**
    * Returns a width of the scrollable area.
    */
-  virtual int getScrollWidth() { return scroll_width; }
+  virtual int getScrollWidth() const { return scroll_width; }
   /**
    * Returns a height of the scrollable area.
    */
-  virtual int getScrollHeight() { return scroll_height; }
+  virtual int getScrollHeight() const { return scroll_height; }
 
   /**
    * Adjusts a visible area to a given position.
@@ -109,9 +110,6 @@ public:
    */
   virtual void makeVisible(int x, int y, int w, int h);
 
-  sigc::signal<void, ScrollPane&, const Point&> signal_scrollarea_scroll;
-  sigc::signal<void, ScrollPane&, const Size&> signal_scrollarea_resize;
-
 protected:
   int scroll_xpos, scroll_ypos, scroll_width, scroll_height;
   bool update_screen_area;
@@ -129,8 +127,7 @@ protected:
   virtual bool makePointVisible(int x, int y);
 
 private:
-  ScrollPane(const ScrollPane&);
-  ScrollPane& operator=(const ScrollPane&);
+  CONSUI_DISABLE_COPY(ScrollPane);
 };
 
 } // namespace CppConsUI

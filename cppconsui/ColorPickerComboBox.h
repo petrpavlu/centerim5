@@ -68,8 +68,7 @@ protected:
     int color;
 
   private:
-    ColorButton(const ColorButton&);
-    ColorButton& operator=(const ColorButton&);
+    CONSUI_DISABLE_COPY(ColorButton);
   };
 
   // ComboBox
@@ -100,8 +99,7 @@ protected:
 #endif // COLORPICKER_256COLOR
 
 private:
-  ColorPickerComboBox(const ColorPickerComboBox&);
-  ColorPickerComboBox& operator=(const ColorPickerComboBox&);
+  CONSUI_DISABLE_COPY(ColorPickerComboBox);
 };
 
 } // namespace CppConsUI

@@ -61,8 +61,7 @@ private:
         PurplePlugin *plugin);
 
   private:
-    AddPluginWindow(const AddPluginWindow&);
-    AddPluginWindow& operator=(const AddPluginWindow&);
+    CONSUI_DISABLE_COPY(AddPluginWindow);
   };
 
   class BoolOption
@@ -78,8 +77,7 @@ private:
     void onToggle(CppConsUI::CheckBox& activator, bool new_state);
 
   private:
-    BoolOption(const BoolOption&);
-    BoolOption& operator=(const BoolOption&);
+    CONSUI_DISABLE_COPY(BoolOption);
   };
 
   class StringOption
@@ -98,8 +96,7 @@ private:
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
-    StringOption(const StringOption&);
-    StringOption& operator=(const StringOption&);
+    CONSUI_DISABLE_COPY(StringOption);
   };
 
   class IntegerOption
@@ -118,8 +115,7 @@ private:
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
-    IntegerOption(const IntegerOption&);
-    IntegerOption& operator=(const IntegerOption&);
+    CONSUI_DISABLE_COPY(IntegerOption);
   };
 
   class PathOption
@@ -138,8 +134,7 @@ private:
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
-    PathOption(const PathOption&);
-    PathOption& operator=(const PathOption&);
+    CONSUI_DISABLE_COPY(PathOption);
   };
 
   struct PluginEntry
@@ -153,8 +148,7 @@ private:
   CppConsUI::TreeView *treeview;
   PluginEntries plugin_entries;
 
-  PluginWindow(const PluginWindow&);
-  PluginWindow& operator=(const PluginWindow&);
+  CONSUI_DISABLE_COPY(PluginWindow);
 
   void clearPlugin(PurplePlugin *plugin);
   void populatePlugin(PurplePlugin *plugin);

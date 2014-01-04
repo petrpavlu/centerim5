@@ -124,8 +124,7 @@ protected:
   virtual void resizeAndUpdateArea();
 
 private:
-  FreeWindow(const FreeWindow&);
-  FreeWindow& operator=(const FreeWindow&);
+  CONSUI_DISABLE_COPY(FreeWindow);
 
   // Widget
   // windows cannot have any parent

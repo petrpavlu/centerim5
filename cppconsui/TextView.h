@@ -164,8 +164,7 @@ protected:
       size_t *deleted = NULL);
 
 private:
-  TextView(const TextView &);
-  TextView& operator=(const TextView&);
+  CONSUI_DISABLE_COPY(TextView);
 
   void actionScroll(int direction);
 

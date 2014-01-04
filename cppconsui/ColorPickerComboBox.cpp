@@ -186,7 +186,7 @@ void ColorPickerComboBox::colorPickerOk(ColorPickerDialog& activator,
     return;
 
   // selected option didn't change
-  if (selected_color == new_color)
+  if (new_color == selected_color)
     return;
 
   setColor(new_color);

@@ -129,8 +129,7 @@ protected:
   virtual void onRefWidgetDestroy();
 
 private:
-  MenuWindow(const MenuWindow&);
-  MenuWindow& operator=(const MenuWindow&);
+  CONSUI_DISABLE_COPY(MenuWindow);
 };
 
 } // namespace CppConsUI

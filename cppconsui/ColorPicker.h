@@ -67,20 +67,18 @@ protected:
     ColorScheme::Color c;
 
   private:
-    Sample(const Sample&);
-    Sample& operator=(const Sample&);
+    CONSUI_DISABLE_COPY(Sample);
   };
-
-  virtual void onColorChanged(ComboBox& activator, int new_color);
 
   ColorPickerComboBox *fg_combo;
   ColorPickerComboBox *bg_combo;
   Label *label;
   Sample *sample;
 
+  virtual void onColorChanged(ComboBox& activator, int new_color);
+
 private:
-  ColorPicker(const ColorPicker&);
-  ColorPicker& operator=(const ColorPicker&);
+  CONSUI_DISABLE_COPY(ColorPicker);
 };
 
 } // namespace CppConsUI

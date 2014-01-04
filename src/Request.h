@@ -66,8 +66,7 @@ private:
         ResponseType response) = 0;
 
   private:
-    RequestDialog(const RequestDialog&);
-    RequestDialog& operator=(const RequestDialog&);
+    CONSUI_DISABLE_COPY(RequestDialog);
   };
 
   class InputTextDialog
@@ -89,8 +88,7 @@ private:
         ResponseType response);
 
   private:
-    InputTextDialog(const InputTextDialog&);
-    InputTextDialog& operator=(const InputTextDialog&);
+    CONSUI_DISABLE_COPY(InputTextDialog);
   };
 
   class ChoiceDialog
@@ -112,8 +110,7 @@ private:
         ResponseType response);
 
   private:
-    ChoiceDialog(const ChoiceDialog&);
-    ChoiceDialog& operator=(const ChoiceDialog&);
+    CONSUI_DISABLE_COPY(ChoiceDialog);
   };
 
   class ActionDialog
@@ -132,8 +129,7 @@ private:
         ResponseType response);
 
   private:
-    ActionDialog(const ActionDialog&);
-    ActionDialog& operator=(const ActionDialog&);
+    CONSUI_DISABLE_COPY(ActionDialog);
 
     void onActionChoice(CppConsUI::Button& activator, size_t i, GCallback cb);
   };
@@ -169,8 +165,7 @@ private:
           CppConsUI::AbstractDialog::ResponseType response);
 
     private:
-      StringField(const StringField&);
-      StringField& operator=(const StringField&);
+      CONSUI_DISABLE_COPY(StringField);
     };
 
     class IntegerField
@@ -188,8 +183,7 @@ private:
           CppConsUI::AbstractDialog::ResponseType response);
 
     private:
-      IntegerField(const IntegerField&);
-      IntegerField& operator=(const IntegerField&);
+      CONSUI_DISABLE_COPY(IntegerField);
     };
 
     class BooleanField
@@ -205,8 +199,7 @@ private:
       void onToggle(CppConsUI::CheckBox& activator, bool new_state);
 
     private:
-      BooleanField(const BooleanField&);
-      BooleanField& operator=(const BooleanField&);
+      CONSUI_DISABLE_COPY(BooleanField);
     };
 
     class ChoiceField
@@ -223,8 +216,7 @@ private:
           const char *title, intptr_t data);
 
     private:
-      ChoiceField(const ChoiceField&);
-      ChoiceField& operator=(const ChoiceField&);
+      CONSUI_DISABLE_COPY(ChoiceField);
     };
 
     class ListFieldMultiple
@@ -250,13 +242,11 @@ private:
         void onToggle(CppConsUI::CheckBox& activator, bool new_state);
 
       private:
-        ListFieldItem(const ListFieldItem&);
-        ListFieldItem& operator=(const ListFieldItem&);
+        CONSUI_DISABLE_COPY(ListFieldItem);
       };
 
     private:
-      ListFieldMultiple(const ListFieldMultiple&);
-      ListFieldMultiple& operator=(const ListFieldMultiple&);
+      CONSUI_DISABLE_COPY(ListFieldMultiple);
     };
 
     class ListFieldSingle
@@ -273,8 +263,7 @@ private:
           const char *title, intptr_t data);
 
     private:
-      ListFieldSingle(const ListFieldSingle&);
-      ListFieldSingle& operator=(const ListFieldSingle&);
+      CONSUI_DISABLE_COPY(ListFieldSingle);
     };
 
     class LabelField
@@ -288,8 +277,7 @@ private:
       PurpleRequestField *field;
 
     private:
-      LabelField(const LabelField&);
-      LabelField& operator=(const LabelField&);
+      CONSUI_DISABLE_COPY(LabelField);
     };
 
     class ImageField
@@ -305,8 +293,7 @@ private:
       void onActivate(CppConsUI::Button& activator);
 
     private:
-      ImageField(const ImageField&);
-      ImageField& operator=(const ImageField&);
+      CONSUI_DISABLE_COPY(ImageField);
     };
 
     class AccountField
@@ -323,16 +310,14 @@ private:
           const char *title, intptr_t data);
 
     private:
-      AccountField(const AccountField&);
-      AccountField& operator=(const AccountField&);
+      CONSUI_DISABLE_COPY(AccountField);
     };
 
     virtual void responseHandler(CppConsUI::SplitDialog& activator,
         ResponseType response);
 
   private:
-    FieldsDialog(const FieldsDialog&);
-    FieldsDialog& operator=(const FieldsDialog&);
+    CONSUI_DISABLE_COPY(FieldsDialog);
   };
 
   typedef std::set<RequestDialog*> Requests;
@@ -344,9 +329,8 @@ private:
   static Request *my_instance;
 
   Request();
-  Request(const Request&);
-  Request& operator=(const Request&);
   ~Request();
+  CONSUI_DISABLE_COPY(Request);
 
   static void init();
   static void finalize();

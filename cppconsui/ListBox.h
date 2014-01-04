@@ -78,8 +78,7 @@ protected:
   virtual void updateScrollHeight();
 
 private:
-  ListBox(const ListBox&);
-  ListBox& operator=(const ListBox&);
+  CONSUI_DISABLE_COPY(ListBox);
 };
 
 } // namespace CppConsUI

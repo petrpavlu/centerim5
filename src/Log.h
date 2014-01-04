@@ -78,8 +78,7 @@ private:
     CppConsUI::TextView *textview;
 
   private:
-    LogWindow(const LogWindow&);
-    LogWindow& operator=(const LogWindow&);
+    CONSUI_DISABLE_COPY(LogWindow);
   };
 
   class LogBufferItem
@@ -98,8 +97,7 @@ private:
     char *text;
 
   private:
-    LogBufferItem(const LogBufferItem&);
-    LogBufferItem& operator=(const LogBufferItem&);
+    CONSUI_DISABLE_COPY(LogBufferItem);
   };
 
   typedef std::vector<LogBufferItem*> LogBufferItems;
@@ -123,9 +121,8 @@ private:
   Level log_level_purple;
 
   Log();
-  Log(const Log&);
-  Log& operator=(const Log&);
   virtual ~Log();
+  CONSUI_DISABLE_COPY(Log);
 
   static void init();
   static void finalize();

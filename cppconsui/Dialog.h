@@ -52,8 +52,7 @@ protected:
   virtual void emitResponse(ResponseType response);
 
 private:
-  Dialog(const Dialog&);
-  Dialog& operator=(const Dialog&);
+  CONSUI_DISABLE_COPY(Dialog);
 };
 
 } // namespace CppConsUI

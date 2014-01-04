@@ -51,12 +51,10 @@ private:
         PurpleStatusType *status_type, bool active);
 
   private:
-    StatusPopup(const StatusPopup&);
-    StatusPopup& operator=(const StatusPopup&);
+    CONSUI_DISABLE_COPY(StatusPopup);
   };
 
-  AccountStatusMenu(const AccountStatusMenu&);
-  AccountStatusMenu& operator=(const AccountStatusMenu&);
+  CONSUI_DISABLE_COPY(AccountStatusMenu);
 };
 
 #endif // __ACOUNTSTATUSMENU_H__

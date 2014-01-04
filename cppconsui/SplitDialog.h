@@ -69,8 +69,7 @@ protected:
   virtual void onOldFocusVisible(Widget& activator, bool visible);
 
 private:
-  SplitDialog(const SplitDialog&);
-  SplitDialog& operator=(const SplitDialog&);
+  CONSUI_DISABLE_COPY(SplitDialog);
 };
 
 } // namespace CppConsUI

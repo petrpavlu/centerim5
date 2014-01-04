@@ -44,8 +44,7 @@ public:
 protected:
 
 private:
-  TextEntry(const TextEntry&);
-  TextEntry& operator=(const TextEntry&);
+  CONSUI_DISABLE_COPY(TextEntry);
 
   void actionActivate();
 

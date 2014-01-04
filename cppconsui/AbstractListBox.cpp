@@ -54,11 +54,6 @@ Button *AbstractListBox::appendItem(const char *title,
   return b;
 }
 
-void AbstractListBox::addWidget(Widget& widget, int x, int y)
-{
-  ScrollPane::addWidget(widget, x, y);
-}
-
 } // namespace CppConsUI
 
 /* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */

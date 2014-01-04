@@ -74,8 +74,7 @@ protected:
       ResponseType response_type);
 
 private:
-  AbstractDialog(const AbstractDialog&);
-  AbstractDialog& operator=(const AbstractDialog&);
+  CONSUI_DISABLE_COPY(AbstractDialog);
 };
 
 } // namespace CppConsUI

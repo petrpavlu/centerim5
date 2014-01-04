@@ -68,8 +68,7 @@ protected:
   int title_width;
 
 private:
-  Panel(const Panel&);
-  Panel& operator=(const Panel&);
+  CONSUI_DISABLE_COPY(Panel);
 };
 
 } // namespace CppConsUI

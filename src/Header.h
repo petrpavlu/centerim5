@@ -55,9 +55,8 @@ private:
   static Header *my_instance;
 
   Header();
-  Header(const Header&);
-  Header &operator=(const Header&);
   virtual ~Header();
+  CONSUI_DISABLE_COPY(Header);
 
   static void init();
   static void finalize();

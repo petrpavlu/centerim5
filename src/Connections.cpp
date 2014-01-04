@@ -140,13 +140,8 @@ void Connections::network_disconnected()
   l = list = purple_accounts_get_all_active();
   while (l) {
     PurpleAccount *a = reinterpret_cast<PurpleAccount*>(l->data);
-    if (!purple_account_is_disconnected(a)) {
-      // XXX why is this needed? (code chunk from pidgin)
-      char *password = g_strdup(purple_account_get_password(a));
+    if (!purple_account_is_disconnected(a))
       purple_account_disconnect(a);
-      purple_account_set_password(a, password);
-      g_free(password);
-    }
 
     l = l->next;
   }

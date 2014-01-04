@@ -82,9 +82,8 @@ private:
   static Conversations *my_instance;
 
   Conversations();
-  Conversations(const Conversations&);
-  Conversations& operator=(const Conversations&);
   virtual ~Conversations();
+  CONSUI_DISABLE_COPY(Conversations);
 
   static void init();
   static void finalize();

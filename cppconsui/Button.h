@@ -109,8 +109,7 @@ protected:
   bool masked;
 
 private:
-  Button(const Button&);
-  Button& operator=(const Button&);
+  CONSUI_DISABLE_COPY(Button);
 
   void actionActivate();
 

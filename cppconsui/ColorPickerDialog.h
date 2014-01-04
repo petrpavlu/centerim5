@@ -39,11 +39,8 @@ class ColorPickerDialog
 : public AbstractDialog
 {
 public:
-  ColorPickerDialog(const char *title, int defaultvalue,
-      int flags);
+  ColorPickerDialog(const char *title, int default_color, int flags);
   virtual ~ColorPickerDialog() {}
-
-  virtual void onColorSelected(ColorPickerPalette& activator, int color);
 
   /**
    * Signal emitted when the user closes the dialog.
@@ -51,15 +48,15 @@ public:
   sigc::signal<void, ColorPickerDialog&, ResponseType, int> signal_response;
 
 protected:
+  int color;
+
   // AbstractDialog
   virtual void emitResponse(ResponseType response);
 
-  ColorPickerPalette *pick;
-  int color;
+  virtual void onColorSelected(ColorPickerPalette& activator, int new_color);
 
 private:
-  ColorPickerDialog(const ColorPickerDialog&);
-  ColorPickerDialog& operator=(const ColorPickerDialog&);
+  CONSUI_DISABLE_COPY(ColorPickerDialog);
 };
 
 } // namespace CppConsUI

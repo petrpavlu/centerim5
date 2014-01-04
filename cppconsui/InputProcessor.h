@@ -28,6 +28,8 @@
 #ifndef __INPUTPROCESSOR_H__
 #define __INPUTPROCESSOR_H__
 
+#include "CppConsUI.h"
+
 #include <sigc++/sigc++.h>
 #include <sigc++/signal.h>
 
@@ -107,9 +109,8 @@ protected:
     Bindable() : type(BINDABLE_NORMAL) {}
     Bindable(const sigc::slot<void>& function_, BindableType type_)
       : function(function_), type(type_) {}
-    //Bindable(const Bindable &other);
-    //Bindable &operator=(const Bindable &other);
     virtual ~Bindable() {}
+    //CONSUI_DISABLE_COPY(Bindable);
 
     sigc::slot<void> function;
     BindableType type;
@@ -159,8 +160,7 @@ protected:
   virtual bool processInputText(const TermKeyKey& key);
 
 private:
-  InputProcessor(const InputProcessor&);
-  InputProcessor& operator=(const InputProcessor&);
+  CONSUI_DISABLE_COPY(InputProcessor);
 };
 
 } // namespace CppConsUI

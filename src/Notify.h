@@ -53,8 +53,7 @@ private:
     CppConsUI::TreeView *treeview;
 
   private:
-    UserInfoDialog(const UserInfoDialog&);
-    UserInfoDialog& operator=(const UserInfoDialog&);
+    CONSUI_DISABLE_COPY(UserInfoDialog);
   };
 
   typedef std::set<CppConsUI::AbstractDialog*> Notifications;
@@ -74,9 +73,8 @@ private:
   static Notify *my_instance;
 
   Notify();
-  Notify(const Notify&);
-  Notify& operator=(const Notify&);
   ~Notify();
+  CONSUI_DISABLE_COPY(Notify);
 
   static void init();
   static void finalize();

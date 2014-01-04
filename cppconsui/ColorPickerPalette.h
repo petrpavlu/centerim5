@@ -44,7 +44,7 @@ public:
     FLAG_HIDE_COLORCUBE = 1 << 2
   };
 
-  ColorPickerPalette(int defaultcolor, int flags = 0);
+  ColorPickerPalette(int default_color, int flags = 0);
   virtual ~ColorPickerPalette() {};
 
   /**
@@ -56,8 +56,6 @@ protected:
   class ColorPickerPaletteButton
   : public Button
   {
-  friend class ColorPickerPalette;
-
   public:
     ColorPickerPaletteButton(int color);
     virtual ~ColorPickerPaletteButton() {};
@@ -65,25 +63,25 @@ protected:
     // Widget
     virtual void draw();
 
+    virtual int getColor() const { return color; };
+
   protected:
     int color;
 
   private:
-    ColorPickerPaletteButton(const ColorPickerPaletteButton&);
-    ColorPickerPaletteButton& operator=(const ColorPickerPaletteButton&);
+    CONSUI_DISABLE_COPY(ColorPickerPaletteButton);
   };
 
   virtual void onSelectColor(Button& activator);
 
-  virtual void addButton(int x, int y, int color, int defaultcolor);
+  virtual void addButton(int x, int y, int color, int default_color);
 
-  virtual void addAnsi(int defaultcolor);
-  virtual void addGrayscale(int defaultcolor);
-  virtual void addColorCube(int defaultcolor);
+  virtual void addAnsi(int default_color);
+  virtual void addGrayscale(int default_color);
+  virtual void addColorCube(int default_color);
 
 private:
-  ColorPickerPalette(const ColorPickerPalette&);
-  ColorPickerPalette& operator=(const ColorPickerPalette&);
+  CONSUI_DISABLE_COPY(ColorPickerPalette);
 };
 
 } // namespace CppConsUI

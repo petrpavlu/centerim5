@@ -71,8 +71,7 @@ protected:
     size_t text_width;
 
   private:
-    ConversationLine(const ConversationLine&);
-    ConversationLine& operator=(const ConversationLine&);
+    CONSUI_DISABLE_COPY(ConversationLine);
   };
 
   CppConsUI::TextView *view;
@@ -98,8 +97,7 @@ protected:
 
 private:
   Conversation();
-  Conversation(const Conversation&);
-  Conversation& operator=(const Conversation&);
+  CONSUI_DISABLE_COPY(Conversation);
 
   void declareBindables();
 };

@@ -61,8 +61,7 @@ protected:
   char *text;
 
 private:
-  Label(const Label&);
-  Label& operator=(const Label&);
+  CONSUI_DISABLE_COPY(Label);
 };
 
 } // namespace CppConsUI

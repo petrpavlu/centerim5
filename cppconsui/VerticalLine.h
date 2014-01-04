@@ -50,8 +50,7 @@ public:
 protected:
 
 private:
-  VerticalLine(const VerticalLine&);
-  VerticalLine& operator=(const VerticalLine&);
+  CONSUI_DISABLE_COPY(VerticalLine);
 };
 
 } // namespace CppConsUI

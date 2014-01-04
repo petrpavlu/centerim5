@@ -117,8 +117,7 @@ protected:
   virtual void dropDownClose(FreeWindow& window);
 
 private:
-  ComboBox(const ComboBox&);
-  ComboBox& operator=(const ComboBox&);
+  CONSUI_DISABLE_COPY(ComboBox);
 };
 
 } // namespace CppConsUI

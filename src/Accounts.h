@@ -55,8 +55,7 @@ private:
     virtual ~Request();
 
   private:
-    Request(const Request&);
-    Request& operator=(const Request&);
+    CONSUI_DISABLE_COPY(Request);
   };
 
   struct AddRequest
@@ -120,8 +119,7 @@ private:
       virtual void emitResponse(ResponseType response);
 
     private:
-      RequestDialog(const RequestDialog&);
-      RequestDialog& operator=(const RequestDialog&);
+      CONSUI_DISABLE_COPY(RequestDialog);
     };
 
     typedef std::map<const Request*, CppConsUI::TreeView::NodeReference>
@@ -137,8 +135,7 @@ private:
     void onAuthResponse(RequestDialog& activator, ResponseType response);
 
   private:
-    PendingRequestWindow(const PendingRequestWindow&);
-    PendingRequestWindow& operator=(const PendingRequestWindow&);
+    CONSUI_DISABLE_COPY(PendingRequestWindow);
   };
 
   PurpleAccountUiOps centerim_account_ui_ops;
@@ -148,9 +145,8 @@ private:
   static Accounts *my_instance;
 
   Accounts();
-  Accounts(const Accounts&);
-  Accounts& operator=(const Accounts&);
   ~Accounts();
+  CONSUI_DISABLE_COPY(Accounts);
 
   static void init();
   static void finalize();

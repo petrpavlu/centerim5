@@ -71,8 +71,7 @@ protected:
   bool checked;
 
 private:
-  CheckBox(const CheckBox&);
-  CheckBox& operator=(const CheckBox&);
+  CONSUI_DISABLE_COPY(CheckBox);
 
   void actionToggle();
 

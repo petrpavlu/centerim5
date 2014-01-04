@@ -46,8 +46,7 @@ public:
 protected:
 
 private:
-  Spacer(const Spacer&);
-  Spacer& operator=(const Spacer&);
+  CONSUI_DISABLE_COPY(Spacer);
 };
 
 } // namespace CppConsUI

@@ -117,8 +117,7 @@ private:
   WindowInternals *p;
 
   Window();
-  Window(const Window &other);
-  Window &operator=(const Window &other);
+  CONSUI_DISABLE_COPY(Window);
 };
 
 struct Color

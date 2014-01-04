@@ -51,9 +51,8 @@ private:
   static Footer *my_instance;
 
   Footer();
-  Footer(const Footer&);
-  Footer &operator=(const Footer&);
   virtual ~Footer() {}
+  CONSUI_DISABLE_COPY(Footer);
 
   static void init();
   static void finalize();

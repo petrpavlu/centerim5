@@ -51,8 +51,7 @@ protected:
     void onToggle(CppConsUI::CheckBox& activator, bool new_state);
 
   private:
-    BooleanOption(const BooleanOption&);
-    BooleanOption& operator=(const BooleanOption&);
+    CONSUI_DISABLE_COPY(BooleanOption);
   };
 
   class StringOption
@@ -70,8 +69,7 @@ protected:
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
-    StringOption(const StringOption&);
-    StringOption& operator=(const StringOption&);
+    CONSUI_DISABLE_COPY(StringOption);
   };
 
   class IntegerOption
@@ -93,8 +91,7 @@ protected:
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
-    IntegerOption(const IntegerOption&);
-    IntegerOption& operator=(const IntegerOption&);
+    CONSUI_DISABLE_COPY(IntegerOption);
   };
 
   class ChoiceOption
@@ -113,8 +110,7 @@ protected:
         const char *title, intptr_t data);
 
   private:
-    ChoiceOption(const ChoiceOption&);
-    ChoiceOption& operator=(const ChoiceOption&);
+    CONSUI_DISABLE_COPY(ChoiceOption);
   };
 
   const char *getPercentUnit(int i) const;
@@ -123,8 +119,7 @@ protected:
   void reloadColorSchemes(CppConsUI::Button& activator) const;
 
 private:
-  OptionWindow(const OptionWindow&);
-  OptionWindow& operator=(const OptionWindow&);
+  CONSUI_DISABLE_COPY(OptionWindow);
 };
 
 #endif // __OPTIONWINDOW_H__

@@ -22,6 +22,7 @@
 #ifndef __CONNECTIONS_H__
 #define __CONNECTIONS_H__
 
+#include <cppconsui/CppConsUI.h>
 #include <libpurple/purple.h>
 
 #define CONNECTIONS (Connections::instance())
@@ -39,9 +40,8 @@ private:
   static Connections *my_instance;
 
   Connections();
-  Connections(const Connections&);
-  Connections& operator=(const Connections&);
   ~Connections();
+  CONSUI_DISABLE_COPY(Connections);
 
   static void init();
   static void finalize();

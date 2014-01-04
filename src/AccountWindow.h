@@ -79,8 +79,7 @@ private:
     void onToggle(CppConsUI::CheckBox& activator, bool new_state);
 
   private:
-    BoolOption(const BoolOption&);
-    BoolOption& operator=(const BoolOption&);
+    CONSUI_DISABLE_COPY(BoolOption);
   };
 
   class StringOption
@@ -109,8 +108,7 @@ private:
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
-    StringOption(const StringOption&);
-    StringOption& operator=(const StringOption&);
+    CONSUI_DISABLE_COPY(StringOption);
   };
 
   class IntegerOption
@@ -130,8 +128,7 @@ private:
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
-    IntegerOption(const IntegerOption&);
-    IntegerOption& operator=(const IntegerOption&);
+    CONSUI_DISABLE_COPY(IntegerOption);
   };
 
   class StringListOption
@@ -149,8 +146,7 @@ private:
         const char *title, intptr_t data);
 
   private:
-    StringListOption(const StringListOption&);
-    StringListOption& operator=(const StringListOption&);
+    CONSUI_DISABLE_COPY(StringListOption);
   };
 
   class SplitOption
@@ -172,8 +168,7 @@ private:
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
-    SplitOption(const SplitOption&);
-    SplitOption& operator=(const SplitOption&);
+    CONSUI_DISABLE_COPY(SplitOption);
   };
 
   class ProtocolOption
@@ -191,8 +186,7 @@ private:
         const char *title, intptr_t data);
 
   private:
-    ProtocolOption(const ProtocolOption&);
-    ProtocolOption& operator=(const ProtocolOption&);
+    CONSUI_DISABLE_COPY(ProtocolOption);
   };
 
   class ColorOption
@@ -209,15 +203,13 @@ private:
         int new_bg);
 
   private:
-    ColorOption(const ColorOption&);
-    ColorOption& operator=(const ColorOption&);
+    CONSUI_DISABLE_COPY(ColorOption);
   };
 
   CppConsUI::TreeView *treeview;
   AccountEntries account_entries;
 
-  AccountWindow(const AccountWindow&);
-  AccountWindow& operator=(const AccountWindow&);
+  CONSUI_DISABLE_COPY(AccountWindow);
 
   void clearAccount(PurpleAccount *account, bool full);
   void populateAccount(PurpleAccount *account);

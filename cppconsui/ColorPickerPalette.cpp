@@ -37,7 +37,7 @@
 namespace CppConsUI
 {
 
-ColorPickerPalette::ColorPickerPalette(int defaultcolor, int flags)
+ColorPickerPalette::ColorPickerPalette(int default_color, int flags)
 : Container(0, 0)
 {
   if (flags == (FLAG_HIDE_ANSI | FLAG_HIDE_GRAYSCALE | FLAG_HIDE_COLORCUBE)) {
@@ -50,15 +50,15 @@ ColorPickerPalette::ColorPickerPalette(int defaultcolor, int flags)
 
   if (!(flags & FLAG_HIDE_ANSI))
     // default 16 colors
-    addAnsi(defaultcolor);
+    addAnsi(default_color);
 
   if (!(flags & FLAG_HIDE_GRAYSCALE))
     // grayscale ladder
-    addGrayscale(defaultcolor);
+    addGrayscale(default_color);
 
   if (!(flags & FLAG_HIDE_COLORCUBE))
     // 6x6x6 color cube
-    addColorCube(defaultcolor);
+    addColorCube(default_color);
 }
 
 void ColorPickerPalette::onSelectColor(Button& activator)
@@ -67,21 +67,21 @@ void ColorPickerPalette::onSelectColor(Button& activator)
     dynamic_cast<ColorPickerPaletteButton*>(&activator);
   assert(button);
 
-  signal_color_selected(*this, button->color);
+  signal_color_selected(*this, button->getColor());
 }
 
-void ColorPickerPalette::addButton(int x, int y, int color, int defaultcolor)
+void ColorPickerPalette::addButton(int x, int y, int color, int default_color)
 {
   ColorPickerPaletteButton *button = new ColorPickerPaletteButton(color);
   button->signal_activate.connect(sigc::mem_fun(this,
         &ColorPickerPalette::onSelectColor));
   addWidget(*button, x, y);
 
-  if (color == defaultcolor)
+  if (color == default_color)
     button->grabFocus();
 }
 
-void ColorPickerPalette::addAnsi(int defaultcolor)
+void ColorPickerPalette::addAnsi(int default_color)
 {
   int w, h, x, y;
 
@@ -101,15 +101,15 @@ void ColorPickerPalette::addAnsi(int defaultcolor)
   for (x = 0; x < Curses::NUM_DEFAULT_COLORS; x++)
     if (x < half) {
       // the first line
-      addButton(x * 2, y, x, defaultcolor);
+      addButton(x * 2, y, x, default_color);
     }
     else {
       // the second line
-      addButton((x - half) * 2, y + 1, x, defaultcolor);
+      addButton((x - half) * 2, y + 1, x, default_color);
     }
 }
 
-void ColorPickerPalette::addGrayscale(int defaultcolor)
+void ColorPickerPalette::addGrayscale(int default_color)
 {
   int w, h, x, y, color;
 
@@ -130,12 +130,12 @@ void ColorPickerPalette::addGrayscale(int defaultcolor)
   // add the color picker buttons
   for (color = GRAYSCALE_START, x = 0; color <= GRAYSCALE_END;
       color++, x += 2)
-    addButton(x, y, color, defaultcolor);
+    addButton(x, y, color, default_color);
 
-  addButton(x, y, Curses::Color::WHITE, defaultcolor);
+  addButton(x, y, Curses::Color::WHITE, default_color);
 }
 
-void ColorPickerPalette::addColorCube(int defaultcolor)
+void ColorPickerPalette::addColorCube(int default_color)
 {
   int w, h, x, y;
 
@@ -159,7 +159,7 @@ void ColorPickerPalette::addColorCube(int defaultcolor)
   for (int g = 0; g < 6; g++) {
     for (int r = 0; r < 6; r++) {
       for (int b = 0; b < 6; b++) {
-        addButton(x, y, 16 + (r * 36) + (g * 6) + b, defaultcolor);
+        addButton(x, y, 16 + (r * 36) + (g * 6) + b, default_color);
         x += 2;
       }
 

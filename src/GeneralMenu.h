@@ -39,8 +39,7 @@ public:
 protected:
 
 private:
-  GeneralMenu(const GeneralMenu&);
-  GeneralMenu& operator=(const GeneralMenu&);
+  CONSUI_DISABLE_COPY(GeneralMenu);
 
   void openStatusWindow(CppConsUI::Button& activator);
   void openAccountWindow(CppConsUI::Button& activator);

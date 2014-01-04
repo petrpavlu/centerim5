@@ -70,8 +70,7 @@ protected:
   virtual void resizeAndUpdateArea();
 
 private:
-  Window(const Window&);
-  Window& operator=(const Window&);
+  CONSUI_DISABLE_COPY(Window);
 };
 
 } // namespace CppConsUI

@@ -242,8 +242,7 @@ protected:
   virtual void onChildVisible(Widget& activator, bool visible);
 
 private:
-  Container(const Container&);
-  Container& operator=(const Container&);
+  CONSUI_DISABLE_COPY(Container);
 
   void declareBindables();
 };

@@ -106,8 +106,7 @@ private:
     BuddyList *parent;
 
   private:
-    Filter(const Filter&);
-    Filter& operator=(const Filter&);
+    CONSUI_DISABLE_COPY(Filter);
   };
 
   class AddWindow
@@ -132,8 +131,7 @@ private:
     protected:
 
     private:
-      AccountOption(const AccountOption&);
-      AccountOption& operator=(const AccountOption&);
+      CONSUI_DISABLE_COPY(AccountOption);
     };
 
     class GroupOption
@@ -147,8 +145,7 @@ private:
     protected:
 
     private:
-      GroupOption(const GroupOption&);
-      GroupOption& operator=(const GroupOption&);
+      CONSUI_DISABLE_COPY(GroupOption);
     };
 
     class StringOption
@@ -165,8 +162,7 @@ private:
           CppConsUI::AbstractDialog::ResponseType response);
 
     private:
-      StringOption(const StringOption&);
-      StringOption& operator=(const StringOption&);
+      CONSUI_DISABLE_COPY(StringOption);
     };
 
     class IntegerOption
@@ -186,8 +182,7 @@ private:
           CppConsUI::AbstractDialog::ResponseType response);
 
     private:
-      IntegerOption(const IntegerOption&);
-      IntegerOption& operator=(const IntegerOption&);
+      CONSUI_DISABLE_COPY(IntegerOption);
     };
 
     class BooleanOption
@@ -200,8 +195,7 @@ private:
     protected:
 
     private:
-      BooleanOption(const BooleanOption&);
-      BooleanOption& operator=(const BooleanOption&);
+      CONSUI_DISABLE_COPY(BooleanOption);
     };
 
     CppConsUI::TreeView *treeview;
@@ -209,8 +203,7 @@ private:
     virtual void onAddRequest(CppConsUI::Button& activator) = 0;
 
   private:
-    AddWindow(const AddWindow&);
-    AddWindow& operator=(const AddWindow&);
+    CONSUI_DISABLE_COPY(AddWindow);
   };
 
   class AddBuddyWindow
@@ -231,8 +224,7 @@ private:
     virtual void onAddRequest(CppConsUI::Button& activator);
 
   private:
-    AddBuddyWindow(const AddBuddyWindow&);
-    AddBuddyWindow& operator=(const AddBuddyWindow&);
+    CONSUI_DISABLE_COPY(AddBuddyWindow);
   };
 
   class AddChatWindow
@@ -262,8 +254,7 @@ private:
         const char *title, intptr_t data);
 
   private:
-    AddChatWindow(const AddChatWindow&);
-    AddChatWindow& operator=(const AddChatWindow&);
+    CONSUI_DISABLE_COPY(AddChatWindow);
   };
 
   class AddGroupWindow
@@ -280,8 +271,7 @@ private:
     virtual void onAddRequest(CppConsUI::Button& activator);
 
   private:
-    AddGroupWindow(const AddGroupWindow&);
-    AddGroupWindow& operator=(const AddGroupWindow&);
+    CONSUI_DISABLE_COPY(AddGroupWindow);
   };
 
   PurpleBlistUiOps centerim_blist_ui_ops;
@@ -305,9 +295,8 @@ private:
   static BuddyList *my_instance;
 
   BuddyList();
-  BuddyList(const BuddyList&);
-  BuddyList& operator=(const BuddyList&);
   virtual ~BuddyList();
+  CONSUI_DISABLE_COPY(BuddyList);
 
   static void init();
   static void finalize();

@@ -51,8 +51,7 @@ public:
   protected:
 
   private:
-    ToggleCollapseButton(const ToggleCollapseButton&);
-    ToggleCollapseButton& operator=(const ToggleCollapseButton&);
+    CONSUI_DISABLE_COPY(ToggleCollapseButton);
   };
 
   /**
@@ -228,8 +227,7 @@ protected:
       const Size& newsize);
 
 private:
-  TreeView(const TreeView&);
-  TreeView& operator=(const TreeView&);
+  CONSUI_DISABLE_COPY(TreeView);
 
   void actionCollapse();
   void actionExpand();

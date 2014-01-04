@@ -50,8 +50,7 @@ public:
 protected:
 
 private:
-  HorizontalLine(const HorizontalLine&);
-  HorizontalLine& operator=(const HorizontalLine&);
+  CONSUI_DISABLE_COPY(HorizontalLine);
 };
 
 } // namespace CppConsUI

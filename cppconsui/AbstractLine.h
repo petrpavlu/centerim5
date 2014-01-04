@@ -47,8 +47,7 @@ public:
 protected:
 
 private:
-  AbstractLine(const AbstractLine&);
-  AbstractLine& operator=(const AbstractLine&);
+  CONSUI_DISABLE_COPY(AbstractLine);
 };
 
 } // namespace CppConsUI

@@ -98,8 +98,6 @@ void ScrollPane::setScrollSize(int swidth, int sheight)
   scroll_width = swidth;
   scroll_height = sheight;
   updateVirtualArea();
-
-  signal_scrollarea_resize(*this, Size(scroll_width, scroll_height));
 }
 
 void ScrollPane::adjustScroll(int newx, int newy)
@@ -140,10 +138,8 @@ void ScrollPane::adjustScroll(int newx, int newy)
     scroll_ypos = 0;
   }
 
-  if (scrolled) {
+  if (scrolled)
     redraw();
-    signal_scrollarea_scroll(*this, Point(scroll_xpos, scroll_ypos));
-  }
 }
 
 void ScrollPane::makeVisible(int x, int y)
@@ -157,7 +153,6 @@ void ScrollPane::makeVisible(int x, int y)
     return;
 
   redraw();
-  signal_scrollarea_scroll(*this, Point(scroll_xpos, scroll_ypos));
 }
 
 void ScrollPane::makeVisible(int x, int y, int w, int h)
@@ -177,7 +172,6 @@ void ScrollPane::makeVisible(int x, int y, int w, int h)
     return;
 
   redraw();
-  signal_scrollarea_scroll(*this, Point(scroll_xpos, scroll_ypos));
 }
 
 void ScrollPane::updateArea()
@@ -190,15 +184,16 @@ void ScrollPane::proceedUpdateArea()
 {
   assert(parent);
 
-  if (update_screen_area) {
-    delete screen_area;
-    screen_area = parent->getSubPad(*this, xpos, ypos, width, height);
+  if (!update_screen_area)
+    return;
 
-    // fix scroll position if necessary
-    adjustScroll(scroll_xpos, scroll_ypos);
+  delete screen_area;
+  screen_area = parent->getSubPad(*this, xpos, ypos, width, height);
 
-    update_screen_area = false;
-  }
+  // fix scroll position if necessary
+  adjustScroll(scroll_xpos, scroll_ypos);
+
+  update_screen_area = false;
 }
 
 void ScrollPane::updateVirtualArea()

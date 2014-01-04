@@ -78,8 +78,7 @@ protected:
   virtual void updateScrollWidth();
 
 private:
-  HorizontalListBox(const HorizontalListBox&);
-  HorizontalListBox& operator=(const HorizontalListBox&);
+  CONSUI_DISABLE_COPY(HorizontalListBox);
 };
 
 } // namespace CppConsUI

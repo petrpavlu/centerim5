@@ -242,8 +242,7 @@ protected:
   virtual size_t moveWordFromCursor(Direction dir, bool word_end) const;
 
 private:
-  TextEdit(const TextEdit&);
-  TextEdit& operator=(const TextEdit&);
+  CONSUI_DISABLE_COPY(TextEdit);
 
   void actionMoveCursor(CursorMovement step, Direction dir);
   void actionDelete(DeleteType type, Direction dir);

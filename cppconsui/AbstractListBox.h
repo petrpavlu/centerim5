@@ -78,11 +78,10 @@ public:
 
 protected:
   // Container
-  virtual void addWidget(Widget& widget, int x, int y);
+  using ScrollPane::addWidget;
 
 private:
-  AbstractListBox(const AbstractListBox&);
-  AbstractListBox& operator=(const AbstractListBox&);
+  CONSUI_DISABLE_COPY(AbstractListBox);
 };
 
 } // namespace CppConsUI

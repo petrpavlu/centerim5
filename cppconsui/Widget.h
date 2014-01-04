@@ -243,8 +243,7 @@ protected:
   virtual Container *getTopContainer();
 
 private:
-  Widget(const Widget&);
-  Widget& operator=(const Widget&);
+  CONSUI_DISABLE_COPY(Widget);
 };
 
 } // namespace CppConsUI

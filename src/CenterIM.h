@@ -125,9 +125,8 @@ private:
   static CenterIM *my_instance;
 
   CenterIM();
-  CenterIM(const CenterIM&);
-  CenterIM& operator=(const CenterIM&);
   virtual ~CenterIM() {}
+  CONSUI_DISABLE_COPY(CenterIM);
 
   static int run(int argc, char *argv[]);
   friend int main(int argc, char *argv[]);

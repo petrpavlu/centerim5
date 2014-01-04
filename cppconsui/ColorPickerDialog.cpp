@@ -32,24 +32,24 @@
 namespace CppConsUI
 {
 
-ColorPickerDialog::ColorPickerDialog(const char *title, int /*defaultvalue*/,
+ColorPickerDialog::ColorPickerDialog(const char *title, int default_color,
     int flags)
 : AbstractDialog(title)
 {
   addButton(OK_BUTTON_TEXT, RESPONSE_OK);
 
-  pick = new ColorPickerPalette(0, flags);
+  ColorPickerPalette *pick = new ColorPickerPalette(default_color, flags);
+  layout->insertWidget(0, *pick);
   pick->signal_color_selected.connect(sigc::mem_fun(this,
         &ColorPickerDialog::onColorSelected));
-  layout->insertWidget(0, *pick);
 
   resize(pick->getWidth() + 2, pick->getHeight() + 4);
 }
 
 void ColorPickerDialog::onColorSelected(ColorPickerPalette& /*activator*/,
-    int color_)
+    int new_color)
 {
-  color = color_;
+  color = new_color;
   response(RESPONSE_OK);
 }
 
