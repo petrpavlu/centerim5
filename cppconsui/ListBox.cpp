@@ -71,7 +71,7 @@ void ListBox::draw()
 
     int y = 0;
     for (Children::iterator i = children.begin(); i != children.end(); i++) {
-      Widget *widget = i->widget;
+      Widget *widget = *i;
       if (!widget->isVisible())
         continue;
 

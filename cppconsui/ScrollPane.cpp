@@ -200,7 +200,7 @@ void ScrollPane::updateVirtualArea()
 {
   if (!update_area)
     for (Children::iterator i = children.begin(); i != children.end(); i++)
-      i->widget->updateArea();
+      (*i)->updateArea();
 
   update_area = true;
 }

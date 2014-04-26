@@ -51,7 +51,7 @@ void Container::updateArea()
 {
   if (!update_area)
     for (Children::iterator i = children.begin(); i != children.end(); i++)
-      i->widget->updateArea();
+      (*i)->updateArea();
 
   Widget::updateArea();
 }
@@ -66,8 +66,8 @@ void Container::draw()
   area->fill(getColorPair("container", "background"));
 
   for (Children::iterator i = children.begin(); i != children.end(); i++)
-    if (i->widget->isVisible())
-      i->widget->draw();
+    if ((*i)->isVisible())
+      (*i)->draw();
 }
 
 Widget *Container::getFocusWidget()
@@ -100,7 +100,7 @@ bool Container::restoreFocus()
 bool Container::grabFocus()
 {
   for (Children::iterator i = children.begin(); i != children.end(); i++)
-    if (i->widget->grabFocus())
+    if ((*i)->grabFocus())
       return true;
   return false;
 }
@@ -131,7 +131,7 @@ void Container::removeWidget(Widget& widget)
   Children::iterator i = findWidget(widget);
   assert(i != children.end());
 
-  delete i->widget;
+  delete *i;
   children.erase(i);
 }
 
@@ -148,7 +148,7 @@ void Container::moveWidgetAfter(Widget& widget, Widget& position)
 void Container::clear()
 {
   while (children.size())
-    removeWidget(*children.front().widget);
+    removeWidget(*children.front());
 }
 
 bool Container::isWidgetVisible(const Widget& /*widget*/) const
@@ -175,7 +175,7 @@ void Container::getFocusChain(FocusChain& focus_chain,
     FocusChain::iterator parent)
 {
   for (Children::iterator i = children.begin(); i != children.end(); i++) {
-    Widget *widget = i->widget;
+    Widget *widget = *i;
     Container *container = dynamic_cast<Container*>(widget);
 
     if (container && container->isVisible()) {
@@ -476,7 +476,7 @@ Container::Children::iterator Container::findWidget(const Widget& widget)
 {
   Children::iterator i;
   for (i = children.begin(); i != children.end(); i++)
-    if (i->widget == &widget)
+    if (*i == &widget)
       break;
   return i;
 }
@@ -485,21 +485,13 @@ void Container::insertWidget(size_t pos, Widget& widget, int x, int y)
 {
   assert(pos <= children.size());
 
-  Child child(widget);
   widget.move(x, y);
 
   /* Insert a widget early into children vector so the widget can grab the
    * focus in setParent() method if it detects that there isn't any focused
    * widget. */
-  children.insert(children.begin() + pos, child);
+  children.insert(children.begin() + pos, &widget);
   widget.setParent(*this);
-
-  children[pos].sig_moveresize = widget.signal_moveresize.connect(
-      sigc::mem_fun(this, &Container::onChildMoveResize));
-  children[pos].sig_moveresize = widget.signal_wish_size_change.connect(
-      sigc::mem_fun(this, &Container::onChildWishSizeChange));
-  children[pos].sig_visible = widget.signal_visible.connect(
-      sigc::mem_fun(this, &Container::onChildVisible));
 }
 
 void Container::moveWidgetInternal(Widget& widget, Widget& position,
@@ -511,7 +503,6 @@ void Container::moveWidgetInternal(Widget& widget, Widget& position,
   // remove widget from the children..
   Children::iterator widget_iter = findWidget(widget);
   assert(widget_iter != children.end());
-  Child child = *widget_iter;
   children.erase(widget_iter);
 
   // ..put it back into a correct position
@@ -519,26 +510,12 @@ void Container::moveWidgetInternal(Widget& widget, Widget& position,
   assert(position_iter != children.end());
   if (after)
     position_iter++;
-  children.insert(position_iter, child);
+  children.insert(position_iter, &widget);
 
   updateFocusChain();
 
   // need redraw if the widgets overlap
   redraw();
-}
-
-void Container::onChildMoveResize(Widget& /*activator*/,
-    const Rect& /*oldsize*/, const Rect& /*newsize*/)
-{
-}
-
-void Container::onChildWishSizeChange(Widget& /*activator*/,
-    const Size& /*oldsize*/, const Size& /*newsize*/)
-{
-}
-
-void Container::onChildVisible(Widget& /*activator*/, bool /*visible*/)
-{
 }
 
 void Container::declareBindables()

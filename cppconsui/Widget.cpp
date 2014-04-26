@@ -65,8 +65,12 @@ void Widget::moveResize(int newx, int newy, int neww, int newh)
   width = neww;
   height = newh;
 
+  /* Tell the parent about the new size so it can position the widget
+   * correctly. */
+  if (parent)
+    parent->onChildMoveResize(*this, oldsize, newsize);
+
   updateArea();
-  signal_moveresize(*this, oldsize, newsize);
 }
 
 void Widget::updateArea()
@@ -149,6 +153,10 @@ void Widget::setVisibility(bool new_visible)
         t->moveFocus(Container::FOCUS_DOWN);
       }
     }
+
+    /* Tell the parent about the new visibility status so it can reposition
+     * its child widgets as appropriate. */
+    parent->onChildVisible(*this, visible);
   }
 
   signal_visible(*this, visible);
@@ -314,13 +322,15 @@ void Widget::setWishSize(int neww, int newh)
   Size oldsize(wish_width, wish_height);
   Size newsize(neww, newh);
 
-  // the parent did not throw, the new wish size can be committed
   wish_width = neww;
   wish_height = newh;
 
-  updateArea();
+  /* Tell the parent about the new wish size so it can position the widget
+   * correctly. */
   if (parent)
     parent->onChildWishSizeChange(*this, oldsize, newsize);
+
+  updateArea();
 }
 
 int Widget::getColorPair(const char *widget, const char *property) const

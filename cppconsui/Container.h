@@ -178,19 +178,9 @@ public:
 
 protected:
   /**
-   * Structure to keep a child widget.
+   * Child widget vector.
    */
-  struct Child
-  {
-    Widget *widget;
-
-    // signal connection to the widget
-    sigc::connection sig_moveresize;
-    sigc::connection sig_visible;
-
-    Child(Widget& w) : widget(&w) {}
-  };
-  typedef std::vector<Child> Children;
+  typedef std::vector<Widget*> Children;
 
   FocusCycleScope focus_cycle_scope;
 
@@ -200,7 +190,8 @@ protected:
    */
   FocusChain focus_chain;
   /**
-   *
+   * Flag indicating if the cached focus chain should be updated, i.e. it
+   * contains obsolete data.
    */
   bool update_focus_chain;
 
@@ -235,11 +226,11 @@ protected:
   virtual void moveWidgetInternal(Widget& widget, Widget& position, bool after);
 
   friend class Widget;
-  virtual void onChildMoveResize(Widget& activator, const Rect& oldsize,
-      const Rect& newsize);
-  virtual void onChildWishSizeChange(Widget& activator, const Size& oldsize,
-      const Size& newsize);
-  virtual void onChildVisible(Widget& activator, bool visible);
+  virtual void onChildMoveResize(Widget& /*activator*/,
+      const Rect& /*oldsize*/, const Rect& /*newsize*/) {}
+  virtual void onChildWishSizeChange(Widget& /*activator*/,
+      const Size& /*oldsize*/, const Size& /*newsize*/) {}
+  virtual void onChildVisible(Widget& /*activator*/, bool /*visible*/) {}
 
 private:
   CONSUI_DISABLE_COPY(Container);

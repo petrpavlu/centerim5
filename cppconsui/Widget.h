@@ -51,7 +51,7 @@ public:
   virtual ~Widget();
 
   /**
-   * Moves and resizes this widget. Emits signal_moveresize.
+   * Moves and resizes this widget.
    */
   virtual void moveResize(int newx, int newy, int neww, int newh);
   /**
@@ -169,9 +169,6 @@ public:
   virtual void setColorScheme(const char *new_color_scheme);
   virtual const char *getColorScheme() const;
 
-  sigc::signal<void, Widget&, const Rect&, const Rect&> signal_moveresize;
-  sigc::signal<void, Widget&, const Size&, const Size&>
-    signal_wish_size_change;
   /**
    * Signal emitted whenever a widget grabs or looses the focus.
    */
