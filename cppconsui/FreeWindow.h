@@ -48,6 +48,7 @@ public:
 
   // Widget
   virtual void moveResize(int newx, int newy, int neww, int newh);
+  virtual void updateArea();
   virtual void moveResizeRect(const Rect &rect)
     { moveResize(rect.x, rect.y, rect.width, rect.height); }
   virtual void draw();
@@ -107,8 +108,12 @@ protected:
   bool closable;
 
   // Widget
-  virtual void proceedUpdateArea();
   virtual void redraw();
+
+  /**
+   * Update Container and any child widgets.
+   */
+  virtual void updateContainer(int realw, int realh);
 
   /**
    * Internal callback triggered when the screen is resized. It should be used
@@ -116,12 +121,6 @@ protected:
    * onScreenResized() instead.
    */
   virtual void onScreenResizedInternal();
-
-  /**
-   * Updates window's width and height and calls updateArea(). Autosize hints
-   * are taken into account during size calculations.
-   */
-  virtual void resizeAndUpdateArea();
 
 private:
   CONSUI_DISABLE_COPY(FreeWindow);

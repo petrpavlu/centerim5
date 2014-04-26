@@ -39,17 +39,23 @@ HorizontalListBox::HorizontalListBox(int w, int h)
 {
 }
 
+void HorizontalListBox::updateArea()
+{
+  AbstractListBox::updateArea();
+
+  if (!screen_area)
+    return;
+
+  // adjust accordingly a size of the virtual scroll area
+  setScrollHeight(screen_area->getmaxy());
+  int origw = area ? area->getmaxx() : 0;
+  updateScrollWidth();
+  if (area && origw != area->getmaxx())
+    reposition_widgets = true;
+}
+
 void HorizontalListBox::draw()
 {
-  proceedUpdateArea();
-  // set virtual scroll area width
-  if (screen_area)
-    setScrollHeight(screen_area->getmaxy());
-  updateScrollWidth();
-  if (update_area)
-    reposition_widgets = true;
-  proceedUpdateVirtualArea();
-
   if (!area) {
     // scrollpane will clear the screen (real) area
     AbstractListBox::draw();

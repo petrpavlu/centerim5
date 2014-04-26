@@ -82,18 +82,23 @@ bool TextEdit::processInputText(const TermKeyKey &key)
   return true;
 }
 
-void TextEdit::draw()
+void TextEdit::updateArea()
 {
   int origw = area ? area->getmaxx() : 0;
-  proceedUpdateArea();
+  Widget::updateArea();
 
-  if (!area)
+  if (!area || origw == area->getmaxx())
     return;
 
-  if (origw != area->getmaxx()) {
-    updateScreenLines();
-    updateScreenCursor();
-  }
+  // update screen lines and cursor position if the area width changed
+  updateScreenLines();
+  updateScreenCursor();
+}
+
+void TextEdit::draw()
+{
+  if (!area)
+    return;
 
   assertUpdatedScreenLines();
 

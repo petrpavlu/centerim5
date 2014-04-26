@@ -46,6 +46,7 @@ public:
   virtual ~TextView();
 
   // Widget
+  virtual void updateArea();
   virtual void draw();
 
   /**

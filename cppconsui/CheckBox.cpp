@@ -62,8 +62,6 @@ CheckBox::~CheckBox()
 
 void CheckBox::draw()
 {
-  proceedUpdateArea();
-
   if (!area)
     return;
 

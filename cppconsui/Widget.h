@@ -51,12 +51,12 @@ public:
   virtual ~Widget();
 
   /**
-   * Moves and resizes this widget.
+   * Moves and resizes the widget.
    */
   virtual void moveResize(int newx, int newy, int neww, int newh);
   /**
-   * The @ref area is recreated, redraw signal is emitted. It is called
-   * whenever the coordinates of the widget change.
+   * Recreates the widget area. It is called whenever coordinates of the
+   * widget change.
    */
   virtual void updateArea();
   /**
@@ -97,7 +97,7 @@ public:
   virtual bool isVisible() const { return visible; }
   virtual bool isVisibleRecursive() const;
 
-  virtual void setParent(Container& parent);
+  virtual void setParent(Container& new_parent);
   virtual Container *getParent() const { return parent; }
 
   virtual int getLeft() const { return xpos; }
@@ -206,21 +206,18 @@ protected:
    */
   Curses::Window *area;
 
-  bool update_area;
   /**
    * Parent widget.
    */
   Container *parent;
   /**
-   * Color scheme.
+   * Current color scheme.
    */
   char *color_scheme;
 
-  virtual void proceedUpdateArea();
-
   /**
-   * The redraw() method is used by a widget to tell the CoreManager object
-   * that the widget has been updated and that the screen should be redrawn.
+   * Tells @ref CoreManager that the widget has been updated and the screen
+   * should be redrawn.
    */
   virtual void redraw();
 

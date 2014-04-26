@@ -31,6 +31,7 @@
 #ifndef __CPPCONSUI_H__
 #define __CPPCONSUI_H__
 
+#include <limits.h>
 #include <stdint.h>
 #include <cstdlib>
 
@@ -41,6 +42,8 @@
 #define CONSUI_DISABLE_COPY(Class) \
   Class(const Class&); \
   Class &operator=(const Class&)
+
+#define DEC_CHARWIDTH(type) ((CHAR_BIT * sizeof(type) + 2) / 3 + 1)
 
 namespace CppConsUI
 {

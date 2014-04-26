@@ -50,9 +50,6 @@ public:
       Type t = TYPE_NORMAL);
   virtual ~Window() {}
 
-  // Widget
-  virtual void moveResize(int newx, int newy, int neww, int newh);
-
   // Container
   virtual Point getAbsolutePosition(const Container& ref,
       const Widget& child) const;
@@ -67,7 +64,7 @@ protected:
   Panel *panel;
 
   // FreeWindow
-  virtual void resizeAndUpdateArea();
+  virtual void updateContainer(int realw, int realh);
 
 private:
   CONSUI_DISABLE_COPY(Window);

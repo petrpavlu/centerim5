@@ -38,8 +38,6 @@ FreeWindow::FreeWindow(int x, int y, int w, int h, Type t)
 : Container(w, h), win_x(x), win_y(y), win_w(w), win_h(h), copy_x(0)
 , copy_y(0), copy_w(0), copy_h(0), realwindow(NULL), type(t), closable(true)
 {
-  updateArea();
-
   COREMANAGER->signal_resize.connect(sigc::mem_fun(this,
         &FreeWindow::onScreenResizedInternal));
   COREMANAGER->signal_resize.connect(sigc::mem_fun(this,
@@ -65,13 +63,51 @@ void FreeWindow::moveResize(int newx, int newy, int neww, int newh)
   win_w = neww;
   win_h = newh;
 
-  resizeAndUpdateArea();
+  updateArea();
+}
+
+void FreeWindow::updateArea()
+{
+  int maxx = Curses::getmaxx();
+  int maxy = Curses::getmaxy();
+
+  // update virtual area
+  delete area;
+  int realw = win_w;
+  if (realw == AUTOSIZE) {
+    realw = getWishWidth();
+    if (realw == AUTOSIZE)
+      realw = maxx - win_x;
+  }
+  int realh = win_h;
+  if (realh == AUTOSIZE) {
+    realh = getWishHeight();
+    if (realh == AUTOSIZE)
+      realh = maxy - win_y;
+  }
+  area = Curses::Window::newpad(realw, realh);
+
+  // inform the container about the new area
+  updateContainer(realw, realh);
+
+  // update real area
+  int left = std::max(0, win_x);
+  int top = std::max(0, win_y);
+  int right = std::min(win_x + realw, maxx);
+  int bottom = std::min(win_y + realh, maxy);
+
+  copy_x = left - win_x;
+  copy_y = top - win_y;
+  copy_w = right - left - 1;
+  copy_h = bottom - top - 1;
+
+  delete realwindow;
+  // this could fail if the window falls outside the visible area
+  realwindow = Curses::Window::newwin(left, top, right - left, bottom - top);
 }
 
 void FreeWindow::draw()
 {
-  proceedUpdateArea();
-
   if (!area || !realwindow)
     return;
 
@@ -109,10 +145,7 @@ void FreeWindow::setWishSize(int neww, int newh)
     return;
 
   Container::setWishSize(neww, newh);
-  /* If either width or height is set to AUTOSIZE then this window has to be
-   * resized accordingly. */
-  if (win_w == AUTOSIZE || win_h == AUTOSIZE)
-    resizeAndUpdateArea();
+  updateArea();
 }
 
 bool FreeWindow::isWidgetVisible(const Widget& /*child*/) const
@@ -161,73 +194,19 @@ void FreeWindow::setClosable(bool new_closable)
   closable = new_closable;
 }
 
-void FreeWindow::proceedUpdateArea()
-{
-  if (!update_area)
-    return;
-
-  int maxx = Curses::getmaxx();
-  int maxy = Curses::getmaxy();
-
-  // update virtual area
-  delete area;
-  int realw = win_w;
-  if (realw == AUTOSIZE) {
-    realw = getWishWidth();
-    if (realw == AUTOSIZE)
-      realw = Curses::getmaxx() - win_x;
-  }
-  int realh = win_h;
-  if (realh == AUTOSIZE) {
-    realh = getWishHeight();
-    if (realh == AUTOSIZE)
-      realh = Curses::getmaxy() - win_y;
-  }
-  area = Curses::Window::newpad(realw, realh);
-
-  // update real area
-  int left = std::max(0, win_x);
-  int top = std::max(0, win_y);
-  int right = std::min(win_x + realw, maxx);
-  int bottom = std::min(win_y + realh, maxy);
-
-  copy_x = left - win_x;
-  copy_y = top - win_y;
-  copy_w = right - left - 1;
-  copy_h = bottom - top - 1;
-
-  delete realwindow;
-  // this could fail if the window falls outside the visible area
-  realwindow = Curses::Window::newwin(left, top, right - left, bottom - top);
-
-  update_area = false;
-}
-
 void FreeWindow::redraw()
 {
   COREMANAGER->redraw();
 }
 
-void FreeWindow::onScreenResizedInternal()
+void FreeWindow::updateContainer(int realw, int realh)
 {
-  resizeAndUpdateArea();
+  Container::moveResize(0, 0, std::max(0, realw), std::max(0, realh));
+  Container::updateArea();
 }
 
-void FreeWindow::resizeAndUpdateArea()
+void FreeWindow::onScreenResizedInternal()
 {
-  int realw = win_w;
-  if (realw == AUTOSIZE) {
-    realw = getWishWidth();
-    if (realw == AUTOSIZE)
-      realw = Curses::getmaxx() - win_x;
-  }
-  int realh = win_h;
-  if (realh == AUTOSIZE) {
-    realh = getWishHeight();
-    if (realh == AUTOSIZE)
-      realh = Curses::getmaxy() - win_y;
-  }
-  Container::moveResize(0, 0, std::max(0, realw), std::max(0, realh));
   updateArea();
 }
 

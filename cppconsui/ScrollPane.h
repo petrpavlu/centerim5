@@ -112,16 +112,13 @@ public:
 
 protected:
   int scroll_xpos, scroll_ypos, scroll_width, scroll_height;
-  bool update_screen_area;
 
   Curses::Window *screen_area;
 
   // Widget
   virtual void updateArea();
-  virtual void proceedUpdateArea();
 
   virtual void updateVirtualArea();
-  virtual void proceedUpdateVirtualArea();
 
   virtual void drawEx(bool container_draw);
   virtual bool makePointVisible(int x, int y);

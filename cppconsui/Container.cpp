@@ -49,17 +49,14 @@ Container::~Container()
 
 void Container::updateArea()
 {
-  if (!update_area)
-    for (Children::iterator i = children.begin(); i != children.end(); i++)
-      (*i)->updateArea();
-
   Widget::updateArea();
+
+  for (Children::iterator i = children.begin(); i != children.end(); i++)
+    (*i)->updateArea();
 }
 
 void Container::draw()
 {
-  proceedUpdateArea();
-
   if (!area)
     return;
 

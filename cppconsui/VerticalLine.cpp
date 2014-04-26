@@ -38,8 +38,6 @@ VerticalLine::VerticalLine(int h)
 
 void VerticalLine::draw()
 {
-  proceedUpdateArea();
-
   int realh;
 
   if (!area || (realh = area->getmaxy()) == 0 || area->getmaxx() != 1)

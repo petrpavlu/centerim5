@@ -250,8 +250,6 @@ Conversation::ConversationLine::~ConversationLine()
 
 void Conversation::ConversationLine::draw()
 {
-  proceedUpdateArea();
-
   int realw;
 
   if (!area || (realw = area->getmaxx()) == 0 || area->getmaxy() != 1)

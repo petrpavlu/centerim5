@@ -41,19 +41,6 @@ Window::Window(int x, int y, int w, int h, const char *title, Type t)
   addWidget(*panel, 0, 0);
 }
 
-void Window::moveResize(int newx, int newy, int neww, int newh)
-{
-  if (newx == win_x && newy == win_y && neww == win_w && newh == win_h)
-    return;
-
-  win_x = newx;
-  win_y = newy;
-  win_w = neww;
-  win_h = newh;
-
-  resizeAndUpdateArea();
-}
-
 Point Window::getAbsolutePosition(const Container& ref,
     const Widget& child) const
 {
@@ -115,25 +102,12 @@ Curses::Window *Window::getSubPad(const Widget &child, int begin_x,
   return area->subpad(begin_x + 1, begin_y + 1, ncols, nlines);
 }
 
-void Window::resizeAndUpdateArea()
+void Window::updateContainer(int realw, int realh)
 {
-  int realw = win_w;
-  if (realw == AUTOSIZE) {
-    realw = getWishWidth();
-    if (realw == AUTOSIZE)
-      realw = Curses::getmaxx() - win_x;
-  }
-  int realh = win_h;
-  if (realh == AUTOSIZE) {
-    realh = getWishHeight();
-    if (realh == AUTOSIZE)
-      realh = Curses::getmaxy() - win_y;
-  }
-
   panel->moveResize(0, 0, realw, realh);
 
   Container::moveResize(1, 1, std::max(0, realw - 2), std::max(0, realh - 2));
-  updateArea();
+  Container::updateArea();
 }
 
 } // namespace CppConsUI

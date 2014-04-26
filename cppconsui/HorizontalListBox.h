@@ -47,6 +47,7 @@ public:
   virtual ~HorizontalListBox() {}
 
   // Widget
+  virtual void updateArea();
   virtual void draw();
 
   // AbstractListBox

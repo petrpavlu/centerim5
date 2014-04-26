@@ -36,9 +36,8 @@ namespace CppConsUI
 
 ScrollPane::ScrollPane(int w, int h, int scrollw, int scrollh)
 : Container(w, h), scroll_xpos(0), scroll_ypos(0), scroll_width(scrollw)
-, scroll_height(scrollh), update_screen_area(false), screen_area(NULL)
+, scroll_height(scrollh), screen_area(NULL)
 {
-  update_area = true;
 }
 
 ScrollPane::~ScrollPane()
@@ -176,15 +175,7 @@ void ScrollPane::makeVisible(int x, int y, int w, int h)
 
 void ScrollPane::updateArea()
 {
-  update_screen_area = true;
-  redraw();
-}
-
-void ScrollPane::proceedUpdateArea()
-{
-  assert(parent);
-
-  if (!update_screen_area)
+  if (!parent)
     return;
 
   delete screen_area;
@@ -192,34 +183,19 @@ void ScrollPane::proceedUpdateArea()
 
   // fix scroll position if necessary
   adjustScroll(scroll_xpos, scroll_ypos);
-
-  update_screen_area = false;
 }
 
 void ScrollPane::updateVirtualArea()
 {
-  if (!update_area)
-    for (Children::iterator i = children.begin(); i != children.end(); i++)
-      (*i)->updateArea();
-
-  update_area = true;
-}
-
-void ScrollPane::proceedUpdateVirtualArea()
-{
-  if (!update_area)
-    return;
-
   delete area;
   area = Curses::Window::newpad(scroll_width, scroll_height);
-  update_area = false;
+
+  for (Children::iterator i = children.begin(); i != children.end(); i++)
+    (*i)->updateArea();
 }
 
 void ScrollPane::drawEx(bool container_draw)
 {
-  proceedUpdateArea();
-  proceedUpdateVirtualArea();
-
   if (!area || !screen_area) {
     if (screen_area)
       screen_area->fill(getColorPair("container", "background"));

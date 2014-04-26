@@ -40,7 +40,7 @@ namespace CppConsUI
 Widget::Widget(int w, int h)
 : xpos(UNSET), ypos(UNSET), width(w), height(h), wish_width(AUTOSIZE)
 , wish_height(AUTOSIZE), can_focus(false), has_focus(false), visible(true)
-, area(NULL), update_area(false), parent(NULL), color_scheme(NULL)
+, area(NULL), parent(NULL), color_scheme(NULL)
 {
 }
 
@@ -75,7 +75,13 @@ void Widget::moveResize(int newx, int newy, int neww, int newh)
 
 void Widget::updateArea()
 {
-  update_area = true;
+  if (!parent)
+    return;
+
+  // obtain a new drawing area from the parent
+  delete area;
+  area = parent->getSubPad(*this, xpos, ypos, width, height);
+
   redraw();
 }
 
@@ -171,14 +177,14 @@ bool Widget::isVisibleRecursive() const
   return parent->isWidgetVisible(*this);
 }
 
-void Widget::setParent(Container& parent)
+void Widget::setParent(Container& new_parent)
 {
   // we don't support parent change
-  assert(!this->parent);
+  assert(!parent);
 
-  this->parent = &parent;
+  parent = &new_parent;
 
-  this->parent->updateFocusChain();
+  parent->updateFocusChain();
 
   Container *t = getTopContainer();
   if (!t->getFocusWidget()) {
@@ -293,18 +299,6 @@ const char *Widget::getColorScheme() const
     return parent->getColorScheme();
 
   return NULL;
-}
-
-void Widget::proceedUpdateArea()
-{
-  assert(parent);
-
-  if (!update_area)
-    return;
-
-  delete area;
-  area = parent->getSubPad(*this, xpos, ypos, width, height);
-  update_area = false;
 }
 
 void Widget::redraw()

@@ -103,8 +103,6 @@ ColorPicker::Sample::Sample(int w, int fg, int bg)
 
 void ColorPicker::Sample::draw()
 {
-  proceedUpdateArea();
-
   if (!area)
     return;
 

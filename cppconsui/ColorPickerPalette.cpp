@@ -179,8 +179,6 @@ ColorPickerPalette::ColorPickerPaletteButton::ColorPickerPaletteButton(
 
 void ColorPickerPalette::ColorPickerPaletteButton::draw()
 {
-  proceedUpdateArea();
-
   if (!area)
     return;
 

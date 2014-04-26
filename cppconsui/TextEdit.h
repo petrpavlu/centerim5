@@ -53,6 +53,7 @@ public:
   virtual bool processInputText(const TermKeyKey &key);
 
   // Widget
+  virtual void updateArea();
   virtual void draw();
 
   /**

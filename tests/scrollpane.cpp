@@ -53,9 +53,6 @@ MyScrollPane::MyScrollPane(int w, int h, int scrollw, int scrollh)
 
 void MyScrollPane::draw()
 {
-  proceedUpdateArea();
-  proceedUpdateVirtualArea();
-
   if (!area) {
     // scrollpane will clear the scroll (real) area
     ScrollPane::draw();

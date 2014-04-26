@@ -94,8 +94,6 @@ void ColorPickerComboBox::setColor(int new_color)
 
 void ColorPickerComboBox::draw()
 {
-  proceedUpdateArea();
-
   if (!area)
     return;
 
@@ -213,8 +211,6 @@ ColorPickerComboBox::ColorButton::ColorButton(int color_)
 
 void ColorPickerComboBox::ColorButton::draw()
 {
-  proceedUpdateArea();
-
   if (!area)
     return;
 

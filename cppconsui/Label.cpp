@@ -52,8 +52,6 @@ Label::~Label()
 
 void Label::draw()
 {
-  proceedUpdateArea();
-
   if (!area)
     return;
 

@@ -98,8 +98,6 @@ BuddyList::Filter::Filter(BuddyList *parent_)
 
 void BuddyList::Filter::draw()
 {
-  proceedUpdateArea();
-
   if (!area)
     return;
 

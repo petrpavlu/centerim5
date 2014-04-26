@@ -125,12 +125,12 @@ void TestWindow::onColerPickerChanged(CppConsUI::ColorPicker& /*activator*/,
     int new_fg, int new_bg)
 {
   std::string text = std::string("Chosen color (")
-      + dynamic_cast<std::ostringstream*>(
+    + dynamic_cast<std::ostringstream*>(
         &(std::ostringstream() << new_fg))->str()
-      + ","
-      + dynamic_cast<std::ostringstream*>(
+    + ","
+    + dynamic_cast<std::ostringstream*>(
         &(std::ostringstream() << new_bg))->str()
-      + ")";
+    + ")";
   label2->setText(text.c_str());
 
   combo->setColor(new_fg);

@@ -70,14 +70,19 @@ TreeView::~TreeView()
   clear();
 }
 
+void TreeView::updateArea()
+{
+  ScrollPane::updateArea();
+
+  if (!screen_area)
+    return;
+
+  // adjust accordingly a width of the virtual scroll area
+  setScrollWidth(screen_area->getmaxx());
+}
+
 void TreeView::draw()
 {
-  proceedUpdateArea();
-  // set virtual scroll area width
-  if (screen_area)
-    setScrollWidth(screen_area->getmaxx());
-  proceedUpdateVirtualArea();
-
   if (!area) {
     // scrollpane will clear the scroll (real) area
     ScrollPane::draw();

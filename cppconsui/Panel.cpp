@@ -47,8 +47,6 @@ Panel::~Panel()
 
 void Panel::draw()
 {
-  proceedUpdateArea();
-
   if (!area)
     return;
 

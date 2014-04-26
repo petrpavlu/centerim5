@@ -30,7 +30,6 @@
 #include <cassert>
 #include <cstdio>
 #include <cstring>
-#include <sstream>
 
 namespace CppConsUI
 {
@@ -48,19 +47,24 @@ TextView::~TextView()
   clear();
 }
 
-void TextView::draw()
+void TextView::updateArea()
 {
   int origw = area ? area->getmaxx() : 0;
-  proceedUpdateArea();
+  Widget::updateArea();
 
+  if (!area || origw == area->getmaxx())
+    return;
+
+  updateAllScreenLines();
+}
+
+void TextView::draw()
+{
   if (!area)
     return;
 
   int realw = area->getmaxx();
   int realh = area->getmaxy();
-
-  if (origw != realw)
-    updateAllScreenLines();
 
   area->erase();
 
@@ -84,10 +88,9 @@ void TextView::draw()
       && j < realh; i++, j++) {
     int attrs2 = 0;
     if (i->parent->color) {
-      std::string color = std::string("color")
-        + dynamic_cast<std::ostringstream*>(
-            &(std::ostringstream() << i->parent->color))->str();
-      attrs2 = getColorPair("textview", color.c_str());
+      char color[sizeof("color") + DEC_CHARWIDTH(int)];
+      std::sprintf(color, "color%d", i->parent->color);
+      attrs2 = getColorPair("textview", color);
       area->attroff(attrs);
       area->attron(attrs2);
     }

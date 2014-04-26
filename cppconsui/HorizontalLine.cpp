@@ -38,8 +38,6 @@ HorizontalLine::HorizontalLine(int w)
 
 void HorizontalLine::draw()
 {
-  proceedUpdateArea();
-
   int realw;
 
   if (!area || (realw = area->getmaxx()) == 0 || area->getmaxy() != 1)

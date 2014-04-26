@@ -70,6 +70,7 @@ public:
   virtual ~TreeView();
 
   // Widget
+  virtual void updateArea();
   virtual void draw();
   virtual void cleanFocus();
   virtual bool grabFocus();

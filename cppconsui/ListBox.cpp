@@ -41,17 +41,23 @@ ListBox::ListBox(int w, int h)
   page_focus = true;
 }
 
+void ListBox::updateArea()
+{
+  AbstractListBox::updateArea();
+
+  if (!screen_area)
+    return;
+
+  // adjust accordingly a size of the virtual scroll area
+  setScrollWidth(screen_area->getmaxx());
+  int origh = area ? area->getmaxy() : 0;
+  updateScrollHeight();
+  if (area && origh != area->getmaxy())
+    reposition_widgets = true;
+}
+
 void ListBox::draw()
 {
-  proceedUpdateArea();
-  // set virtual scroll area width
-  if (screen_area)
-    setScrollWidth(screen_area->getmaxx());
-  updateScrollHeight();
-  if (update_area)
-    reposition_widgets = true;
-  proceedUpdateVirtualArea();
-
   if (!area) {
     // scrollpane will clear the screen (real) area
     AbstractListBox::draw();
