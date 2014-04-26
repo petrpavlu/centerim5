@@ -32,6 +32,7 @@
 #include <sys/ioctl.h>
 #include <signal.h>
 #include <termios.h>
+#include <time.h>
 #include <unistd.h>
 #include "gettext.h"
 
@@ -380,10 +381,12 @@ void CoreManager::draw()
   if (!redraw_pending)
     return;
 
-#if defined(DEBUG) && GLIB_MAJOR_VERSION >= 2 && GLIB_MINOR_VERSION >= 28
-  gint64 t1 = g_get_monotonic_time();
+#if defined(DEBUG) && 0
+  struct timespec ts = {0, 0};
+  clock_gettime(CLOCK_MONOTONIC, &ts);
+
   Curses::reset_stats();
-#endif // defined(DEBUG) && GLIB_VERSION >= 2.28
+#endif // DEBUG
 
   Curses::erase();
   Curses::noutrefresh();
@@ -404,13 +407,21 @@ void CoreManager::draw()
   // copy virtual ncurses screen to the physical screen
   Curses::doupdate();
 
-#if defined(DEBUG) && GLIB_MAJOR_VERSION >= 2 && GLIB_MINOR_VERSION >= 28
+#if defined(DEBUG) && 0
   const Curses::Stats *stats = Curses::get_stats();
-  gint64 tdiff = g_get_monotonic_time() - t1;
-  g_debug("redraw: time=%"G_GINT64_FORMAT"us, newpad/newwin/subpad "
-      "calls=%u/%u/%u", tdiff, stats->newpad_calls, stats->newwin_calls,
-      stats->subpad_calls);
-#endif // defined(DEBUG) && GLIB_VERSION >= 2.28
+
+  struct timespec ts2 = {0, 0};
+  clock_gettime(CLOCK_MONOTONIC, &ts2);
+  unsigned long tdiff = (ts2.tv_sec * 1000000 + ts2.tv_nsec / 1000)
+    - (ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
+
+  char message[sizeof("redraw: time=us, newpad/newwin/subpad calls=//")
+    + DEC_CHARWIDTH(unsigned long) + 3 * DEC_CHARWIDTH(int)];
+  sprintf(message, "redraw: time=%luus, newpad/newwin/subpad calls=%d/%d/%d",
+      tdiff, stats->newpad_calls, stats->newwin_calls, stats->subpad_calls);
+
+  logError(message);
+#endif // DEBUG
 
   redraw_pending = false;
 }
