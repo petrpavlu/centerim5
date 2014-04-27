@@ -590,18 +590,22 @@ void TreeView::onChildMoveResize(Widget& activator, const Rect &oldsize,
 {
   int old_height = oldsize.getHeight();
   int new_height = newsize.getHeight();
-  if (old_height != new_height) {
-    if (old_height == AUTOSIZE)
-      old_height = activator.getWishHeight();
+
+  if (old_height == new_height)
+    return;
+
+  if (old_height == AUTOSIZE) {
+    old_height = activator.getWishHeight();
     if (old_height == AUTOSIZE)
       old_height = 1;
-    if (new_height == AUTOSIZE)
-      new_height = activator.getWishHeight();
+  }
+  if (new_height == AUTOSIZE) {
+    new_height = activator.getWishHeight();
     if (new_height == AUTOSIZE)
       new_height = 1;
-
-    setScrollHeight(getScrollHeight() - old_height + new_height);
   }
+
+  setScrollHeight(getScrollHeight() - old_height + new_height);
 }
 
 void TreeView::onChildWishSizeChange(Widget& activator, const Size& oldsize,
@@ -613,8 +617,10 @@ void TreeView::onChildWishSizeChange(Widget& activator, const Size& oldsize,
   int old_height = oldsize.getHeight();
   int new_height = newsize.getHeight();
 
-  if (old_height != new_height)
-    setScrollHeight(getScrollHeight() - old_height + new_height);
+  if (old_height == new_height)
+    return;
+
+  setScrollHeight(getScrollHeight() - old_height + new_height);
 }
 
 void TreeView::actionCollapse()

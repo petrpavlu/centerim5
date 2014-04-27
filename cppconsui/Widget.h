@@ -30,7 +30,7 @@
 #define __WIDGET_H__
 
 #define AUTOSIZE -1024
-#define UNSET -2048
+#define UNSETPOS -2048
 
 #include "ConsUICurses.h"
 #include "CppConsUI.h"
@@ -158,13 +158,22 @@ public:
    * be used by a parent widget in getSubPad() if width is set to AUTOSIZE.
    * The AUTOSIZE returned value means "as much as possible".
    */
-  virtual int getWishWidth() const;
+  virtual int getWishWidth() const { return wish_width; }
   /**
    * Returns an area height that is requested by the widget. This method can
    * be used by a parent widget in getSubPad() if height is set to AUTOSIZE.
    * The AUTOSIZE returned value means "as much as possible".
    */
-  virtual int getWishHeight() const;
+  virtual int getWishHeight() const { return wish_height; }
+
+  virtual void setAutoSize(int neww, int newh);
+  virtual void setAutoWidth(int neww) { setAutoSize(neww, auto_height); }
+  virtual void setAutoHeight(int newh) { setAutoSize(auto_width, newh); }
+  virtual int getAutoWidth() const { return auto_width; }
+  virtual int getAutoHeight() const { return auto_height; }
+
+  virtual void startPositioning();
+  virtual void finishPositioning();
 
   virtual void setColorScheme(const char *new_color_scheme);
   virtual const char *getColorScheme() const;
@@ -185,16 +194,30 @@ protected:
    */
   int xpos, ypos, width, height;
   /**
-   *
+   * Preferable size calculated by the widget.
    */
   int wish_width, wish_height;
   /**
-   * Flag if the widget can grab the focus.
+   * Automatic size set by the parent.
+   */
+  int auto_width, auto_height;
+  /**
+   * Flag indicating if the parent currently positions the widget and
+   * updateArea() should not be called yet.
+   */
+  bool in_positioning_process;
+  /**
+   * Flag indicating if updateArea() should be called when the positioning
+   * process is ended.
+   */
+  bool update_area_pending;
+  /**
+   * Flag indicating if the widget can grab the focus.
    */
   bool can_focus;
   /**
-   * Flag if the widget has the focus. Only one widget can have the focus in
-   * the application.
+   * Flag indicating if the widget has the focus. Only one widget can have the
+   * focus in the application.
    */
   bool has_focus;
   /**

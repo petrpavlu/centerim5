@@ -48,7 +48,6 @@ public:
 
   // Widget
   virtual void updateArea();
-  virtual void draw();
 
   // AbstractListBox
   virtual VerticalLine *insertSeparator(size_t pos);
@@ -56,27 +55,31 @@ public:
   virtual void insertWidget(size_t pos, Widget& widget);
   virtual void appendWidget(Widget& widget);
 
-  // Container
-  virtual Curses::Window *getSubPad(const Widget& child, int begin_x,
-      int begin_y, int ncols, int nlines);
-
   virtual int getChildrenWidth() const { return children_width; };
 
   sigc::signal<void, HorizontalListBox&, int> signal_children_width_change;
 
 protected:
+  /**
+   * Total width of all visible children.
+   */
   int children_width;
-  int autosize_children;
-  int autosize_width;
-  std::set<const Widget*> autosize_extra;
-  bool reposition_widgets;
+  /**
+   * Number of visible children that has their height set to AUTOSIZE.
+   */
+  int autosize_children_count;
 
   // Container
   virtual void onChildMoveResize(Widget& activator, const Rect& oldsize,
       const Rect& newsize);
+  virtual void onChildWishSizeChange(Widget& activator, const Size& oldsize,
+      const Size& newsize);
   virtual void onChildVisible(Widget& widget, bool visible);
 
+  virtual void updateChildren(int children_width_change,
+      int autosize_children_count_change);
   virtual void updateScrollWidth();
+  virtual void repositionChildren();
 
 private:
   CONSUI_DISABLE_COPY(HorizontalListBox);

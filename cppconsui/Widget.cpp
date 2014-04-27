@@ -38,9 +38,11 @@ namespace CppConsUI
 {
 
 Widget::Widget(int w, int h)
-: xpos(UNSET), ypos(UNSET), width(w), height(h), wish_width(AUTOSIZE)
-, wish_height(AUTOSIZE), can_focus(false), has_focus(false), visible(true)
-, area(NULL), parent(NULL), color_scheme(NULL)
+: xpos(UNSETPOS), ypos(UNSETPOS), width(w), height(h), wish_width(AUTOSIZE)
+, wish_height(AUTOSIZE), auto_width(AUTOSIZE), auto_height(AUTOSIZE)
+, in_positioning_process(false), update_area_pending(false), can_focus(false)
+, has_focus(false), visible(true), area(NULL), parent(NULL)
+, color_scheme(NULL)
 {
 }
 
@@ -70,12 +72,18 @@ void Widget::moveResize(int newx, int newy, int neww, int newh)
   if (parent)
     parent->onChildMoveResize(*this, oldsize, newsize);
 
-  updateArea();
+  if (!in_positioning_process)
+    updateArea();
+  else
+    update_area_pending = true;
 }
 
 void Widget::updateArea()
 {
   if (!parent)
+    return;
+
+  if (xpos == UNSETPOS || ypos == UNSETPOS)
     return;
 
   // obtain a new drawing area from the parent
@@ -200,7 +208,10 @@ void Widget::setParent(Container& new_parent)
     cleanFocus();
   }
 
-  updateArea();
+  if (!in_positioning_process)
+    updateArea();
+  else
+    update_area_pending = true;
 }
 
 /* All following moveResize() wrappers should always call member methods to
@@ -266,14 +277,43 @@ int Widget::getRealHeight() const
   return area->getmaxy();
 }
 
-int Widget::getWishWidth() const
+void Widget::setAutoSize(int neww, int newh)
 {
-  return wish_width;
+  /* A parent container should not set the auto size if the widget does not
+   * request automatic sizing. */
+  assert(width == AUTOSIZE || height == AUTOSIZE);
+  assert(parent);
+
+  if (neww == auto_width && newh == auto_height)
+    return;
+
+  auto_width = neww;
+  auto_height = newh;
+
+  if (!in_positioning_process)
+    updateArea();
+  else
+    update_area_pending = true;
 }
 
-int Widget::getWishHeight() const
+void Widget::startPositioning()
 {
-  return wish_height;
+  assert(!in_positioning_process);
+  assert(!update_area_pending);
+
+  in_positioning_process = true;
+}
+
+void Widget::finishPositioning()
+{
+  assert(in_positioning_process);
+  in_positioning_process = false;
+
+  if (!update_area_pending)
+    return;
+
+  updateArea();
+  update_area_pending = false;
 }
 
 void Widget::setColorScheme(const char *new_color_scheme)
@@ -324,7 +364,10 @@ void Widget::setWishSize(int neww, int newh)
   if (parent)
     parent->onChildWishSizeChange(*this, oldsize, newsize);
 
-  updateArea();
+  if (!in_positioning_process)
+    updateArea();
+  else
+    update_area_pending = true;
 }
 
 int Widget::getColorPair(const char *widget, const char *property) const

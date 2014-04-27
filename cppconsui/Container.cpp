@@ -451,9 +451,9 @@ Curses::Window *Container::getSubPad(const Widget& child, int begin_x,
   int realh = area->getmaxy();
 
   if (nlines == AUTOSIZE)
-    nlines = child.getWishHeight();
+    nlines = child.getAutoHeight();
   if (ncols == AUTOSIZE)
-    ncols = child.getWishWidth();
+    ncols = child.getAutoWidth();
 
   /* Extend requested subpad to whole parent area or shrink requested area
    * if necessary. */

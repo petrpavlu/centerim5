@@ -34,8 +34,7 @@ namespace CppConsUI
 {
 
 HorizontalListBox::HorizontalListBox(int w, int h)
-: AbstractListBox(w, h), children_width(0), autosize_children(0)
-, autosize_width(0), reposition_widgets(false)
+: AbstractListBox(w, h), children_width(0), autosize_children_count(0)
 {
 }
 
@@ -51,66 +50,7 @@ void HorizontalListBox::updateArea()
   int origw = area ? area->getmaxx() : 0;
   updateScrollWidth();
   if (area && origw != area->getmaxx())
-    reposition_widgets = true;
-}
-
-void HorizontalListBox::draw()
-{
-  if (!area) {
-    // scrollpane will clear the screen (real) area
-    AbstractListBox::draw();
-    return;
-  }
-
-  if (reposition_widgets) {
-    autosize_width = 1;
-    int autosize_width_extra = 0;
-    int realw = area->getmaxx();
-    if (autosize_children && children_width < realw) {
-      int space = realw - (children_width - autosize_children);
-      autosize_width = space / autosize_children;
-      autosize_width_extra = space % autosize_children;
-    }
-    autosize_extra.clear();
-
-    int x = 0;
-    for (Children::iterator i = children.begin(); i != children.end(); i++) {
-      Widget *widget = *i;
-      if (!widget->isVisible())
-        continue;
-
-      int w = widget->getWidth();
-      if (w == AUTOSIZE) {
-        w = autosize_width;
-        if (autosize_width_extra) {
-          autosize_extra.insert(widget);
-          autosize_width_extra--;
-          w++;
-        }
-
-        // make sure the area is updated
-        widget->updateArea();
-      }
-
-      widget->move(x, 0);
-      x += w;
-    }
-    reposition_widgets = false;
-  }
-
-  // make sure that currently focused widget is visible
-  if (focus_child) {
-    int w = focus_child->getWidth();
-    if (w == AUTOSIZE) {
-      w = autosize_width;
-      if (autosize_extra.find(focus_child) != autosize_extra.end())
-        w++;
-    }
-
-    makeVisible(focus_child->getLeft(), focus_child->getTop(), w, 1);
-  }
-
-  AbstractListBox::draw();
+    repositionChildren();
 }
 
 VerticalLine *HorizontalListBox::insertSeparator(size_t pos)
@@ -129,22 +69,23 @@ VerticalLine *HorizontalListBox::appendSeparator()
 
 void HorizontalListBox::insertWidget(size_t pos, Widget& widget)
 {
-  if (widget.isVisible()) {
-    int w = widget.getWidth();
+  ScrollPane::insertWidget(pos, widget, UNSETPOS, UNSETPOS);
+
+  if (!widget.isVisible())
+    return;
+
+  // calculate the expected width by the widget
+  int w = widget.getWidth();
+  int autosize_change = 0;
+  if (w == AUTOSIZE) {
+    w = widget.getWishWidth();
     if (w == AUTOSIZE) {
       w = 1;
-      autosize_children++;
+      autosize_change = 1;
     }
-    children_width += w;
-    updateScrollWidth();
   }
 
-  // note: widget is moved to a correct position in draw() method
-  ScrollPane::insertWidget(pos, widget, 0, 0);
-  reposition_widgets = true;
-
-  if (widget.isVisible())
-    signal_children_width_change(*this, children_width);
+  updateChildren(w, autosize_change);
 }
 
 void HorizontalListBox::appendWidget(Widget& widget)
@@ -152,54 +93,81 @@ void HorizontalListBox::appendWidget(Widget& widget)
   insertWidget(children.size(), widget);
 }
 
-Curses::Window *HorizontalListBox::getSubPad(const Widget& child, int begin_x,
-    int begin_y, int ncols, int nlines)
-{
-  // autosize
-  if (ncols == AUTOSIZE) {
-    ncols = autosize_width;
-    if (autosize_extra.find(&child) != autosize_extra.end())
-      ncols++;
-  }
-
-  return AbstractListBox::getSubPad(child, begin_x, begin_y, ncols, nlines);
-}
-
-void HorizontalListBox::onChildMoveResize(Widget& /*activator*/,
+void HorizontalListBox::onChildMoveResize(Widget& activator,
     const Rect& oldsize, const Rect& newsize)
 {
+  if (!activator.isVisible())
+    return;
+
   int old_width = oldsize.getWidth();
   int new_width = newsize.getWidth();
-  if (old_width != new_width) {
+
+  if (old_width == new_width)
+    return;
+
+  int autosize_change = 0;
+  if (old_width == AUTOSIZE) {
+    old_width = activator.getWishWidth();
     if (old_width == AUTOSIZE) {
       old_width = 1;
-      autosize_children--;
+      autosize_change--;
     }
+  }
+  if (new_width == AUTOSIZE) {
+    new_width = activator.getWishWidth();
     if (new_width == AUTOSIZE) {
       new_width = 1;
-      autosize_children++;
+      autosize_change++;
     }
-    children_width += new_width - old_width;
-    reposition_widgets = true;
-    updateScrollWidth();
-
-    signal_children_width_change(*this, children_width);
   }
+
+  updateChildren(new_width - old_width, autosize_change);
+}
+
+void HorizontalListBox::onChildWishSizeChange(Widget& activator,
+    const Size& oldsize, const Size& newsize)
+{
+  if (!activator.isVisible() || activator.getWidth() != AUTOSIZE)
+    return;
+
+  // the widget is visible and is autosized
+  int old_width = oldsize.getWidth();
+  int new_width = newsize.getWidth();
+
+  if (old_width == new_width)
+    return;
+
+  updateChildren(new_width - old_width, 0);
 }
 
 void HorizontalListBox::onChildVisible(Widget& activator, bool visible)
 {
   // the widget is being hidden or deleted
-  int width = activator.getWidth();
-  int sign = visible ? 1 : - 1;
-  if (width == AUTOSIZE) {
-    autosize_children += sign;
-    width = 1;
+  int w = activator.getWidth();
+  int sign = visible ? 1 : -1;
+  int autosize_change = 0;
+  if (w == AUTOSIZE) {
+    w = activator.getWishWidth();
+    if (w == AUTOSIZE) {
+      w = 1;
+      autosize_change = sign;
+    }
   }
-  children_width += sign * width;
-  reposition_widgets = true;
-  updateScrollWidth();
+  updateChildren(sign * w, autosize_change);
+}
 
+void HorizontalListBox::updateChildren(int children_width_change,
+    int autosize_children_count_change)
+{
+  // set new children data
+  children_width += children_width_change;
+  assert(children_width >= 0);
+  autosize_children_count += autosize_children_count_change;
+  assert(autosize_children_count >= 0);
+
+  // update scroll width and reposition all child widgets
+  updateScrollWidth();
+  repositionChildren();
   signal_children_width_change(*this, children_width);
 }
 
@@ -210,6 +178,53 @@ void HorizontalListBox::updateScrollWidth()
     realw = screen_area->getmaxx();
 
   setScrollWidth(std::max(realw, children_width));
+}
+
+void HorizontalListBox::repositionChildren()
+{
+  if (!area)
+    return;
+
+  int autosize_width = 1;
+  int autosize_width_extra = 0;
+  int realw = area->getmaxx();
+  if (autosize_children_count && children_width < realw) {
+    int space = realw - (children_width - autosize_children_count);
+    autosize_width = space / autosize_children_count;
+    autosize_width_extra = space % autosize_children_count;
+  }
+
+  int x = 0;
+  for (Children::iterator i = children.begin(); i != children.end(); i++) {
+    Widget *widget = *i;
+    if (!widget->isVisible())
+      continue;
+
+    // position the widget correctly
+    widget->startPositioning();
+    widget->move(x, 0);
+    int w = widget->getWidth();
+    if (w == AUTOSIZE) {
+      w = autosize_width;
+      if (autosize_width_extra) {
+        autosize_width_extra--;
+        w++;
+      }
+      widget->setAutoWidth(w);
+    }
+    widget->finishPositioning();
+
+    x += w;
+  }
+
+  // make sure that the currently focused widget is visible
+  if (focus_child) {
+    int w = focus_child->getWidth();
+    if (w == AUTOSIZE)
+      w = focus_child->getAutoWidth();
+
+    makeVisible(focus_child->getLeft(), focus_child->getTop(), w, 1);
+  }
 }
 
 } // namespace CppConsUI
