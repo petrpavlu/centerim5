@@ -43,7 +43,7 @@
   Class(const Class&); \
   Class &operator=(const Class&)
 
-#define DEC_CHARWIDTH(type) ((CHAR_BIT * sizeof(type) + 2) / 3 + 1)
+#define PRINTF_WIDTH(type) ((CHAR_BIT * sizeof(type) + 2) / 3 + 1)
 
 namespace CppConsUI
 {

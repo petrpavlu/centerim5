@@ -221,7 +221,6 @@ protected:
   virtual bool isNodeOpenable(SiblingIterator& node) const;
   virtual bool isNodeVisible(NodeReference& node) const;
 
-  // signal handlers
   virtual void onChildMoveResize(Widget& activator, const Rect& oldsize,
       const Rect& newsize);
   virtual void onChildWishSizeChange(Widget& activator, const Size& oldsize,

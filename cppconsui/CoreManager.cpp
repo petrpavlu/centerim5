@@ -416,7 +416,7 @@ void CoreManager::draw()
     - (ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
 
   char message[sizeof("redraw: time=us, newpad/newwin/subpad calls=//")
-    + DEC_CHARWIDTH(unsigned long) + 3 * DEC_CHARWIDTH(int)];
+    + PRINTF_WIDTH(unsigned long) + 3 * PRINTF_WIDTH(int)];
   sprintf(message, "redraw: time=%luus, newpad/newwin/subpad calls=%d/%d/%d",
       tdiff, stats->newpad_calls, stats->newwin_calls, stats->subpad_calls);
 

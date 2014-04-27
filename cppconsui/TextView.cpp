@@ -88,7 +88,7 @@ void TextView::draw()
       && j < realh; i++, j++) {
     int attrs2 = 0;
     if (i->parent->color) {
-      char color[sizeof("color") + DEC_CHARWIDTH(int)];
+      char color[sizeof("color") + PRINTF_WIDTH(int)];
       std::sprintf(color, "color%d", i->parent->color);
       attrs2 = getColorPair("textview", color);
       area->attroff(attrs);

@@ -245,7 +245,7 @@ void Button::setValue(const char *new_value)
 
 void Button::setValue(int new_value)
 {
-  char tmp[DEC_CHARWIDTH(int) + 1];
+  char tmp[PRINTF_WIDTH(int) + 1];
   std::sprintf(tmp, "%d", new_value);
   setValue(tmp);
 }
