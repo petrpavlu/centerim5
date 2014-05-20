@@ -276,12 +276,24 @@ bool BuddyListNode::lessOrEqualByBuddySort(PurpleBuddy *left,
       break;
     case BuddyList::BUDDY_SORT_BY_ACTIVITY:
       {
+        /* Compare buddies according to their last activity.
+         *
+         * It is possible that a blist node will not have the ui_data set. For
+         * instance, this happens when libpurple informs the program that
+         * a blist node is about to be removed. At that point, an associated
+         * BuddyListNode is destroyed, a parent node is updated and the parent
+         * tries to update its position according to its priority buddy. This
+         * buddy will not have the ui_data set because the BuddyListNode has
+         * been already freed.
+         *
+         * In such a case, the cached value cannot be obtained and value 0
+         * will be used instead. */
         BuddyListNode *bnode_left = reinterpret_cast<BuddyListNode*>(
             purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(left)));
         BuddyListNode *bnode_right = reinterpret_cast<BuddyListNode*>(
             purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(right)));
-        a = bnode_left->last_activity;
-        b = bnode_right->last_activity;
+        a = bnode_left ? bnode_left->last_activity : 0;
+        b = bnode_right ? bnode_right->last_activity : 0;
         if (a != b)
           return a > b;
       }
