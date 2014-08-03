@@ -45,71 +45,58 @@ Panel::~Panel()
   delete [] title;
 }
 
-void Panel::draw()
+void Panel::draw(Curses::ViewPort area)
 {
-  if (!area)
-    return;
-
-  int realw = area->getmaxx();
-  int realh = area->getmaxy();
   int attrs, i;
 
   // calc title width
   int draw_title_width = 0;
-  if (realw > 4)
-    draw_title_width = realw - 4;
+  if (real_width > 4)
+    draw_title_width = real_width - 4;
   draw_title_width = std::min(draw_title_width, title_width);
 
   // calc horizontal line length (one segment width)
   int hline_len = 0;
   int extra = draw_title_width ? 4 : 2;
-  if (realw > draw_title_width + extra)
-    hline_len = (realw - draw_title_width - extra) / 2;
+  if (real_width > draw_title_width + extra)
+    hline_len = (real_width - draw_title_width - extra) / 2;
 
   if (draw_title_width) {
     // draw title
     attrs = getColorPair("panel", "title");
-    area->attron(attrs);
-    area->mvaddstring(2 + hline_len, 0, draw_title_width, title);
-    area->attroff(attrs);
+    area.attrOn(attrs);
+    area.addString(2 + hline_len, 0, draw_title_width, title);
+    area.attrOff(attrs);
   }
 
   // draw lines
   attrs = getColorPair("panel", "line");
-  area->attron(attrs);
-
-  int wa = (realw >= width || width == AUTOSIZE) && realw > 1 ? 1 : 0;
-  int ha = (realh >= height || height == AUTOSIZE) && realh > 1 ? 1 : 0;
+  area.attrOn(attrs);
 
   // draw top horizontal line
   for (i = 1; i < 1 + hline_len; i++)
-    area->mvaddlinechar(i, 0, Curses::LINE_HLINE);
-  for (i = 1 + hline_len + extra - 2 + draw_title_width; i < realw - 1 * wa;
+    area.addLineChar(i, 0, Curses::LINE_HLINE);
+  for (i = 1 + hline_len + extra - 2 + draw_title_width; i < real_width - 1;
       i++)
-    area->mvaddlinechar(i, 0, Curses::LINE_HLINE);
+    area.addLineChar(i, 0, Curses::LINE_HLINE);
 
   // draw bottom horizontal line
-  if (ha)
-    for (i = 1; i < realw - 1 * wa; i++)
-      area->mvaddlinechar(i, realh - 1, Curses::LINE_HLINE);
+  for (i = 1; i < real_width - 1; i++)
+    area.addLineChar(i, real_height - 1, Curses::LINE_HLINE);
 
   // draw left and right vertical line
-  for (i = 1; i < realh - 1 * ha; i++)
-    area->mvaddlinechar(0, i, Curses::LINE_VLINE);
-  if (wa)
-    for (i = 1; i < realh - 1 * ha; i++)
-      area->mvaddlinechar(realw - 1, i, Curses::LINE_VLINE);
+  for (i = 1; i < real_height - 1; i++)
+    area.addLineChar(0, i, Curses::LINE_VLINE);
+  for (i = 1; i < real_height - 1; i++)
+    area.addLineChar(real_width - 1, i, Curses::LINE_VLINE);
 
   // draw corners
-  area->mvaddlinechar(0, 0, Curses::LINE_ULCORNER);
-  if (wa)
-    area->mvaddlinechar(realw - 1, 0, Curses::LINE_URCORNER);
-  if (ha)
-    area->mvaddlinechar(0, realh - 1, Curses::LINE_LLCORNER);
-  if (wa && ha)
-    area->mvaddlinechar(realw - 1, realh - 1, Curses::LINE_LRCORNER);
+  area.addLineChar(0, 0, Curses::LINE_ULCORNER);
+  area.addLineChar(real_width - 1, 0, Curses::LINE_URCORNER);
+  area.addLineChar(0, real_height - 1, Curses::LINE_LLCORNER);
+  area.addLineChar(real_width - 1, real_height - 1, Curses::LINE_LRCORNER);
 
-  area->attroff(attrs);
+  area.attrOff(attrs);
 }
 
 void Panel::setTitle(const char *new_title)
@@ -124,7 +111,7 @@ void Panel::setTitle(const char *new_title)
     std::strcpy(title, new_title);
   else
     title[0] = '\0';
-  title_width = Curses::onscreen_width(title);
+  title_width = Curses::onScreenWidth(title);
 
   redraw();
 }

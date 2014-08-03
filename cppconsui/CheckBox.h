@@ -45,7 +45,7 @@ public:
   virtual ~CheckBox();
 
   // Widget
-  virtual void draw();
+  virtual void draw(Curses::ViewPort area);
 
   /**
    * Sets a new label text and redraws the widget.

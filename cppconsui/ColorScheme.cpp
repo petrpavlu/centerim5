@@ -84,14 +84,14 @@ int ColorScheme::getColorPair(const Color& c)
 
   /* No existing pair we can use. Check if we can add a new one to the
    * palette. */
-  if (static_cast<int>(pairs.size()) >= Curses::nrcolorpairs()) {
+  if (static_cast<int>(pairs.size()) >= Curses::getColorPairCount()) {
     COREMANAGER->logError(_("Color pairs limit exceeded."));
     return 0;
   }
 
   // add a new colorpair to the palette
   int res;
-  if (!Curses::init_colorpair(pairs.size() + 1, fg, bg, &res)) {
+  if (!Curses::initColorPair(pairs.size() + 1, fg, bg, &res)) {
     COREMANAGER->logError(_("Adding color pair failed."));
     return 0;
   }

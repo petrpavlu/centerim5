@@ -40,7 +40,6 @@ cppconsui/Container.cpp
 cppconsui/CoreManager.cpp
 cppconsui/CppConsUI.cpp
 cppconsui/Dialog.cpp
-cppconsui/FreeWindow.cpp
 cppconsui/HorizontalLine.cpp
 cppconsui/HorizontalListBox.cpp
 cppconsui/InputDialog.cpp
@@ -52,7 +51,6 @@ cppconsui/ListBox.cpp
 cppconsui/MenuWindow.cpp
 cppconsui/MessageDialog.cpp
 cppconsui/Panel.cpp
-cppconsui/ScrollPane.cpp
 cppconsui/Spacer.cpp
 cppconsui/SplitDialog.cpp
 cppconsui/TextEdit.cpp

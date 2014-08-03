@@ -23,7 +23,7 @@
 #define __TREEVIEW_H__
 
 #include "Button.h"
-#include "ScrollPane.h"
+#include "Container.h"
 
 #include "tree.hh"
 
@@ -31,7 +31,7 @@ namespace CppConsUI
 {
 
 class TreeView
-: public ScrollPane
+: public Container
 {
 protected:
   class TreeNode;
@@ -70,8 +70,7 @@ public:
   virtual ~TreeView();
 
   // Widget
-  virtual void updateArea();
-  virtual void draw();
+  virtual void draw(Curses::ViewPort area);
   virtual void cleanFocus();
   virtual bool grabFocus();
 
@@ -81,8 +80,11 @@ public:
   virtual bool setFocusChild(Widget& child);
   virtual void getFocusChain(FocusChain& focus_chain,
       FocusChain::iterator parent);
-  virtual Curses::Window *getSubPad(const Widget& child, int begin_x,
-      int begin_y, int ncols, int nlines);
+  virtual void onChildMoveResize(Widget& activator, const Rect& oldsize,
+      const Rect& newsize);
+  virtual void onChildWishSizeChange(Widget& activator, const Size& oldsize,
+      const Size& newsize);
+  virtual void onChildVisible(Widget& activator, bool visible);
 
   /**
    * Folds/unfolds given node.
@@ -204,13 +206,16 @@ protected:
   TheTree thetree;
   NodeReference focus_node;
 
-  // Container
-  using ScrollPane::addWidget;
-  using ScrollPane::removeWidget;
-  using ScrollPane::moveWidgetBefore;
-  using ScrollPane::moveWidgetAfter;
+  // Widget
+  virtual void updateArea();
 
-  virtual int drawNode(SiblingIterator node, int top);
+  // Container
+  using Container::addWidget;
+  using Container::removeWidget;
+  using Container::moveWidgetBefore;
+  using Container::moveWidgetAfter;
+
+  virtual int drawNode(SiblingIterator node, Curses::ViewPort& area);
 
   virtual TreeNode addNode(Widget& widget);
 
@@ -221,10 +226,8 @@ protected:
   virtual bool isNodeOpenable(SiblingIterator& node) const;
   virtual bool isNodeVisible(NodeReference& node) const;
 
-  virtual void onChildMoveResize(Widget& activator, const Rect& oldsize,
-      const Rect& newsize);
-  virtual void onChildWishSizeChange(Widget& activator, const Size& oldsize,
-      const Size& newsize);
+  virtual int repositionChildren(SiblingIterator node, int top,
+      bool in_visibility);
 
 private:
   CONSUI_DISABLE_COPY(TreeView);

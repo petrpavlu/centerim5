@@ -32,14 +32,14 @@ namespace CppConsUI
 {
 
 AbstractListBox::AbstractListBox(int w, int h)
-: ScrollPane(w, h, 0, 0)
+: Container(w, h)
 {
 }
 
 Button *AbstractListBox::insertItem(size_t pos, const char *title,
     const sigc::slot<void, Button&>& callback)
 {
-  Button *b = new Button(Curses::onscreen_width(title), 1, title);
+  Button *b = new Button(Curses::onScreenWidth(title), 1, title);
   b->signal_activate.connect(callback);
   insertWidget(pos, *b);
   return b;
@@ -48,7 +48,7 @@ Button *AbstractListBox::insertItem(size_t pos, const char *title,
 Button *AbstractListBox::appendItem(const char *title,
     const sigc::slot<void, Button&>& callback)
 {
-  Button *b = new Button(Curses::onscreen_width(title), 1, title);
+  Button *b = new Button(Curses::onScreenWidth(title), 1, title);
   b->signal_activate.connect(callback);
   appendWidget(*b);
   return b;

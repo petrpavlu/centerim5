@@ -68,6 +68,8 @@ GeneralMenu::GeneralMenu()
 #endif // DEBUG
   appendItem(_("Quit"), sigc::hide(sigc::mem_fun(CENTERIM,
           &CenterIM::quit)));
+
+  onScreenResized();
 }
 
 void GeneralMenu::onScreenResized()

@@ -41,33 +41,20 @@
 namespace CppConsUI
 {
 
-void CoreManager::addWindow(FreeWindow& window)
+void CoreManager::registerWindow(Window& window)
 {
+  assert(!window.isVisible());
+
   Windows::iterator i = findWindow(window);
+  assert(i == windows.end());
 
-  if (i != windows.end()) {
-    /* Window is already added, addWindow() was called to bring the window to
-     * the top. */
-    windows.erase(i);
-    windows.push_back(&window);
-  }
-  else {
-    windows.push_back(&window);
-    window.onScreenResized();
-  }
-
-  focusWindow();
-  redraw();
+  windows.push_front(&window);
+  updateWindowArea(window);
 }
 
-void CoreManager::removeWindow(FreeWindow& window)
+void CoreManager::removeWindow(Window& window)
 {
-  Windows::iterator i;
-
-  for (i = windows.begin(); i != windows.end(); i++)
-    if (*i == &window)
-      break;
-
+  Windows::iterator i = findWindow(window);
   assert(i != windows.end());
 
   windows.erase(i);
@@ -76,18 +63,21 @@ void CoreManager::removeWindow(FreeWindow& window)
   redraw();
 }
 
-bool CoreManager::hasWindow(const FreeWindow& window) const
+void CoreManager::topWindow(Window& window)
 {
-  for (Windows::const_iterator i = windows.begin(); i != windows.end(); i++)
-    if (*i == &window)
-      return true;
+  Windows::iterator i = findWindow(window);
+  assert(i != windows.end());
 
-  return false;
+  windows.erase(i);
+  windows.push_back(&window);
+
+  focusWindow();
+  redraw();
 }
 
-FreeWindow *CoreManager::getTopWindow()
+Window *CoreManager::getTopWindow()
 {
-  return dynamic_cast<FreeWindow*>(input_child);
+  return dynamic_cast<Window*>(input_child);
 }
 
 void CoreManager::enableResizing()
@@ -134,6 +124,24 @@ void CoreManager::redraw()
   interface.timeoutAdd(0, CoreManager::draw_, this);
 }
 
+void CoreManager::onWindowMoveResize(Window& activator,
+    const Rect& /*oldsize*/, const Rect& /*newsize*/)
+{
+  updateWindowArea(activator);
+}
+
+void CoreManager::onWindowWishSizeChange(Window& activator,
+    const Size& oldsize, const Size& newsize)
+{
+  if ((activator.getWidth() != Widget::AUTOSIZE ||
+      oldsize.getWidth() == newsize.getWidth()) &&
+      (activator.getHeight() != Widget::AUTOSIZE ||
+      oldsize.getHeight() == newsize.getHeight()))
+    return;
+
+  updateWindowArea(activator);
+}
+
 CoreManager::CoreManager()
 : top_input_processor(NULL), stdin_input_timeout_handle(0)
 , stdin_input_handle(0), resize_input_handle(0), pipe_valid(false)
@@ -158,7 +166,7 @@ int CoreManager::init(AppInterface& set_interface)
   if ((res = initInput()))
     return res;
 
-  if ((res = Curses::init_screen())) {
+  if ((res = Curses::initScreen())) {
     finalizeInput();
     return res;
   }
@@ -187,11 +195,10 @@ int CoreManager::finalize()
 
   // clear the screen
   Curses::clear();
-  Curses::noutrefresh();
-  Curses::doupdate();
+  Curses::refresh();
 
   int res;
-  if ((res = Curses::finalize_screen()))
+  if ((res = Curses::finalizeScreen()))
     return res;
 
   return 0;
@@ -359,14 +366,59 @@ void CoreManager::resize()
 
   struct winsize size;
   if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &size) >= 0) {
-    Curses::resizeterm(size.ws_row, size.ws_col);
+    Curses::resizeTerm(size.ws_col, size.ws_row);
 
     // make sure everything is redrawn from the scratch
     Curses::clear();
   }
 
+  // signal the resize event
   signal_resize();
+  for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
+    (*i)->onScreenResized();
+
+  // update area
+  updateArea();
+
   redraw();
+}
+
+void CoreManager::updateArea()
+{
+  for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
+    updateWindowArea(**i);
+}
+
+void CoreManager::updateWindowArea(Window& window)
+{
+  int screen_width = Curses::getWidth();
+  int screen_height = Curses::getHeight();
+
+  int window_x = window.getLeft();
+  int window_y = window.getTop();
+
+  // calculate the real width
+  int window_width = window.getWidth();
+  if (window_width == Widget::AUTOSIZE) {
+    window_width = window.getWishWidth();
+    if (window_width == Widget::AUTOSIZE)
+      window_width = screen_width - window_x;
+  }
+  if (window_width < 0)
+    window_width = 0;
+
+  // calculate the real height
+  int window_height = window.getHeight();
+  if (window_height == Widget::AUTOSIZE) {
+    window_height = window.getWishHeight();
+    if (window_height == Widget::AUTOSIZE)
+      window_height = screen_height - window_y;
+  }
+  if (window_height < 0)
+    window_height = 0;
+
+  window.setRealPosition(window_x, window_y);
+  window.setRealSize(window_width, window_height);
 }
 
 bool CoreManager::draw_(void *data)
@@ -385,30 +437,29 @@ void CoreManager::draw()
   struct timespec ts = {0, 0};
   clock_gettime(CLOCK_MONOTONIC, &ts);
 
-  Curses::reset_stats();
+  Curses::resetStats();
 #endif // DEBUG
 
   Curses::erase();
-  Curses::noutrefresh();
 
   // non-focusable -> normal -> top
   for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
-    if ((*i)->getType() == FreeWindow::TYPE_NON_FOCUSABLE)
-      (*i)->draw();
+    if ((*i)->isVisible() && (*i)->getType() == Window::TYPE_NON_FOCUSABLE)
+      drawWindow(**i);
 
   for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
-    if ((*i)->getType() == FreeWindow::TYPE_NORMAL)
-      (*i)->draw();
+    if ((*i)->isVisible() && (*i)->getType() == Window::TYPE_NORMAL)
+      drawWindow(**i);
 
   for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
-    if ((*i)->getType() == FreeWindow::TYPE_TOP)
-      (*i)->draw();
+    if ((*i)->isVisible() && (*i)->getType() == Window::TYPE_TOP)
+      drawWindow(**i);
 
   // copy virtual ncurses screen to the physical screen
-  Curses::doupdate();
+  Curses::refresh();
 
 #if defined(DEBUG) && 0
-  const Curses::Stats *stats = Curses::get_stats();
+  const Curses::Stats *stats = Curses::getStats();
 
   struct timespec ts2 = {0, 0};
   clock_gettime(CLOCK_MONOTONIC, &ts2);
@@ -426,7 +477,53 @@ void CoreManager::draw()
   redraw_pending = false;
 }
 
-CoreManager::Windows::iterator CoreManager::findWindow(FreeWindow& window)
+void CoreManager::drawWindow(Window& window)
+{
+  int screen_width = Curses::getWidth();
+  int screen_height = Curses::getHeight();
+
+  int window_x = window.getRealLeft();
+  int window_y = window.getRealTop();
+  int window_width = window.getRealWidth();
+  int window_height = window.getRealHeight();
+  int window_x2 = window_x + window_width;
+  int window_y2 = window_y + window_height;
+
+  int window_view_x = 0;
+  int window_view_y = 0;
+  int window_view_width = window_width;
+  int window_view_height = window_height;
+
+  // calculate a viewport for the window
+  if (window_x < 0) {
+    window_view_x = -window_x;
+    if (window_view_x > window_width)
+      window_view_x = window_width;
+    window_view_width -= window_view_x;
+  }
+  if (window_y < 0) {
+    window_view_y = -window_y;
+    if (window_view_y > window_height)
+      window_view_y = window_height;
+    window_view_height -= window_view_y;
+  }
+
+  if (window_x2 > screen_width) {
+    window_view_width -= window_x2 - screen_width;
+    if (window_view_width < 0)
+      window_view_width = 0;
+  }
+  if (window_y2 > screen_height) {
+    window_view_height -= window_y2 - screen_height;
+    if (window_view_height < 0)
+      window_view_height = 0;
+  }
+  Curses::ViewPort window_area(window_x, window_y, window_view_x,
+      window_view_y, window_view_width, window_view_height);
+  window.draw(window_area);
+}
+
+CoreManager::Windows::iterator CoreManager::findWindow(Window& window)
 {
   return std::find(windows.begin(), windows.end(), &window);
 }
@@ -434,12 +531,12 @@ CoreManager::Windows::iterator CoreManager::findWindow(FreeWindow& window)
 void CoreManager::focusWindow()
 {
   // check if there are any windows left
-  FreeWindow *win = NULL;
+  Window *win = NULL;
   Windows::reverse_iterator i;
 
   // try to find a top window first
   for (i = windows.rbegin(); i != windows.rend(); i++)
-    if ((*i)->getType() == FreeWindow::TYPE_TOP) {
+    if ((*i)->isVisible() && (*i)->getType() == Window::TYPE_TOP) {
       win = *i;
       break;
     }
@@ -447,12 +544,12 @@ void CoreManager::focusWindow()
   // normal windows
   if (!win)
     for (i = windows.rbegin(); i != windows.rend(); i++)
-      if ((*i)->getType() == FreeWindow::TYPE_NORMAL) {
+      if ((*i)->isVisible() && (*i)->getType() == Window::TYPE_NORMAL) {
         win = *i;
         break;
       }
 
-  FreeWindow *focus = dynamic_cast<FreeWindow*>(getInputChild());
+  Window *focus = dynamic_cast<Window*>(getInputChild());
   if (!win || win != focus) {
     // take the focus from the old window with the focus
     if (focus) {

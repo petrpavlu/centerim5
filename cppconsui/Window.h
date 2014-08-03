@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
  * Copyright (C) 2010-2013 by CenterIM developers
  *
  * This file is part of CenterIM.
@@ -29,45 +28,96 @@
 #ifndef __WINDOW_H__
 #define __WINDOW_H__
 
-#include "FreeWindow.h"
+#include "Container.h"
 #include "Panel.h"
 
 namespace CppConsUI
 {
 
-/**
- * Window class is the class implementing the root node of the Widget chain
- * defined by Widget::parent.
- *
- * It handles the drawing of its pad and subpads of its children to a @ref
- * realwindow "real window".
- */
 class Window
-: public FreeWindow
+: public Container
 {
 public:
-  Window(int x, int y, int w, int h, const char *title = NULL,
-      Type t = TYPE_NORMAL);
-  virtual ~Window() {}
+  enum Type {
+    TYPE_NON_FOCUSABLE,
+    TYPE_NORMAL,
+    TYPE_TOP
+  };
+
+  Window(int x, int y, int w, int h, Type t = TYPE_NORMAL,
+      bool decorated_ = true);
+  Window(int x, int y, int w, int h, const char *title, Type t = TYPE_NORMAL,
+      bool decorated_ = true);
+  virtual ~Window();
+
+  // Widget
+  virtual void moveResizeRect(const Rect &rect)
+    { moveResize(rect.x, rect.y, rect.width, rect.height); }
+  virtual void draw(Curses::ViewPort area);
+  virtual void setVisibility(bool visible);
+  virtual bool isVisibleRecursive() const { return isVisible(); }
+  virtual Point getAbsolutePosition();
 
   // Container
-  virtual Point getAbsolutePosition(const Container& ref,
-      const Widget& child) const;
-  virtual Point getAbsolutePosition(const Widget& child) const;
-  virtual Curses::Window *getSubPad(const Widget &child, int begin_x,
-      int begin_y, int ncols, int nlines);
+  virtual bool isWidgetVisible(const Widget& widget) const;
+  virtual bool setFocusChild(Widget& child);
+
+  virtual void show();
+  virtual void hide();
+  virtual void close();
+
+  //virtual void SetType(Type t) { type = t; }
+  virtual Type getType() { return type; }
+
+  //virtual void setDecorated(bool new_decorated);
+  virtual bool isDecorated() const { return decorated; }
+
+  virtual void setClosable(bool new_closable);
+  virtual bool isClosable() const { return closable; }
 
   virtual void setTitle(const char *text) { panel->setTitle(text); }
   virtual const char *getTitle() const { return panel->getTitle(); }
 
+  /**
+   * This function is called when the screen is resized.
+   */
+  virtual void onScreenResized() {}
+
+  sigc::signal<void, Window&> signal_close;
+  sigc::signal<void, Window&> signal_show;
+  sigc::signal<void, Window&> signal_hide;
+
 protected:
+  Type type;
+  bool decorated;
+
+  /**
+   * Flag indicating if it is allowed to close the window by the close-window
+   * action, this usually means if it is possible to close the window by
+   * pressing the Esc key.
+   */
+  bool closable;
+
   Panel *panel;
 
-  // FreeWindow
-  virtual void updateContainer(int realw, int realh);
+  // Widget
+  virtual void signalMoveResize(const Rect& oldsize, const Rect& newsize);
+  virtual void signalWishSizeChange(const Size& oldsize, const Size& newsize);
+  virtual void updateArea();
+  virtual void redraw();
+
+  virtual void initWindow(int x, int y, const char *title);
 
 private:
   CONSUI_DISABLE_COPY(Window);
+
+  // Widget
+  // windows cannot have any parent
+  using Container::setParent;
+
+  void actionClose();
+
+  void declareBindables();
 };
 
 } // namespace CppConsUI

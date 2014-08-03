@@ -22,6 +22,8 @@
 #include "TreeView.h"
 
 #include <cassert>
+// XXX
+#include <cstdio>
 
 namespace CppConsUI
 {
@@ -48,7 +50,7 @@ void TreeView::ToggleCollapseButton::setParent(Container& parent)
 }
 
 TreeView::TreeView(int w, int h)
-: ScrollPane(w, h, 0, 0)
+: Container(w, h)
 {
   // allow fast focus changing (paging) using PageUp/PageDown keys
   page_focus = true;
@@ -70,51 +72,16 @@ TreeView::~TreeView()
   clear();
 }
 
-void TreeView::updateArea()
+void TreeView::draw(Curses::ViewPort area)
 {
-  ScrollPane::updateArea();
-
-  if (!screen_area)
-    return;
-
-  // adjust accordingly a width of the virtual scroll area
-  setScrollWidth(screen_area->getmaxx());
-}
-
-void TreeView::draw()
-{
-  if (!area) {
-    // scrollpane will clear the scroll (real) area
-    ScrollPane::draw();
-    return;
-  }
-
-  area->fill(getColorPair("container", "background"));
-
-  drawNode(thetree.begin(), 0);
-
-  // make sure that currently focused widget is visible
-  if (focus_child) {
-    int w = focus_child->getWidth();
-    if (w == AUTOSIZE)
-      w = focus_child->getWishWidth();
-    if (w == AUTOSIZE)
-      w = 1;
-    int h = focus_child->getHeight();
-    if (h == AUTOSIZE)
-      h = focus_child->getWishHeight();
-    if (h == AUTOSIZE)
-      h = 1;
-
-    makeVisible(focus_child->getLeft(), focus_child->getTop(), w, h);
-  }
-
-  ScrollPane::drawEx(false);
+  area.scroll(scroll_xpos, scroll_ypos);
+  area.fill(getColorPair("container", "background"));
+  drawNode(thetree.begin(), area);
 }
 
 void TreeView::cleanFocus()
 {
-  ScrollPane::cleanFocus();
+  Container::cleanFocus();
   focus_node = thetree.begin();
 }
 
@@ -135,7 +102,6 @@ void TreeView::clear()
 
   // stay sane
   assert(children.empty());
-  assert(!getScrollHeight());
 }
 
 bool TreeView::isWidgetVisible(const Widget& child) const
@@ -156,7 +122,7 @@ bool TreeView::setFocusChild(Widget& child)
   if (!isNodeVisible(node))
     return false;
 
-  bool res = ScrollPane::setFocusChild(child);
+  bool res = Container::setFocusChild(child);
   focus_node = node;
   return res;
 }
@@ -219,16 +185,41 @@ void TreeView::getFocusChain(FocusChain& focus_chain,
   }
 }
 
-Curses::Window *TreeView::getSubPad(const Widget& child, int begin_x,
-    int begin_y, int ncols, int nlines)
+void TreeView::onChildMoveResize(Widget& activator, const Rect &oldsize,
+    const Rect &newsize)
 {
-  // if height is set to autosize then use widget's wish height
-  if (nlines == AUTOSIZE)
-    nlines = child.getWishHeight();
-  if (nlines == AUTOSIZE)
-    nlines = 1;
+  // sanity check
+  assert(newsize.getLeft() == UNSETPOS && newsize.getTop() == UNSETPOS);
 
-  return ScrollPane::getSubPad(child, begin_x, begin_y, ncols, nlines);
+  assert(activator.getParent() == this);
+
+  // only interested in external height changes
+  if (oldsize.getHeight() == newsize.getHeight())
+    return;
+
+  updateArea();
+}
+
+void TreeView::onChildWishSizeChange(Widget& activator, const Size& oldsize,
+    const Size& newsize)
+{
+  assert(activator.getParent() == this);
+
+  if (activator.getHeight() != AUTOSIZE)
+    return;
+
+  if (oldsize.getHeight() == newsize.getHeight())
+    return;
+
+  updateArea();
+}
+
+void TreeView::onChildVisible(Widget& activator, bool /*visible*/)
+{
+  assert(activator.getParent() == this);
+
+  // TreeView children should get rarely hidden
+  updateArea();
 }
 
 void TreeView::setCollapsed(NodeReference node, bool collapsed)
@@ -240,6 +231,7 @@ void TreeView::setCollapsed(NodeReference node, bool collapsed)
 
   node->collapsed = collapsed;
   fixFocus();
+  updateArea();
   redraw();
 }
 
@@ -249,6 +241,7 @@ void TreeView::toggleCollapsed(NodeReference node)
 
   node->collapsed = !node->collapsed;
   fixFocus();
+  updateArea();
   redraw();
 }
 
@@ -264,7 +257,8 @@ TreeView::NodeReference TreeView::insertNode(NodeReference position,
 
   TreeNode node = addNode(widget);
   NodeReference iter = thetree.insert(position, node);
-  addWidget(widget, 0, 0);
+  addWidget(widget, UNSETPOS, UNSETPOS);
+  updateArea();
   return iter;
 }
 
@@ -275,7 +269,8 @@ TreeView::NodeReference TreeView::insertNodeAfter(NodeReference position,
 
   TreeNode node = addNode(widget);
   NodeReference iter = thetree.insert_after(position, node);
-  addWidget(widget, 0, 0);
+  addWidget(widget, UNSETPOS, UNSETPOS);
+  updateArea();
   return iter;
 }
 
@@ -286,7 +281,8 @@ TreeView::NodeReference TreeView::prependNode(NodeReference parent,
 
   TreeNode node = addNode(widget);
   NodeReference iter = thetree.prepend_child(parent, node);
-  addWidget(widget, 0, 0);
+  addWidget(widget, UNSETPOS, UNSETPOS);
+  updateArea();
   return iter;
 }
 
@@ -297,7 +293,8 @@ TreeView::NodeReference TreeView::appendNode(NodeReference parent,
 
   TreeNode node = addNode(widget);
   NodeReference iter = thetree.append_child(parent, node);
-  addWidget(widget, 0, 0);
+  addWidget(widget, UNSETPOS, UNSETPOS);
+  updateArea();
   return iter;
 }
 
@@ -312,20 +309,22 @@ void TreeView::deleteNode(NodeReference node, bool keepchildren)
   int shrink = 0;
   if (node->widget) {
     int h = node->widget->getHeight();
-    if (h == AUTOSIZE)
+    if (h == AUTOSIZE) {
       h = node->widget->getWishHeight();
-    if (h == AUTOSIZE)
-      h = 1;
+      if (h == AUTOSIZE)
+        h = 1;
+    }
     shrink += h;
   }
 
   while (thetree.number_of_children(node)) {
     TheTree::pre_order_iterator i = thetree.begin_leaf(node);
     int h = i->widget->getHeight();
-    if (h == AUTOSIZE)
+    if (h == AUTOSIZE) {
       h = i->widget->getWishHeight();
-    if (h == AUTOSIZE)
-      h = 1;
+      if (h == AUTOSIZE)
+        h = 1;
+    }
     shrink += h;
 
     // remove the widget and instantly remove it from the tree
@@ -337,7 +336,7 @@ void TreeView::deleteNode(NodeReference node, bool keepchildren)
     removeWidget(*node->widget);
 
   thetree.erase(node);
-  setScrollHeight(getScrollHeight() - shrink);
+  updateArea();
   redraw();
 }
 
@@ -367,11 +366,13 @@ void TreeView::moveNodeBefore(NodeReference node, NodeReference position)
   assert(node->treeview == this);
   assert(position->treeview == this);
 
-  if (thetree.previous_sibling(position) != node) {
-    thetree.move_before(position, node);
-    fixFocus();
-    redraw();
-  }
+  if (thetree.previous_sibling(position) == node)
+    return;
+
+  thetree.move_before(position, node);
+  fixFocus();
+  updateArea();
+  redraw();
 }
 
 void TreeView::moveNodeAfter(NodeReference node, NodeReference position)
@@ -379,11 +380,13 @@ void TreeView::moveNodeAfter(NodeReference node, NodeReference position)
   assert(node->treeview == this);
   assert(position->treeview == this);
 
-  if (thetree.next_sibling(position) != node) {
-    thetree.move_after(position, node);
-    fixFocus();
-    redraw();
-  }
+  if (thetree.next_sibling(position) == node)
+    return;
+
+  thetree.move_after(position, node);
+  fixFocus();
+  updateArea();
+  redraw();
 }
 
 void TreeView::setNodeParent(NodeReference node, NodeReference newparent)
@@ -391,21 +394,25 @@ void TreeView::setNodeParent(NodeReference node, NodeReference newparent)
   assert(node->treeview == this);
   assert(newparent->treeview == this);
 
-  if (thetree.parent(node) != newparent) {
-    thetree.move_ontop(thetree.append_child(newparent), node);
-    fixFocus();
-    redraw();
-  }
+  if (thetree.parent(node) == newparent)
+    return;
+
+  thetree.move_ontop(thetree.append_child(newparent), node);
+  fixFocus();
+  updateArea();
+  redraw();
 }
 
 void TreeView::setNodeStyle(NodeReference node, Style s)
 {
   assert(node->treeview == this);
 
-  if (node->style != s) {
-    node->style = s;
-    redraw();
-  }
+  if (node->style == s)
+    return;
+
+  node->style = s;
+  updateArea();
+  redraw();
 }
 
 TreeView::Style TreeView::getNodeStyle(NodeReference node) const
@@ -415,86 +422,85 @@ TreeView::Style TreeView::getNodeStyle(NodeReference node) const
   return node->style;
 }
 
-int TreeView::drawNode(SiblingIterator node, int top)
+void TreeView::updateArea()
 {
-  int height = 0, j;
-  SiblingIterator i;
-  int depthoffset = thetree.depth(node) * 2;
-  int realw = area->getmaxx();
+  repositionChildren(thetree.begin(), 0, true);
+
+  // make sure that the currently focused widget is visible
+  updateScroll();
+}
+
+int TreeView::drawNode(SiblingIterator node, Curses::ViewPort& area)
+{
+  int top = 0, height = 0;
 
   // draw the node Widget first
   if (node->widget) {
     if (!node->widget->isVisible())
       return 0;
-    if (node->style == STYLE_NORMAL && isNodeOpenable(node))
-      node->widget->move(depthoffset + 3, top);
-    else
-      node->widget->move(depthoffset + 1, top);
-    node->widget->draw();
-    int h = node->widget->getHeight();
-    if (h == AUTOSIZE)
-      h = node->widget->getWishHeight();
-    if (h == AUTOSIZE)
-      h = 1;
+
+    drawChild(*node->widget, area);
+
+    top = node->widget->getRealTop();
+    int h = node->widget->getRealHeight();
+    assert(h != AUTOSIZE);
     height += h;
   }
 
-  if (!node->collapsed && isNodeOpenable(node)) {
-    int attrs = getColorPair("treeview", "line");
-    area->attron(attrs);
-    if (depthoffset < realw)
-      for (j = top + 1; j < top + height; j++)
-        area->mvaddlinechar(depthoffset, j, Curses::LINE_VLINE);
+  // if the node is collapsed or not openable then everything is done
+  if (node->collapsed || !isNodeOpenable(node))
+    return height;
 
-    /* Note: it would be better to start from end towards begin but for some
-     * reason it doesn't seem to work. */
-    SiblingIterator last = node.begin();
-    for (i = node.begin(); i != node.end(); i++) {
-      if (!i->widget)
-        continue;
-      int h = i->widget->getHeight();
-      if (h == AUTOSIZE)
-        h = i->widget->getWishHeight();
-      if (h == AUTOSIZE)
-        h = 1;
-      if (h && i->widget->isVisible())
-        last = i;
-    }
-    SiblingIterator end = last;
-    end++;
-    for (i = node.begin(); i != end; i++) {
-      if (depthoffset < realw) {
-        if (i != last)
-          area->mvaddlinechar(depthoffset, top + height, Curses::LINE_LTEE);
-        else
-          area->mvaddlinechar(depthoffset, top + height,
-              Curses::LINE_LLCORNER);
-      }
+  int depthoffset = thetree.depth(node) * 2;
+  SiblingIterator i;
+  int j;
 
-      if (i->style == STYLE_NORMAL && isNodeOpenable(i)) {
-        if (depthoffset + 1 < realw)
-          area->mvaddstring(depthoffset + 1, top + height, "[");
-        if (depthoffset + 2 < realw)
-          area->mvaddstring(depthoffset + 2, top + height,
-              i->collapsed ? "+" : "-");
-        if (depthoffset + 3 < realw)
-          area->mvaddstring(depthoffset + 3, top + height, "]");
-      }
-      else if (depthoffset + 1 < realw)
-        area->mvaddlinechar(depthoffset + 1, top + height,
-            Curses::LINE_HLINE);
+  int attrs = getColorPair("treeview", "line");
+  area.attrOn(attrs);
 
-      area->attroff(attrs);
-      int oldh = height;
-      height += drawNode(i, top + height);
-      area->attron(attrs);
+  for (j = top + 1; j < top + height; j++)
+    area.addLineChar(depthoffset, j, Curses::LINE_VLINE);
 
-      if (i != last && depthoffset < realw)
-        for (j = top + oldh + 1; j < top + height ; j++)
-          area->mvaddlinechar(depthoffset, j, Curses::LINE_VLINE);
-    }
-    area->attroff(attrs);
+  /* Note: it would be better to start from end towards begin but for some
+   * reason it doesn't seem to work. */
+  SiblingIterator last = node.begin();
+  for (i = node.begin(); i != node.end(); i++) {
+    if (!i->widget)
+      continue;
+
+    if (!i->widget->isVisible())
+      continue;
+
+    int h = i->widget->getRealHeight();
+    assert(h != AUTOSIZE);
+    if (h)
+      last = i;
   }
+  SiblingIterator end = last;
+  end++;
+  for (i = node.begin(); i != end; i++) {
+    if (i != last)
+      area.addLineChar(depthoffset, top + height, Curses::LINE_LTEE);
+    else
+      area.addLineChar(depthoffset, top + height, Curses::LINE_LLCORNER);
+
+    if (i->style == STYLE_NORMAL && isNodeOpenable(i)) {
+      const char *c = i->collapsed ? "[+]" : "[-]";
+      area.addString(depthoffset + 1, top + height, c);
+    }
+    else
+      area.addLineChar(depthoffset + 1, top + height, Curses::LINE_HLINE);
+
+    area.attrOff(attrs);
+    int oldh = height;
+    height += drawNode(i, area);
+    area.attrOn(attrs);
+
+    if (i != last)
+      for (j = top + oldh + 1; j < top + height ; j++)
+        area.addLineChar(depthoffset, j, Curses::LINE_VLINE);
+  }
+  area.attrOff(attrs);
 
   return height;
 }
@@ -502,14 +508,12 @@ int TreeView::drawNode(SiblingIterator node, int top)
 TreeView::TreeNode TreeView::addNode(Widget& widget)
 {
   // make room for this widget
-  int new_height = getScrollHeight();
   int h = widget.getHeight();
-  if (h == AUTOSIZE)
+  if (h == AUTOSIZE) {
     h = widget.getWishHeight();
-  if (h == AUTOSIZE)
-    h = 1;
-  new_height += h;
-  setScrollHeight(new_height);
+    if (h == AUTOSIZE)
+      h = 1;
+  }
 
   // construct the new node
   TreeNode node;
@@ -561,10 +565,11 @@ bool TreeView::isNodeOpenable(SiblingIterator& node) const
     if (!i->widget)
       continue;
     int h = i->widget->getHeight();
-    if (h == AUTOSIZE)
+    if (h == AUTOSIZE) {
       h = i->widget->getWishHeight();
-    if (h == AUTOSIZE)
-      h = 1;
+      if (h == AUTOSIZE)
+        h = 1;
+    }
     if (h && i->widget->isVisible())
       return true;
   }
@@ -585,42 +590,54 @@ bool TreeView::isNodeVisible(NodeReference& node) const
   return true;
 }
 
-void TreeView::onChildMoveResize(Widget& activator, const Rect &oldsize,
-    const Rect &newsize)
+int TreeView::repositionChildren(SiblingIterator node, int top,
+    bool in_visible)
 {
-  int old_height = oldsize.getHeight();
-  int new_height = newsize.getHeight();
+  int height = 0;
 
-  if (old_height == new_height)
-    return;
+  // position the node Widget first
+  Widget *widget = node->widget;
+  if (widget) {
+    int l = thetree.depth(node) * 2;
+    l += (node->style == STYLE_NORMAL && isNodeOpenable(node)) ? 3 : 1;
+    widget->setRealPosition(l, top);
 
-  if (old_height == AUTOSIZE) {
-    old_height = activator.getWishHeight();
-    if (old_height == AUTOSIZE)
-      old_height = 1;
+    // calculate the real width
+    int w = widget->getWidth();
+    if (w == AUTOSIZE) {
+      w = widget->getWishWidth();
+      if (w == AUTOSIZE)
+        w = real_width - l;
+    }
+    if (w > real_width)
+      w = real_width;
+
+    // calculate the real height
+    int h = widget->getHeight();
+    if (h == AUTOSIZE) {
+      h = widget->getWishHeight();
+      if (h == AUTOSIZE)
+        h = 1;
+    }
+
+    widget->setRealSize(w, h);
+
+    if (in_visible && widget->isVisible())
+      height += h;
   }
-  if (new_height == AUTOSIZE) {
-    new_height = activator.getWishHeight();
-    if (new_height == AUTOSIZE)
-      new_height = 1;
-  }
 
-  setScrollHeight(getScrollHeight() - old_height + new_height);
-}
+  in_visible = in_visible && !node->collapsed && isNodeOpenable(node);
 
-void TreeView::onChildWishSizeChange(Widget& activator, const Size& oldsize,
-    const Size& newsize)
-{
-  if (activator.getHeight() != AUTOSIZE)
-    return;
+  // position child nodes
+  int children_height = height;
+  for (SiblingIterator i = node.begin(); i != node.end(); i++)
+    children_height += repositionChildren(i, top + children_height,
+        in_visible);
 
-  int old_height = oldsize.getHeight();
-  int new_height = newsize.getHeight();
+  if (!in_visible)
+    assert(children_height == height);
 
-  if (old_height == new_height)
-    return;
-
-  setScrollHeight(getScrollHeight() - old_height + new_height);
+  return children_height;
 }
 
 void TreeView::actionCollapse()

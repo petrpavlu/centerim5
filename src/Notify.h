@@ -43,7 +43,7 @@ private:
     UserInfoDialog(const char *title);
     virtual ~UserInfoDialog() {}
 
-    // FreeWindow
+    // Window
     virtual void onScreenResized();
 
     void update(PurpleConnection *gc, const char *who,
@@ -80,8 +80,8 @@ private:
   static void finalize();
   friend class CenterIM;
 
-  void onDialogClose(CppConsUI::FreeWindow& activator, PurpleNotifyType type);
-  void onUserInfoDialogClose(CppConsUI::FreeWindow& activator, User user);
+  void onDialogClose(CppConsUI::Window& activator, PurpleNotifyType type);
+  void onUserInfoDialogClose(CppConsUI::Window& activator, User user);
 
   static void *notify_message_(PurpleNotifyMsgType type, const char *title,
       const char *primary, const char *secondary)

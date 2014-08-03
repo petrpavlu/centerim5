@@ -85,8 +85,7 @@ public:
   virtual ~Container();
 
   // Widget
-  virtual void updateArea();
-  virtual void draw();
+  virtual void draw(Curses::ViewPort area);
   virtual Widget *getFocusWidget();
   virtual void cleanFocus();
   virtual bool restoreFocus();
@@ -170,17 +169,24 @@ public:
       const Widget& child) const;
   virtual Point getAbsolutePosition(const Widget& child) const;
 
-  /**
-   * Returns a subpad of current widget with given coordinates.
-   */
-  virtual Curses::Window *getSubPad(const Widget& child, int begin_x,
-      int begin_y, int ncols, int nlines);
+  virtual void onChildMoveResize(Widget& activator, const Rect& oldsize,
+      const Rect& newsize);
+  virtual void onChildWishSizeChange(Widget& activator, const Size& oldsize,
+      const Size& newsize);
+  virtual void onChildVisible(Widget& activator, bool visible);
 
 protected:
   /**
    * Child widget vector.
    */
   typedef std::vector<Widget*> Children;
+
+  /**
+   * Scroll coordinates.
+   */
+  int scroll_xpos, scroll_ypos;
+
+  int border;
 
   FocusCycleScope focus_cycle_scope;
 
@@ -209,6 +215,19 @@ protected:
 
   Children children;
 
+  // Widget
+  virtual void updateArea();
+
+  /**
+   * Sets a drawing area for a given widget.
+   */
+  virtual void updateChildArea(Widget& child);
+
+  /**
+   * Draws a single child widget.
+   */
+  virtual void drawChild(Widget& child, Curses::ViewPort area);
+
   /**
    * Searches children for a given widget.
    */
@@ -225,12 +244,9 @@ protected:
 
   virtual void moveWidgetInternal(Widget& widget, Widget& position, bool after);
 
-  friend class Widget;
-  virtual void onChildMoveResize(Widget& /*activator*/,
-      const Rect& /*oldsize*/, const Rect& /*newsize*/) {}
-  virtual void onChildWishSizeChange(Widget& /*activator*/,
-      const Size& /*oldsize*/, const Size& /*newsize*/) {}
-  virtual void onChildVisible(Widget& /*activator*/, bool /*visible*/) {}
+  virtual void updateScroll();
+  virtual void makeVisible(int x, int y, int w, int h);
+  virtual void makePointVisible(int x, int y);
 
 private:
   CONSUI_DISABLE_COPY(Container);

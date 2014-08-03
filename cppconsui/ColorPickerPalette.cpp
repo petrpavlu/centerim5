@@ -45,7 +45,7 @@ ColorPickerPalette::ColorPickerPalette(int default_color, int flags)
     flags = FLAG_HIDE_GRAYSCALE | FLAG_HIDE_COLORCUBE;
   }
 
-  if (Curses::nrcolors() < 256)
+  if (Curses::getColorCount() < 256)
     flags |= (FLAG_HIDE_GRAYSCALE | FLAG_HIDE_COLORCUBE);
 
   if (!(flags & FLAG_HIDE_ANSI))
@@ -177,21 +177,19 @@ ColorPickerPalette::ColorPickerPaletteButton::ColorPickerPaletteButton(
 {
 }
 
-void ColorPickerPalette::ColorPickerPaletteButton::draw()
+void ColorPickerPalette::ColorPickerPaletteButton::draw(
+    Curses::ViewPort area)
 {
-  if (!area)
-    return;
-
   ColorScheme::Color c(Curses::Color::BLACK, color);
   int colorpair = COLORSCHEME->getColorPair(c);
 
   if (has_focus) {
-    area->attron(Curses::Attr::REVERSE);
-    area->mvaddstring(0, 0, "@@");
-    area->attroff(Curses::Attr::REVERSE);
+    area.attrOn(Curses::Attr::REVERSE);
+    area.addString(0, 0, "@@");
+    area.attrOff(Curses::Attr::REVERSE);
   }
   else
-    area->fill(colorpair, 0, 0, 2, 1);
+    area.fill(colorpair, 0, 0, 2, 1);
 }
 
 } // namespace CppConsUI

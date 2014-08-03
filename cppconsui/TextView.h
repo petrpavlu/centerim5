@@ -46,8 +46,7 @@ public:
   virtual ~TextView();
 
   // Widget
-  virtual void updateArea();
-  virtual void draw();
+  virtual void draw(Curses::ViewPort area);
 
   /**
    * Appends text after the last line.
@@ -149,6 +148,9 @@ protected:
    * Array of on-screen lines.
    */
   ScreenLines screen_lines;
+
+  // Widget
+  virtual void updateArea();
 
   virtual const char *proceedLine(const char *text, int area_width,
       int *res_length) const;

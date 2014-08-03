@@ -66,12 +66,14 @@ Log::LogWindow::LogWindow()
 
   CppConsUI::HorizontalListBox *lbox = new CppConsUI::HorizontalListBox(
       AUTOSIZE, AUTOSIZE);
-  addWidget(*lbox, 0, 0);
+  addWidget(*lbox, 1, 1);
 
   lbox->appendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
   textview = new CppConsUI::TextView(AUTOSIZE, AUTOSIZE, true);
   lbox->appendWidget(*textview);
   lbox->appendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
+
+  onScreenResized();
 }
 
 void Log::LogWindow::onScreenResized()

@@ -82,63 +82,47 @@ bool TextEdit::processInputText(const TermKeyKey &key)
   return true;
 }
 
-void TextEdit::updateArea()
+void TextEdit::draw(Curses::ViewPort area)
 {
-  int origw = area ? area->getmaxx() : 0;
-  Widget::updateArea();
-
-  if (!area || origw == area->getmaxx())
-    return;
-
-  // update screen lines and cursor position if the area width changed
-  updateScreenLines();
-  updateScreenCursor();
-}
-
-void TextEdit::draw()
-{
-  if (!area)
-    return;
-
   assertUpdatedScreenLines();
 
-  area->erase();
+  area.erase();
 
   int attrs = getColorPair("textedit", "text");
-  area->attron(attrs);
+  area.attrOn(attrs);
 
-  int realh = area->getmaxy();
   ScreenLines::iterator i;
   int j;
   for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end()
-      && j < realh; i++, j++) {
+      && j < real_height; i++, j++) {
     const char *p = i->start;
     int w = 0;
     for (size_t k = 0; k < i->length && *p != '\n'; k++) {
+      int printed;
       if (masked)
-        w += area->mvaddchar(w, j, '*');
+        area.addChar(w, j, '*', &printed);
       else {
         UTF8::UniChar uc = UTF8::getUniChar(p);
         if (uc == '\t') {
-          int t = onScreenWidth(uc, w);
-          for (int l = 0; l < t; l++)
-            area->mvaddchar(w + l, j, ' ');
-          w += t;
+          printed = onScreenWidth(uc, w);
+          for (int l = 0; l < printed; l++)
+            area.addChar(w + l, j, ' ');
         }
         else
-          w += area->mvaddchar(w, j, uc);
+          w += area.addChar(w, j, uc, &printed);
+        w += printed;
       }
       p = nextChar(p);
     }
   }
 
-  area->attroff(attrs);
+  area.attrOff(attrs);
 
   if (has_focus) {
     const char *line = screen_lines[current_sc_line].start;
     int sc_x = width(line, current_sc_linepos);
     int sc_y = current_sc_line - view_top;
-    area->mvchgat(sc_x, sc_y, 1, Curses::Attr::REVERSE, 0, NULL);
+    area.changeAt(sc_x, sc_y, 1, Curses::Attr::REVERSE, 0, NULL);
   }
 }
 
@@ -247,6 +231,13 @@ bool TextEdit::CmpScreenLineEnd::operator()(ScreenLine& sline,
     const char *tag)
 {
   return sline.end < tag;
+}
+
+void TextEdit::updateArea()
+{
+  // update screen lines and cursor position if the area width changed
+  updateScreenLines();
+  updateScreenCursor();
 }
 
 void TextEdit::initBuffer(size_t size)
@@ -400,7 +391,7 @@ int TextEdit::onScreenWidth(UTF8::UniChar uc, int w) const
 {
   if (masked)
     return 1;
-  return Curses::onscreen_width(uc, w);
+  return Curses::onScreenWidth(uc, w);
 }
 
 char *TextEdit::getScreenLine(const char *text, int max_width,
@@ -469,8 +460,7 @@ void TextEdit::updateScreenLines()
 {
   screen_lines.clear();
 
-  int realw;
-  if (!area || (realw = area->getmaxx()) <= 1)
+  if (real_width <= 1)
     return;
 
   const char *p = getTextStart();
@@ -479,7 +469,7 @@ void TextEdit::updateScreenLines()
     const char *s = p;
     size_t length;
     // lower max width by one to make a room for the cursor
-    p = getScreenLine(p, realw - 1, &length);
+    p = getScreenLine(p, real_width - 1, &length);
     screen_lines.push_back(ScreenLine(s, p, length));
   }
 }
@@ -489,8 +479,7 @@ void TextEdit::updateScreenLines(const char *begin, const char *end)
   assert(begin);
   assert(end);
 
-  int realw;
-  if (!area || (realw = area->getmaxx()) <= 1)
+  if (real_width <= 1)
     return;
 
   ScreenLines::iterator b, i;
@@ -522,7 +511,7 @@ void TextEdit::updateScreenLines(const char *begin, const char *end)
     const char *s = p;
     size_t length;
     // lower max width by one to make a room for the cursor
-    p = getScreenLine(p, realw - 1, &length);
+    p = getScreenLine(p, real_width - 1, &length);
     ScreenLine sline(s, p, length);
     new_screen_lines.push_back(sline);
     while (i != screen_lines.end() && (i->end <= end || i->start < s
@@ -573,9 +562,6 @@ void TextEdit::updateScreenCursor()
   current_sc_line = 0;
   current_sc_linepos = 0;
 
-  if (!area)
-    return;
-
   assertUpdatedScreenLines();
 
   for (ScreenLines::iterator i = screen_lines.begin();
@@ -590,12 +576,11 @@ void TextEdit::updateScreenCursor()
   }
 
   // fix cursor visibility
-  int realh = area->getmaxy();
-  if (view_top <= current_sc_line && current_sc_line < view_top + realh)
+  if (view_top <= current_sc_line && current_sc_line < view_top + real_height)
     return;
   while (view_top > current_sc_line)
     view_top--;
-  while (view_top + realh <= current_sc_line)
+  while (view_top + real_height <= current_sc_line)
     view_top++;
 }
 

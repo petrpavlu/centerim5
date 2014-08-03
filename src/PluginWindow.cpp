@@ -57,6 +57,8 @@ PluginWindow::PluginWindow()
   buttons->appendSeparator();
   buttons->appendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
           &PluginWindow::close)));
+
+  onScreenResized();
 }
 
 PluginWindow::~PluginWindow()
@@ -96,6 +98,8 @@ PluginWindow::AddPluginWindow::AddPluginWindow()
             &AddPluginWindow::onPluginButtonActivate), plugin));
     treeview->appendNode(treeview->getRootNode(), *button);
   }
+
+  onScreenResized();
 }
 
 void PluginWindow::AddPluginWindow::onScreenResized()

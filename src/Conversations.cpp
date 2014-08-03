@@ -95,7 +95,7 @@ void Conversations::setExpandedConversations(bool expanded)
 }
 
 Conversations::Conversations()
-: FreeWindow(0, 0, 80, 1, TYPE_NON_FOCUSABLE)
+: Window(0, 0, 80, 1, TYPE_NON_FOCUSABLE, false)
 , active(-1)
 {
   setColorScheme("conversation");
@@ -146,6 +146,8 @@ Conversations::Conversations()
       PURPLE_CALLBACK(buddy_typing_), this);
   purple_signal_connect(handle, "buddy-typing-stopped", this,
       PURPLE_CALLBACK(buddy_typing_), this);
+
+  onScreenResized();
 }
 
 Conversations::~Conversations()

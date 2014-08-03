@@ -46,9 +46,6 @@ public:
   HorizontalListBox(int w, int h);
   virtual ~HorizontalListBox() {}
 
-  // Widget
-  virtual void updateArea();
-
   // AbstractListBox
   virtual VerticalLine *insertSeparator(size_t pos);
   virtual VerticalLine *appendSeparator();
@@ -69,6 +66,9 @@ protected:
    */
   int autosize_children_count;
 
+  // Widget
+  virtual void updateArea();
+
   // Container
   virtual void onChildMoveResize(Widget& activator, const Rect& oldsize,
       const Rect& newsize);
@@ -78,8 +78,6 @@ protected:
 
   virtual void updateChildren(int children_width_change,
       int autosize_children_count_change);
-  virtual void updateScrollWidth();
-  virtual void repositionChildren();
 
 private:
   CONSUI_DISABLE_COPY(HorizontalListBox);

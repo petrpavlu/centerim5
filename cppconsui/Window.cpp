@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
  * Copyright (C) 2010-2013 by CenterIM developers
  *
  * This file is part of CenterIM.
@@ -28,86 +27,151 @@
 
 #include "Window.h"
 
+#include "CoreManager.h"
+
 #include <algorithm>
-#include <cassert>
 
 namespace CppConsUI
 {
 
-Window::Window(int x, int y, int w, int h, const char *title, Type t)
-: FreeWindow(x, y, w, h, t)
+Window::Window(int x, int y, int w, int h, Type t, bool decorated_)
+: Container(w, h), type(t), decorated(decorated_), closable(true)
 {
-  panel = new Panel(win_w, win_h, title);
-  addWidget(*panel, 0, 0);
+  initWindow(x, y, NULL);
 }
 
-Point Window::getAbsolutePosition(const Container& ref,
-    const Widget& child) const
+Window::Window(int x, int y, int w, int h, const char *title, Type t,
+    bool decorated_)
+: Container(w, h), type(t), decorated(decorated_), closable(true)
 {
-  assert(child.getParent() == this);
-
-  if (this == &ref) {
-    if (&child == panel)
-      return Point(0, 0);
-
-    return Point(child.getLeft() + 1, child.getTop() + 1);
-  }
-
-  if (&child == panel)
-    return Point(win_x, win_y);
-
-  return Point(win_x + child.getLeft() + 1, win_y + child.getTop() + 1);
+  initWindow(x, y, title);
 }
 
-Point Window::getAbsolutePosition(const Widget& child) const
+Window::~Window()
 {
-  assert(child.getParent() == this);
-
-  if (&child == panel)
-    return Point(win_x, win_y);
-
-  return Point(win_x + child.getLeft() + 1, win_y + child.getTop() + 1);
+  hide();
+  COREMANAGER->removeWindow(*this);
+  delete panel;
 }
 
-Curses::Window *Window::getSubPad(const Widget &child, int begin_x,
-    int begin_y, int ncols, int nlines)
+void Window::draw(Curses::ViewPort area)
 {
-  if (!area)
-    return NULL;
+  area.erase();
 
-  // handle panel child specially
-  if (&child == panel)
-    return area->subpad(begin_x, begin_y, ncols, nlines);
+  Container::draw(area);
+  if (decorated)
+    panel->draw(area);
 
-  int realw = area->getmaxx() - 2;
-  int realh = area->getmaxy() - 2;
-
-  if (nlines == AUTOSIZE)
-    nlines = child.getWishHeight();
-  if (ncols == AUTOSIZE)
-    ncols = child.getWishWidth();
-
-  /* Extend requested subpad to whole panel area or shrink requested area if
-   * necessary. */
-  if (nlines == AUTOSIZE || nlines > realh - begin_y)
-    nlines = realh - begin_y;
-
-  if (ncols == AUTOSIZE || ncols > realw - begin_x)
-    ncols = realw - begin_x;
-
-  if (nlines <= 0 || ncols <= 0)
-    return NULL;
-
-  // add '+1' offset to normal childs so they can not overwrite the panel
-  return area->subpad(begin_x + 1, begin_y + 1, ncols, nlines);
+  /* Reverse the top right corner of the window if there isn't any focused
+   * widget and the window is the top window. This way the user knows which
+   * window is on the top and can be closed using the Esc key. */
+  if (!input_child && COREMANAGER->getTopWindow() == this)
+    area.changeAt(real_width - 1, 0, 1, Curses::Attr::REVERSE, 0, NULL);
 }
 
-void Window::updateContainer(int realw, int realh)
+void Window::setVisibility(bool visible)
 {
-  panel->moveResize(0, 0, realw, realh);
+  visible ? show() : hide();
+}
 
-  Container::moveResize(1, 1, std::max(0, realw - 2), std::max(0, realh - 2));
+Point Window::getAbsolutePosition()
+{
+  return Point(xpos, ypos);
+}
+
+bool Window::isWidgetVisible(const Widget& /*child*/) const
+{
+  return true;
+}
+
+bool Window::setFocusChild(Widget& child)
+{
+  cleanFocus();
+
+  focus_child = &child;
+  setInputChild(child);
+
+  if (COREMANAGER->getTopWindow() != this)
+    return false;
+
+  return true;
+}
+
+void Window::show()
+{
+  visible = true;
+  COREMANAGER->topWindow(*this);
+  signal_show(*this);
+}
+
+void Window::hide()
+{
+  visible = false;
+  signal_hide(*this);
+}
+
+void Window::close()
+{
+  signal_close(*this);
+  delete this;
+}
+
+void Window::setClosable(bool new_closable)
+{
+  closable = new_closable;
+}
+
+void Window::signalMoveResize(const Rect& oldsize, const Rect& newsize)
+{
+  Container::signalMoveResize(oldsize, newsize);
+  COREMANAGER->onWindowMoveResize(*this, oldsize, newsize);
+}
+
+void Window::signalWishSizeChange(const Size& oldsize, const Size& newsize)
+{
+  Container::signalWishSizeChange(oldsize, newsize);
+  COREMANAGER->onWindowWishSizeChange(*this, oldsize, newsize);
+}
+
+void Window::updateArea()
+{
+  panel->setRealSize(real_width, real_height);
   Container::updateArea();
+}
+
+void Window::redraw()
+{
+  COREMANAGER->redraw();
+}
+
+void Window::initWindow(int x, int y, const char *title)
+{
+  xpos = x;
+  ypos = y;
+  visible = false;
+  if (decorated)
+    border = 1;
+
+  panel = new Panel(AUTOSIZE, AUTOSIZE, title);
+  panel->setParent(*this);
+  panel->setRealPosition(0, 0);
+
+  COREMANAGER->registerWindow(*this);
+
+  declareBindables();
+}
+
+void Window::actionClose()
+{
+  if (closable)
+    close();
+}
+
+void Window::declareBindables()
+{
+  declareBindable("window", "close-window",
+      sigc::mem_fun(this, &Window::actionClose),
+      InputProcessor::BINDABLE_NORMAL);
 }
 
 } // namespace CppConsUI

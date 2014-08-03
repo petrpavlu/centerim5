@@ -23,19 +23,19 @@
 
 #include "CenterIM.h"
 
-#include <cppconsui/FreeWindow.h>
+#include <cppconsui/Window.h>
 #include <cppconsui/Label.h>
 
 #define FOOTER (Footer::instance())
 
 // the bottom area of the screen containing context sensitive help
 class Footer
-: public CppConsUI::FreeWindow
+: public CppConsUI::Window
 {
 public:
   static Footer *instance();
 
-  // FreeWindow
+  // Window
   virtual void onScreenResized();
 
   void setText(const char *fmt, ...) _attribute((format(printf, 2, 3)));

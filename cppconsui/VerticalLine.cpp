@@ -36,18 +36,16 @@ VerticalLine::VerticalLine(int h)
 {
 }
 
-void VerticalLine::draw()
+void VerticalLine::draw(Curses::ViewPort area)
 {
-  int realh;
-
-  if (!area || (realh = area->getmaxy()) == 0 || area->getmaxx() != 1)
+  if (real_height == 0 || real_width != 1)
     return;
 
   int attrs = getColorPair("verticalline", "line");
-  area->attron(attrs);
-  for (int i = 0; i < realh; i++)
-    area->mvaddlinechar(i, 0, Curses::LINE_VLINE);
-  area->attroff(attrs);
+  area.attrOn(attrs);
+  for (int i = 0; i < real_height; i++)
+    area.addLineChar(i, 0, Curses::LINE_VLINE);
+  area.attrOff(attrs);
 }
 
 } // namespace CppConsUI

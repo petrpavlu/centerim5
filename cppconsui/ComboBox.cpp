@@ -78,7 +78,7 @@ int ComboBox::addOption(const char *text, intptr_t data)
     e.title[0] = '\0';
   e.data = data;
 
-  int w = Curses::onscreen_width(e.title);
+  int w = Curses::onScreenWidth(e.title);
   if (w > max_option_width)
     max_option_width = w;
 
@@ -183,7 +183,7 @@ void ComboBox::dropDownOk(Button& /*activator*/, int new_entry)
   setSelected(new_entry);
 }
 
-void ComboBox::dropDownClose(FreeWindow& /*window*/)
+void ComboBox::dropDownClose(Window& /*window*/)
 {
   dropdown = NULL;
 }

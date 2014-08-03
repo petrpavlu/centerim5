@@ -39,8 +39,6 @@ AbstractDialog::AbstractDialog(int x, int y, int w, int h, const char *title)
 AbstractDialog::AbstractDialog(const char *title)
 : Window(10, 10, 60, 12, title, TYPE_TOP)
 {
-  /// @todo Set correct position.
-
   initLayout();
 }
 
@@ -70,7 +68,7 @@ void AbstractDialog::response(ResponseType response_type)
 void AbstractDialog::initLayout()
 {
   layout = new ListBox(AUTOSIZE, AUTOSIZE);
-  addWidget(*layout, 0, 0);
+  addWidget(*layout, 1, 1);
 
   separator = new HorizontalLine(AUTOSIZE);
   layout->appendWidget(*separator);

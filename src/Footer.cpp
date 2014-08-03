@@ -67,12 +67,14 @@ void Footer::setText(const char *fmt, ...)
 }
 
 Footer::Footer()
-: FreeWindow(0, 24, 80, 1, TYPE_NON_FOCUSABLE)
+: Window(0, 24, 80, 1, TYPE_NON_FOCUSABLE, false)
 {
   setColorScheme("footer");
 
   label = new CppConsUI::Label;
   addWidget(*label, 0, 0);
+
+  onScreenResized();
 }
 
 void Footer::init()

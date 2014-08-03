@@ -16,7 +16,6 @@ set(cppconsui_SOURCES
   CoreManager.cpp
   CppConsUI.cpp
   Dialog.cpp
-  FreeWindow.cpp
   HorizontalLine.cpp
   HorizontalListBox.cpp
   InputDialog.cpp
@@ -28,7 +27,6 @@ set(cppconsui_SOURCES
   MenuWindow.cpp
   MessageDialog.cpp
   Panel.cpp
-  ScrollPane.cpp
   Spacer.cpp
   SplitDialog.cpp
   TextEdit.cpp
@@ -58,7 +56,6 @@ set(cppconsui_HEADERS
   CoreManager.h
   CppConsUI.h
   Dialog.h
-  FreeWindow.h
   HorizontalLine.h
   HorizontalListBox.h
   InputDialog.h
@@ -70,7 +67,6 @@ set(cppconsui_HEADERS
   MenuWindow.h
   MessageDialog.h
   Panel.h
-  ScrollPane.h
   Spacer.h
   SplitDialog.h
   TextEdit.h

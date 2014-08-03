@@ -175,6 +175,8 @@ do {                                       \
 
   buttons->appendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
           &OptionWindow::close)));
+
+  onScreenResized();
 }
 
 void OptionWindow::onScreenResized()

@@ -61,7 +61,7 @@ protected:
     virtual ~ColorPickerPaletteButton() {};
 
     // Widget
-    virtual void draw();
+    virtual void draw(Curses::ViewPort area);
 
     virtual int getColor() const { return color; };
 

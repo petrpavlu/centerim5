@@ -42,6 +42,8 @@ Notify::UserInfoDialog::UserInfoDialog(const char *title)
 
   buttons->appendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
           &UserInfoDialog::close)));
+
+  onScreenResized();
 }
 
 void Notify::UserInfoDialog::onScreenResized()
@@ -179,7 +181,7 @@ void Notify::finalize()
   my_instance = NULL;
 }
 
-void Notify::onDialogClose(CppConsUI::FreeWindow& activator,
+void Notify::onDialogClose(CppConsUI::Window& activator,
     PurpleNotifyType type)
 {
   CppConsUI::AbstractDialog *dialog
@@ -192,7 +194,7 @@ void Notify::onDialogClose(CppConsUI::FreeWindow& activator,
   }
 }
 
-void Notify::onUserInfoDialogClose(CppConsUI::FreeWindow& /*activator*/,
+void Notify::onUserInfoDialogClose(CppConsUI::Window& /*activator*/,
     User user)
 {
   // the userinfo dialog is gone

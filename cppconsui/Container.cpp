@@ -34,8 +34,9 @@ namespace CppConsUI
 {
 
 Container::Container(int w, int h)
-: Widget(w, h), focus_cycle_scope(FOCUS_CYCLE_GLOBAL)
-, update_focus_chain(false), page_focus(false), focus_child(NULL)
+: Widget(w, h), scroll_xpos(0), scroll_ypos(0), border(0)
+, focus_cycle_scope(FOCUS_CYCLE_GLOBAL), update_focus_chain(false)
+, page_focus(false), focus_child(NULL)
 {
   declareBindables();
 }
@@ -47,24 +48,20 @@ Container::~Container()
   clear();
 }
 
-void Container::updateArea()
+void Container::draw(Curses::ViewPort area)
 {
-  Widget::updateArea();
-
-  for (Children::iterator i = children.begin(); i != children.end(); i++)
-    (*i)->updateArea();
-}
-
-void Container::draw()
-{
-  if (!area)
+  if (real_width <= 0 || real_height <= 0)
     return;
 
-  area->fill(getColorPair("container", "background"));
+  if (area.getViewWidth() <= 0 || area.getViewHeight() <= 0)
+    return;
 
-  for (Children::iterator i = children.begin(); i != children.end(); i++)
+  area.scroll(scroll_xpos, scroll_ypos);
+  area.fill(getColorPair("container", "background"));
+
+  for (Children::iterator i = children.begin(); i != children.end(); ++i)
     if ((*i)->isVisible())
-      (*i)->draw();
+      drawChild(**i, area);
 }
 
 Widget *Container::getFocusWidget()
@@ -96,7 +93,7 @@ bool Container::restoreFocus()
 
 bool Container::grabFocus()
 {
-  for (Children::iterator i = children.begin(); i != children.end(); i++)
+  for (Children::iterator i = children.begin(); i != children.end(); ++i)
     if ((*i)->grabFocus())
       return true;
   return false;
@@ -165,13 +162,14 @@ bool Container::setFocusChild(Widget& child)
   bool res = parent->setFocusChild(*this);
   focus_child = &child;
   setInputChild(child);
+  updateScroll();
   return res;
 }
 
 void Container::getFocusChain(FocusChain& focus_chain,
     FocusChain::iterator parent)
 {
-  for (Children::iterator i = children.begin(); i != children.end(); i++) {
+  for (Children::iterator i = children.begin(); i != children.end(); ++i) {
     Widget *widget = *i;
     Container *container = dynamic_cast<Container*>(widget);
 
@@ -240,10 +238,10 @@ void Container::moveFocus(FocusDirection direction)
       while (i != parent_iter.end()) {
         if ((*i)->canFocus())
           break;
-        i++;
+        ++i;
       }
       if (i == parent_iter.end())
-        for (i = parent_iter.begin(); i != iter; i++)
+        for (i = parent_iter.begin(); i != iter; ++i)
           if ((*i)->canFocus())
             break;
       if (i != parent_iter.end() && (*i)->canFocus()) {
@@ -270,10 +268,10 @@ void Container::moveFocus(FocusDirection direction)
     while (i != focus_chain.end()) {
       if ((*i)->canFocus())
         break;
-      i++;
+      ++i;
     }
     if (i == focus_chain.end())
-      for (i = ++focus_chain.begin(); i != iter; i++)
+      for (i = ++focus_chain.begin(); i != iter; ++i)
         if ((*i)->canFocus())
           break;
 
@@ -365,7 +363,7 @@ void Container::moveFocus(FocusDirection direction)
 
         if (iter == cycle_begin)
           iter = cycle_end;
-        iter--;
+        --iter;
 
         if (direction == FOCUS_PAGE_UP)
           cur = (*iter)->getRelativePosition(*container).getY();
@@ -382,12 +380,12 @@ void Container::moveFocus(FocusDirection direction)
           /* parent_iter.end() returns a sibling_iterator, it has to be
            * converted to pre_order_iterator first... */
           FocusChain::pre_order_iterator tmp = parent_iter.end();
-          tmp--;
+          --tmp;
           if (iter == tmp)
             goto end;
         }
 
-        iter++;
+        ++iter;
         if (iter == cycle_end)
           iter = cycle_begin;
 
@@ -401,7 +399,7 @@ void Container::moveFocus(FocusDirection direction)
       while (iter != parent_iter.end()) {
         if ((*iter)->canFocus())
           goto end;
-        iter++;
+        ++iter;
       }
       /* There is always one widget that can get the focus so this code is
        * unreachable. */
@@ -409,7 +407,7 @@ void Container::moveFocus(FocusDirection direction)
       break;
     case FOCUS_END:
       iter = parent_iter.end();
-      iter--;
+      --iter;
       break;
   }
 
@@ -441,41 +439,135 @@ Point Container::getAbsolutePosition(const Widget& child) const
   return Point(p.getX() + child.getLeft(), p.getY() + child.getTop());
 }
 
-Curses::Window *Container::getSubPad(const Widget& child, int begin_x,
-    int begin_y, int ncols, int nlines)
+void Container::onChildMoveResize(Widget& activator, const Rect& /*oldsize*/,
+    const Rect& newsize)
 {
-  if (!area)
-    return NULL;
+  // can be called only by a real child
+  assert(activator.getParent() == this);
 
-  int realw = area->getmaxx();
-  int realh = area->getmaxy();
+  // update child real size
+  activator.setRealPosition(newsize.getLeft(), newsize.getTop());
+  updateChildArea(activator);
+}
 
-  if (nlines == AUTOSIZE)
-    nlines = child.getAutoHeight();
-  if (ncols == AUTOSIZE)
-    ncols = child.getAutoWidth();
+void Container::onChildWishSizeChange(Widget& activator,
+      const Size& /*oldsize*/, const Size& /*newsize*/)
+{
+  // can be called only by a real child
+  assert(activator.getParent() == this);
 
-  /* Extend requested subpad to whole parent area or shrink requested area
-   * if necessary. */
-  if (nlines == AUTOSIZE || nlines > realh - begin_y)
-    nlines = realh - begin_y;
+  // update child real size
+  updateChildArea(activator);
+}
 
-  if (ncols == AUTOSIZE || ncols > realw - begin_x)
-    ncols = realw - begin_x;
+void Container::onChildVisible(Widget& activator, bool /*visible*/)
+{
+  // can be called only by a real child
+  assert(activator.getParent() == this);
+}
 
-  if (nlines <= 0 || ncols <= 0)
-    return NULL;
+void Container::updateArea()
+{
+  // update all child areas
+  for (Children::iterator i = children.begin(); i != children.end(); ++i)
+    updateChildArea(**i);
+}
 
-  return area->subpad(begin_x, begin_y, ncols, nlines);
+void Container::updateChildArea(Widget& child)
+{
+  int child_x = child.getRealLeft();
+  int child_y = child.getRealTop();
+
+  if (child_x == UNSETPOS || child_y == UNSETPOS) {
+    child.setRealSize(0, 0);
+    return;
+  }
+
+  int max_width = real_width - border;
+  int max_height = real_height - border;
+
+  int child_width = child.getWidth();
+  int child_height = child.getHeight();
+
+  if (child_width == AUTOSIZE)
+    child_width = child.getWishWidth();
+  if (child_height == AUTOSIZE)
+    child_height = child.getWishHeight();
+
+  /* Extend the requested area to the whole parent area or shrink the
+   * requested area if necessary. */
+  if (child_width == AUTOSIZE || child_width > max_width - child_x)
+    child_width = max_width - child_x;
+
+  if (child_height == AUTOSIZE || child_height > max_height - child_y)
+    child_height = max_height - child_y;
+
+  if (child_width > 0 && child_height > 0)
+    child.setRealSize(child_width, child_height);
+  else
+    child.setRealSize(0, 0);
+}
+
+void Container::drawChild(Widget& child, Curses::ViewPort area)
+{
+  int view_x = area.getViewLeft();
+  int view_y = area.getViewTop();
+  int view_width = area.getViewWidth();
+  int view_height = area.getViewHeight();
+
+  int view_x2 = view_x + view_width;
+  int view_y2 = view_y + view_height;
+
+  int child_x = child.getRealLeft();
+  int child_y = child.getRealTop();
+  int child_width = child.getRealWidth();
+  int child_height = child.getRealHeight();
+  int child_x2 = child_x + child_width;
+  int child_y2 = child_y + child_height;
+
+  int child_screen_x = area.getScreenLeft() + child_x - view_x;
+  int child_screen_y = area.getScreenTop() + child_y - view_y;
+
+  int child_view_x = 0;
+  int child_view_y = 0;
+  int child_view_width = child_width;
+  int child_view_height = child_height;
+
+  // calculate a viewport for the child
+  if (view_x > child_x) {
+    child_view_x = view_x - child_x;
+    child_screen_x += child_view_x;
+    if (child_view_x > child_width)
+      child_view_x = child_width;
+    child_view_width -= child_view_x;
+  }
+  if (view_y > child_y) {
+    child_view_y = view_y - child_y;
+    child_screen_y += child_view_y;
+    if (child_view_y > child_height)
+      child_view_y = child_height;
+    child_view_height -= child_view_y;
+  }
+
+  if (child_x2 > view_x2) {
+    child_view_width -= child_x2 - view_x2;
+    if (child_view_width < 0)
+      child_view_width = 0;
+  }
+  if (child_y2 > view_y2) {
+    child_view_height -= child_y2 - view_y2;
+    if (child_view_height < 0)
+      child_view_height = 0;
+  }
+
+  Curses::ViewPort child_area(child_screen_x, child_screen_y, child_view_x,
+      child_view_y, child_view_width, child_view_height);
+  child.draw(child_area);
 }
 
 Container::Children::iterator Container::findWidget(const Widget& widget)
 {
-  Children::iterator i;
-  for (i = children.begin(); i != children.end(); i++)
-    if (*i == &widget)
-      break;
-  return i;
+  return std::find(children.begin(), children.end(), &widget);
 }
 
 void Container::insertWidget(size_t pos, Widget& widget, int x, int y)
@@ -489,6 +581,8 @@ void Container::insertWidget(size_t pos, Widget& widget, int x, int y)
    * widget. */
   children.insert(children.begin() + pos, &widget);
   widget.setParent(*this);
+  widget.setRealPosition(widget.getLeft(), widget.getTop());
+  updateChildArea(widget);
 }
 
 void Container::moveWidgetInternal(Widget& widget, Widget& position,
@@ -506,13 +600,59 @@ void Container::moveWidgetInternal(Widget& widget, Widget& position,
   Children::iterator position_iter = findWidget(position);
   assert(position_iter != children.end());
   if (after)
-    position_iter++;
+    ++position_iter;
   children.insert(position_iter, &widget);
 
   updateFocusChain();
 
   // need redraw if the widgets overlap
   redraw();
+}
+
+void Container::updateScroll()
+{
+  if (!focus_child)
+    return;
+
+  int x = focus_child->getRealLeft();
+  int y = focus_child->getRealTop();
+  if (x == UNSETPOS || y == UNSETPOS)
+    return;
+
+  makeVisible(x, y, focus_child->getRealWidth(),
+      focus_child->getRealHeight());
+}
+
+void Container::makeVisible(int x, int y, int w, int h)
+{
+  makePointVisible(x + w - 1, y + h - 1);
+  makePointVisible(x, y);
+}
+
+void Container::makePointVisible(int x, int y)
+{
+  bool scrolled_x = true;
+  if (real_width == 0)
+    scroll_xpos = 0;
+  else if (x < scroll_xpos)
+    scroll_xpos = x;
+  else if (x > scroll_xpos + real_width - 1)
+    scroll_xpos = x - real_width + 1;
+  else
+    scrolled_x = false;
+
+  bool scrolled_y = true;
+  if (real_height == 0)
+    scroll_ypos = 0;
+  else if (y < scroll_ypos)
+    scroll_ypos = y;
+  else if (y > scroll_ypos + real_height - 1)
+    scroll_ypos = y - real_height + 1;
+  else
+    scrolled_y = false;
+
+  if (scrolled_x || scrolled_y)
+    redraw();
 }
 
 void Container::declareBindables()

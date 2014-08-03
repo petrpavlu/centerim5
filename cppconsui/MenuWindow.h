@@ -46,7 +46,7 @@ public:
   virtual ~MenuWindow();
 
   // Widget
-  virtual void draw();
+  virtual void draw(Curses::ViewPort area);
 
   // FreeWindow
   virtual void show();
@@ -110,7 +110,7 @@ protected:
   virtual void addWidget(Widget& widget, int x, int y);
 
   // FreeWindow
-  virtual void onScreenResizedInternal();
+  //virtual void onScreenResizedInternal();
 
   virtual Button *prepareSubMenu(const char *title, MenuWindow& submenu);
 

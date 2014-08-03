@@ -47,135 +47,124 @@ TextView::~TextView()
   clear();
 }
 
-void TextView::updateArea()
+void TextView::draw(Curses::ViewPort area)
 {
-  int origw = area ? area->getmaxx() : 0;
-  Widget::updateArea();
+  area.erase();
 
-  if (!area || origw == area->getmaxx())
-    return;
-
-  updateAllScreenLines();
-}
-
-void TextView::draw()
-{
-  if (!area)
-    return;
-
-  int realw = area->getmaxx();
-  int realh = area->getmaxy();
-
-  area->erase();
-
-  if (screen_lines.size() <= static_cast<unsigned>(realh)) {
+  if (screen_lines.size() <= static_cast<unsigned>(real_height)) {
     view_top = 0;
     autoscroll_suspended = false;
   }
-  else if (view_top > screen_lines.size() - realh) {
-    view_top = screen_lines.size() - realh;
+  else if (view_top > screen_lines.size() - real_height) {
+    view_top = screen_lines.size() - real_height;
     autoscroll_suspended = false;
   }
   else if (autoscroll && !autoscroll_suspended)
-    view_top = screen_lines.size() - realh;
+    view_top = screen_lines.size() - real_height;
 
   int attrs = getColorPair("textview", "text");
-  area->attron(attrs);
+  area.attrOn(attrs);
 
   ScreenLines::iterator i;
   int j;
   for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end()
-      && j < realh; i++, j++) {
+      && j < real_height; i++, j++) {
     int attrs2 = 0;
     if (i->parent->color) {
       char color[sizeof("color") + PRINTF_WIDTH(int)];
       std::sprintf(color, "color%d", i->parent->color);
       attrs2 = getColorPair("textview", color);
-      area->attroff(attrs);
-      area->attron(attrs2);
+      area.attrOff(attrs);
+      area.attrOn(attrs2);
     }
 
     const char *p = i->text;
     int w = 0;
     for (int k = 0; k < i->length; k++) {
       UTF8::UniChar uc = UTF8::getUniChar(p);
+      int printed;
       if (uc == '\t') {
-        int t = Curses::onscreen_width(uc, w);
-        for (int l = 0; l < t; l++)
-          area->mvaddchar(w + l, j, ' ');
-        w += t;
+        printed = Curses::onScreenWidth(uc, w);
+        for (int l = 0; l < printed; l++)
+          area.addChar(w + l, j, ' ');
       }
-      else
-        w += area->mvaddchar(w, j, uc);
+      else {
+        area.addChar(w, j, uc, &printed);
+      }
+      w += printed;
       p = UTF8::getNextChar(p);
     }
 
     if (i->parent->color) {
-      area->attroff(attrs2);
-      area->attron(attrs);
+      area.attrOff(attrs2);
+      area.attrOn(attrs);
     }
   }
 
-  area->attroff(attrs);
+  area.attrOff(attrs);
 
   // draw scrollbar
   if (scrollbar) {
     int x1, x2;
-    if (screen_lines.size() <= static_cast<unsigned>(realh)) {
+    if (screen_lines.size() <= static_cast<unsigned>(real_height)) {
       x1 = 0;
-      x2 = realh;
+      x2 = real_height;
     }
     else {
-      x2 = static_cast<float>(view_top + realh) * realh / screen_lines.size();
+      x2 = static_cast<float>(view_top + real_height) * real_height
+        / screen_lines.size();
       /* Calculate x1 based on x2 (not based on view_top) to avoid jittering
        * during rounding. */
-      x1 = x2 - realh * realh / screen_lines.size();
+      x1 = x2 - real_height * real_height / screen_lines.size();
     }
 
     int attrs = getColorPair("textview", "scrollbar") | Curses::Attr::REVERSE;
-    area->attron(attrs);
+    area.attrOn(attrs);
 
     for (int i = x1 + 1; i < x2 - 1; i++)
-      area->mvaddstring(realw - 1, i, " ");
+      area.addString(real_width - 1, i, " ");
 
     if (x2 - x1 < 2) {
       /* This is a special case when x1 is too close to x2, but we need to
        * draw at least two arrows. */
-      if (realh - x1 < 2) {
+      if (real_height - x1 < 2) {
         // we are close to bottom position
-        area->mvaddlinechar(realw - 1, realh - 2, Curses::LINE_UARROW);
-        area->mvaddlinechar(realw - 1, realh - 1, Curses::LINE_DARROW);
+        area.addLineChar(real_width - 1, real_height - 2,
+            Curses::LINE_UARROW);
+        area.addLineChar(real_width - 1, real_height - 1,
+            Curses::LINE_DARROW);
       }
       else if (x2 < 2) {
         // we are close to top position
-        area->mvaddlinechar(realw - 1, 0, Curses::LINE_UARROW);
-        area->mvaddlinechar(realw - 1, 1, Curses::LINE_DARROW);
+        area.addLineChar(real_width - 1, 0, Curses::LINE_UARROW);
+        area.addLineChar(real_width - 1, 1, Curses::LINE_DARROW);
       }
       else {
         // in between
-        area->mvaddlinechar(realw - 1, x2 - 2, Curses::LINE_UARROW);
-        area->mvaddlinechar(realw - 1, x2 - 1, Curses::LINE_DARROW);
+        area.addLineChar(real_width - 1, x2 - 2, Curses::LINE_UARROW);
+        area.addLineChar(real_width - 1, x2 - 1, Curses::LINE_DARROW);
       }
     }
     else {
       // scrollbar length is big enough to fit two arrows
-      area->mvaddlinechar(realw - 1, x1, Curses::LINE_UARROW);
-      area->mvaddlinechar(realw - 1, x2 - 1, Curses::LINE_DARROW);
+      area.addLineChar(real_width - 1, x1, Curses::LINE_UARROW);
+      area.addLineChar(real_width - 1, x2 - 1, Curses::LINE_DARROW);
     }
 
     // draw a dot to indicate "end of scrolling" for user
-    if (view_top + realh >= screen_lines.size())
-      area->mvaddlinechar(realw - 1, realh - 1, Curses::LINE_BULLET);
+    if (view_top + real_height >= screen_lines.size())
+      area.addLineChar(real_width - 1, real_height - 1,
+          Curses::LINE_BULLET);
     if (view_top == 0)
-      area->mvaddlinechar(realw - 1, 0, Curses::LINE_BULLET);
+      area.addLineChar(real_width - 1, 0, Curses::LINE_BULLET);
 
-    area->attroff(attrs);
+    area.attrOff(attrs);
   }
 
   /*
   char pos[128];
   g_snprintf(pos, sizeof(pos), "%d/%d ", view_top, screen_lines.size());
-  area->mvaddstring(0, 0, pos);
+  area.addString(0, 0, pos);
   */
 }
 
@@ -318,6 +307,11 @@ TextView::ScreenLine::ScreenLine(Line &parent_, const char *text_,
 {
 }
 
+void TextView::updateArea()
+{
+  updateAllScreenLines();
+}
+
 const char *TextView::proceedLine(const char *text, int area_width,
     int *res_length) const
 {
@@ -336,7 +330,7 @@ const char *TextView::proceedLine(const char *text, int area_width,
   while (*cur) {
     prev_width = cur_width;
     UTF8::UniChar uc = UTF8::getUniChar(cur);
-    cur_width += Curses::onscreen_width(uc, cur_width);
+    cur_width += Curses::onScreenWidth(uc, cur_width);
     cur_length++;
 
     if (prev_width > area_width)
@@ -387,19 +381,19 @@ size_t TextView::updateScreenLines(size_t line_num, size_t start)
   ScreenLines::iterator i = screen_lines.begin() + eraseScreenLines(line_num,
       start);
 
-  if (!area)
-    return 0;
-
   // parse line into screen lines
   ScreenLines new_lines;
   const char *p = lines[line_num]->text;
   const char *s;
 
-  int realw = area->getmaxx();
+  int realw = real_width;
   if (scrollbar && realw > 2) {
     // scrollbar shrinks the width of the view area
     realw -= 2;
   }
+
+  if (realw <= 0)
+    return 0;
 
   int len;
   while (*p) {
@@ -471,15 +465,10 @@ size_t TextView::eraseScreenLines(size_t line_num, size_t start,
 
 void TextView::actionScroll(int direction)
 {
-  if (!area)
+  if (screen_lines.size() <= static_cast<unsigned>(real_height))
     return;
 
-  int realh = area->getmaxy();
-
-  if (screen_lines.size() <= static_cast<unsigned>(realh))
-    return;
-
-  unsigned s = abs(direction) * ((realh + 1) / 2);
+  unsigned s = abs(direction) * ((real_height + 1) / 2);
   if (direction < 0) {
     if (view_top < s)
       view_top = 0;
@@ -487,13 +476,13 @@ void TextView::actionScroll(int direction)
       view_top -= s;
   }
   else {
-    if (view_top + s > screen_lines.size() - realh)
-      view_top = screen_lines.size() - realh;
+    if (view_top + s > screen_lines.size() - real_height)
+      view_top = screen_lines.size() - real_height;
     else
       view_top += s;
   }
 
-  autoscroll_suspended = screen_lines.size() > view_top + realh;
+  autoscroll_suspended = screen_lines.size() > view_top + real_height;
   redraw();
 }
 

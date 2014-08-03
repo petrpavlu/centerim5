@@ -39,7 +39,7 @@ void Header::onScreenResized()
 }
 
 Header::Header()
-: FreeWindow(0, 0, 80, 1, TYPE_NON_FOCUSABLE)
+: Window(0, 0, 80, 1, TYPE_NON_FOCUSABLE, false)
 {
   setColorScheme("header");
 
@@ -80,6 +80,8 @@ Header::Header()
       PURPLE_CALLBACK(account_enabled_), this);
   purple_signal_connect(handle, "account-disabled", this,
       PURPLE_CALLBACK(account_disabled_), this);
+
+  onScreenResized();
 }
 
 Header::~Header()
@@ -165,7 +167,7 @@ void Header::account_status_changed(PurpleAccount *account,
         purple_account_get_protocol_name(account),
         purple_account_get_username(account));
   label->setText(text);
-  label->setWidth(CppConsUI::Curses::onscreen_width(text));
+  label->setWidth(CppConsUI::Curses::onScreenWidth(text));
   g_free(text);
 }
 

@@ -24,10 +24,6 @@
  * Wrapper for curses functions.
  *
  * @ingroup cppconsui
- *
- * @todo Make ConsuiCurses.h a full handler of all curses functions that could
- * be easily changed with a different implementation.
- * @todo Documentation. ;)
  */
 
 #ifndef __CONSUICURSES_H__
@@ -65,59 +61,54 @@ enum LineChar {
   LINE_BULLET
 };
 
-class Window
+class ViewPort
 {
 public:
-  // these tree functions returns NULL if such pad/window can not be created
-  static Window *newpad(int cols, int nlines);
-  static Window *newwin(int begin_x, int begin_y, int ncols, int nlines);
-
-  Window *subpad(int begin_x, int begin_y, int ncols, int nlines);
-
-  virtual ~Window();
+  ViewPort(int screen_x, int screen_y, int view_x, int view_y, int view_width,
+      int view_height);
+  virtual ~ViewPort() {}
 
   /**
-   * Adds string to the window.
+   * Adds a string to the screen.
    *
    * First two variants require NUL-terminated strings.
    */
-  int mvaddstring(int x, int y, int w, const char *str);
-  int mvaddstring(int x, int y, const char *str);
-  int mvaddstring(int x, int y, int w, const char *str, const char *end);
-  int mvaddstring(int x, int y, const char *str, const char *end);
+  int addString(int x, int y, int w, const char *str, int *printed = NULL);
+  int addString(int x, int y, const char *str, int *printed = NULL);
+  int addString(int x, int y, int w, const char *str, const char *end,
+      int *printed = NULL);
+  int addString(int x, int y, const char *str, const char *end,
+      int *printed = NULL);
 
-  int mvaddchar(int x, int y, UTF8::UniChar uc);
+  int addChar(int x, int y, UTF8::UniChar uc, int *printed = NULL);
+  int addLineChar(int x, int y, LineChar c);
 
-  int mvaddlinechar(int x, int y, LineChar c);
-
-  int attron(int attrs);
-  int attroff(int attrs);
-  int mvchgat(int x, int y, int n, /* attr_t */ int attr, short color,
+  int attrOn(int attrs);
+  int attrOff(int attrs);
+  int changeAt(int x, int y, int n, /* attr_t */ int attr, short color,
       const void *opts);
 
   int fill(int attrs);
   int fill(int attrs, int x, int y, int w, int h);
   int erase();
 
-  int noutrefresh();
+  void scroll(int scroll_x, int scroll_y);
 
-  int touch();
-
-  int copyto(Window *dstwin, int smincol, int sminrow, int dmincol,
-      int dminrow, int dmaxcol, int dmaxrow, int overlay);
-
-  int getmaxx();
-  int getmaxy();
+  int getScreenLeft() const { return screen_x; }
+  int getScreenTop() const { return screen_y; }
+  int getViewLeft() const { return view_x; }
+  int getViewTop() const { return view_y; }
+  int getViewWidth() const { return view_width; }
+  int getViewHeight() const { return view_height; }
 
 protected:
-  int printChar(UTF8::UniChar uc);
+  int screen_x, screen_y;
+  int view_x, view_y, view_width, view_height;
+
+  bool isInViewPort(int x, int y, int w);
 
 private:
-  struct WindowInternals;
-  WindowInternals *p;
-
-  Window();
-  CONSUI_DISABLE_COPY(Window);
+  //CONSUI_DISABLE_COPY(ViewPort);
 };
 
 struct Color
@@ -148,34 +139,33 @@ extern const int C_ERR;
 
 const int NUM_DEFAULT_COLORS = 16;
 
-int init_screen();
-int finalize_screen();
-void set_ascii_mode(bool enabled);
-bool get_ascii_mode();
+int initScreen();
+int finalizeScreen();
+void setAsciiMode(bool enabled);
+bool getAsciiMode();
 
-bool init_colorpair(int idx, int fg, int bg, int *res);
-int nrcolors();
-int nrcolorpairs();
-bool colorpair_content(int colorpair, int *fg, int *bg);
+bool initColorPair(int idx, int fg, int bg, int *res);
+int getColorCount();
+int getColorPairCount();
+bool getColorPair(int colorpair, int *fg, int *bg);
 
 int erase();
 int clear();
-int doupdate();
+int refresh();
 
 int beep();
 
 // stdscr
-int noutrefresh();
-int getmaxx();
-int getmaxy();
+int getWidth();
+int getHeight();
 
-int resizeterm(int lines, int columns);
+int resizeTerm(int width, int height);
 
-int onscreen_width(const char *start, const char *end = NULL);
-int onscreen_width(UTF8::UniChar uc, int w = 0);
+int onScreenWidth(const char *start, const char *end = NULL);
+int onScreenWidth(UTF8::UniChar uc, int w = 0);
 
-const Stats *get_stats();
-void reset_stats();
+const Stats *getStats();
+void resetStats();
 
 } // namespace Curses
 

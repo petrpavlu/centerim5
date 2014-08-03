@@ -46,7 +46,7 @@ public:
   virtual ~Panel();
 
   // Widget
-  virtual void draw();
+  virtual void draw(Curses::ViewPort area);
 
   /**
    * Sets a caption text.

@@ -59,7 +59,7 @@ protected:
     virtual ~Sample() {}
 
     // Widget
-    virtual void draw();
+    virtual void draw(Curses::ViewPort area);
 
     virtual void setColors(int fg, int bg);
 

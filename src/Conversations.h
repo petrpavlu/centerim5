@@ -24,7 +24,7 @@
 
 #include "Conversation.h"
 
-#include <cppconsui/FreeWindow.h>
+#include <cppconsui/Window.h>
 #include <cppconsui/HorizontalListBox.h>
 #include <cppconsui/Label.h>
 #include <cppconsui/Spacer.h>
@@ -34,12 +34,12 @@
 #define CONVERSATIONS (Conversations::instance())
 
 class Conversations
-: public CppConsUI::FreeWindow
+: public CppConsUI::Window
 {
 public:
   static Conversations *instance();
 
-  // FreeWindow
+  // Window
   virtual void onScreenResized();
 
   void focusActiveConversation();

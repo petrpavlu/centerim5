@@ -45,7 +45,7 @@ public:
   virtual bool restoreFocus();
   virtual void ungrabFocus();
 
-  // FreeWindow
+  // Window
   virtual void show();
   virtual void close();
   virtual void onScreenResized();
@@ -64,7 +64,7 @@ protected:
     virtual ~ConversationLine();
 
     // Widget
-    virtual void draw();
+    virtual void draw(CppConsUI::Curses::ViewPort area);
 
   protected:
     char *text;

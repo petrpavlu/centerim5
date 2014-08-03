@@ -29,9 +29,6 @@
 #ifndef __WIDGET_H__
 #define __WIDGET_H__
 
-#define AUTOSIZE -1024
-#define UNSETPOS -2048
-
 #include "ConsUICurses.h"
 #include "CppConsUI.h"
 #include "InputProcessor.h"
@@ -47,6 +44,11 @@ class Widget
 , public InputProcessor
 {
 public:
+  enum {
+    AUTOSIZE = -1024,
+    UNSETPOS = -2048
+  };
+
   Widget(int w, int h);
   virtual ~Widget();
 
@@ -55,17 +57,12 @@ public:
    */
   virtual void moveResize(int newx, int newy, int neww, int newh);
   /**
-   * Recreates the widget area. It is called whenever coordinates of the
-   * widget change.
-   */
-  virtual void updateArea();
-  /**
    * The draw() method does the actual drawing on a (virtual) area of the
    * screen. The @ref CoreManager singleton calls draw() on all on-screen
    * Windows. This causes all draw() implementations needed to draw the screen
    * to be called.
    */
-  virtual void draw() = 0;
+  virtual void draw(Curses::ViewPort area) = 0;
   /**
    * Finds the widget that could be the focus widget from the focus chain
    * starting with this widget:
@@ -142,38 +139,26 @@ public:
    * note in getAbsolutePosition() method.
    */
   virtual Point getRelativePosition(const Container& ref) const;
-  /**
-   * Returns a real (on-screen) width. See note in getAbsolutePosition()
-   * method.
-   */
-  virtual int getRealWidth() const;
-  /**
-   * Returns a real (on-screen) height. See note in getAbsolutePosition()
-   * method.
-   */
-  virtual int getRealHeight() const;
 
   /**
    * Returns an area width that is requested by the widget. This method can
-   * be used by a parent widget in getSubPad() if width is set to AUTOSIZE.
-   * The AUTOSIZE returned value means "as much as possible".
+   * be used by a parent widget if width is set to AUTOSIZE. The AUTOSIZE
+   * returned value means "as much as possible".
    */
   virtual int getWishWidth() const { return wish_width; }
   /**
    * Returns an area height that is requested by the widget. This method can
-   * be used by a parent widget in getSubPad() if height is set to AUTOSIZE.
-   * The AUTOSIZE returned value means "as much as possible".
+   * be used by a parent widget in if height is set to AUTOSIZE. The AUTOSIZE
+   * returned value means "as much as possible".
    */
   virtual int getWishHeight() const { return wish_height; }
 
-  virtual void setAutoSize(int neww, int newh);
-  virtual void setAutoWidth(int neww) { setAutoSize(neww, auto_height); }
-  virtual void setAutoHeight(int newh) { setAutoSize(auto_width, newh); }
-  virtual int getAutoWidth() const { return auto_width; }
-  virtual int getAutoHeight() const { return auto_height; }
-
-  virtual void startPositioning();
-  virtual void finishPositioning();
+  virtual void setRealPosition(int newx, int newy);
+  virtual int getRealLeft() const { return real_xpos; }
+  virtual int getRealTop() const { return real_ypos; }
+  virtual void setRealSize(int neww, int newh);
+  virtual int getRealWidth() const { return real_width; }
+  virtual int getRealHeight() const { return real_height; }
 
   virtual void setColorScheme(const char *new_color_scheme);
   virtual const char *getColorScheme() const;
@@ -198,19 +183,9 @@ protected:
    */
   int wish_width, wish_height;
   /**
-   * Automatic size set by the parent.
+   * Real position and size set by the parent container.
    */
-  int auto_width, auto_height;
-  /**
-   * Flag indicating if the parent currently positions the widget and
-   * updateArea() should not be called yet.
-   */
-  bool in_positioning_process;
-  /**
-   * Flag indicating if updateArea() should be called when the positioning
-   * process is ended.
-   */
-  bool update_area_pending;
+  int real_xpos, real_ypos, real_width, real_height;
   /**
    * Flag indicating if the widget can grab the focus.
    */
@@ -224,10 +199,6 @@ protected:
    * Visibility flag.
    */
   bool visible;
-  /**
-   * This is the implementation dependent area of the widget.
-   */
-  Curses::Window *area;
 
   /**
    * Parent widget.
@@ -237,6 +208,16 @@ protected:
    * Current color scheme.
    */
   char *color_scheme;
+
+  virtual void signalMoveResize(const Rect& oldsize, const Rect& newsize);
+  virtual void signalWishSizeChange(const Size& oldsize, const Size& newsize);
+  virtual void signalVisible(bool visible);
+
+  /**
+   * Recalculates the widget area. It is called whenever coordinates of the
+   * widget change.
+   */
+  virtual void updateArea();
 
   /**
    * Tells @ref CoreManager that the widget has been updated and the screen
@@ -255,7 +236,7 @@ protected:
   virtual int getColorPair(const char *widget, const char *property) const;
 
   /**
-   * @todo
+   * Returns the top container.
    */
   virtual Container *getTopContainer();
 

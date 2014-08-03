@@ -90,7 +90,7 @@ private:
     PendingRequestWindow(Accounts& accounts_, const Requests& requests);
     virtual ~PendingRequestWindow() {}
 
-    // FreeWindow
+    // Window
     virtual void onScreenResized();
 
     /* Provide a way for the Accounts singleton to add or delete requests
@@ -155,7 +155,7 @@ private:
   /* This method is called by PendingRequestWindow when an add or auth request
    * should be closed. */
   void closeRequest(const Request& request);
-  void onPendingRequestWindowClose(CppConsUI::FreeWindow& activator);
+  void onPendingRequestWindowClose(CppConsUI::Window& activator);
 
   static void notify_added_(PurpleAccount *account, const char *remote_user,
       const char *id, const char *alias, const char *message)

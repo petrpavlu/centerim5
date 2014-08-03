@@ -39,10 +39,9 @@ namespace CppConsUI
 
 Widget::Widget(int w, int h)
 : xpos(UNSETPOS), ypos(UNSETPOS), width(w), height(h), wish_width(AUTOSIZE)
-, wish_height(AUTOSIZE), auto_width(AUTOSIZE), auto_height(AUTOSIZE)
-, in_positioning_process(false), update_area_pending(false), can_focus(false)
-, has_focus(false), visible(true), area(NULL), parent(NULL)
-, color_scheme(NULL)
+, wish_height(AUTOSIZE), real_xpos(UNSETPOS), real_ypos(UNSETPOS)
+, real_width(0), real_height(0), can_focus(false), has_focus(false)
+, visible(true), parent(NULL), color_scheme(NULL)
 {
 }
 
@@ -50,7 +49,6 @@ Widget::~Widget()
 {
   setVisibility(false);
 
-  delete area;
   delete [] color_scheme;
 }
 
@@ -67,30 +65,7 @@ void Widget::moveResize(int newx, int newy, int neww, int newh)
   width = neww;
   height = newh;
 
-  /* Tell the parent about the new size so it can position the widget
-   * correctly. */
-  if (parent)
-    parent->onChildMoveResize(*this, oldsize, newsize);
-
-  if (!in_positioning_process)
-    updateArea();
-  else
-    update_area_pending = true;
-}
-
-void Widget::updateArea()
-{
-  if (!parent)
-    return;
-
-  if (xpos == UNSETPOS || ypos == UNSETPOS)
-    return;
-
-  // obtain a new drawing area from the parent
-  delete area;
-  area = parent->getSubPad(*this, xpos, ypos, width, height);
-
-  redraw();
+  signalMoveResize(oldsize, newsize);
 }
 
 Widget *Widget::getFocusWidget()
@@ -168,9 +143,7 @@ void Widget::setVisibility(bool new_visible)
       }
     }
 
-    /* Tell the parent about the new visibility status so it can reposition
-     * its child widgets as appropriate. */
-    parent->onChildVisible(*this, visible);
+    signalVisible(visible);
   }
 
   signal_visible(*this, visible);
@@ -207,16 +180,11 @@ void Widget::setParent(Container& new_parent)
      * already has a focused widget. */
     cleanFocus();
   }
-
-  if (!in_positioning_process)
-    updateArea();
-  else
-    update_area_pending = true;
 }
 
 /* All following moveResize() wrappers should always call member methods to
  * get xpos, ypos, width, height and never use member variables directly. See
- * FreeWindow getLeft(), getTop(), getWidth(), getHeight(). */
+ * Window getLeft(), getTop(), getWidth(), getHeight(). */
 void Widget::move(int newx, int newy)
 {
   moveResize(newx, newy, getWidth(), getHeight());
@@ -263,57 +231,21 @@ Point Widget::getRelativePosition(const Container& ref) const
   return parent->getRelativePosition(ref, *this);
 }
 
-int Widget::getRealWidth() const
+void Widget::setRealPosition(int newx, int newy)
 {
-  if (!area)
-    return 0;
-  return area->getmaxx();
+  real_xpos = newx;
+  real_ypos = newy;
 }
 
-int Widget::getRealHeight() const
+void Widget::setRealSize(int neww, int newh)
 {
-  if (!area)
-    return 0;
-  return area->getmaxy();
-}
-
-void Widget::setAutoSize(int neww, int newh)
-{
-  /* A parent container should not set the auto size if the widget does not
-   * request automatic sizing. */
-  assert(width == AUTOSIZE || height == AUTOSIZE);
-  assert(parent);
-
-  if (neww == auto_width && newh == auto_height)
+  if (neww == real_width && newh == real_height)
     return;
 
-  auto_width = neww;
-  auto_height = newh;
-
-  if (!in_positioning_process)
-    updateArea();
-  else
-    update_area_pending = true;
-}
-
-void Widget::startPositioning()
-{
-  assert(!in_positioning_process);
-  assert(!update_area_pending);
-
-  in_positioning_process = true;
-}
-
-void Widget::finishPositioning()
-{
-  assert(in_positioning_process);
-  in_positioning_process = false;
-
-  if (!update_area_pending)
-    return;
+  real_width = neww;
+  real_height = newh;
 
   updateArea();
-  update_area_pending = false;
 }
 
 void Widget::setColorScheme(const char *new_color_scheme)
@@ -341,11 +273,48 @@ const char *Widget::getColorScheme() const
   return NULL;
 }
 
+void Widget::updateArea()
+{
+  // empty for Widget
+}
+
+void Widget::signalMoveResize(const Rect& oldsize, const Rect& newsize)
+{
+  if (!parent)
+    return;
+
+  /* Tell the parent about the new size so it can position the widget
+   * correctly. */
+  parent->onChildMoveResize(*this, oldsize, newsize);
+}
+
+void Widget::signalWishSizeChange(const Size& oldsize,
+    const Size& newsize)
+{
+  if (!parent)
+    return;
+
+  /* Tell the parent about the new wish size so it can position the widget
+   * correctly. */
+  parent->onChildWishSizeChange(*this, oldsize, newsize);
+}
+
+void Widget::signalVisible(bool visible)
+{
+  if (!parent)
+    return;
+
+  /* Tell the parent about the new visibility status so it can reposition its
+   * child widgets as appropriate. */
+  parent->onChildVisible(*this, visible);
+}
+
 void Widget::redraw()
 {
-  FreeWindow *win = dynamic_cast<FreeWindow*>(getTopContainer());
-  if (win && COREMANAGER->hasWindow(*win))
-    COREMANAGER->redraw();
+  if (!parent)
+    return;
+
+  COREMANAGER->redraw();
 }
 
 void Widget::setWishSize(int neww, int newh)
@@ -359,15 +328,7 @@ void Widget::setWishSize(int neww, int newh)
   wish_width = neww;
   wish_height = newh;
 
-  /* Tell the parent about the new wish size so it can position the widget
-   * correctly. */
-  if (parent)
-    parent->onChildWishSizeChange(*this, oldsize, newsize);
-
-  if (!in_positioning_process)
-    updateArea();
-  else
-    update_area_pending = true;
+  signalWishSizeChange(oldsize, newsize);
 }
 
 int Widget::getColorPair(const char *widget, const char *property) const

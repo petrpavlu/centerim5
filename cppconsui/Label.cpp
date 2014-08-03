@@ -50,16 +50,10 @@ Label::~Label()
   delete [] text;
 }
 
-void Label::draw()
+void Label::draw(Curses::ViewPort area)
 {
-  if (!area)
-    return;
-
   int attrs = getColorPair("label", "text");
-  area->attron(attrs);
-
-  int realw = area->getmaxx();
-  int realh = area->getmaxy();
+  area.attrOn(attrs);
 
   // print text
   int y = 0;
@@ -68,19 +62,15 @@ void Label::draw()
   int p;
   while (*end) {
     if (*end == '\n') {
-      if (y >= realh)
-        break;
-
-      p = area->mvaddstring(0, y, realw * (realh - y), start, end);
-      y += (p / realw) + 1;
+      p = area.addString(0, y, real_width * (real_height - y), start, end);
+      y += (p / real_width) + 1;
       start = end + 1;
     }
-    end++;
+    ++end;
   }
-  if (y < realh)
-    area->mvaddstring(0, y, realw * (realh - y), start, end);
+  area.addString(0, y, real_width * (real_height - y), start, end);
 
-  area->attroff(attrs);
+  area.attrOff(attrs);
 }
 
 void Label::setText(const char *new_text)
@@ -98,9 +88,9 @@ void Label::setText(const char *new_text)
 
   // update wish height
   int h = 1;
-  for (const char *cur = text; *cur; cur++)
+  for (const char *cur = text; *cur; ++cur)
     if (*cur == '\n')
-      h++;
+      ++h;
   setWishHeight(h);
 
   redraw();

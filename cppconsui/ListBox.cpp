@@ -29,6 +29,7 @@
 #include "ListBox.h"
 
 #include <algorithm>
+#include <cassert>
 
 namespace CppConsUI
 {
@@ -38,21 +39,6 @@ ListBox::ListBox(int w, int h)
 {
   // allow fast focus changing (paging) using PageUp/PageDown keys
   page_focus = true;
-}
-
-void ListBox::updateArea()
-{
-  AbstractListBox::updateArea();
-
-  if (!screen_area)
-    return;
-
-  // adjust accordingly a size of the virtual scroll area
-  setScrollWidth(screen_area->getmaxx());
-  int origh = area ? area->getmaxy() : 0;
-  updateScrollHeight();
-  if (area && origh != area->getmaxy())
-    repositionChildren();
 }
 
 HorizontalLine *ListBox::insertSeparator(size_t pos)
@@ -71,7 +57,7 @@ HorizontalLine *ListBox::appendSeparator()
 
 void ListBox::insertWidget(size_t pos, Widget& widget)
 {
-  ScrollPane::insertWidget(pos, widget, UNSETPOS, UNSETPOS);
+  Container::insertWidget(pos, widget, UNSETPOS, UNSETPOS);
 
   if (!widget.isVisible())
     return;
@@ -95,9 +81,63 @@ void ListBox::appendWidget(Widget& widget)
   insertWidget(children.size(), widget);
 }
 
+void ListBox::updateArea()
+{
+  int autosize_height = 1;
+  int autosize_height_extra = 0;
+  if (autosize_children_count && children_height < real_height) {
+    int space = real_height - (children_height - autosize_children_count);
+    autosize_height = space / autosize_children_count;
+    autosize_height_extra = space % autosize_children_count;
+  }
+
+  int y = 0;
+  for (Children::iterator i = children.begin(); i != children.end(); i++) {
+    Widget *widget = *i;
+    bool is_visible = widget->isVisible();
+
+    // position the widget correctly
+    widget->setRealPosition(0, y);
+
+    // calculate the real width
+    int w = widget->getWidth();
+    if (w == AUTOSIZE) {
+      w = widget->getWishWidth();
+      if (w == AUTOSIZE)
+        w = real_width;
+    }
+    if (w > real_width)
+      w = real_width;
+
+    // calculate the real height
+    int h = widget->getHeight();
+    if (h == AUTOSIZE) {
+      h = widget->getWishHeight();
+      if (h == AUTOSIZE) {
+        h = autosize_height;
+        if (is_visible && autosize_height_extra) {
+          autosize_height_extra--;
+          h++;
+        }
+      }
+    }
+
+    widget->setRealSize(w, h);
+
+    if (is_visible)
+      y += h;
+  }
+
+  // make sure that the currently focused widget is visible
+  updateScroll();
+}
+
 void ListBox::onChildMoveResize(Widget& activator, const Rect& oldsize,
     const Rect& newsize)
 {
+  // sanity check
+  assert(newsize.getLeft() == UNSETPOS && newsize.getTop() == UNSETPOS);
+
   if (!activator.isVisible())
     return;
 
@@ -167,66 +207,9 @@ void ListBox::updateChildren(int children_height_change,
   autosize_children_count += autosize_children_count_change;
   assert(autosize_children_count >= 0);
 
-  // update scroll height and reposition all child widgets
-  updateScrollHeight();
-  repositionChildren();
+  // reposition all child widgets
+  updateArea();
   signal_children_height_change(*this, children_height);
-}
-
-void ListBox::updateScrollHeight()
-{
-  int realh = 0;
-  if (screen_area)
-    realh = screen_area->getmaxy();
-
-  setScrollHeight(std::max(realh, children_height));
-}
-
-void ListBox::repositionChildren()
-{
-  if (!area)
-    return;
-
-  int autosize_height = 1;
-  int autosize_height_extra = 0;
-  int realh = area->getmaxy();
-  if (autosize_children_count && children_height < realh) {
-    int space = realh - (children_height - autosize_children_count);
-    autosize_height = space / autosize_children_count;
-    autosize_height_extra = space % autosize_children_count;
-  }
-
-  int y = 0;
-  for (Children::iterator i = children.begin(); i != children.end(); i++) {
-    Widget *widget = *i;
-    if (!widget->isVisible())
-      continue;
-
-    // position the widget correctly
-    widget->startPositioning();
-    widget->move(0, y);
-    int h = widget->getHeight();
-    if (h == AUTOSIZE) {
-      h = autosize_height;
-      if (autosize_height_extra) {
-        autosize_height_extra--;
-        h++;
-      }
-      widget->setAutoHeight(h);
-    }
-    widget->finishPositioning();
-
-    y += h;
-  }
-
-  // make sure that the currently focused widget is visible
-  if (focus_child) {
-    int h = focus_child->getHeight();
-    if (h == AUTOSIZE)
-      h = focus_child->getAutoHeight();
-
-    makeVisible(focus_child->getLeft(), focus_child->getTop(), 1, h);
-  }
 }
 
 } // namespace CppConsUI

@@ -53,8 +53,7 @@ public:
   virtual bool processInputText(const TermKeyKey &key);
 
   // Widget
-  virtual void updateArea();
-  virtual void draw();
+  virtual void draw(Curses::ViewPort area);
 
   /**
    * Sets new text.
@@ -192,6 +191,9 @@ protected:
   size_t text_length;
 
   mutable bool screen_lines_dirty;
+
+  // Widget
+  virtual void updateArea();
 
   virtual void initBuffer(size_t size);
   virtual size_t getGapSize() const;

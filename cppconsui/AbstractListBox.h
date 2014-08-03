@@ -31,7 +31,7 @@
 
 #include "AbstractLine.h"
 #include "Button.h"
-#include "ScrollPane.h"
+#include "Container.h"
 
 namespace CppConsUI
 {
@@ -41,7 +41,7 @@ namespace CppConsUI
  * HorizontalListBox.
  */
 class AbstractListBox
-: public ScrollPane
+: public Container
 {
 public:
   AbstractListBox(int w, int h);
@@ -78,7 +78,7 @@ public:
 
 protected:
   // Container
-  using ScrollPane::addWidget;
+  using Container::addWidget;
 
 private:
   CONSUI_DISABLE_COPY(AbstractListBox);

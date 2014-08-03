@@ -61,6 +61,8 @@ Request::RequestDialog::RequestDialog(const char *title,
     addButton(cancel_text, RESPONSE_CANCEL);
   signal_response.connect(sigc::mem_fun(this,
         &RequestDialog::responseHandler));
+
+  onScreenResized();
 }
 
 void Request::RequestDialog::onScreenResized()

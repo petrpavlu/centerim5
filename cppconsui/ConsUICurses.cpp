@@ -49,204 +49,242 @@ namespace Curses
 static Stats stats = {0, 0, 0};
 bool ascii_mode = false;
 
-struct Window::WindowInternals
+ViewPort::ViewPort(int screen_x_, int screen_y_, int view_x_, int view_y_,
+    int view_width_, int view_height_)
+: screen_x(screen_x_), screen_y(screen_y_), view_x(view_x_), view_y(view_y_)
+, view_width(view_width_), view_height(view_height_)
 {
-  WINDOW *win;
-  WindowInternals(WINDOW *w = NULL) : win(w) {}
-};
-
-Window *Window::newpad(int ncols, int nlines)
-{
-  stats.newpad_calls++;
-
-  WINDOW *win;
-
-  if (!(win = ::newpad(nlines, ncols)))
-    return NULL;
-
-  Window *a = new Window;
-  a->p->win = win;
-  return a;
 }
 
-Window *Window::newwin(int begin_x, int begin_y, int ncols, int nlines)
-{
-  stats.newwin_calls++;
-
-  WINDOW *win;
-
-  if (!(win = ::newwin(nlines, ncols, begin_y, begin_x)))
-    return NULL;
-
-  Window *a = new Window;
-  a->p->win = win;
-  return a;
-}
-
-Window *Window::subpad(int begin_x, int begin_y, int ncols, int nlines)
-{
-  stats.subpad_calls++;
-
-  WINDOW *win;
-
-  if (!(win = ::subpad(p->win, nlines, ncols, begin_y, begin_x)))
-    return NULL;
-
-  Window *a = new Window;
-  a->p->win = win;
-  return a;
-}
-
-Window::~Window()
-{
-  delwin(p->win);
-  delete p;
-}
-
-int Window::mvaddstring(int x, int y, int w, const char *str)
+int ViewPort::addString(int x, int y, int w, const char *str, int *printed)
 {
   assert(str);
 
-  wmove(p->win, y, x);
-
-  int printed = 0;
-  while (printed < w && str && *str) {
-    printed += printChar(UTF8::getUniChar(str));
+  int res = OK;
+  int p = 0;
+  while (p < w && str && *str) {
+    int out;
+    if ((res = addChar(x + p, y, UTF8::getUniChar(str), &out)) == ERR)
+      break;
+    p += out;
     str = UTF8::getNextChar(str);
   }
-  return printed;
+
+  if (printed)
+    *printed = p;
+
+  return res;
 }
 
-int Window::mvaddstring(int x, int y, const char *str)
+int ViewPort::addString(int x, int y, const char *str, int *printed)
 {
   assert(str);
 
-  wmove(p->win, y, x);
-
-  int printed = 0;
+  int res = OK;
+  int p = 0;
   while (str && *str) {
-    printed += printChar(UTF8::getUniChar(str));
+    int out;
+    if ((res = addChar(x + p, y, UTF8::getUniChar(str), &out)) == ERR)
+      break;
+    p += out;
     str = UTF8::getNextChar(str);
   }
-  return printed;
+
+  if (printed)
+    *printed = p;
+
+  return res;
 }
 
-int Window::mvaddstring(int x, int y, int w, const char *str, const char *end)
+int ViewPort::addString(int x, int y, int w, const char *str, const char *end,
+    int *printed)
 {
   assert(str);
   assert(end);
 
-  if (str >= end)
-    return 0;
-
-  wmove(p->win, y, x);
-
-  int printed = 0;
-  while (printed < w && str < end && str && *str) {
-    printed += printChar(UTF8::getUniChar(str));
+  int res = OK;
+  int p = 0;
+  while (p < w && str < end && str && *str) {
+    int out;
+    if ((res = addChar(x + p, y, UTF8::getUniChar(str), &out)) == ERR)
+      break;
+    p += out;
     str = UTF8::findNextChar(str, end);
   }
-  return printed;
+
+  if (printed)
+    *printed = p;
+
+  return res;
 }
 
-int Window::mvaddstring(int x, int y, const char *str, const char *end)
+int ViewPort::addString(int x, int y, const char *str, const char *end,
+    int *printed)
 {
   assert(str);
   assert(end);
 
-  if (str >= end)
-    return 0;
-
-  wmove(p->win, y, x);
-
-  int printed = 0;
+  int res = OK;
+  int p = 0;
   while (str < end && str && *str) {
-    printed += printChar(UTF8::getUniChar(str));
+    int out;
+    if ((res = addChar(x + p, y, UTF8::getUniChar(str), &out)) == ERR)
+      break;
+    p += out;
     str = UTF8::findNextChar(str, end);
   }
-  return printed;
+
+  if (printed)
+    *printed = p;
+
+  return res;
 }
 
-int Window::mvaddchar(int x, int y, UTF8::UniChar uc)
+int ViewPort::addChar(int x, int y, UTF8::UniChar uc, int *printed)
 {
-  wmove(p->win, y, x);
-  return printChar(uc);
+  if (printed)
+    *printed = 0;
+
+  int draw_x = screen_x + (x - view_x);
+  int draw_y = screen_y + (y - view_y);
+
+  if (uc >= 0x7f && uc < 0xa0) {
+    // filter out C1 (8-bit) control characters
+    if (isInViewPort(x, y, 1))
+      if (::mvaddch(draw_y, draw_x, '?') == ERR)
+        return ERR;
+    if (printed)
+      *printed = 1;
+    return OK;
+  }
+
+  // get a unicode character from the next few bytes
+  wchar_t wch[2];
+
+  wch[0] = uc;
+  wch[1] = L'\0';
+
+  // invalid utf-8 sequence
+  if (wch[0] < 0)
+    return ERR;
+
+  // tab character
+  if (wch[0] == '\t') {
+    int w = onScreenWidth(wch[0]);
+    for (int i = 0; i < w; ++i) {
+      if (isInViewPort(x + i, y, 1))
+        if (::mvaddch(draw_y, draw_x + i, ' ') == ERR)
+          return ERR;
+      if (printed)
+        ++(*printed);
+    }
+    return OK;
+  }
+
+  // control char symbols
+  if (wch[0] < 32)
+    wch[0] = 0x2400 + wch[0];
+
+  int w = onScreenWidth(wch[0]);
+  if (isInViewPort(x, y, w)) {
+    cchar_t cc;
+
+    if (::setcchar(&cc, wch, A_NORMAL, 0, NULL) == ERR)
+      return ERR;
+    if (::mvadd_wch(draw_y, draw_x, &cc) == ERR)
+      return ERR;
+  }
+  if (printed)
+    *printed = w;
+  return OK;
 }
 
-int Window::mvaddlinechar(int x, int y, LineChar c)
+int ViewPort::addLineChar(int x, int y, LineChar c)
 {
+  if (!isInViewPort(x, y, 1))
+    return OK;
+
+  int draw_x = screen_x + (x - view_x);
+  int draw_y = screen_y + (y - view_y);
+
   switch (c) {
     case LINE_HLINE:
-      return mvwaddch(p->win, y, x, ascii_mode ? '-' : ACS_HLINE);
+      return ::mvaddch(draw_y, draw_x, ascii_mode ? '-' : ACS_HLINE);
     case LINE_VLINE:
-      return mvwaddch(p->win, y, x, ascii_mode ? '|' : ACS_VLINE);
+      return ::mvaddch(draw_y, draw_x, ascii_mode ? '|' : ACS_VLINE);
     case LINE_LLCORNER:
-      return mvwaddch(p->win, y, x, ascii_mode ? '+' : ACS_LLCORNER);
+      return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_LLCORNER);
     case LINE_LRCORNER:
-      return mvwaddch(p->win, y, x, ascii_mode ? '+' : ACS_LRCORNER);
+      return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_LRCORNER);
     case LINE_ULCORNER:
-      return mvwaddch(p->win, y, x, ascii_mode ? '+' : ACS_ULCORNER);
+      return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_ULCORNER);
     case LINE_URCORNER:
-      return mvwaddch(p->win, y, x, ascii_mode ? '+' : ACS_URCORNER);
+      return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_URCORNER);
     case LINE_BTEE:
-      return mvwaddch(p->win, y, x, ascii_mode ? '+' : ACS_BTEE);
+      return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_BTEE);
     case LINE_LTEE:
-      return mvwaddch(p->win, y, x, ascii_mode ? '+' : ACS_LTEE);
+      return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_LTEE);
     case LINE_RTEE:
-      return mvwaddch(p->win, y, x, ascii_mode ? '+' : ACS_RTEE);
+      return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_RTEE);
     case LINE_TTEE:
-      return mvwaddch(p->win, y, x, ascii_mode ? '+' : ACS_TTEE);
+      return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_TTEE);
 
     case LINE_DARROW:
-      return mvwaddch(p->win, y, x, ascii_mode ? 'v' : ACS_DARROW);
+      return ::mvaddch(draw_y, draw_x, ascii_mode ? 'v' : ACS_DARROW);
     case LINE_LARROW:
-      return mvwaddch(p->win, y, x, ascii_mode ? '<' : ACS_LARROW);
+      return ::mvaddch(draw_y, draw_x, ascii_mode ? '<' : ACS_LARROW);
     case LINE_RARROW:
-      return mvwaddch(p->win, y, x, ascii_mode ? '>' : ACS_RARROW);
+      return ::mvaddch(draw_y, draw_x, ascii_mode ? '>' : ACS_RARROW);
     case LINE_UARROW:
-      return mvwaddch(p->win, y, x, ascii_mode ? '^' : ACS_UARROW);
+      return ::mvaddch(draw_y, draw_x, ascii_mode ? '^' : ACS_UARROW);
     case LINE_BULLET:
-      return mvwaddch(p->win, y, x, ascii_mode ? 'o' : ACS_BULLET);
+      return ::mvaddch(draw_y, draw_x, ascii_mode ? 'o' : ACS_BULLET);
   }
   return ERR;
 }
 
-int Window::attron(int attrs)
+int ViewPort::attrOn(int attrs)
 {
-  return wattron(p->win, attrs);
+  return ::attron(attrs);
 }
 
-int Window::attroff(int attrs)
+int ViewPort::attrOff(int attrs)
 {
-  return wattroff(p->win, attrs);
+  return ::attroff(attrs);
 }
 
-int Window::mvchgat(int x, int y, int n, /* attr_t */ int attr, short color,
-    const void *opts)
+int ViewPort::changeAt(int x, int y, int n, /* attr_t */ int attr,
+    short color, const void *opts)
 {
-  return mvwchgat(p->win, y, x, n, attr, color, opts);
+  int res = OK;
+  int draw_x, draw_y;
+  for (int i = 0; i < n; i++) {
+    if (!isInViewPort(x + i, y, 1))
+      continue;
+
+    draw_x = screen_x + (x + i - view_x);
+    draw_y = screen_y + (y - view_y);
+    if ((res = ::mvchgat(draw_y, draw_x, 1, attr, color, opts)) == ERR)
+      break;
+  }
+  return res;
 }
 
-int Window::fill(int attrs)
+int ViewPort::fill(int attrs)
 {
   attr_t battrs;
   short pair;
 
-  if (attr_get(&battrs, &pair, NULL) == ERR)
+  if (::attr_get(&battrs, &pair, NULL) == ERR)
     return ERR;
 
-  if (attron(attrs) == ERR)
+  if (::attron(attrs) == ERR)
     return ERR;
 
-  int realw = getmaxx();
-  int realh = getmaxy();
-
-  for (int i = 0; i < realw; i++)
-    for (int j = 0; j < realh; j++) {
-      /* Note: mvwaddch() returns ERR here when i = realw - 1 and
-       * j = realh - 1 because the cursor can't be wrapped to the next line.
-       * */
-      mvwaddch(p->win, j, i, ' ');
+  for (int i = 0; i < view_height; ++i)
+    for (int j = 0; j < view_width; ++j) {
+      ///< @todo Implement correct error checking.
+      addChar(j, i, ' ');
     }
 
   if (attr_set(battrs, pair, NULL) == ERR)
@@ -255,7 +293,7 @@ int Window::fill(int attrs)
   return OK;
 }
 
-int Window::fill(int attrs, int x, int y, int w, int h)
+int ViewPort::fill(int attrs, int x, int y, int w, int h)
 {
   attr_t battrs;
   short pair;
@@ -266,12 +304,11 @@ int Window::fill(int attrs, int x, int y, int w, int h)
   if (attron(attrs) == ERR)
     return ERR;
 
-  int realw = getmaxx();
-  int realh = getmaxy();
-
-  for (int i = x; i < realw && i < x + w; i++)
-    for (int j = y; j < realh && j < y + h; j++)
-      mvwaddch(p->win, j, i, ' ');
+  for (int i = 0; i < h; ++i)
+    for (int j = 0; j < w; ++j) {
+      ///< @todo Implement correct error checking.
+      addChar(x + j, y + i, ' ');
+    }
 
   if (attr_set(battrs, pair, NULL) == ERR)
     return ERR;
@@ -279,82 +316,22 @@ int Window::fill(int attrs, int x, int y, int w, int h)
   return OK;
 }
 
-int Window::erase()
+int ViewPort::erase()
 {
-  return werase(p->win);
+  return fill(0);
 }
 
-int Window::noutrefresh()
+void ViewPort::scroll(int scroll_x, int scroll_y)
 {
-  return wnoutrefresh(p->win);
+  view_x += scroll_x;
+  view_y += scroll_y;
 }
 
-int Window::touch()
+bool ViewPort::isInViewPort(int x, int y, int w)
 {
-  return touchwin(p->win);
-}
-
-int Window::copyto(Window *dstwin, int smincol, int sminrow,
-    int dmincol, int dminrow, int dmaxcol, int dmaxrow,
-    int overlay)
-{
-  return copywin(p->win, dstwin->p->win, sminrow, smincol, dminrow, dmincol,
-      dmaxrow, dmaxcol, overlay);
-}
-
-int Window::getmaxx()
-{
-  return ::getmaxx(p->win);
-}
-
-int Window::getmaxy()
-{
-  return ::getmaxy(p->win);
-}
-
-int Window::printChar(UTF8::UniChar uc)
-{
-  /**
-   * @todo Error checking (setcchar).
-   */
-
-  if (uc >= 0x7f && uc < 0xa0) {
-    // filter out C1 (8-bit) control characters
-    waddch(p->win, '?');
-    return 1;
-  }
-
-  // get a unicode character from the next few bytes
-  wchar_t wch[2];
-  cchar_t cc;
-
-  wch[0] = uc;
-  wch[1] = L'\0';
-
-  // invalid utf-8 sequence
-  if (wch[0] < 0)
-    return 0;
-
-  // tab character
-  if (wch[0] == '\t') {
-    int w = onscreen_width(wch[0]);
-    for (int i = 0; i < w; i++)
-      waddch(p->win, ' ');
-    return w;
-  }
-
-  // control char symbols
-  if (wch[0] < 32)
-    wch[0] = 0x2400 + wch[0];
-
-  setcchar(&cc, wch, A_NORMAL, 0, NULL);
-  wadd_wch(p->win, &cc);
-  return onscreen_width(wch[0]);
-}
-
-Window::Window()
-: p(new WindowInternals)
-{
+  return x >= view_x && y >= view_y
+    && x + w <= view_x + view_width
+    && y < view_y + view_height;
 }
 
 const int Color::DEFAULT = -1;
@@ -377,7 +354,7 @@ const int Attr::BOLD = A_BOLD;
 const int C_OK = OK;
 const int C_ERR = ERR;
 
-int init_screen()
+int initScreen()
 {
   if (!::initscr())
     return ERR;
@@ -397,26 +374,26 @@ int init_screen()
   return OK;
 }
 
-int finalize_screen()
+int finalizeScreen()
 {
   return ::endwin();
 }
 
-void set_ascii_mode(bool enabled)
+void setAsciiMode(bool enabled)
 {
   ascii_mode = enabled;
 }
 
-bool get_ascii_mode()
+bool getAsciiMode()
 {
   return ascii_mode;
 }
 
-bool init_colorpair(int idx, int fg, int bg, int *res)
+bool initColorPair(int idx, int fg, int bg, int *res)
 {
-  bool success;
+  assert(res);
 
-  success = (init_pair(idx, fg, bg) != ERR);
+  bool success = (init_pair(idx, fg, bg) == OK);
 
   if (success)
     *res = COLOR_PAIR(idx);
@@ -424,12 +401,12 @@ bool init_colorpair(int idx, int fg, int bg, int *res)
   return success;
 }
 
-int nrcolors()
+int getColorCount()
 {
   return COLORS;
 }
 
-int nrcolorpairs()
+int getColorPairCount()
 {
 #ifndef NCURSES_EXT_COLORS
   /* Ncurses reports more than 256 color pairs, even when compiled without
@@ -441,7 +418,7 @@ int nrcolorpairs()
 }
 
 #ifdef DEBUG
-bool colorpair_content(int colorpair, int *fg, int *bg)
+bool getColorPair(int colorpair, int *fg, int *bg)
 {
   short sfg, sbg;
 
@@ -464,9 +441,9 @@ int clear()
   return ::clear();
 }
 
-int doupdate()
+int refresh()
 {
-  return ::doupdate();
+  return ::refresh();
 }
 
 int beep()
@@ -474,28 +451,23 @@ int beep()
   return ::beep();
 }
 
-int noutrefresh()
-{
-  return ::wnoutrefresh(stdscr);
-}
-
-int getmaxx()
+int getWidth()
 {
   return ::getmaxx(stdscr);
 }
 
-int getmaxy()
+int getHeight()
 {
   return ::getmaxy(stdscr);
 }
 
-int resizeterm(int lines, int columns)
+int resizeTerm(int width, int height)
 {
-  return ::resizeterm(lines, columns);
+  return ::resizeterm(height, width);
 }
 
-/// @todo should g_unichar_iszerowidth be used?
-int onscreen_width(const char *start, const char *end)
+/// @todo Should be g_unichar_iszerowidth() used?
+int onScreenWidth(const char *start, const char *end)
 {
   int width = 0;
 
@@ -506,25 +478,25 @@ int onscreen_width(const char *start, const char *end)
     end = start + std::strlen(start);
 
   while (start < end) {
-    width += onscreen_width(UTF8::getUniChar(start));
+    width += onScreenWidth(UTF8::getUniChar(start));
     start = UTF8::getNextChar(start);
   }
   return width;
 }
 
-int onscreen_width(UTF8::UniChar uc, int w)
+int onScreenWidth(UTF8::UniChar uc, int w)
 {
   if (uc == '\t')
     return 8 - w % 8;
   return UTF8::isUniCharWide(uc) ? 2 : 1;
 }
 
-const Stats *get_stats()
+const Stats *getStats()
 {
   return &stats;
 }
 
-void reset_stats()
+void resetStats()
 {
   memset(&stats, 0, sizeof(stats));
 }

@@ -78,7 +78,7 @@ void ColorPicker::setText(const char *new_text)
 {
   label->setText(new_text);
   if (new_text)
-    label->setWidth(Curses::onscreen_width(new_text) + 1);
+    label->setWidth(Curses::onScreenWidth(new_text) + 1);
   else
     label->setWidth(0);
 }
@@ -101,16 +101,13 @@ ColorPicker::Sample::Sample(int w, int fg, int bg)
 {
 }
 
-void ColorPicker::Sample::draw()
+void ColorPicker::Sample::draw(Curses::ViewPort area)
 {
-  if (!area)
-    return;
-
   int colorpair = COLORSCHEME->getColorPair(c);
 
-  area->attron(colorpair);
-  area->mvaddstring(1, 0, _(" SAMPLE "));
-  area->attroff(colorpair);
+  area.attrOn(colorpair);
+  area.addString(1, 0, _(" SAMPLE "));
+  area.attrOff(colorpair);
 }
 
 void ColorPicker::Sample::setColors(int fg, int bg)

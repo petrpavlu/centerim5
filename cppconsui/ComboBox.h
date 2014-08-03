@@ -114,7 +114,7 @@ protected:
    */
   virtual void onDropDown(Button& activator);
   virtual void dropDownOk(Button& activator, int new_entry);
-  virtual void dropDownClose(FreeWindow& window);
+  virtual void dropDownClose(Window& window);
 
 private:
   CONSUI_DISABLE_COPY(ComboBox);

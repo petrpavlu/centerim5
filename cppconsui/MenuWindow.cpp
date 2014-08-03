@@ -43,7 +43,7 @@ MenuWindow::MenuWindow(int x, int y, int w, int h, const char *title)
   listbox = new ListBox(AUTOSIZE, AUTOSIZE);
   listbox->signal_children_height_change.connect(sigc::mem_fun(this,
         &MenuWindow::onChildrenHeightChange));
-  Window::addWidget(*listbox, 0, 0);
+  Window::addWidget(*listbox, 1, 1);
 }
 
 MenuWindow::MenuWindow(Widget& ref_, int w, int h, const char *title)
@@ -55,7 +55,7 @@ MenuWindow::MenuWindow(Widget& ref_, int w, int h, const char *title)
   listbox = new ListBox(AUTOSIZE, AUTOSIZE);
   listbox->signal_children_height_change.connect(sigc::mem_fun(this,
         &MenuWindow::onChildrenHeightChange));
-  Window::addWidget(*listbox, 0, 0);
+  Window::addWidget(*listbox, 1, 1);
 
   setRefWidget(ref_);
 }
@@ -66,11 +66,11 @@ MenuWindow::~MenuWindow()
     ref->remove_destroy_notify_callback(this);
 }
 
-void MenuWindow::draw()
+void MenuWindow::draw(Curses::ViewPort area)
 {
   updateSmartPositionAndSize();
 
-  Window::draw();
+  Window::draw(area);
 }
 
 void MenuWindow::show()
@@ -180,11 +180,13 @@ void MenuWindow::addWidget(Widget& widget, int x, int y)
   Window::addWidget(widget, x, y);
 }
 
+/*
 void MenuWindow::onScreenResizedInternal()
 {
   updateSmartPositionAndSize();
   Window::onScreenResizedInternal();
 }
+*/
 
 Button *MenuWindow::prepareSubMenu(const char *title, MenuWindow& submenu)
 {
@@ -225,7 +227,7 @@ void MenuWindow::updateSmartPositionAndSize()
   if (!ref) {
     // absolute screen position
     int h = listbox->getChildrenHeight() + 2;
-    int max = Curses::getmaxy() - win_y;
+    int max = Curses::getHeight() - ypos;
     if (h > max)
       setWishHeight(std::max(max, 3));
     else
@@ -238,12 +240,12 @@ void MenuWindow::updateSmartPositionAndSize()
     int y = p.getY() + yshift;
 
     int above = y;
-    int below = Curses::getmaxy() - y - 1;
+    int below = Curses::getHeight() - y - 1;
     int req_h;
-    if (win_h == AUTOSIZE)
+    if (height == AUTOSIZE)
       req_h = listbox->getChildrenHeight() + 2;
     else
-      req_h = win_h;
+      req_h = height;
 
     if (below > req_h) {
       // draw the window under the combobox
@@ -255,7 +257,7 @@ void MenuWindow::updateSmartPositionAndSize()
       move(x, y - req_h);
       setWishHeight(req_h);
     }
-    else if (win_h == AUTOSIZE) {
+    else if (height == AUTOSIZE) {
       if (below >= above) {
         move(x, y + 1);
         setWishHeight(below);
@@ -271,7 +273,7 @@ void MenuWindow::updateSmartPositionAndSize()
 void MenuWindow::onChildrenHeightChange(ListBox& /*activator*/,
     int /*new_height*/)
 {
-  if (win_h != AUTOSIZE)
+  if (height != AUTOSIZE)
     return;
 
   updateSmartPositionAndSize();

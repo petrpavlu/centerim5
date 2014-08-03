@@ -62,6 +62,7 @@ Conversation::Conversation(PurpleConversation *conv_)
 
   loadHistory();
 
+  onScreenResized();
   declareBindables();
 }
 
@@ -87,17 +88,17 @@ void Conversation::moveResize(int newx, int newy, int neww, int newh)
   int percentage = purple_prefs_get_int(CONF_PREFIX "/chat/partitioning");
   percentage = CLAMP(percentage, 0, 100);
 
-  int view_height = (height * percentage) / 100;
+  int view_height = (newh * percentage) / 100;
   if (view_height < 1)
     view_height = 1;
 
-  int input_height = height - view_height - 1;
+  int input_height = newh - view_height - 1;
   if (input_height < 1)
     input_height = 1;
 
-  view->moveResize(1, 0, width - 2, view_height);
-  input->moveResize(1, view_height + 1, width - 2, input_height);
-  line->moveResize(0, view_height, width, 1);
+  view->moveResize(2, 0, neww - 4, view_height);
+  input->moveResize(2, view_height + 1, neww - 4, input_height);
+  line->moveResize(1, view_height, neww - 2, 1);
 }
 
 bool Conversation::restoreFocus()
@@ -240,7 +241,7 @@ Conversation::ConversationLine::ConversationLine(const char *text_)
   g_assert(text_);
 
   text = g_strdup(text_);
-  text_width = CppConsUI::Curses::onscreen_width(text);
+  text_width = CppConsUI::Curses::onScreenWidth(text);
 }
 
 Conversation::ConversationLine::~ConversationLine()
@@ -248,31 +249,29 @@ Conversation::ConversationLine::~ConversationLine()
   g_free(text);
 }
 
-void Conversation::ConversationLine::draw()
+void Conversation::ConversationLine::draw(CppConsUI::Curses::ViewPort area)
 {
-  int realw;
-
-  if (!area || (realw = area->getmaxx()) == 0 || area->getmaxy() != 1)
+  if (real_width == 0 || real_height != 1)
     return;
 
   int l;
-  if (text_width + 5 >= static_cast<unsigned>(realw))
+  if (text_width + 5 >= static_cast<unsigned>(real_width))
     l = 0;
   else
-    l = realw - text_width - 5;
+    l = real_width - text_width - 5;
 
   // use HorizontalLine colors
   int attrs = getColorPair("horizontalline", "line");
-  area->attron(attrs);
+  area.attrOn(attrs);
 
   int i;
   for (i = 0; i < l; i++)
-    area->mvaddlinechar(i, 0, CppConsUI::Curses::LINE_HLINE);
-  i += area->mvaddstring(i, 0, text);
-  for (; i < realw; i++)
-    area->mvaddlinechar(i, 0, CppConsUI::Curses::LINE_HLINE);
+    area.addLineChar(i, 0, CppConsUI::Curses::LINE_HLINE);
+  i += area.addString(i, 0, text);
+  for (; i < real_width; i++)
+    area.addLineChar(i, 0, CppConsUI::Curses::LINE_HLINE);
 
-  area->attroff(attrs);
+  area.attrOff(attrs);
 }
 
 char *Conversation::stripHTML(const char *str) const

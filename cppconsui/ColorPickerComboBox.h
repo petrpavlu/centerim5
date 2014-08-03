@@ -46,7 +46,7 @@ public:
   virtual ~ColorPickerComboBox();
 
   // Widget
-  virtual void draw();
+  virtual void draw(Curses::ViewPort area);
 
   virtual void setColor(int new_color);
   virtual int getColor() { return selected_color; }
@@ -62,7 +62,7 @@ protected:
     virtual ~ColorButton() {}
 
    // Widget
-   virtual void draw();
+   virtual void draw(Curses::ViewPort area);
 
   protected:
     int color;
@@ -83,12 +83,12 @@ protected:
   // ComboBox
   virtual void onDropDown(Button& activator);
   virtual void dropDownOk(Button& activator, int new_entry);
-  virtual void dropDownClose(FreeWindow& window)
+  virtual void dropDownClose(Window& window)
     { ComboBox::dropDownClose(window); }
 #ifdef COLORPICKER_256COLOR
   virtual void colorPickerOk(ColorPickerDialog& activator,
       AbstractDialog::ResponseType response, int new_color);
-  virtual void colorPickerClose(FreeWindow& window);
+  virtual void colorPickerClose(Window& window);
 #endif // COLORPICKER_256COLOR
   virtual void setSelected(int new_entry);
 

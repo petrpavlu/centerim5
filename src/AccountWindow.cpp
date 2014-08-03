@@ -43,6 +43,8 @@ AccountWindow::AccountWindow()
   buttons->appendSeparator();
   buttons->appendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
           &AccountWindow::close)));
+
+  onScreenResized();
 }
 
 void AccountWindow::onScreenResized()

@@ -133,6 +133,8 @@ Accounts::PendingRequestWindow::PendingRequestWindow(Accounts& accounts_,
 
   buttons->appendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
           &PendingRequestWindow::close)));
+
+  onScreenResized();
 }
 
 void Accounts::PendingRequestWindow::onScreenResized()
@@ -391,7 +393,7 @@ void Accounts::closeRequest(const Request& request)
   signal_request_count_change(*this, requests.size());
 }
 
-void Accounts::onPendingRequestWindowClose(CppConsUI::FreeWindow& activator)
+void Accounts::onPendingRequestWindowClose(CppConsUI::Window& activator)
 {
   // the request window is dying
   g_assert(request_window == &activator);

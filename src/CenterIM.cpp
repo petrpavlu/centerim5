@@ -456,7 +456,7 @@ int CenterIM::runAll(int argc, char *argv[])
 
   // ASCII mode
   if (ascii)
-    CppConsUI::Curses::set_ascii_mode(ascii);
+    CppConsUI::Curses::setAsciiMode(ascii);
 
   // get the CoreManager instance and register for some signals
   mngr = CppConsUI::getCoreManagerInstance();
@@ -665,8 +665,8 @@ void CenterIM::onScreenResized()
 {
   CppConsUI::Rect size;
 
-  int screen_width = CppConsUI::Curses::getmaxx();
-  int screen_height = CppConsUI::Curses::getmaxy();
+  int screen_width = CppConsUI::Curses::getWidth();
+  int screen_height = CppConsUI::Curses::getHeight();
 
   int buddylist_width;
   int log_height;
@@ -744,7 +744,7 @@ void CenterIM::onTopWindowChanged()
   if (!convs_expanded)
     return;
 
-  CppConsUI::FreeWindow *top = mngr->getTopWindow();
+  CppConsUI::Window *top = mngr->getTopWindow();
   if (top && typeid(Conversation) != typeid(*top)) {
     convs_expanded = false;
     CONVERSATIONS->setExpandedConversations(convs_expanded);
@@ -1295,11 +1295,11 @@ void CenterIM::actionOpenAccountStatusMenu()
 {
   /* Don't allow to open the account status menu if there is any 'top' window
    * (except general menu, we can close that). */
-  CppConsUI::FreeWindow *top = mngr->getTopWindow();
+  CppConsUI::Window *top = mngr->getTopWindow();
   if (top) {
     if (dynamic_cast<GeneralMenu*>(top))
       top->close();
-    else if (top->getType() == CppConsUI::FreeWindow::TYPE_TOP)
+    else if (top->getType() == CppConsUI::Window::TYPE_TOP)
       return;
   }
 
@@ -1311,11 +1311,11 @@ void CenterIM::actionOpenGeneralMenu()
 {
   /* Don't allow to open the general menu if there is any 'top' window (except
    * account status menu, we can close that). */
-  CppConsUI::FreeWindow *top = mngr->getTopWindow();
+  CppConsUI::Window *top = mngr->getTopWindow();
   if (top) {
     if (dynamic_cast<AccountStatusMenu*>(top))
       top->close();
-    else if (top->getType() == CppConsUI::FreeWindow::TYPE_TOP)
+    else if (top->getType() == CppConsUI::Window::TYPE_TOP)
       return;
   }
 
@@ -1347,8 +1347,8 @@ void CenterIM::actionFocusConversation(int i)
 
 void CenterIM::actionExpandConversation()
 {
-  CppConsUI::FreeWindow *top = mngr->getTopWindow();
-  if (top && top->getType() == CppConsUI::FreeWindow::TYPE_TOP)
+  CppConsUI::Window *top = mngr->getTopWindow();
+  if (top && top->getType() == CppConsUI::Window::TYPE_TOP)
     return;
 
   if (!convs_expanded) {

@@ -28,6 +28,7 @@
 
 #include "Button.h"
 
+#include <cassert>
 #include <cstdio>
 #include <cstring>
 
@@ -40,6 +41,9 @@ Button::Button(int w, int h, const char *text_, int flags_, bool masked_)
 , right_width(0), masked(masked_)
 {
   setText(text_);
+  setValue((char*)NULL);
+  setUnit(NULL);
+  setRight(NULL);
 
   can_focus = true;
   declareBindables();
@@ -51,6 +55,9 @@ Button::Button(const char *text_, int flags_, bool masked_)
 , right(NULL), right_width(0), masked(masked_)
 {
   setText(text_);
+  setValue((char*)NULL);
+  setUnit(NULL);
+  setRight(NULL);
 
   can_focus = true;
   declareBindables();
@@ -94,79 +101,85 @@ Button::~Button()
   delete [] right;
 }
 
-void Button::draw()
+void Button::draw(Curses::ViewPort area)
 {
-  if (!area)
-    return;
+  assert(text);
+  assert(value);
+  assert(unit);
+  assert(right);
+
+  {
+    FILE *f = fopen("run.log", "a");
+    fprintf(f, "Buttonito, screen_x=%d, screen_y=%d, view_x=%d, view_y=%d, view_width=%d, view_height=%d\n",
+        area.getScreenLeft(), area.getScreenTop(), area.getViewLeft(), area.getViewTop(), area.getViewWidth(), area.getViewHeight());
+    fclose(f);
+  }
 
   int attrs;
   if (has_focus)
     attrs = getColorPair("button", "focus") | Curses::Attr::REVERSE;
   else
     attrs = getColorPair("button", "normal");
-  area->attron(attrs);
-
-  int realw = area->getmaxx();
-  int realh = area->getmaxy();
+  area.attrOn(attrs);
 
   // print text
-  area->fill(attrs, 0, 0, text_width, realh);
+  area.fill(attrs, 0, 0, text_width, real_height);
   int y = 0;
   const char *start, *end;
   start = end = text;
   while (*end) {
     if (*end == '\n') {
-      if (y >= realh)
-        break;
-
-      area->mvaddstring(0, y, realw, start, end);
-      y++;
+      area.addString(0, y, real_width, start, end);
+      ++y;
       start = end + 1;
     }
-    end++;
+    ++end;
   }
-  if (y < realh)
-    area->mvaddstring(0, y, realw, start, end);
+  area.addString(0, y, real_width, start, end);
 
   int l = text_width;
   int h = (text_height - 1) / 2;
+  int printed;
 
   // print value
   if (flags & FLAG_VALUE) {
-    area->fill(attrs, l, 0, value_width + 2, realh);
-    if (h < realh) {
-      l += area->mvaddstring(l, h, realw - l, ": ");
+    area.fill(attrs, l, 0, value_width + 2, real_height);
+    area.addString(l, h, real_width - l, ": ", &printed);
+    l += printed;
 
-      if (masked) {
-        int count = value_width;
-        while (count--)
-          l += area->mvaddstring(l, h, realw - l, "*");
+    if (masked) {
+      int count = value_width;
+      while (count--) {
+        area.addString(l, h, real_width - l, "*", &printed);
+        l += printed;
       }
-      else
-        l += area->mvaddstring(l, h, realw - l, value);
+    }
+    else {
+      area.addString(l, h, real_width - l, value, &printed);
+      l += printed;
     }
   }
 
   // print unit text
-  if (flags & FLAG_UNIT && unit) {
-    area->fill(attrs, l, 0, unit_width + 1, realh);
-    if (h < realh) {
-      l += area->mvaddstring(l, h, realw - l, " ");
-      l += area->mvaddstring(l, h, realw - l, unit);
-    }
+  if (flags & FLAG_UNIT) {
+    area.fill(attrs, l, 0, unit_width + 1, real_height);
+    area.addString(l, h, real_width - l, " ", &printed);
+    l += printed;
+    area.addString(l, h, real_width - l, unit, &printed);
+    l += printed;
   }
 
-  area->attroff(attrs);
+  area.attrOff(attrs);
 
   // print right area text
-  if (flags & FLAG_RIGHT && right && h < realh) {
+  if (flags & FLAG_RIGHT) {
     const char *cur = right;
     int width = right_width;
-    while (width > realw - l - 1) {
-      width -= Curses::onscreen_width(UTF8::getUniChar(cur));
+    while (width > real_width - l - 1) {
+      width -= Curses::onScreenWidth(UTF8::getUniChar(cur));
       cur = UTF8::getNextChar(cur);
     }
-    area->mvaddstring(realw - width, h, cur);
+    area.addString(real_width - width, h, cur);
   }
 }
 
@@ -210,15 +223,15 @@ void Button::setText(const char *new_text)
   int w;
   while (*end) {
     if (*end == '\n') {
-      w = Curses::onscreen_width(start, end);
+      w = Curses::onScreenWidth(start, end);
       if (w > text_width)
         text_width = w;
-      text_height++;
+      ++text_height;
       start = end + 1;
     }
-    end++;
+    ++end;
   }
-  w = Curses::onscreen_width(start, end);
+  w = Curses::onScreenWidth(start, end);
   if (w > text_width)
     text_width = w;
   setWishHeight(text_height);
@@ -239,7 +252,7 @@ void Button::setValue(const char *new_value)
     std::strcpy(value, new_value);
   else
     value[0] = '\0';
-  value_width = Curses::onscreen_width(value);
+  value_width = Curses::onScreenWidth(value);
   redraw();
 }
 
@@ -263,7 +276,7 @@ void Button::setUnit(const char *new_unit)
     std::strcpy(unit, new_unit);
   else
     unit[0] = '\0';
-  unit_width = Curses::onscreen_width(unit);
+  unit_width = Curses::onScreenWidth(unit);
   redraw();
 }
 
@@ -280,7 +293,7 @@ void Button::setRight(const char *new_right)
     std::strcpy(right, new_right);
   else
     right[0] = '\0';
-  right_width = Curses::onscreen_width(right);
+  right_width = Curses::onScreenWidth(right);
   redraw();
 }
 

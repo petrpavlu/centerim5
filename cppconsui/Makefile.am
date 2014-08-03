@@ -34,8 +34,6 @@ libcppconsui_la_SOURCES = \
 	CppConsUI.h \
 	Dialog.cpp \
 	Dialog.h \
-	FreeWindow.cpp \
-	FreeWindow.h \
 	HorizontalLine.cpp \
 	HorizontalLine.h \
 	HorizontalListBox.cpp \
@@ -58,8 +56,6 @@ libcppconsui_la_SOURCES = \
 	MessageDialog.h \
 	Panel.cpp \
 	Panel.h \
-	ScrollPane.cpp \
-	ScrollPane.h \
 	Spacer.cpp \
 	Spacer.h \
 	SplitDialog.cpp \

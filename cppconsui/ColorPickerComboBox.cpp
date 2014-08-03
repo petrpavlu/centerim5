@@ -47,7 +47,7 @@ ColorPickerComboBox::ColorPickerComboBox(int w, int color)
 #endif // COLORPICKER_256COLOR
 {
   // add ANSI colors
-  int colors = std::min(Curses::NUM_DEFAULT_COLORS, Curses::nrcolors());
+  int colors = std::min(Curses::NUM_DEFAULT_COLORS, Curses::getColorCount());
   for (int i = 0; i < colors; i++)
     addOption(NULL, i);
 
@@ -71,7 +71,8 @@ ColorPickerComboBox::~ColorPickerComboBox()
 
 void ColorPickerComboBox::setColor(int new_color)
 {
-  if (new_color < Curses::Color::DEFAULT || new_color >= Curses::nrcolors()) {
+  if (new_color < Curses::Color::DEFAULT
+      || new_color >= Curses::getColorCount()) {
     // an invalid color was specified, use the default color
     new_color = Curses::Color::DEFAULT;
   }
@@ -92,11 +93,8 @@ void ColorPickerComboBox::setColor(int new_color)
 #endif // COLORPICKER_256COLOR
 }
 
-void ColorPickerComboBox::draw()
+void ColorPickerComboBox::draw(Curses::ViewPort area)
 {
-  if (!area)
-    return;
-
   int button_colorpair;
   if (has_focus)
     button_colorpair = getColorPair("button", "focus")
@@ -104,23 +102,22 @@ void ColorPickerComboBox::draw()
   else
     button_colorpair = getColorPair("button", "normal");
 
-  int realw = area->getmaxx();
   int color = selected_color;
 
-  area->attron(button_colorpair);
-  area->fill(button_colorpair, 0, 0, realw, 1);
-  area->mvaddchar(0, 0, '[');
-  area->mvaddchar(realw - 1, 0, ']');
-  area->attroff(button_colorpair);
+  area.attrOn(button_colorpair);
+  area.fill(button_colorpair, 0, 0, real_width, 1);
+  area.addChar(0, 0, '[');
+  area.addChar(real_width - 1, 0, ']');
+  area.attrOff(button_colorpair);
 
   if (selected_color == Curses::Color::DEFAULT)
-    area->mvaddstring(1, 0, _("DEFAULT"));
+    area.addString(1, 0, _("DEFAULT"));
   else {
     ColorScheme::Color c(Curses::Color::DEFAULT, color);
     int colorpair = COLORSCHEME->getColorPair(c);
-    area->attron(colorpair);
-    area->fill(colorpair, 1, 0, realw - 2, 1);
-    area->attroff(colorpair);
+    area.attrOn(colorpair);
+    area.fill(colorpair, 1, 0, real_width - 2, 1);
+    area.attrOff(colorpair);
   }
 }
 
@@ -190,7 +187,7 @@ void ColorPickerComboBox::colorPickerOk(ColorPickerDialog& activator,
   setColor(new_color);
 }
 
-void ColorPickerComboBox::colorPickerClose(FreeWindow& window)
+void ColorPickerComboBox::colorPickerClose(Window& /*window*/)
 {
   colorpicker = NULL;
 }
@@ -209,11 +206,8 @@ ColorPickerComboBox::ColorButton::ColorButton(int color_)
 {
 }
 
-void ColorPickerComboBox::ColorButton::draw()
+void ColorPickerComboBox::ColorButton::draw(Curses::ViewPort area)
 {
-  if (!area)
-    return;
-
   int button_colorpair;
   if (has_focus)
     button_colorpair = getColorPair("button", "focus")
@@ -221,22 +215,20 @@ void ColorPickerComboBox::ColorButton::draw()
   else
     button_colorpair = getColorPair("button", "normal");
 
-  int realw = area->getmaxx();
-
-  area->attron(button_colorpair);
-  area->fill(button_colorpair, 0, 0, realw, 1);
-  area->mvaddchar(0, 0, '[');
-  area->mvaddchar(realw - 1, 0, ']');
-  area->attroff(button_colorpair);
+  area.attrOn(button_colorpair);
+  area.fill(button_colorpair, 0, 0, real_width, 1);
+  area.addChar(0, 0, '[');
+  area.addChar(real_width - 1, 0, ']');
+  area.attrOff(button_colorpair);
 
   if (color == Curses::Color::DEFAULT)
-    area->mvaddstring(1, 0, _("DEFAULT "));
+    area.addString(1, 0, _("DEFAULT "));
   else {
     ColorScheme::Color c(Curses::Color::DEFAULT, color);
     int colorpair = COLORSCHEME->getColorPair(c);
-    area->attron(colorpair);
-    area->fill(colorpair, 1, 0, realw - 2, 1);
-    area->attroff(colorpair);
+    area.attrOn(colorpair);
+    area.fill(colorpair, 1, 0, real_width - 2, 1);
+    area.attrOff(colorpair);
   }
 }
 

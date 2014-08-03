@@ -23,7 +23,7 @@
 
 #include "Accounts.h"
 
-#include <cppconsui/FreeWindow.h>
+#include <cppconsui/Window.h>
 #include <cppconsui/HorizontalListBox.h>
 #include <cppconsui/Label.h>
 #include <libpurple/purple.h>
@@ -33,12 +33,12 @@
 
 // the top most "head"-area of the screen
 class Header
-: public CppConsUI::FreeWindow
+: public CppConsUI::Window
 {
 public:
   static Header *instance();
 
-  // FreeWindow
+  // Window
   virtual void onScreenResized();
 
 protected:

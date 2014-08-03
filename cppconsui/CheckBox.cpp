@@ -29,6 +29,7 @@
 
 #include "Dialog.h"
 
+#include <cassert>
 #include <cstring>
 #include "gettext.h"
 
@@ -60,53 +61,45 @@ CheckBox::~CheckBox()
   delete [] text;
 }
 
-void CheckBox::draw()
+void CheckBox::draw(Curses::ViewPort area)
 {
-  if (!area)
-    return;
+  assert(text);
 
   int attrs;
   if (has_focus)
     attrs = getColorPair("checkbox", "focus") | Curses::Attr::REVERSE;
   else
     attrs = getColorPair("checkbox", "normal");
-  area->attron(attrs);
-
-  int realw = area->getmaxx();
-  int realh = area->getmaxy();
+  area.attrOn(attrs);
 
   // print text
-  area->fill(attrs, 0, 0, text_width, realh);
+  area.fill(attrs, 0, 0, text_width, real_height);
   int y = 0;
   const char *start, *end;
   start = end = text;
   while (*end) {
     if (*end == '\n') {
-      if (y >= realh)
-        break;
-
-      area->mvaddstring(0, y, realw, start, end);
-      y++;
+      area.addString(0, y, real_width, start, end);
+      ++y;
       start = end + 1;
     }
-    end++;
+    ++end;
   }
-  if (y < realh)
-    area->mvaddstring(0, y, realw, start, end);
+  area.addString(0, y, real_width, start, end);
 
   int l = text_width;
   int h = (text_height - 1) / 2;
+  int printed;
 
   // print value
   const char *value = checked ? YES_BUTTON_TEXT : NO_BUTTON_TEXT;
-  int value_width = Curses::onscreen_width(value);
-  area->fill(attrs, l, 0, value_width + 2, realh);
-  if (h < realh) {
-    l += area->mvaddstring(l, h, realw - l, ": ");
-    l += area->mvaddstring(l, h, realw - l, value);
-  }
+  int value_width = Curses::onScreenWidth(value);
+  area.fill(attrs, l, 0, value_width + 2, real_height);
+  area.addString(l, h, real_width - l, ": ", &printed);
+  l += printed;
+  area.addString(l, h, real_width - l, value);
 
-  area->attroff(attrs);
+  area.attrOff(attrs);
 }
 
 void CheckBox::setText(const char *new_text)
@@ -131,15 +124,15 @@ void CheckBox::setText(const char *new_text)
   int w;
   while (*end) {
     if (*end == '\n') {
-      w = Curses::onscreen_width(start, end);
+      w = Curses::onScreenWidth(start, end);
       if (w > text_width)
         text_width = w;
-      text_height++;
+      ++text_height;
       start = end + 1;
     }
-    end++;
+    ++end;
   }
-  w = Curses::onscreen_width(start, end);
+  w = Curses::onScreenWidth(start, end);
   if (w > text_width)
     text_width = w;
   setWishHeight(text_height);

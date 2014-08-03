@@ -47,7 +47,7 @@ bool BuddyList::processInputText(const TermKeyKey &key)
 
   char *pos = filter_buffer + filter_buffer_length;
   strcpy(pos, key.utf8);
-  filter_buffer_onscreen_width += CppConsUI::Curses::onscreen_width(pos);
+  filter_buffer_onscreen_width += CppConsUI::Curses::onScreenWidth(pos);
   filter_buffer_length += input_len;
 
   updateList(UPDATE_OTHERS);
@@ -96,35 +96,31 @@ BuddyList::Filter::Filter(BuddyList *parent_)
 {
 }
 
-void BuddyList::Filter::draw()
+void BuddyList::Filter::draw(CppConsUI::Curses::ViewPort area)
 {
-  if (!area)
-    return;
-
-  int realw = area->getmaxx();
-
   int x = 0;
-  x += area->mvaddstring(x, 0, realw - x, _("Filter: "));
-  if (static_cast<int>(parent->filter_buffer_onscreen_width) <= realw - x) {
+  x += area.addString(x, 0, real_width - x, _("Filter: "));
+  if (static_cast<int>(parent->filter_buffer_onscreen_width)
+      <= real_width - x) {
     // optimized simple case
-    area->mvaddstring(x, 0, parent->filter_buffer);
+    area.addString(x, 0, parent->filter_buffer);
+    return;
   }
-  else {
-    int w = 0;
-    const char *cur = parent->filter_buffer + parent->filter_buffer_length;
-    while (true) {
-      const char *prev = g_utf8_find_prev_char(parent->filter_buffer, cur);
-      if (!prev)
-        break;
-      gunichar uc = g_utf8_get_char(prev);
-      int wc = CppConsUI::Curses::onscreen_width(uc);
-      if (w + wc > realw - x)
-        break;
-      w += wc;
-      cur = prev;
-    }
-    area->mvaddstring(realw - w, 0, cur);
+
+  int w = 0;
+  const char *cur = parent->filter_buffer + parent->filter_buffer_length;
+  while (true) {
+    const char *prev = g_utf8_find_prev_char(parent->filter_buffer, cur);
+    if (!prev)
+      break;
+    gunichar uc = g_utf8_get_char(prev);
+    int wc = CppConsUI::Curses::onScreenWidth(uc);
+    if (w + wc > real_width - x)
+      break;
+    w += wc;
+    cur = prev;
   }
+  area.addString(real_width - w, 0, cur);
 }
 
 BuddyList::AddWindow::AddWindow(const char *title)
@@ -140,6 +136,8 @@ BuddyList::AddWindow::AddWindow(const char *title)
   buttons->appendSeparator();
   buttons->appendItem(_("Cancel"), sigc::hide(sigc::mem_fun(this,
           &AddWindow::close)));
+
+  onScreenResized();
 }
 
 void BuddyList::AddWindow::onScreenResized()
@@ -476,7 +474,7 @@ BuddyList::BuddyList()
   setColorScheme("buddylist");
 
   CppConsUI::ListBox *lbox = new CppConsUI::ListBox(AUTOSIZE, AUTOSIZE);
-  addWidget(*lbox, 0, 0);
+  addWidget(*lbox, 1, 1);
 
   CppConsUI::HorizontalListBox *hbox
     = new CppConsUI::HorizontalListBox(AUTOSIZE, AUTOSIZE);
@@ -541,6 +539,7 @@ BuddyList::BuddyList()
 
   CENTERIM->timeoutOnceConnect(sigc::mem_fun(this, &BuddyList::load), 0);
 
+  onScreenResized();
   declareBindables();
 }
 
@@ -694,7 +693,7 @@ void BuddyList::actionDeleteChar()
   char *prev = g_utf8_find_prev_char(filter_buffer, end);
   if (prev) {
     filter_buffer_length -= end - prev;
-    filter_buffer_onscreen_width -= CppConsUI::Curses::onscreen_width(prev);
+    filter_buffer_onscreen_width -= CppConsUI::Curses::onScreenWidth(prev);
     *prev = '\0';
   }
   else

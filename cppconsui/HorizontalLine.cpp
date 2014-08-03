@@ -36,18 +36,16 @@ HorizontalLine::HorizontalLine(int w)
 {
 }
 
-void HorizontalLine::draw()
+void HorizontalLine::draw(Curses::ViewPort area)
 {
-  int realw;
-
-  if (!area || (realw = area->getmaxx()) == 0 || area->getmaxy() != 1)
+  if (real_width == 0 || real_height != 1)
     return;
 
   int attrs = getColorPair("horizontalline", "line");
-  area->attron(attrs);
-  for (int i = 0; i < realw; i++)
-    area->mvaddlinechar(i, 0, Curses::LINE_HLINE);
-  area->attroff(attrs);
+  area.attrOn(attrs);
+  for (int i = 0; i < real_width; i++)
+    area.addLineChar(i, 0, Curses::LINE_HLINE);
+  area.attrOff(attrs);
 }
 
 } // namespace CppConsUI

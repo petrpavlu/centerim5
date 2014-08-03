@@ -52,6 +52,8 @@ AccountStatusMenu::AccountStatusMenu()
     l = l->next;
   }
   g_list_free(list);
+
+  onScreenResized();
 }
 
 void AccountStatusMenu::onScreenResized()
@@ -129,6 +131,8 @@ AccountStatusMenu::StatusPopup::StatusPopup(PurpleAccount *account)
       g_free(label);
     }
   }
+
+  onScreenResized();
 }
 
 void AccountStatusMenu::StatusPopup::setStatus(

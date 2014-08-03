@@ -30,11 +30,11 @@
 #define __COREMANAGER_H__
 
 #include "CppConsUI.h" // for COREMANAGER macro
-#include "FreeWindow.h"
+#include "Window.h"
 
 #include "libtermkey/termkey.h"
 #include <iconv.h>
-#include <vector>
+#include <deque>
 
 namespace CppConsUI
 {
@@ -46,10 +46,10 @@ class CoreManager
 : public InputProcessor
 {
 public:
-  void addWindow(FreeWindow& window);
-  void removeWindow(FreeWindow& window);
-  bool hasWindow(const FreeWindow& window) const;
-  FreeWindow *getTopWindow();
+  void registerWindow(Window& window);
+  void removeWindow(Window& window);
+  void topWindow(Window& window);
+  Window *getTopWindow();
 
   void enableResizing();
   void disableResizing();
@@ -63,6 +63,11 @@ public:
   void logError(const char *message);
   void redraw();
 
+  void onWindowMoveResize(Window& activator, const Rect& oldsize,
+      const Rect& newsize);
+  void onWindowWishSizeChange(Window& activator, const Size& oldsize,
+      const Size& newsize);
+
   TermKey *getTermKeyHandle() { return tk; };
 
   sigc::signal<void> signal_resize;
@@ -71,7 +76,7 @@ public:
 protected:
 
 private:
-  typedef std::vector<FreeWindow*> Windows;
+  typedef std::deque<Window*> Windows;
 
   Windows windows;
   AppInterface interface;
@@ -121,11 +126,14 @@ private:
 
   static void signalHandler(int signum);
   void resize();
+  void updateArea();
+  void updateWindowArea(Window& window);
 
   static bool draw_(void *data);
   void draw();
+  void drawWindow(Window& window);
 
-  Windows::iterator findWindow(FreeWindow& window);
+  Windows::iterator findWindow(Window& window);
   void focusWindow();
 
   void redrawScreen();

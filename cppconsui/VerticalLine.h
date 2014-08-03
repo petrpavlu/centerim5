@@ -45,7 +45,7 @@ public:
   virtual ~VerticalLine() {}
 
   // Widget
-  virtual void draw();
+  virtual void draw(Curses::ViewPort area);
 
 protected:
 
