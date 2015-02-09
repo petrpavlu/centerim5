@@ -108,13 +108,6 @@ void Button::draw(Curses::ViewPort area)
   assert(unit);
   assert(right);
 
-  {
-    FILE *f = fopen("run.log", "a");
-    fprintf(f, "Buttonito, screen_x=%d, screen_y=%d, view_x=%d, view_y=%d, view_width=%d, view_height=%d\n",
-        area.getScreenLeft(), area.getScreenTop(), area.getViewLeft(), area.getViewTop(), area.getViewWidth(), area.getViewHeight());
-    fclose(f);
-  }
-
   int attrs;
   if (has_focus)
     attrs = getColorPair("button", "focus") | Curses::Attr::REVERSE;
