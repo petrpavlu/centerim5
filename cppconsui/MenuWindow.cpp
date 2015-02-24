@@ -57,20 +57,19 @@ MenuWindow::MenuWindow(Widget& ref_, int w, int h, const char *title)
         &MenuWindow::onChildrenHeightChange));
   Window::addWidget(*listbox, 1, 1);
 
-  setRefWidget(ref_);
+  setReferenceWidget(ref_);
 }
 
 MenuWindow::~MenuWindow()
 {
-  if (ref)
-    ref->remove_destroy_notify_callback(this);
+  cleanReferenceWidget();
 }
 
-void MenuWindow::draw(Curses::ViewPort area)
+void MenuWindow::onAbsolutePositionChange(Widget& widget)
 {
-  updateSmartPositionAndSize();
-
-  Window::draw(area);
+  if (&widget == ref)
+    updatePositionAndSize();
+  Window::onAbsolutePositionChange(widget);
 }
 
 void MenuWindow::show()
@@ -79,7 +78,7 @@ void MenuWindow::show()
     assert(!ref_visible_conn.connected());
 
     ref_visible_conn = ref->signal_visible.connect(sigc::mem_fun(this,
-          &MenuWindow::onRefWidgetVisible));
+          &MenuWindow::onReferenceWidgetVisible));
   }
 
   if (hide_on_close) {
@@ -107,6 +106,11 @@ void MenuWindow::close()
     Window::close();
 }
 
+void MenuWindow::onScreenResized()
+{
+  updatePositionAndSize();
+}
+
 Button *MenuWindow::insertSubMenu(size_t pos, const char *title,
     MenuWindow& submenu)
 {
@@ -130,29 +134,28 @@ void MenuWindow::setHideOnClose(bool new_hide_on_close)
   hide_on_close = new_hide_on_close;
 }
 
-void MenuWindow::setRefWidget(Widget& new_ref)
+void MenuWindow::setReferenceWidget(Widget& new_ref)
 {
   if (ref == &new_ref)
     return;
 
-  if (ref)
-    ref->remove_destroy_notify_callback(this);
+  // clean the current reference
+  cleanReferenceWidget();
 
   ref = &new_ref;
-  ref->add_destroy_notify_callback(this, onRefWidgetDestroy_);
-  if (visible)
-    redraw();
+  ref->add_destroy_notify_callback(this, onReferenceWidgetDestroy_);
+  ref->registerAbsolutePositionListener(*this);
+  updatePositionAndSize();
 }
 
-void MenuWindow::cleanRefWidget()
+void MenuWindow::cleanReferenceWidget()
 {
   if (!ref)
     return;
 
   ref->remove_destroy_notify_callback(this);
+  ref->unregisterAbsolutePositionListener(*this);
   ref = NULL;
-  if (visible)
-    redraw();
 }
 
 void MenuWindow::setLeftShift(int x)
@@ -161,8 +164,7 @@ void MenuWindow::setLeftShift(int x)
     return;
 
   xshift = x;
-  if (visible)
-    redraw();
+  updatePositionAndSize();
 }
 
 void MenuWindow::setTopShift(int y)
@@ -171,22 +173,13 @@ void MenuWindow::setTopShift(int y)
     return;
 
   yshift = y;
-  if (visible)
-    redraw();
+  updatePositionAndSize();
 }
 
 void MenuWindow::addWidget(Widget& widget, int x, int y)
 {
   Window::addWidget(widget, x, y);
 }
-
-/*
-void MenuWindow::onScreenResizedInternal()
-{
-  updateSmartPositionAndSize();
-  Window::onScreenResizedInternal();
-}
-*/
 
 Button *MenuWindow::prepareSubMenu(const char *title, MenuWindow& submenu)
 {
@@ -200,28 +193,20 @@ Button *MenuWindow::prepareSubMenu(const char *title, MenuWindow& submenu)
   button->signal_activate.connect(sigc::hide(sigc::mem_fun(submenu,
           &MenuWindow::show)));
 
-  submenu.setRefWidget(*button);
+  submenu.setReferenceWidget(*button);
 
   return button;
 }
 
-void MenuWindow::updateSmartPositionAndSize()
+void MenuWindow::updatePositionAndSize()
 {
-  /* This code is called when position or size of this window should be
+  /* This code is called when a position or size of this window should be
    * updated.
    *
    * This can happen when:
    * - the screen is resized,
-   * - listbox wish height changed,
+   * - the listbox wish height changed,
    * - reference widget changed its position on the screen.
-   *
-   * Unfortunately the position of the reference widget isn't known until the
-   * widget is drawn on the screen. This happens just before
-   * FlowMenuWindow::draw() is called thus this method has to be ultimately
-   * called from that method.
-   *
-   * Note that none of the below called methods (move(), setWishHeight())
-   * doesn't trigger update-area procedure if it isn't really necessary.
    */
 
   if (!ref) {
@@ -232,40 +217,43 @@ void MenuWindow::updateSmartPositionAndSize()
       setWishHeight(std::max(max, 3));
     else
       setWishHeight(h);
+    return;
   }
-  else {
-    // relative screen position
-    Point p = ref->getAbsolutePosition();
-    int x = p.getX() + xshift;
-    int y = p.getY() + yshift;
 
-    int above = y;
-    int below = Curses::getHeight() - y - 1;
-    int req_h;
-    if (height == AUTOSIZE)
-      req_h = listbox->getChildrenHeight() + 2;
-    else
-      req_h = height;
+  // relative position to another widget
+  Point p = ref->getAbsolutePosition();
+  if (p.getX() == UNSETPOS || p.getY() == UNSETPOS)
+    p = Point(0, 0);
 
-    if (below > req_h) {
-      // draw the window under the combobox
+  int x = p.getX() + xshift;
+  int y = p.getY() + yshift;
+
+  int above = y;
+  int below = Curses::getHeight() - y - 1;
+  int req_h;
+  if (height == AUTOSIZE)
+    req_h = listbox->getChildrenHeight() + 2;
+  else
+    req_h = height;
+
+  if (below > req_h) {
+    // draw the window under the combobox
+    move(x, y + 1);
+    setWishHeight(req_h);
+  }
+  else if (above > req_h) {
+    // draw the window above the combobox
+    move(x, y - req_h);
+    setWishHeight(req_h);
+  }
+  else if (height == AUTOSIZE) {
+    if (below >= above) {
       move(x, y + 1);
-      setWishHeight(req_h);
+      setWishHeight(below);
     }
-    else if (above > req_h) {
-      // draw the window above the combobox
-      move(x, y - req_h);
-      setWishHeight(req_h);
-    }
-    else if (height == AUTOSIZE) {
-      if (below >= above) {
-        move(x, y + 1);
-        setWishHeight(below);
-      }
-      else {
-        move(x, 0);
-        setWishHeight(above);
-      }
+    else {
+      move(x, 0);
+      setWishHeight(above);
     }
   }
 }
@@ -276,10 +264,10 @@ void MenuWindow::onChildrenHeightChange(ListBox& /*activator*/,
   if (height != AUTOSIZE)
     return;
 
-  updateSmartPositionAndSize();
+  updatePositionAndSize();
 }
 
-void MenuWindow::onRefWidgetVisible(Widget& /*activator*/, bool visible)
+void MenuWindow::onReferenceWidgetVisible(Widget& /*activator*/, bool visible)
 {
   if (visible)
     return;
@@ -288,7 +276,7 @@ void MenuWindow::onRefWidgetVisible(Widget& /*activator*/, bool visible)
   close();
 }
 
-void MenuWindow::onRefWidgetDestroy()
+void MenuWindow::onReferenceWidgetDestroy()
 {
   // ref widget is about to die right now, this window should be destroyed too
   assert(ref);

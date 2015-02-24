@@ -76,7 +76,7 @@ void Window::setVisibility(bool visible)
 
 Point Window::getAbsolutePosition()
 {
-  return Point(xpos, ypos);
+  return Point(real_xpos, real_ypos);
 }
 
 bool Window::isWidgetVisible(const Widget& /*child*/) const
@@ -95,6 +95,24 @@ bool Window::setFocusChild(Widget& child)
     return false;
 
   return true;
+}
+
+Point Window::getAbsolutePosition(const Widget& child) const
+{
+  assert(child.getParent() == this);
+
+  int child_x = child.getRealLeft();
+  int child_y = child.getRealTop();
+
+  if (child_x != UNSETPOS && child_y != UNSETPOS) {
+    child_x -= scroll_xpos;
+    child_y -= scroll_ypos;
+
+    if (real_xpos != UNSETPOS && real_ypos != UNSETPOS)
+      return Point(real_xpos + child_x, real_ypos + child_y);
+  }
+
+  return Point(UNSETPOS, UNSETPOS);
 }
 
 void Window::show()

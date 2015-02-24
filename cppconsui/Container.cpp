@@ -421,22 +421,42 @@ Point Container::getRelativePosition(const Container& ref,
 {
   assert(child.getParent() == this);
 
-  if (!parent || this == &ref)
-    return Point(child.getLeft(), child.getTop());
+  int child_x = child.getRealLeft();
+  int child_y = child.getRealTop();
 
-  Point p = parent->getRelativePosition(ref, *this);
-  return Point(p.getX() + child.getLeft(), p.getY() + child.getTop());
+  if (child_x != UNSETPOS && child_y != UNSETPOS) {
+    child_x -= scroll_xpos;
+    child_y -= scroll_ypos;
+
+    if (!parent || this == &ref)
+      return Point(child_x, child_y);
+
+    Point p = parent->getRelativePosition(ref, *this);
+    if (p.getX() != UNSETPOS && p.getY() != UNSETPOS)
+      return Point(p.getX() + child_x, p.getY() + child_y);
+  }
+  return Point(UNSETPOS, UNSETPOS);
 }
 
 Point Container::getAbsolutePosition(const Widget& child) const
 {
   assert(child.getParent() == this);
 
-  if (!parent)
-    return Point(child.getLeft(), child.getTop());
+  int child_x = child.getRealLeft();
+  int child_y = child.getRealTop();
 
-  Point p = parent->getAbsolutePosition(*this);
-  return Point(p.getX() + child.getLeft(), p.getY() + child.getTop());
+  if (child_x != UNSETPOS && child_y != UNSETPOS) {
+    child_x -= scroll_xpos;
+    child_y -= scroll_ypos;
+
+    if (parent) {
+      Point p = parent->getAbsolutePosition(*this);
+      if (p.getX() != UNSETPOS && p.getY() != UNSETPOS)
+        return Point(p.getX() + child_x, p.getY() + child_y);
+    }
+  }
+
+  return Point(UNSETPOS, UNSETPOS);
 }
 
 void Container::onChildMoveResize(Widget& activator, const Rect& /*oldsize*/,
@@ -619,17 +639,20 @@ void Container::updateScroll()
   if (x == UNSETPOS || y == UNSETPOS)
     return;
 
-  makeVisible(x, y, focus_child->getRealWidth(),
-      focus_child->getRealHeight());
+  int w = focus_child->getRealWidth();
+  int h = focus_child->getRealHeight();
+  bool scrolled_a, scrolled_b;
+  scrolled_a = makePointVisible(x + w - 1, y + h - 1);
+  scrolled_b = makePointVisible(x, y);
+
+  if (!scrolled_a && !scrolled_b)
+    return;
+
+  redraw();
+  signalAbsolutePositionChange();
 }
 
-void Container::makeVisible(int x, int y, int w, int h)
-{
-  makePointVisible(x + w - 1, y + h - 1);
-  makePointVisible(x, y);
-}
-
-void Container::makePointVisible(int x, int y)
+bool Container::makePointVisible(int x, int y)
 {
   bool scrolled_x = true;
   if (real_width == 0)
@@ -651,8 +674,7 @@ void Container::makePointVisible(int x, int y)
   else
     scrolled_y = false;
 
-  if (scrolled_x || scrolled_y)
-    redraw();
+  return scrolled_x || scrolled_y;
 }
 
 void Container::declareBindables()

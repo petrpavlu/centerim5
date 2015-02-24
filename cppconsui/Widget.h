@@ -33,11 +33,16 @@
 #include "CppConsUI.h"
 #include "InputProcessor.h"
 
+#include <vector>
+
 namespace CppConsUI
 {
 
 class Container;
+class Widget;
 class Window;
+
+typedef std::vector<Widget *> Widgets;
 
 class Widget
 : public sigc::trackable
@@ -65,7 +70,7 @@ public:
   virtual void draw(Curses::ViewPort area) = 0;
   /**
    * Finds the widget that could be the focus widget from the focus chain
-   * starting with this widget:
+   * starting with this widget.
    */
   virtual Widget *getFocusWidget();
   /**
@@ -128,15 +133,11 @@ public:
   virtual void setHeight(int newh);
 
   /**
-   * Returns an absolute position of the widget. Note: special care has to be
-   * taken when calling this method because CppConsUI uses deferred drawing.
-   * The returned value is correct only if the drawing of all parent widgets
-   * already occured.
+   * Returns an absolute position of the widget.
    */
   virtual Point getAbsolutePosition() const;
   /**
-   * Returns a relative position of the widget to a given predecessor. See
-   * note in getAbsolutePosition() method.
+   * Returns a relative position of the widget to a given predecessor.
    */
   virtual Point getRelativePosition(const Container& ref) const;
 
@@ -162,6 +163,10 @@ public:
 
   virtual void setColorScheme(const char *new_color_scheme);
   virtual const char *getColorScheme() const;
+
+  virtual void registerAbsolutePositionListener(Widget& widget);
+  virtual void unregisterAbsolutePositionListener(Widget& widget);
+  virtual void onAbsolutePositionChange(Widget& widget);
 
   /**
    * Signal emitted whenever a widget grabs or looses the focus.
@@ -209,9 +214,18 @@ protected:
    */
   char *color_scheme;
 
+  /**
+   * Vector of widgets that need to be informed when the absolute on-screen
+   * position of this widget has changed. This is used by widgets that need to
+   * position itself relative to another widget, for example, MenuWindow
+   * relative to the originating ComboBox.
+   */
+  Widgets absolute_position_listeners;
+
   virtual void signalMoveResize(const Rect& oldsize, const Rect& newsize);
   virtual void signalWishSizeChange(const Size& oldsize, const Size& newsize);
   virtual void signalVisible(bool visible);
+  virtual void signalAbsolutePositionChange();
 
   /**
    * Recalculates the widget area. It is called whenever coordinates of the

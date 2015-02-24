@@ -61,6 +61,7 @@ public:
   // Container
   virtual bool isWidgetVisible(const Widget& widget) const;
   virtual bool setFocusChild(Widget& child);
+  virtual Point getAbsolutePosition(const Widget& child) const;
 
   virtual void show();
   virtual void hide();

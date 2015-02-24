@@ -66,7 +66,7 @@ void AccountStatusMenu::openStatusPopup(CppConsUI::Button& activator,
     PurpleAccount *account)
 {
   StatusPopup *status_popup = new StatusPopup(account);
-  status_popup->setRefWidget(activator);
+  status_popup->setReferenceWidget(activator);
   status_popup->show();
 }
 

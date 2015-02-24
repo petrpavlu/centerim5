@@ -245,8 +245,7 @@ protected:
   virtual void moveWidgetInternal(Widget& widget, Widget& position, bool after);
 
   virtual void updateScroll();
-  virtual void makeVisible(int x, int y, int w, int h);
-  virtual void makePointVisible(int x, int y);
+  virtual bool makePointVisible(int x, int y);
 
 private:
   CONSUI_DISABLE_COPY(Container);

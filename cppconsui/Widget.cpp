@@ -42,12 +42,16 @@ Widget::Widget(int w, int h)
 , wish_height(AUTOSIZE), real_xpos(UNSETPOS), real_ypos(UNSETPOS)
 , real_width(0), real_height(0), can_focus(false), has_focus(false)
 , visible(true), parent(NULL), color_scheme(NULL)
+, absolute_position_listeners(0)
 {
 }
 
 Widget::~Widget()
 {
   setVisibility(false);
+
+  if (parent && absolute_position_listeners.size() > 0)
+    parent->unregisterAbsolutePositionListener(*this);
 
   delete [] color_scheme;
 }
@@ -165,6 +169,11 @@ void Widget::setParent(Container& new_parent)
 
   parent = &new_parent;
 
+  /* Register this widget as an absolute position listener to its parent in
+   * case some other widget is interested in a position of this widget. */
+  if (absolute_position_listeners.size() > 0)
+    parent->registerAbsolutePositionListener(*this);
+
   parent->updateFocusChain();
 
   Container *t = getTopContainer();
@@ -233,8 +242,13 @@ Point Widget::getRelativePosition(const Container& ref) const
 
 void Widget::setRealPosition(int newx, int newy)
 {
+  if (newx == real_xpos && newy == real_ypos)
+    return;
+
   real_xpos = newx;
   real_ypos = newy;
+
+  signalAbsolutePositionChange();
 }
 
 void Widget::setRealSize(int neww, int newh)
@@ -273,9 +287,28 @@ const char *Widget::getColorScheme() const
   return NULL;
 }
 
-void Widget::updateArea()
+void Widget::registerAbsolutePositionListener(Widget& widget)
 {
-  // empty for Widget
+  absolute_position_listeners.push_back(&widget);
+  if (parent && absolute_position_listeners.size() == 1)
+    parent->registerAbsolutePositionListener(*this);
+}
+
+void Widget::unregisterAbsolutePositionListener(Widget& widget)
+{
+  Widgets::iterator i = std::find(absolute_position_listeners.begin(),
+      absolute_position_listeners.end(), &widget);
+  assert(i != absolute_position_listeners.end());
+
+  absolute_position_listeners.erase(i);
+  if (parent && absolute_position_listeners.size() == 0)
+    parent->unregisterAbsolutePositionListener(*this);
+}
+
+void Widget::onAbsolutePositionChange(Widget& /*widget*/)
+{
+  // propagate the event to the listeners
+  signalAbsolutePositionChange();
 }
 
 void Widget::signalMoveResize(const Rect& oldsize, const Rect& newsize)
@@ -288,8 +321,7 @@ void Widget::signalMoveResize(const Rect& oldsize, const Rect& newsize)
   parent->onChildMoveResize(*this, oldsize, newsize);
 }
 
-void Widget::signalWishSizeChange(const Size& oldsize,
-    const Size& newsize)
+void Widget::signalWishSizeChange(const Size& oldsize, const Size& newsize)
 {
   if (!parent)
     return;
@@ -307,6 +339,18 @@ void Widget::signalVisible(bool visible)
   /* Tell the parent about the new visibility status so it can reposition its
    * child widgets as appropriate. */
   parent->onChildVisible(*this, visible);
+}
+
+void Widget::signalAbsolutePositionChange()
+{
+  for (Widgets::iterator i = absolute_position_listeners.begin();
+      i != absolute_position_listeners.end(); ++i)
+    (*i)->onAbsolutePositionChange(*this);
+}
+
+void Widget::updateArea()
+{
+  // empty for Widget
 }
 
 void Widget::redraw()

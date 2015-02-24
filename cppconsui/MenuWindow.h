@@ -46,12 +46,13 @@ public:
   virtual ~MenuWindow();
 
   // Widget
-  virtual void draw(Curses::ViewPort area);
+  virtual void onAbsolutePositionChange(Widget& widget);
 
-  // FreeWindow
+  // Window
   virtual void show();
   virtual void hide();
   virtual void close();
+  virtual void onScreenResized();
 
   virtual Button *insertItem(size_t pos, const char *title,
       const sigc::slot<void, Button&>& callback)
@@ -80,15 +81,15 @@ public:
    * of this MenuWindow. Note that if the reference widget is destroyed then
    * the MenuWindow dies too.
    */
-  virtual void setRefWidget(Widget& new_ref);
+  virtual void setReferenceWidget(Widget& new_ref);
   /**
    * Removes any reference widget assignment.
    */
-  virtual void cleanRefWidget();
+  virtual void cleanReferenceWidget();
   /**
    * Returns the currently set reference widget.
    */
-  virtual Widget *getRefWidget() const { return ref; }
+  virtual Widget *getReferenceWidget() const { return ref; }
 
   virtual int getLeftShift() const { return xshift; }
   virtual int getTopShift() const { return yshift; }
@@ -109,24 +110,22 @@ protected:
   // Container
   virtual void addWidget(Widget& widget, int x, int y);
 
-  // FreeWindow
-  //virtual void onScreenResizedInternal();
-
   virtual Button *prepareSubMenu(const char *title, MenuWindow& submenu);
 
   /**
    * Recalculates desired on-screen position and size of this window. This
    * handles mainly autosize magic.
    */
-  virtual void updateSmartPositionAndSize();
+  virtual void updatePositionAndSize();
 
   virtual void onChildrenHeightChange(ListBox& activator, int new_height);
 
-  virtual void onRefWidgetVisible(Widget& activator, bool visible);
+  virtual void onReferenceWidgetVisible(Widget& activator, bool visible);
 
-  static void *onRefWidgetDestroy_(void *win)
-    { reinterpret_cast<MenuWindow*>(win)->onRefWidgetDestroy(); return NULL; }
-  virtual void onRefWidgetDestroy();
+  static void *onReferenceWidgetDestroy_(void *win)
+    { reinterpret_cast<MenuWindow*>(win)->onReferenceWidgetDestroy();
+      return NULL; }
+  virtual void onReferenceWidgetDestroy();
 
 private:
   CONSUI_DISABLE_COPY(MenuWindow);
