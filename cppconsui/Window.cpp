@@ -141,14 +141,14 @@ void Window::setClosable(bool new_closable)
 
 void Window::signalMoveResize(const Rect& oldsize, const Rect& newsize)
 {
-  Container::signalMoveResize(oldsize, newsize);
   COREMANAGER->onWindowMoveResize(*this, oldsize, newsize);
+  Container::signalMoveResize(oldsize, newsize);
 }
 
 void Window::signalWishSizeChange(const Size& oldsize, const Size& newsize)
 {
-  Container::signalWishSizeChange(oldsize, newsize);
   COREMANAGER->onWindowWishSizeChange(*this, oldsize, newsize);
+  Container::signalWishSizeChange(oldsize, newsize);
 }
 
 void Window::updateArea()

@@ -358,7 +358,7 @@ void Widget::redraw()
   if (!parent)
     return;
 
-  COREMANAGER->redraw();
+  parent->redraw();
 }
 
 void Widget::setWishSize(int neww, int newh)

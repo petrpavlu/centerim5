@@ -22,8 +22,6 @@
 #include "TreeView.h"
 
 #include <cassert>
-// XXX
-#include <cstdio>
 
 namespace CppConsUI
 {
