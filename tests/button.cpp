@@ -25,7 +25,7 @@ private:
 
   CONSUI_DISABLE_COPY(TestWindow);
 
-  void onButtonActivate(CppConsUI::Button& activator);
+  void onButtonActivate(CppConsUI::Button &activator);
 };
 
 TestWindow::TestWindow()
@@ -90,7 +90,7 @@ TestWindow::TestWindow()
   addWidget(*button, 1, 28);
 }
 
-void TestWindow::onButtonActivate(CppConsUI::Button& activator)
+void TestWindow::onButtonActivate(CppConsUI::Button &activator)
 {
   std::string text = std::string(activator.getText()) + " activated.";
   label->setText(text.c_str());

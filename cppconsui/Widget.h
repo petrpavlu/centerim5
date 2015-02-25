@@ -99,7 +99,7 @@ public:
   virtual bool isVisible() const { return visible; }
   virtual bool isVisibleRecursive() const;
 
-  virtual void setParent(Container& new_parent);
+  virtual void setParent(Container &new_parent);
   virtual Container *getParent() const { return parent; }
 
   virtual int getLeft() const { return xpos; }
@@ -139,7 +139,7 @@ public:
   /**
    * Returns a relative position of the widget to a given predecessor.
    */
-  virtual Point getRelativePosition(const Container& ref) const;
+  virtual Point getRelativePosition(const Container &ref) const;
 
   /**
    * Returns an area width that is requested by the widget. This method can
@@ -164,18 +164,18 @@ public:
   virtual void setColorScheme(const char *new_color_scheme);
   virtual const char *getColorScheme() const;
 
-  virtual void registerAbsolutePositionListener(Widget& widget);
-  virtual void unregisterAbsolutePositionListener(Widget& widget);
-  virtual void onAbsolutePositionChange(Widget& widget);
+  virtual void registerAbsolutePositionListener(Widget &widget);
+  virtual void unregisterAbsolutePositionListener(Widget &widget);
+  virtual void onAbsolutePositionChange(Widget &widget);
 
   /**
    * Signal emitted whenever a widget grabs or looses the focus.
    */
-  sigc::signal<void, Widget&, bool> signal_focus;
+  sigc::signal<void, Widget &, bool> signal_focus;
   /**
    * Signal emmited whenever a visible property is changed.
    */
-  sigc::signal<void, Widget&, bool> signal_visible;
+  sigc::signal<void, Widget &, bool> signal_visible;
 
 protected:
   /**
@@ -222,8 +222,8 @@ protected:
    */
   Widgets absolute_position_listeners;
 
-  virtual void signalMoveResize(const Rect& oldsize, const Rect& newsize);
-  virtual void signalWishSizeChange(const Size& oldsize, const Size& newsize);
+  virtual void signalMoveResize(const Rect &oldsize, const Rect &newsize);
+  virtual void signalWishSizeChange(const Size &oldsize, const Size &newsize);
   virtual void signalVisible(bool visible);
   virtual void signalAbsolutePositionChange();
 

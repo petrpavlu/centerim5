@@ -23,8 +23,7 @@ protected:
 private:
   CppConsUI::MenuWindow *menu;
 
-  TestWindow(const TestWindow&);
-  TestWindow& operator=(const TestWindow&);
+  CONSUI_DISABLE_COPY(TestWindow);
 };
 
 TestWindow::TestWindow()

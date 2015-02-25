@@ -73,7 +73,7 @@ Conversation::~Conversation()
     g_io_channel_unref(logfile);
 }
 
-bool Conversation::processInput(const TermKeyKey& key)
+bool Conversation::processInput(const TermKeyKey &key)
 {
   if (view->processInput(key))
     return true;
@@ -125,7 +125,7 @@ void Conversation::show()
    * is actually displayed, so screen lines recalculations in TextView (caused
    * by changing the scrollbar setting) aren't triggered if it isn't really
    * necessary. */
-  view->setScrollBar(!CENTERIM->getExpandedConversations());
+  view->setScrollBar(!CENTERIM->isEnabledExpandedConversationMode());
 
   Window::show();
 }
@@ -152,8 +152,8 @@ void Conversation::write(const char *name, const char * /*alias*/,
     const char *message, PurpleMessageFlags flags, time_t mtime)
 {
   // beep on message
-  if (!(flags & PURPLE_MESSAGE_SEND)
-      && purple_prefs_get_bool(CONF_PREFIX "/chat/beep_on_msg"))
+  if (!(flags & PURPLE_MESSAGE_SEND) &&
+      purple_prefs_get_bool(CONF_PREFIX "/chat/beep_on_msg"))
     CppConsUI::Curses::beep();
 
   // update the last_activity property
@@ -329,8 +329,8 @@ char *Conversation::stripHTML(const char *str) const
 
         /* If we've got an <a> tag with an href, save the address to print
          * later. */
-        if (!g_ascii_strncasecmp(str2 + i, "<a", 2)
-            && g_ascii_isspace(str2[i + 2])) {
+        if (!g_ascii_strncasecmp(str2 + i, "<a", 2) &&
+            g_ascii_isspace(str2[i + 2])) {
           int st; // start of href, inclusive [
           int end; // end of href, exclusive )
           char delim = ' ';
@@ -386,13 +386,13 @@ char *Conversation::stripHTML(const char *str) const
 
         /* Check for tags which should be mapped to newline (but ignore some
          * of the tags at the beginning of the text) */
-        else if ((j && (!g_ascii_strncasecmp(str2 + i, "<p>", 3)
-                || !g_ascii_strncasecmp(str2 + i, "<tr", 3)
-                || !g_ascii_strncasecmp(str2 + i, "<hr", 3)
-                || !g_ascii_strncasecmp(str2 + i, "<li", 3)
-                || !g_ascii_strncasecmp(str2 + i, "<div", 4)))
-            || !g_ascii_strncasecmp(str2 + i, "<br", 3)
-            || !g_ascii_strncasecmp(str2 + i, "</table>", 8))
+        else if ((j && (!g_ascii_strncasecmp(str2 + i, "<p>", 3) ||
+                !g_ascii_strncasecmp(str2 + i, "<tr", 3) ||
+                !g_ascii_strncasecmp(str2 + i, "<hr", 3) ||
+                !g_ascii_strncasecmp(str2 + i, "<li", 3) ||
+                !g_ascii_strncasecmp(str2 + i, "<div", 4))) ||
+            !g_ascii_strncasecmp(str2 + i, "<br", 3) ||
+            !g_ascii_strncasecmp(str2 + i, "</table>", 8))
           str2[j++] = '\n';
         // check for tags which begin CDATA and need to be closed
 #if 0 // FIXME.. option is end tag optional, we can't handle this right now
@@ -691,7 +691,7 @@ bool Conversation::processCommand(const char *raw, const char *html)
   return result;
 }
 
-void Conversation::onInputTextChange(CppConsUI::TextEdit& activator)
+void Conversation::onInputTextChange(CppConsUI::TextEdit &activator)
 {
   PurpleConvIm *im = PURPLE_CONV_IM(conv);
   if (!im)
@@ -719,8 +719,8 @@ void Conversation::onInputTextChange(CppConsUI::TextEdit& activator)
   purple_conv_im_start_send_typed_timeout(im);
 
   time_t again = purple_conv_im_get_type_again(im);
-  if ((!old_text_length && new_text_length)
-      || (again && time(NULL) > again)) {
+  if ((!old_text_length && new_text_length) ||
+      (again && time(NULL) > again)) {
     // the first letter is inserted or update is required for typing status
     unsigned int timeout = serv_send_typing(purple_conversation_get_gc(conv),
         purple_conversation_get_name(conv), PURPLE_TYPING);

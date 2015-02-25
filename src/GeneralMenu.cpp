@@ -78,52 +78,52 @@ void GeneralMenu::onScreenResized()
   move(chat.x, chat.y);
 }
 
-void GeneralMenu::openStatusWindow(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openStatusWindow(CppConsUI::Button & /*activator*/)
 {
   AccountStatusMenu *win = new AccountStatusMenu;
   win->show();
   close();
 }
 
-void GeneralMenu::openAccountWindow(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openAccountWindow(CppConsUI::Button & /*activator*/)
 {
   AccountWindow *win = new AccountWindow;
   win->show();
   close();
 }
 
-void GeneralMenu::openAddBuddyRequest(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openAddBuddyRequest(CppConsUI::Button & /*activator*/)
 {
   purple_blist_request_add_buddy(NULL, NULL, NULL, NULL);
   close();
 }
 
-void GeneralMenu::openAddChatRequest(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openAddChatRequest(CppConsUI::Button & /*activator*/)
 {
   purple_blist_request_add_chat(NULL, NULL, NULL, NULL);
   close();
 }
 
-void GeneralMenu::openAddGroupRequest(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openAddGroupRequest(CppConsUI::Button & /*activator*/)
 {
   purple_blist_request_add_group();
   close();
 }
 
-void GeneralMenu::openPendingRequests(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openPendingRequests(CppConsUI::Button & /*activator*/)
 {
   ACCOUNTS->openPendingRequests();
   close();
 }
 
-void GeneralMenu::openOptionWindow(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openOptionWindow(CppConsUI::Button & /*activator*/)
 {
   OptionWindow *win = new OptionWindow;
   win->show();
   close();
 }
 
-void GeneralMenu::openPluginWindow(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openPluginWindow(CppConsUI::Button & /*activator*/)
 {
   PluginWindow *win = new PluginWindow;
   win->show();
@@ -131,7 +131,7 @@ void GeneralMenu::openPluginWindow(CppConsUI::Button& /*activator*/)
 }
 
 #ifdef DEBUG
-void GeneralMenu::openRequestInputTest(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openRequestInputTest(CppConsUI::Button & /*activator*/)
 {
   purple_request_input(NULL, "Title", "Primary", "Secondary",
       "default value", FALSE, FALSE, NULL, "Ok",
@@ -141,7 +141,7 @@ void GeneralMenu::openRequestInputTest(CppConsUI::Button& /*activator*/)
   close();
 }
 
-void GeneralMenu::openRequestChoiceTest(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openRequestChoiceTest(CppConsUI::Button & /*activator*/)
 {
   purple_request_choice(NULL, "Title", "Primary",
       "Secondary", 1,
@@ -157,7 +157,7 @@ void GeneralMenu::openRequestChoiceTest(CppConsUI::Button& /*activator*/)
   close();
 }
 
-void GeneralMenu::openRequestActionTest(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openRequestActionTest(CppConsUI::Button & /*activator*/)
 {
   purple_request_action(NULL, "Title", "Primary", "Secondary", 1, NULL,
       NULL, NULL, this, 3,
@@ -168,7 +168,7 @@ void GeneralMenu::openRequestActionTest(CppConsUI::Button& /*activator*/)
   close();
 }
 
-void GeneralMenu::openRequestFieldsTest(CppConsUI::Button& /*activator*/)
+void GeneralMenu::openRequestFieldsTest(CppConsUI::Button & /*activator*/)
 {
   PurpleRequestFields *fields = purple_request_fields_new();
   PurpleRequestFieldGroup *g = purple_request_field_group_new("Group 0");
@@ -253,13 +253,13 @@ void GeneralMenu::fields_ok_cb(PurpleRequestFields *fields)
         purple_request_fields_get_field(fields, "list0")); list;
       list = list->next)
     LOG->debug("fields_ok_cb: list0=%s",
-        reinterpret_cast<const char*>(list->data));
+        reinterpret_cast<const char *>(list->data));
 
   for (GList *list = purple_request_field_list_get_selected(
         purple_request_fields_get_field(fields, "list1")); list;
       list = list->next)
     LOG->debug("fields_ok_cb: list1=%s",
-        reinterpret_cast<const char*>(list->data));
+        reinterpret_cast<const char *>(list->data));
 
   PurpleAccount *account = purple_request_fields_get_account(fields,
       "account0");

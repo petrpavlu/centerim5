@@ -79,12 +79,12 @@ Point Window::getAbsolutePosition()
   return Point(real_xpos, real_ypos);
 }
 
-bool Window::isWidgetVisible(const Widget& /*child*/) const
+bool Window::isWidgetVisible(const Widget & /*child*/) const
 {
   return true;
 }
 
-bool Window::setFocusChild(Widget& child)
+bool Window::setFocusChild(Widget &child)
 {
   cleanFocus();
 
@@ -97,7 +97,7 @@ bool Window::setFocusChild(Widget& child)
   return true;
 }
 
-Point Window::getAbsolutePosition(const Widget& child) const
+Point Window::getAbsolutePosition(const Widget &child) const
 {
   assert(child.getParent() == this);
 
@@ -139,13 +139,13 @@ void Window::setClosable(bool new_closable)
   closable = new_closable;
 }
 
-void Window::signalMoveResize(const Rect& oldsize, const Rect& newsize)
+void Window::signalMoveResize(const Rect &oldsize, const Rect &newsize)
 {
   COREMANAGER->onWindowMoveResize(*this, oldsize, newsize);
   Container::signalMoveResize(oldsize, newsize);
 }
 
-void Window::signalWishSizeChange(const Size& oldsize, const Size& newsize)
+void Window::signalWishSizeChange(const Size &oldsize, const Size &newsize)
 {
   COREMANAGER->onWindowWishSizeChange(*this, oldsize, newsize);
   Container::signalWishSizeChange(oldsize, newsize);

@@ -45,7 +45,7 @@ public:
   /**
    * Signal emitted when the user closes the dialog.
    */
-  sigc::signal<void, ColorPickerDialog&, ResponseType, int> signal_response;
+  sigc::signal<void, ColorPickerDialog &, ResponseType, int> signal_response;
 
 protected:
   int color;
@@ -53,7 +53,7 @@ protected:
   // AbstractDialog
   virtual void emitResponse(ResponseType response);
 
-  virtual void onColorSelected(ColorPickerPalette& activator, int new_color);
+  virtual void onColorSelected(ColorPickerPalette &activator, int new_color);
 
 private:
   CONSUI_DISABLE_COPY(ColorPickerDialog);

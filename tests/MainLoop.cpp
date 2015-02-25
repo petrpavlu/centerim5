@@ -35,7 +35,7 @@ static void log_func_glib(const gchar * /*log_domain*/,
 static gboolean io_input_cppconsui(GIOChannel *source, GIOCondition condition,
     gpointer data)
 {
-  IOClosureCppConsUI *closure = static_cast<IOClosureCppConsUI*>(data);
+  IOClosureCppConsUI *closure = static_cast<IOClosureCppConsUI *>(data);
   int cppconsui_cond = 0;
 
   if (condition & G_IO_IN)
@@ -51,19 +51,19 @@ static gboolean io_input_cppconsui(GIOChannel *source, GIOCondition condition,
 
 static void io_destroy_cppconsui(gpointer data)
 {
-  delete static_cast<IOClosureCppConsUI*>(data);
+  delete static_cast<IOClosureCppConsUI *>(data);
 }
 
 static gboolean timeout_function_cppconsui(gpointer data)
 {
   SourceClosureCppConsUI *closure
-    = static_cast<SourceClosureCppConsUI*>(data);
+    = static_cast<SourceClosureCppConsUI *>(data);
   return closure->function(closure->data);
 }
 
 static void timeout_destroy_cppconsui(gpointer data)
 {
-  delete static_cast<SourceClosureCppConsUI*>(data);
+  delete static_cast<SourceClosureCppConsUI *>(data);
 }
 
 void init()

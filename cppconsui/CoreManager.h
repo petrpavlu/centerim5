@@ -46,16 +46,16 @@ class CoreManager
 : public InputProcessor
 {
 public:
-  void registerWindow(Window& window);
-  void removeWindow(Window& window);
-  void topWindow(Window& window);
+  void registerWindow(Window &window);
+  void removeWindow(Window &window);
+  void topWindow(Window &window);
   Window *getTopWindow();
 
   void enableResizing();
   void disableResizing();
   void onScreenResized();
 
-  void setTopInputProcessor(InputProcessor& top)
+  void setTopInputProcessor(InputProcessor &top)
     { top_input_processor = &top; }
   InputProcessor *getTopInputProcessor()
     { return top_input_processor; }
@@ -63,10 +63,10 @@ public:
   void logError(const char *message);
   void redraw();
 
-  void onWindowMoveResize(Window& activator, const Rect& oldsize,
-      const Rect& newsize);
-  void onWindowWishSizeChange(Window& activator, const Size& oldsize,
-      const Size& newsize);
+  void onWindowMoveResize(Window &activator, const Rect &oldsize,
+      const Rect &newsize);
+  void onWindowWishSizeChange(Window &activator, const Size &oldsize,
+      const Size &newsize);
 
   TermKey *getTermKeyHandle() { return tk; };
 
@@ -76,7 +76,7 @@ public:
 protected:
 
 private:
-  typedef std::deque<Window*> Windows;
+  typedef std::deque<Window *> Windows;
 
   Windows windows;
   AppInterface interface;
@@ -95,16 +95,16 @@ private:
   bool resize_pending;
 
   CoreManager();
-  int init(AppInterface& set_interface);
+  int init(AppInterface &set_interface);
   ~CoreManager() {}
   int finalize();
   CONSUI_DISABLE_COPY(CoreManager);
 
-  friend int initializeConsUI(AppInterface& interface);
+  friend int initializeConsUI(AppInterface &interface);
   friend int finalizeConsUI();
 
   // InputProcessor
-  virtual bool processInput(const TermKeyKey& key);
+  virtual bool processInput(const TermKeyKey &key);
 
   /**
    * Reads data from the standard input. The data are first converted from
@@ -112,13 +112,13 @@ private:
    * InputProcessor.
    */
   static void stdin_input_(int fd, InputCondition cond, void *data)
-    { static_cast<CoreManager*>(data)->stdin_input(fd, cond); }
+    { static_cast<CoreManager *>(data)->stdin_input(fd, cond); }
   void stdin_input(int fd, InputCondition cond);
   static bool stdin_input_timeout_(void *data);
   void stdin_input_timeout();
 
   static void resize_input_(int fd, InputCondition cond, void *data)
-    { static_cast<CoreManager*>(data)->resize_input(fd, cond); }
+    { static_cast<CoreManager *>(data)->resize_input(fd, cond); }
   void resize_input(int fd, InputCondition cond);
 
   int initInput();
@@ -127,13 +127,13 @@ private:
   static void signalHandler(int signum);
   void resize();
   void updateArea();
-  void updateWindowArea(Window& window);
+  void updateWindowArea(Window &window);
 
   static bool draw_(void *data);
   void draw();
-  void drawWindow(Window& window);
+  void drawWindow(Window &window);
 
-  Windows::iterator findWindow(Window& window);
+  Windows::iterator findWindow(Window &window);
   void focusWindow();
 
   void redrawScreen();

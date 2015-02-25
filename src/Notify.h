@@ -56,9 +56,9 @@ private:
     CONSUI_DISABLE_COPY(UserInfoDialog);
   };
 
-  typedef std::set<CppConsUI::AbstractDialog*> Notifications;
-  typedef std::pair<PurpleAccount*, std::string> User;
-  typedef std::map<User, UserInfoDialog*> UserInfo;
+  typedef std::set<CppConsUI::AbstractDialog *> Notifications;
+  typedef std::pair<PurpleAccount *, std::string> User;
+  typedef std::map<User, UserInfoDialog *> UserInfo;
 
   /* Track all opened notifications so it is possible to break the
    * purple_notify_close() -> AbstractDialog::Close() -> purple_notify_close()
@@ -80,8 +80,8 @@ private:
   static void finalize();
   friend class CenterIM;
 
-  void onDialogClose(CppConsUI::Window& activator, PurpleNotifyType type);
-  void onUserInfoDialogClose(CppConsUI::Window& activator, User user);
+  void onDialogClose(CppConsUI::Window &activator, PurpleNotifyType type);
+  void onUserInfoDialogClose(CppConsUI::Window &activator, User user);
 
   static void *notify_message_(PurpleNotifyMsgType type, const char *title,
       const char *primary, const char *secondary)

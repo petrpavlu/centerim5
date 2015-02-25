@@ -20,10 +20,9 @@ protected:
   CppConsUI::TextView *textview;
 
 private:
-  TestWindow(const TestWindow&);
-  TestWindow& operator=(const TestWindow&);
-
   void actionToggleScrollbar();
+
+  CONSUI_DISABLE_COPY(TestWindow);
 };
 
 TestWindow::TestWindow()

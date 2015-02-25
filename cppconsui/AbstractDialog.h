@@ -70,7 +70,7 @@ protected:
 
   virtual void initLayout();
   virtual void emitResponse(ResponseType response) = 0;
-  virtual void onButtonResponse(Button& activator,
+  virtual void onButtonResponse(Button &activator,
       ResponseType response_type);
 
 private:

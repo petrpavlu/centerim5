@@ -42,8 +42,7 @@ public:
 protected:
 
 private:
-  MyScrollPane(const MyScrollPane&);
-  MyScrollPane& operator=(const MyScrollPane&);
+  CONSUI_DISABLE_COPY(MyScrollPane);
 };
 
 MyScrollPane::MyScrollPane(int w, int h, int scrollw, int scrollh)
@@ -81,13 +80,12 @@ protected:
   MyScrollPane *pane;
 
 private:
-  TestWindow(const TestWindow&);
-  TestWindow& operator=(const TestWindow&);
-
   void actionScrollUp();
   void actionScrollDown();
   void actionScrollLeft();
   void actionScrollRight();
+
+  CONSUI_DISABLE_COPY(TestWindow);
 };
 
 TestWindow::TestWindow()

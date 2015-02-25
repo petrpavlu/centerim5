@@ -97,7 +97,7 @@ public:
   /**
    * Converts a TermKeyKey to its string representation.
    */
-  char *termKeyToString(const TermKeyKey& key) const;
+  char *termKeyToString(const TermKeyKey &key) const;
 
   /**
    * Parses a string into a TermKeyKey.
@@ -129,7 +129,7 @@ private:
   int finalize() { return 0; }
   CONSUI_DISABLE_COPY(KeyConfig);
 
-  friend int initializeConsUI(AppInterface& interface);
+  friend int initializeConsUI(AppInterface &interface);
   friend int finalizeConsUI();
 };
 

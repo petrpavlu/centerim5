@@ -20,8 +20,7 @@ public:
 protected:
 
 private:
-  TestWindow(const TestWindow&);
-  TestWindow& operator=(const TestWindow&);
+  CONSUI_DISABLE_COPY(TestWindow);
 };
 
 TestWindow::TestWindow()

@@ -19,8 +19,7 @@ public:
 protected:
 
 private:
-  TestWindow(const TestWindow&);
-  TestWindow& operator=(const TestWindow&);
+  CONSUI_DISABLE_COPY(TestWindow);
 };
 
 TestWindow::TestWindow(int number, int x, int y, int w, int h)
@@ -29,7 +28,7 @@ TestWindow::TestWindow(int number, int x, int y, int w, int h)
   CppConsUI::Label *label;
 
   std::string text = std::string("Win ")
-    + dynamic_cast<std::ostringstream*>(
+    + dynamic_cast<std::ostringstream *>(
         &(std::ostringstream() << number))->str();
   label = new CppConsUI::Label(w - 4, 1, text.c_str());
   addWidget(*label, 2, 1);

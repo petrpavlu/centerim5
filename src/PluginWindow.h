@@ -54,10 +54,10 @@ private:
     virtual void onScreenResized();
 
     // signal that the user has selected a plugin that he wants to add
-    sigc::signal<void, AddPluginWindow&, PurplePlugin*> signal_selection;
+    sigc::signal<void, AddPluginWindow &, PurplePlugin *> signal_selection;
 
   protected:
-    void onPluginButtonActivate(CppConsUI::Button& activator,
+    void onPluginButtonActivate(CppConsUI::Button &activator,
         PurplePlugin *plugin);
 
   private:
@@ -74,7 +74,7 @@ private:
   protected:
     char *pref;
 
-    void onToggle(CppConsUI::CheckBox& activator, bool new_state);
+    void onToggle(CppConsUI::CheckBox &activator, bool new_state);
 
   private:
     CONSUI_DISABLE_COPY(BoolOption);
@@ -91,8 +91,8 @@ private:
     char *pref;
 
     void updateValue();
-    void onActivate(CppConsUI::Button& activator);
-    void responseHandler(CppConsUI::InputDialog& activator,
+    void onActivate(CppConsUI::Button &activator);
+    void responseHandler(CppConsUI::InputDialog &activator,
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
@@ -110,8 +110,8 @@ private:
     char *pref;
 
     void updateValue();
-    void onActivate(CppConsUI::Button& activator);
-    void responseHandler(CppConsUI::InputDialog& activator,
+    void onActivate(CppConsUI::Button &activator);
+    void responseHandler(CppConsUI::InputDialog &activator,
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
@@ -129,8 +129,8 @@ private:
     char *pref;
 
     void updateValue();
-    void onActivate(CppConsUI::Button& activator);
-    void responseHandler(CppConsUI::InputDialog& activator,
+    void onActivate(CppConsUI::Button &activator);
+    void responseHandler(CppConsUI::InputDialog &activator,
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
@@ -143,7 +143,7 @@ private:
     CppConsUI::TreeView::NodeReference parent_reference;
     PurplePluginPrefFrame *frame;
   };
-  typedef std::map<PurplePlugin*, PluginEntry> PluginEntries;
+  typedef std::map<PurplePlugin *, PluginEntry> PluginEntries;
 
   CppConsUI::TreeView *treeview;
   PluginEntries plugin_entries;
@@ -153,11 +153,11 @@ private:
   void clearPlugin(PurplePlugin *plugin);
   void populatePlugin(PurplePlugin *plugin);
 
-  void addPlugin(CppConsUI::Button& activator);
-  void onAddPluginSelection(AddPluginWindow& activator, PurplePlugin *plugin);
+  void addPlugin(CppConsUI::Button &activator);
+  void onAddPluginSelection(AddPluginWindow &activator, PurplePlugin *plugin);
 
-  void disablePlugin(CppConsUI::Button& activator, PurplePlugin *plugin);
-  void disablePluginResponseHandler(CppConsUI::MessageDialog& activator,
+  void disablePlugin(CppConsUI::Button &activator, PurplePlugin *plugin);
+  void disablePluginResponseHandler(CppConsUI::MessageDialog &activator,
       CppConsUI::AbstractDialog::ResponseType response, PurplePlugin *plugin);
 };
 

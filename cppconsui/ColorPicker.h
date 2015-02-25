@@ -48,7 +48,7 @@ public:
   /**
    * Emited signal when the colorpair has been selected
    */
-  sigc::signal<void, ColorPicker&, int, int> signal_colorpair_selected;
+  sigc::signal<void, ColorPicker &, int, int> signal_colorpair_selected;
 
 protected:
   class Sample
@@ -75,7 +75,7 @@ protected:
   Label *label;
   Sample *sample;
 
-  virtual void onColorChanged(ComboBox& activator, int new_color);
+  virtual void onColorChanged(ComboBox &activator, int new_color);
 
 private:
   CONSUI_DISABLE_COPY(ColorPicker);

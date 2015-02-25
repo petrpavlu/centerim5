@@ -157,8 +157,8 @@ private:
       virtual ~StringOption() {}
 
     protected:
-      void onActivate(CppConsUI::Button& activator);
-      void responseHandler(CppConsUI::InputDialog& activator,
+      void onActivate(CppConsUI::Button &activator);
+      void responseHandler(CppConsUI::InputDialog &activator,
           CppConsUI::AbstractDialog::ResponseType response);
 
     private:
@@ -177,8 +177,8 @@ private:
       int min_value;
       int max_value;
 
-      void onActivate(CppConsUI::Button& activator);
-      void responseHandler(CppConsUI::InputDialog& activator,
+      void onActivate(CppConsUI::Button &activator);
+      void responseHandler(CppConsUI::InputDialog &activator,
           CppConsUI::AbstractDialog::ResponseType response);
 
     private:
@@ -200,7 +200,7 @@ private:
 
     CppConsUI::TreeView *treeview;
 
-    virtual void onAddRequest(CppConsUI::Button& activator) = 0;
+    virtual void onAddRequest(CppConsUI::Button &activator) = 0;
 
   private:
     CONSUI_DISABLE_COPY(AddWindow);
@@ -221,7 +221,7 @@ private:
     GroupOption *group_option;
 
     // AddWindow
-    virtual void onAddRequest(CppConsUI::Button& activator);
+    virtual void onAddRequest(CppConsUI::Button &activator);
 
   private:
     CONSUI_DISABLE_COPY(AddBuddyWindow);
@@ -247,10 +247,10 @@ private:
     ChatInfoMap chat_info_map;
 
     // AddWindow
-    virtual void onAddRequest(CppConsUI::Button& activator);
+    virtual void onAddRequest(CppConsUI::Button &activator);
 
     void populateChatInfo(PurpleAccount *account);
-    void onAccountChanged(CppConsUI::Button& activator, size_t new_entry,
+    void onAccountChanged(CppConsUI::Button &activator, size_t new_entry,
         const char *title, intptr_t data);
 
   private:
@@ -268,7 +268,7 @@ private:
     StringOption *name_option;
 
     // AddWindow
-    virtual void onAddRequest(CppConsUI::Button& activator);
+    virtual void onAddRequest(CppConsUI::Button &activator);
 
   private:
     CONSUI_DISABLE_COPY(AddGroupWindow);
@@ -346,7 +346,7 @@ private:
   // called when any blist/* pref is changed
   static void blist_pref_change_(const char *name, PurplePrefType type,
       gconstpointer val, gpointer data)
-    { reinterpret_cast<BuddyList*>(data)->blist_pref_change(name, type,
+    { reinterpret_cast<BuddyList *>(data)->blist_pref_change(name, type,
         val); }
   void blist_pref_change(const char *name, PurplePrefType type,
       gconstpointer val);

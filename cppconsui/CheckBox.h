@@ -62,7 +62,7 @@ public:
   /**
    * Emited signal when a checkbox is pressed/activated.
    */
-  sigc::signal<void, CheckBox&, bool> signal_toggle;
+  sigc::signal<void, CheckBox &, bool> signal_toggle;
 
 protected:
   char *text;

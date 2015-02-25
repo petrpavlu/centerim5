@@ -132,7 +132,7 @@ protected:
     ScreenLine(Line &parent_, const char *text_, int length_);
   };
 
-  typedef std::deque<Line*> Lines;
+  typedef std::deque<Line *> Lines;
   typedef std::deque<ScreenLine> ScreenLines;
 
   size_t view_top;

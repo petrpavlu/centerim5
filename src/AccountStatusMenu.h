@@ -36,7 +36,7 @@ public:
   virtual void onScreenResized();
 
 protected:
-  void openStatusPopup(CppConsUI::Button& activator, PurpleAccount *account);
+  void openStatusPopup(CppConsUI::Button &activator, PurpleAccount *account);
 
 private:
   class StatusPopup
@@ -47,7 +47,7 @@ private:
     virtual ~StatusPopup() {}
 
   protected:
-    void setStatus(CppConsUI::Button& activator, PurpleAccount *account,
+    void setStatus(CppConsUI::Button &activator, PurpleAccount *account,
         PurpleStatusType *status_type, bool active);
 
   private:

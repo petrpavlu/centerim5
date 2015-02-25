@@ -44,11 +44,11 @@ BuddyListNode *BuddyListNode::createNode(PurpleBlistNode *node)
   return NULL;
 }
 
-void BuddyListNode::setParent(CppConsUI::Container& parent)
+void BuddyListNode::setParent(CppConsUI::Container &parent)
 {
   Button::setParent(parent);
 
-  treeview = dynamic_cast<CppConsUI::TreeView*>(&parent);
+  treeview = dynamic_cast<CppConsUI::TreeView *>(&parent);
   g_assert(treeview);
 }
 
@@ -116,12 +116,12 @@ void BuddyListNode::sortIn()
     else
       stop_flag = true;
 
-    BuddyListNode *swidget = dynamic_cast<BuddyListNode*>(sref->getWidget());
+    BuddyListNode *swidget = dynamic_cast<BuddyListNode *>(sref->getWidget());
     g_assert(swidget);
     CppConsUI::TreeView::SiblingIterator j = sref;
     j++;
     while (j != parent_ref.end()) {
-      BuddyListNode *n = dynamic_cast<BuddyListNode*>(j->getWidget());
+      BuddyListNode *n = dynamic_cast<BuddyListNode *>(j->getWidget());
       g_assert(n);
 
       if (swidget->lessOrEqual(*n)) {
@@ -145,16 +145,16 @@ BuddyListNode *BuddyListNode::getParentNode() const
   if (!parent)
     return NULL;
 
-  return reinterpret_cast<BuddyListNode*>(
+  return reinterpret_cast<BuddyListNode *>(
       purple_blist_node_get_ui_data(parent));
 }
 
-BuddyListNode::ContextMenu::ContextMenu(BuddyListNode& parent_node_)
+BuddyListNode::ContextMenu::ContextMenu(BuddyListNode &parent_node_)
 : MenuWindow(parent_node_, AUTOSIZE, AUTOSIZE), parent_node(&parent_node_)
 {
 }
 
-void BuddyListNode::ContextMenu::onMenuAction(Button& /*activator*/,
+void BuddyListNode::ContextMenu::onMenuAction(Button & /*activator*/,
     PurpleCallback callback, void *data)
 {
   g_assert(callback);
@@ -166,7 +166,7 @@ void BuddyListNode::ContextMenu::onMenuAction(Button& /*activator*/,
   close();
 }
 
-void BuddyListNode::ContextMenu::appendMenuAction(MenuWindow& menu,
+void BuddyListNode::ContextMenu::appendMenuAction(MenuWindow &menu,
     PurpleMenuAction *act)
 {
   if (!act) {
@@ -187,7 +187,7 @@ void BuddyListNode::ContextMenu::appendMenuAction(MenuWindow& menu,
     menu.appendSubMenu(act->label, *submenu);
 
     for (GList *l = act->children; l; l = l->next) {
-      PurpleMenuAction *act = reinterpret_cast<PurpleMenuAction*>(l->data);
+      PurpleMenuAction *act = reinterpret_cast<PurpleMenuAction *>(l->data);
       appendMenuAction(*submenu, act);
     }
 
@@ -209,7 +209,7 @@ void BuddyListNode::ContextMenu::appendProtocolMenu(PurpleConnection *gc)
 
   GList *ll = prpl_info->blist_node_menu(parent_node->getPurpleBlistNode());
   for (GList *l = ll; l; l = l->next) {
-    PurpleMenuAction *act = reinterpret_cast<PurpleMenuAction*>(l->data);
+    PurpleMenuAction *act = reinterpret_cast<PurpleMenuAction *>(l->data);
     appendMenuAction(*this, act);
   }
 
@@ -226,7 +226,7 @@ void BuddyListNode::ContextMenu::appendExtendedMenu()
   GList *ll = purple_blist_node_get_extended_menu(
       parent_node->getPurpleBlistNode());
   for (GList *l = ll; l; l = l->next) {
-    PurpleMenuAction *act = reinterpret_cast<PurpleMenuAction*>(l->data);
+    PurpleMenuAction *act = reinterpret_cast<PurpleMenuAction *>(l->data);
     appendMenuAction(*this, act);
   }
 
@@ -251,7 +251,7 @@ BuddyListNode::~BuddyListNode()
   purple_blist_node_set_ui_data(blist_node, NULL);
 }
 
-bool BuddyListNode::lessOrEqualByType(const BuddyListNode& other) const
+bool BuddyListNode::lessOrEqualByType(const BuddyListNode &other) const
 {
   // group < contact < buddy < chat < other
   PurpleBlistNodeType t1 = purple_blist_node_get_type(blist_node);
@@ -276,9 +276,9 @@ bool BuddyListNode::lessOrEqualByBuddySort(PurpleBuddy *left,
       break;
     case BuddyList::BUDDY_SORT_BY_ACTIVITY:
       {
-        BuddyListNode *bnode_left = reinterpret_cast<BuddyListNode*>(
+        BuddyListNode *bnode_left = reinterpret_cast<BuddyListNode *>(
             purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(left)));
-        BuddyListNode *bnode_right = reinterpret_cast<BuddyListNode*>(
+        BuddyListNode *bnode_right = reinterpret_cast<BuddyListNode *>(
             purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(right)));
         a = bnode_left->last_activity;
         b = bnode_right->last_activity;
@@ -373,9 +373,9 @@ void BuddyListNode::declareBindables()
       InputProcessor::BINDABLE_NORMAL);
 }
 
-bool BuddyListBuddy::lessOrEqual(const BuddyListNode& other) const
+bool BuddyListBuddy::lessOrEqual(const BuddyListNode &other) const
 {
-  const BuddyListBuddy *o = dynamic_cast<const BuddyListBuddy*>(&other);
+  const BuddyListBuddy *o = dynamic_cast<const BuddyListBuddy *>(&other);
   if (o)
     return lessOrEqualByBuddySort(buddy, o->buddy);
   return lessOrEqualByType(other);
@@ -409,7 +409,7 @@ void BuddyListBuddy::update()
   updateFilterVisibility(alias);
 }
 
-void BuddyListBuddy::onActivate(Button& /*activator*/)
+void BuddyListBuddy::onActivate(Button & /*activator*/)
 {
   PurpleAccount *account = purple_buddy_get_account(buddy);
   const char *name = purple_buddy_get_name(buddy);
@@ -434,7 +434,7 @@ void BuddyListBuddy::retrieveUserInfo()
 }
 
 BuddyListBuddy::BuddyContextMenu::BuddyContextMenu(
-    BuddyListBuddy& parent_buddy_)
+    BuddyListBuddy &parent_buddy_)
 : ContextMenu(parent_buddy_), parent_buddy(&parent_buddy_)
 {
   appendProtocolMenu(purple_account_get_connection(
@@ -449,14 +449,14 @@ BuddyListBuddy::BuddyContextMenu::BuddyContextMenu(
         &BuddyContextMenu::onRemove));
 }
 
-void BuddyListBuddy::BuddyContextMenu::onInformation(Button& /*activator*/)
+void BuddyListBuddy::BuddyContextMenu::onInformation(Button & /*activator*/)
 {
   parent_buddy->retrieveUserInfo();
   close();
 }
 
 void BuddyListBuddy::BuddyContextMenu::changeAliasResponseHandler(
-    CppConsUI::InputDialog& activator,
+    CppConsUI::InputDialog &activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
@@ -470,7 +470,7 @@ void BuddyListBuddy::BuddyContextMenu::changeAliasResponseHandler(
   close();
 }
 
-void BuddyListBuddy::BuddyContextMenu::onChangeAlias(Button& /*activator*/)
+void BuddyListBuddy::BuddyContextMenu::onChangeAlias(Button & /*activator*/)
 {
   PurpleBuddy *buddy = parent_buddy->getPurpleBuddy();
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(
@@ -481,7 +481,7 @@ void BuddyListBuddy::BuddyContextMenu::onChangeAlias(Button& /*activator*/)
 }
 
 void BuddyListBuddy::BuddyContextMenu::removeResponseHandler(
-    CppConsUI::MessageDialog& /*activator*/,
+    CppConsUI::MessageDialog & /*activator*/,
     CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
@@ -498,7 +498,7 @@ void BuddyListBuddy::BuddyContextMenu::removeResponseHandler(
   purple_blist_remove_buddy(buddy);
 }
 
-void BuddyListBuddy::BuddyContextMenu::onRemove(Button& /*activator*/)
+void BuddyListBuddy::BuddyContextMenu::onRemove(Button & /*activator*/)
 {
   PurpleBuddy *buddy = parent_buddy->getPurpleBuddy();
   char *msg = g_strdup_printf(
@@ -515,8 +515,8 @@ void BuddyListBuddy::BuddyContextMenu::onRemove(Button& /*activator*/)
 int BuddyListBuddy::getColorPair(const char *widget, const char *property)
   const
 {
-  if (BUDDYLIST->getColorizationMode() != BuddyList::COLOR_BY_ACCOUNT
-      || strcmp(property, "normal"))
+  if (BUDDYLIST->getColorizationMode() != BuddyList::COLOR_BY_ACCOUNT ||
+      strcmp(property, "normal"))
     return Button::getColorPair(widget, property);
 
   PurpleAccount *account = purple_buddy_get_account(buddy);
@@ -560,9 +560,9 @@ void BuddyListBuddy::updateColorScheme()
   }
 }
 
-bool BuddyListChat::lessOrEqual(const BuddyListNode& other) const
+bool BuddyListChat::lessOrEqual(const BuddyListNode &other) const
 {
-  const BuddyListChat *o = dynamic_cast<const BuddyListChat*>(&other);
+  const BuddyListChat *o = dynamic_cast<const BuddyListChat *>(&other);
   if (o)
     return g_utf8_collate(purple_chat_get_name(chat),
         purple_chat_get_name(o->chat)) <= 0;
@@ -584,7 +584,7 @@ void BuddyListChat::update()
   updateFilterVisibility(name);
 }
 
-void BuddyListChat::onActivate(Button& /*activator*/)
+void BuddyListChat::onActivate(Button & /*activator*/)
 {
   PurpleAccount *account = purple_chat_get_account(chat);
   PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(
@@ -616,7 +616,7 @@ const char *BuddyListChat::toString() const
   return purple_chat_get_name(chat);
 }
 
-BuddyListChat::ChatContextMenu::ChatContextMenu(BuddyListChat& parent_chat_)
+BuddyListChat::ChatContextMenu::ChatContextMenu(BuddyListChat &parent_chat_)
 : ContextMenu(parent_chat_), parent_chat(&parent_chat_)
 {
   appendProtocolMenu(purple_account_get_connection(
@@ -630,7 +630,7 @@ BuddyListChat::ChatContextMenu::ChatContextMenu(BuddyListChat& parent_chat_)
 }
 
 void BuddyListChat::ChatContextMenu::changeAliasResponseHandler(
-    CppConsUI::InputDialog& activator,
+    CppConsUI::InputDialog &activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
@@ -643,7 +643,7 @@ void BuddyListChat::ChatContextMenu::changeAliasResponseHandler(
   close();
 }
 
-void BuddyListChat::ChatContextMenu::onChangeAlias(Button& /*activator*/)
+void BuddyListChat::ChatContextMenu::onChangeAlias(Button & /*activator*/)
 {
   PurpleChat *chat = parent_chat->getPurpleChat();
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(
@@ -654,7 +654,7 @@ void BuddyListChat::ChatContextMenu::onChangeAlias(Button& /*activator*/)
 }
 
 void BuddyListChat::ChatContextMenu::removeResponseHandler(
-    CppConsUI::MessageDialog& /*activator*/,
+    CppConsUI::MessageDialog & /*activator*/,
     CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
@@ -669,7 +669,7 @@ void BuddyListChat::ChatContextMenu::removeResponseHandler(
   purple_blist_remove_chat(chat);
 }
 
-void BuddyListChat::ChatContextMenu::onRemove(Button& /*activator*/)
+void BuddyListChat::ChatContextMenu::onRemove(Button & /*activator*/)
 {
   PurpleChat *chat = parent_chat->getPurpleChat();
   char *msg = g_strdup_printf(
@@ -697,9 +697,9 @@ BuddyListChat::BuddyListChat(PurpleBlistNode *node_)
   chat = PURPLE_CHAT(blist_node);
 }
 
-bool BuddyListContact::lessOrEqual(const BuddyListNode& other) const
+bool BuddyListContact::lessOrEqual(const BuddyListNode &other) const
 {
-  const BuddyListContact *o = dynamic_cast<const BuddyListContact*>(&other);
+  const BuddyListContact *o = dynamic_cast<const BuddyListContact *>(&other);
   if (o) {
     PurpleBuddy *left = purple_contact_get_priority_buddy(contact);
     PurpleBuddy *right = purple_contact_get_priority_buddy(o->contact);
@@ -754,10 +754,10 @@ void BuddyListContact::update()
   updateFilterVisibility(alias);
 }
 
-void BuddyListContact::onActivate(Button& activator)
+void BuddyListContact::onActivate(Button &activator)
 {
   PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
-  BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(
+  BuddyListNode *bnode = reinterpret_cast<BuddyListNode *>(
       purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(buddy)));
   if (bnode)
     bnode->onActivate(activator);
@@ -783,7 +783,7 @@ void BuddyListContact::retrieveUserInfo()
 }
 
 BuddyListContact::ContactContextMenu::ContactContextMenu(
-    BuddyListContact& parent_contact_)
+    BuddyListContact &parent_contact_)
 : ContextMenu(parent_contact_), parent_contact(&parent_contact_)
 {
   appendExtendedMenu();
@@ -823,21 +823,21 @@ BuddyListContact::ContactContextMenu::ContactContextMenu(
 }
 
 void BuddyListContact::ContactContextMenu::onExpandRequest(
-    Button& /*activator*/, bool expand)
+    Button & /*activator*/, bool expand)
 {
   parent_contact->setCollapsed(!expand);
   close();
 }
 
 void BuddyListContact::ContactContextMenu::onInformation(
-    Button& /*activator*/)
+    Button & /*activator*/)
 {
   parent_contact->retrieveUserInfo();
   close();
 }
 
 void BuddyListContact::ContactContextMenu::changeAliasResponseHandler(
-    CppConsUI::InputDialog& activator,
+    CppConsUI::InputDialog &activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
@@ -857,7 +857,7 @@ void BuddyListContact::ContactContextMenu::changeAliasResponseHandler(
 }
 
 void BuddyListContact::ContactContextMenu::onChangeAlias(
-    Button& /*activator*/)
+    Button & /*activator*/)
 {
   PurpleContact *contact = parent_contact->getPurpleContact();
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(
@@ -868,7 +868,7 @@ void BuddyListContact::ContactContextMenu::onChangeAlias(
 }
 
 void BuddyListContact::ContactContextMenu::removeResponseHandler(
-    CppConsUI::MessageDialog& /*activator*/,
+    CppConsUI::MessageDialog & /*activator*/,
     CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
@@ -894,7 +894,7 @@ void BuddyListContact::ContactContextMenu::removeResponseHandler(
   purple_blist_remove_contact(contact);
 }
 
-void BuddyListContact::ContactContextMenu::onRemove(Button& /*activator*/)
+void BuddyListContact::ContactContextMenu::onRemove(Button & /*activator*/)
 {
   PurpleContact *contact = parent_contact->getPurpleContact();
   char *msg = g_strdup_printf(
@@ -908,7 +908,7 @@ void BuddyListContact::ContactContextMenu::onRemove(Button& /*activator*/)
   dialog->show();
 }
 
-void BuddyListContact::ContactContextMenu::onMoveTo(Button& /*activator*/,
+void BuddyListContact::ContactContextMenu::onMoveTo(Button & /*activator*/,
     PurpleGroup *group)
 {
   PurpleContact *contact = parent_contact->getPurpleContact();
@@ -920,8 +920,8 @@ void BuddyListContact::ContactContextMenu::onMoveTo(Button& /*activator*/,
 int BuddyListContact::getColorPair(const char *widget, const char *property)
   const
 {
-  if (BUDDYLIST->getColorizationMode() != BuddyList::COLOR_BY_ACCOUNT
-      || strcmp(property, "normal"))
+  if (BUDDYLIST->getColorizationMode() != BuddyList::COLOR_BY_ACCOUNT ||
+      strcmp(property, "normal"))
     return Button::getColorPair(widget, property);
 
   PurpleAccount *account =
@@ -968,12 +968,12 @@ void BuddyListContact::updateColorScheme()
   }
 }
 
-bool BuddyListGroup::lessOrEqual(const BuddyListNode& other) const
+bool BuddyListGroup::lessOrEqual(const BuddyListNode &other) const
 {
   /* If the groups aren't sorted but ordered manually then this method isn't
    * used. */
 
-  const BuddyListGroup *o = dynamic_cast<const BuddyListGroup*>(&other);
+  const BuddyListGroup *o = dynamic_cast<const BuddyListGroup *>(&other);
   if (o)
     return g_utf8_collate(purple_group_get_name(group),
         purple_group_get_name(o->group)) <= 0;
@@ -1004,7 +1004,7 @@ void BuddyListGroup::update()
           // it better be a group node
           g_assert(PURPLE_BLIST_NODE_IS_GROUP(prev));
 
-          BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(
+          BuddyListNode *bnode = reinterpret_cast<BuddyListNode *>(
               purple_blist_node_get_ui_data(prev));
           // there has to be ui_data set for all group nodes!
           g_assert(bnode);
@@ -1030,7 +1030,7 @@ void BuddyListGroup::update()
   setVisibility(vis);
 }
 
-void BuddyListGroup::onActivate(Button& /*activator*/)
+void BuddyListGroup::onActivate(Button & /*activator*/)
 {
   treeview->toggleCollapsed(ref);
   purple_blist_node_set_bool(blist_node, "collapsed", ref->isCollapsed());
@@ -1056,7 +1056,7 @@ void BuddyListGroup::initCollapsedState()
 }
 
 BuddyListGroup::GroupContextMenu::GroupContextMenu(
-    BuddyListGroup& parent_group_)
+    BuddyListGroup &parent_group_)
 : ContextMenu(parent_group_), parent_group(&parent_group_)
 {
   appendExtendedMenu();
@@ -1074,7 +1074,7 @@ BuddyListGroup::GroupContextMenu::GroupContextMenu(
 
     groups->appendItem(_("-Top-"), sigc::bind(
           sigc::mem_fun(this, &GroupContextMenu::onMoveAfter),
-          static_cast<PurpleGroup*>(NULL)));
+          static_cast<PurpleGroup *>(NULL)));
     for (PurpleBlistNode *node = purple_blist_get_root(); node;
         node = purple_blist_node_get_sibling_next(node)) {
       if (!PURPLE_BLIST_NODE_IS_GROUP(node))
@@ -1090,7 +1090,7 @@ BuddyListGroup::GroupContextMenu::GroupContextMenu(
 }
 
 void BuddyListGroup::GroupContextMenu::renameResponseHandler(
-    CppConsUI::InputDialog& activator,
+    CppConsUI::InputDialog &activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
@@ -1111,7 +1111,7 @@ void BuddyListGroup::GroupContextMenu::renameResponseHandler(
   close();
 }
 
-void BuddyListGroup::GroupContextMenu::onRename(Button& /*activator*/)
+void BuddyListGroup::GroupContextMenu::onRename(Button & /*activator*/)
 {
   PurpleGroup *group = parent_group->getPurpleGroup();
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(
@@ -1122,7 +1122,7 @@ void BuddyListGroup::GroupContextMenu::onRename(Button& /*activator*/)
 }
 
 void BuddyListGroup::GroupContextMenu::removeResponseHandler(
-    CppConsUI::MessageDialog& /*activator*/,
+    CppConsUI::MessageDialog & /*activator*/,
     CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
@@ -1165,7 +1165,7 @@ void BuddyListGroup::GroupContextMenu::removeResponseHandler(
   purple_blist_remove_group(group);
 }
 
-void BuddyListGroup::GroupContextMenu::onRemove(Button& /*activator*/)
+void BuddyListGroup::GroupContextMenu::onRemove(Button & /*activator*/)
 {
   PurpleGroup *group = parent_group->getPurpleGroup();
   char *msg = g_strdup_printf(
@@ -1179,7 +1179,7 @@ void BuddyListGroup::GroupContextMenu::onRemove(Button& /*activator*/)
   dialog->show();
 }
 
-void BuddyListGroup::GroupContextMenu::onMoveAfter(Button& /*activator*/,
+void BuddyListGroup::GroupContextMenu::onMoveAfter(Button & /*activator*/,
     PurpleGroup *group)
 {
   PurpleGroup *moved_group = parent_group->getPurpleGroup();

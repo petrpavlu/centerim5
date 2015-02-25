@@ -150,7 +150,7 @@ BuddyList::AddWindow::AccountOption::AccountOption(
 : ComboBox(_("Account"))
 {
   for (GList *l = purple_accounts_get_all(); l; l = l->next) {
-    PurpleAccount *account = static_cast<PurpleAccount*>(l->data);
+    PurpleAccount *account = static_cast<PurpleAccount *>(l->data);
     if (!purple_account_is_connected(account))
       continue;
 
@@ -194,7 +194,7 @@ BuddyList::AddWindow::StringOption::StringOption(const char *text,
 }
 
 void BuddyList::AddWindow::StringOption::onActivate(
-    CppConsUI::Button& /*activator*/)
+    CppConsUI::Button & /*activator*/)
 {
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(getText(),
       getValue());
@@ -205,7 +205,7 @@ void BuddyList::AddWindow::StringOption::onActivate(
 }
 
 void BuddyList::AddWindow::StringOption::responseHandler(
-    CppConsUI::InputDialog& activator,
+    CppConsUI::InputDialog &activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != AbstractDialog::RESPONSE_OK)
@@ -228,7 +228,7 @@ BuddyList::AddWindow::IntegerOption::IntegerOption(const char *text,
 }
 
 void BuddyList::AddWindow::IntegerOption::onActivate(
-    CppConsUI::Button& /*activator*/)
+    CppConsUI::Button & /*activator*/)
 {
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(getText(),
       getValue());
@@ -240,7 +240,7 @@ void BuddyList::AddWindow::IntegerOption::onActivate(
 }
 
 void BuddyList::AddWindow::IntegerOption::responseHandler(
-    CppConsUI::InputDialog& activator,
+    CppConsUI::InputDialog &activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != AbstractDialog::RESPONSE_OK)
@@ -281,9 +281,10 @@ BuddyList::AddBuddyWindow::AddBuddyWindow(PurpleAccount *account,
   treeview->appendNode(parent, *group_option);
 }
 
-void BuddyList::AddBuddyWindow::onAddRequest(CppConsUI::Button& /*activator*/)
+void BuddyList::AddBuddyWindow::onAddRequest(
+    CppConsUI::Button & /*activator*/)
 {
-  PurpleAccount *account = static_cast<PurpleAccount*>(
+  PurpleAccount *account = static_cast<PurpleAccount *>(
       account_option->getSelectedDataPtr());
   const char *name = name_option->getValue();
   const char *alias = alias_option->getValue();
@@ -340,13 +341,13 @@ BuddyList::AddChatWindow::AddChatWindow(PurpleAccount *account,
   treeview->appendNode(parent, *autojoin_option);
 
   // add protocol-specific fields
-  populateChatInfo(static_cast<PurpleAccount*>(
+  populateChatInfo(static_cast<PurpleAccount *>(
         account_option->getSelectedDataPtr()));
 }
 
-void BuddyList::AddChatWindow::onAddRequest(CppConsUI::Button& /*activator*/)
+void BuddyList::AddChatWindow::onAddRequest(CppConsUI::Button & /*activator*/)
 {
-  PurpleAccount *account = static_cast<PurpleAccount*>(
+  PurpleAccount *account = static_cast<PurpleAccount *>(
       account_option->getSelectedDataPtr());
   const char *alias = alias_option->getValue();
   const char *group = group_option->getSelectedTitle();
@@ -361,7 +362,7 @@ void BuddyList::AddChatWindow::onAddRequest(CppConsUI::Button& /*activator*/)
       g_free, g_free);
   for (ChatInfoMap::iterator i = chat_info_map.begin();
       i != chat_info_map.end(); i++) {
-    CppConsUI::Button *button = dynamic_cast<CppConsUI::Button*>(
+    CppConsUI::Button *button = dynamic_cast<CppConsUI::Button *>(
         i->second->getWidget());
     g_assert(button);
     const char *value = button->getValue();
@@ -406,7 +407,7 @@ void BuddyList::AddChatWindow::populateChatInfo(PurpleAccount *account)
 
   CppConsUI::TreeView::NodeReference ref = account_option_ref;
   for (GList *l = info->chat_info(gc); l; l = l->next) {
-    struct proto_chat_entry *entry = static_cast<struct proto_chat_entry*>(
+    struct proto_chat_entry *entry = static_cast<struct proto_chat_entry *>(
         l->data);
 
     // remove any accelerator from the label
@@ -420,7 +421,7 @@ void BuddyList::AddChatWindow::populateChatInfo(PurpleAccount *account)
     // get default value
     const char *value = NULL;
     if (defaults)
-      value = static_cast<const char*>(g_hash_table_lookup(defaults,
+      value = static_cast<const char *>(g_hash_table_lookup(defaults,
             entry->identifier));
 
     CppConsUI::Button *button;
@@ -440,10 +441,10 @@ void BuddyList::AddChatWindow::populateChatInfo(PurpleAccount *account)
 }
 
 void BuddyList::AddChatWindow::onAccountChanged(
-    CppConsUI::Button& /*activator*/, size_t /*new_entry*/,
+    CppConsUI::Button & /*activator*/, size_t /*new_entry*/,
     const char * /*title*/, intptr_t data)
 {
-  populateChatInfo(reinterpret_cast<PurpleAccount*>(data));
+  populateChatInfo(reinterpret_cast<PurpleAccount *>(data));
 }
 
 BuddyList::AddGroupWindow::AddGroupWindow()
@@ -454,7 +455,8 @@ BuddyList::AddGroupWindow::AddGroupWindow()
   name_option->grabFocus();
 }
 
-void BuddyList::AddGroupWindow::onAddRequest(CppConsUI::Button& /*activator*/)
+void BuddyList::AddGroupWindow::onAddRequest(
+    CppConsUI::Button & /*activator*/)
 {
   const char *name = name_option->getValue();
   if (!name || !name[0]) {
@@ -590,7 +592,7 @@ void BuddyList::updateList(int flags)
       node = purple_blist_node_next(node, TRUE))
     if (PURPLE_BLIST_NODE_IS_GROUP(node) ? (flags & UPDATE_GROUPS)
         : (flags & UPDATE_OTHERS)) {
-      BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(
+      BuddyListNode *bnode = reinterpret_cast<BuddyListNode *>(
           purple_blist_node_get_ui_data(node));
       if (bnode)
         bnode->update();
@@ -603,7 +605,7 @@ void BuddyList::delayedGroupNodesInit()
   for (PurpleBlistNode *node = purple_blist_get_root(); node;
       node = purple_blist_node_get_sibling_next(node))
     if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
-      BuddyListGroup *gnode = reinterpret_cast<BuddyListGroup*>(
+      BuddyListGroup *gnode = reinterpret_cast<BuddyListGroup *>(
           purple_blist_node_get_ui_data(node));
       if (gnode)
         gnode->initCollapsedState();
@@ -653,7 +655,7 @@ void BuddyList::updateCachedPreference(const char *name)
 bool BuddyList::isAnyAccountConnected()
 {
   for (GList *list = purple_accounts_get_all(); list; list = list->next) {
-    PurpleAccount *account = reinterpret_cast<PurpleAccount*>(list->data);
+    PurpleAccount *account = reinterpret_cast<PurpleAccount *>(list->data);
     if (purple_account_is_connected(account))
       return true;
   }
@@ -744,7 +746,7 @@ void BuddyList::update(PurpleBuddyList *list, PurpleBlistNode *node)
   if (!purple_blist_node_get_ui_data(node))
     new_node(node);
 
-  BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(
+  BuddyListNode *bnode = reinterpret_cast<BuddyListNode *>(
       purple_blist_node_get_ui_data(node));
   if (!bnode)
     return;
@@ -758,7 +760,7 @@ void BuddyList::update(PurpleBuddyList *list, PurpleBlistNode *node)
 
 void BuddyList::remove(PurpleBuddyList *list, PurpleBlistNode *node)
 {
-  BuddyListNode *bnode = reinterpret_cast<BuddyListNode*>(
+  BuddyListNode *bnode = reinterpret_cast<BuddyListNode *>(
       purple_blist_node_get_ui_data(node));
   if (!bnode)
     return;
@@ -793,7 +795,7 @@ void BuddyList::request_add_chat(PurpleAccount *account, PurpleGroup *group,
   // find an account with chat capabilities
   bool chat_account_found = false;
   for (GList *l = purple_connections_get_all(); l; l = l->next) {
-    PurpleConnection *gc = reinterpret_cast<PurpleConnection*>(l->data);
+    PurpleConnection *gc = reinterpret_cast<PurpleConnection *>(l->data);
 
     if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->join_chat) {
       chat_account_found = true;
@@ -835,8 +837,8 @@ void BuddyList::blist_pref_change(const char *name, PurplePrefType /*type*/,
   }
 
   bool groups_only = false;
-  if (!strcmp(name, CONF_PREFIX "/blist/show_empty_groups")
-      || !strcmp(name, CONF_PREFIX "/blist/group_sort_mode"))
+  if (!strcmp(name, CONF_PREFIX "/blist/show_empty_groups") ||
+      !strcmp(name, CONF_PREFIX "/blist/group_sort_mode"))
     groups_only = true;
 
   updateList(UPDATE_GROUPS | (!groups_only ? UPDATE_OTHERS : 0));

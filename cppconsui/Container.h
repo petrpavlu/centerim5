@@ -51,7 +51,7 @@ public:
    * Type to keep a tree of "focusable" widgets as leaves and Containers as
    * internal nodes.
    */
-  typedef tree<Widget*> FocusChain;
+  typedef tree<Widget *> FocusChain;
   enum FocusCycleScope {
     /**
      * The focus doesn't cycle, it ends at the last widget from the focus
@@ -91,30 +91,30 @@ public:
   virtual bool restoreFocus();
   virtual bool grabFocus();
   virtual void ungrabFocus();
-  virtual void setParent(Container& parent);
+  virtual void setParent(Container &parent);
 
   /**
    * Adds a widget to the children list. The Container takes ownership of the
    * widget. It means that the widget will be deleted by the Container.
    */
-  virtual void addWidget(Widget& widget, int x, int y);
+  virtual void addWidget(Widget &widget, int x, int y);
   /**
    * Removes the widget from the children list and destroys it.
    */
-  virtual void removeWidget(Widget& widget);
+  virtual void removeWidget(Widget &widget);
 
   /**
    * Changes logical position of the given widget to be before the position
    * widget. This affects focus cycling. Both passed widgets have to be
    * children of this Container.
    */
-  virtual void moveWidgetBefore(Widget& widget, Widget& position);
+  virtual void moveWidgetBefore(Widget &widget, Widget &position);
   /**
    * Changes logical position of the given widget to be after the position
    * widget. This affects focus cycling. Both passed widgets have to be
    * children of this Container.
    */
-  virtual void moveWidgetAfter(Widget& widget, Widget& position);
+  virtual void moveWidgetAfter(Widget &widget, Widget &position);
 
   /**
    * @todo Maybe inserting and moving of widgets should be extended. There
@@ -131,20 +131,20 @@ public:
   /**
    * Returns true if a widget is visible in current context.
    */
-  virtual bool isWidgetVisible(const Widget& widget) const;
+  virtual bool isWidgetVisible(const Widget &widget) const;
 
   /**
    * Resets the focus child by @ref cleanFocus "stealing" the focus from the
    * current chain and also ensures the focus goes also UP the chain to the
    * root widget (normally a Window).
    */
-  virtual bool setFocusChild(Widget& child);
+  virtual bool setFocusChild(Widget &child);
   virtual Widget *getFocusChild() const { return focus_child; }
   /**
    * Guilds a tree of the focus chain starting from this container and puts it
    * into the focus_chain tree as a subtree of @ref parent.
    */
-  virtual void getFocusChain(FocusChain& focus_chain,
+  virtual void getFocusChain(FocusChain &focus_chain,
       FocusChain::iterator parent);
   /**
    * Gives this Container information that the cached focus chain has to be
@@ -165,21 +165,21 @@ public:
   virtual void setPageFocus(bool enabled) { page_focus = enabled; }
   virtual bool canPageFocus() const { return page_focus; };
 
-  virtual Point getRelativePosition(const Container& ref,
-      const Widget& child) const;
-  virtual Point getAbsolutePosition(const Widget& child) const;
+  virtual Point getRelativePosition(const Container &ref,
+      const Widget &child) const;
+  virtual Point getAbsolutePosition(const Widget &child) const;
 
-  virtual void onChildMoveResize(Widget& activator, const Rect& oldsize,
-      const Rect& newsize);
-  virtual void onChildWishSizeChange(Widget& activator, const Size& oldsize,
-      const Size& newsize);
-  virtual void onChildVisible(Widget& activator, bool visible);
+  virtual void onChildMoveResize(Widget &activator, const Rect &oldsize,
+      const Rect &newsize);
+  virtual void onChildWishSizeChange(Widget &activator, const Size &oldsize,
+      const Size &newsize);
+  virtual void onChildVisible(Widget &activator, bool visible);
 
 protected:
   /**
    * Child widget vector.
    */
-  typedef std::vector<Widget*> Children;
+  typedef std::vector<Widget *> Children;
 
   /**
    * Scroll coordinates.
@@ -209,7 +209,7 @@ protected:
 
   /**
    * This defines a chain of focus. Same as
-   * dynamic_cast<Widget*>(input_child).
+   * dynamic_cast<Widget *>(input_child).
    */
   Widget *focus_child;
 
@@ -221,17 +221,17 @@ protected:
   /**
    * Sets a drawing area for a given widget.
    */
-  virtual void updateChildArea(Widget& child);
+  virtual void updateChildArea(Widget &child);
 
   /**
    * Draws a single child widget.
    */
-  virtual void drawChild(Widget& child, Curses::ViewPort area);
+  virtual void drawChild(Widget &child, Curses::ViewPort area);
 
   /**
    * Searches children for a given widget.
    */
-  virtual Children::iterator findWidget(const Widget& widget);
+  virtual Children::iterator findWidget(const Widget &widget);
 
   /**
    * Inserts a widget in the children list at a given position. The Container
@@ -240,9 +240,10 @@ protected:
    * that needs to keep child widgets in order (see ListBox and
    * HorizontalListBox).
    */
-  virtual void insertWidget(size_t pos, Widget& widget, int x, int y);
+  virtual void insertWidget(size_t pos, Widget &widget, int x, int y);
 
-  virtual void moveWidgetInternal(Widget& widget, Widget& position, bool after);
+  virtual void moveWidgetInternal(Widget &widget, Widget &position,
+      bool after);
 
   virtual void updateScroll();
   virtual bool makePointVisible(int x, int y);

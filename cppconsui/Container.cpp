@@ -105,7 +105,7 @@ void Container::ungrabFocus()
     focus_child->ungrabFocus();
 }
 
-void Container::setParent(Container& parent)
+void Container::setParent(Container &parent)
 {
   /* The parent will take care about focus changing and focus chain caching
    * from now on. */
@@ -114,12 +114,12 @@ void Container::setParent(Container& parent)
   Widget::setParent(parent);
 }
 
-void Container::addWidget(Widget& widget, int x, int y)
+void Container::addWidget(Widget &widget, int x, int y)
 {
   insertWidget(children.size(), widget, x, y);
 }
 
-void Container::removeWidget(Widget& widget)
+void Container::removeWidget(Widget &widget)
 {
   assert(widget.getParent() == this);
   Children::iterator i = findWidget(widget);
@@ -129,12 +129,12 @@ void Container::removeWidget(Widget& widget)
   children.erase(i);
 }
 
-void Container::moveWidgetBefore(Widget& widget, Widget& position)
+void Container::moveWidgetBefore(Widget &widget, Widget &position)
 {
   moveWidgetInternal(widget, position, false);
 }
 
-void Container::moveWidgetAfter(Widget& widget, Widget& position)
+void Container::moveWidgetAfter(Widget &widget, Widget &position)
 {
   moveWidgetInternal(widget, position, true);
 }
@@ -145,7 +145,7 @@ void Container::clear()
     removeWidget(*children.front());
 }
 
-bool Container::isWidgetVisible(const Widget& /*widget*/) const
+bool Container::isWidgetVisible(const Widget & /*widget*/) const
 {
   if (!parent || !visible)
     return false;
@@ -153,7 +153,7 @@ bool Container::isWidgetVisible(const Widget& /*widget*/) const
   return parent->isWidgetVisible(*this);
 }
 
-bool Container::setFocusChild(Widget& child)
+bool Container::setFocusChild(Widget &child)
 {
   // focus cannot be set for widget without a parent
   if (!parent || !visible)
@@ -166,12 +166,12 @@ bool Container::setFocusChild(Widget& child)
   return res;
 }
 
-void Container::getFocusChain(FocusChain& focus_chain,
+void Container::getFocusChain(FocusChain &focus_chain,
     FocusChain::iterator parent)
 {
   for (Children::iterator i = children.begin(); i != children.end(); ++i) {
     Widget *widget = *i;
-    Container *container = dynamic_cast<Container*>(widget);
+    Container *container = dynamic_cast<Container *>(widget);
 
     if (container && container->isVisible()) {
       // the widget is a container so add its widgets as well
@@ -184,8 +184,8 @@ void Container::getFocusChain(FocusChain& focus_chain,
       if (!focus_chain.number_of_children(iter))
         focus_chain.erase(iter);
     }
-    else if ((widget->canFocus() && widget->isVisible())
-        || widget == focus_child) {
+    else if ((widget->canFocus() && widget->isVisible()) ||
+        widget == focus_child) {
       // widget can be focused or is focused already
       focus_chain.append_child(parent, widget);
     }
@@ -295,24 +295,24 @@ void Container::moveFocus(FocusDirection direction)
   FocusChain::pre_order_iterator cycle_begin, cycle_end, parent_iter;
   parent_iter = focus_chain.parent(iter);
   while (parent_iter != focus_chain.begin()) {
-    Container *c = dynamic_cast<Container*>(*parent_iter);
+    Container *c = dynamic_cast<Container *>(*parent_iter);
     assert(c);
     scope = c->getFocusCycle();
     if (scope == FOCUS_CYCLE_LOCAL || scope == FOCUS_CYCLE_NONE)
       break;
     parent_iter = focus_chain.parent(parent_iter);
   }
-  Container *container = dynamic_cast<Container*>(*parent_iter);
+  Container *container = dynamic_cast<Container *>(*parent_iter);
   assert(container);
 
   if (direction == FOCUS_PAGE_UP || direction == FOCUS_PAGE_DOWN) {
     /* Get rid off "dummy" containers in the chain, i.e. container that has
      * only one child. This is needed to get a correct container for paging.
      */
-    while (parent_iter.number_of_children() == 1
-        && !(*parent_iter.begin())->canFocus())
+    while (parent_iter.number_of_children() == 1 &&
+        !(*parent_iter.begin())->canFocus())
       parent_iter = parent_iter.begin();
-    container = dynamic_cast<Container*>(*parent_iter);
+    container = dynamic_cast<Container *>(*parent_iter);
     assert(container);
 
     /* Stop here if focus change via paging is requested but container doesn't
@@ -416,8 +416,8 @@ end:
   (*iter)->grabFocus();
 }
 
-Point Container::getRelativePosition(const Container& ref,
-    const Widget& child) const
+Point Container::getRelativePosition(const Container &ref,
+    const Widget &child) const
 {
   assert(child.getParent() == this);
 
@@ -438,7 +438,7 @@ Point Container::getRelativePosition(const Container& ref,
   return Point(UNSETPOS, UNSETPOS);
 }
 
-Point Container::getAbsolutePosition(const Widget& child) const
+Point Container::getAbsolutePosition(const Widget &child) const
 {
   assert(child.getParent() == this);
 
@@ -459,8 +459,8 @@ Point Container::getAbsolutePosition(const Widget& child) const
   return Point(UNSETPOS, UNSETPOS);
 }
 
-void Container::onChildMoveResize(Widget& activator, const Rect& /*oldsize*/,
-    const Rect& newsize)
+void Container::onChildMoveResize(Widget &activator, const Rect & /*oldsize*/,
+    const Rect &newsize)
 {
   // can be called only by a real child
   assert(activator.getParent() == this);
@@ -470,8 +470,8 @@ void Container::onChildMoveResize(Widget& activator, const Rect& /*oldsize*/,
   updateChildArea(activator);
 }
 
-void Container::onChildWishSizeChange(Widget& activator,
-      const Size& /*oldsize*/, const Size& /*newsize*/)
+void Container::onChildWishSizeChange(Widget &activator,
+      const Size & /*oldsize*/, const Size & /*newsize*/)
 {
   // can be called only by a real child
   assert(activator.getParent() == this);
@@ -480,7 +480,7 @@ void Container::onChildWishSizeChange(Widget& activator,
   updateChildArea(activator);
 }
 
-void Container::onChildVisible(Widget& activator, bool /*visible*/)
+void Container::onChildVisible(Widget &activator, bool /*visible*/)
 {
   // can be called only by a real child
   assert(activator.getParent() == this);
@@ -493,7 +493,7 @@ void Container::updateArea()
     updateChildArea(**i);
 }
 
-void Container::updateChildArea(Widget& child)
+void Container::updateChildArea(Widget &child)
 {
   int child_x = child.getRealLeft();
   int child_y = child.getRealTop();
@@ -528,7 +528,7 @@ void Container::updateChildArea(Widget& child)
     child.setRealSize(0, 0);
 }
 
-void Container::drawChild(Widget& child, Curses::ViewPort area)
+void Container::drawChild(Widget &child, Curses::ViewPort area)
 {
   int view_x = area.getViewLeft();
   int view_y = area.getViewTop();
@@ -585,12 +585,12 @@ void Container::drawChild(Widget& child, Curses::ViewPort area)
   child.draw(child_area);
 }
 
-Container::Children::iterator Container::findWidget(const Widget& widget)
+Container::Children::iterator Container::findWidget(const Widget &widget)
 {
   return std::find(children.begin(), children.end(), &widget);
 }
 
-void Container::insertWidget(size_t pos, Widget& widget, int x, int y)
+void Container::insertWidget(size_t pos, Widget &widget, int x, int y)
 {
   assert(pos <= children.size());
 
@@ -605,7 +605,7 @@ void Container::insertWidget(size_t pos, Widget& widget, int x, int y)
   updateChildArea(widget);
 }
 
-void Container::moveWidgetInternal(Widget& widget, Widget& position,
+void Container::moveWidgetInternal(Widget &widget, Widget &position,
     bool after)
 {
   assert(widget.getParent() == this);

@@ -54,7 +54,7 @@ void Footer::setText(const char *fmt, ...)
       if (*(fmt + 1) == '%')
         fmt++;
       else if (*(fmt + 1) == 's') {
-        const char *v = va_arg(args, const char*);
+        const char *v = va_arg(args, const char *);
         values.push_back(std::string(v));
         fmt++;
       }

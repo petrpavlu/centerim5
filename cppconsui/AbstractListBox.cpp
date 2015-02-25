@@ -37,7 +37,7 @@ AbstractListBox::AbstractListBox(int w, int h)
 }
 
 Button *AbstractListBox::insertItem(size_t pos, const char *title,
-    const sigc::slot<void, Button&>& callback)
+    const sigc::slot<void, Button &> &callback)
 {
   Button *b = new Button(Curses::onScreenWidth(title), 1, title);
   b->signal_activate.connect(callback);
@@ -46,7 +46,7 @@ Button *AbstractListBox::insertItem(size_t pos, const char *title,
 }
 
 Button *AbstractListBox::appendItem(const char *title,
-    const sigc::slot<void, Button&>& callback)
+    const sigc::slot<void, Button &> &callback)
 {
   Button *b = new Button(Curses::onScreenWidth(title), 1, title);
   b->signal_activate.connect(callback);

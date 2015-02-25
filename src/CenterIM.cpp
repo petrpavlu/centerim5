@@ -72,7 +72,7 @@ CenterIM *CenterIM::my_instance = NULL;
 class SourceConnectionNode
 {
   public:
-    explicit inline SourceConnectionNode(const sigc::slot_base& nslot);
+    explicit inline SourceConnectionNode(const sigc::slot_base &nslot);
 
     static void *notify(void *data);
     static void destroy_notify_callback(void *data);
@@ -89,7 +89,7 @@ class SourceConnectionNode
 };
 
 inline SourceConnectionNode::SourceConnectionNode(
-    const sigc::slot_base& nslot)
+    const sigc::slot_base &nslot)
 : slot(nslot), source(0)
 {
   slot.set_parent(this, &SourceConnectionNode::notify);
@@ -98,7 +98,7 @@ inline SourceConnectionNode::SourceConnectionNode(
 void *SourceConnectionNode::notify(void *data)
 {
   SourceConnectionNode *self
-    = reinterpret_cast<SourceConnectionNode*>(data);
+    = reinterpret_cast<SourceConnectionNode *>(data);
 
   /* If there is no object, this call was triggered from
    * destroy_notify_handler(), because we set self->source to 0 there. */
@@ -116,7 +116,7 @@ void *SourceConnectionNode::notify(void *data)
 
 void SourceConnectionNode::destroy_notify_callback(void *data)
 {
-  SourceConnectionNode *self = reinterpret_cast<SourceConnectionNode*>(data);
+  SourceConnectionNode *self = reinterpret_cast<SourceConnectionNode *>(data);
 
   if (self) {
     /* The GLib side is disconnected now, thus the GSource* is no longer
@@ -130,10 +130,10 @@ void SourceConnectionNode::destroy_notify_callback(void *data)
 gboolean SourceConnectionNode::source_callback(void *data)
 {
   SourceConnectionNode *conn_data
-    = reinterpret_cast<SourceConnectionNode*>(data);
+    = reinterpret_cast<SourceConnectionNode *>(data);
 
   // recreate the specific slot from the generic slot node
-  return (*static_cast<sigc::slot<bool>*>(conn_data->get_slot()))();
+  return (*static_cast<sigc::slot<bool> *>(conn_data->get_slot()))();
 }
 
 inline void SourceConnectionNode::install(GSource *nsource)
@@ -151,7 +151,7 @@ CenterIM *CenterIM::instance()
   return my_instance;
 }
 
-bool CenterIM::processInput(const TermKeyKey& key)
+bool CenterIM::processInput(const TermKeyKey &key)
 {
   if (idle_reporting_on_keyboard)
     purple_idle_touch();
@@ -311,7 +311,7 @@ out:
   return res;
 }
 
-sigc::connection CenterIM::timeoutConnect(const sigc::slot<bool>& slot,
+sigc::connection CenterIM::timeoutConnect(const sigc::slot<bool> &slot,
     unsigned interval, int priority)
 {
   SourceConnectionNode *conn_node = new SourceConnectionNode(slot);
@@ -332,7 +332,7 @@ sigc::connection CenterIM::timeoutConnect(const sigc::slot<bool>& slot,
   return connection;
 }
 
-sigc::connection CenterIM::timeoutOnceConnect(const sigc::slot<void>& slot,
+sigc::connection CenterIM::timeoutOnceConnect(const sigc::slot<void> &slot,
     unsigned interval, int priority)
 {
   return timeoutConnect(sigc::bind_return(slot, FALSE), interval, priority);
@@ -782,7 +782,7 @@ guint CenterIM::input_add_purple(int fd, PurpleInputCondition condition,
 gboolean CenterIM::io_input_purple(GIOChannel *source,
     GIOCondition condition, gpointer data)
 {
-  IOClosurePurple *closure = static_cast<IOClosurePurple*>(data);
+  IOClosurePurple *closure = static_cast<IOClosurePurple *>(data);
   int purple_cond = 0;
 
   if (condition & G_IO_IN)
@@ -798,7 +798,7 @@ gboolean CenterIM::io_input_purple(GIOChannel *source,
 
 void CenterIM::io_destroy_purple(gpointer data)
 {
-  delete static_cast<IOClosurePurple*>(data);
+  delete static_cast<IOClosurePurple *>(data);
 }
 
 unsigned CenterIM::input_add_cppconsui(int fd,
@@ -829,7 +829,7 @@ unsigned CenterIM::input_add_cppconsui(int fd,
 gboolean CenterIM::io_input_cppconsui(GIOChannel *source,
     GIOCondition condition, gpointer data)
 {
-  IOClosureCppConsUI *closure = static_cast<IOClosureCppConsUI*>(data);
+  IOClosureCppConsUI *closure = static_cast<IOClosureCppConsUI *>(data);
   int cppconsui_cond = 0;
 
   if (condition & G_IO_IN)
@@ -845,7 +845,7 @@ gboolean CenterIM::io_input_cppconsui(GIOChannel *source,
 
 void CenterIM::io_destroy_cppconsui(gpointer data)
 {
-  delete static_cast<IOClosureCppConsUI*>(data);
+  delete static_cast<IOClosureCppConsUI *>(data);
 }
 
 unsigned CenterIM::timeout_add_cppconsui(unsigned interval,
@@ -862,13 +862,13 @@ unsigned CenterIM::timeout_add_cppconsui(unsigned interval,
 gboolean CenterIM::timeout_function_cppconsui(gpointer data)
 {
   SourceClosureCppConsUI *closure
-    = static_cast<SourceClosureCppConsUI*>(data);
+    = static_cast<SourceClosureCppConsUI *>(data);
   return closure->function(closure->data);
 }
 
 void CenterIM::timeout_destroy_cppconsui(gpointer data)
 {
-  delete static_cast<SourceClosureCppConsUI*>(data);
+  delete static_cast<SourceClosureCppConsUI *>(data);
 }
 
 bool CenterIM::timeout_remove_cppconsui(unsigned handle)
@@ -896,13 +896,13 @@ GHashTable *CenterIM::get_ui_info()
     /* Note: the C-style casts are used below because otherwise we would need
      * to use the const_cast and reinterpret_cast together (which is too much
      * typing). */
-    g_hash_table_insert(ui_info, (void*)"name", (void*)PACKAGE_NAME);
-    g_hash_table_insert(ui_info, (void*)"version", (void*)version);
-    g_hash_table_insert(ui_info, (void*)"website", (void*)PACKAGE_URL);
+    g_hash_table_insert(ui_info, (void *)"name", (void *)PACKAGE_NAME);
+    g_hash_table_insert(ui_info, (void *)"version", (void *)version);
+    g_hash_table_insert(ui_info, (void *)"website", (void *)PACKAGE_URL);
 
-    g_hash_table_insert(ui_info, (void*)"dev_website",
-        (void*)PACKAGE_BUGREPORT);
-    g_hash_table_insert(ui_info, (void*)"client_type", (void*)"pc");
+    g_hash_table_insert(ui_info, (void *)"dev_website",
+        (void *)PACKAGE_BUGREPORT);
+    g_hash_table_insert(ui_info, (void *)"client_type", (void *)"pc");
   }
 
   return ui_info;
@@ -931,7 +931,7 @@ void CenterIM::idle_reporting_change(const char * /*name*/,
 {
   g_return_if_fail(type == PURPLE_PREF_STRING);
 
-  const char *value = static_cast<const char*>(val);
+  const char *value = static_cast<const char *>(val);
   if (!strcmp(value, "system"))
     idle_reporting_on_keyboard = true;
   else
@@ -1297,7 +1297,7 @@ void CenterIM::actionOpenAccountStatusMenu()
    * (except general menu, we can close that). */
   CppConsUI::Window *top = mngr->getTopWindow();
   if (top) {
-    if (dynamic_cast<GeneralMenu*>(top))
+    if (dynamic_cast<GeneralMenu *>(top))
       top->close();
     else if (top->getType() == CppConsUI::Window::TYPE_TOP)
       return;
@@ -1313,7 +1313,7 @@ void CenterIM::actionOpenGeneralMenu()
    * account status menu, we can close that). */
   CppConsUI::Window *top = mngr->getTopWindow();
   if (top) {
-    if (dynamic_cast<AccountStatusMenu*>(top))
+    if (dynamic_cast<AccountStatusMenu *>(top))
       top->close();
     else if (top->getType() == CppConsUI::Window::TYPE_TOP)
       return;

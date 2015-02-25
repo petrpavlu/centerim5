@@ -162,7 +162,7 @@ bool Widget::isVisibleRecursive() const
   return parent->isWidgetVisible(*this);
 }
 
-void Widget::setParent(Container& new_parent)
+void Widget::setParent(Container &new_parent)
 {
   // we don't support parent change
   assert(!parent);
@@ -232,7 +232,7 @@ Point Widget::getAbsolutePosition() const
   return parent->getAbsolutePosition(*this);
 }
 
-Point Widget::getRelativePosition(const Container& ref) const
+Point Widget::getRelativePosition(const Container &ref) const
 {
   if (!parent)
     return Point(0, 0);
@@ -287,14 +287,14 @@ const char *Widget::getColorScheme() const
   return NULL;
 }
 
-void Widget::registerAbsolutePositionListener(Widget& widget)
+void Widget::registerAbsolutePositionListener(Widget &widget)
 {
   absolute_position_listeners.push_back(&widget);
   if (parent && absolute_position_listeners.size() == 1)
     parent->registerAbsolutePositionListener(*this);
 }
 
-void Widget::unregisterAbsolutePositionListener(Widget& widget)
+void Widget::unregisterAbsolutePositionListener(Widget &widget)
 {
   Widgets::iterator i = std::find(absolute_position_listeners.begin(),
       absolute_position_listeners.end(), &widget);
@@ -305,13 +305,13 @@ void Widget::unregisterAbsolutePositionListener(Widget& widget)
     parent->unregisterAbsolutePositionListener(*this);
 }
 
-void Widget::onAbsolutePositionChange(Widget& /*widget*/)
+void Widget::onAbsolutePositionChange(Widget & /*widget*/)
 {
   // propagate the event to the listeners
   signalAbsolutePositionChange();
 }
 
-void Widget::signalMoveResize(const Rect& oldsize, const Rect& newsize)
+void Widget::signalMoveResize(const Rect &oldsize, const Rect &newsize)
 {
   if (!parent)
     return;
@@ -321,7 +321,7 @@ void Widget::signalMoveResize(const Rect& oldsize, const Rect& newsize)
   parent->onChildMoveResize(*this, oldsize, newsize);
 }
 
-void Widget::signalWishSizeChange(const Size& oldsize, const Size& newsize)
+void Widget::signalWishSizeChange(const Size &oldsize, const Size &newsize)
 {
   if (!parent)
     return;
@@ -384,7 +384,7 @@ Container *Widget::getTopContainer()
 {
   if (parent)
     return parent->getTopContainer();
-  return dynamic_cast<Container*>(this);
+  return dynamic_cast<Container *>(this);
 }
 
 } // namespace CppConsUI

@@ -36,7 +36,7 @@ InputProcessor::InputProcessor()
 {
 }
 
-bool InputProcessor::processInput(const TermKeyKey& key)
+bool InputProcessor::processInput(const TermKeyKey &key)
 {
   // process overriding key combinations first
   if (process(BINDABLE_OVERRIDE, key))
@@ -58,7 +58,7 @@ bool InputProcessor::processInput(const TermKeyKey& key)
   return false;
 }
 
-void InputProcessor::setInputChild(InputProcessor& child)
+void InputProcessor::setInputChild(InputProcessor &child)
 {
   input_child = &child;
 }
@@ -69,12 +69,12 @@ void InputProcessor::clearInputChild()
 }
 
 void InputProcessor::declareBindable(const char *context, const char *action,
-    const sigc::slot<void>& function, BindableType type)
+    const sigc::slot<void> &function, BindableType type)
 {
   keybindings[context][action] = Bindable(function, type);
 }
 
-bool InputProcessor::process(BindableType type, const TermKeyKey& key)
+bool InputProcessor::process(BindableType type, const TermKeyKey &key)
 {
   for (Bindables::iterator i = keybindings.begin(); i != keybindings.end();
       i++) {
@@ -97,7 +97,7 @@ bool InputProcessor::process(BindableType type, const TermKeyKey& key)
   return false;
 }
 
-bool InputProcessor::processInputText(const TermKeyKey& /*key*/)
+bool InputProcessor::processInputText(const TermKeyKey & /*key*/)
 {
   return false;
 }

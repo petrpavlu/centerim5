@@ -110,7 +110,7 @@ intptr_t ComboBox::getSelectedData() const
 
 void *ComboBox::getSelectedDataPtr() const
 {
-  return reinterpret_cast<void*>(getSelectedData());
+  return reinterpret_cast<void *>(getSelectedData());
 }
 
 const char *ComboBox::getTitle(int entry) const
@@ -155,7 +155,7 @@ void ComboBox::setSelectedByData(intptr_t data)
     }
 }
 
-void ComboBox::onDropDown(Button& /*activator*/)
+void ComboBox::onDropDown(Button & /*activator*/)
 {
   if (options.empty())
     return;
@@ -176,14 +176,14 @@ void ComboBox::onDropDown(Button& /*activator*/)
   dropdown->show();
 }
 
-void ComboBox::dropDownOk(Button& /*activator*/, int new_entry)
+void ComboBox::dropDownOk(Button & /*activator*/, int new_entry)
 {
   dropdown->close();
 
   setSelected(new_entry);
 }
 
-void ComboBox::dropDownClose(Window& /*window*/)
+void ComboBox::dropDownClose(Window & /*window*/)
 {
   dropdown = NULL;
 }

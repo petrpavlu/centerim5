@@ -123,7 +123,7 @@ struct AppInterface {
   void (*logError)(const char *message);
 };
 
-int initializeConsUI(AppInterface& interface);
+int initializeConsUI(AppInterface &interface);
 int finalizeConsUI();
 
 class ColorScheme;

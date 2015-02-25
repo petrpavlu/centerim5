@@ -57,7 +57,7 @@ Header::Header()
   container->appendWidget(*request_indicator);
 
   for (GList *i = purple_accounts_get_all(); i; i = i->next) {
-    PurpleAccount *account = reinterpret_cast<PurpleAccount*>(i->data);
+    PurpleAccount *account = reinterpret_cast<PurpleAccount *>(i->data);
     if (purple_account_get_enabled(account, PACKAGE_NAME))
       protocol_count.insert(purple_account_get_protocol_id(account));
   }
@@ -105,7 +105,7 @@ void Header::finalize()
   my_instance = NULL;
 }
 
-void Header::onRequestCountChange(Accounts& /*accounts*/,
+void Header::onRequestCountChange(Accounts & /*accounts*/,
     size_t request_count)
 {
   if (request_count) {

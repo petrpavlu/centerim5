@@ -96,7 +96,7 @@ public:
    *
    * @return True if the input was successfully processed, false otherwise.
    */
-  virtual bool processInput(const TermKeyKey& key);
+  virtual bool processInput(const TermKeyKey &key);
 
 protected:
   /**
@@ -107,7 +107,7 @@ protected:
   {
   public:
     Bindable() : type(BINDABLE_NORMAL) {}
-    Bindable(const sigc::slot<void>& function_, BindableType type_)
+    Bindable(const sigc::slot<void> &function_, BindableType type_)
       : function(function_), type(type_) {}
     virtual ~Bindable() {}
     //CONSUI_DISABLE_COPY(Bindable);
@@ -138,7 +138,7 @@ protected:
   /**
    * Set the child object that must process input before this object.
    */
-  virtual void setInputChild(InputProcessor& child);
+  virtual void setInputChild(InputProcessor &child);
   virtual void clearInputChild();
   virtual InputProcessor *getInputChild() { return input_child; }
 
@@ -149,15 +149,15 @@ protected:
    * called after or before the @ref input_child.
    */
   virtual void declareBindable(const char *context, const char *action,
-      const sigc::slot<void>& function, BindableType type);
+      const sigc::slot<void> &function, BindableType type);
 
   /**
    * Tries to match an appropriate bound action to the input and process it.
    * @return True if a match was found and processed.
    */
-  virtual bool process(BindableType type, const TermKeyKey& key);
+  virtual bool process(BindableType type, const TermKeyKey &key);
 
-  virtual bool processInputText(const TermKeyKey& key);
+  virtual bool processInputText(const TermKeyKey &key);
 
 private:
   CONSUI_DISABLE_COPY(InputProcessor);

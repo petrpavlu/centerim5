@@ -41,35 +41,35 @@ protected:
 private:
   CONSUI_DISABLE_COPY(GeneralMenu);
 
-  void openStatusWindow(CppConsUI::Button& activator);
-  void openAccountWindow(CppConsUI::Button& activator);
-  void openAddBuddyRequest(CppConsUI::Button& activator);
-  void openAddChatRequest(CppConsUI::Button& activator);
-  void openAddGroupRequest(CppConsUI::Button& activator);
-  void openPendingRequests(CppConsUI::Button& activator);
-  void openOptionWindow(CppConsUI::Button& activator);
-  void openPluginWindow(CppConsUI::Button& activator);
+  void openStatusWindow(CppConsUI::Button &activator);
+  void openAccountWindow(CppConsUI::Button &activator);
+  void openAddBuddyRequest(CppConsUI::Button &activator);
+  void openAddChatRequest(CppConsUI::Button &activator);
+  void openAddGroupRequest(CppConsUI::Button &activator);
+  void openPendingRequests(CppConsUI::Button &activator);
+  void openOptionWindow(CppConsUI::Button &activator);
+  void openPluginWindow(CppConsUI::Button &activator);
 
 #ifdef DEBUG
-  void openRequestInputTest(CppConsUI::Button& activator);
-  void openRequestChoiceTest(CppConsUI::Button& activator);
-  void openRequestActionTest(CppConsUI::Button& activator);
-  void openRequestFieldsTest(CppConsUI::Button& activator);
+  void openRequestInputTest(CppConsUI::Button &activator);
+  void openRequestChoiceTest(CppConsUI::Button &activator);
+  void openRequestActionTest(CppConsUI::Button &activator);
+  void openRequestFieldsTest(CppConsUI::Button &activator);
 
   static void input_ok_cb_(void *data, const char *text)
-    { reinterpret_cast<GeneralMenu*>(data)->input_ok_cb(text); }
+    { reinterpret_cast<GeneralMenu *>(data)->input_ok_cb(text); }
   void input_ok_cb(const char *text);
 
   static void choice_ok_cb_(void *data, int selected)
-    { reinterpret_cast<GeneralMenu*>(data)->choice_ok_cb(selected); }
+    { reinterpret_cast<GeneralMenu *>(data)->choice_ok_cb(selected); }
   void choice_ok_cb(int selected);
 
   static void action_cb_(void *data, int action)
-    { reinterpret_cast<GeneralMenu*>(data)->action_cb(action); }
+    { reinterpret_cast<GeneralMenu *>(data)->action_cb(action); }
   void action_cb(int action);
 
   static void fields_ok_cb_(void *data, PurpleRequestFields *fields)
-    { reinterpret_cast<GeneralMenu*>(data)->fields_ok_cb(fields); }
+    { reinterpret_cast<GeneralMenu *>(data)->fields_ok_cb(fields); }
   void fields_ok_cb(PurpleRequestFields *fields);
 #endif // DEBUG
 };

@@ -111,7 +111,7 @@ void Notify::UserInfoDialog::update(PurpleConnection *gc, const char *who,
   for (GList *i = purple_notify_user_info_get_entries(user_info); i;
       i = i->next) {
     PurpleNotifyUserInfoEntry *entry
-      = reinterpret_cast<PurpleNotifyUserInfoEntry*>(i->data);
+      = reinterpret_cast<PurpleNotifyUserInfoEntry *>(i->data);
     PurpleNotifyUserInfoEntryType type
       = purple_notify_user_info_entry_get_type(entry);
 
@@ -181,11 +181,11 @@ void Notify::finalize()
   my_instance = NULL;
 }
 
-void Notify::onDialogClose(CppConsUI::Window& activator,
+void Notify::onDialogClose(CppConsUI::Window &activator,
     PurpleNotifyType type)
 {
   CppConsUI::AbstractDialog *dialog
-    = dynamic_cast<CppConsUI::AbstractDialog*>(&activator);
+    = dynamic_cast<CppConsUI::AbstractDialog *>(&activator);
   g_assert(dialog);
 
   if (notifications.find(dialog) != notifications.end()) {
@@ -194,7 +194,7 @@ void Notify::onDialogClose(CppConsUI::Window& activator,
   }
 }
 
-void Notify::onUserInfoDialogClose(CppConsUI::Window& /*activator*/,
+void Notify::onUserInfoDialogClose(CppConsUI::Window & /*activator*/,
     User user)
 {
   // the userinfo dialog is gone
@@ -252,7 +252,7 @@ void Notify::close_notify(PurpleNotifyType type, void *ui_handle)
   g_assert(type == PURPLE_NOTIFY_MESSAGE || type == PURPLE_NOTIFY_USERINFO);
 
   CppConsUI::AbstractDialog *dialog
-    = reinterpret_cast<CppConsUI::AbstractDialog*>(ui_handle);
+    = reinterpret_cast<CppConsUI::AbstractDialog *>(ui_handle);
   if (notifications.find(dialog) != notifications.end()) {
     notifications.erase(dialog);
     // close the notification dialog if one is still opened

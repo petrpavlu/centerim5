@@ -117,8 +117,8 @@ Accounts::AuthRequest::~AuthRequest()
   g_free(message);
 }
 
-Accounts::PendingRequestWindow::PendingRequestWindow(Accounts& accounts_,
-    const Requests& requests)
+Accounts::PendingRequestWindow::PendingRequestWindow(Accounts &accounts_,
+    const Requests &requests)
 : SplitDialog(0, 0, 80, 24, _("Pending requests")), accounts(&accounts_)
 , dialog(NULL)
 {
@@ -142,7 +142,7 @@ void Accounts::PendingRequestWindow::onScreenResized()
   moveResizeRect(CENTERIM->getScreenArea(CenterIM::CHAT_AREA));
 }
 
-void Accounts::PendingRequestWindow::appendRequest(const Request& request)
+void Accounts::PendingRequestWindow::appendRequest(const Request &request)
 {
   const char *req;
   if (typeid(request) == typeid(AddRequest))
@@ -175,7 +175,7 @@ void Accounts::PendingRequestWindow::appendRequest(const Request& request)
   request_map[&request] = node;
 }
 
-void Accounts::PendingRequestWindow::removeRequest(const Request& request)
+void Accounts::PendingRequestWindow::removeRequest(const Request &request)
 {
   RequestMap::iterator i = request_map.find(&request);
   g_assert(i != request_map.end());
@@ -199,7 +199,7 @@ void Accounts::PendingRequestWindow::removeRequest(const Request& request)
 }
 
 Accounts::PendingRequestWindow::RequestDialog::RequestDialog(
-    const Request& request_, const char *title, const char *text)
+    const Request &request_, const char *title, const char *text)
 : AbstractDialog(title), request(&request_)
 {
   addButton(YES_BUTTON_TEXT, RESPONSE_YES);
@@ -220,13 +220,14 @@ void Accounts::PendingRequestWindow::RequestDialog::emitResponse(
 }
 
 void Accounts::PendingRequestWindow::onActivate(
-    CppConsUI::Button& /*activator*/, const Request& request)
+    CppConsUI::Button & /*activator*/, const Request &request)
 {
   // we can't have more than one request dialog opened
   g_assert(!dialog);
 
   if (typeid(request) == typeid(AddRequest)) {
-    const AddRequest *add_request = dynamic_cast<const AddRequest*>(&request);
+    const AddRequest *add_request
+      = dynamic_cast<const AddRequest *>(&request);
     g_assert(add_request);
 
     char *text;
@@ -245,7 +246,7 @@ void Accounts::PendingRequestWindow::onActivate(
   }
   else if (typeid(request) == typeid(AuthRequest)) {
     const AuthRequest *auth_request
-      = dynamic_cast<const AuthRequest*>(&request);
+      = dynamic_cast<const AuthRequest *>(&request);
     g_assert(auth_request);
 
     char *text;
@@ -269,14 +270,14 @@ void Accounts::PendingRequestWindow::onActivate(
     g_assert_not_reached();
 }
 
-void Accounts::PendingRequestWindow::onAddResponse(RequestDialog& activator,
+void Accounts::PendingRequestWindow::onAddResponse(RequestDialog &activator,
     ResponseType response)
 {
   // stay sane
   g_assert(dialog == &activator);
 
   const AddRequest *request
-    = dynamic_cast<const AddRequest*>(activator.getRequest());
+    = dynamic_cast<const AddRequest *>(activator.getRequest());
   g_assert(request);
 
   /* Set early that there is no active dialog anymore. This is important
@@ -301,14 +302,14 @@ void Accounts::PendingRequestWindow::onAddResponse(RequestDialog& activator,
   }
 }
 
-void Accounts::PendingRequestWindow::onAuthResponse(RequestDialog& activator,
+void Accounts::PendingRequestWindow::onAuthResponse(RequestDialog &activator,
     ResponseType response)
 {
   // stay sane
   g_assert(dialog == &activator);
 
   const AuthRequest *request
-    = dynamic_cast<const AuthRequest*>(activator.getRequest());
+    = dynamic_cast<const AuthRequest *>(activator.getRequest());
   g_assert(request);
 
   /* Set early that there is no active dialog anymore. This is important
@@ -373,7 +374,7 @@ void Accounts::finalize()
   my_instance = NULL;
 }
 
-void Accounts::closeRequest(const Request& request)
+void Accounts::closeRequest(const Request &request)
 {
   /* It isn't really nice to delete an object referenced by a const parameter,
    * but well.. */
@@ -393,7 +394,7 @@ void Accounts::closeRequest(const Request& request)
   signal_request_count_change(*this, requests.size());
 }
 
-void Accounts::onPendingRequestWindowClose(CppConsUI::Window& activator)
+void Accounts::onPendingRequestWindowClose(CppConsUI::Window &activator)
 {
   // the request window is dying
   g_assert(request_window == &activator);

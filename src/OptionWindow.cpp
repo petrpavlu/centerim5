@@ -143,10 +143,10 @@ do {                                       \
   c = new ChoiceOption(_("Log format"), "/purple/logging/format");
   GList *opts = purple_log_logger_get_options();
   for (GList *o = opts; o; o = o->next) {
-    const char *human = reinterpret_cast<const char*>(o->data);
+    const char *human = reinterpret_cast<const char *>(o->data);
     o = o->next;
     g_assert(o);
-    const char *value = reinterpret_cast<const char*>(o->data);
+    const char *value = reinterpret_cast<const char *>(o->data);
     c->addOption(human, value);
   }
   g_list_free(opts);
@@ -201,7 +201,7 @@ OptionWindow::BooleanOption::~BooleanOption()
   g_free(pref);
 }
 
-void OptionWindow::BooleanOption::onToggle(CheckBox& /*activator*/,
+void OptionWindow::BooleanOption::onToggle(CheckBox & /*activator*/,
     bool new_state)
 {
   purple_prefs_set_bool(pref, new_state);
@@ -224,7 +224,7 @@ OptionWindow::StringOption::~StringOption()
   g_free(pref);
 }
 
-void OptionWindow::StringOption::onActivate(Button& /*activator*/)
+void OptionWindow::StringOption::onActivate(Button & /*activator*/)
 {
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(getText(),
       getValue());
@@ -234,7 +234,7 @@ void OptionWindow::StringOption::onActivate(Button& /*activator*/)
 }
 
 void OptionWindow::StringOption::responseHandler(
-    CppConsUI::InputDialog& activator,
+    CppConsUI::InputDialog &activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != AbstractDialog::RESPONSE_OK)
@@ -257,7 +257,7 @@ OptionWindow::IntegerOption::IntegerOption(const char *text,
 }
 
 OptionWindow::IntegerOption::IntegerOption(const char *text,
-    const char *config, sigc::slot<const char*, int> unit_fun_)
+    const char *config, sigc::slot<const char *, int> unit_fun_)
 : Button(FLAG_VALUE | FLAG_UNIT, text), unit(true), unit_fun(unit_fun_)
 {
   g_assert(text);
@@ -275,7 +275,7 @@ OptionWindow::IntegerOption::~IntegerOption()
   g_free(pref);
 }
 
-void OptionWindow::IntegerOption::onActivate(Button& /*activator*/)
+void OptionWindow::IntegerOption::onActivate(Button & /*activator*/)
 {
   CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(getText(),
       getValue());
@@ -286,7 +286,7 @@ void OptionWindow::IntegerOption::onActivate(Button& /*activator*/)
 }
 
 void OptionWindow::IntegerOption::responseHandler(
-    CppConsUI::InputDialog& activator,
+    CppConsUI::InputDialog &activator,
     CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != AbstractDialog::RESPONSE_OK)
@@ -320,7 +320,7 @@ OptionWindow::ChoiceOption::ChoiceOption(const char *text,
 OptionWindow::ChoiceOption::~ChoiceOption()
 {
   for (ComboBoxEntries::iterator i = options.begin(); i != options.end(); i++)
-    g_free(reinterpret_cast<char*>(i->data));
+    g_free(reinterpret_cast<char *>(i->data));
 
   g_free(pref);
 }
@@ -336,10 +336,10 @@ void OptionWindow::ChoiceOption::addOption(const char *title,
     setSelected(item);
 }
 
-void OptionWindow::ChoiceOption::onSelectionChanged(ComboBox& /*activator*/,
+void OptionWindow::ChoiceOption::onSelectionChanged(ComboBox & /*activator*/,
     int /*new_entry*/, const char * /*title*/, intptr_t data)
 {
-  purple_prefs_set_string(pref, reinterpret_cast<const char*>(data));
+  purple_prefs_set_string(pref, reinterpret_cast<const char *>(data));
 }
 
 const char *OptionWindow::getPercentUnit(int /*i*/) const
@@ -352,13 +352,13 @@ const char *OptionWindow::getMinUnit(int i) const
   return ngettext("minute", "minutes", i);
 }
 
-void OptionWindow::reloadKeyBindings(CppConsUI::Button& /*activator*/) const
+void OptionWindow::reloadKeyBindings(CppConsUI::Button & /*activator*/) const
 {
   if (CENTERIM->loadKeyConfig())
     LOG->message(_("Keybinding file was successfully reloaded."));
 }
 
-void OptionWindow::reloadColorSchemes(CppConsUI::Button& /*activator*/) const
+void OptionWindow::reloadColorSchemes(CppConsUI::Button & /*activator*/) const
 {
   if (CENTERIM->loadColorSchemeConfig())
     LOG->message(_("Colorscheme file was successfully reloaded."));

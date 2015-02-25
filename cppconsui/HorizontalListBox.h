@@ -49,12 +49,12 @@ public:
   // AbstractListBox
   virtual VerticalLine *insertSeparator(size_t pos);
   virtual VerticalLine *appendSeparator();
-  virtual void insertWidget(size_t pos, Widget& widget);
-  virtual void appendWidget(Widget& widget);
+  virtual void insertWidget(size_t pos, Widget &widget);
+  virtual void appendWidget(Widget &widget);
 
   virtual int getChildrenWidth() const { return children_width; };
 
-  sigc::signal<void, HorizontalListBox&, int> signal_children_width_change;
+  sigc::signal<void, HorizontalListBox &, int> signal_children_width_change;
 
 protected:
   /**
@@ -70,11 +70,11 @@ protected:
   virtual void updateArea();
 
   // Container
-  virtual void onChildMoveResize(Widget& activator, const Rect& oldsize,
-      const Rect& newsize);
-  virtual void onChildWishSizeChange(Widget& activator, const Size& oldsize,
-      const Size& newsize);
-  virtual void onChildVisible(Widget& widget, bool visible);
+  virtual void onChildMoveResize(Widget &activator, const Rect &oldsize,
+      const Rect &newsize);
+  virtual void onChildWishSizeChange(Widget &activator, const Size &oldsize,
+      const Size &newsize);
+  virtual void onChildVisible(Widget &widget, bool visible);
 
   virtual void updateChildren(int children_width_change,
       int autosize_children_count_change);

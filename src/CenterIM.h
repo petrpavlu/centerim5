@@ -56,7 +56,7 @@ public:
   static CenterIM *instance();
 
   // InputProcessor
-  virtual bool processInput(const TermKeyKey& key);
+  virtual bool processInput(const TermKeyKey &key);
 
   void quit();
 
@@ -69,11 +69,11 @@ public:
   bool loadColorSchemeConfig();
   bool loadKeyConfig();
 
-  bool getExpandedConversations() const { return convs_expanded; }
+  bool isEnabledExpandedConversationMode() const { return convs_expanded; }
 
-  sigc::connection timeoutConnect(const sigc::slot<bool>& slot,
+  sigc::connection timeoutConnect(const sigc::slot<bool> &slot,
       unsigned interval, int priority = G_PRIORITY_DEFAULT);
-  sigc::connection timeoutOnceConnect(const sigc::slot<void>& slot,
+  sigc::connection timeoutOnceConnect(const sigc::slot<void> &slot,
       unsigned interval, int priority = G_PRIORITY_DEFAULT);
 
 protected:
@@ -191,14 +191,14 @@ private:
   // called when CONF_PREFIX/dimensions prefs are changed
   static void dimensions_change_(const char *name, PurplePrefType type,
       gconstpointer val, gpointer data)
-    { reinterpret_cast<CenterIM*>(data)->dimensions_change(name, type, val); }
+    { reinterpret_cast<CenterIM *>(data)->dimensions_change(name, type, val); }
   void dimensions_change(const char *name, PurplePrefType type,
       gconstpointer val);
 
   // called when /libpurple/away/idle_reporting pref is changed
   static void idle_reporting_change_(const char *name, PurplePrefType type,
       gconstpointer val, gpointer data)
-    { reinterpret_cast<CenterIM*>(data)->idle_reporting_change(name, type,
+    { reinterpret_cast<CenterIM *>(data)->idle_reporting_change(name, type,
         val); }
   void idle_reporting_change(const char *name, PurplePrefType type,
       gconstpointer val);

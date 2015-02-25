@@ -76,8 +76,8 @@ void Connections::reconnectAccount(PurpleAccount *account)
 {
   g_return_if_fail(account);
 
-  if (!purple_account_is_disconnected(account)
-      || !purple_status_is_online(purple_account_get_active_status(account)))
+  if (!purple_account_is_disconnected(account) ||
+      !purple_status_is_online(purple_account_get_active_status(account)))
     return;
 
   purple_account_connect(account);
@@ -123,7 +123,7 @@ void Connections::network_connected()
   GList *list, *l;
   l = list = purple_accounts_get_all_active();
   while (l) {
-    PurpleAccount *account = reinterpret_cast<PurpleAccount*>(l->data);
+    PurpleAccount *account = reinterpret_cast<PurpleAccount *>(l->data);
     if (purple_account_is_disconnected(account))
       reconnectAccount(account);
 
@@ -139,7 +139,7 @@ void Connections::network_disconnected()
   GList *list, *l;
   l = list = purple_accounts_get_all_active();
   while (l) {
-    PurpleAccount *a = reinterpret_cast<PurpleAccount*>(l->data);
+    PurpleAccount *a = reinterpret_cast<PurpleAccount *>(l->data);
     if (!purple_account_is_disconnected(a))
       purple_account_disconnect(a);
 

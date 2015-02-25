@@ -53,7 +53,7 @@ VerticalLine *HorizontalListBox::appendSeparator()
   return l;
 }
 
-void HorizontalListBox::insertWidget(size_t pos, Widget& widget)
+void HorizontalListBox::insertWidget(size_t pos, Widget &widget)
 {
   Container::insertWidget(pos, widget, UNSETPOS, UNSETPOS);
 
@@ -74,7 +74,7 @@ void HorizontalListBox::insertWidget(size_t pos, Widget& widget)
   updateChildren(w, autosize_change);
 }
 
-void HorizontalListBox::appendWidget(Widget& widget)
+void HorizontalListBox::appendWidget(Widget &widget)
 {
   insertWidget(children.size(), widget);
 }
@@ -130,8 +130,8 @@ void HorizontalListBox::updateArea()
   updateScroll();
 }
 
-void HorizontalListBox::onChildMoveResize(Widget& activator,
-    const Rect& oldsize, const Rect& newsize)
+void HorizontalListBox::onChildMoveResize(Widget &activator,
+    const Rect &oldsize, const Rect &newsize)
 {
   // sanity check
   assert(newsize.getLeft() == UNSETPOS && newsize.getTop() == UNSETPOS);
@@ -164,8 +164,8 @@ void HorizontalListBox::onChildMoveResize(Widget& activator,
   updateChildren(new_width - old_width, autosize_change);
 }
 
-void HorizontalListBox::onChildWishSizeChange(Widget& activator,
-    const Size& oldsize, const Size& newsize)
+void HorizontalListBox::onChildWishSizeChange(Widget &activator,
+    const Size &oldsize, const Size &newsize)
 {
   if (!activator.isVisible() || activator.getWidth() != AUTOSIZE)
     return;
@@ -180,7 +180,7 @@ void HorizontalListBox::onChildWishSizeChange(Widget& activator,
   updateChildren(new_width - old_width, 0);
 }
 
-void HorizontalListBox::onChildVisible(Widget& activator, bool visible)
+void HorizontalListBox::onChildVisible(Widget &activator, bool visible)
 {
   // the widget is being hidden or deleted
   int w = activator.getWidth();

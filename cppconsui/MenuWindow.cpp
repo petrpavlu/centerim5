@@ -46,7 +46,7 @@ MenuWindow::MenuWindow(int x, int y, int w, int h, const char *title)
   Window::addWidget(*listbox, 1, 1);
 }
 
-MenuWindow::MenuWindow(Widget& ref_, int w, int h, const char *title)
+MenuWindow::MenuWindow(Widget &ref_, int w, int h, const char *title)
 : Window(0, 0, w, h, title, TYPE_TOP)
 , wish_height(3), ref(NULL), xshift(0), yshift(0), hide_on_close(false)
 {
@@ -65,7 +65,7 @@ MenuWindow::~MenuWindow()
   cleanReferenceWidget();
 }
 
-void MenuWindow::onAbsolutePositionChange(Widget& widget)
+void MenuWindow::onAbsolutePositionChange(Widget &widget)
 {
   if (&widget == ref)
     updatePositionAndSize();
@@ -112,14 +112,14 @@ void MenuWindow::onScreenResized()
 }
 
 Button *MenuWindow::insertSubMenu(size_t pos, const char *title,
-    MenuWindow& submenu)
+    MenuWindow &submenu)
 {
   Button *button = prepareSubMenu(title, submenu);
   listbox->insertWidget(pos, *button);
   return button;
 }
 
-Button *MenuWindow::appendSubMenu(const char *title, MenuWindow& submenu)
+Button *MenuWindow::appendSubMenu(const char *title, MenuWindow &submenu)
 {
   Button *button = prepareSubMenu(title, submenu);
   listbox->appendWidget(*button);
@@ -134,7 +134,7 @@ void MenuWindow::setHideOnClose(bool new_hide_on_close)
   hide_on_close = new_hide_on_close;
 }
 
-void MenuWindow::setReferenceWidget(Widget& new_ref)
+void MenuWindow::setReferenceWidget(Widget &new_ref)
 {
   if (ref == &new_ref)
     return;
@@ -176,12 +176,12 @@ void MenuWindow::setTopShift(int y)
   updatePositionAndSize();
 }
 
-void MenuWindow::addWidget(Widget& widget, int x, int y)
+void MenuWindow::addWidget(Widget &widget, int x, int y)
 {
   Window::addWidget(widget, x, y);
 }
 
-Button *MenuWindow::prepareSubMenu(const char *title, MenuWindow& submenu)
+Button *MenuWindow::prepareSubMenu(const char *title, MenuWindow &submenu)
 {
   // setup submenu correctly
   submenu.hide();
@@ -258,7 +258,7 @@ void MenuWindow::updatePositionAndSize()
   }
 }
 
-void MenuWindow::onChildrenHeightChange(ListBox& /*activator*/,
+void MenuWindow::onChildrenHeightChange(ListBox & /*activator*/,
     int /*new_height*/)
 {
   if (height != AUTOSIZE)
@@ -267,7 +267,8 @@ void MenuWindow::onChildrenHeightChange(ListBox& /*activator*/,
   updatePositionAndSize();
 }
 
-void MenuWindow::onReferenceWidgetVisible(Widget& /*activator*/, bool visible)
+void MenuWindow::onReferenceWidgetVisible(Widget & /*activator*/,
+    bool visible)
 {
   if (visible)
     return;

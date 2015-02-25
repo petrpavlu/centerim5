@@ -35,7 +35,7 @@ ColorScheme *color_scheme = NULL;
 CoreManager *core_manager = NULL;
 KeyConfig *key_config = NULL;
 
-int initializeConsUI(AppInterface& interface)
+int initializeConsUI(AppInterface &interface)
 {
   assert(!color_scheme);
   assert(!core_manager);
@@ -188,8 +188,8 @@ struct Interval
 
 static int interval_compare(const void *key, const void *elt)
 {
-  const UniChar uc = *static_cast<const UniChar*>(key);
-  const Interval *interval = static_cast<const Interval*>(elt);
+  const UniChar uc = *static_cast<const UniChar *>(key);
+  const Interval *interval = static_cast<const Interval *>(elt);
 
   if (uc < interval->start)
     return -1;

@@ -82,7 +82,7 @@ public:
   virtual void setMasked(bool new_masked);
   virtual bool isMasked() const { return masked; }
 
-  sigc::signal<void, TextEdit&> signal_text_change;
+  sigc::signal<void, TextEdit &> signal_text_change;
 
 protected:
   enum Direction {
@@ -125,12 +125,12 @@ protected:
 
     ScreenLine(const char *start_, const char *end_, size_t length_)
       : start(start_), end(end_), length(length_) {}
-    bool operator==(const ScreenLine& other) const;
+    bool operator==(const ScreenLine &other) const;
   };
 
   struct CmpScreenLineEnd
   {
-    bool operator()(ScreenLine& sline, const char *tag);
+    bool operator()(ScreenLine &sline, const char *tag);
   };
 
   typedef std::deque<ScreenLine> ScreenLines;

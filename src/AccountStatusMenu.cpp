@@ -40,7 +40,7 @@ AccountStatusMenu::AccountStatusMenu()
   GList *list, *l;
   list = l = purple_accounts_get_all_active();
   while (l) {
-    PurpleAccount *account = reinterpret_cast<PurpleAccount*>(l->data);
+    PurpleAccount *account = reinterpret_cast<PurpleAccount *>(l->data);
 
     char *text = g_strdup_printf("[%s] %s",
         purple_account_get_protocol_name(account),
@@ -62,7 +62,7 @@ void AccountStatusMenu::onScreenResized()
   move(chat.x, chat.y);
 }
 
-void AccountStatusMenu::openStatusPopup(CppConsUI::Button& activator,
+void AccountStatusMenu::openStatusPopup(CppConsUI::Button &activator,
     PurpleAccount *account)
 {
   StatusPopup *status_popup = new StatusPopup(account);
@@ -79,7 +79,7 @@ AccountStatusMenu::StatusPopup::StatusPopup(PurpleAccount *account)
   for (GList *iter = purple_account_get_status_types(account); iter;
       iter = iter->next) {
     PurpleStatusType *status_type
-      = reinterpret_cast<PurpleStatusType*>(iter->data);
+      = reinterpret_cast<PurpleStatusType *>(iter->data);
 
     if (purple_status_type_is_independent(status_type)) {
       has_independents = true;
@@ -109,7 +109,7 @@ AccountStatusMenu::StatusPopup::StatusPopup(PurpleAccount *account)
     for (GList *iter = purple_account_get_status_types(account); iter;
         iter = iter->next) {
       PurpleStatusType *status_type
-        = reinterpret_cast<PurpleStatusType*>(iter->data);
+        = reinterpret_cast<PurpleStatusType *>(iter->data);
 
       if (!purple_status_type_is_independent(status_type))
         continue;
@@ -136,7 +136,7 @@ AccountStatusMenu::StatusPopup::StatusPopup(PurpleAccount *account)
 }
 
 void AccountStatusMenu::StatusPopup::setStatus(
-    CppConsUI::Button& /*activator*/, PurpleAccount *account,
+    CppConsUI::Button & /*activator*/, PurpleAccount *account,
     PurpleStatusType *status_type, bool active)
 {
   purple_account_set_status(account, purple_status_type_get_id(status_type),

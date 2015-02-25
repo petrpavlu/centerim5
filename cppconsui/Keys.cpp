@@ -31,12 +31,12 @@ namespace CppConsUI
 namespace Keys
 {
 
-bool TermKeyCmp::operator()(const TermKeyKey& a, const TermKeyKey& b) const
+bool TermKeyCmp::operator()(const TermKeyKey &a, const TermKeyKey &b) const
 {
   return termkey_keycmp(COREMANAGER->getTermKeyHandle(), &a, &b) > 0;
 }
 
-TermKeyKey refineKey(const TermKeyKey& k)
+TermKeyKey refineKey(const TermKeyKey &k)
 {
   if (k.type != TERMKEY_TYPE_KEYSYM)
     return k;

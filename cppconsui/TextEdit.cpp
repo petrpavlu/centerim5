@@ -93,8 +93,8 @@ void TextEdit::draw(Curses::ViewPort area)
 
   ScreenLines::iterator i;
   int j;
-  for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end()
-      && j < real_height; i++, j++) {
+  for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end() &&
+      j < real_height; i++, j++) {
     const char *p = i->start;
     int w = 0;
     for (size_t k = 0; k < i->length && *p != '\n'; k++) {
@@ -222,12 +222,12 @@ void TextEdit::setMasked(bool new_masked)
   redraw();
 }
 
-bool TextEdit::ScreenLine::operator==(const ScreenLine& other) const
+bool TextEdit::ScreenLine::operator==(const ScreenLine &other) const
 {
   return start == other.start && end == other.end && length == other.length;
 }
 
-bool TextEdit::CmpScreenLineEnd::operator()(ScreenLine& sline,
+bool TextEdit::CmpScreenLineEnd::operator()(ScreenLine &sline,
     const char *tag)
 {
   return sline.end < tag;
@@ -335,23 +335,23 @@ void TextEdit::moveGapToCursor()
 char *TextEdit::getTextStart() const
 {
   if (buffer == gapstart)
-    return const_cast<char*>(gapend);
-  return const_cast<char*>(buffer);
+    return const_cast<char *>(gapend);
+  return const_cast<char *>(buffer);
 }
 
 char *TextEdit::prevChar(const char *p) const
 {
   if (p >= gapend) {
     if ((p = UTF8::findPrevChar(gapend, p)))
-      return const_cast<char*>(p);
+      return const_cast<char *>(p);
     else
       p = gapstart;
   }
 
   if ((p = UTF8::findPrevChar(buffer, p)))
-    return const_cast<char*>(p);
+    return const_cast<char *>(p);
   else
-    return const_cast<char*>(buffer);
+    return const_cast<char *>(buffer);
 }
 
 char *TextEdit::nextChar(const char *p) const
@@ -362,15 +362,15 @@ char *TextEdit::nextChar(const char *p) const
 
   if (p < gapstart) {
     if ((p = UTF8::findNextChar(p, gapstart)))
-      return const_cast<char*>(p);
+      return const_cast<char *>(p);
     else
-      return const_cast<char*>(gapend);
+      return const_cast<char *>(gapend);
   }
 
   if ((p = UTF8::findNextChar(p, bufend)))
-    return const_cast<char*>(p);
+    return const_cast<char *>(p);
   else
-    return const_cast<char*>(bufend);
+    return const_cast<char *>(bufend);
 }
 
 int TextEdit::width(const char *start, size_t chars) const
@@ -453,7 +453,7 @@ char *TextEdit::getScreenLine(const char *text, int max_width,
     res = nextChar(res);
   }
 
-  return const_cast<char*>(res);
+  return const_cast<char *>(res);
 }
 
 void TextEdit::updateScreenLines()
@@ -514,8 +514,8 @@ void TextEdit::updateScreenLines(const char *begin, const char *end)
     p = getScreenLine(p, real_width - 1, &length);
     ScreenLine sline(s, p, length);
     new_screen_lines.push_back(sline);
-    while (i != screen_lines.end() && (i->end <= end || i->start < s
-          || i->end < p))
+    while (i != screen_lines.end() && (i->end <= end || i->start < s ||
+          i->end < p))
       i++;
     if (i != screen_lines.end() && sline == *i) {
       /* Screen lines are same thus it isn't necessary to recalculate more
@@ -706,8 +706,8 @@ void TextEdit::moveCursor(CursorMovement step, Direction dir)
           const char *ch = screen_lines[current_sc_line + 1].start;
           size_t i = 0;
           int w = 0;
-          while (w < oldw
-              && i < screen_lines[current_sc_line + 1].length - 1) {
+          while (w < oldw &&
+              i < screen_lines[current_sc_line + 1].length - 1) {
             UTF8::UniChar uc = UTF8::getUniChar(ch);
             w += onScreenWidth(uc, w);
             ch = nextChar(ch);
@@ -728,8 +728,8 @@ void TextEdit::moveCursor(CursorMovement step, Direction dir)
           const char *ch = screen_lines[current_sc_line - 1].start;
           size_t i = 0;
           int w = 0;
-          while (w < oldw
-              && i < screen_lines[current_sc_line - 1].length - 1) {
+          while (w < oldw &&
+              i < screen_lines[current_sc_line - 1].length - 1) {
             UTF8::UniChar uc = UTF8::getUniChar(ch);
             w += onScreenWidth(uc, w);
             ch = nextChar(ch);
@@ -907,7 +907,7 @@ void TextEdit::declareBindables()
 
   declareBindable("textentry", "newline",
       sigc::bind(sigc::mem_fun(this, static_cast<void (TextEdit::*)
-          (const char*)>(&TextEdit::insertTextAtCursor)), "\n"),
+          (const char *)>(&TextEdit::insertTextAtCursor)), "\n"),
       InputProcessor::BINDABLE_NORMAL);
 
   /*

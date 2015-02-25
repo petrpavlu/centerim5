@@ -48,7 +48,7 @@ protected:
   protected:
     char *pref;
 
-    void onToggle(CppConsUI::CheckBox& activator, bool new_state);
+    void onToggle(CppConsUI::CheckBox &activator, bool new_state);
 
   private:
     CONSUI_DISABLE_COPY(BooleanOption);
@@ -64,8 +64,8 @@ protected:
   protected:
     char *pref;
 
-    void onActivate(CppConsUI::Button& activator);
-    void responseHandler(CppConsUI::InputDialog& activator,
+    void onActivate(CppConsUI::Button &activator);
+    void responseHandler(CppConsUI::InputDialog &activator,
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
@@ -78,16 +78,16 @@ protected:
   public:
     IntegerOption(const char *text, const char *config);
     IntegerOption(const char *text, const char *config,
-        sigc::slot<const char*, int> unit_fun_);
+        sigc::slot<const char *, int> unit_fun_);
     virtual ~IntegerOption();
 
   protected:
     char *pref;
     bool unit;
-    sigc::slot<const char*, int> unit_fun;
+    sigc::slot<const char *, int> unit_fun;
 
-    void onActivate(CppConsUI::Button& activator);
-    void responseHandler(CppConsUI::InputDialog& activator,
+    void onActivate(CppConsUI::Button &activator);
+    void responseHandler(CppConsUI::InputDialog &activator,
         CppConsUI::AbstractDialog::ResponseType response);
 
   private:
@@ -106,7 +106,7 @@ protected:
   protected:
     char *pref;
 
-    void onSelectionChanged(CppConsUI::ComboBox& activator, int new_entry,
+    void onSelectionChanged(CppConsUI::ComboBox &activator, int new_entry,
         const char *title, intptr_t data);
 
   private:
@@ -115,8 +115,8 @@ protected:
 
   const char *getPercentUnit(int i) const;
   const char *getMinUnit(int i) const;
-  void reloadKeyBindings(CppConsUI::Button& activator) const;
-  void reloadColorSchemes(CppConsUI::Button& activator) const;
+  void reloadKeyBindings(CppConsUI::Button &activator) const;
+  void reloadColorSchemes(CppConsUI::Button &activator) const;
 
 private:
   CONSUI_DISABLE_COPY(OptionWindow);

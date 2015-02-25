@@ -61,10 +61,10 @@ ColorPickerPalette::ColorPickerPalette(int default_color, int flags)
     addColorCube(default_color);
 }
 
-void ColorPickerPalette::onSelectColor(Button& activator)
+void ColorPickerPalette::onSelectColor(Button &activator)
 {
   ColorPickerPaletteButton *button =
-    dynamic_cast<ColorPickerPaletteButton*>(&activator);
+    dynamic_cast<ColorPickerPaletteButton *>(&activator);
   assert(button);
 
   signal_color_selected(*this, button->getColor());

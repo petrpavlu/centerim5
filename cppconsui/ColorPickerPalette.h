@@ -50,7 +50,7 @@ public:
   /**
    * Emited signal when a color is selected
    */
-  sigc::signal<void, ColorPickerPalette&, int> signal_color_selected;
+  sigc::signal<void, ColorPickerPalette &, int> signal_color_selected;
 
 protected:
   class ColorPickerPaletteButton
@@ -72,7 +72,7 @@ protected:
     CONSUI_DISABLE_COPY(ColorPickerPaletteButton);
   };
 
-  virtual void onSelectColor(Button& activator);
+  virtual void onSelectColor(Button &activator);
 
   virtual void addButton(int x, int y, int color, int default_color);
 

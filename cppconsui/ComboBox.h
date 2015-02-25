@@ -79,7 +79,7 @@ public:
   virtual void setSelectedByDataPtr(void *data)
     { setSelectedByData(reinterpret_cast<intptr_t>(data)); }
 
-  sigc::signal<void, ComboBox&, int, const char *, intptr_t>
+  sigc::signal<void, ComboBox &, int, const char *, intptr_t>
     signal_selection_changed;
 
 protected:
@@ -112,9 +112,9 @@ protected:
   /**
    * Prepares and displays the dropdown MenuWindow.
    */
-  virtual void onDropDown(Button& activator);
-  virtual void dropDownOk(Button& activator, int new_entry);
-  virtual void dropDownClose(Window& window);
+  virtual void onDropDown(Button &activator);
+  virtual void dropDownOk(Button &activator, int new_entry);
+  virtual void dropDownClose(Window &window);
 
 private:
   CONSUI_DISABLE_COPY(ComboBox);

@@ -100,7 +100,7 @@ private:
     CONSUI_DISABLE_COPY(LogBufferItem);
   };
 
-  typedef std::vector<LogBufferItem*> LogBufferItems;
+  typedef std::vector<LogBufferItem *> LogBufferItems;
   LogBufferItems log_items;
 
   guint default_handler;
@@ -138,7 +138,7 @@ private:
   // to catch default messages
   static void default_log_handler_(const char *domain, GLogLevelFlags flags,
       const char *msg, gpointer user_data)
-    { reinterpret_cast<Log*>(user_data)->default_log_handler(domain, flags,
+    { reinterpret_cast<Log *>(user_data)->default_log_handler(domain, flags,
         msg); }
   void default_log_handler(const char *domain, GLogLevelFlags flags,
       const char *msg);
@@ -146,7 +146,7 @@ private:
   // to catch glib's messages
   static void glib_log_handler_(const char *domain, GLogLevelFlags flags,
       const char *msg, gpointer user_data)
-    { reinterpret_cast<Log*>(user_data)->glib_log_handler(domain, flags,
+    { reinterpret_cast<Log *>(user_data)->glib_log_handler(domain, flags,
         msg); }
   void glib_log_handler(const char *domain, GLogLevelFlags flags,
       const char *msg);
@@ -154,7 +154,7 @@ private:
   // called when a log pref is changed
   static void log_pref_change_(const char *name, PurplePrefType type,
       gconstpointer val, gpointer data)
-    { reinterpret_cast<Log*>(data)->log_pref_change(name, type, val); }
+    { reinterpret_cast<Log *>(data)->log_pref_change(name, type, val); }
   void log_pref_change(const char *name, PurplePrefType type,
       gconstpointer val);
 

@@ -38,7 +38,7 @@ public:
   void openPendingRequests();
 
   // interface for Header
-  sigc::signal<void, Accounts&, size_t> signal_request_count_change;
+  sigc::signal<void, Accounts &, size_t> signal_request_count_change;
 
 protected:
 
@@ -81,13 +81,13 @@ private:
     virtual ~AuthRequest();
   };
 
-  typedef std::vector<Request*> Requests;
+  typedef std::vector<Request *> Requests;
 
   class PendingRequestWindow
   : public CppConsUI::SplitDialog
   {
   public:
-    PendingRequestWindow(Accounts& accounts_, const Requests& requests);
+    PendingRequestWindow(Accounts &accounts_, const Requests &requests);
     virtual ~PendingRequestWindow() {}
 
     // Window
@@ -95,21 +95,21 @@ private:
 
     /* Provide a way for the Accounts singleton to add or delete requests
      * dynamically when these events occur. */
-    void appendRequest(const Request& request);
-    void removeRequest(const Request& request);
+    void appendRequest(const Request &request);
+    void removeRequest(const Request &request);
 
   protected:
     class RequestDialog
     : public CppConsUI::AbstractDialog
     {
     public:
-      RequestDialog(const Request& request_, const char *title,
+      RequestDialog(const Request &request_, const char *title,
           const char *text);
       virtual ~RequestDialog() {}
 
       const Request *getRequest() const { return request; }
 
-      sigc::signal<void, RequestDialog&, ResponseType> signal_response;
+      sigc::signal<void, RequestDialog &, ResponseType> signal_response;
 
     protected:
       // the request represented by the dialog
@@ -122,7 +122,7 @@ private:
       CONSUI_DISABLE_COPY(RequestDialog);
     };
 
-    typedef std::map<const Request*, CppConsUI::TreeView::NodeReference>
+    typedef std::map<const Request *, CppConsUI::TreeView::NodeReference>
       RequestMap;
 
     CppConsUI::TreeView *treeview;
@@ -130,9 +130,9 @@ private:
     Accounts *accounts;
     RequestDialog *dialog;
 
-    void onActivate(CppConsUI::Button& activator, const Request& request);
-    void onAddResponse(RequestDialog& activator, ResponseType response);
-    void onAuthResponse(RequestDialog& activator, ResponseType response);
+    void onActivate(CppConsUI::Button &activator, const Request &request);
+    void onAddResponse(RequestDialog &activator, ResponseType response);
+    void onAuthResponse(RequestDialog &activator, ResponseType response);
 
   private:
     CONSUI_DISABLE_COPY(PendingRequestWindow);
@@ -154,8 +154,8 @@ private:
 
   /* This method is called by PendingRequestWindow when an add or auth request
    * should be closed. */
-  void closeRequest(const Request& request);
-  void onPendingRequestWindowClose(CppConsUI::Window& activator);
+  void closeRequest(const Request &request);
+  void onPendingRequestWindowClose(CppConsUI::Window &activator);
 
   static void notify_added_(PurpleAccount *account, const char *remote_user,
       const char *id, const char *alias, const char *message)

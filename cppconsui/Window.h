@@ -59,9 +59,9 @@ public:
   virtual Point getAbsolutePosition();
 
   // Container
-  virtual bool isWidgetVisible(const Widget& widget) const;
-  virtual bool setFocusChild(Widget& child);
-  virtual Point getAbsolutePosition(const Widget& child) const;
+  virtual bool isWidgetVisible(const Widget &widget) const;
+  virtual bool setFocusChild(Widget &child);
+  virtual Point getAbsolutePosition(const Widget &child) const;
 
   virtual void show();
   virtual void hide();
@@ -84,9 +84,9 @@ public:
    */
   virtual void onScreenResized() {}
 
-  sigc::signal<void, Window&> signal_close;
-  sigc::signal<void, Window&> signal_show;
-  sigc::signal<void, Window&> signal_hide;
+  sigc::signal<void, Window &> signal_close;
+  sigc::signal<void, Window &> signal_show;
+  sigc::signal<void, Window &> signal_hide;
 
 protected:
   Type type;
@@ -102,8 +102,8 @@ protected:
   Panel *panel;
 
   // Widget
-  virtual void signalMoveResize(const Rect& oldsize, const Rect& newsize);
-  virtual void signalWishSizeChange(const Size& oldsize, const Size& newsize);
+  virtual void signalMoveResize(const Rect &oldsize, const Rect &newsize);
+  virtual void signalWishSizeChange(const Size &oldsize, const Size &newsize);
   virtual void updateArea();
   virtual void redraw();
 

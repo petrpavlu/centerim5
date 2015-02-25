@@ -329,9 +329,9 @@ void ViewPort::scroll(int scroll_x, int scroll_y)
 
 bool ViewPort::isInViewPort(int x, int y, int w)
 {
-  return x >= view_x && y >= view_y
-    && x + w <= view_x + view_width
-    && y < view_y + view_height;
+  return x >= view_x && y >= view_y &&
+    x + w <= view_x + view_width &&
+    y < view_y + view_height;
 }
 
 const int Color::DEFAULT = -1;

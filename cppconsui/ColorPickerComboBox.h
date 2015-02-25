@@ -51,7 +51,7 @@ public:
   virtual void setColor(int new_color);
   virtual int getColor() { return selected_color; }
 
-  sigc::signal<void, ColorPickerComboBox&, int> signal_color_changed;
+  sigc::signal<void, ColorPickerComboBox &, int> signal_color_changed;
 
 protected:
   class ColorButton
@@ -81,14 +81,14 @@ protected:
   using ComboBox::setSelectedByDataPtr;
 
   // ComboBox
-  virtual void onDropDown(Button& activator);
-  virtual void dropDownOk(Button& activator, int new_entry);
-  virtual void dropDownClose(Window& window)
+  virtual void onDropDown(Button &activator);
+  virtual void dropDownOk(Button &activator, int new_entry);
+  virtual void dropDownClose(Window &window)
     { ComboBox::dropDownClose(window); }
 #ifdef COLORPICKER_256COLOR
-  virtual void colorPickerOk(ColorPickerDialog& activator,
+  virtual void colorPickerOk(ColorPickerDialog &activator,
       AbstractDialog::ResponseType response, int new_color);
-  virtual void colorPickerClose(Window& window);
+  virtual void colorPickerClose(Window &window);
 #endif // COLORPICKER_256COLOR
   virtual void setSelected(int new_entry);
 

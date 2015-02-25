@@ -71,8 +71,8 @@ ColorPickerComboBox::~ColorPickerComboBox()
 
 void ColorPickerComboBox::setColor(int new_color)
 {
-  if (new_color < Curses::Color::DEFAULT
-      || new_color >= Curses::getColorCount()) {
+  if (new_color < Curses::Color::DEFAULT ||
+      new_color >= Curses::getColorCount()) {
     // an invalid color was specified, use the default color
     new_color = Curses::Color::DEFAULT;
   }
@@ -83,8 +83,8 @@ void ColorPickerComboBox::setColor(int new_color)
   selected_color = new_color;
 
 #ifdef COLORPICKER_256COLOR
-  if (selected_color >= Curses::Color::DEFAULT
-      && selected_color < Curses::NUM_DEFAULT_COLORS)
+  if (selected_color >= Curses::Color::DEFAULT &&
+      selected_color < Curses::NUM_DEFAULT_COLORS)
     setSelectedByData(selected_color);
   else
     setSelectedByData(COLOR_MORE);
@@ -121,7 +121,7 @@ void ColorPickerComboBox::draw(Curses::ViewPort area)
   }
 }
 
-void ColorPickerComboBox::onDropDown(Button& /*activator*/)
+void ColorPickerComboBox::onDropDown(Button & /*activator*/)
 {
   dropdown = new MenuWindow(*this, MENU_WIDTH, AUTOSIZE);
   dropdown->signal_close.connect(sigc::mem_fun(this,
@@ -150,7 +150,7 @@ void ColorPickerComboBox::onDropDown(Button& /*activator*/)
   dropdown->show();
 }
 
-void ColorPickerComboBox::dropDownOk(Button& /*activator*/, int new_entry)
+void ColorPickerComboBox::dropDownOk(Button & /*activator*/, int new_entry)
 {
   dropdown->close();
 
@@ -174,7 +174,7 @@ void ColorPickerComboBox::dropDownOk(Button& /*activator*/, int new_entry)
 }
 
 #ifdef COLORPICKER_256COLOR
-void ColorPickerComboBox::colorPickerOk(ColorPickerDialog& activator,
+void ColorPickerComboBox::colorPickerOk(ColorPickerDialog &activator,
     AbstractDialog::ResponseType response, int new_color)
 {
   if (response != AbstractDialog::RESPONSE_OK)
@@ -187,7 +187,7 @@ void ColorPickerComboBox::colorPickerOk(ColorPickerDialog& activator,
   setColor(new_color);
 }
 
-void ColorPickerComboBox::colorPickerClose(Window& /*window*/)
+void ColorPickerComboBox::colorPickerClose(Window & /*window*/)
 {
   colorpicker = NULL;
 }

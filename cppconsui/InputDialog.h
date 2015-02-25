@@ -54,7 +54,7 @@ public:
   /**
    * Signal emitted when the user closes the dialog.
    */
-  sigc::signal<void, InputDialog&, ResponseType> signal_response;
+  sigc::signal<void, InputDialog &, ResponseType> signal_response;
 
 protected:
   TextEntry *entry;

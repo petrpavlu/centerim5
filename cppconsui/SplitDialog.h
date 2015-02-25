@@ -47,13 +47,13 @@ public:
   // Container
   virtual void moveFocus(FocusDirection direction);
 
-  virtual void setContainer(Container& cont);
+  virtual void setContainer(Container &cont);
   virtual Container *getContainer() const { return container; }
 
   /**
    * Signal emitted when the user closes the dialog.
    */
-  sigc::signal<void, SplitDialog&, ResponseType> signal_response;
+  sigc::signal<void, SplitDialog &, ResponseType> signal_response;
 
 protected:
   Container *container;
@@ -66,7 +66,7 @@ protected:
   // AbstractDialog
   virtual void emitResponse(ResponseType response);
 
-  virtual void onOldFocusVisible(Widget& activator, bool visible);
+  virtual void onOldFocusVisible(Widget &activator, bool visible);
 
 private:
   CONSUI_DISABLE_COPY(SplitDialog);

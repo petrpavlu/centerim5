@@ -46,7 +46,7 @@ public:
     virtual ~ToggleCollapseButton() {}
 
     // Widget
-    virtual void setParent(Container& parent);
+    virtual void setParent(Container &parent);
 
   protected:
 
@@ -76,15 +76,15 @@ public:
 
   // Container
   virtual void clear();
-  virtual bool isWidgetVisible(const Widget& widget) const;
-  virtual bool setFocusChild(Widget& child);
-  virtual void getFocusChain(FocusChain& focus_chain,
+  virtual bool isWidgetVisible(const Widget &widget) const;
+  virtual bool setFocusChild(Widget &child);
+  virtual void getFocusChain(FocusChain &focus_chain,
       FocusChain::iterator parent);
-  virtual void onChildMoveResize(Widget& activator, const Rect& oldsize,
-      const Rect& newsize);
-  virtual void onChildWishSizeChange(Widget& activator, const Size& oldsize,
-      const Size& newsize);
-  virtual void onChildVisible(Widget& activator, bool visible);
+  virtual void onChildMoveResize(Widget &activator, const Rect &oldsize,
+      const Rect &newsize);
+  virtual void onChildWishSizeChange(Widget &activator, const Size &oldsize,
+      const Size &newsize);
+  virtual void onChildVisible(Widget &activator, bool visible);
 
   /**
    * Folds/unfolds given node.
@@ -109,23 +109,23 @@ public:
    * the widget.
    */
   virtual NodeReference insertNode(NodeReference position,
-      Widget& widget);
+      Widget &widget);
   /**
    * Inserts a widget after a specified position. TreeView takes ownership of
    * the widget.
    */
   virtual NodeReference insertNodeAfter(NodeReference position,
-      Widget& widget);
+      Widget &widget);
   /**
    * Prepends a widget to a specified parent. TreeView takes ownership of the
    * widget.
    */
-  virtual NodeReference prependNode(NodeReference parent, Widget& widget);
+  virtual NodeReference prependNode(NodeReference parent, Widget &widget);
   /**
    * Appends a widget to a specified parent. TreeView takes ownership of the
    * widget.
    */
-  virtual NodeReference appendNode(NodeReference parent, Widget& widget);
+  virtual NodeReference appendNode(NodeReference parent, Widget &widget);
 
   /**
    * Deletes given node.
@@ -215,16 +215,16 @@ protected:
   using Container::moveWidgetBefore;
   using Container::moveWidgetAfter;
 
-  virtual int drawNode(SiblingIterator node, Curses::ViewPort& area);
+  virtual int drawNode(SiblingIterator node, Curses::ViewPort &area);
 
-  virtual TreeNode addNode(Widget& widget);
+  virtual TreeNode addNode(Widget &widget);
 
   virtual void fixFocus();
 
-  virtual NodeReference findNode(const Widget& child) const;
+  virtual NodeReference findNode(const Widget &child) const;
 
-  virtual bool isNodeOpenable(SiblingIterator& node) const;
-  virtual bool isNodeVisible(NodeReference& node) const;
+  virtual bool isNodeOpenable(SiblingIterator &node) const;
+  virtual bool isNodeVisible(NodeReference &node) const;
 
   virtual int repositionChildren(SiblingIterator node, int top,
       bool in_visibility);

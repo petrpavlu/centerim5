@@ -29,15 +29,14 @@ private:
   int defaultcolor;
   CppConsUI::ColorPickerComboBox *combo;
 
-  TestWindow(const TestWindow&);
-  TestWindow& operator=(const TestWindow&);
-
-  void onButtonActivate(CppConsUI::Button& activator, int flags);
-  void onChangeColorResponseHandler(CppConsUI::ColorPickerDialog& activator,
+  void onButtonActivate(CppConsUI::Button &activator, int flags);
+  void onChangeColorResponseHandler(CppConsUI::ColorPickerDialog &activator,
       CppConsUI::AbstractDialog::ResponseType response, int color);
-  void onColerPickerChanged(CppConsUI::ColorPicker& activator, int new_fg,
+  void onColerPickerChanged(CppConsUI::ColorPicker &activator, int new_fg,
       int new_bg);
-  void onComboColorChange(CppConsUI::ComboBox& activator, intptr_t color);
+  void onComboColorChange(CppConsUI::ComboBox &activator, intptr_t color);
+
+  CONSUI_DISABLE_COPY(TestWindow);
 };
 
 TestWindow::TestWindow()
@@ -75,7 +74,7 @@ TestWindow::TestWindow()
         | CppConsUI::ColorPickerPalette::FLAG_HIDE_GRAYSCALE));
 
   std::string text = std::string("Supported nr of colors: ")
-    + dynamic_cast<std::ostringstream*>(
+    + dynamic_cast<std::ostringstream *>(
         &(std::ostringstream() << CppConsUI::Curses::nrcolors()))->str();
   label1 = new CppConsUI::Label(text.c_str());
   addWidget(*label1, 1, 8);
@@ -87,7 +86,7 @@ TestWindow::TestWindow()
 
   l = new CppConsUI::Label;
   text = std::string("Supported nr of color pairs: ")
-    + dynamic_cast<std::ostringstream*>(
+    + dynamic_cast<std::ostringstream *>(
         &(std::ostringstream() << CppConsUI::Curses::nrcolorpairs()))->str();
   l->setText(text.c_str());
   addWidget(*l, 1, 9);
@@ -112,7 +111,8 @@ TestWindow::TestWindow()
   addWidget(*picker, 1, 19);
 }
 
-void TestWindow::onButtonActivate(CppConsUI::Button& /*activator*/, int flags)
+void TestWindow::onButtonActivate(CppConsUI::Button & /*activator*/,
+    int flags)
 {
   CppConsUI::ColorPickerDialog *dialog = new CppConsUI::ColorPickerDialog(
       "Test Colorpicker", 0, flags);
@@ -121,14 +121,14 @@ void TestWindow::onButtonActivate(CppConsUI::Button& /*activator*/, int flags)
   dialog->show();
 }
 
-void TestWindow::onColerPickerChanged(CppConsUI::ColorPicker& /*activator*/,
+void TestWindow::onColerPickerChanged(CppConsUI::ColorPicker & /*activator*/,
     int new_fg, int new_bg)
 {
   std::string text = std::string("Chosen color (")
-    + dynamic_cast<std::ostringstream*>(
+    + dynamic_cast<std::ostringstream *>(
         &(std::ostringstream() << new_fg))->str()
     + ","
-    + dynamic_cast<std::ostringstream*>(
+    + dynamic_cast<std::ostringstream *>(
         &(std::ostringstream() << new_bg))->str()
     + ")";
   label2->setText(text.c_str());
@@ -137,7 +137,7 @@ void TestWindow::onColerPickerChanged(CppConsUI::ColorPicker& /*activator*/,
 }
 
 void TestWindow::onChangeColorResponseHandler(
-    CppConsUI::ColorPickerDialog& /*activator*/,
+    CppConsUI::ColorPickerDialog & /*activator*/,
     CppConsUI::AbstractDialog::ResponseType response,
     int color)
 {
@@ -147,16 +147,16 @@ void TestWindow::onChangeColorResponseHandler(
   combo->setColor(color);
 
   std::string text = std::string("Chosen color nr: ")
-    + dynamic_cast<std::ostringstream*>(
+    + dynamic_cast<std::ostringstream *>(
         &(std::ostringstream() << color))->str();
   label2->setText(text.c_str());
 }
 
-void TestWindow::onComboColorChange(CppConsUI::ComboBox& /*activator*/,
+void TestWindow::onComboColorChange(CppConsUI::ComboBox & /*activator*/,
     intptr_t color)
 {
   std::string text = std::string("Chosen color nr: ")
-    + dynamic_cast<std::ostringstream*>(
+    + dynamic_cast<std::ostringstream *>(
         &(std::ostringstream() << static_cast<int>(color)))->str();
   label2->setText(text.c_str());
 }

@@ -39,7 +39,7 @@ TreeView::ToggleCollapseButton::ToggleCollapseButton(const char *text_)
 
 void TreeView::ToggleCollapseButton::setParent(Container& parent)
 {
-  TreeView *tree = dynamic_cast<TreeView*>(&parent);
+  TreeView *tree = dynamic_cast<TreeView *>(&parent);
   assert(tree);
 
   Button::setParent(parent);
@@ -102,7 +102,7 @@ void TreeView::clear()
   assert(children.empty());
 }
 
-bool TreeView::isWidgetVisible(const Widget& child) const
+bool TreeView::isWidgetVisible(const Widget &child) const
 {
   if (!parent || !visible)
     return false;
@@ -114,7 +114,7 @@ bool TreeView::isWidgetVisible(const Widget& child) const
   return parent->isWidgetVisible(*this);
 }
 
-bool TreeView::setFocusChild(Widget& child)
+bool TreeView::setFocusChild(Widget &child)
 {
   NodeReference node = findNode(child);
   if (!isNodeVisible(node))
@@ -125,7 +125,7 @@ bool TreeView::setFocusChild(Widget& child)
   return res;
 }
 
-void TreeView::getFocusChain(FocusChain& focus_chain,
+void TreeView::getFocusChain(FocusChain &focus_chain,
     FocusChain::iterator parent)
 {
   /* It's possible that the predecessor of focused node was just made
@@ -145,7 +145,7 @@ void TreeView::getFocusChain(FocusChain& focus_chain,
   for (TheTree::pre_order_iterator i = ++thetree.begin();
       i != thetree.end(); i++) {
     Widget *widget = i->widget;
-    Container *container = dynamic_cast<Container*>(widget);
+    Container *container = dynamic_cast<Container *>(widget);
 
     if (container && container->isVisible()) {
       // the widget is a container so add its widgets as well
@@ -166,7 +166,7 @@ void TreeView::getFocusChain(FocusChain& focus_chain,
       /* This node is the focused node or the focused node is in a subtree of
        * this node. */
 
-      Container *focus_cont = dynamic_cast<Container*>(focus_child);
+      Container *focus_cont = dynamic_cast<Container *>(focus_child);
       if (focus_cont) {
         /* The focused node is actually a Container. First add the Container,
          * then the focused widget. */
@@ -183,7 +183,7 @@ void TreeView::getFocusChain(FocusChain& focus_chain,
   }
 }
 
-void TreeView::onChildMoveResize(Widget& activator, const Rect &oldsize,
+void TreeView::onChildMoveResize(Widget &activator, const Rect &oldsize,
     const Rect &newsize)
 {
   // sanity check
@@ -198,8 +198,8 @@ void TreeView::onChildMoveResize(Widget& activator, const Rect &oldsize,
   updateArea();
 }
 
-void TreeView::onChildWishSizeChange(Widget& activator, const Size& oldsize,
-    const Size& newsize)
+void TreeView::onChildWishSizeChange(Widget &activator, const Size &oldsize,
+    const Size &newsize)
 {
   assert(activator.getParent() == this);
 
@@ -212,7 +212,7 @@ void TreeView::onChildWishSizeChange(Widget& activator, const Size& oldsize,
   updateArea();
 }
 
-void TreeView::onChildVisible(Widget& activator, bool /*visible*/)
+void TreeView::onChildVisible(Widget &activator, bool /*visible*/)
 {
   assert(activator.getParent() == this);
 
@@ -249,7 +249,7 @@ void TreeView::actionToggleCollapsed()
 }
 
 TreeView::NodeReference TreeView::insertNode(NodeReference position,
-    Widget& widget)
+    Widget &widget)
 {
   assert(position->treeview == this);
 
@@ -261,7 +261,7 @@ TreeView::NodeReference TreeView::insertNode(NodeReference position,
 }
 
 TreeView::NodeReference TreeView::insertNodeAfter(NodeReference position,
-    Widget& widget)
+    Widget &widget)
 {
   assert(position->treeview == this);
 
@@ -273,7 +273,7 @@ TreeView::NodeReference TreeView::insertNodeAfter(NodeReference position,
 }
 
 TreeView::NodeReference TreeView::prependNode(NodeReference parent,
-    Widget& widget)
+    Widget &widget)
 {
   assert(parent->treeview == this);
 
@@ -285,7 +285,7 @@ TreeView::NodeReference TreeView::prependNode(NodeReference parent,
 }
 
 TreeView::NodeReference TreeView::appendNode(NodeReference parent,
-    Widget& widget)
+    Widget &widget)
 {
   assert(parent->treeview == this);
 
@@ -428,7 +428,7 @@ void TreeView::updateArea()
   updateScroll();
 }
 
-int TreeView::drawNode(SiblingIterator node, Curses::ViewPort& area)
+int TreeView::drawNode(SiblingIterator node, Curses::ViewPort &area)
 {
   int top = 0, height = 0;
 
@@ -503,7 +503,7 @@ int TreeView::drawNode(SiblingIterator node, Curses::ViewPort& area)
   return height;
 }
 
-TreeView::TreeNode TreeView::addNode(Widget& widget)
+TreeView::TreeNode TreeView::addNode(Widget &widget)
 {
   // make room for this widget
   int h = widget.getHeight();
@@ -546,7 +546,7 @@ void TreeView::fixFocus()
   }
 }
 
-TreeView::NodeReference TreeView::findNode(const Widget& child) const
+TreeView::NodeReference TreeView::findNode(const Widget &child) const
 {
   /// @todo Speed up this algorithm.
   TheTree::pre_order_iterator i;
@@ -557,7 +557,7 @@ TreeView::NodeReference TreeView::findNode(const Widget& child) const
   return i;
 }
 
-bool TreeView::isNodeOpenable(SiblingIterator& node) const
+bool TreeView::isNodeOpenable(SiblingIterator &node) const
 {
   for (SiblingIterator i = node.begin(); i != node.end(); i++) {
     if (!i->widget)
@@ -574,7 +574,7 @@ bool TreeView::isNodeOpenable(SiblingIterator& node) const
   return false;
 }
 
-bool TreeView::isNodeVisible(NodeReference& node) const
+bool TreeView::isNodeVisible(NodeReference &node) const
 {
   // node is visible if all predecessors are visible and open
   NodeReference act = node;

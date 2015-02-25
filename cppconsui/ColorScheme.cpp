@@ -45,9 +45,9 @@ int ColorScheme::getColorPair(const char *scheme, const char *widget,
   Schemes::const_iterator i;
   Widgets::const_iterator j;
   Properties::const_iterator k;
-  if (scheme && (i = schemes.find(scheme)) != schemes.end()
-      && (j = i->second.find(widget)) != i->second.end()
-      && (k = j->second.find(property)) != j->second.end()) {
+  if (scheme && (i = schemes.find(scheme)) != schemes.end() &&
+      (j = i->second.find(widget)) != i->second.end() &&
+      (k = j->second.find(property)) != j->second.end()) {
     Color c = k->second;
     int ret = getColorPair(c) | c.attrs;
     schemes[scheme][widget][property] = c;
@@ -58,9 +58,9 @@ int ColorScheme::getColorPair(const char *scheme, const char *widget,
 }
 
 #ifdef SAVE_COLOR_PAIRS
-int ColorScheme::getColorPair(Color& c)
+int ColorScheme::getColorPair(Color &c)
 #else
-int ColorScheme::getColorPair(const Color& c)
+int ColorScheme::getColorPair(const Color &c)
 #endif
 {
   ColorPairs::const_iterator i;
@@ -109,9 +109,9 @@ bool ColorScheme::setColorPair(const char *scheme, const char *widget,
   Schemes::const_iterator i;
   Widgets::const_iterator j;
   Properties::const_iterator k;
-  if (!overwrite && scheme && (i = schemes.find(scheme)) != schemes.end()
-      && (j = i->second.find(widget)) != i->second.end()
-      && (k = j->second.find(property)) != j->second.end())
+  if (!overwrite && scheme && (i = schemes.find(scheme)) != schemes.end() &&
+      (j = i->second.find(widget)) != i->second.end() &&
+      (k = j->second.find(property)) != j->second.end())
     return false;
 
   schemes[scheme][widget][property] = Color(foreground, background, attrs);

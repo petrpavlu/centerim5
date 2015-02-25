@@ -59,10 +59,10 @@ private:
     GCallback cancel_cb;
     void *user_data;
 
-    // convenient var, same as dynamic_cast<ListBox*>(container)
+    // convenient var, same as dynamic_cast<ListBox *>(container)
     CppConsUI::ListBox *lbox;
 
-    virtual void responseHandler(CppConsUI::SplitDialog& activator,
+    virtual void responseHandler(CppConsUI::SplitDialog &activator,
         ResponseType response) = 0;
 
   private:
@@ -84,7 +84,7 @@ private:
   protected:
     CppConsUI::TextEntry *entry;
 
-    virtual void responseHandler(SplitDialog& activator,
+    virtual void responseHandler(SplitDialog &activator,
         ResponseType response);
 
   private:
@@ -106,7 +106,7 @@ private:
   protected:
     CppConsUI::ComboBox *combo;
 
-    virtual void responseHandler(SplitDialog& activator,
+    virtual void responseHandler(SplitDialog &activator,
         ResponseType response);
 
   private:
@@ -125,13 +125,13 @@ private:
     virtual PurpleRequestType getRequestType();
 
   protected:
-    virtual void responseHandler(SplitDialog& activator,
+    virtual void responseHandler(SplitDialog &activator,
         ResponseType response);
 
   private:
     CONSUI_DISABLE_COPY(ActionDialog);
 
-    void onActionChoice(CppConsUI::Button& activator, size_t i, GCallback cb);
+    void onActionChoice(CppConsUI::Button &activator, size_t i, GCallback cb);
   };
 
   class FieldsDialog
@@ -160,8 +160,8 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void onActivate(CppConsUI::Button& activator);
-      void responseHandler(CppConsUI::InputDialog& activator,
+      void onActivate(CppConsUI::Button &activator);
+      void responseHandler(CppConsUI::InputDialog &activator,
           CppConsUI::AbstractDialog::ResponseType response);
 
     private:
@@ -178,8 +178,8 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void onActivate(CppConsUI::Button& activator);
-      void responseHandler(CppConsUI::InputDialog& activator,
+      void onActivate(CppConsUI::Button &activator);
+      void responseHandler(CppConsUI::InputDialog &activator,
           CppConsUI::AbstractDialog::ResponseType response);
 
     private:
@@ -196,7 +196,7 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void onToggle(CppConsUI::CheckBox& activator, bool new_state);
+      void onToggle(CppConsUI::CheckBox &activator, bool new_state);
 
     private:
       CONSUI_DISABLE_COPY(BooleanField);
@@ -212,7 +212,7 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void onSelectionChanged(CppConsUI::ComboBox& activator, int new_entry,
+      void onSelectionChanged(CppConsUI::ComboBox &activator, int new_entry,
           const char *title, intptr_t data);
 
     private:
@@ -239,7 +239,7 @@ private:
       protected:
         PurpleRequestField *field;
 
-        void onToggle(CppConsUI::CheckBox& activator, bool new_state);
+        void onToggle(CppConsUI::CheckBox &activator, bool new_state);
 
       private:
         CONSUI_DISABLE_COPY(ListFieldItem);
@@ -259,7 +259,7 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void onSelectionChanged(CppConsUI::ComboBox& activator, int new_entry,
+      void onSelectionChanged(CppConsUI::ComboBox &activator, int new_entry,
           const char *title, intptr_t data);
 
     private:
@@ -290,7 +290,7 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void onActivate(CppConsUI::Button& activator);
+      void onActivate(CppConsUI::Button &activator);
 
     private:
       CONSUI_DISABLE_COPY(ImageField);
@@ -306,21 +306,21 @@ private:
     protected:
       PurpleRequestField *field;
 
-      void onAccountChanged(CppConsUI::Button& activator, size_t new_entry,
+      void onAccountChanged(CppConsUI::Button &activator, size_t new_entry,
           const char *title, intptr_t data);
 
     private:
       CONSUI_DISABLE_COPY(AccountField);
     };
 
-    virtual void responseHandler(CppConsUI::SplitDialog& activator,
+    virtual void responseHandler(CppConsUI::SplitDialog &activator,
         ResponseType response);
 
   private:
     CONSUI_DISABLE_COPY(FieldsDialog);
   };
 
-  typedef std::set<RequestDialog*> Requests;
+  typedef std::set<RequestDialog *> Requests;
 
   Requests requests;
 
@@ -336,7 +336,7 @@ private:
   static void finalize();
   friend class CenterIM;
 
-  void onDialogResponse(CppConsUI::SplitDialog& dialog,
+  void onDialogResponse(CppConsUI::SplitDialog &dialog,
       CppConsUI::AbstractDialog::ResponseType response);
 
   static void *request_input_(const char *title, const char *primary,

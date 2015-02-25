@@ -33,14 +33,14 @@ namespace Keys
 /** Compares two keys. */
 struct TermKeyCmp
 {
-  bool operator()(const TermKeyKey& a, const TermKeyKey& b) const;
+  bool operator()(const TermKeyKey &a, const TermKeyKey &b) const;
 };
 
 /**
  * Changes symbol termkeys TERMKEY_SYM_TAB, TERMKEY_SYM_ENTER,
  * TERMKEY_SYM_SPACE to unicode termkeys.
  */
-TermKeyKey refineKey(const TermKeyKey& k);
+TermKeyKey refineKey(const TermKeyKey &k);
 
 } // namespace Keys
 

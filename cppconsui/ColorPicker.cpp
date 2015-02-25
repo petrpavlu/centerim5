@@ -83,7 +83,7 @@ void ColorPicker::setText(const char *new_text)
     label->setWidth(0);
 }
 
-void ColorPicker::onColorChanged(ComboBox& activator, int new_color)
+void ColorPicker::onColorChanged(ComboBox &activator, int new_color)
 {
   int new_fg = fg_combo->getColor();
   int new_bg = bg_combo->getColor();

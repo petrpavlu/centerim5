@@ -41,7 +41,7 @@
 namespace CppConsUI
 {
 
-void CoreManager::registerWindow(Window& window)
+void CoreManager::registerWindow(Window &window)
 {
   assert(!window.isVisible());
 
@@ -52,7 +52,7 @@ void CoreManager::registerWindow(Window& window)
   updateWindowArea(window);
 }
 
-void CoreManager::removeWindow(Window& window)
+void CoreManager::removeWindow(Window &window)
 {
   Windows::iterator i = findWindow(window);
   assert(i != windows.end());
@@ -63,7 +63,7 @@ void CoreManager::removeWindow(Window& window)
   redraw();
 }
 
-void CoreManager::topWindow(Window& window)
+void CoreManager::topWindow(Window &window)
 {
   Windows::iterator i = findWindow(window);
   assert(i != windows.end());
@@ -77,7 +77,7 @@ void CoreManager::topWindow(Window& window)
 
 Window *CoreManager::getTopWindow()
 {
-  return dynamic_cast<Window*>(input_child);
+  return dynamic_cast<Window *>(input_child);
 }
 
 void CoreManager::enableResizing()
@@ -104,10 +104,11 @@ void CoreManager::disableResizing()
 
 void CoreManager::onScreenResized()
 {
-  if (pipe_valid && !resize_pending) {
-    write(pipefd[1], "@", 1);
-    resize_pending = true;
-  }
+  if (!pipe_valid || resize_pending)
+    return;
+
+  write(pipefd[1], "@", 1);
+  resize_pending = true;
 }
 
 void CoreManager::logError(const char *message)
@@ -124,14 +125,14 @@ void CoreManager::redraw()
   interface.timeoutAdd(0, CoreManager::draw_, this);
 }
 
-void CoreManager::onWindowMoveResize(Window& activator,
-    const Rect& /*oldsize*/, const Rect& /*newsize*/)
+void CoreManager::onWindowMoveResize(Window &activator,
+    const Rect & /*oldsize*/, const Rect & /*newsize*/)
 {
   updateWindowArea(activator);
 }
 
-void CoreManager::onWindowWishSizeChange(Window& activator,
-    const Size& oldsize, const Size& newsize)
+void CoreManager::onWindowWishSizeChange(Window &activator,
+    const Size &oldsize, const Size &newsize)
 {
   if ((activator.getWidth() != Widget::AUTOSIZE ||
       oldsize.getWidth() == newsize.getWidth()) &&
@@ -151,7 +152,7 @@ CoreManager::CoreManager()
   declareBindables();
 }
 
-int CoreManager::init(AppInterface& set_interface)
+int CoreManager::init(AppInterface &set_interface)
 {
   // validate the passed interface
   assert(set_interface.timeoutAdd);
@@ -204,7 +205,7 @@ int CoreManager::finalize()
   return 0;
 }
 
-bool CoreManager::processInput(const TermKeyKey& key)
+bool CoreManager::processInput(const TermKeyKey &key)
 {
   if (top_input_processor && top_input_processor->processInput(key))
     return true;
@@ -267,7 +268,7 @@ void CoreManager::stdin_input(int /*fd*/, InputCondition /*cond*/)
 
 bool CoreManager::stdin_input_timeout_(void *data)
 {
-  CoreManager *instance = static_cast<CoreManager*>(data);
+  CoreManager *instance = static_cast<CoreManager *>(data);
   instance->stdin_input_timeout();
   return false;
 }
@@ -389,7 +390,7 @@ void CoreManager::updateArea()
     updateWindowArea(**i);
 }
 
-void CoreManager::updateWindowArea(Window& window)
+void CoreManager::updateWindowArea(Window &window)
 {
   int screen_width = Curses::getWidth();
   int screen_height = Curses::getHeight();
@@ -423,7 +424,7 @@ void CoreManager::updateWindowArea(Window& window)
 
 bool CoreManager::draw_(void *data)
 {
-  CoreManager *instance = static_cast<CoreManager*>(data);
+  CoreManager *instance = static_cast<CoreManager *>(data);
   instance->draw();
   return false;
 }
@@ -477,7 +478,7 @@ void CoreManager::draw()
   redraw_pending = false;
 }
 
-void CoreManager::drawWindow(Window& window)
+void CoreManager::drawWindow(Window &window)
 {
   int screen_width = Curses::getWidth();
   int screen_height = Curses::getHeight();
@@ -523,7 +524,7 @@ void CoreManager::drawWindow(Window& window)
   window.draw(window_area);
 }
 
-CoreManager::Windows::iterator CoreManager::findWindow(Window& window)
+CoreManager::Windows::iterator CoreManager::findWindow(Window &window)
 {
   return std::find(windows.begin(), windows.end(), &window);
 }
@@ -549,7 +550,7 @@ void CoreManager::focusWindow()
         break;
       }
 
-  Window *focus = dynamic_cast<Window*>(getInputChild());
+  Window *focus = dynamic_cast<Window *>(getInputChild());
   if (!win || win != focus) {
     // take the focus from the old window with the focus
     if (focus) {

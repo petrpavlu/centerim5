@@ -45,7 +45,7 @@ public:
   /**
    * Signal emitted when the user closes the dialog.
    */
-  sigc::signal<void, Dialog&, ResponseType> signal_response;
+  sigc::signal<void, Dialog &, ResponseType> signal_response;
 
 protected:
   // AbstractDialog

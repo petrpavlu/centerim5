@@ -93,7 +93,7 @@ public:
   /**
    * Emited signal when the button is pressed/activated.
    */
-  sigc::signal<void, Button&> signal_activate;
+  sigc::signal<void, Button &> signal_activate;
 
 protected:
   int flags;

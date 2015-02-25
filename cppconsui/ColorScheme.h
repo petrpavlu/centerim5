@@ -68,9 +68,9 @@ public:
   int getColorPair(const char *scheme, const char *widget,
       const char *property);
 #ifdef SAVE_COLOR_PAIRS
-  int getColorPair(Color& c);
+  int getColorPair(Color &c);
 #else
-  int getColorPair(const Color& c);
+  int getColorPair(const Color &c);
 #endif
   /**
    * Sets color pair and Curses attributes for a given scheme, widget,
@@ -81,7 +81,7 @@ public:
       int attrs = Curses::Attr::NORMAL, bool overwrite = false);
   void freeScheme(const char *scheme);
 
-  const Schemes& getSchemes() const { return schemes; }
+  const Schemes &getSchemes() const { return schemes; }
 
   void clear();
 
@@ -99,7 +99,7 @@ private:
   int finalize() { return 0; }
   CONSUI_DISABLE_COPY(ColorScheme);
 
-  friend int initializeConsUI(AppInterface& interface);
+  friend int initializeConsUI(AppInterface &interface);
   friend int finalizeConsUI();
 };
 

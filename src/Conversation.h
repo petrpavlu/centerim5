@@ -38,7 +38,7 @@ public:
   virtual ~Conversation();
 
   // InputProcessor
-  virtual bool processInput(const TermKeyKey& key);
+  virtual bool processInput(const TermKeyKey &key);
 
   // Widget
   virtual void moveResize(int newx, int newy, int neww, int newh);
@@ -91,7 +91,7 @@ protected:
   char *extractTime(time_t sent_time, time_t show_time) const;
   void loadHistory();
   bool processCommand(const char *raw, const char *html);
-  void onInputTextChange(CppConsUI::TextEdit& activator);
+  void onInputTextChange(CppConsUI::TextEdit &activator);
 
   void actionSend();
 

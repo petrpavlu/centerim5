@@ -67,8 +67,8 @@ void TextView::draw(Curses::ViewPort area)
 
   ScreenLines::iterator i;
   int j;
-  for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end()
-      && j < real_height; i++, j++) {
+  for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end() &&
+      j < real_height; i++, j++) {
     int attrs2 = 0;
     if (i->parent->color) {
       char color[sizeof("color") + PRINTF_WIDTH(int)];

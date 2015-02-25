@@ -77,7 +77,7 @@ const char *KeyConfig::getKeyBind(const char *context,
   return _("<unbound>");
 }
 
-char *KeyConfig::termKeyToString(const TermKeyKey& key) const
+char *KeyConfig::termKeyToString(const TermKeyKey &key) const
 {
   TermKeyKey key_copy = key;
   char out[256];

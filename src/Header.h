@@ -45,7 +45,7 @@ protected:
 
 private:
   typedef std::multiset<std::string> ProtocolCount;
-  typedef std::map<PurpleAccount*, CppConsUI::Label*> Statuses;
+  typedef std::map<PurpleAccount *, CppConsUI::Label *> Statuses;
 
   CppConsUI::HorizontalListBox *container;
   CppConsUI::Label *request_indicator;
@@ -63,23 +63,23 @@ private:
   friend class CenterIM;
 
   // signal from the Accounts singleton
-  void onRequestCountChange(Accounts& accounts, size_t request_count);
+  void onRequestCountChange(Accounts &accounts, size_t request_count);
 
   static void account_signed_on_(PurpleAccount *account, gpointer data)
-    { reinterpret_cast<Header*>(data)->account_signed_on(account); }
+    { reinterpret_cast<Header *>(data)->account_signed_on(account); }
   static void account_signed_off_(PurpleAccount *account, gpointer data)
-    { reinterpret_cast<Header*>(data)->account_signed_off(account); }
+    { reinterpret_cast<Header *>(data)->account_signed_off(account); }
   static void account_status_changed_(PurpleAccount *account,
       PurpleStatus *old, PurpleStatus *cur, gpointer data)
-    { reinterpret_cast<Header*>(data)->account_status_changed(account, old,
+    { reinterpret_cast<Header *>(data)->account_status_changed(account, old,
         cur); }
   static void account_alias_changed_(PurpleAccount *account, const char *old,
       gpointer data)
-    { reinterpret_cast<Header*>(data)->account_alias_changed(account, old); }
+    { reinterpret_cast<Header *>(data)->account_alias_changed(account, old); }
   static void account_enabled_(PurpleAccount *account, gpointer data)
-    { reinterpret_cast<Header*>(data)->account_enabled(account); }
+    { reinterpret_cast<Header *>(data)->account_enabled(account); }
   static void account_disabled_(PurpleAccount *account, gpointer data)
-    { reinterpret_cast<Header*>(data)->account_disabled(account); }
+    { reinterpret_cast<Header *>(data)->account_disabled(account); }
 
   void account_signed_on(PurpleAccount *account);
   void account_signed_off(PurpleAccount *account);

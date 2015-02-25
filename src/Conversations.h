@@ -123,13 +123,13 @@ private:
 
   static void buddy_typing_(PurpleAccount *account, const char *who,
       gpointer data)
-    { reinterpret_cast<Conversations*>(data)->buddy_typing(account, who); }
+    { reinterpret_cast<Conversations *>(data)->buddy_typing(account, who); }
   void buddy_typing(PurpleAccount *account, const char *who);
 
   // called when "/purple/conversations/im/send_typing" pref is changed
   static void send_typing_pref_change_(const char *name, PurplePrefType type,
       gconstpointer val, gpointer data)
-    { reinterpret_cast<Conversations*>(data)->send_typing_pref_change(name,
+    { reinterpret_cast<Conversations *>(data)->send_typing_pref_change(name,
         type, val); }
   void send_typing_pref_change(const char *name, PurplePrefType type,
       gconstpointer val);

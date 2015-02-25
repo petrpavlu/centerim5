@@ -41,7 +41,7 @@ Button::Button(int w, int h, const char *text_, int flags_, bool masked_)
 , right_width(0), masked(masked_)
 {
   setText(text_);
-  setValue((char*)NULL);
+  setValue(static_cast<char *>(NULL));
   setUnit(NULL);
   setRight(NULL);
 
@@ -55,7 +55,7 @@ Button::Button(const char *text_, int flags_, bool masked_)
 , right(NULL), right_width(0), masked(masked_)
 {
   setText(text_);
-  setValue((char*)NULL);
+  setValue(static_cast<char *>(NULL));
   setUnit(NULL);
   setRight(NULL);
 
