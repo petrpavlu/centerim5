@@ -685,6 +685,9 @@ void CenterIM::loadDefaultColorSchemeConfig()
   COLORSCHEME->setColorPair("conversation", "horizontalline", "line",
       CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
       CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->setColorPair("conversation", "verticalline", "line",
+      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
+      CppConsUI::Curses::Attr::BOLD);
   COLORSCHEME->setColorPair("conversation", "textedit", "text",
       CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
 

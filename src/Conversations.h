@@ -111,14 +111,34 @@ private:
       time_t mtime)
     { CONVERSATIONS->write_conv(conv, name, alias, message, flags,
         mtime); }
+  static void chat_add_users_(PurpleConversation *conv, GList *cbuddies,
+      gboolean new_arrivals)
+  { CONVERSATIONS->chat_add_users(conv, cbuddies, new_arrivals); }
+  static void chat_rename_user_(PurpleConversation *conv,
+      const char *old_name, const char *new_name, const char *new_alias)
+  { CONVERSATIONS->chat_rename_user(conv, old_name, new_name, new_alias); }
+  static void chat_remove_users_(PurpleConversation *conv, GList *users)
+  { CONVERSATIONS->chat_remove_users(conv, users); }
+  static void chat_update_user_(PurpleConversation *conv, const char *user)
+  { CONVERSATIONS->chat_update_user(conv, user); }
   static void present_(PurpleConversation *conv)
     { CONVERSATIONS->present(conv); }
+
+  // Internal utility to get a room list for a conversation
+  // Returns NULL if not found
+  ConversationRoomList *getRoomList(PurpleConversation *conv);
 
   void create_conversation(PurpleConversation *conv);
   void destroy_conversation(PurpleConversation *conv);
   void write_conv(PurpleConversation *conv, const char *name,
     const char *alias, const char *message, PurpleMessageFlags flags,
     time_t mtime);
+  void chat_add_users(PurpleConversation *conv, GList *cbuddies,
+    gboolean new_arrivals);
+  void chat_rename_user(PurpleConversation *conv, const char *old_name,
+    const char *new_name, const char *new_alias);
+  void chat_remove_users(PurpleConversation *conv, GList *users);
+  void chat_update_user(PurpleConversation *conv, const char *user);
   void present(PurpleConversation *conv);
 
   static void buddy_typing_(PurpleAccount *account, const char *who,
