@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2013 by CenterIM developers
+ * Copyright (C) 2010-2015 by CenterIM developers
  *
  * This file is part of CenterIM.
  *
@@ -21,7 +21,7 @@
 
 /**
  * @file
- * HorizontalLine class.
+ * VerticalLine class.
  *
  * @ingroup cppconsui
  */
@@ -41,7 +41,7 @@ class VerticalLine
 : public AbstractLine
 {
 public:
-  VerticalLine(int w);
+  VerticalLine(int h);
   virtual ~VerticalLine() {}
 
   // Widget
