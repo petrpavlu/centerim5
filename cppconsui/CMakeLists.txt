@@ -83,6 +83,8 @@ set(cppconsui_HEADERS
 	libtermkey/termkey-internal.h
 	libtermkey/termkey.h)
 
+add_definitions(-DG_LOG_DOMAIN="cppconsui")
+
 add_library(cppconsui SHARED
   ${cppconsui_SOURCES}
   ${cppconsui_HEADERS})
