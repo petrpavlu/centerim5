@@ -85,6 +85,13 @@ set(cppconsui_HEADERS
 
 add_definitions(-DG_LOG_DOMAIN="cppconsui")
 
+# Add curses cflags if they are defined
+if(NOT CURSES_CFLAGS STREQUAL "")
+  set_source_files_properties(
+    ConsUICurses.cpp
+    PROPERTIES COMPILE_FLAGS ${CURSES_CFLAGS})
+endif()
+
 add_library(cppconsui SHARED
   ${cppconsui_SOURCES}
   ${cppconsui_HEADERS})
