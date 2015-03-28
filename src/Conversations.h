@@ -56,7 +56,6 @@ protected:
 private:
   struct ConvChild
   {
-    PurpleConversation *purple_conv;
     Conversation *conv;
     CppConsUI::Label *label;
     char typing_status;

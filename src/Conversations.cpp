@@ -152,7 +152,7 @@ Conversations::~Conversations()
 {
   // close all opened conversations
   while (conversations.size())
-    purple_conversation_destroy(conversations.front().purple_conv);
+    purple_conversation_destroy(conversations.front().conv->getPurpleConversation());
 
   purple_conversations_set_ui_ops(NULL);
   purple_prefs_disconnect_by_handle(this);
@@ -178,7 +178,7 @@ void Conversations::finalize()
 int Conversations::findConversation(PurpleConversation *conv)
 {
   for (int i = 0; i < static_cast<int>(conversations.size()); i++)
-    if (conversations[i].purple_conv == conv)
+    if (conversations[i].conv->getPurpleConversation() == conv)
       return i;
 
   return -1;
@@ -251,7 +251,7 @@ void Conversations::updateLabel(int i)
   g_assert(i < static_cast<int>(conversations.size()));
 
   char *name = g_strdup_printf(" %d|%s%c", i + 1,
-      purple_conversation_get_title(conversations[i].purple_conv),
+      purple_conversation_get_title(conversations[i].conv->getPurpleConversation()),
       conversations[i].typing_status);
   conversations[i].label->setText(name);
   g_free(name);
@@ -280,7 +280,6 @@ void Conversations::create_conversation(PurpleConversation *conv)
   Conversation *conversation = new Conversation(conv);
 
   ConvChild c;
-  c.purple_conv = conv;
   c.conv = conversation;
   c.label = new CppConsUI::Label(AUTOSIZE, 1);
   c.typing_status = ' ';
