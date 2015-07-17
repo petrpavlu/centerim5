@@ -21,7 +21,7 @@
 
 /**
  * @file
- * HorizontalLine class.
+ * VerticalLine class.
  *
  * @ingroup cppconsui
  */
@@ -41,7 +41,7 @@ class VerticalLine
 : public AbstractLine
 {
 public:
-  VerticalLine(int w);
+  VerticalLine(int h);
   virtual ~VerticalLine() {}
 
   // Widget

@@ -30,7 +30,7 @@
 
 Conversation::Conversation(PurpleConversation *conv_)
 : Window(0, 0, 80, 24), conv(conv_), filename(NULL), logfile(NULL)
-, input_text_length(0)
+, input_text_length(0), room_list(NULL), room_list_line(NULL)
 {
   g_assert(conv);
 
@@ -48,6 +48,16 @@ Conversation::Conversation(PurpleConversation *conv_)
   addWidget(*view, 1, 0);
   addWidget(*input, 1, 1);
   addWidget(*line, 0, height);
+
+  PurpleConversationType type = purple_conversation_get_type(conv_);
+  if (type == PURPLE_CONV_TYPE_CHAT) {
+      room_list = new ConversationRoomList(1, 1, conv_);
+      room_list_line = new CppConsUI::VerticalLine(1);
+
+      addWidget(*room_list, 1, 0);
+      addWidget(*room_list_line, 1, 0);
+  }
+
   input->grabFocus();
 
   // open logfile
@@ -85,10 +95,10 @@ void Conversation::moveResize(int newx, int newy, int neww, int newh)
 {
   Window::moveResize(newx, newy, neww, newh);
 
-  int percentage = purple_prefs_get_int(CONF_PREFIX "/chat/partitioning");
-  percentage = CLAMP(percentage, 0, 100);
+  int view_percentage = purple_prefs_get_int(CONF_PREFIX "/chat/partitioning");
+  view_percentage = CLAMP(view_percentage, 0, 100);
 
-  int view_height = (newh * percentage) / 100;
+  int view_height = (newh * view_percentage) / 100;
   if (view_height < 1)
     view_height = 1;
 
@@ -96,9 +106,27 @@ void Conversation::moveResize(int newx, int newy, int neww, int newh)
   if (input_height < 1)
     input_height = 1;
 
-  view->moveResize(2, 0, neww - 4, view_height);
-  input->moveResize(2, view_height + 1, neww - 4, input_height);
-  line->moveResize(1, view_height, neww - 2, 1);
+  int roomlist_percentage = purple_prefs_get_int(CONF_PREFIX
+      "/chat/roomlist_partitioning");
+  roomlist_percentage = CLAMP(roomlist_percentage, 0, 100);
+
+  int view_width = neww - 2;
+  if (room_list)
+    view_width = (view_width * roomlist_percentage) / 100;
+
+  view->moveResize(1, 0, view_width, view_height);
+
+  input->moveResize(1, view_height + 1, neww - 2, input_height);
+  line->moveResize(0, view_height, neww, 1);
+
+  // place the room list if a conversation window
+  if (room_list) {
+    // +2 accounts for borders
+    room_list_line->moveResize(view_width + 1, 0, 1, view_height);
+    // give it some padding to make it line up
+    room_list->moveResize(view_width + 3, 0, neww - view_width - 3,
+        view_height);
+  }
 }
 
 bool Conversation::restoreFocus()

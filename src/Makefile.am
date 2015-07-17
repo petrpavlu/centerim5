@@ -18,6 +18,8 @@ centerim5_SOURCES = \
 	Connections.h \
 	Conversation.cpp \
 	Conversation.h \
+	ConversationRoomList.cpp \
+	ConversationRoomList.h \
 	Conversations.cpp \
 	Conversations.h \
 	Footer.cpp \

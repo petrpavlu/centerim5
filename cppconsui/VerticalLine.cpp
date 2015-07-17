@@ -44,7 +44,7 @@ void VerticalLine::draw(Curses::ViewPort area)
   int attrs = getColorPair("verticalline", "line");
   area.attrOn(attrs);
   for (int i = 0; i < real_height; i++)
-    area.addLineChar(i, 0, Curses::LINE_VLINE);
+    area.addLineChar(0, i, Curses::LINE_VLINE);
   area.attrOff(attrs);
 }
 
