@@ -1,5 +1,5 @@
 Current Developers:
-- Petr Pavlů <setup@dagobah.cz>.
+- Petr Pavlu <setup@dagobah.cz>.
 
 Former Developers:
 - Mark Pustjens <pustjens@dds.nl> -- initial CenterIM5 code.
@@ -16,5 +16,6 @@ Additional Code:
   their status,
 - Alexander Matz -- typing notifications,
 - Patrik Tokarcik <patotok@gmail.com> -- searching in buddy list,
+- Wade Berrier <wberrier@gmail.com> -- conversation room list,
 - and others, see `git log`.
 
