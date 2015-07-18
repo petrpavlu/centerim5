@@ -1,3 +1,10 @@
+* Not yet released -- CenterIM 5.0.0
+  - Add conversation room list that displays users in chats.
+  - Remove deferred updates of drawing areas.
+  - Remove CppConsUI dependency on GLib.
+  - Numerous bug fixes.
+  - Update Dutch translation.
+
 * 22 September 2013 -- CenterIM 5.0.0 Beta2
   - Add ability to sort buddies by name, status or last activity.
   - Allow to sort groups in buddy list manually.
