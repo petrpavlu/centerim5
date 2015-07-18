@@ -29,9 +29,7 @@
 #include <cppconsui/TreeView.h>
 #include <libpurple/purple.h>
 
-class BuddyListNode
-: public CppConsUI::Button
-{
+class BuddyListNode : public CppConsUI::Button {
 public:
   static BuddyListNode *createNode(PurpleBlistNode *node);
 
@@ -45,8 +43,7 @@ public:
   virtual const char *toString() const = 0;
 
   virtual void setRefNode(CppConsUI::TreeView::NodeReference n);
-  virtual CppConsUI::TreeView::NodeReference getRefNode() const
-    { return ref; }
+  virtual CppConsUI::TreeView::NodeReference getRefNode() const { return ref; }
 
   PurpleBlistNode *getPurpleBlistNode() const { return blist_node; }
 
@@ -56,9 +53,7 @@ public:
   BuddyListNode *getParentNode() const;
 
 protected:
-  class ContextMenu
-  : public CppConsUI::MenuWindow
-  {
+  class ContextMenu : public CppConsUI::MenuWindow {
   public:
     ContextMenu(BuddyListNode &parent_node_);
     virtual ~ContextMenu() {}
@@ -110,10 +105,9 @@ private:
   void declareBindables();
 };
 
-class BuddyListBuddy
-: public BuddyListNode
-{
-friend class BuddyListNode;
+class BuddyListBuddy : public BuddyListNode {
+  friend class BuddyListNode;
+
 public:
   // BuddyListNode
   virtual bool lessOrEqual(const BuddyListNode &other) const;
@@ -125,9 +119,7 @@ public:
   void retrieveUserInfo();
 
 protected:
-  class BuddyContextMenu
-  : public ContextMenu
-  {
+  class BuddyContextMenu : public ContextMenu {
   public:
     BuddyContextMenu(BuddyListBuddy &parent_buddy_);
     virtual ~BuddyContextMenu() {}
@@ -138,11 +130,11 @@ protected:
     void onInformation(Button &activator);
 
     void changeAliasResponseHandler(CppConsUI::InputDialog &activator,
-        CppConsUI::AbstractDialog::ResponseType response);
+      CppConsUI::AbstractDialog::ResponseType response);
     void onChangeAlias(Button &activator);
 
     void removeResponseHandler(CppConsUI::MessageDialog &activator,
-        CppConsUI::AbstractDialog::ResponseType response);
+      CppConsUI::AbstractDialog::ResponseType response);
     void onRemove(Button &activator);
 
   private:
@@ -165,10 +157,9 @@ private:
   CONSUI_DISABLE_COPY(BuddyListBuddy);
 };
 
-class BuddyListChat
-: public BuddyListNode
-{
-friend class BuddyListNode;
+class BuddyListChat : public BuddyListNode {
+  friend class BuddyListNode;
+
 public:
   // BuddyListNode
   virtual bool lessOrEqual(const BuddyListNode &other) const;
@@ -179,9 +170,7 @@ public:
   PurpleChat *getPurpleChat() const { return chat; }
 
 protected:
-  class ChatContextMenu
-  : public ContextMenu
-  {
+  class ChatContextMenu : public ContextMenu {
   public:
     ChatContextMenu(BuddyListChat &parent_chat_);
     virtual ~ChatContextMenu() {}
@@ -190,11 +179,11 @@ protected:
     BuddyListChat *parent_chat;
 
     void changeAliasResponseHandler(CppConsUI::InputDialog &activator,
-        CppConsUI::AbstractDialog::ResponseType response);
+      CppConsUI::AbstractDialog::ResponseType response);
     void onChangeAlias(Button &activator);
 
     void removeResponseHandler(CppConsUI::MessageDialog &activator,
-        CppConsUI::AbstractDialog::ResponseType response);
+      CppConsUI::AbstractDialog::ResponseType response);
     void onRemove(Button &activator);
 
   private:
@@ -212,10 +201,9 @@ private:
   CONSUI_DISABLE_COPY(BuddyListChat);
 };
 
-class BuddyListContact
-: public BuddyListNode
-{
-friend class BuddyListNode;
+class BuddyListContact : public BuddyListNode {
+  friend class BuddyListNode;
+
 public:
   // BuddyListNode
   virtual bool lessOrEqual(const BuddyListNode &other) const;
@@ -228,13 +216,10 @@ public:
   void retrieveUserInfo();
 
   bool isCollapsed() const { return ref->isCollapsed(); }
-  void setCollapsed(bool collapsed)
-    { treeview->setCollapsed(ref, collapsed); }
+  void setCollapsed(bool collapsed) { treeview->setCollapsed(ref, collapsed); }
 
 protected:
-  class ContactContextMenu
-  : public ContextMenu
-  {
+  class ContactContextMenu : public ContextMenu {
   public:
     ContactContextMenu(BuddyListContact &parent_contact_);
     virtual ~ContactContextMenu() {}
@@ -246,11 +231,11 @@ protected:
     void onInformation(Button &activator);
 
     void changeAliasResponseHandler(CppConsUI::InputDialog &activator,
-        CppConsUI::AbstractDialog::ResponseType response);
+      CppConsUI::AbstractDialog::ResponseType response);
     void onChangeAlias(Button &activator);
 
     void removeResponseHandler(CppConsUI::MessageDialog &activator,
-        CppConsUI::AbstractDialog::ResponseType response);
+      CppConsUI::AbstractDialog::ResponseType response);
     void onRemove(Button &activator);
 
     void onMoveTo(Button &activator, PurpleGroup *group);
@@ -275,10 +260,9 @@ private:
   CONSUI_DISABLE_COPY(BuddyListContact);
 };
 
-class BuddyListGroup
-: public BuddyListNode
-{
-friend class BuddyListNode;
+class BuddyListGroup : public BuddyListNode {
+  friend class BuddyListNode;
+
 public:
   // BuddyListNode
   virtual bool lessOrEqual(const BuddyListNode &other) const;
@@ -292,9 +276,7 @@ public:
   void initCollapsedState();
 
 protected:
-  class GroupContextMenu
-  : public ContextMenu
-  {
+  class GroupContextMenu : public ContextMenu {
   public:
     GroupContextMenu(BuddyListGroup &parent_group_);
     virtual ~GroupContextMenu() {}
@@ -303,11 +285,11 @@ protected:
     BuddyListGroup *parent_group;
 
     void renameResponseHandler(CppConsUI::InputDialog &activator,
-        CppConsUI::AbstractDialog::ResponseType response);
+      CppConsUI::AbstractDialog::ResponseType response);
     void onRename(Button &activator);
 
     void removeResponseHandler(CppConsUI::MessageDialog &activator,
-        CppConsUI::AbstractDialog::ResponseType response);
+      CppConsUI::AbstractDialog::ResponseType response);
     void onRemove(Button &activator);
 
     void onMoveAfter(Button &activator, PurpleGroup *group);
@@ -329,4 +311,4 @@ private:
 
 #endif // _BUDDYLISTNODE_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

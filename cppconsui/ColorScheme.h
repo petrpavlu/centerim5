@@ -39,21 +39,20 @@
  * colorpairs. */
 //#define SAVE_COLOR_PAIRS
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class ColorScheme
-{
+class ColorScheme {
 public:
-  struct Color
-  {
+  struct Color {
     int foreground;
     int background;
     int attrs;
 
     Color(int f = Curses::Color::DEFAULT, int b = Curses::Color::DEFAULT,
-        int a = Curses::Attr::NORMAL)
-      : foreground(f), background(b), attrs(a) {}
+      int a = Curses::Attr::NORMAL)
+      : foreground(f), background(b), attrs(a)
+    {
+    }
   };
 
   typedef std::map<std::string, Color> Properties;
@@ -65,8 +64,8 @@ public:
    * Curses::Window::attron()) for a given scheme, widget and property
    * combination.
    */
-  int getColorPair(const char *scheme, const char *widget,
-      const char *property);
+  int getColorPair(
+    const char *scheme, const char *widget, const char *property);
 #ifdef SAVE_COLOR_PAIRS
   int getColorPair(Color &c);
 #else
@@ -77,8 +76,8 @@ public:
    * property combination.
    */
   bool setColorPair(const char *scheme, const char *widget,
-      const char *property, int foreground, int background,
-      int attrs = Curses::Attr::NORMAL, bool overwrite = false);
+    const char *property, int foreground, int background,
+    int attrs = Curses::Attr::NORMAL, bool overwrite = false);
   void freeScheme(const char *scheme);
 
   const Schemes &getSchemes() const { return schemes; }
@@ -86,7 +85,6 @@ public:
   void clear();
 
 protected:
-
 private:
   typedef std::map<std::pair<int, int>, int> ColorPairs;
 
@@ -107,4 +105,4 @@ private:
 
 #endif // __COLORSCHEME_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

@@ -30,15 +30,12 @@
 
 #include "Widget.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 /**
  * CheckBox.
  */
-class CheckBox
-: public Widget
-{
+class CheckBox : public Widget {
 public:
   CheckBox(int w, int h, const char *text_ = NULL, bool checked_ = false);
   explicit CheckBox(const char *text_ = NULL, bool checked_ = false);
@@ -82,4 +79,4 @@ private:
 
 #endif // __CHECKBOX_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

@@ -29,19 +29,18 @@
 
 #include <cassert>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 SplitDialog::SplitDialog(int x, int y, int w, int h, const char *title)
-: AbstractDialog(x, y, w, h, title), container(NULL)
-, cont_old_focus(NULL) , buttons_old_focus(NULL)
+  : AbstractDialog(x, y, w, h, title), container(NULL), cont_old_focus(NULL),
+    buttons_old_focus(NULL)
 {
   buttons->setFocusCycle(Container::FOCUS_CYCLE_LOCAL);
 }
 
 SplitDialog::SplitDialog(const char *title)
-: AbstractDialog(title), container(NULL), cont_old_focus(NULL)
-, buttons_old_focus(NULL)
+  : AbstractDialog(title), container(NULL), cont_old_focus(NULL),
+    buttons_old_focus(NULL)
 {
   buttons->setFocusCycle(Container::FOCUS_CYCLE_LOCAL);
 }
@@ -65,14 +64,14 @@ void SplitDialog::cleanFocus()
       cont_old_focus = container->getFocusWidget();
       if (cont_old_focus)
         cont_old_focus_conn = cont_old_focus->signal_visible.connect(
-            sigc::mem_fun(this, &SplitDialog::onOldFocusVisible));
+          sigc::mem_fun(this, &SplitDialog::onOldFocusVisible));
     }
     else if (f == buttons) {
       buttons_old_focus_conn.disconnect();
       buttons_old_focus = buttons->getFocusWidget();
       if (buttons_old_focus)
         buttons_old_focus_conn = buttons_old_focus->signal_visible.connect(
-            sigc::mem_fun(this, &SplitDialog::onOldFocusVisible));
+          sigc::mem_fun(this, &SplitDialog::onOldFocusVisible));
     }
   }
 
@@ -91,70 +90,70 @@ void SplitDialog::moveFocus(FocusDirection direction)
    */
 
   switch (direction) {
-    case FOCUS_PREVIOUS:
-      if (layout->getFocusChild() == container) {
-        // focus is held by the container, give it to the last button
-        FocusChain focus_chain(NULL);
-        buttons->getFocusChain(focus_chain, focus_chain.begin());
+  case FOCUS_PREVIOUS:
+    if (layout->getFocusChild() == container) {
+      // focus is held by the container, give it to the last button
+      FocusChain focus_chain(NULL);
+      buttons->getFocusChain(focus_chain, focus_chain.begin());
 
-        FocusChain::pre_order_iterator iter = --focus_chain.end();
-        if (*iter && (*iter)->grabFocus())
-          return;
-      }
-      else if (layout->getFocusChild() == buttons) {
-        FocusChain focus_chain(NULL);
-        buttons->getFocusChain(focus_chain, focus_chain.begin());
+      FocusChain::pre_order_iterator iter = --focus_chain.end();
+      if (*iter && (*iter)->grabFocus())
+        return;
+    }
+    else if (layout->getFocusChild() == buttons) {
+      FocusChain focus_chain(NULL);
+      buttons->getFocusChain(focus_chain, focus_chain.begin());
 
-        FocusChain::leaf_iterator iter = focus_chain.begin_leaf();
-        if (getFocusWidget() == *iter) {
-          // focus is held by the first button, give it to the container
-          if ((cont_old_focus && cont_old_focus->grabFocus()) ||
-              container->grabFocus())
-            return;
-        }
-      }
-      break;
-    case FOCUS_NEXT:
-      if (layout->getFocusChild() == container) {
-        // focus is held by the container, give it to the first button
-        if (buttons->grabFocus())
-          return;
-      }
-      else if (layout->getFocusChild() == buttons) {
-        FocusChain focus_chain(NULL);
-        buttons->getFocusChain(focus_chain, focus_chain.begin());
-
-        FocusChain::pre_order_iterator iter = --focus_chain.end();
-        if (getFocusWidget() == *iter) {
-          // focus is held by the last button, give it to the container
-          if ((cont_old_focus && cont_old_focus->grabFocus()) ||
-              container->grabFocus())
-            return;
-        }
-      }
-      break;
-    case FOCUS_LEFT:
-    case FOCUS_RIGHT:
-      if (layout->getFocusChild() != buttons) {
-        /* First try to focus the previously focused widget, if it fails then
-         * try any widget. */
-        if ((buttons_old_focus && buttons_old_focus->grabFocus()) ||
-            buttons->grabFocus())
-          return;
-      }
-      break;
-    case FOCUS_UP:
-    case FOCUS_DOWN:
-      if (layout->getFocusChild() != container) {
-        /* First try to focus the previously focused widget, if it fails then
-         * try any widget. */
+      FocusChain::leaf_iterator iter = focus_chain.begin_leaf();
+      if (getFocusWidget() == *iter) {
+        // focus is held by the first button, give it to the container
         if ((cont_old_focus && cont_old_focus->grabFocus()) ||
-            container->grabFocus())
+          container->grabFocus())
           return;
       }
-      break;
-    default:
-      break;
+    }
+    break;
+  case FOCUS_NEXT:
+    if (layout->getFocusChild() == container) {
+      // focus is held by the container, give it to the first button
+      if (buttons->grabFocus())
+        return;
+    }
+    else if (layout->getFocusChild() == buttons) {
+      FocusChain focus_chain(NULL);
+      buttons->getFocusChain(focus_chain, focus_chain.begin());
+
+      FocusChain::pre_order_iterator iter = --focus_chain.end();
+      if (getFocusWidget() == *iter) {
+        // focus is held by the last button, give it to the container
+        if ((cont_old_focus && cont_old_focus->grabFocus()) ||
+          container->grabFocus())
+          return;
+      }
+    }
+    break;
+  case FOCUS_LEFT:
+  case FOCUS_RIGHT:
+    if (layout->getFocusChild() != buttons) {
+      /* First try to focus the previously focused widget, if it fails then
+       * try any widget. */
+      if ((buttons_old_focus && buttons_old_focus->grabFocus()) ||
+        buttons->grabFocus())
+        return;
+    }
+    break;
+  case FOCUS_UP:
+  case FOCUS_DOWN:
+    if (layout->getFocusChild() != container) {
+      /* First try to focus the previously focused widget, if it fails then
+       * try any widget. */
+      if ((cont_old_focus && cont_old_focus->grabFocus()) ||
+        container->grabFocus())
+        return;
+    }
+    break;
+  default:
+    break;
   }
   AbstractDialog::moveFocus(direction);
 }
@@ -192,4 +191,4 @@ void SplitDialog::onOldFocusVisible(Widget &activator, bool visible)
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

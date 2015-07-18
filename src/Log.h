@@ -31,18 +31,17 @@
 
 #define LOG (Log::instance())
 
-class Log
-{
+class Log {
 public:
   // levels are 1:1 mapped to glib levels
   enum Level {
     LEVEL_NONE,
-    LEVEL_ERROR, // = fatal in libpurle
+    LEVEL_ERROR,    // = fatal in libpurle
     LEVEL_CRITICAL, // = error in libpurple
     LEVEL_WARNING,
     LEVEL_MESSAGE, // no such level in libpurple
     LEVEL_INFO,
-    LEVEL_DEBUG // = misc in libpurple
+    LEVEL_DEBUG, // = misc in libpurple
   };
 
   static Log *instance();
@@ -55,17 +54,14 @@ public:
   void debug(const char *fmt, ...) _attribute((format(printf, 2, 3)));
 
 protected:
-
 private:
   enum Type {
     TYPE_CIM,
     TYPE_GLIB,
-    TYPE_PURPLE
+    TYPE_PURPLE,
   };
 
-  class LogWindow
-  : public CppConsUI::Window
-  {
+  class LogWindow : public CppConsUI::Window {
   public:
     LogWindow();
 
@@ -81,8 +77,7 @@ private:
     CONSUI_DISABLE_COPY(LogWindow);
   };
 
-  class LogBufferItem
-  {
+  class LogBufferItem {
   public:
     LogBufferItem(Type type_, Level level_, const char *text_);
     ~LogBufferItem();
@@ -131,32 +126,36 @@ private:
   friend class CenterIM;
 
   // to catch libpurple's debug messages
-  void purple_print(PurpleDebugLevel level, const char *category,
-      const char *arg_s);
+  void purple_print(
+    PurpleDebugLevel level, const char *category, const char *arg_s);
   gboolean purple_is_enabled(PurpleDebugLevel level, const char *category);
 
   // to catch default messages
   static void default_log_handler_(const char *domain, GLogLevelFlags flags,
-      const char *msg, gpointer user_data)
-    { reinterpret_cast<Log *>(user_data)->default_log_handler(domain, flags,
-        msg); }
-  void default_log_handler(const char *domain, GLogLevelFlags flags,
-      const char *msg);
+    const char *msg, gpointer user_data)
+  {
+    reinterpret_cast<Log *>(user_data)->default_log_handler(domain, flags, msg);
+  }
+  void default_log_handler(
+    const char *domain, GLogLevelFlags flags, const char *msg);
 
   // to catch glib's messages
   static void glib_log_handler_(const char *domain, GLogLevelFlags flags,
-      const char *msg, gpointer user_data)
-    { reinterpret_cast<Log *>(user_data)->glib_log_handler(domain, flags,
-        msg); }
-  void glib_log_handler(const char *domain, GLogLevelFlags flags,
-      const char *msg);
+    const char *msg, gpointer user_data)
+  {
+    reinterpret_cast<Log *>(user_data)->glib_log_handler(domain, flags, msg);
+  }
+  void glib_log_handler(
+    const char *domain, GLogLevelFlags flags, const char *msg);
 
   // called when a log pref is changed
-  static void log_pref_change_(const char *name, PurplePrefType type,
-      gconstpointer val, gpointer data)
-    { reinterpret_cast<Log *>(data)->log_pref_change(name, type, val); }
-  void log_pref_change(const char *name, PurplePrefType type,
-      gconstpointer val);
+  static void log_pref_change_(
+    const char *name, PurplePrefType type, gconstpointer val, gpointer data)
+  {
+    reinterpret_cast<Log *>(data)->log_pref_change(name, type, val);
+  }
+  void log_pref_change(
+    const char *name, PurplePrefType type, gconstpointer val);
 
   void updateCachedPreference(const char *name);
   void write(Type type, Level level, const char *text);
@@ -171,4 +170,4 @@ private:
 
 #endif // __LOG_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

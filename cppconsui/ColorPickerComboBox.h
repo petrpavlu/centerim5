@@ -35,12 +35,9 @@
 #define COLORPICKER_256COLOR
 #endif
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class ColorPickerComboBox
-: public ComboBox
-{
+class ColorPickerComboBox : public ComboBox {
 public:
   ColorPickerComboBox(int w, int color);
   virtual ~ColorPickerComboBox();
@@ -54,15 +51,13 @@ public:
   sigc::signal<void, ColorPickerComboBox &, int> signal_color_changed;
 
 protected:
-  class ColorButton
-  : public Button
-  {
+  class ColorButton : public Button {
   public:
     ColorButton(int color_ = -1);
     virtual ~ColorButton() {}
 
-   // Widget
-   virtual void draw(Curses::ViewPort area);
+    // Widget
+    virtual void draw(Curses::ViewPort area);
 
   protected:
     int color;
@@ -84,10 +79,12 @@ protected:
   virtual void onDropDown(Button &activator);
   virtual void dropDownOk(Button &activator, int new_entry);
   virtual void dropDownClose(Window &window)
-    { ComboBox::dropDownClose(window); }
+  {
+    ComboBox::dropDownClose(window);
+  }
 #ifdef COLORPICKER_256COLOR
   virtual void colorPickerOk(ColorPickerDialog &activator,
-      AbstractDialog::ResponseType response, int new_color);
+    AbstractDialog::ResponseType response, int new_color);
   virtual void colorPickerClose(Window &window);
 #endif // COLORPICKER_256COLOR
   virtual void setSelected(int new_entry);
@@ -106,4 +103,4 @@ private:
 
 #endif // __COLORPICKERCOMBOBOX_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

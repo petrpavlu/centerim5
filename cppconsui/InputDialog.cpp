@@ -30,11 +30,10 @@
 
 #include "gettext.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 InputDialog::InputDialog(const char *title, const char *defaultvalue)
-: AbstractDialog(title)
+  : AbstractDialog(title)
 {
   addButton(OK_BUTTON_TEXT, RESPONSE_OK);
 
@@ -51,4 +50,4 @@ void InputDialog::emitResponse(ResponseType response)
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

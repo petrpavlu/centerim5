@@ -25,9 +25,7 @@
 #include <cppconsui/MenuWindow.h>
 #include <libpurple/purple.h>
 
-class AccountStatusMenu
-: public CppConsUI::MenuWindow
-{
+class AccountStatusMenu : public CppConsUI::MenuWindow {
 public:
   AccountStatusMenu();
   virtual ~AccountStatusMenu() {}
@@ -39,16 +37,14 @@ protected:
   void openStatusPopup(CppConsUI::Button &activator, PurpleAccount *account);
 
 private:
-  class StatusPopup
-  : public MenuWindow
-  {
+  class StatusPopup : public MenuWindow {
   public:
     StatusPopup(PurpleAccount *account);
     virtual ~StatusPopup() {}
 
   protected:
     void setStatus(CppConsUI::Button &activator, PurpleAccount *account,
-        PurpleStatusType *status_type, bool active);
+      PurpleStatusType *status_type, bool active);
 
   private:
     CONSUI_DISABLE_COPY(StatusPopup);
@@ -59,4 +55,4 @@ private:
 
 #endif // __ACOUNTSTATUSMENU_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

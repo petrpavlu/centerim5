@@ -30,12 +30,9 @@
 
 #include "Widget.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class Spacer
-: public Widget
-{
+class Spacer : public Widget {
 public:
   Spacer(int w, int h);
   virtual ~Spacer() {}
@@ -44,7 +41,6 @@ public:
   virtual void draw(Curses::ViewPort area);
 
 protected:
-
 private:
   CONSUI_DISABLE_COPY(Spacer);
 };
@@ -53,4 +49,4 @@ private:
 
 #endif // __SPACER_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

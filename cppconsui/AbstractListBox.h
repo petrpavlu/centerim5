@@ -33,16 +33,13 @@
 #include "Button.h"
 #include "Container.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 /**
  * Abstract class that defines common interface for ListBox and
  * HorizontalListBox.
  */
-class AbstractListBox
-: public Container
-{
+class AbstractListBox : public Container {
 public:
   AbstractListBox(int w, int h);
   virtual ~AbstractListBox() {}
@@ -50,13 +47,13 @@ public:
   /**
    * Inserts a new button into ListBox before a given position.
    */
-  virtual Button *insertItem(size_t pos, const char *title,
-      const sigc::slot<void, Button &> &callback);
+  virtual Button *insertItem(
+    size_t pos, const char *title, const sigc::slot<void, Button &> &callback);
   /**
    * Adds a new button in the end of ListBox.
    */
-  virtual Button *appendItem(const char *title,
-      const sigc::slot<void, Button &> &callback);
+  virtual Button *appendItem(
+    const char *title, const sigc::slot<void, Button &> &callback);
   /**
    * Inserts a separator (usually a horizontal or vertical line) into the
    * ListBox before a given position.
@@ -88,4 +85,4 @@ private:
 
 #endif // __ABSTRACTLISTBOX_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

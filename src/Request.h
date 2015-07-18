@@ -32,21 +32,17 @@
 
 #define REQUEST (Request::instance())
 
-class Request
-{
+class Request {
 public:
   static Request *instance();
 
 protected:
-
 private:
-  class RequestDialog
-  : public CppConsUI::SplitDialog
-  {
+  class RequestDialog : public CppConsUI::SplitDialog {
   public:
-    RequestDialog(const char *title, const char *primary,
-        const char *secondary, const char *ok_text, GCallback ok_cb,
-        const char *cancel_text, GCallback cancel_cb, void *user_data);
+    RequestDialog(const char *title, const char *primary, const char *secondary,
+      const char *ok_text, GCallback ok_cb, const char *cancel_text,
+      GCallback cancel_cb, void *user_data);
     virtual ~RequestDialog() {}
 
     // FreeWindow
@@ -62,21 +58,19 @@ private:
     // convenient var, same as dynamic_cast<ListBox *>(container)
     CppConsUI::ListBox *lbox;
 
-    virtual void responseHandler(CppConsUI::SplitDialog &activator,
-        ResponseType response) = 0;
+    virtual void responseHandler(
+      CppConsUI::SplitDialog &activator, ResponseType response) = 0;
 
   private:
     CONSUI_DISABLE_COPY(RequestDialog);
   };
 
-  class InputTextDialog
-  : public RequestDialog
-  {
+  class InputTextDialog : public RequestDialog {
   public:
     InputTextDialog(const char *title, const char *primary,
-        const char *secondary, const char *default_value, bool masked,
-        const char *ok_text, GCallback ok_cb, const char *cancel_text,
-        GCallback cancel_cb, void *user_data);
+      const char *secondary, const char *default_value, bool masked,
+      const char *ok_text, GCallback ok_cb, const char *cancel_text,
+      GCallback cancel_cb, void *user_data);
     virtual ~InputTextDialog() {}
 
     virtual PurpleRequestType getRequestType();
@@ -84,21 +78,18 @@ private:
   protected:
     CppConsUI::TextEntry *entry;
 
-    virtual void responseHandler(SplitDialog &activator,
-        ResponseType response);
+    virtual void responseHandler(SplitDialog &activator, ResponseType response);
 
   private:
     CONSUI_DISABLE_COPY(InputTextDialog);
   };
 
-  class ChoiceDialog
-  : public RequestDialog
-  {
+  class ChoiceDialog : public RequestDialog {
   public:
-    ChoiceDialog(const char *title, const char *primary,
-        const char *secondary, int default_value, const char *ok_text,
-        GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
-        void *user_data, va_list choices);
+    ChoiceDialog(const char *title, const char *primary, const char *secondary,
+      int default_value, const char *ok_text, GCallback ok_cb,
+      const char *cancel_text, GCallback cancel_cb, void *user_data,
+      va_list choices);
     virtual ~ChoiceDialog() {}
 
     virtual PurpleRequestType getRequestType();
@@ -106,27 +97,22 @@ private:
   protected:
     CppConsUI::ComboBox *combo;
 
-    virtual void responseHandler(SplitDialog &activator,
-        ResponseType response);
+    virtual void responseHandler(SplitDialog &activator, ResponseType response);
 
   private:
     CONSUI_DISABLE_COPY(ChoiceDialog);
   };
 
-  class ActionDialog
-  : public RequestDialog
-  {
+  class ActionDialog : public RequestDialog {
   public:
-    ActionDialog(const char *title, const char *primary,
-        const char *secondary, int default_value, void *user_data,
-        size_t action_count, va_list actions);
+    ActionDialog(const char *title, const char *primary, const char *secondary,
+      int default_value, void *user_data, size_t action_count, va_list actions);
     virtual ~ActionDialog() {}
 
     virtual PurpleRequestType getRequestType();
 
   protected:
-    virtual void responseHandler(SplitDialog &activator,
-        ResponseType response);
+    virtual void responseHandler(SplitDialog &activator, ResponseType response);
 
   private:
     CONSUI_DISABLE_COPY(ActionDialog);
@@ -134,14 +120,11 @@ private:
     void onActionChoice(CppConsUI::Button &activator, size_t i, GCallback cb);
   };
 
-  class FieldsDialog
-  : public RequestDialog
-  {
+  class FieldsDialog : public RequestDialog {
   public:
-    FieldsDialog(const char *title, const char *primary,
-        const char *secondary, PurpleRequestFields *request_fields,
-        const char *ok_text, GCallback ok_cb, const char *cancel_text,
-        GCallback cancel_cb, void *user_data);
+    FieldsDialog(const char *title, const char *primary, const char *secondary,
+      PurpleRequestFields *request_fields, const char *ok_text, GCallback ok_cb,
+      const char *cancel_text, GCallback cancel_cb, void *user_data);
     virtual ~FieldsDialog() {}
 
     virtual PurpleRequestType getRequestType();
@@ -150,9 +133,7 @@ private:
     PurpleRequestFields *fields;
     CppConsUI::TreeView *treeview;
 
-    class StringField
-    : public CppConsUI::Button
-    {
+    class StringField : public CppConsUI::Button {
     public:
       StringField(PurpleRequestField *field);
       virtual ~StringField() {}
@@ -162,15 +143,13 @@ private:
 
       void onActivate(CppConsUI::Button &activator);
       void responseHandler(CppConsUI::InputDialog &activator,
-          CppConsUI::AbstractDialog::ResponseType response);
+        CppConsUI::AbstractDialog::ResponseType response);
 
     private:
       CONSUI_DISABLE_COPY(StringField);
     };
 
-    class IntegerField
-    : public CppConsUI::Button
-    {
+    class IntegerField : public CppConsUI::Button {
     public:
       IntegerField(PurpleRequestField *field);
       virtual ~IntegerField() {}
@@ -180,15 +159,13 @@ private:
 
       void onActivate(CppConsUI::Button &activator);
       void responseHandler(CppConsUI::InputDialog &activator,
-          CppConsUI::AbstractDialog::ResponseType response);
+        CppConsUI::AbstractDialog::ResponseType response);
 
     private:
       CONSUI_DISABLE_COPY(IntegerField);
     };
 
-    class BooleanField
-    : public CppConsUI::CheckBox
-    {
+    class BooleanField : public CppConsUI::CheckBox {
     public:
       BooleanField(PurpleRequestField *field);
       virtual ~BooleanField() {}
@@ -202,9 +179,7 @@ private:
       CONSUI_DISABLE_COPY(BooleanField);
     };
 
-    class ChoiceField
-    : public CppConsUI::ComboBox
-    {
+    class ChoiceField : public CppConsUI::ComboBox {
     public:
       ChoiceField(PurpleRequestField *field);
       virtual ~ChoiceField() {}
@@ -213,15 +188,13 @@ private:
       PurpleRequestField *field;
 
       void onSelectionChanged(CppConsUI::ComboBox &activator, int new_entry,
-          const char *title, intptr_t data);
+        const char *title, intptr_t data);
 
     private:
       CONSUI_DISABLE_COPY(ChoiceField);
     };
 
-    class ListFieldMultiple
-    : public CppConsUI::ListBox
-    {
+    class ListFieldMultiple : public CppConsUI::ListBox {
     public:
       ListFieldMultiple(PurpleRequestField *field);
       virtual ~ListFieldMultiple() {}
@@ -229,9 +202,7 @@ private:
     protected:
       PurpleRequestField *field;
 
-      class ListFieldItem
-      : public CppConsUI::CheckBox
-      {
+      class ListFieldItem : public CppConsUI::CheckBox {
       public:
         ListFieldItem(PurpleRequestField *field, const char *text);
         virtual ~ListFieldItem() {}
@@ -249,9 +220,7 @@ private:
       CONSUI_DISABLE_COPY(ListFieldMultiple);
     };
 
-    class ListFieldSingle
-    : public CppConsUI::ComboBox
-    {
+    class ListFieldSingle : public CppConsUI::ComboBox {
     public:
       ListFieldSingle(PurpleRequestField *field);
       virtual ~ListFieldSingle() {}
@@ -260,15 +229,13 @@ private:
       PurpleRequestField *field;
 
       void onSelectionChanged(CppConsUI::ComboBox &activator, int new_entry,
-          const char *title, intptr_t data);
+        const char *title, intptr_t data);
 
     private:
       CONSUI_DISABLE_COPY(ListFieldSingle);
     };
 
-    class LabelField
-    : public CppConsUI::Label
-    {
+    class LabelField : public CppConsUI::Label {
     public:
       LabelField(PurpleRequestField *field);
       virtual ~LabelField() {}
@@ -280,9 +247,7 @@ private:
       CONSUI_DISABLE_COPY(LabelField);
     };
 
-    class ImageField
-    : public CppConsUI::Button
-    {
+    class ImageField : public CppConsUI::Button {
     public:
       ImageField(PurpleRequestField *field);
       virtual ~ImageField() {}
@@ -296,9 +261,7 @@ private:
       CONSUI_DISABLE_COPY(ImageField);
     };
 
-    class AccountField
-    : public CppConsUI::ComboBox
-    {
+    class AccountField : public CppConsUI::ComboBox {
     public:
       AccountField(PurpleRequestField *field);
       virtual ~AccountField() {}
@@ -307,14 +270,14 @@ private:
       PurpleRequestField *field;
 
       void onAccountChanged(CppConsUI::Button &activator, size_t new_entry,
-          const char *title, intptr_t data);
+        const char *title, intptr_t data);
 
     private:
       CONSUI_DISABLE_COPY(AccountField);
     };
 
-    virtual void responseHandler(CppConsUI::SplitDialog &activator,
-        ResponseType response);
+    virtual void responseHandler(
+      CppConsUI::SplitDialog &activator, ResponseType response);
 
   private:
     CONSUI_DISABLE_COPY(FieldsDialog);
@@ -337,94 +300,107 @@ private:
   friend class CenterIM;
 
   void onDialogResponse(CppConsUI::SplitDialog &dialog,
-      CppConsUI::AbstractDialog::ResponseType response);
+    CppConsUI::AbstractDialog::ResponseType response);
 
   static void *request_input_(const char *title, const char *primary,
-      const char *secondary, const char *default_value, gboolean multiline,
-      gboolean masked, char *hint, const char *ok_text, GCallback ok_cb,
-      const char *cancel_text, GCallback cancel_cb, PurpleAccount *account,
-      const char *who, PurpleConversation *conv, void *user_data)
-    { return REQUEST->request_input(title, primary, secondary, default_value,
-        multiline, masked, hint, ok_text, ok_cb, cancel_text, cancel_cb,
-        account, who, conv, user_data); }
+    const char *secondary, const char *default_value, gboolean multiline,
+    gboolean masked, char *hint, const char *ok_text, GCallback ok_cb,
+    const char *cancel_text, GCallback cancel_cb, PurpleAccount *account,
+    const char *who, PurpleConversation *conv, void *user_data)
+  {
+    return REQUEST->request_input(title, primary, secondary, default_value,
+      multiline, masked, hint, ok_text, ok_cb, cancel_text, cancel_cb, account,
+      who, conv, user_data);
+  }
   static void *request_choice_(const char *title, const char *primary,
-      const char *secondary, int default_value, const char *ok_text,
-      GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
-      PurpleAccount *account, const char *who, PurpleConversation *conv,
-      void *user_data, va_list choices)
-    { return REQUEST->request_choice(title, primary, secondary, default_value,
-        ok_text, ok_cb, cancel_text, cancel_cb, account, who, conv, user_data,
-        choices); }
+    const char *secondary, int default_value, const char *ok_text,
+    GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
+    PurpleAccount *account, const char *who, PurpleConversation *conv,
+    void *user_data, va_list choices)
+  {
+    return REQUEST->request_choice(title, primary, secondary, default_value,
+      ok_text, ok_cb, cancel_text, cancel_cb, account, who, conv, user_data,
+      choices);
+  }
   static void *request_action_(const char *title, const char *primary,
-      const char *secondary, int default_action, PurpleAccount *account,
-      const char *who, PurpleConversation *conv, void *user_data,
-      size_t action_count, va_list actions)
-    { return REQUEST->request_action(title, primary, secondary,
-        default_action, account, who, conv, user_data, action_count,
-        actions); }
+    const char *secondary, int default_action, PurpleAccount *account,
+    const char *who, PurpleConversation *conv, void *user_data,
+    size_t action_count, va_list actions)
+  {
+    return REQUEST->request_action(title, primary, secondary, default_action,
+      account, who, conv, user_data, action_count, actions);
+  }
   static void *request_fields_(const char *title, const char *primary,
-      const char *secondary, PurpleRequestFields *fields, const char *ok_text,
-      GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
-      PurpleAccount *account, const char *who, PurpleConversation *conv,
-      void *user_data)
-    { return REQUEST->request_fields(title, primary, secondary, fields,
-        ok_text, ok_cb, cancel_text, cancel_cb, account, who, conv,
-        user_data); }
+    const char *secondary, PurpleRequestFields *fields, const char *ok_text,
+    GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
+    PurpleAccount *account, const char *who, PurpleConversation *conv,
+    void *user_data)
+  {
+    return REQUEST->request_fields(title, primary, secondary, fields, ok_text,
+      ok_cb, cancel_text, cancel_cb, account, who, conv, user_data);
+  }
   static void *request_file_(const char *title, const char *filename,
-      gboolean savedialog, GCallback ok_cb, GCallback cancel_cb,
-      PurpleAccount *account, const char *who, PurpleConversation *conv,
-      void *user_data)
-    { return REQUEST->request_file(title, filename, savedialog, ok_cb,
-        cancel_cb, account, who, conv, user_data); }
+    gboolean savedialog, GCallback ok_cb, GCallback cancel_cb,
+    PurpleAccount *account, const char *who, PurpleConversation *conv,
+    void *user_data)
+  {
+    return REQUEST->request_file(title, filename, savedialog, ok_cb, cancel_cb,
+      account, who, conv, user_data);
+  }
   static void close_request_(PurpleRequestType type, void *ui_handle)
-    { REQUEST->close_request(type, ui_handle); }
+  {
+    REQUEST->close_request(type, ui_handle);
+  }
   static void *request_folder_(const char *title, const char *dirname,
-      GCallback ok_cb, GCallback cancel_cb, PurpleAccount *account,
-      const char *who, PurpleConversation *conv, void *user_data)
-    { return REQUEST->request_folder(title, dirname, ok_cb, cancel_cb,
-        account, who, conv, user_data); }
-  static void *request_action_with_icon_(const char *title,
-      const char *primary, const char *secondary, int default_action,
-      PurpleAccount *account, const char *who, PurpleConversation *conv,
-      gconstpointer icon_data, gsize icon_size, void *user_data,
-      size_t action_count, va_list actions)
-    { return REQUEST->request_action_with_icon(title, primary, secondary,
-        default_action, account, who, conv, icon_data, icon_size, user_data,
-        action_count, actions); }
+    GCallback ok_cb, GCallback cancel_cb, PurpleAccount *account,
+    const char *who, PurpleConversation *conv, void *user_data)
+  {
+    return REQUEST->request_folder(
+      title, dirname, ok_cb, cancel_cb, account, who, conv, user_data);
+  }
+  static void *request_action_with_icon_(const char *title, const char *primary,
+    const char *secondary, int default_action, PurpleAccount *account,
+    const char *who, PurpleConversation *conv, gconstpointer icon_data,
+    gsize icon_size, void *user_data, size_t action_count, va_list actions)
+  {
+    return REQUEST->request_action_with_icon(title, primary, secondary,
+      default_action, account, who, conv, icon_data, icon_size, user_data,
+      action_count, actions);
+  }
 
   void *request_input(const char *title, const char *primary,
-      const char *secondary, const char *default_value, gboolean multiline,
-      gboolean masked, char *hint, const char *ok_text, GCallback ok_cb,
-      const char *cancel_text, GCallback cancel_cb, PurpleAccount *account,
-      const char *who, PurpleConversation *conv, void *user_data);
+    const char *secondary, const char *default_value, gboolean multiline,
+    gboolean masked, char *hint, const char *ok_text, GCallback ok_cb,
+    const char *cancel_text, GCallback cancel_cb, PurpleAccount *account,
+    const char *who, PurpleConversation *conv, void *user_data);
   void *request_choice(const char *title, const char *primary,
-      const char *secondary, int default_value, const char *ok_text,
-      GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
-      PurpleAccount *account, const char *who, PurpleConversation *conv,
-      void *user_data, va_list choices);
+    const char *secondary, int default_value, const char *ok_text,
+    GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
+    PurpleAccount *account, const char *who, PurpleConversation *conv,
+    void *user_data, va_list choices);
   void *request_action(const char *title, const char *primary,
-      const char *secondary, int default_action, PurpleAccount *account,
-      const char *who, PurpleConversation *conv, void *user_data,
-      size_t action_count, va_list actions);
+    const char *secondary, int default_action, PurpleAccount *account,
+    const char *who, PurpleConversation *conv, void *user_data,
+    size_t action_count, va_list actions);
   void *request_fields(const char *title, const char *primary,
-      const char *secondary, PurpleRequestFields *fields, const char *ok_text,
-      GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
-      PurpleAccount *account, const char *who, PurpleConversation *conv,
-      void *user_data);
+    const char *secondary, PurpleRequestFields *fields, const char *ok_text,
+    GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
+    PurpleAccount *account, const char *who, PurpleConversation *conv,
+    void *user_data);
   void *request_file(const char *title, const char *filename,
-      gboolean savedialog, GCallback ok_cb, GCallback cancel_cb,
-      PurpleAccount *account, const char *who, PurpleConversation *conv,
-      void *user_data);
+    gboolean savedialog, GCallback ok_cb, GCallback cancel_cb,
+    PurpleAccount *account, const char *who, PurpleConversation *conv,
+    void *user_data);
   void close_request(PurpleRequestType type, void *ui_handle);
-  void *request_folder(const char *title, const char *dirname,
-      GCallback ok_cb, GCallback cancel_cb, PurpleAccount *account,
-      const char *who, PurpleConversation *conv, void *user_data);
+  void *request_folder(const char *title, const char *dirname, GCallback ok_cb,
+    GCallback cancel_cb, PurpleAccount *account, const char *who,
+    PurpleConversation *conv, void *user_data);
   void *request_action_with_icon(const char *title, const char *primary,
-      const char *secondary, int default_action, PurpleAccount *account,
-      const char *who, PurpleConversation *conv, gconstpointer icon_data,
-      gsize icon_size, void *user_data, size_t action_count, va_list actions);
+    const char *secondary, int default_action, PurpleAccount *account,
+    const char *who, PurpleConversation *conv, gconstpointer icon_data,
+    gsize icon_size, void *user_data, size_t action_count, va_list actions);
 };
 
 #endif // __REQUEST_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

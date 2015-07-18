@@ -32,13 +32,12 @@
 #include <cstdio>
 #include <cstring>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 Button::Button(int w, int h, const char *text_, int flags_, bool masked_)
-: Widget(w, h), flags(flags_), text(NULL), text_width(0), text_height(0)
-, value(NULL), value_width(0), unit(NULL) , unit_width(0), right(NULL)
-, right_width(0), masked(masked_)
+  : Widget(w, h), flags(flags_), text(NULL), text_width(0), text_height(0),
+    value(NULL), value_width(0), unit(NULL), unit_width(0), right(NULL),
+    right_width(0), masked(masked_)
 {
   setText(text_);
   setValue(static_cast<char *>(NULL));
@@ -50,9 +49,9 @@ Button::Button(int w, int h, const char *text_, int flags_, bool masked_)
 }
 
 Button::Button(const char *text_, int flags_, bool masked_)
-: Widget(AUTOSIZE, AUTOSIZE), flags(flags_), text(NULL), text_width(0)
-, text_height(0), value(NULL), value_width(0), unit(NULL), unit_width(0)
-, right(NULL), right_width(0), masked(masked_)
+  : Widget(AUTOSIZE, AUTOSIZE), flags(flags_), text(NULL), text_width(0),
+    text_height(0), value(NULL), value_width(0), unit(NULL), unit_width(0),
+    right(NULL), right_width(0), masked(masked_)
 {
   setText(text_);
   setValue(static_cast<char *>(NULL));
@@ -63,11 +62,11 @@ Button::Button(const char *text_, int flags_, bool masked_)
   declareBindables();
 }
 
-Button::Button(int w, int h, int flags_, const char *text_,
-    const char *value_, const char *unit_, const char *right_, bool masked_)
-: Widget(w, h), flags(flags_), text(NULL), text_width(0), text_height(0)
-, value(NULL), value_width(0), unit(NULL), unit_width(0), right(NULL)
-, right_width(0), masked(masked_)
+Button::Button(int w, int h, int flags_, const char *text_, const char *value_,
+  const char *unit_, const char *right_, bool masked_)
+  : Widget(w, h), flags(flags_), text(NULL), text_width(0), text_height(0),
+    value(NULL), value_width(0), unit(NULL), unit_width(0), right(NULL),
+    right_width(0), masked(masked_)
 {
   setText(text_);
   setValue(value_);
@@ -79,10 +78,10 @@ Button::Button(int w, int h, int flags_, const char *text_,
 }
 
 Button::Button(int flags_, const char *text_, const char *value_,
-    const char *unit_, const char *right_, bool masked_)
-: Widget(AUTOSIZE, AUTOSIZE), flags(flags_), text(NULL), text_width(0)
-, text_height(0), value(NULL), value_width(0), unit(NULL), unit_width(0)
-, right(NULL), right_width(0), masked(masked_)
+  const char *unit_, const char *right_, bool masked_)
+  : Widget(AUTOSIZE, AUTOSIZE), flags(flags_), text(NULL), text_width(0),
+    text_height(0), value(NULL), value_width(0), unit(NULL), unit_width(0),
+    right(NULL), right_width(0), masked(masked_)
 {
   setText(text_);
   setValue(value_);
@@ -95,10 +94,10 @@ Button::Button(int flags_, const char *text_, const char *value_,
 
 Button::~Button()
 {
-  delete [] text;
-  delete [] value;
-  delete [] unit;
-  delete [] right;
+  delete[] text;
+  delete[] value;
+  delete[] unit;
+  delete[] right;
 }
 
 void Button::draw(Curses::ViewPort area)
@@ -196,7 +195,7 @@ void Button::setMasked(bool new_masked)
 
 void Button::setText(const char *new_text)
 {
-  delete [] text;
+  delete[] text;
 
   size_t size = 1;
   if (new_text)
@@ -234,7 +233,7 @@ void Button::setText(const char *new_text)
 
 void Button::setValue(const char *new_value)
 {
-  delete [] value;
+  delete[] value;
 
   size_t size = 1;
   if (new_value)
@@ -251,14 +250,14 @@ void Button::setValue(const char *new_value)
 
 void Button::setValue(int new_value)
 {
-  char tmp[PRINTF_WIDTH(int) + 1];
+  char tmp[PRINTF_WIDTH(int)+1];
   std::sprintf(tmp, "%d", new_value);
   setValue(tmp);
 }
 
 void Button::setUnit(const char *new_unit)
 {
-  delete [] unit;
+  delete[] unit;
 
   size_t size = 1;
   if (new_unit)
@@ -275,7 +274,7 @@ void Button::setUnit(const char *new_unit)
 
 void Button::setRight(const char *new_right)
 {
-  delete [] right;
+  delete[] right;
 
   size_t size = 1;
   if (new_right)
@@ -297,10 +296,11 @@ void Button::actionActivate()
 
 void Button::declareBindables()
 {
-  declareBindable("button", "activate", sigc::mem_fun(this,
-        &Button::actionActivate), InputProcessor::BINDABLE_NORMAL);
+  declareBindable("button", "activate",
+    sigc::mem_fun(this, &Button::actionActivate),
+    InputProcessor::BINDABLE_NORMAL);
 }
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

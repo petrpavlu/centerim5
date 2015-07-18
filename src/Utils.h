@@ -23,8 +23,7 @@
 
 #include <libpurple/purple.h>
 
-namespace Utils
-{
+namespace Utils {
 
 const char *getStatusIndicator(PurpleStatus *status);
 char *getColorSchemeString(const char *base_color_scheme, PurpleBuddy *buddy);
@@ -34,4 +33,4 @@ char *stripAccelerator(const char *label);
 
 #endif // __UTILS_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

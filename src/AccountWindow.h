@@ -32,9 +32,7 @@
 #include <cppconsui/TreeView.h>
 #include <libpurple/purple.h>
 
-class AccountWindow
-: public CppConsUI::SplitDialog
-{
+class AccountWindow : public CppConsUI::SplitDialog {
 public:
   AccountWindow();
   virtual ~AccountWindow() {}
@@ -43,28 +41,24 @@ public:
   virtual void onScreenResized();
 
 protected:
-
 private:
   class SplitOption;
   typedef std::list<SplitOption *> SplitWidgets;
   typedef std::vector<CppConsUI::Widget *> Widgets;
 
-  struct AccountEntry
-  {
+  struct AccountEntry {
     CppConsUI::Button *parent;
     CppConsUI::TreeView::NodeReference parent_reference;
     SplitWidgets split_widgets;
   };
   typedef std::map<PurpleAccount *, AccountEntry> AccountEntries;
 
-  class BoolOption
-  : public CppConsUI::CheckBox
-  {
+  class BoolOption : public CppConsUI::CheckBox {
   public:
     enum Type {
       TYPE_PURPLE,
       TYPE_REMEMBER_PASSWORD,
-      TYPE_ENABLE_ACCOUNT
+      TYPE_ENABLE_ACCOUNT,
     };
 
     BoolOption(PurpleAccount *account_, PurpleAccountOption *option_);
@@ -82,14 +76,12 @@ private:
     CONSUI_DISABLE_COPY(BoolOption);
   };
 
-  class StringOption
-  : public CppConsUI::Button
-  {
+  class StringOption : public CppConsUI::Button {
   public:
     enum Type {
       TYPE_PURPLE,
       TYPE_PASSWORD,
-      TYPE_ALIAS
+      TYPE_ALIAS,
     };
 
     StringOption(PurpleAccount *account_, PurpleAccountOption *option_);
@@ -105,15 +97,13 @@ private:
     void updateValue();
     void onActivate(CppConsUI::Button &activator);
     void responseHandler(CppConsUI::InputDialog &activator,
-        CppConsUI::AbstractDialog::ResponseType response);
+      CppConsUI::AbstractDialog::ResponseType response);
 
   private:
     CONSUI_DISABLE_COPY(StringOption);
   };
 
-  class IntegerOption
-  : public CppConsUI::Button
-  {
+  class IntegerOption : public CppConsUI::Button {
   public:
     IntegerOption(PurpleAccount *account_, PurpleAccountOption *option_);
     virtual ~IntegerOption() {}
@@ -125,15 +115,13 @@ private:
     void updateValue();
     void onActivate(CppConsUI::Button &activator);
     void responseHandler(CppConsUI::InputDialog &activator,
-        CppConsUI::AbstractDialog::ResponseType response);
+      CppConsUI::AbstractDialog::ResponseType response);
 
   private:
     CONSUI_DISABLE_COPY(IntegerOption);
   };
 
-  class StringListOption
-  : public CppConsUI::ComboBox
-  {
+  class StringListOption : public CppConsUI::ComboBox {
   public:
     StringListOption(PurpleAccount *account_, PurpleAccountOption *option_);
     virtual ~StringListOption() {}
@@ -143,18 +131,16 @@ private:
     PurpleAccountOption *option;
 
     void onSelectionChanged(CppConsUI::ComboBox &activator, int new_entry,
-        const char *title, intptr_t data);
+      const char *title, intptr_t data);
 
   private:
     CONSUI_DISABLE_COPY(StringListOption);
   };
 
-  class SplitOption
-  : public CppConsUI::Button
-  {
+  class SplitOption : public CppConsUI::Button {
   public:
     SplitOption(PurpleAccount *account_, PurpleAccountUserSplit *split_,
-        AccountEntry *account_entry_);
+      AccountEntry *account_entry_);
     virtual ~SplitOption() {}
 
   protected:
@@ -165,15 +151,13 @@ private:
     void updateSplits();
     void onActivate(CppConsUI::Button &activator);
     void responseHandler(CppConsUI::InputDialog &activator,
-        CppConsUI::AbstractDialog::ResponseType response);
+      CppConsUI::AbstractDialog::ResponseType response);
 
   private:
     CONSUI_DISABLE_COPY(SplitOption);
   };
 
-  class ProtocolOption
-  : public CppConsUI::ComboBox
-  {
+  class ProtocolOption : public CppConsUI::ComboBox {
   public:
     ProtocolOption(PurpleAccount *account_, AccountWindow &account_window_);
     virtual ~ProtocolOption() {}
@@ -183,15 +167,13 @@ private:
     PurpleAccount *account;
 
     void onProtocolChanged(CppConsUI::ComboBox &activator, size_t new_entry,
-        const char *title, intptr_t data);
+      const char *title, intptr_t data);
 
   private:
     CONSUI_DISABLE_COPY(ProtocolOption);
   };
 
-  class ColorOption
-  : public CppConsUI::ColorPicker
-  {
+  class ColorOption : public CppConsUI::ColorPicker {
   public:
     ColorOption(PurpleAccount *account_);
     virtual ~ColorOption() {}
@@ -199,8 +181,8 @@ private:
   protected:
     PurpleAccount *account;
 
-    void onColorChanged(CppConsUI::ColorPicker &activator, int new_fg,
-        int new_bg);
+    void onColorChanged(
+      CppConsUI::ColorPicker &activator, int new_fg, int new_bg);
 
   private:
     CONSUI_DISABLE_COPY(ColorOption);
@@ -217,10 +199,9 @@ private:
   void addAccount(CppConsUI::Button &activator);
   void dropAccount(CppConsUI::Button &activator, PurpleAccount *account);
   void dropAccountResponseHandler(CppConsUI::MessageDialog &activator,
-      CppConsUI::AbstractDialog::ResponseType response,
-      PurpleAccount *account);
+    CppConsUI::AbstractDialog::ResponseType response, PurpleAccount *account);
 };
 
 #endif // __ACCOUNTWINDOW_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

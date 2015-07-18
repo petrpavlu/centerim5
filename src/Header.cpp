@@ -38,8 +38,7 @@ void Header::onScreenResized()
   moveResizeRect(CENTERIM->getScreenArea(CenterIM::HEADER_AREA));
 }
 
-Header::Header()
-: Window(0, 0, 80, 1, TYPE_NON_FOCUSABLE, false)
+Header::Header() : Window(0, 0, 80, 1, TYPE_NON_FOCUSABLE, false)
 {
   setColorScheme("header");
 
@@ -64,22 +63,22 @@ Header::Header()
 
   // connect to the Accounts singleton
   g_assert(ACCOUNTS);
-  ACCOUNTS->signal_request_count_change.connect(sigc::mem_fun(this,
-        &Header::onRequestCountChange));
+  ACCOUNTS->signal_request_count_change.connect(
+    sigc::mem_fun(this, &Header::onRequestCountChange));
 
   void *handle = purple_accounts_get_handle();
   purple_signal_connect(handle, "account-signed-on", this,
-      PURPLE_CALLBACK(account_signed_on_), this);
+    PURPLE_CALLBACK(account_signed_on_), this);
   purple_signal_connect(handle, "account-signed-off", this,
-      PURPLE_CALLBACK(account_signed_off_), this);
+    PURPLE_CALLBACK(account_signed_off_), this);
   purple_signal_connect(handle, "account-status-changed", this,
-      PURPLE_CALLBACK(account_status_changed_), this);
+    PURPLE_CALLBACK(account_status_changed_), this);
   purple_signal_connect(handle, "account-alias-changed", this,
-      PURPLE_CALLBACK(account_alias_changed_), this);
-  purple_signal_connect(handle, "account-enabled", this,
-      PURPLE_CALLBACK(account_enabled_), this);
-  purple_signal_connect(handle, "account-disabled", this,
-      PURPLE_CALLBACK(account_disabled_), this);
+    PURPLE_CALLBACK(account_alias_changed_), this);
+  purple_signal_connect(
+    handle, "account-enabled", this, PURPLE_CALLBACK(account_enabled_), this);
+  purple_signal_connect(
+    handle, "account-disabled", this, PURPLE_CALLBACK(account_disabled_), this);
 
   onScreenResized();
 }
@@ -105,8 +104,7 @@ void Header::finalize()
   my_instance = NULL;
 }
 
-void Header::onRequestCountChange(Accounts & /*accounts*/,
-    size_t request_count)
+void Header::onRequestCountChange(Accounts & /*accounts*/, size_t request_count)
 {
   if (request_count) {
     request_indicator->setText("* ");
@@ -129,8 +127,8 @@ void Header::account_signed_on(PurpleAccount *account)
   statuses[account] = label;
   container->appendWidget(*label);
 
-  account_status_changed(account, NULL,
-      purple_account_get_active_status(account));
+  account_status_changed(
+    account, NULL, purple_account_get_active_status(account));
 }
 
 void Header::account_signed_off(PurpleAccount *account)
@@ -144,8 +142,8 @@ void Header::account_signed_off(PurpleAccount *account)
   statuses.erase(account);
 }
 
-void Header::account_status_changed(PurpleAccount *account,
-    PurpleStatus * /*old*/, PurpleStatus *cur)
+void Header::account_status_changed(
+  PurpleAccount *account, PurpleStatus * /*old*/, PurpleStatus *cur)
 {
   g_return_if_fail(account);
   g_return_if_fail(cur);
@@ -161,23 +159,22 @@ void Header::account_status_changed(PurpleAccount *account,
   char *text;
   if (short_text)
     text = g_strdup_printf(" %s [%s]", Utils::getStatusIndicator(cur),
-        purple_account_get_protocol_name(account));
+      purple_account_get_protocol_name(account));
   else
     text = g_strdup_printf(" %s [%s|%s]", Utils::getStatusIndicator(cur),
-        purple_account_get_protocol_name(account),
-        purple_account_get_username(account));
+      purple_account_get_protocol_name(account),
+      purple_account_get_username(account));
   label->setText(text);
   label->setWidth(CppConsUI::Curses::onScreenWidth(text));
   g_free(text);
 }
 
-void Header::account_alias_changed(PurpleAccount *account,
-    const char * /*old*/)
+void Header::account_alias_changed(PurpleAccount *account, const char * /*old*/)
 {
   g_return_if_fail(account);
 
-  account_status_changed(account, NULL,
-      purple_account_get_active_status(account));
+  account_status_changed(
+    account, NULL, purple_account_get_active_status(account));
 }
 
 void Header::account_enabled(PurpleAccount *account)
@@ -191,8 +188,8 @@ void Header::account_enabled(PurpleAccount *account)
     for (Statuses::iterator i = statuses.begin(); i != statuses.end(); i++) {
       PurpleAccount *acc = i->first;
       if (!strcmp(purple_account_get_protocol_id(acc), prid))
-        account_status_changed(acc, NULL,
-            purple_account_get_active_status(acc));
+        account_status_changed(
+          acc, NULL, purple_account_get_active_status(acc));
     }
 }
 
@@ -208,9 +205,9 @@ void Header::account_disabled(PurpleAccount *account)
     for (Statuses::iterator i = statuses.begin(); i != statuses.end(); i++) {
       PurpleAccount *acc = i->first;
       if (!strcmp(purple_account_get_protocol_id(acc), prid))
-        account_status_changed(acc, NULL,
-            purple_account_get_active_status(acc));
+        account_status_changed(
+          acc, NULL, purple_account_get_active_status(acc));
     }
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

@@ -33,22 +33,22 @@ Log *Log::instance()
   return my_instance;
 }
 
-#define WRITE_METHOD(name, level)                       \
-void Log::name(const char *fmt, ...)                    \
-{                                                       \
-  va_list args;                                         \
-  char *text;                                           \
-                                                        \
-  if (log_level_cim < level)                            \
-    return; /* we don't want to see this log message */ \
-                                                        \
-  va_start(args, fmt);                                  \
-  text = g_strdup_vprintf(fmt, args);                   \
-  va_end(args);                                         \
-                                                        \
-  write(TYPE_CIM, level, text);                         \
-  g_free(text);                                         \
-}
+#define WRITE_METHOD(name, level)                                              \
+  void Log::name(const char *fmt, ...)                                         \
+  {                                                                            \
+    va_list args;                                                              \
+    char *text;                                                                \
+                                                                               \
+    if (log_level_cim < level)                                                 \
+      return; /* we don't want to see this log message */                      \
+                                                                               \
+    va_start(args, fmt);                                                       \
+    text = g_strdup_vprintf(fmt, args);                                        \
+    va_end(args);                                                              \
+                                                                               \
+    write(TYPE_CIM, level, text);                                              \
+    g_free(text);                                                              \
+  }
 
 WRITE_METHOD(error, LEVEL_ERROR)
 WRITE_METHOD(critical, LEVEL_CRITICAL)
@@ -59,13 +59,12 @@ WRITE_METHOD(debug, LEVEL_DEBUG)
 
 #undef WRITE_METHOD
 
-Log::LogWindow::LogWindow()
-: Window(0, 0, 80, 24, NULL, TYPE_NON_FOCUSABLE)
+Log::LogWindow::LogWindow() : Window(0, 0, 80, 24, NULL, TYPE_NON_FOCUSABLE)
 {
   setColorScheme("log");
 
-  CppConsUI::HorizontalListBox *lbox = new CppConsUI::HorizontalListBox(
-      AUTOSIZE, AUTOSIZE);
+  CppConsUI::HorizontalListBox *lbox =
+    new CppConsUI::HorizontalListBox(AUTOSIZE, AUTOSIZE);
   addWidget(*lbox, 1, 1);
 
   lbox->appendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
@@ -95,7 +94,7 @@ void Log::LogWindow::append(const char *text)
 }
 
 Log::LogBufferItem::LogBufferItem(Type type_, Level level_, const char *text_)
-: type(type_), level(level_)
+  : type(type_), level(level_)
 {
   text = g_strdup(text_);
 }
@@ -106,19 +105,19 @@ Log::LogBufferItem::~LogBufferItem()
 }
 
 Log::Log()
-: log_window(NULL), phase2_active(false), logfile(NULL)
-, log_level_cim(LEVEL_DEBUG), log_level_glib(LEVEL_DEBUG)
-, log_level_purple(LEVEL_DEBUG)
+  : log_window(NULL), phase2_active(false), logfile(NULL),
+    log_level_cim(LEVEL_DEBUG), log_level_glib(LEVEL_DEBUG),
+    log_level_purple(LEVEL_DEBUG)
 {
-#define REGISTER_G_LOG_HANDLER(name, handler) \
+#define REGISTER_G_LOG_HANDLER(name, handler)                                  \
   g_log_set_handler((name), (GLogLevelFlags)G_LOG_LEVEL_MASK, (handler), this)
 
   // register the glib log handlers
   default_handler = REGISTER_G_LOG_HANDLER(NULL, default_log_handler_);
   glib_handler = REGISTER_G_LOG_HANDLER("GLib", glib_log_handler_);
   gmodule_handler = REGISTER_G_LOG_HANDLER("GModule", glib_log_handler_);
-  glib_gobject_handler = REGISTER_G_LOG_HANDLER("GLib-GObject",
-      glib_log_handler_);
+  glib_gobject_handler =
+    REGISTER_G_LOG_HANDLER("GLib-GObject", glib_log_handler_);
   gthread_handler = REGISTER_G_LOG_HANDLER("GThread", glib_log_handler_);
 }
 
@@ -168,8 +167,8 @@ void Log::initPhase2()
   updateCachedPreference(CONF_PREFIX "/log/log_level_glib");
 
   // connect callbacks
-  purple_prefs_connect_callback(this, CONF_PREFIX "/log", log_pref_change_,
-      this);
+  purple_prefs_connect_callback(
+    this, CONF_PREFIX "/log", log_pref_change_, this);
 
   // create the log window
   g_assert(!log_window);
@@ -181,7 +180,7 @@ void Log::initPhase2()
 
   // output buffered messages
   for (LogBufferItems::iterator i = log_items.begin(); i != log_items.end();
-      i++) {
+       i++) {
     LogBufferItem *item = *i;
 
     // determine if this message should be displayed
@@ -216,8 +215,8 @@ void Log::finalizePhase2()
   phase2_active = false;
 }
 
-void Log::purple_print(PurpleDebugLevel purplelevel, const char *category,
-    const char *arg_s)
+void Log::purple_print(
+  PurpleDebugLevel purplelevel, const char *category, const char *arg_s)
 {
   Level level = convertPurpleDebugLevel(purplelevel);
   if (log_level_purple < level)
@@ -226,7 +225,7 @@ void Log::purple_print(PurpleDebugLevel purplelevel, const char *category,
   if (!category) {
     category = "misc";
     warning(_("centerim/log: purple_print() parameter category was "
-         "not defined."));
+              "not defined."));
   }
 
   char *text = g_strdup_printf("libpurple/%s: %s", category, arg_s);
@@ -234,8 +233,8 @@ void Log::purple_print(PurpleDebugLevel purplelevel, const char *category,
   g_free(text);
 }
 
-gboolean Log::purple_is_enabled(PurpleDebugLevel purplelevel,
-    const char * /*category*/)
+gboolean Log::purple_is_enabled(
+  PurpleDebugLevel purplelevel, const char * /*category*/)
 {
   Level level = convertPurpleDebugLevel(purplelevel);
 
@@ -245,8 +244,8 @@ gboolean Log::purple_is_enabled(PurpleDebugLevel purplelevel,
   return TRUE;
 }
 
-void Log::default_log_handler(const char *domain, GLogLevelFlags flags,
-  const char *msg)
+void Log::default_log_handler(
+  const char *domain, GLogLevelFlags flags, const char *msg)
 {
   if (!msg)
     return;
@@ -260,8 +259,8 @@ void Log::default_log_handler(const char *domain, GLogLevelFlags flags,
   g_free(text);
 }
 
-void Log::glib_log_handler(const char *domain, GLogLevelFlags flags,
-  const char *msg)
+void Log::glib_log_handler(
+  const char *domain, GLogLevelFlags flags, const char *msg)
 {
   if (!msg)
     return;
@@ -275,8 +274,8 @@ void Log::glib_log_handler(const char *domain, GLogLevelFlags flags,
   g_free(text);
 }
 
-void Log::log_pref_change(const char *name, PurplePrefType /*type*/,
-    gconstpointer /*val*/)
+void Log::log_pref_change(
+  const char *name, PurplePrefType /*type*/, gconstpointer /*val*/)
 {
   // log/* preference changed
   updateCachedPreference(name);
@@ -289,12 +288,12 @@ void Log::updateCachedPreference(const char *name)
 
     if (logfile_enabled && !logfile) {
       char *filename = g_build_filename(purple_user_dir(),
-          purple_prefs_get_string(CONF_PREFIX "/log/filename"), NULL);
+        purple_prefs_get_string(CONF_PREFIX "/log/filename"), NULL);
       GError *err = NULL;
 
       if (!(logfile = g_io_channel_new_file(filename, "a", &err))) {
         error(_("centerim/log: Error opening logfile '%s' (%s)."), filename,
-            err->message);
+          err->message);
         g_clear_error(&err);
       }
       g_free(filename);
@@ -359,10 +358,10 @@ void Log::writeToFile(const char *text)
 
   // write text into logfile
   if (logfile) {
-    if (g_io_channel_write_chars(logfile, text, -1, NULL, &err)
-        != G_IO_STATUS_NORMAL) {
-      writeErrorToWindow(_("centerim/log: Error writing to logfile (%s)."),
-          err->message);
+    if (g_io_channel_write_chars(logfile, text, -1, NULL, &err) !=
+      G_IO_STATUS_NORMAL) {
+      writeErrorToWindow(
+        _("centerim/log: Error writing to logfile (%s)."), err->message);
       g_clear_error(&err);
     }
     else {
@@ -375,8 +374,8 @@ void Log::writeToFile(const char *text)
     }
 
     if (g_io_channel_flush(logfile, &err) != G_IO_STATUS_NORMAL) {
-      writeErrorToWindow(_("centerim/log: Error flushing logfile (%s)."),
-          err->message);
+      writeErrorToWindow(
+        _("centerim/log: Error flushing logfile (%s)."), err->message);
       g_clear_error(&err);
     }
   }
@@ -386,7 +385,7 @@ void Log::outputBufferMessages()
 {
   // output all buffered messages to stderr
   for (LogBufferItems::iterator i = log_items.begin(); i != log_items.end();
-      i++) {
+       i++) {
     LogBufferItem *item = *i;
 
     // determine if this message should be displayed
@@ -412,22 +411,22 @@ void Log::outputBufferMessages()
 Log::Level Log::convertPurpleDebugLevel(PurpleDebugLevel purplelevel)
 {
   switch (purplelevel) {
-    case PURPLE_DEBUG_MISC:
-      return LEVEL_DEBUG;
-    case PURPLE_DEBUG_INFO:
-      return LEVEL_INFO;
-    case PURPLE_DEBUG_WARNING:
-      return LEVEL_WARNING;
-    case PURPLE_DEBUG_ERROR:
-      return LEVEL_CRITICAL;
-    case PURPLE_DEBUG_FATAL:
-      return LEVEL_ERROR;
-    case PURPLE_DEBUG_ALL:
-      return LEVEL_ERROR; // use error level so this message is always printed
+  case PURPLE_DEBUG_MISC:
+    return LEVEL_DEBUG;
+  case PURPLE_DEBUG_INFO:
+    return LEVEL_INFO;
+  case PURPLE_DEBUG_WARNING:
+    return LEVEL_WARNING;
+  case PURPLE_DEBUG_ERROR:
+    return LEVEL_CRITICAL;
+  case PURPLE_DEBUG_FATAL:
+    return LEVEL_ERROR;
+  case PURPLE_DEBUG_ALL:
+    return LEVEL_ERROR; // use error level so this message is always printed
   }
 
-  warning(_("centerim/log: Unknown libpurple logging level '%d'."),
-      purplelevel);
+  warning(
+    _("centerim/log: Unknown libpurple logging level '%d'."), purplelevel);
   return LEVEL_DEBUG;
 }
 
@@ -472,15 +471,15 @@ Log::Level Log::stringToLevel(const char *slevel)
 Log::Level Log::getLogLevel(Type type)
 {
   switch (type) {
-    case TYPE_CIM:
-      return log_level_cim;
-    case TYPE_GLIB:
-      return log_level_glib;
-    case TYPE_PURPLE:
-      return log_level_purple;
-    default:
-      g_assert_not_reached();
+  case TYPE_CIM:
+    return log_level_cim;
+  case TYPE_GLIB:
+    return log_level_glib;
+  case TYPE_PURPLE:
+    return log_level_purple;
+  default:
+    g_assert_not_reached();
   }
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

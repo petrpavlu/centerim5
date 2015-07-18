@@ -32,12 +32,9 @@
 #include "ColorScheme.h"
 #include "ColorPickerPalette.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class ColorPickerDialog
-: public AbstractDialog
-{
+class ColorPickerDialog : public AbstractDialog {
 public:
   ColorPickerDialog(const char *title, int default_color, int flags);
   virtual ~ColorPickerDialog() {}
@@ -63,4 +60,4 @@ private:
 
 #endif // __COLORPICKERDIALOG_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

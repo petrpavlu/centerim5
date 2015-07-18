@@ -30,24 +30,21 @@
 
 #include <cstring>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-Label::Label(int w, int h, const char *text_)
-: Widget(w, h), text(NULL)
+Label::Label(int w, int h, const char *text_) : Widget(w, h), text(NULL)
 {
   setText(text_);
 }
 
-Label::Label(const char *text_)
-: Widget(AUTOSIZE, AUTOSIZE), text(NULL)
+Label::Label(const char *text_) : Widget(AUTOSIZE, AUTOSIZE), text(NULL)
 {
   setText(text_);
 }
 
 Label::~Label()
 {
-  delete [] text;
+  delete[] text;
 }
 
 void Label::draw(Curses::ViewPort area)
@@ -75,7 +72,7 @@ void Label::draw(Curses::ViewPort area)
 
 void Label::setText(const char *new_text)
 {
-  delete [] text;
+  delete[] text;
 
   size_t size = 1;
   if (new_text)
@@ -98,4 +95,4 @@ void Label::setText(const char *new_text)
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

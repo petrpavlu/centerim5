@@ -31,28 +31,27 @@
 #include "Container.h"
 #include "Panel.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class Window
-: public Container
-{
+class Window : public Container {
 public:
   enum Type {
     TYPE_NON_FOCUSABLE,
     TYPE_NORMAL,
-    TYPE_TOP
+    TYPE_TOP,
   };
 
-  Window(int x, int y, int w, int h, Type t = TYPE_NORMAL,
-      bool decorated_ = true);
+  Window(
+    int x, int y, int w, int h, Type t = TYPE_NORMAL, bool decorated_ = true);
   Window(int x, int y, int w, int h, const char *title, Type t = TYPE_NORMAL,
-      bool decorated_ = true);
+    bool decorated_ = true);
   virtual ~Window();
 
   // Widget
   virtual void moveResizeRect(const Rect &rect)
-    { moveResize(rect.x, rect.y, rect.width, rect.height); }
+  {
+    moveResize(rect.x, rect.y, rect.width, rect.height);
+  }
   virtual void draw(Curses::ViewPort area);
   virtual void setVisibility(bool visible);
   virtual bool isVisibleRecursive() const { return isVisible(); }
@@ -67,10 +66,10 @@ public:
   virtual void hide();
   virtual void close();
 
-  //virtual void SetType(Type t) { type = t; }
+  // virtual void SetType(Type t) { type = t; }
   virtual Type getType() { return type; }
 
-  //virtual void setDecorated(bool new_decorated);
+  // virtual void setDecorated(bool new_decorated);
   virtual bool isDecorated() const { return decorated; }
 
   virtual void setClosable(bool new_closable);
@@ -125,4 +124,4 @@ private:
 
 #endif // __WINDOW_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

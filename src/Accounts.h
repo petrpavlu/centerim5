@@ -28,8 +28,7 @@
 
 #define ACCOUNTS (Accounts::instance())
 
-class Accounts
-{
+class Accounts {
 public:
   static Accounts *instance();
 
@@ -41,51 +40,43 @@ public:
   sigc::signal<void, Accounts &, size_t> signal_request_count_change;
 
 protected:
-
 private:
-  struct Request
-  {
+  struct Request {
     PurpleAccount *account;
     char *remote_user;
     char *id;
     char *alias;
 
-    Request(PurpleAccount *account_, const char *remote_user_,
-        const char *id_, const char *alias_);
+    Request(PurpleAccount *account_, const char *remote_user_, const char *id_,
+      const char *alias_);
     virtual ~Request();
 
   private:
     CONSUI_DISABLE_COPY(Request);
   };
 
-  struct AddRequest
-  : public Request
-  {
+  struct AddRequest : public Request {
     AddRequest(PurpleAccount *account_, const char *remote_user_,
-        const char *id_, const char *alias_);
+      const char *id_, const char *alias_);
     virtual ~AddRequest() {}
   };
 
-  struct AuthRequest
-  : public Request
-  {
+  struct AuthRequest : public Request {
     char *message;
     PurpleAccountRequestAuthorizationCb auth_cb;
     PurpleAccountRequestAuthorizationCb deny_cb;
     void *data;
 
     AuthRequest(PurpleAccount *account_, const char *remote_user_,
-        const char *id_, const char *alias_, const char *message_,
-        bool on_list_, PurpleAccountRequestAuthorizationCb auth_cb_,
-        PurpleAccountRequestAuthorizationCb deny_cb_, void *data_);
+      const char *id_, const char *alias_, const char *message_, bool on_list_,
+      PurpleAccountRequestAuthorizationCb auth_cb_,
+      PurpleAccountRequestAuthorizationCb deny_cb_, void *data_);
     virtual ~AuthRequest();
   };
 
   typedef std::vector<Request *> Requests;
 
-  class PendingRequestWindow
-  : public CppConsUI::SplitDialog
-  {
+  class PendingRequestWindow : public CppConsUI::SplitDialog {
   public:
     PendingRequestWindow(Accounts &accounts_, const Requests &requests);
     virtual ~PendingRequestWindow() {}
@@ -99,12 +90,10 @@ private:
     void removeRequest(const Request &request);
 
   protected:
-    class RequestDialog
-    : public CppConsUI::AbstractDialog
-    {
+    class RequestDialog : public CppConsUI::AbstractDialog {
     public:
-      RequestDialog(const Request &request_, const char *title,
-          const char *text);
+      RequestDialog(
+        const Request &request_, const char *title, const char *text);
       virtual ~RequestDialog() {}
 
       const Request *getRequest() const { return request; }
@@ -158,35 +147,45 @@ private:
   void onPendingRequestWindowClose(CppConsUI::Window &activator);
 
   static void notify_added_(PurpleAccount *account, const char *remote_user,
-      const char *id, const char *alias, const char *message)
-    { ACCOUNTS->notify_added(account, remote_user, id, alias, message); }
+    const char *id, const char *alias, const char *message)
+  {
+    ACCOUNTS->notify_added(account, remote_user, id, alias, message);
+  }
   static void status_changed_(PurpleAccount *account, PurpleStatus *status)
-    { ACCOUNTS->status_changed(account, status); }
+  {
+    ACCOUNTS->status_changed(account, status);
+  }
   static void request_add_(PurpleAccount *account, const char *remote_user,
-      const char *id, const char *alias, const char *message)
-    { ACCOUNTS->request_add(account, remote_user, id, alias, message); }
+    const char *id, const char *alias, const char *message)
+  {
+    ACCOUNTS->request_add(account, remote_user, id, alias, message);
+  }
   static void *request_authorize_(PurpleAccount *account,
-      const char *remote_user, const char *id, const char *alias,
-      const char *message, gboolean on_list,
-      PurpleAccountRequestAuthorizationCb authorize_cb,
-      PurpleAccountRequestAuthorizationCb deny_cb, void *user_data)
-    { return ACCOUNTS->request_authorize(account, remote_user, id, alias,
-        message, on_list, authorize_cb, deny_cb, user_data); }
+    const char *remote_user, const char *id, const char *alias,
+    const char *message, gboolean on_list,
+    PurpleAccountRequestAuthorizationCb authorize_cb,
+    PurpleAccountRequestAuthorizationCb deny_cb, void *user_data)
+  {
+    return ACCOUNTS->request_authorize(account, remote_user, id, alias, message,
+      on_list, authorize_cb, deny_cb, user_data);
+  }
   static void close_account_request_(void *ui_handle)
-    { ACCOUNTS->close_account_request(ui_handle); }
+  {
+    ACCOUNTS->close_account_request(ui_handle);
+  }
 
   void notify_added(PurpleAccount *account, const char *remote_user,
-      const char *id, const char *alias, const char *message);
+    const char *id, const char *alias, const char *message);
   void status_changed(PurpleAccount *account, PurpleStatus *status);
   void request_add(PurpleAccount *account, const char *remote_user,
-      const char *id, const char *alias, const char *message);
+    const char *id, const char *alias, const char *message);
   void *request_authorize(PurpleAccount *account, const char *remote_user,
-      const char *id, const char *alias, const char *message,
-      gboolean on_list, PurpleAccountRequestAuthorizationCb authorize_cb,
-      PurpleAccountRequestAuthorizationCb deny_cb, void *user_data);
+    const char *id, const char *alias, const char *message, gboolean on_list,
+    PurpleAccountRequestAuthorizationCb authorize_cb,
+    PurpleAccountRequestAuthorizationCb deny_cb, void *user_data);
   void close_account_request(void *ui_handle);
 };
 
 #endif // __ACCOUNTS_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

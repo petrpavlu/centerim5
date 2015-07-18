@@ -32,15 +32,14 @@
 #include <cstring>
 #include "gettext.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-bool KeyConfig::bindKey(const char *context, const char *action,
-    const char *key)
+bool KeyConfig::bindKey(
+  const char *context, const char *action, const char *key)
 {
   TermKeyKey tkey;
-  const char *res = termkey_strpkey(COREMANAGER->getTermKeyHandle(), key,
-      &tkey, TERMKEY_FORMAT_LONGMOD);
+  const char *res = termkey_strpkey(
+    COREMANAGER->getTermKeyHandle(), key, &tkey, TERMKEY_FORMAT_LONGMOD);
   if (!res || res[0])
     return false;
 
@@ -49,7 +48,7 @@ bool KeyConfig::bindKey(const char *context, const char *action,
 }
 
 const KeyConfig::KeyBindContext *KeyConfig::getKeyBinds(
-    const char *context) const
+  const char *context) const
 {
   KeyBinds::const_iterator i = binds.find(context);
   if (i == binds.end())
@@ -57,20 +56,19 @@ const KeyConfig::KeyBindContext *KeyConfig::getKeyBinds(
   return &i->second;
 }
 
-const char *KeyConfig::getKeyBind(const char *context,
-    const char *action) const
+const char *KeyConfig::getKeyBind(const char *context, const char *action) const
 {
   KeyBinds::const_iterator i = binds.find(context);
   if (i == binds.end())
     return NULL;
 
   for (KeyBindContext::const_iterator j = i->second.begin();
-      j != i->second.end(); j++)
+       j != i->second.end(); j++)
     if (!j->second.compare(action)) {
       TermKeyKey key = j->first;
       static char out[256];
       termkey_strfkey(COREMANAGER->getTermKeyHandle(), out, sizeof(out), &key,
-          TERMKEY_FORMAT_CARETCTRL);
+        TERMKEY_FORMAT_CARETCTRL);
       return out;
     }
 
@@ -81,8 +79,8 @@ char *KeyConfig::termKeyToString(const TermKeyKey &key) const
 {
   TermKeyKey key_copy = key;
   char out[256];
-  termkey_strfkey(COREMANAGER->getTermKeyHandle(), out, sizeof(out),
-      &key_copy, TERMKEY_FORMAT_LONGMOD);
+  termkey_strfkey(COREMANAGER->getTermKeyHandle(), out, sizeof(out), &key_copy,
+    TERMKEY_FORMAT_LONGMOD);
 
   size_t size = std::strlen(out) + 1;
   char *res = new char[size];
@@ -92,8 +90,8 @@ char *KeyConfig::termKeyToString(const TermKeyKey &key) const
 
 bool KeyConfig::stringToTermKey(const char *key, TermKeyKey *termkey) const
 {
-  const char *res = termkey_strpkey(COREMANAGER->getTermKeyHandle(), key,
-      termkey, TERMKEY_FORMAT_LONGMOD);
+  const char *res = termkey_strpkey(
+    COREMANAGER->getTermKeyHandle(), key, termkey, TERMKEY_FORMAT_LONGMOD);
   return res && !res[0];
 }
 
@@ -154,4 +152,4 @@ void KeyConfig::loadDefaultKeyConfig()
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

@@ -38,18 +38,15 @@
 #include "ListBox.h"
 #include "Window.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class AbstractDialog
-: public Window
-{
+class AbstractDialog : public Window {
 public:
   enum ResponseType {
     RESPONSE_OK,
     RESPONSE_CANCEL, ///< Cancel button or close dialog.
     RESPONSE_YES,
-    RESPONSE_NO
+    RESPONSE_NO,
   };
 
   AbstractDialog(int x, int y, int w, int h, const char *title = NULL);
@@ -70,8 +67,7 @@ protected:
 
   virtual void initLayout();
   virtual void emitResponse(ResponseType response) = 0;
-  virtual void onButtonResponse(Button &activator,
-      ResponseType response_type);
+  virtual void onButtonResponse(Button &activator, ResponseType response_type);
 
 private:
   CONSUI_DISABLE_COPY(AbstractDialog);
@@ -81,4 +77,4 @@ private:
 
 #endif // __ABSTRACTDIALOG_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

@@ -27,14 +27,12 @@
 
 #include "AbstractLine.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-AbstractLine::AbstractLine(int w, int h)
-: Widget(w, h)
+AbstractLine::AbstractLine(int w, int h) : Widget(w, h)
 {
 }
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

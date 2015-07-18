@@ -28,11 +28,9 @@
 
 #include "VerticalLine.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-VerticalLine::VerticalLine(int h)
-: AbstractLine(1, h)
+VerticalLine::VerticalLine(int h) : AbstractLine(1, h)
 {
 }
 
@@ -50,4 +48,4 @@ void VerticalLine::draw(Curses::ViewPort area)
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

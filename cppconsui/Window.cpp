@@ -31,18 +31,17 @@
 
 #include <algorithm>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 Window::Window(int x, int y, int w, int h, Type t, bool decorated_)
-: Container(w, h), type(t), decorated(decorated_), closable(true)
+  : Container(w, h), type(t), decorated(decorated_), closable(true)
 {
   initWindow(x, y, NULL);
 }
 
-Window::Window(int x, int y, int w, int h, const char *title, Type t,
-    bool decorated_)
-: Container(w, h), type(t), decorated(decorated_), closable(true)
+Window::Window(
+  int x, int y, int w, int h, const char *title, Type t, bool decorated_)
+  : Container(w, h), type(t), decorated(decorated_), closable(true)
 {
   initWindow(x, y, title);
 }
@@ -188,10 +187,9 @@ void Window::actionClose()
 void Window::declareBindables()
 {
   declareBindable("window", "close-window",
-      sigc::mem_fun(this, &Window::actionClose),
-      InputProcessor::BINDABLE_NORMAL);
+    sigc::mem_fun(this, &Window::actionClose), InputProcessor::BINDABLE_NORMAL);
 }
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

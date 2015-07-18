@@ -95,8 +95,7 @@ void Conversations::setExpandedConversations(bool expanded)
 }
 
 Conversations::Conversations()
-: Window(0, 0, 80, 1, TYPE_NON_FOCUSABLE, false)
-, active(-1)
+  : Window(0, 0, 80, 1, TYPE_NON_FOCUSABLE, false), active(-1)
 {
   setColorScheme("conversation");
 
@@ -120,13 +119,13 @@ Conversations::Conversations()
   // send_typing caching
   send_typing = purple_prefs_get_bool("/purple/conversations/im/send_typing");
   purple_prefs_connect_callback(this, "/purple/conversations/im/send_typing",
-      send_typing_pref_change_, this);
+    send_typing_pref_change_, this);
 
   memset(&centerim_conv_ui_ops, 0, sizeof(centerim_conv_ui_ops));
   centerim_conv_ui_ops.create_conversation = create_conversation_;
   centerim_conv_ui_ops.destroy_conversation = destroy_conversation_;
-  //centerim_conv_ui_ops.write_chat = ;
-  //centerim_conv_ui_ops.write_im = ;
+  // centerim_conv_ui_ops.write_chat = ;
+  // centerim_conv_ui_ops.write_im = ;
   centerim_conv_ui_ops.write_conv = write_conv_;
   centerim_conv_ui_ops.chat_add_users = chat_add_users_;
   centerim_conv_ui_ops.chat_rename_user = chat_rename_user_;
@@ -134,20 +133,20 @@ Conversations::Conversations()
   centerim_conv_ui_ops.chat_update_user = chat_update_user_;
 
   centerim_conv_ui_ops.present = present_;
-  //centerim_conv_ui_ops.has_focus = ;
-  //centerim_conv_ui_ops.custom_smiley_add = ;
-  //centerim_conv_ui_ops.custom_smiley_write = ;
-  //centerim_conv_ui_ops.custom_smiley_close = ;
-  //centerim_conv_ui_ops.send_confirm = ;
+  // centerim_conv_ui_ops.has_focus = ;
+  // centerim_conv_ui_ops.custom_smiley_add = ;
+  // centerim_conv_ui_ops.custom_smiley_write = ;
+  // centerim_conv_ui_ops.custom_smiley_close = ;
+  // centerim_conv_ui_ops.send_confirm = ;
 
   // setup the callbacks for conversations
   purple_conversations_set_ui_ops(&centerim_conv_ui_ops);
 
   void *handle = purple_conversations_get_handle();
-  purple_signal_connect(handle, "buddy-typing", this,
-      PURPLE_CALLBACK(buddy_typing_), this);
-  purple_signal_connect(handle, "buddy-typing-stopped", this,
-      PURPLE_CALLBACK(buddy_typing_), this);
+  purple_signal_connect(
+    handle, "buddy-typing", this, PURPLE_CALLBACK(buddy_typing_), this);
+  purple_signal_connect(
+    handle, "buddy-typing-stopped", this, PURPLE_CALLBACK(buddy_typing_), this);
 
   onScreenResized();
 }
@@ -156,7 +155,8 @@ Conversations::~Conversations()
 {
   // close all opened conversations
   while (conversations.size())
-    purple_conversation_destroy(conversations.front().conv->getPurpleConversation());
+    purple_conversation_destroy(
+      conversations.front().conv->getPurpleConversation());
 
   purple_conversations_set_ui_ops(NULL);
   purple_prefs_disconnect_by_handle(this);
@@ -254,9 +254,10 @@ void Conversations::updateLabel(int i)
   g_assert(i >= 0);
   g_assert(i < static_cast<int>(conversations.size()));
 
-  char *name = g_strdup_printf(" %d|%s%c", i + 1,
-      purple_conversation_get_title(conversations[i].conv->getPurpleConversation()),
-      conversations[i].typing_status);
+  char *name = g_strdup_printf(
+    " %d|%s%c", i + 1, purple_conversation_get_title(
+                         conversations[i].conv->getPurpleConversation()),
+    conversations[i].typing_status);
   conversations[i].label->setText(name);
   g_free(name);
 }
@@ -283,7 +284,7 @@ void Conversations::create_conversation(PurpleConversation *conv)
 
   Conversation *conversation = new Conversation(conv);
 
-  conv->ui_data = static_cast<void*>(conversation);
+  conv->ui_data = static_cast<void *>(conversation);
 
   ConvChild c;
   c.conv = conversation;
@@ -334,8 +335,8 @@ void Conversations::destroy_conversation(PurpleConversation *conv)
 }
 
 void Conversations::write_conv(PurpleConversation *conv, const char *name,
-    const char *alias, const char *message, PurpleMessageFlags flags,
-    time_t mtime)
+  const char *alias, const char *message, PurpleMessageFlags flags,
+  time_t mtime)
 {
   g_return_if_fail(conv);
 
@@ -352,14 +353,14 @@ void Conversations::write_conv(PurpleConversation *conv, const char *name,
   conversations[i].conv->write(name, alias, message, flags, mtime);
 }
 
-ConversationRoomList * Conversations::getRoomList(PurpleConversation *conv)
+ConversationRoomList *Conversations::getRoomList(PurpleConversation *conv)
 {
   ConversationRoomList *ret = NULL;
 
-  if(NULL != conv) {
-    Conversation *conversation = static_cast<Conversation*>(conv->ui_data);
-    if(NULL != conversation) {
-      if(conversation->getRoomList()) {
+  if (NULL != conv) {
+    Conversation *conversation = static_cast<Conversation *>(conv->ui_data);
+    if (NULL != conversation) {
+      if (conversation->getRoomList()) {
         ret = conversation->getRoomList();
       }
     }
@@ -368,33 +369,33 @@ ConversationRoomList * Conversations::getRoomList(PurpleConversation *conv)
   return ret;
 }
 
-void Conversations::chat_add_users(PurpleConversation *conv, GList *cbuddies,
-    gboolean new_arrivals)
+void Conversations::chat_add_users(
+  PurpleConversation *conv, GList *cbuddies, gboolean new_arrivals)
 {
   ConversationRoomList *room_list = getRoomList(conv);
-  if(room_list)
+  if (room_list)
     room_list->add_users(cbuddies, new_arrivals);
 }
 
-void Conversations::chat_rename_user(PurpleConversation *conv, const char *old_name,
-  const char *new_name, const char *new_alias)
+void Conversations::chat_rename_user(PurpleConversation *conv,
+  const char *old_name, const char *new_name, const char *new_alias)
 {
   ConversationRoomList *room_list = getRoomList(conv);
-  if(room_list)
+  if (room_list)
     room_list->rename_user(old_name, new_name, new_alias);
 }
 
 void Conversations::chat_remove_users(PurpleConversation *conv, GList *users)
 {
   ConversationRoomList *room_list = getRoomList(conv);
-  if(room_list)
+  if (room_list)
     room_list->remove_users(users);
 }
 
 void Conversations::chat_update_user(PurpleConversation *conv, const char *user)
 {
   ConversationRoomList *room_list = getRoomList(conv);
-  if(room_list)
+  if (room_list)
     room_list->update_user(user);
 }
 
@@ -413,8 +414,8 @@ void Conversations::present(PurpleConversation *conv)
 
 void Conversations::buddy_typing(PurpleAccount *account, const char *who)
 {
-  PurpleConversation *conv = purple_find_conversation_with_account(
-      PURPLE_CONV_TYPE_IM, who, account);
+  PurpleConversation *conv =
+    purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, who, account);
   if (!conv)
     return;
 
@@ -434,11 +435,11 @@ void Conversations::buddy_typing(PurpleAccount *account, const char *who)
   updateLabel(i);
 }
 
-void Conversations::send_typing_pref_change(const char *name,
-    PurplePrefType /*type*/, gconstpointer /*val*/)
+void Conversations::send_typing_pref_change(
+  const char *name, PurplePrefType /*type*/, gconstpointer /*val*/)
 {
   g_assert(!strcmp(name, "/purple/conversations/im/send_typing"));
   send_typing = purple_prefs_get_bool(name);
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

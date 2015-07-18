@@ -27,19 +27,14 @@
 
 #include "tree.hh"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class TreeView
-: public Container
-{
+class TreeView : public Container {
 protected:
   class TreeNode;
 
 public:
-  class ToggleCollapseButton
-  : public Button
-  {
+  class ToggleCollapseButton : public Button {
   public:
     ToggleCollapseButton(int w, int h, const char *text_ = NULL);
     explicit ToggleCollapseButton(const char *text_ = NULL);
@@ -49,7 +44,6 @@ public:
     virtual void setParent(Container &parent);
 
   protected:
-
   private:
     CONSUI_DISABLE_COPY(ToggleCollapseButton);
   };
@@ -59,7 +53,7 @@ public:
    */
   enum Style {
     STYLE_NORMAL, ///< Draw "[+]" if the node is collapsed.
-    STYLE_VOID ///< Don't draw any extra information.
+    STYLE_VOID,   ///< Don't draw any extra information.
   };
 
   typedef tree<TreeNode> TheTree;
@@ -78,12 +72,12 @@ public:
   virtual void clear();
   virtual bool isWidgetVisible(const Widget &widget) const;
   virtual bool setFocusChild(Widget &child);
-  virtual void getFocusChain(FocusChain &focus_chain,
-      FocusChain::iterator parent);
-  virtual void onChildMoveResize(Widget &activator, const Rect &oldsize,
-      const Rect &newsize);
-  virtual void onChildWishSizeChange(Widget &activator, const Size &oldsize,
-      const Size &newsize);
+  virtual void getFocusChain(
+    FocusChain &focus_chain, FocusChain::iterator parent);
+  virtual void onChildMoveResize(
+    Widget &activator, const Rect &oldsize, const Rect &newsize);
+  virtual void onChildWishSizeChange(
+    Widget &activator, const Size &oldsize, const Size &newsize);
   virtual void onChildVisible(Widget &activator, bool visible);
 
   /**
@@ -108,14 +102,12 @@ public:
    * Inserts a widget before a specified position. TreeView takes ownership of
    * the widget.
    */
-  virtual NodeReference insertNode(NodeReference position,
-      Widget &widget);
+  virtual NodeReference insertNode(NodeReference position, Widget &widget);
   /**
    * Inserts a widget after a specified position. TreeView takes ownership of
    * the widget.
    */
-  virtual NodeReference insertNodeAfter(NodeReference position,
-      Widget &widget);
+  virtual NodeReference insertNodeAfter(NodeReference position, Widget &widget);
   /**
    * Prepends a widget to a specified parent. TreeView takes ownership of the
    * widget.
@@ -165,12 +157,11 @@ public:
   virtual Style getNodeStyle(NodeReference node) const;
 
 protected:
-  class TreeNode
-  {
-  /* Note: If TreeNode is just protected/private and all its variables are
-   * public, then variables can be accessed from outside using NodeReference.
-   */
-  friend class TreeView;
+  class TreeNode {
+    /* Note: If TreeNode is just protected/private and all its variables are
+     * public, then variables can be accessed from outside using NodeReference.
+     */
+    friend class TreeView;
 
   public:
     TreeView *getTreeView() const { return treeview; }
@@ -179,7 +170,6 @@ protected:
     Widget *getWidget() const { return widget; }
 
   protected:
-
   private:
     /**
      * Pointer to TreeView this node belongs to.
@@ -226,8 +216,8 @@ protected:
   virtual bool isNodeOpenable(SiblingIterator &node) const;
   virtual bool isNodeVisible(NodeReference &node) const;
 
-  virtual int repositionChildren(SiblingIterator node, int top,
-      bool in_visibility);
+  virtual int repositionChildren(
+    SiblingIterator node, int top, bool in_visibility);
 
 private:
   CONSUI_DISABLE_COPY(TreeView);
@@ -242,4 +232,4 @@ private:
 
 #endif // __TREEVIEW_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

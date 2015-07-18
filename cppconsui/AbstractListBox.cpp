@@ -28,16 +28,14 @@
 
 #include "AbstractListBox.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-AbstractListBox::AbstractListBox(int w, int h)
-: Container(w, h)
+AbstractListBox::AbstractListBox(int w, int h) : Container(w, h)
 {
 }
 
-Button *AbstractListBox::insertItem(size_t pos, const char *title,
-    const sigc::slot<void, Button &> &callback)
+Button *AbstractListBox::insertItem(
+  size_t pos, const char *title, const sigc::slot<void, Button &> &callback)
 {
   Button *b = new Button(Curses::onScreenWidth(title), 1, title);
   b->signal_activate.connect(callback);
@@ -45,8 +43,8 @@ Button *AbstractListBox::insertItem(size_t pos, const char *title,
   return b;
 }
 
-Button *AbstractListBox::appendItem(const char *title,
-    const sigc::slot<void, Button &> &callback)
+Button *AbstractListBox::appendItem(
+  const char *title, const sigc::slot<void, Button &> &callback)
 {
   Button *b = new Button(Curses::onScreenWidth(title), 1, title);
   b->signal_activate.connect(callback);
@@ -56,4 +54,4 @@ Button *AbstractListBox::appendItem(const char *title,
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

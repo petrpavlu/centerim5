@@ -3,11 +3,9 @@
 #include <glib.h>
 // TODO Rewrite this code without use of GLib.
 
-namespace MainLoop
-{
+namespace MainLoop {
 
-struct IOClosureCppConsUI
-{
+struct IOClosureCppConsUI {
   CppConsUI::InputFunction function;
   guint result;
   gpointer data;
@@ -15,8 +13,7 @@ struct IOClosureCppConsUI
   IOClosureCppConsUI() : function(NULL), result(0), data(NULL) {}
 };
 
-struct SourceClosureCppConsUI
-{
+struct SourceClosureCppConsUI {
   CppConsUI::SourceFunction function;
   void *data;
 
@@ -26,14 +23,14 @@ struct SourceClosureCppConsUI
 GMainLoop *mainloop = NULL;
 
 static void log_func_glib(const gchar * /*log_domain*/,
-    GLogLevelFlags /*log_level*/, const gchar * /*message*/,
-    gpointer /*user_data*/)
+  GLogLevelFlags /*log_level*/, const gchar * /*message*/,
+  gpointer /*user_data*/)
 {
   // ignore all messages
 }
 
-static gboolean io_input_cppconsui(GIOChannel *source, GIOCondition condition,
-    gpointer data)
+static gboolean io_input_cppconsui(
+  GIOChannel *source, GIOCondition condition, gpointer data)
 {
   IOClosureCppConsUI *closure = static_cast<IOClosureCppConsUI *>(data);
   int cppconsui_cond = 0;
@@ -44,7 +41,7 @@ static gboolean io_input_cppconsui(GIOChannel *source, GIOCondition condition,
     cppconsui_cond |= CppConsUI::INPUT_CONDITION_WRITE;
 
   closure->function(g_io_channel_unix_get_fd(source),
-      static_cast<CppConsUI::InputCondition>(cppconsui_cond), closure->data);
+    static_cast<CppConsUI::InputCondition>(cppconsui_cond), closure->data);
 
   return TRUE;
 }
@@ -56,8 +53,7 @@ static void io_destroy_cppconsui(gpointer data)
 
 static gboolean timeout_function_cppconsui(gpointer data)
 {
-  SourceClosureCppConsUI *closure
-    = static_cast<SourceClosureCppConsUI *>(data);
+  SourceClosureCppConsUI *closure = static_cast<SourceClosureCppConsUI *>(data);
   return closure->function(closure->data);
 }
 
@@ -93,7 +89,7 @@ void finalize()
 }
 
 unsigned input_add_cppconsui(int fd, CppConsUI::InputCondition condition,
-    CppConsUI::InputFunction function, void *data)
+  CppConsUI::InputFunction function, void *data)
 {
   IOClosureCppConsUI *closure = new IOClosureCppConsUI;
   GIOChannel *channel;
@@ -109,22 +105,22 @@ unsigned input_add_cppconsui(int fd, CppConsUI::InputCondition condition,
 
   channel = g_io_channel_unix_new(fd);
   closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT,
-      static_cast<GIOCondition>(cond), io_input_cppconsui, closure,
-      io_destroy_cppconsui);
+    static_cast<GIOCondition>(cond), io_input_cppconsui, closure,
+    io_destroy_cppconsui);
 
   g_io_channel_unref(channel);
   return closure->result;
 }
 
-unsigned timeout_add_cppconsui(unsigned interval,
-    CppConsUI::SourceFunction function, void *data)
+unsigned timeout_add_cppconsui(
+  unsigned interval, CppConsUI::SourceFunction function, void *data)
 {
   SourceClosureCppConsUI *closure = new SourceClosureCppConsUI;
   closure->function = function;
   closure->data = data;
 
   return g_timeout_add_full(G_PRIORITY_DEFAULT, interval,
-      timeout_function_cppconsui, closure, timeout_destroy_cppconsui);
+    timeout_function_cppconsui, closure, timeout_destroy_cppconsui);
 }
 
 bool timeout_remove_cppconsui(unsigned handle)
@@ -139,4 +135,4 @@ bool input_remove_cppconsui(unsigned handle)
 
 } // namespace MainLoop
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

@@ -30,22 +30,18 @@
 
 #include "Widget.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 /**
  * Abstract class that defines common interface for VerticalLine and
  * HorizontalLine.
  */
-class AbstractLine
-: public Widget
-{
+class AbstractLine : public Widget {
 public:
   AbstractLine(int w, int h);
   virtual ~AbstractLine() {}
 
 protected:
-
 private:
   CONSUI_DISABLE_COPY(AbstractLine);
 };
@@ -54,4 +50,4 @@ private:
 
 #endif // __ABSTRACTLINE_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

@@ -28,32 +28,27 @@
 
 #include <map>
 
-class ConversationRoomList
-: public CppConsUI::ListBox
-{
+class ConversationRoomList : public CppConsUI::ListBox {
 public:
   ConversationRoomList(int w, int h, PurpleConversation *conv)
-      : CppConsUI::ListBox(w, h)
-      , conv_(conv)
-  {}
+    : CppConsUI::ListBox(w, h), conv_(conv)
+  {
+  }
   virtual ~ConversationRoomList() {}
 
   // Purple chatroom interfaces
   void add_users(GList *cbuddies, gboolean new_arrivals);
-  void rename_user(const char *old_name, const char *new_name,
-    const char *new_alias);
+  void rename_user(
+    const char *old_name, const char *new_name, const char *new_alias);
   void remove_users(GList *users);
   void update_user(const char *user);
 
 protected:
-
-  PurpleConversation * conv_;
+  PurpleConversation *conv_;
 
   // Represents a widget as well as pointer to libpurple data
-  class Buddy : public CppConsUI::Button
-  {
+  class Buddy : public CppConsUI::Button {
   public:
-
     Buddy(PurpleConvChatBuddy *pbuddy);
 
     virtual ~Buddy();
@@ -63,13 +58,13 @@ protected:
 
     // Use pbuddy info to generate button displayText
     // NOTE: returns newly allocated string, caller must free
-    char * displayText() const;
+    char *displayText() const;
 
     // Prefer alias if it exists, and fall back on name
-    const char * displayName() const;
+    const char *displayName() const;
 
     // TODO
-    //void onActivate(Button &);
+    // void onActivate(Button &);
 
     // Update purple buddy (for rename case)
     void setPurpleBuddy(PurpleConvChatBuddy *pbuddy);
@@ -83,7 +78,6 @@ protected:
     bool operator==(const Buddy &rhs);
 
   private:
-
     void readFlags(bool &is_op, bool &is_typing, bool &is_away) const;
 
     // NOTE: when remove_users op is called, this pointer is invalidated!
@@ -92,8 +86,8 @@ protected:
     // Force public constructor
     Buddy();
 
-    Buddy(const Buddy&);
-    Buddy& operator=(const Buddy&);
+    Buddy(const Buddy &);
+    Buddy &operator=(const Buddy &);
   };
 
   // Move buddy to sorted position
@@ -105,16 +99,14 @@ protected:
   // Otherwise could store "name" in Buddy and iterate through "children"
   // NOTE: turns out that ui_data is new in libpurple 2.9, so for previous
   // versions this map is required anyways... :/
-  std::map<std::string, Buddy*> buddy_map_;
-  typedef std::map<std::string, Buddy*>::iterator BuddyMapIter;
+  std::map<std::string, Buddy *> buddy_map_;
+  typedef std::map<std::string, Buddy *>::iterator BuddyMapIter;
 
 private:
-
-  ConversationRoomList(const ConversationRoomList&);
-  ConversationRoomList& operator=(const ConversationRoomList&);
-
+  ConversationRoomList(const ConversationRoomList &);
+  ConversationRoomList &operator=(const ConversationRoomList &);
 };
 
 #endif
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

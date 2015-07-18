@@ -32,21 +32,17 @@
 
 #include <deque>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class TextEdit
-: public Widget
-{
+class TextEdit : public Widget {
 public:
   enum Flag {
     FLAG_NUMERIC = 1 << 0,
-    FLAG_NOSPACE = 1 << 1
+    FLAG_NOSPACE = 1 << 1,
   };
 
   TextEdit(int w, int h, const char *text_ = NULL, int flags_ = 0,
-      bool single_line = false, bool accept_tabs_ = true,
-      bool masked_ = false);
+    bool single_line = false, bool accept_tabs_ = true, bool masked_ = false);
   virtual ~TextEdit();
 
   // InputProcessor
@@ -87,7 +83,7 @@ public:
 protected:
   enum Direction {
     DIR_BACK,
-    DIR_FORWARD
+    DIR_FORWARD,
   };
 
   enum CursorMovement {
@@ -100,16 +96,15 @@ protected:
     MOVE_PARAGRAPH_ENDS,
     MOVE_PAGES,
     MOVE_BUFFER_ENDS,
-    MOVE_HORIZONTAL_PAGES
+    MOVE_HORIZONTAL_PAGES,
   };
 
   enum DeleteType {
     DELETE_CHARS,
-    DELETE_WORD_ENDS
+    DELETE_WORD_ENDS,
   };
 
-  struct ScreenLine
-  {
+  struct ScreenLine {
     /**
      * Pointer to the start of line (points into buffer).
      */
@@ -124,12 +119,13 @@ protected:
     size_t length;
 
     ScreenLine(const char *start_, const char *end_, size_t length_)
-      : start(start_), end(end_), length(length_) {}
+      : start(start_), end(end_), length(length_)
+    {
+    }
     bool operator==(const ScreenLine &other) const;
   };
 
-  struct CmpScreenLineEnd
-  {
+  struct CmpScreenLineEnd {
     bool operator()(ScreenLine &sline, const char *tag);
   };
 
@@ -211,8 +207,8 @@ protected:
    */
   virtual int onScreenWidth(UTF8::UniChar uc, int w = 0) const;
 
-  virtual char *getScreenLine(const char *text, int max_width,
-      size_t *res_length) const;
+  virtual char *getScreenLine(
+    const char *text, int max_width, size_t *res_length) const;
   /**
    * Recalculates all screen lines.
    */
@@ -233,8 +229,7 @@ protected:
   /**
    * Inserts given text at the current cursor position.
    */
-  virtual void insertTextAtCursor(const char *new_text,
-      size_t new_text_bytes);
+  virtual void insertTextAtCursor(const char *new_text, size_t new_text_bytes);
   virtual void insertTextAtCursor(const char *new_text);
   virtual void deleteFromCursor(DeleteType type, Direction dir);
   virtual void moveCursor(CursorMovement step, Direction dir);
@@ -258,4 +253,4 @@ private:
 
 #endif // __TEXTEDIT_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

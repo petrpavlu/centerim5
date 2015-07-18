@@ -22,17 +22,15 @@
 #ifndef __TRANSFERS_H__
 #define __TRANSFERS_H__
 
-class Transfers
-{
+class Transfers {
 public:
   Transfers();
   ~Transfers();
 
 protected:
-
 private:
 };
 
 #endif // __TRANSFERS_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

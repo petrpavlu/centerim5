@@ -36,15 +36,12 @@
 #include <iconv.h>
 #include <deque>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 /**
  * This class implements a core part of CppConsUI.
  */
-class CoreManager
-: public InputProcessor
-{
+class CoreManager : public InputProcessor {
 public:
   void registerWindow(Window &window);
   void removeWindow(Window &window);
@@ -55,18 +52,16 @@ public:
   void disableResizing();
   void onScreenResized();
 
-  void setTopInputProcessor(InputProcessor &top)
-    { top_input_processor = &top; }
-  InputProcessor *getTopInputProcessor()
-    { return top_input_processor; }
+  void setTopInputProcessor(InputProcessor &top) { top_input_processor = &top; }
+  InputProcessor *getTopInputProcessor() { return top_input_processor; }
 
   void logError(const char *message);
   void redraw();
 
-  void onWindowMoveResize(Window &activator, const Rect &oldsize,
-      const Rect &newsize);
-  void onWindowWishSizeChange(Window &activator, const Size &oldsize,
-      const Size &newsize);
+  void onWindowMoveResize(
+    Window &activator, const Rect &oldsize, const Rect &newsize);
+  void onWindowWishSizeChange(
+    Window &activator, const Size &oldsize, const Size &newsize);
 
   TermKey *getTermKeyHandle() { return tk; };
 
@@ -74,7 +69,6 @@ public:
   sigc::signal<void> signal_top_window_change;
 
 protected:
-
 private:
   typedef std::deque<Window *> Windows;
 
@@ -112,13 +106,17 @@ private:
    * InputProcessor.
    */
   static void stdin_input_(int fd, InputCondition cond, void *data)
-    { static_cast<CoreManager *>(data)->stdin_input(fd, cond); }
+  {
+    static_cast<CoreManager *>(data)->stdin_input(fd, cond);
+  }
   void stdin_input(int fd, InputCondition cond);
   static bool stdin_input_timeout_(void *data);
   void stdin_input_timeout();
 
   static void resize_input_(int fd, InputCondition cond, void *data)
-    { static_cast<CoreManager *>(data)->resize_input(fd, cond); }
+  {
+    static_cast<CoreManager *>(data)->resize_input(fd, cond);
+  }
   void resize_input(int fd, InputCondition cond);
 
   int initInput();
@@ -145,4 +143,4 @@ private:
 
 #endif // __COREMANGER_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

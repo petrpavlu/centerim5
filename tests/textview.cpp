@@ -9,9 +9,7 @@
 #include <iostream>
 
 // TestWindow class
-class TestWindow
-: public CppConsUI::Window
-{
+class TestWindow : public CppConsUI::Window {
 public:
   TestWindow();
   virtual ~TestWindow() {}
@@ -25,8 +23,7 @@ private:
   CONSUI_DISABLE_COPY(TestWindow);
 };
 
-TestWindow::TestWindow()
-: CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
+TestWindow::TestWindow() : CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
   setClosable(false);
   setColorScheme("textviewwindow");
@@ -34,7 +31,8 @@ TestWindow::TestWindow()
   textview = new CppConsUI::TextView(AUTOSIZE, AUTOSIZE);
   addWidget(*textview, 0, 0);
 
-  const char *long_text = "Lorem ipsum dolor sit amet, consectetur"
+  const char *long_text =
+    "Lorem ipsum dolor sit amet, consectetur"
     "adipiscing elit. Duis dui dui, interdum eget tempor auctor, viverra"
     "suscipit velit. Phasellus vel magna odio. Duis rutrum tortor at nisi"
     "auctor tincidunt. Mauris libero neque, faucibus sit amet semper in, "
@@ -52,23 +50,23 @@ TestWindow::TestWindow()
     textview->append(long_text, i % 7 + 1);
 
   COLORSCHEME->setColorPair("textviewwindow", "textview", "color1",
-      CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::BLACK);
+    CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::BLACK);
   COLORSCHEME->setColorPair("textviewwindow", "textview", "color2",
-      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
+    CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
   COLORSCHEME->setColorPair("textviewwindow", "textview", "color3",
-      CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK);
+    CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK);
   COLORSCHEME->setColorPair("textviewwindow", "textview", "color4",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK);
+    CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK);
   COLORSCHEME->setColorPair("textviewwindow", "textview", "color5",
-      CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::BLACK);
+    CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::BLACK);
   COLORSCHEME->setColorPair("textviewwindow", "textview", "color6",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
   COLORSCHEME->setColorPair("textviewwindow", "textview", "color7",
-      CppConsUI::Curses::Color::WHITE, CppConsUI::Curses::Color::BLACK);
+    CppConsUI::Curses::Color::WHITE, CppConsUI::Curses::Color::BLACK);
 
-  declareBindable("textviewwindow", "toggle-scrollbar", sigc::mem_fun(this,
-        &TestWindow::actionToggleScrollbar),
-      InputProcessor::BINDABLE_NORMAL);
+  declareBindable("textviewwindow", "toggle-scrollbar",
+    sigc::mem_fun(this, &TestWindow::actionToggleScrollbar),
+    InputProcessor::BINDABLE_NORMAL);
 }
 
 void TestWindow::actionToggleScrollbar()
@@ -77,14 +75,11 @@ void TestWindow::actionToggleScrollbar()
 }
 
 // TestApp class
-class TestApp
-: public CppConsUI::InputProcessor
-{
+class TestApp : public CppConsUI::InputProcessor {
 public:
   static int run();
 
 protected:
-
 private:
   static TestApp *my_instance;
 
@@ -137,13 +132,9 @@ int TestApp::runAll()
   mainloop_initialized = true;
 
   // initialize CppConsUI
-  CppConsUI::AppInterface interface = {
-    MainLoop::timeout_add_cppconsui,
-    MainLoop::timeout_remove_cppconsui,
-    MainLoop::input_add_cppconsui,
-    MainLoop::input_remove_cppconsui,
-    log_error_cppconsui
-  };
+  CppConsUI::AppInterface interface = {MainLoop::timeout_add_cppconsui,
+    MainLoop::timeout_remove_cppconsui, MainLoop::input_add_cppconsui,
+    MainLoop::input_remove_cppconsui, log_error_cppconsui};
   int consui_res = CppConsUI::initializeConsUI(interface);
   if (consui_res) {
     std::cerr << "CppConsUI initialization failed." << std::endl;
@@ -153,7 +144,7 @@ int TestApp::runAll()
 
   // declare local bindables
   declareBindable("testapp", "quit", sigc::ptr_fun(MainLoop::quit),
-      InputProcessor::BINDABLE_OVERRIDE);
+    InputProcessor::BINDABLE_OVERRIDE);
 
   // create the main window
   win = new TestWindow;
@@ -192,4 +183,4 @@ int main()
   return TestApp::run();
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

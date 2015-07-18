@@ -9,8 +9,8 @@
 
 #include <iostream>
 
-static const char *pic[] =
-{
+// clang-format off
+static const char *pic[] = {
 " ______                                __          __         __   __                       ",
 "|      |.-----.-----.-----.----.---.-.|  |_.--.--.|  |.---.-.|  |_|__|.-----.-----.-----.   ",
 "|   ---||  _  |     |  _  |   _|  _  ||   _|  |  ||  ||  _  ||   _|  ||  _  |     |__ --|__ ",
@@ -26,12 +26,10 @@ static const char *pic[] =
 "|    |  ||  _  |        |  -__|__                                                           ",
 "|_______||___._|__|__|__|_____|__|                                                          "
 };
-
+// clang-format on
 
 // MyScrollPane class
-class MyScrollPane
-: public CppConsUI::ScrollPane
-{
+class MyScrollPane : public CppConsUI::ScrollPane {
 public:
   MyScrollPane(int w, int h, int scrollw, int scrollh);
   virtual ~MyScrollPane() {}
@@ -40,13 +38,12 @@ public:
   virtual void draw();
 
 protected:
-
 private:
   CONSUI_DISABLE_COPY(MyScrollPane);
 };
 
 MyScrollPane::MyScrollPane(int w, int h, int scrollw, int scrollh)
-: CppConsUI::ScrollPane(w, h, scrollw, scrollh)
+  : CppConsUI::ScrollPane(w, h, scrollw, scrollh)
 {
 }
 
@@ -61,17 +58,15 @@ void MyScrollPane::draw()
   area->fill(getColorPair("container", "background"));
 
   int real_height = area->getmaxy();
-  for (int i = 0; i < real_height && i < (int) (sizeof(pic) / sizeof(pic[0]));
-      i++)
+  for (int i = 0; i < real_height && i < (int)(sizeof(pic) / sizeof(pic[0]));
+       i++)
     area->mvaddstring(0, i, pic[i]);
 
   ScrollPane::drawEx(false);
 }
 
 // TestWindow class
-class TestWindow
-: public CppConsUI::Window
-{
+class TestWindow : public CppConsUI::Window {
 public:
   TestWindow();
   virtual ~TestWindow() {}
@@ -88,65 +83,60 @@ private:
   CONSUI_DISABLE_COPY(TestWindow);
 };
 
-TestWindow::TestWindow()
-: CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
+TestWindow::TestWindow() : CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
   setClosable(false);
 
   addWidget(*(new CppConsUI::Label(25, 1, "Press F10 to quit.")), 1, 1);
-  addWidget(*(new CppConsUI::Label(25, 1, "WASD to move the picture.")),
-      1, 2);
+  addWidget(*(new CppConsUI::Label(25, 1, "WASD to move the picture.")), 1, 2);
 
   pane = new MyScrollPane(20, 10, 111, 23);
   addWidget(*pane, 1, 4);
 
   declareBindable("scrollpanewindow", "scroll-up",
-      sigc::mem_fun(this, &TestWindow::actionScrollUp),
-      InputProcessor::BINDABLE_NORMAL);
+    sigc::mem_fun(this, &TestWindow::actionScrollUp),
+    InputProcessor::BINDABLE_NORMAL);
   declareBindable("scrollpanewindow", "scroll-down",
-      sigc::mem_fun(this, &TestWindow::actionScrollDown),
-      InputProcessor::BINDABLE_NORMAL);
+    sigc::mem_fun(this, &TestWindow::actionScrollDown),
+    InputProcessor::BINDABLE_NORMAL);
   declareBindable("scrollpanewindow", "scroll-left",
-      sigc::mem_fun(this, &TestWindow::actionScrollLeft),
-      InputProcessor::BINDABLE_NORMAL);
+    sigc::mem_fun(this, &TestWindow::actionScrollLeft),
+    InputProcessor::BINDABLE_NORMAL);
   declareBindable("scrollpanewindow", "scroll-right",
-      sigc::mem_fun(this, &TestWindow::actionScrollRight),
-      InputProcessor::BINDABLE_NORMAL);
+    sigc::mem_fun(this, &TestWindow::actionScrollRight),
+    InputProcessor::BINDABLE_NORMAL);
 }
 
 void TestWindow::actionScrollUp()
 {
-  pane->adjustScroll(pane->getScrollPositionX(),
-      pane->getScrollPositionY() - 1);
+  pane->adjustScroll(
+    pane->getScrollPositionX(), pane->getScrollPositionY() - 1);
 }
 
 void TestWindow::actionScrollDown()
 {
-  pane->adjustScroll(pane->getScrollPositionX(),
-      pane->getScrollPositionY() + 1);
+  pane->adjustScroll(
+    pane->getScrollPositionX(), pane->getScrollPositionY() + 1);
 }
 
 void TestWindow::actionScrollLeft()
 {
-  pane->adjustScroll(pane->getScrollPositionX() - 1,
-      pane->getScrollPositionY());
+  pane->adjustScroll(
+    pane->getScrollPositionX() - 1, pane->getScrollPositionY());
 }
 
 void TestWindow::actionScrollRight()
 {
-  pane->adjustScroll(pane->getScrollPositionX() + 1,
-      pane->getScrollPositionY());
+  pane->adjustScroll(
+    pane->getScrollPositionX() + 1, pane->getScrollPositionY());
 }
 
 // TestApp class
-class TestApp
-: public CppConsUI::InputProcessor
-{
+class TestApp : public CppConsUI::InputProcessor {
 public:
   static int run();
 
 protected:
-
 private:
   static TestApp *my_instance;
 
@@ -199,13 +189,9 @@ int TestApp::runAll()
   mainloop_initialized = true;
 
   // initialize CppConsUI
-  CppConsUI::AppInterface interface = {
-    MainLoop::timeout_add_cppconsui,
-    MainLoop::timeout_remove_cppconsui,
-    MainLoop::input_add_cppconsui,
-    MainLoop::input_remove_cppconsui,
-    log_error_cppconsui
-  };
+  CppConsUI::AppInterface interface = {MainLoop::timeout_add_cppconsui,
+    MainLoop::timeout_remove_cppconsui, MainLoop::input_add_cppconsui,
+    MainLoop::input_remove_cppconsui, log_error_cppconsui};
   int consui_res = CppConsUI::initializeConsUI(interface);
   if (consui_res) {
     std::cerr << "CppConsUI initialization failed." << std::endl;
@@ -215,7 +201,7 @@ int TestApp::runAll()
 
   // declare local bindables
   declareBindable("testapp", "quit", sigc::ptr_fun(MainLoop::quit),
-      InputProcessor::BINDABLE_OVERRIDE);
+    InputProcessor::BINDABLE_OVERRIDE);
 
   // create the main window
   win = new TestWindow;
@@ -257,4 +243,4 @@ int main()
   return TestApp::run();
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

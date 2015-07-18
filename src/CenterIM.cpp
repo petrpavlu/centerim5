@@ -55,50 +55,46 @@ int main(int argc, char *argv[])
 }
 
 const char *CenterIM::named_colors[] = {
-  "default", /* -1 */
-  "black",   /*  0 */
-  "red",     /*  1 */
-  "green",   /*  2 */
-  "yellow",  /*  3 */
-  "blue",    /*  4 */
-  "magenta", /*  5 */
-  "cyan",    /*  6 */
-  "white"    /*  7 */
+  "default", // -1
+  "black",   //  0
+  "red",     //  1
+  "green",   //  2
+  "yellow",  //  3
+  "blue",    //  4
+  "magenta", //  5
+  "cyan",    //  6
+  "white",   //  7
 };
 
 CenterIM *CenterIM::my_instance = NULL;
 
 // based on glibmm code
-class SourceConnectionNode
-{
-  public:
-    explicit inline SourceConnectionNode(const sigc::slot_base &nslot);
+class SourceConnectionNode {
+public:
+  explicit inline SourceConnectionNode(const sigc::slot_base &nslot);
 
-    static void *notify(void *data);
-    static void destroy_notify_callback(void *data);
-    static gboolean source_callback(void *data);
+  static void *notify(void *data);
+  static void destroy_notify_callback(void *data);
+  static gboolean source_callback(void *data);
 
-    inline void install(GSource *nsource);
-    inline sigc::slot_base *get_slot();
+  inline void install(GSource *nsource);
+  inline sigc::slot_base *get_slot();
 
-  protected:
-
-  private:
-    sigc::slot_base slot;
-    GSource *source;
+protected:
+private:
+  sigc::slot_base slot;
+  GSource *source;
 };
 
-inline SourceConnectionNode::SourceConnectionNode(
-    const sigc::slot_base &nslot)
-: slot(nslot), source(0)
+inline SourceConnectionNode::SourceConnectionNode(const sigc::slot_base &nslot)
+  : slot(nslot), source(0)
 {
   slot.set_parent(this, &SourceConnectionNode::notify);
 }
 
 void *SourceConnectionNode::notify(void *data)
 {
-  SourceConnectionNode *self
-    = reinterpret_cast<SourceConnectionNode *>(data);
+  SourceConnectionNode *self = reinterpret_cast<SourceConnectionNode *>(data);
 
   /* If there is no object, this call was triggered from
    * destroy_notify_handler(), because we set self->source to 0 there. */
@@ -129,8 +125,8 @@ void SourceConnectionNode::destroy_notify_callback(void *data)
 
 gboolean SourceConnectionNode::source_callback(void *data)
 {
-  SourceConnectionNode *conn_data
-    = reinterpret_cast<SourceConnectionNode *>(data);
+  SourceConnectionNode *conn_data =
+    reinterpret_cast<SourceConnectionNode *>(data);
 
   // recreate the specific slot from the generic slot node
   return (*static_cast<sigc::slot<bool> *>(conn_data->get_slot()))();
@@ -179,8 +175,8 @@ CppConsUI::Rect CenterIM::getScreenAreaCentered(ScreenArea area)
 
 bool CenterIM::loadColorSchemeConfig()
 {
-  xmlnode *root = purple_util_read_xml_from_file("colorschemes.xml",
-      _("color schemes"));
+  xmlnode *root =
+    purple_util_read_xml_from_file("colorschemes.xml", _("color schemes"));
 
   if (!root) {
     // read error, first time run?
@@ -194,7 +190,7 @@ bool CenterIM::loadColorSchemeConfig()
   bool res = false;
 
   for (xmlnode *scheme = xmlnode_get_child(root, "scheme"); scheme;
-      scheme = xmlnode_get_next_twin(scheme)) {
+       scheme = xmlnode_get_next_twin(scheme)) {
     const char *name = xmlnode_get_attrib(scheme, "name");
     if (!name) {
       LOG->error(_("Missing 'name' attribute in the scheme definition."));
@@ -202,18 +198,16 @@ bool CenterIM::loadColorSchemeConfig()
     }
 
     for (xmlnode *color = xmlnode_get_child(scheme, "color"); color;
-        color = xmlnode_get_next_twin(color)) {
+         color = xmlnode_get_next_twin(color)) {
       const char *widget = xmlnode_get_attrib(color, "widget");
       if (!widget) {
-        LOG->error(
-            _("Missing 'widget' attribute in the color definition."));
+        LOG->error(_("Missing 'widget' attribute in the color definition."));
         goto out;
       }
 
       const char *property = xmlnode_get_attrib(color, "property");
       if (!property) {
-        LOG->error(
-            _("Missing 'property' attribute in the color definition."));
+        LOG->error(_("Missing 'property' attribute in the color definition."));
         goto out;
       }
 
@@ -249,7 +243,7 @@ bool CenterIM::loadColorSchemeConfig()
 out:
   if (!res) {
     LOG->error(_("Error parsing 'colorschemes.xml', "
-          "loading default color scheme."));
+                 "loading default color scheme."));
     loadDefaultColorSchemeConfig();
   }
 
@@ -260,8 +254,8 @@ out:
 
 bool CenterIM::loadKeyConfig()
 {
-  xmlnode *root = purple_util_read_xml_from_file("binds.xml",
-      _("key bindings"));
+  xmlnode *root =
+    purple_util_read_xml_from_file("binds.xml", _("key bindings"));
 
   if (!root) {
     // read error, first time run?
@@ -275,21 +269,21 @@ bool CenterIM::loadKeyConfig()
   bool res = false;
 
   for (xmlnode *bind = xmlnode_get_child(root, "bind"); bind;
-      bind = xmlnode_get_next_twin(bind)) {
+       bind = xmlnode_get_next_twin(bind)) {
     const char *context = xmlnode_get_attrib(bind, "context");
     if (!context) {
-        LOG->error(_("Missing 'context' attribute in the bind definition."));
-        goto out;
+      LOG->error(_("Missing 'context' attribute in the bind definition."));
+      goto out;
     }
     const char *action = xmlnode_get_attrib(bind, "action");
     if (!action) {
-        LOG->error(_("Missing 'action' attribute in the bind definition."));
-        goto out;
+      LOG->error(_("Missing 'action' attribute in the bind definition."));
+      goto out;
     }
     const char *key = xmlnode_get_attrib(bind, "key");
     if (!key) {
-        LOG->error(_("Missing 'key' attribute in the bind definition."));
-        goto out;
+      LOG->error(_("Missing 'key' attribute in the bind definition."));
+      goto out;
     }
 
     if (!KEYCONFIG->bindKey(context, action, key)) {
@@ -311,8 +305,8 @@ out:
   return res;
 }
 
-sigc::connection CenterIM::timeoutConnect(const sigc::slot<bool> &slot,
-    unsigned interval, int priority)
+sigc::connection CenterIM::timeoutConnect(
+  const sigc::slot<bool> &slot, unsigned interval, int priority)
 {
   SourceConnectionNode *conn_node = new SourceConnectionNode(slot);
   sigc::connection connection(*conn_node->get_slot());
@@ -323,7 +317,7 @@ sigc::connection CenterIM::timeoutConnect(const sigc::slot<bool> &slot,
     g_source_set_priority(source, priority);
 
   g_source_set_callback(source, &SourceConnectionNode::source_callback,
-      conn_node, &SourceConnectionNode::destroy_notify_callback);
+    conn_node, &SourceConnectionNode::destroy_notify_callback);
 
   g_source_attach(source, NULL);
   g_source_unref(source); // GMainContext holds a reference
@@ -332,15 +326,15 @@ sigc::connection CenterIM::timeoutConnect(const sigc::slot<bool> &slot,
   return connection;
 }
 
-sigc::connection CenterIM::timeoutOnceConnect(const sigc::slot<void> &slot,
-    unsigned interval, int priority)
+sigc::connection CenterIM::timeoutOnceConnect(
+  const sigc::slot<void> &slot, unsigned interval, int priority)
 {
   return timeoutConnect(sigc::bind_return(slot, FALSE), interval, priority);
 }
 
 CenterIM::CenterIM()
-: mainloop(NULL), mngr(NULL), convs_expanded(false)
-, idle_reporting_on_keyboard(false)
+  : mainloop(NULL), mngr(NULL), convs_expanded(false),
+    idle_reporting_on_keyboard(false)
 {
   memset(&centerim_core_ui_ops, 0, sizeof(centerim_core_ui_ops));
   memset(&logbuf_debug_ui_ops, 0, sizeof(logbuf_debug_ui_ops));
@@ -391,6 +385,7 @@ int CenterIM::runAll(int argc, char *argv[])
   bool offline = false;
   const char *config_path = CIM_CONFIG_PATH;
   int opt;
+  // clang-format off
   struct option long_options[] = {
     {"ascii",   no_argument,       NULL, 'a'},
     {"help",    no_argument,       NULL, 'h'},
@@ -399,34 +394,33 @@ int CenterIM::runAll(int argc, char *argv[])
     {"offline", no_argument,       NULL, 'o'},
     {NULL,      0,                 NULL,  0 }
   };
+  // clang-format on
 
-  while ((opt = getopt_long(argc, argv, "ahvb:o", long_options, NULL))
-      != -1) {
+  while ((opt = getopt_long(argc, argv, "ahvb:o", long_options, NULL)) != -1) {
     switch (opt) {
-      case 'a':
-        ascii = true;
-        break;
-      case 'h':
-        printUsage(stdout, argv[0]);
-        return 0;
-      case 'v':
-        printVersion(stdout);
-        return 0;
-      case 'b':
-        config_path = optarg;
-        break;
-      case 'o':
-        offline = true;
-        break;
-      default:
-        printUsage(stderr, argv[0]);
-        return 1;
+    case 'a':
+      ascii = true;
+      break;
+    case 'h':
+      printUsage(stdout, argv[0]);
+      return 0;
+    case 'v':
+      printVersion(stdout);
+      return 0;
+    case 'b':
+      config_path = optarg;
+      break;
+    case 'o':
+      offline = true;
+      break;
+    default:
+      printUsage(stderr, argv[0]);
+      return 1;
     }
   }
 
   if (optind < argc) {
-    std::fprintf(stderr, _("%s: unexpected argument after options\n"),
-        argv[0]);
+    std::fprintf(stderr, _("%s: unexpected argument after options\n"), argv[0]);
     printUsage(stderr, argv[0]);
     return 1;
   }
@@ -441,13 +435,9 @@ int CenterIM::runAll(int argc, char *argv[])
   mainloop = g_main_loop_new(NULL, FALSE);
 
   // initialize CppConsUI
-  CppConsUI::AppInterface interface = {
-    timeout_add_cppconsui,
-    timeout_remove_cppconsui,
-    input_add_cppconsui,
-    input_remove_cppconsui,
-    log_error_cppconsui
-  };
+  CppConsUI::AppInterface interface = {timeout_add_cppconsui,
+    timeout_remove_cppconsui, input_add_cppconsui, input_remove_cppconsui,
+    log_error_cppconsui};
   if (CppConsUI::initializeConsUI(interface)) {
     LOG->error(_("CppConsUI initialization failed."));
     goto out;
@@ -461,10 +451,10 @@ int CenterIM::runAll(int argc, char *argv[])
   // get the CoreManager instance and register for some signals
   mngr = CppConsUI::getCoreManagerInstance();
   g_assert(mngr);
-  resize_conn = mngr->signal_resize.connect(sigc::mem_fun(this,
-        &CenterIM::onScreenResized));
+  resize_conn = mngr->signal_resize.connect(
+    sigc::mem_fun(this, &CenterIM::onScreenResized));
   top_window_change_conn = mngr->signal_top_window_change.connect(
-      sigc::mem_fun(this, &CenterIM::onTopWindowChanged));
+    sigc::mem_fun(this, &CenterIM::onTopWindowChanged));
 
   // declare CenterIM bindables
   declareBindables();
@@ -501,7 +491,7 @@ int CenterIM::runAll(int argc, char *argv[])
   BuddyList::init();
 
   LOG->info(_("Welcome to CenterIM 5. Press %s to display main menu."),
-      KEYCONFIG->getKeyBind("centerim", "generalmenu"));
+    KEYCONFIG->getKeyBind("centerim", "generalmenu"));
 
   // restore last know status on all accounts
   ACCOUNTS->restoreStatuses(offline);
@@ -557,6 +547,7 @@ out:
 
 void CenterIM::printUsage(FILE *out, const char *prg_name)
 {
+  // clang-format off
   std::fprintf(out, _(
 "Usage: %s [option]...\n\n"
 "Options:\n"
@@ -565,7 +556,8 @@ void CenterIM::printUsage(FILE *out, const char *prg_name)
 "  -v, --version              show the program version info\n"
 "  -b, --basedir <directory>  specify another base directory\n"
 "  -o, --offline              start with all accounts set offline\n"),
-      prg_name);
+    prg_name);
+  // clang-format on
 }
 
 void CenterIM::printVersion(FILE *out)
@@ -635,7 +627,7 @@ void CenterIM::purpleFinalize()
   purple_plugins_save_loaded(CONF_PLUGINS_SAVE_PREF);
 
   purple_core_set_ui_ops(NULL);
-  //purple_eventloop_set_ui_ops(NULL);
+  // purple_eventloop_set_ui_ops(NULL);
   purple_core_quit();
 }
 
@@ -651,11 +643,11 @@ void CenterIM::prefsInit()
   purple_prefs_add_int(CONF_PREFIX "/dimensions/log_height", 25);
   purple_prefs_add_bool(CONF_PREFIX "/dimensions/show_header", true);
   purple_prefs_add_bool(CONF_PREFIX "/dimensions/show_footer", true);
-  purple_prefs_connect_callback(this, CONF_PREFIX "/dimensions",
-      dimensions_change_, this);
+  purple_prefs_connect_callback(
+    this, CONF_PREFIX "/dimensions", dimensions_change_, this);
 
-  purple_prefs_connect_callback(this, "/purple/away/idle_reporting",
-      idle_reporting_change_, this);
+  purple_prefs_connect_callback(
+    this, "/purple/away/idle_reporting", idle_reporting_change_, this);
   /* Proceed the callback. Note: This potentially triggers other callbacks
    * inside libpurple. */
   purple_prefs_trigger_callback("/purple/away/idle_reporting");
@@ -675,22 +667,22 @@ void CenterIM::onScreenResized()
     log_height = 0;
   }
   else {
-    buddylist_width = purple_prefs_get_int(CONF_PREFIX
-        "/dimensions/buddylist_width");
+    buddylist_width =
+      purple_prefs_get_int(CONF_PREFIX "/dimensions/buddylist_width");
     buddylist_width = CLAMP(buddylist_width, 0, 50);
     log_height = purple_prefs_get_int(CONF_PREFIX "/dimensions/log_height");
     log_height = CLAMP(log_height, 0, 50);
   }
 
-  bool show_header = purple_prefs_get_bool(CONF_PREFIX
-      "/dimensions/show_header");
+  bool show_header =
+    purple_prefs_get_bool(CONF_PREFIX "/dimensions/show_header");
   int header_height;
   if (show_header)
     header_height = 1;
   else
     header_height = 0;
-  bool show_footer = purple_prefs_get_bool(CONF_PREFIX
-      "/dimensions/show_footer");
+  bool show_footer =
+    purple_prefs_get_bool(CONF_PREFIX "/dimensions/show_footer");
   int footer_height;
   if (show_footer)
     footer_height = 1;
@@ -712,8 +704,7 @@ void CenterIM::onScreenResized()
   size.x = areas[BUDDY_LIST_AREA].width;
   size.y = header_height;
   size.width = screen_width - size.x;
-  size.height = screen_height - size.y - areas[LOG_AREA].height
-    - footer_height;
+  size.height = screen_height - size.y - areas[LOG_AREA].height - footer_height;
   if (convs_expanded) {
     size.x -= 2;
     size.width += 4;
@@ -752,7 +743,7 @@ void CenterIM::onTopWindowChanged()
   }
 }
 
-#define GLIB_IO_READ_COND  (G_IO_IN | G_IO_HUP | G_IO_ERR)
+#define GLIB_IO_READ_COND (G_IO_IN | G_IO_HUP | G_IO_ERR)
 #define GLIB_IO_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
 
 guint CenterIM::input_add_purple(int fd, PurpleInputCondition condition,
@@ -772,15 +763,15 @@ guint CenterIM::input_add_purple(int fd, PurpleInputCondition condition,
 
   channel = g_io_channel_unix_new(fd);
   closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT,
-      static_cast<GIOCondition>(cond), io_input_purple, closure,
-      io_destroy_purple);
+    static_cast<GIOCondition>(cond), io_input_purple, closure,
+    io_destroy_purple);
 
   g_io_channel_unref(channel);
   return closure->result;
 }
 
-gboolean CenterIM::io_input_purple(GIOChannel *source,
-    GIOCondition condition, gpointer data)
+gboolean CenterIM::io_input_purple(
+  GIOChannel *source, GIOCondition condition, gpointer data)
 {
   IOClosurePurple *closure = static_cast<IOClosurePurple *>(data);
   int purple_cond = 0;
@@ -791,7 +782,7 @@ gboolean CenterIM::io_input_purple(GIOChannel *source,
     purple_cond |= PURPLE_INPUT_WRITE;
 
   closure->function(closure->data, g_io_channel_unix_get_fd(source),
-      static_cast<PurpleInputCondition>(purple_cond));
+    static_cast<PurpleInputCondition>(purple_cond));
 
   return TRUE;
 }
@@ -802,8 +793,8 @@ void CenterIM::io_destroy_purple(gpointer data)
 }
 
 unsigned CenterIM::input_add_cppconsui(int fd,
-    CppConsUI::InputCondition condition, CppConsUI::InputFunction function,
-    void *data)
+  CppConsUI::InputCondition condition, CppConsUI::InputFunction function,
+  void *data)
 {
   IOClosureCppConsUI *closure = new IOClosureCppConsUI;
   GIOChannel *channel;
@@ -819,15 +810,15 @@ unsigned CenterIM::input_add_cppconsui(int fd,
 
   channel = g_io_channel_unix_new(fd);
   closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT,
-      static_cast<GIOCondition>(cond), io_input_cppconsui, closure,
-      io_destroy_cppconsui);
+    static_cast<GIOCondition>(cond), io_input_cppconsui, closure,
+    io_destroy_cppconsui);
 
   g_io_channel_unref(channel);
   return closure->result;
 }
 
-gboolean CenterIM::io_input_cppconsui(GIOChannel *source,
-    GIOCondition condition, gpointer data)
+gboolean CenterIM::io_input_cppconsui(
+  GIOChannel *source, GIOCondition condition, gpointer data)
 {
   IOClosureCppConsUI *closure = static_cast<IOClosureCppConsUI *>(data);
   int cppconsui_cond = 0;
@@ -838,7 +829,7 @@ gboolean CenterIM::io_input_cppconsui(GIOChannel *source,
     cppconsui_cond |= CppConsUI::INPUT_CONDITION_WRITE;
 
   closure->function(g_io_channel_unix_get_fd(source),
-      static_cast<CppConsUI::InputCondition>(cppconsui_cond), closure->data);
+    static_cast<CppConsUI::InputCondition>(cppconsui_cond), closure->data);
 
   return TRUE;
 }
@@ -848,21 +839,20 @@ void CenterIM::io_destroy_cppconsui(gpointer data)
   delete static_cast<IOClosureCppConsUI *>(data);
 }
 
-unsigned CenterIM::timeout_add_cppconsui(unsigned interval,
-    CppConsUI::SourceFunction function, void *data)
+unsigned CenterIM::timeout_add_cppconsui(
+  unsigned interval, CppConsUI::SourceFunction function, void *data)
 {
   SourceClosureCppConsUI *closure = new SourceClosureCppConsUI;
   closure->function = function;
   closure->data = data;
 
   return g_timeout_add_full(G_PRIORITY_DEFAULT, interval,
-      timeout_function_cppconsui, closure, timeout_destroy_cppconsui);
+    timeout_function_cppconsui, closure, timeout_destroy_cppconsui);
 }
 
 gboolean CenterIM::timeout_function_cppconsui(gpointer data)
 {
-  SourceClosureCppConsUI *closure
-    = static_cast<SourceClosureCppConsUI *>(data);
+  SourceClosureCppConsUI *closure = static_cast<SourceClosureCppConsUI *>(data);
   return closure->function(closure->data);
 }
 
@@ -900,34 +890,34 @@ GHashTable *CenterIM::get_ui_info()
     g_hash_table_insert(ui_info, (void *)"version", (void *)version);
     g_hash_table_insert(ui_info, (void *)"website", (void *)PACKAGE_URL);
 
-    g_hash_table_insert(ui_info, (void *)"dev_website",
-        (void *)PACKAGE_BUGREPORT);
+    g_hash_table_insert(
+      ui_info, (void *)"dev_website", (void *)PACKAGE_BUGREPORT);
     g_hash_table_insert(ui_info, (void *)"client_type", (void *)"pc");
   }
 
   return ui_info;
 }
 
-void CenterIM::purple_print(PurpleDebugLevel level, const char *category,
-    const char *arg_s)
+void CenterIM::purple_print(
+  PurpleDebugLevel level, const char *category, const char *arg_s)
 {
   LOG->purple_print(level, category, arg_s);
 }
 
-gboolean CenterIM::purple_is_enabled(PurpleDebugLevel level,
-    const char *category)
+gboolean CenterIM::purple_is_enabled(
+  PurpleDebugLevel level, const char *category)
 {
   return LOG->purple_is_enabled(level, category);
 }
 
-void CenterIM::dimensions_change(const char * /*name*/,
-    PurplePrefType /*type*/, gconstpointer /*val*/)
+void CenterIM::dimensions_change(
+  const char * /*name*/, PurplePrefType /*type*/, gconstpointer /*val*/)
 {
   mngr->onScreenResized();
 }
 
-void CenterIM::idle_reporting_change(const char * /*name*/,
-    PurplePrefType type, gconstpointer val)
+void CenterIM::idle_reporting_change(
+  const char * /*name*/, PurplePrefType type, gconstpointer val)
 {
   g_return_if_fail(type == PURPLE_PREF_STRING);
 
@@ -944,97 +934,97 @@ void CenterIM::loadDefaultColorSchemeConfig()
 
   // default colors init
   COLORSCHEME->setColorPair("accountstatusmenu", "panel", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setColorPair("accountstatusmenu", "horizontalline", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setColorPair("accountstatusmenu", "button", "normal",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
 
   COLORSCHEME->setColorPair("buddylist", "treeview", "line",
-      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setColorPair("buddylist", "panel", "line",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
-      CppConsUI::Curses::Attr::BOLD);
+    CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
+    CppConsUI::Curses::Attr::BOLD);
   COLORSCHEME->setColorPair("buddylist", "button", "normal",
-      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setColorPair("buddylistgroup", "button", "normal",
-      CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
 
   COLORSCHEME->setColorPair("buddylistbuddy_offline", "button", "normal",
-      CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setColorPair("buddylistbuddy_online", "button", "normal",
-      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setColorPair("buddylistbuddy_na", "button", "normal",
-      CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setColorPair("buddylistbuddy_away", "button", "normal",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT);
 
   COLORSCHEME->setColorPair("buddylistcontact_offline", "button", "normal",
-      CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setColorPair("buddylistcontact_online", "button", "normal",
-      CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setColorPair("buddylistcontact_na", "button", "normal",
-      CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setColorPair("buddylistcontact_away", "button", "normal",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT);
 
   COLORSCHEME->setColorPair("conversation", "textview", "text",
-      CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setColorPair("conversation", "textview", "color1",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setColorPair("conversation", "textview", "color2",
-      CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setColorPair("conversation", "panel", "line",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
-      CppConsUI::Curses::Attr::BOLD);
+    CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
+    CppConsUI::Curses::Attr::BOLD);
   COLORSCHEME->setColorPair("conversation", "horizontalline", "line",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
-      CppConsUI::Curses::Attr::BOLD);
+    CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
+    CppConsUI::Curses::Attr::BOLD);
   COLORSCHEME->setColorPair("conversation", "verticalline", "line",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
-      CppConsUI::Curses::Attr::BOLD);
+    CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
+    CppConsUI::Curses::Attr::BOLD);
   COLORSCHEME->setColorPair("conversation", "textedit", "text",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
 
   COLORSCHEME->setColorPair("conversation", "label", "text",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setColorPair("conversation-active", "label", "text",
-      CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setColorPair("conversation-new", "label", "text",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT,
-      CppConsUI::Curses::Attr::BOLD);
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT,
+    CppConsUI::Curses::Attr::BOLD);
 
   COLORSCHEME->setColorPair("footer", "label", "text",
-      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
+    CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
   COLORSCHEME->setColorPair("footer", "container", "background",
-      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
+    CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
 
   COLORSCHEME->setColorPair("generalmenu", "panel", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setColorPair("generalmenu", "horizontalline", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setColorPair("generalmenu", "button", "normal",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
 
   COLORSCHEME->setColorPair("generalwindow", "panel", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setColorPair("generalwindow", "horizontalline", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setColorPair("generalwindow", "verticalline", "line",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
 
   COLORSCHEME->setColorPair("log", "panel", "line",
-      CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
-      CppConsUI::Curses::Attr::BOLD);
+    CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
+    CppConsUI::Curses::Attr::BOLD);
   COLORSCHEME->setColorPair("log", "textview", "text",
-      CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
 
   COLORSCHEME->setColorPair("header", "label", "text",
-      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
+    CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
   COLORSCHEME->setColorPair("header", "container", "background",
-      CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
+    CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
   COLORSCHEME->setColorPair("header-request", "label", "text",
-      CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::WHITE);
+    CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::WHITE);
 }
 
 bool CenterIM::saveColorSchemeConfig()
@@ -1042,19 +1032,19 @@ bool CenterIM::saveColorSchemeConfig()
   xmlnode *root = xmlnode_new("colorscheme");
   xmlnode_set_attrib(root, "version", "1.0");
 
-  for (CppConsUI::ColorScheme::Schemes::const_iterator
-      si = COLORSCHEME->getSchemes().begin();
-      si != COLORSCHEME->getSchemes().end(); si++) {
+  for (CppConsUI::ColorScheme::Schemes::const_iterator si =
+         COLORSCHEME->getSchemes().begin();
+       si != COLORSCHEME->getSchemes().end(); si++) {
     xmlnode *scheme = xmlnode_new("scheme");
     xmlnode_set_attrib(scheme, "name", si->first.c_str());
     xmlnode_insert_child(root, scheme);
 
-    for (CppConsUI::ColorScheme::Widgets::const_iterator
-        wi = si->second.begin();
-        wi != si->second.end(); wi++) {
-      for (CppConsUI::ColorScheme::Properties::const_iterator
-          pi = wi->second.begin();
-          pi != wi->second.end(); pi++) {
+    for (CppConsUI::ColorScheme::Widgets::const_iterator wi =
+           si->second.begin();
+         wi != si->second.end(); wi++) {
+      for (CppConsUI::ColorScheme::Properties::const_iterator pi =
+             wi->second.begin();
+           pi != wi->second.end(); pi++) {
         xmlnode *color = xmlnode_new("color");
         xmlnode_set_attrib(color, "widget", wi->first.c_str());
         xmlnode_set_attrib(color, "property", pi->first.c_str());
@@ -1127,10 +1117,11 @@ bool CenterIM::stringToColor(const char *str, int *color)
 
 char *CenterIM::colorAttributesToString(int attrs)
 {
-#define APPEND(str) do { \
-    if (s.size()) \
-      s.append("|"); \
-    s.append(str); \
+#define APPEND(str)                                                            \
+  do {                                                                         \
+    if (s.size())                                                              \
+      s.append("|");                                                           \
+    s.append(str);                                                             \
   } while (0)
 
   std::string s;
@@ -1248,25 +1239,25 @@ bool CenterIM::saveKeyConfig()
 
   const CppConsUI::KeyConfig::KeyBinds *binds = KEYCONFIG->getKeyBinds();
   for (CppConsUI::KeyConfig::KeyBinds::const_iterator bi = binds->begin();
-      bi != binds->end(); bi++) {
+       bi != binds->end(); bi++) {
     /* Invert the map because the output should be sorted by context+action,
      * not by context+key. */
     typedef std::multimap<std::string, TermKeyKey> InvertedMap;
     InvertedMap inverted;
-    for (CppConsUI::KeyConfig::KeyBindContext::const_iterator
-        ci = bi->second.begin();
-        ci != bi->second.end(); ci++)
+    for (CppConsUI::KeyConfig::KeyBindContext::const_iterator ci =
+           bi->second.begin();
+         ci != bi->second.end(); ci++)
       inverted.insert(std::make_pair(ci->second, ci->first));
 
     for (InvertedMap::iterator ci = inverted.begin(); ci != inverted.end();
-        ci++) {
+         ci++) {
       xmlnode *bind = xmlnode_new("bind");
       xmlnode_set_attrib(bind, "context", bi->first.c_str());
       xmlnode_set_attrib(bind, "action", ci->first.c_str());
       char *key;
       if ((key = KEYCONFIG->termKeyToString(ci->second))) {
         xmlnode_set_attrib(bind, "key", key);
-        delete [] key;
+        delete[] key;
       }
 
       xmlnode_insert_child(root, bind);
@@ -1328,8 +1319,8 @@ void CenterIM::actionOpenGeneralMenu()
 
 void CenterIM::actionBuddyListToggleOffline()
 {
-  gboolean cur = purple_prefs_get_bool(CONF_PREFIX
-      "/blist/show_offline_buddies");
+  gboolean cur =
+    purple_prefs_get_bool(CONF_PREFIX "/blist/show_offline_buddies");
   purple_prefs_set_bool(CONF_PREFIX "/blist/show_offline_buddies", !cur);
 }
 
@@ -1368,40 +1359,39 @@ void CenterIM::actionExpandConversation()
 
 void CenterIM::declareBindables()
 {
-  declareBindable("centerim", "quit",
-      sigc::mem_fun(this, &CenterIM::quit),
-      InputProcessor::BINDABLE_OVERRIDE);
+  declareBindable("centerim", "quit", sigc::mem_fun(this, &CenterIM::quit),
+    InputProcessor::BINDABLE_OVERRIDE);
   declareBindable("centerim", "buddylist",
-      sigc::mem_fun(this, &CenterIM::actionFocusBuddyList),
-      InputProcessor::BINDABLE_OVERRIDE);
+    sigc::mem_fun(this, &CenterIM::actionFocusBuddyList),
+    InputProcessor::BINDABLE_OVERRIDE);
   declareBindable("centerim", "conversation-active",
-      sigc::mem_fun(this, &CenterIM::actionFocusActiveConversation),
-      InputProcessor::BINDABLE_OVERRIDE);
+    sigc::mem_fun(this, &CenterIM::actionFocusActiveConversation),
+    InputProcessor::BINDABLE_OVERRIDE);
   declareBindable("centerim", "accountstatusmenu",
-      sigc::mem_fun(this, &CenterIM::actionOpenAccountStatusMenu),
-      InputProcessor::BINDABLE_OVERRIDE);
+    sigc::mem_fun(this, &CenterIM::actionOpenAccountStatusMenu),
+    InputProcessor::BINDABLE_OVERRIDE);
   declareBindable("centerim", "generalmenu",
-      sigc::mem_fun(this, &CenterIM::actionOpenGeneralMenu),
-      InputProcessor::BINDABLE_OVERRIDE);
+    sigc::mem_fun(this, &CenterIM::actionOpenGeneralMenu),
+    InputProcessor::BINDABLE_OVERRIDE);
   declareBindable("centerim", "buddylist-toggle-offline",
-      sigc::mem_fun(this, &CenterIM::actionBuddyListToggleOffline),
-      InputProcessor::BINDABLE_OVERRIDE);
+    sigc::mem_fun(this, &CenterIM::actionBuddyListToggleOffline),
+    InputProcessor::BINDABLE_OVERRIDE);
   declareBindable("centerim", "conversation-prev",
-      sigc::mem_fun(this, &CenterIM::actionFocusPrevConversation),
-      InputProcessor::BINDABLE_OVERRIDE);
+    sigc::mem_fun(this, &CenterIM::actionFocusPrevConversation),
+    InputProcessor::BINDABLE_OVERRIDE);
   declareBindable("centerim", "conversation-next",
-      sigc::mem_fun(this, &CenterIM::actionFocusNextConversation),
-      InputProcessor::BINDABLE_OVERRIDE);
+    sigc::mem_fun(this, &CenterIM::actionFocusNextConversation),
+    InputProcessor::BINDABLE_OVERRIDE);
   char action[] = "conversation-numberXX";
   for (int i = 1; i <= 20; i++) {
     g_sprintf(action + sizeof(action) - 3, "%d", i);
-    declareBindable("centerim", action, sigc::bind(sigc::mem_fun(this,
-            &CenterIM::actionFocusConversation), i),
-        InputProcessor::BINDABLE_OVERRIDE);
+    declareBindable("centerim", action,
+      sigc::bind(sigc::mem_fun(this, &CenterIM::actionFocusConversation), i),
+      InputProcessor::BINDABLE_OVERRIDE);
   }
   declareBindable("centerim", "conversation-expand",
-      sigc::mem_fun(this, &CenterIM::actionExpandConversation),
-      InputProcessor::BINDABLE_OVERRIDE);
+    sigc::mem_fun(this, &CenterIM::actionExpandConversation),
+    InputProcessor::BINDABLE_OVERRIDE);
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

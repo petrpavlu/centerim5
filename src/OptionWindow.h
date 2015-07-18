@@ -27,9 +27,7 @@
 #include <cppconsui/InputDialog.h>
 #include <cppconsui/SplitDialog.h>
 
-class OptionWindow
-: public CppConsUI::SplitDialog
-{
+class OptionWindow : public CppConsUI::SplitDialog {
 public:
   OptionWindow();
   virtual ~OptionWindow() {}
@@ -38,9 +36,7 @@ public:
   virtual void onScreenResized();
 
 protected:
-  class BooleanOption
-  : public CppConsUI::CheckBox
-  {
+  class BooleanOption : public CppConsUI::CheckBox {
   public:
     BooleanOption(const char *text, const char *config);
     virtual ~BooleanOption();
@@ -54,9 +50,7 @@ protected:
     CONSUI_DISABLE_COPY(BooleanOption);
   };
 
-  class StringOption
-  : public CppConsUI::Button
-  {
+  class StringOption : public CppConsUI::Button {
   public:
     StringOption(const char *text, const char *config);
     virtual ~StringOption();
@@ -66,19 +60,17 @@ protected:
 
     void onActivate(CppConsUI::Button &activator);
     void responseHandler(CppConsUI::InputDialog &activator,
-        CppConsUI::AbstractDialog::ResponseType response);
+      CppConsUI::AbstractDialog::ResponseType response);
 
   private:
     CONSUI_DISABLE_COPY(StringOption);
   };
 
-  class IntegerOption
-  : public CppConsUI::Button
-  {
+  class IntegerOption : public CppConsUI::Button {
   public:
     IntegerOption(const char *text, const char *config);
     IntegerOption(const char *text, const char *config,
-        sigc::slot<const char *, int> unit_fun_);
+      sigc::slot<const char *, int> unit_fun_);
     virtual ~IntegerOption();
 
   protected:
@@ -88,15 +80,13 @@ protected:
 
     void onActivate(CppConsUI::Button &activator);
     void responseHandler(CppConsUI::InputDialog &activator,
-        CppConsUI::AbstractDialog::ResponseType response);
+      CppConsUI::AbstractDialog::ResponseType response);
 
   private:
     CONSUI_DISABLE_COPY(IntegerOption);
   };
 
-  class ChoiceOption
-  : public CppConsUI::ComboBox
-  {
+  class ChoiceOption : public CppConsUI::ComboBox {
   public:
     ChoiceOption(const char *text, const char *config);
     virtual ~ChoiceOption();
@@ -107,7 +97,7 @@ protected:
     char *pref;
 
     void onSelectionChanged(CppConsUI::ComboBox &activator, int new_entry,
-        const char *title, intptr_t data);
+      const char *title, intptr_t data);
 
   private:
     CONSUI_DISABLE_COPY(ChoiceOption);
@@ -124,4 +114,4 @@ private:
 
 #endif // __OPTIONWINDOW_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

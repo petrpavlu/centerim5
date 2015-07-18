@@ -32,12 +32,11 @@
 
 #include "gettext.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 ColorPicker::ColorPicker(int fg, int bg, const char *text, bool sample_)
-: HorizontalListBox(AUTOSIZE, 1), fg_combo(NULL), bg_combo(NULL), label(NULL)
-, sample(NULL)
+  : HorizontalListBox(AUTOSIZE, 1), fg_combo(NULL), bg_combo(NULL), label(NULL),
+    sample(NULL)
 {
   fg_combo = new ColorPickerComboBox(10, fg);
   bg_combo = new ColorPickerComboBox(10, bg);
@@ -46,9 +45,9 @@ ColorPicker::ColorPicker(int fg, int bg, const char *text, bool sample_)
   setText(text);
 
   fg_combo->signal_color_changed.connect(
-      sigc::mem_fun(this, &ColorPicker::onColorChanged));
+    sigc::mem_fun(this, &ColorPicker::onColorChanged));
   bg_combo->signal_color_changed.connect(
-      sigc::mem_fun(this, &ColorPicker::onColorChanged));
+    sigc::mem_fun(this, &ColorPicker::onColorChanged));
 
   appendWidget(*label);
   appendWidget(*fg_combo);
@@ -96,8 +95,7 @@ void ColorPicker::onColorChanged(ComboBox &activator, int new_color)
   setColorPair(new_fg, new_bg);
 }
 
-ColorPicker::Sample::Sample(int w, int fg, int bg)
-: Widget(w, 1), c(fg, bg)
+ColorPicker::Sample::Sample(int w, int fg, int bg) : Widget(w, 1), c(fg, bg)
 {
 }
 
@@ -118,4 +116,4 @@ void ColorPicker::Sample::setColors(int fg, int bg)
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

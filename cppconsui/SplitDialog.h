@@ -30,12 +30,9 @@
 
 #include "AbstractDialog.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class SplitDialog
-: public AbstractDialog
-{
+class SplitDialog : public AbstractDialog {
 public:
   SplitDialog(int x, int y, int w, int h, const char *title = NULL);
   explicit SplitDialog(const char *title = NULL);
@@ -76,4 +73,4 @@ private:
 
 #endif // __SPLITDIALOG_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

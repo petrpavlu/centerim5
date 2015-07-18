@@ -29,9 +29,7 @@
 #define FOOTER (Footer::instance())
 
 // the bottom area of the screen containing context sensitive help
-class Footer
-: public CppConsUI::Window
-{
+class Footer : public CppConsUI::Window {
 public:
   static Footer *instance();
 
@@ -41,7 +39,6 @@ public:
   void setText(const char *fmt, ...) _attribute((format(printf, 2, 3)));
 
 protected:
-
 private:
   typedef std::vector<std::string> Values;
 
@@ -63,4 +60,4 @@ private:
 
 #endif // __FOOTER_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

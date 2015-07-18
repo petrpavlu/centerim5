@@ -31,15 +31,12 @@
 
 #include "Widget.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 /**
  * A widget that displays a small to medium amount of text.
  */
-class Label
-: public Widget
-{
+class Label : public Widget {
 public:
   Label(int w, int h, const char *text_ = NULL);
   explicit Label(const char *text_ = NULL);
@@ -68,4 +65,4 @@ private:
 
 #endif // __LABEL_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

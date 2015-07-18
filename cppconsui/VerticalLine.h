@@ -31,15 +31,12 @@
 
 #include "AbstractLine.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 /**
  * A widget representing a vertical line.
  */
-class VerticalLine
-: public AbstractLine
-{
+class VerticalLine : public AbstractLine {
 public:
   VerticalLine(int h);
   virtual ~VerticalLine() {}
@@ -48,7 +45,6 @@ public:
   virtual void draw(Curses::ViewPort area);
 
 protected:
-
 private:
   CONSUI_DISABLE_COPY(VerticalLine);
 };
@@ -57,4 +53,4 @@ private:
 
 #endif // __VERTICALLINE_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

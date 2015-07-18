@@ -28,17 +28,13 @@
 
 #define NOTIFY (Notify::instance())
 
-class Notify
-{
+class Notify {
 public:
   static Notify *instance();
 
 protected:
-
 private:
-  class UserInfoDialog
-  : public CppConsUI::SplitDialog
-  {
+  class UserInfoDialog : public CppConsUI::SplitDialog {
   public:
     UserInfoDialog(const char *title);
     virtual ~UserInfoDialog() {}
@@ -46,8 +42,8 @@ private:
     // Window
     virtual void onScreenResized();
 
-    void update(PurpleConnection *gc, const char *who,
-        PurpleNotifyUserInfo *user_info);
+    void update(
+      PurpleConnection *gc, const char *who, PurpleNotifyUserInfo *user_info);
 
   protected:
     CppConsUI::TreeView *treeview;
@@ -84,21 +80,27 @@ private:
   void onUserInfoDialogClose(CppConsUI::Window &activator, User user);
 
   static void *notify_message_(PurpleNotifyMsgType type, const char *title,
-      const char *primary, const char *secondary)
-    { return NOTIFY->notify_message(type, title, primary, secondary); }
-  static void *notify_userinfo_(PurpleConnection *gc, const char *who,
-      PurpleNotifyUserInfo *user_info)
-    { return NOTIFY->notify_userinfo(gc, who, user_info); }
+    const char *primary, const char *secondary)
+  {
+    return NOTIFY->notify_message(type, title, primary, secondary);
+  }
+  static void *notify_userinfo_(
+    PurpleConnection *gc, const char *who, PurpleNotifyUserInfo *user_info)
+  {
+    return NOTIFY->notify_userinfo(gc, who, user_info);
+  }
   static void close_notify_(PurpleNotifyType type, void *ui_handle)
-    { NOTIFY->close_notify(type, ui_handle); }
+  {
+    NOTIFY->close_notify(type, ui_handle);
+  }
 
   void *notify_message(PurpleNotifyMsgType type, const char *title,
-      const char *primary, const char *secondary);
-  void *notify_userinfo(PurpleConnection *gc, const char *who,
-      PurpleNotifyUserInfo *user_info);
+    const char *primary, const char *secondary);
+  void *notify_userinfo(
+    PurpleConnection *gc, const char *who, PurpleNotifyUserInfo *user_info);
   void close_notify(PurpleNotifyType type, void *ui_handle);
 };
 
 #endif // __NOTIFY_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

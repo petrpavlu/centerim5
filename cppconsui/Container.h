@@ -34,8 +34,7 @@
 #include "tree.hh"
 #include <vector>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 /**
  * The generic widget container class.
@@ -43,9 +42,7 @@ namespace CppConsUI
  * It implements @ref moveFocus "moving focus" in different @ref
  * FocusDirection "directions".
  */
-class Container
-: public Widget
-{
+class Container : public Widget {
 public:
   /**
    * Type to keep a tree of "focusable" widgets as leaves and Containers as
@@ -65,7 +62,7 @@ public:
     /**
      * The focus cycles also through the other containers windows.
      */
-    FOCUS_CYCLE_GLOBAL
+    FOCUS_CYCLE_GLOBAL,
   };
 
   enum FocusDirection {
@@ -78,7 +75,7 @@ public:
     FOCUS_PAGE_UP,
     FOCUS_PAGE_DOWN,
     FOCUS_BEGIN,
-    FOCUS_END
+    FOCUS_END,
   };
 
   Container(int w, int h);
@@ -144,8 +141,8 @@ public:
    * Guilds a tree of the focus chain starting from this container and puts it
    * into the focus_chain tree as a subtree of @ref parent.
    */
-  virtual void getFocusChain(FocusChain &focus_chain,
-      FocusChain::iterator parent);
+  virtual void getFocusChain(
+    FocusChain &focus_chain, FocusChain::iterator parent);
   /**
    * Gives this Container information that the cached focus chain has to be
    * updated. If this container has a parent then this information is
@@ -159,20 +156,22 @@ public:
   virtual void moveFocus(FocusDirection direction);
 
   virtual void setFocusCycle(FocusCycleScope scope)
-    { focus_cycle_scope = scope; }
+  {
+    focus_cycle_scope = scope;
+  }
   virtual FocusCycleScope getFocusCycle() const { return focus_cycle_scope; }
 
   virtual void setPageFocus(bool enabled) { page_focus = enabled; }
   virtual bool canPageFocus() const { return page_focus; };
 
-  virtual Point getRelativePosition(const Container &ref,
-      const Widget &child) const;
+  virtual Point getRelativePosition(
+    const Container &ref, const Widget &child) const;
   virtual Point getAbsolutePosition(const Widget &child) const;
 
-  virtual void onChildMoveResize(Widget &activator, const Rect &oldsize,
-      const Rect &newsize);
-  virtual void onChildWishSizeChange(Widget &activator, const Size &oldsize,
-      const Size &newsize);
+  virtual void onChildMoveResize(
+    Widget &activator, const Rect &oldsize, const Rect &newsize);
+  virtual void onChildWishSizeChange(
+    Widget &activator, const Size &oldsize, const Size &newsize);
   virtual void onChildVisible(Widget &activator, bool visible);
 
 protected:
@@ -242,8 +241,7 @@ protected:
    */
   virtual void insertWidget(size_t pos, Widget &widget, int x, int y);
 
-  virtual void moveWidgetInternal(Widget &widget, Widget &position,
-      bool after);
+  virtual void moveWidgetInternal(Widget &widget, Widget &position, bool after);
 
   virtual void updateScroll();
   virtual bool makePointVisible(int x, int y);
@@ -258,4 +256,4 @@ private:
 
 #endif // __CONTAINER_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

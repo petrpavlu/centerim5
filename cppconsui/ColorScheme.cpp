@@ -33,11 +33,10 @@
 #include <cassert>
 #include "gettext.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-int ColorScheme::getColorPair(const char *scheme, const char *widget,
-    const char *property)
+int ColorScheme::getColorPair(
+  const char *scheme, const char *widget, const char *property)
 {
   assert(widget);
   assert(property);
@@ -46,8 +45,8 @@ int ColorScheme::getColorPair(const char *scheme, const char *widget,
   Widgets::const_iterator j;
   Properties::const_iterator k;
   if (scheme && (i = schemes.find(scheme)) != schemes.end() &&
-      (j = i->second.find(widget)) != i->second.end() &&
-      (k = j->second.find(property)) != j->second.end()) {
+    (j = i->second.find(widget)) != i->second.end() &&
+    (k = j->second.find(property)) != j->second.end()) {
     Color c = k->second;
     int ret = getColorPair(c) | c.attrs;
     schemes[scheme][widget][property] = c;
@@ -100,8 +99,8 @@ int ColorScheme::getColorPair(const Color &c)
 }
 
 bool ColorScheme::setColorPair(const char *scheme, const char *widget,
-    const char *property, int foreground, int background, int attrs,
-    bool overwrite)
+  const char *property, int foreground, int background, int attrs,
+  bool overwrite)
 {
   assert(widget);
   assert(property);
@@ -110,8 +109,8 @@ bool ColorScheme::setColorPair(const char *scheme, const char *widget,
   Widgets::const_iterator j;
   Properties::const_iterator k;
   if (!overwrite && scheme && (i = schemes.find(scheme)) != schemes.end() &&
-      (j = i->second.find(widget)) != i->second.end() &&
-      (k = j->second.find(property)) != j->second.end())
+    (j = i->second.find(widget)) != i->second.end() &&
+    (k = j->second.find(property)) != j->second.end())
     return false;
 
   schemes[scheme][widget][property] = Color(foreground, background, attrs);
@@ -138,4 +137,4 @@ void ColorScheme::clear()
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

@@ -31,30 +31,29 @@
 #include <algorithm>
 #include <cassert>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 MenuWindow::MenuWindow(int x, int y, int w, int h, const char *title)
-: Window(x, y, w, h, title, TYPE_TOP)
-, wish_height(3), ref(NULL), xshift(0), yshift(0), hide_on_close(false)
+  : Window(x, y, w, h, title, TYPE_TOP), wish_height(3), ref(NULL), xshift(0),
+    yshift(0), hide_on_close(false)
 {
   wish_width = MENU_WINDOW_WISH_WIDTH;
 
   listbox = new ListBox(AUTOSIZE, AUTOSIZE);
-  listbox->signal_children_height_change.connect(sigc::mem_fun(this,
-        &MenuWindow::onChildrenHeightChange));
+  listbox->signal_children_height_change.connect(
+    sigc::mem_fun(this, &MenuWindow::onChildrenHeightChange));
   Window::addWidget(*listbox, 1, 1);
 }
 
 MenuWindow::MenuWindow(Widget &ref_, int w, int h, const char *title)
-: Window(0, 0, w, h, title, TYPE_TOP)
-, wish_height(3), ref(NULL), xshift(0), yshift(0), hide_on_close(false)
+  : Window(0, 0, w, h, title, TYPE_TOP), wish_height(3), ref(NULL), xshift(0),
+    yshift(0), hide_on_close(false)
 {
   wish_width = MENU_WINDOW_WISH_WIDTH;
 
   listbox = new ListBox(AUTOSIZE, AUTOSIZE);
-  listbox->signal_children_height_change.connect(sigc::mem_fun(this,
-        &MenuWindow::onChildrenHeightChange));
+  listbox->signal_children_height_change.connect(
+    sigc::mem_fun(this, &MenuWindow::onChildrenHeightChange));
   Window::addWidget(*listbox, 1, 1);
 
   setReferenceWidget(ref_);
@@ -77,8 +76,8 @@ void MenuWindow::show()
   if (ref) {
     assert(!ref_visible_conn.connected());
 
-    ref_visible_conn = ref->signal_visible.connect(sigc::mem_fun(this,
-          &MenuWindow::onReferenceWidgetVisible));
+    ref_visible_conn = ref->signal_visible.connect(
+      sigc::mem_fun(this, &MenuWindow::onReferenceWidgetVisible));
   }
 
   if (hide_on_close) {
@@ -111,8 +110,8 @@ void MenuWindow::onScreenResized()
   updatePositionAndSize();
 }
 
-Button *MenuWindow::insertSubMenu(size_t pos, const char *title,
-    MenuWindow &submenu)
+Button *MenuWindow::insertSubMenu(
+  size_t pos, const char *title, MenuWindow &submenu)
 {
   Button *button = prepareSubMenu(title, submenu);
   listbox->insertWidget(pos, *button);
@@ -190,8 +189,8 @@ Button *MenuWindow::prepareSubMenu(const char *title, MenuWindow &submenu)
 
   // create an opening button
   Button *button = new Button(title);
-  button->signal_activate.connect(sigc::hide(sigc::mem_fun(submenu,
-          &MenuWindow::show)));
+  button->signal_activate.connect(
+    sigc::hide(sigc::mem_fun(submenu, &MenuWindow::show)));
 
   submenu.setReferenceWidget(*button);
 
@@ -258,8 +257,8 @@ void MenuWindow::updatePositionAndSize()
   }
 }
 
-void MenuWindow::onChildrenHeightChange(ListBox & /*activator*/,
-    int /*new_height*/)
+void MenuWindow::onChildrenHeightChange(
+  ListBox & /*activator*/, int /*new_height*/)
 {
   if (height != AUTOSIZE)
     return;
@@ -267,8 +266,7 @@ void MenuWindow::onChildrenHeightChange(ListBox & /*activator*/,
   updatePositionAndSize();
 }
 
-void MenuWindow::onReferenceWidgetVisible(Widget & /*activator*/,
-    bool visible)
+void MenuWindow::onReferenceWidgetVisible(Widget & /*activator*/, bool visible)
 {
   if (visible)
     return;
@@ -287,4 +285,4 @@ void MenuWindow::onReferenceWidgetDestroy()
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

@@ -31,18 +31,17 @@
 #include <algorithm>
 #include <cstring>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 Panel::Panel(int w, int h, const char *text)
-: Widget(w, h), title(NULL), title_width(0)
+  : Widget(w, h), title(NULL), title_width(0)
 {
   setTitle(text);
 }
 
 Panel::~Panel()
 {
-  delete [] title;
+  delete[] title;
 }
 
 void Panel::draw(Curses::ViewPort area)
@@ -77,7 +76,7 @@ void Panel::draw(Curses::ViewPort area)
   for (i = 1; i < 1 + hline_len; i++)
     area.addLineChar(i, 0, Curses::LINE_HLINE);
   for (i = 1 + hline_len + extra - 2 + draw_title_width; i < real_width - 1;
-      i++)
+       i++)
     area.addLineChar(i, 0, Curses::LINE_HLINE);
 
   // draw bottom horizontal line
@@ -101,7 +100,7 @@ void Panel::draw(Curses::ViewPort area)
 
 void Panel::setTitle(const char *new_title)
 {
-  delete [] title;
+  delete[] title;
 
   size_t size = 1;
   if (new_title)
@@ -118,4 +117,4 @@ void Panel::setTitle(const char *new_title)
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

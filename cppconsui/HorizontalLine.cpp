@@ -28,11 +28,9 @@
 
 #include "HorizontalLine.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-HorizontalLine::HorizontalLine(int w)
-: AbstractLine(w, 1)
+HorizontalLine::HorizontalLine(int w) : AbstractLine(w, 1)
 {
 }
 
@@ -50,4 +48,4 @@ void HorizontalLine::draw(Curses::ViewPort area)
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

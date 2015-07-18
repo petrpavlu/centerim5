@@ -28,11 +28,9 @@
 #include "InputProcessor.h"
 #include "KeyConfig.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-InputProcessor::InputProcessor()
-: input_child(NULL)
+InputProcessor::InputProcessor() : input_child(NULL)
 {
 }
 
@@ -69,7 +67,7 @@ void InputProcessor::clearInputChild()
 }
 
 void InputProcessor::declareBindable(const char *context, const char *action,
-    const sigc::slot<void> &function, BindableType type)
+  const sigc::slot<void> &function, BindableType type)
 {
   keybindings[context][action] = Bindable(function, type);
 }
@@ -77,10 +75,10 @@ void InputProcessor::declareBindable(const char *context, const char *action,
 bool InputProcessor::process(BindableType type, const TermKeyKey &key)
 {
   for (Bindables::iterator i = keybindings.begin(); i != keybindings.end();
-      i++) {
+       i++) {
     // get keys for this context
-    const KeyConfig::KeyBindContext *keys
-      = KEYCONFIG->getKeyBinds(i->first.c_str());
+    const KeyConfig::KeyBindContext *keys =
+      KEYCONFIG->getKeyBinds(i->first.c_str());
     if (!keys)
       continue;
     KeyConfig::KeyBindContext::const_iterator j = keys->find(key);
@@ -104,4 +102,4 @@ bool InputProcessor::processInputText(const TermKeyKey & /*key*/)
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

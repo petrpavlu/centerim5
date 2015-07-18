@@ -30,13 +30,12 @@
 
 #include <cassert>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 Container::Container(int w, int h)
-: Widget(w, h), scroll_xpos(0), scroll_ypos(0), border(0)
-, focus_cycle_scope(FOCUS_CYCLE_GLOBAL), update_focus_chain(false)
-, page_focus(false), focus_child(NULL)
+  : Widget(w, h), scroll_xpos(0), scroll_ypos(0), border(0),
+    focus_cycle_scope(FOCUS_CYCLE_GLOBAL), update_focus_chain(false),
+    page_focus(false), focus_child(NULL)
 {
   declareBindables();
 }
@@ -166,8 +165,8 @@ bool Container::setFocusChild(Widget &child)
   return res;
 }
 
-void Container::getFocusChain(FocusChain &focus_chain,
-    FocusChain::iterator parent)
+void Container::getFocusChain(
+  FocusChain &focus_chain, FocusChain::iterator parent)
 {
   for (Children::iterator i = children.begin(); i != children.end(); ++i) {
     Widget *widget = *i;
@@ -175,8 +174,8 @@ void Container::getFocusChain(FocusChain &focus_chain,
 
     if (container && container->isVisible()) {
       // the widget is a container so add its widgets as well
-      FocusChain::pre_order_iterator iter = focus_chain.append_child(parent,
-          container);
+      FocusChain::pre_order_iterator iter =
+        focus_chain.append_child(parent, container);
       container->getFocusChain(focus_chain, iter);
 
       /* If this is not a focusable widget and it has no focusable
@@ -185,7 +184,7 @@ void Container::getFocusChain(FocusChain &focus_chain,
         focus_chain.erase(iter);
     }
     else if ((widget->canFocus() && widget->isVisible()) ||
-        widget == focus_child) {
+      widget == focus_child) {
       // widget can be focused or is focused already
       focus_chain.append_child(parent, widget);
     }
@@ -310,7 +309,7 @@ void Container::moveFocus(FocusDirection direction)
      * only one child. This is needed to get a correct container for paging.
      */
     while (parent_iter.number_of_children() == 1 &&
-        !(*parent_iter.begin())->canFocus())
+      !(*parent_iter.begin())->canFocus())
       parent_iter = parent_iter.begin();
     container = dynamic_cast<Container *>(*parent_iter);
     assert(container);
@@ -350,65 +349,65 @@ void Container::moveFocus(FocusDirection direction)
     max = init = cur = 0;
 
   switch (direction) {
-    case FOCUS_PREVIOUS:
-    case FOCUS_UP:
-    case FOCUS_LEFT:
-    case FOCUS_PAGE_UP:
-      // finally, find the previous widget which will get the focus
-      do {
-        /* If no focus cycling is allowed, stop if the widget with focus is
-         * the first/last child. */
-        if (scope == FOCUS_CYCLE_NONE && iter == parent_iter.begin())
-          goto end;
+  case FOCUS_PREVIOUS:
+  case FOCUS_UP:
+  case FOCUS_LEFT:
+  case FOCUS_PAGE_UP:
+    // finally, find the previous widget which will get the focus
+    do {
+      /* If no focus cycling is allowed, stop if the widget with focus is
+       * the first/last child. */
+      if (scope == FOCUS_CYCLE_NONE && iter == parent_iter.begin())
+        goto end;
 
-        if (iter == cycle_begin)
-          iter = cycle_end;
-        --iter;
-
-        if (direction == FOCUS_PAGE_UP)
-          cur = (*iter)->getRelativePosition(*container).getY();
-      } while (!(*iter)->canFocus() || init - cur < max);
-
-      break;
-    case FOCUS_NEXT:
-    case FOCUS_DOWN:
-    case FOCUS_RIGHT:
-    case FOCUS_PAGE_DOWN:
-      // finally, find the next widget which will get the focus
-      do {
-        if (scope == FOCUS_CYCLE_NONE) {
-          /* parent_iter.end() returns a sibling_iterator, it has to be
-           * converted to pre_order_iterator first... */
-          FocusChain::pre_order_iterator tmp = parent_iter.end();
-          --tmp;
-          if (iter == tmp)
-            goto end;
-        }
-
-        ++iter;
-        if (iter == cycle_end)
-          iter = cycle_begin;
-
-        if (direction == FOCUS_PAGE_DOWN)
-          cur = (*iter)->getRelativePosition(*container).getY();
-      } while (!(*iter)->canFocus() || cur - init < max);
-
-      break;
-    case FOCUS_BEGIN:
-      iter = parent_iter.begin();
-      while (iter != parent_iter.end()) {
-        if ((*iter)->canFocus())
-          goto end;
-        ++iter;
-      }
-      /* There is always one widget that can get the focus so this code is
-       * unreachable. */
-      assert(0);
-      break;
-    case FOCUS_END:
-      iter = parent_iter.end();
+      if (iter == cycle_begin)
+        iter = cycle_end;
       --iter;
-      break;
+
+      if (direction == FOCUS_PAGE_UP)
+        cur = (*iter)->getRelativePosition(*container).getY();
+    } while (!(*iter)->canFocus() || init - cur < max);
+
+    break;
+  case FOCUS_NEXT:
+  case FOCUS_DOWN:
+  case FOCUS_RIGHT:
+  case FOCUS_PAGE_DOWN:
+    // finally, find the next widget which will get the focus
+    do {
+      if (scope == FOCUS_CYCLE_NONE) {
+        /* parent_iter.end() returns a sibling_iterator, it has to be
+         * converted to pre_order_iterator first... */
+        FocusChain::pre_order_iterator tmp = parent_iter.end();
+        --tmp;
+        if (iter == tmp)
+          goto end;
+      }
+
+      ++iter;
+      if (iter == cycle_end)
+        iter = cycle_begin;
+
+      if (direction == FOCUS_PAGE_DOWN)
+        cur = (*iter)->getRelativePosition(*container).getY();
+    } while (!(*iter)->canFocus() || cur - init < max);
+
+    break;
+  case FOCUS_BEGIN:
+    iter = parent_iter.begin();
+    while (iter != parent_iter.end()) {
+      if ((*iter)->canFocus())
+        goto end;
+      ++iter;
+    }
+    /* There is always one widget that can get the focus so this code is
+     * unreachable. */
+    assert(0);
+    break;
+  case FOCUS_END:
+    iter = parent_iter.end();
+    --iter;
+    break;
   }
 
 end:
@@ -416,8 +415,8 @@ end:
   (*iter)->grabFocus();
 }
 
-Point Container::getRelativePosition(const Container &ref,
-    const Widget &child) const
+Point Container::getRelativePosition(
+  const Container &ref, const Widget &child) const
 {
   assert(child.getParent() == this);
 
@@ -459,8 +458,8 @@ Point Container::getAbsolutePosition(const Widget &child) const
   return Point(UNSETPOS, UNSETPOS);
 }
 
-void Container::onChildMoveResize(Widget &activator, const Rect & /*oldsize*/,
-    const Rect &newsize)
+void Container::onChildMoveResize(
+  Widget &activator, const Rect & /*oldsize*/, const Rect &newsize)
 {
   // can be called only by a real child
   assert(activator.getParent() == this);
@@ -470,8 +469,8 @@ void Container::onChildMoveResize(Widget &activator, const Rect & /*oldsize*/,
   updateChildArea(activator);
 }
 
-void Container::onChildWishSizeChange(Widget &activator,
-      const Size & /*oldsize*/, const Size & /*newsize*/)
+void Container::onChildWishSizeChange(
+  Widget &activator, const Size & /*oldsize*/, const Size & /*newsize*/)
 {
   // can be called only by a real child
   assert(activator.getParent() == this);
@@ -581,7 +580,7 @@ void Container::drawChild(Widget &child, Curses::ViewPort area)
   }
 
   Curses::ViewPort child_area(child_screen_x, child_screen_y, child_view_x,
-      child_view_y, child_view_width, child_view_height);
+    child_view_y, child_view_width, child_view_height);
   child.draw(child_area);
 }
 
@@ -605,8 +604,7 @@ void Container::insertWidget(size_t pos, Widget &widget, int x, int y)
   updateChildArea(widget);
 }
 
-void Container::moveWidgetInternal(Widget &widget, Widget &position,
-    bool after)
+void Container::moveWidgetInternal(Widget &widget, Widget &position, bool after)
 {
   assert(widget.getParent() == this);
   assert(position.getParent() == this);
@@ -680,37 +678,46 @@ bool Container::makePointVisible(int x, int y)
 void Container::declareBindables()
 {
   declareBindable("container", "focus-previous",
-      sigc::bind(sigc::mem_fun(this, &Container::moveFocus),
-        Container::FOCUS_PREVIOUS), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &Container::moveFocus),
+                    Container::FOCUS_PREVIOUS),
+    InputProcessor::BINDABLE_NORMAL);
   declareBindable("container", "focus-next",
-      sigc::bind(sigc::mem_fun(this, &Container::moveFocus),
-        Container::FOCUS_NEXT), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &Container::moveFocus),
+                    Container::FOCUS_NEXT),
+    InputProcessor::BINDABLE_NORMAL);
   declareBindable("container", "focus-up",
-      sigc::bind(sigc::mem_fun(this, &Container::moveFocus),
-        Container::FOCUS_UP), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &Container::moveFocus), Container::FOCUS_UP),
+    InputProcessor::BINDABLE_NORMAL);
   declareBindable("container", "focus-down",
-      sigc::bind(sigc::mem_fun(this, &Container::moveFocus),
-        Container::FOCUS_DOWN), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &Container::moveFocus),
+                    Container::FOCUS_DOWN),
+    InputProcessor::BINDABLE_NORMAL);
   declareBindable("container", "focus-left",
-      sigc::bind(sigc::mem_fun(this, &Container::moveFocus),
-        Container::FOCUS_LEFT), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &Container::moveFocus),
+                    Container::FOCUS_LEFT),
+    InputProcessor::BINDABLE_NORMAL);
   declareBindable("container", "focus-right",
-      sigc::bind(sigc::mem_fun(this, &Container::moveFocus),
-        Container::FOCUS_RIGHT), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &Container::moveFocus),
+                    Container::FOCUS_RIGHT),
+    InputProcessor::BINDABLE_NORMAL);
   declareBindable("container", "focus-page-up",
-      sigc::bind(sigc::mem_fun(this, &Container::moveFocus),
-        Container::FOCUS_PAGE_UP), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &Container::moveFocus),
+                    Container::FOCUS_PAGE_UP),
+    InputProcessor::BINDABLE_NORMAL);
   declareBindable("container", "focus-page-down",
-      sigc::bind(sigc::mem_fun(this, &Container::moveFocus),
-        Container::FOCUS_PAGE_DOWN), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &Container::moveFocus),
+                    Container::FOCUS_PAGE_DOWN),
+    InputProcessor::BINDABLE_NORMAL);
   declareBindable("container", "focus-begin",
-      sigc::bind(sigc::mem_fun(this, &Container::moveFocus),
-        Container::FOCUS_BEGIN), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &Container::moveFocus),
+                    Container::FOCUS_BEGIN),
+    InputProcessor::BINDABLE_NORMAL);
   declareBindable("container", "focus-end",
-      sigc::bind(sigc::mem_fun(this, &Container::moveFocus),
-        Container::FOCUS_END), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &Container::moveFocus),
+                    Container::FOCUS_END),
+    InputProcessor::BINDABLE_NORMAL);
 }
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

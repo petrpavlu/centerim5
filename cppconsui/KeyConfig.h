@@ -35,8 +35,7 @@
 #include <map>
 #include <string>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 /**
  * This singleton class is used to keep the key definitions. It holds the
@@ -62,8 +61,7 @@ namespace CppConsUI
  * }
  * \endcode
  */
-class KeyConfig
-{
+class KeyConfig {
 public:
   /**
    * Maps keys to actions for one context, {key: action}.
@@ -115,9 +113,7 @@ public:
   void loadDefaultKeyConfig();
 
 protected:
-
 private:
-
   /**
    * Current key binds.
    */
@@ -137,4 +133,4 @@ private:
 
 #endif // __KEYCONFIG_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

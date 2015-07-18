@@ -32,12 +32,9 @@
 #include "AbstractDialog.h"
 #include "TextEntry.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class InputDialog
-: public AbstractDialog
-{
+class InputDialog : public AbstractDialog {
 public:
   InputDialog(const char *title, const char *defaultvalue);
   virtual ~InputDialog() {}
@@ -70,4 +67,4 @@ private:
 
 #endif // __INPUTDIALOG_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

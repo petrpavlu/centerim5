@@ -28,16 +28,14 @@
 
 #include "Dialog.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 Dialog::Dialog(int x, int y, int w, int h, const char *title)
-: AbstractDialog(x, y, w, h, title)
+  : AbstractDialog(x, y, w, h, title)
 {
 }
 
-Dialog::Dialog(const char *title)
-: AbstractDialog(title)
+Dialog::Dialog(const char *title) : AbstractDialog(title)
 {
 }
 
@@ -48,4 +46,4 @@ void Dialog::emitResponse(ResponseType response)
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

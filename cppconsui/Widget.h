@@ -35,8 +35,7 @@
 
 #include <vector>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 class Container;
 class Widget;
@@ -44,14 +43,11 @@ class Window;
 
 typedef std::vector<Widget *> Widgets;
 
-class Widget
-: public sigc::trackable
-, public InputProcessor
-{
+class Widget : public sigc::trackable, public InputProcessor {
 public:
   enum {
     AUTOSIZE = -1024,
-    UNSETPOS = -2048
+    UNSETPOS = -2048,
   };
 
   Widget(int w, int h);
@@ -262,4 +258,4 @@ private:
 
 #endif // __WIDGET_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

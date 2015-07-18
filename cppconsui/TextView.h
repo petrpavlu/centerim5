@@ -32,15 +32,12 @@
 
 #include <deque>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 /**
  * Line oriented text view widget.
  */
-class TextView
-: public Widget
-{
+class TextView : public Widget {
 public:
   TextView(int w, int h, bool autoscroll_ = false, bool scrollbar_ = false);
   virtual ~TextView();
@@ -92,8 +89,7 @@ protected:
    * Struct Line saves a real line. All text added into TextView is split on
    * '\\n' character and stored into Line objects.
    */
-  struct Line
-  {
+  struct Line {
     /**
      * UTF-8 encoded text. Note: Newline character is not part of text.
      */
@@ -114,8 +110,7 @@ protected:
   /**
    * ScreenLine represents an on-screen line.
    */
-  struct ScreenLine
-  {
+  struct ScreenLine {
     /**
      * Parent Line that this ScreenLine shows.
      */
@@ -152,8 +147,8 @@ protected:
   // Widget
   virtual void updateArea();
 
-  virtual const char *proceedLine(const char *text, int area_width,
-      int *res_length) const;
+  virtual const char *proceedLine(
+    const char *text, int area_width, int *res_length) const;
   /**
    * Recalculates on-screen lines for a specified line number.
    */
@@ -163,8 +158,8 @@ protected:
    */
   virtual void updateAllScreenLines();
 
-  virtual size_t eraseScreenLines(size_t line_num, size_t start = 0,
-      size_t *deleted = NULL);
+  virtual size_t eraseScreenLines(
+    size_t line_num, size_t start = 0, size_t *deleted = NULL);
 
 private:
   CONSUI_DISABLE_COPY(TextView);
@@ -178,4 +173,4 @@ private:
 
 #endif // __TEXTVIEW_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

@@ -11,15 +11,12 @@
 #include <string>
 
 // TestWindow class
-class TestWindow
-: public CppConsUI::Window
-{
+class TestWindow : public CppConsUI::Window {
 public:
   TestWindow();
   virtual ~TestWindow() {}
 
 protected:
-
 private:
   CppConsUI::Label *label;
 
@@ -28,8 +25,7 @@ private:
   void onButtonActivate(CppConsUI::Button &activator);
 };
 
-TestWindow::TestWindow()
-: CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
+TestWindow::TestWindow() : CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
   setClosable(false);
 
@@ -40,53 +36,53 @@ TestWindow::TestWindow()
   CppConsUI::Button *button;
 
   button = new CppConsUI::Button(20, 1, "Normal button");
-  button->signal_activate.connect(sigc::mem_fun(this,
-        &TestWindow::onButtonActivate));
+  button->signal_activate.connect(
+    sigc::mem_fun(this, &TestWindow::onButtonActivate));
   addWidget(*button, 1, 8);
 
   button = new CppConsUI::Button("Simple autosize");
-  button->signal_activate.connect(sigc::mem_fun(this,
-        &TestWindow::onButtonActivate));
+  button->signal_activate.connect(
+    sigc::mem_fun(this, &TestWindow::onButtonActivate));
   addWidget(*button, 1, 10);
 
-  button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE,
-      "Text+value button", "value");
-  button->signal_activate.connect(sigc::mem_fun(this,
-        &TestWindow::onButtonActivate));
+  button = new CppConsUI::Button(
+    CppConsUI::Button::FLAG_VALUE, "Text+value button", "value");
+  button->signal_activate.connect(
+    sigc::mem_fun(this, &TestWindow::onButtonActivate));
   addWidget(*button, 1, 12);
 
-  button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE
-      | CppConsUI::Button::FLAG_UNIT, "Text+value+unit button", "value",
-      "unit");
-  button->signal_activate.connect(sigc::mem_fun(this,
-        &TestWindow::onButtonActivate));
+  button = new CppConsUI::Button(
+    CppConsUI::Button::FLAG_VALUE | CppConsUI::Button::FLAG_UNIT,
+    "Text+value+unit button", "value", "unit");
+  button->signal_activate.connect(
+    sigc::mem_fun(this, &TestWindow::onButtonActivate));
   addWidget(*button, 1, 14);
 
-  button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE
-      | CppConsUI::Button::FLAG_UNIT, "Text+value+unit\n2-line button",
-      "value", "unit");
-  button->signal_activate.connect(sigc::mem_fun(this,
-        &TestWindow::onButtonActivate));
+  button = new CppConsUI::Button(
+    CppConsUI::Button::FLAG_VALUE | CppConsUI::Button::FLAG_UNIT,
+    "Text+value+unit\n2-line button", "value", "unit");
+  button->signal_activate.connect(
+    sigc::mem_fun(this, &TestWindow::onButtonActivate));
   addWidget(*button, 1, 16);
 
-  button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE
-      | CppConsUI::Button::FLAG_UNIT, "Text+value+unit\n3-line\nbutton",
-      "value", "unit");
-  button->signal_activate.connect(sigc::mem_fun(this,
-        &TestWindow::onButtonActivate));
+  button = new CppConsUI::Button(
+    CppConsUI::Button::FLAG_VALUE | CppConsUI::Button::FLAG_UNIT,
+    "Text+value+unit\n3-line\nbutton", "value", "unit");
+  button->signal_activate.connect(
+    sigc::mem_fun(this, &TestWindow::onButtonActivate));
   addWidget(*button, 1, 19);
 
-  button = new CppConsUI::Button(CppConsUI::Button::FLAG_VALUE
-      | CppConsUI::Button::FLAG_UNIT,
-      "Text+value+unit\n4-line\n\nbutton", "value", "unit");
-  button->signal_activate.connect(sigc::mem_fun(this,
-        &TestWindow::onButtonActivate));
+  button = new CppConsUI::Button(
+    CppConsUI::Button::FLAG_VALUE | CppConsUI::Button::FLAG_UNIT,
+    "Text+value+unit\n4-line\n\nbutton", "value", "unit");
+  button->signal_activate.connect(
+    sigc::mem_fun(this, &TestWindow::onButtonActivate));
   addWidget(*button, 1, 23);
 
   button = new CppConsUI::Button(30, 1, CppConsUI::Button::FLAG_RIGHT,
-      "Text+right button", NULL, NULL, "right");
-  button->signal_activate.connect(sigc::mem_fun(this,
-        &TestWindow::onButtonActivate));
+    "Text+right button", NULL, NULL, "right");
+  button->signal_activate.connect(
+    sigc::mem_fun(this, &TestWindow::onButtonActivate));
   addWidget(*button, 1, 28);
 }
 
@@ -97,14 +93,11 @@ void TestWindow::onButtonActivate(CppConsUI::Button &activator)
 }
 
 // TestApp class
-class TestApp
-: public CppConsUI::InputProcessor
-{
+class TestApp : public CppConsUI::InputProcessor {
 public:
   static int run();
 
 protected:
-
 private:
   static TestApp *my_instance;
 
@@ -157,13 +150,9 @@ int TestApp::runAll()
   mainloop_initialized = true;
 
   // initialize CppConsUI
-  CppConsUI::AppInterface interface = {
-    MainLoop::timeout_add_cppconsui,
-    MainLoop::timeout_remove_cppconsui,
-    MainLoop::input_add_cppconsui,
-    MainLoop::input_remove_cppconsui,
-    log_error_cppconsui
-  };
+  CppConsUI::AppInterface interface = {MainLoop::timeout_add_cppconsui,
+    MainLoop::timeout_remove_cppconsui, MainLoop::input_add_cppconsui,
+    MainLoop::input_remove_cppconsui, log_error_cppconsui};
   int consui_res = CppConsUI::initializeConsUI(interface);
   if (consui_res) {
     std::cerr << "CppConsUI initialization failed." << std::endl;
@@ -173,7 +162,7 @@ int TestApp::runAll()
 
   // declare local bindables
   declareBindable("testapp", "quit", sigc::ptr_fun(MainLoop::quit),
-      InputProcessor::BINDABLE_OVERRIDE);
+    InputProcessor::BINDABLE_OVERRIDE);
 
   // create the main window
   win = new TestWindow;
@@ -211,4 +200,4 @@ int main()
   return TestApp::run();
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

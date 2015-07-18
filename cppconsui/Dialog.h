@@ -31,12 +31,9 @@
 
 #include "AbstractDialog.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class Dialog
-: public AbstractDialog
-{
+class Dialog : public AbstractDialog {
 public:
   Dialog(int x, int y, int w, int h, const char *title = NULL);
   explicit Dialog(const char *title = NULL);
@@ -59,4 +56,4 @@ private:
 
 #endif // __DIALOG_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

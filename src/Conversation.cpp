@@ -29,8 +29,8 @@
 #include "gettext.h"
 
 Conversation::Conversation(PurpleConversation *conv_)
-: Window(0, 0, 80, 24), conv(conv_), filename(NULL), logfile(NULL)
-, input_text_length(0), room_list(NULL), room_list_line(NULL)
+  : Window(0, 0, 80, 24), conv(conv_), filename(NULL), logfile(NULL),
+    input_text_length(0), room_list(NULL), room_list_line(NULL)
 {
   g_assert(conv);
 
@@ -38,11 +38,11 @@ Conversation::Conversation(PurpleConversation *conv_)
 
   view = new CppConsUI::TextView(width - 2, height, true, true);
   input = new CppConsUI::TextEdit(width - 2, height);
-  input->signal_text_change.connect(sigc::mem_fun(this,
-        &Conversation::onInputTextChange));
+  input->signal_text_change.connect(
+    sigc::mem_fun(this, &Conversation::onInputTextChange));
   char *name = g_strdup_printf("[%s] %s",
-      purple_account_get_protocol_name(purple_conversation_get_account(conv)),
-      purple_conversation_get_name(conv));
+    purple_account_get_protocol_name(purple_conversation_get_account(conv)),
+    purple_conversation_get_name(conv));
   line = new ConversationLine(name);
   g_free(name);
   addWidget(*view, 1, 0);
@@ -51,11 +51,11 @@ Conversation::Conversation(PurpleConversation *conv_)
 
   PurpleConversationType type = purple_conversation_get_type(conv_);
   if (type == PURPLE_CONV_TYPE_CHAT) {
-      room_list = new ConversationRoomList(1, 1, conv_);
-      room_list_line = new CppConsUI::VerticalLine(1);
+    room_list = new ConversationRoomList(1, 1, conv_);
+    room_list_line = new CppConsUI::VerticalLine(1);
 
-      addWidget(*room_list, 1, 0);
-      addWidget(*room_list_line, 1, 0);
+    addWidget(*room_list, 1, 0);
+    addWidget(*room_list_line, 1, 0);
   }
 
   input->grabFocus();
@@ -66,7 +66,7 @@ Conversation::Conversation(PurpleConversation *conv_)
   GError *err = NULL;
   if (!(logfile = g_io_channel_new_file(filename, "a", &err))) {
     LOG->error(_("Error opening conversation logfile '%s' (%s)."), filename,
-        err->message);
+      err->message);
     g_clear_error(&err);
   }
 
@@ -106,8 +106,8 @@ void Conversation::moveResize(int newx, int newy, int neww, int newh)
   if (input_height < 1)
     input_height = 1;
 
-  int roomlist_percentage = purple_prefs_get_int(CONF_PREFIX
-      "/chat/roomlist_partitioning");
+  int roomlist_percentage =
+    purple_prefs_get_int(CONF_PREFIX "/chat/roomlist_partitioning");
   roomlist_percentage = CLAMP(roomlist_percentage, 0, 100);
 
   int view_width = neww - 2;
@@ -124,19 +124,18 @@ void Conversation::moveResize(int newx, int newy, int neww, int newh)
     // +2 accounts for borders
     room_list_line->moveResize(view_width + 1, 0, 1, view_height);
     // give it some padding to make it line up
-    room_list->moveResize(view_width + 3, 0, neww - view_width - 3,
-        view_height);
+    room_list->moveResize(
+      view_width + 3, 0, neww - view_width - 3, view_height);
   }
 }
 
 bool Conversation::restoreFocus()
 {
   FOOTER->setText(_("%s buddy list, %s main menu, "
-        "%s/%s/%s next/prev/act conv, %s send, %s expand"),
-      "centerim|buddylist", "centerim|generalmenu",
-      "centerim|conversation-next", "centerim|conversation-prev",
-      "centerim|conversation-active", "conversation|send",
-      "centerim|conversation-expand");
+                    "%s/%s/%s next/prev/act conv, %s send, %s expand"),
+    "centerim|buddylist", "centerim|generalmenu", "centerim|conversation-next",
+    "centerim|conversation-prev", "centerim|conversation-active",
+    "conversation|send", "centerim|conversation-expand");
 
   return Window::restoreFocus();
 }
@@ -177,11 +176,11 @@ void Conversation::onScreenResized()
 }
 
 void Conversation::write(const char *name, const char * /*alias*/,
-    const char *message, PurpleMessageFlags flags, time_t mtime)
+  const char *message, PurpleMessageFlags flags, time_t mtime)
 {
   // beep on message
   if (!(flags & PURPLE_MESSAGE_SEND) &&
-      purple_prefs_get_bool(CONF_PREFIX "/chat/beep_on_msg"))
+    purple_prefs_get_bool(CONF_PREFIX "/chat/beep_on_msg"))
     CppConsUI::Curses::beep();
 
   // update the last_activity property
@@ -189,9 +188,9 @@ void Conversation::write(const char *name, const char * /*alias*/,
   time_t cur_time = time(NULL);
 
   if (type == PURPLE_CONV_TYPE_IM) {
-    PurpleBlistNode *bnode = PURPLE_BLIST_NODE(purple_find_buddy(
-          purple_conversation_get_account(conv),
-          purple_conversation_get_name(conv)));
+    PurpleBlistNode *bnode =
+      PURPLE_BLIST_NODE(purple_find_buddy(purple_conversation_get_account(conv),
+        purple_conversation_get_name(conv)));
     if (bnode) {
       purple_blist_node_set_int(bnode, "last_activity", cur_time);
 
@@ -218,7 +217,6 @@ void Conversation::write(const char *name, const char * /*alias*/,
     dir = "IN";
     mtype = "OTHER";
     color = 0;
-
   }
 
   // write text into logfile
@@ -226,21 +224,21 @@ void Conversation::write(const char *name, const char * /*alias*/,
     char *log_msg;
     if (type == PURPLE_CONV_TYPE_CHAT)
       log_msg = g_strdup_printf("\f\n%s\n%s\n%lu\n%lu\n%s: %s\n", dir, mtype,
-          mtime, cur_time, name, message);
+        mtime, cur_time, name, message);
     else
-      log_msg = g_strdup_printf("\f\n%s\n%s\n%lu\n%lu\n%s\n", dir, mtype,
-          mtime, cur_time, message);
+      log_msg = g_strdup_printf(
+        "\f\n%s\n%s\n%lu\n%lu\n%s\n", dir, mtype, mtime, cur_time, message);
     if (logfile) {
       GError *err = NULL;
-      if (g_io_channel_write_chars(logfile, log_msg, -1, NULL, &err)
-          != G_IO_STATUS_NORMAL) {
-        LOG->error(_("Error writing to conversation logfile (%s)."),
-            err->message);
+      if (g_io_channel_write_chars(logfile, log_msg, -1, NULL, &err) !=
+        G_IO_STATUS_NORMAL) {
+        LOG->error(
+          _("Error writing to conversation logfile (%s)."), err->message);
         g_clear_error(&err);
       }
       if (g_io_channel_flush(logfile, &err) != G_IO_STATUS_NORMAL) {
-        LOG->error(_("Error flushing conversation logfile (%s)."),
-            err->message);
+        LOG->error(
+          _("Error flushing conversation logfile (%s)."), err->message);
         g_clear_error(&err);
       }
     }
@@ -264,7 +262,7 @@ void Conversation::write(const char *name, const char * /*alias*/,
 }
 
 Conversation::ConversationLine::ConversationLine(const char *text_)
-: AbstractLine(AUTOSIZE, 1)
+  : AbstractLine(AUTOSIZE, 1)
 {
   g_assert(text_);
 
@@ -324,8 +322,8 @@ char *Conversation::stripHTML(const char *str) const
     if (str2[i] == '<') {
       if (cdata_close_tag) {
         // note: don't even assume any other tag is a tag in CDATA
-        if (g_ascii_strncasecmp(str2 + i, cdata_close_tag,
-              !strlen(cdata_close_tag))) {
+        if (g_ascii_strncasecmp(
+              str2 + i, cdata_close_tag, !strlen(cdata_close_tag))) {
           i += strlen(cdata_close_tag) - 1;
           cdata_close_tag = NULL;
         }
@@ -358,8 +356,8 @@ char *Conversation::stripHTML(const char *str) const
         /* If we've got an <a> tag with an href, save the address to print
          * later. */
         if (!g_ascii_strncasecmp(str2 + i, "<a", 2) &&
-            g_ascii_isspace(str2[i + 2])) {
-          int st; // start of href, inclusive [
+          g_ascii_isspace(str2[i + 2])) {
+          int st;  // start of href, inclusive [
           int end; // end of href, exclusive )
           char delim = ' ';
           // find start of href
@@ -399,9 +397,8 @@ char *Conversation::stripHTML(const char *str) const
            *  7 == strlen("http://") */
           if ((hrlen != (unsigned)(j - href_st) ||
                 strncmp(str2 + href_st, href, hrlen)) &&
-              (hrlen != (unsigned)(j - href_st + 7) ||
-               strncmp(str2 + href_st, href + 7, hrlen - 7)))
-          {
+            (hrlen != (unsigned)(j - href_st + 7) ||
+                strncmp(str2 + href_st, href + 7, hrlen - 7))) {
             str2[j++] = ' ';
             str2[j++] = '(';
             g_memmove(str2 + j, href, hrlen);
@@ -415,14 +412,14 @@ char *Conversation::stripHTML(const char *str) const
         /* Check for tags which should be mapped to newline (but ignore some
          * of the tags at the beginning of the text) */
         else if ((j && (!g_ascii_strncasecmp(str2 + i, "<p>", 3) ||
-                !g_ascii_strncasecmp(str2 + i, "<tr", 3) ||
-                !g_ascii_strncasecmp(str2 + i, "<hr", 3) ||
-                !g_ascii_strncasecmp(str2 + i, "<li", 3) ||
-                !g_ascii_strncasecmp(str2 + i, "<div", 4))) ||
-            !g_ascii_strncasecmp(str2 + i, "<br", 3) ||
-            !g_ascii_strncasecmp(str2 + i, "</table>", 8))
+                         !g_ascii_strncasecmp(str2 + i, "<tr", 3) ||
+                         !g_ascii_strncasecmp(str2 + i, "<hr", 3) ||
+                         !g_ascii_strncasecmp(str2 + i, "<li", 3) ||
+                         !g_ascii_strncasecmp(str2 + i, "<div", 4))) ||
+          !g_ascii_strncasecmp(str2 + i, "<br", 3) ||
+          !g_ascii_strncasecmp(str2 + i, "</table>", 8))
           str2[j++] = '\n';
-        // check for tags which begin CDATA and need to be closed
+// check for tags which begin CDATA and need to be closed
 #if 0 // FIXME.. option is end tag optional, we can't handle this right now
         else if (!g_ascii_strncasecmp(str2 + i, "<option", 7))
         {
@@ -435,7 +432,7 @@ char *Conversation::stripHTML(const char *str) const
         else if (!g_ascii_strncasecmp(str2 + i, "<style", 6))
           cdata_close_tag = "</style>";
         // update the index and continue checking after the tag
-        i = (str2[k] == '<' || str2[k] == '\0') ? k - 1: k;
+        i = (str2[k] == '<' || str2[k] == '\0') ? k - 1 : k;
         continue;
       }
     }
@@ -444,8 +441,8 @@ char *Conversation::stripHTML(const char *str) const
     else if (!g_ascii_isspace(str2[i]))
       visible = true;
 
-    if (str2[i] == '&' && (ent = purple_markup_unescape_entity(str2 + i,
-            &entlen))) {
+    if (str2[i] == '&' &&
+      (ent = purple_markup_unescape_entity(str2 + i, &entlen))) {
       while (*ent)
         str2[j++] = *ent++;
       i += entlen - 1;
@@ -453,7 +450,7 @@ char *Conversation::stripHTML(const char *str) const
     }
 
     if (visible)
-      str2[j++] = g_ascii_isspace(str2[i]) && str[i] != '\t' ? ' ': str2[i];
+      str2[j++] = g_ascii_isspace(str2[i]) && str[i] != '\t' ? ' ' : str2[i];
   }
 
   g_free(href);
@@ -478,14 +475,13 @@ void Conversation::buildLogFilename()
 
   proto_name = purple_account_get_protocol_name(account);
 
-  acct_name = g_strdup(purple_escape_filename(purple_normalize(account,
-          purple_account_get_username(account))));
+  acct_name = g_strdup(purple_escape_filename(
+    purple_normalize(account, purple_account_get_username(account))));
 
   name = purple_conversation_get_name(conv);
 
-  filename = g_build_filename(purple_user_dir(), "clogs", proto_name,
-      acct_name, purple_escape_filename(purple_normalize(account, name)),
-      NULL);
+  filename = g_build_filename(purple_user_dir(), "clogs", proto_name, acct_name,
+    purple_escape_filename(purple_normalize(account, name)), NULL);
 
   dir = g_path_get_dirname(filename);
   if (g_mkdir_with_parents(dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
@@ -532,7 +528,7 @@ void Conversation::loadHistory()
 
   if ((chan = g_io_channel_new_file(filename, "r", &err)) == NULL) {
     LOG->error(_("Error opening conversation logfile '%s' (%s)."), filename,
-        err->message);
+      err->message);
     g_clear_error(&err);
     return;
   }
@@ -543,8 +539,9 @@ void Conversation::loadHistory()
   char *line;
   bool new_msg = false;
   // read conversation logfile line by line
-  while (new_msg || (st = g_io_channel_read_line(chan, &line, NULL, NULL,
-          &err)) == G_IO_STATUS_NORMAL) {
+  while (new_msg ||
+    (st = g_io_channel_read_line(chan, &line, NULL, NULL, &err)) ==
+      G_IO_STATUS_NORMAL) {
     new_msg = false;
 
     // start flag
@@ -555,8 +552,8 @@ void Conversation::loadHistory()
     g_free(line);
 
     // parse direction (in/out)
-    if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err))
-        != G_IO_STATUS_NORMAL)
+    if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err)) !=
+      G_IO_STATUS_NORMAL)
       break;
     int color = 0;
     if (!strcmp(line, "OUT\n"))
@@ -566,8 +563,8 @@ void Conversation::loadHistory()
     g_free(line);
 
     // type
-    if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err))
-        != G_IO_STATUS_NORMAL)
+    if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err)) !=
+      G_IO_STATUS_NORMAL)
       break;
     bool cim4 = true;
     if (!strcmp(line, "MSG2\n"))
@@ -579,30 +576,31 @@ void Conversation::loadHistory()
     g_free(line);
 
     // sent time
-    if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err))
-        != G_IO_STATUS_NORMAL)
+    if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err)) !=
+      G_IO_STATUS_NORMAL)
       break;
     time_t sent_time = atol(line);
     g_free(line);
 
     // show time
-    if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err))
-        != G_IO_STATUS_NORMAL)
+    if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err)) !=
+      G_IO_STATUS_NORMAL)
       break;
     time_t show_time = atol(line);
     g_free(line);
 
     if (!cim4) {
       // cim5, read only one line and strip it off HTML
-      if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err))
-          != G_IO_STATUS_NORMAL)
+      if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err)) !=
+        G_IO_STATUS_NORMAL)
         break;
 
       // validate UTF-8
       if (!g_utf8_validate(line, -1, NULL)) {
         g_free(line);
         LOG->error(_("Invalid message detected in conversation logfile"
-              " '%s'. The message was skipped."), filename);
+                     " '%s'. The message was skipped."),
+          filename);
         continue;
       }
 
@@ -620,8 +618,9 @@ void Conversation::loadHistory()
       // cim4, read multiple raw lines
       gsize length;
       std::string msg;
-      while ((st = g_io_channel_read_line(chan, &line, &length, NULL, &err))
-          == G_IO_STATUS_NORMAL && line != NULL) {
+      while ((st = g_io_channel_read_line(chan, &line, &length, NULL, &err)) ==
+          G_IO_STATUS_NORMAL &&
+        line != NULL) {
         if (!strcmp(line, "\f\n")) {
           new_msg = true;
           break;
@@ -644,7 +643,8 @@ void Conversation::loadHistory()
       // validate UTF-8
       if (!g_utf8_validate(msg.c_str(), -1, NULL)) {
         LOG->error(_("Invalid message detected in conversation logfile"
-              " '%s'. The message was skipped."), filename);
+                     " '%s'. The message was skipped."),
+          filename);
         continue;
       }
 
@@ -659,7 +659,7 @@ void Conversation::loadHistory()
 
   if (st != G_IO_STATUS_EOF) {
     LOG->error(_("Error reading from conversation logfile '%s' (%s)."),
-        filename, err->message);
+      filename, err->message);
     g_clear_error(&err);
   }
   g_io_channel_unref(chan);
@@ -671,47 +671,46 @@ bool Conversation::processCommand(const char *raw, const char *html)
   if (strncmp(raw, "/", 1))
     return false;
 
-  purple_conversation_write(conv, "", html, PURPLE_MESSAGE_NO_LOG,
-      time(NULL));
+  purple_conversation_write(conv, "", html, PURPLE_MESSAGE_NO_LOG, time(NULL));
 
   char *error = NULL;
   // strip the prefix and execute the command
-  PurpleCmdStatus status = purple_cmd_do_command(conv, raw + 1, html + 1,
-      &error);
+  PurpleCmdStatus status =
+    purple_cmd_do_command(conv, raw + 1, html + 1, &error);
 
   bool result = true;
   switch (status) {
-    case PURPLE_CMD_STATUS_OK:
-      break;
-    case PURPLE_CMD_STATUS_NOT_FOUND:
-      // it isn't a valid command, send it as a message
-      result = false;
-      break;
-    case PURPLE_CMD_STATUS_WRONG_ARGS:
+  case PURPLE_CMD_STATUS_OK:
+    break;
+  case PURPLE_CMD_STATUS_NOT_FOUND:
+    // it isn't a valid command, send it as a message
+    result = false;
+    break;
+  case PURPLE_CMD_STATUS_WRONG_ARGS:
+    purple_conversation_write(conv, "",
+      _("Wrong number of arguments passed to the command."),
+      PURPLE_MESSAGE_NO_LOG, time(NULL));
+    break;
+  case PURPLE_CMD_STATUS_FAILED:
+    purple_conversation_write(conv, "",
+      error ? error : _("The command failed for an unknown reason."),
+      PURPLE_MESSAGE_NO_LOG, time(NULL));
+    break;
+  case PURPLE_CMD_STATUS_WRONG_TYPE:
+    if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
       purple_conversation_write(conv, "",
-          _("Wrong number of arguments passed to the command."),
-          PURPLE_MESSAGE_NO_LOG, time(NULL));
-      break;
-    case PURPLE_CMD_STATUS_FAILED:
+        _("The command only works in chats, not IMs."), PURPLE_MESSAGE_NO_LOG,
+        time(NULL));
+    else
       purple_conversation_write(conv, "",
-          error ? error : _("The command failed for an unknown reason."),
-          PURPLE_MESSAGE_NO_LOG, time(NULL));
-      break;
-    case PURPLE_CMD_STATUS_WRONG_TYPE:
-      if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
-        purple_conversation_write(conv, "",
-            _("The command only works in chats, not IMs."),
-            PURPLE_MESSAGE_NO_LOG, time(NULL));
-      else
-        purple_conversation_write(conv, "",
-            _("The command only works in IMs, not chats."),
-            PURPLE_MESSAGE_NO_LOG, time(NULL));
-      break;
-    case PURPLE_CMD_STATUS_WRONG_PRPL:
-      purple_conversation_write(conv, "",
-          _("The command does not work on this protocol."),
-          PURPLE_MESSAGE_NO_LOG, time(NULL));
-      break;
+        _("The command only works in IMs, not chats."), PURPLE_MESSAGE_NO_LOG,
+        time(NULL));
+    break;
+  case PURPLE_CMD_STATUS_WRONG_PRPL:
+    purple_conversation_write(conv, "",
+      _("The command does not work on this protocol."), PURPLE_MESSAGE_NO_LOG,
+      time(NULL));
+    break;
   }
 
   g_free(error);
@@ -739,7 +738,7 @@ void Conversation::onInputTextChange(CppConsUI::TextEdit &activator)
     purple_conv_im_stop_send_typed_timeout(im);
 
     serv_send_typing(purple_conversation_get_gc(conv),
-        purple_conversation_get_name(conv), PURPLE_NOT_TYPING);
+      purple_conversation_get_name(conv), PURPLE_NOT_TYPING);
     return;
   }
 
@@ -747,11 +746,10 @@ void Conversation::onInputTextChange(CppConsUI::TextEdit &activator)
   purple_conv_im_start_send_typed_timeout(im);
 
   time_t again = purple_conv_im_get_type_again(im);
-  if ((!old_text_length && new_text_length) ||
-      (again && time(NULL) > again)) {
+  if ((!old_text_length && new_text_length) || (again && time(NULL) > again)) {
     // the first letter is inserted or update is required for typing status
     unsigned int timeout = serv_send_typing(purple_conversation_get_gc(conv),
-        purple_conversation_get_name(conv), PURPLE_TYPING);
+      purple_conversation_get_name(conv), PURPLE_TYPING);
     purple_conv_im_set_type_again(im, timeout);
   }
 }
@@ -784,8 +782,8 @@ void Conversation::actionSend()
 void Conversation::declareBindables()
 {
   declareBindable("conversation", "send",
-      sigc::mem_fun(this, &Conversation::actionSend),
-      InputProcessor::BINDABLE_OVERRIDE);
+    sigc::mem_fun(this, &Conversation::actionSend),
+    InputProcessor::BINDABLE_OVERRIDE);
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

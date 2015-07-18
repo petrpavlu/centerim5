@@ -31,11 +31,10 @@
 #include <algorithm>
 #include <cassert>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 HorizontalListBox::HorizontalListBox(int w, int h)
-: AbstractListBox(w, h), children_width(0), autosize_children_count(0)
+  : AbstractListBox(w, h), children_width(0), autosize_children_count(0)
 {
 }
 
@@ -130,8 +129,8 @@ void HorizontalListBox::updateArea()
   updateScroll();
 }
 
-void HorizontalListBox::onChildMoveResize(Widget &activator,
-    const Rect &oldsize, const Rect &newsize)
+void HorizontalListBox::onChildMoveResize(
+  Widget &activator, const Rect &oldsize, const Rect &newsize)
 {
   // sanity check
   assert(newsize.getLeft() == UNSETPOS && newsize.getTop() == UNSETPOS);
@@ -164,8 +163,8 @@ void HorizontalListBox::onChildMoveResize(Widget &activator,
   updateChildren(new_width - old_width, autosize_change);
 }
 
-void HorizontalListBox::onChildWishSizeChange(Widget &activator,
-    const Size &oldsize, const Size &newsize)
+void HorizontalListBox::onChildWishSizeChange(
+  Widget &activator, const Size &oldsize, const Size &newsize)
 {
   if (!activator.isVisible() || activator.getWidth() != AUTOSIZE)
     return;
@@ -196,8 +195,8 @@ void HorizontalListBox::onChildVisible(Widget &activator, bool visible)
   updateChildren(sign * w, autosize_change);
 }
 
-void HorizontalListBox::updateChildren(int children_width_change,
-    int autosize_children_count_change)
+void HorizontalListBox::updateChildren(
+  int children_width_change, int autosize_children_count_change)
 {
   // set new children data
   children_width += children_width_change;
@@ -212,4 +211,4 @@ void HorizontalListBox::updateChildren(int children_width_change,
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

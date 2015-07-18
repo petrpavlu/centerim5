@@ -24,15 +24,12 @@
 
 #include "libtermkey/termkey.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-namespace Keys
-{
+namespace Keys {
 
 /** Compares two keys. */
-struct TermKeyCmp
-{
+struct TermKeyCmp {
   bool operator()(const TermKeyKey &a, const TermKeyKey &b) const;
 };
 
@@ -48,4 +45,4 @@ TermKeyKey refineKey(const TermKeyKey &k);
 
 #endif // __KEYS_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

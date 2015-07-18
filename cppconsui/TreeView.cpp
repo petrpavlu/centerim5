@@ -23,32 +23,30 @@
 
 #include <cassert>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-TreeView::ToggleCollapseButton::ToggleCollapseButton(int w, int h,
-    const char *text_)
-: Button(w, h, text_)
+TreeView::ToggleCollapseButton::ToggleCollapseButton(
+  int w, int h, const char *text_)
+  : Button(w, h, text_)
 {
 }
 
 TreeView::ToggleCollapseButton::ToggleCollapseButton(const char *text_)
-: Button(text_)
+  : Button(text_)
 {
 }
 
-void TreeView::ToggleCollapseButton::setParent(Container& parent)
+void TreeView::ToggleCollapseButton::setParent(Container &parent)
 {
   TreeView *tree = dynamic_cast<TreeView *>(&parent);
   assert(tree);
 
   Button::setParent(parent);
-  signal_activate.connect(sigc::hide(sigc::mem_fun(tree,
-          &TreeView::actionToggleCollapsed)));
+  signal_activate.connect(
+    sigc::hide(sigc::mem_fun(tree, &TreeView::actionToggleCollapsed)));
 }
 
-TreeView::TreeView(int w, int h)
-: Container(w, h)
+TreeView::TreeView(int w, int h) : Container(w, h)
 {
   // allow fast focus changing (paging) using PageUp/PageDown keys
   page_focus = true;
@@ -85,8 +83,8 @@ void TreeView::cleanFocus()
 
 bool TreeView::grabFocus()
 {
-  for (TheTree::pre_order_iterator i = ++thetree.begin();
-      i != thetree.end(); i++)
+  for (TheTree::pre_order_iterator i = ++thetree.begin(); i != thetree.end();
+       i++)
     if (i->widget->grabFocus())
       return true;
   return false;
@@ -125,8 +123,8 @@ bool TreeView::setFocusChild(Widget &child)
   return res;
 }
 
-void TreeView::getFocusChain(FocusChain &focus_chain,
-    FocusChain::iterator parent)
+void TreeView::getFocusChain(
+  FocusChain &focus_chain, FocusChain::iterator parent)
 {
   /* It's possible that the predecessor of focused node was just made
    * invisible and moveFocus() is called so other widget can take the focus.
@@ -142,15 +140,15 @@ void TreeView::getFocusChain(FocusChain &focus_chain,
   }
 
   // the preorder iterator starts with the root so we must skip it
-  for (TheTree::pre_order_iterator i = ++thetree.begin();
-      i != thetree.end(); i++) {
+  for (TheTree::pre_order_iterator i = ++thetree.begin(); i != thetree.end();
+       i++) {
     Widget *widget = i->widget;
     Container *container = dynamic_cast<Container *>(widget);
 
     if (container && container->isVisible()) {
       // the widget is a container so add its widgets as well
-      FocusChain::pre_order_iterator iter = focus_chain.append_child(parent,
-          container);
+      FocusChain::pre_order_iterator iter =
+        focus_chain.append_child(parent, container);
       container->getFocusChain(focus_chain, iter);
 
       /* If this is not a focusable widget and it has no focusable
@@ -170,8 +168,8 @@ void TreeView::getFocusChain(FocusChain &focus_chain,
       if (focus_cont) {
         /* The focused node is actually a Container. First add the Container,
          * then the focused widget. */
-        FocusChain::pre_order_iterator iter = focus_chain.append_child(parent,
-            focus_cont);
+        FocusChain::pre_order_iterator iter =
+          focus_chain.append_child(parent, focus_cont);
         focus_chain.append_child(iter, focus_cont->getFocusWidget());
       }
       else
@@ -183,8 +181,8 @@ void TreeView::getFocusChain(FocusChain &focus_chain,
   }
 }
 
-void TreeView::onChildMoveResize(Widget &activator, const Rect &oldsize,
-    const Rect &newsize)
+void TreeView::onChildMoveResize(
+  Widget &activator, const Rect &oldsize, const Rect &newsize)
 {
   // sanity check
   assert(newsize.getLeft() == UNSETPOS && newsize.getTop() == UNSETPOS);
@@ -198,8 +196,8 @@ void TreeView::onChildMoveResize(Widget &activator, const Rect &oldsize,
   updateArea();
 }
 
-void TreeView::onChildWishSizeChange(Widget &activator, const Size &oldsize,
-    const Size &newsize)
+void TreeView::onChildWishSizeChange(
+  Widget &activator, const Size &oldsize, const Size &newsize)
 {
   assert(activator.getParent() == this);
 
@@ -248,8 +246,8 @@ void TreeView::actionToggleCollapsed()
   toggleCollapsed(focus_node);
 }
 
-TreeView::NodeReference TreeView::insertNode(NodeReference position,
-    Widget &widget)
+TreeView::NodeReference TreeView::insertNode(
+  NodeReference position, Widget &widget)
 {
   assert(position->treeview == this);
 
@@ -260,8 +258,8 @@ TreeView::NodeReference TreeView::insertNode(NodeReference position,
   return iter;
 }
 
-TreeView::NodeReference TreeView::insertNodeAfter(NodeReference position,
-    Widget &widget)
+TreeView::NodeReference TreeView::insertNodeAfter(
+  NodeReference position, Widget &widget)
 {
   assert(position->treeview == this);
 
@@ -272,8 +270,8 @@ TreeView::NodeReference TreeView::insertNodeAfter(NodeReference position,
   return iter;
 }
 
-TreeView::NodeReference TreeView::prependNode(NodeReference parent,
-    Widget &widget)
+TreeView::NodeReference TreeView::prependNode(
+  NodeReference parent, Widget &widget)
 {
   assert(parent->treeview == this);
 
@@ -284,8 +282,8 @@ TreeView::NodeReference TreeView::prependNode(NodeReference parent,
   return iter;
 }
 
-TreeView::NodeReference TreeView::appendNode(NodeReference parent,
-    Widget &widget)
+TreeView::NodeReference TreeView::appendNode(
+  NodeReference parent, Widget &widget)
 {
   assert(parent->treeview == this);
 
@@ -495,7 +493,7 @@ int TreeView::drawNode(SiblingIterator node, Curses::ViewPort &area)
     area.attrOn(attrs);
 
     if (i != last)
-      for (j = top + oldh + 1; j < top + height ; j++)
+      for (j = top + oldh + 1; j < top + height; j++)
         area.addLineChar(depthoffset, j, Curses::LINE_VLINE);
   }
   area.attrOff(attrs);
@@ -588,8 +586,7 @@ bool TreeView::isNodeVisible(NodeReference &node) const
   return true;
 }
 
-int TreeView::repositionChildren(SiblingIterator node, int top,
-    bool in_visible)
+int TreeView::repositionChildren(SiblingIterator node, int top, bool in_visible)
 {
   int height = 0;
 
@@ -629,8 +626,7 @@ int TreeView::repositionChildren(SiblingIterator node, int top,
   // position child nodes
   int children_height = height;
   for (SiblingIterator i = node.begin(); i != node.end(); i++)
-    children_height += repositionChildren(i, top + children_height,
-        in_visible);
+    children_height += repositionChildren(i, top + children_height, in_visible);
 
   if (!in_visible)
     assert(children_height == height);
@@ -650,12 +646,14 @@ void TreeView::actionExpand()
 
 void TreeView::declareBindables()
 {
-  declareBindable("treeview", "fold-subtree", sigc::mem_fun(this,
-        &TreeView::actionCollapse), InputProcessor::BINDABLE_NORMAL);
-  declareBindable("treeview", "unfold-subtree", sigc::mem_fun(this,
-        &TreeView::actionExpand), InputProcessor::BINDABLE_NORMAL);
+  declareBindable("treeview", "fold-subtree",
+    sigc::mem_fun(this, &TreeView::actionCollapse),
+    InputProcessor::BINDABLE_NORMAL);
+  declareBindable("treeview", "unfold-subtree",
+    sigc::mem_fun(this, &TreeView::actionExpand),
+    InputProcessor::BINDABLE_NORMAL);
 }
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

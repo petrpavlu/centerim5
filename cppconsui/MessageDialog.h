@@ -32,12 +32,9 @@
 #include "AbstractDialog.h"
 #include "TextView.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class MessageDialog
-: public AbstractDialog
-{
+class MessageDialog : public AbstractDialog {
 public:
   MessageDialog(const char *title, const char *text);
   virtual ~MessageDialog() {}
@@ -61,4 +58,4 @@ private:
 
 #endif // __MESSAGEDIALOG_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

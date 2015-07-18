@@ -31,16 +31,13 @@
 
 #include "Widget.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 /**
  * A widget representing a rectangular border with an optional caption on the
  * top border line.
  */
-class Panel
-: public Widget
-{
+class Panel : public Widget {
 public:
   Panel(int w, int h, const char *text = NULL);
   virtual ~Panel();
@@ -75,4 +72,4 @@ private:
 
 #endif // __PANEL_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

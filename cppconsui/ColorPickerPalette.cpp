@@ -34,11 +34,10 @@
 #define GRAYSCALE_START 232
 #define GRAYSCALE_END 255
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 ColorPickerPalette::ColorPickerPalette(int default_color, int flags)
-: Container(0, 0)
+  : Container(0, 0)
 {
   if (flags == (FLAG_HIDE_ANSI | FLAG_HIDE_GRAYSCALE | FLAG_HIDE_COLORCUBE)) {
     // show at least ANSI colors
@@ -73,8 +72,8 @@ void ColorPickerPalette::onSelectColor(Button &activator)
 void ColorPickerPalette::addButton(int x, int y, int color, int default_color)
 {
   ColorPickerPaletteButton *button = new ColorPickerPaletteButton(color);
-  button->signal_activate.connect(sigc::mem_fun(this,
-        &ColorPickerPalette::onSelectColor));
+  button->signal_activate.connect(
+    sigc::mem_fun(this, &ColorPickerPalette::onSelectColor));
   addWidget(*button, x, y);
 
   if (color == default_color)
@@ -128,8 +127,7 @@ void ColorPickerPalette::addGrayscale(int default_color)
   resize(w, h);
 
   // add the color picker buttons
-  for (color = GRAYSCALE_START, x = 0; color <= GRAYSCALE_END;
-      color++, x += 2)
+  for (color = GRAYSCALE_START, x = 0; color <= GRAYSCALE_END; color++, x += 2)
     addButton(x, y, color, default_color);
 
   addButton(x, y, Curses::Color::WHITE, default_color);
@@ -172,13 +170,12 @@ void ColorPickerPalette::addColorCube(int default_color)
 }
 
 ColorPickerPalette::ColorPickerPaletteButton::ColorPickerPaletteButton(
-    int color)
-: Button(2, 1, ""), color(color)
+  int color)
+  : Button(2, 1, ""), color(color)
 {
 }
 
-void ColorPickerPalette::ColorPickerPaletteButton::draw(
-    Curses::ViewPort area)
+void ColorPickerPalette::ColorPickerPaletteButton::draw(Curses::ViewPort area)
 {
   ColorScheme::Color c(Curses::Color::BLACK, color);
   int colorpair = COLORSCHEME->getColorPair(c);
@@ -194,4 +191,4 @@ void ColorPickerPalette::ColorPickerPaletteButton::draw(
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

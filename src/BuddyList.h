@@ -33,30 +33,28 @@
 
 #define BUDDYLIST (BuddyList::instance())
 
-class BuddyList
-: public CppConsUI::Window
-{
+class BuddyList : public CppConsUI::Window {
 public:
   enum ListMode {
     LIST_NORMAL,
-    LIST_FLAT
+    LIST_FLAT,
   };
 
   enum GroupSortMode {
     GROUP_SORT_BY_USER,
-    GROUP_SORT_BY_NAME
+    GROUP_SORT_BY_NAME,
   };
 
   enum BuddySortMode {
     BUDDY_SORT_BY_NAME,
     BUDDY_SORT_BY_STATUS,
-    BUDDY_SORT_BY_ACTIVITY
+    BUDDY_SORT_BY_ACTIVITY,
   };
 
   enum ColorizationMode {
     COLOR_NONE,
     COLOR_BY_STATUS,
-    COLOR_BY_ACCOUNT
+    COLOR_BY_ACCOUNT,
   };
 
   static BuddyList *instance();
@@ -85,16 +83,13 @@ public:
   void updateNode(PurpleBlistNode *node);
 
 protected:
-
 private:
   enum UpdateFlags {
     UPDATE_GROUPS = 1 << 0,
-    UPDATE_OTHERS = 1 << 1
+    UPDATE_OTHERS = 1 << 1,
   };
 
-  class Filter
-  : public CppConsUI::Widget
-  {
+  class Filter : public CppConsUI::Widget {
   public:
     Filter(BuddyList *parent_);
     virtual ~Filter() {}
@@ -109,9 +104,7 @@ private:
     CONSUI_DISABLE_COPY(Filter);
   };
 
-  class AddWindow
-  : public CppConsUI::SplitDialog
-  {
+  class AddWindow : public CppConsUI::SplitDialog {
   public:
     AddWindow(const char *title);
     virtual ~AddWindow() {}
@@ -120,57 +113,47 @@ private:
     virtual void onScreenResized();
 
   protected:
-    class AccountOption
-    : public CppConsUI::ComboBox
-    {
+    class AccountOption : public CppConsUI::ComboBox {
     public:
-      explicit AccountOption(PurpleAccount *default_account = NULL,
-          bool chat_only = false);
+      explicit AccountOption(
+        PurpleAccount *default_account = NULL, bool chat_only = false);
       virtual ~AccountOption() {}
 
     protected:
-
     private:
       CONSUI_DISABLE_COPY(AccountOption);
     };
 
-    class GroupOption
-    : public CppConsUI::ComboBox
-    {
+    class GroupOption : public CppConsUI::ComboBox {
     public:
       explicit GroupOption(const char *default_group);
       explicit GroupOption(PurpleGroup *default_group);
       virtual ~GroupOption() {}
 
     protected:
-
     private:
       CONSUI_DISABLE_COPY(GroupOption);
     };
 
-    class StringOption
-    : public CppConsUI::Button
-    {
+    class StringOption : public CppConsUI::Button {
     public:
-      explicit StringOption(const char *text, const char *value = NULL,
-          bool masked = false);
+      explicit StringOption(
+        const char *text, const char *value = NULL, bool masked = false);
       virtual ~StringOption() {}
 
     protected:
       void onActivate(CppConsUI::Button &activator);
       void responseHandler(CppConsUI::InputDialog &activator,
-          CppConsUI::AbstractDialog::ResponseType response);
+        CppConsUI::AbstractDialog::ResponseType response);
 
     private:
       CONSUI_DISABLE_COPY(StringOption);
     };
 
-    class IntegerOption
-    : public CppConsUI::Button
-    {
+    class IntegerOption : public CppConsUI::Button {
     public:
       explicit IntegerOption(const char *text, const char *value = NULL,
-          bool masked = false, int min = INT_MIN, int max = INT_MAX);
+        bool masked = false, int min = INT_MIN, int max = INT_MAX);
       virtual ~IntegerOption() {}
 
     protected:
@@ -179,21 +162,18 @@ private:
 
       void onActivate(CppConsUI::Button &activator);
       void responseHandler(CppConsUI::InputDialog &activator,
-          CppConsUI::AbstractDialog::ResponseType response);
+        CppConsUI::AbstractDialog::ResponseType response);
 
     private:
       CONSUI_DISABLE_COPY(IntegerOption);
     };
 
-    class BooleanOption
-    : public CppConsUI::CheckBox
-    {
+    class BooleanOption : public CppConsUI::CheckBox {
     public:
       explicit BooleanOption(const char *text, bool checked = true);
       virtual ~BooleanOption() {}
 
     protected:
-
     private:
       CONSUI_DISABLE_COPY(BooleanOption);
     };
@@ -206,12 +186,10 @@ private:
     CONSUI_DISABLE_COPY(AddWindow);
   };
 
-  class AddBuddyWindow
-  : public AddWindow
-  {
+  class AddBuddyWindow : public AddWindow {
   public:
     AddBuddyWindow(PurpleAccount *account, const char *username,
-        const char *group, const char *alias);
+      const char *group, const char *alias);
     virtual ~AddBuddyWindow() {}
 
   protected:
@@ -227,12 +205,10 @@ private:
     CONSUI_DISABLE_COPY(AddBuddyWindow);
   };
 
-  class AddChatWindow
-  : public AddWindow
-  {
+  class AddChatWindow : public AddWindow {
   public:
     AddChatWindow(PurpleAccount *account, const char *name, const char *alias,
-        const char *group);
+      const char *group);
     virtual ~AddChatWindow() {}
 
   protected:
@@ -251,15 +227,13 @@ private:
 
     void populateChatInfo(PurpleAccount *account);
     void onAccountChanged(CppConsUI::Button &activator, size_t new_entry,
-        const char *title, intptr_t data);
+      const char *title, intptr_t data);
 
   private:
     CONSUI_DISABLE_COPY(AddChatWindow);
   };
 
-  class AddGroupWindow
-  : public AddWindow
-  {
+  class AddGroupWindow : public AddWindow {
   public:
     AddGroupWindow();
     virtual ~AddGroupWindow() {}
@@ -313,24 +287,28 @@ private:
   void actionDeleteChar();
   void declareBindables();
 
-  static void new_list_(PurpleBuddyList *list)
-    { BUDDYLIST->new_list(list); }
-  static void new_node_(PurpleBlistNode *node)
-    { BUDDYLIST->new_node(node); }
+  static void new_list_(PurpleBuddyList *list) { BUDDYLIST->new_list(list); }
+  static void new_node_(PurpleBlistNode *node) { BUDDYLIST->new_node(node); }
   static void update_(PurpleBuddyList *list, PurpleBlistNode *node)
-    { BUDDYLIST->update(list, node); }
+  {
+    BUDDYLIST->update(list, node);
+  }
   static void remove_(PurpleBuddyList *list, PurpleBlistNode *node)
-    { BUDDYLIST->remove(list, node); }
-  static void destroy_(PurpleBuddyList *list)
-    { BUDDYLIST->destroy(list); }
-  static void request_add_buddy_(PurpleAccount *account,
-      const char *username, const char *group, const char *alias)
-    { BUDDYLIST->request_add_buddy(account, username, group, alias); }
-  static void request_add_chat_(PurpleAccount *account,
-      PurpleGroup *group, const char *alias, const char *name)
-    { BUDDYLIST->request_add_chat(account, group, alias, name); }
-  static void request_add_group_()
-    { BUDDYLIST->request_add_group(); }
+  {
+    BUDDYLIST->remove(list, node);
+  }
+  static void destroy_(PurpleBuddyList *list) { BUDDYLIST->destroy(list); }
+  static void request_add_buddy_(PurpleAccount *account, const char *username,
+    const char *group, const char *alias)
+  {
+    BUDDYLIST->request_add_buddy(account, username, group, alias);
+  }
+  static void request_add_chat_(PurpleAccount *account, PurpleGroup *group,
+    const char *alias, const char *name)
+  {
+    BUDDYLIST->request_add_chat(account, group, alias, name);
+  }
+  static void request_add_group_() { BUDDYLIST->request_add_group(); }
 
   void new_list(PurpleBuddyList *list);
   void new_node(PurpleBlistNode *node);
@@ -338,20 +316,21 @@ private:
   void remove(PurpleBuddyList *list, PurpleBlistNode *node);
   void destroy(PurpleBuddyList *list);
   void request_add_buddy(PurpleAccount *account, const char *username,
-      const char *group, const char *alias);
+    const char *group, const char *alias);
   void request_add_chat(PurpleAccount *account, PurpleGroup *group,
-      const char *alias, const char *name);
+    const char *alias, const char *name);
   void request_add_group();
 
   // called when any blist/* pref is changed
-  static void blist_pref_change_(const char *name, PurplePrefType type,
-      gconstpointer val, gpointer data)
-    { reinterpret_cast<BuddyList *>(data)->blist_pref_change(name, type,
-        val); }
-  void blist_pref_change(const char *name, PurplePrefType type,
-      gconstpointer val);
+  static void blist_pref_change_(
+    const char *name, PurplePrefType type, gconstpointer val, gpointer data)
+  {
+    reinterpret_cast<BuddyList *>(data)->blist_pref_change(name, type, val);
+  }
+  void blist_pref_change(
+    const char *name, PurplePrefType type, gconstpointer val);
 };
 
 #endif // __BUDDYLIST_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

@@ -34,11 +34,10 @@ Request *Request::instance()
   return my_instance;
 }
 
-Request::RequestDialog::RequestDialog(const char *title,
-    const char *primary, const char *secondary, const char *ok_text,
-    GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
-    void *user_data)
-: SplitDialog(title), ok_cb(ok_cb), cancel_cb(cancel_cb), user_data(user_data)
+Request::RequestDialog::RequestDialog(const char *title, const char *primary,
+  const char *secondary, const char *ok_text, GCallback ok_cb,
+  const char *cancel_text, GCallback cancel_cb, void *user_data)
+  : SplitDialog(title), ok_cb(ok_cb), cancel_cb(cancel_cb), user_data(user_data)
 {
   setColorScheme("generalwindow");
 
@@ -59,8 +58,7 @@ Request::RequestDialog::RequestDialog(const char *title,
     addSeparator();
   if (cancel_text)
     addButton(cancel_text, RESPONSE_CANCEL);
-  signal_response.connect(sigc::mem_fun(this,
-        &RequestDialog::responseHandler));
+  signal_response.connect(sigc::mem_fun(this, &RequestDialog::responseHandler));
 
   onScreenResized();
 }
@@ -71,11 +69,11 @@ void Request::RequestDialog::onScreenResized()
 }
 
 Request::InputTextDialog::InputTextDialog(const char *title,
-    const char *primary, const char *secondary, const char *default_value,
-    bool /*masked*/, const char *ok_text, GCallback ok_cb,
-    const char *cancel_text, GCallback cancel_cb, void *user_data)
-: RequestDialog(title, primary, secondary, ok_text, ok_cb, cancel_text,
-    cancel_cb, user_data)
+  const char *primary, const char *secondary, const char *default_value,
+  bool /*masked*/, const char *ok_text, GCallback ok_cb,
+  const char *cancel_text, GCallback cancel_cb, void *user_data)
+  : RequestDialog(title, primary, secondary, ok_text, ok_cb, cancel_text,
+      cancel_cb, user_data)
 {
   entry = new CppConsUI::TextEntry(AUTOSIZE, AUTOSIZE, default_value);
   lbox->appendWidget(*entry);
@@ -87,32 +85,32 @@ PurpleRequestType Request::InputTextDialog::getRequestType()
   return PURPLE_REQUEST_INPUT;
 }
 
-void Request::InputTextDialog::responseHandler(SplitDialog & /*activator*/,
-    ResponseType response)
+void Request::InputTextDialog::responseHandler(
+  SplitDialog & /*activator*/, ResponseType response)
 {
   switch (response) {
-    case AbstractDialog::RESPONSE_OK:
-      if (ok_cb)
-        reinterpret_cast<PurpleRequestInputCb>(ok_cb)(user_data,
-            entry->getText());
-      break;
-    case AbstractDialog::RESPONSE_CANCEL:
-      if (cancel_cb)
-        reinterpret_cast<PurpleRequestInputCb>(cancel_cb)(user_data,
-            entry->getText());
-      break;
-    default:
-      g_assert_not_reached();
-      break;
+  case AbstractDialog::RESPONSE_OK:
+    if (ok_cb)
+      reinterpret_cast<PurpleRequestInputCb>(ok_cb)(
+        user_data, entry->getText());
+    break;
+  case AbstractDialog::RESPONSE_CANCEL:
+    if (cancel_cb)
+      reinterpret_cast<PurpleRequestInputCb>(cancel_cb)(
+        user_data, entry->getText());
+    break;
+  default:
+    g_assert_not_reached();
+    break;
   }
 }
 
 Request::ChoiceDialog::ChoiceDialog(const char *title, const char *primary,
-    const char *secondary, int default_value, const char *ok_text,
-    GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
-    void *user_data, va_list choices)
-: RequestDialog(title, primary, secondary, ok_text, ok_cb, cancel_text,
-    cancel_cb, user_data)
+  const char *secondary, int default_value, const char *ok_text,
+  GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
+  void *user_data, va_list choices)
+  : RequestDialog(title, primary, secondary, ok_text, ok_cb, cancel_text,
+      cancel_cb, user_data)
 {
   combo = new CppConsUI::ComboBox(AUTOSIZE, 1, _("Selected value"));
   lbox->appendWidget(*combo);
@@ -131,40 +129,37 @@ PurpleRequestType Request::ChoiceDialog::getRequestType()
   return PURPLE_REQUEST_CHOICE;
 }
 
-void Request::ChoiceDialog::responseHandler(SplitDialog & /*activator*/,
-    ResponseType response)
+void Request::ChoiceDialog::responseHandler(
+  SplitDialog & /*activator*/, ResponseType response)
 {
   int data = combo->getSelectedData();
 
   switch (response) {
-    case AbstractDialog::RESPONSE_OK:
-      if (ok_cb)
-        reinterpret_cast<PurpleRequestChoiceCb>(ok_cb)(user_data,
-            data);
-      break;
-    case AbstractDialog::RESPONSE_CANCEL:
-      if (cancel_cb)
-        reinterpret_cast<PurpleRequestChoiceCb>(cancel_cb)(user_data,
-            data);
-      break;
-    default:
-      g_assert_not_reached();
-      break;
+  case AbstractDialog::RESPONSE_OK:
+    if (ok_cb)
+      reinterpret_cast<PurpleRequestChoiceCb>(ok_cb)(user_data, data);
+    break;
+  case AbstractDialog::RESPONSE_CANCEL:
+    if (cancel_cb)
+      reinterpret_cast<PurpleRequestChoiceCb>(cancel_cb)(user_data, data);
+    break;
+  default:
+    g_assert_not_reached();
+    break;
   }
 }
 
 Request::ActionDialog::ActionDialog(const char *title, const char *primary,
-    const char *secondary, int default_value, void *user_data,
-    size_t action_count, va_list actions)
-: RequestDialog(title, primary, secondary, NULL, NULL, NULL, NULL, user_data)
+  const char *secondary, int default_value, void *user_data,
+  size_t action_count, va_list actions)
+  : RequestDialog(title, primary, secondary, NULL, NULL, NULL, NULL, user_data)
 {
   for (size_t i = 0; i < action_count; i++) {
     const char *title = va_arg(actions, const char *);
     GCallback cb = va_arg(actions, GCallback);
 
     CppConsUI::Button *b = buttons->appendItem(title,
-        sigc::bind(sigc::mem_fun(this, &ActionDialog::onActionChoice),
-          i, cb));
+      sigc::bind(sigc::mem_fun(this, &ActionDialog::onActionChoice), i, cb));
     if (static_cast<int>(i) == default_value)
       b->grabFocus();
 
@@ -178,13 +173,13 @@ PurpleRequestType Request::ActionDialog::getRequestType()
   return PURPLE_REQUEST_ACTION;
 }
 
-void Request::ActionDialog::responseHandler(SplitDialog & /*activator*/,
-    ResponseType /*response*/)
+void Request::ActionDialog::responseHandler(
+  SplitDialog & /*activator*/, ResponseType /*response*/)
 {
 }
 
-void Request::ActionDialog::onActionChoice(CppConsUI::Button & /*activator*/,
-    size_t i, GCallback cb)
+void Request::ActionDialog::onActionChoice(
+  CppConsUI::Button & /*activator*/, size_t i, GCallback cb)
 {
   if (cb)
     reinterpret_cast<PurpleRequestActionCb>(cb)(user_data, i);
@@ -198,11 +193,12 @@ void Request::ActionDialog::onActionChoice(CppConsUI::Button & /*activator*/,
 }
 
 Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,
-    const char *secondary, PurpleRequestFields *request_fields,
-    const char *ok_text, GCallback ok_cb, const char *cancel_text,
-    GCallback cancel_cb, void *user_data)
-: RequestDialog(title, primary, secondary, ok_text, ok_cb, cancel_text,
-    cancel_cb, user_data), fields(request_fields)
+  const char *secondary, PurpleRequestFields *request_fields,
+  const char *ok_text, GCallback ok_cb, const char *cancel_text,
+  GCallback cancel_cb, void *user_data)
+  : RequestDialog(title, primary, secondary, ok_text, ok_cb, cancel_text,
+      cancel_cb, user_data),
+    fields(request_fields)
 {
   treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
   lbox->appendWidget(*treeview);
@@ -213,11 +209,11 @@ Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,
     return;
   if (!purple_request_field_group_get_title(
         static_cast<PurpleRequestFieldGroup *>(groups->data)) &&
-      !groups->next)
+    !groups->next)
     grouping = false;
   for (; groups; groups = groups->next) {
-    PurpleRequestFieldGroup *group
-      = static_cast<PurpleRequestFieldGroup *>(groups->data);
+    PurpleRequestFieldGroup *group =
+      static_cast<PurpleRequestFieldGroup *>(groups->data);
 
     CppConsUI::TreeView::NodeReference parent = treeview->getRootNode();
     if (grouping) {
@@ -225,15 +221,15 @@ Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,
       if (!title)
         title = _("Settings group");
 
-      CppConsUI::TreeView::ToggleCollapseButton *button
-        = new CppConsUI::TreeView::ToggleCollapseButton(title);
+      CppConsUI::TreeView::ToggleCollapseButton *button =
+        new CppConsUI::TreeView::ToggleCollapseButton(title);
       parent = treeview->appendNode(treeview->getRootNode(), *button);
     }
 
-    for (GList *gfields = purple_request_field_group_get_fields(group);
-        gfields; gfields = gfields->next) {
-      PurpleRequestField *field
-        = static_cast<PurpleRequestField *>(gfields->data);
+    for (GList *gfields = purple_request_field_group_get_fields(group); gfields;
+         gfields = gfields->next) {
+      PurpleRequestField *field =
+        static_cast<PurpleRequestField *>(gfields->data);
 
       if (!purple_request_field_is_visible(field))
         continue;
@@ -241,36 +237,36 @@ Request::FieldsDialog::FieldsDialog(const char *title, const char *primary,
       PurpleRequestFieldType type = purple_request_field_get_type(field);
 
       switch (type) {
-        case PURPLE_REQUEST_FIELD_STRING:
-          treeview->appendNode(parent, *(new StringField(field)));
-          break;
-        case PURPLE_REQUEST_FIELD_INTEGER:
-          treeview->appendNode(parent, *(new IntegerField(field)));
-          break;
-        case PURPLE_REQUEST_FIELD_BOOLEAN:
-          treeview->appendNode(parent, *(new BooleanField(field)));
-          break;
-        case PURPLE_REQUEST_FIELD_CHOICE:
-          treeview->appendNode(parent, *(new ChoiceField(field)));
-          break;
-        case PURPLE_REQUEST_FIELD_LIST:
-          if (purple_request_field_list_get_multi_select(field))
-            treeview->appendNode(parent, *(new ListFieldMultiple(field)));
-          else
-            treeview->appendNode(parent, *(new ListFieldSingle(field)));
-          break;
-        case PURPLE_REQUEST_FIELD_LABEL:
-          treeview->appendNode(parent, *(new LabelField(field)));
-          break;
-        case PURPLE_REQUEST_FIELD_IMAGE:
-          treeview->appendNode(parent, *(new ImageField(field)));
-          break;
-        case PURPLE_REQUEST_FIELD_ACCOUNT:
-          treeview->appendNode(parent, *(new AccountField(field)));
-          break;
-        default:
-          LOG->error(_("Unhandled request field type '%d'."), type);
-          break;
+      case PURPLE_REQUEST_FIELD_STRING:
+        treeview->appendNode(parent, *(new StringField(field)));
+        break;
+      case PURPLE_REQUEST_FIELD_INTEGER:
+        treeview->appendNode(parent, *(new IntegerField(field)));
+        break;
+      case PURPLE_REQUEST_FIELD_BOOLEAN:
+        treeview->appendNode(parent, *(new BooleanField(field)));
+        break;
+      case PURPLE_REQUEST_FIELD_CHOICE:
+        treeview->appendNode(parent, *(new ChoiceField(field)));
+        break;
+      case PURPLE_REQUEST_FIELD_LIST:
+        if (purple_request_field_list_get_multi_select(field))
+          treeview->appendNode(parent, *(new ListFieldMultiple(field)));
+        else
+          treeview->appendNode(parent, *(new ListFieldSingle(field)));
+        break;
+      case PURPLE_REQUEST_FIELD_LABEL:
+        treeview->appendNode(parent, *(new LabelField(field)));
+        break;
+      case PURPLE_REQUEST_FIELD_IMAGE:
+        treeview->appendNode(parent, *(new ImageField(field)));
+        break;
+      case PURPLE_REQUEST_FIELD_ACCOUNT:
+        treeview->appendNode(parent, *(new AccountField(field)));
+        break;
+      default:
+        LOG->error(_("Unhandled request field type '%d'."), type);
+        break;
       }
     }
   }
@@ -284,15 +280,15 @@ PurpleRequestType Request::FieldsDialog::getRequestType()
 }
 
 Request::FieldsDialog::StringField::StringField(PurpleRequestField *field)
-: Button(FLAG_VALUE), field(field)
+  : Button(FLAG_VALUE), field(field)
 {
   g_assert(field);
 
   if (purple_request_field_string_is_masked(field))
     setMasked(true);
 
-  char *text = g_strdup_printf("%s%s",
-      purple_request_field_is_required(field) ? "*" : "",
+  char *text =
+    g_strdup_printf("%s%s", purple_request_field_is_required(field) ? "*" : "",
       purple_request_field_get_label(field));
   setText(text);
   g_free(text);
@@ -302,20 +298,20 @@ Request::FieldsDialog::StringField::StringField(PurpleRequestField *field)
 }
 
 void Request::FieldsDialog::StringField::onActivate(
-    CppConsUI::Button & /*activator*/)
+  CppConsUI::Button & /*activator*/)
 {
-  CppConsUI::InputDialog *dialog
-    = new CppConsUI::InputDialog(purple_request_field_get_label(field),
+  CppConsUI::InputDialog *dialog =
+    new CppConsUI::InputDialog(purple_request_field_get_label(field),
       purple_request_field_string_get_value(field));
   dialog->setMasked(isMasked());
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &StringField::responseHandler));
+  dialog->signal_response.connect(
+    sigc::mem_fun(this, &StringField::responseHandler));
   dialog->show();
 }
 
 void Request::FieldsDialog::StringField::responseHandler(
-    CppConsUI::InputDialog & activator,
-    CppConsUI::AbstractDialog::ResponseType response)
+  CppConsUI::InputDialog &activator,
+  CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != AbstractDialog::RESPONSE_OK)
     return;
@@ -325,12 +321,12 @@ void Request::FieldsDialog::StringField::responseHandler(
 }
 
 Request::FieldsDialog::IntegerField::IntegerField(PurpleRequestField *field)
-: Button(FLAG_VALUE), field(field)
+  : Button(FLAG_VALUE), field(field)
 {
   g_assert(field);
 
-  char *text = g_strdup_printf("%s%s",
-      purple_request_field_is_required(field) ? "*" : "",
+  char *text =
+    g_strdup_printf("%s%s", purple_request_field_is_required(field) ? "*" : "",
       purple_request_field_get_label(field));
   setText(text);
   g_free(text);
@@ -340,22 +336,22 @@ Request::FieldsDialog::IntegerField::IntegerField(PurpleRequestField *field)
 }
 
 void Request::FieldsDialog::IntegerField::onActivate(
-    CppConsUI::Button & /*activator*/)
+  CppConsUI::Button & /*activator*/)
 {
-  char *value = g_strdup_printf("%d",
-      purple_request_field_int_get_value(field));
-  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(
-      purple_request_field_get_label(field), value);
+  char *value =
+    g_strdup_printf("%d", purple_request_field_int_get_value(field));
+  CppConsUI::InputDialog *dialog =
+    new CppConsUI::InputDialog(purple_request_field_get_label(field), value);
   g_free(value);
   dialog->setFlags(CppConsUI::TextEntry::FLAG_NUMERIC);
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &IntegerField::responseHandler));
+  dialog->signal_response.connect(
+    sigc::mem_fun(this, &IntegerField::responseHandler));
   dialog->show();
 }
 
 void Request::FieldsDialog::IntegerField::responseHandler(
-    CppConsUI::InputDialog & activator,
-    CppConsUI::AbstractDialog::ResponseType response)
+  CppConsUI::InputDialog &activator,
+  CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != AbstractDialog::RESPONSE_OK)
     return;
@@ -370,12 +366,12 @@ void Request::FieldsDialog::IntegerField::responseHandler(
 }
 
 Request::FieldsDialog::BooleanField::BooleanField(PurpleRequestField *field)
-: field(field)
+  : field(field)
 {
   g_assert(field);
 
-  char *text = g_strdup_printf("%s%s",
-      purple_request_field_is_required(field) ? "*" : "",
+  char *text =
+    g_strdup_printf("%s%s", purple_request_field_is_required(field) ? "*" : "",
       purple_request_field_get_label(field));
   setText(text);
   g_free(text);
@@ -384,42 +380,42 @@ Request::FieldsDialog::BooleanField::BooleanField(PurpleRequestField *field)
   signal_toggle.connect(sigc::mem_fun(this, &BooleanField::onToggle));
 }
 
-void Request::FieldsDialog::BooleanField::onToggle(CheckBox & /*activator*/,
-    bool new_state)
+void Request::FieldsDialog::BooleanField::onToggle(
+  CheckBox & /*activator*/, bool new_state)
 {
   purple_request_field_bool_set_value(field, new_state);
 }
 
 Request::FieldsDialog::ChoiceField::ChoiceField(PurpleRequestField *field)
-: field(field)
+  : field(field)
 {
   g_assert(field);
 
-  char *text = g_strdup_printf("%s%s",
-      purple_request_field_is_required(field) ? "*" : "",
+  char *text =
+    g_strdup_printf("%s%s", purple_request_field_is_required(field) ? "*" : "",
       purple_request_field_get_label(field));
   setText(text);
   g_free(text);
 
   for (GList *list = purple_request_field_choice_get_labels(field); list;
-      list = list->next)
+       list = list->next)
     addOption(static_cast<const char *>(list->data));
   setSelected(purple_request_field_choice_get_default_value(field));
 
-  signal_selection_changed.connect(sigc::mem_fun(this,
-        &ChoiceField::onSelectionChanged));
+  signal_selection_changed.connect(
+    sigc::mem_fun(this, &ChoiceField::onSelectionChanged));
 }
 
 void Request::FieldsDialog::ChoiceField::onSelectionChanged(
-    ComboBox & /*activator*/, int new_entry, const char * /*title*/,
-    intptr_t /*data*/)
+  ComboBox & /*activator*/, int new_entry, const char * /*title*/,
+  intptr_t /*data*/)
 {
   purple_request_field_choice_set_value(field, new_entry);
 }
 
 Request::FieldsDialog::ListFieldMultiple::ListFieldMultiple(
-    PurpleRequestField *field)
-: ListBox(AUTOSIZE, 1), field(field)
+  PurpleRequestField *field)
+  : ListBox(AUTOSIZE, 1), field(field)
 {
   g_assert(field);
 
@@ -427,15 +423,15 @@ Request::FieldsDialog::ListFieldMultiple::ListFieldMultiple(
 
   int height = 0;
   for (GList *list = purple_request_field_list_get_items(field); list;
-      list = list->next, height++)
-    appendWidget(*(new ListFieldItem(field,
-            static_cast<const char *>(list->data))));
+       list = list->next, height++)
+    appendWidget(
+      *(new ListFieldItem(field, static_cast<const char *>(list->data))));
   setHeight(height);
 }
 
 Request::FieldsDialog::ListFieldMultiple::ListFieldItem::ListFieldItem(
-    PurpleRequestField *field, const char *text)
-: field(field)
+  PurpleRequestField *field, const char *text)
+  : field(field)
 {
   g_assert(field);
 
@@ -445,7 +441,7 @@ Request::FieldsDialog::ListFieldMultiple::ListFieldItem::ListFieldItem(
 }
 
 void Request::FieldsDialog::ListFieldMultiple::ListFieldItem::onToggle(
-    CheckBox & /*activator*/, bool new_state)
+  CheckBox & /*activator*/, bool new_state)
 {
   if (new_state)
     purple_request_field_list_add_selected(field, getText());
@@ -454,7 +450,7 @@ void Request::FieldsDialog::ListFieldMultiple::ListFieldItem::onToggle(
      * purple_request_field_list_remove_selected() function. */
     GList *new_selected = NULL;
     for (GList *selected = purple_request_field_list_get_selected(field);
-        selected; selected = selected->next) {
+         selected; selected = selected->next) {
       const char *data = static_cast<const char *>(selected->data);
       if (strcmp(getText(), data))
         new_selected = g_list_append(new_selected, g_strdup(data));
@@ -471,13 +467,13 @@ void Request::FieldsDialog::ListFieldMultiple::ListFieldItem::onToggle(
 }
 
 Request::FieldsDialog::ListFieldSingle::ListFieldSingle(
-    PurpleRequestField *field)
-: field(field)
+  PurpleRequestField *field)
+  : field(field)
 {
   g_assert(field);
 
-  char *text = g_strdup_printf("%s%s",
-      purple_request_field_is_required(field) ? "*" : "",
+  char *text =
+    g_strdup_printf("%s%s", purple_request_field_is_required(field) ? "*" : "",
       purple_request_field_get_label(field));
   setText(text);
   g_free(text);
@@ -490,20 +486,20 @@ Request::FieldsDialog::ListFieldSingle::ListFieldSingle(
       setSelected(i);
   }
 
-  signal_selection_changed.connect(sigc::mem_fun(this,
-        &ListFieldSingle::onSelectionChanged));
+  signal_selection_changed.connect(
+    sigc::mem_fun(this, &ListFieldSingle::onSelectionChanged));
 }
 
 void Request::FieldsDialog::ListFieldSingle::onSelectionChanged(
-    ComboBox & /*activator*/, int /*new_entry*/, const char *title,
-    intptr_t /*data*/)
+  ComboBox & /*activator*/, int /*new_entry*/, const char *title,
+  intptr_t /*data*/)
 {
   purple_request_field_list_clear_selected(field);
   purple_request_field_list_add_selected(field, title);
 }
 
 Request::FieldsDialog::LabelField::LabelField(PurpleRequestField *field)
-: field(field)
+  : field(field)
 {
   g_assert(field);
 
@@ -511,12 +507,12 @@ Request::FieldsDialog::LabelField::LabelField(PurpleRequestField *field)
 }
 
 Request::FieldsDialog::ImageField::ImageField(PurpleRequestField *field)
-: field(field)
+  : field(field)
 {
   g_assert(field);
 
-  char *text = g_strdup_printf("%s%s",
-      purple_request_field_is_required(field) ? "*" : "",
+  char *text =
+    g_strdup_printf("%s%s", purple_request_field_is_required(field) ? "*" : "",
       purple_request_field_get_label(field));
   setText(text);
   g_free(text);
@@ -531,15 +527,15 @@ void Request::FieldsDialog::ImageField::onActivate(Button & /*activator*/)
 }
 
 Request::FieldsDialog::AccountField::AccountField(PurpleRequestField *field)
-: field(field)
+  : field(field)
 {
   g_assert(field);
 
   // TODO filter (purple_request_field_account_get_filter())
   // TODO signals (signed-on, signed-off, account-added, account-removed)
 
-  char *text = g_strdup_printf("%s%s",
-      purple_request_field_is_required(field) ? "*" : "",
+  char *text =
+    g_strdup_printf("%s%s", purple_request_field_is_required(field) ? "*" : "",
       purple_request_field_get_label(field));
   setText(text);
   g_free(text);
@@ -550,41 +546,41 @@ Request::FieldsDialog::AccountField::AccountField(PurpleRequestField *field)
     if (!show_all && !purple_account_is_connected(account))
       continue;
 
-    char *label = g_strdup_printf("[%s] %s",
-        purple_account_get_protocol_name(account),
+    char *label =
+      g_strdup_printf("[%s] %s", purple_account_get_protocol_name(account),
         purple_account_get_username(account));
     addOptionPtr(label, account);
     g_free(label);
   }
   setSelectedByDataPtr(purple_request_field_account_get_default_value(field));
 
-  signal_selection_changed.connect(sigc::mem_fun(this,
-        &AccountField::onAccountChanged));
+  signal_selection_changed.connect(
+    sigc::mem_fun(this, &AccountField::onAccountChanged));
 }
 
 void Request::FieldsDialog::AccountField::onAccountChanged(
-    Button & /*activator*/, size_t /*new_entry*/, const char * /*title*/,
-    intptr_t data)
+  Button & /*activator*/, size_t /*new_entry*/, const char * /*title*/,
+  intptr_t data)
 {
-  purple_request_field_account_set_value(field,
-      reinterpret_cast<PurpleAccount *>(data));
+  purple_request_field_account_set_value(
+    field, reinterpret_cast<PurpleAccount *>(data));
 }
 
-void Request::FieldsDialog::responseHandler(SplitDialog & /*activator*/,
-    ResponseType response)
+void Request::FieldsDialog::responseHandler(
+  SplitDialog & /*activator*/, ResponseType response)
 {
   switch (response) {
-    case AbstractDialog::RESPONSE_OK:
-      if (ok_cb)
-        reinterpret_cast<PurpleRequestFieldsCb>(ok_cb)(user_data, fields);
-      break;
-    case AbstractDialog::RESPONSE_CANCEL:
-      if (cancel_cb)
-        reinterpret_cast<PurpleRequestFieldsCb>(cancel_cb)(user_data, fields);
-      break;
-    default:
-      g_assert_not_reached();
-      break;
+  case AbstractDialog::RESPONSE_OK:
+    if (ok_cb)
+      reinterpret_cast<PurpleRequestFieldsCb>(ok_cb)(user_data, fields);
+    break;
+  case AbstractDialog::RESPONSE_CANCEL:
+    if (cancel_cb)
+      reinterpret_cast<PurpleRequestFieldsCb>(cancel_cb)(user_data, fields);
+    break;
+  default:
+    g_assert_not_reached();
+    break;
   }
 
   purple_request_fields_destroy(fields);
@@ -602,8 +598,7 @@ Request::Request()
   centerim_request_ui_ops.request_file = request_file_;
   centerim_request_ui_ops.close_request = close_request_;
   centerim_request_ui_ops.request_folder = request_folder_;
-  centerim_request_ui_ops.request_action_with_icon
-    = request_action_with_icon_;
+  centerim_request_ui_ops.request_action_with_icon = request_action_with_icon_;
   purple_request_set_ui_ops(&centerim_request_ui_ops);
 }
 
@@ -633,8 +628,8 @@ void Request::finalize()
   my_instance = NULL;
 }
 
-void Request::onDialogResponse(CppConsUI::SplitDialog & dialog,
-    CppConsUI::AbstractDialog::ResponseType /*response*/)
+void Request::onDialogResponse(CppConsUI::SplitDialog &dialog,
+  CppConsUI::AbstractDialog::ResponseType /*response*/)
 {
   RequestDialog *rdialog = dynamic_cast<RequestDialog *>(&dialog);
   g_assert(rdialog);
@@ -646,18 +641,17 @@ void Request::onDialogResponse(CppConsUI::SplitDialog & dialog,
 }
 
 void *Request::request_input(const char *title, const char *primary,
-    const char *secondary, const char *default_value, gboolean /*multiline*/,
-    gboolean masked, char * /*hint*/, const char *ok_text, GCallback ok_cb,
-    const char *cancel_text, GCallback cancel_cb, PurpleAccount * /*account*/,
-    const char * /*who*/, PurpleConversation * /*conv*/, void *user_data)
+  const char *secondary, const char *default_value, gboolean /*multiline*/,
+  gboolean masked, char * /*hint*/, const char *ok_text, GCallback ok_cb,
+  const char *cancel_text, GCallback cancel_cb, PurpleAccount * /*account*/,
+  const char * /*who*/, PurpleConversation * /*conv*/, void *user_data)
 {
   LOG->debug("request_input");
 
   InputTextDialog *dialog = new InputTextDialog(title, primary, secondary,
-      default_value, masked, ok_text, ok_cb, cancel_text, cancel_cb,
-      user_data);
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &Request::onDialogResponse));
+    default_value, masked, ok_text, ok_cb, cancel_text, cancel_cb, user_data);
+  dialog->signal_response.connect(
+    sigc::mem_fun(this, &Request::onDialogResponse));
   dialog->show();
 
   requests.insert(dialog);
@@ -665,18 +659,17 @@ void *Request::request_input(const char *title, const char *primary,
 }
 
 void *Request::request_choice(const char *title, const char *primary,
-    const char *secondary, int default_value, const char *ok_text,
-    GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
-    PurpleAccount * /*account*/, const char * /*who*/,
-    PurpleConversation * /*conv*/, void *user_data, va_list choices)
+  const char *secondary, int default_value, const char *ok_text,
+  GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
+  PurpleAccount * /*account*/, const char * /*who*/,
+  PurpleConversation * /*conv*/, void *user_data, va_list choices)
 {
   LOG->debug("request_choice");
 
   ChoiceDialog *dialog = new ChoiceDialog(title, primary, secondary,
-      default_value, ok_text, ok_cb, cancel_text, cancel_cb, user_data,
-      choices);
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &Request::onDialogResponse));
+    default_value, ok_text, ok_cb, cancel_text, cancel_cb, user_data, choices);
+  dialog->signal_response.connect(
+    sigc::mem_fun(this, &Request::onDialogResponse));
   dialog->show();
 
   requests.insert(dialog);
@@ -684,16 +677,16 @@ void *Request::request_choice(const char *title, const char *primary,
 }
 
 void *Request::request_action(const char *title, const char *primary,
-    const char *secondary, int default_action, PurpleAccount * /*account*/,
-    const char * /*who*/, PurpleConversation * /*conv*/, void *user_data,
-    size_t action_count, va_list actions)
+  const char *secondary, int default_action, PurpleAccount * /*account*/,
+  const char * /*who*/, PurpleConversation * /*conv*/, void *user_data,
+  size_t action_count, va_list actions)
 {
   LOG->debug("request_action");
 
   ActionDialog *dialog = new ActionDialog(title, primary, secondary,
-      default_action, user_data, action_count, actions);
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &Request::onDialogResponse));
+    default_action, user_data, action_count, actions);
+  dialog->signal_response.connect(
+    sigc::mem_fun(this, &Request::onDialogResponse));
   dialog->show();
 
   requests.insert(dialog);
@@ -701,17 +694,17 @@ void *Request::request_action(const char *title, const char *primary,
 }
 
 void *Request::request_fields(const char *title, const char *primary,
-    const char *secondary, PurpleRequestFields *fields,
-    const char *ok_text, GCallback ok_cb, const char *cancel_text,
-    GCallback cancel_cb, PurpleAccount * /*account*/, const char * /*who*/,
-    PurpleConversation * /*conv*/, void *user_data)
+  const char *secondary, PurpleRequestFields *fields, const char *ok_text,
+  GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
+  PurpleAccount * /*account*/, const char * /*who*/,
+  PurpleConversation * /*conv*/, void *user_data)
 {
   LOG->debug("request_fields");
 
-  FieldsDialog *dialog = new FieldsDialog(title, primary, secondary,
-      fields, ok_text, ok_cb, cancel_text, cancel_cb, user_data);
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &Request::onDialogResponse));
+  FieldsDialog *dialog = new FieldsDialog(title, primary, secondary, fields,
+    ok_text, ok_cb, cancel_text, cancel_cb, user_data);
+  dialog->signal_response.connect(
+    sigc::mem_fun(this, &Request::onDialogResponse));
   dialog->show();
 
   requests.insert(dialog);
@@ -719,9 +712,9 @@ void *Request::request_fields(const char *title, const char *primary,
 }
 
 void *Request::request_file(const char * /*title*/, const char * /*filename*/,
-    gboolean /*savedialog*/, GCallback /*ok_cb*/, GCallback /*cancel_cb*/,
-    PurpleAccount * /*account*/, const char * /*who*/,
-    PurpleConversation * /*conv*/, void * /*user_data*/)
+  gboolean /*savedialog*/, GCallback /*ok_cb*/, GCallback /*cancel_cb*/,
+  PurpleAccount * /*account*/, const char * /*who*/,
+  PurpleConversation * /*conv*/, void * /*user_data*/)
 {
   return NULL;
 }
@@ -739,22 +732,21 @@ void Request::close_request(PurpleRequestType /*type*/, void *ui_handle)
   }
 }
 
-void *Request::request_folder(const char * /*title*/,
-    const char * /*dirname*/, GCallback /*ok_cb*/, GCallback /*cancel_cb*/,
-    PurpleAccount * /*account*/, const char * /*who*/,
-    PurpleConversation * /*conv*/, void * /*user_data*/)
+void *Request::request_folder(const char * /*title*/, const char * /*dirname*/,
+  GCallback /*ok_cb*/, GCallback /*cancel_cb*/, PurpleAccount * /*account*/,
+  const char * /*who*/, PurpleConversation * /*conv*/, void * /*user_data*/)
 {
   return NULL;
 }
 
 void *Request::request_action_with_icon(const char * /*title*/,
-    const char * /*primary*/, const char * /*secondary*/,
-    int /*default_action*/, PurpleAccount * /*account*/, const char * /*who*/,
-    PurpleConversation * /*conv*/, gconstpointer /*icon_data*/,
-    gsize /*icon_size*/, void * /*user_data*/, size_t /*action_count*/,
-    va_list /*actions*/)
+  const char * /*primary*/, const char * /*secondary*/, int /*default_action*/,
+  PurpleAccount * /*account*/, const char * /*who*/,
+  PurpleConversation * /*conv*/, gconstpointer /*icon_data*/,
+  gsize /*icon_size*/, void * /*user_data*/, size_t /*action_count*/,
+  va_list /*actions*/)
 {
   return NULL;
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

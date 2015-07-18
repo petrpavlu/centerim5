@@ -27,11 +27,9 @@
 
 #include "Spacer.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-Spacer::Spacer(int w, int h)
-: Widget(w, h)
+Spacer::Spacer(int w, int h) : Widget(w, h)
 {
 }
 
@@ -41,4 +39,4 @@ void Spacer::draw(Curses::ViewPort /*area*/)
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

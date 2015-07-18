@@ -27,17 +27,16 @@
 
 #include "AbstractDialog.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 AbstractDialog::AbstractDialog(int x, int y, int w, int h, const char *title)
-: Window(x, y, w, h, title, TYPE_TOP)
+  : Window(x, y, w, h, title, TYPE_TOP)
 {
   initLayout();
 }
 
 AbstractDialog::AbstractDialog(const char *title)
-: Window(10, 10, 60, 12, title, TYPE_TOP)
+  : Window(10, 10, 60, 12, title, TYPE_TOP)
 {
   initLayout();
 }
@@ -47,11 +46,12 @@ void AbstractDialog::close()
   response(RESPONSE_CANCEL);
 }
 
-void AbstractDialog::addButton(const char *text,
-    AbstractDialog::ResponseType response)
+void AbstractDialog::addButton(
+  const char *text, AbstractDialog::ResponseType response)
 {
-  buttons->appendItem(text, sigc::bind(sigc::mem_fun(this,
-          &AbstractDialog::onButtonResponse), response));
+  buttons->appendItem(
+    text, sigc::bind(
+            sigc::mem_fun(this, &AbstractDialog::onButtonResponse), response));
 }
 
 void AbstractDialog::addSeparator()
@@ -76,12 +76,12 @@ void AbstractDialog::initLayout()
   layout->appendWidget(*buttons);
 }
 
-void AbstractDialog::onButtonResponse(Button & /*activator*/,
-    ResponseType response_type)
+void AbstractDialog::onButtonResponse(
+  Button & /*activator*/, ResponseType response_type)
 {
   response(response_type);
 }
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

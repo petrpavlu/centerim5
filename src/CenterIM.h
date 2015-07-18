@@ -39,9 +39,7 @@
 
 #define CENTERIM (CenterIM::instance())
 
-class CenterIM
-: public CppConsUI::InputProcessor
-{
+class CenterIM : public CppConsUI::InputProcessor {
 public:
   enum ScreenArea {
     BUDDY_LIST_AREA,
@@ -64,7 +62,7 @@ public:
   CppConsUI::Rect getScreenArea(ScreenArea area);
   CppConsUI::Rect getScreenAreaCentered(ScreenArea area);
 
-  static const char * const version;
+  static const char *const version;
 
   bool loadColorSchemeConfig();
   bool loadKeyConfig();
@@ -72,15 +70,13 @@ public:
   bool isEnabledExpandedConversationMode() const { return convs_expanded; }
 
   sigc::connection timeoutConnect(const sigc::slot<bool> &slot,
-      unsigned interval, int priority = G_PRIORITY_DEFAULT);
+    unsigned interval, int priority = G_PRIORITY_DEFAULT);
   sigc::connection timeoutOnceConnect(const sigc::slot<void> &slot,
-      unsigned interval, int priority = G_PRIORITY_DEFAULT);
+    unsigned interval, int priority = G_PRIORITY_DEFAULT);
 
 protected:
-
 private:
-  struct IOClosurePurple
-  {
+  struct IOClosurePurple {
     PurpleInputFunction function;
     guint result;
     gpointer data;
@@ -88,8 +84,7 @@ private:
     IOClosurePurple() : function(NULL), result(0), data(NULL) {}
   };
 
-  struct IOClosureCppConsUI
-  {
+  struct IOClosureCppConsUI {
     CppConsUI::InputFunction function;
     guint result;
     gpointer data;
@@ -97,8 +92,7 @@ private:
     IOClosureCppConsUI() : function(NULL), result(0), data(NULL) {}
   };
 
-  struct SourceClosureCppConsUI
-  {
+  struct SourceClosureCppConsUI {
     CppConsUI::SourceFunction function;
     void *data;
 
@@ -146,30 +140,30 @@ private:
   // PurpleEventLoopUiOps callbacks
   // adds IO watch to glib main loop context
   static guint input_add_purple(int fd, PurpleInputCondition condition,
-      PurpleInputFunction function, gpointer data);
+    PurpleInputFunction function, gpointer data);
 
   // helper functions for input_add_purple()
   // process IO input to purple callback
-  static gboolean io_input_purple(GIOChannel *source, GIOCondition condition,
-      gpointer data);
+  static gboolean io_input_purple(
+    GIOChannel *source, GIOCondition condition, gpointer data);
   // destroyes libpurple IO input callback internal data
   static void io_destroy_purple(gpointer data);
 
   // CppConsUI callbacks
   // adds IO watch to glib main loop context
   static unsigned input_add_cppconsui(int fd,
-      CppConsUI::InputCondition condition, CppConsUI::InputFunction function,
-      void *data);
+    CppConsUI::InputCondition condition, CppConsUI::InputFunction function,
+    void *data);
 
   // helper functions for input_add_cppconsui()
   // process IO input to CppConsUI callback
-  static gboolean io_input_cppconsui(GIOChannel *source,
-      GIOCondition condition, gpointer data);
+  static gboolean io_input_cppconsui(
+    GIOChannel *source, GIOCondition condition, gpointer data);
   // destroyes CppConsUI IO input callback internal data
   static void io_destroy_cppconsui(gpointer data);
 
-  static unsigned timeout_add_cppconsui(unsigned interval,
-      CppConsUI::SourceFunction function, void *data);
+  static unsigned timeout_add_cppconsui(
+    unsigned interval, CppConsUI::SourceFunction function, void *data);
   static gboolean timeout_function_cppconsui(gpointer data);
   static void timeout_destroy_cppconsui(gpointer data);
   static bool timeout_remove_cppconsui(unsigned handle);
@@ -183,25 +177,28 @@ private:
   static GHashTable *get_ui_info();
 
   // PurpleDebugUiOps callbacks
-  static void purple_print(PurpleDebugLevel level, const char *category,
-      const char *arg_s);
-  static gboolean purple_is_enabled(PurpleDebugLevel level,
-      const char *category);
+  static void purple_print(
+    PurpleDebugLevel level, const char *category, const char *arg_s);
+  static gboolean purple_is_enabled(
+    PurpleDebugLevel level, const char *category);
 
   // called when CONF_PREFIX/dimensions prefs are changed
-  static void dimensions_change_(const char *name, PurplePrefType type,
-      gconstpointer val, gpointer data)
-    { reinterpret_cast<CenterIM *>(data)->dimensions_change(name, type, val); }
-  void dimensions_change(const char *name, PurplePrefType type,
-      gconstpointer val);
+  static void dimensions_change_(
+    const char *name, PurplePrefType type, gconstpointer val, gpointer data)
+  {
+    reinterpret_cast<CenterIM *>(data)->dimensions_change(name, type, val);
+  }
+  void dimensions_change(
+    const char *name, PurplePrefType type, gconstpointer val);
 
   // called when /libpurple/away/idle_reporting pref is changed
-  static void idle_reporting_change_(const char *name, PurplePrefType type,
-      gconstpointer val, gpointer data)
-    { reinterpret_cast<CenterIM *>(data)->idle_reporting_change(name, type,
-        val); }
-  void idle_reporting_change(const char *name, PurplePrefType type,
-      gconstpointer val);
+  static void idle_reporting_change_(
+    const char *name, PurplePrefType type, gconstpointer val, gpointer data)
+  {
+    reinterpret_cast<CenterIM *>(data)->idle_reporting_change(name, type, val);
+  }
+  void idle_reporting_change(
+    const char *name, PurplePrefType type, gconstpointer val);
 
   // config handling
   void loadDefaultColorSchemeConfig();
@@ -228,4 +225,4 @@ private:
 
 #endif // __CENTERIM_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

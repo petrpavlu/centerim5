@@ -25,11 +25,9 @@
 
 #include <string.h>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-namespace Keys
-{
+namespace Keys {
 
 bool TermKeyCmp::operator()(const TermKeyKey &a, const TermKeyKey &b) const
 {
@@ -64,4 +62,4 @@ TermKeyKey refineKey(const TermKeyKey &k)
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

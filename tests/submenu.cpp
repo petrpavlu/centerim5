@@ -11,23 +11,19 @@
 #include <string>
 
 // TestWindow class
-class TestWindow
-: public CppConsUI::Window
-{
+class TestWindow : public CppConsUI::Window {
 public:
   TestWindow();
   virtual ~TestWindow();
 
 protected:
-
 private:
   CppConsUI::MenuWindow *menu;
 
   CONSUI_DISABLE_COPY(TestWindow);
 };
 
-TestWindow::TestWindow()
-: CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
+TestWindow::TestWindow() : CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
 {
   setClosable(false);
 
@@ -39,40 +35,40 @@ TestWindow::TestWindow()
   menu = new CppConsUI::MenuWindow(*button, AUTOSIZE, AUTOSIZE);
   menu->setHideOnClose(true);
 
-  button->signal_activate.connect(sigc::hide(sigc::mem_fun(menu,
-          &CppConsUI::MenuWindow::show)));
+  button->signal_activate.connect(
+    sigc::hide(sigc::mem_fun(menu, &CppConsUI::MenuWindow::show)));
 
-  menu->appendItem("Item 1", sigc::hide(sigc::mem_fun(menu,
-          &CppConsUI::MenuWindow::hide)));
-  menu->appendItem("Item 2", sigc::hide(sigc::mem_fun(menu,
-          &CppConsUI::MenuWindow::hide)));
-  menu->appendItem("Item 3", sigc::hide(sigc::mem_fun(menu,
-          &CppConsUI::MenuWindow::hide)));
-  menu->appendItem("Item 4", sigc::hide(sigc::mem_fun(menu,
-          &CppConsUI::MenuWindow::hide)));
+  menu->appendItem(
+    "Item 1", sigc::hide(sigc::mem_fun(menu, &CppConsUI::MenuWindow::hide)));
+  menu->appendItem(
+    "Item 2", sigc::hide(sigc::mem_fun(menu, &CppConsUI::MenuWindow::hide)));
+  menu->appendItem(
+    "Item 3", sigc::hide(sigc::mem_fun(menu, &CppConsUI::MenuWindow::hide)));
+  menu->appendItem(
+    "Item 4", sigc::hide(sigc::mem_fun(menu, &CppConsUI::MenuWindow::hide)));
   menu->appendSeparator();
 
-  CppConsUI::MenuWindow *submenu = new CppConsUI::MenuWindow(*button,
-      AUTOSIZE, AUTOSIZE);
-  submenu->appendItem("Item 1", sigc::hide(sigc::mem_fun(submenu,
-          &CppConsUI::MenuWindow::hide)));
-  submenu->appendItem("Item 2", sigc::hide(sigc::mem_fun(submenu,
-          &CppConsUI::MenuWindow::hide)));
-  submenu->appendItem("Item 3", sigc::hide(sigc::mem_fun(submenu,
-          &CppConsUI::MenuWindow::hide)));
-  submenu->appendItem("Item 3", sigc::hide(sigc::mem_fun(submenu,
-          &CppConsUI::MenuWindow::hide)));
+  CppConsUI::MenuWindow *submenu =
+    new CppConsUI::MenuWindow(*button, AUTOSIZE, AUTOSIZE);
+  submenu->appendItem(
+    "Item 1", sigc::hide(sigc::mem_fun(submenu, &CppConsUI::MenuWindow::hide)));
+  submenu->appendItem(
+    "Item 2", sigc::hide(sigc::mem_fun(submenu, &CppConsUI::MenuWindow::hide)));
+  submenu->appendItem(
+    "Item 3", sigc::hide(sigc::mem_fun(submenu, &CppConsUI::MenuWindow::hide)));
+  submenu->appendItem(
+    "Item 3", sigc::hide(sigc::mem_fun(submenu, &CppConsUI::MenuWindow::hide)));
   menu->appendSubMenu("First submenu", *submenu);
 
   submenu = new CppConsUI::MenuWindow(*button, AUTOSIZE, AUTOSIZE);
-  submenu->appendItem("Item 1", sigc::hide(sigc::mem_fun(menu,
-          &CppConsUI::MenuWindow::hide)));
-  submenu->appendItem("Item 2", sigc::hide(sigc::mem_fun(menu,
-          &CppConsUI::MenuWindow::hide)));
-  submenu->appendItem("Item 3", sigc::hide(sigc::mem_fun(menu,
-          &CppConsUI::MenuWindow::hide)));
-  submenu->appendItem("Item 4", sigc::hide(sigc::mem_fun(menu,
-          &CppConsUI::MenuWindow::hide)));
+  submenu->appendItem(
+    "Item 1", sigc::hide(sigc::mem_fun(menu, &CppConsUI::MenuWindow::hide)));
+  submenu->appendItem(
+    "Item 2", sigc::hide(sigc::mem_fun(menu, &CppConsUI::MenuWindow::hide)));
+  submenu->appendItem(
+    "Item 3", sigc::hide(sigc::mem_fun(menu, &CppConsUI::MenuWindow::hide)));
+  submenu->appendItem(
+    "Item 4", sigc::hide(sigc::mem_fun(menu, &CppConsUI::MenuWindow::hide)));
   menu->appendSubMenu("Second submenu", *submenu);
 }
 
@@ -82,14 +78,11 @@ TestWindow::~TestWindow()
 }
 
 // TestApp class
-class TestApp
-: public CppConsUI::InputProcessor
-{
+class TestApp : public CppConsUI::InputProcessor {
 public:
   static int run();
 
 protected:
-
 private:
   static TestApp *my_instance;
 
@@ -142,13 +135,9 @@ int TestApp::runAll()
   mainloop_initialized = true;
 
   // initialize CppConsUI
-  CppConsUI::AppInterface interface = {
-    MainLoop::timeout_add_cppconsui,
-    MainLoop::timeout_remove_cppconsui,
-    MainLoop::input_add_cppconsui,
-    MainLoop::input_remove_cppconsui,
-    log_error_cppconsui
-  };
+  CppConsUI::AppInterface interface = {MainLoop::timeout_add_cppconsui,
+    MainLoop::timeout_remove_cppconsui, MainLoop::input_add_cppconsui,
+    MainLoop::input_remove_cppconsui, log_error_cppconsui};
   int consui_res = CppConsUI::initializeConsUI(interface);
   if (consui_res) {
     std::cerr << "CppConsUI initialization failed." << std::endl;
@@ -158,7 +147,7 @@ int TestApp::runAll()
 
   // declare local bindables
   declareBindable("testapp", "quit", sigc::ptr_fun(MainLoop::quit),
-      InputProcessor::BINDABLE_OVERRIDE);
+    InputProcessor::BINDABLE_OVERRIDE);
 
   // create the main window
   win = new TestWindow;
@@ -196,4 +185,4 @@ int main()
   return TestApp::run();
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

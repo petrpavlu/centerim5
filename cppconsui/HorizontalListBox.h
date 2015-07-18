@@ -32,16 +32,13 @@
 #include "AbstractListBox.h"
 #include "VerticalLine.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 /**
  * Implementation of AbstractListBox class where widgets are placed
  * horizontally.
  */
-class HorizontalListBox
-: public AbstractListBox
-{
+class HorizontalListBox : public AbstractListBox {
 public:
   HorizontalListBox(int w, int h);
   virtual ~HorizontalListBox() {}
@@ -70,14 +67,14 @@ protected:
   virtual void updateArea();
 
   // Container
-  virtual void onChildMoveResize(Widget &activator, const Rect &oldsize,
-      const Rect &newsize);
-  virtual void onChildWishSizeChange(Widget &activator, const Size &oldsize,
-      const Size &newsize);
+  virtual void onChildMoveResize(
+    Widget &activator, const Rect &oldsize, const Rect &newsize);
+  virtual void onChildWishSizeChange(
+    Widget &activator, const Size &oldsize, const Size &newsize);
   virtual void onChildVisible(Widget &widget, bool visible);
 
-  virtual void updateChildren(int children_width_change,
-      int autosize_children_count_change);
+  virtual void updateChildren(
+    int children_width_change, int autosize_children_count_change);
 
 private:
   CONSUI_DISABLE_COPY(HorizontalListBox);
@@ -87,4 +84,4 @@ private:
 
 #endif // __HORIZONTALLISTBOX_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

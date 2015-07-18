@@ -34,15 +34,14 @@
 #include <cassert>
 #include <cstring>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 Widget::Widget(int w, int h)
-: xpos(UNSETPOS), ypos(UNSETPOS), width(w), height(h), wish_width(AUTOSIZE)
-, wish_height(AUTOSIZE), real_xpos(UNSETPOS), real_ypos(UNSETPOS)
-, real_width(0), real_height(0), can_focus(false), has_focus(false)
-, visible(true), parent(NULL), color_scheme(NULL)
-, absolute_position_listeners(0)
+  : xpos(UNSETPOS), ypos(UNSETPOS), width(w), height(h), wish_width(AUTOSIZE),
+    wish_height(AUTOSIZE), real_xpos(UNSETPOS), real_ypos(UNSETPOS),
+    real_width(0), real_height(0), can_focus(false), has_focus(false),
+    visible(true), parent(NULL), color_scheme(NULL),
+    absolute_position_listeners(0)
 {
 }
 
@@ -53,7 +52,7 @@ Widget::~Widget()
   if (parent && absolute_position_listeners.size() > 0)
     parent->unregisterAbsolutePositionListener(*this);
 
-  delete [] color_scheme;
+  delete[] color_scheme;
 }
 
 void Widget::moveResize(int newx, int newy, int neww, int newh)
@@ -264,7 +263,7 @@ void Widget::setRealSize(int neww, int newh)
 
 void Widget::setColorScheme(const char *new_color_scheme)
 {
-  delete [] color_scheme;
+  delete[] color_scheme;
 
   if (new_color_scheme) {
     size_t size = std::strlen(new_color_scheme) + 1;
@@ -297,7 +296,7 @@ void Widget::registerAbsolutePositionListener(Widget &widget)
 void Widget::unregisterAbsolutePositionListener(Widget &widget)
 {
   Widgets::iterator i = std::find(absolute_position_listeners.begin(),
-      absolute_position_listeners.end(), &widget);
+    absolute_position_listeners.end(), &widget);
   assert(i != absolute_position_listeners.end());
 
   absolute_position_listeners.erase(i);
@@ -344,7 +343,7 @@ void Widget::signalVisible(bool visible)
 void Widget::signalAbsolutePositionChange()
 {
   for (Widgets::iterator i = absolute_position_listeners.begin();
-      i != absolute_position_listeners.end(); ++i)
+       i != absolute_position_listeners.end(); ++i)
     (*i)->onAbsolutePositionChange(*this);
 }
 
@@ -389,4 +388,4 @@ Container *Widget::getTopContainer()
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

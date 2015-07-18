@@ -29,17 +29,16 @@
 
 #include "Container.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 TextEntry::TextEntry(int w, int h, const char *text_, int flags_)
-: TextEdit(w, h, text_, flags_, true, false)
+  : TextEdit(w, h, text_, flags_, true, false)
 {
   declareBindables();
 }
 
 TextEntry::TextEntry(const char *text_, int flags_)
-: TextEdit(AUTOSIZE, 1, text_, flags_, true, false)
+  : TextEdit(AUTOSIZE, 1, text_, flags_, true, false)
 {
   declareBindables();
 }
@@ -53,10 +52,11 @@ void TextEntry::actionActivate()
 void TextEntry::declareBindables()
 {
   // non text editing bindables
-  declareBindable("textentry", "activate", sigc::mem_fun(this,
-        &TextEntry::actionActivate), InputProcessor::BINDABLE_NORMAL);
+  declareBindable("textentry", "activate",
+    sigc::mem_fun(this, &TextEntry::actionActivate),
+    InputProcessor::BINDABLE_NORMAL);
 }
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

@@ -21,6 +21,6 @@
 #include "git-version.h"
 #include "CenterIM.h"
 
-const char * const CenterIM::version = GIT_VERSION;
+const char *const CenterIM::version = GIT_VERSION;
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

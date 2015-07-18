@@ -31,13 +31,10 @@
 
 #include "CppConsUI.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-namespace Curses
-{
-struct Stats
-{
+namespace Curses {
+struct Stats {
   unsigned newpad_calls;
   unsigned newwin_calls;
   unsigned subpad_calls;
@@ -58,14 +55,13 @@ enum LineChar {
   LINE_LARROW,
   LINE_RARROW,
   LINE_UARROW,
-  LINE_BULLET
+  LINE_BULLET,
 };
 
-class ViewPort
-{
+class ViewPort {
 public:
   ViewPort(int screen_x, int screen_y, int view_x, int view_y, int view_width,
-      int view_height);
+    int view_height);
   virtual ~ViewPort() {}
 
   /**
@@ -75,18 +71,18 @@ public:
    */
   int addString(int x, int y, int w, const char *str, int *printed = NULL);
   int addString(int x, int y, const char *str, int *printed = NULL);
-  int addString(int x, int y, int w, const char *str, const char *end,
-      int *printed = NULL);
-  int addString(int x, int y, const char *str, const char *end,
-      int *printed = NULL);
+  int addString(
+    int x, int y, int w, const char *str, const char *end, int *printed = NULL);
+  int addString(
+    int x, int y, const char *str, const char *end, int *printed = NULL);
 
   int addChar(int x, int y, UTF8::UniChar uc, int *printed = NULL);
   int addLineChar(int x, int y, LineChar c);
 
   int attrOn(int attrs);
   int attrOff(int attrs);
-  int changeAt(int x, int y, int n, /* attr_t */ int attr, short color,
-      const void *opts);
+  int changeAt(
+    int x, int y, int n, /* attr_t */ int attr, short color, const void *opts);
 
   int fill(int attrs);
   int fill(int attrs, int x, int y, int w, int h);
@@ -108,11 +104,10 @@ protected:
   bool isInViewPort(int x, int y, int w);
 
 private:
-  //CONSUI_DISABLE_COPY(ViewPort);
+  // CONSUI_DISABLE_COPY(ViewPort);
 };
 
-struct Color
-{
+struct Color {
   const static int DEFAULT;
   const static int BLACK;
   const static int RED;
@@ -124,8 +119,7 @@ struct Color
   const static int WHITE;
 };
 
-struct Attr
-{
+struct Attr {
   const static int NORMAL;
   const static int STANDOUT;
   const static int REVERSE;
@@ -173,4 +167,4 @@ void resetStats();
 
 #endif // __CONSUICURSES_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

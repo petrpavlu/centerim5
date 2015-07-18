@@ -30,19 +30,15 @@
 
 #include "TextEdit.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class TextEntry
-: public TextEdit
-{
+class TextEntry : public TextEdit {
 public:
   TextEntry(int w, int h, const char *text_ = NULL, int flags_ = 0);
   explicit TextEntry(const char *text_ = NULL, int flags_ = 0);
   virtual ~TextEntry() {}
 
 protected:
-
 private:
   CONSUI_DISABLE_COPY(TextEntry);
 
@@ -55,4 +51,4 @@ private:
 
 #endif // __TEXT_ENTRY_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

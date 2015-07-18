@@ -31,19 +31,18 @@
 #include <cassert>
 #include <cstring>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 ComboBox::ComboBox(int w, int h, const char *text)
-: Button(w, h, text, FLAG_VALUE), dropdown(NULL), selected_entry(0)
-, max_option_width(0)
+  : Button(w, h, text, FLAG_VALUE), dropdown(NULL), selected_entry(0),
+    max_option_width(0)
 {
   signal_activate.connect(sigc::mem_fun(this, &ComboBox::onDropDown));
 }
 
 ComboBox::ComboBox(const char *text)
-: Button(text, FLAG_VALUE), dropdown(NULL), selected_entry(0)
-, max_option_width(0)
+  : Button(text, FLAG_VALUE), dropdown(NULL), selected_entry(0),
+    max_option_width(0)
 {
   signal_activate.connect(sigc::mem_fun(this, &ComboBox::onDropDown));
 }
@@ -58,7 +57,7 @@ ComboBox::~ComboBox()
 void ComboBox::clearOptions()
 {
   for (ComboBoxEntries::iterator i = options.begin(); i != options.end(); i++)
-    delete [] i->title;
+    delete[] i->title;
 
   options.clear();
   selected_entry = 0;
@@ -161,14 +160,13 @@ void ComboBox::onDropDown(Button & /*activator*/)
     return;
 
   dropdown = new MenuWindow(*this, max_option_width + 2, AUTOSIZE);
-  dropdown->signal_close.connect(sigc::mem_fun(this,
-        &ComboBox::dropDownClose));
+  dropdown->signal_close.connect(sigc::mem_fun(this, &ComboBox::dropDownClose));
 
   int i;
   ComboBoxEntries::iterator j;
   for (i = 0, j = options.begin(); j != options.end(); i++, j++) {
-    Button *b = dropdown->appendItem(j->title, sigc::bind(sigc::mem_fun(this,
-            &ComboBox::dropDownOk), i));
+    Button *b = dropdown->appendItem(
+      j->title, sigc::bind(sigc::mem_fun(this, &ComboBox::dropDownOk), i));
     if (i == selected_entry)
       b->grabFocus();
   }
@@ -190,4 +188,4 @@ void ComboBox::dropDownClose(Window & /*window*/)
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

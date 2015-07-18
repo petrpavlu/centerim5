@@ -29,25 +29,24 @@
 
 #include "gettext.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-ColorPickerDialog::ColorPickerDialog(const char *title, int default_color,
-    int flags)
-: AbstractDialog(title)
+ColorPickerDialog::ColorPickerDialog(
+  const char *title, int default_color, int flags)
+  : AbstractDialog(title)
 {
   addButton(OK_BUTTON_TEXT, RESPONSE_OK);
 
   ColorPickerPalette *pick = new ColorPickerPalette(default_color, flags);
   layout->insertWidget(0, *pick);
-  pick->signal_color_selected.connect(sigc::mem_fun(this,
-        &ColorPickerDialog::onColorSelected));
+  pick->signal_color_selected.connect(
+    sigc::mem_fun(this, &ColorPickerDialog::onColorSelected));
 
   resize(pick->getWidth() + 2, pick->getHeight() + 4);
 }
 
-void ColorPickerDialog::onColorSelected(ColorPickerPalette & /*activator*/,
-    int new_color)
+void ColorPickerDialog::onColorSelected(
+  ColorPickerPalette & /*activator*/, int new_color)
 {
   color = new_color;
   response(RESPONSE_OK);
@@ -60,4 +59,4 @@ void ColorPickerDialog::emitResponse(ResponseType response)
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

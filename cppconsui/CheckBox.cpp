@@ -33,12 +33,10 @@
 #include <cstring>
 #include "gettext.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 CheckBox::CheckBox(int w, int h, const char *text_, bool checked_)
-: Widget(w, h), text(NULL), text_width(0), text_height(0)
-, checked(checked_)
+  : Widget(w, h), text(NULL), text_width(0), text_height(0), checked(checked_)
 {
   setText(text_);
 
@@ -47,8 +45,8 @@ CheckBox::CheckBox(int w, int h, const char *text_, bool checked_)
 }
 
 CheckBox::CheckBox(const char *text_, bool checked_)
-: Widget(AUTOSIZE, AUTOSIZE), text(NULL), text_width(0), text_height(0)
-, checked(checked_)
+  : Widget(AUTOSIZE, AUTOSIZE), text(NULL), text_width(0), text_height(0),
+    checked(checked_)
 {
   setText(text_);
 
@@ -58,7 +56,7 @@ CheckBox::CheckBox(const char *text_, bool checked_)
 
 CheckBox::~CheckBox()
 {
-  delete [] text;
+  delete[] text;
 }
 
 void CheckBox::draw(Curses::ViewPort area)
@@ -104,7 +102,7 @@ void CheckBox::draw(Curses::ViewPort area)
 
 void CheckBox::setText(const char *new_text)
 {
-  delete [] text;
+  delete[] text;
 
   size_t size = 1;
   if (new_text)
@@ -157,10 +155,11 @@ void CheckBox::actionToggle()
 
 void CheckBox::declareBindables()
 {
-  declareBindable("checkbox", "toggle", sigc::mem_fun(this,
-        &CheckBox::actionToggle), InputProcessor::BINDABLE_NORMAL);
+  declareBindable("checkbox", "toggle",
+    sigc::mem_fun(this, &CheckBox::actionToggle),
+    InputProcessor::BINDABLE_NORMAL);
 }
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

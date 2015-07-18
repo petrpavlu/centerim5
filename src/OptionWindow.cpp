@@ -26,8 +26,7 @@
 #include <errno.h>
 #include "gettext.h"
 
-OptionWindow::OptionWindow()
-: SplitDialog(0, 0, 80, 24, _("Config options"))
+OptionWindow::OptionWindow() : SplitDialog(0, 0, 80, 24, _("Config options"))
 {
   setColorScheme("generalwindow");
 
@@ -37,108 +36,104 @@ OptionWindow::OptionWindow()
   ChoiceOption *c;
   CppConsUI::TreeView::NodeReference parent;
   parent = treeview->appendNode(treeview->getRootNode(),
-      *(new CppConsUI::TreeView::ToggleCollapseButton(_("Buddy list"))));
+    *(new CppConsUI::TreeView::ToggleCollapseButton(_("Buddy list"))));
   treeview->setCollapsed(parent, true);
   treeview->appendNode(parent, *(new BooleanOption(_("Show empty groups"),
-          CONF_PREFIX "/blist/show_empty_groups")));
+                                 CONF_PREFIX "/blist/show_empty_groups")));
   treeview->appendNode(parent, *(new BooleanOption(_("Show offline buddies"),
-          CONF_PREFIX "/blist/show_offline_buddies")));
+                                 CONF_PREFIX "/blist/show_offline_buddies")));
   c = new ChoiceOption(_("List mode"), CONF_PREFIX "/blist/list_mode");
   c->addOption(_("Normal"), "normal");
   c->addOption(_("Flat"), "flat");
   treeview->appendNode(parent, *c);
-  c = new ChoiceOption(_("Group sort mode"),
-      CONF_PREFIX "/blist/group_sort_mode");
+  c = new ChoiceOption(
+    _("Group sort mode"), CONF_PREFIX "/blist/group_sort_mode");
   c->addOption(_("Manually"), "user");
   c->addOption(_("By name"), "name");
   treeview->appendNode(parent, *c);
-  c = new ChoiceOption(_("Buddy sort mode"),
-      CONF_PREFIX "/blist/buddy_sort_mode");
+  c = new ChoiceOption(
+    _("Buddy sort mode"), CONF_PREFIX "/blist/buddy_sort_mode");
   c->addOption(_("By name"), "name");
   c->addOption(_("By status"), "status");
   c->addOption(_("By activity"), "activity");
   treeview->appendNode(parent, *c);
-  c = new ChoiceOption(_("Colorization mode"),
-      CONF_PREFIX "/blist/colorization_mode");
+  c = new ChoiceOption(
+    _("Colorization mode"), CONF_PREFIX "/blist/colorization_mode");
   c->addOption(_("None"), "none");
   c->addOption(_("By status"), "status");
   c->addOption(_("By account"), "account");
   treeview->appendNode(parent, *c);
 
   parent = treeview->appendNode(treeview->getRootNode(),
-      *(new CppConsUI::TreeView::ToggleCollapseButton(_("Dimensions"))));
+    *(new CppConsUI::TreeView::ToggleCollapseButton(_("Dimensions"))));
   treeview->setCollapsed(parent, true);
-  treeview->appendNode(parent, *(new IntegerOption(
-          _("Buddy list window width"), CONF_PREFIX
-          "/dimensions/buddylist_width", sigc::mem_fun(this,
-            &OptionWindow::getPercentUnit))));
-  treeview->appendNode(parent, *(new IntegerOption(_("Log window height"),
-          CONF_PREFIX "/dimensions/log_height", sigc::mem_fun(this,
-            &OptionWindow::getPercentUnit))));
+  treeview->appendNode(
+    parent, *(new IntegerOption(_("Buddy list window width"),
+              CONF_PREFIX "/dimensions/buddylist_width",
+              sigc::mem_fun(this, &OptionWindow::getPercentUnit))));
+  treeview->appendNode(
+    parent, *(new IntegerOption(_("Log window height"),
+              CONF_PREFIX "/dimensions/log_height",
+              sigc::mem_fun(this, &OptionWindow::getPercentUnit))));
   treeview->appendNode(parent, *(new BooleanOption(_("Show header"),
-          CONF_PREFIX "/dimensions/show_header")));
+                                 CONF_PREFIX "/dimensions/show_header")));
   treeview->appendNode(parent, *(new BooleanOption(_("Show footer"),
-          CONF_PREFIX "/dimensions/show_footer")));
+                                 CONF_PREFIX "/dimensions/show_footer")));
 
   parent = treeview->appendNode(treeview->getRootNode(),
-      *(new CppConsUI::TreeView::ToggleCollapseButton(
-          _("Idle settings"))));
+    *(new CppConsUI::TreeView::ToggleCollapseButton(_("Idle settings"))));
   treeview->setCollapsed(parent, true);
-  treeview->appendNode(parent, *(new BooleanOption(
-          _("Change to away status when idle"),
-          "/purple/away/away_when_idle")));
-  treeview->appendNode(parent, *(new IntegerOption(
-          _("Time before becoming idle"), "/purple/away/mins_before_away",
-          sigc::mem_fun(this, &OptionWindow::getMinUnit))));
-  c = new ChoiceOption(_("Report idle time"),
-      "/purple/away/idle_reporting");
+  treeview->appendNode(
+    parent, *(new BooleanOption(_("Change to away status when idle"),
+              "/purple/away/away_when_idle")));
+  treeview->appendNode(
+    parent, *(new IntegerOption(_("Time before becoming idle"),
+              "/purple/away/mins_before_away",
+              sigc::mem_fun(this, &OptionWindow::getMinUnit))));
+  c = new ChoiceOption(_("Report idle time"), "/purple/away/idle_reporting");
   c->addOption(_("Never"), "none");
   c->addOption(_("From last sent message"), "purple");
   c->addOption(_("Based on keyboard activity"), "system");
   treeview->appendNode(parent, *c);
 
   parent = treeview->appendNode(treeview->getRootNode(),
-      *(new CppConsUI::TreeView::ToggleCollapseButton(
-          _("Conversations"))));
+    *(new CppConsUI::TreeView::ToggleCollapseButton(_("Conversations"))));
   treeview->setCollapsed(parent, true);
   treeview->appendNode(parent, *(new BooleanOption(_("Beep on new message"),
-          CONF_PREFIX "/chat/beep_on_msg")));
-  treeview->appendNode(parent, *(new BooleanOption(
-          _("Send typing notification"),
-          "/purple/conversations/im/send_typing")));
+                                 CONF_PREFIX "/chat/beep_on_msg")));
+  treeview->appendNode(
+    parent, *(new BooleanOption(_("Send typing notification"),
+              "/purple/conversations/im/send_typing")));
 
   parent = treeview->appendNode(treeview->getRootNode(),
-      *(new CppConsUI::TreeView::ToggleCollapseButton(_("System logging"))));
+    *(new CppConsUI::TreeView::ToggleCollapseButton(_("System logging"))));
   treeview->setCollapsed(parent, true);
-#define ADD_DEBUG_OPTIONS()                \
-do {                                       \
-  c->addOption(_("None"), "none");         \
-  c->addOption(_("Error"), "error");       \
-  c->addOption(_("Critical"), "critical"); \
-  c->addOption(_("Warning"), "warning");   \
-  c->addOption(_("Message"), "message");   \
-  c->addOption(_("Info"), "info");         \
-  c->addOption(_("Debug"), "debug");       \
-} while (0)
-  c = new ChoiceOption(_("CIM log level"),
-    CONF_PREFIX "/log/log_level_cim");
+#define ADD_DEBUG_OPTIONS()                                                    \
+  do {                                                                         \
+    c->addOption(_("None"), "none");                                           \
+    c->addOption(_("Error"), "error");                                         \
+    c->addOption(_("Critical"), "critical");                                   \
+    c->addOption(_("Warning"), "warning");                                     \
+    c->addOption(_("Message"), "message");                                     \
+    c->addOption(_("Info"), "info");                                           \
+    c->addOption(_("Debug"), "debug");                                         \
+  } while (0)
+  c = new ChoiceOption(_("CIM log level"), CONF_PREFIX "/log/log_level_cim");
   ADD_DEBUG_OPTIONS();
   treeview->appendNode(parent, *c);
 
-  c = new ChoiceOption(_("Purple log level"),
-      CONF_PREFIX "/log/log_level_purple");
+  c = new ChoiceOption(
+    _("Purple log level"), CONF_PREFIX "/log/log_level_purple");
   ADD_DEBUG_OPTIONS();
   treeview->appendNode(parent, *c);
 
-  c = new ChoiceOption(_("GLib log level"),
-      CONF_PREFIX "/log/log_level_glib");
+  c = new ChoiceOption(_("GLib log level"), CONF_PREFIX "/log/log_level_glib");
   ADD_DEBUG_OPTIONS();
   treeview->appendNode(parent, *c);
 #undef ADD_DEBUG_OPTIONS
 
   parent = treeview->appendNode(treeview->getRootNode(),
-      *(new CppConsUI::TreeView::ToggleCollapseButton(
-          _("Libpurple logging"))));
+    *(new CppConsUI::TreeView::ToggleCollapseButton(_("Libpurple logging"))));
   treeview->setCollapsed(parent, true);
   c = new ChoiceOption(_("Log format"), "/purple/logging/format");
   GList *opts = purple_log_logger_get_options();
@@ -151,30 +146,30 @@ do {                                       \
   }
   g_list_free(opts);
   treeview->appendNode(parent, *c);
-  treeview->appendNode(parent, *(new BooleanOption(
-          _("Log all instant messages"), "/purple/logging/log_ims")));
-  treeview->appendNode(parent, *(new BooleanOption(_("Log all chats"),
-          "/purple/logging/log_chats")));
-  treeview->appendNode(parent, *(new BooleanOption(
-          _("Log all status changes to system log"),
-          "/purple/logging/log_system")));
+  treeview->appendNode(
+    parent, *(new BooleanOption(
+              _("Log all instant messages"), "/purple/logging/log_ims")));
+  treeview->appendNode(parent,
+    *(new BooleanOption(_("Log all chats"), "/purple/logging/log_chats")));
+  treeview->appendNode(
+    parent, *(new BooleanOption(_("Log all status changes to system log"),
+              "/purple/logging/log_system")));
 
   CppConsUI::Button *b;
   parent = treeview->appendNode(treeview->getRootNode(),
-      *(new CppConsUI::TreeView::ToggleCollapseButton(
-          _("Config files"))));
+    *(new CppConsUI::TreeView::ToggleCollapseButton(_("Config files"))));
   treeview->setCollapsed(parent, true);
   b = new CppConsUI::Button(AUTOSIZE, 1, _("Reload key bindings"));
-  b->signal_activate.connect(sigc::mem_fun(this,
-        &OptionWindow::reloadKeyBindings));
+  b->signal_activate.connect(
+    sigc::mem_fun(this, &OptionWindow::reloadKeyBindings));
   treeview->appendNode(parent, *b);
   b = new CppConsUI::Button(AUTOSIZE, 1, _("Reload color schemes"));
-  b->signal_activate.connect(sigc::mem_fun(this,
-        &OptionWindow::reloadColorSchemes));
+  b->signal_activate.connect(
+    sigc::mem_fun(this, &OptionWindow::reloadColorSchemes));
   treeview->appendNode(parent, *b);
 
-  buttons->appendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
-          &OptionWindow::close)));
+  buttons->appendItem(
+    _("Done"), sigc::hide(sigc::mem_fun(this, &OptionWindow::close)));
 
   onScreenResized();
 }
@@ -184,9 +179,8 @@ void OptionWindow::onScreenResized()
   moveResizeRect(CENTERIM->getScreenArea(CenterIM::CHAT_AREA));
 }
 
-OptionWindow::BooleanOption::BooleanOption(const char *text,
-    const char *config)
-: CheckBox(text)
+OptionWindow::BooleanOption::BooleanOption(const char *text, const char *config)
+  : CheckBox(text)
 {
   g_assert(text);
   g_assert(config);
@@ -201,15 +195,14 @@ OptionWindow::BooleanOption::~BooleanOption()
   g_free(pref);
 }
 
-void OptionWindow::BooleanOption::onToggle(CheckBox & /*activator*/,
-    bool new_state)
+void OptionWindow::BooleanOption::onToggle(
+  CheckBox & /*activator*/, bool new_state)
 {
   purple_prefs_set_bool(pref, new_state);
 }
 
-OptionWindow::StringOption::StringOption(const char *text,
-    const char *config)
-: Button(FLAG_VALUE, text)
+OptionWindow::StringOption::StringOption(const char *text, const char *config)
+  : Button(FLAG_VALUE, text)
 {
   g_assert(text);
   g_assert(config);
@@ -226,16 +219,16 @@ OptionWindow::StringOption::~StringOption()
 
 void OptionWindow::StringOption::onActivate(Button & /*activator*/)
 {
-  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(getText(),
-      getValue());
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &StringOption::responseHandler));
+  CppConsUI::InputDialog *dialog =
+    new CppConsUI::InputDialog(getText(), getValue());
+  dialog->signal_response.connect(
+    sigc::mem_fun(this, &StringOption::responseHandler));
   dialog->show();
 }
 
 void OptionWindow::StringOption::responseHandler(
-    CppConsUI::InputDialog &activator,
-    CppConsUI::AbstractDialog::ResponseType response)
+  CppConsUI::InputDialog &activator,
+  CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != AbstractDialog::RESPONSE_OK)
     return;
@@ -244,9 +237,8 @@ void OptionWindow::StringOption::responseHandler(
   setValue(purple_prefs_get_string(pref));
 }
 
-OptionWindow::IntegerOption::IntegerOption(const char *text,
-    const char *config)
-: Button(FLAG_VALUE, text), unit(false)
+OptionWindow::IntegerOption::IntegerOption(const char *text, const char *config)
+  : Button(FLAG_VALUE, text), unit(false)
 {
   g_assert(text);
   g_assert(config);
@@ -256,9 +248,9 @@ OptionWindow::IntegerOption::IntegerOption(const char *text,
   signal_activate.connect(sigc::mem_fun(this, &IntegerOption::onActivate));
 }
 
-OptionWindow::IntegerOption::IntegerOption(const char *text,
-    const char *config, sigc::slot<const char *, int> unit_fun_)
-: Button(FLAG_VALUE | FLAG_UNIT, text), unit(true), unit_fun(unit_fun_)
+OptionWindow::IntegerOption::IntegerOption(
+  const char *text, const char *config, sigc::slot<const char *, int> unit_fun_)
+  : Button(FLAG_VALUE | FLAG_UNIT, text), unit(true), unit_fun(unit_fun_)
 {
   g_assert(text);
   g_assert(config);
@@ -277,17 +269,17 @@ OptionWindow::IntegerOption::~IntegerOption()
 
 void OptionWindow::IntegerOption::onActivate(Button & /*activator*/)
 {
-  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(getText(),
-      getValue());
+  CppConsUI::InputDialog *dialog =
+    new CppConsUI::InputDialog(getText(), getValue());
   dialog->setFlags(CppConsUI::TextEntry::FLAG_NUMERIC);
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &IntegerOption::responseHandler));
+  dialog->signal_response.connect(
+    sigc::mem_fun(this, &IntegerOption::responseHandler));
   dialog->show();
 }
 
 void OptionWindow::IntegerOption::responseHandler(
-    CppConsUI::InputDialog &activator,
-    CppConsUI::AbstractDialog::ResponseType response)
+  CppConsUI::InputDialog &activator,
+  CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != AbstractDialog::RESPONSE_OK)
     return;
@@ -305,16 +297,15 @@ void OptionWindow::IntegerOption::responseHandler(
     setUnit(unit_fun(val));
 }
 
-OptionWindow::ChoiceOption::ChoiceOption(const char *text,
-    const char *config)
-: ComboBox(text)
+OptionWindow::ChoiceOption::ChoiceOption(const char *text, const char *config)
+  : ComboBox(text)
 {
   g_assert(text);
   g_assert(config);
 
   pref = g_strdup(config);
-  signal_selection_changed.connect(sigc::mem_fun(this,
-        &ChoiceOption::onSelectionChanged));
+  signal_selection_changed.connect(
+    sigc::mem_fun(this, &ChoiceOption::onSelectionChanged));
 }
 
 OptionWindow::ChoiceOption::~ChoiceOption()
@@ -325,8 +316,7 @@ OptionWindow::ChoiceOption::~ChoiceOption()
   g_free(pref);
 }
 
-void OptionWindow::ChoiceOption::addOption(const char *title,
-    const char *value)
+void OptionWindow::ChoiceOption::addOption(const char *title, const char *value)
 {
   g_assert(title);
   g_assert(value);
@@ -337,7 +327,7 @@ void OptionWindow::ChoiceOption::addOption(const char *title,
 }
 
 void OptionWindow::ChoiceOption::onSelectionChanged(ComboBox & /*activator*/,
-    int /*new_entry*/, const char * /*title*/, intptr_t data)
+  int /*new_entry*/, const char * /*title*/, intptr_t data)
 {
   purple_prefs_set_string(pref, reinterpret_cast<const char *>(data));
 }
@@ -364,4 +354,4 @@ void OptionWindow::reloadColorSchemes(CppConsUI::Button & /*activator*/) const
     LOG->message(_("Colorscheme file was successfully reloaded."));
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

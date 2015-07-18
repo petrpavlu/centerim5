@@ -23,8 +23,7 @@
 
 #include "CenterIM.h"
 
-AccountStatusMenu::AccountStatusMenu()
-: MenuWindow(0, 0, AUTOSIZE, AUTOSIZE)
+AccountStatusMenu::AccountStatusMenu() : MenuWindow(0, 0, AUTOSIZE, AUTOSIZE)
 {
   setColorScheme("accountstatusmenu");
 
@@ -42,11 +41,12 @@ AccountStatusMenu::AccountStatusMenu()
   while (l) {
     PurpleAccount *account = reinterpret_cast<PurpleAccount *>(l->data);
 
-    char *text = g_strdup_printf("[%s] %s",
-        purple_account_get_protocol_name(account),
+    char *text =
+      g_strdup_printf("[%s] %s", purple_account_get_protocol_name(account),
         purple_account_get_username(account));
-    appendItem(text, sigc::bind(sigc::mem_fun(this,
-            &AccountStatusMenu::openStatusPopup), account));
+    appendItem(
+      text, sigc::bind(sigc::mem_fun(this, &AccountStatusMenu::openStatusPopup),
+              account));
     g_free(text);
 
     l = l->next;
@@ -62,8 +62,8 @@ void AccountStatusMenu::onScreenResized()
   move(chat.x, chat.y);
 }
 
-void AccountStatusMenu::openStatusPopup(CppConsUI::Button &activator,
-    PurpleAccount *account)
+void AccountStatusMenu::openStatusPopup(
+  CppConsUI::Button &activator, PurpleAccount *account)
 {
   StatusPopup *status_popup = new StatusPopup(account);
   status_popup->setReferenceWidget(activator);
@@ -71,33 +71,33 @@ void AccountStatusMenu::openStatusPopup(CppConsUI::Button &activator,
 }
 
 AccountStatusMenu::StatusPopup::StatusPopup(PurpleAccount *account)
-: MenuWindow(0, 0, AUTOSIZE, AUTOSIZE)
+  : MenuWindow(0, 0, AUTOSIZE, AUTOSIZE)
 {
   setColorScheme("accountstatusmenu");
 
   bool has_independents = false;
   for (GList *iter = purple_account_get_status_types(account); iter;
-      iter = iter->next) {
-    PurpleStatusType *status_type
-      = reinterpret_cast<PurpleStatusType *>(iter->data);
+       iter = iter->next) {
+    PurpleStatusType *status_type =
+      reinterpret_cast<PurpleStatusType *>(iter->data);
 
     if (purple_status_type_is_independent(status_type)) {
       has_independents = true;
       continue;
     }
 
-    bool active = purple_presence_is_status_active(
-        purple_account_get_presence(account),
+    bool active =
+      purple_presence_is_status_active(purple_account_get_presence(account),
         purple_status_type_get_id(status_type));
 
     char *label;
     if (active)
-      label = g_strdup_printf("* %s",
-          purple_status_type_get_name(status_type));
+      label = g_strdup_printf("* %s", purple_status_type_get_name(status_type));
     else
       label = g_strdup(purple_status_type_get_name(status_type));
-    CppConsUI::Button *b = appendItem(label, sigc::bind(sigc::mem_fun(this,
-            &StatusPopup::setStatus), account, status_type, true));
+    CppConsUI::Button *b =
+      appendItem(label, sigc::bind(sigc::mem_fun(this, &StatusPopup::setStatus),
+                          account, status_type, true));
     if (active)
       b->grabFocus();
     g_free(label);
@@ -107,25 +107,26 @@ AccountStatusMenu::StatusPopup::StatusPopup(PurpleAccount *account)
     appendSeparator();
 
     for (GList *iter = purple_account_get_status_types(account); iter;
-        iter = iter->next) {
-      PurpleStatusType *status_type
-        = reinterpret_cast<PurpleStatusType *>(iter->data);
+         iter = iter->next) {
+      PurpleStatusType *status_type =
+        reinterpret_cast<PurpleStatusType *>(iter->data);
 
       if (!purple_status_type_is_independent(status_type))
         continue;
 
-      bool active = purple_presence_is_status_active(
-          purple_account_get_presence(account),
+      bool active =
+        purple_presence_is_status_active(purple_account_get_presence(account),
           purple_status_type_get_id(status_type));
 
       char *label;
       if (active)
-        label = g_strdup_printf("* %s",
-            purple_status_type_get_name(status_type));
+        label =
+          g_strdup_printf("* %s", purple_status_type_get_name(status_type));
       else
         label = g_strdup(purple_status_type_get_name(status_type));
-      CppConsUI::Button *b = appendItem(label, sigc::bind(sigc::mem_fun(this,
-              &StatusPopup::setStatus), account, status_type, !active));
+      CppConsUI::Button *b = appendItem(
+        label, sigc::bind(sigc::mem_fun(this, &StatusPopup::setStatus), account,
+                 status_type, !active));
       if (active)
         b->grabFocus();
       g_free(label);
@@ -136,12 +137,12 @@ AccountStatusMenu::StatusPopup::StatusPopup(PurpleAccount *account)
 }
 
 void AccountStatusMenu::StatusPopup::setStatus(
-    CppConsUI::Button & /*activator*/, PurpleAccount *account,
-    PurpleStatusType *status_type, bool active)
+  CppConsUI::Button & /*activator*/, PurpleAccount *account,
+  PurpleStatusType *status_type, bool active)
 {
-  purple_account_set_status(account, purple_status_type_get_id(status_type),
-      active, NULL);
+  purple_account_set_status(
+    account, purple_status_type_get_id(status_type), active, NULL);
   close();
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

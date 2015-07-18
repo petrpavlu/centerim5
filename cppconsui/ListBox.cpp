@@ -31,11 +31,10 @@
 #include <algorithm>
 #include <cassert>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 ListBox::ListBox(int w, int h)
-: AbstractListBox(w, h), children_height(0), autosize_children_count(0)
+  : AbstractListBox(w, h), children_height(0), autosize_children_count(0)
 {
   // allow fast focus changing (paging) using PageUp/PageDown keys
   page_focus = true;
@@ -132,8 +131,8 @@ void ListBox::updateArea()
   updateScroll();
 }
 
-void ListBox::onChildMoveResize(Widget &activator, const Rect &oldsize,
-    const Rect &newsize)
+void ListBox::onChildMoveResize(
+  Widget &activator, const Rect &oldsize, const Rect &newsize)
 {
   // sanity check
   assert(newsize.getLeft() == UNSETPOS && newsize.getTop() == UNSETPOS);
@@ -166,8 +165,8 @@ void ListBox::onChildMoveResize(Widget &activator, const Rect &oldsize,
   updateChildren(new_height - old_height, autosize_change);
 }
 
-void ListBox::onChildWishSizeChange(Widget &activator, const Size &oldsize,
-    const Size &newsize)
+void ListBox::onChildWishSizeChange(
+  Widget &activator, const Size &oldsize, const Size &newsize)
 {
   if (!activator.isVisible() || activator.getHeight() != AUTOSIZE)
     return;
@@ -198,8 +197,8 @@ void ListBox::onChildVisible(Widget &activator, bool visible)
   updateChildren(sign * h, autosize_change);
 }
 
-void ListBox::updateChildren(int children_height_change,
-    int autosize_children_count_change)
+void ListBox::updateChildren(
+  int children_height_change, int autosize_children_count_change)
 {
   // set new children data
   children_height += children_height_change;
@@ -214,4 +213,4 @@ void ListBox::updateChildren(int children_height_change,
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

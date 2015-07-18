@@ -26,9 +26,7 @@
 #include <libpurple/purple.h>
 #include "config.h"
 
-class GeneralMenu
-: public CppConsUI::MenuWindow
-{
+class GeneralMenu : public CppConsUI::MenuWindow {
 public:
   GeneralMenu();
   virtual ~GeneralMenu() {}
@@ -37,7 +35,6 @@ public:
   virtual void onScreenResized();
 
 protected:
-
 private:
   CONSUI_DISABLE_COPY(GeneralMenu);
 
@@ -57,23 +54,31 @@ private:
   void openRequestFieldsTest(CppConsUI::Button &activator);
 
   static void input_ok_cb_(void *data, const char *text)
-    { reinterpret_cast<GeneralMenu *>(data)->input_ok_cb(text); }
+  {
+    reinterpret_cast<GeneralMenu *>(data)->input_ok_cb(text);
+  }
   void input_ok_cb(const char *text);
 
   static void choice_ok_cb_(void *data, int selected)
-    { reinterpret_cast<GeneralMenu *>(data)->choice_ok_cb(selected); }
+  {
+    reinterpret_cast<GeneralMenu *>(data)->choice_ok_cb(selected);
+  }
   void choice_ok_cb(int selected);
 
   static void action_cb_(void *data, int action)
-    { reinterpret_cast<GeneralMenu *>(data)->action_cb(action); }
+  {
+    reinterpret_cast<GeneralMenu *>(data)->action_cb(action);
+  }
   void action_cb(int action);
 
   static void fields_ok_cb_(void *data, PurpleRequestFields *fields)
-    { reinterpret_cast<GeneralMenu *>(data)->fields_ok_cb(fields); }
+  {
+    reinterpret_cast<GeneralMenu *>(data)->fields_ok_cb(fields);
+  }
   void fields_ok_cb(PurpleRequestFields *fields);
 #endif // DEBUG
 };
 
 #endif // __GENERALMENU_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

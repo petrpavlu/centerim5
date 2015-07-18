@@ -31,21 +31,18 @@
 #include "Button.h"
 #include "Container.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class ColorPickerPalette
-: public Container
-{
+class ColorPickerPalette : public Container {
 public:
   enum Flag {
     FLAG_HIDE_ANSI = 1 << 0,
     FLAG_HIDE_GRAYSCALE = 1 << 1,
-    FLAG_HIDE_COLORCUBE = 1 << 2
+    FLAG_HIDE_COLORCUBE = 1 << 2,
   };
 
   ColorPickerPalette(int default_color, int flags = 0);
-  virtual ~ColorPickerPalette() {};
+  virtual ~ColorPickerPalette(){};
 
   /**
    * Emited signal when a color is selected
@@ -53,12 +50,10 @@ public:
   sigc::signal<void, ColorPickerPalette &, int> signal_color_selected;
 
 protected:
-  class ColorPickerPaletteButton
-  : public Button
-  {
+  class ColorPickerPaletteButton : public Button {
   public:
     ColorPickerPaletteButton(int color);
-    virtual ~ColorPickerPaletteButton() {};
+    virtual ~ColorPickerPaletteButton(){};
 
     // Widget
     virtual void draw(Curses::ViewPort area);
@@ -88,4 +83,4 @@ private:
 
 #endif // __COLORPICKERPALETTE_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

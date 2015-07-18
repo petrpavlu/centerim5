@@ -48,7 +48,7 @@ void Accounts::restoreStatuses(bool offline)
 
   // if we've used this type+message before, lookup the transient status
   saved_status = purple_savedstatus_find_transient_by_type_and_message(
-      PURPLE_STATUS_OFFLINE, NULL);
+    PURPLE_STATUS_OFFLINE, NULL);
 
   // if this type+message is unique then create a new transient saved status
   if (!saved_status)
@@ -74,14 +74,14 @@ void Accounts::openPendingRequests()
   }
 
   request_window = new PendingRequestWindow(*this, requests);
-  request_window->signal_close.connect(sigc::mem_fun(this,
-        &Accounts::onPendingRequestWindowClose));
+  request_window->signal_close.connect(
+    sigc::mem_fun(this, &Accounts::onPendingRequestWindowClose));
   request_window->show();
 }
 
 Accounts::Request::Request(PurpleAccount *account_, const char *remote_user_,
-    const char *id_, const char *alias_)
-: account(account_)
+  const char *id_, const char *alias_)
+  : account(account_)
 {
   remote_user = g_strdup(remote_user_);
   id = g_strdup(id_);
@@ -96,18 +96,18 @@ Accounts::Request::~Request()
 }
 
 Accounts::AddRequest::AddRequest(PurpleAccount *account_,
-    const char *remote_user_, const char *id_, const char *alias_)
-: Request(account_, remote_user_, id_, alias_)
+  const char *remote_user_, const char *id_, const char *alias_)
+  : Request(account_, remote_user_, id_, alias_)
 {
 }
 
 Accounts::AuthRequest::AuthRequest(PurpleAccount *account_,
-    const char *remote_user_, const char *id_, const char *alias_,
-    const char *message_, bool /*on_list_*/,
-    PurpleAccountRequestAuthorizationCb auth_cb_,
-    PurpleAccountRequestAuthorizationCb deny_cb_, void *data_)
-: Request(account_, remote_user_, id_, alias_), auth_cb(auth_cb_)
-, deny_cb(deny_cb_), data(data_)
+  const char *remote_user_, const char *id_, const char *alias_,
+  const char *message_, bool /*on_list_*/,
+  PurpleAccountRequestAuthorizationCb auth_cb_,
+  PurpleAccountRequestAuthorizationCb deny_cb_, void *data_)
+  : Request(account_, remote_user_, id_, alias_), auth_cb(auth_cb_),
+    deny_cb(deny_cb_), data(data_)
 {
   message = g_strdup(message_);
 }
@@ -117,22 +117,21 @@ Accounts::AuthRequest::~AuthRequest()
   g_free(message);
 }
 
-Accounts::PendingRequestWindow::PendingRequestWindow(Accounts &accounts_,
-    const Requests &requests)
-: SplitDialog(0, 0, 80, 24, _("Pending requests")), accounts(&accounts_)
-, dialog(NULL)
+Accounts::PendingRequestWindow::PendingRequestWindow(
+  Accounts &accounts_, const Requests &requests)
+  : SplitDialog(0, 0, 80, 24, _("Pending requests")), accounts(&accounts_),
+    dialog(NULL)
 {
   setColorScheme("generalwindow");
 
   treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
   setContainer(*treeview);
 
-  for (Requests::const_iterator i = requests.begin(); i != requests.end();
-      i++)
+  for (Requests::const_iterator i = requests.begin(); i != requests.end(); i++)
     appendRequest(**i);
 
-  buttons->appendItem(_("Done"), sigc::hide(sigc::mem_fun(this,
-          &PendingRequestWindow::close)));
+  buttons->appendItem(
+    _("Done"), sigc::hide(sigc::mem_fun(this, &PendingRequestWindow::close)));
 
   onScreenResized();
 }
@@ -155,23 +154,23 @@ void Accounts::PendingRequestWindow::appendRequest(const Request &request)
   char *text;
   if (request.alias)
     text = g_strdup_printf("[%s] %s: %s %s (%s)",
-        purple_account_get_protocol_name(request.account),
-        purple_account_get_username(request.account), req,
-        request.remote_user, request.alias);
+      purple_account_get_protocol_name(request.account),
+      purple_account_get_username(request.account), req, request.remote_user,
+      request.alias);
   else
     text = g_strdup_printf("[%s] %s: %s %s",
-        purple_account_get_protocol_name(request.account),
-        purple_account_get_username(request.account), req,
-        request.remote_user);
+      purple_account_get_protocol_name(request.account),
+      purple_account_get_username(request.account), req, request.remote_user);
 
   CppConsUI::Button *b = new CppConsUI::Button(text);
-  b->signal_activate.connect(sigc::bind(sigc::mem_fun(this,
-          &PendingRequestWindow::onActivate), sigc::ref(request)));
+  b->signal_activate.connect(
+    sigc::bind(sigc::mem_fun(this, &PendingRequestWindow::onActivate),
+      sigc::ref(request)));
 
   g_free(text);
 
-  CppConsUI::TreeView::NodeReference node = treeview->appendNode(
-      treeview->getRootNode(), *b);
+  CppConsUI::TreeView::NodeReference node =
+    treeview->appendNode(treeview->getRootNode(), *b);
   request_map[&request] = node;
 }
 
@@ -199,8 +198,8 @@ void Accounts::PendingRequestWindow::removeRequest(const Request &request)
 }
 
 Accounts::PendingRequestWindow::RequestDialog::RequestDialog(
-    const Request &request_, const char *title, const char *text)
-: AbstractDialog(title), request(&request_)
+  const Request &request_, const char *title, const char *text)
+  : AbstractDialog(title), request(&request_)
 {
   addButton(YES_BUTTON_TEXT, RESPONSE_YES);
   addSeparator();
@@ -214,70 +213,69 @@ Accounts::PendingRequestWindow::RequestDialog::RequestDialog(
 }
 
 void Accounts::PendingRequestWindow::RequestDialog::emitResponse(
-    ResponseType response)
+  ResponseType response)
 {
   signal_response(*this, response);
 }
 
 void Accounts::PendingRequestWindow::onActivate(
-    CppConsUI::Button & /*activator*/, const Request &request)
+  CppConsUI::Button & /*activator*/, const Request &request)
 {
   // we can't have more than one request dialog opened
   g_assert(!dialog);
 
   if (typeid(request) == typeid(AddRequest)) {
-    const AddRequest *add_request
-      = dynamic_cast<const AddRequest *>(&request);
+    const AddRequest *add_request = dynamic_cast<const AddRequest *>(&request);
     g_assert(add_request);
 
     char *text;
     if (request.alias)
       text = g_strdup_printf(_("Add %s (%s) to your buddy list?"),
-          request.remote_user, request.alias);
+        request.remote_user, request.alias);
     else
-      text = g_strdup_printf(_("Add %s to your buddy list?"),
-          request.remote_user);
+      text =
+        g_strdup_printf(_("Add %s to your buddy list?"), request.remote_user);
     dialog = new RequestDialog(request, _("Add buddy"), text);
     g_free(text);
 
-    dialog->signal_response.connect(sigc::mem_fun(this,
-          &PendingRequestWindow::onAddResponse));
+    dialog->signal_response.connect(
+      sigc::mem_fun(this, &PendingRequestWindow::onAddResponse));
     dialog->show();
   }
   else if (typeid(request) == typeid(AuthRequest)) {
-    const AuthRequest *auth_request
-      = dynamic_cast<const AuthRequest *>(&request);
+    const AuthRequest *auth_request =
+      dynamic_cast<const AuthRequest *>(&request);
     g_assert(auth_request);
 
     char *text;
     if (request.alias)
-      text = g_strdup_printf(
-          _("Allow %s (%s) to add you to his or her buddy list?\n"
-            "Message: %s"), request.remote_user, request.alias,
-          auth_request->message);
+      text =
+        g_strdup_printf(_("Allow %s (%s) to add you to his or her buddy list?\n"
+                          "Message: %s"),
+          request.remote_user, request.alias, auth_request->message);
     else
-      text = g_strdup_printf(
-          _("Allow %s to add you to his or her buddy list?\n"
-            "Message: %s"), request.remote_user, auth_request->message);
+      text = g_strdup_printf(_("Allow %s to add you to his or her buddy list?\n"
+                               "Message: %s"),
+        request.remote_user, auth_request->message);
     dialog = new RequestDialog(request, _("Authorize buddy"), text);
     g_free(text);
 
-    dialog->signal_response.connect(sigc::mem_fun(this,
-          &PendingRequestWindow::onAuthResponse));
+    dialog->signal_response.connect(
+      sigc::mem_fun(this, &PendingRequestWindow::onAuthResponse));
     dialog->show();
   }
   else
     g_assert_not_reached();
 }
 
-void Accounts::PendingRequestWindow::onAddResponse(RequestDialog &activator,
-    ResponseType response)
+void Accounts::PendingRequestWindow::onAddResponse(
+  RequestDialog &activator, ResponseType response)
 {
   // stay sane
   g_assert(dialog == &activator);
 
-  const AddRequest *request
-    = dynamic_cast<const AddRequest *>(activator.getRequest());
+  const AddRequest *request =
+    dynamic_cast<const AddRequest *>(activator.getRequest());
   g_assert(request);
 
   /* Set early that there is no active dialog anymore. This is important
@@ -289,27 +287,27 @@ void Accounts::PendingRequestWindow::onAddResponse(RequestDialog &activator,
   dialog = NULL;
 
   switch (response) {
-    case CppConsUI::AbstractDialog::RESPONSE_YES:
-      purple_blist_request_add_buddy(request->account, request->remote_user,
-          NULL, request->alias);
-      accounts->closeRequest(*request);
-      break;
-    case CppConsUI::AbstractDialog::RESPONSE_NO:
-      accounts->closeRequest(*request);
-      break;
-    default:
-      break;
+  case CppConsUI::AbstractDialog::RESPONSE_YES:
+    purple_blist_request_add_buddy(
+      request->account, request->remote_user, NULL, request->alias);
+    accounts->closeRequest(*request);
+    break;
+  case CppConsUI::AbstractDialog::RESPONSE_NO:
+    accounts->closeRequest(*request);
+    break;
+  default:
+    break;
   }
 }
 
-void Accounts::PendingRequestWindow::onAuthResponse(RequestDialog &activator,
-    ResponseType response)
+void Accounts::PendingRequestWindow::onAuthResponse(
+  RequestDialog &activator, ResponseType response)
 {
   // stay sane
   g_assert(dialog == &activator);
 
-  const AuthRequest *request
-    = dynamic_cast<const AuthRequest *>(activator.getRequest());
+  const AuthRequest *request =
+    dynamic_cast<const AuthRequest *>(activator.getRequest());
   g_assert(request);
 
   /* Set early that there is no active dialog anymore. This is important
@@ -321,24 +319,23 @@ void Accounts::PendingRequestWindow::onAuthResponse(RequestDialog &activator,
   dialog = NULL;
 
   switch (response) {
-    case CppConsUI::AbstractDialog::RESPONSE_YES:
-      request->auth_cb(request->data);
-      if (!purple_find_buddy(request->account, request->remote_user))
-        purple_blist_request_add_buddy(request->account, request->remote_user,
-            NULL, request->alias);
-      accounts->closeRequest(*request);
-      break;
-    case CppConsUI::AbstractDialog::RESPONSE_NO:
-      request->deny_cb(request->data);
-      accounts->closeRequest(*request);
-      break;
-    default:
-      break;
+  case CppConsUI::AbstractDialog::RESPONSE_YES:
+    request->auth_cb(request->data);
+    if (!purple_find_buddy(request->account, request->remote_user))
+      purple_blist_request_add_buddy(
+        request->account, request->remote_user, NULL, request->alias);
+    accounts->closeRequest(*request);
+    break;
+  case CppConsUI::AbstractDialog::RESPONSE_NO:
+    request->deny_cb(request->data);
+    accounts->closeRequest(*request);
+    break;
+  default:
+    break;
   }
 }
 
-Accounts::Accounts()
-: request_window(NULL)
+Accounts::Accounts() : request_window(NULL)
 {
   // if the statuses are not known, set them all to the default
   if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
@@ -379,8 +376,7 @@ void Accounts::closeRequest(const Request &request)
   /* It isn't really nice to delete an object referenced by a const parameter,
    * but well.. */
 
-  Requests::iterator i = std::find(requests.begin(), requests.end(),
-      &request);
+  Requests::iterator i = std::find(requests.begin(), requests.end(), &request);
   /* It's possible that the request has been already closed but it should be
    * very very rare (and it'd most likely signalize a problem in
    * libpurple). */
@@ -402,7 +398,7 @@ void Accounts::onPendingRequestWindowClose(CppConsUI::Window &activator)
 }
 
 void Accounts::notify_added(PurpleAccount *account, const char *remote_user,
-    const char * /*id*/, const char *alias, const char *message)
+  const char * /*id*/, const char *alias, const char *message)
 {
   const char *proto = purple_account_get_protocol_name(account);
   const char *uname = purple_account_get_username(account);
@@ -414,18 +410,18 @@ void Accounts::notify_added(PurpleAccount *account, const char *remote_user,
   if (message) {
     if (alias)
       LOG->message(_("+ [%s] %s: %s (%s) has made you his or her buddy: %s"),
-          proto, uname, remote_user, alias, message);
+        proto, uname, remote_user, alias, message);
     else
-      LOG->message(_("+ [%s] %s: %s has made you his or her buddy: %s"),
-          proto, uname, remote_user, message);
+      LOG->message(_("+ [%s] %s: %s has made you his or her buddy: %s"), proto,
+        uname, remote_user, message);
   }
   else {
     if (alias)
-      LOG->message(_("+ [%s] %s: %s (%s) has made you his or her buddy"),
-          proto, uname, remote_user, alias);
+      LOG->message(_("+ [%s] %s: %s (%s) has made you his or her buddy"), proto,
+        uname, remote_user, alias);
     else
-      LOG->message(_("+ [%s] %s: %s has made you his or her buddy"),
-          proto, uname, remote_user);
+      LOG->message(_("+ [%s] %s: %s has made you his or her buddy"), proto,
+        uname, remote_user);
   }
 }
 
@@ -435,13 +431,12 @@ void Accounts::status_changed(PurpleAccount *account, PurpleStatus *status)
     return;
 
   LOG->message(_("+ [%s] %s: Status changed to: %s"),
-      purple_account_get_protocol_name(account),
-      purple_account_get_username(account),
-      purple_status_get_name(status));
+    purple_account_get_protocol_name(account),
+    purple_account_get_username(account), purple_status_get_name(status));
 }
 
 void Accounts::request_add(PurpleAccount *account, const char *remote_user,
-    const char *id, const char *alias, const char * /*message*/)
+  const char *id, const char *alias, const char * /*message*/)
 {
   AddRequest *request = new AddRequest(account, remote_user, id, alias);
   requests.push_back(request);
@@ -452,21 +447,20 @@ void Accounts::request_add(PurpleAccount *account, const char *remote_user,
   const char *uname = purple_account_get_username(account);
   if (alias)
     LOG->message(_("+ [%s] %s: New add request from %s (%s)"), proto, uname,
-        remote_user, alias);
+      remote_user, alias);
   else
-    LOG->message(_("+ [%s] %s: New add request from %s"), proto, uname,
-        remote_user);
+    LOG->message(
+      _("+ [%s] %s: New add request from %s"), proto, uname, remote_user);
 }
 
 void *Accounts::request_authorize(PurpleAccount *account,
-    const char *remote_user, const char *id, const char *alias,
-    const char *message, gboolean on_list,
-    PurpleAccountRequestAuthorizationCb authorize_cb,
-    PurpleAccountRequestAuthorizationCb deny_cb,
-    void *user_data)
+  const char *remote_user, const char *id, const char *alias,
+  const char *message, gboolean on_list,
+  PurpleAccountRequestAuthorizationCb authorize_cb,
+  PurpleAccountRequestAuthorizationCb deny_cb, void *user_data)
 {
   AuthRequest *request = new AuthRequest(account, remote_user, id, alias,
-      message, on_list, authorize_cb, deny_cb, user_data);
+    message, on_list, authorize_cb, deny_cb, user_data);
   requests.push_back(request);
   signal_request_count_change(*this, requests.size());
   if (request_window)
@@ -475,23 +469,22 @@ void *Accounts::request_authorize(PurpleAccount *account,
   const char *proto = purple_account_get_protocol_name(account);
   const char *uname = purple_account_get_username(account);
   if (alias)
-    LOG->message(_("+ [%s] %s: New authorization request from %s (%s)"),
-        proto, uname, remote_user, alias);
+    LOG->message(_("+ [%s] %s: New authorization request from %s (%s)"), proto,
+      uname, remote_user, alias);
   else
     LOG->message(_("+ [%s] %s: New authorization request from %s"), proto,
-        uname, remote_user);
+      uname, remote_user);
 
   return request;
 }
 
 void Accounts::close_account_request(void *ui_handle)
 {
-  Requests::iterator i = std::find(requests.begin(), requests.end(),
-      ui_handle);
+  Requests::iterator i = std::find(requests.begin(), requests.end(), ui_handle);
   g_return_if_fail(i == requests.end());
 
   // this code path is only for auth requests
-  g_assert(typeid(*i) == typeid(AuthRequest*));
+  g_assert(typeid(*i) == typeid(AuthRequest *));
 
   if (request_window)
     request_window->removeRequest(**i);
@@ -500,4 +493,4 @@ void Accounts::close_account_request(void *ui_handle)
   signal_request_count_change(*this, requests.size());
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

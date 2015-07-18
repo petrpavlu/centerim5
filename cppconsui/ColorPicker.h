@@ -32,12 +32,9 @@
 #include "HorizontalListBox.h"
 #include "Label.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class ColorPicker
-: public HorizontalListBox
-{
+class ColorPicker : public HorizontalListBox {
 public:
   ColorPicker(int fg, int bg, const char *text, bool sample = false);
   virtual ~ColorPicker() {}
@@ -51,9 +48,7 @@ public:
   sigc::signal<void, ColorPicker &, int, int> signal_colorpair_selected;
 
 protected:
-  class Sample
-  : public Widget
-  {
+  class Sample : public Widget {
   public:
     Sample(int w, int fg = -1, int bg = -1);
     virtual ~Sample() {}
@@ -85,4 +80,4 @@ private:
 
 #endif // __COLORPICKER_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

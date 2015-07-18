@@ -146,16 +146,16 @@ BuddyListNode *BuddyListNode::getParentNode() const
     return NULL;
 
   return reinterpret_cast<BuddyListNode *>(
-      purple_blist_node_get_ui_data(parent));
+    purple_blist_node_get_ui_data(parent));
 }
 
 BuddyListNode::ContextMenu::ContextMenu(BuddyListNode &parent_node_)
-: MenuWindow(parent_node_, AUTOSIZE, AUTOSIZE), parent_node(&parent_node_)
+  : MenuWindow(parent_node_, AUTOSIZE, AUTOSIZE), parent_node(&parent_node_)
 {
 }
 
-void BuddyListNode::ContextMenu::onMenuAction(Button & /*activator*/,
-    PurpleCallback callback, void *data)
+void BuddyListNode::ContextMenu::onMenuAction(
+  Button & /*activator*/, PurpleCallback callback, void *data)
 {
   g_assert(callback);
 
@@ -166,8 +166,8 @@ void BuddyListNode::ContextMenu::onMenuAction(Button & /*activator*/,
   close();
 }
 
-void BuddyListNode::ContextMenu::appendMenuAction(MenuWindow &menu,
-    PurpleMenuAction *act)
+void BuddyListNode::ContextMenu::appendMenuAction(
+  MenuWindow &menu, PurpleMenuAction *act)
 {
   if (!act) {
     menu.appendSeparator();
@@ -176,8 +176,9 @@ void BuddyListNode::ContextMenu::appendMenuAction(MenuWindow &menu,
 
   if (!act->children) {
     if (act->callback)
-      menu.appendItem(act->label, sigc::bind(sigc::mem_fun(this,
-            &ContextMenu::onMenuAction), act->callback, act->data));
+      menu.appendItem(
+        act->label, sigc::bind(sigc::mem_fun(this, &ContextMenu::onMenuAction),
+                      act->callback, act->data));
     else {
       // TODO display non-focusable widget?
     }
@@ -202,8 +203,8 @@ void BuddyListNode::ContextMenu::appendMenuAction(MenuWindow &menu,
 
 void BuddyListNode::ContextMenu::appendProtocolMenu(PurpleConnection *gc)
 {
-  PurplePluginProtocolInfo *prpl_info
-    = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+  PurplePluginProtocolInfo *prpl_info =
+    PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
   if (!prpl_info || !prpl_info->blist_node_menu)
     return;
 
@@ -223,8 +224,8 @@ void BuddyListNode::ContextMenu::appendProtocolMenu(PurpleConnection *gc)
 
 void BuddyListNode::ContextMenu::appendExtendedMenu()
 {
-  GList *ll = purple_blist_node_get_extended_menu(
-      parent_node->getPurpleBlistNode());
+  GList *ll =
+    purple_blist_node_get_extended_menu(parent_node->getPurpleBlistNode());
   for (GList *l = ll; l; l = l->next) {
     PurpleMenuAction *act = reinterpret_cast<PurpleMenuAction *>(l->data);
     appendMenuAction(*this, act);
@@ -239,7 +240,7 @@ void BuddyListNode::ContextMenu::appendExtendedMenu()
 }
 
 BuddyListNode::BuddyListNode(PurpleBlistNode *node_)
-: treeview(NULL), blist_node(node_), last_activity(0)
+  : treeview(NULL), blist_node(node_), last_activity(0)
 {
   purple_blist_node_set_ui_data(blist_node, this);
   signal_activate.connect(sigc::mem_fun(this, &BuddyListNode::onActivate));
@@ -259,48 +260,45 @@ bool BuddyListNode::lessOrEqualByType(const BuddyListNode &other) const
   return t1 <= t2;
 }
 
-bool BuddyListNode::lessOrEqualByBuddySort(PurpleBuddy *left,
-    PurpleBuddy *right) const
+bool BuddyListNode::lessOrEqualByBuddySort(
+  PurpleBuddy *left, PurpleBuddy *right) const
 {
   BuddyList::BuddySortMode mode = BUDDYLIST->getBuddySortMode();
   int a, b;
 
   switch (mode) {
-    case BuddyList::BUDDY_SORT_BY_NAME:
-      break;
-    case BuddyList::BUDDY_SORT_BY_STATUS:
-      a = getBuddyStatusWeight(left);
-      b = getBuddyStatusWeight(right);
-      if (a != b)
-        return a > b;
-      break;
-    case BuddyList::BUDDY_SORT_BY_ACTIVITY:
-      {
-        /* Compare buddies according to their last activity.
-         *
-         * It is possible that a blist node will not have the ui_data set. For
-         * instance, this happens when libpurple informs the program that
-         * a blist node is about to be removed. At that point, an associated
-         * BuddyListNode is destroyed, a parent node is updated and the parent
-         * tries to update its position according to its priority buddy. This
-         * buddy will not have the ui_data set because the BuddyListNode has
-         * been already freed.
-         *
-         * In such a case, the cached value cannot be obtained and value 0
-         * will be used instead. */
-        BuddyListNode *bnode_left = reinterpret_cast<BuddyListNode*>(
-            purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(left)));
-        BuddyListNode *bnode_right = reinterpret_cast<BuddyListNode *>(
-            purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(right)));
-        a = bnode_left ? bnode_left->last_activity : 0;
-        b = bnode_right ? bnode_right->last_activity : 0;
-        if (a != b)
-          return a > b;
-      }
-      break;
+  case BuddyList::BUDDY_SORT_BY_NAME:
+    break;
+  case BuddyList::BUDDY_SORT_BY_STATUS:
+    a = getBuddyStatusWeight(left);
+    b = getBuddyStatusWeight(right);
+    if (a != b)
+      return a > b;
+    break;
+  case BuddyList::BUDDY_SORT_BY_ACTIVITY: {
+    /* Compare buddies according to their last activity.
+     *
+     * It is possible that a blist node will not have the ui_data set. For
+     * instance, this happens when libpurple informs the program that a blist
+     * node is about to be removed. At that point, an associated BuddyListNode
+     * is destroyed, a parent node is updated and the parent tries to update its
+     * position according to its priority buddy. This buddy will not have the
+     * ui_data set because the BuddyListNode has been already freed.
+     *
+     * In such a case, the cached value cannot be obtained and value 0 will be
+     * used instead. */
+    BuddyListNode *bnode_left = reinterpret_cast<BuddyListNode *>(
+      purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(left)));
+    BuddyListNode *bnode_right = reinterpret_cast<BuddyListNode *>(
+      purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(right)));
+    a = bnode_left ? bnode_left->last_activity : 0;
+    b = bnode_right ? bnode_right->last_activity : 0;
+    if (a != b)
+      return a > b;
+  } break;
   }
-  return g_utf8_collate(purple_buddy_get_alias(left),
-      purple_buddy_get_alias(right)) <= 0;
+  return g_utf8_collate(
+           purple_buddy_get_alias(left), purple_buddy_get_alias(right)) <= 0;
 }
 
 const char *BuddyListNode::getBuddyStatus(PurpleBuddy *buddy) const
@@ -324,28 +322,28 @@ int BuddyListNode::getBuddyStatusWeight(PurpleBuddy *buddy) const
   PurpleStatusPrimitive prim = purple_status_type_get_primitive(status_type);
 
   switch (prim) {
-    case PURPLE_STATUS_OFFLINE:
-      return 0;
-    default:
-      return 1;
-    case PURPLE_STATUS_UNSET:
-      return 2;
-    case PURPLE_STATUS_UNAVAILABLE:
-      return 3;
-    case PURPLE_STATUS_AWAY:
-      return 4;
-    case PURPLE_STATUS_EXTENDED_AWAY:
-      return 5;
-    case PURPLE_STATUS_MOBILE:
-      return 6;
-    case PURPLE_STATUS_MOOD:
-      return 7;
-    case PURPLE_STATUS_TUNE:
-      return 8;
-    case PURPLE_STATUS_INVISIBLE:
-      return 9;
-    case PURPLE_STATUS_AVAILABLE:
-      return 10;
+  case PURPLE_STATUS_OFFLINE:
+    return 0;
+  default:
+    return 1;
+  case PURPLE_STATUS_UNSET:
+    return 2;
+  case PURPLE_STATUS_UNAVAILABLE:
+    return 3;
+  case PURPLE_STATUS_AWAY:
+    return 4;
+  case PURPLE_STATUS_EXTENDED_AWAY:
+    return 5;
+  case PURPLE_STATUS_MOBILE:
+    return 6;
+  case PURPLE_STATUS_MOOD:
+    return 7;
+  case PURPLE_STATUS_TUNE:
+    return 8;
+  case PURPLE_STATUS_INVISIBLE:
+    return 9;
+  case PURPLE_STATUS_AVAILABLE:
+    return 10;
   }
 }
 
@@ -362,12 +360,11 @@ void BuddyListNode::updateFilterVisibility(const char *name)
   setVisibility(purple_strcasestr(name, filter));
 }
 
-void BuddyListNode::retrieveUserInfoForName(PurpleConnection *gc,
-    const char *name) const
+void BuddyListNode::retrieveUserInfoForName(
+  PurpleConnection *gc, const char *name) const
 {
   PurpleNotifyUserInfo *info = purple_notify_user_info_new();
-  purple_notify_user_info_add_pair(info, _("Information"),
-      _("Retrieving..."));
+  purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
   purple_notify_userinfo(gc, name, info, NULL, NULL);
   purple_notify_user_info_destroy(info);
   serv_get_info(gc, name);
@@ -380,9 +377,9 @@ void BuddyListNode::actionOpenContextMenu()
 
 void BuddyListNode::declareBindables()
 {
-  declareBindable("buddylist", "contextmenu", sigc::mem_fun(this,
-        &BuddyListNode::actionOpenContextMenu),
-      InputProcessor::BINDABLE_NORMAL);
+  declareBindable("buddylist", "contextmenu",
+    sigc::mem_fun(this, &BuddyListNode::actionOpenContextMenu),
+    InputProcessor::BINDABLE_NORMAL);
 }
 
 bool BuddyListBuddy::lessOrEqual(const BuddyListNode &other) const
@@ -425,8 +422,8 @@ void BuddyListBuddy::onActivate(Button & /*activator*/)
 {
   PurpleAccount *account = purple_buddy_get_account(buddy);
   const char *name = purple_buddy_get_name(buddy);
-  PurpleConversation *conv = purple_find_conversation_with_account(
-      PURPLE_CONV_TYPE_IM, name, account);
+  PurpleConversation *conv =
+    purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, account);
 
   if (!conv)
     conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
@@ -440,25 +437,24 @@ const char *BuddyListBuddy::toString() const
 
 void BuddyListBuddy::retrieveUserInfo()
 {
-  PurpleConnection *gc = purple_account_get_connection(
-      purple_buddy_get_account(buddy));
+  PurpleConnection *gc =
+    purple_account_get_connection(purple_buddy_get_account(buddy));
   retrieveUserInfoForName(gc, purple_buddy_get_name(buddy));
 }
 
 BuddyListBuddy::BuddyContextMenu::BuddyContextMenu(
-    BuddyListBuddy &parent_buddy_)
-: ContextMenu(parent_buddy_), parent_buddy(&parent_buddy_)
+  BuddyListBuddy &parent_buddy_)
+  : ContextMenu(parent_buddy_), parent_buddy(&parent_buddy_)
 {
   appendProtocolMenu(purple_account_get_connection(
-          purple_buddy_get_account(parent_buddy->getPurpleBuddy())));
+    purple_buddy_get_account(parent_buddy->getPurpleBuddy())));
   appendExtendedMenu();
 
-  appendItem(_("Information..."), sigc::mem_fun(this,
-        &BuddyContextMenu::onInformation));
-  appendItem(_("Alias..."), sigc::mem_fun(this,
-        &BuddyContextMenu::onChangeAlias));
-  appendItem(_("Delete..."), sigc::mem_fun(this,
-        &BuddyContextMenu::onRemove));
+  appendItem(
+    _("Information..."), sigc::mem_fun(this, &BuddyContextMenu::onInformation));
+  appendItem(
+    _("Alias..."), sigc::mem_fun(this, &BuddyContextMenu::onChangeAlias));
+  appendItem(_("Delete..."), sigc::mem_fun(this, &BuddyContextMenu::onRemove));
 }
 
 void BuddyListBuddy::BuddyContextMenu::onInformation(Button & /*activator*/)
@@ -468,8 +464,8 @@ void BuddyListBuddy::BuddyContextMenu::onInformation(Button & /*activator*/)
 }
 
 void BuddyListBuddy::BuddyContextMenu::changeAliasResponseHandler(
-    CppConsUI::InputDialog &activator,
-    CppConsUI::AbstractDialog::ResponseType response)
+  CppConsUI::InputDialog &activator,
+  CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
     return;
@@ -485,23 +481,23 @@ void BuddyListBuddy::BuddyContextMenu::changeAliasResponseHandler(
 void BuddyListBuddy::BuddyContextMenu::onChangeAlias(Button & /*activator*/)
 {
   PurpleBuddy *buddy = parent_buddy->getPurpleBuddy();
-  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(
-      _("Alias"), purple_buddy_get_alias(buddy));
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &BuddyContextMenu::changeAliasResponseHandler));
+  CppConsUI::InputDialog *dialog =
+    new CppConsUI::InputDialog(_("Alias"), purple_buddy_get_alias(buddy));
+  dialog->signal_response.connect(
+    sigc::mem_fun(this, &BuddyContextMenu::changeAliasResponseHandler));
   dialog->show();
 }
 
 void BuddyListBuddy::BuddyContextMenu::removeResponseHandler(
-    CppConsUI::MessageDialog & /*activator*/,
-    CppConsUI::AbstractDialog::ResponseType response)
+  CppConsUI::MessageDialog & /*activator*/,
+  CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
     return;
 
   PurpleBuddy *buddy = parent_buddy->getPurpleBuddy();
-  purple_account_remove_buddy(purple_buddy_get_account(buddy), buddy,
-      purple_buddy_get_group(buddy));
+  purple_account_remove_buddy(
+    purple_buddy_get_account(buddy), buddy, purple_buddy_get_group(buddy));
 
   /* Close the context menu before the buddy is deleted because its deletion
    * can lead to destruction of this object. */
@@ -514,28 +510,27 @@ void BuddyListBuddy::BuddyContextMenu::onRemove(Button & /*activator*/)
 {
   PurpleBuddy *buddy = parent_buddy->getPurpleBuddy();
   char *msg = g_strdup_printf(
-      _("Are you sure you want to delete buddy %s from the list?"),
-      purple_buddy_get_alias(buddy));
-  CppConsUI::MessageDialog *dialog = new CppConsUI::MessageDialog(
-      _("Buddy deletion"), msg);
+    _("Are you sure you want to delete buddy %s from the list?"),
+    purple_buddy_get_alias(buddy));
+  CppConsUI::MessageDialog *dialog =
+    new CppConsUI::MessageDialog(_("Buddy deletion"), msg);
   g_free(msg);
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &BuddyContextMenu::removeResponseHandler));
+  dialog->signal_response.connect(
+    sigc::mem_fun(this, &BuddyContextMenu::removeResponseHandler));
   dialog->show();
 }
 
-int BuddyListBuddy::getColorPair(const char *widget, const char *property)
-  const
+int BuddyListBuddy::getColorPair(const char *widget, const char *property) const
 {
   if (BUDDYLIST->getColorizationMode() != BuddyList::COLOR_BY_ACCOUNT ||
-      strcmp(property, "normal"))
+    strcmp(property, "normal"))
     return Button::getColorPair(widget, property);
 
   PurpleAccount *account = purple_buddy_get_account(buddy);
   int fg = purple_account_get_ui_int(account, "centerim5",
-      "buddylist-foreground-color", CppConsUI::Curses::Color::DEFAULT);
+    "buddylist-foreground-color", CppConsUI::Curses::Color::DEFAULT);
   int bg = purple_account_get_ui_int(account, "centerim5",
-      "buddylist-background-color", CppConsUI::Curses::Color::DEFAULT);
+    "buddylist-background-color", CppConsUI::Curses::Color::DEFAULT);
 
   CppConsUI::ColorScheme::Color c(fg, bg);
   return COLORSCHEME->getColorPair(c);
@@ -547,8 +542,7 @@ void BuddyListBuddy::openContextMenu()
   w->show();
 }
 
-BuddyListBuddy::BuddyListBuddy(PurpleBlistNode *node_)
-: BuddyListNode(node_)
+BuddyListBuddy::BuddyListBuddy(PurpleBlistNode *node_) : BuddyListNode(node_)
 {
   setColorScheme("buddylistbuddy");
 
@@ -560,15 +554,15 @@ void BuddyListBuddy::updateColorScheme()
   char *new_scheme;
 
   switch (BUDDYLIST->getColorizationMode()) {
-    case BuddyList::COLOR_BY_STATUS:
-      new_scheme = Utils::getColorSchemeString("buddylistbuddy", buddy);
-      setColorScheme(new_scheme);
-      g_free(new_scheme);
-      break;
-    default:
-      // note: COLOR_BY_ACCOUNT case is handled by BuddyListBuddy::draw()
-      setColorScheme("buddylistbuddy");
-      break;
+  case BuddyList::COLOR_BY_STATUS:
+    new_scheme = Utils::getColorSchemeString("buddylistbuddy", buddy);
+    setColorScheme(new_scheme);
+    g_free(new_scheme);
+    break;
+  default:
+    // note: COLOR_BY_ACCOUNT case is handled by BuddyListBuddy::draw()
+    setColorScheme("buddylistbuddy");
+    break;
   }
 }
 
@@ -576,8 +570,8 @@ bool BuddyListChat::lessOrEqual(const BuddyListNode &other) const
 {
   const BuddyListChat *o = dynamic_cast<const BuddyListChat *>(&other);
   if (o)
-    return g_utf8_collate(purple_chat_get_name(chat),
-        purple_chat_get_name(o->chat)) <= 0;
+    return g_utf8_collate(
+             purple_chat_get_name(chat), purple_chat_get_name(o->chat)) <= 0;
   return lessOrEqualByType(other);
 }
 
@@ -600,7 +594,7 @@ void BuddyListChat::onActivate(Button & /*activator*/)
 {
   PurpleAccount *account = purple_chat_get_account(chat);
   PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(
-      purple_find_prpl(purple_account_get_protocol_id(account)));
+    purple_find_prpl(purple_account_get_protocol_id(account)));
   GHashTable *components = purple_chat_get_components(chat);
 
   char *chat_name = NULL;
@@ -613,8 +607,8 @@ void BuddyListChat::onActivate(Button & /*activator*/)
   else
     name = purple_chat_get_name(chat);
 
-  PurpleConversation *conv = purple_find_conversation_with_account(
-      PURPLE_CONV_TYPE_CHAT, name, account);
+  PurpleConversation *conv =
+    purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, name, account);
   if (conv)
     purple_conversation_present(conv);
 
@@ -629,21 +623,20 @@ const char *BuddyListChat::toString() const
 }
 
 BuddyListChat::ChatContextMenu::ChatContextMenu(BuddyListChat &parent_chat_)
-: ContextMenu(parent_chat_), parent_chat(&parent_chat_)
+  : ContextMenu(parent_chat_), parent_chat(&parent_chat_)
 {
   appendProtocolMenu(purple_account_get_connection(
-          purple_chat_get_account(parent_chat->getPurpleChat())));
+    purple_chat_get_account(parent_chat->getPurpleChat())));
   appendExtendedMenu();
 
-  appendItem(_("Alias..."), sigc::mem_fun(this,
-        &ChatContextMenu::onChangeAlias));
-  appendItem(_("Delete..."), sigc::mem_fun(this,
-        &ChatContextMenu::onRemove));
+  appendItem(
+    _("Alias..."), sigc::mem_fun(this, &ChatContextMenu::onChangeAlias));
+  appendItem(_("Delete..."), sigc::mem_fun(this, &ChatContextMenu::onRemove));
 }
 
 void BuddyListChat::ChatContextMenu::changeAliasResponseHandler(
-    CppConsUI::InputDialog &activator,
-    CppConsUI::AbstractDialog::ResponseType response)
+  CppConsUI::InputDialog &activator,
+  CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
     return;
@@ -658,16 +651,16 @@ void BuddyListChat::ChatContextMenu::changeAliasResponseHandler(
 void BuddyListChat::ChatContextMenu::onChangeAlias(Button & /*activator*/)
 {
   PurpleChat *chat = parent_chat->getPurpleChat();
-  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(
-      _("Alias"), purple_chat_get_name(chat));
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &ChatContextMenu::changeAliasResponseHandler));
+  CppConsUI::InputDialog *dialog =
+    new CppConsUI::InputDialog(_("Alias"), purple_chat_get_name(chat));
+  dialog->signal_response.connect(
+    sigc::mem_fun(this, &ChatContextMenu::changeAliasResponseHandler));
   dialog->show();
 }
 
 void BuddyListChat::ChatContextMenu::removeResponseHandler(
-    CppConsUI::MessageDialog & /*activator*/,
-    CppConsUI::AbstractDialog::ResponseType response)
+  CppConsUI::MessageDialog & /*activator*/,
+  CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
     return;
@@ -684,14 +677,14 @@ void BuddyListChat::ChatContextMenu::removeResponseHandler(
 void BuddyListChat::ChatContextMenu::onRemove(Button & /*activator*/)
 {
   PurpleChat *chat = parent_chat->getPurpleChat();
-  char *msg = g_strdup_printf(
-      _("Are you sure you want to delete chat %s from the list?"),
+  char *msg =
+    g_strdup_printf(_("Are you sure you want to delete chat %s from the list?"),
       purple_chat_get_name(chat));
-  CppConsUI::MessageDialog *dialog = new CppConsUI::MessageDialog(
-      _("Chat deletion"), msg);
+  CppConsUI::MessageDialog *dialog =
+    new CppConsUI::MessageDialog(_("Chat deletion"), msg);
   g_free(msg);
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &ChatContextMenu::removeResponseHandler));
+  dialog->signal_response.connect(
+    sigc::mem_fun(this, &ChatContextMenu::removeResponseHandler));
   dialog->show();
 }
 
@@ -701,8 +694,7 @@ void BuddyListChat::openContextMenu()
   w->show();
 }
 
-BuddyListChat::BuddyListChat(PurpleBlistNode *node_)
-: BuddyListNode(node_)
+BuddyListChat::BuddyListChat(PurpleBlistNode *node_) : BuddyListNode(node_)
 {
   setColorScheme("buddylistchat");
 
@@ -770,7 +762,7 @@ void BuddyListContact::onActivate(Button &activator)
 {
   PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
   BuddyListNode *bnode = reinterpret_cast<BuddyListNode *>(
-      purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(buddy)));
+    purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(buddy)));
   if (bnode)
     bnode->onActivate(activator);
 }
@@ -789,45 +781,45 @@ void BuddyListContact::setRefNode(CppConsUI::TreeView::NodeReference n)
 void BuddyListContact::retrieveUserInfo()
 {
   PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
-  PurpleConnection *gc = purple_account_get_connection(
-      purple_buddy_get_account(buddy));
+  PurpleConnection *gc =
+    purple_account_get_connection(purple_buddy_get_account(buddy));
   retrieveUserInfoForName(gc, purple_buddy_get_name(buddy));
 }
 
 BuddyListContact::ContactContextMenu::ContactContextMenu(
-    BuddyListContact &parent_contact_)
-: ContextMenu(parent_contact_), parent_contact(&parent_contact_)
+  BuddyListContact &parent_contact_)
+  : ContextMenu(parent_contact_), parent_contact(&parent_contact_)
 {
   appendExtendedMenu();
 
   if (parent_contact->isCollapsed())
-    appendItem(_("Expand"), sigc::bind(sigc::mem_fun(this,
-            &ContactContextMenu::onExpandRequest), true));
+    appendItem(_("Expand"),
+      sigc::bind(sigc::mem_fun(this, &ContactContextMenu::onExpandRequest),
+                 true));
   else
-    appendItem(_("Collapse"), sigc::bind(sigc::mem_fun(this,
-            &ContactContextMenu::onExpandRequest), false));
+    appendItem(_("Collapse"),
+      sigc::bind(sigc::mem_fun(this, &ContactContextMenu::onExpandRequest),
+                 false));
 
-  appendItem(_("Information..."), sigc::mem_fun(this,
-        &ContactContextMenu::onInformation));
-  appendItem(_("Alias..."), sigc::mem_fun(this,
-        &ContactContextMenu::onChangeAlias));
-  appendItem(_("Delete..."), sigc::mem_fun(this,
-        &ContactContextMenu::onRemove));
+  appendItem(_("Information..."),
+    sigc::mem_fun(this, &ContactContextMenu::onInformation));
+  appendItem(
+    _("Alias..."), sigc::mem_fun(this, &ContactContextMenu::onChangeAlias));
+  appendItem(
+    _("Delete..."), sigc::mem_fun(this, &ContactContextMenu::onRemove));
 
-  CppConsUI::MenuWindow *groups = new CppConsUI::MenuWindow(*this, AUTOSIZE,
-      AUTOSIZE);
+  CppConsUI::MenuWindow *groups =
+    new CppConsUI::MenuWindow(*this, AUTOSIZE, AUTOSIZE);
 
   for (PurpleBlistNode *node = purple_blist_get_root(); node;
-      node = purple_blist_node_get_sibling_next(node)) {
+       node = purple_blist_node_get_sibling_next(node)) {
     if (!PURPLE_BLIST_NODE_IS_GROUP(node))
       continue;
 
     PurpleGroup *group = PURPLE_GROUP(node);
-    CppConsUI::Button *button = groups->appendItem(
-        purple_group_get_name(group), sigc::bind(sigc::mem_fun(this,
-            &ContactContextMenu::onMoveTo), group));
-    if (purple_contact_get_group(parent_contact->getPurpleContact())
-        == group)
+    CppConsUI::Button *button = groups->appendItem(purple_group_get_name(group),
+      sigc::bind(sigc::mem_fun(this, &ContactContextMenu::onMoveTo), group));
+    if (purple_contact_get_group(parent_contact->getPurpleContact()) == group)
       button->grabFocus();
   }
 
@@ -835,22 +827,21 @@ BuddyListContact::ContactContextMenu::ContactContextMenu(
 }
 
 void BuddyListContact::ContactContextMenu::onExpandRequest(
-    Button & /*activator*/, bool expand)
+  Button & /*activator*/, bool expand)
 {
   parent_contact->setCollapsed(!expand);
   close();
 }
 
-void BuddyListContact::ContactContextMenu::onInformation(
-    Button & /*activator*/)
+void BuddyListContact::ContactContextMenu::onInformation(Button & /*activator*/)
 {
   parent_contact->retrieveUserInfo();
   close();
 }
 
 void BuddyListContact::ContactContextMenu::changeAliasResponseHandler(
-    CppConsUI::InputDialog &activator,
-    CppConsUI::AbstractDialog::ResponseType response)
+  CppConsUI::InputDialog &activator,
+  CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
     return;
@@ -868,20 +859,19 @@ void BuddyListContact::ContactContextMenu::changeAliasResponseHandler(
   close();
 }
 
-void BuddyListContact::ContactContextMenu::onChangeAlias(
-    Button & /*activator*/)
+void BuddyListContact::ContactContextMenu::onChangeAlias(Button & /*activator*/)
 {
   PurpleContact *contact = parent_contact->getPurpleContact();
-  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(
-      _("Alias"), purple_contact_get_alias(contact));
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &ContactContextMenu::changeAliasResponseHandler));
+  CppConsUI::InputDialog *dialog =
+    new CppConsUI::InputDialog(_("Alias"), purple_contact_get_alias(contact));
+  dialog->signal_response.connect(
+    sigc::mem_fun(this, &ContactContextMenu::changeAliasResponseHandler));
   dialog->show();
 }
 
 void BuddyListContact::ContactContextMenu::removeResponseHandler(
-    CppConsUI::MessageDialog & /*activator*/,
-    CppConsUI::AbstractDialog::ResponseType response)
+  CppConsUI::MessageDialog & /*activator*/,
+  CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
     return;
@@ -891,8 +881,8 @@ void BuddyListContact::ContactContextMenu::removeResponseHandler(
   PurpleBlistNode *cnode = PURPLE_BLIST_NODE(contact);
   PurpleGroup *group = purple_contact_get_group(contact);
 
-  for (PurpleBlistNode *bnode = purple_blist_node_get_first_child(cnode);
-      bnode; bnode = purple_blist_node_get_sibling_next(bnode)) {
+  for (PurpleBlistNode *bnode = purple_blist_node_get_first_child(cnode); bnode;
+       bnode = purple_blist_node_get_sibling_next(bnode)) {
     PurpleBuddy *buddy = PURPLE_BUDDY(bnode);
     PurpleAccount *account = purple_buddy_get_account(buddy);
     if (purple_account_is_connected(account))
@@ -910,18 +900,18 @@ void BuddyListContact::ContactContextMenu::onRemove(Button & /*activator*/)
 {
   PurpleContact *contact = parent_contact->getPurpleContact();
   char *msg = g_strdup_printf(
-      _("Are you sure you want to delete contact %s from the list?"),
-      purple_contact_get_alias(contact));
-  CppConsUI::MessageDialog *dialog = new CppConsUI::MessageDialog(
-      _("Contact deletion"), msg);
+    _("Are you sure you want to delete contact %s from the list?"),
+    purple_contact_get_alias(contact));
+  CppConsUI::MessageDialog *dialog =
+    new CppConsUI::MessageDialog(_("Contact deletion"), msg);
   g_free(msg);
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &ContactContextMenu::removeResponseHandler));
+  dialog->signal_response.connect(
+    sigc::mem_fun(this, &ContactContextMenu::removeResponseHandler));
   dialog->show();
 }
 
-void BuddyListContact::ContactContextMenu::onMoveTo(Button & /*activator*/,
-    PurpleGroup *group)
+void BuddyListContact::ContactContextMenu::onMoveTo(
+  Button & /*activator*/, PurpleGroup *group)
 {
   PurpleContact *contact = parent_contact->getPurpleContact();
   close();
@@ -929,21 +919,21 @@ void BuddyListContact::ContactContextMenu::onMoveTo(Button & /*activator*/,
   purple_blist_add_contact(contact, group, NULL);
 }
 
-int BuddyListContact::getColorPair(const char *widget, const char *property)
-  const
+int BuddyListContact::getColorPair(
+  const char *widget, const char *property) const
 {
   if (BUDDYLIST->getColorizationMode() != BuddyList::COLOR_BY_ACCOUNT ||
-      strcmp(property, "normal"))
+    strcmp(property, "normal"))
     return Button::getColorPair(widget, property);
 
   PurpleAccount *account =
     purple_buddy_get_account(purple_contact_get_priority_buddy(contact));
   int fg = purple_account_get_ui_int(account, "centerim5",
-      "buddylist-foreground-color", CppConsUI::Curses::Color::DEFAULT);
+    "buddylist-foreground-color", CppConsUI::Curses::Color::DEFAULT);
   int bg = purple_account_get_ui_int(account, "centerim5",
-      "buddylist-background-color", CppConsUI::Curses::Color::DEFAULT);
+    "buddylist-background-color", CppConsUI::Curses::Color::DEFAULT);
 
-  CppConsUI::ColorScheme::Color c(fg,bg);
+  CppConsUI::ColorScheme::Color c(fg, bg);
   return COLORSCHEME->getColorPair(c);
 }
 
@@ -954,7 +944,7 @@ void BuddyListContact::openContextMenu()
 }
 
 BuddyListContact::BuddyListContact(PurpleBlistNode *node_)
-: BuddyListNode(node_)
+  : BuddyListNode(node_)
 {
   setColorScheme("buddylistcontact");
 
@@ -967,16 +957,16 @@ void BuddyListContact::updateColorScheme()
   PurpleBuddy *buddy;
 
   switch (BUDDYLIST->getColorizationMode()) {
-    case BuddyList::COLOR_BY_STATUS:
-      buddy = purple_contact_get_priority_buddy(contact);
-      new_scheme = Utils::getColorSchemeString("buddylistcontact", buddy);
-      setColorScheme(new_scheme);
-      g_free(new_scheme);
-      break;
-    default:
-      // note: COLOR_BY_ACCOUNT case is handled by BuddyListContact::draw()
-      setColorScheme("buddylistcontact");
-      break;
+  case BuddyList::COLOR_BY_STATUS:
+    buddy = purple_contact_get_priority_buddy(contact);
+    new_scheme = Utils::getColorSchemeString("buddylistcontact", buddy);
+    setColorScheme(new_scheme);
+    g_free(new_scheme);
+    break;
+  default:
+    // note: COLOR_BY_ACCOUNT case is handled by BuddyListContact::draw()
+    setColorScheme("buddylistcontact");
+    break;
   }
 }
 
@@ -988,7 +978,7 @@ bool BuddyListGroup::lessOrEqual(const BuddyListNode &other) const
   const BuddyListGroup *o = dynamic_cast<const BuddyListGroup *>(&other);
   if (o)
     return g_utf8_collate(purple_group_get_name(group),
-        purple_group_get_name(o->group)) <= 0;
+             purple_group_get_name(o->group)) <= 0;
   return lessOrEqualByType(other);
 }
 
@@ -1001,39 +991,34 @@ void BuddyListGroup::update()
   // sort in the group
   BuddyList::GroupSortMode mode = BUDDYLIST->getGroupSortMode();
   switch (mode) {
-    case BuddyList::GROUP_SORT_BY_USER:
-      {
-        /* Note that the sorting below works even if there was
-         * a contact/chat/buddy node that is attached at the root level of the
-         * blist treeview. This happens when such a node was just created (the
-         * new_node() callback was called) but the node doesn't have any
-         * parent yet. */
+  case BuddyList::GROUP_SORT_BY_USER: {
+    /* Note that the sorting below works even if there was a contact/chat/buddy
+     * node that is attached at the root level of the blist treeview. This
+     * happens when such a node was just created (the new_node() callback was
+     * called) but the node doesn't have any parent yet. */
 
-        PurpleBlistNode *prev = purple_blist_node_get_sibling_prev(
-            blist_node);
+    PurpleBlistNode *prev = purple_blist_node_get_sibling_prev(blist_node);
 
-        if (prev) {
-          // it better be a group node
-          g_assert(PURPLE_BLIST_NODE_IS_GROUP(prev));
+    if (prev) {
+      // it better be a group node
+      g_assert(PURPLE_BLIST_NODE_IS_GROUP(prev));
 
-          BuddyListNode *bnode = reinterpret_cast<BuddyListNode *>(
-              purple_blist_node_get_ui_data(prev));
-          // there has to be ui_data set for all group nodes!
-          g_assert(bnode);
+      BuddyListNode *bnode =
+        reinterpret_cast<BuddyListNode *>(purple_blist_node_get_ui_data(prev));
+      // there has to be ui_data set for all group nodes!
+      g_assert(bnode);
 
-          treeview->moveNodeAfter(ref, bnode->getRefNode());
-        }
-        else {
-          // the group is the first one in the list
-          CppConsUI::TreeView::NodeReference parent_ref
-            = treeview->getRootNode();
-          treeview->moveNodeBefore(ref, parent_ref.begin());
-        }
-      }
-      break;
-    case BuddyList::GROUP_SORT_BY_NAME:
-      sortIn();
-      break;
+      treeview->moveNodeAfter(ref, bnode->getRefNode());
+    }
+    else {
+      // the group is the first one in the list
+      CppConsUI::TreeView::NodeReference parent_ref = treeview->getRootNode();
+      treeview->moveNodeBefore(ref, parent_ref.begin());
+    }
+  } break;
+  case BuddyList::GROUP_SORT_BY_NAME:
+    sortIn();
+    break;
   }
 
   bool vis = true;
@@ -1063,38 +1048,36 @@ void BuddyListGroup::initCollapsedState()
 {
   /* This can't be done when the purple_blist_load() function was called
    * because node settings are unavailable at that time. */
-  treeview->setCollapsed(ref, purple_blist_node_get_bool(blist_node,
-        "collapsed"));
+  treeview->setCollapsed(
+    ref, purple_blist_node_get_bool(blist_node, "collapsed"));
 }
 
 BuddyListGroup::GroupContextMenu::GroupContextMenu(
-    BuddyListGroup &parent_group_)
-: ContextMenu(parent_group_), parent_group(&parent_group_)
+  BuddyListGroup &parent_group_)
+  : ContextMenu(parent_group_), parent_group(&parent_group_)
 {
   appendExtendedMenu();
 
-  appendItem(_("Rename..."), sigc::mem_fun(this,
-        &GroupContextMenu::onRename));
-  appendItem(_("Delete..."), sigc::mem_fun(this,
-        &GroupContextMenu::onRemove));
+  appendItem(_("Rename..."), sigc::mem_fun(this, &GroupContextMenu::onRename));
+  appendItem(_("Delete..."), sigc::mem_fun(this, &GroupContextMenu::onRemove));
 
   if (BUDDYLIST->getGroupSortMode() == BuddyList::GROUP_SORT_BY_USER) {
     /* If the manual sorting is enabled then show a menu item and a submenu
      * for group moving. */
-    CppConsUI::MenuWindow *groups = new CppConsUI::MenuWindow(*this, AUTOSIZE,
-        AUTOSIZE);
+    CppConsUI::MenuWindow *groups =
+      new CppConsUI::MenuWindow(*this, AUTOSIZE, AUTOSIZE);
 
-    groups->appendItem(_("-Top-"), sigc::bind(
-          sigc::mem_fun(this, &GroupContextMenu::onMoveAfter),
-          static_cast<PurpleGroup *>(NULL)));
+    groups->appendItem(_("-Top-"),
+      sigc::bind(sigc::mem_fun(this, &GroupContextMenu::onMoveAfter),
+                         static_cast<PurpleGroup *>(NULL)));
     for (PurpleBlistNode *node = purple_blist_get_root(); node;
-        node = purple_blist_node_get_sibling_next(node)) {
+         node = purple_blist_node_get_sibling_next(node)) {
       if (!PURPLE_BLIST_NODE_IS_GROUP(node))
         continue;
 
       PurpleGroup *group = PURPLE_GROUP(node);
-      groups->appendItem(purple_group_get_name(group), sigc::bind(
-            sigc::mem_fun(this, &GroupContextMenu::onMoveAfter), group));
+      groups->appendItem(purple_group_get_name(group),
+        sigc::bind(sigc::mem_fun(this, &GroupContextMenu::onMoveAfter), group));
     }
 
     appendSubMenu(_("Move after..."), *groups);
@@ -1102,8 +1085,8 @@ BuddyListGroup::GroupContextMenu::GroupContextMenu(
 }
 
 void BuddyListGroup::GroupContextMenu::renameResponseHandler(
-    CppConsUI::InputDialog &activator,
-    CppConsUI::AbstractDialog::ResponseType response)
+  CppConsUI::InputDialog &activator,
+  CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
     return;
@@ -1126,24 +1109,24 @@ void BuddyListGroup::GroupContextMenu::renameResponseHandler(
 void BuddyListGroup::GroupContextMenu::onRename(Button & /*activator*/)
 {
   PurpleGroup *group = parent_group->getPurpleGroup();
-  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(
-      _("Rename"), purple_group_get_name(group));
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &GroupContextMenu::renameResponseHandler));
+  CppConsUI::InputDialog *dialog =
+    new CppConsUI::InputDialog(_("Rename"), purple_group_get_name(group));
+  dialog->signal_response.connect(
+    sigc::mem_fun(this, &GroupContextMenu::renameResponseHandler));
   dialog->show();
 }
 
 void BuddyListGroup::GroupContextMenu::removeResponseHandler(
-    CppConsUI::MessageDialog & /*activator*/,
-    CppConsUI::AbstractDialog::ResponseType response)
+  CppConsUI::MessageDialog & /*activator*/,
+  CppConsUI::AbstractDialog::ResponseType response)
 {
   if (response != CppConsUI::AbstractDialog::RESPONSE_OK)
     return;
 
   // based on gtkdialogs.c:pidgin_dialogs_remove_group_cb()
   PurpleGroup *group = parent_group->getPurpleGroup();
-  PurpleBlistNode *cnode = purple_blist_node_get_first_child(
-      PURPLE_BLIST_NODE(group));
+  PurpleBlistNode *cnode =
+    purple_blist_node_get_first_child(PURPLE_BLIST_NODE(group));
   while (cnode) {
     if (PURPLE_BLIST_NODE_IS_CONTACT(cnode)) {
       PurpleBlistNode *bnode = purple_blist_node_get_first_child(cnode);
@@ -1181,18 +1164,18 @@ void BuddyListGroup::GroupContextMenu::onRemove(Button & /*activator*/)
 {
   PurpleGroup *group = parent_group->getPurpleGroup();
   char *msg = g_strdup_printf(
-      _("Are you sure you want to delete group %s from the list?"),
-      purple_group_get_name(group));
-  CppConsUI::MessageDialog *dialog
-    = new CppConsUI::MessageDialog(_("Group deletion"), msg);
+    _("Are you sure you want to delete group %s from the list?"),
+    purple_group_get_name(group));
+  CppConsUI::MessageDialog *dialog =
+    new CppConsUI::MessageDialog(_("Group deletion"), msg);
   g_free(msg);
-  dialog->signal_response.connect(sigc::mem_fun(this,
-        &GroupContextMenu::removeResponseHandler));
+  dialog->signal_response.connect(
+    sigc::mem_fun(this, &GroupContextMenu::removeResponseHandler));
   dialog->show();
 }
 
-void BuddyListGroup::GroupContextMenu::onMoveAfter(Button & /*activator*/,
-    PurpleGroup *group)
+void BuddyListGroup::GroupContextMenu::onMoveAfter(
+  Button & /*activator*/, PurpleGroup *group)
 {
   PurpleGroup *moved_group = parent_group->getPurpleGroup();
   close();
@@ -1206,12 +1189,11 @@ void BuddyListGroup::openContextMenu()
   w->show();
 }
 
-BuddyListGroup::BuddyListGroup(PurpleBlistNode *node_)
-: BuddyListNode(node_)
+BuddyListGroup::BuddyListGroup(PurpleBlistNode *node_) : BuddyListNode(node_)
 {
   setColorScheme("buddylistgroup");
 
   group = PURPLE_GROUP(blist_node);
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

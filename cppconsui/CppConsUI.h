@@ -39,23 +39,21 @@
 #define COREMANAGER (CppConsUI::getCoreManagerInstance())
 #define KEYCONFIG (CppConsUI::getKeyConfigInstance())
 
-#define CONSUI_DISABLE_COPY(Class) \
-  Class(const Class&); \
-  Class &operator=(const Class&)
+#define CONSUI_DISABLE_COPY(Class)                                             \
+  Class(const Class &);                                                        \
+  Class &operator=(const Class &)
 
 #define PRINTF_WIDTH(type) ((CHAR_BIT * sizeof(type) + 2) / 3 + 1)
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 enum WrapMode {
   WRAP_NONE,
   WRAP_CHAR,
-  WRAP_WORD
+  WRAP_WORD,
 };
 
-class Point
-{
+class Point {
 public:
   Point() : x(0), y(0) {}
   Point(int x_, int y_) : x(x_), y(y_) {}
@@ -66,12 +64,10 @@ public:
   int x, y;
 
 protected:
-
 private:
 };
 
-class Size
-{
+class Size {
 public:
   Size() : width(0), height(0) {}
   Size(int w, int h) : width(w), height(h) {}
@@ -82,12 +78,10 @@ public:
   int width, height;
 
 protected:
-
 private:
 };
 
-class Rect: public Point
-{
+class Rect : public Point {
 public:
   Rect() : width(0), height(0) {}
   Rect(int x, int y, int w, int h) : Point(x, y), width(w), height(h) {}
@@ -102,13 +96,12 @@ public:
   int width, height;
 
 protected:
-
 private:
 };
 
 enum InputCondition {
   INPUT_CONDITION_READ = 1 << 0,
-  INPUT_CONDITION_WRITE = 1 << 1
+  INPUT_CONDITION_WRITE = 1 << 1,
 };
 
 typedef bool (*SourceFunction)(void *data);
@@ -117,8 +110,8 @@ typedef void (*InputFunction)(int fd, InputCondition cond, void *data);
 struct AppInterface {
   unsigned (*timeoutAdd)(unsigned interval, SourceFunction func, void *data);
   bool (*timeoutRemove)(unsigned handle);
-  unsigned (*inputAdd)(int fd, InputCondition cond, InputFunction func,
-      void *data);
+  unsigned (*inputAdd)(
+    int fd, InputCondition cond, InputFunction func, void *data);
   bool (*inputRemove)(unsigned handle);
   void (*logError)(const char *message);
 };
@@ -134,8 +127,7 @@ ColorScheme *getColorSchemeInstance();
 CoreManager *getCoreManagerInstance();
 KeyConfig *getKeyConfigInstance();
 
-namespace UTF8
-{
+namespace UTF8 {
 
 typedef uint32_t UniChar;
 UniChar getUniChar(const char *p);
@@ -153,4 +145,4 @@ const char *findPrevChar(const char *start, const char *p);
 
 #endif // __CPPCONSUI_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

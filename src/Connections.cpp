@@ -44,7 +44,7 @@ Connections::Connections()
   centerim_connection_ui_ops.disconnected = disconnected_;
   centerim_connection_ui_ops.notice = notice_;
   // deprecated in favour of report_disconnect_reason()
-  //centerim_connection_ui_ops.report_disconnect = report_disconnect_;
+  // centerim_connection_ui_ops.report_disconnect = report_disconnect_;
   centerim_connection_ui_ops.network_connected = network_connected_;
   centerim_connection_ui_ops.network_disconnected = network_disconnected_;
   centerim_connection_ui_ops.report_disconnect_reason =
@@ -77,43 +77,41 @@ void Connections::reconnectAccount(PurpleAccount *account)
   g_return_if_fail(account);
 
   if (!purple_account_is_disconnected(account) ||
-      !purple_status_is_online(purple_account_get_active_status(account)))
+    !purple_status_is_online(purple_account_get_active_status(account)))
     return;
 
   purple_account_connect(account);
 }
 
 void Connections::connect_progress(PurpleConnection *gc, const char *text,
-    size_t /*step*/, size_t /*step_count*/)
+  size_t /*step*/, size_t /*step_count*/)
 {
   PurpleAccount *account = purple_connection_get_account(gc);
-  LOG->message(_("+ [%s] %s: %s"),
-      purple_account_get_protocol_name(account),
-      purple_account_get_username(account), text);
+  LOG->message(_("+ [%s] %s: %s"), purple_account_get_protocol_name(account),
+    purple_account_get_username(account), text);
 }
 
 void Connections::connected(PurpleConnection *gc)
 {
   PurpleAccount *account = purple_connection_get_account(gc);
   LOG->message(_("+ [%s] %s: Connected"),
-      purple_account_get_protocol_name(account),
-      purple_account_get_username(account));
+    purple_account_get_protocol_name(account),
+    purple_account_get_username(account));
 }
 
 void Connections::disconnected(PurpleConnection *gc)
 {
   PurpleAccount *account = purple_connection_get_account(gc);
   LOG->message(_("+ [%s] %s: Disconnected"),
-      purple_account_get_protocol_name(account),
-      purple_account_get_username(account));
+    purple_account_get_protocol_name(account),
+    purple_account_get_username(account));
 }
 
 void Connections::notice(PurpleConnection *gc, const char *text)
 {
   PurpleAccount *account = purple_connection_get_account(gc);
-  LOG->message(_("+ [%s] %s: %s"),
-      purple_account_get_protocol_name(account),
-      purple_account_get_username(account), text);
+  LOG->message(_("+ [%s] %s: %s"), purple_account_get_protocol_name(account),
+    purple_account_get_username(account), text);
 }
 
 void Connections::network_connected()
@@ -148,8 +146,8 @@ void Connections::network_disconnected()
   g_list_free(list);
 }
 
-void Connections::report_disconnect_reason(PurpleConnection *gc,
-    PurpleConnectionError reason, const char *text)
+void Connections::report_disconnect_reason(
+  PurpleConnection *gc, PurpleConnectionError reason, const char *text)
 {
   PurpleAccount *account = purple_connection_get_account(gc);
   const char *protocol = purple_account_get_protocol_name(account);
@@ -158,13 +156,14 @@ void Connections::report_disconnect_reason(PurpleConnection *gc,
   LOG->message(_("+ [%s] %s: %s"), protocol, username, text);
 
   if (!purple_connection_error_is_fatal(reason)) {
-    unsigned delay = g_random_int_range(RECONNECTION_DELAY_MIN,
-        RECONNECTION_DELAY_MAX);
-    CENTERIM->timeoutOnceConnect(sigc::bind(sigc::mem_fun(this,
-            &Connections::reconnectAccount), account), delay);
+    unsigned delay =
+      g_random_int_range(RECONNECTION_DELAY_MIN, RECONNECTION_DELAY_MAX);
+    CENTERIM->timeoutOnceConnect(
+      sigc::bind(sigc::mem_fun(this, &Connections::reconnectAccount), account),
+      delay);
     LOG->message(ngettext("+ [%s] %s: Auto-reconnection in %d second",
-          "+ [%s] %s: Auto-reconnection in %d seconds", delay / 1000),
-        protocol, username, delay / 1000);
+                   "+ [%s] %s: Auto-reconnection in %d seconds", delay / 1000),
+      protocol, username, delay / 1000);
   }
   else {
     purple_account_set_enabled(account, PACKAGE_NAME, FALSE);
@@ -172,4 +171,4 @@ void Connections::report_disconnect_reason(PurpleConnection *gc,
   }
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

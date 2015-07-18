@@ -9,27 +9,24 @@
 #include <sstream>
 
 // TestWindow class
-class TestWindow
-: public CppConsUI::Window
-{
+class TestWindow : public CppConsUI::Window {
 public:
   TestWindow(int number, int x, int y, int w, int h);
   virtual ~TestWindow() {}
 
 protected:
-
 private:
   CONSUI_DISABLE_COPY(TestWindow);
 };
 
 TestWindow::TestWindow(int number, int x, int y, int w, int h)
-: CppConsUI::Window(x, y, w, h)
+  : CppConsUI::Window(x, y, w, h)
 {
   CppConsUI::Label *label;
 
-  std::string text = std::string("Win ")
-    + dynamic_cast<std::ostringstream *>(
-        &(std::ostringstream() << number))->str();
+  std::string text = std::string("Win ") +
+    dynamic_cast<std::ostringstream *>(&(std::ostringstream() << number))
+      ->str();
   label = new CppConsUI::Label(w - 4, 1, text.c_str());
   addWidget(*label, 2, 1);
 
@@ -43,14 +40,11 @@ TestWindow::TestWindow(int number, int x, int y, int w, int h)
 }
 
 // TestApp class
-class TestApp
-: public CppConsUI::InputProcessor
-{
+class TestApp : public CppConsUI::InputProcessor {
 public:
   static int run();
 
 protected:
-
 private:
   static TestApp *my_instance;
 
@@ -102,13 +96,9 @@ int TestApp::runAll()
   mainloop_initialized = true;
 
   // initialize CppConsUI
-  CppConsUI::AppInterface interface = {
-    MainLoop::timeout_add_cppconsui,
-    MainLoop::timeout_remove_cppconsui,
-    MainLoop::input_add_cppconsui,
-    MainLoop::input_remove_cppconsui,
-    log_error_cppconsui
-  };
+  CppConsUI::AppInterface interface = {MainLoop::timeout_add_cppconsui,
+    MainLoop::timeout_remove_cppconsui, MainLoop::input_add_cppconsui,
+    MainLoop::input_remove_cppconsui, log_error_cppconsui};
   int consui_res = CppConsUI::initializeConsUI(interface);
   if (consui_res) {
     std::cerr << "CppConsUI initialization failed." << std::endl;
@@ -118,12 +108,12 @@ int TestApp::runAll()
 
   // declare local bindables
   declareBindable("testapp", "quit", sigc::ptr_fun(MainLoop::quit),
-      InputProcessor::BINDABLE_OVERRIDE);
+    InputProcessor::BINDABLE_OVERRIDE);
 
   // create test windows
   for (int i = 1; i <= 4; i++) {
-    TestWindow *win = new TestWindow(i, (i - 1) % 2 * 40, (i - 1) / 2 * 10,
-        40, 10);
+    TestWindow *win =
+      new TestWindow(i, (i - 1) % 2 * 40, (i - 1) / 2 * 10, 40, 10);
     win->show();
   }
 
@@ -159,4 +149,4 @@ int main()
   return TestApp::run();
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

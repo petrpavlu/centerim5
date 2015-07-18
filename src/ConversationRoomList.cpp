@@ -24,58 +24,51 @@
 // Move the widget to a position according to sorting function
 void ConversationRoomList::moveToSortedPosition(Buddy *new_buddy)
 {
-  Buddy * buddy = NULL;
+  Buddy *buddy = NULL;
   Children::iterator iter;
 
   g_assert(new_buddy);
 
-  for(iter = children.begin(); iter != children.end(); ++iter) {
-
-    buddy = dynamic_cast<Buddy*>(*iter);
+  for (iter = children.begin(); iter != children.end(); ++iter) {
+    buddy = dynamic_cast<Buddy *>(*iter);
 
     // Should never happen...
     g_assert(buddy);
 
     // Since new_buddy is in list already, must skip
-    if(*buddy == *new_buddy)
+    if (*buddy == *new_buddy)
       continue;
 
     // Break once insertion point is found
-    if(!Buddy::less_than_op_away_name(*buddy, *new_buddy))
+    if (!Buddy::less_than_op_away_name(*buddy, *new_buddy))
       break;
   }
 
   // Don't change anything if wanting to put into the same position
   // (also returns on single node case)
-  if(*buddy == *new_buddy) {
+  if (*buddy == *new_buddy)
     return;
-  }
 
   // TODO: HACK? Seems to be required to have the ListBox
   //   reorder the widgets after calling moveWidget*
   //   Doesn't seem right...
-  //reposition_widgets = true;
+  // reposition_widgets = true;
 
   // Insert after if at end
-  if(iter == children.end()) {
+  if (iter == children.end())
     moveWidgetAfter(*new_buddy, *buddy);
-  }
-  else {
+  else
     moveWidgetBefore(*new_buddy, *buddy);
-  }
-
 }
 
-void ConversationRoomList::add_users(GList *cbuddies,
-    gboolean /*new_arrivals*/)
+void ConversationRoomList::add_users(GList *cbuddies, gboolean /*new_arrivals*/)
 {
   GList *l;
   PurpleConvChatBuddy *pbuddy;
   for (l = cbuddies; l != NULL; l = l->next) {
+    pbuddy = static_cast<PurpleConvChatBuddy *>(l->data);
 
-    pbuddy = static_cast<PurpleConvChatBuddy*>(l->data);
-
-    Buddy * buddy = new Buddy(pbuddy);
+    Buddy *buddy = new Buddy(pbuddy);
     buddy->setButtonText();
     buddy_map_[pbuddy->name] = buddy;
 
@@ -85,27 +78,26 @@ void ConversationRoomList::add_users(GList *cbuddies,
   }
 }
 
-void ConversationRoomList::rename_user(const char *old_name,
-  const char *new_name, const char * /*new_alias*/)
+void ConversationRoomList::rename_user(
+  const char *old_name, const char *new_name, const char * /*new_alias*/)
 {
   // The old PurpleConvChatBuddy is still valid while
   // this function is executing
-  //PurpleConvChatBuddy * old_pbuddy = purple_conv_chat_cb_find(
+  // PurpleConvChatBuddy * old_pbuddy = purple_conv_chat_cb_find(
   //  conv_->u.chat, old_name);
 
-  PurpleConvChat * conv = PURPLE_CONV_CHAT(conv_);
+  PurpleConvChat *conv = PURPLE_CONV_CHAT(conv_);
 
   g_assert(conv);
 
-  PurpleConvChatBuddy * new_pbuddy = purple_conv_chat_cb_find(
-    conv, new_name);
+  PurpleConvChatBuddy *new_pbuddy = purple_conv_chat_cb_find(conv, new_name);
 
-  //g_assert(old_pbuddy);
+  // g_assert(old_pbuddy);
   g_assert(new_pbuddy);
 
   // NOTE: PurpleConvChatBuddy::ui_data is pidgin 2.9!!
-  //Buddy * buddy = static_cast<Buddy *>(old_pbuddy->ui_data);
-  Buddy * buddy = buddy_map_[old_name];
+  // Buddy * buddy = static_cast<Buddy *>(old_pbuddy->ui_data);
+  Buddy *buddy = buddy_map_[old_name];
 
   g_assert(buddy);
 
@@ -126,7 +118,6 @@ void ConversationRoomList::remove_users(GList *users)
   GList *l;
   const char *name;
   for (l = users; l != NULL; l = l->next) {
-
     name = static_cast<const char *>(l->data);
 
     // NOTE: can't remove purple_conv_chat_cb_find, because the user
@@ -134,29 +125,25 @@ void ConversationRoomList::remove_users(GList *users)
 
     BuddyMapIter iter = buddy_map_.find(name);
 
-    if(buddy_map_.end() != iter) {
-
-        buddy_map_.erase(iter);
-        // NOTE: this deletes the buddy object
-        removeWidget(*iter->second);
+    if (buddy_map_.end() != iter) {
+      buddy_map_.erase(iter);
+      // NOTE: this deletes the buddy object
+      removeWidget(*iter->second);
     }
   }
 }
 
 void ConversationRoomList::update_user(const char *user)
 {
-  PurpleConvChat * conv = PURPLE_CONV_CHAT(conv_);
-
+  PurpleConvChat *conv = PURPLE_CONV_CHAT(conv_);
   g_assert(conv);
 
-  PurpleConvChatBuddy * pbuddy = purple_conv_chat_cb_find(conv, user);
-
+  PurpleConvChatBuddy *pbuddy = purple_conv_chat_cb_find(conv, user);
   g_assert(pbuddy);
 
   // NOTE: PurpleConvChatBuddy::ui_data is pidgin 2.9!!
-  //Buddy * buddy = static_cast<Buddy *>(pbuddy->ui_data);
-  Buddy * buddy = buddy_map_[user];
-
+  // Buddy * buddy = static_cast<Buddy *>(pbuddy->ui_data);
+  Buddy *buddy = buddy_map_[user];
   g_assert(buddy);
 
   // Move and then update
@@ -165,20 +152,19 @@ void ConversationRoomList::update_user(const char *user)
 }
 
 ConversationRoomList::Buddy::Buddy(PurpleConvChatBuddy *pbuddy)
-  : CppConsUI::Button(AUTOSIZE, 1, "")
-  , pbuddy_(pbuddy)
+  : CppConsUI::Button(AUTOSIZE, 1, ""), pbuddy_(pbuddy)
 {
   // Set ui data
   // NOTE: PurpleConvChatBuddy::ui_data is pidgin 2.9!!
-  //pbuddy_->ui_data = static_cast<void*>(this);
+  // pbuddy_->ui_data = static_cast<void*>(this);
 }
 
 ConversationRoomList::Buddy::~Buddy()
 {
 }
 
-void ConversationRoomList::Buddy::readFlags(bool &is_op, bool &is_typing,
-  bool &is_away) const
+void ConversationRoomList::Buddy::readFlags(
+  bool &is_op, bool &is_typing, bool &is_away) const
 {
   g_assert(pbuddy_);
 
@@ -186,18 +172,10 @@ void ConversationRoomList::Buddy::readFlags(bool &is_op, bool &is_typing,
 
   // TODO: how about founder?  Does that matter?
 
-  is_op = (
-    ((flags & PURPLE_CBFLAGS_OP)      != 0)
-    );
-
-  is_typing = (
-    ((flags & PURPLE_CBFLAGS_TYPING)  != 0)
-    );
-
+  is_op = (((flags & PURPLE_CBFLAGS_OP) != 0));
+  is_typing = (((flags & PURPLE_CBFLAGS_TYPING) != 0));
 #if PURPLE_VERSION_CHECK(2, 8, 0)
-  is_away = (
-    ((flags & PURPLE_CBFLAGS_AWAY)    != 0)
-    );
+  is_away = (((flags & PURPLE_CBFLAGS_AWAY) != 0));
 #else
   is_away = false;
 #endif
@@ -205,14 +183,14 @@ void ConversationRoomList::Buddy::readFlags(bool &is_op, bool &is_typing,
 
 void ConversationRoomList::Buddy::setButtonText()
 {
-  char * text = displayText();
+  char *text = displayText();
   setText(text);
   g_free(text);
 }
 
-char * ConversationRoomList::Buddy::displayText() const
+char *ConversationRoomList::Buddy::displayText() const
 {
-  char * ret;
+  char *ret;
 
   bool is_op(false);
   bool is_typing(false);
@@ -220,25 +198,21 @@ char * ConversationRoomList::Buddy::displayText() const
 
   readFlags(is_op, is_typing, is_away);
 
-  ret = g_strdup_printf("[%s] %s%s%s",
-    (is_away     ? "a" : "o"),
-    (is_op       ? "@" : ""),
-    displayName(),
-    (is_typing   ? "*" : "")
-    );
+  ret = g_strdup_printf("[%s] %s%s%s", (is_away ? "a" : "o"),
+    (is_op ? "@" : ""), displayName(), (is_typing ? "*" : ""));
 
   // TODO: elide long names?
 
   return ret;
 }
 
-const char * ConversationRoomList::Buddy::displayName() const
+const char *ConversationRoomList::Buddy::displayName() const
 {
   g_assert(pbuddy_);
 
   // prefer alias
   // NOTE: pbuddy_->alias_key isn't used yet... (according to docs)
-  if(pbuddy_->alias != NULL)
+  if (pbuddy_->alias != NULL)
     return pbuddy_->alias;
   else
     return pbuddy_->name;
@@ -253,11 +227,11 @@ void ConversationRoomList::Buddy::setPurpleBuddy(PurpleConvChatBuddy *pbuddy)
 {
   pbuddy_ = pbuddy;
   // NOTE: PurpleConvChatBuddy::ui_data is pidgin 2.9!!
-  //pbuddy_->ui_data = static_cast<void*>(this);
+  // pbuddy_->ui_data = static_cast<void*>(this);
 }
 
-bool ConversationRoomList::Buddy::less_than_op_away_name(const Buddy &lhs,
-  const Buddy &rhs)
+bool ConversationRoomList::Buddy::less_than_op_away_name(
+  const Buddy &lhs, const Buddy &rhs)
 {
   // Sort order:
   //
@@ -272,20 +246,16 @@ bool ConversationRoomList::Buddy::less_than_op_away_name(const Buddy &lhs,
   rhs.readFlags(rhs_is_op, rhs_is_typing, rhs_is_away);
 
   // Probably a more elegant way to do this
-  if(lhs_is_op && !rhs_is_op) {
+  if (lhs_is_op && !rhs_is_op)
     return true;
-  }
-  else if(!lhs_is_op && rhs_is_op) {
+  else if (!lhs_is_op && rhs_is_op)
     return false;
-  }
   // equal op or non-op status
   else {
-    if(lhs_is_away && !rhs_is_away) {
+    if (lhs_is_away && !rhs_is_away)
       return false;
-    }
-    else if(!lhs_is_away && rhs_is_away) {
+    else if (!lhs_is_away && rhs_is_away)
       return true;
-    }
     // on equal online/away status
     else {
       // utf8 comparison
@@ -294,4 +264,4 @@ bool ConversationRoomList::Buddy::less_than_op_away_name(const Buddy &lhs,
   }
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

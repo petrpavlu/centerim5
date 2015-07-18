@@ -30,9 +30,7 @@
 #include <cppconsui/TreeView.h>
 #include <libpurple/purple.h>
 
-class PluginWindow
-: public CppConsUI::SplitDialog
-{
+class PluginWindow : public CppConsUI::SplitDialog {
 public:
   PluginWindow();
   virtual ~PluginWindow();
@@ -41,11 +39,8 @@ public:
   virtual void onScreenResized();
 
 protected:
-
 private:
-  class AddPluginWindow
-  : public CppConsUI::Window
-  {
+  class AddPluginWindow : public CppConsUI::Window {
   public:
     AddPluginWindow();
     virtual ~AddPluginWindow() {}
@@ -57,16 +52,14 @@ private:
     sigc::signal<void, AddPluginWindow &, PurplePlugin *> signal_selection;
 
   protected:
-    void onPluginButtonActivate(CppConsUI::Button &activator,
-        PurplePlugin *plugin);
+    void onPluginButtonActivate(
+      CppConsUI::Button &activator, PurplePlugin *plugin);
 
   private:
     CONSUI_DISABLE_COPY(AddPluginWindow);
   };
 
-  class BoolOption
-  : public CppConsUI::CheckBox
-  {
+  class BoolOption : public CppConsUI::CheckBox {
   public:
     BoolOption(const char *name, const char *pref_);
     virtual ~BoolOption();
@@ -80,9 +73,7 @@ private:
     CONSUI_DISABLE_COPY(BoolOption);
   };
 
-  class StringOption
-  : public CppConsUI::Button
-  {
+  class StringOption : public CppConsUI::Button {
   public:
     StringOption(const char *name, const char *pref_);
     virtual ~StringOption();
@@ -93,15 +84,13 @@ private:
     void updateValue();
     void onActivate(CppConsUI::Button &activator);
     void responseHandler(CppConsUI::InputDialog &activator,
-        CppConsUI::AbstractDialog::ResponseType response);
+      CppConsUI::AbstractDialog::ResponseType response);
 
   private:
     CONSUI_DISABLE_COPY(StringOption);
   };
 
-  class IntegerOption
-  : public CppConsUI::Button
-  {
+  class IntegerOption : public CppConsUI::Button {
   public:
     IntegerOption(const char *name, const char *pref_);
     virtual ~IntegerOption();
@@ -112,15 +101,13 @@ private:
     void updateValue();
     void onActivate(CppConsUI::Button &activator);
     void responseHandler(CppConsUI::InputDialog &activator,
-        CppConsUI::AbstractDialog::ResponseType response);
+      CppConsUI::AbstractDialog::ResponseType response);
 
   private:
     CONSUI_DISABLE_COPY(IntegerOption);
   };
 
-  class PathOption
-  : public CppConsUI::Button
-  {
+  class PathOption : public CppConsUI::Button {
   public:
     PathOption(const char *name, const char *pref_);
     virtual ~PathOption();
@@ -131,14 +118,13 @@ private:
     void updateValue();
     void onActivate(CppConsUI::Button &activator);
     void responseHandler(CppConsUI::InputDialog &activator,
-        CppConsUI::AbstractDialog::ResponseType response);
+      CppConsUI::AbstractDialog::ResponseType response);
 
   private:
     CONSUI_DISABLE_COPY(PathOption);
   };
 
-  struct PluginEntry
-  {
+  struct PluginEntry {
     CppConsUI::Button *parent;
     CppConsUI::TreeView::NodeReference parent_reference;
     PurplePluginPrefFrame *frame;
@@ -158,9 +144,9 @@ private:
 
   void disablePlugin(CppConsUI::Button &activator, PurplePlugin *plugin);
   void disablePluginResponseHandler(CppConsUI::MessageDialog &activator,
-      CppConsUI::AbstractDialog::ResponseType response, PurplePlugin *plugin);
+    CppConsUI::AbstractDialog::ResponseType response, PurplePlugin *plugin);
 };
 
 #endif // __PLUGINWINDOW_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

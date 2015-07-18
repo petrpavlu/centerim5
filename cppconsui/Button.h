@@ -31,8 +31,7 @@
 
 #include "Widget.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 /**
  * This class implements a simple button behaviour.
@@ -40,26 +39,23 @@ namespace CppConsUI
  * The button does not keep states like pressed or not and it can call back
  * one (or more) functions when pressed.
  */
-class Button
-: public Widget
-{
+class Button : public Widget {
 public:
   enum Flag {
     FLAG_VALUE = 1 << 0,
     FLAG_UNIT = 1 << 1,
-    FLAG_RIGHT = 1 << 2
+    FLAG_RIGHT = 1 << 2,
   };
 
   Button(int w, int h, const char *text_ = NULL, int flags_ = 0,
-      bool masked_ = false);
-  explicit Button(const char *text_ = NULL, int flags_ = 0,
-      bool masked_ = false);
+    bool masked_ = false);
+  explicit Button(
+    const char *text_ = NULL, int flags_ = 0, bool masked_ = false);
   Button(int w, int h, int flags_ = 0, const char *text_ = NULL,
-      const char *value_ = NULL, const char *unit_ = NULL,
-      const char *right_ = NULL, bool masked_ = false);
+    const char *value_ = NULL, const char *unit_ = NULL,
+    const char *right_ = NULL, bool masked_ = false);
   Button(int flags_, const char *text_ = NULL, const char *value_ = NULL,
-      const char *unit_ = NULL, const char *right_ = NULL,
-      bool masked_ = false);
+    const char *unit_ = NULL, const char *right_ = NULL, bool masked_ = false);
   virtual ~Button();
 
   // Widget
@@ -120,4 +116,4 @@ private:
 
 #endif // __BUTTON_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

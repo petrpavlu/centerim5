@@ -34,16 +34,13 @@
 
 #include <vector>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 /**
  * This class should be used when the user must choose one value from several
  * options.
  */
-class ComboBox
-: public Button
-{
+class ComboBox : public Button {
 public:
   ComboBox(int w, int h, const char *text_ = NULL);
   explicit ComboBox(const char *text_ = NULL);
@@ -59,7 +56,9 @@ public:
    */
   virtual int addOption(const char *text = NULL, intptr_t data = 0);
   virtual int addOptionPtr(const char *text = NULL, void *data = NULL)
-    { return addOption(text, reinterpret_cast<intptr_t>(data)); }
+  {
+    return addOption(text, reinterpret_cast<intptr_t>(data));
+  }
 
   /**
    * Returns last selected option.
@@ -77,7 +76,9 @@ public:
   virtual void setSelected(int new_entry);
   virtual void setSelectedByData(intptr_t data);
   virtual void setSelectedByDataPtr(void *data)
-    { setSelectedByData(reinterpret_cast<intptr_t>(data)); }
+  {
+    setSelectedByData(reinterpret_cast<intptr_t>(data));
+  }
 
   sigc::signal<void, ComboBox &, int, const char *, intptr_t>
     signal_selection_changed;
@@ -86,8 +87,7 @@ protected:
   /**
    * Keeps a pair of {display text, value}.
    */
-  struct ComboBoxEntry
-  {
+  struct ComboBoxEntry {
     char *title;
     intptr_t data;
   };
@@ -124,4 +124,4 @@ private:
 
 #endif // __COMBOBOX_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

@@ -38,8 +38,7 @@
 #include <map>
 #include <string>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 /**
  * Base class that takes care of input processing.
@@ -48,8 +47,7 @@ namespace CppConsUI
  * - key-action bindings,
  * - a chain of input processors (top to bottom).
  */
-class InputProcessor
-{
+class InputProcessor {
 public:
   /**
    * Defines when a key binding will be processed comparing with the child
@@ -63,7 +61,7 @@ public:
     /**
      * Key bindings will be processed before the child input processor.
      */
-    BINDABLE_OVERRIDE
+    BINDABLE_OVERRIDE,
   };
 
   InputProcessor();
@@ -103,14 +101,15 @@ protected:
    * Bindable struct holds a function and a bindable type that is associated
    * to some {context:action} pair.
    */
-  class Bindable
-  {
+  class Bindable {
   public:
     Bindable() : type(BINDABLE_NORMAL) {}
     Bindable(const sigc::slot<void> &function_, BindableType type_)
-      : function(function_), type(type_) {}
+      : function(function_), type(type_)
+    {
+    }
     virtual ~Bindable() {}
-    //CONSUI_DISABLE_COPY(Bindable);
+    // CONSUI_DISABLE_COPY(Bindable);
 
     sigc::slot<void> function;
     BindableType type;
@@ -149,7 +148,7 @@ protected:
    * called after or before the @ref input_child.
    */
   virtual void declareBindable(const char *context, const char *action,
-      const sigc::slot<void> &function, BindableType type);
+    const sigc::slot<void> &function, BindableType type);
 
   /**
    * Tries to match an appropriate bound action to the input and process it.
@@ -167,4 +166,4 @@ private:
 
 #endif // __INPUTPROCESSOR_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

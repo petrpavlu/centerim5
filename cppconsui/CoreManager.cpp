@@ -38,8 +38,7 @@
 
 #define ICONV_NONE reinterpret_cast<iconv_t>(-1)
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 void CoreManager::registerWindow(Window &window)
 {
@@ -125,29 +124,28 @@ void CoreManager::redraw()
   interface.timeoutAdd(0, CoreManager::draw_, this);
 }
 
-void CoreManager::onWindowMoveResize(Window &activator,
-    const Rect & /*oldsize*/, const Rect & /*newsize*/)
+void CoreManager::onWindowMoveResize(
+  Window &activator, const Rect & /*oldsize*/, const Rect & /*newsize*/)
 {
   updateWindowArea(activator);
 }
 
-void CoreManager::onWindowWishSizeChange(Window &activator,
-    const Size &oldsize, const Size &newsize)
+void CoreManager::onWindowWishSizeChange(
+  Window &activator, const Size &oldsize, const Size &newsize)
 {
   if ((activator.getWidth() != Widget::AUTOSIZE ||
-      oldsize.getWidth() == newsize.getWidth()) &&
-      (activator.getHeight() != Widget::AUTOSIZE ||
-      oldsize.getHeight() == newsize.getHeight()))
+        oldsize.getWidth() == newsize.getWidth()) &&
+    (activator.getHeight() != Widget::AUTOSIZE ||
+        oldsize.getHeight() == newsize.getHeight()))
     return;
 
   updateWindowArea(activator);
 }
 
 CoreManager::CoreManager()
-: top_input_processor(NULL), stdin_input_timeout_handle(0)
-, stdin_input_handle(0), resize_input_handle(0), pipe_valid(false)
-, tk(NULL), iconv_desc(ICONV_NONE), redraw_pending(false)
-, resize_pending(false)
+  : top_input_processor(NULL), stdin_input_timeout_handle(0),
+    stdin_input_handle(0), resize_input_handle(0), pipe_valid(false), tk(NULL),
+    iconv_desc(ICONV_NONE), redraw_pending(false), resize_pending(false)
 {
   declareBindables();
 }
@@ -182,16 +180,14 @@ int CoreManager::finalize()
   /* Close all windows, work with a copy of the windows vector because the
    * original vector can be changed by calling the close() methods. */
   Windows windows_copy = windows;
-  for (Windows::iterator i = windows_copy.begin(); i != windows_copy.end();
-      i++)
+  for (Windows::iterator i = windows_copy.begin(); i != windows_copy.end(); i++)
     (*i)->close();
 
   /* Delete all remaining windows. This prevents memory leaks for windows that
    * have the close() method overridden and calling it does not remove the
    * object from memory. */
   windows_copy = windows;
-  for (Windows::iterator i = windows_copy.begin(); i != windows_copy.end();
-      i++)
+  for (Windows::iterator i = windows_copy.begin(); i != windows_copy.end(); i++)
     delete *i;
 
   // clear the screen
@@ -244,8 +240,8 @@ void CoreManager::stdin_input(int /*fd*/, InputCondition /*cond*/)
       }
       if (res == static_cast<size_t>(-1)) {
         char text[256];
-        snprintf(text, sizeof(text),
-            _("Error converting input to UTF-8 (%s)."), std::strerror(errno));
+        snprintf(text, sizeof(text), _("Error converting input to UTF-8 (%s)."),
+          std::strerror(errno));
         logError(text);
         continue;
       }
@@ -261,8 +257,8 @@ void CoreManager::stdin_input(int /*fd*/, InputCondition /*cond*/)
   }
   if (ret == TERMKEY_RES_AGAIN) {
     int wait = termkey_get_waittime(tk);
-    stdin_input_timeout_handle = interface.timeoutAdd(wait,
-        CoreManager::stdin_input_timeout_, this);
+    stdin_input_timeout_handle =
+      interface.timeoutAdd(wait, CoreManager::stdin_input_timeout_, this);
   }
 }
 
@@ -319,14 +315,14 @@ int CoreManager::initInput()
     }
   }
 
-  stdin_input_handle = interface.inputAdd(STDIN_FILENO, INPUT_CONDITION_READ,
-      CoreManager::stdin_input_, this);
+  stdin_input_handle = interface.inputAdd(
+    STDIN_FILENO, INPUT_CONDITION_READ, CoreManager::stdin_input_, this);
 
   // screen resizing
   if (!pipe(pipefd)) {
     pipe_valid = true;
-    resize_input_handle = interface.inputAdd(pipefd[0], INPUT_CONDITION_READ,
-        CoreManager::resize_input_, this);
+    resize_input_handle = interface.inputAdd(
+      pipefd[0], INPUT_CONDITION_READ, CoreManager::resize_input_, this);
   }
 
   return 0;
@@ -464,13 +460,13 @@ void CoreManager::draw()
 
   struct timespec ts2 = {0, 0};
   clock_gettime(CLOCK_MONOTONIC, &ts2);
-  unsigned long tdiff = (ts2.tv_sec * 1000000 + ts2.tv_nsec / 1000)
-    - (ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
+  unsigned long tdiff = (ts2.tv_sec * 1000000 + ts2.tv_nsec / 1000) -
+    (ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
 
-  char message[sizeof("redraw: time=us, newpad/newwin/subpad calls=//")
-    + PRINTF_WIDTH(unsigned long) + 3 * PRINTF_WIDTH(int)];
+  char message[sizeof("redraw: time=us, newpad/newwin/subpad calls=//") +
+    PRINTF_WIDTH(unsigned long)+3 * PRINTF_WIDTH(int)];
   sprintf(message, "redraw: time=%luus, newpad/newwin/subpad calls=%d/%d/%d",
-      tdiff, stats->newpad_calls, stats->newwin_calls, stats->subpad_calls);
+    tdiff, stats->newpad_calls, stats->newwin_calls, stats->subpad_calls);
 
   logError(message);
 #endif // DEBUG
@@ -519,8 +515,8 @@ void CoreManager::drawWindow(Window &window)
     if (window_view_height < 0)
       window_view_height = 0;
   }
-  Curses::ViewPort window_area(window_x, window_y, window_view_x,
-      window_view_y, window_view_width, window_view_height);
+  Curses::ViewPort window_area(window_x, window_y, window_view_x, window_view_y,
+    window_view_width, window_view_height);
   window.draw(window_area);
 }
 
@@ -578,10 +574,10 @@ void CoreManager::redrawScreen()
 void CoreManager::declareBindables()
 {
   declareBindable("coremanager", "redraw-screen",
-      sigc::mem_fun(this, &CoreManager::redrawScreen),
-      InputProcessor::BINDABLE_OVERRIDE);
+    sigc::mem_fun(this, &CoreManager::redrawScreen),
+    InputProcessor::BINDABLE_OVERRIDE);
 }
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

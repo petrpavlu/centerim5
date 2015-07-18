@@ -39,14 +39,13 @@
 // gap expand size when the gap becomes filled
 #define GAP_SIZE_EXPAND 4096
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 TextEdit::TextEdit(int w, int h, const char *text_, int flags_,
-    bool single_line, bool accept_tabs_, bool masked_)
-: Widget(w, h), flags(flags_), editable(true), overwrite_mode(false)
-, single_line_mode(single_line), accept_tabs(accept_tabs_), masked(masked_)
-, buffer(NULL), screen_lines_dirty(false)
+  bool single_line, bool accept_tabs_, bool masked_)
+  : Widget(w, h), flags(flags_), editable(true), overwrite_mode(false),
+    single_line_mode(single_line), accept_tabs(accept_tabs_), masked(masked_),
+    buffer(NULL), screen_lines_dirty(false)
 {
   setText(text_);
 
@@ -56,7 +55,7 @@ TextEdit::TextEdit(int w, int h, const char *text_, int flags_,
 
 TextEdit::~TextEdit()
 {
-  delete [] buffer;
+  delete[] buffer;
 }
 
 bool TextEdit::processInputText(const TermKeyKey &key)
@@ -93,8 +92,8 @@ void TextEdit::draw(Curses::ViewPort area)
 
   ScreenLines::iterator i;
   int j;
-  for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end() &&
-      j < real_height; i++, j++) {
+  for (i = screen_lines.begin() + view_top, j = 0;
+       i != screen_lines.end() && j < real_height; i++, j++) {
     const char *p = i->start;
     int w = 0;
     for (size_t k = 0; k < i->length && *p != '\n'; k++) {
@@ -227,8 +226,7 @@ bool TextEdit::ScreenLine::operator==(const ScreenLine &other) const
   return start == other.start && end == other.end && length == other.length;
 }
 
-bool TextEdit::CmpScreenLineEnd::operator()(ScreenLine &sline,
-    const char *tag)
+bool TextEdit::CmpScreenLineEnd::operator()(ScreenLine &sline, const char *tag)
 {
   return sline.end < tag;
 }
@@ -244,7 +242,7 @@ void TextEdit::initBuffer(size_t size)
 {
   assert(size > 0);
 
-  delete [] buffer;
+  delete[] buffer;
   buffer = new char[size];
 
   current_pos = 0;
@@ -292,7 +290,7 @@ void TextEdit::expandGap(size_t size)
   gapstart = buffer + (gapstart - origbuffer);
   gapend = buffer + (gapend - origbuffer);
 
-  delete [] origbuffer;
+  delete[] origbuffer;
 
   std::memmove(gapend + size, gapend, bufend - gapend);
 
@@ -394,8 +392,8 @@ int TextEdit::onScreenWidth(UTF8::UniChar uc, int w) const
   return Curses::onScreenWidth(uc, w);
 }
 
-char *TextEdit::getScreenLine(const char *text, int max_width,
-    size_t *res_length) const
+char *TextEdit::getScreenLine(
+  const char *text, int max_width, size_t *res_length) const
 {
   assert(text);
   assert(text < bufend);
@@ -484,7 +482,7 @@ void TextEdit::updateScreenLines(const char *begin, const char *end)
 
   ScreenLines::iterator b, i;
   b = std::lower_bound(screen_lines.begin(), screen_lines.end(), begin,
-      TextEdit::CmpScreenLineEnd());
+    TextEdit::CmpScreenLineEnd());
   if (b != screen_lines.begin()) {
     /*
      *  Initial      Correct final
@@ -514,8 +512,8 @@ void TextEdit::updateScreenLines(const char *begin, const char *end)
     p = getScreenLine(p, real_width - 1, &length);
     ScreenLine sline(s, p, length);
     new_screen_lines.push_back(sline);
-    while (i != screen_lines.end() && (i->end <= end || i->start < s ||
-          i->end < p))
+    while (
+      i != screen_lines.end() && (i->end <= end || i->start < s || i->end < p))
       i++;
     if (i != screen_lines.end() && sline == *i) {
       /* Screen lines are same thus it isn't necessary to recalculate more
@@ -534,7 +532,7 @@ void TextEdit::updateScreenLines(const char *begin, const char *end)
   // replace old screen lines with new screen lines
   ScreenLines::iterator j;
   for (j = new_screen_lines.begin(); j != new_screen_lines.end() && b != i;
-      j++, b++)
+       j++, b++)
     *b = *j;
 
   if (j != new_screen_lines.end()) {
@@ -564,8 +562,8 @@ void TextEdit::updateScreenCursor()
 
   assertUpdatedScreenLines();
 
-  for (ScreenLines::iterator i = screen_lines.begin();
-      i != screen_lines.end(); i++) {
+  for (ScreenLines::iterator i = screen_lines.begin(); i != screen_lines.end();
+       i++) {
     size_t length = i->length;
     if (acu_length <= current_pos && current_pos < acu_length + length) {
       current_sc_linepos = current_pos - acu_length;
@@ -645,14 +643,14 @@ void TextEdit::deleteFromCursor(DeleteType type, Direction dir)
   int count = 0;
 
   switch (type) {
-    case DELETE_CHARS:
-      count = moveLogicallyFromCursor(dir) - current_pos;
-      break;
-    case DELETE_WORD_ENDS:
-      count = moveWordFromCursor(dir, true) - current_pos;
-      break;
-    default:
-      assert(0);
+  case DELETE_CHARS:
+    count = moveLogicallyFromCursor(dir) - current_pos;
+    break;
+  case DELETE_WORD_ENDS:
+    count = moveWordFromCursor(dir, true) - current_pos;
+    break;
+  default:
+    assert(0);
   }
 
   if (count) {
@@ -688,66 +686,64 @@ void TextEdit::moveCursor(CursorMovement step, Direction dir)
 
   size_t old_pos = current_pos;
   switch (step) {
-    case MOVE_LOGICAL_POSITIONS:
-      current_pos = moveLogicallyFromCursor(dir);
-      break;
-    case MOVE_WORDS:
-      current_pos = moveWordFromCursor(dir, false);
-      break;
-    case MOVE_DISPLAY_LINES:
-      if (dir == DIR_FORWARD) {
-        if (current_sc_line + 1 < screen_lines.size()) {
-          int oldw = width(screen_lines[current_sc_line].start,
-              current_sc_linepos);
-          // first move to end of current line
-          current_pos += screen_lines[current_sc_line].length
-              - current_sc_linepos;
-          // find a character close to the original position
-          const char *ch = screen_lines[current_sc_line + 1].start;
-          size_t i = 0;
-          int w = 0;
-          while (w < oldw &&
-              i < screen_lines[current_sc_line + 1].length - 1) {
-            UTF8::UniChar uc = UTF8::getUniChar(ch);
-            w += onScreenWidth(uc, w);
-            ch = nextChar(ch);
-            i++;
-          }
-          current_pos += i;
+  case MOVE_LOGICAL_POSITIONS:
+    current_pos = moveLogicallyFromCursor(dir);
+    break;
+  case MOVE_WORDS:
+    current_pos = moveWordFromCursor(dir, false);
+    break;
+  case MOVE_DISPLAY_LINES:
+    if (dir == DIR_FORWARD) {
+      if (current_sc_line + 1 < screen_lines.size()) {
+        int oldw =
+          width(screen_lines[current_sc_line].start, current_sc_linepos);
+        // first move to end of current line
+        current_pos +=
+          screen_lines[current_sc_line].length - current_sc_linepos;
+        // find a character close to the original position
+        const char *ch = screen_lines[current_sc_line + 1].start;
+        size_t i = 0;
+        int w = 0;
+        while (w < oldw && i < screen_lines[current_sc_line + 1].length - 1) {
+          UTF8::UniChar uc = UTF8::getUniChar(ch);
+          w += onScreenWidth(uc, w);
+          ch = nextChar(ch);
+          i++;
         }
+        current_pos += i;
       }
-      else { // DIR_BACK
-        if (current_sc_line > 0) {
-          int oldw = width(screen_lines[current_sc_line].start,
-              current_sc_linepos);
-          // first move to start of current line
-          current_pos -= current_sc_linepos;
-          // move to the start of the previous line
-          current_pos -= screen_lines[current_sc_line - 1].length;
-          // find a character close to the original position
-          const char *ch = screen_lines[current_sc_line - 1].start;
-          size_t i = 0;
-          int w = 0;
-          while (w < oldw &&
-              i < screen_lines[current_sc_line - 1].length - 1) {
-            UTF8::UniChar uc = UTF8::getUniChar(ch);
-            w += onScreenWidth(uc, w);
-            ch = nextChar(ch);
-            i++;
-          }
-          current_pos += i;
-        }
-      }
-      break;
-    case MOVE_DISPLAY_LINE_ENDS:
-      if (dir == DIR_FORWARD)
-        current_pos += screen_lines[current_sc_line].length
-          - current_sc_linepos - 1;
-      else // DIR_BACK
+    }
+    else { // DIR_BACK
+      if (current_sc_line > 0) {
+        int oldw =
+          width(screen_lines[current_sc_line].start, current_sc_linepos);
+        // first move to start of current line
         current_pos -= current_sc_linepos;
-      break;
-    default:
-      assert(0);
+        // move to the start of the previous line
+        current_pos -= screen_lines[current_sc_line - 1].length;
+        // find a character close to the original position
+        const char *ch = screen_lines[current_sc_line - 1].start;
+        size_t i = 0;
+        int w = 0;
+        while (w < oldw && i < screen_lines[current_sc_line - 1].length - 1) {
+          UTF8::UniChar uc = UTF8::getUniChar(ch);
+          w += onScreenWidth(uc, w);
+          ch = nextChar(ch);
+          i++;
+        }
+        current_pos += i;
+      }
+    }
+    break;
+  case MOVE_DISPLAY_LINE_ENDS:
+    if (dir == DIR_FORWARD)
+      current_pos +=
+        screen_lines[current_sc_line].length - current_sc_linepos - 1;
+    else // DIR_BACK
+      current_pos -= current_sc_linepos;
+    break;
+  default:
+    assert(0);
   }
 
   // update point
@@ -855,60 +851,72 @@ void TextEdit::declareBindables()
 {
   // cursor movement
   declareBindable("textentry", "cursor-right",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::actionMoveCursor),
-        MOVE_LOGICAL_POSITIONS, DIR_FORWARD),
-      InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &TextEdit::actionMoveCursor),
+                    MOVE_LOGICAL_POSITIONS, DIR_FORWARD),
+    InputProcessor::BINDABLE_NORMAL);
 
   declareBindable("textentry", "cursor-left",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::actionMoveCursor),
-        MOVE_LOGICAL_POSITIONS, DIR_BACK), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &TextEdit::actionMoveCursor),
+                    MOVE_LOGICAL_POSITIONS, DIR_BACK),
+    InputProcessor::BINDABLE_NORMAL);
 
   declareBindable("textentry", "cursor-down",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::actionMoveCursor),
-        MOVE_DISPLAY_LINES, DIR_FORWARD), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &TextEdit::actionMoveCursor),
+                    MOVE_DISPLAY_LINES, DIR_FORWARD),
+    InputProcessor::BINDABLE_NORMAL);
 
   declareBindable("textentry", "cursor-up",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::actionMoveCursor),
-        MOVE_DISPLAY_LINES, DIR_BACK), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &TextEdit::actionMoveCursor),
+                    MOVE_DISPLAY_LINES, DIR_BACK),
+    InputProcessor::BINDABLE_NORMAL);
 
   declareBindable("textentry", "cursor-right-word",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::actionMoveCursor), MOVE_WORDS,
-        DIR_FORWARD), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &TextEdit::actionMoveCursor), MOVE_WORDS,
+                    DIR_FORWARD),
+    InputProcessor::BINDABLE_NORMAL);
 
   declareBindable("textentry", "cursor-left-word",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::actionMoveCursor), MOVE_WORDS,
-        DIR_BACK), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &TextEdit::actionMoveCursor), MOVE_WORDS,
+                    DIR_BACK),
+    InputProcessor::BINDABLE_NORMAL);
 
   declareBindable("textentry", "cursor-end",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::actionMoveCursor),
-        MOVE_DISPLAY_LINE_ENDS, DIR_FORWARD),
-      InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &TextEdit::actionMoveCursor),
+                    MOVE_DISPLAY_LINE_ENDS, DIR_FORWARD),
+    InputProcessor::BINDABLE_NORMAL);
 
   declareBindable("textentry", "cursor-begin",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::actionMoveCursor),
-        MOVE_DISPLAY_LINE_ENDS, DIR_BACK), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &TextEdit::actionMoveCursor),
+                    MOVE_DISPLAY_LINE_ENDS, DIR_BACK),
+    InputProcessor::BINDABLE_NORMAL);
 
   // deleting text
   declareBindable("textentry", "delete-char",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::actionDelete),
-        DELETE_CHARS, DIR_FORWARD), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &TextEdit::actionDelete), DELETE_CHARS,
+                    DIR_FORWARD),
+    InputProcessor::BINDABLE_NORMAL);
 
   declareBindable("textentry", "backspace",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::actionDelete),
-        DELETE_CHARS, DIR_BACK), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &TextEdit::actionDelete), DELETE_CHARS,
+                    DIR_BACK),
+    InputProcessor::BINDABLE_NORMAL);
 
   declareBindable("textentry", "delete-word-end",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::actionDelete),
-        DELETE_WORD_ENDS, DIR_FORWARD), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &TextEdit::actionDelete), DELETE_WORD_ENDS,
+                    DIR_FORWARD),
+    InputProcessor::BINDABLE_NORMAL);
 
   declareBindable("textentry", "delete-word-begin",
-      sigc::bind(sigc::mem_fun(this, &TextEdit::actionDelete),
-        DELETE_WORD_ENDS, DIR_BACK), InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &TextEdit::actionDelete), DELETE_WORD_ENDS,
+                    DIR_BACK),
+    InputProcessor::BINDABLE_NORMAL);
 
   declareBindable("textentry", "newline",
-      sigc::bind(sigc::mem_fun(this, static_cast<void (TextEdit::*)
-          (const char *)>(&TextEdit::insertTextAtCursor)), "\n"),
-      InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(
+                 this, static_cast<void (TextEdit::*)(const char *)>(
+                         &TextEdit::insertTextAtCursor)),
+                    "\n"),
+    InputProcessor::BINDABLE_NORMAL);
 
   /*
   // overwrite
@@ -919,4 +927,4 @@ void TextEdit::declareBindables()
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

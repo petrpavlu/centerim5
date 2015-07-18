@@ -34,12 +34,9 @@
 
 #define MENU_WINDOW_WISH_WIDTH 40
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class MenuWindow
-: public Window
-{
+class MenuWindow : public Window {
 public:
   MenuWindow(int x, int y, int w, int h, const char *title = NULL);
   MenuWindow(Widget &ref_, int w, int h, const char *title = NULL);
@@ -54,24 +51,29 @@ public:
   virtual void close();
   virtual void onScreenResized();
 
-  virtual Button *insertItem(size_t pos, const char *title,
-      const sigc::slot<void, Button &> &callback)
-    { return listbox->insertItem(pos, title, callback); }
-  virtual Button *appendItem(const char *title,
-      const sigc::slot<void, Button &> &callback)
-    { return listbox->appendItem(title, callback); }
+  virtual Button *insertItem(
+    size_t pos, const char *title, const sigc::slot<void, Button &> &callback)
+  {
+    return listbox->insertItem(pos, title, callback);
+  }
+  virtual Button *appendItem(
+    const char *title, const sigc::slot<void, Button &> &callback)
+  {
+    return listbox->appendItem(title, callback);
+  }
   virtual AbstractLine *insertSeparator(size_t pos)
-    { return listbox->insertSeparator(pos); }
-  virtual AbstractLine *appendSeparator()
-    { return listbox->appendSeparator(); }
-  virtual Button *insertSubMenu(size_t pos, const char *title,
-      MenuWindow &submenu);
-  virtual Button *appendSubMenu(const char *title,
-      MenuWindow &submenu);
+  {
+    return listbox->insertSeparator(pos);
+  }
+  virtual AbstractLine *appendSeparator() { return listbox->appendSeparator(); }
+  virtual Button *insertSubMenu(
+    size_t pos, const char *title, MenuWindow &submenu);
+  virtual Button *appendSubMenu(const char *title, MenuWindow &submenu);
   virtual void insertWidget(size_t pos, Widget &widget)
-    { listbox->insertWidget(pos, widget); }
-  virtual void appendWidget(Widget &widget)
-    { listbox->appendWidget(widget); }
+  {
+    listbox->insertWidget(pos, widget);
+  }
+  virtual void appendWidget(Widget &widget) { listbox->appendWidget(widget); }
 
   virtual void setHideOnClose(bool new_hide_on_close);
   virtual int getHideOnClose() const { return hide_on_close; }
@@ -123,8 +125,10 @@ protected:
   virtual void onReferenceWidgetVisible(Widget &activator, bool visible);
 
   static void *onReferenceWidgetDestroy_(void *win)
-    { reinterpret_cast<MenuWindow *>(win)->onReferenceWidgetDestroy();
-      return NULL; }
+  {
+    reinterpret_cast<MenuWindow *>(win)->onReferenceWidgetDestroy();
+    return NULL;
+  }
   virtual void onReferenceWidgetDestroy();
 
 private:
@@ -135,4 +139,4 @@ private:
 
 #endif // __MENUWINDOW_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

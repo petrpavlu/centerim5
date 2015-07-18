@@ -40,19 +40,17 @@
 #include <cassert>
 #include <cstring>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-namespace Curses
-{
+namespace Curses {
 
 static Stats stats = {0, 0, 0};
 bool ascii_mode = false;
 
 ViewPort::ViewPort(int screen_x_, int screen_y_, int view_x_, int view_y_,
-    int view_width_, int view_height_)
-: screen_x(screen_x_), screen_y(screen_y_), view_x(view_x_), view_y(view_y_)
-, view_width(view_width_), view_height(view_height_)
+  int view_width_, int view_height_)
+  : screen_x(screen_x_), screen_y(screen_y_), view_x(view_x_), view_y(view_y_),
+    view_width(view_width_), view_height(view_height_)
 {
 }
 
@@ -96,8 +94,8 @@ int ViewPort::addString(int x, int y, const char *str, int *printed)
   return res;
 }
 
-int ViewPort::addString(int x, int y, int w, const char *str, const char *end,
-    int *printed)
+int ViewPort::addString(
+  int x, int y, int w, const char *str, const char *end, int *printed)
 {
   assert(str);
   assert(end);
@@ -118,8 +116,8 @@ int ViewPort::addString(int x, int y, int w, const char *str, const char *end,
   return res;
 }
 
-int ViewPort::addString(int x, int y, const char *str, const char *end,
-    int *printed)
+int ViewPort::addString(
+  int x, int y, const char *str, const char *end, int *printed)
 {
   assert(str);
   assert(end);
@@ -208,37 +206,37 @@ int ViewPort::addLineChar(int x, int y, LineChar c)
   int draw_y = screen_y + (y - view_y);
 
   switch (c) {
-    case LINE_HLINE:
-      return ::mvaddch(draw_y, draw_x, ascii_mode ? '-' : ACS_HLINE);
-    case LINE_VLINE:
-      return ::mvaddch(draw_y, draw_x, ascii_mode ? '|' : ACS_VLINE);
-    case LINE_LLCORNER:
-      return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_LLCORNER);
-    case LINE_LRCORNER:
-      return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_LRCORNER);
-    case LINE_ULCORNER:
-      return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_ULCORNER);
-    case LINE_URCORNER:
-      return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_URCORNER);
-    case LINE_BTEE:
-      return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_BTEE);
-    case LINE_LTEE:
-      return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_LTEE);
-    case LINE_RTEE:
-      return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_RTEE);
-    case LINE_TTEE:
-      return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_TTEE);
+  case LINE_HLINE:
+    return ::mvaddch(draw_y, draw_x, ascii_mode ? '-' : ACS_HLINE);
+  case LINE_VLINE:
+    return ::mvaddch(draw_y, draw_x, ascii_mode ? '|' : ACS_VLINE);
+  case LINE_LLCORNER:
+    return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_LLCORNER);
+  case LINE_LRCORNER:
+    return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_LRCORNER);
+  case LINE_ULCORNER:
+    return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_ULCORNER);
+  case LINE_URCORNER:
+    return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_URCORNER);
+  case LINE_BTEE:
+    return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_BTEE);
+  case LINE_LTEE:
+    return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_LTEE);
+  case LINE_RTEE:
+    return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_RTEE);
+  case LINE_TTEE:
+    return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_TTEE);
 
-    case LINE_DARROW:
-      return ::mvaddch(draw_y, draw_x, ascii_mode ? 'v' : ACS_DARROW);
-    case LINE_LARROW:
-      return ::mvaddch(draw_y, draw_x, ascii_mode ? '<' : ACS_LARROW);
-    case LINE_RARROW:
-      return ::mvaddch(draw_y, draw_x, ascii_mode ? '>' : ACS_RARROW);
-    case LINE_UARROW:
-      return ::mvaddch(draw_y, draw_x, ascii_mode ? '^' : ACS_UARROW);
-    case LINE_BULLET:
-      return ::mvaddch(draw_y, draw_x, ascii_mode ? 'o' : ACS_BULLET);
+  case LINE_DARROW:
+    return ::mvaddch(draw_y, draw_x, ascii_mode ? 'v' : ACS_DARROW);
+  case LINE_LARROW:
+    return ::mvaddch(draw_y, draw_x, ascii_mode ? '<' : ACS_LARROW);
+  case LINE_RARROW:
+    return ::mvaddch(draw_y, draw_x, ascii_mode ? '>' : ACS_RARROW);
+  case LINE_UARROW:
+    return ::mvaddch(draw_y, draw_x, ascii_mode ? '^' : ACS_UARROW);
+  case LINE_BULLET:
+    return ::mvaddch(draw_y, draw_x, ascii_mode ? 'o' : ACS_BULLET);
   }
   return ERR;
 }
@@ -253,8 +251,8 @@ int ViewPort::attrOff(int attrs)
   return ::attroff(attrs);
 }
 
-int ViewPort::changeAt(int x, int y, int n, /* attr_t */ int attr,
-    short color, const void *opts)
+int ViewPort::changeAt(
+  int x, int y, int n, /* attr_t */ int attr, short color, const void *opts)
 {
   int res = OK;
   int draw_x, draw_y;
@@ -329,8 +327,7 @@ void ViewPort::scroll(int scroll_x, int scroll_y)
 
 bool ViewPort::isInViewPort(int x, int y, int w)
 {
-  return x >= view_x && y >= view_y &&
-    x + w <= view_x + view_width &&
+  return x >= view_x && y >= view_y && x + w <= view_x + view_width &&
     y < view_y + view_height;
 }
 
@@ -505,4 +502,4 @@ void resetStats()
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

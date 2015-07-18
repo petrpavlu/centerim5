@@ -66,8 +66,7 @@ void Footer::setText(const char *fmt, ...)
   updateText();
 }
 
-Footer::Footer()
-: Window(0, 24, 80, 1, TYPE_NON_FOCUSABLE, false)
+Footer::Footer() : Window(0, 24, 80, 1, TYPE_NON_FOCUSABLE, false)
 {
   setColorScheme("footer");
 
@@ -134,4 +133,4 @@ void Footer::updateText()
   label->setText(out);
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */

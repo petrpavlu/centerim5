@@ -31,12 +31,11 @@
 #include <cstdio>
 #include <cstring>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 TextView::TextView(int w, int h, bool autoscroll_, bool scrollbar_)
-: Widget(w, h), view_top(0), autoscroll(autoscroll_)
-, autoscroll_suspended(false), scrollbar(scrollbar_)
+  : Widget(w, h), view_top(0), autoscroll(autoscroll_),
+    autoscroll_suspended(false), scrollbar(scrollbar_)
 {
   can_focus = true;
   declareBindables();
@@ -67,8 +66,8 @@ void TextView::draw(Curses::ViewPort area)
 
   ScreenLines::iterator i;
   int j;
-  for (i = screen_lines.begin() + view_top, j = 0; i != screen_lines.end() &&
-      j < real_height; i++, j++) {
+  for (i = screen_lines.begin() + view_top, j = 0;
+       i != screen_lines.end() && j < real_height; i++, j++) {
     int attrs2 = 0;
     if (i->parent->color) {
       char color[sizeof("color") + PRINTF_WIDTH(int)];
@@ -111,8 +110,8 @@ void TextView::draw(Curses::ViewPort area)
       x2 = real_height;
     }
     else {
-      x2 = static_cast<float>(view_top + real_height) * real_height
-        / screen_lines.size();
+      x2 = static_cast<float>(view_top + real_height) * real_height /
+        screen_lines.size();
       /* Calculate x1 based on x2 (not based on view_top) to avoid jittering
        * during rounding. */
       x1 = x2 - real_height * real_height / screen_lines.size();
@@ -129,10 +128,8 @@ void TextView::draw(Curses::ViewPort area)
        * draw at least two arrows. */
       if (real_height - x1 < 2) {
         // we are close to bottom position
-        area.addLineChar(real_width - 1, real_height - 2,
-            Curses::LINE_UARROW);
-        area.addLineChar(real_width - 1, real_height - 1,
-            Curses::LINE_DARROW);
+        area.addLineChar(real_width - 1, real_height - 2, Curses::LINE_UARROW);
+        area.addLineChar(real_width - 1, real_height - 1, Curses::LINE_DARROW);
       }
       else if (x2 < 2) {
         // we are close to top position
@@ -153,8 +150,7 @@ void TextView::draw(Curses::ViewPort area)
 
     // draw a dot to indicate "end of scrolling" for user
     if (view_top + real_height >= screen_lines.size())
-      area.addLineChar(real_width - 1, real_height - 1,
-          Curses::LINE_BULLET);
+      area.addLineChar(real_width - 1, real_height - 1, Curses::LINE_BULLET);
     if (view_top == 0)
       area.addLineChar(real_width - 1, 0, Curses::LINE_BULLET);
 
@@ -280,7 +276,7 @@ void TextView::setScrollBar(bool new_scrollbar)
 }
 
 TextView::Line::Line(const char *text_, size_t bytes, int color_)
-: color(color_)
+  : color(color_)
 {
   assert(text_);
 
@@ -298,12 +294,11 @@ TextView::Line::Line(const char *text_, size_t bytes, int color_)
 
 TextView::Line::~Line()
 {
-  delete [] text;
+  delete[] text;
 }
 
-TextView::ScreenLine::ScreenLine(Line &parent_, const char *text_,
-    int length_)
-: parent(&parent_), text(text_), length(length_)
+TextView::ScreenLine::ScreenLine(Line &parent_, const char *text_, int length_)
+  : parent(&parent_), text(text_), length(length_)
 {
 }
 
@@ -312,8 +307,8 @@ void TextView::updateArea()
   updateAllScreenLines();
 }
 
-const char *TextView::proceedLine(const char *text, int area_width,
-    int *res_length) const
+const char *TextView::proceedLine(
+  const char *text, int area_width, int *res_length) const
 {
   assert(text);
   assert(area_width > 0);
@@ -378,8 +373,8 @@ size_t TextView::updateScreenLines(size_t line_num, size_t start)
 
   /* Find where new screen lines should be placed and remove previous screen
    * lines created for this line. */
-  ScreenLines::iterator i = screen_lines.begin() + eraseScreenLines(line_num,
-      start);
+  ScreenLines::iterator i =
+    screen_lines.begin() + eraseScreenLines(line_num, start);
 
   // parse line into screen lines
   ScreenLines new_lines;
@@ -422,8 +417,8 @@ void TextView::updateAllScreenLines()
     advice = updateScreenLines(i, advice);
 }
 
-size_t TextView::eraseScreenLines(size_t line_num, size_t start,
-    size_t *deleted)
+size_t TextView::eraseScreenLines(
+  size_t line_num, size_t start, size_t *deleted)
 {
   assert(line_num < lines.size());
   assert(start <= screen_lines.size());
@@ -451,8 +446,8 @@ size_t TextView::eraseScreenLines(size_t line_num, size_t start,
   if (begin_set) {
     if (!end_set)
       end = screen_lines.size();
-    screen_lines.erase(screen_lines.begin() + begin, screen_lines.begin()
-        + end);
+    screen_lines.erase(
+      screen_lines.begin() + begin, screen_lines.begin() + end);
     i -= (end - begin);
     if (deleted)
       *deleted = end - begin;
@@ -489,14 +484,14 @@ void TextView::actionScroll(int direction)
 void TextView::declareBindables()
 {
   declareBindable("textview", "scroll-up",
-      sigc::bind(sigc::mem_fun(this, &TextView::actionScroll), -1),
-      InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &TextView::actionScroll), -1),
+    InputProcessor::BINDABLE_NORMAL);
 
   declareBindable("textview", "scroll-down",
-      sigc::bind(sigc::mem_fun(this, &TextView::actionScroll), 1),
-      InputProcessor::BINDABLE_NORMAL);
+    sigc::bind(sigc::mem_fun(this, &TextView::actionScroll), 1),
+    InputProcessor::BINDABLE_NORMAL);
 }
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
