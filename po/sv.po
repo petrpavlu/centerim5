@@ -1,5 +1,5 @@
-# Swedish translations for centerim package.
-# This file is distributed under the same license as the centerim package.
+# Swedish translations for centerim5 package.
+# This file is distributed under the same license as the centerim5 package.
 # Jonas Zetterberg <jozz@jozz.se>, 2010.
 #
 msgid ""

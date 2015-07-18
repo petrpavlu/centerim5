@@ -1,5 +1,6 @@
-# German translations for centerim package.
-# This file is distributed under the same license as the centerim package.
+# German translations for centerim5 package.
+# This file is distributed under the same license as the centerim5 package.
+# Alexander Adam <alexander.adam@informatik.tu-chemnitz.de>, 2010.
 #
 msgid ""
 msgstr ""

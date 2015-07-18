@@ -1,7 +1,6 @@
 # Dutch translations for centerim5 package.
-# Copyright (C) 2012 CenterIM developers
 # This file is distributed under the same license as the centerim5 package.
-# root <cb@linux.be>, 2012.
+# CBke <cb@linux.be>, 2012.
 #
 msgid ""
 msgstr ""

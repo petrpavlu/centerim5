@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 by CenterIM developers
+ * Copyright (C) 2012-2013 Petr Pavlu <setup@dagobah.cz>
  *
  * This file is part of CenterIM.
  *
@@ -195,7 +195,7 @@ static PurplePluginInfo info = {
   N_("Executes an external program when a specific event occurs."),
   N_("When an event such as received-im-msg, or buddy-signed-on occurs this "
       "plugin executes a user-defined external program."),
-  "CenterIM developers",
+  "Petr Pavlu <setup@dagobah.cz>",
   PACKAGE_URL,
   plugin_load,
   plugin_unload,

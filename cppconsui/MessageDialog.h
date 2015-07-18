@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2008 by Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 by CenterIM developers
+ * Copyright (C) 2008 Mark Pustjens <pustjens@dds.nl>
+ * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
  *
  * This file is part of CenterIM.
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 by CenterIM developers
+ * Copyright (C) 2011-2015 Petr Pavlu <setup@dagobah.cz>
  *
  * This file is part of CenterIM.
  *

@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2015 by Wade Berrier <wberrier@gmail.com>
- * Copyright (C) 2010-2015 by CenterIM developers
+ * Copyright (C) 2015 Wade Berrier <wberrier@gmail.com>
  *
  * This file is part of CenterIM.
  *
