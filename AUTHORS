@@ -5,17 +5,15 @@ Former Developers:
 - Mark Pustjens <pustjens@dds.nl> -- initial CenterIM5 code.
 
 Additional Code:
+- Alexander Adam <alexander.adam@informatik.tu-chemnitz.de> -- cmake build,
+- Alexander Matz -- typing notifications,
 - Iulian Ciorascu <iulica@box.co.uk> -- Doxygen support, documentation, build
   fixes,
 - kyak <bas@bmail.ru> -- various improvements,
-- Roger <roger@jikos.cz> -- initial support for screen resizing,
-- Alexander Adam <alexander.adam@informatik.tu-chemnitz.de> -- cmake build,
 - Manuel Argüelles <manuel.arguelles@gmail.com> -- beep-on-new-messages code,
 - paco -- password protection in UI with asterisks,
+- Patrik Tokarcik <patotok@gmail.com> -- searching in buddy list,
 - Per-Henrik Lundblom <ph@whatever.nu> -- coloring contacts according to
   their status,
-- Alexander Matz -- typing notifications,
-- Patrik Tokarcik <patotok@gmail.com> -- searching in buddy list,
-- Wade Berrier <wberrier@gmail.com> -- conversation room list,
-- and others, see `git log`.
-
+- Roger <roger@jikos.cz> -- initial support for screen resizing,
+- Wade Berrier <wberrier@gmail.com> -- conversation room list.
