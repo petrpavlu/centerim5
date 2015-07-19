@@ -1,13 +1,9 @@
-# *- Autoconf -*-
-
-# hurray for <http://www.lrde.epita.fr/~adl/autotools.html>
-
 AC_PREREQ([2.59])
 AC_INIT([centerim5],
 	m4_esyscmd([misc/git-version-gen .tarball-version]),
 	[http://bugzilla.centerim.org/], [centerim5],
 	[http://www.centerim.org/])
-# prevent AC_PROG_CC, AC_PROG_CXX from initializing CFLAGS and CXXFLAGS
+# Prevent AC_PROG_CC, AC_PROG_CXX from initializing CFLAGS and CXXFLAGS.
 : ${CFLAGS=""}
 : ${CXXFLAGS=""}
 AC_CONFIG_SRCDIR([config.h.in])
@@ -19,9 +15,7 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 AC_GNU_SOURCE
 
-########################
-# Checks for programs. #
-########################
+# Checks for programs.
 AC_PROG_CC
 AC_PROG_CC_C99
 AC_PROG_CPP
@@ -30,9 +24,7 @@ AC_PROG_CXXCPP
 
 LT_INIT([disable-static])
 
-#########################
-# Checks for libraries. #
-#########################
+# Checks for libraries.
 
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.17])
@@ -40,7 +32,7 @@ AM_GNU_GETTEXT_VERSION([0.17])
 # libpurple
 # v2.7.0 is needed because of purple_account_get_name_for_display(), this
 # version was released on 2010-05-13 and is available in both Debian Stable
-# (squeeze) and CentOS 6
+# (squeeze) and CentOS 6.
 # find . \( -name \*.cpp -o -name \*.h \) -print0 | xargs -0 sed -n 's/.*\(purple_[^( ]*\)(.*/\1/p' | sort | uniq | less
 PKG_CHECK_MODULES([PURPLE], [purple >= 2.7.0])
 AC_SUBST([PURPLE_CFLAGS])
@@ -48,20 +40,21 @@ AC_SUBST([PURPLE_LIBS])
 
 # glib
 # v2.16.0 is needed because of g_markup_parse_context_get_element_stack(),
-# this version was released on 2009-03-13
+# this version was released on 2009-03-13.
 # find . \( -name \*.cpp -o -name \*.h \) -print0 | xargs -0 sed -n 's/.*\(g_[^ (]*\)(.*/\1/p' | sort | uniq | less
 PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.16.0])
 AC_SUBST([GLIB_CFLAGS])
 AC_SUBST([GLIB_LIBS])
 
-# extaction plugin requires a newer version of glib, check if it's available
+# The extaction plugin requires a newer version of glib, check whether it is
+# available.
 PKG_CHECK_EXISTS([glib-2.0 >= 2.32.0], [build_extaction=yes],
 	[build_extaction=no
 	AC_MSG_WARN([cannot find glib version >= 2.32, extaction plugin disabled])])
 AM_CONDITIONAL(BUILD_EXTACTION, test "x$build_extaction" = xyes)
 
 # libsigc++
-# v2.2.0 was released on 2008-02-22
+# v2.2.0 was released on 2008-02-22.
 PKG_CHECK_MODULES([SIGC], [sigc++-2.0 >= 2.2.0])
 AC_SUBST([SIGC_CFLAGS])
 AC_SUBST([SIGC_LIBS])
@@ -72,21 +65,7 @@ AC_PATH_LIB([ncursesw], , [ncurses.h], [ncursesw5-config], , , [
 	AC_MSG_RESULT([no])
 	AC_ERROR([You must have the ncursesw library and developement headers installed to build.])])
 
-############################
-# Checks for header files. #
-############################
-
-##################################################################
-# Checks for typedefs, structures, and compiler characteristics. #
-##################################################################
-
-#################################
-# Checks for library functions. #
-#################################
-
-###############################
-# Set default compiler flags. #
-###############################
+# Set compiler flags.
 
 AC_ARG_ENABLE([strict], [AC_HELP_STRING([--enable-strict],
 	[enable extra compiler warnings during build])])
@@ -96,10 +75,6 @@ if test "$GCC" = yes; then
 		[CFLAGS="-Wall -Wextra -pedantic $CFLAGS"
 		CXXFLAGS="-Wall -Wextra -pedantic -Wno-long-long $CXXFLAGS"])
 fi
-
-###########
-# Options #
-###########
 
 AC_ARG_ENABLE([debug], [AC_HELP_STRING([--enable-debug],
 	[compile with debugging support])])
@@ -120,9 +95,9 @@ AS_IF([test "$enable_debug" = yes],
 
 # adl_RECURSIVE_EVAL(VALUE, RESULT)
 # =================================
-# Interpolate the VALUE in loop until it doesn't change,
-# and set the result to $RESULT.
-# WARNING: It's easy to get an infinite loop with some unsane input.
+# Interpolate the VALUE in loop until it does not change, and set the result
+# to $RESULT.
+# WARNING: It is easy to get an infinite loop with some unsane input.
 AC_DEFUN([adl_RECURSIVE_EVAL],
 [_lcl_receval="$1"
 $2=`(test "$prefix" = NONE && prefix="$ac_default_prefix"
@@ -137,10 +112,10 @@ $2=`(test "$prefix" = NONE && prefix="$ac_default_prefix"
 # Define locale and pkgdir directories. It would be nicer to do this in
 # Makefile.ams by adding appropriate '-D' compiler options to respective
 # CPPFLAGS, which is a common solution that can be seen in other projects. In
-# that case, it isn't needed to resolve the paths at the configure time using
-# the adl_RECURSIVE_EVAL function. However this solution unfortunately doesn't
+# that case, it is not needed to resolve the paths at the configure time using
+# the adl_RECURSIVE_EVAL function. However this solution unfortunately does not
 # work correctly when values of the defines are changed, the source files that
-# use these defines don't get correctly recompiled. To fix this, the defines
+# use these defines do not get correctly recompiled. To fix this, the defines
 # have to be put into the config.h file.
 adl_RECURSIVE_EVAL([$localedir], [localedir_eval])
 AC_DEFINE_UNQUOTED([LOCALEDIR], ["$localedir_eval"],
@@ -150,9 +125,7 @@ adl_RECURSIVE_EVAL([$libdir/AC_PACKAGE_NAME], [pkglibdir_eval])
 AC_DEFINE_UNQUOTED([PKGLIBDIR], ["$pkglibdir_eval"],
 	[Define to the pkglib directory.])
 
-########################
-# Create output files. #
-########################
+# Create output files.
 AC_CONFIG_FILES([Makefile
 		 contrib/Makefile
 		 cppconsui/Makefile

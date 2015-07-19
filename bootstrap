@@ -1,5 +1,4 @@
-#! /bin/sh
-# script shamelessly taken from openbox
+#!/bin/sh
 
 sh() {
   /bin/sh -c "set -x; $*" || exit 1

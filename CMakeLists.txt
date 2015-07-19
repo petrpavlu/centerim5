@@ -6,8 +6,8 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include(cmake/CMakeConfs.cmake)
 
-# libtermkey requires c99
-set(CMAKE_C_FLAGS "-std=c99")
+# libtermkey requires c99.
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 
 install(FILES centerim5.1 DESTINATION share/man/man1)
 

@@ -1,4 +1,4 @@
-# When you add files here, also add them in po/POTFILES.in
+# When you add files here, also add them in po/POTFILES.in.
 set(centerim5_SOURCES
   AccountStatusMenu.cpp
   AccountWindow.cpp
@@ -56,13 +56,11 @@ add_executable(centerim5
 
 add_dependencies(centerim5 git-version.h)
 
-set_target_properties(centerim5
-  PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-
-target_link_libraries(centerim5
-  cppconsui
-  ${PURPLE_LIBRARIES}
-  ${GLIB2_LIBRARIES}
-  ${SIGC_LIBRARIES})
+set_property(TARGET centerim5
+  PROPERTY INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+target_compile_options(centerim5 PRIVATE
+  ${PURPLE_CFLAGS} ${GLIB2_CFLAGS} ${SIGC_CFLAGS})
+target_link_libraries(centerim5 PRIVATE
+  ${PURPLE_LDFLAGS} ${GLIB2_LDFLAGS} ${SIGC_LDFLAGS} cppconsui)
 
 install(TARGETS centerim5 DESTINATION bin)

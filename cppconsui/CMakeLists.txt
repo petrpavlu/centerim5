@@ -1,4 +1,4 @@
-# when you add files here, also add them in po/POTFILES.in
+# When you add files here, also add them in po/POTFILES.in.
 set(cppconsui_SOURCES
   AbstractDialog.cpp
   AbstractLine.cpp
@@ -80,24 +80,15 @@ set(cppconsui_HEADERS
 	libtermkey/termkey-internal.h
 	libtermkey/termkey.h)
 
-add_definitions(-DG_LOG_DOMAIN="cppconsui")
-
-# Add curses cflags if they are defined
-if(NOT CURSES_CFLAGS STREQUAL "")
-  set_source_files_properties(
-    ConsUICurses.cpp
-    PROPERTIES COMPILE_FLAGS ${CURSES_CFLAGS})
-endif()
-
 add_library(cppconsui SHARED
   ${cppconsui_SOURCES}
   ${cppconsui_HEADERS})
 
-set_target_properties(cppconsui
-  PROPERTIES VERSION 0.0.0)
-
-target_link_libraries(cppconsui
-  ${CURSES_LIBRARIES}
-  ${SIGC_LIBRARIES})
+set_property(TARGET cppconsui
+  PROPERTY VERSION 0.0.0)
+target_compile_options(cppconsui PRIVATE
+  ${SIGC_CFLAGS} ${NCURSESW_CFLAGS} "-DG_LOG_DOMAIN=\"cppconsui\"")
+target_link_libraries(cppconsui PRIVATE
+  ${SIGC_LDFLAGS} ${NCURSESW_LDFLAGS})
 
 install(TARGETS cppconsui DESTINATION lib)
