@@ -351,8 +351,9 @@ const int Attr::BOLD = A_BOLD;
 const int C_OK = OK;
 const int C_ERR = ERR;
 
-int initScreen()
+int initScreen(Error &error)
 {
+  // TODO
   if (!::initscr())
     return ERR;
 
@@ -371,8 +372,9 @@ int initScreen()
   return OK;
 }
 
-int finalizeScreen()
+int finalizeScreen(Error &error)
 {
+  // TODO
   return ::endwin();
 }
 

@@ -43,6 +43,15 @@ namespace CppConsUI {
  */
 class CoreManager : public InputProcessor {
 public:
+  int initializeInput(Error &error);
+  int finalizeInput(Error &error);
+
+  int initializeOutput(Error &error);
+  int finalizeOutput(Error &error);
+
+  int initializeScreenResizing(Error &error);
+  int finalizeScreenResizing(Error &error);
+
   void registerWindow(Window &window);
   void removeWindow(Window &window);
   void topWindow(Window &window);
@@ -80,7 +89,6 @@ private:
   unsigned stdin_input_handle;
   unsigned resize_input_handle;
   int pipefd[2];
-  bool pipe_valid;
 
   TermKey *tk;
   iconv_t iconv_desc;
@@ -88,14 +96,12 @@ private:
   bool redraw_pending;
   bool resize_pending;
 
-  CoreManager();
-  int init(AppInterface &set_interface);
+  CoreManager(AppInterface &set_interface);
   ~CoreManager() {}
-  int finalize();
   CONSUI_DISABLE_COPY(CoreManager);
 
-  friend int initializeConsUI(AppInterface &interface);
-  friend int finalizeConsUI();
+  friend void initializeConsUI(AppInterface &interface);
+  friend void finalizeConsUI();
 
   // InputProcessor
   virtual bool processInput(const TermKeyKey &key);
@@ -118,9 +124,6 @@ private:
     static_cast<CoreManager *>(data)->resize_input(fd, cond);
   }
   void resize_input(int fd, InputCondition cond);
-
-  int initInput();
-  void finalizeInput();
 
   static void signalHandler(int signum);
   void resize();

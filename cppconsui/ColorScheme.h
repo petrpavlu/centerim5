@@ -92,13 +92,11 @@ private:
   ColorPairs pairs;
 
   ColorScheme() {}
-  int init() { return 0; }
   ~ColorScheme() {}
-  int finalize() { return 0; }
   CONSUI_DISABLE_COPY(ColorScheme);
 
-  friend int initializeConsUI(AppInterface &interface);
-  friend int finalizeConsUI();
+  friend void initializeConsUI(AppInterface &interface);
+  friend void finalizeConsUI();
 };
 
 } // namespace CppConsUI

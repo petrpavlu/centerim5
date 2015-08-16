@@ -24,8 +24,6 @@
  * General classes, functions and enumerations.
  *
  * @ingroup cppconsui
- *
- * @todo CppConsUI namespace
  */
 
 #ifndef __CPPCONSUI_H__
@@ -45,7 +43,43 @@
 
 #define PRINTF_WIDTH(type) ((CHAR_BIT * sizeof(type) + 2) / 3 + 1)
 
+#ifdef __GNUC__
+#define CPPCONSUI_COMPILER_ATTRIBUTE(x) __attribute__(x)
+#else
+#define CPPCONSUI_COMPILER_ATTRIBUTE(x)
+#endif
+
 namespace CppConsUI {
+
+enum ErrorCode {
+  ERROR_NONE,
+  ERROR_LIBTERMKEY_INITIALIZATION,
+  ERROR_ICONV_INITIALIZATION,
+  ERROR_SCREEN_RESIZING_INITIALIZATION,
+  ERROR_SCREEN_RESIZING_FINALIZATION,
+};
+
+class Error {
+public:
+  explicit Error(ErrorCode code = ERROR_NONE, const char *string = NULL);
+  Error(const Error &other);
+  Error &operator=(const Error &other);
+  virtual ~Error();
+
+  void setCode(ErrorCode code);
+  ErrorCode getCode() const { return error_code; }
+
+  void setString(const char *string);
+  void setFormattedString(const char *format, ...)
+    CPPCONSUI_COMPILER_ATTRIBUTE((format(printf, 2, 3)));
+  const char *getString() const { return error_string; }
+
+  void clear();
+
+protected:
+  ErrorCode error_code;
+  char *error_string;
+};
 
 enum WrapMode {
   WRAP_NONE,
@@ -116,8 +150,8 @@ struct AppInterface {
   void (*logError)(const char *message);
 };
 
-int initializeConsUI(AppInterface &interface);
-int finalizeConsUI();
+void initializeConsUI(AppInterface &interface);
+void finalizeConsUI();
 
 class ColorScheme;
 class CoreManager;

@@ -40,6 +40,156 @@
 
 namespace CppConsUI {
 
+int CoreManager::initializeInput(Error &error)
+{
+  assert(tk == NULL);
+  assert(iconv_desc == ICONV_NONE);
+  assert(stdin_input_handle == 0);
+
+  // Get the codeset.
+  const char *codeset = nl_langinfo(CODESET);
+
+  // Initialize libtermkey.
+  tk = termkey_new(STDIN_FILENO, TERMKEY_FLAG_NOTERMIOS);
+  if (tk == NULL) {
+    error = Error(
+      ERROR_LIBTERMKEY_INITIALIZATION, _("Libtermkey initialization failed."));
+    goto error_cleanup;
+  }
+  termkey_set_canonflags(tk, TERMKEY_CANON_DELBS);
+
+  // If the codeset differs from UTF-8, setup iconv for conversion.
+  if (std::strcmp(codeset, "UTF-8") != 0) {
+    iconv_desc = iconv_open("UTF-8", codeset);
+    if (iconv_desc == ICONV_NONE) {
+      error = Error(ERROR_ICONV_INITIALIZATION);
+      error.setFormattedString(
+        _("Iconv initialization failed. Cannot create conversion from %s to "
+          "UTF-8."),
+        codeset);
+      goto error_cleanup;
+    }
+  }
+
+  stdin_input_handle = interface.inputAdd(
+    STDIN_FILENO, INPUT_CONDITION_READ, CoreManager::stdin_input_, this);
+  assert(stdin_input_handle != 0);
+
+  return 0;
+
+error_cleanup:
+  if (iconv_desc != ICONV_NONE) {
+    int res = iconv_close(iconv_desc);
+    assert(res == 0);
+    iconv_desc = ICONV_NONE;
+  }
+
+  if (tk != NULL) {
+    termkey_destroy(tk);
+    tk = NULL;
+  }
+
+  return error.getCode();
+}
+
+int CoreManager::finalizeInput(Error &error)
+{
+  assert(tk != NULL);
+  assert(stdin_input_handle != 0);
+
+  interface.inputRemove(stdin_input_handle);
+  stdin_input_handle = 0;
+
+  if (iconv_desc != ICONV_NONE) {
+    int res = iconv_close(iconv_desc);
+    // Closing iconv can fail only if the conversion descriptor is invalid but
+    // that should never happen in CppConsUI.
+    assert(res == 0);
+    iconv_desc = ICONV_NONE;
+  }
+
+  termkey_destroy(tk);
+  tk = NULL;
+
+  return 0;
+}
+
+int CoreManager::initializeOutput(Error &error)
+{
+  return Curses::initScreen(error);
+}
+
+int CoreManager::finalizeOutput(Error &error)
+{
+  // Close all windows, work with a copy of the windows vector because the
+  // original vector can be changed by calling the close() methods.
+  Windows windows_copy = windows;
+  for (Windows::iterator i = windows_copy.begin(); i != windows_copy.end(); i++)
+    (*i)->close();
+
+  // Delete all remaining windows. This prevents memory leaks for windows that
+  // have the close() method overridden and calling it does not remove the
+  // object from memory.
+  windows_copy = windows;
+  for (Windows::iterator i = windows_copy.begin(); i != windows_copy.end(); i++)
+    delete *i;
+
+  // Clear the screen.
+  Curses::clear();
+  Curses::refresh();
+
+  return Curses::finalizeScreen(error);
+}
+
+int CoreManager::initializeScreenResizing(Error &error)
+{
+  assert(pipefd[0] == -1);
+  assert(pipefd[1] == -1);
+  assert(resize_input_handle == 0);
+
+  // Set up screen resizing.
+  if (pipe(pipefd) != 0) {
+    error = Error(ERROR_SCREEN_RESIZING_INITIALIZATION);
+    error.setFormattedString(
+      _("Screen resizing initialization failed. Cannot create self-pipe: %s."),
+      strerror(errno));
+    return error.getCode();
+  }
+
+  resize_input_handle = interface.inputAdd(
+    pipefd[0], INPUT_CONDITION_READ, CoreManager::resize_input_, this);
+  assert(resize_input_handle != 0);
+
+  return 0;
+}
+
+int CoreManager::finalizeScreenResizing(Error &error)
+{
+  assert(pipefd[0] != -1);
+  assert(pipefd[1] != -1);
+  assert(resize_input_handle != 0);
+
+  interface.inputRemove(resize_input_handle);
+  resize_input_handle = 0;
+
+  int close0_res = close(pipefd[0]);
+  pipefd[0] = -1;
+
+  int close1_res = close(pipefd[1]);
+  pipefd[1] = -1;
+
+  if (close0_res != 0 || close1_res != 0) {
+    error = Error(ERROR_SCREEN_RESIZING_FINALIZATION);
+    // Set the string using the last error.
+    error.setFormattedString(
+      _("Screen resizing finalization failed. Cannot close self-pipe: %s."),
+      strerror(errno));
+    return error.getCode();
+  }
+
+  return 0;
+}
+
 void CoreManager::registerWindow(Window &window)
 {
   assert(!window.isVisible());
@@ -103,7 +253,7 @@ void CoreManager::disableResizing()
 
 void CoreManager::onScreenResized()
 {
-  if (!pipe_valid || resize_pending)
+  if (resize_pending)
     return;
 
   write(pipefd[1], "@", 1);
@@ -142,63 +292,23 @@ void CoreManager::onWindowWishSizeChange(
   updateWindowArea(activator);
 }
 
-CoreManager::CoreManager()
+CoreManager::CoreManager(AppInterface &set_interface)
   : top_input_processor(NULL), stdin_input_timeout_handle(0),
-    stdin_input_handle(0), resize_input_handle(0), pipe_valid(false), tk(NULL),
+    stdin_input_handle(0), resize_input_handle(0), tk(NULL),
     iconv_desc(ICONV_NONE), redraw_pending(false), resize_pending(false)
 {
-  declareBindables();
-}
+  pipefd[0] = pipefd[1] = -1;
 
-int CoreManager::init(AppInterface &set_interface)
-{
   // validate the passed interface
-  assert(set_interface.timeoutAdd);
-  assert(set_interface.timeoutRemove);
-  assert(set_interface.inputAdd);
-  assert(set_interface.inputRemove);
-  assert(set_interface.logError);
+  assert(set_interface.timeoutAdd != NULL);
+  assert(set_interface.timeoutRemove != NULL);
+  assert(set_interface.inputAdd != NULL);
+  assert(set_interface.inputRemove != NULL);
+  assert(set_interface.logError != NULL);
 
   interface = set_interface;
 
-  int res;
-  if ((res = initInput()))
-    return res;
-
-  if ((res = Curses::initScreen())) {
-    finalizeInput();
-    return res;
-  }
-
-  return 0;
-}
-
-int CoreManager::finalize()
-{
-  finalizeInput();
-
-  /* Close all windows, work with a copy of the windows vector because the
-   * original vector can be changed by calling the close() methods. */
-  Windows windows_copy = windows;
-  for (Windows::iterator i = windows_copy.begin(); i != windows_copy.end(); i++)
-    (*i)->close();
-
-  /* Delete all remaining windows. This prevents memory leaks for windows that
-   * have the close() method overridden and calling it does not remove the
-   * object from memory. */
-  windows_copy = windows;
-  for (Windows::iterator i = windows_copy.begin(); i != windows_copy.end(); i++)
-    delete *i;
-
-  // clear the screen
-  Curses::clear();
-  Curses::refresh();
-
-  int res;
-  if ((res = Curses::finalizeScreen()))
-    return res;
-
-  return 0;
+  declareBindables();
 }
 
 bool CoreManager::processInput(const TermKeyKey &key)
@@ -211,11 +321,6 @@ bool CoreManager::processInput(const TermKeyKey &key)
 
 void CoreManager::stdin_input(int /*fd*/, InputCondition /*cond*/)
 {
-  if (stdin_input_timeout_handle) {
-    interface.timeoutRemove(stdin_input_timeout_handle);
-    stdin_input_timeout_handle = 0;
-  }
-
   termkey_advisereadable(tk);
 
   TermKeyKey key;
@@ -271,6 +376,9 @@ bool CoreManager::stdin_input_timeout_(void *data)
 
 void CoreManager::stdin_input_timeout()
 {
+  assert(stdin_input_timeout_handle != 0);
+  stdin_input_timeout_handle = 0;
+
   TermKeyKey key;
   if (termkey_getkey_force(tk, &key) == TERMKEY_RES_KEY) {
     /* This should happen only for Esc key, so no need to do locale->utf8
@@ -289,65 +397,6 @@ void CoreManager::resize_input(int fd, InputCondition /*cond*/)
 
   if (resize_pending)
     resize();
-}
-
-int CoreManager::initInput()
-{
-  // init libtermkey
-  if (!(tk = termkey_new(STDIN_FILENO, TERMKEY_FLAG_NOTERMIOS))) {
-    logError("Libtermkey initialization failed.");
-    return 1;
-  }
-  termkey_set_canonflags(tk, TERMKEY_CANON_DELBS);
-
-  const char *codeset = nl_langinfo(CODESET);
-  if (std::strcmp(codeset, "UTF-8")) {
-    // if the codeset differs from UTF-8, setup iconv for conversion
-    iconv_desc = iconv_open("UTF-8", codeset);
-    if (iconv_desc == ICONV_NONE) {
-      logError("Libtermkey initialization failed.");
-
-      // destroy already initialized termkey
-      termkey_destroy(tk);
-      tk = NULL;
-
-      return 1;
-    }
-  }
-
-  stdin_input_handle = interface.inputAdd(
-    STDIN_FILENO, INPUT_CONDITION_READ, CoreManager::stdin_input_, this);
-
-  // screen resizing
-  if (!pipe(pipefd)) {
-    pipe_valid = true;
-    resize_input_handle = interface.inputAdd(
-      pipefd[0], INPUT_CONDITION_READ, CoreManager::resize_input_, this);
-  }
-
-  return 0;
-}
-
-void CoreManager::finalizeInput()
-{
-  if (pipe_valid) {
-    interface.inputRemove(resize_input_handle);
-    resize_input_handle = 0;
-
-    close(pipefd[0]);
-    close(pipefd[1]);
-  }
-
-  interface.inputRemove(stdin_input_handle);
-  stdin_input_handle = 0;
-
-  if (iconv_desc != ICONV_NONE) {
-    iconv_close(iconv_desc);
-    iconv_desc = ICONV_NONE;
-  }
-
-  termkey_destroy(tk);
-  tk = NULL;
 }
 
 void CoreManager::signalHandler(int signum)

@@ -1,4 +1,5 @@
 ---
+Language: Cpp
 BasedOnStyle: LLVM
 
 AlignAfterOpenBracket: false
@@ -7,7 +8,6 @@ AllowShortFunctionsOnASingleLine: Inline
 BreakBeforeBraces: Stroustrup
 ConstructorInitializerIndentWidth: 2
 ContinuationIndentWidth: 2
-Language: Cpp
 Standard: Cpp03
 ...
 

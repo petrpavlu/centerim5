@@ -363,7 +363,10 @@ int CenterIM::runAll(int argc, char *argv[])
 {
   int res = 1;
   bool purple_initialized = false;
-  bool cppconsui_initialized = false;
+  bool cppconsui_input_initialized = false;
+  bool cppconsui_output_initialized = false;
+  bool cppconsui_screen_resizing_initialized = false;
+  CppConsUI::Error error;
 
   // set GLib program name
   g_set_prgname(PACKAGE_NAME);
@@ -434,23 +437,38 @@ int CenterIM::runAll(int argc, char *argv[])
   // create the main loop
   mainloop = g_main_loop_new(NULL, FALSE);
 
-  // initialize CppConsUI
+  // Initialize CppConsUI.
   CppConsUI::AppInterface interface = {timeout_add_cppconsui,
     timeout_remove_cppconsui, input_add_cppconsui, input_remove_cppconsui,
     log_error_cppconsui};
-  if (CppConsUI::initializeConsUI(interface)) {
-    LOG->error(_("CppConsUI initialization failed."));
+  CppConsUI::initializeConsUI(interface);
+
+  // Get the CoreManager instance.
+  mngr = CppConsUI::getCoreManagerInstance();
+  g_assert(mngr);
+
+  // Initialize CoreManager's input, output and screen resizing.
+  if (mngr->initializeInput(error) != 0) {
+    LOG->error("%s\n", error.getString());
     goto out;
   }
-  cppconsui_initialized = true;
+  cppconsui_input_initialized = true;
+  if (mngr->initializeOutput(error) != 0) {
+    LOG->error("%s\n", error.getString());
+    goto out;
+  }
+  cppconsui_output_initialized = true;
+  if (mngr->initializeScreenResizing(error) != 0) {
+    LOG->error("%s\n", error.getString());
+    goto out;
+  }
+  cppconsui_screen_resizing_initialized = true;
 
   // ASCII mode
   if (ascii)
     CppConsUI::Curses::setAsciiMode(ascii);
 
-  // get the CoreManager instance and register for some signals
-  mngr = CppConsUI::getCoreManagerInstance();
-  g_assert(mngr);
+  // Register for some signals.
   resize_conn = mngr->signal_resize.connect(
     sigc::mem_fun(this, &CenterIM::onScreenResized));
   top_window_change_conn = mngr->signal_top_window_change.connect(
@@ -528,11 +546,17 @@ out:
   if (purple_initialized)
     purpleFinalize();
 
-  // finalize CppConsUI
-  if (cppconsui_initialized) {
-    if (CppConsUI::finalizeConsUI())
-      LOG->error(_("CppConsUI finalization failed."));
-  }
+  // Finalize CoreManager's input, output and screen resizing.
+  if (cppconsui_screen_resizing_initialized &&
+    mngr->finalizeScreenResizing(error) != 0)
+    LOG->error("%s\n", error.getString());
+  if (cppconsui_output_initialized && mngr->finalizeOutput(error) != 0)
+    LOG->error("%s\n", error.getString());
+  if (cppconsui_input_initialized && mngr->finalizeInput(error) != 0)
+    LOG->error("%s\n", error.getString());
+
+  // Finalize CppConsUI.
+  CppConsUI::finalizeConsUI();
 
   // destroy the main loop
   if (mainloop)

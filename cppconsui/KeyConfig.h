@@ -120,13 +120,11 @@ private:
   KeyBinds binds;
 
   KeyConfig() {}
-  int init() { return 0; }
   ~KeyConfig() {}
-  int finalize() { return 0; }
   CONSUI_DISABLE_COPY(KeyConfig);
 
-  friend int initializeConsUI(AppInterface &interface);
-  friend int finalizeConsUI();
+  friend void initializeConsUI(AppInterface &interface);
+  friend void finalizeConsUI();
 };
 
 } // namespace CppConsUI

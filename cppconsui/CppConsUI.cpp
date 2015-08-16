@@ -26,7 +26,10 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cstdarg>
+#include <cstdio>
 #include <cstdlib>
+#include <cstring>
 
 namespace CppConsUI {
 
@@ -34,74 +37,112 @@ ColorScheme *color_scheme = NULL;
 CoreManager *core_manager = NULL;
 KeyConfig *key_config = NULL;
 
-int initializeConsUI(AppInterface &interface)
+Error::Error(ErrorCode code, const char *string)
+  : error_code(code), error_string(NULL)
 {
-  assert(!color_scheme);
-  assert(!core_manager);
-  assert(!key_config);
-
-  int res;
-
-  color_scheme = new ColorScheme;
-  if ((res = color_scheme->init()))
-    return res;
-
-  key_config = new KeyConfig;
-  if ((res = key_config->init())) {
-    delete key_config;
-    key_config = NULL;
-
-    // not good, destroy already initialized ColorScheme
-    color_scheme->finalize();
-    delete color_scheme;
-    color_scheme = NULL;
-
-    return res;
-  }
-
-  // CoreManager depends on KeyConfig so it has to be initialized after it
-  core_manager = new CoreManager;
-  if ((res = core_manager->init(interface))) {
-    delete core_manager;
-    core_manager = NULL;
-
-    // not good, destroy already initialized KeyConfig and ColorScheme
-    key_config->finalize();
-    delete key_config;
-    key_config = NULL;
-
-    color_scheme->finalize();
-    delete color_scheme;
-    color_scheme = NULL;
-
-    return res;
-  }
-
-  return 0;
+  setString(string);
 }
 
-int finalizeConsUI()
+Error::Error(const Error &other)
 {
-  assert(color_scheme);
-  assert(core_manager);
-  assert(key_config);
+  assert(other.error_string != NULL);
 
-  int max = 0;
-  int res;
+  error_code = other.error_code;
 
-  res = core_manager->finalize();
+  size_t size = std::strlen(other.error_string) + 1;
+  error_string = new char[size];
+  std::strcpy(error_string, other.error_string);
+}
+
+Error &Error::operator=(const Error &other)
+{
+  assert(other.error_string != NULL);
+
+  size_t size = std::strlen(other.error_string) + 1;
+  char *new_string = new char[size];
+  std::strcpy(new_string, other.error_string);
+
+  error_code = other.error_code;
+  delete[] error_string;
+  error_string = new_string;
+}
+
+Error::~Error()
+{
+  delete[] error_string;
+}
+
+void Error::setCode(ErrorCode code)
+{
+  error_code = code;
+}
+
+void Error::setString(const char *string)
+{
+  size_t size = 1;
+  if (string != NULL)
+    size += std::strlen(string);
+  char *new_string = new char[size];
+
+  if (string != NULL)
+    std::strcpy(new_string, string);
+  else
+    new_string[0] = '\0';
+
+  delete[] error_string;
+  error_string = new_string;
+}
+
+void Error::setFormattedString(const char *format, ...)
+{
+  assert(format != NULL);
+
+  va_list args;
+
+  va_start(args, format);
+  int size = std::vsnprintf(NULL, 0, format, args) + 1;
+  char *new_string = new char[size];
+  std::vsprintf(new_string, format, args);
+  va_end(args);
+
+  delete[] error_string;
+  error_string = new_string;
+}
+
+void Error::clear()
+{
+  error_code = ERROR_NONE;
+  delete[] error_string;
+  error_string = NULL;
+}
+
+void initializeConsUI(AppInterface &interface)
+{
+  assert(color_scheme == NULL);
+  assert(core_manager == NULL);
+  assert(key_config == NULL);
+
+  // Initialize ColorScheme and KeyConfig. These cannot fail.
+  color_scheme = new ColorScheme;
+  key_config = new KeyConfig;
+
+  // CoreManager depends on KeyConfig so it has to be initialized after it.
+  core_manager = new CoreManager(interface);
+}
+
+void finalizeConsUI()
+{
+  assert(color_scheme != NULL);
+  assert(core_manager != NULL);
+  assert(key_config != NULL);
+
+  // Destroy CoreManager, KeyConfig and ColorScheme.
+  delete core_manager;
   core_manager = NULL;
-  max = std::max(max, res);
-
-  res = key_config->finalize();
+  delete key_config;
   key_config = NULL;
-  max = std::max(max, res);
-
-  res = color_scheme->finalize();
+  delete color_scheme;
   color_scheme = NULL;
-  max = std::max(max, res);
-
-  return max;
 }
 
 ColorScheme *getColorSchemeInstance()

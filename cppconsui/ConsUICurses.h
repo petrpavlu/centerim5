@@ -58,6 +58,15 @@ enum LineChar {
   LINE_BULLET,
 };
 
+#if 0
+class CursesException : public std::runtime_error
+{
+public:
+  explicit CursesException(const string &what_arg)
+    : runtime_error(what_arg) {}
+};
+#endif
+
 class ViewPort {
 public:
   ViewPort(int screen_x, int screen_y, int view_x, int view_y, int view_width,
@@ -133,8 +142,8 @@ extern const int C_ERR;
 
 const int NUM_DEFAULT_COLORS = 16;
 
-int initScreen();
-int finalizeScreen();
+int initScreen(Error &error);
+int finalizeScreen(Error &error);
 void setAsciiMode(bool enabled);
 bool getAsciiMode();
 
