@@ -40,7 +40,6 @@ public:
   // Widget
   virtual void draw(Curses::ViewPort area);
 
-protected:
 private:
   CONSUI_DISABLE_COPY(Spacer);
 };

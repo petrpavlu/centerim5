@@ -49,7 +49,6 @@ public:
 
   bool getSendTypingPref() const { return send_typing; }
 
-protected:
 private:
   struct ConvChild {
     Conversation *conv;

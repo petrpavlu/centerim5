@@ -37,7 +37,6 @@ public:
   // Widget
   virtual void draw();
 
-protected:
 private:
   CONSUI_DISABLE_COPY(MyScrollPane);
 };
@@ -136,7 +135,6 @@ class TestApp : public CppConsUI::InputProcessor {
 public:
   static int run();
 
-protected:
 private:
   static TestApp *my_instance;
 

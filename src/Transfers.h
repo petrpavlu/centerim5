@@ -26,9 +26,6 @@ class Transfers {
 public:
   Transfers();
   ~Transfers();
-
-protected:
-private:
 };
 
 #endif // __TRANSFERS_H__

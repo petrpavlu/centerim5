@@ -39,7 +39,6 @@ public:
   // Window
   virtual void onScreenResized();
 
-protected:
 private:
   typedef std::multiset<std::string> ProtocolCount;
   typedef std::map<PurpleAccount *, CppConsUI::Label *> Statuses;

@@ -84,7 +84,6 @@ public:
 
   void clear();
 
-protected:
 private:
   typedef std::map<std::pair<int, int>, int> ColorPairs;
 

@@ -38,7 +38,6 @@ public:
   // FreeWindow
   virtual void onScreenResized();
 
-protected:
 private:
   class AddPluginWindow : public CppConsUI::Window {
   public:

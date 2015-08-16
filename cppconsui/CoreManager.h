@@ -77,7 +77,6 @@ public:
   sigc::signal<void> signal_resize;
   sigc::signal<void> signal_top_window_change;
 
-protected:
 private:
   typedef std::deque<Window *> Windows;
 

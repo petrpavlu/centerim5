@@ -35,8 +35,6 @@ public:
 
 protected:
   size_t lines_count;
-
-private:
 };
 - Order methods in an implementation file according to the respective header
   file.

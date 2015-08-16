@@ -31,7 +31,6 @@ class Connections {
 public:
   static Connections *instance();
 
-protected:
 private:
   PurpleConnectionUiOps centerim_connection_ui_ops;
 

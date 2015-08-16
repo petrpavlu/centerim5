@@ -38,7 +38,6 @@ public:
 
   void setText(const char *fmt, ...) _attribute((format(printf, 2, 3)));
 
-protected:
 private:
   typedef std::vector<std::string> Values;
 

@@ -82,7 +82,6 @@ public:
 
   void updateNode(PurpleBlistNode *node);
 
-protected:
 private:
   enum UpdateFlags {
     UPDATE_GROUPS = 1 << 0,
@@ -119,7 +118,6 @@ private:
         PurpleAccount *default_account = NULL, bool chat_only = false);
       virtual ~AccountOption() {}
 
-    protected:
     private:
       CONSUI_DISABLE_COPY(AccountOption);
     };
@@ -130,7 +128,6 @@ private:
       explicit GroupOption(PurpleGroup *default_group);
       virtual ~GroupOption() {}
 
-    protected:
     private:
       CONSUI_DISABLE_COPY(GroupOption);
     };
@@ -173,7 +170,6 @@ private:
       explicit BooleanOption(const char *text, bool checked = true);
       virtual ~BooleanOption() {}
 
-    protected:
     private:
       CONSUI_DISABLE_COPY(BooleanOption);
     };

@@ -32,7 +32,6 @@ class Notify {
 public:
   static Notify *instance();
 
-protected:
 private:
   class UserInfoDialog : public CppConsUI::SplitDialog {
   public:

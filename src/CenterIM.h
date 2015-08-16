@@ -74,7 +74,6 @@ public:
   sigc::connection timeoutOnceConnect(const sigc::slot<void> &slot,
     unsigned interval, int priority = G_PRIORITY_DEFAULT);
 
-protected:
 private:
   struct IOClosurePurple {
     PurpleInputFunction function;

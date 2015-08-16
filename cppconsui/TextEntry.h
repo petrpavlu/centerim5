@@ -38,7 +38,6 @@ public:
   explicit TextEntry(const char *text_ = NULL, int flags_ = 0);
   virtual ~TextEntry() {}
 
-protected:
 private:
   CONSUI_DISABLE_COPY(TextEntry);
 

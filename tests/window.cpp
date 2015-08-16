@@ -14,7 +14,6 @@ public:
   TestWindow(int number, int x, int y, int w, int h);
   virtual ~TestWindow() {}
 
-protected:
 private:
   CONSUI_DISABLE_COPY(TestWindow);
 };
@@ -44,7 +43,6 @@ class TestApp : public CppConsUI::InputProcessor {
 public:
   static int run();
 
-protected:
 private:
   static TestApp *my_instance;
 

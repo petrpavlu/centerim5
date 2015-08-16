@@ -41,7 +41,6 @@ public:
   AbstractLine(int w, int h);
   virtual ~AbstractLine() {}
 
-protected:
 private:
   CONSUI_DISABLE_COPY(AbstractLine);
 };

@@ -34,7 +34,6 @@ public:
   // FreeWindow
   virtual void onScreenResized();
 
-protected:
 private:
   CONSUI_DISABLE_COPY(GeneralMenu);
 

@@ -53,7 +53,6 @@ public:
   void info(const char *fmt, ...) _attribute((format(printf, 2, 3)));
   void debug(const char *fmt, ...) _attribute((format(printf, 2, 3)));
 
-protected:
 private:
   enum Type {
     TYPE_CIM,

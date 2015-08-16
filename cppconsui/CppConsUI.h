@@ -96,9 +96,6 @@ public:
   int getY() const { return y; }
 
   int x, y;
-
-protected:
-private:
 };
 
 class Size {
@@ -110,9 +107,6 @@ public:
   int getHeight() const { return height; }
 
   int width, height;
-
-protected:
-private:
 };
 
 class Rect : public Point {
@@ -128,9 +122,6 @@ public:
   int getBottom() const { return y + height - 1; }
 
   int width, height;
-
-protected:
-private:
 };
 
 enum InputCondition {

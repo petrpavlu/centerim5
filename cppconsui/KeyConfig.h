@@ -112,7 +112,6 @@ public:
    */
   void loadDefaultKeyConfig();
 
-protected:
 private:
   /**
    * Current key binds.

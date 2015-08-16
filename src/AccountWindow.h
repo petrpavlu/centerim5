@@ -40,7 +40,6 @@ public:
   // FreeWindow
   virtual void onScreenResized();
 
-protected:
 private:
   class SplitOption;
   typedef std::list<SplitOption *> SplitWidgets;

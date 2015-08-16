@@ -39,7 +39,6 @@ public:
   // interface for Header
   sigc::signal<void, Accounts &, size_t> signal_request_count_change;
 
-protected:
 private:
   struct Request {
     PurpleAccount *account;

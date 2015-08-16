@@ -43,7 +43,6 @@ public:
     // Widget
     virtual void setParent(Container &parent);
 
-  protected:
   private:
     CONSUI_DISABLE_COPY(ToggleCollapseButton);
   };
@@ -169,7 +168,6 @@ protected:
     Style getStyle() const { return style; }
     Widget *getWidget() const { return widget; }
 
-  protected:
   private:
     /**
      * Pointer to TreeView this node belongs to.

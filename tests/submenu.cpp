@@ -16,7 +16,6 @@ public:
   TestWindow();
   virtual ~TestWindow();
 
-protected:
 private:
   CppConsUI::MenuWindow *menu;
 
@@ -82,7 +81,6 @@ class TestApp : public CppConsUI::InputProcessor {
 public:
   static int run();
 
-protected:
 private:
   static TestApp *my_instance;
 

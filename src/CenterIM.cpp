@@ -80,7 +80,6 @@ public:
   inline void install(GSource *nsource);
   inline sigc::slot_base *get_slot();
 
-protected:
 private:
   sigc::slot_base slot;
   GSource *source;
