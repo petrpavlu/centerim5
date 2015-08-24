@@ -66,11 +66,11 @@ int CheckBox::draw(Curses::ViewPort area, Error &error)
 
   int attrs;
   if (has_focus) {
-    DRAW(getAttributes(ColorScheme::CHECKBOX_FOCUS, &attrs, error));
+    DRAW(getAttributes(ColorScheme::PROPERTY_CHECKBOX_FOCUS, &attrs, error));
     attrs |= Curses::Attr::REVERSE;
   }
   else
-    DRAW(getAttributes(ColorScheme::CHECKBOX_NORMAL, &attrs, error));
+    DRAW(getAttributes(ColorScheme::PROPERTY_CHECKBOX_NORMAL, &attrs, error));
   DRAW(area.attrOn(attrs, error));
 
   // Print text.

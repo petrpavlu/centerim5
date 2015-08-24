@@ -59,7 +59,8 @@ int Container::draw(Curses::ViewPort area, Error &error)
 
   area.scroll(scroll_xpos, scroll_ypos);
   int attrs;
-  DRAW(getAttributes(ColorScheme::CONTAINER_BACKGROUND, &attrs, error));
+  DRAW(
+    getAttributes(ColorScheme::PROPERTY_CONTAINER_BACKGROUND, &attrs, error));
   DRAW(area.fill(attrs, error));
 
   for (Children::iterator i = children.begin(); i != children.end(); ++i)

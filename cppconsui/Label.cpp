@@ -52,7 +52,7 @@ Label::~Label()
 int Label::draw(Curses::ViewPort area, Error &error)
 {
   int attrs;
-  DRAW(getAttributes(ColorScheme::LABEL_TEXT, &attrs, error));
+  DRAW(getAttributes(ColorScheme::PROPERTY_LABEL_TEXT, &attrs, error));
   DRAW(area.attrOn(attrs, error));
 
   // Print text.

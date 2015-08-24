@@ -42,7 +42,7 @@ int HorizontalLine::draw(Curses::ViewPort area, Error &error)
     return 0;
 
   int attrs;
-  DRAW(getAttributes(ColorScheme::HORIZONTALLINE_LINE, &attrs, error));
+  DRAW(getAttributes(ColorScheme::PROPERTY_HORIZONTALLINE_LINE, &attrs, error));
   DRAW(area.attrOn(attrs, error));
 
   for (int i = 0; i < real_width; i++)

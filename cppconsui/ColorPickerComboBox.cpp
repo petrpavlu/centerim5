@@ -98,11 +98,11 @@ int ColorPickerComboBox::draw(Curses::ViewPort area, Error &error)
 {
   int attrs;
   if (has_focus) {
-    DRAW(getAttributes(ColorScheme::BUTTON_FOCUS, &attrs, error));
+    DRAW(getAttributes(ColorScheme::PROPERTY_BUTTON_FOCUS, &attrs, error));
     attrs |= Curses::Attr::REVERSE;
   }
   else
-    DRAW(getAttributes(ColorScheme::BUTTON_NORMAL, &attrs, error));
+    DRAW(getAttributes(ColorScheme::PROPERTY_BUTTON_NORMAL, &attrs, error));
 
   int color = selected_color;
 
@@ -215,11 +215,11 @@ int ColorPickerComboBox::ColorButton::draw(Curses::ViewPort area, Error &error)
 {
   int attrs;
   if (has_focus) {
-    DRAW(getAttributes(ColorScheme::BUTTON_FOCUS, &attrs, error));
+    DRAW(getAttributes(ColorScheme::PROPERTY_BUTTON_FOCUS, &attrs, error));
     attrs |= Curses::Attr::REVERSE;
   }
   else
-    DRAW(getAttributes(ColorScheme::BUTTON_NORMAL, &attrs, error));
+    DRAW(getAttributes(ColorScheme::PROPERTY_BUTTON_NORMAL, &attrs, error));
 
   DRAW(area.attrOn(attrs, error));
   DRAW(area.fill(attrs, 0, 0, real_width, 1, error));

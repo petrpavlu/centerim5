@@ -75,7 +75,8 @@ int TreeView::draw(Curses::ViewPort area, Error &error)
   area.scroll(scroll_xpos, scroll_ypos);
 
   int attrs;
-  DRAW(getAttributes(ColorScheme::CONTAINER_BACKGROUND, &attrs, error));
+  DRAW(
+    getAttributes(ColorScheme::PROPERTY_CONTAINER_BACKGROUND, &attrs, error));
   DRAW(area.fill(attrs, error));
 
   int height;
@@ -465,7 +466,7 @@ int TreeView::drawNode(
   int j;
 
   int attrs;
-  DRAW(getAttributes(ColorScheme::TREEVIEW_LINE, &attrs, error));
+  DRAW(getAttributes(ColorScheme::PROPERTY_TREEVIEW_LINE, &attrs, error));
   DRAW(area.attrOn(attrs, error));
 
   for (j = 1; j < *out_height; ++j)

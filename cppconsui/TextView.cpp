@@ -64,7 +64,7 @@ int TextView::draw(Curses::ViewPort area, Error &error)
     view_top = screen_lines.size() - real_height;
 
   int attrs;
-  DRAW(getAttributes(ColorScheme::TEXTVIEW_TEXT, &attrs, error));
+  DRAW(getAttributes(ColorScheme::PROPERTY_TEXTVIEW_TEXT, &attrs, error));
   DRAW(area.attrOn(attrs, error));
 
   ScreenLines::iterator i;
@@ -74,7 +74,7 @@ int TextView::draw(Curses::ViewPort area, Error &error)
     int attrs2 = 0;
     if (i->parent->color != 0) {
       DRAW(getAttributes(
-        ColorScheme::TEXTVIEW_TEXT, i->parent->color, &attrs2, error));
+        ColorScheme::PROPERTY_TEXTVIEW_TEXT, i->parent->color, &attrs2, error));
       DRAW(area.attrOff(attrs, error));
       DRAW(area.attrOn(attrs2, error));
     }
@@ -119,7 +119,8 @@ int TextView::draw(Curses::ViewPort area, Error &error)
     }
 
     int attrs;
-    DRAW(getAttributes(ColorScheme::TEXTVIEW_SCROLLBAR, &attrs, error));
+    DRAW(
+      getAttributes(ColorScheme::PROPERTY_TEXTVIEW_SCROLLBAR, &attrs, error));
     attrs |= Curses::Attr::REVERSE;
     DRAW(area.attrOn(attrs, error));
 

@@ -563,7 +563,7 @@ int BuddyListBuddy::getAttributes(
   int property, int subproperty, int *attrs, CppConsUI::Error &error) const
 {
   if (BUDDYLIST->getColorizationMode() != BuddyList::COLOR_BY_ACCOUNT ||
-    property != CppConsUI::ColorScheme::BUTTON_NORMAL)
+    property != CppConsUI::ColorScheme::PROPERTY_BUTTON_NORMAL)
     return Button::getAttributes(property, subproperty, attrs, error);
 
   // TODO Implement caching for these two properties.
@@ -961,7 +961,7 @@ int BuddyListContact::getAttributes(
   int property, int subproperty, int *attrs, CppConsUI::Error &error) const
 {
   if (BUDDYLIST->getColorizationMode() != BuddyList::COLOR_BY_ACCOUNT ||
-    property != CppConsUI::ColorScheme::BUTTON_NORMAL)
+    property != CppConsUI::ColorScheme::PROPERTY_BUTTON_NORMAL)
     return Button::getAttributes(property, subproperty, attrs, error);
 
   // TODO Implement caching for these two properties.

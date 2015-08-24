@@ -293,8 +293,8 @@ int Conversation::ConversationLine::draw(
 
   // Use HorizontalLine colors.
   int attrs;
-  DRAW(
-    getAttributes(CppConsUI::ColorScheme::HORIZONTALLINE_LINE, &attrs, error));
+  DRAW(getAttributes(
+    CppConsUI::ColorScheme::PROPERTY_HORIZONTALLINE_LINE, &attrs, error));
   DRAW(area.attrOn(attrs, error));
 
   int i;

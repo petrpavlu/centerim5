@@ -140,30 +140,30 @@ void ColorScheme::clear()
 
 const char *ColorScheme::propertyToWidgetName(int property)
 {
-  switch (property) {
-  case BUTTON_FOCUS:
-  case BUTTON_NORMAL:
+  switch (static_cast<Property>(property)) {
+  case PROPERTY_BUTTON_FOCUS:
+  case PROPERTY_BUTTON_NORMAL:
     return "button";
-  case CHECKBOX_FOCUS:
-  case CHECKBOX_NORMAL:
+  case PROPERTY_CHECKBOX_FOCUS:
+  case PROPERTY_CHECKBOX_NORMAL:
     return "checkbox";
-  case CONTAINER_BACKGROUND:
+  case PROPERTY_CONTAINER_BACKGROUND:
     return "container";
-  case HORIZONTALLINE_LINE:
+  case PROPERTY_HORIZONTALLINE_LINE:
     return "horizontalline";
-  case LABEL_TEXT:
+  case PROPERTY_LABEL_TEXT:
     return "label";
-  case PANEL_LINE:
-  case PANEL_TITLE:
+  case PROPERTY_PANEL_LINE:
+  case PROPERTY_PANEL_TITLE:
     return "panel";
-  case TEXTEDIT_TEXT:
+  case PROPERTY_TEXTEDIT_TEXT:
     return "textedit";
-  case TEXTVIEW_TEXT:
-  case TEXTVIEW_SCROLLBAR:
+  case PROPERTY_TEXTVIEW_TEXT:
+  case PROPERTY_TEXTVIEW_SCROLLBAR:
     return "textview";
-  case VERTICALLINE_LINE:
+  case PROPERTY_VERTICALLINE_LINE:
     return "verticalline";
-  case TREEVIEW_LINE:
+  case PROPERTY_TREEVIEW_LINE:
     return "treeview";
   }
   return NULL;
@@ -171,27 +171,27 @@ const char *ColorScheme::propertyToWidgetName(int property)
 
 const char *ColorScheme::propertyToPropertyName(int property)
 {
-  switch (property) {
-  case BUTTON_FOCUS:
-  case CHECKBOX_FOCUS:
+  switch (static_cast<Property>(property)) {
+  case PROPERTY_BUTTON_FOCUS:
+  case PROPERTY_CHECKBOX_FOCUS:
     return "focus";
-  case BUTTON_NORMAL:
-  case CHECKBOX_NORMAL:
+  case PROPERTY_BUTTON_NORMAL:
+  case PROPERTY_CHECKBOX_NORMAL:
     return "normal";
-  case CONTAINER_BACKGROUND:
+  case PROPERTY_CONTAINER_BACKGROUND:
     return "background";
-  case HORIZONTALLINE_LINE:
-  case PANEL_LINE:
-  case VERTICALLINE_LINE:
-  case TREEVIEW_LINE:
+  case PROPERTY_HORIZONTALLINE_LINE:
+  case PROPERTY_PANEL_LINE:
+  case PROPERTY_VERTICALLINE_LINE:
+  case PROPERTY_TREEVIEW_LINE:
     return "line";
-  case LABEL_TEXT:
-  case TEXTEDIT_TEXT:
-  case TEXTVIEW_TEXT:
+  case PROPERTY_LABEL_TEXT:
+  case PROPERTY_TEXTEDIT_TEXT:
+  case PROPERTY_TEXTVIEW_TEXT:
     return "text";
-  case PANEL_TITLE:
+  case PROPERTY_PANEL_TITLE:
     return "title";
-  case TEXTVIEW_SCROLLBAR:
+  case PROPERTY_TEXTVIEW_SCROLLBAR:
     return "scrollbar";
   }
   return NULL;
@@ -208,72 +208,72 @@ ColorScheme::PropertyConversionResult ColorScheme::stringPairToPropertyPair(
 
   if (strcmp(widget, "button") == 0) {
     if (strcmp(property, "focus") == 0) {
-      *out_property = BUTTON_FOCUS;
+      *out_property = PROPERTY_BUTTON_FOCUS;
       return CONVERSION_SUCCESS;
     }
     if (strcmp(property, "normal") == 0) {
-      *out_property = BUTTON_NORMAL;
+      *out_property = PROPERTY_BUTTON_NORMAL;
       return CONVERSION_SUCCESS;
     }
     return CONVERSION_ERROR_PROPERTY;
   }
   else if (strcmp(widget, "checkbox") == 0) {
     if (strcmp(property, "focus") == 0) {
-      *out_property = CHECKBOX_FOCUS;
+      *out_property = PROPERTY_CHECKBOX_FOCUS;
       return CONVERSION_SUCCESS;
     }
     if (strcmp(property, "normal") == 0) {
-      *out_property = CHECKBOX_NORMAL;
+      *out_property = PROPERTY_CHECKBOX_NORMAL;
       return CONVERSION_SUCCESS;
     }
     return CONVERSION_ERROR_PROPERTY;
   }
   else if (strcmp(widget, "container") == 0) {
     if (strcmp(property, "background") == 0) {
-      *out_property = CONTAINER_BACKGROUND;
+      *out_property = PROPERTY_CONTAINER_BACKGROUND;
       return CONVERSION_SUCCESS;
     }
     return CONVERSION_ERROR_PROPERTY;
   }
   else if (strcmp(widget, "horizontalline") == 0) {
     if (strcmp(property, "line") == 0) {
-      *out_property = HORIZONTALLINE_LINE;
+      *out_property = PROPERTY_HORIZONTALLINE_LINE;
       return CONVERSION_SUCCESS;
     }
     return CONVERSION_ERROR_PROPERTY;
   }
   else if (strcmp(widget, "label") == 0) {
     if (strcmp(property, "text") == 0) {
-      *out_property = LABEL_TEXT;
+      *out_property = PROPERTY_LABEL_TEXT;
       return CONVERSION_SUCCESS;
     }
     return CONVERSION_ERROR_PROPERTY;
   }
   else if (strcmp(widget, "panel") == 0) {
     if (strcmp(property, "line") == 0) {
-      *out_property = PANEL_LINE;
+      *out_property = PROPERTY_PANEL_LINE;
       return CONVERSION_SUCCESS;
     }
     if (strcmp(property, "title") == 0) {
-      *out_property = PANEL_TITLE;
+      *out_property = PROPERTY_PANEL_TITLE;
       return CONVERSION_SUCCESS;
     }
     return CONVERSION_ERROR_PROPERTY;
   }
   else if (strcmp(widget, "textedit") == 0) {
     if (strcmp(property, "text") == 0) {
-      *out_property = TEXTEDIT_TEXT;
+      *out_property = PROPERTY_TEXTEDIT_TEXT;
       return CONVERSION_SUCCESS;
     }
     return CONVERSION_ERROR_PROPERTY;
   }
   else if (strcmp(widget, "textview") == 0) {
     if (strcmp(property, "text") == 0) {
-      *out_property = TEXTVIEW_TEXT;
+      *out_property = PROPERTY_TEXTVIEW_TEXT;
       return CONVERSION_SUCCESS;
     }
     if (strcmp(property, "scrollbar") == 0) {
-      *out_property = TEXTVIEW_SCROLLBAR;
+      *out_property = PROPERTY_TEXTVIEW_SCROLLBAR;
       return CONVERSION_SUCCESS;
     }
 
@@ -295,19 +295,19 @@ ColorScheme::PropertyConversionResult ColorScheme::stringPairToPropertyPair(
     if (endptr != '\0' || errno == ERANGE || i > INT_MAX)
       return CONVERSION_ERROR_PROPERTY;
 
-    *out_property = TEXTVIEW_TEXT;
+    *out_property = PROPERTY_TEXTVIEW_TEXT;
     *out_subproperty = i;
     return CONVERSION_SUCCESS;
   }
   else if (strcmp(widget, "verticalline") == 0) {
     if (strcmp(property, "line") == 0) {
-      *out_property = VERTICALLINE_LINE;
+      *out_property = PROPERTY_VERTICALLINE_LINE;
       return CONVERSION_SUCCESS;
     }
   }
   else if (strcmp(widget, "treeview") == 0) {
     if (strcmp(property, "line") == 0) {
-      *out_property = TREEVIEW_LINE;
+      *out_property = PROPERTY_TREEVIEW_LINE;
       return CONVERSION_SUCCESS;
     }
   }

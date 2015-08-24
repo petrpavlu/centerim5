@@ -61,20 +61,22 @@ public:
     CONVERSION_ERROR_PROPERTY,
   };
 
-  static const int BUTTON_FOCUS = 0;
-  static const int BUTTON_NORMAL = 1;
-  static const int CHECKBOX_FOCUS = 2;
-  static const int CHECKBOX_NORMAL = 3;
-  static const int CONTAINER_BACKGROUND = 4;
-  static const int HORIZONTALLINE_LINE = 5;
-  static const int LABEL_TEXT = 6;
-  static const int PANEL_LINE = 7;
-  static const int PANEL_TITLE = 8;
-  static const int TEXTEDIT_TEXT = 9;
-  static const int TEXTVIEW_TEXT = 10;
-  static const int TEXTVIEW_SCROLLBAR = 11;
-  static const int VERTICALLINE_LINE = 12;
-  static const int TREEVIEW_LINE = 13;
+  enum Property {
+    PROPERTY_BUTTON_FOCUS,
+    PROPERTY_BUTTON_NORMAL,
+    PROPERTY_CHECKBOX_FOCUS,
+    PROPERTY_CHECKBOX_NORMAL,
+    PROPERTY_CONTAINER_BACKGROUND,
+    PROPERTY_HORIZONTALLINE_LINE,
+    PROPERTY_LABEL_TEXT,
+    PROPERTY_PANEL_LINE,
+    PROPERTY_PANEL_TITLE,
+    PROPERTY_TEXTEDIT_TEXT,
+    PROPERTY_TEXTVIEW_TEXT,
+    PROPERTY_TEXTVIEW_SCROLLBAR,
+    PROPERTY_VERTICALLINE_LINE,
+    PROPERTY_TREEVIEW_LINE,
+  };
 
   typedef std::pair<int, int> PropertyPair;
   typedef std::map<PropertyPair, Color> Properties;

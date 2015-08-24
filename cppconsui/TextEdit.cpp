@@ -90,7 +90,7 @@ int TextEdit::draw(Curses::ViewPort area, Error &error)
   DRAW(area.erase(error));
 
   int attrs;
-  DRAW(getAttributes(ColorScheme::TEXTEDIT_TEXT, &attrs, error));
+  DRAW(getAttributes(ColorScheme::PROPERTY_TEXTEDIT_TEXT, &attrs, error));
   DRAW(area.attrOn(attrs, error));
 
   ScreenLines::iterator i;

@@ -1009,125 +1009,130 @@ void CenterIM::loadDefaultColorSchemeConfig()
 
   // Inititialize default color schemes.
   COLORSCHEME->setAttributes(SCHEME_ACCOUNTSTATUSMENU,
-    CppConsUI::ColorScheme::PANEL_LINE, CppConsUI::Curses::Color::CYAN,
+    CppConsUI::ColorScheme::PROPERTY_PANEL_LINE, CppConsUI::Curses::Color::CYAN,
     CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setAttributes(SCHEME_ACCOUNTSTATUSMENU,
-    CppConsUI::ColorScheme::HORIZONTALLINE_LINE, CppConsUI::Curses::Color::CYAN,
-    CppConsUI::Curses::Color::DEFAULT);
+    CppConsUI::ColorScheme::PROPERTY_HORIZONTALLINE_LINE,
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
   COLORSCHEME->setAttributes(SCHEME_ACCOUNTSTATUSMENU,
-    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::CYAN,
-    CppConsUI::Curses::Color::DEFAULT);
-
-  COLORSCHEME->setAttributes(SCHEME_BUDDYLIST,
-    CppConsUI::ColorScheme::TREEVIEW_LINE, CppConsUI::Curses::Color::GREEN,
-    CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setAttributes(SCHEME_BUDDYLIST,
-    CppConsUI::ColorScheme::PANEL_LINE, CppConsUI::Curses::Color::BLUE,
-    CppConsUI::Curses::Color::DEFAULT, CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->setAttributes(SCHEME_BUDDYLIST,
-    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::GREEN,
-    CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTGROUP,
-    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::MAGENTA,
-    CppConsUI::Curses::Color::DEFAULT);
-
-  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTBUDDY_AWAY,
-    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::BLUE,
-    CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTBUDDY_NA,
-    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::MAGENTA,
-    CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTBUDDY_OFFLINE,
-    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::RED,
-    CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTBUDDY_ONLINE,
-    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::GREEN,
-    CppConsUI::Curses::Color::DEFAULT);
-
-  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTCONTACT_AWAY,
-    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::BLUE,
-    CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTCONTACT_NA,
-    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::MAGENTA,
-    CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTCONTACT_OFFLINE,
-    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::RED,
-    CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTCONTACT_ONLINE,
-    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::GREEN,
-    CppConsUI::Curses::Color::DEFAULT);
-
-  COLORSCHEME->setAttributes(SCHEME_CONVERSATION,
-    CppConsUI::ColorScheme::TEXTVIEW_TEXT, CppConsUI::Curses::Color::MAGENTA,
-    CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setAttributesExt(SCHEME_CONVERSATION,
-    CppConsUI::ColorScheme::TEXTVIEW_TEXT, 1, CppConsUI::Curses::Color::CYAN,
-    CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setAttributesExt(SCHEME_CONVERSATION,
-    CppConsUI::ColorScheme::TEXTVIEW_TEXT, 2, CppConsUI::Curses::Color::MAGENTA,
-    CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setAttributes(SCHEME_CONVERSATION,
-    CppConsUI::ColorScheme::PANEL_LINE, CppConsUI::Curses::Color::BLUE,
-    CppConsUI::Curses::Color::DEFAULT, CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->setAttributes(SCHEME_CONVERSATION,
-    CppConsUI::ColorScheme::HORIZONTALLINE_LINE, CppConsUI::Curses::Color::BLUE,
-    CppConsUI::Curses::Color::DEFAULT, CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->setAttributes(SCHEME_CONVERSATION,
-    CppConsUI::ColorScheme::VERTICALLINE_LINE, CppConsUI::Curses::Color::BLUE,
-    CppConsUI::Curses::Color::DEFAULT, CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->setAttributes(SCHEME_CONVERSATION,
-    CppConsUI::ColorScheme::TEXTEDIT_TEXT, CppConsUI::Curses::Color::CYAN,
-    CppConsUI::Curses::Color::DEFAULT);
-
-  COLORSCHEME->setAttributes(SCHEME_CONVERSATION,
-    CppConsUI::ColorScheme::LABEL_TEXT, CppConsUI::Curses::Color::CYAN,
-    CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setAttributes(SCHEME_CONVERSATION_ACTIVE,
-    CppConsUI::ColorScheme::LABEL_TEXT, CppConsUI::Curses::Color::MAGENTA,
-    CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setAttributes(SCHEME_CONVERSATION_NEW,
-    CppConsUI::ColorScheme::LABEL_TEXT, CppConsUI::Curses::Color::CYAN,
-    CppConsUI::Curses::Color::DEFAULT, CppConsUI::Curses::Attr::BOLD);
-
-  COLORSCHEME->setAttributes(SCHEME_FOOTER, CppConsUI::ColorScheme::LABEL_TEXT,
-    CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
-  COLORSCHEME->setAttributes(SCHEME_FOOTER,
-    CppConsUI::ColorScheme::CONTAINER_BACKGROUND,
-    CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
-
-  COLORSCHEME->setAttributes(SCHEME_GENERALMENU,
-    CppConsUI::ColorScheme::PANEL_LINE, CppConsUI::Curses::Color::CYAN,
-    CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setAttributes(SCHEME_GENERALMENU,
-    CppConsUI::ColorScheme::HORIZONTALLINE_LINE, CppConsUI::Curses::Color::CYAN,
-    CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setAttributes(SCHEME_GENERALMENU,
-    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::CYAN,
-    CppConsUI::Curses::Color::DEFAULT);
-
-  COLORSCHEME->setAttributes(SCHEME_GENERALWINDOW,
-    CppConsUI::ColorScheme::PANEL_LINE, CppConsUI::Curses::Color::CYAN,
-    CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setAttributes(SCHEME_GENERALWINDOW,
-    CppConsUI::ColorScheme::HORIZONTALLINE_LINE, CppConsUI::Curses::Color::CYAN,
-    CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setAttributes(SCHEME_GENERALWINDOW,
-    CppConsUI::ColorScheme::VERTICALLINE_LINE, CppConsUI::Curses::Color::CYAN,
-    CppConsUI::Curses::Color::DEFAULT);
-
-  COLORSCHEME->setAttributes(SCHEME_LOG, CppConsUI::ColorScheme::PANEL_LINE,
-    CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
-    CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->setAttributes(SCHEME_LOG, CppConsUI::ColorScheme::TEXTVIEW_TEXT,
+    CppConsUI::ColorScheme::PROPERTY_BUTTON_NORMAL,
     CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
 
-  COLORSCHEME->setAttributes(SCHEME_HEADER, CppConsUI::ColorScheme::LABEL_TEXT,
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLIST,
+    CppConsUI::ColorScheme::PROPERTY_TREEVIEW_LINE,
+    CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLIST,
+    CppConsUI::ColorScheme::PROPERTY_PANEL_LINE, CppConsUI::Curses::Color::BLUE,
+    CppConsUI::Curses::Color::DEFAULT, CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLIST,
+    CppConsUI::ColorScheme::PROPERTY_BUTTON_NORMAL,
+    CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTGROUP,
+    CppConsUI::ColorScheme::PROPERTY_BUTTON_NORMAL,
+    CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
+
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTBUDDY_AWAY,
+    CppConsUI::ColorScheme::PROPERTY_BUTTON_NORMAL,
+    CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTBUDDY_NA,
+    CppConsUI::ColorScheme::PROPERTY_BUTTON_NORMAL,
+    CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTBUDDY_OFFLINE,
+    CppConsUI::ColorScheme::PROPERTY_BUTTON_NORMAL,
+    CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTBUDDY_ONLINE,
+    CppConsUI::ColorScheme::PROPERTY_BUTTON_NORMAL,
+    CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
+
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTCONTACT_AWAY,
+    CppConsUI::ColorScheme::PROPERTY_BUTTON_NORMAL,
+    CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTCONTACT_NA,
+    CppConsUI::ColorScheme::PROPERTY_BUTTON_NORMAL,
+    CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTCONTACT_OFFLINE,
+    CppConsUI::ColorScheme::PROPERTY_BUTTON_NORMAL,
+    CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTCONTACT_ONLINE,
+    CppConsUI::ColorScheme::PROPERTY_BUTTON_NORMAL,
+    CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
+
+  COLORSCHEME->setAttributes(SCHEME_CONVERSATION,
+    CppConsUI::ColorScheme::PROPERTY_TEXTVIEW_TEXT,
+    CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributesExt(SCHEME_CONVERSATION,
+    CppConsUI::ColorScheme::PROPERTY_TEXTVIEW_TEXT, 1,
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributesExt(SCHEME_CONVERSATION,
+    CppConsUI::ColorScheme::PROPERTY_TEXTVIEW_TEXT, 2,
+    CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_CONVERSATION,
+    CppConsUI::ColorScheme::PROPERTY_PANEL_LINE, CppConsUI::Curses::Color::BLUE,
+    CppConsUI::Curses::Color::DEFAULT, CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->setAttributes(SCHEME_CONVERSATION,
+    CppConsUI::ColorScheme::PROPERTY_HORIZONTALLINE_LINE,
+    CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
+    CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->setAttributes(SCHEME_CONVERSATION,
+    CppConsUI::ColorScheme::PROPERTY_VERTICALLINE_LINE,
+    CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
+    CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->setAttributes(SCHEME_CONVERSATION,
+    CppConsUI::ColorScheme::PROPERTY_TEXTEDIT_TEXT,
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+
+  COLORSCHEME->setAttributes(SCHEME_CONVERSATION,
+    CppConsUI::ColorScheme::PROPERTY_LABEL_TEXT, CppConsUI::Curses::Color::CYAN,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_CONVERSATION_ACTIVE,
+    CppConsUI::ColorScheme::PROPERTY_LABEL_TEXT,
+    CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_CONVERSATION_NEW,
+    CppConsUI::ColorScheme::PROPERTY_LABEL_TEXT, CppConsUI::Curses::Color::CYAN,
+    CppConsUI::Curses::Color::DEFAULT, CppConsUI::Curses::Attr::BOLD);
+
+  COLORSCHEME->setAttributes(SCHEME_FOOTER,
+    CppConsUI::ColorScheme::PROPERTY_LABEL_TEXT,
+    CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
+  COLORSCHEME->setAttributes(SCHEME_FOOTER,
+    CppConsUI::ColorScheme::PROPERTY_CONTAINER_BACKGROUND,
+    CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
+
+  COLORSCHEME->setAttributes(SCHEME_GENERALMENU,
+    CppConsUI::ColorScheme::PROPERTY_PANEL_LINE, CppConsUI::Curses::Color::CYAN,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_GENERALMENU,
+    CppConsUI::ColorScheme::PROPERTY_HORIZONTALLINE_LINE,
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_GENERALMENU,
+    CppConsUI::ColorScheme::PROPERTY_BUTTON_NORMAL,
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+
+  COLORSCHEME->setAttributes(SCHEME_GENERALWINDOW,
+    CppConsUI::ColorScheme::PROPERTY_PANEL_LINE, CppConsUI::Curses::Color::CYAN,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_GENERALWINDOW,
+    CppConsUI::ColorScheme::PROPERTY_HORIZONTALLINE_LINE,
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_GENERALWINDOW,
+    CppConsUI::ColorScheme::PROPERTY_VERTICALLINE_LINE,
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+
+  COLORSCHEME->setAttributes(SCHEME_LOG,
+    CppConsUI::ColorScheme::PROPERTY_PANEL_LINE, CppConsUI::Curses::Color::BLUE,
+    CppConsUI::Curses::Color::DEFAULT, CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->setAttributes(SCHEME_LOG,
+    CppConsUI::ColorScheme::PROPERTY_TEXTVIEW_TEXT,
+    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+
+  COLORSCHEME->setAttributes(SCHEME_HEADER,
+    CppConsUI::ColorScheme::PROPERTY_LABEL_TEXT,
     CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
   COLORSCHEME->setAttributes(SCHEME_HEADER,
-    CppConsUI::ColorScheme::CONTAINER_BACKGROUND,
+    CppConsUI::ColorScheme::PROPERTY_CONTAINER_BACKGROUND,
     CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
   COLORSCHEME->setAttributes(SCHEME_HEADER_REQUEST,
-    CppConsUI::ColorScheme::LABEL_TEXT, CppConsUI::Curses::Color::RED,
+    CppConsUI::ColorScheme::PROPERTY_LABEL_TEXT, CppConsUI::Curses::Color::RED,
     CppConsUI::Curses::Color::WHITE);
 }
 

@@ -64,14 +64,14 @@ int Panel::draw(Curses::ViewPort area, Error &error)
 
   if (draw_title_width) {
     // Draw title.
-    DRAW(getAttributes(ColorScheme::PANEL_TITLE, &attrs, error));
+    DRAW(getAttributes(ColorScheme::PROPERTY_PANEL_TITLE, &attrs, error));
     DRAW(area.attrOn(attrs, error));
     DRAW(area.addString(2 + hline_len, 0, draw_title_width, title, error));
     DRAW(area.attrOff(attrs, error));
   }
 
   // Draw lines.
-  DRAW(getAttributes(ColorScheme::PANEL_LINE, &attrs, error));
+  DRAW(getAttributes(ColorScheme::PROPERTY_PANEL_LINE, &attrs, error));
   DRAW(area.attrOn(attrs, error));
 
   // Draw top horizontal line.
