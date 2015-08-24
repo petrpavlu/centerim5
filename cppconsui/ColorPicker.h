@@ -55,7 +55,7 @@ protected:
     virtual ~Sample() {}
 
     // Widget
-    virtual void draw(Curses::ViewPort area);
+    virtual int draw(Curses::ViewPort area, Error &error);
 
     virtual void setColors(int fg, int bg);
 

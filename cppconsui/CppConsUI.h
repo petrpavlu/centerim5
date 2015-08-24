@@ -29,6 +29,7 @@
 #ifndef __CPPCONSUI_H__
 #define __CPPCONSUI_H__
 
+#include <inttypes.h>
 #include <limits.h>
 #include <stdint.h>
 #include <cstdlib>
@@ -53,10 +54,22 @@ namespace CppConsUI {
 
 enum ErrorCode {
   ERROR_NONE,
+
   ERROR_LIBTERMKEY_INITIALIZATION,
   ERROR_ICONV_INITIALIZATION,
   ERROR_SCREEN_RESIZING_INITIALIZATION,
   ERROR_SCREEN_RESIZING_FINALIZATION,
+
+  ERROR_CURSES_INITIALIZATION,
+  ERROR_CURSES_FINALIZATION,
+  ERROR_CURSES_ADD_CHARACTER,
+  ERROR_CURSES_ATTR,
+  ERROR_CURSES_COLOR_LIMIT,
+  ERROR_CURSES_COLOR_INIT,
+  ERROR_CURSES_CLEAR,
+  ERROR_CURSES_REFRESH,
+  ERROR_CURSES_BEEP,
+  ERROR_CURSES_RESIZE,
 };
 
 class Error {
@@ -65,6 +78,8 @@ public:
   Error(const Error &other);
   Error &operator=(const Error &other);
   virtual ~Error();
+
+  bool present() const { return error_code != ERROR_NONE; }
 
   void setCode(ErrorCode code);
   ErrorCode getCode() const { return error_code; }
@@ -155,6 +170,7 @@ KeyConfig *getKeyConfigInstance();
 namespace UTF8 {
 
 typedef uint32_t UniChar;
+#define UNICHAR_FORMAT PRIu32
 UniChar getUniChar(const char *p);
 bool isUniCharWide(UniChar uc);
 bool isUniCharDigit(UniChar uc);

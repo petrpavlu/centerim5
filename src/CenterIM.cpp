@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
   return CenterIM::run(argc, argv);
 }
 
-const char *CenterIM::named_colors[] = {
+const char *CenterIM::color_names[] = {
   "default", // -1
   "black",   //  0
   "red",     //  1
@@ -64,6 +64,33 @@ const char *CenterIM::named_colors[] = {
   "magenta", //  5
   "cyan",    //  6
   "white",   //  7
+};
+
+const char *CenterIM::scheme_names[] = {
+  NULL,
+  "accountstatusmenu",        // SCHEME_ACCOUNTSTATUSMENU
+  "buddylist",                // SCHEME_BUDDYLIST
+  "buddylistbuddy",           // SCHEME_BUDDYLISTBUDDY
+  "buddylistbuddy_away",      // SCHEME_BUDDYLISTBUDDY_AWAY
+  "buddylistbuddy_na",        // SCHEME_BUDDYLISTBUDDY_NA
+  "buddylistbuddy_offline",   // SCHEME_BUDDYLISTBUDDY_OFFLINE
+  "buddylistbuddy_online",    // SCHEME_BUDDYLISTBUDDY_ONLINE
+  "buddylistchat",            // SCHEME_BUDDYLISTCHAT
+  "buddylistcontact",         // SCHEME_BUDDYLISTCONTACT
+  "buddylistcontact_away",    // SCHEME_BUDDYLISTCONTACT_AWAY
+  "buddylistcontact_na",      // SCHEME_BUDDYLISTCONTACT_NA
+  "buddylistcontact_offline", // SCHEME_BUDDYLISTCONTACT_OFFLINE
+  "buddylistcontact_online",  // SCHEME_BUDDYLISTCONTACT_ONLINE
+  "buddylistgroup",           // SCHEME_BUDDYLISTGROUP
+  "conversation",             // SCHEME_CONVERSATION
+  "conversation_active",      // SCHEME_CONVERSATION_ACTIVE
+  "conversation_new",         // SCHEME_CONVERSATION_NEW
+  "footer",                   // SCHEME_FOOTER
+  "generalmenu",              // SCHEME_GENERALMENU
+  "generalwindow",            // SCHEME_GENERALWINDOW
+  "header",                   // SCHEME_HEADER
+  "header_request",           // SCHEME_HEADER_REQUEST
+  "log",                      // SCHEME_LOG
 };
 
 CenterIM *CenterIM::my_instance = NULL;
@@ -177,8 +204,8 @@ bool CenterIM::loadColorSchemeConfig()
   xmlnode *root =
     purple_util_read_xml_from_file("colorschemes.xml", _("color schemes"));
 
-  if (!root) {
-    // read error, first time run?
+  if (root == NULL) {
+    // Read error, first time run?
     loadDefaultColorSchemeConfig();
     if (saveColorSchemeConfig())
       return true;
@@ -188,52 +215,77 @@ bool CenterIM::loadColorSchemeConfig()
   COLORSCHEME->clear();
   bool res = false;
 
-  for (xmlnode *scheme = xmlnode_get_child(root, "scheme"); scheme;
-       scheme = xmlnode_get_next_twin(scheme)) {
-    const char *name = xmlnode_get_attrib(scheme, "name");
-    if (!name) {
+  for (xmlnode *scheme_node = xmlnode_get_child(root, "scheme");
+       scheme_node != NULL; scheme_node = xmlnode_get_next_twin(scheme_node)) {
+    const char *scheme_name = xmlnode_get_attrib(scheme_node, "name");
+    if (scheme_name == NULL) {
       LOG->error(_("Missing 'name' attribute in the scheme definition."));
       goto out;
     }
 
-    for (xmlnode *color = xmlnode_get_child(scheme, "color"); color;
+    int scheme = stringToScheme(scheme_name);
+    if (scheme == 0) {
+      LOG->error(_("Unrecognized scheme '%s'."), scheme_name);
+      goto out;
+    }
+
+    for (xmlnode *color = xmlnode_get_child(scheme_node, "color"); color;
          color = xmlnode_get_next_twin(color)) {
-      const char *widget = xmlnode_get_attrib(color, "widget");
-      if (!widget) {
+      const char *widget_string = xmlnode_get_attrib(color, "widget");
+      if (widget_string == NULL) {
         LOG->error(_("Missing 'widget' attribute in the color definition."));
         goto out;
       }
 
-      const char *property = xmlnode_get_attrib(color, "property");
-      if (!property) {
+      const char *property_string = xmlnode_get_attrib(color, "property");
+      if (property_string == NULL) {
         LOG->error(_("Missing 'property' attribute in the color definition."));
         goto out;
       }
 
-      const char *fgs = xmlnode_get_attrib(color, "foreground");
-      const char *bgs = xmlnode_get_attrib(color, "background");
-      const char *attrs = xmlnode_get_attrib(color, "attributes");
+      CppConsUI::ColorScheme::PropertyConversionResult conv_res;
+      int property;
+      int subproperty;
+      conv_res = COLORSCHEME->stringPairToPropertyPair(
+        widget_string, property_string, &property, &subproperty);
+      switch (conv_res) {
+      case CppConsUI::ColorScheme::CONVERSION_SUCCESS:
+        break;
+      case CppConsUI::ColorScheme::CONVERSION_ERROR_WIDGET:
+        LOG->error(_("Unrecognized widget '%s'."), widget_string);
+        goto out;
+      case CppConsUI::ColorScheme::CONVERSION_ERROR_PROPERTY:
+        LOG->error(_("Unrecognized property '%s'."), property_string);
+        goto out;
+      default:
+        g_assert_not_reached();
+      }
+
+      const char *fg_string = xmlnode_get_attrib(color, "foreground");
+      const char *bg_string = xmlnode_get_attrib(color, "background");
+      const char *attrs_string = xmlnode_get_attrib(color, "attributes");
 
       int fg = CppConsUI::Curses::Color::DEFAULT;
       int bg = CppConsUI::Curses::Color::DEFAULT;
-      int attr = 0;
+      int attrs = 0;
 
-      if (fgs && !stringToColor(fgs, &fg)) {
-        LOG->error(_("Unrecognized color '%s'."), fgs);
+      if (fg_string != NULL && !stringToColor(fg_string, &fg)) {
+        LOG->error(_("Unrecognized color '%s'."), fg_string);
         goto out;
       }
 
-      if (bgs && !stringToColor(bgs, &bg)) {
-        LOG->error(_("Unrecognized color '%s'."), bgs);
+      if (bg_string != NULL && !stringToColor(bg_string, &bg)) {
+        LOG->error(_("Unrecognized color '%s'."), bg_string);
         goto out;
       }
 
-      if (attrs && !stringToColorAttributes(attrs, &attr)) {
-        LOG->error(_("Unrecognized attributes '%s'."), attrs);
+      if (attrs_string != NULL &&
+        !stringToColorAttributes(attrs_string, &attrs)) {
+        LOG->error(_("Unrecognized attributes '%s'."), attrs_string);
         goto out;
       }
 
-      COLORSCHEME->setColorPair(name, widget, property, fg, bg, attr);
+      COLORSCHEME->setAttributes(scheme, property, subproperty, fg, bg, attrs);
     }
   }
 
@@ -955,99 +1007,128 @@ void CenterIM::loadDefaultColorSchemeConfig()
 {
   COLORSCHEME->clear();
 
-  // default colors init
-  COLORSCHEME->setColorPair("accountstatusmenu", "panel", "line",
-    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setColorPair("accountstatusmenu", "horizontalline", "line",
-    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setColorPair("accountstatusmenu", "button", "normal",
-    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+  // Inititialize default color schemes.
+  COLORSCHEME->setAttributes(SCHEME_ACCOUNTSTATUSMENU,
+    CppConsUI::ColorScheme::PANEL_LINE, CppConsUI::Curses::Color::CYAN,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_ACCOUNTSTATUSMENU,
+    CppConsUI::ColorScheme::HORIZONTALLINE_LINE, CppConsUI::Curses::Color::CYAN,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_ACCOUNTSTATUSMENU,
+    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::CYAN,
+    CppConsUI::Curses::Color::DEFAULT);
 
-  COLORSCHEME->setColorPair("buddylist", "treeview", "line",
-    CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setColorPair("buddylist", "panel", "line",
-    CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
-    CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->setColorPair("buddylist", "button", "normal",
-    CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setColorPair("buddylistgroup", "button", "normal",
-    CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLIST,
+    CppConsUI::ColorScheme::TREEVIEW_LINE, CppConsUI::Curses::Color::GREEN,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLIST,
+    CppConsUI::ColorScheme::PANEL_LINE, CppConsUI::Curses::Color::BLUE,
+    CppConsUI::Curses::Color::DEFAULT, CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLIST,
+    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::GREEN,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTGROUP,
+    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::MAGENTA,
+    CppConsUI::Curses::Color::DEFAULT);
 
-  COLORSCHEME->setColorPair("buddylistbuddy_offline", "button", "normal",
-    CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setColorPair("buddylistbuddy_online", "button", "normal",
-    CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setColorPair("buddylistbuddy_na", "button", "normal",
-    CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setColorPair("buddylistbuddy_away", "button", "normal",
-    CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTBUDDY_AWAY,
+    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::BLUE,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTBUDDY_NA,
+    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::MAGENTA,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTBUDDY_OFFLINE,
+    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::RED,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTBUDDY_ONLINE,
+    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::GREEN,
+    CppConsUI::Curses::Color::DEFAULT);
 
-  COLORSCHEME->setColorPair("buddylistcontact_offline", "button", "normal",
-    CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setColorPair("buddylistcontact_online", "button", "normal",
-    CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setColorPair("buddylistcontact_na", "button", "normal",
-    CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setColorPair("buddylistcontact_away", "button", "normal",
-    CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTCONTACT_AWAY,
+    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::BLUE,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTCONTACT_NA,
+    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::MAGENTA,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTCONTACT_OFFLINE,
+    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::RED,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_BUDDYLISTCONTACT_ONLINE,
+    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::GREEN,
+    CppConsUI::Curses::Color::DEFAULT);
 
-  COLORSCHEME->setColorPair("conversation", "textview", "text",
-    CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setColorPair("conversation", "textview", "color1",
-    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setColorPair("conversation", "textview", "color2",
-    CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setColorPair("conversation", "panel", "line",
-    CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
-    CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->setColorPair("conversation", "horizontalline", "line",
-    CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
-    CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->setColorPair("conversation", "verticalline", "line",
-    CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
-    CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->setColorPair("conversation", "textedit", "text",
-    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_CONVERSATION,
+    CppConsUI::ColorScheme::TEXTVIEW_TEXT, CppConsUI::Curses::Color::MAGENTA,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributesExt(SCHEME_CONVERSATION,
+    CppConsUI::ColorScheme::TEXTVIEW_TEXT, 1, CppConsUI::Curses::Color::CYAN,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributesExt(SCHEME_CONVERSATION,
+    CppConsUI::ColorScheme::TEXTVIEW_TEXT, 2, CppConsUI::Curses::Color::MAGENTA,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_CONVERSATION,
+    CppConsUI::ColorScheme::PANEL_LINE, CppConsUI::Curses::Color::BLUE,
+    CppConsUI::Curses::Color::DEFAULT, CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->setAttributes(SCHEME_CONVERSATION,
+    CppConsUI::ColorScheme::HORIZONTALLINE_LINE, CppConsUI::Curses::Color::BLUE,
+    CppConsUI::Curses::Color::DEFAULT, CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->setAttributes(SCHEME_CONVERSATION,
+    CppConsUI::ColorScheme::VERTICALLINE_LINE, CppConsUI::Curses::Color::BLUE,
+    CppConsUI::Curses::Color::DEFAULT, CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->setAttributes(SCHEME_CONVERSATION,
+    CppConsUI::ColorScheme::TEXTEDIT_TEXT, CppConsUI::Curses::Color::CYAN,
+    CppConsUI::Curses::Color::DEFAULT);
 
-  COLORSCHEME->setColorPair("conversation", "label", "text",
-    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setColorPair("conversation-active", "label", "text",
-    CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setColorPair("conversation-new", "label", "text",
-    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT,
-    CppConsUI::Curses::Attr::BOLD);
+  COLORSCHEME->setAttributes(SCHEME_CONVERSATION,
+    CppConsUI::ColorScheme::LABEL_TEXT, CppConsUI::Curses::Color::CYAN,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_CONVERSATION_ACTIVE,
+    CppConsUI::ColorScheme::LABEL_TEXT, CppConsUI::Curses::Color::MAGENTA,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_CONVERSATION_NEW,
+    CppConsUI::ColorScheme::LABEL_TEXT, CppConsUI::Curses::Color::CYAN,
+    CppConsUI::Curses::Color::DEFAULT, CppConsUI::Curses::Attr::BOLD);
 
-  COLORSCHEME->setColorPair("footer", "label", "text",
+  COLORSCHEME->setAttributes(SCHEME_FOOTER, CppConsUI::ColorScheme::LABEL_TEXT,
     CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
-  COLORSCHEME->setColorPair("footer", "container", "background",
+  COLORSCHEME->setAttributes(SCHEME_FOOTER,
+    CppConsUI::ColorScheme::CONTAINER_BACKGROUND,
     CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
 
-  COLORSCHEME->setColorPair("generalmenu", "panel", "line",
-    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setColorPair("generalmenu", "horizontalline", "line",
-    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setColorPair("generalmenu", "button", "normal",
-    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_GENERALMENU,
+    CppConsUI::ColorScheme::PANEL_LINE, CppConsUI::Curses::Color::CYAN,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_GENERALMENU,
+    CppConsUI::ColorScheme::HORIZONTALLINE_LINE, CppConsUI::Curses::Color::CYAN,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_GENERALMENU,
+    CppConsUI::ColorScheme::BUTTON_NORMAL, CppConsUI::Curses::Color::CYAN,
+    CppConsUI::Curses::Color::DEFAULT);
 
-  COLORSCHEME->setColorPair("generalwindow", "panel", "line",
-    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setColorPair("generalwindow", "horizontalline", "line",
-    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
-  COLORSCHEME->setColorPair("generalwindow", "verticalline", "line",
-    CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_GENERALWINDOW,
+    CppConsUI::ColorScheme::PANEL_LINE, CppConsUI::Curses::Color::CYAN,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_GENERALWINDOW,
+    CppConsUI::ColorScheme::HORIZONTALLINE_LINE, CppConsUI::Curses::Color::CYAN,
+    CppConsUI::Curses::Color::DEFAULT);
+  COLORSCHEME->setAttributes(SCHEME_GENERALWINDOW,
+    CppConsUI::ColorScheme::VERTICALLINE_LINE, CppConsUI::Curses::Color::CYAN,
+    CppConsUI::Curses::Color::DEFAULT);
 
-  COLORSCHEME->setColorPair("log", "panel", "line",
+  COLORSCHEME->setAttributes(SCHEME_LOG, CppConsUI::ColorScheme::PANEL_LINE,
     CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::DEFAULT,
     CppConsUI::Curses::Attr::BOLD);
-  COLORSCHEME->setColorPair("log", "textview", "text",
+  COLORSCHEME->setAttributes(SCHEME_LOG, CppConsUI::ColorScheme::TEXTVIEW_TEXT,
     CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::DEFAULT);
 
-  COLORSCHEME->setColorPair("header", "label", "text",
+  COLORSCHEME->setAttributes(SCHEME_HEADER, CppConsUI::ColorScheme::LABEL_TEXT,
     CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
-  COLORSCHEME->setColorPair("header", "container", "background",
+  COLORSCHEME->setAttributes(SCHEME_HEADER,
+    CppConsUI::ColorScheme::CONTAINER_BACKGROUND,
     CppConsUI::Curses::Color::BLACK, CppConsUI::Curses::Color::WHITE);
-  COLORSCHEME->setColorPair("header-request", "label", "text",
-    CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::WHITE);
+  COLORSCHEME->setAttributes(SCHEME_HEADER_REQUEST,
+    CppConsUI::ColorScheme::LABEL_TEXT, CppConsUI::Curses::Color::RED,
+    CppConsUI::Curses::Color::WHITE);
 }
 
 bool CenterIM::saveColorSchemeConfig()
@@ -1057,39 +1138,53 @@ bool CenterIM::saveColorSchemeConfig()
 
   for (CppConsUI::ColorScheme::Schemes::const_iterator si =
          COLORSCHEME->getSchemes().begin();
-       si != COLORSCHEME->getSchemes().end(); si++) {
-    xmlnode *scheme = xmlnode_new("scheme");
-    xmlnode_set_attrib(scheme, "name", si->first.c_str());
-    xmlnode_insert_child(root, scheme);
+       si != COLORSCHEME->getSchemes().end(); ++si) {
+    xmlnode *scheme_node = xmlnode_new("scheme");
+    xmlnode_set_attrib(scheme_node, "name", schemeToString(si->first));
+    xmlnode_insert_child(root, scheme_node);
 
-    for (CppConsUI::ColorScheme::Widgets::const_iterator wi =
+    for (CppConsUI::ColorScheme::Properties::const_iterator pi =
            si->second.begin();
-         wi != si->second.end(); wi++) {
-      for (CppConsUI::ColorScheme::Properties::const_iterator pi =
-             wi->second.begin();
-           pi != wi->second.end(); pi++) {
-        xmlnode *color = xmlnode_new("color");
-        xmlnode_set_attrib(color, "widget", wi->first.c_str());
-        xmlnode_set_attrib(color, "property", pi->first.c_str());
-        xmlnode_insert_child(scheme, color);
-        char *str;
+         pi != si->second.end(); ++pi) {
+      xmlnode *color_node = xmlnode_new("color");
+      xmlnode_insert_child(scheme_node, color_node);
 
-        if (pi->second.foreground != CppConsUI::Curses::Color::DEFAULT) {
-          str = colorToString(pi->second.foreground);
-          xmlnode_set_attrib(color, "foreground", str);
-          g_free(str);
-        }
+      CppConsUI::ColorScheme::PropertyPair pair = pi->first;
+      CppConsUI::ColorScheme::Color color = pi->second;
 
-        if (pi->second.background != CppConsUI::Curses::Color::DEFAULT) {
-          str = colorToString(pi->second.background);
-          xmlnode_set_attrib(color, "background", str);
-          g_free(str);
-        }
+      const char *widget_string = COLORSCHEME->propertyToWidgetName(pair.first);
+      assert(widget_string != NULL);
+      xmlnode_set_attrib(color_node, "widget", widget_string);
 
-        if ((str = colorAttributesToString(pi->second.attrs))) {
-          xmlnode_set_attrib(color, "attributes", str);
-          g_free(str);
-        }
+      char *str;
+
+      const char *property_string =
+        COLORSCHEME->propertyToPropertyName(pair.first);
+      assert(property_string != NULL);
+      if (pair.second != 0) {
+        str = g_strdup_printf("%s_%d", property_string, pair.second);
+        xmlnode_set_attrib(color_node, "property", str);
+        g_free(str);
+      }
+      else
+        xmlnode_set_attrib(color_node, "property", property_string);
+
+      if (color.foreground != CppConsUI::Curses::Color::DEFAULT) {
+        str = colorToString(color.foreground);
+        xmlnode_set_attrib(color_node, "foreground", str);
+        g_free(str);
+      }
+
+      if (color.background != CppConsUI::Curses::Color::DEFAULT) {
+        str = colorToString(color.background);
+        xmlnode_set_attrib(color_node, "background", str);
+        g_free(str);
+      }
+
+      str = colorAttributesToString(color.attrs);
+      if (str != NULL) {
+        xmlnode_set_attrib(color_node, "attributes", str);
+        g_free(str);
       }
     }
   }
@@ -1105,10 +1200,24 @@ bool CenterIM::saveColorSchemeConfig()
   return res;
 }
 
+const char *CenterIM::schemeToString(int scheme)
+{
+  assert(scheme >= 0 && scheme < SCHEME_END);
+  return scheme_names[scheme];
+}
+
+int CenterIM::stringToScheme(const char *str)
+{
+  for (int i = SCHEME_BEGIN; i < SCHEME_END; ++i)
+    if (strcmp(str, scheme_names[i]) == 0)
+      return i;
+  return 0;
+}
+
 char *CenterIM::colorToString(int color)
 {
-  if (color >= -1 && color < static_cast<int>(G_N_ELEMENTS(named_colors) - 1))
-    return g_strdup(named_colors[color + 1]);
+  if (color >= -1 && color < static_cast<int>(G_N_ELEMENTS(color_names) - 1))
+    return g_strdup(color_names[color + 1]);
   return g_strdup_printf("%d", color);
 }
 
@@ -1129,8 +1238,8 @@ bool CenterIM::stringToColor(const char *str, int *color)
   }
 
   // symbolic colors
-  for (int i = -1; i < static_cast<int>(G_N_ELEMENTS(named_colors) - 1); i++)
-    if (!strcmp(str, named_colors[i + 1])) {
+  for (int i = -1; i < static_cast<int>(G_N_ELEMENTS(color_names) - 1); i++)
+    if (!strcmp(str, color_names[i + 1])) {
       *color = i;
       return true;
     }

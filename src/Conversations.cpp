@@ -97,7 +97,7 @@ void Conversations::setExpandedConversations(bool expanded)
 Conversations::Conversations()
   : Window(0, 0, 80, 1, TYPE_NON_FOCUSABLE, false), active(-1)
 {
-  setColorScheme("conversation");
+  setColorScheme(CenterIM::SCHEME_CONVERSATION);
 
   outer_list = new CppConsUI::HorizontalListBox(AUTOSIZE, 1);
   addWidget(*outer_list, 0, 0);
@@ -236,13 +236,14 @@ void Conversations::activateConversation(int i)
   if (i != -1) {
     // show a new active conversation
     conversations[i].label->setVisibility(true);
-    conversations[i].label->setColorScheme("conversation-active");
+    conversations[i].label->setColorScheme(
+      CenterIM::SCHEME_CONVERSATION_ACTIVE);
     conversations[i].conv->show();
   }
 
   // hide old active conversation if there is any
   if (active != -1) {
-    conversations[active].label->setColorScheme(NULL);
+    conversations[active].label->setColorScheme(0);
     conversations[active].conv->hide();
   }
 
@@ -347,7 +348,7 @@ void Conversations::write_conv(PurpleConversation *conv, const char *name,
     return;
 
   if (i != active)
-    conversations[i].label->setColorScheme("conversation-new");
+    conversations[i].label->setColorScheme(CenterIM::SCHEME_CONVERSATION_NEW);
 
   // delegate it to Conversation object
   conversations[i].conv->write(name, alias, message, flags, mtime);

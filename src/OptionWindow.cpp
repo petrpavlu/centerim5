@@ -28,7 +28,7 @@
 
 OptionWindow::OptionWindow() : SplitDialog(0, 0, 80, 24, _("Config options"))
 {
-  setColorScheme("generalwindow");
+  setColorScheme(CenterIM::SCHEME_GENERALWINDOW);
 
   CppConsUI::TreeView *treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
   setContainer(*treeview);

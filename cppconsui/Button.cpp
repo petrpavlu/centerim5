@@ -28,6 +28,8 @@
 
 #include "Button.h"
 
+#include "ColorScheme.h"
+
 #include <cassert>
 #include <cstdio>
 #include <cstring>
@@ -100,70 +102,72 @@ Button::~Button()
   delete[] right;
 }
 
-void Button::draw(Curses::ViewPort area)
+int Button::draw(Curses::ViewPort area, Error &error)
 {
-  assert(text);
-  assert(value);
-  assert(unit);
-  assert(right);
+  assert(text != NULL);
+  assert(value != NULL);
+  assert(unit != NULL);
+  assert(right != NULL);
 
   int attrs;
-  if (has_focus)
-    attrs = getColorPair("button", "focus") | Curses::Attr::REVERSE;
+  if (has_focus) {
+    DRAW(getAttributes(ColorScheme::BUTTON_FOCUS, &attrs, error));
+    attrs |= Curses::Attr::REVERSE;
+  }
   else
-    attrs = getColorPair("button", "normal");
-  area.attrOn(attrs);
+    DRAW(getAttributes(ColorScheme::BUTTON_NORMAL, &attrs, error));
+  DRAW(area.attrOn(attrs, error));
 
-  // print text
-  area.fill(attrs, 0, 0, text_width, real_height);
+  // Print text.
+  DRAW(area.fill(attrs, 0, 0, text_width, real_height, error));
   int y = 0;
   const char *start, *end;
   start = end = text;
-  while (*end) {
+  while (*end != '\0') {
     if (*end == '\n') {
-      area.addString(0, y, real_width, start, end);
+      DRAW(area.addString(0, y, real_width, start, end, error));
       ++y;
       start = end + 1;
     }
     ++end;
   }
-  area.addString(0, y, real_width, start, end);
+  DRAW(area.addString(0, y, real_width, start, end, error));
 
   int l = text_width;
   int h = (text_height - 1) / 2;
   int printed;
 
-  // print value
+  // Print value.
   if (flags & FLAG_VALUE) {
-    area.fill(attrs, l, 0, value_width + 2, real_height);
-    area.addString(l, h, real_width - l, ": ", &printed);
+    DRAW(area.fill(attrs, l, 0, value_width + 2, real_height, error));
+    DRAW(area.addString(l, h, real_width - l, ": ", error, &printed));
     l += printed;
 
     if (masked) {
       int count = value_width;
       while (count--) {
-        area.addString(l, h, real_width - l, "*", &printed);
+        DRAW(area.addString(l, h, real_width - l, "*", error, &printed));
         l += printed;
       }
     }
     else {
-      area.addString(l, h, real_width - l, value, &printed);
+      DRAW(area.addString(l, h, real_width - l, value, error, &printed));
       l += printed;
     }
   }
 
-  // print unit text
+  // Print unit text.
   if (flags & FLAG_UNIT) {
-    area.fill(attrs, l, 0, unit_width + 1, real_height);
-    area.addString(l, h, real_width - l, " ", &printed);
+    DRAW(area.fill(attrs, l, 0, unit_width + 1, real_height, error));
+    DRAW(area.addString(l, h, real_width - l, " ", error, &printed));
     l += printed;
-    area.addString(l, h, real_width - l, unit, &printed);
+    DRAW(area.addString(l, h, real_width - l, unit, error, &printed));
     l += printed;
   }
 
-  area.attrOff(attrs);
+  DRAW(area.attrOff(attrs, error));
 
-  // print right area text
+  // Print right area text.
   if (flags & FLAG_RIGHT) {
     const char *cur = right;
     int width = right_width;
@@ -171,8 +175,10 @@ void Button::draw(Curses::ViewPort area)
       width -= Curses::onScreenWidth(UTF8::getUniChar(cur));
       cur = UTF8::getNextChar(cur);
     }
-    area.addString(real_width - width, h, cur);
+    DRAW(area.addString(real_width - width, h, cur, error));
   }
+
+  return 0;
 }
 
 void Button::setFlags(int new_flags)

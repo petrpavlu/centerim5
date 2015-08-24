@@ -39,7 +39,7 @@ Request::RequestDialog::RequestDialog(const char *title, const char *primary,
   const char *cancel_text, GCallback cancel_cb, void *user_data)
   : SplitDialog(title), ok_cb(ok_cb), cancel_cb(cancel_cb), user_data(user_data)
 {
-  setColorScheme("generalwindow");
+  setColorScheme(CenterIM::SCHEME_GENERALWINDOW);
 
   lbox = new CppConsUI::ListBox(AUTOSIZE, AUTOSIZE);
   if (primary)

@@ -92,7 +92,7 @@ error_cleanup:
   return error.getCode();
 }
 
-int CoreManager::finalizeInput(Error &error)
+int CoreManager::finalizeInput(Error & /*error*/)
 {
   assert(tk != NULL);
   assert(stdin_input_handle != 0);
@@ -133,10 +133,6 @@ int CoreManager::finalizeOutput(Error &error)
   windows_copy = windows;
   for (Windows::iterator i = windows_copy.begin(); i != windows_copy.end(); i++)
     delete *i;
-
-  // Clear the screen.
-  Curses::clear();
-  Curses::refresh();
 
   return Curses::finalizeScreen(error);
 }
@@ -408,22 +404,25 @@ void CoreManager::signalHandler(int signum)
 
 void CoreManager::resize()
 {
+  /// @todo Implement correct error reporting when resize() fails.
+
   resize_pending = false;
 
   struct winsize size;
   if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &size) >= 0) {
-    Curses::resizeTerm(size.ws_col, size.ws_row);
+    Error error;
+    Curses::resizeTerm(size.ws_col, size.ws_row, error);
 
-    // make sure everything is redrawn from the scratch
-    Curses::clear();
+    // Make sure everything is redrawn from the scratch.
+    Curses::clear(error);
   }
 
-  // signal the resize event
+  // Signal the resize event.
   signal_resize();
   for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
     (*i)->onScreenResized();
 
-  // update area
+  // Update area.
   updateArea();
 
   redraw();
@@ -470,14 +469,16 @@ void CoreManager::updateWindowArea(Window &window)
 bool CoreManager::draw_(void *data)
 {
   CoreManager *instance = static_cast<CoreManager *>(data);
-  instance->draw();
+  /// @todo Implement correct reporting when draw() fails.
+  Error error;
+  instance->draw(error);
   return false;
 }
 
-void CoreManager::draw()
+int CoreManager::draw(Error &error)
 {
   if (!redraw_pending)
-    return;
+    return 0;
 
 #if defined(DEBUG) && 0
   struct timespec ts = {0, 0};
@@ -486,23 +487,23 @@ void CoreManager::draw()
   Curses::resetStats();
 #endif // DEBUG
 
-  Curses::erase();
+  DRAW(Curses::erase(error));
 
-  // non-focusable -> normal -> top
+  // Non-focusable -> normal -> top.
   for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
     if ((*i)->isVisible() && (*i)->getType() == Window::TYPE_NON_FOCUSABLE)
-      drawWindow(**i);
+      DRAW(drawWindow(**i, error));
 
   for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
     if ((*i)->isVisible() && (*i)->getType() == Window::TYPE_NORMAL)
-      drawWindow(**i);
+      DRAW(drawWindow(**i, error));
 
   for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
     if ((*i)->isVisible() && (*i)->getType() == Window::TYPE_TOP)
-      drawWindow(**i);
+      DRAW(drawWindow(**i, error));
 
-  // copy virtual ncurses screen to the physical screen
-  Curses::refresh();
+  // Copy virtual ncurses screen to the physical screen.
+  DRAW(Curses::refresh(error));
 
 #if defined(DEBUG) && 0
   const Curses::Stats *stats = Curses::getStats();
@@ -521,9 +522,11 @@ void CoreManager::draw()
 #endif // DEBUG
 
   redraw_pending = false;
+
+  return 0;
 }
 
-void CoreManager::drawWindow(Window &window)
+int CoreManager::drawWindow(Window &window, Error &error)
 {
   int screen_width = Curses::getWidth();
   int screen_height = Curses::getHeight();
@@ -566,7 +569,7 @@ void CoreManager::drawWindow(Window &window)
   }
   Curses::ViewPort window_area(window_x, window_y, window_view_x, window_view_y,
     window_view_width, window_view_height);
-  window.draw(window_area);
+  return window.draw(window_area, error);
 }
 
 CoreManager::Windows::iterator CoreManager::findWindow(Window &window)
@@ -614,8 +617,11 @@ void CoreManager::focusWindow()
 
 void CoreManager::redrawScreen()
 {
-  // make sure everything is redrawn from the scratch
-  Curses::clear();
+  /// @todo Implement correct error handling when clear() fails.
+
+  // Make sure everything is redrawn from the scratch.
+  Error error;
+  Curses::clear(error);
 
   redraw();
 }

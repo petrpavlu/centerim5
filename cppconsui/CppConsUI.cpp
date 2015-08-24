@@ -65,6 +65,8 @@ Error &Error::operator=(const Error &other)
   error_code = other.error_code;
   delete[] error_string;
   error_string = new_string;
+
+  return *this;
 }
 
 Error::~Error()

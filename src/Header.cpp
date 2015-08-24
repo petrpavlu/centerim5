@@ -40,7 +40,7 @@ void Header::onScreenResized()
 
 Header::Header() : Window(0, 0, 80, 1, TYPE_NON_FOCUSABLE, false)
 {
-  setColorScheme("header");
+  setColorScheme(CenterIM::SCHEME_HEADER);
 
   container = new CppConsUI::HorizontalListBox(AUTOSIZE, AUTOSIZE);
   addWidget(*container, 0, 0);
@@ -52,7 +52,7 @@ Header::Header() : Window(0, 0, 80, 1, TYPE_NON_FOCUSABLE, false)
 
   // pending request indicator
   request_indicator = new CppConsUI::Label(0, 1, "");
-  request_indicator->setColorScheme("header-request");
+  request_indicator->setColorScheme(CenterIM::SCHEME_HEADER_REQUEST);
   container->appendWidget(*request_indicator);
 
   for (GList *i = purple_accounts_get_all(); i; i = i->next) {

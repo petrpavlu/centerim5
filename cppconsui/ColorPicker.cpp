@@ -100,13 +100,17 @@ ColorPicker::Sample::Sample(int w, int fg, int bg) : Widget(w, 1), c(fg, bg)
 {
 }
 
-void ColorPicker::Sample::draw(Curses::ViewPort area)
+int ColorPicker::Sample::draw(Curses::ViewPort area, Error &error)
 {
-  int colorpair = COLORSCHEME->getColorPair(c);
+  int attrs;
+  if (COLORSCHEME->getColorPair(c, &attrs, error) != 0)
+    return error.getCode();
 
-  area.attrOn(colorpair);
-  area.addString(1, 0, _(" SAMPLE "));
-  area.attrOff(colorpair);
+  DRAW(area.attrOn(attrs, error));
+  DRAW(area.addString(1, 0, _(" SAMPLE "), error));
+  DRAW(area.attrOff(attrs, error));
+
+  return 0;
 }
 
 void ColorPicker::Sample::setColors(int fg, int bg)

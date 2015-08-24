@@ -43,7 +43,7 @@ public:
   virtual ~Label();
 
   // Widget
-  virtual void draw(Curses::ViewPort area);
+  virtual int draw(Curses::ViewPort area, Error &error);
 
   /**
    * Sets a new label text and redraws the widget.

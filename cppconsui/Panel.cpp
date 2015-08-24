@@ -28,6 +28,8 @@
 
 #include "Panel.h"
 
+#include "ColorScheme.h"
+
 #include <algorithm>
 #include <cstring>
 
@@ -44,58 +46,61 @@ Panel::~Panel()
   delete[] title;
 }
 
-void Panel::draw(Curses::ViewPort area)
+int Panel::draw(Curses::ViewPort area, Error &error)
 {
   int attrs, i;
 
-  // calc title width
+  // Calculate title width.
   int draw_title_width = 0;
   if (real_width > 4)
     draw_title_width = real_width - 4;
   draw_title_width = std::min(draw_title_width, title_width);
 
-  // calc horizontal line length (one segment width)
+  // Calculate horizontal line length (one segment width).
   int hline_len = 0;
   int extra = draw_title_width ? 4 : 2;
   if (real_width > draw_title_width + extra)
     hline_len = (real_width - draw_title_width - extra) / 2;
 
   if (draw_title_width) {
-    // draw title
-    attrs = getColorPair("panel", "title");
-    area.attrOn(attrs);
-    area.addString(2 + hline_len, 0, draw_title_width, title);
-    area.attrOff(attrs);
+    // Draw title.
+    DRAW(getAttributes(ColorScheme::PANEL_TITLE, &attrs, error));
+    DRAW(area.attrOn(attrs, error));
+    DRAW(area.addString(2 + hline_len, 0, draw_title_width, title, error));
+    DRAW(area.attrOff(attrs, error));
   }
 
-  // draw lines
-  attrs = getColorPair("panel", "line");
-  area.attrOn(attrs);
+  // Draw lines.
+  DRAW(getAttributes(ColorScheme::PANEL_LINE, &attrs, error));
+  DRAW(area.attrOn(attrs, error));
 
-  // draw top horizontal line
-  for (i = 1; i < 1 + hline_len; i++)
-    area.addLineChar(i, 0, Curses::LINE_HLINE);
+  // Draw top horizontal line.
+  for (i = 1; i < 1 + hline_len; ++i)
+    DRAW(area.addLineChar(i, 0, Curses::LINE_HLINE, error));
   for (i = 1 + hline_len + extra - 2 + draw_title_width; i < real_width - 1;
-       i++)
-    area.addLineChar(i, 0, Curses::LINE_HLINE);
+       ++i)
+    DRAW(area.addLineChar(i, 0, Curses::LINE_HLINE, error));
 
-  // draw bottom horizontal line
-  for (i = 1; i < real_width - 1; i++)
-    area.addLineChar(i, real_height - 1, Curses::LINE_HLINE);
+  // Draw bottom horizontal line.
+  for (i = 1; i < real_width - 1; ++i)
+    DRAW(area.addLineChar(i, real_height - 1, Curses::LINE_HLINE, error));
 
-  // draw left and right vertical line
-  for (i = 1; i < real_height - 1; i++)
-    area.addLineChar(0, i, Curses::LINE_VLINE);
-  for (i = 1; i < real_height - 1; i++)
-    area.addLineChar(real_width - 1, i, Curses::LINE_VLINE);
+  // Draw left and right vertical line.
+  for (i = 1; i < real_height - 1; ++i)
+    DRAW(area.addLineChar(0, i, Curses::LINE_VLINE, error));
+  for (i = 1; i < real_height - 1; ++i)
+    DRAW(area.addLineChar(real_width - 1, i, Curses::LINE_VLINE, error));
 
-  // draw corners
-  area.addLineChar(0, 0, Curses::LINE_ULCORNER);
-  area.addLineChar(real_width - 1, 0, Curses::LINE_URCORNER);
-  area.addLineChar(0, real_height - 1, Curses::LINE_LLCORNER);
-  area.addLineChar(real_width - 1, real_height - 1, Curses::LINE_LRCORNER);
+  // Draw corners.
+  DRAW(area.addLineChar(0, 0, Curses::LINE_ULCORNER, error));
+  DRAW(area.addLineChar(real_width - 1, 0, Curses::LINE_URCORNER, error));
+  DRAW(area.addLineChar(0, real_height - 1, Curses::LINE_LLCORNER, error));
+  DRAW(area.addLineChar(
+    real_width - 1, real_height - 1, Curses::LINE_LRCORNER, error));
 
-  area.attrOff(attrs);
+  DRAW(area.attrOff(attrs, error));
+
+  return 0;
 }
 
 void Panel::setTitle(const char *new_title)

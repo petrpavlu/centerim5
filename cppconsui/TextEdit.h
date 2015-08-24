@@ -49,7 +49,7 @@ public:
   virtual bool processInputText(const TermKeyKey &key);
 
   // Widget
-  virtual void draw(Curses::ViewPort area);
+  virtual int draw(Curses::ViewPort area, Error &error);
 
   /**
    * Sets new text.

@@ -51,6 +51,36 @@ public:
     AREAS_NUM
   };
 
+  // Color schemes. Keep synchronized with scheme_names.
+  enum Scheme {
+    SCHEME_BEGIN = 1,
+    SCHEME_ACCOUNTSTATUSMENU = SCHEME_BEGIN,
+    SCHEME_BUDDYLIST,
+    SCHEME_BUDDYLISTBUDDY,
+    SCHEME_BUDDYLISTBUDDY_AWAY,
+    SCHEME_BUDDYLISTBUDDY_NA,
+    SCHEME_BUDDYLISTBUDDY_OFFLINE,
+    SCHEME_BUDDYLISTBUDDY_ONLINE,
+    SCHEME_BUDDYLISTCHAT,
+    SCHEME_BUDDYLISTCONTACT,
+    SCHEME_BUDDYLISTCONTACT_AWAY,
+    SCHEME_BUDDYLISTCONTACT_NA,
+    SCHEME_BUDDYLISTCONTACT_OFFLINE,
+    SCHEME_BUDDYLISTCONTACT_ONLINE,
+    SCHEME_BUDDYLISTGROUP,
+    SCHEME_CONVERSATION,
+    SCHEME_CONVERSATION_ACTIVE,
+    SCHEME_CONVERSATION_NEW,
+    SCHEME_FOOTER,
+    SCHEME_GENERALMENU,
+    SCHEME_GENERALWINDOW,
+    SCHEME_HEADER,
+    SCHEME_HEADER_REQUEST,
+    SCHEME_LOG,
+
+    SCHEME_END,
+  };
+
   static CenterIM *instance();
 
   // InputProcessor
@@ -113,7 +143,8 @@ private:
 
   CppConsUI::Rect areas[AREAS_NUM];
 
-  static const char *named_colors[];
+  static const char *color_names[];
+  static const char *scheme_names[];
 
   static CenterIM *my_instance;
 
@@ -199,9 +230,11 @@ private:
   void idle_reporting_change(
     const char *name, PurplePrefType type, gconstpointer val);
 
-  // config handling
+  // Config handling.
   void loadDefaultColorSchemeConfig();
   bool saveColorSchemeConfig();
+  const char *schemeToString(int scheme);
+  int stringToScheme(const char *str);
   char *colorToString(int color);
   bool stringToColor(const char *str, int *color);
   char *colorAttributesToString(int attrs);

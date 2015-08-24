@@ -28,22 +28,29 @@
 
 #include "VerticalLine.h"
 
+#include "ColorScheme.h"
+
 namespace CppConsUI {
 
 VerticalLine::VerticalLine(int h) : AbstractLine(1, h)
 {
 }
 
-void VerticalLine::draw(Curses::ViewPort area)
+int VerticalLine::draw(Curses::ViewPort area, Error &error)
 {
   if (real_height == 0 || real_width != 1)
-    return;
+    return 0;
 
-  int attrs = getColorPair("verticalline", "line");
-  area.attrOn(attrs);
+  int attrs;
+  DRAW(getAttributes(ColorScheme::VERTICALLINE_LINE, &attrs, error));
+  DRAW(area.attrOn(attrs, error));
+
   for (int i = 0; i < real_height; i++)
-    area.addLineChar(0, i, Curses::LINE_VLINE);
-  area.attrOff(attrs);
+    DRAW(area.addLineChar(0, i, Curses::LINE_VLINE, error));
+
+  DRAW(area.attrOff(attrs, error));
+
+  return 0;
 }
 
 } // namespace CppConsUI

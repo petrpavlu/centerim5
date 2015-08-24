@@ -40,8 +40,7 @@ Widget::Widget(int w, int h)
   : xpos(UNSETPOS), ypos(UNSETPOS), width(w), height(h), wish_width(AUTOSIZE),
     wish_height(AUTOSIZE), real_xpos(UNSETPOS), real_ypos(UNSETPOS),
     real_width(0), real_height(0), can_focus(false), has_focus(false),
-    visible(true), parent(NULL), color_scheme(NULL),
-    absolute_position_listeners(0)
+    visible(true), parent(NULL), color_scheme(0), absolute_position_listeners(0)
 {
 }
 
@@ -51,8 +50,6 @@ Widget::~Widget()
 
   if (parent && absolute_position_listeners.size() > 0)
     parent->unregisterAbsolutePositionListener(*this);
-
-  delete[] color_scheme;
 }
 
 void Widget::moveResize(int newx, int newy, int neww, int newh)
@@ -261,29 +258,23 @@ void Widget::setRealSize(int neww, int newh)
   updateArea();
 }
 
-void Widget::setColorScheme(const char *new_color_scheme)
+void Widget::setColorScheme(int new_color_scheme)
 {
-  delete[] color_scheme;
+  if (new_color_scheme == color_scheme)
+    return;
 
-  if (new_color_scheme) {
-    size_t size = std::strlen(new_color_scheme) + 1;
-    color_scheme = new char[size];
-    std::strcpy(color_scheme, new_color_scheme);
-  }
-  else
-    color_scheme = NULL;
-
+  color_scheme = new_color_scheme;
   redraw();
 }
 
-const char *Widget::getColorScheme() const
+int Widget::getColorScheme() const
 {
-  if (color_scheme)
+  if (color_scheme != 0)
     return color_scheme;
-  else if (parent)
+  else if (parent != NULL)
     return parent->getColorScheme();
 
-  return NULL;
+  return 0;
 }
 
 void Widget::registerAbsolutePositionListener(Widget &widget)
@@ -374,9 +365,16 @@ void Widget::setWishSize(int neww, int newh)
   signalWishSizeChange(oldsize, newsize);
 }
 
-int Widget::getColorPair(const char *widget, const char *property) const
+int Widget::getAttributes(int property, int *attrs, Error &error) const
 {
-  return COLORSCHEME->getColorPair(getColorScheme(), widget, property);
+  return getAttributes(property, 0, attrs, error);
+}
+
+int Widget::getAttributes(
+  int property, int subproperty, int *attrs, Error &error) const
+{
+  return COLORSCHEME->getAttributes(
+    getColorScheme(), property, subproperty, attrs, error);
 }
 
 Container *Widget::getTopContainer()

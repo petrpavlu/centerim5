@@ -94,31 +94,36 @@ void ColorPickerComboBox::setColor(int new_color)
 #endif // COLORPICKER_256COLOR
 }
 
-void ColorPickerComboBox::draw(Curses::ViewPort area)
+int ColorPickerComboBox::draw(Curses::ViewPort area, Error &error)
 {
-  int button_colorpair;
-  if (has_focus)
-    button_colorpair = getColorPair("button", "focus") | Curses::Attr::REVERSE;
+  int attrs;
+  if (has_focus) {
+    DRAW(getAttributes(ColorScheme::BUTTON_FOCUS, &attrs, error));
+    attrs |= Curses::Attr::REVERSE;
+  }
   else
-    button_colorpair = getColorPair("button", "normal");
+    DRAW(getAttributes(ColorScheme::BUTTON_NORMAL, &attrs, error));
 
   int color = selected_color;
 
-  area.attrOn(button_colorpair);
-  area.fill(button_colorpair, 0, 0, real_width, 1);
-  area.addChar(0, 0, '[');
-  area.addChar(real_width - 1, 0, ']');
-  area.attrOff(button_colorpair);
+  DRAW(area.attrOn(attrs, error));
+  DRAW(area.fill(attrs, 0, 0, real_width, 1, error));
+  DRAW(area.addChar(0, 0, '[', error));
+  DRAW(area.addChar(real_width - 1, 0, ']', error));
+  DRAW(area.attrOff(attrs, error));
 
   if (selected_color == Curses::Color::DEFAULT)
-    area.addString(1, 0, _("DEFAULT"));
+    DRAW(area.addString(1, 0, _("DEFAULT"), error));
   else {
     ColorScheme::Color c(Curses::Color::DEFAULT, color);
-    int colorpair = COLORSCHEME->getColorPair(c);
-    area.attrOn(colorpair);
-    area.fill(colorpair, 1, 0, real_width - 2, 1);
-    area.attrOff(colorpair);
+    int colorpair;
+    DRAW(COLORSCHEME->getColorPair(c, &colorpair, error));
+    DRAW(area.attrOn(colorpair, error));
+    DRAW(area.fill(colorpair, 1, 0, real_width - 2, 1, error));
+    DRAW(area.attrOff(colorpair, error));
   }
+
+  return 0;
 }
 
 void ColorPickerComboBox::onDropDown(Button & /*activator*/)
@@ -206,29 +211,34 @@ ColorPickerComboBox::ColorButton::ColorButton(int color_)
 {
 }
 
-void ColorPickerComboBox::ColorButton::draw(Curses::ViewPort area)
+int ColorPickerComboBox::ColorButton::draw(Curses::ViewPort area, Error &error)
 {
-  int button_colorpair;
-  if (has_focus)
-    button_colorpair = getColorPair("button", "focus") | Curses::Attr::REVERSE;
+  int attrs;
+  if (has_focus) {
+    DRAW(getAttributes(ColorScheme::BUTTON_FOCUS, &attrs, error));
+    attrs |= Curses::Attr::REVERSE;
+  }
   else
-    button_colorpair = getColorPair("button", "normal");
+    DRAW(getAttributes(ColorScheme::BUTTON_NORMAL, &attrs, error));
 
-  area.attrOn(button_colorpair);
-  area.fill(button_colorpair, 0, 0, real_width, 1);
-  area.addChar(0, 0, '[');
-  area.addChar(real_width - 1, 0, ']');
-  area.attrOff(button_colorpair);
+  DRAW(area.attrOn(attrs, error));
+  DRAW(area.fill(attrs, 0, 0, real_width, 1, error));
+  DRAW(area.addChar(0, 0, '[', error));
+  DRAW(area.addChar(real_width - 1, 0, ']', error));
+  DRAW(area.attrOff(attrs, error));
 
   if (color == Curses::Color::DEFAULT)
-    area.addString(1, 0, _("DEFAULT "));
+    DRAW(area.addString(1, 0, _("DEFAULT "), error));
   else {
     ColorScheme::Color c(Curses::Color::DEFAULT, color);
-    int colorpair = COLORSCHEME->getColorPair(c);
-    area.attrOn(colorpair);
-    area.fill(colorpair, 1, 0, real_width - 2, 1);
-    area.attrOff(colorpair);
+    int colorpair;
+    DRAW(COLORSCHEME->getColorPair(c, &colorpair, error));
+    DRAW(area.attrOn(colorpair, error));
+    DRAW(area.fill(colorpair, 1, 0, real_width - 2, 1, error));
+    DRAW(area.attrOff(colorpair, error));
   }
+
+  return 0;
 }
 
 } // namespace CppConsUI

@@ -130,8 +130,8 @@ private:
   void updateWindowArea(Window &window);
 
   static bool draw_(void *data);
-  void draw();
-  void drawWindow(Window &window);
+  int draw(Error &error);
+  int drawWindow(Window &window, Error &error);
 
   Windows::iterator findWindow(Window &window);
   void focusWindow();

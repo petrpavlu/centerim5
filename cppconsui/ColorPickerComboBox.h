@@ -44,7 +44,7 @@ public:
   virtual ~ColorPickerComboBox();
 
   // Widget
-  virtual void draw(Curses::ViewPort area);
+  virtual int draw(Curses::ViewPort area, Error &error);
 
   virtual void setColor(int new_color);
   virtual int getColor() { return selected_color; }
@@ -58,7 +58,7 @@ protected:
     virtual ~ColorButton() {}
 
     // Widget
-    virtual void draw(Curses::ViewPort area);
+    virtual int draw(Curses::ViewPort area, Error &error);
 
   protected:
     int color;

@@ -43,7 +43,7 @@ public:
   virtual ~TextView();
 
   // Widget
-  virtual void draw(Curses::ViewPort area);
+  virtual int draw(Curses::ViewPort area, Error &error);
 
   /**
    * Appends text after the last line.

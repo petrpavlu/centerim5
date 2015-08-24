@@ -52,7 +52,7 @@ public:
   {
     moveResize(rect.x, rect.y, rect.width, rect.height);
   }
-  virtual void draw(Curses::ViewPort area);
+  virtual int draw(Curses::ViewPort area, Error &error);
   virtual void setVisibility(bool visible);
   virtual bool isVisibleRecursive() const { return isVisible(); }
   virtual Point getAbsolutePosition();

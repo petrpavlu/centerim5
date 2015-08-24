@@ -21,6 +21,8 @@
 
 #include "TreeView.h"
 
+#include "ColorScheme.h"
+
 #include <cassert>
 
 namespace CppConsUI {
@@ -68,11 +70,18 @@ TreeView::~TreeView()
   clear();
 }
 
-void TreeView::draw(Curses::ViewPort area)
+int TreeView::draw(Curses::ViewPort area, Error &error)
 {
   area.scroll(scroll_xpos, scroll_ypos);
-  area.fill(getColorPair("container", "background"));
-  drawNode(thetree.begin(), area);
+
+  int attrs;
+  DRAW(getAttributes(ColorScheme::CONTAINER_BACKGROUND, &attrs, error));
+  DRAW(area.fill(attrs, error));
+
+  int height;
+  DRAW(drawNode(thetree.begin(), &height, area, error));
+
+  return 0;
 }
 
 void TreeView::cleanFocus()
@@ -426,41 +435,46 @@ void TreeView::updateArea()
   updateScroll();
 }
 
-int TreeView::drawNode(SiblingIterator node, Curses::ViewPort &area)
+int TreeView::drawNode(
+  SiblingIterator node, int *out_height, Curses::ViewPort &area, Error &error)
 {
-  int top = 0, height = 0;
+  assert(out_height != NULL);
 
-  // draw the node Widget first
+  int top = 0;
+  *out_height = 0;
+
+  // Draw the node Widget first.
   if (node->widget) {
     if (!node->widget->isVisible())
       return 0;
 
-    drawChild(*node->widget, area);
+    DRAW(drawChild(*node->widget, area, error));
 
     top = node->widget->getRealTop();
     int h = node->widget->getRealHeight();
     assert(h != AUTOSIZE);
-    height += h;
+    *out_height += h;
   }
 
-  // if the node is collapsed or not openable then everything is done
+  // If the node is collapsed or not openable then everything is done.
   if (node->collapsed || !isNodeOpenable(node))
-    return height;
+    return 0;
 
   int depthoffset = thetree.depth(node) * 2;
   SiblingIterator i;
   int j;
 
-  int attrs = getColorPair("treeview", "line");
-  area.attrOn(attrs);
+  int attrs;
+  DRAW(getAttributes(ColorScheme::TREEVIEW_LINE, &attrs, error));
+  DRAW(area.attrOn(attrs, error));
 
-  for (j = top + 1; j < top + height; j++)
-    area.addLineChar(depthoffset, j, Curses::LINE_VLINE);
+  for (j = 1; j < *out_height; ++j)
+    DRAW(area.addLineChar(depthoffset, top + j, Curses::LINE_VLINE, error));
 
-  /* Note: it would be better to start from end towards begin but for some
-   * reason it doesn't seem to work. */
+  // Note: It would be better to start from the end towards the beginning but
+  // for some reason it does not seem to work.
   SiblingIterator last = node.begin();
-  for (i = node.begin(); i != node.end(); i++) {
+  for (i = node.begin(); i != node.end(); ++i) {
     if (!i->widget)
       continue;
 
@@ -473,32 +487,37 @@ int TreeView::drawNode(SiblingIterator node, Curses::ViewPort &area)
       last = i;
   }
   SiblingIterator end = last;
-  end++;
-  for (i = node.begin(); i != end; i++) {
+  ++end;
+  for (i = node.begin(); i != end; ++i) {
     if (i != last)
-      area.addLineChar(depthoffset, top + height, Curses::LINE_LTEE);
+      DRAW(area.addLineChar(
+        depthoffset, top + *out_height, Curses::LINE_LTEE, error));
     else
-      area.addLineChar(depthoffset, top + height, Curses::LINE_LLCORNER);
+      DRAW(area.addLineChar(
+        depthoffset, top + *out_height, Curses::LINE_LLCORNER, error));
 
     if (i->style == STYLE_NORMAL && isNodeOpenable(i)) {
       const char *c = i->collapsed ? "[+]" : "[-]";
-      area.addString(depthoffset + 1, top + height, c);
+      DRAW(area.addString(depthoffset + 1, top + *out_height, c, error));
     }
     else
-      area.addLineChar(depthoffset + 1, top + height, Curses::LINE_HLINE);
+      DRAW(area.addLineChar(
+        depthoffset + 1, top + *out_height, Curses::LINE_HLINE, error));
 
-    area.attrOff(attrs);
-    int oldh = height;
-    height += drawNode(i, area);
-    area.attrOn(attrs);
+    DRAW(area.attrOff(attrs, error));
+    int oldh = *out_height;
+    int child_height;
+    DRAW(drawNode(i, &child_height, area, error));
+    *out_height += child_height;
+    DRAW(area.attrOn(attrs, error));
 
     if (i != last)
-      for (j = top + oldh + 1; j < top + height; j++)
-        area.addLineChar(depthoffset, j, Curses::LINE_VLINE);
+      for (j = oldh + 1; j < *out_height; ++j)
+        DRAW(area.addLineChar(depthoffset, top + j, Curses::LINE_VLINE, error));
   }
-  area.attrOff(attrs);
+  DRAW(area.attrOff(attrs, error));
 
-  return height;
+  return 0;
 }
 
 TreeView::TreeNode TreeView::addNode(Widget &widget)

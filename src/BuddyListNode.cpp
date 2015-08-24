@@ -347,6 +347,45 @@ int BuddyListNode::getBuddyStatusWeight(PurpleBuddy *buddy) const
   }
 }
 
+int BuddyListNode::getColorSchemeByBuddy(int base_scheme, PurpleBuddy *buddy)
+{
+  g_assert(base_scheme == CenterIM::SCHEME_BUDDYLISTBUDDY ||
+    base_scheme == CenterIM::SCHEME_BUDDYLISTCONTACT);
+
+  bool scheme_buddy = (base_scheme == CenterIM::SCHEME_BUDDYLISTBUDDY);
+
+  if (!purple_account_is_connected(purple_buddy_get_account(buddy)))
+    return scheme_buddy ? CenterIM::SCHEME_BUDDYLISTBUDDY_OFFLINE
+                        : CenterIM::SCHEME_BUDDYLISTCONTACT_OFFLINE;
+
+  PurplePresence *presence = purple_buddy_get_presence(buddy);
+  PurpleStatus *status = purple_presence_get_active_status(presence);
+  PurpleStatusType *status_type = purple_status_get_type(status);
+  PurpleStatusPrimitive prim = purple_status_type_get_primitive(status_type);
+
+  switch (prim) {
+  case PURPLE_STATUS_UNSET:
+  case PURPLE_STATUS_OFFLINE:
+  default:
+    return scheme_buddy ? CenterIM::SCHEME_BUDDYLISTBUDDY_OFFLINE
+                        : CenterIM::SCHEME_BUDDYLISTCONTACT_OFFLINE;
+  case PURPLE_STATUS_AVAILABLE:
+  case PURPLE_STATUS_MOBILE:
+  case PURPLE_STATUS_TUNE:
+  case PURPLE_STATUS_MOOD:
+    return scheme_buddy ? CenterIM::SCHEME_BUDDYLISTBUDDY_ONLINE
+                        : CenterIM::SCHEME_BUDDYLISTCONTACT_ONLINE;
+  case PURPLE_STATUS_AWAY:
+  case PURPLE_STATUS_EXTENDED_AWAY:
+    return scheme_buddy ? CenterIM::SCHEME_BUDDYLISTBUDDY_AWAY
+                        : CenterIM::SCHEME_BUDDYLISTCONTACT_AWAY;
+  case PURPLE_STATUS_UNAVAILABLE:
+  case PURPLE_STATUS_INVISIBLE:
+    return scheme_buddy ? CenterIM::SCHEME_BUDDYLISTBUDDY_NA
+                        : CenterIM::SCHEME_BUDDYLISTCONTACT_NA;
+  }
+}
+
 void BuddyListNode::updateFilterVisibility(const char *name)
 {
   if (!isVisible())
@@ -520,12 +559,14 @@ void BuddyListBuddy::BuddyContextMenu::onRemove(Button & /*activator*/)
   dialog->show();
 }
 
-int BuddyListBuddy::getColorPair(const char *widget, const char *property) const
+int BuddyListBuddy::getAttributes(
+  int property, int subproperty, int *attrs, CppConsUI::Error &error) const
 {
   if (BUDDYLIST->getColorizationMode() != BuddyList::COLOR_BY_ACCOUNT ||
-    strcmp(property, "normal"))
-    return Button::getColorPair(widget, property);
+    property != CppConsUI::ColorScheme::BUTTON_NORMAL)
+    return Button::getAttributes(property, subproperty, attrs, error);
 
+  // TODO Implement caching for these two properties.
   PurpleAccount *account = purple_buddy_get_account(buddy);
   int fg = purple_account_get_ui_int(account, "centerim5",
     "buddylist-foreground-color", CppConsUI::Curses::Color::DEFAULT);
@@ -533,7 +574,7 @@ int BuddyListBuddy::getColorPair(const char *widget, const char *property) const
     "buddylist-background-color", CppConsUI::Curses::Color::DEFAULT);
 
   CppConsUI::ColorScheme::Color c(fg, bg);
-  return COLORSCHEME->getColorPair(c);
+  return COLORSCHEME->getColorPair(c, attrs, error);
 }
 
 void BuddyListBuddy::openContextMenu()
@@ -544,24 +585,21 @@ void BuddyListBuddy::openContextMenu()
 
 BuddyListBuddy::BuddyListBuddy(PurpleBlistNode *node_) : BuddyListNode(node_)
 {
-  setColorScheme("buddylistbuddy");
+  setColorScheme(CenterIM::SCHEME_BUDDYLISTBUDDY);
 
   buddy = PURPLE_BUDDY(blist_node);
 }
 
 void BuddyListBuddy::updateColorScheme()
 {
-  char *new_scheme;
-
   switch (BUDDYLIST->getColorizationMode()) {
   case BuddyList::COLOR_BY_STATUS:
-    new_scheme = Utils::getColorSchemeString("buddylistbuddy", buddy);
-    setColorScheme(new_scheme);
-    g_free(new_scheme);
+    setColorScheme(
+      getColorSchemeByBuddy(CenterIM::SCHEME_BUDDYLISTBUDDY, buddy));
     break;
   default:
     // note: COLOR_BY_ACCOUNT case is handled by BuddyListBuddy::draw()
-    setColorScheme("buddylistbuddy");
+    setColorScheme(CenterIM::SCHEME_BUDDYLISTBUDDY);
     break;
   }
 }
@@ -696,7 +734,7 @@ void BuddyListChat::openContextMenu()
 
 BuddyListChat::BuddyListChat(PurpleBlistNode *node_) : BuddyListNode(node_)
 {
-  setColorScheme("buddylistchat");
+  setColorScheme(CenterIM::SCHEME_BUDDYLISTCHAT);
 
   chat = PURPLE_CHAT(blist_node);
 }
@@ -919,13 +957,14 @@ void BuddyListContact::ContactContextMenu::onMoveTo(
   purple_blist_add_contact(contact, group, NULL);
 }
 
-int BuddyListContact::getColorPair(
-  const char *widget, const char *property) const
+int BuddyListContact::getAttributes(
+  int property, int subproperty, int *attrs, CppConsUI::Error &error) const
 {
   if (BUDDYLIST->getColorizationMode() != BuddyList::COLOR_BY_ACCOUNT ||
-    strcmp(property, "normal"))
-    return Button::getColorPair(widget, property);
+    property != CppConsUI::ColorScheme::BUTTON_NORMAL)
+    return Button::getAttributes(property, subproperty, attrs, error);
 
+  // TODO Implement caching for these two properties.
   PurpleAccount *account =
     purple_buddy_get_account(purple_contact_get_priority_buddy(contact));
   int fg = purple_account_get_ui_int(account, "centerim5",
@@ -934,7 +973,7 @@ int BuddyListContact::getColorPair(
     "buddylist-background-color", CppConsUI::Curses::Color::DEFAULT);
 
   CppConsUI::ColorScheme::Color c(fg, bg);
-  return COLORSCHEME->getColorPair(c);
+  return COLORSCHEME->getColorPair(c, attrs, error);
 }
 
 void BuddyListContact::openContextMenu()
@@ -946,26 +985,23 @@ void BuddyListContact::openContextMenu()
 BuddyListContact::BuddyListContact(PurpleBlistNode *node_)
   : BuddyListNode(node_)
 {
-  setColorScheme("buddylistcontact");
+  setColorScheme(CenterIM::SCHEME_BUDDYLISTCONTACT);
 
   contact = PURPLE_CONTACT(blist_node);
 }
 
 void BuddyListContact::updateColorScheme()
 {
-  char *new_scheme;
-  PurpleBuddy *buddy;
-
   switch (BUDDYLIST->getColorizationMode()) {
-  case BuddyList::COLOR_BY_STATUS:
-    buddy = purple_contact_get_priority_buddy(contact);
-    new_scheme = Utils::getColorSchemeString("buddylistcontact", buddy);
-    setColorScheme(new_scheme);
-    g_free(new_scheme);
+  case BuddyList::COLOR_BY_STATUS: {
+    PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
+    setColorScheme(
+      getColorSchemeByBuddy(CenterIM::SCHEME_BUDDYLISTCONTACT, buddy));
     break;
+  }
   default:
     // note: COLOR_BY_ACCOUNT case is handled by BuddyListContact::draw()
-    setColorScheme("buddylistcontact");
+    setColorScheme(CenterIM::SCHEME_BUDDYLISTCONTACT);
     break;
   }
 }
@@ -1191,7 +1227,7 @@ void BuddyListGroup::openContextMenu()
 
 BuddyListGroup::BuddyListGroup(PurpleBlistNode *node_) : BuddyListNode(node_)
 {
-  setColorScheme("buddylistgroup");
+  setColorScheme(CenterIM::SCHEME_BUDDYLISTGROUP);
 
   group = PURPLE_GROUP(blist_node);
 }

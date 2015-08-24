@@ -28,7 +28,7 @@
 
 AccountWindow::AccountWindow() : SplitDialog(0, 0, 80, 24, _("Accounts"))
 {
-  setColorScheme("generalwindow");
+  setColorScheme(CenterIM::SCHEME_GENERALWINDOW);
 
   treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
   setContainer(*treeview);

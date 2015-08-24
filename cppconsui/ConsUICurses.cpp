@@ -27,8 +27,8 @@
 
 #include "ConsUICurses.h"
 
-/* In order to get wide characters support we must define
- * _XOPEN_SOURCE_EXTENDED when using cursesw.h. */
+// In order to get wide characters support we must define _XOPEN_SOURCE_EXTENDED
+// when using cursesw.h.
 #ifndef _XOPEN_SOURCE_EXTENDED
 #define _XOPEN_SOURCE_EXTENDED
 #endif
@@ -39,6 +39,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cstring>
+#include "gettext.h"
 
 namespace CppConsUI {
 
@@ -54,91 +55,94 @@ ViewPort::ViewPort(int screen_x_, int screen_y_, int view_x_, int view_y_,
 {
 }
 
-int ViewPort::addString(int x, int y, int w, const char *str, int *printed)
+int ViewPort::addString(
+  int x, int y, int w, const char *str, Error &error, int *printed)
 {
-  assert(str);
+  assert(str != NULL);
 
-  int res = OK;
+  int res = 0;
   int p = 0;
-  while (p < w && str && *str) {
+  while (p < w && str != NULL && *str) {
     int out;
-    if ((res = addChar(x + p, y, UTF8::getUniChar(str), &out)) == ERR)
+    if ((res = addChar(x + p, y, UTF8::getUniChar(str), error, &out)) != 0)
       break;
     p += out;
     str = UTF8::getNextChar(str);
   }
 
-  if (printed)
-    *printed = p;
-
-  return res;
-}
-
-int ViewPort::addString(int x, int y, const char *str, int *printed)
-{
-  assert(str);
-
-  int res = OK;
-  int p = 0;
-  while (str && *str) {
-    int out;
-    if ((res = addChar(x + p, y, UTF8::getUniChar(str), &out)) == ERR)
-      break;
-    p += out;
-    str = UTF8::getNextChar(str);
-  }
-
-  if (printed)
+  if (printed != NULL)
     *printed = p;
 
   return res;
 }
 
 int ViewPort::addString(
-  int x, int y, int w, const char *str, const char *end, int *printed)
+  int x, int y, const char *str, Error &error, int *printed)
 {
-  assert(str);
-  assert(end);
+  assert(str != NULL);
 
-  int res = OK;
+  int res = 0;
   int p = 0;
-  while (p < w && str < end && str && *str) {
+  while (str != NULL && *str) {
     int out;
-    if ((res = addChar(x + p, y, UTF8::getUniChar(str), &out)) == ERR)
+    if ((res = addChar(x + p, y, UTF8::getUniChar(str), error, &out)) != 0)
+      break;
+    p += out;
+    str = UTF8::getNextChar(str);
+  }
+
+  if (printed != NULL)
+    *printed = p;
+
+  return res;
+}
+
+int ViewPort::addString(int x, int y, int w, const char *str, const char *end,
+  Error &error, int *printed)
+{
+  assert(str != NULL);
+  assert(end != NULL);
+
+  int res = 0;
+  int p = 0;
+  while (p < w && str != NULL && str < end && *str) {
+    int out;
+    if ((res = addChar(x + p, y, UTF8::getUniChar(str), error, &out)) != 0)
       break;
     p += out;
     str = UTF8::findNextChar(str, end);
   }
 
-  if (printed)
+  if (printed != NULL)
     *printed = p;
 
   return res;
 }
 
 int ViewPort::addString(
-  int x, int y, const char *str, const char *end, int *printed)
+  int x, int y, const char *str, const char *end, Error &error, int *printed)
 {
-  assert(str);
-  assert(end);
+  assert(str != NULL);
+  assert(end != NULL);
 
-  int res = OK;
+  int res = 0;
   int p = 0;
-  while (str < end && str && *str) {
+  while (str != NULL && str < end && *str) {
     int out;
-    if ((res = addChar(x + p, y, UTF8::getUniChar(str), &out)) == ERR)
+    if ((res = addChar(x + p, y, UTF8::getUniChar(str), error, &out)) != 0)
       break;
     p += out;
     str = UTF8::findNextChar(str, end);
   }
 
-  if (printed)
+  if (printed != NULL)
     *printed = p;
 
   return res;
 }
 
-int ViewPort::addChar(int x, int y, UTF8::UniChar uc, int *printed)
+int ViewPort::addChar(
+  int x, int y, UTF8::UniChar uc, Error &error, int *printed)
 {
   if (printed)
     *printed = 0;
@@ -147,176 +151,276 @@ int ViewPort::addChar(int x, int y, UTF8::UniChar uc, int *printed)
   int draw_y = screen_y + (y - view_y);
 
   if (uc >= 0x7f && uc < 0xa0) {
-    // filter out C1 (8-bit) control characters
+    // Filter out C1 (8-bit) control characters.
     if (isInViewPort(x, y, 1))
-      if (::mvaddch(draw_y, draw_x, '?') == ERR)
-        return ERR;
-    if (printed)
+      if (::mvaddch(draw_y, draw_x, '?') == ERR) {
+        error = Error(ERROR_CURSES_ADD_CHARACTER);
+        error.setFormattedString(
+          _("Adding character '?' on screen at position (x=%d, y=%d) failed."),
+          draw_x, draw_y);
+        return error.getCode();
+      }
+    if (printed != NULL)
       *printed = 1;
-    return OK;
+    return 0;
   }
 
-  // get a unicode character from the next few bytes
-  wchar_t wch[2];
-
-  wch[0] = uc;
-  wch[1] = L'\0';
-
-  // invalid utf-8 sequence
-  if (wch[0] < 0)
-    return ERR;
-
-  // tab character
-  if (wch[0] == '\t') {
-    int w = onScreenWidth(wch[0]);
+  // Handle tab characters.
+  if (uc == '\t') {
+    int w = onScreenWidth(uc);
     for (int i = 0; i < w; ++i) {
       if (isInViewPort(x + i, y, 1))
-        if (::mvaddch(draw_y, draw_x + i, ' ') == ERR)
-          return ERR;
-      if (printed)
+        if (::mvaddch(draw_y, draw_x + i, ' ') == ERR) {
+          error = Error(ERROR_CURSES_ADD_CHARACTER);
+          error.setFormattedString(
+            _("Adding character ' ' on screen at position (x=%d, y=%d) "
+              "failed."),
+            draw_x, draw_y);
+          return error.getCode();
+        }
+      if (printed != NULL)
         ++(*printed);
     }
-    return OK;
+    return 0;
   }
 
-  // control char symbols
-  if (wch[0] < 32)
-    wch[0] = 0x2400 + wch[0];
+  // Make control chars printable.
+  if (uc < 32)
+    uc += 0x2400;
 
-  int w = onScreenWidth(wch[0]);
+  // Create a wide-character string accepted by ncurses.
+  wchar_t wch[2];
+  wch[0] = uc;
+  wch[1] = '\0';
+
+  int w = onScreenWidth(uc);
   if (isInViewPort(x, y, w)) {
     cchar_t cc;
 
-    if (::setcchar(&cc, wch, A_NORMAL, 0, NULL) == ERR)
-      return ERR;
-    if (::mvadd_wch(draw_y, draw_x, &cc) == ERR)
-      return ERR;
+    if (::setcchar(&cc, wch, A_NORMAL, 0, NULL) == ERR) {
+      error = Error(ERROR_CURSES_ADD_CHARACTER);
+      error.setFormattedString(
+        _("Setting complex character from Unicode character "
+          "#%" UNICHAR_FORMAT "failed."),
+        uc);
+      return error.getCode();
+    }
+    if (::mvadd_wch(draw_y, draw_x, &cc) == ERR) {
+      error = Error(ERROR_CURSES_ADD_CHARACTER);
+      error.setFormattedString(
+        _("Adding Unicode character #%" UNICHAR_FORMAT " on screen at position "
+          "(x=%d, y=%d)."),
+        uc, draw_x, draw_y);
+      return error.getCode();
+    }
   }
-  if (printed)
+  if (printed != NULL)
     *printed = w;
-  return OK;
+  return 0;
 }
 
-int ViewPort::addLineChar(int x, int y, LineChar c)
+int ViewPort::addLineChar(int x, int y, LineChar c, Error &error)
 {
   if (!isInViewPort(x, y, 1))
-    return OK;
+    return 0;
+
+  chtype ch;
+
+  switch (c) {
+  case LINE_HLINE:
+    ch = ascii_mode ? '-' : ACS_HLINE;
+    break;
+  case LINE_VLINE:
+    ch = ascii_mode ? '|' : ACS_VLINE;
+    break;
+  case LINE_LLCORNER:
+    ch = ascii_mode ? '+' : ACS_LLCORNER;
+    break;
+  case LINE_LRCORNER:
+    ch = ascii_mode ? '+' : ACS_LRCORNER;
+    break;
+  case LINE_ULCORNER:
+    ch = ascii_mode ? '+' : ACS_ULCORNER;
+    break;
+  case LINE_URCORNER:
+    ch = ascii_mode ? '+' : ACS_URCORNER;
+    break;
+  case LINE_BTEE:
+    ch = ascii_mode ? '+' : ACS_BTEE;
+    break;
+  case LINE_LTEE:
+    ch = ascii_mode ? '+' : ACS_LTEE;
+    break;
+  case LINE_RTEE:
+    ch = ascii_mode ? '+' : ACS_RTEE;
+    break;
+  case LINE_TTEE:
+    ch = ascii_mode ? '+' : ACS_TTEE;
+    break;
+  case LINE_DARROW:
+    ch = ascii_mode ? 'v' : ACS_DARROW;
+    break;
+  case LINE_LARROW:
+    ch = ascii_mode ? '<' : ACS_LARROW;
+    break;
+  case LINE_RARROW:
+    ch = ascii_mode ? '>' : ACS_RARROW;
+    break;
+  case LINE_UARROW:
+    ch = ascii_mode ? '^' : ACS_UARROW;
+    break;
+  case LINE_BULLET:
+    ch = ascii_mode ? 'o' : ACS_BULLET;
+    break;
+  default:
+    assert(0);
+  }
 
   int draw_x = screen_x + (x - view_x);
   int draw_y = screen_y + (y - view_y);
 
+  if (::mvaddch(draw_y, draw_x, ch) == OK)
+    return 0;
+
+  const char *name;
   switch (c) {
   case LINE_HLINE:
-    return ::mvaddch(draw_y, draw_x, ascii_mode ? '-' : ACS_HLINE);
+    name = "HLINE";
+    break;
   case LINE_VLINE:
-    return ::mvaddch(draw_y, draw_x, ascii_mode ? '|' : ACS_VLINE);
+    name = "VLINE";
+    break;
   case LINE_LLCORNER:
-    return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_LLCORNER);
+    name = "LLCORNER";
+    break;
   case LINE_LRCORNER:
-    return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_LRCORNER);
+    name = "LRCORNER";
+    break;
   case LINE_ULCORNER:
-    return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_ULCORNER);
+    name = "ULCORNER";
+    break;
   case LINE_URCORNER:
-    return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_URCORNER);
+    name = "URCORNER";
+    break;
   case LINE_BTEE:
-    return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_BTEE);
+    name = "BTEE";
+    break;
   case LINE_LTEE:
-    return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_LTEE);
+    name = "LTEE";
+    break;
   case LINE_RTEE:
-    return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_RTEE);
+    name = "RTEE";
+    break;
   case LINE_TTEE:
-    return ::mvaddch(draw_y, draw_x, ascii_mode ? '+' : ACS_TTEE);
-
+    name = "TTEE";
+    break;
   case LINE_DARROW:
-    return ::mvaddch(draw_y, draw_x, ascii_mode ? 'v' : ACS_DARROW);
+    name = "DARROW";
+    break;
   case LINE_LARROW:
-    return ::mvaddch(draw_y, draw_x, ascii_mode ? '<' : ACS_LARROW);
+    name = "LARROW";
+    break;
   case LINE_RARROW:
-    return ::mvaddch(draw_y, draw_x, ascii_mode ? '>' : ACS_RARROW);
+    name = "RARROW";
+    break;
   case LINE_UARROW:
-    return ::mvaddch(draw_y, draw_x, ascii_mode ? '^' : ACS_UARROW);
+    name = "UARROW";
+    break;
   case LINE_BULLET:
-    return ::mvaddch(draw_y, draw_x, ascii_mode ? 'o' : ACS_BULLET);
+    name = "BULLET";
+    break;
+  default:
+    assert(0);
   }
-  return ERR;
+
+  error = Error(ERROR_CURSES_ADD_CHARACTER);
+  error.setFormattedString(
+    _("Adding line character %s on screen at position (x=%d, y=%d) failed."),
+    name, draw_x, draw_y);
+  return error.getCode();
 }
 
-int ViewPort::attrOn(int attrs)
+int ViewPort::attrOn(int attrs, Error &error)
 {
-  return ::attron(attrs);
+  if (::attron(attrs) == OK)
+    return 0;
+
+  error = Error(ERROR_CURSES_ATTR);
+  error.setFormattedString(
+    _("Turning on window attributes '%#x' failed."), attrs);
+  return error.getCode();
 }
 
-int ViewPort::attrOff(int attrs)
+int ViewPort::attrOff(int attrs, Error &error)
 {
-  return ::attroff(attrs);
+  if (::attroff(attrs) == OK)
+    return 0;
+
+  error = Error(ERROR_CURSES_ATTR);
+  error.setFormattedString(
+    _("Turning off window attributes '%#x' failed."), attrs);
+  return error.getCode();
 }
 
-int ViewPort::changeAt(
-  int x, int y, int n, /* attr_t */ int attr, short color, const void *opts)
+int ViewPort::changeAt(int x, int y, int n, /* attr_t */ unsigned long attr,
+  short color, Error &error)
 {
-  int res = OK;
-  int draw_x, draw_y;
-  for (int i = 0; i < n; i++) {
+  for (int i = 0; i < n; ++i) {
     if (!isInViewPort(x + i, y, 1))
       continue;
 
-    draw_x = screen_x + (x + i - view_x);
-    draw_y = screen_y + (y - view_y);
-    if ((res = ::mvchgat(draw_y, draw_x, 1, attr, color, opts)) == ERR)
-      break;
-  }
-  return res;
-}
-
-int ViewPort::fill(int attrs)
-{
-  attr_t battrs;
-  short pair;
-
-  if (::attr_get(&battrs, &pair, NULL) == ERR)
-    return ERR;
-
-  if (::attron(attrs) == ERR)
-    return ERR;
-
-  for (int i = 0; i < view_height; ++i)
-    for (int j = 0; j < view_width; ++j) {
-      ///< @todo Implement correct error checking.
-      addChar(j, i, ' ');
+    int draw_x = screen_x + (x + i - view_x);
+    int draw_y = screen_y + (y - view_y);
+    if (::mvchgat(draw_y, draw_x, 1, attr, color, NULL) == ERR) {
+      error = Error(ERROR_CURSES_ATTR);
+      error.setFormattedString(
+        _("Changing window attributes to '%#lx' and color pair to '%d' on "
+          "screen at position (x=%d, y=%d) failed."),
+        attr, color, draw_x, draw_y);
+      return error.getCode();
     }
-
-  if (attr_set(battrs, pair, NULL) == ERR)
-    return ERR;
-
-  return OK;
+  }
+  return 0;
 }
 
-int ViewPort::fill(int attrs, int x, int y, int w, int h)
+int ViewPort::fill(int attrs, Error &error)
+{
+  return fill(attrs, 0, 0, view_width, view_height, error);
+}
+
+int ViewPort::fill(int attrs, int x, int y, int w, int h, Error &error)
 {
   attr_t battrs;
   short pair;
 
-  if (attr_get(&battrs, &pair, NULL) == ERR)
-    return ERR;
+  if (::attr_get(&battrs, &pair, NULL) == ERR) {
+    error = Error(ERROR_CURSES_ATTR, _("Obtaining window attributes failed."));
+    return error.getCode();
+  }
 
-  if (attron(attrs) == ERR)
-    return ERR;
+  if (attrOn(attrs, error) != 0)
+    return error.getCode();
 
   for (int i = 0; i < h; ++i)
     for (int j = 0; j < w; ++j) {
       ///< @todo Implement correct error checking.
-      addChar(x + j, y + i, ' ');
+      addChar(x + j, y + i, ' ', error);
     }
 
-  if (attr_set(battrs, pair, NULL) == ERR)
-    return ERR;
+  if (::attr_set(battrs, pair, NULL) == ERR) {
+    error = Error(ERROR_CURSES_ATTR);
+    error.setFormattedString(
+      _("Setting window attributes to '%#lx' and color pair to '%d' failed."),
+      static_cast<unsigned long>(battrs), pair);
+    return error.getCode();
+  }
 
-  return OK;
+  return 0;
 }
 
-int ViewPort::erase()
+int ViewPort::erase(Error &error)
 {
-  return fill(0);
+  return fill(0, error);
 }
 
 void ViewPort::scroll(int scroll_x, int scroll_y)
@@ -348,34 +452,84 @@ const int Attr::BLINK = A_BLINK;
 const int Attr::DIM = A_DIM;
 const int Attr::BOLD = A_BOLD;
 
-const int C_OK = OK;
-const int C_ERR = ERR;
+SCREEN *screen = NULL;
 
 int initScreen(Error &error)
 {
-  // TODO
-  if (!::initscr())
-    return ERR;
+  assert(screen == NULL);
+
+  screen = ::newterm(NULL, stdout, stdin);
+  if (screen == NULL) {
+    error = Error(ERROR_CURSES_INITIALIZATION,
+      _("Initialization of the terminal for Curses session failed."));
+    return error.getCode();
+  }
 
   if (::has_colors()) {
-    if (::start_color() == ERR)
-      return ERR;
-    if (::use_default_colors() == ERR)
-      return ERR;
+    if (::start_color() == ERR) {
+      error = Error(ERROR_CURSES_INITIALIZATION,
+        _("Initialization of color support failed."));
+      goto error_out;
+    }
+    if (::use_default_colors() == ERR) {
+      error = Error(ERROR_CURSES_INITIALIZATION,
+        _("Initialization of default colors failed."));
+      goto error_out;
+    }
   }
-  if (::curs_set(0) == ERR)
-    return ERR;
-  if (::nonl() == ERR)
-    return ERR;
-  if (::raw() == ERR)
-    return ERR;
-  return OK;
+  if (::curs_set(0) == ERR) {
+    error = Error(ERROR_CURSES_INITIALIZATION, _("Hiding the cursor failed."));
+    goto error_out;
+  }
+  if (::nonl() == ERR) {
+    error = Error(
+      ERROR_CURSES_INITIALIZATION, _("Disabling newline translation failed."));
+    goto error_out;
+  }
+  if (::raw() == ERR) {
+    error = Error(ERROR_CURSES_INITIALIZATION,
+      _("Placing the terminal into raw mode failed."));
+    goto error_out;
+  }
+
+  return 0;
+
+error_out:
+  // Try to destroy the already created screen.
+  ::endwin();
+  ::delscreen(screen);
+  screen = NULL;
+
+  return error.getCode();
 }
 
 int finalizeScreen(Error &error)
 {
-  // TODO
-  return ::endwin();
+  assert(screen != NULL);
+
+  // Note: This function can fail in three places: clear(), refresh() and
+  // endwin(). The first two are non-critical and the function proceeds even if
+  // they occur. Error in endwin() is potentially serious and should always
+  // override any error from clear() or refresh().
+
+  bool has_error;
+
+  // Clear the screen.
+  if (clear(error) != 0)
+    has_error = true;
+  if (refresh(error) != 0)
+    has_error = true;
+
+  if (::endwin() == ERR) {
+    error = Error(
+      ERROR_CURSES_FINALIZATION, _("Finalization of Curses session failed."));
+    has_error = true;
+  }
+
+  ::delscreen(screen);
+  screen = NULL;
+
+  return has_error ? error.getCode() : 0;
 }
 
 void setAsciiMode(bool enabled)
@@ -388,16 +542,31 @@ bool getAsciiMode()
   return ascii_mode;
 }
 
-bool initColorPair(int idx, int fg, int bg, int *res)
+bool initColorPair(int idx, int fg, int bg, int *res, Error &error)
 {
-  assert(res);
+  assert(res != NULL);
 
-  bool success = (init_pair(idx, fg, bg) == OK);
+  int color_pair_count = Curses::getColorPairCount();
+  if (idx > color_pair_count) {
+    error = Error(ERROR_CURSES_COLOR_LIMIT);
+    error.setFormattedString(
+      _("Adding of color pair '%d' (foreground=%d, background=%d) failed "
+        "because color pair limit of '%d' was exceeded."),
+      idx, fg, bg, color_pair_count);
+    return error.getCode();
+  }
 
-  if (success)
-    *res = COLOR_PAIR(idx);
+  if (::init_pair(idx, fg, bg) == ERR) {
+    error = Error(ERROR_CURSES_COLOR_INIT);
+    error.setFormattedString(
+      _("Initialization of color pair '%d' to (foreground=%d, background=%d) "
+        "failed."),
+      idx, fg, bg);
+    return error.getCode();
+  }
 
-  return success;
+  *res = COLOR_PAIR(idx);
+  return 0;
 }
 
 int getColorCount()
@@ -408,72 +577,84 @@ int getColorCount()
 int getColorPairCount()
 {
 #ifndef NCURSES_EXT_COLORS
-  /* Ncurses reports more than 256 color pairs, even when compiled without
-   * ext-color. */
+  // Ncurses reports more than 256 color pairs, even when compiled without
+  // ext-color.
   return std::min(COLOR_PAIRS, 256);
 #else
   return COLOR_PAIRS;
 #endif
 }
 
-#ifdef DEBUG
-bool getColorPair(int colorpair, int *fg, int *bg)
+int erase(Error &error)
 {
-  short sfg, sbg;
-
-  int ret = pair_content(PAIR_NUMBER(colorpair), &sfg, &sbg);
-
-  *fg = sfg;
-  *bg = sbg;
-
-  return ret;
-}
-#endif // DEBUG
-
-int erase()
-{
-  return ::erase();
+  if (::erase() == ERR) {
+    error = Error(ERROR_CURSES_CLEAR, _("Erasing the screen failed."));
+    return error.getCode();
+  }
+  return 0;
 }
 
-int clear()
+int clear(Error &error)
 {
-  return ::clear();
+  if (::clear() == ERR) {
+    error = Error(ERROR_CURSES_CLEAR, _("Clearing the screen failed."));
+    return error.getCode();
+  }
+  return 0;
 }
 
-int refresh()
+int refresh(Error &error)
 {
-  return ::refresh();
+  if (::refresh() == ERR) {
+    error = Error(ERROR_CURSES_REFRESH, _("Refreshing the screen failed."));
+    return error.getCode();
+  }
+  return 0;
 }
 
-int beep()
+int beep(Error &error)
 {
-  return ::beep();
+  if (::beep() == ERR) {
+    error = Error(ERROR_CURSES_BEEP, _("Producing beep alert failed."));
+    return error.getCode();
+  }
+  return 0;
 }
 
 int getWidth()
 {
-  return ::getmaxx(stdscr);
+  int res = ::getmaxx(stdscr);
+  assert(res != ERR);
+  return res;
 }
 
 int getHeight()
 {
-  return ::getmaxy(stdscr);
+  int res = ::getmaxy(stdscr);
+  assert(res != ERR);
+  return res;
 }
 
-int resizeTerm(int width, int height)
+int resizeTerm(int width, int height, Error &error)
 {
-  return ::resizeterm(height, width);
+  if (::resizeterm(height, width) == ERR) {
+    error = Error(ERROR_CURSES_RESIZE);
+    error.setFormattedString(
+      _("Changing the Curses terminal size to (width=%d, height=%d) failed."),
+      width, height);
+    return error.getCode();
+  }
+  return 0;
 }
 
-/// @todo Should be g_unichar_iszerowidth() used?
 int onScreenWidth(const char *start, const char *end)
 {
   int width = 0;
 
-  if (!start)
+  if (start == NULL)
     return 0;
 
-  if (!end)
+  if (end == NULL)
     end = start + std::strlen(start);
 
   while (start < end) {

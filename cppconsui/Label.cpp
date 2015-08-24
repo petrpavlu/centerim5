@@ -28,6 +28,8 @@
 
 #include "Label.h"
 
+#include "ColorScheme.h"
+
 #include <cstring>
 
 namespace CppConsUI {
@@ -47,27 +49,31 @@ Label::~Label()
   delete[] text;
 }
 
-void Label::draw(Curses::ViewPort area)
+int Label::draw(Curses::ViewPort area, Error &error)
 {
-  int attrs = getColorPair("label", "text");
-  area.attrOn(attrs);
+  int attrs;
+  DRAW(getAttributes(ColorScheme::LABEL_TEXT, &attrs, error));
+  DRAW(area.attrOn(attrs, error));
 
-  // print text
+  // Print text.
   int y = 0;
   const char *start, *end;
   start = end = text;
-  int p;
-  while (*end) {
+  int printed;
+  while (*end != '\0') {
     if (*end == '\n') {
-      p = area.addString(0, y, real_width * (real_height - y), start, end);
-      y += (p / real_width) + 1;
+      DRAW(area.addString(
+        0, y, real_width * (real_height - y), start, end, error, &printed));
+      y += (printed / real_width) + 1;
       start = end + 1;
     }
     ++end;
   }
-  area.addString(0, y, real_width * (real_height - y), start, end);
+  DRAW(area.addString(0, y, real_width * (real_height - y), start, end, error));
 
-  area.attrOff(attrs);
+  DRAW(area.attrOff(attrs, error));
+
+  return 0;
 }
 
 void Label::setText(const char *new_text)

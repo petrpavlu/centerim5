@@ -97,15 +97,16 @@ BuddyList::Filter::Filter(BuddyList *parent_)
 {
 }
 
-void BuddyList::Filter::draw(CppConsUI::Curses::ViewPort area)
+int BuddyList::Filter::draw(
+  CppConsUI::Curses::ViewPort area, CppConsUI::Error &error)
 {
-  int x = 0;
-  x += area.addString(x, 0, real_width - x, _("Filter: "));
+  int printed;
+  DRAW(area.addString(0, 0, real_width, _("Filter: "), error, &printed));
   if (static_cast<int>(parent->filter_buffer_onscreen_width) <=
-    real_width - x) {
-    // optimized simple case
-    area.addString(x, 0, parent->filter_buffer);
-    return;
+    real_width - printed) {
+    // Optimized simple case.
+    DRAW(area.addString(printed, 0, parent->filter_buffer, error));
+    return 0;
   }
 
   int w = 0;
@@ -116,18 +117,20 @@ void BuddyList::Filter::draw(CppConsUI::Curses::ViewPort area)
       break;
     gunichar uc = g_utf8_get_char(prev);
     int wc = CppConsUI::Curses::onScreenWidth(uc);
-    if (w + wc > real_width - x)
+    if (w + wc > real_width - printed)
       break;
     w += wc;
     cur = prev;
   }
-  area.addString(real_width - w, 0, cur);
+  DRAW(area.addString(real_width - w, 0, cur, error));
+
+  return 0;
 }
 
 BuddyList::AddWindow::AddWindow(const char *title)
   : SplitDialog(0, 0, 80, 24, title)
 {
-  setColorScheme("generalwindow");
+  setColorScheme(CenterIM::SCHEME_GENERALWINDOW);
 
   treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
   setContainer(*treeview);
@@ -469,7 +472,7 @@ void BuddyList::AddGroupWindow::onAddRequest(CppConsUI::Button & /*activator*/)
 
 BuddyList::BuddyList() : Window(0, 0, 80, 24)
 {
-  setColorScheme("buddylist");
+  setColorScheme(CenterIM::SCHEME_BUDDYLIST);
 
   CppConsUI::ListBox *lbox = new CppConsUI::ListBox(AUTOSIZE, AUTOSIZE);
   addWidget(*lbox, 1, 1);

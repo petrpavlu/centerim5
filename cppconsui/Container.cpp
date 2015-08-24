@@ -28,6 +28,8 @@
 
 #include "Container.h"
 
+#include "ColorScheme.h"
+
 #include <cassert>
 
 namespace CppConsUI {
@@ -47,20 +49,24 @@ Container::~Container()
   clear();
 }
 
-void Container::draw(Curses::ViewPort area)
+int Container::draw(Curses::ViewPort area, Error &error)
 {
   if (real_width <= 0 || real_height <= 0)
-    return;
+    return 0;
 
   if (area.getViewWidth() <= 0 || area.getViewHeight() <= 0)
-    return;
+    return 0;
 
   area.scroll(scroll_xpos, scroll_ypos);
-  area.fill(getColorPair("container", "background"));
+  int attrs;
+  DRAW(getAttributes(ColorScheme::CONTAINER_BACKGROUND, &attrs, error));
+  DRAW(area.fill(attrs, error));
 
   for (Children::iterator i = children.begin(); i != children.end(); ++i)
     if ((*i)->isVisible())
-      drawChild(**i, area);
+      DRAW(drawChild(**i, area, error));
+
+  return 0;
 }
 
 Widget *Container::getFocusWidget()
@@ -527,7 +533,7 @@ void Container::updateChildArea(Widget &child)
     child.setRealSize(0, 0);
 }
 
-void Container::drawChild(Widget &child, Curses::ViewPort area)
+int Container::drawChild(Widget &child, Curses::ViewPort area, Error &error)
 {
   int view_x = area.getViewLeft();
   int view_y = area.getViewTop();
@@ -581,7 +587,7 @@ void Container::drawChild(Widget &child, Curses::ViewPort area)
 
   Curses::ViewPort child_area(child_screen_x, child_screen_y, child_view_x,
     child_view_y, child_view_width, child_view_height);
-  child.draw(child_area);
+  return child.draw(child_area, error);
 }
 
 Container::Children::iterator Container::findWidget(const Widget &widget)

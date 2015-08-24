@@ -38,7 +38,7 @@
 
 PluginWindow::PluginWindow() : SplitDialog(0, 0, 80, 24, _("Plugins"))
 {
-  setColorScheme("generalwindow");
+  setColorScheme(CenterIM::SCHEME_GENERALWINDOW);
 
   treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
   setContainer(*treeview);

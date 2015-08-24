@@ -59,7 +59,7 @@ public:
   virtual ~Button();
 
   // Widget
-  virtual void draw(Curses::ViewPort area);
+  virtual int draw(Curses::ViewPort area, Error &error);
 
   virtual void setFlags(int new_flags);
   virtual int getFlags() const { return flags; }

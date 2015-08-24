@@ -34,7 +34,7 @@ Notify *Notify::instance()
 
 Notify::UserInfoDialog::UserInfoDialog(const char *title) : SplitDialog(title)
 {
-  setColorScheme("generalwindow");
+  setColorScheme(CenterIM::SCHEME_GENERALWINDOW);
 
   treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
   setContainer(*treeview);

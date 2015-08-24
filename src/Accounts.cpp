@@ -122,7 +122,7 @@ Accounts::PendingRequestWindow::PendingRequestWindow(
   : SplitDialog(0, 0, 80, 24, _("Pending requests")), accounts(&accounts_),
     dialog(NULL)
 {
-  setColorScheme("generalwindow");
+  setColorScheme(CenterIM::SCHEME_GENERALWINDOW);
 
   treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
   setContainer(*treeview);

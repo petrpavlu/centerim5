@@ -32,7 +32,7 @@
 
 GeneralMenu::GeneralMenu() : MenuWindow(0, 0, AUTOSIZE, AUTOSIZE)
 {
-  setColorScheme("generalmenu");
+  setColorScheme(CenterIM::SCHEME_GENERALMENU);
 
   appendItem(
     _("Change status"), sigc::mem_fun(this, &GeneralMenu::openStatusWindow));
@@ -53,7 +53,7 @@ GeneralMenu::GeneralMenu() : MenuWindow(0, 0, AUTOSIZE, AUTOSIZE)
   appendSeparator();
 #ifdef DEBUG
   MenuWindow *submenu = new MenuWindow(0, 0, AUTOSIZE, AUTOSIZE);
-  submenu->setColorScheme("generalmenu");
+  submenu->setColorScheme(CenterIM::SCHEME_GENERALMENU);
   submenu->appendItem(
     "Request input", sigc::mem_fun(this, &GeneralMenu::openRequestInputTest));
   submenu->appendItem(

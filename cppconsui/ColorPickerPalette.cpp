@@ -176,18 +176,23 @@ ColorPickerPalette::ColorPickerPaletteButton::ColorPickerPaletteButton(
 {
 }
 
-void ColorPickerPalette::ColorPickerPaletteButton::draw(Curses::ViewPort area)
+int ColorPickerPalette::ColorPickerPaletteButton::draw(
+  Curses::ViewPort area, Error &error)
 {
   ColorScheme::Color c(Curses::Color::BLACK, color);
-  int colorpair = COLORSCHEME->getColorPair(c);
+  int attrs;
+  if (COLORSCHEME->getColorPair(c, &attrs, error) != 0)
+    return error.getCode();
 
   if (has_focus) {
-    area.attrOn(Curses::Attr::REVERSE);
-    area.addString(0, 0, "@@");
-    area.attrOff(Curses::Attr::REVERSE);
+    DRAW(area.attrOn(Curses::Attr::REVERSE, error));
+    DRAW(area.addString(0, 0, "@@", error));
+    DRAW(area.attrOff(Curses::Attr::REVERSE, error));
   }
   else
-    area.fill(colorpair, 0, 0, 2, 1);
+    DRAW(area.fill(attrs, 0, 0, 2, 1, error));
+
+  return 0;
 }
 
 } // namespace CppConsUI

@@ -58,44 +58,36 @@ enum LineChar {
   LINE_BULLET,
 };
 
-#if 0
-class CursesException : public std::runtime_error
-{
-public:
-  explicit CursesException(const string &what_arg)
-    : runtime_error(what_arg) {}
-};
-#endif
-
 class ViewPort {
 public:
   ViewPort(int screen_x, int screen_y, int view_x, int view_y, int view_width,
     int view_height);
   virtual ~ViewPort() {}
 
-  /**
-   * Adds a string to the screen.
-   *
-   * First two variants require NUL-terminated strings.
-   */
-  int addString(int x, int y, int w, const char *str, int *printed = NULL);
-  int addString(int x, int y, const char *str, int *printed = NULL);
+  /// Adds a string to the screen.
+  ///
+  /// First two variants require NUL-terminated strings.
   int addString(
-    int x, int y, int w, const char *str, const char *end, int *printed = NULL);
+    int x, int y, int w, const char *str, Error &error, int *printed = NULL);
   int addString(
-    int x, int y, const char *str, const char *end, int *printed = NULL);
+    int x, int y, const char *str, Error &error, int *printed = NULL);
+  int addString(int x, int y, int w, const char *str, const char *end,
+    Error &error, int *printed = NULL);
+  int addString(int x, int y, const char *str, const char *end, Error &error,
+    int *printed = NULL);
 
-  int addChar(int x, int y, UTF8::UniChar uc, int *printed = NULL);
-  int addLineChar(int x, int y, LineChar c);
+  int addChar(
+    int x, int y, UTF8::UniChar uc, Error &error, int *printed = NULL);
+  int addLineChar(int x, int y, LineChar c, Error &error);
 
-  int attrOn(int attrs);
-  int attrOff(int attrs);
-  int changeAt(
-    int x, int y, int n, /* attr_t */ int attr, short color, const void *opts);
+  int attrOn(int attrs, Error &error);
+  int attrOff(int attrs, Error &error);
+  int changeAt(int x, int y, int n, /* attr_t */ unsigned long attr,
+    short color, Error &error);
 
-  int fill(int attrs);
-  int fill(int attrs, int x, int y, int w, int h);
-  int erase();
+  int fill(int attrs, Error &error);
+  int fill(int attrs, int x, int y, int w, int h, Error &error);
+  int erase(Error &error);
 
   void scroll(int scroll_x, int scroll_y);
 
@@ -137,9 +129,6 @@ struct Attr {
   const static int BOLD;
 };
 
-extern const int C_OK;
-extern const int C_ERR;
-
 const int NUM_DEFAULT_COLORS = 16;
 
 int initScreen(Error &error);
@@ -147,22 +136,21 @@ int finalizeScreen(Error &error);
 void setAsciiMode(bool enabled);
 bool getAsciiMode();
 
-bool initColorPair(int idx, int fg, int bg, int *res);
+bool initColorPair(int idx, int fg, int bg, int *res, Error &error);
 int getColorCount();
 int getColorPairCount();
-bool getColorPair(int colorpair, int *fg, int *bg);
 
-int erase();
-int clear();
-int refresh();
+int erase(Error &error);
+int clear(Error &error);
+int refresh(Error &error);
 
-int beep();
+int beep(Error &error);
 
 // stdscr
 int getWidth();
 int getHeight();
 
-int resizeTerm(int width, int height);
+int resizeTerm(int width, int height, Error &error);
 
 int onScreenWidth(const char *start, const char *end = NULL);
 int onScreenWidth(UTF8::UniChar uc, int w = 0);

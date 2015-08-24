@@ -35,6 +35,12 @@
 
 #include <vector>
 
+#define DRAW(call)                                                             \
+  do {                                                                         \
+    if (call != 0)                                                             \
+      return error.getCode();                                                  \
+  } while (0)
+
 namespace CppConsUI {
 
 class Container;
@@ -63,7 +69,7 @@ public:
    * Windows. This causes all draw() implementations needed to draw the screen
    * to be called.
    */
-  virtual void draw(Curses::ViewPort area) = 0;
+  virtual int draw(Curses::ViewPort area, Error &error) = 0;
   /**
    * Finds the widget that could be the focus widget from the focus chain
    * starting with this widget.
@@ -157,8 +163,8 @@ public:
   virtual int getRealWidth() const { return real_width; }
   virtual int getRealHeight() const { return real_height; }
 
-  virtual void setColorScheme(const char *new_color_scheme);
-  virtual const char *getColorScheme() const;
+  virtual void setColorScheme(int new_color_scheme);
+  virtual int getColorScheme() const;
 
   virtual void registerAbsolutePositionListener(Widget &widget);
   virtual void unregisterAbsolutePositionListener(Widget &widget);
@@ -206,9 +212,9 @@ protected:
    */
   Container *parent;
   /**
-   * Current color scheme.
+   * Current color scheme ID.
    */
-  char *color_scheme;
+  int color_scheme;
 
   /**
    * Vector of widgets that need to be informed when the absolute on-screen
@@ -239,11 +245,12 @@ protected:
   virtual void setWishWidth(int neww) { setWishSize(neww, wish_height); }
   virtual void setWishHeight(int newh) { setWishSize(wish_width, newh); }
 
-  /**
-   * Convenient method that calls COLORSCHEME->getColorPair(getColorScheme(),
-   * widget, property).
-   */
-  virtual int getColorPair(const char *widget, const char *property) const;
+  /// Convenient method that calls getAttributes(property, 0, attrs, error).
+  virtual int getAttributes(int property, int *attrs, Error &error) const;
+  /// Convenient method that calls COLORSCHEME->getAttributes(getColorScheme(),
+  /// property, subproperty, attrs, error).
+  virtual int getAttributes(
+    int property, int subproperty, int *attrs, Error &error) const;
 
   /**
    * Returns the top container.

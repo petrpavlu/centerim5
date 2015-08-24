@@ -53,19 +53,21 @@ Window::~Window()
   delete panel;
 }
 
-void Window::draw(Curses::ViewPort area)
+int Window::draw(Curses::ViewPort area, Error &error)
 {
-  area.erase();
+  DRAW(area.erase(error));
 
-  Container::draw(area);
+  DRAW(Container::draw(area, error));
   if (decorated)
-    panel->draw(area);
+    DRAW(panel->draw(area, error));
 
-  /* Reverse the top right corner of the window if there isn't any focused
-   * widget and the window is the top window. This way the user knows which
-   * window is on the top and can be closed using the Esc key. */
+  // Reverse the top right corner of the window if there is not any focused
+  // widget and the window is the top window. This way the user knows which
+  // window is on the top and can be closed using the Esc key.
   if (!input_child && COREMANAGER->getTopWindow() == this)
-    area.changeAt(real_width - 1, 0, 1, Curses::Attr::REVERSE, 0, NULL);
+    DRAW(area.changeAt(real_width - 1, 0, 1, Curses::Attr::REVERSE, 0, error));
+
+  return 0;
 }
 
 void Window::setVisibility(bool visible)

@@ -61,7 +61,7 @@ WRITE_METHOD(debug, LEVEL_DEBUG)
 
 Log::LogWindow::LogWindow() : Window(0, 0, 80, 24, NULL, TYPE_NON_FOCUSABLE)
 {
-  setColorScheme("log");
+  setColorScheme(CenterIM::SCHEME_LOG);
 
   CppConsUI::HorizontalListBox *lbox =
     new CppConsUI::HorizontalListBox(AUTOSIZE, AUTOSIZE);

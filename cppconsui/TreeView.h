@@ -63,7 +63,7 @@ public:
   virtual ~TreeView();
 
   // Widget
-  virtual void draw(Curses::ViewPort area);
+  virtual int draw(Curses::ViewPort area, Error &error);
   virtual void cleanFocus();
   virtual bool grabFocus();
 
@@ -203,7 +203,8 @@ protected:
   using Container::moveWidgetBefore;
   using Container::moveWidgetAfter;
 
-  virtual int drawNode(SiblingIterator node, Curses::ViewPort &area);
+  virtual int drawNode(SiblingIterator node, int *out_height,
+    Curses::ViewPort &area, Error &error);
 
   virtual TreeNode addNode(Widget &widget);
 

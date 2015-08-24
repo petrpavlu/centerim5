@@ -68,7 +68,7 @@ void Footer::setText(const char *fmt, ...)
 
 Footer::Footer() : Window(0, 24, 80, 1, TYPE_NON_FOCUSABLE, false)
 {
-  setColorScheme("footer");
+  setColorScheme(CenterIM::SCHEME_FOOTER);
 
   label = new CppConsUI::Label;
   addWidget(*label, 0, 0);

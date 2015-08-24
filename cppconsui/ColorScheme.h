@@ -55,37 +55,62 @@ public:
     }
   };
 
-  typedef std::map<std::string, Color> Properties;
-  typedef std::map<std::string, Properties> Widgets;
-  typedef std::map<std::string, Widgets> Schemes;
+  enum PropertyConversionResult {
+    CONVERSION_SUCCESS,
+    CONVERSION_ERROR_WIDGET,
+    CONVERSION_ERROR_PROPERTY,
+  };
 
-  /**
-   * Returns color pair and Curses attributes (that can be passed to
-   * Curses::Window::attron()) for a given scheme, widget and property
-   * combination.
-   */
-  int getColorPair(
-    const char *scheme, const char *widget, const char *property);
+  static const int BUTTON_FOCUS = 0;
+  static const int BUTTON_NORMAL = 1;
+  static const int CHECKBOX_FOCUS = 2;
+  static const int CHECKBOX_NORMAL = 3;
+  static const int CONTAINER_BACKGROUND = 4;
+  static const int HORIZONTALLINE_LINE = 5;
+  static const int LABEL_TEXT = 6;
+  static const int PANEL_LINE = 7;
+  static const int PANEL_TITLE = 8;
+  static const int TEXTEDIT_TEXT = 9;
+  static const int TEXTVIEW_TEXT = 10;
+  static const int TEXTVIEW_SCROLLBAR = 11;
+  static const int VERTICALLINE_LINE = 12;
+  static const int TREEVIEW_LINE = 13;
+
+  typedef std::pair<int, int> PropertyPair;
+  typedef std::map<PropertyPair, Color> Properties;
+  typedef std::map<int, Properties> Schemes;
+
+  /// Gets color pair and Curses attributes (that can be passed to
+  /// Curses::ViewPort::attrOn()) for a given scheme, widget and property
+  /// combination.
+  int getAttributes(
+    int scheme, int property, int subproperty, int *out_attrs, Error &error);
 #ifdef SAVE_COLOR_PAIRS
-  int getColorPair(Color &c);
+  int getColorPair(Color &c, int *attrs, Error &error);
 #else
-  int getColorPair(const Color &c);
+  int getColorPair(const Color &c, int *attrs, Error &error);
 #endif
-  /**
-   * Sets color pair and Curses attributes for a given scheme, widget,
-   * property combination.
-   */
-  bool setColorPair(const char *scheme, const char *widget,
-    const char *property, int foreground, int background,
-    int attrs = Curses::Attr::NORMAL, bool overwrite = false);
-  void freeScheme(const char *scheme);
 
+  /// Sets color pair and Curses attributes for a given scheme, widget, property
+  /// combination.
+  bool setAttributes(int scheme, int property, int foreground, int background,
+    int attrs = Curses::Attr::NORMAL, bool overwrite = false);
+  bool setAttributesExt(int scheme, int property, int subproperty,
+    int foreground, int background, int attrs = Curses::Attr::NORMAL,
+    bool overwrite = false);
+  void freeScheme(int scheme);
   const Schemes &getSchemes() const { return schemes; }
 
   void clear();
 
+  static const char *propertyToWidgetName(int property);
+  static const char *propertyToPropertyName(int property);
+  static PropertyConversionResult stringPairToPropertyPair(const char *widget,
+    const char *property, int *out_property, int *out_subproperty);
+
 private:
-  typedef std::map<std::pair<int, int>, int> ColorPairs;
+  typedef std::pair<int, int> ColorPair;
+  typedef std::map<ColorPair, int> ColorPairs;
 
   Schemes schemes;
   ColorPairs pairs;

@@ -33,8 +33,9 @@ Spacer::Spacer(int w, int h) : Widget(w, h)
 {
 }
 
-void Spacer::draw(Curses::ViewPort /*area*/)
+int Spacer::draw(Curses::ViewPort /*area*/, Error & /*error*/)
 {
+  return 0;
 }
 
 } // namespace CppConsUI

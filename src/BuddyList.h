@@ -94,7 +94,7 @@ private:
     virtual ~Filter() {}
 
     // Widget
-    virtual void draw(CppConsUI::Curses::ViewPort area);
+    virtual int draw(CppConsUI::Curses::ViewPort area, CppConsUI::Error &error);
 
   protected:
     BuddyList *parent;

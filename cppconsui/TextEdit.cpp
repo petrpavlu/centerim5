@@ -32,6 +32,8 @@
 
 #include "TextEdit.h"
 
+#include "ColorScheme.h"
+
 #include <algorithm>
 #include <cassert>
 #include <cstring>
@@ -81,14 +83,15 @@ bool TextEdit::processInputText(const TermKeyKey &key)
   return true;
 }
 
-void TextEdit::draw(Curses::ViewPort area)
+int TextEdit::draw(Curses::ViewPort area, Error &error)
 {
   assertUpdatedScreenLines();
 
-  area.erase();
+  DRAW(area.erase(error));
 
-  int attrs = getColorPair("textedit", "text");
-  area.attrOn(attrs);
+  int attrs;
+  DRAW(getAttributes(ColorScheme::TEXTEDIT_TEXT, &attrs, error));
+  DRAW(area.attrOn(attrs, error));
 
   ScreenLines::iterator i;
   int j;
@@ -99,30 +102,32 @@ void TextEdit::draw(Curses::ViewPort area)
     for (size_t k = 0; k < i->length && *p != '\n'; k++) {
       int printed;
       if (masked)
-        area.addChar(w, j, '*', &printed);
+        DRAW(area.addChar(w, j, '*', error, &printed));
       else {
         UTF8::UniChar uc = UTF8::getUniChar(p);
         if (uc == '\t') {
           printed = onScreenWidth(uc, w);
           for (int l = 0; l < printed; l++)
-            area.addChar(w + l, j, ' ');
+            DRAW(area.addChar(w + l, j, ' ', error));
         }
         else
-          w += area.addChar(w, j, uc, &printed);
+          DRAW(area.addChar(w, j, uc, error, &printed));
         w += printed;
       }
       p = nextChar(p);
     }
   }
 
-  area.attrOff(attrs);
+  DRAW(area.attrOff(attrs, error));
 
   if (has_focus) {
     const char *line = screen_lines[current_sc_line].start;
     int sc_x = width(line, current_sc_linepos);
     int sc_y = current_sc_line - view_top;
-    area.changeAt(sc_x, sc_y, 1, Curses::Attr::REVERSE, 0, NULL);
+    DRAW(area.changeAt(sc_x, sc_y, 1, Curses::Attr::REVERSE, 0, error));
   }
+
+  return 0;
 }
 
 void TextEdit::setText(const char *new_text)

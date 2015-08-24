@@ -94,6 +94,8 @@ protected:
    * for sorting. */
   int getBuddyStatusWeight(PurpleBuddy *buddy) const;
 
+  int getColorSchemeByBuddy(int base_scheme, PurpleBuddy *buddy);
+
   void updateFilterVisibility(const char *name);
 
   void retrieveUserInfoForName(PurpleConnection *gc, const char *name) const;
@@ -144,7 +146,8 @@ protected:
   PurpleBuddy *buddy;
 
   // Widget
-  virtual int getColorPair(const char *widget, const char *property) const;
+  virtual int getAttributes(
+    int property, int subproperty, int *attrs, CppConsUI::Error &error) const;
 
   // BuddyListNode
   virtual void openContextMenu();
@@ -247,7 +250,8 @@ protected:
   PurpleContact *contact;
 
   // Widget
-  virtual int getColorPair(const char *widget, const char *property) const;
+  virtual int getAttributes(
+    int property, int subproperty, int *attrs, CppConsUI::Error &error) const;
 
   // BuddyListNode
   virtual void openContextMenu();

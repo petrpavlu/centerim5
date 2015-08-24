@@ -28,22 +28,29 @@
 
 #include "HorizontalLine.h"
 
+#include "ColorScheme.h"
+
 namespace CppConsUI {
 
 HorizontalLine::HorizontalLine(int w) : AbstractLine(w, 1)
 {
 }
 
-void HorizontalLine::draw(Curses::ViewPort area)
+int HorizontalLine::draw(Curses::ViewPort area, Error &error)
 {
   if (real_width == 0 || real_height != 1)
-    return;
+    return 0;
 
-  int attrs = getColorPair("horizontalline", "line");
-  area.attrOn(attrs);
+  int attrs;
+  DRAW(getAttributes(ColorScheme::HORIZONTALLINE_LINE, &attrs, error));
+  DRAW(area.attrOn(attrs, error));
+
   for (int i = 0; i < real_width; i++)
-    area.addLineChar(i, 0, Curses::LINE_HLINE);
-  area.attrOff(attrs);
+    DRAW(area.addLineChar(i, 0, Curses::LINE_HLINE, error));
+
+  DRAW(area.attrOff(attrs, error));
+
+  return 0;
 }
 
 } // namespace CppConsUI

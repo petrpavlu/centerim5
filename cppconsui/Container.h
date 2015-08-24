@@ -82,7 +82,7 @@ public:
   virtual ~Container();
 
   // Widget
-  virtual void draw(Curses::ViewPort area);
+  virtual int draw(Curses::ViewPort area, Error &error);
   virtual Widget *getFocusWidget();
   virtual void cleanFocus();
   virtual bool restoreFocus();
@@ -225,7 +225,7 @@ protected:
   /**
    * Draws a single child widget.
    */
-  virtual void drawChild(Widget &child, Curses::ViewPort area);
+  virtual int drawChild(Widget &child, Curses::ViewPort area, Error &error);
 
   /**
    * Searches children for a given widget.

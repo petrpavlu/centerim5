@@ -25,6 +25,7 @@
 #include "Conversations.h"
 #include "Footer.h"
 
+#include <cppconsui/ColorScheme.h>
 #include <sys/stat.h>
 #include "gettext.h"
 
@@ -34,7 +35,7 @@ Conversation::Conversation(PurpleConversation *conv_)
 {
   g_assert(conv);
 
-  setColorScheme("conversation");
+  setColorScheme(CenterIM::SCHEME_CONVERSATION);
 
   view = new CppConsUI::TextView(width - 2, height, true, true);
   input = new CppConsUI::TextEdit(width - 2, height);
@@ -180,8 +181,11 @@ void Conversation::write(const char *name, const char * /*alias*/,
 {
   // beep on message
   if (!(flags & PURPLE_MESSAGE_SEND) &&
-    purple_prefs_get_bool(CONF_PREFIX "/chat/beep_on_msg"))
-    CppConsUI::Curses::beep();
+    purple_prefs_get_bool(CONF_PREFIX "/chat/beep_on_msg")) {
+    // TODO Implement correct error handling.
+    CppConsUI::Error error;
+    CppConsUI::Curses::beep(error);
+  }
 
   // update the last_activity property
   PurpleConversationType type = purple_conversation_get_type(conv);
@@ -275,10 +279,11 @@ Conversation::ConversationLine::~ConversationLine()
   g_free(text);
 }
 
-void Conversation::ConversationLine::draw(CppConsUI::Curses::ViewPort area)
+int Conversation::ConversationLine::draw(
+  CppConsUI::Curses::ViewPort area, CppConsUI::Error &error)
 {
   if (real_width == 0 || real_height != 1)
-    return;
+    return 0;
 
   int l;
   if (text_width + 5 >= static_cast<unsigned>(real_width))
@@ -286,18 +291,24 @@ void Conversation::ConversationLine::draw(CppConsUI::Curses::ViewPort area)
   else
     l = real_width - text_width - 5;
 
-  // use HorizontalLine colors
-  int attrs = getColorPair("horizontalline", "line");
-  area.attrOn(attrs);
+  // Use HorizontalLine colors.
+  int attrs;
+  DRAW(
+    getAttributes(CppConsUI::ColorScheme::HORIZONTALLINE_LINE, &attrs, error));
+  DRAW(area.attrOn(attrs, error));
 
   int i;
   for (i = 0; i < l; i++)
-    area.addLineChar(i, 0, CppConsUI::Curses::LINE_HLINE);
-  i += area.addString(i, 0, text);
+    DRAW(area.addLineChar(i, 0, CppConsUI::Curses::LINE_HLINE, error));
+  int printed;
+  DRAW(area.addString(i, 0, text, error, &printed));
+  i += printed;
   for (; i < real_width; i++)
-    area.addLineChar(i, 0, CppConsUI::Curses::LINE_HLINE);
+    DRAW(area.addLineChar(i, 0, CppConsUI::Curses::LINE_HLINE, error));
 
-  area.attrOff(attrs);
+  DRAW(area.attrOff(attrs, error));
+
+  return 0;
 }
 
 char *Conversation::stripHTML(const char *str) const

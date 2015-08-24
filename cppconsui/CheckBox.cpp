@@ -27,6 +27,7 @@
 
 #include "CheckBox.h"
 
+#include "ColorScheme.h"
 #include "Dialog.h"
 
 #include <cassert>
@@ -59,45 +60,49 @@ CheckBox::~CheckBox()
   delete[] text;
 }
 
-void CheckBox::draw(Curses::ViewPort area)
+int CheckBox::draw(Curses::ViewPort area, Error &error)
 {
-  assert(text);
+  assert(text != NULL);
 
   int attrs;
-  if (has_focus)
-    attrs = getColorPair("checkbox", "focus") | Curses::Attr::REVERSE;
+  if (has_focus) {
+    DRAW(getAttributes(ColorScheme::CHECKBOX_FOCUS, &attrs, error));
+    attrs |= Curses::Attr::REVERSE;
+  }
   else
-    attrs = getColorPair("checkbox", "normal");
-  area.attrOn(attrs);
+    DRAW(getAttributes(ColorScheme::CHECKBOX_NORMAL, &attrs, error));
+  DRAW(area.attrOn(attrs, error));
 
-  // print text
-  area.fill(attrs, 0, 0, text_width, real_height);
+  // Print text.
+  DRAW(area.fill(attrs, 0, 0, text_width, real_height, error));
   int y = 0;
   const char *start, *end;
   start = end = text;
-  while (*end) {
+  while (*end != '\0') {
     if (*end == '\n') {
-      area.addString(0, y, real_width, start, end);
+      DRAW(area.addString(0, y, real_width, start, end, error));
       ++y;
       start = end + 1;
     }
     ++end;
   }
-  area.addString(0, y, real_width, start, end);
+  DRAW(area.addString(0, y, real_width, start, end, error));
 
   int l = text_width;
   int h = (text_height - 1) / 2;
   int printed;
 
-  // print value
+  // Print value.
   const char *value = checked ? YES_BUTTON_TEXT : NO_BUTTON_TEXT;
   int value_width = Curses::onScreenWidth(value);
-  area.fill(attrs, l, 0, value_width + 2, real_height);
-  area.addString(l, h, real_width - l, ": ", &printed);
+  DRAW(area.fill(attrs, l, 0, value_width + 2, real_height, error));
+  DRAW(area.addString(l, h, real_width - l, ": ", error, &printed));
   l += printed;
-  area.addString(l, h, real_width - l, value);
+  DRAW(area.addString(l, h, real_width - l, value, error));
 
-  area.attrOff(attrs);
+  DRAW(area.attrOff(attrs, error));
+
+  return 0;
 }
 
 void CheckBox::setText(const char *new_text)

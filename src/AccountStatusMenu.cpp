@@ -25,7 +25,7 @@
 
 AccountStatusMenu::AccountStatusMenu() : MenuWindow(0, 0, AUTOSIZE, AUTOSIZE)
 {
-  setColorScheme("accountstatusmenu");
+  setColorScheme(CenterIM::SCHEME_ACCOUNTSTATUSMENU);
 
   /*
   TODO
@@ -73,7 +73,7 @@ void AccountStatusMenu::openStatusPopup(
 AccountStatusMenu::StatusPopup::StatusPopup(PurpleAccount *account)
   : MenuWindow(0, 0, AUTOSIZE, AUTOSIZE)
 {
-  setColorScheme("accountstatusmenu");
+  setColorScheme(CenterIM::SCHEME_ACCOUNTSTATUSMENU);
 
   bool has_independents = false;
   for (GList *iter = purple_account_get_status_types(account); iter;
