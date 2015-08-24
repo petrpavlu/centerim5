@@ -1207,6 +1207,8 @@ bool CenterIM::saveColorSchemeConfig()
 
 const char *CenterIM::schemeToString(int scheme)
 {
+  static_assert(G_N_ELEMENTS(scheme_names) == SCHEME_END,
+    "Incorrect number of elements in array scheme_names");
   assert(scheme >= 0 && scheme < SCHEME_END);
   return scheme_names[scheme];
 }
