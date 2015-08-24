@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR([config.h.in])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_MACRO_DIR([m4])
-AM_INIT_AUTOMAKE([-Wall])
+AM_INIT_AUTOMAKE([-Wall subdir-objects])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 AC_GNU_SOURCE
@@ -18,17 +18,16 @@ AC_GNU_SOURCE
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_CC_C99
-AC_PROG_CPP
 AC_PROG_CXX
 AX_CXX_COMPILE_STDCXX_11([noext])
-AC_PROG_CXXCPP
+AM_PROG_AR
 
 LT_INIT([disable-static])
 
 # Checks for libraries.
 
 AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.17])
+AM_GNU_GETTEXT_VERSION([0.18.2])
 
 # libpurple
 # v2.7.0 is needed because of purple_account_get_name_for_display(), this
