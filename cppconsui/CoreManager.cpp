@@ -64,8 +64,8 @@ int CoreManager::initializeInput(Error &error)
     if (iconv_desc == ICONV_NONE) {
       error = Error(ERROR_ICONV_INITIALIZATION);
       error.setFormattedString(
-        _("Iconv initialization failed. Cannot create conversion from %s to "
-          "UTF-8."),
+        _("Iconv initialization failed. Cannot create a conversion descriptor "
+          "from %s to UTF-8."),
         codeset);
       goto error_cleanup;
     }
@@ -252,8 +252,9 @@ void CoreManager::onScreenResized()
   if (resize_pending)
     return;
 
-  write(pipefd[1], "@", 1);
-  resize_pending = true;
+  int r = write(pipefd[1], "@", 1);
+  if (r == 1)
+    resize_pending = true;
 }
 
 void CoreManager::logError(const char *message)
