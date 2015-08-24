@@ -201,16 +201,17 @@ void Button::setMasked(bool new_masked)
 
 void Button::setText(const char *new_text)
 {
-  delete[] text;
-
   size_t size = 1;
-  if (new_text)
+  if (new_text != NULL)
     size += std::strlen(new_text);
-  text = new char[size];
-  if (new_text)
-    std::strcpy(text, new_text);
+  char *new_storage = new char[size];
+  if (new_text != NULL)
+    std::strcpy(new_storage, new_text);
   else
-    text[0] = '\0';
+    new_storage[0] = '\0';
+
+  delete[] text;
+  text = new_storage;
 
   // update text_width, text_height and wish height
   text_width = 0;
@@ -239,17 +240,18 @@ void Button::setText(const char *new_text)
 
 void Button::setValue(const char *new_value)
 {
-  delete[] value;
-
   size_t size = 1;
-  if (new_value)
+  if (new_value != NULL)
     size += std::strlen(new_value);
-  value = new char[size];
-
-  if (new_value)
-    std::strcpy(value, new_value);
+  char *new_storage = new char[size];
+  if (new_value != NULL)
+    std::strcpy(new_storage, new_value);
   else
-    value[0] = '\0';
+    new_storage[0] = '\0';
+
+  delete[] value;
+  value = new_storage;
+
   value_width = Curses::onScreenWidth(value);
   redraw();
 }
@@ -263,34 +265,36 @@ void Button::setValue(int new_value)
 
 void Button::setUnit(const char *new_unit)
 {
-  delete[] unit;
-
   size_t size = 1;
-  if (new_unit)
+  if (new_unit != NULL)
     size += std::strlen(new_unit);
-  unit = new char[size];
-
-  if (new_unit)
-    std::strcpy(unit, new_unit);
+  char *new_storage = new char[size];
+  if (new_unit != NULL)
+    std::strcpy(new_storage, new_unit);
   else
-    unit[0] = '\0';
+    new_storage[0] = '\0';
+
+  delete[] unit;
+  unit = new_storage;
+
   unit_width = Curses::onScreenWidth(unit);
   redraw();
 }
 
 void Button::setRight(const char *new_right)
 {
-  delete[] right;
-
   size_t size = 1;
-  if (new_right)
+  if (new_right != NULL)
     size += std::strlen(new_right);
-  right = new char[size];
-
-  if (new_right)
-    std::strcpy(right, new_right);
+  char *new_storage = new char[size];
+  if (new_right != NULL)
+    std::strcpy(new_storage, new_right);
   else
-    right[0] = '\0';
+    new_storage[0] = '\0';
+
+  delete[] right;
+  right = new_storage;
+
   right_width = Curses::onScreenWidth(right);
   redraw();
 }

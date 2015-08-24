@@ -85,7 +85,6 @@ void Error::setString(const char *string)
   if (string != NULL)
     size += std::strlen(string);
   char *new_string = new char[size];
-
   if (string != NULL)
     std::strcpy(new_string, string);
   else

@@ -105,18 +105,19 @@ int Panel::draw(Curses::ViewPort area, Error &error)
 
 void Panel::setTitle(const char *new_title)
 {
-  delete[] title;
-
   size_t size = 1;
-  if (new_title)
+  if (new_title != NULL)
     size += std::strlen(new_title);
-  title = new char[size];
-  if (new_title)
-    std::strcpy(title, new_title);
+  char *new_storage = new char[size];
+  if (new_title != NULL)
+    std::strcpy(new_storage, new_title);
   else
-    title[0] = '\0';
-  title_width = Curses::onScreenWidth(title);
+    new_storage[0] = '\0';
 
+  delete[] title;
+  title = new_storage;
+
+  title_width = Curses::onScreenWidth(title);
   redraw();
 }
 

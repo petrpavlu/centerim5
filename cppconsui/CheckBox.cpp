@@ -107,16 +107,17 @@ int CheckBox::draw(Curses::ViewPort area, Error &error)
 
 void CheckBox::setText(const char *new_text)
 {
-  delete[] text;
-
   size_t size = 1;
-  if (new_text)
+  if (new_text != NULL)
     size += std::strlen(new_text);
-  text = new char[size];
-  if (new_text)
-    std::strcpy(text, new_text);
+  char *new_storage = new char[size];
+  if (new_text != NULL)
+    std::strcpy(new_storage, new_text);
   else
-    text[0] = '\0';
+    new_storage[0] = '\0';
+
+  delete[] text;
+  text = new_storage;
 
   // update text_width, text_height and wish height
   text_width = 0;
