@@ -37,8 +37,8 @@ Conversation::Conversation(PurpleConversation *conv_)
 
   setColorScheme(CenterIM::SCHEME_CONVERSATION);
 
-  view = new CppConsUI::TextView(width - 2, height, true, true);
-  input = new CppConsUI::TextEdit(width - 2, height);
+  view = new CppConsUI::TextView(width_ - 2, height_, true, true);
+  input = new CppConsUI::TextEdit(width_ - 2, height_);
   input->signal_text_change.connect(
     sigc::mem_fun(this, &Conversation::onInputTextChange));
   char *name = g_strdup_printf("[%s] %s",
@@ -48,7 +48,7 @@ Conversation::Conversation(PurpleConversation *conv_)
   g_free(name);
   addWidget(*view, 1, 0);
   addWidget(*input, 1, 1);
-  addWidget(*line, 0, height);
+  addWidget(*line, 0, height_);
 
   PurpleConversationType type = purple_conversation_get_type(conv_);
   if (type == PURPLE_CONV_TYPE_CHAT) {
@@ -282,14 +282,14 @@ Conversation::ConversationLine::~ConversationLine()
 int Conversation::ConversationLine::draw(
   CppConsUI::Curses::ViewPort area, CppConsUI::Error &error)
 {
-  if (real_width == 0 || real_height != 1)
+  if (real_width_ == 0 || real_height_ != 1)
     return 0;
 
   int l;
-  if (text_width + 5 >= static_cast<unsigned>(real_width))
+  if (text_width + 5 >= static_cast<unsigned>(real_width_))
     l = 0;
   else
-    l = real_width - text_width - 5;
+    l = real_width_ - text_width - 5;
 
   // Use HorizontalLine colors.
   int attrs;
@@ -303,7 +303,7 @@ int Conversation::ConversationLine::draw(
   int printed;
   DRAW(area.addString(i, 0, text, error, &printed));
   i += printed;
-  for (; i < real_width; i++)
+  for (; i < real_width_; i++)
     DRAW(area.addLineChar(i, 0, CppConsUI::Curses::LINE_HLINE, error));
 
   DRAW(area.attrOff(attrs, error));

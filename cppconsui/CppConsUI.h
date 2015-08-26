@@ -1,30 +1,25 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * General classes, functions and enumerations.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// General classes, functions and enumerations.
+///
+/// @ingroup cppconsui
 
 #ifndef __CPPCONSUI_H__
 #define __CPPCONSUI_H__
@@ -79,21 +74,21 @@ public:
   Error &operator=(const Error &other);
   virtual ~Error();
 
-  bool present() const { return error_code != ERROR_NONE; }
+  bool present() const { return error_code_ != ERROR_NONE; }
 
   void setCode(ErrorCode code);
-  ErrorCode getCode() const { return error_code; }
+  ErrorCode getCode() const { return error_code_; }
 
   void setString(const char *string);
   void setFormattedString(const char *format, ...)
     CPPCONSUI_COMPILER_ATTRIBUTE((format(printf, 2, 3)));
-  const char *getString() const { return error_string; }
+  const char *getString() const { return error_string_; }
 
   void clear();
 
 protected:
-  ErrorCode error_code;
-  char *error_string;
+  ErrorCode error_code_;
+  char *error_string_;
 };
 
 enum WrapMode {
@@ -102,10 +97,9 @@ enum WrapMode {
   WRAP_WORD,
 };
 
-class Point {
-public:
+struct Point {
   Point() : x(0), y(0) {}
-  Point(int x_, int y_) : x(x_), y(y_) {}
+  Point(int x, int y) : x(x), y(y) {}
 
   int getX() const { return x; }
   int getY() const { return y; }
@@ -113,8 +107,7 @@ public:
   int x, y;
 };
 
-class Size {
-public:
+struct Size {
   Size() : width(0), height(0) {}
   Size(int w, int h) : width(w), height(h) {}
 
@@ -124,19 +117,14 @@ public:
   int width, height;
 };
 
-class Rect : public Point {
-public:
-  Rect() : width(0), height(0) {}
-  Rect(int x, int y, int w, int h) : Point(x, y), width(w), height(h) {}
+struct Rect : public Point, public Size {
+  Rect() {}
+  Rect(int x, int y, int w, int h) : Point(x, y), Size(w, h) {}
 
-  int getWidth() const { return width; }
-  int getHeight() const { return height; }
   int getLeft() const { return x; }
   int getTop() const { return y; }
   int getRight() const { return x + width - 1; }
   int getBottom() const { return y + height - 1; }
-
-  int width, height;
 };
 
 enum InputCondition {
@@ -186,4 +174,4 @@ const char *findPrevChar(const char *start, const char *p);
 
 #endif // __CPPCONSUI_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

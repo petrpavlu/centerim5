@@ -1,30 +1,25 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * ListBox class implementation.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// ListBox class implementation.
+///
+/// @ingroup cppconsui
 
 #include "ListBox.h"
 
@@ -34,10 +29,10 @@
 namespace CppConsUI {
 
 ListBox::ListBox(int w, int h)
-  : AbstractListBox(w, h), children_height(0), autosize_children_count(0)
+  : AbstractListBox(w, h), children_height_(0), autosize_children_count_(0)
 {
-  // allow fast focus changing (paging) using PageUp/PageDown keys
-  page_focus = true;
+  // Allow fast focus changing (paging) using PageUp/PageDown keys.
+  page_focus_ = true;
 }
 
 HorizontalLine *ListBox::insertSeparator(size_t pos)
@@ -61,7 +56,7 @@ void ListBox::insertWidget(size_t pos, Widget &widget)
   if (!widget.isVisible())
     return;
 
-  // calculate the expected height by the widget
+  // Calculate the expected height by the widget.
   int h = widget.getHeight();
   int autosize_change = 0;
   if (h == AUTOSIZE) {
@@ -77,46 +72,46 @@ void ListBox::insertWidget(size_t pos, Widget &widget)
 
 void ListBox::appendWidget(Widget &widget)
 {
-  insertWidget(children.size(), widget);
+  insertWidget(children_.size(), widget);
 }
 
 void ListBox::updateArea()
 {
   int autosize_height = 1;
   int autosize_height_extra = 0;
-  if (autosize_children_count && children_height < real_height) {
-    int space = real_height - (children_height - autosize_children_count);
-    autosize_height = space / autosize_children_count;
-    autosize_height_extra = space % autosize_children_count;
+  if (autosize_children_count_ && children_height_ < real_height_) {
+    int space = real_height_ - (children_height_ - autosize_children_count_);
+    autosize_height = space / autosize_children_count_;
+    autosize_height_extra = space % autosize_children_count_;
   }
 
   int y = 0;
-  for (Children::iterator i = children.begin(); i != children.end(); i++) {
+  for (Children::iterator i = children_.begin(); i != children_.end(); ++i) {
     Widget *widget = *i;
     bool is_visible = widget->isVisible();
 
-    // position the widget correctly
+    // Position the widget correctly.
     widget->setRealPosition(0, y);
 
-    // calculate the real width
+    // Calculate the real width.
     int w = widget->getWidth();
     if (w == AUTOSIZE) {
       w = widget->getWishWidth();
       if (w == AUTOSIZE)
-        w = real_width;
+        w = real_width_;
     }
-    if (w > real_width)
-      w = real_width;
+    if (w > real_width_)
+      w = real_width_;
 
-    // calculate the real height
+    // Calculate the real height.
     int h = widget->getHeight();
     if (h == AUTOSIZE) {
       h = widget->getWishHeight();
       if (h == AUTOSIZE) {
         h = autosize_height;
-        if (is_visible && autosize_height_extra) {
-          autosize_height_extra--;
-          h++;
+        if (is_visible && autosize_height_extra > 0) {
+          --autosize_height_extra;
+          ++h;
         }
       }
     }
@@ -127,14 +122,14 @@ void ListBox::updateArea()
       y += h;
   }
 
-  // make sure that the currently focused widget is visible
+  // Make sure that the currently focused widget is visible.
   updateScroll();
 }
 
 void ListBox::onChildMoveResize(
   Widget &activator, const Rect &oldsize, const Rect &newsize)
 {
-  // sanity check
+  // Sanity check.
   assert(newsize.getLeft() == UNSETPOS && newsize.getTop() == UNSETPOS);
 
   if (!activator.isVisible())
@@ -151,14 +146,14 @@ void ListBox::onChildMoveResize(
     old_height = activator.getWishHeight();
     if (old_height == AUTOSIZE) {
       old_height = 1;
-      autosize_change--;
+      --autosize_change;
     }
   }
   if (new_height == AUTOSIZE) {
     new_height = activator.getWishHeight();
     if (new_height == AUTOSIZE) {
       new_height = 1;
-      autosize_change++;
+      ++autosize_change;
     }
   }
 
@@ -171,7 +166,7 @@ void ListBox::onChildWishSizeChange(
   if (!activator.isVisible() || activator.getHeight() != AUTOSIZE)
     return;
 
-  // the widget is visible and is autosized
+  // The widget is visible and is autosized.
   int old_height = oldsize.getHeight();
   int new_height = newsize.getHeight();
 
@@ -183,7 +178,7 @@ void ListBox::onChildWishSizeChange(
 
 void ListBox::onChildVisible(Widget &activator, bool visible)
 {
-  // the widget is being hidden or deleted
+  // The widget is being hidden or deleted.
   int h = activator.getHeight();
   int sign = visible ? 1 : -1;
   int autosize_change = 0;
@@ -200,17 +195,17 @@ void ListBox::onChildVisible(Widget &activator, bool visible)
 void ListBox::updateChildren(
   int children_height_change, int autosize_children_count_change)
 {
-  // set new children data
-  children_height += children_height_change;
-  assert(children_height >= 0);
-  autosize_children_count += autosize_children_count_change;
-  assert(autosize_children_count >= 0);
+  // Set new children data.
+  children_height_ += children_height_change;
+  assert(children_height_ >= 0);
+  autosize_children_count_ += autosize_children_count_change;
+  assert(autosize_children_count_ >= 0);
 
-  // reposition all child widgets
+  // Reposition all child widgets.
   updateArea();
-  signal_children_height_change(*this, children_height);
+  signal_children_height_change(*this, children_height_);
 }
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

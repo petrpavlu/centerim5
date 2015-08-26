@@ -1,30 +1,25 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * ComboBox class implementation.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// ComboBox class implementation.
+///
+/// @ingroup cppconsui
 
 #include "ComboBox.h"
 
@@ -34,15 +29,15 @@
 namespace CppConsUI {
 
 ComboBox::ComboBox(int w, int h, const char *text)
-  : Button(w, h, text, FLAG_VALUE), dropdown(NULL), selected_entry(0),
-    max_option_width(0)
+  : Button(w, h, text, FLAG_VALUE), dropdown_(NULL), selected_entry_(0),
+    max_option_width_(0)
 {
   signal_activate.connect(sigc::mem_fun(this, &ComboBox::onDropDown));
 }
 
 ComboBox::ComboBox(const char *text)
-  : Button(text, FLAG_VALUE), dropdown(NULL), selected_entry(0),
-    max_option_width(0)
+  : Button(text, FLAG_VALUE), dropdown_(NULL), selected_entry_(0),
+    max_option_width_(0)
 {
   signal_activate.connect(sigc::mem_fun(this, &ComboBox::onDropDown));
 }
@@ -50,61 +45,61 @@ ComboBox::ComboBox(const char *text)
 ComboBox::~ComboBox()
 {
   clearOptions();
-  if (dropdown)
-    dropdown->close();
+  if (dropdown_ != NULL)
+    dropdown_->close();
 }
 
 void ComboBox::clearOptions()
 {
-  for (ComboBoxEntries::iterator i = options.begin(); i != options.end(); i++)
+  for (ComboBoxEntries::iterator i = options_.begin(); i != options_.end(); ++i)
     delete[] i->title;
 
-  options.clear();
-  selected_entry = 0;
-  max_option_width = 0;
+  options_.clear();
+  selected_entry_ = 0;
+  max_option_width_ = 0;
 }
 
 int ComboBox::addOption(const char *text, intptr_t data)
 {
   size_t size = 1;
-  if (text)
+  if (text != NULL)
     size += std::strlen(text);
   ComboBoxEntry e;
   e.title = new char[size];
-  if (text)
+  if (text != NULL)
     std::strcpy(e.title, text);
   else
     e.title[0] = '\0';
   e.data = data;
 
   int w = Curses::onScreenWidth(e.title);
-  if (w > max_option_width)
-    max_option_width = w;
+  if (w > max_option_width_)
+    max_option_width_ = w;
 
-  // set this option as selected if there isn't any other yet
-  if (options.empty()) {
-    selected_entry = 0;
+  // Set this option as selected if it is the first one.
+  if (options_.empty()) {
+    selected_entry_ = 0;
     setValue(text);
   }
 
-  options.push_back(e);
-  return options.size() - 1;
+  options_.push_back(e);
+  return options_.size() - 1;
 }
 
 const char *ComboBox::getSelectedTitle() const
 {
-  if (options.empty())
+  if (options_.empty())
     return NULL;
 
-  return getTitle(selected_entry);
+  return getTitle(selected_entry_);
 }
 
 intptr_t ComboBox::getSelectedData() const
 {
-  if (options.empty())
+  if (options_.empty())
     return 0;
 
-  return getData(selected_entry);
+  return getData(selected_entry_);
 }
 
 void *ComboBox::getSelectedDataPtr() const
@@ -115,30 +110,30 @@ void *ComboBox::getSelectedDataPtr() const
 const char *ComboBox::getTitle(int entry) const
 {
   assert(entry >= 0);
-  assert(static_cast<size_t>(entry) < options.size());
+  assert(static_cast<size_t>(entry) < options_.size());
 
-  return options[entry].title;
+  return options_[entry].title;
 }
 
 intptr_t ComboBox::getData(int entry) const
 {
   assert(entry >= 0);
-  assert(static_cast<size_t>(entry) < options.size());
+  assert(static_cast<size_t>(entry) < options_.size());
 
-  return options[entry].data;
+  return options_[entry].data;
 }
 
 void ComboBox::setSelected(int new_entry)
 {
   assert(new_entry >= 0);
-  assert(static_cast<size_t>(new_entry) < options.size());
+  assert(static_cast<size_t>(new_entry) < options_.size());
 
-  // selected option didn't change
-  if (new_entry == selected_entry)
+  // Selected option did not change.
+  if (new_entry == selected_entry_)
     return;
 
-  selected_entry = new_entry;
-  ComboBoxEntry e = options[new_entry];
+  selected_entry_ = new_entry;
+  ComboBoxEntry e = options_[new_entry];
   setValue(e.title);
   signal_selection_changed(*this, new_entry, e.title, e.data);
 }
@@ -147,7 +142,7 @@ void ComboBox::setSelectedByData(intptr_t data)
 {
   int i;
   ComboBoxEntries::iterator j;
-  for (i = 0, j = options.begin(); j != options.end(); i++, j++)
+  for (i = 0, j = options_.begin(); j != options_.end(); ++i, ++j)
     if (j->data == data) {
       setSelected(i);
       break;
@@ -156,36 +151,37 @@ void ComboBox::setSelectedByData(intptr_t data)
 
 void ComboBox::onDropDown(Button & /*activator*/)
 {
-  if (options.empty())
+  if (options_.empty())
     return;
 
-  dropdown = new MenuWindow(*this, max_option_width + 2, AUTOSIZE);
-  dropdown->signal_close.connect(sigc::mem_fun(this, &ComboBox::dropDownClose));
+  dropdown_ = new MenuWindow(*this, max_option_width_ + 2, AUTOSIZE);
+  dropdown_->signal_close.connect(
+    sigc::mem_fun(this, &ComboBox::dropDownClose));
 
   int i;
   ComboBoxEntries::iterator j;
-  for (i = 0, j = options.begin(); j != options.end(); i++, j++) {
-    Button *b = dropdown->appendItem(
+  for (i = 0, j = options_.begin(); j != options_.end(); ++i, ++j) {
+    Button *b = dropdown_->appendItem(
       j->title, sigc::bind(sigc::mem_fun(this, &ComboBox::dropDownOk), i));
-    if (i == selected_entry)
+    if (i == selected_entry_)
       b->grabFocus();
   }
 
-  dropdown->show();
+  dropdown_->show();
 }
 
 void ComboBox::dropDownOk(Button & /*activator*/, int new_entry)
 {
-  dropdown->close();
+  dropdown_->close();
 
   setSelected(new_entry);
 }
 
 void ComboBox::dropDownClose(Window & /*window*/)
 {
-  dropdown = NULL;
+  dropdown_ = NULL;
 }
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

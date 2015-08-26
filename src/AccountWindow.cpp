@@ -37,10 +37,10 @@ AccountWindow::AccountWindow() : SplitDialog(0, 0, 80, 24, _("Accounts"))
   for (GList *i = purple_accounts_get_all(); i; i = i->next)
     populateAccount(reinterpret_cast<PurpleAccount *>(i->data));
 
-  buttons->appendItem(
+  buttons_->appendItem(
     _("Add"), sigc::mem_fun(this, &AccountWindow::addAccount));
-  buttons->appendSeparator();
-  buttons->appendItem(
+  buttons_->appendSeparator();
+  buttons_->appendItem(
     _("Done"), sigc::hide(sigc::mem_fun(this, &AccountWindow::close)));
 
   onScreenResized();
@@ -294,7 +294,7 @@ void AccountWindow::SplitOption::updateSplits()
 
 void AccountWindow::SplitOption::onActivate(Button & /*activator*/)
 {
-  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(text, value);
+  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(text_, value_);
   dialog->signal_response.connect(
     sigc::mem_fun(this, &SplitOption::responseHandler));
   dialog->show();

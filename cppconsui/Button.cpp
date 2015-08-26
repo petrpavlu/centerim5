@@ -1,30 +1,25 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * Button class implementation.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// Button class implementation.
+///
+/// @ingroup cppconsui
 
 #include "Button.h"
 
@@ -36,81 +31,81 @@
 
 namespace CppConsUI {
 
-Button::Button(int w, int h, const char *text_, int flags_, bool masked_)
-  : Widget(w, h), flags(flags_), text(NULL), text_width(0), text_height(0),
-    value(NULL), value_width(0), unit(NULL), unit_width(0), right(NULL),
-    right_width(0), masked(masked_)
+Button::Button(int w, int h, const char *text, int flags, bool masked)
+  : Widget(w, h), flags_(flags), text_(NULL), text_width_(0), text_height_(0),
+    value_(NULL), value_width_(0), unit_(NULL), unit_width_(0), right_(NULL),
+    right_width_(0), masked_(masked)
 {
-  setText(text_);
+  setText(text);
   setValue(static_cast<char *>(NULL));
   setUnit(NULL);
   setRight(NULL);
 
-  can_focus = true;
+  can_focus_ = true;
   declareBindables();
 }
 
-Button::Button(const char *text_, int flags_, bool masked_)
-  : Widget(AUTOSIZE, AUTOSIZE), flags(flags_), text(NULL), text_width(0),
-    text_height(0), value(NULL), value_width(0), unit(NULL), unit_width(0),
-    right(NULL), right_width(0), masked(masked_)
+Button::Button(const char *text, int flags, bool masked)
+  : Widget(AUTOSIZE, AUTOSIZE), flags_(flags), text_(NULL), text_width_(0),
+    text_height_(0), value_(NULL), value_width_(0), unit_(NULL), unit_width_(0),
+    right_(NULL), right_width_(0), masked_(masked)
 {
-  setText(text_);
+  setText(text);
   setValue(static_cast<char *>(NULL));
   setUnit(NULL);
   setRight(NULL);
 
-  can_focus = true;
+  can_focus_ = true;
   declareBindables();
 }
 
-Button::Button(int w, int h, int flags_, const char *text_, const char *value_,
-  const char *unit_, const char *right_, bool masked_)
-  : Widget(w, h), flags(flags_), text(NULL), text_width(0), text_height(0),
-    value(NULL), value_width(0), unit(NULL), unit_width(0), right(NULL),
-    right_width(0), masked(masked_)
+Button::Button(int w, int h, int flags, const char *text, const char *value,
+  const char *unit, const char *right, bool masked)
+  : Widget(w, h), flags_(flags), text_(NULL), text_width_(0), text_height_(0),
+    value_(NULL), value_width_(0), unit_(NULL), unit_width_(0), right_(NULL),
+    right_width_(0), masked_(masked)
 {
-  setText(text_);
-  setValue(value_);
-  setUnit(unit_);
-  setRight(right_);
+  setText(text);
+  setValue(value);
+  setUnit(unit);
+  setRight(right);
 
-  can_focus = true;
+  can_focus_ = true;
   declareBindables();
 }
 
-Button::Button(int flags_, const char *text_, const char *value_,
-  const char *unit_, const char *right_, bool masked_)
-  : Widget(AUTOSIZE, AUTOSIZE), flags(flags_), text(NULL), text_width(0),
-    text_height(0), value(NULL), value_width(0), unit(NULL), unit_width(0),
-    right(NULL), right_width(0), masked(masked_)
+Button::Button(int flags, const char *text, const char *value, const char *unit,
+  const char *right, bool masked)
+  : Widget(AUTOSIZE, AUTOSIZE), flags_(flags), text_(NULL), text_width_(0),
+    text_height_(0), value_(NULL), value_width_(0), unit_(NULL), unit_width_(0),
+    right_(NULL), right_width_(0), masked_(masked)
 {
-  setText(text_);
-  setValue(value_);
-  setUnit(unit_);
-  setRight(right_);
+  setText(text);
+  setValue(value);
+  setUnit(unit);
+  setRight(right);
 
-  can_focus = true;
+  can_focus_ = true;
   declareBindables();
 }
 
 Button::~Button()
 {
-  delete[] text;
-  delete[] value;
-  delete[] unit;
-  delete[] right;
+  delete[] text_;
+  delete[] value_;
+  delete[] unit_;
+  delete[] right_;
 }
 
 int Button::draw(Curses::ViewPort area, Error &error)
 {
-  assert(text != NULL);
-  assert(value != NULL);
-  assert(unit != NULL);
-  assert(right != NULL);
+  assert(text_ != NULL);
+  assert(value_ != NULL);
+  assert(unit_ != NULL);
+  assert(right_ != NULL);
 
   int attrs;
-  if (has_focus) {
+  if (has_focus_) {
     DRAW(getAttributes(ColorScheme::PROPERTY_BUTTON_FOCUS, &attrs, error));
     attrs |= Curses::Attr::REVERSE;
   }
@@ -119,63 +114,63 @@ int Button::draw(Curses::ViewPort area, Error &error)
   DRAW(area.attrOn(attrs, error));
 
   // Print text.
-  DRAW(area.fill(attrs, 0, 0, text_width, real_height, error));
+  DRAW(area.fill(attrs, 0, 0, text_width_, real_height_, error));
   int y = 0;
   const char *start, *end;
-  start = end = text;
+  start = end = text_;
   while (*end != '\0') {
     if (*end == '\n') {
-      DRAW(area.addString(0, y, real_width, start, end, error));
+      DRAW(area.addString(0, y, real_width_, start, end, error));
       ++y;
       start = end + 1;
     }
     ++end;
   }
-  DRAW(area.addString(0, y, real_width, start, end, error));
+  DRAW(area.addString(0, y, real_width_, start, end, error));
 
-  int l = text_width;
-  int h = (text_height - 1) / 2;
+  int l = text_width_;
+  int h = (text_height_ - 1) / 2;
   int printed;
 
   // Print value.
-  if (flags & FLAG_VALUE) {
-    DRAW(area.fill(attrs, l, 0, value_width + 2, real_height, error));
-    DRAW(area.addString(l, h, real_width - l, ": ", error, &printed));
+  if (flags_ & FLAG_VALUE) {
+    DRAW(area.fill(attrs, l, 0, value_width_ + 2, real_height_, error));
+    DRAW(area.addString(l, h, real_width_ - l, ": ", error, &printed));
     l += printed;
 
-    if (masked) {
-      int count = value_width;
+    if (masked_) {
+      int count = value_width_;
       while (count--) {
-        DRAW(area.addString(l, h, real_width - l, "*", error, &printed));
+        DRAW(area.addString(l, h, real_width_ - l, "*", error, &printed));
         l += printed;
       }
     }
     else {
-      DRAW(area.addString(l, h, real_width - l, value, error, &printed));
+      DRAW(area.addString(l, h, real_width_ - l, value_, error, &printed));
       l += printed;
     }
   }
 
   // Print unit text.
-  if (flags & FLAG_UNIT) {
-    DRAW(area.fill(attrs, l, 0, unit_width + 1, real_height, error));
-    DRAW(area.addString(l, h, real_width - l, " ", error, &printed));
+  if (flags_ & FLAG_UNIT) {
+    DRAW(area.fill(attrs, l, 0, unit_width_ + 1, real_height_, error));
+    DRAW(area.addString(l, h, real_width_ - l, " ", error, &printed));
     l += printed;
-    DRAW(area.addString(l, h, real_width - l, unit, error, &printed));
+    DRAW(area.addString(l, h, real_width_ - l, unit_, error, &printed));
     l += printed;
   }
 
   DRAW(area.attrOff(attrs, error));
 
   // Print right area text.
-  if (flags & FLAG_RIGHT) {
-    const char *cur = right;
-    int width = right_width;
-    while (width > real_width - l - 1) {
+  if (flags_ & FLAG_RIGHT) {
+    const char *cur = right_;
+    int width = right_width_;
+    while (width > real_width_ - l - 1) {
       width -= Curses::onScreenWidth(UTF8::getUniChar(cur));
       cur = UTF8::getNextChar(cur);
     }
-    DRAW(area.addString(real_width - width, h, cur, error));
+    DRAW(area.addString(real_width_ - width, h, cur, error));
   }
 
   return 0;
@@ -183,19 +178,19 @@ int Button::draw(Curses::ViewPort area, Error &error)
 
 void Button::setFlags(int new_flags)
 {
-  if (new_flags == flags)
+  if (new_flags == flags_)
     return;
 
-  flags = new_flags;
+  flags_ = new_flags;
   redraw();
 }
 
 void Button::setMasked(bool new_masked)
 {
-  if (new_masked == masked)
+  if (new_masked == masked_)
     return;
 
-  masked = new_masked;
+  masked_ = new_masked;
   redraw();
 }
 
@@ -210,30 +205,30 @@ void Button::setText(const char *new_text)
   else
     new_storage[0] = '\0';
 
-  delete[] text;
-  text = new_storage;
+  delete[] text_;
+  text_ = new_storage;
 
-  // update text_width, text_height and wish height
-  text_width = 0;
-  text_height = 1;
+  // Update text_width_, text_height_ and wish height.
+  text_width_ = 0;
+  text_height_ = 1;
 
   const char *start, *end;
-  start = end = text;
+  start = end = text_;
   int w;
-  while (*end) {
+  while (*end != '\0') {
     if (*end == '\n') {
       w = Curses::onScreenWidth(start, end);
-      if (w > text_width)
-        text_width = w;
-      ++text_height;
+      if (w > text_width_)
+        text_width_ = w;
+      ++text_height_;
       start = end + 1;
     }
     ++end;
   }
   w = Curses::onScreenWidth(start, end);
-  if (w > text_width)
-    text_width = w;
-  setWishHeight(text_height);
+  if (w > text_width_)
+    text_width_ = w;
+  setWishHeight(text_height_);
 
   redraw();
 }
@@ -249,10 +244,10 @@ void Button::setValue(const char *new_value)
   else
     new_storage[0] = '\0';
 
-  delete[] value;
-  value = new_storage;
+  delete[] value_;
+  value_ = new_storage;
 
-  value_width = Curses::onScreenWidth(value);
+  value_width_ = Curses::onScreenWidth(value_);
   redraw();
 }
 
@@ -274,10 +269,10 @@ void Button::setUnit(const char *new_unit)
   else
     new_storage[0] = '\0';
 
-  delete[] unit;
-  unit = new_storage;
+  delete[] unit_;
+  unit_ = new_storage;
 
-  unit_width = Curses::onScreenWidth(unit);
+  unit_width_ = Curses::onScreenWidth(unit_);
   redraw();
 }
 
@@ -292,10 +287,10 @@ void Button::setRight(const char *new_right)
   else
     new_storage[0] = '\0';
 
-  delete[] right;
-  right = new_storage;
+  delete[] right_;
+  right_ = new_storage;
 
-  right_width = Curses::onScreenWidth(right);
+  right_width_ = Curses::onScreenWidth(right_);
   redraw();
 }
 
@@ -313,4 +308,4 @@ void Button::declareBindables()
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

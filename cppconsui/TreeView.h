@@ -1,23 +1,20 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef __TREEVIEW_H__
 #define __TREEVIEW_H__
@@ -47,9 +44,7 @@ public:
     CONSUI_DISABLE_COPY(ToggleCollapseButton);
   };
 
-  /**
-   * Node drawing style.
-   */
+  /// Node drawing style.
   enum Style {
     STYLE_NORMAL, ///< Draw "[+]" if the node is collapsed.
     STYLE_VOID,   ///< Don't draw any extra information.
@@ -79,87 +74,65 @@ public:
     Widget &activator, const Size &oldsize, const Size &newsize);
   virtual void onChildVisible(Widget &activator, bool visible);
 
-  /**
-   * Folds/unfolds given node.
-   */
+  /// Folds/unfolds given node.
   virtual void setCollapsed(NodeReference node, bool collapsed);
-  /**
-   * Toggles folding for given node.
-   */
+
+  /// Toggles folding for given node.
   virtual void toggleCollapsed(NodeReference node);
-  /**
-   * Convenient method to toggle folding of the current active node.
-   */
+
+  /// Convenient method to toggle folding of the current active node.
   virtual void actionToggleCollapsed();
 
-  /**
-   * Returns root node reference.
-   */
-  virtual NodeReference getRootNode() const { return thetree.begin(); }
+  /// Returns root node reference.
+  virtual NodeReference getRootNode() const { return thetree_.begin(); }
 
-  /**
-   * Inserts a widget before a specified position. TreeView takes ownership of
-   * the widget.
-   */
+  /// Inserts a widget before a specified position. TreeView takes ownership of
+  /// the widget.
   virtual NodeReference insertNode(NodeReference position, Widget &widget);
-  /**
-   * Inserts a widget after a specified position. TreeView takes ownership of
-   * the widget.
-   */
+
+  /// Inserts a widget after a specified position. TreeView takes ownership of
+  /// the widget.
   virtual NodeReference insertNodeAfter(NodeReference position, Widget &widget);
-  /**
-   * Prepends a widget to a specified parent. TreeView takes ownership of the
-   * widget.
-   */
+
+  /// Prepends a widget to a specified parent. TreeView takes ownership of the
+  /// widget.
   virtual NodeReference prependNode(NodeReference parent, Widget &widget);
-  /**
-   * Appends a widget to a specified parent. TreeView takes ownership of the
-   * widget.
-   */
+
+  /// Appends a widget to a specified parent. TreeView takes ownership of the
+  /// widget.
   virtual NodeReference appendNode(NodeReference parent, Widget &widget);
 
-  /**
-   * Deletes given node.
-   */
+  /// Deletes given node.
   virtual void deleteNode(NodeReference node, bool keepchildren);
-  /**
-   * Deletes all children of given node.
-   */
+
+  /// Deletes all children of given node.
   virtual void deleteNodeChildren(NodeReference node, bool keepchildren);
 
-  /**
-   * Returns reference to currently focused node/widget.
-   */
+  /// Returns reference to currently focused node/widget.
   virtual NodeReference getSelectedNode() const;
 
-  /**
-   * Returns node depth.
-   */
+  /// Returns node depth.
   virtual int getNodeDepth(NodeReference node) const;
 
-  /**
-   * Detaches a given node from its current location and moves it before
-   * a given position.
-   */
+  /// Detaches a given node from its current location and moves it before a
+  /// given position.
   virtual void moveNodeBefore(NodeReference node, NodeReference position);
-  /**
-   * Detaches a given node from its current location and moves it after
-   * a given position.
-   */
+
+  /// Detaches a given node from its current location and moves it after a given
+  /// position.
   virtual void moveNodeAfter(NodeReference node, NodeReference position);
-  /**
-   * Detaches a given node from its current location and appents it to a new
-   * parent.
-   */
+
+  /// Detaches a given node from its current location and appents it to a new
+  /// parent.
   virtual void setNodeParent(NodeReference node, NodeReference newparent);
+
   virtual void setNodeStyle(NodeReference node, Style s);
   virtual Style getNodeStyle(NodeReference node) const;
 
 protected:
   class TreeNode {
-    /* Note: If TreeNode is just protected/private and all its variables are
-     * public, then variables can be accessed from outside using NodeReference.
-     */
+    // Note: If TreeNode is just protected/private and all its variables are
+    // public, then variables can be accessed from outside using NodeReference.
     friend class TreeView;
 
   public:
@@ -169,30 +142,22 @@ protected:
     Widget *getWidget() const { return widget; }
 
   private:
-    /**
-     * Pointer to TreeView this node belongs to.
-     */
+    /// Pointer to TreeView this node belongs to.
     TreeView *treeview;
 
-    /**
-     * Flag whether the subtree is folded or not.
-     */
+    /// Flag whether the subtree is folded or not.
     bool collapsed;
 
-    /**
-     * Selected node drawing style.
-     */
+    /// Selected node drawing style.
     Style style;
 
-    /**
-     * Widget to show. Not const because width is changed to fit. E.g. labels
-     * can show '...' when the text does not fit in the given space.
-     */
+    /// Widget to show. Not const because width is changed to fit. E.g. labels
+    /// can show '...' when the text does not fit in the given space.
     Widget *widget;
   };
 
-  TheTree thetree;
-  NodeReference focus_node;
+  TheTree thetree_;
+  NodeReference focus_node_;
 
   // Widget
   virtual void updateArea();
@@ -231,4 +196,4 @@ private:
 
 #endif // __TREEVIEW_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

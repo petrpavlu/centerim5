@@ -158,13 +158,13 @@ Request::ActionDialog::ActionDialog(const char *title, const char *primary,
     const char *title = va_arg(actions, const char *);
     GCallback cb = va_arg(actions, GCallback);
 
-    CppConsUI::Button *b = buttons->appendItem(title,
+    CppConsUI::Button *b = buttons_->appendItem(title,
       sigc::bind(sigc::mem_fun(this, &ActionDialog::onActionChoice), i, cb));
     if (static_cast<int>(i) == default_value)
       b->grabFocus();
 
     if (i < action_count - 1)
-      buttons->appendSeparator();
+      buttons_->appendSeparator();
   }
 }
 

@@ -1,29 +1,24 @@
-/*
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * CheckBox class implementation.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// CheckBox class implementation.
+///
+/// @ingroup cppconsui
 
 #include "CheckBox.h"
 
@@ -36,36 +31,37 @@
 
 namespace CppConsUI {
 
-CheckBox::CheckBox(int w, int h, const char *text_, bool checked_)
-  : Widget(w, h), text(NULL), text_width(0), text_height(0), checked(checked_)
+CheckBox::CheckBox(int w, int h, const char *text, bool checked)
+  : Widget(w, h), text_(NULL), text_width_(0), text_height_(0),
+    checked_(checked)
 {
-  setText(text_);
+  setText(text);
 
-  can_focus = true;
+  can_focus_ = true;
   declareBindables();
 }
 
-CheckBox::CheckBox(const char *text_, bool checked_)
-  : Widget(AUTOSIZE, AUTOSIZE), text(NULL), text_width(0), text_height(0),
-    checked(checked_)
+CheckBox::CheckBox(const char *text, bool checked)
+  : Widget(AUTOSIZE, AUTOSIZE), text_(NULL), text_width_(0), text_height_(0),
+    checked_(checked)
 {
-  setText(text_);
+  setText(text);
 
-  can_focus = true;
+  can_focus_ = true;
   declareBindables();
 }
 
 CheckBox::~CheckBox()
 {
-  delete[] text;
+  delete[] text_;
 }
 
 int CheckBox::draw(Curses::ViewPort area, Error &error)
 {
-  assert(text != NULL);
+  assert(text_ != NULL);
 
   int attrs;
-  if (has_focus) {
+  if (has_focus_) {
     DRAW(getAttributes(ColorScheme::PROPERTY_CHECKBOX_FOCUS, &attrs, error));
     attrs |= Curses::Attr::REVERSE;
   }
@@ -74,31 +70,31 @@ int CheckBox::draw(Curses::ViewPort area, Error &error)
   DRAW(area.attrOn(attrs, error));
 
   // Print text.
-  DRAW(area.fill(attrs, 0, 0, text_width, real_height, error));
+  DRAW(area.fill(attrs, 0, 0, text_width_, real_height_, error));
   int y = 0;
   const char *start, *end;
-  start = end = text;
+  start = end = text_;
   while (*end != '\0') {
     if (*end == '\n') {
-      DRAW(area.addString(0, y, real_width, start, end, error));
+      DRAW(area.addString(0, y, real_width_, start, end, error));
       ++y;
       start = end + 1;
     }
     ++end;
   }
-  DRAW(area.addString(0, y, real_width, start, end, error));
+  DRAW(area.addString(0, y, real_width_, start, end, error));
 
-  int l = text_width;
-  int h = (text_height - 1) / 2;
+  int l = text_width_;
+  int h = (text_height_ - 1) / 2;
   int printed;
 
   // Print value.
-  const char *value = checked ? YES_BUTTON_TEXT : NO_BUTTON_TEXT;
+  const char *value = checked_ ? YES_BUTTON_TEXT : NO_BUTTON_TEXT;
   int value_width = Curses::onScreenWidth(value);
-  DRAW(area.fill(attrs, l, 0, value_width + 2, real_height, error));
-  DRAW(area.addString(l, h, real_width - l, ": ", error, &printed));
+  DRAW(area.fill(attrs, l, 0, value_width + 2, real_height_, error));
+  DRAW(area.addString(l, h, real_width_ - l, ": ", error, &printed));
   l += printed;
-  DRAW(area.addString(l, h, real_width - l, value, error));
+  DRAW(area.addString(l, h, real_width_ - l, value, error));
 
   DRAW(area.attrOff(attrs, error));
 
@@ -116,47 +112,47 @@ void CheckBox::setText(const char *new_text)
   else
     new_storage[0] = '\0';
 
-  delete[] text;
-  text = new_storage;
+  delete[] text_;
+  text_ = new_storage;
 
-  // update text_width, text_height and wish height
-  text_width = 0;
-  text_height = 1;
+  // Update text_width_, text_height_ and wish height.
+  text_width_ = 0;
+  text_height_ = 1;
 
   const char *start, *end;
-  start = end = text;
+  start = end = text_;
   int w;
-  while (*end) {
+  while (*end != '\0') {
     if (*end == '\n') {
       w = Curses::onScreenWidth(start, end);
-      if (w > text_width)
-        text_width = w;
-      ++text_height;
+      if (w > text_width_)
+        text_width_ = w;
+      ++text_height_;
       start = end + 1;
     }
     ++end;
   }
   w = Curses::onScreenWidth(start, end);
-  if (w > text_width)
-    text_width = w;
-  setWishHeight(text_height);
+  if (w > text_width_)
+    text_width_ = w;
+  setWishHeight(text_height_);
 
   redraw();
 }
 
 void CheckBox::setChecked(bool new_checked)
 {
-  if (new_checked == checked)
+  if (new_checked == checked_)
     return;
 
-  checked = new_checked;
-  signal_toggle(*this, checked);
+  checked_ = new_checked;
+  signal_toggle(*this, checked_);
   redraw();
 }
 
 void CheckBox::actionToggle()
 {
-  setChecked(!checked);
+  setChecked(!checked_);
 }
 
 void CheckBox::declareBindables()
@@ -168,4 +164,4 @@ void CheckBox::declareBindables()
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

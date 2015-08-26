@@ -1,22 +1,19 @@
-/*
- * Copyright (C) 2013-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2013-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CppConsUI.h"
 
@@ -38,45 +35,45 @@ CoreManager *core_manager = NULL;
 KeyConfig *key_config = NULL;
 
 Error::Error(ErrorCode code, const char *string)
-  : error_code(code), error_string(NULL)
+  : error_code_(code), error_string_(NULL)
 {
   setString(string);
 }
 
 Error::Error(const Error &other)
 {
-  assert(other.error_string != NULL);
+  assert(other.error_string_ != NULL);
 
-  error_code = other.error_code;
+  error_code_ = other.error_code_;
 
-  size_t size = std::strlen(other.error_string) + 1;
-  error_string = new char[size];
-  std::strcpy(error_string, other.error_string);
+  size_t size = std::strlen(other.error_string_) + 1;
+  error_string_ = new char[size];
+  std::strcpy(error_string_, other.error_string_);
 }
 
 Error &Error::operator=(const Error &other)
 {
-  assert(other.error_string != NULL);
+  assert(other.error_string_ != NULL);
 
-  size_t size = std::strlen(other.error_string) + 1;
+  size_t size = std::strlen(other.error_string_) + 1;
   char *new_string = new char[size];
-  std::strcpy(new_string, other.error_string);
+  std::strcpy(new_string, other.error_string_);
 
-  error_code = other.error_code;
-  delete[] error_string;
-  error_string = new_string;
+  error_code_ = other.error_code_;
+  delete[] error_string_;
+  error_string_ = new_string;
 
   return *this;
 }
 
 Error::~Error()
 {
-  delete[] error_string;
+  delete[] error_string_;
 }
 
 void Error::setCode(ErrorCode code)
 {
-  error_code = code;
+  error_code_ = code;
 }
 
 void Error::setString(const char *string)
@@ -90,8 +87,8 @@ void Error::setString(const char *string)
   else
     new_string[0] = '\0';
 
-  delete[] error_string;
-  error_string = new_string;
+  delete[] error_string_;
+  error_string_ = new_string;
 }
 
 void Error::setFormattedString(const char *format, ...)
@@ -106,15 +103,15 @@ void Error::setFormattedString(const char *format, ...)
   std::vsprintf(new_string, format, args);
   va_end(args);
 
-  delete[] error_string;
-  error_string = new_string;
+  delete[] error_string_;
+  error_string_ = new_string;
 }
 
 void Error::clear()
 {
-  error_code = ERROR_NONE;
-  delete[] error_string;
-  error_string = NULL;
+  error_code_ = ERROR_NONE;
+  delete[] error_string_;
+  error_string_ = NULL;
 }
 
 void initializeConsUI(AppInterface &interface)
@@ -148,38 +145,36 @@ void finalizeConsUI()
 
 ColorScheme *getColorSchemeInstance()
 {
-  assert(color_scheme);
+  assert(color_scheme != NULL);
   return color_scheme;
 }
 
 CoreManager *getCoreManagerInstance()
 {
-  assert(core_manager);
+  assert(core_manager != NULL);
   return core_manager;
 }
 
 KeyConfig *getKeyConfigInstance()
 {
-  assert(key_config);
+  assert(key_config != NULL);
   return key_config;
 }
 
 namespace UTF8 {
 
-// some code below is based on the GLib code
+// Some code below is based on the GLib code.
 
-/*
- * Bits  Length  Byte 1    Byte 2    Byte 3    Byte 4    Byte 5    Byte 6
- *   7     1     0xxxxxxx
- *  11     2     110xxxxx  10xxxxxx
- *  16     3     1110xxxx  10xxxxxx  10xxxxxx
- *  21     4     11110xxx  10xxxxxx  10xxxxxx  10xxxxxx
- *  26     5     111110xx  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx
- *  31     6     1111110x  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx
- */
+// Bits  Length  Byte 1    Byte 2    Byte 3    Byte 4    Byte 5    Byte 6
+//   7     1     0xxxxxxx
+//  11     2     110xxxxx  10xxxxxx
+//  16     3     1110xxxx  10xxxxxx  10xxxxxx
+//  21     4     11110xxx  10xxxxxx  10xxxxxx  10xxxxxx
+//  26     5     111110xx  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx
+//  31     6     1111110x  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx
 UniChar getUniChar(const char *p)
 {
-  assert(p);
+  assert(p != NULL);
 
   UniChar res;
   unsigned char c = *p++;
@@ -210,12 +205,12 @@ UniChar getUniChar(const char *p)
   else
     return -1;
 
-  while (rest--) {
+  while (rest-- > 0) {
     c = *p++;
     if ((c & 0xc0) != 0x80)
       return -1;
     res <<= 6;
-    res |= (c & 0x3f);
+    res |= c & 0x3f;
   }
 
   return res;
@@ -260,7 +255,7 @@ bool isUniCharWide(UniChar uc)
 
 bool isUniCharDigit(UniChar uc)
 {
-  // note: this function does not behave according to the Unicode standard
+  // Note: this function does not behave according to the Unicode standard.
 
   if (uc > '0' && uc < '9')
     return true;
@@ -269,7 +264,7 @@ bool isUniCharDigit(UniChar uc)
 
 bool isUniCharSpace(UniChar uc)
 {
-  // note: this function does not behave according to the Unicode standard
+  // Note: this function does not behave according to the Unicode standard.
 
   if (uc == '\t' || uc == '\n' || uc == '\r' || uc == '\f')
     return true;
@@ -303,7 +298,7 @@ const char *getNextChar(const char *p)
 const char *getPrevChar(const char *p)
 {
   while (true) {
-    p--;
+    --p;
     if ((*p & 0xc0) != 0x80)
       return p;
   }
@@ -311,11 +306,11 @@ const char *getPrevChar(const char *p)
 
 const char *findNextChar(const char *p, const char *end)
 {
-  if (!end)
+  if (end == NULL)
     return getNextChar(p);
 
   while (p + 1 < end) {
-    p++;
+    ++p;
     if ((*p & 0xc0) != 0x80)
       return p;
   }
@@ -325,7 +320,7 @@ const char *findNextChar(const char *p, const char *end)
 const char *findPrevChar(const char *start, const char *p)
 {
   while (p > start) {
-    p--;
+    --p;
     if ((*p & 0xc0) != 0x80)
       return p;
   }
@@ -336,4 +331,4 @@ const char *findPrevChar(const char *start, const char *p)
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

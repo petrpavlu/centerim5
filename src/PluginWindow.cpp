@@ -51,9 +51,9 @@ PluginWindow::PluginWindow() : SplitDialog(0, 0, 80, 24, _("Plugins"))
       populatePlugin(plugin);
   }
 
-  buttons->appendItem(_("Add"), sigc::mem_fun(this, &PluginWindow::addPlugin));
-  buttons->appendSeparator();
-  buttons->appendItem(
+  buttons_->appendItem(_("Add"), sigc::mem_fun(this, &PluginWindow::addPlugin));
+  buttons_->appendSeparator();
+  buttons_->appendItem(
     _("Done"), sigc::hide(sigc::mem_fun(this, &PluginWindow::close)));
 
   onScreenResized();

@@ -1,30 +1,25 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * Widget class implementation.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// Widget class implementation.
+///
+/// @ingroup cppconsui
 
 #include "Widget.h"
 
@@ -37,10 +32,11 @@
 namespace CppConsUI {
 
 Widget::Widget(int w, int h)
-  : xpos(UNSETPOS), ypos(UNSETPOS), width(w), height(h), wish_width(AUTOSIZE),
-    wish_height(AUTOSIZE), real_xpos(UNSETPOS), real_ypos(UNSETPOS),
-    real_width(0), real_height(0), can_focus(false), has_focus(false),
-    visible(true), parent(NULL), color_scheme(0), absolute_position_listeners(0)
+  : xpos_(UNSETPOS), ypos_(UNSETPOS), width_(w), height_(h),
+    wish_width_(AUTOSIZE), wish_height_(AUTOSIZE), real_xpos_(UNSETPOS),
+    real_ypos_(UNSETPOS), real_width_(0), real_height_(0), can_focus_(false),
+    has_focus_(false), visible_(true), parent_(NULL), color_scheme_(0),
+    absolute_position_listeners_(0)
 {
 }
 
@@ -48,39 +44,39 @@ Widget::~Widget()
 {
   setVisibility(false);
 
-  if (parent && absolute_position_listeners.size() > 0)
-    parent->unregisterAbsolutePositionListener(*this);
+  if (parent_ != NULL && absolute_position_listeners_.size() > 0)
+    parent_->unregisterAbsolutePositionListener(*this);
 }
 
 void Widget::moveResize(int newx, int newy, int neww, int newh)
 {
-  if (newx == xpos && newy == ypos && neww == width && newh == height)
+  if (newx == xpos_ && newy == ypos_ && neww == width_ && newh == height_)
     return;
 
-  Rect oldsize(xpos, ypos, width, height);
+  Rect oldsize(xpos_, ypos_, width_, height_);
   Rect newsize(newx, newy, neww, newh);
 
-  xpos = newx;
-  ypos = newy;
-  width = neww;
-  height = newh;
+  xpos_ = newx;
+  ypos_ = newy;
+  width_ = neww;
+  height_ = newh;
 
   signalMoveResize(oldsize, newsize);
 }
 
 Widget *Widget::getFocusWidget()
 {
-  if (can_focus)
+  if (can_focus_)
     return this;
   return NULL;
 }
 
 void Widget::cleanFocus()
 {
-  if (!has_focus)
+  if (!has_focus_)
     return;
 
-  has_focus = false;
+  has_focus_ = false;
   signal_focus(*this, false);
   redraw();
 }
@@ -92,22 +88,22 @@ bool Widget::restoreFocus()
 
 void Widget::ungrabFocus()
 {
-  if (!parent || !has_focus)
+  if (parent_ == NULL || !has_focus_)
     return;
 
-  has_focus = false;
+  has_focus_ = false;
   signal_focus(*this, false);
   redraw();
 }
 
 bool Widget::grabFocus()
 {
-  if (!parent || has_focus)
+  if (parent_ == NULL || has_focus_)
     return false;
 
-  if (can_focus && isVisibleRecursive()) {
-    if (parent->setFocusChild(*this)) {
-      has_focus = true;
+  if (can_focus_ && isVisibleRecursive()) {
+    if (parent_->setFocusChild(*this)) {
+      has_focus_ = true;
       signal_focus(*this, true);
       redraw();
     }
@@ -119,77 +115,77 @@ bool Widget::grabFocus()
 
 void Widget::setVisibility(bool new_visible)
 {
-  if (new_visible == visible)
+  if (new_visible == visible_)
     return;
 
-  visible = new_visible;
+  visible_ = new_visible;
 
-  if (parent) {
-    parent->updateFocusChain();
+  if (parent_ != NULL) {
+    parent_->updateFocusChain();
 
     Container *t = getTopContainer();
-    if (visible) {
+    if (visible_) {
       if (!t->getFocusWidget()) {
-        /* There is no focused widget, try if this or a widget
-         * that was revealed can grab it. */
+        // There is no focused widget, try if this or a widget that was revealed
+        // can grab it.
         t->moveFocus(Container::FOCUS_DOWN);
       }
     }
     else {
       Widget *focus = t->getFocusWidget();
       if (focus && !focus->isVisibleRecursive()) {
-        // focused widget was hidden, move the focus
+        // Focused widget was hidden, move the focus.
         t->moveFocus(Container::FOCUS_DOWN);
       }
     }
 
-    signalVisible(visible);
+    signalVisible(visible_);
   }
 
-  signal_visible(*this, visible);
+  signal_visible(*this, visible_);
   redraw();
 }
 
 bool Widget::isVisibleRecursive() const
 {
-  if (!parent || !visible)
+  if (parent_ == NULL || !visible_)
     return false;
 
-  return parent->isWidgetVisible(*this);
+  return parent_->isWidgetVisible(*this);
 }
 
 void Widget::setParent(Container &new_parent)
 {
-  // we don't support parent change
-  assert(!parent);
+  // Changing parent widget is not supported.
+  assert(parent_ == NULL);
 
-  parent = &new_parent;
+  parent_ = &new_parent;
 
-  /* Register this widget as an absolute position listener to its parent in
-   * case some other widget is interested in a position of this widget. */
-  if (absolute_position_listeners.size() > 0)
-    parent->registerAbsolutePositionListener(*this);
+  // Register this widget as an absolute position listener to its parent in case
+  // some other widget is interested in a position of this widget.
+  if (absolute_position_listeners_.size() > 0)
+    parent_->registerAbsolutePositionListener(*this);
 
-  parent->updateFocusChain();
+  parent_->updateFocusChain();
 
   Container *t = getTopContainer();
   if (!t->getFocusWidget()) {
-    /* There is no focused widget, try if this or a child widget (in case
-     * of Container) can grab it. */
+    // There is no focused widget, try if this or a child widget (in case of
+    // Container) can grab it.
     Widget *w = getFocusWidget();
-    if (w)
+    if (w != NULL)
       w->grabFocus();
   }
   else {
-    /* Clean focus if this widget/container was added to a container that
-     * already has a focused widget. */
+    // Clean focus if this widget/container was added to a container that
+    // already has a focused widget.
     cleanFocus();
   }
 }
 
-/* All following moveResize() wrappers should always call member methods to
- * get xpos, ypos, width, height and never use member variables directly. See
- * Window getLeft(), getTop(), getWidth(), getHeight(). */
+// All following moveResize() wrappers should always call member methods to get
+// xpos_, ypos_, width_, height_ and never use member variables directly. See
+// getLeft(), getTop(), getWidth(), getHeight() in the Window class.
 void Widget::move(int newx, int newy)
 {
   moveResize(newx, newy, getWidth(), getHeight());
@@ -222,145 +218,144 @@ void Widget::setHeight(int newh)
 
 Point Widget::getAbsolutePosition() const
 {
-  if (!parent)
+  if (parent_ == NULL)
     return Point(0, 0);
 
-  return parent->getAbsolutePosition(*this);
+  return parent_->getAbsolutePosition(*this);
 }
 
 Point Widget::getRelativePosition(const Container &ref) const
 {
-  if (!parent)
+  if (parent_ == NULL)
     return Point(0, 0);
 
-  return parent->getRelativePosition(ref, *this);
+  return parent_->getRelativePosition(ref, *this);
 }
 
 void Widget::setRealPosition(int newx, int newy)
 {
-  if (newx == real_xpos && newy == real_ypos)
+  if (newx == real_xpos_ && newy == real_ypos_)
     return;
 
-  real_xpos = newx;
-  real_ypos = newy;
+  real_xpos_ = newx;
+  real_ypos_ = newy;
 
   signalAbsolutePositionChange();
 }
 
 void Widget::setRealSize(int neww, int newh)
 {
-  if (neww == real_width && newh == real_height)
+  if (neww == real_width_ && newh == real_height_)
     return;
 
-  real_width = neww;
-  real_height = newh;
+  real_width_ = neww;
+  real_height_ = newh;
 
   updateArea();
 }
 
 void Widget::setColorScheme(int new_color_scheme)
 {
-  if (new_color_scheme == color_scheme)
+  if (new_color_scheme == color_scheme_)
     return;
 
-  color_scheme = new_color_scheme;
+  color_scheme_ = new_color_scheme;
   redraw();
 }
 
 int Widget::getColorScheme() const
 {
-  if (color_scheme != 0)
-    return color_scheme;
-  else if (parent != NULL)
-    return parent->getColorScheme();
+  if (color_scheme_ != 0)
+    return color_scheme_;
+  else if (parent_ != NULL)
+    return parent_->getColorScheme();
 
   return 0;
 }
 
 void Widget::registerAbsolutePositionListener(Widget &widget)
 {
-  absolute_position_listeners.push_back(&widget);
-  if (parent && absolute_position_listeners.size() == 1)
-    parent->registerAbsolutePositionListener(*this);
+  absolute_position_listeners_.push_back(&widget);
+  if (parent_ != NULL && absolute_position_listeners_.size() == 1)
+    parent_->registerAbsolutePositionListener(*this);
 }
 
 void Widget::unregisterAbsolutePositionListener(Widget &widget)
 {
-  Widgets::iterator i = std::find(absolute_position_listeners.begin(),
-    absolute_position_listeners.end(), &widget);
-  assert(i != absolute_position_listeners.end());
+  Widgets::iterator i = std::find(absolute_position_listeners_.begin(),
+    absolute_position_listeners_.end(), &widget);
+  assert(i != absolute_position_listeners_.end());
 
-  absolute_position_listeners.erase(i);
-  if (parent && absolute_position_listeners.size() == 0)
-    parent->unregisterAbsolutePositionListener(*this);
+  absolute_position_listeners_.erase(i);
+  if (parent_ != NULL && absolute_position_listeners_.size() == 0)
+    parent_->unregisterAbsolutePositionListener(*this);
 }
 
 void Widget::onAbsolutePositionChange(Widget & /*widget*/)
 {
-  // propagate the event to the listeners
+  // Propagate the event to the listeners.
   signalAbsolutePositionChange();
 }
 
 void Widget::signalMoveResize(const Rect &oldsize, const Rect &newsize)
 {
-  if (!parent)
+  if (parent_ == NULL)
     return;
 
-  /* Tell the parent about the new size so it can position the widget
-   * correctly. */
-  parent->onChildMoveResize(*this, oldsize, newsize);
+  // Tell the parent about the new size so it can position the widget correctly.
+  parent_->onChildMoveResize(*this, oldsize, newsize);
 }
 
 void Widget::signalWishSizeChange(const Size &oldsize, const Size &newsize)
 {
-  if (!parent)
+  if (parent_ == NULL)
     return;
 
-  /* Tell the parent about the new wish size so it can position the widget
-   * correctly. */
-  parent->onChildWishSizeChange(*this, oldsize, newsize);
+  // Tell the parent about the new wish size so it can position the widget
+  // correctly.
+  parent_->onChildWishSizeChange(*this, oldsize, newsize);
 }
 
 void Widget::signalVisible(bool visible)
 {
-  if (!parent)
+  if (parent_ == NULL)
     return;
 
-  /* Tell the parent about the new visibility status so it can reposition its
-   * child widgets as appropriate. */
-  parent->onChildVisible(*this, visible);
+  // Tell the parent about the new visibility status so it can reposition its
+  // child widgets as appropriate.
+  parent_->onChildVisible(*this, visible);
 }
 
 void Widget::signalAbsolutePositionChange()
 {
-  for (Widgets::iterator i = absolute_position_listeners.begin();
-       i != absolute_position_listeners.end(); ++i)
+  for (Widgets::iterator i = absolute_position_listeners_.begin();
+       i != absolute_position_listeners_.end(); ++i)
     (*i)->onAbsolutePositionChange(*this);
 }
 
 void Widget::updateArea()
 {
-  // empty for Widget
+  // Empty for Widget.
 }
 
 void Widget::redraw()
 {
-  if (!parent)
+  if (parent_ == NULL)
     return;
 
-  parent->redraw();
+  parent_->redraw();
 }
 
 void Widget::setWishSize(int neww, int newh)
 {
-  if (neww == wish_width && newh == wish_height)
+  if (neww == wish_width_ && newh == wish_height_)
     return;
 
-  Size oldsize(wish_width, wish_height);
+  Size oldsize(wish_width_, wish_height_);
   Size newsize(neww, newh);
 
-  wish_width = neww;
-  wish_height = newh;
+  wish_width_ = neww;
+  wish_height_ = newh;
 
   signalWishSizeChange(oldsize, newsize);
 }
@@ -379,11 +374,11 @@ int Widget::getAttributes(
 
 Container *Widget::getTopContainer()
 {
-  if (parent)
-    return parent->getTopContainer();
+  if (parent_ != NULL)
+    return parent_->getTopContainer();
   return dynamic_cast<Container *>(this);
 }
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

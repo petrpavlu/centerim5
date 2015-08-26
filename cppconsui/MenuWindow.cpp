@@ -1,30 +1,25 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * MenuWindow class implementation.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// MenuWindow class implementation.
+///
+/// @ingroup cppconsui
 
 #include "MenuWindow.h"
 
@@ -34,29 +29,29 @@
 namespace CppConsUI {
 
 MenuWindow::MenuWindow(int x, int y, int w, int h, const char *title)
-  : Window(x, y, w, h, title, TYPE_TOP), wish_height(3), ref(NULL), xshift(0),
-    yshift(0), hide_on_close(false)
+  : Window(x, y, w, h, title, TYPE_TOP), wish_height_(3), ref_(NULL),
+    xshift_(0), yshift_(0), hide_on_close_(false)
 {
-  wish_width = MENU_WINDOW_WISH_WIDTH;
+  wish_width_ = MENU_WINDOW_WISH_WIDTH;
 
-  listbox = new ListBox(AUTOSIZE, AUTOSIZE);
-  listbox->signal_children_height_change.connect(
+  listbox_ = new ListBox(AUTOSIZE, AUTOSIZE);
+  listbox_->signal_children_height_change.connect(
     sigc::mem_fun(this, &MenuWindow::onChildrenHeightChange));
-  Window::addWidget(*listbox, 1, 1);
+  Window::addWidget(*listbox_, 1, 1);
 }
 
-MenuWindow::MenuWindow(Widget &ref_, int w, int h, const char *title)
-  : Window(0, 0, w, h, title, TYPE_TOP), wish_height(3), ref(NULL), xshift(0),
-    yshift(0), hide_on_close(false)
+MenuWindow::MenuWindow(Widget &ref, int w, int h, const char *title)
+  : Window(0, 0, w, h, title, TYPE_TOP), wish_height_(3), ref_(NULL),
+    xshift_(0), yshift_(0), hide_on_close_(false)
 {
-  wish_width = MENU_WINDOW_WISH_WIDTH;
+  wish_width_ = MENU_WINDOW_WISH_WIDTH;
 
-  listbox = new ListBox(AUTOSIZE, AUTOSIZE);
-  listbox->signal_children_height_change.connect(
+  listbox_ = new ListBox(AUTOSIZE, AUTOSIZE);
+  listbox_->signal_children_height_change.connect(
     sigc::mem_fun(this, &MenuWindow::onChildrenHeightChange));
-  Window::addWidget(*listbox, 1, 1);
+  Window::addWidget(*listbox_, 1, 1);
 
-  setReferenceWidget(ref_);
+  setReferenceWidget(ref);
 }
 
 MenuWindow::~MenuWindow()
@@ -66,24 +61,24 @@ MenuWindow::~MenuWindow()
 
 void MenuWindow::onAbsolutePositionChange(Widget &widget)
 {
-  if (&widget == ref)
+  if (&widget == ref_)
     updatePositionAndSize();
   Window::onAbsolutePositionChange(widget);
 }
 
 void MenuWindow::show()
 {
-  if (ref) {
-    assert(!ref_visible_conn.connected());
+  if (ref_ != NULL) {
+    assert(!ref_visible_conn_.connected());
 
-    ref_visible_conn = ref->signal_visible.connect(
+    ref_visible_conn_ = ref_->signal_visible.connect(
       sigc::mem_fun(this, &MenuWindow::onReferenceWidgetVisible));
   }
 
-  if (hide_on_close) {
-    // make sure that the first widget in the focus chain is always focused
-    listbox->cleanFocus();
-    listbox->moveFocus(Container::FOCUS_DOWN);
+  if (hide_on_close_) {
+    // Make sure that the first widget in the focus chain is always focused.
+    listbox_->cleanFocus();
+    listbox_->moveFocus(Container::FOCUS_DOWN);
   }
 
   Window::show();
@@ -91,15 +86,15 @@ void MenuWindow::show()
 
 void MenuWindow::hide()
 {
-  if (ref)
-    ref_visible_conn.disconnect();
+  if (ref_ != NULL)
+    ref_visible_conn_.disconnect();
 
   Window::hide();
 }
 
 void MenuWindow::close()
 {
-  if (hide_on_close)
+  if (hide_on_close_)
     hide();
   else
     Window::close();
@@ -114,64 +109,64 @@ Button *MenuWindow::insertSubMenu(
   size_t pos, const char *title, MenuWindow &submenu)
 {
   Button *button = prepareSubMenu(title, submenu);
-  listbox->insertWidget(pos, *button);
+  listbox_->insertWidget(pos, *button);
   return button;
 }
 
 Button *MenuWindow::appendSubMenu(const char *title, MenuWindow &submenu)
 {
   Button *button = prepareSubMenu(title, submenu);
-  listbox->appendWidget(*button);
+  listbox_->appendWidget(*button);
   return button;
 }
 
 void MenuWindow::setHideOnClose(bool new_hide_on_close)
 {
-  if (hide_on_close == new_hide_on_close)
+  if (hide_on_close_ == new_hide_on_close)
     return;
 
-  hide_on_close = new_hide_on_close;
+  hide_on_close_ = new_hide_on_close;
 }
 
 void MenuWindow::setReferenceWidget(Widget &new_ref)
 {
-  if (ref == &new_ref)
+  if (ref_ == &new_ref)
     return;
 
-  // clean the current reference
+  // Clean the current reference.
   cleanReferenceWidget();
 
-  ref = &new_ref;
-  ref->add_destroy_notify_callback(this, onReferenceWidgetDestroy_);
-  ref->registerAbsolutePositionListener(*this);
+  ref_ = &new_ref;
+  ref_->add_destroy_notify_callback(this, onReferenceWidgetDestroy_);
+  ref_->registerAbsolutePositionListener(*this);
   updatePositionAndSize();
 }
 
 void MenuWindow::cleanReferenceWidget()
 {
-  if (!ref)
+  if (ref_ == NULL)
     return;
 
-  ref->remove_destroy_notify_callback(this);
-  ref->unregisterAbsolutePositionListener(*this);
-  ref = NULL;
+  ref_->remove_destroy_notify_callback(this);
+  ref_->unregisterAbsolutePositionListener(*this);
+  ref_ = NULL;
 }
 
 void MenuWindow::setLeftShift(int x)
 {
-  if (xshift == x)
+  if (xshift_ == x)
     return;
 
-  xshift = x;
+  xshift_ = x;
   updatePositionAndSize();
 }
 
 void MenuWindow::setTopShift(int y)
 {
-  if (yshift == y)
+  if (yshift_ == y)
     return;
 
-  yshift = y;
+  yshift_ = y;
   updatePositionAndSize();
 }
 
@@ -182,12 +177,12 @@ void MenuWindow::addWidget(Widget &widget, int x, int y)
 
 Button *MenuWindow::prepareSubMenu(const char *title, MenuWindow &submenu)
 {
-  // setup submenu correctly
+  // Setup submenu correctly.
   submenu.hide();
   submenu.setHideOnClose(true);
   signal_hide.connect(sigc::hide(sigc::mem_fun(submenu, &MenuWindow::hide)));
 
-  // create an opening button
+  // Create an opening button.
   Button *button = new Button(title);
   button->signal_activate.connect(
     sigc::hide(sigc::mem_fun(submenu, &MenuWindow::show)));
@@ -199,19 +194,18 @@ Button *MenuWindow::prepareSubMenu(const char *title, MenuWindow &submenu)
 
 void MenuWindow::updatePositionAndSize()
 {
-  /* This code is called when a position or size of this window should be
-   * updated.
-   *
-   * This can happen when:
-   * - the screen is resized,
-   * - the listbox wish height changed,
-   * - reference widget changed its position on the screen.
-   */
+  // This code is called when a position or size of this window should be
+  // updated.
+  //
+  // This can happen when:
+  // - the screen is resized,
+  // - the listbox wish height changed,
+  // - reference widget changed its position on the screen.
 
-  if (!ref) {
-    // absolute screen position
-    int h = listbox->getChildrenHeight() + 2;
-    int max = Curses::getHeight() - ypos;
+  if (ref_ == NULL) {
+    // Absolute screen position.
+    int h = listbox_->getChildrenHeight() + 2;
+    int max = Curses::getHeight() - ypos_;
     if (h > max)
       setWishHeight(std::max(max, 3));
     else
@@ -219,33 +213,33 @@ void MenuWindow::updatePositionAndSize()
     return;
   }
 
-  // relative position to another widget
-  Point p = ref->getAbsolutePosition();
+  // Relative position to another widget.
+  Point p = ref_->getAbsolutePosition();
   if (p.getX() == UNSETPOS || p.getY() == UNSETPOS)
     p = Point(0, 0);
 
-  int x = p.getX() + xshift;
-  int y = p.getY() + yshift;
+  int x = p.getX() + xshift_;
+  int y = p.getY() + yshift_;
 
   int above = y;
   int below = Curses::getHeight() - y - 1;
   int req_h;
-  if (height == AUTOSIZE)
-    req_h = listbox->getChildrenHeight() + 2;
+  if (height_ == AUTOSIZE)
+    req_h = listbox_->getChildrenHeight() + 2;
   else
-    req_h = height;
+    req_h = height_;
 
   if (below > req_h) {
-    // draw the window under the combobox
+    // Draw the window under the combobox.
     move(x, y + 1);
     setWishHeight(req_h);
   }
   else if (above > req_h) {
-    // draw the window above the combobox
+    // Draw the window above the combobox.
     move(x, y - req_h);
     setWishHeight(req_h);
   }
-  else if (height == AUTOSIZE) {
+  else if (height_ == AUTOSIZE) {
     if (below >= above) {
       move(x, y + 1);
       setWishHeight(below);
@@ -260,7 +254,7 @@ void MenuWindow::updatePositionAndSize()
 void MenuWindow::onChildrenHeightChange(
   ListBox & /*activator*/, int /*new_height*/)
 {
-  if (height != AUTOSIZE)
+  if (height_ != AUTOSIZE)
     return;
 
   updatePositionAndSize();
@@ -271,18 +265,18 @@ void MenuWindow::onReferenceWidgetVisible(Widget & /*activator*/, bool visible)
   if (visible)
     return;
 
-  // close this window if the reference widget is no longer visible
+  // Close this window if the reference widget is no longer visible.
   close();
 }
 
 void MenuWindow::onReferenceWidgetDestroy()
 {
-  // ref widget is about to die right now, this window should be destroyed too
-  assert(ref);
-  ref = NULL;
+  // Ref widget is about to die right now, this window should be destroyed too.
+  assert(ref_ != NULL);
+  ref_ = NULL;
   delete this;
 }
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

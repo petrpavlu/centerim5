@@ -1,23 +1,20 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2009-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2009-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CoreManager.h"
 
@@ -42,26 +39,26 @@ namespace CppConsUI {
 
 int CoreManager::initializeInput(Error &error)
 {
-  assert(tk == NULL);
-  assert(iconv_desc == ICONV_NONE);
-  assert(stdin_input_handle == 0);
+  assert(tk_ == NULL);
+  assert(iconv_desc_ == ICONV_NONE);
+  assert(stdin_input_handle_ == 0);
 
-  // Get the codeset.
+  // Get the current character encoding.
   const char *codeset = nl_langinfo(CODESET);
 
   // Initialize libtermkey.
-  tk = termkey_new(STDIN_FILENO, TERMKEY_FLAG_NOTERMIOS);
-  if (tk == NULL) {
+  tk_ = termkey_new(STDIN_FILENO, TERMKEY_FLAG_NOTERMIOS);
+  if (tk_ == NULL) {
     error = Error(
       ERROR_LIBTERMKEY_INITIALIZATION, _("Libtermkey initialization failed."));
     goto error_cleanup;
   }
-  termkey_set_canonflags(tk, TERMKEY_CANON_DELBS);
+  termkey_set_canonflags(tk_, TERMKEY_CANON_DELBS);
 
   // If the codeset differs from UTF-8, setup iconv for conversion.
   if (std::strcmp(codeset, "UTF-8") != 0) {
-    iconv_desc = iconv_open("UTF-8", codeset);
-    if (iconv_desc == ICONV_NONE) {
+    iconv_desc_ = iconv_open("UTF-8", codeset);
+    if (iconv_desc_ == ICONV_NONE) {
       error = Error(ERROR_ICONV_INITIALIZATION);
       error.setFormattedString(
         _("Iconv initialization failed. Cannot create a conversion descriptor "
@@ -71,22 +68,22 @@ int CoreManager::initializeInput(Error &error)
     }
   }
 
-  stdin_input_handle = interface.inputAdd(
+  stdin_input_handle_ = interface_.inputAdd(
     STDIN_FILENO, INPUT_CONDITION_READ, CoreManager::stdin_input_, this);
-  assert(stdin_input_handle != 0);
+  assert(stdin_input_handle_ != 0);
 
   return 0;
 
 error_cleanup:
-  if (iconv_desc != ICONV_NONE) {
-    int res = iconv_close(iconv_desc);
+  if (iconv_desc_ != ICONV_NONE) {
+    int res = iconv_close(iconv_desc_);
     assert(res == 0);
-    iconv_desc = ICONV_NONE;
+    iconv_desc_ = ICONV_NONE;
   }
 
-  if (tk != NULL) {
-    termkey_destroy(tk);
-    tk = NULL;
+  if (tk_ != NULL) {
+    termkey_destroy(tk_);
+    tk_ = NULL;
   }
 
   return error.getCode();
@@ -94,22 +91,22 @@ error_cleanup:
 
 int CoreManager::finalizeInput(Error & /*error*/)
 {
-  assert(tk != NULL);
-  assert(stdin_input_handle != 0);
+  assert(tk_ != NULL);
+  assert(stdin_input_handle_ != 0);
 
-  interface.inputRemove(stdin_input_handle);
-  stdin_input_handle = 0;
+  interface_.inputRemove(stdin_input_handle_);
+  stdin_input_handle_ = 0;
 
-  if (iconv_desc != ICONV_NONE) {
-    int res = iconv_close(iconv_desc);
+  if (iconv_desc_ != ICONV_NONE) {
+    int res = iconv_close(iconv_desc_);
     // Closing iconv can fail only if the conversion descriptor is invalid but
     // that should never happen in CppConsUI.
     assert(res == 0);
-    iconv_desc = ICONV_NONE;
+    iconv_desc_ = ICONV_NONE;
   }
 
-  termkey_destroy(tk);
-  tk = NULL;
+  termkey_destroy(tk_);
+  tk_ = NULL;
 
   return 0;
 }
@@ -123,15 +120,15 @@ int CoreManager::finalizeOutput(Error &error)
 {
   // Close all windows, work with a copy of the windows vector because the
   // original vector can be changed by calling the close() methods.
-  Windows windows_copy = windows;
-  for (Windows::iterator i = windows_copy.begin(); i != windows_copy.end(); i++)
+  Windows windows_copy = windows_;
+  for (Windows::iterator i = windows_copy.begin(); i != windows_copy.end(); ++i)
     (*i)->close();
 
   // Delete all remaining windows. This prevents memory leaks for windows that
   // have the close() method overridden and calling it does not remove the
   // object from memory.
-  windows_copy = windows;
-  for (Windows::iterator i = windows_copy.begin(); i != windows_copy.end(); i++)
+  windows_copy = windows_;
+  for (Windows::iterator i = windows_copy.begin(); i != windows_copy.end(); ++i)
     delete *i;
 
   return Curses::finalizeScreen(error);
@@ -139,12 +136,12 @@ int CoreManager::finalizeOutput(Error &error)
 
 int CoreManager::initializeScreenResizing(Error &error)
 {
-  assert(pipefd[0] == -1);
-  assert(pipefd[1] == -1);
-  assert(resize_input_handle == 0);
+  assert(pipefd_[0] == -1);
+  assert(pipefd_[1] == -1);
+  assert(resize_input_handle_ == 0);
 
   // Set up screen resizing.
-  if (pipe(pipefd) != 0) {
+  if (pipe(pipefd_) != 0) {
     error = Error(ERROR_SCREEN_RESIZING_INITIALIZATION);
     error.setFormattedString(
       _("Screen resizing initialization failed. Cannot create self-pipe: %s."),
@@ -152,27 +149,27 @@ int CoreManager::initializeScreenResizing(Error &error)
     return error.getCode();
   }
 
-  resize_input_handle = interface.inputAdd(
-    pipefd[0], INPUT_CONDITION_READ, CoreManager::resize_input_, this);
-  assert(resize_input_handle != 0);
+  resize_input_handle_ = interface_.inputAdd(
+    pipefd_[0], INPUT_CONDITION_READ, CoreManager::resize_input_, this);
+  assert(resize_input_handle_ != 0);
 
   return 0;
 }
 
 int CoreManager::finalizeScreenResizing(Error &error)
 {
-  assert(pipefd[0] != -1);
-  assert(pipefd[1] != -1);
-  assert(resize_input_handle != 0);
+  assert(pipefd_[0] != -1);
+  assert(pipefd_[1] != -1);
+  assert(resize_input_handle_ != 0);
 
-  interface.inputRemove(resize_input_handle);
-  resize_input_handle = 0;
+  interface_.inputRemove(resize_input_handle_);
+  resize_input_handle_ = 0;
 
-  int close0_res = close(pipefd[0]);
-  pipefd[0] = -1;
+  int close0_res = close(pipefd_[0]);
+  pipefd_[0] = -1;
 
-  int close1_res = close(pipefd[1]);
-  pipefd[1] = -1;
+  int close1_res = close(pipefd_[1]);
+  pipefd_[1] = -1;
 
   if (close0_res != 0 || close1_res != 0) {
     error = Error(ERROR_SCREEN_RESIZING_FINALIZATION);
@@ -191,18 +188,18 @@ void CoreManager::registerWindow(Window &window)
   assert(!window.isVisible());
 
   Windows::iterator i = findWindow(window);
-  assert(i == windows.end());
+  assert(i == windows_.end());
 
-  windows.push_front(&window);
+  windows_.push_front(&window);
   updateWindowArea(window);
 }
 
 void CoreManager::removeWindow(Window &window)
 {
   Windows::iterator i = findWindow(window);
-  assert(i != windows.end());
+  assert(i != windows_.end());
 
-  windows.erase(i);
+  windows_.erase(i);
 
   focusWindow();
   redraw();
@@ -211,10 +208,10 @@ void CoreManager::removeWindow(Window &window)
 void CoreManager::topWindow(Window &window)
 {
   Windows::iterator i = findWindow(window);
-  assert(i != windows.end());
+  assert(i != windows_.end());
 
-  windows.erase(i);
-  windows.push_back(&window);
+  windows_.erase(i);
+  windows_.push_back(&window);
 
   focusWindow();
   redraw();
@@ -222,14 +219,14 @@ void CoreManager::topWindow(Window &window)
 
 Window *CoreManager::getTopWindow()
 {
-  return dynamic_cast<Window *>(input_child);
+  return dynamic_cast<Window *>(input_child_);
 }
 
 void CoreManager::enableResizing()
 {
   onScreenResized();
 
-  // register resize handler
+  // Register resize handler.
   struct sigaction sig;
   sig.sa_handler = signalHandler;
   sigemptyset(&sig.sa_mask);
@@ -239,7 +236,7 @@ void CoreManager::enableResizing()
 
 void CoreManager::disableResizing()
 {
-  // unregister resize handler
+  // Unregister resize handler.
   struct sigaction sig;
   sig.sa_handler = SIG_DFL;
   sigemptyset(&sig.sa_mask);
@@ -249,26 +246,26 @@ void CoreManager::disableResizing()
 
 void CoreManager::onScreenResized()
 {
-  if (resize_pending)
+  if (resize_pending_)
     return;
 
-  int r = write(pipefd[1], "@", 1);
+  int r = write(pipefd_[1], "@", 1);
   if (r == 1)
-    resize_pending = true;
+    resize_pending_ = true;
 }
 
 void CoreManager::logError(const char *message)
 {
-  interface.logError(message);
+  interface_.logError(message);
 }
 
 void CoreManager::redraw()
 {
-  if (redraw_pending)
+  if (redraw_pending_)
     return;
 
-  redraw_pending = true;
-  interface.timeoutAdd(0, CoreManager::draw_, this);
+  redraw_pending_ = true;
+  interface_.timeoutAdd(0, CoreManager::draw_, this);
 }
 
 void CoreManager::onWindowMoveResize(
@@ -290,27 +287,27 @@ void CoreManager::onWindowWishSizeChange(
 }
 
 CoreManager::CoreManager(AppInterface &set_interface)
-  : top_input_processor(NULL), stdin_input_timeout_handle(0),
-    stdin_input_handle(0), resize_input_handle(0), tk(NULL),
-    iconv_desc(ICONV_NONE), redraw_pending(false), resize_pending(false)
+  : top_input_processor_(NULL), stdin_input_timeout_handle_(0),
+    stdin_input_handle_(0), resize_input_handle_(0), tk_(NULL),
+    iconv_desc_(ICONV_NONE), redraw_pending_(false), resize_pending_(false)
 {
-  pipefd[0] = pipefd[1] = -1;
+  pipefd_[0] = pipefd_[1] = -1;
 
-  // validate the passed interface
+  // Validate the passed interface.
   assert(set_interface.timeoutAdd != NULL);
   assert(set_interface.timeoutRemove != NULL);
   assert(set_interface.inputAdd != NULL);
   assert(set_interface.inputRemove != NULL);
   assert(set_interface.logError != NULL);
 
-  interface = set_interface;
+  interface_ = set_interface;
 
   declareBindables();
 }
 
 bool CoreManager::processInput(const TermKeyKey &key)
 {
-  if (top_input_processor && top_input_processor->processInput(key))
+  if (top_input_processor_ && top_input_processor_->processInput(key))
     return true;
 
   return InputProcessor::processInput(key);
@@ -318,25 +315,25 @@ bool CoreManager::processInput(const TermKeyKey &key)
 
 void CoreManager::stdin_input(int /*fd*/, InputCondition /*cond*/)
 {
-  termkey_advisereadable(tk);
+  termkey_advisereadable(tk_);
 
   TermKeyKey key;
   TermKeyResult ret;
-  while ((ret = termkey_getkey(tk, &key)) == TERMKEY_RES_KEY) {
-    if (key.type == TERMKEY_TYPE_UNICODE && iconv_desc != ICONV_NONE) {
+  while ((ret = termkey_getkey(tk_, &key)) == TERMKEY_RES_KEY) {
+    if (key.type == TERMKEY_TYPE_UNICODE && iconv_desc_ != ICONV_NONE) {
       size_t inbytesleft, outbytesleft;
       char *inbuf, *outbuf;
       size_t res;
       char utf8[sizeof(key.utf8) - 1];
 
-      // convert data from user charset to UTF-8
+      // Convert data from user charset to UTF-8.
       inbuf = key.utf8;
       inbytesleft = strlen(key.utf8);
       outbuf = utf8;
       outbytesleft = sizeof(utf8);
-      res = iconv(iconv_desc, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+      res = iconv(iconv_desc_, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
       if (res != static_cast<size_t>(-1) && inbytesleft != 0) {
-        // no error occured but not all bytes has been converted
+        // No error occured but not all bytes have been converted.
         errno = EINVAL;
         res = static_cast<size_t>(-1);
       }
@@ -358,9 +355,9 @@ void CoreManager::stdin_input(int /*fd*/, InputCondition /*cond*/)
     processInput(key);
   }
   if (ret == TERMKEY_RES_AGAIN) {
-    int wait = termkey_get_waittime(tk);
-    stdin_input_timeout_handle =
-      interface.timeoutAdd(wait, CoreManager::stdin_input_timeout_, this);
+    int wait = termkey_get_waittime(tk_);
+    stdin_input_timeout_handle_ =
+      interface_.timeoutAdd(wait, CoreManager::stdin_input_timeout_, this);
   }
 }
 
@@ -373,26 +370,26 @@ bool CoreManager::stdin_input_timeout_(void *data)
 
 void CoreManager::stdin_input_timeout()
 {
-  assert(stdin_input_timeout_handle != 0);
-  stdin_input_timeout_handle = 0;
+  assert(stdin_input_timeout_handle_ != 0);
+  stdin_input_timeout_handle_ = 0;
 
   TermKeyKey key;
-  if (termkey_getkey_force(tk, &key) == TERMKEY_RES_KEY) {
-    /* This should happen only for Esc key, so no need to do locale->utf8
-     * conversion. */
+  if (termkey_getkey_force(tk_, &key) == TERMKEY_RES_KEY) {
+    // This should happen only for Esc key, so no need to do locale->utf8
+    // conversion.
     processInput(key);
   }
 }
 
 void CoreManager::resize_input(int fd, InputCondition /*cond*/)
 {
-  // stay sane
-  assert(fd == pipefd[0]);
+  // Stay sane.
+  assert(fd == pipefd_[0]);
 
   char buf[1024];
   read(fd, buf, sizeof(buf));
 
-  if (resize_pending)
+  if (resize_pending_)
     resize();
 }
 
@@ -407,7 +404,7 @@ void CoreManager::resize()
 {
   /// @todo Implement correct error reporting when resize() fails.
 
-  resize_pending = false;
+  resize_pending_ = false;
 
   struct winsize size;
   if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &size) >= 0) {
@@ -420,7 +417,7 @@ void CoreManager::resize()
 
   // Signal the resize event.
   signal_resize();
-  for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
+  for (Windows::iterator i = windows_.begin(); i != windows_.end(); ++i)
     (*i)->onScreenResized();
 
   // Update area.
@@ -431,7 +428,7 @@ void CoreManager::resize()
 
 void CoreManager::updateArea()
 {
-  for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
+  for (Windows::iterator i = windows_.begin(); i != windows_.end(); ++i)
     updateWindowArea(**i);
 }
 
@@ -443,7 +440,7 @@ void CoreManager::updateWindowArea(Window &window)
   int window_x = window.getLeft();
   int window_y = window.getTop();
 
-  // calculate the real width
+  // Calculate the real width.
   int window_width = window.getWidth();
   if (window_width == Widget::AUTOSIZE) {
     window_width = window.getWishWidth();
@@ -453,7 +450,7 @@ void CoreManager::updateWindowArea(Window &window)
   if (window_width < 0)
     window_width = 0;
 
-  // calculate the real height
+  // Calculate the real height.
   int window_height = window.getHeight();
   if (window_height == Widget::AUTOSIZE) {
     window_height = window.getWishHeight();
@@ -478,7 +475,7 @@ bool CoreManager::draw_(void *data)
 
 int CoreManager::draw(Error &error)
 {
-  if (!redraw_pending)
+  if (!redraw_pending_)
     return 0;
 
 #if defined(DEBUG) && 0
@@ -491,15 +488,15 @@ int CoreManager::draw(Error &error)
   DRAW(Curses::erase(error));
 
   // Non-focusable -> normal -> top.
-  for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
+  for (Windows::iterator i = windows_.begin(); i != windows_.end(); ++i)
     if ((*i)->isVisible() && (*i)->getType() == Window::TYPE_NON_FOCUSABLE)
       DRAW(drawWindow(**i, error));
 
-  for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
+  for (Windows::iterator i = windows_.begin(); i != windows_.end(); ++i)
     if ((*i)->isVisible() && (*i)->getType() == Window::TYPE_NORMAL)
       DRAW(drawWindow(**i, error));
 
-  for (Windows::iterator i = windows.begin(); i != windows.end(); i++)
+  for (Windows::iterator i = windows_.begin(); i != windows_.end(); ++i)
     if ((*i)->isVisible() && (*i)->getType() == Window::TYPE_TOP)
       DRAW(drawWindow(**i, error));
 
@@ -522,7 +519,7 @@ int CoreManager::draw(Error &error)
   logError(message);
 #endif // DEBUG
 
-  redraw_pending = false;
+  redraw_pending_ = false;
 
   return 0;
 }
@@ -544,7 +541,7 @@ int CoreManager::drawWindow(Window &window, Error &error)
   int window_view_width = window_width;
   int window_view_height = window_height;
 
-  // calculate a viewport for the window
+  // Calculate a viewport for the window.
   if (window_x < 0) {
     window_view_x = -window_x;
     if (window_view_x > window_width)
@@ -575,40 +572,40 @@ int CoreManager::drawWindow(Window &window, Error &error)
 
 CoreManager::Windows::iterator CoreManager::findWindow(Window &window)
 {
-  return std::find(windows.begin(), windows.end(), &window);
+  return std::find(windows_.begin(), windows_.end(), &window);
 }
 
 void CoreManager::focusWindow()
 {
-  // check if there are any windows left
+  // Check if there are any windows left.
   Window *win = NULL;
   Windows::reverse_iterator i;
 
   // try to find a top window first
-  for (i = windows.rbegin(); i != windows.rend(); i++)
+  for (i = windows_.rbegin(); i != windows_.rend(); ++i)
     if ((*i)->isVisible() && (*i)->getType() == Window::TYPE_TOP) {
       win = *i;
       break;
     }
 
-  // normal windows
-  if (!win)
-    for (i = windows.rbegin(); i != windows.rend(); i++)
+  // Normal windows.
+  if (win == NULL)
+    for (i = windows_.rbegin(); i != windows_.rend(); ++i)
       if ((*i)->isVisible() && (*i)->getType() == Window::TYPE_NORMAL) {
         win = *i;
         break;
       }
 
   Window *focus = dynamic_cast<Window *>(getInputChild());
-  if (!win || win != focus) {
-    // take the focus from the old window with the focus
-    if (focus) {
+  if (win == NULL || win != focus) {
+    // Take the focus from the old window with the focus.
+    if (focus != NULL) {
       focus->ungrabFocus();
       clearInputChild();
     }
 
-    // give the focus to the window
-    if (win) {
+    // Give the focus to the window.
+    if (win != NULL) {
       setInputChild(*win);
       win->restoreFocus();
     }
@@ -636,4 +633,4 @@ void CoreManager::declareBindables()
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

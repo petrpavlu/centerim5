@@ -1,30 +1,25 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * Wrapper for curses functions.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// Wrapper for curses functions.
+///
+/// @ingroup cppconsui
 
 #ifndef __CONSUICURSES_H__
 #define __CONSUICURSES_H__
@@ -91,16 +86,16 @@ public:
 
   void scroll(int scroll_x, int scroll_y);
 
-  int getScreenLeft() const { return screen_x; }
-  int getScreenTop() const { return screen_y; }
-  int getViewLeft() const { return view_x; }
-  int getViewTop() const { return view_y; }
-  int getViewWidth() const { return view_width; }
-  int getViewHeight() const { return view_height; }
+  int getScreenLeft() const { return screen_x_; }
+  int getScreenTop() const { return screen_y_; }
+  int getViewLeft() const { return view_x_; }
+  int getViewTop() const { return view_y_; }
+  int getViewWidth() const { return view_width_; }
+  int getViewHeight() const { return view_height_; }
 
 protected:
-  int screen_x, screen_y;
-  int view_x, view_y, view_width, view_height;
+  int screen_x_, screen_y_;
+  int view_x_, view_y_, view_width_, view_height_;
 
   bool isInViewPort(int x, int y, int w);
 
@@ -164,4 +159,4 @@ void resetStats();
 
 #endif // __CONSUICURSES_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

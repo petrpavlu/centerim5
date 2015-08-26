@@ -1,29 +1,24 @@
-/*
- * Copyright (C) 2009-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2009-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * KeyConfig class implementation.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// KeyConfig class implementation.
+///
+/// @ingroup cppconsui
 
 #include "KeyConfig.h"
 
@@ -40,30 +35,30 @@ bool KeyConfig::bindKey(
   TermKeyKey tkey;
   const char *res = termkey_strpkey(
     COREMANAGER->getTermKeyHandle(), key, &tkey, TERMKEY_FORMAT_LONGMOD);
-  if (!res || res[0])
+  if (res == NULL || res[0] != '\0')
     return false;
 
-  binds[context][tkey] = action;
+  binds_[context][tkey] = action;
   return true;
 }
 
 const KeyConfig::KeyBindContext *KeyConfig::getKeyBinds(
   const char *context) const
 {
-  KeyBinds::const_iterator i = binds.find(context);
-  if (i == binds.end())
+  KeyBinds::const_iterator i = binds_.find(context);
+  if (i == binds_.end())
     return NULL;
   return &i->second;
 }
 
 const char *KeyConfig::getKeyBind(const char *context, const char *action) const
 {
-  KeyBinds::const_iterator i = binds.find(context);
-  if (i == binds.end())
+  KeyBinds::const_iterator i = binds_.find(context);
+  if (i == binds_.end())
     return NULL;
 
   for (KeyBindContext::const_iterator j = i->second.begin();
-       j != i->second.end(); j++)
+       j != i->second.end(); ++j)
     if (!j->second.compare(action)) {
       TermKeyKey key = j->first;
       static char out[256];
@@ -92,17 +87,17 @@ bool KeyConfig::stringToTermKey(const char *key, TermKeyKey *termkey) const
 {
   const char *res = termkey_strpkey(
     COREMANAGER->getTermKeyHandle(), key, termkey, TERMKEY_FORMAT_LONGMOD);
-  return res && !res[0];
+  return res != NULL && res[0] == '\0';
 }
 
 void KeyConfig::clear()
 {
-  binds.clear();
+  binds_.clear();
 }
 
 void KeyConfig::loadDefaultKeyConfig()
 {
-  // clear current bindings
+  // Clear current bindings.
   clear();
 
   bindKey("button", "activate", "Enter");
@@ -134,10 +129,8 @@ void KeyConfig::loadDefaultKeyConfig()
   bindKey("textentry", "backspace", "Backspace");
 
   bindKey("textentry", "delete-word-end", "Ctrl-Delete");
-  /// @todo enable
-  /*
-  bindKey("textentry", "toggle-overwrite", "Insert");
-  */
+  /// @todo Enable toogle-overwrite bind.
+  // bindKey("textentry", "toggle-overwrite", "Insert");
 
   bindKey("textentry", "activate", "Enter");
 
@@ -152,4 +145,4 @@ void KeyConfig::loadDefaultKeyConfig()
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

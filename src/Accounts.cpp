@@ -130,7 +130,7 @@ Accounts::PendingRequestWindow::PendingRequestWindow(
   for (Requests::const_iterator i = requests.begin(); i != requests.end(); i++)
     appendRequest(**i);
 
-  buttons->appendItem(
+  buttons_->appendItem(
     _("Done"), sigc::hide(sigc::mem_fun(this, &PendingRequestWindow::close)));
 
   onScreenResized();
@@ -205,11 +205,11 @@ Accounts::PendingRequestWindow::RequestDialog::RequestDialog(
   addSeparator();
   addButton(NO_BUTTON_TEXT, RESPONSE_NO);
   // never give focus to the textview
-  buttons->setFocusCycle(FOCUS_CYCLE_LOCAL);
+  buttons_->setFocusCycle(FOCUS_CYCLE_LOCAL);
 
   CppConsUI::TextView *textview = new CppConsUI::TextView(AUTOSIZE, AUTOSIZE);
   textview->append(text);
-  layout->insertWidget(0, *textview);
+  layout_->insertWidget(0, *textview);
 }
 
 void Accounts::PendingRequestWindow::RequestDialog::emitResponse(

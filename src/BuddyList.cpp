@@ -101,9 +101,9 @@ int BuddyList::Filter::draw(
   CppConsUI::Curses::ViewPort area, CppConsUI::Error &error)
 {
   int printed;
-  DRAW(area.addString(0, 0, real_width, _("Filter: "), error, &printed));
+  DRAW(area.addString(0, 0, real_width_, _("Filter: "), error, &printed));
   if (static_cast<int>(parent->filter_buffer_onscreen_width) <=
-    real_width - printed) {
+    real_width_ - printed) {
     // Optimized simple case.
     DRAW(area.addString(printed, 0, parent->filter_buffer, error));
     return 0;
@@ -117,12 +117,12 @@ int BuddyList::Filter::draw(
       break;
     gunichar uc = g_utf8_get_char(prev);
     int wc = CppConsUI::Curses::onScreenWidth(uc);
-    if (w + wc > real_width - printed)
+    if (w + wc > real_width_ - printed)
       break;
     w += wc;
     cur = prev;
   }
-  DRAW(area.addString(real_width - w, 0, cur, error));
+  DRAW(area.addString(real_width_ - w, 0, cur, error));
 
   return 0;
 }
@@ -135,9 +135,9 @@ BuddyList::AddWindow::AddWindow(const char *title)
   treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
   setContainer(*treeview);
 
-  buttons->appendItem(_("Add"), sigc::mem_fun(this, &AddWindow::onAddRequest));
-  buttons->appendSeparator();
-  buttons->appendItem(
+  buttons_->appendItem(_("Add"), sigc::mem_fun(this, &AddWindow::onAddRequest));
+  buttons_->appendSeparator();
+  buttons_->appendItem(
     _("Cancel"), sigc::hide(sigc::mem_fun(this, &AddWindow::close)));
 
   onScreenResized();

@@ -1,29 +1,24 @@
-/*
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * SplitDialog class.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// SplitDialog class.
+///
+/// @ingroup cppconsui
 
 #ifndef __SPLITDIALOG_H__
 #define __SPLITDIALOG_H__
@@ -45,20 +40,18 @@ public:
   virtual void moveFocus(FocusDirection direction);
 
   virtual void setContainer(Container &cont);
-  virtual Container *getContainer() const { return container; }
+  virtual Container *getContainer() const { return container_; }
 
-  /**
-   * Signal emitted when the user closes the dialog.
-   */
+  /// Signal emitted when user closes the dialog.
   sigc::signal<void, SplitDialog &, ResponseType> signal_response;
 
 protected:
-  Container *container;
+  Container *container_;
 
-  Widget *cont_old_focus;
-  Widget *buttons_old_focus;
-  sigc::connection cont_old_focus_conn;
-  sigc::connection buttons_old_focus_conn;
+  Widget *cont_old_focus_;
+  Widget *buttons_old_focus_;
+  sigc::connection cont_old_focus_conn_;
+  sigc::connection buttons_old_focus_conn_;
 
   // AbstractDialog
   virtual void emitResponse(ResponseType response);
@@ -73,4 +66,4 @@ private:
 
 #endif // __SPLITDIALOG_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

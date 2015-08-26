@@ -28,7 +28,7 @@ void ConversationRoomList::moveToSortedPosition(Buddy *new_buddy)
 
   g_assert(new_buddy);
 
-  for (iter = children.begin(); iter != children.end(); ++iter) {
+  for (iter = children_.begin(); iter != children_.end(); ++iter) {
     buddy = dynamic_cast<Buddy *>(*iter);
 
     // Should never happen...
@@ -54,7 +54,7 @@ void ConversationRoomList::moveToSortedPosition(Buddy *new_buddy)
   // reposition_widgets = true;
 
   // Insert after if at end
-  if (iter == children.end())
+  if (iter == children_.end())
     moveWidgetAfter(*new_buddy, *buddy);
   else
     moveWidgetBefore(*new_buddy, *buddy);

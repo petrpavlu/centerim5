@@ -1,30 +1,25 @@
-/*
- * Copyright (C) 2008 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2008 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * ColorScheme class implementation.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// ColorScheme class implementation.
+///
+/// @ingroup cppconsui
 
 #include "ColorScheme.h"
 
@@ -34,6 +29,7 @@
 #include <cctype>
 #include <cerrno>
 #include <cstdlib>
+#include <cstring>
 #include "gettext.h"
 
 namespace CppConsUI {
@@ -46,7 +42,7 @@ int ColorScheme::getAttributes(
   PropertyPair property_pair(property, subproperty);
   Schemes::const_iterator i;
   Properties::const_iterator j;
-  if ((i = schemes.find(scheme)) != schemes.end() &&
+  if ((i = schemes_.find(scheme)) != schemes_.end() &&
     (j = i->second.find(property_pair)) != i->second.end()) {
     Color c = j->second;
     if (getColorPair(c, out_attrs, error) != 0)
@@ -54,7 +50,7 @@ int ColorScheme::getAttributes(
     *out_attrs |= c.attrs;
 #ifdef SAVE_COLOR_PAIRS
     // Save updated color in case it got inverted.
-    schemes[scheme][property_pair] = c;
+    schemes_[scheme][property_pair] = c;
 #endif // SAVE_COLOR_PAIRS
     return 0;
   }
@@ -77,14 +73,14 @@ int ColorScheme::getColorPair(const Color &c, int *out_attrs, Error &error)
   ColorPair color_pair(fg, bg);
 
   // Check if the pair already exists.
-  if ((i = pairs.find(color_pair)) != pairs.end()) {
+  if ((i = pairs_.find(color_pair)) != pairs_.end()) {
     *out_attrs = i->second;
     return 0;
   }
 
 #ifdef SAVE_COLOR_PAIRS
   // Check if the inverse pairs exists.
-  if ((i = pairs.find(color_pair)) != pairs.end()) {
+  if ((i = pairs_.find(color_pair)) != pairs_.end()) {
     // If the inverse pair exists, use that one and flip the REVERSE bit.
     c.foreground = bg;
     c.background = fg;
@@ -95,10 +91,10 @@ int ColorScheme::getColorPair(const Color &c, int *out_attrs, Error &error)
 #endif // SAVE_COLOR_PAIRS
 
   // Add a new color pair to the palette.
-  if (Curses::initColorPair(pairs.size() + 1, fg, bg, out_attrs, error) != 0)
+  if (Curses::initColorPair(pairs_.size() + 1, fg, bg, out_attrs, error) != 0)
     return error.getCode();
 
-  pairs[color_pair] = *out_attrs;
+  pairs_[color_pair] = *out_attrs;
   return 0;
 }
 
@@ -114,28 +110,28 @@ bool ColorScheme::setAttributesExt(int scheme, int property, int subproperty,
 {
   PropertyPair property_pair(property, subproperty);
   Schemes::const_iterator i;
-  if (!overwrite && (i = schemes.find(scheme)) != schemes.end() &&
+  if (!overwrite && (i = schemes_.find(scheme)) != schemes_.end() &&
     i->second.find(property_pair) != i->second.end())
     return false;
 
-  schemes[scheme][property_pair] = Color(foreground, background, attrs);
+  schemes_[scheme][property_pair] = Color(foreground, background, attrs);
   return true;
 }
 
 void ColorScheme::freeScheme(int scheme)
 {
-  Schemes::const_iterator i = schemes.find(scheme);
+  Schemes::const_iterator i = schemes_.find(scheme);
 
-  if (i == schemes.end())
+  if (i == schemes_.end())
     return;
 
-  schemes.erase(scheme);
+  schemes_.erase(scheme);
 }
 
 void ColorScheme::clear()
 {
-  schemes.clear();
-  pairs.clear();
+  schemes_.clear();
+  pairs_.clear();
 }
 
 const char *ColorScheme::propertyToWidgetName(int property)
@@ -206,81 +202,81 @@ ColorScheme::PropertyConversionResult ColorScheme::stringPairToPropertyPair(
 
   *out_subproperty = 0;
 
-  if (strcmp(widget, "button") == 0) {
-    if (strcmp(property, "focus") == 0) {
+  if (std::strcmp(widget, "button") == 0) {
+    if (std::strcmp(property, "focus") == 0) {
       *out_property = PROPERTY_BUTTON_FOCUS;
       return CONVERSION_SUCCESS;
     }
-    if (strcmp(property, "normal") == 0) {
+    if (std::strcmp(property, "normal") == 0) {
       *out_property = PROPERTY_BUTTON_NORMAL;
       return CONVERSION_SUCCESS;
     }
     return CONVERSION_ERROR_PROPERTY;
   }
-  else if (strcmp(widget, "checkbox") == 0) {
-    if (strcmp(property, "focus") == 0) {
+  else if (std::strcmp(widget, "checkbox") == 0) {
+    if (std::strcmp(property, "focus") == 0) {
       *out_property = PROPERTY_CHECKBOX_FOCUS;
       return CONVERSION_SUCCESS;
     }
-    if (strcmp(property, "normal") == 0) {
+    if (std::strcmp(property, "normal") == 0) {
       *out_property = PROPERTY_CHECKBOX_NORMAL;
       return CONVERSION_SUCCESS;
     }
     return CONVERSION_ERROR_PROPERTY;
   }
-  else if (strcmp(widget, "container") == 0) {
-    if (strcmp(property, "background") == 0) {
+  else if (std::strcmp(widget, "container") == 0) {
+    if (std::strcmp(property, "background") == 0) {
       *out_property = PROPERTY_CONTAINER_BACKGROUND;
       return CONVERSION_SUCCESS;
     }
     return CONVERSION_ERROR_PROPERTY;
   }
-  else if (strcmp(widget, "horizontalline") == 0) {
-    if (strcmp(property, "line") == 0) {
+  else if (std::strcmp(widget, "horizontalline") == 0) {
+    if (std::strcmp(property, "line") == 0) {
       *out_property = PROPERTY_HORIZONTALLINE_LINE;
       return CONVERSION_SUCCESS;
     }
     return CONVERSION_ERROR_PROPERTY;
   }
-  else if (strcmp(widget, "label") == 0) {
-    if (strcmp(property, "text") == 0) {
+  else if (std::strcmp(widget, "label") == 0) {
+    if (std::strcmp(property, "text") == 0) {
       *out_property = PROPERTY_LABEL_TEXT;
       return CONVERSION_SUCCESS;
     }
     return CONVERSION_ERROR_PROPERTY;
   }
-  else if (strcmp(widget, "panel") == 0) {
-    if (strcmp(property, "line") == 0) {
+  else if (std::strcmp(widget, "panel") == 0) {
+    if (std::strcmp(property, "line") == 0) {
       *out_property = PROPERTY_PANEL_LINE;
       return CONVERSION_SUCCESS;
     }
-    if (strcmp(property, "title") == 0) {
+    if (std::strcmp(property, "title") == 0) {
       *out_property = PROPERTY_PANEL_TITLE;
       return CONVERSION_SUCCESS;
     }
     return CONVERSION_ERROR_PROPERTY;
   }
-  else if (strcmp(widget, "textedit") == 0) {
-    if (strcmp(property, "text") == 0) {
+  else if (std::strcmp(widget, "textedit") == 0) {
+    if (std::strcmp(property, "text") == 0) {
       *out_property = PROPERTY_TEXTEDIT_TEXT;
       return CONVERSION_SUCCESS;
     }
     return CONVERSION_ERROR_PROPERTY;
   }
-  else if (strcmp(widget, "textview") == 0) {
-    if (strcmp(property, "text") == 0) {
+  else if (std::strcmp(widget, "textview") == 0) {
+    if (std::strcmp(property, "text") == 0) {
       *out_property = PROPERTY_TEXTVIEW_TEXT;
       return CONVERSION_SUCCESS;
     }
-    if (strcmp(property, "scrollbar") == 0) {
+    if (std::strcmp(property, "scrollbar") == 0) {
       *out_property = PROPERTY_TEXTVIEW_SCROLLBAR;
       return CONVERSION_SUCCESS;
     }
 
     // Handle text_<number> and color_<number> properties.
-    if (strncmp(property, "text_", 5) == 0)
+    if (std::strncmp(property, "text_", 5) == 0)
       property += 5;
-    else if (strncmp(property, "color_", 6) == 0)
+    else if (std::strncmp(property, "color_", 6) == 0)
       property += 6;
     else
       return CONVERSION_ERROR_PROPERTY;
@@ -299,14 +295,14 @@ ColorScheme::PropertyConversionResult ColorScheme::stringPairToPropertyPair(
     *out_subproperty = i;
     return CONVERSION_SUCCESS;
   }
-  else if (strcmp(widget, "verticalline") == 0) {
-    if (strcmp(property, "line") == 0) {
+  else if (std::strcmp(widget, "verticalline") == 0) {
+    if (std::strcmp(property, "line") == 0) {
       *out_property = PROPERTY_VERTICALLINE_LINE;
       return CONVERSION_SUCCESS;
     }
   }
-  else if (strcmp(widget, "treeview") == 0) {
-    if (strcmp(property, "line") == 0) {
+  else if (std::strcmp(widget, "treeview") == 0) {
+    if (std::strcmp(property, "line") == 0) {
       *out_property = PROPERTY_TREEVIEW_LINE;
       return CONVERSION_SUCCESS;
     }
@@ -317,4 +313,4 @@ ColorScheme::PropertyConversionResult ColorScheme::stringPairToPropertyPair(
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

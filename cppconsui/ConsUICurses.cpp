@@ -1,34 +1,28 @@
-/*
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * Hidden implementation of curses specific functions.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// Hidden implementation of curses specific functions.
+///
+/// @ingroup cppconsui
 
 #include "ConsUICurses.h"
 
-// In order to get wide characters support we must define _XOPEN_SOURCE_EXTENDED
-// when using cursesw.h.
+// Define _XOPEN_SOURCE_EXTENDED to get wide character support.
 #ifndef _XOPEN_SOURCE_EXTENDED
 #define _XOPEN_SOURCE_EXTENDED
 #endif
@@ -48,10 +42,10 @@ namespace Curses {
 static Stats stats = {0, 0, 0};
 bool ascii_mode = false;
 
-ViewPort::ViewPort(int screen_x_, int screen_y_, int view_x_, int view_y_,
-  int view_width_, int view_height_)
-  : screen_x(screen_x_), screen_y(screen_y_), view_x(view_x_), view_y(view_y_),
-    view_width(view_width_), view_height(view_height_)
+ViewPort::ViewPort(int screen_x, int screen_y, int view_x, int view_y,
+  int view_width, int view_height)
+  : screen_x_(screen_x), screen_y_(screen_y), view_x_(view_x), view_y_(view_y),
+    view_width_(view_width), view_height_(view_height)
 {
 }
 
@@ -147,8 +141,8 @@ int ViewPort::addChar(
   if (printed)
     *printed = 0;
 
-  int draw_x = screen_x + (x - view_x);
-  int draw_y = screen_y + (y - view_y);
+  int draw_x = screen_x_ + (x - view_x_);
+  int draw_y = screen_y_ + (y - view_y_);
 
   if (uc >= 0x7f && uc < 0xa0) {
     // Filter out C1 (8-bit) control characters.
@@ -276,8 +270,8 @@ int ViewPort::addLineChar(int x, int y, LineChar c, Error &error)
     assert(0);
   }
 
-  int draw_x = screen_x + (x - view_x);
-  int draw_y = screen_y + (y - view_y);
+  int draw_x = screen_x_ + (x - view_x_);
+  int draw_y = screen_y_ + (y - view_y_);
 
   if (::mvaddch(draw_y, draw_x, ch) == OK)
     return 0;
@@ -369,8 +363,8 @@ int ViewPort::changeAt(int x, int y, int n, /* attr_t */ unsigned long attr,
     if (!isInViewPort(x + i, y, 1))
       continue;
 
-    int draw_x = screen_x + (x + i - view_x);
-    int draw_y = screen_y + (y - view_y);
+    int draw_x = screen_x_ + (x + i - view_x_);
+    int draw_y = screen_y_ + (y - view_y_);
     if (::mvchgat(draw_y, draw_x, 1, attr, color, NULL) == ERR) {
       error = Error(ERROR_CURSES_ATTR);
       error.setFormattedString(
@@ -385,7 +379,7 @@ int ViewPort::changeAt(int x, int y, int n, /* attr_t */ unsigned long attr,
 
 int ViewPort::fill(int attrs, Error &error)
 {
-  return fill(attrs, 0, 0, view_width, view_height, error);
+  return fill(attrs, 0, 0, view_width_, view_height_, error);
 }
 
 int ViewPort::fill(int attrs, int x, int y, int w, int h, Error &error)
@@ -425,14 +419,14 @@ int ViewPort::erase(Error &error)
 
 void ViewPort::scroll(int scroll_x, int scroll_y)
 {
-  view_x += scroll_x;
-  view_y += scroll_y;
+  view_x_ += scroll_x;
+  view_y_ += scroll_y;
 }
 
 bool ViewPort::isInViewPort(int x, int y, int w)
 {
-  return x >= view_x && y >= view_y && x + w <= view_x + view_width &&
-    y < view_y + view_height;
+  return x >= view_x_ && y >= view_y_ && x + w <= view_x_ + view_width_ &&
+    y < view_y_ + view_height_;
 }
 
 const int Color::DEFAULT = -1;
@@ -685,4 +679,4 @@ void resetStats()
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

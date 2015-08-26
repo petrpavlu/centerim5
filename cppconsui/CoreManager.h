@@ -1,35 +1,30 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2009-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2009-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * CoreManager class
- *
- * @ingroup cppconsui
- */
+/// @file
+/// CoreManager class
+///
+/// @ingroup cppconsui
 
 #ifndef __COREMANAGER_H__
 #define __COREMANAGER_H__
 
-#include "CppConsUI.h" // for COREMANAGER macro
+#include "CppConsUI.h"
 #include "Window.h"
 
 #include "libtermkey/termkey.h"
@@ -38,9 +33,7 @@
 
 namespace CppConsUI {
 
-/**
- * This class implements a core part of CppConsUI.
- */
+/// CppConsUI manager.
 class CoreManager : public InputProcessor {
 public:
   int initializeInput(Error &error);
@@ -61,8 +54,11 @@ public:
   void disableResizing();
   void onScreenResized();
 
-  void setTopInputProcessor(InputProcessor &top) { top_input_processor = &top; }
-  InputProcessor *getTopInputProcessor() { return top_input_processor; }
+  void setTopInputProcessor(InputProcessor &top)
+  {
+    top_input_processor_ = &top;
+  }
+  InputProcessor *getTopInputProcessor() { return top_input_processor_; }
 
   void logError(const char *message);
   void redraw();
@@ -72,7 +68,7 @@ public:
   void onWindowWishSizeChange(
     Window &activator, const Size &oldsize, const Size &newsize);
 
-  TermKey *getTermKeyHandle() { return tk; };
+  TermKey *getTermKeyHandle() { return tk_; };
 
   sigc::signal<void> signal_resize;
   sigc::signal<void> signal_top_window_change;
@@ -80,20 +76,20 @@ public:
 private:
   typedef std::deque<Window *> Windows;
 
-  Windows windows;
-  AppInterface interface;
-  InputProcessor *top_input_processor;
+  Windows windows_;
+  AppInterface interface_;
+  InputProcessor *top_input_processor_;
 
-  unsigned stdin_input_timeout_handle;
-  unsigned stdin_input_handle;
-  unsigned resize_input_handle;
-  int pipefd[2];
+  unsigned stdin_input_timeout_handle_;
+  unsigned stdin_input_handle_;
+  unsigned resize_input_handle_;
+  int pipefd_[2];
 
-  TermKey *tk;
-  iconv_t iconv_desc;
+  TermKey *tk_;
+  iconv_t iconv_desc_;
 
-  bool redraw_pending;
-  bool resize_pending;
+  bool redraw_pending_;
+  bool resize_pending_;
 
   CoreManager(AppInterface &set_interface);
   ~CoreManager() {}
@@ -105,11 +101,9 @@ private:
   // InputProcessor
   virtual bool processInput(const TermKeyKey &key);
 
-  /**
-   * Reads data from the standard input. The data are first converted from
-   * user locales to the internal representation (UTF-8) and then processed by
-   * InputProcessor.
-   */
+  /// Reads data from the standard input. The data are first converted from user
+  /// locales to the internal representation (UTF-8) and then processed by
+  /// InputProcessor.
   static void stdin_input_(int fd, InputCondition cond, void *data)
   {
     static_cast<CoreManager *>(data)->stdin_input(fd, cond);
@@ -145,4 +139,4 @@ private:
 
 #endif // __COREMANGER_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

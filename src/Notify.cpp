@@ -39,7 +39,7 @@ Notify::UserInfoDialog::UserInfoDialog(const char *title) : SplitDialog(title)
   treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
   setContainer(*treeview);
 
-  buttons->appendItem(
+  buttons_->appendItem(
     _("Done"), sigc::hide(sigc::mem_fun(this, &UserInfoDialog::close)));
 
   onScreenResized();

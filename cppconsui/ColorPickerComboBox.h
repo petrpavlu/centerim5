@@ -1,30 +1,25 @@
-/*
- * Copyright (C) 2012 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2012-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2012 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2012-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * ColorPickerComboBox class.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// ColorPickerComboBox class.
+///
+/// @ingroup cppconsui
 
 #ifndef __COLORPICKERCOMBOBOX_H__
 #define __COLORPICKERCOMBOBOX_H__
@@ -47,21 +42,21 @@ public:
   virtual int draw(Curses::ViewPort area, Error &error);
 
   virtual void setColor(int new_color);
-  virtual int getColor() { return selected_color; }
+  virtual int getColor() { return selected_color_; }
 
   sigc::signal<void, ColorPickerComboBox &, int> signal_color_changed;
 
 protected:
   class ColorButton : public Button {
   public:
-    ColorButton(int color_ = -1);
+    ColorButton(int color = -1);
     virtual ~ColorButton() {}
 
     // Widget
     virtual int draw(Curses::ViewPort area, Error &error);
 
   protected:
-    int color;
+    int color_;
 
   private:
     CONSUI_DISABLE_COPY(ColorButton);
@@ -90,10 +85,10 @@ protected:
 #endif // COLORPICKER_256COLOR
   virtual void setSelected(int new_entry);
 
-  int selected_color;
+  int selected_color_;
 
 #ifdef COLORPICKER_256COLOR
-  ColorPickerDialog *colorpicker;
+  ColorPickerDialog *colorpicker_;
 #endif // COLORPICKER_256COLOR
 
 private:
@@ -104,4 +99,4 @@ private:
 
 #endif // __COLORPICKERCOMBOBOX_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

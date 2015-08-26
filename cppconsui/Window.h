@@ -1,29 +1,24 @@
-/*
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * Window class.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// Window class.
+///
+/// @ingroup cppconsui
 
 #ifndef __WINDOW_H__
 #define __WINDOW_H__
@@ -66,21 +61,19 @@ public:
   virtual void hide();
   virtual void close();
 
-  // virtual void SetType(Type t) { type = t; }
-  virtual Type getType() { return type; }
+  // virtual void SetType(Type t) { type_ = t; }
+  virtual Type getType() { return type_; }
 
   // virtual void setDecorated(bool new_decorated);
-  virtual bool isDecorated() const { return decorated; }
+  virtual bool isDecorated() const { return decorated_; }
 
   virtual void setClosable(bool new_closable);
-  virtual bool isClosable() const { return closable; }
+  virtual bool isClosable() const { return closable_; }
 
-  virtual void setTitle(const char *text) { panel->setTitle(text); }
-  virtual const char *getTitle() const { return panel->getTitle(); }
+  virtual void setTitle(const char *text) { panel_->setTitle(text); }
+  virtual const char *getTitle() const { return panel_->getTitle(); }
 
-  /**
-   * This function is called when the screen is resized.
-   */
+  /// This function is called when the screen is resized.
   virtual void onScreenResized() {}
 
   sigc::signal<void, Window &> signal_close;
@@ -88,17 +81,15 @@ public:
   sigc::signal<void, Window &> signal_hide;
 
 protected:
-  Type type;
-  bool decorated;
+  Type type_;
+  bool decorated_;
 
-  /**
-   * Flag indicating if it is allowed to close the window by the close-window
-   * action, this usually means if it is possible to close the window by
-   * pressing the Esc key.
-   */
-  bool closable;
+  /// Flag indicating if it is allowed to close the window by the close-window
+  /// action, this usually means if it is possible to close the window by
+  /// pressing the Esc key.
+  bool closable_;
 
-  Panel *panel;
+  Panel *panel_;
 
   // Widget
   virtual void signalMoveResize(const Rect &oldsize, const Rect &newsize);
@@ -112,7 +103,7 @@ private:
   CONSUI_DISABLE_COPY(Window);
 
   // Widget
-  // windows cannot have any parent
+  // Windows cannot have any parent.
   using Container::setParent;
 
   void actionClose();
@@ -124,4 +115,4 @@ private:
 
 #endif // __WINDOW_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

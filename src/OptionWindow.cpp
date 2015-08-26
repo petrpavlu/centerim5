@@ -168,7 +168,7 @@ OptionWindow::OptionWindow() : SplitDialog(0, 0, 80, 24, _("Config options"))
     sigc::mem_fun(this, &OptionWindow::reloadColorSchemes));
   treeview->appendNode(parent, *b);
 
-  buttons->appendItem(
+  buttons_->appendItem(
     _("Done"), sigc::hide(sigc::mem_fun(this, &OptionWindow::close)));
 
   onScreenResized();
@@ -310,7 +310,7 @@ OptionWindow::ChoiceOption::ChoiceOption(const char *text, const char *config)
 
 OptionWindow::ChoiceOption::~ChoiceOption()
 {
-  for (ComboBoxEntries::iterator i = options.begin(); i != options.end(); i++)
+  for (ComboBoxEntries::iterator i = options_.begin(); i != options_.end(); i++)
     g_free(reinterpret_cast<char *>(i->data));
 
   g_free(pref);
