@@ -1,23 +1,20 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef _BUDDYLISTNODE_H__
 #define _BUDDYLISTNODE_H__
@@ -39,15 +36,15 @@ public:
   virtual bool lessOrEqual(const BuddyListNode &other) const = 0;
   virtual void update();
   virtual void onActivate(CppConsUI::Button &activator) = 0;
-  // debugging method
+  // Debugging method.
   virtual const char *toString() const = 0;
 
   virtual void setRefNode(CppConsUI::TreeView::NodeReference n);
-  virtual CppConsUI::TreeView::NodeReference getRefNode() const { return ref; }
+  virtual CppConsUI::TreeView::NodeReference getRefNode() const { return ref_; }
 
-  PurpleBlistNode *getPurpleBlistNode() const { return blist_node; }
+  PurpleBlistNode *getPurpleBlistNode() const { return blist_node_; }
 
-  /* Sorts in this node. */
+  // Sorts in this node.
   void sortIn();
 
   BuddyListNode *getParentNode() const;
@@ -55,11 +52,11 @@ public:
 protected:
   class ContextMenu : public CppConsUI::MenuWindow {
   public:
-    ContextMenu(BuddyListNode &parent_node_);
+    ContextMenu(BuddyListNode &parent_node);
     virtual ~ContextMenu() {}
 
   protected:
-    BuddyListNode *parent_node;
+    BuddyListNode *parent_node_;
 
     void onMenuAction(Button &activator, PurpleCallback callback, void *data);
     void appendMenuAction(MenuWindow &menu, PurpleMenuAction *act);
@@ -70,13 +67,13 @@ protected:
     CONSUI_DISABLE_COPY(ContextMenu);
   };
 
-  CppConsUI::TreeView *treeview;
-  CppConsUI::TreeView::NodeReference ref;
+  CppConsUI::TreeView *treeview_;
+  CppConsUI::TreeView::NodeReference ref_;
 
-  PurpleBlistNode *blist_node;
+  PurpleBlistNode *blist_node_;
 
-  // cached value of purple_blist_node_get_int(blist_node, "last_activity")
-  int last_activity;
+  // Cached value of purple_blist_node_get_int(blist_node, "last_activity").
+  int last_activity_;
 
   BuddyListNode(PurpleBlistNode *node_);
   virtual ~BuddyListNode();
@@ -86,12 +83,12 @@ protected:
   bool lessOrEqualByType(const BuddyListNode &other) const;
   bool lessOrEqualByBuddySort(PurpleBuddy *left, PurpleBuddy *right) const;
 
-  /* Called by BuddyListBuddy and BuddyListContact to get presence status
-   * char. Returned value should be used as a prefix of buddy/contact name. */
+  // Called by BuddyListBuddy and BuddyListContact to get presence status char.
+  // Returned value should be used as a prefix of buddy/contact name.
   const char *getBuddyStatus(PurpleBuddy *buddy) const;
 
-  /* Returns weight of buddy status (available > away > offline...). Used
-   * for sorting. */
+  // Returns weight of buddy status (available > away > offline...). Used for
+  // sorting.
   int getBuddyStatusWeight(PurpleBuddy *buddy) const;
 
   int getColorSchemeByBuddy(int base_scheme, PurpleBuddy *buddy);
@@ -117,17 +114,17 @@ public:
   virtual void onActivate(Button &activator);
   virtual const char *toString() const;
 
-  PurpleBuddy *getPurpleBuddy() const { return buddy; }
+  PurpleBuddy *getPurpleBuddy() const { return buddy_; }
   void retrieveUserInfo();
 
 protected:
   class BuddyContextMenu : public ContextMenu {
   public:
-    BuddyContextMenu(BuddyListBuddy &parent_buddy_);
+    BuddyContextMenu(BuddyListBuddy &parent_buddy);
     virtual ~BuddyContextMenu() {}
 
   protected:
-    BuddyListBuddy *parent_buddy;
+    BuddyListBuddy *parent_buddy_;
 
     void onInformation(Button &activator);
 
@@ -143,7 +140,7 @@ protected:
     CONSUI_DISABLE_COPY(BuddyContextMenu);
   };
 
-  PurpleBuddy *buddy;
+  PurpleBuddy *buddy_;
 
   // Widget
   virtual int getAttributes(
@@ -155,7 +152,7 @@ protected:
   void updateColorScheme();
 
 private:
-  BuddyListBuddy(PurpleBlistNode *node_);
+  BuddyListBuddy(PurpleBlistNode *node);
   virtual ~BuddyListBuddy() {}
   CONSUI_DISABLE_COPY(BuddyListBuddy);
 };
@@ -170,16 +167,16 @@ public:
   virtual void onActivate(Button &activator);
   virtual const char *toString() const;
 
-  PurpleChat *getPurpleChat() const { return chat; }
+  PurpleChat *getPurpleChat() const { return chat_; }
 
 protected:
   class ChatContextMenu : public ContextMenu {
   public:
-    ChatContextMenu(BuddyListChat &parent_chat_);
+    ChatContextMenu(BuddyListChat &parent_chat);
     virtual ~ChatContextMenu() {}
 
   protected:
-    BuddyListChat *parent_chat;
+    BuddyListChat *parent_chat_;
 
     void changeAliasResponseHandler(CppConsUI::InputDialog &activator,
       CppConsUI::AbstractDialog::ResponseType response);
@@ -193,13 +190,13 @@ protected:
     CONSUI_DISABLE_COPY(ChatContextMenu);
   };
 
-  PurpleChat *chat;
+  PurpleChat *chat_;
 
   // BuddyListNode
   virtual void openContextMenu();
 
 private:
-  BuddyListChat(PurpleBlistNode *node_);
+  BuddyListChat(PurpleBlistNode *node);
   virtual ~BuddyListChat() {}
   CONSUI_DISABLE_COPY(BuddyListChat);
 };
@@ -215,20 +212,23 @@ public:
   virtual const char *toString() const;
   virtual void setRefNode(CppConsUI::TreeView::NodeReference n);
 
-  PurpleContact *getPurpleContact() const { return contact; }
+  PurpleContact *getPurpleContact() const { return contact_; }
   void retrieveUserInfo();
 
-  bool isCollapsed() const { return ref->isCollapsed(); }
-  void setCollapsed(bool collapsed) { treeview->setCollapsed(ref, collapsed); }
+  bool isCollapsed() const { return ref_->isCollapsed(); }
+  void setCollapsed(bool collapsed)
+  {
+    treeview_->setCollapsed(ref_, collapsed);
+  }
 
 protected:
   class ContactContextMenu : public ContextMenu {
   public:
-    ContactContextMenu(BuddyListContact &parent_contact_);
+    ContactContextMenu(BuddyListContact &parent_contact);
     virtual ~ContactContextMenu() {}
 
   protected:
-    BuddyListContact *parent_contact;
+    BuddyListContact *parent_contact_;
 
     void onExpandRequest(Button &activator, bool expand);
     void onInformation(Button &activator);
@@ -247,7 +247,7 @@ protected:
     CONSUI_DISABLE_COPY(ContactContextMenu);
   };
 
-  PurpleContact *contact;
+  PurpleContact *contact_;
 
   // Widget
   virtual int getAttributes(
@@ -259,7 +259,7 @@ protected:
   void updateColorScheme();
 
 private:
-  BuddyListContact(PurpleBlistNode *node_);
+  BuddyListContact(PurpleBlistNode *node);
   virtual ~BuddyListContact() {}
   CONSUI_DISABLE_COPY(BuddyListContact);
 };
@@ -275,18 +275,18 @@ public:
   virtual const char *toString() const;
   virtual void setRefNode(CppConsUI::TreeView::NodeReference n);
 
-  PurpleGroup *getPurpleGroup() const { return group; }
+  PurpleGroup *getPurpleGroup() const { return group_; }
 
   void initCollapsedState();
 
 protected:
   class GroupContextMenu : public ContextMenu {
   public:
-    GroupContextMenu(BuddyListGroup &parent_group_);
+    GroupContextMenu(BuddyListGroup &parent_group);
     virtual ~GroupContextMenu() {}
 
   protected:
-    BuddyListGroup *parent_group;
+    BuddyListGroup *parent_group_;
 
     void renameResponseHandler(CppConsUI::InputDialog &activator,
       CppConsUI::AbstractDialog::ResponseType response);
@@ -302,17 +302,17 @@ protected:
     CONSUI_DISABLE_COPY(GroupContextMenu);
   };
 
-  PurpleGroup *group;
+  PurpleGroup *group_;
 
   // BuddyListNode
   virtual void openContextMenu();
 
 private:
-  BuddyListGroup(PurpleBlistNode *node_);
+  BuddyListGroup(PurpleBlistNode *node);
   virtual ~BuddyListGroup() {}
   CONSUI_DISABLE_COPY(BuddyListGroup);
 };
 
 #endif // _BUDDYLISTNODE_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

@@ -1,22 +1,19 @@
-/*
- * Copyright (C) 2012-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2012-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef __PLUGINWINDOW_H__
 #define __PLUGINWINDOW_H__
@@ -47,7 +44,7 @@ private:
     // FreeWindow
     virtual void onScreenResized();
 
-    // signal that the user has selected a plugin that he wants to add
+    // Signal that the user has selected a plugin that he wants to add.
     sigc::signal<void, AddPluginWindow &, PurplePlugin *> signal_selection;
 
   protected:
@@ -60,11 +57,11 @@ private:
 
   class BoolOption : public CppConsUI::CheckBox {
   public:
-    BoolOption(const char *name, const char *pref_);
+    BoolOption(const char *name, const char *pref);
     virtual ~BoolOption();
 
   protected:
-    char *pref;
+    char *pref_;
 
     void onToggle(CppConsUI::CheckBox &activator, bool new_state);
 
@@ -74,11 +71,11 @@ private:
 
   class StringOption : public CppConsUI::Button {
   public:
-    StringOption(const char *name, const char *pref_);
+    StringOption(const char *name, const char *pref);
     virtual ~StringOption();
 
   protected:
-    char *pref;
+    char *pref_;
 
     void updateValue();
     void onActivate(CppConsUI::Button &activator);
@@ -91,11 +88,11 @@ private:
 
   class IntegerOption : public CppConsUI::Button {
   public:
-    IntegerOption(const char *name, const char *pref_);
+    IntegerOption(const char *name, const char *pref);
     virtual ~IntegerOption();
 
   protected:
-    char *pref;
+    char *pref_;
 
     void updateValue();
     void onActivate(CppConsUI::Button &activator);
@@ -108,11 +105,11 @@ private:
 
   class PathOption : public CppConsUI::Button {
   public:
-    PathOption(const char *name, const char *pref_);
+    PathOption(const char *name, const char *pref);
     virtual ~PathOption();
 
   protected:
-    char *pref;
+    char *pref_;
 
     void updateValue();
     void onActivate(CppConsUI::Button &activator);
@@ -130,8 +127,8 @@ private:
   };
   typedef std::map<PurplePlugin *, PluginEntry> PluginEntries;
 
-  CppConsUI::TreeView *treeview;
-  PluginEntries plugin_entries;
+  CppConsUI::TreeView *treeview_;
+  PluginEntries plugin_entries_;
 
   CONSUI_DISABLE_COPY(PluginWindow);
 
@@ -148,4 +145,4 @@ private:
 
 #endif // __PLUGINWINDOW_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

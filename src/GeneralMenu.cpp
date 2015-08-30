@@ -1,23 +1,20 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "GeneralMenu.h"
 
@@ -235,13 +232,13 @@ void GeneralMenu::fields_ok_cb(PurpleRequestFields *fields)
 
   for (GList *list = purple_request_field_list_get_selected(
          purple_request_fields_get_field(fields, "list0"));
-       list; list = list->next)
+       list != NULL; list = list->next)
     LOG->debug(
       "fields_ok_cb: list0=%s", reinterpret_cast<const char *>(list->data));
 
   for (GList *list = purple_request_field_list_get_selected(
          purple_request_fields_get_field(fields, "list1"));
-       list; list = list->next)
+       list != NULL; list = list->next)
     LOG->debug(
       "fields_ok_cb: list1=%s", reinterpret_cast<const char *>(list->data));
 
@@ -253,4 +250,4 @@ void GeneralMenu::fields_ok_cb(PurpleRequestFields *fields)
 }
 #endif // DEBUG
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

@@ -1,36 +1,34 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Log.h"
 
 #include <cppconsui/HorizontalListBox.h>
 #include <cppconsui/Spacer.h>
 #include <cstdio>
+#include <cstring>
 #include "gettext.h"
 
-Log *Log::my_instance = NULL;
+Log *Log::my_instance_ = NULL;
 
 Log *Log::instance()
 {
-  return my_instance;
+  return my_instance_;
 }
 
 #define WRITE_METHOD(name, level)                                              \
@@ -39,7 +37,7 @@ Log *Log::instance()
     va_list args;                                                              \
     char *text;                                                                \
                                                                                \
-    if (log_level_cim < level)                                                 \
+    if (log_level_cim_ < level)                                                \
       return; /* we don't want to see this log message */                      \
                                                                                \
     va_start(args, fmt);                                                       \
@@ -68,8 +66,8 @@ Log::LogWindow::LogWindow() : Window(0, 0, 80, 24, NULL, TYPE_NON_FOCUSABLE)
   addWidget(*lbox, 1, 1);
 
   lbox->appendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
-  textview = new CppConsUI::TextView(AUTOSIZE, AUTOSIZE, true);
-  lbox->appendWidget(*textview);
+  textview_ = new CppConsUI::TextView(AUTOSIZE, AUTOSIZE, true);
+  lbox->appendWidget(*textview_);
   lbox->appendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
 
   onScreenResized();
@@ -82,78 +80,78 @@ void Log::LogWindow::onScreenResized()
 
 void Log::LogWindow::append(const char *text)
 {
-  textview->append(text);
+  textview_->append(text);
 
-  // shorten the window text
-  size_t lines_num = textview->getLinesNumber();
+  // Shorten the window text.
+  size_t lines_num = textview_->getLinesNumber();
 
   if (lines_num > 200) {
-    // remove 40 extra lines
-    textview->erase(0, lines_num - 200 + 40);
+    // Remove 40 extra lines.
+    textview_->erase(0, lines_num - 200 + 40);
   }
 }
 
-Log::LogBufferItem::LogBufferItem(Type type_, Level level_, const char *text_)
-  : type(type_), level(level_)
+Log::LogBufferItem::LogBufferItem(Type type, Level level, const char *text)
+  : type_(type), level_(level)
 {
-  text = g_strdup(text_);
+  text_ = g_strdup(text);
 }
 
 Log::LogBufferItem::~LogBufferItem()
 {
-  g_free(text);
+  g_free(text_);
 }
 
 Log::Log()
-  : log_window(NULL), phase2_active(false), logfile(NULL),
-    log_level_cim(LEVEL_DEBUG), log_level_glib(LEVEL_DEBUG),
-    log_level_purple(LEVEL_DEBUG)
+  : log_window_(NULL), phase2_active_(false), logfile_(NULL),
+    log_level_cim_(LEVEL_DEBUG), log_level_glib_(LEVEL_DEBUG),
+    log_level_purple_(LEVEL_DEBUG)
 {
 #define REGISTER_G_LOG_HANDLER(name, handler)                                  \
   g_log_set_handler((name), (GLogLevelFlags)G_LOG_LEVEL_MASK, (handler), this)
 
-  // register the glib log handlers
-  default_handler = REGISTER_G_LOG_HANDLER(NULL, default_log_handler_);
-  glib_handler = REGISTER_G_LOG_HANDLER("GLib", glib_log_handler_);
-  gmodule_handler = REGISTER_G_LOG_HANDLER("GModule", glib_log_handler_);
-  glib_gobject_handler =
+  // Register the glib log handlers.
+  default_handler_ = REGISTER_G_LOG_HANDLER(NULL, default_log_handler_);
+  glib_handler_ = REGISTER_G_LOG_HANDLER("GLib", glib_log_handler_);
+  gmodule_handler_ = REGISTER_G_LOG_HANDLER("GModule", glib_log_handler_);
+  glib_gobject_handler_ =
     REGISTER_G_LOG_HANDLER("GLib-GObject", glib_log_handler_);
-  gthread_handler = REGISTER_G_LOG_HANDLER("GThread", glib_log_handler_);
+  gthread_handler_ = REGISTER_G_LOG_HANDLER("GThread", glib_log_handler_);
 }
 
 Log::~Log()
 {
-  g_log_remove_handler(NULL, default_handler);
-  g_log_remove_handler("GLib", glib_handler);
-  g_log_remove_handler("GModule", gmodule_handler);
-  g_log_remove_handler("GLib-GObject", glib_gobject_handler);
-  g_log_remove_handler("GThread", gthread_handler);
+  g_log_remove_handler(NULL, default_handler_);
+  g_log_remove_handler("GLib", glib_handler_);
+  g_log_remove_handler("GModule", gmodule_handler_);
+  g_log_remove_handler("GLib-GObject", glib_gobject_handler_);
+  g_log_remove_handler("GThread", gthread_handler_);
 
   outputBufferMessages();
 }
 
 void Log::init()
 {
-  g_assert(!my_instance);
+  g_assert(my_instance_ == NULL);
 
-  my_instance = new Log;
+  my_instance_ = new Log;
 }
 
 void Log::finalize()
 {
-  g_assert(my_instance);
+  g_assert(my_instance_ != NULL);
 
-  delete my_instance;
-  my_instance = NULL;
+  delete my_instance_;
+  my_instance_ = NULL;
 }
 
 void Log::initPhase2()
 {
-  /* Phase 2 is called after CppConsUI and libpurple has been initialized.
-   * Logging to file is part of the phase 2. */
-  g_assert(!phase2_active);
+  // Phase 2 is called after CppConsUI and libpurple has been initialized.
+  // Logging to file is part of the phase 2.
+  g_assert(!phase2_active_);
 
-  // init prefs
+  // Init preferences.
   purple_prefs_add_none(CONF_PREFIX "/log");
   purple_prefs_add_bool(CONF_PREFIX "/log/debug", false);
   purple_prefs_add_string(CONF_PREFIX "/log/filename", "debug.log");
@@ -166,24 +164,24 @@ void Log::initPhase2()
   updateCachedPreference(CONF_PREFIX "/log/log_level_purple");
   updateCachedPreference(CONF_PREFIX "/log/log_level_glib");
 
-  // connect callbacks
+  // Connect callbacks.
   purple_prefs_connect_callback(
     this, CONF_PREFIX "/log", log_pref_change_, this);
 
-  // create the log window
-  g_assert(!log_window);
-  log_window = new LogWindow;
-  log_window->show();
+  // Create the log window.
+  g_assert(log_window_ == NULL);
+  log_window_ = new LogWindow;
+  log_window_->show();
 
-  // phase 2 is now active
-  phase2_active = true;
+  // Phase 2 is now active.
+  phase2_active_ = true;
 
-  // output buffered messages
-  for (LogBufferItems::iterator i = log_items.begin(); i != log_items.end();
-       i++) {
+  // Output buffered messages.
+  for (LogBufferItems::iterator i = log_items_.begin(); i != log_items_.end();
+       ++i) {
     LogBufferItem *item = *i;
 
-    // determine if this message should be displayed
+    // Determine if this message should be displayed.
     Level loglevel = getLogLevel(item->getType());
 
     if (loglevel >= item->getLevel())
@@ -191,38 +189,38 @@ void Log::initPhase2()
 
     delete item;
   }
-  log_items.clear();
+  log_items_.clear();
 }
 
 void Log::finalizePhase2()
 {
-  /* Phase 2 finalization is done before CppConsUI and libpurple is finalized.
-   * Note that log levels are unchanged after phase 2 finishes. */
-  g_assert(phase2_active);
+  // Phase 2 finalization is done before CppConsUI and libpurple is finalized.
+  // Note that log levels are unchanged after phase 2 finishes.
+  g_assert(phase2_active_);
 
-  // delete the log window
-  g_assert(log_window);
-  delete log_window;
-  log_window = NULL;
+  // Delete the log window.
+  g_assert(log_window_ != NULL);
+  delete log_window_;
+  log_window_ = NULL;
 
   purple_prefs_disconnect_by_handle(this);
 
-  // close the log file (if it is opened)
-  if (logfile)
-    g_io_channel_unref(logfile);
+  // Close the log file (if it is opened).
+  if (logfile_ != NULL)
+    g_io_channel_unref(logfile_);
 
-  // done with phase 2
-  phase2_active = false;
+  // Done with phase 2.
+  phase2_active_ = false;
 }
 
 void Log::purple_print(
   PurpleDebugLevel purplelevel, const char *category, const char *arg_s)
 {
   Level level = convertPurpleDebugLevel(purplelevel);
-  if (log_level_purple < level)
-    return; // we don't want to see this log message
+  if (log_level_purple_ < level)
+    return; // We do not want to see this log message.
 
-  if (!category) {
+  if (category == NULL) {
     category = "misc";
     warning(_("centerim/log: purple_print() parameter category was "
               "not defined."));
@@ -238,7 +236,7 @@ gboolean Log::purple_is_enabled(
 {
   Level level = convertPurpleDebugLevel(purplelevel);
 
-  if (log_level_purple < level)
+  if (log_level_purple_ < level)
     return FALSE;
 
   return TRUE;
@@ -247,12 +245,12 @@ gboolean Log::purple_is_enabled(
 void Log::default_log_handler(
   const char *domain, GLogLevelFlags flags, const char *msg)
 {
-  if (!msg)
+  if (msg == NULL)
     return;
 
   Level level = convertGLibDebugLevel(flags);
-  if (log_level_glib < level)
-    return; // we don't want to see this log message
+  if (log_level_glib_ < level)
+    return; // We do not want to see this log message.
 
   char *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
   write(TYPE_GLIB, level, text);
@@ -262,12 +260,12 @@ void Log::default_log_handler(
 void Log::glib_log_handler(
   const char *domain, GLogLevelFlags flags, const char *msg)
 {
-  if (!msg)
+  if (msg == NULL)
     return;
 
   Level level = convertGLibDebugLevel(flags);
-  if (log_level_glib < level)
-    return; // we don't want to see this log message
+  if (log_level_glib_ < level)
+    return; // We do not want to see this log message.
 
   char *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
   write(TYPE_GLIB, level, text);
@@ -277,103 +275,104 @@ void Log::glib_log_handler(
 void Log::log_pref_change(
   const char *name, PurplePrefType /*type*/, gconstpointer /*val*/)
 {
-  // log/* preference changed
+  // log/* preference changed.
   updateCachedPreference(name);
 }
 
 void Log::updateCachedPreference(const char *name)
 {
-  if (!strcmp(name, CONF_PREFIX "/log/debug")) {
+  if (std::strcmp(name, CONF_PREFIX "/log/debug") == 0) {
     bool logfile_enabled = purple_prefs_get_bool(name);
 
-    if (logfile_enabled && !logfile) {
+    if (logfile_enabled && logfile_ == NULL) {
       char *filename = g_build_filename(purple_user_dir(),
         purple_prefs_get_string(CONF_PREFIX "/log/filename"), NULL);
       GError *err = NULL;
 
-      if (!(logfile = g_io_channel_new_file(filename, "a", &err))) {
+      logfile_ = g_io_channel_new_file(filename, "a", &err);
+      if (logfile_ == NULL) {
         error(_("centerim/log: Error opening logfile '%s' (%s)."), filename,
           err->message);
         g_clear_error(&err);
       }
       g_free(filename);
     }
-    else if (!logfile_enabled && logfile) {
-      // debug was disabled so close logfile if it's opened
-      g_io_channel_unref(logfile);
-      logfile = NULL;
+    else if (!logfile_enabled && logfile_ != NULL) {
+      // Debug was disabled so close logfile if it is opened.
+      g_io_channel_unref(logfile_);
+      logfile_ = NULL;
     }
   }
-  else if (!strcmp(name, CONF_PREFIX "/log/log_level_cim"))
-    log_level_cim = stringToLevel(purple_prefs_get_string(name));
-  else if (!strcmp(name, CONF_PREFIX "/log/log_level_purple"))
-    log_level_purple = stringToLevel(purple_prefs_get_string(name));
-  else if (!strcmp(name, CONF_PREFIX "/log/log_level_glib"))
-    log_level_glib = stringToLevel(purple_prefs_get_string(name));
+  else if (std::strcmp(name, CONF_PREFIX "/log/log_level_cim") == 0)
+    log_level_cim_ = stringToLevel(purple_prefs_get_string(name));
+  else if (std::strcmp(name, CONF_PREFIX "/log/log_level_purple") == 0)
+    log_level_purple_ = stringToLevel(purple_prefs_get_string(name));
+  else if (std::strcmp(name, CONF_PREFIX "/log/log_level_glib") == 0)
+    log_level_glib_ = stringToLevel(purple_prefs_get_string(name));
 }
 
 void Log::write(Type type, Level level, const char *text)
 {
-  // if phase 2 is not active buffer the message
-  if (!phase2_active) {
+  // If phase 2 is not active buffer the message.
+  if (!phase2_active_) {
     LogBufferItem *item = new LogBufferItem(type, level, text);
-    log_items.push_back(item);
+    log_items_.push_back(item);
     return;
   }
 
-  g_assert(log_window);
-  log_window->append(text);
+  g_assert(log_window_ != NULL);
+  log_window_->append(text);
   writeToFile(text);
 }
 
 void Log::writeErrorToWindow(const char *fmt, ...)
 {
-  // can be called only if phase 2 is active
-  g_assert(phase2_active);
-  g_assert(log_window);
+  // Can be called only if phase 2 is active.
+  g_assert(phase2_active_);
+  g_assert(log_window_ != NULL);
 
   va_list args;
 
-  if (log_level_cim < LEVEL_ERROR)
-    return; // we don't want to see this log message
+  if (log_level_cim_ < LEVEL_ERROR)
+    return; // We do not want to see this log message.
 
   va_start(args, fmt);
   char *text = g_strdup_vprintf(fmt, args);
   va_end(args);
 
-  log_window->append(text);
+  log_window_->append(text);
   g_free(text);
 }
 
 void Log::writeToFile(const char *text)
 {
-  // writing to file is enabled only in phase 2
-  if (!phase2_active)
+  // Writing to file is enabled only in phase 2.
+  if (!phase2_active_)
     return;
 
-  if (!text)
+  if (text == NULL)
     return;
 
   GError *err = NULL;
 
-  // write text into logfile
-  if (logfile) {
-    if (g_io_channel_write_chars(logfile, text, -1, NULL, &err) !=
+  // Write text into logfile.
+  if (logfile_ != NULL) {
+    if (g_io_channel_write_chars(logfile_, text, -1, NULL, &err) !=
       G_IO_STATUS_NORMAL) {
       writeErrorToWindow(
         _("centerim/log: Error writing to logfile (%s)."), err->message);
       g_clear_error(&err);
     }
     else {
-      // if necessary write missing EOL character
-      size_t len = strlen(text);
-      if (len && text[len - 1] != '\n') {
-        // ignore all errors
-        g_io_channel_write_chars(logfile, "\n", -1, NULL, NULL);
+      // If necessary write missing EOL character.
+      size_t len = std::strlen(text);
+      if (len > 0 && text[len - 1] != '\n') {
+        // Ignore all errors.
+        g_io_channel_write_chars(logfile_, "\n", -1, NULL, NULL);
       }
     }
 
-    if (g_io_channel_flush(logfile, &err) != G_IO_STATUS_NORMAL) {
+    if (g_io_channel_flush(logfile_, &err) != G_IO_STATUS_NORMAL) {
       writeErrorToWindow(
         _("centerim/log: Error flushing logfile (%s)."), err->message);
       g_clear_error(&err);
@@ -383,28 +382,29 @@ void Log::writeToFile(const char *text)
 
 void Log::outputBufferMessages()
 {
-  // output all buffered messages to stderr
-  for (LogBufferItems::iterator i = log_items.begin(); i != log_items.end();
-       i++) {
+  // Output all buffered messages to stderr.
+  for (LogBufferItems::iterator i = log_items_.begin(); i != log_items_.end();
+       ++i) {
     LogBufferItem *item = *i;
 
-    // determine if this message should be displayed
+    // Determine if this message should be displayed.
     Level loglevel = getLogLevel(item->getType());
 
     if (loglevel >= item->getLevel()) {
       const char *text = item->getText();
-      g_assert(text);
+      g_assert(text != NULL);
 
       std::fprintf(stderr, text);
 
-      // if necessary write missing EOL character
-      if (text[strlen(text) - 1] != '\n')
+      // If necessary write missing EOL character.
+      size_t len = std::strlen(text);
+      if (len > 0 && text[len - 1] != '\n')
         std::fprintf(stderr, "\n");
     }
 
     delete item;
   }
-  log_items.clear();
+  log_items_.clear();
   std::fflush(stderr);
 }
 
@@ -422,7 +422,7 @@ Log::Level Log::convertPurpleDebugLevel(PurpleDebugLevel purplelevel)
   case PURPLE_DEBUG_FATAL:
     return LEVEL_ERROR;
   case PURPLE_DEBUG_ALL:
-    return LEVEL_ERROR; // use error level so this message is always printed
+    return LEVEL_ERROR; // Use error level so this message is always printed.
   }
 
   warning(
@@ -451,19 +451,19 @@ Log::Level Log::convertGLibDebugLevel(GLogLevelFlags gliblevel)
 
 Log::Level Log::stringToLevel(const char *slevel)
 {
-  if (!g_ascii_strcasecmp(slevel, "none"))
+  if (std::strcmp(slevel, "none") == 0)
     return LEVEL_NONE;
-  else if (!g_ascii_strcasecmp(slevel, "debug"))
+  else if (std::strcmp(slevel, "debug") == 0)
     return LEVEL_DEBUG;
-  else if (!g_ascii_strcasecmp(slevel, "info"))
+  else if (std::strcmp(slevel, "info") == 0)
     return LEVEL_INFO;
-  else if (!g_ascii_strcasecmp(slevel, "message"))
+  else if (std::strcmp(slevel, "message") == 0)
     return LEVEL_MESSAGE;
-  else if (!g_ascii_strcasecmp(slevel, "warning"))
+  else if (std::strcmp(slevel, "warning") == 0)
     return LEVEL_WARNING;
-  else if (!g_ascii_strcasecmp(slevel, "critical"))
+  else if (std::strcmp(slevel, "critical") == 0)
     return LEVEL_CRITICAL;
-  else if (!g_ascii_strcasecmp(slevel, "error"))
+  else if (std::strcmp(slevel, "error") == 0)
     return LEVEL_ERROR;
   return LEVEL_NONE;
 }
@@ -472,14 +472,14 @@ Log::Level Log::getLogLevel(Type type)
 {
   switch (type) {
   case TYPE_CIM:
-    return log_level_cim;
+    return log_level_cim_;
   case TYPE_GLIB:
-    return log_level_glib;
+    return log_level_glib_;
   case TYPE_PURPLE:
-    return log_level_purple;
+    return log_level_purple_;
   default:
     g_assert_not_reached();
   }
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

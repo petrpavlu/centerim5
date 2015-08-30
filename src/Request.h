@@ -1,22 +1,19 @@
-/*
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef __REQUEST_H__
 #define __REQUEST_H__
@@ -51,12 +48,12 @@ private:
     virtual PurpleRequestType getRequestType() = 0;
 
   protected:
-    GCallback ok_cb;
-    GCallback cancel_cb;
-    void *user_data;
+    GCallback ok_cb_;
+    GCallback cancel_cb_;
+    void *user_data_;
 
-    // convenient var, same as dynamic_cast<ListBox *>(container)
-    CppConsUI::ListBox *lbox;
+    // Convenience variable, same as dynamic_cast<ListBox *>(container).
+    CppConsUI::ListBox *lbox_;
 
     virtual void responseHandler(
       CppConsUI::SplitDialog &activator, ResponseType response) = 0;
@@ -76,7 +73,7 @@ private:
     virtual PurpleRequestType getRequestType();
 
   protected:
-    CppConsUI::TextEntry *entry;
+    CppConsUI::TextEntry *entry_;
 
     virtual void responseHandler(SplitDialog &activator, ResponseType response);
 
@@ -95,7 +92,7 @@ private:
     virtual PurpleRequestType getRequestType();
 
   protected:
-    CppConsUI::ComboBox *combo;
+    CppConsUI::ComboBox *combo_;
 
     virtual void responseHandler(SplitDialog &activator, ResponseType response);
 
@@ -130,8 +127,8 @@ private:
     virtual PurpleRequestType getRequestType();
 
   protected:
-    PurpleRequestFields *fields;
-    CppConsUI::TreeView *treeview;
+    PurpleRequestFields *fields_;
+    CppConsUI::TreeView *treeview_;
 
     class StringField : public CppConsUI::Button {
     public:
@@ -139,7 +136,7 @@ private:
       virtual ~StringField() {}
 
     protected:
-      PurpleRequestField *field;
+      PurpleRequestField *field_;
 
       void onActivate(CppConsUI::Button &activator);
       void responseHandler(CppConsUI::InputDialog &activator,
@@ -155,7 +152,7 @@ private:
       virtual ~IntegerField() {}
 
     protected:
-      PurpleRequestField *field;
+      PurpleRequestField *field_;
 
       void onActivate(CppConsUI::Button &activator);
       void responseHandler(CppConsUI::InputDialog &activator,
@@ -171,7 +168,7 @@ private:
       virtual ~BooleanField() {}
 
     protected:
-      PurpleRequestField *field;
+      PurpleRequestField *field_;
 
       void onToggle(CppConsUI::CheckBox &activator, bool new_state);
 
@@ -185,7 +182,7 @@ private:
       virtual ~ChoiceField() {}
 
     protected:
-      PurpleRequestField *field;
+      PurpleRequestField *field_;
 
       void onSelectionChanged(CppConsUI::ComboBox &activator, int new_entry,
         const char *title, intptr_t data);
@@ -200,7 +197,7 @@ private:
       virtual ~ListFieldMultiple() {}
 
     protected:
-      PurpleRequestField *field;
+      PurpleRequestField *field_;
 
       class ListFieldItem : public CppConsUI::CheckBox {
       public:
@@ -208,7 +205,7 @@ private:
         virtual ~ListFieldItem() {}
 
       protected:
-        PurpleRequestField *field;
+        PurpleRequestField *field_;
 
         void onToggle(CppConsUI::CheckBox &activator, bool new_state);
 
@@ -226,7 +223,7 @@ private:
       virtual ~ListFieldSingle() {}
 
     protected:
-      PurpleRequestField *field;
+      PurpleRequestField *field_;
 
       void onSelectionChanged(CppConsUI::ComboBox &activator, int new_entry,
         const char *title, intptr_t data);
@@ -241,7 +238,7 @@ private:
       virtual ~LabelField() {}
 
     protected:
-      PurpleRequestField *field;
+      PurpleRequestField *field_;
 
     private:
       CONSUI_DISABLE_COPY(LabelField);
@@ -253,7 +250,7 @@ private:
       virtual ~ImageField() {}
 
     protected:
-      PurpleRequestField *field;
+      PurpleRequestField *field_;
 
       void onActivate(CppConsUI::Button &activator);
 
@@ -267,7 +264,7 @@ private:
       virtual ~AccountField() {}
 
     protected:
-      PurpleRequestField *field;
+      PurpleRequestField *field_;
 
       void onAccountChanged(CppConsUI::Button &activator, size_t new_entry,
         const char *title, intptr_t data);
@@ -285,11 +282,11 @@ private:
 
   typedef std::set<RequestDialog *> Requests;
 
-  Requests requests;
+  Requests requests_;
 
-  PurpleRequestUiOps centerim_request_ui_ops;
+  PurpleRequestUiOps centerim_request_ui_ops_;
 
-  static Request *my_instance;
+  static Request *my_instance_;
 
   Request();
   ~Request();
@@ -403,4 +400,4 @@ private:
 
 #endif // __REQUEST_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

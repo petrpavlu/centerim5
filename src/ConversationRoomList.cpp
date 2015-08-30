@@ -1,50 +1,45 @@
-/*
- * Copyright (C) 2015 Wade Berrier <wberrier@gmail.com>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2015 Wade Berrier <wberrier@gmail.com>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ConversationRoomList.h"
 
-// Move the widget to a position according to sorting function
+// Move the widget to a position according to sorting function.
 void ConversationRoomList::moveToSortedPosition(Buddy *new_buddy)
 {
   Buddy *buddy = NULL;
   Children::iterator iter;
 
-  g_assert(new_buddy);
+  g_assert(new_buddy != NULL);
 
   for (iter = children_.begin(); iter != children_.end(); ++iter) {
     buddy = dynamic_cast<Buddy *>(*iter);
+    g_assert(buddy != NULL);
 
-    // Should never happen...
-    g_assert(buddy);
-
-    // Since new_buddy is in list already, must skip
+    // If buddy is in the list already, skip it.
     if (*buddy == *new_buddy)
       continue;
 
-    // Break once insertion point is found
+    // Break once insertion point is found.
     if (!Buddy::less_than_op_away_name(*buddy, *new_buddy))
       break;
   }
 
-  // Don't change anything if wanting to put into the same position
-  // (also returns on single node case)
+  // Do not change anything if wanting to put into the same position (also
+  // returns on single node case).
   if (*buddy == *new_buddy)
     return;
 
@@ -53,7 +48,7 @@ void ConversationRoomList::moveToSortedPosition(Buddy *new_buddy)
   //   Doesn't seem right...
   // reposition_widgets = true;
 
-  // Insert after if at end
+  // Insert after if at end.
   if (iter == children_.end())
     moveWidgetAfter(*new_buddy, *buddy);
   else
@@ -62,10 +57,8 @@ void ConversationRoomList::moveToSortedPosition(Buddy *new_buddy)
 
 void ConversationRoomList::add_users(GList *cbuddies, gboolean /*new_arrivals*/)
 {
-  GList *l;
-  PurpleConvChatBuddy *pbuddy;
-  for (l = cbuddies; l != NULL; l = l->next) {
-    pbuddy = static_cast<PurpleConvChatBuddy *>(l->data);
+  for (GList *l = cbuddies; l != NULL; l = l->next) {
+    PurpleConvChatBuddy *pbuddy = static_cast<PurpleConvChatBuddy *>(l->data);
 
     Buddy *buddy = new Buddy(pbuddy);
     buddy->setButtonText();
@@ -86,38 +79,33 @@ void ConversationRoomList::rename_user(
   //  conv_->u.chat, old_name);
 
   PurpleConvChat *conv = PURPLE_CONV_CHAT(conv_);
-
-  g_assert(conv);
+  g_assert(conv != NULL);
 
   PurpleConvChatBuddy *new_pbuddy = purple_conv_chat_cb_find(conv, new_name);
-
-  // g_assert(old_pbuddy);
-  g_assert(new_pbuddy);
+  // g_assert(old_pbuddy != NULL);
+  g_assert(new_pbuddy != NULL);
 
   // NOTE: PurpleConvChatBuddy::ui_data is pidgin 2.9!!
   // Buddy * buddy = static_cast<Buddy *>(old_pbuddy->ui_data);
   Buddy *buddy = buddy_map_[old_name];
+  g_assert(buddy != NULL);
 
-  g_assert(buddy);
-
-  // Update buddy
+  // Update buddy.
   buddy->setPurpleBuddy(new_pbuddy);
 
-  // Update buddy map
+  // Update buddy map.
   buddy_map_.erase(old_name);
   buddy_map_[new_name] = buddy;
 
-  // Move and then update
+  // Move and then update.
   moveToSortedPosition(buddy);
   buddy->setButtonText();
 }
 
 void ConversationRoomList::remove_users(GList *users)
 {
-  GList *l;
-  const char *name;
-  for (l = users; l != NULL; l = l->next) {
-    name = static_cast<const char *>(l->data);
+  for (GList *l = users; l != NULL; l = l->next) {
+    const char *name = static_cast<const char *>(l->data);
 
     // NOTE: can't remove purple_conv_chat_cb_find, because the user
     //   and PurpleConvChatBuddy has already been removed
@@ -126,7 +114,7 @@ void ConversationRoomList::remove_users(GList *users)
 
     if (buddy_map_.end() != iter) {
       buddy_map_.erase(iter);
-      // NOTE: this deletes the buddy object
+      // NOTE: this deletes the buddy object.
       removeWidget(*iter->second);
     }
   }
@@ -135,17 +123,17 @@ void ConversationRoomList::remove_users(GList *users)
 void ConversationRoomList::update_user(const char *user)
 {
   PurpleConvChat *conv = PURPLE_CONV_CHAT(conv_);
-  g_assert(conv);
+  g_assert(conv != NULL);
 
   PurpleConvChatBuddy *pbuddy = purple_conv_chat_cb_find(conv, user);
-  g_assert(pbuddy);
+  g_assert(pbuddy != NULL);
 
   // NOTE: PurpleConvChatBuddy::ui_data is pidgin 2.9!!
   // Buddy * buddy = static_cast<Buddy *>(pbuddy->ui_data);
   Buddy *buddy = buddy_map_[user];
-  g_assert(buddy);
+  g_assert(buddy != NULL);
 
-  // Move and then update
+  // Move and then update.
   moveToSortedPosition(buddy);
   buddy->setButtonText();
 }
@@ -153,7 +141,7 @@ void ConversationRoomList::update_user(const char *user)
 ConversationRoomList::Buddy::Buddy(PurpleConvChatBuddy *pbuddy)
   : CppConsUI::Button(AUTOSIZE, 1, ""), pbuddy_(pbuddy)
 {
-  // Set ui data
+  // Set ui data.
   // NOTE: PurpleConvChatBuddy::ui_data is pidgin 2.9!!
   // pbuddy_->ui_data = static_cast<void*>(this);
 }
@@ -165,7 +153,7 @@ ConversationRoomList::Buddy::~Buddy()
 void ConversationRoomList::Buddy::readFlags(
   bool &is_op, bool &is_typing, bool &is_away) const
 {
-  g_assert(pbuddy_);
+  g_assert(pbuddy_ != NULL);
 
   PurpleConvChatBuddyFlags flags = pbuddy_->flags;
 
@@ -191,9 +179,9 @@ char *ConversationRoomList::Buddy::displayText() const
 {
   char *ret;
 
-  bool is_op(false);
-  bool is_typing(false);
-  bool is_away(false);
+  bool is_op = false;
+  bool is_typing = false;
+  bool is_away = false;
 
   readFlags(is_op, is_typing, is_away);
 
@@ -207,9 +195,9 @@ char *ConversationRoomList::Buddy::displayText() const
 
 const char *ConversationRoomList::Buddy::displayName() const
 {
-  g_assert(pbuddy_);
+  g_assert(pbuddy_ != NULL);
 
-  // prefer alias
+  // Prefer alias.
   // NOTE: pbuddy_->alias_key isn't used yet... (according to docs)
   if (pbuddy_->alias != NULL)
     return pbuddy_->alias;
@@ -244,23 +232,21 @@ bool ConversationRoomList::Buddy::less_than_op_away_name(
   lhs.readFlags(lhs_is_op, lhs_is_typing, lhs_is_away);
   rhs.readFlags(rhs_is_op, rhs_is_typing, rhs_is_away);
 
-  // Probably a more elegant way to do this
+  // Probably a more elegant way to do this.
   if (lhs_is_op && !rhs_is_op)
     return true;
   else if (!lhs_is_op && rhs_is_op)
     return false;
-  // equal op or non-op status
+  // Equal op or non-op status.
   else {
     if (lhs_is_away && !rhs_is_away)
       return false;
     else if (!lhs_is_away && rhs_is_away)
       return true;
-    // on equal online/away status
-    else {
-      // utf8 comparison
+    // On equal online/away status.
+    else
       return g_utf8_collate(lhs.displayName(), rhs.displayName()) < 0;
-    }
   }
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

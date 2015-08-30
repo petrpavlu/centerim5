@@ -1,23 +1,20 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef __CENTERIM_H__
 #define __CENTERIM_H__
@@ -88,16 +85,16 @@ public:
 
   void quit();
 
-  // returns a position and size of a selected area
+  // Returns a position and size of a selected area.
   CppConsUI::Rect getScreenArea(ScreenArea area);
   CppConsUI::Rect getScreenAreaCentered(ScreenArea area);
 
-  static const char *const version;
+  static const char *const version_;
 
   bool loadColorSchemeConfig();
   bool loadKeyConfig();
 
-  bool isEnabledExpandedConversationMode() const { return convs_expanded; }
+  bool isEnabledExpandedConversationMode() const { return convs_expanded_; }
 
   sigc::connection timeoutConnect(const sigc::slot<bool> &slot,
     unsigned interval, int priority = G_PRIORITY_DEFAULT);
@@ -128,25 +125,23 @@ private:
     SourceClosureCppConsUI() : function(NULL), data(NULL) {}
   };
 
-  GMainLoop *mainloop;
-  CppConsUI::CoreManager *mngr;
-  sigc::connection resize_conn;
-  sigc::connection top_window_change_conn;
-  // flag indicating if the conversation full-screen mode is activated
-  bool convs_expanded;
-  // flag indicating if idle reporting is based on keyboard presses
-  bool idle_reporting_on_keyboard;
+  GMainLoop *mainloop_;
+  CppConsUI::CoreManager *mngr_;
+  // Flag indicating if the conversation full-screen mode is activated.
+  bool convs_expanded_;
+  // Flag indicating if idle reporting is based on keyboard presses.
+  bool idle_reporting_on_keyboard_;
 
-  PurpleCoreUiOps centerim_core_ui_ops;
-  PurpleDebugUiOps logbuf_debug_ui_ops;
-  PurpleEventLoopUiOps centerim_glib_eventloops;
+  PurpleCoreUiOps centerim_core_ui_ops_;
+  PurpleDebugUiOps logbuf_debug_ui_ops_;
+  PurpleEventLoopUiOps centerim_glib_eventloops_;
 
-  CppConsUI::Rect areas[AREAS_NUM];
+  CppConsUI::Rect areas_[AREAS_NUM];
 
-  static const char *color_names[];
-  static const char *scheme_names[];
+  static const char *color_names_[];
+  static const char *scheme_names_[];
 
-  static CenterIM *my_instance;
+  static CenterIM *my_instance_;
 
   CenterIM();
   virtual ~CenterIM() {}
@@ -162,34 +157,34 @@ private:
   void purpleFinalize();
   void prefsInit();
 
-  // recalculates area sizes to fit into current screen size
+  // Recalculates area sizes to fit into current screen size.
   void onScreenResized();
 
   void onTopWindowChanged();
 
-  // PurpleEventLoopUiOps callbacks
-  // adds IO watch to glib main loop context
+  // PurpleEventLoopUiOps callbacks.
+  // Adds IO watch to glib main loop context.
   static guint input_add_purple(int fd, PurpleInputCondition condition,
     PurpleInputFunction function, gpointer data);
 
-  // helper functions for input_add_purple()
-  // process IO input to purple callback
+  // Helper functions for input_add_purple().
+  // Processes IO input to purple callback.
   static gboolean io_input_purple(
     GIOChannel *source, GIOCondition condition, gpointer data);
-  // destroyes libpurple IO input callback internal data
+  // Destroyes libpurple IO input callback internal data.
   static void io_destroy_purple(gpointer data);
 
-  // CppConsUI callbacks
-  // adds IO watch to glib main loop context
+  // CppConsUI callbacks.
+  // Adds IO watch to glib main loop context.
   static unsigned input_add_cppconsui(int fd,
     CppConsUI::InputCondition condition, CppConsUI::InputFunction function,
     void *data);
 
-  // helper functions for input_add_cppconsui()
-  // process IO input to CppConsUI callback
+  // Helper functions for input_add_cppconsui().
+  // Processes IO input to CppConsUI callback.
   static gboolean io_input_cppconsui(
     GIOChannel *source, GIOCondition condition, gpointer data);
-  // destroyes CppConsUI IO input callback internal data
+  // Destroyes CppConsUI IO input callback internal data.
   static void io_destroy_cppconsui(gpointer data);
 
   static unsigned timeout_add_cppconsui(
@@ -199,20 +194,20 @@ private:
   static bool timeout_remove_cppconsui(unsigned handle);
   static bool input_remove_cppconsui(unsigned handle);
 
-  // log an error produced by CppConsUI
+  // Log an error produced by CppConsUI.
   static void log_error_cppconsui(const char *message);
 
-  // PurpleCoreUiOps callbacks
-  // returns information about CenterIM such as name, website etc.
+  // PurpleCoreUiOps callbacks.
+  // Returns information about CenterIM such as name, website etc.
   static GHashTable *get_ui_info();
 
-  // PurpleDebugUiOps callbacks
+  // PurpleDebugUiOps callbacks.
   static void purple_print(
     PurpleDebugLevel level, const char *category, const char *arg_s);
   static gboolean purple_is_enabled(
     PurpleDebugLevel level, const char *category);
 
-  // called when CONF_PREFIX/dimensions prefs are changed
+  // Called when the CONF_PREFIX/dimensions preferences change their values.
   static void dimensions_change_(
     const char *name, PurplePrefType type, gconstpointer val, gpointer data)
   {
@@ -221,7 +216,8 @@ private:
   void dimensions_change(
     const char *name, PurplePrefType type, gconstpointer val);
 
-  // called when /libpurple/away/idle_reporting pref is changed
+  // Called when the /libpurple/away/idle_reporting preference changes its
+  // value.
   static void idle_reporting_change_(
     const char *name, PurplePrefType type, gconstpointer val, gpointer data)
   {
@@ -257,4 +253,4 @@ private:
 
 #endif // __CENTERIM_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

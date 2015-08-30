@@ -1,22 +1,19 @@
-/*
- * Copyright (C) 2011-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2011-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "OptionWindow.h"
 
@@ -137,10 +134,10 @@ OptionWindow::OptionWindow() : SplitDialog(0, 0, 80, 24, _("Config options"))
   treeview->setCollapsed(parent, true);
   c = new ChoiceOption(_("Log format"), "/purple/logging/format");
   GList *opts = purple_log_logger_get_options();
-  for (GList *o = opts; o; o = o->next) {
+  for (GList *o = opts; o != NULL; o = o->next) {
     const char *human = reinterpret_cast<const char *>(o->data);
     o = o->next;
-    g_assert(o);
+    g_assert(o != NULL);
     const char *value = reinterpret_cast<const char *>(o->data);
     c->addOption(human, value);
   }
@@ -182,39 +179,39 @@ void OptionWindow::onScreenResized()
 OptionWindow::BooleanOption::BooleanOption(const char *text, const char *config)
   : CheckBox(text)
 {
-  g_assert(text);
-  g_assert(config);
+  g_assert(text != NULL);
+  g_assert(config != NULL);
 
-  pref = g_strdup(config);
-  setChecked(purple_prefs_get_bool(config));
+  pref_ = g_strdup(config);
+  setChecked(purple_prefs_get_bool(pref_));
   signal_toggle.connect(sigc::mem_fun(this, &BooleanOption::onToggle));
 }
 
 OptionWindow::BooleanOption::~BooleanOption()
 {
-  g_free(pref);
+  g_free(pref_);
 }
 
 void OptionWindow::BooleanOption::onToggle(
   CheckBox & /*activator*/, bool new_state)
 {
-  purple_prefs_set_bool(pref, new_state);
+  purple_prefs_set_bool(pref_, new_state);
 }
 
 OptionWindow::StringOption::StringOption(const char *text, const char *config)
   : Button(FLAG_VALUE, text)
 {
-  g_assert(text);
-  g_assert(config);
+  g_assert(text != NULL);
+  g_assert(config != NULL);
 
-  pref = g_strdup(config);
-  setValue(purple_prefs_get_string(config));
+  pref_ = g_strdup(config);
+  setValue(purple_prefs_get_string(pref_));
   signal_activate.connect(sigc::mem_fun(this, &StringOption::onActivate));
 }
 
 OptionWindow::StringOption::~StringOption()
 {
-  g_free(pref);
+  g_free(pref_);
 }
 
 void OptionWindow::StringOption::onActivate(Button & /*activator*/)
@@ -233,38 +230,38 @@ void OptionWindow::StringOption::responseHandler(
   if (response != AbstractDialog::RESPONSE_OK)
     return;
 
-  purple_prefs_set_string(pref, activator.getText());
-  setValue(purple_prefs_get_string(pref));
+  purple_prefs_set_string(pref_, activator.getText());
+  setValue(purple_prefs_get_string(pref_));
 }
 
 OptionWindow::IntegerOption::IntegerOption(const char *text, const char *config)
-  : Button(FLAG_VALUE, text), unit(false)
+  : Button(FLAG_VALUE, text), unit_(false)
 {
-  g_assert(text);
-  g_assert(config);
+  g_assert(text != NULL);
+  g_assert(config != NULL);
 
-  pref = g_strdup(config);
-  setValue(purple_prefs_get_int(config));
+  pref_ = g_strdup(config);
+  setValue(purple_prefs_get_int(pref_));
   signal_activate.connect(sigc::mem_fun(this, &IntegerOption::onActivate));
 }
 
 OptionWindow::IntegerOption::IntegerOption(
-  const char *text, const char *config, sigc::slot<const char *, int> unit_fun_)
-  : Button(FLAG_VALUE | FLAG_UNIT, text), unit(true), unit_fun(unit_fun_)
+  const char *text, const char *config, sigc::slot<const char *, int> unit_fun)
+  : Button(FLAG_VALUE | FLAG_UNIT, text), unit_(true), unit_fun_(unit_fun)
 {
-  g_assert(text);
-  g_assert(config);
+  g_assert(text != NULL);
+  g_assert(config != NULL);
 
-  pref = g_strdup(config);
-  int val = purple_prefs_get_int(config);
+  pref_ = g_strdup(config);
+  int val = purple_prefs_get_int(pref_);
   setValue(val);
-  setUnit(unit_fun(val));
+  setUnit(unit_fun_(val));
   signal_activate.connect(sigc::mem_fun(this, &IntegerOption::onActivate));
 }
 
 OptionWindow::IntegerOption::~IntegerOption()
 {
-  g_free(pref);
+  g_free(pref_);
 }
 
 void OptionWindow::IntegerOption::onActivate(Button & /*activator*/)
@@ -290,46 +287,46 @@ void OptionWindow::IntegerOption::responseHandler(
   if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
     LOG->warning(_("Value is out of range."));
 
-  purple_prefs_set_int(pref, CLAMP(i, INT_MIN, INT_MAX));
-  int val = purple_prefs_get_int(pref);
-  setValue(purple_prefs_get_int(pref));
-  if (unit)
-    setUnit(unit_fun(val));
+  purple_prefs_set_int(pref_, CLAMP(i, INT_MIN, INT_MAX));
+  int val = purple_prefs_get_int(pref_);
+  setValue(purple_prefs_get_int(pref_));
+  if (unit_)
+    setUnit(unit_fun_(val));
 }
 
 OptionWindow::ChoiceOption::ChoiceOption(const char *text, const char *config)
   : ComboBox(text)
 {
-  g_assert(text);
-  g_assert(config);
+  g_assert(text != NULL);
+  g_assert(config != NULL);
 
-  pref = g_strdup(config);
+  pref_ = g_strdup(config);
   signal_selection_changed.connect(
     sigc::mem_fun(this, &ChoiceOption::onSelectionChanged));
 }
 
 OptionWindow::ChoiceOption::~ChoiceOption()
 {
-  for (ComboBoxEntries::iterator i = options_.begin(); i != options_.end(); i++)
+  for (ComboBoxEntries::iterator i = options_.begin(); i != options_.end(); ++i)
     g_free(reinterpret_cast<char *>(i->data));
 
-  g_free(pref);
+  g_free(pref_);
 }
 
 void OptionWindow::ChoiceOption::addOption(const char *title, const char *value)
 {
-  g_assert(title);
-  g_assert(value);
+  g_assert(title != NULL);
+  g_assert(value != NULL);
 
   int item = addOptionPtr(title, g_strdup(value));
-  if (!g_ascii_strcasecmp(purple_prefs_get_string(pref), value))
+  if (g_ascii_strcasecmp(purple_prefs_get_string(pref_), value) == 0)
     setSelected(item);
 }
 
 void OptionWindow::ChoiceOption::onSelectionChanged(ComboBox & /*activator*/,
   int /*new_entry*/, const char * /*title*/, intptr_t data)
 {
-  purple_prefs_set_string(pref, reinterpret_cast<const char *>(data));
+  purple_prefs_set_string(pref_, reinterpret_cast<const char *>(data));
 }
 
 const char *OptionWindow::getPercentUnit(int /*i*/) const
@@ -354,4 +351,4 @@ void OptionWindow::reloadColorSchemes(CppConsUI::Button & /*activator*/) const
     LOG->message(_("Colorscheme file was successfully reloaded."));
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

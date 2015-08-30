@@ -1,6 +1,6 @@
 bin_PROGRAMS = centerim5
 
-# when you add files here, also add them in po/POTFILES.in
+# When you add files here, also add them in po/POTFILES.in.
 centerim5_SOURCES = \
 	AccountStatusMenu.cpp \
 	AccountStatusMenu.h \

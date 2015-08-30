@@ -1,23 +1,20 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef __LOG_H__
 #define __LOG_H__
@@ -33,15 +30,15 @@
 
 class Log {
 public:
-  // levels are 1:1 mapped to glib levels
+  // Levels are 1:1 mapped to glib levels.
   enum Level {
-    LEVEL_NONE,
-    LEVEL_ERROR,    // = fatal in libpurle
-    LEVEL_CRITICAL, // = error in libpurple
-    LEVEL_WARNING,
-    LEVEL_MESSAGE, // no such level in libpurple
-    LEVEL_INFO,
-    LEVEL_DEBUG, // = misc in libpurple
+    LEVEL_NONE,     //
+    LEVEL_ERROR,    // = Fatal in libpurple.
+    LEVEL_CRITICAL, // = Error in libpurple.
+    LEVEL_WARNING,  //
+    LEVEL_MESSAGE,  // No such level in libpurple.
+    LEVEL_INFO,     //
+    LEVEL_DEBUG,    // = Misc in libpurple.
   };
 
   static Log *instance();
@@ -70,7 +67,7 @@ private:
     void append(const char *text);
 
   protected:
-    CppConsUI::TextView *textview;
+    CppConsUI::TextView *textview_;
 
   private:
     CONSUI_DISABLE_COPY(LogWindow);
@@ -78,41 +75,41 @@ private:
 
   class LogBufferItem {
   public:
-    LogBufferItem(Type type_, Level level_, const char *text_);
+    LogBufferItem(Type type, Level level, const char *text);
     ~LogBufferItem();
 
-    Type getType() const { return type; }
-    Level getLevel() const { return level; }
-    const char *getText() const { return text; }
+    Type getType() const { return type_; }
+    Level getLevel() const { return level_; }
+    const char *getText() const { return text_; }
 
   protected:
-    Type type;
-    Level level;
-    char *text;
+    Type type_;
+    Level level_;
+    char *text_;
 
   private:
     CONSUI_DISABLE_COPY(LogBufferItem);
   };
 
   typedef std::vector<LogBufferItem *> LogBufferItems;
-  LogBufferItems log_items;
+  LogBufferItems log_items_;
 
-  guint default_handler;
-  guint glib_handler;
-  guint gmodule_handler;
-  guint glib_gobject_handler;
-  guint gthread_handler;
-  guint cppconsui_handler;
+  guint default_handler_;
+  guint glib_handler_;
+  guint gmodule_handler_;
+  guint glib_gobject_handler_;
+  guint gthread_handler_;
+  guint cppconsui_handler_;
 
-  static Log *my_instance;
+  static Log *my_instance_;
 
-  LogWindow *log_window;
-  bool phase2_active;
-  GIOChannel *logfile;
+  LogWindow *log_window_;
+  bool phase2_active_;
+  GIOChannel *logfile_;
 
-  Level log_level_cim;
-  Level log_level_glib;
-  Level log_level_purple;
+  Level log_level_cim_;
+  Level log_level_glib_;
+  Level log_level_purple_;
 
   Log();
   virtual ~Log();
@@ -124,12 +121,12 @@ private:
   void finalizePhase2();
   friend class CenterIM;
 
-  // to catch libpurple's debug messages
+  // To catch libpurple's debug messages.
   void purple_print(
     PurpleDebugLevel level, const char *category, const char *arg_s);
   gboolean purple_is_enabled(PurpleDebugLevel level, const char *category);
 
-  // to catch default messages
+  // To catch default messages.
   static void default_log_handler_(const char *domain, GLogLevelFlags flags,
     const char *msg, gpointer user_data)
   {
@@ -138,7 +135,7 @@ private:
   void default_log_handler(
     const char *domain, GLogLevelFlags flags, const char *msg);
 
-  // to catch glib's messages
+  // To catch glib's messages.
   static void glib_log_handler_(const char *domain, GLogLevelFlags flags,
     const char *msg, gpointer user_data)
   {
@@ -147,7 +144,7 @@ private:
   void glib_log_handler(
     const char *domain, GLogLevelFlags flags, const char *msg);
 
-  // called when a log pref is changed
+  // Called when log preferences change.
   static void log_pref_change_(
     const char *name, PurplePrefType type, gconstpointer val, gpointer data)
   {
@@ -169,4 +166,4 @@ private:
 
 #endif // __LOG_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

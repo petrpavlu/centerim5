@@ -1,23 +1,20 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef __ACCOUNTWINDOW_H__
 #define __ACCOUNTWINDOW_H__
@@ -60,14 +57,14 @@ private:
       TYPE_ENABLE_ACCOUNT,
     };
 
-    BoolOption(PurpleAccount *account_, PurpleAccountOption *option_);
-    BoolOption(PurpleAccount *account_, Type type_);
+    BoolOption(PurpleAccount *account, PurpleAccountOption *option);
+    BoolOption(PurpleAccount *account, Type type);
     virtual ~BoolOption() {}
 
   protected:
-    PurpleAccount *account;
-    PurpleAccountOption *option;
-    Type type;
+    PurpleAccount *account_;
+    PurpleAccountOption *option_;
+    Type type_;
 
     void onToggle(CppConsUI::CheckBox &activator, bool new_state);
 
@@ -83,14 +80,14 @@ private:
       TYPE_ALIAS,
     };
 
-    StringOption(PurpleAccount *account_, PurpleAccountOption *option_);
-    StringOption(PurpleAccount *account_, Type type_);
+    StringOption(PurpleAccount *account, PurpleAccountOption *option);
+    StringOption(PurpleAccount *account, Type type);
     virtual ~StringOption() {}
 
   protected:
-    PurpleAccount *account;
-    PurpleAccountOption *option;
-    Type type;
+    PurpleAccount *account_;
+    PurpleAccountOption *option_;
+    Type type_;
 
     void initialize();
     void updateValue();
@@ -104,12 +101,12 @@ private:
 
   class IntegerOption : public CppConsUI::Button {
   public:
-    IntegerOption(PurpleAccount *account_, PurpleAccountOption *option_);
+    IntegerOption(PurpleAccount *account, PurpleAccountOption *option);
     virtual ~IntegerOption() {}
 
   protected:
-    PurpleAccount *account;
-    PurpleAccountOption *option;
+    PurpleAccount *account_;
+    PurpleAccountOption *option_;
 
     void updateValue();
     void onActivate(CppConsUI::Button &activator);
@@ -122,12 +119,12 @@ private:
 
   class StringListOption : public CppConsUI::ComboBox {
   public:
-    StringListOption(PurpleAccount *account_, PurpleAccountOption *option_);
+    StringListOption(PurpleAccount *account, PurpleAccountOption *option);
     virtual ~StringListOption() {}
 
   protected:
-    PurpleAccount *account;
-    PurpleAccountOption *option;
+    PurpleAccount *account_;
+    PurpleAccountOption *option_;
 
     void onSelectionChanged(CppConsUI::ComboBox &activator, int new_entry,
       const char *title, intptr_t data);
@@ -138,14 +135,14 @@ private:
 
   class SplitOption : public CppConsUI::Button {
   public:
-    SplitOption(PurpleAccount *account_, PurpleAccountUserSplit *split_,
-      AccountEntry *account_entry_);
+    SplitOption(PurpleAccount *account, PurpleAccountUserSplit *split,
+      AccountEntry *account_entry);
     virtual ~SplitOption() {}
 
   protected:
-    PurpleAccount *account;
-    PurpleAccountUserSplit *split;
-    AccountEntry *account_entry;
+    PurpleAccount *account_;
+    PurpleAccountUserSplit *split_;
+    AccountEntry *account_entry_;
 
     void updateSplits();
     void onActivate(CppConsUI::Button &activator);
@@ -158,12 +155,12 @@ private:
 
   class ProtocolOption : public CppConsUI::ComboBox {
   public:
-    ProtocolOption(PurpleAccount *account_, AccountWindow &account_window_);
+    ProtocolOption(PurpleAccount *account, AccountWindow &account_window);
     virtual ~ProtocolOption() {}
 
   protected:
-    AccountWindow *account_window;
-    PurpleAccount *account;
+    AccountWindow *account_window_;
+    PurpleAccount *account_;
 
     void onProtocolChanged(CppConsUI::ComboBox &activator, size_t new_entry,
       const char *title, intptr_t data);
@@ -174,11 +171,11 @@ private:
 
   class ColorOption : public CppConsUI::ColorPicker {
   public:
-    ColorOption(PurpleAccount *account_);
+    ColorOption(PurpleAccount *account);
     virtual ~ColorOption() {}
 
   protected:
-    PurpleAccount *account;
+    PurpleAccount *account_;
 
     void onColorChanged(
       CppConsUI::ColorPicker &activator, int new_fg, int new_bg);
@@ -187,8 +184,8 @@ private:
     CONSUI_DISABLE_COPY(ColorOption);
   };
 
-  CppConsUI::TreeView *treeview;
-  AccountEntries account_entries;
+  CppConsUI::TreeView *treeview_;
+  AccountEntries account_entries_;
 
   CONSUI_DISABLE_COPY(AccountWindow);
 
@@ -203,4 +200,4 @@ private:
 
 #endif // __ACCOUNTWINDOW_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

@@ -1,23 +1,20 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CenterIM.h"
 
@@ -38,6 +35,7 @@
 #include <cppconsui/ColorScheme.h>
 #include <cppconsui/KeyConfig.h>
 #include <cstdio>
+#include <cstring>
 #include <locale.h>
 #include <errno.h>
 #include <getopt.h>
@@ -48,13 +46,13 @@
 
 #define CIM_CONFIG_PATH ".centerim5"
 
-// program's entry point
+// Program's entry point.
 int main(int argc, char *argv[])
 {
   return CenterIM::run(argc, argv);
 }
 
-const char *CenterIM::color_names[] = {
+const char *CenterIM::color_names_[] = {
   "default", // -1
   "black",   //  0
   "red",     //  1
@@ -66,7 +64,7 @@ const char *CenterIM::color_names[] = {
   "white",   //  7
 };
 
-const char *CenterIM::scheme_names[] = {
+const char *CenterIM::scheme_names_[] = {
   NULL,
   "accountstatusmenu",        // SCHEME_ACCOUNTSTATUSMENU
   "buddylist",                // SCHEME_BUDDYLIST
@@ -93,9 +91,9 @@ const char *CenterIM::scheme_names[] = {
   "log",                      // SCHEME_LOG
 };
 
-CenterIM *CenterIM::my_instance = NULL;
+CenterIM *CenterIM::my_instance_ = NULL;
 
-// based on glibmm code
+// Based on glibmm code.
 class SourceConnectionNode {
 public:
   explicit inline SourceConnectionNode(const sigc::slot_base &nslot);
@@ -122,15 +120,15 @@ void *SourceConnectionNode::notify(void *data)
 {
   SourceConnectionNode *self = reinterpret_cast<SourceConnectionNode *>(data);
 
-  /* If there is no object, this call was triggered from
-   * destroy_notify_handler(), because we set self->source to 0 there. */
+  // If there is no object, this call was triggered from
+  // destroy_notify_handler(), because we set self->source to 0 there.
   if (self->source) {
     GSource *s = self->source;
     self->source = 0;
     g_source_destroy(s);
 
-    /* Destroying the object triggers execution of destroy_notify_handler(),
-     * eiter immediately or later, so we leave that to do the deletion. */
+    // Destroying the object triggers execution of destroy_notify_handler(),
+    // either immediately or later, so we leave that to do the deletion.
   }
 
   return 0;
@@ -141,8 +139,7 @@ void SourceConnectionNode::destroy_notify_callback(void *data)
   SourceConnectionNode *self = reinterpret_cast<SourceConnectionNode *>(data);
 
   if (self) {
-    /* The GLib side is disconnected now, thus the GSource* is no longer
-     * valid. */
+    // The GLib side is disconnected now, thus the GSource* is no longer valid.
     self->source = 0;
 
     delete self;
@@ -154,7 +151,7 @@ gboolean SourceConnectionNode::source_callback(void *data)
   SourceConnectionNode *conn_data =
     reinterpret_cast<SourceConnectionNode *>(data);
 
-  // recreate the specific slot from the generic slot node
+  // Recreate the specific slot from the generic slot node.
   return (*static_cast<sigc::slot<bool> *>(conn_data->get_slot()))();
 }
 
@@ -170,30 +167,30 @@ inline sigc::slot_base *SourceConnectionNode::get_slot()
 
 CenterIM *CenterIM::instance()
 {
-  return my_instance;
+  return my_instance_;
 }
 
 bool CenterIM::processInput(const TermKeyKey &key)
 {
-  if (idle_reporting_on_keyboard)
+  if (idle_reporting_on_keyboard_)
     purple_idle_touch();
   return InputProcessor::processInput(key);
 }
 
 void CenterIM::quit()
 {
-  g_main_loop_quit(mainloop);
+  g_main_loop_quit(mainloop_);
 }
 
 CppConsUI::Rect CenterIM::getScreenArea(ScreenArea area)
 {
-  return areas[area];
+  return areas_[area];
 }
 
 CppConsUI::Rect CenterIM::getScreenAreaCentered(ScreenArea area)
 {
-  CppConsUI::Rect s = areas[WHOLE_AREA];
-  CppConsUI::Rect r = areas[area];
+  CppConsUI::Rect s = areas_[WHOLE_AREA];
+  CppConsUI::Rect r = areas_[area];
   int x = (s.width - r.width) / 2;
   int y = (s.height - r.height) / 2;
   return CppConsUI::Rect(x, y, r.width, r.height);
@@ -308,8 +305,8 @@ bool CenterIM::loadKeyConfig()
   xmlnode *root =
     purple_util_read_xml_from_file("binds.xml", _("key bindings"));
 
-  if (!root) {
-    // read error, first time run?
+  if (root == NULL) {
+    // Read error, first time run?
     loadDefaultKeyConfig();
     if (saveKeyConfig())
       return true;
@@ -319,20 +316,20 @@ bool CenterIM::loadKeyConfig()
   KEYCONFIG->clear();
   bool res = false;
 
-  for (xmlnode *bind = xmlnode_get_child(root, "bind"); bind;
-       bind = xmlnode_get_next_twin(bind)) {
-    const char *context = xmlnode_get_attrib(bind, "context");
-    if (!context) {
+  for (xmlnode *bind_node = xmlnode_get_child(root, "bind"); bind_node != NULL;
+       bind_node = xmlnode_get_next_twin(bind_node)) {
+    const char *context = xmlnode_get_attrib(bind_node, "context");
+    if (context == NULL) {
       LOG->error(_("Missing 'context' attribute in the bind definition."));
       goto out;
     }
-    const char *action = xmlnode_get_attrib(bind, "action");
-    if (!action) {
+    const char *action = xmlnode_get_attrib(bind_node, "action");
+    if (action == NULL) {
       LOG->error(_("Missing 'action' attribute in the bind definition."));
       goto out;
     }
-    const char *key = xmlnode_get_attrib(bind, "key");
-    if (!key) {
+    const char *key = xmlnode_get_attrib(bind_node, "key");
+    if (key == NULL) {
       LOG->error(_("Missing 'key' attribute in the bind definition."));
       goto out;
     }
@@ -371,7 +368,7 @@ sigc::connection CenterIM::timeoutConnect(
     conn_node, &SourceConnectionNode::destroy_notify_callback);
 
   g_source_attach(source, NULL);
-  g_source_unref(source); // GMainContext holds a reference
+  g_source_unref(source); // GMainContext holds a reference.
 
   conn_node->install(source);
   return connection;
@@ -384,28 +381,28 @@ sigc::connection CenterIM::timeoutOnceConnect(
 }
 
 CenterIM::CenterIM()
-  : mainloop(NULL), mngr(NULL), convs_expanded(false),
-    idle_reporting_on_keyboard(false)
+  : mainloop_(NULL), mngr_(NULL), convs_expanded_(false),
+    idle_reporting_on_keyboard_(false)
 {
-  memset(&centerim_core_ui_ops, 0, sizeof(centerim_core_ui_ops));
-  memset(&logbuf_debug_ui_ops, 0, sizeof(logbuf_debug_ui_ops));
-  memset(&centerim_glib_eventloops, 0, sizeof(centerim_glib_eventloops));
+  memset(&centerim_core_ui_ops_, 0, sizeof(centerim_core_ui_ops_));
+  memset(&logbuf_debug_ui_ops_, 0, sizeof(logbuf_debug_ui_ops_));
+  memset(&centerim_glib_eventloops_, 0, sizeof(centerim_glib_eventloops_));
 }
 
 int CenterIM::run(int argc, char *argv[])
 {
-  // init CenterIM
-  g_assert(!my_instance);
-  my_instance = new CenterIM;
+  // Init CenterIM.
+  g_assert(my_instance_ == NULL);
+  my_instance_ = new CenterIM;
 
-  // run CenterIM
-  int res = my_instance->runAll(argc, argv);
+  // Run CenterIM.
+  int res = my_instance_->runAll(argc, argv);
 
-  // finalize CenterIM
-  g_assert(my_instance);
+  // Finalize CenterIM.
+  g_assert(my_instance_ != NULL);
 
-  delete my_instance;
-  my_instance = NULL;
+  delete my_instance_;
+  my_instance_ = NULL;
 
   return res;
 }
@@ -418,8 +415,10 @@ int CenterIM::runAll(int argc, char *argv[])
   bool cppconsui_output_initialized = false;
   bool cppconsui_screen_resizing_initialized = false;
   CppConsUI::Error error;
+  sigc::connection resize_conn;
+  sigc::connection top_window_change_conn;
 
-  // set GLib program name
+  // Set program name for glib.
   g_set_prgname(PACKAGE_NAME);
 
   setlocale(LC_ALL, "");
@@ -434,7 +433,7 @@ int CenterIM::runAll(int argc, char *argv[])
 
   signal(SIGPIPE, SIG_IGN);
 
-  // parse command-line arguments
+  // Parse command-line arguments.
   bool ascii = false;
   bool offline = false;
   const char *config_path = CIM_CONFIG_PATH;
@@ -479,14 +478,14 @@ int CenterIM::runAll(int argc, char *argv[])
     return 1;
   }
 
-  /* Initialize the internal logger. It will buffer all messages produced by
-   * GLib, libpurple, or CppConsUI until it is possible to output them on the
-   * screen (in the log window). If any part of the initialization fails the
-   * buffered messages will be printed on stderr. */
+  // Initialize the internal logger. It will buffer all messages produced by
+  // GLib, libpurple, or CppConsUI until it is possible to output them on the
+  // screen (in the log window). If any part of the initialization fails the
+  // buffered messages will be printed on stderr.
   Log::init();
 
-  // create the main loop
-  mainloop = g_main_loop_new(NULL, FALSE);
+  // Create the main loop.
+  mainloop_ = g_main_loop_new(NULL, FALSE);
 
   // Initialize CppConsUI.
   CppConsUI::AppInterface interface = {timeout_add_cppconsui,
@@ -495,54 +494,54 @@ int CenterIM::runAll(int argc, char *argv[])
   CppConsUI::initializeConsUI(interface);
 
   // Get the CoreManager instance.
-  mngr = CppConsUI::getCoreManagerInstance();
-  g_assert(mngr);
+  mngr_ = CppConsUI::getCoreManagerInstance();
+  g_assert(mngr_ != NULL);
 
   // Initialize CoreManager's input, output and screen resizing.
-  if (mngr->initializeInput(error) != 0) {
+  if (mngr_->initializeInput(error) != 0) {
     LOG->error("%s\n", error.getString());
     goto out;
   }
   cppconsui_input_initialized = true;
-  if (mngr->initializeOutput(error) != 0) {
+  if (mngr_->initializeOutput(error) != 0) {
     LOG->error("%s\n", error.getString());
     goto out;
   }
   cppconsui_output_initialized = true;
-  if (mngr->initializeScreenResizing(error) != 0) {
+  if (mngr_->initializeScreenResizing(error) != 0) {
     LOG->error("%s\n", error.getString());
     goto out;
   }
   cppconsui_screen_resizing_initialized = true;
 
-  // ASCII mode
+  // ASCII mode.
   if (ascii)
     CppConsUI::Curses::setAsciiMode(ascii);
 
   // Register for some signals.
-  resize_conn = mngr->signal_resize.connect(
+  resize_conn = mngr_->signal_resize.connect(
     sigc::mem_fun(this, &CenterIM::onScreenResized));
-  top_window_change_conn = mngr->signal_top_window_change.connect(
+  top_window_change_conn = mngr_->signal_top_window_change.connect(
     sigc::mem_fun(this, &CenterIM::onTopWindowChanged));
 
-  // declare CenterIM bindables
+  // Declare CenterIM bindables.
   declareBindables();
 
-  // initialize libpurple
+  // Initialize libpurple.
   if (purpleInit(config_path)) {
     LOG->error(_("Libpurple initialization failed."));
     goto out;
   }
   purple_initialized = true;
 
-  // initialize global preferences
+  // Initialize global preferences.
   prefsInit();
 
-  // initialize the log window
+  // Initialize the log window.
   LOG->initPhase2();
 
-  /* Init colorschemes and keybinds after the Log is initialized so the user
-   * can see if there is any error in the configs. */
+  // Init colorschemes and keybinds after the Log is initialized so the user can
+  // see if there is any error in the configs.
   loadColorSchemeConfig();
   loadKeyConfig();
 
@@ -553,23 +552,23 @@ int CenterIM::runAll(int argc, char *argv[])
   Notify::init();
   Request::init();
 
-  // initialize UI
+  // Initialize UI.
   Conversations::init();
   Header::init();
-  // init BuddyList last so it takes the focus
+  // Init BuddyList last so it takes the focus.
   BuddyList::init();
 
   LOG->info(_("Welcome to CenterIM 5. Press %s to display main menu."),
     KEYCONFIG->getKeyBind("centerim", "generalmenu"));
 
-  // restore last know status on all accounts
+  // Restore last know status on all accounts.
   ACCOUNTS->restoreStatuses(offline);
 
-  mngr->setTopInputProcessor(*this);
-  mngr->enableResizing();
+  mngr_->setTopInputProcessor(*this);
+  mngr_->enableResizing();
 
-  // start the main loop
-  g_main_loop_run(mainloop);
+  // Start the main loop.
+  g_main_loop_run(mainloop_);
 
   purple_prefs_disconnect_by_handle(this);
 
@@ -589,32 +588,32 @@ int CenterIM::runAll(int argc, char *argv[])
 
   LOG->finalizePhase2();
 
-  // everything went ok
+  // Everything went ok.
   res = 0;
 
 out:
-  // finalize libpurple
+  // Finalize libpurple.
   if (purple_initialized)
     purpleFinalize();
 
   // Finalize CoreManager's input, output and screen resizing.
   if (cppconsui_screen_resizing_initialized &&
-    mngr->finalizeScreenResizing(error) != 0)
+    mngr_->finalizeScreenResizing(error) != 0)
     LOG->error("%s\n", error.getString());
-  if (cppconsui_output_initialized && mngr->finalizeOutput(error) != 0)
+  if (cppconsui_output_initialized && mngr_->finalizeOutput(error) != 0)
     LOG->error("%s\n", error.getString());
-  if (cppconsui_input_initialized && mngr->finalizeInput(error) != 0)
+  if (cppconsui_input_initialized && mngr_->finalizeInput(error) != 0)
     LOG->error("%s\n", error.getString());
 
   // Finalize CppConsUI.
   CppConsUI::finalizeConsUI();
 
-  // destroy the main loop
-  if (mainloop)
-    g_main_loop_unref(mainloop);
+  // Destroy the main loop.
+  if (mainloop_ != NULL)
+    g_main_loop_unref(mainloop_);
 
-  /* Finalize the log component. It will output all buffered messages (if
-   * there are any) on stderr. */
+  // Finalize the log component. It will output all buffered messages (if there
+  // are any) on stderr.
   Log::finalize();
 
   return res;
@@ -637,16 +636,16 @@ void CenterIM::printUsage(FILE *out, const char *prg_name)
 
 void CenterIM::printVersion(FILE *out)
 {
-  std::fprintf(out, "CenterIM %s\n", version);
+  std::fprintf(out, "CenterIM %s\n", version_);
 }
 
 int CenterIM::purpleInit(const char *config_path)
 {
-  g_assert(config_path);
+  g_assert(config_path != NULL);
 
-  // build config path
+  // Build config path.
   if (g_path_is_absolute(config_path)) {
-    // absolute path
+    // Absolute path.
     purple_util_set_user_dir(config_path);
   }
   else {
@@ -656,32 +655,32 @@ int CenterIM::purpleInit(const char *config_path)
     g_free(path);
   }
 
-  /* This does not disable debugging, but rather it disables printing to
-   * stdout. Don't change this to TRUE or things will get messy. */
+  // This does not disable debugging, but rather it disables printing to stdout.
+  // Do not change this to TRUE or things will get messy.
   purple_debug_set_enabled(FALSE);
 
-  // catch libpurple messages
-  logbuf_debug_ui_ops.print = purple_print;
-  logbuf_debug_ui_ops.is_enabled = purple_is_enabled;
-  purple_debug_set_ui_ops(&logbuf_debug_ui_ops);
+  // Catch libpurple messages.
+  logbuf_debug_ui_ops_.print = purple_print;
+  logbuf_debug_ui_ops_.is_enabled = purple_is_enabled;
+  purple_debug_set_ui_ops(&logbuf_debug_ui_ops_);
 
-  // set core uiops
-  centerim_core_ui_ops.get_ui_info = get_ui_info;
-  purple_core_set_ui_ops(&centerim_core_ui_ops);
+  // Set core uiops.
+  centerim_core_ui_ops_.get_ui_info = get_ui_info;
+  purple_core_set_ui_ops(&centerim_core_ui_ops_);
 
-  // set the uiops for the eventloop
-  centerim_glib_eventloops.timeout_add = g_timeout_add;
-  centerim_glib_eventloops.timeout_remove = g_source_remove;
-  centerim_glib_eventloops.input_add = input_add_purple;
-  centerim_glib_eventloops.input_remove = g_source_remove;
-  purple_eventloop_set_ui_ops(&centerim_glib_eventloops);
+  // Set the uiops for the eventloop.
+  centerim_glib_eventloops_.timeout_add = g_timeout_add;
+  centerim_glib_eventloops_.timeout_remove = g_source_remove;
+  centerim_glib_eventloops_.input_add = input_add_purple;
+  centerim_glib_eventloops_.input_remove = g_source_remove;
+  purple_eventloop_set_ui_ops(&centerim_glib_eventloops_);
 
-  // search user-specific plugins
+  // Add a search path for user-specific plugins.
   char *path = g_build_filename(purple_user_dir(), "plugins", NULL);
   purple_plugins_add_search_path(path);
   g_free(path);
 
-  // search centerim-specific plugins
+  // Add a search path for centerim-specific plugins.
   purple_plugins_add_search_path(PKGLIBDIR);
 
   if (!purple_core_init(PACKAGE_NAME))
@@ -690,7 +689,7 @@ int CenterIM::purpleInit(const char *config_path)
   purple_prefs_add_none(CONF_PREFIX);
   purple_prefs_add_none(CONF_PLUGINS_PREF);
 
-  // load the desired plugins
+  // Load the desired plugins.
   if (purple_prefs_exists(CONF_PLUGINS_SAVE_PREF))
     purple_plugins_load_saved(CONF_PLUGINS_SAVE_PREF);
 
@@ -708,11 +707,11 @@ void CenterIM::purpleFinalize()
 
 void CenterIM::prefsInit()
 {
-  // remove someday...
+  // Remove someday...
   if (purple_prefs_exists("/centerim"))
     purple_prefs_rename("/centerim", CONF_PREFIX);
 
-  // init prefs
+  // Initialize preferences.
   purple_prefs_add_none(CONF_PREFIX "/dimensions");
   purple_prefs_add_int(CONF_PREFIX "/dimensions/buddylist_width", 20);
   purple_prefs_add_int(CONF_PREFIX "/dimensions/log_height", 25);
@@ -723,8 +722,8 @@ void CenterIM::prefsInit()
 
   purple_prefs_connect_callback(
     this, "/purple/away/idle_reporting", idle_reporting_change_, this);
-  /* Proceed the callback. Note: This potentially triggers other callbacks
-   * inside libpurple. */
+  // Trigger the callback. Note: This potentially triggers other callbacks
+  // inside libpurple.
   purple_prefs_trigger_callback("/purple/away/idle_reporting");
 }
 
@@ -737,7 +736,7 @@ void CenterIM::onScreenResized()
 
   int buddylist_width;
   int log_height;
-  if (convs_expanded) {
+  if (convs_expanded_) {
     buddylist_width = 0;
     log_height = 0;
   }
@@ -768,53 +767,54 @@ void CenterIM::onScreenResized()
   size.y = header_height;
   size.width = screen_width / 100.0 * buddylist_width;
   size.height = screen_height - header_height - footer_height;
-  areas[BUDDY_LIST_AREA] = size;
+  areas_[BUDDY_LIST_AREA] = size;
 
-  size.x = areas[BUDDY_LIST_AREA].width;
+  size.x = areas_[BUDDY_LIST_AREA].width;
   size.width = screen_width - size.x;
   size.height = screen_height / 100.0 * log_height;
   size.y = screen_height - size.height - footer_height;
-  areas[LOG_AREA] = size;
+  areas_[LOG_AREA] = size;
 
-  size.x = areas[BUDDY_LIST_AREA].width;
+  size.x = areas_[BUDDY_LIST_AREA].width;
   size.y = header_height;
   size.width = screen_width - size.x;
-  size.height = screen_height - size.y - areas[LOG_AREA].height - footer_height;
-  if (convs_expanded) {
+  size.height =
+    screen_height - size.y - areas_[LOG_AREA].height - footer_height;
+  if (convs_expanded_) {
     size.x -= 2;
     size.width += 4;
   }
-  areas[CHAT_AREA] = size;
+  areas_[CHAT_AREA] = size;
 
   size.x = 0;
   size.y = 0;
   size.width = screen_width;
   size.height = header_height;
-  areas[HEADER_AREA] = size;
+  areas_[HEADER_AREA] = size;
 
   size.x = 0;
   size.y = screen_height - 1;
   size.width = screen_width;
   size.height = footer_height;
-  areas[FOOTER_AREA] = size;
+  areas_[FOOTER_AREA] = size;
 
   size.x = 0;
   size.y = 0;
   size.width = screen_width;
   size.height = screen_height;
-  areas[WHOLE_AREA] = size;
+  areas_[WHOLE_AREA] = size;
 }
 
 void CenterIM::onTopWindowChanged()
 {
-  if (!convs_expanded)
+  if (!convs_expanded_)
     return;
 
-  CppConsUI::Window *top = mngr->getTopWindow();
-  if (top && typeid(Conversation) != typeid(*top)) {
-    convs_expanded = false;
-    CONVERSATIONS->setExpandedConversations(convs_expanded);
-    mngr->onScreenResized();
+  CppConsUI::Window *top = mngr_->getTopWindow();
+  if (top != NULL && typeid(Conversation) != typeid(*top)) {
+    convs_expanded_ = false;
+    CONVERSATIONS->setExpandedConversations(convs_expanded_);
+    mngr_->onScreenResized();
   }
 }
 
@@ -955,14 +955,13 @@ GHashTable *CenterIM::get_ui_info()
 {
   static GHashTable *ui_info = NULL;
 
-  if (!ui_info) {
+  if (ui_info == NULL) {
     ui_info = g_hash_table_new(g_str_hash, g_str_equal);
 
-    /* Note: the C-style casts are used below because otherwise we would need
-     * to use the const_cast and reinterpret_cast together (which is too much
-     * typing). */
+    // Note: the C-style casts are used below because otherwise we would need to
+    // use const_cast and reinterpret_cast together (which is too much typing).
     g_hash_table_insert(ui_info, (void *)"name", (void *)PACKAGE_NAME);
-    g_hash_table_insert(ui_info, (void *)"version", (void *)version);
+    g_hash_table_insert(ui_info, (void *)"version", (void *)version_);
     g_hash_table_insert(ui_info, (void *)"website", (void *)PACKAGE_URL);
 
     g_hash_table_insert(
@@ -988,7 +987,7 @@ gboolean CenterIM::purple_is_enabled(
 void CenterIM::dimensions_change(
   const char * /*name*/, PurplePrefType /*type*/, gconstpointer /*val*/)
 {
-  mngr->onScreenResized();
+  mngr_->onScreenResized();
 }
 
 void CenterIM::idle_reporting_change(
@@ -997,10 +996,10 @@ void CenterIM::idle_reporting_change(
   g_return_if_fail(type == PURPLE_PREF_STRING);
 
   const char *value = static_cast<const char *>(val);
-  if (!strcmp(value, "system"))
-    idle_reporting_on_keyboard = true;
+  if (std::strcmp(value, "system") == 0)
+    idle_reporting_on_keyboard_ = true;
   else
-    idle_reporting_on_keyboard = false;
+    idle_reporting_on_keyboard_ = false;
 }
 
 void CenterIM::loadDefaultColorSchemeConfig()
@@ -1207,36 +1206,36 @@ bool CenterIM::saveColorSchemeConfig()
 
 const char *CenterIM::schemeToString(int scheme)
 {
-  static_assert(G_N_ELEMENTS(scheme_names) == SCHEME_END,
-    "Incorrect number of elements in array scheme_names");
+  static_assert(G_N_ELEMENTS(scheme_names_) == SCHEME_END,
+    "Incorrect number of elements in array scheme_names_");
   assert(scheme >= 0 && scheme < SCHEME_END);
-  return scheme_names[scheme];
+  return scheme_names_[scheme];
 }
 
 int CenterIM::stringToScheme(const char *str)
 {
   for (int i = SCHEME_BEGIN; i < SCHEME_END; ++i)
-    if (strcmp(str, scheme_names[i]) == 0)
+    if (std::strcmp(str, scheme_names_[i]) == 0)
       return i;
   return 0;
 }
 
 char *CenterIM::colorToString(int color)
 {
-  if (color >= -1 && color < static_cast<int>(G_N_ELEMENTS(color_names) - 1))
-    return g_strdup(color_names[color + 1]);
+  if (color >= -1 && color < static_cast<int>(G_N_ELEMENTS(color_names_) - 1))
+    return g_strdup(color_names_[color + 1]);
   return g_strdup_printf("%d", color);
 }
 
 bool CenterIM::stringToColor(const char *str, int *color)
 {
-  g_assert(str);
-  g_assert(color);
+  g_assert(str != NULL);
+  g_assert(color != NULL);
 
   *color = 0;
 
   if (g_ascii_isdigit(str[0]) || str[0] == '-') {
-    // numeric colors
+    // Numeric colors.
     long i = strtol(str, NULL, 10);
     if (errno == ERANGE || i > INT_MAX || i < -1)
       return false;
@@ -1244,9 +1243,9 @@ bool CenterIM::stringToColor(const char *str, int *color)
     return true;
   }
 
-  // symbolic colors
-  for (int i = -1; i < static_cast<int>(G_N_ELEMENTS(color_names) - 1); i++)
-    if (!strcmp(str, color_names[i + 1])) {
+  // Symbolic colors.
+  for (int i = -1; i < static_cast<int>(G_N_ELEMENTS(color_names_) - 1); i++)
+    if (!strcmp(str, color_names_[i + 1])) {
       *color = i;
       return true;
     }
@@ -1280,45 +1279,44 @@ char *CenterIM::colorAttributesToString(int attrs)
     APPEND("bold");
 
   return g_strdup(s.c_str());
-
 #undef APPEND
 }
 
 bool CenterIM::stringToColorAttributes(const char *str, int *attrs)
 {
-  g_assert(str);
-  g_assert(attrs);
+  g_assert(str != NULL);
+  g_assert(attrs != NULL);
 
   gchar **tokens = g_strsplit(str, "|", 0);
   *attrs = 0;
 
   bool valid = true;
-  for (size_t i = 0; tokens[i]; i++) {
-    if (!strcmp("normal", tokens[i])) {
+  for (size_t i = 0; tokens[i] != NULL; ++i) {
+    if (std::strcmp("normal", tokens[i]) == 0) {
       *attrs |= CppConsUI::Curses::Attr::NORMAL;
       continue;
     }
-    if (!strcmp("standout", tokens[i])) {
+    if (std::strcmp("standout", tokens[i]) == 0) {
       *attrs |= CppConsUI::Curses::Attr::STANDOUT;
       continue;
     }
-    if (!strcmp("reverse", tokens[i])) {
+    if (std::strcmp("reverse", tokens[i]) == 0) {
       *attrs |= CppConsUI::Curses::Attr::REVERSE;
       continue;
     }
-    if (!strcmp("blink", tokens[i])) {
+    if (std::strcmp("blink", tokens[i]) == 0) {
       *attrs |= CppConsUI::Curses::Attr::BLINK;
       continue;
     }
-    if (!strcmp("dim", tokens[i])) {
+    if (std::strcmp("dim", tokens[i]) == 0) {
       *attrs |= CppConsUI::Curses::Attr::DIM;
       continue;
     }
-    if (!strcmp("bold", tokens[i])) {
+    if (std::strcmp("bold", tokens[i]) == 0) {
       *attrs |= CppConsUI::Curses::Attr::BOLD;
       continue;
     }
-    // unrecognized attribute
+    // Unrecognized attribute.
     valid = false;
     break;
   }
@@ -1330,7 +1328,7 @@ bool CenterIM::stringToColorAttributes(const char *str, int *attrs)
 
 void CenterIM::loadDefaultKeyConfig()
 {
-  // clear current bindings and load default ones
+  // Clear current bindings and load default ones.
   KEYCONFIG->loadDefaultKeyConfig();
 
   KEYCONFIG->bindKey("centerim", "quit", "Ctrl-q");
@@ -1378,28 +1376,28 @@ bool CenterIM::saveKeyConfig()
 
   const CppConsUI::KeyConfig::KeyBinds *binds = KEYCONFIG->getKeyBinds();
   for (CppConsUI::KeyConfig::KeyBinds::const_iterator bi = binds->begin();
-       bi != binds->end(); bi++) {
-    /* Invert the map because the output should be sorted by context+action,
-     * not by context+key. */
+       bi != binds->end(); ++bi) {
+    // Invert the map because the output should be sorted by context+action, not
+    // by context+key.
     typedef std::multimap<std::string, TermKeyKey> InvertedMap;
     InvertedMap inverted;
     for (CppConsUI::KeyConfig::KeyBindContext::const_iterator ci =
            bi->second.begin();
-         ci != bi->second.end(); ci++)
+         ci != bi->second.end(); ++ci)
       inverted.insert(std::make_pair(ci->second, ci->first));
 
     for (InvertedMap::iterator ci = inverted.begin(); ci != inverted.end();
-         ci++) {
-      xmlnode *bind = xmlnode_new("bind");
-      xmlnode_set_attrib(bind, "context", bi->first.c_str());
-      xmlnode_set_attrib(bind, "action", ci->first.c_str());
-      char *key;
-      if ((key = KEYCONFIG->termKeyToString(ci->second))) {
-        xmlnode_set_attrib(bind, "key", key);
+         ++ci) {
+      xmlnode *bind_node = xmlnode_new("bind");
+      xmlnode_set_attrib(bind_node, "context", bi->first.c_str());
+      xmlnode_set_attrib(bind_node, "action", ci->first.c_str());
+      char *key = KEYCONFIG->termKeyToString(ci->second);
+      if (key != NULL) {
+        xmlnode_set_attrib(bind_node, "key", key);
         delete[] key;
       }
 
-      xmlnode_insert_child(root, bind);
+      xmlnode_insert_child(root, bind_node);
     }
   }
 
@@ -1426,10 +1424,10 @@ void CenterIM::actionFocusActiveConversation()
 
 void CenterIM::actionOpenAccountStatusMenu()
 {
-  /* Don't allow to open the account status menu if there is any 'top' window
-   * (except general menu, we can close that). */
-  CppConsUI::Window *top = mngr->getTopWindow();
-  if (top) {
+  // Do not allow to open the account status menu if there is any 'top' window
+  // (except general menu, we can close that).
+  CppConsUI::Window *top = mngr_->getTopWindow();
+  if (top != NULL) {
     if (dynamic_cast<GeneralMenu *>(top))
       top->close();
     else if (top->getType() == CppConsUI::Window::TYPE_TOP)
@@ -1442,10 +1440,10 @@ void CenterIM::actionOpenAccountStatusMenu()
 
 void CenterIM::actionOpenGeneralMenu()
 {
-  /* Don't allow to open the general menu if there is any 'top' window (except
-   * account status menu, we can close that). */
-  CppConsUI::Window *top = mngr->getTopWindow();
-  if (top) {
+  // Do not allow to open the general menu if there is any 'top' window (except
+  // account status menu, we can close that).
+  CppConsUI::Window *top = mngr_->getTopWindow();
+  if (top != NULL) {
     if (dynamic_cast<AccountStatusMenu *>(top))
       top->close();
     else if (top->getType() == CppConsUI::Window::TYPE_TOP)
@@ -1480,20 +1478,20 @@ void CenterIM::actionFocusConversation(int i)
 
 void CenterIM::actionExpandConversation()
 {
-  CppConsUI::Window *top = mngr->getTopWindow();
-  if (top && top->getType() == CppConsUI::Window::TYPE_TOP)
+  CppConsUI::Window *top = mngr_->getTopWindow();
+  if (top != NULL && top->getType() == CppConsUI::Window::TYPE_TOP)
     return;
 
-  if (!convs_expanded) {
+  if (!convs_expanded_) {
     CONVERSATIONS->focusActiveConversation();
-    top = mngr->getTopWindow();
-    if (!top || typeid(Conversation) != typeid(*top))
+    top = mngr_->getTopWindow();
+    if (top == NULL || typeid(Conversation) != typeid(*top))
       return;
   }
 
-  convs_expanded = !convs_expanded;
-  CONVERSATIONS->setExpandedConversations(convs_expanded);
-  mngr->onScreenResized();
+  convs_expanded_ = !convs_expanded_;
+  CONVERSATIONS->setExpandedConversations(convs_expanded_);
+  mngr_->onScreenResized();
 }
 
 void CenterIM::declareBindables()
@@ -1522,7 +1520,7 @@ void CenterIM::declareBindables()
     sigc::mem_fun(this, &CenterIM::actionFocusNextConversation),
     InputProcessor::BINDABLE_OVERRIDE);
   char action[] = "conversation-numberXX";
-  for (int i = 1; i <= 20; i++) {
+  for (int i = 1; i <= 20; ++i) {
     g_sprintf(action + sizeof(action) - 3, "%d", i);
     declareBindable("centerim", action,
       sigc::bind(sigc::mem_fun(this, &CenterIM::actionFocusConversation), i),
@@ -1533,4 +1531,4 @@ void CenterIM::declareBindables()
     InputProcessor::BINDABLE_OVERRIDE);
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

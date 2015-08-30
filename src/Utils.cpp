@@ -1,22 +1,19 @@
-/*
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Utils.h"
 
@@ -55,18 +52,18 @@ const char *getStatusIndicator(PurpleStatus *status)
 
 char *stripAccelerator(const char *label)
 {
-  g_assert(label);
+  g_assert(label != NULL);
 
-  // calculate the string length without accelerators
+  // Calculate length of the string without accelerators.
   size_t len = 1;
-  for (const char *p = label; *p; p++)
+  for (const char *p = label; *p != '\0'; ++p)
     if (*p != '_')
-      len++;
+      ++len;
 
-  // allocate and populate the resulting string
+  // Allocate and populate the resulting string.
   char *res = g_new(char, len);
   char *o = res;
-  for (const char *p = label; *p; p++)
+  for (const char *p = label; *p != '\0'; ++p)
     if (*p != '_')
       *o++ = *p;
   *o = '\0';
@@ -74,6 +71,6 @@ char *stripAccelerator(const char *label)
   return res;
 }
 
-} // namespace utils
+} // namespace Utils
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

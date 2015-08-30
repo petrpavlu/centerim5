@@ -1,22 +1,19 @@
-/*
- * Copyright (C) 2011-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2011-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef __OPTIONWINDOW_H__
 #define __OPTIONWINDOW_H__
@@ -42,7 +39,7 @@ protected:
     virtual ~BooleanOption();
 
   protected:
-    char *pref;
+    char *pref_;
 
     void onToggle(CppConsUI::CheckBox &activator, bool new_state);
 
@@ -56,7 +53,7 @@ protected:
     virtual ~StringOption();
 
   protected:
-    char *pref;
+    char *pref_;
 
     void onActivate(CppConsUI::Button &activator);
     void responseHandler(CppConsUI::InputDialog &activator,
@@ -70,13 +67,13 @@ protected:
   public:
     IntegerOption(const char *text, const char *config);
     IntegerOption(const char *text, const char *config,
-      sigc::slot<const char *, int> unit_fun_);
+      sigc::slot<const char *, int> unit_fun);
     virtual ~IntegerOption();
 
   protected:
-    char *pref;
-    bool unit;
-    sigc::slot<const char *, int> unit_fun;
+    char *pref_;
+    bool unit_;
+    sigc::slot<const char *, int> unit_fun_;
 
     void onActivate(CppConsUI::Button &activator);
     void responseHandler(CppConsUI::InputDialog &activator,
@@ -94,7 +91,7 @@ protected:
     void addOption(const char *title, const char *value);
 
   protected:
-    char *pref;
+    char *pref_;
 
     void onSelectionChanged(CppConsUI::ComboBox &activator, int new_entry,
       const char *title, intptr_t data);
@@ -114,4 +111,4 @@ private:
 
 #endif // __OPTIONWINDOW_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

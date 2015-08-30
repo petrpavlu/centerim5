@@ -1,23 +1,20 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Connections.h"
 
@@ -28,22 +25,22 @@
 #define RECONNECTION_DELAY_MIN 60000
 #define RECONNECTION_DELAY_MAX 120000
 
-Connections *Connections::my_instance = NULL;
+Connections *Connections::my_instance_ = NULL;
 
 Connections *Connections::instance()
 {
-  return my_instance;
+  return my_instance_;
 }
 
 Connections::Connections()
 {
-  // set the purple connection callbacks
+  // Set the purple connection callbacks.
   memset(&centerim_connection_ui_ops, 0, sizeof(centerim_connection_ui_ops));
   centerim_connection_ui_ops.connect_progress = connect_progress_;
   centerim_connection_ui_ops.connected = connected_;
   centerim_connection_ui_ops.disconnected = disconnected_;
   centerim_connection_ui_ops.notice = notice_;
-  // deprecated in favour of report_disconnect_reason()
+  // Deprecated in favour of report_disconnect_reason().
   // centerim_connection_ui_ops.report_disconnect = report_disconnect_;
   centerim_connection_ui_ops.network_connected = network_connected_;
   centerim_connection_ui_ops.network_disconnected = network_disconnected_;
@@ -59,22 +56,22 @@ Connections::~Connections()
 
 void Connections::init()
 {
-  g_assert(!my_instance);
+  g_assert(my_instance_ == NULL);
 
-  my_instance = new Connections;
+  my_instance_ = new Connections;
 }
 
 void Connections::finalize()
 {
-  g_assert(my_instance);
+  g_assert(my_instance_ != NULL);
 
-  delete my_instance;
-  my_instance = NULL;
+  delete my_instance_;
+  my_instance_ = NULL;
 }
 
 void Connections::reconnectAccount(PurpleAccount *account)
 {
-  g_return_if_fail(account);
+  g_return_if_fail(account != NULL);
 
   if (!purple_account_is_disconnected(account) ||
     !purple_status_is_online(purple_account_get_active_status(account)))
@@ -120,7 +117,7 @@ void Connections::network_connected()
 
   GList *list, *l;
   l = list = purple_accounts_get_all_active();
-  while (l) {
+  while (l != NULL) {
     PurpleAccount *account = reinterpret_cast<PurpleAccount *>(l->data);
     if (purple_account_is_disconnected(account))
       reconnectAccount(account);
@@ -136,7 +133,7 @@ void Connections::network_disconnected()
 
   GList *list, *l;
   l = list = purple_accounts_get_all_active();
-  while (l) {
+  while (l != NULL) {
     PurpleAccount *a = reinterpret_cast<PurpleAccount *>(l->data);
     if (!purple_account_is_disconnected(a))
       purple_account_disconnect(a);
@@ -171,4 +168,4 @@ void Connections::report_disconnect_reason(
   }
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

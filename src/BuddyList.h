@@ -1,23 +1,20 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef __BUDDYLIST_H__
 #define __BUDDYLIST_H__
@@ -70,15 +67,15 @@ public:
   virtual void close();
   virtual void onScreenResized();
 
-  // these functions are faster version of getting blist/* prefs
-  bool getShowEmptyGroupsPref() const { return show_empty_groups; }
-  bool getShowOfflineBuddiesPref() const { return show_offline_buddies; }
-  ListMode getListMode() const { return list_mode; }
-  GroupSortMode getGroupSortMode() const { return group_sort_mode; }
-  BuddySortMode getBuddySortMode() const { return buddy_sort_mode; }
-  ColorizationMode getColorizationMode() const { return colorization_mode; }
+  // These functions are faster version of getting blist/* prefs.
+  bool getShowEmptyGroupsPref() const { return show_empty_groups_; }
+  bool getShowOfflineBuddiesPref() const { return show_offline_buddies_; }
+  ListMode getListMode() const { return list_mode_; }
+  GroupSortMode getGroupSortMode() const { return group_sort_mode_; }
+  BuddySortMode getBuddySortMode() const { return buddy_sort_mode_; }
+  ColorizationMode getColorizationMode() const { return colorization_mode_; }
 
-  const char *getFilterString() const { return filter_buffer; }
+  const char *getFilterString() const { return filter_buffer_; }
 
   void updateNode(PurpleBlistNode *node);
 
@@ -90,14 +87,14 @@ private:
 
   class Filter : public CppConsUI::Widget {
   public:
-    Filter(BuddyList *parent_);
+    Filter(BuddyList *parent_blist);
     virtual ~Filter() {}
 
     // Widget
     virtual int draw(CppConsUI::Curses::ViewPort area, CppConsUI::Error &error);
 
   protected:
-    BuddyList *parent;
+    BuddyList *parent_blist_;
 
   private:
     CONSUI_DISABLE_COPY(Filter);
@@ -154,8 +151,8 @@ private:
       virtual ~IntegerOption() {}
 
     protected:
-      int min_value;
-      int max_value;
+      int min_value_;
+      int max_value_;
 
       void onActivate(CppConsUI::Button &activator);
       void responseHandler(CppConsUI::InputDialog &activator,
@@ -174,7 +171,7 @@ private:
       CONSUI_DISABLE_COPY(BooleanOption);
     };
 
-    CppConsUI::TreeView *treeview;
+    CppConsUI::TreeView *treeview_;
 
     virtual void onAddRequest(CppConsUI::Button &activator) = 0;
 
@@ -189,10 +186,10 @@ private:
     virtual ~AddBuddyWindow() {}
 
   protected:
-    AccountOption *account_option;
-    StringOption *name_option;
-    StringOption *alias_option;
-    GroupOption *group_option;
+    AccountOption *account_option_;
+    StringOption *name_option_;
+    StringOption *alias_option_;
+    GroupOption *group_option_;
 
     // AddWindow
     virtual void onAddRequest(CppConsUI::Button &activator);
@@ -211,12 +208,12 @@ private:
     typedef std::map<std::string, CppConsUI::TreeView::NodeReference>
       ChatInfoMap;
 
-    AccountOption *account_option;
-    CppConsUI::TreeView::NodeReference account_option_ref;
-    StringOption *alias_option;
-    GroupOption *group_option;
-    BooleanOption *autojoin_option;
-    ChatInfoMap chat_info_map;
+    AccountOption *account_option_;
+    CppConsUI::TreeView::NodeReference account_option_ref_;
+    StringOption *alias_option_;
+    GroupOption *group_option_;
+    BooleanOption *autojoin_option_;
+    ChatInfoMap chat_info_map_;
 
     // AddWindow
     virtual void onAddRequest(CppConsUI::Button &activator);
@@ -235,7 +232,7 @@ private:
     virtual ~AddGroupWindow() {}
 
   protected:
-    StringOption *name_option;
+    StringOption *name_option_;
 
     // AddWindow
     virtual void onAddRequest(CppConsUI::Button &activator);
@@ -244,25 +241,25 @@ private:
     CONSUI_DISABLE_COPY(AddGroupWindow);
   };
 
-  PurpleBlistUiOps centerim_blist_ui_ops;
-  PurpleBuddyList *buddylist;
-  CppConsUI::TreeView *treeview;
+  PurpleBlistUiOps centerim_blist_ui_ops_;
+  PurpleBuddyList *buddylist_;
+  CppConsUI::TreeView *treeview_;
 
-  bool show_empty_groups;
-  bool show_offline_buddies;
-  ListMode list_mode;
-  BuddySortMode buddy_sort_mode;
-  GroupSortMode group_sort_mode;
-  ColorizationMode colorization_mode;
+  bool show_empty_groups_;
+  bool show_offline_buddies_;
+  ListMode list_mode_;
+  BuddySortMode buddy_sort_mode_;
+  GroupSortMode group_sort_mode_;
+  ColorizationMode colorization_mode_;
 
-  Filter *filter;
-  char filter_buffer[256];
-  // length in bytes
-  size_t filter_buffer_length;
-  // onscreen width
-  size_t filter_buffer_onscreen_width;
+  Filter *filter_;
+  char filter_buffer_[256];
+  // Length in bytes.
+  size_t filter_buffer_length_;
+  // Onscreen width.
+  size_t filter_buffer_onscreen_width_;
 
-  static BuddyList *my_instance;
+  static BuddyList *my_instance_;
 
   BuddyList();
   virtual ~BuddyList();
@@ -317,7 +314,7 @@ private:
     const char *alias, const char *name);
   void request_add_group();
 
-  // called when any blist/* pref is changed
+  // Called when any blist/* pref is changed.
   static void blist_pref_change_(
     const char *name, PurplePrefType type, gconstpointer val, gpointer data)
   {
@@ -329,4 +326,4 @@ private:
 
 #endif // __BUDDYLIST_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

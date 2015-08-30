@@ -1,23 +1,20 @@
-/*
- * Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef __CONVERSATIONS_H__
 #define __CONVERSATIONS_H__
@@ -47,7 +44,7 @@ public:
 
   void setExpandedConversations(bool expanded);
 
-  bool getSendTypingPref() const { return send_typing; }
+  bool getSendTypingPref() const { return send_typing_; }
 
 private:
   struct ConvChild {
@@ -58,22 +55,22 @@ private:
 
   typedef std::vector<ConvChild> ConversationsVector;
 
-  ConversationsVector conversations;
+  ConversationsVector conversations_;
 
-  // active conversation, -1 if none
-  int active;
+  // Active conversation, -1 if none.
+  int active_;
 
-  CppConsUI::HorizontalListBox *outer_list;
-  CppConsUI::Spacer *left_spacer;
-  CppConsUI::Spacer *right_spacer;
-  CppConsUI::HorizontalListBox *conv_list;
+  CppConsUI::HorizontalListBox *outer_list_;
+  CppConsUI::Spacer *left_spacer_;
+  CppConsUI::Spacer *right_spacer_;
+  CppConsUI::HorizontalListBox *conv_list_;
 
-  // cached value of the "/purple/conversations/im/send_typing" pref
-  bool send_typing;
+  // Cached value of the "/purple/conversations/im/send_typing" preference.
+  bool send_typing_;
 
-  PurpleConversationUiOps centerim_conv_ui_ops;
+  PurpleConversationUiOps centerim_conv_ui_ops_;
 
-  static Conversations *my_instance;
+  static Conversations *my_instance_;
 
   Conversations();
   virtual ~Conversations();
@@ -83,7 +80,7 @@ private:
   static void finalize();
   friend class CenterIM;
 
-  // find PurpleConversation in conversations
+  // Find PurpleConversation in conversations.
   int findConversation(PurpleConversation *conv);
 
   int prevActiveConversation(int current);
@@ -91,9 +88,9 @@ private:
 
   void activateConversation(int i);
 
-  // update a single conversation label
+  // Update a single conversation label.
   void updateLabel(int i);
-  // update all conversation labels
+  // Update all conversation labels.
   void updateLabels();
 
   static void create_conversation_(PurpleConversation *conv)
@@ -133,8 +130,8 @@ private:
     CONVERSATIONS->present(conv);
   }
 
-  // Internal utility to get a room list for a conversation
-  // Returns NULL if not found
+  // Internal utility to get a room list for a conversation. Returns NULL if
+  // none is present.
   ConversationRoomList *getRoomList(PurpleConversation *conv);
 
   void create_conversation(PurpleConversation *conv);
@@ -156,7 +153,7 @@ private:
   }
   void buddy_typing(PurpleAccount *account, const char *who);
 
-  // called when "/purple/conversations/im/send_typing" pref is changed
+  // Called when "/purple/conversations/im/send_typing" preference changes.
   static void send_typing_pref_change_(
     const char *name, PurplePrefType type, gconstpointer val, gpointer data)
   {
@@ -169,4 +166,4 @@ private:
 
 #endif // __CONVERSATIONS_H__
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:
