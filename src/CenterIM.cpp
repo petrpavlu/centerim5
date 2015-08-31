@@ -1246,7 +1246,7 @@ bool CenterIM::stringToColor(const char *str, int *color)
   }
 
   // Symbolic colors.
-  for (int i = -1; i < static_cast<int>(G_N_ELEMENTS(color_names_) - 1); i++)
+  for (int i = -1; i < static_cast<int>(G_N_ELEMENTS(color_names_) - 1); ++i)
     if (!strcmp(str, color_names_[i + 1])) {
       *color = i;
       return true;

@@ -422,7 +422,7 @@ Request::FieldsDialog::ListFieldMultiple::ListFieldMultiple(
 
   int height = 0;
   for (GList *list = purple_request_field_list_get_items(field_);
-       list != nullptr; list = list->next, height++)
+       list != nullptr; list = list->next, ++height)
     appendWidget(
       *(new ListFieldItem(field_, static_cast<const char *>(list->data))));
   setHeight(height);
@@ -478,7 +478,7 @@ Request::FieldsDialog::ListFieldSingle::ListFieldSingle(
   g_free(text);
 
   GList *list = purple_request_field_list_get_items(field_);
-  for (int i = 0; list; ++i, list = list->next) {
+  for (int i = 0; list != NULL; ++i, list = list->next) {
     const char *text = static_cast<const char *>(list->data);
     addOption(text);
     if (purple_request_field_list_is_selected(field_, text))

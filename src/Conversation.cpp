@@ -171,7 +171,7 @@ void Conversation::onScreenResized()
 {
   CppConsUI::Rect r = CENTERIM->getScreenArea(CenterIM::CHAT_AREA);
   // Make room for conversation list.
-  r.height--;
+  --r.height;
 
   moveResizeRect(r);
 }
@@ -298,12 +298,12 @@ int Conversation::ConversationLine::draw(
   DRAW(area.attrOn(attrs, error));
 
   int i;
-  for (i = 0; i < l; i++)
+  for (i = 0; i < l; ++i)
     DRAW(area.addLineChar(i, 0, CppConsUI::Curses::LINE_HLINE, error));
   int printed;
   DRAW(area.addString(i, 0, text_, error, &printed));
   i += printed;
-  for (; i < real_width_; i++)
+  for (; i < real_width_; ++i)
     DRAW(area.addLineChar(i, 0, CppConsUI::Curses::LINE_HLINE, error));
 
   DRAW(area.attrOff(attrs, error));
