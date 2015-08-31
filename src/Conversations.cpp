@@ -21,7 +21,7 @@
 #include <cstring>
 #include "gettext.h"
 
-Conversations *Conversations::my_instance_ = NULL;
+Conversations *Conversations::my_instance_ = nullptr;
 
 Conversations *Conversations::instance()
 {
@@ -156,14 +156,14 @@ Conversations::~Conversations()
     purple_conversation_destroy(
       conversations_.front().conv->getPurpleConversation());
 
-  purple_conversations_set_ui_ops(NULL);
+  purple_conversations_set_ui_ops(nullptr);
   purple_prefs_disconnect_by_handle(this);
   purple_signals_disconnect_by_handle(this);
 }
 
 void Conversations::init()
 {
-  g_assert(my_instance_ == NULL);
+  g_assert(my_instance_ == nullptr);
 
   my_instance_ = new Conversations;
   my_instance_->show();
@@ -171,10 +171,10 @@ void Conversations::init()
 
 void Conversations::finalize()
 {
-  g_assert(my_instance_ != NULL);
+  g_assert(my_instance_ != nullptr);
 
   delete my_instance_;
-  my_instance_ = NULL;
+  my_instance_ = nullptr;
 }
 
 int Conversations::findConversation(PurpleConversation *conv)
@@ -270,7 +270,7 @@ void Conversations::updateLabels()
 
 void Conversations::create_conversation(PurpleConversation *conv)
 {
-  g_return_if_fail(conv != NULL);
+  g_return_if_fail(conv != nullptr);
   g_return_if_fail(findConversation(conv) == -1);
 
   PurpleConversationType type = purple_conversation_get_type(conv);
@@ -280,7 +280,7 @@ void Conversations::create_conversation(PurpleConversation *conv)
     return;
   }
 
-  Conversation *conversation = new Conversation(conv);
+  auto conversation = new Conversation(conv);
 
   conv->ui_data = static_cast<void *>(conversation);
 
@@ -299,7 +299,7 @@ void Conversations::create_conversation(PurpleConversation *conv)
 
 void Conversations::destroy_conversation(PurpleConversation *conv)
 {
-  g_return_if_fail(conv != NULL);
+  g_return_if_fail(conv != nullptr);
 
   int i = findConversation(conv);
 
@@ -336,7 +336,7 @@ void Conversations::write_conv(PurpleConversation *conv, const char *name,
   const char *alias, const char *message, PurpleMessageFlags flags,
   time_t mtime)
 {
-  g_return_if_fail(conv != NULL);
+  g_return_if_fail(conv != nullptr);
 
   int i = findConversation(conv);
 
@@ -353,20 +353,20 @@ void Conversations::write_conv(PurpleConversation *conv, const char *name,
 
 ConversationRoomList *Conversations::getRoomList(PurpleConversation *conv)
 {
-  if (conv != NULL) {
+  if (conv != nullptr) {
     Conversation *conversation = static_cast<Conversation *>(conv->ui_data);
-    if (conversation != NULL)
+    if (conversation != nullptr)
       return conversation->getRoomList();
   }
 
-  return NULL;
+  return nullptr;
 }
 
 void Conversations::chat_add_users(
   PurpleConversation *conv, GList *cbuddies, gboolean new_arrivals)
 {
   ConversationRoomList *room_list = getRoomList(conv);
-  if (room_list != NULL)
+  if (room_list != nullptr)
     room_list->add_users(cbuddies, new_arrivals);
 }
 
@@ -374,21 +374,21 @@ void Conversations::chat_rename_user(PurpleConversation *conv,
   const char *old_name, const char *new_name, const char *new_alias)
 {
   ConversationRoomList *room_list = getRoomList(conv);
-  if (room_list != NULL)
+  if (room_list != nullptr)
     room_list->rename_user(old_name, new_name, new_alias);
 }
 
 void Conversations::chat_remove_users(PurpleConversation *conv, GList *users)
 {
   ConversationRoomList *room_list = getRoomList(conv);
-  if (room_list != NULL)
+  if (room_list != nullptr)
     room_list->remove_users(users);
 }
 
 void Conversations::chat_update_user(PurpleConversation *conv, const char *user)
 {
   ConversationRoomList *room_list = getRoomList(conv);
-  if (room_list != NULL)
+  if (room_list != nullptr)
     room_list->update_user(user);
 }
 
@@ -419,7 +419,7 @@ void Conversations::buddy_typing(PurpleAccount *account, const char *who)
   }
 
   PurpleConvIm *im = PURPLE_CONV_IM(conv);
-  g_assert(im != NULL);
+  g_assert(im != nullptr);
   if (purple_conv_im_get_typing_state(im) == PURPLE_TYPING)
     conversations_[i].typing_status = '*';
   else

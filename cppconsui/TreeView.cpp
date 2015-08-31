@@ -38,7 +38,7 @@ TreeView::ToggleCollapseButton::ToggleCollapseButton(const char *text)
 void TreeView::ToggleCollapseButton::setParent(Container &parent)
 {
   TreeView *tree = dynamic_cast<TreeView *>(&parent);
-  assert(tree != NULL);
+  assert(tree != nullptr);
 
   Button::setParent(parent);
   signal_activate.connect(
@@ -55,7 +55,7 @@ TreeView::TreeView(int w, int h) : Container(w, h)
   root.treeview = this;
   root.collapsed = false;
   root.style = STYLE_NORMAL;
-  root.widget = NULL;
+  root.widget = nullptr;
   thetree_.set_head(root);
   focus_node_ = thetree_.begin();
 
@@ -109,7 +109,7 @@ void TreeView::clear()
 
 bool TreeView::isWidgetVisible(const Widget &child) const
 {
-  if (parent_ == NULL || !visible_)
+  if (parent_ == nullptr || !visible_)
     return false;
 
   NodeReference node = findNode(child);
@@ -151,7 +151,7 @@ void TreeView::getFocusChain(
     Widget *widget = i->widget;
     Container *container = dynamic_cast<Container *>(widget);
 
-    if (container != NULL && container->isVisible()) {
+    if (container != nullptr && container->isVisible()) {
       // The widget is a container so add its widgets as well.
       FocusChain::pre_order_iterator iter =
         focus_chain.append_child(parent, container);
@@ -171,7 +171,7 @@ void TreeView::getFocusChain(
       // this node.
 
       Container *focus_cont = dynamic_cast<Container *>(focus_child_);
-      if (focus_cont != NULL) {
+      if (focus_cont != nullptr) {
         // The focused node is actually a Container. First add the Container,
         // then the focused widget.
         FocusChain::pre_order_iterator iter =
@@ -334,7 +334,7 @@ void TreeView::deleteNode(NodeReference node, bool keepchildren)
     thetree_.erase(i);
   }
 
-  if (node->widget != NULL)
+  if (node->widget != nullptr)
     removeWidget(*node->widget);
 
   thetree_.erase(node);
@@ -435,7 +435,7 @@ void TreeView::updateArea()
 int TreeView::drawNode(
   SiblingIterator node, int *out_height, Curses::ViewPort &area, Error &error)
 {
-  assert(out_height != NULL);
+  assert(out_height != nullptr);
 
   int top = 0;
   *out_height = 0;
@@ -472,7 +472,7 @@ int TreeView::drawNode(
   // for some reason it does not seem to work.
   SiblingIterator last = node.begin();
   for (i = node.begin(); i != node.end(); ++i) {
-    if (i->widget == NULL)
+    if (i->widget == nullptr)
       continue;
 
     if (!i->widget->isVisible())
@@ -550,7 +550,7 @@ void TreeView::fixFocus()
 
   Container *t = getTopContainer();
   Widget *focus = t->getFocusWidget();
-  if (focus == NULL) {
+  if (focus == nullptr) {
     // Try to grab the focus.
     t->moveFocus(FOCUS_DOWN);
   }
@@ -608,7 +608,7 @@ int TreeView::repositionChildren(SiblingIterator node, int top, bool in_visible)
 
   // Position the node Widget first.
   Widget *widget = node->widget;
-  if (widget != NULL) {
+  if (widget != nullptr) {
     int l = thetree_.depth(node) * 2;
     l += (node->style == STYLE_NORMAL && isNodeOpenable(node)) ? 3 : 1;
     widget->setRealPosition(l, top);

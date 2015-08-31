@@ -31,7 +31,7 @@ namespace CppConsUI {
 Window::Window(int x, int y, int w, int h, Type t, bool decorated)
   : Container(w, h), type_(t), decorated_(decorated), closable_(true)
 {
-  initWindow(x, y, NULL);
+  initWindow(x, y, nullptr);
 }
 
 Window::Window(
@@ -59,7 +59,7 @@ int Window::draw(Curses::ViewPort area, Error &error)
   // Reverse the top right corner of the window if there is not any focused
   // widget and the window is the top window. This way the user knows which
   // window is on the top and can be closed using the Esc key.
-  if (input_child_ == NULL && COREMANAGER->getTopWindow() == this)
+  if (input_child_ == nullptr && COREMANAGER->getTopWindow() == this)
     DRAW(area.changeAt(real_width_ - 1, 0, 1, Curses::Attr::REVERSE, 0, error));
 
   return 0;

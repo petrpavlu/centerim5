@@ -52,7 +52,7 @@ const char *getStatusIndicator(PurpleStatus *status)
 
 char *stripAccelerator(const char *label)
 {
-  g_assert(label != NULL);
+  g_assert(label != nullptr);
 
   // Calculate length of the string without accelerators.
   size_t len = 1;

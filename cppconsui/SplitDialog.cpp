@@ -27,15 +27,15 @@
 namespace CppConsUI {
 
 SplitDialog::SplitDialog(int x, int y, int w, int h, const char *title)
-  : AbstractDialog(x, y, w, h, title), container_(NULL), cont_old_focus_(NULL),
-    buttons_old_focus_(NULL)
+  : AbstractDialog(x, y, w, h, title), container_(nullptr),
+    cont_old_focus_(nullptr), buttons_old_focus_(nullptr)
 {
   buttons_->setFocusCycle(Container::FOCUS_CYCLE_LOCAL);
 }
 
 SplitDialog::SplitDialog(const char *title)
-  : AbstractDialog(title), container_(NULL), cont_old_focus_(NULL),
-    buttons_old_focus_(NULL)
+  : AbstractDialog(title), container_(nullptr), cont_old_focus_(nullptr),
+    buttons_old_focus_(nullptr)
 {
   buttons_->setFocusCycle(Container::FOCUS_CYCLE_LOCAL);
 }
@@ -45,26 +45,26 @@ SplitDialog::~SplitDialog()
   // Slots has to be disconnected manually because sigc::~trackable() is called
   // too late.
   cont_old_focus_conn_.disconnect();
-  cont_old_focus_ = NULL;
+  cont_old_focus_ = nullptr;
   buttons_old_focus_conn_.disconnect();
-  buttons_old_focus_ = NULL;
+  buttons_old_focus_ = nullptr;
 }
 
 void SplitDialog::cleanFocus()
 {
   Widget *f = layout_->getFocusChild();
-  if (f != NULL) {
+  if (f != nullptr) {
     if (f == container_) {
       cont_old_focus_conn_.disconnect();
       cont_old_focus_ = container_->getFocusWidget();
-      if (cont_old_focus_ != NULL)
+      if (cont_old_focus_ != nullptr)
         cont_old_focus_conn_ = cont_old_focus_->signal_visible.connect(
           sigc::mem_fun(this, &SplitDialog::onOldFocusVisible));
     }
     else if (f == buttons_) {
       buttons_old_focus_conn_.disconnect();
       buttons_old_focus_ = buttons_->getFocusWidget();
-      if (buttons_old_focus_ != NULL)
+      if (buttons_old_focus_ != nullptr)
         buttons_old_focus_conn_ = buttons_old_focus_->signal_visible.connect(
           sigc::mem_fun(this, &SplitDialog::onOldFocusVisible));
     }
@@ -75,7 +75,7 @@ void SplitDialog::cleanFocus()
 
 void SplitDialog::moveFocus(FocusDirection direction)
 {
-  if (container_ == NULL) {
+  if (container_ == nullptr) {
     AbstractDialog::moveFocus(direction);
     return;
   }
@@ -86,15 +86,15 @@ void SplitDialog::moveFocus(FocusDirection direction)
   case FOCUS_PREVIOUS:
     if (layout_->getFocusChild() == container_) {
       // Focus is held by the container, give it to the last button.
-      FocusChain focus_chain(NULL);
+      FocusChain focus_chain(nullptr);
       buttons_->getFocusChain(focus_chain, focus_chain.begin());
 
       FocusChain::pre_order_iterator iter = --focus_chain.end();
-      if (*iter != NULL && (*iter)->grabFocus())
+      if (*iter != nullptr && (*iter)->grabFocus())
         return;
     }
     else if (layout_->getFocusChild() == buttons_) {
-      FocusChain focus_chain(NULL);
+      FocusChain focus_chain(nullptr);
       buttons_->getFocusChain(focus_chain, focus_chain.begin());
 
       FocusChain::leaf_iterator iter = focus_chain.begin_leaf();
@@ -113,7 +113,7 @@ void SplitDialog::moveFocus(FocusDirection direction)
         return;
     }
     else if (layout_->getFocusChild() == buttons_) {
-      FocusChain focus_chain(NULL);
+      FocusChain focus_chain(nullptr);
       buttons_->getFocusChain(focus_chain, focus_chain.begin());
 
       FocusChain::pre_order_iterator iter = --focus_chain.end();
@@ -153,7 +153,7 @@ void SplitDialog::moveFocus(FocusDirection direction)
 
 void SplitDialog::setContainer(Container &cont)
 {
-  assert(container_ == NULL);
+  assert(container_ == nullptr);
 
   container_ = &cont;
   cont.setFocusCycle(Container::FOCUS_CYCLE_LOCAL);
@@ -172,11 +172,11 @@ void SplitDialog::onOldFocusVisible(Widget &activator, bool visible)
 
   if (&activator == cont_old_focus_) {
     cont_old_focus_conn_.disconnect();
-    cont_old_focus_ = NULL;
+    cont_old_focus_ = nullptr;
   }
   else if (&activator == buttons_old_focus_) {
     buttons_old_focus_conn_.disconnect();
-    buttons_old_focus_ = NULL;
+    buttons_old_focus_ = nullptr;
   }
   else
     assert(0);

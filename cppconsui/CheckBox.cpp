@@ -32,7 +32,7 @@
 namespace CppConsUI {
 
 CheckBox::CheckBox(int w, int h, const char *text, bool checked)
-  : Widget(w, h), text_(NULL), text_width_(0), text_height_(0),
+  : Widget(w, h), text_(nullptr), text_width_(0), text_height_(0),
     checked_(checked)
 {
   setText(text);
@@ -42,7 +42,7 @@ CheckBox::CheckBox(int w, int h, const char *text, bool checked)
 }
 
 CheckBox::CheckBox(const char *text, bool checked)
-  : Widget(AUTOSIZE, AUTOSIZE), text_(NULL), text_width_(0), text_height_(0),
+  : Widget(AUTOSIZE, AUTOSIZE), text_(nullptr), text_width_(0), text_height_(0),
     checked_(checked)
 {
   setText(text);
@@ -58,7 +58,7 @@ CheckBox::~CheckBox()
 
 int CheckBox::draw(Curses::ViewPort area, Error &error)
 {
-  assert(text_ != NULL);
+  assert(text_ != nullptr);
 
   int attrs;
   if (has_focus_) {
@@ -104,10 +104,10 @@ int CheckBox::draw(Curses::ViewPort area, Error &error)
 void CheckBox::setText(const char *new_text)
 {
   size_t size = 1;
-  if (new_text != NULL)
+  if (new_text != nullptr)
     size += std::strlen(new_text);
-  char *new_storage = new char[size];
-  if (new_text != NULL)
+  auto new_storage = new char[size];
+  if (new_text != nullptr)
     std::strcpy(new_storage, new_text);
   else
     new_storage[0] = '\0';

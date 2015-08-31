@@ -29,7 +29,7 @@
 namespace CppConsUI {
 
 MenuWindow::MenuWindow(int x, int y, int w, int h, const char *title)
-  : Window(x, y, w, h, title, TYPE_TOP), wish_height_(3), ref_(NULL),
+  : Window(x, y, w, h, title, TYPE_TOP), wish_height_(3), ref_(nullptr),
     xshift_(0), yshift_(0), hide_on_close_(false)
 {
   wish_width_ = MENU_WINDOW_WISH_WIDTH;
@@ -41,7 +41,7 @@ MenuWindow::MenuWindow(int x, int y, int w, int h, const char *title)
 }
 
 MenuWindow::MenuWindow(Widget &ref, int w, int h, const char *title)
-  : Window(0, 0, w, h, title, TYPE_TOP), wish_height_(3), ref_(NULL),
+  : Window(0, 0, w, h, title, TYPE_TOP), wish_height_(3), ref_(nullptr),
     xshift_(0), yshift_(0), hide_on_close_(false)
 {
   wish_width_ = MENU_WINDOW_WISH_WIDTH;
@@ -68,7 +68,7 @@ void MenuWindow::onAbsolutePositionChange(Widget &widget)
 
 void MenuWindow::show()
 {
-  if (ref_ != NULL) {
+  if (ref_ != nullptr) {
     assert(!ref_visible_conn_.connected());
 
     ref_visible_conn_ = ref_->signal_visible.connect(
@@ -86,7 +86,7 @@ void MenuWindow::show()
 
 void MenuWindow::hide()
 {
-  if (ref_ != NULL)
+  if (ref_ != nullptr)
     ref_visible_conn_.disconnect();
 
   Window::hide();
@@ -144,12 +144,12 @@ void MenuWindow::setReferenceWidget(Widget &new_ref)
 
 void MenuWindow::cleanReferenceWidget()
 {
-  if (ref_ == NULL)
+  if (ref_ == nullptr)
     return;
 
   ref_->remove_destroy_notify_callback(this);
   ref_->unregisterAbsolutePositionListener(*this);
-  ref_ = NULL;
+  ref_ = nullptr;
 }
 
 void MenuWindow::setLeftShift(int x)
@@ -183,7 +183,7 @@ Button *MenuWindow::prepareSubMenu(const char *title, MenuWindow &submenu)
   signal_hide.connect(sigc::hide(sigc::mem_fun(submenu, &MenuWindow::hide)));
 
   // Create an opening button.
-  Button *button = new Button(title);
+  auto button = new Button(title);
   button->signal_activate.connect(
     sigc::hide(sigc::mem_fun(submenu, &MenuWindow::show)));
 
@@ -202,7 +202,7 @@ void MenuWindow::updatePositionAndSize()
   // - the listbox wish height changed,
   // - reference widget changed its position on the screen.
 
-  if (ref_ == NULL) {
+  if (ref_ == nullptr) {
     // Absolute screen position.
     int h = listbox_->getChildrenHeight() + 2;
     int max = Curses::getHeight() - ypos_;
@@ -272,8 +272,8 @@ void MenuWindow::onReferenceWidgetVisible(Widget & /*activator*/, bool visible)
 void MenuWindow::onReferenceWidgetDestroy()
 {
   // Ref widget is about to die right now, this window should be destroyed too.
-  assert(ref_ != NULL);
-  ref_ = NULL;
+  assert(ref_ != nullptr);
+  ref_ = nullptr;
   delete this;
 }
 

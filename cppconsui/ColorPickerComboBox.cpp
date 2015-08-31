@@ -45,10 +45,10 @@ ColorPickerComboBox::ColorPickerComboBox(int w, int color)
   // Add ANSI colors.
   int colors = std::min(Curses::NUM_DEFAULT_COLORS, Curses::getColorCount());
   for (int i = 0; i < colors; ++i)
-    addOption(NULL, i);
+    addOption(nullptr, i);
 
   // Add options for default color and to open the 256 color dialog.
-  addOption(NULL, Curses::Color::DEFAULT);
+  addOption(nullptr, Curses::Color::DEFAULT);
 #ifdef COLORPICKER_256COLOR
   addOption(_("More..."), COLOR_MORE);
 #endif // COLORPICKER_256COLOR

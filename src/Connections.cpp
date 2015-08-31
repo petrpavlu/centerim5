@@ -25,7 +25,7 @@
 #define RECONNECTION_DELAY_MIN 60000
 #define RECONNECTION_DELAY_MAX 120000
 
-Connections *Connections::my_instance_ = NULL;
+Connections *Connections::my_instance_ = nullptr;
 
 Connections *Connections::instance()
 {
@@ -51,27 +51,27 @@ Connections::Connections()
 
 Connections::~Connections()
 {
-  purple_connections_set_ui_ops(NULL);
+  purple_connections_set_ui_ops(nullptr);
 }
 
 void Connections::init()
 {
-  g_assert(my_instance_ == NULL);
+  g_assert(my_instance_ == nullptr);
 
   my_instance_ = new Connections;
 }
 
 void Connections::finalize()
 {
-  g_assert(my_instance_ != NULL);
+  g_assert(my_instance_ != nullptr);
 
   delete my_instance_;
-  my_instance_ = NULL;
+  my_instance_ = nullptr;
 }
 
 void Connections::reconnectAccount(PurpleAccount *account)
 {
-  g_return_if_fail(account != NULL);
+  g_return_if_fail(account != nullptr);
 
   if (!purple_account_is_disconnected(account) ||
     !purple_status_is_online(purple_account_get_active_status(account)))
@@ -117,7 +117,7 @@ void Connections::network_connected()
 
   GList *list, *l;
   l = list = purple_accounts_get_all_active();
-  while (l != NULL) {
+  while (l != nullptr) {
     PurpleAccount *account = reinterpret_cast<PurpleAccount *>(l->data);
     if (purple_account_is_disconnected(account))
       reconnectAccount(account);
@@ -133,7 +133,7 @@ void Connections::network_disconnected()
 
   GList *list, *l;
   l = list = purple_accounts_get_all_active();
-  while (l != NULL) {
+  while (l != nullptr) {
     PurpleAccount *a = reinterpret_cast<PurpleAccount *>(l->data);
     if (!purple_account_is_disconnected(a))
       purple_account_disconnect(a);

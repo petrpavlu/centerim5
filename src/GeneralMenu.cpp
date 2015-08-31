@@ -49,7 +49,7 @@ GeneralMenu::GeneralMenu() : MenuWindow(0, 0, AUTOSIZE, AUTOSIZE)
     _("Plugins..."), sigc::mem_fun(this, &GeneralMenu::openPluginWindow));
   appendSeparator();
 #ifdef DEBUG
-  MenuWindow *submenu = new MenuWindow(0, 0, AUTOSIZE, AUTOSIZE);
+  auto submenu = new MenuWindow(0, 0, AUTOSIZE, AUTOSIZE);
   submenu->setColorScheme(CenterIM::SCHEME_GENERALMENU);
   submenu->appendItem(
     "Request input", sigc::mem_fun(this, &GeneralMenu::openRequestInputTest));
@@ -75,27 +75,27 @@ void GeneralMenu::onScreenResized()
 
 void GeneralMenu::openStatusWindow(CppConsUI::Button & /*activator*/)
 {
-  AccountStatusMenu *win = new AccountStatusMenu;
+  auto win = new AccountStatusMenu;
   win->show();
   close();
 }
 
 void GeneralMenu::openAccountWindow(CppConsUI::Button & /*activator*/)
 {
-  AccountWindow *win = new AccountWindow;
+  auto win = new AccountWindow;
   win->show();
   close();
 }
 
 void GeneralMenu::openAddBuddyRequest(CppConsUI::Button & /*activator*/)
 {
-  purple_blist_request_add_buddy(NULL, NULL, NULL, NULL);
+  purple_blist_request_add_buddy(nullptr, nullptr, nullptr, nullptr);
   close();
 }
 
 void GeneralMenu::openAddChatRequest(CppConsUI::Button & /*activator*/)
 {
-  purple_blist_request_add_chat(NULL, NULL, NULL, NULL);
+  purple_blist_request_add_chat(nullptr, nullptr, nullptr, nullptr);
   close();
 }
 
@@ -113,14 +113,14 @@ void GeneralMenu::openPendingRequests(CppConsUI::Button & /*activator*/)
 
 void GeneralMenu::openOptionWindow(CppConsUI::Button & /*activator*/)
 {
-  OptionWindow *win = new OptionWindow;
+  auto win = new OptionWindow;
   win->show();
   close();
 }
 
 void GeneralMenu::openPluginWindow(CppConsUI::Button & /*activator*/)
 {
-  PluginWindow *win = new PluginWindow;
+  auto win = new PluginWindow;
   win->show();
   close();
 }
@@ -128,27 +128,27 @@ void GeneralMenu::openPluginWindow(CppConsUI::Button & /*activator*/)
 #ifdef DEBUG
 void GeneralMenu::openRequestInputTest(CppConsUI::Button & /*activator*/)
 {
-  purple_request_input(NULL, "Title", "Primary", "Secondary", "default value",
-    FALSE, FALSE, NULL, "Ok", G_CALLBACK(input_ok_cb_), "Cancel", NULL, NULL,
-    NULL, NULL, this);
+  purple_request_input(nullptr, "Title", "Primary", "Secondary",
+    "default value", FALSE, FALSE, nullptr, "Ok", G_CALLBACK(input_ok_cb_),
+    "Cancel", nullptr, nullptr, nullptr, nullptr, this);
 
   close();
 }
 
 void GeneralMenu::openRequestChoiceTest(CppConsUI::Button & /*activator*/)
 {
-  purple_request_choice(NULL, "Title", "Primary", "Secondary", 1, "Ok",
-    G_CALLBACK(choice_ok_cb_), "Cancel", NULL, NULL, NULL, NULL, this,
-    "Option 0", 0, "Option 1", 1, "Option 2", 2, NULL);
+  purple_request_choice(nullptr, "Title", "Primary", "Secondary", 1, "Ok",
+    G_CALLBACK(choice_ok_cb_), "Cancel", nullptr, nullptr, nullptr, nullptr,
+    this, "Option 0", 0, "Option 1", 1, "Option 2", 2, NULL);
 
   close();
 }
 
 void GeneralMenu::openRequestActionTest(CppConsUI::Button & /*activator*/)
 {
-  purple_request_action(NULL, "Title", "Primary", "Secondary", 1, NULL, NULL,
-    NULL, this, 3, "Action 0", G_CALLBACK(action_cb_), "Action 1", NULL,
-    "Action 2", G_CALLBACK(action_cb_));
+  purple_request_action(nullptr, "Title", "Primary", "Secondary", 1, nullptr,
+    nullptr, nullptr, this, 3, "Action 0", G_CALLBACK(action_cb_), "Action 1",
+    NULL, "Action 2", G_CALLBACK(action_cb_));
 
   close();
 }
@@ -163,7 +163,8 @@ void GeneralMenu::openRequestFieldsTest(CppConsUI::Button & /*activator*/)
   PurpleRequestField *f;
   f = purple_request_field_string_new("text0", "String field 0", "def0", FALSE);
   purple_request_field_group_add_field(g, f);
-  f = purple_request_field_string_new("text1", "String field 1", NULL, FALSE);
+  f =
+    purple_request_field_string_new("text1", "String field 1", nullptr, FALSE);
   purple_request_field_group_add_field(g, f);
   f = purple_request_field_int_new("int0", "Int field 0", INT_MAX);
   purple_request_field_group_add_field(g, f);
@@ -195,12 +196,13 @@ void GeneralMenu::openRequestFieldsTest(CppConsUI::Button & /*activator*/)
   purple_request_field_list_add_selected(f, "Three");
   purple_request_field_group_add_field(g, f);
 
-  f = purple_request_field_account_new("account0", "Account field 0", NULL);
+  f = purple_request_field_account_new("account0", "Account field 0", nullptr);
   purple_request_field_account_set_show_all(f, TRUE);
   purple_request_field_group_add_field(g, f);
 
-  purple_request_fields(NULL, "Title", "Primary", "Secondary", fields, "Ok",
-    G_CALLBACK(fields_ok_cb_), "Cancel", NULL, NULL, NULL, NULL, this);
+  purple_request_fields(nullptr, "Title", "Primary", "Secondary", fields, "Ok",
+    G_CALLBACK(fields_ok_cb_), "Cancel", nullptr, nullptr, nullptr, nullptr,
+    this);
 
   close();
 }
@@ -232,13 +234,13 @@ void GeneralMenu::fields_ok_cb(PurpleRequestFields *fields)
 
   for (GList *list = purple_request_field_list_get_selected(
          purple_request_fields_get_field(fields, "list0"));
-       list != NULL; list = list->next)
+       list != nullptr; list = list->next)
     LOG->debug(
       "fields_ok_cb: list0=%s", reinterpret_cast<const char *>(list->data));
 
   for (GList *list = purple_request_field_list_get_selected(
          purple_request_fields_get_field(fields, "list1"));
-       list != NULL; list = list->next)
+       list != nullptr; list = list->next)
     LOG->debug(
       "fields_ok_cb: list1=%s", reinterpret_cast<const char *>(list->data));
 

@@ -40,7 +40,7 @@ TextEntry::TextEntry(const char *text_, int flags_)
 
 void TextEntry::actionActivate()
 {
-  if (parent_ != NULL)
+  if (parent_ != nullptr)
     parent_->moveFocus(Container::FOCUS_NEXT);
 }
 

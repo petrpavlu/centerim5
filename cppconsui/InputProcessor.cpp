@@ -25,7 +25,7 @@
 
 namespace CppConsUI {
 
-InputProcessor::InputProcessor() : input_child_(NULL)
+InputProcessor::InputProcessor() : input_child_(nullptr)
 {
 }
 
@@ -36,7 +36,7 @@ bool InputProcessor::processInput(const TermKeyKey &key)
     return true;
 
   // Hand of input to a child.
-  if (input_child_ != NULL && input_child_->processInput(key))
+  if (input_child_ != nullptr && input_child_->processInput(key))
     return true;
 
   // Process other key combinations.
@@ -58,7 +58,7 @@ void InputProcessor::setInputChild(InputProcessor &child)
 
 void InputProcessor::clearInputChild()
 {
-  input_child_ = NULL;
+  input_child_ = nullptr;
 }
 
 void InputProcessor::declareBindable(const char *context, const char *action,
@@ -69,19 +69,18 @@ void InputProcessor::declareBindable(const char *context, const char *action,
 
 bool InputProcessor::process(BindableType type, const TermKeyKey &key)
 {
-  for (Bindables::iterator i = keybindings_.begin(); i != keybindings_.end();
-       ++i) {
+  for (std::pair<const std::string, BindableContext> &keybind : keybindings_) {
     // Get keys for this context.
     const KeyConfig::KeyBindContext *keys =
-      KEYCONFIG->getKeyBinds(i->first.c_str());
-    if (keys == NULL)
+      KEYCONFIG->getKeyBinds(keybind.first.c_str());
+    if (keys == nullptr)
       continue;
     KeyConfig::KeyBindContext::const_iterator j = keys->find(key);
     if (j == keys->end())
       continue;
 
-    BindableContext::iterator k = i->second.find(j->second);
-    if (k != i->second.end() && k->second.type == type) {
+    BindableContext::iterator k = keybind.second.find(j->second);
+    if (k != keybind.second.end() && k->second.type == type) {
       k->second.function();
       return true;
     }

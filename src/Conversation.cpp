@@ -28,10 +28,10 @@
 #include "gettext.h"
 
 Conversation::Conversation(PurpleConversation *conv)
-  : Window(0, 0, 80, 24), conv_(conv), filename_(NULL), logfile_(NULL),
-    input_text_length_(0), room_list_(NULL), room_list_line_(NULL)
+  : Window(0, 0, 80, 24), conv_(conv), filename_(nullptr), logfile_(nullptr),
+    input_text_length_(0), room_list_(nullptr), room_list_line_(nullptr)
 {
-  g_assert(conv_ != NULL);
+  g_assert(conv_ != nullptr);
 
   setColorScheme(CenterIM::SCHEME_CONVERSATION);
 
@@ -62,9 +62,9 @@ Conversation::Conversation(PurpleConversation *conv)
   // Open logfile.
   buildLogFilename();
 
-  GError *err = NULL;
+  GError *err = nullptr;
   logfile_ = g_io_channel_new_file(filename_, "a", &err);
-  if (logfile_ == NULL) {
+  if (logfile_ == nullptr) {
     LOG->error(_("Error opening conversation logfile '%s' (%s)."), filename_,
       err->message);
     g_clear_error(&err);
@@ -79,7 +79,7 @@ Conversation::Conversation(PurpleConversation *conv)
 Conversation::~Conversation()
 {
   g_free(filename_);
-  if (logfile_ != NULL)
+  if (logfile_ != nullptr)
     g_io_channel_unref(logfile_);
 }
 
@@ -111,7 +111,7 @@ void Conversation::moveResize(int newx, int newy, int neww, int newh)
   roomlist_percentage = CLAMP(roomlist_percentage, 0, 100);
 
   int view_width = neww - 2;
-  if (room_list_ != NULL)
+  if (room_list_ != nullptr)
     view_width = (view_width * roomlist_percentage) / 100;
 
   view_->moveResize(1, 0, view_width, view_height);
@@ -120,7 +120,7 @@ void Conversation::moveResize(int newx, int newy, int neww, int newh)
   line_->moveResize(0, view_height, neww, 1);
 
   // Place the room list if it exists.
-  if (room_list_ != NULL) {
+  if (room_list_ != nullptr) {
     // +2 accounts for borders.
     room_list_line_->moveResize(view_width + 1, 0, 1, view_height);
     // Give it some padding to make it line up.
@@ -142,7 +142,7 @@ bool Conversation::restoreFocus()
 
 void Conversation::ungrabFocus()
 {
-  FOOTER->setText(NULL);
+  FOOTER->setText(nullptr);
   Window::ungrabFocus();
 }
 
@@ -188,7 +188,7 @@ void Conversation::write(const char *name, const char * /*alias*/,
 
   // Update the last_activity property.
   PurpleConversationType type = purple_conversation_get_type(conv_);
-  time_t cur_time = time(NULL);
+  time_t cur_time = time(nullptr);
 
   if (type == PURPLE_CONV_TYPE_IM) {
     PurpleBlistNode *bnode = PURPLE_BLIST_NODE(
@@ -231,9 +231,9 @@ void Conversation::write(const char *name, const char * /*alias*/,
     else
       log_msg = g_strdup_printf(
         "\f\n%s\n%s\n%lu\n%lu\n%s\n", dir, mtype, mtime, cur_time, message);
-    if (logfile_ != NULL) {
-      GError *err = NULL;
-      if (g_io_channel_write_chars(logfile_, log_msg, -1, NULL, &err) !=
+    if (logfile_ != nullptr) {
+      GError *err = nullptr;
+      if (g_io_channel_write_chars(logfile_, log_msg, -1, nullptr, &err) !=
         G_IO_STATUS_NORMAL) {
         LOG->error(
           _("Error writing to conversation logfile (%s)."), err->message);
@@ -267,7 +267,7 @@ void Conversation::write(const char *name, const char * /*alias*/,
 Conversation::ConversationLine::ConversationLine(const char *text)
   : AbstractLine(AUTOSIZE, 1)
 {
-  g_assert(text != NULL);
+  g_assert(text != nullptr);
 
   text_ = g_strdup(text);
   text_width_ = CppConsUI::Curses::onScreenWidth(text_);
@@ -315,15 +315,15 @@ char *Conversation::stripHTML(const char *str) const
   // Almost copy&paste from libpurple/util.c:purple_markup_strip_html(), but
   // this version does not convert tab character to a space.
 
-  if (str == NULL)
-    return NULL;
+  if (str == nullptr)
+    return nullptr;
 
   int i, j, k, entlen;
   bool visible = true;
   bool closing_td_p = false;
   gchar *str2;
-  const gchar *cdata_close_tag = NULL, *ent;
-  gchar *href = NULL;
+  const gchar *cdata_close_tag = nullptr, *ent;
+  gchar *href = nullptr;
   int href_st = 0;
 
   str2 = g_strdup(str);
@@ -335,7 +335,7 @@ char *Conversation::stripHTML(const char *str) const
         if (g_ascii_strncasecmp(
               str2 + i, cdata_close_tag, !strlen(cdata_close_tag))) {
           i += strlen(cdata_close_tag) - 1;
-          cdata_close_tag = NULL;
+          cdata_close_tag = nullptr;
         }
         continue;
       }
@@ -400,7 +400,7 @@ char *Conversation::stripHTML(const char *str) const
 
         // Replace </a> with an ascii representation of the address the link was
         // pointing to.
-        else if (href != NULL &&
+        else if (href != nullptr &&
           g_ascii_strncasecmp(str2 + i, "</a>", 4) == 0) {
           size_t hrlen = std::strlen(href);
 
@@ -416,7 +416,7 @@ char *Conversation::stripHTML(const char *str) const
             j += hrlen;
             str2[j++] = ')';
             g_free(href);
-            href = NULL;
+            href = nullptr;
           }
         }
 
@@ -468,7 +468,7 @@ void Conversation::buildLogFilename()
   PurpleAccount *account = purple_conversation_get_account(conv_);
   PurplePlugin *prpl =
     purple_find_prpl(purple_account_get_protocol_id(account));
-  g_assert(prpl != NULL);
+  g_assert(prpl != nullptr);
 
   const char *proto_name = purple_account_get_protocol_name(account);
 
@@ -495,9 +495,9 @@ char *Conversation::extractTime(time_t sent_time, time_t show_time) const
   // Convert to local time, note that localtime_r() should not really fail.
   struct tm show_time_local;
   struct tm sent_time_local;
-  if (localtime_r(&show_time, &show_time_local) == NULL)
+  if (localtime_r(&show_time, &show_time_local) == nullptr)
     memset(&show_time_local, 0, sizeof(show_time_local));
-  if (localtime_r(&sent_time, &sent_time_local) == NULL)
+  if (localtime_r(&sent_time, &sent_time_local) == nullptr)
     memset(&sent_time_local, 0, sizeof(sent_time_local));
 
   // Format the times.
@@ -520,23 +520,23 @@ char *Conversation::extractTime(time_t sent_time, time_t show_time) const
 void Conversation::loadHistory()
 {
   // Open logfile.
-  GError *err = NULL;
+  GError *err = nullptr;
   GIOChannel *chan = g_io_channel_new_file(filename_, "r", &err);
-  if (chan == NULL) {
+  if (chan == nullptr) {
     LOG->error(_("Error opening conversation logfile '%s' (%s)."), filename_,
       err->message);
     g_clear_error(&err);
     return;
   }
   // This should never fail.
-  g_io_channel_set_encoding(chan, NULL, NULL);
+  g_io_channel_set_encoding(chan, nullptr, nullptr);
 
   GIOStatus st;
   char *line;
   bool new_msg = false;
   // Read conversation logfile line by line.
   while (new_msg ||
-    (st = g_io_channel_read_line(chan, &line, NULL, NULL, &err)) ==
+    (st = g_io_channel_read_line(chan, &line, nullptr, nullptr, &err)) ==
       G_IO_STATUS_NORMAL) {
     new_msg = false;
 
@@ -548,7 +548,7 @@ void Conversation::loadHistory()
     g_free(line);
 
     // Parse direction (in/out).
-    if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err)) !=
+    if ((st = g_io_channel_read_line(chan, &line, nullptr, nullptr, &err)) !=
       G_IO_STATUS_NORMAL)
       break;
     int color = 0;
@@ -559,7 +559,7 @@ void Conversation::loadHistory()
     g_free(line);
 
     // Handle type.
-    if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err)) !=
+    if ((st = g_io_channel_read_line(chan, &line, nullptr, nullptr, &err)) !=
       G_IO_STATUS_NORMAL)
       break;
     bool cim4 = true;
@@ -572,14 +572,14 @@ void Conversation::loadHistory()
     g_free(line);
 
     // Sent time.
-    if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err)) !=
+    if ((st = g_io_channel_read_line(chan, &line, nullptr, nullptr, &err)) !=
       G_IO_STATUS_NORMAL)
       break;
     time_t sent_time = atol(line);
     g_free(line);
 
     // Show time.
-    if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err)) !=
+    if ((st = g_io_channel_read_line(chan, &line, nullptr, nullptr, &err)) !=
       G_IO_STATUS_NORMAL)
       break;
     time_t show_time = atol(line);
@@ -587,12 +587,12 @@ void Conversation::loadHistory()
 
     if (!cim4) {
       // cim5, read only one line and strip it off HTML.
-      if ((st = g_io_channel_read_line(chan, &line, NULL, NULL, &err)) !=
+      if ((st = g_io_channel_read_line(chan, &line, nullptr, nullptr, &err)) !=
         G_IO_STATUS_NORMAL)
         break;
 
       // Validate UTF-8.
-      if (!g_utf8_validate(line, -1, NULL)) {
+      if (!g_utf8_validate(line, -1, nullptr)) {
         g_free(line);
         LOG->error(_("Invalid message detected in conversation logfile"
                      " '%s'. The message was skipped."),
@@ -614,9 +614,9 @@ void Conversation::loadHistory()
       // cim4, read multiple raw lines.
       gsize length;
       std::string msg;
-      while ((st = g_io_channel_read_line(chan, &line, &length, NULL, &err)) ==
-          G_IO_STATUS_NORMAL &&
-        line != NULL) {
+      while ((st = g_io_channel_read_line(
+                chan, &line, &length, nullptr, &err)) == G_IO_STATUS_NORMAL &&
+        line != nullptr) {
         if (std::strcmp(line, "\f\n") == 0) {
           new_msg = true;
           break;
@@ -637,7 +637,7 @@ void Conversation::loadHistory()
       }
 
       // Validate UTF-8.
-      if (!g_utf8_validate(msg.c_str(), -1, NULL)) {
+      if (!g_utf8_validate(msg.c_str(), -1, nullptr)) {
         LOG->error(_("Invalid message detected in conversation logfile"
                      " '%s'. The message was skipped."),
           filename_);
@@ -667,9 +667,10 @@ bool Conversation::processCommand(const char *raw, const char *html)
   if (std::strncmp(raw, "/", 1) != 0)
     return false;
 
-  purple_conversation_write(conv_, "", html, PURPLE_MESSAGE_NO_LOG, time(NULL));
+  purple_conversation_write(
+    conv_, "", html, PURPLE_MESSAGE_NO_LOG, time(nullptr));
 
-  char *error = NULL;
+  char *error = nullptr;
   // Strip the prefix and execute the command.
   PurpleCmdStatus status =
     purple_cmd_do_command(conv_, raw + 1, html + 1, &error);
@@ -685,27 +686,27 @@ bool Conversation::processCommand(const char *raw, const char *html)
   case PURPLE_CMD_STATUS_WRONG_ARGS:
     purple_conversation_write(conv_, "",
       _("Wrong number of arguments passed to the command."),
-      PURPLE_MESSAGE_NO_LOG, time(NULL));
+      PURPLE_MESSAGE_NO_LOG, time(nullptr));
     break;
   case PURPLE_CMD_STATUS_FAILED:
     purple_conversation_write(conv_, "",
       error ? error : _("The command failed for an unknown reason."),
-      PURPLE_MESSAGE_NO_LOG, time(NULL));
+      PURPLE_MESSAGE_NO_LOG, time(nullptr));
     break;
   case PURPLE_CMD_STATUS_WRONG_TYPE:
     if (purple_conversation_get_type(conv_) == PURPLE_CONV_TYPE_IM)
       purple_conversation_write(conv_, "",
         _("The command only works in chats, not IMs."), PURPLE_MESSAGE_NO_LOG,
-        time(NULL));
+        time(nullptr));
     else
       purple_conversation_write(conv_, "",
         _("The command only works in IMs, not chats."), PURPLE_MESSAGE_NO_LOG,
-        time(NULL));
+        time(nullptr));
     break;
   case PURPLE_CMD_STATUS_WRONG_PRPL:
     purple_conversation_write(conv_, "",
       _("The command does not work on this protocol."), PURPLE_MESSAGE_NO_LOG,
-      time(NULL));
+      time(nullptr));
     break;
   }
 
@@ -717,7 +718,7 @@ bool Conversation::processCommand(const char *raw, const char *html)
 void Conversation::onInputTextChange(CppConsUI::TextEdit &activator)
 {
   PurpleConvIm *im = PURPLE_CONV_IM(conv_);
-  if (im == NULL)
+  if (im == nullptr)
     return;
 
   if (!CONVERSATIONS->getSendTypingPref()) {
@@ -743,7 +744,7 @@ void Conversation::onInputTextChange(CppConsUI::TextEdit &activator)
 
   time_t again = purple_conv_im_get_type_again(im);
   if ((old_text_length == 0 && new_text_length != 0) ||
-    (again != 0 && time(NULL) > again)) {
+    (again != 0 && time(nullptr) > again)) {
     // The first letter is inserted or update is required for typing status.
     unsigned int timeout = serv_send_typing(purple_conversation_get_gc(conv_),
       purple_conversation_get_name(conv_), PURPLE_TYPING);
@@ -754,7 +755,7 @@ void Conversation::onInputTextChange(CppConsUI::TextEdit &activator)
 void Conversation::actionSend()
 {
   const char *str = input_->getText();
-  if (str == NULL || str[0] == '\0')
+  if (str == nullptr || str[0] == '\0')
     return;
 
   purple_idle_touch();

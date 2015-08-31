@@ -29,12 +29,12 @@
 
 namespace CppConsUI {
 
-Label::Label(int w, int h, const char *text) : Widget(w, h), text_(NULL)
+Label::Label(int w, int h, const char *text) : Widget(w, h), text_(nullptr)
 {
   setText(text);
 }
 
-Label::Label(const char *text) : Widget(AUTOSIZE, AUTOSIZE), text_(NULL)
+Label::Label(const char *text) : Widget(AUTOSIZE, AUTOSIZE), text_(nullptr)
 {
   setText(text);
 }
@@ -75,10 +75,10 @@ int Label::draw(Curses::ViewPort area, Error &error)
 void Label::setText(const char *new_text)
 {
   size_t size = 1;
-  if (new_text != NULL)
+  if (new_text != nullptr)
     size += std::strlen(new_text);
-  char *new_storage = new char[size];
-  if (new_text != NULL)
+  auto new_storage = new char[size];
+  if (new_text != nullptr)
     std::strcpy(new_storage, new_text);
   else
     new_storage[0] = '\0';

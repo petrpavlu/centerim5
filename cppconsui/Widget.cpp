@@ -35,7 +35,7 @@ Widget::Widget(int w, int h)
   : xpos_(UNSETPOS), ypos_(UNSETPOS), width_(w), height_(h),
     wish_width_(AUTOSIZE), wish_height_(AUTOSIZE), real_xpos_(UNSETPOS),
     real_ypos_(UNSETPOS), real_width_(0), real_height_(0), can_focus_(false),
-    has_focus_(false), visible_(true), parent_(NULL), color_scheme_(0),
+    has_focus_(false), visible_(true), parent_(nullptr), color_scheme_(0),
     absolute_position_listeners_(0)
 {
 }
@@ -44,7 +44,7 @@ Widget::~Widget()
 {
   setVisibility(false);
 
-  if (parent_ != NULL && absolute_position_listeners_.size() > 0)
+  if (parent_ != nullptr && absolute_position_listeners_.size() > 0)
     parent_->unregisterAbsolutePositionListener(*this);
 }
 
@@ -68,7 +68,7 @@ Widget *Widget::getFocusWidget()
 {
   if (can_focus_)
     return this;
-  return NULL;
+  return nullptr;
 }
 
 void Widget::cleanFocus()
@@ -88,7 +88,7 @@ bool Widget::restoreFocus()
 
 void Widget::ungrabFocus()
 {
-  if (parent_ == NULL || !has_focus_)
+  if (parent_ == nullptr || !has_focus_)
     return;
 
   has_focus_ = false;
@@ -98,7 +98,7 @@ void Widget::ungrabFocus()
 
 bool Widget::grabFocus()
 {
-  if (parent_ == NULL || has_focus_)
+  if (parent_ == nullptr || has_focus_)
     return false;
 
   if (can_focus_ && isVisibleRecursive()) {
@@ -120,7 +120,7 @@ void Widget::setVisibility(bool new_visible)
 
   visible_ = new_visible;
 
-  if (parent_ != NULL) {
+  if (parent_ != nullptr) {
     parent_->updateFocusChain();
 
     Container *t = getTopContainer();
@@ -148,7 +148,7 @@ void Widget::setVisibility(bool new_visible)
 
 bool Widget::isVisibleRecursive() const
 {
-  if (parent_ == NULL || !visible_)
+  if (parent_ == nullptr || !visible_)
     return false;
 
   return parent_->isWidgetVisible(*this);
@@ -157,7 +157,7 @@ bool Widget::isVisibleRecursive() const
 void Widget::setParent(Container &new_parent)
 {
   // Changing parent widget is not supported.
-  assert(parent_ == NULL);
+  assert(parent_ == nullptr);
 
   parent_ = &new_parent;
 
@@ -173,7 +173,7 @@ void Widget::setParent(Container &new_parent)
     // There is no focused widget, try if this or a child widget (in case of
     // Container) can grab it.
     Widget *w = getFocusWidget();
-    if (w != NULL)
+    if (w != nullptr)
       w->grabFocus();
   }
   else {
@@ -218,7 +218,7 @@ void Widget::setHeight(int newh)
 
 Point Widget::getAbsolutePosition() const
 {
-  if (parent_ == NULL)
+  if (parent_ == nullptr)
     return Point(0, 0);
 
   return parent_->getAbsolutePosition(*this);
@@ -226,7 +226,7 @@ Point Widget::getAbsolutePosition() const
 
 Point Widget::getRelativePosition(const Container &ref) const
 {
-  if (parent_ == NULL)
+  if (parent_ == nullptr)
     return Point(0, 0);
 
   return parent_->getRelativePosition(ref, *this);
@@ -267,7 +267,7 @@ int Widget::getColorScheme() const
 {
   if (color_scheme_ != 0)
     return color_scheme_;
-  else if (parent_ != NULL)
+  else if (parent_ != nullptr)
     return parent_->getColorScheme();
 
   return 0;
@@ -276,7 +276,7 @@ int Widget::getColorScheme() const
 void Widget::registerAbsolutePositionListener(Widget &widget)
 {
   absolute_position_listeners_.push_back(&widget);
-  if (parent_ != NULL && absolute_position_listeners_.size() == 1)
+  if (parent_ != nullptr && absolute_position_listeners_.size() == 1)
     parent_->registerAbsolutePositionListener(*this);
 }
 
@@ -287,7 +287,7 @@ void Widget::unregisterAbsolutePositionListener(Widget &widget)
   assert(i != absolute_position_listeners_.end());
 
   absolute_position_listeners_.erase(i);
-  if (parent_ != NULL && absolute_position_listeners_.size() == 0)
+  if (parent_ != nullptr && absolute_position_listeners_.size() == 0)
     parent_->unregisterAbsolutePositionListener(*this);
 }
 
@@ -299,7 +299,7 @@ void Widget::onAbsolutePositionChange(Widget & /*widget*/)
 
 void Widget::signalMoveResize(const Rect &oldsize, const Rect &newsize)
 {
-  if (parent_ == NULL)
+  if (parent_ == nullptr)
     return;
 
   // Tell the parent about the new size so it can position the widget correctly.
@@ -308,7 +308,7 @@ void Widget::signalMoveResize(const Rect &oldsize, const Rect &newsize)
 
 void Widget::signalWishSizeChange(const Size &oldsize, const Size &newsize)
 {
-  if (parent_ == NULL)
+  if (parent_ == nullptr)
     return;
 
   // Tell the parent about the new wish size so it can position the widget
@@ -318,7 +318,7 @@ void Widget::signalWishSizeChange(const Size &oldsize, const Size &newsize)
 
 void Widget::signalVisible(bool visible)
 {
-  if (parent_ == NULL)
+  if (parent_ == nullptr)
     return;
 
   // Tell the parent about the new visibility status so it can reposition its
@@ -328,9 +328,8 @@ void Widget::signalVisible(bool visible)
 
 void Widget::signalAbsolutePositionChange()
 {
-  for (Widgets::iterator i = absolute_position_listeners_.begin();
-       i != absolute_position_listeners_.end(); ++i)
-    (*i)->onAbsolutePositionChange(*this);
+  for (Widget *widget : absolute_position_listeners_)
+    widget->onAbsolutePositionChange(*this);
 }
 
 void Widget::updateArea()
@@ -340,7 +339,7 @@ void Widget::updateArea()
 
 void Widget::redraw()
 {
-  if (parent_ == NULL)
+  if (parent_ == nullptr)
     return;
 
   parent_->redraw();
@@ -374,7 +373,7 @@ int Widget::getAttributes(
 
 Container *Widget::getTopContainer()
 {
-  if (parent_ != NULL)
+  if (parent_ != nullptr)
     return parent_->getTopContainer();
   return dynamic_cast<Container *>(this);
 }

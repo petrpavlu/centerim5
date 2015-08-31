@@ -52,11 +52,11 @@ ViewPort::ViewPort(int screen_x, int screen_y, int view_x, int view_y,
 int ViewPort::addString(
   int x, int y, int w, const char *str, Error &error, int *printed)
 {
-  assert(str != NULL);
+  assert(str != nullptr);
 
   int res = 0;
   int p = 0;
-  while (p < w && str != NULL && *str) {
+  while (p < w && str != nullptr && *str != '\0') {
     int out;
     if ((res = addChar(x + p, y, UTF8::getUniChar(str), error, &out)) != 0)
       break;
@@ -64,7 +64,7 @@ int ViewPort::addString(
     str = UTF8::getNextChar(str);
   }
 
-  if (printed != NULL)
+  if (printed != nullptr)
     *printed = p;
 
   return res;
@@ -73,11 +73,11 @@ int ViewPort::addString(
 int ViewPort::addString(
   int x, int y, const char *str, Error &error, int *printed)
 {
-  assert(str != NULL);
+  assert(str != nullptr);
 
   int res = 0;
   int p = 0;
-  while (str != NULL && *str) {
+  while (str != nullptr && *str != '\0') {
     int out;
     if ((res = addChar(x + p, y, UTF8::getUniChar(str), error, &out)) != 0)
       break;
@@ -85,7 +85,7 @@ int ViewPort::addString(
     str = UTF8::getNextChar(str);
   }
 
-  if (printed != NULL)
+  if (printed != nullptr)
     *printed = p;
 
   return res;
@@ -94,12 +94,12 @@ int ViewPort::addString(
 int ViewPort::addString(int x, int y, int w, const char *str, const char *end,
   Error &error, int *printed)
 {
-  assert(str != NULL);
-  assert(end != NULL);
+  assert(str != nullptr);
+  assert(end != nullptr);
 
   int res = 0;
   int p = 0;
-  while (p < w && str != NULL && str < end && *str) {
+  while (p < w && str != nullptr && str < end && *str != '\0') {
     int out;
     if ((res = addChar(x + p, y, UTF8::getUniChar(str), error, &out)) != 0)
       break;
@@ -107,7 +107,7 @@ int ViewPort::addString(int x, int y, int w, const char *str, const char *end,
     str = UTF8::findNextChar(str, end);
   }
 
-  if (printed != NULL)
+  if (printed != nullptr)
     *printed = p;
 
   return res;
@@ -116,12 +116,12 @@ int ViewPort::addString(int x, int y, int w, const char *str, const char *end,
 int ViewPort::addString(
   int x, int y, const char *str, const char *end, Error &error, int *printed)
 {
-  assert(str != NULL);
-  assert(end != NULL);
+  assert(str != nullptr);
+  assert(end != nullptr);
 
   int res = 0;
   int p = 0;
-  while (str != NULL && str < end && *str) {
+  while (str != nullptr && str < end && *str != '\0') {
     int out;
     if ((res = addChar(x + p, y, UTF8::getUniChar(str), error, &out)) != 0)
       break;
@@ -129,7 +129,7 @@ int ViewPort::addString(
     str = UTF8::findNextChar(str, end);
   }
 
-  if (printed != NULL)
+  if (printed != nullptr)
     *printed = p;
 
   return res;
@@ -154,7 +154,7 @@ int ViewPort::addChar(
           draw_x, draw_y);
         return error.getCode();
       }
-    if (printed != NULL)
+    if (printed != nullptr)
       *printed = 1;
     return 0;
   }
@@ -172,7 +172,7 @@ int ViewPort::addChar(
             draw_x, draw_y);
           return error.getCode();
         }
-      if (printed != NULL)
+      if (printed != nullptr)
         ++(*printed);
     }
     return 0;
@@ -191,7 +191,7 @@ int ViewPort::addChar(
   if (isInViewPort(x, y, w)) {
     cchar_t cc;
 
-    if (::setcchar(&cc, wch, A_NORMAL, 0, NULL) == ERR) {
+    if (::setcchar(&cc, wch, A_NORMAL, 0, nullptr) == ERR) {
       error = Error(ERROR_CURSES_ADD_CHARACTER);
       error.setFormattedString(
         _("Setting complex character from Unicode character "
@@ -208,7 +208,7 @@ int ViewPort::addChar(
       return error.getCode();
     }
   }
-  if (printed != NULL)
+  if (printed != nullptr)
     *printed = w;
   return 0;
 }
@@ -365,7 +365,7 @@ int ViewPort::changeAt(int x, int y, int n, /* attr_t */ unsigned long attr,
 
     int draw_x = screen_x_ + (x + i - view_x_);
     int draw_y = screen_y_ + (y - view_y_);
-    if (::mvchgat(draw_y, draw_x, 1, attr, color, NULL) == ERR) {
+    if (::mvchgat(draw_y, draw_x, 1, attr, color, nullptr) == ERR) {
       error = Error(ERROR_CURSES_ATTR);
       error.setFormattedString(
         _("Changing window attributes to '%#lx' and color pair to '%d' on "
@@ -387,7 +387,7 @@ int ViewPort::fill(int attrs, int x, int y, int w, int h, Error &error)
   attr_t battrs;
   short pair;
 
-  if (::attr_get(&battrs, &pair, NULL) == ERR) {
+  if (::attr_get(&battrs, &pair, nullptr) == ERR) {
     error = Error(ERROR_CURSES_ATTR, _("Obtaining window attributes failed."));
     return error.getCode();
   }
@@ -401,7 +401,7 @@ int ViewPort::fill(int attrs, int x, int y, int w, int h, Error &error)
       addChar(x + j, y + i, ' ', error);
     }
 
-  if (::attr_set(battrs, pair, NULL) == ERR) {
+  if (::attr_set(battrs, pair, nullptr) == ERR) {
     error = Error(ERROR_CURSES_ATTR);
     error.setFormattedString(
       _("Setting window attributes to '%#lx' and color pair to '%d' failed."),
@@ -446,14 +446,14 @@ const int Attr::BLINK = A_BLINK;
 const int Attr::DIM = A_DIM;
 const int Attr::BOLD = A_BOLD;
 
-SCREEN *screen = NULL;
+SCREEN *screen = nullptr;
 
 int initScreen(Error &error)
 {
-  assert(screen == NULL);
+  assert(screen == nullptr);
 
-  screen = ::newterm(NULL, stdout, stdin);
-  if (screen == NULL) {
+  screen = ::newterm(nullptr, stdout, stdin);
+  if (screen == nullptr) {
     error = Error(ERROR_CURSES_INITIALIZATION,
       _("Initialization of the terminal for Curses session failed."));
     return error.getCode();
@@ -492,14 +492,14 @@ error_out:
   // Try to destroy the already created screen.
   ::endwin();
   ::delscreen(screen);
-  screen = NULL;
+  screen = nullptr;
 
   return error.getCode();
 }
 
 int finalizeScreen(Error &error)
 {
-  assert(screen != NULL);
+  assert(screen != nullptr);
 
   // Note: This function can fail in three places: clear(), refresh() and
   // endwin(). The first two are non-critical and the function proceeds even if
@@ -521,7 +521,7 @@ int finalizeScreen(Error &error)
   }
 
   ::delscreen(screen);
-  screen = NULL;
+  screen = nullptr;
 
   return has_error ? error.getCode() : 0;
 }
@@ -538,7 +538,7 @@ bool getAsciiMode()
 
 bool initColorPair(int idx, int fg, int bg, int *res, Error &error)
 {
-  assert(res != NULL);
+  assert(res != nullptr);
 
   int color_pair_count = Curses::getColorPairCount();
   if (idx > color_pair_count) {
@@ -645,10 +645,10 @@ int onScreenWidth(const char *start, const char *end)
 {
   int width = 0;
 
-  if (start == NULL)
+  if (start == nullptr)
     return 0;
 
-  if (end == NULL)
+  if (end == nullptr)
     end = start + std::strlen(start);
 
   while (start < end) {

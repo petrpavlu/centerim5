@@ -29,14 +29,14 @@
 namespace CppConsUI {
 
 ComboBox::ComboBox(int w, int h, const char *text)
-  : Button(w, h, text, FLAG_VALUE), dropdown_(NULL), selected_entry_(0),
+  : Button(w, h, text, FLAG_VALUE), dropdown_(nullptr), selected_entry_(0),
     max_option_width_(0)
 {
   signal_activate.connect(sigc::mem_fun(this, &ComboBox::onDropDown));
 }
 
 ComboBox::ComboBox(const char *text)
-  : Button(text, FLAG_VALUE), dropdown_(NULL), selected_entry_(0),
+  : Button(text, FLAG_VALUE), dropdown_(nullptr), selected_entry_(0),
     max_option_width_(0)
 {
   signal_activate.connect(sigc::mem_fun(this, &ComboBox::onDropDown));
@@ -45,14 +45,14 @@ ComboBox::ComboBox(const char *text)
 ComboBox::~ComboBox()
 {
   clearOptions();
-  if (dropdown_ != NULL)
+  if (dropdown_ != nullptr)
     dropdown_->close();
 }
 
 void ComboBox::clearOptions()
 {
-  for (ComboBoxEntries::iterator i = options_.begin(); i != options_.end(); ++i)
-    delete[] i->title;
+  for (ComboBoxEntry &entry : options_)
+    delete[] entry.title;
 
   options_.clear();
   selected_entry_ = 0;
@@ -62,11 +62,11 @@ void ComboBox::clearOptions()
 int ComboBox::addOption(const char *text, intptr_t data)
 {
   size_t size = 1;
-  if (text != NULL)
+  if (text != nullptr)
     size += std::strlen(text);
   ComboBoxEntry e;
   e.title = new char[size];
-  if (text != NULL)
+  if (text != nullptr)
     std::strcpy(e.title, text);
   else
     e.title[0] = '\0';
@@ -89,7 +89,7 @@ int ComboBox::addOption(const char *text, intptr_t data)
 const char *ComboBox::getSelectedTitle() const
 {
   if (options_.empty())
-    return NULL;
+    return nullptr;
 
   return getTitle(selected_entry_);
 }
@@ -140,13 +140,14 @@ void ComboBox::setSelected(int new_entry)
 
 void ComboBox::setSelectedByData(intptr_t data)
 {
-  int i;
-  ComboBoxEntries::iterator j;
-  for (i = 0, j = options_.begin(); j != options_.end(); ++i, ++j)
-    if (j->data == data) {
+  int i = 0;
+  for (ComboBoxEntry &entry : options_) {
+    if (entry.data == data) {
       setSelected(i);
       break;
     }
+    ++i;
+  }
 }
 
 void ComboBox::onDropDown(Button & /*activator*/)
@@ -158,13 +159,13 @@ void ComboBox::onDropDown(Button & /*activator*/)
   dropdown_->signal_close.connect(
     sigc::mem_fun(this, &ComboBox::dropDownClose));
 
-  int i;
-  ComboBoxEntries::iterator j;
-  for (i = 0, j = options_.begin(); j != options_.end(); ++i, ++j) {
+  int i = 0;
+  for (ComboBoxEntry &entry : options_) {
     Button *b = dropdown_->appendItem(
-      j->title, sigc::bind(sigc::mem_fun(this, &ComboBox::dropDownOk), i));
+      entry.title, sigc::bind(sigc::mem_fun(this, &ComboBox::dropDownOk), i));
     if (i == selected_entry_)
       b->grabFocus();
+    ++i;
   }
 
   dropdown_->show();
@@ -179,7 +180,7 @@ void ComboBox::dropDownOk(Button & /*activator*/, int new_entry)
 
 void ComboBox::dropDownClose(Window & /*window*/)
 {
-  dropdown_ = NULL;
+  dropdown_ = nullptr;
 }
 
 } // namespace CppConsUI

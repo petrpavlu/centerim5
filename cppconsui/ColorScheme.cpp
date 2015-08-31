@@ -37,7 +37,7 @@ namespace CppConsUI {
 int ColorScheme::getAttributes(
   int scheme, int property, int subproperty, int *out_attrs, Error &error)
 {
-  assert(out_attrs != NULL);
+  assert(out_attrs != nullptr);
 
   PropertyPair property_pair(property, subproperty);
   Schemes::const_iterator i;
@@ -65,7 +65,7 @@ int ColorScheme::getColorPair(Color &c, int *out_attrs, Error &error)
 int ColorScheme::getColorPair(const Color &c, int *out_attrs, Error &error)
 #endif // SAVE_COLOR_PAIRS
 {
-  assert(out_attrs != NULL);
+  assert(out_attrs != nullptr);
 
   ColorPairs::const_iterator i;
   int fg = c.foreground;
@@ -162,7 +162,7 @@ const char *ColorScheme::propertyToWidgetName(int property)
   case PROPERTY_TREEVIEW_LINE:
     return "treeview";
   }
-  return NULL;
+  return nullptr;
 }
 
 const char *ColorScheme::propertyToPropertyName(int property)
@@ -190,15 +190,15 @@ const char *ColorScheme::propertyToPropertyName(int property)
   case PROPERTY_TEXTVIEW_SCROLLBAR:
     return "scrollbar";
   }
-  return NULL;
+  return nullptr;
 }
 
 ColorScheme::PropertyConversionResult ColorScheme::stringPairToPropertyPair(
   const char *widget, const char *property, int *out_property,
   int *out_subproperty)
 {
-  assert(out_property != NULL);
-  assert(out_subproperty != NULL);
+  assert(out_property != nullptr);
+  assert(out_subproperty != nullptr);
 
   *out_subproperty = 0;
 

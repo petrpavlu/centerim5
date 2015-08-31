@@ -21,7 +21,7 @@
 #include <cstring>
 #include <string>
 
-Footer *Footer::my_instance_ = NULL;
+Footer *Footer::my_instance_ = nullptr;
 
 Footer *Footer::instance()
 {
@@ -37,7 +37,7 @@ void Footer::setText(const char *fmt, ...)
 {
   values_.clear();
 
-  if (fmt == NULL) {
+  if (fmt == nullptr) {
     updateText();
     return;
   }
@@ -75,7 +75,7 @@ Footer::Footer() : Window(0, 24, 80, 1, TYPE_NON_FOCUSABLE, false)
 
 void Footer::init()
 {
-  g_assert(my_instance_ == NULL);
+  g_assert(my_instance_ == nullptr);
 
   my_instance_ = new Footer;
   my_instance_->show();
@@ -83,16 +83,16 @@ void Footer::init()
 
 void Footer::finalize()
 {
-  g_assert(my_instance_ != NULL);
+  g_assert(my_instance_ != nullptr);
 
   delete my_instance_;
-  my_instance_ = NULL;
+  my_instance_ = nullptr;
 }
 
 void Footer::updateText()
 {
   if (values_.empty()) {
-    label_->setText(NULL);
+    label_->setText(nullptr);
     return;
   }
 

@@ -31,7 +31,7 @@
 namespace CppConsUI {
 
 Panel::Panel(int w, int h, const char *text)
-  : Widget(w, h), title_(NULL), title_width_(0)
+  : Widget(w, h), title_(nullptr), title_width_(0)
 {
   setTitle(text);
 }
@@ -101,10 +101,10 @@ int Panel::draw(Curses::ViewPort area, Error &error)
 void Panel::setTitle(const char *new_title)
 {
   size_t size = 1;
-  if (new_title != NULL)
+  if (new_title != nullptr)
     size += std::strlen(new_title);
-  char *new_storage = new char[size];
-  if (new_title != NULL)
+  auto new_storage = new char[size];
+  if (new_title != nullptr)
     std::strcpy(new_storage, new_title);
   else
     new_storage[0] = '\0';

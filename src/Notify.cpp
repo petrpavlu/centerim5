@@ -22,7 +22,7 @@
 #include <cstring>
 #include "gettext.h"
 
-Notify *Notify::my_instance_ = NULL;
+Notify *Notify::my_instance_ = nullptr;
 
 Notify *Notify::instance()
 {
@@ -57,7 +57,7 @@ void Notify::UserInfoDialog::update(
   // Local information.
   PurpleAccount *account = purple_connection_get_account(gc);
   PurpleBuddy *buddy = purple_find_buddy(account, who);
-  if (buddy != NULL) {
+  if (buddy != nullptr) {
     // Note that we should always be able to find the specified buddy, unless
     // something goes very wrong.
     button =
@@ -78,7 +78,7 @@ void Notify::UserInfoDialog::update(
     else {
       saved_time = static_cast<time_t>(
         purple_blist_node_get_int(PURPLE_BLIST_NODE(buddy), "last_seen"));
-      if (saved_time != 0 && localtime_r(&saved_time, &local_time) != NULL)
+      if (saved_time != 0 && localtime_r(&saved_time, &local_time) != nullptr)
         formatted_time = purple_date_format_long(&local_time);
       else
         formatted_time = _("Unknown");
@@ -90,7 +90,7 @@ void Notify::UserInfoDialog::update(
     // Last activity.
     saved_time = static_cast<time_t>(
       purple_blist_node_get_int(PURPLE_BLIST_NODE(buddy), "last_activity"));
-    if (saved_time != 0 && localtime_r(&saved_time, &local_time) != NULL)
+    if (saved_time != 0 && localtime_r(&saved_time, &local_time) != nullptr)
       formatted_time = purple_date_format_long(&local_time);
     else
       formatted_time = _("Unknown");
@@ -104,7 +104,7 @@ void Notify::UserInfoDialog::update(
     new CppConsUI::TreeView::ToggleCollapseButton(_("Remote information"));
   parent = treeview_->appendNode(treeview_->getRootNode(), *button);
   CppConsUI::TreeView::NodeReference subparent = parent;
-  for (GList *i = purple_notify_user_info_get_entries(user_info); i != NULL;
+  for (GList *i = purple_notify_user_info_get_entries(user_info); i != nullptr;
        i = i->next) {
     PurpleNotifyUserInfoEntry *entry =
       reinterpret_cast<PurpleNotifyUserInfoEntry *>(i->data);
@@ -112,7 +112,7 @@ void Notify::UserInfoDialog::update(
       purple_notify_user_info_entry_get_type(entry);
 
     const char *label = purple_notify_user_info_entry_get_label(entry);
-    if (label == NULL)
+    if (label == nullptr)
       continue;
     const char *value = purple_notify_user_info_entry_get_value(entry);
     char *nohtml = purple_markup_strip_html(value);
@@ -159,29 +159,29 @@ Notify::Notify()
 
 Notify::~Notify()
 {
-  purple_notify_set_ui_ops(NULL);
+  purple_notify_set_ui_ops(nullptr);
 }
 
 void Notify::init()
 {
-  g_assert(my_instance_ == NULL);
+  g_assert(my_instance_ == nullptr);
 
   my_instance_ = new Notify;
 }
 
 void Notify::finalize()
 {
-  g_assert(my_instance_ != NULL);
+  g_assert(my_instance_ != nullptr);
 
   delete my_instance_;
-  my_instance_ = NULL;
+  my_instance_ = nullptr;
 }
 
 void Notify::onDialogClose(CppConsUI::Window &activator, PurpleNotifyType type)
 {
   CppConsUI::AbstractDialog *dialog =
     dynamic_cast<CppConsUI::AbstractDialog *>(&activator);
-  g_assert(dialog != NULL);
+  g_assert(dialog != nullptr);
 
   if (notifications_.find(dialog) == notifications_.end())
     return;
@@ -200,7 +200,7 @@ void *Notify::notify_message(PurpleNotifyMsgType /*type*/, const char *title,
   const char *primary, const char *secondary)
 {
   char *text = g_strdup_printf("%s\n\n%s", primary, secondary);
-  CppConsUI::MessageDialog *dialog = new CppConsUI::MessageDialog(title, text);
+  auto dialog = new CppConsUI::MessageDialog(title, text);
   g_free(text);
   dialog->signal_close.connect(sigc::bind(
     sigc::mem_fun(this, &Notify::onDialogClose), PURPLE_NOTIFY_MESSAGE));

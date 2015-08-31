@@ -23,7 +23,7 @@
 #include <cstring>
 #include "config.h"
 
-Header *Header::my_instance_ = NULL;
+Header *Header::my_instance_ = nullptr;
 
 Header *Header::instance()
 {
@@ -52,14 +52,14 @@ Header::Header() : Window(0, 0, 80, 1, TYPE_NON_FOCUSABLE, false)
   request_indicator_->setColorScheme(CenterIM::SCHEME_HEADER_REQUEST);
   container_->appendWidget(*request_indicator_);
 
-  for (GList *i = purple_accounts_get_all(); i != NULL; i = i->next) {
+  for (GList *i = purple_accounts_get_all(); i != nullptr; i = i->next) {
     PurpleAccount *account = reinterpret_cast<PurpleAccount *>(i->data);
     if (purple_account_get_enabled(account, PACKAGE_NAME))
       protocol_count_.insert(purple_account_get_protocol_id(account));
   }
 
   // Connect to the Accounts singleton.
-  g_assert(ACCOUNTS != NULL);
+  g_assert(ACCOUNTS != nullptr);
   ACCOUNTS->signal_request_count_change.connect(
     sigc::mem_fun(this, &Header::onRequestCountChange));
 
@@ -87,7 +87,7 @@ Header::~Header()
 
 void Header::init()
 {
-  g_assert(my_instance_ == NULL);
+  g_assert(my_instance_ == nullptr);
 
   my_instance_ = new Header;
   my_instance_->show();
@@ -95,10 +95,10 @@ void Header::init()
 
 void Header::finalize()
 {
-  g_assert(my_instance_ != NULL);
+  g_assert(my_instance_ != nullptr);
 
   delete my_instance_;
-  my_instance_ = NULL;
+  my_instance_ = nullptr;
 }
 
 void Header::onRequestCountChange(Accounts & /*accounts*/, size_t request_count)
@@ -115,22 +115,22 @@ void Header::onRequestCountChange(Accounts & /*accounts*/, size_t request_count)
 
 void Header::account_signed_on(PurpleAccount *account)
 {
-  g_return_if_fail(account != NULL);
+  g_return_if_fail(account != nullptr);
 
   if (statuses_.find(account) != statuses_.end())
     return;
 
-  CppConsUI::Label *label = new CppConsUI::Label(0, 1, "");
+  auto label = new CppConsUI::Label(0, 1, "");
   statuses_[account] = label;
   container_->appendWidget(*label);
 
   account_status_changed(
-    account, NULL, purple_account_get_active_status(account));
+    account, nullptr, purple_account_get_active_status(account));
 }
 
 void Header::account_signed_off(PurpleAccount *account)
 {
-  g_return_if_fail(account != NULL);
+  g_return_if_fail(account != nullptr);
 
   if (statuses_.find(account) == statuses_.end())
     return;
@@ -142,8 +142,8 @@ void Header::account_signed_off(PurpleAccount *account)
 void Header::account_status_changed(
   PurpleAccount *account, PurpleStatus * /*old*/, PurpleStatus *cur)
 {
-  g_return_if_fail(account != NULL);
-  g_return_if_fail(cur != NULL);
+  g_return_if_fail(account != nullptr);
+  g_return_if_fail(cur != nullptr);
 
   if (statuses_.find(account) == statuses_.end())
     return;
@@ -168,15 +168,15 @@ void Header::account_status_changed(
 
 void Header::account_alias_changed(PurpleAccount *account, const char * /*old*/)
 {
-  g_return_if_fail(account != NULL);
+  g_return_if_fail(account != nullptr);
 
   account_status_changed(
-    account, NULL, purple_account_get_active_status(account));
+    account, nullptr, purple_account_get_active_status(account));
 }
 
 void Header::account_enabled(PurpleAccount *account)
 {
-  g_return_if_fail(account != NULL);
+  g_return_if_fail(account != nullptr);
 
   const char *prid = purple_account_get_protocol_id(account);
   protocol_count_.insert(prid);
@@ -186,13 +186,13 @@ void Header::account_enabled(PurpleAccount *account)
       PurpleAccount *acc = i->first;
       if (std::strcmp(purple_account_get_protocol_id(acc), prid) == 0)
         account_status_changed(
-          acc, NULL, purple_account_get_active_status(acc));
+          acc, nullptr, purple_account_get_active_status(acc));
     }
 }
 
 void Header::account_disabled(PurpleAccount *account)
 {
-  g_return_if_fail(account != NULL);
+  g_return_if_fail(account != nullptr);
 
   const char *prid = purple_account_get_protocol_id(account);
   ProtocolCount::iterator i = protocol_count_.find(prid);
@@ -203,7 +203,7 @@ void Header::account_disabled(PurpleAccount *account)
       PurpleAccount *acc = i->first;
       if (std::strcmp(purple_account_get_protocol_id(acc), prid) == 0)
         account_status_changed(
-          acc, NULL, purple_account_get_active_status(acc));
+          acc, nullptr, purple_account_get_active_status(acc));
     }
 }
 

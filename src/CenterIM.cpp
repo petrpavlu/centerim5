@@ -65,7 +65,7 @@ const char *CenterIM::color_names_[] = {
 };
 
 const char *CenterIM::scheme_names_[] = {
-  NULL,
+  nullptr,
   "accountstatusmenu",        // SCHEME_ACCOUNTSTATUSMENU
   "buddylist",                // SCHEME_BUDDYLIST
   "buddylistbuddy",           // SCHEME_BUDDYLISTBUDDY
@@ -91,7 +91,7 @@ const char *CenterIM::scheme_names_[] = {
   "log",                      // SCHEME_LOG
 };
 
-CenterIM *CenterIM::my_instance_ = NULL;
+CenterIM *CenterIM::my_instance_ = nullptr;
 
 // Based on glibmm code.
 class SourceConnectionNode {
@@ -111,7 +111,7 @@ private:
 };
 
 inline SourceConnectionNode::SourceConnectionNode(const sigc::slot_base &nslot)
-  : slot(nslot), source(0)
+  : slot(nslot), source(nullptr)
 {
   slot.set_parent(this, &SourceConnectionNode::notify);
 }
@@ -124,14 +124,14 @@ void *SourceConnectionNode::notify(void *data)
   // destroy_notify_handler(), because we set self->source to 0 there.
   if (self->source) {
     GSource *s = self->source;
-    self->source = 0;
+    self->source = nullptr;
     g_source_destroy(s);
 
     // Destroying the object triggers execution of destroy_notify_handler(),
     // either immediately or later, so we leave that to do the deletion.
   }
 
-  return 0;
+  return nullptr;
 }
 
 void SourceConnectionNode::destroy_notify_callback(void *data)
@@ -140,7 +140,7 @@ void SourceConnectionNode::destroy_notify_callback(void *data)
 
   if (self) {
     // The GLib side is disconnected now, thus the GSource* is no longer valid.
-    self->source = 0;
+    self->source = nullptr;
 
     delete self;
   }
@@ -201,7 +201,7 @@ bool CenterIM::loadColorSchemeConfig()
   xmlnode *root =
     purple_util_read_xml_from_file("colorschemes.xml", _("color schemes"));
 
-  if (root == NULL) {
+  if (root == nullptr) {
     // Read error, first time run?
     loadDefaultColorSchemeConfig();
     if (saveColorSchemeConfig())
@@ -213,9 +213,10 @@ bool CenterIM::loadColorSchemeConfig()
   bool res = false;
 
   for (xmlnode *scheme_node = xmlnode_get_child(root, "scheme");
-       scheme_node != NULL; scheme_node = xmlnode_get_next_twin(scheme_node)) {
+       scheme_node != nullptr;
+       scheme_node = xmlnode_get_next_twin(scheme_node)) {
     const char *scheme_name = xmlnode_get_attrib(scheme_node, "name");
-    if (scheme_name == NULL) {
+    if (scheme_name == nullptr) {
       LOG->error(_("Missing 'name' attribute in the scheme definition."));
       goto out;
     }
@@ -229,13 +230,13 @@ bool CenterIM::loadColorSchemeConfig()
     for (xmlnode *color = xmlnode_get_child(scheme_node, "color"); color;
          color = xmlnode_get_next_twin(color)) {
       const char *widget_string = xmlnode_get_attrib(color, "widget");
-      if (widget_string == NULL) {
+      if (widget_string == nullptr) {
         LOG->error(_("Missing 'widget' attribute in the color definition."));
         goto out;
       }
 
       const char *property_string = xmlnode_get_attrib(color, "property");
-      if (property_string == NULL) {
+      if (property_string == nullptr) {
         LOG->error(_("Missing 'property' attribute in the color definition."));
         goto out;
       }
@@ -266,17 +267,17 @@ bool CenterIM::loadColorSchemeConfig()
       int bg = CppConsUI::Curses::Color::DEFAULT;
       int attrs = 0;
 
-      if (fg_string != NULL && !stringToColor(fg_string, &fg)) {
+      if (fg_string != nullptr && !stringToColor(fg_string, &fg)) {
         LOG->error(_("Unrecognized color '%s'."), fg_string);
         goto out;
       }
 
-      if (bg_string != NULL && !stringToColor(bg_string, &bg)) {
+      if (bg_string != nullptr && !stringToColor(bg_string, &bg)) {
         LOG->error(_("Unrecognized color '%s'."), bg_string);
         goto out;
       }
 
-      if (attrs_string != NULL &&
+      if (attrs_string != nullptr &&
         !stringToColorAttributes(attrs_string, &attrs)) {
         LOG->error(_("Unrecognized attributes '%s'."), attrs_string);
         goto out;
@@ -305,7 +306,7 @@ bool CenterIM::loadKeyConfig()
   xmlnode *root =
     purple_util_read_xml_from_file("binds.xml", _("key bindings"));
 
-  if (root == NULL) {
+  if (root == nullptr) {
     // Read error, first time run?
     loadDefaultKeyConfig();
     if (saveKeyConfig())
@@ -316,20 +317,20 @@ bool CenterIM::loadKeyConfig()
   KEYCONFIG->clear();
   bool res = false;
 
-  for (xmlnode *bind_node = xmlnode_get_child(root, "bind"); bind_node != NULL;
-       bind_node = xmlnode_get_next_twin(bind_node)) {
+  for (xmlnode *bind_node = xmlnode_get_child(root, "bind");
+       bind_node != nullptr; bind_node = xmlnode_get_next_twin(bind_node)) {
     const char *context = xmlnode_get_attrib(bind_node, "context");
-    if (context == NULL) {
+    if (context == nullptr) {
       LOG->error(_("Missing 'context' attribute in the bind definition."));
       goto out;
     }
     const char *action = xmlnode_get_attrib(bind_node, "action");
-    if (action == NULL) {
+    if (action == nullptr) {
       LOG->error(_("Missing 'action' attribute in the bind definition."));
       goto out;
     }
     const char *key = xmlnode_get_attrib(bind_node, "key");
-    if (key == NULL) {
+    if (key == nullptr) {
       LOG->error(_("Missing 'key' attribute in the bind definition."));
       goto out;
     }
@@ -356,7 +357,7 @@ out:
 sigc::connection CenterIM::timeoutConnect(
   const sigc::slot<bool> &slot, unsigned interval, int priority)
 {
-  SourceConnectionNode *conn_node = new SourceConnectionNode(slot);
+  auto conn_node = new SourceConnectionNode(slot);
   sigc::connection connection(*conn_node->get_slot());
 
   GSource *source = g_timeout_source_new(interval);
@@ -367,7 +368,7 @@ sigc::connection CenterIM::timeoutConnect(
   g_source_set_callback(source, &SourceConnectionNode::source_callback,
     conn_node, &SourceConnectionNode::destroy_notify_callback);
 
-  g_source_attach(source, NULL);
+  g_source_attach(source, nullptr);
   g_source_unref(source); // GMainContext holds a reference.
 
   conn_node->install(source);
@@ -381,7 +382,7 @@ sigc::connection CenterIM::timeoutOnceConnect(
 }
 
 CenterIM::CenterIM()
-  : mainloop_(NULL), mngr_(NULL), convs_expanded_(false),
+  : mainloop_(nullptr), mngr_(nullptr), convs_expanded_(false),
     idle_reporting_on_keyboard_(false)
 {
   memset(&centerim_core_ui_ops_, 0, sizeof(centerim_core_ui_ops_));
@@ -392,17 +393,17 @@ CenterIM::CenterIM()
 int CenterIM::run(int argc, char *argv[])
 {
   // Init CenterIM.
-  g_assert(my_instance_ == NULL);
+  g_assert(my_instance_ == nullptr);
   my_instance_ = new CenterIM;
 
   // Run CenterIM.
   int res = my_instance_->runAll(argc, argv);
 
   // Finalize CenterIM.
-  g_assert(my_instance_ != NULL);
+  g_assert(my_instance_ != nullptr);
 
   delete my_instance_;
-  my_instance_ = NULL;
+  my_instance_ = nullptr;
 
   return res;
 }
@@ -440,16 +441,17 @@ int CenterIM::runAll(int argc, char *argv[])
   int opt;
   // clang-format off
   struct option long_options[] = {
-    {"ascii",   no_argument,       NULL, 'a'},
-    {"help",    no_argument,       NULL, 'h'},
-    {"version", no_argument,       NULL, 'v'},
-    {"basedir", required_argument, NULL, 'b'},
-    {"offline", no_argument,       NULL, 'o'},
-    {NULL,      0,                 NULL,  0 }
+    {"ascii",   no_argument,       nullptr, 'a'},
+    {"help",    no_argument,       nullptr, 'h'},
+    {"version", no_argument,       nullptr, 'v'},
+    {"basedir", required_argument, nullptr, 'b'},
+    {"offline", no_argument,       nullptr, 'o'},
+    {nullptr,   0,                 nullptr,  0 }
   };
   // clang-format on
 
-  while ((opt = getopt_long(argc, argv, "ahvb:o", long_options, NULL)) != -1) {
+  while (
+    (opt = getopt_long(argc, argv, "ahvb:o", long_options, nullptr)) != -1) {
     switch (opt) {
     case 'a':
       ascii = true;
@@ -485,7 +487,7 @@ int CenterIM::runAll(int argc, char *argv[])
   Log::init();
 
   // Create the main loop.
-  mainloop_ = g_main_loop_new(NULL, FALSE);
+  mainloop_ = g_main_loop_new(nullptr, FALSE);
 
   // Initialize CppConsUI.
   CppConsUI::AppInterface interface = {timeout_add_cppconsui,
@@ -495,7 +497,7 @@ int CenterIM::runAll(int argc, char *argv[])
 
   // Get the CoreManager instance.
   mngr_ = CppConsUI::getCoreManagerInstance();
-  g_assert(mngr_ != NULL);
+  g_assert(mngr_ != nullptr);
 
   // Initialize CoreManager's input, output and screen resizing.
   if (mngr_->initializeInput(error) != 0) {
@@ -609,7 +611,7 @@ out:
   CppConsUI::finalizeConsUI();
 
   // Destroy the main loop.
-  if (mainloop_ != NULL)
+  if (mainloop_ != nullptr)
     g_main_loop_unref(mainloop_);
 
   // Finalize the log component. It will output all buffered messages (if there
@@ -641,7 +643,7 @@ void CenterIM::printVersion(FILE *out)
 
 int CenterIM::purpleInit(const char *config_path)
 {
-  g_assert(config_path != NULL);
+  g_assert(config_path != nullptr);
 
   // Build config path.
   if (g_path_is_absolute(config_path)) {
@@ -700,7 +702,7 @@ void CenterIM::purpleFinalize()
 {
   purple_plugins_save_loaded(CONF_PLUGINS_SAVE_PREF);
 
-  purple_core_set_ui_ops(NULL);
+  purple_core_set_ui_ops(nullptr);
   // purple_eventloop_set_ui_ops(NULL);
   purple_core_quit();
 }
@@ -811,7 +813,7 @@ void CenterIM::onTopWindowChanged()
     return;
 
   CppConsUI::Window *top = mngr_->getTopWindow();
-  if (top != NULL && typeid(Conversation) != typeid(*top)) {
+  if (top != nullptr && typeid(Conversation) != typeid(*top)) {
     convs_expanded_ = false;
     CONVERSATIONS->setExpandedConversations(convs_expanded_);
     mngr_->onScreenResized();
@@ -824,7 +826,7 @@ void CenterIM::onTopWindowChanged()
 guint CenterIM::input_add_purple(int fd, PurpleInputCondition condition,
   PurpleInputFunction function, gpointer data)
 {
-  IOClosurePurple *closure = new IOClosurePurple;
+  auto closure = new IOClosurePurple;
   GIOChannel *channel;
   int cond = 0;
 
@@ -871,7 +873,7 @@ unsigned CenterIM::input_add_cppconsui(int fd,
   CppConsUI::InputCondition condition, CppConsUI::InputFunction function,
   void *data)
 {
-  IOClosureCppConsUI *closure = new IOClosureCppConsUI;
+  auto closure = new IOClosureCppConsUI;
   GIOChannel *channel;
   int cond = 0;
 
@@ -917,7 +919,7 @@ void CenterIM::io_destroy_cppconsui(gpointer data)
 unsigned CenterIM::timeout_add_cppconsui(
   unsigned interval, CppConsUI::SourceFunction function, void *data)
 {
-  SourceClosureCppConsUI *closure = new SourceClosureCppConsUI;
+  auto closure = new SourceClosureCppConsUI;
   closure->function = function;
   closure->data = data;
 
@@ -953,9 +955,9 @@ void CenterIM::log_error_cppconsui(const char *message)
 
 GHashTable *CenterIM::get_ui_info()
 {
-  static GHashTable *ui_info = NULL;
+  static GHashTable *ui_info = nullptr;
 
-  if (ui_info == NULL) {
+  if (ui_info == nullptr) {
     ui_info = g_hash_table_new(g_str_hash, g_str_equal);
 
     // Note: the C-style casts are used below because otherwise we would need to
@@ -1157,14 +1159,14 @@ bool CenterIM::saveColorSchemeConfig()
       CppConsUI::ColorScheme::Color color = pi->second;
 
       const char *widget_string = COLORSCHEME->propertyToWidgetName(pair.first);
-      assert(widget_string != NULL);
+      assert(widget_string != nullptr);
       xmlnode_set_attrib(color_node, "widget", widget_string);
 
       char *str;
 
       const char *property_string =
         COLORSCHEME->propertyToPropertyName(pair.first);
-      assert(property_string != NULL);
+      assert(property_string != nullptr);
       if (pair.second != 0) {
         str = g_strdup_printf("%s_%d", property_string, pair.second);
         xmlnode_set_attrib(color_node, "property", str);
@@ -1186,14 +1188,14 @@ bool CenterIM::saveColorSchemeConfig()
       }
 
       str = colorAttributesToString(color.attrs);
-      if (str != NULL) {
+      if (str != nullptr) {
         xmlnode_set_attrib(color_node, "attributes", str);
         g_free(str);
       }
     }
   }
 
-  char *data = xmlnode_to_formatted_str(root, NULL);
+  char *data = xmlnode_to_formatted_str(root, nullptr);
   bool res = true;
   if (!purple_util_write_data_to_file("colorschemes.xml", data, -1)) {
     LOG->error(_("Error saving 'colorschemes.xml'."));
@@ -1229,14 +1231,14 @@ char *CenterIM::colorToString(int color)
 
 bool CenterIM::stringToColor(const char *str, int *color)
 {
-  g_assert(str != NULL);
-  g_assert(color != NULL);
+  g_assert(str != nullptr);
+  g_assert(color != nullptr);
 
   *color = 0;
 
   if (g_ascii_isdigit(str[0]) || str[0] == '-') {
     // Numeric colors.
-    long i = strtol(str, NULL, 10);
+    long i = strtol(str, nullptr, 10);
     if (errno == ERANGE || i > INT_MAX || i < -1)
       return false;
     *color = i;
@@ -1265,7 +1267,7 @@ char *CenterIM::colorAttributesToString(int attrs)
   std::string s;
 
   if (attrs == CppConsUI::Curses::Attr::NORMAL)
-    return NULL;
+    return nullptr;
 
   if (attrs & CppConsUI::Curses::Attr::STANDOUT)
     APPEND("standout");
@@ -1284,14 +1286,14 @@ char *CenterIM::colorAttributesToString(int attrs)
 
 bool CenterIM::stringToColorAttributes(const char *str, int *attrs)
 {
-  g_assert(str != NULL);
-  g_assert(attrs != NULL);
+  g_assert(str != nullptr);
+  g_assert(attrs != nullptr);
 
   gchar **tokens = g_strsplit(str, "|", 0);
   *attrs = 0;
 
   bool valid = true;
-  for (size_t i = 0; tokens[i] != NULL; ++i) {
+  for (size_t i = 0; tokens[i] != nullptr; ++i) {
     if (std::strcmp("normal", tokens[i]) == 0) {
       *attrs |= CppConsUI::Curses::Attr::NORMAL;
       continue;
@@ -1392,7 +1394,7 @@ bool CenterIM::saveKeyConfig()
       xmlnode_set_attrib(bind_node, "context", bi->first.c_str());
       xmlnode_set_attrib(bind_node, "action", ci->first.c_str());
       char *key = KEYCONFIG->termKeyToString(ci->second);
-      if (key != NULL) {
+      if (key != nullptr) {
         xmlnode_set_attrib(bind_node, "key", key);
         delete[] key;
       }
@@ -1401,7 +1403,7 @@ bool CenterIM::saveKeyConfig()
     }
   }
 
-  char *data = xmlnode_to_formatted_str(root, NULL);
+  char *data = xmlnode_to_formatted_str(root, nullptr);
   bool res = true;
   if (!purple_util_write_data_to_file("binds.xml", data, -1)) {
     LOG->error(_("Error saving 'binds.xml'."));
@@ -1427,14 +1429,14 @@ void CenterIM::actionOpenAccountStatusMenu()
   // Do not allow to open the account status menu if there is any 'top' window
   // (except general menu, we can close that).
   CppConsUI::Window *top = mngr_->getTopWindow();
-  if (top != NULL) {
+  if (top != nullptr) {
     if (dynamic_cast<GeneralMenu *>(top))
       top->close();
     else if (top->getType() == CppConsUI::Window::TYPE_TOP)
       return;
   }
 
-  AccountStatusMenu *menu = new AccountStatusMenu;
+  auto menu = new AccountStatusMenu;
   menu->show();
 }
 
@@ -1443,14 +1445,14 @@ void CenterIM::actionOpenGeneralMenu()
   // Do not allow to open the general menu if there is any 'top' window (except
   // account status menu, we can close that).
   CppConsUI::Window *top = mngr_->getTopWindow();
-  if (top != NULL) {
+  if (top != nullptr) {
     if (dynamic_cast<AccountStatusMenu *>(top))
       top->close();
     else if (top->getType() == CppConsUI::Window::TYPE_TOP)
       return;
   }
 
-  GeneralMenu *menu = new GeneralMenu;
+  auto menu = new GeneralMenu;
   menu->show();
 }
 
@@ -1479,13 +1481,13 @@ void CenterIM::actionFocusConversation(int i)
 void CenterIM::actionExpandConversation()
 {
   CppConsUI::Window *top = mngr_->getTopWindow();
-  if (top != NULL && top->getType() == CppConsUI::Window::TYPE_TOP)
+  if (top != nullptr && top->getType() == CppConsUI::Window::TYPE_TOP)
     return;
 
   if (!convs_expanded_) {
     CONVERSATIONS->focusActiveConversation();
     top = mngr_->getTopWindow();
-    if (top == NULL || typeid(Conversation) != typeid(*top))
+    if (top == nullptr || typeid(Conversation) != typeid(*top))
       return;
   }
 

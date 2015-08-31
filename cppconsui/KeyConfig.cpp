@@ -35,7 +35,7 @@ bool KeyConfig::bindKey(
   TermKeyKey tkey;
   const char *res = termkey_strpkey(
     COREMANAGER->getTermKeyHandle(), key, &tkey, TERMKEY_FORMAT_LONGMOD);
-  if (res == NULL || res[0] != '\0')
+  if (res == nullptr || res[0] != '\0')
     return false;
 
   binds_[context][tkey] = action;
@@ -47,7 +47,7 @@ const KeyConfig::KeyBindContext *KeyConfig::getKeyBinds(
 {
   KeyBinds::const_iterator i = binds_.find(context);
   if (i == binds_.end())
-    return NULL;
+    return nullptr;
   return &i->second;
 }
 
@@ -55,12 +55,11 @@ const char *KeyConfig::getKeyBind(const char *context, const char *action) const
 {
   KeyBinds::const_iterator i = binds_.find(context);
   if (i == binds_.end())
-    return NULL;
+    return nullptr;
 
-  for (KeyBindContext::const_iterator j = i->second.begin();
-       j != i->second.end(); ++j)
-    if (!j->second.compare(action)) {
-      TermKeyKey key = j->first;
+  for (std::pair<TermKeyKey, std::string> key_action : i->second)
+    if (!key_action.second.compare(action)) {
+      TermKeyKey key = key_action.first;
       static char out[256];
       termkey_strfkey(COREMANAGER->getTermKeyHandle(), out, sizeof(out), &key,
         TERMKEY_FORMAT_CARETCTRL);
@@ -78,7 +77,7 @@ char *KeyConfig::termKeyToString(const TermKeyKey &key) const
     TERMKEY_FORMAT_LONGMOD);
 
   size_t size = std::strlen(out) + 1;
-  char *res = new char[size];
+  auto res = new char[size];
   std::strcpy(res, out);
   return res;
 }
@@ -87,7 +86,7 @@ bool KeyConfig::stringToTermKey(const char *key, TermKeyKey *termkey) const
 {
   const char *res = termkey_strpkey(
     COREMANAGER->getTermKeyHandle(), key, termkey, TERMKEY_FORMAT_LONGMOD);
-  return res != NULL && res[0] == '\0';
+  return res != nullptr && res[0] == '\0';
 }
 
 void KeyConfig::clear()

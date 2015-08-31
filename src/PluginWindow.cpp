@@ -39,7 +39,7 @@ PluginWindow::PluginWindow() : SplitDialog(0, 0, 80, 24, _("Plugins"))
   setContainer(*treeview_);
 
   // Show settings for all loaded plugins.
-  for (GList *iter = purple_plugins_get_loaded(); iter != NULL;
+  for (GList *iter = purple_plugins_get_loaded(); iter != nullptr;
        iter = iter->next) {
     PurplePlugin *plugin = reinterpret_cast<PurplePlugin *>(iter->data);
     if (plugin->info->type == PURPLE_PLUGIN_STANDARD &&
@@ -72,11 +72,11 @@ void PluginWindow::onScreenResized()
 PluginWindow::AddPluginWindow::AddPluginWindow()
   : Window(0, 0, 80, 24, _("Add plugin"), TYPE_TOP)
 {
-  CppConsUI::TreeView *treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
+  auto treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
   addWidget(*treeview, 0, 0);
 
   // Populate available plugins except the ones that are already enabled.
-  for (GList *iter = purple_plugins_get_all(); iter != NULL;
+  for (GList *iter = purple_plugins_get_all(); iter != nullptr;
        iter = iter->next) {
     PurplePlugin *plugin = reinterpret_cast<PurplePlugin *>(iter->data);
     if (purple_plugin_is_loaded(plugin) ||
@@ -86,7 +86,7 @@ PluginWindow::AddPluginWindow::AddPluginWindow()
 
     char *text = g_strdup_printf("%s, %s\n%s", purple_plugin_get_name(plugin),
       purple_plugin_get_version(plugin), purple_plugin_get_summary(plugin));
-    CppConsUI::Button *button = new CppConsUI::Button(text);
+    auto button = new CppConsUI::Button(text);
     g_free(text);
 
     button->signal_activate.connect(sigc::bind(
@@ -112,8 +112,8 @@ void PluginWindow::AddPluginWindow::onPluginButtonActivate(
 PluginWindow::BoolOption::BoolOption(const char *name, const char *pref)
   : CheckBox(name)
 {
-  g_assert(name != NULL);
-  g_assert(pref != NULL);
+  g_assert(name != nullptr);
+  g_assert(pref != nullptr);
 
   pref_ = g_strdup(pref);
   setChecked(purple_prefs_get_bool(pref_));
@@ -134,8 +134,8 @@ void PluginWindow::BoolOption::onToggle(
 PluginWindow::StringOption::StringOption(const char *name, const char *pref)
   : Button(FLAG_VALUE, name)
 {
-  g_assert(name != NULL);
-  g_assert(pref != NULL);
+  g_assert(name != nullptr);
+  g_assert(pref != nullptr);
 
   pref_ = g_strdup(pref);
   updateValue();
@@ -154,8 +154,7 @@ void PluginWindow::StringOption::updateValue()
 
 void PluginWindow::StringOption::onActivate(Button & /*activator*/)
 {
-  CppConsUI::InputDialog *dialog =
-    new CppConsUI::InputDialog(getText(), getValue());
+  auto dialog = new CppConsUI::InputDialog(getText(), getValue());
   dialog->signal_response.connect(
     sigc::mem_fun(this, &StringOption::responseHandler));
   dialog->show();
@@ -174,8 +173,8 @@ void PluginWindow::StringOption::responseHandler(
 PluginWindow::IntegerOption::IntegerOption(const char *name, const char *pref)
   : Button(FLAG_VALUE, name)
 {
-  g_assert(name != NULL);
-  g_assert(pref != NULL);
+  g_assert(name != nullptr);
+  g_assert(pref != nullptr);
 
   pref_ = g_strdup(pref);
   updateValue();
@@ -194,8 +193,7 @@ void PluginWindow::IntegerOption::updateValue()
 
 void PluginWindow::IntegerOption::onActivate(Button & /*activator*/)
 {
-  CppConsUI::InputDialog *dialog =
-    new CppConsUI::InputDialog(getText(), getValue());
+  auto dialog = new CppConsUI::InputDialog(getText(), getValue());
   dialog->setFlags(CppConsUI::TextEntry::FLAG_NUMERIC);
   dialog->signal_response.connect(
     sigc::mem_fun(this, &IntegerOption::responseHandler));
@@ -211,7 +209,7 @@ void PluginWindow::IntegerOption::responseHandler(
 
   const char *text = activator.getText();
   errno = 0;
-  long i = strtol(text, NULL, 10);
+  long i = strtol(text, nullptr, 10);
   if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
     LOG->warning(_("Value is out of range."));
   purple_prefs_set_int(pref_, CLAMP(i, INT_MIN, INT_MAX));
@@ -221,8 +219,8 @@ void PluginWindow::IntegerOption::responseHandler(
 PluginWindow::PathOption::PathOption(const char *name, const char *pref)
   : Button(FLAG_VALUE, name)
 {
-  g_assert(name != NULL);
-  g_assert(pref != NULL);
+  g_assert(name != nullptr);
+  g_assert(pref != nullptr);
 
   pref_ = g_strdup(pref);
   updateValue();
@@ -241,8 +239,7 @@ void PluginWindow::PathOption::updateValue()
 
 void PluginWindow::PathOption::onActivate(Button & /*activator*/)
 {
-  CppConsUI::InputDialog *dialog =
-    new CppConsUI::InputDialog(getText(), getValue());
+  auto dialog = new CppConsUI::InputDialog(getText(), getValue());
   dialog->signal_response.connect(
     sigc::mem_fun(this, &PathOption::responseHandler));
   dialog->show();
@@ -262,7 +259,7 @@ void PluginWindow::clearPlugin(PurplePlugin *plugin)
 {
   PluginEntry *plugin_entry = &plugin_entries_[plugin];
   treeview_->deleteNode(plugin_entry->parent_reference, false);
-  if (plugin_entry->frame != NULL)
+  if (plugin_entry->frame != nullptr)
     purple_plugin_pref_frame_destroy(plugin_entry->frame);
   plugin_entries_.erase(plugin);
 }
@@ -280,7 +277,7 @@ void PluginWindow::populatePlugin(PurplePlugin *plugin)
   PluginEntry entry;
   entry.parent = button;
   entry.parent_reference = parent_reference;
-  entry.frame = NULL;
+  entry.frame = nullptr;
   plugin_entries_[plugin] = entry;
 
   if (PURPLE_PLUGIN_HAS_PREF_FRAME(plugin)) {
@@ -293,14 +290,14 @@ void PluginWindow::populatePlugin(PurplePlugin *plugin)
     // Group node (set to an "invalid" value).
     CppConsUI::TreeView::NodeReference group = treeview_->getRootNode();
 
-    for (GList *iter = purple_plugin_pref_frame_get_prefs(frame); iter != NULL;
-         iter = iter->next) {
+    for (GList *iter = purple_plugin_pref_frame_get_prefs(frame);
+         iter != nullptr; iter = iter->next) {
       PurplePluginPref *pref = reinterpret_cast<PurplePluginPref *>(iter->data);
       PurplePluginPrefType type = purple_plugin_pref_get_type(pref);
       const char *label = purple_plugin_pref_get_label(pref);
       const char *name = purple_plugin_pref_get_name(pref);
-      if (name == NULL) {
-        if (label == NULL)
+      if (name == nullptr) {
+        if (label == nullptr)
           continue;
 
         if (type == PURPLE_PLUGIN_PREF_INFO) {
@@ -319,12 +316,12 @@ void PluginWindow::populatePlugin(PurplePlugin *plugin)
       PurplePrefType value_type = purple_prefs_get_type(name);
       CppConsUI::Widget *pref_widget;
       if (type == PURPLE_PLUGIN_PREF_CHOICE) {
-        CppConsUI::ComboBox *combo = new CppConsUI::ComboBox(label);
+        auto combo = new CppConsUI::ComboBox(label);
         pref_widget = combo;
 
         // Add possible options.
         for (GList *pref_iter = purple_plugin_pref_get_choices(pref);
-             pref_iter != NULL && pref_iter->next != NULL;
+             pref_iter != nullptr && pref_iter->next != nullptr;
              pref_iter = pref_iter->next->next)
           combo->addOptionPtr(reinterpret_cast<const char *>(pref_iter->data),
             pref_iter->next->data);
@@ -372,8 +369,7 @@ void PluginWindow::populatePlugin(PurplePlugin *plugin)
   }
 
   // Disable plugin.
-  CppConsUI::Button *disable_button =
-    new CppConsUI::Button(_("Disable plugin"));
+  auto disable_button = new CppConsUI::Button(_("Disable plugin"));
   disable_button->signal_activate.connect(
     sigc::bind(sigc::mem_fun(this, &PluginWindow::disablePlugin), plugin));
   treeview_->appendNode(parent_reference, *disable_button);
@@ -382,7 +378,7 @@ void PluginWindow::populatePlugin(PurplePlugin *plugin)
 void PluginWindow::addPlugin(CppConsUI::Button & /*activator*/)
 {
   // Show a window for the user to select a plugin that he wants to add.
-  AddPluginWindow *win = new AddPluginWindow;
+  auto win = new AddPluginWindow;
   win->signal_selection.connect(
     sigc::mem_fun(this, &PluginWindow::onAddPluginSelection));
   win->show();
@@ -405,14 +401,14 @@ void PluginWindow::onAddPluginSelection(
   // Make the button for this plugin focused.
   PluginEntries::iterator i = plugin_entries_.find(plugin);
   g_assert(i != plugin_entries_.end());
-  g_assert(i->second.parent != NULL);
+  g_assert(i->second.parent != nullptr);
   i->second.parent->grabFocus();
 }
 
 void PluginWindow::disablePlugin(
   CppConsUI::Button & /*activator*/, PurplePlugin *plugin)
 {
-  CppConsUI::MessageDialog *dialog = new CppConsUI::MessageDialog(
+  auto dialog = new CppConsUI::MessageDialog(
     _("Disable plugin"), _("Are you sure you want to disable this plugin?"));
   dialog->signal_response.connect(sigc::bind(
     sigc::mem_fun(this, &PluginWindow::disablePluginResponseHandler), plugin));

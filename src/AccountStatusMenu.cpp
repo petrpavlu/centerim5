@@ -34,7 +34,7 @@ AccountStatusMenu::AccountStatusMenu() : MenuWindow(0, 0, AUTOSIZE, AUTOSIZE)
   */
 
   GList *list = purple_accounts_get_all_active();
-  for (GList *l = list; l != NULL; l = l->next) {
+  for (GList *l = list; l != nullptr; l = l->next) {
     PurpleAccount *account = reinterpret_cast<PurpleAccount *>(l->data);
 
     char *text =
@@ -59,7 +59,7 @@ void AccountStatusMenu::onScreenResized()
 void AccountStatusMenu::openStatusPopup(
   CppConsUI::Button &activator, PurpleAccount *account)
 {
-  StatusPopup *status_popup = new StatusPopup(account);
+  auto status_popup = new StatusPopup(account);
   status_popup->setReferenceWidget(activator);
   status_popup->show();
 }
@@ -70,7 +70,7 @@ AccountStatusMenu::StatusPopup::StatusPopup(PurpleAccount *account)
   setColorScheme(CenterIM::SCHEME_ACCOUNTSTATUSMENU);
 
   bool has_independents = false;
-  for (GList *iter = purple_account_get_status_types(account); iter != NULL;
+  for (GList *iter = purple_account_get_status_types(account); iter != nullptr;
        iter = iter->next) {
     PurpleStatusType *status_type =
       reinterpret_cast<PurpleStatusType *>(iter->data);

@@ -63,14 +63,14 @@ void ColorPickerPalette::onSelectColor(Button &activator)
 {
   ColorPickerPaletteButton *button =
     dynamic_cast<ColorPickerPaletteButton *>(&activator);
-  assert(button != NULL);
+  assert(button != nullptr);
 
   signal_color_selected(*this, button->getColor());
 }
 
 void ColorPickerPalette::addButton(int x, int y, int color, int default_color)
 {
-  ColorPickerPaletteButton *button = new ColorPickerPaletteButton(color);
+  auto button = new ColorPickerPaletteButton(color);
   button->signal_activate.connect(
     sigc::mem_fun(this, &ColorPickerPalette::onSelectColor));
   addWidget(*button, x, y);

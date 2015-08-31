@@ -178,7 +178,7 @@ void TextView::append(const char *text, int color)
 
 void TextView::insert(size_t line_num, const char *text, int color)
 {
-  if (text == NULL)
+  if (text == nullptr)
     return;
 
   assert(line_num <= lines_.size());
@@ -190,7 +190,7 @@ void TextView::insert(size_t line_num, const char *text, int color)
   // Parse lines.
   while (*p != '\0') {
     if (*p == '\n') {
-      Line *l = new Line(s, p - s, color);
+      auto l = new Line(s, p - s, color);
       lines_.insert(lines_.begin() + cur_line_num, l);
       ++cur_line_num;
       s = p = UTF8::getNextChar(p);
@@ -201,7 +201,7 @@ void TextView::insert(size_t line_num, const char *text, int color)
   }
 
   if (s < p) {
-    Line *l = new Line(s, p - s, color);
+    auto l = new Line(s, p - s, color);
     lines_.insert(lines_.begin() + cur_line_num, l);
     ++cur_line_num;
   }
@@ -242,8 +242,8 @@ void TextView::erase(size_t start_line, size_t end_line)
 
 void TextView::clear()
 {
-  for (Lines::iterator i = lines_.begin(); i != lines_.end(); ++i)
-    delete *i;
+  for (Line *line : lines_)
+    delete line;
   lines_.clear();
 
   screen_lines_.clear();
@@ -285,7 +285,7 @@ void TextView::setScrollBar(bool new_scrollbar)
 TextView::Line::Line(const char *text_, size_t bytes, int color_)
   : color(color_)
 {
-  assert(text_ != NULL);
+  assert(text_ != nullptr);
 
   text = new char[bytes + 1];
   std::strncpy(text, text_, bytes);
@@ -293,7 +293,7 @@ TextView::Line::Line(const char *text_, size_t bytes, int color_)
 
   length = 0;
   const char *p = text;
-  while (p != NULL && *p != '\0') {
+  while (p != nullptr && *p != '\0') {
     ++length;
     p = UTF8::getNextChar(p);
   }
@@ -317,9 +317,9 @@ void TextView::updateArea()
 const char *TextView::proceedLine(
   const char *text, int area_width, int *res_length) const
 {
-  assert(text != NULL);
+  assert(text != nullptr);
   assert(area_width > 0);
-  assert(res_length != NULL);
+  assert(res_length != nullptr);
 
   const char *cur = text;
   const char *res = text;
@@ -455,11 +455,11 @@ size_t TextView::eraseScreenLines(
     screen_lines_.erase(
       screen_lines_.begin() + begin, screen_lines_.begin() + end);
     i -= end - begin;
-    if (deleted != NULL)
+    if (deleted != nullptr)
       *deleted = end - begin;
   }
-  else if (deleted != NULL)
-    deleted = 0;
+  else if (deleted != nullptr)
+    deleted = nullptr;
 
   return i;
 }

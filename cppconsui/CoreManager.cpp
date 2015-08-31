@@ -39,7 +39,7 @@ namespace CppConsUI {
 
 int CoreManager::initializeInput(Error &error)
 {
-  assert(tk_ == NULL);
+  assert(tk_ == nullptr);
   assert(iconv_desc_ == ICONV_NONE);
   assert(stdin_input_handle_ == 0);
 
@@ -48,7 +48,7 @@ int CoreManager::initializeInput(Error &error)
 
   // Initialize libtermkey.
   tk_ = termkey_new(STDIN_FILENO, TERMKEY_FLAG_NOTERMIOS);
-  if (tk_ == NULL) {
+  if (tk_ == nullptr) {
     error = Error(
       ERROR_LIBTERMKEY_INITIALIZATION, _("Libtermkey initialization failed."));
     goto error_cleanup;
@@ -81,9 +81,9 @@ error_cleanup:
     iconv_desc_ = ICONV_NONE;
   }
 
-  if (tk_ != NULL) {
+  if (tk_ != nullptr) {
     termkey_destroy(tk_);
-    tk_ = NULL;
+    tk_ = nullptr;
   }
 
   return error.getCode();
@@ -91,7 +91,7 @@ error_cleanup:
 
 int CoreManager::finalizeInput(Error & /*error*/)
 {
-  assert(tk_ != NULL);
+  assert(tk_ != nullptr);
   assert(stdin_input_handle_ != 0);
 
   interface_.inputRemove(stdin_input_handle_);
@@ -106,7 +106,7 @@ int CoreManager::finalizeInput(Error & /*error*/)
   }
 
   termkey_destroy(tk_);
-  tk_ = NULL;
+  tk_ = nullptr;
 
   return 0;
 }
@@ -121,15 +121,15 @@ int CoreManager::finalizeOutput(Error &error)
   // Close all windows, work with a copy of the windows vector because the
   // original vector can be changed by calling the close() methods.
   Windows windows_copy = windows_;
-  for (Windows::iterator i = windows_copy.begin(); i != windows_copy.end(); ++i)
-    (*i)->close();
+  for (Window *window : windows_copy)
+    window->close();
 
   // Delete all remaining windows. This prevents memory leaks for windows that
   // have the close() method overridden and calling it does not remove the
   // object from memory.
   windows_copy = windows_;
-  for (Windows::iterator i = windows_copy.begin(); i != windows_copy.end(); ++i)
-    delete *i;
+  for (Window *window : windows_copy)
+    delete window;
 
   return Curses::finalizeScreen(error);
 }
@@ -231,7 +231,7 @@ void CoreManager::enableResizing()
   sig.sa_handler = signalHandler;
   sigemptyset(&sig.sa_mask);
   sig.sa_flags = SA_RESTART;
-  sigaction(SIGWINCH, &sig, NULL);
+  sigaction(SIGWINCH, &sig, nullptr);
 }
 
 void CoreManager::disableResizing()
@@ -241,7 +241,7 @@ void CoreManager::disableResizing()
   sig.sa_handler = SIG_DFL;
   sigemptyset(&sig.sa_mask);
   sig.sa_flags = 0;
-  sigaction(SIGWINCH, &sig, NULL);
+  sigaction(SIGWINCH, &sig, nullptr);
 }
 
 void CoreManager::onScreenResized()
@@ -287,18 +287,18 @@ void CoreManager::onWindowWishSizeChange(
 }
 
 CoreManager::CoreManager(AppInterface &set_interface)
-  : top_input_processor_(NULL), stdin_input_timeout_handle_(0),
-    stdin_input_handle_(0), resize_input_handle_(0), tk_(NULL),
+  : top_input_processor_(nullptr), stdin_input_timeout_handle_(0),
+    stdin_input_handle_(0), resize_input_handle_(0), tk_(nullptr),
     iconv_desc_(ICONV_NONE), redraw_pending_(false), resize_pending_(false)
 {
   pipefd_[0] = pipefd_[1] = -1;
 
   // Validate the passed interface.
-  assert(set_interface.timeoutAdd != NULL);
-  assert(set_interface.timeoutRemove != NULL);
-  assert(set_interface.inputAdd != NULL);
-  assert(set_interface.inputRemove != NULL);
-  assert(set_interface.logError != NULL);
+  assert(set_interface.timeoutAdd != nullptr);
+  assert(set_interface.timeoutRemove != nullptr);
+  assert(set_interface.inputAdd != nullptr);
+  assert(set_interface.inputRemove != nullptr);
+  assert(set_interface.logError != nullptr);
 
   interface_ = set_interface;
 
@@ -417,8 +417,8 @@ void CoreManager::resize()
 
   // Signal the resize event.
   signal_resize();
-  for (Windows::iterator i = windows_.begin(); i != windows_.end(); ++i)
-    (*i)->onScreenResized();
+  for (Window *window : windows_)
+    window->onScreenResized();
 
   // Update area.
   updateArea();
@@ -428,8 +428,8 @@ void CoreManager::resize()
 
 void CoreManager::updateArea()
 {
-  for (Windows::iterator i = windows_.begin(); i != windows_.end(); ++i)
-    updateWindowArea(**i);
+  for (Window *window : windows_)
+    updateWindowArea(*window);
 }
 
 void CoreManager::updateWindowArea(Window &window)
@@ -488,17 +488,17 @@ int CoreManager::draw(Error &error)
   DRAW(Curses::erase(error));
 
   // Non-focusable -> normal -> top.
-  for (Windows::iterator i = windows_.begin(); i != windows_.end(); ++i)
-    if ((*i)->isVisible() && (*i)->getType() == Window::TYPE_NON_FOCUSABLE)
-      DRAW(drawWindow(**i, error));
+  for (Window *window : windows_)
+    if (window->isVisible() && window->getType() == Window::TYPE_NON_FOCUSABLE)
+      DRAW(drawWindow(*window, error));
 
-  for (Windows::iterator i = windows_.begin(); i != windows_.end(); ++i)
-    if ((*i)->isVisible() && (*i)->getType() == Window::TYPE_NORMAL)
-      DRAW(drawWindow(**i, error));
+  for (Window *window : windows_)
+    if (window->isVisible() && window->getType() == Window::TYPE_NORMAL)
+      DRAW(drawWindow(*window, error));
 
-  for (Windows::iterator i = windows_.begin(); i != windows_.end(); ++i)
-    if ((*i)->isVisible() && (*i)->getType() == Window::TYPE_TOP)
-      DRAW(drawWindow(**i, error));
+  for (Window *window : windows_)
+    if (window->isVisible() && window->getType() == Window::TYPE_TOP)
+      DRAW(drawWindow(*window, error));
 
   // Copy virtual ncurses screen to the physical screen.
   DRAW(Curses::refresh(error));
@@ -578,7 +578,7 @@ CoreManager::Windows::iterator CoreManager::findWindow(Window &window)
 void CoreManager::focusWindow()
 {
   // Check if there are any windows left.
-  Window *win = NULL;
+  Window *win = nullptr;
   Windows::reverse_iterator i;
 
   // try to find a top window first
@@ -589,7 +589,7 @@ void CoreManager::focusWindow()
     }
 
   // Normal windows.
-  if (win == NULL)
+  if (win == nullptr)
     for (i = windows_.rbegin(); i != windows_.rend(); ++i)
       if ((*i)->isVisible() && (*i)->getType() == Window::TYPE_NORMAL) {
         win = *i;
@@ -597,15 +597,15 @@ void CoreManager::focusWindow()
       }
 
   Window *focus = dynamic_cast<Window *>(getInputChild());
-  if (win == NULL || win != focus) {
+  if (win == nullptr || win != focus) {
     // Take the focus from the old window with the focus.
-    if (focus != NULL) {
+    if (focus != nullptr) {
       focus->ungrabFocus();
       clearInputChild();
     }
 
     // Give the focus to the window.
-    if (win != NULL) {
+    if (win != nullptr) {
       setInputChild(*win);
       win->restoreFocus();
     }

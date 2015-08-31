@@ -37,14 +37,14 @@ ListBox::ListBox(int w, int h)
 
 HorizontalLine *ListBox::insertSeparator(size_t pos)
 {
-  HorizontalLine *l = new HorizontalLine(AUTOSIZE);
+  auto l = new HorizontalLine(AUTOSIZE);
   insertWidget(pos, *l);
   return l;
 }
 
 HorizontalLine *ListBox::appendSeparator()
 {
-  HorizontalLine *l = new HorizontalLine(AUTOSIZE);
+  auto l = new HorizontalLine(AUTOSIZE);
   appendWidget(*l);
   return l;
 }
@@ -86,8 +86,7 @@ void ListBox::updateArea()
   }
 
   int y = 0;
-  for (Children::iterator i = children_.begin(); i != children_.end(); ++i) {
-    Widget *widget = *i;
+  for (Widget *widget : children_) {
     bool is_visible = widget->isVisible();
 
     // Position the widget correctly.

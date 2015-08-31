@@ -32,7 +32,7 @@ AccountWindow::AccountWindow() : SplitDialog(0, 0, 80, 24, _("Accounts"))
   setContainer(*treeview_);
 
   // Populate all defined accounts.
-  for (GList *i = purple_accounts_get_all(); i != NULL; i = i->next)
+  for (GList *i = purple_accounts_get_all(); i != nullptr; i = i->next)
     populateAccount(reinterpret_cast<PurpleAccount *>(i->data));
 
   buttons_->appendItem(
@@ -53,8 +53,8 @@ AccountWindow::BoolOption::BoolOption(
   PurpleAccount *account, PurpleAccountOption *option)
   : account_(account), option_(option), type_(TYPE_PURPLE)
 {
-  g_assert(account_ != NULL);
-  g_assert(option_ != NULL);
+  g_assert(account_ != nullptr);
+  g_assert(option_ != nullptr);
 
   setText(purple_account_option_get_text(option_));
   setChecked(purple_account_get_bool(account_,
@@ -65,9 +65,9 @@ AccountWindow::BoolOption::BoolOption(
 }
 
 AccountWindow::BoolOption::BoolOption(PurpleAccount *account, Type type)
-  : account_(account), option_(NULL), type_(type)
+  : account_(account), option_(nullptr), type_(type)
 {
-  g_assert(account_ != NULL);
+  g_assert(account_ != nullptr);
 
   if (type == TYPE_REMEMBER_PASSWORD) {
     setText(_("Remember password"));
@@ -97,16 +97,16 @@ AccountWindow::StringOption::StringOption(
   PurpleAccount *account, PurpleAccountOption *option)
   : Button(FLAG_VALUE), account_(account), option_(option), type_(TYPE_PURPLE)
 {
-  g_assert(account_ != NULL);
-  g_assert(option_ != NULL);
+  g_assert(account_ != nullptr);
+  g_assert(option_ != nullptr);
 
   initialize();
 }
 
 AccountWindow::StringOption::StringOption(PurpleAccount *account, Type type)
-  : Button(FLAG_VALUE), account_(account), option_(NULL), type_(type)
+  : Button(FLAG_VALUE), account_(account), option_(nullptr), type_(type)
 {
-  g_assert(account_ != NULL);
+  g_assert(account_ != nullptr);
 
   initialize();
 }
@@ -140,8 +140,7 @@ void AccountWindow::StringOption::updateValue()
 
 void AccountWindow::StringOption::onActivate(Button & /*activator*/)
 {
-  CppConsUI::InputDialog *dialog =
-    new CppConsUI::InputDialog(getText(), getValue());
+  auto dialog = new CppConsUI::InputDialog(getText(), getValue());
   dialog->setMasked(isMasked());
   dialog->signal_response.connect(
     sigc::mem_fun(this, &StringOption::responseHandler));
@@ -169,8 +168,8 @@ AccountWindow::IntegerOption::IntegerOption(
   PurpleAccount *account, PurpleAccountOption *option)
   : Button(FLAG_VALUE), account_(account), option_(option)
 {
-  g_assert(account_ != NULL);
-  g_assert(option_ != NULL);
+  g_assert(account_ != nullptr);
+  g_assert(option_ != nullptr);
 
   setText(purple_account_option_get_text(option_));
   updateValue();
@@ -186,8 +185,7 @@ void AccountWindow::IntegerOption::updateValue()
 
 void AccountWindow::IntegerOption::onActivate(Button & /*activator*/)
 {
-  CppConsUI::InputDialog *dialog =
-    new CppConsUI::InputDialog(getText(), getValue());
+  auto dialog = new CppConsUI::InputDialog(getText(), getValue());
   dialog->setFlags(CppConsUI::TextEntry::FLAG_NUMERIC);
   dialog->signal_response.connect(
     sigc::mem_fun(this, &IntegerOption::responseHandler));
@@ -203,7 +201,7 @@ void AccountWindow::IntegerOption::responseHandler(
 
   const char *text = activator.getText();
   errno = 0;
-  long i = strtol(text, NULL, 10);
+  long i = strtol(text, nullptr, 10);
   if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
     LOG->warning(_("Value is out of range."));
   purple_account_set_int(account_, purple_account_option_get_setting(option_),
@@ -216,20 +214,20 @@ AccountWindow::StringListOption::StringListOption(
   PurpleAccount *account, PurpleAccountOption *option)
   : account_(account), option_(option)
 {
-  g_assert(account_ != NULL);
-  g_assert(option_ != NULL);
+  g_assert(account_ != nullptr);
+  g_assert(option_ != nullptr);
 
   setText(purple_account_option_get_text(option_));
 
   const char *def = purple_account_get_string(account_,
     purple_account_option_get_setting(option_),
     purple_account_option_get_default_list_value(option_));
-  for (GList *l = purple_account_option_get_list(option_); l != NULL;
+  for (GList *l = purple_account_option_get_list(option_); l != nullptr;
        l = l->next)
-    if (l->data != NULL) {
+    if (l->data != nullptr) {
       PurpleKeyValuePair *kvp = reinterpret_cast<PurpleKeyValuePair *>(l->data);
       addOptionPtr(kvp->key, kvp->value);
-      if (kvp->value != NULL && def != NULL &&
+      if (kvp->value != nullptr && def != nullptr &&
         std::strcmp(def, reinterpret_cast<const char *>(kvp->value)) == 0)
         setSelectedByDataPtr(kvp->value);
     }
@@ -252,9 +250,9 @@ AccountWindow::SplitOption::SplitOption(PurpleAccount *account,
   : Button(FLAG_VALUE), account_(account), split_(split),
     account_entry_(account_entry)
 {
-  g_assert(account_ != NULL);
+  g_assert(account_ != nullptr);
 
-  if (split_ != NULL)
+  if (split_ != nullptr)
     setText(purple_account_user_split_get_text(split_));
   else
     setText(_("Username"));
@@ -275,14 +273,14 @@ void AccountWindow::SplitOption::updateSplits()
     purple_find_prpl(purple_account_get_protocol_id(account_)));
 
   for (GList *iter = prplinfo->user_splits;
-       iter != NULL && split_widget != split_widgets->end();
+       iter != nullptr && split_widget != split_widgets->end();
        iter = iter->next, ++split_widget) {
     PurpleAccountUserSplit *user_split =
       reinterpret_cast<PurpleAccountUserSplit *>(iter->data);
     widget = *split_widget;
 
     val = widget->getValue();
-    if (val == NULL || *val == '\0')
+    if (val == nullptr || *val == '\0')
       val = purple_account_user_split_get_default_value(user_split);
     g_string_append_printf(username, "%c%s",
       purple_account_user_split_get_separator(user_split), val);
@@ -294,7 +292,7 @@ void AccountWindow::SplitOption::updateSplits()
 
 void AccountWindow::SplitOption::onActivate(Button & /*activator*/)
 {
-  CppConsUI::InputDialog *dialog = new CppConsUI::InputDialog(text_, value_);
+  auto dialog = new CppConsUI::InputDialog(text_, value_);
   dialog->signal_response.connect(
     sigc::mem_fun(this, &SplitOption::responseHandler));
   dialog->show();
@@ -315,11 +313,11 @@ AccountWindow::ProtocolOption::ProtocolOption(
   PurpleAccount *account, AccountWindow &account_window)
   : account_window_(&account_window), account_(account)
 {
-  g_assert(account_ != NULL);
+  g_assert(account_ != nullptr);
 
   setText(_("Protocol"));
 
-  for (GList *i = purple_plugins_get_protocols(); i != NULL; i = i->next)
+  for (GList *i = purple_plugins_get_protocols(); i != nullptr; i = i->next)
     addOptionPtr(
       purple_plugin_get_name(reinterpret_cast<PurplePlugin *>(i->data)),
       i->data);
@@ -347,7 +345,7 @@ AccountWindow::ColorOption::ColorOption(PurpleAccount *account)
       CppConsUI::Curses::Color::DEFAULT, _("Buddylist color:"), true),
     account_(account)
 {
-  g_assert(account_ != NULL);
+  g_assert(account_ != nullptr);
 
   int fg = purple_account_get_ui_int(account, "centerim5",
     "buddylist-foreground-color", CppConsUI::Curses::Color::DEFAULT);
@@ -387,7 +385,7 @@ void AccountWindow::populateAccount(PurpleAccount *account)
   if (account_entries_.find(account) == account_entries_.end()) {
     // No entry for this account, add one.
     AccountEntry entry;
-    entry.parent = NULL;
+    entry.parent = nullptr;
     account_entries_[account] = entry;
   }
   else {
@@ -397,9 +395,8 @@ void AccountWindow::populateAccount(PurpleAccount *account)
 
   AccountEntry *account_entry = &account_entries_[account];
 
-  if (account_entry->parent == NULL) {
-    CppConsUI::TreeView::ToggleCollapseButton *button =
-      new CppConsUI::TreeView::ToggleCollapseButton;
+  if (account_entry->parent == nullptr) {
+    auto button = new CppConsUI::TreeView::ToggleCollapseButton;
     CppConsUI::TreeView::NodeReference parent_reference =
       treeview_->appendNode(treeview_->getRootNode(), *button);
     treeview_->setCollapsed(parent_reference, true);
@@ -416,9 +413,9 @@ void AccountWindow::populateAccount(PurpleAccount *account)
   const char *protocol_id = purple_account_get_protocol_id(account);
   PurplePlugin *prpl = purple_find_prpl(protocol_id);
 
-  if (prpl == NULL) {
+  if (prpl == nullptr) {
     // Settings of an unknown account cannot be changed.
-    CppConsUI::Label *label =
+    auto label =
       new CppConsUI::Label(_("Invalid account or protocol plugin not loaded."));
     treeview_->appendNode(account_entry->parent_reference, *label);
   }
@@ -426,7 +423,7 @@ void AccountWindow::populateAccount(PurpleAccount *account)
     PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
     // Protocols combobox.
-    ProtocolOption *combobox = new ProtocolOption(account, *this);
+    auto combobox = new ProtocolOption(account, *this);
     CppConsUI::TreeView::NodeReference protocol_node =
       treeview_->appendNode(account_entry->parent_reference, *combobox);
     combobox->grabFocus();
@@ -435,7 +432,7 @@ void AccountWindow::populateAccount(PurpleAccount *account)
     // multiple values (e.g. user@server:port/resource).
     char *username = g_strdup(purple_account_get_username(account));
 
-    for (GList *iter = g_list_last(prplinfo->user_splits); iter != NULL;
+    for (GList *iter = g_list_last(prplinfo->user_splits); iter != nullptr;
          iter = iter->prev) {
       PurpleAccountUserSplit *split =
         reinterpret_cast<PurpleAccountUserSplit *>(iter->data);
@@ -447,7 +444,7 @@ void AccountWindow::populateAccount(PurpleAccount *account)
         s = strchr(username, purple_account_user_split_get_separator(split));
 
       const char *value;
-      if (s != NULL) {
+      if (s != nullptr) {
         *s = '\0';
         value = s + 1;
       }
@@ -455,15 +452,14 @@ void AccountWindow::populateAccount(PurpleAccount *account)
         value = purple_account_user_split_get_default_value(split);
 
       // Create widget for the username split and remember.
-      SplitOption *widget_split =
-        new SplitOption(account, split, account_entry);
+      auto widget_split = new SplitOption(account, split, account_entry);
       widget_split->setValue(value);
       account_entry->split_widgets.push_front(widget_split);
 
       treeview_->appendNode(account_entry->parent_reference, *widget_split);
     }
 
-    SplitOption *widget_split = new SplitOption(account, NULL, account_entry);
+    auto widget_split = new SplitOption(account, nullptr, account_entry);
     widget_split->setValue(username);
     account_entry->split_widgets.push_front(widget_split);
     treeview_->insertNodeAfter(protocol_node, *widget_split);
@@ -481,7 +477,7 @@ void AccountWindow::populateAccount(PurpleAccount *account)
     widget = new StringOption(account, StringOption::TYPE_ALIAS);
     treeview_->appendNode(account_entry->parent_reference, *widget);
 
-    for (GList *pref = prplinfo->protocol_options; pref != NULL;
+    for (GList *pref = prplinfo->protocol_options; pref != nullptr;
          pref = pref->next) {
       PurpleAccountOption *option =
         reinterpret_cast<PurpleAccountOption *>(pref->data);
@@ -520,7 +516,7 @@ void AccountWindow::populateAccount(PurpleAccount *account)
   }
 
   // Drop account.
-  CppConsUI::Button *drop_button = new CppConsUI::Button(_("Drop account"));
+  auto drop_button = new CppConsUI::Button(_("Drop account"));
   drop_button->signal_activate.connect(
     sigc::bind(sigc::mem_fun(this, &AccountWindow::dropAccount), account));
   treeview_->appendNode(account_entry->parent_reference, *drop_button);
@@ -529,7 +525,7 @@ void AccountWindow::populateAccount(PurpleAccount *account)
 void AccountWindow::addAccount(CppConsUI::Button & /*activator*/)
 {
   GList *i = purple_plugins_get_protocols();
-  if (i == NULL) {
+  if (i == nullptr) {
     // Libpurple returns NULL if there are no protocols available.
     LOG->warning(_("No protocol plugins available."));
     return;
@@ -552,7 +548,7 @@ void AccountWindow::addAccount(CppConsUI::Button & /*activator*/)
 void AccountWindow::dropAccount(
   CppConsUI::Button & /*activator*/, PurpleAccount *account)
 {
-  CppConsUI::MessageDialog *dialog = new CppConsUI::MessageDialog(
+  auto dialog = new CppConsUI::MessageDialog(
     _("Account deletion"), _("Are you sure you want to delete this account?"));
   dialog->signal_response.connect(sigc::bind(
     sigc::mem_fun(this, &AccountWindow::dropAccountResponseHandler), account));

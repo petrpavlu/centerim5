@@ -32,28 +32,28 @@
 namespace CppConsUI {
 
 Button::Button(int w, int h, const char *text, int flags, bool masked)
-  : Widget(w, h), flags_(flags), text_(NULL), text_width_(0), text_height_(0),
-    value_(NULL), value_width_(0), unit_(NULL), unit_width_(0), right_(NULL),
-    right_width_(0), masked_(masked)
+  : Widget(w, h), flags_(flags), text_(nullptr), text_width_(0),
+    text_height_(0), value_(nullptr), value_width_(0), unit_(nullptr),
+    unit_width_(0), right_(nullptr), right_width_(0), masked_(masked)
 {
   setText(text);
-  setValue(static_cast<char *>(NULL));
-  setUnit(NULL);
-  setRight(NULL);
+  setValue(static_cast<char *>(nullptr));
+  setUnit(nullptr);
+  setRight(nullptr);
 
   can_focus_ = true;
   declareBindables();
 }
 
 Button::Button(const char *text, int flags, bool masked)
-  : Widget(AUTOSIZE, AUTOSIZE), flags_(flags), text_(NULL), text_width_(0),
-    text_height_(0), value_(NULL), value_width_(0), unit_(NULL), unit_width_(0),
-    right_(NULL), right_width_(0), masked_(masked)
+  : Widget(AUTOSIZE, AUTOSIZE), flags_(flags), text_(nullptr), text_width_(0),
+    text_height_(0), value_(nullptr), value_width_(0), unit_(nullptr),
+    unit_width_(0), right_(nullptr), right_width_(0), masked_(masked)
 {
   setText(text);
-  setValue(static_cast<char *>(NULL));
-  setUnit(NULL);
-  setRight(NULL);
+  setValue(static_cast<char *>(nullptr));
+  setUnit(nullptr);
+  setRight(nullptr);
 
   can_focus_ = true;
   declareBindables();
@@ -61,9 +61,9 @@ Button::Button(const char *text, int flags, bool masked)
 
 Button::Button(int w, int h, int flags, const char *text, const char *value,
   const char *unit, const char *right, bool masked)
-  : Widget(w, h), flags_(flags), text_(NULL), text_width_(0), text_height_(0),
-    value_(NULL), value_width_(0), unit_(NULL), unit_width_(0), right_(NULL),
-    right_width_(0), masked_(masked)
+  : Widget(w, h), flags_(flags), text_(nullptr), text_width_(0),
+    text_height_(0), value_(nullptr), value_width_(0), unit_(nullptr),
+    unit_width_(0), right_(nullptr), right_width_(0), masked_(masked)
 {
   setText(text);
   setValue(value);
@@ -76,9 +76,9 @@ Button::Button(int w, int h, int flags, const char *text, const char *value,
 
 Button::Button(int flags, const char *text, const char *value, const char *unit,
   const char *right, bool masked)
-  : Widget(AUTOSIZE, AUTOSIZE), flags_(flags), text_(NULL), text_width_(0),
-    text_height_(0), value_(NULL), value_width_(0), unit_(NULL), unit_width_(0),
-    right_(NULL), right_width_(0), masked_(masked)
+  : Widget(AUTOSIZE, AUTOSIZE), flags_(flags), text_(nullptr), text_width_(0),
+    text_height_(0), value_(nullptr), value_width_(0), unit_(nullptr),
+    unit_width_(0), right_(nullptr), right_width_(0), masked_(masked)
 {
   setText(text);
   setValue(value);
@@ -99,10 +99,10 @@ Button::~Button()
 
 int Button::draw(Curses::ViewPort area, Error &error)
 {
-  assert(text_ != NULL);
-  assert(value_ != NULL);
-  assert(unit_ != NULL);
-  assert(right_ != NULL);
+  assert(text_ != nullptr);
+  assert(value_ != nullptr);
+  assert(unit_ != nullptr);
+  assert(right_ != nullptr);
 
   int attrs;
   if (has_focus_) {
@@ -197,10 +197,10 @@ void Button::setMasked(bool new_masked)
 void Button::setText(const char *new_text)
 {
   size_t size = 1;
-  if (new_text != NULL)
+  if (new_text != nullptr)
     size += std::strlen(new_text);
-  char *new_storage = new char[size];
-  if (new_text != NULL)
+  auto new_storage = new char[size];
+  if (new_text != nullptr)
     std::strcpy(new_storage, new_text);
   else
     new_storage[0] = '\0';
@@ -236,10 +236,10 @@ void Button::setText(const char *new_text)
 void Button::setValue(const char *new_value)
 {
   size_t size = 1;
-  if (new_value != NULL)
+  if (new_value != nullptr)
     size += std::strlen(new_value);
-  char *new_storage = new char[size];
-  if (new_value != NULL)
+  auto new_storage = new char[size];
+  if (new_value != nullptr)
     std::strcpy(new_storage, new_value);
   else
     new_storage[0] = '\0';
@@ -261,10 +261,10 @@ void Button::setValue(int new_value)
 void Button::setUnit(const char *new_unit)
 {
   size_t size = 1;
-  if (new_unit != NULL)
+  if (new_unit != nullptr)
     size += std::strlen(new_unit);
-  char *new_storage = new char[size];
-  if (new_unit != NULL)
+  auto new_storage = new char[size];
+  if (new_unit != nullptr)
     std::strcpy(new_storage, new_unit);
   else
     new_storage[0] = '\0';
@@ -279,10 +279,10 @@ void Button::setUnit(const char *new_unit)
 void Button::setRight(const char *new_right)
 {
   size_t size = 1;
-  if (new_right != NULL)
+  if (new_right != nullptr)
     size += std::strlen(new_right);
-  char *new_storage = new char[size];
-  if (new_right != NULL)
+  auto new_storage = new char[size];
+  if (new_right != nullptr)
     std::strcpy(new_storage, new_right);
   else
     new_storage[0] = '\0';

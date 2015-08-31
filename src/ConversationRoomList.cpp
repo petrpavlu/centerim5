@@ -20,14 +20,14 @@
 // Move the widget to a position according to sorting function.
 void ConversationRoomList::moveToSortedPosition(Buddy *new_buddy)
 {
-  Buddy *buddy = NULL;
+  Buddy *buddy = nullptr;
   Children::iterator iter;
 
-  g_assert(new_buddy != NULL);
+  g_assert(new_buddy != nullptr);
 
   for (iter = children_.begin(); iter != children_.end(); ++iter) {
     buddy = dynamic_cast<Buddy *>(*iter);
-    g_assert(buddy != NULL);
+    g_assert(buddy != nullptr);
 
     // If buddy is in the list already, skip it.
     if (*buddy == *new_buddy)
@@ -57,10 +57,10 @@ void ConversationRoomList::moveToSortedPosition(Buddy *new_buddy)
 
 void ConversationRoomList::add_users(GList *cbuddies, gboolean /*new_arrivals*/)
 {
-  for (GList *l = cbuddies; l != NULL; l = l->next) {
+  for (GList *l = cbuddies; l != nullptr; l = l->next) {
     PurpleConvChatBuddy *pbuddy = static_cast<PurpleConvChatBuddy *>(l->data);
 
-    Buddy *buddy = new Buddy(pbuddy);
+    auto buddy = new Buddy(pbuddy);
     buddy->setButtonText();
     buddy_map_[pbuddy->name] = buddy;
 
@@ -79,16 +79,16 @@ void ConversationRoomList::rename_user(
   //  conv_->u.chat, old_name);
 
   PurpleConvChat *conv = PURPLE_CONV_CHAT(conv_);
-  g_assert(conv != NULL);
+  g_assert(conv != nullptr);
 
   PurpleConvChatBuddy *new_pbuddy = purple_conv_chat_cb_find(conv, new_name);
   // g_assert(old_pbuddy != NULL);
-  g_assert(new_pbuddy != NULL);
+  g_assert(new_pbuddy != nullptr);
 
   // NOTE: PurpleConvChatBuddy::ui_data is pidgin 2.9!!
   // Buddy * buddy = static_cast<Buddy *>(old_pbuddy->ui_data);
   Buddy *buddy = buddy_map_[old_name];
-  g_assert(buddy != NULL);
+  g_assert(buddy != nullptr);
 
   // Update buddy.
   buddy->setPurpleBuddy(new_pbuddy);
@@ -104,7 +104,7 @@ void ConversationRoomList::rename_user(
 
 void ConversationRoomList::remove_users(GList *users)
 {
-  for (GList *l = users; l != NULL; l = l->next) {
+  for (GList *l = users; l != nullptr; l = l->next) {
     const char *name = static_cast<const char *>(l->data);
 
     // NOTE: can't remove purple_conv_chat_cb_find, because the user
@@ -123,15 +123,15 @@ void ConversationRoomList::remove_users(GList *users)
 void ConversationRoomList::update_user(const char *user)
 {
   PurpleConvChat *conv = PURPLE_CONV_CHAT(conv_);
-  g_assert(conv != NULL);
+  g_assert(conv != nullptr);
 
   PurpleConvChatBuddy *pbuddy = purple_conv_chat_cb_find(conv, user);
-  g_assert(pbuddy != NULL);
+  g_assert(pbuddy != nullptr);
 
   // NOTE: PurpleConvChatBuddy::ui_data is pidgin 2.9!!
   // Buddy * buddy = static_cast<Buddy *>(pbuddy->ui_data);
   Buddy *buddy = buddy_map_[user];
-  g_assert(buddy != NULL);
+  g_assert(buddy != nullptr);
 
   // Move and then update.
   moveToSortedPosition(buddy);
@@ -153,7 +153,7 @@ ConversationRoomList::Buddy::~Buddy()
 void ConversationRoomList::Buddy::readFlags(
   bool &is_op, bool &is_typing, bool &is_away) const
 {
-  g_assert(pbuddy_ != NULL);
+  g_assert(pbuddy_ != nullptr);
 
   PurpleConvChatBuddyFlags flags = pbuddy_->flags;
 
@@ -195,11 +195,11 @@ char *ConversationRoomList::Buddy::displayText() const
 
 const char *ConversationRoomList::Buddy::displayName() const
 {
-  g_assert(pbuddy_ != NULL);
+  g_assert(pbuddy_ != nullptr);
 
   // Prefer alias.
   // NOTE: pbuddy_->alias_key isn't used yet... (according to docs)
-  if (pbuddy_->alias != NULL)
+  if (pbuddy_->alias != nullptr)
     return pbuddy_->alias;
   else
     return pbuddy_->name;

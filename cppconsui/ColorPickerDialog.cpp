@@ -33,7 +33,7 @@ ColorPickerDialog::ColorPickerDialog(
 {
   addButton(OK_BUTTON_TEXT, RESPONSE_OK);
 
-  ColorPickerPalette *pick = new ColorPickerPalette(default_color, flags);
+  auto pick = new ColorPickerPalette(default_color, flags);
   layout_->insertWidget(0, *pick);
   pick->signal_color_selected.connect(
     sigc::mem_fun(this, &ColorPickerDialog::onColorSelected));

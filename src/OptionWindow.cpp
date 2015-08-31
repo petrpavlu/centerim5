@@ -27,7 +27,7 @@ OptionWindow::OptionWindow() : SplitDialog(0, 0, 80, 24, _("Config options"))
 {
   setColorScheme(CenterIM::SCHEME_GENERALWINDOW);
 
-  CppConsUI::TreeView *treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
+  auto treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
   setContainer(*treeview);
 
   ChoiceOption *c;
@@ -134,10 +134,10 @@ OptionWindow::OptionWindow() : SplitDialog(0, 0, 80, 24, _("Config options"))
   treeview->setCollapsed(parent, true);
   c = new ChoiceOption(_("Log format"), "/purple/logging/format");
   GList *opts = purple_log_logger_get_options();
-  for (GList *o = opts; o != NULL; o = o->next) {
+  for (GList *o = opts; o != nullptr; o = o->next) {
     const char *human = reinterpret_cast<const char *>(o->data);
     o = o->next;
-    g_assert(o != NULL);
+    g_assert(o != nullptr);
     const char *value = reinterpret_cast<const char *>(o->data);
     c->addOption(human, value);
   }
@@ -179,8 +179,8 @@ void OptionWindow::onScreenResized()
 OptionWindow::BooleanOption::BooleanOption(const char *text, const char *config)
   : CheckBox(text)
 {
-  g_assert(text != NULL);
-  g_assert(config != NULL);
+  g_assert(text != nullptr);
+  g_assert(config != nullptr);
 
   pref_ = g_strdup(config);
   setChecked(purple_prefs_get_bool(pref_));
@@ -201,8 +201,8 @@ void OptionWindow::BooleanOption::onToggle(
 OptionWindow::StringOption::StringOption(const char *text, const char *config)
   : Button(FLAG_VALUE, text)
 {
-  g_assert(text != NULL);
-  g_assert(config != NULL);
+  g_assert(text != nullptr);
+  g_assert(config != nullptr);
 
   pref_ = g_strdup(config);
   setValue(purple_prefs_get_string(pref_));
@@ -216,8 +216,7 @@ OptionWindow::StringOption::~StringOption()
 
 void OptionWindow::StringOption::onActivate(Button & /*activator*/)
 {
-  CppConsUI::InputDialog *dialog =
-    new CppConsUI::InputDialog(getText(), getValue());
+  auto dialog = new CppConsUI::InputDialog(getText(), getValue());
   dialog->signal_response.connect(
     sigc::mem_fun(this, &StringOption::responseHandler));
   dialog->show();
@@ -237,8 +236,8 @@ void OptionWindow::StringOption::responseHandler(
 OptionWindow::IntegerOption::IntegerOption(const char *text, const char *config)
   : Button(FLAG_VALUE, text), unit_(false)
 {
-  g_assert(text != NULL);
-  g_assert(config != NULL);
+  g_assert(text != nullptr);
+  g_assert(config != nullptr);
 
   pref_ = g_strdup(config);
   setValue(purple_prefs_get_int(pref_));
@@ -249,8 +248,8 @@ OptionWindow::IntegerOption::IntegerOption(
   const char *text, const char *config, sigc::slot<const char *, int> unit_fun)
   : Button(FLAG_VALUE | FLAG_UNIT, text), unit_(true), unit_fun_(unit_fun)
 {
-  g_assert(text != NULL);
-  g_assert(config != NULL);
+  g_assert(text != nullptr);
+  g_assert(config != nullptr);
 
   pref_ = g_strdup(config);
   int val = purple_prefs_get_int(pref_);
@@ -266,8 +265,7 @@ OptionWindow::IntegerOption::~IntegerOption()
 
 void OptionWindow::IntegerOption::onActivate(Button & /*activator*/)
 {
-  CppConsUI::InputDialog *dialog =
-    new CppConsUI::InputDialog(getText(), getValue());
+  auto dialog = new CppConsUI::InputDialog(getText(), getValue());
   dialog->setFlags(CppConsUI::TextEntry::FLAG_NUMERIC);
   dialog->signal_response.connect(
     sigc::mem_fun(this, &IntegerOption::responseHandler));
@@ -283,7 +281,7 @@ void OptionWindow::IntegerOption::responseHandler(
 
   const char *text = activator.getText();
   errno = 0;
-  long i = strtol(text, NULL, 10);
+  long i = strtol(text, nullptr, 10);
   if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
     LOG->warning(_("Value is out of range."));
 
@@ -297,8 +295,8 @@ void OptionWindow::IntegerOption::responseHandler(
 OptionWindow::ChoiceOption::ChoiceOption(const char *text, const char *config)
   : ComboBox(text)
 {
-  g_assert(text != NULL);
-  g_assert(config != NULL);
+  g_assert(text != nullptr);
+  g_assert(config != nullptr);
 
   pref_ = g_strdup(config);
   signal_selection_changed.connect(
@@ -307,16 +305,16 @@ OptionWindow::ChoiceOption::ChoiceOption(const char *text, const char *config)
 
 OptionWindow::ChoiceOption::~ChoiceOption()
 {
-  for (ComboBoxEntries::iterator i = options_.begin(); i != options_.end(); ++i)
-    g_free(reinterpret_cast<char *>(i->data));
+  for (ComboBoxEntry &entry : options_)
+    g_free(reinterpret_cast<char *>(entry.data));
 
   g_free(pref_);
 }
 
 void OptionWindow::ChoiceOption::addOption(const char *title, const char *value)
 {
-  g_assert(title != NULL);
-  g_assert(value != NULL);
+  g_assert(title != nullptr);
+  g_assert(value != nullptr);
 
   int item = addOptionPtr(title, g_strdup(value));
   if (g_ascii_strcasecmp(purple_prefs_get_string(pref_), value) == 0)

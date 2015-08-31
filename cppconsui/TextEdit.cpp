@@ -40,7 +40,7 @@ TextEdit::TextEdit(int w, int h, const char *text, int flags, bool single_line,
   bool accept_tabs, bool masked)
   : Widget(w, h), flags_(flags), editable_(true), overwrite_mode_(false),
     single_line_mode_(single_line), accept_tabs_(accept_tabs), masked_(masked),
-    buffer_(NULL), screen_lines_dirty_(false)
+    buffer_(nullptr), screen_lines_dirty_(false)
 {
   setText(text);
 
@@ -125,7 +125,7 @@ int TextEdit::draw(Curses::ViewPort area, Error &error)
 
 void TextEdit::setText(const char *new_text)
 {
-  if (new_text == NULL) {
+  if (new_text == nullptr) {
     clear();
     return;
   }
@@ -371,7 +371,7 @@ char *TextEdit::nextChar(const char *p) const
 
 int TextEdit::width(const char *start, size_t chars) const
 {
-  assert(start != NULL);
+  assert(start != nullptr);
 
   int width = 0;
 
@@ -393,10 +393,10 @@ int TextEdit::onScreenWidth(UTF8::UniChar uc, int w) const
 char *TextEdit::getScreenLine(
   const char *text, int max_width, size_t *res_length) const
 {
-  assert(text != NULL);
+  assert(text != nullptr);
   assert(text < bufend_);
   assert(max_width > 0);
-  assert(res_length != NULL);
+  assert(res_length != nullptr);
 
   const char *cur = text;
   const char *res = text;
@@ -472,8 +472,8 @@ void TextEdit::updateScreenLines()
 
 void TextEdit::updateScreenLines(const char *begin, const char *end)
 {
-  assert(begin != NULL);
-  assert(end != NULL);
+  assert(begin != nullptr);
+  assert(end != nullptr);
 
   if (real_width_ <= 1)
     return;
@@ -553,9 +553,8 @@ void TextEdit::updateScreenCursor()
 
   assertUpdatedScreenLines();
 
-  for (ScreenLines::iterator i = screen_lines_.begin();
-       i != screen_lines_.end(); ++i) {
-    size_t length = i->length;
+  for (ScreenLine &line : screen_lines_) {
+    size_t length = line.length;
     if (acu_length <= current_pos_ && current_pos_ < acu_length + length) {
       current_sc_linepos_ = current_pos_ - acu_length;
       break;
@@ -576,7 +575,7 @@ void TextEdit::updateScreenCursor()
 
 void TextEdit::insertTextAtCursor(const char *new_text, size_t new_text_bytes)
 {
-  assert(new_text != NULL);
+  assert(new_text != nullptr);
 
   assertUpdatedScreenLines();
 
@@ -595,7 +594,7 @@ void TextEdit::insertTextAtCursor(const char *new_text, size_t new_text_bytes)
 
   size_t n_chars = 0;
   const char *p = new_text;
-  while (p != NULL && *p != '\0') {
+  while (p != nullptr && *p != '\0') {
     ++n_chars;
     p = UTF8::findNextChar(p, new_text + new_text_bytes);
   }
@@ -620,7 +619,7 @@ void TextEdit::insertTextAtCursor(const char *new_text, size_t new_text_bytes)
 
 void TextEdit::insertTextAtCursor(const char *new_text)
 {
-  assert(new_text != NULL);
+  assert(new_text != nullptr);
 
   insertTextAtCursor(new_text, strlen(new_text));
 }

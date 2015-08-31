@@ -30,19 +30,19 @@
 
 namespace CppConsUI {
 
-ColorScheme *color_scheme = NULL;
-CoreManager *core_manager = NULL;
-KeyConfig *key_config = NULL;
+ColorScheme *color_scheme = nullptr;
+CoreManager *core_manager = nullptr;
+KeyConfig *key_config = nullptr;
 
 Error::Error(ErrorCode code, const char *string)
-  : error_code_(code), error_string_(NULL)
+  : error_code_(code), error_string_(nullptr)
 {
   setString(string);
 }
 
 Error::Error(const Error &other)
 {
-  assert(other.error_string_ != NULL);
+  assert(other.error_string_ != nullptr);
 
   error_code_ = other.error_code_;
 
@@ -53,10 +53,10 @@ Error::Error(const Error &other)
 
 Error &Error::operator=(const Error &other)
 {
-  assert(other.error_string_ != NULL);
+  assert(other.error_string_ != nullptr);
 
   size_t size = std::strlen(other.error_string_) + 1;
-  char *new_string = new char[size];
+  auto new_string = new char[size];
   std::strcpy(new_string, other.error_string_);
 
   error_code_ = other.error_code_;
@@ -79,10 +79,10 @@ void Error::setCode(ErrorCode code)
 void Error::setString(const char *string)
 {
   size_t size = 1;
-  if (string != NULL)
+  if (string != nullptr)
     size += std::strlen(string);
-  char *new_string = new char[size];
-  if (string != NULL)
+  auto new_string = new char[size];
+  if (string != nullptr)
     std::strcpy(new_string, string);
   else
     new_string[0] = '\0';
@@ -93,13 +93,13 @@ void Error::setString(const char *string)
 
 void Error::setFormattedString(const char *format, ...)
 {
-  assert(format != NULL);
+  assert(format != nullptr);
 
   va_list args;
 
   va_start(args, format);
-  int size = std::vsnprintf(NULL, 0, format, args) + 1;
-  char *new_string = new char[size];
+  int size = std::vsnprintf(nullptr, 0, format, args) + 1;
+  auto new_string = new char[size];
   std::vsprintf(new_string, format, args);
   va_end(args);
 
@@ -111,14 +111,14 @@ void Error::clear()
 {
   error_code_ = ERROR_NONE;
   delete[] error_string_;
-  error_string_ = NULL;
+  error_string_ = nullptr;
 }
 
 void initializeConsUI(AppInterface &interface)
 {
-  assert(color_scheme == NULL);
-  assert(core_manager == NULL);
-  assert(key_config == NULL);
+  assert(color_scheme == nullptr);
+  assert(core_manager == nullptr);
+  assert(key_config == nullptr);
 
   // Initialize ColorScheme and KeyConfig. These cannot fail.
   color_scheme = new ColorScheme;
@@ -130,34 +130,34 @@ void initializeConsUI(AppInterface &interface)
 
 void finalizeConsUI()
 {
-  assert(color_scheme != NULL);
-  assert(core_manager != NULL);
-  assert(key_config != NULL);
+  assert(color_scheme != nullptr);
+  assert(core_manager != nullptr);
+  assert(key_config != nullptr);
 
   // Destroy CoreManager, KeyConfig and ColorScheme.
   delete core_manager;
-  core_manager = NULL;
+  core_manager = nullptr;
   delete key_config;
-  key_config = NULL;
+  key_config = nullptr;
   delete color_scheme;
-  color_scheme = NULL;
+  color_scheme = nullptr;
 }
 
 ColorScheme *getColorSchemeInstance()
 {
-  assert(color_scheme != NULL);
+  assert(color_scheme != nullptr);
   return color_scheme;
 }
 
 CoreManager *getCoreManagerInstance()
 {
-  assert(core_manager != NULL);
+  assert(core_manager != nullptr);
   return core_manager;
 }
 
 KeyConfig *getKeyConfigInstance()
 {
-  assert(key_config != NULL);
+  assert(key_config != nullptr);
   return key_config;
 }
 
@@ -174,7 +174,7 @@ namespace UTF8 {
 //  31     6     1111110x  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx
 UniChar getUniChar(const char *p)
 {
-  assert(p != NULL);
+  assert(p != nullptr);
 
   UniChar res;
   unsigned char c = *p++;
@@ -306,7 +306,7 @@ const char *getPrevChar(const char *p)
 
 const char *findNextChar(const char *p, const char *end)
 {
-  if (end == NULL)
+  if (end == nullptr)
     return getNextChar(p);
 
   while (p + 1 < end) {
@@ -314,7 +314,7 @@ const char *findNextChar(const char *p, const char *end)
     if ((*p & 0xc0) != 0x80)
       return p;
   }
-  return NULL;
+  return nullptr;
 }
 
 const char *findPrevChar(const char *start, const char *p)
@@ -324,7 +324,7 @@ const char *findPrevChar(const char *start, const char *p)
     if ((*p & 0xc0) != 0x80)
       return p;
   }
-  return NULL;
+  return nullptr;
 }
 
 } // namespace UTF8

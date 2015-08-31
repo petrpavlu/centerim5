@@ -31,8 +31,8 @@
 namespace CppConsUI {
 
 ColorPicker::ColorPicker(int fg, int bg, const char *text, bool sample)
-  : HorizontalListBox(AUTOSIZE, 1), fg_combo_(NULL), bg_combo_(NULL),
-    label_(NULL), sample_(NULL)
+  : HorizontalListBox(AUTOSIZE, 1), fg_combo_(nullptr), bg_combo_(nullptr),
+    label_(nullptr), sample_(nullptr)
 {
   fg_combo_ = new ColorPickerComboBox(10, fg);
   bg_combo_ = new ColorPickerComboBox(10, bg);
@@ -63,7 +63,7 @@ void ColorPicker::setColorPair(int fg, int bg)
   fg_combo_->setColor(fg);
   bg_combo_->setColor(bg);
 
-  if (sample_ != NULL)
+  if (sample_ != nullptr)
     sample_->setColors(fg, bg);
 
   signal_colorpair_selected(*this, fg, bg);
@@ -72,7 +72,7 @@ void ColorPicker::setColorPair(int fg, int bg)
 void ColorPicker::setText(const char *new_text)
 {
   label_->setText(new_text);
-  if (new_text != NULL)
+  if (new_text != nullptr)
     label_->setWidth(Curses::onScreenWidth(new_text) + 1);
   else
     label_->setWidth(0);
