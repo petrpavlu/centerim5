@@ -23,6 +23,7 @@
 #include "Footer.h"
 
 #include <cppconsui/ColorScheme.h>
+#include <cstdlib>
 #include <cstring>
 #include <sys/stat.h>
 #include "gettext.h"
@@ -504,7 +505,7 @@ char *Conversation::extractTime(time_t sent_time, time_t show_time) const
   char *t1 = g_strdup(purple_date_format_long(&show_time_local));
   char *t2 = g_strdup(purple_date_format_long(&sent_time_local));
 
-  int tdiff = abs(sent_time - show_time);
+  int tdiff = std::abs(sent_time - show_time);
 
   if (tdiff > 5 && std::strcmp(t1, t2) != 0) {
     char *res = g_strdup_printf("%s [%s]", t1, t2);
