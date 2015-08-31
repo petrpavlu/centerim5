@@ -288,7 +288,7 @@ ColorScheme::PropertyConversionResult ColorScheme::stringPairToPropertyPair(
     errno = 0;
     long i = std::strtol(property, &endptr, 10);
     assert(i >= 0);
-    if (endptr != '\0' || errno == ERANGE || i > INT_MAX)
+    if (*endptr != '\0' || errno == ERANGE || i > INT_MAX)
       return CONVERSION_ERROR_PROPERTY;
 
     *out_property = PROPERTY_TEXTVIEW_TEXT;
