@@ -21,8 +21,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __CONSUICURSES_H__
-#define __CONSUICURSES_H__
+#ifndef CONSUICURSES_H
+#define CONSUICURSES_H
 
 #include "CppConsUI.h"
 
@@ -157,6 +157,6 @@ void resetStats();
 
 } // namespace CppConsUI
 
-#endif // __CONSUICURSES_H__
+#endif // CONSUICURSES_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

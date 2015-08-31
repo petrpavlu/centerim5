@@ -21,8 +21,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __VERTICALLINE_H__
-#define __VERTICALLINE_H__
+#ifndef VERTICALLINE_H
+#define VERTICALLINE_H
 
 #include "AbstractLine.h"
 
@@ -43,6 +43,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __VERTICALLINE_H__
+#endif // VERTICALLINE_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

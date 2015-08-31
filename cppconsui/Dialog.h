@@ -21,8 +21,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __DIALOG_H__
-#define __DIALOG_H__
+#ifndef DIALOG_H
+#define DIALOG_H
 
 #include "AbstractDialog.h"
 
@@ -47,6 +47,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __DIALOG_H__
+#endif // DIALOG_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

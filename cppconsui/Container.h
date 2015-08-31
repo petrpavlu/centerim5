@@ -21,8 +21,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __CONTAINER_H__
-#define __CONTAINER_H__
+#ifndef CONTAINER_H
+#define CONTAINER_H
 
 #include "Widget.h"
 
@@ -205,6 +205,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __CONTAINER_H__
+#endif // CONTAINER_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

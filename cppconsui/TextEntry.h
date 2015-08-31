@@ -20,8 +20,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __TEXT_ENTRY_H__
-#define __TEXT_ENTRY_H__
+#ifndef TEXT_ENTRY_H
+#define TEXT_ENTRY_H
 
 #include "TextEdit.h"
 
@@ -43,6 +43,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __TEXT_ENTRY_H__
+#endif // TEXT_ENTRY_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

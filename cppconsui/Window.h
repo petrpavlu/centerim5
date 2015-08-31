@@ -20,8 +20,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __WINDOW_H__
-#define __WINDOW_H__
+#ifndef WINDOW_H
+#define WINDOW_H
 
 #include "Container.h"
 #include "Panel.h"
@@ -113,6 +113,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __WINDOW_H__
+#endif // WINDOW_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

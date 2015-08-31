@@ -20,8 +20,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __TEXTEDIT_H__
-#define __TEXTEDIT_H__
+#ifndef TEXTEDIT_H
+#define TEXTEDIT_H
 
 #include "Widget.h"
 
@@ -218,6 +218,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __TEXTEDIT_H__
+#endif // TEXTEDIT_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __PLUGINWINDOW_H__
-#define __PLUGINWINDOW_H__
+#ifndef PLUGINWINDOW_H
+#define PLUGINWINDOW_H
 
 #include <cppconsui/Button.h>
 #include <cppconsui/CheckBox.h>
@@ -143,6 +143,6 @@ private:
     CppConsUI::AbstractDialog::ResponseType response, PurplePlugin *plugin);
 };
 
-#endif // __PLUGINWINDOW_H__
+#endif // PLUGINWINDOW_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

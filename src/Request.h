@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __REQUEST_H__
-#define __REQUEST_H__
+#ifndef REQUEST_H
+#define REQUEST_H
 
 #include <cppconsui/CheckBox.h>
 #include <cppconsui/ComboBox.h>
@@ -398,6 +398,6 @@ private:
     gsize icon_size, void *user_data, size_t action_count, va_list actions);
 };
 
-#endif // __REQUEST_H__
+#endif // REQUEST_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

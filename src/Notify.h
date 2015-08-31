@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __NOTIFY_H__
-#define __NOTIFY_H__
+#ifndef NOTIFY_H
+#define NOTIFY_H
 
 #include <cppconsui/MessageDialog.h>
 #include <cppconsui/SplitDialog.h>
@@ -97,6 +97,6 @@ private:
   void close_notify(PurpleNotifyType type, void *ui_handle);
 };
 
-#endif // __NOTIFY_H__
+#endif // NOTIFY_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

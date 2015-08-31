@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __CENTERIM_H__
-#define __CENTERIM_H__
+#ifndef CENTERIM_H
+#define CENTERIM_H
 
 #ifdef __GNUC__
 #define _attribute(x) __attribute__(x)
@@ -251,6 +251,6 @@ private:
   void declareBindables();
 };
 
-#endif // __CENTERIM_H__
+#endif // CENTERIM_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

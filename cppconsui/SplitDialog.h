@@ -20,8 +20,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __SPLITDIALOG_H__
-#define __SPLITDIALOG_H__
+#ifndef SPLITDIALOG_H
+#define SPLITDIALOG_H
 
 #include "AbstractDialog.h"
 
@@ -64,6 +64,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __SPLITDIALOG_H__
+#endif // SPLITDIALOG_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

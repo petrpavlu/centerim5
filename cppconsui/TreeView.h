@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __TREEVIEW_H__
-#define __TREEVIEW_H__
+#ifndef TREEVIEW_H
+#define TREEVIEW_H
 
 #include "Button.h"
 #include "Container.h"
@@ -194,6 +194,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __TREEVIEW_H__
+#endif // TREEVIEW_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

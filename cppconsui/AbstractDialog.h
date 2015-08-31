@@ -20,8 +20,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __ABSTRACTDIALOG_H__
-#define __ABSTRACTDIALOG_H__
+#ifndef ABSTRACTDIALOG_H
+#define ABSTRACTDIALOG_H
 
 #define OK_BUTTON_TEXT _("Ok")
 #define CANCEL_BUTTON_TEXT _("Cancel")
@@ -70,6 +70,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __ABSTRACTDIALOG_H__
+#endif // ABSTRACTDIALOG_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

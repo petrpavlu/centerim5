@@ -20,8 +20,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __CHECKBOX_H__
-#define __CHECKBOX_H__
+#ifndef CHECKBOX_H
+#define CHECKBOX_H
 
 #include "Widget.h"
 
@@ -66,6 +66,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __CHECKBOX_H__
+#endif // CHECKBOX_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

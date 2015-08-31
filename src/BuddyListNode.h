@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _BUDDYLISTNODE_H__
-#define _BUDDYLISTNODE_H__
+#ifndef BUDDYLISTNODE_H
+#define BUDDYLISTNODE_H
 
 #include <cppconsui/Button.h>
 #include <cppconsui/InputDialog.h>
@@ -313,6 +313,6 @@ private:
   CONSUI_DISABLE_COPY(BuddyListGroup);
 };
 
-#endif // _BUDDYLISTNODE_H__
+#endif // BUDDYLISTNODE_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

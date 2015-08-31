@@ -21,8 +21,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __LISTBOX_H__
-#define __LISTBOX_H__
+#ifndef LISTBOX_H
+#define LISTBOX_H
 
 #include "AbstractListBox.h"
 #include "HorizontalLine.h"
@@ -71,6 +71,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __LISTBOX_H__
+#endif // LISTBOX_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

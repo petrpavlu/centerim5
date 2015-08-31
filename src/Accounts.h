@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __ACCOUNTS_H__
-#define __ACCOUNTS_H__
+#ifndef ACCOUNTS_H
+#define ACCOUNTS_H
 
 #include <cppconsui/SplitDialog.h>
 #include <cppconsui/TreeView.h>
@@ -182,6 +182,6 @@ private:
   void close_account_request(void *ui_handle);
 };
 
-#endif // __ACCOUNTS_H__
+#endif // ACCOUNTS_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

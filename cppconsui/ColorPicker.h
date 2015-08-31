@@ -21,8 +21,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __COLORPICKER_H__
-#define __COLORPICKER_H__
+#ifndef COLORPICKER_H
+#define COLORPICKER_H
 
 #include "ColorPickerComboBox.h"
 #include "HorizontalListBox.h"
@@ -72,6 +72,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __COLORPICKER_H__
+#endif // COLORPICKER_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

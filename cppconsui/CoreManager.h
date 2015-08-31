@@ -21,8 +21,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __COREMANAGER_H__
-#define __COREMANAGER_H__
+#ifndef COREMANAGER_H
+#define COREMANAGER_H
 
 #include "CppConsUI.h"
 #include "Window.h"
@@ -137,6 +137,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __COREMANGER_H__
+#endif // COREMANGER_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

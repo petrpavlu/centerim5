@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __FOOTER_H__
-#define __FOOTER_H__
+#ifndef FOOTER_H
+#define FOOTER_H
 
 #include "CenterIM.h"
 
@@ -54,6 +54,6 @@ private:
   void updateText();
 };
 
-#endif // __FOOTER_H__
+#endif // FOOTER_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

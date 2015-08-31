@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __ACOUNTSTATUSMENU_H__
-#define __ACOUNTSTATUSMENU_H__
+#ifndef ACOUNTSTATUSMENU_H
+#define ACOUNTSTATUSMENU_H
 
 #include <cppconsui/MenuWindow.h>
 #include <libpurple/purple.h>
@@ -50,6 +50,6 @@ private:
   CONSUI_DISABLE_COPY(AccountStatusMenu);
 };
 
-#endif // __ACOUNTSTATUSMENU_H__
+#endif // ACOUNTSTATUSMENU_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

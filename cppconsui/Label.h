@@ -21,8 +21,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __LABEL_H__
-#define __LABEL_H__
+#ifndef LABEL_H
+#define LABEL_H
 
 #include "Widget.h"
 
@@ -53,6 +53,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __LABEL_H__
+#endif // LABEL_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

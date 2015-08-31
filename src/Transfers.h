@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __TRANSFERS_H__
-#define __TRANSFERS_H__
+#ifndef TRANSFERS_H
+#define TRANSFERS_H
 
 class Transfers {
 public:
@@ -25,6 +25,6 @@ public:
   ~Transfers();
 };
 
-#endif // __TRANSFERS_H__
+#endif // TRANSFERS_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

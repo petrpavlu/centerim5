@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __CONNECTIONS_H__
-#define __CONNECTIONS_H__
+#ifndef CONNECTIONS_H
+#define CONNECTIONS_H
 
 #include <cppconsui/CppConsUI.h>
 #include <libpurple/purple.h>
@@ -76,6 +76,6 @@ private:
     PurpleConnection *gc, PurpleConnectionError reason, const char *text);
 };
 
-#endif // __CONNECTIONS_H__
+#endif // CONNECTIONS_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

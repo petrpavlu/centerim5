@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __CONVERSATION_H__
-#define __CONVERSATION_H__
+#ifndef CONVERSATION_H
+#define CONVERSATION_H
 
 #include "Log.h"
 #include "ConversationRoomList.h"
@@ -103,6 +103,6 @@ private:
   void declareBindables();
 };
 
-#endif // __CONVERSATION_H__
+#endif // CONVERSATION_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

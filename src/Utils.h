@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __UTILS_H__
-#define __UTILS_H__
+#ifndef UTILS_H
+#define UTILS_H
 
 #include <libpurple/purple.h>
 
@@ -27,6 +27,6 @@ char *stripAccelerator(const char *label);
 
 } // namespace Utils
 
-#endif // __UTILS_H__
+#endif // UTILS_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

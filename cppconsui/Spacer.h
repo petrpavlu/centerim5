@@ -20,8 +20,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __SPACER_H__
-#define __SPACER_H__
+#ifndef SPACER_H
+#define SPACER_H
 
 #include "Widget.h"
 
@@ -41,6 +41,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __SPACER_H__
+#endif // SPACER_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

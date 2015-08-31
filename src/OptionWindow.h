@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __OPTIONWINDOW_H__
-#define __OPTIONWINDOW_H__
+#ifndef OPTIONWINDOW_H
+#define OPTIONWINDOW_H
 
 #include <cppconsui/Button.h>
 #include <cppconsui/CheckBox.h>
@@ -109,6 +109,6 @@ private:
   CONSUI_DISABLE_COPY(OptionWindow);
 };
 
-#endif // __OPTIONWINDOW_H__
+#endif // OPTIONWINDOW_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

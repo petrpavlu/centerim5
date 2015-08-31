@@ -21,8 +21,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __COLORSCHEME_H__
-#define __COLORSCHEME_H__
+#ifndef COLORSCHEME_H
+#define COLORSCHEME_H
 
 #include "ConsUICurses.h"
 #include "CppConsUI.h" // for COLORSCHEME macro
@@ -123,6 +123,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __COLORSCHEME_H__
+#endif // COLORSCHEME_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

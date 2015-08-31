@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __HEADER_H__
-#define __HEADER_H__
+#ifndef HEADER_H
+#define HEADER_H
 
 #include "Accounts.h"
 
@@ -94,6 +94,6 @@ private:
   void account_disabled(PurpleAccount *account);
 };
 
-#endif // __HEADER_H__
+#endif // HEADER_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

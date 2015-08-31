@@ -20,8 +20,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __ABSTRACTLINE_H__
-#define __ABSTRACTLINE_H__
+#ifndef ABSTRACTLINE_H
+#define ABSTRACTLINE_H
 
 #include "Widget.h"
 
@@ -40,6 +40,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __ABSTRACTLINE_H__
+#endif // ABSTRACTLINE_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

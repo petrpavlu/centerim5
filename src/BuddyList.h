@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __BUDDYLIST_H__
-#define __BUDDYLIST_H__
+#ifndef BUDDYLIST_H
+#define BUDDYLIST_H
 
 #include "BuddyListNode.h"
 
@@ -324,6 +324,6 @@ private:
     const char *name, PurplePrefType type, gconstpointer val);
 };
 
-#endif // __BUDDYLIST_H__
+#endif // BUDDYLIST_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

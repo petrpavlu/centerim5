@@ -21,8 +21,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __MENUWINDOW_H__
-#define __MENUWINDOW_H__
+#ifndef MENUWINDOW_H
+#define MENUWINDOW_H
 
 #include "ListBox.h"
 #include "Window.h"
@@ -129,6 +129,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __MENUWINDOW_H__
+#endif // MENUWINDOW_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

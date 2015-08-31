@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __GENERALMENU_H__
-#define __GENERALMENU_H__
+#ifndef GENERALMENU_H
+#define GENERALMENU_H
 
 #include <cppconsui/MenuWindow.h>
 #include <libpurple/purple.h>
@@ -75,6 +75,6 @@ private:
 #endif // DEBUG
 };
 
-#endif // __GENERALMENU_H__
+#endif // GENERALMENU_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

@@ -21,8 +21,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __BUTTON_H__
-#define __BUTTON_H__
+#ifndef BUTTON_H
+#define BUTTON_H
 
 #include "Widget.h"
 
@@ -106,6 +106,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __BUTTON_H__
+#endif // BUTTON_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

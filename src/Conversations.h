@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __CONVERSATIONS_H__
-#define __CONVERSATIONS_H__
+#ifndef CONVERSATIONS_H
+#define CONVERSATIONS_H
 
 #include "Conversation.h"
 
@@ -164,6 +164,6 @@ private:
     const char *name, PurplePrefType type, gconstpointer val);
 };
 
-#endif // __CONVERSATIONS_H__
+#endif // CONVERSATIONS_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

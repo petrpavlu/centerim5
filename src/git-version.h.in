@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __GIT_VERSION_H__
-#define __GIT_VERSION_H__
+#ifndef GIT_VERSION_H
+#define GIT_VERSION_H
 
 #define GIT_VERSION "@GIT_VERSION@"
 
-#endif // __GIT_VERSION_H__
+#endif // GIT_VERSION_H

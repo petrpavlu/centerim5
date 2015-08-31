@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __LOG_H__
-#define __LOG_H__
+#ifndef LOG_H
+#define LOG_H
 
 #include "CenterIM.h"
 
@@ -164,6 +164,6 @@ private:
   Level getLogLevel(Type type);
 };
 
-#endif // __LOG_H__
+#endif // LOG_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __CONVERSATION_ROOM_LIST_H__
-#define __CONVERSATION_ROOM_LIST_H__
+#ifndef CONVERSATION_ROOMLIST_H
+#define CONVERSATION_ROOMLIST_H
 
 #include <cppconsui/ListBox.h>
 #include <cppconsui/Button.h>
@@ -101,6 +101,6 @@ private:
   CONSUI_DISABLE_COPY(ConversationRoomList);
 };
 
-#endif
+#endif // CONVERSATION_ROOMLIST_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

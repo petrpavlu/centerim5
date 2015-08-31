@@ -20,8 +20,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __KEYCONFIG_H__
-#define __KEYCONFIG_H__
+#ifndef KEYCONFIG_H
+#define KEYCONFIG_H
 
 #include "CppConsUI.h"
 #include "Keys.h"
@@ -101,6 +101,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __KEYCONFIG_H__
+#endif // KEYCONFIG_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

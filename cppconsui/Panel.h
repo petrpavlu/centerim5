@@ -21,8 +21,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __PANEL_H__
-#define __PANEL_H__
+#ifndef PANEL_H
+#define PANEL_H
 
 #include "Widget.h"
 
@@ -57,6 +57,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __PANEL_H__
+#endif // PANEL_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

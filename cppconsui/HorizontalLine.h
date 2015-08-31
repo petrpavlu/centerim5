@@ -21,8 +21,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __HORIZONTALLINE_H__
-#define __HORIZONTALLINE_H__
+#ifndef HORIZONTALLINE_H
+#define HORIZONTALLINE_H
 
 #include "AbstractLine.h"
 
@@ -43,6 +43,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __HORIZONTALLINE_H__
+#endif // HORIZONTALLINE_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

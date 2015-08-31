@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __ACCOUNTWINDOW_H__
-#define __ACCOUNTWINDOW_H__
+#ifndef ACCOUNTWINDOW_H
+#define ACCOUNTWINDOW_H
 
 #include <cppconsui/Button.h>
 #include <cppconsui/CheckBox.h>
@@ -198,6 +198,6 @@ private:
     CppConsUI::AbstractDialog::ResponseType response, PurpleAccount *account);
 };
 
-#endif // __ACCOUNTWINDOW_H__
+#endif // ACCOUNTWINDOW_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

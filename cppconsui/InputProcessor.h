@@ -20,8 +20,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __INPUTPROCESSOR_H__
-#define __INPUTPROCESSOR_H__
+#ifndef INPUTPROCESSOR_H
+#define INPUTPROCESSOR_H
 
 #include "CppConsUI.h"
 
@@ -134,6 +134,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __INPUTPROCESSOR_H__
+#endif // INPUTPROCESSOR_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

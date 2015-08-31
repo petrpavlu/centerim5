@@ -21,8 +21,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __COMBOBOX_H__
-#define __COMBOBOX_H__
+#ifndef COMBOBOX_H
+#define COMBOBOX_H
 
 #include "Button.h"
 #include "MenuWindow.h"
@@ -100,6 +100,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __COMBOBOX_H__
+#endif // COMBOBOX_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

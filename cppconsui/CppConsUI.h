@@ -21,8 +21,8 @@
 ///
 /// @ingroup cppconsui
 
-#ifndef __CPPCONSUI_H__
-#define __CPPCONSUI_H__
+#ifndef CPPCONSUI_H
+#define CPPCONSUI_H
 
 #include <inttypes.h>
 #include <limits.h>
@@ -172,6 +172,6 @@ const char *findPrevChar(const char *start, const char *p);
 
 } // namespace CppConsUI
 
-#endif // __CPPCONSUI_H__
+#endif // CPPCONSUI_H
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:
