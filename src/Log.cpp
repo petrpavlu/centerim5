@@ -387,7 +387,7 @@ void Log::outputBufferMessages()
       const char *text = item->getText();
       g_assert(text != nullptr);
 
-      std::fprintf(stderr, text);
+      std::fprintf(stderr, "%s", text);
 
       // If necessary write missing EOL character.
       size_t len = std::strlen(text);
