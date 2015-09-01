@@ -57,7 +57,7 @@ const char *KeyConfig::getKeyBind(const char *context, const char *action) const
   if (i == binds_.end())
     return nullptr;
 
-  for (std::pair<TermKeyKey, std::string> key_action : i->second)
+  for (const KeyBindContext::value_type &key_action : i->second)
     if (!key_action.second.compare(action)) {
       TermKeyKey key = key_action.first;
       static char out[256];

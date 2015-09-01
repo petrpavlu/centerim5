@@ -62,7 +62,7 @@ void ConversationRoomList::add_users(GList *cbuddies, gboolean /*new_arrivals*/)
 
     auto buddy = new Buddy(pbuddy);
     buddy->setButtonText();
-    buddy_map_[pbuddy->name] = buddy;
+    buddies_[pbuddy->name] = buddy;
 
     appendWidget(*buddy);
 
@@ -87,15 +87,15 @@ void ConversationRoomList::rename_user(
 
   // NOTE: PurpleConvChatBuddy::ui_data is pidgin 2.9!!
   // Buddy * buddy = static_cast<Buddy *>(old_pbuddy->ui_data);
-  Buddy *buddy = buddy_map_[old_name];
+  Buddy *buddy = buddies_[old_name];
   g_assert(buddy != nullptr);
 
   // Update buddy.
   buddy->setPurpleBuddy(new_pbuddy);
 
   // Update buddy map.
-  buddy_map_.erase(old_name);
-  buddy_map_[new_name] = buddy;
+  buddies_.erase(old_name);
+  buddies_[new_name] = buddy;
 
   // Move and then update.
   moveToSortedPosition(buddy);
@@ -110,10 +110,10 @@ void ConversationRoomList::remove_users(GList *users)
     // NOTE: can't remove purple_conv_chat_cb_find, because the user
     //   and PurpleConvChatBuddy has already been removed
 
-    BuddyMapIter iter = buddy_map_.find(name);
+    Buddies::iterator iter = buddies_.find(name);
 
-    if (buddy_map_.end() != iter) {
-      buddy_map_.erase(iter);
+    if (buddies_.end() != iter) {
+      buddies_.erase(iter);
       // NOTE: this deletes the buddy object.
       removeWidget(*iter->second);
     }
@@ -130,7 +130,7 @@ void ConversationRoomList::update_user(const char *user)
 
   // NOTE: PurpleConvChatBuddy::ui_data is pidgin 2.9!!
   // Buddy * buddy = static_cast<Buddy *>(pbuddy->ui_data);
-  Buddy *buddy = buddy_map_[user];
+  Buddy *buddy = buddies_[user];
   g_assert(buddy != nullptr);
 
   // Move and then update.

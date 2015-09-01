@@ -50,7 +50,7 @@ private:
 
   typedef std::set<CppConsUI::AbstractDialog *> Notifications;
   typedef std::pair<PurpleAccount *, std::string> User;
-  typedef std::map<User, UserInfoDialog *> UserInfo;
+  typedef std::map<User, UserInfoDialog *> UserInfos;
 
   // Track all opened notifications so it is possible to break the
   // purple_notify_close() -> AbstractDialog::Close() -> purple_notify_close()
@@ -58,7 +58,7 @@ private:
   Notifications notifications_;
   // Keep track of all opened user info dialogs so they can be updated when
   // notify_userinfo() is called for them several times.
-  UserInfo userinfos_;
+  UserInfos user_infos_;
 
   PurpleNotifyUiOps centerim_notify_ui_ops_;
 

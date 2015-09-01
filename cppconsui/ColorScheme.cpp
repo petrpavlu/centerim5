@@ -121,7 +121,6 @@ bool ColorScheme::setAttributesExt(int scheme, int property, int subproperty,
 void ColorScheme::freeScheme(int scheme)
 {
   Schemes::const_iterator i = schemes_.find(scheme);
-
   if (i == schemes_.end())
     return;
 

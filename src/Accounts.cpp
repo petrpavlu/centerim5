@@ -166,13 +166,13 @@ void Accounts::PendingRequestWindow::appendRequest(const Request &request)
 
   CppConsUI::TreeView::NodeReference node =
     treeview_->appendNode(treeview_->getRootNode(), *b);
-  request_map_[&request] = node;
+  request_nodes_[&request] = node;
 }
 
 void Accounts::PendingRequestWindow::removeRequest(const Request &request)
 {
-  RequestMap::iterator i = request_map_.find(&request);
-  g_assert(i != request_map_.end());
+  RequestNodes::iterator i = request_nodes_.find(&request);
+  g_assert(i != request_nodes_.end());
 
   // If a dialog is opened for this request then close it. This happens only
   // when the request is closed by some external event. This should never happen
@@ -189,7 +189,7 @@ void Accounts::PendingRequestWindow::removeRequest(const Request &request)
   }
 
   treeview_->deleteNode(i->second, false);
-  request_map_.erase(i);
+  request_nodes_.erase(i);
 }
 
 Accounts::PendingRequestWindow::RequestDialog::RequestDialog(

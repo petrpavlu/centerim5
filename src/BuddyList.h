@@ -206,14 +206,14 @@ private:
 
   protected:
     typedef std::map<std::string, CppConsUI::TreeView::NodeReference>
-      ChatInfoMap;
+      ChatInfos;
 
     AccountOption *account_option_;
     CppConsUI::TreeView::NodeReference account_option_ref_;
     StringOption *alias_option_;
     GroupOption *group_option_;
     BooleanOption *autojoin_option_;
-    ChatInfoMap chat_info_map_;
+    ChatInfos chat_infos_;
 
     // AddWindow
     virtual void onAddRequest(CppConsUI::Button &activator);

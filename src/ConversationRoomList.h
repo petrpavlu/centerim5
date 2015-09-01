@@ -40,8 +40,6 @@ public:
   void update_user(const char *user);
 
 protected:
-  PurpleConversation *conv_;
-
   // Represents a widget as well as pointer to libpurple data.
   class Buddy : public CppConsUI::Button {
   public:
@@ -85,8 +83,9 @@ protected:
     CONSUI_DISABLE_COPY(Buddy);
   };
 
-  // Move buddy to sorted position.
-  void moveToSortedPosition(Buddy *buddy);
+  typedef std::map<std::string, Buddy *> Buddies;
+
+  PurpleConversation *conv_;
 
   // Have to keep this mapping to remove users
   // because when libpurple calls remove_user, the user is already
@@ -94,8 +93,10 @@ protected:
   // Otherwise could store "name" in Buddy and iterate through "children"
   // NOTE: turns out that ui_data is new in libpurple 2.9, so for previous
   // versions this map is required anyways... :/
-  std::map<std::string, Buddy *> buddy_map_;
-  typedef std::map<std::string, Buddy *>::iterator BuddyMapIter;
+  Buddies buddies_;
+
+  // Move buddy to sorted position.
+  void moveToSortedPosition(Buddy *buddy);
 
 private:
   CONSUI_DISABLE_COPY(ConversationRoomList);

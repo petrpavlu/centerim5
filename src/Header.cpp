@@ -182,8 +182,8 @@ void Header::account_enabled(PurpleAccount *account)
   protocol_count_.insert(prid);
 
   if (protocol_count_.count(prid) == 2)
-    for (Statuses::iterator i = statuses_.begin(); i != statuses_.end(); ++i) {
-      PurpleAccount *acc = i->first;
+    for (Statuses::value_type &status : statuses_) {
+      PurpleAccount *acc = status.first;
       if (std::strcmp(purple_account_get_protocol_id(acc), prid) == 0)
         account_status_changed(
           acc, nullptr, purple_account_get_active_status(acc));
@@ -199,8 +199,8 @@ void Header::account_disabled(PurpleAccount *account)
   protocol_count_.erase(i);
 
   if (protocol_count_.count(prid) == 1)
-    for (Statuses::iterator i = statuses_.begin(); i != statuses_.end(); ++i) {
-      PurpleAccount *acc = i->first;
+    for (Statuses::value_type &status : statuses_) {
+      PurpleAccount *acc = status.first;
       if (std::strcmp(purple_account_get_protocol_id(acc), prid) == 0)
         account_status_changed(
           acc, nullptr, purple_account_get_active_status(acc));

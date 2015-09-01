@@ -108,10 +108,10 @@ private:
     };
 
     typedef std::map<const Request *, CppConsUI::TreeView::NodeReference>
-      RequestMap;
+      RequestNodes;
 
     CppConsUI::TreeView *treeview_;
-    RequestMap request_map_;
+    RequestNodes request_nodes_;
     Accounts *accounts_;
     RequestDialog *dialog_;
 

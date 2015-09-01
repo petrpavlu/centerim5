@@ -193,7 +193,7 @@ void Notify::onDialogClose(CppConsUI::Window &activator, PurpleNotifyType type)
 void Notify::onUserInfoDialogClose(CppConsUI::Window & /*activator*/, User user)
 {
   // The userinfo dialog is gone.
-  userinfos_.erase(user);
+  user_infos_.erase(user);
 }
 
 void *Notify::notify_message(PurpleNotifyMsgType /*type*/, const char *title,
@@ -214,9 +214,9 @@ void *Notify::notify_userinfo(
   PurpleConnection *gc, const char *who, PurpleNotifyUserInfo *user_info)
 {
   User user(purple_connection_get_account(gc), who);
-  UserInfo::iterator i = userinfos_.find(user);
+  UserInfos::iterator i = user_infos_.find(user);
   UserInfoDialog *dialog;
-  if (i == userinfos_.end()) {
+  if (i == user_infos_.end()) {
     // Create a new dialog to display this user info.
     char *title = g_strdup_printf(_("User information for %s"), who);
     dialog = new UserInfoDialog(title);
@@ -229,7 +229,7 @@ void *Notify::notify_userinfo(
     dialog->show();
 
     notifications_.insert(dialog);
-    userinfos_[user] = dialog;
+    user_infos_[user] = dialog;
   }
   else {
     // Update already opened dialog.

@@ -69,7 +69,7 @@ void InputProcessor::declareBindable(const char *context, const char *action,
 
 bool InputProcessor::process(BindableType type, const TermKeyKey &key)
 {
-  for (std::pair<const std::string, BindableContext> &keybind : keybindings_) {
+  for (Bindables::value_type &keybind : keybindings_) {
     // Get keys for this context.
     const KeyConfig::KeyBindContext *keys =
       KEYCONFIG->getKeyBinds(keybind.first.c_str());

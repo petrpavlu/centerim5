@@ -58,10 +58,9 @@ PluginWindow::PluginWindow() : SplitDialog(0, 0, 80, 24, _("Plugins"))
 PluginWindow::~PluginWindow()
 {
   // Destroy all allocated pref frames.
-  for (PluginEntries::iterator i = plugin_entries_.begin();
-       i != plugin_entries_.end(); ++i)
-    if (i->second.frame != NULL)
-      purple_plugin_pref_frame_destroy(i->second.frame);
+  for (PluginEntries::value_type &entry : plugin_entries_)
+    if (entry.second.frame != NULL)
+      purple_plugin_pref_frame_destroy(entry.second.frame);
 }
 
 void PluginWindow::onScreenResized()

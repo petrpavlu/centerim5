@@ -359,8 +359,7 @@ void BuddyList::AddChatWindow::onAddRequest(CppConsUI::Button & /*activator*/)
 
   GHashTable *components =
     g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-  for (std::pair<const std::string, CppConsUI::TreeView::NodeReference>
-         &chat_info : chat_info_map_) {
+  for (ChatInfos::value_type &chat_info : chat_infos_) {
     CppConsUI::Button *button =
       dynamic_cast<CppConsUI::Button *>(chat_info.second->getWidget());
     g_assert(button != nullptr);
@@ -389,10 +388,9 @@ void BuddyList::AddChatWindow::onAddRequest(CppConsUI::Button & /*activator*/)
 void BuddyList::AddChatWindow::populateChatInfo(PurpleAccount *account)
 {
   // Remove old entries.
-  for (std::pair<const std::string, CppConsUI::TreeView::NodeReference>
-         &chat_info : chat_info_map_)
+  for (ChatInfos::value_type &chat_info : chat_infos_)
     treeview_->deleteNode(chat_info.second, false);
-  chat_info_map_.clear();
+  chat_infos_.clear();
 
   PurpleConnection *gc = purple_account_get_connection(account);
   PurplePluginProtocolInfo *info =
@@ -432,7 +430,7 @@ void BuddyList::AddChatWindow::populateChatInfo(PurpleAccount *account)
     g_free(label);
 
     ref = treeview_->insertNodeAfter(ref, *button);
-    chat_info_map_[entry->identifier] = ref;
+    chat_infos_[entry->identifier] = ref;
   }
 
   if (defaults != nullptr)
