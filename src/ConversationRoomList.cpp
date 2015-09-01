@@ -21,7 +21,7 @@
 void ConversationRoomList::moveToSortedPosition(Buddy *new_buddy)
 {
   Buddy *buddy = nullptr;
-  Children::iterator iter;
+  CppConsUI::Widgets::iterator iter;
 
   g_assert(new_buddy != nullptr);
 

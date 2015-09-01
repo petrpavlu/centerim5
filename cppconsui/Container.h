@@ -145,9 +145,6 @@ public:
   virtual void onChildVisible(Widget &activator, bool visible);
 
 protected:
-  /// Child widget vector.
-  typedef std::vector<Widget *> Children;
-
   /// Scroll coordinates.
   int scroll_xpos_, scroll_ypos_;
 
@@ -171,7 +168,7 @@ protected:
   /// dynamic_cast<Widget *>(input_child).
   Widget *focus_child_;
 
-  Children children_;
+  Widgets children_;
 
   // Widget
   virtual void updateArea();
@@ -183,7 +180,7 @@ protected:
   virtual int drawChild(Widget &child, Curses::ViewPort area, Error &error);
 
   /// Searches children for a given widget.
-  virtual Children::iterator findWidget(const Widget &widget);
+  virtual Widgets::iterator findWidget(const Widget &widget);
 
   /// Inserts a widget in the children list at a given position. The Container
   /// takes ownership of the widget. It means that the widget will be deleted by

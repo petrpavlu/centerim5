@@ -123,7 +123,7 @@ void Container::addWidget(Widget &widget, int x, int y)
 void Container::removeWidget(Widget &widget)
 {
   assert(widget.getParent() == this);
-  Children::iterator i = findWidget(widget);
+  Widgets::iterator i = findWidget(widget);
   assert(i != children_.end());
 
   delete *i;
@@ -584,7 +584,7 @@ int Container::drawChild(Widget &child, Curses::ViewPort area, Error &error)
   return child.draw(child_area, error);
 }
 
-Container::Children::iterator Container::findWidget(const Widget &widget)
+Widgets::iterator Container::findWidget(const Widget &widget)
 {
   return std::find(children_.begin(), children_.end(), &widget);
 }
@@ -609,12 +609,12 @@ void Container::moveWidgetInternal(Widget &widget, Widget &position, bool after)
   assert(position.getParent() == this);
 
   // Remove widget from the children..
-  Children::iterator widget_iter = findWidget(widget);
+  Widgets::iterator widget_iter = findWidget(widget);
   assert(widget_iter != children_.end());
   children_.erase(widget_iter);
 
   // ..put it back into a correct position.
-  Children::iterator position_iter = findWidget(position);
+  Widgets::iterator position_iter = findWidget(position);
   assert(position_iter != children_.end());
   if (after)
     ++position_iter;
