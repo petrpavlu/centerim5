@@ -33,7 +33,8 @@ public:
   // Window
   virtual void onScreenResized();
 
-  void setText(const char *fmt, ...) _attribute((format(printf, 2, 3)));
+  void setText(const char *fmt, ...)
+    CPPCONSUI_GNUC_ATTRIBUTE((format(printf, 2, 3)));
 
 private:
   typedef std::vector<std::string> Values;

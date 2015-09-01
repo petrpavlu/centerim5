@@ -43,12 +43,18 @@ public:
 
   static Log *instance();
 
-  void error(const char *fmt, ...) _attribute((format(printf, 2, 3)));
-  void critical(const char *fmt, ...) _attribute((format(printf, 2, 3)));
-  void warning(const char *fmt, ...) _attribute((format(printf, 2, 3)));
-  void message(const char *fmt, ...) _attribute((format(printf, 2, 3)));
-  void info(const char *fmt, ...) _attribute((format(printf, 2, 3)));
-  void debug(const char *fmt, ...) _attribute((format(printf, 2, 3)));
+  void error(const char *fmt, ...)
+    CPPCONSUI_GNUC_ATTRIBUTE((format(printf, 2, 3)));
+  void critical(const char *fmt, ...)
+    CPPCONSUI_GNUC_ATTRIBUTE((format(printf, 2, 3)));
+  void warning(const char *fmt, ...)
+    CPPCONSUI_GNUC_ATTRIBUTE((format(printf, 2, 3)));
+  void message(const char *fmt, ...)
+    CPPCONSUI_GNUC_ATTRIBUTE((format(printf, 2, 3)));
+  void info(const char *fmt, ...)
+    CPPCONSUI_GNUC_ATTRIBUTE((format(printf, 2, 3)));
+  void debug(const char *fmt, ...)
+    CPPCONSUI_GNUC_ATTRIBUTE((format(printf, 2, 3)));
 
 private:
   enum Type {

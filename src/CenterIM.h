@@ -19,12 +19,6 @@
 #ifndef CENTERIM_H
 #define CENTERIM_H
 
-#ifdef __GNUC__
-#define _attribute(x) __attribute__(x)
-#else
-#define _attribute(x)
-#endif
-
 #include <cppconsui/CoreManager.h>
 #include <cppconsui/CppConsUI.h>
 #include <libpurple/purple.h>

@@ -40,9 +40,9 @@
 #define PRINTF_WIDTH(type) ((CHAR_BIT * sizeof(type) + 2) / 3 + 1)
 
 #ifdef __GNUC__
-#define CPPCONSUI_COMPILER_ATTRIBUTE(x) __attribute__(x)
+#define CPPCONSUI_GNUC_ATTRIBUTE(x) __attribute__(x)
 #else
-#define CPPCONSUI_COMPILER_ATTRIBUTE(x)
+#define CPPCONSUI_GNUC_ATTRIBUTE(x)
 #endif
 
 namespace CppConsUI {
@@ -81,7 +81,7 @@ public:
 
   void setString(const char *string);
   void setFormattedString(const char *format, ...)
-    CPPCONSUI_COMPILER_ATTRIBUTE((format(printf, 2, 3)));
+    CPPCONSUI_GNUC_ATTRIBUTE((format(printf, 2, 3)));
   const char *getString() const { return error_string_; }
 
   void clear();
