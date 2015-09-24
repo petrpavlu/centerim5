@@ -36,15 +36,20 @@
 #include <cppconsui/KeyConfig.h>
 #include <cstdio>
 #include <cstring>
+#include <fcntl.h>
 #include <locale.h>
 #include <errno.h>
 #include <getopt.h>
 #include <glib/gprintf.h>
 #include <time.h>
 #include <typeinfo>
+#include <unistd.h>
 #include "gettext.h"
 
 #define CIM_CONFIG_PATH ".centerim5"
+
+#define GLIB_IO_READ_COND (G_IO_IN | G_IO_HUP | G_IO_ERR)
+#define GLIB_IO_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
 
 // Program's entry point.
 int main(int argc, char *argv[])
@@ -382,9 +387,14 @@ sigc::connection CenterIM::timeoutOnceConnect(
 }
 
 CenterIM::CenterIM()
-  : mainloop_(nullptr), mngr_(nullptr), convs_expanded_(false),
-    idle_reporting_on_keyboard_(false)
+  : mainloop_(nullptr), mainloop_error_exit_(false), mngr_(nullptr),
+    convs_expanded_(false), idle_reporting_on_keyboard_(false),
+    stdin_timeout_id_(0), resize_pending_(false),
+    sigwinch_write_error_(nullptr), sigwinch_write_error_size_(0)
 {
+  resize_pipe_[0] = -1;
+  resize_pipe_[1] = -1;
+
   memset(&centerim_core_ui_ops_, 0, sizeof(centerim_core_ui_ops_));
   memset(&logbuf_debug_ui_ops_, 0, sizeof(logbuf_debug_ui_ops_));
   memset(&centerim_glib_eventloops_, 0, sizeof(centerim_glib_eventloops_));
@@ -411,11 +421,13 @@ int CenterIM::run(int argc, char *argv[])
 int CenterIM::runAll(int argc, char *argv[])
 {
   int res = 1;
-  bool purple_initialized = false;
   bool cppconsui_input_initialized = false;
   bool cppconsui_output_initialized = false;
-  bool cppconsui_screen_resizing_initialized = false;
+  bool screen_resizing_initialized = false;
+  bool purple_initialized = false;
   CppConsUI::Error error;
+  guint stdin_watch_handle;
+  guint resize_watch_handle;
   sigc::connection resize_conn;
   sigc::connection top_window_change_conn;
 
@@ -490,16 +502,17 @@ int CenterIM::runAll(int argc, char *argv[])
   mainloop_ = g_main_loop_new(nullptr, FALSE);
 
   // Initialize CppConsUI.
-  CppConsUI::AppInterface interface = {timeout_add_cppconsui,
-    timeout_remove_cppconsui, input_add_cppconsui, input_remove_cppconsui,
-    log_error_cppconsui};
+  CppConsUI::AppInterface interface = {
+    sigc::mem_fun(this, &CenterIM::redraw_cppconsui),
+    sigc::mem_fun(this, &CenterIM::log_debug_cppconsui)
+  };
   CppConsUI::initializeConsUI(interface);
 
   // Get the CoreManager instance.
   mngr_ = CppConsUI::getCoreManagerInstance();
   g_assert(mngr_ != nullptr);
 
-  // Initialize CoreManager's input, output and screen resizing.
+  // Initialize CppConsUI input and output.
   if (mngr_->initializeInput(error) != 0) {
     LOG->error("%s\n", error.getString());
     goto out;
@@ -510,11 +523,6 @@ int CenterIM::runAll(int argc, char *argv[])
     goto out;
   }
   cppconsui_output_initialized = true;
-  if (mngr_->initializeScreenResizing(error) != 0) {
-    LOG->error("%s\n", error.getString());
-    goto out;
-  }
-  cppconsui_screen_resizing_initialized = true;
 
   // ASCII mode.
   if (ascii)
@@ -529,15 +537,22 @@ int CenterIM::runAll(int argc, char *argv[])
   // Declare CenterIM bindables.
   declareBindables();
 
+  // Set up screen resizing.
+  if (initializeScreenResizing() != 0) {
+    LOG->error(_("Screen resizing initialization failed."));
+    goto out;
+  }
+  screen_resizing_initialized = true;
+
   // Initialize libpurple.
-  if (purpleInit(config_path)) {
+  if (initializePurple(config_path) != 0) {
     LOG->error(_("Libpurple initialization failed."));
     goto out;
   }
   purple_initialized = true;
 
   // Initialize global preferences.
-  prefsInit();
+  initializePreferences();
 
   // Initialize the log window.
   LOG->initPhase2();
@@ -567,10 +582,39 @@ int CenterIM::runAll(int argc, char *argv[])
   ACCOUNTS->restoreStatuses(offline);
 
   mngr_->setTopInputProcessor(*this);
-  mngr_->enableResizing();
+  mngr_->onScreenResized();
+
+  // Initialize input processing.
+  {
+    GIOChannel *stdin_channel = g_io_channel_unix_new(STDIN_FILENO);
+    stdin_watch_handle = g_io_add_watch_full(stdin_channel, G_PRIORITY_DEFAULT,
+      static_cast<GIOCondition>(GLIB_IO_READ_COND), stdin_bytes_available_,
+      this, nullptr);
+    g_io_channel_unref(stdin_channel);
+  }
+
+  // Add a watch of the self-pipe for screen resizing.
+  {
+    GIOChannel *resize_channel = g_io_channel_unix_new(resize_pipe_[0]);
+    resize_watch_handle = g_io_add_watch_full(resize_channel,
+      G_PRIORITY_DEFAULT, static_cast<GIOCondition>(GLIB_IO_READ_COND),
+      resize_bytes_available_, this, nullptr);
+    g_io_channel_unref(resize_channel);
+  }
 
   // Start the main loop.
   g_main_loop_run(mainloop_);
+
+  // Finalize input processing.
+  g_source_remove(stdin_watch_handle);
+  // Also remove any stdin timeout source.
+  if (stdin_timeout_id_ != 0) {
+    g_source_remove(stdin_timeout_id_);
+    stdin_timeout_id_ = 0;
+  }
+
+  // Remove the self-pipe watch.
+  g_source_remove(resize_watch_handle);
 
   purple_prefs_disconnect_by_handle(this);
 
@@ -590,18 +634,21 @@ int CenterIM::runAll(int argc, char *argv[])
 
   LOG->finalizePhase2();
 
-  // Everything went ok.
-  res = 0;
+  if (!mainloop_error_exit_) {
+    // Everything went ok.
+    res = 0;
+  }
 
 out:
   // Finalize libpurple.
   if (purple_initialized)
-    purpleFinalize();
+    finalizePurple();
 
-  // Finalize CoreManager's input, output and screen resizing.
-  if (cppconsui_screen_resizing_initialized &&
-    mngr_->finalizeScreenResizing(error) != 0)
-    LOG->error("%s\n", error.getString());
+  // Finalize screen resizing.
+  if (screen_resizing_initialized)
+    finalizeScreenResizing();
+
+  // Finalize CppConsUI input and output.
   if (cppconsui_output_initialized && mngr_->finalizeOutput(error) != 0)
     LOG->error("%s\n", error.getString());
   if (cppconsui_input_initialized && mngr_->finalizeInput(error) != 0)
@@ -641,7 +688,7 @@ void CenterIM::printVersion(FILE *out)
   std::fprintf(out, "CenterIM %s\n", version_);
 }
 
-int CenterIM::purpleInit(const char *config_path)
+int CenterIM::initializePurple(const char *config_path)
 {
   g_assert(config_path != nullptr);
 
@@ -698,7 +745,7 @@ int CenterIM::purpleInit(const char *config_path)
   return 0;
 }
 
-void CenterIM::purpleFinalize()
+void CenterIM::finalizePurple()
 {
   purple_plugins_save_loaded(CONF_PLUGINS_SAVE_PREF);
 
@@ -707,7 +754,7 @@ void CenterIM::purpleFinalize()
   purple_core_quit();
 }
 
-void CenterIM::prefsInit()
+void CenterIM::initializePreferences()
 {
   // Remove someday...
   if (purple_prefs_exists("/centerim"))
@@ -727,6 +774,76 @@ void CenterIM::prefsInit()
   // Trigger the callback. Note: This potentially triggers other callbacks
   // inside libpurple.
   purple_prefs_trigger_callback("/purple/away/idle_reporting");
+}
+
+int CenterIM::initializeScreenResizing()
+{
+  int res;
+
+  // Get error message reported from the SIGWINCH handler when a write to the
+  // self-pipe fails.
+  sigwinch_write_error_ =
+    _("Write to the self-pipe for screen resizing failed.");
+  sigwinch_write_error_size_ = std::strlen(sigwinch_write_error_) + 1;
+
+  // Create a self-pipe.
+  g_assert(resize_pipe_[0] == -1);
+  g_assert(resize_pipe_[1] == -1);
+
+  res = pipe(resize_pipe_);
+  if (res != 0) {
+    LOG->error(_("Creating a self-pipe for screen resizing failed."));
+    return 1;
+  }
+
+  // Set close-on-exec on both descriptors.
+  res = fcntl(resize_pipe_[0], F_GETFD);
+  g_assert(res != -1);
+  res = fcntl(resize_pipe_[0], F_SETFD, res | FD_CLOEXEC);
+  g_assert(res == 0);
+  res = fcntl(resize_pipe_[1], F_GETFD);
+  g_assert(res != -1);
+  res = fcntl(resize_pipe_[1], F_SETFD, res | FD_CLOEXEC);
+  g_assert(res == 0);
+
+  // Register a SIGWINCH handler.
+  struct sigaction sig;
+  sig.sa_handler = sigwinch_handler_;
+  sig.sa_flags = SA_RESTART;
+  res = sigemptyset(&sig.sa_mask);
+  g_assert(res == 0);
+  res = sigaction(SIGWINCH, &sig, nullptr);
+  g_assert(res == 0);
+
+  return 0;
+}
+
+void CenterIM::finalizeScreenResizing()
+{
+  int res;
+
+  // Unregister the SIGWINCH handler.
+  struct sigaction sig;
+  sig.sa_handler = SIG_DFL;
+  sig.sa_flags = 0;
+  res = sigemptyset(&sig.sa_mask);
+  g_assert(res == 0);
+  res = sigaction(SIGWINCH, &sig, nullptr);
+  g_assert(res == 0);
+
+  // Destroy the self-pipe.
+  g_assert(resize_pipe_[0] != -1);
+  g_assert(resize_pipe_[1] != -1);
+
+  res = close(resize_pipe_[0]);
+  if (res != 0)
+    LOG->error(_("Closing the self-pipe for screen resizing failed."));
+  resize_pipe_[0] = -1;
+
+  res = close(resize_pipe_[1]);
+  if (res != 0)
+    LOG->error(_("Closing the self-pipe for screen resizing failed."));
+  resize_pipe_[1] = -1;
 }
 
 void CenterIM::onScreenResized()
@@ -820,9 +937,6 @@ void CenterIM::onTopWindowChanged()
   }
 }
 
-#define GLIB_IO_READ_COND (G_IO_IN | G_IO_HUP | G_IO_ERR)
-#define GLIB_IO_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
-
 guint CenterIM::input_add_purple(int fd, PurpleInputCondition condition,
   PurpleInputFunction function, gpointer data)
 {
@@ -869,88 +983,114 @@ void CenterIM::io_destroy_purple(gpointer data)
   delete static_cast<IOClosurePurple *>(data);
 }
 
-unsigned CenterIM::input_add_cppconsui(int fd,
-  CppConsUI::InputCondition condition, CppConsUI::InputFunction function,
-  void *data)
+gboolean CenterIM::stdin_bytes_available()
 {
-  auto closure = new IOClosureCppConsUI;
-  GIOChannel *channel;
-  int cond = 0;
+  // Disconnect any timeout handler.
+  if (stdin_timeout_id_ != 0) {
+    g_source_remove(stdin_timeout_id_);
+    stdin_timeout_id_ = 0;
+  }
 
-  closure->function = function;
-  closure->data = data;
+  int wait;
+  CppConsUI::Error error;
+  if (mngr_->processStandardInput(&wait, error) != 0)
+    LOG->error("%s", error.getString());
 
-  if (condition & CppConsUI::INPUT_CONDITION_READ)
-    cond |= GLIB_IO_READ_COND;
-  if (condition & CppConsUI::INPUT_CONDITION_WRITE)
-    cond |= GLIB_IO_WRITE_COND;
-
-  channel = g_io_channel_unix_new(fd);
-  closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT,
-    static_cast<GIOCondition>(cond), io_input_cppconsui, closure,
-    io_destroy_cppconsui);
-
-  g_io_channel_unref(channel);
-  return closure->result;
-}
-
-gboolean CenterIM::io_input_cppconsui(
-  GIOChannel *source, GIOCondition condition, gpointer data)
-{
-  IOClosureCppConsUI *closure = static_cast<IOClosureCppConsUI *>(data);
-  int cppconsui_cond = 0;
-
-  if (condition & G_IO_IN)
-    cppconsui_cond |= CppConsUI::INPUT_CONDITION_READ;
-  if (condition & G_IO_OUT)
-    cppconsui_cond |= CppConsUI::INPUT_CONDITION_WRITE;
-
-  closure->function(g_io_channel_unix_get_fd(source),
-    static_cast<CppConsUI::InputCondition>(cppconsui_cond), closure->data);
+  if (wait >= 0) {
+    // Connect timeout handler.
+    stdin_timeout_id_ = g_timeout_add_full(G_PRIORITY_DEFAULT, wait,
+        stdin_timeout_, this, nullptr);
+  }
 
   return TRUE;
 }
 
-void CenterIM::io_destroy_cppconsui(gpointer data)
+gboolean CenterIM::stdin_timeout()
 {
-  delete static_cast<IOClosureCppConsUI *>(data);
+  stdin_timeout_id_ = 0;
+
+  CppConsUI::Error error;
+  if (mngr_->processStandardInputTimeout(error) != 0)
+    LOG->error("%s", error.getString());
+
+  return FALSE;
 }
 
-unsigned CenterIM::timeout_add_cppconsui(
-  unsigned interval, CppConsUI::SourceFunction function, void *data)
+gboolean CenterIM::resize_bytes_available()
 {
-  auto closure = new SourceClosureCppConsUI;
-  closure->function = function;
-  closure->data = data;
+  // An obvious thing here would be to read a single character because
+  // sigwinch_handler() never writes more than one character into the pipe.
+  // (Additional writes are protected by setting the resize_pending_ flag.)
+  // However, it is possible that SIGWINCH was received after a fork() call but
+  // before the child exited or exec'ed. In this case, both the parent and the
+  // child will receive the signal and write in the pipe. The code should
+  // attempt to read out all characters from the pipe so the resizing is not
+  // unnecessarily done multiple times.
+  char buf[1024];
+  int res = read(resize_pipe_[0], buf, sizeof(buf));
+  g_assert(res > 0);
 
-  return g_timeout_add_full(G_PRIORITY_DEFAULT, interval,
-    timeout_function_cppconsui, closure, timeout_destroy_cppconsui);
+  // The following assertion should generally hold. However, in a very unlikely
+  // case when the pipe contains more than one character and the read above gets
+  // interrupted and does not receive all data it will fail when
+  // resize_bytes_available() is called again because of the remaining
+  // characters.
+  // g_assert(resize_pending_);
+
+  resize_pending_ = false;
+
+  CppConsUI::Error error;
+  if (mngr_->resize(error) != 0) {
+    LOG->error("%s", error.getString());
+
+    // Exit the program.
+    mainloop_error_exit_ = true;
+    g_main_loop_quit(mainloop_);
+  }
+  return TRUE;
 }
 
-gboolean CenterIM::timeout_function_cppconsui(gpointer data)
+gboolean CenterIM::draw()
 {
-  SourceClosureCppConsUI *closure = static_cast<SourceClosureCppConsUI *>(data);
-  return closure->function(closure->data);
+  CppConsUI::Error error;
+  if (mngr_->draw(error) != 0) {
+    LOG->error("%s", error.getString());
+
+    // Exit the program.
+    mainloop_error_exit_ = true;
+    g_main_loop_quit(mainloop_);
+  }
+  return FALSE;
 }
 
-void CenterIM::timeout_destroy_cppconsui(gpointer data)
+void CenterIM::sigwinch_handler(int signum)
 {
-  delete static_cast<SourceClosureCppConsUI *>(data);
+  g_assert(signum == SIGWINCH);
+
+  if (resize_pending_)
+    return;
+
+  int saved_errno = errno;
+  int res = write(resize_pipe_[1], "@", 1);
+  errno = saved_errno;
+  if (res == 1) {
+    resize_pending_ = true;
+    return;
+  }
+
+  // Cannot reasonably recover from this error. This should be absolutely rare.
+  write(STDERR_FILENO, sigwinch_write_error_, sigwinch_write_error_size_);
+  _exit(13);
 }
 
-bool CenterIM::timeout_remove_cppconsui(unsigned handle)
+void CenterIM::redraw_cppconsui()
 {
-  return g_source_remove(handle);
+  g_timeout_add_full(G_PRIORITY_DEFAULT, 0, draw_, this, nullptr);
 }
 
-bool CenterIM::input_remove_cppconsui(unsigned handle)
+void CenterIM::log_debug_cppconsui(const char *message)
 {
-  return g_source_remove(handle);
-}
-
-void CenterIM::log_error_cppconsui(const char *message)
-{
-  LOG->warning("%s", message);
+  LOG->debug("%s", message);
 }
 
 GHashTable *CenterIM::get_ui_info()

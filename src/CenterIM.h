@@ -104,27 +104,19 @@ private:
     IOClosurePurple() : function(NULL), result(0), data(NULL) {}
   };
 
-  struct IOClosureCppConsUI {
-    CppConsUI::InputFunction function;
-    guint result;
-    gpointer data;
-
-    IOClosureCppConsUI() : function(NULL), result(0), data(NULL) {}
-  };
-
-  struct SourceClosureCppConsUI {
-    CppConsUI::SourceFunction function;
-    void *data;
-
-    SourceClosureCppConsUI() : function(NULL), data(NULL) {}
-  };
-
   GMainLoop *mainloop_;
+  bool mainloop_error_exit_;
   CppConsUI::CoreManager *mngr_;
   // Flag indicating if the conversation full-screen mode is activated.
   bool convs_expanded_;
   // Flag indicating if idle reporting is based on keyboard presses.
   bool idle_reporting_on_keyboard_;
+
+  guint stdin_timeout_id_;
+  int resize_pipe_[2];
+  volatile bool resize_pending_;
+  const char *sigwinch_write_error_;
+  size_t sigwinch_write_error_size_;
 
   PurpleCoreUiOps centerim_core_ui_ops_;
   PurpleDebugUiOps logbuf_debug_ui_ops_;
@@ -147,9 +139,12 @@ private:
   int runAll(int argc, char *argv[]);
   void printUsage(FILE *out, const char *prg_name);
   void printVersion(FILE *out);
-  int purpleInit(const char *config_path);
-  void purpleFinalize();
-  void prefsInit();
+  int initializePurple(const char *config_path);
+  void finalizePurple();
+  void initializePreferences();
+
+  int initializeScreenResizing();
+  void finalizeScreenResizing();
 
   // Recalculates area sizes to fit into current screen size.
   void onScreenResized();
@@ -168,28 +163,43 @@ private:
   // Destroyes libpurple IO input callback internal data.
   static void io_destroy_purple(gpointer data);
 
+  static gboolean stdin_bytes_available_(
+    GIOChannel * /*source*/, GIOCondition /*condition*/, gpointer data)
+  {
+    return reinterpret_cast<CenterIM *>(data)->stdin_bytes_available();
+  }
+  gboolean stdin_bytes_available();
+  static gboolean stdin_timeout_(gpointer data)
+  {
+    return reinterpret_cast<CenterIM *>(data)->stdin_timeout();
+  }
+  gboolean stdin_timeout();
+
+  static gboolean resize_bytes_available_(
+    GIOChannel * /*source*/, GIOCondition /*condition*/, gpointer data)
+  {
+    return reinterpret_cast<CenterIM *>(data)->resize_bytes_available();
+  }
+  gboolean resize_bytes_available();
+
+  // Draws everything.
+  static gboolean draw_(gpointer data)
+  {
+    return reinterpret_cast<CenterIM *>(data)->draw();
+  }
+  gboolean draw();
+
+  static void sigwinch_handler_(int signum)
+  {
+    CENTERIM->sigwinch_handler(signum);
+  }
+  void sigwinch_handler(int signum);
+
   // CppConsUI callbacks.
-  // Adds IO watch to glib main loop context.
-  static unsigned input_add_cppconsui(int fd,
-    CppConsUI::InputCondition condition, CppConsUI::InputFunction function,
-    void *data);
-
-  // Helper functions for input_add_cppconsui().
-  // Processes IO input to CppConsUI callback.
-  static gboolean io_input_cppconsui(
-    GIOChannel *source, GIOCondition condition, gpointer data);
-  // Destroyes CppConsUI IO input callback internal data.
-  static void io_destroy_cppconsui(gpointer data);
-
-  static unsigned timeout_add_cppconsui(
-    unsigned interval, CppConsUI::SourceFunction function, void *data);
-  static gboolean timeout_function_cppconsui(gpointer data);
-  static void timeout_destroy_cppconsui(gpointer data);
-  static bool timeout_remove_cppconsui(unsigned handle);
-  static bool input_remove_cppconsui(unsigned handle);
-
-  // Log an error produced by CppConsUI.
-  static void log_error_cppconsui(const char *message);
+  // Registers a redraw request.
+  void redraw_cppconsui();
+  // Logs a debug message produced by CppConsUI.
+  void log_debug_cppconsui(const char *message);
 
   // PurpleCoreUiOps callbacks.
   // Returns information about CenterIM such as name, website etc.

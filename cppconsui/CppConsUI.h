@@ -24,10 +24,12 @@
 #ifndef CPPCONSUI_H
 #define CPPCONSUI_H
 
+#include <sigc++/sigc++.h>
+
+#include <cstdlib>
 #include <inttypes.h>
 #include <limits.h>
 #include <stdint.h>
-#include <cstdlib>
 
 #define COLORSCHEME (CppConsUI::getColorSchemeInstance())
 #define COREMANAGER (CppConsUI::getCoreManagerInstance())
@@ -54,6 +56,8 @@ enum ErrorCode {
   ERROR_ICONV_INITIALIZATION,
   ERROR_SCREEN_RESIZING_INITIALIZATION,
   ERROR_SCREEN_RESIZING_FINALIZATION,
+
+  ERROR_INPUT_CONVERSION,
 
   ERROR_CURSES_INITIALIZATION,
   ERROR_CURSES_FINALIZATION,
@@ -127,21 +131,9 @@ struct Rect : public Point, public Size {
   int getBottom() const { return y + height - 1; }
 };
 
-enum InputCondition {
-  INPUT_CONDITION_READ = 1 << 0,
-  INPUT_CONDITION_WRITE = 1 << 1,
-};
-
-typedef bool (*SourceFunction)(void *data);
-typedef void (*InputFunction)(int fd, InputCondition cond, void *data);
-
 struct AppInterface {
-  unsigned (*timeoutAdd)(unsigned interval, SourceFunction func, void *data);
-  bool (*timeoutRemove)(unsigned handle);
-  unsigned (*inputAdd)(
-    int fd, InputCondition cond, InputFunction func, void *data);
-  bool (*inputRemove)(unsigned handle);
-  void (*logError)(const char *message);
+  sigc::slot<void> redraw;
+  sigc::slot<void, const char *> logDebug;
 };
 
 void initializeConsUI(AppInterface &interface);

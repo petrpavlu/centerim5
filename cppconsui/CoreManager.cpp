@@ -41,7 +41,6 @@ int CoreManager::initializeInput(Error &error)
 {
   assert(tk_ == nullptr);
   assert(iconv_desc_ == ICONV_NONE);
-  assert(stdin_input_handle_ == 0);
 
   // Get the current character encoding.
   const char *codeset = nl_langinfo(CODESET);
@@ -68,10 +67,6 @@ int CoreManager::initializeInput(Error &error)
     }
   }
 
-  stdin_input_handle_ = interface_.inputAdd(
-    STDIN_FILENO, INPUT_CONDITION_READ, CoreManager::stdin_input_, this);
-  assert(stdin_input_handle_ != 0);
-
   return 0;
 
 error_cleanup:
@@ -92,10 +87,6 @@ error_cleanup:
 int CoreManager::finalizeInput(Error & /*error*/)
 {
   assert(tk_ != nullptr);
-  assert(stdin_input_handle_ != 0);
-
-  interface_.inputRemove(stdin_input_handle_);
-  stdin_input_handle_ = 0;
 
   if (iconv_desc_ != ICONV_NONE) {
     int res = iconv_close(iconv_desc_);
@@ -134,51 +125,138 @@ int CoreManager::finalizeOutput(Error &error)
   return Curses::finalizeScreen(error);
 }
 
-int CoreManager::initializeScreenResizing(Error &error)
+int CoreManager::processStandardInput(int *wait, Error &error)
 {
-  assert(pipefd_[0] == -1);
-  assert(pipefd_[1] == -1);
-  assert(resize_input_handle_ == 0);
+  assert(wait != nullptr);
+  *wait = -1;
 
-  // Set up screen resizing.
-  if (pipe(pipefd_) != 0) {
-    error = Error(ERROR_SCREEN_RESIZING_INITIALIZATION);
-    error.setFormattedString(
-      _("Screen resizing initialization failed. Cannot create self-pipe: %s."),
-      strerror(errno));
-    return error.getCode();
+  termkey_advisereadable(tk_);
+
+  TermKeyKey key;
+  TermKeyResult ret;
+  while ((ret = termkey_getkey(tk_, &key)) == TERMKEY_RES_KEY) {
+    if (key.type == TERMKEY_TYPE_UNICODE && iconv_desc_ != ICONV_NONE) {
+      size_t inbytesleft, outbytesleft;
+      char *inbuf, *outbuf;
+      size_t res;
+      char utf8[sizeof(key.utf8) - 1];
+
+      // Convert data from the user charset to UTF-8.
+      inbuf = key.utf8;
+      inbytesleft = strlen(key.utf8);
+      outbuf = utf8;
+      outbytesleft = sizeof(utf8);
+      res = iconv(iconv_desc_, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+      if (res != static_cast<size_t>(-1) && inbytesleft != 0) {
+        // No error occured but not all bytes have been converted.
+        errno = EINVAL;
+        res = static_cast<size_t>(-1);
+      }
+      if (res == static_cast<size_t>(-1)) {
+        error = Error(ERROR_INPUT_CONVERSION);
+        error.setFormattedString(_("Error converting input to UTF-8 (%s)."),
+          std::strerror(errno));
+        return error.getCode();
+      }
+
+      size_t outbytes = sizeof(utf8) - outbytesleft;
+      std::memcpy(key.utf8, utf8, outbytes);
+      key.utf8[outbytes] = '\0';
+
+      key.code.codepoint = UTF8::getUniChar(key.utf8);
+    }
+
+    processInput(key);
   }
-
-  resize_input_handle_ = interface_.inputAdd(
-    pipefd_[0], INPUT_CONDITION_READ, CoreManager::resize_input_, this);
-  assert(resize_input_handle_ != 0);
+  if (ret == TERMKEY_RES_AGAIN) {
+    *wait = termkey_get_waittime(tk_);
+    assert(*wait >= 0);
+  }
 
   return 0;
 }
 
-int CoreManager::finalizeScreenResizing(Error &error)
+int CoreManager::processStandardInputTimeout(Error & /*error*/)
 {
-  assert(pipefd_[0] != -1);
-  assert(pipefd_[1] != -1);
-  assert(resize_input_handle_ != 0);
-
-  interface_.inputRemove(resize_input_handle_);
-  resize_input_handle_ = 0;
-
-  int close0_res = close(pipefd_[0]);
-  pipefd_[0] = -1;
-
-  int close1_res = close(pipefd_[1]);
-  pipefd_[1] = -1;
-
-  if (close0_res != 0 || close1_res != 0) {
-    error = Error(ERROR_SCREEN_RESIZING_FINALIZATION);
-    // Set the string using the last error.
-    error.setFormattedString(
-      _("Screen resizing finalization failed. Cannot close self-pipe: %s."),
-      strerror(errno));
-    return error.getCode();
+  TermKeyKey key;
+  if (termkey_getkey_force(tk_, &key) == TERMKEY_RES_KEY) {
+    // This should happen only for Esc key, so no need to do the locale -> UTF-8
+    // conversion.
+    processInput(key);
   }
+  return 0;
+}
+
+int CoreManager::resize(Error &error)
+{
+  struct winsize size;
+  if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &size) >= 0) {
+    if (Curses::resizeTerm(size.ws_col, size.ws_row, error) != 0)
+      return error.getCode();
+  }
+
+  // Update area.
+  updateArea();
+
+  // Make sure everything is redrawn from the scratch.
+  redraw(true);
+
+  // Trigger the resize event.
+  onScreenResized();
+
+  return 0;
+}
+
+int CoreManager::draw(Error &error)
+{
+  if (pending_redraw_ == REDRAW_NONE)
+    return 0;
+
+#if defined(DEBUG) && 0
+  struct timespec ts = {0, 0};
+  clock_gettime(CLOCK_MONOTONIC, &ts);
+
+  Curses::resetStats();
+#endif // DEBUG
+
+  if (pending_redraw_ == REDRAW_FROM_SCRATCH)
+    DRAW(Curses::clear(error));
+  else
+    DRAW(Curses::erase(error));
+
+  // Non-focusable -> normal -> top.
+  for (Window *window : windows_)
+    if (window->isVisible() && window->getType() == Window::TYPE_NON_FOCUSABLE)
+      DRAW(drawWindow(*window, error));
+
+  for (Window *window : windows_)
+    if (window->isVisible() && window->getType() == Window::TYPE_NORMAL)
+      DRAW(drawWindow(*window, error));
+
+  for (Window *window : windows_)
+    if (window->isVisible() && window->getType() == Window::TYPE_TOP)
+      DRAW(drawWindow(*window, error));
+
+  // Copy virtual ncurses screen to the physical screen.
+  DRAW(Curses::refresh(error));
+
+#if defined(DEBUG) && 0
+  const Curses::Stats *stats = Curses::getStats();
+
+  struct timespec ts2 = {0, 0};
+  clock_gettime(CLOCK_MONOTONIC, &ts2);
+  unsigned long tdiff = (ts2.tv_sec * 1000000 + ts2.tv_nsec / 1000) -
+    (ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
+
+  char message[sizeof("redraw: time=us, newpad/newwin/subpad calls=//") +
+    PRINTF_WIDTH(unsigned long)+3 * PRINTF_WIDTH(int)];
+  sprintf(message, "redraw: time=%luus, newpad/newwin/subpad calls=%d/%d/%d",
+    tdiff, stats->newpad_calls, stats->newwin_calls, stats->subpad_calls);
+
+  logDebug(message);
+#endif // DEBUG
+
+  pending_redraw_ = REDRAW_NONE;
 
   return 0;
 }
@@ -222,50 +300,29 @@ Window *CoreManager::getTopWindow()
   return dynamic_cast<Window *>(input_child_);
 }
 
-void CoreManager::enableResizing()
+void CoreManager::logDebug(const char *message)
 {
-  onScreenResized();
-
-  // Register resize handler.
-  struct sigaction sig;
-  sig.sa_handler = signalHandler;
-  sigemptyset(&sig.sa_mask);
-  sig.sa_flags = SA_RESTART;
-  sigaction(SIGWINCH, &sig, nullptr);
+  interface_.logDebug(message);
 }
 
-void CoreManager::disableResizing()
+void CoreManager::redraw(bool from_scratch)
 {
-  // Unregister resize handler.
-  struct sigaction sig;
-  sig.sa_handler = SIG_DFL;
-  sigemptyset(&sig.sa_mask);
-  sig.sa_flags = 0;
-  sigaction(SIGWINCH, &sig, nullptr);
+  if (pending_redraw_ == REDRAW_NONE)
+    interface_.redraw();
+
+  if (pending_redraw_ == REDRAW_FROM_SCRATCH)
+    return;
+  pending_redraw_ = from_scratch ? REDRAW_FROM_SCRATCH : REDRAW_NORMAL;
 }
 
 void CoreManager::onScreenResized()
 {
-  if (resize_pending_)
-    return;
+  // Signal the resize event.
+  signal_resize();
 
-  int r = write(pipefd_[1], "@", 1);
-  if (r == 1)
-    resize_pending_ = true;
-}
-
-void CoreManager::logError(const char *message)
-{
-  interface_.logError(message);
-}
-
-void CoreManager::redraw()
-{
-  if (redraw_pending_)
-    return;
-
-  redraw_pending_ = true;
-  interface_.timeoutAdd(0, CoreManager::draw_, this);
+  // Propagate the resize event to all windows.
+  for (Window *window : windows_)
+    window->onScreenResized();
 }
 
 void CoreManager::onWindowMoveResize(
@@ -287,18 +344,12 @@ void CoreManager::onWindowWishSizeChange(
 }
 
 CoreManager::CoreManager(AppInterface &set_interface)
-  : top_input_processor_(nullptr), stdin_input_timeout_handle_(0),
-    stdin_input_handle_(0), resize_input_handle_(0), tk_(nullptr),
-    iconv_desc_(ICONV_NONE), redraw_pending_(false), resize_pending_(false)
+  : top_input_processor_(nullptr), tk_(nullptr), iconv_desc_(ICONV_NONE),
+    pending_redraw_(REDRAW_NONE)
 {
-  pipefd_[0] = pipefd_[1] = -1;
-
   // Validate the passed interface.
-  assert(set_interface.timeoutAdd != nullptr);
-  assert(set_interface.timeoutRemove != nullptr);
-  assert(set_interface.inputAdd != nullptr);
-  assert(set_interface.inputRemove != nullptr);
-  assert(set_interface.logError != nullptr);
+  assert(!set_interface.redraw.empty());
+  assert(!set_interface.logDebug.empty());
 
   interface_ = set_interface;
 
@@ -311,119 +362,6 @@ bool CoreManager::processInput(const TermKeyKey &key)
     return true;
 
   return InputProcessor::processInput(key);
-}
-
-void CoreManager::stdin_input(int /*fd*/, InputCondition /*cond*/)
-{
-  termkey_advisereadable(tk_);
-
-  TermKeyKey key;
-  TermKeyResult ret;
-  while ((ret = termkey_getkey(tk_, &key)) == TERMKEY_RES_KEY) {
-    if (key.type == TERMKEY_TYPE_UNICODE && iconv_desc_ != ICONV_NONE) {
-      size_t inbytesleft, outbytesleft;
-      char *inbuf, *outbuf;
-      size_t res;
-      char utf8[sizeof(key.utf8) - 1];
-
-      // Convert data from user charset to UTF-8.
-      inbuf = key.utf8;
-      inbytesleft = strlen(key.utf8);
-      outbuf = utf8;
-      outbytesleft = sizeof(utf8);
-      res = iconv(iconv_desc_, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
-      if (res != static_cast<size_t>(-1) && inbytesleft != 0) {
-        // No error occured but not all bytes have been converted.
-        errno = EINVAL;
-        res = static_cast<size_t>(-1);
-      }
-      if (res == static_cast<size_t>(-1)) {
-        char text[256];
-        snprintf(text, sizeof(text), _("Error converting input to UTF-8 (%s)."),
-          std::strerror(errno));
-        logError(text);
-        continue;
-      }
-
-      size_t outbytes = sizeof(utf8) - outbytesleft;
-      std::memcpy(key.utf8, utf8, outbytes);
-      key.utf8[outbytes] = '\0';
-
-      key.code.codepoint = UTF8::getUniChar(key.utf8);
-    }
-
-    processInput(key);
-  }
-  if (ret == TERMKEY_RES_AGAIN) {
-    int wait = termkey_get_waittime(tk_);
-    stdin_input_timeout_handle_ =
-      interface_.timeoutAdd(wait, CoreManager::stdin_input_timeout_, this);
-  }
-}
-
-bool CoreManager::stdin_input_timeout_(void *data)
-{
-  CoreManager *instance = static_cast<CoreManager *>(data);
-  instance->stdin_input_timeout();
-  return false;
-}
-
-void CoreManager::stdin_input_timeout()
-{
-  assert(stdin_input_timeout_handle_ != 0);
-  stdin_input_timeout_handle_ = 0;
-
-  TermKeyKey key;
-  if (termkey_getkey_force(tk_, &key) == TERMKEY_RES_KEY) {
-    // This should happen only for Esc key, so no need to do locale->utf8
-    // conversion.
-    processInput(key);
-  }
-}
-
-void CoreManager::resize_input(int fd, InputCondition /*cond*/)
-{
-  // Stay sane.
-  assert(fd == pipefd_[0]);
-
-  char buf[1024];
-  read(fd, buf, sizeof(buf));
-
-  if (resize_pending_)
-    resize();
-}
-
-void CoreManager::signalHandler(int signum)
-{
-  assert(signum == SIGWINCH);
-
-  COREMANAGER->onScreenResized();
-}
-
-void CoreManager::resize()
-{
-  /// @todo Implement correct error reporting when resize() fails.
-
-  resize_pending_ = false;
-
-  struct winsize size;
-  if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &size) >= 0) {
-    Error error;
-    Curses::resizeTerm(size.ws_col, size.ws_row, error);
-
-    // Make sure everything is redrawn from the scratch.
-    Curses::clear(error);
-  }
-
-  // Signal the resize event.
-  signal_resize();
-  for (Window *window : windows_)
-    window->onScreenResized();
-
-  // Update area.
-  updateArea();
-
-  redraw();
 }
 
 void CoreManager::updateArea()
@@ -462,66 +400,6 @@ void CoreManager::updateWindowArea(Window &window)
 
   window.setRealPosition(window_x, window_y);
   window.setRealSize(window_width, window_height);
-}
-
-bool CoreManager::draw_(void *data)
-{
-  CoreManager *instance = static_cast<CoreManager *>(data);
-  /// @todo Implement correct reporting when draw() fails.
-  Error error;
-  instance->draw(error);
-  return false;
-}
-
-int CoreManager::draw(Error &error)
-{
-  if (!redraw_pending_)
-    return 0;
-
-#if defined(DEBUG) && 0
-  struct timespec ts = {0, 0};
-  clock_gettime(CLOCK_MONOTONIC, &ts);
-
-  Curses::resetStats();
-#endif // DEBUG
-
-  DRAW(Curses::erase(error));
-
-  // Non-focusable -> normal -> top.
-  for (Window *window : windows_)
-    if (window->isVisible() && window->getType() == Window::TYPE_NON_FOCUSABLE)
-      DRAW(drawWindow(*window, error));
-
-  for (Window *window : windows_)
-    if (window->isVisible() && window->getType() == Window::TYPE_NORMAL)
-      DRAW(drawWindow(*window, error));
-
-  for (Window *window : windows_)
-    if (window->isVisible() && window->getType() == Window::TYPE_TOP)
-      DRAW(drawWindow(*window, error));
-
-  // Copy virtual ncurses screen to the physical screen.
-  DRAW(Curses::refresh(error));
-
-#if defined(DEBUG) && 0
-  const Curses::Stats *stats = Curses::getStats();
-
-  struct timespec ts2 = {0, 0};
-  clock_gettime(CLOCK_MONOTONIC, &ts2);
-  unsigned long tdiff = (ts2.tv_sec * 1000000 + ts2.tv_nsec / 1000) -
-    (ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
-
-  char message[sizeof("redraw: time=us, newpad/newwin/subpad calls=//") +
-    PRINTF_WIDTH(unsigned long)+3 * PRINTF_WIDTH(int)];
-  sprintf(message, "redraw: time=%luus, newpad/newwin/subpad calls=%d/%d/%d",
-    tdiff, stats->newpad_calls, stats->newwin_calls, stats->subpad_calls);
-
-  logError(message);
-#endif // DEBUG
-
-  redraw_pending_ = false;
-
-  return 0;
 }
 
 int CoreManager::drawWindow(Window &window, Error &error)
@@ -581,7 +459,7 @@ void CoreManager::focusWindow()
   Window *win = nullptr;
   Windows::reverse_iterator i;
 
-  // try to find a top window first
+  // Try to find a top window first.
   for (i = windows_.rbegin(); i != windows_.rend(); ++i)
     if ((*i)->isVisible() && (*i)->getType() == Window::TYPE_TOP) {
       win = *i;
@@ -615,13 +493,8 @@ void CoreManager::focusWindow()
 
 void CoreManager::redrawScreen()
 {
-  /// @todo Implement correct error handling when clear() fails.
-
   // Make sure everything is redrawn from the scratch.
-  Error error;
-  Curses::clear(error);
-
-  redraw();
+  redraw(true);
 }
 
 void CoreManager::declareBindables()

@@ -42,17 +42,19 @@ public:
   int initializeOutput(Error &error);
   int finalizeOutput(Error &error);
 
-  int initializeScreenResizing(Error &error);
-  int finalizeScreenResizing(Error &error);
+  /// Reads data from the standard input. The data are first converted from the
+  /// user locale to the internal representation (UTF-8) and then processed by
+  /// InputProcessor.
+  int processStandardInput(int *wait, Error &error);
+  int processStandardInputTimeout(Error &error);
+
+  int resize(Error &error);
+  int draw(Error &error);
 
   void registerWindow(Window &window);
   void removeWindow(Window &window);
   void topWindow(Window &window);
   Window *getTopWindow();
-
-  void enableResizing();
-  void disableResizing();
-  void onScreenResized();
 
   void setTopInputProcessor(InputProcessor &top)
   {
@@ -60,8 +62,10 @@ public:
   }
   InputProcessor *getTopInputProcessor() { return top_input_processor_; }
 
-  void logError(const char *message);
-  void redraw();
+  void logDebug(const char *message);
+  void redraw(bool from_scratch = false);
+
+  void onScreenResized();
 
   void onWindowMoveResize(
     Window &activator, const Rect &oldsize, const Rect &newsize);
@@ -76,20 +80,20 @@ public:
 private:
   typedef std::deque<Window *> Windows;
 
+  enum PendingRedraw {
+    REDRAW_NONE,
+    REDRAW_NORMAL,
+    REDRAW_FROM_SCRATCH,
+  };
+
   Windows windows_;
   AppInterface interface_;
   InputProcessor *top_input_processor_;
 
-  unsigned stdin_input_timeout_handle_;
-  unsigned stdin_input_handle_;
-  unsigned resize_input_handle_;
-  int pipefd_[2];
-
   TermKey *tk_;
   iconv_t iconv_desc_;
 
-  bool redraw_pending_;
-  bool resize_pending_;
+  PendingRedraw pending_redraw_;
 
   CoreManager(AppInterface &set_interface);
   ~CoreManager() {}
@@ -101,30 +105,9 @@ private:
   // InputProcessor
   virtual bool processInput(const TermKeyKey &key);
 
-  /// Reads data from the standard input. The data are first converted from user
-  /// locales to the internal representation (UTF-8) and then processed by
-  /// InputProcessor.
-  static void stdin_input_(int fd, InputCondition cond, void *data)
-  {
-    static_cast<CoreManager *>(data)->stdin_input(fd, cond);
-  }
-  void stdin_input(int fd, InputCondition cond);
-  static bool stdin_input_timeout_(void *data);
-  void stdin_input_timeout();
-
-  static void resize_input_(int fd, InputCondition cond, void *data)
-  {
-    static_cast<CoreManager *>(data)->resize_input(fd, cond);
-  }
-  void resize_input(int fd, InputCondition cond);
-
-  static void signalHandler(int signum);
-  void resize();
   void updateArea();
   void updateWindowArea(Window &window);
 
-  static bool draw_(void *data);
-  int draw(Error &error);
   int drawWindow(Window &window, Error &error);
 
   Windows::iterator findWindow(Window &window);
