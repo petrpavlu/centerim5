@@ -34,13 +34,13 @@ namespace CppConsUI {
 class HorizontalListBox : public AbstractListBox {
 public:
   HorizontalListBox(int w, int h);
-  virtual ~HorizontalListBox() {}
+  virtual ~HorizontalListBox() override {}
 
   // AbstractListBox
-  virtual VerticalLine *insertSeparator(size_t pos);
-  virtual VerticalLine *appendSeparator();
-  virtual void insertWidget(size_t pos, Widget &widget);
-  virtual void appendWidget(Widget &widget);
+  virtual VerticalLine *insertSeparator(size_t pos) override;
+  virtual VerticalLine *appendSeparator() override;
+  virtual void insertWidget(size_t pos, Widget &widget) override;
+  virtual void appendWidget(Widget &widget) override;
 
   virtual int getChildrenWidth() const { return children_width_; };
 
@@ -54,14 +54,14 @@ protected:
   int autosize_children_count_;
 
   // Widget
-  virtual void updateArea();
+  virtual void updateArea() override;
 
   // Container
   virtual void onChildMoveResize(
-    Widget &activator, const Rect &oldsize, const Rect &newsize);
+    Widget &activator, const Rect &oldsize, const Rect &newsize) override;
   virtual void onChildWishSizeChange(
-    Widget &activator, const Size &oldsize, const Size &newsize);
-  virtual void onChildVisible(Widget &widget, bool visible);
+    Widget &activator, const Size &oldsize, const Size &newsize) override;
+  virtual void onChildVisible(Widget &widget, bool visible) override;
 
   virtual void updateChildren(
     int children_width_change, int autosize_children_count_change);

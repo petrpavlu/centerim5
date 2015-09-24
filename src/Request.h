@@ -33,17 +33,16 @@ class Request {
 public:
   static Request *instance();
 
-protected:
 private:
   class RequestDialog : public CppConsUI::SplitDialog {
   public:
     RequestDialog(const char *title, const char *primary, const char *secondary,
       const char *ok_text, GCallback ok_cb, const char *cancel_text,
       GCallback cancel_cb, void *user_data);
-    virtual ~RequestDialog() {}
+    virtual ~RequestDialog() override {}
 
     // FreeWindow
-    virtual void onScreenResized();
+    virtual void onScreenResized() override;
 
     virtual PurpleRequestType getRequestType() = 0;
 
@@ -68,14 +67,17 @@ private:
       const char *secondary, const char *default_value, bool masked,
       const char *ok_text, GCallback ok_cb, const char *cancel_text,
       GCallback cancel_cb, void *user_data);
-    virtual ~InputTextDialog() {}
+    virtual ~InputTextDialog() override {}
 
-    virtual PurpleRequestType getRequestType();
+    // RequestDialog
+    virtual PurpleRequestType getRequestType() override;
 
   protected:
     CppConsUI::TextEntry *entry_;
 
-    virtual void responseHandler(SplitDialog &activator, ResponseType response);
+    // RequestDialog
+    virtual void responseHandler(
+      SplitDialog &activator, ResponseType response) override;
 
   private:
     CONSUI_DISABLE_COPY(InputTextDialog);
@@ -87,14 +89,17 @@ private:
       int default_value, const char *ok_text, GCallback ok_cb,
       const char *cancel_text, GCallback cancel_cb, void *user_data,
       va_list choices);
-    virtual ~ChoiceDialog() {}
+    virtual ~ChoiceDialog() override {}
 
-    virtual PurpleRequestType getRequestType();
+    // RequestDialog
+    virtual PurpleRequestType getRequestType() override;
 
   protected:
     CppConsUI::ComboBox *combo_;
 
-    virtual void responseHandler(SplitDialog &activator, ResponseType response);
+    // RequestDialog
+    virtual void responseHandler(
+      SplitDialog &activator, ResponseType response) override;
 
   private:
     CONSUI_DISABLE_COPY(ChoiceDialog);
@@ -104,12 +109,15 @@ private:
   public:
     ActionDialog(const char *title, const char *primary, const char *secondary,
       int default_value, void *user_data, size_t action_count, va_list actions);
-    virtual ~ActionDialog() {}
+    virtual ~ActionDialog() override {}
 
-    virtual PurpleRequestType getRequestType();
+    // RequestDialog
+    virtual PurpleRequestType getRequestType() override;
 
   protected:
-    virtual void responseHandler(SplitDialog &activator, ResponseType response);
+    // RequestDialog
+    virtual void responseHandler(
+      SplitDialog &activator, ResponseType response) override;
 
   private:
     CONSUI_DISABLE_COPY(ActionDialog);
@@ -122,9 +130,10 @@ private:
     FieldsDialog(const char *title, const char *primary, const char *secondary,
       PurpleRequestFields *request_fields, const char *ok_text, GCallback ok_cb,
       const char *cancel_text, GCallback cancel_cb, void *user_data);
-    virtual ~FieldsDialog() {}
+    virtual ~FieldsDialog() override {}
 
-    virtual PurpleRequestType getRequestType();
+    // RequestDialog
+    virtual PurpleRequestType getRequestType() override;
 
   protected:
     PurpleRequestFields *fields_;
@@ -133,7 +142,7 @@ private:
     class StringField : public CppConsUI::Button {
     public:
       StringField(PurpleRequestField *field);
-      virtual ~StringField() {}
+      virtual ~StringField() override {}
 
     protected:
       PurpleRequestField *field_;
@@ -149,7 +158,7 @@ private:
     class IntegerField : public CppConsUI::Button {
     public:
       IntegerField(PurpleRequestField *field);
-      virtual ~IntegerField() {}
+      virtual ~IntegerField() override {}
 
     protected:
       PurpleRequestField *field_;
@@ -165,7 +174,7 @@ private:
     class BooleanField : public CppConsUI::CheckBox {
     public:
       BooleanField(PurpleRequestField *field);
-      virtual ~BooleanField() {}
+      virtual ~BooleanField() override {}
 
     protected:
       PurpleRequestField *field_;
@@ -179,7 +188,7 @@ private:
     class ChoiceField : public CppConsUI::ComboBox {
     public:
       ChoiceField(PurpleRequestField *field);
-      virtual ~ChoiceField() {}
+      virtual ~ChoiceField() override {}
 
     protected:
       PurpleRequestField *field_;
@@ -194,7 +203,7 @@ private:
     class ListFieldMultiple : public CppConsUI::ListBox {
     public:
       ListFieldMultiple(PurpleRequestField *field);
-      virtual ~ListFieldMultiple() {}
+      virtual ~ListFieldMultiple() override {}
 
     protected:
       PurpleRequestField *field_;
@@ -202,7 +211,7 @@ private:
       class ListFieldItem : public CppConsUI::CheckBox {
       public:
         ListFieldItem(PurpleRequestField *field, const char *text);
-        virtual ~ListFieldItem() {}
+        virtual ~ListFieldItem() override {}
 
       protected:
         PurpleRequestField *field_;
@@ -220,7 +229,7 @@ private:
     class ListFieldSingle : public CppConsUI::ComboBox {
     public:
       ListFieldSingle(PurpleRequestField *field);
-      virtual ~ListFieldSingle() {}
+      virtual ~ListFieldSingle() override {}
 
     protected:
       PurpleRequestField *field_;
@@ -235,7 +244,7 @@ private:
     class LabelField : public CppConsUI::Label {
     public:
       LabelField(PurpleRequestField *field);
-      virtual ~LabelField() {}
+      virtual ~LabelField() override {}
 
     protected:
       PurpleRequestField *field_;
@@ -247,7 +256,7 @@ private:
     class ImageField : public CppConsUI::Button {
     public:
       ImageField(PurpleRequestField *field);
-      virtual ~ImageField() {}
+      virtual ~ImageField() override {}
 
     protected:
       PurpleRequestField *field_;
@@ -261,7 +270,7 @@ private:
     class AccountField : public CppConsUI::ComboBox {
     public:
       AccountField(PurpleRequestField *field);
-      virtual ~AccountField() {}
+      virtual ~AccountField() override {}
 
     protected:
       PurpleRequestField *field_;
@@ -273,8 +282,9 @@ private:
       CONSUI_DISABLE_COPY(AccountField);
     };
 
+    // RequestDialog
     virtual void responseHandler(
-      CppConsUI::SplitDialog &activator, ResponseType response);
+      CppConsUI::SplitDialog &activator, ResponseType response) override;
 
   private:
     CONSUI_DISABLE_COPY(FieldsDialog);

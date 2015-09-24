@@ -32,7 +32,7 @@ namespace CppConsUI {
 class InputDialog : public AbstractDialog {
 public:
   InputDialog(const char *title, const char *defaultvalue);
-  virtual ~InputDialog() {}
+  virtual ~InputDialog() override {}
 
   virtual void setText(const char *new_text) { entry_->setText(new_text); }
   virtual const char *getText() const { return entry_->getText(); }
@@ -50,7 +50,7 @@ protected:
   TextEntry *entry_;
 
   // AbstractDialog
-  virtual void emitResponse(ResponseType response);
+  virtual void emitResponse(ResponseType response) override;
 
 private:
   CONSUI_DISABLE_COPY(InputDialog);

@@ -25,10 +25,10 @@
 class AccountStatusMenu : public CppConsUI::MenuWindow {
 public:
   AccountStatusMenu();
-  virtual ~AccountStatusMenu() {}
+  virtual ~AccountStatusMenu() override {}
 
   // FreeWindow
-  virtual void onScreenResized();
+  virtual void onScreenResized() override;
 
 protected:
   void openStatusPopup(CppConsUI::Button &activator, PurpleAccount *account);
@@ -37,7 +37,7 @@ private:
   class StatusPopup : public MenuWindow {
   public:
     StatusPopup(PurpleAccount *account);
-    virtual ~StatusPopup() {}
+    virtual ~StatusPopup() override {}
 
   protected:
     void setStatus(CppConsUI::Button &activator, PurpleAccount *account,

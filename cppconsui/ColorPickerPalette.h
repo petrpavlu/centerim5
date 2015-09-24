@@ -38,7 +38,7 @@ public:
   };
 
   ColorPickerPalette(int default_color, int flags = 0);
-  virtual ~ColorPickerPalette(){};
+  virtual ~ColorPickerPalette() override {}
 
   /// Signal emitted when a color is selected.
   sigc::signal<void, ColorPickerPalette &, int> signal_color_selected;
@@ -47,10 +47,10 @@ protected:
   class ColorPickerPaletteButton : public Button {
   public:
     ColorPickerPaletteButton(int color);
-    virtual ~ColorPickerPaletteButton(){};
+    virtual ~ColorPickerPaletteButton() override {}
 
     // Widget
-    virtual int draw(Curses::ViewPort area, Error &error);
+    virtual int draw(Curses::ViewPort area, Error &error) override;
 
     virtual int getColor() const { return color_; };
 

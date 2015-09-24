@@ -75,7 +75,7 @@ public:
   static CenterIM *instance();
 
   // InputProcessor
-  virtual bool processInput(const TermKeyKey &key);
+  virtual bool processInput(const TermKeyKey &key) override;
 
   void quit();
 

@@ -30,10 +30,10 @@ namespace CppConsUI {
 class Spacer : public Widget {
 public:
   Spacer(int w, int h);
-  virtual ~Spacer() {}
+  virtual ~Spacer() override {}
 
   // Widget
-  virtual int draw(Curses::ViewPort area, Error &error);
+  virtual int draw(Curses::ViewPort area, Error &error) override;
 
 private:
   CONSUI_DISABLE_COPY(Spacer);

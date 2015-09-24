@@ -40,22 +40,18 @@ public:
     int x, int y, int w, int h, Type t = TYPE_NORMAL, bool decorated_ = true);
   Window(int x, int y, int w, int h, const char *title, Type t = TYPE_NORMAL,
     bool decorated_ = true);
-  virtual ~Window();
+  virtual ~Window() override;
 
   // Widget
-  virtual void moveResizeRect(const Rect &rect)
-  {
-    moveResize(rect.x, rect.y, rect.width, rect.height);
-  }
-  virtual int draw(Curses::ViewPort area, Error &error);
-  virtual void setVisibility(bool visible);
-  virtual bool isVisibleRecursive() const { return isVisible(); }
-  virtual Point getAbsolutePosition();
+  virtual int draw(Curses::ViewPort area, Error &error) override;
+  virtual void setVisibility(bool visible) override;
+  virtual bool isVisibleRecursive() const override { return isVisible(); }
+  virtual Point getAbsolutePosition() const override;
 
   // Container
-  virtual bool isWidgetVisible(const Widget &widget) const;
-  virtual bool setFocusChild(Widget &child);
-  virtual Point getAbsolutePosition(const Widget &child) const;
+  virtual bool isWidgetVisible(const Widget &widget) const override;
+  virtual bool setFocusChild(Widget &child) override;
+  virtual Point getAbsolutePosition(const Widget &child) const override;
 
   virtual void show();
   virtual void hide();
@@ -92,10 +88,12 @@ protected:
   Panel *panel_;
 
   // Widget
-  virtual void signalMoveResize(const Rect &oldsize, const Rect &newsize);
-  virtual void signalWishSizeChange(const Size &oldsize, const Size &newsize);
-  virtual void updateArea();
-  virtual void redraw();
+  virtual void signalMoveResize(
+    const Rect &oldsize, const Rect &newsize) override;
+  virtual void signalWishSizeChange(
+    const Size &oldsize, const Size &newsize) override;
+  virtual void updateArea() override;
+  virtual void redraw() override;
 
   virtual void initWindow(int x, int y, const char *title);
 

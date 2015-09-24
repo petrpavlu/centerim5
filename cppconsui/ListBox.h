@@ -33,13 +33,13 @@ namespace CppConsUI {
 class ListBox : public AbstractListBox {
 public:
   ListBox(int w, int h);
-  virtual ~ListBox() {}
+  virtual ~ListBox() override {}
 
   // AbstractListBox
-  virtual HorizontalLine *insertSeparator(size_t pos);
-  virtual HorizontalLine *appendSeparator();
-  virtual void insertWidget(size_t pos, Widget &widget);
-  virtual void appendWidget(Widget &widget);
+  virtual HorizontalLine *insertSeparator(size_t pos) override;
+  virtual HorizontalLine *appendSeparator() override;
+  virtual void insertWidget(size_t pos, Widget &widget) override;
+  virtual void appendWidget(Widget &widget) override;
 
   virtual int getChildrenHeight() const { return children_height_; };
 
@@ -53,14 +53,14 @@ protected:
   int autosize_children_count_;
 
   // Widget
-  virtual void updateArea();
+  virtual void updateArea() override;
 
   // Container
   virtual void onChildMoveResize(
-    Widget &activator, const Rect &oldsize, const Rect &newsize);
+    Widget &activator, const Rect &oldsize, const Rect &newsize) override;
   virtual void onChildWishSizeChange(
-    Widget &activator, const Size &oldsize, const Size &newsize);
-  virtual void onChildVisible(Widget &activator, bool visible);
+    Widget &activator, const Size &oldsize, const Size &newsize) override;
+  virtual void onChildVisible(Widget &activator, bool visible) override;
 
   virtual void updateChildren(
     int children_height_change, int autosize_children_count_change);

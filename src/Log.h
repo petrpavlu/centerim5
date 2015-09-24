@@ -66,9 +66,10 @@ private:
   class LogWindow : public CppConsUI::Window {
   public:
     LogWindow();
+    virtual ~LogWindow() override {}
 
     // FreeWindow
-    virtual void onScreenResized();
+    virtual void onScreenResized() override;
 
     void append(const char *text);
 
@@ -118,7 +119,7 @@ private:
   Level log_level_purple_;
 
   Log();
-  virtual ~Log();
+  ~Log();
   CONSUI_DISABLE_COPY(Log);
 
   static void init();

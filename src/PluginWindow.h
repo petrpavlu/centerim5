@@ -30,19 +30,19 @@
 class PluginWindow : public CppConsUI::SplitDialog {
 public:
   PluginWindow();
-  virtual ~PluginWindow();
+  virtual ~PluginWindow() override;
 
   // FreeWindow
-  virtual void onScreenResized();
+  virtual void onScreenResized() override;
 
 private:
   class AddPluginWindow : public CppConsUI::Window {
   public:
     AddPluginWindow();
-    virtual ~AddPluginWindow() {}
+    virtual ~AddPluginWindow() override {}
 
     // FreeWindow
-    virtual void onScreenResized();
+    virtual void onScreenResized() override;
 
     // Signal that the user has selected a plugin that he wants to add.
     sigc::signal<void, AddPluginWindow &, PurplePlugin *> signal_selection;
@@ -58,7 +58,7 @@ private:
   class BoolOption : public CppConsUI::CheckBox {
   public:
     BoolOption(const char *name, const char *pref);
-    virtual ~BoolOption();
+    virtual ~BoolOption() override;
 
   protected:
     char *pref_;
@@ -72,7 +72,7 @@ private:
   class StringOption : public CppConsUI::Button {
   public:
     StringOption(const char *name, const char *pref);
-    virtual ~StringOption();
+    virtual ~StringOption() override;
 
   protected:
     char *pref_;
@@ -89,7 +89,7 @@ private:
   class IntegerOption : public CppConsUI::Button {
   public:
     IntegerOption(const char *name, const char *pref);
-    virtual ~IntegerOption();
+    virtual ~IntegerOption() override;
 
   protected:
     char *pref_;
@@ -106,7 +106,7 @@ private:
   class PathOption : public CppConsUI::Button {
   public:
     PathOption(const char *name, const char *pref);
-    virtual ~PathOption();
+    virtual ~PathOption() override;
 
   protected:
     char *pref_;

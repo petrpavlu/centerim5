@@ -36,10 +36,10 @@ namespace CppConsUI {
 class ColorPickerComboBox : public ComboBox {
 public:
   ColorPickerComboBox(int w, int color);
-  virtual ~ColorPickerComboBox();
+  virtual ~ColorPickerComboBox() override;
 
   // Widget
-  virtual int draw(Curses::ViewPort area, Error &error);
+  virtual int draw(Curses::ViewPort area, Error &error) override;
 
   virtual void setColor(int new_color);
   virtual int getColor() { return selected_color_; }
@@ -50,10 +50,10 @@ protected:
   class ColorButton : public Button {
   public:
     ColorButton(int color = -1);
-    virtual ~ColorButton() {}
+    virtual ~ColorButton() override {}
 
     // Widget
-    virtual int draw(Curses::ViewPort area, Error &error);
+    virtual int draw(Curses::ViewPort area, Error &error) override;
 
   protected:
     int color_;
@@ -72,9 +72,9 @@ protected:
   using ComboBox::setSelectedByDataPtr;
 
   // ComboBox
-  virtual void onDropDown(Button &activator);
-  virtual void dropDownOk(Button &activator, int new_entry);
-  virtual void dropDownClose(Window &window)
+  virtual void onDropDown(Button &activator) override;
+  virtual void dropDownOk(Button &activator, int new_entry) override;
+  virtual void dropDownClose(Window &window) override
   {
     ComboBox::dropDownClose(window);
   }
@@ -83,7 +83,7 @@ protected:
     AbstractDialog::ResponseType response, int new_color);
   virtual void colorPickerClose(Window &window);
 #endif // COLORPICKER_256COLOR
-  virtual void setSelected(int new_entry);
+  virtual void setSelected(int new_entry) override;
 
   int selected_color_;
 

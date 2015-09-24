@@ -32,14 +32,14 @@ class Dialog : public AbstractDialog {
 public:
   Dialog(int x, int y, int w, int h, const char *title = NULL);
   explicit Dialog(const char *title = NULL);
-  virtual ~Dialog() {}
+  virtual ~Dialog() override {}
 
   /// Signal emitted when user closes the dialog.
   sigc::signal<void, Dialog &, ResponseType> signal_response;
 
 protected:
   // AbstractDialog
-  virtual void emitResponse(ResponseType response);
+  virtual void emitResponse(ResponseType response) override;
 
 private:
   CONSUI_DISABLE_COPY(Dialog);

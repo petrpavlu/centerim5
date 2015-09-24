@@ -32,10 +32,10 @@ namespace CppConsUI {
 class HorizontalLine : public AbstractLine {
 public:
   HorizontalLine(int w);
-  virtual ~HorizontalLine() {}
+  virtual ~HorizontalLine() override {}
 
   // Widget
-  virtual int draw(Curses::ViewPort area, Error &error);
+  virtual int draw(Curses::ViewPort area, Error &error) override;
 
 private:
   CONSUI_DISABLE_COPY(HorizontalLine);

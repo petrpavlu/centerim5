@@ -34,7 +34,7 @@ public:
   static Header *instance();
 
   // Window
-  virtual void onScreenResized();
+  virtual void onScreenResized() override;
 
 private:
   typedef std::multiset<std::string> ProtocolCount;
@@ -48,7 +48,7 @@ private:
   static Header *my_instance_;
 
   Header();
-  virtual ~Header();
+  virtual ~Header() override;
   CONSUI_DISABLE_COPY(Header);
 
   static void init();

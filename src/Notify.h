@@ -33,10 +33,10 @@ private:
   class UserInfoDialog : public CppConsUI::SplitDialog {
   public:
     UserInfoDialog(const char *title);
-    virtual ~UserInfoDialog() {}
+    virtual ~UserInfoDialog() override {}
 
     // Window
-    virtual void onScreenResized();
+    virtual void onScreenResized() override;
 
     void update(
       PurpleConnection *gc, const char *who, PurpleNotifyUserInfo *user_info);

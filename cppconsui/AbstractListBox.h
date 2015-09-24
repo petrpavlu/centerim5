@@ -35,7 +35,7 @@ namespace CppConsUI {
 class AbstractListBox : public Container {
 public:
   AbstractListBox(int w, int h);
-  virtual ~AbstractListBox() {}
+  virtual ~AbstractListBox() override {}
 
   /// Inserts a new button into ListBox before a given position.
   virtual Button *insertItem(

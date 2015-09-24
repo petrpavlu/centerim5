@@ -46,10 +46,10 @@ public:
 
   AbstractDialog(int x, int y, int w, int h, const char *title = NULL);
   explicit AbstractDialog(const char *title = NULL);
-  virtual ~AbstractDialog() {}
+  virtual ~AbstractDialog() override {}
 
   // FreeWindow
-  virtual void close();
+  virtual void close() override;
 
   virtual void addButton(const char *label, ResponseType response);
   virtual void addSeparator();

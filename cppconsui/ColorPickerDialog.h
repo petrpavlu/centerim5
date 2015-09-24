@@ -33,7 +33,7 @@ namespace CppConsUI {
 class ColorPickerDialog : public AbstractDialog {
 public:
   ColorPickerDialog(const char *title, int default_color, int flags);
-  virtual ~ColorPickerDialog() {}
+  virtual ~ColorPickerDialog() override {}
 
   /// Signal emitted when user closes the dialog.
   sigc::signal<void, ColorPickerDialog &, ResponseType, int> signal_response;
@@ -42,7 +42,7 @@ protected:
   int color_;
 
   // AbstractDialog
-  virtual void emitResponse(ResponseType response);
+  virtual void emitResponse(ResponseType response) override;
 
   virtual void onColorSelected(ColorPickerPalette &activator, int new_color);
 

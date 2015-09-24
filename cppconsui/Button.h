@@ -48,10 +48,10 @@ public:
     bool masked = false);
   Button(int flags, const char *text = NULL, const char *value = NULL,
     const char *unit = NULL, const char *right = NULL, bool masked = false);
-  virtual ~Button();
+  virtual ~Button() override;
 
   // Widget
-  virtual int draw(Curses::ViewPort area, Error &error);
+  virtual int draw(Curses::ViewPort area, Error &error) override;
 
   virtual void setFlags(int new_flags);
   virtual int getFlags() const { return flags_; }

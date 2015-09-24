@@ -54,7 +54,7 @@ private:
   struct AddRequest : public Request {
     AddRequest(PurpleAccount *account, const char *remote_user, const char *id,
       const char *alias);
-    virtual ~AddRequest() {}
+    virtual ~AddRequest() override {}
   };
 
   struct AuthRequest : public Request {
@@ -67,7 +67,7 @@ private:
       const char *alias, const char *message, bool on_list,
       PurpleAccountRequestAuthorizationCb auth_cb,
       PurpleAccountRequestAuthorizationCb deny_cb, void *data);
-    virtual ~AuthRequest();
+    virtual ~AuthRequest() override;
   };
 
   typedef std::vector<Request *> Requests;
@@ -75,10 +75,10 @@ private:
   class PendingRequestWindow : public CppConsUI::SplitDialog {
   public:
     PendingRequestWindow(Accounts &accounts, const Requests &requests);
-    virtual ~PendingRequestWindow() {}
+    virtual ~PendingRequestWindow() override {}
 
     // Window
-    virtual void onScreenResized();
+    virtual void onScreenResized() override;
 
     // Provide a way for the Accounts singleton to add or delete requests
     // dynamically when these events occur.
@@ -90,7 +90,7 @@ private:
     public:
       RequestDialog(
         const Request &request, const char *title, const char *text);
-      virtual ~RequestDialog() {}
+      virtual ~RequestDialog() override {}
 
       const Request *getRequest() const { return request_; }
 
@@ -101,7 +101,7 @@ private:
       const Request *request_;
 
       // AbstractDialog
-      virtual void emitResponse(ResponseType response);
+      virtual void emitResponse(ResponseType response) override;
 
     private:
       CONSUI_DISABLE_COPY(RequestDialog);

@@ -31,7 +31,7 @@ public:
   static Footer *instance();
 
   // Window
-  virtual void onScreenResized();
+  virtual void onScreenResized() override;
 
   void setText(const char *fmt, ...)
     CPPCONSUI_GNUC_ATTRIBUTE((format(printf, 2, 3)));
@@ -45,7 +45,7 @@ private:
   static Footer *my_instance_;
 
   Footer();
-  virtual ~Footer() {}
+  virtual ~Footer() override {}
   CONSUI_DISABLE_COPY(Footer);
 
   static void init();

@@ -33,10 +33,10 @@ class Label : public Widget {
 public:
   Label(int w, int h, const char *text = NULL);
   explicit Label(const char *text = NULL);
-  virtual ~Label();
+  virtual ~Label() override;
 
   // Widget
-  virtual int draw(Curses::ViewPort area, Error &error);
+  virtual int draw(Curses::ViewPort area, Error &error) override;
 
   /// Sets a new label text and redraws the widget.
   virtual void setText(const char *new_text);

@@ -35,10 +35,10 @@ public:
   public:
     ToggleCollapseButton(int w, int h, const char *text_ = NULL);
     explicit ToggleCollapseButton(const char *text_ = NULL);
-    virtual ~ToggleCollapseButton() {}
+    virtual ~ToggleCollapseButton() override {}
 
     // Widget
-    virtual void setParent(Container &parent);
+    virtual void setParent(Container &parent) override;
 
   private:
     CONSUI_DISABLE_COPY(ToggleCollapseButton);
@@ -55,24 +55,24 @@ public:
   typedef TheTree::sibling_iterator SiblingIterator;
 
   TreeView(int w, int h);
-  virtual ~TreeView();
+  virtual ~TreeView() override;
 
   // Widget
-  virtual int draw(Curses::ViewPort area, Error &error);
-  virtual void cleanFocus();
-  virtual bool grabFocus();
+  virtual int draw(Curses::ViewPort area, Error &error) override;
+  virtual void cleanFocus() override;
+  virtual bool grabFocus() override;
 
   // Container
-  virtual void clear();
-  virtual bool isWidgetVisible(const Widget &widget) const;
-  virtual bool setFocusChild(Widget &child);
+  virtual void clear() override;
+  virtual bool isWidgetVisible(const Widget &widget) const override;
+  virtual bool setFocusChild(Widget &child) override;
   virtual void getFocusChain(
-    FocusChain &focus_chain, FocusChain::iterator parent);
+    FocusChain &focus_chain, FocusChain::iterator parent) override;
   virtual void onChildMoveResize(
-    Widget &activator, const Rect &oldsize, const Rect &newsize);
+    Widget &activator, const Rect &oldsize, const Rect &newsize) override;
   virtual void onChildWishSizeChange(
-    Widget &activator, const Size &oldsize, const Size &newsize);
-  virtual void onChildVisible(Widget &activator, bool visible);
+    Widget &activator, const Size &oldsize, const Size &newsize) override;
+  virtual void onChildVisible(Widget &activator, bool visible) override;
 
   /// Folds/unfolds given node.
   virtual void setCollapsed(NodeReference node, bool collapsed);
@@ -160,7 +160,7 @@ protected:
   NodeReference focus_node_;
 
   // Widget
-  virtual void updateArea();
+  virtual void updateArea() override;
 
   // Container
   using Container::addWidget;

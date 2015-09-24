@@ -32,7 +32,7 @@ namespace CppConsUI {
 class AbstractLine : public Widget {
 public:
   AbstractLine(int w, int h);
-  virtual ~AbstractLine() {}
+  virtual ~AbstractLine() override {}
 
 private:
   CONSUI_DISABLE_COPY(AbstractLine);

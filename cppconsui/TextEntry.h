@@ -31,7 +31,7 @@ class TextEntry : public TextEdit {
 public:
   TextEntry(int w, int h, const char *text_ = NULL, int flags_ = 0);
   explicit TextEntry(const char *text_ = NULL, int flags_ = 0);
-  virtual ~TextEntry() {}
+  virtual ~TextEntry() override {}
 
 private:
   CONSUI_DISABLE_COPY(TextEntry);

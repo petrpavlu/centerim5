@@ -35,7 +35,7 @@ public:
   static Conversations *instance();
 
   // Window
-  virtual void onScreenResized();
+  virtual void onScreenResized() override;
 
   void focusActiveConversation();
   void focusConversation(int i);
@@ -73,7 +73,7 @@ private:
   static Conversations *my_instance_;
 
   Conversations();
-  virtual ~Conversations();
+  virtual ~Conversations() override;
   CONSUI_DISABLE_COPY(Conversations);
 
   static void init();

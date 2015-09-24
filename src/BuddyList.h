@@ -57,15 +57,15 @@ public:
   static BuddyList *instance();
 
   // InputProcessor
-  virtual bool processInputText(const TermKeyKey &key);
+  virtual bool processInputText(const TermKeyKey &key) override;
 
   // Widget
-  virtual bool restoreFocus();
-  virtual void ungrabFocus();
+  virtual bool restoreFocus() override;
+  virtual void ungrabFocus() override;
 
   // FreeWindow
-  virtual void close();
-  virtual void onScreenResized();
+  virtual void close() override;
+  virtual void onScreenResized() override;
 
   // These functions are faster version of getting blist/* prefs.
   bool getShowEmptyGroupsPref() const { return show_empty_groups_; }
@@ -88,10 +88,11 @@ private:
   class Filter : public CppConsUI::Widget {
   public:
     Filter(BuddyList *parent_blist);
-    virtual ~Filter() {}
+    virtual ~Filter() override {}
 
     // Widget
-    virtual int draw(CppConsUI::Curses::ViewPort area, CppConsUI::Error &error);
+    virtual int draw(
+      CppConsUI::Curses::ViewPort area, CppConsUI::Error &error) override;
 
   protected:
     BuddyList *parent_blist_;
@@ -103,17 +104,17 @@ private:
   class AddWindow : public CppConsUI::SplitDialog {
   public:
     AddWindow(const char *title);
-    virtual ~AddWindow() {}
+    virtual ~AddWindow() override {}
 
     // FreeWindow
-    virtual void onScreenResized();
+    virtual void onScreenResized() override;
 
   protected:
     class AccountOption : public CppConsUI::ComboBox {
     public:
       explicit AccountOption(
         PurpleAccount *default_account = NULL, bool chat_only = false);
-      virtual ~AccountOption() {}
+      virtual ~AccountOption() override {}
 
     private:
       CONSUI_DISABLE_COPY(AccountOption);
@@ -123,7 +124,7 @@ private:
     public:
       explicit GroupOption(const char *default_group);
       explicit GroupOption(PurpleGroup *default_group);
-      virtual ~GroupOption() {}
+      virtual ~GroupOption() override {}
 
     private:
       CONSUI_DISABLE_COPY(GroupOption);
@@ -133,7 +134,7 @@ private:
     public:
       explicit StringOption(
         const char *text, const char *value = NULL, bool masked = false);
-      virtual ~StringOption() {}
+      virtual ~StringOption() override {}
 
     protected:
       void onActivate(CppConsUI::Button &activator);
@@ -148,7 +149,7 @@ private:
     public:
       explicit IntegerOption(const char *text, const char *value = NULL,
         bool masked = false, int min = INT_MIN, int max = INT_MAX);
-      virtual ~IntegerOption() {}
+      virtual ~IntegerOption() override {}
 
     protected:
       int min_value_;
@@ -165,7 +166,7 @@ private:
     class BooleanOption : public CppConsUI::CheckBox {
     public:
       explicit BooleanOption(const char *text, bool checked = true);
-      virtual ~BooleanOption() {}
+      virtual ~BooleanOption() override {}
 
     private:
       CONSUI_DISABLE_COPY(BooleanOption);
@@ -183,7 +184,7 @@ private:
   public:
     AddBuddyWindow(PurpleAccount *account, const char *username,
       const char *group, const char *alias);
-    virtual ~AddBuddyWindow() {}
+    virtual ~AddBuddyWindow() override {}
 
   protected:
     AccountOption *account_option_;
@@ -192,7 +193,7 @@ private:
     GroupOption *group_option_;
 
     // AddWindow
-    virtual void onAddRequest(CppConsUI::Button &activator);
+    virtual void onAddRequest(CppConsUI::Button &activator) override;
 
   private:
     CONSUI_DISABLE_COPY(AddBuddyWindow);
@@ -202,7 +203,7 @@ private:
   public:
     AddChatWindow(PurpleAccount *account, const char *name, const char *alias,
       const char *group);
-    virtual ~AddChatWindow() {}
+    virtual ~AddChatWindow() override {}
 
   protected:
     typedef std::map<std::string, CppConsUI::TreeView::NodeReference> ChatInfos;
@@ -215,7 +216,7 @@ private:
     ChatInfos chat_infos_;
 
     // AddWindow
-    virtual void onAddRequest(CppConsUI::Button &activator);
+    virtual void onAddRequest(CppConsUI::Button &activator) override;
 
     void populateChatInfo(PurpleAccount *account);
     void onAccountChanged(CppConsUI::Button &activator, size_t new_entry,
@@ -228,13 +229,13 @@ private:
   class AddGroupWindow : public AddWindow {
   public:
     AddGroupWindow();
-    virtual ~AddGroupWindow() {}
+    virtual ~AddGroupWindow() override {}
 
   protected:
     StringOption *name_option_;
 
     // AddWindow
-    virtual void onAddRequest(CppConsUI::Button &activator);
+    virtual void onAddRequest(CppConsUI::Button &activator) override;
 
   private:
     CONSUI_DISABLE_COPY(AddGroupWindow);

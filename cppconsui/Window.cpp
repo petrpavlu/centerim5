@@ -70,7 +70,7 @@ void Window::setVisibility(bool visible)
   visible ? show() : hide();
 }
 
-Point Window::getAbsolutePosition()
+Point Window::getAbsolutePosition() const
 {
   return Point(real_xpos_, real_ypos_);
 }

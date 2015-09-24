@@ -30,7 +30,7 @@ public:
     : CppConsUI::ListBox(w, h), conv_(conv)
   {
   }
-  virtual ~ConversationRoomList() {}
+  virtual ~ConversationRoomList() override {}
 
   // Libpurple chatroom interfaces.
   void add_users(GList *cbuddies, gboolean new_arrivals);
@@ -43,9 +43,9 @@ protected:
   // Represents a widget as well as pointer to libpurple data.
   class Buddy : public CppConsUI::Button {
   public:
-    Buddy(PurpleConvChatBuddy *pbuddy);
+    explicit Buddy(PurpleConvChatBuddy *pbuddy);
 
-    virtual ~Buddy();
+    virtual ~Buddy() override;
 
     // Sets button text with displayName.
     void setButtonText();
@@ -76,9 +76,6 @@ protected:
 
     // Note: When remove_users op is called, this pointer is invalidated!.
     PurpleConvChatBuddy *pbuddy_;
-
-    // Force public constructor.
-    Buddy();
 
     CONSUI_DISABLE_COPY(Buddy);
   };

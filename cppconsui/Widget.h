@@ -52,10 +52,14 @@ public:
   };
 
   Widget(int w, int h);
-  virtual ~Widget();
+  virtual ~Widget() override;
 
   /// Moves and resizes the widget.
   virtual void moveResize(int newx, int newy, int neww, int newh);
+  virtual void moveResizeRect(const Rect &rect)
+  {
+    moveResize(rect.x, rect.y, rect.width, rect.height);
+  }
 
   /// The draw() method does the actual drawing on a (virtual) area of the
   /// screen. The @ref CoreManager singleton calls draw() on all on-screen

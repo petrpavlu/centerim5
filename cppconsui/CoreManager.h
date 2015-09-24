@@ -103,7 +103,7 @@ private:
   friend void finalizeConsUI();
 
   // InputProcessor
-  virtual bool processInput(const TermKeyKey &key);
+  virtual bool processInput(const TermKeyKey &key) override;
 
   void updateArea();
   void updateWindowArea(Window &window);

@@ -31,13 +31,13 @@ class SplitDialog : public AbstractDialog {
 public:
   SplitDialog(int x, int y, int w, int h, const char *title = NULL);
   explicit SplitDialog(const char *title = NULL);
-  virtual ~SplitDialog();
+  virtual ~SplitDialog() override;
 
   // Widget
-  virtual void cleanFocus();
+  virtual void cleanFocus() override;
 
   // Container
-  virtual void moveFocus(FocusDirection direction);
+  virtual void moveFocus(FocusDirection direction) override;
 
   virtual void setContainer(Container &cont);
   virtual Container *getContainer() const { return container_; }
@@ -54,7 +54,7 @@ protected:
   sigc::connection buttons_old_focus_conn_;
 
   // AbstractDialog
-  virtual void emitResponse(ResponseType response);
+  virtual void emitResponse(ResponseType response) override;
 
   virtual void onOldFocusVisible(Widget &activator, bool visible);
 

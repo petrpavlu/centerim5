@@ -26,10 +26,10 @@
 class GeneralMenu : public CppConsUI::MenuWindow {
 public:
   GeneralMenu();
-  virtual ~GeneralMenu() {}
+  virtual ~GeneralMenu() override {}
 
   // FreeWindow
-  virtual void onScreenResized();
+  virtual void onScreenResized() override;
 
 private:
   CONSUI_DISABLE_COPY(GeneralMenu);

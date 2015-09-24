@@ -33,10 +33,10 @@ namespace CppConsUI {
 class Panel : public Widget {
 public:
   Panel(int w, int h, const char *text = NULL);
-  virtual ~Panel();
+  virtual ~Panel() override;
 
   // Widget
-  virtual int draw(Curses::ViewPort area, Error &error);
+  virtual int draw(Curses::ViewPort area, Error &error) override;
 
   /// Sets a caption text.
   virtual void setTitle(const char *new_title);

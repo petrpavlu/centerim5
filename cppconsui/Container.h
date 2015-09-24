@@ -66,16 +66,16 @@ public:
   };
 
   Container(int w, int h);
-  virtual ~Container();
+  virtual ~Container() override;
 
   // Widget
-  virtual int draw(Curses::ViewPort area, Error &error);
-  virtual Widget *getFocusWidget();
-  virtual void cleanFocus();
-  virtual bool restoreFocus();
-  virtual bool grabFocus();
-  virtual void ungrabFocus();
-  virtual void setParent(Container &parent);
+  virtual int draw(Curses::ViewPort area, Error &error) override;
+  virtual Widget *getFocusWidget() override;
+  virtual void cleanFocus() override;
+  virtual bool restoreFocus() override;
+  virtual bool grabFocus() override;
+  virtual void ungrabFocus() override;
+  virtual void setParent(Container &parent) override;
 
   /// Adds a widget to the children list. The Container takes ownership of the
   /// widget. It means that the widget will be deleted by the Container.
@@ -171,7 +171,7 @@ protected:
   Widgets children_;
 
   // Widget
-  virtual void updateArea();
+  virtual void updateArea() override;
 
   /// Sets a drawing area for a given widget.
   virtual void updateChildArea(Widget &child);

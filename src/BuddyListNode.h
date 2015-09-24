@@ -31,7 +31,7 @@ public:
   static BuddyListNode *createNode(PurpleBlistNode *node);
 
   // Widget
-  virtual void setParent(CppConsUI::Container &parent);
+  virtual void setParent(CppConsUI::Container &parent) override;
 
   virtual bool lessOrEqual(const BuddyListNode &other) const = 0;
   virtual void update();
@@ -53,7 +53,7 @@ protected:
   class ContextMenu : public CppConsUI::MenuWindow {
   public:
     ContextMenu(BuddyListNode &parent_node);
-    virtual ~ContextMenu() {}
+    virtual ~ContextMenu() override {}
 
   protected:
     BuddyListNode *parent_node_;
@@ -109,10 +109,10 @@ class BuddyListBuddy : public BuddyListNode {
 
 public:
   // BuddyListNode
-  virtual bool lessOrEqual(const BuddyListNode &other) const;
-  virtual void update();
-  virtual void onActivate(Button &activator);
-  virtual const char *toString() const;
+  virtual bool lessOrEqual(const BuddyListNode &other) const override;
+  virtual void update() override;
+  virtual void onActivate(Button &activator) override;
+  virtual const char *toString() const override;
 
   PurpleBuddy *getPurpleBuddy() const { return buddy_; }
   void retrieveUserInfo();
@@ -121,7 +121,7 @@ protected:
   class BuddyContextMenu : public ContextMenu {
   public:
     BuddyContextMenu(BuddyListBuddy &parent_buddy);
-    virtual ~BuddyContextMenu() {}
+    virtual ~BuddyContextMenu() override {}
 
   protected:
     BuddyListBuddy *parent_buddy_;
@@ -143,17 +143,17 @@ protected:
   PurpleBuddy *buddy_;
 
   // Widget
-  virtual int getAttributes(
-    int property, int subproperty, int *attrs, CppConsUI::Error &error) const;
+  virtual int getAttributes(int property, int subproperty, int *attrs,
+    CppConsUI::Error &error) const override;
 
   // BuddyListNode
-  virtual void openContextMenu();
+  virtual void openContextMenu() override;
 
   void updateColorScheme();
 
 private:
   BuddyListBuddy(PurpleBlistNode *node);
-  virtual ~BuddyListBuddy() {}
+  virtual ~BuddyListBuddy() override {}
   CONSUI_DISABLE_COPY(BuddyListBuddy);
 };
 
@@ -162,10 +162,10 @@ class BuddyListChat : public BuddyListNode {
 
 public:
   // BuddyListNode
-  virtual bool lessOrEqual(const BuddyListNode &other) const;
-  virtual void update();
-  virtual void onActivate(Button &activator);
-  virtual const char *toString() const;
+  virtual bool lessOrEqual(const BuddyListNode &other) const override;
+  virtual void update() override;
+  virtual void onActivate(Button &activator) override;
+  virtual const char *toString() const override;
 
   PurpleChat *getPurpleChat() const { return chat_; }
 
@@ -173,7 +173,7 @@ protected:
   class ChatContextMenu : public ContextMenu {
   public:
     ChatContextMenu(BuddyListChat &parent_chat);
-    virtual ~ChatContextMenu() {}
+    virtual ~ChatContextMenu() override {}
 
   protected:
     BuddyListChat *parent_chat_;
@@ -193,11 +193,11 @@ protected:
   PurpleChat *chat_;
 
   // BuddyListNode
-  virtual void openContextMenu();
+  virtual void openContextMenu() override;
 
 private:
   BuddyListChat(PurpleBlistNode *node);
-  virtual ~BuddyListChat() {}
+  virtual ~BuddyListChat() override {}
   CONSUI_DISABLE_COPY(BuddyListChat);
 };
 
@@ -206,11 +206,11 @@ class BuddyListContact : public BuddyListNode {
 
 public:
   // BuddyListNode
-  virtual bool lessOrEqual(const BuddyListNode &other) const;
-  virtual void update();
-  virtual void onActivate(Button &activator);
-  virtual const char *toString() const;
-  virtual void setRefNode(CppConsUI::TreeView::NodeReference n);
+  virtual bool lessOrEqual(const BuddyListNode &other) const override;
+  virtual void update() override;
+  virtual void onActivate(Button &activator) override;
+  virtual const char *toString() const override;
+  virtual void setRefNode(CppConsUI::TreeView::NodeReference n) override;
 
   PurpleContact *getPurpleContact() const { return contact_; }
   void retrieveUserInfo();
@@ -225,7 +225,7 @@ protected:
   class ContactContextMenu : public ContextMenu {
   public:
     ContactContextMenu(BuddyListContact &parent_contact);
-    virtual ~ContactContextMenu() {}
+    virtual ~ContactContextMenu() override {}
 
   protected:
     BuddyListContact *parent_contact_;
@@ -250,17 +250,17 @@ protected:
   PurpleContact *contact_;
 
   // Widget
-  virtual int getAttributes(
-    int property, int subproperty, int *attrs, CppConsUI::Error &error) const;
+  virtual int getAttributes(int property, int subproperty, int *attrs,
+    CppConsUI::Error &error) const override;
 
   // BuddyListNode
-  virtual void openContextMenu();
+  virtual void openContextMenu() override;
 
   void updateColorScheme();
 
 private:
   BuddyListContact(PurpleBlistNode *node);
-  virtual ~BuddyListContact() {}
+  virtual ~BuddyListContact() override {}
   CONSUI_DISABLE_COPY(BuddyListContact);
 };
 
@@ -269,11 +269,11 @@ class BuddyListGroup : public BuddyListNode {
 
 public:
   // BuddyListNode
-  virtual bool lessOrEqual(const BuddyListNode &other) const;
-  virtual void update();
-  virtual void onActivate(Button &activator);
-  virtual const char *toString() const;
-  virtual void setRefNode(CppConsUI::TreeView::NodeReference n);
+  virtual bool lessOrEqual(const BuddyListNode &other) const override;
+  virtual void update() override;
+  virtual void onActivate(Button &activator) override;
+  virtual const char *toString() const override;
+  virtual void setRefNode(CppConsUI::TreeView::NodeReference n) override;
 
   PurpleGroup *getPurpleGroup() const { return group_; }
 
@@ -283,7 +283,7 @@ protected:
   class GroupContextMenu : public ContextMenu {
   public:
     GroupContextMenu(BuddyListGroup &parent_group);
-    virtual ~GroupContextMenu() {}
+    virtual ~GroupContextMenu() override {}
 
   protected:
     BuddyListGroup *parent_group_;
@@ -305,11 +305,11 @@ protected:
   PurpleGroup *group_;
 
   // BuddyListNode
-  virtual void openContextMenu();
+  virtual void openContextMenu() override;
 
 private:
   BuddyListGroup(PurpleBlistNode *node);
-  virtual ~BuddyListGroup() {}
+  virtual ~BuddyListGroup() override {}
   CONSUI_DISABLE_COPY(BuddyListGroup);
 };
 

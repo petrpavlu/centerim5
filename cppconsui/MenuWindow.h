@@ -35,16 +35,16 @@ class MenuWindow : public Window {
 public:
   MenuWindow(int x, int y, int w, int h, const char *title = NULL);
   MenuWindow(Widget &ref, int w, int h, const char *title = NULL);
-  virtual ~MenuWindow();
+  virtual ~MenuWindow() override;
 
   // Widget
-  virtual void onAbsolutePositionChange(Widget &widget);
+  virtual void onAbsolutePositionChange(Widget &widget) override;
 
   // Window
-  virtual void show();
-  virtual void hide();
-  virtual void close();
-  virtual void onScreenResized();
+  virtual void show() override;
+  virtual void hide() override;
+  virtual void close() override;
+  virtual void onScreenResized() override;
 
   virtual Button *insertItem(
     size_t pos, const char *title, const sigc::slot<void, Button &> &callback)
@@ -104,7 +104,7 @@ protected:
   bool hide_on_close_;
 
   // Container
-  virtual void addWidget(Widget &widget, int x, int y);
+  virtual void addWidget(Widget &widget, int x, int y) override;
 
   virtual Button *prepareSubMenu(const char *title, MenuWindow &submenu);
 

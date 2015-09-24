@@ -32,10 +32,10 @@ class CheckBox : public Widget {
 public:
   CheckBox(int w, int h, const char *text = NULL, bool checked = false);
   explicit CheckBox(const char *text = NULL, bool checked = false);
-  virtual ~CheckBox();
+  virtual ~CheckBox() override;
 
   // Widget
-  virtual int draw(Curses::ViewPort area, Error &error);
+  virtual int draw(Curses::ViewPort area, Error &error) override;
 
   /// Sets new text label.
   virtual void setText(const char *new_text);

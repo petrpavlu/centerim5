@@ -32,10 +32,10 @@
 class AccountWindow : public CppConsUI::SplitDialog {
 public:
   AccountWindow();
-  virtual ~AccountWindow() {}
+  virtual ~AccountWindow() override {}
 
   // FreeWindow
-  virtual void onScreenResized();
+  virtual void onScreenResized() override;
 
 private:
   class SplitOption;
@@ -59,7 +59,7 @@ private:
 
     BoolOption(PurpleAccount *account, PurpleAccountOption *option);
     BoolOption(PurpleAccount *account, Type type);
-    virtual ~BoolOption() {}
+    virtual ~BoolOption() override {}
 
   protected:
     PurpleAccount *account_;
@@ -82,7 +82,7 @@ private:
 
     StringOption(PurpleAccount *account, PurpleAccountOption *option);
     StringOption(PurpleAccount *account, Type type);
-    virtual ~StringOption() {}
+    virtual ~StringOption() override {}
 
   protected:
     PurpleAccount *account_;
@@ -102,7 +102,7 @@ private:
   class IntegerOption : public CppConsUI::Button {
   public:
     IntegerOption(PurpleAccount *account, PurpleAccountOption *option);
-    virtual ~IntegerOption() {}
+    virtual ~IntegerOption() override {}
 
   protected:
     PurpleAccount *account_;
@@ -120,7 +120,7 @@ private:
   class StringListOption : public CppConsUI::ComboBox {
   public:
     StringListOption(PurpleAccount *account, PurpleAccountOption *option);
-    virtual ~StringListOption() {}
+    virtual ~StringListOption() override {}
 
   protected:
     PurpleAccount *account_;
@@ -137,7 +137,7 @@ private:
   public:
     SplitOption(PurpleAccount *account, PurpleAccountUserSplit *split,
       AccountEntry *account_entry);
-    virtual ~SplitOption() {}
+    virtual ~SplitOption() override {}
 
   protected:
     PurpleAccount *account_;
@@ -156,7 +156,7 @@ private:
   class ProtocolOption : public CppConsUI::ComboBox {
   public:
     ProtocolOption(PurpleAccount *account, AccountWindow &account_window);
-    virtual ~ProtocolOption() {}
+    virtual ~ProtocolOption() override {}
 
   protected:
     AccountWindow *account_window_;
@@ -172,7 +172,7 @@ private:
   class ColorOption : public CppConsUI::ColorPicker {
   public:
     ColorOption(PurpleAccount *account);
-    virtual ~ColorOption() {}
+    virtual ~ColorOption() override {}
 
   protected:
     PurpleAccount *account_;

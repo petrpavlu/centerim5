@@ -32,7 +32,7 @@ namespace CppConsUI {
 class MessageDialog : public AbstractDialog {
 public:
   MessageDialog(const char *title, const char *text);
-  virtual ~MessageDialog() {}
+  virtual ~MessageDialog() override {}
 
   /// Signal emitted when user closes the dialog.
   sigc::signal<void, MessageDialog &, ResponseType> signal_response;
@@ -41,7 +41,7 @@ protected:
   TextView *textview_;
 
   // AbstractDialog
-  virtual void emitResponse(ResponseType response);
+  virtual void emitResponse(ResponseType response) override;
 
 private:
   CONSUI_DISABLE_COPY(MessageDialog);

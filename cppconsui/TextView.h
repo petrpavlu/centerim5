@@ -33,10 +33,10 @@ namespace CppConsUI {
 class TextView : public Widget {
 public:
   TextView(int w, int h, bool autoscroll_ = false, bool scrollbar_ = false);
-  virtual ~TextView();
+  virtual ~TextView() override;
 
   // Widget
-  virtual int draw(Curses::ViewPort area, Error &error);
+  virtual int draw(Curses::ViewPort area, Error &error) override;
 
   /// Appends text after the last line.
   virtual void append(const char *text, int color = 0);
@@ -114,7 +114,7 @@ protected:
   ScreenLines screen_lines_;
 
   // Widget
-  virtual void updateArea();
+  virtual void updateArea() override;
 
   virtual const char *proceedLine(
     const char *text, int area_width, int *res_length) const;

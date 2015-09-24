@@ -27,16 +27,16 @@
 class OptionWindow : public CppConsUI::SplitDialog {
 public:
   OptionWindow();
-  virtual ~OptionWindow() {}
+  virtual ~OptionWindow() override {}
 
   // FreeWindow
-  virtual void onScreenResized();
+  virtual void onScreenResized() override;
 
 protected:
   class BooleanOption : public CppConsUI::CheckBox {
   public:
     BooleanOption(const char *text, const char *config);
-    virtual ~BooleanOption();
+    virtual ~BooleanOption() override;
 
   protected:
     char *pref_;
@@ -50,7 +50,7 @@ protected:
   class StringOption : public CppConsUI::Button {
   public:
     StringOption(const char *text, const char *config);
-    virtual ~StringOption();
+    virtual ~StringOption() override;
 
   protected:
     char *pref_;
@@ -68,7 +68,7 @@ protected:
     IntegerOption(const char *text, const char *config);
     IntegerOption(const char *text, const char *config,
       sigc::slot<const char *, int> unit_fun);
-    virtual ~IntegerOption();
+    virtual ~IntegerOption() override;
 
   protected:
     char *pref_;
@@ -86,7 +86,7 @@ protected:
   class ChoiceOption : public CppConsUI::ComboBox {
   public:
     ChoiceOption(const char *text, const char *config);
-    virtual ~ChoiceOption();
+    virtual ~ChoiceOption() override;
 
     void addOption(const char *title, const char *value);
 

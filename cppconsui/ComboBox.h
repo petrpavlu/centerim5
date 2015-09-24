@@ -36,7 +36,7 @@ class ComboBox : public Button {
 public:
   ComboBox(int w, int h, const char *text_ = NULL);
   explicit ComboBox(const char *text_ = NULL);
-  virtual ~ComboBox();
+  virtual ~ComboBox() override;
 
   /// Removes all options.
   virtual void clearOptions();

@@ -33,7 +33,7 @@ namespace CppConsUI {
 class ColorPicker : public HorizontalListBox {
 public:
   ColorPicker(int fg, int bg, const char *text, bool sample = false);
-  virtual ~ColorPicker() {}
+  virtual ~ColorPicker() override {}
 
   virtual void setColorPair(int fg, int bg);
   virtual void setText(const char *new_text);
@@ -45,10 +45,10 @@ protected:
   class Sample : public Widget {
   public:
     Sample(int w, int fg = -1, int bg = -1);
-    virtual ~Sample() {}
+    virtual ~Sample() override {}
 
     // Widget
-    virtual int draw(Curses::ViewPort area, Error &error);
+    virtual int draw(Curses::ViewPort area, Error &error) override;
 
     virtual void setColors(int fg, int bg);
 

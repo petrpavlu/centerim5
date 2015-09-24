@@ -38,13 +38,13 @@ public:
 
   TextEdit(int w, int h, const char *text_ = NULL, int flags_ = 0,
     bool single_line = false, bool accept_tabs_ = true, bool masked_ = false);
-  virtual ~TextEdit();
+  virtual ~TextEdit() override;
 
   // InputProcessor
-  virtual bool processInputText(const TermKeyKey &key);
+  virtual bool processInputText(const TermKeyKey &key) override;
 
   // Widget
-  virtual int draw(Curses::ViewPort area, Error &error);
+  virtual int draw(Curses::ViewPort area, Error &error) override;
 
   /// Sets new text.
   virtual void setText(const char *new_text);
@@ -162,7 +162,7 @@ protected:
   mutable bool screen_lines_dirty_;
 
   // Widget
-  virtual void updateArea();
+  virtual void updateArea() override;
 
   virtual void initBuffer(size_t size);
   virtual size_t getGapSize() const;

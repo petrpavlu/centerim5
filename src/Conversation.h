@@ -31,21 +31,21 @@
 
 class Conversation : public CppConsUI::Window {
 public:
-  Conversation(PurpleConversation *conv);
-  virtual ~Conversation();
+  explicit Conversation(PurpleConversation *conv);
+  virtual ~Conversation() override;
 
   // InputProcessor
-  virtual bool processInput(const TermKeyKey &key);
+  virtual bool processInput(const TermKeyKey &key) override;
 
   // Widget
-  virtual void moveResize(int newx, int newy, int neww, int newh);
-  virtual bool restoreFocus();
-  virtual void ungrabFocus();
+  virtual void moveResize(int newx, int newy, int neww, int newh) override;
+  virtual bool restoreFocus() override;
+  virtual void ungrabFocus() override;
 
   // Window
-  virtual void show();
-  virtual void close();
-  virtual void onScreenResized();
+  virtual void show() override;
+  virtual void close() override;
+  virtual void onScreenResized() override;
 
   void write(const char *name, const char *alias, const char *message,
     PurpleMessageFlags flags, time_t mtime);
@@ -58,10 +58,11 @@ protected:
   class ConversationLine : public CppConsUI::AbstractLine {
   public:
     ConversationLine(const char *text);
-    virtual ~ConversationLine();
+    virtual ~ConversationLine() override;
 
     // Widget
-    virtual int draw(CppConsUI::Curses::ViewPort area, CppConsUI::Error &error);
+    virtual int draw(
+      CppConsUI::Curses::ViewPort area, CppConsUI::Error &error) override;
 
   protected:
     char *text_;
@@ -97,7 +98,6 @@ protected:
   void actionSend();
 
 private:
-  Conversation();
   CONSUI_DISABLE_COPY(Conversation);
 
   void declareBindables();
