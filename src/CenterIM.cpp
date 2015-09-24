@@ -504,8 +504,7 @@ int CenterIM::runAll(int argc, char *argv[])
   // Initialize CppConsUI.
   CppConsUI::AppInterface interface = {
     sigc::mem_fun(this, &CenterIM::redraw_cppconsui),
-    sigc::mem_fun(this, &CenterIM::log_debug_cppconsui)
-  };
+    sigc::mem_fun(this, &CenterIM::log_debug_cppconsui)};
   CppConsUI::initializeConsUI(interface);
 
   // Get the CoreManager instance.
@@ -998,8 +997,8 @@ gboolean CenterIM::stdin_bytes_available()
 
   if (wait >= 0) {
     // Connect timeout handler.
-    stdin_timeout_id_ = g_timeout_add_full(G_PRIORITY_DEFAULT, wait,
-        stdin_timeout_, this, nullptr);
+    stdin_timeout_id_ = g_timeout_add_full(
+      G_PRIORITY_DEFAULT, wait, stdin_timeout_, this, nullptr);
   }
 
   return TRUE;

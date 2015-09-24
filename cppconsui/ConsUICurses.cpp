@@ -149,13 +149,13 @@ int ViewPort::addChar(
     // Filter out C1 (8-bit) control characters.
     if (isInViewPort(x, y, 1))
       ch = '?';
-      if (::mvaddchnstr(draw_y, draw_x, &ch, 1) == ERR) {
-        error = Error(ERROR_CURSES_ADD_CHARACTER);
-        error.setFormattedString(
-          _("Adding character '?' on screen at position (x=%d, y=%d) failed."),
-          draw_x, draw_y);
-        return error.getCode();
-      }
+    if (::mvaddchnstr(draw_y, draw_x, &ch, 1) == ERR) {
+      error = Error(ERROR_CURSES_ADD_CHARACTER);
+      error.setFormattedString(
+        _("Adding character '?' on screen at position (x=%d, y=%d) failed."),
+        draw_x, draw_y);
+      return error.getCode();
+    }
     if (printed != nullptr)
       *printed = 1;
     return 0;
@@ -167,14 +167,14 @@ int ViewPort::addChar(
     for (int i = 0; i < w; ++i) {
       if (isInViewPort(x + i, y, 1))
         ch = ' ';
-        if (::mvaddchnstr(draw_y, draw_x + i, &ch, 1) == ERR) {
-          error = Error(ERROR_CURSES_ADD_CHARACTER);
-          error.setFormattedString(
-            _("Adding character ' ' on screen at position (x=%d, y=%d) "
-              "failed."),
-            draw_x, draw_y);
-          return error.getCode();
-        }
+      if (::mvaddchnstr(draw_y, draw_x + i, &ch, 1) == ERR) {
+        error = Error(ERROR_CURSES_ADD_CHARACTER);
+        error.setFormattedString(
+          _("Adding character ' ' on screen at position (x=%d, y=%d) "
+            "failed."),
+          draw_x, draw_y);
+        return error.getCode();
+      }
       if (printed != nullptr)
         ++(*printed);
     }

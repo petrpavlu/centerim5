@@ -205,8 +205,7 @@ private:
     virtual ~AddChatWindow() {}
 
   protected:
-    typedef std::map<std::string, CppConsUI::TreeView::NodeReference>
-      ChatInfos;
+    typedef std::map<std::string, CppConsUI::TreeView::NodeReference> ChatInfos;
 
     AccountOption *account_option_;
     CppConsUI::TreeView::NodeReference account_option_ref_;

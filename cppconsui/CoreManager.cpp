@@ -154,8 +154,8 @@ int CoreManager::processStandardInput(int *wait, Error &error)
       }
       if (res == static_cast<size_t>(-1)) {
         error = Error(ERROR_INPUT_CONVERSION);
-        error.setFormattedString(_("Error converting input to UTF-8 (%s)."),
-          std::strerror(errno));
+        error.setFormattedString(
+          _("Error converting input to UTF-8 (%s)."), std::strerror(errno));
         return error.getCode();
       }
 
