@@ -99,7 +99,11 @@ void Error::setFormattedString(const char *format, ...)
 
   va_start(args, format);
   int size = std::vsnprintf(nullptr, 0, format, args) + 1;
+  va_end(args);
+
   auto new_string = new char[size];
+
+  va_start(args, format);
   std::vsprintf(new_string, format, args);
   va_end(args);
 
