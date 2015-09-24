@@ -143,11 +143,13 @@ int ViewPort::addChar(
 
   int draw_x = screen_x_ + (x - view_x_);
   int draw_y = screen_y_ + (y - view_y_);
+  chtype ch;
 
   if (uc >= 0x7f && uc < 0xa0) {
     // Filter out C1 (8-bit) control characters.
     if (isInViewPort(x, y, 1))
-      if (::mvaddch(draw_y, draw_x, '?') == ERR) {
+      ch = '?';
+      if (::mvaddchnstr(draw_y, draw_x, &ch, 1) == ERR) {
         error = Error(ERROR_CURSES_ADD_CHARACTER);
         error.setFormattedString(
           _("Adding character '?' on screen at position (x=%d, y=%d) failed."),
@@ -164,7 +166,8 @@ int ViewPort::addChar(
     int w = onScreenWidth(uc);
     for (int i = 0; i < w; ++i) {
       if (isInViewPort(x + i, y, 1))
-        if (::mvaddch(draw_y, draw_x + i, ' ') == ERR) {
+        ch = ' ';
+        if (::mvaddchnstr(draw_y, draw_x + i, &ch, 1) == ERR) {
           error = Error(ERROR_CURSES_ADD_CHARACTER);
           error.setFormattedString(
             _("Adding character ' ' on screen at position (x=%d, y=%d) "
@@ -199,11 +202,10 @@ int ViewPort::addChar(
         uc);
       return error.getCode();
     }
-    if (::mvadd_wch(draw_y, draw_x, &cc) == ERR) {
-      error = Error(ERROR_CURSES_ADD_CHARACTER);
+    if (::mvadd_wchnstr(draw_y, draw_x, &cc, 1) == ERR) {
       error.setFormattedString(
         _("Adding Unicode character #%" UNICHAR_FORMAT " on screen at position "
-          "(x=%d, y=%d)."),
+          "(x=%d, y=%d) failed."),
         uc, draw_x, draw_y);
       return error.getCode();
     }
@@ -218,62 +220,116 @@ int ViewPort::addLineChar(int x, int y, LineChar c, Error &error)
   if (!isInViewPort(x, y, 1))
     return 0;
 
-  chtype ch;
+  cchar_t cc;
+  cchar_t *ccp = &cc;
 
-  switch (c) {
-  case LINE_HLINE:
-    ch = ascii_mode ? '-' : ACS_HLINE;
-    break;
-  case LINE_VLINE:
-    ch = ascii_mode ? '|' : ACS_VLINE;
-    break;
-  case LINE_LLCORNER:
-    ch = ascii_mode ? '+' : ACS_LLCORNER;
-    break;
-  case LINE_LRCORNER:
-    ch = ascii_mode ? '+' : ACS_LRCORNER;
-    break;
-  case LINE_ULCORNER:
-    ch = ascii_mode ? '+' : ACS_ULCORNER;
-    break;
-  case LINE_URCORNER:
-    ch = ascii_mode ? '+' : ACS_URCORNER;
-    break;
-  case LINE_BTEE:
-    ch = ascii_mode ? '+' : ACS_BTEE;
-    break;
-  case LINE_LTEE:
-    ch = ascii_mode ? '+' : ACS_LTEE;
-    break;
-  case LINE_RTEE:
-    ch = ascii_mode ? '+' : ACS_RTEE;
-    break;
-  case LINE_TTEE:
-    ch = ascii_mode ? '+' : ACS_TTEE;
-    break;
-  case LINE_DARROW:
-    ch = ascii_mode ? 'v' : ACS_DARROW;
-    break;
-  case LINE_LARROW:
-    ch = ascii_mode ? '<' : ACS_LARROW;
-    break;
-  case LINE_RARROW:
-    ch = ascii_mode ? '>' : ACS_RARROW;
-    break;
-  case LINE_UARROW:
-    ch = ascii_mode ? '^' : ACS_UARROW;
-    break;
-  case LINE_BULLET:
-    ch = ascii_mode ? 'o' : ACS_BULLET;
-    break;
-  default:
-    assert(0);
+  if (ascii_mode) {
+    char ch;
+
+    switch (c) {
+    case LINE_HLINE:
+      ch = '-';
+      break;
+    case LINE_VLINE:
+      ch = '|';
+      break;
+    case LINE_LLCORNER:
+    case LINE_LRCORNER:
+    case LINE_ULCORNER:
+    case LINE_URCORNER:
+    case LINE_BTEE:
+    case LINE_LTEE:
+    case LINE_RTEE:
+    case LINE_TTEE:
+      ch = '+';
+      break;
+    case LINE_DARROW:
+      ch = 'v';
+      break;
+    case LINE_LARROW:
+      ch = '<';
+      break;
+    case LINE_RARROW:
+      ch = '>';
+      break;
+    case LINE_UARROW:
+      ch = '^';
+      break;
+    case LINE_BULLET:
+      ch = 'o';
+      break;
+    default:
+      assert(0);
+    }
+
+    wchar_t wch[2];
+    wch[0] = ch;
+    wch[1] = '\0';
+
+    if (::setcchar(&cc, wch, A_NORMAL, 0, nullptr) == ERR) {
+      error = Error(ERROR_CURSES_ADD_CHARACTER);
+      error.setFormattedString(
+        _("Setting complex character from character '%c' failed."), ch);
+      return error.getCode();
+    }
+  }
+  else {
+    // Non-ASCII mode.
+    switch (c) {
+    case LINE_HLINE:
+      ccp = WACS_HLINE;
+      break;
+    case LINE_VLINE:
+      ccp = WACS_VLINE;
+      break;
+    case LINE_LLCORNER:
+      ccp = WACS_LLCORNER;
+      break;
+    case LINE_LRCORNER:
+      ccp = WACS_LRCORNER;
+      break;
+    case LINE_ULCORNER:
+      ccp = WACS_ULCORNER;
+      break;
+    case LINE_URCORNER:
+      ccp = WACS_URCORNER;
+      break;
+    case LINE_BTEE:
+      ccp = WACS_BTEE;
+      break;
+    case LINE_LTEE:
+      ccp = WACS_LTEE;
+      break;
+    case LINE_RTEE:
+      ccp = WACS_RTEE;
+      break;
+    case LINE_TTEE:
+      ccp = WACS_TTEE;
+      break;
+    case LINE_DARROW:
+      ccp = WACS_DARROW;
+      break;
+    case LINE_LARROW:
+      ccp = WACS_LARROW;
+      break;
+    case LINE_RARROW:
+      ccp = WACS_RARROW;
+      break;
+    case LINE_UARROW:
+      ccp = WACS_UARROW;
+      break;
+    case LINE_BULLET:
+      ccp = WACS_BULLET;
+      break;
+    default:
+      assert(0);
+    }
   }
 
   int draw_x = screen_x_ + (x - view_x_);
   int draw_y = screen_y_ + (y - view_y_);
 
-  if (::mvaddch(draw_y, draw_x, ch) == OK)
+  if (::mvadd_wchnstr(draw_y, draw_x, ccp, 1) == OK)
     return 0;
 
   const char *name;
@@ -396,10 +452,9 @@ int ViewPort::fill(int attrs, int x, int y, int w, int h, Error &error)
     return error.getCode();
 
   for (int i = 0; i < h; ++i)
-    for (int j = 0; j < w; ++j) {
-      ///< @todo Implement correct error checking.
-      addChar(x + j, y + i, ' ', error);
-    }
+    for (int j = 0; j < w; ++j)
+      if (addChar(x + j, y + i, ' ', error) != 0)
+        return error.getCode();
 
   if (::attr_set(battrs, pair, nullptr) == ERR) {
     error = Error(ERROR_CURSES_ATTR);
