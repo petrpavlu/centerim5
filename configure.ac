@@ -24,6 +24,93 @@ AM_PROG_AR
 
 LT_INIT([disable-static])
 
+# Set compiler flags.
+
+AC_ARG_ENABLE([strict], [AC_HELP_STRING([--enable-strict],
+	[enable extra compiler warnings during build])])
+AC_ARG_ENABLE([debug], [AC_HELP_STRING([--enable-debug],
+	[compile with debugging support])])
+
+# If not --enable-debug then try to set -O2 as default.
+AS_IF([test "$enable_debug" != yes],
+	[save_cflags="$CFLAGS"]
+	[CFLAGS="-O2"]
+	[AC_MSG_CHECKING([whether CC supports -O2])]
+	[AC_LANG_PUSH([C])]
+	[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+		[AC_MSG_RESULT([yes])]
+		[AM_CFLAGS="$AM_CFLAGS -O2"],
+		[AC_MSG_RESULT([no])])]
+	[AC_LANG_POP([C])]
+	[CFLAGS="$save_cflags"]
+
+	[save_cxxflags="$CXXFLAGS"]
+	[CXXFLAGS="-O2"]
+	[AC_MSG_CHECKING([whether CXX supports -O2])]
+	[AC_LANG_PUSH([C++])]
+	[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+		[AC_MSG_RESULT([yes])]
+		[AM_CXXFLAGS="$AM_CXXFLAGS -O2"],
+		[AC_MSG_RESULT([no])])]
+	[AC_LANG_POP([C++])]
+	[CXXFLAGS="$save_cxxflags"])
+
+# If --enable-strict is specified then enable compilation warnings.
+AS_IF([test "$enable_strict" = yes],
+	[save_cflags="$CFLAGS"]
+	[CFLAGS="-Wall -Wextra -pedantic"]
+	[AC_MSG_CHECKING([whether CC supports -Wall -Wextra -pedantic])]
+	[AC_LANG_PUSH([C])]
+	[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+		[AC_MSG_RESULT([yes])],
+		[AC_MSG_RESULT([no])]
+		[AC_MSG_ERROR([the C compiler does not recognize options -Wall -Wextra -pedantic that are needed by --enable-strict])])]
+	[AC_LANG_POP([C])]
+	[CFLAGS="$save_cflags"]
+	[AM_CFLAGS="$AM_CFLAGS -Wall -Wextra -pedantic"]
+
+	[save_cxxflags="$CXXFLAGS"]
+	[CXXFLAGS="-Wall -Wextra -pedantic -Wno-long-long -Wsuggest-override"]
+	[AC_MSG_CHECKING([whether CXX supports -Wall -Wextra -pedantic -Wno-long-long -Wsuggest-override])]
+	[AC_LANG_PUSH([C++])]
+	[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+		[AC_MSG_RESULT([yes])],
+		[AC_MSG_RESULT([no])]
+		[AC_MSG_ERROR([the C++ compiler does not recognize options -Wall -Wextra -pedantic -Wno-long-long -Wsuggest-override that are needed by --enable-strict])])]
+	[AC_LANG_POP([C++])]
+	[CXXFLAGS="$save_cxxflags"]
+	[AM_CXXFLAGS="$AM_CXXFLAGS -Wall -Wextra -pedantic -Wno-long-long -Wsuggest-override"])
+
+# If --enable-debug is specified then compile with -g -O0.
+AS_IF([test "$enable_debug" = yes],
+	[save_cflags="$CFLAGS"]
+	[CFLAGS="-g -O0"]
+	[AC_MSG_CHECKING([whether CC supports -g -O0])]
+	[AC_LANG_PUSH([C])]
+	[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+		[AC_MSG_RESULT([yes])],
+		[AC_MSG_RESULT([no])]
+		[AC_MSG_ERROR([the C compiler does not recognize options -g -O0 that are needed by --enable-debug])])]
+	[AC_LANG_POP([C])]
+	[CFLAGS="$save_cflags"]
+	[AM_CFLAGS="$AM_CFLAGS -g -O0"]
+
+	[save_cxxflags="$CXXFLAGS"]
+	[CXXFLAGS="-g -O0"]
+	[AC_MSG_CHECKING([whether CXX supports -g -O0])]
+	[AC_LANG_PUSH([C++])]
+	[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+		[AC_MSG_RESULT([yes])],
+		[AC_MSG_RESULT([no])]
+		[AC_MSG_ERROR([the C++ compiler does not recognize options -g -O0 that are needed by --enable-debug])])]
+	[AC_LANG_POP([C++])]
+	[CXXFLAGS="$save_cxxflags"]
+	[AM_CXXFLAGS="$AM_CXXFLAGS -g -O0"])
+AC_SUBST([AM_CFLAGS])
+AC_SUBST([AM_CXXFLAGS])
+AS_IF([test "$enable_debug" = yes],
+	[AC_DEFINE([DEBUG], [1], [Define if debugging is enabled.])])
+
 # Checks for libraries.
 
 AM_GNU_GETTEXT([external])
@@ -64,34 +151,6 @@ AC_PATH_LIB_LIBCONFIG
 AC_PATH_LIB([ncursesw], , [ncurses.h], [ncursesw5-config], , , [
 	AC_MSG_RESULT([no])
 	AC_ERROR([You must have the ncursesw library and developement headers installed to build.])])
-
-# Set compiler flags.
-
-AC_ARG_ENABLE([strict], [AC_HELP_STRING([--enable-strict],
-	[enable extra compiler warnings during build])])
-
-if test "$GCC" = yes; then
-	AS_IF([test "$enable_strict" = yes],
-		[CFLAGS="-Wall -Wextra -pedantic $CFLAGS"
-		CXXFLAGS="-Wall -Wextra -pedantic -Wno-long-long $CXXFLAGS"])
-fi
-
-AC_ARG_ENABLE([debug], [AC_HELP_STRING([--enable-debug],
-	[compile with debugging support])])
-
-# TODO provide correct switches for other compilers too
-if test "$GCC" = yes; then
-	AS_IF([test "$enable_debug" = yes],
-		[CFLAGS="-ggdb -O0 $CFLAGS"
-		CXXFLAGS="-ggdb -O0 $CXXFLAGS"],
-		[CFLAGS="-O2 $CFLAGS"
-		CXXFLAGS="-O2 $CXXFLAGS"])
-fi
-AC_SUBST([CFLAGS])
-AC_SUBST([CXXFLAGS])
-
-AS_IF([test "$enable_debug" = yes],
-	[AC_DEFINE([DEBUG], [1], [Define if debugging is enabled.])])
 
 # adl_RECURSIVE_EVAL(VALUE, RESULT)
 # =================================
