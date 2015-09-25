@@ -25,6 +25,10 @@ namespace Utils {
 const char *getStatusIndicator(PurpleStatus *status);
 char *stripAccelerator(const char *label);
 
+// Converts a string to a number. Logs a warning if the value is non-numeric or
+// out-of-range. Returns true if the conversion was successful, false otherwise.
+bool stringToNumber(const char *text, long min, long max, long *out);
+
 } // namespace Utils
 
 #endif // UTILS_H

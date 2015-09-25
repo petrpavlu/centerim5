@@ -18,9 +18,9 @@
 #include "OptionWindow.h"
 
 #include "Log.h"
+#include "Utils.h"
 
 #include <cppconsui/TreeView.h>
-#include <errno.h>
 #include "gettext.h"
 
 OptionWindow::OptionWindow() : SplitDialog(0, 0, 80, 24, _("Config options"))
@@ -279,13 +279,11 @@ void OptionWindow::IntegerOption::responseHandler(
   if (response != AbstractDialog::RESPONSE_OK)
     return;
 
-  const char *text = activator.getText();
-  errno = 0;
-  long i = strtol(text, nullptr, 10);
-  if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
-    LOG->warning(_("Value is out of range."));
+  long num;
+  if (!Utils::stringToNumber(activator.getText(), INT_MIN, INT_MAX, &num))
+    return;
 
-  purple_prefs_set_int(pref_, CLAMP(i, INT_MIN, INT_MAX));
+  purple_prefs_set_int(pref_, num);
   int val = purple_prefs_get_int(pref_);
   setValue(purple_prefs_get_int(pref_));
   if (unit_)

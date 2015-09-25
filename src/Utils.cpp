@@ -17,6 +17,12 @@
 
 #include "Utils.h"
 
+#include "Log.h"
+
+#include <cerrno>
+#include <cstdlib>
+#include "gettext.h"
+
 namespace Utils {
 
 const char *getStatusIndicator(PurpleStatus *status)
@@ -69,6 +75,26 @@ char *stripAccelerator(const char *label)
   *o = '\0';
 
   return res;
+}
+
+bool stringToNumber(const char *text, long min, long max, long *out)
+{
+  g_assert(text != nullptr);
+  g_assert(out != nullptr);
+
+  char *endptr;
+  errno = 0;
+  *out = std::strtol(text, &endptr, 10);
+  if (*text == '\0' || *endptr != '\0') {
+    LOG->warning(_("Value is not a number."));
+    return false;
+  }
+  if (errno == ERANGE || *out < min || *out > max) {
+    *out = CLAMP(*out, min, max);
+    LOG->warning(_("Value is out of range [%ld, %ld]."), min, max);
+    return false;
+  }
+  return true;
 }
 
 } // namespace Utils

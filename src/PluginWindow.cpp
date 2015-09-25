@@ -18,9 +18,9 @@
 #include "PluginWindow.h"
 
 #include "Log.h"
+#include "Utils.h"
 
 #include <cppconsui/Label.h>
-#include <errno.h>
 #include "gettext.h"
 
 // TODO
@@ -206,12 +206,11 @@ void PluginWindow::IntegerOption::responseHandler(
   if (response != AbstractDialog::RESPONSE_OK)
     return;
 
-  const char *text = activator.getText();
-  errno = 0;
-  long i = strtol(text, nullptr, 10);
-  if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
-    LOG->warning(_("Value is out of range."));
-  purple_prefs_set_int(pref_, CLAMP(i, INT_MIN, INT_MAX));
+  long num;
+  if (!Utils::stringToNumber(activator.getText(), INT_MIN, INT_MAX, &num))
+    return;
+  purple_prefs_set_int(pref_, num);
+
   updateValue();
 }
 

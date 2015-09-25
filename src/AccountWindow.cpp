@@ -19,9 +19,9 @@
 #include "AccountWindow.h"
 
 #include "Log.h"
+#include "Utils.h"
 
 #include <cstring>
-#include <errno.h>
 #include "gettext.h"
 
 AccountWindow::AccountWindow() : SplitDialog(0, 0, 80, 24, _("Accounts"))
@@ -199,13 +199,11 @@ void AccountWindow::IntegerOption::responseHandler(
   if (response != AbstractDialog::RESPONSE_OK)
     return;
 
-  const char *text = activator.getText();
-  errno = 0;
-  long i = strtol(text, nullptr, 10);
-  if (errno == ERANGE || i > INT_MAX || i < INT_MIN)
-    LOG->warning(_("Value is out of range."));
-  purple_account_set_int(account_, purple_account_option_get_setting(option_),
-    CLAMP(i, INT_MIN, INT_MAX));
+  long num;
+  if (!Utils::stringToNumber(activator.getText(), INT_MIN, INT_MAX, &num))
+    return;
+  purple_account_set_int(
+    account_, purple_account_option_get_setting(option_), num);
 
   updateValue();
 }

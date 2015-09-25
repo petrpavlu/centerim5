@@ -34,11 +34,11 @@
 
 #include <cppconsui/ColorScheme.h>
 #include <cppconsui/KeyConfig.h>
+#include <cerrno>
 #include <cstdio>
 #include <cstring>
 #include <fcntl.h>
 #include <locale.h>
-#include <errno.h>
 #include <getopt.h>
 #include <glib/gprintf.h>
 #include <time.h>
@@ -1377,8 +1377,9 @@ bool CenterIM::stringToColor(const char *str, int *color)
 
   if (g_ascii_isdigit(str[0]) || str[0] == '-') {
     // Numeric colors.
-    long i = strtol(str, nullptr, 10);
-    if (errno == ERANGE || i > INT_MAX || i < -1)
+    char *endptr;
+    long i = std::strtol(str, &endptr, 10);
+    if (*endptr != '\0' || errno == ERANGE || i < -1 || i > INT_MAX)
       return false;
     *color = i;
     return true;

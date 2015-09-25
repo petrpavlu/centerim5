@@ -23,8 +23,8 @@
 #include "Utils.h"
 
 #include <cppconsui/Spacer.h>
+#include <cstdlib>
 #include <cstring>
-#include <errno.h>
 #include "gettext.h"
 
 BuddyList *BuddyList::my_instance_ = nullptr;
@@ -221,7 +221,7 @@ BuddyList::AddWindow::IntegerOption::IntegerOption(
     min_value_(min), max_value_(max)
 {
   // Make sure that the default value is in the range.
-  long i = strtol(value, nullptr, 10);
+  long i = std::strtol(value, nullptr, 10);
   i = CLAMP(i, min_value_, max_value_);
   setValue(i);
 
@@ -246,13 +246,11 @@ void BuddyList::AddWindow::IntegerOption::responseHandler(
   if (response != AbstractDialog::RESPONSE_OK)
     return;
 
-  const char *text = activator.getText();
-  errno = 0;
-  long i = strtol(text, nullptr, 10);
-  if (errno == ERANGE || i > max_value_ || i < min_value_)
-    LOG->warning(_("Value is out of range."));
-  i = CLAMP(i, min_value_, max_value_);
-  setValue(i);
+  long num;
+  if (!Utils::stringToNumber(activator.getText(), min_value_, max_value_, &num))
+    return;
+
+  setValue(num);
 }
 
 BuddyList::AddWindow::BooleanOption::BooleanOption(
