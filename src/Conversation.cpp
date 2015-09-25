@@ -182,9 +182,9 @@ void Conversation::write(const char *name, const char * /*alias*/,
   // Beep on message.
   if (!(flags & PURPLE_MESSAGE_SEND) &&
     purple_prefs_get_bool(CONF_PREFIX "/chat/beep_on_msg")) {
-    // TODO Implement correct error handling.
     CppConsUI::Error error;
-    CppConsUI::Curses::beep(error);
+    if (CppConsUI::Curses::beep(error) != 0)
+      LOG->error("%s", error.getString());
   }
 
   // Update the last_activity property.
