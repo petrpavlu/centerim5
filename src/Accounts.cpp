@@ -20,6 +20,7 @@
 
 #include "Log.h"
 
+#include <cstring>
 #include <typeinfo>
 #include "gettext.h"
 
@@ -335,7 +336,7 @@ Accounts::Accounts() : request_window_(nullptr)
     purple_savedstatus_activate(purple_savedstatus_get_startup());
 
   // Set the purple account callbacks.
-  memset(&centerim_account_ui_ops_, 0, sizeof(centerim_account_ui_ops_));
+  std::memset(&centerim_account_ui_ops_, 0, sizeof(centerim_account_ui_ops_));
   centerim_account_ui_ops_.notify_added = notify_added_;
   centerim_account_ui_ops_.status_changed = status_changed_;
   centerim_account_ui_ops_.request_add = request_add_;

@@ -586,7 +586,7 @@ void Request::FieldsDialog::responseHandler(
 
 Request::Request()
 {
-  memset(&centerim_request_ui_ops_, 0, sizeof(centerim_request_ui_ops_));
+  std::memset(&centerim_request_ui_ops_, 0, sizeof(centerim_request_ui_ops_));
 
   // Set the purple request callbacks.
   centerim_request_ui_ops_.request_input = request_input_;

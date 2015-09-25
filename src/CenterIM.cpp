@@ -395,9 +395,9 @@ CenterIM::CenterIM()
   resize_pipe_[0] = -1;
   resize_pipe_[1] = -1;
 
-  memset(&centerim_core_ui_ops_, 0, sizeof(centerim_core_ui_ops_));
-  memset(&logbuf_debug_ui_ops_, 0, sizeof(logbuf_debug_ui_ops_));
-  memset(&centerim_glib_eventloops_, 0, sizeof(centerim_glib_eventloops_));
+  std::memset(&centerim_core_ui_ops_, 0, sizeof(centerim_core_ui_ops_));
+  std::memset(&logbuf_debug_ui_ops_, 0, sizeof(logbuf_debug_ui_ops_));
+  std::memset(&centerim_glib_eventloops_, 0, sizeof(centerim_glib_eventloops_));
 }
 
 int CenterIM::run(int argc, char *argv[])

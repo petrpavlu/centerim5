@@ -119,7 +119,7 @@ Conversations::Conversations()
   purple_prefs_connect_callback(this, "/purple/conversations/im/send_typing",
     send_typing_pref_change_, this);
 
-  memset(&centerim_conv_ui_ops_, 0, sizeof(centerim_conv_ui_ops_));
+  std::memset(&centerim_conv_ui_ops_, 0, sizeof(centerim_conv_ui_ops_));
   centerim_conv_ui_ops_.create_conversation = create_conversation_;
   centerim_conv_ui_ops_.destroy_conversation = destroy_conversation_;
   // centerim_conv_ui_ops_.write_chat = ;

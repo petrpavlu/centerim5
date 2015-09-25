@@ -727,7 +727,7 @@ const Stats *getStats()
 
 void resetStats()
 {
-  memset(&stats, 0, sizeof(stats));
+  std::memset(&stats, 0, sizeof(stats));
 }
 
 } // namespace Curses

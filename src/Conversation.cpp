@@ -497,9 +497,9 @@ char *Conversation::extractTime(time_t sent_time, time_t show_time) const
   struct tm show_time_local;
   struct tm sent_time_local;
   if (localtime_r(&show_time, &show_time_local) == nullptr)
-    memset(&show_time_local, 0, sizeof(show_time_local));
+    std::memset(&show_time_local, 0, sizeof(show_time_local));
   if (localtime_r(&sent_time, &sent_time_local) == nullptr)
-    memset(&sent_time_local, 0, sizeof(sent_time_local));
+    std::memset(&sent_time_local, 0, sizeof(sent_time_local));
 
   // Format the times.
   char *t1 = g_strdup(purple_date_format_long(&show_time_local));

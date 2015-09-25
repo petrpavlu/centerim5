@@ -513,7 +513,7 @@ BuddyList::BuddyList() : Window(0, 0, 80, 24)
     this, CONF_PREFIX "/blist", blist_pref_change_, this);
 
   // Setup the callbacks for the buddylist.
-  memset(&centerim_blist_ui_ops_, 0, sizeof(centerim_blist_ui_ops_));
+  std::memset(&centerim_blist_ui_ops_, 0, sizeof(centerim_blist_ui_ops_));
   centerim_blist_ui_ops_.new_list = new_list_;
   centerim_blist_ui_ops_.new_node = new_node_;
   // centerim_blist_ui_ops_.show = show_;
