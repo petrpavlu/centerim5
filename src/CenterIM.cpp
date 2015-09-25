@@ -513,12 +513,12 @@ int CenterIM::runAll(int argc, char *argv[])
 
   // Initialize CppConsUI input and output.
   if (mngr_->initializeInput(error) != 0) {
-    LOG->error("%s\n", error.getString());
+    LOG->error("%s", error.getString());
     goto out;
   }
   cppconsui_input_initialized = true;
   if (mngr_->initializeOutput(error) != 0) {
-    LOG->error("%s\n", error.getString());
+    LOG->error("%s", error.getString());
     goto out;
   }
   cppconsui_output_initialized = true;
@@ -649,9 +649,9 @@ out:
 
   // Finalize CppConsUI input and output.
   if (cppconsui_output_initialized && mngr_->finalizeOutput(error) != 0)
-    LOG->error("%s\n", error.getString());
+    LOG->error("%s", error.getString());
   if (cppconsui_input_initialized && mngr_->finalizeInput(error) != 0)
-    LOG->error("%s\n", error.getString());
+    LOG->error("%s", error.getString());
 
   // Finalize CppConsUI.
   CppConsUI::finalizeConsUI();
