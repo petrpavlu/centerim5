@@ -272,13 +272,12 @@ ColorScheme::PropertyConversionResult ColorScheme::stringPairToPropertyPair(
       return CONVERSION_SUCCESS;
     }
 
-    // Handle text_<number> and color_<number> properties.
-    if (std::strncmp(property, "text_", 5) == 0)
-      property += 5;
-    else if (std::strncmp(property, "color_", 6) == 0)
-      property += 6;
-    else
+    // Handle text_<number> and color<number> properties. The latter one is
+    // recognized only for backward compatibility.
+    if (std::strncmp(property, "text_", 5) != 0 &&
+        std::strncmp(property, "color", 5) != 0)
       return CONVERSION_ERROR_PROPERTY;
+    property += 5;
 
     if (!std::isdigit((unsigned char)*property))
       return CONVERSION_ERROR_PROPERTY;

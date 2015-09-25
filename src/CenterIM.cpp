@@ -86,13 +86,13 @@ const char *CenterIM::scheme_names_[] = {
   "buddylistcontact_online",  // SCHEME_BUDDYLISTCONTACT_ONLINE
   "buddylistgroup",           // SCHEME_BUDDYLISTGROUP
   "conversation",             // SCHEME_CONVERSATION
-  "conversation_active",      // SCHEME_CONVERSATION_ACTIVE
-  "conversation_new",         // SCHEME_CONVERSATION_NEW
+  "conversation-active",      // SCHEME_CONVERSATION_ACTIVE
+  "conversation-new",         // SCHEME_CONVERSATION_NEW
   "footer",                   // SCHEME_FOOTER
   "generalmenu",              // SCHEME_GENERALMENU
   "generalwindow",            // SCHEME_GENERALWINDOW
   "header",                   // SCHEME_HEADER
-  "header_request",           // SCHEME_HEADER_REQUEST
+  "header-request",           // SCHEME_HEADER_REQUEST
   "log",                      // SCHEME_LOG
 };
 
@@ -288,7 +288,7 @@ bool CenterIM::loadColorSchemeConfig()
         goto out;
       }
 
-      COLORSCHEME->setAttributes(scheme, property, subproperty, fg, bg, attrs);
+      COLORSCHEME->setAttributesExt(scheme, property, subproperty, fg, bg, attrs);
     }
   }
 
