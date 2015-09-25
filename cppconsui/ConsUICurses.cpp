@@ -39,7 +39,6 @@ namespace CppConsUI {
 
 namespace Curses {
 
-static Stats stats = {0, 0, 0};
 bool ascii_mode = false;
 
 ViewPort::ViewPort(int screen_x, int screen_y, int view_x, int view_y,
@@ -718,16 +717,6 @@ int onScreenWidth(UTF8::UniChar uc, int w)
   if (uc == '\t')
     return 8 - w % 8;
   return UTF8::isUniCharWide(uc) ? 2 : 1;
-}
-
-const Stats *getStats()
-{
-  return &stats;
-}
-
-void resetStats()
-{
-  std::memset(&stats, 0, sizeof(stats));
 }
 
 } // namespace Curses

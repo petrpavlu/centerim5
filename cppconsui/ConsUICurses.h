@@ -29,11 +29,6 @@
 namespace CppConsUI {
 
 namespace Curses {
-struct Stats {
-  unsigned newpad_calls;
-  unsigned newwin_calls;
-  unsigned subpad_calls;
-};
 
 enum LineChar {
   LINE_HLINE,
@@ -149,9 +144,6 @@ int resizeTerm(int width, int height, Error &error);
 
 int onScreenWidth(const char *start, const char *end = NULL);
 int onScreenWidth(UTF8::UniChar uc, int w = 0);
-
-const Stats *getStats();
-void resetStats();
 
 } // namespace Curses
 

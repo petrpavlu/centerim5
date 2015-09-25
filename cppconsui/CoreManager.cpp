@@ -215,8 +215,6 @@ int CoreManager::draw(Error &error)
 #if defined(DEBUG) && 0
   struct timespec ts = {0, 0};
   clock_gettime(CLOCK_MONOTONIC, &ts);
-
-  Curses::resetStats();
 #endif // DEBUG
 
   if (pending_redraw_ == REDRAW_FROM_SCRATCH)
@@ -241,18 +239,13 @@ int CoreManager::draw(Error &error)
   DRAW(Curses::refresh(error));
 
 #if defined(DEBUG) && 0
-  const Curses::Stats *stats = Curses::getStats();
-
   struct timespec ts2 = {0, 0};
   clock_gettime(CLOCK_MONOTONIC, &ts2);
   unsigned long tdiff = (ts2.tv_sec * 1000000 + ts2.tv_nsec / 1000) -
     (ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
 
-  char message[sizeof("redraw: time=us, newpad/newwin/subpad calls=//") +
-    PRINTF_WIDTH(unsigned long)+3 * PRINTF_WIDTH(int)];
-  sprintf(message, "redraw: time=%luus, newpad/newwin/subpad calls=%d/%d/%d",
-    tdiff, stats->newpad_calls, stats->newwin_calls, stats->subpad_calls);
-
+  char message[sizeof("redraw: time=us") + PRINTF_WIDTH(unsigned long)];
+  sprintf(message, "redraw: time=%luus", tdiff);
   logDebug(message);
 #endif // DEBUG
 
