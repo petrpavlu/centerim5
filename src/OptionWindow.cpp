@@ -234,7 +234,7 @@ void OptionWindow::StringOption::responseHandler(
 }
 
 OptionWindow::IntegerOption::IntegerOption(const char *text, const char *config)
-  : Button(FLAG_VALUE, text), unit_(false)
+  : Button(FLAG_VALUE, text), has_unit_(false)
 {
   g_assert(text != nullptr);
   g_assert(config != nullptr);
@@ -246,7 +246,7 @@ OptionWindow::IntegerOption::IntegerOption(const char *text, const char *config)
 
 OptionWindow::IntegerOption::IntegerOption(
   const char *text, const char *config, sigc::slot<const char *, int> unit_fun)
-  : Button(FLAG_VALUE | FLAG_UNIT, text), unit_(true), unit_fun_(unit_fun)
+  : Button(FLAG_VALUE | FLAG_UNIT, text), has_unit_(true), unit_fun_(unit_fun)
 {
   g_assert(text != nullptr);
   g_assert(config != nullptr);
@@ -286,7 +286,7 @@ void OptionWindow::IntegerOption::responseHandler(
   purple_prefs_set_int(pref_, num);
   int val = purple_prefs_get_int(pref_);
   setValue(purple_prefs_get_int(pref_));
-  if (unit_)
+  if (has_unit_)
     setUnit(unit_fun_(val));
 }
 

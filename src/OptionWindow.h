@@ -72,7 +72,7 @@ protected:
 
   protected:
     char *pref_;
-    bool unit_;
+    bool has_unit_;
     sigc::slot<const char *, int> unit_fun_;
 
     void onActivate(CppConsUI::Button &activator);
