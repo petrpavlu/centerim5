@@ -38,7 +38,7 @@ Log *Log::instance()
     char *text;                                                                \
                                                                                \
     if (log_level_cim_ < level)                                                \
-      return; /* we don't want to see this log message */                      \
+      return; /* Do not show this message. */                                  \
                                                                                \
     va_start(args, fmt);                                                       \
     text = g_strdup_vprintf(fmt, args);                                        \
@@ -214,7 +214,7 @@ void Log::purple_print(
 {
   Level level = convertPurpleDebugLevel(purplelevel);
   if (log_level_purple_ < level)
-    return; // We do not want to see this log message.
+    return; // Do not show this message.
 
   if (category == nullptr) {
     category = "misc";
@@ -246,7 +246,7 @@ void Log::default_log_handler(
 
   Level level = convertGLibDebugLevel(flags);
   if (log_level_glib_ < level)
-    return; // We do not want to see this log message.
+    return; // Do not show this message.
 
   char *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
   write(TYPE_GLIB, level, text);
@@ -261,7 +261,7 @@ void Log::glib_log_handler(
 
   Level level = convertGLibDebugLevel(flags);
   if (log_level_glib_ < level)
-    return; // We do not want to see this log message.
+    return; // Do not show this message.
 
   char *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
   write(TYPE_GLIB, level, text);
@@ -346,33 +346,31 @@ void Log::writeToFile(const char *text)
   if (!phase2_active_)
     return;
 
-  if (text == nullptr)
+  if (text == nullptr || logfile_ == nullptr)
     return;
 
+  // Write text into logfile.
   GError *err = nullptr;
 
-  // Write text into logfile.
-  if (logfile_ != nullptr) {
-    if (g_io_channel_write_chars(logfile_, text, -1, nullptr, &err) !=
-      G_IO_STATUS_NORMAL) {
-      writeErrorToWindow(
-        _("centerim/log: Error writing to logfile (%s)."), err->message);
-      g_clear_error(&err);
+  if (g_io_channel_write_chars(logfile_, text, -1, nullptr, &err) !=
+    G_IO_STATUS_NORMAL) {
+    writeErrorToWindow(
+      _("centerim/log: Error writing to logfile (%s)."), err->message);
+    g_clear_error(&err);
+  }
+  else {
+    // If necessary write missing EOL character.
+    size_t len = std::strlen(text);
+    if (len > 0 && text[len - 1] != '\n') {
+      // Ignore all errors.
+      g_io_channel_write_chars(logfile_, "\n", -1, nullptr, nullptr);
     }
-    else {
-      // If necessary write missing EOL character.
-      size_t len = std::strlen(text);
-      if (len > 0 && text[len - 1] != '\n') {
-        // Ignore all errors.
-        g_io_channel_write_chars(logfile_, "\n", -1, nullptr, nullptr);
-      }
-    }
+  }
 
-    if (g_io_channel_flush(logfile_, &err) != G_IO_STATUS_NORMAL) {
-      writeErrorToWindow(
-        _("centerim/log: Error flushing logfile (%s)."), err->message);
-      g_clear_error(&err);
-    }
+  if (g_io_channel_flush(logfile_, &err) != G_IO_STATUS_NORMAL) {
+    writeErrorToWindow(
+      _("centerim/log: Error flushing logfile (%s)."), err->message);
+    g_clear_error(&err);
   }
 }
 
