@@ -288,7 +288,8 @@ bool CenterIM::loadColorSchemeConfig()
         goto out;
       }
 
-      COLORSCHEME->setAttributesExt(scheme, property, subproperty, fg, bg, attrs);
+      COLORSCHEME->setAttributesExt(
+        scheme, property, subproperty, fg, bg, attrs);
     }
   }
 

@@ -36,7 +36,8 @@ Connections *Connections::instance()
 Connections::Connections()
 {
   // Set the purple connection callbacks.
-  std::memset(&centerim_connection_ui_ops, 0, sizeof(centerim_connection_ui_ops));
+  std::memset(
+    &centerim_connection_ui_ops, 0, sizeof(centerim_connection_ui_ops));
   centerim_connection_ui_ops.connect_progress = connect_progress_;
   centerim_connection_ui_ops.connected = connected_;
   centerim_connection_ui_ops.disconnected = disconnected_;
