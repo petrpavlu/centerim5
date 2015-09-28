@@ -16,6 +16,32 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+// Logging facility collects all messages from the program itself and libraries
+// (mainly GLib and libpurple). It filters them by severity and then outputs
+// them to the Log window, a file or on the standard error output (stderr).
+//
+// Processing consists of three phases: initialization -> normal phase ->
+// finalization, and is tightly tied to the CenterIM class. The program can exit
+// in any of these phases.
+//
+// 1) Initialization: All messages are being buffered. If an error occurs
+//    during this phase, the recorded messages are printed on stderr before the
+//    program exits.
+// 2) Normal phase: When processing reaches this phase (implying no critical
+//    error occurred during the initialization phase), messages recorded by
+//    the initialization phase are output to the Log window and optionally to a
+//    file. New messages coming from the normal processing of the program are
+//    then output in the same way. A limited number of the most recent messages
+//    is also being buffered by this phase. If the program exists from the main
+//    loop normally, the recorded messages are cleared.
+// 3) Finalization: All messages are being buffered and when the program is
+//    about to exit, they will get printed on stderr together with any buffered
+//    messages from the previous stage.
+//
+// This mechanism ensures that if a non-recoverable error occurs during
+// execution of the program and it must exit abnormally, the error will always
+// get printed on stderr.
+
 #include "Log.h"
 
 #include <cppconsui/HorizontalListBox.h>
@@ -23,6 +49,14 @@
 #include <cstdio>
 #include <cstring>
 #include "gettext.h"
+
+// Maximum number of lines in the Log window.
+#define LOG_WINDOW_MAX_LINES 200
+// Number of deleted lines when the line limit in the Log window is reached.
+#define LOG_WINDOW_DELETE_COUNT 40
+
+// Maximum number of buffered messages in the normal phase.
+#define LOG_MAX_BUFFERED_MESSAGES 200
 
 Log *Log::my_instance_ = nullptr;
 
@@ -57,6 +91,13 @@ WRITE_METHOD(debug, LEVEL_DEBUG)
 
 #undef WRITE_METHOD
 
+void Log::clearAllBufferedMessages()
+{
+  // Delete all buffered messages.
+  clearBufferedMessages(init_log_items_);
+  clearBufferedMessages(log_items_);
+}
+
 Log::LogWindow::LogWindow() : Window(0, 0, 80, 24, nullptr, TYPE_NON_FOCUSABLE)
 {
   setColorScheme(CenterIM::SCHEME_LOG);
@@ -84,9 +125,10 @@ void Log::LogWindow::append(const char *text)
   // Shorten the window text.
   size_t lines_num = textview_->getLinesNumber();
 
-  if (lines_num > 200) {
-    // Remove 40 extra lines.
-    textview_->erase(0, lines_num - 200 + 40);
+  if (lines_num > LOG_WINDOW_MAX_LINES) {
+    // Remove some lines.
+    textview_->erase(
+      0, lines_num - LOG_WINDOW_MAX_LINES - LOG_WINDOW_DELETE_COUNT);
   }
 }
 
@@ -102,7 +144,7 @@ Log::LogBufferItem::~LogBufferItem()
 }
 
 Log::Log()
-  : log_window_(nullptr), phase2_active_(false), logfile_(nullptr),
+  : phase_(PHASE_INITIALIZATION), log_window_(nullptr), logfile_(nullptr),
     log_level_cim_(LEVEL_DEBUG), log_level_glib_(LEVEL_DEBUG),
     log_level_purple_(LEVEL_DEBUG)
 {
@@ -126,7 +168,8 @@ Log::~Log()
   g_log_remove_handler("GLib-GObject", glib_gobject_handler_);
   g_log_remove_handler("GThread", gthread_handler_);
 
-  outputBufferMessages();
+  outputAllBufferedMessages();
+  clearAllBufferedMessages();
 }
 
 void Log::init()
@@ -144,11 +187,11 @@ void Log::finalize()
   my_instance_ = nullptr;
 }
 
-void Log::initPhase2()
+void Log::initNormalPhase()
 {
-  // Phase 2 is called after CppConsUI and libpurple has been initialized.
-  // Logging to file is part of the phase 2.
-  g_assert(!phase2_active_);
+  // Normal phase is called after CppConsUI and libpurple has been initialized.
+  // Logging to file is part of the normal phase.
+  g_assert(phase_ == PHASE_INITIALIZATION);
 
   // Init preferences.
   purple_prefs_add_none(CONF_PREFIX "/log");
@@ -172,27 +215,28 @@ void Log::initPhase2()
   log_window_ = new LogWindow;
   log_window_->show();
 
-  // Phase 2 is now active.
-  phase2_active_ = true;
+  // Normal phase is now active.
+  phase_ = PHASE_NORMAL;
 
-  // Output buffered messages.
-  for (LogBufferItem *item : log_items_) {
+  // Output buffered messages from the initialization phase.
+  for (LogBufferItem *item : init_log_items_) {
     // Determine if this message should be displayed.
     Level loglevel = getLogLevel(item->getType());
 
     if (loglevel >= item->getLevel())
-      write(item->getType(), item->getLevel(), item->getText());
+      write(item->getType(), item->getLevel(), item->getText(), false);
 
     delete item;
   }
-  log_items_.clear();
+  init_log_items_.clear();
 }
 
-void Log::finalizePhase2()
+void Log::finalizeNormalPhase()
 {
-  // Phase 2 finalization is done before CppConsUI and libpurple is finalized.
-  // Note that log levels are unchanged after phase 2 finishes.
-  g_assert(phase2_active_);
+  // Normal phase finalization is done before CppConsUI and libpurple is
+  // finalized. Note that log levels are unchanged after the normal phase
+  // finishes.
+  g_assert(phase_ == PHASE_NORMAL);
 
   // Delete the log window.
   g_assert(log_window_ != nullptr);
@@ -205,8 +249,8 @@ void Log::finalizePhase2()
   if (logfile_ != nullptr)
     g_io_channel_unref(logfile_);
 
-  // Done with phase 2.
-  phase2_active_ = false;
+  // Done with the normal phase.
+  phase_ = PHASE_FINALIZATION;
 }
 
 void Log::purple_print(
@@ -307,14 +351,14 @@ void Log::updateCachedPreference(const char *name)
     log_level_glib_ = stringToLevel(purple_prefs_get_string(name));
 }
 
-void Log::write(Type type, Level level, const char *text)
+void Log::write(Type type, Level level, const char *text, bool buffer)
 {
-  // If phase 2 is not active buffer the message.
-  if (!phase2_active_) {
-    auto item = new LogBufferItem(type, level, text);
-    log_items_.push_back(item);
+  if (buffer)
+    bufferMessage(type, level, text);
+
+  // If the normal phase is not active then only buffer the message.
+  if (phase_ != PHASE_NORMAL)
     return;
-  }
 
   g_assert(log_window_ != nullptr);
   log_window_->append(text);
@@ -323,14 +367,14 @@ void Log::write(Type type, Level level, const char *text)
 
 void Log::writeErrorToWindow(const char *fmt, ...)
 {
-  // Can be called only if phase 2 is active.
-  g_assert(phase2_active_);
+  // Can be called only if the normal phase is active.
+  g_assert(phase_ == PHASE_NORMAL);
   g_assert(log_window_ != nullptr);
 
   va_list args;
 
   if (log_level_cim_ < LEVEL_ERROR)
-    return; // We do not want to see this log message.
+    return; // Do not show this message.
 
   va_start(args, fmt);
   char *text = g_strdup_vprintf(fmt, args);
@@ -342,9 +386,8 @@ void Log::writeErrorToWindow(const char *fmt, ...)
 
 void Log::writeToFile(const char *text)
 {
-  // Writing to file is enabled only in phase 2.
-  if (!phase2_active_)
-    return;
+  // Writing to a file is possible only in the normal phase.
+  g_assert(phase_ == PHASE_NORMAL);
 
   if (text == nullptr || logfile_ == nullptr)
     return;
@@ -374,10 +417,38 @@ void Log::writeToFile(const char *text)
   }
 }
 
-void Log::outputBufferMessages()
+void Log::bufferMessage(Type type, Level level, const char *text)
 {
-  // Output all buffered messages to stderr.
-  for (LogBufferItem *item : log_items_) {
+  auto item = new LogBufferItem(type, level, text);
+  if (phase_ == PHASE_INITIALIZATION)
+    init_log_items_.push_back(item);
+  else
+    log_items_.push_back(item);
+
+  if (phase_ != PHASE_NORMAL)
+    return;
+
+  // Reduce a number of buffered messages if the normal phase is active.
+  size_t size = log_items_.size();
+  if (size <= LOG_MAX_BUFFERED_MESSAGES)
+    return;
+
+  // There can never be more than one message to remove.
+  g_assert(size == LOG_MAX_BUFFERED_MESSAGES + 1);
+  delete log_items_.front();
+  log_items_.pop_front();
+}
+
+void Log::clearBufferedMessages(LogBufferItems &items)
+{
+  for (LogBufferItem *item : items)
+    delete item;
+  items.clear();
+}
+
+void Log::outputBufferedMessages(LogBufferItems &items)
+{
+  for (LogBufferItem *item : items) {
     // Determine if this message should be displayed.
     Level loglevel = getLogLevel(item->getType());
 
@@ -392,10 +463,15 @@ void Log::outputBufferMessages()
       if (len > 0 && text[len - 1] != '\n')
         std::fprintf(stderr, "\n");
     }
-
-    delete item;
   }
-  log_items_.clear();
+}
+
+void Log::outputAllBufferedMessages()
+{
+  // Output all buffered messages on stderr.
+  outputBufferedMessages(init_log_items_);
+  outputBufferedMessages(log_items_);
+
   std::fflush(stderr);
 }
 

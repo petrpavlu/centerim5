@@ -24,6 +24,7 @@
 #include <cppconsui/TextView.h>
 #include <cppconsui/Window.h>
 #include <libpurple/purple.h>
+#include <deque>
 #include <string>
 
 #define LOG (Log::instance())
@@ -56,11 +57,19 @@ public:
   void debug(const char *fmt, ...)
     CPPCONSUI_GNUC_ATTRIBUTE((format(printf, 2, 3)));
 
+  void clearAllBufferedMessages();
+
 private:
   enum Type {
     TYPE_CIM,
     TYPE_GLIB,
     TYPE_PURPLE,
+  };
+
+  enum Phase {
+    PHASE_INITIALIZATION,
+    PHASE_NORMAL,
+    PHASE_FINALIZATION,
   };
 
   class LogWindow : public CppConsUI::Window {
@@ -98,7 +107,8 @@ private:
     CONSUI_DISABLE_COPY(LogBufferItem);
   };
 
-  typedef std::vector<LogBufferItem *> LogBufferItems;
+  typedef std::deque<LogBufferItem *> LogBufferItems;
+  LogBufferItems init_log_items_;
   LogBufferItems log_items_;
 
   guint default_handler_;
@@ -110,8 +120,8 @@ private:
 
   static Log *my_instance_;
 
+  Phase phase_;
   LogWindow *log_window_;
-  bool phase2_active_;
   GIOChannel *logfile_;
 
   Level log_level_cim_;
@@ -124,8 +134,8 @@ private:
 
   static void init();
   static void finalize();
-  void initPhase2();
-  void finalizePhase2();
+  void initNormalPhase();
+  void finalizeNormalPhase();
   friend class CenterIM;
 
   // To catch libpurple's debug messages.
@@ -161,10 +171,13 @@ private:
     const char *name, PurplePrefType type, gconstpointer val);
 
   void updateCachedPreference(const char *name);
-  void write(Type type, Level level, const char *text);
+  void write(Type type, Level level, const char *text, bool buffer = true);
   void writeErrorToWindow(const char *fmt, ...);
   void writeToFile(const char *text);
-  void outputBufferMessages();
+  void bufferMessage(Type type, Level level, const char *text);
+  void clearBufferedMessages(LogBufferItems &items);
+  void outputBufferedMessages(LogBufferItems &items);
+  void outputAllBufferedMessages();
   Level convertPurpleDebugLevel(PurpleDebugLevel purplelevel);
   Level convertGLibDebugLevel(GLogLevelFlags gliblevel);
   Level stringToLevel(const char *slevel);

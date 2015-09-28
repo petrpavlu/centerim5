@@ -554,7 +554,7 @@ int CenterIM::runAll(int argc, char *argv[])
   initializePreferences();
 
   // Initialize the log window.
-  LOG->initPhase2();
+  LOG->initNormalPhase();
 
   // Init colorschemes and keybinds after the Log is initialized so the user can
   // see if there is any error in the configs.
@@ -604,6 +604,12 @@ int CenterIM::runAll(int argc, char *argv[])
   // Start the main loop.
   g_main_loop_run(mainloop_);
 
+  if (!mainloop_error_exit_) {
+    // If the program is not exiting with an error then clear all buffered
+    // messages because the user could already see them in the Log window.
+    LOG->clearAllBufferedMessages();
+  }
+
   // Finalize input processing.
   g_source_remove(stdin_watch_handle);
   // Also remove any stdin timeout source.
@@ -631,7 +637,7 @@ int CenterIM::runAll(int argc, char *argv[])
 
   Footer::finalize();
 
-  LOG->finalizePhase2();
+  LOG->finalizeNormalPhase();
 
   if (!mainloop_error_exit_) {
     // Everything went ok.
