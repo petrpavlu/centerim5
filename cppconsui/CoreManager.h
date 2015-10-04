@@ -66,6 +66,8 @@ public:
   void logDebug(const char *message);
   void redraw(bool from_scratch = false);
 
+  bool isRedrawPending() const;
+
   void onScreenResized();
 
   void onWindowMoveResize(

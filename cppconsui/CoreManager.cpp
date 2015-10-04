@@ -311,6 +311,11 @@ void CoreManager::redraw(bool from_scratch)
   pending_redraw_ = from_scratch ? REDRAW_FROM_SCRATCH : REDRAW_NORMAL;
 }
 
+bool CoreManager::isRedrawPending() const
+{
+  return pending_redraw_ != REDRAW_NONE;
+}
+
 void CoreManager::onScreenResized()
 {
   // Signal the resize event.
