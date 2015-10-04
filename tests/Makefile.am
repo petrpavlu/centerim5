@@ -2,7 +2,6 @@ check_PROGRAMS = \
 	button \
 	colorpicker \
 	label \
-	scrollpane \
 	submenu \
 	textentry \
 	textview \
@@ -10,47 +9,41 @@ check_PROGRAMS = \
 	window
 
 AM_CPPFLAGS = \
-	$(GLIB_CFLAGS) \
 	$(SIGC_CFLAGS) \
 	-I$(top_srcdir)
 
 LDADD = \
-	$(GLIB_LIBS) \
 	$(SIGC_LIBS) \
 	$(top_builddir)/cppconsui/libcppconsui.la
 
 button_SOURCES = \
 	button.cpp \
-	MainLoop.cpp
+	main.cpp
 
 colorpicker_SOURCES = \
 	colorpicker.cpp \
-	MainLoop.cpp
+	main.cpp
 
 label_SOURCES = \
 	label.cpp \
-	MainLoop.cpp
-
-scrollpane_SOURCES = \
-	scrollpane.cpp \
-	MainLoop.cpp
+	main.cpp
 
 submenu_SOURCES = \
 	submenu.cpp \
-	MainLoop.cpp
+	main.cpp
 
 textentry_SOURCES = \
 	textentry.cpp \
-	MainLoop.cpp
+	main.cpp
 
 textview_SOURCES = \
 	textview.cpp \
-	MainLoop.cpp
+	main.cpp
 
 treeview_SOURCES = \
 	treeview.cpp \
-	MainLoop.cpp
+	main.cpp
 
 window_SOURCES = \
 	window.cpp \
-	MainLoop.cpp
+	main.cpp
