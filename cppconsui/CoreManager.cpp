@@ -276,6 +276,15 @@ void CoreManager::removeWindow(Window &window)
   redraw();
 }
 
+void CoreManager::hideWindow(Window &window)
+{
+  Windows::iterator i = findWindow(window);
+  assert(i != windows_.end());
+
+  focusWindow();
+  redraw();
+}
+
 void CoreManager::topWindow(Window &window)
 {
   Windows::iterator i = findWindow(window);

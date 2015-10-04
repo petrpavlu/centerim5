@@ -53,6 +53,7 @@ public:
 
   void registerWindow(Window &window);
   void removeWindow(Window &window);
+  void hideWindow(Window &window);
   void topWindow(Window &window);
   Window *getTopWindow();
 

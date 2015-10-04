@@ -121,6 +121,7 @@ void Window::show()
 void Window::hide()
 {
   visible_ = false;
+  COREMANAGER->hideWindow(*this);
   signal_hide(*this);
 }
 
