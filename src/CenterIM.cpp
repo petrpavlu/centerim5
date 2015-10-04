@@ -789,7 +789,7 @@ int CenterIM::initializeScreenResizing()
   // Get error message reported from the SIGWINCH handler when a write to the
   // self-pipe fails.
   sigwinch_write_error_ =
-    _("Write to the self-pipe for screen resizing failed.");
+    _("Write to the self-pipe for screen resizing failed.\n");
   sigwinch_write_error_size_ = std::strlen(sigwinch_write_error_) + 1;
 
   // Create a self-pipe.
