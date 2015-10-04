@@ -109,18 +109,12 @@ int CoreManager::initializeOutput(Error &error)
 
 int CoreManager::finalizeOutput(Error &error)
 {
-  // Close all windows, work with a copy of the windows vector because the
-  // original vector can be changed by calling the close() methods.
-  Windows windows_copy = windows_;
-  for (Window *window : windows_copy)
-    window->close();
-
-  // Delete all remaining windows. This prevents memory leaks for windows that
-  // have the close() method overridden and calling it does not remove the
-  // object from memory.
-  windows_copy = windows_;
-  for (Window *window : windows_copy)
-    delete window;
+  // Delete all windows. This must be done very carefully because deleting one
+  // window can lead to deletion of another one. It is however required for each
+  // window to deregister itself from CoreManager when it is deleted (and not to
+  // register any new windows).
+  while (!windows_.empty())
+    delete windows_.front();
 
   return Curses::finalizeScreen(error);
 }
