@@ -87,6 +87,7 @@ AC_PATH_LIB([ncursesw], , [ncurses.h], [ncursesw5-config], , , [
 ###############################
 # Set default compiler flags. #
 ###############################
+CXXFLAGS="-std=gnu++11 $CXXFLAGS"
 
 AC_ARG_ENABLE([strict], [AC_HELP_STRING([--enable-strict],
 	[enable extra compiler warnings during build])])
