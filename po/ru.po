@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
 "POT-Creation-Date: 2013-09-17 20:29+0200\n"
-"PO-Revision-Date: 2015-11-15 13:57+0300\n"
+"PO-Revision-Date: 2015-11-15 14:06+0300\n"
 "Last-Translator: kyak <bas@bmail.ru>\n"
 "Language-Team: \n"
 "Language: ru_RU\n"
@@ -955,11 +955,11 @@ msgstr "Больше..."
 
 #: cppconsui/ColorPickerComboBox.cpp:118
 msgid "DEFAULT"
-msgstr "ПО УМОЛЧАНИЮ"
+msgstr "УМОЛЧ."
 
 #: cppconsui/ColorPickerComboBox.cpp:236
 msgid "DEFAULT "
-msgstr "ПО УМОЛЧАНИЮ "
+msgstr "УМОЛЧ."
 
 #: cppconsui/ColorScheme.cpp:92
 msgid "Color pairs limit exceeded."
