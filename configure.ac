@@ -67,8 +67,13 @@ AC_SUBST([SIGC_CFLAGS])
 AC_SUBST([SIGC_LIBS])
 
 # ncursesw
+NCURSES_CONFIG="ncursesw5-config"
+AC_CHECK_PROG(HAVE_NCURSES5,$NCURSES_CONFIG,yes,no)
+if test "$HAVE_NCURSES5" = "no" ; then
+	NCURSES_CONFIG="ncursesw6-config"
+fi
 AC_PATH_LIB_LIBCONFIG
-AC_PATH_LIB([ncursesw], , [ncurses.h], [ncursesw5-config], , , [
+AC_PATH_LIB([ncursesw], , [ncurses.h], [$NCURSES_CONFIG], , , [
 	AC_MSG_RESULT([no])
 	AC_ERROR([You must have the ncursesw library and developement headers installed to build.])])
 
