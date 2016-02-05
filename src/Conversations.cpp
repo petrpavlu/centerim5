@@ -148,6 +148,13 @@ Conversations::Conversations()
       PURPLE_CALLBACK(buddy_typing_), this);
   purple_signal_connect(handle, "buddy-typing-stopped", this,
       PURPLE_CALLBACK(buddy_typing_), this);
+
+  // setup the callbacks for connections in relation to conversations
+  void *connections_handle = purple_connections_get_handle();
+  purple_signal_connect(connections_handle, "signed-on", this,
+      PURPLE_CALLBACK(account_signed_on_off_), this);
+  purple_signal_connect(connections_handle, "signed-off", this,
+      PURPLE_CALLBACK(account_signed_on_off_), this);
 }
 
 Conversations::~Conversations()
@@ -430,6 +437,44 @@ void Conversations::buddy_typing(PurpleAccount *account, const char *who)
     conversations[i].typing_status = ' ';
 
   updateLabel(i);
+}
+
+void Conversations::account_signed_on_off(PurpleConnection *connection)
+{
+    // If signed on
+    if(PURPLE_CONNECTION_IS_CONNECTED(connection)) {
+
+        for(ConversationsVector::iterator conv_child = conversations.begin(); conv_child != conversations.end(); ++conv_child) {
+
+            if(!conv_child->conv)
+                continue;
+
+            PurpleConversation *purple_conv = conv_child->conv->getPurpleConversation();
+
+            // Only process chats for this connection
+            if(purple_conversation_get_gc(purple_conv) == connection) {
+
+                // TODO: add and consult "want-to-rejoin" configuration parameter?
+
+                // Look up the chat from the buddy list
+                PurpleChat * purple_chat = purple_blist_find_chat(
+                        purple_conversation_get_account(purple_conv),
+                        purple_conversation_get_name(purple_conv)
+                        );
+
+                if(!purple_chat)
+                    continue;
+
+                GHashTable *chat_components = purple_chat_get_components(purple_chat);
+
+                if(chat_components) {
+                    serv_join_chat(connection, chat_components);
+                } else {
+                    LOG->error(_("Unable to re-join chat '%s'"), purple_conversation_get_name(purple_conv));
+                }
+            }
+        }
+    }
 }
 
 void Conversations::send_typing_pref_change(const char *name,
