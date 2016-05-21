@@ -316,7 +316,7 @@ static int start_driver(TermKey *tk, void *info)
   len = strlen(start_string);
   while(len) {
     size_t written = write(tk->fd, start_string, len);
-    if(written == -1)
+    if(written == (size_t)-1)
       return 0;
     start_string += written;
     len -= written;
@@ -349,7 +349,7 @@ static int stop_driver(TermKey *tk, void *info)
   len = strlen(stop_string);
   while(len) {
     size_t written = write(tk->fd, stop_string, len);
-    if(written == -1)
+    if(written == (size_t)-1)
       return 0;
     stop_string += written;
     len -= written;
