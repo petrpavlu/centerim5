@@ -73,7 +73,7 @@ enum ErrorCode {
 
 class Error {
 public:
-  explicit Error(ErrorCode code = ERROR_NONE, const char *string = NULL);
+  explicit Error(ErrorCode code = ERROR_NONE, const char *string = nullptr);
   Error(const Error &other);
   Error &operator=(const Error &other);
   virtual ~Error();

@@ -59,7 +59,7 @@ PluginWindow::~PluginWindow()
 {
   // Destroy all allocated pref frames.
   for (PluginEntries::value_type &entry : plugin_entries_)
-    if (entry.second.frame != NULL)
+    if (entry.second.frame != nullptr)
       purple_plugin_pref_frame_destroy(entry.second.frame);
 }
 

@@ -58,16 +58,16 @@ public:
   ///
   /// First two variants require NUL-terminated strings.
   int addString(
-    int x, int y, int w, const char *str, Error &error, int *printed = NULL);
+    int x, int y, int w, const char *str, Error &error, int *printed = nullptr);
   int addString(
-    int x, int y, const char *str, Error &error, int *printed = NULL);
+    int x, int y, const char *str, Error &error, int *printed = nullptr);
   int addString(int x, int y, int w, const char *str, const char *end,
-    Error &error, int *printed = NULL);
+    Error &error, int *printed = nullptr);
   int addString(int x, int y, const char *str, const char *end, Error &error,
-    int *printed = NULL);
+    int *printed = nullptr);
 
   int addChar(
-    int x, int y, UTF8::UniChar uc, Error &error, int *printed = NULL);
+    int x, int y, UTF8::UniChar uc, Error &error, int *printed = nullptr);
   int addLineChar(int x, int y, LineChar c, Error &error);
 
   int attrOn(int attrs, Error &error);
@@ -142,7 +142,7 @@ int getHeight();
 
 int resizeTerm(int width, int height, Error &error);
 
-int onScreenWidth(const char *start, const char *end = NULL);
+int onScreenWidth(const char *start, const char *end = nullptr);
 int onScreenWidth(UTF8::UniChar uc, int w = 0);
 
 } // namespace Curses

@@ -12,10 +12,10 @@ import cgi
 import pynotify
 
 def main():
-    # make the parameters saved in enviromental variables easier accessible
+    # Make the parameters saved in enviromental variables easier accessible.
     try:
         event_type = os.environ['EVENT_TYPE']
-        # this script can handle only the msg type
+        # This script can handle only the msg type.
         if event_type != 'msg':
             sys.exit(1)
 
@@ -25,7 +25,7 @@ def main():
         event_message = os.environ['EVENT_MESSAGE']
         #event_message_html = os.environ['EVENT_MESSAGE_HTML']
     except KeyError:
-        # some necessary parameters are missing
+        # Some necessary parameters are missing.
         sys.exit(1)
 
     if not pynotify.init('Extaction-plugin handler'):
@@ -33,27 +33,27 @@ def main():
 
     title = 'Message from %s:' % event_remote_user
     # event_message is in UTF-8, decode it to Unicode, then select first 256
-    # characters and encode them back to UTF-8
+    # characters and encode them back to UTF-8.
     body = event_message.decode('utf-8')[0:256].encode('utf-8')
-    # and escape the '&', '<', '>' characters
+    # And escape the '&', '<', '>' characters.
     body = cgi.escape(body)
     n = pynotify.Notification(title, body)
     if os.environ.has_key('EVENT_REMOTE_USER_ICON'):
-        # the icon is encoded in base64, decode it first
+        # The icon is encoded in base64, decode it first.
         icon_encoded = os.environ['EVENT_REMOTE_USER_ICON']
         icon_decoded = base64.b64decode(icon_encoded)
 
-        # create a pixbuf loader
+        # Create a pixbuf loader.
         loader = pynotify.gtk.gdk.PixbufLoader();
         loader.set_size(48, 48);
         loader.write(icon_decoded);
         loader.close()
 
-        # set icon from the pixbuf
+        # Set icon from the pixbuf.
         pixbuf = loader.get_pixbuf()
         n.set_icon_from_pixbuf(pixbuf)
 
-    # get the notification on the screen
+    # Get the notification on the screen.
     n.show()
 
     pynotify.uninit()

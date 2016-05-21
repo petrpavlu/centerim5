@@ -30,8 +30,8 @@ namespace CppConsUI {
 /// CheckBox.
 class CheckBox : public Widget {
 public:
-  CheckBox(int w, int h, const char *text = NULL, bool checked = false);
-  explicit CheckBox(const char *text = NULL, bool checked = false);
+  CheckBox(int w, int h, const char *text = nullptr, bool checked = false);
+  explicit CheckBox(const char *text = nullptr, bool checked = false);
   virtual ~CheckBox() override;
 
   // Widget

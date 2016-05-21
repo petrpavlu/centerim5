@@ -29,8 +29,8 @@ namespace CppConsUI {
 
 class SplitDialog : public AbstractDialog {
 public:
-  SplitDialog(int x, int y, int w, int h, const char *title = NULL);
-  explicit SplitDialog(const char *title = NULL);
+  SplitDialog(int x, int y, int w, int h, const char *title = nullptr);
+  explicit SplitDialog(const char *title = nullptr);
   virtual ~SplitDialog() override;
 
   // Widget

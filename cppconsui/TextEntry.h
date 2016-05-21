@@ -29,8 +29,8 @@ namespace CppConsUI {
 
 class TextEntry : public TextEdit {
 public:
-  TextEntry(int w, int h, const char *text_ = NULL, int flags_ = 0);
-  explicit TextEntry(const char *text_ = NULL, int flags_ = 0);
+  TextEntry(int w, int h, const char *text_ = nullptr, int flags_ = 0);
+  explicit TextEntry(const char *text_ = nullptr, int flags_ = 0);
   virtual ~TextEntry() override {}
 
 private:

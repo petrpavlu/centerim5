@@ -48,22 +48,22 @@
 
 static PurplePlugin *ea_plugin = NULL;
 
-static void on_new_message(PurpleAccount *account, const char *remote,
-    const char *message)
+static void on_new_message(
+  PurpleAccount *account, const char *remote, const char *message)
 {
   const char *command = purple_prefs_get_path(PLUGIN_PREF_COMMAND);
 
-  // the command should be never NULL
+  // The command should be never NULL.
   g_return_if_fail(command);
 
   if (!command[0]) {
-    // no command is set
+    // No command is set.
     return;
   }
 
   const char *protocol = purple_account_get_protocol_name(account);
-  char *local = g_strdup(purple_normalize(account,
-        purple_account_get_username(account)));
+  char *local =
+    g_strdup(purple_normalize(account, purple_account_get_username(account)));
   char *nohtml = purple_markup_strip_html(message);
   PurpleBuddy *buddy = purple_find_buddy(account, remote);
   char *icon_encoded = NULL;
@@ -82,7 +82,7 @@ static void on_new_message(PurpleAccount *account, const char *remote,
   argv[0] = g_strdup(command);
   argv[1] = NULL;
 
-  // prepare child's environment variables
+  // Prepare child's environment variables.
   char **envp = g_get_environ();
   envp = g_environ_setenv(envp, "EVENT_TYPE", "msg", TRUE);
   envp = g_environ_setenv(envp, "EVENT_NETWORK", protocol, TRUE);
@@ -93,16 +93,16 @@ static void on_new_message(PurpleAccount *account, const char *remote,
   envp = g_environ_setenv(envp, "EVENT_MESSAGE", nohtml, TRUE);
   envp = g_environ_setenv(envp, "EVENT_MESSAGE_HTML", message, TRUE);
 
-  // spawn the command
+  // Spawn the command.
   GError *err = NULL;
-  if (!g_spawn_async(NULL, argv, envp, G_SPAWN_SEARCH_PATH
-        | G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL, NULL, NULL,
-        NULL, &err)) {
+  if (!g_spawn_async(NULL, argv, envp, G_SPAWN_SEARCH_PATH |
+          G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
+        NULL, NULL, NULL, &err)) {
     purple_debug_error("extaction", "%s", err->message);
     g_clear_error(&err);
   }
 
-  // free all resources
+  // Free all resources.
   g_free(argv[0]);
   g_strfreev(envp);
 
@@ -112,8 +112,8 @@ static void on_new_message(PurpleAccount *account, const char *remote,
 }
 
 static void on_new_im_message(PurpleAccount *account, const char *name,
-    const char *message, PurpleConversation *conv, PurpleMessageFlags flags,
-    gpointer data)
+  const char *message, PurpleConversation *conv, PurpleMessageFlags flags,
+  gpointer data)
 {
   UNUSED(conv);
   UNUSED(flags);
@@ -123,8 +123,8 @@ static void on_new_im_message(PurpleAccount *account, const char *name,
 }
 
 static void on_new_chat_message(PurpleAccount *account, const char *who,
-    const char *message, PurpleConversation *conv, PurpleMessageFlags flags,
-    gpointer data)
+  const char *message, PurpleConversation *conv, PurpleMessageFlags flags,
+  gpointer data)
 {
   UNUSED(conv);
   UNUSED(flags);
@@ -139,19 +139,19 @@ static gboolean plugin_load(PurplePlugin *plugin)
 
   void *conv_handle = purple_conversations_get_handle();
 
-  // connect callbacks
+  // Connect callbacks.
   purple_signal_connect(conv_handle, "received-im-msg", plugin,
-      PURPLE_CALLBACK(on_new_im_message), NULL);
+    PURPLE_CALLBACK(on_new_im_message), NULL);
 
   purple_signal_connect(conv_handle, "received-chat-msg", plugin,
-      PURPLE_CALLBACK(on_new_chat_message), NULL);
+    PURPLE_CALLBACK(on_new_chat_message), NULL);
 
   return TRUE;
 }
 
 static gboolean plugin_unload(PurplePlugin *plugin)
 {
-  // disconnect callbacks
+  // Disconnect callbacks.
   purple_signals_disconnect_by_handle(plugin);
   return TRUE;
 }
@@ -164,12 +164,13 @@ static PurplePluginPrefFrame *plugin_get_pref_frame(PurplePlugin *plugin)
   PurplePluginPrefFrame *frame = purple_plugin_pref_frame_new();
 
   PurplePluginPref *pref = purple_plugin_pref_new_with_name_and_label(
-      PLUGIN_PREF_COMMAND, _("Command"));
+    PLUGIN_PREF_COMMAND, _("Command"));
   purple_plugin_pref_frame_add(frame, pref);
 
   return frame;
 }
 
+// clang-format off
 static PurplePluginUiInfo prefs_info = {
   plugin_get_pref_frame,
   0,
@@ -209,6 +210,7 @@ static PurplePluginInfo info = {
   NULL,
   NULL
 };
+// clang-format on
 
 static void init_plugin(PurplePlugin *plugin)
 {
@@ -219,4 +221,3 @@ static void init_plugin(PurplePlugin *plugin)
 }
 
 PURPLE_INIT_PLUGIN(extaction, init_plugin, info)
-

@@ -126,7 +126,7 @@ protected:
   virtual void updateAllScreenLines();
 
   virtual size_t eraseScreenLines(
-    size_t line_num, size_t start = 0, size_t *deleted = NULL);
+    size_t line_num, size_t start = 0, size_t *deleted = nullptr);
 
 private:
   CONSUI_DISABLE_COPY(TextView);

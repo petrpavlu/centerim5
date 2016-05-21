@@ -184,7 +184,7 @@ void Accounts::PendingRequestWindow::removeRequest(const Request &request)
 
     dialog_->close();
 
-    // The dialog should become NULL because the close() method triggers the
+    // The dialog should become nullptr because the close() method triggers the
     // OnAuthResponse() handler.
     g_assert(dialog_ == nullptr);
   }

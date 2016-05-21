@@ -130,7 +130,7 @@ private:
     CONVERSATIONS->present(conv);
   }
 
-  // Internal utility to get a room list for a conversation. Returns NULL if
+  // Internal utility to get a room list for a conversation. Returns nullptr if
   // none is present.
   ConversationRoomList *getRoomList(PurpleConversation *conv);
 

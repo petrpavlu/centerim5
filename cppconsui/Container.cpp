@@ -285,9 +285,9 @@ void Container::moveFocus(FocusDirection direction)
     return;
   }
 
-  // At this point, focus_widget is non-NULL and iter represents focus_widget in
-  // focus_chain_. Also the currently focused widget is visible, so if there is
-  // not any other widget that can take the focus then the focused widget can
+  // At this point, focus_widget is non-nullptr and iter represents focus_widget
+  // in focus_chain_. Also the currently focused widget is visible, so if there
+  // is not any other widget that can take the focus then the focused widget can
   // remain the same.
 
   // Search for a parent that has set local or none focus cycling.

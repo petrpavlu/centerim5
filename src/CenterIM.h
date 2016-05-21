@@ -101,7 +101,7 @@ private:
     guint result;
     gpointer data;
 
-    IOClosurePurple() : function(NULL), result(0), data(NULL) {}
+    IOClosurePurple() : function(nullptr), result(0), data(nullptr) {}
   };
 
   GMainLoop *mainloop_;

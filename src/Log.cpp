@@ -152,7 +152,7 @@ Log::Log()
   g_log_set_handler((name), (GLogLevelFlags)G_LOG_LEVEL_MASK, (handler), this)
 
   // Register the glib log handlers.
-  default_handler_ = REGISTER_G_LOG_HANDLER(NULL, default_log_handler_);
+  default_handler_ = REGISTER_G_LOG_HANDLER(nullptr, default_log_handler_);
   glib_handler_ = REGISTER_G_LOG_HANDLER("GLib", glib_log_handler_);
   gmodule_handler_ = REGISTER_G_LOG_HANDLER("GModule", glib_log_handler_);
   glib_gobject_handler_ =
@@ -326,7 +326,7 @@ void Log::updateCachedPreference(const char *name)
 
     if (logfile_enabled && logfile_ == nullptr) {
       char *filename = g_build_filename(purple_user_dir(),
-        purple_prefs_get_string(CONF_PREFIX "/log/filename"), NULL);
+        purple_prefs_get_string(CONF_PREFIX "/log/filename"), nullptr);
       GError *err = nullptr;
 
       logfile_ = g_io_channel_new_file(filename, "a", &err);

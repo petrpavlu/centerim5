@@ -275,7 +275,7 @@ ColorScheme::PropertyConversionResult ColorScheme::stringPairToPropertyPair(
     // Handle text_<number> and color<number> properties. The latter one is
     // recognized only for backward compatibility.
     if (std::strncmp(property, "text_", 5) != 0 &&
-        std::strncmp(property, "color", 5) != 0)
+      std::strncmp(property, "color", 5) != 0)
       return CONVERSION_ERROR_PROPERTY;
     property += 5;
 

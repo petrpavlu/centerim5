@@ -139,7 +139,7 @@ void GeneralMenu::openRequestChoiceTest(CppConsUI::Button & /*activator*/)
 {
   purple_request_choice(nullptr, "Title", "Primary", "Secondary", 1, "Ok",
     G_CALLBACK(choice_ok_cb_), "Cancel", nullptr, nullptr, nullptr, nullptr,
-    this, "Option 0", 0, "Option 1", 1, "Option 2", 2, NULL);
+    this, "Option 0", 0, "Option 1", 1, "Option 2", 2, nullptr);
 
   close();
 }
@@ -148,7 +148,7 @@ void GeneralMenu::openRequestActionTest(CppConsUI::Button & /*activator*/)
 {
   purple_request_action(nullptr, "Title", "Primary", "Secondary", 1, nullptr,
     nullptr, nullptr, this, 3, "Action 0", G_CALLBACK(action_cb_), "Action 1",
-    NULL, "Action 2", G_CALLBACK(action_cb_));
+    nullptr, "Action 2", G_CALLBACK(action_cb_));
 
   close();
 }

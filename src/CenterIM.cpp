@@ -704,7 +704,7 @@ int CenterIM::initializePurple(const char *config_path)
     purple_util_set_user_dir(config_path);
   }
   else {
-    char *path = g_build_filename(purple_home_dir(), config_path, NULL);
+    char *path = g_build_filename(purple_home_dir(), config_path, nullptr);
     g_assert(g_path_is_absolute(path));
     purple_util_set_user_dir(path);
     g_free(path);
@@ -731,7 +731,7 @@ int CenterIM::initializePurple(const char *config_path)
   purple_eventloop_set_ui_ops(&centerim_glib_eventloops_);
 
   // Add a search path for user-specific plugins.
-  char *path = g_build_filename(purple_user_dir(), "plugins", NULL);
+  char *path = g_build_filename(purple_user_dir(), "plugins", nullptr);
   purple_plugins_add_search_path(path);
   g_free(path);
 
@@ -756,7 +756,7 @@ void CenterIM::finalizePurple()
   purple_plugins_save_loaded(CONF_PLUGINS_SAVE_PREF);
 
   purple_core_set_ui_ops(nullptr);
-  // purple_eventloop_set_ui_ops(NULL);
+  // purple_eventloop_set_ui_ops(nullptr);
   purple_core_quit();
 }
 

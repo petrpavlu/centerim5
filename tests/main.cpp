@@ -47,7 +47,7 @@ private:
   CONSUI_DISABLE_COPY(TestApp);
 };
 
-TestApp *TestApp::my_instance_ = NULL;
+TestApp *TestApp::my_instance_ = nullptr;
 
 int TestApp::run()
 {

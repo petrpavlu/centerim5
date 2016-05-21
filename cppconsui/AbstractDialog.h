@@ -44,8 +44,8 @@ public:
     RESPONSE_NO,
   };
 
-  AbstractDialog(int x, int y, int w, int h, const char *title = NULL);
-  explicit AbstractDialog(const char *title = NULL);
+  AbstractDialog(int x, int y, int w, int h, const char *title = nullptr);
+  explicit AbstractDialog(const char *title = nullptr);
   virtual ~AbstractDialog() override {}
 
   // FreeWindow

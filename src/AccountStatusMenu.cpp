@@ -135,7 +135,7 @@ void AccountStatusMenu::StatusPopup::setStatus(
   PurpleStatusType *status_type, bool active)
 {
   purple_account_set_status(
-    account, purple_status_type_get_id(status_type), active, NULL);
+    account, purple_status_type_get_id(status_type), active, nullptr);
   close();
 }
 

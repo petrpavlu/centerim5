@@ -39,7 +39,7 @@ ColorPickerComboBox::ColorPickerComboBox(int w, int color)
   : ComboBox(w, 1), selected_color_(color)
 #ifdef COLORPICKER_256COLOR
     ,
-    colorpicker_(NULL)
+    colorpicker_(nullptr)
 #endif // COLORPICKER_256COLOR
 {
   // Add ANSI colors.
@@ -60,7 +60,7 @@ ColorPickerComboBox::ColorPickerComboBox(int w, int color)
 ColorPickerComboBox::~ColorPickerComboBox()
 {
 #ifdef COLORPICKER_256COLOR
-  if (colorpicker_ != NULL)
+  if (colorpicker_ != nullptr)
     colorpicker_->close();
 #endif // COLORPICKER_256COLOR
 }
@@ -187,7 +187,7 @@ void ColorPickerComboBox::colorPickerOk(ColorPickerDialog &activator,
 
 void ColorPickerComboBox::colorPickerClose(Window & /*window*/)
 {
-  colorpicker_ = NULL;
+  colorpicker_ = nullptr;
 }
 #endif // COLORPICKER_256COLOR
 

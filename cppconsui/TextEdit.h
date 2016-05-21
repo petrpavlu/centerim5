@@ -36,7 +36,7 @@ public:
     FLAG_NOSPACE = 1 << 1,
   };
 
-  TextEdit(int w, int h, const char *text_ = NULL, int flags_ = 0,
+  TextEdit(int w, int h, const char *text_ = nullptr, int flags_ = 0,
     bool single_line = false, bool accept_tabs_ = true, bool masked_ = false);
   virtual ~TextEdit() override;
 

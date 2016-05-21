@@ -113,7 +113,7 @@ private:
     class AccountOption : public CppConsUI::ComboBox {
     public:
       explicit AccountOption(
-        PurpleAccount *default_account = NULL, bool chat_only = false);
+        PurpleAccount *default_account = nullptr, bool chat_only = false);
       virtual ~AccountOption() override {}
 
     private:
@@ -133,7 +133,7 @@ private:
     class StringOption : public CppConsUI::Button {
     public:
       explicit StringOption(
-        const char *text, const char *value = NULL, bool masked = false);
+        const char *text, const char *value = nullptr, bool masked = false);
       virtual ~StringOption() override {}
 
     protected:
@@ -147,7 +147,7 @@ private:
 
     class IntegerOption : public CppConsUI::Button {
     public:
-      explicit IntegerOption(const char *text, const char *value = NULL,
+      explicit IntegerOption(const char *text, const char *value = nullptr,
         bool masked = false, int min = INT_MIN, int max = INT_MAX);
       virtual ~IntegerOption() override {}
 

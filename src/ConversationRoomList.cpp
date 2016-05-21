@@ -82,7 +82,7 @@ void ConversationRoomList::rename_user(
   g_assert(conv != nullptr);
 
   PurpleConvChatBuddy *new_pbuddy = purple_conv_chat_cb_find(conv, new_name);
-  // g_assert(old_pbuddy != NULL);
+  // g_assert(old_pbuddy != nullptr);
   g_assert(new_pbuddy != nullptr);
 
   // NOTE: PurpleConvChatBuddy::ui_data is pidgin 2.9!!

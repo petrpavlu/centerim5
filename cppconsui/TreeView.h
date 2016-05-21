@@ -33,8 +33,8 @@ protected:
 public:
   class ToggleCollapseButton : public Button {
   public:
-    ToggleCollapseButton(int w, int h, const char *text_ = NULL);
-    explicit ToggleCollapseButton(const char *text_ = NULL);
+    ToggleCollapseButton(int w, int h, const char *text_ = nullptr);
+    explicit ToggleCollapseButton(const char *text_ = nullptr);
     virtual ~ToggleCollapseButton() override {}
 
     // Widget

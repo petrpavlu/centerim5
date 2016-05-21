@@ -34,16 +34,16 @@ namespace CppConsUI {
 /// Selection widget for choosing one value from several options.
 class ComboBox : public Button {
 public:
-  ComboBox(int w, int h, const char *text_ = NULL);
-  explicit ComboBox(const char *text_ = NULL);
+  ComboBox(int w, int h, const char *text_ = nullptr);
+  explicit ComboBox(const char *text_ = nullptr);
   virtual ~ComboBox() override;
 
   /// Removes all options.
   virtual void clearOptions();
 
   /// Appends a new option.
-  virtual int addOption(const char *text = NULL, intptr_t data = 0);
-  virtual int addOptionPtr(const char *text = NULL, void *data = NULL)
+  virtual int addOption(const char *text = nullptr, intptr_t data = 0);
+  virtual int addOptionPtr(const char *text = nullptr, void *data = nullptr)
   {
     return addOption(text, reinterpret_cast<intptr_t>(data));
   }

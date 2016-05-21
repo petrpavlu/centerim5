@@ -235,8 +235,8 @@ int CoreManager::draw(Error &error)
 #if defined(DEBUG) && 0
   struct timespec ts2;
   clock_gettime(CLOCK_MONOTONIC, &ts2);
-  unsigned long tdiff = (ts2.tv_sec - ts.tv_sec) * 1000000 +
-    ts2.tv_nsec / 1000 - ts.tv_nsec / 1000;
+  unsigned long tdiff =
+    (ts2.tv_sec - ts.tv_sec) * 1000000 + ts2.tv_nsec / 1000 - ts.tv_nsec / 1000;
 
   char message[sizeof("redraw: time=us") + PRINTF_WIDTH(unsigned long)];
   sprintf(message, "redraw: time=%luus", tdiff);

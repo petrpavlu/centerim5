@@ -33,8 +33,8 @@ namespace CppConsUI {
 
 class MenuWindow : public Window {
 public:
-  MenuWindow(int x, int y, int w, int h, const char *title = NULL);
-  MenuWindow(Widget &ref, int w, int h, const char *title = NULL);
+  MenuWindow(int x, int y, int w, int h, const char *title = nullptr);
+  MenuWindow(Widget &ref, int w, int h, const char *title = nullptr);
   virtual ~MenuWindow() override;
 
   // Widget
@@ -119,7 +119,7 @@ protected:
   static void *onReferenceWidgetDestroy_(void *win)
   {
     reinterpret_cast<MenuWindow *>(win)->onReferenceWidgetDestroy();
-    return NULL;
+    return nullptr;
   }
   virtual void onReferenceWidgetDestroy();
 

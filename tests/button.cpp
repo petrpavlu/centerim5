@@ -71,7 +71,7 @@ TestWindow::TestWindow() : CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
   addWidget(*button, 1, 23);
 
   button = new CppConsUI::Button(30, 1, CppConsUI::Button::FLAG_RIGHT,
-    "Text+right button", NULL, NULL, "right");
+    "Text+right button", nullptr, nullptr, "right");
   button->signal_activate.connect(
     sigc::mem_fun(this, &TestWindow::onButtonActivate));
   addWidget(*button, 1, 28);

@@ -31,8 +31,8 @@ namespace CppConsUI {
 /// A widget that displays a small to medium amount of text.
 class Label : public Widget {
 public:
-  Label(int w, int h, const char *text = NULL);
-  explicit Label(const char *text = NULL);
+  Label(int w, int h, const char *text = nullptr);
+  explicit Label(const char *text = nullptr);
   virtual ~Label() override;
 
   // Widget

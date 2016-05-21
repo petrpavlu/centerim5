@@ -86,7 +86,7 @@ void Label::setText(const char *new_text)
   delete[] text_;
   text_ = new_storage;
 
-  // update wish height
+  // Update wish height.
   int h = 1;
   for (const char *cur = text_; *cur; ++cur)
     if (*cur == '\n')

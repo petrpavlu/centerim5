@@ -524,7 +524,7 @@ void AccountWindow::addAccount(CppConsUI::Button & /*activator*/)
 {
   GList *i = purple_plugins_get_protocols();
   if (i == nullptr) {
-    // Libpurple returns NULL if there are no protocols available.
+    // Libpurple returns nullptr if there are no protocols available.
     LOG->warning(_("No protocol plugins available."));
     return;
   }

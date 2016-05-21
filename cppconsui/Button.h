@@ -40,14 +40,16 @@ public:
     FLAG_RIGHT = 1 << 2,
   };
 
-  Button(
-    int w, int h, const char *text = NULL, int flags = 0, bool masked = false);
-  explicit Button(const char *text = NULL, int flags = 0, bool masked = false);
-  Button(int w, int h, int flags = 0, const char *text = NULL,
-    const char *value = NULL, const char *unit = NULL, const char *right = NULL,
+  Button(int w, int h, const char *text = nullptr, int flags = 0,
     bool masked = false);
-  Button(int flags, const char *text = NULL, const char *value = NULL,
-    const char *unit = NULL, const char *right = NULL, bool masked = false);
+  explicit Button(
+    const char *text = nullptr, int flags = 0, bool masked = false);
+  Button(int w, int h, int flags = 0, const char *text = nullptr,
+    const char *value = nullptr, const char *unit = nullptr,
+    const char *right = nullptr, bool masked = false);
+  Button(int flags, const char *text = nullptr, const char *value = nullptr,
+    const char *unit = nullptr, const char *right = nullptr,
+    bool masked = false);
   virtual ~Button() override;
 
   // Widget

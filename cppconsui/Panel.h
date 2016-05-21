@@ -32,7 +32,7 @@ namespace CppConsUI {
 /// top border line.
 class Panel : public Widget {
 public:
-  Panel(int w, int h, const char *text = NULL);
+  Panel(int w, int h, const char *text = nullptr);
   virtual ~Panel() override;
 
   // Widget

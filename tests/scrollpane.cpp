@@ -147,7 +147,7 @@ private:
   CONSUI_DISABLE_COPY(TestApp);
 };
 
-TestApp *TestApp::my_instance = NULL;
+TestApp *TestApp::my_instance = nullptr;
 
 int TestApp::run()
 {
@@ -162,7 +162,7 @@ int TestApp::run()
   assert(my_instance);
 
   delete my_instance;
-  my_instance = NULL;
+  my_instance = nullptr;
 
   return res;
 }

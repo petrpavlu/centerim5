@@ -30,8 +30,8 @@ namespace CppConsUI {
 
 class Dialog : public AbstractDialog {
 public:
-  Dialog(int x, int y, int w, int h, const char *title = NULL);
-  explicit Dialog(const char *title = NULL);
+  Dialog(int x, int y, int w, int h, const char *title = nullptr);
+  explicit Dialog(const char *title = nullptr);
   virtual ~Dialog() override {}
 
   /// Signal emitted when user closes the dialog.

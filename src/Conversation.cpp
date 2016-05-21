@@ -478,8 +478,9 @@ void Conversation::buildLogFilename()
 
   const char *name = purple_conversation_get_name(conv_);
 
-  filename_ = g_build_filename(purple_user_dir(), "clogs", proto_name,
-    acct_name, purple_escape_filename(purple_normalize(account, name)), NULL);
+  filename_ =
+    g_build_filename(purple_user_dir(), "clogs", proto_name, acct_name,
+      purple_escape_filename(purple_normalize(account, name)), nullptr);
 
   char *dir = g_path_get_dirname(filename_);
   if (g_mkdir_with_parents(dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
