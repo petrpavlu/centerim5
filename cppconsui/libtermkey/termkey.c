@@ -1,12 +1,16 @@
 #include "termkey.h"
 #include "termkey-internal.h"
 
+#include <ctype.h>
 #include <errno.h>
 #include <poll.h>
 #include <unistd.h>
 #include <string.h>
+#include <strings.h>
 
 #include <stdio.h>
+
+#define strcaseeq(a,b) (strcasecmp(a,b) == 0)
 
 void termkey_check_version(int major, int minor)
 {
@@ -141,6 +145,23 @@ static void print_key(TermKey *tk, TermKeyKey *key)
       fprintf(stderr, "Mouse ev=%d button=%d pos=(%d,%d)\n", ev, button, line, col);
     }
     break;
+  case TERMKEY_TYPE_POSITION:
+    {
+      int line, col;
+      termkey_interpret_position(tk, key, &line, &col);
+      fprintf(stderr, "Position report pos=(%d,%d)\n", line, col);
+    }
+    break;
+  case TERMKEY_TYPE_MODEREPORT:
+    {
+      int initial, mode, value;
+      termkey_interpret_modereport(tk, key, &initial, &mode, &value);
+      fprintf(stderr, "Mode report mode=%s %d val=%d\n", initial == '?' ? "DEC" : "ANSI", mode, value);
+    }
+    break;
+  case TERMKEY_TYPE_UNKNOWN_CSI:
+    fprintf(stderr, "unknown CSI\n");
+    break;
   }
 
   int m = key->modifiers;
@@ -173,56 +194,116 @@ static const char *res2str(TermKeyResult res)
 }
 #endif
 
-/* We might expose this as public API one day, when the ideas are finalised.
- * As yet it isn't public, so keep it static
+/* Similar to snprintf(str, size, "%s", src) except it turns CamelCase into
+ * space separated values
  */
-static TermKey *termkey_new_full(int fd, int flags, size_t buffsize, int waittime)
+static int snprint_cameltospaces(char *str, size_t size, const char *src)
 {
-  TermKey *tk = malloc(sizeof(*tk));
+  int prev_lower = 0;
+  size_t l = 0;
+  while(*src && l < size - 1) {
+    if(isupper(*src) && prev_lower) {
+      if(str)
+        str[l++] = ' ';
+      if(l >= size - 1)
+        break;
+    }
+    prev_lower = islower(*src);
+    str[l++] = tolower(*src++);
+  }
+  str[l] = 0;
+  /* For consistency with snprintf, return the number of bytes that would have
+   * been written, excluding '\0' */
+  while(*src) {
+    if(isupper(*src) && prev_lower) {
+      l++;
+    }
+    prev_lower = islower(*src);
+    src++; l++;
+  }
+  return l;
+}
+
+/* Similar to strcmp(str, strcamel, n) except that:
+ *    it compares CamelCase in strcamel with space separated values in str;
+ *    it takes char**s and updates them
+ * n counts bytes of strcamel, not str
+ */
+static int strpncmp_camel(const char **strp, const char **strcamelp, size_t n)
+{
+  const char *str = *strp, *strcamel = *strcamelp;
+  int prev_lower = 0;
+
+  for( ; (*str || *strcamel) && n; n--) {
+    char b = tolower(*strcamel);
+    if(isupper(*strcamel) && prev_lower) {
+      if(*str != ' ')
+        break;
+      str++;
+      if(*str != b)
+        break;
+    }
+    else
+      if(*str != b)
+        break;
+
+    prev_lower = islower(*strcamel);
+
+    str++;
+    strcamel++;
+  }
+
+  *strp = str;
+  *strcamelp = strcamel;
+  return *str - *strcamel;
+}
+
+static TermKey *termkey_alloc(void)
+{
+  TermKey *tk = malloc(sizeof(TermKey));
   if(!tk)
     return NULL;
 
-  if(!(flags & (TERMKEY_FLAG_RAW|TERMKEY_FLAG_UTF8))) {
-    int locale_is_utf8 = 0;
-    char *e;
+  /* Default all the object fields but don't allocate anything */
 
-    if((e = getenv("LANG")) && strstr(e, "UTF-8"))
-      locale_is_utf8 = 1;
-
-    if(!locale_is_utf8 && (e = getenv("LC_MESSAGES")) && strstr(e, "UTF-8"))
-      locale_is_utf8 = 1;
-
-    if(!locale_is_utf8 && (e = getenv("LC_ALL")) && strstr(e, "UTF-8"))
-      locale_is_utf8 = 1;
-
-    if(locale_is_utf8)
-      flags |= TERMKEY_FLAG_UTF8;
-    else
-      flags |= TERMKEY_FLAG_RAW;
-  }
-
-  tk->fd    = fd;
-  tk->flags = flags;
+  tk->fd         = -1;
+  tk->flags      = 0;
   tk->canonflags = 0;
 
-  if(flags & TERMKEY_FLAG_SPACESYMBOL)
-    tk->canonflags |= TERMKEY_CANON_SPACESYMBOL;
-
-  tk->buffer = malloc(buffsize);
-  if(!tk->buffer)
-    goto abort_free_tk;
-
+  tk->buffer    = NULL;
   tk->buffstart = 0;
   tk->buffcount = 0;
-  tk->buffsize  = buffsize;
+  tk->buffsize  = 256; /* bytes */
+  tk->hightide  = 0;
 
   tk->restore_termios_valid = 0;
 
-  tk->waittime = waittime;
+  tk->waittime = 50; /* msec */
 
   tk->is_closed = 0;
+  tk->is_started = 0;
 
   tk->nkeynames = 64;
+  tk->keynames  = NULL;
+
+  for(int i = 0; i < 32; i++)
+    tk->c0[i].sym = TERMKEY_SYM_NONE;
+
+  tk->drivers = NULL;
+
+  tk->method.emit_codepoint = &emit_codepoint;
+  tk->method.peekkey_simple = &peekkey_simple;
+  tk->method.peekkey_mouse  = &peekkey_mouse;
+
+  return tk;
+}
+
+static int termkey_init(TermKey *tk, const char *term)
+{
+  tk->buffer = malloc(tk->buffsize);
+  if(!tk->buffer)
+    return 0;
+
   tk->keynames = malloc(sizeof(tk->keynames[0]) * tk->nkeynames);
   if(!tk->keynames)
     goto abort_free_buffer;
@@ -231,22 +312,13 @@ static TermKey *termkey_new_full(int fd, int flags, size_t buffsize, int waittim
   for(i = 0; i < tk->nkeynames; i++)
     tk->keynames[i] = NULL;
 
-  for(i = 0; i < 32; i++)
-    tk->c0[i].sym = TERMKEY_SYM_NONE;
-
-  tk->method.emit_codepoint = &emit_codepoint;
-  tk->method.peekkey_simple = &peekkey_simple;
-  tk->method.peekkey_mouse  = &peekkey_mouse;
-
   for(i = 0; keynames[i].name; i++)
-    termkey_register_keyname(tk, keynames[i].sym, keynames[i].name);
+    if(termkey_register_keyname(tk, keynames[i].sym, keynames[i].name) == -1)
+      goto abort_free_keynames;
 
-  register_c0(tk, TERMKEY_SYM_BACKSPACE, 0x08, NULL);
-  register_c0(tk, TERMKEY_SYM_TAB,       0x09, NULL);
-  register_c0(tk, TERMKEY_SYM_ENTER,     0x0d, NULL);
-  register_c0(tk, TERMKEY_SYM_ESCAPE,    0x1b, NULL);
-
-  const char *term = getenv("TERM");
+  register_c0(tk, TERMKEY_SYM_TAB,    0x09, NULL);
+  register_c0(tk, TERMKEY_SYM_ENTER,  0x0d, NULL);
+  register_c0(tk, TERMKEY_SYM_ESCAPE, 0x1b, NULL);
 
   struct TermKeyDriverNode *tail = NULL;
 
@@ -280,54 +352,14 @@ static TermKey *termkey_new_full(int fd, int flags, size_t buffsize, int waittim
   }
 
   if(!tk->drivers) {
-    fprintf(stderr, "Unable to find a terminal driver\n");
+    errno = ENOENT;
     goto abort_free_keynames;
   }
 
-  if(!(flags & TERMKEY_FLAG_NOTERMIOS)) {
-    struct termios termios;
-    if(tcgetattr(fd, &termios) == 0) {
-      tk->restore_termios = termios;
-      tk->restore_termios_valid = 1;
-
-      termios.c_iflag &= ~(IXON|INLCR|ICRNL);
-      termios.c_lflag &= ~(ICANON|ECHO);
-      termios.c_cc[VMIN] = 1;
-      termios.c_cc[VTIME] = 0;
-
-      if(flags & TERMKEY_FLAG_CTRLC)
-        /* want no signal keys at all, so just disable ISIG */
-        termios.c_lflag &= ~ISIG;
-      else {
-        /* Disable Ctrl-\==VQUIT and Ctrl-D==VSUSP but leave Ctrl-C as SIGINT */
-        termios.c_cc[VQUIT] = _POSIX_VDISABLE;
-        termios.c_cc[VSUSP] = _POSIX_VDISABLE;
-        /* Some OSes have Ctrl-Y==VDSUSP */
-#ifdef VDSUSP
-        termios.c_cc[VDSUSP] = _POSIX_VDISABLE;
-#endif
-      }
-
-#ifdef DEBUG
-      fprintf(stderr, "Setting termios(3) flags\n");
-#endif
-      tcsetattr(fd, TCSANOW, &termios);
-    }
-  }
-
-  struct TermKeyDriverNode *p;
-  for(p = tk->drivers; p; p = p->next)
-    if(p->driver->start_driver)
-      (*p->driver->start_driver)(tk, p->info);
-
-#ifdef DEBUG
-  fprintf(stderr, "Drivers started; termkey instance %p is ready\n", tk);
-#endif
-
-  return tk;
+  return 1;
 
 abort_free_drivers:
-  for(p = tk->drivers; p; ) {
+  for(struct TermKeyDriverNode *p = tk->drivers; p; ) {
     (*p->driver->free_driver)(p->info);
     struct TermKeyDriverNode *next = p->next;
     free(p);
@@ -340,15 +372,66 @@ abort_free_keynames:
 abort_free_buffer:
   free(tk->buffer);
 
-abort_free_tk:
-  free(tk);
-
-  return NULL;
+  return 0;
 }
 
 TermKey *termkey_new(int fd, int flags)
 {
-  return termkey_new_full(fd, flags, 256, 50);
+  TermKey *tk = termkey_alloc();
+  if(!tk)
+    return NULL;
+
+  tk->fd = fd;
+
+  if(!(flags & (TERMKEY_FLAG_RAW|TERMKEY_FLAG_UTF8))) {
+    char *e;
+
+    /* Most OSes will set .UTF-8. Some will set .utf8. Try to be fairly
+     * generous in parsing these
+     */
+    if(((e = getenv("LANG")) || (e = getenv("LC_MESSAGES")) || (e = getenv("LC_ALL"))) &&
+       (e = strchr(e, '.')) && e++ &&
+       (strcaseeq(e, "UTF-8") || strcaseeq(e, "UTF8")))
+      flags |= TERMKEY_FLAG_UTF8;
+    else
+      flags |= TERMKEY_FLAG_RAW;
+  }
+
+  termkey_set_flags(tk, flags);
+
+  const char *term = getenv("TERM");
+
+  if(!termkey_init(tk, term))
+    goto abort;
+
+  if(!termkey_start(tk))
+    goto abort;
+
+  return tk;
+
+abort:
+  free(tk);
+  return NULL;
+}
+
+TermKey *termkey_new_abstract(const char *term, int flags)
+{
+  TermKey *tk = termkey_alloc();
+  if(!tk)
+    return NULL;
+
+  tk->fd = -1;
+
+  termkey_set_flags(tk, flags);
+
+  if(!termkey_init(tk, term)) {
+    free(tk);
+    return NULL;
+  }
+
+  termkey_start(tk);
+
+  return tk;
 }
 
 void termkey_free(TermKey *tk)
@@ -369,6 +452,71 @@ void termkey_free(TermKey *tk)
 
 void termkey_destroy(TermKey *tk)
 {
+  if(tk->is_started)
+    termkey_stop(tk);
+
+  termkey_free(tk);
+}
+
+int termkey_start(TermKey *tk)
+{
+  if(tk->is_started)
+    return 1;
+
+  if(tk->fd != -1 && !(tk->flags & TERMKEY_FLAG_NOTERMIOS)) {
+    struct termios termios;
+    if(tcgetattr(tk->fd, &termios) == 0) {
+      tk->restore_termios = termios;
+      tk->restore_termios_valid = 1;
+
+      termios.c_iflag &= ~(IXON|INLCR|ICRNL);
+      termios.c_lflag &= ~(ICANON|ECHO
+#ifdef IEXTEN
+          | IEXTEN
+#endif
+      );
+      termios.c_cc[VMIN] = 1;
+      termios.c_cc[VTIME] = 0;
+
+      if(tk->flags & TERMKEY_FLAG_CTRLC)
+        /* want no signal keys at all, so just disable ISIG */
+        termios.c_lflag &= ~ISIG;
+      else {
+        /* Disable Ctrl-\==VQUIT and Ctrl-D==VSUSP but leave Ctrl-C as SIGINT */
+        termios.c_cc[VQUIT] = _POSIX_VDISABLE;
+        termios.c_cc[VSUSP] = _POSIX_VDISABLE;
+        /* Some OSes have Ctrl-Y==VDSUSP */
+#ifdef VDSUSP
+        termios.c_cc[VDSUSP] = _POSIX_VDISABLE;
+#endif
+      }
+
+#ifdef DEBUG
+      fprintf(stderr, "Setting termios(3) flags\n");
+#endif
+      tcsetattr(tk->fd, TCSANOW, &termios);
+    }
+  }
+
+  struct TermKeyDriverNode *p;
+  for(p = tk->drivers; p; p = p->next)
+    if(p->driver->start_driver)
+      if(!(*p->driver->start_driver)(tk, p->info))
+        return 0;
+
+#ifdef DEBUG
+  fprintf(stderr, "Drivers started; termkey instance %p is ready\n", tk);
+#endif
+
+  tk->is_started = 1;
+  return 1;
+}
+
+int termkey_stop(TermKey *tk)
+{
+  if(!tk->is_started)
+    return 1;
+
   struct TermKeyDriverNode *p;
   for(p = tk->drivers; p; p = p->next)
     if(p->driver->stop_driver)
@@ -377,7 +525,14 @@ void termkey_destroy(TermKey *tk)
   if(tk->restore_termios_valid)
     tcsetattr(tk->fd, TCSANOW, &tk->restore_termios);
 
-  termkey_free(tk);
+  tk->is_started = 0;
+
+  return 1;
+}
+
+int termkey_is_started(TermKey *tk)
+{
+  return tk->is_started;
 }
 
 int termkey_get_fd(TermKey *tk)
@@ -423,6 +578,30 @@ void termkey_set_canonflags(TermKey *tk, int flags)
     tk->flags |= TERMKEY_FLAG_SPACESYMBOL;
   else
     tk->flags &= ~TERMKEY_FLAG_SPACESYMBOL;
+}
+
+size_t termkey_get_buffer_size(TermKey *tk)
+{
+  return tk->buffsize;
+}
+
+int termkey_set_buffer_size(TermKey *tk, size_t size)
+{
+  unsigned char *buffer = realloc(tk->buffer, size);
+  if(!buffer)
+    return 0;
+
+  tk->buffer = buffer;
+  tk->buffsize = size;
+
+  return 1;
+}
+
+size_t termkey_get_buffer_remaining(TermKey *tk)
+{
+  /* Return the total number of free bytes in the buffer, because that's what
+   * is available to the user. */
+  return tk->buffsize - tk->buffcount;
 }
 
 static void eat_bytes(TermKey *tk, size_t count)
@@ -564,7 +743,7 @@ static void emit_codepoint(TermKey *tk, long codepoint, TermKeyKey *key)
       key->type = TERMKEY_TYPE_UNICODE;
       /* Generically modified Unicode ought not report the SHIFT state, or else
        * we get into complicationg trying to report Shift-; vs : and so on...
-       * In order to be able to represent Ctrl-Shift-A as CTRL modified 
+       * In order to be able to represent Ctrl-Shift-A as CTRL modified
        * unicode A, we need to call Ctrl-A simply 'a', lowercase
        */
       if(codepoint+0x40 >= 'A' && codepoint+0x40 <= 'Z')
@@ -638,11 +817,22 @@ static TermKeyResult peekkey(TermKey *tk, TermKeyKey *key, int force, size_t *nb
 {
   int again = 0;
 
+  if(!tk->is_started) {
+    errno = EINVAL;
+    return TERMKEY_RES_ERROR;
+  }
+
 #ifdef DEBUG
   fprintf(stderr, "getkey(force=%d): buffer ", force);
   print_buffer(tk);
   fprintf(stderr, "\n");
 #endif
+
+  if(tk->hightide) {
+    tk->buffstart += tk->hightide;
+    tk->buffcount -= tk->hightide;
+    tk->hightide = 0;
+  }
 
   TermKeyResult ret;
   struct TermKeyDriverNode *p;
@@ -794,62 +984,12 @@ static TermKeyResult peekkey_mouse(TermKey *tk, TermKeyKey *key, size_t *nbytep)
   key->code.mouse[0] = CHARAT(0) - 0x20;
   key->code.mouse[1] = CHARAT(1) - 0x20;
   key->code.mouse[2] = CHARAT(2) - 0x20;
-  key->modifiers     = 0;
+  key->code.mouse[3] = 0;
+
+  key->modifiers     = (key->code.mouse[0] & 0x1c) >> 2;
+  key->code.mouse[0] &= ~0x1c;
+
   *nbytep = 3;
-  return TERMKEY_RES_KEY;
-}
-
-TermKeyResult termkey_interpret_mouse(TermKey *tk, const TermKeyKey *key, TermKeyMouseEvent *event, int *button, int *line, int *col)
-{
-  (void)tk; /* remove unused warning */
-
-  if(key->type != TERMKEY_TYPE_MOUSE)
-    return TERMKEY_RES_NONE;
-
-  if(button)
-    *button = 0;
-
-  if(col)
-    *col  = (unsigned char)key->code.mouse[1];
-
-  if(line)
-    *line = (unsigned char)key->code.mouse[2];
-
-  if(!event)
-    return TERMKEY_RES_KEY;
-
-  int btn = 0;
-
-  int code = key->code.mouse[0];
-
-  int drag = code & 0x20;
-
-  switch(code & ~0x20) {
-  case 0:
-  case 1:
-  case 2:
-    *event = drag ? TERMKEY_MOUSE_DRAG : TERMKEY_MOUSE_PRESS;
-    btn = (code & ~0x20) + 1;
-    break;
-
-  case 3:
-    *event = TERMKEY_MOUSE_RELEASE;
-    // no button hint
-    break;
-
-  case 64:
-  case 65:
-    *event = drag ? TERMKEY_MOUSE_DRAG : TERMKEY_MOUSE_PRESS;
-    btn = (code & ~0x20) + 4 - 64;
-    break;
-
-  default:
-    *event = TERMKEY_MOUSE_UNKNOWN;
-  }
-
-  if(button)
-    *button = btn;
-
   return TERMKEY_RES_KEY;
 }
 
@@ -882,6 +1022,11 @@ TermKeyResult termkey_getkey_force(TermKey *tk, TermKeyKey *key)
 
 TermKeyResult termkey_waitkey(TermKey *tk, TermKeyKey *key)
 {
+  if(tk->fd == -1) {
+    errno = EBADF;
+    return TERMKEY_RES_ERROR;
+  }
+
   while(1) {
     TermKeyResult ret = termkey_getkey(tk, key);
 
@@ -935,29 +1080,28 @@ retry:
   /* UNREACHABLE */
 }
 
-void termkey_pushinput(TermKey *tk, const unsigned char *input, size_t inputlen)
-{
-  if(tk->buffstart + tk->buffcount + inputlen > tk->buffsize) {
-    while(tk->buffstart + tk->buffcount + inputlen > tk->buffsize)
-      tk->buffsize *= 2;
-
-    unsigned char *newbuffer = realloc(tk->buffer, tk->buffsize);
-    // TODO: Handle realloc() failure
-    tk->buffer = newbuffer;
-  }
-
-  // Not strcpy just in case of NUL bytes
-  memcpy(tk->buffer + tk->buffstart + tk->buffcount, input, inputlen);
-  tk->buffcount += inputlen;
-}
-
 TermKeyResult termkey_advisereadable(TermKey *tk)
 {
-  unsigned char buffer[64]; // Smaller than the default size
   ssize_t len;
 
+  if(tk->fd == -1) {
+    errno = EBADF;
+    return TERMKEY_RES_ERROR;
+  }
+
+  if(tk->buffstart) {
+    memmove(tk->buffer, tk->buffer + tk->buffstart, tk->buffcount);
+    tk->buffstart = 0;
+  }
+
+  /* Not expecting it ever to be greater but doesn't hurt to handle that */
+  if(tk->buffcount >= tk->buffsize) {
+    errno = ENOMEM;
+    return TERMKEY_RES_ERROR;
+  }
+
 retry:
-  len = read(tk->fd, buffer, sizeof buffer);
+  len = read(tk->fd, tk->buffer + tk->buffcount, tk->buffsize - tk->buffcount);
 
   if(len == -1) {
     if(errno == EAGAIN)
@@ -972,9 +1116,32 @@ retry:
     return TERMKEY_RES_NONE;
   }
   else {
-    termkey_pushinput(tk, buffer, len);
+    tk->buffcount += len;
     return TERMKEY_RES_AGAIN;
   }
+}
+
+size_t termkey_push_bytes(TermKey *tk, const char *bytes, size_t len)
+{
+  if(tk->buffstart) {
+    memmove(tk->buffer, tk->buffer + tk->buffstart, tk->buffcount);
+    tk->buffstart = 0;
+  }
+
+  /* Not expecting it ever to be greater but doesn't hurt to handle that */
+  if(tk->buffcount >= tk->buffsize) {
+    errno = ENOMEM;
+    return (size_t)-1;
+  }
+
+  if(len > tk->buffsize - tk->buffcount)
+    len = tk->buffsize - tk->buffcount;
+
+  // memcpy(), not strncpy() in case of null bytes in input
+  memcpy(tk->buffer + tk->buffcount, bytes, len);
+  tk->buffcount += len;
+
+  return len;
 }
 
 TermKeySym termkey_register_keyname(TermKey *tk, TermKeySym sym, const char *name)
@@ -984,7 +1151,9 @@ TermKeySym termkey_register_keyname(TermKey *tk, TermKeySym sym, const char *nam
 
   if(sym >= tk->nkeynames) {
     const char **new_keynames = realloc(tk->keynames, sizeof(new_keynames[0]) * (sym + 1));
-    // TODO: Handle realloc() failure
+    if(!new_keynames)
+      return -1;
+
     tk->keynames = new_keynames;
 
     // Fill in the hole
@@ -1010,7 +1179,7 @@ const char *termkey_get_keyname(TermKey *tk, TermKeySym sym)
   return "UNKNOWN";
 }
 
-char *termkey_lookup_keyname(TermKey *tk, const char *str, TermKeySym *sym)
+static const char *termkey_lookup_keyname_format(TermKey *tk, const char *str, TermKeySym *sym, TermKeyFormat format)
 {
   /* We store an array, so we can't do better than a linear search. Doesn't
    * matter because user won't be calling this too often */
@@ -1020,17 +1189,29 @@ char *termkey_lookup_keyname(TermKey *tk, const char *str, TermKeySym *sym)
     if(!thiskey)
       continue;
     size_t len = strlen(thiskey);
-    if(strncmp(str, thiskey, len) == 0)
-      return (char *)str + len;
+    if(format & TERMKEY_FORMAT_LOWERSPACE) {
+      const char *thisstr = str;
+      if(strpncmp_camel(&thisstr, &thiskey, len) == 0)
+          return thisstr;
+    }
+    else {
+      if(strncmp(str, thiskey, len) == 0)
+        return (char *)str + len;
+    }
   }
 
   return NULL;
 }
 
+const char *termkey_lookup_keyname(TermKey *tk, const char *str, TermKeySym *sym)
+{
+  return termkey_lookup_keyname_format(tk, str, sym, 0);
+}
+
 TermKeySym termkey_keyname2sym(TermKey *tk, const char *keyname)
 {
   TermKeySym sym;
-  char *endp = termkey_lookup_keyname(tk, keyname, &sym);
+  const char *endp = termkey_lookup_keyname(tk, keyname, &sym);
   if(!endp || endp[0])
     return TERMKEY_SYM_UNKNOWN;
   return sym;
@@ -1044,7 +1225,7 @@ static TermKeySym register_c0(TermKey *tk, TermKeySym sym, unsigned char ctrl, c
 static TermKeySym register_c0_full(TermKey *tk, TermKeySym sym, int modifier_set, int modifier_mask, unsigned char ctrl, const char *name)
 {
   if(ctrl >= 0x20) {
-    fprintf(stderr, "Cannot register C0 key at ctrl 0x%02x - out of bounds\n", ctrl);
+    errno = EINVAL;
     return -1;
   }
 
@@ -1067,7 +1248,7 @@ size_t termkey_snprint_key(TermKey *tk, char *buffer, size_t len, TermKeyKey *ke
   return termkey_strfkey(tk, buffer, len, key, format);
 }
 
-struct modnames {
+static struct modnames {
   const char *shift, *alt, *ctrl;
 }
 modnames[] = {
@@ -1075,6 +1256,10 @@ modnames[] = {
   { "Shift", "Alt",  "Ctrl" }, // LONGMOD
   { "S",     "M",    "C" },    // ALTISMETA
   { "Shift", "Meta", "Ctrl" }, // ALTISMETA+LONGMOD
+  { "s",     "a",    "c" },    // LOWERMOD
+  { "shift", "alt",  "ctrl" }, // LOWERMOD+LONGMOD
+  { "s",     "m",    "c" },    // LOWERMOD+ALTISMETA
+  { "shift", "meta", "ctrl" }, // LOWERMOD+ALTISMETA+LONGMOD
 };
 
 size_t termkey_strfkey(TermKey *tk, char *buffer, size_t len, TermKeyKey *key, TermKeyFormat format)
@@ -1083,12 +1268,15 @@ size_t termkey_strfkey(TermKey *tk, char *buffer, size_t len, TermKeyKey *key, T
   size_t l = 0;
 
   struct modnames *mods = &modnames[!!(format & TERMKEY_FORMAT_LONGMOD) +
-                                    !!(format & TERMKEY_FORMAT_ALTISMETA) * 2];
+                                    !!(format & TERMKEY_FORMAT_ALTISMETA) * 2 +
+                                    !!(format & TERMKEY_FORMAT_LOWERMOD) * 4];
 
   int wrapbracket = (format & TERMKEY_FORMAT_WRAPBRACKET) &&
                     (key->type != TERMKEY_TYPE_UNICODE || key->modifiers != 0);
 
-  if(format & TERMKEY_FORMAT_CARETCTRL && 
+  char sep = (format & TERMKEY_FORMAT_SPACEMOD) ? ' ' : '-';
+
+  if(format & TERMKEY_FORMAT_CARETCTRL &&
      key->type == TERMKEY_TYPE_UNICODE &&
      key->modifiers == TERMKEY_KEYMOD_CTRL) {
     long codepoint = key->code.codepoint;
@@ -1116,19 +1304,19 @@ size_t termkey_strfkey(TermKey *tk, char *buffer, size_t len, TermKeyKey *key, T
   }
 
   if(key->modifiers & TERMKEY_KEYMOD_ALT) {
-    l = snprintf(buffer + pos, len - pos, "%s-", mods->alt);
+    l = snprintf(buffer + pos, len - pos, "%s%c", mods->alt, sep);
     if(l <= 0) return pos;
     pos += l;
   }
 
   if(key->modifiers & TERMKEY_KEYMOD_CTRL) {
-    l = snprintf(buffer + pos, len - pos, "%s-", mods->ctrl);
+    l = snprintf(buffer + pos, len - pos, "%s%c", mods->ctrl, sep);
     if(l <= 0) return pos;
     pos += l;
   }
 
   if(key->modifiers & TERMKEY_KEYMOD_SHIFT) {
-    l = snprintf(buffer + pos, len - pos, "%s-", mods->shift);
+    l = snprintf(buffer + pos, len - pos, "%s%c", mods->shift, sep);
     if(l <= 0) return pos;
     pos += l;
   }
@@ -1140,10 +1328,17 @@ size_t termkey_strfkey(TermKey *tk, char *buffer, size_t len, TermKeyKey *key, T
     l = snprintf(buffer + pos, len - pos, "%s", key->utf8);
     break;
   case TERMKEY_TYPE_KEYSYM:
-    l = snprintf(buffer + pos, len - pos, "%s", termkey_get_keyname(tk, key->code.sym));
+    {
+      const char *name = termkey_get_keyname(tk, key->code.sym);
+      if(format & TERMKEY_FORMAT_LOWERSPACE)
+        l = snprint_cameltospaces(buffer + pos, len - pos, name);
+      else
+        l = snprintf(buffer + pos, len - pos, "%s", name);
+    }
     break;
   case TERMKEY_TYPE_FUNCTION:
-    l = snprintf(buffer + pos, len - pos, "F%d", key->code.number);
+    l = snprintf(buffer + pos, len - pos, "%c%d",
+        (format & TERMKEY_FORMAT_LOWERSPACE ? 'f' : 'F'), key->code.number);
     break;
   case TERMKEY_TYPE_MOUSE:
     {
@@ -1152,7 +1347,7 @@ size_t termkey_strfkey(TermKey *tk, char *buffer, size_t len, TermKeyKey *key, T
       int line, col;
       termkey_interpret_mouse(tk, key, &ev, &button, &line, &col);
 
-      static char *evnames[] = { "Unknown", "Press", "Drag", "Release" };
+      static const char *evnames[] = { "Unknown", "Press", "Drag", "Release" };
 
       l = snprintf(buffer + pos, len - pos, "Mouse%s(%d)",
           evnames[ev], button);
@@ -1164,6 +1359,21 @@ size_t termkey_strfkey(TermKey *tk, char *buffer, size_t len, TermKeyKey *key, T
         l = snprintf(buffer + pos, len - pos, " @ (%u,%u)", col, line);
       }
     }
+    break;
+  case TERMKEY_TYPE_POSITION:
+    l = snprintf(buffer + pos, len - pos, "Position");
+    break;
+  case TERMKEY_TYPE_MODEREPORT:
+    {
+      int initial, mode, value;
+      termkey_interpret_modereport(tk, key, &initial, &mode, &value);
+      if(initial)
+        l = snprintf(buffer + pos, len - pos, "Mode(%c%d=%d)", initial, mode, value);
+      else
+        l = snprintf(buffer + pos, len - pos, "Mode(%d=%d)", mode, value);
+    }
+  case TERMKEY_TYPE_UNKNOWN_CSI:
+    l = snprintf(buffer + pos, len - pos, "CSI %c", key->code.number & 0xff);
     break;
   }
 
@@ -1179,10 +1389,11 @@ size_t termkey_strfkey(TermKey *tk, char *buffer, size_t len, TermKeyKey *key, T
   return pos;
 }
 
-char *termkey_strpkey(TermKey *tk, const char *str, TermKeyKey *key, TermKeyFormat format)
+const char *termkey_strpkey(TermKey *tk, const char *str, TermKeyKey *key, TermKeyFormat format)
 {
   struct modnames *mods = &modnames[!!(format & TERMKEY_FORMAT_LONGMOD) +
-                                    !!(format & TERMKEY_FORMAT_ALTISMETA) * 2];
+                                    !!(format & TERMKEY_FORMAT_ALTISMETA) * 2 +
+                                    !!(format & TERMKEY_FORMAT_LOWERMOD) * 4];
 
   key->modifiers = 0;
 
@@ -1202,10 +1413,10 @@ char *termkey_strpkey(TermKey *tk, const char *str, TermKeyKey *key, TermKeyForm
     return (char *)str;
   }
 
-  const char *hyphen;
+  const char *sep_at;
 
-  while((hyphen = strchr(str, '-'))) {
-    size_t n = hyphen - str;
+  while((sep_at = strchr(str, (format & TERMKEY_FORMAT_SPACEMOD) ? ' ' : '-'))) {
+    size_t n = sep_at - str;
 
     if(n == strlen(mods->alt) && strncmp(mods->alt, str, n) == 0)
       key->modifiers |= TERMKEY_KEYMOD_ALT;
@@ -1217,23 +1428,23 @@ char *termkey_strpkey(TermKey *tk, const char *str, TermKeyKey *key, TermKeyForm
     else
       break;
 
-    str = hyphen + 1;
+    str = sep_at + 1;
   }
 
   size_t nbytes;
-  int ibytes;
-  char *endstr;
+  ssize_t snbytes;
+  const char *endstr;
 
-  if((endstr = termkey_lookup_keyname(tk, str, &key->code.sym))) {
+  if((endstr = termkey_lookup_keyname_format(tk, str, &key->code.sym, format))) {
     key->type = TERMKEY_TYPE_KEYSYM;
     str = endstr;
   }
-  else if(sscanf(str, "F%d%n", &key->code.number, &ibytes) == 1) {
+  else if(sscanf(str, "F%d%zn", &key->code.number, &snbytes) == 1) {
     key->type = TERMKEY_TYPE_FUNCTION;
-    str += ibytes;
+    str += snbytes;
   }
   // Unicode must be last
-  else if(parse_utf8((unsigned char *)str, strlen(str), &key->code.codepoint, &nbytes) == TERMKEY_RES_KEY) {
+  else if(parse_utf8((unsigned const char *)str, strlen(str), &key->code.codepoint, &nbytes) == TERMKEY_RES_KEY) {
     key->type = TERMKEY_TYPE_UNICODE;
     fill_utf8(key);
     str += nbytes;
@@ -1262,17 +1473,43 @@ int termkey_keycmp(TermKey *tk, const TermKeyKey *key1p, const TermKeyKey *key2p
     case TERMKEY_TYPE_UNICODE:
       if(key1.code.codepoint != key2.code.codepoint)
         return key1.code.codepoint - key2.code.codepoint;
+      break;
     case TERMKEY_TYPE_KEYSYM:
       if(key1.code.sym != key2.code.sym)
         return key1.code.sym - key2.code.sym;
+      break;
     case TERMKEY_TYPE_FUNCTION:
+    case TERMKEY_TYPE_UNKNOWN_CSI:
       if(key1.code.number != key2.code.number)
         return key1.code.number - key2.code.number;
+      break;
     case TERMKEY_TYPE_MOUSE:
       {
         int cmp = strncmp(key1.code.mouse, key2.code.mouse, 4);
         if(cmp != 0)
           return cmp;
+      }
+      break;
+    case TERMKEY_TYPE_POSITION:
+      {
+        int line1, col1, line2, col2;
+        termkey_interpret_position(tk, &key1, &line1, &col1);
+        termkey_interpret_position(tk, &key2, &line2, &col2);
+        if(line1 != line2)
+          return line1 - line2;
+        return col1 - col2;
+      }
+      break;
+    case TERMKEY_TYPE_MODEREPORT:
+      {
+        int initial1, initial2, mode1, mode2, value1, value2;
+        termkey_interpret_modereport(tk, &key1, &initial1, &mode1, &value1);
+        termkey_interpret_modereport(tk, &key2, &initial2, &mode2, &value2);
+        if(initial1 != initial2)
+          return initial1 - initial2;
+        if(mode1 != mode2)
+          return mode1 - mode2;
+        return value1 - value2;
       }
   }
 

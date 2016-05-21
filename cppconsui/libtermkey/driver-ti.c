@@ -18,6 +18,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 /* To be efficient at lookups, we store the byte sequence => keyinfo mapping
  * in a trie. This avoids a slow linear search through a flat list of
@@ -289,27 +291,70 @@ abort_free_ti:
   return NULL;
 }
 
-static void start_driver(TermKey *tk, void *info)
+static int start_driver(TermKey *tk, void *info)
 {
   TermKeyTI *ti = info;
+  struct stat statbuf;
+  char *start_string = ti->start_string;
+  size_t len;
+
+  if(tk->fd == -1 || !start_string)
+    return 1;
 
   /* The terminfo database will contain keys in application cursor key mode.
    * We may need to enable that mode
    */
-  if(ti->start_string) {
-    // Can't call putp or tputs because they suck and don't give us fd control
-    write(tk->fd, ti->start_string, strlen(ti->start_string));
+
+  /* There's no point trying to write() to a pipe */
+  if(fstat(tk->fd, &statbuf) == -1)
+    return 0;
+
+  if(S_ISFIFO(statbuf.st_mode))
+    return 1;
+
+  // Can't call putp or tputs because they suck and don't give us fd control
+  len = strlen(start_string);
+  while(len) {
+    size_t written = write(tk->fd, start_string, len);
+    if(written == -1)
+      return 0;
+    start_string += written;
+    len -= written;
   }
+  return 1;
 }
 
-static void stop_driver(TermKey *tk, void *info)
+static int stop_driver(TermKey *tk, void *info)
 {
   TermKeyTI *ti = info;
+  struct stat statbuf;
+  char *stop_string = ti->stop_string;
+  size_t len;
 
-  if(ti->stop_string) {
-    // Can't call putp or tputs because they suck and don't give us fd control
-    write(tk->fd, ti->stop_string, strlen(ti->stop_string));
+  if(tk->fd == -1 || !stop_string)
+    return 1;
+
+  /* There's no point trying to write() to a pipe */
+  if(fstat(tk->fd, &statbuf) == -1)
+    return 0;
+
+  if(S_ISFIFO(statbuf.st_mode))
+    return 1;
+
+  /* The terminfo database will contain keys in application cursor key mode.
+   * We may need to enable that mode
+   */
+
+  // Can't call putp or tputs because they suck and don't give us fd control
+  len = strlen(stop_string);
+  while(len) {
+    size_t written = write(tk->fd, stop_string, len);
+    if(written == -1)
+      return 0;
+    stop_string += written;
+    len -= written;
   }
+  return 1;
 }
 
 static void free_driver(void *info)
@@ -428,7 +473,7 @@ static struct {
   { "suspend",   TERMKEY_TYPE_KEYSYM, TERMKEY_SYM_SUSPEND,   0 },
   { "undo",      TERMKEY_TYPE_KEYSYM, TERMKEY_SYM_UNDO,      0 },
   { "up",        TERMKEY_TYPE_KEYSYM, TERMKEY_SYM_UP,        0 },
-  { NULL,        0,                   0,                     0 },
+  { NULL },
 };
 
 static int funcname2keysym(const char *funcname, TermKeyType *typep, TermKeySym *symp, int *modmaskp, int *modsetp)
