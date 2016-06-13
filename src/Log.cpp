@@ -128,7 +128,7 @@ void Log::LogWindow::append(const char *text)
   if (lines_num > LOG_WINDOW_MAX_LINES) {
     // Remove some lines.
     textview_->erase(
-      0, lines_num - LOG_WINDOW_MAX_LINES - LOG_WINDOW_DELETE_COUNT);
+      0, lines_num - LOG_WINDOW_MAX_LINES + LOG_WINDOW_DELETE_COUNT);
   }
 }
 
