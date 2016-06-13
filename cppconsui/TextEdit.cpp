@@ -105,8 +105,8 @@ int TextEdit::draw(Curses::ViewPort area, Error &error)
         }
         else
           DRAW(area.addChar(w, j, uc, error, &printed));
-        w += printed;
       }
+      w += printed;
       p = nextChar(p);
     }
   }
