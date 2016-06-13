@@ -72,7 +72,7 @@ PluginWindow::AddPluginWindow::AddPluginWindow()
   : Window(0, 0, 80, 24, _("Add plugin"), TYPE_TOP)
 {
   auto treeview = new CppConsUI::TreeView(AUTOSIZE, AUTOSIZE);
-  addWidget(*treeview, 0, 0);
+  addWidget(*treeview, 1, 1);
 
   // Populate available plugins except the ones that are already enabled.
   for (GList *iter = purple_plugins_get_all(); iter != nullptr;
