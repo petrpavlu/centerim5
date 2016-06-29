@@ -906,8 +906,8 @@ void CenterIM::onScreenResized()
   size.height =
     screen_height - size.y - areas_[LOG_AREA].height - footer_height;
   if (convs_expanded_) {
-    size.x -= 2;
-    size.width += 4;
+    size.x -= 1;
+    size.width += 2;
   }
   areas_[CHAT_AREA] = size;
 
