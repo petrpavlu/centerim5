@@ -423,12 +423,14 @@ int CoreManager::drawWindow(Window &window, Error &error)
   // Calculate a viewport for the window.
   if (window_x < 0) {
     window_view_x = -window_x;
+    window_x += window_view_x;
     if (window_view_x > window_width)
       window_view_x = window_width;
     window_view_width -= window_view_x;
   }
   if (window_y < 0) {
     window_view_y = -window_y;
+    window_y += window_view_y;
     if (window_view_y > window_height)
       window_view_y = window_height;
     window_view_height -= window_view_y;
@@ -444,6 +446,7 @@ int CoreManager::drawWindow(Window &window, Error &error)
     if (window_view_height < 0)
       window_view_height = 0;
   }
+
   Curses::ViewPort window_area(window_x, window_y, window_view_x, window_view_y,
     window_view_width, window_view_height);
   return window.draw(window_area, error);
