@@ -39,7 +39,22 @@ namespace CppConsUI {
 
 namespace Curses {
 
+namespace {
+
+SCREEN *screen = nullptr;
+int screen_width = 0;
+int screen_height = 0;
 bool ascii_mode = false;
+
+void updateScreenSize()
+{
+  screen_width = ::getmaxx(stdscr);
+  assert(screen_width != ERR);
+  screen_height = ::getmaxy(stdscr);
+  assert(screen_height != ERR);
+}
+
+} // anonymous namespace
 
 ViewPort::ViewPort(int screen_x, int screen_y, int view_x, int view_y,
   int view_width, int view_height)
@@ -479,6 +494,7 @@ void ViewPort::scroll(int scroll_x, int scroll_y)
 
 bool ViewPort::isInViewPort(int x, int y, int w)
 {
+  // Check that the given area fits in the view port.
   return x >= view_x_ && y >= view_y_ && x + w <= view_x_ + view_width_ &&
     y < view_y_ + view_height_;
 }
@@ -499,8 +515,6 @@ const int Attr::REVERSE = A_REVERSE;
 const int Attr::BLINK = A_BLINK;
 const int Attr::DIM = A_DIM;
 const int Attr::BOLD = A_BOLD;
-
-SCREEN *screen = nullptr;
 
 int initScreen(Error &error)
 {
@@ -539,6 +553,8 @@ int initScreen(Error &error)
       _("Placing the terminal into raw mode failed."));
     goto error_out;
   }
+
+  updateScreenSize();
 
   return 0;
 
@@ -671,16 +687,12 @@ int beep(Error &error)
 
 int getWidth()
 {
-  int res = ::getmaxx(stdscr);
-  assert(res != ERR);
-  return res;
+  return screen_width;
 }
 
 int getHeight()
 {
-  int res = ::getmaxy(stdscr);
-  assert(res != ERR);
-  return res;
+  return screen_height;
 }
 
 int resizeTerm(int width, int height, Error &error)
@@ -692,6 +704,9 @@ int resizeTerm(int width, int height, Error &error)
       width, height);
     return error.getCode();
   }
+
+  updateScreenSize();
+
   return 0;
 }
 
