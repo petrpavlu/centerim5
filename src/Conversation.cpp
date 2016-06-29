@@ -99,34 +99,39 @@ void Conversation::moveResize(int newx, int newy, int neww, int newh)
   int view_percentage = purple_prefs_get_int(CONF_PREFIX "/chat/partitioning");
   view_percentage = CLAMP(view_percentage, 0, 100);
 
-  int view_height = (newh * view_percentage) / 100;
-  if (view_height < 1)
-    view_height = 1;
+  // Calculate inner area.
+  neww = neww < 2 ? 0 : neww - 2;
+  newh = newh < 2 ? 0 : newh - 2;
 
-  int input_height = newh - view_height - 1;
-  if (input_height < 1)
-    input_height = 1;
+  //                  ,- room_list_line_
+  //                  v
+  // ,-----------------------------,
+  // | view_          | room_list_ |
+  // |                |            |
+  // |                |            |
+  // |-----------------------------|<- line_
+  // | input_                      |
+  // '-----------------------------'
+
+  int view_height = (newh * view_percentage) / 100;
 
   int roomlist_percentage =
     purple_prefs_get_int(CONF_PREFIX "/chat/roomlist_partitioning");
   roomlist_percentage = CLAMP(roomlist_percentage, 0, 100);
 
-  int view_width = neww - 2;
+  int view_width = neww;
   if (room_list_ != nullptr)
     view_width = (view_width * roomlist_percentage) / 100;
 
-  view_->moveResize(1, 0, view_width, view_height);
-
-  input_->moveResize(1, view_height + 1, neww - 2, input_height);
-  line_->moveResize(0, view_height, neww, 1);
+  view_->moveResize(1, 1, view_width, view_height);
+  line_->moveResize(1, 1 + view_height, neww, 1);
+  input_->moveResize(1, 1 + view_height + 1, neww, newh - view_height - 2);
 
   // Place the room list if it exists.
   if (room_list_ != nullptr) {
-    // +2 accounts for borders.
-    room_list_line_->moveResize(view_width + 1, 0, 1, view_height);
-    // Give it some padding to make it line up.
+    room_list_line_->moveResize(1 + view_width, 1, 1, view_height);
     room_list_->moveResize(
-      view_width + 3, 0, neww - view_width - 3, view_height);
+      1 + view_width + 1, 1, neww - view_width - 2, view_height);
   }
 }
 
