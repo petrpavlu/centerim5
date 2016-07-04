@@ -24,12 +24,11 @@
 #ifndef CPPCONSUI_H
 #define CPPCONSUI_H
 
-#include <sigc++/sigc++.h>
-
+#include <cinttypes>
+#include <climits>
+#include <cstdint>
 #include <cstdlib>
-#include <inttypes.h>
-#include <limits.h>
-#include <stdint.h>
+#include <sigc++/sigc++.h>
 
 #define COLORSCHEME (CppConsUI::getColorSchemeInstance())
 #define COREMANAGER (CppConsUI::getCoreManagerInstance())
@@ -149,7 +148,7 @@ KeyConfig *getKeyConfigInstance();
 
 namespace UTF8 {
 
-typedef uint32_t UniChar;
+typedef std::uint32_t UniChar;
 #define UNICHAR_FORMAT PRIu32
 UniChar getUniChar(const char *p);
 bool isUniCharWide(UniChar uc);
