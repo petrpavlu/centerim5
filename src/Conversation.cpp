@@ -408,7 +408,7 @@ char *Conversation::stripHTML(const char *str) const
         // pointing to.
         else if (href != nullptr &&
           g_ascii_strncasecmp(str2 + i, "</a>", 4) == 0) {
-          size_t hrlen = std::strlen(href);
+          std::size_t hrlen = std::strlen(href);
 
           // Only insert the href if it is different from the CDATA.
           // 7 == strlen("http://").
@@ -733,8 +733,8 @@ void Conversation::onInputTextChange(CppConsUI::TextEdit &activator)
     return;
   }
 
-  size_t old_text_length = input_text_length_;
-  size_t new_text_length = activator.getTextLength();
+  std::size_t old_text_length = input_text_length_;
+  std::size_t new_text_length = activator.getTextLength();
   input_text_length_ = new_text_length;
 
   if (new_text_length == 0) {

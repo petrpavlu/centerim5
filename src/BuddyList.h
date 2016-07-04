@@ -219,7 +219,7 @@ private:
     virtual void onAddRequest(CppConsUI::Button &activator) override;
 
     void populateChatInfo(PurpleAccount *account);
-    void onAccountChanged(CppConsUI::Button &activator, size_t new_entry,
+    void onAccountChanged(CppConsUI::Button &activator, std::size_t new_entry,
       const char *title, intptr_t data);
 
   private:
@@ -255,9 +255,9 @@ private:
   Filter *filter_;
   char filter_buffer_[256];
   // Length in bytes.
-  size_t filter_buffer_length_;
+  std::size_t filter_buffer_length_;
   // Onscreen width.
-  size_t filter_buffer_onscreen_width_;
+  std::size_t filter_buffer_onscreen_width_;
 
   static BuddyList *my_instance_;
 

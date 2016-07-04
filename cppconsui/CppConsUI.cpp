@@ -46,7 +46,7 @@ Error::Error(const Error &other)
 
   error_code_ = other.error_code_;
 
-  size_t size = std::strlen(other.error_string_) + 1;
+  std::size_t size = std::strlen(other.error_string_) + 1;
   error_string_ = new char[size];
   std::strcpy(error_string_, other.error_string_);
 }
@@ -55,7 +55,7 @@ Error &Error::operator=(const Error &other)
 {
   assert(other.error_string_ != nullptr);
 
-  size_t size = std::strlen(other.error_string_) + 1;
+  std::size_t size = std::strlen(other.error_string_) + 1;
   auto new_string = new char[size];
   std::strcpy(new_string, other.error_string_);
 
@@ -78,7 +78,7 @@ void Error::setCode(ErrorCode code)
 
 void Error::setString(const char *string)
 {
-  size_t size = 1;
+  std::size_t size = 1;
   if (string != nullptr)
     size += std::strlen(string);
   auto new_string = new char[size];

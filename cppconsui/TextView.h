@@ -43,24 +43,24 @@ public:
 
   /// Inserts text before specified line number. Text can contain multiple lines
   /// and should end with '\\n' character just in front of '\\0' character.
-  virtual void insert(size_t line_num, const char *text, int color = 0);
+  virtual void insert(std::size_t line_num, const char *text, int color = 0);
 
   /// Removes a specified line.
-  virtual void erase(size_t line_num);
+  virtual void erase(std::size_t line_num);
 
   /// Removes specified range of lines. Parameter end_line represents the line
   /// after the last removed line, thus range of <start_line, end_line) lines is
   /// removed.
-  virtual void erase(size_t start_line, size_t end_line);
+  virtual void erase(std::size_t start_line, std::size_t end_line);
 
   /// Removes all lines.
   virtual void clear();
 
   /// Returns string for a specified line number.
-  virtual const char *getLine(size_t line_num) const;
+  virtual const char *getLine(std::size_t line_num) const;
 
   /// Returns count of all lines.
-  virtual size_t getLinesNumber() const;
+  virtual std::size_t getLinesNumber() const;
 
   virtual void setAutoScroll(bool new_autoscroll);
   virtual bool hasAutoScroll() const { return autoscroll_; }
@@ -76,12 +76,12 @@ protected:
     char *text;
 
     /// Text length in characters.
-    size_t length;
+    std::size_t length;
 
     /// Color number.
     int color;
 
-    Line(const char *text_, size_t bytes, int color_);
+    Line(const char *text_, std::size_t bytes, int color_);
     virtual ~Line();
   };
 
@@ -102,7 +102,7 @@ protected:
   typedef std::deque<Line *> Lines;
   typedef std::deque<ScreenLine> ScreenLines;
 
-  size_t view_top_;
+  std::size_t view_top_;
   bool autoscroll_;
   bool autoscroll_suspended_;
   bool scrollbar_;
@@ -120,13 +120,14 @@ protected:
     const char *text, int area_width, int *res_length) const;
 
   /// Recalculates on-screen lines for a specified line number.
-  virtual size_t updateScreenLines(size_t line_num, size_t start = 0);
+  virtual std::size_t updateScreenLines(
+    std::size_t line_num, std::size_t start = 0);
 
   /// Recalculates all screen lines.
   virtual void updateAllScreenLines();
 
-  virtual size_t eraseScreenLines(
-    size_t line_num, size_t start = 0, size_t *deleted = nullptr);
+  virtual std::size_t eraseScreenLines(std::size_t line_num,
+    std::size_t start = 0, std::size_t *deleted = nullptr);
 
 private:
   CONSUI_DISABLE_COPY(TextView);

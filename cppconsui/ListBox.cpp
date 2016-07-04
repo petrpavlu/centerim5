@@ -35,7 +35,7 @@ ListBox::ListBox(int w, int h)
   page_focus_ = true;
 }
 
-HorizontalLine *ListBox::insertSeparator(size_t pos)
+HorizontalLine *ListBox::insertSeparator(std::size_t pos)
 {
   auto l = new HorizontalLine(AUTOSIZE);
   insertWidget(pos, *l);
@@ -49,7 +49,7 @@ HorizontalLine *ListBox::appendSeparator()
   return l;
 }
 
-void ListBox::insertWidget(size_t pos, Widget &widget)
+void ListBox::insertWidget(std::size_t pos, Widget &widget)
 {
   Container::insertWidget(pos, widget, UNSETPOS, UNSETPOS);
 

@@ -55,7 +55,7 @@ public:
   /// Returns inserted text.
   virtual const char *getText() const;
 
-  virtual size_t getTextLength() const { return text_length_; }
+  virtual std::size_t getTextLength() const { return text_length_; }
 
   virtual void setFlags(int new_flags, bool revalidate = true);
   virtual int getFlags() const { return flags_; }
@@ -103,9 +103,9 @@ protected:
     const char *end;
 
     /// Precalculated length.
-    size_t length;
+    std::size_t length;
 
-    ScreenLine(const char *start, const char *end, size_t length)
+    ScreenLine(const char *start, const char *end, std::size_t length)
       : start(start), end(end), length(length)
     {
     }
@@ -130,19 +130,19 @@ protected:
   bool masked_;
 
   /// Character position from the start of buffer.
-  size_t current_pos_;
+  std::size_t current_pos_;
 
   /// Cursor location in the buffer.
   mutable char *point_;
 
   /// Current cursor line (derived from current_pos_ and screen_lines_).
-  size_t current_sc_line_;
+  std::size_t current_sc_line_;
 
   /// Current cursor character number (in the current line).
-  size_t current_sc_linepos_;
+  std::size_t current_sc_linepos_;
 
   /// Holds index into screen_lines_ that marks the first screen line.
-  size_t view_top_;
+  std::size_t view_top_;
 
   /// Start of text buffer.
   char *buffer_;
@@ -157,22 +157,22 @@ protected:
   mutable char *gapend_;
 
   /// Length in use, in chars.
-  size_t text_length_;
+  std::size_t text_length_;
 
   mutable bool screen_lines_dirty_;
 
   // Widget
   virtual void updateArea() override;
 
-  virtual void initBuffer(size_t size);
-  virtual size_t getGapSize() const;
-  virtual void expandGap(size_t size);
+  virtual void initBuffer(std::size_t size);
+  virtual std::size_t getGapSize() const;
+  virtual void expandGap(std::size_t size);
   virtual void moveGapToCursor();
 
   virtual char *getTextStart() const;
   virtual char *prevChar(const char *p) const;
   virtual char *nextChar(const char *p) const;
-  virtual int width(const char *start, size_t chars) const;
+  virtual int width(const char *start, std::size_t chars) const;
 
   /// Returns on-screen width of a given character in the same fashion as
   /// Curses::onscreen_width() does but handles the tab character and wide
@@ -180,7 +180,7 @@ protected:
   virtual int onScreenWidth(UTF8::UniChar uc, int w = 0) const;
 
   virtual char *getScreenLine(
-    const char *text, int max_width, size_t *res_length) const;
+    const char *text, int max_width, std::size_t *res_length) const;
 
   /// Recalculates all screen lines.
   virtual void updateScreenLines();
@@ -196,15 +196,16 @@ protected:
   virtual void updateScreenCursor();
 
   /// Inserts given text at the current cursor position.
-  virtual void insertTextAtCursor(const char *new_text, size_t new_text_bytes);
+  virtual void insertTextAtCursor(
+    const char *new_text, std::size_t new_text_bytes);
   virtual void insertTextAtCursor(const char *new_text);
   virtual void deleteFromCursor(DeleteType type, Direction dir);
   virtual void moveCursor(CursorMovement step, Direction dir);
 
   virtual void toggleOverwrite();
 
-  virtual size_t moveLogicallyFromCursor(Direction dir) const;
-  virtual size_t moveWordFromCursor(Direction dir, bool word_end) const;
+  virtual std::size_t moveLogicallyFromCursor(Direction dir) const;
+  virtual std::size_t moveWordFromCursor(Direction dir, bool word_end) const;
 
 private:
   CONSUI_DISABLE_COPY(TextEdit);

@@ -100,7 +100,7 @@ int Panel::draw(Curses::ViewPort area, Error &error)
 
 void Panel::setTitle(const char *new_title)
 {
-  size_t size = 1;
+  std::size_t size = 1;
   if (new_title != nullptr)
     size += std::strlen(new_title);
   auto new_storage = new char[size];

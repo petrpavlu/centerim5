@@ -56,7 +56,7 @@ private:
   friend class CenterIM;
 
   // Signal from the Accounts singleton.
-  void onRequestCountChange(Accounts &accounts, size_t request_count);
+  void onRequestCountChange(Accounts &accounts, std::size_t request_count);
 
   static void account_signed_on_(PurpleAccount *account, gpointer data)
   {

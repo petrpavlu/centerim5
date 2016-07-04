@@ -66,7 +66,7 @@ protected:
 
   protected:
     char *text_;
-    size_t text_width_;
+    std::size_t text_width_;
 
   private:
     CONSUI_DISABLE_COPY(ConversationLine);
@@ -81,7 +81,7 @@ protected:
   char *filename_;
   GIOChannel *logfile_;
 
-  size_t input_text_length_;
+  std::size_t input_text_length_;
 
   // Only PURPLE_CONV_TYPE_CHAT have a room list.
   ConversationRoomList *room_list_;

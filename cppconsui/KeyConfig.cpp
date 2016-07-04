@@ -76,7 +76,7 @@ char *KeyConfig::termKeyToString(const TermKeyKey &key) const
   termkey_strfkey(COREMANAGER->getTermKeyHandle(), out, sizeof(out), &key_copy,
     TERMKEY_FORMAT_LONGMOD);
 
-  size_t size = std::strlen(out) + 1;
+  std::size_t size = std::strlen(out) + 1;
   auto res = new char[size];
   std::strcpy(res, out);
   return res;

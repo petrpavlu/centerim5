@@ -108,7 +108,8 @@ private:
   class ActionDialog : public RequestDialog {
   public:
     ActionDialog(const char *title, const char *primary, const char *secondary,
-      int default_value, void *user_data, size_t action_count, va_list actions);
+      int default_value, void *user_data, std::size_t action_count,
+      va_list actions);
     virtual ~ActionDialog() override {}
 
     // RequestDialog
@@ -122,7 +123,8 @@ private:
   private:
     CONSUI_DISABLE_COPY(ActionDialog);
 
-    void onActionChoice(CppConsUI::Button &activator, size_t i, GCallback cb);
+    void onActionChoice(
+      CppConsUI::Button &activator, std::size_t i, GCallback cb);
   };
 
   class FieldsDialog : public RequestDialog {
@@ -275,7 +277,7 @@ private:
     protected:
       PurpleRequestField *field_;
 
-      void onAccountChanged(CppConsUI::Button &activator, size_t new_entry,
+      void onAccountChanged(CppConsUI::Button &activator, std::size_t new_entry,
         const char *title, intptr_t data);
 
     private:
@@ -332,7 +334,7 @@ private:
   static void *request_action_(const char *title, const char *primary,
     const char *secondary, int default_action, PurpleAccount *account,
     const char *who, PurpleConversation *conv, void *user_data,
-    size_t action_count, va_list actions)
+    std::size_t action_count, va_list actions)
   {
     return REQUEST->request_action(title, primary, secondary, default_action,
       account, who, conv, user_data, action_count, actions);
@@ -368,7 +370,7 @@ private:
   static void *request_action_with_icon_(const char *title, const char *primary,
     const char *secondary, int default_action, PurpleAccount *account,
     const char *who, PurpleConversation *conv, gconstpointer icon_data,
-    gsize icon_size, void *user_data, size_t action_count, va_list actions)
+    gsize icon_size, void *user_data, std::size_t action_count, va_list actions)
   {
     return REQUEST->request_action_with_icon(title, primary, secondary,
       default_action, account, who, conv, icon_data, icon_size, user_data,
@@ -388,7 +390,7 @@ private:
   void *request_action(const char *title, const char *primary,
     const char *secondary, int default_action, PurpleAccount *account,
     const char *who, PurpleConversation *conv, void *user_data,
-    size_t action_count, va_list actions);
+    std::size_t action_count, va_list actions);
   void *request_fields(const char *title, const char *primary,
     const char *secondary, PurpleRequestFields *fields, const char *ok_text,
     GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
@@ -405,7 +407,8 @@ private:
   void *request_action_with_icon(const char *title, const char *primary,
     const char *secondary, int default_action, PurpleAccount *account,
     const char *who, PurpleConversation *conv, gconstpointer icon_data,
-    gsize icon_size, void *user_data, size_t action_count, va_list actions);
+    gsize icon_size, void *user_data, std::size_t action_count,
+    va_list actions);
 };
 
 #endif // REQUEST_H

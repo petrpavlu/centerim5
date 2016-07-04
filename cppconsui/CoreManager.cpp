@@ -130,9 +130,9 @@ int CoreManager::processStandardInput(int *wait, Error &error)
   TermKeyResult ret;
   while ((ret = termkey_getkey(tk_, &key)) == TERMKEY_RES_KEY) {
     if (key.type == TERMKEY_TYPE_UNICODE && iconv_desc_ != ICONV_NONE) {
-      size_t inbytesleft, outbytesleft;
+      std::size_t inbytesleft, outbytesleft;
       char *inbuf, *outbuf;
-      size_t res;
+      std::size_t res;
       char utf8[sizeof(key.utf8) - 1];
 
       // Convert data from the user charset to UTF-8.
@@ -141,19 +141,19 @@ int CoreManager::processStandardInput(int *wait, Error &error)
       outbuf = utf8;
       outbytesleft = sizeof(utf8);
       res = iconv(iconv_desc_, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
-      if (res != static_cast<size_t>(-1) && inbytesleft != 0) {
+      if (res != static_cast<std::size_t>(-1) && inbytesleft != 0) {
         // No error occured but not all bytes have been converted.
         errno = EINVAL;
-        res = static_cast<size_t>(-1);
+        res = static_cast<std::size_t>(-1);
       }
-      if (res == static_cast<size_t>(-1)) {
+      if (res == static_cast<std::size_t>(-1)) {
         error = Error(ERROR_INPUT_CONVERSION);
         error.setFormattedString(
           _("Error converting input to UTF-8 (%s)."), std::strerror(errno));
         return error.getCode();
       }
 
-      size_t outbytes = sizeof(utf8) - outbytesleft;
+      std::size_t outbytes = sizeof(utf8) - outbytesleft;
       std::memcpy(key.utf8, utf8, outbytes);
       key.utf8[outbytes] = '\0';
 

@@ -37,9 +37,9 @@ public:
   virtual ~HorizontalListBox() override {}
 
   // AbstractListBox
-  virtual VerticalLine *insertSeparator(size_t pos) override;
+  virtual VerticalLine *insertSeparator(std::size_t pos) override;
   virtual VerticalLine *appendSeparator() override;
-  virtual void insertWidget(size_t pos, Widget &widget) override;
+  virtual void insertWidget(std::size_t pos, Widget &widget) override;
   virtual void appendWidget(Widget &widget) override;
 
   virtual int getChildrenWidth() const { return children_width_; };

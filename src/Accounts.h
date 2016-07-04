@@ -34,7 +34,7 @@ public:
   void openPendingRequests();
 
   // Interface for Header.
-  sigc::signal<void, Accounts &, size_t> signal_request_count_change;
+  sigc::signal<void, Accounts &, std::size_t> signal_request_count_change;
 
 private:
   struct Request {

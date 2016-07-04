@@ -123,7 +123,7 @@ void Log::LogWindow::append(const char *text)
   textview_->append(text);
 
   // Shorten the window text.
-  size_t lines_num = textview_->getLinesNumber();
+  std::size_t lines_num = textview_->getLinesNumber();
 
   if (lines_num > LOG_WINDOW_MAX_LINES) {
     // Remove some lines.
@@ -403,7 +403,7 @@ void Log::writeToFile(const char *text)
   }
   else {
     // If necessary write missing EOL character.
-    size_t len = std::strlen(text);
+    std::size_t len = std::strlen(text);
     if (len > 0 && text[len - 1] != '\n') {
       // Ignore all errors.
       g_io_channel_write_chars(logfile_, "\n", -1, nullptr, nullptr);
@@ -429,7 +429,7 @@ void Log::bufferMessage(Type type, Level level, const char *text)
     return;
 
   // Reduce a number of buffered messages if the normal phase is active.
-  size_t size = log_items_.size();
+  std::size_t size = log_items_.size();
   if (size <= LOG_MAX_BUFFERED_MESSAGES)
     return;
 
@@ -459,7 +459,7 @@ void Log::outputBufferedMessages(LogBufferItems &items)
       std::fprintf(stderr, "%s", text);
 
       // If necessary write missing EOL character.
-      size_t len = std::strlen(text);
+      std::size_t len = std::strlen(text);
       if (len > 0 && text[len - 1] != '\n')
         std::fprintf(stderr, "\n");
     }

@@ -176,7 +176,7 @@ void TextView::append(const char *text, int color)
   insert(lines_.size(), text, color);
 }
 
-void TextView::insert(size_t line_num, const char *text, int color)
+void TextView::insert(std::size_t line_num, const char *text, int color)
 {
   if (text == nullptr)
     return;
@@ -185,7 +185,7 @@ void TextView::insert(size_t line_num, const char *text, int color)
 
   const char *p = text;
   const char *s = text;
-  size_t cur_line_num = line_num;
+  std::size_t cur_line_num = line_num;
 
   // Parse lines.
   while (*p != '\0') {
@@ -207,13 +207,13 @@ void TextView::insert(size_t line_num, const char *text, int color)
   }
 
   // Update screen lines.
-  for (size_t i = line_num, advice = 0; i < cur_line_num; ++i)
+  for (std::size_t i = line_num, advice = 0; i < cur_line_num; ++i)
     advice = updateScreenLines(i, advice);
 
   redraw();
 }
 
-void TextView::erase(size_t line_num)
+void TextView::erase(std::size_t line_num)
 {
   assert(line_num < lines_.size());
 
@@ -224,16 +224,16 @@ void TextView::erase(size_t line_num)
   redraw();
 }
 
-void TextView::erase(size_t start_line, size_t end_line)
+void TextView::erase(std::size_t start_line, std::size_t end_line)
 {
   assert(start_line < lines_.size());
   assert(end_line <= lines_.size());
   assert(start_line <= end_line);
 
-  size_t advice = 0;
-  for (size_t i = start_line; i < end_line; ++i)
+  std::size_t advice = 0;
+  for (std::size_t i = start_line; i < end_line; ++i)
     advice = eraseScreenLines(i, advice);
-  for (size_t i = start_line; i < end_line; ++i)
+  for (std::size_t i = start_line; i < end_line; ++i)
     delete lines_[i];
   lines_.erase(lines_.begin() + start_line, lines_.begin() + end_line);
 
@@ -251,14 +251,14 @@ void TextView::clear()
   redraw();
 }
 
-const char *TextView::getLine(size_t line_num) const
+const char *TextView::getLine(std::size_t line_num) const
 {
   assert(line_num < lines_.size());
 
   return lines_[line_num]->text;
 }
 
-size_t TextView::getLinesNumber() const
+std::size_t TextView::getLinesNumber() const
 {
   return lines_.size();
 }
@@ -282,7 +282,7 @@ void TextView::setScrollBar(bool new_scrollbar)
   redraw();
 }
 
-TextView::Line::Line(const char *text_, size_t bytes, int color_)
+TextView::Line::Line(const char *text_, std::size_t bytes, int color_)
   : color(color_)
 {
   assert(text_ != nullptr);
@@ -373,7 +373,7 @@ const char *TextView::proceedLine(
   return res;
 }
 
-size_t TextView::updateScreenLines(size_t line_num, size_t start)
+std::size_t TextView::updateScreenLines(std::size_t line_num, std::size_t start)
 {
   assert(line_num < lines_.size());
   assert(start <= screen_lines_.size());
@@ -408,7 +408,7 @@ size_t TextView::updateScreenLines(size_t line_num, size_t start)
   if (new_lines.empty())
     new_lines.push_back(ScreenLine(*lines_[line_num], p, 0));
 
-  size_t res = i - screen_lines_.begin() + new_lines.size();
+  std::size_t res = i - screen_lines_.begin() + new_lines.size();
   screen_lines_.insert(i, new_lines.begin(), new_lines.end());
 
   return res;
@@ -420,21 +420,21 @@ void TextView::updateAllScreenLines()
   screen_lines_.clear();
 
   /// @todo Save and restore scroll afterwards.
-  for (size_t i = 0, advice = 0; i < lines_.size(); ++i)
+  for (std::size_t i = 0, advice = 0; i < lines_.size(); ++i)
     advice = updateScreenLines(i, advice);
 }
 
-size_t TextView::eraseScreenLines(
-  size_t line_num, size_t start, size_t *deleted)
+std::size_t TextView::eraseScreenLines(
+  std::size_t line_num, std::size_t start, std::size_t *deleted)
 {
   assert(line_num < lines_.size());
   assert(start <= screen_lines_.size());
 
-  size_t i = start;
+  std::size_t i = start;
   bool begin_set = false, end_set = false;
   // Note, the assigment to the begin variable is only to silence a compiler
   // warning. The use of the variable is protected by the begin_set variable.
-  size_t begin = 0, end;
+  std::size_t begin = 0, end;
   while (i < screen_lines_.size()) {
     if (screen_lines_[i].parent == lines_[line_num]) {
       if (!begin_set) {

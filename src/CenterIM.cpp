@@ -1440,7 +1440,7 @@ bool CenterIM::stringToColorAttributes(const char *str, int *attrs)
   *attrs = 0;
 
   bool valid = true;
-  for (size_t i = 0; tokens[i] != nullptr; ++i) {
+  for (std::size_t i = 0; tokens[i] != nullptr; ++i) {
     if (std::strcmp("normal", tokens[i]) == 0) {
       *attrs |= CppConsUI::Curses::Attr::NORMAL;
       continue;

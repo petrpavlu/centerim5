@@ -150,11 +150,11 @@ void Request::ChoiceDialog::responseHandler(
 
 Request::ActionDialog::ActionDialog(const char *title, const char *primary,
   const char *secondary, int default_value, void *user_data,
-  size_t action_count, va_list actions)
+  std::size_t action_count, va_list actions)
   : RequestDialog(
       title, primary, secondary, nullptr, nullptr, nullptr, nullptr, user_data)
 {
-  for (size_t i = 0; i < action_count; ++i) {
+  for (std::size_t i = 0; i < action_count; ++i) {
     const char *title = va_arg(actions, const char *);
     GCallback cb = va_arg(actions, GCallback);
 
@@ -179,7 +179,7 @@ void Request::ActionDialog::responseHandler(
 }
 
 void Request::ActionDialog::onActionChoice(
-  CppConsUI::Button & /*activator*/, size_t i, GCallback cb)
+  CppConsUI::Button & /*activator*/, std::size_t i, GCallback cb)
 {
   if (cb != nullptr)
     reinterpret_cast<PurpleRequestActionCb>(cb)(user_data_, i);
@@ -557,7 +557,7 @@ Request::FieldsDialog::AccountField::AccountField(PurpleRequestField *field)
 }
 
 void Request::FieldsDialog::AccountField::onAccountChanged(
-  Button & /*activator*/, size_t /*new_entry*/, const char * /*title*/,
+  Button & /*activator*/, std::size_t /*new_entry*/, const char * /*title*/,
   intptr_t data)
 {
   purple_request_field_account_set_value(
@@ -678,7 +678,7 @@ void *Request::request_choice(const char *title, const char *primary,
 void *Request::request_action(const char *title, const char *primary,
   const char *secondary, int default_action, PurpleAccount * /*account*/,
   const char * /*who*/, PurpleConversation * /*conv*/, void *user_data,
-  size_t action_count, va_list actions)
+  std::size_t action_count, va_list actions)
 {
   LOG->debug("request_action");
 
@@ -743,7 +743,7 @@ void *Request::request_action_with_icon(const char * /*title*/,
   const char * /*primary*/, const char * /*secondary*/, int /*default_action*/,
   PurpleAccount * /*account*/, const char * /*who*/,
   PurpleConversation * /*conv*/, gconstpointer /*icon_data*/,
-  gsize /*icon_size*/, void * /*user_data*/, size_t /*action_count*/,
+  gsize /*icon_size*/, void * /*user_data*/, std::size_t /*action_count*/,
   va_list /*actions*/)
 {
   return nullptr;

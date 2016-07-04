@@ -61,7 +61,7 @@ char *stripAccelerator(const char *label)
   g_assert(label != nullptr);
 
   // Calculate length of the string without accelerators.
-  size_t len = 1;
+  std::size_t len = 1;
   for (const char *p = label; *p != '\0'; ++p)
     if (*p != '_')
       ++len;

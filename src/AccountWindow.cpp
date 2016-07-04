@@ -329,7 +329,7 @@ AccountWindow::ProtocolOption::ProtocolOption(
 }
 
 void AccountWindow::ProtocolOption::onProtocolChanged(ComboBox & /*activator*/,
-  size_t /*new_entry*/, const char * /*title*/, intptr_t data)
+  std::size_t /*new_entry*/, const char * /*title*/, intptr_t data)
 {
   purple_account_set_protocol_id(
     account_, purple_plugin_get_id(reinterpret_cast<PurplePlugin *>(data)));

@@ -61,7 +61,7 @@ void ComboBox::clearOptions()
 
 int ComboBox::addOption(const char *text, intptr_t data)
 {
-  size_t size = 1;
+  std::size_t size = 1;
   if (text != nullptr)
     size += std::strlen(text);
   ComboBoxEntry e;
@@ -110,7 +110,7 @@ void *ComboBox::getSelectedDataPtr() const
 const char *ComboBox::getTitle(int entry) const
 {
   assert(entry >= 0);
-  assert(static_cast<size_t>(entry) < options_.size());
+  assert(static_cast<std::size_t>(entry) < options_.size());
 
   return options_[entry].title;
 }
@@ -118,7 +118,7 @@ const char *ComboBox::getTitle(int entry) const
 intptr_t ComboBox::getData(int entry) const
 {
   assert(entry >= 0);
-  assert(static_cast<size_t>(entry) < options_.size());
+  assert(static_cast<std::size_t>(entry) < options_.size());
 
   return options_[entry].data;
 }
@@ -126,7 +126,7 @@ intptr_t ComboBox::getData(int entry) const
 void ComboBox::setSelected(int new_entry)
 {
   assert(new_entry >= 0);
-  assert(static_cast<size_t>(new_entry) < options_.size());
+  assert(static_cast<std::size_t>(new_entry) < options_.size());
 
   // Selected option did not change.
   if (new_entry == selected_entry_)

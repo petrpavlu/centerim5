@@ -38,8 +38,8 @@ public:
   virtual ~AbstractListBox() override {}
 
   /// Inserts a new button into ListBox before a given position.
-  virtual Button *insertItem(
-    size_t pos, const char *title, const sigc::slot<void, Button &> &callback);
+  virtual Button *insertItem(std::size_t pos, const char *title,
+    const sigc::slot<void, Button &> &callback);
 
   /// Adds a new button in the end of ListBox.
   virtual Button *appendItem(
@@ -47,14 +47,14 @@ public:
 
   /// Inserts a separator (usually a horizontal or vertical line) into the
   /// ListBox before a given position.
-  virtual AbstractLine *insertSeparator(size_t pos) = 0;
+  virtual AbstractLine *insertSeparator(std::size_t pos) = 0;
 
   /// Appends a separator (usually a horizontal or vertical line) into the
   /// ListBox.
   virtual AbstractLine *appendSeparator() = 0;
 
   /// Inserts a widget into the ListBox before a given position.
-  virtual void insertWidget(size_t pos, Widget &widget) = 0;
+  virtual void insertWidget(std::size_t pos, Widget &widget) = 0;
 
   /// Appends a widget into the ListBox.
   virtual void appendWidget(Widget &widget) = 0;

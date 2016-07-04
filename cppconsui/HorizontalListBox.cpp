@@ -33,7 +33,7 @@ HorizontalListBox::HorizontalListBox(int w, int h)
 {
 }
 
-VerticalLine *HorizontalListBox::insertSeparator(size_t pos)
+VerticalLine *HorizontalListBox::insertSeparator(std::size_t pos)
 {
   auto l = new VerticalLine(AUTOSIZE);
   insertWidget(pos, *l);
@@ -47,7 +47,7 @@ VerticalLine *HorizontalListBox::appendSeparator()
   return l;
 }
 
-void HorizontalListBox::insertWidget(size_t pos, Widget &widget)
+void HorizontalListBox::insertWidget(std::size_t pos, Widget &widget)
 {
   Container::insertWidget(pos, widget, UNSETPOS, UNSETPOS);
 

@@ -39,7 +39,7 @@ bool BuddyList::processInputText(const TermKeyKey &key)
   if (!filter_->isVisible())
     return false;
 
-  size_t input_len = strlen(key.utf8);
+  std::size_t input_len = strlen(key.utf8);
   if (filter_buffer_length_ + input_len + 1 > sizeof(filter_buffer_))
     return false;
 
@@ -409,7 +409,7 @@ void BuddyList::AddChatWindow::populateChatInfo(PurpleAccount *account)
     char *label = Utils::stripAccelerator(entry->label);
 
     // And strip any trailing colon.
-    size_t len = strlen(label);
+    std::size_t len = strlen(label);
     if (label[len - 1] == ':')
       label[len - 1] = '\0';
 
@@ -436,7 +436,7 @@ void BuddyList::AddChatWindow::populateChatInfo(PurpleAccount *account)
 }
 
 void BuddyList::AddChatWindow::onAccountChanged(
-  CppConsUI::Button & /*activator*/, size_t /*new_entry*/,
+  CppConsUI::Button & /*activator*/, std::size_t /*new_entry*/,
   const char * /*title*/, intptr_t data)
 {
   populateChatInfo(reinterpret_cast<PurpleAccount *>(data));

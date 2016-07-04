@@ -96,8 +96,8 @@ public:
 
   /// @todo Maybe inserting and moving of widgets should be extended. There
   /// should be a way how to insert a widget at a specified position. Generally
-  /// insertWidget() should be made public, and MoveWidget(widget, size_t
-  /// position) should be added.
+  /// insertWidget() should be made public, and MoveWidget(widget, position)
+  /// should be added.
 
   /// Removes (and deletes) all children widgets.
   virtual void clear();
@@ -187,7 +187,7 @@ protected:
   /// the Container. This function is intended to be used by derived classes
   /// that needs to keep child widgets in order (see ListBox and
   /// HorizontalListBox).
-  virtual void insertWidget(size_t pos, Widget &widget, int x, int y);
+  virtual void insertWidget(std::size_t pos, Widget &widget, int x, int y);
 
   virtual void moveWidgetInternal(Widget &widget, Widget &position, bool after);
 

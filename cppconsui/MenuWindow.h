@@ -46,8 +46,8 @@ public:
   virtual void close() override;
   virtual void onScreenResized() override;
 
-  virtual Button *insertItem(
-    size_t pos, const char *title, const sigc::slot<void, Button &> &callback)
+  virtual Button *insertItem(std::size_t pos, const char *title,
+    const sigc::slot<void, Button &> &callback)
   {
     return listbox_->insertItem(pos, title, callback);
   }
@@ -56,7 +56,7 @@ public:
   {
     return listbox_->appendItem(title, callback);
   }
-  virtual AbstractLine *insertSeparator(size_t pos)
+  virtual AbstractLine *insertSeparator(std::size_t pos)
   {
     return listbox_->insertSeparator(pos);
   }
@@ -65,9 +65,9 @@ public:
     return listbox_->appendSeparator();
   }
   virtual Button *insertSubMenu(
-    size_t pos, const char *title, MenuWindow &submenu);
+    std::size_t pos, const char *title, MenuWindow &submenu);
   virtual Button *appendSubMenu(const char *title, MenuWindow &submenu);
-  virtual void insertWidget(size_t pos, Widget &widget)
+  virtual void insertWidget(std::size_t pos, Widget &widget)
   {
     listbox_->insertWidget(pos, widget);
   }

@@ -43,8 +43,8 @@ private:
 
   void reconnectAccount(PurpleAccount *account);
 
-  static void connect_progress_(
-    PurpleConnection *gc, const char *text, size_t step, size_t step_count)
+  static void connect_progress_(PurpleConnection *gc, const char *text,
+    std::size_t step, std::size_t step_count)
   {
     CONNECTIONS->connect_progress(gc, text, step, step_count);
   }
@@ -65,8 +65,8 @@ private:
     CONNECTIONS->report_disconnect_reason(gc, reason, text);
   }
 
-  void connect_progress(
-    PurpleConnection *gc, const char *text, size_t step, size_t step_count);
+  void connect_progress(PurpleConnection *gc, const char *text,
+    std::size_t step, std::size_t step_count);
   void connected(PurpleConnection *gc);
   void disconnected(PurpleConnection *gc);
   void notice(PurpleConnection *gc, const char *text);

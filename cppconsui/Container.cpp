@@ -589,7 +589,7 @@ Widgets::iterator Container::findWidget(const Widget &widget)
   return std::find(children_.begin(), children_.end(), &widget);
 }
 
-void Container::insertWidget(size_t pos, Widget &widget, int x, int y)
+void Container::insertWidget(std::size_t pos, Widget &widget, int x, int y)
 {
   assert(pos <= children_.size());
 

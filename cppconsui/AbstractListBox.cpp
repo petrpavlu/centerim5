@@ -29,8 +29,8 @@ AbstractListBox::AbstractListBox(int w, int h) : Container(w, h)
 {
 }
 
-Button *AbstractListBox::insertItem(
-  size_t pos, const char *title, const sigc::slot<void, Button &> &callback)
+Button *AbstractListBox::insertItem(std::size_t pos, const char *title,
+  const sigc::slot<void, Button &> &callback)
 {
   auto b = new Button(Curses::onScreenWidth(title), 1, title);
   b->signal_activate.connect(callback);

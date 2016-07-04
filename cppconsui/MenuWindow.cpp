@@ -106,7 +106,7 @@ void MenuWindow::onScreenResized()
 }
 
 Button *MenuWindow::insertSubMenu(
-  size_t pos, const char *title, MenuWindow &submenu)
+  std::size_t pos, const char *title, MenuWindow &submenu)
 {
   Button *button = prepareSubMenu(title, submenu);
   listbox_->insertWidget(pos, *button);

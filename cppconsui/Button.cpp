@@ -196,7 +196,7 @@ void Button::setMasked(bool new_masked)
 
 void Button::setText(const char *new_text)
 {
-  size_t size = 1;
+  std::size_t size = 1;
   if (new_text != nullptr)
     size += std::strlen(new_text);
   auto new_storage = new char[size];
@@ -235,7 +235,7 @@ void Button::setText(const char *new_text)
 
 void Button::setValue(const char *new_value)
 {
-  size_t size = 1;
+  std::size_t size = 1;
   if (new_value != nullptr)
     size += std::strlen(new_value);
   auto new_storage = new char[size];
@@ -260,7 +260,7 @@ void Button::setValue(int new_value)
 
 void Button::setUnit(const char *new_unit)
 {
-  size_t size = 1;
+  std::size_t size = 1;
   if (new_unit != nullptr)
     size += std::strlen(new_unit);
   auto new_storage = new char[size];
@@ -278,7 +278,7 @@ void Button::setUnit(const char *new_unit)
 
 void Button::setRight(const char *new_right)
 {
-  size_t size = 1;
+  std::size_t size = 1;
   if (new_right != nullptr)
     size += std::strlen(new_right);
   auto new_storage = new char[size];

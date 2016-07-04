@@ -162,8 +162,8 @@ private:
     AccountWindow *account_window_;
     PurpleAccount *account_;
 
-    void onProtocolChanged(CppConsUI::ComboBox &activator, size_t new_entry,
-      const char *title, intptr_t data);
+    void onProtocolChanged(CppConsUI::ComboBox &activator,
+      std::size_t new_entry, const char *title, intptr_t data);
 
   private:
     CONSUI_DISABLE_COPY(ProtocolOption);

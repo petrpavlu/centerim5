@@ -83,7 +83,7 @@ void Connections::reconnectAccount(PurpleAccount *account)
 }
 
 void Connections::connect_progress(PurpleConnection *gc, const char *text,
-  size_t /*step*/, size_t /*step_count*/)
+  std::size_t /*step*/, std::size_t /*step_count*/)
 {
   PurpleAccount *account = purple_connection_get_account(gc);
   LOG->message(_("+ [%s] %s: %s"), purple_account_get_protocol_name(account),

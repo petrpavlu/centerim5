@@ -74,7 +74,7 @@ int Label::draw(Curses::ViewPort area, Error &error)
 
 void Label::setText(const char *new_text)
 {
-  size_t size = 1;
+  std::size_t size = 1;
   if (new_text != nullptr)
     size += std::strlen(new_text);
   auto new_storage = new char[size];

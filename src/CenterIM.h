@@ -116,7 +116,7 @@ private:
   int resize_pipe_[2];
   volatile bool resize_pending_;
   const char *sigwinch_write_error_;
-  size_t sigwinch_write_error_size_;
+  std::size_t sigwinch_write_error_size_;
 
   PurpleCoreUiOps centerim_core_ui_ops_;
   PurpleDebugUiOps logbuf_debug_ui_ops_;

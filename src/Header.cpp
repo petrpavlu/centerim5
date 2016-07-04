@@ -101,7 +101,8 @@ void Header::finalize()
   my_instance_ = nullptr;
 }
 
-void Header::onRequestCountChange(Accounts & /*accounts*/, size_t request_count)
+void Header::onRequestCountChange(
+  Accounts & /*accounts*/, std::size_t request_count)
 {
   if (request_count > 0) {
     request_indicator_->setText("* ");
