@@ -32,19 +32,19 @@
 #include "AccountStatusMenu.h"
 #include "GeneralMenu.h"
 
+#include "gettext.h"
+#include <cerrno>
 #include <cppconsui/ColorScheme.h>
 #include <cppconsui/KeyConfig.h>
-#include <cerrno>
 #include <cstdio>
 #include <cstring>
 #include <fcntl.h>
-#include <locale.h>
 #include <getopt.h>
 #include <glib/gprintf.h>
+#include <locale.h>
 #include <time.h>
 #include <typeinfo>
 #include <unistd.h>
-#include "gettext.h"
 
 #define CIM_CONFIG_PATH ".centerim5"
 

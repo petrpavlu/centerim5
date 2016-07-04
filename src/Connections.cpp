@@ -20,8 +20,8 @@
 
 #include "Log.h"
 
-#include <cstring>
 #include "gettext.h"
+#include <cstring>
 
 #define RECONNECTION_DELAY_MIN 60000
 #define RECONNECTION_DELAY_MAX 120000

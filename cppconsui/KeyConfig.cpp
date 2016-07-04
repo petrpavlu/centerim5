@@ -24,8 +24,8 @@
 
 #include "CoreManager.h"
 
-#include <cstring>
 #include "gettext.h"
+#include <cstring>
 
 namespace CppConsUI {
 

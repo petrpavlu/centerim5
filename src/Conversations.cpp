@@ -18,8 +18,8 @@
 
 #include "Conversations.h"
 
-#include <cstring>
 #include "gettext.h"
+#include <cstring>
 
 Conversations *Conversations::my_instance_ = nullptr;
 
@@ -465,8 +465,8 @@ void Conversations::account_signed_on(PurpleConnection *gc)
   }
 }
 
-void Conversations::send_typing_pref_change(const char *name,
-    PurplePrefType /*type*/, gconstpointer /*val*/)
+void Conversations::send_typing_pref_change(
+  const char *name, PurplePrefType /*type*/, gconstpointer /*val*/)
 {
   g_assert(std::strcmp(name, "/purple/conversations/im/send_typing") == 0);
   send_typing_ = purple_prefs_get_bool(name);

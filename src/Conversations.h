@@ -21,10 +21,10 @@
 
 #include "Conversation.h"
 
-#include <cppconsui/Window.h>
 #include <cppconsui/HorizontalListBox.h>
 #include <cppconsui/Label.h>
 #include <cppconsui/Spacer.h>
+#include <cppconsui/Window.h>
 #include <libpurple/purple.h>
 #include <vector>
 

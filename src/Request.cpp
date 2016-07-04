@@ -20,10 +20,10 @@
 #include "Log.h"
 #include "Utils.h"
 
+#include "gettext.h"
 #include <cppconsui/InputDialog.h>
 #include <cppconsui/Spacer.h>
 #include <cstring>
-#include "gettext.h"
 
 Request *Request::my_instance_ = nullptr;
 

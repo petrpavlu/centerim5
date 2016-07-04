@@ -30,10 +30,10 @@
 #define NCURSES_NOMACROS
 #include <cursesw.h>
 
+#include "gettext.h"
 #include <algorithm>
 #include <cassert>
 #include <cstring>
-#include "gettext.h"
 
 namespace CppConsUI {
 

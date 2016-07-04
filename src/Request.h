@@ -22,9 +22,9 @@
 #include <cppconsui/ComboBox.h>
 #include <cppconsui/InputDialog.h>
 #include <cppconsui/Label.h>
+#include <cppconsui/SplitDialog.h>
 #include <cppconsui/TextEntry.h>
 #include <cppconsui/TreeView.h>
-#include <cppconsui/SplitDialog.h>
 #include <libpurple/purple.h>
 
 #define REQUEST (Request::instance())

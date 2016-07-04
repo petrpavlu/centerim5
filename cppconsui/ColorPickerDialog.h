@@ -25,8 +25,8 @@
 #define COLORPICKERDIALOG_H
 
 #include "AbstractDialog.h"
-#include "ColorScheme.h"
 #include "ColorPickerPalette.h"
+#include "ColorScheme.h"
 
 namespace CppConsUI {
 

@@ -22,10 +22,10 @@
 #include "Log.h"
 #include "Utils.h"
 
+#include "gettext.h"
 #include <cppconsui/Spacer.h>
 #include <cstdlib>
 #include <cstring>
-#include "gettext.h"
 
 BuddyList *BuddyList::my_instance_ = nullptr;
 

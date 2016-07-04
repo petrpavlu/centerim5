@@ -22,8 +22,8 @@
 #include "Log.h"
 #include "Utils.h"
 
-#include <cppconsui/ColorScheme.h>
 #include "gettext.h"
+#include <cppconsui/ColorScheme.h>
 
 BuddyListNode *BuddyListNode::createNode(PurpleBlistNode *node)
 {

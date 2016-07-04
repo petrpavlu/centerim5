@@ -23,8 +23,8 @@
 
 #include <cppconsui/TextView.h>
 #include <cppconsui/Window.h>
-#include <libpurple/purple.h>
 #include <deque>
+#include <libpurple/purple.h>
 #include <string>
 
 #define LOG (Log::instance())

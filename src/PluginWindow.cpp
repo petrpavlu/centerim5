@@ -20,8 +20,8 @@
 #include "Log.h"
 #include "Utils.h"
 
-#include <cppconsui/Label.h>
 #include "gettext.h"
+#include <cppconsui/Label.h>
 
 // TODO
 // - Improve handling of PURPLE_PREF_PATH.

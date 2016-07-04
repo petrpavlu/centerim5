@@ -19,9 +19,9 @@
 #ifndef GENERALMENU_H
 #define GENERALMENU_H
 
+#include "config.h"
 #include <cppconsui/MenuWindow.h>
 #include <libpurple/purple.h>
-#include "config.h"
 
 class GeneralMenu : public CppConsUI::MenuWindow {
 public:

@@ -28,8 +28,8 @@
 #include "Window.h"
 
 #include "libtermkey/termkey.h"
-#include <iconv.h>
 #include <deque>
+#include <iconv.h>
 
 namespace CppConsUI {
 

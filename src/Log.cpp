@@ -44,11 +44,11 @@
 
 #include "Log.h"
 
+#include "gettext.h"
 #include <cppconsui/HorizontalListBox.h>
 #include <cppconsui/Spacer.h>
 #include <cstdio>
 #include <cstring>
-#include "gettext.h"
 
 // Maximum number of lines in the Log window.
 #define LOG_WINDOW_MAX_LINES 200

@@ -25,12 +25,12 @@
 
 #include "CoreManager.h"
 
+#include "gettext.h"
 #include <cassert>
 #include <cctype>
 #include <cerrno>
 #include <cstdlib>
 #include <cstring>
-#include "gettext.h"
 
 namespace CppConsUI {
 

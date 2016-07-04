@@ -24,8 +24,8 @@
 #include <cppconsui/Button.h>
 #include <cppconsui/CheckBox.h>
 #include <cppconsui/ComboBox.h>
-#include <cppconsui/TreeView.h>
 #include <cppconsui/SplitDialog.h>
+#include <cppconsui/TreeView.h>
 #include <cppconsui/Window.h>
 
 #define BUDDYLIST (BuddyList::instance())

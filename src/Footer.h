@@ -20,8 +20,8 @@
 
 #include "CenterIM.h"
 
-#include <cppconsui/Window.h>
 #include <cppconsui/Label.h>
+#include <cppconsui/Window.h>
 
 #define FOOTER (Footer::instance())
 

@@ -20,9 +20,9 @@
 
 #include "Log.h"
 
+#include "gettext.h"
 #include <cstring>
 #include <typeinfo>
-#include "gettext.h"
 
 Accounts *Accounts::my_instance_ = nullptr;
 

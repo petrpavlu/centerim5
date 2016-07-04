@@ -22,11 +22,11 @@
 #include "Conversations.h"
 #include "Footer.h"
 
+#include "gettext.h"
 #include <cppconsui/ColorScheme.h>
 #include <cstdlib>
 #include <cstring>
 #include <sys/stat.h>
-#include "gettext.h"
 
 Conversation::Conversation(PurpleConversation *conv)
   : Window(0, 0, 80, 24), conv_(conv), filename_(nullptr), logfile_(nullptr),

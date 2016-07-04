@@ -19,8 +19,8 @@
 
 #include "Log.h"
 
-#include <cstring>
 #include "gettext.h"
+#include <cstring>
 
 Notify *Notify::my_instance_ = nullptr;
 

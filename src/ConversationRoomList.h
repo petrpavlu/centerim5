@@ -18,8 +18,8 @@
 #ifndef CONVERSATION_ROOMLIST_H
 #define CONVERSATION_ROOMLIST_H
 
-#include <cppconsui/ListBox.h>
 #include <cppconsui/Button.h>
+#include <cppconsui/ListBox.h>
 #include <libpurple/purple.h>
 
 #include <map>

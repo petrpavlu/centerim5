@@ -25,9 +25,9 @@
 #include "ColorScheme.h"
 #include "Dialog.h"
 
+#include "gettext.h"
 #include <cassert>
 #include <cstring>
-#include "gettext.h"
 
 namespace CppConsUI {
 

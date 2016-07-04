@@ -19,13 +19,13 @@
 #ifndef CONVERSATION_H
 #define CONVERSATION_H
 
-#include "Log.h"
 #include "ConversationRoomList.h"
+#include "Log.h"
 
 #include <cppconsui/AbstractLine.h>
-#include <cppconsui/VerticalLine.h>
 #include <cppconsui/TextEdit.h>
 #include <cppconsui/TextView.h>
+#include <cppconsui/VerticalLine.h>
 #include <cppconsui/Window.h>
 #include <libpurple/purple.h>
 

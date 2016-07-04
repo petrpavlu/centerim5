@@ -21,8 +21,8 @@
 #include "Log.h"
 #include "Utils.h"
 
-#include <cstring>
 #include "gettext.h"
+#include <cstring>
 
 AccountWindow::AccountWindow() : SplitDialog(0, 0, 80, 24, _("Accounts"))
 {

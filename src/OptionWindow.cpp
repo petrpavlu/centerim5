@@ -20,8 +20,8 @@
 #include "Log.h"
 #include "Utils.h"
 
-#include <cppconsui/TreeView.h>
 #include "gettext.h"
+#include <cppconsui/TreeView.h>
 
 OptionWindow::OptionWindow() : SplitDialog(0, 0, 80, 24, _("Config options"))
 {

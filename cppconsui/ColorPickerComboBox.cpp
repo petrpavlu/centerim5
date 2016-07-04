@@ -23,8 +23,8 @@
 
 #include "ColorPickerComboBox.h"
 
-#include <algorithm>
 #include "gettext.h"
+#include <algorithm>
 
 // Invalid color number that is used for the "More..." button in
 // ColorPickerComboBox.

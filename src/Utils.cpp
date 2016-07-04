@@ -19,9 +19,9 @@
 
 #include "Log.h"
 
+#include "gettext.h"
 #include <cerrno>
 #include <cstdlib>
-#include "gettext.h"
 
 namespace Utils {
 

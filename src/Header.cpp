@@ -20,8 +20,8 @@
 #include "CenterIM.h"
 #include "Utils.h"
 
-#include <cstring>
 #include "config.h"
+#include <cstring>
 
 Header *Header::my_instance_ = nullptr;
 

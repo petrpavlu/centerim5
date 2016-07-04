@@ -21,17 +21,17 @@
 #include "ColorScheme.h"
 #include "KeyConfig.h"
 
+#include "gettext.h"
 #include <cassert>
 #include <cerrno>
 #include <cstdio>
 #include <cstring>
 #include <langinfo.h>
-#include <sys/ioctl.h>
 #include <signal.h>
+#include <sys/ioctl.h>
 #include <termios.h>
 #include <time.h>
 #include <unistd.h>
-#include "gettext.h"
 
 #define ICONV_NONE reinterpret_cast<iconv_t>(-1)
 
