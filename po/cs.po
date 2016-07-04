@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: centerim5\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2016-06-13 20:51+0100\n"
+"POT-Creation-Date: 2016-07-04 20:02+0100\n"
 "PO-Revision-Date: 2015-07-18 10:51+0100\n"
 "Last-Translator: Petr Pavlu <setup@dagobah.cz>\n"
 "Language-Team: Czech\n"
@@ -519,12 +519,12 @@ msgstr[2] "+ [%s] %s: Opětovné připojení za %d sekund"
 msgid "+ [%s] %s: Account disabled"
 msgstr "+ [%s] %s: Účet zakázán"
 
-#: src/Conversation.cpp:69 src/Conversation.cpp:528
+#: src/Conversation.cpp:69 src/Conversation.cpp:533
 #, c-format
 msgid "Error opening conversation logfile '%s' (%s)."
 msgstr "Chyba při otevírání log souboru konverzace \"%s\" (%s)."
 
-#: src/Conversation.cpp:135
+#: src/Conversation.cpp:140
 #, c-format
 msgid ""
 "%s buddy list, %s main menu, %s/%s/%s next/prev/act conv, %s send, %s expand"
@@ -532,22 +532,22 @@ msgstr ""
 "%s kamarádi, %s hlavní nabídka, %s/%s/%s násl/před/akt konv, %s odeslat, %s "
 "rozšířit"
 
-#: src/Conversation.cpp:240
+#: src/Conversation.cpp:245
 #, c-format
 msgid "Error writing to conversation logfile (%s)."
 msgstr "Chyba při zápisu do log souboru konverzace (%s)."
 
-#: src/Conversation.cpp:245
+#: src/Conversation.cpp:250
 #, c-format
 msgid "Error flushing conversation logfile (%s)."
 msgstr "Chyba při zápisu (flush) do log souboru konverzace (%s)."
 
-#: src/Conversation.cpp:487
+#: src/Conversation.cpp:492
 #, c-format
 msgid "Error creating directory '%s'."
 msgstr "Chyba při vytváření adresáře \"%s\"."
 
-#: src/Conversation.cpp:599 src/Conversation.cpp:643
+#: src/Conversation.cpp:604 src/Conversation.cpp:648
 #, c-format
 msgid ""
 "Invalid message detected in conversation logfile '%s'. The message was "
@@ -556,32 +556,32 @@ msgstr ""
 "Detekována neplatná zpráva v log souboru konverzace \"%s\". Zpráva byla "
 "přeskočena."
 
-#: src/Conversation.cpp:659
+#: src/Conversation.cpp:664
 #, c-format
 msgid "Error reading from conversation logfile '%s' (%s)."
 msgstr "Chyba při čtení z log souboru konverzace \"%s\" (%s)."
 
-#: src/Conversation.cpp:690
+#: src/Conversation.cpp:695
 msgid "Wrong number of arguments passed to the command."
 msgstr "Příkazu byl předán špatný počet argumentů."
 
-#: src/Conversation.cpp:695
+#: src/Conversation.cpp:700
 msgid "The command failed for an unknown reason."
 msgstr "Příkaz selhal z neznámého důvodu."
 
-#: src/Conversation.cpp:701
+#: src/Conversation.cpp:706
 msgid "The command only works in chats, not IMs."
 msgstr "Příkaz je platný pouze pro chaty, ne IM."
 
-#: src/Conversation.cpp:705
+#: src/Conversation.cpp:710
 msgid "The command only works in IMs, not chats."
 msgstr "Příkaz je platný pouze pro IM, ne chaty."
 
-#: src/Conversation.cpp:710
+#: src/Conversation.cpp:715
 msgid "The command does not work on this protocol."
 msgstr "Příkaz není platný na tomto protokolu."
 
-#: src/Conversations.cpp:279
+#: src/Conversations.cpp:284
 #, c-format
 msgid "Unhandled conversation type '%d'."
 msgstr "Nepodporovaný druh konverzace \"%d\"."
@@ -986,123 +986,123 @@ msgstr ""
 msgid "DEFAULT "
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:154
+#: cppconsui/ConsUICurses.cpp:169
 #, c-format
 msgid "Adding character '?' on screen at position (x=%d, y=%d) failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:172
+#: cppconsui/ConsUICurses.cpp:188
 #, c-format
 msgid "Adding character ' ' on screen at position (x=%d, y=%d) failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:199
+#: cppconsui/ConsUICurses.cpp:216
 msgid "Setting complex character from Unicode character #%"
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:206
+#: cppconsui/ConsUICurses.cpp:223
 msgid "Adding Unicode character #%"
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:271
+#: cppconsui/ConsUICurses.cpp:288
 #, c-format
 msgid "Setting complex character from character '%c' failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:387
+#: cppconsui/ConsUICurses.cpp:404
 #, c-format
 msgid "Adding line character %s on screen at position (x=%d, y=%d) failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:399
+#: cppconsui/ConsUICurses.cpp:416
 #, c-format
 msgid "Turning on window attributes '%#x' failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:410
+#: cppconsui/ConsUICurses.cpp:427
 #, c-format
 msgid "Turning off window attributes '%#x' failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:426
+#: cppconsui/ConsUICurses.cpp:443
 #, c-format
 msgid ""
 "Changing window attributes to '%#lx' and color pair to '%d' on screen at "
 "position (x=%d, y=%d) failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:446
+#: cppconsui/ConsUICurses.cpp:463
 msgid "Obtaining window attributes failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:461
+#: cppconsui/ConsUICurses.cpp:478
 #, c-format
 msgid "Setting window attributes to '%#lx' and color pair to '%d' failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:512
+#: cppconsui/ConsUICurses.cpp:528
 msgid "Initialization of the terminal for Curses session failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:519
+#: cppconsui/ConsUICurses.cpp:535
 #, fuzzy
 msgid "Initialization of color support failed."
 msgstr "Nezdařila se inicializace knihovny libpurple."
 
-#: cppconsui/ConsUICurses.cpp:524
+#: cppconsui/ConsUICurses.cpp:540
 #, fuzzy
 msgid "Initialization of default colors failed."
 msgstr "Nezdařila se inicializace knihovny libpurple."
 
-#: cppconsui/ConsUICurses.cpp:529
+#: cppconsui/ConsUICurses.cpp:545
 #, fuzzy
 msgid "Hiding the cursor failed."
 msgstr "Přidání barevného páru selhalo."
 
-#: cppconsui/ConsUICurses.cpp:534
+#: cppconsui/ConsUICurses.cpp:550
 #, fuzzy
 msgid "Disabling newline translation failed."
 msgstr "Nezdařila se inicializace knihovny libpurple."
 
-#: cppconsui/ConsUICurses.cpp:539
+#: cppconsui/ConsUICurses.cpp:555
 msgid "Placing the terminal into raw mode failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:573
+#: cppconsui/ConsUICurses.cpp:591
 msgid "Finalization of Curses session failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:601
+#: cppconsui/ConsUICurses.cpp:619
 #, c-format
 msgid ""
 "Adding of color pair '%d' (foreground=%d, background=%d) failed because "
 "color pair limit of '%d' was exceeded."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:610
+#: cppconsui/ConsUICurses.cpp:628
 #, c-format
 msgid ""
 "Initialization of color pair '%d' to (foreground=%d, background=%d) failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:639
+#: cppconsui/ConsUICurses.cpp:657
 msgid "Erasing the screen failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:648
+#: cppconsui/ConsUICurses.cpp:666
 msgid "Clearing the screen failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:657
+#: cppconsui/ConsUICurses.cpp:675
 msgid "Refreshing the screen failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:666
+#: cppconsui/ConsUICurses.cpp:684
 #, fuzzy
 msgid "Producing beep alert failed."
 msgstr "Přidání barevného páru selhalo."
 
-#: cppconsui/ConsUICurses.cpp:691
+#: cppconsui/ConsUICurses.cpp:705
 #, c-format
 msgid "Changing the Curses terminal size to (width=%d, height=%d) failed."
 msgstr ""

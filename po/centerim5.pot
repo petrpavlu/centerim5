@@ -6,10 +6,10 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: centerim5 5.0.0beta2.87-b7ba-dirty\n"
+"Project-Id-Version: centerim5 5.0.0beta2.97-ef2d-dirty\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2016-06-13 20:51+0100\n"
+"POT-Creation-Date: 2016-07-04 20:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -503,65 +503,65 @@ msgstr[1] ""
 msgid "+ [%s] %s: Account disabled"
 msgstr ""
 
-#: src/Conversation.cpp:69 src/Conversation.cpp:528
+#: src/Conversation.cpp:69 src/Conversation.cpp:533
 #, c-format
 msgid "Error opening conversation logfile '%s' (%s)."
 msgstr ""
 
-#: src/Conversation.cpp:135
+#: src/Conversation.cpp:140
 #, c-format
 msgid ""
 "%s buddy list, %s main menu, %s/%s/%s next/prev/act conv, %s send, %s expand"
 msgstr ""
 
-#: src/Conversation.cpp:240
+#: src/Conversation.cpp:245
 #, c-format
 msgid "Error writing to conversation logfile (%s)."
 msgstr ""
 
-#: src/Conversation.cpp:245
+#: src/Conversation.cpp:250
 #, c-format
 msgid "Error flushing conversation logfile (%s)."
 msgstr ""
 
-#: src/Conversation.cpp:487
+#: src/Conversation.cpp:492
 #, c-format
 msgid "Error creating directory '%s'."
 msgstr ""
 
-#: src/Conversation.cpp:599 src/Conversation.cpp:643
+#: src/Conversation.cpp:604 src/Conversation.cpp:648
 #, c-format
 msgid ""
 "Invalid message detected in conversation logfile '%s'. The message was "
 "skipped."
 msgstr ""
 
-#: src/Conversation.cpp:659
+#: src/Conversation.cpp:664
 #, c-format
 msgid "Error reading from conversation logfile '%s' (%s)."
 msgstr ""
 
-#: src/Conversation.cpp:690
+#: src/Conversation.cpp:695
 msgid "Wrong number of arguments passed to the command."
 msgstr ""
 
-#: src/Conversation.cpp:695
+#: src/Conversation.cpp:700
 msgid "The command failed for an unknown reason."
 msgstr ""
 
-#: src/Conversation.cpp:701
+#: src/Conversation.cpp:706
 msgid "The command only works in chats, not IMs."
 msgstr ""
 
-#: src/Conversation.cpp:705
+#: src/Conversation.cpp:710
 msgid "The command only works in IMs, not chats."
 msgstr ""
 
-#: src/Conversation.cpp:710
+#: src/Conversation.cpp:715
 msgid "The command does not work on this protocol."
 msgstr ""
 
-#: src/Conversations.cpp:279
+#: src/Conversations.cpp:284
 #, c-format
 msgid "Unhandled conversation type '%d'."
 msgstr ""
@@ -962,118 +962,118 @@ msgstr ""
 msgid "DEFAULT "
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:154
+#: cppconsui/ConsUICurses.cpp:169
 #, c-format
 msgid "Adding character '?' on screen at position (x=%d, y=%d) failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:172
+#: cppconsui/ConsUICurses.cpp:188
 #, c-format
 msgid "Adding character ' ' on screen at position (x=%d, y=%d) failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:199
+#: cppconsui/ConsUICurses.cpp:216
 msgid "Setting complex character from Unicode character #%"
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:206
+#: cppconsui/ConsUICurses.cpp:223
 msgid "Adding Unicode character #%"
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:271
+#: cppconsui/ConsUICurses.cpp:288
 #, c-format
 msgid "Setting complex character from character '%c' failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:387
+#: cppconsui/ConsUICurses.cpp:404
 #, c-format
 msgid "Adding line character %s on screen at position (x=%d, y=%d) failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:399
+#: cppconsui/ConsUICurses.cpp:416
 #, c-format
 msgid "Turning on window attributes '%#x' failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:410
+#: cppconsui/ConsUICurses.cpp:427
 #, c-format
 msgid "Turning off window attributes '%#x' failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:426
+#: cppconsui/ConsUICurses.cpp:443
 #, c-format
 msgid ""
 "Changing window attributes to '%#lx' and color pair to '%d' on screen at "
 "position (x=%d, y=%d) failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:446
+#: cppconsui/ConsUICurses.cpp:463
 msgid "Obtaining window attributes failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:461
+#: cppconsui/ConsUICurses.cpp:478
 #, c-format
 msgid "Setting window attributes to '%#lx' and color pair to '%d' failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:512
+#: cppconsui/ConsUICurses.cpp:528
 msgid "Initialization of the terminal for Curses session failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:519
+#: cppconsui/ConsUICurses.cpp:535
 msgid "Initialization of color support failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:524
+#: cppconsui/ConsUICurses.cpp:540
 msgid "Initialization of default colors failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:529
+#: cppconsui/ConsUICurses.cpp:545
 msgid "Hiding the cursor failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:534
+#: cppconsui/ConsUICurses.cpp:550
 msgid "Disabling newline translation failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:539
+#: cppconsui/ConsUICurses.cpp:555
 msgid "Placing the terminal into raw mode failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:573
+#: cppconsui/ConsUICurses.cpp:591
 msgid "Finalization of Curses session failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:601
+#: cppconsui/ConsUICurses.cpp:619
 #, c-format
 msgid ""
 "Adding of color pair '%d' (foreground=%d, background=%d) failed because "
 "color pair limit of '%d' was exceeded."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:610
+#: cppconsui/ConsUICurses.cpp:628
 #, c-format
 msgid ""
 "Initialization of color pair '%d' to (foreground=%d, background=%d) failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:639
+#: cppconsui/ConsUICurses.cpp:657
 msgid "Erasing the screen failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:648
+#: cppconsui/ConsUICurses.cpp:666
 msgid "Clearing the screen failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:657
+#: cppconsui/ConsUICurses.cpp:675
 msgid "Refreshing the screen failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:666
+#: cppconsui/ConsUICurses.cpp:684
 msgid "Producing beep alert failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:691
+#: cppconsui/ConsUICurses.cpp:705
 #, c-format
 msgid "Changing the Curses terminal size to (width=%d, height=%d) failed."
 msgstr ""

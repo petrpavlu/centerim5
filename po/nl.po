@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: centerim5 5.0.0beta1.28-6b68-dirty\n"
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
-"POT-Creation-Date: 2016-06-13 20:51+0100\n"
+"POT-Creation-Date: 2016-07-04 20:02+0100\n"
 "PO-Revision-Date: 2015-07-18 10:52+0100\n"
 "Last-Translator: CBke <cb@linux.be>\n"
 "Language-Team: Dutch\n"
@@ -520,12 +520,12 @@ msgstr[1] "+ [%s] %s: Automatisch herverbinden in %d seconden"
 msgid "+ [%s] %s: Account disabled"
 msgstr "+ [%s] %s: Account gedeactiveerd"
 
-#: src/Conversation.cpp:69 src/Conversation.cpp:528
+#: src/Conversation.cpp:69 src/Conversation.cpp:533
 #, c-format
 msgid "Error opening conversation logfile '%s' (%s)."
 msgstr "Fout bij openen conversatie logbestand '%s' (%s)."
 
-#: src/Conversation.cpp:135
+#: src/Conversation.cpp:140
 #, c-format
 msgid ""
 "%s buddy list, %s main menu, %s/%s/%s next/prev/act conv, %s send, %s expand"
@@ -533,23 +533,23 @@ msgstr ""
 "%s vriendenlijst, %s menu, %s/%s/%s wisselen conv, %s verzenden, %s "
 "uitklappen"
 
-#: src/Conversation.cpp:240
+#: src/Conversation.cpp:245
 #, c-format
 msgid "Error writing to conversation logfile (%s)."
 msgstr "Fout bij het schrijven van conversatie naar logbestand (%s)."
 
-#: src/Conversation.cpp:245
+#: src/Conversation.cpp:250
 #, c-format
 msgid "Error flushing conversation logfile (%s)."
 msgstr ""
 "Fout bij het wegschrijven van de buffers naar conversatie logbestand (%s)."
 
-#: src/Conversation.cpp:487
+#: src/Conversation.cpp:492
 #, c-format
 msgid "Error creating directory '%s'."
 msgstr "Fout bij het aanmaken van directory '%s'."
 
-#: src/Conversation.cpp:599 src/Conversation.cpp:643
+#: src/Conversation.cpp:604 src/Conversation.cpp:648
 #, c-format
 msgid ""
 "Invalid message detected in conversation logfile '%s'. The message was "
@@ -558,32 +558,32 @@ msgstr ""
 "Ongeldig bericht gevonden in conversatie logbestand '%s'. Het bericht werd "
 "overgeslagen."
 
-#: src/Conversation.cpp:659
+#: src/Conversation.cpp:664
 #, c-format
 msgid "Error reading from conversation logfile '%s' (%s)."
 msgstr "Fout bij lezen van conversatie logbestand '%s' (%s)."
 
-#: src/Conversation.cpp:690
+#: src/Conversation.cpp:695
 msgid "Wrong number of arguments passed to the command."
 msgstr "Incorrect aantal parameters meegegeven aan het commando."
 
-#: src/Conversation.cpp:695
+#: src/Conversation.cpp:700
 msgid "The command failed for an unknown reason."
 msgstr "Het commando is voor onbekende reden mislukt."
 
-#: src/Conversation.cpp:701
+#: src/Conversation.cpp:706
 msgid "The command only works in chats, not IMs."
 msgstr "Het commando werkt enkel in chats, niet bij IM's."
 
-#: src/Conversation.cpp:705
+#: src/Conversation.cpp:710
 msgid "The command only works in IMs, not chats."
 msgstr "Het commando werkt enkel bij IM's, niet bij chats."
 
-#: src/Conversation.cpp:710
+#: src/Conversation.cpp:715
 msgid "The command does not work on this protocol."
 msgstr "Het commando werkt niet bij dit protocol."
 
-#: src/Conversations.cpp:279
+#: src/Conversations.cpp:284
 #, c-format
 msgid "Unhandled conversation type '%d'."
 msgstr "Niet ondersteund conversatie type: '%d'."
@@ -987,123 +987,123 @@ msgstr "DEFAULT"
 msgid "DEFAULT "
 msgstr "DEFAULT "
 
-#: cppconsui/ConsUICurses.cpp:154
+#: cppconsui/ConsUICurses.cpp:169
 #, c-format
 msgid "Adding character '?' on screen at position (x=%d, y=%d) failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:172
+#: cppconsui/ConsUICurses.cpp:188
 #, c-format
 msgid "Adding character ' ' on screen at position (x=%d, y=%d) failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:199
+#: cppconsui/ConsUICurses.cpp:216
 msgid "Setting complex character from Unicode character #%"
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:206
+#: cppconsui/ConsUICurses.cpp:223
 msgid "Adding Unicode character #%"
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:271
+#: cppconsui/ConsUICurses.cpp:288
 #, c-format
 msgid "Setting complex character from character '%c' failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:387
+#: cppconsui/ConsUICurses.cpp:404
 #, c-format
 msgid "Adding line character %s on screen at position (x=%d, y=%d) failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:399
+#: cppconsui/ConsUICurses.cpp:416
 #, c-format
 msgid "Turning on window attributes '%#x' failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:410
+#: cppconsui/ConsUICurses.cpp:427
 #, c-format
 msgid "Turning off window attributes '%#x' failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:426
+#: cppconsui/ConsUICurses.cpp:443
 #, c-format
 msgid ""
 "Changing window attributes to '%#lx' and color pair to '%d' on screen at "
 "position (x=%d, y=%d) failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:446
+#: cppconsui/ConsUICurses.cpp:463
 msgid "Obtaining window attributes failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:461
+#: cppconsui/ConsUICurses.cpp:478
 #, c-format
 msgid "Setting window attributes to '%#lx' and color pair to '%d' failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:512
+#: cppconsui/ConsUICurses.cpp:528
 msgid "Initialization of the terminal for Curses session failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:519
+#: cppconsui/ConsUICurses.cpp:535
 #, fuzzy
 msgid "Initialization of color support failed."
 msgstr "Initialisatie van CppConsUI is niet gelukt.\n"
 
-#: cppconsui/ConsUICurses.cpp:524
+#: cppconsui/ConsUICurses.cpp:540
 #, fuzzy
 msgid "Initialization of default colors failed."
 msgstr "Initialisatie van CppConsUI is niet gelukt.\n"
 
-#: cppconsui/ConsUICurses.cpp:529
+#: cppconsui/ConsUICurses.cpp:545
 #, fuzzy
 msgid "Hiding the cursor failed."
 msgstr "Toevoegen van Kleurenpaar mislukt."
 
-#: cppconsui/ConsUICurses.cpp:534
+#: cppconsui/ConsUICurses.cpp:550
 #, fuzzy
 msgid "Disabling newline translation failed."
 msgstr "Initialisatie van libpurple is niet gelukt."
 
-#: cppconsui/ConsUICurses.cpp:539
+#: cppconsui/ConsUICurses.cpp:555
 msgid "Placing the terminal into raw mode failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:573
+#: cppconsui/ConsUICurses.cpp:591
 msgid "Finalization of Curses session failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:601
+#: cppconsui/ConsUICurses.cpp:619
 #, c-format
 msgid ""
 "Adding of color pair '%d' (foreground=%d, background=%d) failed because "
 "color pair limit of '%d' was exceeded."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:610
+#: cppconsui/ConsUICurses.cpp:628
 #, c-format
 msgid ""
 "Initialization of color pair '%d' to (foreground=%d, background=%d) failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:639
+#: cppconsui/ConsUICurses.cpp:657
 msgid "Erasing the screen failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:648
+#: cppconsui/ConsUICurses.cpp:666
 msgid "Clearing the screen failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:657
+#: cppconsui/ConsUICurses.cpp:675
 msgid "Refreshing the screen failed."
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:666
+#: cppconsui/ConsUICurses.cpp:684
 #, fuzzy
 msgid "Producing beep alert failed."
 msgstr "Toevoegen van Kleurenpaar mislukt."
 
-#: cppconsui/ConsUICurses.cpp:691
+#: cppconsui/ConsUICurses.cpp:705
 #, c-format
 msgid "Changing the Curses terminal size to (width=%d, height=%d) failed."
 msgstr ""

@@ -146,6 +146,11 @@ Conversations::Conversations()
   purple_signal_connect(
     handle, "buddy-typing-stopped", this, PURPLE_CALLBACK(buddy_typing_), this);
 
+  // Setup callbacks for connections in relation to conversations.
+  void *connections_handle = purple_connections_get_handle();
+  purple_signal_connect(connections_handle, "signed-on", this,
+    PURPLE_CALLBACK(account_signed_on_), this);
+
   onScreenResized();
 }
 
@@ -428,8 +433,40 @@ void Conversations::buddy_typing(PurpleAccount *account, const char *who)
   updateLabel(i);
 }
 
-void Conversations::send_typing_pref_change(
-  const char *name, PurplePrefType /*type*/, gconstpointer /*val*/)
+void Conversations::account_signed_on(PurpleConnection *gc)
+{
+  for (ConvChild &conv_child : conversations_) {
+    PurpleConversation *purple_conv = conv_child.conv->getPurpleConversation();
+
+    // Only process chats for this connection.
+    if (purple_conversation_get_gc(purple_conv) != gc)
+      continue;
+
+    // TODO Add and consult the "want-to-rejoin" configuration parameter?
+
+    // Look up the chat from the buddy list.
+    PurpleChat *purple_chat =
+      purple_blist_find_chat(purple_conversation_get_account(purple_conv),
+        purple_conversation_get_name(purple_conv));
+
+    GHashTable *components = NULL;
+
+    if (purple_chat != nullptr)
+      components = purple_chat_get_components(purple_chat);
+    else {
+      // Use defaults if the chat cannot be found.
+      PurplePluginProtocolInfo *info =
+        PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+      components =
+        info->chat_info_defaults(gc, purple_conversation_get_name(purple_conv));
+    }
+
+    serv_join_chat(gc, components);
+  }
+}
+
+void Conversations::send_typing_pref_change(const char *name,
+    PurplePrefType /*type*/, gconstpointer /*val*/)
 {
   g_assert(std::strcmp(name, "/purple/conversations/im/send_typing") == 0);
   send_typing_ = purple_prefs_get_bool(name);

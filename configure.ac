@@ -138,7 +138,7 @@ AC_SUBST([GLIB_LIBS])
 PKG_CHECK_EXISTS([glib-2.0 >= 2.32.0], [build_extaction=yes],
 	[build_extaction=no
 	AC_MSG_WARN([cannot find glib version >= 2.32, extaction plugin disabled])])
-AM_CONDITIONAL(BUILD_EXTACTION, test "x$build_extaction" = xyes)
+AM_CONDITIONAL(BUILD_EXTACTION, test "$build_extaction" = yes)
 
 # libsigc++
 # v2.2.0 was released on 2008-02-22.
@@ -147,10 +147,13 @@ AC_SUBST([SIGC_CFLAGS])
 AC_SUBST([SIGC_LIBS])
 
 # ncursesw
+AC_CHECK_PROGS(NCURSES_CONFIG, [ncursesw6-config ncursesw5-config])
+AS_IF([test "$NCURSES_CONFIG" = ""],
+	[AC_MSG_ERROR([the ncursesw6-config or ncursesw5-config helper script must be installed to build])])
 AC_PATH_LIB_LIBCONFIG
-AC_PATH_LIB([ncursesw], , [ncurses.h], [ncursesw5-config], , , [
+AC_PATH_LIB([ncursesw], , [ncurses.h], ["$NCURSES_CONFIG"], , , [
 	AC_MSG_RESULT([no])
-	AC_ERROR([You must have the ncursesw library and developement headers installed to build.])])
+	AC_MSG_ERROR([the ncursesw library and developement headers must be installed to build])])
 
 # adl_RECURSIVE_EVAL(VALUE, RESULT)
 # =================================

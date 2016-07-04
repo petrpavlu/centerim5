@@ -153,6 +153,12 @@ private:
   }
   void buddy_typing(PurpleAccount *account, const char *who);
 
+  static void account_signed_on_(PurpleConnection *gc, gpointer data)
+  {
+    reinterpret_cast<Conversations *>(data)->account_signed_on(gc);
+  }
+  void account_signed_on(PurpleConnection *gc);
+
   // Called when "/purple/conversations/im/send_typing" preference changes.
   static void send_typing_pref_change_(
     const char *name, PurplePrefType type, gconstpointer val, gpointer data)
