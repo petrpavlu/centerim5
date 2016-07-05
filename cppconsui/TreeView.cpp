@@ -540,11 +540,11 @@ TreeView::TreeNode TreeView::addNode(Widget &widget)
 void TreeView::fixFocus()
 {
   // This function is called when a widget tree is reorganized (a node was moved
-  // in another position in the tree). In this case iti is possible that there
+  // in another position in the tree). In this case, it is possible that there
   // can be revealed a widget that could grab the focus (if there is no focused
-  // widget yet) or it is also possible that currently focused widget was hidden
-  // by this reorganization (then the focus has to be handled to another
-  // widget). */
+  // widget yet) or it is also possible that the currently focused widget was
+  // hidden by this reorganization (then the focus has to be handled to another
+  // widget).
 
   updateFocusChain();
 
@@ -590,7 +590,7 @@ bool TreeView::isNodeOpenable(SiblingIterator &node) const
 
 bool TreeView::isNodeVisible(NodeReference &node) const
 {
-  // node is visible if all predecessors are visible and open
+  // Node is visible if all predecessors are visible and open.
   NodeReference act = node;
   bool first = true;
   while (act != thetree_.begin()) {
