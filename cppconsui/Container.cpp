@@ -25,6 +25,7 @@
 
 #include "ColorScheme.h"
 
+#include <algorithm>
 #include <cassert>
 
 namespace CppConsUI {
@@ -490,6 +491,33 @@ void Container::updateArea()
   // Update all child areas.
   for (Widget *widget : children_)
     updateChildArea(*widget);
+}
+
+void Container::updateAreaPostRealSizeChange(
+  const Size &oldsize, const Size &newsize)
+{
+  // If the new size is bigger than the old one then adjust the scroll in a way
+  // that the area on the left/top gets revealed.
+  bool scrolled = false;
+  if (scroll_xpos_ > 0) {
+    int x_diff = newsize.getWidth() - oldsize.getWidth();
+    if (x_diff > 0) {
+      scroll_xpos_ -= std::min(x_diff, scroll_xpos_);
+      scrolled = true;
+    }
+  }
+  if (scroll_ypos_ > 0) {
+    int y_diff = newsize.getHeight() - oldsize.getHeight();
+    if (y_diff > 0) {
+      scroll_ypos_ -= std::min(y_diff, scroll_ypos_);
+      scrolled = true;
+    }
+  }
+  if (scrolled)
+    redraw();
+
+  // Finish normal post-setRealSize() processing.
+  Widget::updateAreaPostRealSizeChange(oldsize, newsize);
 }
 
 void Container::updateChildArea(Widget &child)

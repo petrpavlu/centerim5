@@ -172,6 +172,8 @@ protected:
 
   // Widget
   virtual void updateArea() override;
+  virtual void updateAreaPostRealSizeChange(
+    const Size &oldsize, const Size &newsize) override;
 
   /// Sets a drawing area for a given widget.
   virtual void updateChildArea(Widget &child);

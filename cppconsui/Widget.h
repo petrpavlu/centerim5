@@ -196,6 +196,10 @@ protected:
   /// widget change.
   virtual void updateArea();
 
+  /// Peforms operations needed after setRealSize() is processed.
+  virtual void updateAreaPostRealSizeChange(
+    const Size &oldsize, const Size &newsize);
+
   /// Informs @ref CoreManager that the widget has been updated and the screen
   /// should be redrawn.
   virtual void redraw();

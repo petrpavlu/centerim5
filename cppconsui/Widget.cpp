@@ -248,10 +248,13 @@ void Widget::setRealSize(int neww, int newh)
   if (neww == real_width_ && newh == real_height_)
     return;
 
+  Size oldsize(real_width_, real_height_);
+  Size newsize(neww, newh);
+
   real_width_ = neww;
   real_height_ = newh;
 
-  updateArea();
+  updateAreaPostRealSizeChange(oldsize, newsize);
 }
 
 void Widget::setColorScheme(int new_color_scheme)
@@ -335,6 +338,13 @@ void Widget::signalAbsolutePositionChange()
 void Widget::updateArea()
 {
   // Empty for Widget.
+}
+
+void Widget::updateAreaPostRealSizeChange(
+  const Size & /*oldsize*/, const Size & /*newsize*/)
+{
+  // Normal widgets only need to call updateArea().
+  updateArea();
 }
 
 void Widget::redraw()
