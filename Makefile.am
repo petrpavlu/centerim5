@@ -10,7 +10,7 @@ EXTRA_DIST = \
 dist_man_MANS = centerim5.1
 
 BUILT_SOURCES = $(top_srcdir)/.version
-# we want to execute this target everytime make is run
+# We want to execute this target everytime make is run.
 .PHONY: $(top_srcdir)/.version
 $(top_srcdir)/.version:
 	@cd $(top_srcdir); version=`misc/git-version-gen .tarball-version`; \
@@ -24,7 +24,7 @@ dist-hook:
 doc:
 	cd doc; $(MAKE) doc
 
-# package in all cmake files
+# Package in all cmake files.
 EXTRA_DIST += \
 	CMakeLists.txt \
 	config.h.cmake \
