@@ -1,4 +1,4 @@
-AC_PREREQ([2.59])
+AC_PREREQ([2.69])
 AC_INIT([centerim5],
 	m4_esyscmd([misc/git-version-gen .tarball-version]),
 	[http://bugzilla.centerim.org/], [centerim5],
