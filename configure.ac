@@ -113,8 +113,9 @@ AS_IF([test "$enable_debug" = yes],
 
 # Checks for libraries.
 
+# gettext -- v0.18.1 was released on 2010-06-04.
 AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.18.2])
+AM_GNU_GETTEXT_VERSION([0.18.1])
 
 # libpurple -- v2.9.0 is needed because of PurpleConvChatBuddy::ui_data!, this
 # version was released on 2011-06-23.
