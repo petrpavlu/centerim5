@@ -1,14 +1,7 @@
 # Find required libraries.
 find_package(PkgConfig)
 pkg_check_modules(PURPLE REQUIRED "purple >= 2.7.0")
-pkg_check_modules(GLIB2 REQUIRED "glib-2.0 >= 2.16.0")
-# The extaction plugin requires a newer version of glib, see if it is
-# available.
-pkg_check_modules(GLIB232 QUIET "glib-2.0 >= 2.32.0")
-if(NOT GLIB232_FOUND)
-  message(STATUS
-    "Cannot find glib version >= 2.32, extaction plugin disabled")
-endif()
+pkg_check_modules(GLIB2 REQUIRED "glib-2.0 >= 2.32.0")
 pkg_check_modules(SIGC REQUIRED "sigc++-2.0 >= 2.2.0")
 
 find_package(NCURSESW REQUIRED)

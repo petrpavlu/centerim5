@@ -125,20 +125,12 @@ PKG_CHECK_MODULES([PURPLE], [purple >= 2.7.0])
 AC_SUBST([PURPLE_CFLAGS])
 AC_SUBST([PURPLE_LIBS])
 
-# glib
-# v2.16.0 is needed because of g_markup_parse_context_get_element_stack(),
-# this version was released on 2009-03-13.
-# find . \( -name \*.cpp -o -name \*.h \) -print0 | xargs -0 sed -n 's/.*\(g_[^ (]*\)(.*/\1/p' | sort | uniq | less
-PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.16.0])
+# glib -- v2.32.0 is needed because of g_environ_setenv(), this version was
+# released on 2012-03-24.
+# find . \( -name \*.c -o -name \*.cpp -o -name \*.h \) -print0 | xargs -0 sed -n 's/.*\(g_[^ (]*\)(.*/\1/p' | sort -u | less
+PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.32.0])
 AC_SUBST([GLIB_CFLAGS])
 AC_SUBST([GLIB_LIBS])
-
-# The extaction plugin requires a newer version of glib, check whether it is
-# available.
-PKG_CHECK_EXISTS([glib-2.0 >= 2.32.0], [build_extaction=yes],
-	[build_extaction=no
-	AC_MSG_WARN([cannot find glib version >= 2.32, extaction plugin disabled])])
-AM_CONDITIONAL(BUILD_EXTACTION, test "$build_extaction" = yes)
 
 # libsigc++
 # v2.2.0 was released on 2008-02-22.
