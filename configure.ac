@@ -116,11 +116,9 @@ AS_IF([test "$enable_debug" = yes],
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.18.2])
 
-# libpurple
-# v2.7.0 is needed because of purple_account_get_name_for_display(), this
-# version was released on 2010-05-13 and is available in both Debian Stable
-# (squeeze) and CentOS 6.
-# find . \( -name \*.cpp -o -name \*.h \) -print0 | xargs -0 sed -n 's/.*\(purple_[^( ]*\)(.*/\1/p' | sort | uniq | less
+# libpurple -- v2.9.0 is needed because of PurpleConvChatBuddy::ui_data!, this
+# version was released on 2011-06-23.
+# find . \( -name \*.c -or -name \*.cpp -o -name \*.h \) -print0 | xargs -0 sed -n 's/.*\(purple_[^( ]*\)(.*/\1/p' | sort -u | less
 PKG_CHECK_MODULES([PURPLE], [purple >= 2.7.0])
 AC_SUBST([PURPLE_CFLAGS])
 AC_SUBST([PURPLE_LIBS])
