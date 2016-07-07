@@ -191,7 +191,7 @@ protected:
   /// HorizontalListBox).
   virtual void insertWidget(std::size_t pos, Widget &widget, int x, int y);
 
-  virtual void moveWidgetInternal(Widget &widget, Widget &position, bool after);
+  virtual void moveWidget(Widget &widget, Widget &position, bool after);
 
   virtual void updateScroll();
   virtual bool makePointVisible(int x, int y);

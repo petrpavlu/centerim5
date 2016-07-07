@@ -189,6 +189,14 @@ void HorizontalListBox::onChildVisible(Widget &activator, bool visible)
   updateChildren(sign * w, autosize_change);
 }
 
+void HorizontalListBox::moveWidget(Widget &widget, Widget &position, bool after)
+{
+  Container::moveWidget(widget, position, after);
+
+  // Reposition all child widgets.
+  updateArea();
+}
+
 void HorizontalListBox::updateChildren(
   int children_width_change, int autosize_children_count_change)
 {

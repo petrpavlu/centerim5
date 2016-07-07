@@ -43,11 +43,6 @@ void ConversationRoomList::moveToSortedPosition(Buddy *new_buddy)
   if (*buddy == *new_buddy)
     return;
 
-  // TODO: HACK? Seems to be required to have the ListBox
-  //   reorder the widgets after calling moveWidget*
-  //   Doesn't seem right...
-  // reposition_widgets = true;
-
   // Insert after if at end.
   if (iter == children_.end())
     moveWidgetAfter(*new_buddy, *buddy);

@@ -61,6 +61,8 @@ protected:
   virtual void onChildWishSizeChange(
     Widget &activator, const Size &oldsize, const Size &newsize) override;
   virtual void onChildVisible(Widget &activator, bool visible) override;
+  virtual void moveWidget(
+    Widget &widget, Widget &position, bool after) override;
 
   virtual void updateChildren(
     int children_height_change, int autosize_children_count_change);

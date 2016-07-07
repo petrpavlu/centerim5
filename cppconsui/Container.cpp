@@ -133,12 +133,12 @@ void Container::removeWidget(Widget &widget)
 
 void Container::moveWidgetBefore(Widget &widget, Widget &position)
 {
-  moveWidgetInternal(widget, position, false);
+  moveWidget(widget, position, false);
 }
 
 void Container::moveWidgetAfter(Widget &widget, Widget &position)
 {
-  moveWidgetInternal(widget, position, true);
+  moveWidget(widget, position, true);
 }
 
 void Container::clear()
@@ -631,7 +631,7 @@ void Container::insertWidget(std::size_t pos, Widget &widget, int x, int y)
   updateChildArea(widget);
 }
 
-void Container::moveWidgetInternal(Widget &widget, Widget &position, bool after)
+void Container::moveWidget(Widget &widget, Widget &position, bool after)
 {
   assert(widget.getParent() == this);
   assert(position.getParent() == this);

@@ -191,6 +191,14 @@ void ListBox::onChildVisible(Widget &activator, bool visible)
   updateChildren(sign * h, autosize_change);
 }
 
+void ListBox::moveWidget(Widget &widget, Widget &position, bool after)
+{
+  Container::moveWidget(widget, position, after);
+
+  // Reposition all child widgets.
+  updateArea();
+}
+
 void ListBox::updateChildren(
   int children_height_change, int autosize_children_count_change)
 {
