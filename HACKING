@@ -3,41 +3,38 @@ CenterIM 5 Hacking Documentation
 Contents
 --------
 
-1. Code Style
+1. Coding Style
 2. General Debugging
 3. Valgrind Notes
 
 
-1. Code Style
--------------
+1. Coding Style
+---------------
 
-- Use clang-format to format the code ('clang-format --style=file -i FILE').
-- No tabs, two spaces indenting.
-- Line length limited to 80 characters.
-- Comments:
-    // one line comment
-    /* Multiline
-     * comment. */
-- Class names use CamelNotation, methods use camelNotation(), variables use
-  common_c_naming. THIS_IS_A_CONST. An exception are libpurple/glib callbacks
+- The clang-format tool should be used to format the code ('clang-format
+  --style=file -i FILE').
+- Indentation is done by two spaces.
+- Line length is limited to 80 characters.
+- C++-style comments should be used and they must form full sentences:
+  // This is a comment.
+- Names of classes use CamelNotation, methods use camelNotation(), variables use
+  common_c_naming. THIS_IS_A_CONST. An exception are libpurple/glib callbacks,
   which use usual C naming-style (purple_print()).
-- Example of class declaration:
+- Example of a class definition:
 class MyClass : public OtherClass {
 public:
-  // enums and typedefs first,
+  // Enums and typedefs first,
   // then variables,
-  // methods last
+  // methods last.
 
-  /**
-   * Doxygen comment.
-   */
+  /// Doxygen comment.
   virtual size_t getLinesCount() const { return lines_count; }
 
 protected:
   size_t lines_count;
 };
-- Order methods in an implementation file according to the respective header
-  file.
+- Methods in each implementation file should be ordered as in the associated
+  header file.
 - Methods that can be bound to a key should be prefixed with 'action', for
   example, actionActivate().
 - Methods connected to signals should use the 'on' prefix, for example,
@@ -49,10 +46,11 @@ protected:
 2. General Debugging
 --------------------
 
-Use the '--enable-debug' configure option to disable optimizations and to
-enable producing of binary with debugging information.
+The '--enable-debug' configure option can be used to disable optimizations and
+to produce a binary that contains debugging information.
 
-Use the '--enable-strict' configure option to enable extra compiler warnings.
+The '--enable-strict' configure options enables extra compiler warnings. This
+option should be always used during the development.
 
 
 3. Valgrind Notes
@@ -64,16 +62,13 @@ Use the '--enable-strict' configure option to enable extra compiler warnings.
 % valgrind --leak-check=full --child-silent-after-fork=yes \
     --log-file=cim5.log --track-fds=yes centerim5
 
-Make sure you do not run this command on libtool's binary wrapper.
+The final command should be run on an actual binary, not on a libtool's binary
+wrapper.
 
 GLIBCXX_FORCE_NEW forces libstdc++ allocator to use new() and delete() calls
 instead of using memory pools
 (http://gcc.gnu.org/onlinedocs/libstdc++/manual/ext_allocators.html).
 
-Setting the G_SLICE, G_DEBUG environment variables to values mentioned above
-turns off memory optimizations in Glib, which prevents some confusion for
+Setting the G_SLICE and G_DEBUG environment variables to the values mentioned
+above turns off memory optimizations in Glib, which prevents some confusion for
 Valgrind (https://live.gnome.org/Valgrind).
-
-There is currently no suppresion list, though you can use at least the list
-from the Pidgin project.
-
