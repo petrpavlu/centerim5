@@ -1,20 +1,23 @@
 * Not yet released -- CenterIM 5.0.0
-  - Add conversation room list that displays users in chats.
-  - Remove deferred updates of drawing areas.
-  - Remove CppConsUI dependency on GLib.
-  - Numerous bug fixes.
-  - Update Dutch translation.
+  - Conversation room list that displays users in chats has been added.
+  - Error reporting got extensively improved.
+  - Numerous bugs were fixed.
+  - Czech, Dutch and Russian translations have been updated.
+  - Important internal changes: Deferred updates of draw areas were removed.
+    CppConsUI lost its dependency on GLib.
 
 * 22 September 2013 -- CenterIM 5.0.0 Beta2
-  - Add ability to sort buddies by name, status or last activity.
-  - Allow to sort groups in buddy list manually.
-  - Add support for searching in the buddy list.
-  - Improve dialogs for adding buddies, chat and groups.
-  - Add a dialog for displaying information about buddies.
-  - Add support for executing libpurple commands from conversations.
-  - Add a plugin to execute an external program when a specific event occurs.
-  - Add a dialog for enabling plugins and setting their preferences.
-  - Add Dutch translation, update Czech and Russian translations.
+  - Ability to sort buddies by name, status or last activity has been added.
+  - Groups in the buddy list can be now sorted manually.
+  - Support for searching in the buddy list has been added.
+  - Dialogs for adding buddies, chat and groups have been improved.
+  - A dialog for displaying information about buddies has been introduced.
+  - Libpurple commands can be now executed from conversations.
+  - A plugin to execute an external program when a specific event occurs has
+    been added.
+  - A dialog for enabling plugins and setting their preferences has been added.
+  - Dutch translation has been added, Czech and Russian translations got
+    updated.
 
 * 27 July 2012 -- CenterIM 5.0.0 Beta1
   Countless smaller and bigger features added. The code was almost completely
