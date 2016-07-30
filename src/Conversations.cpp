@@ -444,7 +444,8 @@ void Conversations::account_signed_on_off(PurpleConnection *connection)
         PurpleConversation *purple_conv = conv_child->conv->getPurpleConversation();
 
         // Only process chats for this connection
-        if(purple_conversation_get_gc(purple_conv) == connection) {
+        if(purple_conversation_get_type(purple_conv) == PURPLE_CONV_TYPE_CHAT &&
+           purple_conversation_get_gc(purple_conv) == connection) {
 
             // TODO: add and consult "want-to-rejoin" configuration parameter?
 
