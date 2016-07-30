@@ -89,7 +89,7 @@ add_definitions(-DG_LOG_DOMAIN="cppconsui")
 if(NOT CURSES_CFLAGS STREQUAL "")
   set_source_files_properties(
     ConsUICurses.cpp
-    PROPERTIES COMPILE_FLAGS ${CURSES_CFLAGS})
+    PROPERTIES COMPILE_FLAGS "${CURSES_CFLAGS}")
 endif()
 
 add_library(cppconsui SHARED
