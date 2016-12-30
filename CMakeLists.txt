@@ -9,6 +9,9 @@ include(cmake/CMakeConfs.cmake)
 # libtermkey requires c99
 set(CMAKE_C_FLAGS "-std=c99")
 
+# Newer versions of sigc++ require this (this mirrors what's done in configure.ac)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+
 install(FILES centerim5.1 DESTINATION share/man/man1)
 
 add_subdirectory(cppconsui)
