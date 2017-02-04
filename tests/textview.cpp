@@ -25,7 +25,7 @@ TestWindow::TestWindow() : CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
   setColorScheme(SCHEME_TEXTVIEWWINDOW);
 
   textview = new CppConsUI::TextView(AUTOSIZE, AUTOSIZE);
-  addWidget(*textview, 0, 0);
+  addWidget(*textview, 1, 1);
 
   const char *long_text =
     "Lorem ipsum dolor sit amet, consectetur"
