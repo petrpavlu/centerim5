@@ -45,19 +45,26 @@ TestWindow::TestWindow() : CppConsUI::Window(0, 0, AUTOSIZE, AUTOSIZE)
   for (int i = 0; i < 128; i++)
     textview->append(long_text, i % 7 + 1);
 
-  COLORSCHEME->setAttributesExt(SCHEME_TEXTVIEWWINDOW, CppConsUI::ColorScheme::PROPERTY_TEXTVIEW_TEXT, 1,
+  COLORSCHEME->setAttributesExt(SCHEME_TEXTVIEWWINDOW,
+    CppConsUI::ColorScheme::PROPERTY_TEXTVIEW_TEXT, 1,
     CppConsUI::Curses::Color::RED, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->setAttributesExt(SCHEME_TEXTVIEWWINDOW, CppConsUI::ColorScheme::PROPERTY_TEXTVIEW_TEXT, 2,
+  COLORSCHEME->setAttributesExt(SCHEME_TEXTVIEWWINDOW,
+    CppConsUI::ColorScheme::PROPERTY_TEXTVIEW_TEXT, 2,
     CppConsUI::Curses::Color::GREEN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->setAttributesExt(SCHEME_TEXTVIEWWINDOW, CppConsUI::ColorScheme::PROPERTY_TEXTVIEW_TEXT, 3,
+  COLORSCHEME->setAttributesExt(SCHEME_TEXTVIEWWINDOW,
+    CppConsUI::ColorScheme::PROPERTY_TEXTVIEW_TEXT, 3,
     CppConsUI::Curses::Color::YELLOW, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->setAttributesExt(SCHEME_TEXTVIEWWINDOW, CppConsUI::ColorScheme::PROPERTY_TEXTVIEW_TEXT, 4,
+  COLORSCHEME->setAttributesExt(SCHEME_TEXTVIEWWINDOW,
+    CppConsUI::ColorScheme::PROPERTY_TEXTVIEW_TEXT, 4,
     CppConsUI::Curses::Color::BLUE, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->setAttributesExt(SCHEME_TEXTVIEWWINDOW, CppConsUI::ColorScheme::PROPERTY_TEXTVIEW_TEXT, 5,
+  COLORSCHEME->setAttributesExt(SCHEME_TEXTVIEWWINDOW,
+    CppConsUI::ColorScheme::PROPERTY_TEXTVIEW_TEXT, 5,
     CppConsUI::Curses::Color::MAGENTA, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->setAttributesExt(SCHEME_TEXTVIEWWINDOW, CppConsUI::ColorScheme::PROPERTY_TEXTVIEW_TEXT, 6,
+  COLORSCHEME->setAttributesExt(SCHEME_TEXTVIEWWINDOW,
+    CppConsUI::ColorScheme::PROPERTY_TEXTVIEW_TEXT, 6,
     CppConsUI::Curses::Color::CYAN, CppConsUI::Curses::Color::BLACK);
-  COLORSCHEME->setAttributesExt(SCHEME_TEXTVIEWWINDOW, CppConsUI::ColorScheme::PROPERTY_TEXTVIEW_TEXT, 7,
+  COLORSCHEME->setAttributesExt(SCHEME_TEXTVIEWWINDOW,
+    CppConsUI::ColorScheme::PROPERTY_TEXTVIEW_TEXT, 7,
     CppConsUI::Curses::Color::WHITE, CppConsUI::Curses::Color::BLACK);
 
   declareBindable("textviewwindow", "toggle-scrollbar",
