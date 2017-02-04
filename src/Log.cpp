@@ -14,7 +14,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
 
 // Logging facility collects all messages from the program itself and libraries
 // (mainly GLib and libpurple). It filters them by severity and then outputs
