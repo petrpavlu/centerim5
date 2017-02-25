@@ -27,6 +27,8 @@ include_directories(
 
 # Handle translations.
 find_package(Gettext)
+mark_as_advanced(GETTEXT_MSGFMT_EXECUTABLE)
+mark_as_advanced(GETTEXT_MSGMERGE_EXECUTABLE)
 
 if(GETTEXT_FOUND)
   set(centerim5_LOCALEDIR "${CMAKE_INSTALL_PREFIX}/share/locale")
