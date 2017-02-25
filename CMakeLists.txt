@@ -41,8 +41,7 @@ find_package(Doxygen)
 
 # Generate the config file.
 set(centerim5_PKGLIBDIR "${CMAKE_INSTALL_PREFIX}/lib/centerim5")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake"
-  "${CMAKE_CURRENT_BINARY_DIR}/config.h")
+configure_file(config.h.cmake config.h)
 
 install(FILES centerim5.1 DESTINATION share/man/man1)
 

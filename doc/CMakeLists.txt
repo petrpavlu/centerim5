@@ -5,6 +5,5 @@ if(DOXYGEN_FOUND AND DOXYGEN_DOT_FOUND)
   unset(top_srcdir)
 
   add_custom_target(doc
-    COMMAND ${DOXYGEN_EXECUTABLE}
-    ${CMAKE_CURRENT_BINARY_DIR}/doxygen-cppconsui.conf)
+    COMMAND ${DOXYGEN_EXECUTABLE} doxygen-cppconsui.conf)
 endif()
