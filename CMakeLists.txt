@@ -48,7 +48,7 @@ install(FILES centerim5.1 DESTINATION share/man/man1)
 
 add_subdirectory(cppconsui)
 add_subdirectory(src)
-add_subdirectory(tests)
+add_subdirectory(tests EXCLUDE_FROM_ALL)
 add_subdirectory(plugins)
 add_subdirectory(po)
 add_subdirectory(doc)
