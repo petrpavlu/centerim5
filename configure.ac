@@ -133,12 +133,13 @@ PKG_CHECK_MODULES([SIGC], [sigc++-2.0 >= 2.2.0])
 # ncursesw -- v5.8 was released on 2011-02-26.
 PKG_CHECK_MODULES([NCURSESW], [ncursesw >= 5.8])
 
-# adl_RECURSIVE_EVAL(VALUE, RESULT)
+# CIM_RECURSIVE_EVAL(VALUE, RESULT)
 # =================================
 # Interpolate the VALUE in loop until it does not change, and set the result
 # to $RESULT.
 # WARNING: It is easy to get an infinite loop with some unsane input.
-AC_DEFUN([adl_RECURSIVE_EVAL],
+# Taken from http://ac-archive.sourceforge.net/adl/relpaths.html.
+AC_DEFUN([CIM_RECURSIVE_EVAL],
 [_lcl_receval="$1"
 $2=`(test "$prefix" = NONE && prefix="$ac_default_prefix"
 	test "$exec_prefix" = NONE && exec_prefix="$prefix"
@@ -153,15 +154,15 @@ $2=`(test "$prefix" = NONE && prefix="$ac_default_prefix"
 # Makefile.ams by adding appropriate '-D' compiler options to respective
 # CPPFLAGS, which is a common solution that can be seen in other projects. In
 # that case, it is not needed to resolve the paths at the configure time using
-# the adl_RECURSIVE_EVAL function. However this solution unfortunately does not
+# the CIM_RECURSIVE_EVAL function. However this solution unfortunately does not
 # work correctly when values of the defines are changed, the source files that
 # use these defines do not get correctly recompiled. To fix this, the defines
 # have to be put into the config.h file.
-adl_RECURSIVE_EVAL([$localedir], [localedir_eval])
+CIM_RECURSIVE_EVAL([$localedir], [localedir_eval])
 AC_DEFINE_UNQUOTED([LOCALEDIR], ["$localedir_eval"],
 	[Define to the locale directory.])
 
-adl_RECURSIVE_EVAL([$libdir/AC_PACKAGE_NAME], [pkglibdir_eval])
+CIM_RECURSIVE_EVAL([$libdir/AC_PACKAGE_NAME], [pkglibdir_eval])
 AC_DEFINE_UNQUOTED([PKGLIBDIR], ["$pkglibdir_eval"],
 	[Define to the pkglib directory.])
 
