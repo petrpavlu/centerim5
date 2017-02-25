@@ -121,20 +121,14 @@ AM_GNU_GETTEXT_VERSION([0.18.1])
 # version was released on 2011-06-23.
 # find . \( -name \*.c -or -name \*.cpp -o -name \*.h \) -print0 | xargs -0 sed -n 's/.*\(purple_[^( ]*\)(.*/\1/p' | sort -u | less
 PKG_CHECK_MODULES([PURPLE], [purple >= 2.7.0])
-AC_SUBST([PURPLE_CFLAGS])
-AC_SUBST([PURPLE_LIBS])
 
 # glib -- v2.32.0 is needed because of g_environ_setenv(), this version was
 # released on 2012-03-24.
 # find . \( -name \*.c -o -name \*.cpp -o -name \*.h \) -print0 | xargs -0 sed -n 's/.*\(g_[^ (]*\)(.*/\1/p' | sort -u | less
 PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.32.0])
-AC_SUBST([GLIB_CFLAGS])
-AC_SUBST([GLIB_LIBS])
 
 # libsigc++ -- v2.2.0 was released on 2008-02-22.
 PKG_CHECK_MODULES([SIGC], [sigc++-2.0 >= 2.2.0])
-AC_SUBST([SIGC_CFLAGS])
-AC_SUBST([SIGC_LIBS])
 
 # ncursesw -- v5.8 was released on 2011-02-26.
 PKG_CHECK_MODULES([NCURSESW], [ncursesw >= 5.8])
