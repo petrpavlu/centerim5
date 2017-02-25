@@ -13,16 +13,20 @@ BUILT_SOURCES = $(top_srcdir)/.version
 # We want to execute this target everytime make is run.
 .PHONY: $(top_srcdir)/.version
 $(top_srcdir)/.version:
-	@cd $(top_srcdir); version=`misc/git-version-gen .tarball-version`; \
-	if test "$$version" != "`cat .version 2> /dev/null`"; then printf '%s' "$$version" > .version; fi
+	$(AM_V_at)cd $(top_srcdir); \
+	version=`misc/git-version-gen .tarball-version`; \
+	if test "$$version" != "`cat .version 2> /dev/null`"; then \
+		printf '%s' "$$version" > .version; \
+	fi
 
 dist-hook:
-	@cd $(top_srcdir); misc/git-version-gen .tarball-version > .tarball-version
-	@mv $(top_srcdir)/.tarball-version $(top_distdir)
+	$(AM_V_at)cd $(top_srcdir); misc/git-version-gen .tarball-version \
+		> .tarball-version
+	$(AM_V_at)mv $(top_srcdir)/.tarball-version $(top_distdir)
 
 .PHONY: doc
 doc:
-	cd doc; $(MAKE) doc
+	$(AM_V_at)cd doc; $(MAKE) doc
 
 # Package in all cmake files.
 EXTRA_DIST += \

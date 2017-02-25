@@ -59,5 +59,6 @@ centerim5_LDADD = \
 
 git-version.cpp: git-version.h
 
-git-version.h : $(top_srcdir)/.version git-version.h.in
-	@sed -e "s/@GIT_VERSION@/`cat $(top_srcdir)/.version`/" < $(srcdir)/git-version.h.in > git-version.h
+git-version.h: $(top_srcdir)/.version git-version.h.in
+	$(AM_V_GEN)sed -e "s/@GIT_VERSION@/`cat $(top_srcdir)/.version`/" \
+		< $(srcdir)/git-version.h.in > git-version.h
