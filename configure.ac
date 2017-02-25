@@ -136,14 +136,8 @@ PKG_CHECK_MODULES([SIGC], [sigc++-2.0 >= 2.2.0])
 AC_SUBST([SIGC_CFLAGS])
 AC_SUBST([SIGC_LIBS])
 
-# ncursesw
-AC_CHECK_PROGS(NCURSES_CONFIG, [ncursesw6-config ncursesw5-config])
-AS_IF([test "$NCURSES_CONFIG" = ""],
-	[AC_MSG_ERROR([the ncursesw6-config or ncursesw5-config helper script must be installed to build])])
-AC_PATH_LIB_LIBCONFIG
-AC_PATH_LIB([ncursesw], , [ncurses.h], ["$NCURSES_CONFIG"], , , [
-	AC_MSG_RESULT([no])
-	AC_MSG_ERROR([the ncursesw library and developement headers must be installed to build])])
+# ncursesw -- v5.8 was released on 2011-02-26.
+PKG_CHECK_MODULES([NCURSESW], [ncursesw >= 5.8])
 
 # adl_RECURSIVE_EVAL(VALUE, RESULT)
 # =================================

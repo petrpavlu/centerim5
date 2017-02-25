@@ -3,8 +3,7 @@ find_package(PkgConfig)
 pkg_check_modules(PURPLE REQUIRED "purple >= 2.9.0")
 pkg_check_modules(GLIB2 REQUIRED "glib-2.0 >= 2.32.0")
 pkg_check_modules(SIGC REQUIRED "sigc++-2.0 >= 2.2.0")
-
-find_package(NCURSESW REQUIRED)
+pkg_check_modules(NCURSESW REQUIRED "ncursesw >= 5.8")
 
 # Populate common include directories.
 include_directories(

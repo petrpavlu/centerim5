@@ -33,7 +33,6 @@ EXTRA_DIST += \
 	CMakeLists.txt \
 	config.h.cmake \
 	cmake/CMakeConfs.cmake \
-	cmake/FindCursesw.cmake \
 	cppconsui/CMakeLists.txt \
 	src/CMakeLists.txt \
 	tests/CMakeLists.txt \
