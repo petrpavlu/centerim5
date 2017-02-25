@@ -40,7 +40,6 @@ if sys.hexversion < 0x03050000:
 
 ROWS = 24
 COLUMNS = 80
-TERMINFO = '/path_to_terminfo'
 CHILD_TIMEOUT = 5
 
 ATTR_NORMAL = 0
@@ -191,10 +190,11 @@ class Term:
         """
         pass
 
-    def __init__(self, root, program, mode):
+    def __init__(self, root, program, mode, terminfo=None):
         self._root = root
         self._program = program
         self._mode = mode
+        self._terminfo = terminfo
 
         self._child_pid = None
         self._fd = None
@@ -255,7 +255,11 @@ class Term:
         if self._child_pid == 0:
             try:
                 env = {'PATH': '/bin:/usr/bin', 'TERM': 'termex',
-                       'TERMINFO': TERMINFO, 'LC_ALL': 'en_US.UTF-8'}
+                       'LC_ALL': 'en_US.UTF-8'}
+                if self._terminfo:
+                    env['TERMINFO'] = self._terminfo
+                elif 'TERMINFO' in os.environ:
+                    env['TERMINFO'] = os.environ['TERMINFO']
                 os.execle(self._program, self._program, env)
             except OSError as e:
                 print("Failed to execute '{}': {}".format(self._program, e),
@@ -1059,7 +1063,9 @@ def main():
 
     # Parse command line arguments.
     parser = argparse.ArgumentParser()
-    parser.set_defaults(func=None)
+    parser.add_argument(
+        '-t', '--terminfo', metavar='PATH', help="path to terminfo directory")
+
     subparsers = parser.add_subparsers(dest='command')
     subparsers.required = True
 
@@ -1098,7 +1104,7 @@ def main():
             print("Failed to initialize GUI: {}.".format(e), file=sys.stderr)
             return 1
 
-    term = Term(tk_root, args.program, args.mode)
+    term = Term(tk_root, args.program, args.mode, args.terminfo)
     if tk_root:
         # Start the GUI main loop.
         term.run_gui_mainloop()
