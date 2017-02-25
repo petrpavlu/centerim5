@@ -117,7 +117,7 @@ AS_IF([test "$enable_debug" = yes],
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.18.1])
 
-# libpurple -- v2.9.0 is needed because of PurpleConvChatBuddy::ui_data!, this
+# libpurple -- v2.9.0 is needed because of PurpleConvChatBuddy::ui_data, this
 # version was released on 2011-06-23.
 # find . \( -name \*.c -or -name \*.cpp -o -name \*.h \) -print0 | xargs -0 sed -n 's/.*\(purple_[^( ]*\)(.*/\1/p' | sort -u | less
 PKG_CHECK_MODULES([PURPLE], [purple >= 2.7.0])

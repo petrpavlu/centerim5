@@ -36,9 +36,9 @@ set(cppconsui_SOURCES
   VerticalLine.cpp
   Widget.cpp
   Window.cpp
-	libtermkey/driver-csi.c
-	libtermkey/driver-ti.c
-	libtermkey/termkey.c)
+  libtermkey/driver-csi.c
+  libtermkey/driver-ti.c
+  libtermkey/termkey.c)
 
 set(cppconsui_HEADERS
   AbstractDialog.h
@@ -77,8 +77,8 @@ set(cppconsui_HEADERS
   Widget.h
   Window.h
   tree.hh
-	libtermkey/termkey-internal.h
-	libtermkey/termkey.h)
+  libtermkey/termkey-internal.h
+  libtermkey/termkey.h)
 
 add_library(cppconsui SHARED
   ${cppconsui_SOURCES}
