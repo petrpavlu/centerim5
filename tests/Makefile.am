@@ -47,3 +47,18 @@ treeview_SOURCES = \
 window_SOURCES = \
 	window.cpp \
 	main.cpp
+
+if TERMEX_TESTS
+terminfo: $(srcdir)/termex.src
+	$(AM_V_GEN)$(TIC) -o terminfo "$(srcdir)/termex.src"
+	$(AM_V_at)touch terminfo
+
+check-local: terminfo
+
+else
+check-local:
+	$(error tests cannot be run because required dependencies are missing, \
+		reconfigure the build and install the tools that are reported \
+		as needed for the testing)
+
+endif
