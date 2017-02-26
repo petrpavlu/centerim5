@@ -22,28 +22,7 @@ set(centerim5_SOURCES
   Utils.cpp
   git-version.cpp)
 
-set(centerim5_HEADERS
-  AccountStatusMenu.h
-  AccountWindow.h
-  Accounts.h
-  BuddyList.h
-  BuddyListNode.h
-  CenterIM.h
-  Connections.h
-  Conversation.h
-  ConversationRoomList.h
-  Conversations.h
-  Footer.h
-  GeneralMenu.h
-  Header.h
-  Log.h
-  Notify.h
-  OptionWindow.h
-  PluginWindow.h
-  Request.h
-  Transfers.h
-  Utils.h
-  git-version.h.in)
+add_executable(centerim5 ${centerim5_SOURCES})
 
 include_directories("${centerim5_BINARY_DIR}/src")
 
@@ -56,10 +35,6 @@ add_custom_target(git-version.h VERBATIM
       sed -e \"s/@GIT_VERSION@/`cat .version`/\" \
         < \"${CMAKE_CURRENT_SOURCE_DIR}/git-version.h.in\" > git-version.h; \
     fi")
-
-add_executable(centerim5
-  ${centerim5_SOURCES}
-  ${centerim5_HEADERS})
 
 add_dependencies(centerim5 git-version.h)
 

@@ -40,49 +40,7 @@ set(cppconsui_SOURCES
   libtermkey/driver-ti.c
   libtermkey/termkey.c)
 
-set(cppconsui_HEADERS
-  AbstractDialog.h
-  AbstractLine.h
-  AbstractListBox.h
-  Button.h
-  CheckBox.h
-  ColorPicker.h
-  ColorPickerPalette.h
-  ColorPickerDialog.h
-  ColorScheme.h
-  ConsUICurses.h
-  Container.h
-  ComboBox.h
-  CoreManager.h
-  CppConsUI.h
-  Dialog.h
-  HorizontalLine.h
-  HorizontalListBox.h
-  InputDialog.h
-  InputProcessor.h
-  Label.h
-  ListBox.h
-  KeyConfig.h
-  Keys.h
-  MenuWindow.h
-  MessageDialog.h
-  Panel.h
-  Spacer.h
-  SplitDialog.h
-  TextEdit.h
-  TextEntry.h
-  TextView.h
-  TreeView.h
-  VerticalLine.h
-  Widget.h
-  Window.h
-  tree.hh
-  libtermkey/termkey-internal.h
-  libtermkey/termkey.h)
-
-add_library(cppconsui SHARED
-  ${cppconsui_SOURCES}
-  ${cppconsui_HEADERS})
+add_library(cppconsui SHARED ${cppconsui_SOURCES})
 
 set_property(TARGET cppconsui
   PROPERTY VERSION 0.0.0)

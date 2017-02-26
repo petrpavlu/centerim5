@@ -2,8 +2,7 @@
 set(extaction_SOURCES
   extaction.c)
 
-add_library(extaction SHARED
-  ${extaction_SOURCES})
+add_library(extaction SHARED ${extaction_SOURCES})
 
 set_property(TARGET extaction PROPERTY
   PREFIX "")
