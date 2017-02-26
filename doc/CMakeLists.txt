@@ -4,6 +4,6 @@ if(DOXYGEN_FOUND AND DOXYGEN_DOT_FOUND)
   configure_file(doxygen-cppconsui.conf.in doxygen-cppconsui.conf @ONLY)
   unset(top_srcdir)
 
-  add_custom_target(doc
+  add_custom_target(doc VERBATIM
     COMMAND "${DOXYGEN_EXECUTABLE}" doxygen-cppconsui.conf)
 endif()

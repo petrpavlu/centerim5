@@ -47,8 +47,15 @@ set(centerim5_HEADERS
 
 include_directories("${centerim5_BINARY_DIR}/src")
 
-add_custom_target(git-version.h ALL VERBATIM
-  COMMAND sh -c "cd \"${centerim5_SOURCE_DIR}\"; version=`misc/git-version-gen .tarball-version`; cd \"${CMAKE_CURRENT_BINARY_DIR}\"; if test \"$version\" != \"`cat .version 2> /dev/null`\"; then printf '%s' \"$version\" > .version; sed -e \"s/@GIT_VERSION@/`cat .version`/\" < \"${CMAKE_CURRENT_SOURCE_DIR}/git-version.h.in\" > git-version.h; fi")
+add_custom_target(git-version.h VERBATIM
+  COMMAND sh -c "cd \"${centerim5_SOURCE_DIR}\"; \
+    version=`misc/git-version-gen .tarball-version`; \
+    cd \"${CMAKE_CURRENT_BINARY_DIR}\"; \
+    if test \"$version\" != \"`cat .version 2> /dev/null`\"; then \
+      printf '%s' \"$version\" > .version; \
+      sed -e \"s/@GIT_VERSION@/`cat .version`/\" \
+        < \"${CMAKE_CURRENT_SOURCE_DIR}/git-version.h.in\" > git-version.h; \
+    fi")
 
 add_executable(centerim5
   ${centerim5_SOURCES}
