@@ -41,6 +41,31 @@ endif()
 # Produce documentation.
 find_package(Doxygen)
 
+# Checks for tools needed by the termex test framework. Only warn about these
+# missing dependencies.
+find_program(TIC_EXECUTABLE tic DOC "Path to a program.")
+mark_as_advanced(TIC_EXECUTABLE)
+if(TIC_EXECUTABLE)
+  message(STATUS "Found tic: ${TIC_EXECUTABLE}")
+else()
+  message(WARNING "tic was not found, running tests will not be possible")
+endif()
+
+find_package(PythonInterp 3.5 QUIET)
+if(PYTHONINTERP_FOUND)
+  message(STATUS
+    "Found Python 3: ${PYTHON_EXECUTABLE} (found version \"${PYTHON_VERSION_STRING}\")")
+else()
+  message(WARNING
+    "python >= 3.5 was not found, running tests will not be possible")
+endif()
+
+if(TIC_EXECUTABLE AND PYTHONINTERP_FOUND)
+  set(TERMEX_TESTS true)
+else()
+  set(TERMEX_TESTS false)
+endif()
+
 # Generate the config file.
 set(centerim5_PKGLIBDIR "${CMAKE_INSTALL_PREFIX}/lib/centerim5")
 configure_file(config.h.cmake config.h)

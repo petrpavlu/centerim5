@@ -133,6 +133,31 @@ PKG_CHECK_MODULES([SIGC], [sigc++-2.0 >= 2.2.0])
 # ncursesw -- v5.8 was released on 2011-02-26.
 PKG_CHECK_MODULES([NCURSESW], [ncursesw >= 5.8])
 
+# Checks for tools needed by the termex test framework. Only warn about these
+# missing dependencies.
+
+# tic
+AC_PATH_PROG([TIC], [tic])
+AC_ARG_VAR([TIC], [path to tic])
+AS_IF([test -z "$TIC"],
+	[AC_MSG_WARN([tic was not found, running tests will not be possible])])
+
+# python -- v3.5 is needed for termex.py (see the script for details), this
+# version was released on 2015-09-13.
+AC_PATH_PROG([PYTHON], [python3])
+AC_ARG_VAR([PYTHON], [path to python3])
+AS_IF([test -n "$PYTHON"],
+	[AC_MSG_CHECKING([python3 is at least version 3.5])]
+	[python_version_ok=`$PYTHON -c 'import sys; print(sys.hexversion >= 0x03050000)'`]
+	[AS_IF([test "$python_version_ok" == True],
+		[AC_MSG_RESULT([yes])],
+		[AC_MSG_RESULT([no])])])
+AS_IF([test -z "$PYTHON" -o "$python_version_ok" != True],
+	[AC_MSG_WARN([python >= 3.5 was not found, running tests will not be possible])])
+
+AM_CONDITIONAL([TERMEX_TESTS],
+	[test -n "$TIC" -a -n "$PYTHON" -a "$python_version_ok" == True])
+
 # CIM_RECURSIVE_EVAL(VALUE, RESULT)
 # =================================
 # Interpolate the VALUE in loop until it does not change, and set the result
