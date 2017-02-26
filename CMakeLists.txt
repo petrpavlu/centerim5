@@ -22,8 +22,8 @@ pkg_check_modules(NCURSESW REQUIRED "ncursesw >= 5.8")
 
 # Populate common include directories.
 include_directories(
-  ${centerim5_BINARY_DIR}
-  ${centerim5_SOURCE_DIR})
+  "${centerim5_BINARY_DIR}"
+  "${centerim5_SOURCE_DIR}")
 
 # Handle translations.
 find_package(Gettext)
