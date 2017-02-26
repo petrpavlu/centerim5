@@ -3,8 +3,8 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = contrib cppconsui doc misc plugins po src tests
 
 EXTRA_DIST = \
-	bootstrap \
 	HACKING \
+	bootstrap \
 	gettext.h
 
 dist_man_MANS = centerim5.1
@@ -33,8 +33,8 @@ EXTRA_DIST += \
 	CMakeLists.txt \
 	config.h.cmake \
 	cppconsui/CMakeLists.txt \
-	src/CMakeLists.txt \
-	tests/CMakeLists.txt \
+	doc/CMakeLists.txt \
 	plugins/CMakeLists.txt \
 	po/CMakeLists.txt \
-	doc/CMakeLists.txt
+	src/CMakeLists.txt \
+	tests/CMakeLists.txt
