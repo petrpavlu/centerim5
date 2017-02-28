@@ -3,7 +3,8 @@ if(TERMEX_TESTS)
   add_custom_command(OUTPUT terminfo VERBATIM
     COMMAND "${TIC_EXECUTABLE}" -o terminfo
       "${CMAKE_CURRENT_SOURCE_DIR}/termex.src"
-    COMMAND "${CMAKE_COMMAND}" -E touch terminfo)
+    COMMAND "${CMAKE_COMMAND}" -E touch terminfo
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/termex.src")
   list(APPEND check_DEPENDS terminfo)
 endif()
 
