@@ -1,7 +1,7 @@
-project(centerim5)
-
 # CMAKE_CXX_STANDARD requires at least CMake 3.1.
 cmake_minimum_required(VERSION 3.1)
+
+project(centerim5)
 
 include(FindPackageHandleStandardArgs)
 
