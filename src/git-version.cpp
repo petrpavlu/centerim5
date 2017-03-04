@@ -15,9 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "git-version.h"
 #include "CenterIM.h"
 
-const char *const CenterIM::version_ = GIT_VERSION;
+#include "config.h"
+
+const char *const CenterIM::version_ = VERSION;
 
 // vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

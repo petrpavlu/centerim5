@@ -68,6 +68,8 @@ endif()
 
 # Generate the config file.
 set(centerim5_PKGLIBDIR "${CMAKE_INSTALL_PREFIX}/lib/centerim5")
+execute_process(COMMAND misc/git-version-gen .tarball-version
+  WORKING_DIRECTORY "${centerim5_SOURCE_DIR}" OUTPUT_VARIABLE centerim5_VERSION)
 configure_file(config.h.cmake config.h)
 
 install(FILES centerim5.1 DESTINATION share/man/man1)
