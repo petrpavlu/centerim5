@@ -3,6 +3,8 @@ project(centerim5)
 # CMAKE_CXX_STANDARD requires at least CMake 3.1.
 cmake_minimum_required(VERSION 3.1)
 
+include(FindPackageHandleStandardArgs)
+
 # C++ code requires C++11.
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_EXTENSIONS false)
@@ -45,19 +47,17 @@ find_package(Doxygen)
 # missing dependencies.
 find_program(TIC_EXECUTABLE tic DOC "Path to a program.")
 mark_as_advanced(TIC_EXECUTABLE)
-if(TIC_EXECUTABLE)
-  message(STATUS "Found tic: ${TIC_EXECUTABLE}")
-else()
-  message(WARNING "tic was not found, running tests will not be possible")
+find_package_handle_standard_args(Tic
+  REQUIRED_VARS TIC_EXECUTABLE)
+if(NOT TIC_EXECUTABLE)
+  message(WARNING "Tic was not found, running tests will not be possible")
 endif()
 
-find_package(PythonInterp 3.5 QUIET)
-if(PYTHONINTERP_FOUND)
-  message(STATUS
-    "Found Python 3: ${PYTHON_EXECUTABLE} (found version \"${PYTHON_VERSION_STRING}\")")
-else()
+find_package(PythonInterp 3.5)
+if(NOT PYTHONINTERP_FOUND)
   message(WARNING
-    "python >= 3.5 was not found, running tests will not be possible")
+    "Suitable Python interpreter was not found, running tests will not be "
+    "possible")
 endif()
 
 if(TIC_EXECUTABLE AND PYTHONINTERP_FOUND)
