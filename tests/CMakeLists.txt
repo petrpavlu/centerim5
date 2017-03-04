@@ -4,7 +4,7 @@ if(TERMEX_TESTS)
     COMMAND "${TIC_EXECUTABLE}" -o terminfo
       "${CMAKE_CURRENT_SOURCE_DIR}/termex.src"
     COMMAND "${CMAKE_COMMAND}" -E touch terminfo
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/termex.src")
+    DEPENDS termex.src)
   list(APPEND check_DEPENDS terminfo)
 endif()
 

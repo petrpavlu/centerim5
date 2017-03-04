@@ -48,8 +48,12 @@ window_SOURCES = \
 	window.cpp \
 	main.cpp
 
+EXTRA_DIST = \
+	termex.py \
+	termex.src
+
 if TERMEX_TESTS
-terminfo: $(srcdir)/termex.src
+terminfo: termex.src
 	$(AM_V_GEN)$(TIC) -o terminfo "$(srcdir)/termex.src"
 	$(AM_V_at)touch terminfo
 
@@ -62,3 +66,6 @@ check-local:
 		as needed for the testing)
 
 endif
+
+mostlyclean-local:
+	-$(AM_V_at)rm -r terminfo
