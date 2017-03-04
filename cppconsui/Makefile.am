@@ -1,6 +1,6 @@
 lib_LTLIBRARIES = libcppconsui.la
 
-# When you add files here, also add them in po/POTFILES.in
+# When you add files here, also add them in po/POTFILES.in.
 libcppconsui_la_SOURCES = \
 	AbstractDialog.cpp \
 	AbstractDialog.h \
