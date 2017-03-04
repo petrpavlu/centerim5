@@ -10,7 +10,7 @@ EXTRA_DIST = \
 dist_man_MANS = centerim5.1
 
 dist-hook:
-	$(AM_V_at)echo $(VERSION) > $(distdir)/.tarball-version
+	$(AM_V_at)echo $(VERSION) > $(distdir)/version
 
 .PHONY: doc
 doc:
