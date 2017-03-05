@@ -609,8 +609,7 @@ class Term:
 
     def _get_screen_xml(self, screen):
         """
-        Return an ElementTree.Element that represents the current screen
-        content.
+        Return an ElementTree.Element that represents the given screen.
         """
 
         expect_e = ElementTree.Element('expect')
