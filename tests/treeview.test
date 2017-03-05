@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<test program="treeview">
+	<expect>
+		<data>
+			<line>┌──────────────────────────────────────────────────────────────────────────────┐</line>
+			<line>│Press F10 to quit.                                                            │</line>
+			<line>│                                                                              │</line>
+			<line>│├[-] Button node A                                                            │</line>
+			<attr>      aaaaaaaaaaaaa                                                             </attr>
+			<line>││ ├[-] Button node A-1                                                        │</line>
+			<line>││ │ ├─ Button node A-1-a                                                      │</line>
+			<line>││ │ ├─ Button node A-1-b                                                      │</line>
+			<line>││ │ └─ Button node A-1-c                                                      │</line>
+			<line>││ ├─ Button node A-2                                                          │</line>
+			<line>││ └─ Button node A-3                                                          │</line>
+			<line>│├[-] Label node B                                                             │</line>
+			<line>││ ├─ Label node B-1                                                           │</line>
+			<line>││ ├─ Label node B-2                                                           │</line>
+			<line>││ └─ Label node B-3                                                           │</line>
+			<line>│└[-] Button node C                                                            │</line>
+			<line>│                                                                              │</line>
+			<line>│                                                                              │</line>
+			<line>│                                                                              │</line>
+			<line>│                                                                              │</line>
+			<line>│                                                                              │</line>
+			<line>│                                                                              │</line>
+			<line>│                                                                              │</line>
+			<line>│                                                                              │</line>
+			<line>└──────────────────────────────────────────────────────────────────────────────┘</line>
+		</data>
+		<scheme>
+			<color attributes="reverse" background="default" foreground="default" key="a" />
+		</scheme>
+	</expect>
+	<action key="F10" />
+</test>

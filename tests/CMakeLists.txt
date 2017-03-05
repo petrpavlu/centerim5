@@ -1,23 +1,3 @@
-set(check_DEPENDS "")
-if(TERMEX_TESTS)
-  add_custom_command(OUTPUT terminfo VERBATIM
-    COMMAND "${TIC_EXECUTABLE}" -o terminfo
-      "${CMAKE_CURRENT_SOURCE_DIR}/termex.src"
-    COMMAND "${CMAKE_COMMAND}" -E touch terminfo
-    DEPENDS termex.src)
-  list(APPEND check_DEPENDS terminfo)
-endif()
-
-add_custom_target(check DEPENDS ${check_DEPENDS})
-
-if(NOT TERMEX_TESTS)
-  add_custom_command(TARGET check POST_BUILD VERBATIM
-    COMMAND "${CMAKE_COMMAND}" -E echo "Tests cannot be run because required \
-dependencies are missing, reconfigure the build and install the tools that are \
-reported as needed for the testing"
-    COMMAND false)
-endif()
-
 add_compile_options(${SIGC_CFLAGS})
 link_libraries(${SIGC_LDFLAGS} cppconsui)
 
@@ -30,6 +10,26 @@ add_executable(textview textview.cpp main.cpp)
 add_executable(treeview treeview.cpp main.cpp)
 add_executable(window window.cpp main.cpp)
 
+if(TERMEX_TESTS)
+  add_custom_command(OUTPUT terminfo VERBATIM
+    COMMAND "${TIC_EXECUTABLE}" -o terminfo
+      "${CMAKE_CURRENT_SOURCE_DIR}/termex.src"
+    COMMAND "${CMAKE_COMMAND}" -E touch terminfo
+    DEPENDS termex.src)
+
+  add_custom_target(check VERBATIM COMMAND "${CMAKE_CTEST_COMMAND}"
+    DEPENDS terminfo)
+
+else()
+  add_custom_target(check)
+
+  add_custom_command(TARGET check POST_BUILD VERBATIM
+    COMMAND "${CMAKE_COMMAND}" -E echo "Tests cannot be run because required \
+dependencies are missing, reconfigure the build and install the tools that are \
+reported as needed for the testing"
+    COMMAND false)
+endif()
+
 add_dependencies(check
   button
   colorpicker
@@ -39,3 +39,14 @@ add_dependencies(check
   textview
   treeview
   window)
+
+# List of test playbooks.
+set(TESTS
+  treeview)
+
+foreach(testname ${TESTS})
+  add_test(NAME "${testname}"
+    COMMAND "${PYTHON_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/termex.py"
+      -t "${CMAKE_CURRENT_BINARY_DIR}/terminfo" test
+      "${CMAKE_CURRENT_SOURCE_DIR}/${testname}.test")
+endforeach()

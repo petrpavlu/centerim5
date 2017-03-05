@@ -2,6 +2,7 @@
 cmake_minimum_required(VERSION 3.1)
 
 project(centerim5)
+enable_testing()
 
 include(FindPackageHandleStandardArgs)
 
