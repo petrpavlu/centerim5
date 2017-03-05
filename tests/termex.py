@@ -196,6 +196,10 @@ class Term:
         self._mode = mode
         self._terminfo = terminfo
 
+        # Test mode obtains the program name from the playbook.
+        if self._mode == self.MODE_TEST:
+            assert self._program is None
+
         self._child_pid = None
         self._fd = None
 
@@ -229,6 +233,7 @@ class Term:
 
         if self._mode == self.MODE_RECORD:
             self._test_e = ElementTree.Element('test')
+            self._test_e.set('program', self._program)
 
     def _start_program(self):
         """
@@ -964,9 +969,6 @@ class Term:
 
         assert self._mode == self.MODE_TEST
 
-        if test_e.tag != 'test':
-            raise self._TestFailure("Root element '{}' is invalid, expected "
-                                    "'test'".format(test_e.tag))
         cmd_iter = iter(test_e)
 
         # Start the main loop.
@@ -1040,6 +1042,19 @@ class Term:
                   file=sys.stderr)
             return False
 
+        # Read what program to execute.
+        test_e = tree.getroot()
+        if test_e.tag != 'test':
+            print("Root element '{}' is invalid, expected 'test'.".format(
+                  test_e.tag), file=sys.stderr)
+            return False
+        try:
+            self._program = test_e.attrib['program']
+        except KeyError:
+            print("Element 'test' is missing required attribute 'program'.",
+                  file=sys.stderr)
+            return False
+
         # Start the specified program.
         if not self._start_program():
             return False
@@ -1072,15 +1087,15 @@ def main():
     parser.add_argument(
         '-t', '--terminfo', metavar='PATH', help="path to terminfo directory")
 
-    subparsers = parser.add_subparsers(dest='command')
+    subparsers = parser.add_subparsers(dest='program')
     subparsers.required = True
 
     program_parser = argparse.ArgumentParser(add_help=False)
-    program_parser.add_argument('program')
+    program_parser.add_argument('program', help="executable to run")
 
     # Create the parser for the 'run' command.
     parser_run = subparsers.add_parser(
-        'run', parents=[program_parser], help="run a command")
+        'run', parents=[program_parser], help="run a program")
     parser_run.set_defaults(mode=Term.MODE_RUN)
 
     # Create the parser for the 'record' command.
@@ -1088,16 +1103,14 @@ def main():
         'record', parents=[program_parser], help="record a test")
     parser_record.set_defaults(mode=Term.MODE_RECORD)
     parser_record.add_argument(
-        '-p', '--playbook', metavar='FILE', required=True,
+        '-o', '--playbook', metavar='FILE', required=True,
         help="output playbook file")
 
     # Create the parser for the 'test' command.
-    parser_test = subparsers.add_parser(
-        'test', parents=[program_parser], help="run a test")
+    parser_test = subparsers.add_parser('test', help="perform a test")
+    parser_test.set_defaults(program=None)
     parser_test.set_defaults(mode=Term.MODE_TEST)
-    parser_test.add_argument(
-        '-p', '--playbook', metavar='FILE', required=True,
-        help="input playbook file")
+    parser_test.add_argument('playbook', help="input playbook file")
 
     args = parser.parse_args()
 
@@ -1124,8 +1137,7 @@ def main():
             msg = "failed"
             res = 1
 
-        print("Run of '{}' using playbook '{}' {}.".format(
-            args.program, args.playbook, msg))
+        print("Checking of playbook '{}' {}.".format(args.playbook, msg))
         return res
 
     if args.mode == Term.MODE_RECORD:
