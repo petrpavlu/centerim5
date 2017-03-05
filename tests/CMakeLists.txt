@@ -22,18 +22,20 @@ add_compile_options(${SIGC_CFLAGS})
 link_libraries(${SIGC_LDFLAGS} cppconsui)
 
 add_executable(button button.cpp main.cpp)
-add_dependencies(check button)
 add_executable(colorpicker colorpicker.cpp main.cpp)
-add_dependencies(check colorpicker)
 add_executable(label label.cpp main.cpp)
-add_dependencies(check label)
 add_executable(submenu submenu.cpp main.cpp)
-add_dependencies(check submenu)
 add_executable(textentry textentry.cpp main.cpp)
-add_dependencies(check textentry)
 add_executable(textview textview.cpp main.cpp)
-add_dependencies(check textview)
 add_executable(treeview treeview.cpp main.cpp)
-add_dependencies(check treeview)
 add_executable(window window.cpp main.cpp)
-add_dependencies(check window)
+
+add_dependencies(check
+  button
+  colorpicker
+  label
+  submenu
+  textentry
+  textview
+  treeview
+  window)
