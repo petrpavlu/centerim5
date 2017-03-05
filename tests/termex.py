@@ -789,28 +789,28 @@ class Term:
                 raise self._TestFailure(
                     "Element 'color' is missing required attribute 'key'")
 
-            attr = None
+            attr = ATTR_NORMAL
             if 'attributes' in color_e.attrib:
                 try:
-                    attr = color_e.attrib['attributes']
+                    attr = string_to_attr(color_e.attrib['attributes'])
                 except ValueError as e:
                     raise self._TestFailure(
                         "Value of attribute 'attributes' is invalid: "
                         "{}".format(e))
 
-            fgcolor = None
+            fgcolor = COLOR_DEFAULT
             if 'foreground' in color_e.attrib:
                 try:
-                    attr = color_e.attrib['foreground']
+                    fgcolor = string_to_color(color_e.attrib['foreground'])
                 except ValueError as e:
                     raise self._TestFailure(
                         "Value of attribute 'foreground' is invalid: "
                         "{}".format(e))
 
-            bgcolor = None
+            bgcolor = COLOR_DEFAULT
             if 'background' in color_e.attrib:
                 try:
-                    attr = color_e.attrib['background']
+                    bgcolor = string_to_color(color_e.attrib['background'])
                 except ValueError as e:
                     raise self._TestFailure(
                         "Value of attribute 'background' is invalid: "
@@ -843,6 +843,7 @@ class Term:
                     expected_screen.append(line)
                 # Parse the new line.
                 line = [TermChar(char) for char in data_sub_e.text]
+                state = NEW_LINE_OR_ATTR
 
             if state == NEW_LINE and data_sub_e.tag != 'line':
                 raise self._TestFailure("Element '{}' is invalid, expected "
@@ -857,6 +858,9 @@ class Term:
                             "'{}'".format(len(line), len(data_sub_e.text)))
 
                     for i, key in enumerate(data_sub_e.text):
+                        if key == ' ':
+                            continue
+
                         try:
                             attr, fgcolor, bgcolor = colors[key]
                         except KeyError:
@@ -865,6 +869,9 @@ class Term:
                         line[i].attr = attr
                         line[i].fgcolor = fgcolor
                         line[i].bgcolor = bgcolor
+
+                    state = NEW_LINE
+
                 elif data_sub_e.tag != 'line':
                     raise self._TestFailure(
                         "Element '{}' is invalid, expected 'line' or "
