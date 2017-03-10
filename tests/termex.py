@@ -28,7 +28,6 @@ import re
 import selectors
 import sys
 import time
-import tkinter
 import xml.etree.ElementTree as ElementTree
 
 # The module relies on selectors.select() to automatically retry the operation
@@ -1117,6 +1116,9 @@ def main():
     tk_root = None
     if args.mode in (Term.MODE_RUN, Term.MODE_RECORD):
         # Start the terminal GUI.
+        global tkinter
+        import tkinter
+
         try:
             tk_root = tkinter.Tk()
         except tkinter.TclError as e:
