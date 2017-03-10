@@ -40,6 +40,7 @@
 /libtool
 /m4/
 !/m4/ac_path_lib.m4
+!/m4/ax_cxx_compile_stdcxx.m4
 /po/*.gmo
 /po/Makevars.template
 /po/POTFILES
