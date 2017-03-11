@@ -1,8 +1,6 @@
 AC_PREREQ([2.69])
-AC_INIT([centerim5],
-	m4_esyscmd([misc/git-version-gen version]),
-	[http://bugzilla.centerim.org/], [centerim5],
-	[http://www.centerim.org/])
+AC_INIT([centerim5], [m4_esyscmd([misc/git-version-gen version])],
+	[centerim-devel@centerim.org], [centerim5], [http://www.centerim.org/])
 # Prevent AC_PROG_CC, AC_PROG_CXX from initializing CFLAGS and CXXFLAGS.
 : ${CFLAGS=""}
 : ${CXXFLAGS=""}
