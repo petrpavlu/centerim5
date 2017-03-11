@@ -43,6 +43,16 @@ endif()
 
 # Produce documentation.
 find_package(Doxygen)
+if(NOT DOXYGEN_FOUND)
+  message(WARNING
+    "Doxygen was not found, generating documentation for CppConsUI will not be "
+    "possible")
+endif()
+if(NOT DOXYGEN_DOT_FOUND)
+  message(WARNING
+    "Dot was not found, generating documentation for CppConsUI will not be "
+    "possible")
+endif()
 
 # Checks for tools needed by the termex test framework. Only warn about these
 # missing dependencies.
