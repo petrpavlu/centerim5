@@ -28,7 +28,7 @@
 #endif
 
 #define NCURSES_NOMACROS
-#include <cursesw.h>
+#include <curses.h>
 
 #include "gettext.h"
 #include <algorithm>
