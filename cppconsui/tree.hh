@@ -34,16 +34,8 @@
 #include <queue>
 #include <algorithm>
 #include <cstddef>
-
-// CenterIM 5: Workaround for non-working std::to_string() on SmartOS.
 #include <string>
-#include <sstream>
-namespace patch {
-template <class T> std::string to_string(const T& val) {
-	return dynamic_cast<std::ostringstream *>(
-		&(std::ostringstream() << val))->str();
-}
-} // namespace patch
+
 
 /// A node in the tree, combining links to other nodes as well as the actual data.
 template<class T>
@@ -1610,9 +1602,9 @@ template<typename iter> iter tree<T, tree_node_allocator>::move_in_as_nth_child(
 		while(true) {
 			if(walk==0)
 				throw std::range_error("tree: move_in_as_nth_child position "
-											  +patch::to_string(n+1)
+											  +std::to_string(n+1)
 											  +" out of range; only "
-											  +patch::to_string(number_of_children(loc))
+											  +std::to_string(number_of_children(loc))
 											  +" child nodes present");
 			if(n==0) 
 				break;
