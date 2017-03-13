@@ -37,6 +37,28 @@
 
 namespace CppConsUI {
 
+namespace {
+
+// Workaround for implementations that declare the inbuf parameter of the
+// iconv() function as "const char **".
+template <class T> class sloppy {
+};
+
+// Convert between "T **" and "const T **".
+template <class T> class sloppy<T **> {
+public:
+  sloppy(T **t) : t_(t) {}
+  sloppy(const T **t) : t_(const_cast<T **>(t)) {}
+
+  operator T **() const { return t_; }
+  operator const T **() const { return const_cast<const T **>(t_); }
+
+private:
+  T **t_;
+};
+
+} // anonymous namespace
+
 int CoreManager::initializeInput(Error &error)
 {
   assert(tk_ == nullptr);
@@ -140,7 +162,8 @@ int CoreManager::processStandardInput(int *wait, Error &error)
       inbytesleft = strlen(key.utf8);
       outbuf = utf8;
       outbytesleft = sizeof(utf8);
-      res = iconv(iconv_desc_, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+      res = iconv(iconv_desc_, sloppy<char **>(&inbuf), &inbytesleft, &outbuf,
+        &outbytesleft);
       if (res != static_cast<std::size_t>(-1) && inbytesleft != 0) {
         // No error occured but not all bytes have been converted.
         errno = EINVAL;
