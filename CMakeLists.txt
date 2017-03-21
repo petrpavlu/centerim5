@@ -28,16 +28,24 @@ include_directories(
   "${centerim5_BINARY_DIR}"
   "${centerim5_SOURCE_DIR}")
 
-# Handle translations.
+# Handle localization.
+find_package(Intl)
 find_package(Gettext)
 mark_as_advanced(GETTEXT_MSGFMT_EXECUTABLE)
 mark_as_advanced(GETTEXT_MSGMERGE_EXECUTABLE)
 
-if(GETTEXT_FOUND)
+if(Intl_FOUND AND GETTEXT_FOUND)
   set(centerim5_LOCALEDIR "${CMAKE_INSTALL_PREFIX}/share/locale")
   set(ENABLE_NLS true)
 else()
-  message(SEND_ERROR "Gettext not found, translation not possible")
+  if(NOT Intl_FOUND AND NOT GETTEXT_FOUND)
+    set(missing_package "Intl and Gettext")
+  elseif(NOT Intl_FOUND)
+    set(missing_package "Intl")
+  else()
+    set(missing_package "Gettext")
+  endif()
+  message(SEND_ERROR "${missing_package} not found, localization not possible")
   set(ENABLE_NLS false)
 endif()
 

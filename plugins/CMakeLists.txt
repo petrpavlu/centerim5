@@ -6,9 +6,11 @@ add_library(extaction SHARED ${extaction_SOURCES})
 
 set_property(TARGET extaction PROPERTY
   PREFIX "")
+target_include_directories(extaction PRIVATE
+  ${Intl_INCLUDE_DIRS})
 target_compile_options(extaction PRIVATE
   ${PURPLE_CFLAGS} ${GLIB232_CFLAGS})
 target_link_libraries(extaction PRIVATE
-  ${PURPLE_LDFLAGS} ${GLIB232_LDFLAGS})
+  ${Intl_LIBRARIES} ${PURPLE_LDFLAGS} ${GLIB232_LDFLAGS})
 
 install(TARGETS extaction DESTINATION lib/centerim5)

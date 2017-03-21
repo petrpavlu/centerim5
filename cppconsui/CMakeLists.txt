@@ -44,9 +44,11 @@ add_library(cppconsui SHARED ${cppconsui_SOURCES})
 
 set_property(TARGET cppconsui
   PROPERTY VERSION 0.0.0)
+target_include_directories(cppconsui PRIVATE
+  ${Intl_INCLUDE_DIRS})
 target_compile_options(cppconsui PRIVATE
   ${SIGC_CFLAGS} ${NCURSESW_CFLAGS} "-DG_LOG_DOMAIN=\"cppconsui\"")
 target_link_libraries(cppconsui PRIVATE
-  ${SIGC_LDFLAGS} ${NCURSESW_LDFLAGS})
+  ${Intl_LIBRARIES} ${SIGC_LDFLAGS} ${NCURSESW_LDFLAGS})
 
 install(TARGETS cppconsui DESTINATION lib)

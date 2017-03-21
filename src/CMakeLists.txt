@@ -26,9 +26,12 @@ add_executable(centerim5 ${centerim5_SOURCES})
 
 set_property(TARGET centerim5
   PROPERTY INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+target_include_directories(centerim5 PRIVATE
+  ${Intl_INCLUDE_DIRS})
 target_compile_options(centerim5 PRIVATE
   ${PURPLE_CFLAGS} ${GLIB2_CFLAGS} ${SIGC_CFLAGS})
 target_link_libraries(centerim5 PRIVATE
-  ${PURPLE_LDFLAGS} ${GLIB2_LDFLAGS} ${SIGC_LDFLAGS} cppconsui)
+  ${Intl_LIBRARIES} ${PURPLE_LDFLAGS} ${GLIB2_LDFLAGS} ${SIGC_LDFLAGS}
+  cppconsui)
 
 install(TARGETS centerim5 DESTINATION bin)

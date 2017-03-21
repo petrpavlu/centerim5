@@ -51,6 +51,7 @@ centerim5_CPPFLAGS = \
 	-I$(top_srcdir)
 
 centerim5_LDADD = \
+	$(LTLIBINTL) \
 	$(PURPLE_LIBS) \
 	$(GLIB_LIBS) \
 	$(SIGC_LIBS) \

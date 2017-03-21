@@ -13,5 +13,6 @@ extaction_la_LDFLAGS = \
 	-avoid-version -module
 
 extaction_la_LIBADD = \
+	$(LTLIBINTL) \
 	$(PURPLE_LIBS) \
 	$(GLIB_LIBS)

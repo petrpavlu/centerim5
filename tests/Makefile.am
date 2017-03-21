@@ -13,6 +13,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)
 
 LDADD = \
+	$(LTLIBINTL) \
 	$(SIGC_LIBS) \
 	$(top_builddir)/cppconsui/libcppconsui.la
 
