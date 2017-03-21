@@ -1,36 +1,29 @@
-/*
- * Copyright (C) 2012-2013 Petr Pavlu <setup@dagobah.cz>
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2012-2013 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * Plugin to support external-action functionality in CenterIM5.
- *
- * When an event such as received-im-msg, or buddy-signed-on occurs this
- * plugin asynchronously executes a user-defined external program.
- *
- * An example how to use this plugin can be found in contrib/extnotify.py.
- *
- * TODO Add support for more kinds of events, currently only received-im-msg
- * and received-chat-msg actions are supported.
- *
- * Note: This plugin requires glib 2.32 because it relies on the
- * g_environ_setenv() function which isn't available in earlier glib versions.
- */
+// Plugin to support external-action functionality in CenterIM5.
+//
+// When an event such as received-im-msg, or buddy-signed-on occurs this plugin
+// asynchronously executes a user-defined external program.
+//
+// An example how to use this plugin can be found in contrib/extnotify.py.
+//
+// TODO Add support for more kinds of events, currently only received-im-msg and
+// received-chat-msg actions are supported.
 
 #define PURPLE_PLUGINS
 
@@ -53,9 +46,9 @@ static void on_new_message(
   const char *command = purple_prefs_get_path(PLUGIN_PREF_COMMAND);
 
   // The command should be never NULL.
-  g_return_if_fail(command);
+  g_return_if_fail(command != NULL);
 
-  if (!command[0]) {
+  if (command[0] == '\0') {
     // No command is set.
     return;
   }
@@ -66,11 +59,11 @@ static void on_new_message(
   char *nohtml = purple_markup_strip_html(message);
   PurpleBuddy *buddy = purple_find_buddy(account, remote);
   char *icon_encoded = NULL;
-  if (buddy) {
-    // get buddy alias and icon
+  if (buddy != NULL) {
+    // Get buddy alias and icon.
     remote = purple_buddy_get_alias(buddy);
     PurpleBuddyIcon *icon = purple_buddy_get_icon(buddy);
-    if (icon) {
+    if (icon != NULL) {
       size_t len;
       gconstpointer data = purple_buddy_icon_get_data(icon, &len);
       icon_encoded = g_base64_encode(data, len);
@@ -87,7 +80,7 @@ static void on_new_message(
   envp = g_environ_setenv(envp, "EVENT_NETWORK", protocol, TRUE);
   envp = g_environ_setenv(envp, "EVENT_LOCAL_USER", local, TRUE);
   envp = g_environ_setenv(envp, "EVENT_REMOTE_USER", remote, TRUE);
-  if (icon_encoded)
+  if (icon_encoded != NULL)
     envp = g_environ_setenv(envp, "EVENT_REMOTE_USER_ICON", icon_encoded, TRUE);
   envp = g_environ_setenv(envp, "EVENT_MESSAGE", nohtml, TRUE);
   envp = g_environ_setenv(envp, "EVENT_MESSAGE_HTML", message, TRUE);
