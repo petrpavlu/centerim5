@@ -209,6 +209,7 @@ class Term:
         self._fgcolor = COLOR_DEFAULT
         self._bgcolor = COLOR_DEFAULT
         self._charbuf = b''
+        self._alt_charset_mode = False
 
         # Initialize the GUI if requested.
         if self._root:
@@ -413,11 +414,36 @@ class Term:
         otherwise.
         """
 
+        # Handle characters from the alternate set.
+        if self._alt_charset_mode:
+            uchars = {
+                b'q': '\N{BOX DRAWINGS LIGHT HORIZONTAL}',
+                b'x': '\N{BOX DRAWINGS LIGHT VERTICAL}',
+                b'm': '\N{BOX DRAWINGS LIGHT UP AND RIGHT}',
+                b'j': '\N{BOX DRAWINGS LIGHT UP AND LEFT}',
+                b'l': '\N{BOX DRAWINGS LIGHT DOWN AND RIGHT}',
+                b'k': '\N{BOX DRAWINGS LIGHT DOWN AND LEFT}',
+                b'v': '\N{BOX DRAWINGS LIGHT UP AND HORIZONTAL}',
+                b't': '\N{BOX DRAWINGS LIGHT VERTICAL AND RIGHT}',
+                b'u': '\N{BOX DRAWINGS LIGHT VERTICAL AND LEFT}',
+                b'w': '\N{BOX DRAWINGS LIGHT DOWN AND HORIZONTAL}',
+                b'.': '\N{DOWNWARDS ARROW}',
+                b',': '\N{LEFTWARDS ARROW}',
+                b'+': '\N{RIGHTWARDS ARROW}',
+                b'-': '\N{UPWARDS ARROW}',
+                b'~': '\N{MIDDLE DOT}'}
+
+            if seq in uchars:
+                self._print_char(TermChar(uchars[seq], self._attr,
+                                          self._fgcolor, self._bgcolor))
+                return True
+
+        # Handle normal characters.
         if re.fullmatch(b'[^\x01-\x1f]+', seq):
             try:
                 uchar = seq.decode('utf-8')
-                self._print_char(
-                    TermChar(uchar, self._attr, self._fgcolor, self._bgcolor))
+                self._print_char(TermChar(uchar, self._attr, self._fgcolor,
+                                          self._bgcolor))
                 return True
             except UnicodeError:
                 # Continue on the assumption that it is not yet a complete
@@ -444,6 +470,14 @@ class Term:
             return True
 
         # Controls beginning with ESC.
+        if seq == b'\x1b(0':
+            # Start alternate character set.
+            self._alt_charset_mode = True
+            return True
+        if seq == b'\x1b(B':
+            # End alternate character set.
+            self._alt_charset_mode = False
+            return True
 
         # Control sequences.
         match = re.fullmatch(b'\x1b\\[([0-9]+)@', seq)
