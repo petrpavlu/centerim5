@@ -237,10 +237,10 @@ int ViewPort::addLineChar(int x, int y, LineChar c, Error &error)
     return 0;
 
   cchar_t cc;
-  cchar_t *ccp = &cc;
+  cchar_t *ccp = nullptr;
 
   if (ascii_mode) {
-    char ch;
+    char ch = '\0';
 
     switch (c) {
     case LINE_HLINE:
@@ -274,9 +274,8 @@ int ViewPort::addLineChar(int x, int y, LineChar c, Error &error)
     case LINE_BULLET:
       ch = 'o';
       break;
-    default:
-      assert(0);
     }
+    assert(ch != '\0');
 
     wchar_t wch[2];
     wch[0] = ch;
@@ -288,6 +287,8 @@ int ViewPort::addLineChar(int x, int y, LineChar c, Error &error)
         _("Setting complex character from character '%c' failed."), ch);
       return error.getCode();
     }
+
+    ccp = &cc;
   }
   else {
     // Non-ASCII mode.
@@ -337,10 +338,10 @@ int ViewPort::addLineChar(int x, int y, LineChar c, Error &error)
     case LINE_BULLET:
       ccp = WACS_BULLET;
       break;
-    default:
-      assert(0);
     }
   }
+
+  assert(ccp != nullptr);
 
   int draw_x = screen_x_ + (x - view_x_);
   int draw_y = screen_y_ + (y - view_y_);
@@ -348,7 +349,7 @@ int ViewPort::addLineChar(int x, int y, LineChar c, Error &error)
   if (::mvadd_wchnstr(draw_y, draw_x, ccp, 1) == OK)
     return 0;
 
-  const char *name;
+  const char *name = nullptr;
   switch (c) {
   case LINE_HLINE:
     name = "HLINE";
@@ -395,9 +396,8 @@ int ViewPort::addLineChar(int x, int y, LineChar c, Error &error)
   case LINE_BULLET:
     name = "BULLET";
     break;
-  default:
-    assert(0);
   }
+  assert(name != nullptr);
 
   error = Error(ERROR_CURSES_ADD_CHARACTER);
   error.setFormattedString(
