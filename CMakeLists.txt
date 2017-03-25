@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.1)
 project(centerim5)
 enable_testing()
 
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # C++ code requires C++11.
 set(CMAKE_CXX_STANDARD 11)
@@ -28,6 +29,11 @@ include_directories(
   "${CMAKE_CURRENT_SOURCE_DIR}")
 
 # Handle localization.
+find_package(Iconv)
+if(NOT Iconv_FOUND)
+  message(SEND_ERROR "Iconv not found")
+endif()
+
 find_package(Intl)
 find_package(Gettext)
 mark_as_advanced(GETTEXT_MSGFMT_EXECUTABLE)

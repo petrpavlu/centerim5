@@ -88,6 +88,7 @@ libcppconsui_la_CPPFLAGS = \
 	-DG_LOG_DOMAIN=\"cppconsui\"
 
 libcppconsui_la_LIBADD = \
+	$(LTLIBICONV) \
 	$(LTLIBINTL) \
 	$(SIGC_LIBS) \
 	$(NCURSESW_LIBS)

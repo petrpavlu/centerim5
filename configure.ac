@@ -111,6 +111,10 @@ AS_IF([test "$enable_debug" = yes],
 
 # Checks for libraries.
 
+AM_ICONV()
+AS_IF([test "$am_cv_func_iconv" != yes],
+	[AC_MSG_ERROR([iconv not found])])
+
 # gettext -- v0.18.1 was released on 2010-06-04.
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.18.1])
