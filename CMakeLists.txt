@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 3.1)
 project(centerim5)
 enable_testing()
 
-include(FindPackageHandleStandardArgs)
 
 # C++ code requires C++11.
 set(CMAKE_CXX_STANDARD 11)
@@ -25,8 +24,8 @@ pkg_check_modules(NCURSESW REQUIRED "ncursesw >= 5.8")
 
 # Populate common include directories.
 include_directories(
-  "${centerim5_BINARY_DIR}"
-  "${centerim5_SOURCE_DIR}")
+  "${CMAKE_CURRENT_BINARY_DIR}"
+  "${CMAKE_CURRENT_SOURCE_DIR}")
 
 # Handle localization.
 find_package(Intl)
@@ -88,7 +87,8 @@ endif()
 # Generate the config file.
 set(centerim5_PKGLIBDIR "${CMAKE_INSTALL_PREFIX}/lib/centerim5")
 execute_process(COMMAND misc/git-version-gen .tarball-version
-  WORKING_DIRECTORY "${centerim5_SOURCE_DIR}" OUTPUT_VARIABLE centerim5_VERSION)
+  WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+  OUTPUT_VARIABLE centerim5_VERSION)
 configure_file(config.h.cmake config.h)
 
 install(FILES centerim5.1 DESTINATION share/man/man1)
