@@ -1,6 +1,5 @@
-include_directories(${Intl_INCLUDE_DIRS})
 add_compile_options(${SIGC_CFLAGS})
-link_libraries(${Intl_LIBRARIES} ${SIGC_LDFLAGS} cppconsui)
+link_libraries(${SIGC_LDFLAGS} cppconsui)
 
 add_executable(button button.cpp main.cpp)
 add_executable(colorpicker colorpicker.cpp main.cpp)
