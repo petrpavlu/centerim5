@@ -578,7 +578,7 @@ int finalizeScreen(Error &error)
   // they occur. Error in endwin() is potentially serious and should always
   // override any error from clear() or refresh().
 
-  bool has_error;
+  bool has_error = false;
 
   // Clear the screen.
   if (clear(error) != 0)
