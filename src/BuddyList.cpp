@@ -634,7 +634,7 @@ void BuddyList::updateCachedPreference(const char *name)
     const char *value = purple_prefs_get_string(name);
     if (std::strcmp(value, "status") == 0)
       colorization_mode_ = COLOR_BY_STATUS;
-    else if (std::strcmp(value, "account") != 0)
+    else if (std::strcmp(value, "account") == 0)
       colorization_mode_ = COLOR_BY_ACCOUNT;
     else
       colorization_mode_ = COLOR_NONE;
