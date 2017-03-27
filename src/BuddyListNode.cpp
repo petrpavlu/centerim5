@@ -593,7 +593,8 @@ void BuddyListBuddy::updateColorScheme()
       getColorSchemeByBuddy(CenterIM::SCHEME_BUDDYLISTBUDDY, buddy_));
     break;
   default:
-    // note: COLOR_BY_ACCOUNT case is handled by BuddyListBuddy::draw()
+    // Note: COLOR_BY_ACCOUNT case is handled by
+    // BuddyListBuddy::getAttributes().
     setColorScheme(CenterIM::SCHEME_BUDDYLISTBUDDY);
     break;
   }
@@ -991,7 +992,8 @@ void BuddyListContact::updateColorScheme()
     break;
   }
   default:
-    // Note: COLOR_BY_ACCOUNT case is handled by BuddyListContact::draw().
+    // Note: COLOR_BY_ACCOUNT case is handled by
+    // BuddyListContact::getAttributes().
     setColorScheme(CenterIM::SCHEME_BUDDYLISTCONTACT);
     break;
   }
