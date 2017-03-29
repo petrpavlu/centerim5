@@ -405,7 +405,7 @@ void BuddyList::AddChatWindow::populateChatInfo(PurpleAccount *account)
     struct proto_chat_entry *entry =
       static_cast<struct proto_chat_entry *>(l->data);
 
-    // Remove any accelerator from the label:
+    // Remove any accelerator from the label.
     char *label = Utils::stripAccelerator(entry->label);
 
     // And strip any trailing colon.
