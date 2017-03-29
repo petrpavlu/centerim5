@@ -23,8 +23,10 @@
 #define __CONVERSATION_H__
 
 #include "Log.h"
+#include "ConversationRoomList.h"
 
 #include <cppconsui/AbstractLine.h>
+#include <cppconsui/VerticalLine.h>
 #include <cppconsui/TextEdit.h>
 #include <cppconsui/TextView.h>
 #include <cppconsui/Window.h>
@@ -55,6 +57,8 @@ public:
 
   PurpleConversation *getPurpleConversation() const { return conv; };
 
+  ConversationRoomList *getRoomList() const { return room_list; };
+
 protected:
   class ConversationLine
   : public CppConsUI::AbstractLine
@@ -77,6 +81,10 @@ protected:
   CppConsUI::TextView *view;
   CppConsUI::TextEdit *input;
   ConversationLine *line;
+
+  // Only PURPLE_CONV_TYPE_CHAT have a room list
+  ConversationRoomList *room_list;
+  CppConsUI::VerticalLine *room_list_line;
 
   PurpleConversation *conv;
 

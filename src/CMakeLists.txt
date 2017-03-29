@@ -8,6 +8,7 @@ set(centerim5_SOURCES
   CenterIM.cpp
   Connections.cpp
   Conversation.cpp
+  ConversationRoomList.cpp
   Conversations.cpp
   Footer.cpp
   GeneralMenu.cpp
@@ -30,6 +31,7 @@ set(centerim5_HEADERS
   CenterIM.h
   Connections.h
   Conversation.h
+  ConversationRoomList.h
   Conversations.h
   Footer.h
   GeneralMenu.h

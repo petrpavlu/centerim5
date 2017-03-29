@@ -48,7 +48,7 @@ void VerticalLine::draw()
   int attrs = getColorPair("verticalline", "line");
   area->attron(attrs);
   for (int i = 0; i < realh; i++)
-    area->mvaddlinechar(i, 0, Curses::LINE_VLINE);
+    area->mvaddlinechar(0, i, Curses::LINE_VLINE);
   area->attroff(attrs);
 }
 

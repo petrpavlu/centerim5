@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
 "projects/centerim\n"
 "POT-Creation-Date: 2013-09-17 20:29+0200\n"
-"PO-Revision-Date: 2013-05-29 22:56+0400\n"
+"PO-Revision-Date: 2015-11-15 14:06+0300\n"
 "Last-Translator: kyak <bas@bmail.ru>\n"
 "Language-Team: \n"
 "Language: ru_RU\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Poedit 1.8.5\n"
 
 #: src/AccountWindow.cpp:30
 msgid "Accounts"
@@ -456,14 +456,14 @@ msgid "%s: unexpected argument after options\n"
 msgstr "%s: непредвиденный аргумент после опций\n"
 
 #: src/CenterMain.cpp:112
-#, fuzzy, c-format
+#, c-format
 msgid "CppConsUI initialization failed.\n"
-msgstr "Ошибка инициализации Libpurple"
+msgstr "Ошибка инициализации CppConsUI.\n"
 
 #: src/CenterMain.cpp:124
-#, fuzzy, c-format
+#, c-format
 msgid "CppConsUI deinitialization failed.\n"
-msgstr "Ошибка инициализации Libpurple"
+msgstr "Ошибка деинициализации CppConsUI.\n"
 
 #: src/Connections.cpp:90 src/Connections.cpp:114 src/Connections.cpp:163
 #, c-format
@@ -947,19 +947,19 @@ msgstr "Нет"
 
 #: cppconsui/ColorPicker.cpp:114
 msgid " SAMPLE "
-msgstr ""
+msgstr " ПРИМЕР "
 
 #: cppconsui/ColorPickerComboBox.cpp:56
 msgid "More..."
-msgstr ""
+msgstr "Больше..."
 
 #: cppconsui/ColorPickerComboBox.cpp:118
 msgid "DEFAULT"
-msgstr ""
+msgstr "УМОЛЧ."
 
 #: cppconsui/ColorPickerComboBox.cpp:236
 msgid "DEFAULT "
-msgstr ""
+msgstr "УМОЛЧ."
 
 #: cppconsui/ColorScheme.cpp:92
 msgid "Color pairs limit exceeded."

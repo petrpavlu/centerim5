@@ -114,6 +114,7 @@ Conversations::Conversations()
   // init prefs
   purple_prefs_add_none(CONF_PREFIX "/chat");
   purple_prefs_add_int(CONF_PREFIX "/chat/partitioning", 80);
+  purple_prefs_add_int(CONF_PREFIX "/chat/roomlist_partitioning", 80);
   purple_prefs_add_bool(CONF_PREFIX "/chat/beep_on_msg", false);
 
   // send_typing caching
@@ -127,10 +128,11 @@ Conversations::Conversations()
   //centerim_conv_ui_ops.write_chat = ;
   //centerim_conv_ui_ops.write_im = ;
   centerim_conv_ui_ops.write_conv = write_conv_;
-  //centerim_conv_ui_ops.chat_add_users = ;
-  //centerim_conv_ui_ops.chat_rename_user = ;
-  //centerim_conv_ui_ops.chat_remove_users = ;
-  //centerim_conv_ui_ops.chat_update_user = ;
+  centerim_conv_ui_ops.chat_add_users = chat_add_users_;
+  centerim_conv_ui_ops.chat_rename_user = chat_rename_user_;
+  centerim_conv_ui_ops.chat_remove_users = chat_remove_users_;
+  centerim_conv_ui_ops.chat_update_user = chat_update_user_;
+
   centerim_conv_ui_ops.present = present_;
   //centerim_conv_ui_ops.has_focus = ;
   //centerim_conv_ui_ops.custom_smiley_add = ;
@@ -146,13 +148,18 @@ Conversations::Conversations()
       PURPLE_CALLBACK(buddy_typing_), this);
   purple_signal_connect(handle, "buddy-typing-stopped", this,
       PURPLE_CALLBACK(buddy_typing_), this);
+
+  // setup the callbacks for connections in relation to conversations
+  void *connections_handle = purple_connections_get_handle();
+  purple_signal_connect(connections_handle, "signed-on", this,
+      PURPLE_CALLBACK(account_signed_on_off_), this);
 }
 
 Conversations::~Conversations()
 {
   // close all opened conversations
   while (conversations.size())
-    purple_conversation_destroy(conversations.front().purple_conv);
+    purple_conversation_destroy(conversations.front().conv->getPurpleConversation());
 
   purple_conversations_set_ui_ops(NULL);
   purple_prefs_disconnect_by_handle(this);
@@ -178,7 +185,7 @@ void Conversations::finalize()
 int Conversations::findConversation(PurpleConversation *conv)
 {
   for (int i = 0; i < static_cast<int>(conversations.size()); i++)
-    if (conversations[i].purple_conv == conv)
+    if (conversations[i].conv->getPurpleConversation() == conv)
       return i;
 
   return -1;
@@ -251,7 +258,7 @@ void Conversations::updateLabel(int i)
   g_assert(i < static_cast<int>(conversations.size()));
 
   char *name = g_strdup_printf(" %d|%s%c", i + 1,
-      purple_conversation_get_title(conversations[i].purple_conv),
+      purple_conversation_get_title(conversations[i].conv->getPurpleConversation()),
       conversations[i].typing_status);
   conversations[i].label->setText(name);
   g_free(name);
@@ -279,8 +286,9 @@ void Conversations::create_conversation(PurpleConversation *conv)
 
   Conversation *conversation = new Conversation(conv);
 
+  conv->ui_data = static_cast<void*>(conversation);
+
   ConvChild c;
-  c.purple_conv = conv;
   c.conv = conversation;
   c.label = new CppConsUI::Label(AUTOSIZE, 1);
   c.typing_status = ' ';
@@ -347,6 +355,52 @@ void Conversations::write_conv(PurpleConversation *conv, const char *name,
   conversations[i].conv->write(name, alias, message, flags, mtime);
 }
 
+ConversationRoomList * Conversations::getRoomList(PurpleConversation *conv)
+{
+  ConversationRoomList *ret = NULL;
+
+  if(NULL != conv) {
+    Conversation *conversation = static_cast<Conversation*>(conv->ui_data);
+    if(NULL != conversation) {
+      if(conversation->getRoomList()) {
+        ret = conversation->getRoomList();
+      }
+    }
+  }
+
+  return ret;
+}
+
+void Conversations::chat_add_users(PurpleConversation *conv, GList *cbuddies,
+    gboolean new_arrivals)
+{
+  ConversationRoomList *room_list = getRoomList(conv);
+  if(room_list)
+    room_list->add_users(cbuddies, new_arrivals);
+}
+
+void Conversations::chat_rename_user(PurpleConversation *conv, const char *old_name,
+  const char *new_name, const char *new_alias)
+{
+  ConversationRoomList *room_list = getRoomList(conv);
+  if(room_list)
+    room_list->rename_user(old_name, new_name, new_alias);
+}
+
+void Conversations::chat_remove_users(PurpleConversation *conv, GList *users)
+{
+  ConversationRoomList *room_list = getRoomList(conv);
+  if(room_list)
+    room_list->remove_users(users);
+}
+
+void Conversations::chat_update_user(PurpleConversation *conv, const char *user)
+{
+  ConversationRoomList *room_list = getRoomList(conv);
+  if(room_list)
+    room_list->update_user(user);
+}
+
 void Conversations::present(PurpleConversation *conv)
 {
   g_return_if_fail(conv);
@@ -381,6 +435,39 @@ void Conversations::buddy_typing(PurpleAccount *account, const char *who)
     conversations[i].typing_status = ' ';
 
   updateLabel(i);
+}
+
+void Conversations::account_signed_on_off(PurpleConnection *connection)
+{
+    for(ConversationsVector::iterator conv_child = conversations.begin(); conv_child != conversations.end(); ++conv_child) {
+
+        PurpleConversation *purple_conv = conv_child->conv->getPurpleConversation();
+
+        // Only process chats for this connection
+        if(purple_conversation_get_type(purple_conv) == PURPLE_CONV_TYPE_CHAT &&
+           purple_conversation_get_gc(purple_conv) == connection) {
+
+            // TODO: add and consult "want-to-rejoin" configuration parameter?
+
+            // Look up the chat from the buddy list
+            PurpleChat * purple_chat = purple_blist_find_chat(
+                    purple_conversation_get_account(purple_conv),
+                    purple_conversation_get_name(purple_conv)
+                    );
+
+            GHashTable *chat_components = NULL;
+
+            if(purple_chat) {
+                chat_components = purple_chat_get_components(purple_chat);
+            } else {
+                // Use defaults if the chat can't be found
+                PurplePluginProtocolInfo *info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(connection));
+                chat_components = info->chat_info_defaults(connection, purple_conversation_get_name(purple_conv));
+            }
+
+            serv_join_chat(connection, chat_components);
+        }
+    }
 }
 
 void Conversations::send_typing_pref_change(const char *name,
