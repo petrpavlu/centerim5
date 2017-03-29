@@ -7,6 +7,9 @@
 /* Define to the home page for this package. */
 #define PACKAGE_URL "http://www.centerim.org/"
 
+/* Version number of package. */
+#define VERSION "${centerim5_VERSION}"
+
 /* Define to the pkglib directory. */
 #define PKGLIBDIR "${centerim5_PKGLIBDIR}"
 

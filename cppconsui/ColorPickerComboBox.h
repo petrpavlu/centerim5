@@ -1,32 +1,28 @@
-/*
- * Copyright (C) 2012-2013 by CenterIM developers
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2012 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2012-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * ColorPickerComboBox class.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// ColorPickerComboBox class.
+///
+/// @ingroup cppconsui
 
-#ifndef __COLORPICKERCOMBOBOX_H__
-#define __COLORPICKERCOMBOBOX_H__
+#ifndef COLORPICKERCOMBOBOX_H
+#define COLORPICKERCOMBOBOX_H
 
 #include "ColorPickerDialog.h"
 #include "ComboBox.h"
@@ -35,37 +31,32 @@
 #define COLORPICKER_256COLOR
 #endif
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class ColorPickerComboBox
-: public ComboBox
-{
+class ColorPickerComboBox : public ComboBox {
 public:
   ColorPickerComboBox(int w, int color);
-  virtual ~ColorPickerComboBox();
+  virtual ~ColorPickerComboBox() override;
 
   // Widget
-  virtual void draw();
+  virtual int draw(Curses::ViewPort area, Error &error) override;
 
   virtual void setColor(int new_color);
-  virtual int getColor() { return selected_color; }
+  virtual int getColor() { return selected_color_; }
 
-  sigc::signal<void, ColorPickerComboBox&, int> signal_color_changed;
+  sigc::signal<void, ColorPickerComboBox &, int> signal_color_changed;
 
 protected:
-  class ColorButton
-  : public Button
-  {
+  class ColorButton : public Button {
   public:
-    ColorButton(int color_ = -1);
-    virtual ~ColorButton() {}
+    ColorButton(int color = -1);
+    virtual ~ColorButton() override {}
 
-   // Widget
-   virtual void draw();
+    // Widget
+    virtual int draw(Curses::ViewPort area, Error &error) override;
 
   protected:
-    int color;
+    int color_;
 
   private:
     CONSUI_DISABLE_COPY(ColorButton);
@@ -81,21 +72,23 @@ protected:
   using ComboBox::setSelectedByDataPtr;
 
   // ComboBox
-  virtual void onDropDown(Button& activator);
-  virtual void dropDownOk(Button& activator, int new_entry);
-  virtual void dropDownClose(FreeWindow& window)
-    { ComboBox::dropDownClose(window); }
+  virtual void onDropDown(Button &activator) override;
+  virtual void dropDownOk(Button &activator, int new_entry) override;
+  virtual void dropDownClose(Window &window) override
+  {
+    ComboBox::dropDownClose(window);
+  }
 #ifdef COLORPICKER_256COLOR
-  virtual void colorPickerOk(ColorPickerDialog& activator,
-      AbstractDialog::ResponseType response, int new_color);
-  virtual void colorPickerClose(FreeWindow& window);
+  virtual void colorPickerOk(ColorPickerDialog &activator,
+    AbstractDialog::ResponseType response, int new_color);
+  virtual void colorPickerClose(Window &window);
 #endif // COLORPICKER_256COLOR
-  virtual void setSelected(int new_entry);
+  virtual void setSelected(int new_entry) override;
 
-  int selected_color;
+  int selected_color_;
 
 #ifdef COLORPICKER_256COLOR
-  ColorPickerDialog *colorpicker;
+  ColorPickerDialog *colorpicker_;
 #endif // COLORPICKER_256COLOR
 
 private:
@@ -104,6 +97,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __COLORPICKERCOMBOBOX_H__
+#endif // COLORPICKERCOMBOBOX_H
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

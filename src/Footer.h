@@ -1,57 +1,51 @@
-/*
- * Copyright (C) 2011-2013 by CenterIM developers
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2011-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __FOOTER_H__
-#define __FOOTER_H__
+#ifndef FOOTER_H
+#define FOOTER_H
 
 #include "CenterIM.h"
 
-#include <cppconsui/FreeWindow.h>
 #include <cppconsui/Label.h>
+#include <cppconsui/Window.h>
 
 #define FOOTER (Footer::instance())
 
-// the bottom area of the screen containing context sensitive help
-class Footer
-: public CppConsUI::FreeWindow
-{
+// Bottom area of the screen containing context sensitive help.
+class Footer : public CppConsUI::Window {
 public:
   static Footer *instance();
 
-  // FreeWindow
-  virtual void onScreenResized();
+  // Window
+  virtual void onScreenResized() override;
 
-  void setText(const char *fmt, ...) _attribute((format(printf, 2, 3)));
-
-protected:
+  void setText(const char *fmt, ...)
+    CPPCONSUI_GNUC_ATTRIBUTE((format(printf, 2, 3)));
 
 private:
   typedef std::vector<std::string> Values;
 
-  CppConsUI::Label *label;
-  Values values;
+  CppConsUI::Label *label_;
+  Values values_;
 
-  static Footer *my_instance;
+  static Footer *my_instance_;
 
   Footer();
-  virtual ~Footer() {}
+  virtual ~Footer() override {}
   CONSUI_DISABLE_COPY(Footer);
 
   static void init();
@@ -61,6 +55,6 @@ private:
   void updateText();
 };
 
-#endif // __FOOTER_H__
+#endif // FOOTER_H
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

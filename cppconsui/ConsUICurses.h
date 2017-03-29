@@ -1,51 +1,34 @@
-/*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2013 by CenterIM developers
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * Wrapper for curses functions.
- *
- * @ingroup cppconsui
- *
- * @todo Make ConsuiCurses.h a full handler of all curses functions that could
- * be easily changed with a different implementation.
- * @todo Documentation. ;)
- */
+/// @file
+/// Wrapper for curses functions.
+///
+/// @ingroup cppconsui
 
-#ifndef __CONSUICURSES_H__
-#define __CONSUICURSES_H__
+#ifndef CONSUICURSES_H
+#define CONSUICURSES_H
 
 #include "CppConsUI.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-namespace Curses
-{
-struct Stats
-{
-  unsigned newpad_calls;
-  unsigned newwin_calls;
-  unsigned subpad_calls;
-};
+namespace Curses {
 
 enum LineChar {
   LINE_HLINE,
@@ -62,66 +45,60 @@ enum LineChar {
   LINE_LARROW,
   LINE_RARROW,
   LINE_UARROW,
-  LINE_BULLET
+  LINE_BULLET,
 };
 
-class Window
-{
+class ViewPort {
 public:
-  // these tree functions returns NULL if such pad/window can not be created
-  static Window *newpad(int cols, int nlines);
-  static Window *newwin(int begin_x, int begin_y, int ncols, int nlines);
+  ViewPort(int screen_x, int screen_y, int view_x, int view_y, int view_width,
+    int view_height);
+  virtual ~ViewPort() {}
 
-  Window *subpad(int begin_x, int begin_y, int ncols, int nlines);
+  /// Adds a string to the screen.
+  ///
+  /// First two variants require NUL-terminated strings.
+  int addString(
+    int x, int y, int w, const char *str, Error &error, int *printed = nullptr);
+  int addString(
+    int x, int y, const char *str, Error &error, int *printed = nullptr);
+  int addString(int x, int y, int w, const char *str, const char *end,
+    Error &error, int *printed = nullptr);
+  int addString(int x, int y, const char *str, const char *end, Error &error,
+    int *printed = nullptr);
 
-  virtual ~Window();
+  int addChar(
+    int x, int y, UTF8::UniChar uc, Error &error, int *printed = nullptr);
+  int addLineChar(int x, int y, LineChar c, Error &error);
 
-  /**
-   * Adds string to the window.
-   *
-   * First two variants require NUL-terminated strings.
-   */
-  int mvaddstring(int x, int y, int w, const char *str);
-  int mvaddstring(int x, int y, const char *str);
-  int mvaddstring(int x, int y, int w, const char *str, const char *end);
-  int mvaddstring(int x, int y, const char *str, const char *end);
+  int attrOn(int attrs, Error &error);
+  int attrOff(int attrs, Error &error);
+  int changeAt(int x, int y, int n, /* attr_t */ unsigned long attr,
+    short color, Error &error);
 
-  int mvaddchar(int x, int y, UTF8::UniChar uc);
+  int fill(int attrs, Error &error);
+  int fill(int attrs, int x, int y, int w, int h, Error &error);
+  int erase(Error &error);
 
-  int mvaddlinechar(int x, int y, LineChar c);
+  void scroll(int scroll_x, int scroll_y);
 
-  int attron(int attrs);
-  int attroff(int attrs);
-  int mvchgat(int x, int y, int n, /* attr_t */ int attr, short color,
-      const void *opts);
-
-  int fill(int attrs);
-  int fill(int attrs, int x, int y, int w, int h);
-  int erase();
-
-  int noutrefresh();
-
-  int touch();
-
-  int copyto(Window *dstwin, int smincol, int sminrow, int dmincol,
-      int dminrow, int dmaxcol, int dmaxrow, int overlay);
-
-  int getmaxx();
-  int getmaxy();
+  int getScreenLeft() const { return screen_x_; }
+  int getScreenTop() const { return screen_y_; }
+  int getViewLeft() const { return view_x_; }
+  int getViewTop() const { return view_y_; }
+  int getViewWidth() const { return view_width_; }
+  int getViewHeight() const { return view_height_; }
 
 protected:
-  int printChar(UTF8::UniChar uc);
+  int screen_x_, screen_y_;
+  int view_x_, view_y_, view_width_, view_height_;
+
+  bool isInViewPort(int x, int y, int w);
 
 private:
-  struct WindowInternals;
-  WindowInternals *p;
-
-  Window();
-  CONSUI_DISABLE_COPY(Window);
+  // CONSUI_DISABLE_COPY(ViewPort);
 };
 
-struct Color
-{
+struct Color {
   const static int DEFAULT;
   const static int BLACK;
   const static int RED;
@@ -133,8 +110,7 @@ struct Color
   const static int WHITE;
 };
 
-struct Attr
-{
+struct Attr {
   const static int NORMAL;
   const static int STANDOUT;
   const static int REVERSE;
@@ -143,44 +119,36 @@ struct Attr
   const static int BOLD;
 };
 
-extern const int C_OK;
-extern const int C_ERR;
-
 const int NUM_DEFAULT_COLORS = 16;
 
-int init_screen();
-int finalize_screen();
-void set_ascii_mode(bool enabled);
-bool get_ascii_mode();
+int initScreen(Error &error);
+int finalizeScreen(Error &error);
+void setAsciiMode(bool enabled);
+bool getAsciiMode();
 
-bool init_colorpair(int idx, int fg, int bg, int *res);
-int nrcolors();
-int nrcolorpairs();
-bool colorpair_content(int colorpair, int *fg, int *bg);
+bool initColorPair(int idx, int fg, int bg, int *res, Error &error);
+int getColorCount();
+int getColorPairCount();
 
-int erase();
-int clear();
-int doupdate();
+int erase(Error &error);
+int clear(Error &error);
+int refresh(Error &error);
 
-int beep();
+int beep(Error &error);
 
 // stdscr
-int noutrefresh();
-int getmaxx();
-int getmaxy();
+int getWidth();
+int getHeight();
 
-int resizeterm(int lines, int columns);
+int resizeTerm(int width, int height, Error &error);
 
-int onscreen_width(const char *start, const char *end = NULL);
-int onscreen_width(UTF8::UniChar uc, int w = 0);
-
-const Stats *get_stats();
-void reset_stats();
+int onScreenWidth(const char *start, const char *end = nullptr);
+int onScreenWidth(UTF8::UniChar uc, int w = 0);
 
 } // namespace Curses
 
 } // namespace CppConsUI
 
-#endif // __CONSUICURSES_H__
+#endif // CONSUICURSES_H
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

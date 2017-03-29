@@ -1,49 +1,39 @@
-/*
- * Copyright (C) 2010-2013 by CenterIM developers
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * Spacer class.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// Spacer class.
+///
+/// @ingroup cppconsui
 
-#ifndef __SPACER_H__
-#define __SPACER_H__
+#ifndef SPACER_H
+#define SPACER_H
 
 #include "Widget.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class Spacer
-: public Widget
-{
+class Spacer : public Widget {
 public:
   Spacer(int w, int h);
-  virtual ~Spacer() {}
+  virtual ~Spacer() override {}
 
   // Widget
-  virtual void draw();
-
-protected:
+  virtual int draw(Curses::ViewPort area, Error &error) override;
 
 private:
   CONSUI_DISABLE_COPY(Spacer);
@@ -51,6 +41,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __SPACER_H__
+#endif // SPACER_H
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

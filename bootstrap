@@ -1,19 +1,16 @@
-#! /bin/sh
-# script shamelessly taken from openbox
+#!/bin/sh
 
 sh() {
-  /bin/sh -c "set -x; $*"
+  /bin/sh -c "set -x; $*" || exit 1
 }
 
-export WANT_AUTOMAKE=1.9
-
-sh autopoint --force || exit 1 # for GNU gettext
-sh libtoolize --copy --force --automake || exit 1
-sh aclocal -I m4 $ACLOCAL_FLAGS || exit 1
-sh autoheader || exit 1
-sh autoconf || exit 1
-sh automake --add-missing --copy || exit 1
+sh autopoint --force # for GNU gettext
+sh libtoolize --copy --force --quiet
+sh aclocal -I m4
+sh autoheader
+sh autoconf
+sh automake --add-missing --copy
 
 echo
 echo You are now ready to run ./configure
-echo enjoy!
+echo Enjoy!

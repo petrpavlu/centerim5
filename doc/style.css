@@ -1,0 +1,20 @@
+.memtitle {
+  font-size: 1.1em;
+  font-weight: 500;
+  background-image: none;
+}
+
+table.memname tr {
+  float: left; /* Inline parameters. */
+}
+
+.memdoc {
+  background-image: none;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  box-shadow: none;
+}
+
+.fieldtable th {
+  background-image: none;
+}

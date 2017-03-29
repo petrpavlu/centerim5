@@ -1,57 +1,53 @@
-/*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2013 by CenterIM developers
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * VerticalLine class implementation.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// VerticalLine class implementation.
+///
+/// @ingroup cppconsui
 
 #include "VerticalLine.h"
 
-namespace CppConsUI
-{
+#include "ColorScheme.h"
 
-VerticalLine::VerticalLine(int h)
-: AbstractLine(1, h)
+namespace CppConsUI {
+
+VerticalLine::VerticalLine(int h) : AbstractLine(1, h)
 {
 }
 
-void VerticalLine::draw()
+int VerticalLine::draw(Curses::ViewPort area, Error &error)
 {
-  proceedUpdateArea();
+  if (real_height_ == 0 || real_width_ != 1)
+    return 0;
 
-  int realh;
+  int attrs;
+  DRAW(getAttributes(ColorScheme::PROPERTY_VERTICALLINE_LINE, &attrs, error));
+  DRAW(area.attrOn(attrs, error));
 
-  if (!area || (realh = area->getmaxy()) == 0 || area->getmaxx() != 1)
-    return;
+  for (int i = 0; i < real_height_; ++i)
+    DRAW(area.addLineChar(0, i, Curses::LINE_VLINE, error));
 
-  int attrs = getColorPair("verticalline", "line");
-  area->attron(attrs);
-  for (int i = 0; i < realh; i++)
-    area->mvaddlinechar(0, i, Curses::LINE_VLINE);
-  area->attroff(attrs);
+  DRAW(area.attrOff(attrs, error));
+
+  return 0;
 }
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

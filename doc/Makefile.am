@@ -1,4 +1,4 @@
 .PHONY: doc
 doc:
-	doxygen doxygen-cppconsui.conf > /dev/null
-	@echo "open doc/html/index.html"
+	$(AM_V_GEN)doxygen doxygen-cppconsui.conf > /dev/null
+	@echo "Open doc/html/index.html."

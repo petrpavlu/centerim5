@@ -1,70 +1,52 @@
-add_executable(button EXCLUDE_FROM_ALL button.cpp MainLoop.cpp)
+add_compile_options(${SIGC_CFLAGS})
+link_libraries(${SIGC_LDFLAGS} cppconsui)
 
-target_link_libraries(button
-  cppconsui
-  ${GLIB2_LIBRARIES}
-  ${SIGC_LIBRARIES})
+add_executable(button button.cpp main.cpp)
+add_executable(colorpicker colorpicker.cpp main.cpp)
+add_executable(label label.cpp main.cpp)
+add_executable(submenu submenu.cpp main.cpp)
+add_executable(textentry textentry.cpp main.cpp)
+add_executable(textview textview.cpp main.cpp)
+add_executable(treeview treeview.cpp main.cpp)
+add_executable(window window.cpp main.cpp)
 
-##############################################################################
-add_executable(colorpicker EXCLUDE_FROM_ALL colorpicker.cpp MainLoop.cpp)
+if(TERMEX_TESTS)
+  add_custom_command(OUTPUT terminfo VERBATIM
+    COMMAND "${TIC_EXECUTABLE}" -o terminfo
+      "${CMAKE_CURRENT_SOURCE_DIR}/termex.src"
+    COMMAND "${CMAKE_COMMAND}" -E touch terminfo
+    DEPENDS termex.src)
 
-target_link_libraries(colorpicker
-  cppconsui
-  ${GLIB2_LIBRARIES}
-  ${SIGC_LIBRARIES})
+  add_custom_target(check VERBATIM COMMAND "${CMAKE_CTEST_COMMAND}"
+    DEPENDS terminfo)
 
-##############################################################################
-add_executable(label EXCLUDE_FROM_ALL label.cpp MainLoop.cpp)
+else()
+  add_custom_target(check)
 
-target_link_libraries(label
-  cppconsui
-  ${GLIB2_LIBRARIES}
-  ${SIGC_LIBRARIES})
+  add_custom_command(TARGET check POST_BUILD VERBATIM
+    COMMAND "${CMAKE_COMMAND}" -E echo "Tests cannot be run because required \
+dependencies are missing, reconfigure the build and install the tools that are \
+reported as needed for the testing"
+    COMMAND false)
+endif()
 
-##############################################################################
-add_executable(scrollpane EXCLUDE_FROM_ALL scrollpane.cpp MainLoop.cpp)
+add_dependencies(check
+  button
+  colorpicker
+  label
+  submenu
+  textentry
+  textview
+  treeview
+  window)
 
-target_link_libraries(scrollpane
-  cppconsui
-  ${GLIB2_LIBRARIES}
-  ${SIGC_LIBRARIES})
+# List of test playbooks.
+set(TESTS
+  treeview)
 
-##############################################################################
-add_executable(submenu EXCLUDE_FROM_ALL submenu.cpp MainLoop.cpp)
-
-target_link_libraries(submenu
-  cppconsui
-  ${GLIB2_LIBRARIES}
-  ${SIGC_LIBRARIES})
-
-##############################################################################
-add_executable(textentry EXCLUDE_FROM_ALL textentry.cpp MainLoop.cpp)
-
-target_link_libraries(textentry
-  cppconsui
-  ${GLIB2_LIBRARIES}
-  ${SIGC_LIBRARIES})
-
-##############################################################################
-add_executable(textview EXCLUDE_FROM_ALL textview.cpp MainLoop.cpp)
-
-target_link_libraries(textview
-  cppconsui
-  ${GLIB2_LIBRARIES}
-  ${SIGC_LIBRARIES})
-
-##############################################################################
-add_executable(treeview EXCLUDE_FROM_ALL treeview.cpp MainLoop.cpp)
-
-target_link_libraries(treeview
-  cppconsui
-  ${GLIB2_LIBRARIES}
-  ${SIGC_LIBRARIES})
-
-##############################################################################
-add_executable(window EXCLUDE_FROM_ALL window.cpp MainLoop.cpp)
-
-target_link_libraries(window
-  cppconsui
-  ${GLIB2_LIBRARIES}
-  ${SIGC_LIBRARIES})
+foreach(testname ${TESTS})
+  add_test(NAME "${testname}"
+    COMMAND "${PYTHON_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/termex.py"
+      -t "${CMAKE_CURRENT_BINARY_DIR}/terminfo" test
+      "${CMAKE_CURRENT_SOURCE_DIR}/${testname}.test")
+endforeach()

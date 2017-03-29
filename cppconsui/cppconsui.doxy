@@ -10,7 +10,7 @@ digraph G
   node [fontname="DejaVu Sans", fontsize=10, shape=record, height=0.2, width=0.4];
 
   ColorScheme [label="ColorScheme", URL="\ref CppConsUI::ColorScheme"];
-  CursesWindow [label="Curses::Window", URL="\ref CppConsUI::Curses::Window"];
+  CursesViewPort [label="Curses::ViewPort", URL="\ref CppConsUI::Curses::ViewPort"];
 
   CoreManager [label="CoreManager", URL="\ref CppConsUI::CoreManager"];
   InputProcessor -> CoreManager [dir="back"];
@@ -35,9 +35,7 @@ digraph G
   Container [label="Container", URL="\ref CppConsUI::Container"];
   Container -> ColorPickerPalette [dir="back"];
   ColorPickerPalette [label="ColorPickerPalette", URL="\ref CppConsUI::ColorPickerPalette"];
-  Container -> FreeWindow [dir="back"];
-  FreeWindow [label="FreeWindow", URL="\ref CppConsUI::FreeWindow"];
-  FreeWindow -> Window [dir="back"];
+  Container -> Window [dir="back"];
   Window [label="Window", URL="\ref CppConsUI::Window"];
   Window -> AbstractDialog [dir="back"];
   AbstractDialog [label="AbstractDialog", URL="\ref CppConsUI::AbstractDialog"];
@@ -53,9 +51,7 @@ digraph G
   SplitDialog [label="SplitDialog", URL="\ref CppConsUI::SplitDialog"];
   Window -> MenuWindow [dir="back"];
   MenuWindow [label="MenuWindow", URL="\ref CppConsUI::MenuWindow"];
-  Container -> ScrollPane [dir="back"];
-  ScrollPane [label="ScrollPane", URL="\ref CppConsUI::ScrollPane"];
-  ScrollPane -> AbstractListBox [dir="back"];
+  Container -> AbstractListBox [dir="back"];
   AbstractListBox [label="AbstractListBox", URL="\ref CppConsUI::AbstractListBox"];
   AbstractListBox -> HorizontalListBox [dir="back"];
   HorizontalListBox [label="HorizontalListBox", URL="\ref CppConsUI::HorizontalListBox"];
@@ -63,7 +59,7 @@ digraph G
   ColorPicker [label="ColorPicker", URL="\ref CppConsUI::ColorPicker"];
   AbstractListBox -> ListBox [dir="back"];
   ListBox [label="ListBox", URL="\ref CppConsUI::ListBox"];
-  ScrollPane -> TreeView [dir="back"];
+  Container -> TreeView [dir="back"];
   TreeView [label="TreeView", URL="\ref CppConsUI::TreeView"];
   Widget -> Label [dir="back"];
   Label [label="Label", URL="\ref CppConsUI::Label"];
@@ -85,7 +81,7 @@ digraph G
 \namespace CppConsUI
 \brief Main namespace for the library.
 
-CppConsUI is a main namespace that encapsulates all library content.
+CppConsUI is the main namespace that encapsulates all library content.
 
 \namespace CppConsUI::Curses
 \brief Helpers for the curses library.

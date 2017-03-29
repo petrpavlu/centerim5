@@ -1,6 +1,6 @@
 lib_LTLIBRARIES = libcppconsui.la
 
-# When you add files here, also add them in po/POTFILES.in
+# When you add files here, also add them in po/POTFILES.in.
 libcppconsui_la_SOURCES = \
 	AbstractDialog.cpp \
 	AbstractDialog.h \
@@ -34,8 +34,6 @@ libcppconsui_la_SOURCES = \
 	CppConsUI.h \
 	Dialog.cpp \
 	Dialog.h \
-	FreeWindow.cpp \
-	FreeWindow.h \
 	HorizontalLine.cpp \
 	HorizontalLine.h \
 	HorizontalListBox.cpp \
@@ -58,8 +56,6 @@ libcppconsui_la_SOURCES = \
 	MessageDialog.h \
 	Panel.cpp \
 	Panel.h \
-	ScrollPane.cpp \
-	ScrollPane.h \
 	Spacer.cpp \
 	Spacer.h \
 	SplitDialog.cpp \
@@ -92,5 +88,7 @@ libcppconsui_la_CPPFLAGS = \
 	-DG_LOG_DOMAIN=\"cppconsui\"
 
 libcppconsui_la_LIBADD = \
+	$(LTLIBICONV) \
+	$(LTLIBINTL) \
 	$(SIGC_LIBS) \
 	$(NCURSESW_LIBS)

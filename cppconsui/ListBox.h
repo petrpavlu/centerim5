@@ -1,81 +1,71 @@
-/*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2013 by CenterIM developers
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * ListBox class.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// ListBox class.
+///
+/// @ingroup cppconsui
 
-#ifndef __LISTBOX_H__
-#define __LISTBOX_H__
+#ifndef LISTBOX_H
+#define LISTBOX_H
 
 #include "AbstractListBox.h"
 #include "HorizontalLine.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-/**
- * Implementation of AbstractListBox class where widgets are placed
- * vertically.
- */
-class ListBox
-: public AbstractListBox
-{
+/// Implementation of AbstractListBox class where widgets are placed vertically.
+class ListBox : public AbstractListBox {
 public:
   ListBox(int w, int h);
-  virtual ~ListBox() {}
-
-  // Widget
-  virtual void draw();
+  virtual ~ListBox() override {}
 
   // AbstractListBox
-  virtual HorizontalLine *insertSeparator(size_t pos);
-  virtual HorizontalLine *appendSeparator();
-  virtual void insertWidget(size_t pos, Widget& widget);
-  virtual void appendWidget(Widget& widget);
+  virtual HorizontalLine *insertSeparator(std::size_t pos) override;
+  virtual HorizontalLine *appendSeparator() override;
+  virtual void insertWidget(std::size_t pos, Widget &widget) override;
+  virtual void appendWidget(Widget &widget) override;
 
-  // Container
-  virtual Curses::Window *getSubPad(const Widget& child, int begin_x,
-      int begin_y, int ncols, int nlines);
+  virtual int getChildrenHeight() const { return children_height_; };
 
-  virtual int getChildrenHeight() const { return children_height; };
-
-  sigc::signal<void, ListBox&, int> signal_children_height_change;
+  sigc::signal<void, ListBox &, int> signal_children_height_change;
 
 protected:
-  int children_height;
-  int autosize_children;
-  int autosize_height;
-  std::set<const Widget*> autosize_extra;
-  bool reposition_widgets;
+  /// Total height of all visible children.
+  int children_height_;
+
+  /// Number of visible children that has their height set to AUTOSIZE.
+  int autosize_children_count_;
+
+  // Widget
+  virtual void updateArea() override;
 
   // Container
-  virtual void onChildMoveResize(Widget& activator, const Rect& oldsize,
-      const Rect& newsize);
-  virtual void onChildVisible(Widget& activator, bool visible);
+  virtual void onChildMoveResize(
+    Widget &activator, const Rect &oldsize, const Rect &newsize) override;
+  virtual void onChildWishSizeChange(
+    Widget &activator, const Size &oldsize, const Size &newsize) override;
+  virtual void onChildVisible(Widget &activator, bool visible) override;
+  virtual void moveWidget(
+    Widget &widget, Widget &position, bool after) override;
 
-  virtual void updateScrollHeight();
+  virtual void updateChildren(
+    int children_height_change, int autosize_children_count_change);
 
 private:
   CONSUI_DISABLE_COPY(ListBox);
@@ -83,6 +73,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __LISTBOX_H__
+#endif // LISTBOX_H
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

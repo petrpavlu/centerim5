@@ -1,4 +1,4 @@
-# when you add files here, also add them in po/POTFILES.in
+# When you add files here, also add them in po/POTFILES.in.
 set(cppconsui_SOURCES
   AbstractDialog.cpp
   AbstractLine.cpp
@@ -16,7 +16,6 @@ set(cppconsui_SOURCES
   CoreManager.cpp
   CppConsUI.cpp
   Dialog.cpp
-  FreeWindow.cpp
   HorizontalLine.cpp
   HorizontalListBox.cpp
   InputDialog.cpp
@@ -28,7 +27,6 @@ set(cppconsui_SOURCES
   MenuWindow.cpp
   MessageDialog.cpp
   Panel.cpp
-  ScrollPane.cpp
   Spacer.cpp
   SplitDialog.cpp
   TextEdit.cpp
@@ -38,70 +36,19 @@ set(cppconsui_SOURCES
   VerticalLine.cpp
   Widget.cpp
   Window.cpp
-	libtermkey/driver-csi.c
-	libtermkey/driver-ti.c
-	libtermkey/termkey.c)
+  libtermkey/driver-csi.c
+  libtermkey/driver-ti.c
+  libtermkey/termkey.c)
 
-set(cppconsui_HEADERS
-  AbstractDialog.h
-  AbstractLine.h
-  AbstractListBox.h
-  Button.h
-  CheckBox.h
-  ColorPicker.h
-  ColorPickerPalette.h
-  ColorPickerDialog.h
-  ColorScheme.h
-  ConsUICurses.h
-  Container.h
-  ComboBox.h
-  CoreManager.h
-  CppConsUI.h
-  Dialog.h
-  FreeWindow.h
-  HorizontalLine.h
-  HorizontalListBox.h
-  InputDialog.h
-  InputProcessor.h
-  Label.h
-  ListBox.h
-  KeyConfig.h
-  Keys.h
-  MenuWindow.h
-  MessageDialog.h
-  Panel.h
-  ScrollPane.h
-  Spacer.h
-  SplitDialog.h
-  TextEdit.h
-  TextEntry.h
-  TextView.h
-  TreeView.h
-  VerticalLine.h
-  Widget.h
-  Window.h
-  tree.hh
-	libtermkey/termkey-internal.h
-	libtermkey/termkey.h)
+add_library(cppconsui SHARED ${cppconsui_SOURCES})
 
-add_definitions(-DG_LOG_DOMAIN="cppconsui")
-
-# Add curses cflags if they are defined
-if(NOT CURSES_CFLAGS STREQUAL "")
-  set_source_files_properties(
-    ConsUICurses.cpp
-    PROPERTIES COMPILE_FLAGS "${CURSES_CFLAGS}")
-endif()
-
-add_library(cppconsui SHARED
-  ${cppconsui_SOURCES}
-  ${cppconsui_HEADERS})
-
-set_target_properties(cppconsui
-  PROPERTIES VERSION 0.0.0)
-
-target_link_libraries(cppconsui
-  ${CURSES_LIBRARIES}
-  ${SIGC_LIBRARIES})
+set_property(TARGET cppconsui
+  PROPERTY VERSION 0.0.0)
+target_include_directories(cppconsui PRIVATE
+  ${Iconv_INCLUDE_DIRS} ${Intl_INCLUDE_DIRS})
+target_compile_options(cppconsui PRIVATE
+  ${SIGC_CFLAGS} ${NCURSESW_CFLAGS} "-DG_LOG_DOMAIN=\"cppconsui\"")
+target_link_libraries(cppconsui PRIVATE
+  ${Iconv_LIBRARIES} ${Intl_LIBRARIES} ${SIGC_LDFLAGS} ${NCURSESW_LDFLAGS})
 
 install(TARGETS cppconsui DESTINATION lib)

@@ -1,54 +1,86 @@
-/*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2013 by CenterIM developers
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
+
+// Logging facility collects all messages from the program itself and libraries
+// (mainly GLib and libpurple). It filters them by severity and then outputs
+// them to the Log window, a file or on the standard error output (stderr).
+//
+// Processing consists of three phases: initialization -> normal phase ->
+// finalization, and is tightly tied to the CenterIM class. The program can exit
+// in any of these phases.
+//
+// 1) Initialization: All messages are being buffered. If an error occurs
+//    during this phase, the recorded messages are printed on stderr before the
+//    program exits.
+// 2) Normal phase: When processing reaches this phase (implying no critical
+//    error occurred during the initialization phase), messages recorded by
+//    the initialization phase are output to the Log window and optionally to a
+//    file. New messages coming from the normal processing of the program are
+//    then output in the same way. A limited number of the most recent messages
+//    is also being buffered by this phase. If the program exists from the main
+//    loop normally, the recorded messages are cleared.
+// 3) Finalization: All messages are being buffered and when the program is
+//    about to exit, they will get printed on stderr together with any buffered
+//    messages from the previous stage.
+//
+// This mechanism ensures that if a non-recoverable error occurs during
+// execution of the program and it must exit abnormally, the error will always
+// get printed on stderr.
 
 #include "Log.h"
 
+#include "gettext.h"
 #include <cppconsui/HorizontalListBox.h>
 #include <cppconsui/Spacer.h>
 #include <cstdio>
-#include "gettext.h"
+#include <cstring>
 
-Log *Log::my_instance = NULL;
+// Maximum number of lines in the Log window.
+#define LOG_WINDOW_MAX_LINES 200
+// Number of deleted lines when the line limit in the Log window is reached.
+#define LOG_WINDOW_DELETE_COUNT 40
+
+// Maximum number of buffered messages in the normal phase.
+#define LOG_MAX_BUFFERED_MESSAGES 200
+
+Log *Log::my_instance_ = nullptr;
 
 Log *Log::instance()
 {
-  return my_instance;
+  return my_instance_;
 }
 
-#define WRITE_METHOD(name, level)                       \
-void Log::name(const char *fmt, ...)                    \
-{                                                       \
-  va_list args;                                         \
-  char *text;                                           \
-                                                        \
-  if (log_level_cim < level)                            \
-    return; /* we don't want to see this log message */ \
-                                                        \
-  va_start(args, fmt);                                  \
-  text = g_strdup_vprintf(fmt, args);                   \
-  va_end(args);                                         \
-                                                        \
-  write(TYPE_CIM, level, text);                         \
-  g_free(text);                                         \
-}
+#define WRITE_METHOD(name, level)                                              \
+  void Log::name(const char *fmt, ...)                                         \
+  {                                                                            \
+    va_list args;                                                              \
+    char *text;                                                                \
+                                                                               \
+    if (log_level_cim_ < level)                                                \
+      return; /* Do not show this message. */                                  \
+                                                                               \
+    va_start(args, fmt);                                                       \
+    text = g_strdup_vprintf(fmt, args);                                        \
+    va_end(args);                                                              \
+                                                                               \
+    write(TYPE_CIM, level, text);                                              \
+    g_free(text);                                                              \
+  }
 
 WRITE_METHOD(error, LEVEL_ERROR)
 WRITE_METHOD(critical, LEVEL_CRITICAL)
@@ -59,19 +91,26 @@ WRITE_METHOD(debug, LEVEL_DEBUG)
 
 #undef WRITE_METHOD
 
-Log::LogWindow::LogWindow()
-: Window(0, 0, 80, 24, NULL, TYPE_NON_FOCUSABLE)
+void Log::clearAllBufferedMessages()
 {
-  setColorScheme("log");
+  // Delete all buffered messages.
+  clearBufferedMessages(init_log_items_);
+  clearBufferedMessages(log_items_);
+}
 
-  CppConsUI::HorizontalListBox *lbox = new CppConsUI::HorizontalListBox(
-      AUTOSIZE, AUTOSIZE);
-  addWidget(*lbox, 0, 0);
+Log::LogWindow::LogWindow() : Window(0, 0, 80, 24, nullptr, TYPE_NON_FOCUSABLE)
+{
+  setColorScheme(CenterIM::SCHEME_LOG);
+
+  auto lbox = new CppConsUI::HorizontalListBox(AUTOSIZE, AUTOSIZE);
+  addWidget(*lbox, 1, 1);
 
   lbox->appendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
-  textview = new CppConsUI::TextView(AUTOSIZE, AUTOSIZE, true);
-  lbox->appendWidget(*textview);
+  textview_ = new CppConsUI::TextView(AUTOSIZE, AUTOSIZE, true);
+  lbox->appendWidget(*textview_);
   lbox->appendWidget(*(new CppConsUI::Spacer(1, AUTOSIZE)));
+
+  onScreenResized();
 }
 
 void Log::LogWindow::onScreenResized()
@@ -81,78 +120,80 @@ void Log::LogWindow::onScreenResized()
 
 void Log::LogWindow::append(const char *text)
 {
-  textview->append(text);
+  textview_->append(text);
 
-  // shorten the window text
-  size_t lines_num = textview->getLinesNumber();
+  // Shorten the window text.
+  std::size_t lines_num = textview_->getLinesNumber();
 
-  if (lines_num > 200) {
-    // remove 40 extra lines
-    textview->erase(0, lines_num - 200 + 40);
+  if (lines_num > LOG_WINDOW_MAX_LINES) {
+    // Remove some lines.
+    textview_->erase(
+      0, lines_num - LOG_WINDOW_MAX_LINES + LOG_WINDOW_DELETE_COUNT);
   }
 }
 
-Log::LogBufferItem::LogBufferItem(Type type_, Level level_, const char *text_)
-: type(type_), level(level_)
+Log::LogBufferItem::LogBufferItem(Type type, Level level, const char *text)
+  : type_(type), level_(level)
 {
-  text = g_strdup(text_);
+  text_ = g_strdup(text);
 }
 
 Log::LogBufferItem::~LogBufferItem()
 {
-  g_free(text);
+  g_free(text_);
 }
 
 Log::Log()
-: log_window(NULL), phase2_active(false), logfile(NULL)
-, log_level_cim(LEVEL_DEBUG), log_level_glib(LEVEL_DEBUG)
-, log_level_purple(LEVEL_DEBUG)
+  : phase_(PHASE_INITIALIZATION), log_window_(nullptr), logfile_(nullptr),
+    log_level_cim_(LEVEL_DEBUG), log_level_glib_(LEVEL_DEBUG),
+    log_level_purple_(LEVEL_DEBUG)
 {
-#define REGISTER_G_LOG_HANDLER(name, handler) \
+#define REGISTER_G_LOG_HANDLER(name, handler)                                  \
   g_log_set_handler((name), (GLogLevelFlags)G_LOG_LEVEL_MASK, (handler), this)
 
-  // register the glib log handlers
-  default_handler = REGISTER_G_LOG_HANDLER(NULL, default_log_handler_);
-  glib_handler = REGISTER_G_LOG_HANDLER("GLib", glib_log_handler_);
-  gmodule_handler = REGISTER_G_LOG_HANDLER("GModule", glib_log_handler_);
-  glib_gobject_handler = REGISTER_G_LOG_HANDLER("GLib-GObject",
-      glib_log_handler_);
-  gthread_handler = REGISTER_G_LOG_HANDLER("GThread", glib_log_handler_);
+  // Register the glib log handlers.
+  default_handler_ = REGISTER_G_LOG_HANDLER(nullptr, default_log_handler_);
+  glib_handler_ = REGISTER_G_LOG_HANDLER("GLib", glib_log_handler_);
+  gmodule_handler_ = REGISTER_G_LOG_HANDLER("GModule", glib_log_handler_);
+  glib_gobject_handler_ =
+    REGISTER_G_LOG_HANDLER("GLib-GObject", glib_log_handler_);
+  gthread_handler_ = REGISTER_G_LOG_HANDLER("GThread", glib_log_handler_);
 }
 
 Log::~Log()
 {
-  g_log_remove_handler(NULL, default_handler);
-  g_log_remove_handler("GLib", glib_handler);
-  g_log_remove_handler("GModule", gmodule_handler);
-  g_log_remove_handler("GLib-GObject", glib_gobject_handler);
-  g_log_remove_handler("GThread", gthread_handler);
+  g_log_remove_handler(nullptr, default_handler_);
+  g_log_remove_handler("GLib", glib_handler_);
+  g_log_remove_handler("GModule", gmodule_handler_);
+  g_log_remove_handler("GLib-GObject", glib_gobject_handler_);
+  g_log_remove_handler("GThread", gthread_handler_);
 
-  outputBufferMessages();
+  outputAllBufferedMessages();
+  clearAllBufferedMessages();
 }
 
 void Log::init()
 {
-  g_assert(!my_instance);
+  g_assert(my_instance_ == nullptr);
 
-  my_instance = new Log;
+  my_instance_ = new Log;
 }
 
 void Log::finalize()
 {
-  g_assert(my_instance);
+  g_assert(my_instance_ != nullptr);
 
-  delete my_instance;
-  my_instance = NULL;
+  delete my_instance_;
+  my_instance_ = nullptr;
 }
 
-void Log::initPhase2()
+void Log::initNormalPhase()
 {
-  /* Phase 2 is called after CppConsUI and libpurple has been initialized.
-   * Logging to file is part of the phase 2. */
-  g_assert(!phase2_active);
+  // Normal phase is called after CppConsUI and libpurple has been initialized.
+  // Logging to file is part of the normal phase.
+  g_assert(phase_ == PHASE_INITIALIZATION);
 
-  // init prefs
+  // Init preferences.
   purple_prefs_add_none(CONF_PREFIX "/log");
   purple_prefs_add_bool(CONF_PREFIX "/log/debug", false);
   purple_prefs_add_string(CONF_PREFIX "/log/filename", "debug.log");
@@ -165,66 +206,64 @@ void Log::initPhase2()
   updateCachedPreference(CONF_PREFIX "/log/log_level_purple");
   updateCachedPreference(CONF_PREFIX "/log/log_level_glib");
 
-  // connect callbacks
-  purple_prefs_connect_callback(this, CONF_PREFIX "/log", log_pref_change_,
-      this);
+  // Connect callbacks.
+  purple_prefs_connect_callback(
+    this, CONF_PREFIX "/log", log_pref_change_, this);
 
-  // create the log window
-  g_assert(!log_window);
-  log_window = new LogWindow;
-  log_window->show();
+  // Create the log window.
+  g_assert(log_window_ == nullptr);
+  log_window_ = new LogWindow;
+  log_window_->show();
 
-  // phase 2 is now active
-  phase2_active = true;
+  // Normal phase is now active.
+  phase_ = PHASE_NORMAL;
 
-  // output buffered messages
-  for (LogBufferItems::iterator i = log_items.begin(); i != log_items.end();
-      i++) {
-    LogBufferItem *item = *i;
-
-    // determine if this message should be displayed
+  // Output buffered messages from the initialization phase.
+  for (LogBufferItem *item : init_log_items_) {
+    // Determine if this message should be displayed.
     Level loglevel = getLogLevel(item->getType());
 
     if (loglevel >= item->getLevel())
-      write(item->getType(), item->getLevel(), item->getText());
+      write(item->getType(), item->getLevel(), item->getText(), false);
 
     delete item;
   }
-  log_items.clear();
+  init_log_items_.clear();
 }
 
-void Log::finalizePhase2()
+void Log::finalizeNormalPhase()
 {
-  /* Phase 2 finalization is done before CppConsUI and libpurple is finalized.
-   * Note that log levels are unchanged after phase 2 finishes. */
-  g_assert(phase2_active);
+  // Normal phase finalization is done before CppConsUI and libpurple is
+  // finalized. Note that log levels are unchanged after the normal phase
+  // finishes.
+  g_assert(phase_ == PHASE_NORMAL);
 
-  // delete the log window
-  g_assert(log_window);
-  delete log_window;
-  log_window = NULL;
+  // Delete the log window.
+  g_assert(log_window_ != nullptr);
+  delete log_window_;
+  log_window_ = nullptr;
 
   purple_prefs_disconnect_by_handle(this);
 
-  // close the log file (if it is opened)
-  if (logfile)
-    g_io_channel_unref(logfile);
+  // Close the log file (if it is opened).
+  if (logfile_ != nullptr)
+    g_io_channel_unref(logfile_);
 
-  // done with phase 2
-  phase2_active = false;
+  // Done with the normal phase.
+  phase_ = PHASE_FINALIZATION;
 }
 
-void Log::purple_print(PurpleDebugLevel purplelevel, const char *category,
-    const char *arg_s)
+void Log::purple_print(
+  PurpleDebugLevel purplelevel, const char *category, const char *arg_s)
 {
   Level level = convertPurpleDebugLevel(purplelevel);
-  if (log_level_purple < level)
-    return; // we don't want to see this log message
+  if (log_level_purple_ < level)
+    return; // Do not show this message.
 
-  if (!category) {
+  if (category == nullptr) {
     category = "misc";
     warning(_("centerim/log: purple_print() parameter category was "
-         "not defined."));
+              "not defined."));
   }
 
   char *text = g_strdup_printf("libpurple/%s: %s", category, arg_s);
@@ -232,200 +271,229 @@ void Log::purple_print(PurpleDebugLevel purplelevel, const char *category,
   g_free(text);
 }
 
-gboolean Log::purple_is_enabled(PurpleDebugLevel purplelevel,
-    const char * /*category*/)
+gboolean Log::purple_is_enabled(
+  PurpleDebugLevel purplelevel, const char * /*category*/)
 {
   Level level = convertPurpleDebugLevel(purplelevel);
 
-  if (log_level_purple < level)
+  if (log_level_purple_ < level)
     return FALSE;
 
   return TRUE;
 }
 
-void Log::default_log_handler(const char *domain, GLogLevelFlags flags,
-  const char *msg)
+void Log::default_log_handler(
+  const char *domain, GLogLevelFlags flags, const char *msg)
 {
-  if (!msg)
+  if (msg == nullptr)
     return;
 
   Level level = convertGLibDebugLevel(flags);
-  if (log_level_glib < level)
-    return; // we don't want to see this log message
+  if (log_level_glib_ < level)
+    return; // Do not show this message.
 
   char *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
   write(TYPE_GLIB, level, text);
   g_free(text);
 }
 
-void Log::glib_log_handler(const char *domain, GLogLevelFlags flags,
-  const char *msg)
+void Log::glib_log_handler(
+  const char *domain, GLogLevelFlags flags, const char *msg)
 {
-  if (!msg)
+  if (msg == nullptr)
     return;
 
   Level level = convertGLibDebugLevel(flags);
-  if (log_level_glib < level)
-    return; // we don't want to see this log message
+  if (log_level_glib_ < level)
+    return; // Do not show this message.
 
   char *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
   write(TYPE_GLIB, level, text);
   g_free(text);
 }
 
-void Log::log_pref_change(const char *name, PurplePrefType /*type*/,
-    gconstpointer /*val*/)
+void Log::log_pref_change(
+  const char *name, PurplePrefType /*type*/, gconstpointer /*val*/)
 {
-  // log/* preference changed
+  // log/* preference changed.
   updateCachedPreference(name);
 }
 
 void Log::updateCachedPreference(const char *name)
 {
-  if (!strcmp(name, CONF_PREFIX "/log/debug")) {
+  if (std::strcmp(name, CONF_PREFIX "/log/debug") == 0) {
     bool logfile_enabled = purple_prefs_get_bool(name);
 
-    if (logfile_enabled && !logfile) {
+    if (logfile_enabled && logfile_ == nullptr) {
       char *filename = g_build_filename(purple_user_dir(),
-          purple_prefs_get_string(CONF_PREFIX "/log/filename"), NULL);
-      GError *err = NULL;
+        purple_prefs_get_string(CONF_PREFIX "/log/filename"), nullptr);
+      GError *err = nullptr;
 
-      if (!(logfile = g_io_channel_new_file(filename, "a", &err))) {
+      logfile_ = g_io_channel_new_file(filename, "a", &err);
+      if (logfile_ == nullptr) {
         error(_("centerim/log: Error opening logfile '%s' (%s)."), filename,
-            err->message);
+          err->message);
         g_clear_error(&err);
       }
       g_free(filename);
     }
-    else if (!logfile_enabled && logfile) {
-      // debug was disabled so close logfile if it's opened
-      g_io_channel_unref(logfile);
-      logfile = NULL;
+    else if (!logfile_enabled && logfile_ != nullptr) {
+      // Debug was disabled so close logfile if it is opened.
+      g_io_channel_unref(logfile_);
+      logfile_ = nullptr;
     }
   }
-  else if (!strcmp(name, CONF_PREFIX "/log/log_level_cim"))
-    log_level_cim = stringToLevel(purple_prefs_get_string(name));
-  else if (!strcmp(name, CONF_PREFIX "/log/log_level_purple"))
-    log_level_purple = stringToLevel(purple_prefs_get_string(name));
-  else if (!strcmp(name, CONF_PREFIX "/log/log_level_glib"))
-    log_level_glib = stringToLevel(purple_prefs_get_string(name));
+  else if (std::strcmp(name, CONF_PREFIX "/log/log_level_cim") == 0)
+    log_level_cim_ = stringToLevel(purple_prefs_get_string(name));
+  else if (std::strcmp(name, CONF_PREFIX "/log/log_level_purple") == 0)
+    log_level_purple_ = stringToLevel(purple_prefs_get_string(name));
+  else if (std::strcmp(name, CONF_PREFIX "/log/log_level_glib") == 0)
+    log_level_glib_ = stringToLevel(purple_prefs_get_string(name));
 }
 
-void Log::write(Type type, Level level, const char *text)
+void Log::write(Type type, Level level, const char *text, bool buffer)
 {
-  // if phase 2 is not active buffer the message
-  if (!phase2_active) {
-    LogBufferItem *item = new LogBufferItem(type, level, text);
-    log_items.push_back(item);
-    return;
-  }
+  if (buffer)
+    bufferMessage(type, level, text);
 
-  g_assert(log_window);
-  log_window->append(text);
+  // If the normal phase is not active then only buffer the message.
+  if (phase_ != PHASE_NORMAL)
+    return;
+
+  g_assert(log_window_ != nullptr);
+  log_window_->append(text);
   writeToFile(text);
 }
 
 void Log::writeErrorToWindow(const char *fmt, ...)
 {
-  // can be called only if phase 2 is active
-  g_assert(phase2_active);
-  g_assert(log_window);
+  // Can be called only if the normal phase is active.
+  g_assert(phase_ == PHASE_NORMAL);
+  g_assert(log_window_ != nullptr);
 
   va_list args;
 
-  if (log_level_cim < LEVEL_ERROR)
-    return; // we don't want to see this log message
+  if (log_level_cim_ < LEVEL_ERROR)
+    return; // Do not show this message.
 
   va_start(args, fmt);
   char *text = g_strdup_vprintf(fmt, args);
   va_end(args);
 
-  log_window->append(text);
+  log_window_->append(text);
   g_free(text);
 }
 
 void Log::writeToFile(const char *text)
 {
-  // writing to file is enabled only in phase 2
-  if (!phase2_active)
+  // Writing to a file is possible only in the normal phase.
+  g_assert(phase_ == PHASE_NORMAL);
+
+  if (text == nullptr || logfile_ == nullptr)
     return;
 
-  if (!text)
-    return;
+  // Write text into logfile.
+  GError *err = nullptr;
 
-  GError *err = NULL;
+  if (g_io_channel_write_chars(logfile_, text, -1, nullptr, &err) !=
+    G_IO_STATUS_NORMAL) {
+    writeErrorToWindow(
+      _("centerim/log: Error writing to logfile (%s)."), err->message);
+    g_clear_error(&err);
+  }
+  else {
+    // If necessary write missing EOL character.
+    std::size_t len = std::strlen(text);
+    if (len > 0 && text[len - 1] != '\n') {
+      // Ignore all errors.
+      g_io_channel_write_chars(logfile_, "\n", -1, nullptr, nullptr);
+    }
+  }
 
-  // write text into logfile
-  if (logfile) {
-    if (g_io_channel_write_chars(logfile, text, -1, NULL, &err)
-        != G_IO_STATUS_NORMAL) {
-      writeErrorToWindow(_("centerim/log: Error writing to logfile (%s)."),
-          err->message);
-      g_clear_error(&err);
-    }
-    else {
-      // if necessary write missing EOL character
-      size_t len = strlen(text);
-      if (len && text[len - 1] != '\n') {
-        // ignore all errors
-        g_io_channel_write_chars(logfile, "\n", -1, NULL, NULL);
-      }
-    }
-
-    if (g_io_channel_flush(logfile, &err) != G_IO_STATUS_NORMAL) {
-      writeErrorToWindow(_("centerim/log: Error flushing logfile (%s)."),
-          err->message);
-      g_clear_error(&err);
-    }
+  if (g_io_channel_flush(logfile_, &err) != G_IO_STATUS_NORMAL) {
+    writeErrorToWindow(
+      _("centerim/log: Error flushing logfile (%s)."), err->message);
+    g_clear_error(&err);
   }
 }
 
-void Log::outputBufferMessages()
+void Log::bufferMessage(Type type, Level level, const char *text)
 {
-  // output all buffered messages to stderr
-  for (LogBufferItems::iterator i = log_items.begin(); i != log_items.end();
-      i++) {
-    LogBufferItem *item = *i;
+  auto item = new LogBufferItem(type, level, text);
+  if (phase_ == PHASE_INITIALIZATION)
+    init_log_items_.push_back(item);
+  else
+    log_items_.push_back(item);
 
-    // determine if this message should be displayed
+  if (phase_ != PHASE_NORMAL)
+    return;
+
+  // Reduce a number of buffered messages if the normal phase is active.
+  std::size_t size = log_items_.size();
+  if (size <= LOG_MAX_BUFFERED_MESSAGES)
+    return;
+
+  // There can never be more than one message to remove.
+  g_assert(size == LOG_MAX_BUFFERED_MESSAGES + 1);
+  delete log_items_.front();
+  log_items_.pop_front();
+}
+
+void Log::clearBufferedMessages(LogBufferItems &items)
+{
+  for (LogBufferItem *item : items)
+    delete item;
+  items.clear();
+}
+
+void Log::outputBufferedMessages(LogBufferItems &items)
+{
+  for (LogBufferItem *item : items) {
+    // Determine if this message should be displayed.
     Level loglevel = getLogLevel(item->getType());
 
     if (loglevel >= item->getLevel()) {
       const char *text = item->getText();
-      g_assert(text);
+      g_assert(text != nullptr);
 
-      std::fprintf(stderr, text);
+      std::fprintf(stderr, "%s", text);
 
-      // if necessary write missing EOL character
-      if (text[strlen(text) - 1] != '\n')
+      // If necessary write missing EOL character.
+      std::size_t len = std::strlen(text);
+      if (len > 0 && text[len - 1] != '\n')
         std::fprintf(stderr, "\n");
     }
-
-    delete item;
   }
-  log_items.clear();
+}
+
+void Log::outputAllBufferedMessages()
+{
+  // Output all buffered messages on stderr.
+  outputBufferedMessages(init_log_items_);
+  outputBufferedMessages(log_items_);
+
   std::fflush(stderr);
 }
 
 Log::Level Log::convertPurpleDebugLevel(PurpleDebugLevel purplelevel)
 {
   switch (purplelevel) {
-    case PURPLE_DEBUG_MISC:
-      return LEVEL_DEBUG;
-    case PURPLE_DEBUG_INFO:
-      return LEVEL_INFO;
-    case PURPLE_DEBUG_WARNING:
-      return LEVEL_WARNING;
-    case PURPLE_DEBUG_ERROR:
-      return LEVEL_CRITICAL;
-    case PURPLE_DEBUG_FATAL:
-      return LEVEL_ERROR;
-    case PURPLE_DEBUG_ALL:
-      return LEVEL_ERROR; // use error level so this message is always printed
+  case PURPLE_DEBUG_MISC:
+    return LEVEL_DEBUG;
+  case PURPLE_DEBUG_INFO:
+    return LEVEL_INFO;
+  case PURPLE_DEBUG_WARNING:
+    return LEVEL_WARNING;
+  case PURPLE_DEBUG_ERROR:
+    return LEVEL_CRITICAL;
+  case PURPLE_DEBUG_FATAL:
+    return LEVEL_ERROR;
+  case PURPLE_DEBUG_ALL:
+    return LEVEL_ERROR; // Use error level so this message is always printed.
   }
 
-  warning(_("centerim/log: Unknown libpurple logging level '%d'."),
-      purplelevel);
+  warning(
+    _("centerim/log: Unknown libpurple logging level '%d'."), purplelevel);
   return LEVEL_DEBUG;
 }
 
@@ -450,19 +518,19 @@ Log::Level Log::convertGLibDebugLevel(GLogLevelFlags gliblevel)
 
 Log::Level Log::stringToLevel(const char *slevel)
 {
-  if (!g_ascii_strcasecmp(slevel, "none"))
+  if (std::strcmp(slevel, "none") == 0)
     return LEVEL_NONE;
-  else if (!g_ascii_strcasecmp(slevel, "debug"))
+  else if (std::strcmp(slevel, "debug") == 0)
     return LEVEL_DEBUG;
-  else if (!g_ascii_strcasecmp(slevel, "info"))
+  else if (std::strcmp(slevel, "info") == 0)
     return LEVEL_INFO;
-  else if (!g_ascii_strcasecmp(slevel, "message"))
+  else if (std::strcmp(slevel, "message") == 0)
     return LEVEL_MESSAGE;
-  else if (!g_ascii_strcasecmp(slevel, "warning"))
+  else if (std::strcmp(slevel, "warning") == 0)
     return LEVEL_WARNING;
-  else if (!g_ascii_strcasecmp(slevel, "critical"))
+  else if (std::strcmp(slevel, "critical") == 0)
     return LEVEL_CRITICAL;
-  else if (!g_ascii_strcasecmp(slevel, "error"))
+  else if (std::strcmp(slevel, "error") == 0)
     return LEVEL_ERROR;
   return LEVEL_NONE;
 }
@@ -470,15 +538,15 @@ Log::Level Log::stringToLevel(const char *slevel)
 Log::Level Log::getLogLevel(Type type)
 {
   switch (type) {
-    case TYPE_CIM:
-      return log_level_cim;
-    case TYPE_GLIB:
-      return log_level_glib;
-    case TYPE_PURPLE:
-      return log_level_purple;
-    default:
-      g_assert_not_reached();
+  case TYPE_CIM:
+    return log_level_cim_;
+  case TYPE_GLIB:
+    return log_level_glib_;
+  case TYPE_PURPLE:
+    return log_level_purple_;
+  default:
+    g_assert_not_reached();
   }
 }
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

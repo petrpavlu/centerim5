@@ -1,81 +1,72 @@
-/*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2013 by CenterIM developers
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * HorizontalListBox class.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// HorizontalListBox class.
+///
+/// @ingroup cppconsui
 
-#ifndef __HORIZONTALLISTBOX_H__
-#define __HORIZONTALLISTBOX_H__
+#ifndef HORIZONTALLISTBOX_H
+#define HORIZONTALLISTBOX_H
 
 #include "AbstractListBox.h"
 #include "VerticalLine.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-/**
- * Implementation of AbstractListBox class where widgets are placed
- * horizontally.
- */
-class HorizontalListBox
-: public AbstractListBox
-{
+/// Implementation of AbstractListBox class where widgets are placed
+/// horizontally.
+class HorizontalListBox : public AbstractListBox {
 public:
   HorizontalListBox(int w, int h);
-  virtual ~HorizontalListBox() {}
-
-  // Widget
-  virtual void draw();
+  virtual ~HorizontalListBox() override {}
 
   // AbstractListBox
-  virtual VerticalLine *insertSeparator(size_t pos);
-  virtual VerticalLine *appendSeparator();
-  virtual void insertWidget(size_t pos, Widget& widget);
-  virtual void appendWidget(Widget& widget);
+  virtual VerticalLine *insertSeparator(std::size_t pos) override;
+  virtual VerticalLine *appendSeparator() override;
+  virtual void insertWidget(std::size_t pos, Widget &widget) override;
+  virtual void appendWidget(Widget &widget) override;
 
-  // Container
-  virtual Curses::Window *getSubPad(const Widget& child, int begin_x,
-      int begin_y, int ncols, int nlines);
+  virtual int getChildrenWidth() const { return children_width_; };
 
-  virtual int getChildrenWidth() const { return children_width; };
-
-  sigc::signal<void, HorizontalListBox&, int> signal_children_width_change;
+  sigc::signal<void, HorizontalListBox &, int> signal_children_width_change;
 
 protected:
-  int children_width;
-  int autosize_children;
-  int autosize_width;
-  std::set<const Widget*> autosize_extra;
-  bool reposition_widgets;
+  /// Total width of all visible children.
+  int children_width_;
+
+  /// Number of visible children that has their height set to AUTOSIZE.
+  int autosize_children_count_;
+
+  // Widget
+  virtual void updateArea() override;
 
   // Container
-  virtual void onChildMoveResize(Widget& activator, const Rect& oldsize,
-      const Rect& newsize);
-  virtual void onChildVisible(Widget& widget, bool visible);
+  virtual void onChildMoveResize(
+    Widget &activator, const Rect &oldsize, const Rect &newsize) override;
+  virtual void onChildWishSizeChange(
+    Widget &activator, const Size &oldsize, const Size &newsize) override;
+  virtual void onChildVisible(Widget &widget, bool visible) override;
+  virtual void moveWidget(
+    Widget &widget, Widget &position, bool after) override;
 
-  virtual void updateScrollWidth();
+  virtual void updateChildren(
+    int children_width_change, int autosize_children_count_change);
 
 private:
   CONSUI_DISABLE_COPY(HorizontalListBox);
@@ -83,6 +74,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __HORIZONTALLISTBOX_H__
+#endif // HORIZONTALLISTBOX_H
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

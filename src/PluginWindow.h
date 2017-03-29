@@ -1,25 +1,22 @@
-/*
- * Copyright (C) 2012-2013 by CenterIM developers
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2012-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __PLUGINWINDOW_H__
-#define __PLUGINWINDOW_H__
+#ifndef PLUGINWINDOW_H
+#define PLUGINWINDOW_H
 
 #include <cppconsui/Button.h>
 #include <cppconsui/CheckBox.h>
@@ -30,137 +27,122 @@
 #include <cppconsui/TreeView.h>
 #include <libpurple/purple.h>
 
-class PluginWindow
-: public CppConsUI::SplitDialog
-{
+class PluginWindow : public CppConsUI::SplitDialog {
 public:
   PluginWindow();
-  virtual ~PluginWindow();
+  virtual ~PluginWindow() override;
 
   // FreeWindow
-  virtual void onScreenResized();
-
-protected:
+  virtual void onScreenResized() override;
 
 private:
-  class AddPluginWindow
-  : public CppConsUI::Window
-  {
+  class AddPluginWindow : public CppConsUI::Window {
   public:
     AddPluginWindow();
-    virtual ~AddPluginWindow() {}
+    virtual ~AddPluginWindow() override {}
 
     // FreeWindow
-    virtual void onScreenResized();
+    virtual void onScreenResized() override;
 
-    // signal that the user has selected a plugin that he wants to add
-    sigc::signal<void, AddPluginWindow&, PurplePlugin*> signal_selection;
+    // Signal that the user has selected a plugin that he wants to add.
+    sigc::signal<void, AddPluginWindow &, PurplePlugin *> signal_selection;
 
   protected:
-    void onPluginButtonActivate(CppConsUI::Button& activator,
-        PurplePlugin *plugin);
+    void onPluginButtonActivate(
+      CppConsUI::Button &activator, PurplePlugin *plugin);
 
   private:
     CONSUI_DISABLE_COPY(AddPluginWindow);
   };
 
-  class BoolOption
-  : public CppConsUI::CheckBox
-  {
+  class BoolOption : public CppConsUI::CheckBox {
   public:
-    BoolOption(const char *name, const char *pref_);
-    virtual ~BoolOption();
+    BoolOption(const char *name, const char *pref);
+    virtual ~BoolOption() override;
 
   protected:
-    char *pref;
+    char *pref_;
 
-    void onToggle(CppConsUI::CheckBox& activator, bool new_state);
+    void onToggle(CppConsUI::CheckBox &activator, bool new_state);
 
   private:
     CONSUI_DISABLE_COPY(BoolOption);
   };
 
-  class StringOption
-  : public CppConsUI::Button
-  {
+  class StringOption : public CppConsUI::Button {
   public:
-    StringOption(const char *name, const char *pref_);
-    virtual ~StringOption();
+    StringOption(const char *name, const char *pref);
+    virtual ~StringOption() override;
 
   protected:
-    char *pref;
+    char *pref_;
 
     void updateValue();
-    void onActivate(CppConsUI::Button& activator);
-    void responseHandler(CppConsUI::InputDialog& activator,
-        CppConsUI::AbstractDialog::ResponseType response);
+    void onActivate(CppConsUI::Button &activator);
+    void responseHandler(CppConsUI::InputDialog &activator,
+      CppConsUI::AbstractDialog::ResponseType response);
 
   private:
     CONSUI_DISABLE_COPY(StringOption);
   };
 
-  class IntegerOption
-  : public CppConsUI::Button
-  {
+  class IntegerOption : public CppConsUI::Button {
   public:
-    IntegerOption(const char *name, const char *pref_);
-    virtual ~IntegerOption();
+    IntegerOption(const char *name, const char *pref);
+    virtual ~IntegerOption() override;
 
   protected:
-    char *pref;
+    char *pref_;
 
     void updateValue();
-    void onActivate(CppConsUI::Button& activator);
-    void responseHandler(CppConsUI::InputDialog& activator,
-        CppConsUI::AbstractDialog::ResponseType response);
+    void onActivate(CppConsUI::Button &activator);
+    void responseHandler(CppConsUI::InputDialog &activator,
+      CppConsUI::AbstractDialog::ResponseType response);
 
   private:
     CONSUI_DISABLE_COPY(IntegerOption);
   };
 
-  class PathOption
-  : public CppConsUI::Button
-  {
+  class PathOption : public CppConsUI::Button {
   public:
-    PathOption(const char *name, const char *pref_);
-    virtual ~PathOption();
+    PathOption(const char *name, const char *pref);
+    virtual ~PathOption() override;
 
   protected:
-    char *pref;
+    char *pref_;
 
     void updateValue();
-    void onActivate(CppConsUI::Button& activator);
-    void responseHandler(CppConsUI::InputDialog& activator,
-        CppConsUI::AbstractDialog::ResponseType response);
+    void onActivate(CppConsUI::Button &activator);
+    void responseHandler(CppConsUI::InputDialog &activator,
+      CppConsUI::AbstractDialog::ResponseType response);
 
   private:
     CONSUI_DISABLE_COPY(PathOption);
   };
 
-  struct PluginEntry
-  {
+  struct PluginEntry {
     CppConsUI::Button *parent;
     CppConsUI::TreeView::NodeReference parent_reference;
     PurplePluginPrefFrame *frame;
   };
-  typedef std::map<PurplePlugin*, PluginEntry> PluginEntries;
+  typedef std::map<PurplePlugin *, PluginEntry> PluginEntries;
 
-  CppConsUI::TreeView *treeview;
-  PluginEntries plugin_entries;
+  CppConsUI::TreeView *treeview_;
+  PluginEntries plugin_entries_;
 
   CONSUI_DISABLE_COPY(PluginWindow);
 
   void clearPlugin(PurplePlugin *plugin);
   void populatePlugin(PurplePlugin *plugin);
 
-  void addPlugin(CppConsUI::Button& activator);
-  void onAddPluginSelection(AddPluginWindow& activator, PurplePlugin *plugin);
+  void addPlugin(CppConsUI::Button &activator);
+  void onAddPluginSelection(AddPluginWindow &activator, PurplePlugin *plugin);
 
-  void disablePlugin(CppConsUI::Button& activator, PurplePlugin *plugin);
-  void disablePluginResponseHandler(CppConsUI::MessageDialog& activator,
-      CppConsUI::AbstractDialog::ResponseType response, PurplePlugin *plugin);
+  void disablePlugin(CppConsUI::Button &activator, PurplePlugin *plugin);
+  void disablePluginResponseHandler(CppConsUI::MessageDialog &activator,
+    CppConsUI::AbstractDialog::ResponseType response, PurplePlugin *plugin);
 };
 
-#endif // __PLUGINWINDOW_H__
+#endif // PLUGINWINDOW_H
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

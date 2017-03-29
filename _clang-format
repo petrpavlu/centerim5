@@ -1,0 +1,13 @@
+---
+Language: Cpp
+BasedOnStyle: LLVM
+
+AlignAfterOpenBracket: false
+AlignOperands: false
+AllowShortFunctionsOnASingleLine: Inline
+BreakBeforeBraces: Stroustrup
+ConstructorInitializerIndentWidth: 2
+ContinuationIndentWidth: 2
+Standard: Cpp11
+...
+

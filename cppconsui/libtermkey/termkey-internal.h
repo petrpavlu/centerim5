@@ -11,8 +11,8 @@ struct TermKeyDriver
   const char      *name;
   void          *(*new_driver)(TermKey *tk, const char *term);
   void           (*free_driver)(void *info);
-  void           (*start_driver)(TermKey *tk, void *info);
-  void           (*stop_driver)(TermKey *tk, void *info);
+  int            (*start_driver)(TermKey *tk, void *info);
+  int            (*stop_driver)(TermKey *tk, void *info);
   TermKeyResult (*peekkey)(TermKey *tk, void *info, TermKeyKey *key, int force, size_t *nbytes);
 };
 
@@ -30,7 +30,7 @@ struct TermKeyDriverNode {
   struct TermKeyDriverNode *next;
 };
 
-struct _TermKey {
+struct TermKey {
   int    fd;
   int    flags;
   int    canonflags;
@@ -38,6 +38,8 @@ struct _TermKey {
   size_t buffstart; // First offset in buffer
   size_t buffcount; // NUMBER of entires valid in buffer
   size_t buffsize; // Total malloc'ed size
+  size_t hightide; /* Position beyond buffstart at which peekkey() should next start
+                    * normally 0, but see also termkey_interpret_csi */
 
   struct termios restore_termios;
   char restore_termios_valid;
@@ -45,6 +47,7 @@ struct _TermKey {
   int waittime; // msec
 
   char   is_closed;
+  char   is_started;
 
   int  nkeynames;
   const char **keynames;
@@ -62,6 +65,28 @@ struct _TermKey {
     TermKeyResult (*peekkey_mouse)(TermKey *tk, TermKeyKey *key, size_t *nbytes);
   } method;
 };
+
+static inline void termkey_key_get_linecol(const TermKeyKey *key, int *line, int *col)
+{
+  if(col)
+    *col  = (unsigned char)key->code.mouse[1] | ((unsigned char)key->code.mouse[3] & 0x0f) << 8;
+
+  if(line)
+    *line = (unsigned char)key->code.mouse[2] | ((unsigned char)key->code.mouse[3] & 0x70) << 4;
+}
+
+static inline void termkey_key_set_linecol(TermKeyKey *key, int line, int col)
+{
+  if(line > 0xfff)
+    line = 0xfff;
+
+  if(col > 0x7ff)
+    col = 0x7ff;
+
+  key->code.mouse[1] = (line & 0x0ff);
+  key->code.mouse[2] = (col & 0x0ff);
+  key->code.mouse[3] = (line & 0xf00) >> 8 | (col & 0x300) >> 4;
+}
 
 extern struct TermKeyDriver termkey_driver_csi;
 extern struct TermKeyDriver termkey_driver_ti;

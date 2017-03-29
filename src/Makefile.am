@@ -1,6 +1,6 @@
 bin_PROGRAMS = centerim5
 
-# when you add files here, also add them in po/POTFILES.in
+# When you add files here, also add them in po/POTFILES.in.
 centerim5_SOURCES = \
 	AccountStatusMenu.cpp \
 	AccountStatusMenu.h \
@@ -42,8 +42,7 @@ centerim5_SOURCES = \
 	Transfers.h \
 	Utils.cpp \
 	Utils.h \
-	git-version.cpp \
-	git-version.h.in
+	git-version.cpp
 
 centerim5_CPPFLAGS = \
 	$(PURPLE_CFLAGS) \
@@ -52,12 +51,8 @@ centerim5_CPPFLAGS = \
 	-I$(top_srcdir)
 
 centerim5_LDADD = \
+	$(LTLIBINTL) \
 	$(PURPLE_LIBS) \
 	$(GLIB_LIBS) \
 	$(SIGC_LIBS) \
 	$(top_builddir)/cppconsui/libcppconsui.la
-
-git-version.cpp: git-version.h
-
-git-version.h : $(top_srcdir)/.version git-version.h.in
-	@sed -e "s/@GIT_VERSION@/`cat $(top_srcdir)/.version`/" < $(srcdir)/git-version.h.in > git-version.h

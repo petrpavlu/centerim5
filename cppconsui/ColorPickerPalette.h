@@ -1,78 +1,67 @@
-/*
- * Copyright (C) 2012-2013 by CenterIM developers
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * */
+// Copyright (C) 2012 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2012-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * ColorPickerPalette class.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// ColorPickerPalette class.
+///
+/// @ingroup cppconsui
 
-#ifndef __COLORPICKERPALETTE_H__
-#define __COLORPICKERPALETTE_H__
+#ifndef COLORPICKERPALETTE_H
+#define COLORPICKERPALETTE_H
 
 #include "Button.h"
 #include "Container.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class ColorPickerPalette
-: public Container
-{
+class ColorPickerPalette : public Container {
 public:
   enum Flag {
     FLAG_HIDE_ANSI = 1 << 0,
     FLAG_HIDE_GRAYSCALE = 1 << 1,
-    FLAG_HIDE_COLORCUBE = 1 << 2
+    FLAG_HIDE_COLORCUBE = 1 << 2,
   };
 
   ColorPickerPalette(int default_color, int flags = 0);
-  virtual ~ColorPickerPalette() {};
+  virtual ~ColorPickerPalette() override {}
 
-  /**
-   * Emited signal when a color is selected
-   */
-  sigc::signal<void, ColorPickerPalette&, int> signal_color_selected;
+  /// Signal emitted when a color is selected.
+  sigc::signal<void, ColorPickerPalette &, int> signal_color_selected;
 
 protected:
-  class ColorPickerPaletteButton
-  : public Button
-  {
+  class ColorPickerPaletteButton : public Button {
   public:
     ColorPickerPaletteButton(int color);
-    virtual ~ColorPickerPaletteButton() {};
+    virtual ~ColorPickerPaletteButton() override {}
 
     // Widget
-    virtual void draw();
+    virtual int draw(Curses::ViewPort area, Error &error) override;
 
-    virtual int getColor() const { return color; };
+    virtual int getColor() const { return color_; };
 
   protected:
-    int color;
+    int color_;
 
   private:
     CONSUI_DISABLE_COPY(ColorPickerPaletteButton);
   };
 
-  virtual void onSelectColor(Button& activator);
+  virtual void onSelectColor(Button &activator);
 
   virtual void addButton(int x, int y, int color, int default_color);
 
@@ -86,6 +75,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __COLORPICKERPALETTE_H__
+#endif // COLORPICKERPALETTE_H
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

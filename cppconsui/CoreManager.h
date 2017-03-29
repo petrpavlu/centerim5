@@ -1,131 +1,119 @@
-/*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2009-2013 by CenterIM developers
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2009-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * CoreManager class
- *
- * @ingroup cppconsui
- */
+/// @file
+/// CoreManager class
+///
+/// @ingroup cppconsui
 
-#ifndef __COREMANAGER_H__
-#define __COREMANAGER_H__
+#ifndef COREMANAGER_H
+#define COREMANAGER_H
 
-#include "CppConsUI.h" // for COREMANAGER macro
-#include "FreeWindow.h"
+#include "CppConsUI.h"
+#include "Window.h"
 
 #include "libtermkey/termkey.h"
+#include <deque>
 #include <iconv.h>
-#include <vector>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-/**
- * This class implements a core part of CppConsUI.
- */
-class CoreManager
-: public InputProcessor
-{
+/// CppConsUI manager.
+class CoreManager : public InputProcessor {
 public:
-  void addWindow(FreeWindow& window);
-  void removeWindow(FreeWindow& window);
-  bool hasWindow(const FreeWindow& window) const;
-  FreeWindow *getTopWindow();
+  int initializeInput(Error &error);
+  int finalizeInput(Error &error);
 
-  void enableResizing();
-  void disableResizing();
+  int initializeOutput(Error &error);
+  int finalizeOutput(Error &error);
+
+  /// Reads data from the standard input. The data are first converted from the
+  /// user locale to the internal representation (UTF-8) and then processed by
+  /// InputProcessor.
+  int processStandardInput(int *wait, Error &error);
+  int processStandardInputTimeout(Error &error);
+
+  int resize(Error &error);
+  int draw(Error &error);
+
+  void registerWindow(Window &window);
+  void removeWindow(Window &window);
+  void hideWindow(Window &window);
+  void topWindow(Window &window);
+  Window *getTopWindow();
+
+  void setTopInputProcessor(InputProcessor &top)
+  {
+    top_input_processor_ = &top;
+  }
+  InputProcessor *getTopInputProcessor() { return top_input_processor_; }
+
+  void logDebug(const char *message);
+  void redraw(bool from_scratch = false);
+
+  bool isRedrawPending() const;
+
   void onScreenResized();
 
-  void setTopInputProcessor(InputProcessor& top)
-    { top_input_processor = &top; }
-  InputProcessor *getTopInputProcessor()
-    { return top_input_processor; }
+  void onWindowMoveResize(
+    Window &activator, const Rect &oldsize, const Rect &newsize);
+  void onWindowWishSizeChange(
+    Window &activator, const Size &oldsize, const Size &newsize);
 
-  void logError(const char *message);
-  void redraw();
-
-  TermKey *getTermKeyHandle() { return tk; };
+  TermKey *getTermKeyHandle() { return tk_; };
 
   sigc::signal<void> signal_resize;
   sigc::signal<void> signal_top_window_change;
 
-protected:
-
 private:
-  typedef std::vector<FreeWindow*> Windows;
+  typedef std::deque<Window *> Windows;
 
-  Windows windows;
-  AppInterface interface;
-  InputProcessor *top_input_processor;
+  enum PendingRedraw {
+    REDRAW_NONE,
+    REDRAW_NORMAL,
+    REDRAW_FROM_SCRATCH,
+  };
 
-  unsigned stdin_input_timeout_handle;
-  unsigned stdin_input_handle;
-  unsigned resize_input_handle;
-  int pipefd[2];
-  bool pipe_valid;
+  Windows windows_;
+  AppInterface interface_;
+  InputProcessor *top_input_processor_;
 
-  TermKey *tk;
-  iconv_t iconv_desc;
+  TermKey *tk_;
+  iconv_t iconv_desc_;
 
-  bool redraw_pending;
-  bool resize_pending;
+  PendingRedraw pending_redraw_;
 
-  CoreManager();
-  int init(AppInterface& set_interface);
+  CoreManager(AppInterface &set_interface);
   ~CoreManager() {}
-  int finalize();
   CONSUI_DISABLE_COPY(CoreManager);
 
-  friend int initializeConsUI(AppInterface& interface);
-  friend int finalizeConsUI();
+  friend void initializeConsUI(AppInterface &interface);
+  friend void finalizeConsUI();
 
   // InputProcessor
-  virtual bool processInput(const TermKeyKey& key);
+  virtual bool processInput(const TermKeyKey &key) override;
 
-  /**
-   * Reads data from the standard input. The data are first converted from
-   * user locales to the internal representation (UTF-8) and then processed by
-   * InputProcessor.
-   */
-  static void stdin_input_(int fd, InputCondition cond, void *data)
-    { static_cast<CoreManager*>(data)->stdin_input(fd, cond); }
-  void stdin_input(int fd, InputCondition cond);
-  static bool stdin_input_timeout_(void *data);
-  void stdin_input_timeout();
+  void updateArea();
+  void updateWindowArea(Window &window);
 
-  static void resize_input_(int fd, InputCondition cond, void *data)
-    { static_cast<CoreManager*>(data)->resize_input(fd, cond); }
-  void resize_input(int fd, InputCondition cond);
+  int drawWindow(Window &window, Error &error);
 
-  int initInput();
-  void finalizeInput();
-
-  static void signalHandler(int signum);
-  void resize();
-
-  static bool draw_(void *data);
-  void draw();
-
-  Windows::iterator findWindow(FreeWindow& window);
+  Windows::iterator findWindow(Window &window);
   void focusWindow();
 
   void redrawScreen();
@@ -135,6 +123,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __COREMANGER_H__
+#endif // COREMANGER_H
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

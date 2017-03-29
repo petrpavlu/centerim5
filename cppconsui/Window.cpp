@@ -1,141 +1,193 @@
-/*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2013 by CenterIM developers
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * Window class implementation.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// Window class implementation.
+///
+/// @ingroup cppconsui
 
 #include "Window.h"
 
+#include "CoreManager.h"
+
 #include <algorithm>
-#include <cassert>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-Window::Window(int x, int y, int w, int h, const char *title, Type t)
-: FreeWindow(x, y, w, h, t)
+Window::Window(int x, int y, int w, int h, Type t, bool decorated)
+  : Container(w, h), type_(t), decorated_(decorated), closable_(true)
 {
-  panel = new Panel(win_w, win_h, title);
-  addWidget(*panel, 0, 0);
+  initWindow(x, y, nullptr);
 }
 
-void Window::moveResize(int newx, int newy, int neww, int newh)
+Window::Window(
+  int x, int y, int w, int h, const char *title, Type t, bool decorated)
+  : Container(w, h), type_(t), decorated_(decorated), closable_(true)
 {
-  if (newx == win_x && newy == win_y && neww == win_w && newh == win_h)
-    return;
-
-  win_x = newx;
-  win_y = newy;
-  win_w = neww;
-  win_h = newh;
-
-  resizeAndUpdateArea();
+  initWindow(x, y, title);
 }
 
-Point Window::getAbsolutePosition(const Container& ref,
-    const Widget& child) const
+Window::~Window()
+{
+  hide();
+  COREMANAGER->removeWindow(*this);
+  delete panel_;
+}
+
+int Window::draw(Curses::ViewPort area, Error &error)
+{
+  DRAW(area.erase(error));
+
+  DRAW(Container::draw(area, error));
+  if (decorated_)
+    DRAW(panel_->draw(area, error));
+
+  // Reverse the top right corner of the window if there is not any focused
+  // widget and the window is the top window. This way the user knows which
+  // window is on the top and can be closed using the Esc key.
+  if (input_child_ == nullptr && COREMANAGER->getTopWindow() == this)
+    DRAW(area.changeAt(real_width_ - 1, 0, 1, Curses::Attr::REVERSE, 0, error));
+
+  return 0;
+}
+
+void Window::setVisibility(bool visible)
+{
+  visible ? show() : hide();
+}
+
+Point Window::getAbsolutePosition() const
+{
+  return Point(real_xpos_, real_ypos_);
+}
+
+bool Window::isWidgetVisible(const Widget & /*child*/) const
+{
+  return true;
+}
+
+bool Window::setFocusChild(Widget &child)
+{
+  cleanFocus();
+
+  focus_child_ = &child;
+  setInputChild(child);
+
+  if (COREMANAGER->getTopWindow() != this)
+    return false;
+
+  return true;
+}
+
+Point Window::getAbsolutePosition(const Widget &child) const
 {
   assert(child.getParent() == this);
 
-  if (this == &ref) {
-    if (&child == panel)
-      return Point(0, 0);
+  int child_x = child.getRealLeft();
+  int child_y = child.getRealTop();
 
-    return Point(child.getLeft() + 1, child.getTop() + 1);
+  if (child_x != UNSETPOS && child_y != UNSETPOS) {
+    child_x -= scroll_xpos_;
+    child_y -= scroll_ypos_;
+
+    if (real_xpos_ != UNSETPOS && real_ypos_ != UNSETPOS)
+      return Point(real_xpos_ + child_x, real_ypos_ + child_y);
   }
 
-  if (&child == panel)
-    return Point(win_x, win_y);
-
-  return Point(win_x + child.getLeft() + 1, win_y + child.getTop() + 1);
+  return Point(UNSETPOS, UNSETPOS);
 }
 
-Point Window::getAbsolutePosition(const Widget& child) const
+void Window::show()
 {
-  assert(child.getParent() == this);
-
-  if (&child == panel)
-    return Point(win_x, win_y);
-
-  return Point(win_x + child.getLeft() + 1, win_y + child.getTop() + 1);
+  visible_ = true;
+  COREMANAGER->topWindow(*this);
+  signal_show(*this);
 }
 
-Curses::Window *Window::getSubPad(const Widget &child, int begin_x,
-    int begin_y, int ncols, int nlines)
+void Window::hide()
 {
-  if (!area)
-    return NULL;
-
-  // handle panel child specially
-  if (&child == panel)
-    return area->subpad(begin_x, begin_y, ncols, nlines);
-
-  int realw = area->getmaxx() - 2;
-  int realh = area->getmaxy() - 2;
-
-  if (nlines == AUTOSIZE)
-    nlines = child.getWishHeight();
-  if (ncols == AUTOSIZE)
-    ncols = child.getWishWidth();
-
-  /* Extend requested subpad to whole panel area or shrink requested area if
-   * necessary. */
-  if (nlines == AUTOSIZE || nlines > realh - begin_y)
-    nlines = realh - begin_y;
-
-  if (ncols == AUTOSIZE || ncols > realw - begin_x)
-    ncols = realw - begin_x;
-
-  if (nlines <= 0 || ncols <= 0)
-    return NULL;
-
-  // add '+1' offset to normal childs so they can not overwrite the panel
-  return area->subpad(begin_x + 1, begin_y + 1, ncols, nlines);
+  visible_ = false;
+  COREMANAGER->hideWindow(*this);
+  signal_hide(*this);
 }
 
-void Window::resizeAndUpdateArea()
+void Window::close()
 {
-  int realw = win_w;
-  if (realw == AUTOSIZE) {
-    realw = getWishWidth();
-    if (realw == AUTOSIZE)
-      realw = Curses::getmaxx() - win_x;
-  }
-  int realh = win_h;
-  if (realh == AUTOSIZE) {
-    realh = getWishHeight();
-    if (realh == AUTOSIZE)
-      realh = Curses::getmaxy() - win_y;
-  }
+  signal_close(*this);
+  delete this;
+}
 
-  panel->moveResize(0, 0, realw, realh);
+void Window::setClosable(bool new_closable)
+{
+  closable_ = new_closable;
+}
 
-  Container::moveResize(1, 1, std::max(0, realw - 2), std::max(0, realh - 2));
-  updateArea();
+void Window::signalMoveResize(const Rect &oldsize, const Rect &newsize)
+{
+  COREMANAGER->onWindowMoveResize(*this, oldsize, newsize);
+  Container::signalMoveResize(oldsize, newsize);
+}
+
+void Window::signalWishSizeChange(const Size &oldsize, const Size &newsize)
+{
+  COREMANAGER->onWindowWishSizeChange(*this, oldsize, newsize);
+  Container::signalWishSizeChange(oldsize, newsize);
+}
+
+void Window::updateArea()
+{
+  panel_->setRealSize(real_width_, real_height_);
+  Container::updateArea();
+}
+
+void Window::redraw()
+{
+  COREMANAGER->redraw();
+}
+
+void Window::initWindow(int x, int y, const char *title)
+{
+  xpos_ = x;
+  ypos_ = y;
+  visible_ = false;
+  if (decorated_)
+    border_ = 1;
+
+  panel_ = new Panel(AUTOSIZE, AUTOSIZE, title);
+  panel_->setParent(*this);
+  panel_->setRealPosition(0, 0);
+
+  COREMANAGER->registerWindow(*this);
+
+  declareBindables();
+}
+
+void Window::actionClose()
+{
+  if (closable_)
+    close();
+}
+
+void Window::declareBindables()
+{
+  declareBindable("window", "close-window",
+    sigc::mem_fun(this, &Window::actionClose), InputProcessor::BINDABLE_NORMAL);
 }
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

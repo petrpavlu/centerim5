@@ -1,136 +1,121 @@
-/*
- * Copyright (C) 2007 by Mark Pustjens <pustjens@dds.nl>
- * Copyright (C) 2010-2013 by CenterIM developers
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2007 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * Panel class implementation.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// Panel class implementation.
+///
+/// @ingroup cppconsui
 
 #include "Panel.h"
+
+#include "ColorScheme.h"
 
 #include <algorithm>
 #include <cstring>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 Panel::Panel(int w, int h, const char *text)
-: Widget(w, h), title(NULL), title_width(0)
+  : Widget(w, h), title_(nullptr), title_width_(0)
 {
   setTitle(text);
 }
 
 Panel::~Panel()
 {
-  delete [] title;
+  delete[] title_;
 }
 
-void Panel::draw()
+int Panel::draw(Curses::ViewPort area, Error &error)
 {
-  proceedUpdateArea();
-
-  if (!area)
-    return;
-
-  int realw = area->getmaxx();
-  int realh = area->getmaxy();
   int attrs, i;
 
-  // calc title width
+  // Calculate title width.
   int draw_title_width = 0;
-  if (realw > 4)
-    draw_title_width = realw - 4;
-  draw_title_width = std::min(draw_title_width, title_width);
+  if (real_width_ > 4)
+    draw_title_width = real_width_ - 4;
+  draw_title_width = std::min(draw_title_width, title_width_);
 
-  // calc horizontal line length (one segment width)
+  // Calculate horizontal line length (one segment width).
   int hline_len = 0;
   int extra = draw_title_width ? 4 : 2;
-  if (realw > draw_title_width + extra)
-    hline_len = (realw - draw_title_width - extra) / 2;
+  if (real_width_ > draw_title_width + extra)
+    hline_len = (real_width_ - draw_title_width - extra) / 2;
 
   if (draw_title_width) {
-    // draw title
-    attrs = getColorPair("panel", "title");
-    area->attron(attrs);
-    area->mvaddstring(2 + hline_len, 0, draw_title_width, title);
-    area->attroff(attrs);
+    // Draw title.
+    DRAW(getAttributes(ColorScheme::PROPERTY_PANEL_TITLE, &attrs, error));
+    DRAW(area.attrOn(attrs, error));
+    DRAW(area.addString(2 + hline_len, 0, draw_title_width, title_, error));
+    DRAW(area.attrOff(attrs, error));
   }
 
-  // draw lines
-  attrs = getColorPair("panel", "line");
-  area->attron(attrs);
+  // Draw lines.
+  DRAW(getAttributes(ColorScheme::PROPERTY_PANEL_LINE, &attrs, error));
+  DRAW(area.attrOn(attrs, error));
 
-  int wa = (realw >= width || width == AUTOSIZE) && realw > 1 ? 1 : 0;
-  int ha = (realh >= height || height == AUTOSIZE) && realh > 1 ? 1 : 0;
+  // Draw top horizontal line.
+  for (i = 1; i < 1 + hline_len; ++i)
+    DRAW(area.addLineChar(i, 0, Curses::LINE_HLINE, error));
+  for (i = 1 + hline_len + extra - 2 + draw_title_width; i < real_width_ - 1;
+       ++i)
+    DRAW(area.addLineChar(i, 0, Curses::LINE_HLINE, error));
 
-  // draw top horizontal line
-  for (i = 1; i < 1 + hline_len; i++)
-    area->mvaddlinechar(i, 0, Curses::LINE_HLINE);
-  for (i = 1 + hline_len + extra - 2 + draw_title_width; i < realw - 1 * wa;
-      i++)
-    area->mvaddlinechar(i, 0, Curses::LINE_HLINE);
+  // Draw bottom horizontal line.
+  for (i = 1; i < real_width_ - 1; ++i)
+    DRAW(area.addLineChar(i, real_height_ - 1, Curses::LINE_HLINE, error));
 
-  // draw bottom horizontal line
-  if (ha)
-    for (i = 1; i < realw - 1 * wa; i++)
-      area->mvaddlinechar(i, realh - 1, Curses::LINE_HLINE);
+  // Draw left and right vertical line.
+  for (i = 1; i < real_height_ - 1; ++i)
+    DRAW(area.addLineChar(0, i, Curses::LINE_VLINE, error));
+  for (i = 1; i < real_height_ - 1; ++i)
+    DRAW(area.addLineChar(real_width_ - 1, i, Curses::LINE_VLINE, error));
 
-  // draw left and right vertical line
-  for (i = 1; i < realh - 1 * ha; i++)
-    area->mvaddlinechar(0, i, Curses::LINE_VLINE);
-  if (wa)
-    for (i = 1; i < realh - 1 * ha; i++)
-      area->mvaddlinechar(realw - 1, i, Curses::LINE_VLINE);
+  // Draw corners.
+  DRAW(area.addLineChar(0, 0, Curses::LINE_ULCORNER, error));
+  DRAW(area.addLineChar(real_width_ - 1, 0, Curses::LINE_URCORNER, error));
+  DRAW(area.addLineChar(0, real_height_ - 1, Curses::LINE_LLCORNER, error));
+  DRAW(area.addLineChar(
+    real_width_ - 1, real_height_ - 1, Curses::LINE_LRCORNER, error));
 
-  // draw corners
-  area->mvaddlinechar(0, 0, Curses::LINE_ULCORNER);
-  if (wa)
-    area->mvaddlinechar(realw - 1, 0, Curses::LINE_URCORNER);
-  if (ha)
-    area->mvaddlinechar(0, realh - 1, Curses::LINE_LLCORNER);
-  if (wa && ha)
-    area->mvaddlinechar(realw - 1, realh - 1, Curses::LINE_LRCORNER);
+  DRAW(area.attrOff(attrs, error));
 
-  area->attroff(attrs);
+  return 0;
 }
 
 void Panel::setTitle(const char *new_title)
 {
-  delete [] title;
-
-  size_t size = 1;
-  if (new_title)
+  std::size_t size = 1;
+  if (new_title != nullptr)
     size += std::strlen(new_title);
-  title = new char[size];
-  if (new_title)
-    std::strcpy(title, new_title);
+  auto new_storage = new char[size];
+  if (new_title != nullptr)
+    std::strcpy(new_storage, new_title);
   else
-    title[0] = '\0';
-  title_width = Curses::onscreen_width(title);
+    new_storage[0] = '\0';
 
+  delete[] title_;
+  title_ = new_storage;
+
+  title_width_ = Curses::onScreenWidth(title_);
   redraw();
 }
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

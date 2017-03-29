@@ -1,81 +1,70 @@
-/*
- * Copyright (C) 2012-2013 by CenterIM developers
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * */
+// Copyright (C) 2012 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2012-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * ColorPicker class.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// ColorPicker class.
+///
+/// @ingroup cppconsui
 
-#ifndef __COLORPICKER_H__
-#define __COLORPICKER_H__
+#ifndef COLORPICKER_H
+#define COLORPICKER_H
 
 #include "ColorPickerComboBox.h"
 #include "HorizontalListBox.h"
 #include "Label.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class ColorPicker
-: public HorizontalListBox
-{
+class ColorPicker : public HorizontalListBox {
 public:
   ColorPicker(int fg, int bg, const char *text, bool sample = false);
-  virtual ~ColorPicker() {}
+  virtual ~ColorPicker() override {}
 
   virtual void setColorPair(int fg, int bg);
   virtual void setText(const char *new_text);
 
-  /**
-   * Emited signal when the colorpair has been selected
-   */
-  sigc::signal<void, ColorPicker&, int, int> signal_colorpair_selected;
+  /// Signal emitted when a colorpair has been selected.
+  sigc::signal<void, ColorPicker &, int, int> signal_colorpair_selected;
 
 protected:
-  class Sample
-  : public Widget
-  {
+  class Sample : public Widget {
   public:
     Sample(int w, int fg = -1, int bg = -1);
-    virtual ~Sample() {}
+    virtual ~Sample() override {}
 
     // Widget
-    virtual void draw();
+    virtual int draw(Curses::ViewPort area, Error &error) override;
 
     virtual void setColors(int fg, int bg);
 
   protected:
-    ColorScheme::Color c;
+    ColorScheme::Color color_;
 
   private:
     CONSUI_DISABLE_COPY(Sample);
   };
 
-  ColorPickerComboBox *fg_combo;
-  ColorPickerComboBox *bg_combo;
-  Label *label;
-  Sample *sample;
+  ColorPickerComboBox *fg_combo_;
+  ColorPickerComboBox *bg_combo_;
+  Label *label_;
+  Sample *sample_;
 
-  virtual void onColorChanged(ComboBox& activator, int new_color);
+  virtual void onColorChanged(ComboBox &activator, int new_color);
 
 private:
   CONSUI_DISABLE_COPY(ColorPicker);
@@ -83,6 +72,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __COLORPICKER_H__
+#endif // COLORPICKER_H
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

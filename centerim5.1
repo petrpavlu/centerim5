@@ -1,40 +1,35 @@
-.TH CENTERIM5 1 "27 July 2012"
+.TH CENTERIM5 1 "11 July 2016"
 
 .SH NAME
-\fBcenterim5\fP \- a text-mode IM client for Linux, *BSD, Solaris and other
-Unices that uses libpurple as a communication backend.
+centerim5 \- a text\-mode instant messaging client
 
 .SH SYNOPSIS
-.B "centerim5 "
-[
-.B option
-] ...
+\fBcenterim5\fR [\fB\-a\fR] [\fB\-b\fR \fIDIR\fR] [\fB\-o\fR]
 
 .SH DESCRIPTION
-This manual page documents briefly the
-.B centerim5
-command.
+\fBcenterim5\fR is a text\-mode IM client for Linux, *BSD, Solaris and other
+Unices that uses libpurple as a communication backend.
 
 .SH OPTIONS
 .TP
 \fB\-a\fR, \fB\-\-ascii\fR
-use ASCII characters to draw lines and boxes
+Use ASCII characters to draw lines and boxes.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
-display command line usage
+Display command line usage.
 .TP
 \fB\-v\fR, \fB\-\-version\fR
-show the program version info
+Show the program version info.
 .TP
-\fB\-b\fR, \fB\-\-basedir\fR <directory>
-specify another base directory; useful for having several IM identities
-under the same UNIX account
+\fB\-b\fR \fIDIR\fR, \fB\-\-basedir\fR=\fIDIR\fR
+Specify another base directory; useful for having several IM identities under
+the same UNIX account.
 .TP
 \fB\-o\fR, \fB\-\-offline\fR
-start with all accounts set offline
+Start with all accounts set offline.
 
-.SH BUG REPORT
-Report any bugs at our Bugzilla site at http://bugzilla.centerim.org/
+.SH BUGS
+Please send bug reports to <centerim-devel@centerim.org>.
 
-.SH WEB
-http://www.centerim.org/
+.SH "SEE ALSO"
+<http://www.centerim.org/>, \fBfinch\fR(1), \fBpidgin\fR(1)

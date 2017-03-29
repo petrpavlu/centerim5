@@ -1,93 +1,80 @@
-/*
- * Copyright (C) 2010-2013 by CenterIM developers
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * TextEdit class
- *
- * @ingroup cppconsui
- */
+/// @file
+/// TextEdit class
+///
+/// @ingroup cppconsui
 
-#ifndef __TEXTEDIT_H__
-#define __TEXTEDIT_H__
+#ifndef TEXTEDIT_H
+#define TEXTEDIT_H
 
 #include "Widget.h"
 
 #include <deque>
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-class TextEdit
-: public Widget
-{
+class TextEdit : public Widget {
 public:
   enum Flag {
     FLAG_NUMERIC = 1 << 0,
-    FLAG_NOSPACE = 1 << 1
+    FLAG_NOSPACE = 1 << 1,
   };
 
-  TextEdit(int w, int h, const char *text_ = NULL, int flags_ = 0,
-      bool single_line = false, bool accept_tabs_ = true,
-      bool masked_ = false);
-  virtual ~TextEdit();
+  TextEdit(int w, int h, const char *text_ = nullptr, int flags_ = 0,
+    bool single_line = false, bool accept_tabs_ = true, bool masked_ = false);
+  virtual ~TextEdit() override;
 
   // InputProcessor
-  virtual bool processInputText(const TermKeyKey &key);
+  virtual bool processInputText(const TermKeyKey &key) override;
 
   // Widget
-  virtual void draw();
+  virtual int draw(Curses::ViewPort area, Error &error) override;
 
-  /**
-   * Sets new text.
-   */
+  /// Sets new text.
   virtual void setText(const char *new_text);
-  /**
-   * Removes all text.
-   */
+
+  /// Removes all text.
   virtual void clear();
-  /**
-   * Returns inserted text.
-   */
+
+  /// Returns inserted text.
   virtual const char *getText() const;
 
-  virtual size_t getTextLength() const { return text_length; }
+  virtual std::size_t getTextLength() const { return text_length_; }
 
   virtual void setFlags(int new_flags, bool revalidate = true);
-  virtual int getFlags() const { return flags; }
+  virtual int getFlags() const { return flags_; }
 
   virtual void setSingleLineMode(bool new_single_line_mode);
-  virtual bool isSingleLineMode() const { return single_line_mode; }
+  virtual bool isSingleLineMode() const { return single_line_mode_; }
 
   virtual void setAcceptTabs(bool new_accept_tabs);
-  virtual bool doesAcceptTabs() const { return accept_tabs; }
+  virtual bool doesAcceptTabs() const { return accept_tabs_; }
 
   virtual void setMasked(bool new_masked);
-  virtual bool isMasked() const { return masked; }
+  virtual bool isMasked() const { return masked_; }
 
-  sigc::signal<void, TextEdit&> signal_text_change;
+  sigc::signal<void, TextEdit &> signal_text_change;
 
 protected:
   enum Direction {
     DIR_BACK,
-    DIR_FORWARD
+    DIR_FORWARD,
   };
 
   enum CursorMovement {
@@ -100,146 +87,125 @@ protected:
     MOVE_PARAGRAPH_ENDS,
     MOVE_PAGES,
     MOVE_BUFFER_ENDS,
-    MOVE_HORIZONTAL_PAGES
+    MOVE_HORIZONTAL_PAGES,
   };
 
   enum DeleteType {
     DELETE_CHARS,
-    DELETE_WORD_ENDS
+    DELETE_WORD_ENDS,
   };
 
-  struct ScreenLine
-  {
-    /**
-     * Pointer to the start of line (points into buffer).
-     */
+  struct ScreenLine {
+    /// Pointer to the start of line (points into buffer).
     const char *start;
-    /**
-     * Pointer to the first byte that is not part of this line.
-     */
-    const char *end;
-    /**
-     * Precalculated length.
-     */
-    size_t length;
 
-    ScreenLine(const char *start_, const char *end_, size_t length_)
-      : start(start_), end(end_), length(length_) {}
-    bool operator==(const ScreenLine& other) const;
+    /// Pointer to the first byte that is not part of this line.
+    const char *end;
+
+    /// Precalculated length.
+    std::size_t length;
+
+    ScreenLine(const char *start, const char *end, std::size_t length)
+      : start(start), end(end), length(length)
+    {
+    }
+    bool operator==(const ScreenLine &other) const;
   };
 
-  struct CmpScreenLineEnd
-  {
-    bool operator()(ScreenLine& sline, const char *tag);
+  struct CmpScreenLineEnd {
+    bool operator()(ScreenLine &sline, const char *tag);
   };
 
   typedef std::deque<ScreenLine> ScreenLines;
 
-  ScreenLines screen_lines;
+  ScreenLines screen_lines_;
 
-  /**
-   * Bitmask indicating which input is accepted.
-   */
-  int flags;
-  bool editable;
-  bool overwrite_mode;
-  bool single_line_mode;
-  bool accept_tabs;
-  bool masked;
+  /// Bitmask indicating which input is accepted.
+  int flags_;
 
-  /**
-   * Character position from the start of buffer.
-   */
-  size_t current_pos;
-  /**
-   * Cursor location in the buffer.
-   */
-  mutable char *point;
+  bool editable_;
+  bool overwrite_mode_;
+  bool single_line_mode_;
+  bool accept_tabs_;
+  bool masked_;
 
-  /**
-   * Current cursor line (derived from current_pos and screen_lines).
-   */
-  size_t current_sc_line;
-  /**
-   * Current cursor character number (in the current line).
-   */
-  size_t current_sc_linepos;
-  /**
-   * Holds index into screen_lines that marks the first screen line.
-   */
-  size_t view_top;
+  /// Character position from the start of buffer.
+  std::size_t current_pos_;
 
-  /**
-   * Start of text buffer.
-   */
-  char *buffer;
-  /**
-   * First location outside buffer.
-   */
-  char *bufend;
-  /**
-   * Start of gap.
-   */
-  mutable char *gapstart;
-  /**
-   * First location after the gap end.
-   */
-  mutable char *gapend;
-  /**
-   * Length in use, in chars.
-   */
-  size_t text_length;
+  /// Cursor location in the buffer.
+  mutable char *point_;
 
-  mutable bool screen_lines_dirty;
+  /// Current cursor line (derived from current_pos_ and screen_lines_).
+  std::size_t current_sc_line_;
 
-  virtual void initBuffer(size_t size);
-  virtual size_t getGapSize() const;
-  virtual void expandGap(size_t size);
+  /// Current cursor character number (in the current line).
+  std::size_t current_sc_linepos_;
+
+  /// Holds index into screen_lines_ that marks the first screen line.
+  std::size_t view_top_;
+
+  /// Start of text buffer.
+  char *buffer_;
+
+  /// First location outside buffer.
+  char *bufend_;
+
+  /// Start of gap.
+  mutable char *gapstart_;
+
+  /// First location after the gap end.
+  mutable char *gapend_;
+
+  /// Length in use, in chars.
+  std::size_t text_length_;
+
+  mutable bool screen_lines_dirty_;
+
+  // Widget
+  virtual void updateArea() override;
+
+  virtual void initBuffer(std::size_t size);
+  virtual std::size_t getGapSize() const;
+  virtual void expandGap(std::size_t size);
   virtual void moveGapToCursor();
 
   virtual char *getTextStart() const;
   virtual char *prevChar(const char *p) const;
   virtual char *nextChar(const char *p) const;
-  virtual int width(const char *start, size_t chars) const;
-  /**
-   * Returns on-screen width of a given character in the same fashion as
-   * Curses::onscreen_width() does but handles the tab character and wide
-   * characters properly if the masked mode is active.
-   */
+  virtual int width(const char *start, std::size_t chars) const;
+
+  /// Returns on-screen width of a given character in the same fashion as
+  /// Curses::onscreen_width() does but handles the tab character and wide
+  /// characters properly if the masked mode is active.
   virtual int onScreenWidth(UTF8::UniChar uc, int w = 0) const;
 
-  virtual char *getScreenLine(const char *text, int max_width,
-      size_t *res_length) const;
-  /**
-   * Recalculates all screen lines.
-   */
+  virtual char *getScreenLine(
+    const char *text, int max_width, std::size_t *res_length) const;
+
+  /// Recalculates all screen lines.
   virtual void updateScreenLines();
-  /**
-   * Recalculates necessary amout of screen lines.
-   */
+
+  /// Recalculates necessary amout of screen lines.
   virtual void updateScreenLines(const char *begin, const char *end);
+
   virtual void assertUpdatedScreenLines();
 
-  /**
-   * Recalculates screen cursor position based on current_pos and
-   * screen_lines, sets current_sc_line and current_sc_linepos and handles
-   * scrolling if necessary.
-   */
+  /// Recalculates screen cursor position based on current_pos_ and
+  /// screen_lines_, sets current_sc_line_ and current_sc_linepos_ and handles
+  /// scrolling if necessary.
   virtual void updateScreenCursor();
 
-  /**
-   * Inserts given text at the current cursor position.
-   */
-  virtual void insertTextAtCursor(const char *new_text,
-      size_t new_text_bytes);
+  /// Inserts given text at the current cursor position.
+  virtual void insertTextAtCursor(
+    const char *new_text, std::size_t new_text_bytes);
   virtual void insertTextAtCursor(const char *new_text);
   virtual void deleteFromCursor(DeleteType type, Direction dir);
   virtual void moveCursor(CursorMovement step, Direction dir);
 
   virtual void toggleOverwrite();
 
-  virtual size_t moveLogicallyFromCursor(Direction dir) const;
-  virtual size_t moveWordFromCursor(Direction dir, bool word_end) const;
+  virtual std::size_t moveLogicallyFromCursor(Direction dir) const;
+  virtual std::size_t moveWordFromCursor(Direction dir, bool word_end) const;
 
 private:
   CONSUI_DISABLE_COPY(TextEdit);
@@ -253,6 +219,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __TEXTEDIT_H__
+#endif // TEXTEDIT_H
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

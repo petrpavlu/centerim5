@@ -1,200 +1,193 @@
-/*
- * Copyright (C) 2012-2013 by CenterIM developers
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2012 Mark Pustjens <pustjens@dds.nl>
+// Copyright (C) 2012-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * ColorPickerComboBox class implementation.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// ColorPickerComboBox class implementation.
+///
+/// @ingroup cppconsui
 
 #include "ColorPickerComboBox.h"
 
-#include <algorithm>
 #include "gettext.h"
+#include <algorithm>
 
-/* This is an invalid color number that is used for the "More..." button in
- * ColorPickerComboBox. */
+// Invalid color number that is used for the "More..." button in
+// ColorPickerComboBox.
 #define COLOR_MORE (-2)
 
-// width of the drop-down menu
+// Width of the drop-down menu.
 #define MENU_WIDTH 12
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
 ColorPickerComboBox::ColorPickerComboBox(int w, int color)
-: ComboBox(w, 1), selected_color(color)
+  : ComboBox(w, 1), selected_color_(color)
 #ifdef COLORPICKER_256COLOR
-, colorpicker(NULL)
+    ,
+    colorpicker_(nullptr)
 #endif // COLORPICKER_256COLOR
 {
-  // add ANSI colors
-  int colors = std::min(Curses::NUM_DEFAULT_COLORS, Curses::nrcolors());
-  for (int i = 0; i < colors; i++)
-    addOption(NULL, i);
+  // Add ANSI colors.
+  int colors = std::min(Curses::NUM_DEFAULT_COLORS, Curses::getColorCount());
+  for (int i = 0; i < colors; ++i)
+    addOption(nullptr, i);
 
-  // add options for default color and to open the 256 color dialog
-  addOption(NULL, Curses::Color::DEFAULT);
+  // Add options for default color and to open the 256 color dialog.
+  addOption(nullptr, Curses::Color::DEFAULT);
 #ifdef COLORPICKER_256COLOR
   addOption(_("More..."), COLOR_MORE);
 #endif // COLORPICKER_256COLOR
 
-  // set initial selection
+  // Set initial selection.
   setSelectedByData(color);
 }
 
 ColorPickerComboBox::~ColorPickerComboBox()
 {
 #ifdef COLORPICKER_256COLOR
-  if (colorpicker)
-    colorpicker->close();
+  if (colorpicker_ != nullptr)
+    colorpicker_->close();
 #endif // COLORPICKER_256COLOR
 }
 
 void ColorPickerComboBox::setColor(int new_color)
 {
-  if (new_color < Curses::Color::DEFAULT || new_color >= Curses::nrcolors()) {
+  if (new_color < Curses::Color::DEFAULT ||
+    new_color >= Curses::getColorCount()) {
     // an invalid color was specified, use the default color
     new_color = Curses::Color::DEFAULT;
   }
 
-  if (new_color == selected_color)
+  if (new_color == selected_color_)
     return;
 
-  selected_color = new_color;
+  selected_color_ = new_color;
 
 #ifdef COLORPICKER_256COLOR
-  if (selected_color >= Curses::Color::DEFAULT
-      && selected_color < Curses::NUM_DEFAULT_COLORS)
-    setSelectedByData(selected_color);
+  if (selected_color_ >= Curses::Color::DEFAULT &&
+    selected_color_ < Curses::NUM_DEFAULT_COLORS)
+    setSelectedByData(selected_color_);
   else
     setSelectedByData(COLOR_MORE);
 #else
-  setSelectedByData(selected_color);
+  setSelectedByData(selected_color_);
 #endif // COLORPICKER_256COLOR
 }
 
-void ColorPickerComboBox::draw()
+int ColorPickerComboBox::draw(Curses::ViewPort area, Error &error)
 {
-  proceedUpdateArea();
-
-  if (!area)
-    return;
-
-  int button_colorpair;
-  if (has_focus)
-    button_colorpair = getColorPair("button", "focus")
-      | Curses::Attr::REVERSE;
-  else
-    button_colorpair = getColorPair("button", "normal");
-
-  int realw = area->getmaxx();
-  int color = selected_color;
-
-  area->attron(button_colorpair);
-  area->fill(button_colorpair, 0, 0, realw, 1);
-  area->mvaddchar(0, 0, '[');
-  area->mvaddchar(realw - 1, 0, ']');
-  area->attroff(button_colorpair);
-
-  if (selected_color == Curses::Color::DEFAULT)
-    area->mvaddstring(1, 0, _("DEFAULT"));
-  else {
-    ColorScheme::Color c(Curses::Color::DEFAULT, color);
-    int colorpair = COLORSCHEME->getColorPair(c);
-    area->attron(colorpair);
-    area->fill(colorpair, 1, 0, realw - 2, 1);
-    area->attroff(colorpair);
+  int attrs;
+  if (has_focus_) {
+    DRAW(getAttributes(ColorScheme::PROPERTY_BUTTON_FOCUS, &attrs, error));
+    attrs |= Curses::Attr::REVERSE;
   }
+  else
+    DRAW(getAttributes(ColorScheme::PROPERTY_BUTTON_NORMAL, &attrs, error));
+
+  DRAW(area.attrOn(attrs, error));
+  DRAW(area.fill(attrs, 0, 0, real_width_, 1, error));
+  DRAW(area.addChar(0, 0, '[', error));
+  DRAW(area.addChar(real_width_ - 1, 0, ']', error));
+  DRAW(area.attrOff(attrs, error));
+
+  if (selected_color_ == Curses::Color::DEFAULT)
+    DRAW(area.addString(1, 0, _("DEFAULT"), error));
+  else {
+    ColorScheme::Color c(Curses::Color::DEFAULT, selected_color_);
+    int colorpair;
+    DRAW(COLORSCHEME->getColorPair(c, &colorpair, error));
+    DRAW(area.attrOn(colorpair, error));
+    DRAW(area.fill(colorpair, 1, 0, real_width_ - 2, 1, error));
+    DRAW(area.attrOff(colorpair, error));
+  }
+
+  return 0;
 }
 
-void ColorPickerComboBox::onDropDown(Button& /*activator*/)
+void ColorPickerComboBox::onDropDown(Button & /*activator*/)
 {
-  dropdown = new MenuWindow(*this, MENU_WIDTH, AUTOSIZE);
-  dropdown->signal_close.connect(sigc::mem_fun(this,
-        &ColorPickerComboBox::dropDownClose));
+  dropdown_ = new MenuWindow(*this, MENU_WIDTH, AUTOSIZE);
+  dropdown_->signal_close.connect(
+    sigc::mem_fun(this, &ColorPickerComboBox::dropDownClose));
 
   int i;
   ComboBoxEntries::iterator j;
-  for (i = 0, j = options.begin(); j != options.end(); i++, j++) {
+  for (i = 0, j = options_.begin(); j != options_.end(); ++i, ++j) {
     Button *b;
     if (j->data == COLOR_MORE) {
-      // add the "More..." button
-      b = dropdown->appendItem(j->title, sigc::bind( sigc::mem_fun(this,
-              &ColorPickerComboBox::dropDownOk), i));
+      // Add the "More..." button.
+      b = dropdown_->appendItem(j->title,
+        sigc::bind(sigc::mem_fun(this, &ColorPickerComboBox::dropDownOk), i));
     }
     else {
-      // normal color button
+      // Normal color button.
       b = new ColorButton(j->data);
-      dropdown->appendWidget(*b);
-      b->signal_activate.connect(sigc::bind(sigc::mem_fun(this,
-              &ColorPickerComboBox::dropDownOk), i));
+      dropdown_->appendWidget(*b);
+      b->signal_activate.connect(
+        sigc::bind(sigc::mem_fun(this, &ColorPickerComboBox::dropDownOk), i));
     }
-    if (i == selected_entry)
+    if (i == selected_entry_)
       b->grabFocus();
   }
 
-  dropdown->show();
+  dropdown_->show();
 }
 
-void ColorPickerComboBox::dropDownOk(Button& /*activator*/, int new_entry)
+void ColorPickerComboBox::dropDownOk(Button & /*activator*/, int new_entry)
 {
-  dropdown->close();
+  dropdown_->close();
 
 #ifdef COLORPICKER_256COLOR
-  if (options[new_entry].data != COLOR_MORE) {
-    setColor(options[new_entry].data);
+  if (options_[new_entry].data != COLOR_MORE) {
+    setColor(options_[new_entry].data);
     return;
   }
 
-  // the "More..." button was selected, display the color picker dialog
+  // Rhe "More..." button was selected, display the color picker dialog.
   // @todo Initialize the color picker dialog with a selected color.
-  colorpicker = new ColorPickerDialog("", 0, 0);
-  colorpicker->signal_response.connect(sigc::mem_fun(this,
-        &ColorPickerComboBox::colorPickerOk));
-  colorpicker->signal_close.connect(sigc::mem_fun(this,
-        &ColorPickerComboBox::colorPickerClose));
-  colorpicker->show();
+  colorpicker_ = new ColorPickerDialog("", 0, 0);
+  colorpicker_->signal_response.connect(
+    sigc::mem_fun(this, &ColorPickerComboBox::colorPickerOk));
+  colorpicker_->signal_close.connect(
+    sigc::mem_fun(this, &ColorPickerComboBox::colorPickerClose));
+  colorpicker_->show();
 #else
-  setColor(options[new_entry].data);
+  setColor(options_[new_entry].data);
 #endif // COLORPICKER_256COLOR
 }
 
 #ifdef COLORPICKER_256COLOR
-void ColorPickerComboBox::colorPickerOk(ColorPickerDialog& activator,
-    AbstractDialog::ResponseType response, int new_color)
+void ColorPickerComboBox::colorPickerOk(ColorPickerDialog &activator,
+  AbstractDialog::ResponseType response, int new_color)
 {
   if (response != AbstractDialog::RESPONSE_OK)
     return;
 
-  // selected option didn't change
+  // Selected option did not change.
   if (new_color == selected_color)
     return;
 
   setColor(new_color);
 }
 
-void ColorPickerComboBox::colorPickerClose(FreeWindow& window)
+void ColorPickerComboBox::colorPickerClose(Window & /*window*/)
 {
-  colorpicker = NULL;
+  colorpicker_ = nullptr;
 }
 #endif // COLORPICKER_256COLOR
 
@@ -202,48 +195,45 @@ void ColorPickerComboBox::setSelected(int new_entry)
 {
   ComboBox::setSelected(new_entry);
 
-  selected_color = options[new_entry].data;
-  signal_color_changed(*this, selected_color);
+  selected_color_ = options_[new_entry].data;
+  signal_color_changed(*this, selected_color_);
 }
 
-ColorPickerComboBox::ColorButton::ColorButton(int color_)
-: Button(MENU_WIDTH - 2, 1, ""), color(color_)
+ColorPickerComboBox::ColorButton::ColorButton(int color)
+  : Button(MENU_WIDTH - 2, 1, ""), color_(color)
 {
 }
 
-void ColorPickerComboBox::ColorButton::draw()
+int ColorPickerComboBox::ColorButton::draw(Curses::ViewPort area, Error &error)
 {
-  proceedUpdateArea();
-
-  if (!area)
-    return;
-
-  int button_colorpair;
-  if (has_focus)
-    button_colorpair = getColorPair("button", "focus")
-      | Curses::Attr::REVERSE;
-  else
-    button_colorpair = getColorPair("button", "normal");
-
-  int realw = area->getmaxx();
-
-  area->attron(button_colorpair);
-  area->fill(button_colorpair, 0, 0, realw, 1);
-  area->mvaddchar(0, 0, '[');
-  area->mvaddchar(realw - 1, 0, ']');
-  area->attroff(button_colorpair);
-
-  if (color == Curses::Color::DEFAULT)
-    area->mvaddstring(1, 0, _("DEFAULT "));
-  else {
-    ColorScheme::Color c(Curses::Color::DEFAULT, color);
-    int colorpair = COLORSCHEME->getColorPair(c);
-    area->attron(colorpair);
-    area->fill(colorpair, 1, 0, realw - 2, 1);
-    area->attroff(colorpair);
+  int attrs;
+  if (has_focus_) {
+    DRAW(getAttributes(ColorScheme::PROPERTY_BUTTON_FOCUS, &attrs, error));
+    attrs |= Curses::Attr::REVERSE;
   }
+  else
+    DRAW(getAttributes(ColorScheme::PROPERTY_BUTTON_NORMAL, &attrs, error));
+
+  DRAW(area.attrOn(attrs, error));
+  DRAW(area.fill(attrs, 0, 0, real_width_, 1, error));
+  DRAW(area.addChar(0, 0, '[', error));
+  DRAW(area.addChar(real_width_ - 1, 0, ']', error));
+  DRAW(area.attrOff(attrs, error));
+
+  if (color_ == Curses::Color::DEFAULT)
+    DRAW(area.addString(1, 0, _("DEFAULT "), error));
+  else {
+    ColorScheme::Color c(Curses::Color::DEFAULT, color_);
+    int colorpair;
+    DRAW(COLORSCHEME->getColorPair(c, &colorpair, error));
+    DRAW(area.attrOn(colorpair, error));
+    DRAW(area.fill(colorpair, 1, 0, real_width_ - 2, 1, error));
+    DRAW(area.attrOff(colorpair, error));
+  }
+
+  return 0;
 }
 
 } // namespace CppConsUI
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:

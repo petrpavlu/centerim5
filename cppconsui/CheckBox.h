@@ -1,74 +1,60 @@
-/*
- * Copyright (C) 2010-2013 by CenterIM developers
- *
- * This file is part of CenterIM.
- *
- * CenterIM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * CenterIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Copyright (C) 2010-2015 Petr Pavlu <setup@dagobah.cz>
+//
+// This file is part of CenterIM.
+//
+// CenterIM is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// CenterIM is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with CenterIM.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @file
- * CheckBox class.
- *
- * @ingroup cppconsui
- */
+/// @file
+/// CheckBox class.
+///
+/// @ingroup cppconsui
 
-#ifndef __CHECKBOX_H__
-#define __CHECKBOX_H__
+#ifndef CHECKBOX_H
+#define CHECKBOX_H
 
 #include "Widget.h"
 
-namespace CppConsUI
-{
+namespace CppConsUI {
 
-/**
- * CheckBox.
- */
-class CheckBox
-: public Widget
-{
+/// CheckBox.
+class CheckBox : public Widget {
 public:
-  CheckBox(int w, int h, const char *text_ = NULL, bool checked_ = false);
-  explicit CheckBox(const char *text_ = NULL, bool checked_ = false);
-  virtual ~CheckBox();
+  CheckBox(int w, int h, const char *text = nullptr, bool checked = false);
+  explicit CheckBox(const char *text = nullptr, bool checked = false);
+  virtual ~CheckBox() override;
 
   // Widget
-  virtual void draw();
+  virtual int draw(Curses::ViewPort area, Error &error) override;
 
-  /**
-   * Sets a new label text and redraws the widget.
-   */
+  /// Sets new text label.
   virtual void setText(const char *new_text);
-  /**
-   * Returns a current label text.
-   */
-  virtual const char *getText() const { return text; }
+
+  /// Returns current text label.
+  virtual const char *getText() const { return text_; }
 
   virtual void setChecked(bool new_checked);
-  virtual bool isChecked() const { return checked; }
+  virtual bool isChecked() const { return checked_; }
 
-  /**
-   * Emited signal when a checkbox is pressed/activated.
-   */
-  sigc::signal<void, CheckBox&, bool> signal_toggle;
+  /// Signal emitted when the checkbox is pressed/activated.
+  sigc::signal<void, CheckBox &, bool> signal_toggle;
 
 protected:
-  char *text;
-  int text_width;
-  int text_height;
-  bool checked;
+  char *text_;
+  int text_width_;
+  int text_height_;
+
+  bool checked_;
 
 private:
   CONSUI_DISABLE_COPY(CheckBox);
@@ -80,6 +66,6 @@ private:
 
 } // namespace CppConsUI
 
-#endif // __CHECKBOX_H__
+#endif // CHECKBOX_H
 
-/* vim: set tabstop=2 shiftwidth=2 textwidth=78 expandtab : */
+// vim: set tabstop=2 shiftwidth=2 textwidth=80 expandtab:
