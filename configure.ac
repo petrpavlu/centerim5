@@ -115,9 +115,9 @@ AM_ICONV()
 AS_IF([test "$am_cv_func_iconv" != yes],
 	[AC_MSG_ERROR([iconv not found])])
 
-# gettext -- v0.18.1 was released on 2010-06-04.
+# gettext -- v0.19.3 was released on 2014-10-16.
 AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.18.1])
+AM_GNU_GETTEXT_VERSION([0.19.3])
 
 # libpurple -- v2.9.0 is needed because of PurpleConvChatBuddy::ui_data, this
 # version was released on 2011-06-23.
