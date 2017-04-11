@@ -3,8 +3,9 @@
   - Error reporting got extensively improved.
   - Numerous bugs were fixed.
   - Czech, Dutch and Russian translations have been updated.
-  - Important internal changes: Deferred updates of draw areas were removed.
-    CppConsUI lost its dependency on GLib.
+  - Important internal changes: Deferred updates of drawing areas were removed.
+    CppConsUI no longer requires GLib. Framework for automated testing of the
+    library has been introduced.
 
 * 22 September 2013 -- CenterIM 5.0.0 Beta2
   - Ability to sort buddies by name, status or last activity has been added.
