@@ -4,10 +4,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: centerim5 5.0.0beta1.28-6b68-dirty\n"
-"Report-Msgid-Bugs-To: CenterIM developers List http://sourceforge.net/"
-"projects/centerim\n"
-"POT-Creation-Date: 2016-07-04 20:02+0100\n"
+"Project-Id-Version: centerim5 5.0.0\n"
+"Report-Msgid-Bugs-To: centerim-devel@centerim.org\n"
+"POT-Creation-Date: 2017-04-16 22:35+0100\n"
 "PO-Revision-Date: 2015-07-18 10:52+0100\n"
 "Last-Translator: CBke <cb@linux.be>\n"
 "Language-Team: Dutch\n"
@@ -44,8 +43,8 @@ msgid "Password"
 msgstr "Wachtwoord"
 
 #: src/AccountWindow.cpp:119 src/BuddyList.cpp:275 src/BuddyList.cpp:331
-#: src/BuddyListNode.cpp:520 src/BuddyListNode.cpp:688
-#: src/BuddyListNode.cpp:897 src/Notify.cpp:68
+#: src/BuddyListNode.cpp:520 src/BuddyListNode.cpp:689
+#: src/BuddyListNode.cpp:898 src/Notify.cpp:68
 msgid "Alias"
 msgstr "Alias"
 
@@ -269,17 +268,17 @@ msgstr "Informatie"
 msgid "Retrieving..."
 msgstr "Ontvangen..."
 
-#: src/BuddyListNode.cpp:489 src/BuddyListNode.cpp:836
+#: src/BuddyListNode.cpp:489 src/BuddyListNode.cpp:837
 msgid "Information..."
 msgstr "Informatie..."
 
-#: src/BuddyListNode.cpp:491 src/BuddyListNode.cpp:666
-#: src/BuddyListNode.cpp:839
+#: src/BuddyListNode.cpp:491 src/BuddyListNode.cpp:667
+#: src/BuddyListNode.cpp:840
 msgid "Alias..."
 msgstr "ALias..."
 
-#: src/BuddyListNode.cpp:492 src/BuddyListNode.cpp:667
-#: src/BuddyListNode.cpp:841 src/BuddyListNode.cpp:1088
+#: src/BuddyListNode.cpp:492 src/BuddyListNode.cpp:668
+#: src/BuddyListNode.cpp:842 src/BuddyListNode.cpp:1090
 msgid "Delete..."
 msgstr "Verwijderen..."
 
@@ -292,62 +291,62 @@ msgstr "Bent u zeker dat je vriend %s wilt verwijderen van de lijst?"
 msgid "Buddy deletion"
 msgstr "Vriend verwijderen"
 
-#: src/BuddyListNode.cpp:714
+#: src/BuddyListNode.cpp:715
 #, c-format
 msgid "Are you sure you want to delete chat %s from the list?"
 msgstr "Bent u zeker dat je chat %s wilt verwijderen van de lijst?"
 
-#: src/BuddyListNode.cpp:716
+#: src/BuddyListNode.cpp:717
 msgid "Chat deletion"
 msgstr "Chat verwijderen"
 
-#: src/BuddyListNode.cpp:828
+#: src/BuddyListNode.cpp:829
 msgid "Expand"
 msgstr "Uitklappen"
 
-#: src/BuddyListNode.cpp:832
+#: src/BuddyListNode.cpp:833
 msgid "Collapse"
 msgstr "Inklappen"
 
-#: src/BuddyListNode.cpp:857
+#: src/BuddyListNode.cpp:858
 msgid "Move to..."
 msgstr "Verplaatsen naar..."
 
-#: src/BuddyListNode.cpp:934
+#: src/BuddyListNode.cpp:935
 #, c-format
 msgid "Are you sure you want to delete contact %s from the list?"
 msgstr "Bent u zeker dat je contact %s wilt verwijderen uit de lijst?"
 
-#: src/BuddyListNode.cpp:936
+#: src/BuddyListNode.cpp:937
 msgid "Contact deletion"
 msgstr "Contact Verwijderen"
 
-#: src/BuddyListNode.cpp:1087
+#: src/BuddyListNode.cpp:1089
 msgid "Rename..."
 msgstr "Hernoemen.."
 
-#: src/BuddyListNode.cpp:1095
+#: src/BuddyListNode.cpp:1097
 msgid "-Top-"
 msgstr "-Top-"
 
-#: src/BuddyListNode.cpp:1108
+#: src/BuddyListNode.cpp:1110
 msgid "Move after..."
 msgstr "Verplaatsen achter..."
 
-#: src/BuddyListNode.cpp:1124
+#: src/BuddyListNode.cpp:1126
 msgid "Specified group is already in the list."
 msgstr "De gespecifieerde groep bestaat reeds in de lijst."
 
-#: src/BuddyListNode.cpp:1139
+#: src/BuddyListNode.cpp:1141
 msgid "Rename"
 msgstr "Hernoem"
 
-#: src/BuddyListNode.cpp:1193
+#: src/BuddyListNode.cpp:1195
 #, c-format
 msgid "Are you sure you want to delete group %s from the list?"
 msgstr "Bent u zeker dat je de groep %s wilt verwijderen van de lijst?"
 
-#: src/BuddyListNode.cpp:1195
+#: src/BuddyListNode.cpp:1197
 msgid "Group deletion"
 msgstr "Groep verwijderen"
 
@@ -1005,7 +1004,7 @@ msgstr ""
 msgid "Adding Unicode character #%"
 msgstr ""
 
-#: cppconsui/ConsUICurses.cpp:288
+#: cppconsui/ConsUICurses.cpp:287
 #, c-format
 msgid "Setting complex character from character '%c' failed."
 msgstr ""
@@ -1108,18 +1107,18 @@ msgstr "Toevoegen van Kleurenpaar mislukt."
 msgid "Changing the Curses terminal size to (width=%d, height=%d) failed."
 msgstr ""
 
-#: cppconsui/CoreManager.cpp:52
+#: cppconsui/CoreManager.cpp:74
 msgid "Libtermkey initialization failed."
 msgstr "Libtermkey initialisatie mislukt."
 
-#: cppconsui/CoreManager.cpp:63
+#: cppconsui/CoreManager.cpp:85
 #, c-format
 msgid ""
 "Iconv initialization failed. Cannot create a conversion descriptor from %s "
 "to UTF-8."
 msgstr ""
 
-#: cppconsui/CoreManager.cpp:152
+#: cppconsui/CoreManager.cpp:175
 #, c-format
 msgid "Error converting input to UTF-8 (%s)."
 msgstr "Fout bij converteren van input to UTF-8 (%s)."
@@ -1128,20 +1127,20 @@ msgstr "Fout bij converteren van input to UTF-8 (%s)."
 msgid "<unbound>"
 msgstr "<niet gebonden>"
 
-#: plugins/extaction.c:167
+#: plugins/extaction.c:159
 msgid "Command"
 msgstr "Opdracht"
 
-#: plugins/extaction.c:194
+#: plugins/extaction.c:186
 msgid "External actions"
 msgstr "Externe actie"
 
-#: plugins/extaction.c:196
+#: plugins/extaction.c:188
 msgid "Executes an external program when a specific event occurs."
 msgstr ""
 "Voer een extern programma uit wanneer er een specifieke gebeurtenis gebeurd."
 
-#: plugins/extaction.c:197
+#: plugins/extaction.c:189
 msgid ""
 "When an event such as received-im-msg, or buddy-signed-on occurs this plugin "
 "executes a user-defined external program."
