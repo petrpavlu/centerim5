@@ -19,6 +19,7 @@ doc:
 # Package in all cmake files.
 EXTRA_DIST += \
 	CMakeLists.txt \
+	cmake/FindIconv.cmake \
 	config.h.cmake \
 	cppconsui/CMakeLists.txt \
 	doc/CMakeLists.txt \
