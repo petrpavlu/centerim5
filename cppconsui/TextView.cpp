@@ -207,7 +207,8 @@ void TextView::insert(std::size_t line_num, const char *text, int color)
   }
 
   // Update screen lines.
-  for (std::size_t i = line_num, advice = 0; i < cur_line_num; ++i)
+  std::size_t advice = cur_line_num == lines_.size() ? screen_lines_.size() : 0;
+  for (std::size_t i = line_num; i < cur_line_num; ++i)
     advice = updateScreenLines(i, advice);
 
   redraw();
