@@ -42,7 +42,7 @@ public:
   virtual void append(const char *text, int color = 0);
 
   /// Inserts text before specified line number. Text can contain multiple lines
-  /// and should end with '\\n' character just in front of '\\0' character.
+  /// and should end with the '\n' character just before the '\0' byte.
   virtual void insert(std::size_t line_num, const char *text, int color = 0);
 
   /// Removes a specified line.
