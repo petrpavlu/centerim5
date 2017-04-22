@@ -459,7 +459,7 @@ std::size_t TextView::eraseScreenLines(
       *deleted = end - begin;
   }
   else if (deleted != nullptr)
-    deleted = nullptr;
+    *deleted = 0;
 
   return i;
 }
