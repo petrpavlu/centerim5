@@ -9,7 +9,7 @@ env:
   - |
     NAME=debian
     IMAGE=debian:stretch
-    INSTALL_UPDATE_CMD=apt-get\ update
+    INSTALL_UPDATE_CMD=apt-get update
     INSTALL_CMD="apt-get install -y autoconf automake libtool autopoint \
       gettext pkg-config cmake make g++ libglib2.0-dev libpurple-dev \
       libsigc++-2.0-dev libncursesw6-dev python3"
