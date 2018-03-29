@@ -16,13 +16,13 @@ env:
 
 before_install:
   - echo "Starting run ${IMAGE}"
-  - docker run -d --name ${NAME} -v $(pwd):/travis ${IMAGE} /bin/bash
+  - docker run -d --name ${NAME} -v $(pwd):/travis ${IMAGE} tail -f /dev/null
 
 install:
-  - docker exec -t ${NAME} /bin/bash -c ${INSTALL_UPDATE_CMD}
-  - docker exec -t ${NAME} /bin/bash -c ${INSTALL_CMD}
+  - docker exec -t ${NAME} bash -c ${INSTALL_UPDATE_CMD}
+  - docker exec -t ${NAME} bash -c ${INSTALL_CMD}
 
 script:
   # Check the autotools build.
-  - docker exec -t ${NAME} /bin/bash -c "cd /travis;
+  - docker exec -t ${NAME} bash -c "cd /travis;
       ./bootstrap && ./configure && make distcheck"
