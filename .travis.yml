@@ -30,7 +30,7 @@ script:
   - docker exec -t ${NAME} bash -c "cd /travis;
       ./bootstrap && ./configure && make distcheck"
   # Check the cmake build.
-  - docker exec -t ${NAMEJ} bash -c "cd /travis;
+  - docker exec -t ${NAME} bash -c "cd /travis;
       mkdir distcheck-cmake && cd distcheck-cmake &&
         tar -xvzf ../centerim5-*.tar.gz && cmake centerim5-* &&
         make && make check"
