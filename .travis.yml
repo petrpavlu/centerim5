@@ -14,7 +14,7 @@ matrix:
       - UPGRADE_CMD="apt-get full-upgrade -y"
       - INSTALL_CMD="apt-get install -y autoconf automake libtool autopoint
           gettext pkg-config cmake make g++ libglib2.0-dev libpurple-dev
-          libsigc++-2.0-dev libncursesw5-dev python3"
+          libsigc++-2.0-dev libncursesw5-dev python3 doxygen graphviz"
 
 before_install:
   - echo "Starting run ${IMAGE}"
@@ -29,3 +29,10 @@ script:
   # Check the autotools build.
   - docker exec -t ${NAME} bash -c "cd /travis;
       ./bootstrap && ./configure && make distcheck"
+  # Check the cmake build.
+  - docker exec -t ${NAMEJ} bash -c "cd /travis;
+      mkdir distcheck-cmake && cd distcheck-cmake &&
+        tar -xvzf ../centerim5-*.tar.gz && cmake centerim5-* &&
+        make && make check"
+  # Build the documentation.
+  - docker exec -t ${NAME} bash -c "cd /travis; make doc"
