@@ -19,7 +19,7 @@ matrix:
     - env:
       - NAME=fedora
       - IMAGE=fedora:27
-      - UPDATE_CMD="dnf check-update"
+      - UPDATE_CMD="dnf makecache"
       - UPGRADE_CMD="dnf -y upgrade"
       - INSTALL_CMD="dnf -y install autoconf automake libtool gettext-devel
           pkgconfig cmake make gcc-c++ glib2-devel libpurple-devel
