@@ -20,8 +20,8 @@ before_install:
   - docker run -d --name ${NAME} -v $(pwd):/travis ${IMAGE} tail -f /dev/null
 
 install:
-  - docker exec -t ${NAME} bash -c ${INSTALL_UPDATE_CMD}
-  - docker exec -t ${NAME} bash -c ${INSTALL_CMD}
+  - docker exec -t ${NAME} bash -c "${INSTALL_UPDATE_CMD}"
+  - docker exec -t ${NAME} bash -c "${INSTALL_CMD}"
 
 script:
   # Check the autotools build.
