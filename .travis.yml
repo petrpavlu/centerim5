@@ -11,10 +11,19 @@ matrix:
       - NAME=debian
       - IMAGE=debian:stretch
       - UPDATE_CMD="apt-get update"
-      - UPGRADE_CMD="apt-get full-upgrade -y"
-      - INSTALL_CMD="apt-get install -y autoconf automake libtool autopoint
+      - UPGRADE_CMD="apt-get -y full-upgrade"
+      - INSTALL_CMD="apt-get -y install autoconf automake libtool autopoint
           gettext pkg-config cmake make g++ libglib2.0-dev libpurple-dev
           libsigc++-2.0-dev libncursesw5-dev python3 doxygen graphviz"
+    # Fedora 27.
+    - env:
+      - NAME=fedora
+      - IMAGE=fedora:27
+      - UPDATE_CMD="dnf check-update"
+      - UPGRADE_CMD="dnf -y upgrade"
+      - INSTALL_CMD="dnf -y install autoconf automake libtool gettext-devel
+          pkgconfig cmake make gcc-c++ glib2-devel libpurple-devel
+          libsigc++20-devel ncurses-devel doxygen graphviz"
 
 before_install:
   - echo "Starting run ${IMAGE}"
