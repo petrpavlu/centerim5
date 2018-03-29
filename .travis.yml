@@ -1,0 +1,28 @@
+language: cpp
+sudo: required
+
+services:
+  - docker
+
+env:
+  # Debian 9 (stretch).
+  - |
+    NAME=debian
+    IMAGE=debian:stretch
+    INSTALL_UPDATE_CMD="apt-get update"
+    INSTALL_CMD="apt-get install -y autoconf automake libtool autopoint \
+      gettext pkg-config cmake make g++ libglib2.0-dev libpurple-dev \
+      libsigc++-2.0-dev libncursesw6-dev python3"
+
+before_install:
+  - echo "Starting run ${IMAGE}"
+  - docker run -d --name ${NAME} -v $(pwd):/travis ${IMAGE} /bin/bash
+
+install:
+  - docker exec -t ${NAME} /bin/bash -c ${INSTALL_UPDATE_CMD}
+  - docker exec -t ${NAME} /bin/bash -c ${INSTALL_CMD}
+
+script:
+  # Check the autotools build.
+  - docker exec -t ${NAME} /bin/bash -c "cd /travis;
+      ./bootstrap && ./configure && make distcheck"
