@@ -26,7 +26,6 @@ matrix:
           libsigc++20-devel ncurses-devel doxygen graphviz"
 
 before_install:
-  - echo "Starting run ${IMAGE}"
   - docker run -d --name ${NAME} -v $(pwd):/travis ${IMAGE} tail -f /dev/null
 
 install:
