@@ -59,3 +59,7 @@ script:
         make ${MAKE_JOBS} && make ${MAKE_JOBS} check"
   # Build the documentation.
   - docker exec -t ${NAME} bash -c "cd /travis; make doc"
+
+after_script:
+  # Stop the container.
+  - docker stop ${NAME}
