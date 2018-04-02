@@ -14,8 +14,8 @@ matrix:
       - PREPARE_UPGRADE_CMD="apt-get -y full-upgrade"
       - PREPARE_INSTALL_CMD="apt-get -y install autoconf automake libtool
           autopoint gettext pkg-config cmake make g++ libglib2.0-dev
-          libpurple-dev libsigc++-2.0-dev libncursesw5-dev python3 doxygen
-          graphviz"
+          libpurple-dev libsigc++-2.0-dev libncursesw5-dev libtermkey-dev
+          python3 doxygen graphviz"
     # Fedora 27.
     - env:
       - NAME=fedora
@@ -24,7 +24,7 @@ matrix:
       - PREPARE_UPGRADE_CMD="dnf -y upgrade"
       - PREPARE_INSTALL_CMD="dnf -y install autoconf automake libtool
           gettext-devel pkgconfig cmake make gcc-c++ glib2-devel libpurple-devel
-          libsigc++20-devel ncurses-devel doxygen graphviz"
+          libsigc++20-devel ncurses-devel libtermkey-devel doxygen graphviz"
 
 # Define common environment variables.
 env:

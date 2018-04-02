@@ -28,7 +28,7 @@
 #include <sigc++/sigc++.h>
 #include <sigc++/signal.h>
 
-#include "libtermkey/termkey.h"
+#include <termkey.h>
 
 #include <map>
 #include <string>

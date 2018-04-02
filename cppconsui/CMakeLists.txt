@@ -35,10 +35,7 @@ set(cppconsui_SOURCES
   TreeView.cpp
   VerticalLine.cpp
   Widget.cpp
-  Window.cpp
-  libtermkey/driver-csi.c
-  libtermkey/driver-ti.c
-  libtermkey/termkey.c)
+  Window.cpp)
 
 add_library(cppconsui SHARED ${cppconsui_SOURCES})
 
@@ -47,8 +44,10 @@ set_property(TARGET cppconsui
 target_include_directories(cppconsui PRIVATE
   ${Iconv_INCLUDE_DIRS} ${Intl_INCLUDE_DIRS})
 target_compile_options(cppconsui PRIVATE
-  ${SIGC_CFLAGS} ${NCURSESW_CFLAGS} "-DG_LOG_DOMAIN=\"cppconsui\"")
+  ${SIGC_CFLAGS} ${NCURSESW_CFLAGS} ${TERMKEY_CFLAGS}
+  "-DG_LOG_DOMAIN=\"cppconsui\"")
 target_link_libraries(cppconsui PRIVATE
-  ${Iconv_LIBRARIES} ${Intl_LIBRARIES} ${SIGC_LDFLAGS} ${NCURSESW_LDFLAGS})
+  ${Iconv_LIBRARIES} ${Intl_LIBRARIES} ${SIGC_LDFLAGS} ${NCURSESW_LDFLAGS}
+  ${TERMKEY_LDFLAGS})
 
 install(TARGETS cppconsui DESTINATION lib)

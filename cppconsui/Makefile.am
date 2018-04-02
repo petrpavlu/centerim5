@@ -74,16 +74,12 @@ libcppconsui_la_SOURCES = \
 	Widget.h \
 	Window.cpp \
 	Window.h \
-	tree.hh \
-	libtermkey/driver-csi.c \
-	libtermkey/driver-ti.c \
-	libtermkey/termkey-internal.h \
-	libtermkey/termkey.c \
-	libtermkey/termkey.h
+	tree.hh
 
 libcppconsui_la_CPPFLAGS = \
 	$(SIGC_CFLAGS) \
 	$(NCURSESW_CFLAGS) \
+	$(TERMKEY_CFLAGS) \
 	-I$(top_srcdir) \
 	-DG_LOG_DOMAIN=\"cppconsui\"
 
@@ -91,4 +87,5 @@ libcppconsui_la_LIBADD = \
 	$(LTLIBICONV) \
 	$(LTLIBINTL) \
 	$(SIGC_LIBS) \
-	$(NCURSESW_LIBS)
+	$(NCURSESW_LIBS) \
+	$(TERMKEY_LIBS)

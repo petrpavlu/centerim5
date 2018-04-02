@@ -19,7 +19,7 @@
 #ifndef KEYS_H
 #define KEYS_H
 
-#include "libtermkey/termkey.h"
+#include <termkey.h>
 
 namespace CppConsUI {
 

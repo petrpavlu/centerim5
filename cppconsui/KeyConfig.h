@@ -26,9 +26,9 @@
 #include "CppConsUI.h"
 #include "Keys.h"
 
-#include "libtermkey/termkey.h"
 #include <map>
 #include <string>
+#include <termkey.h>
 
 namespace CppConsUI {
 

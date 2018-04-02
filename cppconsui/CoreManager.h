@@ -27,9 +27,9 @@
 #include "CppConsUI.h"
 #include "Window.h"
 
-#include "libtermkey/termkey.h"
 #include <deque>
 #include <iconv.h>
+#include <termkey.h>
 
 namespace CppConsUI {
 

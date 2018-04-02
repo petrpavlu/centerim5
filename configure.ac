@@ -135,6 +135,9 @@ PKG_CHECK_MODULES([SIGC], [sigc++-2.0 >= 2.2.0])
 # ncursesw -- v5.8 was released on 2011-02-26.
 PKG_CHECK_MODULES([NCURSESW], [ncursesw >= 5.8])
 
+# libtermkey -- v0.18 was released on 2015-10-06.
+PKG_CHECK_MODULES([TERMKEY], [termkey >= 0.18])
+
 # Checks for tools needed by the termex test framework. Only warn about these
 # missing dependencies.
 
