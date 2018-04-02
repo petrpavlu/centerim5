@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_EXTENSIONS false)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
-# Libtermkey requires C99.
+# The extaction plugin requires C99.
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_EXTENSIONS false)
 set(CMAKE_C_STANDARD_REQUIRED true)
