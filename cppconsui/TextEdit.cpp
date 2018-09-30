@@ -641,6 +641,9 @@ void TextEdit::deleteFromCursor(DeleteType type, Direction dir)
   case DELETE_WORD_ENDS:
     count = moveWordFromCursor(dir, true) - current_pos_;
     break;
+  case DELETE_LINE_ENDS:
+    count = moveLineFromCursor(dir) - current_pos_;
+    break;
   default:
     assert(0);
   }
@@ -824,6 +827,51 @@ std::size_t TextEdit::moveWordFromCursor(Direction dir, bool word_end) const
   }
 }
 
+std::size_t TextEdit::moveLineFromCursor(Direction dir) const
+{
+  std::size_t new_pos = current_pos_;
+  const char *cur = point_;
+  if (cur == gapstart_)
+    cur = gapend_;
+
+  if (dir == DIR_FORWARD) {
+    if (new_pos == text_length_)
+      return new_pos;
+
+    // already at end of line?
+    if( *cur == '\n' )
+      return ++new_pos;
+
+    while (new_pos < text_length_) {
+      cur = nextChar(cur);
+      ++new_pos;
+
+      if (*cur == '\n')
+        break;
+    }
+    return new_pos;
+  }
+  else { // DIR_BACK
+    if (new_pos == 0)
+      return 0;
+
+    // already at start off line?
+    cur = prevChar(cur);
+    --new_pos;
+    if (*cur == '\n')
+      return new_pos;
+
+    while (new_pos > 0) {
+      cur = prevChar(cur);
+      --new_pos;
+
+      if (*cur == '\n')
+        return ++new_pos;
+    }
+    return 0;
+  }
+}
+
 void TextEdit::actionMoveCursor(CursorMovement step, Direction dir)
 {
   moveCursor(step, dir);
@@ -900,6 +948,16 @@ void TextEdit::declareBindables()
 
   declareBindable("textentry", "delete-word-begin",
     sigc::bind(sigc::mem_fun(this, &TextEdit::actionDelete), DELETE_WORD_ENDS,
+                    DIR_BACK),
+    InputProcessor::BINDABLE_NORMAL);
+
+  declareBindable("textentry", "delete-line-end",
+    sigc::bind(sigc::mem_fun(this, &TextEdit::actionDelete), DELETE_LINE_ENDS,
+                    DIR_FORWARD),
+    InputProcessor::BINDABLE_NORMAL);
+
+  declareBindable("textentry", "delete-line-begin",
+    sigc::bind(sigc::mem_fun(this, &TextEdit::actionDelete), DELETE_LINE_ENDS,
                     DIR_BACK),
     InputProcessor::BINDABLE_NORMAL);
 
