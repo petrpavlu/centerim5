@@ -57,6 +57,8 @@ public:
   void debug(const char *fmt, ...)
     CPPCONSUI_GNUC_ATTRIBUTE((format(printf, 2, 3)));
 
+  void logv( enum Level level, const char *fmt, va_list args );
+
   void clearAllBufferedMessages();
 
 private:

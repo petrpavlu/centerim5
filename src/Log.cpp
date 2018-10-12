@@ -69,17 +69,13 @@ Log *Log::instance()
   void Log::name(const char *fmt, ...)                                         \
   {                                                                            \
     va_list args;                                                              \
-    char *text;                                                                \
                                                                                \
     if (log_level_cim_ < level)                                                \
       return; /* Do not show this message. */                                  \
                                                                                \
     va_start(args, fmt);                                                       \
-    text = g_strdup_vprintf(fmt, args);                                        \
+    logv(level, fmt, args);                                                    \
     va_end(args);                                                              \
-                                                                               \
-    write(TYPE_CIM, level, text);                                              \
-    g_free(text);                                                              \
   }
 
 WRITE_METHOD(error, LEVEL_ERROR)
@@ -90,6 +86,33 @@ WRITE_METHOD(info, LEVEL_INFO)
 WRITE_METHOD(debug, LEVEL_DEBUG)
 
 #undef WRITE_METHOD
+
+static const char *now_formatted( void )
+{
+    time_t now;
+    struct tm nowtm;
+    const char *formatted_time;
+
+    now = time( nullptr );
+    if( now != 0 && localtime_r(&now, &nowtm) != nullptr )
+      formatted_time = purple_date_format_long(&nowtm);
+    else
+      formatted_time = _("Unknown");
+
+    return formatted_time;
+}
+
+void Log::logv( enum Level level, const char *fmt, va_list args )
+{
+    char *text, *all;
+
+    text = g_strdup_vprintf(fmt, args);
+    all = g_strconcat( now_formatted(), " ", text, NULL );
+
+    write(TYPE_CIM, level, all);
+    g_free(text);
+    g_free(all);
+}
 
 void Log::clearAllBufferedMessages()
 {
@@ -266,7 +289,8 @@ void Log::purple_print(
               "not defined."));
   }
 
-  char *text = g_strdup_printf("libpurple/%s: %s", category, arg_s);
+  char *text = g_strdup_printf("%s libpurple/%s: %s",
+      now_formatted(), category, arg_s);
   write(TYPE_PURPLE, level, text);
   g_free(text);
 }
@@ -292,7 +316,8 @@ void Log::default_log_handler(
   if (log_level_glib_ < level)
     return; // Do not show this message.
 
-  char *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
+  char *text = g_strdup_printf("%s %s: %s",
+      now_formatted(), domain ? domain : "g_log", msg);
   write(TYPE_GLIB, level, text);
   g_free(text);
 }
@@ -307,7 +332,8 @@ void Log::glib_log_handler(
   if (log_level_glib_ < level)
     return; // Do not show this message.
 
-  char *text = g_strdup_printf("%s: %s", domain ? domain : "g_log", msg);
+  char *text = g_strdup_printf("%s %s: %s",
+      now_formatted(), domain ? domain : "g_log", msg);
   write(TYPE_GLIB, level, text);
   g_free(text);
 }
