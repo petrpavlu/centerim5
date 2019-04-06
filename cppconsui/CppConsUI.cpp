@@ -274,7 +274,7 @@ bool isUniCharSpace(UniChar uc)
 {
   // Note: this function does not behave according to the Unicode standard.
 
-  if (uc == '\t' || uc == '\n' || uc == '\r' || uc == '\f')
+  if (uc == ' ' || uc == '\t' || uc == '\n' || uc == '\r' || uc == '\f')
     return true;
   return false;
 }

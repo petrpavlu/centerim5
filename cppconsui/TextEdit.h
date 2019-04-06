@@ -93,6 +93,7 @@ protected:
   enum DeleteType {
     DELETE_CHARS,
     DELETE_WORD_ENDS,
+    DELETE_LINE_ENDS,
   };
 
   struct ScreenLine {
@@ -206,6 +207,7 @@ protected:
 
   virtual std::size_t moveLogicallyFromCursor(Direction dir) const;
   virtual std::size_t moveWordFromCursor(Direction dir, bool word_end) const;
+  virtual std::size_t moveLineFromCursor(Direction dir) const;
 
 private:
   CONSUI_DISABLE_COPY(TextEdit);
