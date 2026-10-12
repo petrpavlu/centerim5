@@ -155,6 +155,8 @@ private:
   // Adds IO watch to glib main loop context.
   static guint input_add_purple(int fd, PurpleInputCondition condition,
     PurpleInputFunction function, gpointer data);
+  // Removes timeout or IO watch from glib main loop context.
+  static gboolean source_remove_purple(guint handle);
 
   // Helper functions for input_add_purple().
   // Processes IO input to purple callback.

@@ -130,6 +130,9 @@ private:
   Level log_level_glib_;
   Level log_level_purple_;
 
+  GLogFunc prev_catchall_handler_;
+  GThread *main_thread_;
+
   Log();
   ~Log();
   CONSUI_DISABLE_COPY(Log);
@@ -161,6 +164,17 @@ private:
     reinterpret_cast<Log *>(user_data)->glib_log_handler(domain, flags, msg);
   }
   void glib_log_handler(
+    const char *domain, GLogLevelFlags flags, const char *msg);
+
+  // To catch messages from all other domains (e.g. "Json" used by protocol
+  // plugins) which would be otherwise printed on stderr.
+  static void catchall_log_handler_(const char *domain, GLogLevelFlags flags,
+    const char *msg, gpointer user_data)
+  {
+    reinterpret_cast<Log *>(user_data)->catchall_log_handler(
+      domain, flags, msg);
+  }
+  void catchall_log_handler(
     const char *domain, GLogLevelFlags flags, const char *msg);
 
   // Called when log preferences change.

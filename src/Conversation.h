@@ -54,11 +54,15 @@ public:
 
   ConversationRoomList *getRoomList() const { return room_list_; };
 
+  void updateTitle();
+
 protected:
   class ConversationLine : public CppConsUI::AbstractLine {
   public:
     ConversationLine(const char *text);
     virtual ~ConversationLine() override;
+
+    void setText(const char *text);
 
     // Widget
     virtual int draw(

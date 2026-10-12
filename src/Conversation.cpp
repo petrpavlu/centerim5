@@ -40,11 +40,8 @@ Conversation::Conversation(PurpleConversation *conv)
   input_ = new CppConsUI::TextEdit(width_ - 2, height_);
   input_->signal_text_change.connect(
     sigc::mem_fun(this, &Conversation::onInputTextChange));
-  char *name = g_strdup_printf("[%s] %s",
-    purple_account_get_protocol_name(purple_conversation_get_account(conv_)),
-    purple_conversation_get_name(conv_));
-  line_ = new ConversationLine(name);
-  g_free(name);
+  line_ = new ConversationLine("");
+  updateTitle();
   addWidget(*view_, 1, 0);
   addWidget(*input_, 1, 1);
   addWidget(*line_, 0, height_);
@@ -270,6 +267,20 @@ void Conversation::write(const char *name, const char * /*alias*/,
   g_free(msg);
 }
 
+void Conversation::updateTitle()
+{
+  // Prpls like Discord name chats by an id and set a readable title.
+  const char *title = purple_conversation_get_title(conv_);
+  if (title == nullptr || *title == '\0')
+    title = purple_conversation_get_name(conv_);
+
+  char *text = g_strdup_printf("[%s] %s",
+    purple_account_get_protocol_name(purple_conversation_get_account(conv_)),
+    title);
+  line_->setText(text);
+  g_free(text);
+}
+
 Conversation::ConversationLine::ConversationLine(const char *text)
   : AbstractLine(AUTOSIZE, 1)
 {
@@ -282,6 +293,19 @@ Conversation::ConversationLine::ConversationLine(const char *text)
 Conversation::ConversationLine::~ConversationLine()
 {
   g_free(text_);
+}
+
+void Conversation::ConversationLine::setText(const char *text)
+{
+  g_assert(text != nullptr);
+
+  if (std::strcmp(text_, text) == 0)
+    return;
+
+  g_free(text_);
+  text_ = g_strdup(text);
+  text_width_ = CppConsUI::Curses::onScreenWidth(text_);
+  redraw();
 }
 
 int Conversation::ConversationLine::draw(
@@ -418,7 +442,7 @@ char *Conversation::stripHTML(const char *str) const
                 std::strncmp(str2 + href_st, href + 7, hrlen - 7) != 0)) {
             str2[j++] = ' ';
             str2[j++] = '(';
-            g_memmove(str2 + j, href, hrlen);
+            memmove(str2 + j, href, hrlen);
             j += hrlen;
             str2[j++] = ')';
             g_free(href);

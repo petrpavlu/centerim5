@@ -169,7 +169,8 @@ Log::LogBufferItem::~LogBufferItem()
 Log::Log()
   : phase_(PHASE_INITIALIZATION), log_window_(nullptr), logfile_(nullptr),
     log_level_cim_(LEVEL_DEBUG), log_level_glib_(LEVEL_DEBUG),
-    log_level_purple_(LEVEL_DEBUG)
+    log_level_purple_(LEVEL_DEBUG), prev_catchall_handler_(nullptr),
+    main_thread_(g_thread_self())
 {
 #define REGISTER_G_LOG_HANDLER(name, handler)                                  \
   g_log_set_handler((name), (GLogLevelFlags)G_LOG_LEVEL_MASK, (handler), this)
@@ -181,10 +182,13 @@ Log::Log()
   glib_gobject_handler_ =
     REGISTER_G_LOG_HANDLER("GLib-GObject", glib_log_handler_);
   gthread_handler_ = REGISTER_G_LOG_HANDLER("GThread", glib_log_handler_);
+  prev_catchall_handler_ =
+    g_log_set_default_handler(catchall_log_handler_, this);
 }
 
 Log::~Log()
 {
+  g_log_set_default_handler(prev_catchall_handler_, nullptr);
   g_log_remove_handler(nullptr, default_handler_);
   g_log_remove_handler("GLib", glib_handler_);
   g_log_remove_handler("GModule", gmodule_handler_);
@@ -313,6 +317,14 @@ void Log::default_log_handler(
     return;
 
   Level level = convertGLibDebugLevel(flags);
+
+  // Harmless: plugin compat macros pass NULL when no conversation is open.
+  if (std::strcmp(msg, "purple_conversation_get_chat_data: assertion "
+                       "'conv != NULL' failed") == 0 ||
+    std::strcmp(msg, "purple_conversation_get_im_data: assertion "
+                     "'conv != NULL' failed") == 0)
+    level = LEVEL_DEBUG;
+
   if (log_level_glib_ < level)
     return; // Do not show this message.
 
@@ -336,6 +348,18 @@ void Log::glib_log_handler(
       now_formatted(), domain ? domain : "g_log", msg);
   write(TYPE_GLIB, level, text);
   g_free(text);
+}
+
+void Log::catchall_log_handler(
+  const char *domain, GLogLevelFlags flags, const char *msg)
+{
+  // The log window and buffered messages can be accessed only from the main thread.
+  if (g_thread_self() != main_thread_ || (flags & G_LOG_FLAG_FATAL)) {
+    prev_catchall_handler_(domain, flags, msg, nullptr);
+    return;
+  }
+
+  default_log_handler(domain, flags, msg);
 }
 
 void Log::log_pref_change(

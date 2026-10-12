@@ -153,6 +153,16 @@ private:
   }
   void buddy_typing(PurpleAccount *account, const char *who);
 
+  static void topic_changed_(PurpleAccount *account, const char *who, const char *topic, void *data)
+  {
+    // reinterpret_cast<Conversations *>(data)->updateLabels();
+  }
+
+  static void conversation_updated_(PurpleConversation *conv, PurpleConvUpdateType type, gpointer data)
+  {
+    if(type==PURPLE_CONV_UPDATE_TITLE) reinterpret_cast<Conversations *>(data)->updateLabels();
+  }
+
   static void account_signed_on_(PurpleConnection *gc, gpointer data)
   {
     reinterpret_cast<Conversations *>(data)->account_signed_on(gc);

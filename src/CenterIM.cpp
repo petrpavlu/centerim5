@@ -45,6 +45,7 @@
 #include <time.h>
 #include <typeinfo>
 #include <unistd.h>
+#include <sys/wait.h>
 
 #define CIM_CONFIG_PATH ".centerim5"
 
@@ -419,6 +420,15 @@ int CenterIM::run(int argc, char *argv[])
   return res;
 }
 
+// Reap exited children (libpurple DNS resolvers). Async-signal-safe calls only!
+static void sigchld_handler(int /*signum*/)
+{
+  int saved_errno = errno;
+  while (waitpid(-1, nullptr, WNOHANG) > 0)
+    ;
+  errno = saved_errno;
+}
+
 int CenterIM::runAll(int argc, char *argv[])
 {
   int res = 1;
@@ -446,6 +456,12 @@ int CenterIM::runAll(int argc, char *argv[])
 #endif
 
   signal(SIGPIPE, SIG_IGN);
+
+  struct sigaction sigchld = {};
+  sigchld.sa_handler = sigchld_handler;
+  sigchld.sa_flags = SA_RESTART | SA_NOCLDSTOP;
+  sigemptyset(&sigchld.sa_mask);
+  sigaction(SIGCHLD, &sigchld, nullptr);
 
   // Parse command-line arguments.
   bool ascii = false;
@@ -725,9 +741,9 @@ int CenterIM::initializePurple(const char *config_path)
 
   // Set the uiops for the eventloop.
   centerim_glib_eventloops_.timeout_add = g_timeout_add;
-  centerim_glib_eventloops_.timeout_remove = g_source_remove;
+  centerim_glib_eventloops_.timeout_remove = source_remove_purple;
   centerim_glib_eventloops_.input_add = input_add_purple;
-  centerim_glib_eventloops_.input_remove = g_source_remove;
+  centerim_glib_eventloops_.input_remove = source_remove_purple;
   purple_eventloop_set_ui_ops(&centerim_glib_eventloops_);
 
   // Add a search path for user-specific plugins.
@@ -941,6 +957,14 @@ void CenterIM::onTopWindowChanged()
     CONVERSATIONS->setExpandedConversations(convs_expanded_);
     mngr_->onScreenResized();
   }
+}
+
+gboolean CenterIM::source_remove_purple(guint handle)
+{
+  // Plugins remove never-added sources (0), g_source_remove(0) would warn.
+  if (handle == 0)
+    return FALSE;
+  return g_source_remove(handle);
 }
 
 guint CenterIM::input_add_purple(int fd, PurpleInputCondition condition,

@@ -145,6 +145,10 @@ Conversations::Conversations()
     handle, "buddy-typing", this, PURPLE_CALLBACK(buddy_typing_), this);
   purple_signal_connect(
     handle, "buddy-typing-stopped", this, PURPLE_CALLBACK(buddy_typing_), this);
+  purple_signal_connect(
+    handle, "chat-topic-changed", this, PURPLE_CALLBACK(topic_changed_), this);
+  purple_signal_connect(
+    handle, "conversation-updated", this, PURPLE_CALLBACK(conversation_updated_), this);
 
   // Setup callbacks for connections in relation to conversations.
   void *connections_handle = purple_connections_get_handle();
@@ -264,6 +268,8 @@ void Conversations::updateLabel(int i)
     conversations_[i].typing_status);
   conversations_[i].label->setText(name);
   g_free(name);
+
+  conversations_[i].conv->updateTitle();
 }
 
 void Conversations::updateLabels()
